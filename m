@@ -1,97 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753087AbeBFNHO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 08:07:14 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33542 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752488AbeBFNHE (ORCPT
+        id S1752922AbeBFNJG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 08:09:06 -0500
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:40177 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752246AbeBFNJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:07:04 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180206130702euoutp02d284dff684efdc6df5c9ecbfe0b51b3e~QvmaYNbYI1396413964euoutp02m
-X-AuditID: cbfec7f5-f79d06d0000031c7-bc-5a79a874fba8
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH v2] drm/bridge/synopsys: dsi: Add 1.31 version support
-To: Philippe Cornu <philippe.cornu@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
-        Heiko Stubner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc: Yannick Fertre <yannick.fertre@st.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-id: <ec4a4255-38f1-6747-4dc4-09ea9f06126d@samsung.com>
-Date: Tue, 06 Feb 2018 14:06:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-In-reply-to: <20180206084251.303-1-philippe.cornu@st.com>
-Content-transfer-encoding: 8bit
-Content-language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe89tx+HidVo+mCStIgrSki6nMrOQOEWREEnti406qXkpNg1X
-        RGNmzXtZmZ55JRWtyFIzLTM1yFKRylpI3rpodpGZl9BCbdtR8Nvvub3/5/nzsqTSSnuw4dEx
-        gjZaE6li5FT1i8n2tTGlevW6J41+XGr7K4J78LUVcUbTEM0Zm1oYbqQnneEqfltp7t24leFm
-        Pv+kudyM81zi1SIZV/HFQnMdj3NsbX0zJNd3cZDm2t43UNzlxAQmAPNmwxuK70hLJfhasVvG
-        m03ZNN9lqWP4R3/6aL43uZngK4su8FPiM4p/ZMkj+f6JpyQ/WrE0yFkt9zsuRIafEbQ+/kfl
-        YXXGAvr0XyqutEYkDegHmYScWMAboMOYNcuL4XVPOZOE5KwSFyMYHh4hpWAUwWvLW2ZuwlzW
-        K7OzEpcg6E9dZmcFdoGJaz2UnUm8GgbHMihpeACBochE2AuueC/8asiV2Qtu2EiB5WuOQ4LE
-        BgQDuZkOCcY2PlXZyUjP+sPdwkHHsxReCSWpbY5lF+HDUHijH9nZCW+B7MR0UpL2gsZ332bX
-        cIf4hE7HGoBbZPB7xEpINwRCQtW3WXaFH81VMok9IdHUSEgDyQhG0l/KpOA6gunhOZ+2wfPm
-        N7QksRAyqm/a8qwtrwDTJaXUwkPPg3pK4p1wrzJeJpmRgqD2lZm4grzEeaaJ80wT510hzrui
-        AFG3kZsQq4sKFXQbvXWaKF1sdKj3sVNRFcj2DVunm8drUPGLrU0Is0jlrKgR4tRKWnNGp49q
-        QsCSKjdFWp5erVQc1+jPCtpTIdrYSEHXhJawlMpdsV196YgSh2pihAhBOC1o56oE6+RhQAs+
-        19/PcKn22oPKl2N98K0d7IDzBev2/cz3qojeejIWl6l3nVjh++fO5of+y+MeZnlssohXiZwD
-        n5KWPCa7FiAmrz1k/M7HwA/I3fOQuC8gIv9kvs9QSl+2ytfpGqlmDv8Llud3nVuFyhemZx6c
-        9J+B+567t34fM9fnB5m7A40qShemWb+G1Oo0/wFc2A8sggMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xa7olKyqjDPoWi1n0njvJZLHxyWlG
-        i6aOt6wWTYdOsVl8utfPZrHp43tWiytf37NZ/H/0mtVi7qRai86JS9gtNj2+xmpxedccoLIH
-        /5ktHrS8YLU4c/UAi0V7Zyubg4DH7IaLLB6X+3qZPHbOusvuMbtjJqvHnWt72Dy2f3vA6nG/
-        +ziTx+Yl9R5/Z+1n8dh+bR6zx9Mfe5k9Pm+SC+CJ4rJJSc3JLEst0rdL4MrY07SAteAXS8WK
-        HbOYGxhfMXcxcnJICJhIzF55nx3CFpO4cG89WxcjF4eQwBJGiXfTnoMleAUEJX5MvsfSxcjB
-        wSygLjFlSi5EzTNGiXP/tzCB1AgLeEm8OTCXHSQhItDCIrH36U2wScwCTYwSV77uYodo6WOU
-        +LZzP9huNgFNib+bQapAVthJrFn4ggXEZhFQlVjWewasRlQgQqJz5XywOKeApcTMzn6wOLOA
-        vMTBK89ZIGxxiebWmywTGAVnIbl2FsK1s5B0zELSsYCRZRWjSGppcW56brGhXnFibnFpXrpe
-        cn7uJkZgzG479nPzDsZLG4MPMQpwMCrx8O5IrYgSYk0sK67MPcQowcGsJMLbN68ySog3JbGy
-        KrUoP76oNCe1+BCjNAeLkjjveQOglEB6YklqdmpqQWoRTJaJg1OqgTGhi3lympP6nb+C+18U
-        Mdjf2dyyZE5GRJ7n15tON0IPx7m4hc1aVjBzwzq73i+N92a0fYt6r3B0Soj/JOY1Iia/EznO
-        lllt1+u79e1/5cMVZf0bRBQ7PTXs7pZrSf9IaGYLe/b/4QHNX//shMomLnnt8tpuzcvZbCZb
-        E3S+BAuYnD014YVi7nolluKMREMt5qLiRADdsszS1QIAAA==
-X-CMS-MailID: 20180206130700eucas1p241374144e21ed673155a00bda3b34aff
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf
-X-RootMTR: 20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf
-References: <CGME20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf@epcas1p3.samsung.com>
-        <20180206084251.303-1-philippe.cornu@st.com>
+        Tue, 6 Feb 2018 08:09:00 -0500
+X-Google-Smtp-Source: AH8x224pM3llkivoLqfFMiKDBqSY82as37GkRbRiqZSw2xAQMs+tMCYllZT5nWFf8Wy3g32C4h6Oskr66ifhrHTkT+c=
+MIME-Version: 1.0
+In-Reply-To: <3f171f6a-bcea-65ec-d56d-f6ae24660f34@ti.com>
+References: <20180205155222.22189-1-brgl@bgdev.pl> <3f171f6a-bcea-65ec-d56d-f6ae24660f34@ti.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Tue, 6 Feb 2018 14:08:58 +0100
+Message-ID: <CAMpxmJUDbwkcJt_kx9GX+qY10xiGAp-j3+kXM-q3WP1VGwr0UQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: da850-evm: add clock properties to the nand node
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.02.2018 09:42, Philippe Cornu wrote:
-> Add support for the Synopsys DesignWare MIPI DSI version 1.31
-> Two registers need to be updated/added for supporting 1.31:
-> * PHY_TMR_CFG 0x9c (updated)
->   1.30 [31:24] phy_hs2lp_time
->        [23:16] phy_lp2hs_time
->        [14: 0] max_rd_time
+2018-02-06 12:07 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
+> On Monday 05 February 2018 09:22 PM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Make nand work with the common clock framework by specifying which
+>> clock should be used and what name to look up.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>  arch/arm/boot/dts/da850-evm.dts | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+>> index a86a8a1816f2..2602ad8e99ee 100644
+>> --- a/arch/arm/boot/dts/da850-evm.dts
+>> +++ b/arch/arm/boot/dts/da850-evm.dts
+>> @@ -296,6 +296,9 @@
+>>                       reg = <0 0x02000000 0x02000000
+>>                              1 0x00000000 0x00008000>;
+>>
+>> +                     clocks = <&psc0 3>;
+>> +                     clock-names = "aemif";
 >
->   1.31 [25:16] phy_hs2lp_time
->        [ 9: 0] phy_lp2hs_time
+> Looks like this is being added only to satisfy the devm_clk_get() call
+> in nand_davinci_probe() which I think is superfluous since we also
+> enable the same clock in aemif_probe().
 >
-> * PHY_TMR_RD_CFG 0xf4 (new)
->   1.31 [14: 0] max_rd_time
+> Perhaps the better solution is to drip the clk code in
+> drivers/mtd/nand/davinci_nand.c and shift legacy code to start using
+> drivers/memory/aemif.c as well? This way we can also drop
+> arch/arm/mach-davinci/aemif.c
 >
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> Thanks,
+> Sekhar
 
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Yes, this sounds good, but I think we should leave it for later as an
+additional improvement, once everything else is in place. I think
+these patches should be applied together with David's series in order
+to not break the support on davinci boards and the aemif work would go
+in later as a follow-up. How about that?
 
-If there will be no objections I will merge it this week.
+Also: I don't have any keystone board to test whether such changes
+don't break the nand support there. Would you be able to test this?
 
- --
-Regards
-Andrzej
+Thanks,
+Bartosz
