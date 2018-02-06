@@ -1,104 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753497AbeBFUpQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:45:16 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:32842 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751632AbeBFUpO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:45:14 -0500
-Subject: Re: [PATCH 3/3] fs : ext2: super: fixed '==' instead '='
- braces,whitespace coding style issue.
-To: devesh.pradhan1@gmail.com, jack@suse.com
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180206203317.14435-1-devesh.pradhan1@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e4b13bd3-0611-252b-ee8f-f35f6bbbc198@infradead.org>
-Date: Tue, 6 Feb 2018 12:45:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180206203317.14435-1-devesh.pradhan1@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1753897AbeBFUwK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 15:52:10 -0500
+Received: from mga03.intel.com ([134.134.136.65]:26350 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752514AbeBFUwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 15:52:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,470,1511856000";
+   d="scan'208";a="25230754"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] tpm: add longer timeouts for creation commands.
+Thread-Topic: [PATCH v2] tpm: add longer timeouts for creation commands.
+Thread-Index: AQHTn4YcnV0JMQfTbkinhZ5+Q9/sBaOX1OeQ
+Date: Tue, 6 Feb 2018 20:51:48 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421881D@hasmsx108.ger.corp.intel.com>
+References: <20180128081739.8066-1-tomas.winkler@intel.com>
+ <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
+In-Reply-To: <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDBmNjkxZDAtYjkwMi00MDI5LTgyMDEtNWIyOGQ4MzBiY2YxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJGWWNYUk1rdGlMT2xTSGNNM1N6ZkNMVFZmRVVcL25xaHZDT05QN2NPMXV4TDFyRjVrZmJQek5kdHZOZk1IY3VYMCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.249.81.60]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/2018 12:33 PM, devesh.pradhan1@gmail.com wrote:
-> From: devesh pradhan <devesh.pradhan1@gmail.com>
 > 
-> fixed coding style issue.
-
-I think there is more here than coding style fixes.
-
-Also, did you do any testing after making these changes?
-
-
-> Signed-off-by: devesh pradhan <devesh.pradhan1@gmail.com>
-> ---
->  fs/ext2/super.c | 59 ++++++++++++++++++++++++++-------------------------------
->  1 file changed, 27 insertions(+), 32 deletions(-)
+> On Sun, Jan 28, 2018 at 10:17:39AM +0200, Tomas Winkler wrote:
+> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
+> > generation of crypto keys which can be a computationally intensive task.
+> > The timeout is set to 3min.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 > 
-> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-> index 554c98b8a93a..cb80bcb693a9 100644
-> --- a/fs/ext2/super.c
-> +++ b/fs/ext2/super.c
+> This is still NAK because we need some kind of reference for the new value.
+> Is that also right value for ARM64/TrustZone based TPMs?
 
-> @@ -864,7 +860,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->  	}
->  
->  	/*
-> -	 * If the superblock doesn't start on a hardware sector boundary,
+The SPEC itself, doesn't define the timeout,  except for specific commands, 
+also the current 'undefined' number is born in air, I wonder if you  can provide the reference as well.
+If I would suggest to shorten the number that would maybe a problem for other implementation, 
+but I don't see how the increase in timeout is adverse another implementations.
+Key generation is computational intensive task because of generation of a prime number, so this is really 
+dependent on device capabilities, so there is no better source of definition that HW itself.
 
-Why is this change being made?
-
-> +	 * If the superblock doesn't start on a hardware sector boundary
->  	 * calculate the offset.  
->  	 */
->  	if (blocksize != BLOCK_SIZE) {
-> @@ -874,7 +870,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->  		logic_sb_block = sb_block;
->  	}
->  
-> -	if (!(bh = sb_bread(sb, logic_sb_block))) {
-> +	if (!(bh == sb_bread(sb, logic_sb_block))) {
-
-I'm pretty sure this one was meant to be '=', as in "assignment."
-It could be split into 2 lines of code to clarify what it is doing.
-
->  		ext2_msg(sb, KERN_ERR, "error: unable to read superblock");
->  		goto failed_sbi;
->  	}
-> @@ -904,8 +900,8 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->  #ifdef CONFIG_EXT2_FS_POSIX_ACL
->  	if (def_mount_opts & EXT2_DEFM_ACL)
->  		set_opt(opts.s_mount_opt, POSIX_ACL);
-> -#endif
-> -	
-> +#endif	
-
-above line adds trailing whitespace. :(
-
-> +
->  	if (le16_to_cpu(sbi->s_es->s_errors) == EXT2_ERRORS_PANIC)
->  		set_opt(opts.s_mount_opt, ERRORS_PANIC);
->  	else if (le16_to_cpu(sbi->s_es->s_errors) == EXT2_ERRORS_CONTINUE)
-
-> @@ -949,7 +944,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->  			le32_to_cpu(features));
->  		goto failed_mount;
->  	}
-> -	if (!sb_rdonly(sb) && (features = EXT2_HAS_RO_COMPAT_FEATURE(sb, ~EXT2_FEATURE_RO_COMPAT_SUPP))){
-> +	if (!sb_rdonly(sb) && (features == EXT2_HAS_RO_COMPAT_FEATURE(sb, ~EXT2_FEATURE_RO_COMPAT_SUPP))) {
-
-That one is most likely correct before the patch.
-
->  		ext2_msg(sb, KERN_ERR, "error: couldn't mount RDWR because of "
->  		       "unsupported optional features (%x)",
->  		       le32_to_cpu(features));
-
-thanks,
--- 
-~Randy
+Thanks
+Tomas
