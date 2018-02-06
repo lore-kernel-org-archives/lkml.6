@@ -1,49 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752574AbeBFR2C (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 12:28:02 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43786 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752171AbeBFR14 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 12:27:56 -0500
-X-Google-Smtp-Source: AH8x225UNi7WiIzqCxK2apLkJ67VR0jQIT+RHUSAmr4ywBHpehZIdBURH3Nf7G0kvnOU0ltfzEubBQ==
-Date: Tue, 6 Feb 2018 20:27:53 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Vladimir Davydov <vdavydov@virtuozzo.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Kees Cook <keescook@google.com>, Willy Tarreau <w@1wt.eu>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm: Always print RLIMIT_DATA warning
-Message-ID: <20180206172753.GD2002@uranus.lan>
-References: <1517935505-9321-1-git-send-email-dwmw@amazon.co.uk>
+        id S1752688AbeBFR3I (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 12:29:08 -0500
+Received: from mout.web.de ([212.227.15.14]:52881 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752171AbeBFR3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 12:29:01 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] HID-Asus: Adjustments for two function implementations
+Message-ID: <5289ace9-8927-9803-4692-c7c621ab0a8d@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 18:28:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517935505-9321-1-git-send-email-dwmw@amazon.co.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:v3EypTsQkZuFMecU74GvyTiZyptySZUzqahQzqGTwVvXqMsG9A+
+ mmLrJiKnPdG0ESkGKUWvpK6rKgSXuC2Eex6Cl4hTRwgcrcEqvYEP67tDVOQw1mBoKxz9B6p
+ ic5LxTxsblr3KsujXInrxJRQjO1v+ifacA/kVeYr6TwTcvx1juBEE8/nCLdDcrMOS8UvXpG
+ ywwv9f/7Xph9oOd5ksSMQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:V1oUk/Qshoc=:kSBjRec8BQAXwQNj3wj7XJ
+ CnFpYeEpSLg18aGFqLLKyKncowpfvwX+/Kr4LmTqsAAfNVeoX4TrzslY1PmcXwKwk+JLFIRG8
+ Luyw+vUtRQylSOs8YncpenpueNeh8sRf9Zv1OHPIIvJcWr3u3EGY40lROqO2ykRp9L5XPlfwa
+ I2h1awTIjyXTSS1hNioMnAthD6Exl6oC93k7YeyYQHPqpWLF2XeFSv+Ucmkr6uNbj70178qi/
+ /nFfSF6Ouhr5qLetUbo/wKCNGVMraFoNBWlicT0y4uN0I78QNydXts0KZelyPn76ElyEXC7EB
+ C5eCWATkl+G0kg72DjYjBFQA3HYv6IOyr+xV3F7i/mkwtXYl3spqP4ERXRvM94ZeJIEGqQfCJ
+ wiHPalzadoDLOOdpGLpfBUSR8BZrrzwsLar+MF7n74KkZsrSI/km3O7JtsLDLRNvseicR+hlo
+ KH0Z05j2LgZ/v9lS+uxFxmy2tAfr2+MyKhUqka7f5qL4v6uu8N8CTaSoP1KVK6xqdCDnGFzYy
+ cnPvaHyLDAxjtSMhWtDXPc7feJLn2TI7sEH6XGroAAOFAeQn1fy4BVGjGgn+HVra2yq0HjG/O
+ MBANQk8R1JNe+dlu/3Uu80xszGDpHLWPV/e0ltQQjFZsQV8kgQhZxDYGj8zhfSJHwz92LxUFC
+ 3piH5TLyplT3RGI4DWmSad85xyFid5NiC+GmcnzRWrWi4U1Y0XIOMSXfBmTTabgHgZdwkLV4v
+ uPiLwmLaS74F/0ylgZtDugYmvMbSFZ4ENl3z4cSq5hYwztEc4l4iezH8Ts8TQ1/vvwtCGyTHf
+ Bl/E3KlkUNtBwu3WlsKODPSFw0iba3t0L5kI8Hdyce41YWJrcE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 04:45:05PM +0000, David Woodhouse wrote:
-> The documentation for ignore_rlimit_data says that it will print a warning
-> at first misuse. Yet it doesn't seem to do that. Fix the code to print
-> the warning even when we allow the process to continue.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
-> We should probably also do what Linus suggested in 
-> https://lkml.org/lkml/2016/9/16/585
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 18:24:56 +0100
 
-Might be typo in docs I guess, Kostya?
+Two update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in two functions
+  Return an error code only as a constant in asus_start_multitouch()
+
+ drivers/hid/hid-asus.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+-- 
+2.16.1
