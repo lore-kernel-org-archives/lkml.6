@@ -1,31 +1,31 @@
 Return-Path: <prvs=568516f6c=stanislav.nijnikov@wdc.com>
-X-Google-Smtp-Source: AH8x225/bKnmSuQPTWGgG7/fF3wU0hZadxE4o35SCnZxwe/TwO8nGNGlMwhqRl0CGDsIsaWIAnt0
-ARC-Seal: i=1; a=rsa-sha256; t=1517933213; cv=none;
+X-Google-Smtp-Source: AH8x22599pBbk98dDVqTFW9xhGmGmKbBtPgUd5feAGF543p+wwoD4B7quj2wVI/IYeQuwxdZr2Bs
+ARC-Seal: i=1; a=rsa-sha256; t=1517933211; cv=none;
         d=google.com; s=arc-20160816;
-        b=CN4nzKwPWlMCTG9YJCEg/MCXn3btFKQNAmbkW6CK5YStUmj9Qz37+pNA81AyRfTASU
-         1xHUr6GR4Jd+Do93Bmg7yeDcC/RA89/4vesF98SqpShrxdWPe3fiXTeBQXyItc6+5Dcn
-         kaDR9mh8RFLBVE53BWnCPE+fe1SsLbGuB7nqJtN3TLnWZHWWiDdEIknDN/n9/eNHmeH6
-         EOnaFBEC6CB4Ow7r/ALyrV6IQZe9ubfHcr483JAuEVY+0xqMKnzjgbPxgS4hGJtpiEOx
-         b656TCJhrjQ8Gj7Jx2BYMS5Efz1tz75WgmznTEMcT8FTc9JaaB67A6Hw0Kg3SwrPZEKn
-         kjUA==
+        b=fhDtZUXfF6AdIsnX5WyPn42gbYHoCLGQExxCNfnbmr+JDzgzk9IuZreRGm0uw0U7qh
+         Ls8kK8n3ka7y+HtrOVI7dUUVU1k+8HmZVD1fJj7/XKo3gY3fMYsIFZpm1BeWIATzJ3yq
+         /wpLbPAU4y4PMb6Rx165Z+XODQHSzX576QF0OQGGjvn0IW/RSXeGfmaLhBoXDLrSRCpx
+         LtsBsTo5iLNqenlVCScEnf04PoP+2jKP/o8Cl9nh8oW28pmjC90n5oAAst/7u6/mJ2FZ
+         jJNbr3uivxeKhNWIvnQAk5GVhYduErBuO1CRflP5Wv2vyLaf5o1IYfur4RH5CTnVQLHP
+         RMaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=0K9/7yrSdaLMYNTnwoMZC1VztJPrXUSjw/a14FopqzQ=;
-        b=ODTp+VI+VhKT4hFcpPo3p56edoixQCcZjWTxXkcY3A8KncGRDy4WPzw7S4BSPJGjEj
-         eC3BrE3Kt0unLheJ+eJPMpLdPPyw/VjO+FKIuiAlLBXm+07oBAN9sWfYfJVWolMAr6f6
-         V0JHdMxuLIOGromcOTSOqRCyQccdkdHwSskmPiSaFzmdDo1cpyb5dG9bOI6HGhNNHjBW
-         P7hzGukLz3Dk34PrrfqkIn2vNCxdKXKq0L9m2PWlPg2yqmGGSvvkWc5as0pqk6vAc+ov
-         PUpJaGJqeftD3jj7uleCGqA5AHIfugdb7mu5qeIuNq5HSumyC16dHDXkZhOTBVJc/2nt
-         Aosw==
+        bh=h5dNiV5Op2UunDV0oGUZiVMexXO6MIiUxbvZGF8cNgg=;
+        b=mOHmFgFAq+etGRAEcKNqtLlnCpDYtgIiwSpL2fduIeonUBuMIw1OwjPTRG6J7AWgGF
+         122NLaXs9i86TXJSh+A1hatJu/R5keR7xXmnBIyzVuJp0u56vdBS6TndfcBP+7fXaroK
+         Fu0GqfKXQE8fGSVsPw/GUH2+FFgeHKRI6vnve78sy5Y6McbVHarJgqpJ77mnJ5IOnPsY
+         1INsMWey4P5E+psMgJyHTghQbKXYMIS8eagWgpIkRezfh7Ot8kyVoE+ZZZlhhYrORix1
+         OeyonzVCVGFBqFXL6hILvNzvGpUeYIjzrZHwQCEg62dm+fU6sGtHw9mb/HJXNG7uQkjd
+         v+3w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=IHess8nC;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=oGLbTHf0;
        spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=IHess8nC;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=oGLbTHf0;
        spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
 X-IronPort-AV: E=Sophos;i="5.46,469,1511798400";
-   d="scan'208";a="167144251"
+   d="scan'208";a="167144247"
 From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
 To: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -33,376 +33,185 @@ To: linux-scsi@vger.kernel.org,
 	jaegeuk@kernel.org
 Cc: alex.lemberg@wdc.com,
 	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-Subject: [PATCH v5 11/11] scsi: ufs: sysfs: attributes
-Date: Tue,  6 Feb 2018 18:06:23 +0200
-Message-Id: <1517933183-30892-12-git-send-email-stanislav.nijnikov@wdc.com>
+Subject: [PATCH v5 10/11] scsi: ufs: sysfs: flags
+Date: Tue,  6 Feb 2018 18:06:22 +0200
+Message-Id: <1517933183-30892-11-git-send-email-stanislav.nijnikov@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517933183-30892-1-git-send-email-stanislav.nijnikov@wdc.com>
 References: <1517933183-30892-1-git-send-email-stanislav.nijnikov@wdc.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591668337916128461?=
-X-GMAIL-MSGID: =?utf-8?q?1591668337916128461?=
+X-GMAIL-THRID: =?utf-8?q?1591668334865757207?=
+X-GMAIL-MSGID: =?utf-8?q?1591668334865757207?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch introduces a sysfs group entry for the UFS attributes. The
-group adds "attributes" folder under the UFS driver sysfs entry
-(/sys/bus/platform/drivers/ufshcd/*). The attributes are shown
-as hexadecimal numbers. The full information about the attributes could
-be found at UFS specifications 2.1.
+This patch introduces a sysfs group entry for the UFS flags. The group adds
+"flags" folder under the UFS driver sysfs entry
+(/sys/bus/platform/drivers/ufshcd/*). The flags are shown as boolean value
+("true" or "false"). The full information about the UFS flags could be
+found at UFS specifications 2.1.
 
 Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
 ---
- Documentation/ABI/testing/sysfs-driver-ufs | 139 +++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs-sysfs.c               |  80 +++++++++++++++++
- drivers/scsi/ufs/ufs-sysfs.h               |   1 +
- drivers/scsi/ufs/ufs.h                     |  27 +++++-
- drivers/scsi/ufs/ufshcd.c                  |   5 +-
- drivers/scsi/ufs/ufshcd.h                  |   3 +-
- 6 files changed, 248 insertions(+), 7 deletions(-)
+ Documentation/ABI/testing/sysfs-driver-ufs | 65 ++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.c               | 39 ++++++++++++++++++
+ drivers/scsi/ufs/ufs.h                     | 14 +++++--
+ 3 files changed, 115 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index f4f49e2..07f1c2f 100644
+index 57c6a90..f4f49e2 100644
 --- a/Documentation/ABI/testing/sysfs-driver-ufs
 +++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -663,3 +663,142 @@ Description:	This file shows whether the device FW update is permanently
- 		disabled. The full information about the flag could be found
- 		at UFS specifications 2.1.
+@@ -598,3 +598,68 @@ Description:	This file shows the granularity of the LUN. This is one of
+ 		the UFS unit descriptor parameters. The full information
+ 		about the descriptor could be found at UFS specifications 2.1.
  		The file is read only.
 +
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/boot_lun_enabled
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/device_init
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the boot lun enabled UFS device attribute.
-+		The full information about the attribute could be found at
++Description:	This file shows the device init status. The full information
++		about the flag could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/permanent_wpe
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows whether permanent write protection is enabled.
++		The full information about the flag could be found at
 +		UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/current_power_mode
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/power_on_wpe
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the current power mode UFS device attribute.
-+		The full information about the attribute could be found at
++Description:	This file shows whether write protection is enabled on all
++		logical units configured as power on write protected. The
++		full information about the flag could be found at
 +		UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/active_icc_level
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/bkops_enable
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the active icc level UFS device attribute.
-+		The full information about the attribute could be found at
++Description:	This file shows whether the device background operations are
++		enabled. The full information about the flag could be
++		found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/life_span_mode_enable
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows whether the device life span mode is enabled.
++		The full information about the flag could be found at
 +		UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ooo_data_enabled
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/phy_resource_removal
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the out of order data transfer enabled UFS
-+		device attribute. The full information about the attribute
-+		could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/bkops_status
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the background operations status UFS device
-+		attribute. The full information about the attribute could
-+		be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/purge_status
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the purge operation status UFS device
-+		attribute. The full information about the attribute could
-+		be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_in_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the maximum data size in a DATA IN
-+		UPIU. The full information about the attribute could
-+		be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_out_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the maximum number of bytes that can be
-+		requested with a READY TO TRANSFER UPIU. The full information
-+		about the attribute could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/reference_clock_frequency
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the reference clock frequency UFS device
-+		attribute. The full information about the attribute could
-+		be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/configuration_descriptor_lock
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether the configuration descriptor is locked.
-+		The full information about the attribute could be found at
-+		UFS specifications 2.1. The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_number_of_rtt
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the maximum current number of
-+		outstanding RTTs in device that is allowed. The full
-+		information about the attribute could be found at
++Description:	This file shows whether physical resource removal is enable.
++		The full information about the flag could be found at
 +		UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_control
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/busy_rtc
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the exception event control UFS device
-+		attribute. The full information about the attribute could
-+		be found at UFS specifications 2.1.
++Description:	This file shows whether the device is executing internal
++		operation related to real time clock. The full information
++		about the flag could be found at UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_status
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/disable_fw_update
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the exception event status UFS device
-+		attribute. The full information about the attribute could
-+		be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ffu_status
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file provides the ffu status UFS device attribute.
-+		The full information about the attribute could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_state
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file show the PSA feature status. The full information
-+		about the attribute could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_data_size
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the amount of data that the host plans to
-+		load to all logical units in pre-soldering state.
-+		The full information about the attribute could be found at
-+		UFS specifications 2.1.
-+		The file is read only.
-+
-+
-+What:		/sys/class/scsi_device/*/device/dyn_cap_needed
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the The amount of physical memory needed
-+		to be removed from the physical memory resources pool of
-+		the particular logical unit. The full information about
-+		the attribute could be found at UFS specifications 2.1.
++Description:	This file shows whether the device FW update is permanently
++		disabled. The full information about the flag could be found
++		at UFS specifications 2.1.
 +		The file is read only.
 diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index 258fb75..cb5d5a4 100644
+index fc43583..258fb75 100644
 --- a/drivers/scsi/ufs/ufs-sysfs.c
 +++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -577,6 +577,61 @@ static const struct attribute_group ufs_sysfs_flags_group = {
- 	.attrs = ufs_sysfs_device_flags,
+@@ -538,6 +538,44 @@ static const struct attribute_group ufs_sysfs_string_descriptors_group = {
+ 	.attrs = ufs_sysfs_string_descriptors,
  };
  
-+#define UFS_ATTRIBUTE(_name, _uname)					\
++#define UFS_FLAG(_name, _uname)						\
 +static ssize_t _name##_show(struct device *dev,				\
 +	struct device_attribute *attr, char *buf)			\
 +{									\
++	bool flag;							\
 +	struct ufs_hba *hba = dev_get_drvdata(dev);			\
-+	u32 value;							\
-+	if (ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,		\
-+		QUERY_ATTR_IDN##_uname, 0, 0, &value))			\
++	if (ufshcd_query_flag(hba, UPIU_QUERY_OPCODE_READ_FLAG,		\
++		QUERY_FLAG_IDN##_uname, &flag))				\
 +		return -EINVAL;						\
-+	return sprintf(buf, "0x%08X\n", value);				\
++	return sprintf(buf, "%s\n", flag ? "true" : "false");		\
 +}									\
 +static DEVICE_ATTR_RO(_name)
 +
-+UFS_ATTRIBUTE(boot_lun_enabled, _BOOT_LU_EN);
-+UFS_ATTRIBUTE(current_power_mode, _POWER_MODE);
-+UFS_ATTRIBUTE(active_icc_level, _ACTIVE_ICC_LVL);
-+UFS_ATTRIBUTE(ooo_data_enabled, _OOO_DATA_EN);
-+UFS_ATTRIBUTE(bkops_status, _BKOPS_STATUS);
-+UFS_ATTRIBUTE(purge_status, _PURGE_STATUS);
-+UFS_ATTRIBUTE(max_data_in_size, _MAX_DATA_IN);
-+UFS_ATTRIBUTE(max_data_out_size, _MAX_DATA_OUT);
-+UFS_ATTRIBUTE(reference_clock_frequency, _REF_CLK_FREQ);
-+UFS_ATTRIBUTE(configuration_descriptor_lock, _CONF_DESC_LOCK);
-+UFS_ATTRIBUTE(max_number_of_rtt, _MAX_NUM_OF_RTT);
-+UFS_ATTRIBUTE(exception_event_control, _EE_CONTROL);
-+UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
-+UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
-+UFS_ATTRIBUTE(psa_state, _PSA_STATE);
-+UFS_ATTRIBUTE(psa_data_size, _PSA_DATA_SIZE);
++UFS_FLAG(device_init, _FDEVICEINIT);
++UFS_FLAG(permanent_wpe, _PERMANENT_WPE);
++UFS_FLAG(power_on_wpe, _PWR_ON_WPE);
++UFS_FLAG(bkops_enable, _BKOPS_EN);
++UFS_FLAG(life_span_mode_enable, _LIFE_SPAN_MODE_ENABLE);
++UFS_FLAG(phy_resource_removal, _FPHYRESOURCEREMOVAL);
++UFS_FLAG(busy_rtc, _BUSY_RTC);
++UFS_FLAG(disable_fw_update, _PERMANENTLY_DISABLE_FW_UPDATE);
 +
-+static struct attribute *ufs_sysfs_attributes[] = {
-+	&dev_attr_boot_lun_enabled.attr,
-+	&dev_attr_current_power_mode.attr,
-+	&dev_attr_active_icc_level.attr,
-+	&dev_attr_ooo_data_enabled.attr,
-+	&dev_attr_bkops_status.attr,
-+	&dev_attr_purge_status.attr,
-+	&dev_attr_max_data_in_size.attr,
-+	&dev_attr_max_data_out_size.attr,
-+	&dev_attr_reference_clock_frequency.attr,
-+	&dev_attr_configuration_descriptor_lock.attr,
-+	&dev_attr_max_number_of_rtt.attr,
-+	&dev_attr_exception_event_control.attr,
-+	&dev_attr_exception_event_status.attr,
-+	&dev_attr_ffu_status.attr,
-+	&dev_attr_psa_state.attr,
-+	&dev_attr_psa_data_size.attr,
++static struct attribute *ufs_sysfs_device_flags[] = {
++	&dev_attr_device_init.attr,
++	&dev_attr_permanent_wpe.attr,
++	&dev_attr_power_on_wpe.attr,
++	&dev_attr_bkops_enable.attr,
++	&dev_attr_life_span_mode_enable.attr,
++	&dev_attr_phy_resource_removal.attr,
++	&dev_attr_busy_rtc.attr,
++	&dev_attr_disable_fw_update.attr,
 +	NULL,
 +};
 +
-+static const struct attribute_group ufs_sysfs_attributes_group = {
-+	.name = "attributes",
-+	.attrs = ufs_sysfs_attributes,
++static const struct attribute_group ufs_sysfs_flags_group = {
++	.name = "flags",
++	.attrs = ufs_sysfs_device_flags,
 +};
-+
+ 
  static const struct attribute_group *ufs_sysfs_groups[] = {
  	&ufs_sysfs_default_group,
- 	&ufs_sysfs_device_descriptor_group,
-@@ -586,6 +641,7 @@ static const struct attribute_group *ufs_sysfs_groups[] = {
+@@ -547,6 +585,7 @@ static const struct attribute_group *ufs_sysfs_groups[] = {
+ 	&ufs_sysfs_health_descriptor_group,
  	&ufs_sysfs_power_descriptor_group,
  	&ufs_sysfs_string_descriptors_group,
- 	&ufs_sysfs_flags_group,
-+	&ufs_sysfs_attributes_group,
++	&ufs_sysfs_flags_group,
  	NULL,
  };
  
-@@ -642,6 +698,30 @@ const struct attribute_group ufs_sysfs_unit_descriptor_group = {
- 	.attrs = ufs_sysfs_unit_descriptor,
- };
- 
-+static ssize_t dyn_cap_needed_attribute_show(struct device *dev,
-+	struct device_attribute *attr, char *buf)
-+{
-+	u32 value;
-+	struct scsi_device *sdev = to_scsi_device(dev);
-+	struct ufs_hba *hba = shost_priv(sdev->host);
-+	u8 lun = ufshcd_scsi_to_upiu_lun(sdev->lun);
-+
-+	if (ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_DYN_CAP_NEEDED, lun, 0, &value))
-+		return -EINVAL;
-+	return sprintf(buf, "0x%08X\n", value);
-+}
-+static DEVICE_ATTR_RO(dyn_cap_needed_attribute);
-+
-+static struct attribute *ufs_sysfs_lun_attributes[] = {
-+	&dev_attr_dyn_cap_needed_attribute.attr,
-+	NULL,
-+};
-+
-+const struct attribute_group ufs_sysfs_lun_attributes_group = {
-+	.attrs = ufs_sysfs_lun_attributes,
-+};
-+
- void ufs_sysfs_add_nodes(struct device *dev)
- {
- 	int ret;
-diff --git a/drivers/scsi/ufs/ufs-sysfs.h b/drivers/scsi/ufs/ufs-sysfs.h
-index dd2fadc..7f29715 100644
---- a/drivers/scsi/ufs/ufs-sysfs.h
-+++ b/drivers/scsi/ufs/ufs-sysfs.h
-@@ -13,4 +13,5 @@ void ufs_sysfs_add_nodes(struct device *dev);
- void ufs_sysfs_remove_nodes(struct device *dev);
- 
- extern const struct attribute_group ufs_sysfs_unit_descriptor_group;
-+extern const struct attribute_group ufs_sysfs_lun_attributes_group;
- #endif
 diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index df5e73e..14e5bf7 100644
+index 7387059..df5e73e 100644
 --- a/drivers/scsi/ufs/ufs.h
 +++ b/drivers/scsi/ufs/ufs.h
-@@ -145,10 +145,29 @@ enum flag_idn {
+@@ -130,9 +130,17 @@ enum {
+ 
+ /* Flag idn for Query Requests*/
+ enum flag_idn {
+-	QUERY_FLAG_IDN_FDEVICEINIT      = 0x01,
+-	QUERY_FLAG_IDN_PWR_ON_WPE	= 0x03,
+-	QUERY_FLAG_IDN_BKOPS_EN         = 0x04,
++	QUERY_FLAG_IDN_FDEVICEINIT			= 0x01,
++	QUERY_FLAG_IDN_PERMANENT_WPE			= 0x02,
++	QUERY_FLAG_IDN_PWR_ON_WPE			= 0x03,
++	QUERY_FLAG_IDN_BKOPS_EN				= 0x04,
++	QUERY_FLAG_IDN_LIFE_SPAN_MODE_ENABLE		= 0x05,
++	QUERY_FLAG_IDN_PURGE_ENABLE			= 0x06,
++	QUERY_FLAG_IDN_RESERVED2			= 0x07,
++	QUERY_FLAG_IDN_FPHYRESOURCEREMOVAL		= 0x08,
++	QUERY_FLAG_IDN_BUSY_RTC				= 0x09,
++	QUERY_FLAG_IDN_RESERVED3			= 0x0A,
++	QUERY_FLAG_IDN_PERMANENTLY_DISABLE_FW_UPDATE	= 0x0B,
+ };
  
  /* Attribute idn for Query requests */
- enum attr_idn {
--	QUERY_ATTR_IDN_ACTIVE_ICC_LVL	= 0x03,
--	QUERY_ATTR_IDN_BKOPS_STATUS	= 0x05,
--	QUERY_ATTR_IDN_EE_CONTROL	= 0x0D,
--	QUERY_ATTR_IDN_EE_STATUS	= 0x0E,
-+	QUERY_ATTR_IDN_BOOT_LU_EN		= 0x00,
-+	QUERY_ATTR_IDN_RESERVED			= 0x01,
-+	QUERY_ATTR_IDN_POWER_MODE		= 0x02,
-+	QUERY_ATTR_IDN_ACTIVE_ICC_LVL		= 0x03,
-+	QUERY_ATTR_IDN_OOO_DATA_EN		= 0x04,
-+	QUERY_ATTR_IDN_BKOPS_STATUS		= 0x05,
-+	QUERY_ATTR_IDN_PURGE_STATUS		= 0x06,
-+	QUERY_ATTR_IDN_MAX_DATA_IN		= 0x07,
-+	QUERY_ATTR_IDN_MAX_DATA_OUT		= 0x08,
-+	QUERY_ATTR_IDN_DYN_CAP_NEEDED		= 0x09,
-+	QUERY_ATTR_IDN_REF_CLK_FREQ		= 0x0A,
-+	QUERY_ATTR_IDN_CONF_DESC_LOCK		= 0x0B,
-+	QUERY_ATTR_IDN_MAX_NUM_OF_RTT		= 0x0C,
-+	QUERY_ATTR_IDN_EE_CONTROL		= 0x0D,
-+	QUERY_ATTR_IDN_EE_STATUS		= 0x0E,
-+	QUERY_ATTR_IDN_SECONDS_PASSED		= 0x0F,
-+	QUERY_ATTR_IDN_CNTX_CONF		= 0x10,
-+	QUERY_ATTR_IDN_CORR_PRG_BLK_NUM		= 0x11,
-+	QUERY_ATTR_IDN_RESERVED2		= 0x12,
-+	QUERY_ATTR_IDN_RESERVED3		= 0x13,
-+	QUERY_ATTR_IDN_FFU_STATUS		= 0x14,
-+	QUERY_ATTR_IDN_PSA_STATE		= 0x15,
-+	QUERY_ATTR_IDN_PSA_DATA_SIZE		= 0x16,
- };
- 
- /* Descriptor idn for Query requests */
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index ace3acd..1fbb17b 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -2689,8 +2689,8 @@ int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
-  *
-  * Returns 0 for success, non-zero in case of failure
- */
--static int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
--			enum attr_idn idn, u8 index, u8 selector, u32 *attr_val)
-+int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
-+		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val)
- {
- 	struct ufs_query_req *request = NULL;
- 	struct ufs_query_res *response = NULL;
-@@ -6468,6 +6468,7 @@ static enum blk_eh_timer_return ufshcd_eh_timed_out(struct scsi_cmnd *scmd)
- 
- static const struct attribute_group *ufshcd_driver_groups[] = {
- 	&ufs_sysfs_unit_descriptor_group,
-+	&ufs_sysfs_lun_attributes_group,
- 	NULL,
- };
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index f4cb31b..deb3c5d 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -847,13 +847,14 @@ int ufshcd_query_descriptor_retry(struct ufs_hba *hba,
- 				  enum desc_idn idn, u8 index,
- 				  u8 selector,
- 				  u8 *desc_buf, int *buf_len);
--
- int ufshcd_read_desc_param(struct ufs_hba *hba,
- 			   enum desc_idn desc_id,
- 			   int desc_index,
- 			   u8 param_offset,
- 			   u8 *param_read_buf,
- 			   u8 param_size);
-+int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
-+		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val);
- int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
- 	enum flag_idn idn, bool *flag_res);
- int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
 -- 
 2.7.4
