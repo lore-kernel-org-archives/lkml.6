@@ -1,59 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753441AbeBFWKI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 17:10:08 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57245 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753199AbeBFWKH (ORCPT
+        id S1753493AbeBFWKN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 17:10:13 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33584 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753329AbeBFWKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:10:07 -0500
-From: Colin King <colin.king@canonical.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/ksm: make function stable_node_dup static
-Date: Tue,  6 Feb 2018 22:10:05 +0000
-Message-Id: <20180206221005.12642-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Tue, 6 Feb 2018 17:10:08 -0500
+X-Google-Smtp-Source: AH8x225/3RnOqRVCFrJNaFFWkyBgiF3oaVB2d2jZtd670aNkDJNLpv/oS0Er0PxMCItKaxi65r2Z81cmibNHleW/U2g=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <34fea40b-4943-e8a8-6bf5-ca200122123d@arm.com>
+References: <20180203012450.18378-1-dbasehore@chromium.org>
+ <20180203012450.18378-5-dbasehore@chromium.org> <34fea40b-4943-e8a8-6bf5-ca200122123d@arm.com>
+From: "dbasehore ." <dbasehore@chromium.org>
+Date: Tue, 6 Feb 2018 14:10:06 -0800
+X-Google-Sender-Auth: u7WUbl4X6Ihs4gdMdaEdCkL1Q2s
+Message-ID: <CAGAzgso3jx9en=B8xeGakWSq1VRNHY9Y_848E=H4r5a_2kD66A@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] irqchip/gic-v3-its: add ability to resend MAPC on resume
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Soby Mathew <Soby.Mathew@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Feb 6, 2018 at 8:40 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 03/02/18 01:24, Derek Basehore wrote:
+>> This adds functionality to resend the MAPC command to an ITS node on
+>> resume. If the ITS is powered down during suspend and the collections
+>> are not backed by memory, the ITS will lose that state. This just sets
+>> up the known state for the collections after the ITS is restored.
+>>
+>> This feature is enabled via Kconfig and a device tree entry.
+>>
+>> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+>> ---
+>>  arch/arm64/Kconfig               |  10 ++++
+>>  drivers/irqchip/irq-gic-v3-its.c | 101 ++++++++++++++++++++++++---------------
+>>  2 files changed, 73 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index 53612879fe56..f38f1a7b4266 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -571,6 +571,16 @@ config HISILICON_ERRATUM_161600802
+>>
+>>         If unsure, say Y.
+>>
+>> +config ARM_GIC500_COLLECTIONS_RESET
+>> +     bool "GIC-500 Collections: Workaround for GIC-500 Collections on suspend reset"
+>> +     default y
+>> +     help
+>> +       The GIC-500 can store Collections state internally for the ITS. If
+>> +       the ITS is reset on suspend (ie from power getting disabled), the
+>> +       collections need to be reconfigured on resume.
+>> +
+>> +       If unsure, say Y.
+>> +
+>>  config QCOM_FALKOR_ERRATUM_E1041
+>>       bool "Falkor E1041: Speculative instruction fetches might cause errant memory access"
+>>       default y
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>> index e13515cdb68f..63764efa4dcc 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -48,6 +48,7 @@
+>>  #define ITS_FLAGS_WORKAROUND_CAVIUM_22375    (1ULL << 1)
+>>  #define ITS_FLAGS_WORKAROUND_CAVIUM_23144    (1ULL << 2)
+>>  #define ITS_FLAGS_SAVE_SUSPEND_STATE         (1ULL << 3)
+>> +#define ITS_FLAGS_WORKAROUND_GIC500_MAPC     (1ULL << 4)
+>>
+>>  #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING  (1 << 0)
+>>
+>> @@ -1950,52 +1951,53 @@ static void its_cpu_init_lpis(void)
+>>       dsb(sy);
+>>  }
+>>
+>> -static void its_cpu_init_collection(void)
+>> +static void its_cpu_init_collection(struct its_node *its)
+>>  {
+>> -     struct its_node *its;
+>> -     int cpu;
+>> -
+>> -     spin_lock(&its_lock);
+>> -     cpu = smp_processor_id();
+>> -
+>> -     list_for_each_entry(its, &its_nodes, entry) {
+>> -             u64 target;
+>> +     int cpu = smp_processor_id();
+>> +     u64 target;
+>>
+>> -             /* avoid cross node collections and its mapping */
+>> -             if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
+>> -                     struct device_node *cpu_node;
+>> +     /* avoid cross node collections and its mapping */
+>> +     if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
+>> +             struct device_node *cpu_node;
+>>
+>> -                     cpu_node = of_get_cpu_node(cpu, NULL);
+>> -                     if (its->numa_node != NUMA_NO_NODE &&
+>> -                             its->numa_node != of_node_to_nid(cpu_node))
+>> -                             continue;
+>> -             }
+>> +             cpu_node = of_get_cpu_node(cpu, NULL);
+>> +             if (its->numa_node != NUMA_NO_NODE &&
+>> +                     its->numa_node != of_node_to_nid(cpu_node))
+>> +                     return;
+>> +     }
+>>
+>> +     /*
+>> +      * We now have to bind each collection to its target
+>> +      * redistributor.
+>> +      */
+>> +     if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
+>>               /*
+>> -              * We now have to bind each collection to its target
+>> +              * This ITS wants the physical address of the
+>>                * redistributor.
+>>                */
+>> -             if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
+>> -                     /*
+>> -                      * This ITS wants the physical address of the
+>> -                      * redistributor.
+>> -                      */
+>> -                     target = gic_data_rdist()->phys_base;
+>> -             } else {
+>> -                     /*
+>> -                      * This ITS wants a linear CPU number.
+>> -                      */
+>> -                     target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
+>> -                     target = GICR_TYPER_CPU_NUMBER(target) << 16;
+>> -             }
+>> +             target = gic_data_rdist()->phys_base;
+>> +     } else {
+>> +             /* This ITS wants a linear CPU number. */
+>> +             target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
+>> +             target = GICR_TYPER_CPU_NUMBER(target) << 16;
+>> +     }
+>>
+>> -             /* Perform collection mapping */
+>> -             its->collections[cpu].target_address = target;
+>> -             its->collections[cpu].col_id = cpu;
+>> +     /* Perform collection mapping */
+>> +     its->collections[cpu].target_address = target;
+>> +     its->collections[cpu].col_id = cpu;
+>>
+>> -             its_send_mapc(its, &its->collections[cpu], 1);
+>> -             its_send_invall(its, &its->collections[cpu]);
+>> -     }
+>> +     its_send_mapc(its, &its->collections[cpu], 1);
+>> +     its_send_invall(its, &its->collections[cpu]);
+>> +}
+>> +
+>> +static void its_cpu_init_collections(void)
+>> +{
+>> +     struct its_node *its;
+>> +
+>> +     spin_lock(&its_lock);
+>> +
+>> +     list_for_each_entry(its, &its_nodes, entry)
+>> +             its_cpu_init_collection(its);
+>>
+>>       spin_unlock(&its_lock);
+>>  }
+>> @@ -2997,6 +2999,18 @@ static bool __maybe_unused its_enable_quirk_hip07_161600802(void *data)
+>>       return true;
+>>  }
+>>
+>> +static bool __maybe_unused its_enable_quirk_gic500_collections(void *data)
+>> +{
+>> +     struct its_node *its = data;
+>> +
+>> +     if (fwnode_property_present(its->fwnode_handle,
+>> +                                 "collections-reset-on-suspend")) {
+>> +             its->flags |= ITS_FLAGS_WORKAROUND_GIC500_MAPC;
+>> +             return true;
+>> +     }
+>> +     return false;
+>> +}
+>> +
+>>  static const struct gic_quirk its_quirks[] = {
+>>  #ifdef CONFIG_CAVIUM_ERRATUM_22375
+>>       {
+>> @@ -3042,6 +3056,14 @@ static const struct gic_quirk its_quirks[] = {
+>>               .mask   = 0xffffffff,
+>>               .init   = its_enable_quirk_hip07_161600802,
+>>       },
+>> +#endif
+>> +#ifdef CONFIG_ARM_GIC500_COLLECTIONS_RESET
+>> +     {
+>> +             .desc   = "ITS: GIC-500 Collections Reset on Resume",
+>> +             .iidr   = 0x00000000,
+>> +             .mask   = 0xff000000,
+>> +             .init   = its_enable_quirk_gic500_collections,
+>> +     },
+>>  #endif
+>>       {
+>>       }
+>> @@ -3129,6 +3151,9 @@ static void its_restore_enable(void)
+>>                       }
+>>                       writel_relaxed(ctx->ctlr, base + GITS_CTLR);
+>>               }
+>> +
+>> +             if (its->flags & ITS_FLAGS_WORKAROUND_GIC500_MAPC)
+>> +                     its_cpu_init_collection(its);
+>>       }
+>>       spin_unlock(&its_lock);
+>>  }
+>> @@ -3395,7 +3420,7 @@ int its_cpu_init(void)
+>>                       return -ENXIO;
+>>               }
+>>               its_cpu_init_lpis();
+>> -             its_cpu_init_collection();
+>> +             its_cpu_init_collections();
+>>       }
+>>
+>>       return 0;
+>>
+>
+> I wonder if a better way to implement this is simply to bite the bullet
+> and implement the letter of the architecture:
+>
+> If GITS_TYPER.HCC != 0, then collections 0...HCC-1 are held in HW, and
+> the rest in a SW-managed table. That would allow us to deal with this
+> without a quirk (which I asked for initially, apologies for changing my
+> mind).
+>
+> We still the same DT flag to tell us we're going to be reset on suspend.
 
-The function stable_node_dup is local to the source and does not need
-to be in global scope, so make it static.
+So this would just be under the generic reset-on-suspend flag that I
+added in patch 2/5?
 
-Cleans up sparse warning:
-mm/ksm.c:1321:13: warning: symbol 'stable_node_dup' was not
-declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/ksm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 293721f5da70..30ebdbfaf373 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -1318,10 +1318,10 @@ bool is_page_sharing_candidate(struct stable_node *stable_node)
- 	return __is_page_sharing_candidate(stable_node, 0);
- }
- 
--struct page *stable_node_dup(struct stable_node **_stable_node_dup,
--			     struct stable_node **_stable_node,
--			     struct rb_root *root,
--			     bool prune_stale_stable_nodes)
-+static struct page *stable_node_dup(struct stable_node **_stable_node_dup,
-+				    struct stable_node **_stable_node,
-+				    struct rb_root *root,
-+				    bool prune_stale_stable_nodes)
- {
- 	struct stable_node *dup, *found = NULL, *stable_node = *_stable_node;
- 	struct hlist_node *hlist_safe;
--- 
-2.15.1
+>
+> Thanks,
+>
+>         M.
+> --
+> Jazz is not dead. It just smells funny...
