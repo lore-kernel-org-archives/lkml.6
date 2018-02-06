@@ -1,90 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753147AbeBFRcz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 12:32:55 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:50298 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753090AbeBFRcJ (ORCPT
+        id S1753196AbeBFReO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 12:34:14 -0500
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:37412 "EHLO
+        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752888AbeBFReD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 12:32:09 -0500
-Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
- select_idle_sibling
-To: Joel Fernandes <joelaf@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        "Cc: EAS Dev" <eas-dev@lists.linaro.org>
-References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
- <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
- <6967b972-129a-a7f0-06ab-c48dc9709726@oracle.com>
- <CAJWu+orKkgYMjTxRiaHbjGAxeWT1YZQvpDR7ofpWcJreCi9Zgw@mail.gmail.com>
-From: Rohit Jain <rohit.k.jain@oracle.com>
-Message-ID: <39c72c93-b00b-f59c-ad75-af43daac77e9@oracle.com>
-Date: Tue, 6 Feb 2018 09:36:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 6 Feb 2018 12:34:03 -0500
+X-Google-Smtp-Source: AH8x2254AhvdcvRsh8plFOwid/ocuLAczLcFMjxs3JskYoaeMQBHyJKxzXCCHdnbenLTM6+0k5hnZNxtA93kWzuFl2s=
 MIME-Version: 1.0
-In-Reply-To: <CAJWu+orKkgYMjTxRiaHbjGAxeWT1YZQvpDR7ofpWcJreCi9Zgw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8796 signatures=668662
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802060221
+In-Reply-To: <94eb2c0efc1ede1c4205648e8a49@google.com>
+References: <94eb2c0efc1ede1c4205648e8a49@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 6 Feb 2018 18:33:41 +0100
+Message-ID: <CACT4Y+ZybLXnPiQ8BDLORD6VA8E7KeMrJZxO8q46MfMKyH7q_Q@mail.gmail.com>
+Subject: Re: WARNING: bad usercopy in put_cmsg
+To: syzbot <syzbot+c4dcac91687a29cbae15@syzkaller.appspotmail.com>
+Cc: Kees Cook <keescook@chromium.org>, keun-o.park@darkmatter.ae,
+        Laura Abbott <labbott@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/05/2018 10:42 PM, Joel Fernandes wrote:
-> On Tue, Jan 30, 2018 at 11:47 AM, Rohit Jain <rohit.k.jain@oracle.com> wrote:
-> [...]
->>>> @@ -6102,7 +6107,8 @@ static int select_idle_core(struct task_struct *p,
->>>> struct sched_domain *sd, int
->>>>     */
->>>>    static int select_idle_smt(struct task_struct *p, struct sched_domain
->>>> *sd, int target)
->>>>    {
->>>> -       int cpu;
->>>> +       int cpu, rcpu = -1;
->>>> +       unsigned long max_cap = 0;
->>>>
->>>>           if (!static_branch_likely(&sched_smt_present))
->>>>                   return -1;
->>>> @@ -6110,11 +6116,13 @@ static int select_idle_smt(struct task_struct *p,
->>>> struct sched_domain *sd, int t
->>>>           for_each_cpu(cpu, cpu_smt_mask(target)) {
->>>>                   if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
->>>>                           continue;
->>>> -               if (idle_cpu(cpu))
->>>> -                       return cpu;
->>>> +               if (idle_cpu(cpu) && (capacity_of(cpu) > max_cap)) {
->>>> +                       max_cap = capacity_of(cpu);
->>>> +                       rcpu = cpu;
->>> At the SMT level, do you need to bother with choosing best capacity
->>> among threads? If RT is eating into one of the SMT thread's underlying
->>> capacity, it would eat into the other's. Wondering what's the benefit
->>> of doing this here.
->>
->> Yes, you are right because of SD_SHARE_CPUCAPACITY, however the benefit
->> is that if don't do this check, we might end up picking a SMT thread
->> which has "high" RT/IRQ activity and be on the run queue for a while,
->> till the pull side can bail us out.
-> Do your tests show a difference in results though with such change
-> (for select_idle_smt)?
-
-I don't have the numbers readily available, but I did see a measurable
-difference with the select_idle_smt changes.
-
-Thanks,
-Rohit
-
+On Tue, Feb 6, 2018 at 6:31 PM, syzbot
+<syzbot+c4dcac91687a29cbae15@syzkaller.appspotmail.com> wrote:
+> Hello,
 >
-> thanks,
+> syzbot hit the following crash on upstream commit
+> e237f98a9c134c3d600353f21e07db915516875b (Mon Feb 5 21:35:56 2018 +0000)
+> Merge tag 'xfs-4.16-merge-5' of
+> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
 >
-> - Joel
+> So far this crash happened 8 times on net-next, upstream.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+
+#syz dup: WARNING in usercopy_warn
+
+Let's make that one the main copy, since Kees is already looking at it.
+
+
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+c4dcac91687a29cbae15@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+>
+> ------------[ cut here ]------------
+> Bad or missing usercopy whitelist? Kernel memory exposure attempt detected
+> from SLAB object 'skbuff_head_cache' (offset 64, size 16)!
+> WARNING: CPU: 1 PID: 4176 at mm/usercopy.c:81 usercopy_warn+0xdb/0x100
+> mm/usercopy.c:76
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+> CPU: 1 PID: 4176 Comm: syzkaller502931 Not tainted 4.15.0+ #299
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  panic+0x1e4/0x41c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x211/0x2d0 lib/bug.c:184
+>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:984
+> RIP: 0010:usercopy_warn+0xdb/0x100 mm/usercopy.c:76
+> RSP: 0018:ffff8801b2bc7598 EFLAGS: 00010286
+> RAX: dffffc0000000008 RBX: ffffffff86801907 RCX: ffffffff815a585e
+> RDX: 0000000000000000 RSI: 1ffff10036578e63 RDI: 1ffff10036578e38
+> RBP: ffff8801b2bc75f0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000000007a6 R11: 0000000000000000 R12: ffffffff86403180
+> R13: ffffffff85f2d4c0 R14: 0000000000000040 R15: 0000000000000010
+>  __check_heap_object+0x89/0xc0 mm/slab.c:4426
+>  check_heap_object mm/usercopy.c:236 [inline]
+>  __check_object_size+0x272/0x530 mm/usercopy.c:259
+>  check_object_size include/linux/thread_info.h:112 [inline]
+>  check_copy_size include/linux/thread_info.h:143 [inline]
+>  copy_to_user include/linux/uaccess.h:154 [inline]
+>  put_cmsg+0x233/0x3f0 net/core/scm.c:242
+>  sock_recv_errqueue+0x200/0x3e0 net/core/sock.c:2910
+>  packet_recvmsg+0xb2e/0x17a0 net/packet/af_packet.c:3296
+>  sock_recvmsg_nosec net/socket.c:803 [inline]
+>  sock_recvmsg+0xc9/0x110 net/socket.c:810
+>  ___sys_recvmsg+0x2a4/0x640 net/socket.c:2205
+>  __sys_recvmsg+0xe2/0x210 net/socket.c:2250
+>  SYSC_recvmsg net/socket.c:2262 [inline]
+>  SyS_recvmsg+0x2d/0x50 net/socket.c:2257
+>  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x26/0x9b
+> RIP: 0033:0x445399
+> RSP: 002b:00007ffdfb47d4d8 EFLAGS: 00000217 ORIG_RAX: 000000000000002f
+> RAX: ffffffffffffffda RBX: 0000000000000066 RCX: 0000000000445399
+> RDX: 0000000000002000 RSI: 0000000020006fc8 RDI: 0000000000000004
+> RBP: 00007ffdfb47d5e8 R08: 000000000000a1fd R09: 000000000000a1fd
+> R10: 000000000000a1fd R11: 0000000000000217 R12: 00007ffdfb47d5e8
+> R13: 0000000000402860 R14: 0000000000000000 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/94eb2c0efc1ede1c4205648e8a49%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
