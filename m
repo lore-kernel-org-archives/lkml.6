@@ -1,88 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeBFRWB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 12:22:01 -0500
-Received: from foss.arm.com ([217.140.101.70]:40584 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752383AbeBFRVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 12:21:53 -0500
-Date: Tue, 6 Feb 2018 17:21:56 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <20180206172156.GA25540@arm.com>
-References: <20180206114048.6c8ced1c@canb.auug.org.au>
- <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com>
- <20180206135512.GB22740@arm.com>
- <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com>
- <20180206141118.GC22740@arm.com>
- <1409139836.17054.1517936752110.JavaMail.zimbra@efficios.com>
+        id S1752574AbeBFR2C (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 12:28:02 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43786 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752171AbeBFR14 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 12:27:56 -0500
+X-Google-Smtp-Source: AH8x225UNi7WiIzqCxK2apLkJ67VR0jQIT+RHUSAmr4ywBHpehZIdBURH3Nf7G0kvnOU0ltfzEubBQ==
+Date: Tue, 6 Feb 2018 20:27:53 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Konstantin Khlebnikov <koct9i@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Vladimir Davydov <vdavydov@virtuozzo.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        Kees Cook <keescook@google.com>, Willy Tarreau <w@1wt.eu>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] mm: Always print RLIMIT_DATA warning
+Message-ID: <20180206172753.GD2002@uranus.lan>
+References: <1517935505-9321-1-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1409139836.17054.1517936752110.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1517935505-9321-1-git-send-email-dwmw@amazon.co.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 05:05:52PM +0000, Mathieu Desnoyers wrote:
-> ----- On Feb 6, 2018, at 9:11 AM, Will Deacon will.deacon@arm.com wrote:
+On Tue, Feb 06, 2018 at 04:45:05PM +0000, David Woodhouse wrote:
+> The documentation for ignore_rlimit_data says that it will print a warning
+> at first misuse. Yet it doesn't seem to do that. Fix the code to print
+> the warning even when we allow the process to continue.
 > 
-> > On Tue, Feb 06, 2018 at 02:06:50PM +0000, Mathieu Desnoyers wrote:
-> >> ----- On Feb 6, 2018, at 8:55 AM, Will Deacon will.deacon@arm.com wrote:
-> >> > On Tue, Feb 06, 2018 at 12:52:34PM +0000, Mathieu Desnoyers wrote:
-> >> >> One approach I would consider for this is to duplicate this
-> >> >> comment and add it just above the "eret" instruction within the
-> >> >> macro:
-> >> >> 
-> >> >> 	/*
-> >> >> 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on eret context synchronization
-> >> >> 	 * when returning from IPI handler, and when returning to user-space.
-> >> >> 	 */
-> >> >> 
-> >> >> Or perhaps Will has something else in mind ?
-> >> > 
-> >> > To be honest with you, I'd just drop the comment entirely. entry.S is
-> >> > terrifying these days and nobody should have to go in there to understand
-> >> > why we select ARCH_HAS_MEMBARRIER_SYNC_CORE. If you really feel a justification
-> >> > is needed, I'd be happy with a line in the Kconfig file.
-> >> 
-> >> My concern is that someone wanting to optimize away a few cycles by changing
-> >> eret to something else in the future will not be looking at Kconfig: that
-> >> person will be staring at entry.S.
-> > 
-> > That person will probably also be me, or somebody who sits within punching
-> > distance. I really wouldn't worry about it. There a bunch of other
-> > things that will break if we don't use ERET here and, if it's a real
-> > concern, we're making the *huge* assumption that developers actually
-> > read and pay attention to comments.
-> > 
-> >> One alternative presented by PeterZ on irc is to do like ppc: define a
-> >> macro for eret, and stick all appropriate comments near the macro. This
-> >> way, it won't hurt when reading the code, but at least it keeps the
-> >> comments near the instruction being discussed.
-> > 
-> > For the sake of avoiding the conflict, can we just drop it for now, please?
-> > Having an "eret" macro isn't obvious, because people won't realise that it's
-> > a macro. Having "exception_return" is cryptic as hell to people familiar
-> > with the ISA.
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+> We should probably also do what Linus suggested in 
+> https://lkml.org/lkml/2016/9/16/585
 > 
-> I'd be OK not adding comments in the assembly provided that we document this
-> within the new documentation file as I just posted as RFC:
-> 
-> http://lkml.kernel.org/r/1517936413-19675-1-git-send-email-mathieu.desnoyers@efficios.com
-> 
-> Thoughts ?
 
-I certainly think that Documentation/ and probably init/Kconfig are the
-right places to describe this, but I defer to Ingo on whether or not
-arch-support.txt is ok with free-form text comments.
-
-Will
+Might be typo in docs I guess, Kostya?
