@@ -1,71 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeBFJuN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:50:13 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:50152 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752403AbeBFJuE (ORCPT
+        id S1752656AbeBFJxU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:53:20 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46245 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752187AbeBFJxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:50:04 -0500
-Subject: Re: [RFCv2 00/17] Request API, take three
-To: Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180131102427.207721-1-acourbot@chromium.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <b7d08a9b-40bb-e501-bd2f-05c8ef8f7339@xs4all.nl>
-Date: Tue, 6 Feb 2018 10:49:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 6 Feb 2018 04:53:14 -0500
+X-UUID: ea6faf72c107463093c1f8de39eac045-20180206
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 00/16] add dts nodes to MT7622 SoC
+Date: Tue, 6 Feb 2018 17:52:49 +0800
+Message-ID: <cover.1517910489.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <20180131102427.207721-1-acourbot@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDUw4UZ+69Otnz0eI+uQsJ69ru/EVTN2kREp2Mv63A2XWOKXZ+v1KHMakYcqaTXbkoyxCJXFcikrHkLXMkICK3JgoI5T2wXfK1D9kgN9p/KH1ItrzqT1
- p+tb9J+84eX3VctGVi3PfmdLXvRxRRk28HfiMaliEsOg1s1zzVjj7ACXkMI5SQJw0W5kMnJnq6UHvDsJH/1d2PqjN3JfcqcBFIXYE9Voma8sEdSjK5EYIrRB
- mD2C56NelyaAaq8ropEs0qP3NkTPNfE4HyADwRIIqeTcynQKxYPcrYm5YYzu76UJzNaHDkq6gKIy7Wp3xtIAZ4uGQktx4j0TYvFM9aW7zlwlA/7bGHjkA0XC
- sAvadDe1QwbbQXyJILuzlkZ43XcglMlAzBoeI39vQhJIgHg0mie3C2kwc1Rf9VdbhtNLt4KroZGisTKnNXywCMdI1+xzM/an5RP2CVGyOiJh1ZGB798JtjvV
- Xc0QcrKijWuLDe+4PAsZL4qFWSPRdiIm2gg0P3OU4NLxc76KtHuaE9aI0B0BQuW7P3LK5Gm4SW7qX/Ik0gdadEN/j94dc58NCJDhQEU0B2BOdw1yycRjLI7k
- /YI=
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+From: Sean Wang <sean.wang@mediatek.com>
 
-On 01/31/18 11:24, Alexandre Courbot wrote:
-> This is a quickly-put together revision that includes and uses Hans' work to
-> use v4l2_ctrl_handler as the request state holder for V4L2 devices. Although
-> minor fixes have also been applied, there are still a few comments from the
-> previous revision that are left unaddressed. I wanted to give Hans something
-> to play with before he forgets what he had in mind for controls. ;)
-> 
-> Changelog since v1:
-> * Integrate Hans control framework patches so S_EXT_CTRLS and G_EXT_CTRLS now
->   work with requests
-> * Only allow one buffer at a time for a given request in the buffer queue
-> * Applied comments related to documentation and document control ioctls
-> * Minor small fixes
-> 
-> I have also updated the very basic program that demonstrates the use of the
-> request API on vim2m:
-> 
-> https://gist.github.com/Gnurou/dbc3776ed97ea7d4ce6041ea15eb0438
-> 
-> It does not do much, but gives a practical idea of how requests should be used.
+Changes since v1:
+- add usb, thermal, HSDMA, mmc related nodes
+- fix Warning (unit_address_vs_reg): Node /oscillator@0 has
+  a unit name, but no reg property in patch 2
+- fix Warning (pci_bridge): Node /pcie@1a140000/pcie@0,0 missing
+  bus-range for PCI bridge
+- fix Warning (pci_bridge): Node /pcie@1a140000/pcie@1,0 missing
+  bus-range for PCI bridge
+- fix Warning (unit_address_format): Failed prerequisite 'pci_bridge'
+- fix Warning (pci_device_reg): Failed prerequisite 'pci_bridge'
+- fix Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
+- enhance commit log in patch 4
+- use - instead of _ in DT node name in patch 4 and 6
+- use SPDX-License-Identifier for newly added files in patch 5
+- use proper #size-cells for spi nor nodes in patch 9
+- remove currently no needed #address-cells and #size-cells in
+children nodes of spi nor in patch 9.
 
-Can you rebase and repost? It doesn't apply anymore to the latest media_tree master.
-Among others v4l2-core/videobuf2-* has been moved to common/videobuf2/videobuf2-*.
+add dts nodes to MT7622 SoC and related rfb1 board
 
-But there are also conflicts in v4l2-compat-ioctl32.c.
+Chunfeng Yun (1):
+  arm64: dts: mt7622: add usb device nodes
 
-Thanks!
+Ryder Lee (2):
+  arm64: dts: mt7622: add PCIe device nodes
+  arm64: dts: mt7622: add SATA device nodes
 
-	Hans
+Sean Wang (13):
+  dt-bindings: clock: mediatek: add missing required #reset-cells
+  arm64: dts: mt7622: add clock controller device nodes
+  arm64: dts: mt7622: add power domain controller device nodes
+  arm64: dts: mt7622: add pinctrl related device nodes
+  arm64: dts: mt7622: add PMIC MT6380 related nodes
+  arm64: dts: mt7622: add cpufreq related device nodes
+  arm64: dts: mt7622: turn uart0 clock to real ones
+  arm64: dts: mt7622: add SoC and peripheral related device nodes
+  arm64: dts: mt7622: add flash related device nodes
+  arm64: dts: mt7622: add ethernet device nodes
+  arm64: dts: mt7622: add thermal and related nodes
+  arm64: dts: mt7622: add High-Speed DMA device nodes
+  arm64: dts: mt7622: add mmc related device nodes
+
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      |   2 +
+ .../bindings/arm/mediatek/mediatek,pciesys.txt     |   2 +
+ .../bindings/arm/mediatek/mediatek,ssusbsys.txt    |   2 +
+ arch/arm64/boot/dts/mediatek/mt6380.dtsi           |  86 +++
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts       | 469 ++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi           | 682 ++++++++++++++++++++-
+ 6 files changed, 1238 insertions(+), 5 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6380.dtsi
+
+-- 
+2.7.4
