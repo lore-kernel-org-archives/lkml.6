@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1690823-1517938402-2-16446206676623174961
+X-Cyrus-Session-Id: sloti22d1t05-1690823-1517938220-2-3862794467816244410
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roensk.us-ascii, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,35 +13,35 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517938402; b=vMbKanwd30Tvyx9Bd79qZFbetxbO9WbQJZsz8ZKzf3Gxm39
-    yWIh8CSbfnBdQ1AmpQlGgh4I+rWQ0DadvtluBda5U756OoDjJ2Qi//R9eP5cyrvb
-    wBHlIcnZ5sYExj+aTgUgqZvkYcPYZjpvqL0iPp9QGrAfeWP+z4NcKq6ipRHobtQS
-    OKRzpTWuXo6154DMppReSW27UVixSMUwJaJDMltipHtAhcjyNPFtHXJBGOZaFQvE
-    O9yuw+RTnlYo0NjV9qOACvzkxnRoyUgDd1kEfl3bvvGj1ZFNBM5QKvt3yVj8zgH9
-    iSZyhBoZq0v2NjZmW6hcXgfjxKg8AfwSmAGVgcg==
+    t=1517938219; b=S5BGOZ12BUelgryJmmQgD4zxp4vwu8MdQ1/T4LSSvuX2Ytu
+    FzkhE8tSI0Kvyng4u81rk/OKSU6Rikdj2G7Ftl0rOP+eieuPHNL99gv12esHGmXj
+    bNi1e3W3L2RFi5WCVOusnkLYbuPFzjsih1p7sdrsEDzrJXPBKGr5DItrFDdjrKhY
+    rC2sYeX7Ez9cDhLEF7S3mlBp91TXCb4sJ7Bu4LXfgpkhirzatENjgY/7RaWPimqB
+    895G3Uau4r+6iIT8ukeed2dp500BINxi03rhkXFNQmsXfJdHl+Oi2i57mpfCuLsd
+    qJt0HCXMHmbm8u0qausTAHM5Kv8SVLuxgzWsxZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1517938402;
-    bh=v/LgfVlkm+24JS3LGpkpIitibo9kPJy1ed/qoa/UM2M=; b=BHBx/D9XGJux
-    Y0kVQH2ZRAasrjNb65txEWZjNgDURSa6Id82SNCGysmsz7uSyoyGqi2LiYL36+jr
-    vanRi0HT1VhFCXTKn3GAm/W6BsDL/l+BUsvo6MCyUSSnMnS8PhLqgMy7HC9KjQyD
-    WsJXnz18d9Gyl3vuvvVTOsSkRE1uMbmZqPB1LBxqgfUFKPg4eFwhw+HmVOmr65lI
-    GK9hQm0OKrY3BPmsLU6NO8y8tK3MTHdk7MJtrJZKL49pjmOSYsr1cJVhiq7Gro9G
-    PRTKiugCDBIG4EGXj3YE+Esr/7xg8fF3HbfSmwQ68gXH1vYhdtxFf07V8Z4ryGq5
-    7jpqxDJnng==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1517938219;
+    bh=+Hzg7DFoYpfWA42oO6osZ5km2Wqrs7a9lqm05HkahQQ=; b=RZQBhxUS7BY8
+    KjnhAJ7noIRQnMwPdtSNhYh2neQYsDfcXFabzwl4jGCLMUyaY0nM8CUZnQWNWmcT
+    wffD5a+fzW64So/xzX7y2PAZSCA1owyQWuB+lyHU3zb/R2Drn4OgM369BBsQiF9p
+    QNH3vKJUN4yQjzftnX7mgvKwMFM6JgJ9JloMztWqOMFeyGhNkK9A6KWDHcG8xTOQ
+    0C9+Ash7gCE2lrPIpH+LWvqWm4rW4q8YpFPh9rsOiL2kSzvsRNFHfB6462vOU6eI
+    7//KNwuX1kvx8SiiEb3YklwoPc+uqVkXiMk4gcPcEv0c91hDomiKBopy9iEPg5W0
+    Tv0DU7/Stw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim-adsp=pass (ADSP policy from amazon.co.uk);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=ZNWIWi5V x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=IdxMf35Q x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
     dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim-adsp=pass (ADSP policy from amazon.co.uk);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=ZNWIWi5V x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=IdxMf35Q x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
     dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -49,14 +49,14 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753122AbeBFRc1 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 12:32:27 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:6243 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753111AbeBFRcX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 12:32:23 -0500
+        id S1752820AbeBFRaQ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 12:30:16 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:44336 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752749AbeBFR35 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 12:29:57 -0500
 X-IronPort-AV: E=Sophos;i="5.46,469,1511827200";
-   d="scan'208";a="721415789"
+   d="scan'208";a="330970458"
 From: David Woodhouse <dwmw@amazon.co.uk>
 To: Paolo Bonzini <pbonzini@redhat.com>,
         Jim Mattson <jmattson@google.com>,
@@ -64,9 +64,9 @@ To: Paolo Bonzini <pbonzini@redhat.com>,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         KarimAllah Ahmed <karahmed@amazon.de>,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4/9] KVM: VMX: introduce alloc_loaded_vmcs
-Date: Tue,  6 Feb 2018 17:29:36 +0000
-Message-Id: <1517938181-15317-5-git-send-email-dwmw@amazon.co.uk>
+Subject: [PATCH 9/9] KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+Date: Tue,  6 Feb 2018 17:29:41 +0000
+Message-Id: <1517938181-15317-10-git-send-email-dwmw@amazon.co.uk>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
 References: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
@@ -76,101 +76,190 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: KarimAllah Ahmed <karahmed@amazon.de>
 
-Group together the calls to alloc_vmcs and loaded_vmcs_init.  Soon we'll also
-allocate an MSR bitmap there.
+[ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
 
-Cc: stable@vger.kernel.org       # prereq for Spectre mitigation
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-(cherry picked from commit f21f165ef922c2146cc5bdc620f542953c41714b)
+... basically doing exactly what we do for VMX:
+
+- Passthrough SPEC_CTRL to guests (if enabled in guest CPUID)
+- Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
+  actually used it.
+
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517669783-20732-1-git-send-email-karahmed@amazon.de
+
+(cherry picked from commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/kvm/vmx.c | 38 +++++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+ arch/x86/kvm/svm.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 55b1474..8c562da 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -3522,11 +3522,6 @@ static struct vmcs *alloc_vmcs_cpu(int cpu)
- 	return vmcs;
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 6de8d65..be644af 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -183,6 +183,8 @@ struct vcpu_svm {
+ 		u64 gs_base;
+ 	} host;
+ 
++	u64 spec_ctrl;
++
+ 	u32 *msrpm;
+ 
+ 	ulong nmi_iret_rip;
+@@ -248,6 +250,7 @@ static const struct svm_direct_access_msrs {
+ 	{ .index = MSR_CSTAR,				.always = true  },
+ 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
+ #endif
++	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
+ 	{ .index = MSR_IA32_PRED_CMD,			.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
+@@ -863,6 +866,25 @@ static bool valid_msr_intercept(u32 index)
+ 	return false;
  }
  
--static struct vmcs *alloc_vmcs(void)
--{
--	return alloc_vmcs_cpu(raw_smp_processor_id());
--}
--
- static void free_vmcs(struct vmcs *vmcs)
- {
- 	free_pages((unsigned long)vmcs, vmcs_config.order);
-@@ -3545,6 +3540,22 @@ static void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
- 	WARN_ON(loaded_vmcs->shadow_vmcs != NULL);
- }
- 
-+static struct vmcs *alloc_vmcs(void)
++static bool msr_write_intercepted(struct kvm_vcpu *vcpu, unsigned msr)
 +{
-+	return alloc_vmcs_cpu(raw_smp_processor_id());
++	u8 bit_write;
++	unsigned long tmp;
++	u32 offset;
++	u32 *msrpm;
++
++	msrpm = is_guest_mode(vcpu) ? to_svm(vcpu)->nested.msrpm:
++				      to_svm(vcpu)->msrpm;
++
++	offset    = svm_msrpm_offset(msr);
++	bit_write = 2 * (msr & 0x0f) + 1;
++	tmp       = msrpm[offset];
++
++	BUG_ON(offset == MSR_INVALID);
++
++	return !!test_bit(bit_write,  &tmp);
 +}
 +
-+static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
-+{
-+	loaded_vmcs->vmcs = alloc_vmcs();
-+	if (!loaded_vmcs->vmcs)
-+		return -ENOMEM;
-+
-+	loaded_vmcs->shadow_vmcs = NULL;
-+	loaded_vmcs_init(loaded_vmcs);
-+	return 0;
-+}
-+
- static void free_kvm_area(void)
+ static void set_msr_interception(u32 *msrpm, unsigned msr,
+ 				 int read, int write)
  {
- 	int cpu;
-@@ -6947,6 +6958,7 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 	struct vmcs *shadow_vmcs;
- 	const u64 VMXON_NEEDED_FEATURES = FEATURE_CONTROL_LOCKED
- 		| FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX;
-+	int r;
+@@ -1537,6 +1559,8 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	u32 dummy;
+ 	u32 eax = 1;
  
- 	/* The Intel VMX Instruction Reference lists a bunch of bits that
- 	 * are prerequisite to running VMXON, most notably cr4.VMXE must be
-@@ -6986,11 +6998,9 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 		return 1;
- 	}
++	svm->spec_ctrl = 0;
++
+ 	if (!init_event) {
+ 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
+ 					   MSR_IA32_APICBASE_ENABLE;
+@@ -3520,6 +3544,13 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_VM_CR:
+ 		msr_info->data = svm->nested.vm_cr_msr;
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		msr_info->data = svm->spec_ctrl;
++		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = 0x01000065;
+ 		break;
+@@ -3611,6 +3642,33 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		/* The STIBP bit doesn't fault even if it's not advertised */
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++			return 1;
++
++		svm->spec_ctrl = data;
++
++		if (!data)
++			break;
++
++		/*
++		 * For non-nested:
++		 * When it's written (to non-zero) for the first time, pass
++		 * it through.
++		 *
++		 * For nested:
++		 * The handling of the MSR bitmap for L2 guests is done in
++		 * nested_svm_vmrun_msrpm.
++		 * We update the L1 MSR bit as well since it will end up
++		 * touching the MSR anyway now.
++		 */
++		set_msr_interception(svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
++		break;
+ 	case MSR_IA32_PRED_CMD:
+ 		if (!msr->host_initiated &&
+ 		    !guest_cpuid_has_ibpb(vcpu))
+@@ -4854,6 +4912,15 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
  
--	vmx->nested.vmcs02.vmcs = alloc_vmcs();
--	vmx->nested.vmcs02.shadow_vmcs = NULL;
--	if (!vmx->nested.vmcs02.vmcs)
-+	r = alloc_loaded_vmcs(&vmx->nested.vmcs02);
-+	if (r < 0)
- 		goto out_vmcs02;
--	loaded_vmcs_init(&vmx->nested.vmcs02);
+ 	local_irq_enable();
  
- 	if (cpu_has_vmx_msr_bitmap()) {
- 		vmx->nested.msr_bitmap =
-@@ -9111,17 +9121,15 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- 	if (!vmx->guest_msrs)
- 		goto free_pml;
++	/*
++	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
++	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
++	 * is no need to worry about the conditional branch over the wrmsr
++	 * being speculatively taken.
++	 */
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+ 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
+@@ -4946,6 +5013,27 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ #endif
+ 		);
  
--	vmx->loaded_vmcs = &vmx->vmcs01;
--	vmx->loaded_vmcs->vmcs = alloc_vmcs();
--	vmx->loaded_vmcs->shadow_vmcs = NULL;
--	if (!vmx->loaded_vmcs->vmcs)
--		goto free_msrs;
- 	if (!vmm_exclusive)
- 		kvm_cpu_vmxon(__pa(per_cpu(vmxarea, raw_smp_processor_id())));
--	loaded_vmcs_init(vmx->loaded_vmcs);
-+	err = alloc_loaded_vmcs(&vmx->vmcs01);
- 	if (!vmm_exclusive)
- 		kvm_cpu_vmxoff();
-+	if (err < 0)
-+		goto free_msrs;
++	/*
++	 * We do not use IBRS in the kernel. If this vCPU has used the
++	 * SPEC_CTRL MSR it may have left it on; save the value and
++	 * turn it off. This is much more efficient than blindly adding
++	 * it to the atomic save/restore list. Especially as the former
++	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 *
++	 * For non-nested case:
++	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 *
++	 * For nested case:
++	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 */
++	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
  
-+	vmx->loaded_vmcs = &vmx->vmcs01;
- 	cpu = get_cpu();
- 	vmx_vcpu_load(&vmx->vcpu, cpu);
- 	vmx->vcpu.cpu = cpu;
 -- 
 2.7.4
