@@ -1,59 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752966AbeBFURX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:17:23 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:26056 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752759AbeBFURW (ORCPT
+        id S1753003AbeBFUXj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 15:23:39 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40046 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752759AbeBFUXi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:17:22 -0500
-X-ME-Helo: linux.numericable.fr
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 06 Feb 2018 21:17:20 +0100
-X-ME-IP: 77.198.79.136
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: ganeshgr@chelsio.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] cxgb4: Fix error handling path in 'init_one()'
-Date: Tue,  6 Feb 2018 21:17:17 +0100
-Message-Id: <20180206201717.27412-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.14.1
+        Tue, 6 Feb 2018 15:23:38 -0500
+X-Google-Smtp-Source: AH8x227ZzPxZbaaeFW2zQAJqnYu1vNWKYZjw0/oLeBqQ+b3m86rua6r4roC0f93V+btdofvbJxcC+g==
+Date: Tue, 6 Feb 2018 21:23:34 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@us.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] locking updates
+Message-ID: <20180206202334.tvq3rhuhsy7uoq7x@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit baf5086840ab1 ("cxgb4: restructure VF mgmt code") has reordered
-some code but an error handling label has not been updated accordingly.
-So fix it and free 'adapter' if 't4_wait_dev_ready()' fails.
+Linus,
 
-Fixes: baf5086840ab1 ("cxgb4: restructure VF mgmt code")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please pull the latest locking-urgent-for-linus git tree from:
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-index 725643b4a8ab..79bffaa3c1af 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -5125,7 +5125,7 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	adapter->regs = regs;
- 	err = t4_wait_dev_ready(regs);
- 	if (err < 0)
--		goto out_unmap_bar0;
-+		goto out_free_adapter;
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
+
+   # HEAD: ca66e797120fb09b8138623fb4b563e952586ef5 locking/qrwlock: include asm/byteorder.h as needed
+
+An endianness fix and a jump labels branch hint update.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Arnd Bergmann (1):
+      locking/qrwlock: include asm/byteorder.h as needed
+
+Peter Zijlstra (1):
+      jump_label: Add branch hints to static_branch_{un,}likely()
+
+
+ include/asm-generic/qrwlock_types.h | 1 +
+ include/linux/jump_label.h          | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/include/asm-generic/qrwlock_types.h b/include/asm-generic/qrwlock_types.h
+index 137ecdd16daa..c36f1d5a2572 100644
+--- a/include/asm-generic/qrwlock_types.h
++++ b/include/asm-generic/qrwlock_types.h
+@@ -3,6 +3,7 @@
+ #define __ASM_GENERIC_QRWLOCK_TYPES_H
  
- 	/* We control everything through one PF */
- 	whoami = readl(regs + PL_WHOAMI_A);
--- 
-2.14.1
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+ #include <linux/types.h>
++#include <asm/byteorder.h>
+ #include <asm/spinlock_types.h>
+ 
+ /*
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index e0340ca08d98..b6a29c126cc4 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -393,7 +393,7 @@ extern bool ____wrong_branch_error(void);
+ 		branch = !arch_static_branch_jump(&(x)->key, true);		\
+ 	else									\
+ 		branch = ____wrong_branch_error();				\
+-	branch;									\
++	likely(branch);								\
+ })
+ 
+ #define static_branch_unlikely(x)						\
+@@ -405,7 +405,7 @@ extern bool ____wrong_branch_error(void);
+ 		branch = arch_static_branch(&(x)->key, false);			\
+ 	else									\
+ 		branch = ____wrong_branch_error();				\
+-	branch;									\
++	unlikely(branch);							\
+ })
+ 
+ #else /* !HAVE_JUMP_LABEL */
