@@ -1,197 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752908AbeBFNRu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 08:17:50 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:33960 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751910AbeBFNRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:17:42 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4] ARM: sun8i: h2+: add support for Banana Pi M2 Zero board
-Date: Tue,  6 Feb 2018 21:16:47 +0800
-Message-Id: <20180206131647.41700-1-icenowy@aosc.io>
+        id S1752875AbeBFNTz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 08:19:55 -0500
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:33450 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751738AbeBFNTs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 08:19:48 -0500
+X-Google-Smtp-Source: AH8x2250cLn3auexZ3EJtTI8neGo6zSttsR2lr+eAlIVPRoqR7F+OgBl3oR1dK40YxxJh5tqzARiuQ==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: netdev@vger.kernel.org
+Cc: ktkhai@virtuozzo.com, stephen@networkplumber.org,
+        w.bumiller@proxmox.com, ebiederm@xmission.com, jbenc@redhat.com,
+        nicolas.dichtel@6wind.com, linux-kernel@vger.kernel.org,
+        dsahern@gmail.com, davem@davemloft.net,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net 0/1 v3] rtnetlink: require unique netns identifier
+Date: Tue,  6 Feb 2018 14:19:01 +0100
+Message-Id: <20180206131902.31937-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Banana Pi M2 Zero board is a H2+-based board by Sinovoip, with a form
-factor and GPIO holes similar to Raspberry Pi Zero.
+Hey,
 
-It features:
-- Allwinner H2+ SoC
-- Single-chip (16-bit) 512MiB DDR3 DRAM
-- Ampak AP6212 Wi-Fi/Bluetooth module
-- MicroSD slot
-- Two MicroUSB Type-B ports (one can only be used to power the board and
-  the other features OTG functionality)
-- Two keys, a reset and a GPIO-connected key.
-- HDMI Type-C (miniHDMI) connector connected to the HDMI part of H2+.
-- CSI connector to connect the camera sensor provided by Sinovoip.
+Since we've added support for IFLA_IF_NETNSID for RTM_{DEL,GET,SET,NEW}LINK
+it is possible for userspace to send us requests with three different
+properties to identify a target network namespace. This affects at least
+RTM_{NEW,SET}LINK. Each of them could potentially refer to a different
+network namespace which is confusing and a potential security liability
+given that pids might be recycled while the netlink request is served or
+the process might do a setns() It also lets us indicate that network namespace
+ids are the preferred way of interacting with network namespaces in rtnetlink
+requests. The regression potential is quite minimal since the rtnetlink
+requests in question either won't allow IFLA_IF_NETNSID requests before 4.16 is
+out (RTM_{NEW,SET}LINK) or don't support IFLA_NET_NS_{PID,FD}
+(RTM_{DEL,GET}LINK) in the first place.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+We obviously cannot prevent users from passing both IFLA_NET_NS_PID and
+IFLA_NET_NS_FD since we have supported this somehow for a long time for
+a subset of rtnetlink requests. So the check I'm proposing is to only
+fail when both IFLA_IF_NETNSID, and IFLA_NET_NS_PID or IFLA_NET_NS_FD are
+passed.
+
+Thanks!
+Christian
+
 ---
-Changes in v4:
-- Use SPDX license identifier.
+ChangeLog v2->v3:
+* Specifying target network namespaces with pids or fds seems racy since the
+  process might die and the pid get recycled or the process does a setns() in
+  which case the tests would be invalid. So only check whether multiple
+  properties are specified and report a helpful error in this case.
+ChangeLog v1->v2:
+* return errno when the specified network namespace id is invalid
+* fill in struct netlink_ext_ack if the network namespace id is invalid
+* rename rtnl_ensure_unique_netns_attr() to rtnl_ensure_unique_netns() to
+  indicate that a request without any network namespace identifying attributes
+  is also considered valid.
+ChangeLog v0->v1:
+* report a descriptive error to userspace via struct netlink_ext_ack
+* do not fail when multiple properties specifiy the same network namespace
+---
 
-Changes in v3:
-- Add comments about Vbus problem in &usbphy node.
+Christian Brauner (1):
+  rtnetlink: require unique netns identifier
 
-Changes in v2:
-- Use high active SD card detect on the production batch.
+ net/core/rtnetlink.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
- arch/arm/boot/dts/Makefile                         |   1 +
- .../boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts    | 126 +++++++++++++++++++++
- 2 files changed, 127 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index ade7a38543dc..d5a17e6e8b0f 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -974,6 +974,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-a83t-cubietruck-plus.dtb \
- 	sun8i-a83t-tbs-a711.dtb \
- 	sun8i-h2-plus-orangepi-r1.dtb \
-+	sun8i-h2-plus-bananapi-m2-zero.dtb \
- 	sun8i-h2-plus-orangepi-zero.dtb \
- 	sun8i-h3-bananapi-m2-plus.dtb \
- 	sun8i-h3-beelink-x2.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
-new file mode 100644
-index 000000000000..e2ee65a5bf92
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
-@@ -0,0 +1,126 @@
-+/*
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * Based on sun8i-h3-bananapi-m2-plus.dts, which is:
-+ *   Copyright (C) 2016 Chen-Yu Tsai <wens@csie.org>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-h3.dtsi"
-+#include "sunxi-common-regulators.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	model = "Banana Pi BPI-M2-Zero";
-+	compatible = "sinovoip,bpi-m2-zero", "allwinner,sun8i-h2-plus";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+
-+		pwr_led {
-+			label = "bananapi-m2-zero:red:pwr";
-+			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>; /* PL10 */
-+			default-state = "on";
-+		};
-+	};
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+
-+		sw4 {
-+			label = "power";
-+			linux,code = <BTN_0>;
-+			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	wifi_pwrseq: wifi_pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		pinctrl-names = "default";
-+		reset-gpios = <&r_pio 0 7 GPIO_ACTIVE_LOW>; /* PL7 */
-+	};
-+};
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_a>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <4>;
-+	/*
-+	 * On the production batch of this board the card detect GPIO is
-+	 * high active (card inserted), although on the early samples it's
-+	 * low active.
-+	 */
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	status = "okay";
-+};
-+
-+&mmc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc1_pins_a>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	vqmmc-supply = <&reg_vcc3v3>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	bus-width = <4>;
-+	non-removable;
-+	status = "okay";
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+		interrupt-parent = <&pio>;
-+		interrupts = <6 10 IRQ_TYPE_LEVEL_LOW>; /* PG10 / EINT10 */
-+		interrupt-names = "host-wake";
-+	};
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_a>;
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb0_id_det-gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
-+	/*
-+	 * There're two micro-USB connectors, one is power-only and another is
-+	 * OTG. The Vbus of these two connectors are connected together, so
-+	 * the external USB device will be powered just by the power input
-+	 * from the power-only USB port.
-+	 */
-+	status = "okay";
-+};
 -- 
-2.15.1
+2.14.1
