@@ -1,268 +1,384 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753001AbeBFSd2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:33:28 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41940 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752749AbeBFSdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:33:20 -0500
-Date: Tue, 6 Feb 2018 18:33:15 +0000
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v4 1/3] sched/fair: add util_est on top of PELT
-Message-ID: <20180206183315.GG5739@e110439-lin>
-References: <20180206144131.31233-1-patrick.bellasi@arm.com>
- <20180206144131.31233-2-patrick.bellasi@arm.com>
- <20180206155056.GF2269@hirez.programming.kicks-ass.net>
+        id S1753161AbeBFSfl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:35:41 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:37694 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752806AbeBFSfc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:35:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name E0DD02E5E28
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180206155056.GF2269@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 06 Feb 2018 19:35:29 +0100
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Mike Galbraith <efault@gmx.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>, ming.lei@redhat.com,
+        ivan@ludios.org, 169364@studenti.unimore.it,
+        Serena Ziviani <ziviani.serena@gmail.com>
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+In-Reply-To: <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+ <20180205190510.5499-2-paolo.valente@linaro.org>
+ <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+ <1517903761.9843.12.camel@gmx.de>
+ <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+ <1517918234.25841.31.camel@gmx.de>
+ <77124223e6116350a5184a5199850304@natalenko.name>
+ <1517924768.25841.32.camel@gmx.de>
+ <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
+ <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
+Message-ID: <82ffc96aacc3945861cbb708df346338@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.3
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1517942130;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
+        bh=5Q9hGCUPXZ3isG9YhiYrq/UVmueJcTR8PLhKi8FweA8=;
+        b=jCjj3hHrst0Nu6odlAzhjS/522x+ptHVcKfp1g+kFBrlJtPbLDh8lOUm0We/W1dDUmggKr
+        bVTW+JkutKUi5I8T3zqAGHMbGgitAmy9iqvmNMtZoLxxfazirjfaTU3cGheg9XrkXE4IVR
+        xUNaeuD1LKcYYxwz6uGye6oyXmt9fDI=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517942130; a=rsa-sha256;
+        cv=none;
+        b=jpKkxfZajuJZVSnc8y5eLbo0wRMQo+U1Oegcc2sEpuygC4jb+EB1kllmiJVUvXod5/EtFJbm0feijRPmJpz+UkRV5zJZzHhR/rVXkM43jVFdvmZviJXyKStpkAiWtJlUJwtd8Bq3F61uwyWMG5I7eXOBye1h8foefI21GvwYxSI=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-Feb 16:50, Peter Zijlstra wrote:
-> 
-> Mostly nice, I almost applied, except too many nits below.
+Hi.
 
-:)
+06.02.2018 15:50, Paolo Valente wrote:
+> Could you please do a
+> gdb <buildir>/block/bfq-iosched.o # or vmlinux.o if bfq is builtin
+> list *(bfq_finish_requeue_request+0x54)
+> list *(bfq_put_queue+0x10b)
+> for me?
 
-Thanks for the really fast still useful review!
+Fresh crashes and gdb output are given below. A side note: it is harder 
+to trigger things on a slower machine, so clearly some timing-bounded 
+race condition there.
 
-> On Tue, Feb 06, 2018 at 02:41:29PM +0000, Patrick Bellasi wrote:
-> 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 7b6535987500..118f49c39b60 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5193,6 +5193,20 @@ static inline void hrtick_update(struct rq *rq)
-> >  }
-> >  #endif
-> >  
-> > +static inline unsigned long task_util(struct task_struct *p);
-> > +static inline unsigned long _task_util_est(struct task_struct *p);
-> 
-> What's with the leading underscore? I don't see one without it.
+[  134.276548] BUG: unable to handle kernel NULL pointer dereference at  
+          (null)
+[  134.283699] IP: blk_flush_complete_seq+0x20a/0x300
+[  134.288163] PGD 0 P4D 0
+[  134.291284] Oops: 0002 [#1] PREEMPT SMP PTI
+[  134.293842] Modules linked in: bochs_drm ttm nls_iso8859_1 kvm_intel 
+nls_cp437 vfat fat drm_kms_helper kvm drm irqbypass psmouse iTCO_wdt 
+ppdev iTCO_vendor_support input_leds led_class i2c_i801 parport_pc 
+joydev intel_agp parport intel_gtt mousedev lpc_ich rtc_cmos syscopyarea 
+evdev sysfillrect agpgart qemu_fw_cfg mac_hid sysimgblt fb_sys_fops 
+sch_fq_codel ip_tables x_tables xfs dm_thin_pool dm_persistent_data 
+dm_bio_prison dm_bufio libcrc32c crc32c_generic dm_crypt algif_skcipher 
+af_alg dm_mod hid_generic usbhid raid10 hid md_mod sr_mod sd_mod cdrom 
+uhci_hcd ehci_pci serio_raw crct10dif_pclmul crc32_pclmul atkbd 
+crc32c_intel libps2 ghash_clmulni_intel pcbc xhci_pci xhci_hcd ehci_hcd 
+aesni_intel aes_x86_64 crypto_simd glue_helper cryptd ahci libahci 
+libata usbcore usb_common i8042 serio virtio_scsi
+[  134.340606]  scsi_mod virtio_blk virtio_net virtio_pci virtio_ring 
+virtio
+[  134.345803] CPU: 0 PID: 178 Comm: kworker/0:1H Not tainted 4.15.0-pf2 
+#1
+[  134.350309] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+0.0.0 02/06/2015
+[  134.355106] Workqueue: kblockd blk_mq_run_work_fn
+[  134.359034] RIP: 0010:blk_flush_complete_seq+0x20a/0x300
+[  134.367647] RSP: 0000:ffff88000f803ce8 EFLAGS: 00010082
+[  134.371632] RAX: ffff88000d9755c0 RBX: ffff88000d9755a0 RCX: 
+ffff88000c9b39a8
+[  134.375675] RDX: 0000000000000000 RSI: ffff88000d9755d0 RDI: 
+ffff88000c9b3900
+[  134.381068] RBP: ffff88000d21a990 R08: ffff88000d9755b0 R09: 
+0000000000000000
+[  134.386302] R10: ffff8800058ff100 R11: 000000000002000b R12: 
+0000000000000000
+[  134.396915] R13: ffff88000d9755f0 R14: 0000000000000046 R15: 
+ffff88000d9755a0
+[  134.401140] FS:  0000000000000000(0000) GS:ffff88000f800000(0000) 
+knlGS:0000000000000000
+[  134.407361] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  134.412384] CR2: 0000000000000000 CR3: 0000000004008006 CR4: 
+00000000001606f0
+[  134.416913] Call Trace:
+[  134.420251]  <IRQ>
+[  134.427731]  mq_flush_data_end_io+0xb3/0xf0
+[  134.431848]  scsi_end_request+0x90/0x1e0 [scsi_mod]
+[  134.436424]  scsi_io_completion+0x237/0x650 [scsi_mod]
+[  134.440109]  __blk_mq_complete_request+0xc4/0x150
+[  134.444517]  ? scsi_mq_get_budget+0x110/0x110 [scsi_mod]
+[  134.449603]  ata_scsi_qc_complete+0x8d/0x430 [libata]
+[  134.458487]  ata_qc_complete_multiple+0x8d/0xe0 [libata]
+[  134.461726]  ahci_handle_port_interrupt+0xc9/0x5b0 [libahci]
+[  134.466420]  ahci_handle_port_intr+0x54/0xb0 [libahci]
+[  134.470128]  ahci_single_level_irq_intr+0x3b/0x60 [libahci]
+[  134.473327]  __handle_irq_event_percpu+0x44/0x1e0
+[  134.476700]  handle_irq_event_percpu+0x30/0x70
+[  134.480227]  handle_irq_event+0x37/0x60
+[  134.490341]  handle_edge_irq+0x107/0x1c0
+[  134.492876]  handle_irq+0x1f/0x30
+[  134.495497]  do_IRQ+0x4d/0xe0
+[  134.497963]  common_interrupt+0xa2/0xa2
+[  134.500877]  </IRQ>
+[  134.503129] RIP: 0010:_raw_spin_unlock_irqrestore+0x11/0x40
+[  134.506782] RSP: 0000:ffffc90000307d30 EFLAGS: 00000293 ORIG_RAX: 
+ffffffffffffffdb
+[  134.511845] RAX: 0000000000000001 RBX: ffff88000db04000 RCX: 
+0000000000000008
+[  134.523019] RDX: 0000000000000100 RSI: 0000000000000293 RDI: 
+0000000000000293
+[  134.527968] RBP: 0000000000000293 R08: ffffffffffffffff R09: 
+0000000000000040
+[  134.532289] R10: 00000000008e66bf R11: 000000000002000b R12: 
+0000000000000000
+[  134.536376] R13: ffff88000d26a000 R14: ffff88000b99ac48 R15: 
+ffff88000d26a000
+[  134.541046]  ata_scsi_queuecmd+0xa0/0x210 [libata]
+[  134.544363]  scsi_dispatch_cmd+0xe8/0x260 [scsi_mod]
+[  134.552883]  scsi_queue_rq+0x4cf/0x560 [scsi_mod]
+[  134.556811]  blk_mq_dispatch_rq_list+0x8f/0x4c0
+[  134.559741]  blk_mq_sched_dispatch_requests+0x105/0x190
+[  134.563253]  __blk_mq_run_hw_queue+0x80/0x90
+[  134.565540]  process_one_work+0x1df/0x420
+[  134.568041]  worker_thread+0x2b/0x3d0
+[  134.571032]  ? process_one_work+0x420/0x420
+[  134.573964]  kthread+0x113/0x130
+[  134.584370]  ? kthread_create_on_node+0x70/0x70
+[  134.587355]  ret_from_fork+0x35/0x40
+[  134.589796] Code: 39 d0 0f 84 8f 00 00 00 48 8b 97 b0 00 00 00 49 c1 
+e0 04 45 31 e4 48 8b b7 a8 00 00 00 49 01 d8 48 8d 8f a8 00 00 00 48 89 
+56 08 <48> 89 32 49 8b 50 18 49 89 48 18 48 89 87 a8 00 00 00 48 89 97
+[  134.598881] RIP: blk_flush_complete_seq+0x20a/0x300 RSP: 
+ffff88000f803ce8
+[  134.601812] CR2: 0000000000000000
+[  134.603728] ---[ end trace fc6d0cdf33d29717 ]---
+[  134.612349] Kernel panic - not syncing: Fatal exception in interrupt
+[  134.615630] Kernel Offset: disabled
+[  134.617712] ---[ end Kernel panic - not syncing: Fatal exception in 
+interrupt
 
-Good point, I was actually expecting this question and I should have
-added it to the cover letter, sorry.
+(gdb) list *(blk_flush_complete_seq+0x20a)
+0xffffffff813056ca is in blk_flush_complete_seq 
+(./include/linux/compiler.h:212).
+207     {
+208             switch (size) {
+209             case 1: *(volatile __u8 *)p = *(__u8 *)res; break;
+210             case 2: *(volatile __u16 *)p = *(__u16 *)res; break;
+211             case 4: *(volatile __u32 *)p = *(__u32 *)res; break;
+212             case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
+213             default:
+214                     barrier();
+215                     __builtin_memcpy((void *)p, (const void *)res, 
+size);
+216                     barrier();
 
-The reasoning was: the task's estimated utilization is defined as the
-max between PELT and the "estimation". Where "estimation" is
-the max between EWMA and the last ENQUEUED utilization.
+[  231.545605] BUG: unable to handle kernel paging request at 
+0000001000000028
+[  231.551962] IP: bfq_put_queue+0x10b/0x130
+[  231.556307] PGD 0 P4D 0
+[  231.558939] Oops: 0000 [#1] PREEMPT SMP PTI
+[  231.562149] Modules linked in: nls_iso8859_1 nls_cp437 vfat fat 
+kvm_intel kvm bochs_drm irqbypass ttm iTCO_wdt ppdev drm_kms_helper 
+iTCO_vendor_support psmouse input_leds drm led_class joydev parport_pc 
+mousedev intel_agp syscopyarea parport intel_gtt sysfillrect i2c_i801 
+evdev sysimgblt agpgart rtc_cmos qemu_fw_cfg mac_hid fb_sys_fops lpc_ich 
+sch_fq_codel ip_tables x_tables xfs dm_thin_pool dm_persistent_data 
+dm_bio_prison dm_bufio libcrc32c crc32c_generic dm_crypt algif_skcipher 
+af_alg dm_mod hid_generic usbhid hid raid10 md_mod sr_mod cdrom sd_mod 
+serio_raw atkbd libps2 uhci_hcd crct10dif_pclmul crc32_pclmul 
+crc32c_intel ghash_clmulni_intel pcbc xhci_pci aesni_intel aes_x86_64 
+ehci_pci xhci_hcd ehci_hcd ahci crypto_simd glue_helper libahci cryptd 
+usbcore libata usb_common i8042 serio virtio_scsi
+[  231.608289]  scsi_mod virtio_blk virtio_net virtio_pci virtio_ring 
+virtio
+[  231.613610] CPU: 0 PID: 187 Comm: kworker/0:1H Not tainted 4.15.0-pf2 
+#1
+[  231.619675] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+0.0.0 02/06/2015
+[  231.624477] Workqueue: kblockd blk_mq_requeue_work
+[  231.628532] RIP: 0010:bfq_put_queue+0x10b/0x130
+[  231.635453] RSP: 0000:ffffc90000377c98 EFLAGS: 00010282
+[  231.638621] RAX: 0000001000000000 RBX: ffff88000cdf20f0 RCX: 
+0000000000000000
+[  231.642332] RDX: 0000000000000000 RSI: ffff88000d4926d8 RDI: 
+ffff88000cdf2120
+[  231.647000] RBP: 000000000d4926a8 R08: 0000000000000041 R09: 
+ffff88000cdf20f0
+[  231.652682] R10: 0000000000105a7f R11: 000000000002000b R12: 
+ffff88000cdf2120
+[  231.657102] R13: ffff88000e152188 R14: 0000000000000041 R15: 
+0000000000000000
+[  231.661213] FS:  0000000000000000(0000) GS:ffff88000f800000(0000) 
+knlGS:0000000000000000
+[  231.664746] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  231.667647] CR2: 0000001000000028 CR3: 0000000004008002 CR4: 
+00000000001606f0
+[  231.671475] Call Trace:
+[  231.673873]  bfq_finish_requeue_request+0x54/0x380
+[  231.676823]  __blk_mq_requeue_request+0x5c/0x140
+[  231.679465]  blk_mq_dispatch_rq_list+0x1b4/0x4c0
+[  231.681798]  blk_mq_sched_dispatch_requests+0x105/0x190
+[  231.685059]  __blk_mq_run_hw_queue+0x80/0x90
+[  231.687750]  __blk_mq_delay_run_hw_queue+0x92/0xe0
+[  231.691510]  blk_mq_run_hw_queue+0x25/0x90
+[  231.694759]  blk_mq_run_hw_queues+0x3a/0x50
+[  231.696706]  blk_mq_requeue_work+0x116/0x140
+[  231.699340]  process_one_work+0x1df/0x420
+[  231.703147]  worker_thread+0x2b/0x3d0
+[  231.705322]  ? process_one_work+0x420/0x420
+[  231.707002]  kthread+0x113/0x130
+[  231.708494]  ? kthread_create_on_node+0x70/0x70
+[  231.710209]  ? kthread_create_on_node+0x70/0x70
+[  231.712754]  ret_from_fork+0x35/0x40
+[  231.715068] Code: c1 e8 06 83 e0 01 48 83 f8 01 45 19 f6 e8 be 3b 00 
+00 41 83 e6 ee 48 89 c7 41 83 c6 53 e8 8e 3b 00 00 49 89 d9 45 89 f0 44 
+89 f9 <48> 8b 70 28 48 c7 c2 3a 9a e5 81 55 4c 89 ef e8 11 1c e0 ff 8b
+[  231.725379] RIP: bfq_put_queue+0x10b/0x130 RSP: ffffc90000377c98
+[  231.728391] CR2: 0000001000000028
+[  231.730840] ---[ end trace 03bd81aa0d2b1434 ]---
+[  231.733269] note: kworker/0:1H[187] exited with preempt_count 1
 
-Thus I was envisioning these two calls:
+(gdb) l *(bfq_put_queue+0x10b)
+0xffffffff81334d1b is in bfq_put_queue (block/bfq-iosched.c:3978).
+3973    #ifdef CONFIG_BFQ_GROUP_IOSCHED
+3974            struct bfq_group *bfqg = bfqq_group(bfqq);
+3975    #endif
+3976
+3977            if (bfqq->bfqd)
+3978                    bfq_log_bfqq(bfqq->bfqd, bfqq, "put_queue: %p 
+%d",
+3979                                 bfqq, bfqq->ref);
+3980
+3981            bfqq->ref--;
+3982            if (bfqq->ref)
 
-   _task_util_est := max(EWMA, ENQUEUED)
-    task_util_est := max(util_avg, _task_util_est)
+(gdb) l *(bfq_finish_requeue_request+0x54)
+0xffffffff81335294 is in bfq_finish_requeue_request 
+(block/bfq-iosched.c:4804).
+4799             * that re-insertions of requeued requests, without
+4800             * re-preparation, can happen only for pass_through or 
+at_head
+4801             * requests (which are not re-inserted into bfq internal
+4802             * queues).
+4803             */
+4804            rq->elv.priv[0] = NULL;
+4805            rq->elv.priv[1] = NULL;
+4806    }
+4807
+4808    /*
 
-but since now we have clients only for the first API, I've not added
-the second one. Still I would prefer to keep the "_" to make it clear
-that's and util_est's internal signal, not the actual task's estimated
-utilization.
+[  322.939697] BUG: unable to handle kernel NULL pointer dereference at 
+0000000000000008
+[  322.944283] IP: blk_flush_complete_seq+0x206/0x300
+[  322.947463] PGD 0 P4D 0
+[  322.950266] Oops: 0002 [#2] PREEMPT SMP PTI
+[  322.958898] Modules linked in: kvm_intel bochs_drm nls_iso8859_1 
+nls_cp437 vfat fat ttm kvm drm_kms_helper drm iTCO_wdt irqbypass psmouse 
+ppdev iTCO_vendor_support input_leds led_class i2c_i801 intel_agp 
+parport_pc intel_gtt joydev lpc_ich rtc_cmos agpgart evdev parport 
+syscopyarea mousedev qemu_fw_cfg sysfillrect mac_hid sysimgblt 
+fb_sys_fops sch_fq_codel ip_tables x_tables xfs dm_thin_pool 
+dm_persistent_data dm_bio_prison dm_bufio libcrc32c crc32c_generic 
+dm_crypt algif_skcipher af_alg dm_mod hid_generic usbhid hid 
+crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel raid10 
+pcbc md_mod sr_mod cdrom sd_mod serio_raw atkbd libps2 uhci_hcd xhci_pci 
+xhci_hcd ahci ehci_pci libahci aesni_intel aes_x86_64 crypto_simd 
+glue_helper ehci_hcd cryptd libata usbcore usb_common i8042 serio 
+virtio_scsi
+[  323.001668]  scsi_mod virtio_blk virtio_net virtio_pci virtio_ring 
+virtio
+[  323.006121] CPU: 0 PID: 215 Comm: kworker/u5:1 Tainted: G      D      
+     4.15.0-pf2 #1
+[  323.010263] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+0.0.0 02/06/2015
+[  323.021225] Workqueue: kcryptd kcryptd_crypt [dm_crypt]
+[  323.024947] RIP: 0010:blk_flush_complete_seq+0x206/0x300
+[  323.028405] RSP: 0018:ffff88000f803ed0 EFLAGS: 00010086
+[  323.032491] RAX: ffff88000cfe78b0 RBX: ffff88000cfe78a0 RCX: 
+ffff88000d4d85a8
+[  323.036262] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 
+ffff88000d4d8500
+[  323.041032] RBP: ffff88000d6510a0 R08: ffff88000cfe78a0 R09: 
+0000000000000000
+[  323.051518] R10: ffff88000dab4d00 R11: ffffffffc01aafb0 R12: 
+0000000000000000
+[  323.055818] R13: ffff88000cfe78f0 R14: 0000000000000046 R15: 
+ffff88000cfe78a0
+[  323.060965] FS:  0000000000000000(0000) GS:ffff88000f800000(0000) 
+knlGS:0000000000000000
+[  323.065902] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  323.070571] CR2: 0000000000000008 CR3: 0000000004008001 CR4: 
+00000000001606f0
+[  323.076591] Call Trace:
+[  323.081685]  <IRQ>
+[  323.084025]  mq_flush_data_end_io+0xb3/0xf0
+[  323.087155]  scsi_end_request+0x90/0x1e0 [scsi_mod]
+[  323.095768]  scsi_io_completion+0x237/0x650 [scsi_mod]
+[  323.099928]  flush_smp_call_function_queue+0x7c/0xf0
+[  323.104028]  smp_call_function_single_interrupt+0x32/0xf0
+[  323.114170]  call_function_single_interrupt+0xa2/0xb0
+[  323.118208]  </IRQ>
+[  323.121040] RIP: 0010:_aesni_enc4+0x178/0x190 [aesni_intel]
+[  323.124658] RSP: 0018:ffffc900004a7c40 EFLAGS: 00000293 ORIG_RAX: 
+ffffffffffffff04
+[  323.128777] RAX: ffffffffc01ab208 RBX: 0000000000000180 RCX: 
+0000000000000000
+[  323.133003] RDX: ffff88000daf9c80 RSI: ffff88000a2b3c80 RDI: 
+ffff88000cd24260
+[  323.139211] RBP: ffffc900004a7d40 R08: ffff8800089f7718 R09: 
+0000000000000010
+[  323.146930] R10: ffff88000cd24290 R11: ffffffffc01aafb0 R12: 
+0000000000000080
+[  323.151758] R13: ffffffffc01c90c8 R14: ffff88000a2b3d00 R15: 
+ffff88000daf9d00
+[  323.156507]  ? _aesni_enc1+0xac/0xac [aesni_intel]
+[  323.160419]  ? _aesni_dec1+0xac/0xac [aesni_intel]
+[  323.164204]  ? aesni_xts_crypt8+0x21e/0x260 [aesni_intel]
+[  323.167322]  ? glue_xts_req_128bit+0x125/0x1d0 [glue_helper]
+[  323.178383]  ? crypt_convert+0x961/0xef0 [dm_crypt]
+[  323.182089]  ? xts_decrypt+0x40/0x40 [aesni_intel]
+[  323.185825]  ? crypt_convert+0x961/0xef0 [dm_crypt]
+[  323.189438]  ? bio_alloc_bioset+0x132/0x1e0
+[  323.191926]  ? kcryptd_crypt+0x1ff/0x360 [dm_crypt]
+[  323.194998]  ? process_one_work+0x1df/0x420
+[  323.197475]  ? worker_thread+0x2b/0x3d0
+[  323.206991]  ? process_one_work+0x420/0x420
+[  323.210387]  ? kthread+0x113/0x130
+[  323.213396]  ? kthread_create_on_node+0x70/0x70
+[  323.216751]  ? ret_from_fork+0x35/0x40
+[  323.220815] Code: 48 8b 10 48 39 d0 0f 84 8f 00 00 00 48 8b 97 b0 00 
+00 00 49 c1 e0 04 45 31 e4 48 8b b7 a8 00 00 00 49 01 d8 48 8d 8f a8 00 
+00 00 <48> 89 56 08 48 89 32 49 8b 50 18 49 89 48 18 48 89 87 a8 00 00
+[  323.233543] RIP: blk_flush_complete_seq+0x206/0x300 RSP: 
+ffff88000f803ed0
+[  323.238885] CR2: 0000000000000008
+[  323.241673] ---[ end trace 2ec7b63c3a4a4a02 ]---
+[  323.245006] Kernel panic - not syncing: Fatal exception in interrupt
+[  323.248858] Kernel Offset: disabled
+[  323.250753] ---[ end Kernel panic - not syncing: Fatal exception in 
+interrupt
 
-Does it make sense?
-
-Do you prefer I just remove the "_" and we will refactor it once we
-should add a customer for the proper task's util_est?
-
-> > +
-> > +static inline void util_est_enqueue(struct task_struct *p)
-> 
-> Also pass @rq from enqueue_task_fair() ? I see no point in computing
-> task_rq(p) if we already have the value around.
-
-You right, that seems to make sense.
-I look into it and update if really sane.
-
-> 
-> > +{
-> > +	struct cfs_rq *cfs_rq = &task_rq(p)->cfs;
-> > +
-> > +	if (!sched_feat(UTIL_EST))
-> > +		return;
-> > +
-> > +	/* Update root cfs_rq's estimated utilization */
-> > +	cfs_rq->avg.util_est.enqueued += _task_util_est(p);
-> > +}
-> 
-> 
-> > +/*
-> > + * Check if the specified (signed) value is within a specified margin,
-> > + * based on the observation that:
-> > + *     abs(x) < y := (unsigned)(x + y - 1) < (2 * y - 1)
-> 
->     * Note: this only works when x+y < INT_MAX.
-
-+1
-
-> 
-> > + */
-> > +static inline bool within_margin(long value, unsigned int margin)
-> 
-> This mixing of long and int is dodgy, do we want to consistently use int
-> here?
-
-Right, perhaps better "unsigned int" for both params, isn't?
-
-
-> > +{
-> > +	return ((unsigned int)(value + margin - 1) < (2 * margin - 1));
-> > +}
-> > +
-> > +static inline void util_est_dequeue(struct task_struct *p, int flags)
-> > +{
-> > +	struct cfs_rq *cfs_rq = &task_rq(p)->cfs;
-> > +	unsigned long util_last;
-> > +	long last_ewma_diff;
-> > +	unsigned long ewma;
-> > +	long util_est = 0;
-> 
-> Why long?
-
-Right, because I've did not spot the possibility to update it when I
-changed the util_est type... anyway, I'll check better, but likely
-we don't need a long range.
-
-> > +
-> > +	if (!sched_feat(UTIL_EST))
-> > +		return;
-> > +
-> > +	/*
-> > +	 * Update root cfs_rq's estimated utilization
-> > +	 *
-> > +	 * If *p is the last task then the root cfs_rq's estimated utilization
-> > +	 * of a CPU is 0 by definition.
-> > +	 */
-> > +	if (cfs_rq->nr_running) {
-> > +		util_est  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
-> 
-> Because util_est.enqueued is of type 'unsigned int'.
-
-Indeed...
-
-> 
-> > +		util_est -= min_t(long, util_est, _task_util_est(p));
-> > +	}
-> > +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, util_est);
-> 
-> long to int truncate
-
-right!
-
-We have util_avg related signals which are all long based, but in the
-scope of "utilization" tracking, and specifically for "util_est" signals,
-int should have a sufficient range.
- 
-> > +
-> > +	/*
-> > +	 * Skip update of task's estimated utilization when the task has not
-> > +	 * yet completed an activation, e.g. being migrated.
-> > +	 */
-> > +	if (!(flags & DEQUEUE_SLEEP))
-> > +		return;
-> > +
-> > +	ewma = READ_ONCE(p->se.avg.util_est.ewma);
-> > +	util_last = task_util(p);
-> 
-> Again, all kinds of long, while the ewma type itself is of 'unsigned
-> int'.
-
-Yes, for utilization should be enough...
-
-> 
-> > +
-> > +	/*
-> > +	 * Skip update of task's estimated utilization when its EWMA is
-> > +	 * already ~1% close to its last activation value.
-> > +	 */
-> > +	last_ewma_diff = util_last - ewma;
-> > +	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
-> > +		return;
-> > +
-> > +	/*
-> > +	 * Update Task's estimated utilization
-> > +	 *
-> > +	 * When *p completes an activation we can consolidate another sample
-> > +	 * about the task size. This is done by storing the last PELT value
-> > +	 * for this task and using this value to load another sample in the
-> > +	 * exponential weighted moving average:
-> > +	 *
-> > +	 *  ewma(t) = w *  task_util(p) + (1-w) * ewma(t-1)
-> > +	 *          = w *  task_util(p) +         ewma(t-1)  - w * ewma(t-1)
-> > +	 *          = w * (task_util(p) -         ewma(t-1)) +     ewma(t-1)
-> > +	 *          = w * (      last_ewma_diff            ) +     ewma(t-1)
-> > +	 *          = w * (last_ewma_diff  +  ewma(t-1) / w)
-> > +	 *
-> > +	 * Where 'w' is the weight of new samples, which is configured to be
-> > +	 * 0.25, thus making w=1/4 ( >>= UTIL_EST_WEIGHT_SHIFT)
-> > +	 */
-> > +	ewma   = last_ewma_diff + (ewma << UTIL_EST_WEIGHT_SHIFT);
-> > +	ewma >>= UTIL_EST_WEIGHT_SHIFT;
-> > +
-> > +	WRITE_ONCE(p->se.avg.util_est.ewma, ewma);
-> > +	WRITE_ONCE(p->se.avg.util_est.enqueued, util_last);
-> 
-> Two stores to that word... can we fix that nicely?
-
-Good point, the single word comes from the goal to fit into the same
-cache line of sched_avg.
-
-I think we can fix it by having a struct util_est on stack and then it
-should be possible to update the above code to do:
-
-   ue = READ_ONCE(p->se.avg.util_est)
-   ... magic code on ue.{enqueued, ewma} ...
-   WRITE_ONCE(p->se.avg.util_est, ue);
-
-That should be safe on 32bit builds too, right?
-
-> > +}
-> 
-> > +static inline unsigned long _task_util_est(struct task_struct *p)
-> > +{
-> > +	return max(p->se.avg.util_est.ewma, p->se.avg.util_est.enqueued);
-> > +}
-> 
-> Aside from the underscore thing I already noted, why is this here and
-> not where the fwd declaration is?
-
-Because here is where we have already the definitions of
-cpu_util{_est}() and task_util()... that's to try to keep things
-together. Does it make sense?
-
-> > +/*
-> > + * UtilEstimation. Use estimated CPU utilization.
-> > + */
-> > +SCHED_FEAT(UTIL_EST, false)
-> 
-> Since you couldn't measure it, do we wants it true?
-
-I'm just a single tester so far, I would be more confident once
-someone volunteer to turn this on to give a better coverage.
-
-Moreover, a small out-of-tree patch enabling it for mobile devices is
-more then acceptable for the time being ;)
-
-Finally, we are also considering to post a follow-up to enable it via
-KConfig along with a PELT half-life tunable, i.e using a 16ms instead
-of the default 32ms. Do you think this is something can fly mainline?
-
-Cheers Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+(gdb) l *(blk_flush_complete_seq+0x206)
+0xffffffff813056c6 is in blk_flush_complete_seq 
+(./include/linux/list.h:105).
+100      * This is only for internal list manipulation where we know
+101      * the prev/next entries already!
+102      */
+103     static inline void __list_del(struct list_head * prev, struct 
+list_head * next)
+104     {
+105             next->prev = prev;
+106             WRITE_ONCE(prev->next, next);
+107     }
+108
+109     /**
