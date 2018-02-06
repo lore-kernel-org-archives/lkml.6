@@ -1,103 +1,81 @@
-Return-Path: <willy@infradead.org>
-X-Google-Smtp-Source: AH8x226baAsWTrrXyjnj0dMrX9SwWEv/9/e3UA/5FQzpPx5YL/4ZzPC4NJaqv3GUKdcv1gbkWhE/
-ARC-Seal: i=1; a=rsa-sha256; t=1518456022; cv=none;
+Return-Path: <kernel-hardening-return-11628-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x226AXa+F3k+28pUmK2kPv0Fy5vDn0f+SoBXGWGC+LyCuABgfGd0irq4Q5XsHP8HRCV7N64WX
+ARC-Seal: i=1; a=rsa-sha256; t=1517920680; cv=none;
         d=google.com; s=arc-20160816;
-        b=OeXVRFmCg3apW4ux44ZMZArSzKt+s9IXXjC6ljScnA1TtGTsHBMWu3VuO0ddOPBcVx
-         YSG0qq8qnaZPAbZ9vVtQ/Lwd9oJb6fn0h0W8Mt9VYBmKZiW2pzPJMPmONR6oe0RHnRhB
-         5LFliHZy+UIxO3C9yTmdwLSeWSBB1dmFqpv6H3GYqkIGJMZwOFNOs9k2qJR2iWowg6Jx
-         Nws+z5GA3jXof6ajIhBBojo80zZkRKhcIOnBhXtpu8rK30yWxBbxT5GYjjYDCIOxktLm
-         MZZPsbTNpbhpQ0uwtZRSIvAdMocs7zSksUvA/PGrMTw6rgaaUz+KiIFpOtL6OJ9D6sDf
-         gnyw==
+        b=qylfxjZmXIBPE5BbZru8nW4/yBAhzIaLHnlba+SmSL4HgP5LQzU0SEWDZs5u5SPlpz
+         rHzirN9wLTIu9BM4fWoI+1VkXWXkZ6QEIq9i+DAuqF82pdDf0US/Dtk8vM2Q/mjG+EPp
+         7JpTLY0dbAk+GT3HVObhrz42yVpk3Li/NFCR3MvleZJPUzdsEel7O6L3pgUpwBMeX2BQ
+         xbhsn1sbeIt5mgTq9zLo3XJ6a/LB1bcMoFHM7D/0+lkt4Jy2JWj0Uoet3fAUi611xE94
+         pCXTcr46sUwYvSATHHfndIqWTyYdGdHEi7weTd6X7eqM/4Y8PkueDmymn73siI58/698
+         pWdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=NMhSzjWpoKE9vIY691GMVNLVnwv2WPoQtW5F5wbgYZI=;
-        b=bpcve3BRqMiTQXakcJCxFGAFzF8F6Kjk0amCYzh0brxhffIoWuI4BMFgK3+Ns0GRg1
-         hjeqPjUEFRYgx3UTpKeXTJaxeQDtux9CqtVPpEIWq7MA2TKaBKnsjlxt0qu++L/RgW6t
-         hvGKU4cEVOvAe2hjKJmJQ0gnNgIPeVo0kh/rptGG+EB+eBJZ5HchNPLldukbt5adif+E
-         Z2H/OA9bMxa0lzf7syqd4vtMyMkmWa3IsM/jQOewKnNJtcPs/Tl9T4EByFNsC6ilwXev
-         pZtTlTJwYYZXrFDafr3JB7DKuLZn6vafwdbNAyzVZZdSunEERQA+19AWv1G98Mc2t6P7
-         yDbg==
+         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=atjfp5JR0cRASKvKmF9XjbENSYkPVRFBL1h1ugyZxI0=;
+        b=N/TA2AKHqM4zMUxAC411U2YEQOWh2b+RkU+Cp5EaBJRnSkEI2q/njO7/Y9xRcurkOM
+         cWuNw+Ktq8V++NQzYYhvHXEPEa9988oZpoWJCa9At/xwdL0sHEFez9W8V8c8iiROvFlb
+         t64G7L7kxDdW5OvN2XN6BcM7+b5o+6J6tu7WnBaa52lHDn+Hq1qT2g0nusvdw+4Pjpec
+         +gO/eSTnYb4qrWxG71L+aTkiwKSxWWa0HAg6fSHYEbxE3UaiXZE57NU+guBZlA76DkhQ
+         /Xq5BhFr9LWb2wO2kDCpFTGR3aoChrcd1CaBX+F0YPjXrE7buxIKIzZZJUGIit5GY2dp
+         v/Rg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=Sk3GMuli;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=ULS+WJUi;
-       spf=pass (google.com: best guess record for domain of willy@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=willy@infradead.org
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=Kfr/IWxz;
+       spf=pass (google.com: domain of kernel-hardening-return-11628-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11628-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=Sk3GMuli;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=ULS+WJUi;
-       spf=pass (google.com: best guess record for domain of willy@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=willy@infradead.org
-Date: Mon, 12 Feb 2018 09:19:17 -0800
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=Kfr/IWxz;
+       spf=pass (google.com: domain of kernel-hardening-return-11628-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11628-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Date: Tue, 6 Feb 2018 04:37:35 -0800
 From: Matthew Wilcox <willy@infradead.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Igor Stoppa <igor.stoppa@huawei.com>, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: License documentation
-Message-ID: <20180212171917.GA9396@bombadil.infradead.org>
+To: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: jglisse@redhat.com, keescook@chromium.org, mhocko@kernel.org,
+	labbott@redhat.com, hch@infradead.org, cl@linux.com,
+	linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH 3/6] struct page: add field for vm_struct
+Message-ID: <20180206123735.GA6151@bombadil.infradead.org>
 References: <20180130151446.24698-1-igor.stoppa@huawei.com>
- <20180130151446.24698-6-igor.stoppa@huawei.com>
- <20180130100852.2213b94d@lwn.net>
- <56eb3e0d-d74d-737a-9f85-fead2c40c17c@huawei.com>
- <20180210033714.GA12711@bombadil.infradead.org>
- <20180212082849.1377f7e6@lwn.net>
+ <20180130151446.24698-4-igor.stoppa@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180212082849.1377f7e6@lwn.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180130151446.24698-4-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592216541836755466?=
-X-GMAIL-MSGID: =?utf-8?q?1592216541836755466?=
+X-GMAIL-THRID: =?utf-8?q?1591031026595146297?=
+X-GMAIL-MSGID: =?utf-8?q?1591655195641676944?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 08:28:49AM -0700, Jonathan Corbet wrote:
-> On Fri, 9 Feb 2018 19:37:14 -0800
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > I've done this as the first line of my new documentation files:
-> > 
-> > .. SPDX-License-Identifier: CC-BY-SA-4.0
-> > 
-> > I think this is the CC license that's closest in spirit to the GPL without
-> > the unintended consequences of the GPL when used on documentation.  The
-> > GFDL seems to be out of favour these days.
-> 
-> I think that's a great license.  I still fear that it is not suitable for
-> kernel documentation, though, especially when we produce documents that
-> include significant text from the (GPL-licensed) kernel source.  The
-> result is almost certainly not distributable, and I don't think that's a
-> good thing.  The GPL is not perfect for documentation, but I don't think
-> that we have a better alternative for in-kernel docs.
+On Tue, Jan 30, 2018 at 05:14:43PM +0200, Igor Stoppa wrote:
+> @@ -1744,6 +1748,7 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+>  			const void *caller)
+>  {
+>  	struct vm_struct *area;
+> +	unsigned int page_counter;
+>  	void *addr;
+>  	unsigned long real_size = size;
+>  
+> @@ -1769,6 +1774,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+>  
+>  	kmemleak_vmalloc(area, size, gfp_mask);
+>  
+> +	for (page_counter = 0; page_counter < area->nr_pages; page_counter++)
+> +		area->pages[page_counter]->area = area;
+> +
+>  	return addr;
+>  
 
-That's a reasonable concern.  I've read other reasonable concerns about
-the unintended effects of using the GPL to produce a printed book (eg
-can you print it in a proprietary font, do you have to provide an
-electronic version of the text, and so on).  I fear these wise words
-still ring true:
+LOCAL variable names should be short, and to the point.  If you have
+some random integer loop counter, it should probably be called ``i``.
+Calling it ``loop_counter`` is non-productive, if there is no chance of it
+being mis-understood.  Similarly, ``tmp`` can be just about any type of
+variable that is used to hold a temporary value.
 
-  But the real problem is that we as a community lack a copyleft license
-  that works well for both code and text. About the only thing that even
-  comes close to working is putting the documentation under the GPL as
-  well, but the GPL is a poor fit for text. Nonetheless, it may be the
-  best we have in cases where GPL-licensed code is to be incorporated
-  into documentation.
-
-I dare suggest another possibility: that we create a further exception to
-the license that the kernel is distributed under.  Something along these
-lines:
-
-Documentation [1] extracted from files marked as GPL [2] may be
-distributed under the terms of the CC-BY-SA-4.0 license.
-
-[1] This includes text explicitly marked for extraction using the kernel-doc
-tool.  It may include short example code sequences.  It does not include 
-code that would normally be expected to be compiled.
-
-[2] GPL-2.0, GPL-2.0+, GPL-1.0+, LGPL-2.0, LGPL-2.0+, LGPL-2.1, LGPL-2.1+
-
-We'd want to run it by a lawyer, of course, to have them check for
-unintended consequences.
+(Documentation/process/coding-style.rst)
