@@ -1,89 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752708AbeBFLTH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 06:19:07 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51581 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752278AbeBFLS7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 06:18:59 -0500
-X-Google-Smtp-Source: AH8x225wS72f0ybdUJ/hBAi3bozg8yTihsroUk04tduqKZa83unXY6ih2lQNqjjsbY6P1UE1M6UfyA==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH] clk: call the clock init() callback before any other ops callback
-Date: Tue,  6 Feb 2018 12:18:55 +0100
-Message-Id: <20180206111855.18827-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
+        id S1752798AbeBFLVw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 06:21:52 -0500
+Received: from foss.arm.com ([217.140.101.70]:35490 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752760AbeBFLVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 06:21:43 -0500
+Date: Tue, 6 Feb 2018 11:21:34 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] sched/core: avoid spurious spinlock recursion splats
+Message-ID: <20180206112133.6gs4kt7qawa6ud3t@lakrids.cambridge.arm.com>
+References: <20180205155118.23657-1-mark.rutland@arm.com>
+ <20180206100307.GD2269@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180206100307.GD2269@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some clocks may need to initialize things, whatever it is, before
-being able to properly operate. Move the .init() call before any
-other callback, such recalc_rate() or get_phase(), so the clock
-is properly setup before being used.
+On Tue, Feb 06, 2018 at 11:03:07AM +0100, Peter Zijlstra wrote:
+> On Mon, Feb 05, 2018 at 03:51:18PM +0000, Mark Rutland wrote:
+> > However, this happens *after* prev->on_cpu is cleared, which allows prev
+> > to be scheduled on another CPU. If prev then attempts to acquire the
+> > same rq lock, before the updated rq->lock.owner is made visible, it will
+> > see itself as the owner.
+> 
+> Cute.
+> 
+> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > index b19552a212de..4f0d2e3701c3 100644
+> > --- a/kernel/sched/sched.h
+> > +++ b/kernel/sched/sched.h
+> > @@ -1342,6 +1342,10 @@ static inline void prepare_lock_switch(struct rq *rq, struct task_struct *next)
+> >  
+> >  static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
+> >  {
+> > +#ifdef CONFIG_DEBUG_SPINLOCK
+> > +	/* this is a valid case when another task releases the spinlock */
+> > +	rq->lock.owner = current;
+> > +#endif
+> >  #ifdef CONFIG_SMP
+> >  	/*
+> >  	 * After ->on_cpu is cleared, the task can be moved to a different CPU.
+> > @@ -1355,10 +1359,6 @@ static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
+> >  	 */
+> >  	smp_store_release(&prev->on_cpu, 0);
+> >  #endif
+> > -#ifdef CONFIG_DEBUG_SPINLOCK
+> > -	/* this is a valid case when another task releases the spinlock */
+> > -	rq->lock.owner = current;
+> > -#endif
+> >  	/*
+> >  	 * If we are tracking spinlock dependencies then we have to
+> >  	 * fix up the runqueue lock - which gets 'carried over' from
+> 
+> Right, so patch:
+> 
+>   31cb1bc0dc94 ("sched/core: Rework and clarify prepare_lock_switch()")
+> 
+> munched all that code and the above no longer fits.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+Ah, sorry. I based this on tip/sched-urgent-for-linus as of yesterday,
+and I guess that was out-of-date.
 
-Hi Stephen, Mike,
+> Does the below change also work for you? (tip/master)
 
-This change is addressing a problem I have with clock driver I'm working
-on. This driver needs the .init() callback to run first is order to answer
-correctly .get_phase(). It does not address an existing issue, not one
-that I'm aware of at least, which is why I did not put a Fixes tag.
+So far it seems to in testing, and looks obviously correct to me.
 
-In any case, it makes sense to run init before running anything else.
+If you're going to drop that on a branch, feel free to add my ack!
 
-Since this changes the same region, this patch applies top of [0]
+Thanks,
+Mark.
 
-[0]: https://lkml.kernel.org/r/20180206105404.13086-1-jbrunet@baylibre.com
-
- drivers/clk/clk.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cca05ea2c058..9d56be6ead39 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2929,6 +2929,17 @@ static int __clk_core_init(struct clk_core *core)
- 		core->orphan = true;
- 	}
- 
-+	/*
-+	 * optional platform-specific magic
-+	 *
-+	 * The .init callback is not used by any of the basic clock types, but
-+	 * exists for weird hardware that must perform initialization magic.
-+	 * Please consider other ways of solving initialization problems before
-+	 * using this callback, as its use is discouraged.
-+	 */
-+	if (core->ops->init)
-+		core->ops->init(core->hw);
-+
- 	/*
- 	 * Set clk's accuracy.  The preferred method is to use
- 	 * .recalc_accuracy. For simple clocks and lazy developers the default
-@@ -3006,17 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
- 		}
- 	}
- 
--	/*
--	 * optional platform-specific magic
--	 *
--	 * The .init callback is not used by any of the basic clock types, but
--	 * exists for weird hardware that must perform initialization magic.
--	 * Please consider other ways of solving initialization problems before
--	 * using this callback, as its use is discouraged.
--	 */
--	if (core->ops->init)
--		core->ops->init(core->hw);
--
- 	kref_init(&core->ref);
- out:
- 	clk_pm_runtime_put(core);
--- 
-2.14.3
+> 
+> ---
+>  kernel/sched/core.c | 27 ++++++++++++++++-----------
+>  1 file changed, 16 insertions(+), 11 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index ee420d78e674..abfd10692022 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2600,19 +2600,31 @@ static inline void finish_task(struct task_struct *prev)
+>  #endif
+>  }
+>  
+> -static inline void finish_lock_switch(struct rq *rq)
+> +static inline void
+> +prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf)
+>  {
+> +	/*
+> +	 * Since the runqueue lock will be released by the next
+> +	 * task (which is an invalid locking op but in the case
+> +	 * of the scheduler it's an obvious special-case), so we
+> +	 * do an early lockdep release here:
+> +	 */
+> +	rq_unpin_lock(rq, rf);
+> +	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
+>  #ifdef CONFIG_DEBUG_SPINLOCK
+>  	/* this is a valid case when another task releases the spinlock */
+> -	rq->lock.owner = current;
+> +	rq->lock.owner = next;
+>  #endif
+> +}
+> +
+> +static inline void finish_lock_switch(struct rq *rq)
+> +{
+>  	/*
+>  	 * If we are tracking spinlock dependencies then we have to
+>  	 * fix up the runqueue lock - which gets 'carried over' from
+>  	 * prev into current:
+>  	 */
+>  	spin_acquire(&rq->lock.dep_map, 0, 0, _THIS_IP_);
+> -
+>  	raw_spin_unlock_irq(&rq->lock);
+>  }
+>  
+> @@ -2843,14 +2855,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
+>  
+>  	rq->clock_update_flags &= ~(RQCF_ACT_SKIP|RQCF_REQ_SKIP);
+>  
+> -	/*
+> -	 * Since the runqueue lock will be released by the next
+> -	 * task (which is an invalid locking op but in the case
+> -	 * of the scheduler it's an obvious special-case), so we
+> -	 * do an early lockdep release here:
+> -	 */
+> -	rq_unpin_lock(rq, rf);
+> -	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
+> +	prepare_lock_switch(rq, next, rf);
+>  
+>  	/* Here we just switch the register state and the stack. */
+>  	switch_to(prev, next, prev);
