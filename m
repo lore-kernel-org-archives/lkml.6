@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeBFEJZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:09:25 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46542 "EHLO
+        id S1752632AbeBFEJe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 23:09:34 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46720 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752554AbeBFEJM (ORCPT
+        with ESMTP id S1752560AbeBFEJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:09:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1438460767
+        Mon, 5 Feb 2018 23:09:18 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7766060300
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From: Sricharan R <sricharan@codeaurora.org>
@@ -18,11 +18,10 @@ To: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-pm@vger.kernel.org, robh@kernel.org
-Cc: sricharan@codeaurora.org, Russell King <linux@arm.linux.org.uk>,
-        Courtney Cavin <courtney.cavin@sonymobile.com>
-Subject: [PATCH v6 01/15] ARM: Add Krait L2 register accessor functions
-Date: Tue,  6 Feb 2018 09:38:14 +0530
-Message-Id: <1517890108-8140-2-git-send-email-sricharan@codeaurora.org>
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v6 02/15] clk: mux: Split out register accessors for reuse
+Date: Tue,  6 Feb 2018 09:38:15 +0530
+Message-Id: <1517890108-8140-3-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
 References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
@@ -32,123 +31,189 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Boyd <sboyd@codeaurora.org>
 
-Krait CPUs have a handful of L2 cache controller registers that
-live behind a cp15 based indirection register. First you program
-the indirection register (l2cpselr) to point the L2 'window'
-register (l2cpdr) at what you want to read/write.  Then you
-read/write the 'window' register to do what you want. The
-l2cpselr register is not banked per-cpu so we must lock around
-accesses to it to prevent other CPUs from re-pointing l2cpdr
-underneath us.
+We want to reuse the logic in clk-mux.c for other clock drivers
+that don't use readl as register accessors. Fortunately, there
+really isn't much to the mux code besides the table indirection
+and quirk flags if you assume any bit shifting and masking has
+been done already. Pull that logic out into reusable functions
+that operate on an optional table and some flags so that other
+drivers can use the same logic.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Courtney Cavin <courtney.cavin@sonymobile.com>
+[Sricharan: Rebased for mainline]
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/common/Kconfig                   |  3 ++
- arch/arm/common/Makefile                  |  1 +
- arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
- arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
- 4 files changed, 62 insertions(+)
- create mode 100644 arch/arm/common/krait-l2-accessors.c
- create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+ drivers/clk/clk-mux.c        | 75 +++++++++++++++++++++++++++-----------------
+ include/linux/clk-provider.h |  9 ++++--
+ 2 files changed, 54 insertions(+), 30 deletions(-)
 
-diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
-index e5ad070..c8e1986 100644
---- a/arch/arm/common/Kconfig
-+++ b/arch/arm/common/Kconfig
-@@ -7,6 +7,9 @@ config DMABOUNCE
- 	bool
- 	select ZONE_DMA
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 39cabe1..22ebf99 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -26,35 +26,24 @@
+  * parent - parent is adjustable through clk_set_parent
+  */
  
-+config KRAIT_L2_ACCESSORS
-+	bool
-+
- config SHARP_LOCOMO
- 	bool
+-static u8 clk_mux_get_parent(struct clk_hw *hw)
++unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
++				unsigned int *table, unsigned long flags)
+ {
+-	struct clk_mux *mux = to_clk_mux(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+-	u32 val;
+-
+-	/*
+-	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
+-	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
+-	 * to 0x7 (index starts at one)
+-	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+-	 * val = 0x4 really means "bit 2, index starts at bit 0"
+-	 */
+-	val = clk_readl(mux->reg) >> mux->shift;
+-	val &= mux->mask;
  
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 70b4a14..eec6cd1 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -7,6 +7,7 @@ obj-y				+= firmware.o
+-	if (mux->table) {
++	if (table) {
+ 		int i;
  
- obj-$(CONFIG_SA1111)		+= sa1111.o
- obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
-+obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
- obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
-new file mode 100644
-index 0000000..9a97dda
---- /dev/null
-+++ b/arch/arm/common/krait-l2-accessors.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/spinlock.h>
-+#include <linux/export.h>
-+
-+#include <asm/barrier.h>
-+#include <asm/krait-l2-accessors.h>
-+
-+static DEFINE_RAW_SPINLOCK(krait_l2_lock);
-+
-+void krait_set_l2_indirect_reg(u32 addr, u32 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
+ 		for (i = 0; i < num_parents; i++)
+-			if (mux->table[i] == val)
++			if (table[i] == val)
+ 				return i;
+ 		return -EINVAL;
+ 	}
+ 
+-	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
++	if (val && (flags & CLK_MUX_INDEX_BIT))
+ 		val = ffs(val) - 1;
+ 
+-	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
++	if (val && (flags & CLK_MUX_INDEX_ONE))
+ 		val--;
+ 
+ 	if (val >= num_parents)
+@@ -62,23 +51,53 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 
+ 	return val;
+ }
++EXPORT_SYMBOL_GPL(clk_mux_get_parent);
+ 
+-static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
++static u8 _clk_mux_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	u32 val;
+-	unsigned long flags = 0;
+ 
+-	if (mux->table) {
+-		index = mux->table[index];
 +	/*
-+	 * Select the L2 window by poking l2cpselr, then write to the window
-+	 * via l2cpdr.
++	 * FIXME need a mux-specific flag to determine if val is bitwise or
++	 * numeric e.g. sys_clkin_ck's clksel field is 3 bits wide,
++	 * but ranges from 0x1 to 0x7 (index starts at one)
++	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
++	 * val = 0x4 really means "bit 2, index starts at bit 0"
 +	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
-+	isb();
++	val = clk_readl(mux->reg) >> mux->shift;
++	val &= mux->mask;
 +
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++	return clk_mux_get_parent(hw, val, mux->table, mux->flags);
 +}
-+EXPORT_SYMBOL(krait_set_l2_indirect_reg);
 +
-+u32 krait_get_l2_indirect_reg(u32 addr)
++unsigned int clk_mux_reindex(u8 index, unsigned int *table,
++			     unsigned long flags)
 +{
-+	u32 val;
-+	unsigned long flags;
++	unsigned int val = index;
 +
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
-+	/*
-+	 * Select the L2 window by poking l2cpselr, then read from the window
-+	 * via l2cpdr.
-+	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
-+
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
-+
++	if (table) {
++		val = table[val];
+ 	} else {
+-		if (mux->flags & CLK_MUX_INDEX_BIT)
+-			index = 1 << index;
++		if (flags & CLK_MUX_INDEX_BIT)
++			val = 1 << index;
+ 
+-		if (mux->flags & CLK_MUX_INDEX_ONE)
+-			index++;
++		if (flags & CLK_MUX_INDEX_ONE)
++			val++;
+ 	}
+ 
 +	return val;
 +}
-+EXPORT_SYMBOL(krait_get_l2_indirect_reg);
-diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
-new file mode 100644
-index 0000000..dd7c474
---- /dev/null
-+++ b/arch/arm/include/asm/krait-l2-accessors.h
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++EXPORT_SYMBOL_GPL(clk_mux_reindex);
 +
-+#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
-+#define __ASMARM_KRAIT_L2_ACCESSORS_H
++static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_mux *mux = to_clk_mux(hw);
++	u32 val;
++	unsigned long flags = 0;
 +
-+extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
-+extern u32 krait_get_l2_indirect_reg(u32 addr);
++	index = clk_mux_reindex(index, mux->table, mux->flags);
 +
-+#endif
+ 	if (mux->lock)
+ 		spin_lock_irqsave(mux->lock, flags);
+ 	else
+@@ -102,14 +121,14 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ }
+ 
+ const struct clk_ops clk_mux_ops = {
+-	.get_parent = clk_mux_get_parent,
++	.get_parent = _clk_mux_get_parent,
+ 	.set_parent = clk_mux_set_parent,
+ 	.determine_rate = __clk_mux_determine_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ops);
+ 
+ const struct clk_ops clk_mux_ro_ops = {
+-	.get_parent = clk_mux_get_parent,
++	.get_parent = _clk_mux_get_parent,
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
+ 
+@@ -117,7 +136,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags,
+ 		void __iomem *reg, u8 shift, u32 mask,
+-		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
++		u8 clk_mux_flags, unsigned int *table, spinlock_t *lock)
+ {
+ 	struct clk_mux *mux;
+ 	struct clk_hw *hw;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index f711be6..4cd6728 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -470,7 +470,7 @@ struct clk_hw *clk_hw_register_divider_table(struct device *dev,
+ struct clk_mux {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
+-	u32		*table;
++	unsigned int	*table;
+ 	u32		mask;
+ 	u8		shift;
+ 	u8		flags;
+@@ -488,6 +488,11 @@ struct clk_mux {
+ extern const struct clk_ops clk_mux_ops;
+ extern const struct clk_ops clk_mux_ro_ops;
+ 
++unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
++				unsigned int *table, unsigned long flags);
++unsigned int clk_mux_reindex(u8 index, unsigned int *table,
++			     unsigned long flags);
++
+ struct clk *clk_register_mux(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags,
+@@ -508,7 +513,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags,
+ 		void __iomem *reg, u8 shift, u32 mask,
+-		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
++		u8 clk_mux_flags, unsigned int *table, spinlock_t *lock);
+ 
+ void clk_unregister_mux(struct clk *clk);
+ void clk_hw_unregister_mux(struct clk_hw *hw);
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
