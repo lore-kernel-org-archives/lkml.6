@@ -1,87 +1,134 @@
 Return-Path: <srivatsa@csail.mit.edu>
-X-Google-Smtp-Source: AH8x2266rO7Ef7eFe6SZk+snbx+uMRixiQ9WoGIXZdaBOcw02GLQvFsY0vlE3NhTvH1v+8aWbgri
-ARC-Seal: i=1; a=rsa-sha256; t=1517883917; cv=none;
+X-Google-Smtp-Source: AH8x226/rtI+S+hENVvm5wE4xBkH0zo5gxQWogoRh6xffG7ruIQ0GqteLoDOT9NhTCUVdyjKCgAW
+ARC-Seal: i=1; a=rsa-sha256; t=1517883929; cv=none;
         d=google.com; s=arc-20160816;
-        b=uQfgg1R1ejGDqo2W2EmWhrLGepSVUhWYQ6H4waZyeMS77hLKRaB1DVLvin53vh8dJC
-         iLzk4rLSYuNI16uOrigIDLknfLL7crhF9qraDCe6knsJ0GiK7YEXq7jEt/Q5K56fHCFs
-         4eYg293PBH2lG5hzmJtRpcxbcfWuf2Odhx0zrVClxk6scsGZCSW+spM7ZO15ffSIO9as
-         SYgegAEw1+NxNrYyuFL0umYgjjCfaF/r6ZsGL1pGdK6VeaAJa5GgnkA3IEpLCT3SuYaB
-         v/JuPqh+aM+craxJ/hAA1VS+rvkMyBv9r9PHOAMovKe0e8P9yqTezYidnnf/iCQd5zGJ
-         sNeA==
+        b=PGezpuw5hY2jp3cfD2X27irsa2TGYSHPOFdh6Eonsv3IndhtwTMgYFJC8UJRjH9LOn
+         nLrEasuVnXCq/1H6OVSJvyxqntxIy3VMBcQlORkHYxRr2PQP5WA0Z7yKEXLUxwnKI3Ue
+         2Vrh7wMWf3MI7TRrnF7WvSZt5i20rl5377MaVucQVfjjklZIBKO5DAKLtHobEczKVY+7
+         qJkIrnhzSOY5PENbpuDtoDvz2ybRJS3roJKvv0oIHPKCQ2z2TbTsWmkDl2e3+anZnf3v
+         Lfgg/gcfq2gjnUgI9CdQ6Lznmp+Od7LKvXkJ8fGVgbHDgtr662RgzZiP08c+wCwPLAKL
+         8ANg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :cc:to:from:subject:arc-authentication-results;
-        bh=HZhqYiJY62N6lMqvHyC2I2DpmboRIaTfAkcVO5muy0I=;
-        b=LT7g5MZKxl4lLTtNEQWqvLIx0LcFvuk9HkVGpfORjkQX9ZMxFGqw96qPjZUp/j3z0e
-         c+iksXCzkYUHLE4zsIVT/Fb8ABwtZutk0Mw5H7IetInWNg5o7ZVdPLStWVxtdWgnYPvR
-         oIzR5aPsf/dGkXY9NtbeBvk3ZV2KCgwDpqUZKxoSDIY3sxanE4cQn/SIGuFVhxUJpobG
-         ke5eB0od1QqhdBMR72gRTE4UGNyqZw/l+parsK+4F2AGTBk4JCvtJ5S3rTTAgmmB+gGP
-         QziGMBjXGyyMVyrBHx65Jpu6Xk21Y1+jKkMtdQ8tiLt11lnNAerIpI6OLftcVph5BjFr
-         Gz6g==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:date:cc:to:from:subject
+         :arc-authentication-results;
+        bh=j8FeNfYh288Bn8G0Qcd6CqtxYBMRZoV72TK8w3/AgZM=;
+        b=nyjiAz7KmMnza40UNal3a05iATfiH8rpkAodb65hydRar9hFlTdwykrgektoV2r2Uv
+         x3X6nTQc14TuXhX2S+gJ8l/1ROMS4CIvk9uzqlbt1QTHl6x/kS8kg4njlMmDlKJSOjd0
+         0ZsDvelUXCeXu9LGPUnp8b1odwno7iHRvio/KoR1gupBn7GhoXMRR7IobR8VerNUCsJU
+         9n9Q2WfLDDh0jbXkGjmuAuNOAbXnLt3KTKZM0X1Pyn+1L/OKjtMF19ASoUv5vZJOrUs8
+         keanhYAGtTFQPHghtTI/7kjpgiamnk5oO9HPnYnbjKAhMa9O0E30XmxPJWge4zH/ArE7
+         DmFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of srivatsa@csail.mit.edu designates 128.30.2.210 as permitted sender) smtp.mailfrom=srivatsa@csail.mit.edu;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csail.mit.edu
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of srivatsa@csail.mit.edu designates 128.30.2.210 as permitted sender) smtp.mailfrom=srivatsa@csail.mit.edu;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csail.mit.edu
-Subject: [PATCH 1/2] char_dev: Fix off-by-one bugs in find_dynamic_major()
+Subject: [PATCH 2/2] block,
+ char_dev: Use correct format specifier for unsigned ints
 From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
 To: gregkh@linuxfoundation.org, logang@deltatee.com
 Cc: axboe@kernel.dk, jlayton@poochiereds.net, bfields@fieldses.org,
  viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
  linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
  srivatsa@csail.mit.edu
-Date: Mon, 05 Feb 2018 18:25:09 -0800
-Message-ID: <151788389652.28069.6065922071875812126.stgit@srivatsa-ubuntu>
+Date: Mon, 05 Feb 2018 18:25:27 -0800
+Message-ID: <151788391701.28069.13145257664735983272.stgit@srivatsa-ubuntu>
+In-Reply-To: <151788389652.28069.6065922071875812126.stgit@srivatsa-ubuntu>
+References: <151788389652.28069.6065922071875812126.stgit@srivatsa-ubuntu>
 User-Agent: StGit/0.18
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591616647486250157?=
-X-GMAIL-MSGID: =?utf-8?q?1591616647486250157?=
+X-GMAIL-THRID: =?utf-8?q?1591616659826839373?=
+X-GMAIL-MSGID: =?utf-8?q?1591616659826839373?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 
-CHRDEV_MAJOR_DYN_END and CHRDEV_MAJOR_DYN_EXT_END are valid major
-numbers. So fix the loop iteration to include them in the search for
-free major numbers.
+register_blkdev() and __register_chrdev_region() treat the major
+number as an unsigned int. So print it the same way to avoid
+absurd error statements such as:
+"... major requested (-1) is greater than the maximum (511) ..."
+(and also fix off-by-one bugs in the error prints).
 
-While at it, also remove a redundant if condition ("cd->major != i"),
-as it will never be true.
+While at it, also update the comment describing register_blkdev().
 
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 ---
 
- fs/char_dev.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ block/genhd.c |   19 +++++++++++--------
+ fs/char_dev.c |    4 ++--
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
+diff --git a/block/genhd.c b/block/genhd.c
+index 88a53c1..21a18e5 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -308,19 +308,22 @@ void blkdev_show(struct seq_file *seqf, off_t offset)
+ /**
+  * register_blkdev - register a new block device
+  *
+- * @major: the requested major device number [1..255]. If @major = 0, try to
+- *         allocate any unused major number.
++ * @major: the requested major device number [1..BLKDEV_MAJOR_MAX-1]. If
++ *         @major = 0, try to allocate any unused major number.
+  * @name: the name of the new block device as a zero terminated string
+  *
+  * The @name must be unique within the system.
+  *
+  * The return value depends on the @major input parameter:
+  *
+- *  - if a major device number was requested in range [1..255] then the
+- *    function returns zero on success, or a negative error code
++ *  - if a major device number was requested in range [1..BLKDEV_MAJOR_MAX-1]
++ *    then the function returns zero on success, or a negative error code
+  *  - if any unused major number was requested with @major = 0 parameter
+  *    then the return value is the allocated major number in range
+- *    [1..255] or a negative error code otherwise
++ *    [1..BLKDEV_MAJOR_MAX-1] or a negative error code otherwise
++ *
++ * See Documentation/admin-guide/devices.txt for the list of allocated
++ * major numbers.
+  */
+ int register_blkdev(unsigned int major, const char *name)
+ {
+@@ -347,8 +350,8 @@ int register_blkdev(unsigned int major, const char *name)
+ 	}
+ 
+ 	if (major >= BLKDEV_MAJOR_MAX) {
+-		pr_err("register_blkdev: major requested (%d) is greater than the maximum (%d) for %s\n",
+-		       major, BLKDEV_MAJOR_MAX, name);
++		pr_err("register_blkdev: major requested (%u) is greater than the maximum (%u) for %s\n",
++		       major, BLKDEV_MAJOR_MAX-1, name);
+ 
+ 		ret = -EINVAL;
+ 		goto out;
+@@ -375,7 +378,7 @@ int register_blkdev(unsigned int major, const char *name)
+ 		ret = -EBUSY;
+ 
+ 	if (ret < 0) {
+-		printk("register_blkdev: cannot get major %d for %s\n",
++		printk("register_blkdev: cannot get major %u for %s\n",
+ 		       major, name);
+ 		kfree(p);
+ 	}
 diff --git a/fs/char_dev.c b/fs/char_dev.c
-index a65e4a5..33c9385 100644
+index 33c9385..a279c58 100644
 --- a/fs/char_dev.c
 +++ b/fs/char_dev.c
-@@ -67,18 +67,18 @@ static int find_dynamic_major(void)
- 	int i;
- 	struct char_device_struct *cd;
- 
--	for (i = ARRAY_SIZE(chrdevs)-1; i > CHRDEV_MAJOR_DYN_END; i--) {
-+	for (i = ARRAY_SIZE(chrdevs)-1; i >= CHRDEV_MAJOR_DYN_END; i--) {
- 		if (chrdevs[i] == NULL)
- 			return i;
+@@ -121,8 +121,8 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
  	}
  
- 	for (i = CHRDEV_MAJOR_DYN_EXT_START;
--	     i > CHRDEV_MAJOR_DYN_EXT_END; i--) {
-+	     i >= CHRDEV_MAJOR_DYN_EXT_END; i--) {
- 		for (cd = chrdevs[major_to_index(i)]; cd; cd = cd->next)
- 			if (cd->major == i)
- 				break;
- 
--		if (cd == NULL || cd->major != i)
-+		if (cd == NULL)
- 			return i;
+ 	if (major >= CHRDEV_MAJOR_MAX) {
+-		pr_err("CHRDEV \"%s\" major requested (%d) is greater than the maximum (%d)\n",
+-		       name, major, CHRDEV_MAJOR_MAX);
++		pr_err("CHRDEV \"%s\" major requested (%u) is greater than the maximum (%u)\n",
++		       name, major, CHRDEV_MAJOR_MAX-1);
+ 		ret = -EINVAL;
+ 		goto out;
  	}
- 
