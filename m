@@ -1,86 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753731AbeBFXQw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 18:16:52 -0500
-Received: from mail-io0-f176.google.com ([209.85.223.176]:40833 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753618AbeBFXQv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 18:16:51 -0500
-X-Google-Smtp-Source: AH8x227dOR0RAMYKEDLcSsB5IJ2miVzQkFor30XnM688Kfloz5aE2pXDZQGnv8uHEHxbtiQIcbxMMnMwkoQrnGT3DRo=
+        id S1753849AbeBFXSL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 18:18:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753537AbeBFXSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 18:18:10 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3261D2178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 6 Feb 2018 18:18:07 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: sztsian@gmail.com
+Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
+        linux-kernel@vger.kernel.org, zsun@redhat.com,
+        Vladislav Valtchev <vladislav.valtchev@gmail.com>
+Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
+Message-ID: <20180206181807.2d35393e@gandalf.local.home>
+In-Reply-To: <20180204032014.6962-2-sztsian@gmail.com>
+References: <20180204032014.6962-1-sztsian@gmail.com>
+        <20180204032014.6962-2-sztsian@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180206225548.GB9680@eng-minchan1.roam.corp.google.com>
-References: <20180206004903.224390-1-joelaf@google.com> <20180206220159.GA9680@eng-minchan1.roam.corp.google.com>
- <CAJWu+opFVtVbPygHBYX5gv-LeH1uugY1DDPp2q4va4mOsvBeWw@mail.gmail.com> <20180206225548.GB9680@eng-minchan1.roam.corp.google.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Tue, 6 Feb 2018 15:16:49 -0800
-Message-ID: <CAJWu+op4SpBG1r+V7MOgwsP_tx8MnGxj=udopxw4irXN44z75w@mail.gmail.com>
-Subject: Re: [PATCH RFC] ashmem: Fix lockdep RECLAIM_FS false positive
-To: Minchan Kim <minchan@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zilstra <peterz@infradead.org>, Michal Hocko <mhocko@kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Minchan,
+On Sun,  4 Feb 2018 11:20:13 +0800
+sztsian@gmail.com wrote:
 
-On Tue, Feb 6, 2018 at 2:55 PM, Minchan Kim <minchan@kernel.org> wrote:
-> On Tue, Feb 06, 2018 at 02:32:13PM -0800, Joel Fernandes wrote:
-[...]
->> On Tue, Feb 6, 2018 at 2:01 PM, Minchan Kim <minchan@kernel.org> wrote:
->> [...]
->> > On Mon, Feb 05, 2018 at 04:49:03PM -0800, Joel Fernandes wrote:
->> >> During invocation of ashmem shrinker under memory pressure, ashmem
->> >> calls into VFS code via vfs_fallocate. We however make sure we
->> >> don't enter it if the allocation was GFP_FS to prevent looping
->> >> into filesystem code. However lockdep doesn't know this and prints
->> >> a lockdep splat as below.
->> >>
->> >> This patch fixes the issue by releasing the reclaim_fs lock after
->> >> checking for GFP_FS but before calling into the VFS path, and
->> >> reacquiring it after so that lockdep can continue reporting any
->> >> reclaim issues later.
->> >
->> > At first glance, it looks reasonable. However, Couldn't we return
->> > just 0 in ashmem_shrink_count when the context is under FS?
->> >
->>
->> We're already checking if GFP_FS in ashmem_shrink_scan and bailing out
->> though, did I miss something?
->
-> I understand your concern now. Apart from that, if ashmem_shrink_count
-> is called under GFP_FS, you can just return 0 for removing pointless
-> ashmem_shrink_scan calling. But it might be trivial so up to you. :)
+> From: Zamir SUN <sztsian@gmail.com>
+> 
+> The current detection for swig will cause output to be
+> /usr/bin/swig
+> y
+> So this will never be equal to y. With this patch, the swig path is
+> removed from output, so the detection can work as expected.
+> 
+> Fixes 3bf187a43b7e6302592552ecbc294e5820249687
 
-Yes, I think we can do that in a subsequent patch since that's a
-different optimization. Thanks for the suggestion.
+Hi Zamir,
 
->>
->> The problem is not that there is a deadlock that occurs, the problem
->> that even when we're not under FS, lockdep reports an issue that can't
->> happen. The fix is for the lockdep false positive that occurs.
->
-> Yub, you are right. I am happy to add
->
-> Reviewed-by: Minchan Kim <minchan@kernel.org?
+Actually, a fix was already sent to me:
 
-Great, thanks!
+ http://lkml.kernel.org/r/20171220180748.17273-18-vladislav.valtchev@gmail.com
 
->
-> Other than that, I thought a while we could make it in generic so we
-> can add SHRINKER_FS_AWARE like that so VM code itself can do for
-> preventing such false positive instead of doing it in each driver
-> itself.
->
-> However, if driver can do by itself, it could be more flexible.
+I'm working on add that one.
 
-Yes, off the top it feels like something that driver you should do at
-more finer grained level, since probably only driver knows that/if we
-will be looping into FS.
+Thanks!
 
-Thanks for the review,
+-- Steve
 
-- Joel
+ 
+> 
+> Signed-off-by: Zamir SUN (Red Hat) <sztsian@gmail.com>
+> ---
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index a5d2c38..7c0d1a6 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -105,7 +105,7 @@ PYTHON_GUI	:= ctracecmd.so ctracecmdgui.so
+>  PYTHON_VERS ?= python
+>  
+>  # Can build python?
+> -ifeq ($(shell sh -c "pkg-config --cflags $(PYTHON_VERS) > /dev/null 2>&1 && which swig && echo y"), y)
+> +ifeq ($(shell sh -c "pkg-config --cflags $(PYTHON_VERS) > /dev/null 2>&1 && which swig > /dev/null && echo y"), y)
+>  	PYTHON_PLUGINS := plugin_python.so
+>  	BUILD_PYTHON := $(PYTHON) $(PYTHON_PLUGINS)
+>  	PYTHON_SO_INSTALL := ctracecmd.install
