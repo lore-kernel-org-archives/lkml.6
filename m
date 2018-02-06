@@ -1,65 +1,70 @@
-Return-Path: <arnd@arndb.de>
-X-Google-Smtp-Source: AH8x224ShvYQjNrfUZ2iy8qcMVmBfl4EnM4dT0Xa4otkjCUbBoIrzgL6Tn11ZJgB+TnyKMwEWHK5
-ARC-Seal: i=1; a=rsa-sha256; t=1517586433; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x226xZ6MmhZPShFanqOEv7jgzSeu7kYMKUB42uNdlw+qvMVwE61mHjeZux2fm5QJdKTOTg5Fz
+ARC-Seal: i=1; a=rsa-sha256; t=1517918475; cv=none;
         d=google.com; s=arc-20160816;
-        b=H6ZoGWm0FZa0QdfPbhHQUYVQieLbixKvOXmSS+YMwTOtk81d2t6w31ZanyTnESrBlZ
-         vGUw/65JeosZTDPcKQ+YtPCHQCW/jAscAplAOMr3hkjGqfby99rwNGpsVM08ltmT1kxx
-         O0OZpWvgbPwFtQUc1x8T8KLjnlRNM650ufwU9sZQvdkJSgWqxjqM8r+jDAtNyE8KBvu+
-         IX/sRxg8QxobSuG9mT3QnHypgcYhfxPmOgNbcy7YLoSUHIWq+DF5O8qucuk0bswVKkff
-         CSxRv5jFaQTTykVtxOjzC3O26GjepMj+hNpbDfLwibRePRgQRXvsTvOXXJmMJ0r2J53V
-         iefA==
+        b=bAvX0Jsvpf+a9CVEaKHEKrG/4UzVyzOVUs/z/Ob9E3/Hk8YNqWQKdfi4skR8Wx2AkK
+         Bn2CYF+/dsZSDt7pEv3csMY7mJ7ExywRYZNn9EXLJZw5fwHpRLbHQS/FR1hOisFlF7Af
+         75NDfh807SERhm6Oa9wNBJvmjGvl/OLHfC2fUQykd/xCv7GpWATWK9WHjyaUlI+pyVta
+         PggGBZtbI1LWn85lKKvSaNSuMTJyi/xktTV54kovgH3jWmd2Hb2PJlpK2FMVEx0KNUWL
+         eqfyNbnVLBAwQ+gTF+mIKiIpd24O6ExD1fJ7mdUudd5mrMlB309cVa2FCEzWQsu8Y4XZ
+         NO0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=wOYry3/reDkNznYD3EyWWs6IsDqD2hkfs/ti6M8gJ1c=;
-        b=DmhMUmMjbumJUOO4WeH9MUsq7q97bmqgXEt06iZQtqsKNVS8pb6t8KX5JMmMPab52F
-         blFv1iM06vCn4A4tFRAvmJpx+dR2V2U6vqaCO/VxGn4J/NScvT3mO+psMvf1pf9Ml+rf
-         E5C/CNW/CmiDEPsPog/lh7VvL1g/e0/elA99DyxOCt7ArJ3DIVUDM0UH8155nh5Eg9fv
-         POXqx3TPTXBqFazC0VftOqlFQp2dR24OPSPiTVuIp+xnadW+/05xsb4h6kWNk91OxjnX
-         pgbaVVn4xmHSxJ+4ci/KzLNaHgIu/FWYTEfNIzcf6XHFQumtU981exLfRSnGmshdURMx
-         jXNg==
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=8Rhsld6hsRfBBWWBTZ/coJqo+vV4quc5AITmlk0pM5Y=;
+        b=LHfOGcoCd9m62J1M/pvToO29Wya4xBDJPoN+LOr2lU68ZmP5XcP+9q1BMbxayH2CAP
+         FcEf6DY/JVuk3DI6ZMElnNHYmU4Bkp7plVRyUYF3+eLmGPb2FS0U4lyWrjIq4/VKCW/W
+         13bbs1Sk1vETVH0XF4Ll1n7+0jL5LeUkh4MzfkPz/+6jc2KvpkP/58G1syL2XGPsckae
+         d4GfDdVEdsiTFYTjo+ec2Y58UpxlBoR1IPI+JAp0aME43kjoVffBnyGih2wDF9/UxNM1
+         clVtcxhacXRaajB8h+PInchuc8XsdTyJRMvegLsCMxgn8P9MbJb8ZgPOCvtu5vfJBMzN
+         PVYw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
-From: Arnd Bergmann <arnd@arndb.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Nicolas Pitre <nico@linaro.org>,
-	Andi Kleen <ak@linux.intel.com>,
-	Babu Moger <babu.moger@oracle.com>,
-	Will Deacon <will.deacon@arm.com>,
-	stable@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] locking/qrwlock: include asm/byteorder.h as needed
-Date: Fri,  2 Feb 2018 16:40:44 +0100
-Message-Id: <20180202154104.1522809-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:TsOBgWWVAzowO3S5IpWgn+9z8V3m3+ACevvCnQgbj5YYHS8FsK5
- NrLRnIEwaovjGRBaOyo8Tv2eUu5dpN2SgBe+SArQdZr5iLYSVzdDXpoPFlyT3bSN63ypmHT
- PaQnMlW8TOFab2/DQMubN+TJyktuNsytcM7YkKKjhQpDpOOnHfI/53A+Y4/iop1jL4SakrM
- OuWI5MlLME72e3VT+nnrQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:W92YmiA5Riw=:/X0ZQApivGwwCGdBR7SGkZ
- alMh8VFPSWCmM40dxR0bLcrQch4C+QHNn4QNYN8P8p6zIQ9a9cjWjilhZumZ6x0xODYk2OCPw
- qCNeq5+p13Vg6ZnHLOQ8LMKeseCHeimA5HNe2GrxREsr3ZwyhVG+SLySyiNRW/sUBB7dmuYPP
- 4NcfPPERFhJ/cxm7JhT8Bhhf1wX1BzyTYz/nadUbCJ24BYbmkXoQmaHKrx9qNYktuHiylt/K4
- 07ge3hlbXvOoxQA0AStLPOOv35qsWDngGYev06DgLZohnOpqyCmcZqPXyrfMgnB1ZvAR9pRwJ
- NtBMEAQMUw/SHTVXi7qboM1DbHzZMihY2PhFzNnJKUakhiGdDLEj/4jXGRDV4OqqMEVwFKp2h
- wxc9TCNbR1k4/ycOZRH0hsAGH6CCo4U35EJRXppfWcBlxuKEL7Uc59I9silBA2qQ2vJfWB0MK
- UI15LO6Ot5jABkenZFI0yG/6qeY8GkNDVnsAqStcyrstrjRj7aNvK/fIhxq4gAnL6Cd2wezBW
- m/BX6dDdRVFtThZBBEGSE3IUp9ydKkLDCekwhwDad0U+Uf9ckVkp45PXroMsPiS1SQsndXkt+
- gi98sMA1ydSpH6eS8j88nreRT8LTzvWKl/mF9Igu3fci/4fFAyWLy2qU4WI7kOhHicD1LQ/eG
- p6OEHOAfMZ9kQ5MYh7p5mHG9K1jKNh5jAdyDJe+fm+h/J1X6z4hXM21vbmrZZDSNERS7lWY4d
- +/LqOcMcTmQ50eDupE672kUDyC4GnPXc8kI2XA==
+       spf=pass (google.com: domain of tipbot@zytor.com designates 65.50.211.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Tue, 6 Feb 2018 03:57:47 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-ca66e797120fb09b8138623fb4b563e952586ef5@git.kernel.org>
+Cc: mingo@kernel.org, peterz@infradead.org, babu.moger@oracle.com,
+        gregkh@linuxfoundation.org, nico@linaro.org, akpm@linux-foundation.org,
+        tglx@linutronix.de, will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, arnd@arndb.de, hpa@zytor.com
+Reply-To: akpm@linux-foundation.org, tglx@linutronix.de,
+        gregkh@linuxfoundation.org, nico@linaro.org, mingo@kernel.org,
+        babu.moger@oracle.com, peterz@infradead.org, will.deacon@arm.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        torvalds@linux-foundation.org
+In-Reply-To: <20180202154104.1522809-1-arnd@arndb.de>
+References: <20180202154104.1522809-1-arnd@arndb.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/urgent] locking/qrwlock: include asm/byteorder.h as
+ needed
+Git-Commit-ID: ca66e797120fb09b8138623fb4b563e952586ef5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591304711998635461?=
-X-GMAIL-MSGID: =?utf-8?q?1591304711998635461?=
+X-GMAIL-MSGID: =?utf-8?q?1591652883648397079?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+Commit-ID:  ca66e797120fb09b8138623fb4b563e952586ef5
+Gitweb:     https://git.kernel.org/tip/ca66e797120fb09b8138623fb4b563e952586ef5
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Fri, 2 Feb 2018 16:40:44 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 6 Feb 2018 10:28:58 +0100
+
+locking/qrwlock: include asm/byteorder.h as needed
 
 Moving the qrwlock struct definition into a header file introduced
 a subtle bug on all little-endian machines, where some files in some
@@ -75,17 +80,25 @@ On a current linux-next kernel, I verified that this header is
 responsible for all type mismatches as a result from the endianess
 confusion.
 
-Cc: stable@vger.kernel.org
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: e0d02285f16e ("locking/qrwlock: Use 'struct qrwlock' instead of 'struct __qrwlock'")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Babu Moger <babu.moger@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nicolas Pitre <nico@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Fixes: e0d02285f16e ("locking/qrwlock: Use 'struct qrwlock' instead of 'struct __qrwlock'")
+Link: http://lkml.kernel.org/r/20180202154104.1522809-1-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
  include/asm-generic/qrwlock_types.h | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/include/asm-generic/qrwlock_types.h b/include/asm-generic/qrwlock_types.h
-index 137ecdd16daa..c36f1d5a2572 100644
+index 137ecdd..c36f1d5 100644
 --- a/include/asm-generic/qrwlock_types.h
 +++ b/include/asm-generic/qrwlock_types.h
 @@ -3,6 +3,7 @@
@@ -96,5 +109,3 @@ index 137ecdd16daa..c36f1d5a2572 100644
  #include <asm/spinlock_types.h>
  
  /*
--- 
-2.9.0
