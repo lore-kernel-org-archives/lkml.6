@@ -1,77 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752463AbeBFHnG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 02:43:06 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45069 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752185AbeBFHm5 (ORCPT
+        id S1752326AbeBFHpG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 02:45:06 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:40908 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751924AbeBFHpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 02:42:57 -0500
-X-Google-Smtp-Source: AH8x224Noplnw0lZ4Q1XNxL6IdceiOmiPxDO5USckhOeZWp2hlev+0P3n6Qlf5hKoaYa9jVAFRBNsA==
-Date: Tue, 6 Feb 2018 08:42:53 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
-        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        "luca.abeni" <luca.abeni@santannapisa.it>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/7] sched/topology: Adding function
- partition_sched_domains_locked()
-Message-ID: <20180206074253.GA19535@localhost.localdomain>
-References: <1517503869-3179-1-git-send-email-mathieu.poirier@linaro.org>
- <1517503869-3179-2-git-send-email-mathieu.poirier@linaro.org>
- <20180202101951.GS19535@localhost.localdomain>
- <CANLsYkyJb9F14SBSatLHCwThWaO0dcMSddsCB_kHHAeEdunEtw@mail.gmail.com>
+        Tue, 6 Feb 2018 02:45:00 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 167192E5874
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANLsYkyJb9F14SBSatLHCwThWaO0dcMSddsCB_kHHAeEdunEtw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 06 Feb 2018 08:44:57 +0100
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
+        broonie@kernel.org, linus.walleij@linaro.org,
+        bfq-iosched@googlegroups.com, alban.browaeys@gmail.com,
+        ming.lei@redhat.com, ivan@ludios.org, 169364@studenti.unimore.it,
+        Serena Ziviani <ziviani.serena@gmail.com>, efault@gmx.de
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+In-Reply-To: <20180205190510.5499-2-paolo.valente@linaro.org>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+ <20180205190510.5499-2-paolo.valente@linaro.org>
+Message-ID: <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.3
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1517903098;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
+        bh=qZv/tiETLZiFLv+4JU3fHpW/0QdahVx4mOgT73OxIBc=;
+        b=bQml+ByEVXuYygrmT7REMo1K/CHr0v5O1c9PpmbE0qfHSFT60Y7OAVVTB7eUUx7b+Oaxd2
+        CHPfrje2zvNzOnBrE5Tg0nnyddFVae6A9HGaFFOQMK+ZjWKlU/isoBWKZbYFo2NucaCXMu
+        vIc0wP+ae/q2/lUllm6KDTZ24Z3dfiQ=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517903098; a=rsa-sha256;
+        cv=none;
+        b=OrQGn0BUsQnk734frANXn6mNi1f9yA1hRUgYIfmF2tq+TWyqCMIVO3M+u/x4XMCW/1bBdwUUf1OEHTS5obW39c/Gx4aO9KEkwexKOE307GgwSN50NuTb/O+0qel7WFlX1BlvEK+xIHhB/z3oivInTcdADFmtFXJHmaBF7/Qf008=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/18 11:11, Mathieu Poirier wrote:
-> On 2 February 2018 at 03:19, Juri Lelli <juri.lelli@redhat.com> wrote:
-> > Hi Mathieu,
-> >
-> > On 01/02/18 09:51, Mathieu Poirier wrote:
-> >> Introducing function partition_sched_domains_locked() by taking
-> >> the mutex locking code out of the original function.  That way
-> >> the work done by partition_sched_domains_locked() can be reused
-> >> without dropping the mutex lock.
-> >>
-> >> This patch doesn't change the functionality provided by the
-> >> original code.
-> >>
-> >> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> ---
-> >
-> > [...]
-> >
-> >> +/*
-> >> + * Call with hotplug lock held
-> >
-> > Is this the one that we can actually check if it's locked with
-> >
-> > lockdep_assert_cpus_held()
-> >
-> > ?
-> 
-> Hi Juri,
-> 
-> You are correct - we could call lockdep_assert_cpus_held() but in my
-> opinion it would be in a separate patch and probably outside the scope
-> of this work.  The sole purpose of this patch is to get the
-> locking/unlocking operations of mutex sched_domains_mutex out of
-> function partition_sched_domains_locked().
+Hi, Paolo.
 
-Fair enough. I just thought though that, since you are adding the comment
-above, we could as well add an explicit check for hotplug lock.
+I can confirm that this patch fixes cfdisk hang for me. I've also tried 
+to trigger the issue Mike has encountered, but with no luck (maybe, I 
+wasn't insistent enough, just was doing dd on usb-storage device in the 
+VM).
 
-Best,
+So, with regard to cfdisk hang on usb-storage:
 
-- Juri
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+
+Thank you.
