@@ -1,119 +1,341 @@
-Return-Path: <colin.king@canonical.com>
-X-Google-Smtp-Source: AH8x225PTLX5dNZbJRSEsrONxgTmh7cjG4Z1+UTyPMt9yLCl0Wj5nduG8rBnikQg//K3Lh+OY+p/
-ARC-Seal: i=1; a=rsa-sha256; t=1518009808; cv=none;
+Return-Path: <l4stpr0gr4m@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517952228; cv=none;
         d=google.com; s=arc-20160816;
-        b=YUH9Nb4uWYLJ4N4llMjNdN3Up7qf0Bp24opRjSXVsr349JFDcxdOVfF2an64EV24Zl
-         ekFh0Awj3NzNPERKnuoswc4VNBMx1mG8akNpsDwuxZdTIgI5nphRUjCM3bzmZ2UyEHT4
-         8MMLe372jrVdUW6TLZ1ENqUGSGR2jJCDU4axtJKCHWunzUs0RMqFbUORvAaFrc3XRsAP
-         QiAeYaQ6fHKkjpF2iD8eCIzclm7AMiIuguejer45+OJBKHdDJL0kX3DScRe4ecZxa5hD
-         RLB5kjlnywsokVuK6sXMWkN7emQnmBrce2ECQgYh3p/r47oCEkrj/+oz6jJz+5o+zSgm
-         Jqfg==
+        b=ITBELusJe/XtfCyhZpZEzOTY7X6vKl96Mir7aonNtl2yx7efSYYYEoMZZK/Ci55qkd
+         Wr/F/XghwDD9n7N9W6LAws1VNVqHPBh0SH55uEmPlJFPscy79C8mnZUFvBzLvZky5tlq
+         rBb9KSEQSp71LRZeNyGoKeArXvc/86FViBV2Mun9kCmcMyBQAZkBDWWe8ZFzAYbj6fha
+         5Bby2QWc4aDfSz6z4SG2TuzU7GXzqIc0HA+bDThKyulfsFDNJcqMx1tT2iXPQwXAX6Ui
+         3pcefxYQIls9k/EWrOXre6kv5RzWFsOcnCLsmtfm/VhkVMIMULVma1dhMV1ERhS44FzY
+         K/cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=OQSVVIQPURkR27YtG2J8rxhsjvPZ9M4ywqweBkAcRU8=;
-        b=IOInlrJMhnf5kV05EIyQY82T6Z043t14+gwwczEi1hoky0siYs/9pyX5lStSOf7Lp5
-         Q7klppmFUAsoAmNbNVN7S5PyqYyTiDTfv5EDflq2J9jLXGiI6pO6zrbQMK9m6izqmAaq
-         g752eFunCGLNTCIsEmTWEGvbN2g2S+MuvJJu06FVIO7nenDq8WqwZVbkfjHiOxagd2kd
-         6YxAQPWwzmOvt7N64hXnvZx+LpCLwpS8W1JnMQB2Dw6kiNCTO4En9HaglugLMMTONWwB
-         8eKsSKqR8cE0S+kFhw05v9+D6F5DD/Xc1ebe50yoN/F9Ic9BaS/OavYfLDqhbA7CwkLB
-         pjzQ==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=HTN8d28E7edd76Q+DFdB1P3yq5Xyu3XexHReA/vouR8=;
+        b=Q5PLJkhe4HFT9MTmMBTtVID/kM78Kb+7cfHjBeTnZHGdWYjVhPdDuz4yy7WUcuf3ml
+         LEiPLC47kgA2ld5U1C2lhcgwGeJk8F0yyLWjijb8qVkZBPl7FQdraFIoH40XBzglZUoY
+         PnFrFn89H53XWAH+ipf4BvufJbdA8KZSnoKBYKMvW6KPDI9BNf93NAj+yeia525thq26
+         ZSBcsBlC/L10VHxCV50ZUUI1+TbAuJZj4AsET90NK1w9+4SjmbEWcMkKdpSwoXndaud7
+         rrJ3BDhLugrafT3rXlrcMrA0CQdVpbADofF6nYa1AgNJW1q4vUKcS8bqbuU1IkJYxqAG
+         5uLg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Kl61ZQW6;
+       spf=pass (google.com: domain of l4stpr0gr4m@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=l4stpr0gr4m@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-From: Colin King <colin.king@canonical.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] misc: rtsx: make various functions static
-Date: Wed,  7 Feb 2018 13:23:27 +0000
-Message-Id: <20180207132327.32192-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Kl61ZQW6;
+       spf=pass (google.com: domain of l4stpr0gr4m@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=l4stpr0gr4m@gmail.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x224v1WztQIEsYK4ddiN+Dtf+Kb6P1wBDpq5j3sp1sHR4Bt7eWtTdxU7grBcE6A6qwuTukjq6bA==
+From: l4stpr0gr4m@gmail.com
+To: gregkh@linuxfoundation.org
+Cc: justin@jvreeland.com,
+	hdegoede@redhat.com,
+	hadess@hadess.net,
+	colin.king@canonical.com,
+	Larry.Finger@lwfinger.net,
+	aishpant@gmail.com,
+	himanshujha199640@gmail.com,
+	arnd@arndb.de,
+	ianwmorrison@gmail.com,
+	davem@davemloft.net,
+	joe@perches.com,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Kangmin Park <l4stpr0gr4m@gmail.com>
+Subject: [PATCH] Update rf_type_definition
+Date: Wed,  7 Feb 2018 06:23:34 +0900
+Message-Id: <1517952214-3434-1-git-send-email-l4stpr0gr4m@gmail.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591748652939437980?=
-X-GMAIL-MSGID: =?utf-8?q?1591748652939437980?=
+X-GMAIL-THRID: =?utf-8?q?1591688275498143058?=
+X-GMAIL-MSGID: =?utf-8?q?1591688275498143058?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Kangmin Park <l4stpr0gr4m@gmail.com>
 
-The functions rts5260_get_ocpstat, rts5260_get_ocpstat2,
-rts5260_clear_ocpstat, rts5260_process_ocp, rts5260_init_hw and
-rts5260_set_aspm are local to the source and do not need to be
-in global scope, so make them static.
+enum RT_RF_TYPE_DEFINITION on rtl8723bs/include/rtw_rf.h
+is different from enum tag_HAL_RF_Type_Definition on
+rtl8723bs/include/HalVerDef.h
 
-Cleans up sparse warnings:
-symbol 'rts5260_get_ocpstat' was not declared. Should it be static?
-symbol 'rts5260_get_ocpstat2' was not declared. Should it be static?
-symbol 'rts5260_clear_ocpstat' was not declared. Should it be static?
-symbol 'rts5260_process_ocp' was not declared. Should it be static?
-symbol 'rts5260_init_hw' was not declared. Should it be static?
-symbol 'rts5260_set_aspm' was not declared. Should it be static?
+So, update them to be the same reference from
+enum rf_type on rtlwifi/wifi.h which recent version.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+As a result, ODM_RF_TYPE_E needs to be updated as well
+Therefore, it is updated reference from enum odm_rf_type
+on rtlwifi/phydm/phydm_pre_define.h too.
+And update some additional code to check more
+chip versions that resulted from it.
+
+Also, fixed some space required errors and
+line over 80 characters warnings by checkpatch.pl.
+
+Signed-off-by: Kangmin Park <l4stpr0gr4m@gmail.com>
 ---
- drivers/misc/cardreader/rts5260.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8723bs/hal/odm.h               | 18 +++---
+ drivers/staging/rtl8723bs/hal/rtl8723b_dm.c       | 18 +++++-
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 12 ++++
+ drivers/staging/rtl8723bs/include/HalVerDef.h     | 77 ++++++++++++++++-------
+ drivers/staging/rtl8723bs/include/rtw_rf.h        | 14 +++--
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 20 +++---
+ 6 files changed, 111 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
-index 07cb93abf685..a493b01c5bc6 100644
---- a/drivers/misc/cardreader/rts5260.c
-+++ b/drivers/misc/cardreader/rts5260.c
-@@ -388,17 +388,17 @@ static void rts5260_disable_ocp(struct rtsx_pcr *pcr)
- 				OC_POWER_DOWN);
- }
+diff --git a/drivers/staging/rtl8723bs/hal/odm.h b/drivers/staging/rtl8723bs/hal/odm.h
+index 87a76ba..771b894 100644
+--- a/drivers/staging/rtl8723bs/hal/odm.h
++++ b/drivers/staging/rtl8723bs/hal/odm.h
+@@ -511,14 +511,16 @@ typedef enum tag_ODM_RF_Path_Bit_Definition {
  
--int rts5260_get_ocpstat(struct rtsx_pcr *pcr, u8 *val)
-+static int rts5260_get_ocpstat(struct rtsx_pcr *pcr, u8 *val)
- {
- 	return rtsx_pci_read_register(pcr, REG_OCPSTAT, val);
- }
  
--int rts5260_get_ocpstat2(struct rtsx_pcr *pcr, u8 *val)
-+static int rts5260_get_ocpstat2(struct rtsx_pcr *pcr, u8 *val)
- {
- 	return rtsx_pci_read_register(pcr, REG_DV3318_OCPSTAT, val);
- }
+ typedef enum tag_ODM_RF_Type_Definition {
+-	ODM_1T1R	=	0,
+-	ODM_1T2R	=	1,
+-	ODM_2T2R	=	2,
+-	ODM_2T3R	=	3,
+-	ODM_2T4R	=	4,
+-	ODM_3T3R	=	5,
+-	ODM_3T4R	=	6,
+-	ODM_4T4R	=	7,
++	ODM_1T1R		=	0,
++	ODM_1T2R		=	1,
++	ODM_2T2R		=	2,
++	ODM_2T2R_GREEN	=	3,
++	ODM_2T3R		=	4,
++	ODM_2T4R		=	5,
++	ODM_3T3R		=	6,
++	ODM_3T4R		=	7,
++	ODM_4T4R		=	8,
++	ODM_XTXR		=	9,
+ } ODM_RF_TYPE_E;
  
--void rts5260_clear_ocpstat(struct rtsx_pcr *pcr)
-+static void rts5260_clear_ocpstat(struct rtsx_pcr *pcr)
- {
- 	u8 mask = 0;
- 	u8 val = 0;
-@@ -418,7 +418,7 @@ void rts5260_clear_ocpstat(struct rtsx_pcr *pcr)
- 				DV3318_OCP_INT_CLR | DV3318_OCP_CLR, 0);
- }
  
--void rts5260_process_ocp(struct rtsx_pcr *pcr)
-+static void rts5260_process_ocp(struct rtsx_pcr *pcr)
- {
- 	if (!pcr->option.ocp_en)
- 		return;
-@@ -449,7 +449,7 @@ void rts5260_process_ocp(struct rtsx_pcr *pcr)
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c b/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
+index b162559..6069e1c 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
+@@ -64,10 +64,24 @@ static void Init_ODM_ComInfo_8723b(struct adapter *Adapter)
+ 
+ 	if (pHalData->rf_type == RF_1T1R) {
+ 		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_1T1R);
+-	} else if (pHalData->rf_type == RF_2T2R) {
+-		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T2R);
+ 	} else if (pHalData->rf_type == RF_1T2R) {
+ 		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_1T2R);
++	} else if (pHalData->rf_type == RF_2T2R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T2R);
++	} else if (pHalData->rf_type == RF_2T2R_GREEN) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T2R_GREEN);
++	} else if (pHalData->rf_type == RF_2T3R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T3R);
++	} else if (pHalData->rf_type == RF_2T4R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_2T4R);
++	} else if (pHalData->rf_type == RF_3T3R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_3T3R);
++	} else if (pHalData->rf_type == RF_3T4R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_3T4R);
++	} else if (pHalData->rf_type == RF_4T4R) {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_4T4R);
++	} else {
++		ODM_CmnInfoUpdate(pDM_Odm, ODM_CMNINFO_RF_TYPE, ODM_XTXR);
  	}
- }
  
--int rts5260_init_hw(struct rtsx_pcr *pcr)
-+static int rts5260_init_hw(struct rtsx_pcr *pcr)
+ 	pdmpriv->InitODMFlag = ODM_RF_CALIBRATION|ODM_RF_TX_PWR_TRACK;
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index d6cef9e..a4df098 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -1926,6 +1926,18 @@ static HAL_VERSION ReadChipVersion8723B(struct adapter *padapter)
+ 		pHalData->rf_type = RF_1T2R;
+ 	else if (IS_2T2R(ChipVersion))
+ 		pHalData->rf_type = RF_2T2R;
++	else if (IS_2T2R_GREEN(ChipVersion))
++		pHalData->rf_type = RF_2T2R_GREEN;
++	else if (IS_2T3R(ChipVersion))
++		pHalData->rf_type = RF_2T3R;
++	else if (IS_2T4R(ChipVersion))
++		pHalData->rf_type = RF_2T4R;
++	else if (IS_3T3R(ChipVersion))
++		pHalData->rf_type = RF_3T3R;
++	else if (IS_3T4R(ChipVersion))
++		pHalData->rf_type = RF_3T4R;
++	else if (IS_4T4R(ChipVersion))
++		pHalData->rf_type = RF_4T4R;
+ 	else
+ 		pHalData->rf_type = RF_1T1R;
+ 
+diff --git a/drivers/staging/rtl8723bs/include/HalVerDef.h b/drivers/staging/rtl8723bs/include/HalVerDef.h
+index a9e8609..08301fc 100644
+--- a/drivers/staging/rtl8723bs/include/HalVerDef.h
++++ b/drivers/staging/rtl8723bs/include/HalVerDef.h
+@@ -64,14 +64,15 @@ typedef enum tag_HAL_Manufacturer_Version_Definition
+ 
+ typedef enum tag_HAL_RF_Type_Definition
  {
- 	int err;
+-	RF_TYPE_1T1R	=	0,
+-	RF_TYPE_1T2R	=	1,
+-	RF_TYPE_2T2R	=	2,
+-	RF_TYPE_2T3R	=	3,
+-	RF_TYPE_2T4R	=	4,
+-	RF_TYPE_3T3R	=	5,
+-	RF_TYPE_3T4R	=	6,
+-	RF_TYPE_4T4R	=	7,
++	RF_TYPE_1T1R		=	0,
++	RF_TYPE_1T2R		=	1,
++	RF_TYPE_2T2R		=	2,
++	RF_TYPE_2T2R_GREEN	=	3,
++	RF_TYPE_2T3R		=	4,
++	RF_TYPE_2T4R		=	5,
++	RF_TYPE_3T3R		=	6,
++	RF_TYPE_3T4R		=	7,
++	RF_TYPE_4T4R		=	8,
+ }HAL_RF_TYPE_E;
  
-@@ -620,7 +620,7 @@ static int rts5260_extra_init_hw(struct rtsx_pcr *pcr)
- 	return 0;
- }
+ typedef	struct tag_HAL_VERSION
+@@ -101,27 +102,55 @@ typedef	struct tag_HAL_VERSION
+ /* HAL_VERSION VersionID */
  
--void rts5260_set_aspm(struct rtsx_pcr *pcr, bool enable)
-+static void rts5260_set_aspm(struct rtsx_pcr *pcr, bool enable)
+ /* HAL_CHIP_TYPE_E */
+-#define IS_TEST_CHIP(version)			((GET_CVID_CHIP_TYPE(version) ==TEST_CHIP)? true: false)
+-#define IS_NORMAL_CHIP(version)			((GET_CVID_CHIP_TYPE(version) ==NORMAL_CHIP)? true: false)
++#define IS_TEST_CHIP(version)			\
++	((GET_CVID_CHIP_TYPE(version) == TEST_CHIP) ? true : false)
++#define IS_NORMAL_CHIP(version)			\
++	((GET_CVID_CHIP_TYPE(version) == NORMAL_CHIP) ? true : false)
+ 
+ /* HAL_CUT_VERSION_E */
+-#define IS_A_CUT(version)				((GET_CVID_CUT_VERSION(version) == A_CUT_VERSION) ? true : false)
+-#define IS_B_CUT(version)				((GET_CVID_CUT_VERSION(version) == B_CUT_VERSION) ? true : false)
+-#define IS_C_CUT(version)				((GET_CVID_CUT_VERSION(version) == C_CUT_VERSION) ? true : false)
+-#define IS_D_CUT(version)				((GET_CVID_CUT_VERSION(version) == D_CUT_VERSION) ? true : false)
+-#define IS_E_CUT(version)				((GET_CVID_CUT_VERSION(version) == E_CUT_VERSION) ? true : false)
+-#define IS_I_CUT(version)				((GET_CVID_CUT_VERSION(version) == I_CUT_VERSION) ? true : false)
+-#define IS_J_CUT(version)				((GET_CVID_CUT_VERSION(version) == J_CUT_VERSION) ? true : false)
+-#define IS_K_CUT(version)				((GET_CVID_CUT_VERSION(version) == K_CUT_VERSION) ? true : false)
++#define IS_A_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == A_CUT_VERSION) ? true : false)
++#define IS_B_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == B_CUT_VERSION) ? true : false)
++#define IS_C_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == C_CUT_VERSION) ? true : false)
++#define IS_D_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == D_CUT_VERSION) ? true : false)
++#define IS_E_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == E_CUT_VERSION) ? true : false)
++#define IS_I_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == I_CUT_VERSION) ? true : false)
++#define IS_J_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == J_CUT_VERSION) ? true : false)
++#define IS_K_CUT(version)				\
++	((GET_CVID_CUT_VERSION(version) == K_CUT_VERSION) ? true : false)
+ 
+ /* HAL_VENDOR_E */
+-#define IS_CHIP_VENDOR_TSMC(version)	((GET_CVID_MANUFACTUER(version) == CHIP_VENDOR_TSMC)? true: false)
+-#define IS_CHIP_VENDOR_UMC(version)	((GET_CVID_MANUFACTUER(version) == CHIP_VENDOR_UMC)? true: false)
+-#define IS_CHIP_VENDOR_SMIC(version)	((GET_CVID_MANUFACTUER(version) == CHIP_VENDOR_SMIC)? true: false)
++#define IS_CHIP_VENDOR_TSMC(version)	\
++	((GET_CVID_MANUFACTUER(version) == CHIP_VENDOR_TSMC) ? true : false)
++#define IS_CHIP_VENDOR_UMC(version)		\
++	((GET_CVID_MANUFACTUER(version) == CHIP_VENDOR_UMC) ? true : false)
++#define IS_CHIP_VENDOR_SMIC(version)	\
++	((GET_CVID_MANUFACTUER(version) == CHIP_VENDOR_SMIC) ? true : false)
+ 
+ /* HAL_RF_TYPE_E */
+-#define IS_1T1R(version)					((GET_CVID_RF_TYPE(version) == RF_TYPE_1T1R)? true : false)
+-#define IS_1T2R(version)					((GET_CVID_RF_TYPE(version) == RF_TYPE_1T2R)? true : false)
+-#define IS_2T2R(version)					((GET_CVID_RF_TYPE(version) == RF_TYPE_2T2R)? true : false)
++#define IS_1T1R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_1T1R) ? true : false)
++#define IS_1T2R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_1T2R) ? true : false)
++#define IS_2T2R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_2T2R) ? true : false)
++#define IS_2T2R_GREEN(version)			\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_2T2R_GREEN) ? true : false)
++#define IS_2T3R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_2T3R) ? true : false)
++#define IS_2T4R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_2T4R) ? true : false)
++#define IS_3T3R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_3T3R) ? true : false)
++#define IS_3T4R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_3T4R) ? true : false)
++#define IS_4T4R(version)				\
++	((GET_CVID_RF_TYPE(version) == RF_TYPE_4T4R) ? true : false)
+ 
+ #endif
+diff --git a/drivers/staging/rtl8723bs/include/rtw_rf.h b/drivers/staging/rtl8723bs/include/rtw_rf.h
+index f9becab..d1fc396 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_rf.h
++++ b/drivers/staging/rtl8723bs/include/rtw_rf.h
+@@ -146,12 +146,16 @@ enum PROTECTION_MODE {
+ 
+ /* 2007/11/15 MH Define different RF type. */
+ enum RT_RF_TYPE_DEFINITION {
+-	RF_1T2R = 0,
+-	RF_2T4R = 1,
++	RF_1T1R = 0,
++	RF_1T2R = 1,
+ 	RF_2T2R = 2,
+-	RF_1T1R = 3,
+-	RF_2T2R_GREEN = 4,
+-	RF_MAX_TYPE = 5,
++	RF_2T2R_GREEN = 3,
++	RF_2T3R = 4,
++	RF_2T4R = 5,
++	RF_3T3R = 6,
++	RF_3T4R = 7,
++	RF_4T4R = 8,
++	RF_MAX_TYPE = 9,
+ };
+ 
+ u32 rtw_ch2freq(u32 ch);
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+index 51d48de..22fc6fa 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+@@ -3299,7 +3299,7 @@ static int cfg80211_rtw_sched_scan_stop(struct wiphy *wiphy,
+ 
+ static void rtw_cfg80211_init_ht_capab(struct ieee80211_sta_ht_cap *ht_cap, enum nl80211_band band, u8 rf_type)
  {
- 	struct rtsx_cr_option *option = &pcr->option;
- 	u8 val = 0;
+-
++#define MAX_BIT_RATE_40MHZ_MCS23	450	/* Mbps */
+ #define MAX_BIT_RATE_40MHZ_MCS15	300	/* Mbps */
+ #define MAX_BIT_RATE_40MHZ_MCS7		150	/* Mbps */
+ 
+@@ -3330,24 +3330,26 @@ static void rtw_cfg80211_init_ht_capab(struct ieee80211_sta_ht_cap *ht_cap, enum
+ 	 *if BW_40 rx_mask[4]= 0x01;
+ 	 *highest supported RX rate
+ 	 */
+-	if (rf_type == RF_1T1R)
+-	{
++	if (rf_type == RF_1T1R) {
+ 		ht_cap->mcs.rx_mask[0] = 0xFF;
+ 		ht_cap->mcs.rx_mask[1] = 0x00;
+ 		ht_cap->mcs.rx_mask[4] = 0x01;
+ 
+ 		ht_cap->mcs.rx_highest = cpu_to_le16(MAX_BIT_RATE_40MHZ_MCS7);
+-	}
+-	else if ((rf_type == RF_1T2R) || (rf_type ==RF_2T2R))
+-	{
++	} else if ((rf_type == RF_1T2R) || (rf_type == RF_2T2R)
++			|| (rf_type == RF_2T2R_GREEN)) {
+ 		ht_cap->mcs.rx_mask[0] = 0xFF;
+ 		ht_cap->mcs.rx_mask[1] = 0xFF;
+ 		ht_cap->mcs.rx_mask[4] = 0x01;
+ 
+ 		ht_cap->mcs.rx_highest = cpu_to_le16(MAX_BIT_RATE_40MHZ_MCS15);
+-	}
+-	else
+-	{
++	} else if ((rf_type == RF_2T3R) || (rf_type == RF_3T3R)) {
++		ht_cap->mcs.rx_mask[0] = 0xFF;
++		ht_cap->mcs.rx_mask[1] = 0xFF;
++		ht_cap->mcs.rx_mask[2] = 0x01;
++
++		ht_cap->mcs.rx_highest = cpu_to_le16(MAX_BIT_RATE_40MHZ_MCS23);
++	} else {
+ 		DBG_8192C("%s, error rf_type =%d\n", __func__, rf_type);
+ 	}
+ 
 -- 
-2.15.1
+2.7.4
