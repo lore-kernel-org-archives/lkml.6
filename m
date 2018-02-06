@@ -1,45 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeBFBMZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 20:12:25 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:34930 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751834AbeBFBMP (ORCPT
+        id S1752447AbeBFBUl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 20:20:41 -0500
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:42605 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeBFBUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 20:12:15 -0500
-Date: Mon, 05 Feb 2018 20:12:11 -0500 (EST)
-Message-Id: <20180205.201211.2134769499352656499.davem@davemloft.net>
-To: mfwitten@gmail.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        stephen@networkplumber.org, eric.dumazet@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Please apply these tiny, 4-month-old patches.
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <5603fa86b280465ca559a6b316ac2637-mfwitten@gmail.com>
-References: <45aab5effc0c424a992646a97cf2ec14-mfwitten@gmail.com>
-        <14527e6c082e4ea282a3f833118c68df-mfwitten@gmail.com>
-        <5603fa86b280465ca559a6b316ac2637-mfwitten@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 5 Feb 2018 20:20:31 -0500
+X-Google-Smtp-Source: AH8x227hZqIxpQMJsGSa13KMf+kY07wwNzZCC3KsVVWv/vRMmKKRWmXFW8IrYkTAJ40zgP0/qnBZMw==
+Date: Mon, 5 Feb 2018 17:20:27 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] input: touchscreen: ar1021_i2c: enable touch mode
+ during open
+Message-ID: <20180206012027.GF46524@dtor-ws>
+References: <1493295756-17812-1-git-send-email-martin.kepplinger@ginzinger.com>
+ <CAH9NwWeom2H89D5hUixxSL28YgDna_WS26boayzUBAPyVFUvTA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH9NwWeom2H89D5hUixxSL28YgDna_WS26boayzUBAPyVFUvTA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Witten <mfwitten@gmail.com>
-Date: Tue, 06 Feb 2018 00:54:35 -0000
+On Mon, Feb 05, 2018 at 11:07:08AM +0100, Christian Gmeiner wrote:
+> Hi all.
+> 
+> 2017-04-27 14:22 GMT+02:00 Martin Kepplinger <martin.kepplinger@ginzinger.com>:
+> > The device could as well be in command mode, in which this driver cannot
+> > handle the device. When opening the device, let's make sure the device
+> > will be in the mode we expect it to be for this driver.
+> >
+> 
+> I run into issues caused by this change. It turns out that the device
+> is non-functional
+> after some warm-reboots and as a result I am not able to use xorg's
+> evdev driver.
+> So I have some questions about this change:
+> 
+> * Should we enable irq before calling i2c_master_send(..) as the chip raises an
+>   irq if the command was processed?
 
-> If this is considered "new" code (it isn't) and if this email is
-> received outside of an appropriate merge window, then save this
-> email for later consideration---this isn't a real-time conversation;
-> this is email, so it doesn't matter when you receive it.
+Well, we do not care about the response... However, what is your
+interrupt trigger settings? Are you using edge by chance? If so, please
+try switching to level.
 
-Sorry, things don't work that way.
+> 
+> * Would it be enough to send this command only once during driver
+> lifetime? I can
+>   see that on my system open gets called 3 times during boot-up.
+> 
+> * What are the circumstances the touch device would be in an other state? In the
+>   official kernel driver the userspace can send commands via sysfs.
+> Also the driver
+>   does set the touch enable mode as this patch does.
 
-You must submit your changes at the appropriate time.
+What is "the official kernel driver"?
 
-Please learn how the community works, and how to interact with
-developers and maintainers in that community appropriately.
+Thanks.
 
-Thank you.
+-- 
+Dmitry
