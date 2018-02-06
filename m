@@ -1,57 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753270AbeBFSgi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:36:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42004 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753026AbeBFSg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:36:29 -0500
-Date: Tue, 6 Feb 2018 18:36:24 +0000
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Claudio Scordino <claudio@evidence.eu.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [PATCH v3 0/6] cpufreq: schedutil: fixes for flags updates
-Message-ID: <20180206183623.GH5739@e110439-lin>
-References: <20171130114723.29210-1-patrick.bellasi@arm.com>
- <20171220153029.dqrtjbyowhqdl56r@hirez.programming.kicks-ass.net>
- <f574036c-7572-9b97-79a0-794ff48e4d49@evidence.eu.com>
- <20180206154319.GF5739@e110439-lin>
- <68afaf84-893e-6770-b9f1-619cd2b6dc9c@evidence.eu.com>
+        id S1753206AbeBFShY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:37:24 -0500
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:42743 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752755AbeBFShO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:37:14 -0500
+X-Google-Smtp-Source: AH8x227VlKH/6zdePOBN0KrxFYouvnnqls40w489opXV4C8s16+9rkVZWDefcZZ2KT4dhisKDhD8XxPO2M/l55ITn88=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68afaf84-893e-6770-b9f1-619cd2b6dc9c@evidence.eu.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180126221808.GE28313@codeaurora.org>
+References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-3-rnayak@codeaurora.org>
+ <20180126221808.GE28313@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 6 Feb 2018 10:37:12 -0800
+X-Google-Sender-Auth: QJFpQkdOZaqEUx5CLjJlyGPdGyM
+Message-ID: <CAD=FV=WcCnQJc25=sKWtOi=ZWi=ium6DVsexuQnsLDL=aJE6-Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: sdm845: Add serial console support
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-Feb 19:14, Claudio Scordino wrote:
-> Hi Patrick,
+Hi,
 
-> >At first glance, your proposal below makes to make sense.
-> >
-> >However, I'm wondering if we cannot get it working using
-> >rq->dl's provided information instead of flags?
-> 
-> Yes, we can use the value of rq->dl to check if there has been an increase of the deadline utilization.
-> Even if schedutil might have been triggered by a different scheduling class, the effect should be almost the same.
-> 
-> Below a potential patch. I've kept all frequency update decisions in a single point (i.e. sugov_should_update_freq).
-> Not yet tested (waiting for further comments).
+On Fri, Jan 26, 2018 at 2:18 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/25, Rajendra Nayak wrote:
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
+>> new file mode 100644
+>> index 000000000000..b97f99e6f4b4
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
+>> @@ -0,0 +1,32 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +&tlmm {
+>
+> I'm not the maintainer, but I find this approach to the pins
+> really annoying. I have to flip to another file to figure out how
+> a board has configured the pins. And we may bring in a bunch of
+> settings that we don't ever use on some board too. Why can't we
+> put the settings in the board file directly?
 
-I have a todo list entry to backport/test Peter's series on Android...
-will add this patch too. Thanks.
+I'm not so familiar with how things work with Qualcomm, but in general
+I think putting this in the "board" file is a bad idea.  I'd be OK
+with putting this directly in the SoC file (though it might get
+unwieldy?), but not moving things to the board file as was done with
+v2 of this patch.
 
--- 
-#include <best/regards.h>
+Said another way: nearly board that uses SDM845 that uses UART2 will
+have the same definitions for these pins so we shouldn't be
+duplicating it across every board, right?
 
-Patrick Bellasi
+I'll also respond to the v2 patch so it's obvious there is feedback there...
+
+-Doug
