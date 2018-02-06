@@ -1,141 +1,100 @@
-Return-Path: <dan.j.williams@intel.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517946526; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517948793; cv=none;
         d=google.com; s=arc-20160816;
-        b=sKoUrO8DBsgBEuEuJKTCSGPXkhdVvFXpHITrVFx6W/iDpCF/3A37EnU0ve74QMQsEu
-         xCvN1VTTey5/b0tFqlWjY/wWEyOVp7P73EA10jFJKErgnoQatipjkc0RtXABOG29sl8j
-         yi74bPZ1L8GGs1lUHgKjcO0dVtNBcBt4iV/mD4/gzD61YC2sCIpGgdh6pz/RoriJshd4
-         RHpX7p77su75ooRhWA+hdcEcJDCv8rRjosmCVovQ72tR1oVqi9h9yLKMzSAYLArVf5ea
-         evFQi5DUxsK610AoHPF6CNAaWhdP8N5RuEpssnshw0Jt1XBJRFMq5UN6e63jWRj/cVyu
-         qRpQ==
+        b=mUJbBBZlXvK3pPdMPB8oPi+ivO4HR3uSTVefOS1Jnxp1kznmfynTZnxDlTvaXltfxI
+         Y4l8qLNsRIYPDJ1hB5og7vEB6y7Z6AyBz4m/8N+DnQ0/6L+aZ54am30bonxVJK9Z80Kr
+         1rxp1SCnxMjMWLdxas+tzBEr7GoLqS680yqP69wv+8DGzXQpcxzIpBQrEW20oTvjDCx3
+         pBkeVGoGIJ4IJYZLLsgB1gxWaaJCv+xwBTUzTz/MNHnrq1HnwO6GB2IiZocLUj7CbNjw
+         o18hX614oGXLvIEV2ybJprlt3Ho+TU7zd10S2k4JFCvRDAmEywOZnq4DCJqVX4gpZeWH
+         MG3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=tNZ/f41a2u/mQuhVVZbRzNkGTX4IED5cazf23Og3OaY=;
-        b=pSc4S8nC82TCmzBMbvED7jjTfWHBpoA8T6yE+v6XCSBKiKZIHvXo0UJwM7xDLpkULl
-         A6gSrUeyi1xvxCAaf7muMkWP1ZQg5BGs0uuncZh2NtB0fvrJvS5luYEFMs386oBtA0td
-         nX/wqompBwWk8mz4sA8hc/wYLF+1mXLOVjwBiaR2tmkmLqm52WADDSC+WrViv7PD3NC9
-         T8F1mJqx4hraLQzP9vPqLDayX60XknU//KEFLtWyZMPM6HdDGagQKH4JD76sVEr6E9Mr
-         Cs1pmjUkoCLqhvnmXP7ZZfRCHonFhuLi4sGYmKHO/3zxvzA6IRJt9rEehYFj55V/PM+7
-         PkSw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=rlTM2WLKd/G1RWWP3nDYVV63LfOxjXtygEDLWm72h7g=;
+        b=NIvJRjth3qPqvLNitbzZY5T+y163hxe7lkuPy3oxesUCc3KdSm2XgJRCi9DYFhMaM/
+         Lhlbh4YUznYS9pQgncHpLCeGs2dTrLL6z3IJTRDcCrKu18b8FCCfx/KERiuoFqwZl88F
+         m8v/GCdSJ57tO0ALSWjYqZe5shRcb1QK8bwrShYnpBJnP5cr8dxQ5NRMnX1lnmrUSAVr
+         h8UgMgQ6rLaMN/blE8DpyCynFviq42pxHd3IL4y1/o3Aw5JWrnuO8ITho8eFCzqgETRK
+         mBk8uRwErZZJ3WNrvsFi2QoRpHhbXoqzHGiI8pWJ56WVba78w+Mo6VGkNvMR/8QzslRL
+         dRSQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@intel-com.20150623.gappssmtp.com header.s=20150623 header.b=dvtY3D6U;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uhQxmYPQ;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@intel-com.20150623.gappssmtp.com header.s=20150623 header.b=dvtY3D6U;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
-X-Google-Smtp-Source: AH8x225CXX0zMXHpjTXPJXlMbpzDNGIML20MWOtTx6ZQB51U+scvLpk7lNHAxFFce3fH/oDxCGZWjM0TSi/tsOdFPiE=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uhQxmYPQ;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x227WRjlTq7rsYwpwj7rRNFSJFWuynRjZZ9/Ya9OlfDSQwjl5hWOa3vsbOpuLlrJhxDAbATaeALalDyJzRuWFeBI=
 MIME-Version: 1.0
-In-Reply-To: <20180206192925.qkmghwsbaysr4iv2@hermes.olymp>
+Sender: linus971@gmail.com
+In-Reply-To: <CAPcyv4ihN6fy5-vBtfA0PuwXvCAj8-rMhtQmevh5sdYxbH3Yfw@mail.gmail.com>
 References: <151632009605.21271.11304291057104672116.stgit@dwillia2-desk3.amr.corp.intel.com>
  <151632014097.21271.16980532033566583357.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180206192925.qkmghwsbaysr4iv2@hermes.olymp>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 6 Feb 2018 11:48:45 -0800
-Message-ID: <CAPcyv4ihN6fy5-vBtfA0PuwXvCAj8-rMhtQmevh5sdYxbH3Yfw@mail.gmail.com>
+ <20180206192925.qkmghwsbaysr4iv2@hermes.olymp> <CAPcyv4ihN6fy5-vBtfA0PuwXvCAj8-rMhtQmevh5sdYxbH3Yfw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Feb 2018 12:26:32 -0800
+X-Google-Sender-Auth: MAeBTM3fNyuapp4YMuNXfE4Zdsk
+Message-ID: <CA+55aFxYHX3=HN4P5M0ziSJ08WfjccyhE2T7epS-EC6ZJ6LyjQ@mail.gmail.com>
 Subject: Re: [PATCH v4 07/10] x86: narrow out of bounds syscalls to sys_read
  under speculation
-To: Luis Henriques <lhenriques@suse.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>,
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Luis Henriques <lhenriques@suse.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, Greg KH <gregkh@linuxfoundation.org>,
 	X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
 	"H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Alan Cox <alan@linux.intel.com>
+	Andrew Morton <akpm@linux-foundation.org>, Alan Cox <alan@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1589977480308913684?=
-X-GMAIL-MSGID: =?utf-8?q?1591682297154278863?=
+X-GMAIL-MSGID: =?utf-8?q?1591684674147658322?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 11:29 AM, Luis Henriques <lhenriques@suse.com> wrote=
-:
-> On Thu, Jan 18, 2018 at 04:02:21PM -0800, Dan Williams wrote:
->> The syscall table base is a user controlled function pointer in kernel
->> space. Like, 'get_user, use 'MASK_NOSPEC' to prevent any out of bounds
->> speculation. While retpoline prevents speculating into the user
->> controlled target it does not stop the pointer de-reference, the concern
->> is leaking memory relative to the syscall table base.
+On Tue, Feb 6, 2018 at 11:48 AM, Dan Williams <dan.j.williams@intel.com> wrote:
 >
-> This patch seems to cause a regression.  An easy way to reproduce what
-> I'm seeing is to run the samples/statx/test-statx.  Here's what I see
-> when I have this patchset applied:
+> Just to clarify, when you say "this patch" you mean:
 >
-> # ./test-statx /tmp
-> statx(/tmp) =3D -1
-> /tmp: Bad file descriptor
+>      2fbd7af5af86 x86/syscall: Sanitize syscall table de-references
+> under speculation
 >
-> Reverting this single patch seems to fix it.
+> ...not this early MASK_NOSPEC version of the patch, right?
 
-Just to clarify, when you say "this patch" you mean:
+I suspect not. If that patch is broken, the system wouldn't even boot.
 
-     2fbd7af5af86 x86/syscall: Sanitize syscall table de-references
-under speculation
+That said, looking at 2fbd7af5af86, I do note that the code generation
+is horribly stupid.
 
-...not this early MASK_NOSPEC version of the patch, right?
+It's due to two different issues:
 
->
-> Cheers,
-> --
-> Lu=C3=ADs
->
->>
->> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: x86@kernel.org
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->> ---
->>  arch/x86/entry/entry_64.S   |    2 ++
->>  arch/x86/include/asm/smap.h |    9 ++++++++-
->>  2 files changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
->> index 4f8e1d35a97c..2320017077d4 100644
->> --- a/arch/x86/entry/entry_64.S
->> +++ b/arch/x86/entry/entry_64.S
->> @@ -35,6 +35,7 @@
->>  #include <asm/asm.h>
->>  #include <asm/smap.h>
->>  #include <asm/pgtable_types.h>
->> +#include <asm/smap.h>
->>  #include <asm/export.h>
->>  #include <asm/frame.h>
->>  #include <asm/nospec-branch.h>
->> @@ -264,6 +265,7 @@ entry_SYSCALL_64_fastpath:
->>       cmpl    $__NR_syscall_max, %eax
->>  #endif
->>       ja      1f                              /* return -ENOSYS (already=
- in pt_regs->ax) */
->> +     MASK_NOSPEC %r11 %rax                   /* sanitize syscall_nr wrt=
- speculation */
->>       movq    %r10, %rcx
->>
->>       /*
->> diff --git a/arch/x86/include/asm/smap.h b/arch/x86/include/asm/smap.h
->> index 2b4ad4c6a226..3b5b2cf58dc6 100644
->> --- a/arch/x86/include/asm/smap.h
->> +++ b/arch/x86/include/asm/smap.h
->> @@ -35,7 +35,14 @@
->>   * this directs the cpu to speculate with a NULL ptr rather than
->>   * something targeting kernel memory.
->>   *
->> - * assumes CF is set from a previous 'cmp TASK_addr_limit, %ptr'
->> + * In the syscall entry path it is possible to speculate past the
->> + * validation of the system call number. Use MASK_NOSPEC to sanitize th=
-e
->> + * syscall array index to zero (sys_read) rather than an arbitrary
->> + * target.
->> + *
->> + * assumes CF is set from a previous 'cmp' i.e.:
->> + *     cmp TASK_addr_limit, %ptr
->> + *     cmp __NR_syscall_max, %idx
->>   */
->>  .macro MASK_NOSPEC mask val
->>       sbb \mask, \mask
->>
->>
+ (a) the x86 asm constraints for that inline asm is nasty, and
+requires a register for 'size', even though an immediate works just
+fine.
+
+ (b) the "cmp" is inside the asm, so gcc can't combine it with the
+*other* cmp in the C code.
+
+Fixing (a) is easy:
+
+  +++ b/arch/x86/include/asm/barrier.h
+  @@ -43 +43 @@ static inline unsigned long
+array_index_mask_nospec(unsigned long index,
+  -                       :"r"(size),"r" (index)
+  +                       :"ir"(size),"r" (index)
+
+but fixing (b) looks fundamentally hard. Gcc generates (for do_syscall()):
+
+        cmpq    $332, %rbp      #, nr
+        ja      .L295   #,
+        cmp $333,%rbp
+        sbb %rax,%rax;   #, nr, mask
+
+note how it completely pointlessly does the comparison twice, even
+though it could have just done
+
+        cmp $333,%rbp
+        jae      .L295   #,
+        sbb %rax,%rax;   #, nr, mask
+
+Ho humm. Sad.
+
+              Linus
