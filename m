@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753104AbeBFQxP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:53:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50890 "EHLO
+        id S1753110AbeBFQxY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:53:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47318 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752369AbeBFQu5 (ORCPT
+        by vger.kernel.org with ESMTP id S1752946AbeBFQvK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:50:57 -0500
+        Tue, 6 Feb 2018 11:51:10 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v7 16/24] mm: Introduce __page_add_new_anon_rmap()
-Date: Tue,  6 Feb 2018 17:50:02 +0100
+Subject: [PATCH v7 23/24] x86/mm: Add speculative pagefault handling
+Date: Tue,  6 Feb 2018 17:50:09 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020616-0016-0000-0000-0000052002DA
+x-cbid: 18020616-0016-0000-0000-0000052002DD
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020616-0017-0000-0000-0000285CB633
-Message-Id: <1517935810-31177-17-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18020616-0017-0000-0000-0000285CB636
+Message-Id: <1517935810-31177-24-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-06_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,134 +46,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When dealing with speculative page fault handler, we may race with VMA
-being split or merged. In this case the vma->vm_start and vm->vm_end
-fields may not match the address the page fault is occurring.
+From: Peter Zijlstra <peterz@infradead.org>
 
-This can only happens when the VMA is split but in that case, the
-anon_vma pointer of the new VMA will be the same as the original one,
-because in __split_vma the new->anon_vma is set to src->anon_vma when
-*new = *vma.
+Try a speculative fault before acquiring mmap_sem, if it returns with
+VM_FAULT_RETRY continue with the mmap_sem acquisition and do the
+traditional fault.
 
-So even if the VMA boundaries are not correct, the anon_vma pointer is
-still valid.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-If the VMA has been merged, then the VMA in which it has been merged
-must have the same anon_vma pointer otherwise the merge can't be done.
-
-So in all the case we know that the anon_vma is valid, since we have
-checked before starting the speculative page fault that the anon_vma
-pointer is valid for this VMA and since there is an anon_vma this
-means that at one time a page has been backed and that before the VMA
-is cleaned, the page table lock would have to be grab to clean the
-PTE, and the anon_vma field is checked once the PTE is locked.
-
-This patch introduce a new __page_add_new_anon_rmap() service which
-doesn't check for the VMA boundaries, and create a new inline one
-which do the check.
-
-When called from a page fault handler, if this is not a speculative one,
-there is a guarantee that vm_start and vm_end match the faulting address,
-so this check is useless. In the context of the speculative page fault
-handler, this check may be wrong but anon_vma is still valid as explained
-above.
-
+[Clearing of FAULT_FLAG_ALLOW_RETRY is now done in
+ handle_speculative_fault()]
+[Retry with usual fault path in the case VM_ERROR is returned by
+ handle_speculative_fault(). This allows signal to be delivered]
+[Don't build SPF call if !CONFIG_SPECULATIVE_PAGE_FAULT]
+[Try speculative fault path only for multi threaded processes]
+[Try to the VMA fetch during the speculative path in case of retry]
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/rmap.h | 12 ++++++++++--
- mm/memory.c          |  8 ++++----
- mm/rmap.c            |  5 ++---
- 3 files changed, 16 insertions(+), 9 deletions(-)
+ arch/x86/mm/fault.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 988d176472df..a5d282573093 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -174,8 +174,16 @@ void page_add_anon_rmap(struct page *, struct vm_area_struct *,
- 		unsigned long, bool);
- void do_page_add_anon_rmap(struct page *, struct vm_area_struct *,
- 			   unsigned long, int);
--void page_add_new_anon_rmap(struct page *, struct vm_area_struct *,
--		unsigned long, bool);
-+void __page_add_new_anon_rmap(struct page *, struct vm_area_struct *,
-+			      unsigned long, bool);
-+static inline void page_add_new_anon_rmap(struct page *page,
-+					  struct vm_area_struct *vma,
-+					  unsigned long address, bool compound)
-+{
-+	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
-+	__page_add_new_anon_rmap(page, vma, address, compound);
-+}
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 800de815519c..d9f9236ccb9a 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1239,6 +1239,9 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 		unsigned long address)
+ {
+ 	struct vm_area_struct *vma;
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++	struct vm_area_struct *spf_vma = NULL;
++#endif
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+ 	int fault, major = 0;
+@@ -1336,6 +1339,27 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 	if (error_code & X86_PF_INSTR)
+ 		flags |= FAULT_FLAG_INSTRUCTION;
+ 
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++	if ((error_code & X86_PF_USER) && (atomic_read(&mm->mm_users) > 1)) {
++		fault = handle_speculative_fault(mm, address, flags,
++						 &spf_vma);
 +
- void page_add_file_rmap(struct page *, bool);
- void page_remove_rmap(struct page *, bool);
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index b1e6a1b7c77a..6d0d7a911cbe 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2553,7 +2553,7 @@ static int wp_page_copy(struct vm_fault *vmf)
- 		 * thread doing COW.
- 		 */
- 		ptep_clear_flush_notify(vma, vmf->address, vmf->pte);
--		page_add_new_anon_rmap(new_page, vma, vmf->address, false);
-+		__page_add_new_anon_rmap(new_page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(new_page, memcg, false, false);
- 		__lru_cache_add_active_or_unevictable(new_page, vmf->vma_flags);
- 		/*
-@@ -3095,7 +3095,7 @@ int do_swap_page(struct vm_fault *vmf)
- 
- 	/* ksm created a completely new copy */
- 	if (unlikely(page != swapcache && swapcache)) {
--		page_add_new_anon_rmap(page, vma, vmf->address, false);
-+		__page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
-@@ -3246,7 +3246,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
++		if (!(fault & VM_FAULT_RETRY)) {
++			if (!(fault & VM_FAULT_ERROR)) {
++				perf_sw_event(PERF_COUNT_SW_SPF, 1,
++					      regs, address);
++				goto done;
++			}
++			/*
++			 * In case of error we need the pkey value, but
++			 * can't get it from the spf_vma as it is only returned
++			 * when VM_FAULT_RETRY is returned. So we have to
++			 * retry the page fault with the mmap_sem grabbed.
++			 */
++		}
++	}
++#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
++
+ 	/*
+ 	 * When running in the kernel we expect faults to occur only to
+ 	 * addresses in user space.  All other faults represent errors in
+@@ -1369,7 +1393,16 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 		might_sleep();
  	}
  
- 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
--	page_add_new_anon_rmap(page, vma, vmf->address, false);
-+	__page_add_new_anon_rmap(page, vma, vmf->address, false);
- 	mem_cgroup_commit_charge(page, memcg, false, false);
- 	__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- setpte:
-@@ -3498,7 +3498,7 @@ int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 	/* copy-on-write page */
- 	if (write && !(vmf->vma_flags & VM_SHARED)) {
- 		inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
--		page_add_new_anon_rmap(page, vma, vmf->address, false);
-+		__page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 47db27f8049e..6ec168ba5f73 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1136,7 +1136,7 @@ void do_page_add_anon_rmap(struct page *page,
- }
+-	vma = find_vma(mm, address);
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++	if (spf_vma) {
++		if (can_reuse_spf_vma(spf_vma, address))
++			vma = spf_vma;
++		else
++			vma = find_vma(mm, address);
++		spf_vma = NULL;
++	} else
++#endif
++		vma = find_vma(mm, address);
+ 	if (unlikely(!vma)) {
+ 		bad_area(regs, error_code, address);
+ 		return;
+@@ -1455,6 +1488,9 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 		return;
+ 	}
  
- /**
-- * page_add_new_anon_rmap - add pte mapping to a new anonymous page
-+ * __page_add_new_anon_rmap - add pte mapping to a new anonymous page
-  * @page:	the page to add the mapping to
-  * @vma:	the vm area in which the mapping is added
-  * @address:	the user virtual address mapped
-@@ -1146,12 +1146,11 @@ void do_page_add_anon_rmap(struct page *page,
-  * This means the inc-and-test can be bypassed.
-  * Page does not have to be locked.
-  */
--void page_add_new_anon_rmap(struct page *page,
-+void __page_add_new_anon_rmap(struct page *page,
- 	struct vm_area_struct *vma, unsigned long address, bool compound)
- {
- 	int nr = compound ? hpage_nr_pages(page) : 1;
- 
--	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
- 	__SetPageSwapBacked(page);
- 	if (compound) {
- 		VM_BUG_ON_PAGE(!PageTransHuge(page), page);
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++done:
++#endif
+ 	/*
+ 	 * Major/minor page fault accounting. If any of the events
+ 	 * returned VM_FAULT_MAJOR, we account it as a major fault.
 -- 
 2.7.4
