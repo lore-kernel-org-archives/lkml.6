@@ -1,105 +1,126 @@
-Return-Path: <jpoimboe@redhat.com>
-X-Google-Smtp-Source: AH8x225os5yn/k3nu/gPD8FZ1So/b4Phc3HRZyfPMMp4DMcEX2YQY2ZciZNVvNnSC78IgHYs/93W
-ARC-Seal: i=1; a=rsa-sha256; t=1517960975; cv=none;
-        d=google.com; s=arc-20160816;
-        b=uX7VWM9awigzznRVa4sYG48SJcxU8gLIT6IUaiB1uUJn8dYOC4GcBmT49yUxHnCp0r
-         dhUjR6RST1XaugIcbppFsJMFP58jG0968FW1Yl6SRcyer7U9orcueUInCnkz047/m7/a
-         83Ew7/QsKcHHZ4FF0icFNlScdtxZCA8CQBrMUyO36EPzEOYTvdeNcz3ldPUryDPa6ods
-         SwoQmasAAhEjkuXt0UFWFXNs07w7F4SHme9iquYSix/mw/OoQ21HVVNDTrlWNXR63ZJy
-         +R3qqKcCnNkF03gNBj8abWGbB0un++3zW2vMiQ+EeR3hSSe+1ah35mtErZ+pyVqM0uRW
-         DhWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=RK/jeEmPhxjWITqFEoItCXw4XaYBRHeI0/A0IDcro8c=;
-        b=eqpAjvwpjgAA3s8aBNzV3bsNw7hshZSuEBMSyTEdsgdj8BqOCccbzWfO8zMiuYxx1a
-         mpt0O9gzpDU3wMN5frhlZXLjD3KGNpOqtTNx0lhxP9pKbi/nOBwimCrLXxe5HTZoMmGy
-         SkxeIdz30AW1X6BUBIRf5/N3iuETSy13nwrsFpQn+yalQ5TZbKmDBfeRGsoWsywswzcp
-         kHA+Y2x1vOFVPyPqjDY7zCEUiQp9QVVsKfuFHLQgUUN0FrfJMbzLjXs8vBi3OZf484bN
-         4B0WeENIF5QBnTETknfHXGQXE4ophFoTDHtNNKtxxlY/ePTPHlXHTp0aPHYsCe0giVnS
-         ij9w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Tue, 6 Feb 2018 17:49:32 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, tim.c.chen@linux.intel.com,
-	pjt@google.com, jikos@kernel.org, gregkh@linux-foundation.org,
-	dave.hansen@intel.com, riel@redhat.com, luto@amacapital.net,
-	torvalds@linux-foundation.org, ak@linux.intel.com,
-	keescook@google.com, peterz@infradead.org
-Subject: Re: [PATCH 2/2] x86/speculation: Simplify
- indirect_branch_prediction_barrier()
-Message-ID: <20180206234932.jlctz3u5ybq6gunz@treble>
-References: <20180126121139.31959-4-bp@alien8.de>
- <1516970011.30244.223.camel@infradead.org>
- <20180126132431.fsbd3c3g2yreazy6@pd.tnic>
- <1516983879.30244.236.camel@infradead.org>
- <20180126164746.dpo7dswid5tjk2tz@pd.tnic>
- <20180126200616.5xfn244uzeu7ptyo@pd.tnic>
- <20180126200813.cignvfovk2dhlzbh@pd.tnic>
- <1517946292.3677.22.camel@infradead.org>
- <20180206232514.qcy4y3dzfkjo3xdg@treble>
- <1517959878.3677.54.camel@infradead.org>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2365247-1517957414-2-72846398838624626
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES ensv, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517957413; b=HKzHM7RmVSz3n4iau1KMZsnIvwIgnhBMtPPwISZLGZsVAKr
+    33BqQvElH9TSN9+VabASQA4tjKcb+iZ2ATF6gMjLY4LZDOaL3egY9odgzE8qYObg
+    xjx9vaeJXNJfSLlcumUL/BcVsMCFXBvA3Cp7tf9oT4hjlrxzuhjp0FmGpfG7nDwi
+    7GKsmyDhFtDEhNNOBRtx0QJd9lrENeFkDD0JyflKOVannZNsvTya6PWZzSdy0hgh
+    QXqJutOrkdhHqwHGGa9M+UJJCBKaMEVUOiQLYVvhXU5zzK7iYcutki+UVXBBMKM7
+    tMH9ueAofvA4KbBGYCXm1ZxeA0xnLzgKO0Mdraw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc
+    :content-transfer-encoding:content-type:sender; s=arctest; t=
+    1517957413; bh=aaWEeT7lES5OWhwR1c0V1F0pusDTMQLkHEcZUtUj1FY=; b=p
+    89QDlshNZmg5kC8kJNHPqc00YOroeqtQ3qlpXXgvwpBmALtdsH4+JuDavWboL7Ac
+    4LtmZtvnEF2bxDzdxt0SJq+MyKrBUOP+PK/k0lSAqdXupcC1UaYXPH6c0xry+DBG
+    cPFHSXnIIhJ9pqkPQekpiR70GYyBlttVqSnRbebYp9KV0iZ0yvBDMWJdmaVket3T
+    MLax0UBUazvPkMrLT3v0n4UPwA5oAdy9aB95E3/78mVshwGVKIWw9KfMCG3jXXcA
+    4QiKWekZIlmEF7aGJfyJ4tNmj8XszdQsfAIz1EksgV2vbq6GG++sSTSpS6nTxph7
+    FTja+2ajjonqZHupsIa9w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DNJ6IlwZ;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DNJ6IlwZ;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AH8x224HPJQoHooJuklrCY503YAY/VFnt0VCWchjUQcZzwH+gVz81jG7qKOWo7a8qjSVCtjOq1dU6A==
+Subject: Re: [PATCH] staging: android: ion: Remove unused declaration
+ ion_buffer_fault_user_mappings
+To: Yisheng Xie <xieyisheng1@huawei.com>, gregkh@linuxfoundation.org
+References: <1517371291-37515-1-git-send-email-xieyisheng1@huawei.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <6f216cf2-ae84-0721-b68b-bb1837e1c687@redhat.com>
+Date: Tue, 6 Feb 2018 14:49:58 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1517959878.3677.54.camel@infradead.org>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <1517371291-37515-1-git-send-email-xieyisheng1@huawei.com>
+Content-Language: en-US
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, sumit.semwal@linaro.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590686965266539786?=
-X-GMAIL-MSGID: =?utf-8?q?1591697448088742261?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 06, 2018 at 11:31:18PM +0000, David Woodhouse wrote:
+On 01/30/2018 08:01 PM, Yisheng Xie wrote:
+> ion_buffer_fault_user_mappings's definition has been removed and not be
+> used anymore, just remove its useless declaration.
 > 
-> 
-> On Tue, 2018-02-06 at 17:25 -0600, Josh Poimboeuf wrote:
-> > On Tue, Feb 06, 2018 at 07:44:52PM +0000, David Woodhouse wrote:
-> > > 
-> > > On Fri, 2018-01-26 at 21:08 +0100, Borislav Petkov wrote:
-> > > > 
-> > > > Make it all a function which does the WRMSR instead of having a hairy
-> > > > inline asm.
-> > > ...
-> > > 
-> > > > 
-> > > > +	alternative_input("",
-> > > > +			 "call __ibp_barrier",
-> > > > +			 X86_FEATURE_IBPB,
-> > > > +			 ASM_NO_INPUT_CLOBBER("eax", "ecx", "edx", "memory"));
-> > > >  }
-> > > Dammit. I know the best time to comment is *before* I add my own sign-
-> > > off to it and before Linus has merged it but... I think this is broken.
-> > > 
-> > > If you're calling a C function then you have to mark *all* the call-
-> > > clobbered registers as, well, clobbered.
-> > > 
-> > > If you really really really want to *call* something out of line, then
-> > > it would need to be implemented in asm.
-> >
-> > Hm.  In theory I agree this seems like a bug.  On x86_64 I believe we
-> > would need to mark the following registers as clobbered: r8-r11, ax, cx,
-> > dx, si, di, plus "memory" and "cc".
-> > 
-> > But I'm scratching my head a bit, because we seem to have this bug all
-> > over the kernel.  (Grep for ASM_CALL_CONSTRAINT to see them.)
-> > 
-> > Many of those inline asm calls have been around a long time.  So why
-> > hasn't it ever bitten us?
-> 
-> How many are actually calling C functions, not asm or other special
-> cases like firmware entry points?
 
-I think many, and maybe even most, are calling normal C functions.
+Acked-by: Laura Abbott <labbott@redhat.com>
 
--- 
-Josh
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>   drivers/staging/android/ion/ion.h | 9 ---------
+>   1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
+> index f5f9cd6..2160c35 100644
+> --- a/drivers/staging/android/ion/ion.h
+> +++ b/drivers/staging/android/ion/ion.h
+> @@ -201,15 +201,6 @@ struct ion_heap {
+>   bool ion_buffer_cached(struct ion_buffer *buffer);
+>   
+>   /**
+> - * ion_buffer_fault_user_mappings - fault in user mappings of this buffer
+> - * @buffer:		buffer
+> - *
+> - * indicates whether userspace mappings of this buffer will be faulted
+> - * in, this can affect how buffers are allocated from the heap.
+> - */
+> -bool ion_buffer_fault_user_mappings(struct ion_buffer *buffer);
+> -
+> -/**
+>    * ion_device_add_heap - adds a heap to the ion device
+>    * @heap:		the heap to add
+>    */
+> 
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
