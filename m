@@ -1,56 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752789AbeBFSEs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:04:48 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47560 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbeBFSEl (ORCPT
+        id S1752801AbeBFSJd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:09:33 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39570 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752481AbeBFSJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:04:41 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        x86 <x86@kernel.org>, Jiri Koshina <jikos@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86: PM: Make APM idle driver initialize polling state
-Date: Tue, 06 Feb 2018 19:02:58 +0100
-Message-ID: <1862424.1bTBpgPzTf@aspire.rjw.lan>
-In-Reply-To: <20180206163134.GO5453@intel.com>
-References: <20180122162747.19103-1-ville.syrjala@linux.intel.com> <36158666.hf5grRdGNf@aspire.rjw.lan> <20180206163134.GO5453@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 6 Feb 2018 13:09:27 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D3CA60272
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, asathyak@codeaurora.org,
+        Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v3 0/2] irqchip: qcom: add support for PDC interrupt controller
+Date: Tue,  6 Feb 2018 11:09:03 -0700
+Message-Id: <20180206180905.29047-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Changes since RFC v2:
+- Fixed up DT probe based on suggestions from Thomas and Marc
+- Code clean up as suggested by Thomas
+- Switch to SPDX license marker
+- Dropped the FTRACE patch for now, will need more thought and discussions
 
-Update the APM driver overlooked by commit 1b39e3f813b4 (cpuidle: Make
-drivers initialize polling state) to initialize the polling state like
-the other cpuidle drivers modified by that commit to prevent cpuidle
-from crashing.
+On newer Qualcomm Techonologies Inc's SoCs like the SDM845, the GIC is in a
+power domain that can be powered off when not needed. Interrupts that need to
+be sensed even when the GIC is powered off, are routed through an interrupt
+controller in an always-on domain called the Power Domain Controller a.k.a PDC.
+This series adds support for the PDC's interrupt controller.
 
-Fixes: 1b39e3f813b4 (cpuidle: Make drivers initialize polling state)
-Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Tested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- arch/x86/kernel/apm_32.c |    1 +
- 1 file changed, 1 insertion(+)
+Please consider reviewing these patches.
 
-Index: linux-pm/arch/x86/kernel/apm_32.c
-===================================================================
---- linux-pm.orig/arch/x86/kernel/apm_32.c
-+++ linux-pm/arch/x86/kernel/apm_32.c
-@@ -2389,6 +2389,7 @@ static int __init apm_init(void)
- 	if (HZ != 100)
- 		idle_period = (idle_period * HZ) / 100;
- 	if (idle_threshold < 100) {
-+		cpuidle_poll_state_init(&apm_idle_driver);
- 		if (!cpuidle_register_driver(&apm_idle_driver))
- 			if (cpuidle_register_device(&apm_cpuidle_device))
- 				cpuidle_unregister_driver(&apm_idle_driver);
+RFC v1: https://patchwork.kernel.org/patch/10180857/
+RFC v2: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1600634.html
+
+Lina Iyer (2):
+  drivers: irqchip: pdc: Add PDC interrupt controller for QCOM SoCs
+  dt-bindings/interrupt-controller: pdc: descibe PDC device binding
+
+ .../bindings/interrupt-controller/qcom,pdc.txt     |  80 ++++++
+ drivers/irqchip/Kconfig                            |   9 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/qcom-pdc.c                         | 302 +++++++++++++++++++++
+ 4 files changed, 392 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+ create mode 100644 drivers/irqchip/qcom-pdc.c
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
