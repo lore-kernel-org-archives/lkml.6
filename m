@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeBFJ41 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:56:27 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:19458 "EHLO
+        id S1752858AbeBFJ5S (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:57:18 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46245 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752187AbeBFJxX (ORCPT
+        with ESMTP id S1752256AbeBFJxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:53:23 -0500
-X-UUID: 9a1a3cf8a0304abc8df5263ac138ce38-20180206
+        Tue, 6 Feb 2018 04:53:16 -0500
+X-UUID: 180fc33fa4674957bd72876a89e93b74-20180206
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH v2 06/16] arm64: dts: mt7622: add cpufreq related device nodes
-Date: Tue, 6 Feb 2018 17:52:55 +0800
-Message-ID: <fc5bdf53b92bd7a96e94b714d8d13deebca95c28.1517910489.git.sean.wang@mediatek.com>
+        Sean Wang <sean.wang@mediatek.com>, Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 01/16] dt-bindings: clock: mediatek: add missing required #reset-cells
+Date: Tue, 6 Feb 2018 17:52:50 +0800
+Message-ID: <d58fcf36319254d6de4c7fe100cbdca1bbec27a5.1517910489.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1517910489.git.sean.wang@mediatek.com>
 References: <cover.1517910489.git.sean.wang@mediatek.com>
@@ -29,113 +29,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add clocks, regulators and opp information into cpu nodes.
-In addition, the power supply for cpu nodes is deployed on
-mt7622-rfb1 board.
+All ethsys, pciesys and ssusbsys internally include reset controller, so
+explicitly add back these missing cell definitions to related bindings
+and examples.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 12 +++++++
- arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 49 ++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+ Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt   | 2 ++
+ Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt  | 2 ++
+ Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt | 2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-index 4615af6..bbf4d03 100644
---- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-@@ -20,6 +20,18 @@
- 		bootargs = "console=ttyS0,115200n1";
- 	};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+index 7aa3fa1..8f5335b 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- "mediatek,mt2701-ethsys", "syscon"
+ 	- "mediatek,mt7622-ethsys", "syscon"
+ - #clock-cells: Must be 1
++- #reset-cells: Must be 1
  
-+	cpus {
-+		cpu@0 {
-+			proc-supply = <&mt6380_vcpu_reg>;
-+			sram-supply = <&mt6380_vm_reg>;
-+		};
-+
-+		cpu@1 {
-+			proc-supply = <&mt6380_vcpu_reg>;
-+			sram-supply = <&mt6380_vm_reg>;
-+		};
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys-polled";
- 		poll-interval = <100>;
-diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index c387c4c..65eb417 100644
---- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -18,6 +18,50 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+ The ethsys controller uses the common clk binding from
+ Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -20,4 +21,5 @@ ethsys: clock-controller@1b000000 {
+ 	compatible = "mediatek,mt2701-ethsys", "syscon";
+ 	reg = <0 0x1b000000 0 0x1000>;
+ 	#clock-cells = <1>;
++	#reset-cells = <1>;
+ };
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+index d5d5f12..7fe5dc6 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be:
+ 	- "mediatek,mt7622-pciesys", "syscon"
+ - #clock-cells: Must be 1
++- #reset-cells: Must be 1
  
-+	cpu_opp_table: opp-table {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp-300000000 {
-+			opp-hz = /bits/ 64 <30000000>;
-+			opp-microvolt = <950000>;
-+		};
-+
-+		opp-437500000 {
-+			opp-hz = /bits/ 64 <437500000>;
-+			opp-microvolt = <1000000>;
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <1050000>;
-+		};
-+
-+		opp-812500000 {
-+			opp-hz = /bits/ 64 <812500000>;
-+			opp-microvolt = <1100000>;
-+		};
-+
-+		opp-1025000000 {
-+			opp-hz = /bits/ 64 <1025000000>;
-+			opp-microvolt = <1150000>;
-+		};
-+
-+		opp-1137500000 {
-+			opp-hz = /bits/ 64 <1137500000>;
-+			opp-microvolt = <1200000>;
-+		};
-+
-+		opp-1262500000 {
-+			opp-hz = /bits/ 64 <1262500000>;
-+			opp-microvolt = <1250000>;
-+		};
-+
-+		opp-1350000000 {
-+			opp-hz = /bits/ 64 <1350000000>;
-+			opp-microvolt = <1310000>;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <2>;
- 		#size-cells = <0>;
-@@ -26,6 +70,10 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x0 0x0>;
-+			clocks = <&infracfg CLK_INFRA_MUX1_SEL>,
-+				 <&apmixedsys CLK_APMIXED_MAIN_CORE_EN>;
-+			clock-names = "cpu", "intermediate";
-+			operating-points-v2 = <&cpu_opp_table>;
- 			enable-method = "psci";
- 			clock-frequency = <1300000000>;
- 		};
-@@ -34,6 +82,7 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x0 0x1>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 			enable-method = "psci";
- 			clock-frequency = <1300000000>;
- 		};
+ The PCIESYS controller uses the common clk binding from
+ Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -19,4 +20,5 @@ pciesys: pciesys@1a100800 {
+ 	compatible = "mediatek,mt7622-pciesys", "syscon";
+ 	reg = <0 0x1a100800 0 0x1000>;
+ 	#clock-cells = <1>;
++	#reset-cells = <1>;
+ };
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
+index 00760019..b8184da 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be:
+ 	- "mediatek,mt7622-ssusbsys", "syscon"
+ - #clock-cells: Must be 1
++- #reset-cells: Must be 1
+ 
+ The SSUSBSYS controller uses the common clk binding from
+ Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -19,4 +20,5 @@ ssusbsys: ssusbsys@1a000000 {
+ 	compatible = "mediatek,mt7622-ssusbsys", "syscon";
+ 	reg = <0 0x1a000000 0 0x1000>;
+ 	#clock-cells = <1>;
++	#reset-cells = <1>;
+ };
 -- 
 2.7.4
