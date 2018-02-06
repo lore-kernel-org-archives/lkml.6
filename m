@@ -1,193 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeBFBII (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 20:08:08 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51385 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751834AbeBFBIB (ORCPT
+        id S1752413AbeBFBMZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 20:12:25 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:34930 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751834AbeBFBMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 20:08:01 -0500
-X-Google-Smtp-Source: AH8x2259OE+fevT0Bo7XPDZX+ZmXC2/VOtdkK5pn/xjbd5SNPBayn38Bi1o4pdp2G/3eUlaWCdIiFA==
-Subject: Please apply these tiny, 4-month-old patches.
-Date: Tue, 06 Feb 2018 00:54:35 -0000
-From: Michael Witten <mfwitten@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <5603fa86b280465ca559a6b316ac2637-mfwitten@gmail.com>
-In-Reply-To: <14527e6c082e4ea282a3f833118c68df-mfwitten@gmail.com>
+        Mon, 5 Feb 2018 20:12:15 -0500
+Date: Mon, 05 Feb 2018 20:12:11 -0500 (EST)
+Message-Id: <20180205.201211.2134769499352656499.davem@davemloft.net>
+To: mfwitten@gmail.com
+Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        stephen@networkplumber.org, eric.dumazet@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Please apply these tiny, 4-month-old patches.
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <5603fa86b280465ca559a6b316ac2637-mfwitten@gmail.com>
 References: <45aab5effc0c424a992646a97cf2ec14-mfwitten@gmail.com>
-            <14527e6c082e4ea282a3f833118c68df-mfwitten@gmail.com>
+        <14527e6c082e4ea282a3f833118c68df-mfwitten@gmail.com>
+        <5603fa86b280465ca559a6b316ac2637-mfwitten@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Strictly speaking, these patches streamline the code at both 
-compile-time and run-time, and seem to face no technical
-objection of note.
+From: Michael Witten <mfwitten@gmail.com>
+Date: Tue, 06 Feb 2018 00:54:35 -0000
 
-The strongest objection was a dubious *potential* refactoring of
-similar code, a refactoring which is clearly vaporware, and which
-I myself would have tried to complete if only this initial foray
-had been applied.
+> If this is considered "new" code (it isn't) and if this email is
+> received outside of an appropriate merge window, then save this
+> email for later consideration---this isn't a real-time conversation;
+> this is email, so it doesn't matter when you receive it.
 
-If this is considered "new" code (it isn't) and if this email is
-received outside of an appropriate merge window, then save this
-email for later consideration---this isn't a real-time conversation;
-this is email, so it doesn't matter when you receive it.
+Sorry, things don't work that way.
 
-Sincerely,
-Michael Witten
+You must submit your changes at the appropriate time.
 
-On Sun, 01 Oct 2017 22:19:02 -0000, Michael Witten wrote:
+Please learn how the community works, and how to interact with
+developers and maintainers in that community appropriately.
 
-> The following patch series is an ad hoc "cleanup" that I made
-> while perusing the code (I'm not well versed in this code, so I
-> would not be surprised if there were objections to the changes):
->
->   [1] net: __sock_cmsg_send(): Remove unused parameter `msg'
->   [2] net: inet_recvmsg(): Remove unnecessary bitwise operation
->   [3] net: skb_queue_purge(): lock/unlock the queue only once
->
-> Each patch will be sent as an individual reply to this email;
-> the total diff is appended below for your convenience.
->
-> You may also fetch these patches from GitHub:
->
->   git checkout --detach 5969d1bb3082b41eba8fd2c826559abe38ccb6df
->   git pull https://github.com/mfwitten/linux.git net/tcp-ip/01-cleanup/02
->
-> Overall:
->
->   include/net/sock.h     |  2 +-
->   net/core/skbuff.c      | 26 ++++++++++++++++++--------
->   net/core/sock.c        |  4 ++--
->   net/ipv4/af_inet.c     |  2 +-
->   net/ipv4/ip_sockglue.c |  2 +-
->   net/ipv6/datagram.c    |  2 +-
->   6 files changed, 24 insertions(+), 14 deletions(-)
->
-> Sincerly,
-> Michael Witten
->
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index 03a362568357..83373d7148a9 100644
-> --- a/include/net/sock.h
-> +++ b/include/net/sock.h
-> @@ -1562,7 +1562,7 @@ struct sockcm_cookie {
->  	u16 tsflags;
->  };
->  
-> -int __sock_cmsg_send(struct sock *sk, struct msghdr *msg, struct cmsghdr *cmsg,
-> +int __sock_cmsg_send(struct sock *sk, struct cmsghdr *cmsg,
->  		     struct sockcm_cookie *sockc);
->  int sock_cmsg_send(struct sock *sk, struct msghdr *msg,
->  		   struct sockcm_cookie *sockc);
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index 9b7b6bbb2a23..425e03fe1c56 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -2091,7 +2091,7 @@ struct sk_buff *sock_alloc_send_skb(struct sock *sk, unsigned long size,
->  }
->  EXPORT_SYMBOL(sock_alloc_send_skb);
->  
-> -int __sock_cmsg_send(struct sock *sk, struct msghdr *msg, struct cmsghdr *cmsg,
-> +int __sock_cmsg_send(struct sock *sk, struct cmsghdr *cmsg,
->  		     struct sockcm_cookie *sockc)
->  {
->  	u32 tsflags;
-> @@ -2137,7 +2137,7 @@ int sock_cmsg_send(struct sock *sk, struct msghdr *msg,
->  			return -EINVAL;
->  		if (cmsg->cmsg_level != SOL_SOCKET)
->  			continue;
-> -		ret = __sock_cmsg_send(sk, msg, cmsg, sockc);
-> +		ret = __sock_cmsg_send(sk, cmsg, sockc);
->  		if (ret)
->  			return ret;
->  	}
-> diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-> index e558e4f9597b..c79b7822b0b9 100644
-> --- a/net/ipv4/ip_sockglue.c
-> +++ b/net/ipv4/ip_sockglue.c
-> @@ -263,7 +263,7 @@ int ip_cmsg_send(struct sock *sk, struct msghdr *msg, struct ipcm_cookie *ipc,
->  		}
->  #endif
->  		if (cmsg->cmsg_level == SOL_SOCKET) {
-> -			err = __sock_cmsg_send(sk, msg, cmsg, &ipc->sockc);
-> +			err = __sock_cmsg_send(sk, cmsg, &ipc->sockc);
->  			if (err)
->  				return err;
->  			continue;
-> diff --git a/net/ipv6/datagram.c b/net/ipv6/datagram.c
-> index a1f918713006..1d1926a4cbe2 100644
-> --- a/net/ipv6/datagram.c
-> +++ b/net/ipv6/datagram.c
-> @@ -756,7 +756,7 @@ int ip6_datagram_send_ctl(struct net *net, struct sock *sk,
->  		}
->  
->  		if (cmsg->cmsg_level == SOL_SOCKET) {
-> -			err = __sock_cmsg_send(sk, msg, cmsg, sockc);
-> +			err = __sock_cmsg_send(sk, cmsg, sockc);
->  			if (err)
->  				return err;
->  			continue;
-> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-> index e31108e5ef79..2dbed042a412 100644
-> --- a/net/ipv4/af_inet.c
-> +++ b/net/ipv4/af_inet.c
-> @@ -791,7 +791,7 @@ int inet_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
->  	sock_rps_record_flow(sk);
->  
->  	err = sk->sk_prot->recvmsg(sk, msg, size, flags & MSG_DONTWAIT,
-> -				   flags & ~MSG_DONTWAIT, &addr_len);
-> +				   flags, &addr_len);
->  	if (err >= 0)
->  		msg->msg_namelen = addr_len;
->  	return err;
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index 68065d7d383f..bd26b0bde784 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -2825,18 +2825,28 @@
->  EXPORT_SYMBOL(skb_dequeue_tail);
->  
->  /**
-> - *	skb_queue_purge - empty a list
-> - *	@list: list to empty
-> + *	skb_queue_purge - empty a queue
-> + *	@q: the queue to empty
->   *
-> - *	Delete all buffers on an &sk_buff list. Each buffer is removed from
-> - *	the list and one reference dropped. This function takes the list
-> - *	lock and is atomic with respect to other list locking functions.
-> + *	Dequeue and free each socket buffer that is in @q.
-> + *
-> + *	This function is atomic with respect to other queue-locking functions.
->   */
-> -void skb_queue_purge(struct sk_buff_head *list)
-> +void skb_queue_purge(struct sk_buff_head *q)
->  {
-> -	struct sk_buff *skb;
-> -	while ((skb = skb_dequeue(list)) != NULL)
-> +	unsigned long flags;
-> +	struct sk_buff *skb, *next, *head = (struct sk_buff *)q;
-> +
-> +	spin_lock_irqsave(&q->lock, flags);
-> +	skb = q->next;
-> +	__skb_queue_head_init(q);
-> +	spin_unlock_irqrestore(&q->lock, flags);
-> +
-> +	while (skb != head) {
-> +		next = skb->next;
->  		kfree_skb(skb);
-> +		skb = next;
-> +	}
->  }
->  EXPORT_SYMBOL(skb_queue_purge);
->  
-> -- 
-> 2.14.1
->
+Thank you.
