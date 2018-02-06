@@ -1,137 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752901AbeBFSOC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:14:02 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41736 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752536AbeBFSNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:13:53 -0500
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [RFC 2/4] KVM: arm64: Support dirty page tracking for PUD hugepages
-References: <20180110190729.18383-1-punit.agrawal@arm.com>
-        <20180110190729.18383-3-punit.agrawal@arm.com>
-        <20180206145508.GC23160@cbox>
-Date: Tue, 06 Feb 2018 18:13:50 +0000
-In-Reply-To: <20180206145508.GC23160@cbox> (Christoffer Dall's message of
-        "Tue, 6 Feb 2018 15:55:08 +0100")
-Message-ID: <87a7wmhtpd.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752839AbeBFSUM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:20:12 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:50304 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752702AbeBFSUE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:20:04 -0500
+Subject: Re: [RFC PATCH v1 13/13] mm: splice local lists onto the front of the
+ LRU
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
+        Dave.Dice@oracle.com, dave@stgolabs.net, khandual@linux.vnet.ibm.com,
+        mgorman@suse.de, mhocko@kernel.org, pasha.tatashin@oracle.com,
+        steven.sistare@oracle.com, yossi.lev@oracle.com
+References: <20180131230413.27653-1-daniel.m.jordan@oracle.com>
+ <20180131230413.27653-14-daniel.m.jordan@oracle.com>
+ <765238a2-8970-e05d-4fe3-cdcb796aa399@linux.vnet.ibm.com>
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <a9518500-cc2a-ce15-76a4-73a31b744852@oracle.com>
+Date: Tue, 6 Feb 2018 13:18:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <765238a2-8970-e05d-4fe3-cdcb796aa399@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8796 signatures=668662
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802060231
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoffer Dall <christoffer.dall@linaro.org> writes:
+On 02/02/2018 10:22 AM, Laurent Dufour wrote:
+> On 01/02/2018 00:04, daniel.m.jordan@oracle.com wrote:
+...snip...
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index 99a54df760e3..6911626f29b2 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -2077,6 +2077,7 @@ static void lock_page_lru(struct page *page, int *isolated)
+>>
+>>   		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
+>>   		ClearPageLRU(page);
+>> +		smp_rmb(); /* Pairs with smp_wmb in __pagevec_lru_add */
+> 
+> Why not include the call to smp_rmb() in del_page_from_lru_list() instead
+> of spreading smp_rmb() before calls to del_page_from_lru_list() ?
 
-> On Wed, Jan 10, 2018 at 07:07:27PM +0000, Punit Agrawal wrote:
->> In preparation for creating PUD hugepages at stage 2, add support for
->> write protecting PUD hugepages when they are encountered. Write
->> protecting guest tables is used to track dirty pages when migrating VMs.
->> 
->> Also, provide trivial implementations of required kvm_s2pud_* helpers to
->> allow code to compile on arm32.
->> 
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@linaro.org>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>  arch/arm/include/asm/kvm_mmu.h   |  9 +++++++++
->>  arch/arm64/include/asm/kvm_mmu.h | 10 ++++++++++
->>  virt/kvm/arm/mmu.c               |  9 ++++++---
->>  3 files changed, 25 insertions(+), 3 deletions(-)
->> 
->> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
->> index fa6f2174276b..3fbe919b9181 100644
->> --- a/arch/arm/include/asm/kvm_mmu.h
->> +++ b/arch/arm/include/asm/kvm_mmu.h
->> @@ -103,6 +103,15 @@ static inline bool kvm_s2pmd_readonly(pmd_t *pmd)
->>  	return (pmd_val(*pmd) & L_PMD_S2_RDWR) == L_PMD_S2_RDONLY;
->>  }
->>  
->> +static inline void kvm_set_s2pud_readonly(pud_t *pud)
->> +{
->> +}
->> +
->> +static inline bool kvm_s2pud_readonly(pud_t *pud)
->> +{
->> +	return true;
->
-> why true?  Shouldn't this return the pgd's readonly value, strictly
-> speaking, or if we rely on this never being called, have  VM_BUG_ON() ?
-
-It returns true as it prevents a call to kvm_set_s2pud_readonly() but
-both of the above functions should never be called on ARM due to
-stage2_pud_huge() returning 0.
-
-I'll add a VM_BUG_ON(pud) to indicate that these functions should never
-be called and...
-
->
-> In any case, a comment explaining why we unconditionally return true
-> would be nice.
-
-... add a comment to explain what's going on.
-
->
->> +}
->> +
->>  static inline bool kvm_page_empty(void *ptr)
->>  {
->>  	struct page *ptr_page = virt_to_page(ptr);
->> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
->> index 672c8684d5c2..dbfd18e08cfb 100644
->> --- a/arch/arm64/include/asm/kvm_mmu.h
->> +++ b/arch/arm64/include/asm/kvm_mmu.h
->> @@ -201,6 +201,16 @@ static inline bool kvm_s2pmd_readonly(pmd_t *pmd)
->>  	return kvm_s2pte_readonly((pte_t *)pmd);
->>  }
->>  
->> +static inline void kvm_set_s2pud_readonly(pud_t *pud)
->> +{
->> +	kvm_set_s2pte_readonly((pte_t *)pud);
->> +}
->> +
->> +static inline bool kvm_s2pud_readonly(pud_t *pud)
->> +{
->> +	return kvm_s2pte_readonly((pte_t *)pud);
->> +}
->> +
->>  static inline bool kvm_page_empty(void *ptr)
->>  {
->>  	struct page *ptr_page = virt_to_page(ptr);
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 9dea96380339..02eefda5d71e 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1155,9 +1155,12 @@ static void  stage2_wp_puds(pgd_t *pgd, phys_addr_t addr, phys_addr_t end)
->>  	do {
->>  		next = stage2_pud_addr_end(addr, end);
->>  		if (!stage2_pud_none(*pud)) {
->> -			/* TODO:PUD not supported, revisit later if supported */
->> -			BUG_ON(stage2_pud_huge(*pud));
->> -			stage2_wp_pmds(pud, addr, next);
->> +			if (stage2_pud_huge(*pud)) {
->> +				if (!kvm_s2pud_readonly(pud))
->> +					kvm_set_s2pud_readonly(pud);
->> +			} else {
->> +				stage2_wp_pmds(pud, addr, next);
->> +			}
->>  		}
->>  	} while (pud++, addr = next, addr != end);
->>  }
->> -- 
->> 2.15.1
->> 
->
-> Otherwise:
->
-> Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-
-Thanks for taking a look.
-
-Punit
+Yes, this is what I should have done.  The memory barriers came from 
+another patch I squashed in and I didn't look back to see how obvious 
+the encapsulation was.
