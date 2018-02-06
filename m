@@ -1,26 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752521AbeBFB1S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 20:27:18 -0500
-Received: from mga03.intel.com ([134.134.136.65]:37892 "EHLO mga03.intel.com"
+        id S1752543AbeBFB1Z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 20:27:25 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42024 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752468AbeBFB1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 20:27:12 -0500
+        id S1752506AbeBFB1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 20:27:17 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,467,1511856000";
-   d="scan'208";a="201637391"
-Subject: [PATCH v3 1/3] x86/entry: Clear extra registers beyond syscall
- arguments for 64bit kernels
+   d="scan'208";a="17356231"
+Subject: [PATCH v3 2/3] x86/entry: Clear registers for 64bit
+ exceptions/interrupts
 From: Dan Williams <dan.j.williams@intel.com>
 To: tglx@linutronix.de, mingo@kernel.org
-Cc: Andi Kleen <ak@linux.intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        luto@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        torvalds@linux-foundation.org
-Date: Mon, 05 Feb 2018 17:18:05 -0800
-Message-ID: <151787988577.7847.16733592218894189003.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, luto@kernel.org
+Date: Mon, 05 Feb 2018 17:18:11 -0800
+Message-ID: <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.17.1-9-g687f
@@ -31,60 +29,101 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At entry userspace may have populated the extra registers outside the
-syscall calling convention with values that could be useful in a
-speculative execution attack. Clear them to minimize the kernel's attack
-surface. Note, this only clears the extra registers and not the unused
-registers for syscalls less than 6 arguments since those registers are
-likely to be clobbered well before their values could be put to use
-under speculation.
+From: Andi Kleen <ak@linux.intel.com>
 
-Note, Linus found that the 'xor' instructions can be executed with
-minimized cost if interleaved with the 'push' instructions, and Ingo's
-analysis found that r10 and r11 should be included in the register
-clearing beyond the typical 'extra' syscall calling convention
-registers.
+Clear the 'extra' registers on entering the 64bit kernel for exceptions
+and interrupts. The common registers are not cleared since they are
+likely clobbered well before they can be exploited in a speculative
+execution attack.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reported-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- arch/x86/entry/entry_64.S |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/entry/calling.h  |   19 +++++++++++++++++++
+ arch/x86/entry/entry_64.S |    7 +++++--
+ 2 files changed, 24 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 3f48f695d5e6..5203bb57fb24 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -147,6 +147,25 @@ For 32-bit we have the following conventions - kernel is built with
+ 	UNWIND_HINT_REGS offset=\offset
+ 	.endm
+ 
++	/*
++	 * Sanitize registers of values that a speculation attack
++	 * might want to exploit. The lower registers are likely
++	 * clobbered well before they could be put to use in a
++	 * speculative execution gadget.
++	 */
++	.macro CLEAR_REGS_NOSPEC
++	xorl %ebp, %ebp
++	xorl %ebx, %ebx
++	xorq %r8, %r8
++	xorq %r9, %r9
++	xorq %r10, %r10
++	xorq %r11, %r11
++	xorq %r12, %r12
++	xorq %r13, %r13
++	xorq %r14, %r14
++	xorq %r15, %r15
++	.endm
++
+ 	.macro POP_EXTRA_REGS
+ 	popq %r15
+ 	popq %r14
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index c752abe89d80..e8c3a902333d 100644
+index e8c3a902333d..fd88be099b6a 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -235,13 +235,26 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
- 	pushq	%r8				/* pt_regs->r8 */
- 	pushq	%r9				/* pt_regs->r9 */
- 	pushq	%r10				/* pt_regs->r10 */
-+	/*
-+	 * Sanitize extra registers of values that a speculation attack
-+	 * might want to exploit. Interleave xor with pushq for better
-+	 * uop scheduling.
-+	 */
-+	xorq	%r10, %r10			/* nospec   r10 */
- 	pushq	%r11				/* pt_regs->r11 */
-+	xorq	%r11, %r11			/* nospec   r11 */
- 	pushq	%rbx				/* pt_regs->rbx */
-+	xorl	%ebx, %ebx			/* nospec   rbx */
- 	pushq	%rbp				/* pt_regs->rbp */
-+	xorl	%ebp, %ebp			/* nospec   rbp */
- 	pushq	%r12				/* pt_regs->r12 */
-+	xorq	%r12, %r12			/* nospec   r12 */
- 	pushq	%r13				/* pt_regs->r13 */
-+	xorq	%r13, %r13			/* nospec   r13 */
- 	pushq	%r14				/* pt_regs->r14 */
-+	xorq	%r14, %r14			/* nospec   r14 */
- 	pushq	%r15				/* pt_regs->r15 */
-+	xorq	%r15, %r15			/* nospec   r15 */
- 	UNWIND_HINT_REGS
+@@ -575,6 +575,7 @@ END(irq_entries_start)
+ 	ALLOC_PT_GPREGS_ON_STACK
+ 	SAVE_C_REGS
+ 	SAVE_EXTRA_REGS
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
  
- 	TRACE_IRQS_OFF
+ 	testb	$3, CS(%rsp)
+@@ -1133,6 +1134,7 @@ ENTRY(xen_failsafe_callback)
+ 	ALLOC_PT_GPREGS_ON_STACK
+ 	SAVE_C_REGS
+ 	SAVE_EXTRA_REGS
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
+@@ -1178,6 +1180,7 @@ ENTRY(paranoid_entry)
+ 	cld
+ 	SAVE_C_REGS 8
+ 	SAVE_EXTRA_REGS 8
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER 8
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1185,7 +1188,6 @@ ENTRY(paranoid_entry)
+ 	testl	%edx, %edx
+ 	js	1f				/* negative -> in kernel */
+ 	SWAPGS
+-	xorl	%ebx, %ebx
+ 
+ 1:
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+@@ -1230,8 +1232,8 @@ ENTRY(error_entry)
+ 	cld
+ 	SAVE_C_REGS 8
+ 	SAVE_EXTRA_REGS 8
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER 8
+-	xorl	%ebx, %ebx
+ 	testb	$3, CS+8(%rsp)
+ 	jz	.Lerror_kernelspace
+ 
+@@ -1428,6 +1430,7 @@ ENTRY(nmi)
+ 	pushq	%r14		/* pt_regs->r14 */
+ 	pushq	%r15		/* pt_regs->r15 */
+ 	UNWIND_HINT_REGS
++	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
+ 
+ 	/*
