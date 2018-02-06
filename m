@@ -1,376 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753067AbeBFMDs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 07:03:48 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:36623 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752788AbeBFMD0 (ORCPT
+        id S1752823AbeBFMIj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 07:08:39 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38872 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752324AbeBFMId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 07:03:26 -0500
-Date: Tue, 6 Feb 2018 03:59:40 -0800
-From: tip-bot for Song Liu <tipbot@zytor.com>
-Message-ID: <tip-33ea4b24277b06dbc55d7f5772a46f029600255e@git.kernel.org>
-Cc: acme@redhat.com, jolsa@redhat.com, tglx@linutronix.de,
-        kernel-team@fb.com, torvalds@linux-foundation.org, jbacik@fb.com,
-        namhyung@kernel.org, mingo@kernel.org, peterz@infradead.org,
-        davem@davemloft.net, songliubraving@fb.com, hpa@zytor.com,
-        daniel@iogearbox.net, rostedt@goodmis.org, yhs@fb.com,
-        linux-kernel@vger.kernel.org
-Reply-To: jolsa@redhat.com, acme@redhat.com, torvalds@linux-foundation.org,
-        jbacik@fb.com, tglx@linutronix.de, kernel-team@fb.com,
-        namhyung@kernel.org, mingo@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, davem@davemloft.net, songliubraving@fb.com,
-        rostedt@goodmis.org, yhs@fb.com, daniel@iogearbox.net,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20171206224518.3598254-7-songliubraving@fb.com>
-References: <20171206224518.3598254-7-songliubraving@fb.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/core: Implement the 'perf_uprobe' PMU
-Git-Commit-ID: 33ea4b24277b06dbc55d7f5772a46f029600255e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 6 Feb 2018 07:08:33 -0500
+Date: Tue, 6 Feb 2018 12:08:25 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: clabbe.montjoie@gmail.com, linux-kernel@vger.kernel.org,
+        viresh.kumar@linaro.org, matthias.bgg@gmail.com,
+        linux-pwm@vger.kernel.org, thierry.reding@gmail.com,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Sean Paul <seanpaul@chromium.org>, linux-spi@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v3 03/20] kconfig: Remove leftover references to AVR32
+ symbol
+Message-ID: <20180206120825.GF5681@sirena.org.uk>
+References: <20180205081151.GA11907@Red>
+ <20180205190552.14282-1-ulfalizer@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="p8PhoBjPxaQXD0vg"
 Content-Disposition: inline
+In-Reply-To: <20180205190552.14282-1-ulfalizer@gmail.com>
+X-Cookie: VMS version 2.0 ==>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  33ea4b24277b06dbc55d7f5772a46f029600255e
-Gitweb:     https://git.kernel.org/tip/33ea4b24277b06dbc55d7f5772a46f029600255e
-Author:     Song Liu <songliubraving@fb.com>
-AuthorDate: Wed, 6 Dec 2017 14:45:16 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 6 Feb 2018 11:29:28 +0100
 
-perf/core: Implement the 'perf_uprobe' PMU
+--p8PhoBjPxaQXD0vg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds perf_uprobe support with similar pattern as previous
-patch (for kprobe).
+On Mon, Feb 05, 2018 at 08:05:39PM +0100, Ulf Magnusson wrote:
+> The AVR32 symbol was removed in commit 26202873bb51 ("avr32: remove
+> support for AVR32 architecture"). Remove the remaining references to it
+> from the Kconfig files.
 
-Two functions, create_local_trace_uprobe() and
-destroy_local_trace_uprobe(), are created so a uprobe can be created
-and attached to the file descriptor created by perf_event_open().
+>  drivers/spi/Kconfig           | 2 +-
+>  drivers/video/console/Kconfig | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Yonghong Song <yhs@fb.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Cc: <daniel@iogearbox.net>
-Cc: <davem@davemloft.net>
-Cc: <kernel-team@fb.com>
-Cc: <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20171206224518.3598254-7-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/trace_events.h    |  4 ++
- kernel/events/core.c            | 48 ++++++++++++++++++++++-
- kernel/trace/trace_event_perf.c | 53 +++++++++++++++++++++++++
- kernel/trace/trace_probe.h      |  4 ++
- kernel/trace/trace_uprobe.c     | 86 +++++++++++++++++++++++++++++++++++++----
- 5 files changed, 186 insertions(+), 9 deletions(-)
+It'd probably be easier to just submit these as separate patches to the
+individual subsystems, that'd make it more likely that reviewers will
+see them.  As I've no context for this I can't tell if there's any
+dependencies, I'm guessing not but just in case
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 21c5d43..0d9d6cb 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -537,6 +537,10 @@ extern void perf_trace_del(struct perf_event *event, int flags);
- extern int  perf_kprobe_init(struct perf_event *event, bool is_retprobe);
- extern void perf_kprobe_destroy(struct perf_event *event);
- #endif
-+#ifdef CONFIG_UPROBE_EVENTS
-+extern int  perf_uprobe_init(struct perf_event *event, bool is_retprobe);
-+extern void perf_uprobe_destroy(struct perf_event *event);
-+#endif
- extern int  ftrace_profile_set_filter(struct perf_event *event, int event_id,
- 				     char *filter_str);
- extern void ftrace_profile_free_filter(struct perf_event *event);
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 3337355..5a54630 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7992,7 +7992,7 @@ static struct pmu perf_tracepoint = {
- 	.read		= perf_swevent_read,
- };
- 
--#ifdef CONFIG_KPROBE_EVENTS
-+#if defined(CONFIG_KPROBE_EVENTS) || defined(CONFIG_UPROBE_EVENTS)
- /*
-  * Flags in config, used by dynamic PMU kprobe and uprobe
-  * The flags should match following PMU_FORMAT_ATTR().
-@@ -8020,7 +8020,9 @@ static const struct attribute_group *probe_attr_groups[] = {
- 	&probe_format_group,
- 	NULL,
- };
-+#endif
- 
-+#ifdef CONFIG_KPROBE_EVENTS
- static int perf_kprobe_event_init(struct perf_event *event);
- static struct pmu perf_kprobe = {
- 	.task_ctx_nr	= perf_sw_context,
-@@ -8057,12 +8059,52 @@ static int perf_kprobe_event_init(struct perf_event *event)
- }
- #endif /* CONFIG_KPROBE_EVENTS */
- 
-+#ifdef CONFIG_UPROBE_EVENTS
-+static int perf_uprobe_event_init(struct perf_event *event);
-+static struct pmu perf_uprobe = {
-+	.task_ctx_nr	= perf_sw_context,
-+	.event_init	= perf_uprobe_event_init,
-+	.add		= perf_trace_add,
-+	.del		= perf_trace_del,
-+	.start		= perf_swevent_start,
-+	.stop		= perf_swevent_stop,
-+	.read		= perf_swevent_read,
-+	.attr_groups	= probe_attr_groups,
-+};
-+
-+static int perf_uprobe_event_init(struct perf_event *event)
-+{
-+	int err;
-+	bool is_retprobe;
-+
-+	if (event->attr.type != perf_uprobe.type)
-+		return -ENOENT;
-+	/*
-+	 * no branch sampling for probe events
-+	 */
-+	if (has_branch_stack(event))
-+		return -EOPNOTSUPP;
-+
-+	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
-+	err = perf_uprobe_init(event, is_retprobe);
-+	if (err)
-+		return err;
-+
-+	event->destroy = perf_uprobe_destroy;
-+
-+	return 0;
-+}
-+#endif /* CONFIG_UPROBE_EVENTS */
-+
- static inline void perf_tp_register(void)
- {
- 	perf_pmu_register(&perf_tracepoint, "tracepoint", PERF_TYPE_TRACEPOINT);
- #ifdef CONFIG_KPROBE_EVENTS
- 	perf_pmu_register(&perf_kprobe, "kprobe", -1);
- #endif
-+#ifdef CONFIG_UPROBE_EVENTS
-+	perf_pmu_register(&perf_uprobe, "uprobe", -1);
-+#endif
- }
- 
- static void perf_event_free_filter(struct perf_event *event)
-@@ -8151,6 +8193,10 @@ static inline bool perf_event_is_tracing(struct perf_event *event)
- 	if (event->pmu == &perf_kprobe)
- 		return true;
- #endif
-+#ifdef CONFIG_UPROBE_EVENTS
-+	if (event->pmu == &perf_uprobe)
-+		return true;
-+#endif
- 	return false;
- }
- 
-diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
-index 779baad..2c41650 100644
---- a/kernel/trace/trace_event_perf.c
-+++ b/kernel/trace/trace_event_perf.c
-@@ -286,6 +286,59 @@ void perf_kprobe_destroy(struct perf_event *p_event)
- }
- #endif /* CONFIG_KPROBE_EVENTS */
- 
-+#ifdef CONFIG_UPROBE_EVENTS
-+int perf_uprobe_init(struct perf_event *p_event, bool is_retprobe)
-+{
-+	int ret;
-+	char *path = NULL;
-+	struct trace_event_call *tp_event;
-+
-+	if (!p_event->attr.uprobe_path)
-+		return -EINVAL;
-+	path = kzalloc(PATH_MAX, GFP_KERNEL);
-+	if (!path)
-+		return -ENOMEM;
-+	ret = strncpy_from_user(
-+		path, u64_to_user_ptr(p_event->attr.uprobe_path), PATH_MAX);
-+	if (ret < 0)
-+		goto out;
-+	if (path[0] == '\0') {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	tp_event = create_local_trace_uprobe(
-+		path, p_event->attr.probe_offset, is_retprobe);
-+	if (IS_ERR(tp_event)) {
-+		ret = PTR_ERR(tp_event);
-+		goto out;
-+	}
-+
-+	/*
-+	 * local trace_uprobe need to hold event_mutex to call
-+	 * uprobe_buffer_enable() and uprobe_buffer_disable().
-+	 * event_mutex is not required for local trace_kprobes.
-+	 */
-+	mutex_lock(&event_mutex);
-+	ret = perf_trace_event_init(tp_event, p_event);
-+	if (ret)
-+		destroy_local_trace_uprobe(tp_event);
-+	mutex_unlock(&event_mutex);
-+out:
-+	kfree(path);
-+	return ret;
-+}
-+
-+void perf_uprobe_destroy(struct perf_event *p_event)
-+{
-+	mutex_lock(&event_mutex);
-+	perf_trace_event_close(p_event);
-+	perf_trace_event_unreg(p_event);
-+	mutex_unlock(&event_mutex);
-+	destroy_local_trace_uprobe(p_event->tp_event);
-+}
-+#endif /* CONFIG_UPROBE_EVENTS */
-+
- int perf_trace_add(struct perf_event *p_event, int flags)
- {
- 	struct trace_event_call *tp_event = p_event->tp_event;
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index e3d940a..27de317 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -410,4 +410,8 @@ extern struct trace_event_call *
- create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
- 			  bool is_return);
- extern void destroy_local_trace_kprobe(struct trace_event_call *event_call);
-+
-+extern struct trace_event_call *
-+create_local_trace_uprobe(char *name, unsigned long offs, bool is_return);
-+extern void destroy_local_trace_uprobe(struct trace_event_call *event_call);
- #endif
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 40592e7b..e3cbae7 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -1292,16 +1292,25 @@ static struct trace_event_functions uprobe_funcs = {
- 	.trace		= print_uprobe_event
- };
- 
--static int register_uprobe_event(struct trace_uprobe *tu)
-+static inline void init_trace_event_call(struct trace_uprobe *tu,
-+					 struct trace_event_call *call)
- {
--	struct trace_event_call *call = &tu->tp.call;
--	int ret;
--
--	/* Initialize trace_event_call */
- 	INIT_LIST_HEAD(&call->class->fields);
- 	call->event.funcs = &uprobe_funcs;
- 	call->class->define_fields = uprobe_event_define_fields;
- 
-+	call->flags = TRACE_EVENT_FL_UPROBE;
-+	call->class->reg = trace_uprobe_register;
-+	call->data = tu;
-+}
-+
-+static int register_uprobe_event(struct trace_uprobe *tu)
-+{
-+	struct trace_event_call *call = &tu->tp.call;
-+	int ret = 0;
-+
-+	init_trace_event_call(tu, call);
-+
- 	if (set_print_fmt(&tu->tp, is_ret_probe(tu)) < 0)
- 		return -ENOMEM;
- 
-@@ -1311,9 +1320,6 @@ static int register_uprobe_event(struct trace_uprobe *tu)
- 		return -ENODEV;
- 	}
- 
--	call->flags = TRACE_EVENT_FL_UPROBE;
--	call->class->reg = trace_uprobe_register;
--	call->data = tu;
- 	ret = trace_add_event_call(call);
- 
- 	if (ret) {
-@@ -1339,6 +1345,70 @@ static int unregister_uprobe_event(struct trace_uprobe *tu)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PERF_EVENTS
-+struct trace_event_call *
-+create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
-+{
-+	struct trace_uprobe *tu;
-+	struct inode *inode;
-+	struct path path;
-+	int ret;
-+
-+	ret = kern_path(name, LOOKUP_FOLLOW, &path);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	inode = igrab(d_inode(path.dentry));
-+	path_put(&path);
-+
-+	if (!inode || !S_ISREG(inode->i_mode)) {
-+		iput(inode);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	/*
-+	 * local trace_kprobes are not added to probe_list, so they are never
-+	 * searched in find_trace_kprobe(). Therefore, there is no concern of
-+	 * duplicated name "DUMMY_EVENT" here.
-+	 */
-+	tu = alloc_trace_uprobe(UPROBE_EVENT_SYSTEM, "DUMMY_EVENT", 0,
-+				is_return);
-+
-+	if (IS_ERR(tu)) {
-+		pr_info("Failed to allocate trace_uprobe.(%d)\n",
-+			(int)PTR_ERR(tu));
-+		return ERR_CAST(tu);
-+	}
-+
-+	tu->offset = offs;
-+	tu->inode = inode;
-+	tu->filename = kstrdup(name, GFP_KERNEL);
-+	init_trace_event_call(tu, &tu->tp.call);
-+
-+	if (set_print_fmt(&tu->tp, is_ret_probe(tu)) < 0) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
-+
-+	return &tu->tp.call;
-+error:
-+	free_trace_uprobe(tu);
-+	return ERR_PTR(ret);
-+}
-+
-+void destroy_local_trace_uprobe(struct trace_event_call *event_call)
-+{
-+	struct trace_uprobe *tu;
-+
-+	tu = container_of(event_call, struct trace_uprobe, tp.call);
-+
-+	kfree(tu->tp.call.print_fmt);
-+	tu->tp.call.print_fmt = NULL;
-+
-+	free_trace_uprobe(tu);
-+}
-+#endif /* CONFIG_PERF_EVENTS */
-+
- /* Make a trace interface for controling probe points */
- static __init int init_uprobe_trace(void)
- {
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--p8PhoBjPxaQXD0vg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp5mrgACgkQJNaLcl1U
+h9CxMgf+JGurc+K5jhMMPpAoGyGrZ2TugIAbUw6WrjvHDaaxifeQLKh2i8ujLw3+
+OKgl0XJ1ytpqMPkVVCH9WGZF/BSl8tQKtbVvmF2jSBMmFTlk1mevQcoqrgJb4NTf
+U3m2JAQoWqcPsI4lVF146SNy+AP8N042uQgpXIq9sREp1qHAnzSiD22+WD8LtWVW
+yfIHX5p6Pkdh5odO7hezLjHv2VlMcqSfla7q4Lzm2vAb01OhySdi1Uep6TnahHRX
+fY/lVkeqRjOcKOoacLIgNSxDZ2K1Vgc55krRxXZbB2gAySlFSIksnPSdtE9nH/xm
+yluMHQbeE2ORH3Yhhu7cSOqFwUBAdw==
+=rUEE
+-----END PGP SIGNATURE-----
+
+--p8PhoBjPxaQXD0vg--
