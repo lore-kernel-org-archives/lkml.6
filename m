@@ -1,66 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753897AbeBFUwK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:52:10 -0500
-Received: from mga03.intel.com ([134.134.136.65]:26350 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752514AbeBFUwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:52:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,470,1511856000";
-   d="scan'208";a="25230754"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] tpm: add longer timeouts for creation commands.
-Thread-Topic: [PATCH v2] tpm: add longer timeouts for creation commands.
-Thread-Index: AQHTn4YcnV0JMQfTbkinhZ5+Q9/sBaOX1OeQ
-Date: Tue, 6 Feb 2018 20:51:48 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421881D@hasmsx108.ger.corp.intel.com>
-References: <20180128081739.8066-1-tomas.winkler@intel.com>
- <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
-In-Reply-To: <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDBmNjkxZDAtYjkwMi00MDI5LTgyMDEtNWIyOGQ4MzBiY2YxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJGWWNYUk1rdGlMT2xTSGNNM1N6ZkNMVFZmRVVcL25xaHZDT05QN2NPMXV4TDFyRjVrZmJQek5kdHZOZk1IY3VYMCJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.249.81.60]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1753974AbeBFVBb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 16:01:31 -0500
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:39547 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752514AbeBFVB2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 16:01:28 -0500
+X-Google-Smtp-Source: AH8x2272BLn0RC1YaNWMhZx0IBpuaZ2RbqtIloxVYME/fQ5iJZ5x55R+I/BSf3u/H8hX18xgm5wGZUIzXF+Oq+ncx5o=
 MIME-Version: 1.0
+In-Reply-To: <1517949734-27314-1-git-send-email-clabbe@baylibre.com>
+References: <1517949734-27314-1-git-send-email-clabbe@baylibre.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Tue, 6 Feb 2018 13:01:26 -0800
+Message-ID: <CAKgT0Uc-br8akeUyjf0FenLPLxDdq14D1rppjvb1yfNU33t+Mw@mail.gmail.com>
+Subject: Re: [Intel-wired-lan] [PATCH] Documentation: networking: Update ixgb
+ kconfig select documentation
+To: Corentin Labbe <clabbe@baylibre.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        linux-kernel@vger.kernel.org,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On Sun, Jan 28, 2018 at 10:17:39AM +0200, Tomas Winkler wrote:
-> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
-> > generation of crypto keys which can be a computationally intensive task.
-> > The timeout is set to 3min.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> This is still NAK because we need some kind of reference for the new value.
-> Is that also right value for ARM64/TrustZone based TPMs?
+On Tue, Feb 6, 2018 at 12:42 PM, Corentin Labbe <clabbe@baylibre.com> wrote:
+> Update documentation on how to enable ixgb and ixgb DCB.
+> Simply remove NETDEV_10000 and replace it with the new used kconfig names.
 
-The SPEC itself, doesn't define the timeout,  except for specific commands, 
-also the current 'undefined' number is born in air, I wonder if you  can provide the reference as well.
-If I would suggest to shorten the number that would maybe a problem for other implementation, 
-but I don't see how the increase in timeout is adverse another implementations.
-Key generation is computational intensive task because of generation of a prime number, so this is really 
-dependent on device capabilities, so there is no better source of definition that HW itself.
+Minor typo in the patch description. I assume you mean "ixgb and ixgbe
+DCB". Also you might want to mention ixgbe somewhere in the patch
+title.
 
-Thanks
-Tomas
+>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  Documentation/networking/ixgb.txt  | 3 ++-
+>  Documentation/networking/ixgbe.txt | 7 ++++---
+>  2 files changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/networking/ixgb.txt b/Documentation/networking/ixgb.txt
+> index 09f71d71920a..b10f360c57d4 100644
+> --- a/Documentation/networking/ixgb.txt
+> +++ b/Documentation/networking/ixgb.txt
+> @@ -70,7 +70,8 @@ select m for "Intel(R) PRO/10GbE support" located at:
+>        Location:
+>          -> Device Drivers
+>            -> Network device support (NETDEVICES [=y])
+> -            -> Ethernet (10000 Mbit) (NETDEV_10000 [=y])
+> +            -> Ethernet driver support (ETHERNET [=y])
+> +              -> Intel devices (NET_VENDOR_INTEL [=y])
+>  1. make modules && make modules_install
+>
+>  2. Load the module:
+> diff --git a/Documentation/networking/ixgbe.txt b/Documentation/networking/ixgbe.txt
+> index 687835415707..90a3860cca3d 100644
+> --- a/Documentation/networking/ixgbe.txt
+> +++ b/Documentation/networking/ixgbe.txt
+> @@ -253,9 +253,10 @@ Additional Configurations
+>
+>          -> Device Drivers
+>            -> Network device support (NETDEVICES [=y])
+> -            -> Ethernet (10000 Mbit) (NETDEV_10000 [=y])
+> -              -> Intel(R) 10GbE PCI Express adapters support
+> -                -> Data Center Bridging (DCB) Support
+> +            -> Ethernet driver (ETHERNET [=y])
+> +              -> Intel devices (NET_VENDOR_INTEL [=y])
+> +                -> Intel(R) 10GbE PCI Express adapters support (IXGBE [=y])
+> +                  -> Data Center Bridging (DCB) Support (IXGBE_DCB [=y])
+>
+>    After these options are selected, you must rebuild your kernel and your
+>    modules.
+> --
+> 2.13.6
+>
+> _______________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
