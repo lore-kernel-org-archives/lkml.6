@@ -1,65 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753269AbeBFUmY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:42:24 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36597 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752514AbeBFUmX (ORCPT
+        id S1753497AbeBFUpQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 15:45:16 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:32842 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751632AbeBFUpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:42:23 -0500
-X-Google-Smtp-Source: AH8x227ZUmMA9qGASYVC8lphIfr3RCbaHK54loZ/FXcJHtN2jUCOb1z4SU4OIa9QBkY5PI/EuTzyyg==
-From: Corentin Labbe <clabbe@baylibre.com>
-To: corbet@lwn.net, jeffrey.t.kirsher@intel.com
-Cc: intel-wired-lan@lists.osuosl.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] Documentation: networking: Update ixgb kconfig select documentation
-Date: Tue,  6 Feb 2018 20:42:14 +0000
-Message-Id: <1517949734-27314-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 6 Feb 2018 15:45:14 -0500
+Subject: Re: [PATCH 3/3] fs : ext2: super: fixed '==' instead '='
+ braces,whitespace coding style issue.
+To: devesh.pradhan1@gmail.com, jack@suse.com
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180206203317.14435-1-devesh.pradhan1@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e4b13bd3-0611-252b-ee8f-f35f6bbbc198@infradead.org>
+Date: Tue, 6 Feb 2018 12:45:10 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180206203317.14435-1-devesh.pradhan1@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update documentation on how to enable ixgb and ixgb DCB.
-Simply remove NETDEV_10000 and replace it with the new used kconfig names.
+On 02/06/2018 12:33 PM, devesh.pradhan1@gmail.com wrote:
+> From: devesh pradhan <devesh.pradhan1@gmail.com>
+> 
+> fixed coding style issue.
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- Documentation/networking/ixgb.txt  | 3 ++-
- Documentation/networking/ixgbe.txt | 7 ++++---
- 2 files changed, 6 insertions(+), 4 deletions(-)
+I think there is more here than coding style fixes.
 
-diff --git a/Documentation/networking/ixgb.txt b/Documentation/networking/ixgb.txt
-index 09f71d71920a..b10f360c57d4 100644
---- a/Documentation/networking/ixgb.txt
-+++ b/Documentation/networking/ixgb.txt
-@@ -70,7 +70,8 @@ select m for "Intel(R) PRO/10GbE support" located at:
-       Location:
-         -> Device Drivers
-           -> Network device support (NETDEVICES [=y])
--            -> Ethernet (10000 Mbit) (NETDEV_10000 [=y])
-+            -> Ethernet driver support (ETHERNET [=y])
-+              -> Intel devices (NET_VENDOR_INTEL [=y])
- 1. make modules && make modules_install
- 
- 2. Load the module:
-diff --git a/Documentation/networking/ixgbe.txt b/Documentation/networking/ixgbe.txt
-index 687835415707..90a3860cca3d 100644
---- a/Documentation/networking/ixgbe.txt
-+++ b/Documentation/networking/ixgbe.txt
-@@ -253,9 +253,10 @@ Additional Configurations
- 
-         -> Device Drivers
-           -> Network device support (NETDEVICES [=y])
--            -> Ethernet (10000 Mbit) (NETDEV_10000 [=y])
--              -> Intel(R) 10GbE PCI Express adapters support
--                -> Data Center Bridging (DCB) Support
-+            -> Ethernet driver (ETHERNET [=y])
-+              -> Intel devices (NET_VENDOR_INTEL [=y])
-+                -> Intel(R) 10GbE PCI Express adapters support (IXGBE [=y])
-+                  -> Data Center Bridging (DCB) Support (IXGBE_DCB [=y])
- 
-   After these options are selected, you must rebuild your kernel and your
-   modules.
+Also, did you do any testing after making these changes?
+
+
+> Signed-off-by: devesh pradhan <devesh.pradhan1@gmail.com>
+> ---
+>  fs/ext2/super.c | 59 ++++++++++++++++++++++++++-------------------------------
+>  1 file changed, 27 insertions(+), 32 deletions(-)
+> 
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index 554c98b8a93a..cb80bcb693a9 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+
+> @@ -864,7 +860,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+>  	}
+>  
+>  	/*
+> -	 * If the superblock doesn't start on a hardware sector boundary,
+
+Why is this change being made?
+
+> +	 * If the superblock doesn't start on a hardware sector boundary
+>  	 * calculate the offset.  
+>  	 */
+>  	if (blocksize != BLOCK_SIZE) {
+> @@ -874,7 +870,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+>  		logic_sb_block = sb_block;
+>  	}
+>  
+> -	if (!(bh = sb_bread(sb, logic_sb_block))) {
+> +	if (!(bh == sb_bread(sb, logic_sb_block))) {
+
+I'm pretty sure this one was meant to be '=', as in "assignment."
+It could be split into 2 lines of code to clarify what it is doing.
+
+>  		ext2_msg(sb, KERN_ERR, "error: unable to read superblock");
+>  		goto failed_sbi;
+>  	}
+> @@ -904,8 +900,8 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+>  #ifdef CONFIG_EXT2_FS_POSIX_ACL
+>  	if (def_mount_opts & EXT2_DEFM_ACL)
+>  		set_opt(opts.s_mount_opt, POSIX_ACL);
+> -#endif
+> -	
+> +#endif	
+
+above line adds trailing whitespace. :(
+
+> +
+>  	if (le16_to_cpu(sbi->s_es->s_errors) == EXT2_ERRORS_PANIC)
+>  		set_opt(opts.s_mount_opt, ERRORS_PANIC);
+>  	else if (le16_to_cpu(sbi->s_es->s_errors) == EXT2_ERRORS_CONTINUE)
+
+> @@ -949,7 +944,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+>  			le32_to_cpu(features));
+>  		goto failed_mount;
+>  	}
+> -	if (!sb_rdonly(sb) && (features = EXT2_HAS_RO_COMPAT_FEATURE(sb, ~EXT2_FEATURE_RO_COMPAT_SUPP))){
+> +	if (!sb_rdonly(sb) && (features == EXT2_HAS_RO_COMPAT_FEATURE(sb, ~EXT2_FEATURE_RO_COMPAT_SUPP))) {
+
+That one is most likely correct before the patch.
+
+>  		ext2_msg(sb, KERN_ERR, "error: couldn't mount RDWR because of "
+>  		       "unsupported optional features (%x)",
+>  		       le32_to_cpu(features));
+
+thanks,
 -- 
-2.13.6
+~Randy
