@@ -1,79 +1,87 @@
-Return-Path: <luto@kernel.org>
-X-Google-Smtp-Source: AH8x225B/RxZvkhFhWdgHmbzvg3dFxkEaMZ9gVC+tD5fixi5AeBfoX3i4qsoAoFzltBdT8gtcJRM
-ARC-Seal: i=1; a=rsa-sha256; t=1517950912; cv=none;
+Return-Path: <srivatsa@csail.mit.edu>
+X-Google-Smtp-Source: AH8x2266rO7Ef7eFe6SZk+snbx+uMRixiQ9WoGIXZdaBOcw02GLQvFsY0vlE3NhTvH1v+8aWbgri
+ARC-Seal: i=1; a=rsa-sha256; t=1517883917; cv=none;
         d=google.com; s=arc-20160816;
-        b=B+sq4Ho9FwVn6ofDVjW0xvTFoLapmByfNU1StO7tgAY/OBbcBQrN2kL7p6LU2HY0WB
-         q7Nf2jb/P0/paI+jZJmF7rJAwIALQSGcoI3Blo/1ZPWsHYo8sCILp44WzKBRRPOOhZNm
-         Lrla0Y0q/N/BnGNgddgv/8xep8auiG5h1+RipZiBA9lgIGUQaUP171aZkUwMNGmX4NmQ
-         lBuvsIhSCMI3x/DIS+7tiWJj2g1hKglhCz2q2UQE1H2UieOIFMSdnZwNzj7mydnRsUUO
-         i8+/aMRl0UtVjqQGRz7FmP3YTuNq4cts/P++YWIx29PHvm+aDggFTB5RRX8VV3S1hvCx
-         /E0w==
+        b=uQfgg1R1ejGDqo2W2EmWhrLGepSVUhWYQ6H4waZyeMS77hLKRaB1DVLvin53vh8dJC
+         iLzk4rLSYuNI16uOrigIDLknfLL7crhF9qraDCe6knsJ0GiK7YEXq7jEt/Q5K56fHCFs
+         4eYg293PBH2lG5hzmJtRpcxbcfWuf2Odhx0zrVClxk6scsGZCSW+spM7ZO15ffSIO9as
+         SYgegAEw1+NxNrYyuFL0umYgjjCfaF/r6ZsGL1pGdK6VeaAJa5GgnkA3IEpLCT3SuYaB
+         v/JuPqh+aM+craxJ/hAA1VS+rvkMyBv9r9PHOAMovKe0e8P9yqTezYidnnf/iCQd5zGJ
+         sNeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=ZJh2xp/QJMVGuZ363vvMTa5KPk7z538piLAABVAluZY=;
-        b=GuYo4ORjxiWfar5yzzeksUDWO9V5c8XatrG+XPN7m4ixLKDJCa4ItynY1sdN3wdIlm
-         xePkiN+Yht5qlSP4154ePLoykkJH40AMBH0qZR2XPIQlU4lMRnGODAzBSDsUPyuAH2z4
-         +RoZeRo7hGOQzRw2bb7AEhMjg+WDvJzGHztr3AIFnt4ibyPrl3BpPhTwNYv6r86f/sZs
-         yxE36Vy3been7j8T2pyH0z7msbvtJ6JDOZdYNVZDNZbqTFKJUxLPsckkHwUp0+1yfxIc
-         JxjmRqY/4bcJRZgSvTB7goQ4uH1VuAY8t3w2vXtV/0/nYik6ZuNDv7eKLPFq+1NKWKle
-         qcPA==
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:arc-authentication-results;
+        bh=HZhqYiJY62N6lMqvHyC2I2DpmboRIaTfAkcVO5muy0I=;
+        b=LT7g5MZKxl4lLTtNEQWqvLIx0LcFvuk9HkVGpfORjkQX9ZMxFGqw96qPjZUp/j3z0e
+         c+iksXCzkYUHLE4zsIVT/Fb8ABwtZutk0Mw5H7IetInWNg5o7ZVdPLStWVxtdWgnYPvR
+         oIzR5aPsf/dGkXY9NtbeBvk3ZV2KCgwDpqUZKxoSDIY3sxanE4cQn/SIGuFVhxUJpobG
+         ke5eB0od1QqhdBMR72gRTE4UGNyqZw/l+parsK+4F2AGTBk4JCvtJ5S3rTTAgmmB+gGP
+         QziGMBjXGyyMVyrBHx65Jpu6Xk21Y1+jKkMtdQ8tiLt11lnNAerIpI6OLftcVph5BjFr
+         Gz6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
+       spf=pass (google.com: domain of srivatsa@csail.mit.edu designates 128.30.2.210 as permitted sender) smtp.mailfrom=srivatsa@csail.mit.edu;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csail.mit.edu
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5203217BC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+       spf=pass (google.com: domain of srivatsa@csail.mit.edu designates 128.30.2.210 as permitted sender) smtp.mailfrom=srivatsa@csail.mit.edu;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csail.mit.edu
+Subject: [PATCH 1/2] char_dev: Fix off-by-one bugs in find_dynamic_major()
+From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+To: gregkh@linuxfoundation.org, logang@deltatee.com
+Cc: axboe@kernel.dk, jlayton@poochiereds.net, bfields@fieldses.org,
+ viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ srivatsa@csail.mit.edu
+Date: Mon, 05 Feb 2018 18:25:09 -0800
+Message-ID: <151788389652.28069.6065922071875812126.stgit@srivatsa-ubuntu>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-In-Reply-To: <1517950341.3677.27.camel@woodhou.se>
-References: <1517614240-31269-1-git-send-email-linux@roeck-us.net>
- <20180206203218.GA11026@roeck-us.net> <1517950341.3677.27.camel@woodhou.se>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 6 Feb 2018 21:01:30 +0000
-X-Gmail-Original-Message-ID: <CALCETrX2m8J9YPm+brBKdFEL3dk+BTVa4Y+b4sx9p3yP5oGxpg@mail.gmail.com>
-Message-ID: <CALCETrX2m8J9YPm+brBKdFEL3dk+BTVa4Y+b4sx9p3yP5oGxpg@mail.gmail.com>
-Subject: Re: [RFC] x86/retpoline: Add clang support for 64-bit builds
-To: David Woodhouse <david@woodhou.se>
-Cc: Guenter Roeck <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Rik van Riel <riel@redhat.com>,
-	Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>, Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Jiri Kosina <jikos@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>, Kees Cook <keescook@google.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linux-foundation.org>, Paul Turner <pjt@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591333873946801262?=
-X-GMAIL-MSGID: =?utf-8?q?1591686895897516060?=
+X-GMAIL-THRID: =?utf-8?q?1591616647486250157?=
+X-GMAIL-MSGID: =?utf-8?q?1591616647486250157?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 8:52 PM, David Woodhouse <david@woodhou.se> wrote:
-> On Tue, 2018-02-06 at 12:32 -0800, Guenter Roeck wrote:
->>
->> >
->> Feedback, anyone ?
->>
->> I understand that there is no love for the ABI differences between clang
->> and gcc, but that doesn't help me. Even if the patch is unacceptable
->> as-is, I would like to have some feedback to get an idea if I am on the
->> right track, and what I would have to change to at least move into the
->> right direction.
->
-> I'm going for just a comprehensive NACK. If they fix clang so that at
-> least the thunk symbols __x86_indirect_thunk_\reg are compatible, then
-> we could tolerate command line differences. Otherwise, just no.
->
-> Unless you really fancy trying to do some kind of alias hack in modules
-> so that they link to the external thunk by its proper name, even when
-> built with clang? I reserve the right to hate that too.
+From: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 
-I agree.  Linux already has too much history of bending over backwards
-to deal with poor ABIs from compilers rather than asking compilers to
-fix their ABI.  For example, stack canaries.  Linux should never have
-supported GCC's 32-bit x86 stack canary crap ABI in the first place.
+CHRDEV_MAJOR_DYN_END and CHRDEV_MAJOR_DYN_EXT_END are valid major
+numbers. So fix the loop iteration to include them in the search for
+free major numbers.
 
---Andy
+While at it, also remove a redundant if condition ("cd->major != i"),
+as it will never be true.
+
+Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+---
+
+ fs/char_dev.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index a65e4a5..33c9385 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -67,18 +67,18 @@ static int find_dynamic_major(void)
+ 	int i;
+ 	struct char_device_struct *cd;
+ 
+-	for (i = ARRAY_SIZE(chrdevs)-1; i > CHRDEV_MAJOR_DYN_END; i--) {
++	for (i = ARRAY_SIZE(chrdevs)-1; i >= CHRDEV_MAJOR_DYN_END; i--) {
+ 		if (chrdevs[i] == NULL)
+ 			return i;
+ 	}
+ 
+ 	for (i = CHRDEV_MAJOR_DYN_EXT_START;
+-	     i > CHRDEV_MAJOR_DYN_EXT_END; i--) {
++	     i >= CHRDEV_MAJOR_DYN_EXT_END; i--) {
+ 		for (cd = chrdevs[major_to_index(i)]; cd; cd = cd->next)
+ 			if (cd->major == i)
+ 				break;
+ 
+-		if (cd == NULL || cd->major != i)
++		if (cd == NULL)
+ 			return i;
+ 	}
+ 
