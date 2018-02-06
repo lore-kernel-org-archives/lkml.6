@@ -1,107 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752981AbeBFSYx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:24:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752528AbeBFSY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:24:26 -0500
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 03/17] perf script: Add --show-round-event to display PERF_RECORD_FINISHED_ROUND
-Date: Tue,  6 Feb 2018 19:17:59 +0100
-Message-Id: <20180206181813.10943-4-jolsa@kernel.org>
-In-Reply-To: <20180206181813.10943-1-jolsa@kernel.org>
-References: <20180206181813.10943-1-jolsa@kernel.org>
+        id S1753135AbeBFSZd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:25:33 -0500
+Received: from vern.gendns.com ([206.190.152.46]:55396 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753083AbeBFSZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:25:23 -0500
+Subject: Re: [PATCH] ARM: dts: da850-evm: add clock properties to the nand
+ node
+From: David Lechner <david@lechnology.com>
+To: Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180205155222.22189-1-brgl@bgdev.pl>
+ <3f171f6a-bcea-65ec-d56d-f6ae24660f34@ti.com>
+ <CAMpxmJUDbwkcJt_kx9GX+qY10xiGAp-j3+kXM-q3WP1VGwr0UQ@mail.gmail.com>
+ <54dbdb98-e0e4-c8c9-fec4-2f050745d9be@ti.com>
+ <794024f3-f87a-58ed-2722-a4a2d09df3ce@lechnology.com>
+Message-ID: <4aa2ab13-7890-6904-86b3-e2dbcb6d6daa@lechnology.com>
+Date: Tue, 6 Feb 2018 12:25:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <794024f3-f87a-58ed-2722-a4a2d09df3ce@lechnology.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding --show-round-event to display PERF_RECORD_FINISHED_ROUND
-events like:
+On 02/06/2018 12:16 PM, David Lechner wrote:
+> On 02/06/2018 07:51 AM, Sekhar Nori wrote:
+>> On Tuesday 06 February 2018 06:38 PM, Bartosz Golaszewski wrote:
+>>> 2018-02-06 12:07 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
+>>>> On Monday 05 February 2018 09:22 PM, Bartosz Golaszewski wrote:
+>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>
+>>>>> Make nand work with the common clock framework by specifying which
+>>>>> clock should be used and what name to look up.
+>>>>>
+>>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>> ---
+>>>>>   arch/arm/boot/dts/da850-evm.dts | 3 +++
+>>>>>   1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+>>>>> index a86a8a1816f2..2602ad8e99ee 100644
+>>>>> --- a/arch/arm/boot/dts/da850-evm.dts
+>>>>> +++ b/arch/arm/boot/dts/da850-evm.dts
+>>>>> @@ -296,6 +296,9 @@
+>>>>>                        reg = <0 0x02000000 0x02000000
+>>>>>                               1 0x00000000 0x00008000>;
+>>>>>
+>>>>> +                     clocks = <&psc0 3>;
+>>>>> +                     clock-names = "aemif";
+>>>>
+>>>> Looks like this is being added only to satisfy the devm_clk_get() call
+>>>> in nand_davinci_probe() which I think is superfluous since we also
+>>>> enable the same clock in aemif_probe().
+>>>>
+>>>> Perhaps the better solution is to drip the clk code in
+>>>> drivers/mtd/nand/davinci_nand.c and shift legacy code to start using
+>>>> drivers/memory/aemif.c as well? This way we can also drop
+>>>> arch/arm/mach-davinci/aemif.c
+>>>>
+>>>> Thanks,
+>>>> Sekhar
+>>>
+>>> Yes, this sounds good, but I think we should leave it for later as an
+>>> additional improvement, once everything else is in place. I think
+>>> these patches should be applied together with David's series in order
+>>> to not break the support on davinci boards and the aemif work would go
+>>> in later as a follow-up. How about that?
+>>
+>> No, I dont think we should add temporary hacks to DT to work around
+>> driver issues (I do think its a hack since the clock belongs to aemif
+>> module not NAND flash).
+>>
+>> An easier driver hack might be to not treat devm_clk_get() failure in
+>> davinci_nand.c as catastrophic. It will safely fail in DT case and we
+>> should get the clock in legacy boot case.
+>>
+>> I think we are looking at a driver update dependency anyway.
+> 
+> It looks like keystone.dtsi is using the clock-ranges property in the
+> aemif node to pass the clock to child nodes. Could we not do the same
+> in da850.dtsi?
 
-  # perf script --show-round-events 2>/dev/null
-               yes  8591 [002] 124177.397597:         18         cpu/mem-stores/P: ff...
-               yes  8591 [002] 124177.397615:          1 cpu/mem-loads,ldlat=30/P: ff...
-  PERF_RECORD_FINISHED_ROUND
-              perf 10380 [001] 124177.397622:          6 cpu/mem-loads,ldlat=30/P: ff...
-  PERF_RECORD_FINISHED_ROUND
-           swapper     0 [000] 124177.400518:         88         cpu/mem-stores/P: ff...
-           swapper     0 [000] 124177.400521:         88         cpu/mem-stores/P: ff...
+Bartosz, please try this instead of your patch.
 
-Link: http://lkml.kernel.org/n/tip-b89ggszz9x26hm7ztor29b0s@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+FYI, this is just following the existing memory-controllers/ti-aemif.txt
+device tree bindings, so not a "hack".
+
 ---
- tools/perf/Documentation/perf-script.txt |  3 +++
- tools/perf/builtin-script.c              | 17 +++++++++++++++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 7730c1d2b5d3..36ec0257f8d3 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -303,6 +303,9 @@ OPTIONS
- --show-lost-events
- 	Display lost events i.e. events of type PERF_RECORD_LOST.
- 
-+--show-round-events
-+	Display finished round events i.e. events of type PERF_RECORD_FINISHED_ROUND.
-+
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
- 	disable with --no-demangle.
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index ab19a6ee4093..cce926aeb0c0 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1489,6 +1489,7 @@ struct perf_script {
- 	bool			show_switch_events;
- 	bool			show_namespace_events;
- 	bool			show_lost_events;
-+	bool			show_round_events;
- 	bool			allocated;
- 	bool			per_event_dump;
- 	struct cpu_map		*cpus;
-@@ -2104,6 +2105,16 @@ process_lost_event(struct perf_tool *tool,
- 	return 0;
- }
- 
-+static int
-+process_finished_round_event(struct perf_tool *tool __maybe_unused,
-+			     union perf_event *event,
-+			     struct ordered_events *oe __maybe_unused)
-+
-+{
-+	perf_event__fprintf(event, stdout);
-+	return 0;
-+}
-+
- static void sig_handler(int sig __maybe_unused)
- {
- 	session_done = 1;
-@@ -2200,6 +2211,10 @@ static int __cmd_script(struct perf_script *script)
- 		script->tool.namespaces = process_namespaces_event;
- 	if (script->show_lost_events)
- 		script->tool.lost = process_lost_event;
-+	if (script->show_round_events) {
-+		script->tool.ordered_events = false;
-+		script->tool.finished_round = process_finished_round_event;
-+	}
- 
- 	if (perf_script__setup_per_event_dump(script)) {
- 		pr_err("Couldn't create the per event dump files\n");
-@@ -3139,6 +3154,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Show namespace events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-lost-events", &script.show_lost_events,
- 		    "Show lost events (if recorded)"),
-+	OPT_BOOLEAN('\0', "show-round-events", &script.show_round_events,
-+		    "Show round events (if recorded)"),
- 	OPT_BOOLEAN('\0', "per-event-dump", &script.per_event_dump,
- 		    "Dump trace output to files named by the monitored events"),
- 	OPT_BOOLEAN('f', "force", &symbol_conf.force, "don't complain, do it"),
--- 
-2.13.6
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index 3a1f2ce..ff9d807 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -796,6 +796,8 @@
+  		ranges = <0 0 0x60000000 0x08000000
+  			  1 0 0x68000000 0x00008000>;
+  		clocks = <&psc0 3>;
++		clock-names = "aemif";
++		clock-ranges;
+  		status = "disabled";
+  	};
+  	memctrl: memory-controller@b0000000 {
+---
