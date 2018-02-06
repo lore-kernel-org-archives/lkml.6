@@ -1,86 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752968AbeBFNFP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 08:05:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752403AbeBFNFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:05:07 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4854C21738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AH8x224n6SBGheLeCvsKfvkqsQUMQ7F5qlm00AMbhB6lsBr/OwFAj85UmiTENZK5DXVMXIAvpWitGaPGkJGKD965TuM=
-MIME-Version: 1.0
-In-Reply-To: <20180205154403.13520-9-s.nawrocki@samsung.com>
-References: <CGME20180205154537epcas1p10a9a30a574e3f472358e7dacf3cb0489@epcas1p1.samsung.com>
- <20180205154403.13520-1-s.nawrocki@samsung.com> <20180205154403.13520-9-s.nawrocki@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 6 Feb 2018 14:05:04 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPeRFgJQpUTeJeYYo+qqAxkT1iZczSJQzRzn3O3bXmvOZA@mail.gmail.com>
-Message-ID: <CAJKOXPeRFgJQpUTeJeYYo+qqAxkT1iZczSJQzRzn3O3bXmvOZA@mail.gmail.com>
-Subject: Re: [PATCH 8/8] ASoC: samsung,tm2-audio DT binding documentation update
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com,
-        sbkim73@samsung.com, linux-kernel@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753087AbeBFNHO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 08:07:14 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33542 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752488AbeBFNHE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 08:07:04 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180206130702euoutp02d284dff684efdc6df5c9ecbfe0b51b3e~QvmaYNbYI1396413964euoutp02m
+X-AuditID: cbfec7f5-f79d06d0000031c7-bc-5a79a874fba8
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Subject: Re: [PATCH v2] drm/bridge/synopsys: dsi: Add 1.31 version support
+To: Philippe Cornu <philippe.cornu@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Bhumika Goyal <bhumirks@gmail.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
+        Heiko Stubner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc: Yannick Fertre <yannick.fertre@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-id: <ec4a4255-38f1-6747-4dc4-09ea9f06126d@samsung.com>
+Date: Tue, 06 Feb 2018 14:06:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+In-reply-to: <20180206084251.303-1-philippe.cornu@st.com>
+Content-transfer-encoding: 8bit
+Content-language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe89tx+HidVo+mCStIgrSki6nMrOQOEWREEnti406qXkpNg1X
+        RGNmzXtZmZ55JRWtyFIzLTM1yFKRylpI3rpodpGZl9BCbdtR8Nvvub3/5/nzsqTSSnuw4dEx
+        gjZaE6li5FT1i8n2tTGlevW6J41+XGr7K4J78LUVcUbTEM0Zm1oYbqQnneEqfltp7t24leFm
+        Pv+kudyM81zi1SIZV/HFQnMdj3NsbX0zJNd3cZDm2t43UNzlxAQmAPNmwxuK70hLJfhasVvG
+        m03ZNN9lqWP4R3/6aL43uZngK4su8FPiM4p/ZMkj+f6JpyQ/WrE0yFkt9zsuRIafEbQ+/kfl
+        YXXGAvr0XyqutEYkDegHmYScWMAboMOYNcuL4XVPOZOE5KwSFyMYHh4hpWAUwWvLW2ZuwlzW
+        K7OzEpcg6E9dZmcFdoGJaz2UnUm8GgbHMihpeACBochE2AuueC/8asiV2Qtu2EiB5WuOQ4LE
+        BgQDuZkOCcY2PlXZyUjP+sPdwkHHsxReCSWpbY5lF+HDUHijH9nZCW+B7MR0UpL2gsZ332bX
+        cIf4hE7HGoBbZPB7xEpINwRCQtW3WXaFH81VMok9IdHUSEgDyQhG0l/KpOA6gunhOZ+2wfPm
+        N7QksRAyqm/a8qwtrwDTJaXUwkPPg3pK4p1wrzJeJpmRgqD2lZm4grzEeaaJ80wT510hzrui
+        AFG3kZsQq4sKFXQbvXWaKF1sdKj3sVNRFcj2DVunm8drUPGLrU0Is0jlrKgR4tRKWnNGp49q
+        QsCSKjdFWp5erVQc1+jPCtpTIdrYSEHXhJawlMpdsV196YgSh2pihAhBOC1o56oE6+RhQAs+
+        19/PcKn22oPKl2N98K0d7IDzBev2/cz3qojeejIWl6l3nVjh++fO5of+y+MeZnlssohXiZwD
+        n5KWPCa7FiAmrz1k/M7HwA/I3fOQuC8gIv9kvs9QSl+2ytfpGqlmDv8Llud3nVuFyhemZx6c
+        9J+B+567t34fM9fnB5m7A40qShemWb+G1Oo0/wFc2A8sggMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xa7olKyqjDPoWi1n0njvJZLHxyWlG
+        i6aOt6wWTYdOsVl8utfPZrHp43tWiytf37NZ/H/0mtVi7qRai86JS9gtNj2+xmpxedccoLIH
+        /5ktHrS8YLU4c/UAi0V7Zyubg4DH7IaLLB6X+3qZPHbOusvuMbtjJqvHnWt72Dy2f3vA6nG/
+        +ziTx+Yl9R5/Z+1n8dh+bR6zx9Mfe5k9Pm+SC+CJ4rJJSc3JLEst0rdL4MrY07SAteAXS8WK
+        HbOYGxhfMXcxcnJICJhIzF55nx3CFpO4cG89WxcjF4eQwBJGiXfTnoMleAUEJX5MvsfSxcjB
+        wSygLjFlSi5EzTNGiXP/tzCB1AgLeEm8OTCXHSQhItDCIrH36U2wScwCTYwSV77uYodo6WOU
+        +LZzP9huNgFNib+bQapAVthJrFn4ggXEZhFQlVjWewasRlQgQqJz5XywOKeApcTMzn6wOLOA
+        vMTBK89ZIGxxiebWmywTGAVnIbl2FsK1s5B0zELSsYCRZRWjSGppcW56brGhXnFibnFpXrpe
+        cn7uJkZgzG479nPzDsZLG4MPMQpwMCrx8O5IrYgSYk0sK67MPcQowcGsJMLbN68ySog3JbGy
+        KrUoP76oNCe1+BCjNAeLkjjveQOglEB6YklqdmpqQWoRTJaJg1OqgTGhi3lympP6nb+C+18U
+        Mdjf2dyyZE5GRJ7n15tON0IPx7m4hc1aVjBzwzq73i+N92a0fYt6r3B0Soj/JOY1Iia/EznO
+        lllt1+u79e1/5cMVZf0bRBQ7PTXs7pZrSf9IaGYLe/b/4QHNX//shMomLnnt8tpuzcvZbCZb
+        E3S+BAuYnD014YVi7nolluKMREMt5qLiRADdsszS1QIAAA==
+X-CMS-MailID: 20180206130700eucas1p241374144e21ed673155a00bda3b34aff
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf
+X-RootMTR: 20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf
+References: <CGME20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf@epcas1p3.samsung.com>
+        <20180206084251.303-1-philippe.cornu@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 4:44 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> This patch documents additional entries of the audio-codec and
-> i2s-controller properties required for the HDMI audio support.
+On 06.02.2018 09:42, Philippe Cornu wrote:
+> Add support for the Synopsys DesignWare MIPI DSI version 1.31
+> Two registers need to be updated/added for supporting 1.31:
+> * PHY_TMR_CFG 0x9c (updated)
+>   1.30 [31:24] phy_hs2lp_time
+>        [23:16] phy_lp2hs_time
+>        [14: 0] max_rd_time
 >
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/sound/samsung,tm2-audio.txt        | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+>   1.31 [25:16] phy_hs2lp_time
+>        [ 9: 0] phy_lp2hs_time
 >
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> index 94442e5673b3..f5ccc12ddc00 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> @@ -4,9 +4,13 @@ Required properties:
+> * PHY_TMR_RD_CFG 0xf4 (new)
+>   1.31 [14: 0] max_rd_time
 >
->   - compatible           : "samsung,tm2-audio"
->   - model                : the user-visible name of this sound complex
-> - - audio-codec          : the phandle of the wm5110 audio codec node,
-> -                          as described in ../mfd/arizona.txt
-> - - i2s-controller       : the phandle of the I2S controller
-> + - audio-codec          : the first entry should be phandle of the wm5110 audio
-> +                          codec node, as described in ../mfd/arizona.txt;
-> +                          the second entry should be phandle of the HDMI
+> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 
-AFAIU, this property is still optional so the wording should be
-different. Maybe just add "optional properties" paragraph?
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Best regards,
-Krzysztof
+If there will be no objections I will merge it this week.
 
-> +                          transmitter node
-> + - i2s-controller       : the list of phandle and argument tuples pointing to
-> +                          I2S controllers, the first entry should be I2S0 and
-> +                          the second one I2S1
->   - audio-amplifier      : the phandle of the MAX98504 amplifier
->   - samsung,audio-routing : a list of the connections between audio components;
->                            each entry is a pair of strings, the first being the
-> @@ -22,8 +26,8 @@ Example:
->
->  sound {
->         compatible = "samsung,tm2-audio";
-> -       audio-codec = <&wm5110>;
-> -       i2s-controller = <&i2s0>;
-> +       audio-codec = <&wm5110>, <&hdmi>;
-> +       i2s-controller = <&i2s0 0>, <&i2s1 0>;
->         audio-amplifier = <&max98504>;
->         mic-bias-gpios = <&gpr3 2 0>;
->         model = "wm5110";
-> --
-> 2.14.2
->
+ --
+Regards
+Andrzej
