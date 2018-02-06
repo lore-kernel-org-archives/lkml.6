@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753137AbeBFQx7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:53:59 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44174 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752792AbeBFQvG (ORCPT
+        id S1752803AbeBFQyM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:54:12 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51560 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752776AbeBFQvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:51:06 -0500
+        Tue, 6 Feb 2018 11:51:05 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v7 21/24] perf tools: Add support for the SPF perf event
-Date: Tue,  6 Feb 2018 17:50:07 +0100
+Subject: [PATCH v7 19/24] mm: Adding speculative page fault failure trace events
+Date: Tue,  6 Feb 2018 17:50:05 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020616-0008-0000-0000-000004CA06E9
+x-cbid: 18020616-0012-0000-0000-000005ABFC15
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020616-0009-0000-0000-00001E5DB479
-Message-Id: <1517935810-31177-22-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18020616-0013-0000-0000-00001927B0C9
+Message-Id: <1517935810-31177-20-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-06_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,79 +46,305 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the new speculative faults event.
+This patch a set of new trace events to collect the speculative page fault
+event failures.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- tools/include/uapi/linux/perf_event.h | 1 +
- tools/perf/util/evsel.c               | 1 +
- tools/perf/util/parse-events.c        | 4 ++++
- tools/perf/util/parse-events.l        | 1 +
- tools/perf/util/python.c              | 1 +
- 5 files changed, 8 insertions(+)
+ include/trace/events/pagefault.h | 87 ++++++++++++++++++++++++++++++++++++++++
+ mm/memory.c                      | 62 ++++++++++++++++++++++------
+ 2 files changed, 136 insertions(+), 13 deletions(-)
+ create mode 100644 include/trace/events/pagefault.h
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index e0739a1aa4b2..164383273147 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -112,6 +112,7 @@ enum perf_sw_ids {
- 	PERF_COUNT_SW_EMULATION_FAULTS		= 8,
- 	PERF_COUNT_SW_DUMMY			= 9,
- 	PERF_COUNT_SW_BPF_OUTPUT		= 10,
-+	PERF_COUNT_SW_SPF			= 11,
+diff --git a/include/trace/events/pagefault.h b/include/trace/events/pagefault.h
+new file mode 100644
+index 000000000000..1d793f8c739b
+--- /dev/null
++++ b/include/trace/events/pagefault.h
+@@ -0,0 +1,87 @@
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM pagefault
++
++#if !defined(_TRACE_PAGEFAULT_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_PAGEFAULT_H
++
++#include <linux/tracepoint.h>
++#include <linux/mm.h>
++
++DECLARE_EVENT_CLASS(spf,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, caller)
++		__field(unsigned long, vm_start)
++		__field(unsigned long, vm_end)
++		__field(unsigned long, address)
++	),
++
++	TP_fast_assign(
++		__entry->caller		= caller;
++		__entry->vm_start	= vma->vm_start;
++		__entry->vm_end		= vma->vm_end;
++		__entry->address	= address;
++	),
++
++	TP_printk("ip:%lx vma:%lx-%lx address:%lx",
++		  __entry->caller, __entry->vm_start, __entry->vm_end,
++		  __entry->address)
++);
++
++DEFINE_EVENT(spf, spf_pte_lock,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_changed,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_noanon,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_notsup,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_access,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_pmd_changed,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++#endif /* _TRACE_PAGEFAULT_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+diff --git a/mm/memory.c b/mm/memory.c
+index 4ed2d6a7a6e3..01b8d7447645 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -80,6 +80,9 @@
  
- 	PERF_COUNT_SW_MAX,			/* non-ABI */
- };
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 66fa45198a11..7fddb37f44ca 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -438,6 +438,7 @@ const char *perf_evsel__sw_names[PERF_COUNT_SW_MAX] = {
- 	"alignment-faults",
- 	"emulation-faults",
- 	"dummy",
-+	"speculative-faults",
- };
+ #include "internal.h"
  
- static const char *__perf_evsel__sw_name(u64 config)
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 34589c427e52..2a8189c6d5fc 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -140,6 +140,10 @@ struct event_symbol event_symbols_sw[PERF_COUNT_SW_MAX] = {
- 		.symbol = "bpf-output",
- 		.alias  = "",
- 	},
-+	[PERF_COUNT_SW_SPF] = {
-+		.symbol = "speculative-faults",
-+		.alias	= "spf",
-+	},
- };
++#define CREATE_TRACE_POINTS
++#include <trace/events/pagefault.h>
++
+ #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
+ #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid.
+ #endif
+@@ -2474,23 +2477,30 @@ static bool pte_spinlock(struct vm_fault *vmf)
+ 	}
  
- #define __PERF_EVENT_FIELD(config, name) \
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index 655ecff636a8..5d6782426b30 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -308,6 +308,7 @@ emulation-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_EM
- dummy						{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
- duration_time					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
- bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUTPUT); }
-+speculative-faults|spf				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_SPF); }
+ 	local_irq_disable();
+-	if (vma_has_changed(vmf))
++	if (vma_has_changed(vmf)) {
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
  
  	/*
- 	 * We have to handle the kernel PMU event cycles-ct/cycles-t/mem-loads/mem-stores separately.
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index b1e999bd21ef..100507d632fa 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -1142,6 +1142,7 @@ static struct {
- 	PERF_CONST(COUNT_SW_ALIGNMENT_FAULTS),
- 	PERF_CONST(COUNT_SW_EMULATION_FAULTS),
- 	PERF_CONST(COUNT_SW_DUMMY),
-+	PERF_CONST(COUNT_SW_SPF),
+ 	 * We check if the pmd value is still the same to ensure that there
+ 	 * is a huge collapse operation in progress in our back.
+ 	 */
+ 	pmdval = READ_ONCE(*vmf->pmd);
+-	if (!pmd_same(pmdval, vmf->orig_pmd))
++	if (!pmd_same(pmdval, vmf->orig_pmd)) {
++		trace_spf_pmd_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
  
- 	PERF_CONST(SAMPLE_IP),
- 	PERF_CONST(SAMPLE_TID),
+ 	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
+-	if (unlikely(!spin_trylock(vmf->ptl)))
++	if (unlikely(!spin_trylock(vmf->ptl))) {
++		trace_spf_pte_lock(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
+ 
+ 	if (vma_has_changed(vmf)) {
+ 		spin_unlock(vmf->ptl);
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
+ 	}
+ 
+@@ -2530,16 +2540,20 @@ static bool pte_map_lock(struct vm_fault *vmf)
+ 	 * block on the PTL and thus we're safe.
+ 	 */
+ 	local_irq_disable();
+-	if (vma_has_changed(vmf))
++	if (vma_has_changed(vmf)) {
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
+ 
+ 	/*
+ 	 * We check if the pmd value is still the same to ensure that there
+ 	 * is a huge collapse operation in progress in our back.
+ 	 */
+ 	pmdval = READ_ONCE(*vmf->pmd);
+-	if (!pmd_same(pmdval, vmf->orig_pmd))
++	if (!pmd_same(pmdval, vmf->orig_pmd)) {
++		trace_spf_pmd_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
+ 
+ 	/*
+ 	 * Same as pte_offset_map_lock() except that we call
+@@ -2552,11 +2566,13 @@ static bool pte_map_lock(struct vm_fault *vmf)
+ 	pte = pte_offset_map(vmf->pmd, vmf->address);
+ 	if (unlikely(!spin_trylock(ptl))) {
+ 		pte_unmap(pte);
++		trace_spf_pte_lock(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
+ 	}
+ 
+ 	if (vma_has_changed(vmf)) {
+ 		pte_unmap_unlock(pte, ptl);
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
+ 	}
+ 
+@@ -4311,47 +4327,60 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 		return ret;
+ 
+ 	seq = raw_read_seqcount(&vma->vm_sequence); /* rmb <-> seqlock,vma_rb_erase() */
+-	if (seq & 1)
++	if (seq & 1) {
++		trace_spf_vma_changed(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	/*
+ 	 * Can't call vm_ops service has we don't know what they would do
+ 	 * with the VMA.
+ 	 * This include huge page from hugetlbfs.
+ 	 */
+-	if (vma->vm_ops)
++	if (vma->vm_ops) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	/*
+ 	 * __anon_vma_prepare() requires the mmap_sem to be held
+ 	 * because vm_next and vm_prev must be safe. This can't be guaranteed
+ 	 * in the speculative path.
+ 	 */
+-	if (unlikely(!vma->anon_vma))
++	if (unlikely(!vma->anon_vma)) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	vmf.vma_flags = READ_ONCE(vma->vm_flags);
+ 	vmf.vma_page_prot = READ_ONCE(vma->vm_page_prot);
+ 
+ 	/* Can't call userland page fault handler in the speculative path */
+-	if (unlikely(vmf.vma_flags & VM_UFFD_MISSING))
++	if (unlikely(vmf.vma_flags & VM_UFFD_MISSING)) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+-	if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP)
++	if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP) {
+ 		/*
+ 		 * This could be detected by the check address against VMA's
+ 		 * boundaries but we want to trace it as not supported instead
+ 		 * of changed.
+ 		 */
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	if (address < READ_ONCE(vma->vm_start)
+-	    || READ_ONCE(vma->vm_end) <= address)
++	    || READ_ONCE(vma->vm_end) <= address) {
++		trace_spf_vma_changed(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
+ 				       flags & FAULT_FLAG_INSTRUCTION,
+ 				       flags & FAULT_FLAG_REMOTE)) {
++		trace_spf_vma_access(_RET_IP_, vma, address);
+ 		ret = VM_FAULT_SIGSEGV;
+ 		goto out_put;
+ 	}
+@@ -4359,10 +4388,12 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	/* This is one is required to check that the VMA has write access set */
+ 	if (flags & FAULT_FLAG_WRITE) {
+ 		if (unlikely(!(vmf.vma_flags & VM_WRITE))) {
++			trace_spf_vma_access(_RET_IP_, vma, address);
+ 			ret = VM_FAULT_SIGSEGV;
+ 			goto out_put;
+ 		}
+ 	} else if (unlikely(!(vmf.vma_flags & (VM_READ|VM_EXEC|VM_WRITE)))) {
++		trace_spf_vma_access(_RET_IP_, vma, address);
+ 		ret = VM_FAULT_SIGSEGV;
+ 		goto out_put;
+ 	}
+@@ -4375,8 +4406,10 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	pol = __get_vma_policy(vma, address);
+ 	if (!pol)
+ 		pol = get_task_policy(current);
+-	if (pol && pol->mode == MPOL_INTERLEAVE)
++	if (pol && pol->mode == MPOL_INTERLEAVE) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ #endif
+ 
+ 	/*
+@@ -4449,8 +4482,10 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	 * We need to re-validate the VMA after checking the bounds, otherwise
+ 	 * we might have a false positive on the bounds.
+ 	 */
+-	if (read_seqcount_retry(&vma->vm_sequence, seq))
++	if (read_seqcount_retry(&vma->vm_sequence, seq)) {
++		trace_spf_vma_changed(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	mem_cgroup_oom_enable();
+ 	ret = handle_pte_fault(&vmf);
+@@ -4469,6 +4504,7 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	return ret;
+ 
+ out_walk:
++	trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 	local_irq_enable();
+ out_put:
+ 	put_vma(vma);
 -- 
 2.7.4
