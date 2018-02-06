@@ -1,60 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932094AbeBFXMJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 18:12:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:58010 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753817AbeBFXL4 (ORCPT
+        id S1753731AbeBFXQw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 18:16:52 -0500
+Received: from mail-io0-f176.google.com ([209.85.223.176]:40833 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753618AbeBFXQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 18:11:56 -0500
-From: Colin King <colin.king@canonical.com>
-To: Harsh Jain <harsh@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: chelsio - Make function aead_ccm_validate_input static
-Date: Tue,  6 Feb 2018 23:09:20 +0000
-Message-Id: <20180206230920.13764-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Tue, 6 Feb 2018 18:16:51 -0500
+X-Google-Smtp-Source: AH8x227dOR0RAMYKEDLcSsB5IJ2miVzQkFor30XnM688Kfloz5aE2pXDZQGnv8uHEHxbtiQIcbxMMnMwkoQrnGT3DRo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180206225548.GB9680@eng-minchan1.roam.corp.google.com>
+References: <20180206004903.224390-1-joelaf@google.com> <20180206220159.GA9680@eng-minchan1.roam.corp.google.com>
+ <CAJWu+opFVtVbPygHBYX5gv-LeH1uugY1DDPp2q4va4mOsvBeWw@mail.gmail.com> <20180206225548.GB9680@eng-minchan1.roam.corp.google.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Tue, 6 Feb 2018 15:16:49 -0800
+Message-ID: <CAJWu+op4SpBG1r+V7MOgwsP_tx8MnGxj=udopxw4irXN44z75w@mail.gmail.com>
+Subject: Re: [PATCH RFC] ashmem: Fix lockdep RECLAIM_FS false positive
+To: Minchan Kim <minchan@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Peter Zilstra <peterz@infradead.org>, Michal Hocko <mhocko@kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Minchan,
 
-Function aead_ccm_validate_input is local to the source and does not
-need to be in global scope, so make it static.
+On Tue, Feb 6, 2018 at 2:55 PM, Minchan Kim <minchan@kernel.org> wrote:
+> On Tue, Feb 06, 2018 at 02:32:13PM -0800, Joel Fernandes wrote:
+[...]
+>> On Tue, Feb 6, 2018 at 2:01 PM, Minchan Kim <minchan@kernel.org> wrote:
+>> [...]
+>> > On Mon, Feb 05, 2018 at 04:49:03PM -0800, Joel Fernandes wrote:
+>> >> During invocation of ashmem shrinker under memory pressure, ashmem
+>> >> calls into VFS code via vfs_fallocate. We however make sure we
+>> >> don't enter it if the allocation was GFP_FS to prevent looping
+>> >> into filesystem code. However lockdep doesn't know this and prints
+>> >> a lockdep splat as below.
+>> >>
+>> >> This patch fixes the issue by releasing the reclaim_fs lock after
+>> >> checking for GFP_FS but before calling into the VFS path, and
+>> >> reacquiring it after so that lockdep can continue reporting any
+>> >> reclaim issues later.
+>> >
+>> > At first glance, it looks reasonable. However, Couldn't we return
+>> > just 0 in ashmem_shrink_count when the context is under FS?
+>> >
+>>
+>> We're already checking if GFP_FS in ashmem_shrink_scan and bailing out
+>> though, did I miss something?
+>
+> I understand your concern now. Apart from that, if ashmem_shrink_count
+> is called under GFP_FS, you can just return 0 for removing pointless
+> ashmem_shrink_scan calling. But it might be trivial so up to you. :)
 
-Cleans up sparse warning:
-drivers/crypto/chelsio/chcr_algo.c:2627:5: warning: symbol
-'aead_ccm_validate_input' was not declared. Should it be static?
+Yes, I think we can do that in a subsequent patch since that's a
+different optimization. Thanks for the suggestion.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/chelsio/chcr_algo.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> The problem is not that there is a deadlock that occurs, the problem
+>> that even when we're not under FS, lockdep reports an issue that can't
+>> happen. The fix is for the lockdep false positive that occurs.
+>
+> Yub, you are right. I am happy to add
+>
+> Reviewed-by: Minchan Kim <minchan@kernel.org?
 
-diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-index 34a02d690548..8a67884512e4 100644
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -2636,10 +2636,10 @@ static void fill_sec_cpl_for_aead(struct cpl_tx_sec_pdu *sec_cpl,
- 					0, dst_size);
- }
- 
--int aead_ccm_validate_input(unsigned short op_type,
--			    struct aead_request *req,
--			    struct chcr_aead_ctx *aeadctx,
--			    unsigned int sub_type)
-+static int aead_ccm_validate_input(unsigned short op_type,
-+				   struct aead_request *req,
-+				   struct chcr_aead_ctx *aeadctx,
-+				   unsigned int sub_type)
- {
- 	if (sub_type != CRYPTO_ALG_SUB_TYPE_AEAD_RFC4309) {
- 		if (crypto_ccm_check_iv(req->iv)) {
--- 
-2.15.1
+Great, thanks!
+
+>
+> Other than that, I thought a while we could make it in generic so we
+> can add SHRINKER_FS_AWARE like that so VM code itself can do for
+> preventing such false positive instead of doing it in each driver
+> itself.
+>
+> However, if driver can do by itself, it could be more flexible.
+
+Yes, off the top it feels like something that driver you should do at
+more finer grained level, since probably only driver knows that/if we
+will be looping into FS.
+
+Thanks for the review,
+
+- Joel
