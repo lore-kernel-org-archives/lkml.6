@@ -1,65 +1,68 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-193568-1517899467-2-6591002832205501110
+X-Cyrus-Session-Id: sloti22d1t05-193568-1517895166-2-11646975947319042398
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517899466; b=HHSbM5dofNMg3nvJY2yd6mgQbMVF2oReEXJZNQ7r47SojXM
-    qpy7fFBDpcFIzxxuxlc7VRvrd5z0eIB3bWTysr8W064OSOuNuR+i4Uz4GKb3DLqA
-    GtH1VrmRA4xsDpnYbhrmhPQ8WvMRp+KDvO3HCvsCMgGWLqekHnn97ox/mD7Lj48/
-    HbQMEiVvr5A2eBGRRyIlc2YLYX+GwC0wgrluiAk66L8H5XKXds4/U622YahVn7kv
-    MWHGZY12ah/IbubfJ+mIgf68DJCVQIpOFxR2G8k3mGr9WDArA9BaoP3thWaNA+Jj
-    ZNcyutGQMbxCYhNyHj3RM7uRhaZ/QqyF2oudj/A==
+    t=1517895165; b=fq0S9HKNwODKxOBLAuftETs66DVS96n2eIRT+lBYIpy1XEZ
+    sEhpv9P7Ha/jxCIEI+gXWbB1hcYz/3pn2kjhyQvTDyvr1VwsynmO2diUbarSn95g
+    pdUQjoGBw5+/GUdfQr38ICO1nl31rDZHOoUVhI1YBtcXMEZLvsFtYAq9L8HcCU04
+    yYBBjZglFAaHzNi15WPiBB8WR+GJTo3tTRCJxacPjAJBCbBJloARpPjnLSOpGJq2
+    3jdK3MJyNtpjTBe7qZ5F8DgZlG4MgXlz1alZ9bYyovj65ffZ5LyWsCbMJ8KJB05z
+    zK8v9tVwBybAHsUwh7kFlem11MggBj+1yhBaJNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1517899466; bh=JRYS7vD4HfMfmolRXXnjVLl+eV
-    jXqgyl2v/ls16j4EA=; b=edtNjOIA05LF27rFyN/SwXSaXZn9yJR1oj1kXKI9Wh
-    l/S/VzNnpN9JjcquIQvpULnVVtAIPHHVq5S5ibvroOSPEHBRpwe/xXtlMwi0/PeP
-    okA9NUuTdpYPks4xgyDThtm/pxqIRpcEQCxit+of/LSsnUYf2Qdjq+Q0HkV5WtqO
-    3LfGpT3EUJftJEbt1LkiHhONJcc0NBl+fMO9tIz5Fotr7KeIQbINzMVX0erEqDli
-    jqmjmIc0H/HZmMvFC3pCkHQvSJ/6pLn2vD9T/lbATgz7hSifFnlO+KMDhjTnm5XW
-    YBl4y2sd6ihEVQmy0qYPO0sHLbTfUgo3W9b9PQ+cHCaA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1517895165; bh=HrHUvO9+xtR5mzRvOgICc/ZSPS
+    7Chc6ZAvXML/EW7xY=; b=nkVIzu2faHupYxL/WJZsTeGrlD/s2svifJrMJrV7pz
+    xxsMhWBjrQCnjfsgW1Z8zb6blg5iThmTUeMW0bxNzPCDlkD5ALYQCsSdWBiMy6/g
+    kn2Bhi1fbFFdrl87SOPKJ+t/Wawhc7oTxamNMXCWAGhCqaktf0HAooIKwl3NIs78
+    At/PdRJOz3F6GkTef3IVQkVG17EJB5iPpDWKssAW38ww4eUoulRZDHJO7yhvAV7d
+    ukiB/U6PPYBmG+rSogzJQRE2zZ9HKqFHrDIbCMcLqD/GLBA+K4EKVK9XwdM0l8f2
+    OZ0lKJDYkYmxxjwbNzonrmLaofAxi85gZfBdf8TpEzxQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=un8BMnLl;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=un8BMnLl;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752183AbeBFGoZ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 01:44:25 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38708 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752054AbeBFGoY (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 6 Feb 2018 01:44:24 -0500
-X-Google-Smtp-Source: AH8x225LX/iewmN6YYumxPR7XehP5Vo1apVtVB08l8jcliZQLmwYkg47wmSY6ol4XW8jurmsqzduZw==
-Date: Tue, 6 Feb 2018 07:44:21 +0100
-From: Moritz Fischer <mdf@kernel.org>
+        id S1750758AbeBFFcm (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 00:32:42 -0500
+Received: from mga14.intel.com ([192.55.52.115]:52666 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750751AbeBFFcl (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 6 Feb 2018 00:32:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,467,1511856000";
+   d="scan'208";a="29112300"
+Date: Tue, 6 Feb 2018 13:23:15 +0800
+From: Wu Hao <hao.wu@intel.com>
 To: Alan Tull <atull@kernel.org>
-Cc: Wu Hao <hao.wu@intel.com>, Moritz Fischer <mdf@kernel.org>,
+Cc: Moritz Fischer <mdf@kernel.org>,
         "Luebbers, Enno" <enno.luebbers@intel.com>,
         linux-fpga@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
@@ -71,7 +74,7 @@ Cc: Wu Hao <hao.wu@intel.com>, Moritz Fischer <mdf@kernel.org>,
         Xiao Guangrong <guangrong.xiao@linux.intel.com>
 Subject: Re: [PATCH v3 14/21] fpga: dfl: add fpga manager platform driver for
  FME
-Message-ID: <20180206064421.awx26yvsqk4gmqby@derp-derp.local>
+Message-ID: <20180206052315.GA4882@hao-dev>
 References: <1511764948-20972-1-git-send-email-hao.wu@intel.com>
  <1511764948-20972-15-git-send-email-hao.wu@intel.com>
  <CANk1AXS-ON+Pcxtk-AY1XxH8Paw2aFBjiqhuCz7cA4cyuAQMUA@mail.gmail.com>
@@ -86,7 +89,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CANk1AXTYtLu_cnKG75FjBRCf5FAoHFj6saNRncYPjQpJoXd1eg@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -161,16 +164,6 @@ On Mon, Feb 05, 2018 at 10:25:27PM -0600, Alan Tull wrote:
 > >> >>
 > >> >> I'm not sure userland should be making the call on whether what you're
 > >> >> trying to load is compatible or not.
-
-I guess I was worried that you might take down a PR region that you
-could've avoided. On second thought unless the kernel could extract that
-info somehow from the bitstream before programming this is probably
-anyway not possible, since the only one that knows the id -> bitstream
-mapping is userland.
-
-Hao's comments further down outline well enough that the hardware can
-deal with incompatible bitstreams. So ignore my comments ;-)
-
 > >>
 > >> Could you explain more about what your concern was about this (unless
 > >> Hao has covered it below)?
@@ -228,7 +221,8 @@ deal with incompatible bitstreams. So ignore my comments ;-)
 > 
 > OK, thanks for that explanation.  That makes sense but could have
 > easily been different.  Please document this somewhere.
-> 
-> Alan
 
-Moritz
+Sure, will do.
+
+Thanks
+Hao
