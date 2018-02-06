@@ -1,104 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeBFEIW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:08:22 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:64336 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbeBFEIM (ORCPT
+        id S1752546AbeBFEJM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 23:09:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46282 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752118AbeBFEJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:08:12 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180206040810epoutp02661cf4479cd14fb36daa4f30f7e39b8f~QoP63ctu90853208532epoutp02a
-X-AuditID: b6c32a47-187ff7000000100c-43-5a792a29ae82
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A792A2B.60603@samsung.com>
-Date: Tue, 06 Feb 2018 13:08:11 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH 3/3] clk: exynos5433: Add CLK_IGNORE_UNUSED flag to
- sclk_ioclk_i2s1_bclk
-In-reply-to: <20180205142230.9755-3-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SeWyLcRjH8+vb4y3KT12PCeoNiVVaa9etr2PiGMqGJv6ROrrX9ku7rFf6
-        tmOOWMRMhrG4lk3mjLAYs3VVYxbbEibOMTZiQkUMCUJsWVxt3wr/Pcfnub55aEpZJE2gc10+
-        4nVxDkY6SBxsTTRqEtUFlqTaxunspfKLErYu/ETCftnTI2EfNR6VsuX3r4vYmrYXMvbh7YVs
-        68diCdt/Z7d4rtz0qatIZnpUuldkqj+9zVQaqEamr3UTzBILmW0nXA7xqogr252T67KlMRkr
-        rQusKalJOo1uBmtkVC7OSdKY9EyzZlGuI7IOo8rnHP5IyMzxPDN9zmyv2+8jKrub96Uxq3U6
-        vVaXZNTq9XqtIXntTH1KBMki9n3d5WLPkcEbGxveoEIUkpcgOQ3YAN0361EJGkQrcQjBk7Kf
-        lOD0IQieei/7S3XePRdPXEUw0NUpiiYUeDj0H+gRlyCapvBEaOvIi4YpnAgNVy/KBL4HQcfh
-        ABL4qfDqR680aovxFAg2d0qithSrofldVyw+DE+Czv5wjB+FV8GVY99l0f4j8VKoKtREe1K4
-        A8HzT8UxZgReB+HzTbFF5XgW1AxUxgYDfimFQxdeI+GCdGhvOCsS7BHw/mYgftk4eFt9CQkF
-        xQiKm6oowTmI4N7TnnhFMrw9USISbhsKu1p/xlYCrIBdO5UCYoKHZe3xpvOgtrE+LlczglCo
-        l9qPJlT8p1jFP8Uq/lPsOKKq0Wji4Z02wus9yVqec/J+l02b7XbWodgLqheHUPBeZgvCNGKG
-        KLB9o0Up4fL5AmcLAppiRirmP91gUSpyuIJNxOu2ev0OwreglIjgZVTCqGx35KFdPqvOMCPJ
-        kJqqN6aykRcboygyp1uU2Mb5SB4hHuL9Wyei5QmFSJp1MuivnJy3FFWy2w68CnryunYuvKGc
-        uLh7K9lqXD7Jxuq2Z2WE863mN+3XyjWM3uH/NWTJtMlzHqx5vKLq2Sp76Rnlg8DYl2f3NVvT
-        V1vCGbdrKqoK19Zt7h0uCqv62kKXv2UeNTT1LdsxELgzXr0pYcut36XJtWg9Hjz68IfPaYyY
-        t3M6NeXluT9oOnmtmAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t9jAV1NrcoogwWN4hYbZ6xntdj0+Bqr
-        xceee6wWl3fNYbOYcX4fk8XaI3fZLS6ecrU4/Kad1eLHmW4WB06P9zda2T0u9/UyeWxeUu/R
-        t2UVo8fnTXIBrFFcNimpOZllqUX6dglcGf03Z7AUTOeu2LX1CWMD4w7OLkZODgkBE4mrZ1cy
-        dzFycQgJ7GSUWPf4CQtIgldAUOLH5HtANgcHs4C8xJFL2SBhZgF1iUnzFkHVP2CUOLz2BDNE
-        vYbEwz8v2UBsFgFViW37r7KC2GwCWhL7X9wAi/MLKEpc/fGYEWSmqECERPeJShBTRMBLYl6D
-        LshIZoFLjBKnN+4DaxUWiJN4vGYvO8Su/YwSUw4cZARJcApYS6z9NZt9AqPALCSnzkI4dRaS
-        UxcwMq9ilEwtKM5Nzy02KjDKSy3XK07MLS7NS9dLzs/dxAgM/W2Htfp3MD5eEn+IUYCDUYmH
-        VyCjIkqINbGsuDL3EKMEB7OSCK/T9fIoId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rz8+ccihQTS
-        E0tSs1NTC1KLYLJMHJxSDYy2k9bEvy48YCJrV8Xy9FMsc/ykri3sPYI7kx9ae8y5fULjHrMN
-        303lxOOLNrfv63pwb8KGiXH2z2v9XqU4r+8Su1/+/7bAbB7tJW2LzHleVc5ft/h7w7rnxi2G
-        6v9+rd7sJjNPO/liq/7CDqk7ijHLF61TfWOsvMQv98xL664YLs1nBwR1u2cqsRRnJBpqMRcV
-        JwIAvTKH3XkCAAA=
-X-CMS-MailID: 20180206040809epcas2p43c489752ec7124c3b426b9b2b1966119
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180205142314epcas1p2c9b9bdcba33290a9528a1b24fbc849eb
-X-RootMTR: 20180205142314epcas1p2c9b9bdcba33290a9528a1b24fbc849eb
-References: <20180205142230.9755-1-s.nawrocki@samsung.com>
-        <CGME20180205142314epcas1p2c9b9bdcba33290a9528a1b24fbc849eb@epcas1p2.samsung.com>
-        <20180205142230.9755-3-s.nawrocki@samsung.com>
+        Mon, 5 Feb 2018 23:09:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2BBBA60767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v6 00/15] [v6] Krait clocks + Krait CPUfreq 
+Date: Tue,  6 Feb 2018 09:38:13 +0530
+Message-Id: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 02월 05일 23:22, Sylwester Nawrocki wrote:
-> The sclk_ioclk_i2s1_bclk clock is not currently handled by any driver
-> and disabling this clock by the clk core prevents proper operation
-> of the I2S1 block. CLK_IGNORE_UNUSED flag is added as a temporary fix.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index d74361736e64..15177f74e125 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1680,7 +1680,7 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
->  			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
->  			"ioclk_i2s1_bclk_in", ENABLE_SCLK_PERIC, 10,
-> -			CLK_SET_RATE_PARENT, 0),
-> +			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->  	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "sclk_spdif_peric",
->  			ENABLE_SCLK_PERIC, 8, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
-> 
+[v6]
+  * Adrressed comments from Viresh for patch #14 in v5 [5]
+  * Introduced a new binding operating-points-v2-krait-cpu
+    as per discussion with Rob
+  * Added Review tags
 
-If any device driver handles the sclk_ioclk_i2s1_bclk on later,
-CLK_IGNORE_UNUSED will be ignored. Looks good to me.
+[v5]
+  * Addressed comments from Rob for bindings
+  * Addressed comments from Viresh to use dev_pm_opp_set_prop_name, accordingly
+    dropped patch #12 and corrected patch #11 from previous patch set in [4]
+  * Converted to use #spdx tags for newly introduced files
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Mostly a resend of the v3 posted by Stephen quite some time back [1]
+except for few changes.
+  Based on reading some feedback from list,
+  * Dropped the patch "clk: Add safe switch hook" from v3 [2].
+    Now this is taken care by patch#10 in this series only for Krait.
+  * Dropped the path "clk: Avoid sending high rates to downstream
+		      clocks during set_rate" from v3 [3].
+  * Rebased on top of clk-next.
+  * Dropped the DT update from the series. Will send separately
+  * Now with cpufreq-dt+opp supporting voltage scaling, registering the
+    krait cpu supplies in DT should be sufficient. But one issue is,
+    the qcom-cpufreq drivers reads the efuse and based on that registers
+    the opp data and then registers the cpufreq-dt device. So when
+    cpufreq-dt driver probes and registers the regulator to the OPP framework,
+    it expects that the opp data for the device should not be registered before
+    the regulator. Will send a RFC patch removing that check, to find out the
+    right way of doing it.
+
+These patches provide cpufreq scaling on devices with Krait CPUs.
+In Krait CPU designs there's one PLL and two muxes per CPU, allowing
+us to switch CPU frequencies independently.
+
+				 secondary
+	 +-----+                    +
+	 | QSB |-------+------------|\
+	 +-----+       |            | |-+
+		       |    +-------|/  |
+		       |    |       +   |
+	 +-----+       |    |           |
+	 | PLL |----+-------+           |   primary
+	 +-----+    |  |                |     +
+		    |  |                +-----|\       +------+
+	 +-------+  |  |                      | \      |      |
+	 | HFPLL |----------+-----------------|  |-----| CPU0 |
+	 +-------+  |  |    |                 |  |     |      |
+		    |  |    | +-----+         | /      +------+
+		    |  |    +-| / 2 |---------|/
+		    |  |      +-----+         +
+		    |  |         secondary
+		    |  |            +
+		    |  +------------|\
+		    |               | |-+
+		    +---------------|/  |   primary
+				    +   |     +
+					+-----|\       +------+
+	 +-------+                            | \      |      |
+	 | HFPLL |----------------------------|  |-----| CPU1 |
+	 +-------+          |                 |  |     |      |
+			    | +-----+         | /      +------+
+			    +-| / 2 |---------|/
+			      +-----+         +
+
+To support this in the common clock framework we model the muxes,
+dividers, and PLLs as different clocks. CPUfreq only interacts
+with the primary mux (farthest right in the diagram). When CPUfreq
+sets a rate, the mux code finds the best parent that can provide the rate.
+Due to the design, QSB and the top PLL are always a fixed rate and thus
+only support one frequency each. These sources provide the lowest
+frequencies for the CPUs. The HFPLLs are where we can make the CPU go
+faster (GHz range). Sometimes we need to run the HFPLL twice as
+fast and divide it by two to get a particular frequency.
+
+When switching rates we can't leave the CPU clocked by the HFPLL because
+we need to turn off the output of the PLL when changing its frequency.
+This means we have to switch over to the secondary mux and use one of the
+fixed sources. This is why we need something like the safe parent patch.
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332607.html
+[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332615.html
+[3] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332608.html
+[4] https://lwn.net/Articles/740994/ 
+[5] https://lkml.org/lkml/2017/12/19/537
+
+Sricharan R (2):
+  clk: qcom: Add safe switch hook for krait mux clocks
+  dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
+
+Stephen Boyd (13):
+  ARM: Add Krait L2 register accessor functions
+  clk: mux: Split out register accessors for reuse
+  clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+  clk: qcom: Add HFPLL driver
+  dt-bindings: clock: Document qcom,hfpll
+  clk: qcom: Add MSM8960/APQ8064's HFPLLs
+  clk: qcom: Add IPQ806X's HFPLLs
+  clk: qcom: Add support for Krait clocks
+  clk: qcom: Add KPSS ACC/GCC driver
+  dt-bindings: arm: Document qcom,kpss-gcc
+  clk: qcom: Add Krait clock controller driver
+  dt-bindings: clock: Document qcom,krait-cc
+  cpufreq: Add module to register cpufreq on Krait CPUs
+
+ .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |   7 +
+ .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  |  32 ++
+ .../devicetree/bindings/clock/qcom,hfpll.txt       |  46 +++
+ .../devicetree/bindings/clock/qcom,krait-cc.txt    |  22 ++
+ .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++
+ arch/arm/common/Kconfig                            |   3 +
+ arch/arm/common/Makefile                           |   1 +
+ arch/arm/common/krait-l2-accessors.c               |  48 +++
+ arch/arm/include/asm/krait-l2-accessors.h          |  10 +
+ drivers/clk/clk-mux.c                              |  75 ++--
+ drivers/clk/qcom/Kconfig                           |  28 ++
+ drivers/clk/qcom/Makefile                          |   5 +
+ drivers/clk/qcom/clk-hfpll.c                       | 244 +++++++++++++
+ drivers/clk/qcom/clk-hfpll.h                       |  45 +++
+ drivers/clk/qcom/clk-krait.c                       | 126 +++++++
+ drivers/clk/qcom/clk-krait.h                       |  41 +++
+ drivers/clk/qcom/gcc-ipq806x.c                     |  82 +++++
+ drivers/clk/qcom/gcc-msm8960.c                     | 172 +++++++++
+ drivers/clk/qcom/hfpll.c                           |  96 +++++
+ drivers/clk/qcom/kpss-xcc.c                        |  87 +++++
+ drivers/clk/qcom/krait-cc.c                        | 397 +++++++++++++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  10 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   5 +
+ drivers/cpufreq/qcom-cpufreq.c                     | 162 +++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8960.h       |   2 +
+ include/linux/clk-provider.h                       |   9 +-
+ 27 files changed, 2089 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
+ create mode 100644 arch/arm/common/krait-l2-accessors.c
+ create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+ create mode 100644 drivers/clk/qcom/clk-hfpll.c
+ create mode 100644 drivers/clk/qcom/clk-hfpll.h
+ create mode 100644 drivers/clk/qcom/clk-krait.c
+ create mode 100644 drivers/clk/qcom/clk-krait.h
+ create mode 100644 drivers/clk/qcom/hfpll.c
+ create mode 100644 drivers/clk/qcom/kpss-xcc.c
+ create mode 100644 drivers/clk/qcom/krait-cc.c
+ create mode 100644 drivers/cpufreq/qcom-cpufreq.c
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
