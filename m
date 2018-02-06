@@ -1,141 +1,216 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2995463-1517981158-2-9630952786424511549
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1507316-1517932252-2-11553392794703661294
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01,
+  UNPARSEABLE_RELAY 0.001, LANGUAGES roen, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
+  MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517981157; b=iTLXimyHFnMG42vorb9Wab8gWTn6zi2F9n1hIsNcLLE30Xj
-    5oQ8tjKmBr1s8Jr18awJhPDayLwer8sic2wpx35yGjR5uSRr5x6MUz/oWV183n7v
-    zphaA4PfHDVbztj23oEfcuSAIqtzG1LQPY5OAfCHlS0/fjFx7T1gGQvD2+2IssZT
-    lv4abX2WWuT2UAhLN/BXHlwxymuPpc3L6h4z1fJip9T80v5oSPYYxeRQgQgxtSxB
-    3Y3PeQck4RJwEbvZ+67+kXiGOozr1j5Z0c4G/hFO+d8aPwJNf8KNgVBHkvZfyu+1
-    xM17mR8BlCXgQ3r81PRb+6FR1jkED1UmaVXVJCA==
+    t=1517932251; b=BIRWkDweD+joQ0L0artbh337DP3WVtETCtoiMVfymgXbTbp
+    nDvbXJvm1ti9ZESnh/VkHmORHxzt9bUpKhvmLv4hT7Nyw8vRy7Gspcn3bTXfNwx2
+    Fg671fV1nzQEgA8kxx8pb37MfxwMEDnRsGc1DU5/F25lCtJ9VdndD6pd+1OAV++a
+    90e1nMGyasoWygTARg7UDBB39kSIv5Ugl+eYaiMLfM9G/yqxo+rsa9dHqz4H0cB6
+    DL7XPAxPz9y1NuVVJQuQ+4cc7UW3Zt8CIlf4+Imb5WrZsceOWHjp3Bf72nczG0lk
+    BT2tRqqiOVA36QBRWjapgcgzGDJJtD1mHVczhOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1517981157; bh=w
-    YJNSOPYfV0wa3WE+rZDyzx6WF6IlaJeXkUREBl+7DE=; b=hhXhc1KXXj1vTq+M3
-    8QUpq0XTHhHNcxE8RouwhUa+0mCLvXl396c5Lal4wApSe2eXuWJ+dxOvH+4w7PO8
-    nJJ8zbW/kkAkBL29q0D3c3ooZ3HYAebybDbHfc5AsBA/khehmo7QuA7K2cw3YsQG
-    IxdQNAP9hYVkfWOrYo0d9UC68MVa43gFYEvBxcdC2Hgzw3OcdTun62+0HYZE/UIj
-    q1xl/Ry/U9Ns4YIJP58ANPWlH9FzY77jsDDCTij7Pq5zCFnkNAXAqNladCcWmZvl
-    I7BDzhip+Qta83tJuoUtUtKhZC77PDjm+UoC7HqcJ4ORSkdQdVY5NuackmjZkBid
-    AWjRg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1517932251; bh=fnUanQL7+oLIwfiMm2mlxbCaL+
+    YB7qFIvIHfAAJ/Iwc=; b=Nmcgrla7tbpMojgP5V5DSqODpIyQimRmj5l05zbTQ5
+    r4RNR39RHweeta/t5NGiOx9fVV8VwH09rd5IHSItvS50AmuUhlFJhmN1xFLVTCv1
+    IziaDPAgtDoLMek7oEgJPY1S+s3mxbSxDl76mq4HcCGNooT3Vg8iR3p1c2E/kGkq
+    IW0PYbL8zq52AwjVbXkwlE4weGPQLunmvKh3V3koYy+p0DOnf7lZU8hW8HqcpRPc
+    GmmGC3iM6Bm1A+2MCsxP4mJ54hlayPqPBBLbyn0DzC4zi41VPJJ45xItn15Mvg0z
+    kQuc9hn9eFu/f1zVFWZ4OWyubhXWZUG2kJ9XrdovWceg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx6.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=collabora.co.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,471,1511856000"; d="scan'208";a="17849599"
-Subject: Re: [PATCH v3] staging: android: ion: Add implementation of
- dma_buf_vmap and dma_buf_vunmap
-To: Laura Abbott <labbott@redhat.com>, Greg KH <gregkh@linuxfoundation.org>
-References: <1517400222-2854-1-git-send-email-alexey.skidanov@intel.com>
- <20180131130047.GA22917@kroah.com>
- <89be45dd-ac0e-4efb-2b21-e6c07b0cd66e@intel.com>
- <bf909d75-21a4-9d6d-2f72-887492821252@redhat.com>
-From: Alexey Skidanov <alexey.skidanov@intel.com>
-Message-ID: <7d836085-cd8d-300b-56be-e8db4ff37afc@intel.com>
-Date: Wed, 7 Feb 2018 07:25:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=collabora.co.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752237AbeBFPuq (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 10:50:46 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34886 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752020AbeBFPup (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 6 Feb 2018 10:50:45 -0500
+Date: Tue, 6 Feb 2018 16:50:41 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Peter Chen <hzpeterchen@gmail.com>
+Cc: Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ian Ray <ian.ray@ge.com>, Nandor Han <nandor.han@ge.com>,
+        Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
+        kernel@lists.collabora.co.uk
+Subject: Re: [PATCH 2/2] usb: chipidea: imx: Fix ULPI on imx53
+Message-ID: <20180206155041.objiu5j5kftmzp4q@earth.universe>
+References: <20180124171439.10721-1-sebastian.reichel@collabora.co.uk>
+ <20180124171439.10721-2-sebastian.reichel@collabora.co.uk>
+ <20180129033315.GA20311@b29397-desktop>
 MIME-Version: 1.0
-In-Reply-To: <bf909d75-21a4-9d6d-2f72-887492821252@redhat.com>
-Content-Language: en-US
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, tkjos@android.com, rve@android.com,
- linux-kernel@vger.kernel.org, maco@android.com, sumit.semwal@linaro.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="f37pcu7qnjouqver"
+Content-Disposition: inline
+In-Reply-To: <20180129033315.GA20311@b29397-desktop>
+User-Agent: NeoMutt/20171215
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
+--f37pcu7qnjouqver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/07/2018 01:56 AM, Laura Abbott wrote:
-> On 01/31/2018 10:10 PM, Alexey Skidanov wrote:
->>
->> On 01/31/2018 03:00 PM, Greg KH wrote:
->>> On Wed, Jan 31, 2018 at 02:03:42PM +0200, Alexey Skidanov wrote:
->>>> Any driver may access shared buffers, created by ion, using
->>>> dma_buf_vmap and
->>>> dma_buf_vunmap dma-buf API that maps/unmaps previosuly allocated
->>>> buffers into
->>>> the kernel virtual address space. The implementation of these API is
->>>> missing in
->>>> the current ion implementation.
->>>>
->>>> Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
->>>> ---
->>>
->>> No review from any other Intel developers? :(
->> Will add.
->>>
->>> Anyway, what in-tree driver needs access to these functions?
->> I'm not sure that there are the in-tree drivers using these functions
->> and ion as> buffer exporter because they are not implemented in ion :)
->> But there are some in-tre> drivers using these APIs (gpu drivers) with
->> other buffer exporters.
-> 
-> It's still not clear why you need to implement these APIs.
-How the importing kernel module may access the content of the buffer? :)
-With the current ion implementation it's only possible by dma_buf_kmap,
-mapping one page at a time. For pretty large buffers, it might have some
-performance impact.
-(Probably, the page by page mapping is the only way to access large
-buffers on 32 bit systems, where the vmalloc range is very small. By the
-way, the current ion dma_map_kmap doesn't really map only 1 page at a
-time - it uses the result of vmap() that might fail on 32 bit systems.)
+Hi Peter,
 
-> Are you planning to use Ion with GPU drivers? I'm especially
-> interested in this if you have a non-Android use case.
-Yes, my use case is the non-Android one. But not with GPU drivers.
-> 
-> Thanks,
-> Laura
+On Mon, Jan 29, 2018 at 11:33:15AM +0800, Peter Chen wrote:
+> On Wed, Jan 24, 2018 at 06:14:39PM +0100, Sebastian Reichel wrote:
+> > Traditionally, PORTSC should be set before initializing ULPI phys. But
+> > setting PORTSC before powering on the phy results in a kernel freeze
+> > on imx53 based GE PPD. As a workaround this initializes the phy early
+> > in the imx platform code and disables phy power management from the
+> > core.
+> >=20
+> > Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> > ---
+> >  drivers/usb/chipidea/ci_hdrc_imx.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >=20
+> > diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/=
+ci_hdrc_imx.c
+> > index de155c80eb70..e431c5aafe35 100644
+> > --- a/drivers/usb/chipidea/ci_hdrc_imx.c
+> > +++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+> > @@ -83,6 +83,7 @@ struct ci_hdrc_imx_data {
+> >  	struct clk *clk;
+> >  	struct imx_usbmisc_data *usbmisc_data;
+> >  	bool supports_runtime_pm;
+> > +	bool override_phy_control;
+> >  	bool in_lpm;
+> >  	/* SoC before i.mx6 (except imx23/imx28) needs three clks */
+> >  	bool need_three_clks;
+> > @@ -254,6 +255,7 @@ static int ci_hdrc_imx_probe(struct platform_device=
+ *pdev)
+> >  	int ret;
+> >  	const struct of_device_id *of_id;
+> >  	const struct ci_hdrc_imx_platform_flag *imx_platform_flag;
+> > +	struct device_node *np =3D pdev->dev.of_node;
+> > =20
+> >  	of_id =3D of_match_device(ci_hdrc_imx_dt_ids, &pdev->dev);
+> >  	if (!of_id)
+> > @@ -288,6 +290,14 @@ static int ci_hdrc_imx_probe(struct platform_devic=
+e *pdev)
+> >  	}
+> > =20
+> >  	pdata.usb_phy =3D data->phy;
+> > +
+> > +	if (of_device_is_compatible(np, "fsl,imx53-usb") && pdata.usb_phy &&
+> > +	    of_usb_get_phy_mode(np) =3D=3D USBPHY_INTERFACE_MODE_ULPI) {
+> > +		pdata.flags |=3D CI_HDRC_OVERRIDE_PHY_CONTROL;
+> > +		data->override_phy_control =3D true;
+> > +		usb_phy_init(pdata.usb_phy);
+> > +	}
+> > +
+> >  	pdata.flags |=3D imx_platform_flag->flags;
+> >  	if (pdata.flags & CI_HDRC_SUPPORTS_RUNTIME_PM)
+> >  		data->supports_runtime_pm =3D true;
+> > @@ -341,6 +351,8 @@ static int ci_hdrc_imx_remove(struct platform_devic=
+e *pdev)
+> >  		pm_runtime_put_noidle(&pdev->dev);
+> >  	}
+> >  	ci_hdrc_remove_device(data->ci_pdev);
+> > +	if (data->override_phy_control)
+> > +		usb_phy_shutdown(data->phy);
+> >  	imx_disable_unprepare_clks(&pdev->dev);
+> > =20
+>=20
+> Sebastian, I have a question, do you have any USB or generic PHY drivers
+> for ULPI bus, any power controls are needed for your ULPI peripheral?
 
-Thanks,
-Alexey
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+The devicetree for GE PPD is available in the mainline kernel:
+
+$ grep -A9 "usbphy[23] {" arch/arm/boot/dts/imx53-ppd.dts
+	usbphy2: usbphy2 {
+		compatible =3D "usb-nop-xceiv";
+		reset-gpios =3D <&gpio4 4 GPIO_ACTIVE_LOW>;
+		clock-names =3D "main_clk";
+		clock-frequency =3D <24000000>;
+		clocks =3D <&clks IMX5_CLK_CKO2>;
+		assigned-clocks =3D <&clks IMX5_CLK_CKO2_SEL>, <&clks IMX5_CLK_OSC>;
+		assigned-clock-parents =3D <&clks IMX5_CLK_OSC>;
+	};
+
+	usbphy3: usbphy3 {
+		compatible =3D "usb-nop-xceiv";
+		reset-gpios =3D <&gpio2 19 GPIO_ACTIVE_LOW>;
+		clock-names =3D "main_clk";
+
+		clock-frequency =3D <24000000>;
+		clocks =3D <&clks IMX5_CLK_CKO2>;
+		assigned-clocks =3D <&clks IMX5_CLK_CKO2_SEL>, <&clks IMX5_CLK_OSC>;
+		assigned-clock-parents =3D <&clks IMX5_CLK_OSC>;
+	};
+
+So currently the machine only uses drivers/usb/phy/phy-generic.c. Both
+USB phys are actually SMSC USB3315, which is also detected by the kernel:
+
+root@csmon :~# cat /sys/bus/ulpi/devices/ci_hdrc.*.ulpi/uevent=20
+DEVTYPE=3Dulpi_device
+MODALIAS=3Dulpi:v0424p0006
+DEVTYPE=3Dulpi_device
+MODALIAS=3Dulpi:v0424p0006
+
+So maybe drivers/usb/phy/phy-ulpi.c should be used, but I don't see
+a simple way to do so and using the generic PHY works.
+
+-- Sebastian
+
+--f37pcu7qnjouqver
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlp5zssACgkQ2O7X88g7
++poeZBAAlVAXdTP0z0WIjJnmEnZWUWtIeZb6riM2k5aDYjtPjEs5Uwm0qk6V7dS6
+0RCXES8Fphb+t0CcAue4r6KMaJducfjhaLC4j5rpVFw2I9+yf1VkPn7UfFyCncr9
+9sLzSbX/z0Sn6MJATUi904PA5oeDn+bOj8SzpYq0gOFhO7VVoUKF6tu9uYA+StiQ
+BDWmyHN//3G6BexmJFhfY5NGu9UUH1Fn9+QEiHX2SNrmAvYQzRZEp//9nNFLLaHm
+NTKzxiC0GN5MRwNj3Wib5zJKMCrA2ZzRhWv4rFqLnNAPZ9s9AviPn5uXUebnjWMp
+22whjlGJJg8bzxO1lFAoNQiXpurQk3PwqaT+EWE7DQ3XXkof+saY/bL0ARlrE9Z/
+WH3tTIMzl9eLjDCDNsAcAlA/+lg2ok9UsU38tmqHe4tBMhQCAQmZaA/vDGtNxpO9
+hdlCBAwCZouJkXv6yHkx/bfpR1YmvPjOk4n8JwcAhU0L3EYPx7q/UTJyCX0ao1+K
+5COirzoBQV7SS2YUz3Qq8XZVXedb4ozgfC1SznOnIIMa+8OiWslvm3P/rkbs/7Ju
+K8nA07COCFm/YBWGYQ6w4njVC3WEdDEoZk8SawX3ERtTvPZiH/qSer590JHp01mB
+qtmSfHAYnxpF6yTEAE9hqleR2Lm8fjOdVABbKV5WA1HX4fk8Jv4=
+=l+Js
+-----END PGP SIGNATURE-----
+
+--f37pcu7qnjouqver--
