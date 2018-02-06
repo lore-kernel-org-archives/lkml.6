@@ -1,102 +1,69 @@
-Return-Path: <luto@kernel.org>
-X-Google-Smtp-Source: AH8x2264dXRTEWXSKtVKTc8EBXSaTkD0JNV3/WXgGHj62nQ1c/3TDiDzjo3Vy4FkqtYsf525LpqR
-ARC-Seal: i=1; a=rsa-sha256; t=1517950200; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1517950708; cv=none;
         d=google.com; s=arc-20160816;
-        b=N2jjdsDoYtqmEaqcBVkXygiSAs/ok/zIEFN8noZVjYEGUQ6IAWNdqP9BPbQI35jyMw
-         GHrJ8Q3FhAVsCPnwuOuLhd1xUivx6ln10Ik5SYhlVW7GO0EOqif4oMffrEn+N9ioieSf
-         oRFSKFyHtR8zu5Cy61GLz53e1A8iOeDeNbxrSm2r2FtkW2OSd6+htyX6HrmXtl2kCZGp
-         fvdeEY7NeQZZfpzdxCm/T0iIzS+J+0QJfsnnpErNtaAyyFU1sivCSKQFbya5IpVT+cCt
-         sajBHrvl7IQN4hCGt1zYmKFuTbEhqVy4LSC0M4H0Z2pG5PXBNduV3JLVuhQOitW5Ppri
-         QEQQ==
+        b=0gR+sRmCmrLnjNY93Lx/FbB9ad4FBk4TyRt2L+hVgEfen/7gy6Y4c4tPK39T7ClWuI
+         3foWc/P1CrKXod2LEasSHnDlWOHjyXMF18//DOAWKpu7R1IoOWSf8iADkj7qPGLi/51F
+         /h2DlG6WhGuDwCyBqVfTx7SP4F/dD75VERmS+pkHGT/ls5n9NEhbBnlBSx5dP4J5/hgZ
+         V/tjKtWh7qLvB8Qg033bo8S0UaLKL7EXwlHHN+Re9Af1JyqACpTzNR6VP4BKi3/2XSA/
+         URS6mSmMESU3WDWd6QNgcdK0q5fLQfRrCuCflSJdbDbReBYZehtBey2jvxsR2atGP4RA
+         xN9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=nqTrhbuLlL3a8qX2YbigiL7uDL3wnGGFW4MF2X3vcMs=;
-        b=bFc91TS5FLoBTE3rI5weLX/L6k3ShPviLEqj6GyYH/SV+uFpW8I9M/zj5rWRLgUVce
-         JvcLeQdqPWTwfFaDBC+UzWSMQZhu9fGtZpkmLp9uN10OEPhEVIjpDWKCVPmNWoFVTkmQ
-         +1X01KwDqxO831bhHXjM5LrvUMmfabkR9t4Ri9njqei1unnLLoUuHi3mfpkqEdC2kOXr
-         CoGco3j0zE1v3Kh4cUeXrGGxTZ06xY3z5MmFnKhCvVNXmPYH33h4Qx+6fm0vRJWt5c6J
-         Tu2E4TqH+RXXvKJbbUi/VQ509poCsGWCemGQ9YvlPXyEUzabtBPUGfyuUSvWKrdFigGs
-         d4ww==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=w5Njh8HugnDq92qceM9wlSGI8tpLQx6Ay1uVosh9kWc=;
+        b=0oe9aXFm04ShU5rQbzeu49r5ZewgArPQLrWzRInnW1d4XhDVNagsQLxUObifl6rSEs
+         3HppnnqVi1Fm08h+hVPq9ld6eY9xXTYoMwE5OjQ7iX6ldv/YwB6faFXEhkslCeZHmH7a
+         OctLfgOyOLKZCxwUl65p9PcRyneWjJPpiUyoJDP/4liWnEbKKguKktuxr+594kVpS6AP
+         OWm+k7L73thJH4ZAtdM3B7PaYw0WrJ9qmU9mRz4RBG5Rw10zC32O3+eE1DQnJiPmWvlJ
+         6H5XaKeufo4jUg13cn5dImvUV9Kr6dJsHACZHJ83mbaHOBrRVDcnQ6Qn4xJiiEmK2Lt9
+         akIA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eeYQOIfN;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F2D21748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eeYQOIfN;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x227ukBel4ktGG3LN5Khb/ZKQVnUYdtLfiIHXIKAf7qq/Oz/fMQgKS5pUnEkJmxTKWedniJjRgJH9S6A3Tbh820c=
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFzZVL=WVuhJAQDazj59jwnmhUrRRwNgzXS+c-q5yva0iw@mail.gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CALCETrXV3rHb7Z8iaoieAJ5hRY0+UT7eTknxe4-FiOoke9XoGg@mail.gmail.com>
 References: <151632009605.21271.11304291057104672116.stgit@dwillia2-desk3.amr.corp.intel.com>
  <151632014097.21271.16980532033566583357.stgit@dwillia2-desk3.amr.corp.intel.com>
  <20180206192925.qkmghwsbaysr4iv2@hermes.olymp> <CAPcyv4ihN6fy5-vBtfA0PuwXvCAj8-rMhtQmevh5sdYxbH3Yfw@mail.gmail.com>
  <CA+55aFxYHX3=HN4P5M0ziSJ08WfjccyhE2T7epS-EC6ZJ6LyjQ@mail.gmail.com>
- <CAPcyv4i5oORdk-Fzypxw_+gCLUa8f=w1e_n0=47P7uHR-jT6GQ@mail.gmail.com> <CA+55aFzZVL=WVuhJAQDazj59jwnmhUrRRwNgzXS+c-q5yva0iw@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 6 Feb 2018 20:49:39 +0000
-X-Gmail-Original-Message-ID: <CALCETrXV3rHb7Z8iaoieAJ5hRY0+UT7eTknxe4-FiOoke9XoGg@mail.gmail.com>
-Message-ID: <CALCETrXV3rHb7Z8iaoieAJ5hRY0+UT7eTknxe4-FiOoke9XoGg@mail.gmail.com>
+ <CAPcyv4i5oORdk-Fzypxw_+gCLUa8f=w1e_n0=47P7uHR-jT6GQ@mail.gmail.com>
+ <CA+55aFzZVL=WVuhJAQDazj59jwnmhUrRRwNgzXS+c-q5yva0iw@mail.gmail.com> <CALCETrXV3rHb7Z8iaoieAJ5hRY0+UT7eTknxe4-FiOoke9XoGg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Feb 2018 12:58:27 -0800
+X-Google-Sender-Auth: SvoU4KpQKcRtIDULILL7PgBmuVo
+Message-ID: <CA+55aFy2-OMMCatHTXL7wfP7H=4CEKv4Y_pRvfeEOCwxriDP4Q@mail.gmail.com>
 Subject: Re: [PATCH v4 07/10] x86: narrow out of bounds syscalls to sys_read
  under speculation
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Andy Lutomirski <luto@kernel.org>
 Cc: Dan Williams <dan.j.williams@intel.com>, Luis Henriques <lhenriques@suse.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, Greg KH <gregkh@linuxfoundation.org>,
-	X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>, Alan Cox <alan@linux.intel.com>
+	X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>,
+	Alan Cox <alan@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1589977480308913684?=
-X-GMAIL-MSGID: =?utf-8?q?1591686150315042616?=
+X-GMAIL-MSGID: =?utf-8?q?1591686682217443965?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 8:42 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, Feb 6, 2018 at 12:37 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->>
->> Are there any compilers that would miscompile:
->>
->>     mask = 0 - (index < size);
->>
->> That might be a way to improve the assembly.
+On Tue, Feb 6, 2018 at 12:49 PM, Andy Lutomirski <luto@kernel.org> wrote:
 >
-> Sadly, that is *very* easy to miscompile. In fact, I'd be very
-> surprised indeed if any compiler worth its name wouldn't combine the
-> comparison with the conditional branch it accompanies, and just turn
-> that into a constant. IOW, you'd get
->
->         mask = 0 - (index < size);
->         if (index <= size) {
->                  ... use mask ..
->
-> and the compiler would just turn that into
->
->         if (index <= size) {
->                 mask = -1;
->
-> and be done with it.
->
->                Linus
+> Can you use @cc to make an asm statement that outputs both the masked
+> array index and the "if" condition?  I can never remember the syntax,
+> but something like:
 
-Can you use @cc to make an asm statement that outputs both the masked
-array index and the "if" condition?  I can never remember the syntax,
-but something like:
+Yes. Although I'd actually suggest just using an "asm goto" if we
+really want to optimize this. Give the "index_mask_nospec()" a third
+argument that is the label to jump to for overflow.
 
-asm ("cmp %[limit], %[index]\n\tcmovae %[zero], %[index]" : [index]
-"+" (index), "@ccb" (result));
+Then you can just decide how to implement it best for any particular
+architecture (and compiler limitation).
 
-Then you shove this into a statement expression macro so you can do:
-
-if (index_mask_nospec(&nr, NR_syscalls)) {
-  ... sys_call_table[nr] ..;
-}
-
-(Caveat emptor: I can also *ever* remember which way the $*!& AT&T
-syntax cmp instruction goes.)
-
-A down side is that nr actually ends up containing zero outside the
-if.  *That* could be avoided with jump labels.
-
---Andy
+              Linus
