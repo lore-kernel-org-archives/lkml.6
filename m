@@ -1,60 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754215AbeBFXyT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 18:54:19 -0500
-Received: from mga05.intel.com ([192.55.52.43]:14976 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754149AbeBFXyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 18:54:17 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,470,1511856000";
-   d="scan'208";a="32651183"
-Date: Tue, 6 Feb 2018 15:54:02 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [PATCH tip-pti 2/2] x86/entry: interleave XOR register clearing
- with PUSH/MOV instructions
-Message-ID: <20180206235402.GN30338@tassilo.jf.intel.com>
-References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180206091727.GB15925@isilmar-4.linta.de>
- <20180206105139.nwlg3fwdxyhhrtc4@gmail.com>
- <20180206213202.GB2026@light.dominikbrodowski.net>
- <CA+55aFyXfMhUNoU9WveiMyKq32LftUGzF-BAP7hxEQOfwBTJrA@mail.gmail.com>
+        id S1754196AbeBGAAK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 19:00:10 -0500
+Received: from gateway36.websitewelcome.com ([192.185.188.18]:34431 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754148AbeBGAAJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 19:00:09 -0500
+Date: Tue, 6 Feb 2018 17:36:17 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] ACPI / CPPC: Use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180206233617.GA30829@embeddedgus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFyXfMhUNoU9WveiMyKq32LftUGzF-BAP7hxEQOfwBTJrA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1ejCmg-002f50-CM
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.4.238]:36844
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The reason for that complexity is purely the system call fastpath case
-> that no longer exists, I think.
-> 
-> Am I missing something?
+Add suffix ULL to constant 500 in order to give the compiler complete
+information about the proper arithmetic to use. Notice that this
+constant is used in a context that expects an expression of type
+u64 (64 bits, unsigned).
 
-Yes merging the macros should be fine without fast path. 
+The expression NUM_RETRIES * cppc_ss->latency at line 578, which at
+preprocessing time translates to 500 * cppc_ss->latency is currently
+being evaluated using 32-bit arithmetic.
 
-But for push, on older CPUs (older AMD, most Atoms, really old Intel big core) 
-sub+mov is a lot faster than push because push has additional dependencies
-causing pipeline bubbles. So you would make these cases slower if you
-use PUSH.
+Addresses-Coverity-ID: 1382602
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Notice that another option is to cast NUM_RETRIES to u64 at line 578,
+but as there is only one instace in which this macro is being used I
+think adding the ULL is just enough.
 
-That is no different between fast path and slow path.
+ drivers/acpi/cppc_acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Andi
-
-PS it was never fully clear to me why we removed the fast path. After all it 
-could still be useful on the future CPUs with Spectre hardware fixes.
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index 06ea474..0afbb26 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -119,7 +119,7 @@ static DEFINE_PER_CPU(struct cpc_desc *, cpc_desc_ptr);
+  * to PCC commands. Keeping it high enough to cover emulators where
+  * the processors run painfully slow.
+  */
+-#define NUM_RETRIES 500
++#define NUM_RETRIES 500ULL
+ 
+ struct cppc_attr {
+ 	struct attribute attr;
+-- 
+2.7.4
