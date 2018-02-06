@@ -1,94 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752844AbeBFL4v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 06:56:51 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:41383 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752246AbeBFL4s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 06:56:48 -0500
-Date: Tue, 6 Feb 2018 03:52:59 -0800
-From: tip-bot for Song Liu <tipbot@zytor.com>
-Message-ID: <tip-0d8dd67be013727ae57645ecd3ea2c36365d7da8@git.kernel.org>
-Cc: jolsa@redhat.com, peterz@infradead.org, ast@kernel.org,
-        daniel@iogearbox.net, yhs@fb.com, songliubraving@fb.com,
-        rostedt@goodmis.org, namhyung@kernel.org, hpa@zytor.com,
-        davem@davemloft.net, jbacik@fb.com, kernel-team@fb.com,
-        torvalds@linux-foundation.org, acme@redhat.com, tglx@linutronix.de,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: rostedt@goodmis.org, daniel@iogearbox.net, songliubraving@fb.com,
-        yhs@fb.com, ast@kernel.org, peterz@infradead.org, jolsa@redhat.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        acme@redhat.com, torvalds@linux-foundation.org, kernel-team@fb.com,
-        davem@davemloft.net, hpa@zytor.com, jbacik@fb.com, namhyung@kernel.org
-In-Reply-To: <20171206224518.3598254-5-songliubraving@fb.com>
-References: <20171206224518.3598254-5-songliubraving@fb.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/headers: Sync new perf_event.h with the
- tools/include/uapi version
-Git-Commit-ID: 0d8dd67be013727ae57645ecd3ea2c36365d7da8
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1752853AbeBFL5i convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 06:57:38 -0500
+Received: from mout.gmx.net ([212.227.17.20]:38785 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752324AbeBFL5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 06:57:30 -0500
+Message-ID: <1517918234.25841.31.camel@gmx.de>
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+From: Mike Galbraith <efault@gmx.de>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>, ming.lei@redhat.com,
+        ivan@ludios.org, 169364@studenti.unimore.it,
+        Serena Ziviani <ziviani.serena@gmail.com>
+Date: Tue, 06 Feb 2018 12:57:14 +0100
+In-Reply-To: <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+         <20180205190510.5499-2-paolo.valente@linaro.org>
+         <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+         <1517903761.9843.12.camel@gmx.de>
+         <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K0:rwe88zklhO+r/BgFn9nGwrf3+Kmz2Gf9P48y7QLPmkl51oabfr6
+ f9riPP6YKb+nhm/pu+R1QbRpBxBUW1xUhd5eT4DXHALzrgxsmNDtFRC8vzsqQBrXDSOnzcg
+ WeF3cnMp/MAgS/tGJle/d1gKe7PZGZyTABOruzmeWkf3pVGtpAGkz1zHLn69nK3ubssbj69
+ JSi5xxYVwadDg0wD4+J0g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d0gzTu21cLo=:Cijl8J/freqTCY24L2i6as
+ daOBqB8bE8asEc9FCgMXN1YdcPH9rEp8ic2M1//4j2NCwseMNZky7nF+BOdrXlTfa20Hc/QdL
+ yqSAVY6lIJRLHiIkFUjO4q1Wbj+bXBytNodRHdUk8lDUliZ7cgOBwywVynyGqALZbcU5PSGwb
+ QiQs2ikSx0c4S6sTtqmBEE+JbPIsGxqg6FAbs/Ucgy9zseCzaSBc4SjvfVEaCSdjJK9wdT4g6
+ 53nTtnzcn2IdOyixj1gKB84HHxOneOua/24v6X2avwUNcMA2CsuJIpafpWttFAXntlTqORU4P
+ zAbAAqGEef0pkZQu93mcBzJLv0w9aT3F5OibYzJHLp7XAYv9L/4U+dHDAQMnOar7KvkBxIJrK
+ 9acM0bFuYPbBkdeY8ynboR3KLGw7kd8QU8Yqte8la2SYSYdSjHrQCT4MkWgrTV4ibPvfwyoog
+ hNog5pd81M5n/mK5uN8IrjpHFBaz+hd1TtBPw32M/sHEVrnUpizAIPWaLg0J1hiSRc3HaWu/c
+ HiCxt4Gs71ho1l2/UR3PVuBl9dpQed0nTjqcKGR/na02+fb8EBHoOD+Kvr5yENUUmPnDTOYdt
+ YBn8m79qP3AT4w9LQzKHdRqjpkt93mXI2TyVV4jD3CuHLUEYvbx32iShaXRe4wu3HE62aAC8F
+ ZUFBNZcWJo9UvTFLwDu331qDeDQi9SNlL9mjcfXt3OuXAku5uP5hwyAK0S1Tcy292nuD+zul7
+ NjMVrRcL2UsgKNYGoeS9CZ42REnQqba0QMtQ6tZTJuCQ8wDsC1nUe4Pk+8q7AQCRQFEsRmzCZ
+ j/BPpUsQx/y3WRcxtx4JIT1/d16BbqCy1awXT3ku6HiJJhmyTQ=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0d8dd67be013727ae57645ecd3ea2c36365d7da8
-Gitweb:     https://git.kernel.org/tip/0d8dd67be013727ae57645ecd3ea2c36365d7da8
-Author:     Song Liu <songliubraving@fb.com>
-AuthorDate: Wed, 6 Dec 2017 14:45:14 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 6 Feb 2018 10:18:05 +0100
+On Tue, 2018-02-06 at 10:38 +0100, Paolo Valente wrote:
+> 
+> Hi Mike,
+> as you can imagine, I didn't get any failure in my pre-submission
+> tests on this patch.  In addition, it is not that easy to link this
+> patch, which just adds some internal bfq housekeeping in case of a
+> requeue, with a corruption of external lists for general I/O
+> management.
+> 
+> In this respect, as Oleksandr comments point out, by switching from
+> cfq to bfq, you switch between much more than two schedulers.  Anyway,
+> who knows ...
 
-perf/headers: Sync new perf_event.h with the tools/include/uapi version
+Not me.  Box seems to be fairly sure that it is bfq.  Twice again box
+went belly up on me in fairly short order with bfq, but seemed fine
+with deadline.  I'm currently running deadline again, and box again
+seems solid, thought I won't say _is_ solid until it's been happily
+trundling along with deadline for a quite a bit longer.
 
-perf_event.h is updated in previous patch, this patch applies the same
-changes to the tools/ version. This is part is put in a separate
-patch in case the two files are back ported separately.
+I was ssh'd in during the last episode, got this out.  I should be
+getting crash dumps, but seems kdump is only working intermittently
+atm.  I did get one earlier, but 3 of 4 times not.  Hohum.
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Yonghong Song <yhs@fb.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Cc: <daniel@iogearbox.net>
-Cc: <davem@davemloft.net>
-Cc: <kernel-team@fb.com>
-Cc: <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20171206224518.3598254-5-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/include/uapi/linux/perf_event.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index c77c9a2..5d49cfc 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -380,10 +380,14 @@ struct perf_event_attr {
- 	__u32			bp_type;
- 	union {
- 		__u64		bp_addr;
-+		__u64		kprobe_func; /* for perf_kprobe */
-+		__u64		uprobe_path; /* for perf_uprobe */
- 		__u64		config1; /* extension of config */
- 	};
- 	union {
- 		__u64		bp_len;
-+		__u64		kprobe_addr; /* when kprobe_func == NULL */
-+		__u64		probe_offset; /* for perf_[k,u]probe */
- 		__u64		config2; /* extension of config1 */
- 	};
- 	__u64	branch_sample_type; /* enum perf_branch_sample_type */
+[  484.179292] BUG: unable to handle kernel paging request at ffffffffa0817000
+[  484.179436] IP: __trace_note_message+0x1f/0xd0
+[  484.179576] PGD 1e0c067 P4D 1e0c067 PUD 1e0d063 PMD 3faff2067 PTE 0
+[  484.179719] Oops: 0000 [#1] SMP PTI
+[  484.179861] Dumping ftrace buffer:
+[  484.180011]    (ftrace buffer empty)
+[  484.180138] Modules linked in: fuse(E) ebtable_filter(E) ebtables(E) af_packet(E) bridge(E) stp(E) llc(E) iscsi_ibft(E) iscsi_boot_sysfs(E) nf_conntrack_ipv6(E) nf_defrag_ipv6(E) ipt_REJECT(E) xt_tcpudp(E) iptable_filter(E) ip6table_mangle(E) nf_conntrack_netbios_ns(E) nf_conntrack_broadcast(E) nf_conntrack_ipv4(E) nf_defrag_ipv4(E) ip_tables(E) xt_conntrack(E) nf_conntrack(E) ip6table_filter(E) ip6_tables(E) x_tables(E) nls_iso8859_1(E) nls_cp437(E) intel_rapl(E) x86_pkg_temp_thermal(E) intel_powerclamp(E) snd_hda_codec_hdmi(E) coretemp(E) kvm_intel(E) snd_hda_codec_realtek(E) kvm(E) snd_hda_codec_generic(E) snd_hda_intel(E) snd_hda_codec(E) sr_mod(E) snd_hwdep(E) cdrom(E) joydev(E) snd_hda_core(E) snd_pcm(E) snd_timer(E) irqbypass(E) snd(E) crct10dif_pclmul(E) crc32_pclmul(E) crc32c_intel(E) r8169(E)
+[  484.180740]  iTCO_wdt(E) ghash_clmulni_intel(E) mii(E) iTCO_vendor_support(E) pcbc(E) aesni_intel(E) soundcore(E) aes_x86_64(E) shpchp(E) crypto_simd(E) lpc_ich(E) glue_helper(E) i2c_i801(E) mei_me(E) mfd_core(E) mei(E) cryptd(E) intel_smartconnect(E) pcspkr(E) fan(E) thermal(E) nfsd(E) auth_rpcgss(E) nfs_acl(E) lockd(E) grace(E) sunrpc(E) hid_logitech_hidpp(E) hid_logitech_dj(E) uas(E) usb_storage(E) hid_generic(E) usbhid(E) nouveau(E) wmi(E) i2c_algo_bit(E) drm_kms_helper(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) fb_sys_fops(E) ahci(E) xhci_pci(E) ehci_pci(E) libahci(E) ttm(E) ehci_hcd(E) xhci_hcd(E) libata(E) drm(E) usbcore(E) video(E) button(E) sd_mod(E) vfat(E) fat(E) virtio_blk(E) virtio_mmio(E) virtio_pci(E) virtio_ring(E) virtio(E) ext4(E) crc16(E) mbcache(E) jbd2(E) loop(E) sg(E) dm_multipath(E)
+[  484.181421]  dm_mod(E) scsi_dh_rdac(E) scsi_dh_emc(E) scsi_dh_alua(E) scsi_mod(E) efivarfs(E) autofs4(E)
+[  484.181583] CPU: 3 PID: 500 Comm: kworker/3:1H Tainted: G            E    4.15.0.ge237f98-master #609
+[  484.181746] Hardware name: MEDION MS-7848/MS-7848, BIOS M7848W08.20C 09/23/2013
+[  484.181910] Workqueue: kblockd blk_mq_requeue_work
+[  484.182076] RIP: 0010:__trace_note_message+0x1f/0xd0
+[  484.182250] RSP: 0018:ffff8803f45bfc20 EFLAGS: 00010282
+[  484.182436] RAX: 0000000000000000 RBX: ffffffffa0817000 RCX: 00000000ffff8803
+[  484.182622] RDX: ffffffff81bf514d RSI: 0000000000000000 RDI: ffffffffa0817000
+[  484.182810] RBP: ffff8803f45bfc80 R08: 0000000000000041 R09: ffff8803f69cc5d0
+[  484.182998] R10: ffff8803f80b47d0 R11: 0000000000001000 R12: ffff8803f45e8000
+[  484.183185] R13: 000000000000000d R14: 0000000000000000 R15: ffff8803fba112c0
+[  484.183372] FS:  0000000000000000(0000) GS:ffff88041ecc0000(0000) knlGS:0000000000000000
+[  484.183561] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  484.183747] CR2: ffffffffa0817000 CR3: 0000000001e0a006 CR4: 00000000001606e0
+[  484.183934] Call Trace:
+[  484.184122]  bfq_put_queue+0xd3/0xe0
+[  484.184305]  bfq_finish_requeue_request+0x72/0x350
+[  484.184493]  __blk_mq_requeue_request+0x8f/0x120
+[  484.184678]  blk_mq_dispatch_rq_list+0x342/0x550
+[  484.184866]  ? kyber_dispatch_request+0xd0/0xd0
+[  484.185053]  blk_mq_sched_dispatch_requests+0xf7/0x180
+[  484.185238]  __blk_mq_run_hw_queue+0x58/0xd0
+[  484.185429]  __blk_mq_delay_run_hw_queue+0x99/0xa0
+[  484.185614]  blk_mq_run_hw_queue+0x54/0xf0
+[  484.185805]  blk_mq_run_hw_queues+0x4b/0x60
+[  484.185994]  blk_mq_requeue_work+0x13a/0x150
+[  484.186192]  process_one_work+0x147/0x350
+[  484.186383]  worker_thread+0x47/0x3e0
+[  484.186572]  kthread+0xf8/0x130
+[  484.186760]  ? rescuer_thread+0x360/0x360
+[  484.186948]  ? kthread_stop+0x120/0x120
+[  484.187137]  ret_from_fork+0x35/0x40
+[  484.187321] Code: ff 48 89 44 24 10 e9 58 fd ff ff 90 55 48 89 e5 41 55 41 54 53 48 89 fb 48 83 ec 48 48 89 4c 24 30 4c 89 44 24 38 4c 89 4c 24 40 <83> 3f 02 0f 85 87 00 00 00 f6 43 21 04 75 0b 48 83 c4 48 5b 41 
+[  484.187525] RIP: __trace_note_message+0x1f/0xd0 RSP: ffff8803f45bfc20
+[  484.187727] CR2: ffffffffa0817000
