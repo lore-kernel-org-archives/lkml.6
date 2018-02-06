@@ -1,70 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752022AbeBFN6B (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 08:58:01 -0500
-Received: from sauhun.de ([88.99.104.3]:38002 "EHLO pokefinder.org"
+        id S1752154AbeBFN6r (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 08:58:47 -0500
+Received: from mga17.intel.com ([192.55.52.151]:32000 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751624AbeBFN5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:57:54 -0500
-Date: Tue, 6 Feb 2018 14:57:51 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
- with a mask
-Message-ID: <20180206135751.o7z7sxs3xtm5kbag@ninjato>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
- <20180206131044.oso33fvv553trrd7@mwanda>
- <alpine.DEB.2.20.1802061414340.3306@hadrien>
- <20180206132335.luut6em3kut7f7ej@mwanda>
- <alpine.DEB.2.20.1802061439110.3306@hadrien>
- <20180206135310.deiaz55xemc26xn4@ninjato>
- <alpine.DEB.2.20.1802061453440.3306@hadrien>
+        id S1751305AbeBFN6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 08:58:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,468,1511856000";
+   d="scan'208";a="199022983"
+Date: Tue, 6 Feb 2018 21:50:02 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: jolsa@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Cc: changbin.du@intel.com
+Subject: A problem about 'perf sched latency'
+Message-ID: <20180206135002.sn32vfqgfz326rcb@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mahk6tikjhx33ffa"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1802061453440.3306@hadrien>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: NeoMutt/20171027-42-ad8712
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello all,
+I am using perf sched tool to analyzer sched data on my machine. But it seems that 
+'perf sched latency' report incorrect 'Switches'. What I did is as below.
 
---mahk6tikjhx33ffa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+First, record...
+$ sudo perf sched record time pi 2000000 > /dev/null
 
+Then check statistics. It says 'pi' only sched-in 1 time.
+$ sudo ./perf sched latency | grep pi
+  compiz:4054           |      6.389 ms |       30 | avg:    0.023 ms | max:    0.122 ms | max at:  94546.021080 s
+  pi:4059               |   2083.241 ms |        1 | avg:    0.007 ms | max:    0.007 ms | max at:  94545.201435 s
 
-> I did that too but got no results.  Perhaps right shifting constants is
-> pretty uncommon.  I can put that in the complete rule though.
+But the sched event show 'pi' has been sched-in 7 times.
+$ sudo ./perf sched script | grep pi:
+              pi  4059 [001] 94545.820858:       sched:sched_switch: pi:4059 [120] S ==> kworker/1:1:32237 [120]
+     kworker/1:1 32237 [001] 94545.820868:       sched:sched_switch: kworker/1:1:32237 [120] R ==> pi:4059 [120]
+              pi  4059 [001] 94545.885412:       sched:sched_switch: pi:4059 [120] S ==> kworker/1:1H:320 [100]
+    kworker/1:1H   320 [001] 94545.885419:       sched:sched_switch: kworker/1:1H:320 [100] R ==> pi:4059 [120]
+              pi  4059 [001] 94545.907869:       sched:sched_switch: pi:4059 [120] S ==> kworker/1:1H:320 [100]
+    kworker/1:1H   320 [001] 94545.907875:       sched:sched_switch: kworker/1:1H:320 [100] R ==> pi:4059 [120]
+              pi  4059 [001] 94545.908104:       sched:sched_switch: pi:4059 [120] S ==> kworker/1:1H:320 [100]
+    kworker/1:1H   320 [001] 94545.908108:       sched:sched_switch: kworker/1:1H:320 [100] R ==> pi:4059 [120]
+              pi  4059 [001] 94545.916135:       sched:sched_switch: pi:4059 [120] S ==> kworker/1:1H:320 [100]
+    kworker/1:1H   320 [001] 94545.916154:       sched:sched_switch: kworker/1:1H:320 [100] R ==> pi:4059 [120]
+              pi  4059 [001] 94546.812856:       sched:sched_switch: pi:4059 [120] S ==> kworker/1:1:32237 [120]
+     kworker/1:1 32237 [001] 94546.813148:       sched:sched_switch: kworker/1:1:32237 [120] R ==> pi:4059 [120]
+              pi  4059 [001] 94546.885227:       sched:sched_switch: pi:4059 [120] S ==> i915/signal:1:207 [98]
+   i915/signal:1   207 [001] 94546.885232:       sched:sched_switch: i915/signal:1:207 [98] D ==> pi:4059 [120]
+              pi  4059 [001] 94547.285049:       sched:sched_switch: pi:4059 [120] x ==> swapper/1:0 [120]
 
-Please do. Even if rare, we would want this bug pointed out, right? :)
+Does anyone know why? Thank you! :)
 
-
---mahk6tikjhx33ffa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp5tF8ACgkQFA3kzBSg
-Kbaulg//Uy+7N6z27n0M2XlhBexh66B4hi11mW+Iajq+i8SUCUOOByD4uW//bBTb
-JuPWFvFlhQXZ+PyegluGubEH8k/pLeLU30NAKgGsy4+/p32PRFaJ/L91RtZw9Cv+
-r6yK2nnVIrkrWNV2xzT6sWDItCmejBpa6AyziTHFfyMNggc4keI7/AovCVxDgFTi
-BKws/o6zU9/jDJosdWrxHU3e0qmDhgYCWUP7atQKReksZdpFqLqSrW3SyjSAR4xa
-ZNLGwx/O8tCFUDrRrvUschbt38ou/QMJY7+4vF2lYTu3/hRKWBjIty8XbxU3N0i0
-A6W/vtEn9dyj+IPSkQHklgKmg3boCAbkCq1RK17R0bzkkUgODbZYdyIvx3SsTtjF
-v/6LpnVIZTauPlhDMjpwOQyAj3qXUdlvx7h2Fw/BZhYbN+LLGTYHzCNTtiJ1r3aP
-VlESEFJ5ogRYSX5q6NJGgDt0rhOxWCLSWaqG0t0w7+10Z0fDnglV+hdEp50Y/UTt
-A8wwLFu1q0pf35+DZJVzRuDeMeWQKEhrYd8XQRMEekU6x3cCD8afCGlrnXBmMIMF
-qhP+Xuba6Bi5rkKYOhDuKuLPYt+LNW6oXfnuNJfnje07SbMMkUU8EeUiBBUIVGNi
-eBiMpVD5lUZz9lzCOqF03aqq7H4ACLUwG9efHTdeewL/moEGIAw=
-=QEjS
------END PGP SIGNATURE-----
-
---mahk6tikjhx33ffa--
+-- 
+Thanks,
+Changbin Du
