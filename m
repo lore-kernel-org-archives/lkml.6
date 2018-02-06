@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753194AbeBFS30 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:29:26 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36344 "EHLO mx1.redhat.com"
+        id S1753045AbeBFS3h (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:29:37 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36340 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753228AbeBFS1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753224AbeBFS1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Feb 2018 13:27:48 -0500
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -12,58 +12,34 @@ Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 10/17] perf tools: Generalize machine__set_kernel_mmap function
-Date: Tue,  6 Feb 2018 19:18:06 +0100
-Message-Id: <20180206181813.10943-11-jolsa@kernel.org>
+Subject: [PATCH 01/17] perf report: Ask ordered events for --tasks option
+Date: Tue,  6 Feb 2018 19:17:57 +0100
+Message-Id: <20180206181813.10943-2-jolsa@kernel.org>
 In-Reply-To: <20180206181813.10943-1-jolsa@kernel.org>
 References: <20180206181813.10943-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So it could be called without event object, just with start
-and end values. It will be used in following patch.
+If we have the time in, keep the events in time order.
 
-Link: http://lkml.kernel.org/n/tip-u4hu7m5fmwwsscy6ki70hhq6@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-3wcrngoibk5l96nqyhp0nbkm@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/machine.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ tools/perf/builtin-report.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index f5c79110f0d1..7838fe56b0c9 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1260,15 +1260,15 @@ int machine__create_kernel_maps(struct machine *machine)
- 	return 0;
- }
- 
--static void machine__set_kernel_mmap_len(struct machine *machine,
--					 union perf_event *event)
-+static void machine__set_kernel_mmap(struct machine *machine,
-+				     u64 start, u64 end)
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 4ad5dc649716..8ef71669e7a0 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -614,6 +614,7 @@ static int stats_print(struct report *rep)
+ static void tasks_setup(struct report *rep)
  {
- 	int i;
- 
- 	for (i = 0; i < MAP__NR_TYPES; i++) {
--		machine->vmlinux_maps[i]->start = event->mmap.start;
--		machine->vmlinux_maps[i]->end   = (event->mmap.start +
--						   event->mmap.len);
-+		machine->vmlinux_maps[i]->start = start;
-+		machine->vmlinux_maps[i]->end   = end;
-+
- 		/*
- 		 * Be a bit paranoid here, some perf.data file came with
- 		 * a zero sized synthesized MMAP event for the kernel.
-@@ -1373,7 +1373,8 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 		if (strstr(kernel->long_name, "vmlinux"))
- 			dso__set_short_name(kernel, "[kernel.vmlinux]", false);
- 
--		machine__set_kernel_mmap_len(machine, event);
-+		machine__set_kernel_mmap(machine, event->mmap.start,
-+					 event->mmap.start + event->mmap.len);
- 
- 		/*
- 		 * Avoid using a zero address (kptr_restrict) for the ref reloc
+ 	memset(&rep->tool, 0, sizeof(rep->tool));
++	rep->tool.ordered_events = true;
+ 	if (rep->mmaps_mode) {
+ 		rep->tool.mmap = perf_event__process_mmap;
+ 		rep->tool.mmap2 = perf_event__process_mmap2;
 -- 
 2.13.6
