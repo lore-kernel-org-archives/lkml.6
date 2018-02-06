@@ -1,77 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753899AbeBFWz4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 17:55:56 -0500
-Received: from mail-pl0-f54.google.com ([209.85.160.54]:45859 "EHLO
-        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753610AbeBFWzy (ORCPT
+        id S1753924AbeBFW4Q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 17:56:16 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:50861 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753650AbeBFW4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:55:54 -0500
-X-Google-Smtp-Source: AH8x225UsqvXsUnBGpKZVJoIlLikfXHBXMbvcZwrOHoQmrQA4uV7YaLEiPnxhvl717IZT1oCHTMpAA==
-Date: Tue, 6 Feb 2018 14:55:48 -0800
-From: Minchan Kim <minchan@kernel.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zilstra <peterz@infradead.org>, Michal Hocko <mhocko@kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
-Subject: Re: [PATCH RFC] ashmem: Fix lockdep RECLAIM_FS false positive
-Message-ID: <20180206225548.GB9680@eng-minchan1.roam.corp.google.com>
-References: <20180206004903.224390-1-joelaf@google.com>
- <20180206220159.GA9680@eng-minchan1.roam.corp.google.com>
- <CAJWu+opFVtVbPygHBYX5gv-LeH1uugY1DDPp2q4va4mOsvBeWw@mail.gmail.com>
+        Tue, 6 Feb 2018 17:56:13 -0500
+X-Google-Smtp-Source: AH8x2268AttDFlPakac+t6G3zOK86fV3Agxa9GG9O7nbzlZ5AygYvuEHyoZ8Wb5AXS1oE2EC4dgUmjppmPuXKBEEWO8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJWu+opFVtVbPygHBYX5gv-LeH1uugY1DDPp2q4va4mOsvBeWw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180206212546.GA2026@light.dominikbrodowski.net>
+References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180206091727.GB15925@isilmar-4.linta.de> <20180206105139.nwlg3fwdxyhhrtc4@gmail.com>
+ <20180206212546.GA2026@light.dominikbrodowski.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Feb 2018 14:56:11 -0800
+X-Google-Sender-Auth: yVoxDaxi89ryNS-SfDoPdqGoCV4
+Message-ID: <CA+55aFwuBi8xTNk8Qe+Hw+4z07GPqAq40mYiiR3V71v_EDzhfw@mail.gmail.com>
+Subject: Re: [PATCH tip-pti 1/2] x86/entry: remove SAVE_C_REGS_EXCEPT_* macros
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 02:32:13PM -0800, Joel Fernandes wrote:
-> Hi Minchan,
-> 
-> On Tue, Feb 6, 2018 at 2:01 PM, Minchan Kim <minchan@kernel.org> wrote:
-> [...]
-> > On Mon, Feb 05, 2018 at 04:49:03PM -0800, Joel Fernandes wrote:
-> >> During invocation of ashmem shrinker under memory pressure, ashmem
-> >> calls into VFS code via vfs_fallocate. We however make sure we
-> >> don't enter it if the allocation was GFP_FS to prevent looping
-> >> into filesystem code. However lockdep doesn't know this and prints
-> >> a lockdep splat as below.
-> >>
-> >> This patch fixes the issue by releasing the reclaim_fs lock after
-> >> checking for GFP_FS but before calling into the VFS path, and
-> >> reacquiring it after so that lockdep can continue reporting any
-> >> reclaim issues later.
-> >
-> > At first glance, it looks reasonable. However, Couldn't we return
-> > just 0 in ashmem_shrink_count when the context is under FS?
-> >
-> 
-> We're already checking if GFP_FS in ashmem_shrink_scan and bailing out
-> though, did I miss something?
+On Tue, Feb 6, 2018 at 1:25 PM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> The macros which save all but specific registers have been unused for
+> a long time. Remove them and the SAVE_C_REGS_HELPER macro, but
+> instead provide the SAVE_C_REGS macro directly.
 
-I understand your concern now. Apart from that, if ashmem_shrink_count
-is called under GFP_FS, you can just return 0 for removing pointless
-ashmem_shrink_scan calling. But it might be trivial so up to you. :)
+Ack. But see my other email about even more cleanups.
 
-> 
-> The problem is not that there is a deadlock that occurs, the problem
-> that even when we're not under FS, lockdep reports an issue that can't
-> happen. The fix is for the lockdep false positive that occurs.
+At least the SAVE_{C,EXTRA}_REGS -> SAVE_REGS combination cleanup
+should be totally mindless, since they are always used together and
+with the same argument.
 
-Yub, you are right. I am happy to add
+Unless I'm blind.
 
-Reviewed-by: Minchan Kim <minchan@kernel.org?
-
-Other than that, I thought a while we could make it in generic so we
-can add SHRINKER_FS_AWARE like that so VM code itself can do for
-preventing such false positive instead of doing it in each driver
-itself.
-
-However, if driver can do by itself, it could be more flexible.
-Also, at this moment, my suggestion would be also overengineering so
-I'm not against you. 
-
-Thanks!
+           Linus
