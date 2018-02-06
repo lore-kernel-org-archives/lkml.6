@@ -1,90 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754017AbeBFVH3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 16:07:29 -0500
-Received: from mga02.intel.com ([134.134.136.20]:38200 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753100AbeBFVH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 16:07:27 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,470,1511856000";
-   d="asc'?scan'208";a="16004418"
-Message-ID: <1517951251.9683.5.camel@intel.com>
-Subject: Re: [Intel-wired-lan] [PATCH] Documentation: networking: Update
- ixgb kconfig select documentation
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To: Alexander Duyck <alexander.duyck@gmail.com>,
-        Corentin Labbe <clabbe@baylibre.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Date: Tue, 06 Feb 2018 13:07:31 -0800
-In-Reply-To: <CAKgT0Uc-br8akeUyjf0FenLPLxDdq14D1rppjvb1yfNU33t+Mw@mail.gmail.com>
-References: <1517949734-27314-1-git-send-email-clabbe@baylibre.com>
-         <CAKgT0Uc-br8akeUyjf0FenLPLxDdq14D1rppjvb1yfNU33t+Mw@mail.gmail.com>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-tf1RdcbTox1Fhv56qLPV"
-X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
-Mime-Version: 1.0
+        id S1754011AbeBFVJb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 16:09:31 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:53802 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753156AbeBFVJ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 16:09:29 -0500
+Subject: Re: [PATCH v8 5/7] media: i2c: Add TDA1997x HDMI receiver driver
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+ <1517948874-21681-6-git-send-email-tharvey@gateworks.com>
+ <3630ba30-eb18-0829-7b0c-f0a786232969@xs4all.nl>
+ <CAJ+vNU1SWma59YwvRO7jDAu2=ndgSU6CgYtKs0792+oqDAEtrQ@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <1ff2a81e-04f7-02eb-6ba2-70227665839b@xs4all.nl>
+Date: Tue, 6 Feb 2018 22:09:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAJ+vNU1SWma59YwvRO7jDAu2=ndgSU6CgYtKs0792+oqDAEtrQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfPc9k8/g2db2f95tja+HFEllbSL5r2ZH9reY+TegSOtJCAlyd8S94WiUmIC/cNyO3pq6lr+kypoPKZI+gx44WI4tRu4gOxbeJnMxDJXkh65nUl3xZ8XP
+ O24p5Z+6TseO2a23PkwfBX1xRoO9UbH0rtZwYjulwbJHKyiQ9Qo8IAIVKa0V67pWQLcohY8AiLXE6Q64SVglrqtS8B4CI9FwYHHhJ9Px1oAVOatvtax8hwBu
+ 8jo469sufwonOU9bMI3uhy1+KJ/FP9uki9uuvL05xyfJnh1AnbFkvFiwEHoiATFlevbPrNYWiLXtxJavuOHrRtPPFTy0GKwbLrjd3/Rk7eXPsn+CLTO1EM54
+ WYkheqalukjc2x3lK2Zje5hKDBvTkKUpTwzlXn0CiJew44oZFpyGxDHZxifmaBK4qPuqrU5J1DIF4dB1WaFFT8UbWTIia5+11qbPxZDaO3wRl9maV6QGa7Mr
+ GBsHwo8UM3HZ5FKP
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/06/2018 10:03 PM, Tim Harvey wrote:
+> On Tue, Feb 6, 2018 at 12:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>> On 02/06/2018 09:27 PM, Tim Harvey wrote:
+>>> Add support for the TDA1997x HDMI receivers.
+>>>
+>>> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+>>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+>>> ---
+>>
+>> <snip>
+>>
+>>> +static int tda1997x_get_dv_timings_cap(struct v4l2_subdev *sd,
+>>> +                                    struct v4l2_dv_timings_cap *cap)
+>>> +{
+>>> +     if (cap->pad != TDA1997X_PAD_SOURCE)
+>>> +             return -EINVAL;
+>>> +
+>>> +     *cap = tda1997x_dv_timings_cap;
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +static int tda1997x_enum_dv_timings(struct v4l2_subdev *sd,
+>>> +                                 struct v4l2_enum_dv_timings *timings)
+>>> +{
+>>> +     if (timings->pad != TDA1997X_PAD_SOURCE)
+>>> +             return -EINVAL;
+>>> +
+>>> +     return v4l2_enum_dv_timings_cap(timings, &tda1997x_dv_timings_cap,
+>>> +                                     NULL, NULL);
+>>> +}
+>>
+>> You shouldn't need this pad test: it's done in the v4l2-subdev.c core code
+>> already. But please double-check :-)
+>>
+> 
+> oh right - forgot to check that. Yes, v4l2-subdev.c has pad bounds
+> checking on all ops I use so I can remove them.
+> 
+>> Can you post the output of the v4l2-compliance test? I'm curious to see it.
+> 
+> it's in the cover letter (should I move it to the driver patch for
+> subsequent submittals?)
 
---=-tf1RdcbTox1Fhv56qLPV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ah, it was all the way down after the MC topology. That's why I missed it.
 
-On Tue, 2018-02-06 at 13:01 -0800, Alexander Duyck wrote:
-> On Tue, Feb 6, 2018 at 12:42 PM, Corentin Labbe <clabbe@baylibre.com>
-> wrote:
-> > Update documentation on how to enable ixgb and ixgb DCB.
-> > Simply remove NETDEV_10000 and replace it with the new used kconfig
-> > names.
->=20
-> Minor typo in the patch description. I assume you mean "ixgb and
-> ixgbe
-> DCB". Also you might want to mention ixgbe somewhere in the patch
-> title.
->=20
-> >=20
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > ---
-> >   Documentation/networking/ixgb.txt  | 3 ++-
-> >   Documentation/networking/ixgbe.txt | 7 ++++---
-> >   2 files changed, 6 insertions(+), 4 deletions(-)
+> 
+>>
+>> Can you also try to run v4l2-compliance -m /dev/mediaX? That also tests
+>> whether the right entity types are set (note: testing for that should
+>> also happen in the subdev compliance test, but I haven't done that yet).
+>>
+> 
+> root@ventana:~# v4l2-compliance -m0
+> v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
+> Media Driver Info:
+>         Driver name      : imx-media
+>         Model            : imx-media
+>         Serial           :
+>         Bus info         :
+>         Media version    : 4.15.0
+>         Hardware revision: 0x00000000 (0)
+>         Driver version   : 4.15.0
+> 
+> Compliance test for device /dev/media0:
+> 
+> Required ioctls:
+>         test MEDIA_IOC_DEVICE_INFO: OK
+> 
+> Allow for multiple opens:
+>         test second /dev/media0 open: OK
+>         test MEDIA_IOC_DEVICE_INFO: OK
+>         test for unlimited opens: OK
+> 
+> Media Controller ioctls:
+>                 fail: v4l2-test-media.cpp(141): ent.function ==
+> MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
+>         test MEDIA_IOC_G_TOPOLOGY: FAIL
+>                 fail: v4l2-test-media.cpp(256):
+> v2_entities_set.find(ent.id) == v2_entities_set.end()
+>         test MEDIA_IOC_ENUM_ENTITIES/LINKS: FAIL
+>         test MEDIA_IOC_SETUP_LINK: OK
+> 
+> Total: 7, Succeeded: 5, Failed: 2, Warnings: 0
+> 
+> foiled again!
+> 
+> Is something missing after v4l2_i2c_subdev_init() or is this perhaps
+> something missing in the imx media drivers?
+> 
+>         v4l2_i2c_subdev_init(sd, client, &tda1997x_subdev_ops);
+>         snprintf(sd->name, sizeof(sd->name), "%s %d-%04x",
+>                  id->name, i2c_adapter_id(client->adapter),
+>                  client->addr);
+>         sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
+>         sd->entity.ops = &tda1997x_media_ops;
 
-I alredy have a patch to update the ixgbe kernel documentation, please
-see the following patch:
-http://patchwork.ozlabs.org/patch/870106/
+Yeah, I was afraid of that. Anyway, I saw some issues in the subdev compliance.
+I'll reply to the cover letter about that.
 
-With my updated documentation patch, the ixgbe hunk of your patch no
-longer applies.
---=-tf1RdcbTox1Fhv56qLPV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Regards,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlp6GRMACgkQ5W/vlVpL
-7c4k/xAAjVt0Xplc6CGADcwthmLWFgr2gmkLJDwHoewnRuT4sKkNcwJbCfu36Js8
-hhv6BVTIe3f8lnzppXS3Q342PlTHzIEJzCbezRTKl/3BhQoY1uhYlHGthSsxhEh4
-5QKtRgviQHVc6CvaVd/zMzYli/SdFpVSR5SyucvCX9iWEW3sqdrMD3g8zLcuYwEw
-2dBzZA4O0fh1p7G0ANnGWvpvc8qv351uqI+dzDfXNN6o5cZYpYckke0jD5eKeVi8
-cqOj9dqe/onIAWZL/LQ/oiSpRgk+xg68fmbOQhGOYzCCFZ6xx/WIuzpeUHXkXY+c
-bvVVFacij0TxmUXLcuIRTnNyXLdLCjo/eqSJVe9qHIuXdFshddqTDh2xPhgtz2sQ
-0VRNjG01JidsKkA9SFfxjC0l3HAevwId4qikVMxZqjhDdeI0wxxGYg3+qxDT3MpA
-86FsT4pXTu8icVjn6OlP8+t9/H7Sg+tmNpYNHB2hBt5QX4GQP15iGKyWPbBQKj9e
-o0xYEOMYcqARijDkOqifZk8syPB+/Oq44zbFHn8wPenTktTdfxiUhjRymHL6IKr2
-7gCRc2aUE7dexV/T68qeMUQySe/v+WXjLbK0OjrUjwOWGc5gMf7eIqjq4asgpj3j
-UIXRInHlNm5EpNMMfuN7GDlAylUyEcYzYPuVKpGLG8euUbRusSM=
-=6b/I
------END PGP SIGNATURE-----
-
---=-tf1RdcbTox1Fhv56qLPV--
+	Hans
