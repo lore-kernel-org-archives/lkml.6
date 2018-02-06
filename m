@@ -1,149 +1,647 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752238AbeBFCvO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:51:14 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52798 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752009AbeBFCvG (ORCPT
+        id S1752266AbeBFCwr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:52:47 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:5755 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750999AbeBFCwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:51:06 -0500
-X-Google-Smtp-Source: AH8x2260JYudvxdLa0gP7/8IeR5ZNg4+BW+6jwgvj9yvBq3keLgrEU0D6eZfXWS3p7SktVzQkvTuvgCwWS4ZdH16slY=
-MIME-Version: 1.0
-In-Reply-To: <20180205211340.GD25353@kernel.org>
-References: <20180201083812.11359-1-jolsa@kernel.org> <20180201083812.11359-2-jolsa@kernel.org>
- <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
- <20180202202849.GA8297@kernel.org> <20180202204004.GB8297@kernel.org>
- <CABPqkBQniVqi_7OuEmWQohWSsnp17BkDMRYgOE1RQYE00GpuVw@mail.gmail.com>
- <20180205151720.GA29340@krava> <CABPqkBRDVfoTEfR-4XLkYKKbPenpFfQ0QkibSBO1iTTAYQbzLA@mail.gmail.com>
- <20180205211340.GD25353@kernel.org>
-From: Stephane Eranian <eranian@google.com>
-Date: Mon, 5 Feb 2018 18:51:05 -0800
-Message-ID: <CABPqkBQ272K=f7eYzk1MkgG04sy_szkMuyyTmyNEVSyBdYo-Og@mail.gmail.com>
-Subject: Re: [PATCH 1/3] perf tools: Fix period/freq terms setup
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
+        Mon, 5 Feb 2018 21:52:38 -0500
+X-UUID: 14a6570980414a719783829916a12b2e-20180206
+Message-ID: <1517885553.24456.19.camel@mtksdaap41>
+Subject: Re: [PATCH v21 4/4] soc: mediatek: Add Mediatek CMDQ helper
+From: CK Hu <ck.hu@mediatek.com>
+To: <houlong.wei@mediatek.com>
+CC: Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        cawa cheng <cawa.cheng@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>, YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Damon Chu <damon.chu@mediatek.com>,
+        "Josh-YC Liu" <josh-yc.liu@mediatek.com>,
+        Glory Hung <glory.hung@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Monica Wang <monica.wang@mediatek.com>,
+        "HS Liao" <hs.liao@mediatek.com>
+Date: Tue, 6 Feb 2018 10:52:33 +0800
+In-Reply-To: <1517383693-25591-5-git-send-email-houlong.wei@mediatek.com>
+References: <1517383693-25591-1-git-send-email-houlong.wei@mediatek.com>
+         <1517383693-25591-5-git-send-email-houlong.wei@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 1:13 PM, Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
-> Em Mon, Feb 05, 2018 at 12:58:16PM -0800, Stephane Eranian escreveu:
->> On Mon, Feb 5, 2018 at 7:17 AM, Jiri Olsa <jolsa@redhat.com> wrote:
->> > On Fri, Feb 02, 2018 at 01:04:34PM -0800, Stephane Eranian wrote:
->> >> On Fri, Feb 2, 2018 at 12:40 PM, Arnaldo Carvalho de Melo
->> >> <acme@kernel.org> wrote:
->> >> > Em Fri, Feb 02, 2018 at 05:28:49PM -0300, Arnaldo Carvalho de Melo escreveu:
->> >> >> Em Fri, Feb 02, 2018 at 10:45:46AM -0800, Stephane Eranian escreveu:
->> >> >> > Otherwise, I tested what you have written so far and it works.
->> >> >
->> >> >> So I take that as a Tested-by: Stephane and will apply the patches, Jiri
->> >> >> can continue working on these other aspects, right?
->> >> >
->> >> > I also added this for the casual reader to get up to speed more quickly,
->> >> > please check that it makes sense.
->> >> >
->> >> >     Committer note:
->> >> >
->> >> >     When we use -c or a period=N term in the event definition, then we don't
->> >> >     need to ask the kernel, via perf_event_attr.sample_type |=
->> >> >     PERF_SAMPLE_PERIOD, to put the event period in each sample, as we know
->> >> >     it already, it is in perf_event_attr.sample_period.
->> >> >
->> >> Not quite. It depends on how each event is setup. I can mix & match period
->> >> and frequency. The PERF_SAMPLE_PERIOD can be dropped only if all the
->> >> events use a fixed period either via period=N or -c.
->
->> > I think you can have both period and freq based event in one session
->> > if that's your concern..? what would be the problem?
->
->> My understanding was that perf only support configs where all events
->> have the same attr.sample_type. With frequency mode, you'd want the period
->> recorded in some cases.
->
-> [root@jouet ~]# perf record -e cycles/period=2/,instructions/freq=100/
-> ^C[ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 1.895 MB perf.data (122 samples) ]
->
-> [root@jouet ~]# perf report
-> [root@jouet ~]# perf evlist -v
-> cycles/period=2/: size: 112, { sample_period, sample_freq }: 2, sample_type: IP|TID|TIME|CPU|IDENTIFIER, read_format: ID, disabled: 1, inherit: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1
-> instructions/freq=100/: size: 112, config: 0x1, { sample_period, sample_freq }: 100, sample_type: IP|TID|TIME|CPU|PERIOD|IDENTIFIER, read_format: ID, disabled: 1, inherit: 1, freq: 1, sample_id_all: 1, exclude_guest: 1
-> [root@jouet ~]#
->
-Looks like this is working then, great!
+Hi, Houlong:
 
-Now, related to profiling and reporting. There is still an issue I
-keep running into
-with grouping. I want to sample on N events, where N > number of  hw counters.
-Yet I want the same output as perf report --group, i.e., side-by-side
-profiles as
-opposed to showing me one event profile at a time (which is not very useful).
+I've some inline comment.
 
-You should not require events to belong to the same group to support this. Many
-other tools support such output (e.g., VTUNE, Gooda). It is still very
-valuable even
-though events may not have been measured at the same time.
+On Wed, 2018-01-31 at 15:28 +0800, houlong.wei@mediatek.com wrote:
+> From: "hs.liao@mediatek.com" <hs.liao@mediatek.com>
+> 
+> Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
+> 
+> Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+> Signed-off-by: HS Liao <hs.liao@mediatek.com>
+> ---
+>  drivers/soc/mediatek/Kconfig           |   12 ++
+>  drivers/soc/mediatek/Makefile          |    1 +
+>  drivers/soc/mediatek/mtk-cmdq-helper.c |  322 ++++++++++++++++++++++++++++++++
+>  include/linux/soc/mediatek/mtk-cmdq.h  |  174 +++++++++++++++++
+>  4 files changed, 509 insertions(+)
+>  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
+>  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
+> 
+> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> index a7d0667..e66582e 100644
+> --- a/drivers/soc/mediatek/Kconfig
+> +++ b/drivers/soc/mediatek/Kconfig
+> @@ -4,6 +4,18 @@
+>  menu "MediaTek SoC drivers"
+>  	depends on ARCH_MEDIATEK || COMPILE_TEST
+>  
+> +config MTK_CMDQ
+> +	bool "MediaTek CMDQ Support"
+> +	depends on ARM64 && ( ARCH_MEDIATEK || COMPILE_TEST )
+> +	select MAILBOX
+> +	select MTK_CMDQ_MBOX
+> +	select MTK_INFRACFG
+> +	help
+> +	  Say yes here to add support for the MediaTek Command Queue (CMDQ)
+> +	  driver. The CMDQ is used to help read/write registers with critical
+> +	  time limitation, such as updating display configuration during the
+> +	  vblank.
+> +
+>  config MTK_INFRACFG
+>  	bool "MediaTek INFRACFG Support"
+>  	select REGMAP
+> diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
+> index 12998b0..64ce5ee 100644
+> --- a/drivers/soc/mediatek/Makefile
+> +++ b/drivers/soc/mediatek/Makefile
+> @@ -1,3 +1,4 @@
+> +obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-helper.o
+>  obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
+>  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
+>  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
+> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> new file mode 100644
+> index 0000000..80d0558
+> --- /dev/null
+> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> @@ -0,0 +1,322 @@
+> +/*
+> + * Copyright (c) 2015 MediaTek Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/completion.h>
+> +#include <linux/errno.h>
+> +#include <linux/of_address.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/mailbox_controller.h>
+> +#include <linux/soc/mediatek/mtk-cmdq.h>
+> +
+> +#define CMDQ_ARG_A_WRITE_MASK	0xffff
+> +#define CMDQ_WRITE_ENABLE_MASK	BIT(0)
+> +#define CMDQ_EOC_IRQ_EN		BIT(0)
+> +#define CMDQ_EOC_CMD		((u64)((CMDQ_CODE_EOC << CMDQ_OP_CODE_SHIFT)) \
+> +				<< 32 | CMDQ_EOC_IRQ_EN)
+> +
+> +struct cmdq_subsys {
+> +	u32	base;
+> +	int	id;
+> +};
+> +
+> +static const struct cmdq_subsys gce_subsys[] = {
+> +	{0x1400, 1},
+> +	{0x1401, 2},
+> +	{0x1402, 3},
+> +};
 
-Let me use a simple (and silly but portable) example.
-Today if I do on  Intel x86:
+I think subsys definition varies by different SoC, so it's better to
+pass these definition from device tree to driver (client driver), and
+client driver pass this subsys in the related interface. For example,
 
- $ perf record -e branches,branches,branches,branches,branches my_test
+in include/dt-bindings/gce/mt8173-gce.h, you define
 
-And I do:
+#define GCE_SUBSYS_1400XXXX		1
+#define GCE_SUBSYS_1401XXXX		2
+#define GCE_SUBSYS_1402XXXX		3
 
-$ perf report --group
-It will show me 5 distinct profiles.
+in device tree, place the subsys definition in client device node,
 
-I would like perf to show me a single profile where the 5 events are
-side-by-side.
+#include "dt-bindings/gce/mt8173-gce.h"
 
-Similar to what I get if I do instead:
-$ perf record -e '{branches,branches,branches,branches}' my_test
-$ perf report --group
+	ovl0: ovl@1400c000 {
+		compatible = "mediatek,mt8173-disp-ovl";
+		gce-subsys = <GCE_SUBSYS_1400XXXX>;
+		...
+	};
 
-But here, I would have to ensure all events fits in a group to allow
-the reporting
-I want. So that would limit me to 4 events.
+And client driver pass subsys in the related interface,
 
-I think perf report --group should work regardless of how the events
-were grouped.
-Is there already a way to work around this?
+int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32
+value);
 
-Thanks.
+So, for another SoC, you just need to modify device tree and you do not
+need to modify driver.
 
-> commit ff3d527cebc1fa3707c617bfe9e74f53fcfb0955
-> Author: Adrian Hunter <adrian.hunter@intel.com>
-> Date:   Tue Aug 27 11:23:07 2013 +0300
->
->     perf: make events stream always parsable
->
->     The event stream is not always parsable because the format of a sample
->     is dependent on the sample_type of the selected event.  When there is
->     more than one selected event and the sample_types are not the same then
->     parsing becomes problematic.  A sample can be matched to its selected
->     event using the ID that is allocated when the event is opened.
->     Unfortunately, to get the ID from the sample means first parsing it.
->
->     This patch adds a new sample format bit PERF_SAMPLE_IDENTIFER that puts
->     the ID at a fixed position so that the ID can be retrieved without
->     parsing the sample.  For sample events, that is the first position
->     immediately after the header.  For non-sample events, that is the last
->     position.
->
->     In this respect parsing samples requires that the sample_type and ID
->     values are recorded.  For example, perf tools records struct
->     perf_event_attr and the IDs within the perf.data file.  Those must be
->     read first before it is possible to parse samples found later in the
->     perf.data file.
->
->     Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->     Tested-by: Stephane Eranian <eranian@google.com>
->     Acked-by: Peter Zijlstra <peterz@infradead.org>
->
+> +
+> +static int cmdq_subsys_base_to_id(u32 base)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(gce_subsys); i++)
+> +		if (gce_subsys[i].base == base)
+> +			return gce_subsys[i].id;
+> +	return -EFAULT;
+> +}
+> +
+> +static int cmdq_pkt_realloc_cmd_buffer(struct cmdq_pkt *pkt, size_t size)
+> +{
+> +	void *new_buf;
+> +
+> +	new_buf = krealloc(pkt->va_base, size, GFP_KERNEL | __GFP_ZERO);
+> +	if (!new_buf)
+> +		return -ENOMEM;
+> +	pkt->va_base = new_buf;
+> +	pkt->buf_size = size;
+> +	return 0;
+> +}
+> +
+> +struct cmdq_base *cmdq_register_device(struct device *dev)
+> +{
+> +	struct cmdq_base *cmdq_base;
+> +	struct resource res;
+> +	int subsys;
+> +	u32 base;
+> +
+> +	if (of_address_to_resource(dev->of_node, 0, &res))
+> +		return NULL;
+> +	base = (u32)res.start;
+> +
+> +	subsys = cmdq_subsys_base_to_id(base >> 16);
+> +	if (subsys < 0)
+> +		return NULL;
+> +
+> +	cmdq_base = devm_kmalloc(dev, sizeof(*cmdq_base), GFP_KERNEL);
+> +	if (!cmdq_base)
+> +		return NULL;
+> +	cmdq_base->subsys = subsys;
+> +	cmdq_base->base = base;
+> +
+> +	return cmdq_base;
+> +}
+> +EXPORT_SYMBOL(cmdq_register_device);
+> +
+> +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index)
+> +{
+> +	struct cmdq_client *client;
+> +
+> +	client = kzalloc(sizeof(*client), GFP_KERNEL);
+> +	client->client.dev = dev;
+> +	client->client.tx_block = false;
+> +	client->chan = mbox_request_channel(&client->client, index);
+> +	return client;
+> +}
+> +EXPORT_SYMBOL(cmdq_mbox_create);
+> +
+> +void cmdq_mbox_destroy(struct cmdq_client *client)
+> +{
+> +	mbox_free_channel(client->chan);
+> +	kfree(client);
+> +}
+> +EXPORT_SYMBOL(cmdq_mbox_destroy);
+> +
+> +int cmdq_pkt_create(struct cmdq_pkt **pkt_ptr)
+> +{
+> +	struct cmdq_pkt *pkt;
+> +	int err;
+> +
+> +	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
+> +	if (!pkt)
+> +		return -ENOMEM;
+> +	err = cmdq_pkt_realloc_cmd_buffer(pkt, PAGE_SIZE);
+> +	if (err < 0) {
+> +		kfree(pkt);
+> +		return err;
+> +	}
+> +	*pkt_ptr = pkt;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_create);
+> +
+> +void cmdq_pkt_destroy(struct cmdq_pkt *pkt)
+> +{
+> +	kfree(pkt->va_base);
+> +	kfree(pkt);
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_destroy);
+> +
+> +static bool cmdq_pkt_is_finalized(struct cmdq_pkt *pkt)
+> +{
+> +	u64 *expect_eoc;
+> +
+> +	if (pkt->cmd_buf_size < CMDQ_INST_SIZE << 1)
+> +		return false;
+> +
+> +	expect_eoc = pkt->va_base + pkt->cmd_buf_size - (CMDQ_INST_SIZE << 1);
+> +	if (*expect_eoc == CMDQ_EOC_CMD)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
+> +				   u32 arg_a, u32 arg_b)
+> +{
+> +	u64 *cmd_ptr;
+> +	int err;
+> +
+> +	if (WARN_ON(cmdq_pkt_is_finalized(pkt)))
+> +		return -EBUSY;
+> +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
+> +		err = cmdq_pkt_realloc_cmd_buffer(pkt, pkt->buf_size << 1);
+> +		if (err < 0)
+> +			return err;
+> +	}
+> +	cmd_ptr = pkt->va_base + pkt->cmd_buf_size;
+> +	(*cmd_ptr) = (u64)((code << CMDQ_OP_CODE_SHIFT) | arg_a) << 32 | arg_b;
+> +	pkt->cmd_buf_size += CMDQ_INST_SIZE;
+> +	return 0;
+> +}
+> +
+> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, struct cmdq_base *base,
+> +		   u32 offset)
+> +{
+> +	u32 arg_a = ((base->base + offset) & CMDQ_ARG_A_WRITE_MASK) |
+> +		    (base->subsys << CMDQ_SUBSYS_SHIFT);
+> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WRITE, arg_a, value);
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_write);
+> +
+> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
+> +			struct cmdq_base *base, u32 offset, u32 mask)
+> +{
+> +	u32 offset_mask = offset;
+> +	int err;
+> +
+> +	if (mask != 0xffffffff) {
+> +		err = cmdq_pkt_append_command(pkt, CMDQ_CODE_MASK, 0, ~mask);
+> +		if (err < 0)
+> +			return err;
+> +		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
+> +	}
+> +	return cmdq_pkt_write(pkt, value, base, offset_mask);
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_write_mask);
+> +
+> +static const u32 cmdq_event_value[CMDQ_MAX_EVENT] = {
+> +	/* Display start of frame(SOF) events */
+> +	[CMDQ_EVENT_DISP_OVL0_SOF] = 11,
+> +	[CMDQ_EVENT_DISP_OVL1_SOF] = 12,
+> +	[CMDQ_EVENT_DISP_RDMA0_SOF] = 13,
+> +	[CMDQ_EVENT_DISP_RDMA1_SOF] = 14,
+> +	[CMDQ_EVENT_DISP_RDMA2_SOF] = 15,
+> +	[CMDQ_EVENT_DISP_WDMA0_SOF] = 16,
+> +	[CMDQ_EVENT_DISP_WDMA1_SOF] = 17,
+> +	/* Display end of frame(EOF) events */
+> +	[CMDQ_EVENT_DISP_OVL0_EOF] = 39,
+> +	[CMDQ_EVENT_DISP_OVL1_EOF] = 40,
+> +	[CMDQ_EVENT_DISP_RDMA0_EOF] = 41,
+> +	[CMDQ_EVENT_DISP_RDMA1_EOF] = 42,
+> +	[CMDQ_EVENT_DISP_RDMA2_EOF] = 43,
+> +	[CMDQ_EVENT_DISP_WDMA0_EOF] = 44,
+> +	[CMDQ_EVENT_DISP_WDMA1_EOF] = 45,
+> +	/* Mutex end of frame(EOF) events */
+> +	[CMDQ_EVENT_MUTEX0_STREAM_EOF] = 53,
+> +	[CMDQ_EVENT_MUTEX1_STREAM_EOF] = 54,
+> +	[CMDQ_EVENT_MUTEX2_STREAM_EOF] = 55,
+> +	[CMDQ_EVENT_MUTEX3_STREAM_EOF] = 56,
+> +	[CMDQ_EVENT_MUTEX4_STREAM_EOF] = 57,
+> +	/* Display underrun events */
+> +	[CMDQ_EVENT_DISP_RDMA0_UNDERRUN] = 63,
+> +	[CMDQ_EVENT_DISP_RDMA1_UNDERRUN] = 64,
+> +	[CMDQ_EVENT_DISP_RDMA2_UNDERRUN] = 65,
+> +};
+
+The event is like subsys that it varies by different SoC, so it's better
+to pass this information from device tree to client driver. And the wait
+for event interface would become
+
+int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event)
+
+And cmdq driver need not to translate the event value.
+
+Regards,
+CK
+
+> +
+> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, enum cmdq_event event)
+> +{
+> +	u32 arg_b;
+> +
+> +	if (event >= CMDQ_MAX_EVENT || event < 0)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * WFE arg_b
+> +	 * bit 0-11: wait value
+> +	 * bit 15: 1 - wait, 0 - no wait
+> +	 * bit 16-27: update value
+> +	 * bit 31: 1 - update, 0 - no update
+> +	 */
+> +	arg_b = CMDQ_WFE_UPDATE | CMDQ_WFE_WAIT | CMDQ_WFE_WAIT_VALUE;
+> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE,
+> +			cmdq_event_value[event], arg_b);
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_wfe);
+> +
+> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, enum cmdq_event event)
+> +{
+> +	if (event >= CMDQ_MAX_EVENT || event < 0)
+> +		return -EINVAL;
+> +
+> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE,
+> +			cmdq_event_value[event], CMDQ_WFE_UPDATE);
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_clear_event);
+> +
+> +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+> +{
+> +	int err;
+> +
+> +	if (cmdq_pkt_is_finalized(pkt))
+> +		return 0;
+> +
+> +	/* insert EOC and generate IRQ for each command iteration */
+> +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	/* JUMP to end */
+> +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +int cmdq_pkt_flush_async(struct cmdq_client *client, struct cmdq_pkt *pkt,
+> +			 cmdq_async_flush_cb cb, void *data)
+> +{
+> +	int err;
+> +	struct device *dev;
+> +	dma_addr_t dma_addr;
+> +
+> +	err = cmdq_pkt_finalize(pkt);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	dev = client->chan->mbox->dev;
+> +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->cmd_buf_size,
+> +		DMA_TO_DEVICE);
+> +	if (dma_mapping_error(dev, dma_addr)) {
+> +		dev_err(client->chan->mbox->dev, "dma map failed\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	pkt->pa_base = dma_addr;
+> +	pkt->cb.cb = cb;
+> +	pkt->cb.data = data;
+> +
+> +	mbox_send_message(client->chan, pkt);
+> +	/* We can send next packet immediately, so just call txdone. */
+> +	mbox_client_txdone(client->chan, 0);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_flush_async);
+> +
+> +struct cmdq_flush_completion {
+> +	struct completion cmplt;
+> +	bool err;
+> +};
+> +
+> +static void cmdq_pkt_flush_cb(struct cmdq_cb_data data)
+> +{
+> +	struct cmdq_flush_completion *cmplt = data.data;
+> +
+> +	cmplt->err = data.err;
+> +	complete(&cmplt->cmplt);
+> +}
+> +
+> +int cmdq_pkt_flush(struct cmdq_client *client, struct cmdq_pkt *pkt)
+> +{
+> +	struct cmdq_flush_completion cmplt;
+> +	int err;
+> +
+> +	init_completion(&cmplt.cmplt);
+> +	err = cmdq_pkt_flush_async(client, pkt, cmdq_pkt_flush_cb, &cmplt);
+> +	if (err < 0)
+> +		return err;
+> +	wait_for_completion(&cmplt.cmplt);
+> +	return cmplt.err ? -EFAULT : 0;
+> +}
+> +EXPORT_SYMBOL(cmdq_pkt_flush);
+> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
+> new file mode 100644
+> index 0000000..5b35d73
+> --- /dev/null
+> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
+> @@ -0,0 +1,174 @@
+> +/*
+> + * Copyright (c) 2015 MediaTek Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef __MTK_CMDQ_H__
+> +#define __MTK_CMDQ_H__
+> +
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mailbox/mtk-cmdq-mailbox.h>
+> +
+> +/* display events in command queue(CMDQ) */
+> +enum cmdq_event {
+> +	/* Display start of frame(SOF) events */
+> +	CMDQ_EVENT_DISP_OVL0_SOF,
+> +	CMDQ_EVENT_DISP_OVL1_SOF,
+> +	CMDQ_EVENT_DISP_RDMA0_SOF,
+> +	CMDQ_EVENT_DISP_RDMA1_SOF,
+> +	CMDQ_EVENT_DISP_RDMA2_SOF,
+> +	CMDQ_EVENT_DISP_WDMA0_SOF,
+> +	CMDQ_EVENT_DISP_WDMA1_SOF,
+> +	/* Display end of frame(EOF) events */
+> +	CMDQ_EVENT_DISP_OVL0_EOF,
+> +	CMDQ_EVENT_DISP_OVL1_EOF,
+> +	CMDQ_EVENT_DISP_RDMA0_EOF,
+> +	CMDQ_EVENT_DISP_RDMA1_EOF,
+> +	CMDQ_EVENT_DISP_RDMA2_EOF,
+> +	CMDQ_EVENT_DISP_WDMA0_EOF,
+> +	CMDQ_EVENT_DISP_WDMA1_EOF,
+> +	/* Mutex end of frame(EOF) events */
+> +	CMDQ_EVENT_MUTEX0_STREAM_EOF,
+> +	CMDQ_EVENT_MUTEX1_STREAM_EOF,
+> +	CMDQ_EVENT_MUTEX2_STREAM_EOF,
+> +	CMDQ_EVENT_MUTEX3_STREAM_EOF,
+> +	CMDQ_EVENT_MUTEX4_STREAM_EOF,
+> +	/* Display underrun events */
+> +	CMDQ_EVENT_DISP_RDMA0_UNDERRUN,
+> +	CMDQ_EVENT_DISP_RDMA1_UNDERRUN,
+> +	CMDQ_EVENT_DISP_RDMA2_UNDERRUN,
+> +	/* Keep this at the end */
+> +	CMDQ_MAX_EVENT,
+> +};
+> +
+> +struct cmdq_pkt;
+> +
+> +struct cmdq_base {
+> +	int	subsys;
+> +	u32	base;
+> +};
+> +
+> +struct cmdq_client {
+> +	struct mbox_client client;
+> +	struct mbox_chan *chan;
+> +};
+> +
+> +/**
+> + * cmdq_register_device() - register device which needs CMDQ
+> + * @dev:	device for CMDQ to access its registers
+> + *
+> + * Return: cmdq_base pointer or NULL for failed
+> + */
+> +struct cmdq_base *cmdq_register_device(struct device *dev);
+> +
+> +/**
+> + * cmdq_mbox_create() - create CMDQ mailbox client and channel
+> + * @dev:	device of CMDQ mailbox client
+> + * @index:	index of CMDQ mailbox channel
+> + *
+> + * Return: CMDQ mailbox client pointer
+> + */
+> +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index);
+> +
+> +/**
+> + * cmdq_mbox_destroy() - destroy CMDQ mailbox client and channel
+> + * @client:	the CMDQ mailbox client
+> + */
+> +void cmdq_mbox_destroy(struct cmdq_client *client);
+> +
+> +/**
+> + * cmdq_pkt_create() - create a CMDQ packet
+> + * @pkt_ptr:	CMDQ packet pointer to retrieve cmdq_pkt
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + */
+> +int cmdq_pkt_create(struct cmdq_pkt **pkt_ptr);
+> +
+> +/**
+> + * cmdq_pkt_destroy() - destroy the CMDQ packet
+> + * @pkt:	the CMDQ packet
+> + */
+> +void cmdq_pkt_destroy(struct cmdq_pkt *pkt);
+> +
+> +/**
+> + * cmdq_pkt_write() - append write command to the CMDQ packet
+> + * @pkt:	the CMDQ packet
+> + * @value:	the specified target register value
+> + * @base:	the CMDQ base
+> + * @offset:	register offset from module base
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + */
+> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value,
+> +		   struct cmdq_base *base, u32 offset);
+> +
+> +/**
+> + * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
+> + * @pkt:	the CMDQ packet
+> + * @value:	the specified target register value
+> + * @base:	the CMDQ base
+> + * @offset:	register offset from module base
+> + * @mask:	the specified target register mask
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + */
+> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
+> +			struct cmdq_base *base, u32 offset, u32 mask);
+> +
+> +/**
+> + * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
+> + * @pkt:	the CMDQ packet
+> + * @event:	the desired event type to "wait and CLEAR"
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + */
+> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, enum cmdq_event event);
+> +
+> +/**
+> + * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
+> + * @pkt:	the CMDQ packet
+> + * @event:	the desired event to be cleared
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + */
+> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, enum cmdq_event event);
+> +
+> +/**
+> + * cmdq_pkt_flush() - trigger CMDQ to execute the CMDQ packet
+> + * @client:	the CMDQ mailbox client
+> + * @pkt:	the CMDQ packet
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + *
+> + * Trigger CMDQ to execute the CMDQ packet. Note that this is a
+> + * synchronous flush function. When the function returned, the recorded
+> + * commands have been done.
+> + */
+> +int cmdq_pkt_flush(struct cmdq_client *client, struct cmdq_pkt *pkt);
+> +
+> +/**
+> + * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
+> + *                          packet and call back at the end of done packet
+> + * @client:	the CMDQ mailbox client
+> + * @pkt:	the CMDQ packet
+> + * @cb:		called at the end of done packet
+> + * @data:	this data will pass back to cb
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + *
+> + * Trigger CMDQ to asynchronously execute the CMDQ packet and call back
+> + * at the end of done packet. Note that this is an ASYNC function. When the
+> + * function returned, it may or may not be finished.
+> + */
+> +int cmdq_pkt_flush_async(struct cmdq_client *client, struct cmdq_pkt *pkt,
+> +			 cmdq_async_flush_cb cb, void *data);
+> +
+> +#endif	/* __MTK_CMDQ_H__ */
