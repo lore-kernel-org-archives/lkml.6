@@ -1,136 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752686AbeBFKWr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 05:22:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58148 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752187AbeBFKWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 05:22:38 -0500
-Date: Tue, 6 Feb 2018 11:22:34 +0100
-From: Jan Kara <jack@suse.cz>
-To: Wang Long <wanglong19@meituan.com>
-Cc: darrick.wong@oracle.com, tytso@mit.edu, jack@suse.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] jbd2: remove the conditional test
-Message-ID: <20180206102234.s3yjrtjkfaup5vas@quack2.suse.cz>
-References: <1517840679-5902-1-git-send-email-wanglong19@meituan.com>
+        id S1752759AbeBFK1n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 05:27:43 -0500
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:36297 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752661AbeBFK1b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 05:27:31 -0500
+X-Google-Smtp-Source: AH8x226drpUZExUx5FK0Av9lGZ5vltCPIy1RMp3M+CWjb2eE4GKdbFiuSQxbAUruRUjmUb48ieckaA==
+Date: Tue, 6 Feb 2018 11:27:27 +0100
+From: Miklos Szeredi <miklos@szeredi.hu>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Rich Felker <dalias@libc.org>, Szabolcs Nagy <nsz@port70.net>,
+        Tomasz Majchrzak <tomasz.majchrzak@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: [PATCH] seq_file: fix incomplete reset on read from zero offset
+Message-ID: <20180206102727.GB19579@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517840679-5902-1-git-send-email-wanglong19@meituan.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 05-02-18 22:24:39, Wang Long wrote:
-> kmem_cache_destroy already handles null pointers, so we can remove the
-> conditional test entirely.
-> 
-> This patch also set NULL after the kmem_cache_destroy in function
-> jbd2_journal_destroy_handle_cache.
-> 
-> Signed-off-by: Wang Long <wanglong19@meituan.com>
+When resetting iterator on a zero offset we need to discard any data
+already in the buffer (count), and private state of the iterator (version).
 
-Looks good. You can add:
+For example this bug results in first line being repeated in /proc/mounts
+if doing a zero size read before a non-zero size read.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reported-by: Rich Felker <dalias@libc.org> 
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: e522751d605d ("seq_file: reset iterator to first record for zero offset")
+Cc: <stable@vger.kernel.org> # v4.10
+---
+ fs/seq_file.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-								Honza
-
-> ---
->  fs/jbd2/journal.c     | 18 +++++++-----------
->  fs/jbd2/revoke.c      | 12 ++++--------
->  fs/jbd2/transaction.c |  6 ++----
->  3 files changed, 13 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 93016bb..3c27a61a 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -2286,8 +2286,7 @@ static void jbd2_journal_destroy_slabs(void)
->  	int i;
->  
->  	for (i = 0; i < JBD2_MAX_SLABS; i++) {
-> -		if (jbd2_slab[i])
-> -			kmem_cache_destroy(jbd2_slab[i]);
-> +		kmem_cache_destroy(jbd2_slab[i]);
->  		jbd2_slab[i] = NULL;
->  	}
->  }
-> @@ -2388,10 +2387,8 @@ static int jbd2_journal_init_journal_head_cache(void)
->  
->  static void jbd2_journal_destroy_journal_head_cache(void)
->  {
-> -	if (jbd2_journal_head_cache) {
-> -		kmem_cache_destroy(jbd2_journal_head_cache);
-> -		jbd2_journal_head_cache = NULL;
-> -	}
-> +	kmem_cache_destroy(jbd2_journal_head_cache);
-> +	jbd2_journal_head_cache = NULL;
->  }
->  
->  /*
-> @@ -2649,11 +2646,10 @@ static int __init jbd2_journal_init_handle_cache(void)
->  
->  static void jbd2_journal_destroy_handle_cache(void)
->  {
-> -	if (jbd2_handle_cache)
-> -		kmem_cache_destroy(jbd2_handle_cache);
-> -	if (jbd2_inode_cache)
-> -		kmem_cache_destroy(jbd2_inode_cache);
-> -
-> +	kmem_cache_destroy(jbd2_handle_cache);
-> +	jbd2_handle_cache = NULL;
-> +	kmem_cache_destroy(jbd2_inode_cache);
-> +	jbd2_inode_cache = NULL;
->  }
->  
->  /*
-> diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
-> index 696ef15..240779e 100644
-> --- a/fs/jbd2/revoke.c
-> +++ b/fs/jbd2/revoke.c
-> @@ -180,14 +180,10 @@ static struct jbd2_revoke_record_s *find_revoke_record(journal_t *journal,
->  
->  void jbd2_journal_destroy_revoke_caches(void)
->  {
-> -	if (jbd2_revoke_record_cache) {
-> -		kmem_cache_destroy(jbd2_revoke_record_cache);
-> -		jbd2_revoke_record_cache = NULL;
-> -	}
-> -	if (jbd2_revoke_table_cache) {
-> -		kmem_cache_destroy(jbd2_revoke_table_cache);
-> -		jbd2_revoke_table_cache = NULL;
-> -	}
-> +	kmem_cache_destroy(jbd2_revoke_record_cache);
-> +	jbd2_revoke_record_cache = NULL;
-> +	kmem_cache_destroy(jbd2_revoke_table_cache);
-> +	jbd2_revoke_table_cache = NULL;
->  }
->  
->  int __init jbd2_journal_init_revoke_caches(void)
-> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-> index ac31103..3b642e0 100644
-> --- a/fs/jbd2/transaction.c
-> +++ b/fs/jbd2/transaction.c
-> @@ -49,10 +49,8 @@ int __init jbd2_journal_init_transaction_cache(void)
->  
->  void jbd2_journal_destroy_transaction_cache(void)
->  {
-> -	if (transaction_cache) {
-> -		kmem_cache_destroy(transaction_cache);
-> -		transaction_cache = NULL;
-> -	}
-> +	kmem_cache_destroy(transaction_cache);
-> +	transaction_cache = NULL;
->  }
->  
->  void jbd2_journal_free_transaction(transaction_t *transaction)
-> -- 
-> 1.8.3.1
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -181,8 +181,11 @@ ssize_t seq_read(struct file *file, char
+ 	 * if request is to read from zero offset, reset iterator to first
+ 	 * record as it might have been already advanced by previous requests
+ 	 */
+-	if (*ppos == 0)
++	if (*ppos == 0) {
+ 		m->index = 0;
++		m->version = 0;
++		m->count = 0;
++	}
+ 
+ 	/* Don't assume *ppos is where we left it */
+ 	if (unlikely(*ppos != m->read_pos)) {
