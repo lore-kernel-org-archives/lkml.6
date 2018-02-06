@@ -1,119 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752599AbeBFCba (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:31:30 -0500
-Received: from mx-fe5-210.meituan.com ([103.37.138.210]:41547 "EHLO
-        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752568AbeBFCbX (ORCPT
+        id S1752501AbeBFCjP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:39:15 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:3684 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752141AbeBFCjI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:31:23 -0500
-DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com A6A2D2975C00
-From: Wang Long <wanglong19@meituan.com>
-To: darrick.wong@oracle.com, tytso@mit.edu, jack@suse.com
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] jbd2: remove the conditional test
-Date: Mon,  5 Feb 2018 22:24:39 +0800
-Message-Id: <1517840679-5902-1-git-send-email-wanglong19@meituan.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 5 Feb 2018 21:39:08 -0500
+X-UUID: 12113ef83dfd429e835f985cb5f1107e-20180206
+Message-ID: <1517884738.16010.27.camel@mtkswgap22>
+Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
+ device tree parsing
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 6 Feb 2018 10:38:58 +0800
+In-Reply-To: <1517866584.2312.140.camel@kernel.crashing.org>
+References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
+         <1517563970.24622.9.camel@mtkswgap22>
+         <1517866584.2312.140.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmem_cache_destroy already handles null pointers, so we can remove the
-conditional test entirely.
+On Tue, 2018-02-06 at 08:36 +1100, Benjamin Herrenschmidt wrote:
+> On Fri, 2018-02-02 at 17:32 +0800, Ryder Lee wrote:
+> > On Wed, 2018-01-31 at 10:02 -0600, Rob Herring wrote:
+> > > On Wed, Jan 31, 2018 at 1:41 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> > > > A root complex usually consist of a host bridge and multiple P2P bridges,
+> > > > and someone may express that in the form of a root node with many subnodes
+> > > > and list all four interrupts for each slot (child node) in the root node
+> > > > like this:
+> > > > 
+> > > >          pcie-controller {
+> > > >                  ...
+> > > >                  interrupt-map-mask = <0xf800 0 0 7>;
+> > > >                  interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
+> > > >                                   0x0800 0 0 {INTx} &{interrupt parent} ...>;
+> > > > 
+> > > >                  pcie@0,0 {
+> > > >                          reg = <0x0000 0 0 0 0>;
+> > > >                          ...
+> > > >                  };
+> > > > 
+> > > >                  pcie@1,0 {
+> > > >                          reg = <0x0800 0 0 0 0>;
+> > > >                          ...
+> > > >                  };
+> > > >          };
+> > > > 
+> > > > As shown above, we'd like to propagate IRQs from a root port to the devices
+> > > > in the hierarchy below it in this way.  However, it seems that the current
+> > > > parser couldn't handle such cases and will get something unexpected below:
+> > > > 
+> > > >          pcieport 0000:00:01.0: assign IRQ: got 213
+> > > >          igb 0000:01:00.0: assign IRQ: got 212
+> > > > 
+> > > > There is a device which is connected to 2nd slot, but the port doesn't share
+> > > > the same IRQ with its downstream devices.  The problem here is that, if the
+> > > > loop found a P2P bridge, it wouldn't check whether the reg property exists
+> > > > in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
+> > > > thus the subsequent flow couldn't correctly resolve them.
+> 
+> I don't really understand the problem explanation here. Something
+> doesn't look right as you shouldn't have to change that function, but I
+> just don't get what you a
+> 
+> Cheers,
+> Ben.
+> 
 
-This patch also set NULL after the kmem_cache_destroy in function
-jbd2_journal_destroy_handle_cache.
+I think the code should look at the bridge address <0x0800 ...> we list
+in bindings for resolving interrupts in this case, but it seems like it
+use the 'pdev->defvn << 8' which is not really we want and will lead to
+mismatch.
 
-Signed-off-by: Wang Long <wanglong19@meituan.com>
----
- fs/jbd2/journal.c     | 18 +++++++-----------
- fs/jbd2/revoke.c      | 12 ++++--------
- fs/jbd2/transaction.c |  6 ++----
- 3 files changed, 13 insertions(+), 23 deletions(-)
+		interrupt-map-mask = <0xf800 0 0 7>;
+		interrupt-map = <0x0000 0 0 1 ...>,
+				<0x0000 0 0 2 ...>,
+				<0x0000 0 0 3 ...>,
+				<0x0000 0 0 4 ...>,
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 93016bb..3c27a61a 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2286,8 +2286,7 @@ static void jbd2_journal_destroy_slabs(void)
- 	int i;
- 
- 	for (i = 0; i < JBD2_MAX_SLABS; i++) {
--		if (jbd2_slab[i])
--			kmem_cache_destroy(jbd2_slab[i]);
-+		kmem_cache_destroy(jbd2_slab[i]);
- 		jbd2_slab[i] = NULL;
- 	}
- }
-@@ -2388,10 +2387,8 @@ static int jbd2_journal_init_journal_head_cache(void)
- 
- static void jbd2_journal_destroy_journal_head_cache(void)
- {
--	if (jbd2_journal_head_cache) {
--		kmem_cache_destroy(jbd2_journal_head_cache);
--		jbd2_journal_head_cache = NULL;
--	}
-+	kmem_cache_destroy(jbd2_journal_head_cache);
-+	jbd2_journal_head_cache = NULL;
- }
- 
- /*
-@@ -2649,11 +2646,10 @@ static int __init jbd2_journal_init_handle_cache(void)
- 
- static void jbd2_journal_destroy_handle_cache(void)
- {
--	if (jbd2_handle_cache)
--		kmem_cache_destroy(jbd2_handle_cache);
--	if (jbd2_inode_cache)
--		kmem_cache_destroy(jbd2_inode_cache);
--
-+	kmem_cache_destroy(jbd2_handle_cache);
-+	jbd2_handle_cache = NULL;
-+	kmem_cache_destroy(jbd2_inode_cache);
-+	jbd2_inode_cache = NULL;
- }
- 
- /*
-diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
-index 696ef15..240779e 100644
---- a/fs/jbd2/revoke.c
-+++ b/fs/jbd2/revoke.c
-@@ -180,14 +180,10 @@ static struct jbd2_revoke_record_s *find_revoke_record(journal_t *journal,
- 
- void jbd2_journal_destroy_revoke_caches(void)
- {
--	if (jbd2_revoke_record_cache) {
--		kmem_cache_destroy(jbd2_revoke_record_cache);
--		jbd2_revoke_record_cache = NULL;
--	}
--	if (jbd2_revoke_table_cache) {
--		kmem_cache_destroy(jbd2_revoke_table_cache);
--		jbd2_revoke_table_cache = NULL;
--	}
-+	kmem_cache_destroy(jbd2_revoke_record_cache);
-+	jbd2_revoke_record_cache = NULL;
-+	kmem_cache_destroy(jbd2_revoke_table_cache);
-+	jbd2_revoke_table_cache = NULL;
- }
- 
- int __init jbd2_journal_init_revoke_caches(void)
-diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-index ac31103..3b642e0 100644
---- a/fs/jbd2/transaction.c
-+++ b/fs/jbd2/transaction.c
-@@ -49,10 +49,8 @@ int __init jbd2_journal_init_transaction_cache(void)
- 
- void jbd2_journal_destroy_transaction_cache(void)
- {
--	if (transaction_cache) {
--		kmem_cache_destroy(transaction_cache);
--		transaction_cache = NULL;
--	}
-+	kmem_cache_destroy(transaction_cache);
-+	transaction_cache = NULL;
- }
- 
- void jbd2_journal_free_transaction(transaction_t *transaction)
--- 
-1.8.3.1
+				 0x0800 0 0 1 ...>,
+				 0x0800 0 0 2 ...>,
+				 0x0800 0 0 3 ...>,
+				 0x0800 0 0 4 ...>;
+		...
+		pcie@1,0 {
+			reg = <0x0800 0 0 0 0>;
+			...
+		};
+
+
+Or, alternatively, we could add a interrupt-map property in both child
+and root node to solve this. The below example is my original version as
+I don't want to change that function either.
+
+		interrupt-map-mask = <0xf800 0 0 0>;
+		interrupt-map = <0x0000 0 0 0 ...>,
+				 0x0800 0 0 0 ...>;
+		...
+		pcie@1,0 {
+			reg = <0x0800 0 0 0 0>;
+			#interrupt-cells = <1>;
+			interrupt-map-mask = <0 0 0 0>;
+			interrupt-map = <0 0 0 0 ...>;
+			...
+		};
+
+However, I can't find any other similar case in documentation.
+
+Thanks.
