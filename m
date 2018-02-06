@@ -1,65 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753421AbeBFTsd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 14:48:33 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:21397 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753064AbeBFTsb (ORCPT
+        id S932146AbeBFTtn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 14:49:43 -0500
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:39914 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753320AbeBFTtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 14:48:31 -0500
-X-ME-Helo: linux.numericable.fr
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 06 Feb 2018 20:48:28 +0100
-X-ME-IP: 77.198.79.136
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: jeffrey.t.kirsher@intel.com
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
-Date: Tue,  6 Feb 2018 20:47:59 +0100
-Message-Id: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.14.1
+        Tue, 6 Feb 2018 14:49:40 -0500
+X-Google-Smtp-Source: AH8x225U5zU82QOmATJL7g80s38mVWF2qThP4GSYArtqJKpDVY7bKBi20eN+VkLkk8E8+Z+OYiD1ImA0fQthaQCD/sA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180206190614.GL9465@builder>
+References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-3-rnayak@codeaurora.org>
+ <20180126221808.GE28313@codeaurora.org> <CAD=FV=WcCnQJc25=sKWtOi=ZWi=ium6DVsexuQnsLDL=aJE6-Q@mail.gmail.com>
+ <20180206190614.GL9465@builder>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 6 Feb 2018 11:49:37 -0800
+X-Google-Sender-Auth: SUryFvK3IMydiz_NbEK0KUMWnIU
+Message-ID: <CAD=FV=Whxf1VRJ6qx9mioEEkTeS+uJfJKPbOMcGy-Wigh_NORw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: sdm845: Add serial console support
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'HWTSTAMP_TX_ON' should be handled as a value, not as a bit mask.
-The modified code should behave the same, because HWTSTAMP_TX_ON is 1
-and no other possible values of 'tx_type' would match the test.
-However, this is more future-proof, should other values be allowed one day.
+Hi,
 
-See 'struct hwtstamp_config' in 'include/uapi/linux/net_tstamp.h'
+On Tue, Feb 6, 2018 at 11:06 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Tue 06 Feb 10:37 PST 2018, Doug Anderson wrote:
+>
+>> Hi,
+>>
+>> On Fri, Jan 26, 2018 at 2:18 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 01/25, Rajendra Nayak wrote:
+>> >> diff --git a/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
+>> >> new file mode 100644
+>> >> index 000000000000..b97f99e6f4b4
+>> >> --- /dev/null
+>> >> +++ b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
+>> >> @@ -0,0 +1,32 @@
+>> >> +// SPDX-License-Identifier: GPL-2.0
+>> >> +/*
+>> >> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> >> + */
+>> >> +
+>> >> +&tlmm {
+>> >
+>> > I'm not the maintainer, but I find this approach to the pins
+>> > really annoying. I have to flip to another file to figure out how
+>> > a board has configured the pins. And we may bring in a bunch of
+>> > settings that we don't ever use on some board too. Why can't we
+>> > put the settings in the board file directly?
+>>
+>> I'm not so familiar with how things work with Qualcomm, but in general
+>> I think putting this in the "board" file is a bad idea.  I'd be OK
+>> with putting this directly in the SoC file (though it might get
+>> unwieldy?), but not moving things to the board file as was done with
+>> v2 of this patch.
+>>
+>> Said another way: nearly board that uses SDM845 that uses UART2 will
+>> have the same definitions for these pins so we shouldn't be
+>> duplicating it across every board, right?
+>>
+>
+> We've run into several cases where different boards uses the same
+> function but requires board specific electrical configuration.
+>
+> So what we decided was to keep the pinmux in the soc-file (where e.g.
+> the uart definition is) and then extend it with the board specific
+> electrical properties (the pinconf), in the board files.
+>
+> This does come with the complexity of having the pinctrl nodes split in
+> two places, but the responsibilities of the two parts is clear and we
+> remove the need for all board files to ensure the appropriate pinmux is
+> in place.
+>
+>
+> NB. We did discuss adding "sane defaults" for the pinconf in the soc
+> dtsi, but we end up spending considerable time debugging issues stemming
+> from not having the right pinconf; so better make this explicit and say
+> that the board has to specify it's config.
 
-This fixes a warning reported by smatch:
-   igb_xmit_frame_ring() warn: bit shifter 'HWTSTAMP_TX_ON' used for logical '&'
+Whoops, saw your responses _after_ I sent my response to v2.  In any
+case this makes sense to me then!  On Rockchip boards I've been
+involved in we often added "sane defaults", but I can see how that
+could be confusing in different ways.  I'm happy with your choice and
+it seems like a happy medium.  The sdm845.dtsi file can have the main
+definition of the nodes and can thus refer to the nodes.  Then you
+just add the extra bit in the board file.
 
-Fixes: 26bd4e2db06be ("igb: protect TX timestamping from API misuse")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index c208753ff5b7..e945d1f7c7fe 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -5727,7 +5727,7 @@ netdev_tx_t igb_xmit_frame_ring(struct sk_buff *skb,
- 	if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)) {
- 		struct igb_adapter *adapter = netdev_priv(tx_ring->netdev);
- 
--		if (adapter->tstamp_config.tx_type & HWTSTAMP_TX_ON &&
-+		if (adapter->tstamp_config.tx_type == HWTSTAMP_TX_ON &&
- 		    !test_and_set_bit_lock(__IGB_PTP_TX_IN_PROGRESS,
- 					   &adapter->state)) {
- 			skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
--- 
-2.14.1
+What you propose is not what happened in v2 of the series
+<https://patchwork.kernel.org/patch/10194201/> though.  In v2 _both_
+the pinconf and the pinmux moved to the board file.  That's wrong.
 
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+To make it concrete, you'd have something like this (this has the
+wrong bindings from the UART, but folks get the picture hopefully):
+
+
+In sdm845.dtsi:
+
+    qup_uart2: serial@a84000 {
+      compatible = "qcom,geni-console", "qcom,geni-uart";
+      reg = <0xa84000 0x4000>;
+      reg-names = "se_phys";
+      clock-names = "se-clk", "m-ahb", "s-ahb";
+      clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>,
+         <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
+         <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
+      pinctrl-names = "default", "sleep";
+      pinctrl-0 = <&qup_uart2_default>;
+      pinctrl-1 = <&qup_uart2_sleep>;
+      interrupts = <GIC_SPI 354 IRQ_TYPE_NONE>;
+      qcom,wrapper-core = <&qup_1>;
+      status = "disabled";
+    };
+
+    tlmm: pinctrl@3400000 {
+      compatible = "qcom,sdm845-pinctrl";
+      reg = <0x03400000 0xc00000>;
+      interrupts = <GIC_SPI 208 IRQ_TYPE_NONE>;
+      gpio-controller;
+      #gpio-cells = <2>;
+      interrupt-controller;
+      #interrupt-cells = <2>;
+
+      qup_uart2_default: qup_uart2_default {
+        pinmux {
+          function = "qup9";
+          pins = "gpio4", "gpio5";
+        };
+      };
+
+      qup_uart2_sleep: qup_uart2_sleep {
+        pinmux {
+          function = "gpio";
+          pins = "gpio4", "gpio5";
+        };
+      };
+    };
+
+In sdm845-mtp.dts:
+
+&qup_uart2_default {
+  pinconf {
+    pins = "gpio4", "gpio5";
+    drive-strength = <2>;
+    bias-disable;
+  };
+};
+
+&qup_uart2_sleep {
+  pinconf {
+    pins = "gpio4", "gpio5";
+    drive-strength = <2>;
+    bias-disable;
+  };
+};
