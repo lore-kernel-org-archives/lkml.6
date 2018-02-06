@@ -1,149 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeBFJRl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:17:41 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:58070 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752248AbeBFJR2 (ORCPT
+        id S1752630AbeBFJUd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:20:33 -0500
+Received: from srv06.itamservices.de ([78.46.48.226]:63755 "EHLO
+        srv06.itamservices.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752213AbeBFJU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:17:28 -0500
-Date: Tue, 6 Feb 2018 10:17:27 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: tglx@linutronix.de, mingo@kernel.org, Andi Kleen <ak@linux.intel.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        luto@kernel.org
-Subject: Re: [PATCH v3 2/3] x86/entry: Clear registers for 64bit
- exceptions/interrupts
-Message-ID: <20180206091727.GB15925@isilmar-4.linta.de>
-References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Tue, 6 Feb 2018 04:20:27 -0500
+Subject: Re: It's back! (Re: [REGRESSION] NFS is creating a hidden port (left
+ over from xs_bind() ))
+To: Trond Myklebust <trondmy@primarydata.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+References: <57220e1f-f81e-b30b-a4ea-39ad74c7c0d6@nachtgeist.net>
+ <1517876654.79669.5.camel@primarydata.com>
+From: Daniel Reichelt <hacking@nachtgeist.net>
+Message-ID: <9518bb1f-ad0a-2c33-d3fc-78550be06a0c@nachtgeist.net>
+Date: Tue, 6 Feb 2018 10:20:22 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1517876654.79669.5.camel@primarydata.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="Mrvc8Do60m4Vi01BQn8EmDBswbL577mMf"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 05:18:11PM -0800, Dan Williams wrote:
-> From: Andi Kleen <ak@linux.intel.com>
-> 
-> Clear the 'extra' registers on entering the 64bit kernel for exceptions
-> and interrupts. The common registers are not cleared since they are
-> likely clobbered well before they can be exploited in a speculative
-> execution attack.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Mrvc8Do60m4Vi01BQn8EmDBswbL577mMf
+Content-Type: multipart/mixed; boundary="N4fNFHhBhgM90y6CJjK99FoVR7XExZWZd";
+ protected-headers="v1"
+From: Daniel Reichelt <hacking@nachtgeist.net>
+To: Trond Myklebust <trondmy@primarydata.com>,
+ "rostedt@goodmis.org" <rostedt@goodmis.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Message-ID: <9518bb1f-ad0a-2c33-d3fc-78550be06a0c@nachtgeist.net>
+Subject: Re: It's back! (Re: [REGRESSION] NFS is creating a hidden port (left
+ over from xs_bind() ))
+References: <57220e1f-f81e-b30b-a4ea-39ad74c7c0d6@nachtgeist.net>
+ <1517876654.79669.5.camel@primarydata.com>
+In-Reply-To: <1517876654.79669.5.camel@primarydata.com>
 
-Could the clever trick from patch 3/3 (interleave xorq with movq) be
-used here as well? Something like below (untested)? This includes removing
-the (seemingly?) unused SAVE_C_REGS_EXCEPT_* macros, which probably needs to
-become a spearate patch.
+--N4fNFHhBhgM90y6CJjK99FoVR7XExZWZd
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-	Dominik
+On 02/06/2018 01:24 AM, Trond Myklebust wrote:
+> Does the following fix the issue?
+>=20
+> 8<-----------------------------------------------
+> From 9b30889c548a4d45bfe6226e58de32504c1d682f Mon Sep 17 00:00:00 2001
+> From: Trond Myklebust <trond.myklebust@primarydata.com>
+> Date: Mon, 5 Feb 2018 10:20:06 -0500
+> Subject: [PATCH] SUNRPC: Ensure we always close the socket after a conn=
+ection
+>  shuts down
+>=20
+> Ensure that we release the TCP socket once it is in the TCP_CLOSE or
+> TCP_TIME_WAIT state (and only then) so that we don't confuse rkhunter
+> and its ilk.
+>=20
+> Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+> ---
+>  net/sunrpc/xprtsock.c | 23 ++++++++++-------------
+>  1 file changed, 10 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+> index 18803021f242..5d0108172ed3 100644
+> --- a/net/sunrpc/xprtsock.c
+> +++ b/net/sunrpc/xprtsock.c
+> @@ -807,13 +807,6 @@ static void xs_sock_reset_connection_flags(struct =
+rpc_xprt *xprt)
+>  	smp_mb__after_atomic();
+>  }
+> =20
+> -static void xs_sock_mark_closed(struct rpc_xprt *xprt)
+> -{
+> -	xs_sock_reset_connection_flags(xprt);
+> -	/* Mark transport as closed and wake up all pending tasks */
+> -	xprt_disconnect_done(xprt);
+> -}
+> -
+>  /**
+>   * xs_error_report - callback to handle TCP socket state errors
+>   * @sk: socket
+> @@ -833,9 +826,6 @@ static void xs_error_report(struct sock *sk)
+>  	err =3D -sk->sk_err;
+>  	if (err =3D=3D 0)
+>  		goto out;
+> -	/* Is this a reset event? */
+> -	if (sk->sk_state =3D=3D TCP_CLOSE)
+> -		xs_sock_mark_closed(xprt);
+>  	dprintk("RPC:       xs_error_report client %p, error=3D%d...\n",
+>  			xprt, -err);
+>  	trace_rpc_socket_error(xprt, sk->sk_socket, err);
+> @@ -1655,9 +1645,11 @@ static void xs_tcp_state_change(struct sock *sk)=
+
+>  		if (test_and_clear_bit(XPRT_SOCK_CONNECTING,
+>  					&transport->sock_state))
+>  			xprt_clear_connecting(xprt);
+> +		clear_bit(XPRT_CLOSING, &xprt->state);
+>  		if (sk->sk_err)
+>  			xprt_wake_pending_tasks(xprt, -sk->sk_err);
+> -		xs_sock_mark_closed(xprt);
+> +		/* Trigger the socket release */
+> +		xs_tcp_force_close(xprt);
+>  	}
+>   out:
+>  	read_unlock_bh(&sk->sk_callback_lock);
+> @@ -2265,14 +2257,19 @@ static void xs_tcp_shutdown(struct rpc_xprt *xp=
+rt)
+>  {
+>  	struct sock_xprt *transport =3D container_of(xprt, struct sock_xprt, =
+xprt);
+>  	struct socket *sock =3D transport->sock;
+> +	int skst =3D transport->inet ? transport->inet->sk_state : TCP_CLOSE;=
+
+> =20
+>  	if (sock =3D=3D NULL)
+>  		return;
+> -	if (xprt_connected(xprt)) {
+> +	switch (skst) {
+> +	default:
+>  		kernel_sock_shutdown(sock, SHUT_RDWR);
+>  		trace_rpc_socket_shutdown(xprt, sock);
+> -	} else
+> +		break;
+> +	case TCP_CLOSE:
+> +	case TCP_TIME_WAIT:
+>  		xs_reset_transport(transport);
+> +	}
+>  }
+> =20
+>  static void xs_tcp_set_socket_timeouts(struct rpc_xprt *xprt,
+>=20
 
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 3f48f695d5e6..7bdee6d14f0a 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -101,49 +101,36 @@ For 32-bit we have the following conventions - kernel is built with
- 	addq	$-(15*8), %rsp
- 	.endm
- 
--	.macro SAVE_C_REGS_HELPER offset=0 rax=1 rcx=1 r8910=1 r11=1
--	.if \r11
-+	.macro SAVE_C_REGS offset=0
-+	xorq %r11, %r11				/* nospec r11 */
- 	movq %r11, 6*8+\offset(%rsp)
--	.endif
--	.if \r8910
- 	movq %r10, 7*8+\offset(%rsp)
-+	xorq %r10, %r10				/* nospec r10 */
- 	movq %r9,  8*8+\offset(%rsp)
-+	xorq %r9, %r9				/* nospec r9 */
- 	movq %r8,  9*8+\offset(%rsp)
--	.endif
--	.if \rax
-+	xorq %r8, %r8				/* nospec r8 */
- 	movq %rax, 10*8+\offset(%rsp)
--	.endif
--	.if \rcx
- 	movq %rcx, 11*8+\offset(%rsp)
--	.endif
- 	movq %rdx, 12*8+\offset(%rsp)
- 	movq %rsi, 13*8+\offset(%rsp)
- 	movq %rdi, 14*8+\offset(%rsp)
- 	UNWIND_HINT_REGS offset=\offset extra=0
- 	.endm
--	.macro SAVE_C_REGS offset=0
--	SAVE_C_REGS_HELPER \offset, 1, 1, 1, 1
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_RAX_RCX offset=0
--	SAVE_C_REGS_HELPER \offset, 0, 0, 1, 1
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_R891011
--	SAVE_C_REGS_HELPER 0, 1, 1, 0, 0
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_RCX_R891011
--	SAVE_C_REGS_HELPER 0, 1, 0, 0, 0
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_RAX_RCX_R11
--	SAVE_C_REGS_HELPER 0, 0, 0, 1, 0
--	.endm
- 
- 	.macro SAVE_EXTRA_REGS offset=0
- 	movq %r15, 0*8+\offset(%rsp)
-+	xorq %r15, %r15				/* nospec r15 */
- 	movq %r14, 1*8+\offset(%rsp)
-+	xorq %r14, %r14				/* nospec r14 */
- 	movq %r13, 2*8+\offset(%rsp)
-+	xorq %r13, %r13				/* nospec r13 */
- 	movq %r12, 3*8+\offset(%rsp)
-+	xorq %r12, %r12				/* nospec r12*/
- 	movq %rbp, 4*8+\offset(%rsp)
-+	xorl %ebp, %ebp				/* nospec rbp */
- 	movq %rbx, 5*8+\offset(%rsp)
-+	xorl %ebx, %ebx				/* nospec rbx */
- 	UNWIND_HINT_REGS offset=\offset
- 	.endm
- 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index c752abe89d80..de19a46f40b2 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1218,7 +1218,6 @@ ENTRY(error_entry)
- 	SAVE_C_REGS 8
- 	SAVE_EXTRA_REGS 8
- 	ENCODE_FRAME_POINTER 8
--	xorl	%ebx, %ebx
- 	testb	$3, CS+8(%rsp)
- 	jz	.Lerror_kernelspace
- 
-@@ -1405,15 +1404,25 @@ ENTRY(nmi)
- 	pushq   %rcx		/* pt_regs->cx */
- 	pushq   %rax		/* pt_regs->ax */
- 	pushq   %r8		/* pt_regs->r8 */
-+	xorq    %r8, %r8	/* nospec   r8 */
- 	pushq   %r9		/* pt_regs->r9 */
-+	xorq    %r9, %r9	/* nospec   r9 */
- 	pushq   %r10		/* pt_regs->r10 */
-+	xorq    %r10, %r10	/* nospec   r10 */
- 	pushq   %r11		/* pt_regs->r11 */
-+	xorq    %r11, %r11	/* nospec   r11*/
- 	pushq	%rbx		/* pt_regs->rbx */
-+	xorl    %ebx, %ebx	/* nospec   rbx*/
- 	pushq	%rbp		/* pt_regs->rbp */
-+	xorl    %ebp, %ebp	/* nospec   rbp*/
- 	pushq	%r12		/* pt_regs->r12 */
-+	xorq    %r12, %r12	/* nospec   r12*/
- 	pushq	%r13		/* pt_regs->r13 */
-+	xorq    %r13, %r13	/* nospec   r13*/
- 	pushq	%r14		/* pt_regs->r14 */
-+	xorq    %r14, %r14	/* nospec   r14*/
- 	pushq	%r15		/* pt_regs->r15 */
-+	xorq    %r15, %r15	/* nospec   r15*/
- 	UNWIND_HINT_REGS
- 	ENCODE_FRAME_POINTER
- 
+Previously, I've seen hidden ports within 5-6 minutes after re-starting
+the nfsd and re-mounting nfs-exports on clients.
+
+With this patch applied, I don't see any hidden ports after 15mins. I
+guess it's a valid fix.
+
+
+Thank you!
+
+Daniel
+
+
+--N4fNFHhBhgM90y6CJjK99FoVR7XExZWZd--
+
+--Mrvc8Do60m4Vi01BQn8EmDBswbL577mMf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJLBAEBCAA1FiEEg2wMpOXGvc4nunsZnjl+Rc/8gF8FAlp5c1cXHGhhY2tpbmdA
+bmFjaHRnZWlzdC5uZXQACgkQnjl+Rc/8gF9vlQ/9HIqRpAAEUie4ajh0Dc5AD6CL
+jochGqEyMEMIBFojkl63wOfEo36MSRjHaUxVNRwjtXcTIaQIxOxogYfzgJnjLGBu
+zbw2EFzeXdgyj5YwF6KS9tqWQf2K1w3FTY0bxTL8FImamDPFYhmAyj1oPIe/7olB
+ElLfp0OAbD0nTUUd7i/jw9r4IZfVMPQnd+04qcIFB5W5nTTvFbUAX0ssu/EUcnJu
+8yQ3xa9JLbqKu2C0M/d4BedXk7m/IAiS9R1IVoIws+Y/oFv2QzPwJe04iKIyV0lS
++aqjXtv8oIY196EwONPSJe66KXJquqLqjwJ4CM0hOfZX7KoHmhGifd0SVLlkisTn
+nhVPneTWAysUZGeDd2SZsomS835MniK6soAs5zjhpWGdtbQyR7NxX/iJe7d9Ova0
+NMEoRups2zkjX8GBjG0XJwoEXjUbkOtpL5YcknS69XHXaZ04HoUB9XnSd4O4iSOX
+TC1I5GPt2ZbKyQLVLDAXD9kf6GX5YP6ppCpsjg0e5quL3xY9WIG6jfaUr82kOxEO
+8x/JNa4nj37DHUfpxCIVFMsHSxmpERJ1luIODRmwlY5lFsDXluH2p/F3b6ZQ9aX3
+lAD4kkE281DJIrnX5OweR2Yq3Q83ZL3a5KKdbRAyEHdOHPpPVAihCOziMRhY3kXh
+5bRFx16AKd4JBpQXWuU=
+=JYko
+-----END PGP SIGNATURE-----
+
+--Mrvc8Do60m4Vi01BQn8EmDBswbL577mMf--
