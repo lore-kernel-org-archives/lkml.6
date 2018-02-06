@@ -1,259 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeBFPzL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 10:55:11 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:60569 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751424AbeBFPzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 10:55:04 -0500
+        id S1752518AbeBFP43 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 10:56:29 -0500
+Received: from mail-eopbgr660125.outbound.protection.outlook.com ([40.107.66.125]:57376
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752286AbeBFP4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 10:56:23 -0500
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: Keith Busch <keith.busch@intel.com>
+CC: "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] nvme-pci: Fix incorrect use of CMB size to calculate
+ q_depth
+Thread-Topic: [PATCH] nvme-pci: Fix incorrect use of CMB size to calculate
+ q_depth
+Thread-Index: AQHTntE5A1jmE7IvrEqtRXiOa02FVaOXelIAgAAOHDI=
+Date: Tue, 6 Feb 2018 15:56:21 +0000
+Message-ID: <6ECB1B8A-A08D-466D-BD04-297ED26738E8@raithlin.com>
+References: <1517869943-3655-1-git-send-email-sbates@raithlin.com>,<20180206150552.GD31110@localhost.localdomain>
+In-Reply-To: <20180206150552.GD31110@localhost.localdomain>
+Accept-Language: en-CA, en-US
+Content-Language: en-CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [207.228.78.184]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1869;7:fvPQud5XmPEJlWqNVGOvhU0wyAvtnyYrryDbzeUZ5XgT6JCMTMoPLDdJG7CxMpiAsjmNInS73bIqJgQsqZbTSQ6ezQ4LMIMHipXmIUZOJeR23FLuM9rG/ZzlDvh/RTja26Er/UPg+V3eAOpvnad6iY36pCnDgy3KFCULXaI8dT7fQs9jx4uVutCZsYBtaBMgsR4YJ8oy6QsStpBta10h18LVasVQKREpSpsq1I45yQR1b5c3Qk/hlaI2btVU1+Vl
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: 6a176c98-0374-4eb9-9c47-08d56d7a2ac8
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:YTXPR0101MB1869;
+x-ms-traffictypediagnostic: YTXPR0101MB1869:
+x-microsoft-antispam-prvs: <YTXPR0101MB1869B5812188C5A1038394BDAAFD0@YTXPR0101MB1869.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231101)(2400082)(944501161)(93006095)(93001095)(3002001)(10201501046)(6041288)(20161123558120)(2016111802025)(20161123560045)(20161123562045)(20161123564045)(6043046)(6072148)(201708071742011);SRVR:YTXPR0101MB1869;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1869;
+x-forefront-prvs: 0575F81B58
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39830400003)(376002)(39380400002)(346002)(396003)(51914003)(189003)(199004)(2906002)(2900100001)(99286004)(4326008)(86362001)(3846002)(6116002)(68736007)(229853002)(106356001)(6246003)(97736004)(54906003)(25786009)(83716003)(6916009)(2950100002)(186003)(26005)(478600001)(102836004)(53546011)(6506007)(14454004)(76176011)(5250100002)(3660700001)(8936002)(316002)(53936002)(82746002)(33656002)(305945005)(6486002)(5660300001)(7736002)(36756003)(3280700002)(66066001)(6512007)(105586002)(8676002)(81156014)(81166006)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1869;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: i1mvVZCDO2Q/s3i0z9X1fDioiJlfidMrb3ggs2qFm6iYne9+4rms5lto6R7IcQYGx0Ns8VbTVVwB84OrXXR6+g==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date: Tue, 06 Feb 2018 16:55:02 +0100
-From: stefan@agner.ch
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        shijie.huang@arm.com, max.oss.09@gmail.com, richard@nod.at,
-        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
-        han.xu@nxp.com, dwmw2@infradead.org
-Subject: Re: [PATCH] mtd: nand: gpmi: fall back to legacy mode if no ECC
- information present
-In-Reply-To: <20180206164053.67fe4d0a@bbrezillon>
-References: <20180129144440.13648-1-stefan@agner.ch>
- <20180130142348.35f1bce3@bbrezillon>
- <d7a812de1b96be3460230efde4914ec1@agner.ch>
- <20180131105705.17bbe858@bbrezillon>
- <33bcf28ff1c613886c950465160e5a97@agner.ch>
- <4952bf96840ae5b0caba7b8f472e2b1b@agner.ch>
- <20180206164053.67fe4d0a@bbrezillon>
-Message-ID: <ee15a445609d09cdecc99cbe102cd7c3@agner.ch>
-User-Agent: Roundcube Webmail/1.3.3
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a176c98-0374-4eb9-9c47-08d56d7a2ac8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2018 15:56:21.3396
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1869
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w16FuY3Y001194
 
-On 06.02.2018 16:40, Boris Brezillon wrote:
-> On Mon, 05 Feb 2018 23:16:57 +0100
-> stefan@agner.ch wrote:
+
+> On Feb 6, 2018, at 8:02 AM, Keith Busch <keith.busch@intel.com> wrote:
 > 
->> Hi Boris,
->>
->> [Also adding Huang]
->>
->> On 31.01.2018 22:18, stefan@agner.ch wrote:
->> > I accidentally removed ML/cc before, re-adding.
->> >
->> > On 31.01.2018 10:57, Boris Brezillon wrote:
->> >> On Wed, 31 Jan 2018 10:19:05 +0100
->> >> stefan@agner.ch wrote:
->> >>
->> >>> On 30.01.2018 14:23, Boris Brezillon wrote:
->> >>> > Hi Stefan,
->> >>> >
->> >>> > On Mon, 29 Jan 2018 15:44:40 +0100
->> >>> > Stefan Agner <stefan@agner.ch> wrote:
->> >>> >
->> >>> >> In case fsl,use-minimum-ecc is set, the driver tries to determine
->> >>> >> ECC layout by using the ECC information provided by the MTD stack.
->> >>> >> However, in case the NAND chip does not provide any information,
->> >>> >> the driver currently fails with:
->> >>> >>   nand: device found, Manufacturer ID: 0xc2, Chip ID: 0xf1
->> >>> >>   nand: Macronix NAND 128MiB 3,3V 8-bit
->> >>> >>   nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
->> >>> >>   gpmi-nand 1806000.gpmi-nand: Error setting BCH geometry : 1
->> >>> >>   gpmi-nand: probe of 1806000.gpmi-nand failed with error 1
->> >>> >>
->> >>> >> Fall back to implementation specific default mode if no ECC
->> >>> >> information are provided by the NAND chip and fsl,use-minimum-ecc
->> >>> >> is specified.
->> >>> >
->> >>> > Hm, this sounds a bit fragile: if we ever fix the Macronix driver
->> >>> > (which should be done BTW) to set the appropriate ECC requirements, it
->> >>> > will break all platforms that were relying on this 'fall back to legacy
->> >>> > logic'.
->> >>>
->> >>> I see. It is just that downstream behaves that way, hence we sell
->> >>> modules which use minimal ECC on ONFI enabled chips and legacy (maximum
->> >>> ECC which fits into OOB) on modules with non-ONFI chips.
->> >>
->> >> And I guess you use the same DT for both variants of the board :-/
->> >>
->> >
->> > Actually we only have two SKUs, and they differ also otherwise so I have
->> > two DTs anyway.
->> >
->> >>>
->> >>> Currently we operate the above Macronix chip with 8-bit ECC since quite
->> >>> a while.
->> >>
->> >> Honestly, I don't see a good solution here except adding an extra DT or
->> >> live-patching it from the bootloader, because, even if this hack works
->> >> for you know, it might not in the future.
->> >
->> > Extra DT is fine for Linux.
->> >
->> > The problem is more with U-Boot, where I tried to add minimal ECC
->> > support via Kconfig symbol and align with Linux behavior. For U-Boot I
->> > would really prefer to have a single binary for all SKUs...
->> >
->> > I already sent a first patchset
->> > https://patchwork.ozlabs.org/patch/867180/
->> >
->> > I guess it should be somehow possible to do a board specific selection
->> > of ECC. But this is a discussion for another thread.
->> >
->> >>
->> >> In the future, if you plan to have boards with different variants of
->> >> NANDs, I recommend that you always maximize ECC, this way you won't
->> >> have this kind of issues.
->> >
->> > Makes sense. Unfortunately, for those products we already ship, changing
->> > would be rather painful.
->> >
->> >>
->> >>>
->> >>> > So, if what you really want is legacy_set_geometry(), don't specify
->> >>> > "fsl,use-minimum-ecc" in your DT and you should be good. Otherwise, fix
->> >>> > the Macronix driver to initialize ->ecc_{strength,step_size}_ds
->> >>> > appropriately.
->> >>>
->> >>> The datasheet says:
->> >>> • High Reliability
->> >>> - Endurance: 100K cycles (with 1-bit ECC per 528-byte)
->> >>>
->> >>> So we would set ecc_strenght to 1?
->> >>
->> >> If the datasheet says so, then yes, you should have
->> >> ->ecc_strength_ds = 1 and ->ecc_step_size_ds = 512.
->> >>
->> >>> But then there is almost no room for
->> >>> wear leveling. I remember that I dumped the fixed bits once on such a
->> >>> chip, and there were several blocks from factory which needed one bit
->> >>> fixed...
->> >>
->> >> Well, that's a different issue. You might want to maximize the ECC
->> >> strength for your specific board. In this case, you should not specify
->> >> "fsl,use-minimum-ecc" in your DT, or, if the driver supports it (but I
->> >> doubt it does), you should add "nand-ecc-maximize". Alternatively, if
->> >> you want to keep some of the OOB space, you can ask for a specific ECC
->> >> config with the "nand-ecc-strength" and "nand-ecc-step-size" properties.
->> >
->> > Different issue, but in the end all I care about: Does wear leveling
->> > work properly.
->> >
->> > The NAND chip documentation also mentions that typical access is per
->> > page (2K), I guess if one uses a single ECC across the complete page
->> > then 4-bits are available, which should allow a somewhat decent wear
->> > leveling.
->> >
->> > I guess we can go with nand-ecc-strength/nand-ecc-step-size for that
->> > chip for now.
->>
->> This seems not to be the case for the driver in question gpmi_nand_init
->> calls:
->> nand_scan_ident -> nand_dt_init (which fills
->> chip->ecc.strength/chip->ecc.size)
->>
->> then
->>
->> gpmi_init_last -> gpmi_set_geometry -> bch_set_geometry ->
->> legacy_set_geometry/set_geometry_by_ecc_info
->>
->> In both cases struct bch_geometry is calculated and overwrites
->> ecc.strength/ecc.size (without considering either of them,
->> set_geometry_by_ecc_info is considering ecc_strength_ds/ecc_step_ds
->> though).
->>
->> I guess we would have to add a third option in case device tree
->> specifies strength/size, and validate whether it can be reasonably
->> fulfilled?
->>
->> E.g. extend common_nfc_set_geometry:
->>
->>
->>  int common_nfc_set_geometry(struct gpmi_nand_data *this)
->>  {
->> +	struct nand_chip *chip = &this->nand;
->> +
->> +	if (chip->ecc.strength set && chip->ecc.strength set)
->> +		return set_geometry_by_ecc_dt_info(this);
->> +
->>  	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
->>  				|| legacy_set_geometry(this))
->>  		return set_geometry_by_ecc_info(this);
->>
->>  	return 0;
->>  }
+>> On Mon, Feb 05, 2018 at 03:32:23PM -0700, sbates@raithlin.com wrote:
+>> 
+>> -    if (dev->cmb && (dev->cmbsz & NVME_CMBSZ_SQS)) {
+>> +    if (dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
 > 
-> Or you can just patch set_geometry_by_ecc_info() to use
-> chip->ecc.strength and chip->ecc.size if they are set and fall back to 
-> chip->ecc_strength_ds and chip->ecc_step_ds when they're not:
+> Is this a prep patch for something coming later? dev->cmb is already
+> NULL if use_cmb_sqes is false.
 
-Hm, that sounds reasonable, will give this at try. Thanks!
+Thanks Keith. 
 
---
-Stefan
+Not sure how I missed this. I was working on OOT patches to enable WDS and RDS in the CMB. I *thought* I’d confirmed this patch was applicable to upstream. Looks like I did not do that correctly. 
 
-> 
-> --->8---
-> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> index ab9a0a2ed3b2..ded4b7389960 100644
-> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> @@ -204,11 +204,19 @@ static int set_geometry_by_ecc_info(struct
-> gpmi_nand_data *this)
->         struct nand_chip *chip = &this->nand;
->         struct mtd_info *mtd = nand_to_mtd(chip);
->         unsigned int block_mark_bit_offset;
-> -
-> -       if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> +       unsigned int ecc_strength, ecc_step;
-> +
-> +       if (chip->ecc.strength > 0 && chip->ecc.size > 0) {
-> +               ecc_strength = chip->ecc.strength;
-> +               ecc_step = chip->ecc.size;
-> +       } else if (chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0) {
-> +               ecc_strength = chip->ecc_strength_ds;
-> +               ecc_step = chip->ecc_step_ds;
-> +       } else {
->                 return -EINVAL;
-> +       }
->  
-> -       switch (chip->ecc_step_ds) {
-> +       switch (ecc_step) {
->         case SZ_512:
->                 geo->gf_len = 13;
->                 break;
-> @@ -218,11 +226,11 @@ static int set_geometry_by_ecc_info(struct
-> gpmi_nand_data *this)
->         default:
->                 dev_err(this->dev,
->                         "unsupported nand chip. ecc bits : %d, ecc size : %d\n",
-> -                       chip->ecc_strength_ds, chip->ecc_step_ds);
-> +                       ecc_strength, ecc_step);
->                 return -EINVAL;
->         }
-> -       geo->ecc_chunk_size = chip->ecc_step_ds;
-> -       geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
-> +       geo->ecc_chunk_size = ecc_step;
-> +       geo->ecc_strength = round_up(ecc_strength, 2);
->         if (!gpmi_check_ecc(this))
->                 return -EINVAL;
->  
-> @@ -230,10 +238,12 @@ static int set_geometry_by_ecc_info(struct
-> gpmi_nand_data *this)
->         if (geo->ecc_chunk_size < mtd->oobsize) {
->                 dev_err(this->dev,
->                         "unsupported nand chip. ecc size: %d, oob size : %d\n",
-> -                       chip->ecc_step_ds, mtd->oobsize);
-> +                       ecc_step, mtd->oobsize);
->                 return -EINVAL;
->         }
->  
-> +       chip->ecc.strength = geo->ecc_strength;
-> +
->         /* The default value, see comment in the legacy_set_geometry(). */
->         geo->metadata_size = 10;
+Sorry for the churn. We can leave this patch out for now. Thanks for the prompt feedback everyone!
+
+Stephen 
