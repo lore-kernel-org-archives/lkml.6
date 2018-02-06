@@ -1,145 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752468AbeBFPej (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 10:34:39 -0500
-Received: from mail02.iobjects.de ([188.40.134.68]:50186 "EHLO
-        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752185AbeBFPea (ORCPT
+        id S1752482AbeBFPlK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 10:41:10 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:57520 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeBFPlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 10:34:30 -0500
-Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Alban Browaeys <alban.browaeys@gmail.com>, ming.lei@redhat.com,
-        ivan@ludios.org, 169364@studenti.unimore.it,
-        Serena Ziviani <ziviani.serena@gmail.com>
-References: <20180205190510.5499-1-paolo.valente@linaro.org>
- <20180205190510.5499-2-paolo.valente@linaro.org>
- <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
- <1517903761.9843.12.camel@gmx.de>
- <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
- <1517918234.25841.31.camel@gmx.de>
- <BE442D49-D280-4B35-89ED-43C729263F2A@linaro.org>
- <7770589c-32e0-6bdb-530a-34c642e46630@applied-asynchrony.com>
- <a02e6252-e607-3a49-0916-81d7cabc768a@applied-asynchrony.com>
- <E5D79BA7-68B1-4107-9D49-0AC512BD254F@linaro.org>
-From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Organization: Applied Asynchrony, Inc.
-Message-ID: <b38a023d-c1c0-628a-b39c-2fe1d4250ba2@applied-asynchrony.com>
-Date: Tue, 6 Feb 2018 16:34:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 6 Feb 2018 10:41:05 -0500
+Date: Tue, 6 Feb 2018 16:40:53 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: stefan@agner.ch
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        shijie.huang@arm.com, max.oss.09@gmail.com, richard@nod.at,
+        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
+        han.xu@nxp.com, dwmw2@infradead.org
+Subject: Re: [PATCH] mtd: nand: gpmi: fall back to legacy mode if no ECC
+ information present
+Message-ID: <20180206164053.67fe4d0a@bbrezillon>
+In-Reply-To: <4952bf96840ae5b0caba7b8f472e2b1b@agner.ch>
+References: <20180129144440.13648-1-stefan@agner.ch>
+        <20180130142348.35f1bce3@bbrezillon>
+        <d7a812de1b96be3460230efde4914ec1@agner.ch>
+        <20180131105705.17bbe858@bbrezillon>
+        <33bcf28ff1c613886c950465160e5a97@agner.ch>
+        <4952bf96840ae5b0caba7b8f472e2b1b@agner.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <E5D79BA7-68B1-4107-9D49-0AC512BD254F@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/18 15:55, Paolo Valente wrote:
-> 
-> 
->> Il giorno 06 feb 2018, alle ore 14:40, Holger Hoffstätte <holger@applied-asynchrony.com> ha scritto:
->>
->>
->> The plot thickens!
->>
-> 
-> Yep, the culprit seems clearer, though ...
-> 
->> Just as I was about to post that I didn't have any problems - because
->> I didn't have any - I decided to do a second test, activated bfq on my
->> workstation, on a hunch typed "sync" and .. the machine locked up, hard.
->>
->> Rebooted, activated bfq, typed sync..sync hangs. Luckily this time
->> a second terminal was still alive, so I could capture a trace for
->> your enjoyment:
->>
->> Feb  6 14:28:17 ragnarok kernel: io scheduler bfq registered
->> Feb  6 14:28:20 ragnarok kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000030
->> Feb  6 14:28:20 ragnarok kernel: IP: bfq_put_queue+0x10b/0x130 [bfq]
->> Feb  6 14:28:20 ragnarok kernel: PGD 0 P4D 0 
->> Feb  6 14:28:20 ragnarok kernel: Oops: 0000 [#1] SMP PTI
->> Feb  6 14:28:20 ragnarok kernel: Modules linked in: bfq lz4 lz4_compress lz4_decompress nfs lockd grace sunrpc autofs4 sch_fq_codel it87 hwmon_vid x86_pkg_temp_thermal snd_hda_codec_realtek coretemp radeon crc32_pclmul snd_hda_codec_generic crc32c_intel pcbc snd_hda_codec_hdmi i2c_algo_bit aesni_intel drm_kms_helper aes_x86_64 uvcvideo syscopyarea crypto_simd snd_hda_intel sysfillrect cryptd snd_usb_audio sysimgblt videobuf2_vmalloc glue_helper fb_sys_fops snd_hda_codec snd_hwdep videobuf2_memops ttm videobuf2_v4l2 snd_usbmidi_lib videobuf2_core snd_rawmidi snd_hda_core drm snd_seq_device videodev snd_pcm i2c_i801 usbhid snd_timer i2c_core snd backlight soundcore r8169 parport_pc mii parport
->> Feb  6 14:28:20 ragnarok kernel: CPU: 0 PID: 4 Comm: kworker/0:0H Not tainted 4.14.18 #1
->> Feb  6 14:28:20 ragnarok kernel: Hardware name: Gigabyte Technology Co., Ltd. P67-DS3-B3/P67-DS3-B3, BIOS F1 05/06/2011
->> Feb  6 14:28:20 ragnarok kernel: Workqueue: kblockd blk_mq_requeue_work
->> Feb  6 14:28:20 ragnarok kernel: task: ffff88060395a1c0 task.stack: ffffc90000044000
->> Feb  6 14:28:20 ragnarok kernel: RIP: 0010:bfq_put_queue+0x10b/0x130 [bfq]
->> Feb  6 14:28:20 ragnarok kernel: RSP: 0018:ffffc90000047ca0 EFLAGS: 00010286
->> Feb  6 14:28:20 ragnarok kernel: RAX: 0000000000000008 RBX: ffff8806023db690 RCX: 0000000000000000
->> Feb  6 14:28:20 ragnarok kernel: RDX: 0000000000000000 RSI: ffff880601bb39b0 RDI: ffff880601a56400
->> Feb  6 14:28:20 ragnarok kernel: RBP: 0000000001bb3980 R08: 0000000000000053 R09: ffff8806023db690
->> Feb  6 14:28:20 ragnarok kernel: R10: 000000001dd0f11e R11: 00000000080a011b R12: ffff880601a56400
->> Feb  6 14:28:20 ragnarok kernel: R13: ffff8806023dbed0 R14: 0000000000000053 R15: 0000000000000000
->> Feb  6 14:28:20 ragnarok kernel: FS:  0000000000000000(0000) GS:ffff88061f400000(0000) knlGS:0000000000000000
->> Feb  6 14:28:20 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> Feb  6 14:28:20 ragnarok kernel: CR2: 0000000000000030 CR3: 000000000200a002 CR4: 00000000000606f0
->> Feb  6 14:28:20 ragnarok kernel: Call Trace:
->> Feb  6 14:28:20 ragnarok kernel:  bfq_finish_requeue_request+0x4b/0x370 [bfq]
->> Feb  6 14:28:20 ragnarok kernel:  __blk_mq_requeue_request+0x57/0x130
->> Feb  6 14:28:20 ragnarok kernel:  blk_mq_dispatch_rq_list+0x1b3/0x510
->> Feb  6 14:28:20 ragnarok kernel:  ? __bfq_bfqd_reset_in_service+0x20/0x70 [bfq]
->> Feb  6 14:28:20 ragnarok kernel:  ? bfq_bfqq_expire+0x212/0x740 [bfq]
->> Feb  6 14:28:20 ragnarok kernel:  blk_mq_sched_dispatch_requests+0xf0/0x170
->> Feb  6 14:28:20 ragnarok kernel:  __blk_mq_run_hw_queue+0x4e/0x90
->> Feb  6 14:28:20 ragnarok kernel:  __blk_mq_delay_run_hw_queue+0x73/0x80
->> Feb  6 14:28:20 ragnarok kernel:  blk_mq_run_hw_queue+0x53/0x150
->> Feb  6 14:28:20 ragnarok kernel:  blk_mq_run_hw_queues+0x3a/0x50
->> Feb  6 14:28:20 ragnarok kernel:  blk_mq_requeue_work+0x104/0x110
->> Feb  6 14:28:20 ragnarok kernel:  process_one_work+0x1d4/0x3d0
->> Feb  6 14:28:20 ragnarok kernel:  worker_thread+0x2b/0x3c0
->> Feb  6 14:28:20 ragnarok kernel:  ? process_one_work+0x3d0/0x3d0
->> Feb  6 14:28:20 ragnarok kernel:  kthread+0x117/0x130
->> Feb  6 14:28:20 ragnarok kernel:  ? kthread_create_on_node+0x40/0x40
->> Feb  6 14:28:20 ragnarok kernel:  ret_from_fork+0x1f/0x30
->> Feb  6 14:28:20 ragnarok kernel: Code: c1 e8 06 83 e0 01 48 83 f8 01 45 19 f6 e8 ce 3a 00 00 41 83 e6 ee 48 89 c7 41 83 c6 53 e8 9e 3a 00 00 49 89 d9 45 89 f0 44 89 f9 <48> 8b 70 28 48 c7 c2 d8 00 25 a0 55 4c 89 ef e8 11 ba ea e0 8b 
->> Feb  6 14:28:20 ragnarok kernel: RIP: bfq_put_queue+0x10b/0x130 [bfq] RSP: ffffc90000047ca0
->> Feb  6 14:28:20 ragnarok kernel: CR2: 0000000000000030
->> Feb  6 14:28:20 ragnarok kernel: ---[ end trace 8b782ace30a4e7d8 ]---
->>
-> 
-> Same request: please
-> gdb <buildir>/block/bfq-iosched.o
-> list *(bfq_finish_requeue_request+0x4b)
-> list *(bfq_put_queue+0x10b)
+On Mon, 05 Feb 2018 23:16:57 +0100
+stefan@agner.ch wrote:
 
-(gdb) list *(bfq_finish_requeue_request+0x4b)
-0x46cb is in bfq_finish_requeue_request (block/bfq-iosched.c:4804).
-4799		 * that re-insertions of requeued requests, without
-4800		 * re-preparation, can happen only for pass_through or at_head
-4801		 * requests (which are not re-inserted into bfq internal
-4802		 * queues).
-4803		 */
-4804		rq->elv.priv[0] = NULL;
-4805		rq->elv.priv[1] = NULL;
-4806	}
-4807	
-4808	/*
+> Hi Boris,
+> 
+> [Also adding Huang]
+> 
+> On 31.01.2018 22:18, stefan@agner.ch wrote:
+> > I accidentally removed ML/cc before, re-adding.
+> > 
+> > On 31.01.2018 10:57, Boris Brezillon wrote:  
+> >> On Wed, 31 Jan 2018 10:19:05 +0100
+> >> stefan@agner.ch wrote:
+> >>  
+> >>> On 30.01.2018 14:23, Boris Brezillon wrote:  
+> >>> > Hi Stefan,
+> >>> >
+> >>> > On Mon, 29 Jan 2018 15:44:40 +0100
+> >>> > Stefan Agner <stefan@agner.ch> wrote:
+> >>> >  
+> >>> >> In case fsl,use-minimum-ecc is set, the driver tries to determine
+> >>> >> ECC layout by using the ECC information provided by the MTD stack.
+> >>> >> However, in case the NAND chip does not provide any information,
+> >>> >> the driver currently fails with:
+> >>> >>   nand: device found, Manufacturer ID: 0xc2, Chip ID: 0xf1
+> >>> >>   nand: Macronix NAND 128MiB 3,3V 8-bit
+> >>> >>   nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
+> >>> >>   gpmi-nand 1806000.gpmi-nand: Error setting BCH geometry : 1
+> >>> >>   gpmi-nand: probe of 1806000.gpmi-nand failed with error 1
+> >>> >>
+> >>> >> Fall back to implementation specific default mode if no ECC
+> >>> >> information are provided by the NAND chip and fsl,use-minimum-ecc
+> >>> >> is specified.  
+> >>> >
+> >>> > Hm, this sounds a bit fragile: if we ever fix the Macronix driver
+> >>> > (which should be done BTW) to set the appropriate ECC requirements, it
+> >>> > will break all platforms that were relying on this 'fall back to legacy
+> >>> > logic'.  
+> >>>
+> >>> I see. It is just that downstream behaves that way, hence we sell
+> >>> modules which use minimal ECC on ONFI enabled chips and legacy (maximum
+> >>> ECC which fits into OOB) on modules with non-ONFI chips.  
+> >>
+> >> And I guess you use the same DT for both variants of the board :-/
+> >>  
+> > 
+> > Actually we only have two SKUs, and they differ also otherwise so I have
+> > two DTs anyway.
+> >   
+> >>>
+> >>> Currently we operate the above Macronix chip with 8-bit ECC since quite
+> >>> a while.  
+> >>
+> >> Honestly, I don't see a good solution here except adding an extra DT or
+> >> live-patching it from the bootloader, because, even if this hack works
+> >> for you know, it might not in the future.  
+> > 
+> > Extra DT is fine for Linux.
+> > 
+> > The problem is more with U-Boot, where I tried to add minimal ECC
+> > support via Kconfig symbol and align with Linux behavior. For U-Boot I
+> > would really prefer to have a single binary for all SKUs...
+> > 
+> > I already sent a first patchset
+> > https://patchwork.ozlabs.org/patch/867180/
+> > 
+> > I guess it should be somehow possible to do a board specific selection
+> > of ECC. But this is a discussion for another thread.
+> >   
+> >>
+> >> In the future, if you plan to have boards with different variants of
+> >> NANDs, I recommend that you always maximize ECC, this way you won't
+> >> have this kind of issues.  
+> > 
+> > Makes sense. Unfortunately, for those products we already ship, changing
+> > would be rather painful.
+> >   
+> >>  
+> >>>  
+> >>> > So, if what you really want is legacy_set_geometry(), don't specify
+> >>> > "fsl,use-minimum-ecc" in your DT and you should be good. Otherwise, fix
+> >>> > the Macronix driver to initialize ->ecc_{strength,step_size}_ds
+> >>> > appropriately.  
+> >>>
+> >>> The datasheet says:
+> >>> • High Reliability
+> >>> - Endurance: 100K cycles (with 1-bit ECC per 528-byte)
+> >>>
+> >>> So we would set ecc_strenght to 1?  
+> >>
+> >> If the datasheet says so, then yes, you should have  
+> >> ->ecc_strength_ds = 1 and ->ecc_step_size_ds = 512.  
+> >>  
+> >>> But then there is almost no room for
+> >>> wear leveling. I remember that I dumped the fixed bits once on such a
+> >>> chip, and there were several blocks from factory which needed one bit
+> >>> fixed...  
+> >>
+> >> Well, that's a different issue. You might want to maximize the ECC
+> >> strength for your specific board. In this case, you should not specify
+> >> "fsl,use-minimum-ecc" in your DT, or, if the driver supports it (but I
+> >> doubt it does), you should add "nand-ecc-maximize". Alternatively, if
+> >> you want to keep some of the OOB space, you can ask for a specific ECC
+> >> config with the "nand-ecc-strength" and "nand-ecc-step-size" properties.  
+> > 
+> > Different issue, but in the end all I care about: Does wear leveling
+> > work properly.
+> > 
+> > The NAND chip documentation also mentions that typical access is per
+> > page (2K), I guess if one uses a single ECC across the complete page
+> > then 4-bits are available, which should allow a somewhat decent wear
+> > leveling.
+> > 
+> > I guess we can go with nand-ecc-strength/nand-ecc-step-size for that
+> > chip for now.  
+> 
+> This seems not to be the case for the driver in question gpmi_nand_init
+> calls:
+> nand_scan_ident -> nand_dt_init (which fills
+> chip->ecc.strength/chip->ecc.size)
+> 
+> then
+> 
+> gpmi_init_last -> gpmi_set_geometry -> bch_set_geometry ->
+> legacy_set_geometry/set_geometry_by_ecc_info
+> 
+> In both cases struct bch_geometry is calculated and overwrites
+> ecc.strength/ecc.size (without considering either of them,
+> set_geometry_by_ecc_info is considering ecc_strength_ds/ecc_step_ds
+> though).
+> 
+> I guess we would have to add a third option in case device tree
+> specifies strength/size, and validate whether it can be reasonably
+> fulfilled?
+> 
+> E.g. extend common_nfc_set_geometry:
+> 
+> 
+>  int common_nfc_set_geometry(struct gpmi_nand_data *this)
+>  {
+> +	struct nand_chip *chip = &this->nand;
+> +
+> +	if (chip->ecc.strength set && chip->ecc.strength set)
+> +		return set_geometry_by_ecc_dt_info(this);
+> +
+>  	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
+>  				|| legacy_set_geometry(this))
+>  		return set_geometry_by_ecc_info(this);
+>  
+>  	return 0;
+>  }
 
-(gdb) list *(bfq_put_queue+0x10b)
-0x415b is in bfq_put_queue (block/bfq-iosched.c:3978).
-3973	#ifdef CONFIG_BFQ_GROUP_IOSCHED
-3974		struct bfq_group *bfqg = bfqq_group(bfqq);
-3975	#endif
-3976	
-3977		if (bfqq->bfqd)
-3978			bfq_log_bfqq(bfqq->bfqd, bfqq, "put_queue: %p %d",
-3979				     bfqq, bfqq->ref);
-3980	
-3981		bfqq->ref--;
-3982		if (bfqq->ref)
+Or you can just patch set_geometry_by_ecc_info() to use
+chip->ecc.strength and chip->ecc.size if they are set and fall back to 
+chip->ecc_strength_ds and chip->ecc_step_ds when they're not:
 
-Hope this helps!
-
-Holger
+--->8---
+diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+index ab9a0a2ed3b2..ded4b7389960 100644
+--- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+@@ -204,11 +204,19 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+        struct nand_chip *chip = &this->nand;
+        struct mtd_info *mtd = nand_to_mtd(chip);
+        unsigned int block_mark_bit_offset;
+-
+-       if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
++       unsigned int ecc_strength, ecc_step;
++
++       if (chip->ecc.strength > 0 && chip->ecc.size > 0) {
++               ecc_strength = chip->ecc.strength;
++               ecc_step = chip->ecc.size;
++       } else if (chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0) {
++               ecc_strength = chip->ecc_strength_ds;
++               ecc_step = chip->ecc_step_ds;
++       } else {
+                return -EINVAL;
++       }
+ 
+-       switch (chip->ecc_step_ds) {
++       switch (ecc_step) {
+        case SZ_512:
+                geo->gf_len = 13;
+                break;
+@@ -218,11 +226,11 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+        default:
+                dev_err(this->dev,
+                        "unsupported nand chip. ecc bits : %d, ecc size : %d\n",
+-                       chip->ecc_strength_ds, chip->ecc_step_ds);
++                       ecc_strength, ecc_step);
+                return -EINVAL;
+        }
+-       geo->ecc_chunk_size = chip->ecc_step_ds;
+-       geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
++       geo->ecc_chunk_size = ecc_step;
++       geo->ecc_strength = round_up(ecc_strength, 2);
+        if (!gpmi_check_ecc(this))
+                return -EINVAL;
+ 
+@@ -230,10 +238,12 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+        if (geo->ecc_chunk_size < mtd->oobsize) {
+                dev_err(this->dev,
+                        "unsupported nand chip. ecc size: %d, oob size : %d\n",
+-                       chip->ecc_step_ds, mtd->oobsize);
++                       ecc_step, mtd->oobsize);
+                return -EINVAL;
+        }
+ 
++       chip->ecc.strength = geo->ecc_strength;
++
+        /* The default value, see comment in the legacy_set_geometry(). */
+        geo->metadata_size = 10;
