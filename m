@@ -1,29 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752896AbeBFMAx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 07:00:53 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:38859 "EHLO
+        id S1752989AbeBFMBi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 07:01:38 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:45433 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752246AbeBFMAo (ORCPT
+        with ESMTP id S1752597AbeBFMBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 07:00:44 -0500
-Date: Tue, 6 Feb 2018 03:56:27 -0800
+        Tue, 6 Feb 2018 07:01:19 -0500
+Date: Tue, 6 Feb 2018 03:56:54 -0800
 From: tip-bot for Mel Gorman <tipbot@zytor.com>
-Message-ID: <tip-806486c377e33ab662de6d47902e9e2a32b79368@git.kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        matt@codeblueprint.co.uk, peterz@infradead.org, efault@gmx.de,
-        hpa@zytor.com, tglx@linutronix.de, mgorman@techsingularity.net,
+Message-ID: <tip-32e839dda3ba576943365f0f5817ce5c843137dc@git.kernel.org>
+Cc: matt@codeblueprint.co.uk, hpa@zytor.com, torvalds@linux-foundation.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        efault@gmx.de, mgorman@techsingularity.net, tglx@linutronix.de
+Reply-To: mgorman@techsingularity.net, efault@gmx.de, peterz@infradead.org,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        matt@codeblueprint.co.uk, hpa@zytor.com, linux-kernel@vger.kernel.org,
         mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com, efault@gmx.de,
-        mgorman@techsingularity.net, matt@codeblueprint.co.uk,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org
-In-Reply-To: <20180130104555.4125-4-mgorman@techsingularity.net>
-References: <20180130104555.4125-4-mgorman@techsingularity.net>
+In-Reply-To: <20180130104555.4125-5-mgorman@techsingularity.net>
+References: <20180130104555.4125-5-mgorman@techsingularity.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/fair: Do not migrate if the prev_cpu is
- idle
-Git-Commit-ID: 806486c377e33ab662de6d47902e9e2a32b79368
+Subject: [tip:sched/urgent] sched/fair: Use a recently used CPU as an idle
+ candidate and the basis for SIS
+Git-Commit-ID: 32e839dda3ba576943365f0f5817ce5c843137dc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,55 +35,85 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  806486c377e33ab662de6d47902e9e2a32b79368
-Gitweb:     https://git.kernel.org/tip/806486c377e33ab662de6d47902e9e2a32b79368
+Commit-ID:  32e839dda3ba576943365f0f5817ce5c843137dc
+Gitweb:     https://git.kernel.org/tip/32e839dda3ba576943365f0f5817ce5c843137dc
 Author:     Mel Gorman <mgorman@techsingularity.net>
-AuthorDate: Tue, 30 Jan 2018 10:45:54 +0000
+AuthorDate: Tue, 30 Jan 2018 10:45:55 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 6 Feb 2018 10:20:36 +0100
+CommitDate: Tue, 6 Feb 2018 10:20:37 +0100
 
-sched/fair: Do not migrate if the prev_cpu is idle
+sched/fair: Use a recently used CPU as an idle candidate and the basis for SIS
 
-wake_affine_idle() prefers to move a task to the current CPU if the
-wakeup is due to an interrupt. The expectation is that the interrupt
-data is cache hot and relevant to the waking task as well as avoiding
-a search. However, there is no way to determine if there was cache hot
-data on the previous CPU that may exceed the interrupt data. Furthermore,
-round-robin delivery of interrupts can migrate tasks around a socket where
-each CPU is under-utilised.  This can interact badly with cpufreq which
-makes decisions based on per-cpu data. It has been observed on machines
-with HWP that p-states are not boosted to their maximum levels even though
-the workload is latency and throughput sensitive.
+The select_idle_sibling() (SIS) rewrite in commit:
 
-This patch uses the previous CPU for the task if it's idle and cache-affine
-with the current CPU even if the current CPU is idle due to the wakup
-being related to the interrupt. This reduces migrations at the cost of
-the interrupt data not being cache hot when the task wakes.
+  10e2f1acd010 ("sched/core: Rewrite and improve select_idle_siblings()")
 
-A variety of workloads were tested on various machines and no adverse
-impact was noticed that was outside noise. dbench on ext4 on UMA showed
-roughly 10% reduction in the number of CPU migrations and it is a case
-where interrupts are frequent for IO competions. In most cases, the
-difference in performance is quite small but variability is often
-reduced. For example, this is the result for pgbench running on a UMA
-machine with different numbers of clients.
+... replaced a domain iteration with a search that broadly speaking
+does a wrapped walk of the scheduler domain sharing a last-level-cache.
+
+While this had a number of improvements, one consequence is that two tasks
+that share a waker/wakee relationship push each other around a socket. Even
+though two tasks may be active, all cores are evenly used. This is great from
+a search perspective and spreads a load across individual cores, but it has
+adverse consequences for cpufreq. As each CPU has relatively low utilisation,
+cpufreq may decide the utilisation is too low to used a higher P-state and
+overall computation throughput suffers.
+
+While individual cpufreq and cpuidle drivers may compensate by artifically
+boosting P-state (at c0) or avoiding lower C-states (during idle), it does
+not help if hardware-based cpufreq (e.g. HWP) is used.
+
+This patch tracks a recently used CPU based on what CPU a task was running
+on when it last was a waker a CPU it was recently using when a task is a
+wakee. During SIS, the recently used CPU is used as a target if it's still
+allowed by the task and is idle.
+
+The benefit may be non-obvious so consider an example of two tasks
+communicating back and forth. Task A may be an application doing IO where
+task B is a kworker or kthread like journald. Task A may issue IO, wake
+B and B wakes up A on completion.  With the existing scheme this may look
+like the following (potentially different IDs if SMT is in use but similar
+principal applies).
+
+ A (cpu 0)	wake	B (wakes on cpu 1)
+ B (cpu 1)	wake	A (wakes on cpu 2)
+ A (cpu 2)	wake	B (wakes on cpu 3)
+ etc.
+
+A careful reader may wonder why CPU 0 was not idle when B wakes A the
+first time and it's simply due to the fact that A can be rescheduled to
+another CPU and the pattern is that prev == target when B tries to wakeup A
+and the information about CPU 0 has been lost.
+
+With this patch, the pattern is more likely to be:
+
+ A (cpu 0)	wake	B (wakes on cpu 1)
+ B (cpu 1)	wake	A (wakes on cpu 0)
+ A (cpu 0)	wake	B (wakes on cpu 1)
+ etc
+
+i.e. two communicating casts are more likely to use just two cores instead
+of all available cores sharing a LLC.
+
+The most dramatic speedup was noticed on dbench using the XFS filesystem on
+UMA as clients interact heavily with workqueues in that configuration. Note
+that a similar speedup is not observed on ext4 as the wakeup pattern
+is different:
 
                           4.15.0-rc9             4.15.0-rc9
-                            baseline              waprev-v1
- Hmean     1     22096.28 (   0.00%)    22734.86 (   2.89%)
- Hmean     4     74633.42 (   0.00%)    75496.77 (   1.16%)
- Hmean     7    115017.50 (   0.00%)   113030.81 (  -1.73%)
- Hmean     12   126209.63 (   0.00%)   126613.40 (   0.32%)
- Hmean     16   131886.91 (   0.00%)   130844.35 (  -0.79%)
- Stddev    1       636.38 (   0.00%)      417.11 (  34.46%)
- Stddev    4       614.64 (   0.00%)      583.24 (   5.11%)
- Stddev    7       542.46 (   0.00%)      435.45 (  19.73%)
- Stddev    12      173.93 (   0.00%)      171.50 (   1.40%)
- Stddev    16      671.42 (   0.00%)      680.30 (  -1.32%)
- CoeffVar  1         2.88 (   0.00%)        1.83 (  36.26%)
+                           waprev-v1        biasancestor-v1
+ Hmean      1      287.54 (   0.00%)      817.01 ( 184.14%)
+ Hmean      2     1268.12 (   0.00%)     1781.24 (  40.46%)
+ Hmean      4     1739.68 (   0.00%)     1594.47 (  -8.35%)
+ Hmean      8     2464.12 (   0.00%)     2479.56 (   0.63%)
+ Hmean     64     1455.57 (   0.00%)     1434.68 (  -1.44%)
 
-Note that the different in performance is marginal but for low utilisation,
-there is less variability.
+The results can be less dramatic on NUMA where automatic balancing interferes
+with the test. It's also known that network benchmarks running on localhost
+also benefit quite a bit from this patch (roughly 10% on netperf RR for UDP
+and TCP depending on the machine). Hackbench also seens small improvements
+(6-11% depending on machine and thread count). The facebook schbench was also
+tested but in most cases showed little or no different to wakeup latencies.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -93,30 +122,91 @@ Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180130104555.4125-4-mgorman@techsingularity.net
+Link: http://lkml.kernel.org/r/20180130104555.4125-5-mgorman@techsingularity.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/sched.h |  8 ++++++++
+ kernel/sched/core.c   |  1 +
+ kernel/sched/fair.c   | 22 ++++++++++++++++++++--
+ 3 files changed, 29 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 166144c..92744e3 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -555,6 +555,14 @@ struct task_struct {
+ 	unsigned long			wakee_flip_decay_ts;
+ 	struct task_struct		*last_wakee;
+ 
++	/*
++	 * recent_used_cpu is initially set as the last CPU used by a task
++	 * that wakes affine another task. Waker/wakee relationships can
++	 * push tasks around a CPU where each wakeup moves to the next one.
++	 * Tracking a recently used CPU allows a quick search for a recently
++	 * used CPU that may be idle.
++	 */
++	int				recent_used_cpu;
+ 	int				wake_cpu;
+ #endif
+ 	int				on_rq;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index b40540e..36f113a 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2461,6 +2461,7 @@ void wake_up_new_task(struct task_struct *p)
+ 	 * Use __set_task_cpu() to avoid calling sched_class::migrate_task_rq,
+ 	 * as we're not fully set-up yet.
+ 	 */
++	p->recent_used_cpu = task_cpu(p);
+ 	__set_task_cpu(p, select_task_rq(p, task_cpu(p), SD_BALANCE_FORK, 0));
+ #endif
+ 	rq = __task_rq_lock(p, &rf);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 4c400d7..db45b35 100644
+index db45b35..5eb3ffc 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5700,9 +5700,15 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
- 	 * context. Only allow the move if cache is shared. Otherwise an
- 	 * interrupt intensive workload could force all tasks onto one
- 	 * node depending on the IO topology or IRQ affinity settings.
-+	 *
-+	 * If the prev_cpu is idle and cache affine then avoid a migration.
-+	 * There is no guarantee that the cache hot data from an interrupt
-+	 * is more important than cache hot data on the prev_cpu and from
-+	 * a cpufreq perspective, it's better to have higher utilisation
-+	 * on one CPU.
- 	 */
- 	if (idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
--		return this_cpu;
-+		return idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
+@@ -6197,7 +6197,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ {
+ 	struct sched_domain *sd;
+-	int i;
++	int i, recent_used_cpu;
  
- 	if (sync && cpu_rq(this_cpu)->nr_running == 1)
- 		return this_cpu;
+ 	if (idle_cpu(target))
+ 		return target;
+@@ -6208,6 +6208,21 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	if (prev != target && cpus_share_cache(prev, target) && idle_cpu(prev))
+ 		return prev;
+ 
++	/* Check a recently used CPU as a potential idle candidate */
++	recent_used_cpu = p->recent_used_cpu;
++	if (recent_used_cpu != prev &&
++	    recent_used_cpu != target &&
++	    cpus_share_cache(recent_used_cpu, target) &&
++	    idle_cpu(recent_used_cpu) &&
++	    cpumask_test_cpu(p->recent_used_cpu, &p->cpus_allowed)) {
++		/*
++		 * Replace recent_used_cpu with prev as it is a potential
++		 * candidate for the next wake.
++		 */
++		p->recent_used_cpu = prev;
++		return recent_used_cpu;
++	}
++
+ 	sd = rcu_dereference(per_cpu(sd_llc, target));
+ 	if (!sd)
+ 		return target;
+@@ -6375,9 +6390,12 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 
+ 	if (!sd) {
+ pick_cpu:
+-		if (sd_flag & SD_BALANCE_WAKE) /* XXX always ? */
++		if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
+ 			new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
+ 
++			if (want_affine)
++				current->recent_used_cpu = cpu;
++		}
+ 	} else {
+ 		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
+ 	}
