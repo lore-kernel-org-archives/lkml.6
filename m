@@ -1,90 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752752AbeBFEwQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 23:52:16 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:50368 "EHLO hermes.aosc.io"
+        id S1752659AbeBFEwf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 23:52:35 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:50349 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752460AbeBFEvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 23:51:24 -0500
+        id S1752699AbeBFEvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 23:51:18 -0500
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        Ondrej Jirman <megous@megous.com>, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 08/10] ARM: sun8i: h3: Add SY8106A regulator to Orange Pi PC
-Date: Tue,  6 Feb 2018 12:49:03 +0800
-Message-Id: <20180206044905.30508-9-icenowy@aosc.io>
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 07/10] ARM: sun8i: h3: add SY8113B regulator used by Orange Pi One board
+Date: Tue,  6 Feb 2018 12:49:02 +0800
+Message-Id: <20180206044905.30508-8-icenowy@aosc.io>
 In-Reply-To: <20180206044905.30508-1-icenowy@aosc.io>
 References: <20180206044905.30508-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
+Orange Pi One board has a SY8113B regulator, which is controlled via
+GPIO and capable of outputing 1.1V when the PL6 GPIO is set to output 0
+or 1.3V when the PL6 GPIO is set to input or output 1, and the output is
+the power supply of the ARM cores in H3 SoC.
 
-Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
-Orange Pi PC, then set the power supply of the ARM cores to this
-regulator, in order to enable DVFS.
+Add the device tree node of this regulator and set the cpu's cpu-supply
+property to it.
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-[Icenowy: Enable DVFS in this patch, slight changes and change commit
- message]
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
-Changes in v2:
-- Reduce maximum voltage to 1.3V.
-- Slightly changed the comment at 1.0V minimum voltage for taking BSP
-  DVFS table instead of Armbian one.
+New patch in v2.
 
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-index d22546df1b82..ded9d8d6d008 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-@@ -98,6 +98,10 @@
- 	status = "okay";
- };
- 
-+&cpu0 {
-+	cpu-supply = <&reg_sy8106a>;
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -160,6 +164,29 @@
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
+index 82e5d28cd698..d8250aacfda1 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
+@@ -88,6 +88,27 @@
+ 			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
+ 		};
  	};
- };
- 
-+&r_i2c {
-+	status = "okay";
 +
-+	reg_sy8106a: regulator@65 {
-+		compatible = "silergy,sy8106a";
-+		reg = <0x65>;
++	reg_sy8113b: gpio-regulator {
++		compatible = "regulator-gpio";
 +		regulator-name = "vdd-cpux";
-+		/*
-+		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
-+		 * however both the Armbian DVFS table and the official one
-+		 * have operating points with voltage under 1.1V, and both
-+		 * DVFS table are known to work properly at the lowest
-+		 * operating point.
-+		 *
-+		 * Use 1.0V as the minimum voltage instead.
-+		 */
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1300000>;
++		regulator-type = "voltage";
 +		regulator-boot-on;
 +		regulator-always-on;
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-ramp-delay = <50>; /* 4ms */
++
++		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
++		enable-active-high;
++		gpios-states = <0x1>;
++		states = <1100000 0x0
++			  1300000 0x1>;
 +	};
 +};
 +
- &r_pio {
- 	leds_r_opc: led_pins {
- 		pins = "PL10";
++&cpu0 {
++	cpu-supply = <&reg_sy8113b>;
+ };
+ 
+ &ehci0 {
 -- 
 2.15.1
