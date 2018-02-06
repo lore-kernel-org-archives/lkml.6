@@ -1,228 +1,126 @@
-Return-Path: <jinqian@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517961372; cv=none;
+Return-Path: <lhenriques@suse.com>
+X-Google-Smtp-Source: AH8x225Y1iY0wgWFxUMB94rJlRCAovJZKDKWruMyqTYhrVi9gYV6ivKmctAdwUNokLHUCotOo2lI
+ARC-Seal: i=1; a=rsa-sha256; t=1517945367; cv=none;
         d=google.com; s=arc-20160816;
-        b=o45Iv0KZn+AdR34RJFy0uwRoeMs+656V3n81PaCdmqwIw7FrdKVMKmsBWgGsdr4cm0
-         +F06uqL6A10MrL2zq6hXFoc9SCb3sQw98eR+yRocOy7llIgf4+J3YIdcJkBmFGCmIK31
-         v4+175MjYNM4WK3em5f/V7vIzgtyB8i1KvPXSzyvZZfcibIxgfDOrwIIM7TmUnkfprih
-         azUqNi9QlYTRogdcFyrVBiyGQXttgh3dYc1hvP8P9/3sDymzrZ5vTKrJZLLzfFmLErB8
-         aCRDprtY35mL46ddwsLyVth7LH9SvYSGkCQcFE6RLJQcFTODEBxmGLiE46ec7xNmE7Xr
-         VNmg==
+        b=MrlpC5dKyeiXiBfZED7whjJk1PLymXBo5COCf0uXQ5+Q2NvG5iDThPzLtoQzyOnv5Y
+         LU8AkmId+RTCevHrxWcjMs4XGhDrtIHCi9RyBzdrhfPQbFjZ4yTip1izguG+4MhW/ZlB
+         Kp3g8YDI4gOx7SqGHKtIqrYfa2GWoDtEW/FlA6/W6T5ZXdtBQcUUWrIxc/420HRwtWJT
+         t1C+Oy5d2yHyxT2NsvMmgdGHknEHEOGOzQyR95x4yNm+cyt+gnxjxD8ma11ysz9LRE6o
+         +DYjU0VnyXPFZTWkEmKOMgmuFSYtKkQNRp+ldZgf2OK+qlIFX6WfWEWeP454j6zfRozW
+         oXdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=1ytKCtqRXIfU87xup8UbvWRfsXHZq9KZF7GHQIvxunc=;
-        b=I+l+vXnv/xCQgTjp3mUSXcL220SYPoSM+pOCDiF0jSOTLkdIgyzeeGuO7g4l5LBrC0
-         +nytziAkK+IxZ8+9MS5OdZa7qwvubB4HFTHmXoQ0sSSamHLTREpClpK+0EZRY2PvCthK
-         whidL4SDgYBUEohWzLyw5NuhSd3nwYTjNkfWUvomw95T15HHP0SSPAwsqvygRxc3AESF
-         Rs+QWGiq9lJznrNx3opsuqNVFwIo8JEeA9+rPYYAQQQ42FJ/K5AKWwjkXv0H719BuBko
-         staTQCxiFjrtqrN2I9JH8+1rkY7Y9Ng6QamaRHo3TydufcnzMGrcy/PjJB5T5oVlLVqM
-         gspQ==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=xMMsgH/A7T9efs4+qoOauKDAB5QyZqGANTBjxAiHwC8=;
+        b=DCrXcpyyPIV2ehPV6wxvM/qbKeKJX1NYz4GbqaftAQp5H7/CFCd7iqUuqu7shu2DAy
+         ZDtikkCv4UndyMSFimGwx7B4h68VgiMQZVtA5l04JPNc5vASVDJUje6UTpCxOF0YIJ7s
+         jHz7xECh8SoWUk8Ysqghl5MDn8ngKw0lkhUy0sVqH9rsCIYUo7AL44cS42vExcozwtmo
+         9rfORgakNHyve07hRlBpnUUANo76Uv0ZY2Dk+bRM1e4oLRoU7g6i4l6W9I+G64Q8VE25
+         +8m3IQiBsg3qSU5PciMOIHjyR420TW3jVp48W/4195p1OYqiidtnDdfqgV9zVfZvv+55
+         PESQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=gifM8gZZ;
-       spf=pass (google.com: domain of jinqian@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinqian@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=pass (google.com: domain of lhenriques@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=lhenriques@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=gifM8gZZ;
-       spf=pass (google.com: domain of jinqian@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinqian@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AH8x224R/NOEyRySqzk5b39S2/F4q5i9+66nUlgN115DYAYhpfy8ArU6HEVTy5G7/j9opNhBp3GPzlit9AsfXGidZ54=
+       spf=pass (google.com: domain of lhenriques@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=lhenriques@suse.com
+Date: Tue, 6 Feb 2018 19:29:25 +0000
+From: Luis Henriques <lhenriques@suse.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	kernel-hardening@lists.openwall.com, gregkh@linuxfoundation.org,
+	x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	tglx@linutronix.de, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, alan@linux.intel.com
+Subject: Re: [PATCH v4 07/10] x86: narrow out of bounds syscalls to sys_read
+ under speculation
+Message-ID: <20180206192925.qkmghwsbaysr4iv2@hermes.olymp>
+References: <151632009605.21271.11304291057104672116.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151632014097.21271.16980532033566583357.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-References: <20180206190938.172792-1-jinqian@android.com> <20180206203953.GC18045@kroah.com>
- <20180206231149.GC1977@thunk.org> <20180206233809.GA159960@gmail.com>
-In-Reply-To: <20180206233809.GA159960@gmail.com>
-From: Jin Qian <jinqian@google.com>
-Date: Tue, 06 Feb 2018 23:56:01 +0000
-Message-ID: <CAE3cK=OVoqSNmehRSzNjt892QMv_9vdAafU+k878yKvO2gyY9w@mail.gmail.com>
-Subject: Re: [PATCHv2 1/1] ext4: don't put symlink in pagecache into highmem
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Greg KH <gregkh@linuxfoundation.org>,
-	Jin Qian <jinqian@android.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@poochiereds.net>,
-	"J. Bruce Fields" <bfields@fieldses.org>, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org
-Content-Type: multipart/alternative; boundary="f403043c3f9c5dc904056493ec27"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <151632014097.21271.16980532033566583357.stgit@dwillia2-desk3.amr.corp.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1591695075456239611?=
-X-GMAIL-MSGID: =?utf-8?q?1591697864635200441?=
+X-GMAIL-THRID: =?utf-8?q?1589977480308913684?=
+X-GMAIL-MSGID: =?utf-8?q?1591681081721537403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---f403043c3f9c5dc904056493ec27
-Content-Type: text/plain; charset="UTF-8"
+On Thu, Jan 18, 2018 at 04:02:21PM -0800, Dan Williams wrote:
+> The syscall table base is a user controlled function pointer in kernel
+> space. Like, 'get_user, use 'MASK_NOSPEC' to prevent any out of bounds
+> speculation. While retpoline prevents speculating into the user
+> controlled target it does not stop the pointer de-reference, the concern
+> is leaking memory relative to the syscall table base.
 
-Sure, uploaded https://lkml.org/lkml/2018/2/6/856. PTAL.
+This patch seems to cause a regression.  An easy way to reproduce what
+I'm seeing is to run the samples/statx/test-statx.  Here's what I see
+when I have this patchset applied:
 
-jin
+# ./test-statx /tmp
+statx(/tmp) = -1
+/tmp: Bad file descriptor
 
+Reverting this single patch seems to fix it.
 
-On Tue, Feb 6, 2018 at 3:38 PM Eric Biggers <ebiggers3@gmail.com> wrote:
+Cheers,
+--
+Luís
 
-> On Tue, Feb 06, 2018 at 06:11:49PM -0500, Theodore Ts'o wrote:
-> > On Tue, Feb 06, 2018 at 12:39:53PM -0800, Greg KH wrote:
-> > > On Tue, Feb 06, 2018 at 11:09:37AM -0800, Jin Qian wrote:
-> > > > From: Jin Qian <jinqian@google.com>
-> > > >
-> > > > partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174
-> upstream
-> > > > to v4.4 to prevent virt_to_page on highmem.
-> > >
-> > > Ted, any objection to this patch?
-> >
-> > No objections with my ext4 hat on.
-> >
-> > It should be noted though that this is a partial backport because it
-> > only fixes ext4, while Al's original upstream fix addressed a much
-> > larger set of file systems.  In the Android kernel the f2fs fix had
-> > been backported separately.  But for the upstream kernel, it *might*
-> > be the case that we should try backporting the original commit so that
-> > in case there is some other general purpose distribution decides (a)
-> > to base their system on 4.4, and (b) support a 32-bit kernel, they get
-> > the more general bug fixes which applies for btrfs, isofs, ocfs2, nfs,
-> > etc.
-> >
-> > I haevn't been paying attention to what LTS kernels general purpose
-> > distro's are using, so I don't know how important this would be.  And
-> > if there are companies like Cloudflare which are using upstream LTS
-> > kernel, it seems unlikely they would want to use a 32-bit kernel,
-> > so.... shrug.  Greg, I'll let you decide if you want to backport the
-> > full commit or not.
-> >
-> > (We had a similar discussion on the AOSP kernel, and came to the
-> > conclusion that we only needed to make the patch support ext4.  No one
-> > was going to test the other file systems besides ext4 and f2fs,
-> > anyway.  But the calculus might be different might be different for
-> > the general upstream LTS kernel.)
-> >
->
-> Well, the main point of backporting this change is to fix symlink
-> decryption on
-> 32-bit systems.  So, it would be needed on both ext4 and f2fs.  Jin, it
-> might be
-> a good idea to fix f2fs in this patch at well, since unlike the AOSP
-> kernels,
-> the LTS kernels do not have the latest f2fs backported to them.
->
-> I don't think backporting this change for other filesystems is particularly
-> important, since if I understand correctly, the reasons that Al made the
-> change
-> originally were:
->
-> - to allow following symlinks in RCU mode, but that's not implemented in
-> old
->   kernels
->
-> - to prevent a process from using up all kmaps and deadlocking the system,
-> which
->   I'm not sure is a real problem (someone would need to try to put
-> together a
->   reproducer), but if so it would probably just be a local device of
-> service.
->
-> Also if we actually backported the full commit there are follow-on fixes
-> such as
-> e8ecde25f5e that would be needed as well but might be missed.
->
-> Thanks,
->
-> - Eric
->
-
---f403043c3f9c5dc904056493ec27
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Sure, uploaded <a href=3D"https://lkml.org/lkml/2018/2/6/8=
-56">https://lkml.org/lkml/2018/2/6/856</a>. PTAL.<div><br></div><div>jin<br=
-><div><br></div><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Tue, Feb=
- 6, 2018 at 3:38 PM Eric Biggers &lt;<a href=3D"mailto:ebiggers3@gmail.com"=
->ebiggers3@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quo=
-te" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"=
->On Tue, Feb 06, 2018 at 06:11:49PM -0500, Theodore Ts&#39;o wrote:<br>
-&gt; On Tue, Feb 06, 2018 at 12:39:53PM -0800, Greg KH wrote:<br>
-&gt; &gt; On Tue, Feb 06, 2018 at 11:09:37AM -0800, Jin Qian wrote:<br>
-&gt; &gt; &gt; From: Jin Qian &lt;<a href=3D"mailto:jinqian@google.com" tar=
-get=3D"_blank">jinqian@google.com</a>&gt;<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d1=
-74 upstream<br>
-&gt; &gt; &gt; to v4.4 to prevent virt_to_page on highmem.<br>
-&gt; &gt;<br>
-&gt; &gt; Ted, any objection to this patch?<br>
-&gt;<br>
-&gt; No objections with my ext4 hat on.<br>
-&gt;<br>
-&gt; It should be noted though that this is a partial backport because it<b=
-r>
-&gt; only fixes ext4, while Al&#39;s original upstream fix addressed a much=
-<br>
-&gt; larger set of file systems.=C2=A0 In the Android kernel the f2fs fix h=
-ad<br>
-&gt; been backported separately.=C2=A0 But for the upstream kernel, it *mig=
-ht*<br>
-&gt; be the case that we should try backporting the original commit so that=
-<br>
-&gt; in case there is some other general purpose distribution decides (a)<b=
-r>
-&gt; to base their system on 4.4, and (b) support a 32-bit kernel, they get=
-<br>
-&gt; the more general bug fixes which applies for btrfs, isofs, ocfs2, nfs,=
-<br>
-&gt; etc.<br>
-&gt;<br>
-&gt; I haevn&#39;t been paying attention to what LTS kernels general purpos=
-e<br>
-&gt; distro&#39;s are using, so I don&#39;t know how important this would b=
-e.=C2=A0 And<br>
-&gt; if there are companies like Cloudflare which are using upstream LTS<br=
->
-&gt; kernel, it seems unlikely they would want to use a 32-bit kernel,<br>
-&gt; so.... shrug.=C2=A0 Greg, I&#39;ll let you decide if you want to backp=
-ort the<br>
-&gt; full commit or not.<br>
-&gt;<br>
-&gt; (We had a similar discussion on the AOSP kernel, and came to the<br>
-&gt; conclusion that we only needed to make the patch support ext4.=C2=A0 N=
-o one<br>
-&gt; was going to test the other file systems besides ext4 and f2fs,<br>
-&gt; anyway.=C2=A0 But the calculus might be different might be different f=
-or<br>
-&gt; the general upstream LTS kernel.)<br>
-&gt;<br>
-<br>
-Well, the main point of backporting this change is to fix symlink decryptio=
-n on<br>
-32-bit systems.=C2=A0 So, it would be needed on both ext4 and f2fs.=C2=A0 J=
-in, it might be<br>
-a good idea to fix f2fs in this patch at well, since unlike the AOSP kernel=
-s,<br>
-the LTS kernels do not have the latest f2fs backported to them.<br>
-<br>
-I don&#39;t think backporting this change for other filesystems is particul=
-arly<br>
-important, since if I understand correctly, the reasons that Al made the ch=
-ange<br>
-originally were:<br>
-<br>
-- to allow following symlinks in RCU mode, but that&#39;s not implemented i=
-n old<br>
-=C2=A0 kernels<br>
-<br>
-- to prevent a process from using up all kmaps and deadlocking the system, =
-which<br>
-=C2=A0 I&#39;m not sure is a real problem (someone would need to try to put=
- together a<br>
-=C2=A0 reproducer), but if so it would probably just be a local device of s=
-ervice.<br>
-<br>
-Also if we actually backported the full commit there are follow-on fixes su=
-ch as<br>
-e8ecde25f5e that would be needed as well but might be missed.<br>
-<br>
-Thanks,<br>
-<br>
-- Eric<br>
-</blockquote></div></div></div>
-
---f403043c3f9c5dc904056493ec27--
+> 
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  arch/x86/entry/entry_64.S   |    2 ++
+>  arch/x86/include/asm/smap.h |    9 ++++++++-
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index 4f8e1d35a97c..2320017077d4 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -35,6 +35,7 @@
+>  #include <asm/asm.h>
+>  #include <asm/smap.h>
+>  #include <asm/pgtable_types.h>
+> +#include <asm/smap.h>
+>  #include <asm/export.h>
+>  #include <asm/frame.h>
+>  #include <asm/nospec-branch.h>
+> @@ -264,6 +265,7 @@ entry_SYSCALL_64_fastpath:
+>  	cmpl	$__NR_syscall_max, %eax
+>  #endif
+>  	ja	1f				/* return -ENOSYS (already in pt_regs->ax) */
+> +	MASK_NOSPEC %r11 %rax			/* sanitize syscall_nr wrt speculation */
+>  	movq	%r10, %rcx
+>  
+>  	/*
+> diff --git a/arch/x86/include/asm/smap.h b/arch/x86/include/asm/smap.h
+> index 2b4ad4c6a226..3b5b2cf58dc6 100644
+> --- a/arch/x86/include/asm/smap.h
+> +++ b/arch/x86/include/asm/smap.h
+> @@ -35,7 +35,14 @@
+>   * this directs the cpu to speculate with a NULL ptr rather than
+>   * something targeting kernel memory.
+>   *
+> - * assumes CF is set from a previous 'cmp TASK_addr_limit, %ptr'
+> + * In the syscall entry path it is possible to speculate past the
+> + * validation of the system call number. Use MASK_NOSPEC to sanitize the
+> + * syscall array index to zero (sys_read) rather than an arbitrary
+> + * target.
+> + *
+> + * assumes CF is set from a previous 'cmp' i.e.:
+> + *     cmp TASK_addr_limit, %ptr
+> + *     cmp __NR_syscall_max, %idx
+>   */
+>  .macro MASK_NOSPEC mask val
+>  	sbb \mask, \mask
+> 
+> 
