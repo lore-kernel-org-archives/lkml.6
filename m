@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753004AbeBFQvs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:51:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56246 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752746AbeBFQuh (ORCPT
+        id S1753021AbeBFQwA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:52:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46796 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752870AbeBFQud (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:50:37 -0500
+        Tue, 6 Feb 2018 11:50:33 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,21 +25,21 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v7 07/24] mm: VMA sequence count
-Date: Tue,  6 Feb 2018 17:49:53 +0100
+Subject: [PATCH v7 05/24] mm: Prepare for FAULT_FLAG_SPECULATIVE
+Date: Tue,  6 Feb 2018 17:49:51 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020616-0040-0000-0000-0000042D079D
+x-cbid: 18020616-0020-0000-0000-000003F2EA9C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020616-0041-0000-0000-000020D0B7A2
-Message-Id: <1517935810-31177-8-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18020616-0021-0000-0000-0000428562AC
+Message-Id: <1517935810-31177-6-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-06_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802060212
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,192 +48,173 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-Wrap the VMA modifications (vma_adjust/unmap_page_range) with sequence
-counts such that we can easily test if a VMA is changed.
+When speculating faults (without holding mmap_sem) we need to validate
+that the vma against which we loaded pages is still valid when we're
+ready to install the new PTE.
 
-The unmap_page_range() one allows us to make assumptions about
-page-tables; when we find the seqcount hasn't changed we can assume
-page-tables are still valid.
-
-The flip side is that we cannot distinguish between a vma_adjust() and
-the unmap_page_range() -- where with the former we could have
-re-checked the vma bounds against the address.
+Therefore, replace the pte_offset_map_lock() calls that (re)take the
+PTL with pte_map_lock() which can fail in case we find the VMA changed
+since we started the fault.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
 [Port to 4.12 kernel]
-[Build depends on CONFIG_SPECULATIVE_PAGE_FAULT]
-[Introduce vm_write_* inline function depending on
- CONFIG_SPECULATIVE_PAGE_FAULT]
-[Fix lock dependency between mapping->i_mmap_rwsem and vma->vm_sequence by
- using vm_raw_write* functions]
+[Remove the comment about the fault_env structure which has been
+ implemented as the vm_fault structure in the kernel]
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/mm.h       | 41 +++++++++++++++++++++++++++++++++++++++++
- include/linux/mm_types.h |  3 +++
- mm/memory.c              |  2 ++
- mm/mmap.c                | 35 +++++++++++++++++++++++++++++++++++
- 4 files changed, 81 insertions(+)
+ include/linux/mm.h |  1 +
+ mm/memory.c        | 56 ++++++++++++++++++++++++++++++++++++++----------------
+ 2 files changed, 41 insertions(+), 16 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 51d950cac772..89e5dba22900 100644
+index 47c06fd20f6a..51d950cac772 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -1369,6 +1369,47 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
- 	unmap_mapping_range(mapping, holebegin, holelen, 0);
- }
+@@ -302,6 +302,7 @@ extern pgprot_t protection_map[16];
+ #define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
+ #define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
+ #define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
++#define FAULT_FLAG_SPECULATIVE	0x200	/* Speculative fault, not holding mmap_sem */
  
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+static inline void vm_write_begin(struct vm_area_struct *vma)
-+{
-+	write_seqcount_begin(&vma->vm_sequence);
-+}
-+static inline void vm_write_begin_nested(struct vm_area_struct *vma,
-+					 int subclass)
-+{
-+	write_seqcount_begin_nested(&vma->vm_sequence, subclass);
-+}
-+static inline void vm_write_end(struct vm_area_struct *vma)
-+{
-+	write_seqcount_end(&vma->vm_sequence);
-+}
-+static inline void vm_raw_write_begin(struct vm_area_struct *vma)
-+{
-+	raw_write_seqcount_begin(&vma->vm_sequence);
-+}
-+static inline void vm_raw_write_end(struct vm_area_struct *vma)
-+{
-+	raw_write_seqcount_end(&vma->vm_sequence);
-+}
-+#else
-+static inline void vm_write_begin(struct vm_area_struct *vma)
-+{
-+}
-+static inline void vm_write_begin_nested(struct vm_area_struct *vma,
-+					 int subclass)
-+{
-+}
-+static inline void vm_write_end(struct vm_area_struct *vma)
-+{
-+}
-+static inline void vm_raw_write_begin(struct vm_area_struct *vma)
-+{
-+}
-+static inline void vm_raw_write_end(struct vm_area_struct *vma)
-+{
-+}
-+#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
-+
- extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
- 		void *buf, int len, unsigned int gup_flags);
- extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index fd1af6b9591d..34fde7111e88 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -333,6 +333,9 @@ struct vm_area_struct {
- 	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
- #endif
- 	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	seqcount_t vm_sequence;
-+#endif
- } __randomize_layout;
- 
- struct core_thread {
+ #define FAULT_FLAG_TRACE \
+ 	{ FAULT_FLAG_WRITE,		"WRITE" }, \
 diff --git a/mm/memory.c b/mm/memory.c
-index 2560d100b439..39a6ea624922 100644
+index 32b9eb77d95c..bb058527525a 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -1503,6 +1503,7 @@ void unmap_page_range(struct mmu_gather *tlb,
- 	unsigned long next;
- 
- 	BUG_ON(addr >= end);
-+	vm_write_begin(vma);
- 	tlb_start_vma(tlb, vma);
- 	pgd = pgd_offset(vma->vm_mm, addr);
- 	do {
-@@ -1512,6 +1513,7 @@ void unmap_page_range(struct mmu_gather *tlb,
- 		next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
- 	} while (pgd++, addr = next, addr != end);
- 	tlb_end_vma(tlb, vma);
-+	vm_write_end(vma);
+@@ -2452,6 +2452,13 @@ static inline void wp_page_reuse(struct vm_fault *vmf)
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
  }
  
- 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 4bb038e7984b..671940b72696 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -558,6 +558,10 @@ void __vma_link_rb(struct mm_struct *mm, struct vm_area_struct *vma,
- 	else
- 		mm->highest_vm_end = vm_end_gap(vma);
- 
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	seqcount_init(&vma->vm_sequence);
-+#endif
++static bool pte_map_lock(struct vm_fault *vmf)
++{
++	vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
++				       vmf->address, &vmf->ptl);
++	return true;
++}
 +
+ /*
+  * Handle the case of a page which we actually need to copy to a new page.
+  *
+@@ -2479,6 +2486,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 	const unsigned long mmun_start = vmf->address & PAGE_MASK;
+ 	const unsigned long mmun_end = mmun_start + PAGE_SIZE;
+ 	struct mem_cgroup *memcg;
++	int ret = VM_FAULT_OOM;
+ 
+ 	if (unlikely(anon_vma_prepare(vma)))
+ 		goto oom;
+@@ -2506,7 +2514,11 @@ static int wp_page_copy(struct vm_fault *vmf)
  	/*
- 	 * vma->vm_prev wasn't known when we followed the rbtree to find the
- 	 * correct insertion point for that vma. As a result, we could not
-@@ -692,6 +696,30 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	long adjust_next = 0;
- 	int remove_next = 0;
+ 	 * Re-check the pte - we dropped the lock
+ 	 */
+-	vmf->pte = pte_offset_map_lock(mm, vmf->pmd, vmf->address, &vmf->ptl);
++	if (!pte_map_lock(vmf)) {
++		mem_cgroup_cancel_charge(new_page, memcg, false);
++		ret = VM_FAULT_RETRY;
++		goto oom_free_new;
++	}
+ 	if (likely(pte_same(*vmf->pte, vmf->orig_pte))) {
+ 		if (old_page) {
+ 			if (!PageAnon(old_page)) {
+@@ -2598,7 +2610,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+ oom:
+ 	if (old_page)
+ 		put_page(old_page);
+-	return VM_FAULT_OOM;
++	return ret;
+ }
  
-+	/*
-+	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
-+	 *
-+	 * Locked is complaining about a theoretical lock dependency, involving
-+	 * 3 locks:
-+	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
-+	 *
-+	 * Here are the major path leading to this dependency :
-+	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
-+	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
-+	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
-+	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
-+	 *
-+	 * So there is no way to solve this easily, especially because in
-+	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
-+	 * VMAs are not yet known.
-+	 * However, the way the vm_seq is used is guarantying that we will
-+	 * never block on it since we just check for its value and never wait
-+	 * for it to move, see vma_has_changed() and handle_speculative_fault().
-+	 */
-+	vm_raw_write_begin(vma);
-+	if (next)
-+		vm_raw_write_begin(next);
-+
- 	if (next && !insert) {
- 		struct vm_area_struct *exporter = NULL, *importer = NULL;
- 
-@@ -902,6 +930,7 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 			anon_vma_merge(vma, next);
- 		mm->map_count--;
- 		mpol_put(vma_policy(next));
-+		vm_raw_write_end(next);
- 		kmem_cache_free(vm_area_cachep, next);
- 		/*
- 		 * In mprotect's case 6 (see comments on vma_merge),
-@@ -916,6 +945,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 			 * "vma->vm_next" gap must be updated.
+ /**
+@@ -2619,8 +2631,8 @@ static int wp_page_copy(struct vm_fault *vmf)
+ int finish_mkwrite_fault(struct vm_fault *vmf)
+ {
+ 	WARN_ON_ONCE(!(vmf->vma->vm_flags & VM_SHARED));
+-	vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd, vmf->address,
+-				       &vmf->ptl);
++	if (!pte_map_lock(vmf))
++		return VM_FAULT_RETRY;
+ 	/*
+ 	 * We might have raced with another page fault while we released the
+ 	 * pte_offset_map_lock.
+@@ -2738,8 +2750,11 @@ static int do_wp_page(struct vm_fault *vmf)
+ 			get_page(vmf->page);
+ 			pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 			lock_page(vmf->page);
+-			vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+-					vmf->address, &vmf->ptl);
++			if (!pte_map_lock(vmf)) {
++				unlock_page(vmf->page);
++				put_page(vmf->page);
++				return VM_FAULT_RETRY;
++			}
+ 			if (!pte_same(*vmf->pte, vmf->orig_pte)) {
+ 				unlock_page(vmf->page);
+ 				pte_unmap_unlock(vmf->pte, vmf->ptl);
+@@ -2967,8 +2982,10 @@ int do_swap_page(struct vm_fault *vmf)
+ 			 * Back out if somebody else faulted in this pte
+ 			 * while we released the pte lock.
  			 */
- 			next = vma->vm_next;
-+			if (next)
-+				vm_raw_write_begin(next);
- 		} else {
- 			/*
- 			 * For the scope of the comment "next" and
-@@ -962,6 +993,10 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	if (insert && file)
- 		uprobe_mmap(insert);
+-			vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+-					vmf->address, &vmf->ptl);
++			if (!pte_map_lock(vmf)) {
++				delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
++				return VM_FAULT_RETRY;
++			}
+ 			if (likely(pte_same(*vmf->pte, vmf->orig_pte)))
+ 				ret = VM_FAULT_OOM;
+ 			delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
+@@ -3024,8 +3041,11 @@ int do_swap_page(struct vm_fault *vmf)
+ 	/*
+ 	 * Back out if somebody else already faulted in this pte.
+ 	 */
+-	vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd, vmf->address,
+-			&vmf->ptl);
++	if (!pte_map_lock(vmf)) {
++		ret = VM_FAULT_RETRY;
++		mem_cgroup_cancel_charge(page, memcg, false);
++		goto out_page;
++	}
+ 	if (unlikely(!pte_same(*vmf->pte, vmf->orig_pte)))
+ 		goto out_nomap;
  
-+	if (next && next != vma)
-+		vm_raw_write_end(next);
-+	vm_raw_write_end(vma);
+@@ -3154,8 +3174,8 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 			!mm_forbids_zeropage(vma->vm_mm)) {
+ 		entry = pte_mkspecial(pfn_pte(my_zero_pfn(vmf->address),
+ 						vma->vm_page_prot));
+-		vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+-				vmf->address, &vmf->ptl);
++		if (!pte_map_lock(vmf))
++			return VM_FAULT_RETRY;
+ 		if (!pte_none(*vmf->pte))
+ 			goto unlock;
+ 		ret = check_stable_address_space(vma->vm_mm);
+@@ -3190,8 +3210,11 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	if (vma->vm_flags & VM_WRITE)
+ 		entry = pte_mkwrite(pte_mkdirty(entry));
+ 
+-	vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd, vmf->address,
+-			&vmf->ptl);
++	if (!pte_map_lock(vmf)) {
++		mem_cgroup_cancel_charge(page, memcg, false);
++		put_page(page);
++		return VM_FAULT_RETRY;
++	}
+ 	if (!pte_none(*vmf->pte))
+ 		goto release;
+ 
+@@ -3315,8 +3338,9 @@ static int pte_alloc_one_map(struct vm_fault *vmf)
+ 	 * pte_none() under vmf->ptl protection when we return to
+ 	 * alloc_set_pte().
+ 	 */
+-	vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd, vmf->address,
+-			&vmf->ptl);
++	if (!pte_map_lock(vmf))
++		return VM_FAULT_RETRY;
 +
- 	validate_mm(mm);
- 
  	return 0;
+ }
+ 
 -- 
 2.7.4
