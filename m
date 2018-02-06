@@ -1,84 +1,337 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeBFJW6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:22:58 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39548 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752207AbeBFJWv (ORCPT
+        id S1752618AbeBFJ1f (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:27:35 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:37686 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752213AbeBFJ11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:22:51 -0500
-X-Google-Smtp-Source: AH8x226NhJZT1cZuUwSUGca/jD9PhGjZvdgdBfvimLMF8Vthvoch0SsXBi+mrDoEQf+uJhXyHGVk6LbCV+WVQOnUxEI=
+        Tue, 6 Feb 2018 04:27:27 -0500
+X-Google-Smtp-Source: AH8x227SjH+HPuArrUtU2C0IvuuL+Ew78Sy9L0pKSxrJ4+LTc5CpWmtptoTk9qpy/eJwHvYbMRYcszT5vibqWSuQr4Y=
 MIME-Version: 1.0
-In-Reply-To: <5694b3f8-9726-d5a8-dba3-e4c1619a05be@arm.com>
-References: <20171222075934.f6yenvcb2zkf2ysd@hirez.programming.kicks-ass.net>
- <CAKfTPtC0+5zjvgNXMyVcvnnyJh0giQgJHtx+5p-GEpjUW1x8eg@mail.gmail.com>
- <20171222082915.4lcb7xyyooqyjpia@hirez.programming.kicks-ass.net>
- <20171222091221.ow5vn3ydx3hj4nht@hirez.programming.kicks-ass.net>
- <CAKfTPtAzutuyA7D2qOErKPwdFaRK082YAtVn4ci8hAOUvL3zMQ@mail.gmail.com>
- <20171222185629.lysjebfifgdwvvhu@hirez.programming.kicks-ass.net>
- <20171222204247.kyc6ugyyu3ei7zhs@hirez.programming.kicks-ass.net>
- <CAKfTPtD13p-n9otxq23rQZZKUfA1r03bxYBSDtSdm5HbWX7H6Q@mail.gmail.com>
- <20180115082609.GA6320@linaro.org> <20180118103807.GD28799@e105550-lin.cambridge.arm.com>
- <20180124082536.GA32318@linaro.org> <b1efd041-2faa-76e0-7d9b-3d2917e03012@arm.com>
- <CAKfTPtCmFC2mmR9SBTjjuuzPS8tFNmmrSRMmKrOrkh3uPkYYoA@mail.gmail.com>
- <4fb17712-3f98-c407-42b3-4601a4f294d9@arm.com> <5694b3f8-9726-d5a8-dba3-e4c1619a05be@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 6 Feb 2018 10:22:30 +0100
-Message-ID: <CAKfTPtAh=tw1MpS_+V+bhmDD+8iq2_+3Tsh3csCSDQ5BKnySsw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/5] sched: Add NOHZ_STATS_KICK
-To: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>
+In-Reply-To: <bf06b0c0-b188-68ba-737b-f42d33c0d5dc@lightnvm.io>
+References: <1517364411-22386-1-git-send-email-javier@cnexlabs.com>
+ <1517364411-22386-4-git-send-email-javier@cnexlabs.com> <bf06b0c0-b188-68ba-737b-f42d33c0d5dc@lightnvm.io>
+From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
+Date: Tue, 6 Feb 2018 10:27:25 +0100
+Message-ID: <CANr-nt1+=ikX6XUh3FKG_vgcBWzVkzdrWei82YRdHPTVPpxwuw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] lightnvm: pblk: add padding distribution sysfs attribute
+To: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+Cc: =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@cnexlabs.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w169N2Sa018720
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w169Rhx1019792
 
-On 5 February 2018 at 23:18, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
-> On 01/30/2018 11:41 AM, Valentin Schneider wrote:
->> [...]
->>> I have studied a way to keep track of how many cpus still have blocked
->>> load to try to minimize the number of useless ilb kick but this add
->>> more atomic operations which can impact the system throughput with
->>> heavy load and lot of very small wake up. that's why i have propose
->>> this solution which is more simple. But it's probably just a matter of
->>> where we want to "waste" time. Either we accept to spent a bit more
->>> time to check the state of idle CPUs or we accept to kick ilb from
->>> time to time for no good reason.
->>>
+Hi Matias,
+
+On Wed, Jan 31, 2018 at 9:44 AM, Matias Bjørling <mb@lightnvm.io> wrote:
+> On 01/31/2018 03:06 AM, Javier González wrote:
 >>
->> Agreed. I have the feeling that spending more time doing atomic ops could be worth it - I'll try to test this out and see if it's actually relevant.
+>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>
+>> When pblk receives a sync, all data up to that point in the write buffer
+>> must be comitted to persistent storage, and as flash memory comes with a
+>> minimal write size there is a significant cost involved both in terms
+>> of time for completing the sync and in terms of write amplification
+>> padded sectors for filling up to the minimal write size.
+>>
+>> In order to get a better understanding of the costs involved for syncs,
+>> Add a sysfs attribute to pblk: padded_dist, showing a normalized
+>> distribution of sectors padded. In order to facilitate measurements of
+>> specific workloads during the lifetime of the pblk instance, the
+>> distribution can be reset by writing 0 to the attribute.
+>>
+>> Do this by introducing counters for each possible padding:
+>> {0..(minimal write size - 1)} and calculate the normalized distribution
+>> when showing the attribute.
+>>
+>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>> ---
+>>   drivers/lightnvm/pblk-init.c  | 16 ++++++++--
+>>   drivers/lightnvm/pblk-rb.c    | 15 +++++-----
+>>   drivers/lightnvm/pblk-sysfs.c | 68
+>> +++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/lightnvm/pblk.h       |  6 +++-
+>>   4 files changed, 95 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+>> index 7eedc5daebc8..a5e3510c0f38 100644
+>> --- a/drivers/lightnvm/pblk-init.c
+>> +++ b/drivers/lightnvm/pblk-init.c
+>> @@ -921,6 +921,7 @@ static void pblk_free(struct pblk *pblk)
+>>   {
+>>         pblk_luns_free(pblk);
+>>         pblk_lines_free(pblk);
+>> +       kfree(pblk->pad_dist);
+>>         pblk_line_meta_free(pblk);
+>>         pblk_core_free(pblk);
+>>         pblk_l2p_free(pblk);
+>> @@ -998,11 +999,13 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
+>> struct gendisk *tdisk,
+>>         pblk->pad_rst_wa = 0;
+>>         pblk->gc_rst_wa = 0;
+>>   +     atomic_long_set(&pblk->nr_flush, 0);
+>> +       pblk->nr_flush_rst = 0;
+>> +
+>>   #ifdef CONFIG_NVM_DEBUG
+>>         atomic_long_set(&pblk->inflight_writes, 0);
+>>         atomic_long_set(&pblk->padded_writes, 0);
+>>         atomic_long_set(&pblk->padded_wb, 0);
+>> -       atomic_long_set(&pblk->nr_flush, 0);
+>>         atomic_long_set(&pblk->req_writes, 0);
+>>         atomic_long_set(&pblk->sub_writes, 0);
+>>         atomic_long_set(&pblk->sync_writes, 0);
+>> @@ -1034,10 +1037,17 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
+>> struct gendisk *tdisk,
+>>                 goto fail_free_luns;
+>>         }
+>>   +     pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) *
+>> sizeof(atomic64_t),
+>> +                                GFP_KERNEL);
+>> +       if (!pblk->pad_dist) {
+>> +               ret = -ENOMEM;
+>> +               goto fail_free_line_meta;
+>> +       }
+>> +
+>>         ret = pblk_core_init(pblk);
+>>         if (ret) {
+>>                 pr_err("pblk: could not initialize core\n");
+>> -               goto fail_free_line_meta;
+>> +               goto fail_free_pad_dist;
+>>         }
+>>         ret = pblk_l2p_init(pblk);
+>> @@ -1097,6 +1107,8 @@ static void *pblk_init(struct nvm_tgt_dev *dev,
+>> struct gendisk *tdisk,
+>>         pblk_l2p_free(pblk);
+>>   fail_free_core:
+>>         pblk_core_free(pblk);
+>> +fail_free_pad_dist:
+>> +       kfree(pblk->pad_dist);
+>>   fail_free_line_meta:
+>>         pblk_line_meta_free(pblk);
+>>   fail_free_luns:
+>> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+>> index 7044b5599cc4..264372d7b537 100644
+>> --- a/drivers/lightnvm/pblk-rb.c
+>> +++ b/drivers/lightnvm/pblk-rb.c
+>> @@ -437,9 +437,7 @@ static int pblk_rb_may_write_flush(struct pblk_rb *rb,
+>> unsigned int nr_entries,
+>>         if (bio->bi_opf & REQ_PREFLUSH) {
+>>                 struct pblk *pblk = container_of(rb, struct pblk, rwb);
+>>   -#ifdef CONFIG_NVM_DEBUG
+>>                 atomic_long_inc(&pblk->nr_flush);
+>> -#endif
+>>                 if (pblk_rb_flush_point_set(&pblk->rwb, bio, mem))
+>>                         *io_ret = NVM_IO_OK;
+>>         }
+>> @@ -620,14 +618,17 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb,
+>> struct nvm_rq *rqd,
+>>                         pr_err("pblk: could not pad page in write bio\n");
+>>                         return NVM_IO_ERR;
+>>                 }
+>> +
+>> +               if (pad < pblk->min_write_pgs)
+>> +                       atomic64_inc(&pblk->pad_dist[pad - 1]);
+>> +               else
+>> +                       pr_warn("pblk: padding more than min. sectors\n");
+>
+>
+> Curious, when would this happen? Would it be an implementation error or
+> something a user did wrong?
+
+This would be an implementation error - and this check is just a
+safeguard to make sure we won't go out of bounds when updating the
+statistics.
+
+>
+>
+>> +
+>> +               atomic64_add(pad, &pblk->pad_wa);
+>>         }
+>>   -     atomic64_add(pad, &((struct pblk *)
+>> -                       (container_of(rb, struct pblk, rwb)))->pad_wa);
+>> -
+>>   #ifdef CONFIG_NVM_DEBUG
+>> -       atomic_long_add(pad, &((struct pblk *)
+>> -                       (container_of(rb, struct pblk,
+>> rwb)))->padded_writes);
+>> +       atomic_long_add(pad, &pblk->padded_writes);
+>>   #endif
+>>         return NVM_IO_OK;
+>> diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+>> index 4804bbd32d5f..f902ac00d071 100644
+>> --- a/drivers/lightnvm/pblk-sysfs.c
+>> +++ b/drivers/lightnvm/pblk-sysfs.c
+>> @@ -341,6 +341,38 @@ static ssize_t pblk_sysfs_get_write_amp_trip(struct
+>> pblk *pblk, char *page)
+>>                 atomic64_read(&pblk->pad_wa) - pblk->pad_rst_wa, page);
+>>   }
+>>   +static ssize_t pblk_sysfs_get_padding_dist(struct pblk *pblk, char
+>> *page)
+>> +{
+>> +       int sz = 0;
+>> +       unsigned long long total;
+>> +       unsigned long long total_buckets = 0;
+>> +       int buckets = pblk->min_write_pgs - 1;
+>> +       int i;
+>> +
+>> +       total = atomic64_read(&pblk->nr_flush) - pblk->nr_flush_rst;
+>> +
+>> +       for (i = 0; i < buckets; i++)
+>> +               total_buckets += atomic64_read(&pblk->pad_dist[i]);
+>> +
+>
+>
+> total_buckets are first used later. The calculation could be moved below the
+> next statement.
+
+I saw that you fixed this on the core branch, thanks.
+
+>
+>
+>> +       if (!total) {
+>> +               for (i = 0; i < (buckets + 1); i++)
+>> +                       sz += snprintf(page + sz, PAGE_SIZE - sz,
+>> +                               "%d:0 ", i);
+>> +               sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
+>> +
+>> +               return sz;
+>> +       }
+>> +
+>> +       sz += snprintf(page + sz, PAGE_SIZE - sz, "0:%lld%% ",
+>> +               ((total - total_buckets) * 100) / total);
+>> +       for (i = 0; i < buckets; i++)
+>> +               sz += snprintf(page + sz, PAGE_SIZE - sz, "%d:%lld%% ", i
+>> + 1,
+>> +                       (atomic64_read(&pblk->pad_dist[i]) * 100) /
+>> total);
+>> +       sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
+>> +
+>> +       return sz;
+>> +}
+>> +
+>>   #ifdef CONFIG_NVM_DEBUG
+>>   static ssize_t pblk_sysfs_stats_debug(struct pblk *pblk, char *page)
+>>   {
+>> @@ -427,6 +459,32 @@ static ssize_t pblk_sysfs_set_write_amp_trip(struct
+>> pblk *pblk,
+>>   }
+>>     +static ssize_t pblk_sysfs_set_padding_dist(struct pblk *pblk,
+>> +                       const char *page, size_t len)
+>> +{
+>> +       size_t c_len;
+>> +       int reset_value;
+>> +       int buckets = pblk->min_write_pgs - 1;
+>> +       int i;
+>> +
+>> +       c_len = strcspn(page, "\n");
+>> +       if (c_len >= len)
+>> +               return -EINVAL;
+>> +
+>> +       if (kstrtouint(page, 0, &reset_value))
+>> +               return -EINVAL;
+>> +
+>> +       if (reset_value !=  0)
+>> +               return -EINVAL;
+>> +
+>> +       for (i = 0; i < buckets; i++)
+>> +               atomic64_set(&pblk->pad_dist[i], 0);
+>> +
+>> +       pblk->nr_flush_rst = atomic64_read(&pblk->nr_flush);
+>> +
+>> +       return len;
+>> +}
+>> +
+>>   static struct attribute sys_write_luns = {
+>>         .name = "write_luns",
+>>         .mode = 0444,
+>> @@ -487,6 +545,11 @@ static struct attribute sys_write_amp_trip = {
+>>         .mode = 0644,
+>>   };
+>>   +static struct attribute sys_padding_dist = {
+>> +       .name = "padding_dist",
+>> +       .mode = 0644,
+>> +};
+>> +
+>>   #ifdef CONFIG_NVM_DEBUG
+>>   static struct attribute sys_stats_debug_attr = {
+>>         .name = "stats",
+>> @@ -507,6 +570,7 @@ static struct attribute *pblk_attrs[] = {
+>>         &sys_lines_info_attr,
+>>         &sys_write_amp_mileage,
+>>         &sys_write_amp_trip,
+>> +       &sys_padding_dist,
+>>   #ifdef CONFIG_NVM_DEBUG
+>>         &sys_stats_debug_attr,
+>>   #endif
+>> @@ -540,6 +604,8 @@ static ssize_t pblk_sysfs_show(struct kobject *kobj,
+>> struct attribute *attr,
+>>                 return pblk_sysfs_get_write_amp_mileage(pblk, buf);
+>>         else if (strcmp(attr->name, "write_amp_trip") == 0)
+>>                 return pblk_sysfs_get_write_amp_trip(pblk, buf);
+>> +       else if (strcmp(attr->name, "padding_dist") == 0)
+>> +               return pblk_sysfs_get_padding_dist(pblk, buf);
+>>   #ifdef CONFIG_NVM_DEBUG
+>>         else if (strcmp(attr->name, "stats") == 0)
+>>                 return pblk_sysfs_stats_debug(pblk, buf);
+>> @@ -558,6 +624,8 @@ static ssize_t pblk_sysfs_store(struct kobject *kobj,
+>> struct attribute *attr,
+>>                 return pblk_sysfs_set_sec_per_write(pblk, buf, len);
+>>         else if (strcmp(attr->name, "write_amp_trip") == 0)
+>>                 return pblk_sysfs_set_write_amp_trip(pblk, buf, len);
+>> +       else if (strcmp(attr->name, "padding_dist") == 0)
+>> +               return pblk_sysfs_set_padding_dist(pblk, buf, len);
+>>         return 0;
+>>   }
+>>   diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+>> index 4b7d8618631f..88720e2441c0 100644
+>> --- a/drivers/lightnvm/pblk.h
+>> +++ b/drivers/lightnvm/pblk.h
+>> @@ -626,12 +626,16 @@ struct pblk {
+>>         u64 gc_rst_wa;
+>>         u64 pad_rst_wa;
+>>   +     /* Counters used for calculating padding distribution */
+>> +       atomic64_t *pad_dist;           /* Padding distribution buckets */
+>> +       u64 nr_flush_rst;               /* Flushes reset value for pad
+>> dist.*/
+>> +       atomic_long_t nr_flush;         /* Number of flush/fua I/O */
+>> +
+>>   #ifdef CONFIG_NVM_DEBUG
+>>         /* Non-persistent debug counters, 4kb sector I/Os */
+>>         atomic_long_t inflight_writes;  /* Inflight writes (user and gc)
+>> */
+>>         atomic_long_t padded_writes;    /* Sectors padded due to flush/fua
+>> */
+>>         atomic_long_t padded_wb;        /* Sectors padded in write buffer
+>> */
+>> -       atomic_long_t nr_flush;         /* Number of flush/fua I/O */
+>>         atomic_long_t req_writes;       /* Sectors stored on write buffer
+>> */
+>>         atomic_long_t sub_writes;       /* Sectors submitted from buffer
+>> */
+>>         atomic_long_t sync_writes;      /* Sectors synced to media */
 >>
 >
-> I gave this a spin, still using Vincent's patches with the included patch on top. Nothing too clever, just seeing how replacing nohz.stats_state with a cpumask would go.
->
-> I've replaced nohz.stats_state by nohz.stale_cpus_mask. I kept changes minimal - there are some places where I think nohz.idle_cpus_mask could be substituted by nohz.stale_cpus_mask. Speaking about that, I was about to write a comment regarding the fact that nohz.stale_cpus_mask should be a subset of nohz.idle_cpus_mask, but I realized it's actually not true:
->
-> In the current implementation (cpumask or stats_state flag), an idle CPU is defined as having blocked load as soon as it goes through nohz_balance_enter_idle(), and that flag is cleared when we go through _nohz_idle_balance() (and newly idle load balance in my cpumask implementation).
-> However we can imagine a scenario where a CPU goes idle, is flagged as having blocked load, then it wakes up and goes through its periodic balance code and updates that load. Yet, the flag (or cpumask) won't have been updated.
-> So I think there could be a discussion on whether the flag should be cleared on nohz_balance_exit_idle() if we assume periodic balance now takes care of this. It could cause issues if we have a weird scenario where a CPU keeps going online/idle but never stays online long enough for a tick though.
-> Alternatively we could clear that flag when going through the first periodic balance after idling, but then that's a bit weird because we're using a nohz structure in a non-nohz context.
->
->
-> Anyway, I tried to get some profiling done with the cpumask but there's something wrong with my setup, I would only get nonsense numbers (for both baseline & my patch), so I added start/end trace_printks to _nohz_idle_balance(). It's ugly, inaccurate and unorthodox but it still gives a rough idea of how the cpumask impacts stuff.
-> I ran 20 iterations of my "nohz update" test case (a task accumulates load, goes to sleep, and another always-running task keeps kicking an ILB to decay that blocked load) and the time saved by skipping CPUs is in the ballpark of 20%. Notebook is at [1].
+> Looks good to me. Let me know if you want to send a new patch, or if I may
+> make the change when I pick it up.
 
-Even if saving time in the ILB is interesting, we have to check the
-impact of bitmask operation on the wake up latency of the CPUs when
-the system is heavily used and generate a lot of sleep/wakeup on CPUs
+Thanks for the review, i saw that you already reworked the patch a bit
+on your core branch.
+However, i found a build issue when building for i386, so i'll fix
+that and submit a V2(that includes your update)
 
+> Also, should the padding be stored in the on-disk metadata as well?
 
->
-> I'll try to get a proper function profiling working for when Vincent posts his "v2".
->
-> [1]: https://gist.github.com/valschneider/6f203143bee1e149f24c44e9582a9eff
->
-> ---
+I don't see the need to do this, as I believe one would only be
+interested in measuring the padding distribution on specific workloads
+- and this would not require persisting the counters.
+
+Thanks, Hans
