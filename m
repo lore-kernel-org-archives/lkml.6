@@ -1,61 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754134AbeBFXfU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 18:35:20 -0500
-Received: from ms.lwn.net ([45.79.88.28]:37296 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754091AbeBFXfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 18:35:17 -0500
-Date: Tue, 6 Feb 2018 16:35:14 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
-Subject: [PULL] A few more documentation changes for 4.16
-Message-ID: <20180206163514.685a7cf5@lwn.net>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1754162AbeBFXgz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 18:36:55 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58257 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754129AbeBFXgy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 18:36:54 -0500
+From: Colin King <colin.king@canonical.com>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@google.com>, qat-linux@intel.com,
+        linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: qat - Make several functions static
+Date: Tue,  6 Feb 2018 23:36:42 +0000
+Message-Id: <20180206233642.14591-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit
-255442c93843f52b6891b21d0b485bf2c97f93c3:
+From: Colin Ian King <colin.king@canonical.com>
 
-  Merge tag 'docs-4.16' of git://git.lwn.net/linux (2018-01-31 19:25:25 -0800)
+Functions qat_rsa_set_n, qat_rsa_set_e and qat_rsa_set_n are local to
+the source and do not need to be in global scope, so make them static.
 
-are available in the Git repository at:
+Cleans up sparse warnings:
+drivers/crypto/qat/qat_common/qat_asym_algs.c:972:5: warning: symbol
+'qat_rsa_set_n' was not declared. Should it be static?
+drivers/crypto/qat/qat_common/qat_asym_algs.c:1003:5: warning: symbol
+'qat_rsa_set_e' was not declared. Should it be static?
+drivers/crypto/qat/qat_common/qat_asym_algs.c:1027:5: warning: symbol
+'qat_rsa_set_d' was not declared. Should it be static?
 
-  git://git.lwn.net/linux.git tags/docs-4.16-2
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/qat/qat_common/qat_asym_algs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-for you to fetch changes up to 78ed78451963d1a4282bcda92059fdf2a7821401:
-
-  Documentation/process: tweak pgp maintainer guide (2018-02-06 16:31:56 -0700)
-
-----------------------------------------------------------------
-A few late-arriving fixes, along with Konstantin's PGP document that had
-no reason to wait another cycle.
-
-----------------------------------------------------------------
-Corentin Labbe (1):
-      Documentation: mips: Update AU1xxx_IDE Kconfig dependencies
-
-Grigory Shipunov (1):
-      Fix broken link in Documentation/process/kernel-docs.rst
-
-Konstantin Ryabitsev (2):
-      Documentation/process: kernel maintainer PGP guide
-      Documentation/process: tweak pgp maintainer guide
-
-Randy Dunlap (1):
-      Documentation/admin-guide: fixes for thunderbolt.rst
-
- Documentation/admin-guide/thunderbolt.rst      |  66 +-
- Documentation/mips/AU1xxx_IDE.README           |   7 -
- Documentation/process/index.rst                |   1 +
- Documentation/process/kernel-docs.rst          |   2 +-
- Documentation/process/maintainer-pgp-guide.rst | 929 +++++++++++++++++++++++++
- 5 files changed, 964 insertions(+), 41 deletions(-)
- create mode 100644 Documentation/process/maintainer-pgp-guide.rst
+diff --git a/drivers/crypto/qat/qat_common/qat_asym_algs.c b/drivers/crypto/qat/qat_common/qat_asym_algs.c
+index 13c52d6bf630..320e7854b4ee 100644
+--- a/drivers/crypto/qat/qat_common/qat_asym_algs.c
++++ b/drivers/crypto/qat/qat_common/qat_asym_algs.c
+@@ -969,7 +969,8 @@ static int qat_rsa_dec(struct akcipher_request *req)
+ 	return ret;
+ }
+ 
+-int qat_rsa_set_n(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
++static int qat_rsa_set_n(struct qat_rsa_ctx *ctx, const char *value,
++			 size_t vlen)
+ {
+ 	struct qat_crypto_instance *inst = ctx->inst;
+ 	struct device *dev = &GET_DEV(inst->accel_dev);
+@@ -1000,7 +1001,8 @@ int qat_rsa_set_n(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
+ 	return ret;
+ }
+ 
+-int qat_rsa_set_e(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
++static int qat_rsa_set_e(struct qat_rsa_ctx *ctx, const char *value,
++			 size_t vlen)
+ {
+ 	struct qat_crypto_instance *inst = ctx->inst;
+ 	struct device *dev = &GET_DEV(inst->accel_dev);
+@@ -1024,7 +1026,8 @@ int qat_rsa_set_e(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
+ 	return 0;
+ }
+ 
+-int qat_rsa_set_d(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
++static int qat_rsa_set_d(struct qat_rsa_ctx *ctx, const char *value,
++			 size_t vlen)
+ {
+ 	struct qat_crypto_instance *inst = ctx->inst;
+ 	struct device *dev = &GET_DEV(inst->accel_dev);
+-- 
+2.15.1
