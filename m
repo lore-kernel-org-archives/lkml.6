@@ -1,104 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeBFC00 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 21:26:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752105AbeBFC0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 21:26:18 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FD7214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Tue, 6 Feb 2018 11:26:14 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] apparent bogosity in
- unregister_ftrace_function_probe_func()
-Message-Id: <20180206112614.80e2a9cbfc55954ab904c3e3@kernel.org>
-In-Reply-To: <20180205175433.6cd369db@gandalf.local.home>
-References: <20180127031706.GE13338@ZenIV.linux.org.uk>
-        <CAJwJo6YD4ds-AHZRm-zEyGCnu+PS-6g_FFeAmHDfaKQxQAUr=A@mail.gmail.com>
-        <20180127170748.GF13338@ZenIV.linux.org.uk>
-        <20180129225942.f2aec926e2ea223c52c34169@kernel.org>
-        <20180205175433.6cd369db@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752551AbeBFCaA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 21:30:00 -0500
+Received: from mx-fe5-210.meituan.com ([103.37.138.210]:36007 "EHLO
+        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752165AbeBFC3w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 21:29:52 -0500
+DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 336A22975CE3
+Subject: Re: [PATCH] jbd2: set to NULL after kmem_cache_destroy
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1517837957-1636-1-git-send-email-wanglong19@meituan.com>
+ <20180205170006.GA4838@magnolia>
+From: Wang Long <wanglong19@meituan.com>
+Message-ID: <1fb20a12-8482-fea8-1db2-ff764216ea19@meituan.com>
+Date: Tue, 6 Feb 2018 10:29:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180205170006.GA4838@magnolia>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 5 Feb 2018 17:54:33 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Mon, 29 Jan 2018 22:59:42 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > On Sat, 27 Jan 2018 17:07:48 +0000
-> > Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> > 
-> > > On Sat, Jan 27, 2018 at 01:59:56PM +0000, Dmitry Safonov wrote:  
-> > > >   
-> > > > > Incidentally, shouldn't filter_parse_regex("*[ab]", 5, &s, &not)
-> > > > > end up with s = "*[ab]"?  We are returning MATCH_GLOB, after all,
-> > > > > so we want the entire pattern there...  I would've assumed that
-> > > > > this is what the code in unregister_ftrace_function_probe_func()
-> > > > > is trying to compensate for, the first oddity predates MATCH_GLOB...  
-> > > > 
-> > > > No, I don't think filter_parse_regex() should return the full regex..
-> > > > ftrace_match() expects search would be processed string, not a glob.
-> > > > So, this unnecessary assignment broke unregistering multiple kprobs
-> > > > with a middle/end pattern..  
-> > > 
-> > > For substring - sure, but what about something like "*a*b" and "a*b"?
-> > > AFAICS, filter_parse_regex() ends up with identical results in both
-> > > cases - MATCH_GLOB and *search = "a*b".  And no way for the caller
-> > > to tell one from another.
-> > > 
-> > > IOW, it's a different bug sometimes obscured by the one in
-> > > unregister_ftrace_function_probe_func().  filter_parse_regex()
-> > > ought to revert to *search = buff; when it decides to return
-> > > MATCH_GLOB.  Or something like
-> > >         for (i = 0; i < len; i++) {
-> > >                 if (buff[i] == '*') {
-> > >                         if (!i) {
-> > >                                 type = MATCH_END_ONLY;
-> > >                         } else if (i == len - 1) {
-> > >                                 if (type == MATCH_END_ONLY)
-> > >                                         type = MATCH_MIDDLE_ONLY;
-> > >                                 else
-> > >                                         type = MATCH_FRONT_ONLY;
-> > >                                 buff[i] = 0;
-> > >                                 break;
-> > >                         } else {        /* pattern continues, use full glob */
-> > >                                 return MATCH_GLOB;
-> > >                         }
-> > >                 } else if (strchr("[?\\", buff[i])) {
-> > >                         return MATCH_GLOB;
-> > >                 }
-> > >         }
-> > >         if (buff[0] == '*')
-> > >                 *search = buff + 1;
-> > > for that matter - i.e. delay that "we want everything past the first character"
-> > > until we are certain it's not a MATCH_GLOB.  
-> > 
-> > Looks nice to me!
-> > 
-> 
-> I'll implement this code giving Al credit and referencing this email
-> thread. Anyone have objections to that?
-
-No, that code looks good to me. :)
-
-BTW, did you also remove "search = buff;" line in 
-unregister_ftrace_function_probe_func() too?
-
-Thanks!
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+On 6/2/2018 1:00 AM, Darrick J. Wong wrote:
+> On Mon, Feb 05, 2018 at 09:39:17PM +0800, Wang Long wrote:
+>> Signed-off-by: Wang Long <wanglong19@meituan.com>
+>> ---
+>>   fs/jbd2/journal.c | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+>> index 93016bb..38dc24c 100644
+>> --- a/fs/jbd2/journal.c
+>> +++ b/fs/jbd2/journal.c
+>> @@ -2649,11 +2649,14 @@ static int __init jbd2_journal_init_handle_cache(void)
+>>   
+>>   static void jbd2_journal_destroy_handle_cache(void)
+>>   {
+>> -	if (jbd2_handle_cache)
+>> +	if (jbd2_handle_cache) {
+>>   		kmem_cache_destroy(jbd2_handle_cache);
+> kmem_cache_destroy already handles null pointers, so you can remove the
+> conditional test entirely.
+>
+> --D
+Thanks, I will send another patch to remove all conditional test in 
+module JBD2.
+>> -	if (jbd2_inode_cache)
+>> +		jbd2_handle_cache = NULL;
+>> +	}
+>> +	if (jbd2_inode_cache) {
+>>   		kmem_cache_destroy(jbd2_inode_cache);
+>> -
+>> +		jbd2_inode_cache = NULL;
+>> +	}
+>>   }
+>>   
+>>   /*
+>> -- 
+>> 1.8.3.1
+>>
