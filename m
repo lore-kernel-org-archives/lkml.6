@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753706AbeBFWpt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 17:45:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37706 "EHLO mail.kernel.org"
+        id S1753616AbeBFWps (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 17:45:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753413AbeBFWpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753346AbeBFWpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Feb 2018 17:45:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A2EA217B4
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888D5217B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180206224541.929072588@goodmis.org>
+Message-Id: <20180206224541.371991066@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 06 Feb 2018 17:43:44 -0500
+Date: Tue, 06 Feb 2018 17:43:41 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -19,79 +19,61 @@ Cc: Ingo Molnar <mingo@kernel.org>,
         Al Viro <viro@ZenIV.linux.org.uk>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Dmitry Safonov <0x7f454c46@gmail.com>, Shuah Khan <shuah@kernel.org>
-Subject: [RFC][PATCH 6/6] selftests/ftrace: Add more tests for removing of function probes
+Subject: [RFC][PATCH 3/6] selftests/ftrace: Have reset_ftrace_filter handle modules
 References: <20180206224338.446477232@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0006-selftests-ftrace-Add-more-tests-for-removing-of-func.patch
+Content-Disposition: inline; filename=0003-selftests-ftrace-Have-reset_ftrace_filter-handle-mod.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Al Viro discovered a bug in the removing of function probes where if it had
-a '*' at the beginning, it would fail to find any matches. That is, because
-it reset the glob search string to the the initial string with a "MATCH_END"
-type, instead of skipping the wildcard "*" it included it, where it would
-not match any functions because "*" was being treated as a normal character
-and not a wildcard one.
+If a function probe in set_ftrace_filter belongs to a module, it will
+contain the module name. Like:
 
-Link: http://lkml.kernel.org/r/20180127031706.GE13338@ZenIV.linux.org.uk
+ wmi_query_block [wmi]:traceoff:unlimited
+
+But writing:
+
+ '!wmi_query_block [wmi]:traceoff' > set_ftrace_filter
+
+will cause an error. We still need to write:
+
+ '!wmi_query_block:traceoff' > set_ftrace_filter
 
 Cc: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../ftrace/test.d/ftrace/func_set_ftrace_file.tc   | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ tools/testing/selftests/ftrace/test.d/functions | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc
-index 0f3f92622e33..68e7a48f5828 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc
-@@ -128,6 +128,43 @@ if check_set_ftrace_filter "$FUNC1" "$FUNC2" ; then
-     fail "Expected $FUNC1 and $FUNC2"
- fi
+diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+index f2019b37370d..e7c4c7b752a2 100644
+--- a/tools/testing/selftests/ftrace/test.d/functions
++++ b/tools/testing/selftests/ftrace/test.d/functions
+@@ -37,17 +37,18 @@ reset_ftrace_filter() { # reset all triggers in set_ftrace_filter
+ 	if [ "$tr" = "" ]; then
+ 	    continue
+ 	fi
++	name=`echo $t | cut -d: -f1 | cut -d' ' -f1`
+ 	if [ $tr = "enable_event" -o $tr = "disable_event" ]; then
+-	    tr=`echo $t | cut -d: -f1-4`
++	    tr=`echo $t | cut -d: -f2-4`
+ 	    limit=`echo $t | cut -d: -f5`
+ 	else
+-	    tr=`echo $t | cut -d: -f1-2`
++	    tr=`echo $t | cut -d: -f2`
+ 	    limit=`echo $t | cut -d: -f3`
+ 	fi
+ 	if [ "$limit" != "unlimited" ]; then
+ 	    tr="$tr:$limit"
+ 	fi
+-	echo "!$tr" > set_ftrace_filter
++	echo "!$name:$tr" > set_ftrace_filter
+     done
+ }
  
-+test_actual() { # Compares $TMPDIR/expected with set_ftrace_filter
-+    cat set_ftrace_filter | grep -v '#' | cut -d' ' -f1 | cut -d':' -f1 | sort -u > $TMPDIR/actual
-+    DIFF=`diff $TMPDIR/actual $TMPDIR/expected`
-+    test -z "$DIFF"
-+}
-+
-+# Set traceoff trigger for all fuctions with "lock" in their name
-+cat available_filter_functions | cut -d' ' -f1 |  grep 'lock' | sort -u > $TMPDIR/expected
-+echo '*lock*:traceoff' > set_ftrace_filter
-+test_actual
-+
-+# now remove all with 'try' in it, and end with lock
-+grep -v 'try.*lock$' $TMPDIR/expected > $TMPDIR/expected2
-+mv $TMPDIR/expected2 $TMPDIR/expected
-+echo '!*try*lock:traceoff' >> set_ftrace_filter
-+test_actual
-+
-+# remove all that start with "m" and end with "lock"
-+grep -v '^m.*lock$' $TMPDIR/expected > $TMPDIR/expected2
-+mv $TMPDIR/expected2 $TMPDIR/expected
-+echo '!m*lock:traceoff' >> set_ftrace_filter
-+test_actual
-+
-+# remove all that start with "c" and have "unlock"
-+grep -v '^c.*unlock' $TMPDIR/expected > $TMPDIR/expected2
-+mv $TMPDIR/expected2 $TMPDIR/expected
-+echo '!c*unlock*:traceoff' >> set_ftrace_filter
-+test_actual
-+
-+# clear all the rest
-+> $TMPDIR/expected
-+echo '!*:traceoff' >> set_ftrace_filter
-+test_actual
-+
-+rm $TMPDIR/expected
-+rm $TMPDIR/actual
-+
- do_reset
- 
- exit 0
 -- 
 2.15.1
