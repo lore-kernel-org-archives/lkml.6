@@ -1,136 +1,201 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710301-2-7182714724114950146
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-874968-1517912255-2-8428029393195077199
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='au', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710300; b=hiSaiC6FrzOObnN3f0Pk546G40YeGiDn2qcK/K9/E8XTFV9
-    GW8ZwNYxvGFFKYbfX8Jqmp5+KkdknFi1E7U/yX6gTWJmtENWsOXQA3xTU4v77H1h
-    JwVLQ/ad5z3lEINSuNFDpa6xE3GLmadfPYbh1QR6TPg2mdiqk5T6Ao8DmmzwZx+b
-    HX7/XRPAHUSMAynRdAh6dgGwPNdzIiEvEpSqFMKNT+WhxY9DjvkTq25RWx4m3uJ9
-    VUCR27K7Y/kU4w/LXgRBeBw3ajGhuJFkvgdaNPIwFYwpdeQyRU2RM5IEDbFK6vEW
-    5sbjTwF0ge8Iv8WHglCuM6ttt132wTETxsuEBIQ==
+    t=1517912254; b=BsR3XPziMbVnKCFOEgSqzXVV1FZxH0ZPr1VhKled4C2kDqP
+    zsE2HjBqBP3fZhbC2g9Mw9RWTk5+gJoUO/MgT7Z7LftROpcvsVs3gs+eQJqEm394
+    wzSxU0qwb1ypFxaOuYXrSphjm0GcAt2nMpoWV15Yh3T0pz17YQFILvpENlCbRT4x
+    qFUBEsfm+3ULambBkhGBsn5gLD3xkGi50+3q6hIT2HOyCJ+GwO5xn2JLWbIo7bpz
+    ak4QQEljZdmdBe2j1rynXbUZFGBVXOcGBo+1jH2wDYZpdLOC4tcbMVlXFCas7WAZ
+    OGs3yZcWpbPAQ0zvo4dA4UUD5saArubwdZnuSNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518710300; bh=p
-    IFhRkFZ/D7ISjtYWvxAd9mKAghR8C5wZPjFc16JZ+0=; b=JrlriflEUTaqONUA8
-    VR19DSMvPSbHvIMO7ZQvXpHpAEtMy9CrEbT8EgJJpMoxeczq7rFCbJRE6nM3uNE7
-    2sXkHN8nNJ4ediRFmSjbR4qcOwHpaBo1vZhCW/UM6IxBSv+SUIPXVK8IWA++NdLk
-    rMXbPRcT9gM4uTuvycv0z6zfLYPK4Z/Uxip2zSiKXw3Y0GNl1YZ4A8Vz2jNlGSLq
-    rz9TM8AgKKbIiIiqG68l2G6F+87m1nAPtTfbC8sJ+/XIGmEJhDGKNQASeKCJaghf
-    dF4B3R2FgrVNrD4hX23aPhYX6C802sywNLp6Uk2wDVIQBwi/644/FXpk+mOk8f9C
-    vT0qA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1517912254; bh=QOeiEYCwZ1IkqOax8xgFvqGRZv
+    ZepcSvxPCtIfYYre0=; b=tgXGG0k2c0PoWnoAQCHAQG5xysdYVhgnm9/BRNLKMh
+    Drg3i8Yd+VIWwdMLT8waE5A936R5TlcMUwrPEZq6ovyLGl/oCh3jUqVaAoJ5/hfk
+    Tg1pfbCdnQ1EHtEo8ekjGvjEso0kbtJNKkDYdThdLVVI8x/6mLUbMpLpjX6H+rCW
+    Ai73sOAltrIrK+pss+kCTgPyLZPEGXGuv7tFrvXKwzJsBJ9S35xXtRoyou1ajXB0
+    kV39wirGnbubE9L77MlJLpTmkaz5UUSspXJxu6rNLgn//ceX6+hnE/ic6TI+y1SG
+    p7jWsUeYymofwUbdxKauBvicQV7MS2r8cn51fqE+IqtQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gondor.apana.org.au;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gondor.apana.org.au header.result=pass header_org.domain=apana.org.au header_org.result=pass header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gondor.apana.org.au;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gondor.apana.org.au header.result=pass header_org.domain=apana.org.au header_org.result=pass header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 15 Feb 2018 23:41:50 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Subject: Re: [PATCH v2 0/7] crypto: ccree: Introduce Arm TrustZone CryptoCell
-Message-ID: <20180215154150.GB7352@gondor.apana.org.au>
-References: <1516613230-4524-1-git-send-email-gilad@benyossef.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <1516613230-4524-1-git-send-email-gilad@benyossef.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752626AbeBFKQR (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 05:16:17 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:44466 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752634AbeBFKPE (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 6 Feb 2018 05:15:04 -0500
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Richard Weinberger <richard@nod.at>
+Cc: Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH/RFC 0/6] Allow compile-testing NO_DMA
+Date: Tue,  6 Feb 2018 11:14:46 +0100
+Message-Id: <1517912092-15470-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Jan 22, 2018 at 09:26:58AM +0000, Gilad Ben-Yossef wrote:
-> Arm TrustZone CryptoCell is a security hardware IP that
-> includes support for hardware based hash, digest, cipher
-> and AEAD operations. This driver provides support for
-> these as part of the Linux Crypto sub-system.
-> 
-> The driver spent some time now in the staging tree being
-> cleaned up and is now submitted for review for the
-> purpose of moving into the crypto tree. The first patch
-> therefore renames its copy in the staging directory
-> Kconfig define and marks it broken, otherwise there is a
-> build failure due to global symbols collisions.
-> 
-> Please note that the driver include stubs for yet
-> unexposed functionality (ivgen and secure HW keys),
-> which will be added later.
-> 
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> 
-> Changes from v1:
-> - Use KConfig directive to stop staging tree version to not
->   collide during link time as opposed to deleting it as indicated
->   by Greg KH.
-> - Switched from legacy ablkcipher to skcipher interface as
->   indicated by Corentin Labbe.
-> - Removed unused zero_buff struct as indicated by Corentin Labbe.
-> - Moved to kzfree for all IV/key buffers as indicated by
->   Corentin Labbe.
-> - Moved to using __des3_ede_setkey() in lieu of home grown
->   version as indicated by Stephan Mueller.
-> - Fixed multiple small coding style from Dan Carpenter and others.
-> - Fixed pointer signedness sparse warnings as indicated by Jeremy
->   Sowden.
-> - Rename all registered algs driver name to -ccree prefix
-> 
-> Gilad Ben-Yossef (7):
->   staging: ccree: rename staging ver and mark as broken
->   crypto: ccree: introduce CryptoCell driver
->   crypto: ccree: add skcipher support
->   crypto: ccree: add ahash support
->   crypto: ccree: add AEAD support
->   crypto: ccree: add FIPS support
->   MAINTAINERS: update ccree entry
+	Hi all,
 
-All applied.  Thanks.
+If NO_DMA=y, get_dma_ops() returns a reference to the non-existing
+symbol bad_dma_ops, thus causing a link failure if it is ever used.
+
+The intention of this is twofold:
+  1. To catch users of the DMA API on systems that do no support the DMA
+     mapping API,
+  2. To avoid building drivers that cannot work on such systems anyway.
+
+However, the disadvantage is that we have to keep on adding dependencies
+on HAS_DMA all over the place.
+
+Thanks to the COMPILE_TEST symbol, lots of drivers now depend on one or
+more platform dependencies (that imply HAS_DMA) || COMPILE_TEST, thus
+already covering intention #2.  Having to add an explicit dependency on
+HAS_DMA here is cumbersome, and hinders compile-testing.
+
+Hence I think the time is ripe to reconsider the link failure.
+This patch series:
+  - Changes get_dma_ops() to return NULL instead,
+  - Adds a few more dummies to enable compile-testing,
+  - Removes dependencies on HAS_DMA for symbols that already have
+    platform dependencies implying HAS_DMA.
+
+Note that adding more platform dependencies and/or dependencies on
+COMPILE_TEST is encouraged!
+
+This may make life harder for UML, though, as UML usually satisfies all
+other platform dependencies for HAS_DMA.  Similarly, HAS_IOMEM is even
+more complicated.  Can/do we want to do something similar for
+HAS_IOMEM?
+
+This series is against my current local tree, which has a few more
+"depends on HAS_DMA" than upstream.  Of course I will rebase, and split
+the last patch per subsystem, if this RFC is welcomed positively.
+
+Compile-tested with allmodconfig and allyesconfig for m68k/sun3.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (6):
+  [RFC] dma-mapping: Convert NO_DMA get_dma_ops() into a real dummy
+  [RFC] dma-coherent: Add NO_DMA dummies for managed DMA API
+  [RFC] usb: gadget: Add NO_DMA dummies for DMA mapping API
+  [RFC] mm: Add NO_DMA dummies for DMA pool API
+  [RFC] scsi: Add NO_DMA dummies for SCSI DMA mapping API
+  [RFC] Treewide: Remove depends on HAS_DMA in case of platform
+    dependency
+
+ drivers/ata/Kconfig                             |  2 --
+ drivers/crypto/Kconfig                          | 14 +++------
+ drivers/firewire/Kconfig                        |  1 -
+ drivers/fpga/Kconfig                            |  1 -
+ drivers/gpu/ipu-v3/Kconfig                      |  1 -
+ drivers/i2c/busses/Kconfig                      |  3 --
+ drivers/iio/adc/Kconfig                         |  3 --
+ drivers/iommu/Kconfig                           |  5 ++--
+ drivers/lightnvm/Kconfig                        |  2 +-
+ drivers/mailbox/Kconfig                         |  2 --
+ drivers/media/pci/dt3155/Kconfig                |  1 -
+ drivers/media/pci/solo6x10/Kconfig              |  1 -
+ drivers/media/pci/sta2x11/Kconfig               |  1 -
+ drivers/media/pci/tw5864/Kconfig                |  1 -
+ drivers/media/pci/tw686x/Kconfig                |  1 -
+ drivers/media/platform/Kconfig                  | 40 ++++++++-----------------
+ drivers/media/platform/am437x/Kconfig           |  2 +-
+ drivers/media/platform/atmel/Kconfig            |  4 +--
+ drivers/media/platform/blackfin/Kconfig         |  1 -
+ drivers/media/platform/davinci/Kconfig          |  6 ----
+ drivers/media/platform/marvell-ccic/Kconfig     |  3 +-
+ drivers/media/platform/rcar-vin/Kconfig         |  2 +-
+ drivers/media/platform/soc_camera/Kconfig       |  3 +-
+ drivers/media/platform/sti/c8sectpfe/Kconfig    |  2 +-
+ drivers/mmc/host/Kconfig                        | 10 ++-----
+ drivers/mtd/nand/Kconfig                        |  8 ++---
+ drivers/mtd/spi-nor/Kconfig                     |  2 +-
+ drivers/net/ethernet/amd/Kconfig                |  2 +-
+ drivers/net/ethernet/apm/xgene-v2/Kconfig       |  1 -
+ drivers/net/ethernet/apm/xgene/Kconfig          |  1 -
+ drivers/net/ethernet/arc/Kconfig                |  6 ++--
+ drivers/net/ethernet/broadcom/Kconfig           |  2 --
+ drivers/net/ethernet/calxeda/Kconfig            |  2 +-
+ drivers/net/ethernet/hisilicon/Kconfig          |  2 +-
+ drivers/net/ethernet/marvell/Kconfig            |  8 ++---
+ drivers/net/ethernet/mellanox/mlxsw/Kconfig     |  2 +-
+ drivers/net/ethernet/renesas/Kconfig            |  2 --
+ drivers/net/ethernet/socionext/Kconfig          |  4 +--
+ drivers/net/wireless/broadcom/brcm80211/Kconfig |  1 -
+ drivers/net/wireless/quantenna/qtnfmac/Kconfig  |  2 +-
+ drivers/remoteproc/Kconfig                      |  1 -
+ drivers/scsi/hisi_sas/Kconfig                   |  2 +-
+ drivers/spi/Kconfig                             | 12 ++------
+ drivers/staging/media/davinci_vpfe/Kconfig      |  1 -
+ drivers/staging/media/omap4iss/Kconfig          |  1 -
+ drivers/staging/vc04_services/Kconfig           |  1 -
+ drivers/tty/serial/Kconfig                      |  4 ---
+ drivers/usb/gadget/udc/Kconfig                  |  4 +--
+ drivers/usb/mtu3/Kconfig                        |  2 +-
+ drivers/video/fbdev/Kconfig                     |  3 +-
+ include/linux/dma-mapping.h                     | 19 ++++++++----
+ include/linux/dmapool.h                         | 21 +++++++++++--
+ include/linux/usb/gadget.h                      | 12 ++++++++
+ include/scsi/scsi_cmnd.h                        |  5 ++++
+ sound/soc/bcm/Kconfig                           |  3 +-
+ sound/soc/kirkwood/Kconfig                      |  1 -
+ sound/soc/pxa/Kconfig                           |  1 -
+ sound/soc/qcom/Kconfig                          |  6 ++--
+ 58 files changed, 108 insertions(+), 148 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
