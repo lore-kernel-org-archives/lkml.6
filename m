@@ -1,105 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752463AbeBFOm3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 09:42:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38262 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752151AbeBFOlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 09:41:53 -0500
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: [PATCH v4 3/3] sched/cpufreq_schedutil: use util_est for OPP selection
-Date: Tue,  6 Feb 2018 14:41:31 +0000
-Message-Id: <20180206144131.31233-4-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180206144131.31233-1-patrick.bellasi@arm.com>
-References: <20180206144131.31233-1-patrick.bellasi@arm.com>
+        id S1752259AbeBFOni (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 09:43:38 -0500
+Received: from mout.web.de ([212.227.15.14]:63239 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751424AbeBFOn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 09:43:29 -0500
+To: linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/3] HID-Logitech: Adjustments for two function
+ implementations
+Message-ID: <5c76a767-b1cb-2486-f24d-0d5a220b8985@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 15:43:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:aYsZwoWFhRIOE+K1af3Miemr1DH2iGILV98zYgwZNBd8Z9l14Xr
+ YkX8PZOXE3pgBI9TG/0y+gdH026BmY0epHIw9+AFfcm/jRNWx96SZWeHDHGe9qqYjYeh78S
+ h+q7h/7hVaNBHhpOMfEMKBCSBZSSMXvvP25xs7LgUobYP1MSOohiL/V7eD1M1G5TDZ1oNku
+ R9XBQvRWhXXi2gEbZN9/g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2JsgQM79E5Y=:xAATY9Kuxz/bsbbA8vE2Yp
+ SPD3IKBvvsCpJ3Hh3mvt+OWGiLZTSFV2uvMW29iR3+QFUArCrinzfPXcT1UdBnnTVO68x8KVi
+ q3RZay25uAwUj5ZZqjg3f5UzCaFbZRq9MEtzVqTsSeIVSa/jENftkcq2nn9B6VnyUecB2tjvZ
+ La6oe8+zNUWQJt57MajRFQykEoUGYC5Z8CjeWFTjvJ3MKMolu3ePjiojqRTF93knX86rIP6HD
+ LjqlZAWDKocP9rzhNUbXfCEDmUA6XKcTTmdSuXPmYpSeDup15ejX79faTGQ45fsPAeBxEpeCK
+ eIu3YmxLreVnQkVyXM/sPfjCO66bM4DfWk7xZCb5feqeTL8idDAQX1cgP2NSbvpihT3MF5/IY
+ jrhXimMPCJEh52520HBzfxbAk7KXEYg4haXTPdssMFCWRvfAGqJxpdyAwAacyWqszcG10gdOg
+ CM4pIKBf3Ev6Qzj2jy+GVJzDrzvn6O+dnInxM3eBx1dXlcPa77m7gGkINuGJktAxApG5Oi6gZ
+ Cjy8wq05ysNpwvWyZvSf9GnjNUi/JE/8nffrLFFt7PBC/0eimUy6FXOVEk4bbcpl/Kx7p+lig
+ 2zBK4/SQV2F+03CWb4TzuucMh+tyvf7222vMLAEe7rripqYdnYSD21AAXCsVDR5ijjipmU1Hf
+ eUhoFWjIXsAKk7Io1rk9DXYzFyUG9rg8zdpHOWr7fI1UQ2uritpD9WZFGqjEQnYQXl+oLxtSC
+ dbUi0PVW/G1Es5oYWjYPQV7gWp9KKAO3cH1NlSqeyAZhzGz4/3QuOZopbgwwNK7OURLsGMO4+
+ 6sSN9i1cvzOvvHwy1LoAz2OHBqyrkHGf8mHq4a8kYF5WmvvsMs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When schedutil looks at the CPU utilization, the current PELT value for
-that CPU is returned straight away. In certain scenarios this can have
-undesired side effects and delays on frequency selection.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 15:38:30 +0100
 
-For example, since the task utilization is decayed at wakeup time, a
-long sleeping big task newly enqueued does not add immediately a
-significant contribution to the target CPU. This introduces some latency
-before schedutil will be able to detect the best frequency required by
-that task.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Moreover, the PELT signal build-up time is a function of the current
-frequency, because of the scale invariant load tracking support. Thus,
-starting from a lower frequency, the utilization build-up time will
-increase even more and further delays the selection of the actual
-frequency which better serves the task requirements.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in lg_probe()
+  Improve a size determination in lg_probe()
+  Delete an error message for a failed memory allocation in lg4ff_init()
 
-In order to reduce this kind of latencies, we integrate the usage
-of the CPU's estimated utilization in the sugov_get_util function.
-This allows to properly consider the expected utilization of a CPU which,
-for example, has just got a big task running after a long sleep period.
-Ultimately this allows to select the best frequency to run a task
-right after its wake-up.
+ drivers/hid/hid-lg.c    | 7 +++----
+ drivers/hid/hid-lg4ff.c | 4 +---
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Paul Turner <pjt@google.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-
----
-Changes in v4:
- - rebased on today's tip/sched/core (commit 460e8c3340a2)
- - use util_est.enqueued for cfs_rq's util_est (Joel)
- - simplify cpu_util_cfs() integration (Dietmar)
-
-Changes in v3:
- - rebase on today's tip/sched/core (commit 07881166a892)
- - moved into Juri's cpu_util_cfs(), which should also
-   address Rafael's suggestion to use a local variable.
-
-Changes in v2:
- - rebase on top of v4.15-rc2
- - tested that overhauled PELT code does not affect the util_est
-
-Change-Id: I62c01ed90d8ad45b06383be03d39fcf8c9041646
----
- kernel/sched/sched.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 2e95505e23c6..f3c7b6a83ef4 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2127,7 +2127,12 @@ static inline unsigned long cpu_util_dl(struct rq *rq)
- 
- static inline unsigned long cpu_util_cfs(struct rq *rq)
- {
--	return rq->cfs.avg.util_avg;
-+	if (!sched_feat(UTIL_EST))
-+		return rq->cfs.avg.util_avg;
-+
-+	return max_t(unsigned long,
-+		     rq->cfs.avg.util_avg,
-+		     rq->cfs.avg.util_est.enqueued);
- }
- 
- #endif
 -- 
-2.15.1
+2.16.1
