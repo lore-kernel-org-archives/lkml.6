@@ -1,38 +1,37 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1690823-1517938474-2-8166912697116858045
+X-Cyrus-Session-Id: sloti22d1t05-1654186-1517938468-2-13822152689583193190
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
-X-Spam-charsets: to='UTF-8', plain='UTF-8'
+X-Spam-charsets: to='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517938473; b=u/0voIvpdeyfz0x89Ntc6e68VQqsHDJfTdPsN70VW9UVYaw
-    1/7uSLhKWNq3vEoIs2uhA9klOv8UtXnbQMzGRUR7dbBiR1jKBkpjxVKKqdK45vdF
-    8xVFU1OytxJaubxsf/oFlmUdwyxI2/JS5FRDbUySyT7s7Lnk5CsmRXXgQYiaqix9
-    3sFi840u/PFApNctWzBIEr+ukspIy39M6bEbFkyNlyGyyPW1YCMg1h30YZbSQO7W
-    rDh/ssAwroYHkU45GGkc2/Twh52jCEHt3Tbc/uwE/xO9vLz2zmd/lUQuI33ec2T2
-    fGeQWhUfbZM+2f6cCNgAbIBDVsEPVaACFFLt9uA==
+    t=1517938466; b=gb9RZ4/u+gJ1gQ7bh7VGwMW06XwLwoiqvuRlrQfxjvvNhZA
+    BfYvtkbY3ZvRboH89OT6JH5srCeaIBYdEAbGG/+yw3UmTOw98Chy81mL21hV3U7b
+    fwFbbFChF0mVDX3/gDd4XImSzN+Hw0MtruwZKc8e8eFDDXuQMds6VRz2BuxkgpHO
+    jqOqdl/A8piTI1xUkBPFBztZF9MPL6lEU1odeQsStnpm1fhJfb+OjIbHH5PGK3KG
+    G9Q72zQLBKjTu0WvtKR81Z5eJBRBMYTQV9TpvbJuAoZ3aasNTDkAer2+7Kau79tt
+    36nlobW35ngPkndrKgiEQn+MO8mTJTv6Hnl4OSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1517938473; bh=MmrDipP6Mu9YuVO8A/LM5lIgXkIUWMFnPeC8MVvB+eU=; b=T
-    w5uLYbU0raNFK3nIM0uvm2pZox533FTBZfFA0KMola8IuIUFs5yHBKGauJOuPqZ1
-    AA55dRMLe/oPc7IP8outKZy2siKuVs+uBy/48lOmzPcSihWFv+vXfOpFgTWqHy2N
-    j+nItO+8QKkz3EdXMaAFysogzUj8vYW0MkedT/C+ums0Tnz2LkZsvPin8jI8JMbN
-    DEvobsnFXJ/JD7J3uDAZS5OmXAFaao2brrimPBFMmFqfTWhn1Ensr6R6kUF2rIIy
-    TUippE73kXD3FmRwaSmCx3aIeRX+KeL7l9H4PYhtWbSNec6FUXwJgREvElYvcsL+
-    jiC8TEbg6MJZDW8lR+JZg==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1517938466;
+    bh=3WBQcGagmLxMjKF7DCd5SQe0M87gspUsyvGBS7NUt6U=; b=vNiMId2BHpyQ
+    A8l29+VEiaQ7zc+1670OBKnLL4e5T6aAEP84k/detE2D6n+gLlGI62vxpWBlyeIJ
+    dKlBQdPdpKykr2MnkJb6c6aEDDvRKAHQX0L9xs36S8K0DUMEb8we2w97AeHJYKgM
+    Q1437j2CFYKvALEWXh7P6SH702MIFfv5EyPpjluddnbcTVHnoiAD5KvNjR+sk475
+    q1ugbKZigOdOL2G2mvXn3JJvsrq5nBnlUGidjptnYc0avDoEI7YOhWbrcKFO4+xI
+    INrkrC4nNhRUskvuGAaO5i7efzMSzLgaAq3J7+6LqrwaC9xzsfoMOorR2tzZzGrV
+    Qa97k0WVXg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim-adsp=pass (ADSP policy from amazon.co.uk);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=sPekm+Ep x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=S7sZH42N x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
     dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -42,7 +41,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim-adsp=pass (ADSP policy from amazon.co.uk);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=sPekm+Ep x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=S7sZH42N x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
     dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,14 +49,14 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752759AbeBFRaJ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 12:30:09 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:44320 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752702AbeBFR3y (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 12:29:54 -0500
+        id S1752732AbeBFRbW (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 12:31:22 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:27362 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752929AbeBFRbH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 12:31:07 -0500
 X-IronPort-AV: E=Sophos;i="5.46,469,1511827200";
-   d="scan'208";a="330970449"
+   d="scan'208";a="718429377"
 From: David Woodhouse <dwmw@amazon.co.uk>
 To: Paolo Bonzini <pbonzini@redhat.com>,
         Jim Mattson <jmattson@google.com>,
@@ -65,305 +64,593 @@ To: Paolo Bonzini <pbonzini@redhat.com>,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         KarimAllah Ahmed <karahmed@amazon.de>,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 3/9] KVM: nVMX: Eliminate vmcs02 pool
-Date: Tue,  6 Feb 2018 17:29:35 +0000
-Message-Id: <1517938181-15317-4-git-send-email-dwmw@amazon.co.uk>
+Subject: [PATCH 5/9] KVM: VMX: make MSR bitmaps per-VCPU
+Date: Tue,  6 Feb 2018 17:29:37 +0000
+Message-Id: <1517938181-15317-6-git-send-email-dwmw@amazon.co.uk>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
 References: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jim Mattson <jmattson@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-The potential performance advantages of a vmcs02 pool have never been
-realized. To simplify the code, eliminate the pool. Instead, a single
-vmcs02 is allocated per VCPU when the VCPU enters VMX operation.
+Place the MSR bitmap in struct loaded_vmcs, and update it in place
+every time the x2apic or APICv state can change.  This is rare and
+the loop can handle 64 MSRs per iteration, in a similar fashion as
+nested_vmx_prepare_msr_bitmap.
+
+This prepares for choosing, on a per-VM basis, whether to intercept
+the SPEC_CTRL and PRED_CMD MSRs.
 
 Cc: stable@vger.kernel.org       # prereq for Spectre mitigation
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Mark Kanda <mark.kanda@oracle.com>
-Reviewed-by: Ameya More <ameya.more@oracle.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-
-(cherry picked from commit de3a0021a60635de96aa92713c1a31a96747d72c)
+Suggested-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+(cherry picked from commit 904e14fb7cb96401a7dc803ca2863fd5ba32ffe6)
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/kvm/vmx.c | 146 +++++++++--------------------------------------------
- 1 file changed, 23 insertions(+), 123 deletions(-)
+ arch/x86/kvm/vmx.c | 314 +++++++++++++++++++----------------------------------
+ 1 file changed, 114 insertions(+), 200 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 9408ae8..55b1474 100644
+index 8c562da..8570a17 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -174,7 +174,6 @@ module_param(ple_window_max, int, S_IRUGO);
- extern const ulong vmx_return;
+@@ -110,6 +110,14 @@ static u64 __read_mostly host_xss;
+ static bool __read_mostly enable_pml = 1;
+ module_param_named(pml, enable_pml, bool, S_IRUGO);
  
- #define NR_AUTOLOAD_MSRS 8
--#define VMCS02_POOL_SIZE 1
- 
- struct vmcs {
- 	u32 revision_id;
-@@ -208,7 +207,7 @@ struct shared_msr_entry {
-  * stored in guest memory specified by VMPTRLD, but is opaque to the guest,
-  * which must access it using VMREAD/VMWRITE/VMCLEAR instructions.
-  * More than one of these structures may exist, if L1 runs multiple L2 guests.
-- * nested_vmx_run() will use the data here to build a vmcs02: a VMCS for the
-+ * nested_vmx_run() will use the data here to build the vmcs02: a VMCS for the
-  * underlying hardware which will be used to run L2.
-  * This structure is packed to ensure that its layout is identical across
-  * machines (necessary for live migration).
-@@ -387,13 +386,6 @@ struct __packed vmcs12 {
-  */
- #define VMCS12_SIZE 0x1000
- 
--/* Used to remember the last vmcs02 used for some recently used vmcs12s */
--struct vmcs02_list {
--	struct list_head list;
--	gpa_t vmptr;
--	struct loaded_vmcs vmcs02;
--};
--
- /*
-  * The nested_vmx structure is part of vcpu_vmx, and holds information we need
-  * for correct emulation of VMX (i.e., nested VMX) on this vcpu.
-@@ -420,15 +412,15 @@ struct nested_vmx {
- 	 */
- 	bool sync_shadow_vmcs;
- 
--	/* vmcs02_list cache of VMCSs recently used to run L2 guests */
--	struct list_head vmcs02_pool;
--	int vmcs02_num;
- 	bool change_vmcs01_virtual_x2apic_mode;
- 	/* L2 must run next, and mustn't decide to exit to L1. */
- 	bool nested_run_pending;
++#define MSR_TYPE_R	1
++#define MSR_TYPE_W	2
++#define MSR_TYPE_RW	3
 +
-+	struct loaded_vmcs vmcs02;
++#define MSR_BITMAP_MODE_X2APIC		1
++#define MSR_BITMAP_MODE_X2APIC_APICV	2
++#define MSR_BITMAP_MODE_LM		4
 +
- 	/*
--	 * Guest pages referred to in vmcs02 with host-physical pointers, so
--	 * we must keep them pinned while L2 runs.
-+	 * Guest pages referred to in the vmcs02 with host-physical
-+	 * pointers, so we must keep them pinned while L2 runs.
- 	 */
- 	struct page *apic_access_page;
- 	struct page *virtual_apic_page;
-@@ -6682,94 +6674,6 @@ static int handle_monitor(struct kvm_vcpu *vcpu)
- }
+ #define KVM_VMX_TSC_MULTIPLIER_MAX     0xffffffffffffffffULL
  
- /*
-- * To run an L2 guest, we need a vmcs02 based on the L1-specified vmcs12.
-- * We could reuse a single VMCS for all the L2 guests, but we also want the
-- * option to allocate a separate vmcs02 for each separate loaded vmcs12 - this
-- * allows keeping them loaded on the processor, and in the future will allow
-- * optimizations where prepare_vmcs02 doesn't need to set all the fields on
-- * every entry if they never change.
-- * So we keep, in vmx->nested.vmcs02_pool, a cache of size VMCS02_POOL_SIZE
-- * (>=0) with a vmcs02 for each recently loaded vmcs12s, most recent first.
-- *
-- * The following functions allocate and free a vmcs02 in this pool.
-- */
--
--/* Get a VMCS from the pool to use as vmcs02 for the current vmcs12. */
--static struct loaded_vmcs *nested_get_current_vmcs02(struct vcpu_vmx *vmx)
--{
--	struct vmcs02_list *item;
--	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
--		if (item->vmptr == vmx->nested.current_vmptr) {
--			list_move(&item->list, &vmx->nested.vmcs02_pool);
--			return &item->vmcs02;
--		}
--
--	if (vmx->nested.vmcs02_num >= max(VMCS02_POOL_SIZE, 1)) {
--		/* Recycle the least recently used VMCS. */
--		item = list_last_entry(&vmx->nested.vmcs02_pool,
--				       struct vmcs02_list, list);
--		item->vmptr = vmx->nested.current_vmptr;
--		list_move(&item->list, &vmx->nested.vmcs02_pool);
--		return &item->vmcs02;
--	}
--
--	/* Create a new VMCS */
--	item = kmalloc(sizeof(struct vmcs02_list), GFP_KERNEL);
--	if (!item)
--		return NULL;
--	item->vmcs02.vmcs = alloc_vmcs();
--	item->vmcs02.shadow_vmcs = NULL;
--	if (!item->vmcs02.vmcs) {
--		kfree(item);
--		return NULL;
--	}
--	loaded_vmcs_init(&item->vmcs02);
--	item->vmptr = vmx->nested.current_vmptr;
--	list_add(&(item->list), &(vmx->nested.vmcs02_pool));
--	vmx->nested.vmcs02_num++;
--	return &item->vmcs02;
--}
--
--/* Free and remove from pool a vmcs02 saved for a vmcs12 (if there is one) */
--static void nested_free_vmcs02(struct vcpu_vmx *vmx, gpa_t vmptr)
--{
--	struct vmcs02_list *item;
--	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
--		if (item->vmptr == vmptr) {
--			free_loaded_vmcs(&item->vmcs02);
--			list_del(&item->list);
--			kfree(item);
--			vmx->nested.vmcs02_num--;
--			return;
--		}
--}
--
--/*
-- * Free all VMCSs saved for this vcpu, except the one pointed by
-- * vmx->loaded_vmcs. We must be running L1, so vmx->loaded_vmcs
-- * must be &vmx->vmcs01.
-- */
--static void nested_free_all_saved_vmcss(struct vcpu_vmx *vmx)
--{
--	struct vmcs02_list *item, *n;
--
--	WARN_ON(vmx->loaded_vmcs != &vmx->vmcs01);
--	list_for_each_entry_safe(item, n, &vmx->nested.vmcs02_pool, list) {
--		/*
--		 * Something will leak if the above WARN triggers.  Better than
--		 * a use-after-free.
--		 */
--		if (vmx->loaded_vmcs == &item->vmcs02)
--			continue;
--
--		free_loaded_vmcs(&item->vmcs02);
--		list_del(&item->list);
--		kfree(item);
--		vmx->nested.vmcs02_num--;
--	}
--}
--
--/*
-  * The following 3 functions, nested_vmx_succeed()/failValid()/failInvalid(),
-  * set the success or error code of an emulated VMX instruction, as specified
-  * by Vol 2B, VMX Instruction Reference, "Conventions".
-@@ -7082,6 +6986,12 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 		return 1;
- 	}
- 
-+	vmx->nested.vmcs02.vmcs = alloc_vmcs();
-+	vmx->nested.vmcs02.shadow_vmcs = NULL;
-+	if (!vmx->nested.vmcs02.vmcs)
-+		goto out_vmcs02;
-+	loaded_vmcs_init(&vmx->nested.vmcs02);
-+
- 	if (cpu_has_vmx_msr_bitmap()) {
- 		vmx->nested.msr_bitmap =
- 				(unsigned long *)__get_free_page(GFP_KERNEL);
-@@ -7104,9 +7014,6 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 		vmx->vmcs01.shadow_vmcs = shadow_vmcs;
- 	}
- 
--	INIT_LIST_HEAD(&(vmx->nested.vmcs02_pool));
--	vmx->nested.vmcs02_num = 0;
--
- 	hrtimer_init(&vmx->nested.preemption_timer, CLOCK_MONOTONIC,
- 		     HRTIMER_MODE_REL_PINNED);
- 	vmx->nested.preemption_timer.function = vmx_preemption_timer_fn;
-@@ -7124,6 +7031,9 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 	free_page((unsigned long)vmx->nested.msr_bitmap);
- 
- out_msr_bitmap:
-+	free_loaded_vmcs(&vmx->nested.vmcs02);
-+
-+out_vmcs02:
- 	return -ENOMEM;
- }
- 
-@@ -7209,7 +7119,7 @@ static void free_nested(struct vcpu_vmx *vmx)
- 		vmx->vmcs01.shadow_vmcs = NULL;
- 	}
- 	kfree(vmx->nested.cached_vmcs12);
--	/* Unpin physical memory we referred to in current vmcs02 */
-+	/* Unpin physical memory we referred to in the vmcs02 */
- 	if (vmx->nested.apic_access_page) {
- 		nested_release_page(vmx->nested.apic_access_page);
- 		vmx->nested.apic_access_page = NULL;
-@@ -7225,7 +7135,7 @@ static void free_nested(struct vcpu_vmx *vmx)
- 		vmx->nested.pi_desc = NULL;
- 	}
- 
--	nested_free_all_saved_vmcss(vmx);
-+	free_loaded_vmcs(&vmx->nested.vmcs02);
- }
- 
- /* Emulate the VMXOFF instruction */
-@@ -7259,8 +7169,6 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
- 			vmptr + offsetof(struct vmcs12, launch_state),
- 			&zero, sizeof(zero));
- 
--	nested_free_vmcs02(vmx, vmptr);
--
- 	skip_emulated_instruction(vcpu);
- 	nested_vmx_succeed(vcpu);
- 	return 1;
-@@ -8049,10 +7957,11 @@ static bool nested_vmx_exit_handled(struct kvm_vcpu *vcpu)
- 
- 	/*
- 	 * The host physical addresses of some pages of guest memory
--	 * are loaded into VMCS02 (e.g. L1's Virtual APIC Page). The CPU
--	 * may write to these pages via their host physical address while
--	 * L2 is running, bypassing any address-translation-based dirty
--	 * tracking (e.g. EPT write protection).
-+	 * are loaded into the vmcs02 (e.g. vmcs12's Virtual APIC
-+	 * Page). The CPU may write to these pages via their host
-+	 * physical address while L2 is running, bypassing any
-+	 * address-translation-based dirty tracking (e.g. EPT write
-+	 * protection).
- 	 *
- 	 * Mark them dirty on every exit from L2 to prevent them from
- 	 * getting out of sync with dirty tracking.
-@@ -10221,7 +10130,6 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 	struct vmcs12 *vmcs12;
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ /* Guest_tsc -> host_tsc conversion requires 64-bit division.  */
+@@ -191,6 +199,7 @@ struct loaded_vmcs {
+ 	struct vmcs *shadow_vmcs;
  	int cpu;
--	struct loaded_vmcs *vmcs02;
- 	bool ia32e;
- 	u32 msr_entry_idx;
+ 	int launched;
++	unsigned long *msr_bitmap;
+ 	struct list_head loaded_vmcss_on_cpu_link;
+ };
  
-@@ -10361,17 +10269,13 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 	 * the nested entry.
- 	 */
+@@ -429,8 +438,6 @@ struct nested_vmx {
+ 	bool pi_pending;
+ 	u16 posted_intr_nv;
  
--	vmcs02 = nested_get_current_vmcs02(vmx);
--	if (!vmcs02)
--		return -ENOMEM;
+-	unsigned long *msr_bitmap;
 -
- 	enter_guest_mode(vcpu);
+ 	struct hrtimer preemption_timer;
+ 	bool preemption_timer_expired;
  
- 	if (!(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS))
- 		vmx->nested.vmcs01_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
+@@ -531,6 +538,7 @@ struct vcpu_vmx {
+ 	unsigned long         host_rsp;
+ 	u8                    fail;
+ 	bool                  nmi_known_unmasked;
++	u8		      msr_bitmap_mode;
+ 	u32                   exit_intr_info;
+ 	u32                   idt_vectoring_info;
+ 	ulong                 rflags;
+@@ -902,6 +910,7 @@ static u32 vmx_segment_access_rights(struct kvm_segment *var);
+ static void copy_vmcs12_to_shadow(struct vcpu_vmx *vmx);
+ static void copy_shadow_to_vmcs12(struct vcpu_vmx *vmx);
+ static int alloc_identity_pagetable(struct kvm *kvm);
++static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
  
+ static DEFINE_PER_CPU(struct vmcs *, vmxarea);
+ static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
+@@ -921,12 +930,6 @@ static DEFINE_PER_CPU(spinlock_t, blocked_vcpu_on_cpu_lock);
+ 
+ static unsigned long *vmx_io_bitmap_a;
+ static unsigned long *vmx_io_bitmap_b;
+-static unsigned long *vmx_msr_bitmap_legacy;
+-static unsigned long *vmx_msr_bitmap_longmode;
+-static unsigned long *vmx_msr_bitmap_legacy_x2apic;
+-static unsigned long *vmx_msr_bitmap_longmode_x2apic;
+-static unsigned long *vmx_msr_bitmap_legacy_x2apic_apicv_inactive;
+-static unsigned long *vmx_msr_bitmap_longmode_x2apic_apicv_inactive;
+ static unsigned long *vmx_vmread_bitmap;
+ static unsigned long *vmx_vmwrite_bitmap;
+ 
+@@ -2520,36 +2523,6 @@ static void move_msr_up(struct vcpu_vmx *vmx, int from, int to)
+ 	vmx->guest_msrs[from] = tmp;
+ }
+ 
+-static void vmx_set_msr_bitmap(struct kvm_vcpu *vcpu)
+-{
+-	unsigned long *msr_bitmap;
+-
+-	if (is_guest_mode(vcpu))
+-		msr_bitmap = to_vmx(vcpu)->nested.msr_bitmap;
+-	else if (cpu_has_secondary_exec_ctrls() &&
+-		 (vmcs_read32(SECONDARY_VM_EXEC_CONTROL) &
+-		  SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE)) {
+-		if (enable_apicv && kvm_vcpu_apicv_active(vcpu)) {
+-			if (is_long_mode(vcpu))
+-				msr_bitmap = vmx_msr_bitmap_longmode_x2apic;
+-			else
+-				msr_bitmap = vmx_msr_bitmap_legacy_x2apic;
+-		} else {
+-			if (is_long_mode(vcpu))
+-				msr_bitmap = vmx_msr_bitmap_longmode_x2apic_apicv_inactive;
+-			else
+-				msr_bitmap = vmx_msr_bitmap_legacy_x2apic_apicv_inactive;
+-		}
+-	} else {
+-		if (is_long_mode(vcpu))
+-			msr_bitmap = vmx_msr_bitmap_longmode;
+-		else
+-			msr_bitmap = vmx_msr_bitmap_legacy;
+-	}
+-
+-	vmcs_write64(MSR_BITMAP, __pa(msr_bitmap));
+-}
+-
+ /*
+  * Set up the vmcs to automatically save and restore system
+  * msrs.  Don't touch the 64-bit msrs if the guest is in legacy
+@@ -2590,7 +2563,7 @@ static void setup_msrs(struct vcpu_vmx *vmx)
+ 	vmx->save_nmsrs = save_nmsrs;
+ 
+ 	if (cpu_has_vmx_msr_bitmap())
+-		vmx_set_msr_bitmap(&vmx->vcpu);
++		vmx_update_msr_bitmap(&vmx->vcpu);
+ }
+ 
+ /*
+@@ -3537,6 +3510,8 @@ static void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
+ 	loaded_vmcs_clear(loaded_vmcs);
+ 	free_vmcs(loaded_vmcs->vmcs);
+ 	loaded_vmcs->vmcs = NULL;
++	if (loaded_vmcs->msr_bitmap)
++		free_page((unsigned long)loaded_vmcs->msr_bitmap);
+ 	WARN_ON(loaded_vmcs->shadow_vmcs != NULL);
+ }
+ 
+@@ -3553,7 +3528,18 @@ static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
+ 
+ 	loaded_vmcs->shadow_vmcs = NULL;
+ 	loaded_vmcs_init(loaded_vmcs);
++
++	if (cpu_has_vmx_msr_bitmap()) {
++		loaded_vmcs->msr_bitmap = (unsigned long *)__get_free_page(GFP_KERNEL);
++		if (!loaded_vmcs->msr_bitmap)
++			goto out_vmcs;
++		memset(loaded_vmcs->msr_bitmap, 0xff, PAGE_SIZE);
++	}
+ 	return 0;
++
++out_vmcs:
++	free_loaded_vmcs(loaded_vmcs);
++	return -ENOMEM;
+ }
+ 
+ static void free_kvm_area(void)
+@@ -4562,10 +4548,8 @@ static void free_vpid(int vpid)
+ 	spin_unlock(&vmx_vpid_lock);
+ }
+ 
+-#define MSR_TYPE_R	1
+-#define MSR_TYPE_W	2
+-static void __vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
+-						u32 msr, int type)
++static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
++							  u32 msr, int type)
+ {
+ 	int f = sizeof(unsigned long);
+ 
+@@ -4599,8 +4583,8 @@ static void __vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
+ 	}
+ }
+ 
+-static void __vmx_enable_intercept_for_msr(unsigned long *msr_bitmap,
+-						u32 msr, int type)
++static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitmap,
++							 u32 msr, int type)
+ {
+ 	int f = sizeof(unsigned long);
+ 
+@@ -4634,6 +4618,15 @@ static void __vmx_enable_intercept_for_msr(unsigned long *msr_bitmap,
+ 	}
+ }
+ 
++static void __always_inline vmx_set_intercept_for_msr(unsigned long *msr_bitmap,
++			     			      u32 msr, int type, bool value)
++{
++	if (value)
++		vmx_enable_intercept_for_msr(msr_bitmap, msr, type);
++	else
++		vmx_disable_intercept_for_msr(msr_bitmap, msr, type);
++}
++
+ /*
+  * If a msr is allowed by L0, we should check whether it is allowed by L1.
+  * The corresponding bit will be cleared unless both of L0 and L1 allow it.
+@@ -4680,58 +4673,68 @@ static void nested_vmx_disable_intercept_for_msr(unsigned long *msr_bitmap_l1,
+ 	}
+ }
+ 
+-static void vmx_disable_intercept_for_msr(u32 msr, bool longmode_only)
++static u8 vmx_msr_bitmap_mode(struct kvm_vcpu *vcpu)
+ {
+-	if (!longmode_only)
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy,
+-						msr, MSR_TYPE_R | MSR_TYPE_W);
+-	__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode,
+-						msr, MSR_TYPE_R | MSR_TYPE_W);
+-}
++	u8 mode = 0;
+ 
+-static void vmx_enable_intercept_msr_read_x2apic(u32 msr, bool apicv_active)
+-{
+-	if (apicv_active) {
+-		__vmx_enable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic,
+-				msr, MSR_TYPE_R);
+-		__vmx_enable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic,
+-				msr, MSR_TYPE_R);
+-	} else {
+-		__vmx_enable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic_apicv_inactive,
+-				msr, MSR_TYPE_R);
+-		__vmx_enable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic_apicv_inactive,
+-				msr, MSR_TYPE_R);
++	if (cpu_has_secondary_exec_ctrls() &&
++	    (vmcs_read32(SECONDARY_VM_EXEC_CONTROL) &
++	     SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE)) {
++		mode |= MSR_BITMAP_MODE_X2APIC;
++		if (enable_apicv && kvm_vcpu_apicv_active(vcpu))
++			mode |= MSR_BITMAP_MODE_X2APIC_APICV;
+ 	}
++
++	if (is_long_mode(vcpu))
++		mode |= MSR_BITMAP_MODE_LM;
++
++	return mode;
+ }
+ 
+-static void vmx_disable_intercept_msr_read_x2apic(u32 msr, bool apicv_active)
++#define X2APIC_MSR(r) (APIC_BASE_MSR + ((r) >> 4))
++
++static void vmx_update_msr_bitmap_x2apic(unsigned long *msr_bitmap,
++					 u8 mode)
+ {
+-	if (apicv_active) {
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic,
+-				msr, MSR_TYPE_R);
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic,
+-				msr, MSR_TYPE_R);
+-	} else {
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic_apicv_inactive,
+-				msr, MSR_TYPE_R);
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic_apicv_inactive,
+-				msr, MSR_TYPE_R);
++	int msr;
++
++	for (msr = 0x800; msr <= 0x8ff; msr += BITS_PER_LONG) {
++		unsigned word = msr / BITS_PER_LONG;
++		msr_bitmap[word] = (mode & MSR_BITMAP_MODE_X2APIC_APICV) ? 0 : ~0;
++		msr_bitmap[word + (0x800 / sizeof(long))] = ~0;
++	}
++
++	if (mode & MSR_BITMAP_MODE_X2APIC) {
++		/*
++		 * TPR reads and writes can be virtualized even if virtual interrupt
++		 * delivery is not in use.
++		 */
++		vmx_disable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_TASKPRI), MSR_TYPE_RW);
++		if (mode & MSR_BITMAP_MODE_X2APIC_APICV) {
++			vmx_enable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_TMCCT), MSR_TYPE_R);
++			vmx_disable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_EOI), MSR_TYPE_W);
++			vmx_disable_intercept_for_msr(msr_bitmap, X2APIC_MSR(APIC_SELF_IPI), MSR_TYPE_W);
++		}
+ 	}
+ }
+ 
+-static void vmx_disable_intercept_msr_write_x2apic(u32 msr, bool apicv_active)
++static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu)
+ {
+-	if (apicv_active) {
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic,
+-				msr, MSR_TYPE_W);
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic,
+-				msr, MSR_TYPE_W);
+-	} else {
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_legacy_x2apic_apicv_inactive,
+-				msr, MSR_TYPE_W);
+-		__vmx_disable_intercept_for_msr(vmx_msr_bitmap_longmode_x2apic_apicv_inactive,
+-				msr, MSR_TYPE_W);
+-	}
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
++	u8 mode = vmx_msr_bitmap_mode(vcpu);
++	u8 changed = mode ^ vmx->msr_bitmap_mode;
++
++	if (!changed)
++		return;
++
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW,
++				  !(mode & MSR_BITMAP_MODE_LM));
++
++	if (changed & (MSR_BITMAP_MODE_X2APIC | MSR_BITMAP_MODE_X2APIC_APICV))
++		vmx_update_msr_bitmap_x2apic(msr_bitmap, mode);
++
++	vmx->msr_bitmap_mode = mode;
+ }
+ 
+ static bool vmx_get_enable_apicv(void)
+@@ -4980,7 +4983,7 @@ static void vmx_refresh_apicv_exec_ctrl(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	if (cpu_has_vmx_msr_bitmap())
+-		vmx_set_msr_bitmap(vcpu);
++		vmx_update_msr_bitmap(vcpu);
+ }
+ 
+ static u32 vmx_exec_control(struct vcpu_vmx *vmx)
+@@ -5069,7 +5072,7 @@ static int vmx_vcpu_setup(struct vcpu_vmx *vmx)
+ 		vmcs_write64(VMWRITE_BITMAP, __pa(vmx_vmwrite_bitmap));
+ 	}
+ 	if (cpu_has_vmx_msr_bitmap())
+-		vmcs_write64(MSR_BITMAP, __pa(vmx_msr_bitmap_legacy));
++		vmcs_write64(MSR_BITMAP, __pa(vmx->vmcs01.msr_bitmap));
+ 
+ 	vmcs_write64(VMCS_LINK_POINTER, -1ull); /* 22.3.1.5 */
+ 
+@@ -6400,7 +6403,7 @@ static void wakeup_handler(void)
+ 
+ static __init int hardware_setup(void)
+ {
+-	int r = -ENOMEM, i, msr;
++	int r = -ENOMEM, i;
+ 
+ 	rdmsrl_safe(MSR_EFER, &host_efer);
+ 
+@@ -6415,41 +6418,13 @@ static __init int hardware_setup(void)
+ 	if (!vmx_io_bitmap_b)
+ 		goto out;
+ 
+-	vmx_msr_bitmap_legacy = (unsigned long *)__get_free_page(GFP_KERNEL);
+-	if (!vmx_msr_bitmap_legacy)
+-		goto out1;
+-
+-	vmx_msr_bitmap_legacy_x2apic =
+-				(unsigned long *)__get_free_page(GFP_KERNEL);
+-	if (!vmx_msr_bitmap_legacy_x2apic)
+-		goto out2;
+-
+-	vmx_msr_bitmap_legacy_x2apic_apicv_inactive =
+-				(unsigned long *)__get_free_page(GFP_KERNEL);
+-	if (!vmx_msr_bitmap_legacy_x2apic_apicv_inactive)
+-		goto out3;
+-
+-	vmx_msr_bitmap_longmode = (unsigned long *)__get_free_page(GFP_KERNEL);
+-	if (!vmx_msr_bitmap_longmode)
+-		goto out4;
+-
+-	vmx_msr_bitmap_longmode_x2apic =
+-				(unsigned long *)__get_free_page(GFP_KERNEL);
+-	if (!vmx_msr_bitmap_longmode_x2apic)
+-		goto out5;
+-
+-	vmx_msr_bitmap_longmode_x2apic_apicv_inactive =
+-				(unsigned long *)__get_free_page(GFP_KERNEL);
+-	if (!vmx_msr_bitmap_longmode_x2apic_apicv_inactive)
+-		goto out6;
+-
+ 	vmx_vmread_bitmap = (unsigned long *)__get_free_page(GFP_KERNEL);
+ 	if (!vmx_vmread_bitmap)
+-		goto out7;
++		goto out1;
+ 
+ 	vmx_vmwrite_bitmap = (unsigned long *)__get_free_page(GFP_KERNEL);
+ 	if (!vmx_vmwrite_bitmap)
+-		goto out8;
++		goto out2;
+ 
+ 	memset(vmx_vmread_bitmap, 0xff, PAGE_SIZE);
+ 	memset(vmx_vmwrite_bitmap, 0xff, PAGE_SIZE);
+@@ -6458,12 +6433,9 @@ static __init int hardware_setup(void)
+ 
+ 	memset(vmx_io_bitmap_b, 0xff, PAGE_SIZE);
+ 
+-	memset(vmx_msr_bitmap_legacy, 0xff, PAGE_SIZE);
+-	memset(vmx_msr_bitmap_longmode, 0xff, PAGE_SIZE);
+-
+ 	if (setup_vmcs_config(&vmcs_config) < 0) {
+ 		r = -EIO;
+-		goto out9;
++		goto out3;
+ 	}
+ 
+ 	if (boot_cpu_has(X86_FEATURE_NX))
+@@ -6520,47 +6492,8 @@ static __init int hardware_setup(void)
+ 		kvm_tsc_scaling_ratio_frac_bits = 48;
+ 	}
+ 
+-	vmx_disable_intercept_for_msr(MSR_FS_BASE, false);
+-	vmx_disable_intercept_for_msr(MSR_GS_BASE, false);
+-	vmx_disable_intercept_for_msr(MSR_KERNEL_GS_BASE, true);
+-	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_CS, false);
+-	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_ESP, false);
+-	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_EIP, false);
+-
+-	memcpy(vmx_msr_bitmap_legacy_x2apic,
+-			vmx_msr_bitmap_legacy, PAGE_SIZE);
+-	memcpy(vmx_msr_bitmap_longmode_x2apic,
+-			vmx_msr_bitmap_longmode, PAGE_SIZE);
+-	memcpy(vmx_msr_bitmap_legacy_x2apic_apicv_inactive,
+-			vmx_msr_bitmap_legacy, PAGE_SIZE);
+-	memcpy(vmx_msr_bitmap_longmode_x2apic_apicv_inactive,
+-			vmx_msr_bitmap_longmode, PAGE_SIZE);
+-
+ 	set_bit(0, vmx_vpid_bitmap); /* 0 is reserved for host */
+ 
+-	/*
+-	 * enable_apicv && kvm_vcpu_apicv_active()
+-	 */
+-	for (msr = 0x800; msr <= 0x8ff; msr++)
+-		vmx_disable_intercept_msr_read_x2apic(msr, true);
+-
+-	/* TMCCT */
+-	vmx_enable_intercept_msr_read_x2apic(0x839, true);
+-	/* TPR */
+-	vmx_disable_intercept_msr_write_x2apic(0x808, true);
+-	/* EOI */
+-	vmx_disable_intercept_msr_write_x2apic(0x80b, true);
+-	/* SELF-IPI */
+-	vmx_disable_intercept_msr_write_x2apic(0x83f, true);
+-
+-	/*
+-	 * (enable_apicv && !kvm_vcpu_apicv_active()) ||
+-	 * 	!enable_apicv
+-	 */
+-	/* TPR */
+-	vmx_disable_intercept_msr_read_x2apic(0x808, false);
+-	vmx_disable_intercept_msr_write_x2apic(0x808, false);
+-
+ 	if (enable_ept) {
+ 		kvm_mmu_set_mask_ptes(VMX_EPT_READABLE_MASK,
+ 			(enable_ept_ad_bits) ? VMX_EPT_ACCESS_BIT : 0ull,
+@@ -6606,22 +6539,10 @@ static __init int hardware_setup(void)
+ 
+ 	return alloc_kvm_area();
+ 
+-out9:
+-	free_page((unsigned long)vmx_vmwrite_bitmap);
+-out8:
+-	free_page((unsigned long)vmx_vmread_bitmap);
+-out7:
+-	free_page((unsigned long)vmx_msr_bitmap_longmode_x2apic_apicv_inactive);
+-out6:
+-	free_page((unsigned long)vmx_msr_bitmap_longmode_x2apic);
+-out5:
+-	free_page((unsigned long)vmx_msr_bitmap_longmode);
+-out4:
+-	free_page((unsigned long)vmx_msr_bitmap_legacy_x2apic_apicv_inactive);
+ out3:
+-	free_page((unsigned long)vmx_msr_bitmap_legacy_x2apic);
++	free_page((unsigned long)vmx_vmwrite_bitmap);
+ out2:
+-	free_page((unsigned long)vmx_msr_bitmap_legacy);
++	free_page((unsigned long)vmx_vmread_bitmap);
+ out1:
+ 	free_page((unsigned long)vmx_io_bitmap_b);
+ out:
+@@ -6632,12 +6553,6 @@ static __init int hardware_setup(void)
+ 
+ static __exit void hardware_unsetup(void)
+ {
+-	free_page((unsigned long)vmx_msr_bitmap_legacy_x2apic);
+-	free_page((unsigned long)vmx_msr_bitmap_legacy_x2apic_apicv_inactive);
+-	free_page((unsigned long)vmx_msr_bitmap_longmode_x2apic);
+-	free_page((unsigned long)vmx_msr_bitmap_longmode_x2apic_apicv_inactive);
+-	free_page((unsigned long)vmx_msr_bitmap_legacy);
+-	free_page((unsigned long)vmx_msr_bitmap_longmode);
+ 	free_page((unsigned long)vmx_io_bitmap_b);
+ 	free_page((unsigned long)vmx_io_bitmap_a);
+ 	free_page((unsigned long)vmx_vmwrite_bitmap);
+@@ -7002,13 +6917,6 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
+ 	if (r < 0)
+ 		goto out_vmcs02;
+ 
+-	if (cpu_has_vmx_msr_bitmap()) {
+-		vmx->nested.msr_bitmap =
+-				(unsigned long *)__get_free_page(GFP_KERNEL);
+-		if (!vmx->nested.msr_bitmap)
+-			goto out_msr_bitmap;
+-	}
+-
+ 	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
+ 	if (!vmx->nested.cached_vmcs12)
+ 		goto out_cached_vmcs12;
+@@ -7038,9 +6946,6 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
+ 	kfree(vmx->nested.cached_vmcs12);
+ 
+ out_cached_vmcs12:
+-	free_page((unsigned long)vmx->nested.msr_bitmap);
+-
+-out_msr_bitmap:
+ 	free_loaded_vmcs(&vmx->nested.vmcs02);
+ 
+ out_vmcs02:
+@@ -7119,10 +7024,6 @@ static void free_nested(struct vcpu_vmx *vmx)
+ 	vmx->nested.vmxon = false;
+ 	free_vpid(vmx->nested.vpid02);
+ 	nested_release_vmcs12(vmx);
+-	if (vmx->nested.msr_bitmap) {
+-		free_page((unsigned long)vmx->nested.msr_bitmap);
+-		vmx->nested.msr_bitmap = NULL;
+-	}
+ 	if (enable_shadow_vmcs) {
+ 		vmcs_clear(vmx->vmcs01.shadow_vmcs);
+ 		free_vmcs(vmx->vmcs01.shadow_vmcs);
+@@ -8469,7 +8370,7 @@ static void vmx_set_virtual_x2apic_mode(struct kvm_vcpu *vcpu, bool set)
+ 	}
+ 	vmcs_write32(SECONDARY_VM_EXEC_CONTROL, sec_exec_control);
+ 
+-	vmx_set_msr_bitmap(vcpu);
++	vmx_update_msr_bitmap(vcpu);
+ }
+ 
+ static void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu, hpa_t hpa)
+@@ -9089,6 +8990,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+ {
+ 	int err;
+ 	struct vcpu_vmx *vmx = kmem_cache_zalloc(kvm_vcpu_cache, GFP_KERNEL);
++	unsigned long *msr_bitmap;
+ 	int cpu;
+ 
+ 	if (!vmx)
+@@ -9129,6 +9031,15 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+ 	if (err < 0)
+ 		goto free_msrs;
+ 
++	msr_bitmap = vmx->vmcs01.msr_bitmap;
++	vmx_disable_intercept_for_msr(msr_bitmap, MSR_FS_BASE, MSR_TYPE_RW);
++	vmx_disable_intercept_for_msr(msr_bitmap, MSR_GS_BASE, MSR_TYPE_RW);
++	vmx_disable_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
++	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
++	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
++	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
++	vmx->msr_bitmap_mode = 0;
++
+ 	vmx->loaded_vmcs = &vmx->vmcs01;
  	cpu = get_cpu();
--	vmx->loaded_vmcs = vmcs02;
-+	vmx->loaded_vmcs = &vmx->nested.vmcs02;
- 	vmx_vcpu_put(vcpu);
- 	vmx_vcpu_load(vcpu, cpu);
- 	vcpu->cpu = cpu;
-@@ -10886,10 +10790,6 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 	vm_exit_controls_reset_shadow(vmx);
- 	vmx_segment_cache_clear(vmx);
+ 	vmx_vcpu_load(&vmx->vcpu, cpu);
+@@ -9523,7 +9434,7 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
+ 	int msr;
+ 	struct page *page;
+ 	unsigned long *msr_bitmap_l1;
+-	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.msr_bitmap;
++	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
  
--	/* if no vmcs02 cache requested, remove the one we used */
--	if (VMCS02_POOL_SIZE == 0)
--		nested_free_vmcs02(vmx, vmx->nested.current_vmptr);
--
- 	load_vmcs12_host_state(vcpu, vmcs12);
+ 	/* This shortcut is ok because we support only x2APIC MSRs so far. */
+ 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12))
+@@ -10043,6 +9954,9 @@ static void prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
+ 	if (kvm_has_tsc_control)
+ 		decache_tsc_multiplier(vmx);
  
- 	/* Update any VMCS fields that might have changed while L2 ran */
++	if (cpu_has_vmx_msr_bitmap())
++		vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
++
+ 	if (enable_vpid) {
+ 		/*
+ 		 * There is no direct mapping between vpid02 and vpid12, the
+@@ -10747,7 +10661,7 @@ static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
+ 	vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
+ 
+ 	if (cpu_has_vmx_msr_bitmap())
+-		vmx_set_msr_bitmap(vcpu);
++		vmx_update_msr_bitmap(vcpu);
+ 
+ 	if (nested_vmx_load_msr(vcpu, vmcs12->vm_exit_msr_load_addr,
+ 				vmcs12->vm_exit_msr_load_count))
 -- 
 2.7.4
