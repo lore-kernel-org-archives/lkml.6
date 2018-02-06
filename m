@@ -1,47 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754092AbeBFVVC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 16:21:02 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35583 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753397AbeBFVUf (ORCPT
+        id S1754105AbeBFVVY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 16:21:24 -0500
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:43681 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751632AbeBFVVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 16:20:35 -0500
-X-Google-Smtp-Source: AH8x226QaRUMu5++K7q1GPqnK/6G5GC59COyvhdljJRtRt/u3JXoQuBQrz9f6UiQ+DiAZ5v4rp/EoA==
-From: Artem Savkov <artem.savkov@gmail.com>
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Artem Savkov <artem.savkov@gmail.com>
-Subject: [PATCH 1/2] sun4i_ss_prng: fix return value of sun4i_ss_prng_generate
-Date: Tue,  6 Feb 2018 22:20:21 +0100
-Message-Id: <20180206212022.1309-2-artem.savkov@gmail.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180206212022.1309-1-artem.savkov@gmail.com>
-References: <20180206212022.1309-1-artem.savkov@gmail.com>
+        Tue, 6 Feb 2018 16:21:22 -0500
+Subject: Re: [PATCH v8 0/7] TDA1997x HDMI video reciver
+To: Tim Harvey <tharvey@gateworks.com>, linux-media@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <c7771c44-a9ff-0207-38f6-28bcc06ccdee@xs4all.nl>
+Date: Tue, 6 Feb 2018 22:21:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfM79BTvMRLJRg5Ifk5tmO+C4yK17+1iIRcYevrUwjVOGvo05dQRl9ltSD48EPITbFYG6LiukRQLKv9LkWyr0EzgwTR2Febtts6oU47sbI79nywRDafqN
+ LE01TdgW5IoqaPtdebBO73rcoIHr6Kj737b4FWUsvfOm9NiEdctWTKKv7gmN2LBB+VYDO1awfZgyq0fO7Jwn47SO0vPYFNFL+sumP7wIFfM4H6XFklusngwv
+ Unti/dFkPCSumi9hYftdRpVIVc9jKFa+Up1WpourDVGzvLtHPcUvdLISPkKHThbrofXvS0FoG0r012OP/Og0xlqQQF1xUGIbNNZlCPzr7xIbu4R43elVHRSA
+ 2SQpnRK7BQ+Xz7ezeNrYJDvFi6njbpsvEi3JvYeRH51PjMRQ85F2zryJmYk1evuT3S0VKlOUlcXVHa2iQ3SnejPUo73+nPSlf55tfftC/jMcyndqKDMGrlIV
+ KsBelaGPva8jkmVo
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to crypto/rng.h generate function should return 0 on success
-and < 0 on error.
+On 02/06/2018 09:27 PM, Tim Harvey wrote:
 
-Fixes: b8ae5c7387ad ("crypto: sun4i-ss - support the Security System PRNG")
-Signed-off-by: Artem Savkov <artem.savkov@gmail.com>
----
- drivers/crypto/sunxi-ss/sun4i-ss-prng.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+<snip>
 
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c b/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-index 0d01d1624252..5754e0b92fb0 100644
---- a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-+++ b/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-@@ -52,5 +52,5 @@ int sun4i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
- 
- 	writel(0, ss->base + SS_CTL);
- 	spin_unlock(&ss->slock);
--	return dlen;
-+	return 0;
- }
--- 
-2.15.1
+> v4l2-compliance test results:
+>  - with the following kernel patches:
+>    v4l2-subdev: clear reserved fields
+>  . v4l2-subdev: without controls return -ENOTTY
+> 
+> v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
+> Media Driver Info:
+> 	Driver name      : imx-media
+> 	Model            : imx-media
+> 	Serial           : 
+> 	Bus info         : 
+> 	Media version    : 4.15.0
+> 	Hardware revision: 0x00000000 (0)
+> 	Driver version   : 4.15.0
+> Interface Info:
+> 	ID               : 0x0300008f
+> 	Type             : V4L Sub-Device
+> Entity Info:
+> 	ID               : 0x00000003 (3)
+> 	Name             : tda19971 2-0048
+> 	Function         : Unknown
+
+This is missing. It should be one of these:
+
+https://hverkuil.home.xs4all.nl/spec/uapi/mediactl/media-types.html#media-entity-type
+
+However, we don't have a proper function defined.
+
+I would suggest adding a new MEDIA_ENT_F_DTV_DECODER analogous to MEDIA_ENT_F_ATV_DECODER.
+
+It would be a new patch adding this + documentation.
+
+> 	Pad 0x01000004   : Source
+> 	  Link 0x0200006f: to remote pad 0x1000063 of entity 'ipu1_csi0_mux': Data
+> 
+> Compliance test for device /dev/v4l-subdev1:
+> 
+> Allow for multiple opens:
+> 	test second /dev/v4l-subdev1 open: OK
+> 	test for unlimited opens: OK
+> 
+> Debug ioctls:
+> 	test VIDIOC_LOG_STATUS: OK
+> 
+> Input ioctls:
+> 	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+> 	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+> 	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+> 	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+> 	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+> 	Inputs: 0 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+> 	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+> 	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+> 	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+> 	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+> 	Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+> 	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+> 	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+> 	test VIDIOC_DV_TIMINGS_CAP: OK
+> 	test VIDIOC_G/S_EDID: OK
+
+Nice!
+
+> 
+> Sub-Device ioctls (Source Pad 0):
+> 	test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+> 	test Try VIDIOC_SUBDEV_G/S_FMT: OK
+> 	test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
+> 	test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+> 	test Active VIDIOC_SUBDEV_G/S_FMT: OK
+> 	test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
+> 	test VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
+> 
+> Control ioctls:
+> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+> 	test VIDIOC_QUERYCTRL: OK (Not Supported)
+> 	test VIDIOC_G/S_CTRL: OK (Not Supported)
+> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+> 	Standard Controls: 0 Private Controls: 0
+
+Why doesn't this show anything? You have at least one control, so this should
+reflect that. Does 'v4l2-ctl -d /dev/v4l-subdev1 -l' show any controls?
+
+I think sd->ctrl_handler is never set to the v4l2_ctrl_handler pointer.
+
+Have you ever tested the controls?
+
+Looking closer I also notice that the control handler is never freed. Or
+checked for errors when it is created in the probe function. Hmm, I should
+have caught that earlier.
+
+Regards,
+
+	Hans
