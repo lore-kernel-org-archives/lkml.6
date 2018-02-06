@@ -1,88 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754001AbeBFTiT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 14:38:19 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35194 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932070AbeBFTiK (ORCPT
+        id S1753371AbeBFToj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 14:44:39 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46179 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752966AbeBFTog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 14:38:10 -0500
-X-Google-Smtp-Source: AH8x227ZjoldrTjZwoiMPksZQFD101rDJfA4YsvtesMFX4zn10u7BqABw8qV8zKPMnE3o1Le01NDKBdk5+Z6X+W+6Xo=
+        Tue, 6 Feb 2018 14:44:36 -0500
+X-Google-Smtp-Source: AH8x225FPVMQ/f42/AsSLa+cnPVXBED2tDfW43r5l2j6KVLA5swYGHpIcki1NiGlepG09vZuZyj+ftHLQ6RpXO+/Ywg=
 MIME-Version: 1.0
-In-Reply-To: <20180205162519.GA3044@axis.com>
-References: <20180201161119.3852-1-niklas.cassel@axis.com> <20180201161119.3852-4-niklas.cassel@axis.com>
- <CAHp75VdX5=kzKFunM-Kbw7KOBt3+xik_pxhX1EZdO9eA3QHrBQ@mail.gmail.com>
- <000601d39b8e$f58a76f0$e09f64d0$@gmail.com> <20180205162519.GA3044@axis.com>
+In-Reply-To: <62634aa6-ad3c-93c2-e6fa-9e163d4004ca@huawei.com>
+References: <1516725385-24535-1-git-send-email-john.garry@huawei.com>
+ <1516725385-24535-8-git-send-email-john.garry@huawei.com> <0a30452f-34eb-d0b5-2001-ab6b866c53e2@huawei.com>
+ <CAHp75VfXoAHNH2BnfNLbFfdCqUk3rxU_QWfxTx7ZyLgV0qxotQ@mail.gmail.com> <62634aa6-ad3c-93c2-e6fa-9e163d4004ca@huawei.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 6 Feb 2018 21:38:09 +0200
-Message-ID: <CAHp75VcXt+gVucFYVv8rUYtPH6iAJBOeDTo45Y+k7hifF91Heg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] PCI: designware-ep: Return an error when requesting a
- too large BAR size
-To: Niklas Cassel <niklas.cassel@axis.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
+Date: Tue, 6 Feb 2018 21:44:35 +0200
+Message-ID: <CAHp75VdTKCq5Vxox2OPvr+BvVSduhaxs_sa7B9wskzjv8ZJLqw@mail.gmail.com>
+Subject: Re: [PATCH v12 7/9] ACPI: Translate the I/O range of non-MMIO devices
+ before scanning
+To: John Garry <john.garry@huawei.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+        Olof Johansson <olof@lixom.net>, Hanjun Guo <hanjun.guo@linaro.org>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, linux-pci@vger.kernel.org,
+        Corey Minyard <minyard@acm.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 6:25 PM, Niklas Cassel <niklas.cassel@axis.com> wrote:
-> On Thu, Feb 01, 2018 at 02:00:40PM -0500, Jingoo Han wrote:
->> On Thursday, February 1, 2018 1:58 PM, Andy Shevchenko wrote:
->> >
->> > On Thu, Feb 1, 2018 at 6:11 PM, Niklas Cassel <niklas.cassel@axis.com>
->> > wrote:
->> >
->> > include/linux/sizes.h:
->> >
->> > +SZ_4G  0x100000000ULL
->> >
->> > > +       if (size > 0x100000000ULL) {
->> >
->> > #include <linux/sizes.h>
->> >
->> > if (size > SZ_4G) {
+On Mon, Feb 5, 2018 at 4:25 PM, John Garry <john.garry@huawei.com> wrote:
+> On 05/02/2018 13:16, Andy Shevchenko wrote:
+>> On Thu, Feb 1, 2018 at 1:32 PM, John Garry <john.garry@huawei.com> wrote:
+
+>> resource_size_t is dynamic width type, you will see a compiler
+>> warning. For this we have
+>> %pap specifier.
 >>
->> I like this one for the readability.
->> Thank you.
+>> Moreover, in some cases it's useful to print struct resource via %pR or
+>> %pr.
+
+> I have already fixed this up in my rework.
+
+Good!
+
+>>>> +/* All the host devices which apply indirect-IO can be listed here. */
+>>>> +static const struct acpi_device_id acpi_indirect_host_id[] = {
+>>>> +       {""},
+>>>> +};
 >>
->
-> I liked it too, however both variants
->
-> if (size > 0x100000000ULL) {
->
-> if (size > SZ_4G) {
->
-> result in:
->
-> drivers/pci/dwc/pcie-designware-ep.c:131:11: warning:
->   comparison is always false due to limited range of data type [-Wtype-limits]
->
-> when compiling with W=1 on a platform with 32-bit size_t.
+>>
+>> The idea of terminator is to be such (remove comma there). And it's
+>> basically redundant to have an empty string there. Moreover, it's a
+>> waste of resources in ro section.
 >
 >
-> The annoying thing here is that a BAR can be 64-bit,
-> yet the parameter size is defined as a size_t,
-> so the error will only show on 32-bit and not on 64-bit.
+> OK, the comma should be removed. So what is the preferred acpi device id
+> array sentinel? I see {}, {"", 0}, and {""} used.
 
-Oh, indeed. And it looks moving to u64 or alike is not a solution
-(because if would not describe real hardware in that case).
-
-> What do you think about:
-
-> if (upper_32_bits(size)) {
->         dev_err(pci->dev, "can't handle BAR larger than 4GB\n");
->         return -EINVAL;
-> }
->
-> That should compile without warnings for both
-> 32-bit size_t and 64-bit size_t.
-
-Can you derive some helper based on the code in __pci_read_base() code?
+The rule of thumb --- whatever has more entries in the kernel.
+In case of similarity I would prefer simple {} because it suits for
+termination slightly better (for my opinion, some cases might
+potentially have {"", non_null_vakue}).
 
 -- 
 With Best Regards,
