@@ -1,180 +1,157 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2790034-1518098598-2-1589023058655950077
+X-Cyrus-Session-Id: sloti22d1t05-2292549-1517957149-2-16862745098207792101
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='ISO-8859-15'
+X-Attached: 0002-tracing-Fix-parsing-of-globs-with-a-wildcard-at-the-.patch
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518098597; b=rxpZhA3tFqnH2D0AJVkTo/05oZN+SVoJB3x1NBkjik++GZ+
-    g+fe/X1XFIk1/ax0dleHmBB8txhoHi2OgjoXe4WbApoBdSPrepywRM/sLHbx4Z/n
-    ufxaqpfXSJ14G8pcSjqwG9gRDm5useMSjiMk1DcWiI9GEG+2ye/Tcpt6Lz825LT+
-    EzCK+OLxjhLb9RuCYh1t6PWb+qa+TZeIUWHvAcccfVE/7pKAzfVSDpxR4/qOVO4V
-    F4tXALFcbql8NS4h2DMoW1eVtt84uiutrunUEuw01FJ9bMkfdp559FtLZUKSGbfo
-    Xgt4cKvShCtanBJwB27gEgrJEO6Mr5h4iC4qG7g==
+    t=1517957149; b=ru5A2HD7d14hDKCNoqwlg17phCglkiuwWH741Fz3cPikvMM
+    UzfYFddAQSUT8lW/2FEGsQW2YFMV641qGZ6e7NKMxq7JG/0MeK+O4Cx3nVHGkx0d
+    y8u4y1TH6ScI/+0nKOuazO3DqKJrEnB+HQfVZSGuKzzNwEiuS95lUr1TWEgccbzb
+    odj9O7JHpYadOQMCtvK41zeSUDwogpziU6ZcE/Bq+j1CJuRMez2jRCT7AOl1Ox3m
+    mSHFXtVXN+YLG3V8XFjpTZ350xqs30OM7B6g1mmGtyUc2XLdFpAqpAtbcWFjC0Cv
+    KkTFqKegomaxqiBIb4N34U3Pg2uSEFJ67zXEhFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1518098597; bh=11zyEQa8XYisCH+fvhpLoOJyKo
-    ZQaQBkOOugY+KNqsU=; b=FUOrl+oQ0J3HvZIoFhuEbURY6I+FlhanzYOj+w1Em0
-    YgwrZxShzqExWOvhy3GH4GeW/ypwJYsLT6Nq8Z/BV1PReW+h0bpAx3em0JWrpbsM
-    d+9SOoiYAv5wwMkZJGtyC2i2uXtlEzwLOaWldt3xDKshENv6ei+oXFZdyQpsdt52
-    LrBQosPhfDODpF0u9S7q8IaQHVRG+UQyJBlIn4jf+WFOuzSMMtJB3RU6IyF90YnW
-    G0k+QXCJe8KqzjiehOMpRwiOu0bK5E5JJe0kHNT7kLYnBxA5aDE3f/W5JnB00Xwn
-    bUAA5B8un/l12x/HoYnd8t3K5KcCm8V48/Q482NvXizg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=jMn9akUn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    messagingengine.com; h=message-id:date:from:to:cc:subject
+    :references:mime-version:content-type:sender:list-id; s=arctest;
+    t=1517957149; bh=FS84x35SfmHnYJgg3yVOvlQgdepOzsnDNcaawJy+TYc=; b=
+    YcGAdf4aV55zqYPvB3INW/rI+bwQcL7EAlDQg++6TYPR+2G3+7HyuerkB33Fsiug
+    POP/GLLUx79spV0IC5amN/5Xq5LBHvskavAZmbqqxAGnay+7bTl3MFcLtXy9Psll
+    DAO4vjqHR/PCu2MqzzCvz3wWiFPfGATVHwggWuug7+LGFMElTzwLqjvdUe7eFLEx
+    /EB04GYdw8JPuj1k+NT8AYHiUyeqZ8LHIGfdgmAzOLosvHcz9pkZ5yFR7vOLqo2m
+    T/W+rlibZ7ML0Rawz0+5Rkr83FqAjwhl68trjOiHuw5Axk+/rluh78gUNkXS8s1r
+    3Ikf1IGkPq05YIiABXNzig==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=jMn9akUn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751153AbeBHODO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Feb 2018 09:03:14 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:53576 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeBHODN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 8 Feb 2018 09:03:13 -0500
-From: Joao Martins <joao.m.martins@oracle.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc: Joao Martins <joao.m.martins@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org
-Subject: [PATCH v3] xenbus: track caller request id
-Date: Thu,  8 Feb 2018 14:02:56 +0000
-Message-Id: <20180208140256.9647-1-joao.m.martins@oracle.com>
-X-Mailer: git-send-email 2.11.0
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8798 signatures=668663
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802080164
+        id S1753314AbeBFWpq (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 17:45:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753171AbeBFWpo (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 6 Feb 2018 17:45:44 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED92217B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Message-Id: <20180206224541.231476648@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Tue, 06 Feb 2018 17:43:40 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>, stable@vger.kernel.org
+Subject: [RFC][PATCH 2/6] tracing: Fix parsing of globs with a wildcard at the beginning
+References: <20180206224338.446477232@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0002-tracing-Fix-parsing-of-globs-with-a-wildcard-at-the-.patch
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple concurrent
-xenstore accesses") optimized xenbus concurrent accesses but in doing so
-broke UABI of /dev/xen/xenbus. Through /dev/xen/xenbus applications are in
-charge of xenbus message exchange with the correct header and body. Now,
-after the mentioned commit the replies received by application will no
-longer have the header req_id echoed back as it was on request (see
-specification below for reference), because that particular field is being
-overwritten by kernel.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-struct xsd_sockmsg
-{
-  uint32_t type;  /* XS_??? */
-  uint32_t req_id;/* Request identifier, echoed in daemon's response.  */
-  uint32_t tx_id; /* Transaction id (0 if not related to a transaction). */
-  uint32_t len;   /* Length of data following this. */
+Al Viro reported:
 
-  /* Generally followed by nul-terminated string(s). */
-};
+    For substring - sure, but what about something like "*a*b" and "a*b"?
+    AFAICS, filter_parse_regex() ends up with identical results in both
+    cases - MATCH_GLOB and *search = "a*b".  And no way for the caller
+    to tell one from another.
 
-Before there was only one request at a time so req_id could simply be
-forwarded back and forth. To allow simultaneous requests we need a
-different req_id for each message thus kernel keeps a monotonic increasing
-counter for this field and is written on every request irrespective of
-userspace value.
+Testing this with the following:
 
-Forwarding again the req_id on userspace requests is not a solution because
-we would open the possibility of userspace-generated req_id colliding with
-kernel ones. So this patch instead takes another route which is to
-artificially keep user req_id while keeping the xenbus logic as is. We do
-that by saving the original req_id before xs_send(), use the private kernel
-counter as req_id and then once reply comes and was validated, we restore
-back the original req_id.
+ # cd /sys/kernel/tracing
+ # echo '*raw*lock' > set_ftrace_filter
+ bash: echo: write error: Invalid argument
 
-Cc: <stable@vger.kernel.org> # 4.11
-Fixes: fd8aa9095a ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
-Reported-by: Bhavesh Davda <bhavesh.davda@oracle.com>
-Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+With this patch:
+
+ # echo '*raw*lock' > set_ftrace_filter
+ # cat set_ftrace_filter
+_raw_read_trylock
+_raw_write_trylock
+_raw_read_unlock
+_raw_spin_unlock
+_raw_write_unlock
+_raw_spin_trylock
+_raw_spin_lock
+_raw_write_lock
+_raw_read_lock
+
+Al recommended not setting the search buffer to skip the first '*' unless we
+know we are not using MATCH_GLOB. This implements his suggested logic.
+
+Link: http://lkml.kernel.org/r/20180127170748.GF13338@ZenIV.linux.org.uk
+
+Cc: stable@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 60f1d5e3bac44 ("ftrace: Support full glob matching")
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Suggsted-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
-Here's a link to a unit test (https://pastebin.com/N0kqNBnM) where req_id of
-reply and response are being asserted each request. Without this patch
-the assert will fail (e.g. try it with `./xswire_reqid_test name`). But
-on <= v4.10 or >= v4.11 with the fix above, it will print domain name 10
-times.
+ kernel/trace/trace_events_filter.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Changes since v2:
- * Add Juergen's Reviewed-by
-
-Changes since v1:
- * Adjust commit message
- (Comments from Juergen on IRC)
- * Unilateraly save/restore req_id and remove xs_request_is_user()
- * Initialize req_id for kernel callers
----
- drivers/xen/xenbus/xenbus.h       | 1 +
- drivers/xen/xenbus/xenbus_comms.c | 1 +
- drivers/xen/xenbus/xenbus_xs.c    | 3 +++
- 3 files changed, 5 insertions(+)
-
-diff --git a/drivers/xen/xenbus/xenbus.h b/drivers/xen/xenbus/xenbus.h
-index 149c5e7efc89..092981171df1 100644
---- a/drivers/xen/xenbus/xenbus.h
-+++ b/drivers/xen/xenbus/xenbus.h
-@@ -76,6 +76,7 @@ struct xb_req_data {
- 	struct list_head list;
- 	wait_queue_head_t wq;
- 	struct xsd_sockmsg msg;
-+	uint32_t caller_req_id;
- 	enum xsd_sockmsg_type type;
- 	char *body;
- 	const struct kvec *vec;
-diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
-index 5b081a01779d..d239fc3c5e3d 100644
---- a/drivers/xen/xenbus/xenbus_comms.c
-+++ b/drivers/xen/xenbus/xenbus_comms.c
-@@ -309,6 +309,7 @@ static int process_msg(void)
- 			goto out;
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 61e7f0678d33..a764aec3c9a1 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -400,7 +400,6 @@ enum regex_type filter_parse_regex(char *buff, int len, char **search, int *not)
+ 	for (i = 0; i < len; i++) {
+ 		if (buff[i] == '*') {
+ 			if (!i) {
+-				*search = buff + 1;
+ 				type = MATCH_END_ONLY;
+ 			} else if (i == len - 1) {
+ 				if (type == MATCH_END_ONLY)
+@@ -410,14 +409,14 @@ enum regex_type filter_parse_regex(char *buff, int len, char **search, int *not)
+ 				buff[i] = 0;
+ 				break;
+ 			} else {	/* pattern continues, use full glob */
+-				type = MATCH_GLOB;
+-				break;
++				return MATCH_GLOB;
+ 			}
+ 		} else if (strchr("[?\\", buff[i])) {
+-			type = MATCH_GLOB;
+-			break;
++			return MATCH_GLOB;
+ 		}
+ 	}
++	if (buff[0] == '*')
++		*search = buff + 1;
  
- 		if (req->state == xb_req_state_wait_reply) {
-+			req->msg.req_id = req->caller_req_id;
- 			req->msg.type = state.msg.type;
- 			req->msg.len = state.msg.len;
- 			req->body = state.body;
-diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-index 3e59590c7254..3f3b29398ab8 100644
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -227,6 +227,8 @@ static void xs_send(struct xb_req_data *req, struct xsd_sockmsg *msg)
- 	req->state = xb_req_state_queued;
- 	init_waitqueue_head(&req->wq);
- 
-+	/* Save the caller req_id and restore it later in the reply */
-+	req->caller_req_id = req->msg.req_id;
- 	req->msg.req_id = xs_request_enter(req);
- 
- 	mutex_lock(&xb_write_mutex);
-@@ -310,6 +312,7 @@ static void *xs_talkv(struct xenbus_transaction t,
- 	req->num_vecs = num_vecs;
- 	req->cb = xs_wake_up;
- 
-+	msg.req_id = 0;
- 	msg.tx_id = t.id;
- 	msg.type = type;
- 	msg.len = 0;
+ 	return type;
+ }
 -- 
-2.11.0
+2.15.1
