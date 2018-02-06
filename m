@@ -1,67 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752401AbeBFO7x (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 09:59:53 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:14194 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752010AbeBFO7o (ORCPT
+        id S1752488AbeBFPA0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 10:00:26 -0500
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:39306 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbeBFPAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 09:59:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 6FDAE2E5CF8
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Tue, 6 Feb 2018 10:00:18 -0500
+X-Google-Smtp-Source: AH8x227Bdb/h6aU6i13xkPSqnR3deqKCl/byzZqU7he4hWRKMsxRWhEJLWTzIEb/BtNEI3H/gieMWQ==
+Date: Tue, 6 Feb 2018 17:00:13 +0200
+From: Pekka Paalanen <ppaalanen@gmail.com>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Stefan Hajnoczi <stefanha@gmail.com>, Jason Wang <jasowang@redhat.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org, kernel@collabora.com
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+Message-ID: <20180206170013.7e2b08bb@eldfell>
+In-Reply-To: <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 06 Feb 2018 15:59:42 +0100
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Mike Galbraith <efault@gmx.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Alban Browaeys <alban.browaeys@gmail.com>, ming.lei@redhat.com,
-        ivan@ludios.org, 169364@studenti.unimore.it,
-        Serena Ziviani <ziviani.serena@gmail.com>
-Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
-In-Reply-To: <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
-References: <20180205190510.5499-1-paolo.valente@linaro.org>
- <20180205190510.5499-2-paolo.valente@linaro.org>
- <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
- <1517903761.9843.12.camel@gmx.de>
- <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
- <1517918234.25841.31.camel@gmx.de>
- <77124223e6116350a5184a5199850304@natalenko.name>
- <1517924768.25841.32.camel@gmx.de>
- <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
- <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
-Message-ID: <7eff03cac387051a63aa68df99e49f3a@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.3
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1517929183;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
-        bh=Vnq81rpuLDFqnWEmAVpVxjauvZTlvhz6R52Sn5Tz9yw=;
-        b=ub282zcRcMiyh78UdkH5xSZIpSaID+VNPcO0tdRQsI/Cgc9D0pEXzbcDtCX05unMnmF5yv
-        4G9dYc8BKcEioahjuaHuPsuMmVUAMY/KvY/n6g2B2aJpJQXfy65HXAyq0xrUytUgR4tTHh
-        0IQ+aETzOCgznk6D8kJZWNBDsWqZHhw=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517929183; a=rsa-sha256;
-        cv=none;
-        b=iNzTzwQ7EBZ63mpLiNxYeN1A1G4vHhz6gwKsmdfaWJTfVPYCwdOvQsUq7l9DPYQ8wwVLsWWoERLDW+X/sUAUPGk2iuGtSH1HyAguJu6IFHYWeaxmWpdiYhhlfwQnEC6OrQHbzVUZbU5Z5dYSlSIIro9AX++HUDMqKHiFVNEM+uY=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YRXYvEnENKe9OWQMruDI4Eh"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.02.2018 15:50, Paolo Valente wrote:
-> Could you please do a
-> gdb <buildir>/block/bfq-iosched.o # or vmlinux.o if bfq is builtin
-> list *(bfq_finish_requeue_request+0x54)
-> list *(bfq_put_queue+0x10b)
-> for me?
+--Sig_/YRXYvEnENKe9OWQMruDI4Eh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes. Just give me some time to recompile the kernel with minimal debug 
-info enabled. I'll post then list/disasm and new stacktraces.
+On Mon, 5 Feb 2018 17:03:22 +0100
+Gerd Hoffmann <kraxel@redhat.com> wrote:
+
+> On Mon, Feb 05, 2018 at 03:46:17PM +0100, Tomeu Vizoso wrote:
+> > On 02/05/2018 01:20 PM, Gerd Hoffmann wrote: =20
+> > >    Hi,
+> > >  =20
+>=20
+> Hmm.  I allways assumed the wayland client allocates the buffers, not
+> the server.  Is that wrong?
+
+Hi Gerd,
+
+a fly-by comment here:
+
+The standard operation mode on Wayland indeed is that the client
+allocates any pixel buffers. It is not the whole story though.
+
+Server allocated buffers passed to a client also exist:
+- core protocol uses this to pass keymaps to clients
+- people are not forbidden from writing Wayland extensions that do this
+  for whatever reason
+
+The latter server-allocated case could probably be overlooked, but the
+keymap case not really. Furthermore, copy&paste and drag&drop protocol
+pass pipe file descriptors via Wayland to establish client-to-client
+pipes.
+
+
+Thanks,
+pq
+
+--Sig_/YRXYvEnENKe9OWQMruDI4Eh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAlp5wv4ACgkQI1/ltBGq
+qqc8Cg//aFIZhRaCKo+sjSb+GvUO/L9rb23445t/y+iV6X1JbMw3GlmL7IBPqcB2
+3jveY+iKuIIOlof7l5qtJpl3SNIWCoiz2aQbhICif++TyYQUJQkWbPYthxsdNBrS
+b4oXg22xhXriFy8G7QaLfMEfBM2Tq8j+kNscgZRlPaYrMrkcF24Q2sNGk4SUIT3P
+DFMV2oKFlYphNYrSlZ7n5cq8g+jvd19KG6NshtHAT5T8ECn5Z1hM31sCQZi53+6n
+jhtEu6EN9cuQxaIzMLdWw4+/ZUKlFKopoXqLr1PL5K6vVlxRZlm4d6WmJSD8C975
+l04vhwR2TqXrp9xjLb5Uh9ZbVAk/vBdiWaXtTFJ+8MTM+dbZhBze2jqvjm9D6CCd
+/Vnd3v44JpnhPRW4A4yQ3OF/3tyfgfhvb/nmRJrzNKywn7bLiBhBXdLgW7oKqd+4
+zl00Zcx0HLAiKcM2wywdzaJNJ2q5SPQb9cwz1YLnxlTrTGM8F1KGZXqQQ32J2jiQ
+6Lur+aD6AsxNO3R9I7gHr47QWDHxnujxzPVFxXsEYPXCAbxrNe3G05YD321aL+jB
+g0NNRNm+Tg4Zi+SaOvojqEC0p5UAWhdBSQolyJJJ5EcSewXbUdvprJjXEjLdYRRv
+n186vTIF9TatR+uL0ucMbdjakymmsV/KU+Icl4iIiXfm+srNulE=
+=X1pM
+-----END PGP SIGNATURE-----
+
+--Sig_/YRXYvEnENKe9OWQMruDI4Eh--
