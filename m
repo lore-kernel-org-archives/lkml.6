@@ -1,73 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752509AbeBFQt4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 11:49:56 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:1704 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752543AbeBFQtt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:49:49 -0500
-X-IronPort-AV: E=Sophos;i="5.46,469,1511827200";
-   d="scan'208";a="721409896"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: Konstantin Khlebnikov <koct9i@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Vladimir Davydov <vdavydov@virtuozzo.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Kees Cook <keescook@google.com>, Willy Tarreau <w@1wt.eu>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH] mm: Always print RLIMIT_DATA warning
-Date: Tue,  6 Feb 2018 16:45:05 +0000
-Message-Id: <1517935505-9321-1-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
+        id S1752540AbeBFQuV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 11:50:21 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:47115 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752442AbeBFQuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:50:13 -0500
+Date: Tue, 6 Feb 2018 17:50:09 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sven Van Asbroeck <thesven73@gmail.com>
+Cc: Sven Van Asbroeck <svendev@arcx.com>, Woojung.Huh@microchip.com,
+        Tristram.Ha@microchip.com, f.fainelli@gmail.com,
+        helmut.buchsbaum@gmail.com, Maarten.Blomme@flir.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v1 0/1] spi_ks8995: use regmap to access chip registers.
+Message-ID: <20180206165009.GJ12679@lunn.ch>
+References: <1517930036-17618-1-git-send-email-svendev@arcx.com>
+ <20180206161447.GF12679@lunn.ch>
+ <CAGngYiWYChnZmU7n9i1+nbY+1oWGXQGOopBhNiPHPUoYvTdgaw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGngYiWYChnZmU7n9i1+nbY+1oWGXQGOopBhNiPHPUoYvTdgaw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation for ignore_rlimit_data says that it will print a warning
-at first misuse. Yet it doesn't seem to do that. Fix the code to print
-the warning even when we allow the process to continue.
+On Tue, Feb 06, 2018 at 11:41:14AM -0500, Sven Van Asbroeck wrote:
+> On Tue, Feb 6, 2018 at 11:14 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> > Rather than invest time in this driver, it would be better to look
+> > into writing a DSA driver.
+> 
+> Thank you Andrew. I know little of DSA, but at first sight it appears to
+> be a _very_ complicated beast for a switch PHY which only
+> needs a few static register settings applied to it on startup, and has
+> no further Linux interaction?
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
-We should probably also do what Linus suggested in 
-https://lkml.org/lkml/2016/9/16/585
+Hi Sven
 
- mm/mmap.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+If you want to treat it as a dumb switch, then a simple driver is
+sufficient. But it can do a lot more. Do you need spanning tree, or
+are you happy for your network to collapse if there is a loop? Do you
+want access to statistics? Know if links are up/down? VLAN support?
+Save some power by enabling EEE? DSA will give you these features.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 9efdc021..dd76ea3 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3184,13 +3184,15 @@ bool may_expand_vm(struct mm_struct *mm, vm_flags_t flags, unsigned long npages)
- 		if (rlimit(RLIMIT_DATA) == 0 &&
- 		    mm->data_vm + npages <= rlimit_max(RLIMIT_DATA) >> PAGE_SHIFT)
- 			return true;
--		if (!ignore_rlimit_data) {
--			pr_warn_once("%s (%d): VmData %lu exceed data ulimit %lu. Update limits or use boot option ignore_rlimit_data.\n",
--				     current->comm, current->pid,
--				     (mm->data_vm + npages) << PAGE_SHIFT,
--				     rlimit(RLIMIT_DATA));
-+
-+		pr_warn_once("%s (%d): VmData %lu exceed data ulimit %lu. Update limits%s.\n",
-+			     current->comm, current->pid,
-+			     (mm->data_vm + npages) << PAGE_SHIFT,
-+			     rlimit(RLIMIT_DATA),
-+			     ignore_rlimit_data ? "" : " or use boot option ignore_rlimit_data");
-+
-+		if (!ignore_rlimit_data)
- 			return false;
--		}
- 	}
- 
- 	return true;
--- 
-2.7.4
+And a DSA driver does not need to be complex. You can start simple,
+and add more features later.
+
+     Andrew
