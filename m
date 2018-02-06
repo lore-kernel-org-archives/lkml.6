@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752758AbeBFS1M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:27:12 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42034 "EHLO mx1.redhat.com"
+        id S1753199AbeBFS1W (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:27:22 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42030 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753060AbeBFS1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752846AbeBFS1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Feb 2018 13:27:04 -0500
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -12,71 +12,96 @@ Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 09/17] perf tools: Don't search for active kernel start in __machine__create_kernel_maps
-Date: Tue,  6 Feb 2018 19:18:05 +0100
-Message-Id: <20180206181813.10943-10-jolsa@kernel.org>
+Subject: [PATCH 13/17] perf tools: Remove machine__load_kallsyms function
+Date: Tue,  6 Feb 2018 19:18:09 +0100
+Message-Id: <20180206181813.10943-14-jolsa@kernel.org>
 In-Reply-To: <20180206181813.10943-1-jolsa@kernel.org>
 References: <20180206181813.10943-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should not search for kernel start address in
-__machine__create_kernel_maps function, because it's being
-used in 'report' code path, where we are interested in kernel
-MMAP data address instead of in current kernel address
+And replacing it with __machine__load_kallsyms function.
 
-The __machine__create_kernel_maps serves purely for creating
-the machines kernel maps and setting up the kmap group. The
-report code path then sets the address based on the data from
-kernel MMAP event in machine__set_kernel_mmap function.
+The current machine__load_kallsyms function has no caller,
+so replacing it directly with __machine__load_kallsyms.
+Also removing the no_kcore argument as it was always called
+with true value.
 
-The kallsyms search address logic is used for test code, that
-calls machine__create_kernel_maps to get current maps and calls
-machine__get_running_kernel_start to get kernel starting address.
-
-Also making __machine__create_kernel_maps static, because there's
-no external user.
-
-Link: http://lkml.kernel.org/n/tip-37lmdjzh8dwq03golnk7hgkd@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-kj9bpn6v213n6vaoe6ryxv2q@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/machine.c | 6 ++----
- tools/perf/util/machine.h | 1 -
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ tools/perf/tests/vmlinux-kallsyms.c |  2 +-
+ tools/perf/util/machine.c           | 14 ++++----------
+ tools/perf/util/machine.h           |  2 --
+ 3 files changed, 5 insertions(+), 13 deletions(-)
 
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index f6789fb029d6..58349297f9fb 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -56,7 +56,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 	 * be compacted against the list of modules found in the "vmlinux"
+ 	 * code and with the one got from /proc/modules from the "kallsyms" code.
+ 	 */
+-	if (__machine__load_kallsyms(&kallsyms, "/proc/kallsyms", type, true) <= 0) {
++	if (machine__load_kallsyms(&kallsyms, "/proc/kallsyms", type) <= 0) {
+ 		pr_debug("dso__load_kallsyms ");
+ 		goto out;
+ 	}
 diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 447f10e1323e..f5c79110f0d1 100644
+index 441d09d97f3d..a9e470139722 100644
 --- a/tools/perf/util/machine.c
 +++ b/tools/perf/util/machine.c
-@@ -856,14 +856,12 @@ static int machine__get_running_kernel_start(struct machine *machine,
- 	return 0;
+@@ -151,7 +151,7 @@ struct machine *machine__new_kallsyms(void)
+ 	 *    ask for not using the kcore parsing code, once this one is fixed
+ 	 *    to create a map per module.
+ 	 */
+-	if (machine && __machine__load_kallsyms(machine, "/proc/kallsyms", MAP__FUNCTION, true) <= 0) {
++	if (machine && machine__load_kallsyms(machine, "/proc/kallsyms", MAP__FUNCTION) <= 0) {
+ 		machine__delete(machine);
+ 		machine = NULL;
+ 	}
+@@ -992,11 +992,11 @@ int machines__create_kernel_maps(struct machines *machines, pid_t pid)
+ 	return machine__create_kernel_maps(machine);
  }
  
--int __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
-+static int
-+__machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
+-int __machine__load_kallsyms(struct machine *machine, const char *filename,
+-			     enum map_type type, bool no_kcore)
++int machine__load_kallsyms(struct machine *machine, const char *filename,
++			     enum map_type type)
  {
- 	int type;
- 	u64 start = 0;
+ 	struct map *map = machine__kernel_map(machine);
+-	int ret = __dso__load_kallsyms(map->dso, filename, map, no_kcore);
++	int ret = __dso__load_kallsyms(map->dso, filename, map, true);
  
--	if (machine__get_running_kernel_start(machine, NULL, &start))
--		return -1;
+ 	if (ret > 0) {
+ 		dso__set_loaded(map->dso, type);
+@@ -1011,12 +1011,6 @@ int __machine__load_kallsyms(struct machine *machine, const char *filename,
+ 	return ret;
+ }
+ 
+-int machine__load_kallsyms(struct machine *machine, const char *filename,
+-			   enum map_type type)
+-{
+-	return __machine__load_kallsyms(machine, filename, type, false);
+-}
 -
- 	/* In case of renewal the kernel map, destroy previous one */
- 	machine__destroy_kernel_maps(machine);
- 
+ int machine__load_vmlinux_path(struct machine *machine, enum map_type type)
+ {
+ 	struct map *map = machine__kernel_map(machine);
 diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index cb0a20f3a96b..50d587d34459 100644
+index 50d587d34459..66cc200ef86f 100644
 --- a/tools/perf/util/machine.h
 +++ b/tools/perf/util/machine.h
-@@ -238,7 +238,6 @@ size_t machines__fprintf_dsos_buildid(struct machines *machines, FILE *fp,
- 				     bool (skip)(struct dso *dso, int parm), int parm);
+@@ -225,8 +225,6 @@ struct map *machine__findnew_module_map(struct machine *machine, u64 start,
+ 					const char *filename);
+ int arch__fix_module_text_start(u64 *start, const char *name);
  
- void machine__destroy_kernel_maps(struct machine *machine);
--int __machine__create_kernel_maps(struct machine *machine, struct dso *kernel);
- int machine__create_kernel_maps(struct machine *machine);
- 
- int machines__create_kernel_maps(struct machines *machines, pid_t pid);
+-int __machine__load_kallsyms(struct machine *machine, const char *filename,
+-			     enum map_type type, bool no_kcore);
+ int machine__load_kallsyms(struct machine *machine, const char *filename,
+ 			   enum map_type type);
+ int machine__load_vmlinux_path(struct machine *machine, enum map_type type);
 -- 
 2.13.6
