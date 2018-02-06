@@ -1,233 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753641AbeBFWZb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 17:25:31 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34287 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753428AbeBFWZ3 (ORCPT
+        id S1753614AbeBFWaY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 17:30:24 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44900 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753237AbeBFWaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:25:29 -0500
-X-Google-Smtp-Source: AH8x225QuOwwtfCZ19gYm12kB2HlO3No3OYq9a/Wv6Tr9My0ae6jOHhJKT6n3m0zWjyPofu+j0l6PeB6HFbSRY5/RSM=
+        Tue, 6 Feb 2018 17:30:22 -0500
+X-Google-Smtp-Source: AH8x226kzqDnXlejnm7/d/UafHmLLcayNsFuYvNYGRSIUEU6idKvSPUENQBzT+Nlr6BqViB8vGVGcjnlfvJ+x6O1nA4=
 MIME-Version: 1.0
-In-Reply-To: <f6a643dd-b835-adbf-6a06-ea3843fa8f12@arm.com>
-References: <20180203012450.18378-1-dbasehore@chromium.org>
- <20180203012450.18378-3-dbasehore@chromium.org> <a1b81cab-8e73-2c6f-13e6-612ffc668923@arm.com>
- <CAGAzgsp8M-t7k+pj4G9Lo_+NkeXQ9DeqH_r=-JcErO_+HuoJqA@mail.gmail.com> <f6a643dd-b835-adbf-6a06-ea3843fa8f12@arm.com>
-From: "dbasehore ." <dbasehore@chromium.org>
-Date: Tue, 6 Feb 2018 14:25:26 -0800
-X-Google-Sender-Auth: TZS7QWR6qdkze1TliT7ZSovAtqs
-Message-ID: <CAGAzgspxp05UGG6C3JL88HVDf3OxrVT93vBW3OAtfzOO6twPGw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] irqchip/gic-v3-its: add ability to save/restore
- ITS state
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        Soby Mathew <Soby.Mathew@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Brian Norris <briannorris@chromium.org>
+In-Reply-To: <20180206213202.GB2026@light.dominikbrodowski.net>
+References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180206091727.GB15925@isilmar-4.linta.de> <20180206105139.nwlg3fwdxyhhrtc4@gmail.com>
+ <20180206213202.GB2026@light.dominikbrodowski.net>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 6 Feb 2018 14:30:21 -0800
+Message-ID: <CAPcyv4hCgN_Un1WxGOKtpJR8A_FK3-PStCXynkjOxQTG7ecxCQ@mail.gmail.com>
+Subject: Re: [PATCH tip-pti 2/2] x86/entry: interleave XOR register clearing
+ with PUSH/MOV instructions
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 8:23 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 05/02/18 21:33, dbasehore . wrote:
->> On Mon, Feb 5, 2018 at 7:56 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>> On 03/02/18 01:24, Derek Basehore wrote:
->>>> Some platforms power off GIC logic in suspend, so we need to
->>>> save/restore state. The distributor and redistributor registers need
->>>> to be handled in platform code due to access permissions on those
->>>> registers, but the ITS registers can be restored in the kernel.
->>>>
->>>> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
->>>> ---
->>>>  drivers/irqchip/irq-gic-v3-its.c | 101 +++++++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 101 insertions(+)
->>>>
->>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->>>> index 06f025fd5726..e13515cdb68f 100644
->>>> --- a/drivers/irqchip/irq-gic-v3-its.c
->>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
->>>> @@ -33,6 +33,7 @@
->>>>  #include <linux/of_platform.h>
->>>>  #include <linux/percpu.h>
->>>>  #include <linux/slab.h>
->>>> +#include <linux/syscore_ops.h>
->>>>
->>>>  #include <linux/irqchip.h>
->>>>  #include <linux/irqchip/arm-gic-v3.h>
->>>> @@ -46,6 +47,7 @@
->>>>  #define ITS_FLAGS_CMDQ_NEEDS_FLUSHING                (1ULL << 0)
->>>>  #define ITS_FLAGS_WORKAROUND_CAVIUM_22375    (1ULL << 1)
->>>>  #define ITS_FLAGS_WORKAROUND_CAVIUM_23144    (1ULL << 2)
->>>> +#define ITS_FLAGS_SAVE_SUSPEND_STATE         (1ULL << 3)
->>>>
->>>>  #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING  (1 << 0)
->>>>
->>>> @@ -83,6 +85,15 @@ struct its_baser {
->>>>       u32             psz;
->>>>  };
->>>>
->>>> +/*
->>>> + * Saved ITS state - this is where saved state for the ITS is stored
->>>> + * when it's disabled during system suspend.
->>>> + */
->>>> +struct its_ctx {
->>>> +     u64                     cbaser;
->>>> +     u32                     ctlr;
->>>> +};
->>>
->>> Nit: This is pretty small for the ITS context. Given that its_node is
->>> the context, you can safely expand this in the its_node structure.
->>
->> Sounds reasonable. I think I just have it this way because I used to
->> have more in here.
->>
->>>
->>>> +
->>>>  struct its_device;
->>>>
->>>>  /*
->>>> @@ -101,6 +112,7 @@ struct its_node {
->>>>       struct its_collection   *collections;
->>>>       struct fwnode_handle    *fwnode_handle;
->>>>       u64                     (*get_msi_base)(struct its_device *its_dev);
->>>> +     struct its_ctx          its_ctx;
->>>>       struct list_head        its_device_list;
->>>>       u64                     flags;
->>>>       unsigned long           list_nr;
->>>> @@ -3042,6 +3054,90 @@ static void its_enable_quirks(struct its_node *its)
->>>>       gic_enable_quirks(iidr, its_quirks, its);
->>>>  }
->>>>
->>>> +static int its_save_disable(void)
->>>> +{
->>>> +     struct its_node *its;
->>>> +     int err = 0;
->>>> +
->>>> +     spin_lock(&its_lock);
->>>> +     list_for_each_entry(its, &its_nodes, entry) {
->>>> +             struct its_ctx *ctx;
->>>> +             void __iomem *base;
->>>> +
->>>> +             if (!(its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE))
->>>> +                     continue;
->>>> +
->>>> +             ctx = &its->its_ctx;
->>>> +             base = its->base;
->>>> +             ctx->ctlr = readl_relaxed(base + GITS_CTLR);
->>>> +             err = its_force_quiescent(base);
->>>> +             if (err) {
->>>> +                     pr_err("ITS failed to quiesce\n");
->>>> +                     writel_relaxed(ctx->ctlr, base + GITS_CTLR);
->>>> +                     goto err;
->>>> +             }
->>>> +
->>>> +             ctx->cbaser = gits_read_cbaser(base + GITS_CBASER);
->>>> +     }
->>>> +
->>>> +err:
->>>> +     if (err) {
->>>> +             list_for_each_entry_continue_reverse(its, &its_nodes, entry) {
->>>> +                     if (its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE) {
->>>> +                             struct its_ctx *ctx = &its->its_ctx;
->>>> +                             void __iomem *base = its->base;
->>>> +
->>>> +                             writel_relaxed(ctx->ctlr, base + GITS_CTLR);
->>>> +                     }
->>>> +             }
->>>> +     }
->>>> +
->>>> +     spin_unlock(&its_lock);
->>>> +
->>>> +     return err;
->>>> +}
->>>> +
->>>> +static void its_restore_enable(void)
->>>> +{
->>>> +     struct its_node *its;
->>>> +
->>>> +     spin_lock(&its_lock);
->>>> +     list_for_each_entry(its, &its_nodes, entry) {
->>>> +             if (its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE) {
->>>> +                     struct its_ctx *ctx = &its->its_ctx;
->>>> +                     void __iomem *base = its->base;
->>>> +                     /*
->>>> +                      * Only the lower 32 bits matter here since the upper 32
->>>> +                      * don't include any of the offset.
->>>> +                      */
->>>> +                     u32 creader = readl_relaxed(base + GITS_CREADR);
->>>
->>> Accessor matching gits_write_cwriter and co?
->>>
->>>> +                     int i;
->>>> +
->>>> +                     /*
->>>> +                      * Reset the write location to where the ITS is
->>>> +                      * currently at.
->>>> +                      */
->>>> +                     gits_write_cbaser(ctx->cbaser, base + GITS_CBASER);
->>>> +                     gits_write_cwriter(creader, base + GITS_CWRITER);
->>>> +                     its->cmd_write = &its->cmd_base[
->>>> +                             creader / sizeof(struct its_cmd_block)];
->>>
->>> Nit: please do not split lines like this, this is unreadable. We both
->>> have screens that are wide enough for this to fit on a single line.
->>>
->>> More importantly: Why isn't it sufficient to reset both CREADR and
->>> CWRITER to zero? Is there any case where you can suspend whilst having
->>> anything in flight?
->>
->> CREADR is RO and we need to handle the non-zero case. I was planning
->> on getting rid of the write to CWRITER since it shouldn't be needed.
->> Either CREADR and CWRITER have the prior values, or both are reset to
->> 0.
+On Tue, Feb 6, 2018 at 1:32 PM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> Same as is done for syscalls, interleave XOR with PUSH or MOV
+> instructions for exceptions/interrupts, in order to minimize
+> the cost of the additional instructions required for register
+> clearing.
 >
-> You're writing GITS_CBASER, which has for consequence: "When this
-> register is successfully written, the value of GITS_CREADR is set to
-> zero.". Ergo, none of that is necessary and you *must* set CWRITER to 0.
+> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 
-Huh, I missed that. It at least makes this a lot simpler. That also
-means that the current code has a potential bug if suspend is
-preempted.
+Looks good to me.
+
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
 >
->>
->>>
->>>> +                     /* Restore GITS_BASER from the value cache. */
->>>> +                     for (i = 0; i < GITS_BASER_NR_REGS; i++) {
->>>> +                             struct its_baser *baser = &its->tables[i];
->>>> +
->>>> +                             its_write_baser(its, baser, baser->val);
->>>
->>> You may want to first test that this BASER register is actually
->>> requiring something before writing to it. Yes, this is normally safe.
->>> But HW is also normally broken.
->>>
->>>> +                     }
->>>> +                     writel_relaxed(ctx->ctlr, base + GITS_CTLR);
->>>
->>> Before restoring all of this, shouldn't you first test that the ITS is
->>> actually in a disabled state?
->>
->> The save_disable code put it in a disabled state. The reset state is> also disabled. I don't expect PSCI to change the GITS_CTLR register at
->> all. Are you expecting something on the other side of the PSCI layer
->> to poke this register? We'd probably want to force disable at the
->> start of restore_enable if so.
+> diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+> index 75a237c95ff7..89a906c868d8 100644
+> --- a/arch/x86/entry/calling.h
+> +++ b/arch/x86/entry/calling.h
+> @@ -102,10 +102,21 @@ For 32-bit we have the following conventions - kernel is built with
+>         .endm
 >
-> I expect firmware to do its worse, because even if mainline ATF is close
-> to perfection, it will be hacked to death by platform people who usually
-> do not have a clue (that's definitely my experience). So I expect this
-> code to be written defensively.
-
-Fair enough. I'll disable the ITS at the start of restore_enable.
-
+>         .macro SAVE_C_REGS offset=0
+> +       /*
+> +        * Save registers and sanitize registers of values that a
+> +        * speculation attack might otherwise want to exploit. The
+> +        * lower registers are likely clobbered well before they
+> +        * could be put to use in a speculative execution gadget.
+> +        * Interleave XOR with MOV for better uop scheduling:
+> +        */
+>         movq %r11, 6*8+\offset(%rsp)
+> +       xorq %r11, %r11                         /* nospec r11 */
+>         movq %r10, 7*8+\offset(%rsp)
+> +       xorq %r10, %r10                         /* nospec r10 */
+>         movq %r9,  8*8+\offset(%rsp)
+> +       xorq %r9, %r9                           /* nospec r9 */
+>         movq %r8,  9*8+\offset(%rsp)
+> +       xorq %r8, %r8                           /* nospec r8 */
+>         movq %rax, 10*8+\offset(%rsp)
+>         movq %rcx, 11*8+\offset(%rsp)
+>         movq %rdx, 12*8+\offset(%rsp)
+> @@ -115,34 +126,28 @@ For 32-bit we have the following conventions - kernel is built with
+>         .endm
 >
-> Thanks,
+>         .macro SAVE_EXTRA_REGS offset=0
+> +       /*
+> +        * Save registers and sanitize registers of values that a
+> +        * speculation attack might otherwise want to exploit. The
+> +        * lower registers are likely clobbered well before they
+> +        * could be put to use in a speculative execution gadget.
+> +        * Interleave XOR with MOV for better uop scheduling:
+> +        */
+>         movq %r15, 0*8+\offset(%rsp)
+> +       xorq %r15, %r15                         /* nospec r15 */
+>         movq %r14, 1*8+\offset(%rsp)
+> +       xorq %r14, %r14                         /* nospec r14 */
+>         movq %r13, 2*8+\offset(%rsp)
+> +       xorq %r13, %r13                         /* nospec r13 */
+>         movq %r12, 3*8+\offset(%rsp)
+> +       xorq %r12, %r12                         /* nospec r12 */
+>         movq %rbp, 4*8+\offset(%rsp)
+> +       xorl %ebp, %ebp                         /* nospec rbp */
+>         movq %rbx, 5*8+\offset(%rsp)
+> +       xorl %ebx, %ebx                         /* nospec rbx */
+>         UNWIND_HINT_REGS offset=\offset
+>         .endm
 >
->         M.
-> --
-> Jazz is not dead. It just smells funny...
+> -       /*
+> -        * Sanitize registers of values that a speculation attack
+> -        * might otherwise want to exploit. The lower registers are
+> -        * likely clobbered well before they could be put to use in
+> -        * a speculative execution gadget:
+> -        */
+> -       .macro CLEAR_REGS_NOSPEC
+> -       xorl %ebp, %ebp
+> -       xorl %ebx, %ebx
+> -       xorq %r8, %r8
+> -       xorq %r9, %r9
+> -       xorq %r10, %r10
+> -       xorq %r11, %r11
+> -       xorq %r12, %r12
+> -       xorq %r13, %r13
+> -       xorq %r14, %r14
+> -       xorq %r15, %r15
+> -       .endm
+> -
+>         .macro POP_EXTRA_REGS
+>         popq %r15
+>         popq %r14
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index 9e48002b953b..903d9088bdb3 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -575,7 +575,6 @@ END(irq_entries_start)
+>         ALLOC_PT_GPREGS_ON_STACK
+>         SAVE_C_REGS
+>         SAVE_EXTRA_REGS
+> -       CLEAR_REGS_NOSPEC
+>         ENCODE_FRAME_POINTER
+>
+>         testb   $3, CS(%rsp)
+> @@ -1134,7 +1133,6 @@ ENTRY(xen_failsafe_callback)
+>         ALLOC_PT_GPREGS_ON_STACK
+>         SAVE_C_REGS
+>         SAVE_EXTRA_REGS
+> -       CLEAR_REGS_NOSPEC
+>         ENCODE_FRAME_POINTER
+>         jmp     error_exit
+>  END(xen_failsafe_callback)
+> @@ -1180,7 +1178,6 @@ ENTRY(paranoid_entry)
+>         cld
+>         SAVE_C_REGS 8
+>         SAVE_EXTRA_REGS 8
+> -       CLEAR_REGS_NOSPEC
+>         ENCODE_FRAME_POINTER 8
+>         movl    $1, %ebx
+>         movl    $MSR_GS_BASE, %ecx
+> @@ -1233,7 +1230,6 @@ ENTRY(error_entry)
+>         cld
+>         SAVE_C_REGS 8
+>         SAVE_EXTRA_REGS 8
+> -       CLEAR_REGS_NOSPEC
+>         ENCODE_FRAME_POINTER 8
+>         testb   $3, CS+8(%rsp)
+>         jz      .Lerror_kernelspace
+> @@ -1420,18 +1416,34 @@ ENTRY(nmi)
+>         pushq   (%rdx)          /* pt_regs->dx */
+>         pushq   %rcx            /* pt_regs->cx */
+>         pushq   %rax            /* pt_regs->ax */
+> +       /*
+> +        * Sanitize registers of values that a speculation attack
+> +        * might otherwise want to exploit. The lower registers are
+> +        * likely clobbered well before they could be put to use in
+> +        * a speculative execution gadget. Interleave XOR with PUSH
+> +        * for better uop scheduling:
+> +        */
+>         pushq   %r8             /* pt_regs->r8 */
+> +       xorq    %r8, %r8        /* nospec   r8 */
+>         pushq   %r9             /* pt_regs->r9 */
+> +       xorq    %r9, %r9        /* nospec   r9 */
+>         pushq   %r10            /* pt_regs->r10 */
+> +       xorq    %r10, %r10      /* nospec   r10 */
+>         pushq   %r11            /* pt_regs->r11 */
+> +       xorq    %r11, %r11      /* nospec   r11*/
+>         pushq   %rbx            /* pt_regs->rbx */
+> +       xorl    %ebx, %ebx      /* nospec   rbx*/
+>         pushq   %rbp            /* pt_regs->rbp */
+> +       xorl    %ebp, %ebp      /* nospec   rbp*/
+>         pushq   %r12            /* pt_regs->r12 */
+> +       xorq    %r12, %r12      /* nospec   r12*/
+>         pushq   %r13            /* pt_regs->r13 */
+> +       xorq    %r13, %r13      /* nospec   r13*/
+>         pushq   %r14            /* pt_regs->r14 */
+> +       xorq    %r14, %r14      /* nospec   r14*/
+>         pushq   %r15            /* pt_regs->r15 */
+> +       xorq    %r15, %r15      /* nospec   r15*/
+>         UNWIND_HINT_REGS
+> -       CLEAR_REGS_NOSPEC
+>         ENCODE_FRAME_POINTER
+>
+>         /*
