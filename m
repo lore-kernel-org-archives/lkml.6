@@ -1,28 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752989AbeBFMBi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 07:01:38 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:45433 "EHLO
+        id S1752892AbeBFMDF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 07:03:05 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:44511 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeBFMBT (ORCPT
+        with ESMTP id S1752831AbeBFMCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 07:01:19 -0500
-Date: Tue, 6 Feb 2018 03:56:54 -0800
-From: tip-bot for Mel Gorman <tipbot@zytor.com>
-Message-ID: <tip-32e839dda3ba576943365f0f5817ce5c843137dc@git.kernel.org>
-Cc: matt@codeblueprint.co.uk, hpa@zytor.com, torvalds@linux-foundation.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        efault@gmx.de, mgorman@techsingularity.net, tglx@linutronix.de
-Reply-To: mgorman@techsingularity.net, efault@gmx.de, peterz@infradead.org,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        matt@codeblueprint.co.uk, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org
-In-Reply-To: <20180130104555.4125-5-mgorman@techsingularity.net>
-References: <20180130104555.4125-5-mgorman@techsingularity.net>
+        Tue, 6 Feb 2018 07:02:53 -0500
+Date: Tue, 6 Feb 2018 03:59:11 -0800
+From: tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-e12f03d7031a977356e3d7b75a68c2185ff8d155@git.kernel.org>
+Cc: davem@davemloft.net, namhyung@kernel.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, yhs@fb.com, songliubraving@fb.com,
+        jbacik@fb.com, linux-kernel@vger.kernel.org, daniel@iogearbox.net,
+        tglx@linutronix.de, peterz@infradead.org, jolsa@redhat.com,
+        hpa@zytor.com, acme@redhat.com, rostedt@goodmis.org,
+        kernel-team@fb.com
+Reply-To: torvalds@linux-foundation.org, yhs@fb.com, songliubraving@fb.com,
+        davem@davemloft.net, namhyung@kernel.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, daniel@iogearbox.net, jbacik@fb.com,
+        tglx@linutronix.de, peterz@infradead.org, hpa@zytor.com,
+        jolsa@redhat.com, rostedt@goodmis.org, kernel-team@fb.com,
+        acme@redhat.com
+In-Reply-To: <20171206224518.3598254-6-songliubraving@fb.com>
+References: <20171206224518.3598254-6-songliubraving@fb.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/fair: Use a recently used CPU as an idle
- candidate and the basis for SIS
-Git-Commit-ID: 32e839dda3ba576943365f0f5817ce5c843137dc
+Subject: [tip:perf/core] perf/core: Implement the 'perf_kprobe' PMU
+Git-Commit-ID: e12f03d7031a977356e3d7b75a68c2185ff8d155
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,178 +39,464 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  32e839dda3ba576943365f0f5817ce5c843137dc
-Gitweb:     https://git.kernel.org/tip/32e839dda3ba576943365f0f5817ce5c843137dc
-Author:     Mel Gorman <mgorman@techsingularity.net>
-AuthorDate: Tue, 30 Jan 2018 10:45:55 +0000
+Commit-ID:  e12f03d7031a977356e3d7b75a68c2185ff8d155
+Gitweb:     https://git.kernel.org/tip/e12f03d7031a977356e3d7b75a68c2185ff8d155
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Wed, 6 Dec 2017 14:45:15 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 6 Feb 2018 10:20:37 +0100
+CommitDate: Tue, 6 Feb 2018 11:29:26 +0100
 
-sched/fair: Use a recently used CPU as an idle candidate and the basis for SIS
+perf/core: Implement the 'perf_kprobe' PMU
 
-The select_idle_sibling() (SIS) rewrite in commit:
+A new PMU type, perf_kprobe is added. Based on attr from perf_event_open(),
+perf_kprobe creates a kprobe (or kretprobe) for the perf_event. This
+kprobe is private to this perf_event, and thus not added to global
+lists, and not available in tracefs.
 
-  10e2f1acd010 ("sched/core: Rewrite and improve select_idle_siblings()")
+Two functions, create_local_trace_kprobe() and
+destroy_local_trace_kprobe()  are added to created and destroy these
+local trace_kprobe.
 
-... replaced a domain iteration with a search that broadly speaking
-does a wrapped walk of the scheduler domain sharing a last-level-cache.
-
-While this had a number of improvements, one consequence is that two tasks
-that share a waker/wakee relationship push each other around a socket. Even
-though two tasks may be active, all cores are evenly used. This is great from
-a search perspective and spreads a load across individual cores, but it has
-adverse consequences for cpufreq. As each CPU has relatively low utilisation,
-cpufreq may decide the utilisation is too low to used a higher P-state and
-overall computation throughput suffers.
-
-While individual cpufreq and cpuidle drivers may compensate by artifically
-boosting P-state (at c0) or avoiding lower C-states (during idle), it does
-not help if hardware-based cpufreq (e.g. HWP) is used.
-
-This patch tracks a recently used CPU based on what CPU a task was running
-on when it last was a waker a CPU it was recently using when a task is a
-wakee. During SIS, the recently used CPU is used as a target if it's still
-allowed by the task and is idle.
-
-The benefit may be non-obvious so consider an example of two tasks
-communicating back and forth. Task A may be an application doing IO where
-task B is a kworker or kthread like journald. Task A may issue IO, wake
-B and B wakes up A on completion.  With the existing scheme this may look
-like the following (potentially different IDs if SMT is in use but similar
-principal applies).
-
- A (cpu 0)	wake	B (wakes on cpu 1)
- B (cpu 1)	wake	A (wakes on cpu 2)
- A (cpu 2)	wake	B (wakes on cpu 3)
- etc.
-
-A careful reader may wonder why CPU 0 was not idle when B wakes A the
-first time and it's simply due to the fact that A can be rescheduled to
-another CPU and the pattern is that prev == target when B tries to wakeup A
-and the information about CPU 0 has been lost.
-
-With this patch, the pattern is more likely to be:
-
- A (cpu 0)	wake	B (wakes on cpu 1)
- B (cpu 1)	wake	A (wakes on cpu 0)
- A (cpu 0)	wake	B (wakes on cpu 1)
- etc
-
-i.e. two communicating casts are more likely to use just two cores instead
-of all available cores sharing a LLC.
-
-The most dramatic speedup was noticed on dbench using the XFS filesystem on
-UMA as clients interact heavily with workqueues in that configuration. Note
-that a similar speedup is not observed on ext4 as the wakeup pattern
-is different:
-
-                          4.15.0-rc9             4.15.0-rc9
-                           waprev-v1        biasancestor-v1
- Hmean      1      287.54 (   0.00%)      817.01 ( 184.14%)
- Hmean      2     1268.12 (   0.00%)     1781.24 (  40.46%)
- Hmean      4     1739.68 (   0.00%)     1594.47 (  -8.35%)
- Hmean      8     2464.12 (   0.00%)     2479.56 (   0.63%)
- Hmean     64     1455.57 (   0.00%)     1434.68 (  -1.44%)
-
-The results can be less dramatic on NUMA where automatic balancing interferes
-with the test. It's also known that network benchmarks running on localhost
-also benefit quite a bit from this patch (roughly 10% on netperf RR for UDP
-and TCP depending on the machine). Hackbench also seens small improvements
-(6-11% depending on machine and thread count). The facebook schbench was also
-tested but in most cases showed little or no different to wakeup latencies.
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Yonghong Song <yhs@fb.com>
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+Cc: <daniel@iogearbox.net>
+Cc: <davem@davemloft.net>
+Cc: <kernel-team@fb.com>
+Cc: <rostedt@goodmis.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Mike Galbraith <efault@gmx.de>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180130104555.4125-5-mgorman@techsingularity.net
+Link: http://lkml.kernel.org/r/20171206224518.3598254-6-songliubraving@fb.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/sched.h |  8 ++++++++
- kernel/sched/core.c   |  1 +
- kernel/sched/fair.c   | 22 ++++++++++++++++++++--
- 3 files changed, 29 insertions(+), 2 deletions(-)
+ include/linux/trace_events.h    |   4 ++
+ kernel/events/core.c            | 142 ++++++++++++++++++++++++++++++----------
+ kernel/trace/trace_event_perf.c |  49 ++++++++++++++
+ kernel/trace/trace_kprobe.c     |  91 ++++++++++++++++++++++---
+ kernel/trace/trace_probe.h      |   7 ++
+ 5 files changed, 250 insertions(+), 43 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 166144c..92744e3 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -555,6 +555,14 @@ struct task_struct {
- 	unsigned long			wakee_flip_decay_ts;
- 	struct task_struct		*last_wakee;
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index af44e7c..21c5d43 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -533,6 +533,10 @@ extern int  perf_trace_init(struct perf_event *event);
+ extern void perf_trace_destroy(struct perf_event *event);
+ extern int  perf_trace_add(struct perf_event *event, int flags);
+ extern void perf_trace_del(struct perf_event *event, int flags);
++#ifdef CONFIG_KPROBE_EVENTS
++extern int  perf_kprobe_init(struct perf_event *event, bool is_retprobe);
++extern void perf_kprobe_destroy(struct perf_event *event);
++#endif
+ extern int  ftrace_profile_set_filter(struct perf_event *event, int event_id,
+ 				     char *filter_str);
+ extern void ftrace_profile_free_filter(struct perf_event *event);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index d99fe3f..3337355 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7992,9 +7992,77 @@ static struct pmu perf_tracepoint = {
+ 	.read		= perf_swevent_read,
+ };
  
++#ifdef CONFIG_KPROBE_EVENTS
++/*
++ * Flags in config, used by dynamic PMU kprobe and uprobe
++ * The flags should match following PMU_FORMAT_ATTR().
++ *
++ * PERF_PROBE_CONFIG_IS_RETPROBE if set, create kretprobe/uretprobe
++ *                               if not set, create kprobe/uprobe
++ */
++enum perf_probe_config {
++	PERF_PROBE_CONFIG_IS_RETPROBE = 1U << 0,  /* [k,u]retprobe */
++};
++
++PMU_FORMAT_ATTR(retprobe, "config:0");
++
++static struct attribute *probe_attrs[] = {
++	&format_attr_retprobe.attr,
++	NULL,
++};
++
++static struct attribute_group probe_format_group = {
++	.name = "format",
++	.attrs = probe_attrs,
++};
++
++static const struct attribute_group *probe_attr_groups[] = {
++	&probe_format_group,
++	NULL,
++};
++
++static int perf_kprobe_event_init(struct perf_event *event);
++static struct pmu perf_kprobe = {
++	.task_ctx_nr	= perf_sw_context,
++	.event_init	= perf_kprobe_event_init,
++	.add		= perf_trace_add,
++	.del		= perf_trace_del,
++	.start		= perf_swevent_start,
++	.stop		= perf_swevent_stop,
++	.read		= perf_swevent_read,
++	.attr_groups	= probe_attr_groups,
++};
++
++static int perf_kprobe_event_init(struct perf_event *event)
++{
++	int err;
++	bool is_retprobe;
++
++	if (event->attr.type != perf_kprobe.type)
++		return -ENOENT;
 +	/*
-+	 * recent_used_cpu is initially set as the last CPU used by a task
-+	 * that wakes affine another task. Waker/wakee relationships can
-+	 * push tasks around a CPU where each wakeup moves to the next one.
-+	 * Tracking a recently used CPU allows a quick search for a recently
-+	 * used CPU that may be idle.
++	 * no branch sampling for probe events
 +	 */
-+	int				recent_used_cpu;
- 	int				wake_cpu;
- #endif
- 	int				on_rq;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b40540e..36f113a 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2461,6 +2461,7 @@ void wake_up_new_task(struct task_struct *p)
- 	 * Use __set_task_cpu() to avoid calling sched_class::migrate_task_rq,
- 	 * as we're not fully set-up yet.
- 	 */
-+	p->recent_used_cpu = task_cpu(p);
- 	__set_task_cpu(p, select_task_rq(p, task_cpu(p), SD_BALANCE_FORK, 0));
- #endif
- 	rq = __task_rq_lock(p, &rf);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index db45b35..5eb3ffc 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6197,7 +6197,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- static int select_idle_sibling(struct task_struct *p, int prev, int target)
++	if (has_branch_stack(event))
++		return -EOPNOTSUPP;
++
++	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
++	err = perf_kprobe_init(event, is_retprobe);
++	if (err)
++		return err;
++
++	event->destroy = perf_kprobe_destroy;
++
++	return 0;
++}
++#endif /* CONFIG_KPROBE_EVENTS */
++
+ static inline void perf_tp_register(void)
  {
- 	struct sched_domain *sd;
--	int i;
-+	int i, recent_used_cpu;
+ 	perf_pmu_register(&perf_tracepoint, "tracepoint", PERF_TYPE_TRACEPOINT);
++#ifdef CONFIG_KPROBE_EVENTS
++	perf_pmu_register(&perf_kprobe, "kprobe", -1);
++#endif
+ }
  
- 	if (idle_cpu(target))
- 		return target;
-@@ -6208,6 +6208,21 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	if (prev != target && cpus_share_cache(prev, target) && idle_cpu(prev))
- 		return prev;
+ static void perf_event_free_filter(struct perf_event *event)
+@@ -8071,13 +8139,28 @@ static void perf_event_free_bpf_handler(struct perf_event *event)
+ }
+ #endif
  
-+	/* Check a recently used CPU as a potential idle candidate */
-+	recent_used_cpu = p->recent_used_cpu;
-+	if (recent_used_cpu != prev &&
-+	    recent_used_cpu != target &&
-+	    cpus_share_cache(recent_used_cpu, target) &&
-+	    idle_cpu(recent_used_cpu) &&
-+	    cpumask_test_cpu(p->recent_used_cpu, &p->cpus_allowed)) {
++/*
++ * returns true if the event is a tracepoint, or a kprobe/upprobe created
++ * with perf_event_open()
++ */
++static inline bool perf_event_is_tracing(struct perf_event *event)
++{
++	if (event->pmu == &perf_tracepoint)
++		return true;
++#ifdef CONFIG_KPROBE_EVENTS
++	if (event->pmu == &perf_kprobe)
++		return true;
++#endif
++	return false;
++}
++
+ static int perf_event_set_bpf_prog(struct perf_event *event, u32 prog_fd)
+ {
+ 	bool is_kprobe, is_tracepoint, is_syscall_tp;
+ 	struct bpf_prog *prog;
+ 	int ret;
+ 
+-	if (event->attr.type != PERF_TYPE_TRACEPOINT)
++	if (!perf_event_is_tracing(event))
+ 		return perf_event_set_bpf_handler(event, prog_fd);
+ 
+ 	is_kprobe = event->tp_event->flags & TRACE_EVENT_FL_UKPROBE;
+@@ -8116,7 +8199,7 @@ static int perf_event_set_bpf_prog(struct perf_event *event, u32 prog_fd)
+ 
+ static void perf_event_free_bpf_prog(struct perf_event *event)
+ {
+-	if (event->attr.type != PERF_TYPE_TRACEPOINT) {
++	if (!perf_event_is_tracing(event)) {
+ 		perf_event_free_bpf_handler(event);
+ 		return;
+ 	}
+@@ -8535,47 +8618,36 @@ fail_clear_files:
+ 	return ret;
+ }
+ 
+-static int
+-perf_tracepoint_set_filter(struct perf_event *event, char *filter_str)
+-{
+-	struct perf_event_context *ctx = event->ctx;
+-	int ret;
+-
+-	/*
+-	 * Beware, here be dragons!!
+-	 *
+-	 * the tracepoint muck will deadlock against ctx->mutex, but the tracepoint
+-	 * stuff does not actually need it. So temporarily drop ctx->mutex. As per
+-	 * perf_event_ctx_lock() we already have a reference on ctx.
+-	 *
+-	 * This can result in event getting moved to a different ctx, but that
+-	 * does not affect the tracepoint state.
+-	 */
+-	mutex_unlock(&ctx->mutex);
+-	ret = ftrace_profile_set_filter(event, event->attr.config, filter_str);
+-	mutex_lock(&ctx->mutex);
+-
+-	return ret;
+-}
+-
+ static int perf_event_set_filter(struct perf_event *event, void __user *arg)
+ {
+-	char *filter_str;
+ 	int ret = -EINVAL;
+-
+-	if ((event->attr.type != PERF_TYPE_TRACEPOINT ||
+-	    !IS_ENABLED(CONFIG_EVENT_TRACING)) &&
+-	    !has_addr_filter(event))
+-		return -EINVAL;
++	char *filter_str;
+ 
+ 	filter_str = strndup_user(arg, PAGE_SIZE);
+ 	if (IS_ERR(filter_str))
+ 		return PTR_ERR(filter_str);
+ 
+-	if (IS_ENABLED(CONFIG_EVENT_TRACING) &&
+-	    event->attr.type == PERF_TYPE_TRACEPOINT)
+-		ret = perf_tracepoint_set_filter(event, filter_str);
+-	else if (has_addr_filter(event))
++#ifdef CONFIG_EVENT_TRACING
++	if (perf_event_is_tracing(event)) {
++		struct perf_event_context *ctx = event->ctx;
++
 +		/*
-+		 * Replace recent_used_cpu with prev as it is a potential
-+		 * candidate for the next wake.
++		 * Beware, here be dragons!!
++		 *
++		 * the tracepoint muck will deadlock against ctx->mutex, but
++		 * the tracepoint stuff does not actually need it. So
++		 * temporarily drop ctx->mutex. As per perf_event_ctx_lock() we
++		 * already have a reference on ctx.
++		 *
++		 * This can result in event getting moved to a different ctx,
++		 * but that does not affect the tracepoint state.
 +		 */
-+		p->recent_used_cpu = prev;
-+		return recent_used_cpu;
++		mutex_unlock(&ctx->mutex);
++		ret = ftrace_profile_set_filter(event, event->attr.config, filter_str);
++		mutex_lock(&ctx->mutex);
++	} else
++#endif
++	if (has_addr_filter(event))
+ 		ret = perf_event_set_addr_filter(event, filter_str);
+ 
+ 	kfree(filter_str);
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 55d6dff..779baad 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -8,6 +8,7 @@
+ #include <linux/module.h>
+ #include <linux/kprobes.h>
+ #include "trace.h"
++#include "trace_probe.h"
+ 
+ static char __percpu *perf_trace_buf[PERF_NR_CONTEXTS];
+ 
+@@ -237,6 +238,54 @@ void perf_trace_destroy(struct perf_event *p_event)
+ 	mutex_unlock(&event_mutex);
+ }
+ 
++#ifdef CONFIG_KPROBE_EVENTS
++int perf_kprobe_init(struct perf_event *p_event, bool is_retprobe)
++{
++	int ret;
++	char *func = NULL;
++	struct trace_event_call *tp_event;
++
++	if (p_event->attr.kprobe_func) {
++		func = kzalloc(KSYM_NAME_LEN, GFP_KERNEL);
++		if (!func)
++			return -ENOMEM;
++		ret = strncpy_from_user(
++			func, u64_to_user_ptr(p_event->attr.kprobe_func),
++			KSYM_NAME_LEN);
++		if (ret < 0)
++			goto out;
++
++		if (func[0] == '\0') {
++			kfree(func);
++			func = NULL;
++		}
 +	}
 +
- 	sd = rcu_dereference(per_cpu(sd_llc, target));
- 	if (!sd)
- 		return target;
-@@ -6375,9 +6390,12 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 
- 	if (!sd) {
- pick_cpu:
--		if (sd_flag & SD_BALANCE_WAKE) /* XXX always ? */
-+		if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
- 			new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
- 
-+			if (want_affine)
-+				current->recent_used_cpu = cpu;
-+		}
- 	} else {
- 		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
++	tp_event = create_local_trace_kprobe(
++		func, (void *)(unsigned long)(p_event->attr.kprobe_addr),
++		p_event->attr.probe_offset, is_retprobe);
++	if (IS_ERR(tp_event)) {
++		ret = PTR_ERR(tp_event);
++		goto out;
++	}
++
++	ret = perf_trace_event_init(tp_event, p_event);
++	if (ret)
++		destroy_local_trace_kprobe(tp_event);
++out:
++	kfree(func);
++	return ret;
++}
++
++void perf_kprobe_destroy(struct perf_event *p_event)
++{
++	perf_trace_event_close(p_event);
++	perf_trace_event_unreg(p_event);
++
++	destroy_local_trace_kprobe(p_event->tp_event);
++}
++#endif /* CONFIG_KPROBE_EVENTS */
++
+ int perf_trace_add(struct perf_event *p_event, int flags)
+ {
+ 	struct trace_event_call *tp_event = p_event->tp_event;
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 492700c..246c786 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -438,6 +438,14 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ 			disable_kprobe(&tk->rp.kp);
+ 		wait = 1;
  	}
++
++	/*
++	 * if tk is not added to any list, it must be a local trace_kprobe
++	 * created with perf_event_open. We don't need to wait for these
++	 * trace_kprobes
++	 */
++	if (list_empty(&tk->list))
++		wait = 0;
+  out:
+ 	if (wait) {
+ 		/*
+@@ -1313,12 +1321,9 @@ static struct trace_event_functions kprobe_funcs = {
+ 	.trace		= print_kprobe_event
+ };
+ 
+-static int register_kprobe_event(struct trace_kprobe *tk)
++static inline void init_trace_event_call(struct trace_kprobe *tk,
++					 struct trace_event_call *call)
+ {
+-	struct trace_event_call *call = &tk->tp.call;
+-	int ret;
+-
+-	/* Initialize trace_event_call */
+ 	INIT_LIST_HEAD(&call->class->fields);
+ 	if (trace_kprobe_is_return(tk)) {
+ 		call->event.funcs = &kretprobe_funcs;
+@@ -1327,6 +1332,19 @@ static int register_kprobe_event(struct trace_kprobe *tk)
+ 		call->event.funcs = &kprobe_funcs;
+ 		call->class->define_fields = kprobe_event_define_fields;
+ 	}
++
++	call->flags = TRACE_EVENT_FL_KPROBE;
++	call->class->reg = kprobe_register;
++	call->data = tk;
++}
++
++static int register_kprobe_event(struct trace_kprobe *tk)
++{
++	struct trace_event_call *call = &tk->tp.call;
++	int ret = 0;
++
++	init_trace_event_call(tk, call);
++
+ 	if (set_print_fmt(&tk->tp, trace_kprobe_is_return(tk)) < 0)
+ 		return -ENOMEM;
+ 	ret = register_trace_event(&call->event);
+@@ -1334,9 +1352,6 @@ static int register_kprobe_event(struct trace_kprobe *tk)
+ 		kfree(call->print_fmt);
+ 		return -ENODEV;
+ 	}
+-	call->flags = TRACE_EVENT_FL_KPROBE;
+-	call->class->reg = kprobe_register;
+-	call->data = tk;
+ 	ret = trace_add_event_call(call);
+ 	if (ret) {
+ 		pr_info("Failed to register kprobe event: %s\n",
+@@ -1358,6 +1373,66 @@ static int unregister_kprobe_event(struct trace_kprobe *tk)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_PERF_EVENTS
++/* create a trace_kprobe, but don't add it to global lists */
++struct trace_event_call *
++create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
++			  bool is_return)
++{
++	struct trace_kprobe *tk;
++	int ret;
++	char *event;
++
++	/*
++	 * local trace_kprobes are not added to probe_list, so they are never
++	 * searched in find_trace_kprobe(). Therefore, there is no concern of
++	 * duplicated name here.
++	 */
++	event = func ? func : "DUMMY_EVENT";
++
++	tk = alloc_trace_kprobe(KPROBE_EVENT_SYSTEM, event, (void *)addr, func,
++				offs, 0 /* maxactive */, 0 /* nargs */,
++				is_return);
++
++	if (IS_ERR(tk)) {
++		pr_info("Failed to allocate trace_probe.(%d)\n",
++			(int)PTR_ERR(tk));
++		return ERR_CAST(tk);
++	}
++
++	init_trace_event_call(tk, &tk->tp.call);
++
++	if (set_print_fmt(&tk->tp, trace_kprobe_is_return(tk)) < 0) {
++		ret = -ENOMEM;
++		goto error;
++	}
++
++	ret = __register_trace_kprobe(tk);
++	if (ret < 0)
++		goto error;
++
++	return &tk->tp.call;
++error:
++	free_trace_kprobe(tk);
++	return ERR_PTR(ret);
++}
++
++void destroy_local_trace_kprobe(struct trace_event_call *event_call)
++{
++	struct trace_kprobe *tk;
++
++	tk = container_of(event_call, struct trace_kprobe, tp.call);
++
++	if (trace_probe_is_enabled(&tk->tp)) {
++		WARN_ON(1);
++		return;
++	}
++
++	__unregister_trace_kprobe(tk);
++	free_trace_kprobe(tk);
++}
++#endif /* CONFIG_PERF_EVENTS */
++
+ /* Make a tracefs interface for controlling probe points */
+ static __init int init_kprobe_trace(void)
+ {
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index fb66e3e..e3d940a 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -404,3 +404,10 @@ store_trace_args(int ent_size, struct trace_probe *tp, struct pt_regs *regs,
+ }
+ 
+ extern int set_print_fmt(struct trace_probe *tp, bool is_return);
++
++#ifdef CONFIG_PERF_EVENTS
++extern struct trace_event_call *
++create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
++			  bool is_return);
++extern void destroy_local_trace_kprobe(struct trace_event_call *event_call);
++#endif
