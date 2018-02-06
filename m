@@ -1,83 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752960AbeBFSKk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:10:40 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:60234 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbeBFSKd (ORCPT
+        id S1752904AbeBFSLk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:11:40 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:55926 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752710AbeBFSLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:10:33 -0500
-Subject: Re: [PATCH 16/20] auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 dep.
-To: Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        paul.burton@mips.com
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        tfiga@chromium.org, Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
-        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
-        will.deacon@arm.com, Tony Lindgren <tony@atomide.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
- <20180205012146.23981-17-ulfalizer@gmail.com>
- <CAFkk2KSQ9EBYn0dFhU7qbWXj2nYOu-SL7DfuE99NwiEeOpKBaw@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d02d2488-5e8e-8586-486f-ad5f01a60a02@infradead.org>
-Date: Tue, 6 Feb 2018 10:09:45 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 6 Feb 2018 13:11:33 -0500
+X-Google-Smtp-Source: AH8x225EUP4w8oaxsWJi2s5kWTQyMN1AvIs4+L7yx+1ELEUfzBc6+PtlOKWtARAZ32klG7UQYYlWxN6dMENLIruD9V4=
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KSQ9EBYn0dFhU7qbWXj2nYOu-SL7DfuE99NwiEeOpKBaw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2f18b10f-1c84-f386-2b13-12163c0fd8a5@gmail.com>
+References: <1517930036-17618-1-git-send-email-svendev@arcx.com>
+ <20180206161447.GF12679@lunn.ch> <CAGngYiWYChnZmU7n9i1+nbY+1oWGXQGOopBhNiPHPUoYvTdgaw@mail.gmail.com>
+ <20180206165009.GJ12679@lunn.ch> <CAGngYiWR-ayfg4KiH4yzoey+7P-jjV9MjEv8STmS65aC9JTX5Q@mail.gmail.com>
+ <20180206170526.GK12679@lunn.ch> <2f18b10f-1c84-f386-2b13-12163c0fd8a5@gmail.com>
+From: Sven Van Asbroeck <thesven73@gmail.com>
+Date: Tue, 6 Feb 2018 13:11:31 -0500
+Message-ID: <CAGngYiW1ktwnRDORY=h9wZyHU-cGGE-QtNcECGB5gb=wyp+hKA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/1] spi_ks8995: use regmap to access chip registers.
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Woojung.Huh@microchip.com,
+        Tristram.Ha@microchip.com, Sven Van Asbroeck <svendev@arcx.com>,
+        helmut.buchsbaum@gmail.com, Maarten.Blomme@flir.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/04/2018 05:58 PM, Ulf Magnusson wrote:
-> On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->> The MIPS_SEAD3 symbol was removed in commit 64601cb1343f ("leds: Remove SEAD-3
->> driver").
->>
->> Remove the MIPS_SEAD3 dependency from IMG_ASCII_LCD.
->>
->> Discovered with the
->> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
->> script.
->>
->> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->> ---
->>  drivers/auxdisplay/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
->> index 2c2ed9cf8796..3cba78d36eec 100644
->> --- a/drivers/auxdisplay/Kconfig
->> +++ b/drivers/auxdisplay/Kconfig
->> @@ -137,7 +137,7 @@ config CFAG12864B_RATE
->>  config IMG_ASCII_LCD
->>         tristate "Imagination Technologies ASCII LCD Display"
->>         depends on HAS_IOMEM
->> -       default y if MIPS_MALTA || MIPS_SEAD3
->> +       default y if MIPS_MALTA
->>         select SYSCON
->>         help
->>           Enable this to support the simple ASCII LCD displays found on
->> --
->> 2.14.1
->>
-> 
-> The SYSCON symbol selected here is also globally undefined. Maybe
-> MFD_SYSCON was intended.
+Andrew and Florian, thanks for your input.
 
-Yes.
+On Tue, Feb 6, 2018 at 12:05 PM, Andrew Lunn <andrew@lunn.ch> wrote:
+> I would NACK sysfs bin file. Do it right, or don't do it at all.
 
-from 2018-JAN-18, Corentin Labbe:
-https://marc.info/?l=linux-kernel&m=151630656607526&w=2
+On Tue, Feb 6, 2018 at 12:47 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> Sven, there is a standard ethtool register dump interface that can be
+> used to provide register dumps, if necessary, that might fit your use case.
 
--- 
-~Randy
+I'm not keen on the sysfs bin file either, the existing driver has this,
+and we use it because it's there.
+
+Our use case is as follows: all we need is a reset on boot, followed by
+a few static register bitfiddles which reflect the way we've integrated
+the IC into our product. There is no further Linux interaction.
+I guess the devicetree would be a natural place to store the required
+register changes. No need for sysfs.
+
+As I said before, not sure how others use this chip.
+
+Would the above be attainable by a (trivial) DSA driver?
