@@ -1,97 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752823AbeBFS6F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:58:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50351 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752529AbeBFS56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:57:58 -0500
-Date: Tue, 6 Feb 2018 10:48:44 -0800
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: Davidlohr Bueso <dbueso@suse.de>, akpm@linux-foundation.org,
-        mingo@kernel.org, peterz@infradead.org, jack@suse.cz,
-        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/64] mm: towards parallel address space operations
-Message-ID: <20180206184844.olcd34engojudsxt@linux-n805>
-Mail-Followup-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        Davidlohr Bueso <dbueso@suse.de>, akpm@linux-foundation.org,
-        mingo@kernel.org, peterz@infradead.org, jack@suse.cz,
-        mhocko@kernel.org, kirill.shutemov@linux.intel.com,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20180205012754.23615-1-dbueso@wotan.suse.de>
- <df29e9eb-22ad-7e96-6ea4-2fd0ad2509a9@linux.vnet.ibm.com>
+        id S1752908AbeBFTAq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 14:00:46 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33852 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752688AbeBFTAh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 14:00:37 -0500
+X-Google-Smtp-Source: AH8x224gb8mcfIIMQRtcm5u0exFRuFjg565AuOyH48U+aK+gwH6roHFpgNOPmPj8WTXJQq3gXtTW2g==
+Date: Tue, 6 Feb 2018 11:00:34 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, andy.gross@linaro.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: sdm845: Add serial console support
+Message-ID: <20180206190034.GK9465@builder>
+References: <20180125163216.29018-1-rnayak@codeaurora.org>
+ <20180125163216.29018-3-rnayak@codeaurora.org>
+ <20180126221808.GE28313@codeaurora.org>
+ <086251c4-b012-236c-33e2-9cab551a4594@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df29e9eb-22ad-7e96-6ea4-2fd0ad2509a9@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <086251c4-b012-236c-33e2-9cab551a4594@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 05 Feb 2018, Laurent Dufour wrote:
+On Mon 29 Jan 00:18 PST 2018, Rajendra Nayak wrote:
+> On 01/27/2018 03:48 AM, Stephen Boyd wrote:
+> > On 01/25, Rajendra Nayak wrote:
+> >> diff --git a/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
+> >> new file mode 100644
+> >> index 000000000000..b97f99e6f4b4
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
+> >> @@ -0,0 +1,32 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> >> + */
+> >> +
+> >> +&tlmm {
+> > 
+> > I'm not the maintainer, but I find this approach to the pins
+> > really annoying. I have to flip to another file to figure out how
+> > a board has configured the pins. And we may bring in a bunch of
+> > settings that we don't ever use on some board too. Why can't we
+> > put the settings in the board file directly?
+> 
+> I was just keeping it consistent with how things are for other
+> qualcomm platforms. I can move this to the board dts if no one else
+> sees any issues.
+> 
 
->On 05/02/2018 02:26, Davidlohr Bueso wrote:
->> From: Davidlohr Bueso <dave@stgolabs.net>
->>
->> Hi,
->>
->> This patchset is a new version of both the range locking machinery as well
->> as a full mmap_sem conversion that makes use of it -- as the worst case
->> scenario as all mmap_sem calls are converted to a full range mmap_lock
->> equivalent. As such, while there is no improvement of concurrency perse,
->> these changes aim at adding the machinery to permit this in the future.
->
->Despite the massive rebase, what are the changes in this series compared to
->the one I sent in last May - you silently based on, by the way :
->https://lkml.org/lkml/2017/5/24/409
+What we decided recently for 8916 (at least) was that we define the
+functional properties in the soc dtsi and add the electrical properties
+in the board dts(i).
 
-Hardly, but yes I meant to reference that. It ended up being easier to just
-do a from scratch version. I haven't done a comparison, but at first I thought
-you missed gup users (now not so much), this patchset allows testing on more
-archs (see below), we remove the trylock in vm_insert_page(), etc.
+I fully agree with Stephen on this one, but as you say we're keeping the
+pinconf in separate files for the other platforms/boards.
 
->>
->> Direct users of the mm->mmap_sem can be classified as those that (1) acquire
->> and release the lock within the same context, and (2) those who directly
->> manipulate the mmap_sem down the callchain. For example:
->>
->> (1)  down_read(&mm->mmap_sem);
->>      /* do something */
->>      /* nobody down the chain uses mmap_sem directly */
->>      up_read(&mm->mmap_sem);
->>
->> (2a)  down_read(&mm->mmap_sem);
->>       /* do something that retuns mmap_sem unlocked */
->>       fn(mm, &locked);
->>       if (locked)
->>         up_read(&mm->mmap_sem);
->>
->> (2b)  down_read(&mm->mmap_sem);
->>       /* do something that in between released and reacquired mmap_sem */
->>       fn(mm);
->>       up_read(&mm->mmap_sem);
->
->Unfortunately, there are also indirect users which rely on the mmap_sem
->locking to protect their data. For the first step using a full range this
->doesn't matter, but when refining the range, these one would be the most
->critical ones as they would have to be reworked to take the range in account.
 
-Of course. The value I see in this patchset is that we can determine whether or
-not we move forward based on the worst case scenario numbers.
+I'll prepare and bring some new guidelines to our Thursday meeting and
+we can decide what to do based on that.
 
->> Testing: I have setup an mmtests config file with all the workloads described:
->> http://linux-scalability.org/mmtests-config
->
->Is this link still valid, I can't reach it ?
-
-Sorry, that should have been:
-
-https://linux-scalability.org/range-mmap_lock/mmtests-config
-
-Thanks,
-Davidlohr
+Regards,
+Bjorn
