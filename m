@@ -1,36 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752908AbeBFTAq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 14:00:46 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33852 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752688AbeBFTAh (ORCPT
+        id S1752900AbeBFTGZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 14:06:25 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39169 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752792AbeBFTGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 14:00:37 -0500
-X-Google-Smtp-Source: AH8x224gb8mcfIIMQRtcm5u0exFRuFjg565AuOyH48U+aK+gwH6roHFpgNOPmPj8WTXJQq3gXtTW2g==
-Date: Tue, 6 Feb 2018 11:00:34 -0800
+        Tue, 6 Feb 2018 14:06:18 -0500
+X-Google-Smtp-Source: AH8x226Ngx0GV8MT+Eg5NCD5izGD9PFdniPoJBND+zjUcsVAqGFNWYH+Qcca4Mm2F3EEuiviBDKGBQ==
+Date: Tue, 6 Feb 2018 11:06:14 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, andy.gross@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org
 Subject: Re: [PATCH 2/2] arm64: dts: sdm845: Add serial console support
-Message-ID: <20180206190034.GK9465@builder>
+Message-ID: <20180206190614.GL9465@builder>
 References: <20180125163216.29018-1-rnayak@codeaurora.org>
  <20180125163216.29018-3-rnayak@codeaurora.org>
  <20180126221808.GE28313@codeaurora.org>
- <086251c4-b012-236c-33e2-9cab551a4594@codeaurora.org>
+ <CAD=FV=WcCnQJc25=sKWtOi=ZWi=ium6DVsexuQnsLDL=aJE6-Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <086251c4-b012-236c-33e2-9cab551a4594@codeaurora.org>
+In-Reply-To: <CAD=FV=WcCnQJc25=sKWtOi=ZWi=ium6DVsexuQnsLDL=aJE6-Q@mail.gmail.com>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29 Jan 00:18 PST 2018, Rajendra Nayak wrote:
-> On 01/27/2018 03:48 AM, Stephen Boyd wrote:
+On Tue 06 Feb 10:37 PST 2018, Doug Anderson wrote:
+
+> Hi,
+> 
+> On Fri, Jan 26, 2018 at 2:18 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 > > On 01/25, Rajendra Nayak wrote:
 > >> diff --git a/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm845-pins.dtsi
 > >> new file mode 100644
@@ -44,28 +50,41 @@ On Mon 29 Jan 00:18 PST 2018, Rajendra Nayak wrote:
 > >> + */
 > >> +
 > >> +&tlmm {
-> > 
+> >
 > > I'm not the maintainer, but I find this approach to the pins
 > > really annoying. I have to flip to another file to figure out how
 > > a board has configured the pins. And we may bring in a bunch of
 > > settings that we don't ever use on some board too. Why can't we
 > > put the settings in the board file directly?
 > 
-> I was just keeping it consistent with how things are for other
-> qualcomm platforms. I can move this to the board dts if no one else
-> sees any issues.
+> I'm not so familiar with how things work with Qualcomm, but in general
+> I think putting this in the "board" file is a bad idea.  I'd be OK
+> with putting this directly in the SoC file (though it might get
+> unwieldy?), but not moving things to the board file as was done with
+> v2 of this patch.
+> 
+> Said another way: nearly board that uses SDM845 that uses UART2 will
+> have the same definitions for these pins so we shouldn't be
+> duplicating it across every board, right?
 > 
 
-What we decided recently for 8916 (at least) was that we define the
-functional properties in the soc dtsi and add the electrical properties
-in the board dts(i).
+We've run into several cases where different boards uses the same
+function but requires board specific electrical configuration.
 
-I fully agree with Stephen on this one, but as you say we're keeping the
-pinconf in separate files for the other platforms/boards.
+So what we decided was to keep the pinmux in the soc-file (where e.g.
+the uart definition is) and then extend it with the board specific
+electrical properties (the pinconf), in the board files.
+
+This does come with the complexity of having the pinctrl nodes split in
+two places, but the responsibilities of the two parts is clear and we
+remove the need for all board files to ensure the appropriate pinmux is
+in place.
 
 
-I'll prepare and bring some new guidelines to our Thursday meeting and
-we can decide what to do based on that.
+NB. We did discuss adding "sane defaults" for the pinconf in the soc
+dtsi, but we end up spending considerable time debugging issues stemming
+from not having the right pinconf; so better make this explicit and say
+that the board has to specify it's config.
 
 Regards,
 Bjorn
