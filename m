@@ -1,295 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753281AbeBFU0v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:26:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752960AbeBFU0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:26:35 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96C8217B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x226qs5GaiiTfcf9mVY+B3XJCdH6C5XfuVtCGECIyeHrlVcSR4WPljPgRPQa9TR1GMZ86ZTu4GZug0NT2gIIMF+Q=
-MIME-Version: 1.0
-In-Reply-To: <20180126221501.GD28313@codeaurora.org>
-References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-2-rnayak@codeaurora.org>
- <20180126221501.GD28313@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 6 Feb 2018 14:26:13 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ1xjQ5ZP-KXeZQ0s=ib8GTfvfYjFqyy+Zcub-akCs7Bw@mail.gmail.com>
-Message-ID: <CAL_JsqJ1xjQ5ZP-KXeZQ0s=ib8GTfvfYjFqyy+Zcub-akCs7Bw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1753364AbeBFU2P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 15:28:15 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:40978 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752832AbeBFU2L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 15:28:11 -0500
+X-Google-Smtp-Source: AH8x227AOE8pbYXtIFqYkum4Vm9Asv8eH7zvfo6iBI9SU1iU8jbYllooraSXqMe2bViso0cA0Y0TfQ==
+From: Tim Harvey <tharvey@gateworks.com>
+To: linux-media@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: [PATCH v8 1/7] v4l2-dv-timings: add v4l2_hdmi_colorimetry()
+Date: Tue,  6 Feb 2018 12:27:48 -0800
+Message-Id: <1517948874-21681-2-git-send-email-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 4:15 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/25, Rajendra Nayak wrote:
->>  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
->>  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dtsi
->
-> Do we really need two files? Maybe collapse the two?
->
->>  create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> new file mode 100644
->> index 000000000000..a21f4912b3e2
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> @@ -0,0 +1,308 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +/ {
->> +     model = "Qualcomm Technologies, Inc. SDM845";
->> +
->> +     interrupt-parent = <&intc>;
->> +
->> +     #address-cells = <2>;
->> +     #size-cells = <2>;
->> +
->> +     chosen { };
->> +
->> +     memory {
->> +             device_type = "memory";
->> +             /* We expect the bootloader to fill in the reg */
->> +             reg = <0 0 0 0>;
->> +     };
->> +
->> +     cpus {
->> +             #address-cells = <2>;
->> +             #size-cells = <0>;
->> +
->> +             CPU0: cpu@0 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x0>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_0>;
->> +                     L2_0: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                             L3_0: l3-cache {
->> +                                   compatible = "cache";
->> +                             };
->> +                     };
->> +             };
->> +
->> +             CPU1: cpu@100 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x100>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_100>;
->> +                     L2_100: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                     };
->> +             };
->> +
->> +             CPU2: cpu@200 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x200>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_200>;
->> +                     L2_200: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                     };
->> +             };
->> +
->> +             CPU3: cpu@300 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x300>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_300>;
->> +                     L2_300: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                     };
->> +             };
->> +
->> +             CPU4: cpu@400 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x400>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_400>;
->> +                     L2_400: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                     };
->> +             };
->> +
->> +             CPU5: cpu@500 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x500>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_500>;
->> +                     L2_500: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                     };
->> +             };
->> +
->> +             CPU6: cpu@600 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x600>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_600>;
->> +                     L2_600: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                     };
->> +             };
->> +
->> +             CPU7: cpu@700 {
->> +                     device_type = "cpu";
->> +                     compatible = "qcom,kryo";
->> +                     reg = <0x0 0x700>;
->> +                     enable-method = "psci";
->> +                     next-level-cache = <&L2_700>;
->> +                     L2_700: l2-cache {
->> +                             compatible = "cache";
->> +                             next-level-cache = <&L3_0>;
->> +                     };
->> +             };
->> +
->> +             cpu-map {
->> +                     cluster0 {
->> +                             core0 {
->> +                                     cpu = <&CPU0>;
->> +                             };
->> +
->> +                             core1 {
->> +                                     cpu = <&CPU1>;
->> +                             };
->> +
->> +                             core2 {
->> +                                     cpu = <&CPU2>;
->> +                             };
->> +
->> +                             core3 {
->> +                                     cpu = <&CPU3>;
->> +                             };
->> +                     };
->> +
->> +                     cluster1 {
->> +                             core0 {
->> +                                     cpu = <&CPU4>;
->> +                             };
->> +
->> +                             core1 {
->> +                                     cpu = <&CPU5>;
->> +                             };
->> +
->> +                             core2 {
->> +                                     cpu = <&CPU6>;
->> +                             };
->> +
->> +                             core3 {
->> +                                     cpu = <&CPU7>;
->> +                             };
->> +                     };
->> +             };
->
-> From what I recall, this layout causes the kernel to spew
-> warnings? I mean to say this is the power/performance view, but
-> not the architectural view.
->
->> +     };
->> +
->> +     timer {
->> +             compatible = "arm,armv8-timer";
->> +             interrupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->
-> Are we supposed to use the GIC_CPU_MASK_SIMPLE macros still?
->
->> +                          <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +                          <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +                          <GIC_PPI 0 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
->> +     };
->> +
->> +     clocks {
->> +             xo_board: xo_board {
->> +                     compatible = "fixed-clock";
->> +                     #clock-cells = <0>;
->> +                     clock-frequency = <19200000>;
->> +                     clock-output-names = "xo_board";
->
-> We can drop clock-output-names on these.
->
->> +             };
->> +
->> +             sleep_clk: sleep_clk {
->> +                     compatible = "fixed-clock";
->> +                     #clock-cells = <0>;
->> +                     clock-frequency = <32764>;
->> +                     clock-output-names = "sleep_clk";
->> +             };
->> +     };
->> +
->> +     psci {
->> +             compatible = "arm,psci-1.0";
->> +             method = "smc";
->> +     };
->> +
->> +     soc: soc {
->
-> Will anyone use this phandle?
->
->> +             #address-cells = <1>;
->> +             #size-cells = <1>;
->> +             ranges = <0 0 0 0xffffffff>;
->> +             compatible = "simple-bus";
->> +
->> +             intc: interrupt-controller@17a00000 {
->> +                     compatible = "arm,gic-v3";
->> +                     #interrupt-cells = <3>;
->> +                     interrupt-controller;
->> +                     #redistributor-regions = <1>;
->> +                     redistributor-stride = <0x0 0x20000>;
->> +                     reg = <0x17a00000 0x10000>,     /* GICD */
->> +                           <0x17a60000 0x100000>;    /* GICR * 8 */
->> +                     interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->
-> Can you also add the ITS node please and mark it as disabled?
-> I'll send a patch to the list to skip status = "disabled" ones.
-> We may want to support ITS on these SoCs if the firmware is
-> different.
->
->> +             };
->> +
->> +             gcc: clock-controller@100000 {
->> +                     compatible = "qcom,gcc-sdm845";
->> +                     reg = <0x100000 0x1f0000>;
->> +                     #clock-cells = <1>;
->> +                     #reset-cells = <1>;
->> +             };
->> +
->> +             tlmm: pinctrl@03400000 {
->
-> Drop leading zeroes please.
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-Build dtbs with W=2 and fix the warnings so reviewers don't have to
-waste their time on these issues.
+Add the v4l2_hdmi_colorimetry() function so we have a single function
+that determines the colorspace, YCbCr encoding, quantization range and
+transfer function from the InfoFrame data.
 
-Rob
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+---
+ drivers/media/v4l2-core/v4l2-dv-timings.c | 141 ++++++++++++++++++++++++++++++
+ include/media/v4l2-dv-timings.h           |  21 +++++
+ 2 files changed, 162 insertions(+)
+
+diff --git a/drivers/media/v4l2-core/v4l2-dv-timings.c b/drivers/media/v4l2-core/v4l2-dv-timings.c
+index 930f9c5..0182d3d 100644
+--- a/drivers/media/v4l2-core/v4l2-dv-timings.c
++++ b/drivers/media/v4l2-core/v4l2-dv-timings.c
+@@ -27,6 +27,7 @@
+ #include <linux/v4l2-dv-timings.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <linux/math64.h>
++#include <linux/hdmi.h>
+ 
+ MODULE_AUTHOR("Hans Verkuil");
+ MODULE_DESCRIPTION("V4L2 DV Timings Helper Functions");
+@@ -814,3 +815,143 @@ struct v4l2_fract v4l2_calc_aspect_ratio(u8 hor_landscape, u8 vert_portrait)
+ 	return aspect;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_calc_aspect_ratio);
++
++/** v4l2_hdmi_rx_colorimetry - determine HDMI colorimetry information
++ *	based on various InfoFrames.
++ * @avi - the AVI InfoFrame
++ * @hdmi - the HDMI Vendor InfoFrame, may be NULL
++ * @height - the frame height
++ *
++ * Determines the HDMI colorimetry information, i.e. how the HDMI
++ * pixel color data should be interpreted.
++ *
++ * Note that some of the newer features (DCI-P3, HDR) are not yet
++ * implemented: the hdmi.h header needs to be updated to the HDMI 2.0
++ * and CTA-861-G standards.
++ */
++struct v4l2_hdmi_colorimetry
++v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
++			 const struct hdmi_vendor_infoframe *hdmi,
++			 unsigned int height)
++{
++	struct v4l2_hdmi_colorimetry c = {
++		V4L2_COLORSPACE_SRGB,
++		V4L2_YCBCR_ENC_DEFAULT,
++		V4L2_QUANTIZATION_FULL_RANGE,
++		V4L2_XFER_FUNC_SRGB
++	};
++	bool is_ce = avi->video_code || (hdmi && hdmi->vic);
++	bool is_sdtv = height <= 576;
++	bool default_is_lim_range_rgb = avi->video_code > 1;
++
++	switch (avi->colorspace) {
++	case HDMI_COLORSPACE_RGB:
++		/* RGB pixel encoding */
++		switch (avi->colorimetry) {
++		case HDMI_COLORIMETRY_EXTENDED:
++			switch (avi->extended_colorimetry) {
++			case HDMI_EXTENDED_COLORIMETRY_ADOBE_RGB:
++				c.colorspace = V4L2_COLORSPACE_ADOBERGB;
++				c.xfer_func = V4L2_XFER_FUNC_ADOBERGB;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_BT2020:
++				c.colorspace = V4L2_COLORSPACE_BT2020;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			default:
++				break;
++			}
++			break;
++		default:
++			break;
++		}
++		switch (avi->quantization_range) {
++		case HDMI_QUANTIZATION_RANGE_LIMITED:
++			c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
++			break;
++		case HDMI_QUANTIZATION_RANGE_FULL:
++			break;
++		default:
++			if (default_is_lim_range_rgb)
++				c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
++			break;
++		}
++		break;
++
++	default:
++		/* YCbCr pixel encoding */
++		c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
++		switch (avi->colorimetry) {
++		case HDMI_COLORIMETRY_NONE:
++			if (!is_ce)
++				break;
++			if (is_sdtv) {
++				c.colorspace = V4L2_COLORSPACE_SMPTE170M;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++			} else {
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_709;
++			}
++			c.xfer_func = V4L2_XFER_FUNC_709;
++			break;
++		case HDMI_COLORIMETRY_ITU_601:
++			c.colorspace = V4L2_COLORSPACE_SMPTE170M;
++			c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++			c.xfer_func = V4L2_XFER_FUNC_709;
++			break;
++		case HDMI_COLORIMETRY_ITU_709:
++			c.colorspace = V4L2_COLORSPACE_REC709;
++			c.ycbcr_enc = V4L2_YCBCR_ENC_709;
++			c.xfer_func = V4L2_XFER_FUNC_709;
++			break;
++		case HDMI_COLORIMETRY_EXTENDED:
++			switch (avi->extended_colorimetry) {
++			case HDMI_EXTENDED_COLORIMETRY_XV_YCC_601:
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_XV709;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_XV_YCC_709:
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_XV601;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_S_YCC_601:
++				c.colorspace = V4L2_COLORSPACE_SRGB;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++				c.xfer_func = V4L2_XFER_FUNC_SRGB;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_ADOBE_YCC_601:
++				c.colorspace = V4L2_COLORSPACE_ADOBERGB;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++				c.xfer_func = V4L2_XFER_FUNC_ADOBERGB;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_BT2020:
++				c.colorspace = V4L2_COLORSPACE_BT2020;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_BT2020;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_BT2020_CONST_LUM:
++				c.colorspace = V4L2_COLORSPACE_BT2020;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_BT2020_CONST_LUM;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			default: /* fall back to ITU_709 */
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_709;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			}
++			break;
++		default:
++			break;
++		}
++		/*
++		 * YCC Quantization Range signaling is more-or-less broken,
++		 * let's just ignore this.
++		 */
++		break;
++	}
++	return c;
++}
++EXPORT_SYMBOL_GPL(v4l2_hdmi_rx_colorimetry);
+diff --git a/include/media/v4l2-dv-timings.h b/include/media/v4l2-dv-timings.h
+index 61a1889..835aef7 100644
+--- a/include/media/v4l2-dv-timings.h
++++ b/include/media/v4l2-dv-timings.h
+@@ -223,5 +223,26 @@ static inline  bool can_reduce_fps(struct v4l2_bt_timings *bt)
+ 	return false;
+ }
+ 
++/**
++ * struct v4l2_hdmi_rx_colorimetry - describes the HDMI colorimetry information
++ * @colorspace:		enum v4l2_colorspace, the colorspace
++ * @ycbcr_enc:		enum v4l2_ycbcr_encoding, Y'CbCr encoding
++ * @quantization:	enum v4l2_quantization, colorspace quantization
++ * @xfer_func:		enum v4l2_xfer_func, colorspace transfer function
++ */
++struct v4l2_hdmi_colorimetry {
++	enum v4l2_colorspace colorspace;
++	enum v4l2_ycbcr_encoding ycbcr_enc;
++	enum v4l2_quantization quantization;
++	enum v4l2_xfer_func xfer_func;
++};
++
++struct hdmi_avi_infoframe;
++struct hdmi_vendor_infoframe;
++
++struct v4l2_hdmi_colorimetry
++v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
++			 const struct hdmi_vendor_infoframe *hdmi,
++			 unsigned int height);
+ 
+ #endif
+-- 
+2.7.4
