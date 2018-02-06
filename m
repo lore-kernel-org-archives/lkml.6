@@ -1,52 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752904AbeBFSLk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 13:11:40 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55926 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752710AbeBFSLd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 13:11:33 -0500
-X-Google-Smtp-Source: AH8x225EUP4w8oaxsWJi2s5kWTQyMN1AvIs4+L7yx+1ELEUfzBc6+PtlOKWtARAZ32klG7UQYYlWxN6dMENLIruD9V4=
+        id S1752832AbeBFSNr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 13:13:47 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41722 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752536AbeBFSNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 13:13:41 -0500
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: Christoffer Dall <christoffer.dall@linaro.org>
+Cc: kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [RFC 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
+References: <20180110190729.18383-1-punit.agrawal@arm.com>
+        <20180110190729.18383-5-punit.agrawal@arm.com>
+        <20180206145501.GB23160@cbox>
+Date: Tue, 06 Feb 2018 18:13:38 +0000
+In-Reply-To: <20180206145501.GB23160@cbox> (Christoffer Dall's message of
+        "Tue, 6 Feb 2018 15:55:01 +0100")
+Message-ID: <87bmh2htpp.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <2f18b10f-1c84-f386-2b13-12163c0fd8a5@gmail.com>
-References: <1517930036-17618-1-git-send-email-svendev@arcx.com>
- <20180206161447.GF12679@lunn.ch> <CAGngYiWYChnZmU7n9i1+nbY+1oWGXQGOopBhNiPHPUoYvTdgaw@mail.gmail.com>
- <20180206165009.GJ12679@lunn.ch> <CAGngYiWR-ayfg4KiH4yzoey+7P-jjV9MjEv8STmS65aC9JTX5Q@mail.gmail.com>
- <20180206170526.GK12679@lunn.ch> <2f18b10f-1c84-f386-2b13-12163c0fd8a5@gmail.com>
-From: Sven Van Asbroeck <thesven73@gmail.com>
-Date: Tue, 6 Feb 2018 13:11:31 -0500
-Message-ID: <CAGngYiW1ktwnRDORY=h9wZyHU-cGGE-QtNcECGB5gb=wyp+hKA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/1] spi_ks8995: use regmap to access chip registers.
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Woojung.Huh@microchip.com,
-        Tristram.Ha@microchip.com, Sven Van Asbroeck <svendev@arcx.com>,
-        helmut.buchsbaum@gmail.com, Maarten.Blomme@flir.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew and Florian, thanks for your input.
+Christoffer Dall <christoffer.dall@linaro.org> writes:
 
-On Tue, Feb 6, 2018 at 12:05 PM, Andrew Lunn <andrew@lunn.ch> wrote:
-> I would NACK sysfs bin file. Do it right, or don't do it at all.
+> On Wed, Jan 10, 2018 at 07:07:29PM +0000, Punit Agrawal wrote:
+>> KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
+>> handling to add support for PUD hugepages.
+>> 
+>> Addition of PUD hugpage support enables additional hugepage sizes (1G
+>
+>                  *hugepage
+>
+>> with 4K granule and 4TB with 64k granule) which can be useful on cores
+>> that have support for mapping larger block sizes in the TLB entries.
+>> 
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@linaro.org>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> ---
+>>  arch/arm/include/asm/kvm_mmu.h         | 10 +++++
+>>  arch/arm/include/asm/pgtable-3level.h  |  2 +
+>>  arch/arm64/include/asm/kvm_mmu.h       | 19 +++++++++
+>>  arch/arm64/include/asm/pgtable-hwdef.h |  2 +
+>>  arch/arm64/include/asm/pgtable.h       |  4 ++
+>>  virt/kvm/arm/mmu.c                     | 72 +++++++++++++++++++++++++++++-----
+>>  6 files changed, 99 insertions(+), 10 deletions(-)
+>> 
 
-On Tue, Feb 6, 2018 at 12:47 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> Sven, there is a standard ethtool register dump interface that can be
-> used to provide register dumps, if necessary, that might fit your use case.
+[...]
 
-I'm not keen on the sysfs bin file either, the existing driver has this,
-and we use it because it's there.
+>> diff --git a/arch/arm/include/asm/pgtable-3level.h b/arch/arm/include/asm/pgtable-3level.h
+>> index 1a7a17b2a1ba..97e04fdbfa85 100644
+>> --- a/arch/arm/include/asm/pgtable-3level.h
+>> +++ b/arch/arm/include/asm/pgtable-3level.h
+>> @@ -249,6 +249,8 @@ PMD_BIT_FUNC(mkyoung,   |= PMD_SECT_AF);
+>>  #define pfn_pmd(pfn,prot)	(__pmd(((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot)))
+>>  #define mk_pmd(page,prot)	pfn_pmd(page_to_pfn(page),prot)
+>>  
+>> +#define pud_pfn(pud)		(((pud_val(pud) & PUD_MASK) & PHYS_MASK) >> PAGE_SHIFT)
+>> +
+>
+> does this make sense on 32-bit arm?  Is this ever going to get called
+> and return something meaningful in that case?
 
-Our use case is as follows: all we need is a reset on boot, followed by
-a few static register bitfiddles which reflect the way we've integrated
-the IC into our product. There is no further Linux interaction.
-I guess the devicetree would be a natural place to store the required
-register changes. No need for sysfs.
+This macro should never get called as there are no PUD_SIZE hugepages on
+arm.
 
-As I said before, not sure how others use this chip.
+Ideally we want to fold the pud to fallback to pgd like in the rest of
+the code. I'll have another go at this.
 
-Would the above be attainable by a (trivial) DSA driver?
+>
+>>  /* represent a notpresent pmd by faulting entry, this is used by pmdp_invalidate */
+>>  static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+>>  {
+
+[...]
+
+
+>> @@ -1393,17 +1424,38 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  	if (mmu_notifier_retry(kvm, mmu_seq))
+>>  		goto out_unlock;
+>>  
+>> -	if (!hugetlb && !force_pte)
+>> +	if (!hugetlb && !force_pte) {
+>> +		/*
+>> +		 * We only support PMD_SIZE transparent
+>> +		 * hugepages. This code will need updates if we enable
+>> +		 * other page sizes for THP.
+>> +		 */
+>>  		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+>> +		vma_pagesize = PMD_SIZE;
+>> +	}
+>>  
+>>  	if (hugetlb) {
+>> -		pmd_t new_pmd = stage2_build_pmd(pfn, mem_type, writable);
+>> -
+>> -		if (writable)
+>> -			kvm_set_pfn_dirty(pfn);
+>> -
+>> -		coherent_cache_guest_page(vcpu, pfn, PMD_SIZE);
+>> -		ret = stage2_set_pmd_huge(kvm, memcache, fault_ipa, &new_pmd);
+>> +		if (vma_pagesize == PUD_SIZE) {
+>> +			pud_t new_pud;
+>> +
+>> +			new_pud = stage2_build_pud(pfn, mem_type, writable);
+>> +			if (writable)
+>> +				kvm_set_pfn_dirty(pfn);
+>> +
+>> +			coherent_cache_guest_page(vcpu, pfn, PUD_SIZE);
+>> +			ret = stage2_set_pud_huge(kvm, memcache,
+>> +						  fault_ipa, &new_pud);
+>> +		} else {
+>> +			pmd_t new_pmd;
+>> +
+>> +			new_pmd = stage2_build_pmd(pfn, mem_type, writable);
+>> +			if (writable)
+>> +				kvm_set_pfn_dirty(pfn);
+>> +
+>> +			coherent_cache_guest_page(vcpu, pfn, PMD_SIZE);
+>> +			ret = stage2_set_pmd_huge(kvm, memcache,
+>> +						  fault_ipa, &new_pmd);
+>> +		}
+>
+> This stuff needs rebasing onto v4.16-rc1 when we get there, and it will
+> clash with Marc's icache optimizations.
+
+Thanks for the heads up.
+
+>
+> But, you should be able to move kvm_set_pfn_dirty() out of the
+> size-conditional section and also call the cache maintenance functions
+> using vma_pagesize as parameter.
+
+Agreed - I'll roll these suggestions into the next version.
+
+Thanks a lot for the review.
+
+Punit
