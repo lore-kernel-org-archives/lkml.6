@@ -1,50 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753873AbeBFWrG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 17:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753428AbeBFWpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:45:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805CE2172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180206224338.446477232@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Tue, 06 Feb 2018 17:43:38 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
+        id S1753666AbeBFWsp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 17:48:45 -0500
+Received: from mail-it0-f54.google.com ([209.85.214.54]:35588 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753428AbeBFWsn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 17:48:43 -0500
+X-Google-Smtp-Source: AH8x225PRpvFpQBmxUqqlE+qbYeFrnjgkr0pAzZA+Sfvt7q7ytSH4HZPnYUVxKQLZiEmctis8iQ+fZQX5Kip2Fcamqs=
+MIME-Version: 1.0
+In-Reply-To: <20180206213202.GB2026@light.dominikbrodowski.net>
+References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180206091727.GB15925@isilmar-4.linta.de> <20180206105139.nwlg3fwdxyhhrtc4@gmail.com>
+ <20180206213202.GB2026@light.dominikbrodowski.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Feb 2018 14:48:42 -0800
+X-Google-Sender-Auth: hwuzyh5rddIFCXS1m-isbl6ZkII
+Message-ID: <CA+55aFyXfMhUNoU9WveiMyKq32LftUGzF-BAP7hxEQOfwBTJrA@mail.gmail.com>
+Subject: Re: [PATCH tip-pti 2/2] x86/entry: interleave XOR register clearing
+ with PUSH/MOV instructions
+To: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>
-Subject: [RFC][PATCH 0/6] tracing: Fix bogus parsing of probes and set_ftrace_filter
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 6, 2018 at 1:32 PM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> Same as is done for syscalls, interleave XOR with PUSH or MOV
+> instructions for exceptions/interrupts, in order to minimize
+> the cost of the additional instructions required for register
+> clearing.
 
-Al Viro pointed out a couple of bugs with the parsing of the
-removing of function probes and the parsing of set_ftrace_filter
-strings.
+Side note: I would _really_ like to see
 
-This patch series implements his suggested fixes and adds selftests
-that would have caught the bugs in the first place.
+ (a) SAVE_{C,EXTRA}_REGS go away entirely, to be replaced by just SAVE_REGS.
 
+     We never use them independently of each other any more.
 
-Steven Rostedt (VMware) (6):
-      ftrace: Remove incorrect setting of glob search field
-      tracing: Fix parsing of globs with a wildcard at the beginning
-      selftests/ftrace: Have reset_ftrace_filter handle modules
-      selftests/ftrace: Have reset_ftrace_filter handle multiple instances
-      selftests/ftrace: Add some missing glob checks
-      selftests/ftrace: Add more tests for removing of function probes
+ (b) Get rid of ALLOC_PT_GPREGS_ON_STACK entirely, and make SAVE_REGS
+use pushq's instead of movs.
 
-----
- kernel/trace/ftrace.c                              |  1 -
- kernel/trace/trace_events_filter.c                 |  9 +++---
- .../ftrace/test.d/ftrace/func-filter-glob.tc       |  6 ++++
- .../ftrace/test.d/ftrace/func_set_ftrace_file.tc   | 37 ++++++++++++++++++++++
- tools/testing/selftests/ftrace/test.d/functions    | 10 ++++--
- 5 files changed, 54 insertions(+), 9 deletions(-)
+Doing (a) should be completely trivial.
+
+Doing (b) looks like it needs _some_ care, because
+ALLOC_PT_GPREGS_ON_STACK is not always done just before the SAVE_REGS,
+the error entry code does it in in the early entry code. But honestly,
+that seems mainly so that it can do
+
+        testb   $3, CS(%rsp)                    /* If coming from
+userspace, switch stacks */
+
+before registers are saved, yet use the same CS offset as if they had
+already been saved. So that _one_ stack offset in the 'idtentry' macro
+would need to be fixed up.
+
+There might be others that I don't see from just eyeballing, so it
+does need some care, but wouldn't it be nice if *all* the entry code
+could just use the same pushq sequences, and then put the xor's in
+there?
+
+The reason for that complexity is purely the system call fastpath case
+that no longer exists, I think.
+
+Am I missing something?
+
+                Linus
