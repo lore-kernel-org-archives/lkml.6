@@ -1,60 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752674AbeBFJj6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:39:58 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34456 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752283AbeBFJjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:39:47 -0500
-Date: Tue, 6 Feb 2018 09:39:39 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com, kishon@ti.com,
-        linux-pci@vger.kernel.org, adouglas@cadence.com, stelford@cadence.com,
-        dgary@cadence.com, kgopi@cadence.com, eandrews@cadence.com,
-        thomas.petazzoni@free-electrons.com, sureshp@cadence.com,
-        nsekhar@ti.com, linux-kernel@vger.kernel.org, robh@kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 00/11] PCI: Add support to the Cadence PCIe controller
-Message-ID: <20180206093939.GA2579@e107981-ln.cambridge.arm.com>
-References: <cover.1517170521.git.cyrille.pitchen@free-electrons.com>
- <20180128214741.GA232763@bhelgaas-glaptop.roam.corp.google.com>
- <20180130114155.GA12009@e107981-ln.cambridge.arm.com>
- <8cec81b2-85c4-d7bf-4171-9e94a745eab0@free-electrons.com>
+        id S1752573AbeBFJnv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:43:51 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34676 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752248AbeBFJnr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 04:43:47 -0500
+X-Google-Smtp-Source: AH8x227XcasbpawhBYlD7bpRGaGEA1MbpmE+bTBp0U3iCwKk6tnhdkhgMELELeAu2VkK33r4RnYiQg==
+Subject: Re: [PATCH 3/4] lightnvm: add 2.0 geometry identification
+To: Randy Dunlap <rdunlap@infradead.org>, linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, javier@cnexlabs.com
+References: <20180205121505.27563-1-mb@lightnvm.io>
+ <20180205121505.27563-4-mb@lightnvm.io>
+ <b8ddae5a-064c-7468-d5e2-a5a20a93de19@infradead.org>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <1861efa4-bbba-2211-4c45-735b795e4e34@lightnvm.io>
+Date: Tue, 6 Feb 2018 10:43:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cec81b2-85c4-d7bf-4171-9e94a745eab0@free-electrons.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <b8ddae5a-064c-7468-d5e2-a5a20a93de19@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 10:12:36PM +0100, Cyrille Pitchen wrote:
-
-[...]
-
-> >>> v4 -> v5:
-> >>> - rebase on today's (20180128) linux-pci/next
-> >>
-> >> Don't bother rebasing onto linux-pci/next.
-> >>
-> >> If your patches actually *depend* on something that has already been
-> >> merged onto a PCI topic branch, you should mention that and say which
-> >> branch.
-> > 
-> > Yes - Cyrille please advise which branch(es) this series depends on,
-> > it does not apply cleanly to -rc4.
-> > 
-> > Merge window is open and I do not know what we can do with this series
-> > for v4.16 but please let me know.
-> >
+On 02/05/2018 07:04 PM, Randy Dunlap wrote:
+> On 02/05/2018 04:15 AM, Matias Bjørling wrote:
+>> Implement the geometry data structures for 2.0 and enable a drive
+>> to be identified as one, including exposing the appropriate 2.0
+>> sysfs entries.
+>>
+>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+>> ---
+>>   drivers/lightnvm/core.c      |   2 +-
+>>   drivers/nvme/host/lightnvm.c | 334 +++++++++++++++++++++++++++++++++++++------
+>>   include/linux/lightnvm.h     |  11 +-
+>>   3 files changed, 295 insertions(+), 52 deletions(-)
+>>
+>> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+>> index c72863b36439..250e74dfa120 100644
+>> --- a/drivers/lightnvm/core.c
+>> +++ b/drivers/lightnvm/core.c
+>> @@ -934,7 +934,7 @@ static int nvm_init(struct nvm_dev *dev)
+>>   	pr_debug("nvm: ver:%x nvm_vendor:%x\n",
+>>   			dev->identity.ver_id, dev->identity.vmnt);
+>>   
+>> -	if (dev->identity.ver_id != 1) {
+>> +	if (dev->identity.ver_id != 1 && dev->identity.ver_id != 2) {
+>>   		pr_err("nvm: device not supported by kernel.");
+>>   		goto err;
+>>   	}
 > 
-> I've just sent v6. No change from v5 except that the series has been
-> rebased onto linux-pci/master (v4.15-rc4) and tested on the Palladium.
-> I've cherry-picked one Kishon's patch from linux-pci/next to test the
-> endpoint mode.
+> Hi,
+> The pr_err() above could be a bit more informative to the user. E.g.,
+> 		pr_err("nvm: device ver_id %d not supported by kernel.",
+> 			dev->identity.ver_id);
+> 
+> BTW, isn't that line missing a '\n'?
+> 
 
-We have applied v6 that should get into v4.16, thank you !
-
-Lorenzo
+Good point! Thanks. I'll add it in.
