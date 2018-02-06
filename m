@@ -1,75 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753400AbeBFTrc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 14:47:32 -0500
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:45650 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752873AbeBFTra (ORCPT
+        id S1753421AbeBFTsd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 14:48:33 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:21397 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753064AbeBFTsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 14:47:30 -0500
-X-Google-Smtp-Source: AH8x2241jCZ+tLILjn1UP1Yh18N4oPCsAG6twA5d1gWGp1VXnIAjfcSskkICXSDasM0X+HSc7D0qQPfBFUnc0k1kFR4=
+        Tue, 6 Feb 2018 14:48:31 -0500
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 06 Feb 2018 20:48:28 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: jeffrey.t.kirsher@intel.com
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
+Date: Tue,  6 Feb 2018 20:47:59 +0100
+Message-Id: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-In-Reply-To: <9ee7da52-d86a-7784-8c00-6e5b4ae3ed96@pressers.name>
-References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
- <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
- <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
- <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
- <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
- <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
- <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
- <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
- <f42f6acc-cb30-e36d-0c98-42b7e3d40457@pressers.name> <CAHp75VfmH5aNPzBLvm-GrQ-49uyJNNwdjbte3uh_kmaC91bz6A@mail.gmail.com>
- <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name> <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
- <9ee7da52-d86a-7784-8c00-6e5b4ae3ed96@pressers.name>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 6 Feb 2018 21:47:28 +0200
-Message-ID: <CAHp75VeKq0=+BvK=n09iufsOSuMgE3CtJCiWSqRMGM2dcOiJVQ@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
-To: Steven Presser <steve@pressers.name>
-Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
-        Jeremy Cline <jeremy@jcline.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Lars Kellogg-Stedman <lars@oddbit.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 4, 2018 at 7:58 PM, Steven Presser <steve@pressers.name> wrote:
+'HWTSTAMP_TX_ON' should be handled as a value, not as a bit mask.
+The modified code should behave the same, because HWTSTAMP_TX_ON is 1
+and no other possible values of 'tx_type' would match the test.
+However, this is more future-proof, should other values be allowed one day.
 
-> I had a chance to sit back down with the machine.  I didn't take it all the
-> way apart - there are pieces that I'm afraid of breaking without directions
-> on how to properly disassemble them.
+See 'struct hwtstamp_config' in 'include/uapi/linux/net_tstamp.h'
 
-No need I think to go so-o deep.
+This fixes a warning reported by smatch:
+   igb_xmit_frame_ring() warn: bit shifter 'HWTSTAMP_TX_ON' used for logical '&'
 
-> However, I did recover an exact chip ID - the chips in use are BMA255s [1].
-> Rather than take the machine apart (and because the chips are 2mmx2mm), I
-> queried the chip over SMBus.  On page 50 of the below document, you can see
-> that register 0x00 is a read-only chip ID.  This chipID is unique per Bosch
-> product.  So, using SMBus, I asked the chip for it's chip ID (0xFA, in this
-> case) and then searched likely products until I found the matching chipID.
+Fixes: 26bd4e2db06be ("igb: protect TX timestamping from API misuse")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-> Does this suffice to settle which chips are in use?  If not, I can finish
-> taking the machine apart, I'd just prefer to avoid the risk of breaking
-> something.
-
-I think it's pretty much enough.
-
-> As soon as I finish screwing everything back together, I'll grab the other
-> software IDs asked for and build the branch referenced elsewhere.
-
-I'm just waiting for your Tested-by in case my patch series works as
-expected before I send it out.
-
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index c208753ff5b7..e945d1f7c7fe 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -5727,7 +5727,7 @@ netdev_tx_t igb_xmit_frame_ring(struct sk_buff *skb,
+ 	if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)) {
+ 		struct igb_adapter *adapter = netdev_priv(tx_ring->netdev);
+ 
+-		if (adapter->tstamp_config.tx_type & HWTSTAMP_TX_ON &&
++		if (adapter->tstamp_config.tx_type == HWTSTAMP_TX_ON &&
+ 		    !test_and_set_bit_lock(__IGB_PTP_TX_IN_PROGRESS,
+ 					   &adapter->state)) {
+ 			skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.1
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
