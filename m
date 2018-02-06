@@ -1,126 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754066AbeBFVDd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 16:03:33 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54457 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753382AbeBFVDb (ORCPT
+        id S1753443AbeBFVEy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 16:04:54 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:55536 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753137AbeBFVEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 16:03:31 -0500
-X-Google-Smtp-Source: AH8x224HuMaFG6S6JhhxDFFoBvfKx80BEn5GrfMhhXheJUHiU7iP3xiYpOJ2MGaA1RS0BJlPfSNNrnuOepvEiT2x2s4=
+        Tue, 6 Feb 2018 16:04:52 -0500
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: RE: [PATCH v2] arc: dts: use 'atmel' as manufacturer for at24 in
+ axs10x_mb
+Thread-Topic: [PATCH v2] arc: dts: use 'atmel' as manufacturer for at24 in
+ axs10x_mb
+Thread-Index: AQHTnzrLWIKvJYNdJkiaoqAuzzZm0KOXO+WAgABeCYCAAENXYA==
+Date: Tue, 6 Feb 2018 21:04:47 +0000
+Message-ID: <4881796E12491D4BB15146FE0209CE646802AACB@DE02WEMBXB.internal.synopsys.com>
+References: <20180206110810.9093-1-brgl@bgdev.pl>
+ <1517919923.6726.13.camel@synopsys.com>
+ <CAMRc=MfgLA2KDMFLM_GrbSb6MfQeAdHfVJXbnx-ss+S4xm72uw@mail.gmail.com>
+In-Reply-To: <CAMRc=MfgLA2KDMFLM_GrbSb6MfQeAdHfVJXbnx-ss+S4xm72uw@mail.gmail.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.225.2.34]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <3630ba30-eb18-0829-7b0c-f0a786232969@xs4all.nl>
-References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
- <1517948874-21681-6-git-send-email-tharvey@gateworks.com> <3630ba30-eb18-0829-7b0c-f0a786232969@xs4all.nl>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Tue, 6 Feb 2018 13:03:29 -0800
-Message-ID: <CAJ+vNU1SWma59YwvRO7jDAu2=ndgSU6CgYtKs0792+oqDAEtrQ@mail.gmail.com>
-Subject: Re: [PATCH v8 5/7] media: i2c: Add TDA1997x HDMI receiver driver
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w16L4wbE020625
 
-On Tue, Feb 6, 2018 at 12:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 02/06/2018 09:27 PM, Tim Harvey wrote:
->> Add support for the TDA1997x HDMI receivers.
->>
->> Cc: Hans Verkuil <hverkuil@xs4all.nl>
->> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
->> ---
->
-> <snip>
->
->> +static int tda1997x_get_dv_timings_cap(struct v4l2_subdev *sd,
->> +                                    struct v4l2_dv_timings_cap *cap)
->> +{
->> +     if (cap->pad != TDA1997X_PAD_SOURCE)
->> +             return -EINVAL;
->> +
->> +     *cap = tda1997x_dv_timings_cap;
->> +     return 0;
->> +}
->> +
->> +static int tda1997x_enum_dv_timings(struct v4l2_subdev *sd,
->> +                                 struct v4l2_enum_dv_timings *timings)
->> +{
->> +     if (timings->pad != TDA1997X_PAD_SOURCE)
->> +             return -EINVAL;
->> +
->> +     return v4l2_enum_dv_timings_cap(timings, &tda1997x_dv_timings_cap,
->> +                                     NULL, NULL);
->> +}
->
-> You shouldn't need this pad test: it's done in the v4l2-subdev.c core code
-> already. But please double-check :-)
->
+Hi Bartosz,
 
-oh right - forgot to check that. Yes, v4l2-subdev.c has pad bounds
-checking on all ops I use so I can remove them.
+> -----Original Message-----
+> From: Bartosz Golaszewski [mailto:brgl@bgdev.pl]
+> Sent: Tuesday, February 6, 2018 7:02 PM
+> To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+> Cc: linux-kernel@vger.kernel.org; mark.rutland@arm.com; Vineet.Gupta1@synopsys.com; robh+dt@kernel.org;
+> devicetree@vger.kernel.org; linux-snps-arc@lists.infradead.org
+> Subject: Re: [PATCH v2] arc: dts: use 'atmel' as manufacturer for at24 in axs10x_mb
+> 
+> 2018-02-06 13:25 GMT+01:00 Alexey Brodkin <Alexey.Brodkin@synopsys.com>:
+> > Hi Bartosz,
+> >
+> > On Tue, 2018-02-06 at 12:08 +0100, Bartosz Golaszewski wrote:
+> >> Using compatible strings without the <manufacturer> part for at24 is
+> >> deprecated since commit 6da28acf745f ("dt-bindings: at24: consistently
+> >> document the compatible property"). Use a correct 'atmel,<model>'
+> >> value.
+> >>
+> >> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> >
+> > So my further input might be a bit unexpected :)
+> >
+> > I took a look at the real board and understood that we specified in .dts
+> > wrong ICs. Those Atmel parts are not connected to the CPU at all (used by some
+> > external device) and instead I2C EEPROM we really have connected (but not yet
+> > obviously used in the Linux kernel) is NXP's PCF8594C-2.
+> >
+> > That said we may accept your change because it doesn't break anything
+> > and then I'll send an update to axs10x_mb.dts with replacement of EEPROM nodes.
+> > Or we may drop your change at all since I'm going to replace corresponding nodes.
+> >
+> > -Alexey
+> 
+> Looks like PCF8594C-2 is compatible with atmel,24c04 - when you'll be
+> submitting this patch, please extend the at24 DT bindings with a new
+> naming exception (just like the one for renesas).
 
-> Can you post the output of the v4l2-compliance test? I'm curious to see it.
+Thanks for checking this.
 
-it's in the cover letter (should I move it to the driver patch for
-subsequent submittals?)
+> Feel free to drop this patch if you plan to submit the fix soon -
+> otherwise, apply it if it may take some time.
 
->
-> Can you also try to run v4l2-compliance -m /dev/mediaX? That also tests
-> whether the right entity types are set (note: testing for that should
-> also happen in the subdev compliance test, but I haven't done that yet).
->
+No I think it worth applying especially in the light of your comment about NXP EEPROM.
 
-root@ventana:~# v4l2-compliance -m0
-v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
-Media Driver Info:
-        Driver name      : imx-media
-        Model            : imx-media
-        Serial           :
-        Bus info         :
-        Media version    : 4.15.0
-        Hardware revision: 0x00000000 (0)
-        Driver version   : 4.15.0
+Vineet, could you please take this one?
 
-Compliance test for device /dev/media0:
-
-Required ioctls:
-        test MEDIA_IOC_DEVICE_INFO: OK
-
-Allow for multiple opens:
-        test second /dev/media0 open: OK
-        test MEDIA_IOC_DEVICE_INFO: OK
-        test for unlimited opens: OK
-
-Media Controller ioctls:
-                fail: v4l2-test-media.cpp(141): ent.function ==
-MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
-        test MEDIA_IOC_G_TOPOLOGY: FAIL
-                fail: v4l2-test-media.cpp(256):
-v2_entities_set.find(ent.id) == v2_entities_set.end()
-        test MEDIA_IOC_ENUM_ENTITIES/LINKS: FAIL
-        test MEDIA_IOC_SETUP_LINK: OK
-
-Total: 7, Succeeded: 5, Failed: 2, Warnings: 0
-
-foiled again!
-
-Is something missing after v4l2_i2c_subdev_init() or is this perhaps
-something missing in the imx media drivers?
-
-        v4l2_i2c_subdev_init(sd, client, &tda1997x_subdev_ops);
-        snprintf(sd->name, sizeof(sd->name), "%s %d-%04x",
-                 id->name, i2c_adapter_id(client->adapter),
-                 client->addr);
-        sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
-        sd->entity.ops = &tda1997x_media_ops;
-
-Regards,
-
-Tim
+-Alexey
