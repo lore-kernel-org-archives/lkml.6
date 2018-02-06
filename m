@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeBFRFH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 12:05:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42786 "EHLO mail.kernel.org"
+        id S1753377AbeBFRFP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 12:05:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753130AbeBFQyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 11:54:07 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA4721748
+        id S1752963AbeBFQyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 11:54:04 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5DF21738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Kan Liang <kan.liang@intel.com>, Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/21] perf evlist: Remove stale mmap read for backward
-Date: Tue,  6 Feb 2018 13:53:31 -0300
-Message-Id: <20180206165350.2570-3-acme@kernel.org>
+Subject: [PATCH 01/21] perf vendor events aarch64: Add JSON metrics for ARM Cortex-A53 Processor
+Date: Tue,  6 Feb 2018 13:53:30 -0300
+Message-Id: <20180206165350.2570-2-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180206165350.2570-1-acme@kernel.org>
 References: <20180206165350.2570-1-acme@kernel.org>
@@ -26,79 +27,274 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@intel.com>
+From: William Cohen <wcohen@redhat.com>
 
-perf_evlist__mmap_read_catchup() and perf_evlist__mmap_read_backward()
-are only for overwrite mode.
+Add JSON metrics for ARM Cortex-A53 Processor.
 
-But they read the evlist->mmap buffer which is for non-overwrite mode.
+Unlike the Intel processors there isn't a script that automatically
+generated these files. The patch was manually generated from the
+documentation and the previous oprofile ARM Cortex ac53 event file patch
+I made.
 
-It did not bring any serious problem yet, because there is no one use
-it.
+The relevant documentation is in the "12.9 Events" section of the ARM
+Cortex A53 MPCore Processor Revision: r0p4 Technical Reference Manual.
 
-Remove the unused interfaces.
+The ARM Cortex A53 manual is available at:
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Wang Nan <wangnan0@huawei.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
+  http://infocenter.arm.com/help/topic/com.arm.doc.ddi0500g/DDI0500G_cortex_a53_trm.pdf
+
+Use that to look for additional information about the events.
+
+Signed-off-by: William Cohen <wcohen@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1516310792-208685-2-git-send-email-kan.liang@intel.com
+Link: http://lkml.kernel.org/r/20180131032813.9564-1-wcohen@redhat.com
+[ Added references provided by William Cohen ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c | 17 -----------------
- tools/perf/util/evlist.h |  4 ----
- 2 files changed, 21 deletions(-)
+ .../pmu-events/arch/arm64/cortex-a53/branch.json   | 27 +++++++++++
+ .../perf/pmu-events/arch/arm64/cortex-a53/bus.json | 22 +++++++++
+ .../pmu-events/arch/arm64/cortex-a53/cache.json    | 27 +++++++++++
+ .../pmu-events/arch/arm64/cortex-a53/memory.json   | 22 +++++++++
+ .../pmu-events/arch/arm64/cortex-a53/other.json    | 32 +++++++++++++
+ .../pmu-events/arch/arm64/cortex-a53/pipeline.json | 52 ++++++++++++++++++++++
+ tools/perf/pmu-events/arch/arm64/mapfile.csv       |  1 +
+ 7 files changed, 183 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index ac35cd214feb..e5fc14e53c05 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -715,28 +715,11 @@ union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist, int
- 	return perf_mmap__read_forward(md);
- }
- 
--union perf_event *perf_evlist__mmap_read_backward(struct perf_evlist *evlist, int idx)
--{
--	struct perf_mmap *md = &evlist->mmap[idx];
--
--	/*
--	 * No need to check messup for backward ring buffer:
--	 * We can always read arbitrary long data from a backward
--	 * ring buffer unless we forget to pause it before reading.
--	 */
--	return perf_mmap__read_backward(md);
--}
--
- union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx)
- {
- 	return perf_evlist__mmap_read_forward(evlist, idx);
- }
- 
--void perf_evlist__mmap_read_catchup(struct perf_evlist *evlist, int idx)
--{
--	perf_mmap__read_catchup(&evlist->mmap[idx]);
--}
--
- void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx)
- {
- 	perf_mmap__consume(&evlist->mmap[idx], false);
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 75f8e0ad5d76..336b838e6957 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -133,10 +133,6 @@ union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx);
- 
- union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist,
- 						 int idx);
--union perf_event *perf_evlist__mmap_read_backward(struct perf_evlist *evlist,
--						  int idx);
--void perf_evlist__mmap_read_catchup(struct perf_evlist *evlist, int idx);
--
- void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx);
- 
- int perf_evlist__open(struct perf_evlist *evlist);
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
+new file mode 100644
+index 000000000000..3b6208763e50
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
+@@ -0,0 +1,27 @@
++[
++  {,
++    "EventCode": "0x7A",
++    "EventName": "BR_INDIRECT_SPEC",
++    "BriefDescription": "Branch speculatively executed - Indirect branch"
++  },
++  {,
++    "EventCode": "0xC9",
++    "EventName": "BR_COND",
++    "BriefDescription": "Conditional branch executed"
++  },
++  {,
++    "EventCode": "0xCA",
++    "EventName": "BR_INDIRECT_MISPRED",
++    "BriefDescription": "Indirect branch mispredicted"
++  },
++  {,
++    "EventCode": "0xCB",
++    "EventName": "BR_INDIRECT_MISPRED_ADDR",
++    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
++  },
++  {,
++    "EventCode": "0xCC",
++    "EventName": "BR_COND_MISPRED",
++    "BriefDescription": "Conditional branch mispredicted"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
+new file mode 100644
+index 000000000000..480d9f7460ab
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
+@@ -0,0 +1,22 @@
++[
++  {,
++    "EventCode": "0x60",
++    "EventName": "BUS_ACCESS_LD",
++    "BriefDescription": "Bus access - Read"
++  },
++  {,
++    "EventCode": "0x61",
++    "EventName": "BUS_ACCESS_ST",
++    "BriefDescription": "Bus access - Write"
++  },
++  {,
++    "EventCode": "0xC0",
++    "EventName": "EXT_MEM_REQ",
++    "BriefDescription": "External memory request"
++  },
++  {,
++    "EventCode": "0xC1",
++    "EventName": "EXT_MEM_REQ_NC",
++    "BriefDescription": "Non-cacheable external memory request"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
+new file mode 100644
+index 000000000000..11baad6344b9
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
+@@ -0,0 +1,27 @@
++[
++  {,
++    "EventCode": "0xC2",
++    "EventName": "PREFETCH_LINEFILL",
++    "BriefDescription": "Linefill because of prefetch"
++  },
++  {,
++    "EventCode": "0xC3",
++    "EventName": "PREFETCH_LINEFILL_DROP",
++    "BriefDescription": "Instruction Cache Throttle occurred"
++  },
++  {,
++    "EventCode": "0xC4",
++    "EventName": "READ_ALLOC_ENTER",
++    "BriefDescription": "Entering read allocate mode"
++  },
++  {,
++    "EventCode": "0xC5",
++    "EventName": "READ_ALLOC",
++    "BriefDescription": "Read allocate mode"
++  },
++  {,
++    "EventCode": "0xC8",
++    "EventName": "EXT_SNOOP",
++    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
+new file mode 100644
+index 000000000000..480d9f7460ab
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
+@@ -0,0 +1,22 @@
++[
++  {,
++    "EventCode": "0x60",
++    "EventName": "BUS_ACCESS_LD",
++    "BriefDescription": "Bus access - Read"
++  },
++  {,
++    "EventCode": "0x61",
++    "EventName": "BUS_ACCESS_ST",
++    "BriefDescription": "Bus access - Write"
++  },
++  {,
++    "EventCode": "0xC0",
++    "EventName": "EXT_MEM_REQ",
++    "BriefDescription": "External memory request"
++  },
++  {,
++    "EventCode": "0xC1",
++    "EventName": "EXT_MEM_REQ_NC",
++    "BriefDescription": "Non-cacheable external memory request"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
+new file mode 100644
+index 000000000000..73a22402d003
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
+@@ -0,0 +1,32 @@
++[
++  {,
++    "EventCode": "0x86",
++    "EventName": "EXC_IRQ",
++    "BriefDescription": "Exception taken, IRQ"
++  },
++  {,
++    "EventCode": "0x87",
++    "EventName": "EXC_FIQ",
++    "BriefDescription": "Exception taken, FIQ"
++  },
++  {,
++    "EventCode": "0xC6",
++    "EventName": "PRE_DECODE_ERR",
++    "BriefDescription": "Pre-decode error"
++  },
++  {,
++    "EventCode": "0xD0",
++    "EventName": "L1I_CACHE_ERR",
++    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
++  },
++  {,
++    "EventCode": "0xD1",
++    "EventName": "L1D_CACHE_ERR",
++    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
++  },
++  {,
++    "EventCode": "0xD2",
++    "EventName": "TLB_ERR",
++    "BriefDescription": "TLB memory error"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+new file mode 100644
+index 000000000000..3149fb90555a
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+@@ -0,0 +1,52 @@
++[
++  {,
++    "EventCode": "0xC7",
++    "EventName": "STALL_SB_FULL",
++    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
++  },
++  {,
++    "EventCode": "0xE0",
++    "EventName": "OTHER_IQ_DEP_STALL",
++    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
++  },
++  {,
++    "EventCode": "0xE1",
++    "EventName": "IC_DEP_STALL",
++    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
++  },
++  {,
++    "EventCode": "0xE2",
++    "EventName": "IUTLB_DEP_STALL",
++    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
++  },
++  {,
++    "EventCode": "0xE3",
++    "EventName": "DECODE_DEP_STALL",
++    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
++  },
++  {,
++    "EventCode": "0xE4",
++    "EventName": "OTHER_INTERLOCK_STALL",
++    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
++  },
++  {,
++    "EventCode": "0xE5",
++    "EventName": "AGU_DEP_STALL",
++    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
++  },
++  {,
++    "EventCode": "0xE6",
++    "EventName": "SIMD_DEP_STALL",
++    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
++  },
++  {,
++    "EventCode": "0xE7",
++    "EventName": "LD_DEP_STALL",
++    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
++  },
++  {,
++    "EventCode": "0xE8",
++    "EventName": "ST_DEP_STALL",
++    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+index 219d6756134e..e61c9ca6cf9e 100644
+--- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
++++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+@@ -13,3 +13,4 @@
+ #
+ #Family-model,Version,Filename,EventType
+ 0x00000000420f5160,v1,cavium,core
++0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
 -- 
 2.14.3
