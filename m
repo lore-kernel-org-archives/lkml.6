@@ -1,61 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752316AbeBFAHL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Feb 2018 19:07:11 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:54173 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752023AbeBFAHB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Feb 2018 19:07:01 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SxlBK4R_1517875596;
-From: Yang Shi <yang.shi@linux.alibaba.com>
-To: kirill.shutemov@linux.intel.com, akpm@linux-foundation.org
-Cc: gavin.dg@linux.alibaba.com, yang.shi@linux.alibaba.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: thp: fix potential clearing to referenced flag in page_idle_clear_pte_refs_one()
-Date: Tue,  6 Feb 2018 08:06:36 +0800
-Message-Id: <1517875596-76350-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1752374AbeBFAHX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Feb 2018 19:07:23 -0500
+Received: from mga12.intel.com ([192.55.52.136]:4443 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752308AbeBFAHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Feb 2018 19:07:07 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,466,1511856000";
+   d="scan'208";a="201622130"
+Date: Mon, 5 Feb 2018 17:07:06 -0700
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: torvalds@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: [GIT PULL] libnvdimm for 4.16
+Message-ID: <20180206000706.GA24568@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For PTE-mapped THP, the compound THP has not been split to normal 4K
-pages yet, the whole THP is considered referenced if any one of sub
-page is referenced.
+Hi Linus, please pull from:
 
-When walking PTE-mapped THP by pvmw, all relevant PTEs will be checked
-to retrieve referenced bit. But, the current code just returns the
-result of the last PTE. If the last PTE has not referenced, the
-referenced flag will be cleared.
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/libnvdimm-for-4.16
 
-So, here just break pvmw walk once referenced PTE is found if the page
-is a part of THP.
+...to receive the libnvdimm update for 4.16.
 
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Reported-by: Gang Deng <gavin.dg@linux.alibaba.com>
+All of these commits have shipped in -next and have received build verification
+notices from 0day.
+
+There is one small merge conflict that Michael Ellerman also noted in his pull
+request.  In Michael's tree the axonram driver was removed, and in our tree it
+received two small updates.  The merge can be trivially resolved by just
+keeping the driver removed per Michael's tree.
+
+Regarding the vmem_altmap patches, Michal Hocko took a quick look and while it
+wasn't a full review he has future plans to reuse vmem_altmap in wider places
+in the memory hotplug code, so he's in favor of getting it properly plumbed.
+
+In case you wanted to inspect them or verify the merge I've also pushed the
+three topic branches for this cycle to our nvdimm tree: 
+
+  for-4.16/nfit
+  for-4.16/libnvdimm
+  for-4.16/dax
+
 ---
- mm/page_idle.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/mm/page_idle.c b/mm/page_idle.c
-index 0a49374..da6024f 100644
---- a/mm/page_idle.c
-+++ b/mm/page_idle.c
-@@ -67,6 +67,14 @@ static bool page_idle_clear_pte_refs_one(struct page *page,
- 		if (pvmw.pte) {
- 			referenced = ptep_clear_young_notify(vma, addr,
- 					pvmw.pte);
-+			/*
-+			 * For PTE-mapped THP, one sub page is referenced,
-+			 * the whole THP is referenced.
-+			 */
-+			if (referenced && PageTransCompound(pvmw.page)) {
-+				page_vma_mapped_walk_done(&pvmw);
-+				break;
-+			}
- 		} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
- 			referenced = pmdp_clear_young_notify(vma, addr,
- 					pvmw.pmd);
--- 
-1.8.3.1
+The following changes since commit a7f2766ac7c359216da4e714dc117c881e39a74a:
+
+  Merge branches 'acpi-gpio', 'acpi-button', 'acpi-battery' and 'acpi-video' (2018-01-18 03:02:16 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/libnvdimm-for-4.16
+
+for you to fetch changes up to ee95f4059a833839bf52972191b2d4c3d3cec552:
+
+  Merge branch 'for-4.16/nfit' into libnvdimm-for-next (2018-02-03 00:26:26 -0700)
+
+----------------------------------------------------------------
+libnvdimm for 4.16
+
+* Require struct page by default for filesystem DAX to remove a number of
+  surprising failure cases.  This includes failures with direct I/O, gdb and
+  fork(2).
+
+* Add support for the new Platform Capabilities Structure added to the NFIT in
+  ACPI 6.2a.  This new table tells us whether the platform supports flushing
+  of CPU and memory controller caches on unexpected power loss events.
+
+* Revamp vmem_altmap and dev_pagemap handling to clean up code and better
+  support future future PCI P2P uses.
+
+* Deprecate the ND_IOCTL_SMART_THRESHOLD command whose payload has become
+  out-of-sync with recent versions of the NVDIMM_FAMILY_INTEL spec, and
+  instead rely on the generic ND_CMD_CALL approach used by the two other IOCTL
+  families, NVDIMM_FAMILY_{HPE,MSFT}.
+
+* Enhance nfit_test so we can test some of the new things added in version 1.6
+  of the DSM specification.  This includes testing firmware download and
+  simulating the Last Shutdown State (LSS) status.
+
+----------------------------------------------------------------
+Christoph Hellwig (16):
+      memremap: provide stubs for vmem_altmap_offset and vmem_altmap_free
+      mm: don't export arch_add_memory
+      mm: don't export __add_pages
+      mm: pass the vmem_altmap to arch_add_memory and __add_pages
+      mm: pass the vmem_altmap to vmemmap_populate
+      mm: pass the vmem_altmap to arch_remove_memory and __remove_pages
+      mm: pass the vmem_altmap to vmemmap_free
+      mm: pass the vmem_altmap to memmap_init_zone
+      mm: split altmap memory map allocation from normal case
+      mm: merge vmem_altmap_alloc into altmap_alloc_block_buf
+      mm: move get_dev_pagemap out of line
+      mm: optimize dev_pagemap reference counting around get_dev_pagemap
+      memremap: remove to_vmem_altmap
+      memremap: simplify duplicate region handling in devm_memremap_pages
+      memremap: change devm_memremap_pages interface to use struct dev_pagemap
+      memremap: merge find_dev_pagemap into get_dev_pagemap
+
+Colin Ian King (1):
+      libnvdimm, namespace: remove redundant initialization of 'nd_mapping'
+
+Dan Williams (8):
+      nfit, libnvdimm: deprecate the generic SMART ioctl
+      tools/testing/nvdimm: smart alarm/threshold control
+      mm, dax: introduce pfn_t_special()
+      ext4: auto disable dax instead of failing mount
+      ext2: auto disable dax instead of failing mount
+      dax: require 'struct page' by default for filesystem dax
+      tools/testing/nvdimm: force nfit_test to depend on instrumented modules
+      libnvdimm, namespace: make min namespace size 4K
+
+Dave Jiang (6):
+      acpi: nfit: Add support for detect platform CPU cache flush on power loss
+      acpi: nfit: add persistent memory control flag for nd_region
+      libnvdimm: expose platform persistence attribute for nd_region
+      nfit-test: Add platform cap support from ACPI 6.2a to test
+      libnvdimm/nfit_test: add firmware download emulation
+      libnvdimm/nfit_test: adding support for unit testing enable LSS status
+
+Jan H. Schönherr (2):
+      mm: Fix memory size alignment in devm_memremap_pages_release()
+      mm: Fix devm_memremap_pages() collision handling
+
+Jeff Moyer (1):
+      libnvdimm, btt: fix uninitialized err_lock
+
+Logan Gunthorpe (1):
+      memremap: drop private struct page_map
+
+Luis de Bethencourt (1):
+      device-dax: Fix trailing semicolon
+
+Ross Zwisler (2):
+      Merge branch 'for-4.16/dax' into libnvdimm-for-next
+      Merge branch 'for-4.16/nfit' into libnvdimm-for-next
+
+Toshi Kani (1):
+      acpi, nfit: fix register dimm error handling
+
+ arch/arm64/mm/mmu.c                    |   9 +-
+ arch/ia64/mm/discontig.c               |   6 +-
+ arch/ia64/mm/init.c                    |  18 +-
+ arch/powerpc/mm/init_64.c              |  17 +-
+ arch/powerpc/mm/mem.c                  |  11 +-
+ arch/powerpc/platforms/Kconfig         |   1 +
+ arch/powerpc/sysdev/axonram.c          |   2 +-
+ arch/s390/mm/init.c                    |   7 +-
+ arch/s390/mm/vmem.c                    |   6 +-
+ arch/sh/mm/init.c                      |  10 +-
+ arch/sparc/mm/init_64.c                |   5 +-
+ arch/x86/mm/init_32.c                  |   9 +-
+ arch/x86/mm/init_64.c                  |  94 ++++---
+ drivers/acpi/nfit/core.c               |  26 ++
+ drivers/acpi/nfit/nfit.h               |   1 +
+ drivers/dax/device.c                   |   2 +-
+ drivers/dax/pmem.c                     |  20 +-
+ drivers/dax/super.c                    |  10 +
+ drivers/nvdimm/btt.c                   |   2 +-
+ drivers/nvdimm/bus.c                   |   3 -
+ drivers/nvdimm/namespace_devs.c        |   2 +-
+ drivers/nvdimm/nd.h                    |   9 +-
+ drivers/nvdimm/pfn_devs.c              |  27 +-
+ drivers/nvdimm/pmem.c                  |  41 +--
+ drivers/nvdimm/pmem.h                  |   1 +
+ drivers/nvdimm/region_devs.c           |  13 +
+ drivers/s390/block/Kconfig             |   1 +
+ drivers/s390/block/dcssblk.c           |   3 +-
+ fs/Kconfig                             |   7 +
+ fs/ext2/super.c                        |   7 +-
+ fs/ext4/super.c                        |   9 +-
+ include/linux/libnvdimm.h              |  11 +
+ include/linux/memory_hotplug.h         |  29 +-
+ include/linux/memremap.h               |  77 ++---
+ include/linux/mm.h                     |  22 +-
+ include/linux/pfn_t.h                  |  13 +
+ include/uapi/linux/ndctl.h             |  56 +---
+ kernel/memremap.c                      | 174 +++++-------
+ mm/gup.c                               |   7 +-
+ mm/hmm.c                               |  13 +-
+ mm/memory.c                            |  16 +-
+ mm/memory_hotplug.c                    |  39 ++-
+ mm/page_alloc.c                        |   6 +-
+ mm/sparse-vmemmap.c                    |  67 ++---
+ mm/sparse.c                            |  43 +--
+ tools/testing/nvdimm/Kbuild            |   4 +
+ tools/testing/nvdimm/acpi_nfit_test.c  |   8 +
+ tools/testing/nvdimm/device_dax_test.c |   8 +
+ tools/testing/nvdimm/libnvdimm_test.c  |   8 +
+ tools/testing/nvdimm/pmem_test.c       |   8 +
+ tools/testing/nvdimm/test/iomap.c      |   7 +-
+ tools/testing/nvdimm/test/nfit.c       | 498 +++++++++++++++++++++++++++++----
+ tools/testing/nvdimm/test/nfit_test.h  | 134 +++++++++
+ tools/testing/nvdimm/watermark.h       |  21 ++
+ 54 files changed, 1122 insertions(+), 526 deletions(-)
+ create mode 100644 tools/testing/nvdimm/acpi_nfit_test.c
+ create mode 100644 tools/testing/nvdimm/device_dax_test.c
+ create mode 100644 tools/testing/nvdimm/libnvdimm_test.c
+ create mode 100644 tools/testing/nvdimm/pmem_test.c
+ create mode 100644 tools/testing/nvdimm/watermark.h
