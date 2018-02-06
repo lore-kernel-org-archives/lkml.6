@@ -1,102 +1,62 @@
 Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517966627; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1517949800; cv=none;
         d=google.com; s=arc-20160816;
-        b=gEIN7qNSai/Yi+3E0cnRMk+rTJSMKA7DSjsG7UFZgDgXT73680a4NiSKaBGiR8UN1j
-         bf2FE6pHrZIVtDby0iDZ5tE8TNmAvNB8F3LWOtjuNTBtO4d3S2XUtY7tH+3go0PL7I7u
-         wId5b3wd+Nf7bqUAngSPeWCZhIaVDiwGYYRSZjH0pz0IM02RpJS5V7RbbDzz5uzcaBNh
-         /dOTVEaEY9Vd3ST+/QRzYdifVNE5Afp/DOBsDpkRK84j9YSKPkIvDgxl+5FgmqCVMRE8
-         JEbKyOK/0NFTOwYkxSSCqTCOFuxi+PX4WLdgGgBxSSbREI7r5dPn5eKzM8rXZyhhCG0e
-         KA9w==
+        b=ad5/y7kiIuS6lJFUV0KCrbMmXKxigb1J4KVNcjElO0y5AHKiRG0z1guUmxonNA6Rqi
+         P7MHwiyFC0lhNB3X+/0RW4QvNcSeLDgQINKRNgP67xuaCX5WLPugHG6UFhVIoIbC6eUz
+         WrqpaI8sah36QLH69g0PKuJWMQDQC8C8EvP+XITSBEzaHpy06rzL/g5wynQFqKXWPyc9
+         5ttFns2vfpRnJLVmD/vhRfElKRS754T92sdF/uNw/TIZPPFKsulWuHh5OGcrRDtcirqd
+         yQLDH335DT+6q5vYq7vF/skZRzmTN7vIqcGQ6rhftVHZKtmqUWKbYdyYuSogs9eIqJi5
+         Sv+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=ETKrahDyXJBwVFHwVWGKomo4pLbuHJilNJcjPKe7cEA=;
-        b=LjPZT2D+h0OoBHp59oKBPbLa+2A/sq6z2rX1xkV7ZSt69Ai5kB0vI8UIZq3OnLP+bc
-         P+pjh6Z+eJy6XG06+1CQxU4MdAwMQCjSNIKWRW9a4u/AOJ7ftZdFFMGo0vHr1CNUFlfM
-         0MwiaYs1Dy2fqdyzMFplp+MpvHZILM1nhfvfZElu44EnB82kegDCjiqzpOsKUv8oGbjm
-         pvmt/yXDXDz7LPr9aB41Lb3B6SwHU3pxwesJQme7ttKeLR/+rqPoXkSVGhpevq3t8y4t
-         vUXnd7nEMmnBkYjRX7anTyhlFh7gBDscoiccfEXSojaSulbSDjolLO0LuLFQqr0gJXv0
-         RG7Q==
+        bh=Id4A0UyU4xH5fPSpN1ganqDceG3PYm9dY87PUsTKiR0=;
+        b=lfiTGgpOomEWPu767jsuiNM9Fphj63zP7Ic40C41NpSasVam3FuVYW3r4VqAv9c+cz
+         v1YDGfRxG+MDYUZUwbmaIRu2SUpms+2kxG+NyC5oldo49RwelJpzx71X1FG2otIAdwll
+         B/Ng94dwWe8Lov2D2ibq9rL4do9LwA9tE+1w1gL0t3chYUI6hwH1wPRHn0yA0RR54WqP
+         DEqpbKhlbMflRLbrH1uAzWlecXKdZnSt5c1gFeEv41zMwmaLVBOkEM9n8t6nIE4PTsG/
+         bLVB10J01JBHjrlRE8lB/Qz9gyA6IlYunLy7ukxG4Yt8O+ddQ0SdLbjL4KLpHJ3K/rRz
+         HzRg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p+R/sMFJ;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vRuMWGDN;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p+R/sMFJ;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vRuMWGDN;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AH8x225WakYCIrDbxNPHzH4ETfCZTF7UR1U/F/k/hVMJa9FAY6BRgcXUWaUKCoY7J1LChMnOOFswe8hDWkDPG3k9c/E=
+X-Google-Smtp-Source: AH8x22458WkkEvYf8vEN1Y2bucGXeT8W5yfP0K52pyCW+C8ks3sELeatdy/68IVdjpF+MyzZki1t4xCgD/Lk/PjEKJ0=
 MIME-Version: 1.0
 Sender: linus971@gmail.com
-In-Reply-To: <CAPcyv4gE6qgncGPWWu1aWxbK6fO-tvpDEpE+zkZPfeL+EJAr1w@mail.gmail.com>
+In-Reply-To: <CA+55aFzZVL=WVuhJAQDazj59jwnmhUrRRwNgzXS+c-q5yva0iw@mail.gmail.com>
 References: <151632009605.21271.11304291057104672116.stgit@dwillia2-desk3.amr.corp.intel.com>
  <151632014097.21271.16980532033566583357.stgit@dwillia2-desk3.amr.corp.intel.com>
  <20180206192925.qkmghwsbaysr4iv2@hermes.olymp> <CAPcyv4ihN6fy5-vBtfA0PuwXvCAj8-rMhtQmevh5sdYxbH3Yfw@mail.gmail.com>
  <CA+55aFxYHX3=HN4P5M0ziSJ08WfjccyhE2T7epS-EC6ZJ6LyjQ@mail.gmail.com>
- <CAPcyv4i5oORdk-Fzypxw_+gCLUa8f=w1e_n0=47P7uHR-jT6GQ@mail.gmail.com>
- <CA+55aFzZVL=WVuhJAQDazj59jwnmhUrRRwNgzXS+c-q5yva0iw@mail.gmail.com>
- <CALCETrXV3rHb7Z8iaoieAJ5hRY0+UT7eTknxe4-FiOoke9XoGg@mail.gmail.com>
- <CA+55aFy2-OMMCatHTXL7wfP7H=4CEKv4Y_pRvfeEOCwxriDP4Q@mail.gmail.com>
- <CAPcyv4hELJQMEBQ_gi+_bh4D=7h47ypzK++XTdQjhDGnOs2uRg@mail.gmail.com>
- <CA+55aFxU_vo+JFBZcvE5EOs2D_QHNXBf4G=-KT=3LeP2zjECHw@mail.gmail.com> <CAPcyv4gE6qgncGPWWu1aWxbK6fO-tvpDEpE+zkZPfeL+EJAr1w@mail.gmail.com>
+ <CAPcyv4i5oORdk-Fzypxw_+gCLUa8f=w1e_n0=47P7uHR-jT6GQ@mail.gmail.com> <CA+55aFzZVL=WVuhJAQDazj59jwnmhUrRRwNgzXS+c-q5yva0iw@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 6 Feb 2018 17:23:45 -0800
-X-Google-Sender-Auth: m0RJ4JPOou-6tyqMPfAhKZl4wm8
-Message-ID: <CA+55aFxbd+F_k1Mz97yaigW9HzQz9EYw35tD6OanS+Qg10nFCw@mail.gmail.com>
+Date: Tue, 6 Feb 2018 12:43:19 -0800
+X-Google-Sender-Auth: vVoRzTrKrVwbY400v2-4UXx95fk
+Message-ID: <CA+55aFziKW3=R4erPJ_35JbWv5P02qqqnmS8zDR1mn=+M-YXQw@mail.gmail.com>
 Subject: Re: [PATCH v4 07/10] x86: narrow out of bounds syscalls to sys_read
  under speculation
 To: Dan Williams <dan.j.williams@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Luis Henriques <lhenriques@suse.com>,
+Cc: Luis Henriques <lhenriques@suse.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, Greg KH <gregkh@linuxfoundation.org>,
-	X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>,
-	Alan Cox <alan@linux.intel.com>
+	X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>, Alan Cox <alan@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1589977480308913684?=
-X-GMAIL-MSGID: =?utf-8?q?1591703375225259869?=
+X-GMAIL-MSGID: =?utf-8?q?1591685729782798780?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 4:33 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+On Tue, Feb 6, 2018 at 12:42 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Should we go with array_element_nospec() in the meantime? So we're not
-> depending on jump labels? With the constraint fix and killing that
-> superfluous AND the assembly is now:
->
->      e26:       48 81 fd 4d 01 00 00    cmp    $0x14d,%rbp
->      e2d:       48 19 d2                sbb    %rdx,%rdx
->                         NR_syscalls);
->         if (likely(call))
->      e30:       48 21 d0                and    %rdx,%rax
->      e33:       74 1e                   je     e53 <do_syscall_64+0x73>
->                 regs->ax = (*call)(regs->di, regs->si, regs->dx,
->      e35:       48 8b 4b 38             mov    0x38(%rbx),%rcx
->      e39:       48 8b 53 60             mov    0x60(%rbx),%rdx
->      e3d:       48 8b 73 68             mov    0x68(%rbx),%rsi
->      e41:       48 8b 7b 70             mov    0x70(%rbx),%rdi
->      e45:       4c 8b 4b 40             mov    0x40(%rbx),%r9
->      e49:       4c 8b 43 48             mov    0x48(%rbx),%r8
->      e4d:       ff 10                   callq  *(%rax)
+> Sadly, that is *very* easy to miscompile.
 
-That looks fairly optimal, except for the fact that the callq is
-through a register.
+Side note: don't read email, go watch the falcon heavy takeoff.
 
-Of course, that register-indirect calling convention is forced on us
-by retpoline anyway (which you don't have enabled, likely because of a
-lack of compiler). But without retpoline that callq could be
-
-         callq  sys_call_table(,%rax,8)
-
-if the masking is done on the index (and if the conditional jump had
-been done on the cmp rather than the later 'and').
-
-Instead, you have a
-
-        leaq    sys_call_table(,%rbp,8),%rax
-
-hiding somewhere earlier that doesn't show in your asm snippet.
-
-Oh well. We'll have an extra instruction however we do this. I guess
-that's just something we'll have to live with. No more bikeshedding..
-
-            Linus
+              Linus
