@@ -1,122 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeBFJG6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:06:58 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7053 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751835AbeBFJGv (ORCPT
+        id S1752054AbeBFJHZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:07:25 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:45970 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752203AbeBFJHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:06:51 -0500
-From: Yannick FERTRE <yannick.fertre@st.com>
-To: Philippe CORNU <philippe.cornu@st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH v1 2/2] drm/panel: otm8009a: Add support for the optional
- power-supply
-Thread-Topic: [PATCH v1 2/2] drm/panel: otm8009a: Add support for the optional
- power-supply
-Thread-Index: AQHTnmYbIcGzjj9HPkKl4ycIlyfp16OXBgIA
-Date: Tue, 6 Feb 2018 09:06:35 +0000
-Message-ID: <77c5fd49-6a72-d720-f754-63c975447400@st.com>
-References: <20180205094532.23547-1-philippe.cornu@st.com>
- <20180205094532.23547-3-philippe.cornu@st.com>
-In-Reply-To: <20180205094532.23547-3-philippe.cornu@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8F6463EDF592E24FBBC111F9B4B7A0F3@st.com>
+        Tue, 6 Feb 2018 04:07:08 -0500
+Date: Tue, 6 Feb 2018 10:06:56 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 05/10] ARM: sun8i: h3: add operating-points-v2 table
+ for CPU
+Message-ID: <20180206090656.r52hs7sk7w5iynrk@flea>
+References: <20180206044905.30508-1-icenowy@aosc.io>
+ <20180206044905.30508-6-icenowy@aosc.io>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-06_04:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lm7thvhrmh5kkjhy"
+Content-Disposition: inline
+In-Reply-To: <20180206044905.30508-6-icenowy@aosc.io>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w16974WL017117
-
-Reviewed-by: Yannick Fertré <yannick.fertre@st.com>
 
 
-On 02/05/2018 10:45 AM, Philippe Cornu wrote:
-> Add support for the optional power-supply.
->
-> Note: A "dummy regulator" is returned by devm_regulator_get()
-> if the optional regulator is not present in the device tree,
-> simplifying the source code when enabling/disabling the regulator.
->
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+--lm7thvhrmh5kkjhy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 06, 2018 at 12:49:00PM +0800, Icenowy Zheng wrote:
+> The CPU on Allwinner H3 can do dynamic frequency scaling.
+>=20
+> Add a DVFS table based on the one shipped with Allwinner's H3 SDK. The
+> voltage-frequency relationship seems to be conservative, and Armbian has
+> another DVFS table which uses lower voltage at a certain frequency.
+> However, the official one is chosen for safety.
+>=20
+> Frequencies higher than 1008MHz are temporarily dropped in the table, as
+> they may lead to over voltage on boards without proper regulator
+> settings or over temperature on boards with proper regulator settings.
+> They will be added back once regulator settings are ready and thermal
+> sensor driver is merged.
+>=20
+> In order to satisfy all different regulators (SY8106A which is 50mV per
+> level, SY8113B which have two states: 1.1V and 1.3V, and some board with
+> non-tweakable regulators), all the OPPs are defined with a range which has
+> the target value as the minimum allowed value, and 1.3V (the highest
+> VDD-CPUX voltage suggested by the datasheet) as the maximum allowed value.
+> It's proven to work well with a board with SY8113B.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->   drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
->
-> diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> index 72530983d55d..90f1ae4af93c 100644
-> --- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> +++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> @@ -11,6 +11,7 @@
->   #include <drm/drm_panel.h>
->   #include <linux/backlight.h>
->   #include <linux/gpio/consumer.h>
-> +#include <linux/regulator/consumer.h>
->   #include <video/mipi_display.h>
->   
->   #define DRV_NAME "orisetech_otm8009a"
-> @@ -62,6 +63,7 @@ struct otm8009a {
->   	struct drm_panel panel;
->   	struct backlight_device *bl_dev;
->   	struct gpio_desc *reset_gpio;
-> +	struct regulator *supply;
->   	bool prepared;
->   	bool enabled;
->   };
-> @@ -279,6 +281,8 @@ static int otm8009a_unprepare(struct drm_panel *panel)
->   		msleep(20);
->   	}
->   
-> +	regulator_disable(ctx->supply);
+> Changes in v2:
+> - Switch to BSP OPP table, which is more conservative.
+>=20
+>  arch/arm/boot/dts/sun8i-h3.dtsi | 32 +++++++++++++++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3=
+=2Edtsi
+> index 8495deecedad..36608c03f02b 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -43,32 +43,62 @@
+>  #include "sunxi-h3-h5.dtsi"
+> =20
+>  / {
+> +	cpu0_opp_table: opp_table0 {
+> +		compatible =3D "operating-points-v2";
+> +		opp-shared;
 > +
->   	ctx->prepared = false;
->   
->   	return 0;
-> @@ -292,6 +296,12 @@ static int otm8009a_prepare(struct drm_panel *panel)
->   	if (ctx->prepared)
->   		return 0;
->   
-> +	ret = regulator_enable(ctx->supply);
-> +	if (ret < 0) {
-> +		DRM_ERROR("failed to enable supply: %d\n", ret);
-> +		return ret;
-> +	}
+> +		opp@648000000 {
+> +			opp-hz =3D /bits/ 64 <648000000>;
+> +			opp-microvolt =3D <1040000 1040000 1300000>;
+> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
+> +		};
 > +
->   	if (ctx->reset_gpio) {
->   		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
->   		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-> @@ -414,6 +424,13 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
->   		return PTR_ERR(ctx->reset_gpio);
->   	}
->   
-> +	ctx->supply = devm_regulator_get(dev, "power");
-> +	if (IS_ERR(ctx->supply)) {
-> +		ret = PTR_ERR(ctx->supply);
-> +		dev_err(dev, "failed to request regulator: %d\n", ret);
-> +		return ret;
-> +	}
+> +		opp@816000000 {
+> +			opp-hz =3D /bits/ 64 <816000000>;
+> +			opp-microvolt =3D <1100000 1100000 1300000>;
+> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
+> +		};
 > +
->   	mipi_dsi_set_drvdata(dsi, ctx);
->   
->   	ctx->dev = dev;
+> +		opp@1008000000 {
+> +			opp-hz =3D /bits/ 64 <1008000000>;
+> +			opp-microvolt =3D <1200000 1200000 1300000>;
+> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
+> +		};
+> +	};
+> +
+>  	cpus {
+>  		#address-cells =3D <1>;
+>  		#size-cells =3D <0>;
+> =20
+> -		cpu@0 {
+> +		cpu0: cpu@0 {
+>  			compatible =3D "arm,cortex-a7";
+>  			device_type =3D "cpu";
+>  			reg =3D <0>;
+> +			clocks =3D <&ccu CLK_CPUX>;
+> +			clock-names =3D "cpu";
+> +			operating-points-v2 =3D <&cpu0_opp_table>;
+> +			#cooling-cells =3D <0x2>;
+
+So, that would be 2?
+
+There's this pattern on pretty much all the other patches following
+this one as well, you should address them too.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+--lm7thvhrmh5kkjhy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp5cC8ACgkQ0rTAlCFN
+r3TOGw/9GnFM1ShIioIb0M8acn9gVHSUJYIbN4sEJ3+TTpkm4BNLPg8GVBLMUw5n
+S6EjRhDXf9rO/jP7G0o1YGk8V8qzzwIqgqnLhJca12/82c8Cs9M/tnJFBJkFgAat
+7evGuMbqdL97WF/vTOKB4rqNIVyLqWfvW2dbS/fqfA2uaNhdvnCuoA0LrsQZuXxl
+sEJo0FUQFw2LYg6FMZ9t+BrerDbxsp+xu/C7uBsmFqM7WzHr5MJOQbm7KUF1ANaR
++VQP403FpJCzQftAe74uzcTKbPYw/BT3Lh7qSo/3EqRUyBKIOykv1MLzMa3mIlOD
+U3ofGV1xhrk/QsFqgQs8QDFcf7EVfRAUp3VTYtHmYAICl2QzOGwqWQT61qV0jK5a
+BkASNUjuIY9GTpD98E9xgngPtkUKycYNdh1WlaYwvjPw9/5iag1cWS2pH5n7TgBu
+cotIzw/YQT21Cfw8bA9HWamkWbJp+ivOdA/GkdvIzVcjvSk83RZLsp4IeC8Rrd32
+xS451eXDUyuGVOHwbEktmDs2eovKcTPMx9jvxe09ZDAdPclwNW/gs1YhPm/reAfh
+uNhHDDV3ynqB4LyYjwZ+7v13ekoax718+Jr0zxkMFG9PUs5jali+Hrn+NMDLIEPI
+9vhBs1s+msO7tXtwmex236TqaltAhy7aq6n0j6Kybq9Jabpr22Q=
+=mDjU
+-----END PGP SIGNATURE-----
+
+--lm7thvhrmh5kkjhy--
