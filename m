@@ -1,58 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752326AbeBFHpG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 02:45:06 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:40908 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751924AbeBFHpA (ORCPT
+        id S1752229AbeBFHxR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 02:53:17 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34500 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751924AbeBFHxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 02:45:00 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 167192E5874
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Tue, 6 Feb 2018 02:53:13 -0500
+X-Google-Smtp-Source: AH8x225sJV9J4o7LLt0XtxITH1az/FZAO9+kc4rn9m0deLBiTV25oHRkXl7Vih7Pd+2BGzsu0JO66kNDWEodoMlwe8M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 06 Feb 2018 08:44:57 +0100
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, alban.browaeys@gmail.com,
-        ming.lei@redhat.com, ivan@ludios.org, 169364@studenti.unimore.it,
-        Serena Ziviani <ziviani.serena@gmail.com>, efault@gmx.de
-Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
-In-Reply-To: <20180205190510.5499-2-paolo.valente@linaro.org>
-References: <20180205190510.5499-1-paolo.valente@linaro.org>
- <20180205190510.5499-2-paolo.valente@linaro.org>
-Message-ID: <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.3
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1517903098;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
-        bh=qZv/tiETLZiFLv+4JU3fHpW/0QdahVx4mOgT73OxIBc=;
-        b=bQml+ByEVXuYygrmT7REMo1K/CHr0v5O1c9PpmbE0qfHSFT60Y7OAVVTB7eUUx7b+Oaxd2
-        CHPfrje2zvNzOnBrE5Tg0nnyddFVae6A9HGaFFOQMK+ZjWKlU/isoBWKZbYFo2NucaCXMu
-        vIc0wP+ae/q2/lUllm6KDTZ24Z3dfiQ=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1517903098; a=rsa-sha256;
-        cv=none;
-        b=OrQGn0BUsQnk734frANXn6mNi1f9yA1hRUgYIfmF2tq+TWyqCMIVO3M+u/x4XMCW/1bBdwUUf1OEHTS5obW39c/Gx4aO9KEkwexKOE307GgwSN50NuTb/O+0qel7WFlX1BlvEK+xIHhB/z3oivInTcdADFmtFXJHmaBF7/Qf008=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+In-Reply-To: <20180206072608.idxe4hhhu6gkeqac@gmail.com>
+References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151787989697.7847.4083702787288600552.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180206072608.idxe4hhhu6gkeqac@gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 5 Feb 2018 23:53:12 -0800
+X-Google-Sender-Auth: zQsq9NL-yiCkVSbBsZI-9KsARGY
+Message-ID: <CAA9_cmcNxVVAL33QTdpTMgioaf_k3cnA1wEAq5E0xdBTwuS3Dg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] x86/entry: Clear registers for compat syscalls
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Paolo.
+On Mon, Feb 5, 2018 at 11:26 PM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Dan Williams <dan.j.williams@intel.com> wrote:
+>
+>> From: Andi Kleen <ak@linux.intel.com>
+>>
+>> At entry userspace may have populated registers with values that could
+>> be useful in a speculative execution attack. Clear them to minimize the
+>> kernel's attack surface.
+>>
+>> [djbw: interleave the clearing with setting up the stack ]
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>> Cc: x86@kernel.org
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> ---
+>>  arch/x86/entry/entry_64_compat.S |   30 ++++++++++++++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>>
+>> diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+>> index 98d5358e4041..fd65e016e413 100644
+>> --- a/arch/x86/entry/entry_64_compat.S
+>> +++ b/arch/x86/entry/entry_64_compat.S
+>> @@ -85,15 +85,25 @@ ENTRY(entry_SYSENTER_compat)
+>>       pushq   %rcx                    /* pt_regs->cx */
+>>       pushq   $-ENOSYS                /* pt_regs->ax */
+>>       pushq   $0                      /* pt_regs->r8  = 0 */
+>> +     xorq    %r8, %r8                /* nospec   r8 */
+>>       pushq   $0                      /* pt_regs->r9  = 0 */
+>> +     xorq    %r9, %r9                /* nospec   r9 */
+>>       pushq   $0                      /* pt_regs->r10 = 0 */
+>> +     xorq    %r10, %r10              /* nospec   r10 */
+>>       pushq   $0                      /* pt_regs->r11 = 0 */
+>> +     xorq    %r11, %r11              /* nospec   r11 */
+>>       pushq   %rbx                    /* pt_regs->rbx */
+>> +     xorl    %ebx, %ebx              /* nospec   rbx */
+>>       pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
+>> +     xorl    %ebp, %ebp              /* nospec   rbp */
+>>       pushq   $0                      /* pt_regs->r12 = 0 */
+>> +     xorq    %r12, %r12              /* nospec   r12 */
+>>       pushq   $0                      /* pt_regs->r13 = 0 */
+>> +     xorq    %r13, %r13              /* nospec   r13 */
+>>       pushq   $0                      /* pt_regs->r14 = 0 */
+>> +     xorq    %r14, %r14              /* nospec   r14 */
+>>       pushq   $0                      /* pt_regs->r15 = 0 */
+>> +     xorq    %r15, %r15              /* nospec   r15 */
+>>       cld
+>>
+>>       /*
+>> @@ -214,15 +224,25 @@ GLOBAL(entry_SYSCALL_compat_after_hwframe)
+>>       pushq   %rbp                    /* pt_regs->cx (stashed in bp) */
+>>       pushq   $-ENOSYS                /* pt_regs->ax */
+>>       pushq   $0                      /* pt_regs->r8  = 0 */
+>> +     xorq    %r8, %r8                /* nospec   r8 */
+>>       pushq   $0                      /* pt_regs->r9  = 0 */
+>> +     xorq    %r9, %r9                /* nospec   r9 */
+>>       pushq   $0                      /* pt_regs->r10 = 0 */
+>> +     xorq    %r10, %r10              /* nospec   r10 */
+>>       pushq   $0                      /* pt_regs->r11 = 0 */
+>> +     xorq    %r11, %r11              /* nospec   r11 */
+>>       pushq   %rbx                    /* pt_regs->rbx */
+>> +     xorl    %ebx, %ebx              /* nospec   rbx */
+>>       pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
+>> +     xorl    %ebp, %ebp              /* nospec   rbp */
+>>       pushq   $0                      /* pt_regs->r12 = 0 */
+>> +     xorq    %r12, %r12              /* nospec   r12 */
+>>       pushq   $0                      /* pt_regs->r13 = 0 */
+>> +     xorq    %r13, %r13              /* nospec   r13 */
+>>       pushq   $0                      /* pt_regs->r14 = 0 */
+>> +     xorq    %r14, %r14              /* nospec   r14 */
+>>       pushq   $0                      /* pt_regs->r15 = 0 */
+>> +     xorq    %r15, %r15              /* nospec   r15 */
+>
+> I really love it how you've aligned the comment fields vertically - nice!
+>
+>>       /*
+>>        * User mode is traced as though IRQs are on, and SYSENTER
+>> @@ -338,15 +358,25 @@ ENTRY(entry_INT80_compat)
+>>       pushq   %rcx                    /* pt_regs->cx */
+>>       pushq   $-ENOSYS                /* pt_regs->ax */
+>>       pushq   $0                      /* pt_regs->r8  = 0 */
+>> +     xorq    %r8, %r8                /* nospec   r8 */
+>>       pushq   $0                      /* pt_regs->r9  = 0 */
+>> +     xorq    %r9, %r9                /* nospec   r9 */
+>>       pushq   $0                      /* pt_regs->r10 = 0 */
+>> +     xorq    %r10, %r10              /* nospec   r10 */
+>>       pushq   $0                      /* pt_regs->r11 = 0 */
+>> +     xorq    %r11, %r11              /* nospec   r11 */
+>>       pushq   %rbx                    /* pt_regs->rbx */
+>> +     xorl    %ebx, %ebx              /* nospec   rbx */
+>>       pushq   %rbp                    /* pt_regs->rbp */
+>> +     xorl    %ebp, %ebp              /* nospec   rbp */
+>>       pushq   %r12                    /* pt_regs->r12 */
+>> +     xorq    %r12, %r12              /* nospec   r12 */
+>>       pushq   %r13                    /* pt_regs->r13 */
+>> +     xorq    %r13, %r13              /* nospec   r13 */
+>>       pushq   %r14                    /* pt_regs->r14 */
+>> +     xorq    %r14, %r14              /* nospec   r14 */
+>>       pushq   %r15                    /* pt_regs->r15 */
+>> +     xorq    %r15, %r15              /* nospec   r15 */
+>>       cld
+>
+> BTW., these last two patches have changed *significantly* from Andi's original
+> patches that were submitted originally, so I changed them over to:
+>
+>   From: Dan Williams <dan.j.williams@intel.com>
+>   ...
+>   Originally-From: Andi Kleen <ak@linux.intel.com>
+>   Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>
+> ... to better show authorship history.
+>
+> Please let me know if that's not OK.
 
-I can confirm that this patch fixes cfdisk hang for me. I've also tried 
-to trigger the issue Mike has encountered, but with no luck (maybe, I 
-wasn't insistent enough, just was doing dd on usb-storage device in the 
-VM).
+Works for me.
 
-So, with regard to cfdisk hang on usb-storage:
-
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-
-Thank you.
+Thanks Ingo.
