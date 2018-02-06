@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752856AbeBFJyk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 04:54:40 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50654 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752702AbeBFJx3 (ORCPT
+        id S1752870AbeBFJyq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 04:54:46 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:44470 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752690AbeBFJx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:53:29 -0500
-X-UUID: 35e4b6840df349dd875aeab26330d599-20180206
+        Tue, 6 Feb 2018 04:53:28 -0500
+X-UUID: 3f16ffc9967b4ed0838d917aa78601ab-20180206
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 10/16] arm64: dts: mt7622: add ethernet device nodes
-Date: Tue, 6 Feb 2018 17:52:59 +0800
-Message-ID: <04aff866db96fd7ae4e1d85166f8a722f4b79b77.1517910489.git.sean.wang@mediatek.com>
+        Ryder Lee <ryder.lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 11/16] arm64: dts: mt7622: add PCIe device nodes
+Date: Tue, 6 Feb 2018 17:53:00 +0800
+Message-ID: <ec39a952833c759f98ffdae9560b3c5ad2ad88f6.1517910489.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1517910489.git.sean.wang@mediatek.com>
 References: <cover.1517910489.git.sean.wang@mediatek.com>
@@ -26,90 +26,122 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Ryder Lee <ryder.lee@mediatek.com>
 
-add ethernet device nodes which enable GMAC1 with SGMII interface
+This patch adds PCIe support fot MT7622.
 
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 22 ++++++++++++++++++++
- arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 31 ++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 10 ++++
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 74 ++++++++++++++++++++++++++++
+ 2 files changed, 84 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-index 59a9c36..b80e8c7 100644
+index b80e8c7..1007932 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-@@ -249,6 +249,28 @@
- 	status = "okay";
+@@ -54,6 +54,16 @@
+ 	};
  };
  
-+&eth {
++&pcie {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&eth_pins>;
++	pinctrl-0 = <&pcie0_pins>;
 +	status = "okay";
 +
-+	gmac1: mac@1 {
-+		compatible = "mediatek,eth-mac";
-+		reg = <1>;
-+		phy-handle = <&phy5>;
-+	};
-+
-+	mdio-bus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		phy5: ethernet-phy@5 {
-+			reg = <5>;
-+			phy-mode = "sgmii";
-+		};
++	pcie@0,0 {
++		status = "okay";
 +	};
 +};
 +
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
+ &pio {
+ 	/* eMMC is shared pin with parallel NAND */
+ 	emmc_pins_default: emmc-pins-default {
 diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index 9e11baf..a3a409b 100644
+index a3a409b..f0f18b3 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -477,6 +477,37 @@
+@@ -469,6 +469,80 @@
  		#reset-cells = <1>;
  	};
  
-+	eth: ethernet@1b100000 {
-+		compatible = "mediatek,mt7622-eth",
-+			     "mediatek,mt2701-eth",
-+			     "syscon";
-+		reg = <0 0x1b100000 0 0x20000>;
-+		interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 224 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 225 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&topckgen CLK_TOP_ETH_SEL>,
-+			 <&ethsys CLK_ETH_ESW_EN>,
-+			 <&ethsys CLK_ETH_GP0_EN>,
-+			 <&ethsys CLK_ETH_GP1_EN>,
-+			 <&ethsys CLK_ETH_GP2_EN>,
-+			 <&sgmiisys CLK_SGMII_TX250M_EN>,
-+			 <&sgmiisys CLK_SGMII_RX250M_EN>,
-+			 <&sgmiisys CLK_SGMII_CDR_REF>,
-+			 <&sgmiisys CLK_SGMII_CDR_FB>,
-+			 <&topckgen CLK_TOP_SGMIIPLL>,
-+			 <&apmixedsys CLK_APMIXED_ETH2PLL>;
-+		clock-names = "ethif", "esw", "gp0", "gp1", "gp2",
-+			      "sgmii_tx250m", "sgmii_rx250m",
-+			      "sgmii_cdr_ref", "sgmii_cdr_fb", "sgmii_ck",
-+			      "eth2pll";
-+		power-domains = <&scpsys MT7622_POWER_DOMAIN_ETHSYS>;
-+		mediatek,ethsys = <&ethsys>;
-+		mediatek,sgmiisys = <&sgmiisys>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	pcie: pcie@1a140000 {
++		compatible = "mediatek,mt7622-pcie";
++		device_type = "pci";
++		reg = <0 0x1a140000 0 0x1000>,
++		      <0 0x1a143000 0 0x1000>,
++		      <0 0x1a145000 0 0x1000>;
++		reg-names = "subsys", "port0", "port1";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 229 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&pciesys CLK_PCIE_P0_MAC_EN>,
++			 <&pciesys CLK_PCIE_P1_MAC_EN>,
++			 <&pciesys CLK_PCIE_P0_AHB_EN>,
++			 <&pciesys CLK_PCIE_P0_AHB_EN>,
++			 <&pciesys CLK_PCIE_P0_AUX_EN>,
++			 <&pciesys CLK_PCIE_P1_AUX_EN>,
++			 <&pciesys CLK_PCIE_P0_AXI_EN>,
++			 <&pciesys CLK_PCIE_P1_AXI_EN>,
++			 <&pciesys CLK_PCIE_P0_OBFF_EN>,
++			 <&pciesys CLK_PCIE_P1_OBFF_EN>,
++			 <&pciesys CLK_PCIE_P0_PIPE_EN>,
++			 <&pciesys CLK_PCIE_P1_PIPE_EN>;
++		clock-names = "sys_ck0", "sys_ck1", "ahb_ck0", "ahb_ck1",
++			      "aux_ck0", "aux_ck1", "axi_ck0", "axi_ck1",
++			      "obff_ck0", "obff_ck1", "pipe_ck0", "pipe_ck1";
++		power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF0>;
++		bus-range = <0x00 0xff>;
++		ranges = <0x82000000 0 0x20000000 0x0 0x20000000 0 0x10000000>;
 +		status = "disabled";
++
++		pcie0: pcie@0,0 {
++			reg = <0x0000 0 0 0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges;
++			status = "disabled";
++
++			num-lanes = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &pcie_intc0 0>,
++					<0 0 0 2 &pcie_intc0 1>,
++					<0 0 0 3 &pcie_intc0 2>,
++					<0 0 0 4 &pcie_intc0 3>;
++			pcie_intc0: interrupt-controller {
++				interrupt-controller;
++				#address-cells = <0>;
++				#interrupt-cells = <1>;
++			};
++		};
++
++		pcie1: pcie@1,0 {
++			reg = <0x0800 0 0 0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges;
++			status = "disabled";
++
++			num-lanes = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &pcie_intc1 0>,
++					<0 0 0 2 &pcie_intc1 1>,
++					<0 0 0 3 &pcie_intc1 2>,
++					<0 0 0 4 &pcie_intc1 3>;
++			pcie_intc1: interrupt-controller {
++				interrupt-controller;
++				#address-cells = <0>;
++				#interrupt-cells = <1>;
++			};
++		};
 +	};
 +
- 	sgmiisys: sgmiisys@1b128000 {
- 		compatible = "mediatek,mt7622-sgmiisys",
+ 	ethsys: syscon@1b000000 {
+ 		compatible = "mediatek,mt7622-ethsys",
  			     "syscon";
 -- 
 2.7.4
