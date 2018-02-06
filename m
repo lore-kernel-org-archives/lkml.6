@@ -1,427 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753440AbeBFUbb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 15:31:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751632AbeBFUba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 15:31:30 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AD6217AA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x225jbC8nqihtf32tEpOon67zMg5uT+LyGdtGeBBOpA77k7BoDCESwNKVeS702IgiekAquHjkmecxSJpVHgMtn1A=
-MIME-Version: 1.0
-In-Reply-To: <20180125163216.29018-2-rnayak@codeaurora.org>
-References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-2-rnayak@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 6 Feb 2018 14:31:08 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLb4PQ+NkA_RBAgB-5MzFKd+6wBvfCjXvoH-i8pGzzdTg@mail.gmail.com>
-Message-ID: <CAL_JsqLb4PQ+NkA_RBAgB-5MzFKd+6wBvfCjXvoH-i8pGzzdTg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1753356AbeBFUd3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 15:33:29 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37683 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752852AbeBFUd0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 15:33:26 -0500
+X-Google-Smtp-Source: AH8x227CSHBexSclKhziw092EsHBMbLeFvvE78b92kZoYZbNP56QttGPNYwlSHXLDan1CfxaXSZy/g==
+From: devesh.pradhan1@gmail.com
+To: jack@suse.com
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devesh pradhan <devesh.pradhan1@gmail.com>
+Subject: [PATCH 3/3] fs : ext2: super: fixed '==' instead '=' braces,whitespace coding style issue.
+Date: Wed,  7 Feb 2018 02:03:17 +0530
+Message-Id: <20180206203317.14435-1-devesh.pradhan1@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 10:32 AM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> Add a skeletal sdm845 SoC dtsi and MTP board dts/dtsi files
->
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile        |   1 +
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts  |  13 ++
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dtsi |  11 ++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi     | 308 +++++++++++++++++++++++++++++++
->  4 files changed, 333 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
->
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 55ec5ee7f7e8..c57701bed084 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -6,3 +6,4 @@ dtb-$(CONFIG_ARCH_QCOM) += msm8916-mtp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8992-bullhead-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8994-angler-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8996-mtp.dtb
-> +dtb-$(CONFIG_ARCH_QCOM) += sdm845-mtp.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> new file mode 100644
-> index 000000000000..95e41e42bee1
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> @@ -0,0 +1,13 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sdm845-mtp.dtsi"
-> +
-> +/ {
-> +       model = "Qualcomm Technologies, Inc. SDM845 MTP";
-> +       compatible = "qcom,sdm845-mtp";
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dtsi b/arch/arm64/boot/dts/qcom/sdm845-mtp.dtsi
-> new file mode 100644
-> index 000000000000..5b1022c20bad
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dtsi
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include "sdm845.dtsi"
-> +
-> +/ {
-> +       soc {
-> +       };
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> new file mode 100644
-> index 000000000000..a21f4912b3e2
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -0,0 +1,308 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +       model = "Qualcomm Technologies, Inc. SDM845";
+From: devesh pradhan <devesh.pradhan1@gmail.com>
 
-This should only be in the board level file.
+fixed coding style issue.
 
-> +
-> +       interrupt-parent = <&intc>;
-> +
-> +       #address-cells = <2>;
-> +       #size-cells = <2>;
-> +
-> +       chosen { };
-> +
-> +       memory {
-> +               device_type = "memory";
-> +               /* We expect the bootloader to fill in the reg */
+Signed-off-by: devesh pradhan <devesh.pradhan1@gmail.com>
+---
+ fs/ext2/super.c | 59 ++++++++++++++++++++++++++-------------------------------
+ 1 file changed, 27 insertions(+), 32 deletions(-)
 
-The start address is variable? If not you should populate the base and
-have a unit-address.
-
-> +               reg = <0 0 0 0>;
-> +       };
-> +
-> +       cpus {
-> +               #address-cells = <2>;
-> +               #size-cells = <0>;
-> +
-> +               CPU0: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x0>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_0>;
-> +                       L2_0: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                               L3_0: l3-cache {
-> +                                     compatible = "cache";
-> +                               };
-> +                       };
-> +               };
-> +
-> +               CPU1: cpu@100 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x100>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_100>;
-> +                       L2_100: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU2: cpu@200 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x200>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_200>;
-> +                       L2_200: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU3: cpu@300 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x300>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_300>;
-> +                       L2_300: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU4: cpu@400 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x400>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_400>;
-> +                       L2_400: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU5: cpu@500 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x500>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_500>;
-> +                       L2_500: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU6: cpu@600 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x600>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_600>;
-> +                       L2_600: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU7: cpu@700 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo";
-> +                       reg = <0x0 0x700>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_700>;
-> +                       L2_700: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               cpu-map {
-> +                       cluster0 {
-> +                               core0 {
-> +                                       cpu = <&CPU0>;
-> +                               };
-> +
-> +                               core1 {
-> +                                       cpu = <&CPU1>;
-> +                               };
-> +
-> +                               core2 {
-> +                                       cpu = <&CPU2>;
-> +                               };
-> +
-> +                               core3 {
-> +                                       cpu = <&CPU3>;
-> +                               };
-> +                       };
-> +
-> +                       cluster1 {
-> +                               core0 {
-> +                                       cpu = <&CPU4>;
-> +                               };
-> +
-> +                               core1 {
-> +                                       cpu = <&CPU5>;
-> +                               };
-> +
-> +                               core2 {
-> +                                       cpu = <&CPU6>;
-> +                               };
-> +
-> +                               core3 {
-> +                                       cpu = <&CPU7>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
-> +       timer {
-> +               compatible = "arm,armv8-timer";
-> +               interrupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +                            <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +                            <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +                            <GIC_PPI 0 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> +       };
-> +
-> +       clocks {
-> +               xo_board: xo_board {
-> +                       compatible = "fixed-clock";
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <19200000>;
-> +                       clock-output-names = "xo_board";
-> +               };
-> +
-> +               sleep_clk: sleep_clk {
-> +                       compatible = "fixed-clock";
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <32764>;
-> +                       clock-output-names = "sleep_clk";
-> +               };
-> +       };
-> +
-> +       psci {
-> +               compatible = "arm,psci-1.0";
-> +               method = "smc";
-> +       };
-> +
-> +       soc: soc {
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               ranges = <0 0 0 0xffffffff>;
-> +               compatible = "simple-bus";
-> +
-> +               intc: interrupt-controller@17a00000 {
-> +                       compatible = "arm,gic-v3";
-> +                       #interrupt-cells = <3>;
-> +                       interrupt-controller;
-> +                       #redistributor-regions = <1>;
-> +                       redistributor-stride = <0x0 0x20000>;
-> +                       reg = <0x17a00000 0x10000>,     /* GICD */
-> +                             <0x17a60000 0x100000>;    /* GICR * 8 */
-> +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +
-> +               gcc: clock-controller@100000 {
-> +                       compatible = "qcom,gcc-sdm845";
-
-sdm845-gcc is the preferred order.
-
-> +                       reg = <0x100000 0x1f0000>;
-> +                       #clock-cells = <1>;
-> +                       #reset-cells = <1>;
-> +               };
-> +
-> +               tlmm: pinctrl@03400000 {
-> +                       compatible = "qcom,sdm845-pinctrl";
-> +                       reg = <0x03400000 0xc00000>;
-> +                       interrupts = <GIC_SPI 208 IRQ_TYPE_NONE>;
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
-> +                       interrupt-controller;
-> +                       #interrupt-cells = <2>;
-> +               };
-> +
-> +               timer@17C90000 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       ranges;
-> +                       compatible = "arm,armv7-timer-mem";
-> +                       reg = <0x17C90000 0x1000>;
-> +                       clock-frequency = <19200000>;
-> +
-> +                       frame@17CA0000 {
-> +                               frame-number = <0>;
-> +                               interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-> +                                            <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x17CA0000 0x1000>,
-> +                                     <0x17CB0000 0x1000>;
-> +                       };
-> +
-> +                       frame@17cc0000 {
-> +                               frame-number = <1>;
-> +                               interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x17cc0000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@17cd0000 {
-> +                               frame-number = <2>;
-> +                               interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x17cd0000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@17ce0000 {
-> +                               frame-number = <3>;
-> +                               interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x17ce0000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@17cf0000 {
-> +                               frame-number = <4>;
-> +                               interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x17cf0000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@17d00000 {
-> +                               frame-number = <5>;
-> +                               interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x17d00000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@17d10000 {
-> +                               frame-number = <6>;
-> +                               interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x17d10000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +               };
-> +
-> +               spmi_bus: qcom,spmi@c440000 {
-
-spmi@...
-
-> +                       compatible = "qcom,spmi-pmic-arb";
-> +                       reg = <0xc440000 0x1100>,
-> +                             <0xc600000 0x2000000>,
-> +                             <0xe600000 0x100000>,
-> +                             <0xe700000 0xa0000>,
-> +                             <0xc40a000 0x26000>;
-> +                       reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
-> +                       interrupt-names = "periph_irq";
-> +                       interrupts = <GIC_SPI 481 IRQ_TYPE_NONE>;
-> +                       qcom,ee = <0>;
-> +                       qcom,channel = <0>;
-> +                       #address-cells = <2>;
-> +                       #size-cells = <0>;
-> +                       interrupt-controller;
-> +                       #interrupt-cells = <4>;
-> +                       cell-index = <0>;
-> +               };
-> +
-> +       };
-> +};
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+index 554c98b8a93a..cb80bcb693a9 100644
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -39,8 +39,8 @@
+ #include "acl.h"
+ 
+ static void ext2_write_super(struct super_block *sb);
+-static int ext2_remount (struct super_block * sb, int * flags, char * data);
+-static int ext2_statfs (struct dentry * dentry, struct kstatfs * buf);
++static int ext2_remount (struct super_block *sb, int *flags, char *data);
++static int ext2_statfs (struct dentry *dentry, struct kstatfs *buf);
+ static int ext2_sync_fs(struct super_block *sb, int wait);
+ static int ext2_freeze(struct super_block *sb);
+ static int ext2_unfreeze(struct super_block *sb);
+@@ -140,7 +140,7 @@ static inline void ext2_quota_off_umount(struct super_block *sb)
+ }
+ #endif
+ 
+-static void ext2_put_super (struct super_block * sb)
++static void ext2_put_super (struct super_block *sb)
+ {
+ 	int db_count;
+ 	int i;
+@@ -176,7 +176,7 @@ static void ext2_put_super (struct super_block * sb)
+ 	kfree(sbi);
+ }
+ 
+-static struct kmem_cache * ext2_inode_cachep;
++static struct kmem_cache *ext2_inode_cachep;
+ 
+ static struct inode *ext2_alloc_inode(struct super_block *sb)
+ {
+@@ -646,8 +646,8 @@ static int parse_options(char *options, struct super_block *sb,
+ 	return 1;
+ }
+ 
+-static int ext2_setup_super (struct super_block * sb,
+-			      struct ext2_super_block * es,
++static int ext2_setup_super (struct super_block *sb,
++			      struct ext2_super_block *es,
+ 			      int read_only)
+ {
+ 	int res = 0;
+@@ -713,19 +713,17 @@ static int ext2_check_descriptors(struct super_block *sb)
+ 		else
+ 			last_block = first_block +
+ 				(EXT2_BLOCKS_PER_GROUP(sb) - 1);
+-
+ 		if (le32_to_cpu(gdp->bg_block_bitmap) < first_block ||
+-		    le32_to_cpu(gdp->bg_block_bitmap) > last_block)
+-		{
++		    le32_to_cpu(gdp->bg_block_bitmap) > last_block) {
+ 			ext2_error (sb, "ext2_check_descriptors",
+ 				    "Block bitmap for group %d"
+ 				    " not in group (block %lu)!",
+ 				    i, (unsigned long) le32_to_cpu(gdp->bg_block_bitmap));
+ 			return 0;
+ 		}
++
+ 		if (le32_to_cpu(gdp->bg_inode_bitmap) < first_block ||
+-		    le32_to_cpu(gdp->bg_inode_bitmap) > last_block)
+-		{
++		    le32_to_cpu(gdp->bg_inode_bitmap) > last_block) {
+ 			ext2_error (sb, "ext2_check_descriptors",
+ 				    "Inode bitmap for group %d"
+ 				    " not in group (block %lu)!",
+@@ -734,8 +732,7 @@ static int ext2_check_descriptors(struct super_block *sb)
+ 		}
+ 		if (le32_to_cpu(gdp->bg_inode_table) < first_block ||
+ 		    le32_to_cpu(gdp->bg_inode_table) + sbi->s_itb_per_group - 1 >
+-		    last_block)
+-		{
++		    last_block) {
+ 			ext2_error (sb, "ext2_check_descriptors",
+ 				    "Inode table for group %d"
+ 				    " not in group (block %lu)!",
+@@ -800,7 +797,6 @@ static unsigned long descriptor_loc(struct super_block *sb,
+ 	struct ext2_sb_info *sbi = EXT2_SB(sb);
+ 	unsigned long bg, first_meta_bg;
+ 	int has_super = 0;
+-	
+ 	first_meta_bg = le32_to_cpu(sbi->s_es->s_first_meta_bg);
+ 
+ 	if (!EXT2_HAS_INCOMPAT_FEATURE(sb, EXT2_FEATURE_INCOMPAT_META_BG) ||
+@@ -816,9 +812,9 @@ static unsigned long descriptor_loc(struct super_block *sb,
+ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ {
+ 	struct dax_device *dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
+-	struct buffer_head * bh;
+-	struct ext2_sb_info * sbi;
+-	struct ext2_super_block * es;
++	struct buffer_head *bh;
++	struct ext2_sb_info *sbi;
++	struct ext2_super_block *es;
+ 	struct inode *root;
+ 	unsigned long block;
+ 	unsigned long sb_block = get_sb_block(&data);
+@@ -864,7 +860,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 	}
+ 
+ 	/*
+-	 * If the superblock doesn't start on a hardware sector boundary,
++	 * If the superblock doesn't start on a hardware sector boundary
+ 	 * calculate the offset.  
+ 	 */
+ 	if (blocksize != BLOCK_SIZE) {
+@@ -874,7 +870,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 		logic_sb_block = sb_block;
+ 	}
+ 
+-	if (!(bh = sb_bread(sb, logic_sb_block))) {
++	if (!(bh == sb_bread(sb, logic_sb_block))) {
+ 		ext2_msg(sb, KERN_ERR, "error: unable to read superblock");
+ 		goto failed_sbi;
+ 	}
+@@ -904,8 +900,8 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ #ifdef CONFIG_EXT2_FS_POSIX_ACL
+ 	if (def_mount_opts & EXT2_DEFM_ACL)
+ 		set_opt(opts.s_mount_opt, POSIX_ACL);
+-#endif
+-	
++#endif	
++
+ 	if (le16_to_cpu(sbi->s_es->s_errors) == EXT2_ERRORS_PANIC)
+ 		set_opt(opts.s_mount_opt, ERRORS_PANIC);
+ 	else if (le16_to_cpu(sbi->s_es->s_errors) == EXT2_ERRORS_CONTINUE)
+@@ -915,7 +911,6 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	opts.s_resuid = make_kuid(&init_user_ns, le16_to_cpu(es->s_def_resuid));
+ 	opts.s_resgid = make_kgid(&init_user_ns, le16_to_cpu(es->s_def_resgid));
+-	
+ 	set_opt(opts.s_mount_opt, RESERVATION);
+ 
+ 	if (!parse_options((char *) data, sb, &opts))
+@@ -949,7 +944,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 			le32_to_cpu(features));
+ 		goto failed_mount;
+ 	}
+-	if (!sb_rdonly(sb) && (features = EXT2_HAS_RO_COMPAT_FEATURE(sb, ~EXT2_FEATURE_RO_COMPAT_SUPP))){
++	if (!sb_rdonly(sb) && (features == EXT2_HAS_RO_COMPAT_FEATURE(sb, ~EXT2_FEATURE_RO_COMPAT_SUPP))) {
+ 		ext2_msg(sb, KERN_ERR, "error: couldn't mount RDWR because of "
+ 		       "unsupported optional features (%x)",
+ 		       le32_to_cpu(features));
+@@ -977,7 +972,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 		logic_sb_block = (sb_block*BLOCK_SIZE) / blocksize;
+ 		offset = (sb_block*BLOCK_SIZE) % blocksize;
+ 		bh = sb_bread(sb, logic_sb_block);
+-		if(!bh) {
++		if (!bh) {
+ 			ext2_msg(sb, KERN_ERR, "error: couldn't read"
+ 				"superblock on 2nd try");
+ 			goto failed_sbi;
+@@ -1073,9 +1068,9 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	if (EXT2_BLOCKS_PER_GROUP(sb) == 0)
+ 		goto cantfind_ext2;
+- 	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
+- 				le32_to_cpu(es->s_first_data_block) - 1)
+- 					/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
++	sbi->s_groups_count = ((le32_to_cpu(es->s_blocks_count) -
++				le32_to_cpu(es->s_first_data_block) - 1)
++				/ EXT2_BLOCKS_PER_GROUP(sb)) + 1;
+ 	db_count = (sbi->s_groups_count + EXT2_DESC_PER_BLOCK(sb) - 1) /
+ 		   EXT2_DESC_PER_BLOCK(sb);
+ 	sbi->s_group_desc = kmalloc (db_count * sizeof (struct buffer_head *), GFP_KERNEL);
+@@ -1314,10 +1309,10 @@ static void ext2_write_super(struct super_block *sb)
+ 		ext2_sync_fs(sb, 1);
+ }
+ 
+-static int ext2_remount (struct super_block * sb, int * flags, char * data)
++static int ext2_remount (struct super_block *sb, int *flags, char *data)
+ {
+-	struct ext2_sb_info * sbi = EXT2_SB(sb);
+-	struct ext2_super_block * es;
++	struct ext2_sb_info *sbi = EXT2_SB(sb);
++	struct ext2_super_block *es;
+ 	struct ext2_mount_options new_opts;
+ 	int err;
+ 
+@@ -1400,7 +1395,7 @@ static int ext2_remount (struct super_block * sb, int * flags, char * data)
+ 	return 0;
+ }
+ 
+-static int ext2_statfs (struct dentry * dentry, struct kstatfs * buf)
++static int ext2_statfs (struct dentry *dentry, struct kstatfs *buf)
+ {
+ 	struct super_block *sb = dentry->d_sb;
+ 	struct ext2_sb_info *sbi = EXT2_SB(sb);
+@@ -1639,7 +1634,7 @@ static int __init init_ext2_fs(void)
+ 	err = init_inodecache();
+ 	if (err)
+ 		return err;
+-        err = register_filesystem(&ext2_fs_type);
++	err = register_filesystem(&ext2_fs_type);
+ 	if (err)
+ 		goto out;
+ 	return 0;
+-- 
+2.14.1
