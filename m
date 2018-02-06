@@ -1,56 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753787AbeBFXHb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 18:07:31 -0500
-Received: from gate.crashing.org ([63.228.1.57]:33295 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753302AbeBFXH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 18:07:29 -0500
-Message-ID: <1517956309.2312.172.camel@kernel.crashing.org>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-mediatek@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Wed, 07 Feb 2018 09:31:49 +1100
-In-Reply-To: <1517895732.23319.21.camel@mtkswgap22>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-         <1517563970.24622.9.camel@mtkswgap22>
-         <1517866584.2312.140.camel@kernel.crashing.org>
-         <1517884738.16010.27.camel@mtkswgap22>
-         <1517889903.2312.151.camel@kernel.crashing.org>
-         <1517891471.20869.6.camel@mtkswgap22>
-         <1517892624.2312.167.camel@kernel.crashing.org>
-         <1517895732.23319.21.camel@mtkswgap22>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932094AbeBFXMJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 18:12:09 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58010 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753817AbeBFXL4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 18:11:56 -0500
+From: Colin King <colin.king@canonical.com>
+To: Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: chelsio - Make function aead_ccm_validate_input static
+Date: Tue,  6 Feb 2018 23:09:20 +0000
+Message-Id: <20180206230920.13764-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-06 at 13:42 +0800, Ryder Lee wrote:
-> Thanks for explanation.
-> 
-> So I guess the better way to achieve my aim - one IRQ per slot that is
-> connected to all INTx and get propagated through the bridges (and for
-> those root ports own interrupts (PME ..)} is to add interrupt-map
-> properties in both parent and root port nodes.
-> 
-> Something like this: https://patchwork.kernel.org/patch/9970923// ,right?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yup.
+Function aead_ccm_validate_input is local to the source and does not
+need to be in global scope, so make it static.
 
-Cheers,
-Ben.
+Cleans up sparse warning:
+drivers/crypto/chelsio/chcr_algo.c:2627:5: warning: symbol
+'aead_ccm_validate_input' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/chelsio/chcr_algo.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index 34a02d690548..8a67884512e4 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -2636,10 +2636,10 @@ static void fill_sec_cpl_for_aead(struct cpl_tx_sec_pdu *sec_cpl,
+ 					0, dst_size);
+ }
+ 
+-int aead_ccm_validate_input(unsigned short op_type,
+-			    struct aead_request *req,
+-			    struct chcr_aead_ctx *aeadctx,
+-			    unsigned int sub_type)
++static int aead_ccm_validate_input(unsigned short op_type,
++				   struct aead_request *req,
++				   struct chcr_aead_ctx *aeadctx,
++				   unsigned int sub_type)
+ {
+ 	if (sub_type != CRYPTO_ALG_SUB_TYPE_AEAD_RFC4309) {
+ 		if (crypto_ccm_check_iv(req->iv)) {
+-- 
+2.15.1
