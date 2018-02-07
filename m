@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754904AbeBGR1p (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:27:45 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41654 "EHLO ms.lwn.net"
+        id S1754531AbeBGR1E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:27:04 -0500
+Received: from ms.lwn.net ([45.79.88.28]:41634 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754831AbeBGR1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:27:05 -0500
+        id S1754831AbeBGR1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:27:02 -0500
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
         Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 6/8] docs: kernel-doc: Move STATE_PROTO processing into its own function
-Date: Wed,  7 Feb 2018 10:26:22 -0700
-Message-Id: <20180207172624.24555-7-corbet@lwn.net>
+Subject: [PATCH 3/8] docs: kernel-doc: Move STATE_NORMAL processing into its own function
+Date: Wed,  7 Feb 2018 10:26:19 -0700
+Message-Id: <20180207172624.24555-4-corbet@lwn.net>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180207172624.24555-1-corbet@lwn.net>
 References: <20180207172624.24555-1-corbet@lwn.net>
@@ -20,76 +20,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the top-level prototype-processing code out of process_file().
+Begin the process of splitting up the nearly 500-line process_file()
+function by moving STATE_NORMAL processing to a separate function.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/kernel-doc | 46 ++++++++++++++++++++++++++++------------------
- 1 file changed, 28 insertions(+), 18 deletions(-)
+ scripts/kernel-doc | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index a6a7bb46ea29..2deddb876156 100755
+index ad30c52f91ef..65150b7c8472 100755
 --- a/scripts/kernel-doc
 +++ b/scripts/kernel-doc
-@@ -1965,6 +1965,32 @@ sub process_body($$) {
+@@ -1780,6 +1780,21 @@ sub process_export_file($) {
+     close(IN);
  }
  
- 
 +#
-+# STATE_PROTO: reading a function/whatever prototype.
++# Parsers for the various processing states.
 +#
-+sub process_proto($$) {
-+    my $file = shift;
-+
-+    if (/$doc_inline_oneline/) {
-+	$section = $1;
-+	$contents = $2;
-+	if ($contents ne "") {
-+	    $contents .= "\n";
-+	    dump_section($file, $section, $contents);
-+	    $section = $section_default;
-+	    $contents = "";
-+	}
-+    } elsif (/$doc_inline_start/) {
-+	$state = STATE_INLINE;
-+	$inline_doc_state = STATE_INLINE_NAME;
-+    } elsif ($decl_type eq 'function') {
-+	process_proto_function($_, $file);
-+    } else {
-+	process_proto_type($_, $file);
++# STATE_NORMAL: looking for the /** to begin everything.
++#
++sub process_normal() {
++    if (/$doc_start/o) {
++	$state = STATE_NAME;	# next line is always the function name
++	$in_doc_sect = 0;
++	$declaration_start_line = $. + 1;
 +    }
 +}
 +
 +
++
  sub process_file($) {
      my $file;
-     my $func;
-@@ -2031,24 +2057,8 @@ sub process_file($) {
- 		    ++$warnings;
- 		}
- 	    }
--	} elsif ($state == STATE_PROTO) {	# scanning for function '{' (end of prototype)
--	    if (/$doc_inline_oneline/) {
--		$section = $1;
--		$contents = $2;
--		if ($contents ne "") {
--		    $contents .= "\n";
--		    dump_section($file, $section, $contents);
--		    $section = $section_default;
--		    $contents = "";
--		}
--	    } elsif (/$doc_inline_start/) {
--		$state = STATE_INLINE;
--		$inline_doc_state = STATE_INLINE_NAME;
--	    } elsif ($decl_type eq 'function') {
--		process_proto_function($_, $file);
--	    } else {
--		process_proto_type($_, $file);
+     my $identifier;
+@@ -1807,11 +1822,7 @@ sub process_file($) {
+ 	# Replace tabs by spaces
+         while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
+ 	if ($state == STATE_NORMAL) {
+-	    if (/$doc_start/o) {
+-		$state = STATE_NAME;	# next line is always the function name
+-		$in_doc_sect = 0;
+-		$declaration_start_line = $. + 1;
 -	    }
-+	} elsif ($state == STATE_PROTO) {
-+	    process_proto($file, $_);
- 	} elsif ($state == STATE_DOCBLOCK) {
- 		if (/$doc_end/)
- 		{
++	    process_normal();
+ 	} elsif ($state == STATE_NAME) {# this line is the function name (always)
+ 	    if (/$doc_block/o) {
+ 		$state = STATE_DOCBLOCK;
 -- 
 2.14.3
