@@ -1,150 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753862AbeBGMuE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 07:50:04 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:37206 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753478AbeBGMuD (ORCPT
+        id S1753881AbeBGMx1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 07:53:27 -0500
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:33626 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753478AbeBGMxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 07:50:03 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH 2/2] drm/sun4i: Handle DRM_MODE_FLAG_**SYNC_POSITIVE
- correctly
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: airlied@linux.ie, wens@csie.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1516474221-114596-1-git-send-email-giulio.benetti@micronovasrl.com>
- <1516474221-114596-2-git-send-email-giulio.benetti@micronovasrl.com>
- <20180122085112.7xo2t3x5ag4k2kpl@flea.lan>
- <aa724bd5-cfb1-128c-af32-db29253f32aa@micronovasrl.com>
- <59f7b542-3b1d-ff62-e290-37c47f4075ff@micronovasrl.com>
- <9929d894-53c3-a7e9-a328-a00cfc1ef546@micronovasrl.com>
- <20180207103905.mtyzgu73mmifyvvj@flea>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <653f0438-c55a-02a5-dffb-2ee8e6d9ef4a@micronovasrl.com>
-Date: Wed, 7 Feb 2018 13:49:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180207103905.mtyzgu73mmifyvvj@flea>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+        Wed, 7 Feb 2018 07:53:25 -0500
+X-Google-Smtp-Source: AH8x224u23pMnlAO3oPlFJszTt/3qsT9iwPocMHzdmEpXlrAScxcMjYfIB5xRf43OK4QwXKcSj3Z3g==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: netdev@vger.kernel.org
+Cc: ktkhai@virtuozzo.com, stephen@networkplumber.org,
+        w.bumiller@proxmox.com, ebiederm@xmission.com, jbenc@redhat.com,
+        nicolas.dichtel@6wind.com, linux-kernel@vger.kernel.org,
+        dsahern@gmail.com, davem@davemloft.net,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net 0/1 v4] rtnetlink: require unique netns identifier
+Date: Wed,  7 Feb 2018 13:53:19 +0100
+Message-Id: <20180207125320.9103-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hey,
 
-Il 07/02/2018 11:39, Maxime Ripard ha scritto:
-> On Wed, Jan 24, 2018 at 08:37:28PM +0100, Giulio Benetti wrote:
->>>>> Also, how was it tested? This seems quite weird that we haven't caught
->>>>> that one sooner, and I'm a bit worried about the possible regressions
->>>>> here.
->>>>
->>>> It sounds really strange to me too,
->>>> because everybody under uboot use "sync:3"(HIGH).
->>>> I will retry to measure,
->>>> unfortunately at home I don't have a scope,
->>>> but I think I'm going to have one soon, because of this. :)
->>>
->>> Here I am with scope captures and tcon0 registers dump:
->>> tcon0_regs => https://pasteboard.co/H4r8Zcs.png
->>> dclk_d0 => https://pasteboard.co/H4r8QRe.png
->>> dclk_de => https://pasteboard.co/H4r8zh4R.png
->>> dclk_vsnc => https://pasteboard.co/H4r8Hye.png
->>>
->>> As you can see circled in reg on registers,
->>> TCON0_IO_POL_REG = 0x00000000.
->>> But on all the waveforms you can see:
->>> - dclk_d0: clock phase is 0, but it starts with falling edge, otherwise
->>> the rising front overlaps dclk rising edge(not good), so to me this is
->>> falling, then I mean it Negative.
->>> - dclk_de: de pulse is clearly negative, even if register is 0 and its'
->>> polarity bit is 0.
->>> - dclk_vsnc: same as dclk_de
->>> - dclk_hsync: I didn't take scope screenshot but I can assure you it's
->>> negative.
->>>
->>> You can also check all the other registers about TCON0.
->>>
->>> Now I proceed testing it on A33, maybe the peripheral is slightly
->>> different between Axx SoCs, if I find it that way,
->>> it should be only a check about SoC or peripheral ID,
->>> and treat polarity as it should be done.
->>
->> Here I am with A33 waveforms:
->> tcon0_regs => https://pasteboard.co/H4rXfN0M.png
->> dclk_d0 => https://pasteboard.co/H4rVXwy.png
->> dclk_de => https://pasteboard.co/H4rWDt8.png
->> dclk_vsnc => https://pasteboard.co/H4rWRACu.png
->> dclk_hsync => https://pasteboard.co/H4rWK6I.png
->>
->> It behaves the same way as A20, so as I mean IO polarity,
->> all signals(except D0-D23), are inverted.
->> For A33 I've used A33-OLinuXino.
->> For A20 our LiNova1.
-> 
-> If you have an A33 handy, you probably want to read that mail:
-> https://lists.freedesktop.org/archives/dri-devel/2017-July/147951.html
-> 
-> Especially the 90-phase part.
+Since we've added support for IFLA_IF_NETNSID for RTM_{DEL,GET,SET,NEW}LINK
+it is possible for userspace to send us requests with three different
+properties to identify a target network namespace. This affects at least
+RTM_{NEW,SET}LINK. Each of them could potentially refer to a different
+network namespace which is confusing and a potential security liability
+given that pids might be recycled while the netlink request is served or
+the process might do a setns() It also lets us indicate that network namespace
+ids are the preferred way of interacting with network namespaces in rtnetlink
+requests. The regression potential is quite minimal since the rtnetlink
+requests in question either won't allow IFLA_IF_NETNSID requests before 4.16 is
+out (RTM_{NEW,SET}LINK) or don't support IFLA_NET_NS_{PID,FD}
+(RTM_{DEL,GET}LINK) in the first place.
 
-Here is a summary of different SoCs TCON:
-With DCLK_Sel:
-0x0 => normal phase
-0x1 => 1/3 phase
-0x2 => 2/3 phase
+Thanks!
+Christian
 
-A10, A20
+---
+ChangeLog v3->v4:
+* Based on discussions with Eric and Jiri: disallow passing multiple network
+  namespace identifying properties for all requests, i.e. always enforce
+  uniqueness.
+* disable passing IFLA_NET_NS_{FD,PID} for RTM_{DEL,GET}LINK completely since
+  they never supported it
+ChangeLog v2->v3:
+* Specifying target network namespaces with pids or fds seems racy since the
+  process might die and the pid get recycled or the process does a setns() in
+  which case the tests would be invalid. So only check whether multiple
+  properties are specified and report a helpful error in this case.
+ChangeLog v1->v2:
+* return errno when the specified network namespace id is invalid
+* fill in struct netlink_ext_ack if the network namespace id is invalid
+* rename rtnl_ensure_unique_netns_attr() to rtnl_ensure_unique_netns() to
+  indicate that a request without any network namespace identifying attributes
+  is also considered valid.
+ChangeLog v0->v1:
+* report a descriptive error to userspace via struct netlink_ext_ack
+* do not fail when multiple properties specifiy the same network namespace
+---
 
-With DCLK_Sel:
-0x0 => normal phase
-0x1 => 1/3 phase
-0x2 => 2/3 phase
-0x5 => DCLK/2 phase 0
-0x4 => DCLK/2 phase 90
+Christian Brauner (1):
+  rtnetlink: require unique netns identifier
 
-A31, A31s, A33, A80, A83T
-
-Also I've found that TCON1 has not this feature,
-nor first, nor second case(at least is not described on user manuals).
-
-So I could handle differently according to SoC.
-Unfortunately there is not TCON register keeping IP version,
-so the only way I see is to create a long if-or statement to understand
-which kind of TCON we're using.
-
-But what sounds not the best to me, is that DCLK is divided by 2 if
-using phase 90. So we need to reconsider also bitclock driver according
-to this.
-I don't know if it make sense.
-
-IMHO, I would keep only:
-- As normal => "0x1 => 1/3 phase"
-- As inverted => "0x0 => normal phase"
-
-According to scope captures above on both A20 and A33.
-Unfortunately I don't have other boards for the other SoCs to take captures.
-
-What do you think?
-
-> 
-> Maxime
-> 
+ net/core/rtnetlink.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 -- 
-Giulio Benetti
-R&D Manager &
-Advanced Research
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+2.14.1
