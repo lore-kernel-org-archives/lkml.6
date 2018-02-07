@@ -1,161 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753610AbeBGJh0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 04:37:26 -0500
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:56011 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753314AbeBGJhW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 04:37:22 -0500
-X-Google-Smtp-Source: AH8x227v30vOzd/xJH+YJpAXqHhpqb+p3mnCOrpkmSMp7jXGn6ZunVyZ0kAX20KER9NPMaG+R9osuw==
-Date: Wed, 7 Feb 2018 10:37:19 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: UDF driver is not able to read UDF filesystem without
- Terminating Descriptor
-Message-ID: <20180207093719.d2rgv5afrhffsdqr@pali>
-References: <20180121120856.eoepjk4qnrr7dtwa@pali>
- <20180125163838.ep4ne4sfvgmhwzul@quack2.suse.cz>
+        id S1753597AbeBGJj2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 04:39:28 -0500
+Received: from mail-eopbgr20081.outbound.protection.outlook.com ([40.107.2.81]:9088
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753456AbeBGJj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 04:39:26 -0500
+From: Vadim Pasternak <vadimp@mellanox.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>
+CC: Arnd Bergmann <arnd@arndb.de>,
+        "platform-driver-x86@vger.kernel.org"
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] platform/mellanox: mlxreg-hotplug: Fix uninitialized
+ variable
+Thread-Topic: [PATCH] platform/mellanox: mlxreg-hotplug: Fix uninitialized
+ variable
+Thread-Index: AQHTn/O63+WT4NlsbkmrfFu37e/vvqOYruAw
+Date: Wed, 7 Feb 2018 09:39:22 +0000
+Message-ID: <AM4PR05MB3330B66B4D7077DA6EAB882EA2FC0@AM4PR05MB3330.eurprd05.prod.outlook.com>
+References: <1517994724-5931-1-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1517994724-5931-1-git-send-email-geert@linux-m68k.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vadimp@mellanox.com;
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR05MB1650;7:XMl238lsc50jfPjVwAj7HiK1DBC607XCgZB4bOesIRE1ASI43oKCxlDj8Jy2iCnJToIFOape0XFLIsLalz/LE4ClaIz9ABif9U9ML97qsWiyBUGsv1hugqNzby1W9tTPSJ7xuEH/cXOd75Sp65uVKlsM9ObyuhYz3LQapIi5c/7M8nM0dHhJ2TTnFVgI5C/m0/vzuAjh691qHr2NNYJNxULsxENvr5pMMWJCM5uLQlWHqLHA/NeSqx5rVmjuyNor
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d270d216-e2bc-48ad-f28d-08d56e0eab10
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:AM4PR05MB1650;
+x-ms-traffictypediagnostic: AM4PR05MB1650:
+x-microsoft-antispam-prvs: <AM4PR05MB1650117D345DB91A30FB3E10A2FC0@AM4PR05MB1650.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231101)(2400082)(944501161)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:AM4PR05MB1650;BCL:0;PCL:0;RULEID:;SRVR:AM4PR05MB1650;
+x-forefront-prvs: 0576145E86
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(376002)(39380400002)(396003)(199004)(189003)(13464003)(6436002)(53546011)(54906003)(3846002)(110136005)(2906002)(5660300001)(316002)(59450400001)(5250100002)(186003)(106356001)(25786009)(81166006)(2900100001)(6116002)(8676002)(7696005)(6506007)(102836004)(105586002)(66066001)(76176011)(8936002)(14454004)(33656002)(4326008)(229853002)(53936002)(81156014)(26005)(86362001)(575784001)(97736004)(3280700002)(3660700001)(478600001)(9686003)(55016002)(74316002)(7736002)(305945005)(68736007)(6246003)(99286004)(2950100002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR05MB1650;H:AM4PR05MB3330.eurprd05.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: oycgnSdbafHML+rymFv214OL+JJYScTMft3vMyyJVpRVKLB4C86BNzu7lxont+gLyumo1aIPtQokUJQJVxDMaw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180125163838.ep4ne4sfvgmhwzul@quack2.suse.cz>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d270d216-e2bc-48ad-f28d-08d56e0eab10
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2018 09:39:22.1092
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR05MB1650
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w179dWgv026852
 
-On Thursday 25 January 2018 17:38:38 Jan Kara wrote:
-> Hi!
-> 
-> [added linux-fsdevel@vger.kernel.org to CC since that's more appropriate
-> than LKML]
-> 
-> On Sun 21-01-18 13:08:56, Pali Rohár wrote:
-> > Hi! In attachment you can find two minimalistic UDF filesystem images.
-> > Strictly speaking they are not compliant to Ecma-167 which requires to
-> > have at least 258 blocks for filesystem, but Linux kernel has no problem
-> > to read also such small UDF filesystems. First one is "udf_with_td", has
-> > 89 blocks and udf.ko reads it without problem. Second one is
-> > "udf_without_td", has 88 blocks and udf.ko reject it with error message:
-> > 
-> > UDF-fs: linux/fs/udf/misc.c:223:udf_read_tagged: location mismatch block 1, tag 0 != 1
-> > UDF-fs: warning (device loop1): udf_fill_super: No fileset found
-> > 
-> > The only difference between these two images is presence/absence of
-> > Terminating Descriptor (TD).
-> > 
-> > Looking at the code in function udf_process_sequence(), I found out that
-> > udf.ko does not read Partition Descriptor when filesystem does not
-> > contain Terminating Descriptor. This is of course wrong as without
-> > reading Partition Descriptor it is not possible to locale root directory
-> > of the UDF filesystem.
-> > 
-> > In that function is following code:
-> > 
-> > 	if (vds[VDS_POS_PARTITION_DESC].block) {
-> > 		/*
-> > 		 * We rescan the whole descriptor sequence to find
-> > 		 * partition descriptor blocks and process them.
-> > 		 */
-> > 		for (block = vds[VDS_POS_PARTITION_DESC].block;
-> > 		     block < vds[VDS_POS_TERMINATING_DESC].block;
-> > 		     block++) {
-> > 			ret = udf_load_partdesc(sb, block);
-> > 			if (ret < 0)
-> > 				return ret;
-> > 		}
-> > 	}
-> > 
-> > Array vds is initialized to zeros, so when Partition Descriptor is not
-> > present then vds[VDS_POS_TERMINATING_DESC].block is zero and so above
-> > for loop is immediately stopped.
-> > 
-> > As a quick fix I applied following patch:
-> > 
-> > --- a/fs/udf/super.c
-> > +++ b/fs/udf/super.c
-> > @@ -1620,6 +1620,7 @@ static noinline int udf_process_sequence(
-> >  	unsigned int indirections = 0;
-> >  
-> >  	memset(vds, 0, sizeof(struct udf_vds_record) * VDS_POS_LENGTH);
-> > +	vds[VDS_POS_TERMINATING_DESC].block = lastblock;
-> >  
-> >  	/*
-> >  	 * Read the main descriptor sequence and find which descriptors
-> > 
-> > which forces above loop to call udf_load_partdesc() also when TD is not
-> > available.
-> 
-> Yes, but this will not do the right thing in case there's VDP (volume
-> descriptor pointer) descriptor. More on this below.
-> 
-> > Note that this problem happen also with large enough UDF filesystems
-> > without Terminating Descriptor, not only for those small.
-> > 
-> > And I have not found any restrictions in UDF or ECMA-167 specification
-> > that Terminating Descriptor is required.
-> 
-> You are right that TD does not seem to be required and thus the code is
-> buggy.
-> 
-> > ==========
-> > 
-> > But I'm not sure if above for loop is correct at all.
-> > 
-> > In function udf_process_sequence() is code for handling TAG_IDENT_VDP,
-> > which allow to scanning nested Volume Descriptor Sequences. And each
-> > identifier descriptor handles (increasing) volDescSeqNum except
-> > TAG_IDENT_PD which is for Partition Descriptor. Partition Descriptor is
-> > always used one which was processed first:
-> > 
-> > 		case TAG_IDENT_PD: /* ISO 13346 3/10.5 */
-> > 			curr = &vds[VDS_POS_PARTITION_DESC];
-> > 			if (!curr->block)
-> > 				curr->block = block;
-> > 			break;
-> > 
-> > But only the last processed Terminating Descriptor is used:
-> > 
-> > 		case TAG_IDENT_TD: /* ISO 13346 3/10.9 */
-> > ...
-> > 			vds[VDS_POS_TERMINATING_DESC].block = block;
-> > ...
-> > 			break;
-> > 
-> > And if nested Volume Descriptor Sequences "jumps" to block with smaller
-> > number and in that nested sequence is Terminating Descriptor, it would
-> > have smaller block number as Partition Descriptor block number (read
-> > before nested jump) and so loop for calling udf_load_partdesc() would be
-> > stopped at beginning too.
-> 
-> Yeah, strictly speaking this is possible but that would have to be really
-> evil udf image creator ;) But yes, we ought to handle that.
 
-mkudffs in special cases generate such filesystem. I find out it in
-code, therefore I generated such image and tested what would kernel
-do...
 
-> > Also question is, which Partition Descriptor should be loaded? First
-> > processed? Last processed? One with smallest or biggest Sequence Number?
-> > Or all which are found, including all in nested sequence?
+> -----Original Message-----
+> From: Geert Uytterhoeven [mailto:geert@linux-m68k.org]
+> Sent: Wednesday, February 07, 2018 11:12 AM
+> To: Andy Shevchenko <andy@infradead.org>; Darren Hart
+> <dvhart@infradead.org>; Vadim Pasternak <vadimp@mellanox.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>; platform-driver-x86@vger.kernel.org;
+> linux-kernel@vger.kernel.org; Geert Uytterhoeven <geert@linux-m68k.org>
+> Subject: [PATCH] platform/mellanox: mlxreg-hotplug: Fix uninitialized variable
 > 
-> So partition descriptors are "special". You can have multiple partition
-> descriptiors in the descriptor sequence. "Prevailing descriptors" (this is
-> the term from ECMA 167 specification - it means descriptors that should be
-> taken into account) are those with highest sequence number found for a
-> partition with a particular partition number. So prevailing descriptor for
-> partition 0 can have different sequence number than prevailing descriptor
-> for partition 1. But still you are correct that processing of PD
-> descriptors is hosed both wrt descriptor sequence numbers, VPD descriptor,
-> and missing TD descriptors. I'll fix that up (but probably get to it only
-> after my vacation next week). Thanks for spotting this!
+> With gcc-4.1.2:
+> 
+>     drivers/platform/mellanox/mlxreg-hotplug.c: In function
+> ‘mlxreg_hotplug_health_work_helper’:
+>     drivers/platform/mellanox/mlxreg-hotplug.c:347: warning: ‘ret’ is used
+> uninitialized in this function
+> 
+> Indeed, if mlxreg_core_item.count is zero, ret is used uninitialized.
+> 
+> While this is unlikely to happen (it is set to ARRAY_SIZE(...) in x86 board files),
+> this is done in another source file, so fix this by preinitializing ret to zero.
+> 
+> Fixes: c6acad68eb2dbffd ("platform/mellanox: mlxreg-hotplug: Modify to use a
+> regmap interface")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Ok, so after you are back and would have a proper fix for this, let me know.
+Acked-by: Vadim Pasternak <vadimp@mellanox.com>
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> ---
+>  drivers/platform/mellanox/mlxreg-hotplug.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c
+> b/drivers/platform/mellanox/mlxreg-hotplug.c
+> index 0dfa1ca0d05b0217..313cf8ad77bf68ce 100644
+> --- a/drivers/platform/mellanox/mlxreg-hotplug.c
+> +++ b/drivers/platform/mellanox/mlxreg-hotplug.c
+> @@ -300,7 +300,7 @@ mlxreg_hotplug_health_work_helper(struct
+> mlxreg_hotplug_priv_data *priv,  {
+>  	struct mlxreg_core_data *data = item->data;
+>  	u32 regval;
+> -	int i, ret;
+> +	int i, ret = 0;
+> 
+>  	for (i = 0; i < item->count; i++, data++) {
+>  		/* Mask event. */
+> --
+> 2.7.4
