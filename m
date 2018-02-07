@@ -1,250 +1,379 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754231AbeBGAH0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 19:07:26 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:57687 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754095AbeBGAHZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 19:07:25 -0500
-X-IronPort-AV: E=Sophos;i="5.46,470,1511827200";
-   d="scan'208";a="593724387"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: tglx@linutronix.de, torvalds@linux-foundation.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-        tim.c.chen@linux.intel.com, dave.hansen@intel.com,
-        arjan.van.de.ven@intel.com
-Subject: [RFC PATCH 3/4] x86/speculation: Use IBRS if available before calling into firmware
-Date: Wed,  7 Feb 2018 00:03:13 +0000
-Message-Id: <1517961794-14972-4-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517961794-14972-1-git-send-email-dwmw@amazon.co.uk>
-References: <1517961794-14972-1-git-send-email-dwmw@amazon.co.uk>
+        id S1754266AbeBGAIU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 19:08:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754170AbeBGAIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 19:08:19 -0500
+Subject: [RFC PATCH] vfio/pci: Add ioeventfd support
+From: Alex Williamson <alex.williamson@redhat.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        alex.williamson@redhat.com
+Date: Tue, 06 Feb 2018 17:08:14 -0700
+Message-ID: <20180207000731.32764.95992.stgit@gimli.home>
+User-Agent: StGit/0.18-102-gdf9f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Retpoline means the kernel is safe because it has no indirect branches.
-But firmware isn't, so use IBRS for firmware calls if it's available.
+The ioeventfd here is actually irqfd handling of an ioeventfd such as
+supported in KVM.  A user is able to pre-program a device write to
+occur when the eventfd triggers.  This is yet another instance of
+eventfd-irqfd triggering between KVM and vfio.  The impetus for this
+is high frequency writes to pages which are virtualized in QEMU.
+Enabling this near-direct write path for selected registers within
+the virtualized page can improve performance and reduce overhead.
+Specifically this is initially targeted at NVIDIA graphics cards where
+the driver issues a write to an MMIO register within a virtualized
+region in order to allow the MSI interrupt to re-trigger.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 ---
- arch/x86/include/asm/apm.h           |  6 ++++++
- arch/x86/include/asm/cpufeatures.h   |  1 +
- arch/x86/include/asm/efi.h           | 13 +++++++++++--
- arch/x86/include/asm/nospec-branch.h | 37 +++++++++++++++++++++++++++---------
- arch/x86/kernel/cpu/bugs.c           | 12 +++++++++++-
- drivers/watchdog/hpwdt.c             |  3 +++
- 6 files changed, 60 insertions(+), 12 deletions(-)
+ drivers/vfio/pci/vfio_pci.c         |   33 +++++++
+ drivers/vfio/pci/vfio_pci_private.h |   14 +++
+ drivers/vfio/pci/vfio_pci_rdwr.c    |  165 ++++++++++++++++++++++++++++++++---
+ include/uapi/linux/vfio.h           |   24 +++++
+ 4 files changed, 224 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/include/asm/apm.h b/arch/x86/include/asm/apm.h
-index 4d4015d..4483616 100644
---- a/arch/x86/include/asm/apm.h
-+++ b/arch/x86/include/asm/apm.h
-@@ -7,6 +7,8 @@
- #ifndef _ASM_X86_MACH_DEFAULT_APM_H
- #define _ASM_X86_MACH_DEFAULT_APM_H
- 
-+#include <asm/spec_ctrl.h>
-+
- #ifdef APM_ZERO_SEGS
- #	define APM_DO_ZERO_SEGS \
- 		"pushl %%ds\n\t" \
-@@ -32,6 +34,7 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -44,6 +47,7 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
- 		  "=S" (*esi)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- }
- 
- static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
-@@ -56,6 +60,7 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -68,6 +73,7 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
- 		  "=S" (si)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- 	return error;
- }
- 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 73b5fff..66c1434 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -211,6 +211,7 @@
- #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
- 
- #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
-+#define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index 85f6ccb..6b27828 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -6,6 +6,7 @@
- #include <asm/pgtable.h>
- #include <asm/processor-flags.h>
- #include <asm/tlb.h>
-+#include <asm/nospec-branch.h>
- 
- /*
-  * We map the EFI regions needed for runtime services non-contiguously,
-@@ -36,8 +37,14 @@
- 
- extern asmlinkage unsigned long efi_call_phys(void *, ...);
- 
--#define arch_efi_call_virt_setup()	kernel_fpu_begin()
--#define arch_efi_call_virt_teardown()	kernel_fpu_end()
-+#define arch_efi_call_virt_setup()			\
-+	kernel_fpu_begin()				\
-+	firmware_restrict_branch_speculation_start();
-+
-+#define arch_efi_call_virt_teardown()				\
-+	firmware_restrict_branch_speculation_end();		\
-+	kernel_fpu_end()
-+
- 
- /*
-  * Wrap all the virtual calls in a way that forces the parameters on the stack.
-@@ -73,6 +80,7 @@ struct efi_scratch {
- 	efi_sync_low_kernel_mappings();					\
- 	preempt_disable();						\
- 	__kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
- 									\
- 	if (efi_scratch.use_pgd) {					\
- 		efi_scratch.prev_cr3 = __read_cr3();			\
-@@ -91,6 +99,7 @@ struct efi_scratch {
- 		__flush_tlb_all();					\
- 	}								\
- 									\
-+	firmware_restrict_branch_speculation_end();			\
- 	__kernel_fpu_end();						\
- 	preempt_enable();						\
- })
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 300cc15..788c4da 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -162,17 +162,36 @@ static inline void vmexit_fill_RSB(void)
- #endif
- }
- 
-+#define alternative_msr_write(_msr, _val, _feature)		\
-+	asm volatile(ALTERNATIVE("",				\
-+				 "movl %[msr], %%ecx\n\t"	\
-+				 "movl %[val], %%eax\n\t"	\
-+				 "movl $0, %%edx\n\t"		\
-+				 "wrmsr",			\
-+				 _feature)			\
-+		     : : [msr] "i" (_msr), [val] "i" (_val)	\
-+		     : "eax", "ecx", "edx", "memory")
-+
- static inline void indirect_branch_prediction_barrier(void)
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index f041b1a6cf66..c8e7297a61a3 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -302,6 +302,7 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
  {
--	asm volatile(ALTERNATIVE("",
--				 "movl %[msr], %%ecx\n\t"
--				 "movl %[val], %%eax\n\t"
--				 "movl $0, %%edx\n\t"
--				 "wrmsr",
--				 X86_FEATURE_USE_IBPB)
--		     : : [msr] "i" (MSR_IA32_PRED_CMD),
--			 [val] "i" (PRED_CMD_IBPB)
--		     : "eax", "ecx", "edx", "memory");
-+	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
-+			      X86_FEATURE_USE_IBPB);
-+}
-+
-+/*
-+ * With retpoline, we must use IBRS to restrict branch prediction
-+ * before calling into firmware.
-+ */
-+static inline void firmware_restrict_branch_speculation_start(void)
-+{
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
-+			      X86_FEATURE_USE_IBRS_FW);
-+}
-+
-+static inline void firmware_restrict_branch_speculation_end(void)
-+{
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-+			      X86_FEATURE_USE_IBRS_FW);
- }
+ 	struct pci_dev *pdev = vdev->pdev;
+ 	struct vfio_pci_dummy_resource *dummy_res, *tmp;
++	struct vfio_pci_ioeventfd *ioeventfd, *ioeventfd_tmp;
+ 	int i, bar;
  
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 61152aa..6f6d763 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -303,6 +303,15 @@ static void __init spectre_v2_select_mitigation(void)
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 		pr_info("Enabling Indirect Branch Prediction Barrier\n");
- 	}
-+
-+	/*
-+	 * Retpoline means the kernel is safe because it has no indirect
-+	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
-+		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	/* Stop the device from further DMA */
+@@ -311,6 +312,14 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
+ 				VFIO_IRQ_SET_ACTION_TRIGGER,
+ 				vdev->irq_type, 0, 0, NULL);
+ 
++	/* Device closed, don't need mutex here */
++	list_for_each_entry_safe(ioeventfd, ioeventfd_tmp,
++				 &vdev->ioeventfds_list, next) {
++		vfio_virqfd_disable(&ioeventfd->virqfd);
++		list_del(&ioeventfd->next);
++		kfree(ioeventfd);
 +	}
++
+ 	vdev->virq_disabled = false;
+ 
+ 	for (i = 0; i < vdev->num_regions; i++)
+@@ -1039,6 +1048,28 @@ static long vfio_pci_ioctl(void *device_data,
+ 
+ 		kfree(groups);
+ 		return ret;
++	} else if (cmd == VFIO_DEVICE_IOEVENTFD) {
++		struct vfio_device_ioeventfd ioeventfd;
++		int count;
++
++		minsz = offsetofend(struct vfio_device_ioeventfd, fd);
++
++		if (copy_from_user(&ioeventfd, (void __user*)arg, minsz))
++			return -EFAULT;
++
++		if (ioeventfd.argsz < minsz)
++			return -EINVAL;
++
++		if (ioeventfd.flags & ~VFIO_DEVICE_IOEVENTFD_SIZE_MASK)
++			return -EINVAL;
++
++		count = ioeventfd.flags & VFIO_DEVICE_IOEVENTFD_SIZE_MASK;
++
++		if (hweight8(count) != 1 || ioeventfd.fd < -1)
++			return -EINVAL;
++
++		return vfio_pci_ioeventfd(vdev, ioeventfd.offset,
++					  ioeventfd.data, count, ioeventfd.fd);
+ 	}
+ 
+ 	return -ENOTTY;
+@@ -1217,6 +1248,8 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	vdev->irq_type = VFIO_PCI_NUM_IRQS;
+ 	mutex_init(&vdev->igate);
+ 	spin_lock_init(&vdev->irqlock);
++	mutex_init(&vdev->ioeventfds_lock);
++	INIT_LIST_HEAD(&vdev->ioeventfds_list);
+ 
+ 	ret = vfio_add_group_dev(&pdev->dev, &vfio_pci_ops, vdev);
+ 	if (ret) {
+diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+index f561ac1c78a0..23797622396e 100644
+--- a/drivers/vfio/pci/vfio_pci_private.h
++++ b/drivers/vfio/pci/vfio_pci_private.h
+@@ -29,6 +29,15 @@
+ #define PCI_CAP_ID_INVALID		0xFF	/* default raw access */
+ #define PCI_CAP_ID_INVALID_VIRT		0xFE	/* default virt access */
+ 
++struct vfio_pci_ioeventfd {
++	struct list_head	next;
++	struct virqfd		*virqfd;
++	loff_t			pos;
++	uint64_t		data;
++	int			bar;
++	int			count;
++};
++
+ struct vfio_pci_irq_ctx {
+ 	struct eventfd_ctx	*trigger;
+ 	struct virqfd		*unmask;
+@@ -95,6 +104,8 @@ struct vfio_pci_device {
+ 	struct eventfd_ctx	*err_trigger;
+ 	struct eventfd_ctx	*req_trigger;
+ 	struct list_head	dummy_resources_list;
++	struct mutex		ioeventfds_lock;
++	struct list_head	ioeventfds_list;
+ };
+ 
+ #define is_intx(vdev) (vdev->irq_type == VFIO_PCI_INTX_IRQ_INDEX)
+@@ -120,6 +131,9 @@ extern ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+ extern ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 			       size_t count, loff_t *ppos, bool iswrite);
+ 
++extern long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
++			       uint64_t data, int count, int fd);
++
+ extern int vfio_pci_init_perm_bits(void);
+ extern void vfio_pci_uninit_perm_bits(void);
+ 
+diff --git a/drivers/vfio/pci/vfio_pci_rdwr.c b/drivers/vfio/pci/vfio_pci_rdwr.c
+index 357243d76f10..55bb4517d4ba 100644
+--- a/drivers/vfio/pci/vfio_pci_rdwr.c
++++ b/drivers/vfio/pci/vfio_pci_rdwr.c
+@@ -17,6 +17,7 @@
+ #include <linux/pci.h>
+ #include <linux/uaccess.h>
+ #include <linux/io.h>
++#include <linux/vfio.h>
+ #include <linux/vgaarb.h>
+ 
+ #include "vfio_pci_private.h"
+@@ -113,6 +114,30 @@ static ssize_t do_io_rw(void __iomem *io, char __user *buf,
+ 	return done;
  }
  
- #undef pr_fmt
-@@ -332,8 +341,9 @@ ssize_t cpu_show_spectre_v2(struct device *dev,
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
++static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
++{
++	struct pci_dev *pdev = vdev->pdev;
++	int ret;
++	void __iomem *io;
++
++	if (vdev->barmap[bar])
++		return 0;
++
++	ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
++	if (ret)
++		return ret;
++
++	io = pci_iomap(pdev, bar, 0);
++	if (!io) {
++		pci_release_selected_regions(pdev, 1 << bar);
++		return -ENOMEM;
++	}
++
++	vdev->barmap[bar] = io;
++
++	return 0;
++}
++
+ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 			size_t count, loff_t *ppos, bool iswrite)
+ {
+@@ -147,22 +172,13 @@ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 		if (!io)
+ 			return -ENOMEM;
+ 		x_end = end;
+-	} else if (!vdev->barmap[bar]) {
+-		int ret;
+-
+-		ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
++	} else {
++		int ret = vfio_pci_setup_barmap(vdev, bar);
+ 		if (ret)
+ 			return ret;
  
--	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 		       spectre_v2_module_string());
+-		io = pci_iomap(pdev, bar, 0);
+-		if (!io) {
+-			pci_release_selected_regions(pdev, 1 << bar);
+-			return -ENOMEM;
+-		}
+-
+-		vdev->barmap[bar] = io;
+-	} else
+ 		io = vdev->barmap[bar];
++	}
+ 
+ 	if (bar == vdev->msix_bar) {
+ 		x_start = vdev->msix_offset;
+@@ -242,3 +258,128 @@ ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 
+ 	return done;
  }
- #endif
-diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-index 67fbe35..bab3721 100644
---- a/drivers/watchdog/hpwdt.c
-+++ b/drivers/watchdog/hpwdt.c
-@@ -38,6 +38,7 @@
- #endif /* CONFIG_HPWDT_NMI_DECODING */
- #include <asm/nmi.h>
- #include <asm/frame.h>
-+#include <asm/nospec-branch.h>
++
++static int vfio_pci_ioeventfd_handler8(void *opaque, void *data)
++{
++	iowrite8((unsigned long)data, opaque);
++	return 0;
++}
++
++static int vfio_pci_ioeventfd_handler16(void *opaque, void *data)
++{
++	iowrite16((unsigned long)data, opaque);
++	return 0;
++}
++
++static int vfio_pci_ioeventfd_handler32(void *opaque, void *data)
++{
++	iowrite32((unsigned long)data, opaque);
++	return 0;
++}
++
++#ifdef iowrite64
++static int vfio_pci_ioeventfd_handler64(void *opaque, void *data)
++{
++	iowrite64((unsigned long)data, opaque);
++	return 0;
++}
++#endif
++
++long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
++			uint64_t data, int count, int fd)
++{
++	struct pci_dev *pdev = vdev->pdev;
++	loff_t pos = offset & VFIO_PCI_OFFSET_MASK;
++	int ret, bar = VFIO_PCI_OFFSET_TO_INDEX(offset);
++	struct vfio_pci_ioeventfd *ioeventfd;
++	int (*handler)(void *, void *);
++	unsigned long val;
++
++	/* Only support ioeventfds into BARs */
++	if (bar > VFIO_PCI_BAR5_REGION_INDEX)
++		return -EINVAL;
++
++	if (pos + count > pci_resource_len(pdev, bar))
++		return -EINVAL;
++
++	/* Disallow ioeventfds working around MSI-X table writes */
++	if (bar == vdev->msix_bar &&
++	    !(pos + count <= vdev->msix_offset ||
++	      pos >= vdev->msix_offset + vdev->msix_size))
++		return -EINVAL;
++
++	switch (count) {
++	case 1:
++		handler = &vfio_pci_ioeventfd_handler8;
++		val = data;
++		break;
++	case 2:
++		handler = &vfio_pci_ioeventfd_handler16;
++		val = le16_to_cpu(data);
++		break;
++	case 4:
++		handler = &vfio_pci_ioeventfd_handler32;
++		val = le32_to_cpu(data);
++		break;
++#ifdef iowrite64
++	case 8:
++		handler = &vfio_pci_ioeventfd_handler64;
++		val = le64_to_cpu(data);
++		break;
++#endif
++	default:
++		return -EINVAL;
++	}
++
++	ret = vfio_pci_setup_barmap(vdev, bar);
++	if (ret)
++		return ret;
++
++	mutex_lock(&vdev->ioeventfds_lock);
++
++	list_for_each_entry(ioeventfd, &vdev->ioeventfds_list, next) {
++		if (ioeventfd->pos == pos && ioeventfd->bar == bar &&
++		    ioeventfd->data == data && ioeventfd->count == count) {
++			if (fd == -1) {
++				vfio_virqfd_disable(&ioeventfd->virqfd);
++				list_del(&ioeventfd->next);
++				kfree(ioeventfd);
++				ret = 0;
++			} else
++				ret = -EEXIST;
++
++			goto out_unlock;
++		}
++	}
++
++	if (fd < 0) {
++		ret = -ENODEV;
++		goto out_unlock;
++	}
++
++	ioeventfd = kzalloc(sizeof(*ioeventfd), GFP_KERNEL);
++	if (!ioeventfd) {
++		ret = -ENOMEM;
++		goto out_unlock;
++	}
++
++	ioeventfd->pos = pos;
++	ioeventfd->bar = bar;
++	ioeventfd->data = data;
++	ioeventfd->count = count;
++
++	ret = vfio_virqfd_enable(vdev->barmap[ioeventfd->bar] + ioeventfd->pos,
++				 handler, NULL, (void *)val,
++				 &ioeventfd->virqfd, fd);
++	if (ret) {
++		kfree(ioeventfd);
++		goto out_unlock;
++	}
++
++	list_add(&ioeventfd->next, &vdev->ioeventfds_list);
++
++out_unlock:
++	mutex_unlock(&vdev->ioeventfds_lock);
++
++	return ret;
++}
+diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+index e3301dbd27d4..07966a5f0832 100644
+--- a/include/uapi/linux/vfio.h
++++ b/include/uapi/linux/vfio.h
+@@ -503,6 +503,30 @@ struct vfio_pci_hot_reset {
  
- #define HPWDT_VERSION			"1.4.0"
- #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
-@@ -486,11 +487,13 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
- 	if (!hpwdt_nmi_decoding)
- 		return NMI_DONE;
+ #define VFIO_DEVICE_PCI_HOT_RESET	_IO(VFIO_TYPE, VFIO_BASE + 13)
  
-+	firmware_restrict_branch_speculation_start();
- 	spin_lock_irqsave(&rom_lock, rom_pl);
- 	if (!die_nmi_called && !is_icru && !is_uefi)
- 		asminline_call(&cmn_regs, cru_rom_addr);
- 	die_nmi_called = 1;
- 	spin_unlock_irqrestore(&rom_lock, rom_pl);
-+	firmware_restrict_branch_speculation_end();
++/**
++ * VFIO_DEVICE_IOEVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 14,
++ *                              struct vfio_device_ioeventfd)
++ *
++ * Perform a write to the device at the specified device fd offset, with
++ * the specified data and width when the provided eventfd is triggered.
++ *
++ * Return: 0 on success, -errno on failure.
++ */
++struct vfio_device_ioeventfd {
++	__u32	argsz;
++	__u32	flags;
++#define VFIO_DEVICE_IOEVENTFD_8		(1 << 0) /* 1-byte write */
++#define VFIO_DEVICE_IOEVENTFD_16	(1 << 1) /* 2-byte write */
++#define VFIO_DEVICE_IOEVENTFD_32	(1 << 2) /* 4-byte write */
++#define VFIO_DEVICE_IOEVENTFD_64	(1 << 3) /* 8-byte write */
++#define VFIO_DEVICE_IOEVENTFD_SIZE_MASK	(0xf)
++	__u64	offset;			/* device fd offset of write */
++	__u64	data;			/* data to be written */
++	__s32	fd;			/* -1 for de-assignment */
++};
++
++#define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 14)
++
+ /* -------- API for Type1 VFIO IOMMU -------- */
  
- 	if (allow_kdump)
- 		hpwdt_stop();
--- 
-2.7.4
+ /**
