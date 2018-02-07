@@ -1,113 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932186AbeBGAD4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 19:03:56 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:36282 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932152AbeBGADr (ORCPT
+        id S932203AbeBGAE1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 19:04:27 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.113]:15570 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932188AbeBGAE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 19:03:47 -0500
-X-IronPort-AV: E=Sophos;i="5.46,470,1511827200";
-   d="scan'208";a="707180262"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: tglx@linutronix.de, torvalds@linux-foundation.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-        tim.c.chen@linux.intel.com, dave.hansen@intel.com,
-        arjan.van.de.ven@intel.com
-Subject: [RFC PATCH 4/4] x86/speculation: Support "Enhanced IBRS" on future CPUs
-Date: Wed,  7 Feb 2018 00:03:14 +0000
-Message-Id: <1517961794-14972-5-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517961794-14972-1-git-send-email-dwmw@amazon.co.uk>
-References: <1517961794-14972-1-git-send-email-dwmw@amazon.co.uk>
+        Tue, 6 Feb 2018 19:04:26 -0500
+Date: Tue, 6 Feb 2018 18:04:24 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] video: fbdev: vermilion: use 64-bit arithmetic instead of
+ 32-bit
+Message-ID: <20180207000424.GA32680@embeddedgus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1ejDDt-0032dU-PJ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.4.238]:39266
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original IBRS hack in microcode is horribly slow. For the next
-generation of CPUs, as a stopgap until we get a proper fix, Intel
-promise an "Enhanced IBRS" which will be fast.
+Cast _pitch_ to u64 in order to give the compiler complete information
+about the proper arithmetic to use. Notice that this variable is
+being used in a context that expects an expression of type u64
+(64 bits, unsigned).
 
-The assumption is that predictions in the BTB/RSB will be tagged with
-the VMX mode and ring that they were learned in, and thus we can avoid
-consuming unsafe predictions without a performance penalty.
+The expression pitch * var->yres_virtual is currently being evaluated
+using 32-bit arithmetic and the result of the operation is being stored
+into variable mem, which is a variable of type u64. Based on that,
+chances are there is a potential integer overflow as a result of the
+operation.
 
-This does not actually *set* the IBRS bit in the SPEC_CTRL register,
-because Intel's documentation is wrong. Not wrong in the sense of
-"does not accurately describe Intel's planned future hardware", but
-more in the sense that if Intel make hardware like that, then they
-are Doing It Wrong™.
-
-With IBRS_ALL advertised in IA32_ARCH_CAPABILITIES, the IBRS bit in
-the MSR should do *nothing*. The safe mode where the CPU honours the
-tags in the BTB/RSB should be enabled *unconditionally*.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Addresses-Coverity-ID: 200655 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/x86/include/asm/nospec-branch.h |  2 +-
- arch/x86/kernel/cpu/bugs.c           | 13 ++++++++++++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/vermilion/vermilion.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 788c4da..9b65211 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -140,7 +140,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
--	SPECTRE_V2_IBRS,
-+	SPECTRE_V2_IBRS_ALL,
- };
- 
- extern char __indirect_thunk_start[];
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 6f6d763..8dbbeda 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -88,6 +88,7 @@ static const char *spectre_v2_strings[] = {
- 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
- 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
- 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ALL]			= "Mitigation: Enhanced IBRS",
- };
- 
- #undef pr_fmt
-@@ -240,6 +241,15 @@ static void __init spectre_v2_select_mitigation(void)
- 
- 	case SPECTRE_V2_CMD_FORCE:
- 	case SPECTRE_V2_CMD_AUTO:
-+		if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES)) {
-+			u64 ia32_cap = 0;
-+
-+			rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
-+			if (ia32_cap & ARCH_CAP_IBRS_ALL) {
-+				mode = SPECTRE_V2_IBRS_ALL;
-+				goto ibrs_all;
-+			}
-+		}
- 		if (IS_ENABLED(CONFIG_RETPOLINE))
- 			goto retpoline_auto;
- 		break;
-@@ -277,6 +287,7 @@ static void __init spectre_v2_select_mitigation(void)
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+diff --git a/drivers/video/fbdev/vermilion/vermilion.c b/drivers/video/fbdev/vermilion/vermilion.c
+index 6f8d444..5172fa5 100644
+--- a/drivers/video/fbdev/vermilion/vermilion.c
++++ b/drivers/video/fbdev/vermilion/vermilion.c
+@@ -651,7 +651,7 @@ static int vmlfb_check_var_locked(struct fb_var_screeninfo *var,
  	}
  
-+ ibrs_all:
- 	spectre_v2_enabled = mode;
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
-@@ -308,7 +319,7 @@ static void __init spectre_v2_select_mitigation(void)
- 	 * Retpoline means the kernel is safe because it has no indirect
- 	 * branches. But firmware isn't, so use IBRS to protect that.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+	if (mode != SPECTRE_V2_IBRS_ALL && boot_cpu_has(X86_FEATURE_IBRS)) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	pitch = ALIGN((var->xres * var->bits_per_pixel) >> 3, 0x40);
+-	mem = pitch * var->yres_virtual;
++	mem = (u64)pitch * var->yres_virtual;
+ 	if (mem > vinfo->vram_contig_size) {
+ 		return -ENOMEM;
  	}
 -- 
 2.7.4
