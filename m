@@ -1,58 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753987AbeBGMnL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 07:43:11 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:32835 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753648AbeBGMnK (ORCPT
+        id S1754038AbeBGMoa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 07:44:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38566 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753763AbeBGMo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 07:43:10 -0500
-X-UUID: ab031b8b815e4a17bdf73d274054570b-20180207
-Message-ID: <1518007386.23115.6.camel@mtkswgap22>
-Subject: Re: [PATCH 2/2] dt-bindings: PCI: MediaTek: Correct the
- interrupt-map properties
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>
-CC: <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-pci@vger.kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date: Wed, 7 Feb 2018 20:43:06 +0800
-In-Reply-To: <20180205060830.svkrwnn6wzuig7ns@rob-hp-laptop>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <9d247a4fba54ba90d07df32fd89a8bb2c8bdb0f9.1516961656.git.ryder.lee@mediatek.com>
-         <20180205060830.svkrwnn6wzuig7ns@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Feb 2018 07:44:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 406C2601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of
+ of_find_node_by_phandle()
+From: Chintan Pandya <cpandya@codeaurora.org>
+To: Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
+ <5b84a166-c71b-3a41-9e7f-a7624a8441f6@codeaurora.org>
+ <38cdcae5-ec0f-d1be-b024-1990d4387731@gmail.com>
+ <9e23d32f-05a0-ce8a-41f8-9a1a3d66be37@codeaurora.org>
+ <fd9f5f63-b08e-602e-1510-85a65889f550@gmail.com>
+ <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
+ <0db129ef-ffd8-96fe-46a7-55fb575272e3@gmail.com>
+ <0a178f4b-75fe-0564-7b0e-596f52fca1dc@codeaurora.org>
+Message-ID: <1768c791-7456-c1fe-578b-f6245e79746f@codeaurora.org>
+Date: Wed, 7 Feb 2018 18:14:23 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <0a178f4b-75fe-0564-7b0e-596f52fca1dc@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
-On Mon, 2018-02-05 at 00:08 -0600, Rob Herring wrote:
-> On Wed, Jan 31, 2018 at 03:41:50PM +0800, Ryder Lee wrote:
-> > Move the interrupt-map properties from the child nodes to the root node
-> > and update each entry accordingly.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  .../devicetree/bindings/pci/mediatek-pcie.txt      | 28 ++++++++++++----------
-> >  1 file changed, 15 insertions(+), 13 deletions(-)
+
+On 2/5/2018 5:53 PM, Chintan Pandya wrote:
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+>>
+>> My question was trying to determine whether the numbers reported above
+>> are for a debug configuration or a production configuration.
+> My reported numbers are from debug configuration.
+> 
+>> not a production configuration, I was requesting the numbers for a
+>> production configuration.
+> I'm working on it. But please expect some delay in my response for this. 
+> As I mentioned earlier, I need to work with few teams to get these numbers.
+> 
+> 
+>> show a significant boot time reduction from the patch then there is
+>> less justification for adding complexity to the existing code.  I
+>> prefer to use simpler data structures and algorithms __if__ extra
+>> complexity does not provide any advantage.  The balance between
+>> complexity and benefits is a core software engineering issue.
+>>
+> Ok
 
-Please ignore this patch as we think the original version is better than
-this.  Sorry for the inconvenience.
+Avg Kernel boot time comparison in production set up:
 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+[0] Base: 4519ms
+[1] 4115ms (~400ms improvement)
+[2] 4115ms (~400ms improvement)
+[3] 4177ms (~340ms improvement)
+
+Full data:
+[1] 1024 sized pre-populated cache
+ITR-1	ITR-2	ITR-3	ITR-4	Avg
+4115	4123	4124	4107	4115
+
+[2] Dynamic sized cache allocation/free
+ITR-1	ITR-2	ITR-3	ITR-4	Avg
+4122	4131	4106	4118	4115
+
+[3] Fixed 64 sized cache
+ITR-1	ITR-2	ITR-3	ITR-4	Avg
+4153	4186	4198	4181	4177
+
+
+[1] is my experimental patch and dirty enough to not get merged 
+anywhere. So, I will not push it.
+
+
+
+Chintan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
