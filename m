@@ -1,61 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932184AbeBGOtT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 09:49:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32918 "EHLO mx1.redhat.com"
+        id S1754455AbeBGOsu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 09:48:50 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32892 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932099AbeBGOsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 09:48:54 -0500
+        id S1754206AbeBGOss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 09:48:48 -0500
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 09/10] perf tools: Do not create kernel maps in sample__resolve
-Date: Wed,  7 Feb 2018 15:48:37 +0100
-Message-Id: <20180207144838.16823-10-jolsa@kernel.org>
+Subject: [PATCH 05/10] perf tools: Generalize machine__set_kernel_mmap function
+Date: Wed,  7 Feb 2018 15:48:33 +0100
+Message-Id: <20180207144838.16823-6-jolsa@kernel.org>
 In-Reply-To: <20180207144838.16823-1-jolsa@kernel.org>
 References: <20180207144838.16823-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no need for kernel maps to be allocated at this
-point - sample processing.
+So it could be called without event object, just with start
+and end values. It will be used in following patch.
 
-We search for kernel maps using the kernel map_groups in
-machine::kmaps which is static. If vmlinux maps for any
-reason still don't exist, the search correctly fails
-because they are not in the map group.
-
-Link: http://lkml.kernel.org/n/tip-f1swg55ooc3sihcvadgzkw1z@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-u4hu7m5fmwwsscy6ki70hhq6@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/event.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ tools/perf/util/machine.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 4644e751a3e3..f0a6cbd033cc 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1588,17 +1588,6 @@ int machine__resolve(struct machine *machine, struct addr_location *al,
- 		return -1;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index da85666f3a02..7563b750137d 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1260,15 +1260,15 @@ int machine__create_kernel_maps(struct machine *machine)
+ 	return 0;
+ }
  
- 	dump_printf(" ... thread: %s:%d\n", thread__comm_str(thread), thread->tid);
--	/*
--	 * Have we already created the kernel maps for this machine?
--	 *
--	 * This should have happened earlier, when we processed the kernel MMAP
--	 * events, but for older perf.data files there was no such thing, so do
--	 * it now.
--	 */
--	if (sample->cpumode == PERF_RECORD_MISC_KERNEL &&
--	    machine__kernel_map(machine) == NULL)
--		machine__create_kernel_maps(machine);
--
- 	thread__find_addr_map(thread, sample->cpumode, MAP__FUNCTION, sample->ip, al);
- 	dump_printf(" ...... dso: %s\n",
- 		    al->map ? al->map->dso->long_name :
+-static void machine__set_kernel_mmap_len(struct machine *machine,
+-					 union perf_event *event)
++static void machine__set_kernel_mmap(struct machine *machine,
++				     u64 start, u64 end)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < MAP__NR_TYPES; i++) {
+-		machine->vmlinux_maps[i]->start = event->mmap.start;
+-		machine->vmlinux_maps[i]->end   = (event->mmap.start +
+-						   event->mmap.len);
++		machine->vmlinux_maps[i]->start = start;
++		machine->vmlinux_maps[i]->end   = end;
++
+ 		/*
+ 		 * Be a bit paranoid here, some perf.data file came with
+ 		 * a zero sized synthesized MMAP event for the kernel.
+@@ -1373,7 +1373,8 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
+ 		if (strstr(kernel->long_name, "vmlinux"))
+ 			dso__set_short_name(kernel, "[kernel.vmlinux]", false);
+ 
+-		machine__set_kernel_mmap_len(machine, event);
++		machine__set_kernel_mmap(machine, event->mmap.start,
++					 event->mmap.start + event->mmap.len);
+ 
+ 		/*
+ 		 * Avoid using a zero address (kptr_restrict) for the ref reloc
 -- 
 2.13.6
