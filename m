@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754926AbeBGR2C (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:28:02 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41646 "EHLO ms.lwn.net"
+        id S1754945AbeBGR20 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:28:26 -0500
+Received: from ms.lwn.net ([45.79.88.28]:41640 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754843AbeBGR1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:27:04 -0500
+        id S1754833AbeBGR1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:27:03 -0500
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
         Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 5/8] docs: kernel-doc: Move STATE_BODY processing to a separate function
-Date: Wed,  7 Feb 2018 10:26:21 -0700
-Message-Id: <20180207172624.24555-6-corbet@lwn.net>
+Subject: [PATCH 4/8] docs: kernel-doc: Move STATE_NAME processing into its own function
+Date: Wed,  7 Feb 2018 10:26:20 -0700
+Message-Id: <20180207172624.24555-5-corbet@lwn.net>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180207172624.24555-1-corbet@lwn.net>
 References: <20180207172624.24555-1-corbet@lwn.net>
@@ -20,235 +20,173 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Also group the pseudo-global $leading_space variable with its peers.
+Move this code out of process_file() in the name of readability and
+maintainability.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/kernel-doc | 193 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 101 insertions(+), 92 deletions(-)
+ scripts/kernel-doc | 137 ++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 72 insertions(+), 65 deletions(-)
 
 diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index a27c7016f72d..a6a7bb46ea29 100755
+index 65150b7c8472..a27c7016f72d 100755
 --- a/scripts/kernel-doc
 +++ b/scripts/kernel-doc
-@@ -336,6 +336,7 @@ use constant {
- };
- my $state;
- my $in_doc_sect;
-+my $leading_space;
- 
- # Inline documentation state
- use constant {
-@@ -1865,12 +1866,110 @@ sub process_name($$) {
+@@ -1793,13 +1793,81 @@ sub process_normal() {
      }
  }
  
-+
 +#
-+# STATE_BODY and STATE_BODY_MAYBE: the bulk of a kerneldoc comment.
++# STATE_NAME: Looking for the "name - description" line
 +#
-+sub process_body($$) {
++sub process_name($$) {
 +    my $file = shift;
++    my $identifier;
++    my $descr;
 +
-+    if (/$doc_sect/i) { # case insensitive for supported section names
-+	$newsection = $1;
-+	$newcontents = $2;
++    if (/$doc_block/o) {
++	$state = STATE_DOCBLOCK;
++	$contents = "";
++	$new_start_line = $. + 1;
 +
-+	# map the supported section names to the canonical names
-+	if ($newsection =~ m/^description$/i) {
-+	    $newsection = $section_default;
-+	} elsif ($newsection =~ m/^context$/i) {
-+	    $newsection = $section_context;
-+	} elsif ($newsection =~ m/^returns?$/i) {
-+	    $newsection = $section_return;
-+	} elsif ($newsection =~ m/^\@return$/) {
-+	    # special: @return is a section, not a param description
-+	    $newsection = $section_return;
++	if ( $1 eq "" ) {
++	    $section = $section_intro;
++	} else {
++	    $section = $1;
 +	}
-+
-+	if (($contents ne "") && ($contents ne "\n")) {
-+	    if (!$in_doc_sect && $verbose) {
-+		print STDERR "${file}:$.: warning: contents before sections\n";
-+		++$warnings;
-+	    }
-+	    dump_section($file, $section, $contents);
-+	    $section = $section_default;
++    }
++    elsif (/$doc_decl/o) {
++	$identifier = $1;
++	if (/\s*([\w\s]+?)\s*-/) {
++	    $identifier = $1;
 +	}
-+
-+	$in_doc_sect = 1;
+ 
 +	$state = STATE_BODY;
-+	$contents = $newcontents;
-+	$new_start_line = $.;
-+	while (substr($contents, 0, 1) eq " ") {
-+	    $contents = substr($contents, 1);
++	# if there's no @param blocks need to set up default section
++	# here
++	$contents = "";
++	$section = $section_default;
++	$new_start_line = $. + 1;
++	if (/-(.*)/) {
++	    # strip leading/trailing/multiple spaces
++	    $descr= $1;
++	    $descr =~ s/^\s*//;
++	    $descr =~ s/\s*$//;
++	    $descr =~ s/\s+/ /g;
++	    $declaration_purpose = $descr;
++	    $state = STATE_BODY_MAYBE;
++	} else {
++	    $declaration_purpose = "";
 +	}
-+	if ($contents ne "") {
-+	    $contents .= "\n";
-+	}
-+	$section = $newsection;
-+	$leading_space = undef;
-+    } elsif (/$doc_end/) {
-+	if (($contents ne "") && ($contents ne "\n")) {
-+	    dump_section($file, $section, $contents);
-+	    $section = $section_default;
-+	    $contents = "";
-+	}
-+	# look for doc_com + <text> + doc_end:
-+	if ($_ =~ m'\s*\*\s*[a-zA-Z_0-9:\.]+\*/') {
-+	    print STDERR "${file}:$.: warning: suspicious ending line: $_";
++
++	if (($declaration_purpose eq "") && $verbose) {
++	    print STDERR "${file}:$.: warning: missing initial short description on line:\n";
++	    print STDERR $_;
 +	    ++$warnings;
 +	}
 +
-+	$prototype = "";
-+	$state = STATE_PROTO;
-+	$brcount = 0;
-+    } elsif (/$doc_content/) {
-+	# miguel-style comment kludge, look for blank lines after
-+	# @parameter line to signify start of description
-+	if ($1 eq "") {
-+	    if ($section =~ m/^@/ || $section eq $section_context) {
-+		dump_section($file, $section, $contents);
-+		$section = $section_default;
-+		$contents = "";
-+		$new_start_line = $.;
-+	    } else {
-+		$contents .= "\n";
-+	    }
-+	    $state = STATE_BODY;
-+	} elsif ($state == STATE_BODY_MAYBE) {
-+	    # Continued declaration purpose
-+	    chomp($declaration_purpose);
-+	    $declaration_purpose .= " " . $1;
-+	    $declaration_purpose =~ s/\s+/ /g;
++	if ($identifier =~ m/^struct/) {
++	    $decl_type = 'struct';
++	} elsif ($identifier =~ m/^union/) {
++	    $decl_type = 'union';
++	} elsif ($identifier =~ m/^enum/) {
++	    $decl_type = 'enum';
++	} elsif ($identifier =~ m/^typedef/) {
++	    $decl_type = 'typedef';
 +	} else {
-+	    my $cont = $1;
-+	    if ($section =~ m/^@/ || $section eq $section_context) {
-+		if (!defined $leading_space) {
-+		    if ($cont =~ m/^(\s+)/) {
-+			$leading_space = $1;
-+		    } else {
-+			$leading_space = "";
-+		    }
-+		}
-+		$cont =~ s/^$leading_space//;
-+	    }
-+	    $contents .= $cont . "\n";
++	    $decl_type = 'function';
++	}
++
++	if ($verbose) {
++	    print STDERR "${file}:$.: info: Scanning doc for $identifier\n";
 +	}
 +    } else {
-+	# i dont know - bad line?  ignore.
-+	print STDERR "${file}:$.: warning: bad line: $_";
++	print STDERR "${file}:$.: warning: Cannot understand $_ on line $.",
++	    " - I thought it was a doc line\n";
 +	++$warnings;
++	$state = STATE_NORMAL;
 +    }
 +}
-+
-+
+ 
  sub process_file($) {
      my $file;
+-    my $identifier;
      my $func;
+-    my $descr;
      my $initial_section_counter = $section_counter;
      my ($orig_file) = @_;
--    my $leading_space;
- 
-     $file = map_filename($orig_file);
- 
-@@ -1894,97 +1993,7 @@ sub process_file($) {
- 	} elsif ($state == STATE_NAME) {
- 	    process_name($file, $_);
- 	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
--	    if (/$doc_sect/i) { # case insensitive for supported section names
--		$newsection = $1;
--		$newcontents = $2;
+     my $leading_space;
+@@ -1823,69 +1891,8 @@ sub process_file($) {
+         while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
+ 	if ($state == STATE_NORMAL) {
+ 	    process_normal();
+-	} elsif ($state == STATE_NAME) {# this line is the function name (always)
+-	    if (/$doc_block/o) {
+-		$state = STATE_DOCBLOCK;
+-		$contents = "";
+-                $new_start_line = $. + 1;
 -
--		# map the supported section names to the canonical names
--		if ($newsection =~ m/^description$/i) {
--		    $newsection = $section_default;
--		} elsif ($newsection =~ m/^context$/i) {
--		    $newsection = $section_context;
--		} elsif ($newsection =~ m/^returns?$/i) {
--		    $newsection = $section_return;
--		} elsif ($newsection =~ m/^\@return$/) {
--		    # special: @return is a section, not a param description
--		    $newsection = $section_return;
--		}
--
--		if (($contents ne "") && ($contents ne "\n")) {
--		    if (!$in_doc_sect && $verbose) {
--			print STDERR "${file}:$.: warning: contents before sections\n";
--			++$warnings;
--		    }
--		    dump_section($file, $section, $contents);
--		    $section = $section_default;
--		}
--
--		$in_doc_sect = 1;
--		$state = STATE_BODY;
--		$contents = $newcontents;
--                $new_start_line = $.;
--		while (substr($contents, 0, 1) eq " ") {
--		    $contents = substr($contents, 1);
--		}
--		if ($contents ne "") {
--		    $contents .= "\n";
--		}
--		$section = $newsection;
--		$leading_space = undef;
--	    } elsif (/$doc_end/) {
--		if (($contents ne "") && ($contents ne "\n")) {
--		    dump_section($file, $section, $contents);
--		    $section = $section_default;
--		    $contents = "";
--		}
--		# look for doc_com + <text> + doc_end:
--		if ($_ =~ m'\s*\*\s*[a-zA-Z_0-9:\.]+\*/') {
--		    print STDERR "${file}:$.: warning: suspicious ending line: $_";
--		    ++$warnings;
--		}
--
--		$prototype = "";
--		$state = STATE_PROTO;
--		$brcount = 0;
--#		print STDERR "end of doc comment, looking for prototype\n";
--	    } elsif (/$doc_content/) {
--		# miguel-style comment kludge, look for blank lines after
--		# @parameter line to signify start of description
--		if ($1 eq "") {
--		    if ($section =~ m/^@/ || $section eq $section_context) {
--			dump_section($file, $section, $contents);
--			$section = $section_default;
--			$contents = "";
--                        $new_start_line = $.;
--		    } else {
--			$contents .= "\n";
--		    }
--		    $state = STATE_BODY;
--		} elsif ($state == STATE_BODY_MAYBE) {
--		    # Continued declaration purpose
--		    chomp($declaration_purpose);
--		    $declaration_purpose .= " " . $1;
--		    $declaration_purpose =~ s/\s+/ /g;
+-		if ( $1 eq "" ) {
+-			$section = $section_intro;
 -		} else {
--		    my $cont = $1;
--		    if ($section =~ m/^@/ || $section eq $section_context) {
--			if (!defined $leading_space) {
--			    if ($cont =~ m/^(\s+)/) {
--				$leading_space = $1;
--			    } else {
--				$leading_space = "";
--			    }
--			}
+-			$section = $1;
+-		}
+-	    }
+-	    elsif (/$doc_decl/o) {
+-		$identifier = $1;
+-		if (/\s*([\w\s]+?)\s*-/) {
+-		    $identifier = $1;
+-		}
 -
--			$cont =~ s/^$leading_space//;
--		    }
--		    $contents .= $cont . "\n";
+-		$state = STATE_BODY;
+-		# if there's no @param blocks need to set up default section
+-		# here
+-		$contents = "";
+-		$section = $section_default;
+-		$new_start_line = $. + 1;
+-		if (/-(.*)/) {
+-		    # strip leading/trailing/multiple spaces
+-		    $descr= $1;
+-		    $descr =~ s/^\s*//;
+-		    $descr =~ s/\s*$//;
+-		    $descr =~ s/\s+/ /g;
+-		    $declaration_purpose = $descr;
+-		    $state = STATE_BODY_MAYBE;
+-		} else {
+-		    $declaration_purpose = "";
+-		}
+-
+-		if (($declaration_purpose eq "") && $verbose) {
+-			print STDERR "${file}:$.: warning: missing initial short description on line:\n";
+-			print STDERR $_;
+-			++$warnings;
+-		}
+-
+-		if ($identifier =~ m/^struct/) {
+-		    $decl_type = 'struct';
+-		} elsif ($identifier =~ m/^union/) {
+-		    $decl_type = 'union';
+-		} elsif ($identifier =~ m/^enum/) {
+-		    $decl_type = 'enum';
+-		} elsif ($identifier =~ m/^typedef/) {
+-		    $decl_type = 'typedef';
+-		} else {
+-		    $decl_type = 'function';
+-		}
+-
+-		if ($verbose) {
+-		    print STDERR "${file}:$.: info: Scanning doc for $identifier\n";
 -		}
 -	    } else {
--		# i dont know - bad line?  ignore.
--		print STDERR "${file}:$.: warning: bad line: $_";
+-		print STDERR "${file}:$.: warning: Cannot understand $_ on line $.",
+-		" - I thought it was a doc line\n";
 -		++$warnings;
+-		$state = STATE_NORMAL;
 -	    }
-+	    process_body($file, $_);
- 	} elsif ($state == STATE_INLINE) { # scanning for inline parameters
- 	    # First line (state 1) needs to be a @parameter
- 	    if ($inline_doc_state == STATE_INLINE_NAME && /$doc_inline_sect/o) {
++	} elsif ($state == STATE_NAME) {
++	    process_name($file, $_);
+ 	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
+ 	    if (/$doc_sect/i) { # case insensitive for supported section names
+ 		$newsection = $1;
 -- 
 2.14.3
