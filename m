@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754781AbeBGU2W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:28:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35372 "EHLO mail.kernel.org"
+        id S1754734AbeBGU2U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:28:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754129AbeBGU2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754127AbeBGU2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 15:28:16 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F24AE21738
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F260D2179F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180207202814.738058149@goodmis.org>
+Message-Id: <20180207202402.253089656@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 07 Feb 2018 15:24:03 -0500
+Date: Wed, 07 Feb 2018 15:24:02 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -26,614 +26,279 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 01/20 v2] tracing: Add function based events
-References: <20180207202402.253089656@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0001-tracing-Add-function-based-events.patch
+Subject: [PATCH 00/20 v2] tracing: Dynamically created function based events
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+At Kernel Summit back in October, we tried to bring up trace markers, which
+would be nops within the kernel proper, that would allow modules to hook
+arbitrary trace events to them. The reaction to this proposal was less than
+favorable. We were told that we were trying to make a work around for a
+problem, and not solving it. The problem in our minds is the notion of a
+"stable trace event".
 
-Add an interface that hooks to the ftrace function tracing to create events
-based on functions. A new file is created in the tracefs file system called
-function_events. Writing a function name followed by an empty set of
-parenthesis will create an event that uses ftrace function callbacks to
-record the data. Currently the function takes no arguments, but that will
-soon change. The next step is to have arguments within those parenthesis,
-and an event created to show it.
+There are maintainers that do not want trace events, or more trace events in
+their subsystems. This is due to the fact that trace events post an
+interface to user space, and this interface could become required by some
+tool. This may cause the trace event to become stable where it must not
+break the tool, and thus prevent the code from changing.
 
-Thanks to Jiri Olsa for pointing out the missing mutex protection in
-create_function_event().
+Or, the trace event may just have to add padding for fields that tools
+may require. The "success" field of the sched_wakeup trace event is one such
+instance. There is no more "success" variable, but tools may fail if it were
+to go away, so a "1" is simply added to the trace event wasting ring buffer
+real estate.
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- include/linux/trace_events.h      |   2 +
- kernel/trace/Kconfig              |  12 +
- kernel/trace/Makefile             |   1 +
- kernel/trace/trace.h              |  11 +
- kernel/trace/trace_event_ftrace.c | 473 ++++++++++++++++++++++++++++++++++++++
- kernel/trace/trace_probe.h        |  11 -
- 6 files changed, 499 insertions(+), 11 deletions(-)
+I talked with Linus about this, and he told me that we already have these
+markers in the kernel. They are from the mcount/__fentry__ used by function
+tracing. Have the trace events be created by these, and see if this will
+satisfy most areas that want trace events.
+
+I decided to implement this idea, and here's the patch set.
+
+Introducing "function based events". These are created dynamically by a
+tracefs file called "function_events". By writing a pseudo prototype into
+this file, you create an event.
+
+ # mount -t tracefs nodev /sys/kernel/tracing
+ # cd /sys/kernel/tracing
+ # echo 'do_IRQ(symbol ip[16] | x64[6] irq_stack[16])' > function_events
+ # cat events/functions/do_IRQ/format
+name: do_IRQ
+ID: 1399
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:unsigned long __parent_ip;	offset:8;	size:8;	signed:0;
+	field:unsigned long __ip;	offset:16;	size:8;	signed:0;
+	field:symbol ip;	offset:24;	size:8;	signed:0;
+	field:x64 irq_stack[6];	offset:32;	size:48;	signed:0;
+
+print fmt: "%pS->%pS(ip=%pS, irq_stack=%llx:%llx:%llx:%llx:%llx:%llx)", REC->__ip, REC->__parent_ip,
+REC->ip, REC->irq_stack[0], REC->irq_stack[1], REC->irq_stack[2], REC->irq_stack[3], REC->irq_stack[4],
+REC->irq_stack[5]
+
+ # echo 1 > events/functions/do_IRQ/enable
+ # cat trace
+          <idle>-0     [003] d..3  3647.049344: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.049433: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.049672: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.325709: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.325929: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.325993: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.387571: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.387791: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+          <idle>-0     [003] d..3  3647.387874: ret_from_intr->do_IRQ(ip=cpuidle_enter_state+0xb1/0x330, irq_stack=ffffffff81665db1,10,246,ffffc900006c3e80,18,ffff88011eae9b40)
+
+And this is much more powerful than just this. We can show strings, and
+index off of structures into other structures.
+
+  # echo '__vfs_read(symbol read+40[0]+16)' > function_events
+
+  # echo 1 > events/functions/__vfs_read/enable
+  # cat trace
+         sshd-1343  [005] ...2   199.734752: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
+         bash-1344  [003] ...2   199.734822: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
+         sshd-1343  [005] ...2   199.734835: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
+ avahi-daemon-910   [003] ...2   200.136740: vfs_read->__vfs_read(read=          (null))
+ avahi-daemon-910   [003] ...2   200.136750: vfs_read->__vfs_read(read=          (null))
+
+And even read user space:
+
+  # echo 'SyS_openat(int dfd, string path, x32 flags, x16 mode)' > function_events
+  # echo 1 > events/functions/enable
+  # grep task_fork /proc/kallsyms 
+ffffffff810d5a60 t task_fork_fair
+ffffffff810dfc30 t task_fork_dl
+  # cat trace
+            grep-1820  [000] ...2  3926.107603: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, path=/proc/kallsyms, flags=100, mode=0)
+
+These are fully functional events. That is, they work with ftrace,
+trace-cmd, perf, histograms, triggers, and eBPF.
+
+What's next? I need to rewrite the function graph tracer, and be able to add
+dynamic events on function return.
+
+I made this work with x86 with a simple function that only returns
+6 function parameters for x86_64 and 3 for x86_32. But this could easily
+be extended.
+
+Cheers!
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+ftrace/dynamic-ftrace-events
+
+Head SHA1: acf9c4dc5a0662e4ee1fe60e08099b11ae3cffc5
+
+
+Steven Rostedt (VMware) (20):
+      tracing: Add function based events
+      tracing: Add documentation for function based events
+      tracing: Add simple arguments to function based events
+      tracing/x86: Add arch_get_func_args() function
+      tracing: Add hex print for dynamic ftrace based events
+      tracing: Add indirect offset to args of ftrace based events
+      tracing: Add dereferencing multiple fields per arg
+      tracing: Add "unsigned" to function based events
+      tracing: Add indexing of arguments for function based events
+      tracing: Make func_type enums for easier comparing of arg types
+      tracing: Add symbol type to function based events
+      tracing: Add accessing direct address from function based events
+      tracing: Add array type to function based events
+      tracing: Have char arrays be strings for function based events
+      tracing: Add string type for dynamic strings in function based events
+      tracing: Add NULL to skip args for function based events
+      tracing: Add indirect to indirect access for function based events
+      tracing/perf: Allow perf to use function based events
+      tracing: Add error messages for failed writes to function_events
+      tracing: Add argument error message too many args for function based events
+
+----
+ Documentation/trace/function-based-events.rst |  426 +++++++
+ arch/x86/kernel/ftrace.c                      |   28 +
+ include/linux/trace_events.h                  |    2 +
+ kernel/trace/Kconfig                          |   12 +
+ kernel/trace/Makefile                         |    1 +
+ kernel/trace/trace.h                          |   11 +
+ kernel/trace/trace_event_ftrace.c             | 1653 +++++++++++++++++++++++++
+ kernel/trace/trace_probe.h                    |   11 -
+ 8 files changed, 2133 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/trace/function-based-events.rst
  create mode 100644 kernel/trace/trace_event_ftrace.c
+----
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index af44e7c2d577..6a3600009c48 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -226,6 +226,7 @@ enum {
- 	TRACE_EVENT_FL_TRACEPOINT_BIT,
- 	TRACE_EVENT_FL_KPROBE_BIT,
- 	TRACE_EVENT_FL_UPROBE_BIT,
-+	TRACE_EVENT_FL_FUNC_BIT,
- };
- 
- /*
-@@ -246,6 +247,7 @@ enum {
- 	TRACE_EVENT_FL_TRACEPOINT	= (1 << TRACE_EVENT_FL_TRACEPOINT_BIT),
- 	TRACE_EVENT_FL_KPROBE		= (1 << TRACE_EVENT_FL_KPROBE_BIT),
- 	TRACE_EVENT_FL_UPROBE		= (1 << TRACE_EVENT_FL_UPROBE_BIT),
-+	TRACE_EVENT_FL_FUNC		= (1 << TRACE_EVENT_FL_FUNC_BIT),
- };
- 
- #define TRACE_EVENT_FL_UKPROBE (TRACE_EVENT_FL_KPROBE | TRACE_EVENT_FL_UPROBE)
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index f54dc62b599c..2118838946cd 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -442,6 +442,18 @@ config BLK_DEV_IO_TRACE
- 
- 	  If unsure, say N.
- 
-+config FUNCTION_EVENTS
-+	depends on DYNAMIC_FTRACE_WITH_REGS
-+	bool "Enable function based events"
-+	select TRACING
-+	help
-+	 This creates a file function_events in the tracefs file system.
-+	 Writing function names into this file will create an event
-+	 that can be enabled like any other event, but will be at the
-+	 location of the specified function.
-+
-+	 See Documentation/trace/function_events.txt for more details.
-+
- config KPROBE_EVENTS
- 	depends on KPROBES
- 	depends on HAVE_REGS_AND_STACK_ACCESS_API
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index e2538c7638d4..00f6d69652c0 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -55,6 +55,7 @@ obj-$(CONFIG_FTRACE_SYSCALLS) += trace_syscalls.o
- ifeq ($(CONFIG_PERF_EVENTS),y)
- obj-$(CONFIG_EVENT_TRACING) += trace_event_perf.o
- endif
-+obj-$(CONFIG_FUNCTION_EVENTS) += trace_event_ftrace.o
- obj-$(CONFIG_EVENT_TRACING) += trace_events_filter.o
- obj-$(CONFIG_EVENT_TRACING) += trace_events_trigger.o
- obj-$(CONFIG_HIST_TRIGGERS) += trace_events_hist.o
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 2a6d0325a761..67928b53dc06 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1814,4 +1814,15 @@ static inline void trace_event_eval_update(struct trace_eval_map **map, int len)
- 
- extern struct trace_iterator *tracepoint_print_iter;
- 
-+#undef DEFINE_FIELD
-+#define DEFINE_FIELD(type, item, name, is_signed)			\
-+	do {								\
-+		ret = trace_define_field(event_call, #type, name,	\
-+					 offsetof(typeof(field), item),	\
-+					 sizeof(field.item), is_signed, \
-+					 FILTER_OTHER);			\
-+		if (ret)						\
-+			return ret;					\
-+	} while (0)
-+
- #endif /* _LINUX_KERNEL_TRACE_H */
+Changes since v1:
+
+ The below diff, as well as two patches to supply error messages feedback.
+
+ (Note, I still need to add that quick guide)
+
+
 diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-new file mode 100644
-index 000000000000..fb8e03e663e8
---- /dev/null
+index b145639eac45..303a56c3339a 100644
+--- a/kernel/trace/trace_event_ftrace.c
 +++ b/kernel/trace/trace_event_ftrace.c
-@@ -0,0 +1,473 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * trace events created on top of ftrace (functions).
-+ *
-+ * Copyright (C) 2018 VMware Inc, Steven Rostedt.
-+ */
+@@ -150,6 +150,8 @@ struct func_string {
+ static struct func_string __percpu *str_buffer;
+ static int nr_strings;
+ 
++static int max_args __read_mostly = -1;
 +
-+#include <linux/ctype.h>
-+#include <linux/slab.h>
-+
-+#include "trace.h"
-+
-+#define FUNC_EVENT_SYSTEM "functions"
-+#define WRITE_BUFSIZE  4096
-+
-+struct func_event {
-+	struct list_head		list;
-+	char				*func;
-+	struct trace_event_class	class;
-+	struct trace_event_call		call;
-+	struct ftrace_ops		ops;
-+	struct list_head		files;
-+};
-+
-+struct func_file {
-+	struct list_head		list;
-+	struct trace_event_file		*file;
-+};
-+
-+struct func_event_hdr {
-+	struct trace_entry	ent;
-+	unsigned long		ip;
-+	unsigned long		parent_ip;
-+};
-+
-+static DEFINE_MUTEX(func_event_mutex);
-+static LIST_HEAD(func_events);
-+
-+enum func_states {
-+	FUNC_STATE_INIT,
-+	FUNC_STATE_FUNC,
-+	FUNC_STATE_PARAM,
-+	FUNC_STATE_END,
-+	FUNC_STATE_ERROR,
-+};
-+
-+static void free_func_event(struct func_event *func_event)
-+{
-+	if (!func_event)
-+		return;
-+
-+	ftrace_free_filter(&func_event->ops);
-+	kfree(func_event->call.print_fmt);
-+	kfree(func_event->func);
-+	kfree(func_event);
-+}
-+
-+static char *next_token(char **ptr, char *last)
-+{
-+	char *arg;
-+	char *str;
-+
-+	if (!*ptr)
-+		return NULL;
-+
-+	arg = *ptr;
-+
-+	if (*last)
-+		*arg = *last;
-+
-+	if (!*arg)
-+		return NULL;
-+
-+	for (str = arg; *str; str++) {
-+		if (*str == '(' ||
-+		    *str == ')')
-+			break;
-+	}
-+	if (*str) {
-+		if (str == arg)
-+			str++;
-+		*last = *str;
-+		*str = 0;
-+		*ptr = str;
-+		return arg;
-+	}
-+
-+	*last = 0;
-+	*ptr = NULL;
-+	return arg;
-+}
-+
-+static enum func_states
-+process_event(struct func_event *fevent, const char *token, enum func_states state)
-+{
-+	switch (state) {
-+	case FUNC_STATE_INIT:
-+		if (!isalpha(token[0]))
-+			return FUNC_STATE_ERROR;
-+		/* Do not allow wild cards */
-+		if (strstr(token, "*") || strstr(token, "?"))
-+			return FUNC_STATE_ERROR;
-+		fevent->func = kstrdup(token, GFP_KERNEL);
-+		if (!fevent->func)
-+			return FUNC_STATE_ERROR;
-+		return FUNC_STATE_FUNC;
-+
-+	case FUNC_STATE_FUNC:
-+		if (token[0] != '(')
-+			return FUNC_STATE_ERROR;
-+		return FUNC_STATE_PARAM;
-+
-+	case FUNC_STATE_PARAM:
-+		if (token[0] != ')')
-+			return FUNC_STATE_ERROR;
-+		return FUNC_STATE_END;
-+
-+	default:
-+		return FUNC_STATE_ERROR;
-+	}
-+}
-+
-+static void func_event_trace(struct trace_event_file *trace_file,
-+			     struct func_event *func_event,
-+			     unsigned long ip, unsigned long parent_ip,
-+			     struct pt_regs *pt_regs)
-+{
-+	struct func_event_hdr *entry;
-+	struct trace_event_call *call = &func_event->call;
-+	struct ring_buffer_event *event;
-+	struct ring_buffer *buffer;
-+	unsigned long irq_flags;
-+	int size;
-+	int pc;
-+
-+	if (trace_trigger_soft_disabled(trace_file))
-+		return;
-+
-+	local_save_flags(irq_flags);
-+	pc = preempt_count();
-+
-+	size = sizeof(*entry);
-+
-+	event = trace_event_buffer_lock_reserve(&buffer, trace_file,
-+						call->event.type,
-+						size, irq_flags, pc);
-+	if (!event)
-+		return;
-+
-+	entry = ring_buffer_event_data(event);
-+	entry->ip = ip;
-+	entry->parent_ip = parent_ip;
-+
-+	event_trigger_unlock_commit_regs(trace_file, buffer, event,
-+					 entry, irq_flags, pc, pt_regs);
-+}
-+
-+static void
-+func_event_call(unsigned long ip, unsigned long parent_ip,
-+		    struct ftrace_ops *op, struct pt_regs *pt_regs)
-+{
-+	struct func_event *func_event;
-+	struct func_file *ff;
-+
-+	func_event = container_of(op, struct func_event, ops);
-+
+ /**
+  * arch_get_func_args - retrieve function arguments via pt_regs
+  * @regs: The registers at the moment the function is called
+@@ -269,7 +271,7 @@ static int add_arg(struct func_event *fevent, int ftype, int unsign)
+ 	struct func_arg *arg;
+ 
+ 	/* Make sure the arch can support this many args */
+-	if (fevent->arg_cnt >= arch_get_func_args(NULL, 0, 0, NULL))
++	if (fevent->arg_cnt >= max_args)
+ 		return -EINVAL;
+ 
+ 	arg = kzalloc(sizeof(*arg), GFP_KERNEL);
+@@ -332,7 +334,7 @@ static int update_arg_arg(struct func_event *fevent)
+ 		return -EINVAL;
+ 
+ 	/* Make sure the arch can support this many args */
+-	if (fevent->arg_cnt >= arch_get_func_args(NULL, 0, 0, NULL))
++	if (fevent->arg_cnt >= max_args)
+ 		return -EINVAL;
+ 
+ 	arg->arg = fevent->arg_cnt;
+@@ -879,14 +881,18 @@ func_event_call(unsigned long ip, unsigned long parent_ip,
+ 
+ 	func_event = container_of(op, struct func_event, ops);
+ 
+-	rcu_read_lock_sched();
 +	if (WARN_ON_ONCE(rcu_irq_enter_disabled()))
 +		return;
 +	rcu_irq_enter_irqson();
 +	rcu_read_lock_sched_notrace();
-+	list_for_each_entry_rcu(ff, &func_event->files, list) {
-+		func_event_trace(ff->file, func_event, ip, parent_ip, pt_regs);
-+	}
+ 	list_for_each_entry_rcu(ff, &func_event->files, list) {
+ 		if (ff->file)
+ 			func_event_trace(ff->file, func_event, ip, parent_ip, pt_regs);
+ 		else
+ 			func_event_perf(func_event, ip, parent_ip, pt_regs);
+ 	}
+-	rcu_read_unlock_sched();
 +	rcu_read_unlock_sched_notrace();
 +	rcu_irq_exit_irqson();
-+}
-+
-+
-+
-+static enum print_line_t
-+func_event_print(struct trace_iterator *iter, int flags,
-+		 struct trace_event *event)
-+{
-+	struct func_event_hdr *entry;
-+	struct trace_seq *s = &iter->seq;
-+
-+	entry = (struct func_event_hdr *)iter->ent;
-+
-+	trace_seq_printf(s, "%ps->%ps()",
-+			 (void *)entry->parent_ip, (void *)entry->ip);
-+	trace_seq_putc(s, '\n');
-+	return trace_handle_return(s);
-+}
-+
-+static struct trace_event_functions func_event_funcs = {
-+	.trace		= func_event_print,
-+};
-+
-+static int func_event_define_fields(struct trace_event_call *event_call)
-+{
-+	struct func_event_hdr field;
-+	int ret;
-+
-+	DEFINE_FIELD(unsigned long, ip, "__parent_ip", 0);
-+	DEFINE_FIELD(unsigned long, parent_ip, "__ip", 0);
-+
-+	return 0;
-+}
-+
-+static int enable_func_event(struct func_event *func_event,
-+			     struct trace_event_file *file)
-+{
-+	struct func_file *ff;
-+	int ret;
-+
-+	ff = kmalloc(sizeof(*ff), GFP_KERNEL);
-+	if (!ff)
-+		return -ENOMEM;
-+
-+	if (list_empty(&func_event->files)) {
-+		ret = register_ftrace_function(&func_event->ops);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	ff->file = file;
-+	/* Make sure file is visible before adding to the list */
-+	smp_wmb();
-+	list_add_rcu(&ff->list, &func_event->files);
-+	return 0;
-+}
-+
-+static int disable_func_event(struct func_event *func_event,
-+			      struct trace_event_file *file)
-+{
-+	struct list_head *p, *n;
-+	struct func_file *ff;
-+
-+
-+	list_for_each_safe(p, n, &func_event->files) {
-+		ff = container_of(p, struct func_file, list);
-+		if (ff->file == file) {
-+			list_del_rcu(&ff->list);
-+			break;
-+		}
-+		ff = NULL;
-+	}
-+
-+	if (!ff)
-+		return -ENODEV;
-+
-+	if (list_empty(&func_event->files))
-+		unregister_ftrace_function(&func_event->ops);
-+
-+	synchronize_sched();
-+	kfree(ff);
-+
-+	return 0;
-+}
-+
-+static int func_event_register(struct trace_event_call *event,
-+			       enum trace_reg type, void *data)
-+{
-+	struct func_event *func_event = event->data;
-+	struct trace_event_file *file = data;
-+
-+	switch (type) {
-+	case TRACE_REG_REGISTER:
-+		return enable_func_event(func_event, file);
-+	case TRACE_REG_UNREGISTER:
-+		return disable_func_event(func_event, file);
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int set_print_fmt(struct func_event *func_event)
-+{
-+	const char *fmt = "\"%pS->%pS()\", REC->__ip, REC->__parent_ip";
-+
-+	func_event->call.print_fmt = kstrdup(fmt, GFP_KERNEL);
-+	if (!func_event->call.print_fmt)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static int func_event_create(struct func_event *func_event)
-+{
-+	struct trace_event_call *call = &func_event->call;
-+	int ret;
-+
-+	func_event->class.system = FUNC_EVENT_SYSTEM;
-+	call->class = &func_event->class;
-+	INIT_LIST_HEAD(&call->class->fields);
-+	call->event.funcs = &func_event_funcs;
-+	call->name = func_event->func;
-+	call->class->define_fields = func_event_define_fields;
-+	ret = set_print_fmt(func_event);
-+	if (ret < 0)
-+		return ret;
-+	ret = register_trace_event(&call->event);
-+	if (ret < 0)
-+		return ret;
-+	call->flags = TRACE_EVENT_FL_FUNC;
-+	call->class->reg = func_event_register;
-+	call->data = func_event;
-+	ret = trace_add_event_call(call);
-+	if (ret) {
-+		pr_info("Failed to register func event: %s\n", func_event->func);
-+		unregister_trace_event(&call->event);
-+	}
-+	return ret;
-+}
-+
-+static int create_function_event(int argc, char **argv)
-+{
+ }
+ 
+ #define FMT_SIZE	8
+@@ -1245,7 +1251,7 @@ static int func_event_create(struct func_event *func_event)
+ 
+ static int create_function_event(int argc, char **argv)
+ {
+-	struct func_event *func_event, *fe;
 +	struct func_event *func_event;
-+	enum func_states state = FUNC_STATE_INIT;
-+	char *token;
-+	char *ptr;
-+	char last;
-+	int ret = -EINVAL;
-+	int i;
-+
-+	func_event = kzalloc(sizeof(*func_event), GFP_KERNEL);
-+	if (!func_event)
-+		return -ENOMEM;
-+
-+	INIT_LIST_HEAD(&func_event->files);
-+	func_event->ops.func = func_event_call;
-+	func_event->ops.flags = FTRACE_OPS_FL_SAVE_REGS;
-+
-+	for (i = 0; i < argc; i++) {
-+		ptr = argv[i];
-+		last = 0;
-+		for (token = next_token(&ptr, &last); token;
-+		     token = next_token(&ptr, &last)) {
-+			state = process_event(func_event, token, state);
-+			if (state == FUNC_STATE_ERROR)
-+				goto fail;
-+		}
-+	}
-+	if (state != FUNC_STATE_END)
-+		goto fail;
-+
-+	ret = ftrace_set_filter(&func_event->ops, func_event->func,
-+				strlen(func_event->func), 0);
-+	if (ret < 0)
-+		goto fail;
-+
-+	ret = func_event_create(func_event);
-+	if (ret < 0)
-+		goto fail;
-+
-+	mutex_lock(&func_event_mutex);
-+	list_add_tail(&func_event->list, &func_events);
-+	mutex_unlock(&func_event_mutex);
-+	return 0;
-+ fail:
-+	free_func_event(func_event);
-+	return ret;
-+}
-+
-+static void *func_event_seq_start(struct seq_file *m, loff_t *pos)
-+{
-+	mutex_lock(&func_event_mutex);
-+	return seq_list_start(&func_events, *pos);
-+}
-+
-+static void *func_event_seq_next(struct seq_file *m, void *v, loff_t *pos)
-+{
-+	return seq_list_next(v, &func_events, pos);
-+}
-+
-+static void func_event_seq_stop(struct seq_file *m, void *v)
-+{
-+	mutex_unlock(&func_event_mutex);
-+}
-+
-+static int func_event_seq_show(struct seq_file *m, void *v)
-+{
-+	struct func_event *func_event = v;
-+
-+	seq_printf(m, "%s()\n", func_event->func);
-+
-+	return 0;
-+}
-+
-+static const struct seq_operations func_event_seq_op = {
-+	.start  = func_event_seq_start,
-+	.next   = func_event_seq_next,
-+	.stop   = func_event_seq_stop,
-+	.show   = func_event_seq_show
-+};
-+
-+static int release_all_func_events(void)
-+{
-+	struct func_event *func_event, *n;
-+	int ret = 0;
-+
-+	mutex_lock(&func_event_mutex);
-+	list_for_each_entry_safe(func_event, n, &func_events, list) {
-+		ret = trace_remove_event_call(&func_event->call);
-+		if (ret < 0)
-+			break;
-+		list_del(&func_event->list);
-+		free_func_event(func_event);
-+	}
-+	mutex_unlock(&func_event_mutex);
-+	return ret;
-+}
-+
-+static int func_event_open(struct inode *inode, struct file *file)
-+{
-+	int ret;
-+
-+	if ((file->f_mode & FMODE_WRITE) && (file->f_flags & O_TRUNC)) {
-+		ret = release_all_func_events();
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return seq_open(file, &func_event_seq_op);
-+}
-+
-+static ssize_t
-+func_event_write(struct file *filp, const char __user *ubuf,
-+		 size_t cnt, loff_t *ppos)
-+{
-+	return trace_parse_run_command(filp, ubuf, cnt, ppos,
-+				       create_function_event);
-+}
-+
-+static const struct file_operations func_event_fops = {
-+	.open		= func_event_open,
-+	.read           = seq_read,
-+	.llseek         = seq_lseek,
-+	.release        = seq_release,
-+	.write		= func_event_write,
-+};
-+
-+void create_function_event_file(struct dentry *d_tracer)
-+{
-+	struct dentry *d;
-+
-+	d = trace_create_file("function_events", 0644, d_tracer, NULL,
-+			      &func_event_fops);
-+	WARN(!d, "Failed to create function_events file");
-+}
-+
-+/* Make a tracefs interface for controlling probe points */
-+static __init int init_func_events(void)
-+{
-+	struct dentry *d_tracer;
-+	struct dentry *entry;
-+
-+	d_tracer = tracing_init_dentry();
-+	if (IS_ERR(d_tracer))
-+		return 0;
-+
-+	entry = trace_create_file("function_events", 0644, d_tracer, NULL,
-+				  &func_event_fops);
-+
-+	/* Event list interface */
-+	if (!entry)
-+		pr_warn("Could not create tracefs 'function-events' entry\n");
-+
-+	return 0;
-+}
-+fs_initcall(init_func_events);
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index fb66e3eaa192..a51caafd993b 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -49,17 +49,6 @@
- #define FIELD_STRING_RETIP	"__probe_ret_ip"
- #define FIELD_STRING_FUNC	"__probe_func"
+ 	enum func_states state = FUNC_STATE_INIT;
+ 	char *token;
+ 	char *ptr;
+@@ -1275,12 +1281,6 @@ static int create_function_event(int argc, char **argv)
+ 	if (state != FUNC_STATE_END)
+ 		goto fail;
  
--#undef DEFINE_FIELD
--#define DEFINE_FIELD(type, item, name, is_signed)			\
--	do {								\
--		ret = trace_define_field(event_call, #type, name,	\
--					 offsetof(typeof(field), item),	\
--					 sizeof(field.item), is_signed, \
--					 FILTER_OTHER);			\
--		if (ret)						\
--			return ret;					\
--	} while (0)
+-	ret = -EALREADY;
+-	list_for_each_entry(fe, &func_events, list) {
+-		if (strcmp(fe->func, func_event->func) == 0)
+-			goto fail;
+-	}
 -
+ 	ret = ftrace_set_filter(&func_event->ops, func_event->func,
+ 				strlen(func_event->func), 0);
+ 	if (ret < 0)
+@@ -1290,7 +1290,9 @@ static int create_function_event(int argc, char **argv)
+ 	if (ret < 0)
+ 		goto fail;
  
- /* Flags for trace_probe */
- #define TP_FLAG_TRACE		1
--- 
-2.15.1
++	mutex_lock(&func_event_mutex);
+ 	list_add_tail(&func_event->list, &func_events);
++	mutex_unlock(&func_event_mutex);
+ 	return 0;
+  fail:
+ 	free_func_event(func_event);
+@@ -1349,7 +1351,7 @@ static int func_event_seq_show(struct seq_file *m, void *v)
+ 			if (redirect->index)
+ 				seq_printf(m, "+%ld", redirect->index);
+ 			if (redirect->indirect)
+-				seq_printf(m, "[%d]",
++				seq_printf(m, "[%ld]",
+ 					   (redirect->indirect ^ INDIRECT_FLAG) / arg->size);
+ 		}
+ 	}
+@@ -1368,22 +1370,27 @@ static const struct seq_operations func_event_seq_op = {
+ static int release_all_func_events(void)
+ {
+ 	struct func_event *func_event, *n;
+-	int ret;
++	int ret = 0;
+ 
++	mutex_lock(&func_event_mutex);
+ 	list_for_each_entry_safe(func_event, n, &func_events, list) {
+ 		ret = trace_remove_event_call(&func_event->call);
+ 		if (ret < 0)
+-			return ret;
++			break;
+ 		list_del(&func_event->list);
+ 		free_func_event(func_event);
+ 	}
+-	return 0;
++	mutex_unlock(&func_event_mutex);
++	return ret;
+ }
+ 
+ static int func_event_open(struct inode *inode, struct file *file)
+ {
+ 	int ret;
+ 
++	if (max_args < 0)
++		max_args = arch_get_func_args(NULL, 0, 0, NULL);
++
+ 	if ((file->f_mode & FMODE_WRITE) && (file->f_flags & O_TRUNC)) {
+ 		ret = release_all_func_events();
+ 		if (ret < 0)
