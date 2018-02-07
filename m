@@ -1,91 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeBGGl4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 01:41:56 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45876 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750768AbeBGGly (ORCPT
+        id S1753581AbeBGGmc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 01:42:32 -0500
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:35894 "EHLO
+        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753430AbeBGGm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 01:41:54 -0500
-X-Google-Smtp-Source: AH8x22551XumqEnwEq5/dRXhSl1GAPdZZjcq6EK4te7ZvLhA2bnvijxRSQlL0vzrP7vwNuNxX5j14U5wrGjMC+6pJTU=
+        Wed, 7 Feb 2018 01:42:29 -0500
+X-Google-Smtp-Source: AH8x224UEpx2OAVHeg0bpGcKQ9SqGG0deDTjh7F3f09VlJqU3ZeZFxd5p6eeD18B48svF3++Byyn6qCfqmCvy1SoWfI=
 MIME-Version: 1.0
-In-Reply-To: <1517984706-47244-1-git-send-email-wanpengli@tencent.com>
-References: <1517984706-47244-1-git-send-email-wanpengli@tencent.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 7 Feb 2018 07:41:33 +0100
-Message-ID: <CACT4Y+ZEah_QHsq1VJ8jFGFG6UPkHMojhEDyaSWyVHvxxJfg_A@mail.gmail.com>
-Subject: Re: [PATCH] KVM: X86: Fix SMRAM accessing even if VM is shutdown
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, KVM list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+In-Reply-To: <089e082d13a0cf25ed05648bf8b3@google.com>
+References: <089e082d13a0cf25ed05648bf8b3@google.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Tue, 6 Feb 2018 22:42:08 -0800
+Message-ID: <CAM_iQpVdGUjGr1KdVb6AJ7m4OnKLXHpwiorr_T=TKwCskrZKsA@mail.gmail.com>
+Subject: Re: WARNING: proc registration bug in clusterip_tg_check
+To: syzbot <syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com>
+Cc: coreteam@netfilter.org, David Miller <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w176g3kx004798
 
-On Wed, Feb 7, 2018 at 7:25 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On Tue, Feb 6, 2018 at 6:27 AM, syzbot
+<syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com> wrote:
+> Hello,
 >
-> Reported by syzkaller:
+> syzbot hit the following crash on net-next commit
+> 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
+> Merge tag 'usercopy-v4.16-rc1' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
 >
->    WARNING: CPU: 6 PID: 2434 at arch/x86/kvm/vmx.c:6660 handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
->    CPU: 6 PID: 2434 Comm: repro_test Not tainted 4.15.0+ #4
->    RIP: 0010:handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
->    Call Trace:
->     vmx_handle_exit+0xbd/0xe20 [kvm_intel]
->     kvm_arch_vcpu_ioctl_run+0xdaf/0x1d50 [kvm]
->     kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
->     do_vfs_ioctl+0xa4/0x6a0
->     SyS_ioctl+0x79/0x90
->     entry_SYSCALL_64_fastpath+0x25/0x9c
+> So far this crash happened 5 times on net-next, upstream.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
 >
-> The syzkaller creates a former thread to issue KVM_SMI ioctl, and then creates
-> a latter thread to mmap and operate on the same vCPU, rsm emulation will not be
-> executed since there is no something like seabios which implements smi handler
-> when running syzkaller directly. This triggers a race condition when running
-> the testcase with multiple threads. Sometimes one thread exit w/ SHUTDOWN
-> reason, another thread mmaps and operates on the same vCPU, it continues to
-> use CS=0x30000, IP=0x8000 to access the address of SMI handler which results
-> in the above ept misconfig. This patch fixes it by bailing out immediately if
-> the vCPU is marked EXIT_SHUTDOWN reason.
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
 >
-> Reported-by: Dmitry Vyukov <dvyukov@google.com>
+> x_tables: ip_tables: osf match: only valid for protocol 6
+> x_tables: ip_tables: osf match: only valid for protocol 6
+> x_tables: ip_tables: osf match: only valid for protocol 6
+> ------------[ cut here ]------------
+> proc_dir_entry 'ipt_CLUSTERIP/172.20.0.170' already registered
+> WARNING: CPU: 1 PID: 4152 at fs/proc/generic.c:330 proc_register+0x2a4/0x370
+> fs/proc/generic.c:329
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+> CPU: 1 PID: 4152 Comm: syzkaller851476 Not tainted 4.15.0+ #221
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  panic+0x1e4/0x41c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x211/0x2d0 lib/bug.c:184
+>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1097
+> RIP: 0010:proc_register+0x2a4/0x370 fs/proc/generic.c:329
+> RSP: 0018:ffff8801cbd6ee20 EFLAGS: 00010286
+> RAX: dffffc0000000008 RBX: ffff8801d2181038 RCX: ffffffff815a57ae
+> RDX: 0000000000000000 RSI: 1ffff100397add74 RDI: 1ffff100397add49
+> RBP: ffff8801cbd6ee70 R08: 1ffff100397add0b R09: 0000000000000000
+> R10: ffff8801cbd6ecd8 R11: 0000000000000000 R12: ffff8801b2bb1cc0
+> R13: dffffc0000000000 R14: ffff8801b0d8dbc8 R15: ffff8801b2bb1d81
+>  proc_create_data+0xf8/0x180 fs/proc/generic.c:494
+>  clusterip_config_init net/ipv4/netfilter/ipt_CLUSTERIP.c:250 [inline]
 
-This was reported by syzbot:
-https://groups.google.com/d/msg/syzkaller-bugs/6GrlY0UcDEk/aMShRKq3AwAJ
+I think there is probably a race condition between clusterip_config_entry_put()
+and clusterip_config_init(), after we release the spinlock, a new proc
+with the same IP could be created therefore triggers this warning....
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c1d9517cab094dae65e446c0c5b4de6c40f4dc58@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+I am not sure if it is enough to just move the proc_remove() under
+spinlock...
 
 
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c
+b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index 3a84a60f6b39..1ff72b87a066 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -107,12 +107,6 @@ clusterip_config_entry_put(struct net *net,
+struct clusterip_config *c)
+
+        local_bh_disable();
+        if (refcount_dec_and_lock(&c->entries, &cn->lock)) {
+-               list_del_rcu(&c->list);
+-               spin_unlock(&cn->lock);
+-               local_bh_enable();
+-
+-               unregister_netdevice_notifier(&c->notifier);
+-
+                /* In case anyone still accesses the file, the open/close
+                 * functions are also incrementing the refcount on their own,
+                 * so it's safe to remove the entry even if it's in use. */
+@@ -120,6 +114,12 @@ clusterip_config_entry_put(struct net *net,
+struct clusterip_config *c)
+                if (cn->procdir)
+                        proc_remove(c->pde);
+ #endif
++               list_del_rcu(&c->list);
++               spin_unlock(&cn->lock);
++               local_bh_enable();
++
++               unregister_netdevice_notifier(&c->notifier);
++
+                return;
+        }
+        local_bh_enable();
+
+
+>  clusterip_tg_check+0xf9c/0x16d0 net/ipv4/netfilter/ipt_CLUSTERIP.c:488
+>  xt_check_target+0x22c/0x7d0 net/netfilter/x_tables.c:850
+>  check_target net/ipv4/netfilter/ip_tables.c:513 [inline]
+>  find_check_entry.isra.8+0x8c8/0xcb0 net/ipv4/netfilter/ip_tables.c:554
+>  translate_table+0xed1/0x1610 net/ipv4/netfilter/ip_tables.c:725
+>  do_replace net/ipv4/netfilter/ip_tables.c:1141 [inline]
+>  do_ipt_set_ctl+0x370/0x5f0 net/ipv4/netfilter/ip_tables.c:1675
+>  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+>  nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
+>  ip_setsockopt+0x97/0xa0 net/ipv4/ip_sockglue.c:1259
+>  sctp_setsockopt+0x2b6/0x61d0 net/sctp/socket.c:4104
+>  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2975
+>  SYSC_setsockopt net/socket.c:1849 [inline]
+>  SyS_setsockopt+0x189/0x360 net/socket.c:1828
+>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> RIP: 0033:0x446839
+> RSP: 002b:00007f0309d0fdb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000446839
+> RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000003
+> RBP: 00000000006dbc20 R08: 0000000000000348 R09: 0000000000000000
+> R10: 0000000020013c90 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffc7d53f79f R14: 00007f0309d109c0 R15: 0000000000000003
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
 > ---
->  arch/x86/kvm/x86.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
 >
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 786cd00..445e702 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7458,6 +7458,11 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
->                 goto out;
->         }
->
-> +       if (unlikely(vcpu->run->exit_reason == KVM_EXIT_SHUTDOWN)) {
-> +               r = -EINVAL;
-> +               goto out;
-> +       }
-> +
->         if (vcpu->run->kvm_dirty_regs) {
->                 r = sync_regs(vcpu);
->                 if (r != 0)
-> --
-> 2.7.4
->
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
