@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932180AbeBGRgQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:36:16 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1072 "EHLO
+        id S1754221AbeBGRhI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:37:08 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37632 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753390AbeBGRgN (ORCPT
+        by vger.kernel.org with ESMTP id S1754061AbeBGRgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:36:13 -0500
+        Wed, 7 Feb 2018 12:36:14 -0500
 From: Hugues Fruchet <hugues.fruchet@st.com>
 To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
@@ -17,12 +17,10 @@ CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
         Yannick Fertre <yannick.fertre@st.com>,
         Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH v1 2/3] media: stm32-dcmi: remove redundant clear of interrupt flags
-Date: Wed, 7 Feb 2018 18:35:35 +0100
-Message-ID: <1518024936-2455-3-git-send-email-hugues.fruchet@st.com>
+Subject: [PATCH v1 0/3] STM32 DCMI redundant code & trace cleanup
+Date: Wed, 7 Feb 2018 18:35:33 +0100
+Message-ID: <1518024936-2455-1-git-send-email-hugues.fruchet@st.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518024936-2455-1-git-send-email-hugues.fruchet@st.com>
-References: <1518024936-2455-1-git-send-email-hugues.fruchet@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.201.23.73]
@@ -32,25 +30,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is already cleared in dcmi_irq_callback().
+Remove some redundant code and fix/enhance some
+error trace points.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
----
- drivers/media/platform/stm32/stm32-dcmi.c | 2 --
- 1 file changed, 2 deletions(-)
+Hugues Fruchet (3):
+  media: stm32-dcmi: remove redundant capture enable
+  media: stm32-dcmi: remove redundant clear of interrupt flags
+  media: stm32-dcmi: improve error trace points
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index abc79d8..dfab867 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -385,8 +385,6 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
- 		dcmi->errors_count++;
- 		dmaengine_terminate_all(dcmi->dma_chan);
- 
--		reg_set(dcmi->regs, DCMI_ICR, IT_FRAME | IT_OVR | IT_ERR);
--
- 		dev_dbg(dcmi->dev, "Restarting capture after DCMI error\n");
- 
- 		if (dcmi_start_capture(dcmi)) {
+ drivers/media/platform/stm32/stm32-dcmi.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
+
 -- 
 1.9.1
