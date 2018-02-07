@@ -1,102 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754177AbeBGOBx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 09:01:53 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54881 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753767AbeBGOBw (ORCPT
+        id S1754215AbeBGOCS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 09:02:18 -0500
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:36487 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753763AbeBGOCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 09:01:52 -0500
-X-Google-Smtp-Source: AH8x224OQX4ZtKRezwKLvSWxZBlr+NZC/2YorxoNcREi3CJkL36zcTUWhB9wNYX0t2L4+rj4HFxqpg==
-Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Vladislav Valtchev <vladislav.valtchev@gmail.com>
-Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, zsun@redhat.com
-References: <20180204032014.6962-1-sztsian@gmail.com>
- <20180204032014.6962-2-sztsian@gmail.com>
- <20180206181807.2d35393e@gandalf.local.home>
-From: Zamir SUN <sztsian@gmail.com>
-Message-ID: <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
-Date: Wed, 7 Feb 2018 22:01:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180206181807.2d35393e@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 7 Feb 2018 09:02:17 -0500
+X-Google-Smtp-Source: AH8x224O+85FMO0OTGrmv3IC3EjzEnpvvhFX6duZ9UQ8eE5JXJZeXVZH679avisoejQnJlN7LIzx9w==
+Message-ID: <1518012133.13585.13.camel@redhat.com>
+Subject: Re: [PATCH] x86/microcode/intel: print previous microcode revision
+ during early update
+From: Stanislav Kozina <skozina@redhat.com>
+To: Borislav Petkov <bp@alien8.de>, Petr Oros <poros@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 07 Feb 2018 15:02:13 +0100
+In-Reply-To: <20180126144918.7jiaezmdhjsiman5@pd.tnic>
+References: <20180126103451.16863-1-poros@redhat.com>
+         <20180126104109.slxxoq4vkqytqjxd@pd.tnic>
+         <1516967135.2801.1.camel@redhat.com>
+         <20180126115800.bvqrzik2f3hmmiah@pd.tnic>
+         <1516974600.2801.10.camel@redhat.com>
+         <20180126144918.7jiaezmdhjsiman5@pd.tnic>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.2 (3.26.2-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Borislav,
 
-
-On 02/07/2018 07:18 AM, Steven Rostedt wrote:
-> On Sun,  4 Feb 2018 11:20:13 +0800
-> sztsian@gmail.com wrote:
+On Fri, 2018-01-26 at 15:49 +0100, Borislav Petkov wrote:
+> On Fri, Jan 26, 2018 at 02:50:00PM +0100, Petr Oros wrote:
+> > But what in production? Edit boot params, restart server, grep
+> > /proc/cpuinfo and
+> > restart again? Why i can not read it just from dmesg?
 > 
->> From: Zamir SUN <sztsian@gmail.com>
->>
->> The current detection for swig will cause output to be
->> /usr/bin/swig
->> y
->> So this will never be equal to y. With this patch, the swig path is
->> removed from output, so the detection can work as expected.
->>
->> Fixes 3bf187a43b7e6302592552ecbc294e5820249687
+> Because you don't need the previous revision.
 > 
-> Hi Zamir,
+> You only *happen* to need it now but that is being addressed too with
+> the blacklisting. And when you have broken microcode, it will say:
+
+Although Spectre might be the most visible CPU issue, it's not the only
+one. What if some issue causes failure during early microcode update?
+What if the issue triggers only on update from a certain microcode
+version? We should be transparent about what microcode version we
+update from and to.
+
+The double reboot with "dis_ucode_ldr" argument requires to schedule a
+full system reboot just to figure out what version has been provided by
+the system firmware.
+
+> +               pr_warn("Intel Spectre v2 broken microcode detected;
+> disabling SPEC_CTRL\n");
 > 
-> Actually, a fix was already sent to me:
+> and if you have microcode which doesn't have IBRS, there won't be
+> "spec_ctrl" in /proc/cpuinfo.
 > 
->  http://lkml.kernel.org/r/20171220180748.17273-18-vladislav.valtchev@gmail.com
-> 
-> I'm working on add that one.
-> 
+> I don't want people to start paying attention to microcode
+> revision numbers with the gazillion different revisions and
+> family/model/steppings out there and the crazy confusion that will
+> ensue
+> from this.
 
-Thanks for the heads-up! I did not see that before.
+The current microcode version is already printed in the dmesg. Many
+people do care what revision they are running and what provided this
+revision. It is the most important information on triaging CPU issues,
+especially if anything goes awry.
 
-While just a note for this, in Fedora 27:
+I would appreciate if you could pull this patch in.
 
-$ if command -v swig; then echo 1; else echo 0; fi
-/usr/bin/swig
-1
-
-Actually this test has the same problem as of `which swig` - When swig
-exists, the var SWIG_DEFINED will not be 1 (as shown above).
-
-I see Vladislav is already on this thread. I hope this can be fixed
-before merging the patch set.
-
-
-> Thanks!
-> 
-> -- Steve
-> 
->  
->>
->> Signed-off-by: Zamir SUN (Red Hat) <sztsian@gmail.com>
->> ---
->>  Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Makefile b/Makefile
->> index a5d2c38..7c0d1a6 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -105,7 +105,7 @@ PYTHON_GUI	:= ctracecmd.so ctracecmdgui.so
->>  PYTHON_VERS ?= python
->>  
->>  # Can build python?
->> -ifeq ($(shell sh -c "pkg-config --cflags $(PYTHON_VERS) > /dev/null 2>&1 && which swig && echo y"), y)
->> +ifeq ($(shell sh -c "pkg-config --cflags $(PYTHON_VERS) > /dev/null 2>&1 && which swig > /dev/null && echo y"), y)
->>  	PYTHON_PLUGINS := plugin_python.so
->>  	BUILD_PYTHON := $(PYTHON) $(PYTHON_PLUGINS)
->>  	PYTHON_SO_INSTALL := ctracecmd.install
-> 
-
--- 
-Zamir SUN
-Fedora user
-GPG : 1D86 6D4A 49CE 4BBD 72CF FCF5 D856 6E11 F2A0 525E
+Thank you,
+-Stanislav
