@@ -1,92 +1,136 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x224JxE+MelY+KdLp8B95PXddtZlaeF7cfzTTqU0WoxnpvdilgGC7Rs95/8LS+wz3VWsmLaRv
-ARC-Seal: i=1; a=rsa-sha256; t=1519423934; cv=none;
+Return-Path: <prarit@redhat.com>
+X-Google-Smtp-Source: AH8x226Y3Q9qrp1hs5Nh6LgOBTUz9eaKxQSICMlibUfwkzUjVeQvp6o55UF8g9VOR1lzTirrf9Ts
+ARC-Seal: i=1; a=rsa-sha256; t=1518047368; cv=none;
         d=google.com; s=arc-20160816;
-        b=0IjteP2mEKKet1ackfKttXRKGPp3xqzkx4emvs0U0mXYi6CSbeDnbzrLwV+hSPuRDP
-         ZYEeUfablvihZbhvD5+uC0IaUzrhguNO1jxlr94faHeq98j80qlUDtwBp8UMNrfglDUy
-         mghLAeo0zId0F3nyAyACMZjXZ0S0fNvs5hWOODGQwh6RUPfeOgJrLVpir0389VqTjtEW
-         Tmt3l2OGlUEiYXU2Q56W8b157ah+qj2g8s2Iylx9x1vLdjS5+xNkQftReUEtBJl9S50j
-         FDts3bwsSBKMpl3bj3GA3Ng7spOP01jLD5YsBcTxf59/6OFjk1YOQ+eVjEBtgYxsQw3K
-         CJBg==
+        b=LxnNkjg1vVAH0O9I2q5n4v5J0xRCWReBmmJG4xTObIp7bA8572NOPyaZpZYCSuOdln
+         HvWFYis+nvUVwsYr52AjzjTbmLvehrGLJHy0BZIFCOAdzZaZBl0peIZDGKDfYOEmIZWz
+         L/UgZaq9iFdKdNPk4hNbcZXpNaqgMBUNHqsA1T+m0axqDHs9KTZw7xQq5J3hnPWcAEvc
+         qB4nR3jvCbtPSmTfPMFNlwBJrmipP0g6wHFZcvrRpgQBejP2CfNyyNWtT/f357hVZmGo
+         3pOS9LoKQSwZb3ges6Av0Nqw1KG/mQlPoYnqP6Uygfugke6zIrJjniYAu/k0SA0N/DH0
+         ZkBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:references:in-reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=ORvtkP1+2/NoXDRvxEdeng3uyo+1MIzo5Z2OeMraJUE=;
-        b=07+tU5xVRbIbig2EpPWbaj36CuWsuvozU7c8YLCwWNzN163xUyqoRSZqEcB4P9WD+a
-         6Q4vz9+/8+jktiGJEYdQtuOwiY4wYW3mVU/rjqkhMTOzxTgFVqCKA2lxtFyAQjX1wpbZ
-         nK7MqV3DE5kzgPeNoghQmM2GOiw304a1UrbO7fP4g+KE/NKk29pZbdfhi5lYnuK8iC4W
-         iF54rQ1EL7ukmwmi5VVEPget/8hTsz+ra52N/XQc1JUGf4tWHjFjm7oAoD0bkhVrPIlx
-         ERgu9RsLnVrn58ege7i8Pd3ebzCQYU/31KFhrsElZiaVFMoaYlCow6iHnfGcTW6eBvdi
-         Ac6w==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=6XYV+u3XBsQC5Hbr2v1siuE6XY6pnpF1DayvYE0OIQ8=;
+        b=xCbh1MmIffdMimSc0VQ4vwI5ghCQ2wvMZl9g1DJjk2sGc22ekUb3R7zd0Uemk3dXre
+         xhFwd95Od3ZHgmnb7r+Ns3XZSeP83f1swM/DTZTSkTLMm+TkL5ON8pLyiT56bVZT7ECN
+         onphhDezUQmjvUhl9/CQ0g0YHsbcP0SxmNyPd3MfwhlA1rAIesFFees14oB/GtSCvwDi
+         NAeRluqfW2sS4geuo7LZbt9pOU262/HpOJZ4MJHgqY1gFaZVrzN6bIRsnVH6NfgAtqlW
+         9qcRVBCOLNHN2/0wupVfHNrKceRjwbRxYwDvrCQI2azmmK+256ykLitBoif84IbXN6VH
+         WZZw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       spf=pass (google.com: domain of prarit@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=prarit@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752133AbeBWWMM (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 23 Feb 2018 17:12:12 -0500
-Received: from osg.samsung.com ([64.30.133.232]:46417 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751955AbeBWWMK (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 23 Feb 2018 17:12:10 -0500
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
-From: Shuah Khan <shuahkh@osg.samsung.com>
-To: shuah@kernel.org, dvhart@infradead.org, tbird20d@gmail.com
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH 4/5] selftests: size call ksft_print_header() to print TAP header
-Date: Fri, 23 Feb 2018 15:11:39 -0700
-Message-Id: <181e4860e7f2b2dc8e4074e76d00cc99662c1fa1.1519423341.git.shuahkh@osg.samsung.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1519423340.git.shuahkh@osg.samsung.com>
-References: <cover.1519423340.git.shuahkh@osg.samsung.com>
-In-Reply-To: <cover.1519423340.git.shuahkh@osg.samsung.com>
-References: <cover.1519423340.git.shuahkh@osg.samsung.com>
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       spf=pass (google.com: domain of prarit@redhat.com designates 209.132.183.28 as permitted sender) smtp.mailfrom=prarit@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Prarit Bhargava <prarit@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Prarit Bhargava <prarit@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Juergen Gross <jgross@suse.com>,
+	Dou Liyang <douly.fnst@cn.fujitsu.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Andi Kleen <ak@linux.intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH] x86/xen: Calculate __max_logical_packages on PV domains
+Date: Wed,  7 Feb 2018 18:49:23 -0500
+Message-Id: <20180207234923.13544-1-prarit@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593231471136984453?=
-X-GMAIL-MSGID: =?utf-8?q?1593231471136984453?=
+X-GMAIL-THRID: =?utf-8?q?1591788037595473599?=
+X-GMAIL-MSGID: =?utf-8?q?1591788037595473599?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Call ksft_print_header() to print TAP header. This change helps
-prevent nested TAP headers when the test is run from run_tests
-and from script generated by emit_tests as in both of these cases
-KSFT_TAP_LEVEL will be set and ksft_print_header() will suppress
-the nested TAP header from size test.
+The kernel panics on PV domains because native_smp_cpus_done() is
+only called for HVM domains.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Calculate __max_logical_packages for PV domains.
+
+Fixes: b4c0a7326f5d ("x86/smpboot: Fix __max_logical_packages estimate")
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Tested-and-reported-by: Simon Gaiser <simon@invisiblethingslab.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: xen-devel@lists.xenproject.org
 ---
- tools/testing/selftests/size/get_size.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/smp.h |  1 +
+ arch/x86/kernel/smpboot.c  | 10 ++++++++--
+ arch/x86/xen/smp.c         |  2 ++
+ 3 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/size/get_size.c b/tools/testing/selftests/size/get_size.c
-index d4b59ab979a0..1280b09266f0 100644
---- a/tools/testing/selftests/size/get_size.c
-+++ b/tools/testing/selftests/size/get_size.c
-@@ -23,6 +23,8 @@
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index 461f53d27708..a4189762b266 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -129,6 +129,7 @@ static inline void arch_send_call_function_ipi_mask(const struct cpumask *mask)
+ void cpu_disable_common(void);
+ void native_smp_prepare_boot_cpu(void);
+ void native_smp_prepare_cpus(unsigned int max_cpus);
++void calculate_max_logical_packages(void);
+ void native_smp_cpus_done(unsigned int max_cpus);
+ void common_cpu_up(unsigned int cpunum, struct task_struct *tidle);
+ int native_cpu_up(unsigned int cpunum, struct task_struct *tidle);
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 6f27facbaa9b..767573b7f2db 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1281,11 +1281,10 @@ void __init native_smp_prepare_boot_cpu(void)
+ 	cpu_set_state_online(me);
+ }
  
- #include <sys/sysinfo.h>
- #include <unistd.h>
-+#include <stdio.h>
-+#include "../kselftest.h"
+-void __init native_smp_cpus_done(unsigned int max_cpus)
++void __init calculate_max_logical_packages(void)
+ {
+ 	int ncpus;
  
- #define STDOUT_FILENO 1
+-	pr_debug("Boot done\n");
+ 	/*
+ 	 * Today neither Intel nor AMD support heterogenous systems so
+ 	 * extrapolate the boot cpu's data to all packages.
+@@ -1293,6 +1292,13 @@ void __init native_smp_cpus_done(unsigned int max_cpus)
+ 	ncpus = cpu_data(0).booted_cores * topology_max_smt_threads();
+ 	__max_logical_packages = DIV_ROUND_UP(nr_cpu_ids, ncpus);
+ 	pr_info("Max logical packages: %u\n", __max_logical_packages);
++}
++
++void __init native_smp_cpus_done(unsigned int max_cpus)
++{
++	pr_debug("Boot done\n");
++
++	calculate_max_logical_packages();
  
-@@ -77,7 +79,7 @@ void _start(void)
- 	unsigned long used;
- 	static const char *test_name = " get runtime memory use\n";
+ 	if (x86_has_numa_in_package)
+ 		set_sched_topology(x86_numa_in_package_topology);
+diff --git a/arch/x86/xen/smp.c b/arch/x86/xen/smp.c
+index 77c959cf81e7..7a43b2ae19f1 100644
+--- a/arch/x86/xen/smp.c
++++ b/arch/x86/xen/smp.c
+@@ -122,6 +122,8 @@ void __init xen_smp_cpus_done(unsigned int max_cpus)
  
--	print("TAP version 13\n");
-+	ksft_print_header();
- 	print("# Testing system size.\n");
+ 	if (xen_hvm_domain())
+ 		native_smp_cpus_done(max_cpus);
++	else
++		calculate_max_logical_packages();
  
- 	ccode = sysinfo(&info);
+ 	if (xen_have_vcpu_info_placement)
+ 		return;
 -- 
-2.14.1
-
+2.15.0.rc0.39.g2f0e14e64
