@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754809AbeBGVR2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:17:28 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:42103 "EHLO mail.siol.net"
+        id S1754838AbeBGVRb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 16:17:31 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:42163 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754397AbeBGVRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:17:25 -0500
+        id S1754764AbeBGVR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 16:17:28 -0500
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
         robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
@@ -16,96 +16,74 @@ Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v4 00/12] drm/sun4i: Add A83T HDMI support
-Date: Wed,  7 Feb 2018 22:17:01 +0100
-Message-Id: <20180207211713.3638-1-jernej.skrabec@siol.net>
+Subject: [PATCH v4 01/12] clk: sunxi-ng: Mask nkmp factors when setting register
+Date: Wed,  7 Feb 2018 22:17:02 +0100
+Message-Id: <20180207211713.3638-2-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
+References: <20180207211713.3638-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series implements support for A83T DW HDMI and PHY. Contrary to
-v1 series, this one is based on latest linux-next, since all needed patches
-were merged.
+Currently, if one of the factors isn't present, bit 0 gets always set to
+1. For example, A83T has NMP PLLs modelled as NKMP PLL without K. Since
+K is not specified, it's offset, width and shift is 0. Driver assumes
+that lowest value possible is 1, otherwise we would get division by 0.
+That situation causes that bit 0 is always set, which may change wanted
+clock rate.
 
-While exactly this combination of HDMI controller and PHY is not common in
-Allwinner SoCs, this patch series nevertheless makes groundwork for other
-SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H5.
+Fix that by masking every factor according to it's specified width.
+Factors with width set to 0 won't have any influence to final register
+value.
 
-Please take a look.
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-Best regards,
-Jernej
-
-Changes from v3:
-- Collected tags
-- drop patch for changing NKMP formula
-- add patch to use 64 bit intermediate variable for calculating NKMP
-  clock rate and thus preventing overflow in some cases
-- rework DT bindings patch according Rob's suggestions
-- move TMDS clock from PHY to controller driver, since documentation
-  suggest such relationship
-
-Changes from v2:
-- Collected ACKs and Review-by tags
-- patch for deinit callback was replaced with the one which gives control
-  of drvdata to driver
-- fixed meson driver (renamed reset function)
-- prototypes for newly exported functions in dw_hdmi.h were reordered
-
-Changes from v1:
-- Collected ACKs
-- Separated bindings for controller and PHY
-- Split driver into two parts - controller and PHY
-- HDMI PHY driver now uses regmap for writes
-- added defines for PHY registers and bits
-- updated DT entries to accomodate new bindings
-- removed already merged clock patch
-- reworked first clock patch according to comments
-- added new clock patch which changes NKMP formula
-- split TCON patch in two, one for quirk and one for new compatible
-- reworked patch which exports DW HDMI PHY functions:
-  - remove "gen2" from some function names
-  - removed parameter from dw_hdmi_phy_reset()
-  - added address parameter to dw_hdmi_phy_i2c_set_addr()
-- updated most of commit messages
-
-Jernej Skrabec (12):
-  clk: sunxi-ng: Mask nkmp factors when setting register
-  clk: sunxi-ng: Use u64 for calculation of nkmp rate
-  drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
-  drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
-  drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
-  dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
-  drm/sun4i: Add has_channel_0 TCON quirk
-  drm/sun4i: Add support for A83T second TCON
-  drm/sun4i: Add support for A83T second DE2 mixer
-  drm/sun4i: Implement A83T HDMI driver
-  ARM: dts: sun8i: a83t: Add HDMI display pipeline
-  ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
-
- .../bindings/display/sunxi/sun4i-drm.txt           | 195 ++++++++++++++-
- arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  25 ++
- arch/arm/boot/dts/sun8i-a83t.dtsi                  | 119 ++++++++-
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |  42 +++-
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  83 ++++---
- drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  13 +-
- drivers/gpu/drm/meson/meson_dw_hdmi.c              |  22 +-
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |  12 +-
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  13 +-
- drivers/gpu/drm/sun4i/Kconfig                      |   9 +
- drivers/gpu/drm/sun4i/Makefile                     |   4 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  46 +++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 196 +++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |  44 ++++
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 270 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  11 +
- include/drm/bridge/dw_hdmi.h                       |  24 +-
- 18 files changed, 1040 insertions(+), 89 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index e58c95787f94..a99068a08315 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -134,6 +134,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long parent_rate)
+ {
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
++	u32 n_mask, k_mask, m_mask, p_mask;
+ 	struct _ccu_nkmp _nkmp;
+ 	unsigned long flags;
+ 	u32 reg;
+@@ -149,18 +150,20 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
+ 
++	n_mask = GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
++	k_mask = GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
++	m_mask = GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
++	p_mask = GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
++
+ 	spin_lock_irqsave(nkmp->common.lock, flags);
+ 
+ 	reg = readl(nkmp->common.base + nkmp->common.reg);
+-	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
+-	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
+-	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+-	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+-
+-	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+-	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+-	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+-	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
++	reg &= ~(n_mask | k_mask | m_mask | p_mask);
++
++	reg |= ((_nkmp.n - nkmp->n.offset) << nkmp->n.shift) & n_mask;
++	reg |= ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) & k_mask;
++	reg |= ((_nkmp.m - nkmp->m.offset) << nkmp->m.shift) & m_mask;
++	reg |= (ilog2(_nkmp.p) << nkmp->p.shift) & p_mask;
+ 
+ 	writel(reg, nkmp->common.base + nkmp->common.reg);
+ 
 -- 
 2.16.1
