@@ -1,134 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754301AbeBGSDj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 13:03:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753951AbeBGSDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 13:03:37 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010442179F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x225LMxGOIqlp9/w7Mhohv6Eia41kfsvM0ovw9BAFDNel8ZNJpUd1WJS7nGbHzuDRO78wxSDKETgJfKIfxdqfcfc=
+        id S1754196AbeBGSGZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 13:06:25 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44554 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753965AbeBGSGX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 13:06:23 -0500
+X-Google-Smtp-Source: AH8x2254LI93nHRNGN8e3LBr5uOm132RSOjx8j3g+FUvqTbYvoVQJ4r8DqBkr5R7NVdR1QHbYuPdUw==
+Subject: Re: [PATCH BUGFIX V2 1/1] block, bfq: add requeue-request hook
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        alban.browaeys@gmail.com, ming.lei@redhat.com, ivan@ludios.org,
+        169364@studenti.unimore.it, holger@applied-asynchrony.com,
+        efault@gmx.de, Serena Ziviani <ziviani.serena@gmail.com>
+References: <20180207180050.5639-1-paolo.valente@linaro.org>
+ <20180207180050.5639-2-paolo.valente@linaro.org>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <4815ec99-8c92-4c3b-c6c0-33425a6f2bc6@kernel.dk>
+Date: Wed, 7 Feb 2018 11:06:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101
+ Thunderbird/58.0
 MIME-Version: 1.0
-In-Reply-To: <19273eb9-0c8c-cd2a-d100-f25f25e93234@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
- <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
- <20180205042238.64xjrrguls2drtrg@rob-hp-laptop> <19273eb9-0c8c-cd2a-d100-f25f25e93234@st.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 7 Feb 2018 12:03:15 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJFD5g46mkyEWo2uH_ogYLhnvBLQ0f6mU9DG_bdh9n7sA@mail.gmail.com>
-Message-ID: <CAL_JsqJFD5g46mkyEWo2uH_ogYLhnvBLQ0f6mU9DG_bdh9n7sA@mail.gmail.com>
-Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
- Controller (RCC) bindings
-To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
-        Olivier BIDEAU <olivier.bideau@st.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180207180050.5639-2-paolo.valente@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 1:01 AM, Gabriel FERNANDEZ
-<gabriel.fernandez@st.com> wrote:
-> Hi Rob,
->
-> Thanks for reviewing.
->
->
-> On 02/05/2018 07:09 AM, Rob Herring wrote:
->> On Fri, Feb 02, 2018 at 03:03:29PM +0100, gabriel.fernandez@st.com wrote:
->>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>>
->>> The RCC block is responsible of the management of the clock and reset
->>> generation for the complete circuit.
->>>
->>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->>> ---
->>>   .../devicetree/bindings/mfd/st,stm32-rcc.txt       | 85 ++++++++++++++++++++++
->>>   1 file changed, 85 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
->>> new file mode 100644
->>> index 0000000..28017a1
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
->>> @@ -0,0 +1,85 @@
->>> +STMicroelectronics STM32 Peripheral Reset Clock Controller
->>> +==========================================================
->>> +
->>> +The RCC IP is both a reset and a clock controller.
->>> +
->>> +Please also refer to reset.txt for common reset controller binding usage.
->>> +
->>> +Please also refer to clock-bindings.txt for common clock controller
->>> +binding usage.
->>> +
->>> +
->>> +Required properties:
->>> +- compatible: "simple-mfd", "syscon"
->>
->>> +- reg: should be register base and length as documented in the datasheet
->>> +
->>> +- Sub-nodes:
->>> +  - compatible: "st,stm32mp1-rcc-clk"
->>> +    - #clock-cells: 1, device nodes should specify the clock in their
->>> +      "clocks" property, containing a phandle to the clock device node,
->>> +      an index specifying the clock to use.
->>> +
->>> +  - compatible: "st,stm32mp1-rcc-rst"
->>> +    - #reset-cells: Shall be 1
->>> +
->>> +Example:
->>> +    rcc: rcc@50000000 {
->>> +            compatible = "syscon", "simple-mfd";
->>> +            reg = <0x50000000 0x1000>;
->>> +
->>> +            rcc_clk: rcc-clk@50000000 {
->>> +                    #clock-cells = <1>;
->>> +                    compatible = "st,stm32mp1-rcc-clk";
->>> +            };
->>> +
->>> +            rcc_rst: rcc-reset@50000000 {
->> You should not have the same unit-address twice.
->>
->> IMO, this should just be:
->>
->>       rcc: rcc@50000000 {
->>               compatible = "st-stm32mp1-rcc";
->>               reg = <0x50000000 0x1000>;
->>               #clock-cells = <1>;
->>               #reset-cells = <1>;
->>       };
->>
->> There's no reason a node can't provide more than 1 function.
-> RCC is an dedicated IP for clocks and resets, but also for power
-> management (patches will be sent later)
+On 2/7/18 11:00 AM, Paolo Valente wrote:
+> Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq via
+> RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a device
+> be re-inserted into the active I/O scheduler for that device. As a
+> consequence, I/O schedulers may get the same request inserted again,
+> even several times, without a finish_request invoked on that request
+> before each re-insertion.
+> 
+> This fact is the cause of the failure reported in [1]. For an I/O
+> scheduler, every re-insertion of the same re-prepared request is
+> equivalent to the insertion of a new request. For schedulers like
+> mq-deadline or kyber, this fact causes no harm. In contrast, it
+> confuses a stateful scheduler like BFQ, which keeps state for an I/O
+> request, until the finish_request hook is invoked on the request. In
+> particular, BFQ may get stuck, waiting forever for the number of
+> request dispatches, of the same request, to be balanced by an equal
+> number of request completions (while there will be one completion for
+> that request). In this state, BFQ may refuse to serve I/O requests
+> from other bfq_queues. The hang reported in [1] then follows.
+> 
+> However, the above re-prepared requests undergo a requeue, thus the
+> requeue_request hook of the active elevator is invoked for these
+> requests, if set. This commit then addresses the above issue by
+> properly implementing the hook requeue_request in BFQ.
+> 
+> [1] https://marc.info/?l=linux-block&m=151211117608676
+> 
+> Reported-by: Ivan Kozik <ivan@ludios.org>
+> Reported-by: Alban Browaeys <alban.browaeys@gmail.com>
+> Tested-by: Mike Galbraith <efault@gmx.de>
+> Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+> Signed-off-by: Serena Ziviani <ziviani.serena@gmail.com>
+> ---
+>  block/bfq-iosched.c | 109 ++++++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 84 insertions(+), 25 deletions(-)
+> 
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index 47e6ec7427c4..21e6b9e45638 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -3823,24 +3823,26 @@ static struct request *__bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>  		}
+>  
+>  		/*
+> -		 * We exploit the bfq_finish_request hook to decrement
+> -		 * rq_in_driver, but bfq_finish_request will not be
+> -		 * invoked on this request. So, to avoid unbalance,
+> -		 * just start this request, without incrementing
+> -		 * rq_in_driver. As a negative consequence,
+> -		 * rq_in_driver is deceptively lower than it should be
+> -		 * while this request is in service. This may cause
+> -		 * bfq_schedule_dispatch to be invoked uselessly.
+> +		 * We exploit the bfq_finish_requeue_request hook to
+> +		 * decrement rq_in_driver, but
+> +		 * bfq_finish_requeue_request will not be invoked on
+> +		 * this request. So, to avoid unbalance, just start
+> +		 * this request, without incrementing rq_in_driver. As
+> +		 * a negative consequence, rq_in_driver is deceptively
+> +		 * lower than it should be while this request is in
+> +		 * service. This may cause bfq_schedule_dispatch to be
+> +		 * invoked uselessly.
+>  		 *
+>  		 * As for implementing an exact solution, the
+> -		 * bfq_finish_request hook, if defined, is probably
+> -		 * invoked also on this request. So, by exploiting
+> -		 * this hook, we could 1) increment rq_in_driver here,
+> -		 * and 2) decrement it in bfq_finish_request. Such a
+> -		 * solution would let the value of the counter be
+> -		 * always accurate, but it would entail using an extra
+> -		 * interface function. This cost seems higher than the
+> -		 * benefit, being the frequency of non-elevator-private
+> +		 * bfq_finish_requeue_request hook, if defined, is
+> +		 * probably invoked also on this request. So, by
+> +		 * exploiting this hook, we could 1) increment
+> +		 * rq_in_driver here, and 2) decrement it in
+> +		 * bfq_finish_requeue_request. Such a solution would
+> +		 * let the value of the counter be always accurate,
+> +		 * but it would entail using an extra interface
+> +		 * function. This cost seems higher than the benefit,
+> +		 * being the frequency of non-elevator-private
+>  		 * requests very low.
+>  		 */
+>  		goto start_rq;
+> @@ -4515,6 +4517,8 @@ static inline void bfq_update_insert_stats(struct request_queue *q,
+>  					   unsigned int cmd_flags) {}
+>  #endif
+>  
+> +static void bfq_prepare_request(struct request *rq, struct bio *bio);
+> +
+>  static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+>  			       bool at_head)
+>  {
+> @@ -4541,6 +4545,20 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+>  		else
+>  			list_add_tail(&rq->queuelist, &bfqd->dispatch);
+>  	} else {
+> +		if (!bfqq) {
+> +			/*
+> +			 * This should never happen. Most likely rq is
+> +			 * a requeued regular request, being
+> +			 * re-inserted without being first
+> +			 * re-prepared. Do a prepare, to avoid
+> +			 * failure.
+> +			 */
+> +			pr_warn("Regular request associated with no queue");
+> +			WARN_ON(1);
+> +			bfq_prepare_request(rq, rq->bio);
+> +			bfqq = RQ_BFQQ(rq);
 
-If there's additional functions, they should be part of the binding
-now, not later. bindings should not unnecessarily evolve.
+This reads kind of strange. "Regular request not associated with a
+queue" would be cleaner. Do we really need the message? Why not just
+make the above:
 
-> Then i need to probe 3 drivers with same IP.
+	if (WARN_ON_ONCE(!bfqq)) {
+		bfq_prepare_request(rq, rq->bio);
+		bfqq = RQ_BFQQ(rq);
+	}
 
-Drivers and DT nodes don't have to be 1-1. A parent driver can create
-additional child devices.
+which is much simpler, kills the useless message, and avoids constant
+spew in case it does trigger.
 
-Also, looking at your existing bindings for RCC IP, it is done as I suggested.
-
-> It's also a way to avoid use of 'CLK_OF_DECLARE_DRIVER' and i need it to
-> probe the 3th driver.
-
-Sounds like a Linux problem, not a DT issue.
-
-Rob
+-- 
+Jens Axboe
