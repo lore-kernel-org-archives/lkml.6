@@ -1,82 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754077AbeBGNMT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:12:19 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:44056 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753497AbeBGNMS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:12:18 -0500
-X-Google-Smtp-Source: AH8x225SblfYgrN7nE9hc66m2YTf2wm2/ZilXqS+z0SzE65F1IuJK5pv/TnxUQ8KKyOERtecTf22uA==
-Date: Wed, 7 Feb 2018 14:12:14 +0100
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: Artem Savkov <asavkov@redhat.com>
-Cc: Artem Savkov <artem.savkov@gmail.com>, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1754155AbeBGNS5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:18:57 -0500
+Received: from mga05.intel.com ([192.55.52.43]:8499 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753696AbeBGNS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 08:18:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
+   d="scan'208";a="17952469"
+Message-ID: <1518009532.22495.140.camel@linux.intel.com>
+Subject: Re: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI
+ driver
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mario.Limonciello@dell.com, pali.rohar@gmail.com, rjw@rjwysocki.net
+Cc: andy.shevchenko@gmail.com, dvhart@infradead.org,
+        platform-driver-x86@vger.kernel.org, acelan.kao@canonical.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sun4i_ss_prng: fix return value of
- sun4i_ss_prng_generate
-Message-ID: <20180207131214.GC19249@Red>
-References: <20180206212022.1309-1-artem.savkov@gmail.com>
- <20180206212022.1309-2-artem.savkov@gmail.com>
- <20180207095659.GA19249@Red>
- <20180207105201.pnn2s57wdk5zuda2@shodan.usersys.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207105201.pnn2s57wdk5zuda2@shodan.usersys.redhat.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Date: Wed, 07 Feb 2018 15:18:52 +0200
+In-Reply-To: <8d143fabe24f43de933dc60ce6480d00@ausx13mpc120.AMER.DELL.COM>
+References: <20180131182614.19524-1-andriy.shevchenko@linux.intel.com>
+         <CAHp75VeFSuQYu67DdnJDjZDoaLZiPuo7ag7Lz0q6eSCDjayobw@mail.gmail.com>
+         <2235169.mLvk2uMpgf@aspire.rjw.lan> <4289605.mKSTaFlacu@aspire.rjw.lan>
+         <20180207095522.qhs2wns4goif76u3@pali>
+         <8d143fabe24f43de933dc60ce6480d00@ausx13mpc120.AMER.DELL.COM>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.3-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 11:52:01AM +0100, Artem Savkov wrote:
-> On Wed, Feb 07, 2018 at 10:56:59AM +0100, Corentin Labbe wrote:
-> > On Tue, Feb 06, 2018 at 10:20:21PM +0100, Artem Savkov wrote:
-> > > According to crypto/rng.h generate function should return 0 on success
-> > > and < 0 on error.
-> > > 
-> > > Fixes: b8ae5c7387ad ("crypto: sun4i-ss - support the Security System PRNG")
-> > > Signed-off-by: Artem Savkov <artem.savkov@gmail.com>
-> > > ---
-> > >  drivers/crypto/sunxi-ss/sun4i-ss-prng.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c b/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-> > > index 0d01d1624252..5754e0b92fb0 100644
-> > > --- a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-> > > +++ b/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-> > > @@ -52,5 +52,5 @@ int sun4i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
-> > >  
-> > >  	writel(0, ss->base + SS_CTL);
-> > >  	spin_unlock(&ss->slock);
-> > > -	return dlen;
-> > > +	return 0;
-> > >  }
-> > > -- 
-> > > 2.15.1
-> > > 
+On Wed, 2018-02-07 at 13:08 +0000, Mario.Limonciello@dell.com wrote:
+> > -----Original Message-----
+> > From: Pali Rohár [mailto:pali.rohar@gmail.com]
+> > Sent: Wednesday, February 7, 2018 3:55 AM
+> > To: Rafael J. Wysocki <rjw@rjwysocki.net>
+> > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>; Limonciello, Mario
+> > <Mario_Limonciello@Dell.com>; andriy.shevchenko@linux.intel.com;
+> > dvhart@infradead.org; platform-driver-x86@vger.kernel.org;
+> > acelan.kao@canonical.com; linux-kernel@vger.kernel.org
+> > Subject: Re: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to
+> > pure ACPI driver
 > > 
-> > According to Documentation/crypto/api-samples.rst ("Code Example For Random Number Generator Usage")
-> > you must return the length of data generated.
+> > On Wednesday 07 February 2018 10:47:57 Rafael J. Wysocki wrote:
+> > > BTW, please CC patches with ACPI material to linux-acpi.  They are
+> > > less likely
+> > > to be overlooked by me then and the others on that list may have
+> > > opinions on
+> > > them too.
+> > 
+> > Maybe we can update MAINTAINERS file for acpi based platform-x86
+> > drivers
+> > to include linux-acpi list? Darren, Andy, any idea?
+> > 
 > 
-> I don't think that example is the same as rng_alg.generate, it has a
-> different protottype.
-
-crypto_rng_get_bytes() use crypto_rng_generate() which work on crypto_rng
-
+> I would also wonder if the intel-vbtn driver should still live in
+> platform-x86 as it's
+> now pure ACPI driver with this change Andy proposed.
 > 
-> > So crypto_rng_generate/crypto_rng_get_bytes documentation in crypto/rng.h must be fixed.
+> Btw Andy for your v2 with your fixups that were in your review branch
+> feel free
+> to add:
+> Tested-by: Mario Limonciello <mario.limonciello@dell.com>
 > 
-> It's not just documentation, every other rng driver returns it this way
-> and it gets aead_init_geniv() (and subsequently crypto_create_tfm())
-> really confused because they expect the return value to be 0 or < 0.
-> 
+> When you resubmit it.
 
-Perhaps the example is wrong because "copied from/inspirated by" hwrng API which have this behavior.
+Mario, Rafael clarifies the matter and NACKed this one (which kinda was
+expected by me, that's why RFC was in the first place).
 
-After checking, other crypto_rng driver, you are probably right, so you can add:
-Acked-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+I'm going to drop this patch from my queue.
 
-Thanks
-Regards
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
