@@ -1,63 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754446AbeBGVDy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:03:54 -0500
-Received: from foss.arm.com ([217.140.101.70]:55972 "EHLO foss.arm.com"
+        id S1754742AbeBGVFs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 16:05:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754127AbeBGVDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:03:53 -0500
-Date: Wed, 7 Feb 2018 15:03:51 -0600
-From: Kim Phillips <kim.phillips@arm.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH] coresight replicator: set default y after Kconfig rename
-Message-Id: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1754127AbeBGVFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 16:05:43 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5156521738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+From: Alan Tull <atull@kernel.org>
+To: Moritz Fischer <mdf@kernel.org>
+Cc: Anatolij Gustschin <agust@denx.de>,
+        Matthew Gerlach <matthew.gerlach@linux.intel.com>,
+        Joel Holdsworth <joel@airwebreathe.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Joshua Clayton <stillcompiling@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>, Alan Tull <atull@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: [PATCH v3 0/4] fpga: don't use drvdata in common code
+Date: Wed,  7 Feb 2018 15:05:26 -0600
+Message-Id: <20180207210530.3099-1-atull@kernel.org>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 1c8859848dbb ("coresight replicator: Cleanup programmable
-replicator naming") changed the Kconfig symbol name from
-QCOM_REPLICATOR, which, whilst not in the single arm64 defconfig,
-was being set in my juno build script, which left the new symbol unset,
-causing the following unexpected grief:
+Setting drvdata is fine for DT based devices which have one manager,
+bridge, or region device per platform device.  However, PCIe based
+devices may have multiple FPGA mgr/bridge/regions under one PCIe
+device.  Without these changes, PCIe-based solutions have to create an
+extra device for each child mgr/bridge/region to hold drvdata.
 
- # ./perf record -vvv -C 0 -e cs_etm/@20070000.etr/ --per-thread true
- ..<snip>..
- sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
- mmap size 528384B
- AUX area mmap length 4194304
- perf event ring buffer mmapped per cpu
- failed to mmap AUX area
- failed to mmap with 12 (Cannot allocate memory)
+Also changing the fpga_*_register/unregister functions to take the
+corresponding struct as the only parameter wherever they weren't already.
 
-Make it default y to help not surprise unsuspecting users.
+* int fpga_bridge_register(struct fpga_bridge *br)
+* int fpga_mgr_register(struct fpga_manager *mgr)
+* int fpga_region_register(struct fpga_region *region)
 
-Fixes: 1c8859848dbb ("coresight replicator: Cleanup programmable replicator naming")
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
----
- drivers/hwtracing/coresight/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+* void fpga_bridge_unregister(struct fpga_bridge *br)
+* void fpga_mgr_unregister(struct fpga_manager *mgr)
+* int fpga_region_unregister(struct fpga_region *region)
 
-diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-index ef9cb3c164e1..b94bbd95efa6 100644
---- a/drivers/hwtracing/coresight/Kconfig
-+++ b/drivers/hwtracing/coresight/Kconfig
-@@ -73,6 +73,7 @@ config CORESIGHT_SOURCE_ETM4X
- config CORESIGHT_DYNAMIC_REPLICATOR
- 	bool "CoreSight Programmable Replicator driver"
- 	depends on CORESIGHT_LINKS_AND_SINKS
-+	default y
- 	help
- 	  This enables support for dynamic CoreSight replicator link driver.
- 	  The programmable ATB replicator allows independent filtering of the
+Changes from v2:
+* Drop patch 5 which fixed a DT overlay issue.  The underlying
+  issue was fixed in the main DT overlay code.
+* Minor code cleanup to make it more obvious that the changes
+  were not breaking anything
+* Added Moritz' ack on patch 1
+
+Alan Tull (4):
+  fpga: region: don't use drvdata in common fpga code
+  fpga: manager: don't use drvdata in common fpga code
+  fpga: bridge: don't use drvdata in common fpga code
+  fpga: region: change fpga_region_register to have one param
+
+ Documentation/fpga/fpga-mgr.txt     | 24 +++++++++++++++------
+ Documentation/fpga/fpga-region.txt  |  3 +--
+ drivers/fpga/altera-cvp.c           | 18 ++++++++++++----
+ drivers/fpga/altera-fpga2sdram.c    | 20 +++++++++++++----
+ drivers/fpga/altera-freeze-bridge.c | 18 +++++++++++++---
+ drivers/fpga/altera-hps2fpga.c      | 16 +++++++++++---
+ drivers/fpga/altera-pr-ip-core.c    | 17 +++++++++++++--
+ drivers/fpga/altera-ps-spi.c        | 18 +++++++++++++---
+ drivers/fpga/fpga-bridge.c          | 43 ++++++++++++++-----------------------
+ drivers/fpga/fpga-mgr.c             | 39 ++++++++++++---------------------
+ drivers/fpga/fpga-region.c          |  9 ++++++--
+ drivers/fpga/ice40-spi.c            | 20 +++++++++++++----
+ drivers/fpga/of-fpga-region.c       |  4 +++-
+ drivers/fpga/socfpga-a10.c          | 16 +++++++++++---
+ drivers/fpga/socfpga.c              | 18 +++++++++++++---
+ drivers/fpga/ts73xx-fpga.c          | 18 +++++++++++++---
+ drivers/fpga/xilinx-pr-decoupler.c  | 15 ++++++++++---
+ drivers/fpga/xilinx-spi.c           | 18 +++++++++++++---
+ drivers/fpga/zynq-fpga.c            | 16 +++++++++++---
+ include/linux/fpga/fpga-bridge.h    |  7 +++---
+ include/linux/fpga/fpga-mgr.h       |  8 +++----
+ include/linux/fpga/fpga-region.h    |  4 +++-
+ 22 files changed, 256 insertions(+), 113 deletions(-)
+
 -- 
-2.16.1
+2.7.4
