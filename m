@@ -1,211 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754291AbeBGN6M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:58:12 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51296 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754215AbeBGN6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:58:01 -0500
-From: Robert Walker <robert.walker@arm.com>
-To: acme@kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Robert Walker <robert.walker@arm.com>, coresight@lists.linaro.org
-Subject: [PATCH 2/2] perf inject: Emit instruction records on ETM trace discontinuity
-Date: Wed,  7 Feb 2018 13:57:25 +0000
-Message-Id: <1518011845-24063-3-git-send-email-robert.walker@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518011845-24063-1-git-send-email-robert.walker@arm.com>
-References: <1518011845-24063-1-git-send-email-robert.walker@arm.com>
+        id S1754313AbeBGN7H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:59:07 -0500
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37227 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753648AbeBGN7G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 08:59:06 -0500
+X-Google-Smtp-Source: AH8x2255qluYKSmhGBLwalJRi6wL86AAWodyV8cugjgfjLZTC2BpT1wHxh2fZHSI2wkPjjwiQt9K8A==
+Date: Wed, 7 Feb 2018 13:59:02 +0000
+From: Matt Fleming <matt@codeblueprint.co.uk>
+To: Atish Patra <atish.patra@oracle.com>
+Cc: linux-kernel@vger.kernel.org, joelaf@google.com, jbacik@fb.com,
+        mingo@redhat.com, peterz@infradead.org, efault@gmx.de,
+        urezki@gmail.com
+Subject: Re: [PATCH RFC v2] sched: Minimize the idle cpu selection race
+ window.
+Message-ID: <20180207135902.GA3505@codeblueprint.co.uk>
+References: <1512500947-24444-1-git-send-email-atish.patra@oracle.com>
+ <1512500947-24444-2-git-send-email-atish.patra@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512500947-24444-2-git-send-email-atish.patra@oracle.com>
+User-Agent: Mutt/1.5.24+42 (6e565710a064) (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There may be discontinuities in the ETM trace stream due to overflows or
-ETM configuration for selective trace.  This patch emits an instruction
-sample with the pending branch stack when a TRACE ON packet occurs
-indicating a discontinuity in the trace data.
+On Tue, 05 Dec, at 01:09:07PM, Atish Patra wrote:
+> Currently, multiple tasks can wakeup on same cpu from
+> select_idle_sibiling() path in case they wakeup simulatenously
+> and last ran on the same llc. This happens because an idle cpu
+> is not updated until idle task is scheduled out. Any task waking
+> during that period may potentially select that cpu for a wakeup
+> candidate.
+> 
+> Introduce a per cpu variable that is set as soon as a cpu is
+> selected for wakeup for any task. This prevents from other tasks
+> to select the same cpu again. Note: This does not close the race
+> window but minimizes it to accessing the per-cpu variable. If two
+> wakee tasks access the per cpu variable at the same time, they may
+> select the same cpu again. But it minimizes the race window
+> considerably.
+> 
+> Here are some performance numbers:
 
-A new packet type CS_ETM_TRACE_ON is added, which is emitted by the low
-level decoder when a TRACE ON occurs.  The higher level decoder flushes the
-branch stack when this packet is emitted.
+I ran this patch through some tests here on the SUSE performance grid
+and there's a definite regression for Mike's personal favourite
+benchmark, tbench.
 
-Signed-off-by: Robert Walker <robert.walker@arm.com>
----
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  9 +++
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
- tools/perf/util/cs-etm.c                        | 84 +++++++++++++++++--------
- 3 files changed, 69 insertions(+), 25 deletions(-)
+Here are the results: vanilla 4.15-rc9 on the left, -rc9 plus this
+patch on the right.
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 8ff69df..640af88 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -328,7 +328,14 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
- 	}
- 
- 	return ret;
-+}
- 
-+static ocsd_datapath_resp_t
-+cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
-+				const uint8_t trace_chan_id)
-+{
-+	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-+					     CS_ETM_TRACE_ON);
- }
- 
- static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
-@@ -347,6 +354,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 		decoder->trace_on = false;
- 		break;
- 	case OCSD_GEN_TRC_ELEM_TRACE_ON:
-+		resp = cs_etm_decoder__buffer_trace_on(decoder,
-+						       trace_chan_id);
- 		decoder->trace_on = true;
- 		break;
- 	case OCSD_GEN_TRC_ELEM_INSTR_RANGE:
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index a4fdd28..743f5f4 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -24,6 +24,7 @@ struct cs_etm_buffer {
- 
- enum cs_etm_sample_type {
- 	CS_ETM_RANGE = 1 << 0,
-+	CS_ETM_TRACE_ON = 1 << 1,
- };
- 
- struct cs_etm_packet {
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 6777246..a8d07bd 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -866,6 +866,8 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
- 	 * PREV_PACKET is a branch.
- 	 */
- 	if (etm->synth_opts.last_branch &&
-+	    etmq->prev_packet &&
-+	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
- 	    etmq->prev_packet->last_instr_taken_branch)
- 		cs_etm__update_last_branch_rb(etmq);
- 
-@@ -918,6 +920,40 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
- 	return 0;
- }
- 
-+static int cs_etm__flush(struct cs_etm_queue *etmq)
-+{
-+	int err = 0;
-+	struct cs_etm_packet *tmp;
-+
-+	if (etmq->etm->synth_opts.last_branch &&
-+	    etmq->prev_packet &&
-+	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
-+		/*
-+		 * Generate a last branch event for the branches left in the
-+		 * circular buffer at the end of the trace.
-+		 *
-+		 * Use the address of the end of the last reported execution
-+		 * range
-+		 */
-+		u64 addr = cs_etm__last_executed_instr(etmq->prev_packet);
-+
-+		err = cs_etm__synth_instruction_sample(
-+			etmq, addr,
-+			etmq->period_instructions);
-+		etmq->period_instructions = 0;
-+
-+		/*
-+		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
-+		 * the next incoming packet.
-+		 */
-+		tmp = etmq->packet;
-+		etmq->packet = etmq->prev_packet;
-+		etmq->prev_packet = tmp;
-+	}
-+
-+	return err;
-+}
-+
- static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- {
- 	struct cs_etm_auxtrace *etm = etmq->etm;
-@@ -946,20 +982,19 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- 		/* Run trace decoder until buffer consumed or end of trace */
- 		do {
- 			processed = 0;
--
- 			err = cs_etm_decoder__process_data_block(
- 				etmq->decoder,
- 				etmq->offset,
- 				&buffer.buf[buffer_used],
- 				buffer.len - buffer_used,
- 				&processed);
--
- 			if (err)
- 				return err;
- 
- 			etmq->offset += processed;
- 			buffer_used += processed;
- 
-+			/* Process each packet in this chunk */
- 			while (1) {
- 				err = cs_etm_decoder__get_packet(etmq->decoder,
- 								 etmq->packet);
-@@ -970,32 +1005,31 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- 					 */
- 					break;
- 
--				/*
--				 * If the packet contains an instruction
--				 * range, generate instruction sequence
--				 * events.
--				 */
--				if (etmq->packet->sample_type & CS_ETM_RANGE)
--					err = cs_etm__sample(etmq);
-+				switch (etmq->packet->sample_type) {
-+				case CS_ETM_RANGE:
-+					/*
-+					 * If the packet contains an instruction
-+					 * range, generate instruction sequence
-+					 * events.
-+					 */
-+					cs_etm__sample(etmq);
-+					break;
-+				case CS_ETM_TRACE_ON:
-+					/*
-+					 * Discontinuity in trace, flush
-+					 * previous branch stack
-+					 */
-+					cs_etm__flush(etmq);
-+					break;
-+				default:
-+					break;
-+				}
- 			}
- 		} while (buffer.len > buffer_used);
- 
--		/*
--		 * Generate a last branch event for the branches left in
--		 * the circular buffer at the end of the trace.
--		 */
--		if (etm->sample_instructions &&
--		    etmq->etm->synth_opts.last_branch) {
--			struct branch_stack *bs = etmq->last_branch_rb;
--			struct branch_entry *be =
--				&bs->entries[etmq->last_branch_pos];
--
--			err = cs_etm__synth_instruction_sample(
--				etmq, be->to, etmq->period_instructions);
--			if (err)
--				return err;
--		}
--
-+		if (err == 0)
-+			/* Flush any remaining branch stack entries */
-+			err = cs_etm__flush(etmq);
- 	}
- 
- 	return err;
--- 
-2.7.4
+tbench4
+                                 4.15.0-rc9             4.15.0-rc9
+                                    vanillasched-minimize-idle-cpu-window
+Min       mb/sec-1        484.50 (   0.00%)      463.03 (  -4.43%)
+Min       mb/sec-2        961.43 (   0.00%)      959.35 (  -0.22%)
+Min       mb/sec-4       1789.60 (   0.00%)     1760.21 (  -1.64%)
+Min       mb/sec-8       3518.51 (   0.00%)     3471.47 (  -1.34%)
+Min       mb/sec-16      5521.12 (   0.00%)     5409.77 (  -2.02%)
+Min       mb/sec-32      7268.61 (   0.00%)     7491.29 (   3.06%)
+Min       mb/sec-64     14413.45 (   0.00%)    14347.69 (  -0.46%)
+Min       mb/sec-128    13501.84 (   0.00%)    13413.82 (  -0.65%)
+Min       mb/sec-192    13237.02 (   0.00%)    13231.43 (  -0.04%)
+Hmean     mb/sec-1        505.20 (   0.00%)      485.81 (  -3.84%)
+Hmean     mb/sec-2        973.12 (   0.00%)      970.67 (  -0.25%)
+Hmean     mb/sec-4       1835.22 (   0.00%)     1788.54 (  -2.54%)
+Hmean     mb/sec-8       3529.35 (   0.00%)     3487.20 (  -1.19%)
+Hmean     mb/sec-16      5531.16 (   0.00%)     5437.43 (  -1.69%)
+Hmean     mb/sec-32      7627.96 (   0.00%)     8021.26 (   5.16%)
+Hmean     mb/sec-64     14441.20 (   0.00%)    14395.08 (  -0.32%)
+Hmean     mb/sec-128    13620.40 (   0.00%)    13569.17 (  -0.38%)
+Hmean     mb/sec-192    13265.26 (   0.00%)    13263.98 (  -0.01%)
+Max       mb/sec-1        510.30 (   0.00%)      489.89 (  -4.00%)
+Max       mb/sec-2        989.45 (   0.00%)      976.10 (  -1.35%)
+Max       mb/sec-4       1845.65 (   0.00%)     1795.50 (  -2.72%)
+Max       mb/sec-8       3574.03 (   0.00%)     3547.56 (  -0.74%)
+Max       mb/sec-16      5556.99 (   0.00%)     5564.80 (   0.14%)
+Max       mb/sec-32      7678.18 (   0.00%)     8098.63 (   5.48%)
+Max       mb/sec-64     14463.07 (   0.00%)    14437.58 (  -0.18%)
+Max       mb/sec-128    13659.67 (   0.00%)    13602.65 (  -0.42%)
+Max       mb/sec-192    13612.01 (   0.00%)    13832.98 (   1.62%)
+
+There's a nice little performance bump around the 32-client mark.
+Incidentally, my test machine has 2 NUMA nodes with 24 cpus (12 cores,
+2 threads) each. So 32 clients is the point at which things no longer
+fit on a single node.
+
+It doesn't look like the regression is caused by the schedule() path
+being slightly longer (i.e. it's not a latency issue) because schbench
+results show improvements for the low-end:
+
+schbench
+                                 4.15.0-rc9             4.15.0-rc9
+                                    vanillasched-minimize-idle-cpu-window
+Lat 50.00th-qrtle-1        46.00 (   0.00%)       36.00 (  21.74%)
+Lat 75.00th-qrtle-1        49.00 (   0.00%)       37.00 (  24.49%)
+Lat 90.00th-qrtle-1        52.00 (   0.00%)       38.00 (  26.92%)
+Lat 95.00th-qrtle-1        56.00 (   0.00%)       41.00 (  26.79%)
+Lat 99.00th-qrtle-1        61.00 (   0.00%)       46.00 (  24.59%)
+Lat 99.50th-qrtle-1        63.00 (   0.00%)       48.00 (  23.81%)
+Lat 99.90th-qrtle-1        77.00 (   0.00%)       64.00 (  16.88%)
+Lat 50.00th-qrtle-2        41.00 (   0.00%)       41.00 (   0.00%)
+Lat 75.00th-qrtle-2        47.00 (   0.00%)       46.00 (   2.13%)
+Lat 90.00th-qrtle-2        50.00 (   0.00%)       49.00 (   2.00%)
+Lat 95.00th-qrtle-2        53.00 (   0.00%)       52.00 (   1.89%)
+Lat 99.00th-qrtle-2        58.00 (   0.00%)       57.00 (   1.72%)
+Lat 99.50th-qrtle-2        60.00 (   0.00%)       59.00 (   1.67%)
+Lat 99.90th-qrtle-2        72.00 (   0.00%)       69.00 (   4.17%)
+Lat 50.00th-qrtle-4        46.00 (   0.00%)       45.00 (   2.17%)
+Lat 75.00th-qrtle-4        49.00 (   0.00%)       48.00 (   2.04%)
+Lat 90.00th-qrtle-4        52.00 (   0.00%)       51.00 (   1.92%)
+Lat 95.00th-qrtle-4        55.00 (   0.00%)       53.00 (   3.64%)
+Lat 99.00th-qrtle-4        61.00 (   0.00%)       59.00 (   3.28%)
+Lat 99.50th-qrtle-4        63.00 (   0.00%)       61.00 (   3.17%)
+Lat 99.90th-qrtle-4        69.00 (   0.00%)       74.00 (  -7.25%)
+Lat 50.00th-qrtle-8        48.00 (   0.00%)       50.00 (  -4.17%)
+Lat 75.00th-qrtle-8        52.00 (   0.00%)       54.00 (  -3.85%)
+Lat 90.00th-qrtle-8        54.00 (   0.00%)       58.00 (  -7.41%)
+Lat 95.00th-qrtle-8        57.00 (   0.00%)       61.00 (  -7.02%)
+Lat 99.00th-qrtle-8        64.00 (   0.00%)       68.00 (  -6.25%)
+Lat 99.50th-qrtle-8        67.00 (   0.00%)       72.00 (  -7.46%)
+Lat 99.90th-qrtle-8        81.00 (   0.00%)       81.00 (   0.00%)
+Lat 50.00th-qrtle-16       50.00 (   0.00%)       47.00 (   6.00%)
+Lat 75.00th-qrtle-16       59.00 (   0.00%)       57.00 (   3.39%)
+Lat 90.00th-qrtle-16       66.00 (   0.00%)       65.00 (   1.52%)
+Lat 95.00th-qrtle-16       69.00 (   0.00%)       68.00 (   1.45%)
+Lat 99.00th-qrtle-16       76.00 (   0.00%)       75.00 (   1.32%)
+Lat 99.50th-qrtle-16       79.00 (   0.00%)       79.00 (   0.00%)
+Lat 99.90th-qrtle-16       86.00 (   0.00%)       89.00 (  -3.49%)
+Lat 50.00th-qrtle-23       52.00 (   0.00%)       52.00 (   0.00%)
+Lat 75.00th-qrtle-23       65.00 (   0.00%)       65.00 (   0.00%)
+Lat 90.00th-qrtle-23       75.00 (   0.00%)       74.00 (   1.33%)
+Lat 95.00th-qrtle-23       81.00 (   0.00%)       79.00 (   2.47%)
+Lat 99.00th-qrtle-23       95.00 (   0.00%)       90.00 (   5.26%)
+Lat 99.50th-qrtle-23    12624.00 (   0.00%)     1050.00 (  91.68%)
+Lat 99.90th-qrtle-23    15184.00 (   0.00%)    13872.00 (   8.64%)
+
+If you'd like to run these tests on your own machines they're all
+available at https://github.com/gormanm/mmtests.git.
