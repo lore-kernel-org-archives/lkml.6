@@ -1,42 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753872AbeBGMcB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 07:32:01 -0500
-Received: from mail-it0-f47.google.com ([209.85.214.47]:52850 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753648AbeBGMb7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 07:31:59 -0500
-X-Google-Smtp-Source: AH8x226wi+PzbPBGNYfdQI17eoz7woXd1VigntEjBmnWTutZzCg3/T/TUgm4a+vcj2eIUEfOpmUWLE7bjj4DLaxCTqM=
+        id S1753964AbeBGMcZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 07:32:25 -0500
+Received: from smtp3.ono.com ([62.42.230.163]:52762 "EHLO smtp3.ono.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753896AbeBGMcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 07:32:24 -0500
+X-Junkmail-Premium-Raw: score=17/50,refid=2.7.2:2018.2.7.114216:17:17.509,ip=62.42.230.132,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO,
+ SUBJ_STARTS_IN_SPACE, __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE,
+ MISSING_HEADERS, __ANY_URI, __FRAUD_BODY_WEBMAIL, __URI_NO_WWW,
+ __FRAUD_INTRO, __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
+ __FRAUD_MONEY_CURRENCY_DOLLAR, __PHISH_SPEAR_ACCOUNT_1, __NO_HTML_TAG_RAW,
+ BODY_SIZE_600_699, BODYTEXTP_SIZE_3000_LESS, __MIME_TEXT_P1,
+ __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
+ __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
+ __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
+ WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __PHISH_SPEAR_STRUCTURE_1,
+ BODY_SIZE_1000_LESS, BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2,
+ __MIME_TEXT_P, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS, BODY_SIZE_7000_LESS,
+ TO_MALFORMED
+Message-ID: <3548255.1458571518006679416.JavaMail.defaultUser@defaultHost>
+Date: Wed, 7 Feb 2018 13:31:19 +0100 (CET)
+From: "Mrs.Chantal Sonian Kadi" <ATRKILL@ONO.COM>
+Reply-To: mrschantal.sonian.kadi@gmail.com
+Subject: Compliment of the day to you. Dear Friend.
 MIME-Version: 1.0
-In-Reply-To: <20180118141757.41290-1-yixun.lan@amlogic.com>
-References: <20180118141757.41290-1-yixun.lan@amlogic.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 7 Feb 2018 13:31:58 +0100
-Message-ID: <CACRpkdYvC3wokib4ixjzJ8wWSTU1XQ90ix+iH_3vh70xOnkCcg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: meson-axg: adjust uart_ao_b pin group naming
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 3:17 PM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+ Compliment of the day to you. Dear Friend. for security reason
+contact me Through this email (mrschantal.sonian.kadi@gmail.com)
 
-> Simply adjust the pin group to _x _y _z style, as to
-> keep the consistency in DT with previous naming scheme.
->
-> Fixes: 83c566806a68 ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Dear Friend.
 
-Patch applied for fixes.
+I am Mrs.Chantal Sonian Kadi. am sending this brief letter to solicit 
+your
+partnership to transfer $10.5 million US Dollars. I shall send you
+more information and procedures when I receive positive response from
+you.  please send me a message in my  Email box (mrschantal.sonian.
+kadi@gmail.com)
 
-Yours,
-Linus Walleij
+
+Coupy This Email Id (mrschantal.sonian.kadi@gmail.com)To Reply Me with 
+this
+Id(mrschantal.sonian.kadi@gmail.com)
+
+Mrs.Chantal Sonian Kadi
