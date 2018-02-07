@@ -1,38 +1,38 @@
 Return-Path: <pintu.ping@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518067028; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1517983265; cv=none;
         d=google.com; s=arc-20160816;
-        b=LXELyikDKjRhbqrgSmQYRCguCpdQZUn29l+d5i9I+zOIQ/b3yrupn2Qy6gaP3CT+ii
-         i91KVC+5Lmov0mQiUj4bk9zIaP6zPPSLNQJHRob+e0YNVvCRLHYeipYj1f2ybgv8SIwX
-         vcvM4wl3WJ1DyUwDdvSaPAPK0xjb7EK8CoobTUj7mleBZ2NVXTpYTeEecFtXjssB9mdo
-         4s8Qem9cz988c+shIwuE/07zoyYvUWioi9U81b5KAbplIb5EUq6EdGQNZC3RAqr4kSUi
-         XpUNp5R9+2o2g3WPLK6cFcmFABIMaBjj9n53lRjVUIzBewBMnrfY5Xa33ofqWrtQEHKP
-         +RKQ==
+        b=ASzP6xS2A/YSB7ng+KzRKajqhq3peCiYzyUYRuzqLd+ulM2uJipkkLhhiuVofI4KVA
+         JTSFkHcQ1wpP+D8filcQ89qQwjb6/kKjP9knA+wgO7nYVhP7PNK2GfVXuoBaukZy6op3
+         oKSR/+rv4aKJWwPPYqc9mbcHGx7vg8cSfJsFe8OSOtWHBGOw39pPFN9rt+a2PNjPEdPy
+         IuB3Ry6HDGwG+JRLehxBgWK/jvHQthoKBsTB8tsaHsQjQqjsut7GtIvKI05hIVUkpDzS
+         i8xV7hXMD9QigOvAjWJf1JTAvA7BfpI1LPk4wYl3xjJcystqxw69+1c529T3alEmK7/o
+         OH5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :references:in-reply-to:mime-version:dkim-signature
          :arc-authentication-results;
-        bh=n/HAySqx4WFPBFK6oZQU5LdIReWD5rXbbGN+elBdM8c=;
-        b=q+DvJodRtrlLC/IrnwZRm959+xNdQ282G9LD5a+Q1FC01dtFOaAMPUiSUslWADUa1q
-         KtdCJzJgP9Fe9icx6Kb603SDy62l0FOAQ7V13eoOwRU+bMEl5KjrgP8G8bx776sOMJIH
-         LKGnkaFf+ReWzAERw9sx7EuCk0BzY7oQyX0b/3PQmoaaQB0XrbziEB1UvlXJ+2UxkrTh
-         RiPG6Z3BowNqTQHhnkc4G8fCujHmVZZdZLV9inrW7sT2plyjyaMIti6CpLouvcQ6EoX/
-         Smxiavp9N7a/+FccoYAB46oZP82iyn2OBT4U7UbTLJjtcB3tNK3hKr7/wEb2/jvbknFM
-         EQzg==
+        bh=4OdiAm4fSHY7JQaziTO8NEFrocNXzAXvX5itE+PDV1Y=;
+        b=auI4cXOxZ9q3zLxQOxwJwbgbTNyk30jC7lKZm8FX7AJHm/DOsZndUAP4MA4Sco35Nh
+         n9OsDiOEOd+55cevvlYzK5i7iOdyVVhFRrJX0O3w4L8jehJYH6sZIZN99LkFuJ+IWRcO
+         /m1mH8lSj999yzDVhHe61gSW/bICNKkQCLt/I3MHrRdxfzaYAmjdDQgYsKD+VlWNzlAf
+         KxHcFniHFHLZrMWw8TZ8B/59aXSTrMVT/noUbXpWz5s+3LgQLjcv7aOJBJH6JCVyGcAa
+         FULyzs1/uBD5qXXfEye1QijqYA2gXsvrvyr4laRmuxhEcZOvpoiJfRNQQWyDkekozHoN
+         NQ+g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ryvd+bKC;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YnfQaiDA;
        spf=pass (google.com: domain of pintu.ping@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pintu.ping@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ryvd+bKC;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YnfQaiDA;
        spf=pass (google.com: domain of pintu.ping@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=pintu.ping@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x225x3RO/rUW7/2j8+h8G3FllUeU6lzNnRL5CcTzADsKHQGTTBpdXFZUjgyKTLLLCj5wRUJ9/J6iGkWSVcGmBfVE=
+X-Google-Smtp-Source: AH8x2259HcbynxBo8PwdxX0cnMMM9JzmV3cEUt7EVpLpLvPhBf0ijBYPF6tXwBeZfSuL1G/ak2rVZZI4G35cWFPcZKY=
 MIME-Version: 1.0
 In-Reply-To: <1517961219-17700-1-git-send-email-daniel.diaz@linaro.org>
 References: <1517961219-17700-1-git-send-email-daniel.diaz@linaro.org>
 From: Pintu Kumar <pintu.ping@gmail.com>
-Date: Thu, 8 Feb 2018 10:47:07 +0530
-Message-ID: <CAOuPNLgJx9voztUYGoUmgPR6B7qKfDXx8TUx5utpSi0gxMOFcQ@mail.gmail.com>
+Date: Wed, 7 Feb 2018 11:31:04 +0530
+Message-ID: <CAOuPNLh17DH2nZL86WSWKUKQJr-Z1EY+ZqRFsXRTqK-XMtyx2g@mail.gmail.com>
 Subject: Re: [PATCH] selftests/android: Fix line continuation in Makefile
 To: =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-kselftest@vger.kernel.org,
@@ -44,7 +44,7 @@ Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591697740031389880?=
-X-GMAIL-MSGID: =?utf-8?q?1591808652669970354?=
+X-GMAIL-MSGID: =?utf-8?q?1591720819991765330?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -99,11 +99,22 @@ ftests/android/Makefile
 > +                       rsync -a $$DIR/$$TEST $$BUILD_TARGET/; \
 > +               fi \
 >         done
+
+Thanks for your patch.
+However, I have copied this Makefile from
+tools/testing/selftests/futex/Makefile before modifying it.
+If there is a problem with backslash then the same problem must be
+there in futex Makefile as well.
+Can you compare these 2 Makefile and see if there is any problem.
+
+Also is it because of make version ?
+Can you check your make version ?
+
+Thank You!
+Pintu
+
 >
 >  override define RUN_TESTS
-
-Acked-by: Pintu Agarwal <pintu.ping@gmail.com>
-
 > --
 > 2.7.4
 >
