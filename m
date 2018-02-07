@@ -1,34 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754702AbeBGUfn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:35:43 -0500
-Received: from ozlabs.org ([103.22.144.67]:53055 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754221AbeBGUfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 15:35:41 -0500
-Date: Thu, 8 Feb 2018 07:35:39 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the s390 tree
-Message-ID: <20180208073539.706e942f@canb.auug.org.au>
+        id S1754790AbeBGUgD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:36:03 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35582 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754303AbeBGUgB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 15:36:01 -0500
+X-Google-Smtp-Source: AH8x226QRsCLX7S86abop38XaMEaKRXfHbIL+hlHKwYm/254eJnd26jzFrRu3cuRAmjBMkGBEDCKXQ==
+Subject: Re: [PATCH] rtlwifi: rtl8192cu: Remove variable self-assignment in
+ rf.c
+To: Matthias Kaehlcke <mka@chromium.org>,
+        Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        Craig Bergstrom <craigb@chromium.org>
+References: <20180207202634.98937-1-mka@chromium.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <947198f5-23eb-afbc-7979-fbc38b6a1a37@lwfinger.net>
+Date: Wed, 7 Feb 2018 14:35:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180207202634.98937-1-mka@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On 02/07/2018 02:26 PM, Matthias Kaehlcke wrote:
+> In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
+> is assigned to itself in an if ... else statement, apparently only to
+> document that the branch condition is handled and that a previously read
+> value should be returned unmodified. The self-assignment causes clang to
+> raise the following warning:
+> 
+> drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
+>    error: explicitly assigning value of variable of type 'u32'
+>      (aka 'unsigned int') to itself [-Werror,-Wself-assign]
+>    writeVal = writeVal;
+> 
+> Replace the self-assignment with a semicolon, which still serves to
+> document the 'handling' of the branch condition.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>   drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+> index 9cff6bc4049c..4db92496c122 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+> @@ -301,7 +301,7 @@ static void _rtl92c_get_txpower_writeval_by_regulatory(struct ieee80211_hw *hw,
+>   			writeVal = writeVal - 0x06060606;
+>   		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
+>   			 TXHIGHPWRLEVEL_BT2)
+> -			writeVal = writeVal;
+> +			;
+>   		*(p_outwriteval + rf) = writeVal;
+>   	}
+>   }
+> 
 
-Commit
+As the branch condition does nothing, why not remove it and save the compiler's 
+optimizer a bit of work? The code looks strange, but it matches the rest of 
+Realtek's USB drivers.
 
-  b175210bd231 ("s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select")
-
-is missing a Signed-off-by from its committer.
-
--- 
-Cheers,
-Stephen Rothwell
+Larry
