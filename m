@@ -1,46 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932324AbeBGBb0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:31:26 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:39946 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932184AbeBGBbY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:31:24 -0500
-To: Colin King <colin.king@canonical.com>
-Cc: QLogic-Storage-Upstream@cavium.com,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: qedf: remove redundant initialization of 'fcport'
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180206140316.31453-1-colin.king@canonical.com>
-Date: Tue, 06 Feb 2018 20:25:39 -0500
-In-Reply-To: <20180206140316.31453-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 6 Feb 2018 14:03:16 +0000")
-Message-ID: <yq1372d1tgs.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S932328AbeBGBcl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:32:41 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55950 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932184AbeBGBck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 20:32:40 -0500
+Date: Wed, 7 Feb 2018 09:24:37 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: wenxiong <wenxiong@linux.vnet.ibm.com>
+Cc: Keith Busch <keith.busch@intel.com>, wenxiong@vmlinux.vnet.ibm.com,
+        linux-nvme@lists.infradead.org, axboe@fb.com,
+        linux-kernel@vger.kernel.org, wenxiong@us.ibm.com
+Subject: Re: [PATCH]nvme-pci: Fixes EEH failure on ppc
+Message-ID: <20180207012353.GD13470@ming.t460p>
+References: <1517867380-18790-1-git-send-email-wenxiong@vmlinux.vnet.ibm.com>
+ <20180206163347.GG31110@localhost.localdomain>
+ <787e4960b62a03b3888c67e73d7e1ee2@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8797 signatures=668663
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=623
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802070014
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <787e4960b62a03b3888c67e73d7e1ee2@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 06, 2018 at 02:01:05PM -0600, wenxiong wrote:
+> On 2018-02-06 10:33, Keith Busch wrote:
+> > On Mon, Feb 05, 2018 at 03:49:40PM -0600, wenxiong@vmlinux.vnet.ibm.com
+> > wrote:
+> > > @@ -1189,6 +1183,12 @@ static enum blk_eh_timer_return
+> > > nvme_timeout(struct request *req, bool reserved)
+> > >  	struct nvme_command cmd;
+> > >  	u32 csts = readl(dev->bar + NVME_REG_CSTS);
+> > > 
+> > > +	/* If PCI error recovery process is happening, we cannot reset or
+> > > +	 * the recovery mechanism will surely fail.
+> > > +	 */
+> > > +	if (pci_channel_offline(to_pci_dev(dev->dev)))
+> > > +		return BLK_EH_HANDLED;
+> > > +
+> > 
+> > This patch will tell the block layer to complete the request and
+> > consider
+> > it a success, but it doesn't look like the command actually completed at
+> > all. You're going to get data corruption this way, right? Is returning
+> > BLK_EH_HANDLED immediately really the right thing to do here?
+> 
+> Hi Ming,
+> 
+> Can you help checking if it is ok if returning BLK_EH_HANDLEDED in this
+> case?
 
-Colin,
+Hi Wenxiong,
 
-> Pointer fcport is initialized with a value that is never read, it is
-> re-assigned a new value later on, hence the initialization is redundant
-> and can be removed.
+Looks Keith is correct, and this timed out request will be completed by
+block layer and NVMe driver if BLK_EH_HANDLED is returned, but this IO
+isn't completed actually, so either data loss(write) or read failure is
+caused.
 
-Applied to 4.17/scsi-queue. Thanks!
+Maybe BLK_EH_RESET_TIMER is fine under this situation.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Thanks,
+Ming
