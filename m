@@ -1,104 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754814AbeBGRMU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:12:20 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39325 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754463AbeBGRMS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:12:18 -0500
-X-Google-Smtp-Source: AH8x225Hk/Hl51KOpB0HQwg96WgJLfDaR7EuCiJGm+4U+iPsLscp7Sq6yt11/iYDijfkKiKIIgxxrg==
-Date: Wed, 7 Feb 2018 20:12:15 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/3] x86: Patchable constants
-Message-ID: <20180207171215.b52hql2bv5wzff6o@node.shutemov.name>
-References: <20180207145913.2703-1-kirill.shutemov@linux.intel.com>
- <20180207162507.GB25219@hirez.programming.kicks-ass.net>
+        id S1754696AbeBGRP0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:15:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753390AbeBGRPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:15:24 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEEB217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x224ru4iRFFavWAvv0Q5QHJyAIw6017qJXqOUnAbviMqSvTPdHwCj0+YpFyMIfJ+gOUrLpZcJPc5sjdMs7qHZoi4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207162507.GB25219@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <16de2ed2-c2d8-8236-b001-2bc78e4c1d2f@arm.com>
+References: <422a4ff024038db02a2952158b0babe5b9281b2b.1517922544.git.robin.murphy@arm.com>
+ <CAL_JsqKZ8xzKD=ncTyT1LzCe0+gRL1pzcjDVOyBv61hUTGESnA@mail.gmail.com> <16de2ed2-c2d8-8236-b001-2bc78e4c1d2f@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 7 Feb 2018 11:15:02 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ1Hc8irF4LWM=1=OACC=fmRbg4c1evV777zKj3XOzi=w@mail.gmail.com>
+Message-ID: <CAL_JsqJ1Hc8irF4LWM=1=OACC=fmRbg4c1evV777zKj3XOzi=w@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: Remove last trace of GENERIC_IO
+To: Robin Murphy <Robin.Murphy@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 05:25:07PM +0100, Peter Zijlstra wrote:
-> On Wed, Feb 07, 2018 at 05:59:10PM +0300, Kirill A. Shutemov wrote:
-> > This conversion makes GCC generate worse code. Conversion __PHYSICAL_MASK
-> > to a patchable constant adds about 5k in .text on defconfig and makes it
-> > slightly slower at runtime (~0.2% on my box).
-> 
-> Do you have explicit examples for the worse code? That might give clue
-> on how to improve things.
+On Feb 6, 2018 8:14 AM, "Robin Murphy" <robin.murphy@arm.com> wrote:
+>
+> On 06/02/18 16:06, Rob Herring wrote:
+>>
+>> On Tue, Feb 6, 2018 at 7:11 AM, Robin Murphy <robin.murphy@arm.com> wrote:
+>>>
+>>> Since commit 9de8da47742b ("kconfig: kill off GENERIC_IO option"), this
+>>> select has done nothing, and is now just confusing. Clean it up.
+>>>
+>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>>> ---
+>>>   lib/Kconfig | 1 -
+>>>   1 file changed, 1 deletion(-)
+>>
+>>
+>> We already have:
+>>
+>> https://lkml.org/lkml/2018/1/17/924
+>>
+>> and this series:
+>>
+>> https://lkml.org/lkml/2018/2/4/208
+>
+>
+> Agh, Ulf's patch is even sat in my inbox...
+>
+> This was just a drive-by from looking into HAS_IOMEM, sorry for the noise :)
 
-Clarification: increase by 5k was for defconfig, where I replaced pure constant
-define __PHYSICAL_MASK with patchable constant.
+What are you looking into there? IMO, we should get rid of HAS_IOMEM.
+It's basically a !UML option to turn off a bunch of drivers in UML.
 
-With CONFIG_AMD_MEM_ENCRYPT=y increase is smaller: ~1.8k.
-
-The disassembler below is for CONFIG_AMD_MEM_ENCRYPT=y.
-
-Before:
-
-Dump of assembler code for function migration_entry_wait:
-   0xffffffff8118ab40 <+0>:     mov    (%rsi),%rcx
-   0xffffffff8118ab43 <+3>:     shr    $0x9,%rdx
-   0xffffffff8118ab47 <+7>:     mov    0x10aecba(%rip),%r8        # 0xffffffff82239808 <sme_me_mask>
-   0xffffffff8118ab4e <+14>:    mov    %rdx,%rax
-   0xffffffff8118ab51 <+17>:    mov    0x10aec90(%rip),%r9        # 0xffffffff822397e8 <vmemmap_base>
-   0xffffffff8118ab58 <+24>:    movabs $0x3fffffe00000,%rsi
-   0xffffffff8118ab62 <+34>:    and    $0xff8,%eax
-   0xffffffff8118ab67 <+39>:    test   $0x80,%cl
-   0xffffffff8118ab6a <+42>:    not    %r8
-   0xffffffff8118ab6d <+45>:    jne    0xffffffff8118ab79 <migration_entry_wait+57>
-   0xffffffff8118ab6f <+47>:    movabs $0x3ffffffff000,%rsi
-   0xffffffff8118ab79 <+57>:    and    %r8,%rsi
-   0xffffffff8118ab7c <+60>:    add    0x10aec75(%rip),%rax        # 0xffffffff822397f8 <page_offset_base>
-   0xffffffff8118ab83 <+67>:    and    %rsi,%rcx
-   0xffffffff8118ab86 <+70>:    mov    %rcx,%rdx
-   0xffffffff8118ab89 <+73>:    shr    $0x6,%rdx
-   0xffffffff8118ab8d <+77>:    mov    %rax,%rsi
-   0xffffffff8118ab90 <+80>:    lea    0x30(%r9,%rdx,1),%rdx
-   0xffffffff8118ab95 <+85>:    add    %rcx,%rsi
-   0xffffffff8118ab98 <+88>:    jmpq   0xffffffff8118aa20 <__migration_entry_wait>
-
-After:
-
-Dump of assembler code for function migration_entry_wait:
-   0xffffffff8118b3e0 <+0>:     mov    (%rsi),%rsi
-   0xffffffff8118b3e3 <+3>:     mov    %rdx,%rax
-   0xffffffff8118b3e6 <+6>:     mov    0x10ae41b(%rip),%r8        # 0xffffffff82239808 <vmemmap_base>
-   0xffffffff8118b3ed <+13>:    shr    $0x9,%rax
-   0xffffffff8118b3f1 <+17>:    and    $0xff8,%eax
-   0xffffffff8118b3f6 <+22>:    test   $0x80,%sil
-   0xffffffff8118b3fa <+26>:    jne    0xffffffff8118b432 <migration_entry_wait+82>
-   0xffffffff8118b3fc <+28>:    mov    %rsi,%rdx
-   0xffffffff8118b3ff <+31>:    movabs $0x3fffffffffff,%rcx
-   0xffffffff8118b409 <+41>:    and    %rcx,%rdx
-   0xffffffff8118b40c <+44>:    and    $0xfffffffffffff000,%rcx
-   0xffffffff8118b413 <+51>:    shr    $0xc,%rdx
-   0xffffffff8118b417 <+55>:    shl    $0x6,%rdx
-   0xffffffff8118b41b <+59>:    lea    0x30(%r8,%rdx,1),%rdx
-   0xffffffff8118b420 <+64>:    add    0x10ae3f1(%rip),%rax        # 0xffffffff82239818 <page_offset_base>
-   0xffffffff8118b427 <+71>:    and    %rcx,%rsi
-   0xffffffff8118b42a <+74>:    add    %rax,%rsi
-   0xffffffff8118b42d <+77>:    jmpq   0xffffffff8118b2c0 <__migration_entry_wait>
-   0xffffffff8118b432 <+82>:    mov    %rsi,%rdx
-   0xffffffff8118b435 <+85>:    and    $0xffffffffffe00000,%rdx
-   0xffffffff8118b43c <+92>:    movabs $0x3fffffffffff,%rcx
-   0xffffffff8118b446 <+102>:   and    %rcx,%rdx
-   0xffffffff8118b449 <+105>:   and    $0xffffffffffe00000,%rcx
-   0xffffffff8118b450 <+112>:   shr    $0x6,%rdx
-   0xffffffff8118b454 <+116>:   lea    0x30(%r8,%rdx,1),%rdx
-   0xffffffff8118b459 <+121>:   jmp    0xffffffff8118b420 <migration_entry_wait+64>
-
--- 
- Kirill A. Shutemov
+Rob
