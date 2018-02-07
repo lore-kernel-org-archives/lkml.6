@@ -1,142 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753901AbeBGKYg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:24:36 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:39260 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753476AbeBGKYc (ORCPT
+        id S1753721AbeBGK2G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:28:06 -0500
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:50924 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753564AbeBGK2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:24:32 -0500
-X-Google-Smtp-Source: AH8x224N5So5wmz4ZGIlR18MMT3SriEs/UAlHHgN1fOBX6e60kGmrYqreyz6xcKL8lv2/mfywvRvOQ==
-Subject: Re: [PATCH] [RESEND] x86/smpboot: avoid warning messages while
- hot-removing physical cpu
-To: Masayoshi Mizuma <msys.mizuma@gmail.com>, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-References: <de21ed2c-2efe-87be-01ca-a613c78c1027@gmail.com>
-From: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
-Message-ID: <f2ef2fb1-a6c3-24db-f755-c206be2e4054@gmail.com>
-Date: Wed, 7 Feb 2018 19:24:26 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <de21ed2c-2efe-87be-01ca-a613c78c1027@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Feb 2018 05:28:03 -0500
+X-Google-Smtp-Source: AH8x227zQWEKu10FaEL05bCv7zkBdKeBFcbnGu0y6r2qsGzcM7BkRgq/Y1ejet9vGjpM9QjCYw3bRw==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <1517998516.6606.1.camel@gmx.de>
+Date: Wed, 7 Feb 2018 11:27:56 +0100
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
+        SERENA ZIVIANI <169364@studenti.unimore.it>,
+        Serena Ziviani <ziviani.serena@gmail.com>,
+        =?utf-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
+Message-Id: <5584030F-8F4E-4C98-84A5-79873A1BF775@linaro.org>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+ <20180205190510.5499-2-paolo.valente@linaro.org>
+ <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+ <1517903761.9843.12.camel@gmx.de>
+ <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+ <1517918234.25841.31.camel@gmx.de>
+ <77124223e6116350a5184a5199850304@natalenko.name>
+ <1517924768.25841.32.camel@gmx.de>
+ <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
+ <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
+ <82ffc96aacc3945861cbb708df346338@natalenko.name>
+ <E52CCDEA-279A-40D8-AD9B-F4D1AF351BF1@linaro.org>
+ <1517995431.25619.5.camel@gmx.de>
+ <FBF6DCBB-B0F5-446B-8FD1-106E2538A9C1@linaro.org>
+ <1517998516.6606.1.camel@gmx.de>
+To: Mike Galbraith <efault@gmx.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17ASAve004953
 
-CC:+Andi Kleen
 
-Hi Masayoshi,
 
-This issue is caused by the following commit:
+> Il giorno 07 feb 2018, alle ore 11:15, Mike Galbraith <efault@gmx.de> ha scritto:
+> 
+> On Wed, 2018-02-07 at 10:45 +0100, Paolo Valente wrote:
+>> 
+>>> Il giorno 07 feb 2018, alle ore 10:23, Mike Galbraith <efault@gmx.de> ha scritto:
+>>> 
+>>> On Wed, 2018-02-07 at 10:08 +0100, Paolo Valente wrote:
+>>>> 
+>>>> The first piece of information I need is whether this failure happens
+>>>> even without "BFQ hierarchical scheduling support".
+>>> 
+>>> I presume you mean BFQ_GROUP_IOSCHED, which I do not have enabled.
+>>> 
+>> 
+>> Great (so to speak), this saves us one step.
+>> 
+>> So, here's my next request for help: please apply the attached patch
+>> (compressed to preserve it from my email client) and retry. It adds
+>> several anomaly checks. I hope I have not added any false-positive
+>> check.
+> 
+> kernel BUG at block/bfq-iosched.c:4742!
+> 
+> 4742         BUG_ON(!(rq->rq_flags & RQF_ELVPRIV));
 
-commit 30bb9811856f667042e746d8033883b1091a46ce
-Author: Andi Kleen <ak@linux.intel.com>
-Date:   Tue Nov 14 07:42:56 2017 -0500
+Oh my, this is as crazy as, fortunately, easy to fix.  The problem is
+that this is easy to fix in bfq, but increases the doubts I have
+expressed in my cover letter: is it ok that, in blk-mq, the functions
+of an elevator may get invoked, without control, on requests that do
+not belong to that elevator?
 
-    x86/topology: Avoid wasting 128k for package id array
+Anyway, two requests, Mike, if you haven't had enough already:
 
-So you should add the following "Fixes:" tag in the description.
+1. Could you paste a stack trace for this OOPS, just to understand how we
+get there?
 
-Fixes: 30bb9811856f ("x86/topology: Avoid wasting 128k for package id array")
+2. Could you please turn that BUG_ON into:
+if (!(rq->rq_flags & RQF_ELVPRIV))
+	return;
+and see what happens?
 
-Thanks,
-Yasuaki Ishimatsu
-
-On 02/05/2018 10:51 PM, Masayoshi Mizuma wrote:
-> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> 
-> When a physical cpu is hot-removed, the following warning message
-> are shown while the uncore device is removing in uncore_pci_remove().
-> 
-> WARNING: CPU: 120 PID: 5 at arch/x86/events/intel/uncore.c:988
-> uncore_pci_remove+0xf1/0x110
-> ...
-> CPU: 120 PID: 5 Comm: kworker/u1024:0 Not tainted 4.15.0-rc8 #1
-> Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-> ...
-> Call Trace:
-> pci_device_remove+0x36/0xb0
-> device_release_driver_internal+0x145/0x210
-> pci_stop_bus_device+0x76/0xa0
-> pci_stop_root_bus+0x44/0x60
-> acpi_pci_root_remove+0x1f/0x80
-> acpi_bus_trim+0x54/0x90
-> acpi_bus_trim+0x2e/0x90
-> acpi_device_hotplug+0x2bc/0x4b0
-> acpi_hotplug_work_fn+0x1a/0x30
-> process_one_work+0x141/0x340
-> worker_thread+0x47/0x3e0
-> kthread+0xf5/0x130
-> 
-> When uncore_pci_remove() runs, it tries to get package id to
-> clear the value of uncore_extra_pci_dev[].dev[] by using
-> topology_phys_to_logical_pkg(). The warning messesage are
-> shown because topology_phys_to_logical_pkg() returns -1.
-> 
->   arch/x86/events/intel/uncore.c:
->   static void uncore_pci_remove(struct pci_dev *pdev)
->   {
->   ...
->           phys_id = uncore_pcibus_to_physid(pdev->bus);
->   ...
->                   pkg = topology_phys_to_logical_pkg(phys_id); //returns -1
->                   for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
->                           if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
->                                   uncore_extra_pci_dev[pkg].dev[i] = NULL;
->                                   break;
->                           }
->                   }
->                   WARN_ON_ONCE(i >= UNCORE_EXTRA_PCI_DEV_MAX); //HERE!!
-> 
-> topology_phys_to_logical_pkg() tries to find
-> cpuinfo_x86->phys_proc_id that matches the phys_pkg argument.
-> 
->   arch/x86/kernel/smpboot.c:
->   int topology_phys_to_logical_pkg(unsigned int phys_pkg)
->   {
->           int cpu;
->   
->           for_each_possible_cpu(cpu) {
->                   struct cpuinfo_x86 *c = &cpu_data(cpu);
->   
->                   if (c->initialized && c->phys_proc_id == phys_pkg)
->                           return c->logical_proc_id;
->           }
->           return -1;
->   }
-> 
-> However, the phys_proc_id is already set to 0 by remove_siblinginfo()
-> when the cpu was offlined.
-> So, topology_phys_to_logical_pkg() cannot find correct the
-> logical_proc_id and always returns -1.
-> As the result, uncore_pci_remove() calls WARN_ON_ONCE() and the warning
-> messages are shown.
-> 
-> To avoid this, remove the setting from remove_siblinginfo().
-> There is no influence about the removing because phys_proc_id is not
-> used after it is hot-removed and it is re-set while hot-addeding.
-> 
-> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
->  
-> ---
->  arch/x86/kernel/smpboot.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index ed556d5..844279c 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -1431,7 +1431,6 @@ static void remove_siblinginfo(int cpu)
->  	cpumask_clear(cpu_llc_shared_mask(cpu));
->  	cpumask_clear(topology_sibling_cpumask(cpu));
->  	cpumask_clear(topology_core_cpumask(cpu));
-> -	c->phys_proc_id = 0;
->  	c->cpu_core_id = 0;
->  	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
->  	recompute_smt_state();
-> 
+Thanks a lot,
+Paolo
