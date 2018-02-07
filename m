@@ -1,70 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753614AbeBGKLr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:11:47 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45319 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752992AbeBGKLp (ORCPT
+        id S1753643AbeBGKPL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:15:11 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:56897 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753419AbeBGKPK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:11:45 -0500
-X-Google-Smtp-Source: AH8x225vkoNxW7gO2wzGazigTyk9FJIbg53lleoL/OpR6s1FAbHrZ8k6XAvhj5Dc9zJzTXvA9GcFKpaWZC6MnRcdNE0=
+        Wed, 7 Feb 2018 05:15:10 -0500
+Subject: Re: [PATCH] irqchip: mips-gic: Avoid spuriously handling masked
+ interrupts
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
+        "Jason Cooper" <jason@lakedaemon.net>, <linux-kernel@vger.kernel.org>
+References: <1517849136-29508-1-git-send-email-matt.redfearn@mips.com>
+ <bb76fb4e-5e6c-92eb-d79a-96045f74e91b@arm.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <e7ec98be-5a4b-ef54-797d-7e11cf2b14e5@mips.com>
+Date: Wed, 7 Feb 2018 09:44:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <1517994487.3996.7.camel@redhat.com>
-References: <94eb2c07fd4c75cd8705648eeb87@google.com> <CACT4Y+ahGbrH9BGFeAfRW08jJEWfWf7ovzP9vsHZVQ4-KM5hTw@mail.gmail.com>
- <1517994487.3996.7.camel@redhat.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 7 Feb 2018 11:11:24 +0100
-Message-ID: <CACT4Y+ZA1TsyGbY+eB_6YArx4LWtCw-9A5L8S_XMGAtaZ-Qf+A@mail.gmail.com>
-Subject: Re: possible deadlock in rtnl_lock (3)
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: syzbot <syzbot+63682ce11532e0da2b9d@syzkaller.appspotmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Benc <jbenc@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        Xin Long <lucien.xin@gmail.com>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Vladislav Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <bb76fb4e-5e6c-92eb-d79a-96045f74e91b@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1517998488-298554-22957-46559-15
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.188376
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 7, 2018 at 10:08 AM, Paolo Abeni <pabeni@redhat.com> wrote:
-> On Tue, 2018-02-06 at 19:00 +0100, Dmitry Vyukov wrote:
->> On Tue, Feb 6, 2018 at 6:58 PM, syzbot
->> <syzbot+63682ce11532e0da2b9d@syzkaller.appspotmail.com> wrote:
->> > Hello,
->> >
->> > syzbot hit the following crash on net-next commit
->> > 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
->> > Merge tag 'usercopy-v4.16-rc1' of
->> > git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
->> >
->> > So far this crash happened 2510 times on net-next, upstream.
->> > C reproducer is attached.
->> > syzkaller reproducer is attached.
->> > Raw console output is attached.
->> > compiler: gcc (GCC) 7.1.1 20170620
->> > .config is attached.
->> >
->> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> > Reported-by: syzbot+63682ce11532e0da2b9d@syzkaller.appspotmail.com
->> > It will help syzbot understand when the bug is fixed. See footer for
->> > details.
->> > If you forward the report, please keep this part and the footer.
->>
->>
->> Paolo, was this also fixed by "netfilter: on sockopt() acquire sock
->> lock only in the required scope"?
->
-> I *think* this is fixed by the above commit, anyway I'll probably be
-> unable to verify such statement soon.
+Hi Marc,
 
-Thanks, Paolo. This is good enough for now. If this is wrong, syzbot
-will hit it again later, but at that point we will know that the patch
-is present in the tested tree.
+On 07/02/18 09:41, Marc Zyngier wrote:
+> On 05/02/18 16:45, Matt Redfearn wrote:
+>> Commit 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading
+>> GIC_SH_MASK*") removed the read of the hardware mask register when
+>> handling shared interrupts, instead using the driver's shadow pcpu_masks
+>> entry as the effective mask. Unfortunately this did not take account of
+>> the write to pcpu_masks during gic_shared_irq_domain_map, which
+>> effectively unmasks the interrupt early. If an interrupt is asserted,
+>> gic_handle_shared_int decodes and processes the interrupt even though it
+>> has not yet been unmasked via gic_unmask_irq, which also sets the
+>> appropriate bit in pcpu_masks.
+>>
+>> On the MIPS Boston board, when a console command line of
+>> "console=ttyS0,115200n8r" is passed, the modem status IRQ is enabled in
+>> the UART, which is immediately raised to the GIC. The interrupt has been
+>> mapped, but no handler has yet been registered, nor is it expected to be
+>> unmasked. However, the write to pcpu_masks in gic_shared_irq_domain_map
+>> has effectively unmasked it, resulting in endless reports of:
+>>
+>> [    5.058454] irq 13, desc: ffffffff80a7ad80, depth: 1, count: 0, unhandled: 0
+>> [    5.062057] ->handle_irq():  ffffffff801b1838,
+>> [    5.062175] handle_bad_irq+0x0/0x2c0
+>>
+>> Where IRQ 13 is the UART interrupt.
+>>
+>> To fix this, just remove the write to pcpu_masks in
+>> gic_shared_irq_domain_map. The existing write in gic_unmask_irq is the
+>> correct place for what is now the effective unmasking.
+>>
+>> Fixes: 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading GIC_SH_MASK*")
+>> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+>> Reviewed-by: Paul Burton <paul.burton@mips.com>
+>>
+>> ---
+>>
+>>   drivers/irqchip/irq-mips-gic.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
+>> index b2cfc6d66d74..2c3684ba46e5 100644
+>> --- a/drivers/irqchip/irq-mips-gic.c
+>> +++ b/drivers/irqchip/irq-mips-gic.c
+>> @@ -429,8 +429,6 @@ static int gic_shared_irq_domain_map(struct irq_domain *d, unsigned int virq,
+>>   	spin_lock_irqsave(&gic_lock, flags);
+>>   	write_gic_map_pin(intr, GIC_MAP_PIN_MAP_TO_PIN | shared_cpu_pin);
+>>   	write_gic_map_vp(intr, BIT(mips_cm_vp_id(cpu)));
+>> -	gic_clear_pcpu_masks(intr);
+>> -	set_bit(intr, per_cpu_ptr(pcpu_masks, cpu));
+>>   	irq_data_update_effective_affinity(data, cpumask_of(cpu));
+>>   	spin_unlock_irqrestore(&gic_lock, flags);
+>>   
+>>
+> 
+> Does this need to be Cc to stable (since it fixes something that was
+> merged in 4.14)?
 
-#syz fix: netfilter: on sockopt() acquire sock lock only in the required scope
+Sorry, missed stable off the CC list. Yes, it does indeed need to be 
+backported. Should I resubmit?
+
+Thanks,
+Matt
+
+> 
+> Thanks,
+> 
+> 	M.
+> 
