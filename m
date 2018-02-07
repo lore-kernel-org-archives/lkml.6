@@ -1,42 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753471AbeBGIIc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:08:32 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37170 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750815AbeBGIIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:08:31 -0500
-From: Jason Wang <jasowang@redhat.com>
-To: linux-kernel@vger.kernel.org, mst@redhat.com
-Cc: netdev@vger.kernel.org, Jason Wang <jasowang@redhat.com>
-Subject: [PATCH net] ptr_ring: fail early if queue occupies more than KMALLOC_MAX_SIZE
-Date: Wed,  7 Feb 2018 16:08:25 +0800
-Message-Id: <1517990905-15737-1-git-send-email-jasowang@redhat.com>
+        id S1753398AbeBGIQb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:16:31 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50379 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeBGIQa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 03:16:30 -0500
+X-Google-Smtp-Source: AH8x224jGSAJbS3Q6HyxmhCnPZ77az/W3XpyJmNKcuCU1zZzdtc8OFzOMfL3v8j0EXH5fa3jOjIAXQ==
+Date: Wed, 7 Feb 2018 11:16:27 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Kai Huang <kai.huang@linux.intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] x86/tme: Detect if TME and MKTME is activated by BIOS
+Message-ID: <20180207081627.eomxuyqw74eew756@node.shutemov.name>
+References: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
+ <20180131091509.26531-3-kirill.shutemov@linux.intel.com>
+ <1517978050.23889.23.camel@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517978050.23889.23.camel@linux.intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid slab to warn about exceeded size, fail early if queue
-occupies more than KMALLOC_MAX_SIZE.
+On Wed, Feb 07, 2018 at 05:34:10PM +1300, Kai Huang wrote:
+> On Wed, 2018-01-31 at 12:15 +0300, Kirill A. Shutemov wrote:
+> > IA32_TME_ACTIVATE MSR (0x982) can be used to check if BIOS has
+> > enabled
+> > TME and MKTME. It includes which encryption policy/algorithm is
+> > selected
+> > for TME or available for MKTME. For MKTME, the MSR also enumerates
+> > how
+> > many KeyIDs are available.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/intel.c | 83
+> > +++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 83 insertions(+)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/intel.c
+> > b/arch/x86/kernel/cpu/intel.c
+> > index 6936d14d4c77..5b95fa484837 100644
+> > --- a/arch/x86/kernel/cpu/intel.c
+> > +++ b/arch/x86/kernel/cpu/intel.c
+> > @@ -517,6 +517,86 @@ static void detect_vmx_virtcap(struct
+> > cpuinfo_x86 *c)
+> >  	}
+> >  }
+> >  
+> > +#define MSR_IA32_TME_ACTIVATE		0x982
+> 
+> Should this MSR go into msr-index.h?
 
-Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- include/linux/ptr_ring.h | 2 ++
- 1 file changed, 2 insertions(+)
+No. Comment from msr-index.h:
 
-diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-index 1883d61..4b862da 100644
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-@@ -466,6 +466,8 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
- 
- static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
- {
-+	if (size > KMALLOC_MAX_SIZE)
-+		return NULL;
- 	return kcalloc(size, sizeof(void *), gfp);
- }
- 
+ * Do not add new entries to this file unless the definitions are shared
+ * between multiple compilation units.
+
+> > +
+> > +#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
+> > +#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
+> > +
+> > +#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	
+> > /* Bits 7:4 */
+> > +#define TME_ACTIVATE_POLICY_AES_XTS	0
+> > +
+> > +#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/
+> > * Bits 35:32 */
+> > +
+> > +#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	
+> > /* Bits 63:48 */
+> > +#define TME_ACTIVATE_CRYPTO_AES_XTS	1
+> > +
+> > +#define MKTME_ENABLED		0
+> > +#define MKTME_DISABLED		1
+> > +#define MKTME_UNINITIALIZED	2
+> > +static int mktme_status = MKTME_UNINITIALIZED;
+> > +
+> > +static void detect_tme(struct cpuinfo_x86 *c)
+> > +{
+> > +	u64 tme_activate, tme_policy, tme_crypto_algs;
+> > +	int keyid_bits = 0, nr_keyids = 0;
+> > +	static u64 tme_activate_cpu0 = 0;
+> > +
+> > +	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
+> > +
+> > +	if (mktme_status != MKTME_UNINITIALIZED) {
+> > +		/* Broken BIOS? */
+> > +		if (tme_activate != tme_activate_cpu0) {
+> > +			pr_err_once("TME: configuation is
+> > inconsistent between CPUs\n");
+> > +			mktme_status = MKTME_DISABLED;
+> > +		}
+> > +		goto out;
+> 
+> Why goto out here? If something goes wrong, I think it is pointless to
+> read keyID bits staff? IMHO if something goes wrong, you should set
+> mktme_status to disabled, and clear tme_activate_cpu0?
+
+We still have to mask out keyid bits from x86_phys_bits if CPU has TME
+enabled. But yeah, as you pointed below, I need to check that it actually
+locked and enabled.
+
+> > +	}
+> > +
+> > +	tme_activate_cpu0 = tme_activate;
+> > +
+> > +	if (!TME_ACTIVATE_LOCKED(tme_activate) ||
+> > !TME_ACTIVATE_ENABLED(tme_activate)) {
+> > +		pr_info("TME: not enabled by BIOS\n");
+> > +		mktme_status = MKTME_DISABLED;
+> > +		goto out;
+> 
+> I think it is pointless to read keyID bits staff if TME is not even
+> enabled.
+> 
+> > +	}
+> > +
+> > +	pr_info("TME: enabled by BIOS\n");
+> > +
+> > +	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
+> > +	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS)
+> > +		pr_warn("TME: Unknown policy is active: %#llx\n",
+> > tme_policy);
+> > +
+> > +	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
+> > +	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS)) {
+> > +		pr_err("MKTME: No known encryption algorithm is
+> > supported: %#llx\n",
+> > +				tme_crypto_algs);
+> > +		mktme_status = MKTME_DISABLED;
+> > +	}
+> 
+> To me it is a little bit confusing about the naming. tme_policy is the
+> crypto_alg used by TME keyID (0), and tme_crypto_algs is bitmap of
+> supported crypto_algs for MK-TME. Probably a better naming is needed?
+> And the naming of TME_ACTIVATE_POLICY(x), TME_ACTIVATE_CRYPTO_ALGS(x)
+> above as well?
+
+Suggestions?
+
 -- 
-2.7.4
+ Kirill A. Shutemov
