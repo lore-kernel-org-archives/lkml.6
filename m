@@ -1,499 +1,328 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1263884-1518054279-2-2260905663556323156
+X-Cyrus-Session-Id: sloti22d1t05-3793448-1518002902-2-12613554624597109330
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='gbk'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518054278; b=v6vaHiNnMHOJ7vxwgd+Tvgj2/LJOPn+nVlWljWOcodvPRWs
-    lFB32Sb+IrqlhfP7QnxvowsUmpocztNA8bsDXKqvbv+DpFSHFg+YOJvd5LTzUcl7
-    Ushn3NMFXpo9GPpYrn3Ep+qT0zAHF6Qeq1gNPWFW1HOt10tS46YkQBiHWt7txex3
-    v3zOhYZGp/XjhsM/3rtn3idEx29Laa5H6YKYtQ3JQ7JczQCTHDqdamdj7y0GX2/D
-    k/tHzvxkEoIda3+MlXzHElDq8bufMHYjylO1FLtbAKEIu7kuKw1HJKrfD0xPwomT
-    nzJFDWwRkNuP8Gt3jKRVJt4M1EZKqAS1TEx9NBg==
+    t=1518002901; b=DkvCRC3tO77jwsxDKoHGk1A+jWq/xbSK5EuL5I6ZuUt8kuT
+    kGHcQ99wFvikyC3v+g/mCSPaw4ABtXCmlhDeSuwcV0jHLcFkv4fzI8mWeFMpNhHM
+    4iHoHnyCIQxQnZFy0aUBxl1odXg7Uu4bEH8x84ccRu+59l+OeTCi5Hs7Q9FhjVhI
+    5GDDtngEIHXYWaE+1ZW6iRyufRyU/o5IiO+7Y8u7xoIA62+WxKLU+8eN12qB2Jx9
+    iEYLJ+SmWXh9uaAaZwbUCY3GR39+ChJo2nTXDzfD0QtZCN1g9tUSffHcnX/lIyo0
+    6UrjUyjRQfvTcnI3eYo0bElewg0cRbIq9HYaSoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1518054278; bh=Pt73Y/hBSGIT2hL7VxDLJs99nz3uI/uOWQDKl3/9Udw=; b=k
-    IJ8x5LodHssljyqJTuCPUaLemzUawgvpXi6HKEsCBAhTUWSbLg3nXlVFGXFIqsEw
-    lw1m22lWYQfUr+JRZSVa74d3+78euJWiSKlGwwAzBQtdbxAlQTOhygKNNcei9es8
-    Q/pWPaw99fn+qu/Voq2QdN/Qc7jJfLBgw/ybMKF8PtypU3iS926R+eO/myDGAe0m
-    HFwU5yCCLqrhl9xFf1hfpMDYcWiaoTk7fCj9ZED5ZNbGtb9oEvG9oxEt5ZK2q7Ji
-    WPplTr4TDkW60P3zxzzPR8F3jlrOMzKBxDf2hc7OGjo+z0PFFKe8Dxt+oiUyyW2d
-    AXPShL+TVMsghEZtM7ysQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1518002901; bh=UV65DnECRtHkm9BD2ZSFTXduqH
+    AKMcUvZdG1bEcwprg=; b=VUJ61GZSbCxiCOOWlbZAmmQuzn7XQxFX4zYTirNOF5
+    F4676bTR0q5dM4HAoowfEjKRiIriCfRblavGtXEOS7c0b/Jre+0vkdNlXpbnq+/F
+    QxJbCiFIg/EnyPp6LfP8YCgQv0mdRhMadIHuXU296m0eIegawOmZ85sZc7nbDG2h
+    ngnf+dTLz1r3v+BqoUxw4AHFZ11mX/3JDI9ADGe3FX3y5jKKIGI7poRxWLeSOpgI
+    7+66ba0X1CPZmAqv6tN2ckqFk09JOFHtQhPOqjlh/WZsoZuWdwPNxKRqf67mWo3e
+    d7w+5J5mtao5uYjfMuj41ZWyTAF2YVaCaUbCzoeuv4ow==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cn.fujitsu.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=cn.fujitsu.com header.result=pass header_org.domain=fujitsu.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cn.fujitsu.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=cn.fujitsu.com header.result=pass header_org.domain=fujitsu.com header_org.result=pass header_is_org_domain=no
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751130AbeBHBof (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Feb 2018 20:44:35 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:6781 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750987AbeBHBoe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Feb 2018 20:44:34 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="36910644"
-Subject: Re: [PATCH 4.14 023/159] mm/sparsemem: Allocate mem_section at
- runtime for CONFIG_SPARSEMEM_EXTREME=y
-To: Baoquan He <bhe@redhat.com>
-CC: Takao Indoh <indou.takao@jp.fujitsu.com>,
+        id S1753840AbeBGL2S (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Feb 2018 06:28:18 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43760 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753794AbeBGL2R (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:28:17 -0500
+Date: Wed, 7 Feb 2018 19:28:08 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Mike Galbraith <efault@gmx.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mike Galbraith <efault@gmx.de>, <kexec@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>, <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+        linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@suse.de>, Dave Young <dyoung@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>
-References: <d71ba136-71ba-333a-f99b-b8283e2dc545@cn.fujitsu.com>
- <20180207104111.sljc62bgkggmtio4@node.shutemov.name>
- <1518000336.29698.1.camel@gmx.de>
- <cd7e23ce-60a3-08ad-eb5d-21bb91df5937@cn.fujitsu.com>
- <20180207120827.GB30270@localhost.localdomain>
- <2945e12f-caab-b7e7-77e0-bd3971e784be@cn.fujitsu.com>
- <20180207122724.GC30270@localhost.localdomain>
- <0a2d5abe-3081-a784-dd85-70d34a0f60cc@cn.fujitsu.com>
- <20180207124519.GD30270@localhost.localdomain>
- <0988774f-9de0-b18f-1216-57d802502bb7@cn.fujitsu.com>
- <20180208012323.GE30270@localhost.localdomain>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <df0cf441-ec74-9817-8f37-3bf22474f1c5@cn.fujitsu.com>
-Date: Thu, 8 Feb 2018 09:44:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH 4.14 023/159] mm/sparsemem: Allocate mem_section at
+ runtime for CONFIG_SPARSEMEM_EXTREME=y
+Message-ID: <20180207112808.GA30270@localhost.localdomain>
+References: <20171222084623.668990192@linuxfoundation.org>
+ <20171222084625.007160464@linuxfoundation.org>
+ <1515302062.6507.18.camel@gmx.de>
+ <20180108160444.2ol4fvgqbxnjmlpg@gmail.com>
+ <20180108174653.7muglyihpngxp5tl@black.fi.intel.com>
+ <20180109001303.dy73bpixsaegn4ol@node.shutemov.name>
+ <1515469448.6766.12.camel@gmx.de>
+ <d71ba136-71ba-333a-f99b-b8283e2dc545@cn.fujitsu.com>
 MIME-Version: 1.0
-In-Reply-To: <20180208012323.GE30270@localhost.localdomain>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 37B0F48AE763.AE0AA
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
-X-Remote-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d71ba136-71ba-333a-f99b-b8283e2dc545@cn.fujitsu.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Baoquan,
-
-At 02/08/2018 09:23 AM, Baoquan He wrote:
-> On 02/08/18 at 09:14am, Dou Liyang wrote:
->> Hi Baoquan,
->>
->> At 02/07/2018 08:45 PM, Baoquan He wrote:
->>> On 02/07/18 at 08:34pm, Dou Liyang wrote:
->>>>
->>>>
->>>> At 02/07/2018 08:27 PM, Baoquan He wrote:
->>>>> On 02/07/18 at 08:17pm, Dou Liyang wrote:
->>>>>> Hi Baoquan,
->>>>>>
->>>>>> At 02/07/2018 08:08 PM, Baoquan He wrote:
->>>>>>> On 02/07/18 at 08:00pm, Dou Liyang wrote:
->>>>>>>> Hi Kirill,Mike
->>>>>>>>
->>>>>>>> At 02/07/2018 06:45 PM, Mike Galbraith wrote:
->>>>>>>>> On Wed, 2018-02-07 at 13:41 +0300, Kirill A. Shutemov wrote:
->>>>>>>>>> On Wed, Feb 07, 2018 at 05:25:05PM +0800, Dou Liyang wrote:
->>>>>>>>>>> Hi All,
->>>>>>>>>>>
->>>>>>>>>>> I met the makedumpfile failed in the upstream kernel which contained
->>>>>>>>>>> this patch. Did I missed something else?
->>>>>>>>>>
->>>>>>>>>> None I'm aware of.
->>>>>>>>>>
->>>>>>>>>> Is there a reason to suspect that the issue is related to the bug this patch
->>>>>>>>>> fixed?
->>>>>>>>>
->>>>>>>>
->>>>>>>> I did a contrastive test by my colleagues Indoh's suggestion.
->>>
->>> OK, I may get the reason. kaslr is enabled, right? You can try to
->>
->> I add 'nokaslr' to disable the KASLR feature.
->      ~~~added??
-
-oops! yes, the kaslr had already disabled by this option when I tested.
-
->>
->> # cat /proc/cmdline
->> BOOT_IMAGE=/vmlinuz-4.15.0+ root=UUID=10f10326-c923-4098-86aa-afed5c54ee0b
->> ro crashkernel=512M rhgb console=tty0 console=ttyS0 nokaslr LANG=en_US.UTF-8
->>
->>> disable kaslr and try them again. Because phys_base and kaslr_offset are
->>> got from vmlinux, while these are generated at compiling time. Just a
->>> guess.
->>>
->>
->> Oh, I will recompile the kernel with KASLR disabled in .config.
+On 02/07/18 at 05:25pm, Dou Liyang wrote:
+> Hi All,
 > 
-> Then it's not what I guessed. Need debug makedumpfile since using
-> vmlinux is another code path, few people use it usually.
+> I met the makedumpfile failed in the upstream kernel which contained
+> this patch. Did I missed something else?
+
+readmem: Can't convert a virtual address(ffff88007ffd7000) to physical
+
+Should not related to this patch. Otherwise your code can't get to that
+step. From message, ffff88007ffd7000 is the end of the last mem region,
+seems a code bug. You are testing 5-level on makedumpfile, right?
+
+The patches I posted to descrease the memmory cost on mem map allocation
+has code bug, Fengguang's test robot sent a mail to me, I have updated
+patches, try to write a good patch log. You might also need check the
+5-level patches you posted to makedumpfile upstream.
+
 > 
-
-Understood, I will try to look into it.
-
-Thanks,
-	dou
-
->>
->>
->> Thanks,
->> 	dou.
->>>>>>>>
->>>>>>>> Revert your two commits:
->>>>>>>>
->>>>>>>> commit 83e3c48729d9ebb7af5a31a504f3fd6aff0348c4
->>>>>>>> Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>>>>> Date:   Fri Sep 29 17:08:16 2017 +0300
->>>>>>>>
->>>>>>>> commit 629a359bdb0e0652a8227b4ff3125431995fec6e
->>>>>>>> Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>>>>> Date:   Tue Nov 7 11:33:37 2017 +0300
->>>>>>>>
->>>>>>>> ...and keep others unchanged, the makedumpfile works well.
->>>>>>>>
->>>>>>>>> Still works fine for me with .today.  Box is only 16GB desktop box though.
->>>>>>>>>
->>>>>>>> Btw, In the upstream kernel which contained this patch, I did two tests:
->>>>>>>>
->>>>>>>>      1) use the makedumpfile as core_collector in /etc/kdump.conf, then
->>>>>>>> trigger the process of kdump by echo 1 >/proc/sysrq-trigger, the
->>>>>>>> makedumpfile works well and I can get the vmcore file.
->>>>>>>>
->>>>>>>>          ......It is OK
->>>>>>>>
->>>>>>>>      2) use cp as core_collector, do the same operation to get the vmcore file.
->>>>>>>> then use makedumpfile to do like above:
->>>>>>>>
->>>>>>>>         [douly@localhost code]$ ./makedumpfile -d 31 --message-level 31 -x
->>>>>>>> vmlinux_4.15+ vmcore_4.15+_from_cp_command vmcore_4.15+
->>>>>>>
->>>>>>> Oh, then please ignore my previous comment. Adding '-D' can give more
->>>>>>> debugging message.
->>>>>>
->>>>>> I added '-D', Just like before, no more debugging message:
->>>>>>
->>>>>> BTW, I use crash to analyze the vmcore file created by 'cp' command.
->>>>>>
->>>>>>       ./crash ../makedumpfile/code/vmcore_4.15+_from_cp_command
->>>>>> ../makedumpfile/code/vmlinux_4.15+
->>>>>>
->>>>>> the crash works well, It's so interesting.
->>>>>>
->>>>>> Thanks,
->>>>>> 	dou.
->>>>>>
->>>>>> The debugging message with '-D':
->>>>>
->>>>> And what's the debugging printing when trigger crash by sysrq?
->>>>>
->>>>
->>>> kdump: dump target is /dev/vda2
->>>> kdump: saving to /sysroot//var/crash/127.0.0.1-2018-02-07-07:31:56/
->>>> [    2.751352] EXT4-fs (vda2): re-mounted. Opts: data=ordered
->>>> kdump: saving vmcore-dmesg.txt
->>>> kdump: saving vmcore-dmesg.txt complete
->>>> kdump: saving vmcore
->>>> sadump: does not have partition header
->>>> sadump: read dump device as unknown format
->>>> sadump: unknown format
->>>> LOAD (0)
->>>>     phys_start : 1000000
->>>>     phys_end   : 2a86000
->>>>     virt_start : ffffffff81000000
->>>>     virt_end   : ffffffff82a86000
->>>> LOAD (1)
->>>>     phys_start : 1000
->>>>     phys_end   : 9fc00
->>>>     virt_start : ffff880000001000
->>>>     virt_end   : ffff88000009fc00
->>>> LOAD (2)
->>>>     phys_start : 100000
->>>>     phys_end   : 13000000
->>>>     virt_start : ffff880000100000
->>>>     virt_end   : ffff880013000000
->>>> LOAD (3)
->>>>     phys_start : 33000000
->>>>     phys_end   : 7ffd7000
->>>>     virt_start : ffff880033000000
->>>>     virt_end   : ffff88007ffd7000
->>>> Linux kdump
->>>> page_size    : 4096
->>>>
->>>> max_mapnr    : 7ffd7
->>>>
->>>> Buffer size for the cyclic mode: 131061
->>>>
->>>> num of NODEs : 1
->>>>
->>>>
->>>> Memory type  : SPARSEMEM_EX
->>>>
->>>> mem_map (0)
->>>>     mem_map    : ffffea0000000000
->>>>     pfn_start  : 0
->>>>     pfn_end    : 8000
->>>> mem_map (1)
->>>>     mem_map    : ffffea0000200000
->>>>     pfn_start  : 8000
->>>>     pfn_end    : 10000
->>>> mem_map (2)
->>>>     mem_map    : ffffea0000400000
->>>>     pfn_start  : 10000
->>>>     pfn_end    : 18000
->>>> mem_map (3)
->>>>     mem_map    : ffffea0000600000
->>>>     pfn_start  : 18000
->>>>     pfn_end    : 20000
->>>> mem_map (4)
->>>>     mem_map    : ffffea0000800000
->>>>     pfn_start  : 20000
->>>>     pfn_end    : 28000
->>>> mem_map (5)
->>>>     mem_map    : ffffea0000a00000
->>>>     pfn_start  : 28000
->>>>     pfn_end    : 30000
->>>> mem_map (6)
->>>>     mem_map    : ffffea0000c00000
->>>>     pfn_start  : 30000
->>>>     pfn_end    : 38000
->>>> mem_map (7)
->>>>     mem_map    : ffffea0000e00000
->>>>     pfn_start  : 38000
->>>>     pfn_end    : 40000
->>>> mem_map (8)
->>>>     mem_map    : ffffea0001000000
->>>>     pfn_start  : 40000
->>>>     pfn_end    : 48000
->>>> mem_map (9)
->>>>     mem_map    : ffffea0001200000
->>>>     pfn_start  : 48000
->>>>     pfn_end    : 50000
->>>> mem_map (10)
->>>>     mem_map    : ffffea0001400000
->>>>     pfn_start  : 50000
->>>>     pfn_end    : 58000
->>>> mem_map (11)
->>>>     mem_map    : ffffea0001600000
->>>>     pfn_start  : 58000
->>>>     pfn_end    : 60000
->>>> mem_map (12)
->>>>     mem_map    : ffffea0001800000
->>>>     pfn_start  : 60000
->>>>     pfn_end    : 68000
->>>> mem_map (13)
->>>>     mem_map    : ffffea0001a00000
->>>>     pfn_start  : 68000
->>>>     pfn_end    : 70000
->>>> mem_map (14)
->>>>     mem_map    : ffffea0001c00000
->>>>     pfn_start  : 70000
->>>>     pfn_end    : 78000
->>>> mem_map (15)
->>>>     mem_map    : ffffea0001e00000
->>>>     pfn_start  : 78000
->>>>     pfn_end    : 7ffd7
->>>> mmap() is available on the kernel.
->>>> Copying data                                      : [100.0 %] -  eta: 0s
->>>> Writing erase info...
->>>> offset_eraseinfo: 9567fb0, size_eraseinfo: 0
->>>> kdump: saving vmcore complete
->>>>
->>>> Thanks,
->>>> 	dou
->>>>
->>>>>>
->>>>>> [douly@localhost code]$ ./makedumpfile -D -d 31 --message-level 31 -x
->>>>>> vmlinux_4.15+  vmcore_4.15+_from_cp_command vmcore_4.15+
->>>>>> sadump: does not have partition header
->>>>>> sadump: read dump device as unknown format
->>>>>> sadump: unknown format
->>>>>> LOAD (0)
->>>>>>      phys_start : 1000000
->>>>>>      phys_end   : 2a86000
->>>>>>      virt_start : ffffffff81000000
->>>>>>      virt_end   : ffffffff82a86000
->>>>>> LOAD (1)
->>>>>>      phys_start : 1000
->>>>>>      phys_end   : 9fc00
->>>>>>      virt_start : ffff880000001000
->>>>>>      virt_end   : ffff88000009fc00
->>>>>> LOAD (2)
->>>>>>      phys_start : 100000
->>>>>>      phys_end   : 13000000
->>>>>>      virt_start : ffff880000100000
->>>>>>      virt_end   : ffff880013000000
->>>>>> LOAD (3)
->>>>>>      phys_start : 33000000
->>>>>>      phys_end   : 7ffd7000
->>>>>>      virt_start : ffff880033000000
->>>>>>      virt_end   : ffff88007ffd7000
->>>>>> Linux kdump
->>>>>> page_size    : 4096
->>>>>>
->>>>>> max_mapnr    : 7ffd7
->>>>>>
->>>>>> Buffer size for the cyclic mode: 131061
->>>>>> The kernel version is not supported.
->>>>>> The makedumpfile operation may be incomplete.
->>>>>>
->>>>>> num of NODEs : 1
->>>>>>
->>>>>>
->>>>>> Memory type  : SPARSEMEM_EX
->>>>>>
->>>>>> mem_map (0)
->>>>>>      mem_map    : ffff88007ff26000
->>>>>>      pfn_start  : 0
->>>>>>      pfn_end    : 8000
->>>>>> mem_map (1)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 8000
->>>>>>      pfn_end    : 10000
->>>>>> mem_map (2)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 10000
->>>>>>      pfn_end    : 18000
->>>>>> mem_map (3)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 18000
->>>>>>      pfn_end    : 20000
->>>>>> mem_map (4)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 20000
->>>>>>      pfn_end    : 28000
->>>>>> mem_map (5)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 28000
->>>>>>      pfn_end    : 30000
->>>>>> mem_map (6)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 30000
->>>>>>      pfn_end    : 38000
->>>>>> mem_map (7)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 38000
->>>>>>      pfn_end    : 40000
->>>>>> mem_map (8)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 40000
->>>>>>      pfn_end    : 48000
->>>>>> mem_map (9)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 48000
->>>>>>      pfn_end    : 50000
->>>>>> mem_map (10)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 50000
->>>>>>      pfn_end    : 58000
->>>>>> mem_map (11)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 58000
->>>>>>      pfn_end    : 60000
->>>>>> mem_map (12)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 60000
->>>>>>      pfn_end    : 68000
->>>>>> mem_map (13)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 68000
->>>>>>      pfn_end    : 70000
->>>>>> mem_map (14)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 70000
->>>>>>      pfn_end    : 78000
->>>>>> mem_map (15)
->>>>>>      mem_map    : 0
->>>>>>      pfn_start  : 78000
->>>>>>      pfn_end    : 7ffd7
->>>>>> mmap() is available on the kernel.
->>>>>> Checking for memory holes                         : [100.0 %] |         STEP
->>>>>> [Checking for memory holes  ] : 0.000014 seconds
->>>>>> __vtop4_x86_64: Can't get a valid pte.
->>>>>> readmem: Can't convert a virtual address(ffff88007ffd7000) to physical
->>>>>> address.
->>>>>> readmem: type_addr: 0, addr:ffff88007ffd7000, size:32768
->>>>>> __exclude_unnecessary_pages: Can't read the buffer of struct page.
->>>>>> create_2nd_bitmap: Can't exclude unnecessary pages.
->>>>>> Checking for memory holes                         : [100.0 %] \         STEP
->>>>>> [Checking for memory holes  ] : 0.000006 seconds
->>>>>> Checking for memory holes                         : [100.0 %] -         STEP
->>>>>> [Checking for memory holes  ] : 0.000004 seconds
->>>>>> __vtop4_x86_64: Can't get a valid pte.
->>>>>> readmem: Can't convert a virtual address(ffff88007ffd7000) to physical
->>>>>> address.
->>>>>> readmem: type_addr: 0, addr:ffff88007ffd7000, size:32768
->>>>>> __exclude_unnecessary_pages: Can't read the buffer of struct page.
->>>>>> create_2nd_bitmap: Can't exclude unnecessary pages.
->>>>>>
->>>>>> makedumpfile Failed.
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>>         ......It causes makedumpfile failed.
->>>>>>>>
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>> 	dou.
->>>>>>>>
->>>>>>>>> 	-Mike
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>
->>>>>>
->>>>>
->>>>>
->>>>>
->>>>
->>>>
->>>
->>>
->>>
->>
->>
->>
->> _______________________________________________
->> kexec mailing list
->> kexec@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/kexec
+> In fedora27 host:
+> 
+> [douly@localhost code]$ ./makedumpfile -d 31 --message-level 31 -x
+> vmlinux_4.15+ vmcore_4.15+_from_cp_command vmcore_4.15+
+> 
+> sadump: does not have partition header
+> sadump: read dump device as unknown format
+> sadump: unknown format
+> LOAD (0)
+>   phys_start : 1000000
+>   phys_end   : 2a86000
+>   virt_start : ffffffff81000000
+>   virt_end   : ffffffff82a86000
+> LOAD (1)
+>   phys_start : 1000
+>   phys_end   : 9fc00
+>   virt_start : ffff880000001000
+>   virt_end   : ffff88000009fc00
+> LOAD (2)
+>   phys_start : 100000
+>   phys_end   : 13000000
+>   virt_start : ffff880000100000
+>   virt_end   : ffff880013000000
+> LOAD (3)
+>   phys_start : 33000000
+>   phys_end   : 7ffd7000
+>   virt_start : ffff880033000000
+>   virt_end   : ffff88007ffd7000
+> Linux kdump
+> page_size    : 4096
+> 
+> max_mapnr    : 7ffd7
+> 
+> Buffer size for the cyclic mode: 131061
+> The kernel version is not supported.
+> The makedumpfile operation may be incomplete.
+> 
+> num of NODEs : 1
+> 
+> 
+> Memory type  : SPARSEMEM_EX
+> 
+> mem_map (0)
+>   mem_map    : ffff88007ff26000
+>   pfn_start  : 0
+>   pfn_end    : 8000
+> mem_map (1)
+>   mem_map    : 0
+>   pfn_start  : 8000
+>   pfn_end    : 10000
+> mem_map (2)
+>   mem_map    : 0
+>   pfn_start  : 10000
+>   pfn_end    : 18000
+> mem_map (3)
+>   mem_map    : 0
+>   pfn_start  : 18000
+>   pfn_end    : 20000
+> mem_map (4)
+>   mem_map    : 0
+>   pfn_start  : 20000
+>   pfn_end    : 28000
+> mem_map (5)
+>   mem_map    : 0
+>   pfn_start  : 28000
+>   pfn_end    : 30000
+> mem_map (6)
+>   mem_map    : 0
+>   pfn_start  : 30000
+>   pfn_end    : 38000
+> mem_map (7)
+>   mem_map    : 0
+>   pfn_start  : 38000
+>   pfn_end    : 40000
+> mem_map (8)
+>   mem_map    : 0
+>   pfn_start  : 40000
+>   pfn_end    : 48000
+> mem_map (9)
+>   mem_map    : 0
+>   pfn_start  : 48000
+>   pfn_end    : 50000
+> mem_map (10)
+>   mem_map    : 0
+>   pfn_start  : 50000
+>   pfn_end    : 58000
+> mem_map (11)
+>   mem_map    : 0
+>   pfn_start  : 58000
+>   pfn_end    : 60000
+> mem_map (12)
+>   mem_map    : 0
+>   pfn_start  : 60000
+>   pfn_end    : 68000
+> mem_map (13)
+>   mem_map    : 0
+>   pfn_start  : 68000
+>   pfn_end    : 70000
+> mem_map (14)
+>   mem_map    : 0
+>   pfn_start  : 70000
+>   pfn_end    : 78000
+> mem_map (15)
+>   mem_map    : 0
+>   pfn_start  : 78000
+>   pfn_end    : 7ffd7
+> mmap() is available on the kernel.
+> Checking for memory holes                         : [100.0 %] |         STEP
+> [Checking for memory holes  ] : 0.000060 seconds
+> __vtop4_x86_64: Can't get a valid pte.
+> readmem: Can't convert a virtual address(ffff88007ffd7000) to physical
+> address.
+> readmem: type_addr: 0, addr:ffff88007ffd7000, size:32768
+> __exclude_unnecessary_pages: Can't read the buffer of struct page.
+> create_2nd_bitmap: Can't exclude unnecessary pages.
+> Checking for memory holes                         : [100.0 %] \         STEP
+> [Checking for memory holes  ] : 0.000010 seconds
+> Checking for memory holes                         : [100.0 %] -         STEP
+> [Checking for memory holes  ] : 0.000004 seconds
+> __vtop4_x86_64: Can't get a valid pte.
+> readmem: Can't convert a virtual address(ffff88007ffd7000) to physical
+> address.
+> readmem: type_addr: 0, addr:ffff88007ffd7000, size:32768
+> __exclude_unnecessary_pages: Can't read the buffer of struct page.
+> create_2nd_bitmap: Can't exclude unnecessary pages.
+> 
+> Thanks,
+> 	dou
+> At 01/09/2018 11:44 AM, Mike Galbraith wrote:
+> > On Tue, 2018-01-09 at 03:13 +0300, Kirill A. Shutemov wrote:
+> > > 
+> > > Mike, could you test this? (On top of the rest of the fixes.)
+> > 
+> > homer:..crash/2018-01-09-04:25 # ll
+> > total 1863604
+> > -rw------- 1 root root      66255 Jan  9 04:25 dmesg.txt
+> > -rw-r--r-- 1 root root        182 Jan  9 04:25 README.txt
+> > -rw-r--r-- 1 root root    2818240 Jan  9 04:25 System.map-4.15.0.gb2cd1df-master
+> > -rw------- 1 root root 1832914928 Jan  9 04:25 vmcore
+> > -rw-r--r-- 1 root root   72514993 Jan  9 04:25 vmlinux-4.15.0.gb2cd1df-master.gz
+> > 
+> > Yup, all better.
+> > 
+> > > Sorry for the mess.
+> > 
+> > (why, developers not installing shiny new bugs is a whole lot worse:)
+> > 
+> > >  From 100fd567754f1457be94732046aefca204c842d2 Mon Sep 17 00:00:00 2001
+> > > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > > Date: Tue, 9 Jan 2018 02:55:47 +0300
+> > > Subject: [PATCH] kdump: Write a correct address of mem_section into vmcoreinfo
+> > > 
+> > > Depending on configuration mem_section can now be an array or a pointer
+> > > to an array allocated dynamically. In most cases, we can continue to refer
+> > > to it as 'mem_section' regardless of what it is.
+> > > 
+> > > But there's one exception: '&mem_section' means "address of the array" if
+> > > mem_section is an array, but if mem_section is a pointer, it would mean
+> > > "address of the pointer".
+> > > 
+> > > We've stepped onto this in kdump code. VMCOREINFO_SYMBOL(mem_section)
+> > > writes down address of pointer into vmcoreinfo, not array as we wanted.
+> > > 
+> > > Let's introduce VMCOREINFO_ARRAY() that would handle the situation
+> > > correctly for both cases.
+> > > 
+> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > > Fixes: 83e3c48729d9 ("mm/sparsemem: Allocate mem_section at runtime for CONFIG_SPARSEMEM_EXTREME=y")
+> > > ---
+> > >   include/linux/crash_core.h | 2 ++
+> > >   kernel/crash_core.c        | 2 +-
+> > >   2 files changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
+> > > index 06097ef30449..83ae04950269 100644
+> > > --- a/include/linux/crash_core.h
+> > > +++ b/include/linux/crash_core.h
+> > > @@ -42,6 +42,8 @@ phys_addr_t paddr_vmcoreinfo_note(void);
+> > >   	vmcoreinfo_append_str("PAGESIZE=%ld\n", value)
+> > >   #define VMCOREINFO_SYMBOL(name) \
+> > >   	vmcoreinfo_append_str("SYMBOL(%s)=%lx\n", #name, (unsigned long)&name)
+> > > +#define VMCOREINFO_ARRAY(name) \
+> > > +	vmcoreinfo_append_str("SYMBOL(%s)=%lx\n", #name, (unsigned long)name)
+> > >   #define VMCOREINFO_SIZE(name) \
+> > >   	vmcoreinfo_append_str("SIZE(%s)=%lu\n", #name, \
+> > >   			      (unsigned long)sizeof(name))
+> > > diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> > > index b3663896278e..d4122a837477 100644
+> > > --- a/kernel/crash_core.c
+> > > +++ b/kernel/crash_core.c
+> > > @@ -410,7 +410,7 @@ static int __init crash_save_vmcoreinfo_init(void)
+> > >   	VMCOREINFO_SYMBOL(contig_page_data);
+> > >   #endif
+> > >   #ifdef CONFIG_SPARSEMEM
+> > > -	VMCOREINFO_SYMBOL(mem_section);
+> > > +	VMCOREINFO_ARRAY(mem_section);
+> > >   	VMCOREINFO_LENGTH(mem_section, NR_SECTION_ROOTS);
+> > >   	VMCOREINFO_STRUCT_SIZE(mem_section);
+> > >   	VMCOREINFO_OFFSET(mem_section, section_mem_map);
+> > 
+> > _______________________________________________
+> > kexec mailing list
+> > kexec@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/kexec
+> > 
+> > 
+> > 
 > 
 > 
 > 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
