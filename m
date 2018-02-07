@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754531AbeBGR1E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:27:04 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41634 "EHLO ms.lwn.net"
+        id S1754926AbeBGR2C (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:28:02 -0500
+Received: from ms.lwn.net ([45.79.88.28]:41646 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754831AbeBGR1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:27:02 -0500
+        id S1754843AbeBGR1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:27:04 -0500
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
         Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 3/8] docs: kernel-doc: Move STATE_NORMAL processing into its own function
-Date: Wed,  7 Feb 2018 10:26:19 -0700
-Message-Id: <20180207172624.24555-4-corbet@lwn.net>
+Subject: [PATCH 5/8] docs: kernel-doc: Move STATE_BODY processing to a separate function
+Date: Wed,  7 Feb 2018 10:26:21 -0700
+Message-Id: <20180207172624.24555-6-corbet@lwn.net>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180207172624.24555-1-corbet@lwn.net>
 References: <20180207172624.24555-1-corbet@lwn.net>
@@ -20,52 +20,235 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Begin the process of splitting up the nearly 500-line process_file()
-function by moving STATE_NORMAL processing to a separate function.
+Also group the pseudo-global $leading_space variable with its peers.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/kernel-doc | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ scripts/kernel-doc | 193 ++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 101 insertions(+), 92 deletions(-)
 
 diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index ad30c52f91ef..65150b7c8472 100755
+index a27c7016f72d..a6a7bb46ea29 100755
 --- a/scripts/kernel-doc
 +++ b/scripts/kernel-doc
-@@ -1780,6 +1780,21 @@ sub process_export_file($) {
-     close(IN);
+@@ -336,6 +336,7 @@ use constant {
+ };
+ my $state;
+ my $in_doc_sect;
++my $leading_space;
+ 
+ # Inline documentation state
+ use constant {
+@@ -1865,12 +1866,110 @@ sub process_name($$) {
+     }
  }
  
++
 +#
-+# Parsers for the various processing states.
++# STATE_BODY and STATE_BODY_MAYBE: the bulk of a kerneldoc comment.
 +#
-+# STATE_NORMAL: looking for the /** to begin everything.
-+#
-+sub process_normal() {
-+    if (/$doc_start/o) {
-+	$state = STATE_NAME;	# next line is always the function name
-+	$in_doc_sect = 0;
-+	$declaration_start_line = $. + 1;
++sub process_body($$) {
++    my $file = shift;
++
++    if (/$doc_sect/i) { # case insensitive for supported section names
++	$newsection = $1;
++	$newcontents = $2;
++
++	# map the supported section names to the canonical names
++	if ($newsection =~ m/^description$/i) {
++	    $newsection = $section_default;
++	} elsif ($newsection =~ m/^context$/i) {
++	    $newsection = $section_context;
++	} elsif ($newsection =~ m/^returns?$/i) {
++	    $newsection = $section_return;
++	} elsif ($newsection =~ m/^\@return$/) {
++	    # special: @return is a section, not a param description
++	    $newsection = $section_return;
++	}
++
++	if (($contents ne "") && ($contents ne "\n")) {
++	    if (!$in_doc_sect && $verbose) {
++		print STDERR "${file}:$.: warning: contents before sections\n";
++		++$warnings;
++	    }
++	    dump_section($file, $section, $contents);
++	    $section = $section_default;
++	}
++
++	$in_doc_sect = 1;
++	$state = STATE_BODY;
++	$contents = $newcontents;
++	$new_start_line = $.;
++	while (substr($contents, 0, 1) eq " ") {
++	    $contents = substr($contents, 1);
++	}
++	if ($contents ne "") {
++	    $contents .= "\n";
++	}
++	$section = $newsection;
++	$leading_space = undef;
++    } elsif (/$doc_end/) {
++	if (($contents ne "") && ($contents ne "\n")) {
++	    dump_section($file, $section, $contents);
++	    $section = $section_default;
++	    $contents = "";
++	}
++	# look for doc_com + <text> + doc_end:
++	if ($_ =~ m'\s*\*\s*[a-zA-Z_0-9:\.]+\*/') {
++	    print STDERR "${file}:$.: warning: suspicious ending line: $_";
++	    ++$warnings;
++	}
++
++	$prototype = "";
++	$state = STATE_PROTO;
++	$brcount = 0;
++    } elsif (/$doc_content/) {
++	# miguel-style comment kludge, look for blank lines after
++	# @parameter line to signify start of description
++	if ($1 eq "") {
++	    if ($section =~ m/^@/ || $section eq $section_context) {
++		dump_section($file, $section, $contents);
++		$section = $section_default;
++		$contents = "";
++		$new_start_line = $.;
++	    } else {
++		$contents .= "\n";
++	    }
++	    $state = STATE_BODY;
++	} elsif ($state == STATE_BODY_MAYBE) {
++	    # Continued declaration purpose
++	    chomp($declaration_purpose);
++	    $declaration_purpose .= " " . $1;
++	    $declaration_purpose =~ s/\s+/ /g;
++	} else {
++	    my $cont = $1;
++	    if ($section =~ m/^@/ || $section eq $section_context) {
++		if (!defined $leading_space) {
++		    if ($cont =~ m/^(\s+)/) {
++			$leading_space = $1;
++		    } else {
++			$leading_space = "";
++		    }
++		}
++		$cont =~ s/^$leading_space//;
++	    }
++	    $contents .= $cont . "\n";
++	}
++    } else {
++	# i dont know - bad line?  ignore.
++	print STDERR "${file}:$.: warning: bad line: $_";
++	++$warnings;
 +    }
 +}
 +
 +
-+
  sub process_file($) {
      my $file;
-     my $identifier;
-@@ -1807,11 +1822,7 @@ sub process_file($) {
- 	# Replace tabs by spaces
-         while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
- 	if ($state == STATE_NORMAL) {
--	    if (/$doc_start/o) {
--		$state = STATE_NAME;	# next line is always the function name
--		$in_doc_sect = 0;
--		$declaration_start_line = $. + 1;
+     my $func;
+     my $initial_section_counter = $section_counter;
+     my ($orig_file) = @_;
+-    my $leading_space;
+ 
+     $file = map_filename($orig_file);
+ 
+@@ -1894,97 +1993,7 @@ sub process_file($) {
+ 	} elsif ($state == STATE_NAME) {
+ 	    process_name($file, $_);
+ 	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
+-	    if (/$doc_sect/i) { # case insensitive for supported section names
+-		$newsection = $1;
+-		$newcontents = $2;
+-
+-		# map the supported section names to the canonical names
+-		if ($newsection =~ m/^description$/i) {
+-		    $newsection = $section_default;
+-		} elsif ($newsection =~ m/^context$/i) {
+-		    $newsection = $section_context;
+-		} elsif ($newsection =~ m/^returns?$/i) {
+-		    $newsection = $section_return;
+-		} elsif ($newsection =~ m/^\@return$/) {
+-		    # special: @return is a section, not a param description
+-		    $newsection = $section_return;
+-		}
+-
+-		if (($contents ne "") && ($contents ne "\n")) {
+-		    if (!$in_doc_sect && $verbose) {
+-			print STDERR "${file}:$.: warning: contents before sections\n";
+-			++$warnings;
+-		    }
+-		    dump_section($file, $section, $contents);
+-		    $section = $section_default;
+-		}
+-
+-		$in_doc_sect = 1;
+-		$state = STATE_BODY;
+-		$contents = $newcontents;
+-                $new_start_line = $.;
+-		while (substr($contents, 0, 1) eq " ") {
+-		    $contents = substr($contents, 1);
+-		}
+-		if ($contents ne "") {
+-		    $contents .= "\n";
+-		}
+-		$section = $newsection;
+-		$leading_space = undef;
+-	    } elsif (/$doc_end/) {
+-		if (($contents ne "") && ($contents ne "\n")) {
+-		    dump_section($file, $section, $contents);
+-		    $section = $section_default;
+-		    $contents = "";
+-		}
+-		# look for doc_com + <text> + doc_end:
+-		if ($_ =~ m'\s*\*\s*[a-zA-Z_0-9:\.]+\*/') {
+-		    print STDERR "${file}:$.: warning: suspicious ending line: $_";
+-		    ++$warnings;
+-		}
+-
+-		$prototype = "";
+-		$state = STATE_PROTO;
+-		$brcount = 0;
+-#		print STDERR "end of doc comment, looking for prototype\n";
+-	    } elsif (/$doc_content/) {
+-		# miguel-style comment kludge, look for blank lines after
+-		# @parameter line to signify start of description
+-		if ($1 eq "") {
+-		    if ($section =~ m/^@/ || $section eq $section_context) {
+-			dump_section($file, $section, $contents);
+-			$section = $section_default;
+-			$contents = "";
+-                        $new_start_line = $.;
+-		    } else {
+-			$contents .= "\n";
+-		    }
+-		    $state = STATE_BODY;
+-		} elsif ($state == STATE_BODY_MAYBE) {
+-		    # Continued declaration purpose
+-		    chomp($declaration_purpose);
+-		    $declaration_purpose .= " " . $1;
+-		    $declaration_purpose =~ s/\s+/ /g;
+-		} else {
+-		    my $cont = $1;
+-		    if ($section =~ m/^@/ || $section eq $section_context) {
+-			if (!defined $leading_space) {
+-			    if ($cont =~ m/^(\s+)/) {
+-				$leading_space = $1;
+-			    } else {
+-				$leading_space = "";
+-			    }
+-			}
+-
+-			$cont =~ s/^$leading_space//;
+-		    }
+-		    $contents .= $cont . "\n";
+-		}
+-	    } else {
+-		# i dont know - bad line?  ignore.
+-		print STDERR "${file}:$.: warning: bad line: $_";
+-		++$warnings;
 -	    }
-+	    process_normal();
- 	} elsif ($state == STATE_NAME) {# this line is the function name (always)
- 	    if (/$doc_block/o) {
- 		$state = STATE_DOCBLOCK;
++	    process_body($file, $_);
+ 	} elsif ($state == STATE_INLINE) { # scanning for inline parameters
+ 	    # First line (state 1) needs to be a @parameter
+ 	    if ($inline_doc_state == STATE_INLINE_NAME && /$doc_inline_sect/o) {
 -- 
 2.14.3
