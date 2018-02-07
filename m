@@ -1,144 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753991AbeBGNHz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:07:55 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:19252 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753539AbeBGNHx (ORCPT
+        id S1754109AbeBGNIM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:08:12 -0500
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:34373 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754016AbeBGNIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:07:53 -0500
-Subject: Re: [PATCH] ARM: dts: da850-evm: add clock properties to the nand
- node
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        David Lechner <david@lechnology.com>
-CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180205155222.22189-1-brgl@bgdev.pl>
- <3f171f6a-bcea-65ec-d56d-f6ae24660f34@ti.com>
- <CAMpxmJUDbwkcJt_kx9GX+qY10xiGAp-j3+kXM-q3WP1VGwr0UQ@mail.gmail.com>
- <54dbdb98-e0e4-c8c9-fec4-2f050745d9be@ti.com>
- <794024f3-f87a-58ed-2722-a4a2d09df3ce@lechnology.com>
- <4aa2ab13-7890-6904-86b3-e2dbcb6d6daa@lechnology.com>
- <CAMRc=Mcf0aEQvieNaZ3cMHJTE23Gf1jUNf0=vuO9-PA=9ObDvQ@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <37e034fe-5951-9a58-8698-d34226e8279e@ti.com>
-Date: Wed, 7 Feb 2018 18:36:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=Mcf0aEQvieNaZ3cMHJTE23Gf1jUNf0=vuO9-PA=9ObDvQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        Wed, 7 Feb 2018 08:08:10 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EeAQC/+Hpah2Ka6ERdGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQngQAoCoNbmEiCAokVkFUKhTsCGoJNWBQBAgEBAQEBAQIBAhA?=
+ =?us-ascii?q?BAQEKCwkIKC+COCKCSgEBAQQjEUUMBAIBCBEEAQEBAgIjAwICAh8lAQgIAgQBD?=
+ =?us-ascii?q?QUIihUDFbFsgieHOQ2BMYIKAQEBAQEBAQEBAQEBAQEBAQEBAQEBHYEPg2aCFYM?=
+ =?us-ascii?q?/gy6Ca0QEgXYQI4JdgmUFo3Q1CZB0hH6CJ4Yni3mLEoMwiUiBPDaBc3BSgkaCZ?=
+ =?us-ascii?q?YISeAGMfIEXAQEB?=
+X-IPAS-Result: =?us-ascii?q?A2EeAQC/+Hpah2Ka6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?ngQAoCoNbmEiCAokVkFUKhTsCGoJNWBQBAgEBAQEBAQIBAhABAQEKCwkIKC+CO?=
+ =?us-ascii?q?CKCSgEBAQQjEUUMBAIBCBEEAQEBAgIjAwICAh8lAQgIAgQBDQUIihUDFbFsgie?=
+ =?us-ascii?q?HOQ2BMYIKAQEBAQEBAQEBAQEBAQEBAQEBAQEBHYEPg2aCFYM/gy6Ca0QEgXYQI?=
+ =?us-ascii?q?4JdgmUFo3Q1CZB0hH6CJ4Yni3mLEoMwiUiBPDaBc3BSgkaCZYISeAGMfIEXAQE?=
+ =?us-ascii?q?B?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.195
+X-IronPort-AV: E=Sophos;i="5.46,473,1511848800";
+   d="scan'208";a="1096115131"
+X-DLP: DLP_GlobalPCIDSS
+To: <pali.rohar@gmail.com>, <rjw@rjwysocki.net>
+CC: <andy.shevchenko@gmail.com>, <andriy.shevchenko@linux.intel.com>,
+        <dvhart@infradead.org>, <platform-driver-x86@vger.kernel.org>,
+        <acelan.kao@canonical.com>, <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI
+ driver
+Thread-Topic: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI
+ driver
+Thread-Index: AQHTmsD+s/l7/GkRX0mynZ6Nxv0e5aOO5nIAgAeCdoCAAXSPUIAAh90AgAC2e4CAAAS7gIAAAhIA///Q1wA=
+Date: Wed, 7 Feb 2018 13:08:08 +0000
+Message-ID: <8d143fabe24f43de933dc60ce6480d00@ausx13mpc120.AMER.DELL.COM>
+References: <20180131182614.19524-1-andriy.shevchenko@linux.intel.com>
+ <CAHp75VeFSuQYu67DdnJDjZDoaLZiPuo7ag7Lz0q6eSCDjayobw@mail.gmail.com>
+ <2235169.mLvk2uMpgf@aspire.rjw.lan> <4289605.mKSTaFlacu@aspire.rjw.lan>
+ <20180207095522.qhs2wns4goif76u3@pali>
+In-Reply-To: <20180207095522.qhs2wns4goif76u3@pali>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w17D8GKr003837
 
-On Wednesday 07 February 2018 12:15 AM, Bartosz Golaszewski wrote:
-> 2018-02-06 19:25 GMT+01:00 David Lechner <david@lechnology.com>:
->> On 02/06/2018 12:16 PM, David Lechner wrote:
->>>
->>> On 02/06/2018 07:51 AM, Sekhar Nori wrote:
->>>>
->>>> On Tuesday 06 February 2018 06:38 PM, Bartosz Golaszewski wrote:
->>>>>
->>>>> 2018-02-06 12:07 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
->>>>>>
->>>>>> On Monday 05 February 2018 09:22 PM, Bartosz Golaszewski wrote:
->>>>>>>
->>>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>>>
->>>>>>> Make nand work with the common clock framework by specifying which
->>>>>>> clock should be used and what name to look up.
->>>>>>>
->>>>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>>> ---
->>>>>>>   arch/arm/boot/dts/da850-evm.dts | 3 +++
->>>>>>>   1 file changed, 3 insertions(+)
->>>>>>>
->>>>>>> diff --git a/arch/arm/boot/dts/da850-evm.dts
->>>>>>> b/arch/arm/boot/dts/da850-evm.dts
->>>>>>> index a86a8a1816f2..2602ad8e99ee 100644
->>>>>>> --- a/arch/arm/boot/dts/da850-evm.dts
->>>>>>> +++ b/arch/arm/boot/dts/da850-evm.dts
->>>>>>> @@ -296,6 +296,9 @@
->>>>>>>                        reg = <0 0x02000000 0x02000000
->>>>>>>                               1 0x00000000 0x00008000>;
->>>>>>>
->>>>>>> +                     clocks = <&psc0 3>;
->>>>>>> +                     clock-names = "aemif";
->>>>>>
->>>>>>
->>>>>> Looks like this is being added only to satisfy the devm_clk_get() call
->>>>>> in nand_davinci_probe() which I think is superfluous since we also
->>>>>> enable the same clock in aemif_probe().
->>>>>>
->>>>>> Perhaps the better solution is to drip the clk code in
->>>>>> drivers/mtd/nand/davinci_nand.c and shift legacy code to start using
->>>>>> drivers/memory/aemif.c as well? This way we can also drop
->>>>>> arch/arm/mach-davinci/aemif.c
->>>>>>
->>>>>> Thanks,
->>>>>> Sekhar
->>>>>
->>>>>
->>>>> Yes, this sounds good, but I think we should leave it for later as an
->>>>> additional improvement, once everything else is in place. I think
->>>>> these patches should be applied together with David's series in order
->>>>> to not break the support on davinci boards and the aemif work would go
->>>>> in later as a follow-up. How about that?
->>>>
->>>>
->>>> No, I dont think we should add temporary hacks to DT to work around
->>>> driver issues (I do think its a hack since the clock belongs to aemif
->>>> module not NAND flash).
->>>>
->>>> An easier driver hack might be to not treat devm_clk_get() failure in
->>>> davinci_nand.c as catastrophic. It will safely fail in DT case and we
->>>> should get the clock in legacy boot case.
->>>>
->>>> I think we are looking at a driver update dependency anyway.
->>>
->>>
->>> It looks like keystone.dtsi is using the clock-ranges property in the
->>> aemif node to pass the clock to child nodes. Could we not do the same
->>> in da850.dtsi?
->>
->>
->> Bartosz, please try this instead of your patch.
->>
->> FYI, this is just following the existing memory-controllers/ti-aemif.txt
->> device tree bindings, so not a "hack".
->>
->> ---
->> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
->> index 3a1f2ce..ff9d807 100644
->> --- a/arch/arm/boot/dts/da850.dtsi
->> +++ b/arch/arm/boot/dts/da850.dtsi
->> @@ -796,6 +796,8 @@
->>                 ranges = <0 0 0x60000000 0x08000000
->>                           1 0 0x68000000 0x00008000>;
->>                 clocks = <&psc0 3>;
->> +               clock-names = "aemif";
->> +               clock-ranges;
->>                 status = "disabled";
->>         };
->>         memctrl: memory-controller@b0000000 {
->> ---
+> -----Original Message-----
+> From: Pali Rohár [mailto:pali.rohar@gmail.com]
+> Sent: Wednesday, February 7, 2018 3:55 AM
+> To: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>; Limonciello, Mario
+> <Mario_Limonciello@Dell.com>; andriy.shevchenko@linux.intel.com;
+> dvhart@infradead.org; platform-driver-x86@vger.kernel.org;
+> acelan.kao@canonical.com; linux-kernel@vger.kernel.org
+> Subject: Re: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI driver
 > 
-> Yes, this works. Sekhar: can we include it in David's series, while
-> still keeping the plan to move legacy boards to using the aemif
-> driver?
+> On Wednesday 07 February 2018 10:47:57 Rafael J. Wysocki wrote:
+> > BTW, please CC patches with ACPI material to linux-acpi.  They are less likely
+> > to be overlooked by me then and the others on that list may have opinions on
+> > them too.
+> 
+> Maybe we can update MAINTAINERS file for acpi based platform-x86 drivers
+> to include linux-acpi list? Darren, Andy, any idea?
+> 
 
-Okay. Fine with me. Actually the chipselect node already has
-clock-ranges defined, but that doesn't have any meaning unless its also
-included in aemif node.
+I would also wonder if the intel-vbtn driver should still live in platform-x86 as it's
+now pure ACPI driver with this change Andy proposed.
 
-Thanks,
-Sekhar
+Btw Andy for your v2 with your fixups that were in your review branch feel free
+to add:
+Tested-by: Mario Limonciello <mario.limonciello@dell.com>
+
+When you resubmit it.
