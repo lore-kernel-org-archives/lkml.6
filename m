@@ -1,174 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753468AbeBGGni (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 01:43:38 -0500
-Received: from mail-db5eur01on0070.outbound.protection.outlook.com ([104.47.2.70]:39946
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S1752848AbeBGGrV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 01:47:21 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54424 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753449AbeBGGng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 01:43:36 -0500
-From: Qiang Zhao <qiang.zhao@nxp.com>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Patch v13 0/4] This patchset is to remove PPCisms for QEIC
-Thread-Topic: [Patch v13 0/4] This patchset is to remove PPCisms for QEIC
-Thread-Index: AQHTWdb5r/xWWLVQD0+a/tK0Q3+9u6OZCghQ
-Date: Wed, 7 Feb 2018 06:43:33 +0000
-Message-ID: <AM3PR04MB1185DAF02B9E5D3A5B2F387591FC0@AM3PR04MB1185.eurprd04.prod.outlook.com>
-References: <20171110033125.991-1-qiang.zhao@nxp.com>
-In-Reply-To: <20171110033125.991-1-qiang.zhao@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=qiang.zhao@nxp.com;
-x-originating-ip: [185.114.77.231]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1236;7:l+mkJAruameWFEGXe4VA0mRjjXjWn9UPC8pG0c9vc03eyjvrbCNFOIhjzXqxs9mjsYQZj3tj3yLUQRInzrCugiOiFUxlQD64c8gNwH4/ZP79f4TrRr1edSEQEMNMHbaek2ZDtp1tvx5mbUSuf0tH1wHS3O3kVPGMzAGkEHVlWrmyO77o7tongMwIo0x7jd10/iGOw2M/zGd+pLq/LoB6mdv2xPIs6klvnaLdtHL2pdWvcj0bEOKp0Z78+xGBTBnY
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(376002)(39380400002)(396003)(366004)(346002)(39860400002)(13464003)(199004)(189003)(54534003)(53754006)(3660700001)(6436002)(2201001)(7696005)(76176011)(97736004)(9686003)(86362001)(66066001)(68736007)(2900100001)(3280700002)(99286004)(25786009)(53936002)(106356001)(478600001)(229853002)(6246003)(105586002)(4326008)(55016002)(7736002)(305945005)(2906002)(74316002)(2501003)(81166006)(5660300001)(110136005)(8936002)(33656002)(8676002)(5250100002)(26005)(2950100002)(59450400001)(316002)(53546011)(3846002)(14454004)(6506007)(102836004)(6116002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1236;H:AM3PR04MB1185.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1480e6b9-a2a1-4056-8e54-08d56df61ba2
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:AM3PR04MB1236;
-x-ms-traffictypediagnostic: AM3PR04MB1236:
-x-microsoft-antispam-prvs: <AM3PR04MB1236425573731F5832CD8CCF91FC0@AM3PR04MB1236.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231101)(2400082)(944501161)(6055026)(6041288)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM3PR04MB1236;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1236;
-x-forefront-prvs: 0576145E86
-x-microsoft-antispam-message-info: g5GMy6Bi9umDyZKUhv315EswfWLLOng8Y0PznLSt0A9l1nmDIfnN+zIq6yD0xgt7/smZc0jJSBaOLO9uk/fnXQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
+        id S1750729AbeBGGrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 01:47:20 -0500
+Subject: Re: WARNING: kmalloc bug in tun_device_event
+To: syzbot <syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com>,
+        Linyu.Yuan@alcatel-sbell.com.cn, davem@davemloft.net,
+        edumazet@google.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, peterpenkov96@gmail.com,
+        syzkaller-bugs@googlegroups.com, willemb@google.com,
+        xiyou.wangcong@gmail.com
+References: <089e082603c453a0730564931ce5@google.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <7de8cd87-021a-5c8f-7df4-07be1ca651a5@redhat.com>
+Date: Wed, 7 Feb 2018 14:47:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1480e6b9-a2a1-4056-8e54-08d56df61ba2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2018 06:43:33.5032
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1236
+In-Reply-To: <089e082603c453a0730564931ce5@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w176hi4Z005387
 
-Hi all,
 
-Is there any comments on this patchset?
 
-Best Regards
-Qiang Zhao
+On 2018年02月07日 06:58, syzbot wrote:
+> Hello,
+>
+> syzbot hit the following crash on net-next commit
+> 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
+> Merge tag 'usercopy-v4.16-rc1' of 
+> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+>
+> So far this crash happened 5 times on net-next, upstream.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the 
+> commit:
+> Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for 
+> details.
+> If you forward the report, please keep this part and the footer.
+>
+> WARNING: CPU: 1 PID: 4134 at mm/slab_common.c:1012 
+> kmalloc_slab+0x5d/0x70 mm/slab_common.c:1012
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+> CPU: 1 PID: 4134 Comm: syzkaller993072 Not tainted 4.15.0+ #221
+> Hardware name: Google Google Compute Engine/Google Compute Engine, 
+> BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  panic+0x1e4/0x41c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x211/0x2d0 lib/bug.c:184
+>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1097
+> RIP: 0010:kmalloc_slab+0x5d/0x70 mm/slab_common.c:1012
+> RSP: 0018:ffff8801ba7ceb20 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff83b88bed
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000400000008
+> RBP: ffff8801ba7ceb20 R08: 1ffff100374f9cd7 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000400000008
+> R13: dffffc0000000000 R14: 00000000014080c0 R15: ffff8801b5d52080
+>  __do_kmalloc mm/slab.c:3700 [inline]
+>  __kmalloc+0x25/0x760 mm/slab.c:3714
+>  kmalloc_array include/linux/slab.h:631 [inline]
+>  kcalloc include/linux/slab.h:642 [inline]
+>  __ptr_ring_init_queue_alloc include/linux/ptr_ring.h:469 [inline]
+>  ptr_ring_resize_multiple include/linux/ptr_ring.h:629 [inline]
+>  tun_queue_resize drivers/net/tun.c:3319 [inline]
+>  tun_device_event+0x471/0xec0 drivers/net/tun.c:3338
+>  notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
+>  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+>  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+>  call_netdevice_notifiers_info+0x32/0x70 net/core/dev.c:1707
+>  call_netdevice_notifiers net/core/dev.c:1725 [inline]
+>  dev_change_tx_queue_len+0x117/0x220 net/core/dev.c:7065
+>  do_setlink+0xba7/0x3bb0 net/core/rtnetlink.c:2341
+>  rtnl_newlink+0xf1c/0x1a20 net/core/rtnetlink.c:2915
+>  rtnetlink_rcv_msg+0x57f/0xb10 net/core/rtnetlink.c:4587
+>  netlink_rcv_skb+0x14b/0x380 net/netlink/af_netlink.c:2442
+>  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4605
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1308 [inline]
+>  netlink_unicast+0x4c4/0x6b0 net/netlink/af_netlink.c:1334
+>  netlink_sendmsg+0xa4a/0xe60 net/netlink/af_netlink.c:1897
+>  sock_sendmsg_nosec net/socket.c:630 [inline]
+>  sock_sendmsg+0xca/0x110 net/socket.c:640
+>  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2046
+>  __sys_sendmsg+0xe5/0x210 net/socket.c:2080
+>  SYSC_sendmsg net/socket.c:2091 [inline]
+>  SyS_sendmsg+0x2d/0x50 net/socket.c:2087
+>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> RIP: 0033:0x4463c9
+> RSP: 002b:00007ffe63916e68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00000000004a7af2 RCX: 00000000004463c9
+> RDX: 0000000000000000 RSI: 0000000020504000 RDI: 0000000000000004
+> RBP: 00007ffe63916f08 R08: 0000000000000000 R09: 00000000004a7af2
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe63916f08
+> R13: 0000000000403890 R14: 0000000000000000 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is 
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug 
+> report.
+> Note: all commands must start from beginning of the line in the email 
+> body.
 
------Original Message-----
-From: Zhao Qiang [mailto:qiang.zhao@nxp.com] 
-Sent: 2017��11��10�� 11:31
-To: tglx@linutronix.de; marc.zyngier@arm.com; jason@lakedaemon.net
-Cc: linux-kernel@vger.kernel.org; Qiang Zhao <qiang.zhao@nxp.com>
-Subject: [Patch v13 0/4] This patchset is to remove PPCisms for QEIC
+Looks like we need cap the maximum size that ptr_ring could allocate.
 
-QEIC is an interrupt controller for QE, was put under drivers/soc/fsl/qe, and now move to driver/irqchip.
-And QEIC is supported more than just powerpc boards, so remove PPCisms.
+Will post a patch soon.
 
-changelog:
-	Changes for v8:
-	- use IRQCHIP_DECLARE() instead of subsys_initcall in qeic driver
-	- remove include/soc/fsl/qe/qe_ic.h
-	Changes for v9:
-	- rebase 
-	- fix the compile issue when apply the second patch, in fact, there was no compile issue 
-	  when apply all the patches of this patchset
-	Changes for v10:
-	- simplify codes, remove duplicated codes 
-	Changes for v11:
-	- rebase
-	Changes for v13:
-	- rewrite single-bit constants to BIT(x) to make the code more readable
-
-Zhao Qiang (4):
-  irqchip/qeic: move qeic driver from drivers/soc/fsl/qe
-	Changes for v2:
-		- modify the subject and commit msg
-	Changes for v3:
-		- merge .h file to .c, rename it with irq-qeic.c
-	Changes for v4:
-		- modify comments
-	Changes for v5:
-		- disable rename detection
-	Changes for v6:
-		- rebase
-	Changes for v7:
-		- na
-
-  irqchip/qeic: merge qeic init code from platforms to a common function
-	Changes for v2:
-		- modify subject and commit msg
-		- add check for qeic by type
-	Changes for v3:
-		- na
-	Changes for v4:
-		- na
-	Changes for v5:
-		- na
-	Changes for v6:
-		- rebase
-	Changes for v7:
-		- na
-	Changes for v8:
-		- use IRQCHIP_DECLARE() instead of subsys_initcall
-
-  irqchip/qeic: merge qeic_of_init into qe_ic_init
-	Changes for v2:
-		- modify subject and commit msg
-		- return 0 and add put node when return in qe_ic_init
-	Changes for v3:
-		- na
-	Changes for v4:
-		- na
-	Changes for v5:
-		- na
-	Changes for v6:
-		- rebase
-	Changes for v7:
-		- na
-	Changes for v12:
-		- remove unused code
-
-  irqchip/qeic: remove PPCisms for QEIC
-	Changes for v6:
-		- new added
-	Changes for v7:
-		- fix warning
-	Changes for v8:
-		- remove include/soc/fsl/qe/qe_ic.h
-
-Zhao Qiang (4):
-  irqchip/qeic: move qeic driver from drivers/soc/fsl/qe
-  irqchip/qeic: merge qeic init code from platforms to a common function
-  irqchip/qeic: merge qeic_of_init into qe_ic_init
-  irqchip/qeic: remove PPCisms for QEIC
-
- MAINTAINERS                                        |   6 +
- arch/powerpc/platforms/83xx/km83xx.c               |   1 -
- arch/powerpc/platforms/83xx/misc.c                 |  16 -
- arch/powerpc/platforms/83xx/mpc832x_mds.c          |   1 -
- arch/powerpc/platforms/83xx/mpc832x_rdb.c          |   1 -
- arch/powerpc/platforms/83xx/mpc836x_mds.c          |   1 -
- arch/powerpc/platforms/83xx/mpc836x_rdk.c          |   1 -
- arch/powerpc/platforms/85xx/corenet_generic.c      |  10 -
- arch/powerpc/platforms/85xx/mpc85xx_mds.c          |  15 -
- arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |  17 -
- arch/powerpc/platforms/85xx/twr_p102x.c            |  15 -
- drivers/irqchip/Makefile                           |   1 +
- drivers/{soc/fsl/qe/qe_ic.c => irqchip/irq-qeic.c} | 423 +++++++++++----------
- drivers/soc/fsl/qe/Makefile                        |   2 +-
- drivers/soc/fsl/qe/qe_ic.h                         | 103 -----
- include/soc/fsl/qe/qe_ic.h                         | 139 -------
- 16 files changed, 231 insertions(+), 521 deletions(-)  rename drivers/{soc/fsl/qe/qe_ic.c => irqchip/irq-qeic.c} (53%)  delete mode 100644 drivers/soc/fsl/qe/qe_ic.h  delete mode 100644 include/soc/fsl/qe/qe_ic.h
-
---
-2.14.1
+Thanks
