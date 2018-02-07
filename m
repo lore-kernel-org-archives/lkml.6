@@ -1,179 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754487AbeBGULh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:11:37 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49002 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754129AbeBGULf (ORCPT
+        id S1754557AbeBGUQh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:16:37 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36986 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754002AbeBGUQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 15:11:35 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54CC1606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
-From: Tyler Baicar <tbaicar@codeaurora.org>
-To: helgaas@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Tyler Baicar <tbaicar@codeaurora.org>
-Subject: [PATCH v2] PCI/AER: update AER status string print to match other AER logs
-Date: Wed,  7 Feb 2018 15:11:25 -0500
-Message-Id: <1518034285-3543-1-git-send-email-tbaicar@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 7 Feb 2018 15:16:35 -0500
+From: wenxiong@linux.vnet.ibm.com
+To: linux-nvme@lists.infradead.org
+Cc: keith.busch@intel.com, axboe@fb.com, linux-kernel@vger.kernel.org,
+        wenxiong@us.ibm.com, Wen Xiong <wenxiong@linux.vnet.ibm.com>
+Subject: [PATCH V2]nvme-pci: Fixes EEH failure on ppc
+Date: Wed,  7 Feb 2018 14:09:38 -0600
+X-Mailer: git-send-email 1.7.1
+X-TM-AS-GCONF: 00
+x-cbid: 18020720-0044-0000-0000-000003DD10ED
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008492; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000249; SDB=6.00986386; UDB=6.00500582; IPR=6.00765750;
+ BA=6.00005819; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019428; XFM=3.00000015;
+ UTC=2018-02-07 20:16:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020720-0045-0000-0000-0000080C815D
+Message-Id: <1518034178-26176-1-git-send-email-wenxiong@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802070256
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the AER driver uses cper_print_bits() to print the AER status
-string. This causes the status string to not include the proper PCI device
-name prefix that the other AER prints include. Also, it has a different
-print level than all the other AER prints, and there is a potential to
-have multiple status prints based on string lengths.
+From: Wen Xiong <wenxiong@linux.vnet.ibm.com>
 
-Update the AER driver to print the AER status string with the proper string
-prefix and proper print level, and abreviate the status strings similar to
-lspci -vv prints so they can be printed on the same line.
+With b2a0eb1a0ac72869c910a79d935a0b049ec78ad9(nvme-pci: Remove watchdog
+timer), EEH recovery stops working on ppc.
 
-Previous log example:
+After removing whatdog timer routine, when trigger EEH on ppc, we hit
+EEH in nvme_timeout(). We would like to check if pci channel is offline
+or not at the beginning of nvme_timeout(), if it is already offline,
+we don't need to do future nvme timeout process.
 
-e1000e 0003:01:00.1: aer_status: 0x00000041, aer_mask: 0x00000000
-Receiver Error, Bad TLP
-e1000e 0003:01:00.1: aer_layer=Physical Layer, aer_agent=Receiver ID
-pcieport 0003:00:00.0: aer_status: 0x00001000, aer_mask: 0x0000e000
-Replay Timer Timeout
-pcieport 0003:00:00.0: aer_layer=Data Link Layer, aer_agent=Transmitter ID
+With the patch, EEH recovery works successfuly on ppc.
 
-New log:
+Signed-off-by: Wen Xiong <wenxiong@linux.vnet.ibm.com>
 
-e1000e 0003:01:00.1: aer_status: 0x00000041, aer_mask: 0x00000000
-e1000e 0003:01:00.1: RxErr, BadTLP
-e1000e 0003:01:00.1: aer_layer=Physical Layer, aer_agent=Receiver ID
-pcieport 0003:00:00.0: aer_status: 0x00001000, aer_mask: 0x0000e000
-pcieport 0003:00:00.0: Timeout
-pcieport 0003:00:00.0: aer_layer=Data Link Layer, aer_agent=Transmitter ID
-
-Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
+[  232.585495] EEH: PHB#3 failure detected, location: N/A
+[  232.585545] CPU: 8 PID: 4873 Comm: kworker/8:1H Not tainted
+4.14.0-6.el7a.ppc64le #1
+[  232.585646] Workqueue: kblockd blk_mq_timeout_work
+[  232.585705] Call Trace:
+[  232.585743] [c000003f7a533940] [c000000000c3556c]
+dump_stack+0xb0/0xf4 (unreliable)
+[  232.585823] [c000003f7a533980] [c000000000043eb0]
+eeh_check_failure+0x290/0x630
+[  232.585924] [c000003f7a533a30] [c008000011063f30]
+nvme_timeout+0x1f0/0x410 [nvme]
+[  232.586038] [c000003f7a533b00] [c000000000637fc8]
+blk_mq_check_expired+0x118/0x1a0
+[  232.586134] [c000003f7a533b80] [c00000000063e65c]
+bt_for_each+0x11c/0x200
+[  232.586191] [c000003f7a533be0] [c00000000063f1f8]
+blk_mq_queue_tag_busy_iter+0x78/0x110
+[  232.586272] [c000003f7a533c30] [c0000000006367b8]
+blk_mq_timeout_work+0xa8/0x1c0
+[  232.586351] [c000003f7a533c80] [c00000000015d5ec]
+process_one_work+0x1bc/0x5f0
+[  232.586431] [c000003f7a533d20] [c00000000016060c]
+worker_thread+0xac/0x6b0
+[  232.586485] [c000003f7a533dc0] [c00000000016a528] kthread+0x168/0x1b0
+[  232.586539] [c000003f7a533e30] [c00000000000b4e8]
+ret_from_kernel_thread+0x5c/0x74
+[  232.586640] nvme nvme0: I/O 10 QID 0 timeout, reset controller
+[  232.586640] EEH: Detected error on PHB#3
+[  232.586642] EEH: This PCI device has failed 1 times in the last hour
+[  232.586642] EEH: Notify device drivers to shutdown
+[  232.586645] nvme nvme0: frozen state error detected, reset controller
+[  234.098667] EEH: Collect temporary log
+[  234.098694] PHB4 PHB#3 Diag-data (Version: 1)
+[  234.098728] brdgCtl:    00000002
+[  234.098748] RootSts:    00070020 00402000 c1010008 00100107 00000000
+[  234.098807] RootErrSts: 00000000 00000020 00000001
+[  234.098878] nFir:       0000800000000000 0030001c00000000
+0000800000000000
+[  234.098937] PhbSts:     0000001800000000 0000001800000000
+[  234.098990] Lem:        0000000100000100 0000000000000000
+0000000100000000
+[  234.099067] PhbErr:     000004a000000000 0000008000000000
+2148000098000240 a008400000000000
+[  234.099140] RxeMrgErr:  0000000000000001 0000000000000001
+0000000000000000 0000000000000000
+[  234.099250] PcieDlp:    0000000000000000 0000000000000000
+8000000000000000
+[  234.099326] RegbErr:    00d0000010000000 0000000010000000
+8800005800000000 0000000007011000
+[  234.099418] EEH: Reset without hotplug activity
+[  237.317675] nvme 0003:01:00.0: Refused to change power state,
+currently in D3
+[  237.317740] nvme 0003:01:00.0: Using 64-bit DMA iommu bypass
+[  237.317797] nvme nvme0: Removing after probe failure status: -19
+[  361.139047689,3] PHB#0003[0:3]: Escalating freeze to fence
+PESTA[0]=a440002a01000000
+[  237.617706] EEH: Notify device drivers the completion of reset
+[  237.617754] nvme nvme0: restart after slot reset
+[  237.617834] EEH: Notify device driver to resume
+[  238.777746] nvme0n1: detected capacity change from 24576000000 to 0
+[  238.777841] nvme0n2: detected capacity change from 24576000000 to 0
+[  238.777944] nvme0n3: detected capacity change from 24576000000 to 0
+[  238.778019] nvme0n4: detected capacity change from 24576000000 to 0
+[  238.778132] nvme0n5: detected capacity change from 24576000000 to 0
+[  238.778222] nvme0n6: detected capacity change from 24576000000 to 0
+[  238.778314] nvme0n7: detected capacity change from 24576000000 to 0
+[  238.778416] nvme0n8: detected capacity change from 24576000000 to 0
 ---
- drivers/pci/pcie/aer/aerdrv_errprint.c | 71 ++++++++++++++++++++++------------
- 1 file changed, 47 insertions(+), 24 deletions(-)
+ drivers/nvme/host/pci.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-index 6a352e6..bb68dd4 100644
---- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-+++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-@@ -72,22 +72,22 @@
- };
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 6fe7af0..4809f3d 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1153,12 +1153,6 @@ static bool nvme_should_reset(struct nvme_dev *dev, u32 csts)
+ 	if (!(csts & NVME_CSTS_CFS) && !nssro)
+ 		return false;
  
- static const char *aer_correctable_error_string[] = {
--	"Receiver Error",		/* Bit Position 0	*/
-+	"RxErr",			/* Bit Position 0	*/
- 	NULL,
- 	NULL,
- 	NULL,
- 	NULL,
- 	NULL,
--	"Bad TLP",			/* Bit Position 6	*/
--	"Bad DLLP",			/* Bit Position 7	*/
--	"RELAY_NUM Rollover",		/* Bit Position 8	*/
-+	"BadTLP",			/* Bit Position 6	*/
-+	"BadDLLP",			/* Bit Position 7	*/
-+	"Rollover",			/* Bit Position 8	*/
- 	NULL,
- 	NULL,
- 	NULL,
--	"Replay Timer Timeout",		/* Bit Position 12	*/
--	"Advisory Non-Fatal",		/* Bit Position 13	*/
--	"Corrected Internal Error",	/* Bit Position 14	*/
--	"Header Log Overflow",		/* Bit Position 15	*/
-+	"Timeout",			/* Bit Position 12	*/
-+	"NonFatalErr",			/* Bit Position 13	*/
-+	"CorrIntErr",			/* Bit Position 14	*/
-+	"HeaderOF",			/* Bit Position 15	*/
- };
- 
- static const char *aer_uncorrectable_error_string[] = {
-@@ -95,28 +95,28 @@
- 	NULL,
- 	NULL,
- 	NULL,
--	"Data Link Protocol",		/* Bit Position 4	*/
--	"Surprise Down Error",		/* Bit Position 5	*/
-+	"DLP",				/* Bit Position 4	*/
-+	"SDES",				/* Bit Position 5	*/
- 	NULL,
- 	NULL,
- 	NULL,
- 	NULL,
- 	NULL,
- 	NULL,
--	"Poisoned TLP",			/* Bit Position 12	*/
--	"Flow Control Protocol",	/* Bit Position 13	*/
--	"Completion Timeout",		/* Bit Position 14	*/
--	"Completer Abort",		/* Bit Position 15	*/
--	"Unexpected Completion",	/* Bit Position 16	*/
--	"Receiver Overflow",		/* Bit Position 17	*/
--	"Malformed TLP",		/* Bit Position 18	*/
-+	"TLP",				/* Bit Position 12	*/
-+	"FCP",				/* Bit Position 13	*/
-+	"CmpltTO",			/* Bit Position 14	*/
-+	"CmpltAbrt",			/* Bit Position 15	*/
-+	"UnxCmplt",			/* Bit Position 16	*/
-+	"RxOF",				/* Bit Position 17	*/
-+	"MalfTLP",			/* Bit Position 18	*/
- 	"ECRC",				/* Bit Position 19	*/
--	"Unsupported Request",		/* Bit Position 20	*/
--	"ACS Violation",		/* Bit Position 21	*/
--	"Uncorrectable Internal Error",	/* Bit Position 22	*/
--	"MC Blocked TLP",		/* Bit Position 23	*/
--	"AtomicOp Egress Blocked",	/* Bit Position 24	*/
--	"TLP Prefix Blocked Error",	/* Bit Position 25	*/
-+	"UnsupReq",			/* Bit Position 20	*/
-+	"ACSViol",			/* Bit Position 21	*/
-+	"UncorrIntErr",			/* Bit Position 22	*/
-+	"BlockedTLP",			/* Bit Position 23	*/
-+	"AtomicOpBlocked",		/* Bit Position 24	*/
-+	"TLPBlockedErr",		/* Bit Position 25	*/
- };
- 
- static const char *aer_agent_string[] = {
-@@ -203,6 +203,29 @@ void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+-	/* If PCI error recovery process is happening, we cannot reset or
+-	 * the recovery mechanism will surely fail.
+-	 */
+-	if (pci_channel_offline(to_pci_dev(dev->dev)))
+-		return false;
+-
+ 	return true;
  }
  
- #ifdef CONFIG_ACPI_APEI_PCIEAER
-+
-+#define MAX_PRINT_LENGTH		120
-+
-+void dev_print_bits(struct pci_dev *dev, unsigned int bits,
-+		    const char * const strs[], unsigned int strs_size)
-+{
-+	unsigned int i;
-+	char errs[MAX_PRINT_LENGTH];
-+
-+	errs[0] = '\0';
-+
-+	for (i = 0; i < strs_size; i++) {
-+		if (!(bits & (1U << i)))
-+			continue;
-+		if (strs[i]) {
-+			if (strlen(errs))
-+				strlcat(errs, ", ", MAX_PRINT_LENGTH);
-+			strlcat(errs, strs[i], MAX_PRINT_LENGTH);
-+		}
-+	}
-+	dev_err(&dev->dev, "%s\n", errs);
-+}
-+
- int cper_severity_to_aer(int cper_severity)
- {
- 	switch (cper_severity) {
-@@ -240,7 +263,7 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
- 	agent = AER_GET_AGENT(aer_severity, status);
+@@ -1189,6 +1183,12 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
+ 	struct nvme_command cmd;
+ 	u32 csts = readl(dev->bar + NVME_REG_CSTS);
  
- 	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
--	cper_print_bits("", status, status_strs, status_strs_size);
-+	dev_print_bits(dev, status, status_strs, status_strs_size);
- 	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
- 		aer_error_layer[layer], aer_agent_string[agent]);
- 
++	/* If PCI error recovery process is happening, we cannot reset or
++	 * the recovery mechanism will surely fail.
++	 */
++	if (pci_channel_offline(to_pci_dev(dev->dev)))
++		return BLK_EH_RESET_TIMER;
++
+ 	/*
+ 	 * Reset immediately if the controller is failed
+ 	 */
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+1.7.1
