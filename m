@@ -1,56 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754355AbeBGRh4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:37:56 -0500
-Received: from mail-it0-f43.google.com ([209.85.214.43]:51299 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753937AbeBGRhy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:37:54 -0500
-X-Google-Smtp-Source: AH8x224K2m9Im8l7pQ5pdX4dMc2Rx1eRTh7SNHzmmSldOqE6XPv2Sas1iY19lsBvcHpBxrSt0mEgwJtYo7bBkGBBGf4=
+        id S1754301AbeBGRh2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:37:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753931AbeBGRh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:37:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B49721788
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x224LtKP/aYho1bQ0yKaNoxOPCb6ALydFFRCn2IBa1ML34bjfhC8EsCy36439b/YYXtckJ4K824as9ImsrWaKCL8=
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFzM8ynf4m-X6EPS10gxNqsKPN_8mGucGHvBp8H+OkgW3g@mail.gmail.com>
-References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180206091727.GB15925@isilmar-4.linta.de> <20180206105139.nwlg3fwdxyhhrtc4@gmail.com>
- <20180206213202.GB2026@light.dominikbrodowski.net> <CA+55aFyXfMhUNoU9WveiMyKq32LftUGzF-BAP7hxEQOfwBTJrA@mail.gmail.com>
- <20180206235402.GN30338@tassilo.jf.intel.com> <CA+55aFzRMn6+tFFkAbMT_iDcMphDZFU9+OALEn+ecqa7=RqvUA@mail.gmail.com>
- <20180207151854.GB10945@tassilo.jf.intel.com> <CA+55aFzM8ynf4m-X6EPS10gxNqsKPN_8mGucGHvBp8H+OkgW3g@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 7 Feb 2018 09:37:53 -0800
-X-Google-Sender-Auth: uwvW7R6ePBBgHrw-bOcY-pjISUY
-Message-ID: <CA+55aFxJri=_txLWBkVqs6peL5BLC0XpJSZUQr4YYGHC1s09mg@mail.gmail.com>
-Subject: Re: [PATCH tip-pti 2/2] x86/entry: interleave XOR register clearing
- with PUSH/MOV instructions
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+In-Reply-To: <43b34b44-f613-79c6-1fe4-01c9dfe85e62@codeaurora.org>
+References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-2-rnayak@codeaurora.org>
+ <CAL_JsqLb4PQ+NkA_RBAgB-5MzFKd+6wBvfCjXvoH-i8pGzzdTg@mail.gmail.com> <43b34b44-f613-79c6-1fe4-01c9dfe85e62@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 7 Feb 2018 11:37:04 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKEgwU6YdFTeuQi5im8azUKzNi34XpamCXNZwxhJibUnQ@mail.gmail.com>
+Message-ID: <CAL_JsqKEgwU6YdFTeuQi5im8azUKzNi34XpamCXNZwxhJibUnQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
+ sdm845 SoC and MTP
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 7, 2018 at 9:05 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Tue, Feb 6, 2018 at 10:47 PM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+> []..
 >
-> The other thing we need to do is to just pass down the system call
-> number as an argument instead of reloading it.
+>>> +
+>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +
+>>> +/ {
+>>> +       model = "Qualcomm Technologies, Inc. SDM845";
+>>
+>> This should only be in the board level file.
+>
+> thanks, will fix.
+>
+>>
+>>> +
+>>> +       interrupt-parent = <&intc>;
+>>> +
+>>> +       #address-cells = <2>;
+>>> +       #size-cells = <2>;
+>>> +
+>>> +       chosen { };
+>>> +
+>>> +       memory {
+>>> +               device_type = "memory";
+>>> +               /* We expect the bootloader to fill in the reg */
+>>
+>> The start address is variable? If not you should populate the base and
+>> have a unit-address.
+>
+> sure, I'll check and update.
+>
+>>
+>>> +               reg = <0 0 0 0>;
+>>> +       };
+>>> +
+>
+> []..
+>>> +
+>>> +       soc: soc {
+>>> +               #address-cells = <1>;
+>>> +               #size-cells = <1>;
+>>> +               ranges = <0 0 0 0xffffffff>;
+>>> +               compatible = "simple-bus";
+>>> +
+>>> +               intc: interrupt-controller@17a00000 {
+>>> +                       compatible = "arm,gic-v3";
+>>> +                       #interrupt-cells = <3>;
+>>> +                       interrupt-controller;
+>>> +                       #redistributor-regions = <1>;
+>>> +                       redistributor-stride = <0x0 0x20000>;
+>>> +                       reg = <0x17a00000 0x10000>,     /* GICD */
+>>> +                             <0x17a60000 0x100000>;    /* GICR * 8 */
+>>> +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>>> +               };
+>>> +
+>>> +               gcc: clock-controller@100000 {
+>>> +                       compatible = "qcom,gcc-sdm845";
+>>
+>> sdm845-gcc is the preferred order.
+>
+> This is still proposed as part of the GCC patch for sdm845 [1]
+> (which looks like has neither you nor the DT list copied :/ )
+> Also looking at Documentation/devicetree/bindings/clock/qcom,gcc.txt,
+> I see we seem to follow the gcc-<soc> convention for compatible all along :(
+>
+>                         "qcom,gcc-apq8064"
+>                         "qcom,gcc-apq8084"
+>                         "qcom,gcc-ipq8064"
+>                         "qcom,gcc-ipq4019"
+>                         "qcom,gcc-ipq8074"
+>                         "qcom,gcc-msm8660"
+>                         "qcom,gcc-msm8916"
+>                         "qcom,gcc-msm8960"
+>                         "qcom,gcc-msm8974"
+>                         "qcom,gcc-msm8974pro"
+>                         "qcom,gcc-msm8974pro-ac"
+>                         "qcom,gcc-msm8994"
+>                         "qcom,gcc-msm8996"
+>                         "qcom,gcc-mdm9615"
 
-.. we may also want to disable some debug things.
+Okay, I guess the pattern for this is pretty much established.
 
-For example, if you enable KASAN, it does insane things for
-do_syscall(). I realize that nobody is supposed to care about
-performance for KASAN, but still...
-
-So one of the issues with do_syscall() is simply that _because_ it was
-the rare case only, the code simply was never even looked at. But if y
-ou look at the straight-line case, do_syscall_64() really doesn't look
-too bad apart from the argument reloading that I do think is largely
-fixable.
-
-              Linus
+Rob
