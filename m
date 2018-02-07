@@ -1,100 +1,183 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2828099-1519259134-2-2416879524419586572
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519259133; b=ehVRRXHLVt32GuH3jouw/EBONaIfVqjpXvoINpdB+GTA71u
-    e9Omer719j0Ahd1n6ST0POW8AxPuQuaQ5CKKaFAqet82J+eVBEZCQTWl0cJOvFzL
-    xDPBHYXO1ykHhT/N+04dCVM3sfX3HOViSvIP+GaoqYrv6kqZld2mhcs22c7AU9AW
-    e4fok6DrPYKFXDNmzZuqMlleITtsMEieI5WFAtxf8pNUSoEp98BNUdfCx/Tgyzkb
-    uMUHr8zD/GfVn4GLK5UKFWFUDUgDQZpzZ3OkKzExXcp3ys20uhJNdqHM4La4FD4h
-    UVAPlTsiTXua9vehZkky3LHk+RVoO6D94zNyvzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519259133; bh=qrOmNZ6g9j2ddo43Zo525sEL9zAXAWdsOkCiP+lDUC8=; b=M
-    aTCLCmPX0g339SvQjbAEu8zC/VBoKXWSA/pQ0BnBP42StnfVhu8UrqyernzRjZtA
-    5X8ankhYFI15071JwJjIkWYx4iLt18AFVuHHwaf4bSQ01fkVV4YiYPD3WY5up/2n
-    3ooD/vzACAPiG5xyLyTtMhsgxlh6fr25+DiAbr0QePblzhfSdDyYJxsAovmoZcvL
-    4Wu8+Wx183SgQ/krw0qfVQxHZz5kndGnqfMPIHqLQh2DVcRexRAc0vt7ZhS/9Zj2
-    Fu9YILcWJwilyGE2SjrMmYoaAFDkiW3rS6TdUeJolvjEUCxLwwQj3yk03EqojWUT
-    sPoSyE8p2QoRO/A754Euw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=JRLlZ2tR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qKr15zSf;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=JRLlZ2tR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qKr15zSf;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751411AbeBVAZS (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 19:25:18 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:41554 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751312AbeBVAZR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 19:25:17 -0500
-X-Google-Smtp-Source: AG47ELtJILhkdRnRAcJtPQJ/78oXWbU+6IYO/4oLe7ZD0aComymwVGqbrbM3NKUzk+DKJMhhE3zfjAxeJa5uAjC9zyQ=
-MIME-Version: 1.0
-In-Reply-To: <1519249297-73718-4-git-send-email-pbonzini@redhat.com>
-References: <1519249297-73718-1-git-send-email-pbonzini@redhat.com> <1519249297-73718-4-git-send-email-pbonzini@redhat.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Wed, 21 Feb 2018 16:25:15 -0800
-Message-ID: <CALMp9eSGYFA6vRDGDOrOEp4uwwWpm-FVAzfD=9ypj3vC6Bss8g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] KVM: VMX: mark RDMSR path as unlikely
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <vivek.gautam@codeaurora.org>
+X-Google-Smtp-Source: AH8x225XA3XdJ8Sh8dReVwCUckxlHO2uQBPwlLPsYEkANhpsthRbUZqp+IQxF7snAXCgtj5WLJn5
+ARC-Seal: i=1; a=rsa-sha256; t=1517999499; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nDwl7khyCixjuZX+My8FDUkiFGrAiR1+IuEAT4vPZ0JDC9mCxvBoWCrwItD6ufqQIk
+         e7w31uAGx0BBeW1BBsg5cSumL18dzai0mlW6tZFFoMxL6NIkOdcxKJBAITIxRivrTj/9
+         xR9ve8HjhWHuEbjQ7kg+XKEEDB9cFk9Wvj5fa446yZ9Aj2Hs3dC6pjVk/c4xTpvwdpcl
+         mLr3PMq/Nv/alAVkDkaDpW+o0Z6C1h3QCfJCTqLgx53a2aTUnDD72fm0afOndtk1MdXO
+         jz5+XXRf0jqGdBHm2x2XUMJ37koAg04m40JEHe6qCrS+kXpSI9U2Xj8NiJ21wS2BL1gu
+         QriA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dmarc-filter:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=RSiYcWABTvoUfFPqfwPaiIlClKhnqMNeMecPugEMA+Q=;
+        b=A6y1w61WdV6SqKhN/leelf2Wu9doSFvsXLaTdpKITk/FVWvs8ollBn1Ouxq4nfz70f
+         2Qup3pQM14b3aTfVgxhaYFjBcKBlso0Lw6Oj0WuUJQUR5P7IsqbILV6IL08+v3X3Inb6
+         r2zh9DZUeK3ZelW/t+xvFi8u9vHZco5O0YwcJo+xo5DJxVHF6gafpmJ49Fbf0xyzTJIW
+         J/F7enmHm39h9bCOmKW8AABIZM4sD4SjnJuHxhJgxZKr5WNqsrc/iZClBPkdXJWRZUYH
+         zhxjLZKyzb7wHjMQQkGHsbKwEprbs7YYUbfXTHDP4HJtwczqDrl1poCgm7g8VAn77nv4
+         S0fA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=eMsJNVzW;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=RpH780cr;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=eMsJNVzW;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=RpH780cr;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B87D8601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	robin.murphy@arm.com,
+	will.deacon@arm.com,
+	robdclark@gmail.com,
+	iommu@lists.linux-foundation.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Cc: alex.williamson@redhat.com,
+	gregkh@linuxfoundation.org,
+	airlied@linux.ie,
+	sboyd@codeaurora.org,
+	sricharan@codeaurora.org,
+	m.szyprowski@samsung.com,
+	architt@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	vivek.gautam@codeaurora.org
+Subject: [PATCH v7 0/6] iommu/arm-smmu: Add runtime pm/sleep support
+Date: Wed,  7 Feb 2018 16:01:16 +0530
+Message-Id: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591737843063957158?=
+X-GMAIL-MSGID: =?utf-8?q?1591737843063957158?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 1:41 PM, Paolo Bonzini <pbonzini@redhat.com> wrote:
-> vmx_vcpu_run and svm_vcpu_run are large functions, and this can actually
-> make a substantial cycle difference by keeping the fast path contiguous
-> in memory.  Without it, the retpoline guest/retpoline host case is about
-> 50 cycles slower.
->
-> Cc: x86@kernel.org
-> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> Cc: KarimAllah Ahmed <karahmed@amazon.de>
-> Cc: David Woodhouse <dwmw@amazon.co.uk>
-> Cc: Jim Mattson <jmattson@google.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+This series provides the support for turning on the arm-smmu's
+clocks/power domains using runtime pm. This is done using the
+recently introduced device links patches, which lets the smmu's
+runtime to follow the master's runtime pm, so the smmu remains
+powered only when the masters use it.
 
-Reviewed-by: Jim Mattson <jmattson@google.com>
+It also adds support for Qcom's arm-smmu-v2 variant that
+has different clocks and power requirements.
+
+Took some reference from the exynos runtime patches [1].
+
+After much discussion [3] over the use of pm_runtime_get/put() in
+.unmap op path for the arm-smmu, and after disussing over more than
+a couple of approaches to address this, we are putting forward the
+changes *without* using pm_runtime APIs in 'unmap'. Rather, letting
+the client device take the control of powering on/off the connected
+iommu through pm_runtime_get(put)_suppliers() APIs for the scnerios
+when the iommu power can't be directly controlled by clients through
+device links.
+Rafael acked the change to export the suppliers APIs.
+
+Previous version of this patch series is @ [5].
+
+[v7]
+   * Addressed review comments given by Robin Murphy -
+     -- Added device_link_del() in .remove_device path.
+     -- Error path cleanup in arm_smmu_add_device().
+     -- Added pm_runtime_get/put_sync() in .remove path, and replaced
+        pm_runtime_force_suspend() with pm_runtime_disable().
+     -- clk_names cleanup in arm_smmu_init_clks()
+   * Added 'Reviewed-by' given by Rob H.
+
+[V6]
+   * Added Ack given by Rafael to first patch in the series.
+   * Addressed Rob Herring's comment for adding soc specific compatible
+     string as well besides 'qcom,smmu-v2'.
+
+[V5]
+   * Dropped runtime pm calls from "arm_smmu_unmap" op as discussed over
+     the list [3] for the last patch series.
+   * Added a patch to export pm_runtime_get/put_suppliers() APIs to the
+     series as agreed with Rafael [4].
+   * Added the related patch for msm drm iommu layer to use
+     pm_runtime_get/put_suppliers() APIs in msm_mmu_funcs.
+   * Dropped arm-mmu500 clock patch since that would break existing
+     platforms.
+   * Changed compatible 'qcom,msm8996-smmu-v2' to 'qcom,smmu-v2' to reflect
+     the IP version rather than the platform on which it is used.
+     The same IP is used across multiple platforms including msm8996,
+     and sdm845 etc.
+   * Using clock bulk APIs to handle the clocks available to the IP as
+     suggested by Stephen Boyd.
+   * The first patch in v4 version of the patch-series:
+     ("iommu/arm-smmu: Fix the error path in arm_smmu_add_device") has
+     already made it to mainline.
+
+[V4]
+   * Reworked the clock handling part. We now take clock names as data
+     in the driver for supported compatible versions, and loop over them
+     to get, enable, and disable the clocks.
+   * Using qcom,msm8996 based compatibles for bindings instead of a generic
+     qcom compatible.
+   * Refactor MMU500 patch to just add the necessary clock names data and
+     corresponding bindings.
+   * Added the pm_runtime_get/put() calls in .unmap iommu op (fix added by
+     Stanimir on top of previous patch version.
+   * Added a patch to fix error path in arm_smmu_add_device()
+   * Removed patch 3/5 of V3 patch series that added qcom,smmu-v2 bindings.
+
+[V3]
+   * Reworked the patches to keep the clocks init/enabling function
+     separately for each compatible.
+
+   * Added clocks bindings for MMU40x/500.
+
+   * Added a new compatible for qcom,smmu-v2 implementation and
+     the clock bindings for the same.
+
+   * Rebased on top of 4.11-rc1
+
+[V2]
+   * Split the patches little differently.
+
+   * Addressed comments.
+
+   * Removed the patch #4 [2] from previous post
+     for arm-smmu context save restore. Planning to
+     post this separately after reworking/addressing Robin's
+     feedback.
+
+   * Reversed the sequence to disable clocks than enabling.
+     This was required for those cases where the
+     clocks are populated in a dependent order from DT.
+
+[1] https://lkml.org/lkml/2016/10/20/70
+[2] https://patchwork.kernel.org/patch/9389717/
+[3] https://patchwork.kernel.org/patch/9827825/
+[4] https://patchwork.kernel.org/patch/10102445/
+[5] https://lkml.org/lkml/2018/1/19/217
+
+Sricharan R (3):
+  iommu/arm-smmu: Add pm_runtime/sleep ops
+  iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
+  iommu/arm-smmu: Add the device_link between masters and smmu
+
+Vivek Gautam (3):
+  base: power: runtime: Export pm_runtime_get/put_suppliers
+  iommu/arm-smmu: Add support for qcom,smmu-v2 variant
+  drm/msm: iommu: Replace runtime calls with runtime suppliers
+
+ .../devicetree/bindings/iommu/arm,smmu.txt         |  43 +++++++
+ drivers/base/power/runtime.c                       |   2 +
+ drivers/gpu/drm/msm/msm_iommu.c                    |  16 +--
+ drivers/iommu/arm-smmu.c                           | 127 ++++++++++++++++++++-
+ 4 files changed, 174 insertions(+), 14 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
