@@ -1,172 +1,259 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754052AbeBGKnV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:43:21 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48606 "EHLO
+        id S1754162AbeBGKna (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:43:30 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48916 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754096AbeBGKjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:39:08 -0500
-Date: Wed, 7 Feb 2018 10:39:03 +0000
+        id S1754075AbeBGKnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 05:43:25 -0500
+Date: Wed, 7 Feb 2018 10:43:21 +0000
 From: Dave Martin <Dave.Martin@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        dave.martin@arm.com
-Subject: Re: [PATCH v2 12/20] arm64: capabilities: Change scope of VHE to
- Boot CPU feature
-Message-ID: <20180207103903.GC5862@e103592.cambridge.arm.com>
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-13-suzuki.poulose@arm.com>
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, Dave Martin <dave.martin@arm.com>
+Subject: Re: [PATCH 2/2] arm64: Expose Arm v8.4 features
+Message-ID: <20180207104320.GM5862@e103592.cambridge.arm.com>
+References: <20180201103838.14702-1-suzuki.poulose@arm.com>
+ <20180201103838.14702-2-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180131182807.32134-13-suzuki.poulose@arm.com>
+In-Reply-To: <20180201103838.14702-2-suzuki.poulose@arm.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 06:27:59PM +0000, Suzuki K Poulose wrote:
-> We expect all CPUs to be running at the same EL inside the kernel
-> with or without VHE enabled and we have strict checks to ensure
-> that any mismatch triggers a kernel panic. If VHE is enabled,
-> we use the feature based on the boot CPU and all other CPUs
-> should follow. This makes it a perfect candidate for a cpability
-> based on the boot CPU,  which should be matched by all the CPUs
-> (both when is ON and OFF). This saves us some not-so-pretty
-> hooks and special code, just for verifying the conflict.
+On Thu, Feb 01, 2018 at 10:38:38AM +0000, Suzuki K Poulose wrote:
+> Expose the new features introduced by Arm v8.4 extensions to
+> Arm v8-A profile.
 > 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Dave Martin <dave.martin@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/include/asm/cpufeature.h |  7 +++++++
->  arch/arm64/include/asm/virt.h       |  6 ------
->  arch/arm64/kernel/cpufeature.c      |  3 +--
->  arch/arm64/kernel/smp.c             | 38 -------------------------------------
->  4 files changed, 8 insertions(+), 46 deletions(-)
+> These include :
 > 
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 04161aac0f06..42292a0b93a4 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -260,6 +260,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->  	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
->  	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
->  
-> +/*
-> + * Critical CPU feature used early in the boot based on the boot CPU.
-> + * The feature should be matched by all booting CPU (both miss and hit
-> + * cases).
-> + */
-> +#define ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE ARM64_CPUCAP_SCOPE_BOOT_CPU
-> +
->  struct arm64_cpu_capabilities {
->  	const char *desc;
->  	u16 capability;
-> diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
-> index c5f89442785c..9d1e24e030b3 100644
-> --- a/arch/arm64/include/asm/virt.h
-> +++ b/arch/arm64/include/asm/virt.h
-> @@ -102,12 +102,6 @@ static inline bool has_vhe(void)
->  	return false;
->  }
->  
-> -#ifdef CONFIG_ARM64_VHE
-> -extern void verify_cpu_run_el(void);
-> -#else
-> -static inline void verify_cpu_run_el(void) {}
-> -#endif
-> -
->  #endif /* __ASSEMBLY__ */
->  
->  #endif /* ! __ASM__VIRT_H */
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 6d759f068de1..247d34ea6b5e 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -982,7 +982,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  	{
->  		.desc = "Virtualization Host Extensions",
->  		.capability = ARM64_HAS_VIRT_HOST_EXTN,
-> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.type = ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE,
->  		.matches = runs_at_el2,
->  		.cpu_enable = cpu_copy_el2regs,
->  	},
+>  1) Data indpendent timing of instructions. (DIT, exposed as HWCAP_DIT)
+>  2) Unaligned atomic instructions and Single-copy atomicity of loads
+>     and stores. (AT, expose as HWCAP_USCAT)
+>  3) LDAPR and STLR instructions with immediate offsets (extension to
+>     LRCPC, exposed as HWCAP_ILRCPC)
+>  4) Flag manipulation instructions (TS, exposed as HWCAP_FLAGM).
+> 
+> While at it get rid of the RES0 entries in the cpu-feature-registers.txt
+> documentation.
 
-Could this feature block now be #ifdef CONFIG_ARM64_VHE?
-
-I don't think the lack of #ifdef breaks anything here though, because
-in that case head.S drops down to EL1 runs_at_el2() returns false on
-all CPUs.
-
-> @@ -1322,7 +1322,6 @@ static bool verify_local_cpu_caps(u16 scope_mask)
->   */
->  static void check_early_cpu_features(void)
->  {
-> -	verify_cpu_run_el();
->  	verify_cpu_asid_bits();
->  	/*
->  	 * Early features are used by the kernel already. If there
-> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> index 5cef11450183..f3e2e3aec0b0 100644
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -85,43 +85,6 @@ enum ipi_msg_type {
->  	IPI_WAKEUP
->  };
->  
-> -#ifdef CONFIG_ARM64_VHE
-> -
-> -/* Whether the boot CPU is running in HYP mode or not*/
-> -static bool boot_cpu_hyp_mode;
-> -
-> -static inline void save_boot_cpu_run_el(void)
-> -{
-> -	boot_cpu_hyp_mode = is_kernel_in_hyp_mode();
-> -}
-> -
-> -static inline bool is_boot_cpu_in_hyp_mode(void)
-> -{
-> -	return boot_cpu_hyp_mode;
-> -}
-> -
-> -/*
-> - * Verify that a secondary CPU is running the kernel at the same
-> - * EL as that of the boot CPU.
-> - */
-> -void verify_cpu_run_el(void)
-> -{
-> -	bool in_el2 = is_kernel_in_hyp_mode();
-> -	bool boot_cpu_el2 = is_boot_cpu_in_hyp_mode();
-> -
-> -	if (in_el2 ^ boot_cpu_el2) {
-> -		pr_crit("CPU%d: mismatched Exception Level(EL%d) with boot CPU(EL%d)\n",
-> -					smp_processor_id(),
-> -					in_el2 ? 2 : 1,
-> -					boot_cpu_el2 ? 2 : 1);
-> -		cpu_panic_kernel();
-> -	}
-> -}
-> -
-> -#else
-> -static inline void save_boot_cpu_run_el(void) {}
-> -#endif
-> -
->  #ifdef CONFIG_HOTPLUG_CPU
->  static int op_cpu_kill(unsigned int cpu);
->  #else
-> @@ -447,7 +410,6 @@ void __init smp_prepare_boot_cpu(void)
->  	 */
->  	jump_label_init();
->  	cpuinfo_store_boot_cpu();
-> -	save_boot_cpu_run_el();
-
-Nice diffstat, assuming I didn't miss anything.
+Should we write somewhere than fields that are not described here are
+implicitly RES0, or would that be too strong a statement?
 
 Cheers
 ---Dave
+
+> Cc: Dave Martin <dave.martin@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  Documentation/arm64/cpu-feature-registers.txt | 18 ++++++++++--------
+>  Documentation/arm64/elf_hwcaps.txt            | 16 ++++++++++++++++
+>  arch/arm64/include/asm/sysreg.h               |  3 +++
+>  arch/arm64/include/uapi/asm/hwcap.h           |  4 ++++
+>  arch/arm64/kernel/cpufeature.c                |  7 +++++++
+>  arch/arm64/kernel/cpuinfo.c                   |  4 ++++
+>  6 files changed, 44 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/arm64/cpu-feature-registers.txt b/Documentation/arm64/cpu-feature-registers.txt
+> index a70090b28b07..7964f03846b1 100644
+> --- a/Documentation/arm64/cpu-feature-registers.txt
+> +++ b/Documentation/arm64/cpu-feature-registers.txt
+> @@ -110,7 +110,7 @@ infrastructure:
+>       x--------------------------------------------------x
+>       | Name                         |  bits   | visible |
+>       |--------------------------------------------------|
+> -     | RES0                         | [63-52] |    n    |
+> +     | TS                           | [55-52] |    y    |
+>       |--------------------------------------------------|
+>       | FHM                          | [51-48] |    y    |
+>       |--------------------------------------------------|
+> @@ -124,8 +124,6 @@ infrastructure:
+>       |--------------------------------------------------|
+>       | RDM                          | [31-28] |    y    |
+>       |--------------------------------------------------|
+> -     | RES0                         | [27-24] |    n    |
+> -     |--------------------------------------------------|
+>       | ATOMICS                      | [23-20] |    y    |
+>       |--------------------------------------------------|
+>       | CRC32                        | [19-16] |    y    |
+> @@ -135,8 +133,6 @@ infrastructure:
+>       | SHA1                         | [11-8]  |    y    |
+>       |--------------------------------------------------|
+>       | AES                          | [7-4]   |    y    |
+> -     |--------------------------------------------------|
+> -     | RES0                         | [3-0]   |    n    |
+>       x--------------------------------------------------x
+>  
+>  
+> @@ -144,12 +140,10 @@ infrastructure:
+>       x--------------------------------------------------x
+>       | Name                         |  bits   | visible |
+>       |--------------------------------------------------|
+> -     | RES0                         | [63-36] |    n    |
+> +     | DIT                          | [51-48] |    y    |
+>       |--------------------------------------------------|
+>       | SVE                          | [35-32] |    y    |
+>       |--------------------------------------------------|
+> -     | RES0                         | [31-28] |    n    |
+> -     |--------------------------------------------------|
+>       | GIC                          | [27-24] |    n    |
+>       |--------------------------------------------------|
+>       | AdvSIMD                      | [23-20] |    y    |
+> @@ -199,6 +193,14 @@ infrastructure:
+>       | DPB                          | [3-0]   |    y    |
+>       x--------------------------------------------------x
+>  
+> +  5) ID_AA64MMFR2_EL1 - Memory model feature register 2
+> +
+> +     x--------------------------------------------------x
+> +     | Name                         |  bits   | visible |
+> +     |--------------------------------------------------|
+> +     | AT                           | [35-32] |    y    |
+> +     x--------------------------------------------------x
+> +
+>  Appendix I: Example
+>  ---------------------------
+>  
+> diff --git a/Documentation/arm64/elf_hwcaps.txt b/Documentation/arm64/elf_hwcaps.txt
+> index 57324ee55ecc..d6aff2c5e9e2 100644
+> --- a/Documentation/arm64/elf_hwcaps.txt
+> +++ b/Documentation/arm64/elf_hwcaps.txt
+> @@ -162,3 +162,19 @@ HWCAP_SVE
+>  HWCAP_ASIMDFHM
+>  
+>     Functionality implied by ID_AA64ISAR0_EL1.FHM == 0b0001.
+> +
+> +HWCAP_DIT
+> +
+> +    Functionality implied by ID_AA64PFR0_EL1.DIT == 0b0001.
+> +
+> +HWCAP_USCAT
+> +
+> +    Functionality implied by ID_AA64MMFR2_EL1.AT == 0b0001.
+> +
+> +HWCAP_ILRCPC
+> +
+> +    Functionality implied by ID_AA64ISR1_EL1.LRCPC == 0b0002.
+> +
+> +HWCAP_FLAGM
+> +
+> +    Functionality implied by ID_AA64ISAR0_EL1.TS == 0b0001.
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index 0e1960c59197..e7b9f154e476 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -490,6 +490,7 @@
+>  #define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
+>  
+>  /* id_aa64isar0 */
+> +#define ID_AA64ISAR0_TS_SHIFT		52
+>  #define ID_AA64ISAR0_FHM_SHIFT		48
+>  #define ID_AA64ISAR0_DP_SHIFT		44
+>  #define ID_AA64ISAR0_SM4_SHIFT		40
+> @@ -511,6 +512,7 @@
+>  /* id_aa64pfr0 */
+>  #define ID_AA64PFR0_CSV3_SHIFT		60
+>  #define ID_AA64PFR0_CSV2_SHIFT		56
+> +#define ID_AA64PFR0_DIT_SHIFT		48
+>  #define ID_AA64PFR0_SVE_SHIFT		32
+>  #define ID_AA64PFR0_RAS_SHIFT		28
+>  #define ID_AA64PFR0_GIC_SHIFT		24
+> @@ -568,6 +570,7 @@
+>  #define ID_AA64MMFR1_VMIDBITS_16	2
+>  
+>  /* id_aa64mmfr2 */
+> +#define ID_AA64MMFR2_AT_SHIFT		32
+>  #define ID_AA64MMFR2_LVA_SHIFT		16
+>  #define ID_AA64MMFR2_IESB_SHIFT		12
+>  #define ID_AA64MMFR2_LSM_SHIFT		8
+> diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
+> index f018c3deea3b..17c65c8f33cb 100644
+> --- a/arch/arm64/include/uapi/asm/hwcap.h
+> +++ b/arch/arm64/include/uapi/asm/hwcap.h
+> @@ -44,5 +44,9 @@
+>  #define HWCAP_SHA512		(1 << 21)
+>  #define HWCAP_SVE		(1 << 22)
+>  #define HWCAP_ASIMDFHM		(1 << 23)
+> +#define HWCAP_DIT		(1 << 24)
+> +#define HWCAP_USCAT		(1 << 25)
+> +#define HWCAP_ILRCPC		(1 << 26)
+> +#define HWCAP_FLAGM		(1 << 27)
+>  
+>  #endif /* _UAPI__ASM_HWCAP_H */
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 1c39a635a71c..796e83dde9fc 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -123,6 +123,7 @@ cpufeature_pan_not_uao(const struct arm64_cpu_capabilities *entry, int __unused)
+>   * sync with the documentation of the CPU feature register ABI.
+>   */
+>  static const struct arm64_ftr_bits ftr_id_aa64isar0[] = {
+> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_TS_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_FHM_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_DP_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SM4_SHIFT, 4, 0),
+> @@ -148,6 +149,7 @@ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
+>  static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_DIT_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_SVE_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_RAS_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_GIC_SHIFT, 4, 0),
+> @@ -192,6 +194,7 @@ static const struct arm64_ftr_bits ftr_id_aa64mmfr1[] = {
+>  };
+>  
+>  static const struct arm64_ftr_bits ftr_id_aa64mmfr2[] = {
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_AT_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_LVA_SHIFT, 4, 0),
+>  	/* While IESB is good to have, it is not fatal if we miss this on some CPUs */
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_IESB_SHIFT, 4, 0),
+> @@ -1083,14 +1086,18 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+>  	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_SM4_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_SM4),
+>  	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_DP_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_ASIMDDP),
+>  	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_FHM_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_ASIMDFHM),
+> +	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_TS_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_FLAGM),
+>  	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_FP_SHIFT, FTR_SIGNED, 0, CAP_HWCAP, HWCAP_FP),
+>  	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_FP_SHIFT, FTR_SIGNED, 1, CAP_HWCAP, HWCAP_FPHP),
+>  	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_ASIMD_SHIFT, FTR_SIGNED, 0, CAP_HWCAP, HWCAP_ASIMD),
+>  	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_ASIMD_SHIFT, FTR_SIGNED, 1, CAP_HWCAP, HWCAP_ASIMDHP),
+> +	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_DIT_SHIFT, FTR_SIGNED, 1, CAP_HWCAP, HWCAP_DIT),
+>  	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_DPB_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_DCPOP),
+>  	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_JSCVT_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_JSCVT),
+>  	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_FCMA_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_FCMA),
+>  	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_LRCPC_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_LRCPC),
+> +	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_LRCPC_SHIFT, FTR_UNSIGNED, 2, CAP_HWCAP, HWCAP_ILRCPC),
+> +	HWCAP_CAP(SYS_ID_AA64MMFR2_EL1, ID_AA64MMFR2_AT_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_USCAT),
+>  #ifdef CONFIG_ARM64_SVE
+>  	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_SVE_SHIFT, FTR_UNSIGNED, ID_AA64PFR0_SVE, CAP_HWCAP, HWCAP_SVE),
+>  #endif
+> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+> index 7f94623df8a5..e9ab7b3ed317 100644
+> --- a/arch/arm64/kernel/cpuinfo.c
+> +++ b/arch/arm64/kernel/cpuinfo.c
+> @@ -77,6 +77,10 @@ static const char *const hwcap_str[] = {
+>  	"sha512",
+>  	"sve",
+>  	"asimdfhm",
+> +	"dit",
+> +	"uscat",
+> +	"ilrcpc",
+> +	"flagm",
+>  	NULL
+>  };
+>  
+> -- 
+> 2.14.3
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
