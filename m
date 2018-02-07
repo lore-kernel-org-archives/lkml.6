@@ -1,79 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754467AbeBGOOr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 09:14:47 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41514 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754263AbeBGONt (ORCPT
+        id S1754471AbeBGOPI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 09:15:08 -0500
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:39413 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754223AbeBGOPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 09:13:49 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Daniel Thompson <daniel.thompson@linaro.org>,
-        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] dt-bindings: pwm-backlight: add a num-interpolation-steps property.
-Date: Wed,  7 Feb 2018 15:13:35 +0100
-Message-Id: <20180207141337.22247-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180207141337.22247-1-enric.balletbo@collabora.com>
-References: <20180207141337.22247-1-enric.balletbo@collabora.com>
+        Wed, 7 Feb 2018 09:15:06 -0500
+X-Google-Smtp-Source: AH8x224QKL8rVWfVXoeZv++fM+XR7gpWpr3fRZhFH2kv+o119D5w+F35uZ2OoS0ICBant3ixY7Bs4aKA8Snf7b9+JSU=
+MIME-Version: 1.0
+In-Reply-To: <20180126112838.GA32674@sirena.org.uk>
+References: <20180118053126.22082-1-dolinux.peng@gmail.com>
+ <CAHp75VcefO1L-E8ymHX7MibLiOXkRZ3+3FbkF_L+ywMV-i3Mvw@mail.gmail.com>
+ <20180123173732.GI7600@sirena.org.uk> <CAErzpmt5Z_bVkO-86yCNNWMNSYXWMzvABGtTEuYV1Y1qk=2LJQ@mail.gmail.com>
+ <20180126112838.GA32674@sirena.org.uk>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 7 Feb 2018 16:15:04 +0200
+Message-ID: <CAHp75VdvTdwB=EM1DejYHcazBRRgoy5cw=Rs0U5kSTXHWeuUOA@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: use seq_file to dump the contents of
+ dai_list,platform_list and codec_list
+To: Mark Brown <broonie@kernel.org>
+Cc: Donglin Peng <dolinux.peng@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The num-interpolated-steps property specifies the number of
-interpolated steps between each value of brightness-level table. This is
-useful for high resolution PWMs to not have to list out every possible
-value in the brightness-level array.
+On Fri, Jan 26, 2018 at 1:28 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Jan 26, 2018 at 03:16:00PM +0800, Donglin Peng wrote:
+>> On Wed, Jan 24, 2018 at 1:37 AM, Mark Brown <broonie@kernel.org> wrote:
+>
+>> > Too late, I already applied this - a further conversion for the new
+>> > macro would be good.
+>
+>> I can send another patch after the following patch is merged:
+>> https://patchwork.kernel.org/patch/10178813/
+>
+> Yes, please - that'd be great!
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-Changes since v1:
-- Add an example with a small but realistic curve. Suggested by Rob and
-  Daniel
+I have sent PR to Linus. If everything goes fine, it will be in
+upstream today evening.
 
- .../bindings/leds/backlight/pwm-backlight.txt         | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-index 310810906613..ce9b5746b774 100644
---- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-+++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-@@ -21,6 +21,11 @@ Optional properties:
-                           and enabling the backlight using GPIO.
-   - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
-                       and setting PWM value to 0.
-+  - num-interpolated-steps: Number of interpolated steps between each value
-+                            of brightness-levels table. This way a high
-+                            resolution pwm duty cycle can be used without
-+                            having to list out every possible value in the
-+                            brightness-level array.
- 
- [0]: Documentation/devicetree/bindings/pwm/pwm.txt
- [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -39,3 +44,17 @@ Example:
- 		post-pwm-on-delay-ms = <10>;
- 		pwm-off-delay-ms = <10>;
- 	};
-+
-+Example using num-interpolation-steps:
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 5000000>;
-+
-+		brightness-levels = <0 2048 4096 8192 16384 65535>;
-+		num-interpolated-steps = <2048>;
-+		default-brightness-level = <4096>;
-+
-+		power-supply = <&vdd_bl_reg>;
-+		enable-gpios = <&gpio 58 0>;
-+	};
 -- 
-2.15.1
+With Best Regards,
+Andy Shevchenko
