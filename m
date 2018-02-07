@@ -1,53 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753669AbeBGI40 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:56:26 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:48398 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753512AbeBGIzu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:55:50 -0500
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] bluetooth: hci_ath: Replace mdelay with msleep in
- ath_wakeup_ar3k
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <1517048258-23798-1-git-send-email-baijiaju1990@gmail.com>
-Date: Wed, 7 Feb 2018 09:55:48 +0100
-Cc: "Gustavo F. Padovan" <gustavo@padovan.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1753595AbeBGI5d (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:57:33 -0500
+Received: from foss.arm.com ([217.140.101.70]:46994 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeBGI5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 03:57:31 -0500
+Subject: Re: [PATCH v5 1/4] cpu_pm: add syscore_suspend error handling
+To: Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org
+Cc: Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de,
+        briannorris@chromium.org
+References: <20180207014117.62611-1-dbasehore@chromium.org>
+ <20180207014117.62611-2-dbasehore@chromium.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <04ebd1d9-b45b-df87-d59e-1a3df97f3371@arm.com>
+Date: Wed, 7 Feb 2018 08:57:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180207014117.62611-2-dbasehore@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Message-Id: <133171D5-E5F0-486D-869F-8066EB8ECE59@holtmann.org>
-References: <1517048258-23798-1-git-send-email-baijiaju1990@gmail.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jia-Ju,
-
-> ath_wakeup_ar3k() is never called from atomic context.
+On 07/02/18 01:41, Derek Basehore wrote:
+> If cpu_cluster_pm_enter() fails, cpu_pm_exit() should be called. This
+> will put the CPU in the correct state to resume from the failure.
 > 
-> It is only called by ath_hci_uart_work() that is only called in 
-> ath_open() via INIT_WORK().
-> All of the above functions do not enter atomic context along the way.
-> 
-> Despite never getting called from atomic context, ath_wakeup_ar3k() calls
-> mdelay() for busy wait.
-> That is not necessary and can be replaced with msleep to avoid busy wait.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 > ---
-> drivers/bluetooth/hci_ath.c |    4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
+>  kernel/cpu_pm.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/cpu_pm.c b/kernel/cpu_pm.c
+> index 67b02e138a47..03bcc0751a51 100644
+> --- a/kernel/cpu_pm.c
+> +++ b/kernel/cpu_pm.c
+> @@ -186,6 +186,9 @@ static int cpu_pm_suspend(void)
+>  		return ret;
+>  
+>  	ret = cpu_cluster_pm_enter();
+> +	if (ret)
+> +		cpu_pm_exit();
+> +
+>  	return ret;
+>  }
+>  
+> 
 
-patch has been applied to bluetooth-next tree.
+It is unclear to me why we need this patch as part of the ITS series. I
+probably fixes something for you, but I don't see the connection with
+the other patches.
 
-Regards
+Thanks,
 
-Marcel
+	M.
+-- 
+Jazz is not dead. It just smells funny...
