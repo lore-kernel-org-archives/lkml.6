@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753311AbeBGBtI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:49:08 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45152 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752859AbeBGBtE (ORCPT
+        id S1753366AbeBGBtN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:49:13 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45866 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752859AbeBGBtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:49:04 -0500
-X-Google-Smtp-Source: AH8x227FWStmpPkknKgmSwvpImwVoo6uTHdSLJneY/RenlCivJpjTH6J078i9MceLny+l2T/7613AA==
+        Tue, 6 Feb 2018 20:49:09 -0500
+X-Google-Smtp-Source: AH8x227XeJ93sCebXQcXdJkUQpT5NzV62I07VCBhDhLP12SAhTh6pKqzmcYngCSffKRQd6/3RoPmYA==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -18,11 +18,10 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Gustavo Padovan <gustavo.padovan@collabora.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv3 11/17] v4l2-ctrls: add v4l2_ctrl_request_setup
-Date: Wed,  7 Feb 2018 10:48:15 +0900
-Message-Id: <20180207014821.164536-12-acourbot@chromium.org>
+Subject: [RFCv3 13/17] videodev2.h: add request_fd field to v4l2_ext_controls
+Date: Wed,  7 Feb 2018 10:48:17 +0900
+Message-Id: <20180207014821.164536-14-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180207014821.164536-1-acourbot@chromium.org>
 References: <20180207014821.164536-1-acourbot@chromium.org>
@@ -30,125 +29,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+Allow to specify a request to be used with the S_EXT_CTRLS and
+G_EXT_CTRLS operations.
 
-Add a helper function that can set controls from a request.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/v4l2-ctrls.c | 71 ++++++++++++++++++++++++++++++++++++
- include/media/v4l2-ctrls.h           |  2 +
- 2 files changed, 73 insertions(+)
+ include/uapi/linux/videodev2.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 4fa7adef7531..dccc27968df1 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -1662,6 +1662,14 @@ static void new_to_req(struct v4l2_ctrl_ref *ref)
- 	ptr_to_ptr(ref->ctrl, ref->ctrl->p_new, ref->p_req);
- }
- 
-+/* Copy the request value to the new value */
-+static void req_to_new(struct v4l2_ctrl_ref *ref)
-+{
-+	if (!ref)
-+		return;
-+	ptr_to_ptr(ref->ctrl, ref->p_req, ref->ctrl->p_new);
-+}
-+
- /* Return non-zero if one or more of the controls in the cluster has a new
-    value that differs from the current value. */
- static int cluster_changed(struct v4l2_ctrl *master)
-@@ -3427,6 +3435,69 @@ int __v4l2_ctrl_s_ctrl_string(struct v4l2_ctrl *ctrl, const char *s)
- }
- EXPORT_SYMBOL(__v4l2_ctrl_s_ctrl_string);
- 
-+void v4l2_ctrl_request_setup(struct v4l2_ctrl_handler *hdl)
-+{
-+	struct v4l2_ctrl_ref *ref;
-+
-+	if (!hdl)
-+		return;
-+
-+	mutex_lock(hdl->lock);
-+
-+	list_for_each_entry(ref, &hdl->ctrl_refs, node)
-+		ref->done = false;
-+
-+	list_for_each_entry(ref, &hdl->ctrl_refs, node) {
-+		struct v4l2_ctrl *ctrl = ref->ctrl;
-+		struct v4l2_ctrl *master = ctrl->cluster[0];
-+		int i;
-+
-+		/* Skip if this control was already handled by a cluster. */
-+		/* Skip button controls and read-only controls. */
-+		if (ref->done || ctrl->type == V4L2_CTRL_TYPE_BUTTON ||
-+		    (ctrl->flags & V4L2_CTRL_FLAG_READ_ONLY))
-+			continue;
-+
-+		v4l2_ctrl_lock(master);
-+		for (i = 0; i < master->ncontrols; i++) {
-+			if (master->cluster[i]) {
-+				struct v4l2_ctrl_ref *r =
-+					find_ref(hdl, master->cluster[i]->id);
-+
-+				req_to_new(r);
-+				master->cluster[i]->is_new = 1;
-+				r->done = true;
-+			}
-+		}
-+		/*
-+		 * For volatile autoclusters that are currently in auto mode
-+		 * we need to discover if it will be set to manual mode.
-+		 * If so, then we have to copy the current volatile values
-+		 * first since those will become the new manual values (which
-+		 * may be overwritten by explicit new values from this set
-+		 * of controls).
-+		 */
-+		if (master->is_auto && master->has_volatiles &&
-+		    !is_cur_manual(master)) {
-+			s32 new_auto_val = *master->p_new.p_s32;
-+
-+			/*
-+			 * If the new value == the manual value, then copy
-+			 * the current volatile values.
-+			 */
-+			if (new_auto_val == master->manual_mode_value)
-+				update_from_auto_cluster(master);
-+		}
-+
-+		try_or_set_cluster(NULL, master, true, 0);
-+
-+		v4l2_ctrl_unlock(master);
-+	}
-+
-+	mutex_unlock(hdl->lock);
-+}
-+EXPORT_SYMBOL(v4l2_ctrl_request_setup);
-+
- void v4l2_ctrl_notify(struct v4l2_ctrl *ctrl, v4l2_ctrl_notify_fnc notify, void *priv)
- {
- 	if (ctrl == NULL)
-diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-index bddceb794961..922824dbd7db 100644
---- a/include/media/v4l2-ctrls.h
-+++ b/include/media/v4l2-ctrls.h
-@@ -259,6 +259,7 @@ struct v4l2_ctrl_ref {
- 	struct v4l2_ctrl *ctrl;
- 	struct v4l2_ctrl_helper *helper;
- 	union v4l2_ctrl_ptr p_req;
-+	bool done;
- 	bool from_other_dev;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 4fd46ae8fad5..91cfe0cbd5c5 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -1592,7 +1592,8 @@ struct v4l2_ext_controls {
+ 	};
+ 	__u32 count;
+ 	__u32 error_idx;
+-	__u32 reserved[2];
++	__s32 request_fd;
++	__u32 reserved[1];
+ 	struct v4l2_ext_control *controls;
  };
- 
-@@ -1056,6 +1057,7 @@ int v4l2_ctrl_request_init(struct v4l2_ctrl_handler *hdl);
- int v4l2_ctrl_request_clone(struct v4l2_ctrl_handler *hdl,
- 			    const struct v4l2_ctrl_handler *from,
- 			    bool (*filter)(const struct v4l2_ctrl *ctrl));
-+void v4l2_ctrl_request_setup(struct v4l2_ctrl_handler *hdl);
- void v4l2_ctrl_request_get(struct v4l2_ctrl_handler *hdl);
- void v4l2_ctrl_request_put(struct v4l2_ctrl_handler *hdl);
  
 -- 
 2.16.0.rc1.238.g530d649a79-goog
