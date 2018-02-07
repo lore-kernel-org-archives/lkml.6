@@ -1,76 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753703AbeBGKpn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:45:43 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38758 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753454AbeBGKpm (ORCPT
+        id S1753736AbeBGKum (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:50:42 -0500
+Received: from mail-pl0-f42.google.com ([209.85.160.42]:37293 "EHLO
+        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753610AbeBGKuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:45:42 -0500
-X-Google-Smtp-Source: AH8x22559Bk8e2lyHTSxAYFg+BcRsEjGF/ognYdLg+iWvqh3evA85/BeNbzIoww65l2ZerB5z9NH8A==
-Subject: Re: [PATCH v2 01/16] dt-bindings: clock: mediatek: add missing
- required #reset-cells
-To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-References: <cover.1517910489.git.sean.wang@mediatek.com>
- <d58fcf36319254d6de4c7fe100cbdca1bbec27a5.1517910489.git.sean.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <391278e5-9b72-1142-0262-5d286fe17d8d@gmail.com>
-Date: Wed, 7 Feb 2018 11:45:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 7 Feb 2018 05:50:39 -0500
+X-Google-Smtp-Source: AH8x2264IcMOY7t5Fvjxsi/RGpP7OOW6fAqoipN3ko5F8MCvRI8fH2uaDXCeKkbHhU3DgqiHxesfTdgtOJGZA0SJWmU=
 MIME-Version: 1.0
-In-Reply-To: <d58fcf36319254d6de4c7fe100cbdca1bbec27a5.1517910489.git.sean.wang@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <001a114372a68e749405649cf352@google.com>
+References: <945c8517a87c671825b61223088064ea2ad0a8cb.1517999262.git.pabeni@redhat.com>
+ <001a114372a68e749405649cf352@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 7 Feb 2018 11:50:18 +0100
+Message-ID: <CACT4Y+b4GDnFSLZPr=c7KaD0OpLbD95m16kqjupUUuBQpE2qeg@mail.gmail.com>
+Subject: Re: WARNING: proc registration bug in clusterip_tg_check
+To: syzbot <syzbot+@syzkaller.appspotmail.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, coreteam@netfilter.org,
+        David Miller <davem@davemloft.net>, Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs@googlegroups.com, Cong Wang <xiyou.wangcong@gmail.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+You dropped syzbot from CC ;)
+Add syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com to To or CC.
 
 
-On 02/06/2018 10:52 AM, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> All ethsys, pciesys and ssusbsys internally include reset controller, so
-> explicitly add back these missing cell definitions to related bindings
-> and examples.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt   | 2 ++
->  Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt  | 2 ++
->  Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt | 2 ++
->  3 files changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> index 7aa3fa1..8f5335b 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> @@ -9,6 +9,7 @@ Required Properties:
->  	- "mediatek,mt2701-ethsys", "syscon"
->  	- "mediatek,mt7622-ethsys", "syscon"
->  - #clock-cells: Must be 1
-> +- #reset-cells: Must be 1
->  
->  The ethsys controller uses the common clk binding from
->  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -20,4 +21,5 @@ ethsys: clock-controller@1b000000 {
->  	compatible = "mediatek,mt2701-ethsys", "syscon";
->  	reg = <0 0x1b000000 0 0x1000>;
->  	#clock-cells = <1>;
-> +	#reset-cells = <1>;
-
-The example is already fixed upstream, but I forgot the binding description,
-please rebase this patch.
-
-And please don't forget to add all clock maintainers.
-
-Regards,
-Matthias
+On Wed, Feb 7, 2018 at 11:42 AM, syzbot
+<syzbot+@syzkaller.appspotmail.com> wrote:
+>> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git
+>> master
+>
+>
+> Can't find the corresponding bug.
+>
+>
+>
+>> I can't reproduce the issue locally, so asking the syzbot to test the
+>> tentive fix for me (and hoping I did not mess with the tag/format)
+>
+>
+>> ---
+>>   net/ipv4/netfilter/ipt_CLUSTERIP.c | 30 +++++++++++++++---------------
+>>   1 file changed, 15 insertions(+), 15 deletions(-)
+>
+>
+>> diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c
+>> b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+>> index 3a84a60f6b39..db103cd971a9 100644
+>> --- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
+>> +++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+>> @@ -230,17 +230,6 @@ clusterip_config_init(struct net *net, const struct
+>> ipt_clusterip_tgt_info *i,
+>>         refcount_set(&c->refcount, 1);
+>>         refcount_set(&c->entries, 1);
+>
+>
+>> -       spin_lock_bh(&cn->lock);
+>> -       if (__clusterip_config_find(net, ip)) {
+>> -               spin_unlock_bh(&cn->lock);
+>> -               kfree(c);
+>> -
+>> -               return ERR_PTR(-EBUSY);
+>> -       }
+>> -
+>> -       list_add_rcu(&c->list, &cn->configs);
+>> -       spin_unlock_bh(&cn->lock);
+>> -
+>>   #ifdef CONFIG_PROC_FS
+>>         {
+>>                 char buffer[16];
+>> @@ -257,20 +246,31 @@ clusterip_config_init(struct net *net, const struct
+>> ipt_clusterip_tgt_info *i,
+>>         }
+>>   #endif
+>
+>
+>> +       spin_lock_bh(&cn->lock);
+>> +       if (__clusterip_config_find(net, ip)) {
+>> +               spin_unlock_bh(&cn->lock);
+>> +               err = -EBUSY;
+>> +               goto err_remove_pte:
+>> +       }
+>> +
+>> +       list_add_rcu(&c->list, &cn->configs);
+>> +       spin_unlock_bh(&cn->lock);
+>> +
+>>         c->notifier.notifier_call = clusterip_netdev_event;
+>>         err = register_netdevice_notifier(&c->notifier);
+>>         if (!err)
+>>                 return c;
+>
+>
+>> +       spin_lock_bh(&cn->lock);
+>> +       list_del_rcu(&c->list);
+>> +       spin_unlock_bh(&cn->lock);
+>> +
+>> +err_remove_pte:
+>>   #ifdef CONFIG_PROC_FS
+>>         proc_remove(c->pde);
+>>   err:
+>>   #endif
+>> -       spin_lock_bh(&cn->lock);
+>> -       list_del_rcu(&c->list);
+>> -       spin_unlock_bh(&cn->lock);
+>>         kfree(c);
+>> -
+>>         return ERR_PTR(err);
+>>   }
+>
+>
+>> --
+>> 2.14.3
+>
+>
+>> --
+>> You received this message because you are subscribed to the Google Groups
+>> "syzkaller-bugs" group.
+>> To unsubscribe from this group and stop receiving emails from it, send an
+>> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+>> To view this discussion on the web visit
+>> https://groups.google.com/d/msgid/syzkaller-bugs/945c8517a87c671825b61223088064ea2ad0a8cb.1517999262.git.pabeni%40redhat.com.
+>> For more options, visit https://groups.google.com/d/optout.
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/001a114372a68e749405649cf352%40google.com.
+>
+> For more options, visit https://groups.google.com/d/optout.
