@@ -1,186 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753695AbeBGLpi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:45:38 -0500
-Received: from mga07.intel.com ([134.134.136.100]:23713 "EHLO mga07.intel.com"
+        id S1753923AbeBGLs1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:48:27 -0500
+Received: from foss.arm.com ([217.140.101.70]:49794 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753454AbeBGLpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:45:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
-   d="scan'208";a="17934129"
-Date: Wed, 07 Feb 2018 19:44:47 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [linus:master] BUILD REGRESSION
- a2e5790d841658485d642196dbb0927303d6c22f
-Message-ID: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1753478AbeBGLsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:48:25 -0500
+Date: Wed, 7 Feb 2018 11:48:20 +0000
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v4 1/3] sched/fair: add util_est on top of PELT
+Message-ID: <20180207114820.GI5739@e110439-lin>
+References: <20180206144131.31233-1-patrick.bellasi@arm.com>
+ <20180206144131.31233-2-patrick.bellasi@arm.com>
+ <20180206155056.GF2269@hirez.programming.kicks-ass.net>
+ <20180206183315.GG5739@e110439-lin>
+ <20180206190900.GN2249@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180206190900.GN2249@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
-branch HEAD: a2e5790d841658485d642196dbb0927303d6c22f  Merge branch 'akpm' (patches from Andrew)
+On 06-Feb 20:09, Peter Zijlstra wrote:
+> On Tue, Feb 06, 2018 at 06:33:15PM +0000, Patrick Bellasi wrote:
+> 
+> > Good point, I was actually expecting this question and I should have
+> > added it to the cover letter, sorry.
+> > 
+> > The reasoning was: the task's estimated utilization is defined as the
+> > max between PELT and the "estimation". Where "estimation" is
+> > the max between EWMA and the last ENQUEUED utilization.
+> > 
+> > Thus I was envisioning these two calls:
+> > 
+> >    _task_util_est := max(EWMA, ENQUEUED)
+> >     task_util_est := max(util_avg, _task_util_est)
+> > 
+> > but since now we have clients only for the first API, I've not added
+> > the second one. Still I would prefer to keep the "_" to make it clear
+> > that's and util_est's internal signal, not the actual task's estimated
+> > utilization.
+> > 
+> > Does it make sense?
+> > 
+> > Do you prefer I just remove the "_" and we will refactor it once we
+> > should add a customer for the proper task's util_est?
+> 
+> Hurm... I was thinking:
+> 
+>   task_util_est := max(util_avg, EWMA)
+> 
+> But the above mixes ENQUEUED into it.. *confused*.
+> 
+> Also, I think I'm confused by the 'enqueued' name... it makes sense for
+> the cfs use-case, where we track the sum of all 'enqueued' tasks, but it
+> doesn't make sense for the task use-case where it tracks task_util() at
+> dequeue time.
 
-Regressions in current branch:
+Can be confusing at first, I've changed name in this version while
+trying to consolidate concepts in a reasonable way.
 
-arch/x86/tools/insn_decoder_test: warning: ffffffff810010d7:	0f ff eb             	ud0    %ebx,%ebp
-arch/x86/tools/insn_decoder_test: warning: ffffffff81001152:	0f ff bf 09 00 00 00 	ud0    0x9(%rdi),%edi
-arch/x86/tools/insn_decoder_test: warning: ffffffff81001275:	0f ff eb             	ud0    %ebx,%ebp
-arch/x86/tools/insn_decoder_test: warning: ffffffff810013fd:	0f ff bf 09 00 00 00 	ud0    0x9(%rdi),%edi
-arch/x86/tools/insn_decoder_test: warning: ffffffff81001499:	0f ff bf 09 00 00 00 	ud0    0x9(%rdi),%edi
-arch/x86/tools/insn_decoder_test: warning: ffffffff812296eb:	0f ff e8             	ud0    %eax,%ebp
+Let see if I can cast some light...
 
-Error ids grouped by kconfigs:
+First of all:
 
-recent_errors
-├── x86_64-randconfig-r0-02071059
-│   ├── arch-x86-tools-insn_decoder_test:warning:ffffffff810013fd:0f-ff-bf-ud0-(-rdi)-edi
-│   └── arch-x86-tools-insn_decoder_test:warning:ffffffff81001499:0f-ff-bf-ud0-(-rdi)-edi
-└── x86_64-randconfig-s3-02070914
-    ├── arch-x86-tools-insn_decoder_test:warning:ffffffff810010d7:0f-ff-eb-ud0-ebx-ebp
-    ├── arch-x86-tools-insn_decoder_test:warning:ffffffff81001152:0f-ff-bf-ud0-(-rdi)-edi
-    ├── arch-x86-tools-insn_decoder_test:warning:ffffffff81001275:0f-ff-eb-ud0-ebx-ebp
-    └── arch-x86-tools-insn_decoder_test:warning:ffffffff812296eb:0f-ff-e8-ud0-eax-ebp
+  a)  task_util_est := max(util_avg, EWMA, enqueued)
+  b)       enqueued := util_avg@dequeue time
 
-elapsed time: 302m
 
-configs tested: 124
+a) why we mix "enqueued" into?
 
-x86_64                           allmodconfig
-i386                               tinyconfig
-i386                   randconfig-x019-201805
-i386                   randconfig-x010-201805
-i386                   randconfig-x015-201805
-i386                   randconfig-x014-201805
-i386                   randconfig-x011-201805
-i386                   randconfig-x012-201805
-i386                   randconfig-x017-201805
-i386                   randconfig-x016-201805
-i386                   randconfig-x018-201805
-i386                   randconfig-x013-201805
-i386                     randconfig-n0-201805
-i386                     randconfig-i0-201805
-i386                     randconfig-i1-201805
-parisc                        c3000_defconfig
-parisc                         b180_defconfig
-parisc                              defconfig
-alpha                               defconfig
-parisc                            allnoconfig
-i386                             allmodconfig
-i386                     randconfig-a1-201805
-i386                     randconfig-a0-201805
-x86_64                             acpi-redef
-x86_64                           allyesdebian
-x86_64                                nfsroot
-cris                 etrax-100lx_v2_defconfig
-x86_64                 randconfig-x017-201805
-x86_64                 randconfig-x018-201805
-x86_64                 randconfig-x013-201805
-x86_64                 randconfig-x016-201805
-x86_64                 randconfig-x011-201805
-x86_64                 randconfig-x014-201805
-x86_64                 randconfig-x012-201805
-x86_64                 randconfig-x015-201805
-x86_64                 randconfig-x010-201805
-x86_64                 randconfig-x019-201805
-i386                     randconfig-s0-201805
-i386                     randconfig-s1-201805
-x86_64                 randconfig-i0-02051046
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-mn10300                     asb2364_defconfig
-openrisc                    or1ksim_defconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-frv                                 defconfig
-tile                         tilegx_defconfig
-i386                   randconfig-x071-201805
-i386                   randconfig-x079-201805
-i386                   randconfig-x072-201805
-i386                   randconfig-x077-201805
-i386                   randconfig-x076-201805
-i386                   randconfig-x073-201805
-i386                   randconfig-x070-201805
-i386                   randconfig-x075-201805
-i386                   randconfig-x078-201805
-i386                   randconfig-x074-201805
-sh                            titan_defconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                                allnoconfig
-i386                   randconfig-x004-201805
-i386                   randconfig-x007-201805
-i386                   randconfig-x002-201805
-i386                   randconfig-x009-201805
-i386                   randconfig-x003-201805
-i386                   randconfig-x006-201805
-i386                   randconfig-x005-201805
-i386                   randconfig-x000-201805
-i386                   randconfig-x008-201805
-i386                   randconfig-x001-201805
-m68k                           sun3_defconfig
-m68k                          multi_defconfig
-m68k                       m5475evb_defconfig
-sparc                               defconfig
-sparc64                           allnoconfig
-sparc64                             defconfig
-s390                        default_defconfig
-arm                         at91_dt_defconfig
-arm                               allnoconfig
-arm                           efm32_defconfig
-arm64                               defconfig
-arm                        multi_v5_defconfig
-arm                           sunxi_defconfig
-arm64                             allnoconfig
-arm                          exynos_defconfig
-arm                        shmobile_defconfig
-arm                        multi_v7_defconfig
-c6x                        evmc6678_defconfig
-xtensa                       common_defconfig
-m32r                       m32104ut_defconfig
-score                      spct6600_defconfig
-xtensa                          iss_defconfig
-m32r                         opsput_defconfig
-m32r                           usrv_defconfig
-m32r                     mappi3.smp_defconfig
-nios2                         10m50_defconfig
-h8300                    h8300h-sim_defconfig
-i386                              allnoconfig
-i386                                defconfig
-i386                             alldefconfig
-x86_64                                  kexec
-x86_64                                   rhel
-x86_64                 randconfig-x008-201805
-x86_64                 randconfig-x000-201805
-x86_64                 randconfig-x005-201805
-x86_64                 randconfig-x002-201805
-x86_64                 randconfig-x007-201805
-x86_64                 randconfig-x009-201805
-x86_64                 randconfig-x001-201805
-x86_64                 randconfig-x006-201805
-x86_64                 randconfig-x003-201805
-x86_64                 randconfig-x004-201805
-ia64                              allnoconfig
-ia64                                defconfig
-ia64                             alldefconfig
-mips                                   jz4740
-mips                      malta_kvm_defconfig
-mips                         64r6el_defconfig
-mips                           32r2_defconfig
-mips                              allnoconfig
-mips                      fuloong2e_defconfig
-mips                                     txx9
+   I think we need all the three components to properly describe these
+   scenarios:
 
-Thanks,
-Fengguang
+   - a task becoming smaller:
+     the "EWMA" amortize the task's utilization reduction, usually
+     converging to the new lower utilization in ~6 activations, which
+     should be reasonable at least for some mobile use-cases.
+
+   - a task becoming bigger:
+     the "enqueued" value better represents the task utilization while
+     the "EWMA" catches up, but... that's true only from the second
+     longer running activation.
+     For the first bigger activation, when the task starts to run
+     longer then before, at a certain point the util_avg will be
+     bigger both "enqueued" and "EWMA", thus task_util_est() should
+     just track the PELT's "util_avg".
+
+   Here is a picture showing all these behaviors using a "ramp" task
+   generated with rt-app:
+
+      https://photos.app.goo.gl/kRYgvpS6PTgvu2AM2
+
+b) why enqueued for tasks?
+
+  Since v3 it was:
+
+     task : util_avg { util_est { last, ewma } }
+     cpu  :   cfs_rq { util_est_enqueued }
+
+  and Joel noticed that, since now util_est{} is part of util_avg{},
+  which is included also by cfs_rq{}, then we can use the same
+  util_avg{} for cfs_rq{} too.
+
+  Problem was that using cfs_rq::util_est::last was not meaningful to
+  me, hence I've try to find a concept which was working well for both
+  cpus and tasks.
+
+  Enqueued IMO seems to work for both, provided you read the task's
+  enqueued util_est as:
+     "the util_est of a task which is currently enqueued in its cfs_rq"
+  which (only) happens to be the util_avg@dequeue time.
+
+  IMO, also for tasks, that's not worst than util_est.last...
+  Maybe it's just matter to add a bit of documentation in the util_est
+  struct definition?
+
+Does that makes a bit more sense now?
+
+> > > > +/*
+> > > > + * Check if the specified (signed) value is within a specified margin,
+> > > > + * based on the observation that:
+> > > > + *     abs(x) < y := (unsigned)(x + y - 1) < (2 * y - 1)
+> > > > + */
+> > > > +static inline bool within_margin(long value, unsigned int margin)
+> > > 
+> > > This mixing of long and int is dodgy, do we want to consistently use int
+> > > here?
+> > 
+> > Right, perhaps better "unsigned int" for both params, isn't?
+> 
+> Can't, must be signed, since @value is supposed to be able to be
+> negative remember? ;-)
+
+Right... :)
+
+> > > > +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, util_est);
+> 
+> > > > +	WRITE_ONCE(p->se.avg.util_est.enqueued, util_last);
+> > > 
+> > > Two stores to that word... can we fix that nicely?
+> > 
+> > Good point, the single word comes from the goal to fit into the same
+> > cache line of sched_avg.
+> 
+> Its the above two stores I confuzzled to be the same. So n/m all that.
+
+Ok, fine... however, isn't a single WRITE_ONCE on "struct util_est"
+still better? Did not checked at generated code...
+
+> > > > +SCHED_FEAT(UTIL_EST, false)
+> > > 
+> > > Since you couldn't measure it, do we wants it true?
+> > 
+> > I'm just a single tester so far, I would be more confident once
+> > someone volunteer to turn this on to give a better coverage.
+> 
+> Lets just enable it by default, that way its far more likely someone
+> will complain about it :-), disabling it again is a trivial matter when
+> needed.
+
+Ok, at the end it's your call... but you right, this could help on
+testing it better.
+
+Moreover, on low-utilization (desktop like) workloads we do see
+measurable benefits for interactive tasks.
+
+> Also, your patch 2/3 have insufficient READ_ONCE()s.
+
+Damn, I'll look at it...
+
+Cheers Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
