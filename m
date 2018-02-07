@@ -1,188 +1,138 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2949743-1517976899-2-5223934733193571741
+X-Cyrus-Session-Id: sloti22d1t05-2873564-1517975001-2-5656329200710914439
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='utf-8', plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517976899; b=KLWJl/GIa2RmNCyb2yzhJBRsp3ssXP6dOauGw7CnAJGS5vN
-    1SDUz60x2jCdmjY4rJpi7Qn9wQyoDA5W/Jycs5X+5wXoAWXdF5KF3i3JD3i7ovrw
-    p3EJ5tqhi/rsUPB8ESofbD9mPrwwN/XQubvp4HCQlrgE6FzQvYnCzVivgS8PZLs8
-    tBWkXK+OnucJSGYAS+p+1ktiBPFdsM8T461lGarUpx3GqzW6AaVBnTiq9S/UJJBJ
-    gleksPa48jmIZ3/7JXXTajZbhK1YVf7To2O8Jt+M2wujfj/V9Q415DnHke+I9mgK
-    ypyG5DaImoJirckT956VvhUsEXFMYIl7dKNEDhg==
+    t=1517975000; b=j8hrJ8VEF/ZaIqOeN8tb1VA5onamCTSeL3FwUgSicfO9jTm
+    PcpPksw5GZAcpXwsL8cZS8DY5pFTRI6oZvj+qzJmybjFFNj50p8z4Fsqp0fR2wLL
+    OR/15hsHwYGZdln7zh5pR/VFXM0ZpkhAiywDzKCakxwm1KRjYqQ5cS85INtk7bDp
+    nNxINOhugdBqgn5f6a6lYBRujfCMp/ZTPn59qW3v/cjqbPAcz0ArcY/hYpZgoNJA
+    4ohqQqqSJuAfzXHj64dT3Z8bP/0iOQPE3gnnWvcwARkFlnXOqg1gR688Iy7DVjlx
+    4bD9ieX2qc9SIfnSDdDNerRbTJBACIm7BREyHAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1517976899; bh=cIOQFlhJ4Dmm0lA3yRuGIRuFFqTENNdxpd4KwZStdrc=; b=q
-    T3lMz+8Uvjz2amSamCB1GABhX7WOlLqAGcoSe9+y30DV9cY9/0Rqj8PPt4ksqdN9
-    kSct0cgrKhToAxdiWrQYfRiBzHc6b6SYcm78SfHDM2NDERR5UvTmy1/YgfC4V0Ew
-    0w6yQ3h9pZ3Qk+2xJhFus3ASxLSs2907dv/T1wwThctMEx262ryVvHRRJRVVsI9K
-    VTc0OuIaYDH3rnXBp/im6EydRj9wzG9oWeuaTPCN5yuR6jSd6IKtfFLcZeqYvJ+g
-    0tHRmaIy2ElH04xyZGvcExhcQcWtRYuuSl1ZjMK2a/Vgnti+L36c4XeENaNGW+4J
-    Sg4GDmt93HWALwHCvdu6w==
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1517975000; bh=Rv3qLWDPriNDsOuSAntRYn0nBt
+    UQvDNXix+35uOb+aw=; b=aZukVhqHmx2F2oopQ5qBOb0M4WEdJkwShkqPI1gNx3
+    /e/vCVrOw8A6TbMKzlr6zItG4hwuLuBIuq3i39uw4wyv39O+5AnLJ2wKanYGgPUJ
+    Yas21TN7/1nauJzSArst3rQ7Uf1DaNJVQnFCFX73NwtPwKukbqL8PbhdI5XMfd+z
+    W49AhqOh+piqs9QSH3+82WEOKekZ5GijRQWdLEU9dYt9vIzijZYLnvE9u9HQmKwX
+    Qy+to87/wKZq+CvbMrHP/SAHe2vaXIEeIgYMjLSRDoNIa+IrpvxrtaqSN3pK5HgJ
+    HaK8W9ncjDs+M6e3nBUkp7/qNvrBczBfOKPE/9Y0ECqQ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753246AbeBGEOp (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 23:14:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45354 "EHLO mail.kernel.org"
+        id S1752970AbeBGDnS (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Feb 2018 22:43:18 -0500
+Received: from mga05.intel.com ([192.55.52.43]:24772 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752564AbeBGEOo (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 6 Feb 2018 23:14:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7352075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 6 Feb 2018 23:14:40 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "tip-bot for Steven Rostedt (VMware)" <tipbot@zytor.com>
-Cc: pkondeti@codeaurora.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org, efault@gmx.de,
-        peterz@infradead.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        tglx@linutronix.de, linux-tip-commits@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [tip:sched/urgent] sched/rt: Use container_of() to get root
- domain in rto_push_irq_work_func()
-Message-ID: <20180206231440.4bc7f636@vmware.local.home>
-In-Reply-To: <tip-ad0f1d9d65938aec72a698116cd73a980916895e@git.kernel.org>
-References: <CAEU1=PkiHO35Dzna8EQqNSKW1fr1y1zRQ5y66X117MG06sQtNA@mail.gmail.com>
-        <tip-ad0f1d9d65938aec72a698116cd73a980916895e@git.kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752944AbeBGDnR (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 6 Feb 2018 22:43:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,471,1511856000";
+   d="scan'208";a="202120806"
+Subject: [PATCH] memremap: fix softlockup reports at teardown
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-mm@kvack.org
+Cc: Michal Hocko <mhocko@suse.com>, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Date: Tue, 06 Feb 2018 19:34:11 -0800
+Message-ID: <151797445154.29778.16795392483399217682.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The cond_resched() currently in the setup path needs to be duplicated in
+the teardown path. Rather than require each instance of
+for_each_device_pfn() to open code the same sequence, embed it in the
+helper.
 
-I see this was just applied to Linus's tree. It probably should be
-tagged for stable as well.
+Link: https://github.com/intel/ixpdimm_sw/issues/11
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: <stable@vger.kernel.org>
+Fixes: 71389703839e ("mm, zone_device: Replace {get, put}_zone_device_page()...")
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ kernel/memremap.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
--- Steve
-
-
-On Tue, 6 Feb 2018 03:54:16 -0800
-"tip-bot for Steven Rostedt (VMware)" <tipbot@zytor.com> wrote:
-
-> Commit-ID:  ad0f1d9d65938aec72a698116cd73a980916895e
-> Gitweb:     https://git.kernel.org/tip/ad0f1d9d65938aec72a698116cd73a980916895e
-> Author:     Steven Rostedt (VMware) <rostedt@goodmis.org>
-> AuthorDate: Tue, 23 Jan 2018 20:45:37 -0500
-> Committer:  Ingo Molnar <mingo@kernel.org>
-> CommitDate: Tue, 6 Feb 2018 10:20:33 +0100
-> 
-> sched/rt: Use container_of() to get root domain in rto_push_irq_work_func()
-> 
-> When the rto_push_irq_work_func() is called, it looks at the RT overloaded
-> bitmask in the root domain via the runqueue (rq->rd). The problem is that
-> during CPU up and down, nothing here stops rq->rd from changing between
-> taking the rq->rd->rto_lock and releasing it. That means the lock that is
-> released is not the same lock that was taken.
-> 
-> Instead of using this_rq()->rd to get the root domain, as the irq work is
-> part of the root domain, we can simply get the root domain from the irq work
-> that is passed to the routine:
-> 
->  container_of(work, struct root_domain, rto_push_work)
-> 
-> This keeps the root domain consistent.
-> 
-> Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Mike Galbraith <efault@gmx.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Fixes: 4bdced5c9a292 ("sched/rt: Simplify the IPI based RT balancing logic")
-> Link: http://lkml.kernel.org/r/CAEU1=PkiHO35Dzna8EQqNSKW1fr1y1zRQ5y66X117MG06sQtNA@mail.gmail.com
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  kernel/sched/rt.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 862a513..2fb627d 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -1907,9 +1907,8 @@ static void push_rt_tasks(struct rq *rq)
->   * the rt_loop_next will cause the iterator to perform another scan.
->   *
->   */
-> -static int rto_next_cpu(struct rq *rq)
-> +static int rto_next_cpu(struct root_domain *rd)
->  {
-> -	struct root_domain *rd = rq->rd;
->  	int next;
->  	int cpu;
->  
-> @@ -1985,7 +1984,7 @@ static void tell_cpu_to_push(struct rq *rq)
->  	 * Otherwise it is finishing up and an ipi needs to be sent.
->  	 */
->  	if (rq->rd->rto_cpu < 0)
-> -		cpu = rto_next_cpu(rq);
-> +		cpu = rto_next_cpu(rq->rd);
->  
->  	raw_spin_unlock(&rq->rd->rto_lock);
->  
-> @@ -1998,6 +1997,8 @@ static void tell_cpu_to_push(struct rq *rq)
->  /* Called from hardirq context */
->  void rto_push_irq_work_func(struct irq_work *work)
->  {
-> +	struct root_domain *rd =
-> +		container_of(work, struct root_domain, rto_push_work);
->  	struct rq *rq;
->  	int cpu;
->  
-> @@ -2013,18 +2014,18 @@ void rto_push_irq_work_func(struct irq_work *work)
->  		raw_spin_unlock(&rq->lock);
->  	}
->  
-> -	raw_spin_lock(&rq->rd->rto_lock);
-> +	raw_spin_lock(&rd->rto_lock);
->  
->  	/* Pass the IPI to the next rt overloaded queue */
-> -	cpu = rto_next_cpu(rq);
-> +	cpu = rto_next_cpu(rd);
->  
-> -	raw_spin_unlock(&rq->rd->rto_lock);
-> +	raw_spin_unlock(&rd->rto_lock);
->  
->  	if (cpu < 0)
->  		return;
->  
->  	/* Try the next RT overloaded CPU */
-> -	irq_work_queue_on(&rq->rd->rto_push_work, cpu);
-> +	irq_work_queue_on(&rd->rto_push_work, cpu);
->  }
->  #endif /* HAVE_RT_PUSH_IPI */
->  
+diff --git a/kernel/memremap.c b/kernel/memremap.c
+index 4849be5f9b3c..4dd4274cabe2 100644
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -275,8 +275,15 @@ static unsigned long pfn_end(struct dev_pagemap *pgmap)
+ 	return (res->start + resource_size(res)) >> PAGE_SHIFT;
+ }
+ 
++static unsigned long pfn_next(unsigned long pfn)
++{
++	if (pfn % 1024 == 0)
++		cond_resched();
++	return pfn + 1;
++}
++
+ #define for_each_device_pfn(pfn, map) \
+-	for (pfn = pfn_first(map); pfn < pfn_end(map); pfn++)
++	for (pfn = pfn_first(map); pfn < pfn_end(map); pfn = pfn_next(pfn))
+ 
+ static void devm_memremap_pages_release(void *data)
+ {
+@@ -337,10 +344,10 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+ 	resource_size_t align_start, align_size, align_end;
+ 	struct vmem_altmap *altmap = pgmap->altmap_valid ?
+ 			&pgmap->altmap : NULL;
++	struct resource *res = &pgmap->res;
+ 	unsigned long pfn, pgoff, order;
+ 	pgprot_t pgprot = PAGE_KERNEL;
+-	int error, nid, is_ram, i = 0;
+-	struct resource *res = &pgmap->res;
++	int error, nid, is_ram;
+ 
+ 	align_start = res->start & ~(SECTION_SIZE - 1);
+ 	align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
+@@ -409,8 +416,6 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+ 		list_del(&page->lru);
+ 		page->pgmap = pgmap;
+ 		percpu_ref_get(pgmap->ref);
+-		if (!(++i % 1024))
+-			cond_resched();
+ 	}
+ 
+ 	devm_add_action(dev, devm_memremap_pages_release, pgmap);
