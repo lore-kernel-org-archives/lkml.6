@@ -1,92 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754455AbeBGVAd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:00:33 -0500
-Received: from mout.web.de ([212.227.15.4]:57225 "EHLO mout.web.de"
+        id S1754446AbeBGVDy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 16:03:54 -0500
+Received: from foss.arm.com ([217.140.101.70]:55972 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754127AbeBGVAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:00:31 -0500
-To: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, Archit Taneja <architt@codeaurora.org>,
-        Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        Rob Clark <robdclark@gmail.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] drm/msm/mdp5: Delete an error message for a failed memory
- allocation in two functions
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Message-ID: <7726fab0-dbe4-9d70-36a8-17d6078a39ce@users.sourceforge.net>
-Date: Wed, 7 Feb 2018 22:00:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1754127AbeBGVDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 16:03:53 -0500
+Date: Wed, 7 Feb 2018 15:03:51 -0600
+From: Kim Phillips <kim.phillips@arm.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH] coresight replicator: set default y after Kconfig rename
+Message-Id: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:x58EUAfklJAthGzxC7i3wsse5s6wYrtryTcAo4lSck8VLZoU4b2
- 0XI73j0T5ksjCEiuATUPoF5QBkRwsJg9kJNfSRevmAEINqWA9lFL7kRhF5aUScf4zvzxQJZ
- ZfX4bc0k20p65lqt/E4F5+ThdzrDP7fQTc9qg9c+cJcYXRWBdRJkuTH2oct1NIV7E7JiAr2
- UsfHHGVkcPYbyXktO3OFg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QVMcGaYZzR4=:hiWgbXnn+S56qDY6HNePxi
- KJrW3NORA0CNqpm3F/dWVIpF7Uq6G0I4AUu4J1kaycu/4rCmLVC5kY2o5i+2x0GcT5BP6TZTF
- 4zwckhou0HV/u9O7s4g/H3/Vw0Rn6Ms4lntYBC1libgb1YHgUPK+P9PD76vbgKgpWRciMSLjw
- k5qmlL6USp2x6yNdTALVr9PqdTEfD/NdC6YYs7rEqQPKiZXFHC86OvmS4DbF/Gh2W+oRz7gON
- ZIFhbfyKnEWR45Zkfn5czsI4WbdtPr7tU3fvBnyQ8juc1I+bu8YnEjRKuECYXrIfffOGEneOr
- 0/shgF5r3skurC+EcFQs/vCkpe1xcM6tovKKynejn/J4sNERx46HHeUf+7SwkOgZM0x+ImddW
- LLXSIxIQYpWH7SnSBSr61VD4sHggpPQFWskfSRo8ShhuFlKzHRHrhgV/Pj6KAQbDZ032Y0sgS
- jabXhDjsUGXB+GOuKuASVjUpXzTnNiHDatqlXzOot+F8cE2D4XsC4RlUL46eSW3ZUmkOiAkcb
- rDQXgPSMBPXjRrv/0VgBrl6FrqxNTFukkkCMX3rSnKrtzotPV89DQ97yNTvDQubEb3VQw6PRo
- 4WAQnNgKFQGF7Cl+HLhCJMIrZHtw/8W2HrZ8W2uUgbROBa6Z0aqz7925cmyK/g+LtpO28JN89
- 39tQU0nQT612GaFX/VnOTzFNX0oPLJJ6U0Cq/G6e1CJj6uVNBXkSTjgSvvsSa/T2NNVl/MGmq
- OIOT+OMp6efXbF2wvjOKJ1SxSsll2letT1KJIov0h9lAlTPxfwIjtrKjHXVQByF8sUMMfV6t4
- TEEvNjCweLWX4R4vg/Wu5ROVeCrOWUuMqvbykX/pnRu3PHhEvY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 7 Feb 2018 21:50:07 +0100
+Commit 1c8859848dbb ("coresight replicator: Cleanup programmable
+replicator naming") changed the Kconfig symbol name from
+QCOM_REPLICATOR, which, whilst not in the single arm64 defconfig,
+was being set in my juno build script, which left the new symbol unset,
+causing the following unexpected grief:
 
-Omit an extra message for a memory allocation failure in these functions.
+ # ./perf record -vvv -C 0 -e cs_etm/@20070000.etr/ --per-thread true
+ ..<snip>..
+ sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+ mmap size 528384B
+ AUX area mmap length 4194304
+ perf event ring buffer mmapped per cpu
+ failed to mmap AUX area
+ failed to mmap with 12 (Cannot allocate memory)
 
-This issue was detected by using the Coccinelle software.
+Make it default y to help not surprise unsuspecting users.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 1c8859848dbb ("coresight replicator: Cleanup programmable replicator naming")
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c | 1 -
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c | 4 +---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/hwtracing/coresight/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
-index 439e0a300e25..daa224df4457 100644
---- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
-@@ -717,7 +717,6 @@ struct mdp5_ctl_manager *mdp5_ctlm_init(struct drm_device *dev,
- 
- 	ctl_mgr = kzalloc(sizeof(*ctl_mgr), GFP_KERNEL);
- 	if (!ctl_mgr) {
--		dev_err(dev->dev, "failed to allocate CTL manager\n");
- 		ret = -ENOMEM;
- 		goto fail;
- 	}
-diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-index 3e9bba4d6624..5bf54ca7ab0a 100644
---- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-@@ -844,10 +844,8 @@ static int interface_init(struct mdp5_kms *mdp5_kms)
- 			continue;
- 
- 		intf = kzalloc(sizeof(*intf), GFP_KERNEL);
--		if (!intf) {
--			dev_err(dev->dev, "failed to construct INTF%d\n", i);
-+		if (!intf)
- 			return -ENOMEM;
--		}
- 
- 		intf->num = i;
- 		intf->type = intf_types[i];
+diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+index ef9cb3c164e1..b94bbd95efa6 100644
+--- a/drivers/hwtracing/coresight/Kconfig
++++ b/drivers/hwtracing/coresight/Kconfig
+@@ -73,6 +73,7 @@ config CORESIGHT_SOURCE_ETM4X
+ config CORESIGHT_DYNAMIC_REPLICATOR
+ 	bool "CoreSight Programmable Replicator driver"
+ 	depends on CORESIGHT_LINKS_AND_SINKS
++	default y
+ 	help
+ 	  This enables support for dynamic CoreSight replicator link driver.
+ 	  The programmable ATB replicator allows independent filtering of the
 -- 
 2.16.1
