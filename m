@@ -1,131 +1,124 @@
-Return-Path: <robin.murphy@arm.com>
-X-Google-Smtp-Source: AH8x224S5MinrETZUFiu2rgRAgLRIyusFFVDlskZCAALU4nFoTz0MYT2/aWgcUY86VxMkZXggW0l
-ARC-Seal: i=1; a=rsa-sha256; t=1518529064; cv=none;
+Return-Path: <vivek.gautam@codeaurora.org>
+X-Google-Smtp-Source: AH8x225OujqbcN5AdMKcXehbksfJCG6iCXLJGbDq9kIkV2GB7VOaj9IB1BmH0GzieHsWLgD18NEL
+ARC-Seal: i=1; a=rsa-sha256; t=1517999526; cv=none;
         d=google.com; s=arc-20160816;
-        b=yA1mHwALckh1WnESwF2cTo5HI1xW+LBxqSZFUuwFEikEIRz11GCCUm3raf79Uyhyym
-         2qfyZoNQTxMMVX7kcFUS2foTqbSEEIdkbzAKgb6Za5HQyzMKkc4d1lnfhxYyWZK0ZJgK
-         g477ObPsxcwU0RKeFozQiPlAtDhzEAVEMcr5hyaSFnCWZrtr/TXZXAuEj2l9In4GdEjL
-         4JevTiEXcVlR3ezalB7RwsAYqWsqFocuy8Y10YaJu6b/0YN3U1TGDTKMft/kfqsDIk4S
-         vNWenT3rzG6lKDUu4tNesEzazS/W4k1cYwH3zT4YtnuxIFuBdJrZ9MMHTbwhQGHaG1JN
-         ulpg==
+        b=h7ESUGv9EgDgaZbNfy47jKB50mu+ETlWpa5u52gQEPa+IiynozaV9/LkX8uZL0YR5M
+         4TgJgGVYiQcAF3jyAuWoVcpDG8GvsV8B8Oeh65LSpg1aEEnO3qN4uAyjOytslh14Rmxx
+         /7SQtGSz4zQvpui0yh/FZTcdwmJXXT80wVAdGmoa8mluYOuypdqtTwARrClPmE+bpqsz
+         IfoJhg57JSGxlu0AG68pcdwAvcHvax1aLObEWVPko53+ynduaP9ccif+W8/1D3khkxn0
+         REnFLrET7g5tyzc3Hoik6xKH/F94ZjzhUtFc8tyQ7W+xGD7exDV1plvYulliflUHAJ2S
+         jCWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=833oXPNEmIsSVMHQE0CCUoiZ779UX0dXuR5ReiR4wwk=;
-        b=nhqesFM8B6HmBt+VIzkxhobyVkiHCjaxiismqG+DWEoxjGYJdFuIpS1sZgI7JPMqgD
-         9tx1GT4xmXQVmw+rYY93t179M+c236IT+c3U/P7sxPSeLJu1k35Xsrn1pVx1930UImGD
-         1xSOcr8uT3nBtHi3M8oJUyloj6ausJCLmecuFb4HYvJO2V56x+ZJR0Dso8KY/UI0H6Az
-         J2MIDUkbNfCWv2nn48Z//CSCCVKWdJ6y6GDhDrxKh+GKOBevEqMF29vojUAtadFO05zW
-         z/G5DjhPxDpRxX+eT26SvVgTtTc1tumGvGPrf3trBAaX6ucBl2zqRkGL/CBzcgS8wfl1
-         j+pg==
+        bh=8U+iN46xj9qrDvjJtqlGFYvqqkf3OR97hIwqHRczs8I=;
+        b=EYjwiAl3OxQ6FjWCmYPh5EpusNcVjM9GbUIYHpiXvWsRkd51GOkEo2DfSQPbt/yZUc
+         1n9Vk5iq+X2Ni+I+i0FyC6HHUXU3YpqrzeWlPV5elTta/f1Kd6a1F/kjIYi4zE49BhxX
+         GVJxLzGj4BklqrZKoNF13uuOv2/4OCTnGMPUgJcpp/373V4N7KVsQsCXAspptoX8+DH7
+         /olxwJG7L8E3CkNvtclXvBib3vWet4C+ym7Gnif1akaof6GqYpwkVDGS5VwRSpPP4RvI
+         B/X7Xry4rkDUzMjqQV3UQi3mOHx10tao15giiNakym9xsLSqw/fjX3ZcBZk1dBrywEms
+         KjQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=n3bXvP2F;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=FhoM/swA;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
-Subject: Re: [PATCH v7 1/6] base: power: runtime: Export
- pm_runtime_get/put_suppliers
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
- "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki"
- <rjw@rjwysocki.net>, Will Deacon <will.deacon@arm.com>,
- Rob Clark <robdclark@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- dri-devel <dri-devel@lists.freedesktop.org>,
- freedreno@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
- Greg KH <gregkh@linuxfoundation.org>, sboyd@codeaurora.org,
- linux-arm-msm@vger.kernel.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=n3bXvP2F;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=FhoM/swA;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D81F760767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	robin.murphy@arm.com,
+	will.deacon@arm.com,
+	robdclark@gmail.com,
+	iommu@lists.linux-foundation.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Cc: alex.williamson@redhat.com,
+	gregkh@linuxfoundation.org,
+	airlied@linux.ie,
+	sboyd@codeaurora.org,
+	sricharan@codeaurora.org,
+	m.szyprowski@samsung.com,
+	architt@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	vivek.gautam@codeaurora.org
+Subject: [PATCH v7 4/6] iommu/arm-smmu: Add the device_link between masters and smmu
+Date: Wed,  7 Feb 2018 16:01:20 +0530
+Message-Id: <1517999482-17317-5-git-send-email-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
 References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
- <1517999482-17317-2-git-send-email-vivek.gautam@codeaurora.org>
- <CAAFQd5BmroRf-C8dQkvTKHWK1psGnNi1t7g-q=Xce6KjrGTsdw@mail.gmail.com>
- <65d707c0-76cc-d59e-ff18-1fdd89306900@arm.com>
- <CAAFQd5DNzGYnTRuc2hDr1osQ2=6ruM0wQqV8svP=a10hxTVOGQ@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d6aa408f-6458-7a40-51ea-409ea9663af2@arm.com>
-Date: Tue, 13 Feb 2018 13:37:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAAFQd5DNzGYnTRuc2hDr1osQ2=6ruM0wQqV8svP=a10hxTVOGQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591737849838824813?=
-X-GMAIL-MSGID: =?utf-8?q?1592293131948217399?=
+X-GMAIL-THRID: =?utf-8?q?1591737871126335112?=
+X-GMAIL-MSGID: =?utf-8?q?1591737871126335112?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 13/02/18 12:54, Tomasz Figa wrote:
-> On Tue, Feb 13, 2018 at 9:00 PM, Robin Murphy <robin.murphy@arm.com> wrote:
->> On 13/02/18 07:44, Tomasz Figa wrote:
->>>
->>> Hi Vivek,
->>>
->>> On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
->>> <vivek.gautam@codeaurora.org> wrote:
->>>>
->>>> The device link allows the pm framework to tie the supplier and
->>>> consumer. So, whenever the consumer is powered-on the supplier
->>>> is powered-on first.
->>>>
->>>> There are however cases in which the consumer wants to power-on
->>>> the supplier, but not itself.
->>>> E.g., A Graphics or multimedia driver wants to power-on the SMMU
->>>> to unmap a buffer and finish the TLB operations without powering
->>>> on itself.
->>>
->>>
->>> This sounds strange to me. If the SMMU is powered down, wouldn't the
->>> TLB lose its contents as well (and so no flushing needed)?
->>
->>
->> Depends on implementation details - if runtime PM is actually implemented
->> via external clock gating (in the absence of fine-grained power domains),
->> then "suspended" TLBs might both retain state and not receive invalidation
->> requests, which is really the worst case.
-> 
-> Agreed. That's why in "[PATCH v7 3/6] iommu/arm-smmu: Invoke
-> pm_runtime during probe, add/remove device" I actually suggested
-> managing clocks separately from runtime PM. At least until runtime PM
-> framework arrives at a state, where multiple power states can be
-> managed, i.e. full power state, clock-gated state, domain-off state.
-> (I think I might have seen some ongoing work on this on LWN though...)
-> 
->>
->>> Other than that, what kind of hardware operations would be needed
->>> besides just updating the page tables from the CPU?
->>
->>
->> Domain attach/detach also require updating SMMU hardware state (and possibly
->> TLB maintenance), but don't logically require the master device itself to be
->> active at the time.
-> 
-> Wouldn't this hardware state need to be reinitialized anyway after
-> respective power domain power cycles? (In other words, hardware would
-> only need programming if it's powered on at the moment.)
+From: Sricharan R <sricharan@codeaurora.org>
 
-Yes, if the entire SMMU was fully powered down because all masters were 
-inactive, then all that should need to be done is to update the software 
-shadow state in the expectation that arm_smmu_reset() would re-sync it 
-upon TCU powerup. If at least some part of the internal logic remains 
-active, though, then you may or may not need to fiddle with zero or more 
-clocks and/or power domains (depending on microarchitecture and 
-integration) in order to be sure that everything from the programming 
-slave interface through to wherever that state is kept works correctly 
-so that it can be changed.
+Finally add the device link between the master device and
+smmu, so that the smmu gets runtime enabled/disabled only when the
+master needs it. This is done from add_device callback which gets
+called once when the master is added to the smmu.
 
-The main motivation here is that the Qualcomm SMMU microarchitecture 
-apparently allows the programming interface to be shut down separately 
-from the TCU core (context banks, page table walker, etc.), and they get 
-an appreciable power saving from doing so. This is different from, say, 
-the Arm Ltd. implementations, where the entire TCU is a single 
-clock/power domain internally (although you could maybe still gate the 
-external APB interface clock).
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/iommu/arm-smmu.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-As the previous discussions have shown, this is really, really hard to 
-do properly in a generic manner.
-
-Robin.
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index c024f69c1682..c7e924d553bd 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -215,6 +215,9 @@ struct arm_smmu_device {
+ 
+ 	/* IOMMU core code handle */
+ 	struct iommu_device		iommu;
++
++	/* runtime PM link to master */
++	struct device_link *link;
+ };
+ 
+ enum arm_smmu_context_fmt {
+@@ -1425,6 +1428,17 @@ static int arm_smmu_add_device(struct device *dev)
+ 
+ 	pm_runtime_put_sync(smmu->dev);
+ 
++	/*
++	 * Establish the link between smmu and master, so that the
++	 * smmu gets runtime enabled/disabled as per the master's
++	 * needs.
++	 */
++	smmu->link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
++	if (!smmu->link)
++		dev_warn(smmu->dev,
++			 "Unable to create device link between %s and %s\n",
++			 dev_name(smmu->dev), dev_name(dev));
++
+ 	return 0;
+ 
+ out_rpm_put:
+@@ -1449,6 +1463,8 @@ static void arm_smmu_remove_device(struct device *dev)
+ 	cfg  = fwspec->iommu_priv;
+ 	smmu = cfg->smmu;
+ 
++	device_link_del(smmu->link);
++
+ 	ret = pm_runtime_get_sync(smmu->dev);
+ 	if (ret)
+ 		return;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
