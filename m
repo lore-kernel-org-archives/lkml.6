@@ -1,87 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754769AbeBGRZU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:25:20 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35270 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754343AbeBGRZS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:25:18 -0500
-X-Google-Smtp-Source: AH8x227cd4hA6VXVBf0edVcDbZs6z4VFeLWqoEh4T5clFNyCXsBNiTWq+0xfEPxCTKVjkEqWXHHCMQ==
-Message-ID: <1518024315.3742.16.camel@gmail.com>
-Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
-From: Vladislav Valtchev <vladislav.valtchev@gmail.com>
-To: Zamir SUN <sztsian@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, zsun@redhat.com
-Date: Wed, 07 Feb 2018 19:25:15 +0200
-In-Reply-To: <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
-References: <20180204032014.6962-1-sztsian@gmail.com>
-         <20180204032014.6962-2-sztsian@gmail.com>
-         <20180206181807.2d35393e@gandalf.local.home>
-         <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
-Organization: VMware
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1754819AbeBGR0i (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:26:38 -0500
+Received: from ms.lwn.net ([45.79.88.28]:41608 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754412AbeBGR0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:26:37 -0500
+From: Jonathan Corbet <corbet@lwn.net>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 0/8] Clean up kernel-doc and fix literal-block handling
+Date: Wed,  7 Feb 2018 10:26:16 -0700
+Message-Id: <20180207172624.24555-1-corbet@lwn.net>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-07 at 22:01 +0800, Zamir SUN wrote:
-> 
-> While just a note for this, in Fedora 27:
-> 
-> $ if command -v swig; then echo 1; else echo 0; fi
-> /usr/bin/swig
-> 1
-> 
-> Actually this test has the same problem as of `which swig` - When swig
-> exists, the var SWIG_DEFINED will not be 1 (as shown above).
-> 
-> I see Vladislav is already on this thread. I hope this can be fixed
-> before merging the patch set.
-> 
+So once upon a time I set out to fix the problem reported by Tobin wherein
+a literal block within a kerneldoc comment would be corrupted in
+processing.  On the way, though, I got annoyed at the way I have to learn
+how kernel-doc works from the beginning every time I tear into it.
 
-Hi Zamir,
-I'm sorry but I'm unable to reproduce the issue on Fedora 27,
-after applying my series of patches.
+As a result, seven of the following eight patches just get rid of some dead
+code and reorganize the rest - mostly turning the 500-line process_file()
+function into something a bit more rational.  Sphinx output is unchanged
+after these are applied.  Then, at the end, there's a tweak to stop messing
+with literal blocks.
 
-In my case (fresh install of Fedora27, no customizations):
-	if command -v swig; then echo 1; else echo 0; fi
-works as expected.
+If anybody was unaware that I've not done any serious Perl since the
+1990's, they will certainly understand that fact now.
 
-SWIG_DEFINED does not have to be '1' in order the Makefile to work.
-Because the check in my branch is:
+Jonathan Corbet (8):
+  docs: kernel-doc: Get rid of xml_escape() and friends
+  docs: kernel-doc: Rename and split STATE_FIELD
+  docs: kernel-doc: Move STATE_NORMAL processing into its own function
+  docs: kernel-doc: Move STATE_NAME processing into its own function
+  docs: kernel-doc: Move STATE_BODY processing to a separate function
+  docs: kernel-doc: Move STATE_PROTO processing into its own function
+  docs: kernel-doc: Finish moving STATE_* code out of process_file()
+  docs: kernel-doc: Don't mangle literal code blocks in comments
 
-ifeq ($(SWIG_DEFINED), 0)
-BUILD_PYTHON := report_noswig
-NO_PYTHON = 1
-endif
-
-So there should be no problem. Just to be sure, I've tried to compile trace-cmd
-with my patches first without 'swig' and later with it (on Fedora).
-The result was that, in the first case the message 'no swig installed'
-was displayed, while in the other case it was not. Or better, a message
-saying that 'python-dev' is missing was shown.
-[Yes, both swig and python-dev are necessary].
-
-After installing also 'python-devel' (in Ubuntu is just '-dev'), the
-build system was able to build the rest of the python targets as well.
-
-
-Could you please try by using my fork on GitHub?
-https://github.com/vvaltchev/trace-cmd-fork
-BRANCH NAME: make8.
-
-Let me know if you still experience the issue.
-
-Thanks,
-Vlad
-
-
+ scripts/kernel-doc | 658 +++++++++++++++++++++++++++++------------------------
+ 1 file changed, 357 insertions(+), 301 deletions(-)
 
 -- 
-Vladislav Valtchev
-VMware Open Source Technology Center
+2.14.3
