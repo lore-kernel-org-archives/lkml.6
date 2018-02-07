@@ -1,124 +1,203 @@
-Return-Path: <robdclark@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518704081; cv=none;
+Return-Path: <vivek.gautam@codeaurora.org>
+X-Google-Smtp-Source: AH8x2250bWUaogxpFtLEBa+1dg39JRnxXs1PMH55Tl0geeVW3LaPfTcW2r4iJGlaSpkJfSX1fm0O
+ARC-Seal: i=1; a=rsa-sha256; t=1517999512; cv=none;
         d=google.com; s=arc-20160816;
-        b=WDc9+QqvYyajg2/3Kve+BFOMO6/cqkHhxAae7BmT8zj4ljSrj5pJ3EVL+nZqp/w/8w
-         QaXINfvu6lDKMAi9K0z8SdjWvKFqDuhcv30mQ8qPUITg0fNEwqNeZHYwhB9k1h1s+uAy
-         RLohyBfV0AOZaBdt+aBPSvIgeKfEK09uw2Imo5qIzmJBwGQ9z3NJOj7z6IEpJd7T1KtZ
-         weoiM9gVwWoVYO+Aq+xyiQXUb7TpztVt9QwTJdgC0t4LjQMZlbW2j+6+/FxVeBrl0JP9
-         2VUdAp6iox6L5uQBKal+KFkwMFscx0zRqskm+tOEBgrrlj6VUYOhAdeX0MlrlrIc4uQS
-         t6gg==
+        b=O4g1vVAsCWODRRxDVLGcPJZ94Sfz8ZNDD+bTB5p/VWzJFkYShaCwW6IcrGF/sMH89+
+         Zo3XAHuxA3n7AhQKeDyXcW+bjwzFACp70zA3VyMslbyDjI1SNV85X2WishL+y29QhdL2
+         FztutBlOc2z9vlfLJ0l193f4uu/S88Xvv9I8ySxDEJxecnA7kSSraFwBRPnKjhqZeAii
+         dAi36wCcPObV+Da+ru5pO+ESIPvQj3cfnGsyV+q47AYIxTTKHma3Pf4o2cLoWwiv7gc5
+         lGTuy3zcF5r3nrfOnWMO1d8Dpun9AqyDEibfucqJfZGracwFvZuALN7GeDz22gabo16m
+         /MIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=FOmISjBC6Is5ZjZWghzdW9qvlburSkxvMszTs4qCx3M=;
-        b=BX/NTJTO7JXL9+I5KBmWVxaGseh3qK9SFAPpdCnNAoCx/53PITASWpnKL5Mcs2lh1C
-         9W8akgQ57Sw1Zvl154MisQcWLioF5SBAs6mONZ6WcO4rqEWigNjL7aeDNHlvk0MhwWCE
-         W3ocDkfCsT5ODvigYUn6S1S5W6R62h4bVMVwuYcpuxl7R2bw3ysimHpa2nFRqxxUonVW
-         5rNOxF6lniQmXPIS4cd3ukAlWZ3TjOhbAwRj4yrwMk5vnRSIlVmxSf8SH0IEk41F5ogS
-         JPQs3gzGY9QMF/RK1H4HW3y7+nTjPTG2HafFNlY7OIN7Jt8+9SqdickWQdDJM5ZF+Zhh
-         M6LQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=011l5+J9L21hndchlzZpUZ7nGOSclwXNe16Z5yJ7emw=;
+        b=ippnLIjyBl2oet+aCUERVGpfYs2lHw80VijLr8yRZnUycH/zXwuBb6Y4E8hdE9Cl1h
+         HwBnYpzNsyMIYYc+j7ngEeRCBtGiP2I1OD8ag6pEgbaG84WynpkhCWAeopioadCvNJuM
+         RFM17YyF1Afvx5RmxxTPDSN3upKCODQLaZVohEmDuZ2zeFAGaMzYT/+jxh/L+2CGjCSc
+         kPCTGH0RL21A4wY9lOA6+JQrVxYDmAS+0X0DpiWyBOwJKvUY4sXQ+MLGNxqXDh3WPVY/
+         nasvOmt7s89dpOLMVE6pgoJqNNyIjuXhUfdOPnq+r0B/HkyFFHFQQk77+gExx/vOKPA3
+         Y07g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MvtoIZiH;
-       spf=pass (google.com: domain of robdclark@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=robdclark@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=gGQ3bd0x;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=SRy+X6Gc;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MvtoIZiH;
-       spf=pass (google.com: domain of robdclark@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=robdclark@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x225Up8AdhtAK9u5aTRgYpkaL2HaK1QtQ8n3OW+3Pd+ljgRhbD2lPFy+pCMW/tpkKUetzzDZYfz78EyQPWp2OS3k=
-MIME-Version: 1.0
-In-Reply-To: <CAAFQd5C-9mbd3hDSvz10a1oiO0--FT-L4EpsAYcALxxUvk6Fjg@mail.gmail.com>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=gGQ3bd0x;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=SRy+X6Gc;
+       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FDFA609FD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	robin.murphy@arm.com,
+	will.deacon@arm.com,
+	robdclark@gmail.com,
+	iommu@lists.linux-foundation.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Cc: alex.williamson@redhat.com,
+	gregkh@linuxfoundation.org,
+	airlied@linux.ie,
+	sboyd@codeaurora.org,
+	sricharan@codeaurora.org,
+	m.szyprowski@samsung.com,
+	architt@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	vivek.gautam@codeaurora.org
+Subject: [PATCH v7 2/6] iommu/arm-smmu: Add pm_runtime/sleep ops
+Date: Wed,  7 Feb 2018 16:01:18 +0530
+Message-Id: <1517999482-17317-3-git-send-email-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
 References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
- <1517999482-17317-7-git-send-email-vivek.gautam@codeaurora.org>
- <CAAFQd5AjopiX6fDgD+mO+-+d0yj-swEnVCNvccWRBSMO+XVJkA@mail.gmail.com>
- <20180213164205.GA7599@jcrouse-lnx.qualcomm.com> <CAAFQd5CjQRFATfh-mRQv5J=WefYuxBVTkk=Ju09FoqA-Or5Cvg@mail.gmail.com>
- <20180214154850.GA25422@jcrouse-lnx.qualcomm.com> <CAF6AEGtFOwBtXw7HvDSpEj+w78dsg9+p2SVk9e-uDuCE23Fpbw@mail.gmail.com>
- <CAAFQd5C-9mbd3hDSvz10a1oiO0--FT-L4EpsAYcALxxUvk6Fjg@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 15 Feb 2018 09:14:40 -0500
-Message-ID: <CAF6AEGvWhG83gYOAHSkx4_t3y_y4WH3xEmE3VXzVnO8VExJ0Vw@mail.gmail.com>
-Subject: Re: [Freedreno] [PATCH v7 6/6] drm/msm: iommu: Replace runtime calls
- with runtime suppliers
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-	David Airlie <airlied@linux.ie>, Will Deacon <will.deacon@arm.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>, freedreno <freedreno@lists.freedesktop.org>,
-	Robin Murphy <robin.murphy@arm.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591737886832187485?=
-X-GMAIL-MSGID: =?utf-8?q?1592476650921427048?=
+X-GMAIL-THRID: =?utf-8?q?1591737857427495630?=
+X-GMAIL-MSGID: =?utf-8?q?1591737857427495630?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 14, 2018 at 11:09 PM, Tomasz Figa <tfiga@chromium.org> wrote:
-> On Thu, Feb 15, 2018 at 1:12 AM, Rob Clark <robdclark@gmail.com> wrote:
->> On Wed, Feb 14, 2018 at 10:48 AM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
->>> On Wed, Feb 14, 2018 at 12:31:29PM +0900, Tomasz Figa wrote:
->>>>
->>>> - When submitting commands to the GPU, the GPU driver will
->>>> pm_runtime_get_sync() on the GPU device, which will automatically do
->>>> the same on all the linked suppliers, which would also include the
->>>> SMMU itself. The role of device links here is exactly that the GPU
->>>> driver doesn't have to care which other devices need to be brought up.
->>>
->>> This is true.  Assuming that the device link works correctly we would not need
->>> to explicitly power the SMMU which makes my point entirely moot.
->>
->> Just to point out what motivated this patchset, the biggest problem is
->> iommu_unmap() because that can happen when GPU is not powered on (or
->> in the v4l2 case, because some other device dropped it's reference to
->> the dma-buf allowing it to be free'd).  Currently we pm get/put the
->> GPU device around unmap, but it is kinda silly to boot up the GPU just
->> to unmap a buffer.
->
-> Note that in V4L2 both mapping and unmapping can happen completely
-> without involving the driver. So AFAICT the approach being implemented
-> by this patchset will not work, because there will be no one to power
-> up the IOMMU before the operation. Moreover, there are platforms for
-> which there is no reason to power up the IOMMU just for map/unmap,
-> because the hardware state is lost anyway and the only real work
-> needed is updating the page tables in memory. (I feel like this is
-> actually true for most of the platforms in the wild, but this is based
-> purely on the not so small number of platforms I worked with, haven't
-> bothered looking for more general evidence.)
->
+From: Sricharan R <sricharan@codeaurora.org>
 
-At least as far as drm/msm/adreno, I'm not terribly concerned about
-other platforms that don't need to power up iommu.  It's not really
-the same situation as a IP block that shows up in all different
-vendor's SoCs.
+The smmu needs to be functional only when the respective
+master's using it are active. The device_link feature
+helps to track such functional dependencies, so that the
+iommu gets powered when the master device enables itself
+using pm_runtime. So by adapting the smmu driver for
+runtime pm, above said dependency can be addressed.
 
-But if you can convince Robin to go for get/put_sync() calls inside
-the iommu driver, I'm fine with that approach too.  That is what I do
-in qcom_iommu already.  But if not I'd like to at least solve this for
-some platforms if we can't solve for all.
+This patch adds the pm runtime/sleep callbacks to the
+driver and also the functions to parse the smmu clocks
+from DT and enable them in resume/suspend.
 
-BR,
--R
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Archit Taneja <architt@codeaurora.org>
+[vivek: Clock rework to request bulk of clocks]
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/iommu/arm-smmu.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 54 insertions(+), 2 deletions(-)
 
->>
->> (Semi-related, I would also like to batch map/unmap's, I just haven't
->> gotten around to implementing it yet.. but that would be another case
->> where a single get_supplier()/put_supplier() outside of the iommu
->> would make sense instead of pm_get/put() inside the iommu driver's
->> ->unmap().)
->>
->> If you really dislike the get/put_supplier() approach, then perhaps we
->> need iommu_pm_get()/iommu_pm_put() operations that the iommu user
->> could use to accomplish the same thing?
->
-> I'm afraid this wouldn't work for V4L2 either. And I still haven't
-> been given any evidence that the approach I'm suggesting, which relies
-> only on existing pieces of infrastructure and which worked for both
-> Exynos and Rockchip, including V4L2, wouldn't work for SMMU and/or QC
-> SoCs.
->
-> Best regards,
-> Tomasz
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 69e7c60792a8..9e2f917e16c2 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -48,6 +48,7 @@
+ #include <linux/of_iommu.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -205,6 +206,8 @@ struct arm_smmu_device {
+ 	u32				num_global_irqs;
+ 	u32				num_context_irqs;
+ 	unsigned int			*irqs;
++	struct clk_bulk_data		*clocks;
++	int				num_clks;
+ 
+ 	u32				cavium_id_base; /* Specific to Cavium */
+ 
+@@ -1897,10 +1900,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
+ struct arm_smmu_match_data {
+ 	enum arm_smmu_arch_version version;
+ 	enum arm_smmu_implementation model;
++	const char * const *clks;
++	int num_clks;
+ };
+ 
+ #define ARM_SMMU_MATCH_DATA(name, ver, imp)	\
+-static struct arm_smmu_match_data name = { .version = ver, .model = imp }
++static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
+ 
+ ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+@@ -2001,6 +2006,7 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
+ 	data = of_device_get_match_data(dev);
+ 	smmu->version = data->version;
+ 	smmu->model = data->model;
++	smmu->num_clks = data->num_clks;
+ 
+ 	parse_driver_options(smmu);
+ 
+@@ -2039,6 +2045,28 @@ static void arm_smmu_bus_init(void)
+ #endif
+ }
+ 
++static int arm_smmu_init_clks(struct arm_smmu_device *smmu)
++{
++	int i;
++	int num = smmu->num_clks;
++	const struct arm_smmu_match_data *data;
++
++	if (num < 1)
++		return 0;
++
++	smmu->clocks = devm_kcalloc(smmu->dev, num,
++				    sizeof(*smmu->clocks), GFP_KERNEL);
++	if (!smmu->clocks)
++		return -ENOMEM;
++
++	data = of_device_get_match_data(smmu->dev);
++
++	for (i = 0; i < num; i++)
++		smmu->clocks[i].id = data->clks[i];
++
++	return devm_clk_bulk_get(smmu->dev, num, smmu->clocks);
++}
++
+ static int arm_smmu_device_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+@@ -2099,6 +2127,10 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 		smmu->irqs[i] = irq;
+ 	}
+ 
++	err = arm_smmu_init_clks(smmu);
++	if (err)
++		return err;
++
+ 	err = arm_smmu_device_cfg_probe(smmu);
+ 	if (err)
+ 		return err;
+@@ -2197,7 +2229,27 @@ static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
++static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
++{
++	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
++
++	return clk_bulk_prepare_enable(smmu->num_clks, smmu->clocks);
++}
++
++static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
++{
++	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
++
++	clk_bulk_disable_unprepare(smmu->num_clks, smmu->clocks);
++
++	return 0;
++}
++
++static const struct dev_pm_ops arm_smmu_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
++	SET_RUNTIME_PM_OPS(arm_smmu_runtime_suspend,
++			   arm_smmu_runtime_resume, NULL)
++};
+ 
+ static struct platform_driver arm_smmu_driver = {
+ 	.driver	= {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
