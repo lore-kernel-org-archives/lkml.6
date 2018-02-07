@@ -1,106 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753660AbeBGJVe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 04:21:34 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:39059 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753291AbeBGJVb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 04:21:31 -0500
-X-Google-Smtp-Source: AH8x225ucMBz/B2q/hHPie3etRiPaMTGOSxMfow/4NuCVOd6p3AdVF2GjxTdPxLR7aq2RL0hpqHvFwjye8dVIM5rdHQ=
+        id S1753744AbeBGJWG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 04:22:06 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47408 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753700AbeBGJWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 04:22:02 -0500
+Subject: Re: [PATCH v5 3/4] DT/arm,gic-v3-its: add reset-on-suspend property
+To: Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org
+Cc: Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de,
+        briannorris@chromium.org
+References: <20180207014117.62611-1-dbasehore@chromium.org>
+ <20180207014117.62611-4-dbasehore@chromium.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <b4c7bc62-6861-3851-513e-be8d7a440c91@arm.com>
+Date: Wed, 7 Feb 2018 09:21:59 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
-References: <cover.1517314847.git.dongsu@kinvolk.io> <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 7 Feb 2018 10:21:29 +0100
-Message-ID: <CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
-To: Dongsu Park <dongsu@kinvolk.io>
-Cc: linux-kernel@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180207014117.62611-4-dbasehore@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 7:06 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
-> From: Alban Crequy <alban@kinvolk.io>
->
-> This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
-> re-appraised and re-audited each time. Cached integrity results should
-> not be used.
->
-> It is useful in FUSE because the userspace FUSE process can change the
-> underlying files at any time without notifying the kernel.
->
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-integrity@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
-> Acked-by: Seth Forshee <seth.forshee@canonical.com>
-> Tested-by: Dongsu Park <dongsu@kinvolk.io>
-> Signed-off-by: Alban Crequy <alban@kinvolk.io>
+On 07/02/18 01:41, Derek Basehore wrote:
+> This adds documentation for the new reset-on-suspend property. This
+> property enables saving and restoring the ITS for when it loses state
+> in system suspend.
+> 
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 > ---
->  fs/fuse/inode.c    | 2 +-
->  include/linux/fs.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 624f18bb..0a9e5164 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
->  static struct file_system_type fuse_fs_type = {
->         .owner          = THIS_MODULE,
->         .name           = "fuse",
-> -       .fs_flags       = FS_HAS_SUBTYPE,
-> +       .fs_flags       = FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
->         .mount          = fuse_mount,
->         .kill_sb        = fuse_kill_sb_anon,
->  };
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 511fbaab..ced841ba 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2075,6 +2075,7 @@ struct file_system_type {
->  #define FS_BINARY_MOUNTDATA    2
->  #define FS_HAS_SUBTYPE         4
->  #define FS_USERNS_MOUNT                8       /* Can be mounted by userns root */
-> +#define FS_IMA_NO_CACHE                16      /* Force IMA to re-measure, re-appraise, re-audit files */
+>  Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+> index 0a57f2f4167d..a470147d4f14 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+> @@ -78,6 +78,9 @@ These nodes must have the following properties:
+>  Optional:
+>  - socionext,synquacer-pre-its: (u32, u32) tuple describing the untranslated
+>    address and size of the pre-ITS window.
+> +- reset-on-suspend: Boolean property. Indicates that the ITS state is
+> +  reset on suspend. The state is then saved on suspend and restored on
+> +  resume.
 
-I think it would be more logical to change the order of the patches
-(i.e. first patch adds this constant and the code handling it, and
-second patch just adds it to fuse's .fs_flags).
+By whom? It is important to be clear about the respective
+responsibilities, as this forms a binding contract between firmware and OS.
 
-Otherwise
+Mark: Can you have a look at how to formulate this? I'm not sure we have
+other instances of a non-architected behaviour involving FW
+participation, aside from PSCI.
 
-Acked-by:   Miklos Szeredi <mszeredi@redhat.com>
+>  
+>  The main GIC node must contain the appropriate #address-cells,
+>  #size-cells and ranges properties for the reg property of all ITS
+> 
 
 Thanks,
-Miklos
 
-
->  #define FS_RENAME_DOES_D_MOVE  32768   /* FS will handle d_move() during rename() internally. */
->         struct dentry *(*mount) (struct file_system_type *, int,
->                        const char *, void *);
-> --
-> 2.13.6
->
+	M.
+-- 
+Jazz is not dead. It just smells funny...
