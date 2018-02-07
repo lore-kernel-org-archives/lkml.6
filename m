@@ -1,75 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754622AbeBGU1L (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:27:11 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:53603 "EHLO mail.zytor.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754397AbeBGU1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 15:27:09 -0500
-Subject: Re: [RFC 0/3] x86: Patchable constants
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: the arch/x86 maintainers <x86@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>, linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180207145913.2703-1-kirill.shutemov@linux.intel.com>
- <CA+55aFxJO7kDNp6wRnU58Z6-sPbK1SqdzpgLBTAe54mdPjnd=g@mail.gmail.com>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <8fea57cc-8772-f8b4-3298-91b0de126358@zytor.com>
-Date: Wed, 7 Feb 2018 12:20:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFxJO7kDNp6wRnU58Z6-sPbK1SqdzpgLBTAe54mdPjnd=g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932186AbeBGU05 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:26:57 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37467 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754127AbeBGU0z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 15:26:55 -0500
+X-Google-Smtp-Source: AH8x225fh84thlr/zvvkXNSf+CPqrN0G/LYDVa1aRqg+BJEVWYPfePRAJcGxZtUvPnD7EjEm2VKdgQ==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        Craig Bergstrom <craigb@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
+Date: Wed,  7 Feb 2018 12:26:34 -0800
+Message-Id: <20180207202634.98937-1-mka@chromium.org>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/18 09:01, Linus Torvalds wrote:
-> 
-> Look - much smaller code, and register %rcx isn't used at all. And no
-> D$ miss on loading that constant (that is a constant depending on
-> boot-time setup only).
-> 
-> It's rather more complex, but it actually gives a much bigger win. The
-> code itself will be much better, and smaller.
-> 
-> The *infrastructure* for the code gets pretty hairy, though.
-> 
-> The good news is that the patch already existed to at least _some_
-> degree. Peter Anvin did it about 18 months ago.
-> 
-> It was not really pursued all the way because it *is* a lot of extra
-> complexity, and I think there was some other hold-up, but he did have
-> skeleton code for the actual replacement.
-> 
-> There was a thread on the x86 arch list with the subject line
-> 
->     Disgusting pseudo-self-modifying code idea: "variable constants"
-> 
-> but I'm unable to actually find the patch. I know there was at least a
-> vert early prototype.
-> 
-> Adding hpa to the cc in the hope that he has some prototype code still
-> laying around..
-> 
+In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
+is assigned to itself in an if ... else statement, apparently only to
+document that the branch condition is handled and that a previously read
+value should be returned unmodified. The self-assignment causes clang to
+raise the following warning:
 
-The patchset I have is about 85% complete.  It mostly needs cleanup,
-testing, and breaking into reasonable chunks (it got put on the
-backburner for somewhat obvious reasons, but I don't think it'll take
-very long at all to productize it.)
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
+  error: explicitly assigning value of variable of type 'u32'
+    (aka 'unsigned int') to itself [-Werror,-Wself-assign]
+  writeVal = writeVal;
 
-The main reason I haven't submitted it yet is that I got a bit overly
-ambitious and wanted to implement a whole bunch of more complex
-subcases, such as 64-bit shifts on a 32-bit kernel.  The win in that
-case is actually quite huge, but it is requires data-dependent code
-patching and not just immediate patching, which requires augmentation of
-the alternatives framework.
+Replace the self-assignment with a semicolon, which still serves to
+document the 'handling' of the branch condition.
 
-	-hpa
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+index 9cff6bc4049c..4db92496c122 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+@@ -301,7 +301,7 @@ static void _rtl92c_get_txpower_writeval_by_regulatory(struct ieee80211_hw *hw,
+ 			writeVal = writeVal - 0x06060606;
+ 		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
+ 			 TXHIGHPWRLEVEL_BT2)
+-			writeVal = writeVal;
++			;
+ 		*(p_outwriteval + rf) = writeVal;
+ 	}
+ }
+-- 
+2.16.0.rc1.238.g530d649a79-goog
