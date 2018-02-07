@@ -1,56 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754614AbeBGTKe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:10:34 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35665 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754141AbeBGTKc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:10:32 -0500
-X-Google-Smtp-Source: AH8x225KF0ZnwuDm5IrA5w17x9cJSVuyuKcUGPqZqR3eUBkpH5a9ZB7uOiX9qwiV0/3OfN65dw3i9A==
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Rex Zhu <Rex.Zhu@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        Justin TerAvest <teravest@chromium.org>,
-        Craig Bergstrom <craigb@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] drm/amd/powerplay: Remove extra pair of parentheses
-Date: Wed,  7 Feb 2018 11:10:17 -0800
-Message-Id: <20180207191017.77392-1-mka@chromium.org>
-X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+        id S1754569AbeBGTL5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:11:57 -0500
+Received: from sauhun.de ([88.99.104.3]:44242 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754062AbeBGTLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:11:54 -0500
+Date: Wed, 7 Feb 2018 20:11:52 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
+ cleanups
+Message-ID: <20180207191152.kvqrugblst2cko3c@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hmv3ictfz5w3jtha"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The double parentheses are not needed. Removing them fixes the following
-warning when building with clang:
 
-drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c:419:29:
-  error: equality comparison with extraneous parentheses
-    [-Werror,-Wparentheses-equality]
-  if ((data->vdd_gfx_control == SMU7_VOLTAGE_CONTROL_BY_SVID2)) {
+--hmv3ictfz5w3jtha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-index 79e5c05571bc..f5b3de29b632 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-@@ -416,7 +416,7 @@ static int tonga_populate_cac_tables(struct pp_hwmgr *hwmgr,
- 			convert_to_vid(vddc_lookup_table->entries[index].us_cac_high);
- 	}
- 
--	if ((data->vdd_gfx_control == SMU7_VOLTAGE_CONTROL_BY_SVID2)) {
-+	if (data->vdd_gfx_control == SMU7_VOLTAGE_CONTROL_BY_SVID2) {
- 		/* We are populating vddgfx CAC data to BapmVddgfx table in split mode */
- 		for (count = 0; count < vddgfx_level_count; count++) {
- 			index = phm_get_voltage_index(vddgfx_lookup_table,
--- 
-2.16.0.rc1.238.g530d649a79-goog
+> I picked patch5 and patch6, as those seemed trivial. Unless there is a
+> rc9, let's aim for 4.17 for the rest.
+
+I can't find the branch where you picked these patches? I wanted to use
+it to apply the rest of the patches. They don't seem to fit on v4.15
+or current linus/master. Can you share this branch?
+
+I will do reviewing now "visually". But please wait until I tested them
+before applying.
+
+Thanks,
+
+   Wolfram
+
+
+--hmv3ictfz5w3jtha
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7T3gACgkQFA3kzBSg
+KbYcLRAAi0hE9uVMzeGBlvgjQGw54Uj+EbBvYeUyO4pa7I38zge+HfGCGjF0mhBB
+y7ABAjSittWqEubxBhY1PRgkx3SduAyMV2muz4mUSYbn6fpllR9ov89t273b02FE
+d17wq52rLPUpQxw3TlBGmR9yKIxPW0fKVM91Pg+NfpbtMChwri+HMY4z5iT+qdSE
+757D3k1xwxr33yBQrlj83DA1ipusuGkYNzcKneDwT1qIheQUAZ/aSR5Q3m4AHKJ0
+dVTBpeepl7ei1enze8EhM/zi3fH5l4icGmnqT9WJbyYN48StYa7dEYpvECpqaG23
+cSo4ce3verU12aI/+BXkoGIQUc5xT8bQwVWqTdkX6fqp/hI5tV4kVMfd8H080Yv8
+mbqc/CjU2AV94EIgHrzaIlAm+DBeCzbdRlmFg/Pa2tINfQjzhxfBaSu02nfIqEsa
+uJ/G2BUPjanzVWebP2/mQtvMAVm67ZAiRMjg91aE2BXWK+LqSqaQ+L22MgBJiVf0
+b0QaCGMUmS12P+shRSqUn56Pxs33YGEEw3agIGYRhhsrns67lDiKrt63tK6rkINQ
+HM5TSfHviIVBtj75Lq9XoyPpqBj1askTtRsQxXUkTGqVrJI50UyJC3ANVzteOm/Y
+IKAmVgx+wn4eKr3A29PXQmpTlxuLqt0v5KKn+1x1rEW+b5e9hkU=
+=bDb4
+-----END PGP SIGNATURE-----
+
+--hmv3ictfz5w3jtha--
