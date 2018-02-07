@@ -1,10 +1,10 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-840750-1518038512-2-12301246007603302903
+X-Cyrus-Session-Id: sloti22d1t05-842223-1518038507-2-6759041562018675978
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enrosv,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -14,22 +14,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518038511; b=qsDt7FlqbN/SWobvq3qJ18qiliGMYidD/sS15J3aPj/1na7
-    MQ7yeFDOP/5qZpCJVMBlFNdPf6MUA+OftnolU0FIeXXGDTSIp6GEp/sWwSLETxXZ
-    y6HYhTbfsUoulI0dgd8jY7QiY+WitsXdjYOeEgTbCDPi25o6+s/TupNSqUXpqMo/
-    CEjrAgTX4yaHDBYHZkFD8JAlnHYE9DwNf90ewKkXLRs6oDa69FUoLCU3Nto9fun0
-    fnfx+YlwJMO6o9l4EhoYvib3gd/I8ZWs5H/PK77WXKVeG8O3+PEVjSbfJITpV+oC
-    1FR0uam7wWaVLaGmKtPm1i7aJrgLgUqhfhPh05w==
+    t=1518038506; b=PKxtwJAVyPqB5EC+1dXRu6bT2b+C8tGajSpodAoFFLIGbYD
+    CMnhwC1l4qq6CiHJFPC+zKmX5LsCsLFbOWUpAne6UXMTTgV4FcvmWALux2PPw9ZH
+    vkbr1vUy35qMO54rC2TgqP5WbP5PsU9WoA2e4xDWEQpzBl4WKHPthzqHyEOHzGNl
+    70dR+IIE7iKz7cJRHt9EwrtNV32MqFdPyhz58wtQQGdZfs08cvHYc1PozcMTqUsV
+    f6FYpgZpV593a8LSjNEfvL59TEMreLfqB6yK87xVq5g38eKo5kgg5s3IOIs0vBBq
+    RhaDRMlhdtEGaa0v7LItXaI27OyMnEXj5g5Xa+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references:sender:list-id;
-    s=arctest; t=1518038511; bh=2SJMuKNVeyMMcY7TCBiH4QI7yLHfgC1mCy8
-    Trj9+Kjo=; b=qftOe/1lGy1DY+jCQSuXlBUvSSXV5jTngv/cXHPgqDPejKEYqPL
-    H383+/VY28Tnx9IMpJRVLZfJFWMtqrZwJFOAoKnqD67FjHcxvzwoFRaPaMzwRbnB
-    JJlxZoJL7PUTCe4o73MVRlxrtPSfBJVvT3AGYz4u+KS1RwoYVHo7vJqxRvDSyy/o
-    7J+YvocA8K3YCaNQNVpSNoPP6v1TAmLS/v7+E6tqnYyAVCP1FB55YQhKCzTwNoV9
-    i9Dl4kwqTCflyHtjNC4BYzGL7NEvDFswi3LWmgcr+A48Pa82Sysk//cy/FhnvmNO
-    9gU5zq6GyNF8kF7wuEHBgXQfdXqJZQTm+oA==
+    s=arctest; t=1518038506; bh=EmDHotKcOixBssTR8eK7zdwaY/ksKHnI73X
+    v2Sn472A=; b=GLpzVIfTieAc2p+1nIXcde///pr81s/ZYWVqZG5r6Fv/ApzIHWB
+    HtqaU1j4DsXmPpRPaJaIUIlqiwQXqEks28oD4OvrLVI+v2Ix180N6VcCts7LKEme
+    njtpEToyxGu0I4wXWBasXjJRQVJd0ma/UoHLXFpR/PejB7FEmNVRnMRZjxz6mbyZ
+    RnoCpyBk8UkXGWuE006RB3pU8gv0y0Lz+edGmzTYdxoS29Tqq79zp/jDFOe2IqMb
+    5ezIK7redOJPaYB+2nmZ+dmdD5/i1eWaSYGFUCxIhMdot4A4PV8anYs67AMeh3cN
+    Sejbeqaw8DMXrQLMC8pTa7inE7L+CuIntjQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
@@ -48,21 +48,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932327AbeBGVVG (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Feb 2018 16:21:06 -0500
-Received: from osg.samsung.com ([64.30.133.232]:57658 "EHLO osg.samsung.com"
+        id S1755115AbeBGVVb (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Feb 2018 16:21:31 -0500
+Received: from osg.samsung.com ([64.30.133.232]:64463 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932202AbeBGVVC (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:21:02 -0500
+        id S932326AbeBGVVG (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Wed, 7 Feb 2018 16:21:06 -0500
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Shuah Khan <shuahkh@osg.samsung.com>
 To: valentina.manea.m@gmail.com, shuah@kernel.org,
         gregkh@linuxfoundation.org
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 3.18 3/9] usbip: prevent vhci_hcd driver from leaking a socket pointer address
-Date: Wed,  7 Feb 2018 14:20:26 -0700
-Message-Id: <6ef62df7d7e421dbd71d065f7c1472a8d7c187e6.1518036867.git.shuahkh@osg.samsung.com>
+Subject: [PATCH 3.18 9/9] usbip: vhci: stop printing kernel pointer addresses in messages
+Date: Wed,  7 Feb 2018 14:20:32 -0700
+Message-Id: <3520c95a43a3170d274d41933cd7d4974aa38601.1518036867.git.shuahkh@osg.samsung.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1518036867.git.shuahkh@osg.samsung.com>
 References: <cover.1518036867.git.shuahkh@osg.samsung.com>
@@ -74,127 +74,149 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit 2f2d0088eb93 ("usbip: prevent vhci_hcd driver from leaking a
-socket pointer address")
+Upstream commit 8272d099d05f ("usbip: vhci: stop printing kernel
+pointer addresses in messages")
 
-When a client has a USB device attached over IP, the vhci_hcd driver is
-locally leaking a socket pointer address via the
+Remove and/or change debug, info. and error messages to not print
+kernel pointer addresses.
 
-/sys/devices/platform/vhci_hcd/status file (world-readable) and in debug
-output when "usbip --debug port" is run.
-
-Fix it to not leak. The socket pointer address is not used at the moment
-and it was made visible as a convenient way to find IP address from
-socket pointer address by looking up /proc/net/{tcp,tcp6}.
-
-As this opens a security hole, the fix replaces socket pointer address
-with sockfd.
-
-Reported-by: Secunia Research <vuln@secunia.com>
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/usbip/usbip_common.h     |  1 +
- drivers/usb/usbip/vhci_sysfs.c       | 26 +++++++++++++++-----------
- tools/usb/usbip/libsrc/vhci_driver.c |  8 ++++----
- 3 files changed, 20 insertions(+), 15 deletions(-)
+ drivers/usb/usbip/vhci_hcd.c | 10 ----------
+ drivers/usb/usbip/vhci_rx.c  | 23 +++++++++++------------
+ drivers/usb/usbip/vhci_tx.c  |  3 ++-
+ 3 files changed, 13 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/usb/usbip/usbip_common.h b/drivers/usb/usbip/usbip_common.h
-index 86b08475c254..f875ccaa55f9 100644
---- a/drivers/usb/usbip/usbip_common.h
-+++ b/drivers/usb/usbip/usbip_common.h
-@@ -261,6 +261,7 @@ struct usbip_device {
- 	/* lock for status */
- 	spinlock_t lock;
+diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+index a57843e1173f..869938036248 100644
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -469,9 +469,6 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb,
+ 	struct vhci_device *vdev;
+ 	unsigned long flags;
  
-+	int sockfd;
- 	struct socket *tcp_socket;
+-	usbip_dbg_vhci_hc("enter, usb_hcd %p urb %p mem_flags %d\n",
+-			  hcd, urb, mem_flags);
+-
+ 	/* patch to usb_sg_init() is in 2.5.60 */
+ 	BUG_ON(!urb->transfer_buffer && urb->transfer_buffer_length);
  
- 	struct task_struct *tcp_rx;
-diff --git a/drivers/usb/usbip/vhci_sysfs.c b/drivers/usb/usbip/vhci_sysfs.c
-index 211f43f67ea2..f05f1e0a2baf 100644
---- a/drivers/usb/usbip/vhci_sysfs.c
-+++ b/drivers/usb/usbip/vhci_sysfs.c
-@@ -39,16 +39,20 @@ static ssize_t status_show(struct device *dev, struct device_attribute *attr,
+@@ -630,8 +627,6 @@ static int vhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+ 	struct vhci_device *vdev;
+ 	unsigned long flags;
  
- 	/*
- 	 * output example:
--	 * prt sta spd dev socket           local_busid
--	 * 000 004 000 000         c5a7bb80 1-2.3
--	 * 001 004 000 000         d8cee980 2-3.4
-+	 * prt  sta spd dev      sockfd local_busid
-+	 * 0000 004 000 00000000 000003 1-2.3
-+	 * 0001 004 000 00000000 000004 2-3.4
- 	 *
--	 * IP address can be retrieved from a socket pointer address by looking
--	 * up /proc/net/{tcp,tcp6}. Also, a userland program may remember a
--	 * port number and its peer IP address.
-+	 * Output includes socket fd instead of socket pointer address to
-+	 * avoid leaking kernel memory address in:
-+	 *	/sys/devices/platform/vhci_hcd.0/status and in debug output.
-+	 * The socket pointer address is not used at the moment and it was
-+	 * made visible as a convenient way to find IP address from socket
-+	 * pointer address by looking up /proc/net/{tcp,tcp6}. As this opens
-+	 * a security hole, the change is made to use sockfd instead.
- 	 */
- 	out += sprintf(out,
--		       "prt sta spd bus dev socket           local_busid\n");
-+		       "prt sta spd dev      sockfd local_busid\n");
+-	pr_info("dequeue a urb %p\n", urb);
+-
+ 	spin_lock_irqsave(&the_controller->lock, flags);
  
- 	for (i = 0; i < VHCI_NPORTS; i++) {
- 		struct vhci_device *vdev = port_to_vdev(i);
-@@ -59,12 +63,11 @@ static ssize_t status_show(struct device *dev, struct device_attribute *attr,
- 		if (vdev->ud.status == VDEV_ST_USED) {
- 			out += sprintf(out, "%03u %08x ",
- 				       vdev->speed, vdev->devid);
--			out += sprintf(out, "%16p ", vdev->ud.tcp_socket);
-+			out += sprintf(out, "%06u ", vdev->ud.sockfd);
- 			out += sprintf(out, "%s", dev_name(&vdev->udev->dev));
+ 	priv = urb->hcpriv;
+@@ -659,7 +654,6 @@ static int vhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+ 		/* tcp connection is closed */
+ 		spin_lock(&vdev->priv_lock);
  
--		} else {
--			out += sprintf(out, "000 000 000 0000000000000000 0-0");
--		}
-+		} else
-+			out += sprintf(out, "000 00000000 000000 0-0");
+-		pr_info("device %p seems to be disconnected\n", vdev);
+ 		list_del(&priv->list);
+ 		kfree(priv);
+ 		urb->hcpriv = NULL;
+@@ -671,8 +665,6 @@ static int vhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+ 		 * vhci_rx will receive RET_UNLINK and give back the URB.
+ 		 * Otherwise, we give back it here.
+ 		 */
+-		pr_info("gives back urb %p\n", urb);
+-
+ 		usb_hcd_unlink_urb_from_ep(hcd, urb);
  
- 		out += sprintf(out, "\n");
- 		spin_unlock(&vdev->ud.lock);
-@@ -223,6 +226,7 @@ static ssize_t store_attach(struct device *dev, struct device_attribute *attr,
+ 		spin_unlock_irqrestore(&the_controller->lock, flags);
+@@ -701,8 +693,6 @@ static int vhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
  
- 	vdev->devid         = devid;
- 	vdev->speed         = speed;
-+	vdev->ud.sockfd     = sockfd;
- 	vdev->ud.tcp_socket = socket;
- 	vdev->ud.status     = VDEV_ST_NOTASSIGNED;
+ 		unlink->unlink_seqnum = priv->seqnum;
  
-diff --git a/tools/usb/usbip/libsrc/vhci_driver.c b/tools/usb/usbip/libsrc/vhci_driver.c
-index ad9204773533..1274f326242c 100644
---- a/tools/usb/usbip/libsrc/vhci_driver.c
-+++ b/tools/usb/usbip/libsrc/vhci_driver.c
-@@ -55,12 +55,12 @@ static int parse_status(const char *value)
+-		pr_info("device %p seems to be still connected\n", vdev);
+-
+ 		/* send cmd_unlink and try to cancel the pending URB in the
+ 		 * peer */
+ 		list_add_tail(&unlink->list, &vdev->unlink_tx);
+diff --git a/drivers/usb/usbip/vhci_rx.c b/drivers/usb/usbip/vhci_rx.c
+index d656e0edc3d5..323aa7789989 100644
+--- a/drivers/usb/usbip/vhci_rx.c
++++ b/drivers/usb/usbip/vhci_rx.c
+@@ -37,24 +37,23 @@ struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev, __u32 seqnum)
+ 		urb = priv->urb;
+ 		status = urb->status;
  
- 	while (*c != '\0') {
- 		int port, status, speed, devid;
--		unsigned long socket;
-+		int sockfd;
- 		char lbusid[SYSFS_BUS_ID_SIZE];
+-		usbip_dbg_vhci_rx("find urb %p vurb %p seqnum %u\n",
+-				urb, priv, seqnum);
++		usbip_dbg_vhci_rx("find urb seqnum %u\n", seqnum);
  
--		ret = sscanf(c, "%d %d %d %x %lx %31s\n",
-+		ret = sscanf(c, "%d %d %d %x %u %31s\n",
- 				&port, &status, &speed,
--				&devid, &socket, lbusid);
-+				&devid, &sockfd, lbusid);
+ 		switch (status) {
+ 		case -ENOENT:
+ 			/* fall through */
+ 		case -ECONNRESET:
+-			dev_info(&urb->dev->dev,
+-				 "urb %p was unlinked %ssynchronuously.\n", urb,
+-				 status == -ENOENT ? "" : "a");
++			dev_dbg(&urb->dev->dev,
++				 "urb seq# %u was unlinked %ssynchronuously\n",
++				 seqnum, status == -ENOENT ? "" : "a");
+ 			break;
+ 		case -EINPROGRESS:
+ 			/* no info output */
+ 			break;
+ 		default:
+-			dev_info(&urb->dev->dev,
+-				 "urb %p may be in a error, status %d\n", urb,
+-				 status);
++			dev_dbg(&urb->dev->dev,
++				 "urb seq# %u may be in a error, status %d\n",
++				 seqnum, status);
+ 		}
  
- 		if (ret < 5) {
- 			dbg("sscanf failed: %d", ret);
-@@ -69,7 +69,7 @@ static int parse_status(const char *value)
+ 		list_del(&priv->list);
+@@ -79,8 +78,8 @@ static void vhci_recv_ret_submit(struct vhci_device *vdev,
+ 	spin_unlock_irqrestore(&vdev->priv_lock, flags);
  
- 		dbg("port %d status %d speed %d devid %x",
- 				port, status, speed, devid);
--		dbg("socket %lx lbusid %s", socket, lbusid);
-+		dbg("sockfd %u lbusid %s", sockfd, lbusid);
+ 	if (!urb) {
+-		pr_err("cannot find a urb of seqnum %u\n", pdu->base.seqnum);
+-		pr_info("max seqnum %d\n",
++		pr_err("cannot find a urb of seqnum %u max seqnum %d\n",
++			pdu->base.seqnum,
+ 			atomic_read(&the_controller->seqnum));
+ 		usbip_event_add(ud, VDEV_EVENT_ERROR_TCP);
+ 		return;
+@@ -103,7 +102,7 @@ static void vhci_recv_ret_submit(struct vhci_device *vdev,
+ 	if (usbip_dbg_flag_vhci_rx)
+ 		usbip_dump_urb(urb);
  
+-	usbip_dbg_vhci_rx("now giveback urb %p\n", urb);
++	usbip_dbg_vhci_rx("now giveback urb %u\n", pdu->base.seqnum);
  
- 		/* if a device is connected, look at it */
+ 	spin_lock_irqsave(&the_controller->lock, flags);
+ 	usb_hcd_unlink_urb_from_ep(vhci_to_hcd(the_controller), urb);
+@@ -168,7 +167,7 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
+ 		pr_info("the urb (seqnum %d) was already given back\n",
+ 			pdu->base.seqnum);
+ 	} else {
+-		usbip_dbg_vhci_rx("now giveback urb %p\n", urb);
++		usbip_dbg_vhci_rx("now giveback urb %d\n", pdu->base.seqnum);
+ 
+ 		/* If unlink is successful, status is -ECONNRESET */
+ 		urb->status = pdu->u.ret_unlink.status;
+diff --git a/drivers/usb/usbip/vhci_tx.c b/drivers/usb/usbip/vhci_tx.c
+index 3e7878fe2fd4..a9a663a578b6 100644
+--- a/drivers/usb/usbip/vhci_tx.c
++++ b/drivers/usb/usbip/vhci_tx.c
+@@ -83,7 +83,8 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
+ 		memset(&msg, 0, sizeof(msg));
+ 		memset(&iov, 0, sizeof(iov));
+ 
+-		usbip_dbg_vhci_tx("setup txdata urb %p\n", urb);
++		usbip_dbg_vhci_tx("setup txdata urb seqnum %lu\n",
++				  priv->seqnum);
+ 
+ 		/* 1. setup usbip_header */
+ 		setup_cmd_submit_pdu(&pdu_header, urb);
 -- 
 2.14.1
 
