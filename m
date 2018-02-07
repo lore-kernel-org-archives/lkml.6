@@ -1,84 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754574AbeBGPKv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:10:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:52038 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754417AbeBGPKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:10:50 -0500
-Subject: Re: [PATCH v2 1/2] arm64: Relax constraints on ID feature bits
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, james.morse@arm.com
-References: <20180207142106.10716-1-suzuki.poulose@arm.com>
- <20180207150906.GQ5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <1b48ec33-db45-d6b2-b519-b5652196cb45@arm.com>
-Date: Wed, 7 Feb 2018 15:10:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1754582AbeBGPLQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:11:16 -0500
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:39096 "EHLO
+        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754389AbeBGPLO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 10:11:14 -0500
+X-Google-Smtp-Source: AH8x225upnVS4XJYheIiHhI+EX5L1l4RsIDOTULn07QkjGI5q2DsGVu4FBARQ0fBfS3j1i1Zj0oMCNGkmi6E1lqOOVQ=
 MIME-Version: 1.0
-In-Reply-To: <20180207150906.GQ5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180207150328.nuk7f76nutq2trcg@pathway.suse.cz>
+References: <20180204174521.21383-1-kilobyte@angband.pl> <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
+ <CAGXu5j+rWhT7_DH5Z96_7naPou96-6736x4mjq0r_8EG4iiQ_g@mail.gmail.com>
+ <20180205201555.GQ29988@eros> <CAGXu5j+KSm3rOK46xiYPx8SRaO9T5LaeaXxOA3PSktJv4F__dg@mail.gmail.com>
+ <20180205205817.72dy7e7xzjcnwmhs@angband.pl> <20180207150328.nuk7f76nutq2trcg@pathway.suse.cz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 7 Feb 2018 16:11:13 +0100
+X-Google-Sender-Auth: -urN2c4tNmHOdJRggXi5EMWxEtY
+Message-ID: <CAMuHMdVJZnbFrLxBZm1m6C+sR1MKuk3=G4RoYVkAgcxYDHgMGw@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
+To: Petr Mladek <pmladek@suse.com>
+Cc: Adam Borowski <kilobyte@angband.pl>, Kees Cook <keescook@chromium.org>,
+        "Tobin C. Harding" <me@tobin.cc>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 15:09, Dave Martin wrote:
-> On Wed, Feb 07, 2018 at 02:21:05PM +0000, Suzuki K Poulose wrote:
+Hi Petr,
 
-...
+On Wed, Feb 7, 2018 at 4:03 PM, Petr Mladek <pmladek@suse.com> wrote:
+> On Mon 2018-02-05 21:58:17, Adam Borowski wrote:
+>> On Tue, Feb 06, 2018 at 07:32:32AM +1100, Kees Cook wrote:
+>> > On Tue, Feb 6, 2018 at 7:15 AM, Tobin C. Harding <me@tobin.cc> wrote:
+>> > > On Tue, Feb 06, 2018 at 05:57:17AM +1100, Kees Cook wrote:
+>> > >> On Mon, Feb 5, 2018 at 8:44 PM, Petr Mladek <pmladek@suse.com> wrote:
+>> > >> > On Sun 2018-02-04 18:45:21, Adam Borowski wrote:
+>> > >> >> Like %pK already does, print "00000000" instead.
+>> > >> >>
+>> > >> >> This confused people -- the convention is that "(null)" means you tried to
+>> > >> >> dereference a null pointer as opposed to printing the address.
+>> > >
+>> > > Leaving aside what is converting to %px.  If we consider that using %px
+>> > > is meant to convey to us that we _really_ want the address, in hex hence
+>> > > the 'x', then it is not surprising that we will get "00000000"'s for a
+>> > > null pointer, right?  Yes it is different to before but since we are
+>> > > changing the specifier does this not imply that there may be some
+>> > > change?
+>> >
+>> > I personally prefer 0000s, but if we're going to change this, we need
+>> > to be aware of the difference.
+>>
+>> It's easy to paint this bikeshed any color you guys want to: there's an "if"
+>> already.  My preference is also 0000; NULL would be good, too -- I just
+>> don't want (null) as that has a special meaning in usual userspace
+>> implementations; (null) also fits well most other modes of %p as they show
+>> some object the argument points to.  Confusion = wasted debugging time.
+>
+>> Let's recap:
+>>
+>> Currently:
+>>               not-null              null
+>> %pponies      object's description  (null)
+>> %px           address               (null)
+>> %pK           hash                  hash
+>>
+>> I'd propose:
+>>               not-null              null
+>> %pponies      object's description  (null)
+>> %px           address               00000000
+>> %pK           hash                  00000000
+>
+> It makes sense to me[*], so
+>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+>
+> It seems that all people agree with this change. But there was also some
+> confusion. I am going to give it few more days before I push it to
+> Linus. It means waiting for 4.16-rc3 because I will be without
+> reliable internet next week. Anyone, feel free to push it faster.
+>
+>
+> [*] I made some archaeology:
+>
+> The "(null)" string was added by the commit d97106ab53f812910
+> ("Make %p print '(null)' for NULL pointers").
+>
+> It was a generic solution to prevent eventual crashes, see
+> https://lkml.kernel.org/r/1230979341-23029-1-git-send-email-xyzzy@speakeasy.org
+>
+> From this point, printing 00000000 for %px looks perfectly fine because
+> it does not crash.
+>
+> In fact, it would have made perfect sense to print 00000000 for pure
+> %p because it did not crash. But nobody has cared about the eventual
+> confusion yet.
+>
+> I am not sure if it makes sense to change the pure %p handling
+> now. Note that printing "(null)" has the advantage that we
+> get this string instead of the hash ;-)
 
-> [...]
-> 
->> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_ASID_SHIFT, 4, 0),
->> +	/*
->> +	 * We handle differing ASID widths by explicit checks to make sure the system is
->> +	 * safe via verify_cpu_asid_bits()
-> 
-> I guess that's sufficient.
-> 
-> Although I had suggested adding a comment to verify_cpu_asid_bits()
-> cross-referencing back to here, it now seems superfluous.  It's fairly
-> obvious what that function is supported to do.
-> 
-> 
-> [...]
-> 
->> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_VHE_SHIFT, 4, 0),
-> 
-> [...]
-> 
->> +	/*
->> +	 * When CONFIG_ARM64_VHE is enabled, we ensure that there is no conflict in run
->> +	 * levels via verify_cpu_run_el()
->> +	 */
->> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_VHE_SHIFT, 4, 0),
-> 
-> Similarly ack.
-> 
-> 
-> [...]
-> 
->> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_IESB_SHIFT, 4, 0),
-> 
-> [...]
-> 
->> +	/*
->> +	 * Lacking implicit ESB on exception boundaries on a subset of CPUs is no worse than
->> +	 * lacking it on all of them.
->> +	 */
->> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_IESB_SHIFT, 4, 0),
-> 
-> And again.  Thanks.
-> 
-> [...]
-> 
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-> 
+Note that "(null)" is also used for printing strings, where you do dereference
+the pointer, unlike for printing pointers.
+In addition, "(null)" for strings is not just printed for real NULL
+pointers, but
+also for anything pointing within the first page of virtual memory.
 
+Gr{oetje,eeting}s,
 
-Thanks Dave !
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
