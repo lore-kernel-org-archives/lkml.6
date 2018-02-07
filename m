@@ -1,197 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753983AbeBGNbN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:31:13 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42596 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753648AbeBGNbL (ORCPT
+        id S1753964AbeBGNeW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:34:22 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:38927 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753721AbeBGNeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:31:11 -0500
-X-Google-Smtp-Source: AH8x227I2KQCLp4qPm5d51+PoKj/2mdolJH1iuiSnK/2uRQmkFipRAlldgBZbpsCdhrIQ2sI1C3mqA==
-Date: Wed, 7 Feb 2018 15:31:06 +0200
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix net watchdog timeout
-Message-ID: <20180207133105.GB7883@khorivan>
-Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-References: <20180207011706.13393-1-grygorii.strashko@ti.com>
- <20180207030316.GA7883@khorivan>
+        Wed, 7 Feb 2018 08:34:20 -0500
+X-Google-Smtp-Source: AH8x227CnbEf5MQp6AdRHZqIc0Q1Pc3ntAnEpm+mp1znHiQvBovmIgdzl0dg+0f5O8uXrezjLCZrUCdDuMsrt9UVStk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207030316.GA7883@khorivan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180126011400.2191-3-sboyd@codeaurora.org>
+References: <20180126011400.2191-1-sboyd@codeaurora.org> <20180126011400.2191-3-sboyd@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 7 Feb 2018 14:34:19 +0100
+Message-ID: <CACRpkda2_nt24pweyQTtB_9gypDJTK1NHRm1LjsinEaK-G8F_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] gpiolib-of: Support 'reserved-gpio-ranges' property
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-gpio@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 05:03:19AM +0200, Ivan Khoronzhuk wrote:
-> On Tue, Feb 06, 2018 at 07:17:06PM -0600, Grygorii Strashko wrote:
-> > It was discovered that simple program which indefinitely sends 200b UDP
-> > packets and runs on TI AM574x SoC (SMP) under RT Kernel triggers network
-> > watchdog timeout in TI CPSW driver (<6 hours run). The network watchdog
-> > timeout is triggered due to race between cpsw_ndo_start_xmit() and
-> > cpsw_tx_handler() [NAPI]
-> > 
-> > cpsw_ndo_start_xmit()
-> > 	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
-> > 		txq = netdev_get_tx_queue(ndev, q_idx);
-> > 		netif_tx_stop_queue(txq);
-> > 
-> > ^^ as per [1] barier has to be used after set_bit() otherwise new value
-> > might not be visible to other cpus
-> > 	}
-> > 
-> > cpsw_tx_handler()
-> > 	if (unlikely(netif_tx_queue_stopped(txq)))
-> > 		netif_tx_wake_queue(txq);
-> > 
-> > and when it happens ndev TX queue became disabled forever while driver's HW
-> > TX queue is empty.
-> I'm sure it fixes test case somehow but there is some strangeness.
-> (I've thought about this some X months ago):
-> 1. If no free desc, then there is bunch of descs on the queue ready to be sent
-> 2. If one of this desc while this process was missed then next will wake queue,
-> because there is bunch of them on the fly. So, if desc on top of the sent queue
-> missed to enable the queue, then next one more likely will enable it anyway..
-> then how it could happen? The described race is possible only on last
-> descriptor, yes, packets are small the speed is hight, possibility is very small
-> .....but then next situation is also possible:
-> - packets are sent fast
-> - all packets were sent, but no any descriptors are freed now by sw interrupt (NAPI)
-> - when interrupt had started NAPI, the queue was enabled, all other next 
-> interrupts are throttled once NAPI not finished it's work yet.
-> - when new packet submitted, no free descs are present yet (NAPI has not freed
-> any yet), but all packets are sent, so no one can awake tx queue, as interrupt 
-> will not arise when NAPI is started to free first descriptor interrupts are 
-> disabled.....because h/w queue to be sent is empty...
-> - how it can happen as submitting packet and handling packet operations is under 
-> channel lock? Not exactly, a period between handling and freeing the descriptor
-> to the pool is not under channel lock, here:
-> 
-> 	spin_unlock_irqrestore(&chan->lock, flags);
-> 	if (unlikely(status & CPDMA_DESC_TD_COMPLETE))
-> 		cb_status = -ENOSYS;
-> 	else
-> 		cb_status = status;
-> 
-> 	__cpdma_chan_free(chan, desc, outlen, cb_status);
-> 	return status;
-> 
-> unlock_ret:
-> 	spin_unlock_irqrestore(&chan->lock, flags);
-> 	return status;
-> 
-> And:
-> __cpdma_chan_free(chan, desc, outlen, cb_status);
-> 	-> cpdma_desc_free(pool, desc, 1);
-> 
-> As result, queue deadlock as you've described.
-> Just thought, not checked, but theoretically possible.
-> What do you think?
+Hi Stephen,
 
-Better explanation, for rare race:
+nice work!
 
-start conditions:
-- all descs are submitted, except last one, and queue is not stopped
-- any desc was returned to the pool yet (but packets can be sent)
+On Fri, Jan 26, 2018 at 2:13 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-    time
-     ||
-     \/
+> For now, we plumb this into the gpiochip irq APIs so that
+> GPIO/pinctrl drivers can use the gpiochip_irqchip_irq_valid() to
+> test validity of GPIOs.
 
-submit process				NAPI poll process
---------------------------------------------------------------------------------
-new packet is scheduled for submission
-stated that no free descs (with locks)
-lock is freed
-					returned all descs to the pool
-					and queue is enabled
-					interrupt enabled, poll exit
-queue is disabled
-submit exit
+But is that the right thing to do, given that we just took the
+trouble to define a DT binding that is explicitly about
+any GPIO, not just IRQ capable ones?
 
-Result:
-- all descs are returned to the pool, submission to the queue disabled
-- NAPI cannot wake queue, as all desc were handled already
+I am worries that the *irq* infix etc on these functions
+will be a bit confusing.
 
-According to packet size in 200B
-Data size, bits: 200B * 63desc * 10 = 128000bit roughly
-Time all of them are sent: 128000 / 1Gb = 128us
+Is it a lot of work to make it just generic and maybe bake it
+into the gpio_chip so as to refuse already in
+gpiod_request_commit() in gpiolib already?
 
-That's enough the CPU to be occupied by other process in RT even.
-
-> 
-> > 
-> > Fix this, by adding smp_mb__after_atomic() after netif_tx_stop_queue()
-> > calls and double check for free TX descriptors after stopping ndev TX queue
-> > - if there are free TX descriptors wake up ndev TX queue.
-> > 
-> > [1] https://www.kernel.org/doc/html/latest/core-api/atomic_ops.html
-> > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> > ---
-> >  drivers/net/ethernet/ti/cpsw.c | 16 ++++++++++++++--
-> >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-> > index 10d7cbe..3805b13 100644
-> > --- a/drivers/net/ethernet/ti/cpsw.c
-> > +++ b/drivers/net/ethernet/ti/cpsw.c
-> > @@ -1638,6 +1638,7 @@ static netdev_tx_t cpsw_ndo_start_xmit(struct sk_buff *skb,
-> >  		q_idx = q_idx % cpsw->tx_ch_num;
-> >  
-> >  	txch = cpsw->txv[q_idx].ch;
-> > +	txq = netdev_get_tx_queue(ndev, q_idx);
-> >  	ret = cpsw_tx_packet_submit(priv, skb, txch);
-> >  	if (unlikely(ret != 0)) {
-> >  		cpsw_err(priv, tx_err, "desc submit failed\n");
-> > @@ -1648,15 +1649,26 @@ static netdev_tx_t cpsw_ndo_start_xmit(struct sk_buff *skb,
-> >  	 * tell the kernel to stop sending us tx frames.
-> >  	 */
-> >  	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
-> > -		txq = netdev_get_tx_queue(ndev, q_idx);
-> >  		netif_tx_stop_queue(txq);
-> > +
-> > +		/* Barrier, so that stop_queue visible to other cpus */
-> > +		smp_mb__after_atomic();
-> > +
-> > +		if (cpdma_check_free_tx_desc(txch))
-> > +			netif_tx_wake_queue(txq);
-> >  	}
-> >  
-> >  	return NETDEV_TX_OK;
-> >  fail:
-> >  	ndev->stats.tx_dropped++;
-> > -	txq = netdev_get_tx_queue(ndev, skb_get_queue_mapping(skb));
-> >  	netif_tx_stop_queue(txq);
-> > +
-> > +	/* Barrier, so that stop_queue visible to other cpus */
-> > +	smp_mb__after_atomic();
-> > +
-> > +	if (cpdma_check_free_tx_desc(txch))
-> > +		netif_tx_wake_queue(txq);
-> > +
-> >  	return NETDEV_TX_BUSY;
-> >  }
-> >  
-> > -- 
-> > 2.10.5
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> -- 
-> Regards,
-> Ivan Khoronzhuk
-
--- 
-Regards,
-Ivan Khoronzhuk
+Yours,
+Linus Walleij
