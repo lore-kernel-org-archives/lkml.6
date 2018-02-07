@@ -1,112 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754704AbeBGURY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:17:24 -0500
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:9651 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754281AbeBGURW (ORCPT
+        id S1754461AbeBGUSh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:18:37 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37804 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754002AbeBGUSg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 15:17:22 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EqAQAKXXtah8qZ6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQngQAoCpwlggKJFZBVCoU7AoJpWBQBAgEBAQEBAQIBAhABAQE?=
- =?us-ascii?q?KCwkIKC+COCKCSgEBAQR5DAQCAQgRBAEBAScHISUJCAIEDgUIihUDFbN5hzoNg?=
- =?us-ascii?q?TGCCgEBAQEBAQEDAQEBAQEBAQEBH4R1ghWDP4MugmtEBIF2RYUwBZMZkFs1CZA?=
- =?us-ascii?q?fVYR+gkqRfY5CiUiBPDaBc3CDGIJlJYFteIx1gRcBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EqAQAKXXtah8qZ6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?ngQAoCpwlggKJFZBVCoU7AoJpWBQBAgEBAQEBAQIBAhABAQEKCwkIKC+COCKCS?=
- =?us-ascii?q?gEBAQR5DAQCAQgRBAEBAScHISUJCAIEDgUIihUDFbN5hzoNgTGCCgEBAQEBAQE?=
- =?us-ascii?q?DAQEBAQEBAQEBH4R1ghWDP4MugmtEBIF2RYUwBZMZkFs1CZAfVYR+gkqRfY5Ci?=
- =?us-ascii?q?UiBPDaBc3CDGIJlJYFteIx1gRcBAQE?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.172
-X-IronPort-AV: E=Sophos;i="5.46,473,1511848800";
-   d="scan'208";a="211061080"
-X-DLP: DLP_GlobalPCIDSS
-To: <dvhart@infradead.org>
-CC: <andy.shevchenko@gmail.com>, <pali.rohar@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: RE: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
- rather than globally
-Thread-Topic: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
- rather than globally
-Thread-Index: AQHTnbEBZ5a/3jHsuUK3gXwyW5b5oKOUseSAgAFVFtCAAO0qgIACcZow
-Date: Wed, 7 Feb 2018 20:17:19 +0000
-Message-ID: <4c711099e46e4bbd828d35bd9fbd612a@ausx13mpc120.AMER.DELL.COM>
-References: <1517420855-19374-1-git-send-email-mario.limonciello@dell.com>
- <20180204120922.fds52i22griw2h6e@pali>
- <CAHp75VcnDKP=kNPh7pU1v_f0+oP64ByKAOmkZzXNUVaXg=wDSg@mail.gmail.com>
- <9b01161fb81043b79cf9ade8ec348fff@ausx13mpc120.AMER.DELL.COM>
- <20180206005733.GA11119@fury>
-In-Reply-To: <20180206005733.GA11119@fury>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="iso-8859-1"
+        Wed, 7 Feb 2018 15:18:36 -0500
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 07 Feb 2018 14:19:54 -0600
+From: wenxiong <wenxiong@linux.vnet.ibm.com>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: axboe@fb.com, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>,
+        wenxiong@vmlinux.vnet.ibm.com, wenxiong@us.ibm.com
+Subject: Re: [PATCH]nvme-pci: Fixes EEH failure on ppc
+In-Reply-To: <20180207012353.GD13470@ming.t460p>
+References: <1517867380-18790-1-git-send-email-wenxiong@vmlinux.vnet.ibm.com>
+ <20180206163347.GG31110@localhost.localdomain>
+ <787e4960b62a03b3888c67e73d7e1ee2@linux.vnet.ibm.com>
+ <20180207012353.GD13470@ming.t460p>
+User-Agent: Roundcube Webmail/1.0.1
+X-TM-AS-GCONF: 00
+x-cbid: 18020720-0024-0000-0000-000017E75452
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008492; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000249; SDB=6.00986386; UDB=6.00500582; IPR=6.00765751;
+ BA=6.00005819; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019428; XFM=3.00000015;
+ UTC=2018-02-07 20:18:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020720-0025-0000-0000-00004E9FAD36
+Message-Id: <5974b41335751a6bc59d5c823fb98202@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802070256
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17KHUPg003309
 
-> -----Original Message-----
-> From: Darren Hart [mailto:dvhart@infradead.org]
-> Sent: Monday, February 5, 2018 6:58 PM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: andy.shevchenko@gmail.com; pali.rohar@gmail.com; linux-
-> kernel@vger.kernel.org; platform-driver-x86@vger.kernel.org
-> Subject: Re: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap rather
-> than globally
+On 2018-02-06 19:24, Ming Lei wrote:
+> On Tue, Feb 06, 2018 at 02:01:05PM -0600, wenxiong wrote:
+>> On 2018-02-06 10:33, Keith Busch wrote:
+>> > On Mon, Feb 05, 2018 at 03:49:40PM -0600, wenxiong@vmlinux.vnet.ibm.com
+>> > wrote:
+>> > > @@ -1189,6 +1183,12 @@ static enum blk_eh_timer_return
+>> > > nvme_timeout(struct request *req, bool reserved)
+>> > >  	struct nvme_command cmd;
+>> > >  	u32 csts = readl(dev->bar + NVME_REG_CSTS);
+>> > >
+>> > > +	/* If PCI error recovery process is happening, we cannot reset or
+>> > > +	 * the recovery mechanism will surely fail.
+>> > > +	 */
+>> > > +	if (pci_channel_offline(to_pci_dev(dev->dev)))
+>> > > +		return BLK_EH_HANDLED;
+>> > > +
+>> >
+>> > This patch will tell the block layer to complete the request and
+>> > consider
+>> > it a success, but it doesn't look like the command actually completed at
+>> > all. You're going to get data corruption this way, right? Is returning
+>> > BLK_EH_HANDLED immediately really the right thing to do here?
+>> 
+>> Hi Ming,
+>> 
+>> Can you help checking if it is ok if returning BLK_EH_HANDLEDED in 
+>> this
+>> case?
 > 
-> On Mon, Feb 05, 2018 at 04:49:35PM +0000, Mario.Limonciello@dell.com wrote:
-> > > -----Original Message-----
-> > > From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
-> > > Sent: Sunday, February 4, 2018 8:28 AM
-> > > To: Pali Rohár <pali.rohar@gmail.com>
-> > > Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; Darren Hart
-> > > <dvhart@infradead.org>; LKML <linux-kernel@vger.kernel.org>; Platform
-> Driver
-> > > <platform-driver-x86@vger.kernel.org>
-> > > Subject: Re: [PATCH v2] platform/x86: dell-laptop: Allocate buffer on heap
-> rather
-> > > than globally
-> > >
-> > > On Sun, Feb 4, 2018 at 2:09 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
-> > > > On Wednesday 31 January 2018 11:47:35 Mario Limonciello wrote:
-> > > >> There is no longer a need for the buffer to be defined in
-> > > >> first 4GB physical address space.
-> > > >>
-> > > >> Furthermore there may be race conditions with multiple different functions
-> > > >> working on a module wide buffer causing incorrect results.
-> > > >>
-> > > >> Fixes: 549b4930f057658dc50d8010e66219233119a4d8
-> > >
-> > > He-h, I had to notice this earlier...
-> > >
-> > > > Ok, you can add my:
-> > > > Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-> > >
-> > > Thanks and sorry, Pali, it's in for-next already, can't rebase.
-> >
-> > Andy,
-> > Since it's already in for-next it's probably too late to add the stable CC too right?
-> >
-> > So what's the proper time now to send this to @stable?  And should I just forward
-> existing
-> > patch?
+> Hi Wenxiong,
 > 
-> As a general rule, Andy and I should be adding Cc stable to most anything that
-> includes a Fixes tag that isn't from this review cycle. I've forgotten in the
-> past as well - sorry about that. Something we should add some tooling around I
-> think, so we don't miss it when checking things in to our review branches.
+> Looks Keith is correct, and this timed out request will be completed by
+> block layer and NVMe driver if BLK_EH_HANDLED is returned, but this IO
+> isn't completed actually, so either data loss(write) or read failure is
+> caused.
 > 
-> As to timing. As soon as this is merged to Linus' master, it can go to stable.
-> Instructions for doing this are in Documentation/process/stable-kernel-rules.rst
+> Maybe BLK_EH_RESET_TIMER is fine under this situation.
 > 
-> --
+> Thanks,
+> Ming
+> 
+Hi Ming,
 
-Thanks, I see it's in Linuses' tree today so I sent something to stable for it.
+Thanks! I have tried with BLK_EH_RESET_TIMER and EEH recovery works 
+fine. I am going to resubmit the patch.
+
+Thanks,
+Wendy
