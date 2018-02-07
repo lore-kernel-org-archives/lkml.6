@@ -1,190 +1,494 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753174AbeBGEeP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 23:34:15 -0500
-Received: from mga17.intel.com ([192.55.52.151]:56551 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752682AbeBGEeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 23:34:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,471,1511856000";
-   d="scan'208";a="202129993"
-Message-ID: <1517978050.23889.23.camel@linux.intel.com>
-Subject: Re: [PATCH 2/3] x86/tme: Detect if TME and MKTME is activated by
- BIOS
-From: Kai Huang <kai.huang@linux.intel.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
-Date: Wed, 07 Feb 2018 17:34:10 +1300
-In-Reply-To: <20180131091509.26531-3-kirill.shutemov@linux.intel.com>
-References: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
-         <20180131091509.26531-3-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753370AbeBGEeb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 23:34:31 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753244AbeBGEea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 23:34:30 -0500
+Date: Wed, 7 Feb 2018 06:34:22 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Wei Wang <wei.w.wang@intel.com>
+Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com
+Subject: Re: [PATCH v26 2/2 RESEND] virtio-balloon:
+ VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180207062846-mutt-send-email-mst@kernel.org>
+References: <1517972467-14352-1-git-send-email-wei.w.wang@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517972467-14352-1-git-send-email-wei.w.wang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-01-31 at 12:15 +0300, Kirill A. Shutemov wrote:
-> IA32_TME_ACTIVATE MSR (0x982) can be used to check if BIOS has
-> enabled
-> TME and MKTME. It includes which encryption policy/algorithm is
-> selected
-> for TME or available for MKTME. For MKTME, the MSR also enumerates
-> how
-> many KeyIDs are available.
+On Wed, Feb 07, 2018 at 11:01:06AM +0800, Wei Wang wrote:
+> Negotiation of the VIRTIO_BALLOON_F_FREE_PAGE_HINT feature indicates the
+> support of reporting hints of guest free pages to host via virtio-balloon.
 > 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Host requests the guest to report free page hints by sending a new cmd
+> id to the guest via the free_page_report_cmd_id configuration register.
+> 
+> When the guest starts to report, the first element added to the free page
+> vq is the cmd id given by host. When the guest finishes the reporting
+> of all the free pages, VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID is added
+> to the vq to tell host that the reporting is done. Host polls the free
+> page vq after sending the starting cmd id, so the guest doesn't need to
+> kick after filling an element to the vq.
+> 
+> Host may also requests the guest to stop the reporting in advance by
+> sending the stop cmd id to the guest via the configuration register.
+> 
+> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> Signed-off-by: Liang Li <liang.z.li@intel.com>
+> Cc: Michael S. Tsirkin <mst@redhat.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
 > ---
->  arch/x86/kernel/cpu/intel.c | 83
-> +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
+>  drivers/virtio/virtio_balloon.c     | 255 +++++++++++++++++++++++++++++++-----
+>  include/uapi/linux/virtio_balloon.h |   7 +
+>  mm/page_poison.c                    |   6 +
+>  3 files changed, 232 insertions(+), 36 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/cpu/intel.c
-> b/arch/x86/kernel/cpu/intel.c
-> index 6936d14d4c77..5b95fa484837 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -517,6 +517,86 @@ static void detect_vmx_virtcap(struct
-> cpuinfo_x86 *c)
->  	}
+> Resend Change:
+> 	- Expose page_poisoning_enabled to kernel modules
+
+RESEND tag is for reposting unchanged patches.
+you want to post a v27, and you want the mm patch
+as a separate one, so you can get an ack on it from
+someone on linux-mm.
+
+In fact, I would probably add reporting the poison value as
+a separate feature/couple of patches.
+
+> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> index a1fb52c..5476725 100644
+> --- a/drivers/virtio/virtio_balloon.c
+> +++ b/drivers/virtio/virtio_balloon.c
+> @@ -51,9 +51,22 @@ MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
+>  static struct vfsmount *balloon_mnt;
+>  #endif
+>  
+> +enum virtio_balloon_vq {
+> +	VIRTIO_BALLOON_VQ_INFLATE,
+> +	VIRTIO_BALLOON_VQ_DEFLATE,
+> +	VIRTIO_BALLOON_VQ_STATS,
+> +	VIRTIO_BALLOON_VQ_FREE_PAGE,
+> +	VIRTIO_BALLOON_VQ_MAX
+> +};
+> +
+>  struct virtio_balloon {
+>  	struct virtio_device *vdev;
+> -	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq;
+> +	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq;
+> +
+> +	/* Balloon's own wq for cpu-intensive work items */
+> +	struct workqueue_struct *balloon_wq;
+> +	/* The free page reporting work item submitted to the balloon wq */
+> +	struct work_struct report_free_page_work;
+>  
+>  	/* The balloon servicing is delegated to a freezable workqueue. */
+>  	struct work_struct update_balloon_stats_work;
+> @@ -63,6 +76,11 @@ struct virtio_balloon {
+>  	spinlock_t stop_update_lock;
+>  	bool stop_update;
+>  
+> +	/* The new cmd id received from host */
+> +	uint32_t cmd_id_received;
+> +	/* The cmd id that is in use */
+> +	__virtio32 cmd_id_use;
+> +
+>  	/* Waiting for host to ack the pages we released. */
+>  	wait_queue_head_t acked;
+>  
+> @@ -316,17 +334,6 @@ static void stats_handle_request(struct virtio_balloon *vb)
+>  	virtqueue_kick(vq);
 >  }
 >  
-> +#define MSR_IA32_TME_ACTIVATE		0x982
-
-Should this MSR go into msr-index.h?
-
-> +
-> +#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
-> +#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
-> +
-> +#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	
-> /* Bits 7:4 */
-> +#define TME_ACTIVATE_POLICY_AES_XTS	0
-> +
-> +#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/
-> * Bits 35:32 */
-> +
-> +#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	
-> /* Bits 63:48 */
-> +#define TME_ACTIVATE_CRYPTO_AES_XTS	1
-> +
-> +#define MKTME_ENABLED		0
-> +#define MKTME_DISABLED		1
-> +#define MKTME_UNINITIALIZED	2
-> +static int mktme_status = MKTME_UNINITIALIZED;
-> +
-> +static void detect_tme(struct cpuinfo_x86 *c)
+> -static void virtballoon_changed(struct virtio_device *vdev)
+> -{
+> -	struct virtio_balloon *vb = vdev->priv;
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&vb->stop_update_lock, flags);
+> -	if (!vb->stop_update)
+> -		queue_work(system_freezable_wq, &vb->update_balloon_size_work);
+> -	spin_unlock_irqrestore(&vb->stop_update_lock, flags);
+> -}
+> -
+>  static inline s64 towards_target(struct virtio_balloon *vb)
+>  {
+>  	s64 target;
+> @@ -343,6 +350,34 @@ static inline s64 towards_target(struct virtio_balloon *vb)
+>  	return target - vb->num_pages;
+>  }
+>  
+> +static void virtballoon_changed(struct virtio_device *vdev)
 > +{
-> +	u64 tme_activate, tme_policy, tme_crypto_algs;
-> +	int keyid_bits = 0, nr_keyids = 0;
-> +	static u64 tme_activate_cpu0 = 0;
+> +	struct virtio_balloon *vb = vdev->priv;
+> +	unsigned long flags;
+> +	s64 diff = towards_target(vb);
 > +
-> +	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
+> +	if (diff) {
+> +		spin_lock_irqsave(&vb->stop_update_lock, flags);
+> +		if (!vb->stop_update)
+> +			queue_work(system_freezable_wq,
+> +				   &vb->update_balloon_size_work);
+> +		spin_unlock_irqrestore(&vb->stop_update_lock, flags);
+> +	}
 > +
-> +	if (mktme_status != MKTME_UNINITIALIZED) {
-> +		/* Broken BIOS? */
-> +		if (tme_activate != tme_activate_cpu0) {
-> +			pr_err_once("TME: configuation is
-> inconsistent between CPUs\n");
-> +			mktme_status = MKTME_DISABLED;
+> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+> +		virtio_cread(vdev, struct virtio_balloon_config,
+> +			     free_page_report_cmd_id, &vb->cmd_id_received);
+> +		if (vb->cmd_id_received !=
+> +		    VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID) {
+> +			spin_lock_irqsave(&vb->stop_update_lock, flags);
+> +			if (!vb->stop_update)
+> +				queue_work(vb->balloon_wq,
+> +					   &vb->report_free_page_work);
+> +			spin_unlock_irqrestore(&vb->stop_update_lock, flags);
 > +		}
-> +		goto out;
-
-Why goto out here? If something goes wrong, I think it is pointless to
-read keyID bits staff? IMHO if something goes wrong, you should set
-mktme_status to disabled, and clear tme_activate_cpu0?
-
 > +	}
-> +
-> +	tme_activate_cpu0 = tme_activate;
-> +
-> +	if (!TME_ACTIVATE_LOCKED(tme_activate) ||
-> !TME_ACTIVATE_ENABLED(tme_activate)) {
-> +		pr_info("TME: not enabled by BIOS\n");
-> +		mktme_status = MKTME_DISABLED;
-> +		goto out;
-
-I think it is pointless to read keyID bits staff if TME is not even
-enabled.
-
-> +	}
-> +
-> +	pr_info("TME: enabled by BIOS\n");
-> +
-> +	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
-> +	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS)
-> +		pr_warn("TME: Unknown policy is active: %#llx\n",
-> tme_policy);
-> +
-> +	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
-> +	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS)) {
-> +		pr_err("MKTME: No known encryption algorithm is
-> supported: %#llx\n",
-> +				tme_crypto_algs);
-> +		mktme_status = MKTME_DISABLED;
-> +	}
-
-To me it is a little bit confusing about the naming. tme_policy is the
-crypto_alg used by TME keyID (0), and tme_crypto_algs is bitmap of
-supported crypto_algs for MK-TME. Probably a better naming is needed?
-And the naming of TME_ACTIVATE_POLICY(x), TME_ACTIVATE_CRYPTO_ALGS(x)
-above as well?
-
-> +out:
-> +	keyid_bits = TME_ACTIVATE_KEYID_BITS(tme_activate);
-> +	nr_keyids = (1UL << keyid_bits) - 1;
-> +	if (nr_keyids) {
-> +		pr_info_once("MKTME: enabled by BIOS\n");
-> +		pr_info_once("MKTME: %d KeyIDs available\n",
-> nr_keyids);
-> +	} else {
-> +		pr_info_once("MKTME: disabled by BIOS\n");
-> +	}
-> +
-> +	if (mktme_status == MKTME_UNINITIALIZED) {
-> +		/* MKTME is usable */
-> +		mktme_status = MKTME_ENABLED;
-> +	}
-> +
-> +	/*
-> +	 * Exclude KeyID bits from physical address bits.
-> +	 *
-> +	 * We have to do this even if we are not going to use KeyID
-> bits
-> +	 * ourself. VM guests still have to know that these bits are
-> not usable
-> +	 * for physical address.
-> +	 */
-Currently KVM uses CPUID to get such info directly, but not consulting
-c->x86_phys_bits. I think it may be reasonable for KVM to consulting c-
->x86_phys_bits for MK-TME, but IMHO the real reason we need to do this
-is this is just the fact, and c->x86_phys_bits needs to reflect the
-fact, so probably the comments can be refined.
-
-Thanks,
--Kai
-
-> +	c->x86_phys_bits -= keyid_bits;
 > +}
 > +
->  static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+>  static void update_balloon_size(struct virtio_balloon *vb)
 >  {
->  	u64 epb;
-> @@ -687,6 +767,9 @@ static void init_intel(struct cpuinfo_x86 *c)
->  	if (cpu_has(c, X86_FEATURE_VMX))
->  		detect_vmx_virtcap(c);
+>  	u32 actual = vb->num_pages;
+> @@ -417,42 +452,155 @@ static void update_balloon_size_func(struct work_struct *work)
 >  
-> +	if (cpu_has(c, X86_FEATURE_TME))
-> +		detect_tme(c);
+>  static int init_vqs(struct virtio_balloon *vb)
+>  {
+> -	struct virtqueue *vqs[3];
+> -	vq_callback_t *callbacks[] = { balloon_ack, balloon_ack, stats_request };
+> -	static const char * const names[] = { "inflate", "deflate", "stats" };
+> -	int err, nvqs;
+> +	struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
+> +	vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
+> +	const char *names[VIRTIO_BALLOON_VQ_MAX];
+> +	struct scatterlist sg;
+> +	int ret;
+>  
+>  	/*
+> -	 * We expect two virtqueues: inflate and deflate, and
+> -	 * optionally stat.
+> +	 * Inflateq and deflateq are used unconditionally. The names[]
+> +	 * will be NULL if the related feature is not enabled, which will
+> +	 * cause no allocation for the corresponding virtqueue in find_vqs.
+>  	 */
+> -	nvqs = virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ) ? 3 : 2;
+> -	err = virtio_find_vqs(vb->vdev, nvqs, vqs, callbacks, names, NULL);
+> -	if (err)
+> -		return err;
+> +	callbacks[VIRTIO_BALLOON_VQ_INFLATE] = balloon_ack;
+> +	names[VIRTIO_BALLOON_VQ_INFLATE] = "inflate";
+> +	callbacks[VIRTIO_BALLOON_VQ_DEFLATE] = balloon_ack;
+> +	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
+> +	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
+> +	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+>  
+> -	vb->inflate_vq = vqs[0];
+> -	vb->deflate_vq = vqs[1];
+>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> -		struct scatterlist sg;
+> -		unsigned int num_stats;
+> -		vb->stats_vq = vqs[2];
+> +		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
+> +		callbacks[VIRTIO_BALLOON_VQ_STATS] = stats_request;
+> +	}
+>  
+> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+> +		names[VIRTIO_BALLOON_VQ_FREE_PAGE] = "free_page_vq";
+> +		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+> +	}
 > +
->  	init_intel_energy_perf(c);
+> +	ret = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
+> +					 vqs, callbacks, names, NULL, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
+> +	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
+> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> +		vb->stats_vq = vqs[VIRTIO_BALLOON_VQ_STATS];
+>  		/*
+>  		 * Prime this virtqueue with one buffer so the hypervisor can
+>  		 * use it to signal us later (it can't be broken yet!).
+>  		 */
+> -		num_stats = update_balloon_stats(vb);
+> -
+> -		sg_init_one(&sg, vb->stats, sizeof(vb->stats[0]) * num_stats);
+> -		if (virtqueue_add_outbuf(vb->stats_vq, &sg, 1, vb, GFP_KERNEL)
+> -		    < 0)
+> -			BUG();
+> +		sg_init_one(&sg, vb->stats, sizeof(vb->stats));
+> +		ret = virtqueue_add_outbuf(vb->stats_vq, &sg, 1, vb,
+> +					   GFP_KERNEL);
+> +		if (ret) {
+> +			dev_warn(&vb->vdev->dev, "%s: add stat_vq failed\n",
+> +				 __func__);
+> +			return ret;
+> +		}
+>  		virtqueue_kick(vb->stats_vq);
+>  	}
+> +
+> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
+> +		vb->free_page_vq = vqs[VIRTIO_BALLOON_VQ_FREE_PAGE];
+> +
+>  	return 0;
+>  }
 >  
->  	init_intel_misc_features(c);
+> +static int add_one_sg(struct virtqueue *vq, unsigned long pfn, uint32_t len)
+> +{
+> +	struct scatterlist sg;
+> +	unsigned int unused;
+> +
+> +	sg_init_table(&sg, 1);
+> +	sg_set_page(&sg, pfn_to_page(pfn), len, 0);
+> +
+> +	/* Detach all the used buffers from the vq */
+> +	while (virtqueue_get_buf(vq, &unused))
+> +		;
+> +
+> +	/*
+> +	 * Since this is an optimization feature, losing a couple of free
+> +	 * pages to report isn't important. We simply return without adding
+> +	 * the page hint if the vq is full.
+> +	 * We are adding one entry each time, which essentially results in no
+> +	 * memory allocation, so the GFP_KERNEL flag below can be ignored.
+> +	 * Host works by polling the free page vq for hints after sending the
+> +	 * starting cmd id, so the driver doesn't need to kick after filling
+> +	 * the vq.
+> +	 * Lastly, there is always one entry reserved for the cmd id to use.
+> +	 */
+> +	if (vq->num_free > 1)
+> +		return virtqueue_add_inbuf(vq, &sg, 1, vq, GFP_KERNEL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int virtio_balloon_send_free_pages(void *opaque, unsigned long pfn,
+> +					   unsigned long nr_pages)
+> +{
+> +	struct virtio_balloon *vb = (struct virtio_balloon *)opaque;
+> +	uint32_t len = nr_pages << PAGE_SHIFT;
+> +
+> +	/*
+> +	 * If a stop id or a new cmd id was just received from host, stop
+> +	 * the reporting, and return 1 to indicate an active stop.
+> +	 */
+> +	if (virtio32_to_cpu(vb->vdev, vb->cmd_id_use) != vb->cmd_id_received)
+> +		return 1;
+> +
+> +	return add_one_sg(vb->free_page_vq, pfn, len);
+> +}
+> +
+> +static int send_cmd_id(struct virtio_balloon *vb, uint32_t cmd_id)
+> +{
+> +	struct scatterlist sg;
+> +	struct virtqueue *vq = vb->free_page_vq;
+> +
+> +	vb->cmd_id_use = cpu_to_virtio32(vb->vdev, cmd_id);
+> +	sg_init_one(&sg, &vb->cmd_id_use, sizeof(vb->cmd_id_use));
+> +
+> +	return virtqueue_add_outbuf(vq, &sg, 1, vb, GFP_KERNEL);
+> +}
+> +
+> +static void report_free_page_func(struct work_struct *work)
+> +{
+> +	struct virtio_balloon *vb;
+> +	struct virtqueue *vq;
+> +	unsigned int unused;
+> +	int ret;
+> +
+> +	vb = container_of(work, struct virtio_balloon, report_free_page_work);
+> +	vq = vb->free_page_vq;
+> +
+> +	/* Start by sending the received cmd id to host with an outbuf */
+> +	ret = send_cmd_id(vb, vb->cmd_id_received);
+> +	if (unlikely(ret))
+> +		goto err;
+> +
+> +	ret = walk_free_mem_block(vb, 0, &virtio_balloon_send_free_pages);
+> +	if (unlikely(ret == -EIO))
+> +		goto err;
+> +
+> +	/* End by sending a stop id to host with an outbuf */
+> +	ret = send_cmd_id(vb, VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID);
+> +	if (likely(!ret)) {
+> +		/*
+> +		 * Ending: make sure all the used buffers have been detached
+> +		 * from the vq.
+> +		 */
+> +		while (vq->num_free != virtqueue_get_vring_size(vq))
+> +			virtqueue_get_buf(vq, &unused);
+> +		return;
+> +	}
+> +err:
+> +	dev_err(&vb->vdev->dev, "%s: free page vq failure, ret=%d\n",
+> +		__func__, ret);
+> +}
+> +
+>  #ifdef CONFIG_BALLOON_COMPACTION
+>  /*
+>   * virtballoon_migratepage - perform the balloon page migration on behalf of
+> @@ -537,6 +685,7 @@ static struct file_system_type balloon_fs = {
+>  static int virtballoon_probe(struct virtio_device *vdev)
+>  {
+>  	struct virtio_balloon *vb;
+> +	__u32 poison_val;
+>  	int err;
+>  
+>  	if (!vdev->config->get) {
+> @@ -566,18 +715,39 @@ static int virtballoon_probe(struct virtio_device *vdev)
+>  	if (err)
+>  		goto out_free_vb;
+>  
+> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+> +		/*
+> +		 * There is always one entry reserved for cmd id, so the ring
+> +		 * size needs to be at least two to report free page hints.
+> +		 */
+> +		if (virtqueue_get_vring_size(vb->free_page_vq) < 2)
+> +			goto out_free_vb;
+> +		vb->balloon_wq = alloc_workqueue("balloon-wq",
+> +					WQ_FREEZABLE | WQ_CPU_INTENSIVE, 0);
+> +		if (!vb->balloon_wq) {
+> +			err = -ENOMEM;
+> +			goto out_del_vqs;
+> +		}
+> +		INIT_WORK(&vb->report_free_page_work, report_free_page_func);
+> +		if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
+> +			poison_val = PAGE_POISON;
+> +			virtio_cwrite(vb->vdev, struct virtio_balloon_config,
+> +				      poison_val, &poison_val);
+
+Actually PAGE_POISON is 0xaa. So this writes out 0x000000aa which makes no
+sense to me. I guess you want 0xaaaaaaaa.
+
+> +		}
+> +	}
+> +
+>  	vb->nb.notifier_call = virtballoon_oom_notify;
+>  	vb->nb.priority = VIRTBALLOON_OOM_NOTIFY_PRIORITY;
+>  	err = register_oom_notifier(&vb->nb);
+>  	if (err < 0)
+> -		goto out_del_vqs;
+> +		goto out_del_balloon_wq;
+>  
+>  #ifdef CONFIG_BALLOON_COMPACTION
+>  	balloon_mnt = kern_mount(&balloon_fs);
+>  	if (IS_ERR(balloon_mnt)) {
+>  		err = PTR_ERR(balloon_mnt);
+>  		unregister_oom_notifier(&vb->nb);
+> -		goto out_del_vqs;
+> +		goto out_del_balloon_wq;
+>  	}
+>  
+>  	vb->vb_dev_info.migratepage = virtballoon_migratepage;
+> @@ -587,7 +757,7 @@ static int virtballoon_probe(struct virtio_device *vdev)
+>  		kern_unmount(balloon_mnt);
+>  		unregister_oom_notifier(&vb->nb);
+>  		vb->vb_dev_info.inode = NULL;
+> -		goto out_del_vqs;
+> +		goto out_del_balloon_wq;
+>  	}
+>  	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
+>  #endif
+> @@ -598,6 +768,9 @@ static int virtballoon_probe(struct virtio_device *vdev)
+>  		virtballoon_changed(vdev);
+>  	return 0;
+>  
+> +out_del_balloon_wq:
+> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
+> +		destroy_workqueue(vb->balloon_wq);
+>  out_del_vqs:
+>  	vdev->config->del_vqs(vdev);
+>  out_free_vb:
+> @@ -631,6 +804,11 @@ static void virtballoon_remove(struct virtio_device *vdev)
+>  	cancel_work_sync(&vb->update_balloon_size_work);
+>  	cancel_work_sync(&vb->update_balloon_stats_work);
+>  
+> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+> +		cancel_work_sync(&vb->report_free_page_work);
+> +		destroy_workqueue(vb->balloon_wq);
+> +	}
+> +
+>  	remove_common(vb);
+>  #ifdef CONFIG_BALLOON_COMPACTION
+>  	if (vb->vb_dev_info.inode)
+> @@ -674,6 +852,9 @@ static int virtballoon_restore(struct virtio_device *vdev)
+>  
+>  static int virtballoon_validate(struct virtio_device *vdev)
+>  {
+> +	if (!page_poisoning_enabled())
+> +		__virtio_clear_bit(vdev, VIRTIO_BALLOON_F_PAGE_POISON);
+> +
+>  	__virtio_clear_bit(vdev, VIRTIO_F_IOMMU_PLATFORM);
+>  	return 0;
+>  }
+> @@ -682,6 +863,8 @@ static unsigned int features[] = {
+>  	VIRTIO_BALLOON_F_MUST_TELL_HOST,
+>  	VIRTIO_BALLOON_F_STATS_VQ,
+>  	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
+> +	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
+> +	VIRTIO_BALLOON_F_PAGE_POISON,
+>  };
+>  
+>  static struct virtio_driver virtio_balloon_driver = {
+> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+> index 343d7dd..3f97067 100644
+> --- a/include/uapi/linux/virtio_balloon.h
+> +++ b/include/uapi/linux/virtio_balloon.h
+> @@ -34,15 +34,22 @@
+>  #define VIRTIO_BALLOON_F_MUST_TELL_HOST	0 /* Tell before reclaiming pages */
+>  #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
+>  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
+> +#define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
+> +#define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
+>  
+>  /* Size of a PFN in the balloon interface. */
+>  #define VIRTIO_BALLOON_PFN_SHIFT 12
+>  
+> +#define VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID		0
+>  struct virtio_balloon_config {
+>  	/* Number of pages host wants Guest to give up. */
+>  	__u32 num_pages;
+>  	/* Number of pages we've actually got in balloon. */
+>  	__u32 actual;
+> +	/* Free page report command id, readonly by guest */
+> +	__u32 free_page_report_cmd_id;
+> +	/* Stores PAGE_POISON if page poisoning is in use */
+> +	__u32 poison_val;
+>  };
+>  
+>  #define VIRTIO_BALLOON_S_SWAP_IN  0   /* Amount of memory swapped in */
+> diff --git a/mm/page_poison.c b/mm/page_poison.c
+> index e83fd44..762b472 100644
+> --- a/mm/page_poison.c
+> +++ b/mm/page_poison.c
+> @@ -17,6 +17,11 @@ static int early_page_poison_param(char *buf)
+>  }
+>  early_param("page_poison", early_page_poison_param);
+>  
+> +/**
+> + * page_poisoning_enabled - check if page poisoning is enabled
+> + *
+> + * Return true if page poisoning is enabled, or false if not.
+> + */
+>  bool page_poisoning_enabled(void)
+>  {
+>  	/*
+> @@ -29,6 +34,7 @@ bool page_poisoning_enabled(void)
+>  		(!IS_ENABLED(CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC) &&
+>  		debug_pagealloc_enabled()));
+>  }
+> +EXPORT_SYMBOL_GPL(page_poisoning_enabled);
+>  
+>  static void poison_page(struct page *page)
+>  {
+> -- 
+> 2.7.4
