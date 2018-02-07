@@ -1,71 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754829AbeBGR1A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:27:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53930 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754412AbeBGR06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:26:58 -0500
-Subject: Re: [PATCH] kconfig: Remove last trace of GENERIC_IO
-To: Rob Herring <robh@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <422a4ff024038db02a2952158b0babe5b9281b2b.1517922544.git.robin.murphy@arm.com>
- <CAL_JsqKZ8xzKD=ncTyT1LzCe0+gRL1pzcjDVOyBv61hUTGESnA@mail.gmail.com>
- <16de2ed2-c2d8-8236-b001-2bc78e4c1d2f@arm.com>
- <CAL_JsqJ1Hc8irF4LWM=1=OACC=fmRbg4c1evV777zKj3XOzi=w@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <dc837b10-a41d-4eb3-c14e-ca3fc69a55a9@arm.com>
-Date: Wed, 7 Feb 2018 17:26:56 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ1Hc8irF4LWM=1=OACC=fmRbg4c1evV777zKj3XOzi=w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1754880AbeBGR1J (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:27:09 -0500
+Received: from ms.lwn.net ([45.79.88.28]:41660 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754860AbeBGR1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:27:06 -0500
+From: Jonathan Corbet <corbet@lwn.net>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 7/8] docs: kernel-doc: Finish moving STATE_* code out of process_file()
+Date: Wed,  7 Feb 2018 10:26:23 -0700
+Message-Id: <20180207172624.24555-8-corbet@lwn.net>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180207172624.24555-1-corbet@lwn.net>
+References: <20180207172624.24555-1-corbet@lwn.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 17:15, Rob Herring wrote:
-> On Feb 6, 2018 8:14 AM, "Robin Murphy" <robin.murphy@arm.com> wrote:
->>
->> On 06/02/18 16:06, Rob Herring wrote:
->>>
->>> On Tue, Feb 6, 2018 at 7:11 AM, Robin Murphy <robin.murphy@arm.com> wrote:
->>>>
->>>> Since commit 9de8da47742b ("kconfig: kill off GENERIC_IO option"), this
->>>> select has done nothing, and is now just confusing. Clean it up.
->>>>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>> ---
->>>>    lib/Kconfig | 1 -
->>>>    1 file changed, 1 deletion(-)
->>>
->>>
->>> We already have:
->>>
->>> https://lkml.org/lkml/2018/1/17/924
->>>
->>> and this series:
->>>
->>> https://lkml.org/lkml/2018/2/4/208
->>
->>
->> Agh, Ulf's patch is even sat in my inbox...
->>
->> This was just a drive-by from looking into HAS_IOMEM, sorry for the noise :)
-> 
-> What are you looking into there? IMO, we should get rid of HAS_IOMEM.
-> It's basically a !UML option to turn off a bunch of drivers in UML.
+Move STATE_INLINE and STATE_DOCBLOCK code out of process_file(), which now
+actually fits on a single screen.  Delete an unused variable and add a
+couple of comments while I'm at it.
 
-I was just having a quick investigate out of curiosity after Geert 
-raised it in the context of awkward COMPILE_TEST dependencies here:
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+---
+ scripts/kernel-doc | 145 ++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 83 insertions(+), 62 deletions(-)
 
-https://lists.linuxfoundation.org/pipermail/iommu/2018-February/025963.html
-
-I don't have the bandwidth myself to actually work on burying it, but it 
-does seem like that might be feasible.
-
-Robin.
+diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+index 2deddb876156..c6c9370a1e49 100755
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -1990,10 +1990,86 @@ sub process_proto($$) {
+     }
+ }
+ 
++#
++# STATE_DOCBLOCK: within a DOC: block.
++#
++sub process_docblock($$) {
++    my $file = shift;
++
++    if (/$doc_end/)
++    {
++	dump_doc_section($file, $section, $contents);
++	$section = $section_default;
++	$contents = "";
++	$function = "";
++	%parameterdescs = ();
++	%parametertypes = ();
++	@parameterlist = ();
++	%sections = ();
++	@sectionlist = ();
++	$prototype = "";
++	$state = STATE_NORMAL;
++    }
++    elsif (/$doc_content/)
++    {
++	if ( $1 eq "" )
++	{
++	    $contents .= $blankline;
++	}
++	else
++	{
++	    $contents .= $1 . "\n";
++	}
++    }
++}
++
++#
++# STATE_INLINE: docbook comments within a prototype.
++#
++sub process_inline($$) {
++    my $file = shift;
++
++    # First line (state 1) needs to be a @parameter
++    if ($inline_doc_state == STATE_INLINE_NAME && /$doc_inline_sect/o) {
++	$section = $1;
++	$contents = $2;
++	$new_start_line = $.;
++	if ($contents ne "") {
++	    while (substr($contents, 0, 1) eq " ") {
++		$contents = substr($contents, 1);
++	    }
++	    $contents .= "\n";
++	}
++	$inline_doc_state = STATE_INLINE_TEXT;
++	# Documentation block end */
++    } elsif (/$doc_inline_end/) {
++	if (($contents ne "") && ($contents ne "\n")) {
++	    dump_section($file, $section, $contents);
++	    $section = $section_default;
++	    $contents = "";
++	}
++	$state = STATE_PROTO;
++	$inline_doc_state = STATE_INLINE_NA;
++	# Regular text
++    } elsif (/$doc_content/) {
++	if ($inline_doc_state == STATE_INLINE_TEXT) {
++	    $contents .= $1 . "\n";
++	    # nuke leading blank lines
++	    if ($contents =~ /^\s*$/) {
++		$contents = "";
++	    }
++	} elsif ($inline_doc_state == STATE_INLINE_NAME) {
++	    $inline_doc_state = STATE_INLINE_ERROR;
++	    print STDERR "${file}:$.: warning: ";
++	    print STDERR "Incorrect use of kernel-doc format: $_";
++	    ++$warnings;
++	}
++    }
++}
++
+ 
+ sub process_file($) {
+     my $file;
+-    my $func;
+     my $initial_section_counter = $section_counter;
+     my ($orig_file) = @_;
+ 
+@@ -2014,6 +2090,8 @@ sub process_file($) {
+ 	}
+ 	# Replace tabs by spaces
+         while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
++
++	# Hand this line to the appropriate state handler
+ 	if ($state == STATE_NORMAL) {
+ 	    process_normal();
+ 	} elsif ($state == STATE_NAME) {
+@@ -2021,72 +2099,15 @@ sub process_file($) {
+ 	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
+ 	    process_body($file, $_);
+ 	} elsif ($state == STATE_INLINE) { # scanning for inline parameters
+-	    # First line (state 1) needs to be a @parameter
+-	    if ($inline_doc_state == STATE_INLINE_NAME && /$doc_inline_sect/o) {
+-		$section = $1;
+-		$contents = $2;
+-                $new_start_line = $.;
+-		if ($contents ne "") {
+-		    while (substr($contents, 0, 1) eq " ") {
+-			$contents = substr($contents, 1);
+-		    }
+-		    $contents .= "\n";
+-		}
+-		$inline_doc_state = STATE_INLINE_TEXT;
+-	    # Documentation block end */
+-	    } elsif (/$doc_inline_end/) {
+-		if (($contents ne "") && ($contents ne "\n")) {
+-		    dump_section($file, $section, $contents);
+-		    $section = $section_default;
+-		    $contents = "";
+-		}
+-		$state = STATE_PROTO;
+-		$inline_doc_state = STATE_INLINE_NA;
+-	    # Regular text
+-	    } elsif (/$doc_content/) {
+-		if ($inline_doc_state == STATE_INLINE_TEXT) {
+-		    $contents .= $1 . "\n";
+-		    # nuke leading blank lines
+-		    if ($contents =~ /^\s*$/) {
+-			$contents = "";
+-		    }
+-		} elsif ($inline_doc_state == STATE_INLINE_NAME) {
+-		    $inline_doc_state = STATE_INLINE_ERROR;
+-		    print STDERR "${file}:$.: warning: ";
+-		    print STDERR "Incorrect use of kernel-doc format: $_";
+-		    ++$warnings;
+-		}
+-	    }
++	    process_inline($file, $_);
+ 	} elsif ($state == STATE_PROTO) {
+ 	    process_proto($file, $_);
+ 	} elsif ($state == STATE_DOCBLOCK) {
+-		if (/$doc_end/)
+-		{
+-			dump_doc_section($file, $section, $contents);
+-			$section = $section_default;
+-			$contents = "";
+-			$function = "";
+-			%parameterdescs = ();
+-			%parametertypes = ();
+-			@parameterlist = ();
+-			%sections = ();
+-			@sectionlist = ();
+-			$prototype = "";
+-			$state = STATE_NORMAL;
+-		}
+-		elsif (/$doc_content/)
+-		{
+-			if ( $1 eq "" )
+-			{
+-				$contents .= $blankline;
+-			}
+-			else
+-			{
+-				$contents .= $1 . "\n";
+-			}
+-		}
++	    process_docblock($file, $_);
+ 	}
+     }
++
++    # Make sure we got something interesting.
+     if ($initial_section_counter == $section_counter) {
+ 	if ($output_mode ne "none") {
+ 	    print STDERR "${file}:1: warning: no structured comments found\n";
+-- 
+2.14.3
