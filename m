@@ -1,111 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753728AbeBGJ3j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 04:29:39 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34175 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753690AbeBGJ3h (ORCPT
+        id S1753535AbeBGJcp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 04:32:45 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53525 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753311AbeBGJcn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 04:29:37 -0500
-X-Google-Smtp-Source: AH8x224kP+1kk/mgS7KFvuDoQq5xyFlGefvnU9680NP0C5NhyYjT3k2j10j6f5axZl7QarIb/5pDvA==
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH 1/2] zsmalloc: introduce zs_huge_object() function
-Date: Wed,  7 Feb 2018 18:29:18 +0900
-Message-Id: <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180207092919.19696-1-sergey.senozhatsky@gmail.com>
-References: <20180207092919.19696-1-sergey.senozhatsky@gmail.com>
+        Wed, 7 Feb 2018 04:32:43 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Mario.Limonciello@dell.com" <Mario.Limonciello@dell.com>,
+        "andriy.shevchenko@linux.intel.com"
+        <andriy.shevchenko@linux.intel.com>,
+        "dvhart@infradead.org" <dvhart@infradead.org>,
+        "platform-driver-x86@vger.kernel.org"
+        <platform-driver-x86@vger.kernel.org>,
+        "acelan.kao@canonical.com" <acelan.kao@canonical.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pali.rohar@gmail.com" <pali.rohar@gmail.com>
+Subject: Re: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI driver
+Date: Wed, 07 Feb 2018 10:31:01 +0100
+Message-ID: <2235169.mLvk2uMpgf@aspire.rjw.lan>
+In-Reply-To: <CAHp75VeFSuQYu67DdnJDjZDoaLZiPuo7ag7Lz0q6eSCDjayobw@mail.gmail.com>
+References: <20180131182614.19524-1-andriy.shevchenko@linux.intel.com> <c51e36664a6e4df6b641f3c684b0d189@ausx13mpc120.AMER.DELL.COM> <CAHp75VeFSuQYu67DdnJDjZDoaLZiPuo7ag7Lz0q6eSCDjayobw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not every object can be share its zspage with other objects, e.g.
-when the object is as big as zspage or nearly as big a zspage.
-For such objects zsmalloc has a so called huge class - every object
-which belongs to huge class consumes the entire zspage (which
-consists of a physical page). On x86_64, PAGE_SHIFT 12 box, the
-first non-huge class size is 3264, so starting down from size 3264,
-objects can share page(-s) and thus minimize memory wastage.
+On Tuesday, February 6, 2018 11:37:54 PM CET Andy Shevchenko wrote:
+> Yeah, that's fixed in the branch.
+> 
+> P.S. Apologies for top-posting, wrote from phone in order to not waste time
+> 
+> On Tuesday, February 6, 2018, <Mario.Limonciello@dell.com> wrote:
+> 
+> > > -----Original Message-----
+> > > From: platform-driver-x86-owner@vger.kernel.org [mailto:
+> > platform-driver-x86-
+> > > owner@vger.kernel.org] On Behalf Of Andy Shevchenko
+> > > Sent: Monday, February 5, 2018 10:18 AM
+> > > To: Darren Hart <dvhart@infradead.org>
+> > > Cc: platform-driver-x86@vger.kernel.org; AceLan Kao
+> > > <acelan.kao@canonical.com>; linux-kernel@vger.kernel.org;
+> > > pali.rohar@gmail.com; Limonciello, Mario <Mario_Limonciello@Dell.com>;
+> > Rafael
+> > > Wysocki <rjw@rjwysocki.net>
+> > > Subject: Re: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure
+> > ACPI driver
+> > >
+> > > On Wed, 2018-01-31 at 13:37 -0800, Darren Hart wrote:
+> > > > On Wed, Jan 31, 2018 at 08:26:14PM +0200, Andy Shevchenko wrote:
+> > > > > Remove code duplication by converting driver to pure ACPI one.
+> > > >
+> > >
+> > > I have fixed couple issues, but...
+> > >
+> > > > +Rafael
+> > > >
+> > > > I don't see any reason *not* to do this, it seems the acpi driver
+> > > > model provides
+> > > > some of the boilerplate stuff we were doing manually before as a
+> > > > platform
+> > > > device. I'm scratching my head wondering why we did this as a
+> > > > platform-driver in
+> > > > the first place now...
 
-ZRAM, however, has its own statically defined watermark for huge
-objects - "3 * PAGE_SIZE / 4 = 3072", and forcibly stores every
-object larger than this watermark (3072) as a PAGE_SIZE object,
-in other words, to a huge class, while zsmalloc can keep some of
-those objects in non-huge classes. This results in increased
-memory consumption.
+It looks like I have overlooked this.
 
-zsmalloc knows better if the object is huge or not. Introduce
-zs_huge_object() function which tells if the given object can be
-stored in one of non-huge classes or not. This will let us to drop
-ZRAM's huge object watermark and fully rely on zsmalloc when we
-decide if the object is huge.
+Generally speaking, binding drivers to ACPI device objects is a bad idea,
+because it is sort of what binding drivers to struct device_node in OF would
+be.  It was an unfortunate design choice for struct acpi_device to be based
+on struct device in the first place, but undoing it is not worth the effort
+and pain.
 
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
----
- include/linux/zsmalloc.h |  2 ++
- mm/zsmalloc.c            | 17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
+In some instances (PCI, PNP, I2C, SPI etc) there is a device object to bind a
+driver to already and the corresponding struct acpi_device is the "companion"
+of it.  In those cases binding a driver to the struct acpi_device itself
+clearly doesn't make sense.
 
-diff --git a/include/linux/zsmalloc.h b/include/linux/zsmalloc.h
-index 57a8e98f2708..9a1baf673cc1 100644
---- a/include/linux/zsmalloc.h
-+++ b/include/linux/zsmalloc.h
-@@ -47,6 +47,8 @@ void zs_destroy_pool(struct zs_pool *pool);
- unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t flags);
- void zs_free(struct zs_pool *pool, unsigned long obj);
- 
-+bool zs_huge_object(size_t sz);
-+
- void *zs_map_object(struct zs_pool *pool, unsigned long handle,
- 			enum zs_mapmode mm);
- void zs_unmap_object(struct zs_pool *pool, unsigned long handle);
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index c3013505c305..b3e295a806be 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -192,6 +192,7 @@ static struct vfsmount *zsmalloc_mnt;
-  * (see: fix_fullness_group())
-  */
- static const int fullness_threshold_frac = 4;
-+static size_t zs_huge_class_size;
- 
- struct size_class {
- 	spinlock_t lock;
-@@ -1417,6 +1418,19 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
- }
- EXPORT_SYMBOL_GPL(zs_unmap_object);
- 
-+/*
-+ * Check if the object's size falls into huge_class area. We must take
-+ * ZS_HANDLE_SIZE into account and test the actual size we are going to
-+ * use up. zs_malloc() unconditionally adds handle size before it performs
-+ * size_class lookup, so we may endup in a huge class yet zs_huge_object()
-+ * returned 'false'.
-+ */
-+bool zs_huge_object(size_t sz)
-+{
-+	return sz + ZS_HANDLE_SIZE >= zs_huge_class_size;
-+}
-+EXPORT_SYMBOL_GPL(zs_huge_object);
-+
- static unsigned long obj_malloc(struct size_class *class,
- 				struct zspage *zspage, unsigned long handle)
- {
-@@ -2404,6 +2418,9 @@ struct zs_pool *zs_create_pool(const char *name)
- 			INIT_LIST_HEAD(&class->fullness_list[fullness]);
- 
- 		prev_class = class;
-+		if (pages_per_zspage == 1 && objs_per_zspage == 1
-+				&& !zs_huge_class_size)
-+			zs_huge_class_size = size;
- 	}
- 
- 	/* debug only, don't abort if it fails */
--- 
-2.16.1
+In the cases like the $subject one it is less clear, but for symmetry and
+general confusion avoidance it is better to have a struct device representing
+the "physical" thing *in* *addition* to the struct acpi_device and use the
+latter as the "companion" of it.  That's why we have the platform device in
+this particular case.
+
+Please drop this patch, it doesn't go in the right direction IMO.
+
+Thanks,
+Rafael
