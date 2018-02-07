@@ -1,108 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753484AbeBGIm7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:42:59 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:39435 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753066AbeBGIm6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:42:58 -0500
-Date: Wed, 7 Feb 2018 09:42:54 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
-Message-ID: <20180207084254.GI2269@hirez.programming.kicks-ass.net>
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
- <20180202171708.GN2269@hirez.programming.kicks-ass.net>
- <93db4b69-5ec6-732f-558e-5e64d9ba0cf9@oracle.com>
- <20180205121947.GW2269@hirez.programming.kicks-ass.net>
- <930364e4-bbfe-8c8f-d095-0dd4256a5104@oracle.com>
- <20180206091239.GA2269@hirez.programming.kicks-ass.net>
- <97500234-ebbb-4404-d4de-ab10d3ec79e1@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97500234-ebbb-4404-d4de-ab10d3ec79e1@oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753539AbeBGInO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:43:14 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37758 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753066AbeBGInM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 03:43:12 -0500
+Message-ID: <1517992986.2526.13.camel@redhat.com>
+Subject: Re: WARNING: proc registration bug in clusterip_tg_check
+From: Paolo Abeni <pabeni@redhat.com>
+To: Cong Wang <xiyou.wangcong@gmail.com>,
+        syzbot <syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com>
+Cc: coreteam@netfilter.org, David Miller <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Date: Wed, 07 Feb 2018 09:43:06 +0100
+In-Reply-To: <CAM_iQpVdGUjGr1KdVb6AJ7m4OnKLXHpwiorr_T=TKwCskrZKsA@mail.gmail.com>
+References: <089e082d13a0cf25ed05648bf8b3@google.com>
+         <CAM_iQpVdGUjGr1KdVb6AJ7m4OnKLXHpwiorr_T=TKwCskrZKsA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 04:30:03PM -0800, Subhra Mazumdar wrote:
+On Tue, 2018-02-06 at 22:42 -0800, Cong Wang wrote:
+> On Tue, Feb 6, 2018 at 6:27 AM, syzbot
+> <syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com> wrote:
+> > Hello,
+> > 
+> > syzbot hit the following crash on net-next commit
+> > 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
+> > Merge tag 'usercopy-v4.16-rc1' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+> > 
+> > So far this crash happened 5 times on net-next, upstream.
+> > C reproducer is attached.
+> > syzkaller reproducer is attached.
+> > Raw console output is attached.
+> > compiler: gcc (GCC) 7.1.1 20170620
+> > .config is attached.
+> > 
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com
+> > It will help syzbot understand when the bug is fixed. See footer for
+> > details.
+> > If you forward the report, please keep this part and the footer.
+> > 
+> > x_tables: ip_tables: osf match: only valid for protocol 6
+> > x_tables: ip_tables: osf match: only valid for protocol 6
+> > x_tables: ip_tables: osf match: only valid for protocol 6
+> > ------------[ cut here ]------------
+> > proc_dir_entry 'ipt_CLUSTERIP/172.20.0.170' already registered
+> > WARNING: CPU: 1 PID: 4152 at fs/proc/generic.c:330 proc_register+0x2a4/0x370
+> > fs/proc/generic.c:329
+> > Kernel panic - not syncing: panic_on_warn set ...
+> > 
+> > CPU: 1 PID: 4152 Comm: syzkaller851476 Not tainted 4.15.0+ #221
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:17 [inline]
+> >  dump_stack+0x194/0x257 lib/dump_stack.c:53
+> >  panic+0x1e4/0x41c kernel/panic.c:183
+> >  __warn+0x1dc/0x200 kernel/panic.c:547
+> >  report_bug+0x211/0x2d0 lib/bug.c:184
+> >  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+> >  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+> >  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+> >  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+> >  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1097
+> > RIP: 0010:proc_register+0x2a4/0x370 fs/proc/generic.c:329
+> > RSP: 0018:ffff8801cbd6ee20 EFLAGS: 00010286
+> > RAX: dffffc0000000008 RBX: ffff8801d2181038 RCX: ffffffff815a57ae
+> > RDX: 0000000000000000 RSI: 1ffff100397add74 RDI: 1ffff100397add49
+> > RBP: ffff8801cbd6ee70 R08: 1ffff100397add0b R09: 0000000000000000
+> > R10: ffff8801cbd6ecd8 R11: 0000000000000000 R12: ffff8801b2bb1cc0
+> > R13: dffffc0000000000 R14: ffff8801b0d8dbc8 R15: ffff8801b2bb1d81
+> >  proc_create_data+0xf8/0x180 fs/proc/generic.c:494
+> >  clusterip_config_init net/ipv4/netfilter/ipt_CLUSTERIP.c:250 [inline]
+> 
+> I think there is probably a race condition between clusterip_config_entry_put()
+> and clusterip_config_init(), after we release the spinlock, a new proc
+> with the same IP could be created therefore triggers this warning....
+> 
+> I am not sure if it is enough to just move the proc_remove() under
+> spinlock...
 
-> I meant the SMT balance patch. That does comparison with only one other
-> random core and takes the decision in O(1). Any potential scan of all cores
-> or cpus is O(n) and doesn't scale and will only get worse in future. That
-> applies to both select_idle_core() and select_idle_cpu().
+I *think* we should change the order on proc fs entry creation, 
+because clusterip_config_init() can race with itself,
+clusterip_config_init() returns NULL if the clusterip_config_init has
+no pte, and currently such entry is inserted into the list with NULL
+pte and the list lock itself is released before creating the PTE.
 
-We only do the full scan if we think to know there is indeed an idle
-core to be had, and if there are idle cores the machine isn't terribly
-busy.
+I'll try to test something the following:
+---
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index 3a84a60f6b39..d8807c44cc61 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -230,17 +230,6 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+        refcount_set(&c->refcount, 1);
+        refcount_set(&c->entries, 1);
+ 
+-       spin_lock_bh(&cn->lock);
+-       if (__clusterip_config_find(net, ip)) {
+-               spin_unlock_bh(&cn->lock);
+-               kfree(c);
+-
+-               return ERR_PTR(-EBUSY);
+-       }
+-
+-       list_add_rcu(&c->list, &cn->configs);
+-       spin_unlock_bh(&cn->lock);
+-
+ #ifdef CONFIG_PROC_FS
+        {
+                char buffer[16];
+@@ -257,6 +246,18 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+        }
+ #endif
+ 
++       spin_lock_bh(&cn->lock);
++       if (__clusterip_config_find(net, ip)) {
++               spin_unlock_bh(&cn->lock);
++               kfree(c);
++
++               proc_remove(c->pde);
++               return ERR_PTR(-EBUSY);
++       }
++
++       list_add_rcu(&c->list, &cn->configs);
++       spin_unlock_bh(&cn->lock);
++
+        c->notifier.notifier_call = clusterip_netdev_event;
+        err = register_netdevice_notifier(&c->notifier);
+        if (!err)
+---
 
-If there are no idle cores, we do not in fact scan everything. We limit
-the amount of scanning based on the average idle time with a minimum of
-4.
+Cheers,
 
-(Except when you switch off things like SIS_PROP, then you scan
-unconditionally and reduce tail latency at the cost of throughput --
-like said, some people want this).
-
-O(1) sounds nice, but it has horrible worst case latencies.
-
-And like I said, I don't see how a rotor is particularly more random
-than the previous cpu the task you happen to be waking ran on.
-
-> Is there any reason this randomized approach is not acceptable even if
-> benchmarks show improvement? Are there other benchmarks I should try?
-
-Looking at just one other core has a fairly high chance of not finding
-idle. I really cannot remember all the benchmarks, but Mike did
-something a little less random but still O(1) a few years back and that
-crashed and burned.
-
-> Also your suggestion to keep the SMT utilization but still do a traversal of
-> cores
-> in select_idle_core() while remembering the least loaded core will still
-> have
-> the problem of potentially traversing all cores. I can compare this with a
-> core
-> level only SMT balancing, is that useful to decide? I will also test on
-> SPARC
-> machines with higher degree of SMT.
-
-Please learn to use your email client, that's near unreadable for
-whitespace damage, time is really too precious to try and untangle crap
-like that.
-
-> You had also mentioned to do it for only SMT >2, not sure I understand why
-> as even for SMT=2 (intel) benchmarks show improvement. This clearly shows
-> the scalability problem.
-
-For SMT2 you don't need the occupation counter with atomic crud, a
-simple !atomic core-idle works just fine. And your 'patch' had soo many
-moving parts it was too hard to say which aspect changed what.
-
-hackbench really isn't _that_ interesting a benchmark and its fairly
-easy to make it go faster, but doing so typically wrecks something else.
-
-There's a whole array of netperf benchmarks which you have to run at
-different utilization levels, there's the sysbench oltp stuff, which you
-can run on MariaDB and PostgreSQL, again at different utilization levels
-(both databases behave quite differently). There's ebizzy, tbench,
-dbench and others.
-
-There's also NUMA stuff, like NAS benchmarks and specJBB nonsense.
-
-There's the facebook schbench, which is a bit finnicky to set up.
-
-And I'm sure I'm forgetting half, look at the patches and regression
-reports for more clues, that's what Google is for. You could have
-figured all that out yourself, much of these are listed in the
-changelogs and if you'd bothered to find lkml regression reports you
-could find more.
+Paolo
