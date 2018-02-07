@@ -1,97 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932260AbeBGBRy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:17:54 -0500
-Received: from regular1.263xmail.com ([211.150.99.134]:49508 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754271AbeBGBRx (ORCPT
+        id S1754293AbeBGBWy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:22:54 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:40171 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754189AbeBGBWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:17:53 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: wxt@rock-chips.com
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: wxt@rock-chips.com
-X-UNIQUE-TAG: <5ac43ba71a883bd676092d9339fe67fb>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH v3 0/2] phy: rockchip-emmc: fixes emmc-phy power on failed
- with rk3399 SoCs
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Caesar Wang <wxt@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1515638427-15117-1-git-send-email-wxt@rock-chips.com>
-From: Caesar Wang <wxt@rock-chips.com>
-Message-ID: <e67da623-d6fe-92d9-e6b3-79b8290405c9@rock-chips.com>
-Date: Wed, 7 Feb 2018 09:17:44 +0800
+        Tue, 6 Feb 2018 20:22:52 -0500
+Subject: Re: [PATCH v8 1/7] v4l2-dv-timings: add v4l2_hdmi_colorimetry()
+To: Tim Harvey <tharvey@gateworks.com>, linux-media@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+ <1517948874-21681-2-git-send-email-tharvey@gateworks.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c1dc5de9-e81d-b9bd-b587-1a94de96f97c@infradead.org>
+Date: Tue, 6 Feb 2018 17:22:40 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <1515638427-15117-1-git-send-email-wxt@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517948874-21681-2-git-send-email-tharvey@gateworks.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kishon,
+On 02/06/2018 12:27 PM, Tim Harvey wrote:
+> From: Hans Verkuil <hverkuil@xs4all.nl>
+> 
+> Add the v4l2_hdmi_colorimetry() function so we have a single function
+> that determines the colorspace, YCbCr encoding, quantization range and
+> transfer function from the InfoFrame data.
+> 
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-dv-timings.c | 141 ++++++++++++++++++++++++++++++
+>  include/media/v4l2-dv-timings.h           |  21 +++++
+>  2 files changed, 162 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-dv-timings.c b/drivers/media/v4l2-core/v4l2-dv-timings.c
+> index 930f9c5..0182d3d 100644
+> --- a/drivers/media/v4l2-core/v4l2-dv-timings.c
+> +++ b/drivers/media/v4l2-core/v4l2-dv-timings.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/v4l2-dv-timings.h>
+>  #include <media/v4l2-dv-timings.h>
+>  #include <linux/math64.h>
+> +#include <linux/hdmi.h>
+>  
+>  MODULE_AUTHOR("Hans Verkuil");
+>  MODULE_DESCRIPTION("V4L2 DV Timings Helper Functions");
+> @@ -814,3 +815,143 @@ struct v4l2_fract v4l2_calc_aspect_ratio(u8 hor_landscape, u8 vert_portrait)
+>  	return aspect;
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_calc_aspect_ratio);
+> +
+> +/** v4l2_hdmi_rx_colorimetry - determine HDMI colorimetry information
+> + *	based on various InfoFrames.
+> + * @avi - the AVI InfoFrame
+> + * @hdmi - the HDMI Vendor InfoFrame, may be NULL
+> + * @height - the frame height
 
-Can you help merge this in your  or next tree?  I'm hoping that we can 
-land this somewhere.:-)
+kernel-doc format for function parameters is like:
+
+ * @avi: the AVI InfoFrame
+
+etc.
+
+> + *
+> + * Determines the HDMI colorimetry information, i.e. how the HDMI
+> + * pixel color data should be interpreted.
+> + *
+> + * Note that some of the newer features (DCI-P3, HDR) are not yet
+> + * implemented: the hdmi.h header needs to be updated to the HDMI 2.0
+> + * and CTA-861-G standards.
+> + */
+> +struct v4l2_hdmi_colorimetry
+> +v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
+> +			 const struct hdmi_vendor_infoframe *hdmi,
+> +			 unsigned int height)
+> +{
 
 
-Thanks,
--Caesar
-在 2018年01月11日 10:40, Caesar Wang 写道:
-> Hi Kishon,
->
-> Since the Shawn isn't available, I take over this series patches for now.
->
-> As the original bug had tracked on https://issuetracker.google.com/71561742.
-> In some cases, the mmc phy power on failed during booting up.
-> The log as below:
-> ...
-> [   2.375333] rockchip_emmc_phy_power: caldone timeout.
-> [    2.377815] phy phy-ff770000.syscon:phy@f780.4: phy poweron failed --> -110
-> ...
-> [    2.489295] mmc0: mmc_select_hs400es failed, error -110
-> [    2.489302] mmc0: error -110 whilst initialising MMC card
-> ..
->
-> The actual emulate, the wait 5us for calpad busy trimming, that's no enough.
-> We need give the enough margin for it.
->
-> Verified on url =
->          https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4
-> This series patches can apply and bring up with kernel-next on rk3399 chromebook.
->
-> -Caesar
->
->
-> Changes in v3:
-> - As Doug commented on both upstream and gerrit.
->    Change "5, 50" to "0, 50", and the message of print.
-> - As Doug commented on https://patchwork.kernel.org/patch/10154797,
->    Change "1, 50" to "0, 50".
->
-> Changes in v2:
-> - print the return valut with regmap_read_poll_timeout failing.
-> - As Brian commented on https://patchwork.kernel.org/patch/10139891/,
->    changed the note and added to print error value with
->    regmap_read_poll_timeout API.
->
-> Shawn Lin (2):
->    phy: rockchip-emmc: retry calpad busy trimming
->    phy: rockchip-emmc: use regmap_read_poll_timeout to poll dllrdy
->
->   drivers/phy/rockchip/phy-rockchip-emmc.c | 60 +++++++++++++++-----------------
->   1 file changed, 28 insertions(+), 32 deletions(-)
->
+thanks,
+-- 
+~Randy
