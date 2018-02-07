@@ -1,60 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932110AbeBGOkb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 09:40:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754291AbeBGOka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 09:40:30 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B37C21789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 7 Feb 2018 09:40:17 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Zamir SUN <sztsian@gmail.com>
-Cc: Vladislav Valtchev <vladislav.valtchev@gmail.com>,
-        johannes.berg@intel.com, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, zsun@redhat.com
-Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
-Message-ID: <20180207094017.5a130e6a@gandalf.local.home>
-In-Reply-To: <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
-References: <20180204032014.6962-1-sztsian@gmail.com>
-        <20180204032014.6962-2-sztsian@gmail.com>
-        <20180206181807.2d35393e@gandalf.local.home>
-        <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1754231AbeBGOrR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 09:47:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51768 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753983AbeBGOrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 09:47:16 -0500
+Subject: Re: [PATCH v2 02/20] arm64: capabilities: Move errata work around
+ check on boot CPU
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-3-suzuki.poulose@arm.com>
+ <20180207103737.GS5862@e103592.cambridge.arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <9e21e22a-b41c-ced0-48aa-6738f3b062d9@arm.com>
+Date: Wed, 7 Feb 2018 14:47:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180207103737.GS5862@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Feb 2018 22:01:46 +0800
-Zamir SUN <sztsian@gmail.com> wrote:
-
-
-> Thanks for the heads-up! I did not see that before.
+On 07/02/18 10:37, Dave Martin wrote:
+> On Wed, Jan 31, 2018 at 06:27:49PM +0000, Suzuki K Poulose wrote:
+>> We trigger CPU errata work around check on the boot CPU from
+>> smp_prepare_boot_cpu() to make sure that we run the checks only
+>> after the CPU feature infrastructure is initialised. While this
+>> is correct, we can also do this from init_cpu_features() which
+>> initilisation of the infrastructure, and is called only on the
 > 
-> While just a note for this, in Fedora 27:
+> Typo or missing words here?
 > 
-> $ if command -v swig; then echo 1; else echo 0; fi
-> /usr/bin/swig
-> 1
+> Should this be "which initialises the infrastructure" or "which is
+> called to initialise the infrastructure"?
 > 
-> Actually this test has the same problem as of `which swig` - When swig
-> exists, the var SWIG_DEFINED will not be 1 (as shown above).
+> With that (or any suitable rewording):
+
+Correct. Will fix it.
+
 > 
-> I see Vladislav is already on this thread. I hope this can be fixed
-> before merging the patch set.
->
+> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
 
-After doing some more testing, I'm going to push out the changes today.
-Would you be able to add patches on top of the changes? We are doing a
-restructuring of the directory such that it can grow more.
-
-I'll be backporting these fixes to 2.6 and 2.7 as well.
-
-Thanks!
-
--- Steve
+Thanks
+Suzuki
