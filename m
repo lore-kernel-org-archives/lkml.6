@@ -1,182 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753819AbeBGLAz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:00:55 -0500
-Received: from mga09.intel.com ([134.134.136.24]:22347 "EHLO mga09.intel.com"
+        id S1753733AbeBGLDf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:03:35 -0500
+Received: from mout.gmx.net ([212.227.17.22]:60506 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753470AbeBGLAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:00:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
-   d="scan'208";a="202004403"
-Message-ID: <1518001244.23889.32.camel@linux.intel.com>
-Subject: Re: [PATCH 2/3] x86/tme: Detect if TME and MKTME is activated by
- BIOS
-From: Kai Huang <kai.huang@linux.intel.com>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
-Date: Thu, 08 Feb 2018 00:00:44 +1300
-In-Reply-To: <20180207081627.eomxuyqw74eew756@node.shutemov.name>
-References: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
-         <20180131091509.26531-3-kirill.shutemov@linux.intel.com>
-         <1517978050.23889.23.camel@linux.intel.com>
-         <20180207081627.eomxuyqw74eew756@node.shutemov.name>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+        id S1753476AbeBGLDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:03:33 -0500
+Message-ID: <1518001397.29698.6.camel@gmx.de>
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+From: Mike Galbraith <efault@gmx.de>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
+        SERENA ZIVIANI <169364@studenti.unimore.it>,
+        Serena Ziviani <ziviani.serena@gmail.com>,
+        Holger =?ISO-8859-1?Q?Hoffst=E4tte?=
+        <holger@applied-asynchrony.com>
+Date: Wed, 07 Feb 2018 12:03:17 +0100
+In-Reply-To: <5584030F-8F4E-4C98-84A5-79873A1BF775@linaro.org>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+         <20180205190510.5499-2-paolo.valente@linaro.org>
+         <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+         <1517903761.9843.12.camel@gmx.de>
+         <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+         <1517918234.25841.31.camel@gmx.de>
+         <77124223e6116350a5184a5199850304@natalenko.name>
+         <1517924768.25841.32.camel@gmx.de>
+         <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
+         <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
+         <82ffc96aacc3945861cbb708df346338@natalenko.name>
+         <E52CCDEA-279A-40D8-AD9B-F4D1AF351BF1@linaro.org>
+         <1517995431.25619.5.camel@gmx.de>
+         <FBF6DCBB-B0F5-446B-8FD1-106E2538A9C1@linaro.org>
+         <1517998516.6606.1.camel@gmx.de>
+         <5584030F-8F4E-4C98-84A5-79873A1BF775@linaro.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:XQzQx+7iEiGwZkuoEo3hnypBuiGqH9RV/ZTdRlUYeyT9YmYXMQ3
+ ypMawGVRV4pf1G/kvYm88c2Y1T2rZCweuxTZkEQkubrLAQNBbhe8bVKrmM75m/tuNuzi0MC
+ jlYUoal2vCnpR5Gr6XyvsZ6VWOlfN6PXKLnltep3ZMiQJCrka26kxTdOiHkgzAfmR5WhLHe
+ a4T2v70lrHDURcqjMzM0Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:1UjZHybs+0U=:/25OraoP8ccHGlhysE9miJ
+ EfRDcbT162/+CkDGeAuJdwyqRj/E81BXzIBqjts/ShtQW2gg50qdKhbdbSdKUddYp2ztI5Qzz
+ 6RQhZ6ca2Uwp2FETgRiqacsfKoVEGWZS/GpujfRjCoSBjBP/ZbULHp84qzGqAkML47lrBSKLW
+ wYPbEgJi4FY1mQBRhwlsK62y8160HjugZM4HZSA6k03WUri0ETVp97hmO72xmNUHYorL5/gSD
+ cdM2U9O1fZ0RN9MIgB8/kS73ujmV9BySQsA1rGDRRVlMpFUnkw/UFAfZSc16lREGpU3t0ffuQ
+ FEM2ukdxBP4M5YyfZdxviNCAeoj/EEbKxxboXE2qpCAkya2fmh25tYuzyaby5+J7bUBuc2Kby
+ qp0/QSaCVllb0Y3yN8T2ElXOvdoxkM8omLTMxQiMRbSUHmkVhokd1MoBVUmBmAs90oAOs5iOA
+ L6stlVpE6fnXDI+flAdoOfoD6G61mlqA8E9CYvHRBWgvAB0Be8AWV2yByIxb/Epg6h559R4bH
+ zSfoFFxVS0n79PIAM8OE52bkKA9GiKFxohcsGuAm8YI8DJ/gG0Yrs2fTUSKtmpTV+B2vf8Sy1
+ KoybGxgOGGX8ZVy8xYFgsF+c/UbW9SOsT2r+MiyO/uSL/PbUcCXG3Z8TNqLYc7GBNgY9AWwt+
+ jmgSg/5UmPdoeOJlDlaapjA1ankmzBLYbVtkF2/tLjZ02Or/EUTyVx/gYSBxfaCwd9TEFQFHn
+ UUj+3I9B4bt33+nKRdhS+QkQbGU173Mpa+/YetGhl1uedO49XjGJADtNG1KjPZ8hbHuCdZcfz
+ op/JXgtD6IJdUIFvHl/tNaPUf1C59T6IZSzudBXQvxZWXK9Ihk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-07 at 11:16 +0300, Kirill A. Shutemov wrote:
-> On Wed, Feb 07, 2018 at 05:34:10PM +1300, Kai Huang wrote:
-> > On Wed, 2018-01-31 at 12:15 +0300, Kirill A. Shutemov wrote:
-> > > IA32_TME_ACTIVATE MSR (0x982) can be used to check if BIOS has
-> > > enabled
-> > > TME and MKTME. It includes which encryption policy/algorithm is
-> > > selected
-> > > for TME or available for MKTME. For MKTME, the MSR also
-> > > enumerates
-> > > how
-> > > many KeyIDs are available.
-> > > 
-> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.co
-> > > m>
-> > > ---
-> > >  arch/x86/kernel/cpu/intel.c | 83
-> > > +++++++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 83 insertions(+)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/intel.c
-> > > b/arch/x86/kernel/cpu/intel.c
-> > > index 6936d14d4c77..5b95fa484837 100644
-> > > --- a/arch/x86/kernel/cpu/intel.c
-> > > +++ b/arch/x86/kernel/cpu/intel.c
-> > > @@ -517,6 +517,86 @@ static void detect_vmx_virtcap(struct
-> > > cpuinfo_x86 *c)
-> > >  	}
-> > >  }
-> > >  
-> > > +#define MSR_IA32_TME_ACTIVATE		0x982
-> > 
-> > Should this MSR go into msr-index.h?
+On Wed, 2018-02-07 at 11:27 +0100, Paolo Valente wrote:
 > 
-> No. Comment from msr-index.h:
-> 
->  * Do not add new entries to this file unless the definitions are
-> shared
->  * between multiple compilation units.
-> 
-> > > +
-> > > +#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
-> > > +#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
-> > > +
-> > > +#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	
-> > > /* Bits 7:4 */
-> > > +#define TME_ACTIVATE_POLICY_AES_XTS	0
-> > > +
-> > > +#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	
-> > > /
-> > > * Bits 35:32 */
-> > > +
-> > > +#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	
-> > > /* Bits 63:48 */
-> > > +#define TME_ACTIVATE_CRYPTO_AES_XTS	1
-> > > +
-> > > +#define MKTME_ENABLED		0
-> > > +#define MKTME_DISABLED		1
-> > > +#define MKTME_UNINITIALIZED	2
-> > > +static int mktme_status = MKTME_UNINITIALIZED;
-> > > +
-> > > +static void detect_tme(struct cpuinfo_x86 *c)
-> > > +{
-> > > +	u64 tme_activate, tme_policy, tme_crypto_algs;
-> > > +	int keyid_bits = 0, nr_keyids = 0;
-> > > +	static u64 tme_activate_cpu0 = 0;
-> > > +
-> > > +	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
-> > > +
-> > > +	if (mktme_status != MKTME_UNINITIALIZED) {
-> > > +		/* Broken BIOS? */
-> > > +		if (tme_activate != tme_activate_cpu0) {
-> > > +			pr_err_once("TME: configuation is
-> > > inconsistent between CPUs\n");
-> > > +			mktme_status = MKTME_DISABLED;
-> > > +		}
-> > > +		goto out;
-> > 
-> > Why goto out here? If something goes wrong, I think it is pointless
-> > to
-> > read keyID bits staff? IMHO if something goes wrong, you should set
-> > mktme_status to disabled, and clear tme_activate_cpu0?
-> 
-> We still have to mask out keyid bits from x86_phys_bits if CPU has
-> TME
-> enabled. 
+> 2. Could you please turn that BUG_ON into:
+> if (!(rq->rq_flags & RQF_ELVPRIV))
+> 	return;
+> and see what happens?
 
-Reading spec again yes you are right.
+That seems to make it forgets how to make boom.
 
-> But yeah, as you pointed below, I need to check that it actually
-> locked and enabled.
-> 
-> > > +	}
-> > > +
-> > > +	tme_activate_cpu0 = tme_activate;
-> > > +
-> > > +	if (!TME_ACTIVATE_LOCKED(tme_activate) ||
-> > > !TME_ACTIVATE_ENABLED(tme_activate)) {
-> > > +		pr_info("TME: not enabled by BIOS\n");
-> > > +		mktme_status = MKTME_DISABLED;
-> > > +		goto out;
-> > 
-> > I think it is pointless to read keyID bits staff if TME is not even
-> > enabled.
-> > 
-> > > +	}
-> > > +
-> > > +	pr_info("TME: enabled by BIOS\n");
-> > > +
-> > > +	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
-> > > +	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS)
-> > > +		pr_warn("TME: Unknown policy is active:
-> > > %#llx\n",
-> > > tme_policy);
-> > > +
-> > > +	tme_crypto_algs =
-> > > TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
-> > > +	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS)) {
-> > > +		pr_err("MKTME: No known encryption algorithm is
-> > > supported: %#llx\n",
-> > > +				tme_crypto_algs);
-> > > +		mktme_status = MKTME_DISABLED;
-> > > +	}
-> > 
-> > To me it is a little bit confusing about the naming. tme_policy is
-> > the
-> > crypto_alg used by TME keyID (0), and tme_crypto_algs is bitmap of
-> > supported crypto_algs for MK-TME. Probably a better naming is
-> > needed?
-> > And the naming of TME_ACTIVATE_POLICY(x),
-> > TME_ACTIVATE_CRYPTO_ALGS(x)
-> > above as well?
-> 
-> Suggestions?
-
-I would go with 'tme_cryto_alg', and 'mktme_supported_crypto_algs' for
-the two variables, and TME_CRYPTO_ALG(x), TME_CRYPTO_ALG_AES_XTS_128, 
-MKTME_SUPPORTED_CRYPTO_ALGS(x), and MKTME_CRYPTO_ALG_AES_XTS_128 for
-the macros, but it's up to you and other guys.
-
-Btw I do think AES_XTS should be AES_XTS_128, even you go with current
-names, as AES cipher can also take 256-bit key.
-
-Thanks,
--Kai
-> 
+	-Mike
