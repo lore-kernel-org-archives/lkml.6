@@ -1,67 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754429AbeBGOsr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 09:48:47 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39494 "EHLO mx1.redhat.com"
+        id S932222AbeBGOuN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 09:50:13 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53498 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754206AbeBGOso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 09:48:44 -0500
+        id S1754065AbeBGOsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 09:48:47 -0500
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 02/10] perf tools: Free root_dir in machine__init error path
-Date: Wed,  7 Feb 2018 15:48:30 +0100
-Message-Id: <20180207144838.16823-3-jolsa@kernel.org>
+Subject: [PATCH 04/10] perf tools: Don't search for active kernel start in __machine__create_kernel_maps
+Date: Wed,  7 Feb 2018 15:48:32 +0100
+Message-Id: <20180207144838.16823-5-jolsa@kernel.org>
 In-Reply-To: <20180207144838.16823-1-jolsa@kernel.org>
 References: <20180207144838.16823-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Freeing root_dir in machine__init error path.
+We should not search for kernel start address in
+__machine__create_kernel_maps function, because it's being
+used in 'report' code path, where we are interested in kernel
+MMAP data address instead of in current kernel address
 
-Link: http://lkml.kernel.org/n/tip-ng92slsanexqw7h1d6sadnj7@git.kernel.org
+The __machine__create_kernel_maps serves purely for creating
+the machines kernel maps and setting up the kmap group. The
+report code path then sets the address based on the data from
+kernel MMAP event in machine__set_kernel_mmap function.
+
+The kallsyms search address logic is used for test code, that
+calls machine__create_kernel_maps to get current maps and calls
+machine__get_running_kernel_start to get kernel starting address.
+
+Also making __machine__create_kernel_maps static, because there's
+no external user.
+
+Link: http://lkml.kernel.org/n/tip-37lmdjzh8dwq03golnk7hgkd@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/machine.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ tools/perf/util/machine.c | 6 ++----
+ tools/perf/util/machine.h | 1 -
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index b05a67464c03..c976384f9022 100644
+index b1f1961b13f4..da85666f3a02 100644
 --- a/tools/perf/util/machine.c
 +++ b/tools/perf/util/machine.c
-@@ -50,6 +50,8 @@ static void machine__threads_init(struct machine *machine)
- 
- int machine__init(struct machine *machine, const char *root_dir, pid_t pid)
- {
-+	int err = -ENOMEM;
-+
- 	memset(machine, 0, sizeof(*machine));
- 	map_groups__init(&machine->kmaps, machine);
- 	RB_CLEAR_NODE(&machine->rb_node);
-@@ -79,7 +81,7 @@ int machine__init(struct machine *machine, const char *root_dir, pid_t pid)
- 		char comm[64];
- 
- 		if (thread == NULL)
--			return -ENOMEM;
-+			goto out;
- 
- 		snprintf(comm, sizeof(comm), "[guest/%d]", pid);
- 		thread__set_comm(thread, comm, 0);
-@@ -87,7 +89,11 @@ int machine__init(struct machine *machine, const char *root_dir, pid_t pid)
- 	}
- 
- 	machine->current_tid = NULL;
-+	err = 0;
- 
-+out:
-+	if (err)
-+		zfree(&machine->root_dir);
+@@ -856,14 +856,12 @@ static int machine__get_running_kernel_start(struct machine *machine,
  	return 0;
  }
  
+-int __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
++static int
++__machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
+ {
+ 	int type;
+ 	u64 start = 0;
+ 
+-	if (machine__get_running_kernel_start(machine, NULL, &start))
+-		return -1;
+-
+ 	/* In case of renewal the kernel map, destroy previous one */
+ 	machine__destroy_kernel_maps(machine);
+ 
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index cb0a20f3a96b..50d587d34459 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -238,7 +238,6 @@ size_t machines__fprintf_dsos_buildid(struct machines *machines, FILE *fp,
+ 				     bool (skip)(struct dso *dso, int parm), int parm);
+ 
+ void machine__destroy_kernel_maps(struct machine *machine);
+-int __machine__create_kernel_maps(struct machine *machine, struct dso *kernel);
+ int machine__create_kernel_maps(struct machine *machine);
+ 
+ int machines__create_kernel_maps(struct machines *machines, pid_t pid);
 -- 
 2.13.6
