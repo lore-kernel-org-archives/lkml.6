@@ -1,237 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeBGV6k (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:58:40 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39513 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbeBGV6h (ORCPT
+        id S1752058AbeBGV7v (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 16:59:51 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59104 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750736AbeBGV7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:58:37 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        John Stultz <john.stultz@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Bhumika Goyal <bhumirks@gmail.com>, Inki Dae <inki.dae@samsung.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 2/2] drm: adv7511: Add support for i2c_new_secondary_device
-Date: Wed, 07 Feb 2018 23:59:02 +0200
-Message-ID: <506017617.snhEqs7y0U@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <22aa9d42-e7df-cbe7-4044-3b120cd242c3@ideasonboard.com>
-References: <1516625389-6362-1-git-send-email-kieran.bingham@ideasonboard.com> <1650729.pzuqXiNcLL@avalon> <22aa9d42-e7df-cbe7-4044-3b120cd242c3@ideasonboard.com>
+        Wed, 7 Feb 2018 16:59:49 -0500
+Date: Wed, 7 Feb 2018 23:59:46 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH v3 4/8] i2c: ov9650: use 64-bit arithmetic instead of
+ 32-bit
+Message-ID: <20180207215944.quwowjy52dclk7uc@valkosipuli.retiisi.org.uk>
+References: <cover.1517929336.git.gustavo@embeddedor.com>
+ <6f6fd607cf3428d6ab115f1deaa82c4963b170f1.1517929336.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f6fd607cf3428d6ab115f1deaa82c4963b170f1.1517929336.git.gustavo@embeddedor.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17Lwhpm020174
 
-Hi Kieran,
+Hi Gustavo,
 
-On Wednesday, 7 February 2018 17:14:09 EET Kieran Bingham wrote:
-> On 29/01/18 10:26, Laurent Pinchart wrote:
-> > On Monday, 22 January 2018 14:50:00 EET Kieran Bingham wrote:
-> >> The ADV7511 has four 256-byte maps that can be accessed via the main I²C
-> >> ports. Each map has it own I²C address and acts as a standard slave
-> >> device on the I²C bus.
-> >> 
-> >> Allow a device tree node to override the default addresses so that
-> >> address conflicts with other devices on the same bus may be resolved at
-> >> the board description level.
-> >> 
-> >> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> >> ---
-> >> 
-> >>  .../bindings/display/bridge/adi,adv7511.txt        | 10 +++++-
-> > 
-> > I don't mind personally, but device tree maintainers usually ask for DT
-> > bindings changes to be split to a separate patch.
-> > 
-> >>  drivers/gpu/drm/bridge/adv7511/adv7511.h           |  4 +++
-> >>  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 36 ++++++++++-----
-> >>  3 files changed, 37 insertions(+), 13 deletions(-)
-> >> 
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-> >> b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-> >> index 0047b1394c70..f6bb9f6d3f48 100644
-> >> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-> >> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-> >> 
-> >> @@ -70,6 +70,9 @@ Optional properties:
-> >>    rather than generate its own timings for HDMI output.
-> >>  
-> >>  - clocks: from common clock binding: reference to the CEC clock.
-> >>  - clock-names: from common clock binding: must be "cec".
-> >> 
-> >> +- reg-names : Names of maps with programmable addresses.
-> >> +	It can contain any map needing a non-default address.
-> >> +	Possible maps names are : "main", "edid", "cec", "packet"
-> > 
-> > Is the reg-names property (and the additional maps) mandatory or optional
-> > ? If mandatory you should also update the existing DT sources that use
-> > those bindings.
+On Tue, Feb 06, 2018 at 10:47:50AM -0600, Gustavo A. R. Silva wrote:
+> Add suffix ULL to constants 10000 and 1000000 in order to give the
+> compiler complete information about the proper arithmetic to use.
+> Notice that these constants are used in contexts that expect
+> expressions of type u64 (64 bits, unsigned).
 > 
-> They are currently optional. I do prefer it that way - but perhaps due to an
-> issue mentioned below we might need to make this driver mandatory ?
+> The following expressions:
 > 
-> > If optional you should define which I2C addresses will be used when
-> > the maps are not specified (and in that case I think we should go for
-> > the addresses listed as default in the datasheet, which correspond to the
-> > current driver implementation when the main address is 0x3d/0x7a).
+> (u64)(fi->interval.numerator * 10000)
+> (u64)(iv->interval.numerator * 10000)
+> fiv->interval.numerator * 1000000 / fiv->interval.denominator
 > 
-> The current addresses do not correspond to the datasheet, even when the
-> implementation main address is set to 0x3d.
-
-Don't they ? The driver currently uses the following (8-bit) I2C addresses:
-
-EDID:   main + 4  = 0x7e (0x3f)
-Packet: main - 10 = 0x70 (0x38)
-CEC:    main - 2  = 0x78 (0x3c)
-
-Those are the default addresses according to section 4.1 of the ADV7511W 
-programming guide (rev. B), and they match the ones you set in this patch.
-
-> Thus, in my opinion - they are currently 'wrong' - but perhaps changing them
-> is considered breakage too.
+> are currently being evaluated using 32-bit arithmetic.
 > 
-> A particular issue will arise here too - as on this device - when the device
-> is in low-power mode (after probe, before use) - the maps will respond on
-> their *hardware default* addresses (the ones implemented in this patch),
-> and thus consume that address on the I2C bus regardless of their settings
-> in the driver.
+> Notice that those casts to u64 for the first two expressions are only
+> effective after such expressions are evaluated using 32-bit arithmetic,
+> which leads to potential integer overflows. So based on those casts, it
+> seems that the original intention of the code is to actually use 64-bit
+> arithmetic instead of 32-bit.
+> 
+> Also, notice that once the suffix ULL is added to the constants, the
+> outer casts to u64 are no longer needed.
+> 
+> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
+> Fixes: 84a15ded76ec ("[media] V4L: Add driver for OV9650/52 image sensors")
+> Fixes: 79211c8ed19c ("remove abs64()")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+> Changes in v2:
+>  - Update subject and changelog to better reflect the proposed code changes.
+>  - Add suffix ULL to constants instead of casting variables.
+>  - Remove unnecessary casts to u64 as part of the code change.
+>  - Extend the same code change to other similar expressions.
+> 
+> Changes in v3:
+>  - None.
+> 
+>  drivers/media/i2c/ov9650.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
+> index e519f27..e716e98 100644
+> --- a/drivers/media/i2c/ov9650.c
+> +++ b/drivers/media/i2c/ov9650.c
+> @@ -1130,7 +1130,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
+>  	if (fi->interval.denominator == 0)
+>  		return -EINVAL;
+>  
+> -	req_int = (u64)(fi->interval.numerator * 10000) /
+> +	req_int = fi->interval.numerator * 10000ULL /
+>  		fi->interval.denominator;
 
-We've discussed this previously and I share you concern. Just to make sure I 
-remember correctly, did all the secondary maps reset to their default 
-addresses, or just the EDID map ?
+This has been addressed by your earlier patch "i2c: ov9650: fix potential integer overflow in
+__ov965x_set_frame_interval" I tweaked a little. It's not in media tree
+master yet.
 
-> > You should also update the definition of the reg property that currently
-> > just states
-> > 
-> > - reg: I2C slave address
-> > 
-> > And finally you might want to define the term "map" in this context.
-> > Here's a proposal (if we make all maps mandatory).
-> > 
-> > The ADV7511 internal registers are split into four pages exposed through
-> > different I2C addresses, creating four register maps. The I2C addresses of
-> > all four maps shall be specified by the reg and reg-names property.
-> > 
-> > - reg: I2C slave addresses, one per reg-names entry
-> > - reg-names: map names, shall be "main", "edid", "cec", "packet"
-> > 
-> >>  Required nodes:
-> >> @@ -88,7 +91,12 @@ Example
-> >> 
-> >>  	adv7511w: hdmi@39 {
-> >>  		compatible = "adi,adv7511w";
-> >> -		reg = <39>;
-> >> +		/*
-> >> +		 * The EDID page will be accessible on address 0x66 on the i2c
-> >> +		 * bus. All other maps continue to use their default addresses.
-> >> +		 */
-> >> +		reg = <0x39 0x66>;
-> >> +		reg-names = "main", "edid";
-> >>  		interrupt-parent = <&gpio3>;
-> >>  		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
-> >>  		clocks = <&cec_clock>;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(ov965x_intervals); i++) {
+> @@ -1139,7 +1139,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
+>  		if (mbus_fmt->width != iv->size.width ||
+>  		    mbus_fmt->height != iv->size.height)
+>  			continue;
+> -		err = abs((u64)(iv->interval.numerator * 10000) /
+> +		err = abs(iv->interval.numerator * 10000ULL /
 
-[snip]
+This and the chunk below won't work on e.g. 32-bit ARM. do_div(), please.
 
-> >> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> >> b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> >> index efa29db5fc2b..7ec33837752b 100644
-> >> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> >> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-
-[snip]
-
-> >> @@ -1153,24 +1151,35 @@ static int adv7511_probe(struct i2c_client *i2c,
-> >> const struct i2c_device_id *id)
-> >>  	if (ret)
-> >>  		goto uninit_regulators;
-> >> 
-> >> -	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR,
-> >> edid_i2c_addr);
-> >> -	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
-> >> -		     main_i2c_addr - 0xa);
-> >> -	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
-> >> -		     main_i2c_addr - 2);
-> >> -
-> >>  	adv7511_packet_disable(adv7511, 0xffff);
-> >> -	adv7511->i2c_edid = i2c_new_dummy(i2c->adapter, edid_i2c_addr >> 1);
-> >> +	adv7511->i2c_edid = i2c_new_secondary_device(i2c, "edid",
-> >> +					ADV7511_REG_EDID_I2C_ADDR_DEFAULT);
-> >>  	if (!adv7511->i2c_edid) {
-> >>  		ret = -ENOMEM;
-> > 
-> > I wonder if this is the right error code. Maybe -EINVAL ? In most cases
-> > errors will be caused by invalid addresses (out of memory and
-> > device_register() failures can happen too but should be less common).
-> 
-> It's arbitrary, as multiple error paths simply return NULL, but I think you
-> are right - the 'most common' fault here is likely to be an in use address.
-> 
-> -ENOMEM was chosen here to mirror the equivalent code returned from the
-> adv7604 driver.
-> 
-> Either way - -EINVAL does feel better at the moment. Although when mirrored
-> back to the ADV7604 that becomes a distinct change there.
-> 
-> I don't think that matters though - so I'll apply this fix to both patches.
-> 
-> > It would be nice if i2c_new_secondary_device() returned an ERR_PTR, but
-> > that's out of scope.
-> 
-> I was about to say - well I'll add this, but the reality is it might require
-> updating all users of i2c_new_device, and i2c_new_dummy. Updating
-> i2c_new_secondary_device() on it's own seems a bit pointless otherwise.
-> 
-> And that is definitely out of scope for the amount of time I currently have
-> :D
-> 
-> >>  		goto uninit_regulators;
-> >>  	}
-> >> 
-> >> +	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR,
-> >> +		     adv7511->i2c_edid->addr << 1);
-> >> +
-> >>  	ret = adv7511_init_cec_regmap(adv7511);
-> >>  	if (ret)
-> >>  		goto err_i2c_unregister_edid;
-> >> 
-> >> +	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
-> >> +		     adv7511->i2c_cec->addr << 1);
-> >> +
-> >> +	adv7511->i2c_packet = i2c_new_secondary_device(i2c, "packet",
-> >> +					ADV7511_REG_PACKET_I2C_ADDR_DEFAULT);
-> >> +	if (!adv7511->i2c_packet) {
-> >> +		ret = -ENOMEM;
-> >> +		goto err_unregister_cec;
-> >> +	}
-> >> +
-> >> +	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
-> >> +		     adv7511->i2c_packet->addr << 1);
-> >> +
-> >>  	INIT_WORK(&adv7511->hpd_work, adv7511_hpd_work);
-> >>  	
-> >>  	if (i2c->irq) {
-
-[snip]
+>  			    iv->interval.denominator - req_int);
+>  		if (err < min_err) {
+>  			fiv = iv;
+> @@ -1148,8 +1148,9 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
+>  	}
+>  	ov965x->fiv = fiv;
+>  
+> -	v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %u us\n",
+> -		 fiv->interval.numerator * 1000000 / fiv->interval.denominator);
+> +	v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %llu us\n",
+> +		 fiv->interval.numerator * 1000000ULL /
+> +		 fiv->interval.denominator);
+>  
+>  	return 0;
+>  }
 
 -- 
 Regards,
 
-Laurent Pinchart
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
