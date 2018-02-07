@@ -1,69 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754455AbeBGOsu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 09:48:50 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32892 "EHLO mx1.redhat.com"
+        id S932202AbeBGOtm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 09:49:42 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32904 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754206AbeBGOss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 09:48:48 -0500
+        id S1754457AbeBGOsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 09:48:51 -0500
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 05/10] perf tools: Generalize machine__set_kernel_mmap function
-Date: Wed,  7 Feb 2018 15:48:33 +0100
-Message-Id: <20180207144838.16823-6-jolsa@kernel.org>
+Subject: [PATCH 07/10] perf tools: Rename __map_groups__fixup_end to map_groups__fixup_end
+Date: Wed,  7 Feb 2018 15:48:35 +0100
+Message-Id: <20180207144838.16823-8-jolsa@kernel.org>
 In-Reply-To: <20180207144838.16823-1-jolsa@kernel.org>
 References: <20180207144838.16823-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So it could be called without event object, just with start
-and end values. It will be used in following patch.
+There's no need to keep the '__' prefix now when there's
+map_groups__fixup_end function gone.
 
-Link: http://lkml.kernel.org/n/tip-u4hu7m5fmwwsscy6ki70hhq6@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-xq9wpm97spnpaxfjhaz1a03n@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/machine.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ tools/perf/util/machine.c    | 2 +-
+ tools/perf/util/symbol-elf.c | 2 +-
+ tools/perf/util/symbol.c     | 2 +-
+ tools/perf/util/symbol.h     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index da85666f3a02..7563b750137d 100644
+index 49ebd451151a..a02242eb25a1 100644
 --- a/tools/perf/util/machine.c
 +++ b/tools/perf/util/machine.c
-@@ -1260,15 +1260,15 @@ int machine__create_kernel_maps(struct machine *machine)
- 	return 0;
+@@ -1005,7 +1005,7 @@ int __machine__load_kallsyms(struct machine *machine, const char *filename,
+ 		 * kernel, with modules between them, fixup the end of all
+ 		 * sections.
+ 		 */
+-		__map_groups__fixup_end(&machine->kmaps, type);
++		map_groups__fixup_end(&machine->kmaps, type);
+ 	}
+ 
+ 	return ret;
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 2de770511e70..6d1e4dc2709f 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1124,7 +1124,7 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 			 * We need to fixup this here too because we create new
+ 			 * maps here, for things like vsyscall sections.
+ 			 */
+-			__map_groups__fixup_end(kmaps, map->type);
++			map_groups__fixup_end(kmaps, map->type);
+ 		}
+ 	}
+ 	err = nr;
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index dcb81176669a..fe15dafaef66 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -228,7 +228,7 @@ void symbols__fixup_end(struct rb_root *symbols)
+ 		curr->end = roundup(curr->start, 4096) + 4096;
  }
  
--static void machine__set_kernel_mmap_len(struct machine *machine,
--					 union perf_event *event)
-+static void machine__set_kernel_mmap(struct machine *machine,
-+				     u64 start, u64 end)
+-void __map_groups__fixup_end(struct map_groups *mg, enum map_type type)
++void map_groups__fixup_end(struct map_groups *mg, enum map_type type)
  {
- 	int i;
+ 	struct maps *maps = &mg->maps[type];
+ 	struct map *next, *curr;
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index 0563f33c1eb3..cf955f1d1718 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -316,7 +316,7 @@ void __symbols__insert(struct rb_root *symbols, struct symbol *sym, bool kernel)
+ void symbols__insert(struct rb_root *symbols, struct symbol *sym);
+ void symbols__fixup_duplicate(struct rb_root *symbols);
+ void symbols__fixup_end(struct rb_root *symbols);
+-void __map_groups__fixup_end(struct map_groups *mg, enum map_type type);
++void map_groups__fixup_end(struct map_groups *mg, enum map_type type);
  
- 	for (i = 0; i < MAP__NR_TYPES; i++) {
--		machine->vmlinux_maps[i]->start = event->mmap.start;
--		machine->vmlinux_maps[i]->end   = (event->mmap.start +
--						   event->mmap.len);
-+		machine->vmlinux_maps[i]->start = start;
-+		machine->vmlinux_maps[i]->end   = end;
-+
- 		/*
- 		 * Be a bit paranoid here, some perf.data file came with
- 		 * a zero sized synthesized MMAP event for the kernel.
-@@ -1373,7 +1373,8 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 		if (strstr(kernel->long_name, "vmlinux"))
- 			dso__set_short_name(kernel, "[kernel.vmlinux]", false);
- 
--		machine__set_kernel_mmap_len(machine, event);
-+		machine__set_kernel_mmap(machine, event->mmap.start,
-+					 event->mmap.start + event->mmap.len);
- 
- 		/*
- 		 * Avoid using a zero address (kptr_restrict) for the ref reloc
+ typedef int (*mapfn_t)(u64 start, u64 len, u64 pgoff, void *data);
+ int file__read_maps(int fd, bool exe, mapfn_t mapfn, void *data,
 -- 
 2.13.6
