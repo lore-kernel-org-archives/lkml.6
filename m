@@ -1,51 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753201AbeBGBni (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:43:38 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39945 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932197AbeBGBl1 (ORCPT
+        id S1752785AbeBGBsd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:48:33 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41624 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751989AbeBGBsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:41:27 -0500
-X-Google-Smtp-Source: AH8x227cB3ytF3jTKSrl60ggN2dNRVHGoL5TjMELMhwIQqkaJIJQfaQ6Pxw/3DwnIpodjQog/1ZGDg==
-From: Derek Basehore <dbasehore@chromium.org>
-To: linux-kernel@vger.kernel.org
-Cc: Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        rafael.j.wysocki@intel.com, tglx@linutronix.de,
-        briannorris@chromium.org, marc.zyngier@arm.com,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH v5 1/4] cpu_pm: add syscore_suspend error handling
-Date: Tue,  6 Feb 2018 17:41:14 -0800
-Message-Id: <20180207014117.62611-2-dbasehore@chromium.org>
+        Tue, 6 Feb 2018 20:48:32 -0500
+X-Google-Smtp-Source: AH8x2279WS2S6eLO0qi1BcB2I5jsUiChbYxx6jFodyWMTeyjSzzWemkPnTqvxOv8V3pPtboNcaTa9A==
+From: Alexandre Courbot <acourbot@chromium.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [RFCv3 00/17] Request API, take three
+Date: Wed,  7 Feb 2018 10:48:04 +0900
+Message-Id: <20180207014821.164536-1-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
-In-Reply-To: <20180207014117.62611-1-dbasehore@chromium.org>
-References: <20180207014117.62611-1-dbasehore@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If cpu_cluster_pm_enter() fails, cpu_pm_exit() should be called. This
-will put the CPU in the correct state to resume from the failure.
+As discussed yesterday, here is a rebase on the media master branch. A
+few minor fixes for typos have also slept in, but otherwise this is
+equivalent to v2. I expect to have the buffer queueing behavior fixed in
+the next version.
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
----
- kernel/cpu_pm.c | 3 +++
- 1 file changed, 3 insertions(+)
+Alexandre Courbot (9):
+  media: add request API core and UAPI
+  media: videobuf2: add support for requests
+  media: vb2: add support for requests in QBUF ioctl
+  v4l2: add request API support
+  videodev2.h: add request_fd field to v4l2_ext_controls
+  v4l2-ctrls: support requests in EXT_CTRLS ioctls
+  v4l2: document the request API interface
+  media: vim2m: add media device
+  media: vim2m: add request support
 
-diff --git a/kernel/cpu_pm.c b/kernel/cpu_pm.c
-index 67b02e138a47..03bcc0751a51 100644
---- a/kernel/cpu_pm.c
-+++ b/kernel/cpu_pm.c
-@@ -186,6 +186,9 @@ static int cpu_pm_suspend(void)
- 		return ret;
- 
- 	ret = cpu_cluster_pm_enter();
-+	if (ret)
-+		cpu_pm_exit();
-+
- 	return ret;
- }
- 
+Hans Verkuil (7):
+  videodev2.h: Add request_fd field to v4l2_buffer
+  v4l2-ctrls: v4l2_ctrl_add_handler: add from_other_dev
+  v4l2-ctrls: prepare internal structs for request API
+  v4l2-ctrls: add core request API
+  v4l2-ctrls: use ref in helper instead of ctrl
+  v4l2-ctrls: support g/s_ext_ctrls for requests
+  v4l2-ctrls: add v4l2_ctrl_request_setup
+
+Laurent Pinchart (1):
+  media: Document the media request API
+
+ Documentation/media/uapi/mediactl/media-funcs.rst  |   1 +
+ .../media/uapi/mediactl/media-ioc-request-cmd.rst  | 142 ++++++++++
+ Documentation/media/uapi/v4l/buffer.rst            |  10 +-
+ Documentation/media/uapi/v4l/common.rst            |   1 +
+ Documentation/media/uapi/v4l/request-api.rst       | 236 ++++++++++++++++
+ .../media/uapi/v4l/vidioc-g-ext-ctrls.rst          |  16 +-
+ Documentation/media/uapi/v4l/vidioc-qbuf.rst       |  21 ++
+ drivers/media/Makefile                             |   3 +-
+ drivers/media/common/videobuf2/videobuf2-core.c    | 133 ++++++++-
+ drivers/media/common/videobuf2/videobuf2-v4l2.c    |  31 +-
+ drivers/media/dvb-frontends/rtl2832_sdr.c          |   5 +-
+ drivers/media/media-device.c                       |   7 +
+ drivers/media/media-request-mgr.c                  | 105 +++++++
+ drivers/media/media-request.c                      | 311 +++++++++++++++++++++
+ drivers/media/pci/bt8xx/bttv-driver.c              |   2 +-
+ drivers/media/pci/cx23885/cx23885-417.c            |   2 +-
+ drivers/media/pci/cx88/cx88-blackbird.c            |   2 +-
+ drivers/media/pci/cx88/cx88-video.c                |   2 +-
+ drivers/media/pci/saa7134/saa7134-empress.c        |   4 +-
+ drivers/media/pci/saa7134/saa7134-video.c          |   2 +-
+ drivers/media/platform/exynos4-is/fimc-capture.c   |   2 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c        |   3 +-
+ drivers/media/platform/rcar_drif.c                 |   2 +-
+ drivers/media/platform/soc_camera/soc_camera.c     |   3 +-
+ drivers/media/platform/vim2m.c                     |  79 ++++++
+ drivers/media/platform/vivid/vivid-ctrls.c         |  46 +--
+ drivers/media/usb/cpia2/cpia2_v4l.c                |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-417.c            |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c          |   4 +-
+ drivers/media/usb/msi2500/msi2500.c                |   2 +-
+ drivers/media/usb/tm6000/tm6000-video.c            |   2 +-
+ drivers/media/v4l2-core/Makefile                   |   2 +-
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |   9 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c               | 238 ++++++++++++++--
+ drivers/media/v4l2-core/v4l2-device.c              |   3 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c               | 125 ++++++++-
+ drivers/media/v4l2-core/v4l2-request.c             |  54 ++++
+ drivers/staging/media/imx/imx-media-dev.c          |   2 +-
+ drivers/staging/media/imx/imx-media-fim.c          |   2 +-
+ include/media/media-device.h                       |   3 +
+ include/media/media-entity.h                       |   9 +
+ include/media/media-request-mgr.h                  |  73 +++++
+ include/media/media-request.h                      | 186 ++++++++++++
+ include/media/v4l2-ctrls.h                         |  17 +-
+ include/media/v4l2-request.h                       |  34 +++
+ include/media/videobuf2-core.h                     |  15 +-
+ include/media/videobuf2-v4l2.h                     |   2 +
+ include/uapi/linux/media.h                         |  10 +
+ include/uapi/linux/videodev2.h                     |   6 +-
+ 49 files changed, 1886 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/media/uapi/mediactl/media-ioc-request-cmd.rst
+ create mode 100644 Documentation/media/uapi/v4l/request-api.rst
+ create mode 100644 drivers/media/media-request-mgr.c
+ create mode 100644 drivers/media/media-request.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-request.c
+ create mode 100644 include/media/media-request-mgr.h
+ create mode 100644 include/media/media-request.h
+ create mode 100644 include/media/v4l2-request.h
+
 -- 
 2.16.0.rc1.238.g530d649a79-goog
