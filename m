@@ -1,73 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754416AbeBGPn2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:43:28 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49366 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754150AbeBGPn1 (ORCPT
+        id S1754634AbeBGPn6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:43:58 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37248 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754562AbeBGPnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:43:27 -0500
-Date: Wed, 7 Feb 2018 15:43:25 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [GIT PULL] regulator fix for v4.16
-Message-ID: <20180207154325.GF6003@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oPmsXEqKQNHCSXW7"
-Content-Disposition: inline
-X-Cookie: 15% gratuity added for parties over 8.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Wed, 7 Feb 2018 10:43:55 -0500
+X-Google-Smtp-Source: AH8x224pw/Msq/5SQhHhIPzTvWysj9x6eVWN9RDD+eQvdCVY58OIIZCe74mLoR+DBV5SNu5mBnKpBA==
+From: Dongsu Park <dongsu@kinvolk.io>
+To: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Alban Crequy <alban@kinvolk.io>, Dongsu Park <dongsu@kinvolk.io>
+Subject: [RFC PATCH v5 2/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+Date: Wed,  7 Feb 2018 16:45:13 +0100
+Message-Id: <32720253472ebc444da9561834a5a5f2c7cbd7c1.1517999503.git.dongsu@kinvolk.io>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1517999503.git.dongsu@kinvolk.io>
+References: <cover.1517999503.git.dongsu@kinvolk.io>
+In-Reply-To: <cover.1517999503.git.dongsu@kinvolk.io>
+References: <cover.1517999503.git.dongsu@kinvolk.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Alban Crequy <alban@kinvolk.io>
 
---oPmsXEqKQNHCSXW7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+re-appraised and re-audited each time. Cached integrity results should
+not be used.
 
-The following changes since commit 4e79f3f1c832fc9eabf5435d73ba0279e58f9b9d:
+It is useful in FUSE because the userspace FUSE process can change the
+underlying files at any time without notifying the kernel. FUSE can be
+mounted by unprivileged users either today with fusermount installed
+with setuid, or soon with the upcoming patches to allow FUSE mounts in
+a non-init user namespace. That makes the issue more visible than for
+network filesystems where unprivileged users cannot mount.
 
-  Merge remote-tracking branch 'regulator/topic/tps65218' into regulator-next (2018-01-26 17:57:05 +0000)
+How to test this:
 
-are available in the Git repository at:
+The test I did was using a patched version of the memfs FUSE driver
+[1][2] and two very simple "hello-world" programs [4] (prog1 prints
+"hello world: 1" and prog2 prints "hello world: 2").
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v4.16-suspend
+I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
+check the sha1 hash in
+"/sys/kernel/security/ima/ascii_runtime_measurements".
 
-for you to fetch changes up to 57a0dd187956ea04870f4bbbf25a63c425ee7cad:
+My patch on the memfs FUSE driver added a backdoor command to serve
+prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
+exec prog1 and get it to print "hello world: 2" without ever replacing
+the file via the VFS, so the kernel is not aware of the change.
 
-  regulator: Fix suspend to idle (2018-01-30 12:25:59 +0000)
+The test was done using the branch "dongsu/fuse-flag-ima-nocache-v5" [3].
 
-----------------------------------------------------------------
-regulator: Fix suspend to idle
+Step by step test procedure:
 
-Testing on mainline after the initial regulator pull request went in
-identified a regression for suspend to idle due to it calling the
-suspend operations with states that it wasn't realized could happen,
-this patch fixes the problem.
+1. Mount the memfs FUSE using [2]:
+rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
 
-----------------------------------------------------------------
-Mark Brown (1):
-      regulator: Fix suspend to idle
+2. Copy prog1 and prog2 using [4]
+cp prog1 /mnt/memfs/prog1
+cp prog2 /mnt/memfs/prog2
 
- drivers/regulator/core.c | 2 +-
+3. Lookup the files and let the FUSE driver to keep the handles open:
+dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
+dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
+
+4. Check the 2 programs work correctly:
+$ /mnt/memfs/prog1
+hello world: 1
+$ /mnt/memfs/prog2
+hello world: 2
+
+5. Check the measurements for prog1 and prog2:
+$ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
+                | grep /mnt/memfs/prog
+10 [...] ima-ng sha1:ac14c9268cd2[...] /mnt/memfs/prog1
+10 [...] ima-ng sha1:799cb5d1e06d[...] /mnt/memfs/prog2
+
+6. Use the backdoor command in my patched memfs to redirect file
+operations on file handle 3 to file handle 2:
+rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
+
+7. Check how the FUSE driver serves different content for the files:
+$ /mnt/memfs/prog1
+hello world: 2
+$ /mnt/memfs/prog2
+hello world: 2
+
+8. Check the measurements:
+sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
+                | grep /mnt/memfs/prog
+
+Without the patch, there are no new measurements, despite the FUSE
+driver having served different executables.
+
+With the patch, I can see additional measurements for prog1 and prog2
+with the hashes reversed when the FUSE driver served the alternative
+content.
+
+[1] https://github.com/bbengfort/memfs
+[2] https://github.com/kinvolk/memfs/commits/alban/switch-files
+[3] https://github.com/kinvolk/linux/commits/dongsu/fuse-flag-ima-nocache-v5
+[4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
+
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Acked-by: Miklos Szeredi <miklos@szeredi.hu>
+Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
+Acked-by: Seth Forshee <seth.forshee@canonical.com>
+Tested-by: Dongsu Park <dongsu@kinvolk.io>
+Signed-off-by: Alban Crequy <alban@kinvolk.io>
+---
+ fs/fuse/inode.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---oPmsXEqKQNHCSXW7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp7HpwACgkQJNaLcl1U
-h9BOXQf/ZpzZFncqEizRlQzopGlkVTOrqDnC2ZrhUfyEUi9m1G0KQpwug6A2HoYz
-cNXkk5/NYyHOSVTD9MmWNPkQKAS2Kce9NLab52OCP+hfio5ZaDChU5Ou5JEyF6I/
-O29OsT0qFjxpfOqt9+PaK497oye/6FpmxTulXB31E3ia6X4YAbws1zUBOu/C1pCF
-UugjDo1nfB+jAeUPVCA7uOtYMLh/biK8H+T8gP9fnf63X3cg5DPq4FDAMCo/HLV/
-ZHAijBUHWNwwR3L6xxNw9b4izTIgWbzijXPsXvPNpS0DtCKJxmfM8XuvPyRGWEXV
-wCyt7906kgvOBaBACt0DVmGM8gVIrA==
-=MQ6p
------END PGP SIGNATURE-----
-
---oPmsXEqKQNHCSXW7--
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 624f18bb..0a9e5164 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+ static struct file_system_type fuse_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "fuse",
+-	.fs_flags	= FS_HAS_SUBTYPE,
++	.fs_flags	= FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
+ 	.mount		= fuse_mount,
+ 	.kill_sb	= fuse_kill_sb_anon,
+ };
+-- 
+2.13.6
