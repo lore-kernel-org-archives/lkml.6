@@ -1,114 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754795AbeBGRV5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:21:57 -0500
-Received: from terminus.zytor.com ([65.50.211.136]:39117 "EHLO mail.zytor.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754231AbeBGRV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:21:56 -0500
-Date: Wed, 07 Feb 2018 09:13:57 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CA+55aFxJO7kDNp6wRnU58Z6-sPbK1SqdzpgLBTAe54mdPjnd=g@mail.gmail.com>
-References: <20180207145913.2703-1-kirill.shutemov@linux.intel.com> <CA+55aFxJO7kDNp6wRnU58Z6-sPbK1SqdzpgLBTAe54mdPjnd=g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [RFC 0/3] x86: Patchable constants
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-CC: the arch/x86 maintainers <x86@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>, linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: hpa@zytor.com
-Message-ID: <5D7DF367-BFEF-49C5-93DF-5C19D887752A@zytor.com>
+        id S1754769AbeBGRZU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:25:20 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35270 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754343AbeBGRZS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:25:18 -0500
+X-Google-Smtp-Source: AH8x227cd4hA6VXVBf0edVcDbZs6z4VFeLWqoEh4T5clFNyCXsBNiTWq+0xfEPxCTKVjkEqWXHHCMQ==
+Message-ID: <1518024315.3742.16.camel@gmail.com>
+Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
+From: Vladislav Valtchev <vladislav.valtchev@gmail.com>
+To: Zamir SUN <sztsian@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
+        linux-kernel@vger.kernel.org, zsun@redhat.com
+Date: Wed, 07 Feb 2018 19:25:15 +0200
+In-Reply-To: <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
+References: <20180204032014.6962-1-sztsian@gmail.com>
+         <20180204032014.6962-2-sztsian@gmail.com>
+         <20180206181807.2d35393e@gandalf.local.home>
+         <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
+Organization: VMware
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 7, 2018 9:01:42 AM PST, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->On Wed, Feb 7, 2018 at 6:59 AM, Kirill A. Shutemov
-><kirill.shutemov@linux.intel.com> wrote:
->> This patchset introduces concept of patchable constants: constant
->values
->> that can be adjusted at boot-time in response to system configuration
->or
->> user input (kernel command-line).
->>
->> Patchable constants can replace variables that never changes at
->runtime
->> (only at boot-time), but used in very hot path.
->
->So I actually wanted something very close to this, but I think your
->approach is much too simplistic.
->
->You force all constants into a register, which means that the
->resulting code is always going to be very far from non-optimal.
->
->You also force a big "movabsq" instruction, which really is huge, and
->almost never needed. Together with the "use a register", it just makes
->for big code.
->
->What I wanted was something that can take things like a shift by a
->variable that is set once, and turn it into a shift by a boot-time
->constant. Which means that you literally end up patching the 8-bit
->immediate in the shift instruction itself.
->
->In particular, was looking at the dcache hashing code, and (to quote
->an old email of mine), what I wanted was to simplify the run-time
->constant part of this:
->
->│ mov $0x20,%ecx
->│ sub 0xaf8bd5(%rip),%ecx # ffffffff81d34600 <d_hash_shift>
->│ mov 0x8(%rsi),%r9
->│ add %r14d,%eax
->│ imul $0x9e370001,%eax,%eax
->│ shr %cl,%eax
->
->and it was the expression "32-d_hash_shift" that is really a constant,
->and that sequence of
->
->│ mov $0x20,%ecx
->│ sub 0xaf8bd5(%rip),%ecx # ffffffff81d34600 <d_hash_shift>
->│ shr %cl,%eax
->
->should be just a single
->
->│ shr $CONSTANT,%eax
->
->at runtime.
->
->Look - much smaller code, and register %rcx isn't used at all. And no
->D$ miss on loading that constant (that is a constant depending on
->boot-time setup only).
->
->It's rather more complex, but it actually gives a much bigger win. The
->code itself will be much better, and smaller.
->
->The *infrastructure* for the code gets pretty hairy, though.
->
->The good news is that the patch already existed to at least _some_
->degree. Peter Anvin did it about 18 months ago.
->
->It was not really pursued all the way because it *is* a lot of extra
->complexity, and I think there was some other hold-up, but he did have
->skeleton code for the actual replacement.
->
->There was a thread on the x86 arch list with the subject line
->
->    Disgusting pseudo-self-modifying code idea: "variable constants"
->
->but I'm unable to actually find the patch. I know there was at least a
->vert early prototype.
->
->Adding hpa to the cc in the hope that he has some prototype code still
->laying around..
->
->                Linus
+On Wed, 2018-02-07 at 22:01 +0800, Zamir SUN wrote:
+> 
+> While just a note for this, in Fedora 27:
+> 
+> $ if command -v swig; then echo 1; else echo 0; fi
+> /usr/bin/swig
+> 1
+> 
+> Actually this test has the same problem as of `which swig` - When swig
+> exists, the var SWIG_DEFINED will not be 1 (as shown above).
+> 
+> I see Vladislav is already on this thread. I hope this can be fixed
+> before merging the patch set.
+> 
 
-I am currently working on it much more comprehensive set of patches for extremely this. I am already much further ahead and support most operations.
+Hi Zamir,
+I'm sorry but I'm unable to reproduce the issue on Fedora 27,
+after applying my series of patches.
+
+In my case (fresh install of Fedora27, no customizations):
+	if command -v swig; then echo 1; else echo 0; fi
+works as expected.
+
+SWIG_DEFINED does not have to be '1' in order the Makefile to work.
+Because the check in my branch is:
+
+ifeq ($(SWIG_DEFINED), 0)
+BUILD_PYTHON := report_noswig
+NO_PYTHON = 1
+endif
+
+So there should be no problem. Just to be sure, I've tried to compile trace-cmd
+with my patches first without 'swig' and later with it (on Fedora).
+The result was that, in the first case the message 'no swig installed'
+was displayed, while in the other case it was not. Or better, a message
+saying that 'python-dev' is missing was shown.
+[Yes, both swig and python-dev are necessary].
+
+After installing also 'python-devel' (in Ubuntu is just '-dev'), the
+build system was able to build the rest of the python targets as well.
+
+
+Could you please try by using my fork on GitHub?
+https://github.com/vvaltchev/trace-cmd-fork
+BRANCH NAME: make8.
+
+Let me know if you still experience the issue.
+
+Thanks,
+Vlad
+
+
+
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Vladislav Valtchev
+VMware Open Source Technology Center
