@@ -1,77 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754614AbeBGUvk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:51:40 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35297 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754238AbeBGUvi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 15:51:38 -0500
-X-Google-Smtp-Source: AH8x224G4NtEL/6+uxYnQRSWkg3HFZTbOy4kQXOar/1BVLmuWqGofzAjV/h/kI0muOdRrgMwlkUvpQ==
-Date: Wed, 7 Feb 2018 12:51:36 -0800
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        Justin TerAvest <teravest@chromium.org>,
-        Craig Bergstrom <craigb@chromium.org>
-Subject: Re: [PATCH] rtlwifi: rtl8192cu: Remove variable self-assignment in
- rf.c
-Message-ID: <20180207205136.GB116483@google.com>
-References: <20180207202634.98937-1-mka@chromium.org>
- <947198f5-23eb-afbc-7979-fbc38b6a1a37@lwfinger.net>
+        id S1754720AbeBGUwk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:52:40 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:52529 "EHLO mail.zytor.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754127AbeBGUwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 15:52:39 -0500
+Subject: Re: [RFC 0/3] x86: Patchable constants
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: the arch/x86 maintainers <x86@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>, Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>, linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180207145913.2703-1-kirill.shutemov@linux.intel.com>
+ <CA+55aFxJO7kDNp6wRnU58Z6-sPbK1SqdzpgLBTAe54mdPjnd=g@mail.gmail.com>
+ <8fea57cc-8772-f8b4-3298-91b0de126358@zytor.com>
+Message-ID: <83ddad10-936f-9848-e3d1-8c6e73ab2969@zytor.com>
+Date: Wed, 7 Feb 2018 12:43:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
+In-Reply-To: <8fea57cc-8772-f8b4-3298-91b0de126358@zytor.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <947198f5-23eb-afbc-7979-fbc38b6a1a37@lwfinger.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-El Wed, Feb 07, 2018 at 02:35:59PM -0600 Larry Finger ha dit:
+FYI: the interface I'm implementing looks like this:
 
-> On 02/07/2018 02:26 PM, Matthias Kaehlcke wrote:
-> > In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
-> > is assigned to itself in an if ... else statement, apparently only to
-> > document that the branch condition is handled and that a previously read
-> > value should be returned unmodified. The self-assignment causes clang to
-> > raise the following warning:
-> > 
-> > drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
-> >    error: explicitly assigning value of variable of type 'u32'
-> >      (aka 'unsigned int') to itself [-Werror,-Wself-assign]
-> >    writeVal = writeVal;
-> > 
-> > Replace the self-assignment with a semicolon, which still serves to
-> > document the 'handling' of the branch condition.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >   drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
-> > index 9cff6bc4049c..4db92496c122 100644
-> > --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
-> > +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
-> > @@ -301,7 +301,7 @@ static void _rtl92c_get_txpower_writeval_by_regulatory(struct ieee80211_hw *hw,
-> >   			writeVal = writeVal - 0x06060606;
-> >   		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
-> >   			 TXHIGHPWRLEVEL_BT2)
-> > -			writeVal = writeVal;
-> > +			;
-> >   		*(p_outwriteval + rf) = writeVal;
-> >   	}
-> >   }
-> > 
-> 
-> As the branch condition does nothing, why not remove it and save the
-> compiler's optimizer a bit of work? The code looks strange, but it matches
-> the rest of Realtek's USB drivers.
+	[output =] const_op(data, variable);
 
-Sure, I am happy to change it to whatever the authors/maintainers prefer.
+... where variable can be any variable with a static address, although
+in any sane scenario it should be __ro_after_init.  During
+initialization, it kicks out to an out-of-line (.alternatives_aux)
+handler which accesses the variable in normal fashion, but at
+alternatives-patching time it inlines the relevant opcodes.
 
-I'll wait a bit before respinning for if others feel strongly about
-keeping the branch.
+Some of the assembly infrastructure for this is indeed hairy, especially
+when the out-of-line hander needs temp registers.
+
+	-hpa
