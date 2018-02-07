@@ -1,98 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754622AbeBGQOh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 11:14:37 -0500
-Received: from smtpbg303.qq.com ([184.105.206.26]:55702 "EHLO smtpbg303.qq.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754543AbeBGQOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 11:14:34 -0500
-X-QQ-mid: esmtp12t1518020064tzdj8o17v
-X-QQ-SSF: A1000000000000F00H100700000000P
-X-QQ-FEAT: /2O7Dyku7/OR9GGXdPiTjC5lyVXN+Ep+5RBLlTKfD7tApXQWZDS4nOfmkir6R
-        lQ/hhfaMMiK3TDnDYIow3GLo/u13JcJBjrQvm5YOTd7C/LAoVLnzwOo0w8VaOuSaWNMws9e
-        MoXNKDWVMYDGQjPutEV4TYHS/U054KBqdDgXyfX6G+KFjPaDur9ml0V8bMRP+CNsDplINwH
-        Omy7wpUYZnysJSHTzUr9Knw+91MkeY1G6Gw/cysWgBn5AEp8pBTpgGjcohuFV3feo/WsIn3
-        4AapE6HeTva3yS/RH1MVUEfWV1/Bq3cRJFVQ==
-X-QQ-GoodBg: 0
-From: Chen Guanqiao <chen.chenchacha@foxmail.com>
-To: hirofumi@mail.parknet.co.jp
-Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        pali.rohar@gmail.com, Chen Guanqiao <chen.chenchacha@foxmail.com>
-Subject: [PATCH v9 2/3] fs: fat: Add volume label entry method function
-Date: Thu,  8 Feb 2018 00:14:06 +0800
-Message-Id: <20180207161407.30507-3-chen.chenchacha@foxmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180207161407.30507-1-chen.chenchacha@foxmail.com>
-References: <20180207161407.30507-1-chen.chenchacha@foxmail.com>
-X-QQ-SENDSIZE: 520
-X-QQ-FName: 0763023B8F0B412B9F8088E0A9644A15
-X-QQ-LocalIP: 10.208.130.95
+        id S1754557AbeBGQRc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 11:17:32 -0500
+Received: from gateway30.websitewelcome.com ([192.185.194.16]:48576 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754347AbeBGQRb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 11:17:31 -0500
+Date: Wed, 7 Feb 2018 10:17:29 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Chas Williams <3chas3@gmail.com>
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] atm: he: use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180207161729.GA10329@embeddedgus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1ejSPa-0002D8-8p
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.4.238]:32978
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Chen Guanqiao <chen.chenchacha@foxmail.com>
+Add suffix ULL to constants 272, 204, 136 and 68 in order to give the
+compiler complete information about the proper arithmetic to use.
+Notice that these constants are used in contexts that expect
+expressions of type unsigned long long (64 bits, unsigned).
+
+The following expressions are currently being evaluated using 32-bit
+arithmetic:
+
+272 * mult
+204 * mult
+136 * mult
+68 * mult
+
+Addresses-Coverity-ID: 201058
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/fat/dir.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ drivers/atm/he.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index 8e100c3bf72c..d5286402c829 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -881,6 +881,53 @@ static int fat_get_short_entry(struct inode *dir, loff_t *pos,
-	return -ENOENT;
- }
-
-+int fat_get_volume_label_entry(struct inode *dir, struct buffer_head **bh,
-+			       struct msdos_dir_entry **de)
-+{
-+	loff_t pos = 0;
-+
-+	*bh = NULL;
-+	*de = NULL;
-+	while (fat_get_entry(dir, &pos, bh, de) >= 0) {
-+		if (((*de)->attr & ATTR_VOLUME) && ((*de)->attr != ATTR_EXT) &&
-+		    !IS_FREE((*de)->name))
-+			return 0;
-+	}
-+	return -ENOENT;
-+}
-+EXPORT_SYMBOL_GPL(fat_get_volume_label_entry);
-+
-+int fat_add_volume_label_entry(struct inode *dir, const unsigned char *name,
-+			       struct timespec *ts)
-+{
-+	struct msdos_sb_info *sbi = MSDOS_SB(dir->i_sb);
-+	struct msdos_dir_entry de;
-+	struct fat_slot_info sinfo;
-+	__le16 time, date;
-+	int err;
-+
-+	memcpy(de.name, name, MSDOS_NAME);
-+	de.attr = ATTR_VOLUME;
-+	de.lcase = 0;
-+	fat_time_unix2fat(sbi, ts, &time, &date, NULL);
-+	de.cdate = de.adate = 0;
-+	de.ctime = 0;
-+	de.ctime_cs = 0;
-+	de.time = time;
-+	de.date = date;
-+	fat_set_start(&de, 0);
-+	de.size = 0;
-+
-+	err = fat_add_entries(dir, &de, 1, &sinfo);
-+	if (err)
-+		return err;
-+
-+	brelse(sinfo.bh);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(fat_add_volume_label_entry);
-+
- /*
-  * The ".." entry can not provide the "struct fat_slot_info" information
-  * for inode, nor a usable i_pos. So, this function provides some information
---
-2.14.3
+diff --git a/drivers/atm/he.c b/drivers/atm/he.c
+index e58538c..29f102d 100644
+--- a/drivers/atm/he.c
++++ b/drivers/atm/he.c
+@@ -738,13 +738,13 @@ static int he_init_cs_block_rcm(struct he_dev *he_dev)
+ #else
+ 		/* this is pretty, but avoids _divdu3 and is mostly correct */
+ 		mult = he_dev->atm_dev->link_rate / ATM_OC3_PCR;
+-		if (rate_cps > (272 * mult))
++		if (rate_cps > (272ULL * mult))
+ 			buf = 4;
+-		else if (rate_cps > (204 * mult))
++		else if (rate_cps > (204ULL * mult))
+ 			buf = 3;
+-		else if (rate_cps > (136 * mult))
++		else if (rate_cps > (136ULL * mult))
+ 			buf = 2;
+-		else if (rate_cps > (68 * mult))
++		else if (rate_cps > (68ULL * mult))
+ 			buf = 1;
+ 		else
+ 			buf = 0;
+-- 
+2.7.4
