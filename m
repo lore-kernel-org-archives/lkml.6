@@ -1,81 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754759AbeBGQ4s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 11:56:48 -0500
-Received: from foss.arm.com ([217.140.101.70]:53492 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754392AbeBGQ4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 11:56:47 -0500
-Subject: Re: [PATCH v2 06/20] arm64: capabilities: Unify the verification
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-7-suzuki.poulose@arm.com>
- <20180207103813.GW5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <5dce8ca7-fb75-1213-53fa-99f67ad3a037@arm.com>
-Date: Wed, 7 Feb 2018 16:56:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1754769AbeBGQ5M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 11:57:12 -0500
+Received: from mail-it0-f42.google.com ([209.85.214.42]:35327 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754538AbeBGQ5K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 11:57:10 -0500
+X-Google-Smtp-Source: AH8x225dIM7+CgivUyaRK24vZOmyFIl2QN4mf+/OwBqoIrTyKGtGcumINQygi0qyywIZxjpUB/NKggwmRgAobAo5Sdo=
 MIME-Version: 1.0
-In-Reply-To: <20180207103813.GW5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CANRm+CyqV6s6etBAveNTG2WjfMZrfuuN+HpF9Ub1ex=JjyA1yw@mail.gmail.com>
+References: <1517828686-29070-1-git-send-email-wanpengli@tencent.com>
+ <CALMp9eQNB+2KLAR2Tv+By2oTthRLvAQMmJiEs61kFNrZDct3_g@mail.gmail.com>
+ <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
+ <CANRm+Cx_KVftOfeGWjqn_1P=j8R-NsNcH7w+pA9gCouM_4FDRw@mail.gmail.com>
+ <CALMp9eRHzmU3Kfr0cxhy2Hrr-RybnjrsKHByoV27TdYffuuC3w@mail.gmail.com> <CANRm+CyqV6s6etBAveNTG2WjfMZrfuuN+HpF9Ub1ex=JjyA1yw@mail.gmail.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Wed, 7 Feb 2018 08:57:09 -0800
+Message-ID: <CALMp9eQ+wJyxQfru1j8i6CmBzvsYEPrK2wx94JFZ0M3rWSV0+g@mail.gmail.com>
+Subject: Re: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 10:38, Dave Martin wrote:
-> On Wed, Jan 31, 2018 at 06:27:53PM +0000, Suzuki K Poulose wrote:
->> Now that each capability describes how to treat the conflicts
->> of CPU cap state vs System wide cap state, we can unify the
->> verification logic to a single place.
+vmcs12->host_cr[34] does not contain the up-to-date values when L1 is
+running. L1 can vmwrite any values there. We know at this point that
+they are legal (because we checked them), but that's about it. If the
+VMLAUNCH/VMRESUME of vmcs12 fails for "invalid control field," there
+is no VM-exit from L2 to L1, and these fields are not loaded. Instead,
+execution just falls through to the next instruction with VMFailValid
+semantics.
+
+On Wed, Feb 7, 2018 at 12:31 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+> 2018-02-07 0:58 GMT+08:00 Jim Mattson <jmattson@google.com>:
+>> On Mon, Feb 5, 2018 at 4:57 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
 >>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/cpufeature.h |  1 +
->>   arch/arm64/kernel/cpufeature.c      | 89 +++++++++++++++++++++++--------------
->>   2 files changed, 57 insertions(+), 33 deletions(-)
+>>> This is effective one, what I restore in this patch is
+>>> achitectural/guest visible.
 >>
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index 1b29b3f0a1bc..5e4d581c97f1 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -1233,6 +1233,56 @@ static void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *
->>   	}
->>   }
->>   
->> +/*
->> + * Run through the list of capabilities to check for conflicts.
->> + * If the system has already detected a capability, take necessary
->> + * action on this CPU.
->> + *
->> + * Returns "false" on conflicts.
->> + */
->> +static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_list)
->> +{
->> +	bool cpu_has_cap, system_has_cap;
->> +	const struct arm64_cpu_capabilities *caps = caps_list;
->> +
->> +	for (; caps->matches; caps++) {
->> +		cpu_has_cap = __this_cpu_has_cap(caps_list, caps->capability);
->> +		system_has_cap =  cpus_have_cap(caps->capability);
-> 
-> Nit: Odd spacing?
-
-Fixed
-
-> 
-> [...]
-> 
-> Otherwise,
-> 
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-
-Thanks
-Suzuki
+>> This patch doesn't "restore" the guest visible CR4 to its value at the
+>> time of VMLAUNCH/VMRESUME. It loads a new CR4 value from the vmcs12.
+>> That behavior is incorrect.
+>
+> You have another pointing out about this.
+> https://lkml.org/lkml/2018/2/5/518 vmcs12->host_cr3/host_cr4 has the
+> up-to-date value when L1 is running, it is still up-to-date after
+> vmexit due to L1 executes VMLAUNCH/VMRESUME, I think the value stays
+> the same before L0 emulates the VMLAUNCH/VMRESUME, according to below
+> comments, why vmcs12->host_cr3/cr4 is not the value which we should
+> restore?
+>
+> * After an early L2 VM-entry failure, we're now back
+> * in L1 which thinks it just finished a VMLAUNCH or
+> * VMRESUME instruction
+>
+> Regards,
+> Wanpeng Li
