@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754978AbeBGUbH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:31:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35832 "EHLO mail.kernel.org"
+        id S1754963AbeBGUbF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:31:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754670AbeBGU2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754681AbeBGU2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 15:28:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F5E217B4
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC74B217B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180207202816.348135328@goodmis.org>
+Message-Id: <20180207202816.790726568@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 07 Feb 2018 15:24:13 -0500
+Date: Wed, 07 Feb 2018 15:24:16 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -26,118 +26,132 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 11/20 v2] tracing: Add symbol type to function based events
+Subject: [PATCH 14/20 v2] tracing: Have char arrays be strings for function based events
 References: <20180207202402.253089656@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0011-tracing-Add-symbol-type-to-function-based-events.patch
+Content-Disposition: inline; filename=0014-tracing-Have-char-arrays-be-strings-for-function-bas.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Add a special type "symbol" that will use %pS to display the field of a
-function based event.
+If a field in a function based event is defined with type "char[##]" then it
+will be considered a static string. If a user wants an actual byte array
+they should use one of u8, s8, or x8.
+
+Now we can get strings from events:
+
+ # echo 'SyS_openat(int dfd, char[64] buf, x32 flags, x32 mode)' > function_events
+ # grep xxx /etc/*
+ # cat trace
+  grep-1745  [001] .... 346135.431364: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/adjtime, flags=100, mode=0)
+  grep-1745  [001] .... 346135.431734: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/aliases, flags=100, mode=0)
+  grep-1745  [001] .... 346135.618765: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/alternatives, flags=100, mode=0)
+  grep-1745  [001] .... 346135.619063: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/anacrontab, flags=100, mode=0)
+  grep-1745  [001] .... 346135.619134: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/asciidoc, flags=100, mode=0)
+  grep-1745  [001] .... 346135.619390: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/asound.conf, flags=100, mode=0)
+  grep-1745  [001] .... 346135.624350: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/audisp, flags=100, mode=0)
+  grep-1745  [001] .... 346135.624565: entry_SYSCALL_64_fastpath->SyS_openat(dfd=-100, buf=/etc/audit, flags=100, mode=0)
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/function-based-events.rst | 26 +++++++++++++++++++++++++-
- kernel/trace/trace_event_ftrace.c             | 13 ++++++++++---
- 2 files changed, 35 insertions(+), 4 deletions(-)
+ Documentation/trace/function-based-events.rst | 17 +++++++++++++++++
+ kernel/trace/trace_event_ftrace.c             | 21 +++++++++++++++++----
+ 2 files changed, 34 insertions(+), 4 deletions(-)
 
 diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
-index bdb28f433bfb..f18c8f3ef330 100644
+index 4a8a6fb16a0a..99ae77cd59e6 100644
 --- a/Documentation/trace/function-based-events.rst
 +++ b/Documentation/trace/function-based-events.rst
-@@ -98,7 +98,8 @@ as follows:
-  ATOM := 'u8' | 'u16' | 'u32' | 'u64' |
-          's8' | 's16' | 's32' | 's64' |
-          'x8' | 'x16' | 'x32' | 'x64' |
--         'char' | 'short' | 'int' | 'long' | 'size_t'
-+         'char' | 'short' | 'int' | 'long' | 'size_t' |
-+	 'symbol'
- 
-  FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX
- 
-@@ -243,3 +244,26 @@ The above will take the parameter value, add it by 4, then index it by two
- 8 byte words. It's the same in C as: (u64 *)((void *)param + 4)[2]
- 
-  Note: "int skb[32]" is the same as "int skb+4[31]".
+@@ -325,3 +325,20 @@ To get the net_device perm_addr, from the dev parameter.
+     <idle>-0     [003] ..s3   219.813595: __netif_receive_skb_core->ip_rcv(skb=ffff880118195e00, perm_addr=b4,b5,2f,ce,18,65)
+     <idle>-0     [003] ..s3   220.115053: __netif_receive_skb_core->ip_rcv(skb=ffff880118195c00, perm_addr=b4,b5,2f,ce,18,65)
+     <idle>-0     [003] ..s3   220.115293: __netif_receive_skb_core->ip_rcv(skb=ffff880118195c00, perm_addr=b4,b5,2f,ce,18,65)
 +
 +
-+Symbols (function names)
-+========================
++Static strings
++==============
 +
-+To display kallsyms "%pS" type of output, use the special type "symbol".
++An array of type 'char' or 'unsigned char' will be processed as a string using
++the format "%s". If a nul is found, the output will stop. Use another type
++(x8, u8, s8) if this is not desired.
 +
-+Again, using gdb to find the offset of the "func" field of struct work_struct
++  # echo 'link_path_walk(char[64] name)' > function_events
 +
-+(gdb) printf "%d\n", &((struct work_struct *)0)->func
-+24
-+
-+ Both "symbol func[3]" and "symbol func+24[0]" will work.
-+
-+ # echo '__queue_work(int cpu, x64 wq, symbol func[3])' > function_events
-+
-+ # echo 1 > events/functions/__queue_work/enable
-+ # cat trace
-+       bash-1641  [007] d..2  6241.171332: queue_work_on->__queue_work(cpu=128, wq=ffff88011a010e00, func=flush_to_ldisc+0x0/0xa0)
-+       bash-1641  [007] d..2  6241.171460: queue_work_on->__queue_work(cpu=128, wq=ffff88011a010e00, func=flush_to_ldisc+0x0/0xa0)
-+     <idle>-0     [000] dNs3  6241.172004: delayed_work_timer_fn->__queue_work(cpu=128, wq=ffff88011a010800, func=vmstat_shepherd+0x0/0xb0)
-+ worker/0:2-1689  [000] d..2  6241.172026: __queue_delayed_work->__queue_work(cpu=7, wq=ffff88011a11da00, func=vmstat_update+0x0/0x70)
-+     <idle>-0     [005] d.s3  6241.347996: queue_work_on->__queue_work(cpu=128, wq=ffff88011a011200, func=fb_flashcursor+0x0/0x110 [fb])
++  # echo 1 > events/functions/link_path_walk/enable
++  # cat trace
++      bash-1470  [003] ...2   980.678664: path_openat->link_path_walk(name=/usr/bin/cat)
++      bash-1470  [003] ...2   980.678715: path_openat->link_path_walk(name=/lib64/ld-linux-x86-64.so.2)
++      bash-1470  [003] ...2   980.678721: path_openat->link_path_walk(name=ld-2.24.so)
++      bash-1470  [003] ...2   980.678978: path_lookupat->link_path_walk(name=/etc/ld.so.preload)
 diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-index 6e48361643c0..1359f714a1b1 100644
+index f62bd6a2ea87..aa390339b571 100644
 --- a/kernel/trace/trace_event_ftrace.c
 +++ b/kernel/trace/trace_event_ftrace.c
-@@ -76,6 +76,7 @@ typedef u64 x64;
- typedef u32 x32;
- typedef u16 x16;
- typedef u8 x8;
-+typedef void * symbol;
+@@ -616,6 +616,14 @@ static void make_fmt(struct func_arg *arg, char *fmt)
  
- #define TYPE_TUPLE(type)			\
- 	{ #type, sizeof(type), is_signed_type(type) }
-@@ -97,7 +98,8 @@ typedef u8 x8;
- 	TYPE_TUPLE(x16),			\
- 	TYPE_TUPLE(u8),				\
- 	TYPE_TUPLE(s8),				\
--	TYPE_TUPLE(x8)
-+	TYPE_TUPLE(x8),				\
-+	TYPE_TUPLE(symbol)
- 
- static struct func_type {
- 	char		*name;
-@@ -264,7 +266,7 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 	switch (state) {
- 	case FUNC_STATE_INIT:
- 		unsign = 0;
--		if (!isalpha(token[0]))
-+		if (!isalpha(token[0]) && token[0] != '_')
- 			break;
- 		/* Do not allow wild cards */
- 		if (strstr(token, "*") || strstr(token, "?"))
-@@ -307,7 +309,7 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 		return FUNC_STATE_TYPE;
- 
- 	case FUNC_STATE_TYPE:
--		if (!isalpha(token[0]))
-+		if (!isalpha(token[0]) || token[0] == '_')
- 			break;
- 		if (WARN_ON(!fevent->last_arg))
- 			break;
-@@ -478,6 +480,11 @@ static void make_fmt(struct func_arg *arg, char *fmt)
- {
- 	int c = 0;
- 
-+	if (arg->func_type == FUNC_TYPE_symbol) {
-+		strcpy(fmt, "%pS");
-+		return;
-+	}
-+
  	fmt[c++] = '%';
  
++	if (arg->func_type == FUNC_TYPE_char) {
++		if (arg->array)
++			fmt[c++] = 's';
++		else
++			fmt[c++] = 'c';
++		goto out;
++	}
++
  	if (arg->size == 8) {
+ 		fmt[c++] = 'l';
+ 		fmt[c++] = 'l';
+@@ -628,6 +636,7 @@ static void make_fmt(struct func_arg *arg, char *fmt)
+ 	else
+ 		fmt[c++] = 'u';
+ 
++ out:
+ 	fmt[c++] = '\0';
+ }
+ 
+@@ -645,7 +654,10 @@ static void write_data(struct trace_seq *s, const struct func_arg *arg, const ch
+ 		trace_seq_printf(s, fmt, *(unsigned short *)data);
+ 		break;
+ 	case 1:
+-		trace_seq_printf(s, fmt, *(unsigned char *)data);
++		if (arg->array && arg->func_type == FUNC_TYPE_char)
++			trace_seq_printf(s, fmt, (char *)data);
++		else
++			trace_seq_printf(s, fmt, *(unsigned char *)data);
+ 		break;
+ 	}
+ }
+@@ -678,7 +690,7 @@ func_event_print(struct trace_iterator *iter, int flags,
+ 
+ 		make_fmt(arg, fmt);
+ 
+-		if (arg->array) {
++		if (arg->array && arg->func_type != FUNC_TYPE_char) {
+ 			comma = false;
+ 			for (a = 0; a < arg->array; a++, data += arg->size) {
+ 				if (comma)
+@@ -827,7 +839,7 @@ static int __set_print_fmt(struct func_event *func_event,
+ 
+ 		make_fmt(arg, fmt);
+ 
+-		if (arg->array) {
++		if (arg->array && arg->func_type != FUNC_TYPE_char) {
+ 			bool colon = false;
+ 
+ 			for (a = 0; a < arg->array; a++) {
+@@ -852,7 +864,8 @@ static int __set_print_fmt(struct func_event *func_event,
+ 	len = update_len(len, i);
+ 
+ 	list_for_each_entry(arg, &func_event->args, list) {
+-		if (arg->array) {
++		/* Don't iterate for strings */
++		if (arg->array && arg->func_type != FUNC_TYPE_char) {
+ 			for (a = 0; a < arg->array; a++) {
+ 				i = snprintf(buf + r, len, ", REC->%s[%d]", arg->name, a);
+ 				r += i;
 -- 
 2.15.1
