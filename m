@@ -1,218 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932087AbeBGQVl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 11:21:41 -0500
-Received: from smtpbg64.qq.com ([103.7.28.238]:24344 "EHLO smtpbg64.qq.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754138AbeBGQVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 11:21:39 -0500
-X-QQ-mid: esmtp12t1518020068tmxs0sz9h
-X-QQ-SSF: A1000000000000F00H100700000000P
-X-QQ-FEAT: p/Y2uUKTrszf1zoLIDBKKwowp20617zRB5Qv9lJcmrXxlGh8R4jmE6AtRjRyq
-        SgJXzsqXltqg7SyeC1zs4G/+jKMvBB2dLGBiNt1ipJTpzzmGw55ZKwVNE3I/5UGnmzY+riD
-        DLo2ie9xChOgbYimD3dHimb1Yp28XrmynmHpv9n3wLSRvcAD2TvB/eOtT/4RdcT/jELhFRd
-        Um+KAjaMKaiv6gnM18U+IeIFZWmENEYFjmViWl1eWDTiF+U6BYAl9N8MrxK1u88GohS7iU4
-        oK1BC0351a3ru2kFtky41TbXA=
-X-QQ-GoodBg: 0
-From: Chen Guanqiao <chen.chenchacha@foxmail.com>
-To: hirofumi@mail.parknet.co.jp
-Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        pali.rohar@gmail.com, Chen Guanqiao <chen.chenchacha@foxmail.com>
-Subject: [PATCH v9 3/3] fs: fat: add ioctl method in fat filesystem driver
-Date: Thu,  8 Feb 2018 00:14:07 +0800
-Message-Id: <20180207161407.30507-4-chen.chenchacha@foxmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180207161407.30507-1-chen.chenchacha@foxmail.com>
-References: <20180207161407.30507-1-chen.chenchacha@foxmail.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtp:foxmail.com:bgweb:bgweb117
+        id S1754649AbeBGQYG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 11:24:06 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:49228 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754328AbeBGQYE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 11:24:04 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180207162401epoutp02a636ca1d401b868943ed69b7d4ccbc3d~RF7sUi7bX0946409464epoutp02w
+X-AuditID: b6c32a48-9c5ff70000000ff0-e8-5a7b28209635
+Subject: Re: [PATCH 4/8] ASoC: samsung: i2s: Define the parameters list for
+ SAMSUNG_I2S_OPCLK
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com,
+        sbkim73@samsung.com, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <7f86ec02-2235-7622-9298-f6edd367edb2@samsung.com>
+Date: Wed, 07 Feb 2018 17:23:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-version: 1.0
+In-reply-to: <CAJKOXPf-6wFDSPttdDbc34Y2hiuc=TG2j5bb+2uQeScxGuxjZg@mail.gmail.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7bCmqa6CRnWUwf8nuhZXLh5istg4Yz2r
+        xdSHT9gs5h85x2rxdn83s8X58xvYLb5d6WCyuLxrDpvFjPP7mCzWHrnLbtG69wi7xcUVX5gc
+        eDw2fG5i89g56y67x6ZVnWwefVtWMXp83iQXwBrFZZOSmpNZllqkb5fAlXH1w032gn3cFbOn
+        /mdqYHzE0cXIySEhYCLxcc9E1i5GLg4hgR2MEuvnXGOHcL4zSjyf/pwZpmrW4QXMEIndjBIf
+        Ww5AOfcZJS7t2AbUz8EhLBAv8fujB0iDiICmxPW/38HGMgu8Y5I4c+oO2CQ2AUOJ3qN9jCA2
+        r4CdxJQjG9lBbBYBVYntTYdZQWxRgQiJhVOfQtUISvyYfI8FxOYUCJa49PIeE4jNDLTgxZdJ
+        LBC2uMSx+zcZIWx5ic1r3oIdJyHwnU1i8qorjBAvuEg0vlzLCmELS7w6voUdwpaWeLZqIyNE
+        Qz+jxIk1zVDODEaJO+0TmCCqrCUOH7/ICrGCT6Lj8F92kJclBHglOtqEIEwPiZl9JhDVjhLL
+        D32HhlAHk8TFd40sExjlZiF5aBaSJ2YheWIWkicWMLKsYhRLLSjOTU8tNiow0StOzC0uzUvX
+        S87P3cQITkVaHjsYD5zzOcQowMGoxMNrsKEySog1say4MvcQowQHs5IIrzt7dZQQb0piZVVq
+        UX58UWlOavEhRmkOFiVx3rYAlyghgfTEktTs1NSC1CKYLBMHp1QDY4pKx/wnHzbafX3wm8GQ
+        22TXBm3tiWlSMUbOJQXWM2M8Wea4F5VVSkSLSNsETPvEt6Oy0boy8a7stuqv/Jv+vnl/qKj1
+        6Jn3soZHS004p4YF3tXtPms7b61YJ8tuFjfeA3MPXz8RfLrxJV/SknDzon8fJfzcj138e/zc
+        k46CmrAJz1bnWle+VmIpzkg01GIuKk4EACu5GQNBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42I5/e+xgK68RnWUwZzfFhZXLh5istg4Yz2r
+        xdSHT9gs5h85x2rxdn83s8X58xvYLb5d6WCyuLxrDpvFjPP7mCzWHrnLbtG69wi7xcUVX5gc
+        eDw2fG5i89g56y67x6ZVnWwefVtWMXp83iQXwBrFZZOSmpNZllqkb5fAlXH1w032gn3cFbOn
+        /mdqYHzE0cXIySEhYCIx6/AC5i5GLg4hgZ2MEtuXn2aEcB4yStw9/AjI4eAQFoiX+P3RA6RB
+        REBT4vrf76wgNcwC75gkDsy6CNXdxSSx5OJsdpAqNgFDid6jfYwgNq+AncSUIxvB4iwCqhLb
+        mw6zgtiiAhESnSvns0DUCEr8mHwPzOYUCJboal/GDLKYWUBdYsqUXJAws4C4xLH7NxkhbHmJ
+        zWveMk9gFJiFpHsWQscsJB2zkHQsYGRZxSiZWlCcm55bbFRglJdarlecmFtcmpeul5yfu4kR
+        GDfbDmv172B8vCT+EKMAB6MSD6/BhsooIdbEsuLK3EOMEhzMSiK87uzVUUK8KYmVValF+fFF
+        pTmpxYcYpTlYlMR5+fOPRQoJpCeWpGanphakFsFkmTg4pRoYq9enBnaXpkuf8env8PgfqK7w
+        YXbd/+o2Y/XImIOL7QUmrlC+mX9liotcSvXb0GL9rJc+fNWXGQPseJWeFMu2fVOwOa719umH
+        DClek3wlzk1bLykUdsTM9PB9WPr6asLrIg2HLUccfAUOPeO9lL12/tP7OhsEmw88O9Wikvrn
+        UMaB1pyXnfOVWIozEg21mIuKEwHKFH5KlwIAAA==
+X-CMS-MailID: 20180207162400epcas2p3a5e50392ce7d1a922e1dd05ee7f88c23
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180205154520epcas1p4132421a187a4d767a2f75badfef5eec4
+X-RootMTR: 20180205154520epcas1p4132421a187a4d767a2f75badfef5eec4
+References: <CGME20180205154520epcas1p4132421a187a4d767a2f75badfef5eec4@epcas1p4.samsung.com>
+        <20180205154403.13520-1-s.nawrocki@samsung.com>
+        <20180205154403.13520-5-s.nawrocki@samsung.com>
+        <CAJKOXPf-6wFDSPttdDbc34Y2hiuc=TG2j5bb+2uQeScxGuxjZg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Chen Guanqiao <chen.chenchacha@foxmail.com>
----
- fs/fat/file.c | 145 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 145 insertions(+)
+On 02/06/2018 01:26 PM, Krzysztof Kozlowski wrote:
+> On Mon, Feb 5, 2018 at 4:43 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
 
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 4724cc9ad650..e87c5ae9208e 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -15,11 +15,46 @@
- #include <linux/fsnotify.h>
- #include <linux/security.h>
- #include <linux/falloc.h>
-+#include <linux/ctype.h>
- #include "fat.h"
+>> diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
+>> index 79781de2f247..a9832a9555cb 100644
+>> --- a/sound/soc/samsung/i2s.h
+>> +++ b/sound/soc/samsung/i2s.h
+>> @@ -16,11 +16,16 @@
+>>  #define SAMSUNG_I2S_DAI        "samsung-i2s"
+>>  #define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
+>>
+>> -#define SAMSUNG_I2S_DIV_BCLK   1
+>> +#define SAMSUNG_I2S_DIV_BCLK           1
+>>
+>> -#define SAMSUNG_I2S_RCLKSRC_0  0
+>> -#define SAMSUNG_I2S_RCLKSRC_1  1
+>> +#define SAMSUNG_I2S_RCLKSRC_0          0
+>> +#define SAMSUNG_I2S_RCLKSRC_1          1
+>>  #define SAMSUNG_I2S_CDCLK              2
+>> +/* Operation clock for IIS logic */
+>>  #define SAMSUNG_I2S_OPCLK              3
+>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_OUT   0       /* CODEC clock out */
+>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_IN    1       /* CODEC clock in */
+>> +#define  SAMSUNG_I2S_OPCLK_BCLK_OUT    2       /* Bit clock out */
+>> +#define  SAMSUNG_I2S_OPCLK_PCLK                3       /* Audio bus clock */
+>>
+>>  #endif /* __SND_SOC_SAMSUNG_I2S_H */
+> 
+> This part of patch seems to be unrelated (and it includes some cleanups).
 
- static long fat_fallocate(struct file *file, int mode,
-			  loff_t offset, loff_t len);
+This is actually the main part of the patch, an API exported to other
+drivers.  The whitespace changes are for keeping the alignment uniform,
+I could just drop them.
 
-+static int fat_generate_volume_name(char *label, unsigned long len)
-+{
-+	unsigned int i;
-+
-+	/* For reasons, refer to namei_msdos.c:msdos_format_name() */
-+	if (label[0] == 0xE5)
-+		label[0] = 0x05;
-+
-+	for (i = 0; i < len; ++i) {
-+		char c = label[i];
-+		/* valid character contains d-characters and all extended ASCII
-+		 * characters.
-+		 * remaining empty spaces are padded by 0x20.
-+		 */
-+		if (c <= 0x7f)
-+			switch (label[i]) {
-+			case 'a' ... 'z':
-+				label[i] = __toupper(label[i]);
-+			case 'A' ... 'Z':
-+			case '0' ... '9':
-+			case '_':
-+			case 0x20:
-+				continue;
-+			case 0:
-+				label[i] = 0x20;
-+				continue;
-+			default:
-+				return -EINVAL;
-+			}
-+	}
-+
-+	return 0;
-+}
-+
- static int fat_ioctl_get_attributes(struct inode *inode, u32 __user *user_attr)
- {
-	u32 attr;
-@@ -121,10 +156,116 @@ static int fat_ioctl_get_volume_id(struct inode *inode, u32 __user *user_attr)
-	return put_user(sbi->vol_id, user_attr);
- }
-
-+
-+static int fat_ioctl_get_volume_label(struct inode *inode, u8 __user *label)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	struct buffer_head *bh;
-+	struct msdos_dir_entry *de;
-+	int err;
-+
-+	inode = d_inode(sb->s_root);
-+	inode_lock_shared(inode);
-+
-+	err = fat_get_volume_label_entry(inode, &bh, &de);
-+	if (err)
-+		goto out;
-+
-+	if (copy_to_user(label, de->name, MSDOS_NAME))
-+		err = -EFAULT;
-+
-+	brelse(bh);
-+out:
-+	inode_unlock_shared(inode);
-+
-+	return err;
-+}
-+
-+static int fat_ioctl_set_volume_label(struct file *file, u8 __user *label)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct super_block *sb = inode->i_sb;
-+	struct timespec ts;
-+	struct buffer_head *boot_bh;
-+	struct buffer_head *vol_bh;
-+	struct msdos_dir_entry *de;
-+	struct fat_boot_sector *b;
-+	u8 buf[MSDOS_NAME];
-+	int err;
-+
-+	inode = d_inode(sb->s_root);
-+
-+	if (copy_from_user(buf, label, sizeof(buf))) {
-+		err = -EFAULT;
-+		goto out;
-+	}
-+
-+	err = fat_generate_volume_name(buf, sizeof(buf));
-+	if (err)
-+		goto out;
-+
-+	down_write(&sb->s_umount);
-+	err = mnt_want_write_file(file);
-+	if (err)
-+		goto out;
-+
-+	inode_lock(inode);
-+
-+	/* Updates root directory's label */
-+	err = fat_get_volume_label_entry(inode, &vol_bh, &de);
-+	ts = current_time(inode);
-+	if (err) {
-+		/* Create volume label entry */
-+		err = fat_add_volume_label_entry(inode, buf, &ts);
-+		if (err)
-+			goto out_vol_brelse;
-+	} else {
-+		/* Write to root directory */
-+		memcpy(de->name, buf, sizeof(de->name));
-+		inode->i_ctime = inode->i_mtime = inode->i_atime = ts;
-+
-+		mark_buffer_dirty(vol_bh);
-+	}
-+
-+	/* Update sector's label */
-+	boot_bh = sb_bread(sb, 0);
-+	if (boot_bh == NULL) {
-+		fat_msg(sb, KERN_ERR,
-+			"unable to read boot sector to write volume label");
-+		err = -EIO;
-+		goto out_boot_brelse;
-+	}
-+
-+	b = (struct fat_boot_sector *)boot_bh->b_data;
-+	if (MSDOS_SB(sb)->fat_bits == 32)
-+		memcpy(b->fat32.vol_label, buf, sizeof(buf));
-+	else
-+		memcpy(b->fat16.vol_label, buf, sizeof(buf));
-+
-+	mark_buffer_dirty(boot_bh);
-+
-+	/* Synchronize the data together */
-+	err = sync_dirty_buffer(boot_bh);
-+	if (err)
-+		goto out_boot_brelse;
-+
-+out_boot_brelse:
-+	brelse(boot_bh);
-+out_vol_brelse:
-+	brelse(vol_bh);
-+
-+	inode_unlock(inode);
-+	mnt_drop_write_file(file);
-+	up_write(&sb->s_umount);
-+out:
-+	return err;
-+}
-+
- long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
-	struct inode *inode = file_inode(filp);
-	u32 __user *user_attr = (u32 __user *)arg;
-+	u8 __user *user_vol_label = (u8 __user *)arg;
-
-	switch (cmd) {
-	case FAT_IOCTL_GET_ATTRIBUTES:
-@@ -133,6 +274,10 @@ long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-		return fat_ioctl_set_attributes(filp, user_attr);
-	case FAT_IOCTL_GET_VOLUME_ID:
-		return fat_ioctl_get_volume_id(inode, user_attr);
-+	case FAT_IOCTL_GET_VOLUME_LABEL:
-+		return fat_ioctl_get_volume_label(inode, user_vol_label);
-+	case FAT_IOCTL_SET_VOLUME_LABEL:
-+		return fat_ioctl_set_volume_label(filp, user_vol_label);
-	default:
-		return -ENOTTY;	/* Inappropriate ioctl for device */
-	}
---
-2.14.3
+-- 
+Regards,
+Sylwester
