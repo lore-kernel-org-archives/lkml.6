@@ -1,104 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753796AbeBGMG6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 07:06:58 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753535AbeBGMG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 07:06:56 -0500
-Date: Wed, 7 Feb 2018 13:06:51 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH 01/18] tracing: Add function based events
-Message-ID: <20180207120651.GB16048@krava>
-References: <20180202230458.840252014@goodmis.org>
- <20180202231017.160509978@goodmis.org>
- <20180205082423.GB1253@krava>
- <20180205100050.75c04497@gandalf.local.home>
- <20180206220917.1ca65b54@vmware.local.home>
+        id S1753916AbeBGMKQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 07:10:16 -0500
+Received: from m15-29.126.com ([220.181.15.29]:45520 "EHLO m15-29.126.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753643AbeBGMKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 07:10:15 -0500
+X-Originating-IP: [171.221.128.103]
+Date: Wed, 7 Feb 2018 20:10:03 +0800 (CST)
+From: liuxiang <liuxiang_1999@126.com>
+To: pali.rohar@gmail.com, afd@ti.com, sre@kernel.org,
+        liu.xiang6@zte.com.cn, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: =?UTF-8?Q?=E6=9D=A5=E8=87=AAliuxiang=E7=9A=84=E9=82=AE=E4=BB=B6?=
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
+ 20160729(86883.8884) Copyright (c) 2002-2018 www.mailtech.cn 126com
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180206220917.1ca65b54@vmware.local.home>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Message-ID: <2d5c0de4.9028.161702c3d8a.Coremail.liuxiang_1999@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: HcqowAA36pCc7HpapRadAA--.53913W
+X-CM-SenderInfo: xolx5x5dqjsiqzzzqiyswou0bp/1tbiZhXjsFpD4p8OogACsq
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w17CAL3Q024906
 
-On Tue, Feb 06, 2018 at 10:09:17PM -0500, Steven Rostedt wrote:
-> On Mon, 5 Feb 2018 10:00:50 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Mon, 5 Feb 2018 09:24:23 +0100
-> > Jiri Olsa <jolsa@redhat.com> wrote:
-> > 
-> > 
-> > > should this be done under 'func_event_mutex' ?  
-> > 
-> > Probably.
-> 
-> I think we only need to add the list.
+Sorry, I can't test these pieces of code now.
 
-yep, seems enough
-
-jirka
-
+On Saturday 27 January 2018 22:25:36 Liu Xiang wrote:
+> According to the datasheet, bq27411 is similar to bq27421.
 > 
-> > 
-> > > 
-> > > I tried and crashed the system by running 2 scripts with:
-> > > 
-> > >   echo 'ip_rcv(u64 skb, u64 dev)' > /sys/kernel/debug/tracing/function_events
-> > >   echo 'SyS_openat(int dfd, string buf, x32 flags, x32 mode)' >> /sys/kernel/debug/tracing/function_events
-> > >   echo 'SyS_open(x8[32] buf, x32 flags, x32 mode)' >> /sys/kernel/debug/tracing/function_events
-> > >  
-> > 
+> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+> ---
+>  drivers/power/supply/bq27xxx_battery.c | 14 ++++++++++++++
+>  include/linux/power/bq27xxx_battery.h  |  3 ++-
+>  2 files changed, 16 insertions(+), 1 deletion(-)
 > 
-> There's no reason that we can't have more than one function  event
-> attached to the same function. I'm adding this:
-> 
-> diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-> index b145639eac45..928168fc2025 100644
-> --- a/kernel/trace/trace_event_ftrace.c
-> +++ b/kernel/trace/trace_event_ftrace.c
-> @@ -1275,12 +1275,6 @@ static int create_function_event(int argc, char **argv)
->  	if (state != FUNC_STATE_END)
->  		goto fail;
+> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+> index 51f0961..2de378a 100644
+> --- a/drivers/power/supply/bq27xxx_battery.c
+> +++ b/drivers/power/supply/bq27xxx_battery.c
+> @@ -410,6 +410,7 @@ enum bq27xxx_reg_index {
+>  #define bq27425_regs bq27421_regs
+>  #define bq27441_regs bq27421_regs
+>  #define bq27621_regs bq27421_regs
+> +#define bq27411_regs bq27421_regs
 >  
-> -	ret = -EALREADY;
-> -	list_for_each_entry(fe, &func_events, list) {
-> -		if (strcmp(fe->func, func_event->func) == 0)
-> -			goto fail;
-> -	}
-> -
->  	ret = ftrace_set_filter(&func_event->ops, func_event->func,
->  				strlen(func_event->func), 0);
->  	if (ret < 0)
-> @@ -1290,7 +1284,9 @@ static int create_function_event(int argc, char **argv)
->  	if (ret < 0)
->  		goto fail;
+>  static enum power_supply_property bq27000_props[] = {
+>  	POWER_SUPPLY_PROP_STATUS,
+> @@ -633,6 +634,7 @@ enum bq27xxx_reg_index {
+>  #define bq27425_props bq27421_props
+>  #define bq27441_props bq27421_props
+>  #define bq27621_props bq27421_props
+> +#define bq27411_props bq27421_props
 >  
-> +	mutex_lock(&func_event_mutex);
->  	list_add_tail(&func_event->list, &func_events);
-> +	mutex_unlock(&func_event_mutex);
->  	return 0;
->   fail:
->  	free_func_event(func_event);
-> 
-> -- Steve
+>  struct bq27xxx_dm_reg {
+>  	u8 subclass_id;
+> @@ -716,6 +718,17 @@ enum bq27xxx_dm_reg_id {
+>  #define bq27621_dm_regs 0
+>  #endif
+>  
+> +#if 0 /* not yet tested */
+> +static struct bq27xxx_dm_reg bq27411_dm_regs[] = {
+> +	[BQ27XXX_DM_DESIGN_CAPACITY]   = { 82, 10, 2,    0, 32767 },
+> +	[BQ27XXX_DM_DESIGN_ENERGY]     = { 82, 12, 2,    0, 32767 },
+> +	[BQ27XXX_DM_TERMINATE_VOLTAGE] = { 82, 16, 2, 2800,  3700 },
+> +};
+> +#else
+> +#define bq27411_dm_regs 0
+> +#endif
+
+Can you test it?
+
+I do not think it is a good idea to add dead code into mainline kernel.
+
+> +
+> +
+>  #define BQ27XXX_O_ZERO	0x00000001
+>  #define BQ27XXX_O_OTDC	0x00000002
+>  #define BQ27XXX_O_UTOT  0x00000004
+> @@ -762,6 +775,7 @@ enum bq27xxx_dm_reg_id {
+>  	[BQ27425]   = BQ27XXX_DATA(bq27425,   0x04143672, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP),
+>  	[BQ27441]   = BQ27XXX_DATA(bq27441,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
+>  	[BQ27621]   = BQ27XXX_DATA(bq27621,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
+> +	[BQ27411]   = BQ27XXX_DATA(bq27411,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
+>  };
+>  
+>  static DEFINE_MUTEX(bq27xxx_list_lock);
+> diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/bq27xxx_battery.h
+> index e6187f5..5f48eb0 100644
+> --- a/include/linux/power/bq27xxx_battery.h
+> +++ b/include/linux/power/bq27xxx_battery.h
+> @@ -23,10 +23,11 @@ enum bq27xxx_chip {
+>  	BQ27546,
+>  	BQ27742,
+>  	BQ27545, /* bq27545 */
+> -	BQ27421, /* bq27421, bq27425, bq27441, bq27621 */
+> +	BQ27421, /* bq27421, bq27425, bq27441, bq27621, bq27411 */
+>  	BQ27425,
+>  	BQ27441,
+>  	BQ27621,
+> +	BQ27411,
+>  };
+>  
+>  struct bq27xxx_device_info;
