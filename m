@@ -1,76 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753721AbeBGLz0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:55:26 -0500
-Received: from foss.arm.com ([217.140.101.70]:49860 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753470AbeBGLzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:55:25 -0500
-Date: Wed, 7 Feb 2018 11:55:21 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] arm64: Expose Arm v8.4 features
-Message-ID: <20180207115521.GO5862@e103592.cambridge.arm.com>
-References: <20180201103838.14702-1-suzuki.poulose@arm.com>
- <20180201103838.14702-2-suzuki.poulose@arm.com>
- <20180207104320.GM5862@e103592.cambridge.arm.com>
- <336948e9-62c4-1ca0-c832-045095eda229@arm.com>
+        id S1753835AbeBGL5O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:57:14 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49890 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753497AbeBGL5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:57:13 -0500
+Date: Wed, 7 Feb 2018 11:57:07 +0000
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v4 1/3] sched/fair: add util_est on top of PELT
+Message-ID: <20180207115707.GJ5739@e110439-lin>
+References: <20180206144131.31233-1-patrick.bellasi@arm.com>
+ <20180206144131.31233-2-patrick.bellasi@arm.com>
+ <20180206155056.GF2269@hirez.programming.kicks-ass.net>
+ <20180206183315.GG5739@e110439-lin>
+ <20180206190900.GN2249@hirez.programming.kicks-ass.net>
+ <20180206191507.GU2295@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <336948e9-62c4-1ca0-c832-045095eda229@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180206191507.GU2295@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 10:51:55AM +0000, Suzuki K Poulose wrote:
-> On 07/02/18 10:43, Dave Martin wrote:
-> >On Thu, Feb 01, 2018 at 10:38:38AM +0000, Suzuki K Poulose wrote:
-> >>Expose the new features introduced by Arm v8.4 extensions to
-> >>Arm v8-A profile.
-> >>
-> >>These include :
-> >>
-> >>  1) Data indpendent timing of instructions. (DIT, exposed as HWCAP_DIT)
-> >>  2) Unaligned atomic instructions and Single-copy atomicity of loads
-> >>     and stores. (AT, expose as HWCAP_USCAT)
-> >>  3) LDAPR and STLR instructions with immediate offsets (extension to
-> >>     LRCPC, exposed as HWCAP_ILRCPC)
-> >>  4) Flag manipulation instructions (TS, exposed as HWCAP_FLAGM).
-> >>
-> >>While at it get rid of the RES0 entries in the cpu-feature-registers.txt
-> >>documentation.
-> >
-> >Should we write somewhere than fields that are not described here are
-> >implicitly RES0, or would that be too strong a statement?
+On 06-Feb 20:15, Peter Zijlstra wrote:
+> On Tue, Feb 06, 2018 at 08:09:00PM +0100, Peter Zijlstra wrote:
+> > On Tue, Feb 06, 2018 at 06:33:15PM +0000, Patrick Bellasi wrote:
+> > 
+> > > Good point, I was actually expecting this question and I should have
+> > > added it to the cover letter, sorry.
+> > > 
+> > > The reasoning was: the task's estimated utilization is defined as the
+> > > max between PELT and the "estimation". Where "estimation" is
+> > > the max between EWMA and the last ENQUEUED utilization.
+> > > 
+> > > Thus I was envisioning these two calls:
+> > > 
+> > >    _task_util_est := max(EWMA, ENQUEUED)
+> > >     task_util_est := max(util_avg, _task_util_est)
+> > > 
+> > > but since now we have clients only for the first API, I've not added
+> > > the second one. Still I would prefer to keep the "_" to make it clear
+> > > that's and util_est's internal signal, not the actual task's estimated
+> > > utilization.
+> > > 
+> > > Does it make sense?
+> > > 
+> > > Do you prefer I just remove the "_" and we will refactor it once we
+> > > should add a customer for the proper task's util_est?
+> > 
+> > Hurm... I was thinking:
+> > 
+> >   task_util_est := max(util_avg, EWMA)
+> > 
+> > But the above mixes ENQUEUED into it.. *confused*.
 > 
-> Dave,
+> So mixing in ENQUEUED seems to give it an upward BIAS if the very last
+> activation was 'high'. Thereby improving ramp-up.
 > 
-> We already have the following description in the file :
-> 
-> "The following rules are applied to the value returned by the
-> infrastructure:
-> 
->  a) The value of an 'IMPLEMENTATION DEFINED' field is set to 0.
->  b) The value of a reserved field is populated with the reserved
->     value as defined by the architecture.
->  c) The value of a 'visible' field holds the system wide safe value
->     for the particular feature (except for MIDR_EL1, see section 4).
->  d) All other fields (i.e, invisible fields) are set to indicate
->     the feature is missing (as defined by the architecture).
-> "
-> 
-> So we don't have to bother if the fields are RES0 or they get
-> some definitions in the future, as long as we don't expose them.
+> That seems to be what we want.. might be nice to have that in a comment
+> ;-)
 
-Agreed, that does seem sufficient:
+Ok, I should have read this one before... to avoid you a longer
+(boring) response to your previous email :/
 
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+> I'm thinking we want a different name for max(EWMA, ENQUEUED) though,
+> but I really can't come up with a sensible suggestion, which I suppose,
+> is why you stuck an underscore on it and went on with things.
 
-[...]
+The only sensible way I come up with is to consider that max as a
+util_est "internals"... while the actual task_util_est() (without "_")
+should consider util_avg as well, for PELT tracking when a task
+is becoming bigger the it's previous activations.
 
-Cheers
----Dave
+Is that not reasonable enough?
+
+Potentially I can add also the task_util_est() version... but right
+now we do not have clients... still gcc should not be upset.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
