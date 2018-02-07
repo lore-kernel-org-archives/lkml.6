@@ -1,122 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754683AbeBGPgp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:36:45 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:11514 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754490AbeBGPgP (ORCPT
+        id S1754689AbeBGPhT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:37:19 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39030 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754368AbeBGPhR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:36:15 -0500
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH 6/6] i2c: i2c-stm32f7: Implement I2C recovery mechanism
-Date: Wed, 7 Feb 2018 16:35:17 +0100
-Message-ID: <1518017717-10351-7-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518017717-10351-1-git-send-email-pierre-yves.mordret@st.com>
-References: <1518017717-10351-1-git-send-email-pierre-yves.mordret@st.com>
+        Wed, 7 Feb 2018 10:37:17 -0500
+Date: Wed, 7 Feb 2018 15:37:11 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Message-ID: <20180207153711.GE6003@sirena.org.uk>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
+ <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+ <20180207104351.GA6003@sirena.org.uk>
+ <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+ <20180207141846.GC6003@sirena.org.uk>
+ <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
+ <20180207150155.GD6003@sirena.org.uk>
+ <20180207152045.GC5850@tbergstrom-lnx.Nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_04:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EXKGNeO8l0xGFBjy"
+Content-Disposition: inline
+In-Reply-To: <20180207152045.GC5850@tbergstrom-lnx.Nvidia.com>
+X-Cookie: 15% gratuity added for parties over 8.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Feature prevents I2C lock-ups. Mechanism resets I2C state machine
-and releases SCL/SDA signals but preserves I2C registers.
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-    v1:
-       * Initial
----
----
- drivers/i2c/busses/i2c-stm32f7.c | 32 +++++++++++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 3 deletions(-)
+--EXKGNeO8l0xGFBjy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-index 593efa5..428bf96 100644
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -718,6 +718,20 @@ static void stm32f7_i2c_smbus_reload(struct stm32f7_i2c_dev *i2c_dev)
- 	writel_relaxed(cr2, i2c_dev->base + STM32F7_I2C_CR2);
- }
- 
-+static int stm32f7_i2c_recover_bus(struct i2c_adapter *i2c_adap)
-+{
-+	struct stm32f7_i2c_dev *i2c_dev = i2c_get_adapdata(i2c_adap);
-+
-+	dev_info(i2c_dev->dev, "Trying to recover bus\n");
-+
-+	stm32f7_i2c_clr_bits(i2c_dev->base + STM32F7_I2C_CR1,
-+			     STM32F7_I2C_CR1_PE);
-+
-+	stm32f7_i2c_hw_config(i2c_dev);
-+
-+	return 0;
-+}
-+
- static int stm32f7_i2c_wait_free_bus(struct stm32f7_i2c_dev *i2c_dev)
- {
- 	u32 status;
-@@ -727,12 +741,18 @@ static int stm32f7_i2c_wait_free_bus(struct stm32f7_i2c_dev *i2c_dev)
- 					 status,
- 					 !(status & STM32F7_I2C_ISR_BUSY),
- 					 10, 1000);
-+	if (!ret)
-+		return 0;
-+
-+	dev_info(i2c_dev->dev, "bus busy\n");
-+
-+	ret = i2c_recover_bus(&i2c_dev->adap);
- 	if (ret) {
--		dev_dbg(i2c_dev->dev, "bus busy\n");
--		ret = -EBUSY;
-+		dev_err(i2c_dev->dev, "Failed to recover the bus (%d)\n", ret);
-+		return ret;
- 	}
- 
--	return ret;
-+	return -EBUSY;
- }
- 
- static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
-@@ -1476,6 +1496,7 @@ static irqreturn_t stm32f7_i2c_isr_error(int irq, void *data)
- 	if (status & STM32F7_I2C_ISR_BERR) {
- 		dev_err(dev, "<%s>: Bus error\n", __func__);
- 		writel_relaxed(STM32F7_I2C_ICR_BERRCF, base + STM32F7_I2C_ICR);
-+		i2c_recover_bus(&i2c_dev->adap);
- 		f7_msg->result = -EIO;
- 	}
- 
-@@ -1760,6 +1781,10 @@ static struct i2c_algorithm stm32f7_i2c_algo = {
- 	.unreg_slave = stm32f7_i2c_unreg_slave,
- };
- 
-+static struct i2c_bus_recovery_info stm32f7_i2c_recovery_info = {
-+	.recover_bus = stm32f7_i2c_recover_bus,
-+};
-+
- static int stm32f7_i2c_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -1879,6 +1904,7 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
- 	adap->algo = &stm32f7_i2c_algo;
- 	adap->dev.parent = &pdev->dev;
- 	adap->dev.of_node = pdev->dev.of_node;
-+	adap->bus_recovery_info = &stm32f7_i2c_recovery_info;
- 
- 	init_completion(&i2c_dev->complete);
- 
--- 
-2.7.4
+On Wed, Feb 07, 2018 at 05:20:45PM +0200, Peter De Schrijver wrote:
+> On Wed, Feb 07, 2018 at 03:01:55PM +0000, Mark Brown wrote:
+
+> > I can't really tell what you're saying here.  If the driver needs to
+> > know if it can set the a given voltage there's already an API for doing
+> > that as I said.  If you're trying to convey this minimum and maximum
+> > voltage via the constraints that sounds like an abuse of the constraints.
+
+> No, what I want is the voltage which the regulator will output for a given
+> regulator_set_voltage request taking constraints, regulator step etc into
+> account.
+
+Knowing the range of the constaints is going to tell you nothing useful
+about that, it has zero information on steps or anything.  The way to
+find out what voltages can be set is to enumerate the voltages that can
+be set through the existing API and then if you want to set a specific
+voltage that you've confirmed is available you can set exactly that
+voltage via the normal voltage setting interface, no need to provide a
+range.
+
+--EXKGNeO8l0xGFBjy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp7HSYACgkQJNaLcl1U
+h9BRDAf9FdaH1tOaZcNU2t7spzIT8bqpr3eAGIuF9GdmskpVdhVYL2z/iik+AAWA
+5dvU5+U4UfexPA6KB0lZFVASav5z8XuUdk+t0GH45MGYIramZTSm6ouCpQXor7YD
+DtVtWRw0oNJIgBesUpC3Vfa0JVpuwbkce4GzvmlzLMB/Jd1nEJkjxJm3l14k997k
+njGXu7R/9hI1uwLFSwoMdDFQME49766JgVrp5cVOySWbK2c4c/l9+iL4Xg+TuGpP
+REVfT2NC4ZNWH7BlqtdUqdwzO1bE9F+WaVh/0bfNbtrHgHV+0XWYNNv2IFTDtYvl
+pOPsqdXTfJ8HlKeSjw7f0SqZdWU52g==
+=lJXf
+-----END PGP SIGNATURE-----
+
+--EXKGNeO8l0xGFBjy--
