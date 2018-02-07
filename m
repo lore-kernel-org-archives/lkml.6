@@ -1,80 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753745AbeBGKFS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:05:18 -0500
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:37941 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753419AbeBGKFQ (ORCPT
+        id S1753614AbeBGKLr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:11:47 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45319 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752992AbeBGKLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:05:16 -0500
-X-Google-Smtp-Source: AH8x227eQewUhTVJoJ0sBsM6Xg8WHkTA//pgdlRP729usWKopVvUCUa4CDcrwMIJEMCz5+B+scWa1w==
-Subject: Re: [PATCH 8/8] thermal/drivers/cpu_cooling: Add the combo cpu
- cooling device
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        daniel.thompson@linaro.org
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-9-git-send-email-daniel.lezcano@linaro.org>
- <20180202104259.GA28462@vireshk-i7>
- <8dadd854-25ac-68aa-aa9f-33ba76a137a4@linaro.org>
- <20180205041734.GD28462@vireshk-i7>
- <911804cd-2f1d-a1f7-61a2-6c8b95a88d6b@linaro.org>
- <20180206042853.GI28462@vireshk-i7>
- <54081703-c48f-3e07-b79d-3a2831bc28d7@linaro.org>
- <20180207072606.GO28462@vireshk-i7>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <93e62f8b-bba6-96e6-0011-84504041930a@linaro.org>
-Date: Wed, 7 Feb 2018 11:05:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 7 Feb 2018 05:11:45 -0500
+X-Google-Smtp-Source: AH8x225vkoNxW7gO2wzGazigTyk9FJIbg53lleoL/OpR6s1FAbHrZ8k6XAvhj5Dc9zJzTXvA9GcFKpaWZC6MnRcdNE0=
 MIME-Version: 1.0
-In-Reply-To: <20180207072606.GO28462@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517994487.3996.7.camel@redhat.com>
+References: <94eb2c07fd4c75cd8705648eeb87@google.com> <CACT4Y+ahGbrH9BGFeAfRW08jJEWfWf7ovzP9vsHZVQ4-KM5hTw@mail.gmail.com>
+ <1517994487.3996.7.camel@redhat.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 7 Feb 2018 11:11:24 +0100
+Message-ID: <CACT4Y+ZA1TsyGbY+eB_6YArx4LWtCw-9A5L8S_XMGAtaZ-Qf+A@mail.gmail.com>
+Subject: Re: possible deadlock in rtnl_lock (3)
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: syzbot <syzbot+63682ce11532e0da2b9d@syzkaller.appspotmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jiri Benc <jbenc@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        Xin Long <lucien.xin@gmail.com>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 08:26, Viresh Kumar wrote:
-> On 06-02-18, 11:48, Daniel Lezcano wrote:
->> On 06/02/2018 05:28, Viresh Kumar wrote:
-> 
->>> Surely we can do one thing at a time if that's the way we choose to do it.
+On Wed, Feb 7, 2018 at 10:08 AM, Paolo Abeni <pabeni@redhat.com> wrote:
+> On Tue, 2018-02-06 at 19:00 +0100, Dmitry Vyukov wrote:
+>> On Tue, Feb 6, 2018 at 6:58 PM, syzbot
+>> <syzbot+63682ce11532e0da2b9d@syzkaller.appspotmail.com> wrote:
+>> > Hello,
+>> >
+>> > syzbot hit the following crash on net-next commit
+>> > 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
+>> > Merge tag 'usercopy-v4.16-rc1' of
+>> > git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+>> >
+>> > So far this crash happened 2510 times on net-next, upstream.
+>> > C reproducer is attached.
+>> > syzkaller reproducer is attached.
+>> > Raw console output is attached.
+>> > compiler: gcc (GCC) 7.1.1 20170620
+>> > .config is attached.
+>> >
+>> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> > Reported-by: syzbot+63682ce11532e0da2b9d@syzkaller.appspotmail.com
+>> > It will help syzbot understand when the bug is fixed. See footer for
+>> > details.
+>> > If you forward the report, please keep this part and the footer.
 >>
->> Easy to say :)
 >>
->> The current code is to introduce the feature without impacting the DT
->> bindings in order to keep focused on the thermal mitigation aspect.
->>
->> There are still a lot of improvements to do after that. You are
->> basically asking me to implement the copy-on-write before the memory
->> management is complete.
-> 
-> Perhaps I wasn't clear. What I was trying to say is that we can do "one thing at
-> a time" if we choose to create a "combo device" (the way you proposed). I am not
-> trying to force you to solve all the problems in one go :)
+>> Paolo, was this also fixed by "netfilter: on sockopt() acquire sock
+>> lock only in the required scope"?
+>
+> I *think* this is fixed by the above commit, anyway I'll probably be
+> unable to verify such statement soon.
 
-Oh, ok :)
+Thanks, Paolo. This is good enough for now. If this is wrong, syzbot
+will hit it again later, but at that point we will know that the patch
+is present in the tested tree.
 
->> Can you give an example? Or your understanding is incorrect or I missed
->> the point.
-> 
-> So I tried to write it down and realized I was assuming that different
-> cooling-maps can be provided for different cooling strategies
-> (cpufreq/cpuidle) and obviously that's not the case as its per device.
-> Not sure if it would be correct to explore the possibility of doing
-> that.
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+#syz fix: netfilter: on sockopt() acquire sock lock only in the required scope
