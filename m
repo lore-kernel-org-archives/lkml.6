@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753104AbeBGBsv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:48:51 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39940 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752992AbeBGBsn (ORCPT
+        id S1753244AbeBGBs4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:48:56 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37900 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753111AbeBGBsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:48:43 -0500
-X-Google-Smtp-Source: AH8x2245HymLFXZgJnaOoOdr74wsRNMngHeFJHwq6MjzuJD9Eah9sqTsfPqjjYfCz+/XthFD4+A2eQ==
+        Tue, 6 Feb 2018 20:48:52 -0500
+X-Google-Smtp-Source: AH8x226/iYSIttyUAf0TWaias5L1qbG+pjk8HlHv1pajHgdWjwPFzH0k4jyl9Lp/PpLFTkbr0bFEow==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -18,10 +18,11 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Gustavo Padovan <gustavo.padovan@collabora.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv3 04/17] media: vb2: add support for requests in QBUF ioctl
-Date: Wed,  7 Feb 2018 10:48:08 +0900
-Message-Id: <20180207014821.164536-5-acourbot@chromium.org>
+Subject: [RFCv3 07/17] v4l2-ctrls: prepare internal structs for request API
+Date: Wed,  7 Feb 2018 10:48:11 +0900
+Message-Id: <20180207014821.164536-8-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180207014821.164536-1-acourbot@chromium.org>
 References: <20180207014821.164536-1-acourbot@chromium.org>
@@ -29,123 +30,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support the request argument of the QBUF ioctl.
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
+Add a refcount and is_request bool to struct v4l2_ctrl_handler:
+this is used to refcount a handler that represents a request.
+
+Add a p_req field to struct v4l2_ctrl_ref that will store the
+request value.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 83 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 82 insertions(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-ctrls.c | 1 +
+ include/media/v4l2-ctrls.h           | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 2f40ac0cdf6e..235acdde3111 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -29,6 +29,7 @@
- #include <media/v4l2-device.h>
- #include <media/videobuf2-v4l2.h>
- #include <media/v4l2-mc.h>
-+#include <media/media-request.h>
- 
- #include <trace/events/v4l2.h>
- 
-@@ -968,6 +969,71 @@ static int check_fmt(struct file *file, enum v4l2_buf_type type)
- 	return -EINVAL;
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 2e58381444d1..1ff8fc59fff5 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -1761,6 +1761,7 @@ int v4l2_ctrl_handler_init_class(struct v4l2_ctrl_handler *hdl,
+ 				      sizeof(hdl->buckets[0]),
+ 				      GFP_KERNEL | __GFP_ZERO);
+ 	hdl->error = hdl->buckets ? 0 : -ENOMEM;
++	hdl->is_request = false;
+ 	return hdl->error;
  }
+ EXPORT_SYMBOL(v4l2_ctrl_handler_init_class);
+diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
+index a4750a8090e3..22b6be78057f 100644
+--- a/include/media/v4l2-ctrls.h
++++ b/include/media/v4l2-ctrls.h
+@@ -18,6 +18,7 @@
+ #define _V4L2_CTRLS_H
  
-+/*
-+ * Validate that a given request can be used during an ioctl.
-+ *
-+ * When using the request API, request file descriptors must be matched against
-+ * the actual request object. User-space can pass any file descriptor, so we
-+ * need to make sure the call is valid before going further.
-+ *
-+ * This function looks up the request and associated data and performs the
-+ * following sanity checks:
-+ *
-+ * * Make sure that the entity belongs to the media_device managing the passed
-+ *   request,
-+ * * Make sure that the entity data (if any) is associated to the current file
-+ *   handler.
-+ *
-+ * This function returns a pointer to the valid request, or and error code in
-+ * case of failure. When successful, a reference to the request is acquired and
-+ * must be properly released by the caller. If _data is not NULL, then it is
-+ * filled with a pointer to the corresponding entity data.
-+ */
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+static struct media_request *
-+check_request(int request, struct file *file, void *fh, struct media_request_entity_data **_data)
-+{
-+	struct media_request *req = NULL;
-+	struct video_device *vfd = video_devdata(file);
-+	struct v4l2_fh *vfh =
-+		test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags) ? fh : NULL;
-+	struct media_entity *entity = &vfd->entity;
-+	struct media_request_entity_data *data;
-+
-+	if (!entity)
-+		return ERR_PTR(-EINVAL);
-+
-+	req = media_request_get_from_fd(request);
-+	if (!req)
-+		return ERR_PTR(-EINVAL);
-+
-+	/* Validate that the entity belongs to the correct media_device */
-+	if (vfd->v4l2_dev->mdev->req_mgr != req->mgr) {
-+		media_request_put(req);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	/* Validate that the entity's data belongs to the correct fh */
-+	data = media_request_get_entity_data(req, entity, vfh);
-+	if (IS_ERR(data)) {
-+		media_request_put(req);
-+		return ERR_PTR(PTR_ERR(data));
-+	}
-+
-+	if (_data)
-+		*_data = data;
-+
-+	return req;
-+}
-+#else /* CONFIG_MEDIA_CONTROLLER */
-+static struct media_request *
-+check_request(int request, struct file *file, void *fh)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
-+#endif /* CONFIG_MEDIA_CONTROLLER */
-+
- static void v4l_sanitize_format(struct v4l2_format *fmt)
- {
- 	unsigned int offset;
-@@ -1878,10 +1944,25 @@ static int v4l_querybuf(const struct v4l2_ioctl_ops *ops,
- static int v4l_qbuf(const struct v4l2_ioctl_ops *ops,
- 				struct file *file, void *fh, void *arg)
- {
-+	struct media_request *req = NULL;
- 	struct v4l2_buffer *p = arg;
- 	int ret = check_fmt(file, p->type);
+ #include <linux/list.h>
++#include <linux/kref.h>
+ #include <linux/mutex.h>
+ #include <linux/videodev2.h>
  
--	return ret ? ret : ops->vidioc_qbuf(file, fh, p);
-+	if (ret)
-+		return ret;
-+
-+	if (p->request_fd > 0) {
-+		req = check_request(p->request_fd, file, fh, NULL);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+	}
-+
-+	ret = ops->vidioc_qbuf(file, fh, p);
-+
-+	if (req)
-+		media_request_put(req);
-+
-+	return ret;
- }
+@@ -257,6 +258,7 @@ struct v4l2_ctrl_ref {
+ 	struct v4l2_ctrl_ref *next;
+ 	struct v4l2_ctrl *ctrl;
+ 	struct v4l2_ctrl_helper *helper;
++	union v4l2_ctrl_ptr p_req;
+ 	bool from_other_dev;
+ };
  
- static int v4l_dqbuf(const struct v4l2_ioctl_ops *ops,
+@@ -292,7 +294,9 @@ struct v4l2_ctrl_handler {
+ 	v4l2_ctrl_notify_fnc notify;
+ 	void *notify_priv;
+ 	u16 nr_of_buckets;
++	bool is_request;
+ 	int error;
++	struct kref ref;
+ };
+ 
+ /**
 -- 
 2.16.0.rc1.238.g530d649a79-goog
