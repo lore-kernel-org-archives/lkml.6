@@ -1,57 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754204AbeBGSLJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 13:11:09 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:49151 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754002AbeBGSLH (ORCPT
+        id S1754301AbeBGSNi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 13:13:38 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53097 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753859AbeBGSNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 13:11:07 -0500
-Date: Wed, 7 Feb 2018 10:10:55 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        mingo@redhat.com, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        rao.shoaib@oracle.com
-Subject: Re: [PATCH 0/2] rcu: Transform kfree_rcu() into kvfree_rcu()
-Message-ID: <20180207181055.GB12446@bombadil.infradead.org>
-References: <151791170164.5994.8253310844733420079.stgit@localhost.localdomain>
- <20180207021703.GC3617@linux.vnet.ibm.com>
- <20180207042334.GA16175@bombadil.infradead.org>
- <20180207050200.GH3617@linux.vnet.ibm.com>
- <db9bda80-7506-ae25-2c0a-45eaa08963d9@virtuozzo.com>
- <20180207083104.GK3617@linux.vnet.ibm.com>
- <20180207085700.393f90d0@gandalf.local.home>
- <20180207174513.5cc9b503@redhat.com>
+        Wed, 7 Feb 2018 13:13:36 -0500
+X-Google-Smtp-Source: AH8x226UWq3h3t6E+eFvtMKnts52Yr1jD5TZP9NUjx21itS5UO+Mi+NMzxUunp+zj1lXEf8mv0Bnq9K3ywluZecbri0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207174513.5cc9b503@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 7 Feb 2018 10:13:35 -0800
+X-Google-Sender-Auth: DvtJxkXI6tUJjqXx4INCuA7SquU
+Message-ID: <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
+Subject: Re: [linus:master] BUILD REGRESSION a2e5790d841658485d642196dbb0927303d6c22f
+To: kbuild test robot <fengguang.wu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 05:45:13PM +0100, Jesper Dangaard Brouer wrote:
-> On Wed, 7 Feb 2018 08:57:00 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> > To me kvfree() is a special case and should not be used by RCU as a
-> > generic function. That would make RCU and MM much more coupled than
-> > necessary.
-> 
-> For the record, I fully agree with Steve here. 
-> 
-> And being a performance "fanatic" I don't like to have the extra branch
-> (and compares) in the free code path... but it's a MM-decision (and
-> sometimes you should not listen to "fanatics" ;-))
+Adding more people for this funky warning from the kbuild robot.
 
-While free_rcu() is not withut its performance requirements, I think it's
-currently dominated by cache misses and not by branches.  By the time RCU
-gets to run callbacks, memory is certainly L1/L2 cache-cold and probably
-L3 cache-cold.  Also calling the callback functions is utterly impossible
-for the branch predictor.
+Something is confused. UD0 is 0f ff, the bytes after that shouldn't
+matter. But I guess they can be interpreted as modrm bytes, and
+somebody started doing that.
+
+That said, intel only _documents_ UD2 (0f 0b).
+
+Maybe we should avoid using UD0/UD1 entirely.
+
+              Linus
+
+On Wed, Feb 7, 2018 at 3:44 AM, kbuild test robot
+<fengguang.wu@intel.com> wrote:
+> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+> branch HEAD: a2e5790d841658485d642196dbb0927303d6c22f  Merge branch 'akpm' (patches from Andrew)
+>
+> Regressions in current branch:
+>
+> arch/x86/tools/insn_decoder_test: warning: ffffffff810010d7:    0f ff eb                ud0    %ebx,%ebp
+> arch/x86/tools/insn_decoder_test: warning: ffffffff81001152:    0f ff bf 09 00 00 00    ud0    0x9(%rdi),%edi
+> arch/x86/tools/insn_decoder_test: warning: ffffffff81001275:    0f ff eb                ud0    %ebx,%ebp
+> arch/x86/tools/insn_decoder_test: warning: ffffffff810013fd:    0f ff bf 09 00 00 00    ud0    0x9(%rdi),%edi
+> arch/x86/tools/insn_decoder_test: warning: ffffffff81001499:    0f ff bf 09 00 00 00    ud0    0x9(%rdi),%edi
+> arch/x86/tools/insn_decoder_test: warning: ffffffff812296eb:    0f ff e8                ud0    %eax,%ebp
