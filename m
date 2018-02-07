@@ -1,379 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754266AbeBGAIU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 19:08:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45234 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754170AbeBGAIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 19:08:19 -0500
-Subject: [RFC PATCH] vfio/pci: Add ioeventfd support
-From: Alex Williamson <alex.williamson@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        alex.williamson@redhat.com
-Date: Tue, 06 Feb 2018 17:08:14 -0700
-Message-ID: <20180207000731.32764.95992.stgit@gimli.home>
-User-Agent: StGit/0.18-102-gdf9f
+        id S1754242AbeBGAes (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 19:34:48 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:57532 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754183AbeBGAer (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 19:34:47 -0500
+Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
+ select_idle_sibling using SMT balance
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Sistare <steven.sistare@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        dhaval.giani@oracle.com
+References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
+ <20180201123335.GV2249@hirez.programming.kicks-ass.net>
+ <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
+ <20180202171708.GN2269@hirez.programming.kicks-ass.net>
+ <93db4b69-5ec6-732f-558e-5e64d9ba0cf9@oracle.com>
+ <20180205121947.GW2269@hirez.programming.kicks-ass.net>
+ <930364e4-bbfe-8c8f-d095-0dd4256a5104@oracle.com>
+ <20180206091239.GA2269@hirez.programming.kicks-ass.net>
+From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <97500234-ebbb-4404-d4de-ab10d3ec79e1@oracle.com>
+Date: Tue, 6 Feb 2018 16:30:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180206091239.GA2269@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8797 signatures=668663
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802070005
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ioeventfd here is actually irqfd handling of an ioeventfd such as
-supported in KVM.  A user is able to pre-program a device write to
-occur when the eventfd triggers.  This is yet another instance of
-eventfd-irqfd triggering between KVM and vfio.  The impetus for this
-is high frequency writes to pages which are virtualized in QEMU.
-Enabling this near-direct write path for selected registers within
-the virtualized page can improve performance and reduce overhead.
-Specifically this is initially targeted at NVIDIA graphics cards where
-the driver issues a write to an MMIO register within a virtualized
-region in order to allow the MSI interrupt to re-trigger.
 
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
- drivers/vfio/pci/vfio_pci.c         |   33 +++++++
- drivers/vfio/pci/vfio_pci_private.h |   14 +++
- drivers/vfio/pci/vfio_pci_rdwr.c    |  165 ++++++++++++++++++++++++++++++++---
- include/uapi/linux/vfio.h           |   24 +++++
- 4 files changed, 224 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index f041b1a6cf66..c8e7297a61a3 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -302,6 +302,7 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
- {
- 	struct pci_dev *pdev = vdev->pdev;
- 	struct vfio_pci_dummy_resource *dummy_res, *tmp;
-+	struct vfio_pci_ioeventfd *ioeventfd, *ioeventfd_tmp;
- 	int i, bar;
- 
- 	/* Stop the device from further DMA */
-@@ -311,6 +312,14 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
- 				VFIO_IRQ_SET_ACTION_TRIGGER,
- 				vdev->irq_type, 0, 0, NULL);
- 
-+	/* Device closed, don't need mutex here */
-+	list_for_each_entry_safe(ioeventfd, ioeventfd_tmp,
-+				 &vdev->ioeventfds_list, next) {
-+		vfio_virqfd_disable(&ioeventfd->virqfd);
-+		list_del(&ioeventfd->next);
-+		kfree(ioeventfd);
-+	}
-+
- 	vdev->virq_disabled = false;
- 
- 	for (i = 0; i < vdev->num_regions; i++)
-@@ -1039,6 +1048,28 @@ static long vfio_pci_ioctl(void *device_data,
- 
- 		kfree(groups);
- 		return ret;
-+	} else if (cmd == VFIO_DEVICE_IOEVENTFD) {
-+		struct vfio_device_ioeventfd ioeventfd;
-+		int count;
-+
-+		minsz = offsetofend(struct vfio_device_ioeventfd, fd);
-+
-+		if (copy_from_user(&ioeventfd, (void __user*)arg, minsz))
-+			return -EFAULT;
-+
-+		if (ioeventfd.argsz < minsz)
-+			return -EINVAL;
-+
-+		if (ioeventfd.flags & ~VFIO_DEVICE_IOEVENTFD_SIZE_MASK)
-+			return -EINVAL;
-+
-+		count = ioeventfd.flags & VFIO_DEVICE_IOEVENTFD_SIZE_MASK;
-+
-+		if (hweight8(count) != 1 || ioeventfd.fd < -1)
-+			return -EINVAL;
-+
-+		return vfio_pci_ioeventfd(vdev, ioeventfd.offset,
-+					  ioeventfd.data, count, ioeventfd.fd);
- 	}
- 
- 	return -ENOTTY;
-@@ -1217,6 +1248,8 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	vdev->irq_type = VFIO_PCI_NUM_IRQS;
- 	mutex_init(&vdev->igate);
- 	spin_lock_init(&vdev->irqlock);
-+	mutex_init(&vdev->ioeventfds_lock);
-+	INIT_LIST_HEAD(&vdev->ioeventfds_list);
- 
- 	ret = vfio_add_group_dev(&pdev->dev, &vfio_pci_ops, vdev);
- 	if (ret) {
-diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
-index f561ac1c78a0..23797622396e 100644
---- a/drivers/vfio/pci/vfio_pci_private.h
-+++ b/drivers/vfio/pci/vfio_pci_private.h
-@@ -29,6 +29,15 @@
- #define PCI_CAP_ID_INVALID		0xFF	/* default raw access */
- #define PCI_CAP_ID_INVALID_VIRT		0xFE	/* default virt access */
- 
-+struct vfio_pci_ioeventfd {
-+	struct list_head	next;
-+	struct virqfd		*virqfd;
-+	loff_t			pos;
-+	uint64_t		data;
-+	int			bar;
-+	int			count;
-+};
-+
- struct vfio_pci_irq_ctx {
- 	struct eventfd_ctx	*trigger;
- 	struct virqfd		*unmask;
-@@ -95,6 +104,8 @@ struct vfio_pci_device {
- 	struct eventfd_ctx	*err_trigger;
- 	struct eventfd_ctx	*req_trigger;
- 	struct list_head	dummy_resources_list;
-+	struct mutex		ioeventfds_lock;
-+	struct list_head	ioeventfds_list;
- };
- 
- #define is_intx(vdev) (vdev->irq_type == VFIO_PCI_INTX_IRQ_INDEX)
-@@ -120,6 +131,9 @@ extern ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
- extern ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
- 			       size_t count, loff_t *ppos, bool iswrite);
- 
-+extern long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
-+			       uint64_t data, int count, int fd);
-+
- extern int vfio_pci_init_perm_bits(void);
- extern void vfio_pci_uninit_perm_bits(void);
- 
-diff --git a/drivers/vfio/pci/vfio_pci_rdwr.c b/drivers/vfio/pci/vfio_pci_rdwr.c
-index 357243d76f10..55bb4517d4ba 100644
---- a/drivers/vfio/pci/vfio_pci_rdwr.c
-+++ b/drivers/vfio/pci/vfio_pci_rdwr.c
-@@ -17,6 +17,7 @@
- #include <linux/pci.h>
- #include <linux/uaccess.h>
- #include <linux/io.h>
-+#include <linux/vfio.h>
- #include <linux/vgaarb.h>
- 
- #include "vfio_pci_private.h"
-@@ -113,6 +114,30 @@ static ssize_t do_io_rw(void __iomem *io, char __user *buf,
- 	return done;
- }
- 
-+static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
-+{
-+	struct pci_dev *pdev = vdev->pdev;
-+	int ret;
-+	void __iomem *io;
-+
-+	if (vdev->barmap[bar])
-+		return 0;
-+
-+	ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
-+	if (ret)
-+		return ret;
-+
-+	io = pci_iomap(pdev, bar, 0);
-+	if (!io) {
-+		pci_release_selected_regions(pdev, 1 << bar);
-+		return -ENOMEM;
-+	}
-+
-+	vdev->barmap[bar] = io;
-+
-+	return 0;
-+}
-+
- ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
- 			size_t count, loff_t *ppos, bool iswrite)
- {
-@@ -147,22 +172,13 @@ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
- 		if (!io)
- 			return -ENOMEM;
- 		x_end = end;
--	} else if (!vdev->barmap[bar]) {
--		int ret;
--
--		ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
-+	} else {
-+		int ret = vfio_pci_setup_barmap(vdev, bar);
- 		if (ret)
- 			return ret;
- 
--		io = pci_iomap(pdev, bar, 0);
--		if (!io) {
--			pci_release_selected_regions(pdev, 1 << bar);
--			return -ENOMEM;
--		}
--
--		vdev->barmap[bar] = io;
--	} else
- 		io = vdev->barmap[bar];
-+	}
- 
- 	if (bar == vdev->msix_bar) {
- 		x_start = vdev->msix_offset;
-@@ -242,3 +258,128 @@ ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
- 
- 	return done;
- }
-+
-+static int vfio_pci_ioeventfd_handler8(void *opaque, void *data)
-+{
-+	iowrite8((unsigned long)data, opaque);
-+	return 0;
-+}
-+
-+static int vfio_pci_ioeventfd_handler16(void *opaque, void *data)
-+{
-+	iowrite16((unsigned long)data, opaque);
-+	return 0;
-+}
-+
-+static int vfio_pci_ioeventfd_handler32(void *opaque, void *data)
-+{
-+	iowrite32((unsigned long)data, opaque);
-+	return 0;
-+}
-+
-+#ifdef iowrite64
-+static int vfio_pci_ioeventfd_handler64(void *opaque, void *data)
-+{
-+	iowrite64((unsigned long)data, opaque);
-+	return 0;
-+}
-+#endif
-+
-+long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
-+			uint64_t data, int count, int fd)
-+{
-+	struct pci_dev *pdev = vdev->pdev;
-+	loff_t pos = offset & VFIO_PCI_OFFSET_MASK;
-+	int ret, bar = VFIO_PCI_OFFSET_TO_INDEX(offset);
-+	struct vfio_pci_ioeventfd *ioeventfd;
-+	int (*handler)(void *, void *);
-+	unsigned long val;
-+
-+	/* Only support ioeventfds into BARs */
-+	if (bar > VFIO_PCI_BAR5_REGION_INDEX)
-+		return -EINVAL;
-+
-+	if (pos + count > pci_resource_len(pdev, bar))
-+		return -EINVAL;
-+
-+	/* Disallow ioeventfds working around MSI-X table writes */
-+	if (bar == vdev->msix_bar &&
-+	    !(pos + count <= vdev->msix_offset ||
-+	      pos >= vdev->msix_offset + vdev->msix_size))
-+		return -EINVAL;
-+
-+	switch (count) {
-+	case 1:
-+		handler = &vfio_pci_ioeventfd_handler8;
-+		val = data;
-+		break;
-+	case 2:
-+		handler = &vfio_pci_ioeventfd_handler16;
-+		val = le16_to_cpu(data);
-+		break;
-+	case 4:
-+		handler = &vfio_pci_ioeventfd_handler32;
-+		val = le32_to_cpu(data);
-+		break;
-+#ifdef iowrite64
-+	case 8:
-+		handler = &vfio_pci_ioeventfd_handler64;
-+		val = le64_to_cpu(data);
-+		break;
-+#endif
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ret = vfio_pci_setup_barmap(vdev, bar);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&vdev->ioeventfds_lock);
-+
-+	list_for_each_entry(ioeventfd, &vdev->ioeventfds_list, next) {
-+		if (ioeventfd->pos == pos && ioeventfd->bar == bar &&
-+		    ioeventfd->data == data && ioeventfd->count == count) {
-+			if (fd == -1) {
-+				vfio_virqfd_disable(&ioeventfd->virqfd);
-+				list_del(&ioeventfd->next);
-+				kfree(ioeventfd);
-+				ret = 0;
-+			} else
-+				ret = -EEXIST;
-+
-+			goto out_unlock;
-+		}
-+	}
-+
-+	if (fd < 0) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
-+
-+	ioeventfd = kzalloc(sizeof(*ioeventfd), GFP_KERNEL);
-+	if (!ioeventfd) {
-+		ret = -ENOMEM;
-+		goto out_unlock;
-+	}
-+
-+	ioeventfd->pos = pos;
-+	ioeventfd->bar = bar;
-+	ioeventfd->data = data;
-+	ioeventfd->count = count;
-+
-+	ret = vfio_virqfd_enable(vdev->barmap[ioeventfd->bar] + ioeventfd->pos,
-+				 handler, NULL, (void *)val,
-+				 &ioeventfd->virqfd, fd);
-+	if (ret) {
-+		kfree(ioeventfd);
-+		goto out_unlock;
-+	}
-+
-+	list_add(&ioeventfd->next, &vdev->ioeventfds_list);
-+
-+out_unlock:
-+	mutex_unlock(&vdev->ioeventfds_lock);
-+
-+	return ret;
-+}
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index e3301dbd27d4..07966a5f0832 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -503,6 +503,30 @@ struct vfio_pci_hot_reset {
- 
- #define VFIO_DEVICE_PCI_HOT_RESET	_IO(VFIO_TYPE, VFIO_BASE + 13)
- 
-+/**
-+ * VFIO_DEVICE_IOEVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 14,
-+ *                              struct vfio_device_ioeventfd)
-+ *
-+ * Perform a write to the device at the specified device fd offset, with
-+ * the specified data and width when the provided eventfd is triggered.
-+ *
-+ * Return: 0 on success, -errno on failure.
-+ */
-+struct vfio_device_ioeventfd {
-+	__u32	argsz;
-+	__u32	flags;
-+#define VFIO_DEVICE_IOEVENTFD_8		(1 << 0) /* 1-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_16	(1 << 1) /* 2-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_32	(1 << 2) /* 4-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_64	(1 << 3) /* 8-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_SIZE_MASK	(0xf)
-+	__u64	offset;			/* device fd offset of write */
-+	__u64	data;			/* data to be written */
-+	__s32	fd;			/* -1 for de-assignment */
-+};
-+
-+#define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 14)
-+
- /* -------- API for Type1 VFIO IOMMU -------- */
- 
- /**
+On 02/06/2018 01:12 AM, Peter Zijlstra wrote:
+> On Mon, Feb 05, 2018 at 02:09:11PM -0800, Subhra Mazumdar wrote:
+>> The pseudo random is also used for choosing a random core to compare with,
+>> how will transposing achieve that?
+> Not entirely sure what your point is. Current code doesn't compare to
+> just _one_ other core, and I don't think we'd ever want to do that.
+>
+> So currently select_idle_core() will, if there is an idle core, iterate
+> the whole thing trying to find it. If it fails, it clears the
+> 'have_idle_core' state.
+>
+> select_idle_cpu, which we'll fall back to, will limit the scanning based
+> on the average idle time.
+>
+>
+> The crucial point however, is that concurrent wakeups will not, on
+> average, do the same iteration because of the target offset.
+I meant the SMT balance patch. That does comparison with only one other
+random core and takes the decision in O(1). Any potential scan of all cores
+or cpus is O(n) and doesn't scale and will only get worse in future. That
+applies to both select_idle_core() and select_idle_cpu().
+
+Is there any reason this randomized approach is not acceptable even if
+benchmarks show improvement? Are there other benchmarks I should try?
+
+Also your suggestion to keep the SMT utilization but still do a 
+traversal of cores
+in select_idle_core() while remembering the least loaded core will still 
+have
+the problem of potentially traversing all cores. I can compare this with 
+a core
+level only SMT balancing, is that useful to decide? I will also test on 
+SPARC
+machines with higher degree of SMT.
+
+You had also mentioned to do it for only SMT >2, not sure I understand why
+as even for SMT=2 (intel) benchmarks show improvement. This clearly shows
+the scalability problem.
+
+Thanks,
+Subhra
