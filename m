@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754819AbeBGUaU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:30:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35842 "EHLO mail.kernel.org"
+        id S1754928AbeBGUaS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:30:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754683AbeBGU2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754695AbeBGU2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 15:28:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B105217C5
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0020217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180207202816.632110869@goodmis.org>
+Message-Id: <20180207202816.931318809@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 07 Feb 2018 15:24:15 -0500
+Date: Wed, 07 Feb 2018 15:24:17 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -26,347 +26,386 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 13/20 v2] tracing: Add array type to function based events
+Subject: [PATCH 15/20 v2] tracing: Add string type for dynamic strings in function based events
 References: <20180207202402.253089656@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0013-tracing-Add-array-type-to-function-based-events.patch
+Content-Disposition: inline; filename=0015-tracing-Add-string-type-for-dynamic-strings-in-funct.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Add syntex to allow the user to create an array type. Brackets after the
-type field will denote that this is an array type. For example:
+Add a "string" type that will create a dynamic length string for the
+event, this is the same as the __string() field in normal TRACE_EVENTS.
 
- # echo 'SyS_open(x8[32] buf, x32 flags, x32 mode)' > function_events
-
-Will make the first argument of the sys_open function call an array of
-32 bytes.
-
-The array type can also be used in conjunction with the indirect offset
-brackets as well. For example to get the interrupt stack of regs in do_IRQ()
-for x86_64.
-
- # echo 'do_IRQ(x64[5] regs[16])' > function_events
-
+[ missing 'static' found by Fengguang Wu's kbuild test robot ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/function-based-events.rst |  22 +++-
- kernel/trace/trace_event_ftrace.c             | 157 +++++++++++++++++++++-----
- 2 files changed, 151 insertions(+), 28 deletions(-)
+ Documentation/trace/function-based-events.rst |  19 ++-
+ kernel/trace/trace_event_ftrace.c             | 183 +++++++++++++++++++++++---
+ 2 files changed, 181 insertions(+), 21 deletions(-)
 
 diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
-index b0e6725f3032..4a8a6fb16a0a 100644
+index 99ae77cd59e6..6c643ea749e7 100644
 --- a/Documentation/trace/function-based-events.rst
 +++ b/Documentation/trace/function-based-events.rst
-@@ -93,7 +93,7 @@ as follows:
- 
-  ARG := TYPE FIELD | TYPE <name> '=' ADDR | TYPE ADDR | ARG '|' ARG
- 
-- TYPE := ATOM | 'unsigned' ATOM
-+ TYPE := ATOM | ATOM '[' <number> ']' | 'unsigned' TYPE
- 
-  ATOM := 'u8' | 'u16' | 'u32' | 'u64' |
+@@ -99,7 +99,7 @@ as follows:
           's8' | 's16' | 's32' | 's64' |
-@@ -305,3 +305,23 @@ Is the same as
-     <idle>-0     [003] d..3   655.823498: ret_from_intr->do_IRQ(total_forks=1504, regs=tick_nohz_idle_enter+0x4c/0x50)
-     <idle>-0     [003] d..3   655.954096: ret_from_intr->do_IRQ(total_forks=1504, regs=cpuidle_enter_state+0xb1/0x330)
+          'x8' | 'x16' | 'x32' | 'x64' |
+          'char' | 'short' | 'int' | 'long' | 'size_t' |
+-	 'symbol'
++	 'symbol' | 'string'
  
+  FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX
+ 
+@@ -342,3 +342,20 @@ the format "%s". If a nul is found, the output will stop. Use another type
+       bash-1470  [003] ...2   980.678715: path_openat->link_path_walk(name=/lib64/ld-linux-x86-64.so.2)
+       bash-1470  [003] ...2   980.678721: path_openat->link_path_walk(name=ld-2.24.so)
+       bash-1470  [003] ...2   980.678978: path_lookupat->link_path_walk(name=/etc/ld.so.preload)
 +
-+Array types
-+===========
 +
-+If there's a case where you want to see an array of a type, then you can
-+declare a type as an array by adding '[' number ']' after the type.
++Dynamic strings
++===============
 +
-+To get the net_device perm_addr, from the dev parameter.
++Static strings are fine, but they can waste a lot of memory in the ring buffer.
++The above allocated 64 bytes for a character array, but most of the output was
++less than 20 characters. Not wanting to truncate strings or waste space on
++the ring buffer, the dynamic string can help.
 +
-+ (gdb) printf "%d\n", &((struct net_device *)0)->perm_addr
-+558
++Use the "string" type for strings that have a large range in size. The max
++size that will be recorded is 512 bytes. If a string is larger than that, then
++it will be truncated.
 +
-+ # echo 'ip_rcv(x64 skb, x8[6] perm_addr+558)' > function_events
++ # echo 'link_path_walk(string name)' > function_events
 +
-+ # echo 1 > events/functions/ip_rcv/enable
-+ # cat trace
-+    <idle>-0     [003] ..s3   219.813582: __netif_receive_skb_core->ip_rcv(skb=ffff880118195e00, perm_addr=b4,b5,2f,ce,18,65)
-+    <idle>-0     [003] ..s3   219.813595: __netif_receive_skb_core->ip_rcv(skb=ffff880118195e00, perm_addr=b4,b5,2f,ce,18,65)
-+    <idle>-0     [003] ..s3   220.115053: __netif_receive_skb_core->ip_rcv(skb=ffff880118195c00, perm_addr=b4,b5,2f,ce,18,65)
-+    <idle>-0     [003] ..s3   220.115293: __netif_receive_skb_core->ip_rcv(skb=ffff880118195c00, perm_addr=b4,b5,2f,ce,18,65)
++Gives the same result as above, but does not waste buffer space.
 diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-index 97748edc8bcb..f62bd6a2ea87 100644
+index aa390339b571..50d0c4d32596 100644
 --- a/kernel/trace/trace_event_ftrace.c
 +++ b/kernel/trace/trace_event_ftrace.c
-@@ -20,6 +20,7 @@ struct func_arg {
- 	char				*name;
- 	long				indirect;
- 	long				index;
-+	short				array;
- 	short				offset;
- 	short				size;
- 	s8				arg;
-@@ -68,6 +69,9 @@ enum func_states {
- 	FUNC_STATE_PIPE,
- 	FUNC_STATE_PLUS,
- 	FUNC_STATE_TYPE,
-+	FUNC_STATE_ARRAY,
-+	FUNC_STATE_ARRAY_SIZE,
-+	FUNC_STATE_ARRAY_END,
- 	FUNC_STATE_VAR,
- 	FUNC_STATE_COMMA,
- 	FUNC_STATE_END,
-@@ -291,6 +295,7 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 	static bool update_arg;
- 	static int unsign;
- 	unsigned long val;
-+	char *type;
- 	int ret;
- 	int i;
+@@ -39,6 +39,7 @@ struct func_event {
+ 	struct func_arg			*last_arg;
+ 	int				arg_cnt;
+ 	int				arg_offset;
++	int				has_strings;
+ };
  
-@@ -341,6 +346,10 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ struct func_file {
+@@ -83,6 +84,8 @@ typedef u32 x32;
+ typedef u16 x16;
+ typedef u8 x8;
+ typedef void * symbol;
++/* 2 byte offset, 2 byte length */
++typedef u32 string;
+ 
+ #define TYPE_TUPLE(type)			\
+ 	{ #type, sizeof(type), is_signed_type(type) }
+@@ -105,7 +108,8 @@ typedef void * symbol;
+ 	TYPE_TUPLE(u8),				\
+ 	TYPE_TUPLE(s8),				\
+ 	TYPE_TUPLE(x8),				\
+-	TYPE_TUPLE(symbol)
++	TYPE_TUPLE(symbol),			\
++	TYPE_TUPLE(string)
+ 
+ static struct func_type {
+ 	char		*name;
+@@ -124,6 +128,16 @@ enum {
+ 	FUNC_TYPE_MAX
+ };
+ 
++#define MAX_STR		512
++
++/* Two contexts, normal and NMI, hence the " * 2" */
++struct func_string {
++	char		buf[MAX_STR * 2];
++};
++
++static struct func_string __percpu *str_buffer;
++static int nr_strings;
++
+ static int max_args __read_mostly = -1;
+ 
+ /**
+@@ -165,6 +179,23 @@ int __weak arch_get_func_args(struct pt_regs *regs,
+ 	return 0;
+ }
+ 
++static void free_arg(struct func_arg *arg)
++{
++	list_del(&arg->list);
++	if (arg->func_type == FUNC_TYPE_string) {
++		nr_strings--;
++		if (WARN_ON(nr_strings < 0))
++			nr_strings = 0;
++		if (!nr_strings) {
++			free_percpu(str_buffer);
++			str_buffer = NULL;
++		}
++	}
++	kfree(arg->name);
++	kfree(arg->type);
++	kfree(arg);
++}
++
+ static void free_func_event(struct func_event *func_event)
+ {
+ 	struct func_arg *arg, *n;
+@@ -173,10 +204,7 @@ static void free_func_event(struct func_event *func_event)
+ 		return;
+ 
+ 	list_for_each_entry_safe(arg, n, &func_event->args, list) {
+-		list_del(&arg->list);
+-		kfree(arg->name);
+-		kfree(arg->type);
+-		kfree(arg);
++		free_arg(arg);
+ 	}
+ 	ftrace_free_filter(&func_event->ops);
+ 	kfree(func_event->call.print_fmt);
+@@ -257,6 +285,17 @@ static int add_arg(struct func_event *fevent, int ftype, int unsign)
+ 	list_add_tail(&arg->list, &fevent->args);
+ 	fevent->last_arg = arg;
+ 
++	if (ftype == FUNC_TYPE_string) {
++		fevent->has_strings++;
++		nr_strings++;
++		if (nr_strings == 1) {
++			str_buffer = alloc_percpu(struct func_string);
++			if (!str_buffer) {
++				free_arg(arg);
++				return -ENOMEM;
++			}
++		}
++	}
+ 	return 0;
+ }
+ 
+@@ -346,8 +385,19 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
  		return FUNC_STATE_TYPE;
  
  	case FUNC_STATE_TYPE:
-+		if (token[0] == '[')
-+			return FUNC_STATE_ARRAY;
-+		/* Fall through */
-+	case FUNC_STATE_ARRAY_END:
- 		if (WARN_ON(!fevent->last_arg))
- 			break;
- 		if (update_arg_name(fevent, token) < 0)
-@@ -352,14 +361,37 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 		update_arg = true;
- 		return FUNC_STATE_VAR;
- 
-+	case FUNC_STATE_ARRAY:
- 	case FUNC_STATE_BRACKET:
--		WARN_ON(!fevent->last_arg);
-+		if (WARN_ON(!fevent->last_arg))
-+			break;
- 		ret = kstrtoul(token, 0, &val);
- 		if (ret)
- 			break;
--		val *= fevent->last_arg->size;
--		fevent->last_arg->indirect = val ^ INDIRECT_FLAG;
--		return FUNC_STATE_INDIRECT;
-+		if (state == FUNC_STATE_BRACKET) {
-+			val *= fevent->last_arg->size;
-+			fevent->last_arg->indirect = val ^ INDIRECT_FLAG;
-+			return FUNC_STATE_INDIRECT;
+-		if (token[0] == '[')
++		if (token[0] == '[') {
++			/* Strings are already arrays */
++			if (fevent->last_arg->func_type == FUNC_TYPE_string)
++				break;
+ 			return FUNC_STATE_ARRAY;
 +		}
-+		if (val <= 0)
-+			break;
-+		fevent->last_arg->array = val;
-+		type = kasprintf(GFP_KERNEL, "%s[%d]", fevent->last_arg->type, (unsigned)val);
-+		if (!type)
-+			break;
-+		kfree(fevent->last_arg->type);
-+		fevent->last_arg->type = type;
-+		/*
-+		 * arg_offset has already been updated once by size.
-+		 * This update needs to account for that (hence the "- 1").
-+		 */
-+		fevent->arg_offset += fevent->last_arg->size * (fevent->last_arg->array - 1);
-+		return FUNC_STATE_ARRAY_SIZE;
-+
-+	case FUNC_STATE_ARRAY_SIZE:
-+		if (token[0] != ']')
-+			break;
-+		return FUNC_STATE_ARRAY_END;
++		if (fevent->last_arg->func_type == FUNC_TYPE_string) {
++			type = kstrdup("__data_loc char[]", GFP_KERNEL);
++			if (!type)
++				break;
++			kfree(fevent->last_arg->type);
++			fevent->last_arg->type = type;
++		}
+ 		/* Fall through */
+ 	case FUNC_STATE_ARRAY_END:
+ 		if (WARN_ON(!fevent->last_arg))
+@@ -475,7 +525,7 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 	return FUNC_STATE_END;
+ }
  
- 	case FUNC_STATE_INDIRECT:
- 		if (token[0] != ']')
-@@ -455,6 +487,10 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
+-static long long get_arg(struct func_arg *arg, unsigned long val)
++static long long __get_arg(struct func_arg *arg, unsigned long val)
+ {
+ 	char buf[8];
+ 	int ret;
+@@ -487,8 +537,8 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
  
  	val = val + (arg->indirect ^ INDIRECT_FLAG);
  
-+	/* Arrays do their own indirect reads */
-+	if (arg->array)
-+		return val;
-+
+-	/* Arrays do their own indirect reads */
+-	if (arg->array)
++	/* Arrays and strings do their own indirect reads */
++	if (arg->array || arg->func_type == FUNC_TYPE_string)
+ 		return val;
+ 
  	ret = probe_kernel_read(buf, (void *)val, arg->size);
- 	if (ret)
- 		return 0;
-@@ -476,6 +512,21 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
+@@ -512,6 +562,15 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
  	return val;
  }
  
-+static void get_array(void *dst, struct func_arg *arg, unsigned long val)
++static long long get_arg(struct func_arg *arg, long *args)
 +{
-+	void *ptr = (void *)val;
-+	int ret;
-+	int i;
++	/* Is arg an address and not a parameter? */
++	if (arg->arg < 0)
++		return __get_arg(arg, 0);
++	else
++		return __get_arg(arg, args[arg->arg]);
++}
 +
-+	for (i = 0; i < arg->array; i++) {
-+		ret = probe_kernel_read(dst, ptr, arg->size);
-+		if (ret)
-+			memset(dst, 0, arg->size);
-+		ptr += arg->size;
-+		dst += arg->size;
+ static void get_array(void *dst, struct func_arg *arg, unsigned long val)
+ {
+ 	void *ptr = (void *)val;
+@@ -527,6 +586,67 @@ static void get_array(void *dst, struct func_arg *arg, unsigned long val)
+ 	}
+ }
+ 
++static int read_string(char *str, unsigned long addr)
++{
++	unsigned long flags;
++	struct func_string *strbuf;
++	char *ptr = (void *)addr;
++	char *buf;
++	int ret;
++
++	if (!str_buffer)
++		return 0;
++
++	strbuf = this_cpu_ptr(str_buffer);
++	buf = &strbuf->buf[0];
++
++	if (in_nmi())
++		buf += MAX_STR;
++
++	local_irq_save(flags);
++	ret = strncpy_from_unsafe(buf, ptr, MAX_STR);
++	if (ret < 0)
++		ret = 0;
++	if (ret > 0 && str)
++		memcpy(str, buf, ret);
++	local_irq_restore(flags);
++
++	return ret;
++}
++
++static int calculate_strings(struct func_event *func_event, int nr_args, long *args)
++{
++	struct func_arg *arg;
++	unsigned long val;
++	int str_count = 0;
++	int size = 0;
++
++	list_for_each_entry(arg, &func_event->args, list) {
++		if (arg->func_type != FUNC_TYPE_string)
++			continue;
++		if (arg->arg < nr_args)
++			val = get_arg(arg, args);
++		else
++			goto skip;
++		size += read_string(NULL, val);
++ skip:
++		if (++str_count >= func_event->has_strings)
++			return size;
 +	}
++	return size;
++}
++
++static int get_string(unsigned long addr, unsigned int idx,
++		      unsigned int *info, char *data)
++{
++	int len;
++
++	len = read_string(data, addr);
++	*info = len << 16 | idx;
++
++	return len;
 +}
 +
  static void func_event_trace(struct trace_event_file *trace_file,
  			     struct func_event *func_event,
  			     unsigned long ip, unsigned long parent_ip,
-@@ -522,7 +573,10 @@ static void func_event_trace(struct trace_event_file *trace_file,
- 				val = get_arg(arg, args[arg->arg]);
- 		} else
- 			val = 0;
--		memcpy(&entry->data[arg->offset], &val, arg->size);
-+		if (arg->array)
-+			get_array(&entry->data[arg->offset], arg, val);
+@@ -540,6 +660,8 @@ static void func_event_trace(struct trace_event_file *trace_file,
+ 	long args[func_event->arg_cnt];
+ 	long long val = 1;
+ 	unsigned long irq_flags;
++	int str_offset;
++	int str_idx = 0;
+ 	int nr_args = 0;
+ 	int size;
+ 	int pc;
+@@ -552,6 +674,12 @@ static void func_event_trace(struct trace_event_file *trace_file,
+ 
+ 	size = func_event->arg_offset + sizeof(*entry);
+ 
++	if (func_event->arg_cnt)
++		nr_args = arch_get_func_args(pt_regs, 0, func_event->arg_cnt, args);
++
++	if (func_event->has_strings)
++		size += calculate_strings(func_event, nr_args, args);
++
+ 	event = trace_event_buffer_lock_reserve(&buffer, trace_file,
+ 						call->event.type,
+ 						size, irq_flags, pc);
+@@ -561,21 +689,22 @@ static void func_event_trace(struct trace_event_file *trace_file,
+ 	entry = ring_buffer_event_data(event);
+ 	entry->ip = ip;
+ 	entry->parent_ip = parent_ip;
+-	if (func_event->arg_cnt)
+-		nr_args = arch_get_func_args(pt_regs, 0, func_event->arg_cnt, args);
+ 
+ 	list_for_each_entry(arg, &func_event->args, list) {
+-		if (arg->arg < nr_args) {
+-			/* Is arg an address and not a parameter? */
+-			if (arg->arg < 0)
+-				val = get_arg(arg, 0);
+-			else
+-				val = get_arg(arg, args[arg->arg]);
+-		} else
++		if (arg->arg < nr_args)
++			val = get_arg(arg, args);
 +		else
-+			memcpy(&entry->data[arg->offset], &val, arg->size);
+ 			val = 0;
+ 		if (arg->array)
+ 			get_array(&entry->data[arg->offset], arg, val);
+-		else
++		else if (arg->func_type == FUNC_TYPE_string) {
++			str_offset = sizeof(struct func_event_hdr) +
++				func_event->arg_offset;
++
++			str_idx += get_string(val, str_offset + str_idx,
++					      (unsigned int *)&entry->data[arg->offset],
++					      &entry->data[func_event->arg_offset + str_idx]);
++		} else
+ 			memcpy(&entry->data[arg->offset], &val, arg->size);
  	}
  
- 	event_trigger_unlock_commit_regs(trace_file, buffer, event,
-@@ -577,6 +631,25 @@ static void make_fmt(struct func_arg *arg, char *fmt)
- 	fmt[c++] = '\0';
- }
+@@ -616,6 +745,11 @@ static void make_fmt(struct func_arg *arg, char *fmt)
  
-+static void write_data(struct trace_seq *s, const struct func_arg *arg, const char *fmt,
-+		       const void *data)
-+{
-+	switch (arg->size) {
-+	case 8:
-+		trace_seq_printf(s, fmt, *(unsigned long long *)data);
-+		break;
-+	case 4:
-+		trace_seq_printf(s, fmt, *(unsigned *)data);
-+		break;
-+	case 2:
-+		trace_seq_printf(s, fmt, *(unsigned short *)data);
-+		break;
-+	case 1:
-+		trace_seq_printf(s, fmt, *(unsigned char *)data);
-+		break;
+ 	fmt[c++] = '%';
+ 
++	if (arg->func_type == FUNC_TYPE_string) {
++		fmt[c++] = 's';
++		goto out;
 +	}
-+}
 +
- static enum print_line_t
- func_event_print(struct trace_iterator *iter, int flags,
- 		 struct trace_event *event)
-@@ -588,6 +661,7 @@ func_event_print(struct trace_iterator *iter, int flags,
+ 	if (arg->func_type == FUNC_TYPE_char) {
+ 		if (arg->array)
+ 			fmt[c++] = 's';
+@@ -673,6 +807,7 @@ func_event_print(struct trace_iterator *iter, int flags,
  	char fmt[FMT_SIZE];
  	void *data;
  	bool comma = false;
-+	int a;
++	int info;
+ 	int a;
  
  	entry = (struct func_event_hdr *)iter->ent;
- 
-@@ -604,20 +678,16 @@ func_event_print(struct trace_iterator *iter, int flags,
- 
- 		make_fmt(arg, fmt);
- 
--		switch (arg->size) {
--		case 8:
--			trace_seq_printf(s, fmt, *(unsigned long long *)data);
--			break;
--		case 4:
--			trace_seq_printf(s, fmt, *(unsigned *)data);
--			break;
--		case 2:
--			trace_seq_printf(s, fmt, *(unsigned short *)data);
--			break;
--		case 1:
--			trace_seq_printf(s, fmt, *(unsigned char *)data);
--			break;
--		}
-+		if (arg->array) {
-+			comma = false;
-+			for (a = 0; a < arg->array; a++, data += arg->size) {
-+				if (comma)
-+					trace_seq_putc(s, ',');
-+				comma = true;
-+				write_data(s, arg, fmt, data);
-+			}
-+		} else
-+			write_data(s, arg, fmt, data);
+@@ -698,6 +833,11 @@ func_event_print(struct trace_iterator *iter, int flags,
+ 				comma = true;
+ 				write_data(s, arg, fmt, data);
+ 			}
++		} else if (arg->func_type == FUNC_TYPE_string) {
++			info = *(unsigned int *)data;
++			info = (info & 0xffff) - sizeof(struct func_event_hdr);
++			data = &entry->data[info];
++			trace_seq_printf(s, fmt, data);
+ 		} else
+ 			write_data(s, arg, fmt, data);
  	}
- 	trace_seq_puts(s, ")\n");
- 	return trace_handle_return(s);
-@@ -640,11 +710,14 @@ static int func_event_define_fields(struct trace_event_call *event_call)
- 	DEFINE_FIELD(unsigned long, parent_ip, "__ip", 0);
- 
- 	list_for_each_entry(arg, &fevent->args, list) {
-+		int size = arg->size;
-+
-+		if (arg->array)
-+			size *= arg->array;
- 		ret = trace_define_field(event_call, arg->type,
- 					 arg->name,
- 					 sizeof(field) + arg->offset,
--					 arg->size, arg->sign,
--					 FILTER_OTHER);
-+					 size, arg->sign, FILTER_OTHER);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -735,7 +808,7 @@ static int __set_print_fmt(struct func_event *func_event,
- 	const char *fmt_start = "\"%pS->%pS(";
- 	const char *fmt_end = ")\", REC->__ip, REC->__parent_ip";
- 	char fmt[FMT_SIZE];
--	int r, i;
-+	int r, i, a;
- 	bool comma = false;
- 
- 	r = snprintf(buf, len, "%s", fmt_start);
-@@ -747,19 +820,49 @@ static int __set_print_fmt(struct func_event *func_event,
+@@ -872,7 +1012,10 @@ static int __set_print_fmt(struct func_event *func_event,
+ 				len = update_len(len, i);
+ 			}
+ 		} else {
+-			i = snprintf(buf + r, len, ", REC->%s", arg->name);
++			if (arg->func_type == FUNC_TYPE_string)
++				i = snprintf(buf + r, len, ", __get_str(%s)", arg->name);
++			else
++				i = snprintf(buf + r, len, ", REC->%s", arg->name);
+ 			r += i;
  			len = update_len(len, i);
  		}
- 		comma = true;
--		make_fmt(arg, fmt);
--		i = snprintf(buf + r, len, "%s=%s", arg->name, fmt);
-+
-+		i = snprintf(buf + r, len, "%s=", arg->name);
- 		r += i;
- 		len = update_len(len, i);
-+
-+		make_fmt(arg, fmt);
-+
-+		if (arg->array) {
-+			bool colon = false;
-+
-+			for (a = 0; a < arg->array; a++) {
-+				if (colon) {
-+					i = snprintf(buf + r, len, ":");
-+					r += i;
-+					len = update_len(len, i);
-+				}
-+				colon = true;
-+				i = snprintf(buf + r, len, "%s", fmt);
-+				r += i;
-+				len = update_len(len, i);
-+			}
-+		} else {
-+			i = snprintf(buf + r, len, "%s", fmt);
-+			r += i;
-+			len = update_len(len, i);
-+		}
- 	}
- 	i = snprintf(buf + r, len, "%s", fmt_end);
- 	r += i;
- 	len = update_len(len, i);
- 
- 	list_for_each_entry(arg, &func_event->args, list) {
--		i = snprintf(buf + r, len, ", REC->%s", arg->name);
--		r += i;
--		len = update_len(len, i);
-+		if (arg->array) {
-+			for (a = 0; a < arg->array; a++) {
-+				i = snprintf(buf + r, len, ", REC->%s[%d]", arg->name, a);
-+				r += i;
-+				len = update_len(len, i);
-+			}
-+		} else {
-+			i = snprintf(buf + r, len, ", REC->%s", arg->name);
-+			r += i;
-+			len = update_len(len, i);
-+		}
- 	}
- 
- 	return r;
 -- 
 2.15.1
