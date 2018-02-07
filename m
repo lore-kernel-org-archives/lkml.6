@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753896AbeBGJPE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 04:15:04 -0500
-Received: from mx.socionext.com ([202.248.49.38]:3327 "EHLO mx.socionext.com"
+        id S1753876AbeBGJPD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 04:15:03 -0500
+Received: from mx.socionext.com ([202.248.49.38]:3330 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753664AbeBGJKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753706AbeBGJKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 04:10:39 -0500
 From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
@@ -14,9 +14,9 @@ Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [RESEND PATCH v2 3/9] ASoC: uniphier: add support for UniPhier AIO DMA driver
-Date: Wed,  7 Feb 2018 18:10:43 +0900
-Message-Id: <20180207091049.24700-4-suzuki.katsuhiro@socionext.com>
+Subject: [RESEND PATCH v2 4/9] ASoC: uniphier: add support for UniPhier AIO CPU DAI driver
+Date: Wed,  7 Feb 2018 18:10:44 +0900
+Message-Id: <20180207091049.24700-5-suzuki.katsuhiro@socionext.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20180207091049.24700-1-suzuki.katsuhiro@socionext.com>
 References: <20180207091049.24700-1-suzuki.katsuhiro@socionext.com>
@@ -24,12 +24,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds supports for UniPhier AIO DMA.
+This patch adds CPU DAI driver for UniPhier AIO audio sound system.
 
-This module shared register area with all sound devices for
-I2S, S/PDIF and so on. Since the AIO has mixed register map
-for those I/Os, it is hard to split register areas for each
-sound devices.
+This module provides PCM devices for all input/output port of AIO
+such as I2S, S/PDIF.
 
 Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
@@ -39,36 +37,36 @@ Changes in v2:
   - Change license comment style to C++ from C
   - Add error checks
   - Fix typo in error messages
-  - Split DMA, CPU DAI patches from large one
-  - Add comments to aiodma_irq()
+  - Expose MCLK clock and PLL settings to user
+  - Validate parameters in hw_params()
   - Fix missing checks for return value
 ---
  sound/soc/uniphier/Makefile  |   2 +-
- sound/soc/uniphier/aio-dma.c | 317 +++++++++++++++++++++++++++++++++++++++++++
- sound/soc/uniphier/aio.h     |   2 +
- 3 files changed, 320 insertions(+), 1 deletion(-)
- create mode 100644 sound/soc/uniphier/aio-dma.c
+ sound/soc/uniphier/aio-cpu.c | 570 +++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/uniphier/aio.h     |   9 +
+ 3 files changed, 580 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/uniphier/aio-cpu.c
 
 diff --git a/sound/soc/uniphier/Makefile b/sound/soc/uniphier/Makefile
-index f3b36aba4879..9efe0feffdc2 100644
+index 9efe0feffdc2..3ef2784b2383 100644
 --- a/sound/soc/uniphier/Makefile
 +++ b/sound/soc/uniphier/Makefile
 @@ -1,5 +1,5 @@
  # SPDX-License-Identifier: GPL-2.0
--snd-soc-uniphier-aio-cpu-objs := aio-core.o
-+snd-soc-uniphier-aio-cpu-objs := aio-core.o aio-dma.o
+-snd-soc-uniphier-aio-cpu-objs := aio-core.o aio-dma.o
++snd-soc-uniphier-aio-cpu-objs := aio-core.o aio-dma.o aio-cpu.o
  
  obj-$(CONFIG_SND_SOC_UNIPHIER_AIO) += snd-soc-uniphier-aio-cpu.o
  
-diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
+diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
 new file mode 100644
-index 000000000000..6d0ca6dde913
+index 000000000000..55f3248a31fd
 --- /dev/null
-+++ b/sound/soc/uniphier/aio-dma.c
-@@ -0,0 +1,317 @@
++++ b/sound/soc/uniphier/aio-cpu.c
+@@ -0,0 +1,570 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
-+// Socionext UniPhier AIO DMA driver.
++// Socionext UniPhier AIO ALSA CPU DAI driver.
 +//
 +// Copyright (c) 2016-2018 Socionext Inc.
 +//
@@ -85,313 +83,573 @@ index 000000000000..6d0ca6dde913
 +// You should have received a copy of the GNU General Public License
 +// along with this program; if not, see <http://www.gnu.org/licenses/>.
 +
-+#include <linux/dma-mapping.h>
++#include <linux/clk.h>
 +#include <linux/errno.h>
 +#include <linux/kernel.h>
 +#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
 +#include <sound/core.h>
 +#include <sound/pcm.h>
++#include <sound/pcm_params.h>
 +#include <sound/soc.h>
 +
 +#include "aio.h"
 +
-+static struct snd_pcm_hardware uniphier_aiodma_hw = {
-+	.info = SNDRV_PCM_INFO_MMAP |
-+		SNDRV_PCM_INFO_MMAP_VALID |
-+		SNDRV_PCM_INFO_INTERLEAVED,
-+	.period_bytes_min = 256,
-+	.period_bytes_max = 4096,
-+	.periods_min      = 4,
-+	.periods_max      = 1024,
-+	.buffer_bytes_max = 128 * 1024,
++static bool is_valid_pll(struct uniphier_aio_chip *chip, int pll_id)
++{
++	struct device *dev = &chip->pdev->dev;
++
++	if (pll_id < 0 || chip->num_plls <= pll_id) {
++		dev_err(dev, "PLL(%d) is not supported\n", pll_id);
++		return false;
++	}
++
++	return chip->plls[pll_id].enable;
++}
++
++static bool match_spec(const struct uniphier_aio_spec *spec,
++		       const char *name, int dir)
++{
++	if (dir == SNDRV_PCM_STREAM_PLAYBACK &&
++	    spec->swm.dir != PORT_DIR_OUTPUT) {
++		return false;
++	}
++
++	if (dir == SNDRV_PCM_STREAM_CAPTURE &&
++	    spec->swm.dir != PORT_DIR_INPUT) {
++		return false;
++	}
++
++	if (spec->name && strcmp(spec->name, name) == 0)
++		return true;
++
++	if (spec->gname && strcmp(spec->gname, name) == 0)
++		return true;
++
++	return false;
++}
++
++/**
++ * find_spec - find HW specification info by name
++ * @aio: the AIO device pointer
++ * @name: name of device
++ * @direction: the direction of substream, SNDRV_PCM_STREAM_*
++ *
++ * Find hardware specification information from list by device name. This
++ * information is used for telling the difference of SoCs to driver.
++ *
++ * Specification list is array of 'struct uniphier_aio_spec' which is defined
++ * in each drivers (see: aio-i2s.c).
++ *
++ * Return: The pointer of hardware specification of AIO if successful,
++ * otherwise NULL on error.
++ */
++static const struct uniphier_aio_spec *find_spec(struct uniphier_aio *aio,
++						 const char *name,
++						 int direction)
++{
++	const struct uniphier_aio_chip_spec *chip_spec = aio->chip->chip_spec;
++	int i;
++
++	for (i = 0; i < chip_spec->num_specs; i++) {
++		const struct uniphier_aio_spec *spec = &chip_spec->specs[i];
++
++		if (match_spec(spec, name, direction))
++			return spec;
++	}
++
++	return NULL;
++}
++
++/**
++ * find_divider - find clock divider by frequency
++ * @aio: the AIO device pointer
++ * @pll_id: PLL ID, should be AUD_PLL_XX
++ * @freq: required frequency
++ *
++ * Find suitable clock divider by frequency.
++ *
++ * Return: The ID of PLL if successful, otherwise negative error value.
++ */
++static int find_divider(struct uniphier_aio *aio, int pll_id, unsigned int freq)
++{
++	struct uniphier_aio_pll *pll;
++	int mul[] = { 1, 1, 1, 2, };
++	int div[] = { 2, 3, 1, 3, };
++	int i;
++
++	if (!is_valid_pll(aio->chip, pll_id))
++		return -EINVAL;
++
++	pll = &aio->chip->plls[pll_id];
++	for (i = 0; i < ARRAY_SIZE(mul); i++)
++		if (pll->freq * mul[i] / div[i] == freq)
++			return i;
++
++	return -ENOTSUPP;
++}
++
++static int uniphier_aio_set_sysclk(struct snd_soc_dai *dai, int clk_id,
++				   unsigned int freq, int dir)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct device *dev = &aio->chip->pdev->dev;
++	bool pll_auto = false;
++	int pll_id, div_id;
++
++	if (clk_id == AUD_CLK_IO)
++		return -ENOTSUPP;
++
++	switch (clk_id) {
++	case AUD_CLK_IO:
++		return -ENOTSUPP;
++	case AUD_CLK_A1:
++		pll_id = AUD_PLL_A1;
++		break;
++	case AUD_CLK_F1:
++		pll_id = AUD_PLL_F1;
++		break;
++	case AUD_CLK_A2:
++		pll_id = AUD_PLL_A2;
++		break;
++	case AUD_CLK_F2:
++		pll_id = AUD_PLL_F2;
++		break;
++	case AUD_CLK_A:
++		pll_id = AUD_PLL_A1;
++		pll_auto = true;
++		break;
++	case AUD_CLK_F:
++		pll_id = AUD_PLL_F1;
++		pll_auto = true;
++		break;
++	case AUD_CLK_APLL:
++		pll_id = AUD_PLL_APLL;
++		break;
++	case AUD_CLK_RX0:
++		pll_id = AUD_PLL_RX0;
++		break;
++	case AUD_CLK_USB0:
++		pll_id = AUD_PLL_USB0;
++		break;
++	case AUD_CLK_HSC0:
++		pll_id = AUD_PLL_HSC0;
++		break;
++	default:
++		dev_err(dev, "Sysclk(%d) is not supported\n", clk_id);
++		return -EINVAL;
++	}
++
++	if (pll_auto) {
++		for (pll_id = 0; pll_id < aio->chip->num_plls; pll_id++) {
++			div_id = find_divider(aio, pll_id, freq);
++			if (div_id >= 0) {
++				aio->plldiv = div_id;
++				break;
++			}
++		}
++		if (pll_id == aio->chip->num_plls) {
++			dev_err(dev, "Sysclk frequency is not supported(%d)\n",
++				freq);
++			return -EINVAL;
++		}
++	}
++
++	if (dir == SND_SOC_CLOCK_OUT)
++		aio->pll_out = pll_id;
++	else
++		aio->pll_in = pll_id;
++
++	return 0;
++}
++
++static int uniphier_aio_set_pll(struct snd_soc_dai *dai, int pll_id,
++				int source, unsigned int freq_in,
++				unsigned int freq_out)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct device *dev = &aio->chip->pdev->dev;
++	int ret;
++
++	if (!is_valid_pll(aio->chip, pll_id))
++		return -EINVAL;
++	if (!aio->chip->plls[pll_id].enable) {
++		dev_err(dev, "PLL(%d) is not implemented\n", pll_id);
++		return -ENOTSUPP;
++	}
++
++	ret = aio_chip_set_pll(aio->chip, pll_id, freq_out);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static int uniphier_aio_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct device *dev = &aio->chip->pdev->dev;
++
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_LEFT_J:
++	case SND_SOC_DAIFMT_RIGHT_J:
++	case SND_SOC_DAIFMT_I2S:
++		aio->fmt = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
++		break;
++	default:
++		dev_err(dev, "Format is not supported(%d)\n",
++			fmt & SND_SOC_DAIFMT_FORMAT_MASK);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int uniphier_aio_startup(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++	int ret;
++
++	sub->substream = substream;
++	sub->pass_through = 0;
++	sub->use_mmap = true;
++
++	ret = aio_init(sub);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void uniphier_aio_shutdown(struct snd_pcm_substream *substream,
++				  struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++
++	sub->substream = NULL;
++}
++
++static int uniphier_aio_hw_params(struct snd_pcm_substream *substream,
++				  struct snd_pcm_hw_params *params,
++				  struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++	struct device *dev = &aio->chip->pdev->dev;
++	int freq, ret;
++
++	switch (params_rate(params)) {
++	case 48000:
++	case 32000:
++	case 24000:
++		freq = 12288000;
++		break;
++	case 44100:
++	case 22050:
++		freq = 11289600;
++		break;
++	default:
++		dev_err(dev, "Rate is not supported(%d)\n",
++			params_rate(params));
++		return -EINVAL;
++	}
++	ret = snd_soc_dai_set_sysclk(dai, AUD_CLK_A,
++				     freq, SND_SOC_CLOCK_OUT);
++	if (ret)
++		return ret;
++
++	sub->params = *params;
++	sub->setting = 1;
++
++	aio_port_reset(sub);
++	aio_src_reset(sub);
++
++	return 0;
++}
++
++static int uniphier_aio_hw_free(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++
++	sub->setting = 0;
++
++	return 0;
++}
++
++static int uniphier_aio_prepare(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++	int ret;
++
++	ret = aio_port_set_param(sub, sub->pass_through, &sub->params);
++	if (ret)
++		return ret;
++	ret = aio_src_set_param(sub, &sub->params);
++	if (ret)
++		return ret;
++	aio_port_set_enable(sub, 1);
++
++	ret = aio_if_set_param(sub, sub->pass_through);
++	if (ret)
++		return ret;
++
++	if (sub->swm->type == PORT_TYPE_CONV) {
++		ret = aio_srcif_set_param(sub);
++		if (ret)
++			return ret;
++		ret = aio_srcch_set_param(sub);
++		if (ret)
++			return ret;
++		aio_srcch_set_enable(sub, 1);
++	}
++
++	return 0;
++}
++
++const struct snd_soc_dai_ops uniphier_aio_i2s_ops = {
++	.set_sysclk  = uniphier_aio_set_sysclk,
++	.set_pll     = uniphier_aio_set_pll,
++	.set_fmt     = uniphier_aio_set_fmt,
++	.startup     = uniphier_aio_startup,
++	.shutdown    = uniphier_aio_shutdown,
++	.hw_params   = uniphier_aio_hw_params,
++	.hw_free     = uniphier_aio_hw_free,
++	.prepare     = uniphier_aio_prepare,
++};
++EXPORT_SYMBOL_GPL(uniphier_aio_i2s_ops);
++
++const struct snd_soc_dai_ops uniphier_aio_spdif_ops = {
++	.set_sysclk  = uniphier_aio_set_sysclk,
++	.set_pll     = uniphier_aio_set_pll,
++	.startup     = uniphier_aio_startup,
++	.shutdown    = uniphier_aio_shutdown,
++	.hw_params   = uniphier_aio_hw_params,
++	.hw_free     = uniphier_aio_hw_free,
++	.prepare     = uniphier_aio_prepare,
++};
++EXPORT_SYMBOL_GPL(uniphier_aio_spdif_ops);
++
++int uniphier_aio_dai_probe(struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(aio->sub); i++) {
++		struct uniphier_aio_sub *sub = &aio->sub[i];
++		const struct uniphier_aio_spec *spec;
++
++		spec = find_spec(aio, dai->name, i);
++		if (!spec)
++			continue;
++
++		sub->swm = &spec->swm;
++		sub->spec = spec;
++	}
++
++	aio_chip_init(aio->chip);
++	aio->chip->active = 1;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(uniphier_aio_dai_probe);
++
++int uniphier_aio_dai_remove(struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++
++	aio->chip->active = 0;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(uniphier_aio_dai_remove);
++
++int uniphier_aio_dai_suspend(struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++
++	reset_control_assert(aio->chip->rst);
++	clk_disable_unprepare(aio->chip->clk);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(uniphier_aio_dai_suspend);
++
++int uniphier_aio_dai_resume(struct snd_soc_dai *dai)
++{
++	struct uniphier_aio *aio = uniphier_priv(dai);
++	int ret, i;
++
++	if (!aio->chip->active)
++		return 0;
++
++	ret = clk_prepare_enable(aio->chip->clk);
++	if (ret)
++		return ret;
++
++	ret = reset_control_deassert(aio->chip->rst);
++	if (ret)
++		goto err_out_clock;
++
++	aio_chip_init(aio->chip);
++
++	for (i = 0; i < ARRAY_SIZE(aio->sub); i++) {
++		struct uniphier_aio_sub *sub = &aio->sub[i];
++
++		if (!sub->spec || !sub->substream)
++			continue;
++
++		ret = aio_init(sub);
++		if (ret)
++			goto err_out_clock;
++
++		if (!sub->setting)
++			continue;
++
++		aio_port_reset(sub);
++		aio_src_reset(sub);
++	}
++
++	return 0;
++
++err_out_clock:
++	clk_disable_unprepare(aio->chip->clk);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(uniphier_aio_dai_resume);
++
++static const struct snd_soc_component_driver uniphier_aio_component = {
++	.name = "uniphier-aio",
 +};
 +
-+static void aiodma_pcm_irq(struct uniphier_aio_sub *sub)
++int uniphier_aio_probe(struct platform_device *pdev)
 +{
-+	struct snd_pcm_runtime *runtime = sub->substream->runtime;
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	int ret;
++	struct uniphier_aio_chip *chip;
++	struct device *dev = &pdev->dev;
++	int ret, i, j;
 +
-+	spin_lock(&sub->lock);
-+	ret = aiodma_rb_set_threshold(sub, runtime->dma_bytes,
-+				      sub->threshold + bytes);
-+	if (!ret)
-+		sub->threshold += bytes;
++	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
 +
-+	aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes, bytes);
-+	aiodma_rb_clear_irq(sub);
-+	spin_unlock(&sub->lock);
++	chip->chip_spec = of_device_get_match_data(dev);
++	if (!chip->chip_spec)
++		return -EINVAL;
 +
-+	snd_pcm_period_elapsed(sub->substream);
-+}
++	chip->clk = devm_clk_get(dev, "aio");
++	if (IS_ERR(chip->clk))
++		return PTR_ERR(chip->clk);
 +
-+static void aiodma_compr_irq(struct uniphier_aio_sub *sub)
-+{
-+	struct snd_compr_runtime *runtime = sub->cstream->runtime;
-+	int bytes = runtime->fragment_size;
-+	int ret;
++	chip->rst = devm_reset_control_get_shared(dev, "aio");
++	if (IS_ERR(chip->rst))
++		return PTR_ERR(chip->rst);
 +
-+	spin_lock(&sub->lock);
-+	ret = aiodma_rb_set_threshold(sub, sub->compr_bytes,
-+				      sub->threshold + bytes);
-+	if (!ret)
-+		sub->threshold += bytes;
++	chip->num_aios = chip->chip_spec->num_dais;
++	chip->aios = devm_kzalloc(dev,
++				  sizeof(struct uniphier_aio) * chip->num_aios,
++				  GFP_KERNEL);
++	if (!chip->aios)
++		return -ENOMEM;
 +
-+	aiodma_rb_sync(sub, sub->compr_addr, sub->compr_bytes, bytes);
-+	aiodma_rb_clear_irq(sub);
-+	spin_unlock(&sub->lock);
-+
-+	snd_compr_fragment_elapsed(sub->cstream);
-+}
-+
-+static irqreturn_t aiodma_irq(int irq, void *p)
-+{
-+	struct platform_device *pdev = p;
-+	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
-+	irqreturn_t ret = IRQ_NONE;
-+	int i, j;
++	chip->num_plls = chip->chip_spec->num_plls;
++	chip->plls = devm_kzalloc(dev, sizeof(struct uniphier_aio_pll) *
++				  chip->num_plls, GFP_KERNEL);
++	if (!chip->plls)
++		return -ENOMEM;
++	memcpy(chip->plls, chip->chip_spec->plls,
++	       sizeof(struct uniphier_aio_pll) * chip->num_plls);
 +
 +	for (i = 0; i < chip->num_aios; i++) {
 +		struct uniphier_aio *aio = &chip->aios[i];
 +
++		aio->chip = chip;
++		aio->fmt = SND_SOC_DAIFMT_I2S;
++
 +		for (j = 0; j < ARRAY_SIZE(aio->sub); j++) {
 +			struct uniphier_aio_sub *sub = &aio->sub[j];
 +
-+			/* Skip channel that does not trigger */
-+			if (!sub->running || !aiodma_rb_is_irq(sub))
-+				continue;
-+
-+			if (sub->substream)
-+				aiodma_pcm_irq(sub);
-+			if (sub->cstream)
-+				aiodma_compr_irq(sub);
-+
-+			ret = IRQ_HANDLED;
++			sub->aio = aio;
++			spin_lock_init(&sub->lock);
 +		}
 +	}
 +
++	chip->pdev = pdev;
++	platform_set_drvdata(pdev, chip);
++
++	ret = clk_prepare_enable(chip->clk);
++	if (ret)
++		return ret;
++
++	ret = reset_control_deassert(chip->rst);
++	if (ret)
++		goto err_out_clock;
++
++	ret = devm_snd_soc_register_component(dev, &uniphier_aio_component,
++					      chip->chip_spec->dais,
++					      chip->chip_spec->num_dais);
++	if (ret) {
++		dev_err(dev, "Register component failed.\n");
++		goto err_out_reset;
++	}
++
++	ret = uniphier_aiodma_soc_register_platform(pdev);
++	if (ret) {
++		dev_err(dev, "Register platform failed.\n");
++		goto err_out_reset;
++	}
++
++	return 0;
++
++err_out_reset:
++	reset_control_assert(chip->rst);
++
++err_out_clock:
++	clk_disable_unprepare(chip->clk);
++
 +	return ret;
 +}
++EXPORT_SYMBOL_GPL(uniphier_aio_probe);
 +
-+static int uniphier_aiodma_open(struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+
-+	snd_soc_set_runtime_hwparams(substream, &uniphier_aiodma_hw);
-+
-+	return snd_pcm_hw_constraint_step(runtime, 0,
-+		SNDRV_PCM_HW_PARAM_BUFFER_BYTES, 256);
-+}
-+
-+static int uniphier_aiodma_hw_params(struct snd_pcm_substream *substream,
-+				     struct snd_pcm_hw_params *params)
-+{
-+	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
-+	substream->runtime->dma_bytes = params_buffer_bytes(params);
-+
-+	return 0;
-+}
-+
-+static int uniphier_aiodma_hw_free(struct snd_pcm_substream *substream)
-+{
-+	snd_pcm_set_runtime_buffer(substream, NULL);
-+	substream->runtime->dma_bytes = 0;
-+
-+	return 0;
-+}
-+
-+static int uniphier_aiodma_prepare(struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
-+	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
-+	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	unsigned long flags;
-+	int ret;
-+
-+	ret = aiodma_ch_set_param(sub);
-+	if (ret)
-+		return ret;
-+
-+	spin_lock_irqsave(&sub->lock, flags);
-+	ret = aiodma_rb_set_buffer(sub, runtime->dma_addr,
-+				   runtime->dma_addr + runtime->dma_bytes,
-+				   bytes);
-+	spin_unlock_irqrestore(&sub->lock, flags);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int uniphier_aiodma_trigger(struct snd_pcm_substream *substream, int cmd)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
-+	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
-+	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
-+	struct device *dev = &aio->chip->pdev->dev;
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sub->lock, flags);
-+	switch (cmd) {
-+	case SNDRV_PCM_TRIGGER_START:
-+		aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes,
-+			       bytes);
-+		aiodma_ch_set_enable(sub, 1);
-+		sub->running = 1;
-+
-+		break;
-+	case SNDRV_PCM_TRIGGER_STOP:
-+		sub->running = 0;
-+		aiodma_ch_set_enable(sub, 0);
-+
-+		break;
-+	default:
-+		dev_warn(dev, "Unknown trigger(%d) ignored\n", cmd);
-+		break;
-+	}
-+	spin_unlock_irqrestore(&sub->lock, flags);
-+
-+	return 0;
-+}
-+
-+static snd_pcm_uframes_t uniphier_aiodma_pointer(
-+					struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
-+	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
-+	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	unsigned long flags;
-+	snd_pcm_uframes_t pos;
-+
-+	spin_lock_irqsave(&sub->lock, flags);
-+	aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes, bytes);
-+
-+	if (sub->swm->dir == PORT_DIR_OUTPUT)
-+		pos = bytes_to_frames(runtime, sub->rd_offs);
-+	else
-+		pos = bytes_to_frames(runtime, sub->wr_offs);
-+	spin_unlock_irqrestore(&sub->lock, flags);
-+
-+	return pos;
-+}
-+
-+static int uniphier_aiodma_mmap(struct snd_pcm_substream *substream,
-+				struct vm_area_struct *vma)
-+{
-+	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
-+
-+	return remap_pfn_range(vma, vma->vm_start,
-+			       substream->dma_buffer.addr >> PAGE_SHIFT,
-+			       vma->vm_end - vma->vm_start, vma->vm_page_prot);
-+}
-+
-+static const struct snd_pcm_ops uniphier_aiodma_ops = {
-+	.open      = uniphier_aiodma_open,
-+	.ioctl     = snd_pcm_lib_ioctl,
-+	.hw_params = uniphier_aiodma_hw_params,
-+	.hw_free   = uniphier_aiodma_hw_free,
-+	.prepare   = uniphier_aiodma_prepare,
-+	.trigger   = uniphier_aiodma_trigger,
-+	.pointer   = uniphier_aiodma_pointer,
-+	.mmap      = uniphier_aiodma_mmap,
-+};
-+
-+static int uniphier_aiodma_new(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct device *dev = rtd->card->snd_card->dev;
-+	struct snd_pcm *pcm = rtd->pcm;
-+	int ret;
-+
-+	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(33));
-+	if (ret)
-+		return ret;
-+
-+	return snd_pcm_lib_preallocate_pages_for_all(pcm,
-+		SNDRV_DMA_TYPE_DEV, dev,
-+		uniphier_aiodma_hw.buffer_bytes_max,
-+		uniphier_aiodma_hw.buffer_bytes_max);
-+}
-+
-+static void uniphier_aiodma_free(struct snd_pcm *pcm)
-+{
-+	snd_pcm_lib_preallocate_free_for_all(pcm);
-+}
-+
-+static const struct snd_soc_platform_driver uniphier_soc_platform = {
-+	.pcm_new   = uniphier_aiodma_new,
-+	.pcm_free  = uniphier_aiodma_free,
-+	.ops       = &uniphier_aiodma_ops,
-+};
-+
-+static const struct regmap_config aiodma_regmap_config = {
-+	.reg_bits      = 32,
-+	.reg_stride    = 4,
-+	.val_bits      = 32,
-+	.max_register  = 0x7fffc,
-+	.cache_type    = REGCACHE_NONE,
-+};
-+
-+/**
-+ * uniphier_aiodma_soc_register_platform - register the AIO DMA
-+ * @pdev: the platform device
-+ *
-+ * Register and setup the DMA of AIO to transfer the sound data to device.
-+ * This function need to call once at driver startup and need NOT to call
-+ * unregister function.
-+ *
-+ * Return: Zero if successful, otherwise a negative value on error.
-+ */
-+int uniphier_aiodma_soc_register_platform(struct platform_device *pdev)
++int uniphier_aio_remove(struct platform_device *pdev)
 +{
 +	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	void __iomem *preg;
-+	int irq, ret;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	preg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(preg))
-+		return PTR_ERR(preg);
++	reset_control_assert(chip->rst);
++	clk_disable_unprepare(chip->clk);
 +
-+	chip->regmap = devm_regmap_init_mmio(dev, preg,
-+					     &aiodma_regmap_config);
-+	if (IS_ERR(chip->regmap))
-+		return PTR_ERR(chip->regmap);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(dev, "Could not get irq.\n");
-+		return irq;
-+	}
-+
-+	ret = devm_request_irq(dev, irq, aiodma_irq,
-+			       IRQF_SHARED, dev_name(dev), pdev);
-+	if (ret)
-+		return ret;
-+
-+	return devm_snd_soc_register_platform(dev, &uniphier_soc_platform);
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(uniphier_aiodma_soc_register_platform);
++EXPORT_SYMBOL_GPL(uniphier_aio_remove);
++
++MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier AIO CPU DAI driver.");
++MODULE_LICENSE("GPL v2");
 diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
-index 774abae28028..3687f6ff30b1 100644
+index 3687f6ff30b1..b12e2e3d7699 100644
 --- a/sound/soc/uniphier/aio.h
 +++ b/sound/soc/uniphier/aio.h
-@@ -304,6 +304,8 @@ static inline struct uniphier_aio *uniphier_priv(struct snd_soc_dai *dai)
- 	return &chip->aios[dai->id];
- }
+@@ -306,6 +306,15 @@ static inline struct uniphier_aio *uniphier_priv(struct snd_soc_dai *dai)
  
-+int uniphier_aiodma_soc_register_platform(struct platform_device *pdev);
+ int uniphier_aiodma_soc_register_platform(struct platform_device *pdev);
+ 
++int uniphier_aio_dai_probe(struct snd_soc_dai *dai);
++int uniphier_aio_dai_remove(struct snd_soc_dai *dai);
++int uniphier_aio_dai_suspend(struct snd_soc_dai *dai);
++int uniphier_aio_dai_resume(struct snd_soc_dai *dai);
++int uniphier_aio_probe(struct platform_device *pdev);
++int uniphier_aio_remove(struct platform_device *pdev);
++extern const struct snd_soc_dai_ops uniphier_aio_i2s_ops;
++extern const struct snd_soc_dai_ops uniphier_aio_spdif_ops;
 +
  u64 aio_rb_cnt(struct uniphier_aio_sub *sub);
  u64 aio_rbt_cnt_to_end(struct uniphier_aio_sub *sub);
