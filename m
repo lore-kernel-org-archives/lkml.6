@@ -1,134 +1,400 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753726AbeBGJOZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 04:14:25 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58071 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753436AbeBGJOV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 04:14:21 -0500
-X-UUID: ad6071150561442c8e22832ece5fc4e7-20180207
-From: <sean.wang@mediatek.com>
-To: <thierry.reding@gmail.com>, <matthias.bgg@gmail.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>, Zhi Mao <zhi.mao@mediatek.com>,
-        John Crispin <john@phrozen.org>
-Subject: [PATCH v2] pwm: mediatek: fix up PWM4 and PWM5 malfunction on MT7623
-Date: Wed, 7 Feb 2018 17:14:17 +0800
-Message-ID: <f94b2d4146ebe0f8eaae02b0dd951f39af0972d4.1517994540.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+        id S1753896AbeBGJPE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 04:15:04 -0500
+Received: from mx.socionext.com ([202.248.49.38]:3327 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753664AbeBGJKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 04:10:39 -0500
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [RESEND PATCH v2 3/9] ASoC: uniphier: add support for UniPhier AIO DMA driver
+Date: Wed,  7 Feb 2018 18:10:43 +0900
+Message-Id: <20180207091049.24700-4-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20180207091049.24700-1-suzuki.katsuhiro@socionext.com>
+References: <20180207091049.24700-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+This patch adds supports for UniPhier AIO DMA.
 
-Since the offset for both registers, PWMDWIDTH and PWMTHRES, used to
-control PWM4 or PWM5 are distinct from the other PWMs, whose wrong
-programming on PWM hardware causes waveform cannot be output as expected.
-Thus, the patch adds the extra condition for fixing up the weird case to
-let PWM4 or PWM5 able to work on MT7623.
+This module shared register area with all sound devices for
+I2S, S/PDIF and so on. Since the AIO has mixed register map
+for those I/Os, it is hard to split register areas for each
+sound devices.
 
-v1 -> v2: use pwm45_fixup naming instead of pwm45_quirk
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Zhi Mao <zhi.mao@mediatek.com>
-Cc: John Crispin <john@phrozen.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- drivers/pwm/pwm-mediatek.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-index f5d97e0..796baea 100644
---- a/drivers/pwm/pwm-mediatek.c
-+++ b/drivers/pwm/pwm-mediatek.c
-@@ -29,7 +29,9 @@
- #define PWMGDUR			0x0c
- #define PWMWAVENUM		0x28
- #define PWMDWIDTH		0x2c
-+#define PWM45DWIDTH_FIXUP	0x30
- #define PWMTHRES		0x30
-+#define PWM45THRES_FIXUP	0x34
+Changes in v2:
+  - Change license comment style to C++ from C
+  - Add error checks
+  - Fix typo in error messages
+  - Split DMA, CPU DAI patches from large one
+  - Add comments to aiodma_irq()
+  - Fix missing checks for return value
+---
+ sound/soc/uniphier/Makefile  |   2 +-
+ sound/soc/uniphier/aio-dma.c | 317 +++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/uniphier/aio.h     |   2 +
+ 3 files changed, 320 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/uniphier/aio-dma.c
+
+diff --git a/sound/soc/uniphier/Makefile b/sound/soc/uniphier/Makefile
+index f3b36aba4879..9efe0feffdc2 100644
+--- a/sound/soc/uniphier/Makefile
++++ b/sound/soc/uniphier/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-snd-soc-uniphier-aio-cpu-objs := aio-core.o
++snd-soc-uniphier-aio-cpu-objs := aio-core.o aio-dma.o
  
- #define PWM_CLK_DIV_MAX		7
+ obj-$(CONFIG_SND_SOC_UNIPHIER_AIO) += snd-soc-uniphier-aio-cpu.o
  
-@@ -54,6 +56,7 @@ static const char * const mtk_pwm_clk_name[MTK_CLK_MAX] = {
- 
- struct mtk_pwm_platform_data {
- 	unsigned int num_pwms;
-+	bool pwm45_fixup;
- };
- 
- /**
-@@ -66,6 +69,7 @@ struct mtk_pwm_chip {
- 	struct pwm_chip chip;
- 	void __iomem *regs;
- 	struct clk *clks[MTK_CLK_MAX];
-+	const struct mtk_pwm_platform_data *soc;
- };
- 
- static const unsigned int mtk_pwm_reg_offset[] = {
-@@ -131,7 +135,8 @@ static int mtk_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- {
- 	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
- 	struct clk *clk = pc->clks[MTK_CLK_PWM1 + pwm->hwpwm];
--	u32 resolution, clkdiv = 0;
-+	u32 resolution, clkdiv = 0, reg_width = PWMDWIDTH,
-+	    reg_thres = PWMTHRES;
- 	int ret;
- 
- 	ret = mtk_pwm_clk_enable(chip, pwm);
-@@ -151,9 +156,18 @@ static int mtk_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return -EINVAL;
- 	}
- 
-+	if (pc->soc->pwm45_fixup && pwm->hwpwm > 2) {
-+		/*
-+		 * PWM[4,5] has distinct offset for PWMDWIDTH and PWMTHRES
-+		 * from the other PWMs on MT7623.
-+		 */
-+		reg_width = PWM45DWIDTH_FIXUP;
-+		reg_thres = PWM45THRES_FIXUP;
+diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
+new file mode 100644
+index 000000000000..6d0ca6dde913
+--- /dev/null
++++ b/sound/soc/uniphier/aio-dma.c
+@@ -0,0 +1,317 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Socionext UniPhier AIO DMA driver.
++//
++// Copyright (c) 2016-2018 Socionext Inc.
++//
++// This program is free software; you can redistribute it and/or
++// modify it under the terms of the GNU General Public License
++// as published by the Free Software Foundation; version 2
++// of the License.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program; if not, see <http://www.gnu.org/licenses/>.
++
++#include <linux/dma-mapping.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <sound/core.h>
++#include <sound/pcm.h>
++#include <sound/soc.h>
++
++#include "aio.h"
++
++static struct snd_pcm_hardware uniphier_aiodma_hw = {
++	.info = SNDRV_PCM_INFO_MMAP |
++		SNDRV_PCM_INFO_MMAP_VALID |
++		SNDRV_PCM_INFO_INTERLEAVED,
++	.period_bytes_min = 256,
++	.period_bytes_max = 4096,
++	.periods_min      = 4,
++	.periods_max      = 1024,
++	.buffer_bytes_max = 128 * 1024,
++};
++
++static void aiodma_pcm_irq(struct uniphier_aio_sub *sub)
++{
++	struct snd_pcm_runtime *runtime = sub->substream->runtime;
++	int bytes = runtime->period_size *
++		runtime->channels * samples_to_bytes(runtime, 1);
++	int ret;
++
++	spin_lock(&sub->lock);
++	ret = aiodma_rb_set_threshold(sub, runtime->dma_bytes,
++				      sub->threshold + bytes);
++	if (!ret)
++		sub->threshold += bytes;
++
++	aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes, bytes);
++	aiodma_rb_clear_irq(sub);
++	spin_unlock(&sub->lock);
++
++	snd_pcm_period_elapsed(sub->substream);
++}
++
++static void aiodma_compr_irq(struct uniphier_aio_sub *sub)
++{
++	struct snd_compr_runtime *runtime = sub->cstream->runtime;
++	int bytes = runtime->fragment_size;
++	int ret;
++
++	spin_lock(&sub->lock);
++	ret = aiodma_rb_set_threshold(sub, sub->compr_bytes,
++				      sub->threshold + bytes);
++	if (!ret)
++		sub->threshold += bytes;
++
++	aiodma_rb_sync(sub, sub->compr_addr, sub->compr_bytes, bytes);
++	aiodma_rb_clear_irq(sub);
++	spin_unlock(&sub->lock);
++
++	snd_compr_fragment_elapsed(sub->cstream);
++}
++
++static irqreturn_t aiodma_irq(int irq, void *p)
++{
++	struct platform_device *pdev = p;
++	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
++	irqreturn_t ret = IRQ_NONE;
++	int i, j;
++
++	for (i = 0; i < chip->num_aios; i++) {
++		struct uniphier_aio *aio = &chip->aios[i];
++
++		for (j = 0; j < ARRAY_SIZE(aio->sub); j++) {
++			struct uniphier_aio_sub *sub = &aio->sub[j];
++
++			/* Skip channel that does not trigger */
++			if (!sub->running || !aiodma_rb_is_irq(sub))
++				continue;
++
++			if (sub->substream)
++				aiodma_pcm_irq(sub);
++			if (sub->cstream)
++				aiodma_compr_irq(sub);
++
++			ret = IRQ_HANDLED;
++		}
 +	}
 +
- 	mtk_pwm_writel(pc, pwm->hwpwm, PWMCON, BIT(15) | clkdiv);
--	mtk_pwm_writel(pc, pwm->hwpwm, PWMDWIDTH, period_ns / resolution);
--	mtk_pwm_writel(pc, pwm->hwpwm, PWMTHRES, duty_ns / resolution);
-+	mtk_pwm_writel(pc, pwm->hwpwm, reg_width, period_ns / resolution);
-+	mtk_pwm_writel(pc, pwm->hwpwm, reg_thres, duty_ns / resolution);
++	return ret;
++}
++
++static int uniphier_aiodma_open(struct snd_pcm_substream *substream)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++
++	snd_soc_set_runtime_hwparams(substream, &uniphier_aiodma_hw);
++
++	return snd_pcm_hw_constraint_step(runtime, 0,
++		SNDRV_PCM_HW_PARAM_BUFFER_BYTES, 256);
++}
++
++static int uniphier_aiodma_hw_params(struct snd_pcm_substream *substream,
++				     struct snd_pcm_hw_params *params)
++{
++	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
++	substream->runtime->dma_bytes = params_buffer_bytes(params);
++
++	return 0;
++}
++
++static int uniphier_aiodma_hw_free(struct snd_pcm_substream *substream)
++{
++	snd_pcm_set_runtime_buffer(substream, NULL);
++	substream->runtime->dma_bytes = 0;
++
++	return 0;
++}
++
++static int uniphier_aiodma_prepare(struct snd_pcm_substream *substream)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
++	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++	int bytes = runtime->period_size *
++		runtime->channels * samples_to_bytes(runtime, 1);
++	unsigned long flags;
++	int ret;
++
++	ret = aiodma_ch_set_param(sub);
++	if (ret)
++		return ret;
++
++	spin_lock_irqsave(&sub->lock, flags);
++	ret = aiodma_rb_set_buffer(sub, runtime->dma_addr,
++				   runtime->dma_addr + runtime->dma_bytes,
++				   bytes);
++	spin_unlock_irqrestore(&sub->lock, flags);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int uniphier_aiodma_trigger(struct snd_pcm_substream *substream, int cmd)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
++	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++	struct device *dev = &aio->chip->pdev->dev;
++	int bytes = runtime->period_size *
++		runtime->channels * samples_to_bytes(runtime, 1);
++	unsigned long flags;
++
++	spin_lock_irqsave(&sub->lock, flags);
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++		aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes,
++			       bytes);
++		aiodma_ch_set_enable(sub, 1);
++		sub->running = 1;
++
++		break;
++	case SNDRV_PCM_TRIGGER_STOP:
++		sub->running = 0;
++		aiodma_ch_set_enable(sub, 0);
++
++		break;
++	default:
++		dev_warn(dev, "Unknown trigger(%d) ignored\n", cmd);
++		break;
++	}
++	spin_unlock_irqrestore(&sub->lock, flags);
++
++	return 0;
++}
++
++static snd_pcm_uframes_t uniphier_aiodma_pointer(
++					struct snd_pcm_substream *substream)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
++	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
++	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
++	int bytes = runtime->period_size *
++		runtime->channels * samples_to_bytes(runtime, 1);
++	unsigned long flags;
++	snd_pcm_uframes_t pos;
++
++	spin_lock_irqsave(&sub->lock, flags);
++	aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes, bytes);
++
++	if (sub->swm->dir == PORT_DIR_OUTPUT)
++		pos = bytes_to_frames(runtime, sub->rd_offs);
++	else
++		pos = bytes_to_frames(runtime, sub->wr_offs);
++	spin_unlock_irqrestore(&sub->lock, flags);
++
++	return pos;
++}
++
++static int uniphier_aiodma_mmap(struct snd_pcm_substream *substream,
++				struct vm_area_struct *vma)
++{
++	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
++
++	return remap_pfn_range(vma, vma->vm_start,
++			       substream->dma_buffer.addr >> PAGE_SHIFT,
++			       vma->vm_end - vma->vm_start, vma->vm_page_prot);
++}
++
++static const struct snd_pcm_ops uniphier_aiodma_ops = {
++	.open      = uniphier_aiodma_open,
++	.ioctl     = snd_pcm_lib_ioctl,
++	.hw_params = uniphier_aiodma_hw_params,
++	.hw_free   = uniphier_aiodma_hw_free,
++	.prepare   = uniphier_aiodma_prepare,
++	.trigger   = uniphier_aiodma_trigger,
++	.pointer   = uniphier_aiodma_pointer,
++	.mmap      = uniphier_aiodma_mmap,
++};
++
++static int uniphier_aiodma_new(struct snd_soc_pcm_runtime *rtd)
++{
++	struct device *dev = rtd->card->snd_card->dev;
++	struct snd_pcm *pcm = rtd->pcm;
++	int ret;
++
++	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(33));
++	if (ret)
++		return ret;
++
++	return snd_pcm_lib_preallocate_pages_for_all(pcm,
++		SNDRV_DMA_TYPE_DEV, dev,
++		uniphier_aiodma_hw.buffer_bytes_max,
++		uniphier_aiodma_hw.buffer_bytes_max);
++}
++
++static void uniphier_aiodma_free(struct snd_pcm *pcm)
++{
++	snd_pcm_lib_preallocate_free_for_all(pcm);
++}
++
++static const struct snd_soc_platform_driver uniphier_soc_platform = {
++	.pcm_new   = uniphier_aiodma_new,
++	.pcm_free  = uniphier_aiodma_free,
++	.ops       = &uniphier_aiodma_ops,
++};
++
++static const struct regmap_config aiodma_regmap_config = {
++	.reg_bits      = 32,
++	.reg_stride    = 4,
++	.val_bits      = 32,
++	.max_register  = 0x7fffc,
++	.cache_type    = REGCACHE_NONE,
++};
++
++/**
++ * uniphier_aiodma_soc_register_platform - register the AIO DMA
++ * @pdev: the platform device
++ *
++ * Register and setup the DMA of AIO to transfer the sound data to device.
++ * This function need to call once at driver startup and need NOT to call
++ * unregister function.
++ *
++ * Return: Zero if successful, otherwise a negative value on error.
++ */
++int uniphier_aiodma_soc_register_platform(struct platform_device *pdev)
++{
++	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	void __iomem *preg;
++	int irq, ret;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	preg = devm_ioremap_resource(dev, res);
++	if (IS_ERR(preg))
++		return PTR_ERR(preg);
++
++	chip->regmap = devm_regmap_init_mmio(dev, preg,
++					     &aiodma_regmap_config);
++	if (IS_ERR(chip->regmap))
++		return PTR_ERR(chip->regmap);
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(dev, "Could not get irq.\n");
++		return irq;
++	}
++
++	ret = devm_request_irq(dev, irq, aiodma_irq,
++			       IRQF_SHARED, dev_name(dev), pdev);
++	if (ret)
++		return ret;
++
++	return devm_snd_soc_register_platform(dev, &uniphier_soc_platform);
++}
++EXPORT_SYMBOL_GPL(uniphier_aiodma_soc_register_platform);
+diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
+index 774abae28028..3687f6ff30b1 100644
+--- a/sound/soc/uniphier/aio.h
++++ b/sound/soc/uniphier/aio.h
+@@ -304,6 +304,8 @@ static inline struct uniphier_aio *uniphier_priv(struct snd_soc_dai *dai)
+ 	return &chip->aios[dai->id];
+ }
  
- 	mtk_pwm_clk_disable(chip, pwm);
- 
-@@ -211,6 +225,7 @@ static int mtk_pwm_probe(struct platform_device *pdev)
- 	data = of_device_get_match_data(&pdev->dev);
- 	if (data == NULL)
- 		return -EINVAL;
-+	pc->soc = data;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pc->regs = devm_ioremap_resource(&pdev->dev, res);
-@@ -251,14 +266,17 @@ static int mtk_pwm_remove(struct platform_device *pdev)
- 
- static const struct mtk_pwm_platform_data mt2712_pwm_data = {
- 	.num_pwms = 8,
-+	.pwm45_fixup = false,
- };
- 
- static const struct mtk_pwm_platform_data mt7622_pwm_data = {
- 	.num_pwms = 6,
-+	.pwm45_fixup = false,
- };
- 
- static const struct mtk_pwm_platform_data mt7623_pwm_data = {
- 	.num_pwms = 5,
-+	.pwm45_fixup = true,
- };
- 
- static const struct of_device_id mtk_pwm_of_match[] = {
++int uniphier_aiodma_soc_register_platform(struct platform_device *pdev);
++
+ u64 aio_rb_cnt(struct uniphier_aio_sub *sub);
+ u64 aio_rbt_cnt_to_end(struct uniphier_aio_sub *sub);
+ u64 aio_rb_space(struct uniphier_aio_sub *sub);
 -- 
-2.7.4
+2.15.0
