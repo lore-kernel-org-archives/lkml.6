@@ -1,182 +1,420 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753976AbeBGL3X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:29:23 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:40298 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753736AbeBGL3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:29:22 -0500
-Message-ID: <1518002943.3677.109.camel@infradead.org>
-Subject: Re: [RFC PATCH 3/4] x86/speculation: Use IBRS if available before
- calling into firmware
-From: David Woodhouse <dwmw2@infradead.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: tglx@linutronix.de, torvalds@linux-foundation.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        tim.c.chen@linux.intel.com, dave.hansen@intel.com,
-        arjan.van.de.ven@intel.com
-In-Reply-To: <20180207111739.GA8698@pd.tnic>
-References: <1517961794-14972-1-git-send-email-dwmw@amazon.co.uk>
-         <1517961794-14972-4-git-send-email-dwmw@amazon.co.uk>
-         <20180207111739.GA8698@pd.tnic>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-Ek06kkiruPXHGsNbmwO3"
-Date: Wed, 07 Feb 2018 11:29:03 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        id S1753913AbeBGLbe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:31:34 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49534 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753796AbeBGLbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:31:33 -0500
+Subject: Re: [PATCH v2 05/20] arm64: capabilities: Add flags to handle the
+ conflicts on late CPU
+To: Dave Martin <Dave.Martin@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-6-suzuki.poulose@arm.com>
+ <20180207103804.GV5862@e103592.cambridge.arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <7221b67c-6581-93bd-ebb3-7e48736ecb02@arm.com>
+Date: Wed, 7 Feb 2018 11:31:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180207103804.GV5862@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/02/18 10:38, Dave Martin wrote:
+> On Wed, Jan 31, 2018 at 06:27:52PM +0000, Suzuki K Poulose wrote:
+>> When a CPU is brought up, it is checked against the caps that are
+>> known to be enabled on the system (via verify_local_cpu_capabilities()).
+>> Based on the state of the capability on the CPU vs. that of System we
+>> could have the following combinations of conflict.
+>>
+>> 	x-----------------------------x
+>> 	| Type  | System   | Late CPU |
+>> 	|-----------------------------|
+>> 	|  a    |   y      |    n     |
+>> 	|-----------------------------|
+>> 	|  b    |   n      |    y     |
+>> 	x-----------------------------x
+>>
+>> Case (a) is not permitted for caps which are system features, which the
+>> system expects all the CPUs to have (e.g VHE). While (a) is ignored for
+>> all errata work arounds. However, there could be exceptions to the plain
+>> filtering approach. e.g, KPTI is an optional feature for a late CPU as
+>> long as the system already enables it.
+>>
+>> Case (b) is not permitted for errata work arounds which requires some work
+>> around, which cannot be delayed. And we ignore (b) for features. Here, yet
+> 
+> Nit, maybe:
+> 
+> "Case (b) is not permitted for any errata workaround that cannot be
+> activated if the kernel has finished booting and has not already enabled
+> it."
 
---=-Ek06kkiruPXHGsNbmwO3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Nit^2: I think it would suffice to say "...that cannot be activated 
+after the kernel has finished booting." - since we don't really have the 
+concept of *de*activating workarounds, it is already implicit in that 
+statement that the one in question wasn't activated *before* the kernel 
+finished booting.
 
+Robin.
 
-
-On Wed, 2018-02-07 at 12:17 +0100, Borislav Petkov wrote:
-> Just some random thoughts:
->=20
-> On Wed, Feb 07, 2018 at 12:03:13AM +0000, David Woodhouse wrote:
-> >=20
-> > +#define alternative_msr_write(_msr, _val, _feature)		\
-> > +	asm volatile(ALTERNATIVE("",				\
-> > +				=C2=A0"movl %[msr], %%ecx\n\t"	\
-> > +				=C2=A0"movl %[val], %%eax\n\t"	\
-> > +				=C2=A0"movl $0, %%edx\n\t"		\
-> We'll never write anything except 0 in %edx?
-
-For these uses, no.
-
-> >=20
-> > +				=C2=A0"wrmsr",			\
-> > +				=C2=A0_feature)			\
-> > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0: : [msr] "i" (_msr), [val] "i" (_val)=
-	\
-> > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0: "eax", "ecx", "edx", "memory")
->
-> So I'm not crazy about making it a separate macro because TBH it doesn't
-> look too generic to do that but then again what do I know, considering
-> recent history. :-)
-
-It was mostly split out so that if you want to keep playing silly
-buggers with it, you can do so in only one place and not three.
-
-If you don't want to keep messing with it, I'm happy to not bother ;)
-
-> 	 [ Maybe I need to not look at the spectral meltdown for a
-> 	=C2=A0=C2=A0=C2=A0couple of weeks and simply take a break. ]
->=20
-> I guess it is fine if it is in nospec-branch.h and not prefix it with
-> alternative_ so that it doesn't give people ideas.
-
-Right. It wasn't really being proposed as a generic alternative.
-
-> Oh and firmware_restrict_branch_speculation_start/end() is just too long
-> a name.
-
-Yeah... Thomas wanted descriptive names; I'm not really convinced.
-
---=-Ek06kkiruPXHGsNbmwO3
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDcxMTI5MDNaMC8GCSqG
-SIb3DQEJBDEiBCAUjYonZd8allN9W0LWdyUagpj8rMyIVV0mxkhl6bvnTTCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAAONSfU9IkDX
-FHTlxVkiOJ5OsLfWIFjQrYDftljySQawoQFrtZ83ud64ZRdXbfwLzvLdEtBO8TiBXjo1wSz/rxmQ
-TSF1wl4P6lJDRYr2HX4tuaLNU2BHfW+z2UvNhxCS3bd5+g44gv7J+CpLjpGk78ohYrxfk8bHspMm
-feXvDYhiHr94stdUk8+nMuHgcF804OZ5JnVzKeUOHVSp/6uOsBj89kkD5hAoEa82tsgCGRn4mreo
-GMkeCnYj86EenA4q0B3KLgcOVetutMBvMWrma3C2kwFTIhLbFteXMyV0gzKWz8E9D51MrToTUfwG
-yhD2qjS3k75oJTx8UcvGzdjlUtQAAAAAAAA=
-
-
---=-Ek06kkiruPXHGsNbmwO3--
+>> again, KPTI is an exception, where if a late CPU needs KPTI we are too late
+>> to enable it (because we change the allocation of ASIDs etc).
+>>
+>> Add two different flags to indicate how the conflict should be handled.
+>>
+>>   ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU - CPUs may have the capability
+>>   ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU - CPUs may not have the cappability.
+>>
+>> Now that we have the flags to describe the behavior of the errata and
+>> the features, as we treat them, define types for ERRATUM and FEATURE.
+>>
+>> Cc: Dave Martin <dave.martin@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> All my suggestions in this patch are rewordings of comments, so they're
+> not vital, and anyway you may disagree that they make the meaning
+> clearer.  So I don't think they're essential.
+> 
+> For the actual code
+> 
+> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+> 
+>> ---
+>>   arch/arm64/include/asm/cpufeature.h | 61 ++++++++++++++++++++++++++++++++++++-
+>>   arch/arm64/kernel/cpu_errata.c      |  8 ++---
+>>   arch/arm64/kernel/cpufeature.c      | 30 +++++++++---------
+>>   3 files changed, 79 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+>> index 05da54f1b4c7..7460b1f7e611 100644
+>> --- a/arch/arm64/include/asm/cpufeature.h
+>> +++ b/arch/arm64/include/asm/cpufeature.h
+>> @@ -142,7 +142,8 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>>    *    capabilities and if there is a conflict, the kernel takes an action, based
+>>    *    on the severity (e.g, a CPU could be prevented from booting or cause a
+>>    *    kernel panic). The CPU is allowed to "affect" the state of the capability,
+>> - *    if it has not been finalised already.
+>> + *    if it has not been finalised already. See section 5 for more details on
+>> + *    conflicts.
+>>    *
+>>    * 4) Action: As mentioned in (2), the kernel can take an action for each detected
+>>    *    capability, on all CPUs on the system. This is always initiated only after
+>> @@ -155,6 +156,32 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>>    *	b) Any late CPU, brought up after (1), the action is triggered via:
+>>    *		check_local_cpu_capabilities() -> verify_local_cpu_capabilities()
+>>    *
+>> + * 5) Conflicts: Based on the state of the capability on a late CPU vs. the system
+>> + *    state, we could have the following combinations :
+>> + *
+>> + *		x-----------------------------x
+>> + *		| Type  | System   | Late CPU |
+>> + *		|-----------------------------|
+>> + *		|  a    |   y      |    n     |
+>> + *		|-----------------------------|
+>> + *		|  b    |   n      |    y     |
+>> + *		x-----------------------------x
+> 
+> Nit: I find this a bit hard to follow.  Maybe reordering things a bit
+> would help but putting the rule (the precise bit) first, and the
+> rationale (necessarily more vague) afterward:
+> 
+> "Two capability type flag bits are defined to indicate whether each kind
+> of conflict can be tolerated:
+> 
+> 		ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU - Case (a) is allowed
+> 		ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU - Case (b) is allowed."
+> 
+>> + *
+>> + *     Case (a) is not permitted for capabilities which are usually system
+>> + *     features, which the system expects all CPUs to have. While (a) is ignored
+>> + *     for capabilities which represents an erratum work around.
+> 
+> Similarly "Case (a) is not permitted for a capability that the system
+> requires all CPUs to have in order for the capability to be enabled.
+> This is typical for capabilities that represent enhanced functionality."
+> 
+>> + *
+>> + *     Case (b) is not permitted for erratum capabilities, which might require
+>> + *     some work arounds which cannot be applied really late. Meanwhile, most
+>> + *     of the features could safely ignore (b), as the system doesn't use it
+>> + *     anyway.
+> 
+> and
+> 
+> "Case (b) is not permitted for a capability that the system must enable
+> during boot if any CPU in the system requires it in order to run safely.
+> This is typical for erratum workarounds that cannot be enabled after the
+> corresponding capability is finalised.
+> 
+> In some non-typical cases, either both (a) and (b), or neither, should
+> be permitted.  This can be described by including neither or both flags
+> in the capability's type field."
+> 
+> [...]
+> 
+>>   
+>>   
+>> @@ -165,6 +192,26 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>>   #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
+>>   #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
+>>   
+>> +/* Is it permitted for a late CPU to have this capability when system doesn't already have */
+> 
+> "doesn't already have" -> "hasn't already enabled it"?
+> 
+>> +#define ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU	((u16)BIT(4))
+>> +/* Is it safe for a late CPU to miss this capability when system has it */
+>> +#define ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	((u16)BIT(5))
+>> +
+>> +/*
+>> + * CPU errata detected at boot time based on feature of one or more CPUs.
+>> + * It is not safe for a late CPU to have this feature when the system doesn't
+> 
+> Can we around using the word "feature" to describe errata here?
+> 
+> Maybe "CPU errata workarounds that need to be enabled at boot time if
+> one or more CPUs in the system requires the workaround.  When one of
+> these workaround capabilities has been enabled, it is safe to allow any
+> CPU to boot that does not require the workaround."
+> 
+>> + * have it. But it is safe to miss the feature if the system has it.
+>> + */
+>> +#define ARM64_CPUCAP_LOCAL_CPU_ERRATUM		\
+>> +	(ARM64_CPUCAP_SCOPE_LOCAL_CPU | ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
+>> +/*
+>> + * CPU feature detected at boot time based on system-wide value of a feature.
+>> + * It is safe for a late CPU to have this feature even though the system doesn't
+>> + * have it already. But the CPU must have this feature if the system does.
+> 
+> "hasn't enabled it, although the feature will not be used by Linux
+> in this case.  If the system has enabled this feature already then every
+> late CPU must have it."
+> 
+>> + */
+>> +#define ARM64_CPUCAP_SYSTEM_FEATURE	\
+>> +	(ARM64_CPUCAP_SCOPE_SYSTEM | ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
+>> +
+>>   struct arm64_cpu_capabilities {
+>>   	const char *desc;
+>>   	u16 capability;
+>> @@ -198,6 +245,18 @@ static inline int cpucap_default_scope(const struct arm64_cpu_capabilities *cap)
+>>   	return cap->type & ARM64_CPUCAP_SCOPE_MASK;
+>>   }
+>>   
+>> +static inline bool
+>> +cpucap_late_cpu_optional(const struct arm64_cpu_capabilities *cap)
+>> +{
+>> +	return !!(cap->type & ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU);
+>> +}
+>> +
+>> +static inline bool
+>> +cpucap_late_cpu_permitted(const struct arm64_cpu_capabilities *cap)
+>> +{
+>> +	return !!(cap->type & ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU);
+>> +}
+>> +
+>>   extern DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
+>>   extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
+>>   extern struct static_key_false arm64_const_caps_ready;
+>> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+>> index 328c5a031e45..22ec3960a0c5 100644
+>> --- a/arch/arm64/kernel/cpu_errata.c
+>> +++ b/arch/arm64/kernel/cpu_errata.c
+>> @@ -175,14 +175,14 @@ static void qcom_enable_link_stack_sanitization(
+>>   #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+>>   
+>>   #define MIDR_RANGE(model, min, max) \
+>> -	.type = ARM64_CPUCAP_SCOPE_LOCAL_CPU, \
+>> +	.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM, \
+>>   	.matches = is_affected_midr_range, \
+>>   	.midr_model = model, \
+>>   	.midr_range_min = min, \
+>>   	.midr_range_max = max
+>>   
+>>   #define MIDR_ALL_VERSIONS(model) \
+>> -	.type = ARM64_CPUCAP_SCOPE_LOCAL_CPU, \
+>> +	.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM, \
+>>   	.matches = is_affected_midr_range, \
+>>   	.midr_model = model, \
+>>   	.midr_range_min = 0, \
+>> @@ -286,7 +286,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+>>   		.desc = "Mismatched cache line size",
+>>   		.capability = ARM64_MISMATCHED_CACHE_LINE_SIZE,
+>>   		.matches = has_mismatched_cache_line_size,
+>> -		.type = ARM64_CPUCAP_SCOPE_LOCAL_CPU,
+>> +		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+>>   		.cpu_enable = cpu_enable_trap_ctr_access,
+>>   	},
+>>   #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
+>> @@ -300,7 +300,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+>>   	{
+>>   		.desc = "Qualcomm Technologies Kryo erratum 1003",
+>>   		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
+>> -		.type = ARM64_CPUCAP_SCOPE_LOCAL_CPU,
+>> +		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+>>   		.midr_model = MIDR_QCOM_KRYO,
+>>   		.matches = is_kryo_midr,
+>>   	},
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index 8d22f0ef0927..1b29b3f0a1bc 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -921,7 +921,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "GIC system register CPU interface",
+>>   		.capability = ARM64_HAS_SYSREG_GIC_CPUIF,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_useable_gicv3_cpuif,
+>>   		.sys_reg = SYS_ID_AA64PFR0_EL1,
+>>   		.field_pos = ID_AA64PFR0_GIC_SHIFT,
+>> @@ -932,7 +932,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "Privileged Access Never",
+>>   		.capability = ARM64_HAS_PAN,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_cpuid_feature,
+>>   		.sys_reg = SYS_ID_AA64MMFR1_EL1,
+>>   		.field_pos = ID_AA64MMFR1_PAN_SHIFT,
+>> @@ -945,7 +945,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "LSE atomic instructions",
+>>   		.capability = ARM64_HAS_LSE_ATOMICS,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_cpuid_feature,
+>>   		.sys_reg = SYS_ID_AA64ISAR0_EL1,
+>>   		.field_pos = ID_AA64ISAR0_ATOMICS_SHIFT,
+>> @@ -956,14 +956,14 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "Software prefetching using PRFM",
+>>   		.capability = ARM64_HAS_NO_HW_PREFETCH,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_no_hw_prefetch,
+>>   	},
+>>   #ifdef CONFIG_ARM64_UAO
+>>   	{
+>>   		.desc = "User Access Override",
+>>   		.capability = ARM64_HAS_UAO,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_cpuid_feature,
+>>   		.sys_reg = SYS_ID_AA64MMFR2_EL1,
+>>   		.field_pos = ID_AA64MMFR2_UAO_SHIFT,
+>> @@ -977,21 +977,21 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   #ifdef CONFIG_ARM64_PAN
+>>   	{
+>>   		.capability = ARM64_ALT_PAN_NOT_UAO,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = cpufeature_pan_not_uao,
+>>   	},
+>>   #endif /* CONFIG_ARM64_PAN */
+>>   	{
+>>   		.desc = "Virtualization Host Extensions",
+>>   		.capability = ARM64_HAS_VIRT_HOST_EXTN,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = runs_at_el2,
+>>   		.cpu_enable = cpu_copy_el2regs,
+>>   	},
+>>   	{
+>>   		.desc = "32-bit EL0 Support",
+>>   		.capability = ARM64_HAS_32BIT_EL0,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_cpuid_feature,
+>>   		.sys_reg = SYS_ID_AA64PFR0_EL1,
+>>   		.sign = FTR_UNSIGNED,
+>> @@ -1001,21 +1001,21 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "Reduced HYP mapping offset",
+>>   		.capability = ARM64_HYP_OFFSET_LOW,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = hyp_offset_low,
+>>   	},
+>>   #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>>   	{
+>>   		.desc = "Kernel page table isolation (KPTI)",
+>>   		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = unmap_kernel_at_el0,
+>>   	},
+>>   #endif
+>>   	{
+>>   		/* FP/SIMD is not implemented */
+>>   		.capability = ARM64_HAS_NO_FPSIMD,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.min_field_value = 0,
+>>   		.matches = has_no_fpsimd,
+>>   	},
+>> @@ -1023,7 +1023,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "Data cache clean to Point of Persistence",
+>>   		.capability = ARM64_HAS_DCPOP,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_cpuid_feature,
+>>   		.sys_reg = SYS_ID_AA64ISAR1_EL1,
+>>   		.field_pos = ID_AA64ISAR1_DPB_SHIFT,
+>> @@ -1033,7 +1033,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   #ifdef CONFIG_ARM64_SVE
+>>   	{
+>>   		.desc = "Scalable Vector Extension",
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.capability = ARM64_SVE,
+>>   		.sys_reg = SYS_ID_AA64PFR0_EL1,
+>>   		.sign = FTR_UNSIGNED,
+>> @@ -1047,7 +1047,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   	{
+>>   		.desc = "RAS Extension Support",
+>>   		.capability = ARM64_HAS_RAS_EXTN,
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>   		.matches = has_cpuid_feature,
+>>   		.sys_reg = SYS_ID_AA64PFR0_EL1,
+>>   		.sign = FTR_UNSIGNED,
+>> @@ -1062,7 +1062,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>   #define HWCAP_CAP(reg, field, s, min_value, cap_type, cap)	\
+>>   	{							\
+>>   		.desc = #cap,					\
+>> -		.type = ARM64_CPUCAP_SCOPE_SYSTEM,		\
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,		\
+>>   		.matches = has_cpuid_feature,			\
+>>   		.sys_reg = reg,					\
+>>   		.field_pos = field,				\
+>> -- 
+>> 2.14.3
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
