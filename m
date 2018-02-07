@@ -1,132 +1,929 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753989AbeBGLYW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:24:22 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:42754 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753837AbeBGLYT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:24:19 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180207112417epoutp021549ffc27cbcce5d83a2987a05fd646e~RB1-hlunN2416524165epoutp02W
-X-AuditID: b6c32a36-ca9ff70000001028-3d-5a7ae1e10ad9
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Message-id: <5A7AE1E0.8000509@samsung.com>
-Date: Wed, 07 Feb 2018 20:24:16 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-In-reply-to: <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTX/fhw6oog8+ruSw2zljParHp8TVW
-        i48991gtLu+aw2Yx4/w+Jou1R+6yW1w85Wpx+E07q8WPM90sDpwe72+0sntc7utl8ti8pN6j
-        b8sqRo/Pm+QCWKNSbTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8
-        AnTdMnOAzlFSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CpFGxoa6RkamOsZGRnpmRjHWhmZ
-        ApUkpGasmf+GqWCdcMXWCfeYGhjX83cxcnJICJhI7Oz4ztjFyMUhJLCDUeLg689QzndGiRen
-        zzDCVN1+9BsqsYFRouXoalaQBK+AoMSPyfdYuhg5OJgF5CWOXMoGCTMLaEq8+DKJBaL+HqPE
-        n96JLBD1WhJ3uneA9bIIqEp07vkAtoANKL7/xQ02EJtfQFHi6o/HYHFRgQiJnfO/sYPYIgL6
-        EktWXWQDGcos8JZRYv2pScwgCWGBeIl9D0+CFXEK2EvcfnqIFeLq22wSL+8aQ9guEqcf72OB
-        sIUlXh3fwg5ytISAtMSlo7YgMyUE2hkl2vfOY4ZwpjBKnLt+jwmiwVji2cIuJojX+CTefe1h
-        hWjmlehoE4Io8ZD4cm461F5Hiff/FoDtEhJ4wijRfVJjAqPcLKTwmoUIr1lI4bWAkXkVo1hq
-        QXFuemqxYYGRXnFibnFpXrpecn7uJkZwAtQy28G46JzPIUYBDkYlHl6DDZVRQqyJZcWVuYcY
-        JTiYlUR4f66sihLiTUmsrEotyo8vKs1JLT7EaAoM7onMUqLJ+cDknFcSb2hiaWBiZgRMXpaG
-        hkrivAEBLlFCAumJJanZqakFqUUwfUwcnFINjEujEkpFJ4hm6R3qUaq2m8fzVaZZ115MvOTc
-        ZTZZH+PO+qKbM9MC1GtsmYyWXVqWrmXBlZIrXnUq72nL3tKDq2ySl04UC74TtO6/pk7GrUXL
-        otc0dH/kFnohrXKDS8fJYEOqtEeP7qvP5q81Xj/a9tMzxsh+aag589RIxXLHtFUcDJN/Gboq
-        sRRnJBpqMRcVJwIAV3uM+ZYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsVy+t9jQd0HD6uiDI5/UrfYOGM9q8Wmx9dY
-        LT723GO1uLxrDpvFjPP7mCzWHrnLbnHxlKvF4TftrBY/znSzOHB6vL/Ryu5xua+XyWPzknqP
-        vi2rGD0+b5ILYI3isklJzcksSy3St0vgylgz/w1TwTrhiq0T7jE1MK7n72Lk5JAQMJG4/eg3
-        YxcjF4eQwDpGiQW7frGCJHgFBCV+TL7H0sXIwcEsIC9x5FI2hKkuMWVKLkT5A0aJAz+PM0OU
-        a0nc6d4B1soioCrRuecDI4jNBhTf/+IGG4jNL6AocfXHY0aQOaICERLdJypBwiIC+hJLVl1k
-        A5nJLPCWUeLNyn1gM4UF4iX2PTzJDrHsCaPErfvTwBKcAvYSt58eYp3AKDALyamzEE6dhXDq
-        AkbmVYySqQXFuem5xUYFhnmp5XrFibnFpXnpesn5uZsYgYG/7bBW3w7G+0viDzEKcDAq8fB2
-        bKqMEmJNLCuuzD3EKMHBrCTC+3NlVZQQb0piZVVqUX58UWlOavEhRmkOFiVx3tt5xyKFBNIT
-        S1KzU1MLUotgskwcnFINjE56+Qt6bas8Z/80/37Y/0/UoTmHdM/3Z32Yk7x7vcui3NtMP16z
-        rIsXmrpKRq1MvO0A9y05/5Uuv9/XGa7wCm6t1TGPWt/ZP332W7db1jNn8OpdONbZ2VByZQ2v
-        68mVu/Yx9hSdeBhtF50VVfz9VonLXdf5p7Z8bVxY8lHvrU9hu83SJudmViWW4oxEQy3mouJE
-        ACY4if94AgAA
-X-CMS-MailID: 20180207112416epcas1p18d4f842b76d99539129c28378947bb98
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
-X-RootMTR: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
-        <20180205142230.9755-1-s.nawrocki@samsung.com>
-        <5A7916A2.7010307@samsung.com>
-        <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
+        id S1753909AbeBGLZj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:25:39 -0500
+Received: from mga12.intel.com ([192.55.52.136]:32494 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753630AbeBGLZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:25:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
+   d="scan'208";a="172398003"
+Date: Wed, 7 Feb 2018 13:25:33 +0200
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Alexandre Courbot <acourbot@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFCv3 01/17] media: add request API core and UAPI
+Message-ID: <20180207112533.sk7re4ksoeywop2q@paasikivi.fi.intel.com>
+References: <20180207014821.164536-1-acourbot@chromium.org>
+ <20180207014821.164536-2-acourbot@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180207014821.164536-2-acourbot@chromium.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 02월 07일 19:29, Sylwester Nawrocki wrote:
-> On 02/06/2018 03:44 AM, Chanwoo Choi wrote:
->> When I developed the clk-exynos5433.c I referred to the following description.
->> TRM specified that "Samsung recommends only the values
->> between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
+Hi Alexandre,
+
+On Wed, Feb 07, 2018 at 10:48:05AM +0900, Alexandre Courbot wrote:
+> The request API provides a way to group buffers and device parameters
+> into units of work to be queued and executed. This patch introduces the
+> UAPI and core framework.
 > 
-> Thanks, I somehow missed it. There is also another sentence pointing to
-> a contact person if other values are needed.
+> This patch is based on the previous work by Laurent Pinchart. The core
+> has changed considerably, but the UAPI is mostly untouched.
+
+Thanks for the rebase.
+
+What's the purpose of the split between media-request.c and
+media-request-mgr.c? The use of ops for the request manager suggests it
+could be replaced by an alternative implementation but then again the media
+request is almost entirely initialised in the media-request-mgr. Either
+could make some sense but not both --- I'd simply move the code from the
+media-request-mgr to the functions calling them in media-request.c. That
+should make this easier to read, too.
+
+A few more comments below.
+
 > 
->> It looks like that you refer to clk-exynos5420.c driver.
->> But, I'm wondering exynos5433 might not guarantee the additional clock
->> of this patch as the stable clock.
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  drivers/media/Makefile               |   3 +-
+>  drivers/media/media-device.c         |   7 +
+>  drivers/media/media-request-mgr.c    | 105 ++++++++++++
+>  drivers/media/media-request.c        | 311 +++++++++++++++++++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c |   2 +-
+>  include/media/media-device.h         |   3 +
+>  include/media/media-entity.h         |   9 +
+>  include/media/media-request-mgr.h    |  73 ++++++++
+>  include/media/media-request.h        | 186 +++++++++++++++++++++
+>  include/uapi/linux/media.h           |  10 ++
+>  10 files changed, 707 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/media/media-request-mgr.c
+>  create mode 100644 drivers/media/media-request.c
+>  create mode 100644 include/media/media-request-mgr.h
+>  create mode 100644 include/media/media-request.h
 > 
-> I took the values from downstream SM-N910C_LL kernel, I would say they
-> are well tested and reliable. How about adding just these 3 entries:
-> 
-> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
-> +	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
-> +	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
-> ?
+> diff --git a/drivers/media/Makefile b/drivers/media/Makefile
+> index 594b462ddf0e..06c43ddb52ea 100644
+> --- a/drivers/media/Makefile
+> +++ b/drivers/media/Makefile
+> @@ -3,7 +3,8 @@
+>  # Makefile for the kernel multimedia device drivers.
+>  #
 >  
-> They are needed for audio sample rates that are multiple of 32000, 44100
-> or 48000 Hz. The AUD PLL frequency values which are currently defined
-> are not useful for anything except fs 48000 (fpll = 393216000 Hz).
+> -media-objs	:= media-device.o media-devnode.o media-entity.o
+> +media-objs	:= media-device.o media-devnode.o media-entity.o \
+> +		   media-request.o media-request-mgr.o
+>  
+>  #
+>  # I2C drivers should come before other drivers, otherwise they'll fail
+> diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+> index e79f72b8b858..024ee81a8334 100644
+> --- a/drivers/media/media-device.c
+> +++ b/drivers/media/media-device.c
+> @@ -32,6 +32,8 @@
+>  #include <media/media-device.h>
+>  #include <media/media-devnode.h>
+>  #include <media/media-entity.h>
+> +#include <media/media-request.h>
+> +#include <media/media-request-mgr.h>
+>  
+>  #ifdef CONFIG_MEDIA_CONTROLLER
+>  
+> @@ -407,6 +409,7 @@ static const struct media_ioctl_info ioctl_info[] = {
+>  	MEDIA_IOC(ENUM_LINKS, media_device_enum_links, MEDIA_IOC_FL_GRAPH_MUTEX),
+>  	MEDIA_IOC(SETUP_LINK, media_device_setup_link, MEDIA_IOC_FL_GRAPH_MUTEX),
+>  	MEDIA_IOC(G_TOPOLOGY, media_device_get_topology, MEDIA_IOC_FL_GRAPH_MUTEX),
+> +	MEDIA_IOC(REQUEST_CMD, media_device_request_cmd, 0),
+>  };
+>  
+>  static long media_device_ioctl(struct file *filp, unsigned int cmd,
+> @@ -688,6 +691,10 @@ EXPORT_SYMBOL_GPL(media_device_init);
+>  
+>  void media_device_cleanup(struct media_device *mdev)
+>  {
+> +	if (mdev->req_mgr) {
+> +		media_request_mgr_free(mdev->req_mgr);
+> +		mdev->req_mgr = NULL;
+> +	}
+>  	ida_destroy(&mdev->entity_internal_idx);
+>  	mdev->entity_internal_idx_max = 0;
+>  	media_graph_walk_cleanup(&mdev->pm_count_walk);
+> diff --git a/drivers/media/media-request-mgr.c b/drivers/media/media-request-mgr.c
+> new file mode 100644
+> index 000000000000..686e877a884b
+> --- /dev/null
+> +++ b/drivers/media/media-request-mgr.c
+> @@ -0,0 +1,105 @@
+> +/*
+> + * Generic request manager implementation.
+> + *
+> + * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <media/media-device.h>
+> +#include <media/media-request.h>
+> +#include <media/media-request-mgr.h>
+> +
+> +static struct media_request *
+> +media_request_alloc(struct media_request_mgr *mgr)
+> +{
+> +	struct media_request *req;
+> +
+> +	req = kzalloc(sizeof(*req), GFP_KERNEL);
+> +	if (!req)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	req->mgr = mgr;
+> +	req->state = MEDIA_REQUEST_STATE_IDLE;
+> +	kref_init(&req->kref);
+> +	INIT_LIST_HEAD(&req->data);
+> +	init_waitqueue_head(&req->complete_wait);
+> +	ATOMIC_INIT_NOTIFIER_HEAD(&req->submit_notif);
+> +	mutex_init(&req->lock);
+> +
+> +	mutex_lock(&mgr->mutex);
+> +	req->id = ++mgr->req_id;
+> +	list_add_tail(&req->list, &mgr->requests);
+> +	mutex_unlock(&mgr->mutex);
+> +
+> +	return req;
+> +}
+> +
+> +static void media_request_free(struct media_request *req)
+> +{
+> +	struct media_request_mgr *mgr = req->mgr;
+> +	struct media_request_entity_data *data, *next;
+> +
+> +	mutex_lock(&mgr->mutex);
+> +	list_del(&req->list);
+> +	mutex_unlock(&mgr->mutex);
+> +
+> +	list_for_each_entry_safe(data, next, &req->data, list) {
+> +		list_del(&data->list);
+> +		data->entity->req_ops->data_free(data);
+> +	}
+> +
+> +	kfree(req);
+> +}
+> +
+> +void media_request_mgr_free(struct media_request_mgr *mgr)
+> +{
+> +	struct media_device *mdev = mgr->mdev;
+> +
+> +	/* Just a sanity check - we should have no remaining requests */
+> +	while (!list_empty(&mgr->requests)) {
+> +		struct media_request *req;
+> +
+> +		req = list_first_entry(&mgr->requests, typeof(*req), list);
+> +		dev_warn(mdev->dev,
+> +			"%s: request %u still referenced, deleting forcibly!\n",
+> +			__func__, req->id);
+> +		mgr->ops->req_free(req);
+> +	}
+> +
+> +	kfree(mgr);
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_mgr_free);
+> +
+> +static const struct media_request_mgr_ops request_mgr_generic_ops = {
+> +	.req_alloc = media_request_alloc,
+> +	.req_free = media_request_free,
+> +};
+> +
+> +struct media_request_mgr *
+> +media_request_mgr_alloc(struct media_device *mdev)
+> +{
+> +	struct media_request_mgr *mgr;
+> +
+> +	mgr = kzalloc(sizeof(*mgr), GFP_KERNEL);
+> +	if (!mgr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	mgr->mdev = mdev;
+> +	mutex_init(&mgr->mutex);
+> +	INIT_LIST_HEAD(&mgr->requests);
+> +	mgr->ops = &request_mgr_generic_ops;
+> +
+> +	return mgr;
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_mgr_alloc);
+> diff --git a/drivers/media/media-request.c b/drivers/media/media-request.c
+> new file mode 100644
+> index 000000000000..30a23235b019
+> --- /dev/null
+> +++ b/drivers/media/media-request.c
+> @@ -0,0 +1,311 @@
+> +/*
+> + * Request base implementation
+> + *
+> + * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/anon_inodes.h>
+> +#include <linux/media.h>
+> +#include <linux/fs.h>
+> +#include <linux/file.h>
+> +#include <linux/slab.h>
+> +#include <linux/list.h>
+> +
+> +#include <media/media-device.h>
+> +#include <media/media-request.h>
+> +#include <media/media-request-mgr.h>
+> +
+> +const struct file_operations request_fops;
+> +
+> +struct media_request *media_request_get(struct media_request *req)
+> +{
+> +	kref_get(&req->kref);
+> +	return req;
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_get);
+> +
+> +struct media_request *
+> +media_request_get_from_fd(int fd)
+> +{
+> +	struct file *f;
+> +	struct media_request *req;
+> +
+> +	f = fget(fd);
+> +	if (!f)
+> +		return NULL;
+> +
+> +	/* Not a request FD? */
+> +	if (f->f_op != &request_fops) {
+> +		fput(f);
+> +		return NULL;
+> +	}
+> +
+> +	req = f->private_data;
+> +	media_request_get(req);
+> +	fput(f);
+> +
+> +	return req;
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_get_from_fd);
+> +
+> +static void media_request_release(struct kref *kref)
+> +{
+> +	struct media_request *req =
+> +		container_of(kref, typeof(*req), kref);
+> +
+> +	req->mgr->ops->req_free(req);
+> +}
+> +
+> +void media_request_put(struct media_request *req)
+> +{
+> +	if (WARN_ON(req == NULL))
+> +		return;
+> +
+> +	kref_put(&req->kref, media_request_release);
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_put);
+> +
+> +struct media_request_entity_data *
+> +media_request_get_entity_data(struct media_request *req,
+> +			      struct media_entity *entity, void *fh)
+> +{
+> +	struct media_request_entity_data *data;
+> +
+> +	mutex_lock(&req->lock);
+> +
+> +	/* First look whether we already have entity data */
+> +	list_for_each_entry(data, &req->data, list) {
+> +		if (data->entity == entity) {
+> +			/*
+> +			 * If so, then the fh must match otherwise this means
+> +			 * we are trying to set the same entity through
+> +			 * different handles
+> +			 */
+> +			if (data->fh != fh)
+> +				data = ERR_PTR(-EINVAL);
+> +			goto done;
+> +		}
+> +	}
+> +
+> +	/* No entity data found, let's create it */
+> +	data = entity->req_ops->data_alloc(entity, fh);
+> +	if (IS_ERR(data))
+> +		goto done;
+> +	data->fh = fh;
+> +	data->entity = entity;
+> +	list_add_tail(&data->list, &req->data);
+> +
+> +done:
+> +	mutex_unlock(&req->lock);
+> +	return data;
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_get_entity_data);
+> +
+> +static const char * const media_request_states[] __maybe_unused = {
+> +	"IDLE",
+> +	"SUBMITTED",
+> +	"COMPLETED",
+> +	"DELETED",
+> +};
+> +
+> +static const char *media_request_state(enum media_request_state state)
+> +{
+> +	return state < ARRAY_SIZE(media_request_states) ?
+> +		media_request_states[state] : "INVALID";
+> +}
+> +
+> +static int media_device_request_close(struct inode *inode, struct file *filp)
+> +{
+> +	struct media_request *req = filp->private_data;
+> +
+> +	if (req == NULL)
+> +		return 0;
+> +
+> +	media_request_put(req);
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned int media_request_poll(struct file *file, poll_table *wait)
+> +{
+> +	struct media_request *req = file->private_data;
+> +
+> +	poll_wait(file, &req->complete_wait, wait);
+> +
+> +	if (req->state == MEDIA_REQUEST_STATE_COMPLETED)
+> +		return POLLIN | POLLRDNORM;
+> +
+> +	return 0;
+> +}
+> +
+> +const struct file_operations request_fops = {
+> +	.owner = THIS_MODULE,
+> +	.poll = media_request_poll,
+> +	.release = media_device_request_close,
+> +};
+> +
+> +void media_request_complete(struct media_request *req)
+> +{
+> +	struct media_request_mgr *mgr = req->mgr;
+> +	struct media_device *mdev = mgr->mdev;
+> +
+> +	mutex_lock(&req->lock);
+> +
+> +	if (WARN_ON(req->state != MEDIA_REQUEST_STATE_SUBMITTED)) {
+> +		dev_dbg(mdev->dev, "%s: can't complete %u, state %s\n",
+> +			__func__, req->id, media_request_state(req->state));
+> +		mutex_unlock(&req->lock);
+> +		return;
+> +	}
+> +
+> +	req->state = MEDIA_REQUEST_STATE_COMPLETED;
+> +
+> +	if (mgr->ops->req_complete)
+> +		mgr->ops->req_complete(req);
+> +
+> +	wake_up_interruptible(&req->complete_wait);
+> +
+> +	mutex_unlock(&req->lock);
+> +
+> +	/* Release the reference acquired when we submitted the request */
+> +	media_request_put(req);
+> +}
+> +EXPORT_SYMBOL_GPL(media_request_complete);
+> +
+> +/*
+> + * Process the MEDIA_REQ_CMD_ALLOC command
+> + */
+> +static int media_request_cmd_alloc(struct media_request_mgr *mgr,
+> +				   struct media_request_cmd *cmd)
+> +{
+> +	struct media_request *req;
+> +	int fd;
+> +
+> +	req = mgr->ops->req_alloc(mgr);
+> +	if (!req)
+> +		return -ENOMEM;
+> +
+> +	fd = anon_inode_getfd("media_request", &request_fops, req, O_CLOEXEC);
+> +	if (fd < 0)
+> +		return fd;
+> +
+> +	cmd->fd = fd;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Process the MEDIA_REQ_CMD_SUBMIT command
+> + */
+> +static int media_request_cmd_submit(struct media_request *req)
+> +{
+> +	mutex_lock(&req->lock);
+> +
+> +	if (req->state != MEDIA_REQUEST_STATE_IDLE) {
+> +		dev_dbg(req->mgr->mdev->dev,
+> +			"%s: unable to submit request in state %s\n",
+> +			__func__, media_request_state(req->state));
+> +		mutex_unlock(&req->lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (atomic_read(&req->buf_cpt) == 0) {
+> +		dev_dbg(req->mgr->mdev->dev,
+> +			"%s: request has no buffers!\n", __func__);
+> +		mutex_unlock(&req->lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	req->state = MEDIA_REQUEST_STATE_SUBMITTED;
+> +
+> +	/* Hold a reference to the request until it is completed */
+> +	media_request_get(req);
+> +
+> +	mutex_unlock(&req->lock);
+> +
+> +	atomic_notifier_call_chain(&req->submit_notif, req->state, req);
+> +
+> +	return 0;
+> +}
+> +
+> +static int media_request_cmd_reinit(struct media_request *req)
+> +{
+> +	struct media_request_entity_data *data, *next;
+> +
+> +	mutex_lock(&req->lock);
+> +
+> +	if (req->state == MEDIA_REQUEST_STATE_SUBMITTED) {
+> +		dev_dbg(req->mgr->mdev->dev,
+> +			"%s: unable to reinit submitted request\n", __func__);
+> +		mutex_unlock(&req->lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* delete all entity data */
+> +	list_for_each_entry_safe(data, next, &req->data, list) {
+> +		list_del(&data->list);
+> +		data->entity->req_ops->data_free(data);
+> +	}
+> +
+> +	/* reinitialize request to idle state */
+> +	req->state = MEDIA_REQUEST_STATE_IDLE;
+> +	atomic_set(&req->buf_cpt, 0);
+> +
+> +	mutex_unlock(&req->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +long media_device_request_cmd(struct media_device *mdev,
+> +			      struct media_request_cmd *cmd)
+> +{
+> +	struct media_request *req = NULL;
+> +	int ret;
+> +
+> +	if (!mdev->req_mgr)
+> +		return -ENOTTY;
+> +
+> +	if (cmd->cmd != MEDIA_REQ_CMD_ALLOC) {
+> +		req = media_request_get_from_fd(cmd->fd);
+> +		if (IS_ERR(req))
+> +			return PTR_ERR(req);
+> +
+> +		/* requests must belong to this media device's manager */
+> +		if (req->mgr != mdev->req_mgr) {
+> +			media_request_put(req);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	switch (cmd->cmd) {
+> +	case MEDIA_REQ_CMD_ALLOC:
+> +		ret = media_request_cmd_alloc(mdev->req_mgr, cmd);
+> +		break;
+> +
+> +	case MEDIA_REQ_CMD_SUBMIT:
+> +		ret = media_request_cmd_submit(req);
+> +		break;
+> +
+> +	case MEDIA_REQ_CMD_REINIT:
+> +		ret = media_request_cmd_reinit(req);
+> +		break;
+> +
+> +	default:
+> +		ret = -EINVAL;
+> +		break;
+> +	}
+> +
+> +	if (req)
+> +		media_request_put(req);
+> +
+> +	return ret;
+> +}
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 260288ca4f55..e5109e5b8bf5 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -870,7 +870,7 @@ static int check_ext_ctrls(struct v4l2_ext_controls *c, int allow_priv)
+>  	__u32 i;
+>  
+>  	/* zero the reserved fields */
+> -	c->reserved[0] = c->reserved[1] = 0;
+> +	c->reserved[0] = 0;
+>  	for (i = 0; i < c->count; i++)
+>  		c->controls[i].reserved2[0] = 0;
+>  
+> diff --git a/include/media/media-device.h b/include/media/media-device.h
+> index bcc6ec434f1f..f2d471b8a53f 100644
+> --- a/include/media/media-device.h
+> +++ b/include/media/media-device.h
+> @@ -27,6 +27,7 @@
+>  
+>  struct ida;
+>  struct device;
+> +struct media_request_mgr;
+>  
+>  /**
+>   * struct media_entity_notify - Media Entity Notify
+> @@ -158,6 +159,8 @@ struct media_device {
+>  	void (*disable_source)(struct media_entity *entity);
+>  
+>  	const struct media_device_ops *ops;
+> +
+> +	struct media_request_mgr *req_mgr;
+>  };
+>  
+>  /* We don't need to include pci.h or usb.h here */
+> diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> index a732af1dbba0..39f5e88e2b23 100644
+> --- a/include/media/media-entity.h
+> +++ b/include/media/media-entity.h
+> @@ -172,6 +172,8 @@ struct media_pad {
+>  	unsigned long flags;
+>  };
+>  
+> +struct media_request;
+> +struct v4l2_ext_controls;
+>  /**
+>   * struct media_entity_operations - Media entity operations
+>   * @get_fwnode_pad:	Return the pad number based on a fwnode endpoint or
+> @@ -197,6 +199,11 @@ struct media_entity_operations {
+>  	int (*link_validate)(struct media_link *link);
+>  };
+>  
+> +struct media_entity_request_ops {
+> +	struct media_request_entity_data *(*data_alloc)(struct media_entity *entity, void *fh);
+> +	void (*data_free)(struct media_request_entity_data *data);
+> +};
+> +
+>  /**
+>   * enum media_entity_type - Media entity type
+>   *
+> @@ -281,6 +288,8 @@ struct media_entity {
+>  
+>  	const struct media_entity_operations *ops;
+>  
+> +	const struct media_entity_request_ops *req_ops;
+> +
+>  	int stream_count;
+>  	int use_count;
+>  
+> diff --git a/include/media/media-request-mgr.h b/include/media/media-request-mgr.h
+> new file mode 100644
+> index 000000000000..a3161fa2add0
+> --- /dev/null
+> +++ b/include/media/media-request-mgr.h
+> @@ -0,0 +1,73 @@
+> +/*
+> + * Generic request manager.
+> + *
+> + * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef _MEDIA_REQUEST_MGR_H
+> +#define _MEDIA_REQUEST_MGR_H
+> +
+> +#include <linux/mutex.h>
+> +
+> +struct media_request_mgr;
+> +
+> +/**
+> + * struct media_request_mgr_ops - request manager operations
+> + *
+> + * @req_alloc:	allocate a request
+> + * @req_free:	free a previously allocated request
+> + * @req_complete: callback invoked when a request has completed
+> + *
+> + */
+> +struct media_request_mgr_ops {
+> +	struct media_request *(*req_alloc)(struct media_request_mgr *mgr);
+> +	void (*req_free)(struct media_request *req);
+> +	void (*req_complete)(struct media_request *req);
+> +};
+> +
+> +/**
+> + * struct media_request_mgr - requests manager
+> + *
+> + * @mdev:	media_device owning this manager
+> + * @ops:	implementation of the manager
+> + * @mutex:	protects requests, active_request, req_id, and all members of
+> + *		struct media_request
 
-If you referred to SM-N910C released kernel, I agree.
+The media request has a mutex as well. Is this outdated?
 
-> 
-> We could add new PLL rates: 361267218, 262144000, but I'm not convinced
-> these would be any better than values used in a shipped product. We would 
-> need to confirm below values with the HW team, and I'm not sure what 
-> would be the P, M, S, K set for 262144000 frequency.
-> 
-> 	PLL_36XX_RATE(361267218U, 301, 5, 2,   3671),
-> 
-> As it turns out, the 393216000 Hz entry needs correction, the actual 
-> frequency value from the P, M, S, K equation is 393216003:
-> 
-> -	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
-> +	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
-
-As you described, 393216003 might be more correct than 393216000,
-IMHO, I think that TRM specified 393216000 instead of 393216003,
-because the following equation is clean without any decimal point.
-- "393216000 / 8192 = 48000"
-
-I have no any objection, if 393216003 is correct result.
-
-Could you share your equation?
-because your result is a little bit different of my result.
-- my equation : ((mdiv + kdiv/65535) x 24MHz) / (pdiv x POWER(2,sdiv))
-
-> 
-> Hmm, I have tested with the PLL frequency set to 393216003 Hz and there
-> are some glitches during audio playback, I can't get it to work properly.
+> + * @requests:	list of alive requests produced by this manager
+> + * @req_id:	counter used to identify requests for debugging purposes
+> + */
+> +struct media_request_mgr {
+> +	struct media_device *mdev;
+> +	const struct media_request_mgr_ops *ops;
+> +
+> +	struct mutex mutex;
+> +	struct list_head requests;
+> +	u32 req_id;
+> +};
+> +
+> +/**
+> + * media_request_mgr_alloc() - return an instance of the generic manager
+> + *
+> + * @mdev:	owning media device
+> + */
+> +struct media_request_mgr *
+> +media_request_mgr_alloc(struct media_device *mdev);
+> +
+> +/**
+> + * media_request_mgr_free() - free a media manager
+> + *
+> + * This should only be called when all requests produced by this manager
+> + * has been destroyed. Will warn if that is not the case.
+> + *
+> + */
+> +void media_request_mgr_free(struct media_request_mgr *mgr);
+> +
+> +#endif
+> diff --git a/include/media/media-request.h b/include/media/media-request.h
+> new file mode 100644
+> index 000000000000..817df13ef6e3
+> --- /dev/null
+> +++ b/include/media/media-request.h
+> @@ -0,0 +1,186 @@
+> +/*
+> + * Media requests.
+> + *
+> + * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef _MEDIA_REQUEST_H
+> +#define _MEDIA_REQUEST_H
+> +
+> +#include <linux/kref.h>
+> +#include <linux/list.h>
+> +#include <linux/notifier.h>
+> +#include <linux/wait.h>
+> +
+> +struct media_device;
+> +struct media_entity;
+> +struct media_request_cmd;
+> +struct media_request_entity_data;
+> +struct media_request_mgr;
+> +
+> +#ifdef CONFIG_MEDIA_CONTROLLER
+> +
+> +enum media_request_state {
+> +	MEDIA_REQUEST_STATE_IDLE,
+> +	MEDIA_REQUEST_STATE_SUBMITTED,
+> +	MEDIA_REQUEST_STATE_COMPLETED,
+> +	MEDIA_REQUEST_STATE_DELETED,
+> +};
+> +
+> +/**
+> + * struct media_request - Media request base structure
+> + * @id:		request id, used internally for debugging
+> + * @mgr:	manager this request belongs to
+> + * @kref:	reference count
+> + * @list:	list entry in the media device requests list
+> + * @lock:	protects internal state against concurrent accesses
+> + * @state:	current state of the request
+> + * @data:	per-entity data list
+> + * @complete_wait:	wait queue that signals once the request has completed
+> + * @submit_notif:	notification list to call when the request is submitted
+> + * @buf_cpt:	counter of queued/completed buffers used to decide when the
+> + *		request is completed
+> + */
+> +struct media_request {
+> +	u32 id;
+> +	struct media_request_mgr *mgr;
+> +	struct kref kref;
+> +	struct list_head list;
+> +
+> +	struct mutex lock;
+> +	enum media_request_state state;
+> +	struct list_head data;
+> +	wait_queue_head_t complete_wait;
+> +	struct atomic_notifier_head submit_notif;
+> +	atomic_t buf_cpt;
+> +};
+> +
+> +/**
+> + * media_request_get() - increment the reference counter of a request
+> + *
+> + * The calling context must call media_request_put() once it does not need
+> + * the reference to the request anymore.
+> + *
+> + * Returns the request that has been passed as argument.
+> + *
+> + * @req:	request to acquire a reference of
+> + */
+> +struct media_request *media_request_get(struct media_request *req);
+> +
+> +/**
+> + * media_request_get_from_fd() - lookup request by fd and acquire a reference.
+> + *
+> + * Look a request up from its fd, acquire a reference and return a pointer to
+> + * the request. As for media_request_get(), media_request_put() must be called
+> + * once the reference is not used anymore.
+> + *
+> + * @req:	request to lookup and acquire.
+> + *
+> + */
+> +struct media_request *media_request_get_from_fd(int fd);
+> +
+> +/**
+> + * media_request_put() - decrement the reference counter of a request
+> + *
+> + * Mirror function of media_request_get() and media_request_get_from_fd(). Will
+> + * free the request if this was the last valid reference.
+> + *
+> + * @req:	request to release.
+> + */
+> +void media_request_put(struct media_request *req);
+> +
+> +/**
+> + * media_request_get_entity_data() - get per-entity data for a request
+> + * @req:	request to get entity data from
+> + * @entity:	entity to get data of
+> + * @fh:		cookie identifying the handle from which the entity is accessed
+> + *
+> + * Search and return the entity data associated associated to the request. If no
+> + * such data exists, it is allocated as per the entity operations.
+> + *
+> + * The fh arguments serves as a cookie to make sure the same entity is not
+> + * accessed through different opened file handles. The same handle must be
+> + * passed to all calls of this function for the same entity. Failure to do so
+> + * will return an error.
+> + *
+> + * Returns the per-entity data, or an error code if a problem happened. -EINVAL
+> + * means that data for the entity already existed, but has been allocated under
+> + * a different cookie.
+> + */
+> +struct media_request_entity_data *
+> +media_request_get_entity_data(struct media_request *req,
+> +			      struct media_entity *entity, void *fh);
+> +
+> +
+> +/**
+> + * media_request_complete() - to be invoked when the request is complete
+> + *
+> + * @req:	request which has completed
+> + */
+> +void media_request_complete(struct media_request *req);
+> +
+> +/**
+> + * struct media_request_entity_data - per-entity request data
+> + *
+> + * Base structure used to store request state data. To be extended by actual
+> + * implementation.
+> + *
+> + * @entity:	entity this data belongs to
+> + * @fh:		subsystem-dependent. For V4L2, the v4l2_fh of the opened device
+> + * @list:	entry in media_request::data
+> + * @applied:	whether this request has already been applied for this entity
+> + */
+> +struct media_request_entity_data {
+> +	struct media_entity *entity;
+> +	void *fh;
+> +	struct list_head list;
+> +	bool applied;
+> +};
+> +
+> +/**
+> + * media_device_request_cmd() - perform the REQUEST_CMD ioctl
+> + *
+> + * @mdev:	media device the ioctl has been called on
+> + * @cmd:	user-space request command structure
+> + */
+> +long media_device_request_cmd(struct media_device *mdev,
+> +			      struct media_request_cmd *cmd);
+> +
+> +#else /* CONFIG_MEDIA_CONTROLLER */
+> +
+> +static inline media_request_get(struct media_request *req)
+> +{
+> +}
+> +
+> +static inline struct media_request *media_request_get_from_fd(int fd)
+> +{
+> +	return ERR_PTR(-ENOSYS);
+> +}
+> +
+> +static inline void media_request_put(struct media_request *req)
+> +{
+> +}
+> +
+> +static inline struct media_request *media_request_get_entity_data(
+> +					  struct media_request *req,
+> +					  struct media_entity *entity, void *fh)
+> +{
+> +	return ERR_PTR(-ENOSYS);
+> +}
+> +
+> +static inline void media_request_entity_complete(struct media_request *req)
+> +{
+> +}
+> +
+> +#endif /* CONFIG_MEDIA_CONTROLLER */
+> +
+> +#endif
+> diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
+> index b9b9446095e9..6e20ac9848b5 100644
+> --- a/include/uapi/linux/media.h
+> +++ b/include/uapi/linux/media.h
+> @@ -406,6 +406,15 @@ struct media_v2_topology {
+>  	__u64 ptr_links;
+>  } __attribute__ ((packed));
+>  
+> +#define MEDIA_REQ_CMD_ALLOC		0
+> +#define MEDIA_REQ_CMD_SUBMIT		1
+> +#define MEDIA_REQ_CMD_REINIT		2
+> +
+> +struct media_request_cmd {
+> +	__u32 cmd;
+> +	__s32 fd;
+> +} __attribute__ ((packed));
+> +
+>  /* ioctls */
+>  
+>  #define MEDIA_IOC_DEVICE_INFO		_IOWR('|', 0x00, struct media_device_info)
+> @@ -413,5 +422,6 @@ struct media_v2_topology {
+>  #define MEDIA_IOC_ENUM_LINKS		_IOWR('|', 0x02, struct media_links_enum)
+>  #define MEDIA_IOC_SETUP_LINK		_IOWR('|', 0x03, struct media_link_desc)
+>  #define MEDIA_IOC_G_TOPOLOGY		_IOWR('|', 0x04, struct media_v2_topology)
+> +#define MEDIA_IOC_REQUEST_CMD		_IOWR('|', 0x05, struct media_request_cmd)
+>  
+>  #endif /* __LINUX_MEDIA_H */
+> -- 
+> 2.16.0.rc1.238.g530d649a79-goog
 > 
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Sakari Ailus
+sakari.ailus@linux.intel.com
