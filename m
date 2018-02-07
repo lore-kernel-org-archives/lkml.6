@@ -1,119 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752058AbeBGV7v (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:59:51 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59104 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750736AbeBGV7t (ORCPT
+        id S1751190AbeBGWCC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 17:02:02 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39342 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750729AbeBGWCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:59:49 -0500
-Date: Wed, 7 Feb 2018 23:59:46 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH v3 4/8] i2c: ov9650: use 64-bit arithmetic instead of
- 32-bit
-Message-ID: <20180207215944.quwowjy52dclk7uc@valkosipuli.retiisi.org.uk>
-References: <cover.1517929336.git.gustavo@embeddedor.com>
- <6f6fd607cf3428d6ab115f1deaa82c4963b170f1.1517929336.git.gustavo@embeddedor.com>
+        Wed, 7 Feb 2018 17:02:00 -0500
+X-Google-Smtp-Source: AH8x224T/NwZxeKa9sw3KM9ZQfSgvyL7N6aZa/8pMMLni84mMw7zlgt0w2buzd+9jZ8NcEo6DDMLog==
+Date: Wed, 7 Feb 2018 14:01:56 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org,
+        Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de
+Subject: Re: [PATCH v5 1/4] cpu_pm: add syscore_suspend error handling
+Message-ID: <20180207220155.GA106856@ban.mtv.corp.google.com>
+References: <20180207014117.62611-1-dbasehore@chromium.org>
+ <20180207014117.62611-2-dbasehore@chromium.org>
+ <04ebd1d9-b45b-df87-d59e-1a3df97f3371@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f6fd607cf3428d6ab115f1deaa82c4963b170f1.1517929336.git.gustavo@embeddedor.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <04ebd1d9-b45b-df87-d59e-1a3df97f3371@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+Hi Marc,
 
-On Tue, Feb 06, 2018 at 10:47:50AM -0600, Gustavo A. R. Silva wrote:
-> Add suffix ULL to constants 10000 and 1000000 in order to give the
-> compiler complete information about the proper arithmetic to use.
-> Notice that these constants are used in contexts that expect
-> expressions of type u64 (64 bits, unsigned).
+On Wed, Feb 07, 2018 at 08:57:27AM +0000, Marc Zyngier wrote:
+> On 07/02/18 01:41, Derek Basehore wrote:
+> > If cpu_cluster_pm_enter() fails, cpu_pm_exit() should be called. This
+> > will put the CPU in the correct state to resume from the failure.
+> > 
+> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > ---
+> >  kernel/cpu_pm.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/kernel/cpu_pm.c b/kernel/cpu_pm.c
+> > index 67b02e138a47..03bcc0751a51 100644
+> > --- a/kernel/cpu_pm.c
+> > +++ b/kernel/cpu_pm.c
+> > @@ -186,6 +186,9 @@ static int cpu_pm_suspend(void)
+> >  		return ret;
+> >  
+> >  	ret = cpu_cluster_pm_enter();
+> > +	if (ret)
+> > +		cpu_pm_exit();
+> > +
+> >  	return ret;
+> >  }
+> >  
+> > 
 > 
-> The following expressions:
-> 
-> (u64)(fi->interval.numerator * 10000)
-> (u64)(iv->interval.numerator * 10000)
-> fiv->interval.numerator * 1000000 / fiv->interval.denominator
-> 
-> are currently being evaluated using 32-bit arithmetic.
-> 
-> Notice that those casts to u64 for the first two expressions are only
-> effective after such expressions are evaluated using 32-bit arithmetic,
-> which leads to potential integer overflows. So based on those casts, it
-> seems that the original intention of the code is to actually use 64-bit
-> arithmetic instead of 32-bit.
-> 
-> Also, notice that once the suffix ULL is added to the constants, the
-> outer casts to u64 are no longer needed.
-> 
-> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
-> Fixes: 84a15ded76ec ("[media] V4L: Add driver for OV9650/52 image sensors")
-> Fixes: 79211c8ed19c ("remove abs64()")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v2:
->  - Update subject and changelog to better reflect the proposed code changes.
->  - Add suffix ULL to constants instead of casting variables.
->  - Remove unnecessary casts to u64 as part of the code change.
->  - Extend the same code change to other similar expressions.
-> 
-> Changes in v3:
->  - None.
-> 
->  drivers/media/i2c/ov9650.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
-> index e519f27..e716e98 100644
-> --- a/drivers/media/i2c/ov9650.c
-> +++ b/drivers/media/i2c/ov9650.c
-> @@ -1130,7 +1130,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
->  	if (fi->interval.denominator == 0)
->  		return -EINVAL;
->  
-> -	req_int = (u64)(fi->interval.numerator * 10000) /
-> +	req_int = fi->interval.numerator * 10000ULL /
->  		fi->interval.denominator;
+> It is unclear to me why we need this patch as part of the ITS series. I
+> probably fixes something for you, but I don't see the connection with
+> the other patches.
 
-This has been addressed by your earlier patch "i2c: ov9650: fix potential integer overflow in
-__ov965x_set_frame_interval" I tweaked a little. It's not in media tree
-master yet.
+Ths bug was noticed (by inspection) along with earlier versions of this
+series, when Derek was still adding new cpu_pm callbacks, and new
+failure modes within the existing callbacks. It's a proper fix to my
+knowledge, but I believe it no longer has any particular relevance to
+this series, since we're not really touching cpu_pm in this series any
+more.
 
->  
->  	for (i = 0; i < ARRAY_SIZE(ov965x_intervals); i++) {
-> @@ -1139,7 +1139,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
->  		if (mbus_fmt->width != iv->size.width ||
->  		    mbus_fmt->height != iv->size.height)
->  			continue;
-> -		err = abs((u64)(iv->interval.numerator * 10000) /
-> +		err = abs(iv->interval.numerator * 10000ULL /
-
-This and the chunk below won't work on e.g. 32-bit ARM. do_div(), please.
-
->  			    iv->interval.denominator - req_int);
->  		if (err < min_err) {
->  			fiv = iv;
-> @@ -1148,8 +1148,9 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
->  	}
->  	ov965x->fiv = fiv;
->  
-> -	v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %u us\n",
-> -		 fiv->interval.numerator * 1000000 / fiv->interval.denominator);
-> +	v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %llu us\n",
-> +		 fiv->interval.numerator * 1000000ULL /
-> +		 fiv->interval.denominator);
->  
->  	return 0;
->  }
-
--- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Brian
