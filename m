@@ -1,115 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754167AbeBGKmn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:42:43 -0500
-Received: from mail-io0-f200.google.com ([209.85.223.200]:43544 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753651AbeBGKm2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:42:28 -0500
-X-Google-Smtp-Source: AH8x224yZT53W6xxHSRWsat/mRABe8nj7Mxcfh/eGTRISu/Pgxe1Dhsfyc5nroFUjYa4YxQqa8WdyEX9qrs2F/kvrutCmor8tlWr
+        id S1754052AbeBGKnV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:43:21 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48606 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754096AbeBGKjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 05:39:08 -0500
+Date: Wed, 7 Feb 2018 10:39:03 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        dave.martin@arm.com
+Subject: Re: [PATCH v2 12/20] arm64: capabilities: Change scope of VHE to
+ Boot CPU feature
+Message-ID: <20180207103903.GC5862@e103592.cambridge.arm.com>
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-13-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Date: Wed, 07 Feb 2018 02:42:27 -0800
-In-Reply-To: <945c8517a87c671825b61223088064ea2ad0a8cb.1517999262.git.pabeni@redhat.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a114372a68e749405649cf352@google.com>
-Subject: Re: WARNING: proc registration bug in clusterip_tg_check
-From: syzbot <syzbot+@syzkaller.appspotmail.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        kadlec@blackhole.kfki.hu, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pabeni@redhat.com,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131182807.32134-13-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git  
-> master
-
-Can't find the corresponding bug.
-
-
-> I can't reproduce the issue locally, so asking the syzbot to test the
-> tentive fix for me (and hoping I did not mess with the tag/format)
-
+On Wed, Jan 31, 2018 at 06:27:59PM +0000, Suzuki K Poulose wrote:
+> We expect all CPUs to be running at the same EL inside the kernel
+> with or without VHE enabled and we have strict checks to ensure
+> that any mismatch triggers a kernel panic. If VHE is enabled,
+> we use the feature based on the boot CPU and all other CPUs
+> should follow. This makes it a perfect candidate for a cpability
+> based on the boot CPU,  which should be matched by all the CPUs
+> (both when is ON and OFF). This saves us some not-so-pretty
+> hooks and special code, just for verifying the conflict.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Dave Martin <dave.martin@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 > ---
->   net/ipv4/netfilter/ipt_CLUSTERIP.c | 30 +++++++++++++++---------------
->   1 file changed, 15 insertions(+), 15 deletions(-)
-
-> diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c  
-> b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-> index 3a84a60f6b39..db103cd971a9 100644
-> --- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-> +++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-> @@ -230,17 +230,6 @@ clusterip_config_init(struct net *net, const struct  
-> ipt_clusterip_tgt_info *i,
->   	refcount_set(&c->refcount, 1);
->   	refcount_set(&c->entries, 1);
-
-> -	spin_lock_bh(&cn->lock);
-> -	if (__clusterip_config_find(net, ip)) {
-> -		spin_unlock_bh(&cn->lock);
-> -		kfree(c);
+>  arch/arm64/include/asm/cpufeature.h |  7 +++++++
+>  arch/arm64/include/asm/virt.h       |  6 ------
+>  arch/arm64/kernel/cpufeature.c      |  3 +--
+>  arch/arm64/kernel/smp.c             | 38 -------------------------------------
+>  4 files changed, 8 insertions(+), 46 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index 04161aac0f06..42292a0b93a4 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -260,6 +260,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>  	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
+>  	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
+>  
+> +/*
+> + * Critical CPU feature used early in the boot based on the boot CPU.
+> + * The feature should be matched by all booting CPU (both miss and hit
+> + * cases).
+> + */
+> +#define ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE ARM64_CPUCAP_SCOPE_BOOT_CPU
+> +
+>  struct arm64_cpu_capabilities {
+>  	const char *desc;
+>  	u16 capability;
+> diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
+> index c5f89442785c..9d1e24e030b3 100644
+> --- a/arch/arm64/include/asm/virt.h
+> +++ b/arch/arm64/include/asm/virt.h
+> @@ -102,12 +102,6 @@ static inline bool has_vhe(void)
+>  	return false;
+>  }
+>  
+> -#ifdef CONFIG_ARM64_VHE
+> -extern void verify_cpu_run_el(void);
+> -#else
+> -static inline void verify_cpu_run_el(void) {}
+> -#endif
 > -
-> -		return ERR_PTR(-EBUSY);
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #endif /* ! __ASM__VIRT_H */
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 6d759f068de1..247d34ea6b5e 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -982,7 +982,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>  	{
+>  		.desc = "Virtualization Host Extensions",
+>  		.capability = ARM64_HAS_VIRT_HOST_EXTN,
+> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.type = ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE,
+>  		.matches = runs_at_el2,
+>  		.cpu_enable = cpu_copy_el2regs,
+>  	},
+
+Could this feature block now be #ifdef CONFIG_ARM64_VHE?
+
+I don't think the lack of #ifdef breaks anything here though, because
+in that case head.S drops down to EL1 runs_at_el2() returns false on
+all CPUs.
+
+> @@ -1322,7 +1322,6 @@ static bool verify_local_cpu_caps(u16 scope_mask)
+>   */
+>  static void check_early_cpu_features(void)
+>  {
+> -	verify_cpu_run_el();
+>  	verify_cpu_asid_bits();
+>  	/*
+>  	 * Early features are used by the kernel already. If there
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 5cef11450183..f3e2e3aec0b0 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -85,43 +85,6 @@ enum ipi_msg_type {
+>  	IPI_WAKEUP
+>  };
+>  
+> -#ifdef CONFIG_ARM64_VHE
+> -
+> -/* Whether the boot CPU is running in HYP mode or not*/
+> -static bool boot_cpu_hyp_mode;
+> -
+> -static inline void save_boot_cpu_run_el(void)
+> -{
+> -	boot_cpu_hyp_mode = is_kernel_in_hyp_mode();
+> -}
+> -
+> -static inline bool is_boot_cpu_in_hyp_mode(void)
+> -{
+> -	return boot_cpu_hyp_mode;
+> -}
+> -
+> -/*
+> - * Verify that a secondary CPU is running the kernel at the same
+> - * EL as that of the boot CPU.
+> - */
+> -void verify_cpu_run_el(void)
+> -{
+> -	bool in_el2 = is_kernel_in_hyp_mode();
+> -	bool boot_cpu_el2 = is_boot_cpu_in_hyp_mode();
+> -
+> -	if (in_el2 ^ boot_cpu_el2) {
+> -		pr_crit("CPU%d: mismatched Exception Level(EL%d) with boot CPU(EL%d)\n",
+> -					smp_processor_id(),
+> -					in_el2 ? 2 : 1,
+> -					boot_cpu_el2 ? 2 : 1);
+> -		cpu_panic_kernel();
 > -	}
+> -}
 > -
-> -	list_add_rcu(&c->list, &cn->configs);
-> -	spin_unlock_bh(&cn->lock);
+> -#else
+> -static inline void save_boot_cpu_run_el(void) {}
+> -#endif
 > -
->   #ifdef CONFIG_PROC_FS
->   	{
->   		char buffer[16];
-> @@ -257,20 +246,31 @@ clusterip_config_init(struct net *net, const struct  
-> ipt_clusterip_tgt_info *i,
->   	}
->   #endif
+>  #ifdef CONFIG_HOTPLUG_CPU
+>  static int op_cpu_kill(unsigned int cpu);
+>  #else
+> @@ -447,7 +410,6 @@ void __init smp_prepare_boot_cpu(void)
+>  	 */
+>  	jump_label_init();
+>  	cpuinfo_store_boot_cpu();
+> -	save_boot_cpu_run_el();
 
-> +	spin_lock_bh(&cn->lock);
-> +	if (__clusterip_config_find(net, ip)) {
-> +		spin_unlock_bh(&cn->lock);
-> +		err = -EBUSY;
-> +		goto err_remove_pte:
-> +	}
-> +
-> +	list_add_rcu(&c->list, &cn->configs);
-> +	spin_unlock_bh(&cn->lock);
-> +
->   	c->notifier.notifier_call = clusterip_netdev_event;
->   	err = register_netdevice_notifier(&c->notifier);
->   	if (!err)
->   		return c;
+Nice diffstat, assuming I didn't miss anything.
 
-> +	spin_lock_bh(&cn->lock);
-> +	list_del_rcu(&c->list);
-> +	spin_unlock_bh(&cn->lock);
-> +
-> +err_remove_pte:
->   #ifdef CONFIG_PROC_FS
->   	proc_remove(c->pde);
->   err:
->   #endif
-> -	spin_lock_bh(&cn->lock);
-> -	list_del_rcu(&c->list);
-> -	spin_unlock_bh(&cn->lock);
->   	kfree(c);
-> -
->   	return ERR_PTR(err);
->   }
-
-> --
-> 2.14.3
-
-> --
-> You received this message because you are subscribed to the Google  
-> Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an  
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit  
-> https://groups.google.com/d/msgid/syzkaller-bugs/945c8517a87c671825b61223088064ea2ad0a8cb.1517999262.git.pabeni%40redhat.com.
-> For more options, visit https://groups.google.com/d/optout.
+Cheers
+---Dave
