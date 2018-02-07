@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754742AbeBGVFs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:05:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41300 "EHLO mail.kernel.org"
+        id S932183AbeBGVFv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 16:05:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754127AbeBGVFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:05:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5156521738
+        id S1754759AbeBGVFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 16:05:49 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD914217AA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
 From: Alan Tull <atull@kernel.org>
@@ -18,67 +18,123 @@ Cc: Anatolij Gustschin <agust@denx.de>,
         Joshua Clayton <stillcompiling@gmail.com>,
         Dinh Nguyen <dinguyen@kernel.org>, Alan Tull <atull@kernel.org>,
         linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v3 0/4] fpga: don't use drvdata in common code
-Date: Wed,  7 Feb 2018 15:05:26 -0600
-Message-Id: <20180207210530.3099-1-atull@kernel.org>
+Subject: [PATCH v3 4/4] fpga: region: change fpga_region_register to have one param
+Date: Wed,  7 Feb 2018 15:05:30 -0600
+Message-Id: <20180207210530.3099-5-atull@kernel.org>
 X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180207210530.3099-1-atull@kernel.org>
+References: <20180207210530.3099-1-atull@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setting drvdata is fine for DT based devices which have one manager,
-bridge, or region device per platform device.  However, PCIe based
-devices may have multiple FPGA mgr/bridge/regions under one PCIe
-device.  Without these changes, PCIe-based solutions have to create an
-extra device for each child mgr/bridge/region to hold drvdata.
+Change fpga_region_register to only take one parameter:
 
-Also changing the fpga_*_register/unregister functions to take the
-corresponding struct as the only parameter wherever they weren't already.
+  int fpga_region_register(struct fpga_region *region)
 
-* int fpga_bridge_register(struct fpga_bridge *br)
-* int fpga_mgr_register(struct fpga_manager *mgr)
-* int fpga_region_register(struct fpga_region *region)
+The parent dev is added to struct fpga_region.
 
-* void fpga_bridge_unregister(struct fpga_bridge *br)
-* void fpga_mgr_unregister(struct fpga_manager *mgr)
-* int fpga_region_unregister(struct fpga_region *region)
+This make it similar to fpga_bridge_register and fpga_mgr_register
+which also just take their respective struct.
 
-Changes from v2:
-* Drop patch 5 which fixed a DT overlay issue.  The underlying
-  issue was fixed in the main DT overlay code.
-* Minor code cleanup to make it more obvious that the changes
-  were not breaking anything
-* Added Moritz' ack on patch 1
+The one caller of fpga_region_register is changed to alloc the
+fpga_region struct, fill it in, and pass it to the register
+function.
 
-Alan Tull (4):
-  fpga: region: don't use drvdata in common fpga code
-  fpga: manager: don't use drvdata in common fpga code
-  fpga: bridge: don't use drvdata in common fpga code
-  fpga: region: change fpga_region_register to have one param
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+v2: This patch added in this version of the patchset
+v3: minor changes to make diffs smaller and more obviously correct
+---
+ Documentation/fpga/fpga-region.txt | 3 +--
+ drivers/fpga/fpga-region.c         | 8 +++++++-
+ drivers/fpga/of-fpga-region.c      | 3 ++-
+ include/linux/fpga/fpga-region.h   | 4 +++-
+ 4 files changed, 13 insertions(+), 5 deletions(-)
 
- Documentation/fpga/fpga-mgr.txt     | 24 +++++++++++++++------
- Documentation/fpga/fpga-region.txt  |  3 +--
- drivers/fpga/altera-cvp.c           | 18 ++++++++++++----
- drivers/fpga/altera-fpga2sdram.c    | 20 +++++++++++++----
- drivers/fpga/altera-freeze-bridge.c | 18 +++++++++++++---
- drivers/fpga/altera-hps2fpga.c      | 16 +++++++++++---
- drivers/fpga/altera-pr-ip-core.c    | 17 +++++++++++++--
- drivers/fpga/altera-ps-spi.c        | 18 +++++++++++++---
- drivers/fpga/fpga-bridge.c          | 43 ++++++++++++++-----------------------
- drivers/fpga/fpga-mgr.c             | 39 ++++++++++++---------------------
- drivers/fpga/fpga-region.c          |  9 ++++++--
- drivers/fpga/ice40-spi.c            | 20 +++++++++++++----
- drivers/fpga/of-fpga-region.c       |  4 +++-
- drivers/fpga/socfpga-a10.c          | 16 +++++++++++---
- drivers/fpga/socfpga.c              | 18 +++++++++++++---
- drivers/fpga/ts73xx-fpga.c          | 18 +++++++++++++---
- drivers/fpga/xilinx-pr-decoupler.c  | 15 ++++++++++---
- drivers/fpga/xilinx-spi.c           | 18 +++++++++++++---
- drivers/fpga/zynq-fpga.c            | 16 +++++++++++---
- include/linux/fpga/fpga-bridge.h    |  7 +++---
- include/linux/fpga/fpga-mgr.h       |  8 +++----
- include/linux/fpga/fpga-region.h    |  4 +++-
- 22 files changed, 256 insertions(+), 113 deletions(-)
-
+diff --git a/Documentation/fpga/fpga-region.txt b/Documentation/fpga/fpga-region.txt
+index 139a02b..d38fa3b 100644
+--- a/Documentation/fpga/fpga-region.txt
++++ b/Documentation/fpga/fpga-region.txt
+@@ -42,8 +42,7 @@ The FPGA region API
+ To register or unregister a region:
+ -----------------------------------
+ 
+-	int fpga_region_register(struct device *dev,
+-				 struct fpga_region *region);
++	int fpga_region_register(struct fpga_region *region);
+ 	int fpga_region_unregister(struct fpga_region *region);
+ 
+ An example of usage can be seen in the probe function of [3]
+diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+index ebe1f87..660a91b 100644
+--- a/drivers/fpga/fpga-region.c
++++ b/drivers/fpga/fpga-region.c
+@@ -162,10 +162,16 @@ int fpga_region_program_fpga(struct fpga_region *region)
+ }
+ EXPORT_SYMBOL_GPL(fpga_region_program_fpga);
+ 
+-int fpga_region_register(struct device *dev, struct fpga_region *region)
++int fpga_region_register(struct fpga_region *region)
+ {
++	struct device *dev = region->parent;
+ 	int id, ret = 0;
+ 
++	if (!dev) {
++		pr_err("Attempt to register fpga region without parent\n");
++		return -EINVAL;
++	}
++
+ 	id = ida_simple_get(&fpga_region_ida, 0, 0, GFP_KERNEL);
+ 	if (id < 0)
+ 		return id;
+diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
+index 35e7e8c..a7b38aa 100644
+--- a/drivers/fpga/of-fpga-region.c
++++ b/drivers/fpga/of-fpga-region.c
+@@ -428,12 +428,13 @@ static int of_fpga_region_probe(struct platform_device *pdev)
+ 		goto eprobe_mgr_put;
+ 	}
+ 
++	region->parent = dev;
+ 	region->mgr = mgr;
+ 
+ 	/* Specify how to get bridges for this type of region. */
+ 	region->get_bridges = of_fpga_region_get_bridges;
+ 
+-	ret = fpga_region_register(dev, region);
++	ret = fpga_region_register(region);
+ 	if (ret)
+ 		goto eprobe_mgr_put;
+ 
+diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
+index b652031..423c87e 100644
+--- a/include/linux/fpga/fpga-region.h
++++ b/include/linux/fpga/fpga-region.h
+@@ -8,6 +8,7 @@
+ /**
+  * struct fpga_region - FPGA Region structure
+  * @dev: FPGA Region device
++ * @parent: parent device
+  * @mutex: enforces exclusive reference to region
+  * @bridge_list: list of FPGA bridges specified in region
+  * @mgr: FPGA manager
+@@ -18,6 +19,7 @@
+  */
+ struct fpga_region {
+ 	struct device dev;
++	struct device *parent;
+ 	struct mutex mutex; /* for exclusive reference to region */
+ 	struct list_head bridge_list;
+ 	struct fpga_manager *mgr;
+@@ -34,7 +36,7 @@ struct fpga_region *fpga_region_class_find(
+ 	int (*match)(struct device *, const void *));
+ 
+ int fpga_region_program_fpga(struct fpga_region *region);
+-int fpga_region_register(struct device *dev, struct fpga_region *region);
++int fpga_region_register(struct fpga_region *region);
+ int fpga_region_unregister(struct fpga_region *region);
+ 
+ #endif /* _FPGA_REGION_H */
 -- 
 2.7.4
