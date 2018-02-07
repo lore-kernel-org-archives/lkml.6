@@ -1,111 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754560AbeBGRne (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:43:34 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64642 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753390AbeBGRna (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:43:30 -0500
-From: Hugues Fruchet <hugues.fruchet@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH] media: stm32-dcmi: add g/s_parm framerate support
-Date: Wed, 7 Feb 2018 18:43:09 +0100
-Message-ID: <1518025389-3677-1-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 1.9.1
+        id S1754697AbeBGRor (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:44:47 -0500
+Received: from mail.us.es ([193.147.175.20]:47704 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754429AbeBGRoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:44:44 -0500
+Date: Wed, 7 Feb 2018 18:44:39 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Yang Shi <yang.s@alibaba-inc.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        netdev <netdev@vger.kernel.org>, guro@fb.com,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs@googlegroups.com, Linux-MM <linux-mm@kvack.org>,
+        coreteam@netfilter.org, netfilter-devel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        David Miller <davem@davemloft.net>, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
+ processes... (2)
+Message-ID: <20180207174439.esm4djxb4trbotne@salvia>
+References: <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
+ <20180129223522.GG5906@breakpoint.cc>
+ <20180130075226.GL21609@dhcp22.suse.cz>
+ <20180130081127.GH5906@breakpoint.cc>
+ <20180130082817.cbax5qj4mxancx4b@node.shutemov.name>
+ <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
+ <20180130095739.GV21609@dhcp22.suse.cz>
+ <20180130140104.GE21609@dhcp22.suse.cz>
+ <20180130112745.934883e37e696ab7f875a385@linux-foundation.org>
+ <20180131081916.GO21609@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131081916.GO21609@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add g/s_parm framerate support by calling subdev
-g/s_frame_interval ops.
-This allows user to control sensor framerate by
-calling ioctl G/S_PARM.
+Hi,
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
----
- drivers/media/platform/stm32/stm32-dcmi.c | 49 +++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+On Wed, Jan 31, 2018 at 09:19:16AM +0100, Michal Hocko wrote:
+[...]
+> Yeah, we do not BUG but rather fail instead. See __vmalloc_node_range.
+> My excavation tools pointed me to "VM: Rework vmalloc code to support mapping of arbitray pages"
+> by Christoph back in 2002. So yes, we can safely remove it finally. Se
+> below.
+> 
+> 
+> From 8d52e1d939d101b0dafed6ae5c3c1376183e65bb Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Wed, 31 Jan 2018 09:16:56 +0100
+> Subject: [PATCH] net/netfilter/x_tables.c: remove size check
+> 
+> Back in 2002 vmalloc used to BUG on too large sizes. We are much better
+> behaved these days and vmalloc simply returns NULL for those. Remove
+> the check as it simply not needed and the comment even misleading.
+> 
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  net/netfilter/x_tables.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+> index b55ec5aa51a6..48a6ff620493 100644
+> --- a/net/netfilter/x_tables.c
+> +++ b/net/netfilter/x_tables.c
+> @@ -999,10 +999,6 @@ struct xt_table_info *xt_alloc_table_info(unsigned int size)
+>  	if (sz < sizeof(*info))
+>  		return NULL;
+>  
+> -	/* Pedantry: prevent them from hitting BUG() in vmalloc.c --RR */
+> -	if ((SMP_ALIGN(size) >> PAGE_SHIFT) + 2 > totalram_pages)
+> -		return NULL;
+> -
+>  	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
+>  	 * work reasonably well if sz is too large and bail out rather
+>  	 * than shoot all processes down before realizing there is nothing
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index ab555d4..8197554 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1151,6 +1151,52 @@ static int dcmi_enum_framesizes(struct file *file, void *fh,
- 	return 0;
- }
- 
-+static int dcmi_g_parm(struct file *file, void *priv,
-+		       struct v4l2_streamparm *p)
-+{
-+	struct stm32_dcmi *dcmi = video_drvdata(file);
-+	struct v4l2_subdev_frame_interval ival = { 0 };
-+	int ret;
-+
-+	if (p->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-+		return -EINVAL;
-+
-+	p->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
-+	ret = v4l2_subdev_call(dcmi->entity.subdev, video,
-+			       g_frame_interval, &ival);
-+	if (ret)
-+		return ret;
-+
-+	p->parm.capture.timeperframe = ival.interval;
-+
-+	return ret;
-+}
-+
-+static int dcmi_s_parm(struct file *file, void *priv,
-+		       struct v4l2_streamparm *p)
-+{
-+	struct stm32_dcmi *dcmi = video_drvdata(file);
-+	struct v4l2_subdev_frame_interval ival = {
-+		0,
-+		p->parm.capture.timeperframe
-+	};
-+	int ret;
-+
-+	if (p->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-+		return -EINVAL;
-+
-+	memset(&p->parm, 0, sizeof(p->parm));
-+	p->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
-+	ret = v4l2_subdev_call(dcmi->entity.subdev, video,
-+			       s_frame_interval, &ival);
-+	if (ret)
-+		return ret;
-+
-+	p->parm.capture.timeperframe = ival.interval;
-+
-+	return ret;
-+}
-+
- static int dcmi_enum_frameintervals(struct file *file, void *fh,
- 				    struct v4l2_frmivalenum *fival)
- {
-@@ -1253,6 +1299,9 @@ static int dcmi_release(struct file *file)
- 	.vidioc_g_input			= dcmi_g_input,
- 	.vidioc_s_input			= dcmi_s_input,
- 
-+	.vidioc_g_parm			= dcmi_g_parm,
-+	.vidioc_s_parm			= dcmi_s_parm,
-+
- 	.vidioc_enum_framesizes		= dcmi_enum_framesizes,
- 	.vidioc_enum_frameintervals	= dcmi_enum_frameintervals,
- 
--- 
-1.9.1
+Patchwork didn't catch this patch for some reason, would you mind to
+resend?
+
+Thanks!
