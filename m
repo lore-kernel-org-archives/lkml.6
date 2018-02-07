@@ -1,155 +1,189 @@
 Return-Path: <vivek.gautam@codeaurora.org>
-X-Google-Smtp-Source: AH8x2262bx15hKGM7y/7Y2JiQweJIHvBkkIGoNsTa/SbsUnUR3GFgHZNBCOiMFhmiTdwKF2tM2Mt
-ARC-Seal: i=1; a=rsa-sha256; t=1518516859; cv=none;
+X-Google-Smtp-Source: AH8x2264LmInq2pbMIJm8o6G7rJuk2wJ4BpSQBGGARZa1qH6+HY4HDOWmNd4BcWJvtABgBkaQcWh
+ARC-Seal: i=1; a=rsa-sha256; t=1517999533; cv=none;
         d=google.com; s=arc-20160816;
-        b=FSaLscsKqNLzQKb3VxxrPB8NDD6ZIJBitRf6O9Mkd0hvh1n9uGLm3e7qZw8mRdMxqE
-         WrVWGkmlrwOA1iKnX29IJTDHth6jz2MGevaRZPEPmOYnvHwvx7aP/MjRvaa9APa6BsPm
-         ebVCGilggUi18OjykjxciH8jLNJha3lHUZc9x7js89UVzYzpwUHAo0HS+3GW/2v1exsA
-         L5y2E6jsLuXWDLzlQyAqRzO8TSrQATPzPMNcmDP3zNHjYpMGgh25VvjzUyD+YpCAByWN
-         Ub7APY8sXbSJ0WfaiHCc6e4aaPlS0m9GUH/ool7Ksea7Xqgcj10uMVQdGclck3kE2b+3
-         2GOA==
+        b=USwLahapKf5yKX/HPiOothLpYk+59AE+rz+VCh0xESj+8vCj1qrQR3mUu2YzauxWgr
+         qomTSqqZPIvlnOYtOxa2SNbYhM9FtwhnF5lA9ZgwpAEgq38pBZRpaFItIJ9VbnA9uP6s
+         eRfbGL7IfmVMNeulOPUdQrl4TajupRMIi3QuqHxtUc9RmI+al+Ag4feN4Zmb3CBUXiCd
+         sKsPTb5wCEu2sh4cfgVADZwQevpoc/pA3ClySzbyTzzcdeL9f6sWnnH9ci33A3d4ROLp
+         dD3ynfXXwDv+fM05xImMzqZV0f3Px1XpwG5eosBGLp0CJqPqtnHcqq6ZTfsuUiqHN7mL
+         r+hQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:dkim-signature:dkim-signature
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=3nmBtqUlz+zFQJ4JefP9nO51wDITPjyBS/4Ox3NpoCU=;
-        b=l3pZJRP5B42zYzdTrSTbp1ttmOkeSrA154QCuTnm/GphrwtjK5iYdfo4amiSZpKs85
-         fXBhaNchltuVU4Nrk+8tQb3wBMSf0jPbWUJ4zqPwRFnV0WxVg7ma//svbA6PDEifwgg7
-         CNrpx7uT4TCStC7MtY6JNOSOepIJfWPD9RffLR+9GqHTX83WTDvXNFEpdACUXSyLkkQQ
-         wkHkDogePpBkloT8IVp+rFtXQUanQbD5D0JzcVaqh9fNyvn7XgWEygDxXu6tCUwlj70a
-         hGeCou5tLcG32n5NSO2yMyS2/8j/U0tscJp+yl+ovyL+BTgQMD+bLE5iu5PAxre9qVei
-         f47w==
+        bh=OIpR3XKjNkemxQoFGPDqpRqrkbO0w+VXodXkT0q1Mrk=;
+        b=XL8QzcLLYB8h7VGR41NWlkWMf2PVPraq8iTmq5rwGVgrkryScOS1zgkLL9+2qGIjg8
+         EI0LAtpH6BTXHxO9CZ8OS/eVEsU0HlF+jYhfocDrAqFio3zTJuo8K8hn/MJIcb9cGXoE
+         xV/BSarKJ5s7IyZNmIvfj3o1qkBMbQrBQiIs7wAmrnZoEx6oBmdb32cg6nE/KfleoUpq
+         T6x92P09Sn1Txm0eHGJLbznhK7kcozeoBZpBEIFrT3F520CuN+K+8e0riZmV4G3w6ptW
+         S+sFvvrYZGem6RDY4H7NGH1STe5veH9RQ69RbfEouSls0rlt0wj1uxcyEIxBC8UPpoHr
+         Bb4w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Fwbi9VFA;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Xu9JiEbG;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=gcdO1fmc;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=gcdO1fmc;
        spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Fwbi9VFA;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Xu9JiEbG;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=gcdO1fmc;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=gcdO1fmc;
        spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B91CD60F6B
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16A7760A06
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BQAs9=N27_Z0pJNSrndFY3vFin2KBP44UtiW+tMXy5nQ@mail.gmail.com>
-References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
- <1517999482-17317-5-git-send-email-vivek.gautam@codeaurora.org> <CAAFQd5BQAs9=N27_Z0pJNSrndFY3vFin2KBP44UtiW+tMXy5nQ@mail.gmail.com>
 From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Tue, 13 Feb 2018 15:44:16 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iFms9ciq5AkGGNobVqhXT3E6xJD3-DahT8i19gp1mLxTw@mail.gmail.com>
-Message-ID: <CAFp+6iFms9ciq5AkGGNobVqhXT3E6xJD3-DahT8i19gp1mLxTw@mail.gmail.com>
-Subject: Re: [PATCH v7 4/6] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Rob Clark <robdclark@gmail.com>,
-	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>, devicetree@vger.kernel.org,
-	open list <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>, freedreno@lists.freedesktop.org,
-	David Airlie <airlied@linux.ie>, Greg KH <gregkh@linuxfoundation.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: joro@8bytes.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	robin.murphy@arm.com,
+	will.deacon@arm.com,
+	robdclark@gmail.com,
+	iommu@lists.linux-foundation.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Cc: alex.williamson@redhat.com,
+	gregkh@linuxfoundation.org,
+	airlied@linux.ie,
+	sboyd@codeaurora.org,
+	sricharan@codeaurora.org,
+	m.szyprowski@samsung.com,
+	architt@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	vivek.gautam@codeaurora.org
+Subject: [PATCH v7 5/6] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
+Date: Wed,  7 Feb 2018 16:01:21 +0530
+Message-Id: <1517999482-17317-6-git-send-email-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
+References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591737871126335112?=
-X-GMAIL-MSGID: =?utf-8?q?1592280334214726951?=
+X-GMAIL-THRID: =?utf-8?q?1591737878253050989?=
+X-GMAIL-MSGID: =?utf-8?q?1591737878253050989?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Tomasz,
+qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
+clock and power requirements. This smmu core is used with
+multiple masters on msm8996, viz. mdss, video, etc.
+Add bindings for the same.
 
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/iommu/arm,smmu.txt         | 43 ++++++++++++++++++++++
+ drivers/iommu/arm-smmu.c                           | 13 +++++++
+ 2 files changed, 56 insertions(+)
 
-On Tue, Feb 13, 2018 at 2:01 PM, Tomasz Figa <tfiga@chromium.org> wrote:
-> Hi Vivek,
->
-> Thanks for the patch. Please see my comments inline.
-
-Thanks for reviewing the patch series.
-
->
-> On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
->> From: Sricharan R <sricharan@codeaurora.org>
->>
->> Finally add the device link between the master device and
->> smmu, so that the smmu gets runtime enabled/disabled only when the
->> master needs it. This is done from add_device callback which gets
->> called once when the master is added to the smmu.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->> ---
->>  drivers/iommu/arm-smmu.c | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>
->> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->> index c024f69c1682..c7e924d553bd 100644
->> --- a/drivers/iommu/arm-smmu.c
->> +++ b/drivers/iommu/arm-smmu.c
->> @@ -215,6 +215,9 @@ struct arm_smmu_device {
->>
->>         /* IOMMU core code handle */
->>         struct iommu_device             iommu;
->> +
->> +       /* runtime PM link to master */
->> +       struct device_link *link;
->>  };
->>
->>  enum arm_smmu_context_fmt {
->> @@ -1425,6 +1428,17 @@ static int arm_smmu_add_device(struct device *dev)
->>
->>         pm_runtime_put_sync(smmu->dev);
->>
->> +       /*
->> +        * Establish the link between smmu and master, so that the
->> +        * smmu gets runtime enabled/disabled as per the master's
->> +        * needs.
->> +        */
->> +       smmu->link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
->> +       if (!smmu->link)
->> +               dev_warn(smmu->dev,
->> +                        "Unable to create device link between %s and %s\n",
->> +                        dev_name(smmu->dev), dev_name(dev));
->
-> How likely it is that the master can work normally even if the link
-> add fails? Perhaps we should just return an error here?
-
-Right. We are assuming that the power is handled for most of the
-smmu operations, after we add the master with smmu, based on the fact
-that the device link is successful.
-We should return error code here. Will make the necessary change.
-
->
->> +
->>         return 0;
->>
->>  out_rpm_put:
->> @@ -1449,6 +1463,8 @@ static void arm_smmu_remove_device(struct device *dev)
->>         cfg  = fwspec->iommu_priv;
->>         smmu = cfg->smmu;
->>
->> +       device_link_del(smmu->link);
->
-> We allowed smmu->link in arm_smmu_add_device(), but here we don't
-> check it. Looking at the code, device_link_del() doesn't seem to check
-> either.
->
-> Note that this problem would go away if we fail add_device on
-> device_link_add() failure, as I suggested above, so no change would be
-> necessary.
-
-Sure. After making the above change, this should also be handled.
-
-Best regards
-Vivek
-
->
-> Best regards,
-> Tomasz
-
-
-
+diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+index 8a6ffce12af5..169222ae2706 100644
+--- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
++++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+@@ -17,10 +17,19 @@ conditions.
+                         "arm,mmu-401"
+                         "arm,mmu-500"
+                         "cavium,smmu-v2"
++                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
+ 
+                   depending on the particular implementation and/or the
+                   version of the architecture implemented.
+ 
++                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
++                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
++                  string that should be present along with the "qcom,smmu-v2"
++                  to facilitate SoC specific clocks/power connections and to
++                  address specific bug fixes.
++                  An example string would be -
++                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
++
+ - reg           : Base address and size of the SMMU.
+ 
+ - #global-interrupts : The number of global interrupts exposed by the
+@@ -71,6 +80,23 @@ conditions.
+                   or using stream matching with #iommu-cells = <2>, and
+                   may be ignored if present in such cases.
+ 
++- clock-names:    Should be "bus", and "iface" for "qcom,smmu-v2"
++                  implementation.
++
++                  "bus" clock for "qcom,smmu-v2" is required for downstream
++                  bus access and for the smmu ptw.
++
++                  "iface" clock is required to access smmu's registers through
++                  the TCU's programming interface.
++
++- clocks:         Phandles for respective clocks described by clock-names.
++
++- power-domains:  Phandles to SMMU's power domain specifier. This is
++                  required even if SMMU belongs to the master's power
++                  domain, as the SMMU will have to be enabled and
++                  accessed before master gets enabled and linked to its
++                  SMMU.
++
+ ** Deprecated properties:
+ 
+ - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+@@ -137,3 +163,20 @@ conditions.
+                 iommu-map = <0 &smmu3 0 0x400>;
+                 ...
+         };
++
++	/* Qcom's arm,smmu-v2 implementation */
++	smmu4: iommu {
++		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
++		reg = <0xd00000 0x10000>;
++
++		#global-interrupts = <1>;
++		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
++		#iommu-cells = <1>;
++		power-domains = <&mmcc MDSS_GDSC>;
++
++		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
++			 <&mmcc SMMU_MDP_AHB_CLK>;
++		clock-names = "bus", "iface";
++	};
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index c7e924d553bd..721cf1291f85 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -119,6 +119,7 @@ enum arm_smmu_implementation {
+ 	GENERIC_SMMU,
+ 	ARM_MMU500,
+ 	CAVIUM_SMMUV2,
++	QCOM_SMMUV2,
+ };
+ 
+ struct arm_smmu_s2cr {
+@@ -1950,6 +1951,17 @@ struct arm_smmu_match_data {
+ ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+ ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
+ 
++static const char * const qcom_smmuv2_clks[] = {
++	"bus", "iface",
++};
++
++static const struct arm_smmu_match_data qcom_smmuv2 = {
++	.version = ARM_SMMU_V2,
++	.model = QCOM_SMMUV2,
++	.clks = qcom_smmuv2_clks,
++	.num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
++};
++
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+ 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
+@@ -1957,6 +1969,7 @@ struct arm_smmu_match_data {
+ 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
+ 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
+ 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
++	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
