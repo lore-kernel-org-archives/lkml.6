@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932221AbeBGUUl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:20:41 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:59540 "EHLO
+        id S932196AbeBGUUk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:20:40 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:59542 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754572AbeBGUTo (ORCPT
+        with ESMTP id S1754569AbeBGUTo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 15:19:44 -0500
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, x86@kernel.org
 Cc: dan.j.williams@intel.com, tglx@linutronix.de, ak@linux.intel.com,
         torvalds@linux-foundation.org, luto@kernel.org
-Subject: [RFC v2 PATCH 2/7] x86/entry: merge POP_C_REGS and POP_EXTRA_REGS
-Date: Wed,  7 Feb 2018 21:15:12 +0100
-Message-Id: <20180207201517.6518-3-linux@dominikbrodowski.net>
+Subject: [RFC v2 PATCH 1/7] x86/entry: merge SAVE_C_REGS and SAVE_EXTRA_REGS, remove unused extensions
+Date: Wed,  7 Feb 2018 21:15:11 +0100
+Message-Id: <20180207201517.6518-2-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180207201517.6518-1-linux@dominikbrodowski.net>
 References: <20180207201517.6518-1-linux@dominikbrodowski.net>
@@ -21,113 +21,140 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The two special, opencoded cases for POP_C_REGS can be handled by ASM
-macros.
+All current code paths call SAVE_C_REGS and then immediately
+SAVE_EXTRA_REGS. Therefore, merge these two macros and order the MOV
+sequeneces properly.
 
+While at it, remove the macros to save all except specific registers,
+as these macros have been unused for a long time.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/entry/calling.h  | 15 +++++++++++----
- arch/x86/entry/entry_64.S | 26 ++++----------------------
- 2 files changed, 15 insertions(+), 26 deletions(-)
+ arch/x86/entry/calling.h  | 57 +++++++++++++----------------------------------
+ arch/x86/entry/entry_64.S | 12 ++++------
+ 2 files changed, 19 insertions(+), 50 deletions(-)
 
 diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 8907a6593b42..3bda31736a7b 100644
+index f4b129d4af42..8907a6593b42 100644
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -139,25 +139,32 @@ For 32-bit we have the following conventions - kernel is built with
- 	xorq %r15, %r15
+@@ -101,49 +101,22 @@ For 32-bit we have the following conventions - kernel is built with
+ 	addq	$-(15*8), %rsp
  	.endm
  
--	.macro POP_EXTRA_REGS
-+	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
- 	popq %r15
- 	popq %r14
- 	popq %r13
- 	popq %r12
- 	popq %rbp
- 	popq %rbx
+-	.macro SAVE_C_REGS_HELPER offset=0 rax=1 rcx=1 r8910=1 r11=1
+-	.if \r11
+-	movq %r11, 6*8+\offset(%rsp)
+-	.endif
+-	.if \r8910
+-	movq %r10, 7*8+\offset(%rsp)
+-	movq %r9,  8*8+\offset(%rsp)
+-	movq %r8,  9*8+\offset(%rsp)
+-	.endif
+-	.if \rax
+-	movq %rax, 10*8+\offset(%rsp)
+-	.endif
+-	.if \rcx
+-	movq %rcx, 11*8+\offset(%rsp)
+-	.endif
+-	movq %rdx, 12*8+\offset(%rsp)
+-	movq %rsi, 13*8+\offset(%rsp)
++	.macro SAVE_REGS offset=0
+ 	movq %rdi, 14*8+\offset(%rsp)
+-	UNWIND_HINT_REGS offset=\offset extra=0
+-	.endm
+-	.macro SAVE_C_REGS offset=0
+-	SAVE_C_REGS_HELPER \offset, 1, 1, 1, 1
+-	.endm
+-	.macro SAVE_C_REGS_EXCEPT_RAX_RCX offset=0
+-	SAVE_C_REGS_HELPER \offset, 0, 0, 1, 1
+-	.endm
+-	.macro SAVE_C_REGS_EXCEPT_R891011
+-	SAVE_C_REGS_HELPER 0, 1, 1, 0, 0
+-	.endm
+-	.macro SAVE_C_REGS_EXCEPT_RCX_R891011
+-	SAVE_C_REGS_HELPER 0, 1, 0, 0, 0
+-	.endm
+-	.macro SAVE_C_REGS_EXCEPT_RAX_RCX_R11
+-	SAVE_C_REGS_HELPER 0, 0, 0, 1, 0
 -	.endm
 -
--	.macro POP_C_REGS
-+	.if \skip_r11rcx
-+	popq %rsi
-+	.else
- 	popq %r11
-+	.endif
- 	popq %r10
- 	popq %r9
- 	popq %r8
- 	popq %rax
-+	.if \skip_r11rcx
-+	popq %rsi
-+	.else
- 	popq %rcx
-+	.endif
- 	popq %rdx
- 	popq %rsi
-+	.if \pop_rdi
- 	popq %rdi
-+	.endif
+-	.macro SAVE_EXTRA_REGS offset=0
+-	movq %r15, 0*8+\offset(%rsp)
+-	movq %r14, 1*8+\offset(%rsp)
+-	movq %r13, 2*8+\offset(%rsp)
+-	movq %r12, 3*8+\offset(%rsp)
+-	movq %rbp, 4*8+\offset(%rsp)
++	movq %rsi, 13*8+\offset(%rsp)
++	movq %rdx, 12*8+\offset(%rsp)
++	movq %rcx, 11*8+\offset(%rsp)
++	movq %rax, 10*8+\offset(%rsp)
++	movq %r8,  9*8+\offset(%rsp)
++	movq %r9,  8*8+\offset(%rsp)
++	movq %r10, 7*8+\offset(%rsp)
++	movq %r11, 6*8+\offset(%rsp)
+ 	movq %rbx, 5*8+\offset(%rsp)
++	movq %rbp, 4*8+\offset(%rsp)
++	movq %r12, 3*8+\offset(%rsp)
++	movq %r13, 2*8+\offset(%rsp)
++	movq %r14, 1*8+\offset(%rsp)
++	movq %r15, 0*8+\offset(%rsp)
+ 	UNWIND_HINT_REGS offset=\offset
  	.endm
  
- 	.macro icebp
+@@ -197,7 +170,7 @@ For 32-bit we have the following conventions - kernel is built with
+  * is just setting the LSB, which makes it an invalid stack address and is also
+  * a signal to the unwinder that it's a pt_regs pointer in disguise.
+  *
+- * NOTE: This macro must be used *after* SAVE_EXTRA_REGS because it corrupts
++ * NOTE: This macro must be used *after* SAVE_REGS because it corrupts
+  * the original rbp.
+  */
+ .macro ENCODE_FRAME_POINTER ptregs_offset=0
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 91e8d84c2496..286b24b650da 100644
+index 9e48002b953b..91e8d84c2496 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -334,15 +334,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
- syscall_return_via_sysret:
- 	/* rcx and r11 are already restored (see code above) */
- 	UNWIND_HINT_EMPTY
--	POP_EXTRA_REGS
--	popq	%rsi	/* skip r11 */
--	popq	%r10
--	popq	%r9
--	popq	%r8
--	popq	%rax
--	popq	%rsi	/* skip rcx */
--	popq	%rdx
--	popq	%rsi
-+	POP_REGS pop_rdi=0 skip_r11rcx=1
- 
- 	/*
- 	 * Now all regs are restored except RSP and RDI.
-@@ -635,15 +627,7 @@ GLOBAL(swapgs_restore_regs_and_return_to_usermode)
- 	ud2
+@@ -573,8 +573,7 @@ END(irq_entries_start)
  1:
- #endif
--	POP_EXTRA_REGS
--	popq	%r11
--	popq	%r10
--	popq	%r9
--	popq	%r8
--	popq	%rax
--	popq	%rcx
--	popq	%rdx
--	popq	%rsi
-+	POP_REGS pop_rdi=0
  
- 	/*
- 	 * The stack is now user RDI, orig_ax, RIP, CS, EFLAGS, RSP, SS.
-@@ -701,8 +685,7 @@ GLOBAL(restore_regs_and_return_to_kernel)
- 	ud2
- 1:
- #endif
--	POP_EXTRA_REGS
--	POP_C_REGS
-+	POP_REGS
- 	addq	$8, %rsp	/* skip regs->orig_ax */
- 	INTERRUPT_RETURN
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_C_REGS
+-	SAVE_EXTRA_REGS
++	SAVE_REGS
+ 	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
  
-@@ -1661,8 +1644,7 @@ end_repeat_nmi:
- nmi_swapgs:
- 	SWAPGS_UNSAFE_STACK
- nmi_restore:
--	POP_EXTRA_REGS
--	POP_C_REGS
-+	POP_REGS
- 
- 	/*
- 	 * Skip orig_ax and the "outermost" frame to point RSP at the "iret"
+@@ -1132,8 +1131,7 @@ ENTRY(xen_failsafe_callback)
+ 	UNWIND_HINT_IRET_REGS
+ 	pushq	$-1 /* orig_ax = -1 => not a system call */
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_C_REGS
+-	SAVE_EXTRA_REGS
++	SAVE_REGS
+ 	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+@@ -1178,8 +1176,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+ ENTRY(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_C_REGS 8
+-	SAVE_EXTRA_REGS 8
++	SAVE_REGS 8
+ 	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER 8
+ 	movl	$1, %ebx
+@@ -1231,8 +1228,7 @@ END(paranoid_exit)
+ ENTRY(error_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_C_REGS 8
+-	SAVE_EXTRA_REGS 8
++	SAVE_REGS 8
+ 	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER 8
+ 	testb	$3, CS+8(%rsp)
 -- 
 2.16.1
