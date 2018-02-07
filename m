@@ -1,80 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753745AbeBGLMY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:12:24 -0500
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:43679 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753454AbeBGLMW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:12:22 -0500
-X-Google-Smtp-Source: AH8x227ajZXLNfNUlr8hvMA0RG9SCPeMkSkezHYDtSGlSCJVCGpWh4AbhgehkQrse9r7gmEjpPSIgA==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <1518001397.29698.6.camel@gmx.de>
-Date: Wed, 7 Feb 2018 12:12:18 +0100
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
-        SERENA ZIVIANI <169364@studenti.unimore.it>,
-        Serena Ziviani <ziviani.serena@gmail.com>,
-        =?utf-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-Message-Id: <ADDEE2C2-9AC0-469D-BD28-05748C6EDCDA@linaro.org>
-References: <20180205190510.5499-1-paolo.valente@linaro.org>
- <20180205190510.5499-2-paolo.valente@linaro.org>
- <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
- <1517903761.9843.12.camel@gmx.de>
- <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
- <1517918234.25841.31.camel@gmx.de>
- <77124223e6116350a5184a5199850304@natalenko.name>
- <1517924768.25841.32.camel@gmx.de>
- <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
- <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
- <82ffc96aacc3945861cbb708df346338@natalenko.name>
- <E52CCDEA-279A-40D8-AD9B-F4D1AF351BF1@linaro.org>
- <1517995431.25619.5.camel@gmx.de>
- <FBF6DCBB-B0F5-446B-8FD1-106E2538A9C1@linaro.org>
- <1517998516.6606.1.camel@gmx.de>
- <5584030F-8F4E-4C98-84A5-79873A1BF775@linaro.org>
- <1518001397.29698.6.camel@gmx.de>
-To: Mike Galbraith <efault@gmx.de>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S1753889AbeBGLNP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:13:15 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33602 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753693AbeBGLNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:13:14 -0500
+Date: Wed, 7 Feb 2018 12:13:09 +0100
+From: Jiri Benc <jbenc@redhat.com>
+To: ebiederm@xmission.com (Eric W. Biederman)
+Cc: Christian Brauner <christian.brauner@canonical.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        netdev@vger.kernel.org, stephen@networkplumber.org,
+        w.bumiller@proxmox.com, nicolas.dichtel@6wind.com,
+        linux-kernel@vger.kernel.org, dsahern@gmail.com, davem@davemloft.net
+Subject: Re: [PATCH net 1/1 v2] rtnetlink: require unique netns identifier
+Message-ID: <20180207121309.46fdce62@redhat.com>
+In-Reply-To: <877erphhry.fsf@xmission.com>
+References: <20180205155550.21432-1-christian.brauner@ubuntu.com>
+        <20180205155550.21432-2-christian.brauner@ubuntu.com>
+        <2eac607b-e847-1b21-b3cb-6a45130138ee@virtuozzo.com>
+        <20180205232438.GA8695@gmail.com>
+        <877erphhry.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17BCTd9013438
 
+On Tue, 06 Feb 2018 16:31:29 -0600, Eric W. Biederman wrote:
+> Frankly.  If we are talking precedence it should be:
+> fds
+> netnsids
+> pids
 
+The current order is 1. pids, 2. fds, though. Not that it matters much,
+see below.
 
-> Il giorno 07 feb 2018, alle ore 12:03, Mike Galbraith <efault@gmx.de> ha scritto:
-> 
-> On Wed, 2018-02-07 at 11:27 +0100, Paolo Valente wrote:
->> 
->> 2. Could you please turn that BUG_ON into:
->> if (!(rq->rq_flags & RQF_ELVPRIV))
->> 	return;
->> and see what happens?
-> 
-> That seems to make it forgets how to make boom.
-> 
+> I do think it makes a lot of sense to error if someone passes in
+> duplicate arguments.  AKA multiple attribute that could select for
+> the same thing.   No one will do that deliberately.  It doesn't make
+> sense.  So it is just a nonsense case we have to handle gracefully,
+> and correctly.  With correctness being the most important as otherwise
+> people might just send in nonsense to exploit bugs.
 
-Great! This deserves to be celebrated with a packet of Ikea chips.
+Completely agreed. Let's just start returning error if more than one of
+the pid/fs/netnsid attributes is specified. I don't think this is going
+to break any user. And we'll not have to care about the order.
 
-Just to be certain, before submitting a new patch: you changed *only*
-the BUG_ON at line 4742, on top of my instrumentation patch.
+> I agree refusing to combine multiple attributes for the same thing
+> sounds the most sensible course.
 
-Thanks,
-Paolo
+Yes, please.
 
+Thanks!
 
-> 	-Mike
+ Jiri
