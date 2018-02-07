@@ -1,232 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754386AbeBGNr3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:47:29 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38727 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754151AbeBGNqJ (ORCPT
+        id S1754408AbeBGNrl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:47:41 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42543 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754394AbeBGNrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:46:09 -0500
-X-Google-Smtp-Source: AH8x2277xdRaeQJNAlu7NdlSbV8pxeV2zJfHRmgVPL6EU3p+r19Cq0QDPu22cle25+b8MTy/W3Mo0g==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/7] soc: davinci: new genpd driver
-Date: Wed,  7 Feb 2018 14:45:48 +0100
-Message-Id: <20180207134553.13510-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180207134553.13510-1-brgl@bgdev.pl>
-References: <20180207134553.13510-1-brgl@bgdev.pl>
+        Wed, 7 Feb 2018 08:47:37 -0500
+X-Google-Smtp-Source: AH8x224u6Kf5hjkHkvgotnmY2mnzlZ8yTAJGav8w8juKmbOBvcF4YdQeNHbdZ1iPk5aJ45PSUjG8xmfB9yWboaoygv4=
+MIME-Version: 1.0
+In-Reply-To: <d72f1065c98d4073b3f112cf8538f508@ausx13mpc120.AMER.DELL.COM>
+References: <20180125224857.3622-1-alexander.n.abrosimov@gmail.com>
+ <20180125230239.GA3736@fury> <20180125230615.akr2nvmmrqzfo53q@pali> <d72f1065c98d4073b3f112cf8538f508@ausx13mpc120.AMER.DELL.COM>
+From: Alexander Abrosimov <alexander.n.abrosimov@gmail.com>
+Date: Wed, 7 Feb 2018 16:47:36 +0300
+Message-ID: <CACKjtf6eiFXeBzzfO=cjkBru4j0M3YLtAJ1b7e_nv13k1e0A8Q@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: dell-laptop: Add 2-in-1 devices to the DMI whitelist
+To: Darren Hart <dvhart@infradead.org>
+Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Mario.Limonciello@dell.com, Matthew Garrett <mjg59@srcf.ucam.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17DljSo013398
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Darren, I have checked change on git.kernel.org and it seems to be merged twice:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/platform/x86/dell-laptop.c?id=fe486138788ba435ffa918c8d7aba05a77b6289a
 
-Add a simple clock_pm-based driver for DaVinci SoCs. This is required
-to complete the transision to using the common clock framework for this
-architecture.
+How it can be fixed?
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/soc/Kconfig                      |   1 +
- drivers/soc/Makefile                     |   1 +
- drivers/soc/davinci/Kconfig              |  16 ++++
- drivers/soc/davinci/Makefile             |   1 +
- drivers/soc/davinci/davinci_pm_domains.c | 125 +++++++++++++++++++++++++++++++
- 5 files changed, 144 insertions(+)
- create mode 100644 drivers/soc/davinci/Kconfig
- create mode 100644 drivers/soc/davinci/Makefile
- create mode 100644 drivers/soc/davinci/davinci_pm_domains.c
+2018-01-26 17:42 GMT+03:00 <Mario.Limonciello@dell.com>:
+>
+> > -----Original Message-----
+> > From: Pali Rohár [mailto:pali.rohar@gmail.com]
+> > Sent: Thursday, January 25, 2018 5:06 PM
+> > To: Darren Hart <dvhart@infradead.org>
+> > Cc: Alexander Abrosimov <alexander.n.abrosimov@gmail.com>; Matthew Garrett
+> > <mjg59@srcf.ucam.org>; Limonciello, Mario <Mario_Limonciello@Dell.com>; Andy
+> > Shevchenko <andy@infradead.org>; platform-driver-x86@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH] platform/x86: dell-laptop: Add 2-in-1 devices to the DMI
+> > whitelist
+> >
+> > On Thursday 25 January 2018 15:02:39 Darren Hart wrote:
+> > > On Fri, Jan 26, 2018 at 01:48:57AM +0300, Alexander Abrosimov wrote:
+> > > > SMBIOS 3.0.0 Specification introduced new Chassis Types field values for
+> > > > 2-in-1 devices like tablets, convertibles and detachables. Dell's
+> > > > Inspiron 2-in-1 and XPS 2-in-1 fall into this category and they have to
+> > > > be added to the DMI whitelist, so rfkill and backlight can be controlled
+> > > > for them as for other laptops.
+> > > >
+> > > > Signed-off-by: Alexander Abrosimov <alexander.n.abrosimov@gmail.com>
+> > >
+> > > Thanks Alexander. Looks good - just going to give Pali and +Mario a chance to
+> > > respond before merging...
+> >
+> > I have no comments for this. This should be confirmed by Mario or
+> > somebody else from Dell, which DMI names are used for a new products.
+>
+> Yes these chassis types from SMBIOS 3.0 are covered by Dell specs and used for
+> some products.
+>
+> This patch looks good to me.
+>
+> Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+> >
+> > > > ---
+> > > >  drivers/platform/x86/dell-laptop.c | 18 ++++++++++++++++++
+> > > >  1 file changed, 18 insertions(+)
+> > > >
+> > > > diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-
+> > laptop.c
+> > > > index cd4725e7e0b5..23fc94d70ea1 100644
+> > > > --- a/drivers/platform/x86/dell-laptop.c
+> > > > +++ b/drivers/platform/x86/dell-laptop.c
+> > > > @@ -110,6 +110,24 @@ static const struct dmi_system_id dell_device_table[]
+> > __initconst = {
+> > > >           },
+> > > >   },
+> > > >   {
+> > > > +         .matches = {
+> > > > +                 DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> > > > +                 DMI_MATCH(DMI_CHASSIS_TYPE, "30"), /*Tablet*/
+> > > > +         },
+> > > > + },
+> > > > + {
+> > > > +         .matches = {
+> > > > +                 DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> > > > +                 DMI_MATCH(DMI_CHASSIS_TYPE, "31"), /*Convertible*/
+> > > > +         },
+> > > > + },
+> > > > + {
+> > > > +         .matches = {
+> > > > +                 DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> > > > +                 DMI_MATCH(DMI_CHASSIS_TYPE, "32"), /*Detachable*/
+> > > > +         },
+> > > > + },
+> > > > + {
+> > > >           .ident = "Dell Computer Corporation",
+> > > >           .matches = {
+> > > >                   DMI_MATCH(DMI_SYS_VENDOR, "Dell Computer
+> > Corporation"),
+> > > > --
+> > > > 2.13.6
+> > > >
+> > > >
+> > >
+> >
+> > --
+> > Pali Rohár
+> > pali.rohar@gmail.com
 
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index fc9e98047421..f318899a6cf6 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -4,6 +4,7 @@ source "drivers/soc/actions/Kconfig"
- source "drivers/soc/amlogic/Kconfig"
- source "drivers/soc/atmel/Kconfig"
- source "drivers/soc/bcm/Kconfig"
-+source "drivers/soc/davinci/Kconfig"
- source "drivers/soc/fsl/Kconfig"
- source "drivers/soc/imx/Kconfig"
- source "drivers/soc/mediatek/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index deecb16e7256..8e5fe23d6678 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_AT91)		+= atmel/
- obj-y				+= bcm/
- obj-$(CONFIG_ARCH_DOVE)		+= dove/
- obj-$(CONFIG_MACH_DOVE)		+= dove/
-+obj-$(CONFIG_ARCH_DAVINCI)	+= davinci/
- obj-y				+= fsl/
- obj-$(CONFIG_ARCH_MXC)		+= imx/
- obj-$(CONFIG_SOC_XWAY)		+= lantiq/
-diff --git a/drivers/soc/davinci/Kconfig b/drivers/soc/davinci/Kconfig
-new file mode 100644
-index 000000000000..7ee44f4ff41e
---- /dev/null
-+++ b/drivers/soc/davinci/Kconfig
-@@ -0,0 +1,16 @@
-+#
-+# TI DaVinci SOC drivers
-+#
-+menuconfig SOC_DAVINCI
-+	bool "TI DaVinci SOC drivers support"
-+
-+if SOC_DAVINCI
-+
-+config DAVINCI_PM_DOMAINS
-+	tristate "TI DaVinci PM Domains Driver"
-+	depends on ARCH_DAVINCI
-+	depends on PM_GENERIC_DOMAINS
-+	help
-+	  Generic power domains driver for TI DaVinci family of SoCs.
-+
-+endif # SOC_DAVINCI
-diff --git a/drivers/soc/davinci/Makefile b/drivers/soc/davinci/Makefile
-new file mode 100644
-index 000000000000..822b03c18260
---- /dev/null
-+++ b/drivers/soc/davinci/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_DAVINCI_PM_DOMAINS)        += davinci_pm_domains.o
-diff --git a/drivers/soc/davinci/davinci_pm_domains.c b/drivers/soc/davinci/davinci_pm_domains.c
-new file mode 100644
-index 000000000000..c27d4c404d52
---- /dev/null
-+++ b/drivers/soc/davinci/davinci_pm_domains.c
-@@ -0,0 +1,125 @@
-+/*
-+ * TI DaVinci Generic Power Domain Driver
-+ *
-+ * Copyright (C) 2018 BayLibre SAS
-+ *         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_clock.h>
-+
-+struct davinci_genpd_ctx {
-+	struct device *dev;
-+	struct generic_pm_domain pd;
-+	struct clk *pm_clk;
-+};
-+
-+static int davinci_genpd_attach_dev(struct generic_pm_domain *domain,
-+				    struct device *dev)
-+{
-+	struct davinci_genpd_ctx *ctx;
-+	struct clk *clk;
-+	int rv;
-+
-+	ctx = container_of(domain, struct davinci_genpd_ctx, pd);
-+
-+	if (dev->pm_domain)
-+		return -EEXIST;
-+
-+	/*
-+	 * DaVinci always uses a single clock for power-management. We assume
-+	 * it's the first one in the clocks property.
-+	 */
-+	clk = of_clk_get(dev->of_node, 0);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	rv = pm_clk_create(dev);
-+	if (rv) {
-+		clk_put(clk);
-+		return rv;
-+	}
-+
-+	rv = pm_clk_add_clk(dev, clk);
-+	if (rv) {
-+		pm_clk_destroy(dev);
-+		return rv;
-+	}
-+
-+	dev_pm_domain_set(dev, &domain->domain);
-+	ctx->pm_clk = clk;
-+
-+	return 0;
-+}
-+
-+static void davinci_genpd_detach_dev(struct generic_pm_domain *domain,
-+				     struct device *dev)
-+{
-+	struct davinci_genpd_ctx *ctx;
-+
-+	ctx = container_of(domain, struct davinci_genpd_ctx, pd);
-+
-+	pm_clk_remove_clk(dev, ctx->pm_clk);
-+	pm_clk_destroy(dev);
-+}
-+
-+static const struct of_device_id davinci_genpd_matches[] = {
-+	{ .compatible = "ti,davinci-pm-domains", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, davinci_genpd_matches);
-+
-+static int davinci_genpd_probe(struct platform_device *pdev)
-+{
-+	struct davinci_genpd_ctx *pd;
-+	struct device_node *np;
-+	struct device *dev;
-+
-+	dev = &pdev->dev;
-+	np = dev->of_node;
-+
-+	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	pd->pd.name = devm_kasprintf(dev, GFP_KERNEL,
-+				     "davinci_pwc_pd%d",
-+				     of_alias_get_id(np, "pwc"));
-+	if (!pd->pd.name)
-+		return -ENOMEM;
-+
-+	pd->dev = dev;
-+	pd->pd.attach_dev = davinci_genpd_attach_dev;
-+	pd->pd.detach_dev = davinci_genpd_detach_dev;
-+	pd->pd.flags |= GENPD_FLAG_PM_CLK;
-+
-+	pm_genpd_init(&pd->pd, NULL, true);
-+
-+	return of_genpd_add_provider_simple(np, &pd->pd);
-+}
-+
-+static struct platform_driver davinci_genpd_driver = {
-+	.probe = davinci_genpd_probe,
-+	.driver = {
-+		.name = "davinci_genpd",
-+		.of_match_table = davinci_genpd_matches,
-+	},
-+};
-+module_platform_driver(davinci_genpd_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("TI DaVinci Generic Power Domains driver");
-+MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
+
+
+
 -- 
-2.16.1
+Best Regards,
+Abrosimov Alexander, mailto:alexander.n.abrosimov@gmail.com
