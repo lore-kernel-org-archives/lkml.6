@@ -1,122 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753225AbeBGErK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 23:47:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60458 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752682AbeBGErI (ORCPT
+        id S1753396AbeBGEse (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 23:48:34 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46471 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752848AbeBGEsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 23:47:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9CB656029D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-To: Rob Herring <robh@kernel.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org
-References: <20180125163216.29018-1-rnayak@codeaurora.org>
- <20180125163216.29018-2-rnayak@codeaurora.org>
- <CAL_JsqLb4PQ+NkA_RBAgB-5MzFKd+6wBvfCjXvoH-i8pGzzdTg@mail.gmail.com>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <43b34b44-f613-79c6-1fe4-01c9dfe85e62@codeaurora.org>
-Date: Wed, 7 Feb 2018 10:17:03 +0530
+        Tue, 6 Feb 2018 23:48:32 -0500
+X-Google-Smtp-Source: AH8x226+DB1ycm7xrqBQHKWsiV2HROMlMsw3m4M9TVcAUki9w4jRWJqXqUdukODlGxhXRe0BxfP8cw==
+Subject: Re: [RFC PATCH] vfio/pci: Add ioeventfd support
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org
+References: <20180207000731.32764.95992.stgit@gimli.home>
+ <cfe31ae1-2557-d15a-45a2-0ba03d8d71fa@ozlabs.ru>
+ <20180206212538.50ef0e13@w520.home>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
+Message-ID: <6014d60c-9bdb-4dc0-7cd7-9299005d9c5a@ozlabs.ru>
+Date: Wed, 7 Feb 2018 15:48:26 +1100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLb4PQ+NkA_RBAgB-5MzFKd+6wBvfCjXvoH-i8pGzzdTg@mail.gmail.com>
+In-Reply-To: <20180206212538.50ef0e13@w520.home>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-AU
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[]..
-
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +/ {
->> +       model = "Qualcomm Technologies, Inc. SDM845";
+On 07/02/18 15:25, Alex Williamson wrote:
+> On Wed, 7 Feb 2018 15:09:22 +1100
+> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+>> On 07/02/18 11:08, Alex Williamson wrote:
+>>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+>>> index e3301dbd27d4..07966a5f0832 100644
+>>> --- a/include/uapi/linux/vfio.h
+>>> +++ b/include/uapi/linux/vfio.h
+>>> @@ -503,6 +503,30 @@ struct vfio_pci_hot_reset {
+>>>  
+>>>  #define VFIO_DEVICE_PCI_HOT_RESET	_IO(VFIO_TYPE, VFIO_BASE + 13)
+>>>  
+>>> +/**
+>>> + * VFIO_DEVICE_IOEVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 14,
+>>> + *                              struct vfio_device_ioeventfd)
+>>> + *
+>>> + * Perform a write to the device at the specified device fd offset, with
+>>> + * the specified data and width when the provided eventfd is triggered.
+>>> + *
+>>> + * Return: 0 on success, -errno on failure.
+>>> + */
+>>> +struct vfio_device_ioeventfd {
+>>> +	__u32	argsz;
+>>> +	__u32	flags;
+>>> +#define VFIO_DEVICE_IOEVENTFD_8		(1 << 0) /* 1-byte write */
+>>> +#define VFIO_DEVICE_IOEVENTFD_16	(1 << 1) /* 2-byte write */
+>>> +#define VFIO_DEVICE_IOEVENTFD_32	(1 << 2) /* 4-byte write */
+>>> +#define VFIO_DEVICE_IOEVENTFD_64	(1 << 3) /* 8-byte write */
+>>> +#define VFIO_DEVICE_IOEVENTFD_SIZE_MASK	(0xf)
+>>> +	__u64	offset;			/* device fd offset of write */
+>>> +	__u64	data;			/* data to be written */
+>>> +	__s32	fd;			/* -1 for de-assignment */
+>>> +};
+>>> +
+>>> +#define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 14)  
+>>
+>>
+>> Is this a first ioctl with endianness fixed to little-endian? I'd suggest
+>> to comment on that as things like vfio_info_cap_header do use the host
+>> endianness.
 > 
-> This should only be in the board level file.
+> Look at our current read and write interface, we call leXX_to_cpu
+> before calling iowriteXX there and I think a user would logically
+> expect to use the same data format here as they would there.
 
-thanks, will fix.
+If the data is "char data[8]" (i.e. bytestream), then it can be expected to
+be device/bus endian (i.e. PCI == little endian), but if it is u64 - then I
+am not so sure really, and this made me look around. It could be "__le64
+data" too.
 
-> 
->> +
->> +       interrupt-parent = <&intc>;
->> +
->> +       #address-cells = <2>;
->> +       #size-cells = <2>;
->> +
->> +       chosen { };
->> +
->> +       memory {
->> +               device_type = "memory";
->> +               /* We expect the bootloader to fill in the reg */
-> 
-> The start address is variable? If not you should populate the base and
-> have a unit-address.
+> Also note
+> that iowriteXX does a cpu_to_leXX, so are we really defining the
+> interface as little-endian or are we just trying to make ourselves
+> endian neutral and counter that implicit conversion?  Thanks,
 
-sure, I'll check and update.
+Defining it LE is fine, I just find it a bit confusing when
+vfio_info_cap_header is host endian but vfio_device_ioeventfd is not.
 
-> 
->> +               reg = <0 0 0 0>;
->> +       };
->> +
-
-[]..
->> +
->> +       soc: soc {
->> +               #address-cells = <1>;
->> +               #size-cells = <1>;
->> +               ranges = <0 0 0 0xffffffff>;
->> +               compatible = "simple-bus";
->> +
->> +               intc: interrupt-controller@17a00000 {
->> +                       compatible = "arm,gic-v3";
->> +                       #interrupt-cells = <3>;
->> +                       interrupt-controller;
->> +                       #redistributor-regions = <1>;
->> +                       redistributor-stride = <0x0 0x20000>;
->> +                       reg = <0x17a00000 0x10000>,     /* GICD */
->> +                             <0x17a60000 0x100000>;    /* GICR * 8 */
->> +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +               };
->> +
->> +               gcc: clock-controller@100000 {
->> +                       compatible = "qcom,gcc-sdm845";
-> 
-> sdm845-gcc is the preferred order.
-
-This is still proposed as part of the GCC patch for sdm845 [1]
-(which looks like has neither you nor the DT list copied :/ )
-Also looking at Documentation/devicetree/bindings/clock/qcom,gcc.txt,
-I see we seem to follow the gcc-<soc> convention for compatible all along :(
-
-                        "qcom,gcc-apq8064"
-                        "qcom,gcc-apq8084"
-                        "qcom,gcc-ipq8064"
-                        "qcom,gcc-ipq4019"
-                        "qcom,gcc-ipq8074"
-                        "qcom,gcc-msm8660"
-                        "qcom,gcc-msm8916"
-                        "qcom,gcc-msm8960"
-                        "qcom,gcc-msm8974"
-                        "qcom,gcc-msm8974pro"
-                        "qcom,gcc-msm8974pro-ac"
-                        "qcom,gcc-msm8994"
-                        "qcom,gcc-msm8996"
-                        "qcom,gcc-mdm9615"
-
-[1] https://patchwork.kernel.org/patch/10193895/ 
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+Alexey
