@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754864AbeBGR1G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:27:06 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41626 "EHLO ms.lwn.net"
+        id S1754892AbeBGR1X (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:27:23 -0500
+Received: from ms.lwn.net ([45.79.88.28]:41668 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754466AbeBGR1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:27:01 -0500
+        id S1754466AbeBGR1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:27:07 -0500
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
         Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/8] docs: kernel-doc: Rename and split STATE_FIELD
-Date: Wed,  7 Feb 2018 10:26:18 -0700
-Message-Id: <20180207172624.24555-3-corbet@lwn.net>
+Subject: [PATCH 8/8] docs: kernel-doc: Don't mangle literal code blocks in comments
+Date: Wed,  7 Feb 2018 10:26:24 -0700
+Message-Id: <20180207172624.24555-9-corbet@lwn.net>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180207172624.24555-1-corbet@lwn.net>
 References: <20180207172624.24555-1-corbet@lwn.net>
@@ -20,92 +20,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STATE_FIELD describes a parser state that can handle any part of a
-kerneldoc comment body; rename it to STATE_BODY to reflect that.
+It can be useful to put code snippets into kerneldoc comments; that can be
+done with the "::" operator at the end of a line like this::
 
-The $in_purpose variable was a hidden substate of STATE_FIELD; get rid of
-it and make a proper state (STATE_BODY_MAYBE) instead.  This will make the
-subsequent process_file() splitup easier.
+   if (desperate)
+       run_in_circles();
+
+kernel-doc currently fails to understand these literal blocks and applies
+its normal markup to them, which is then treated as literal by sphinx.  The
+result is unsightly markup instead of a useful code snippet.
+
+Apply a hack to the output code to recognize literal blocks and avoid
+performing any special markup on them.  It's ugly, but that means it fits
+in well with the rest of the script.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/kernel-doc | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ scripts/kernel-doc | 55 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 50 insertions(+), 5 deletions(-)
 
 diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index 5aa4ce211fc6..ad30c52f91ef 100755
+index c6c9370a1e49..c984f82cb897 100755
 --- a/scripts/kernel-doc
 +++ b/scripts/kernel-doc
-@@ -328,10 +328,11 @@ my $lineprefix="";
- use constant {
-     STATE_NORMAL        => 0, # normal code
-     STATE_NAME          => 1, # looking for function name
--    STATE_FIELD         => 2, # scanning field start
--    STATE_PROTO         => 3, # scanning prototype
--    STATE_DOCBLOCK      => 4, # documentation block
--    STATE_INLINE        => 5, # gathering documentation outside main block
-+    STATE_BODY_MAYBE    => 2, # body - or maybe more description
-+    STATE_BODY          => 3, # the body of the comment
-+    STATE_PROTO         => 4, # scanning prototype
-+    STATE_DOCBLOCK      => 5, # documentation block
-+    STATE_INLINE        => 6, # gathering documentation outside main block
- };
- my $state;
- my $in_doc_sect;
-@@ -1784,7 +1785,6 @@ sub process_file($) {
-     my $identifier;
-     my $func;
-     my $descr;
--    my $in_purpose = 0;
-     my $initial_section_counter = $section_counter;
-     my ($orig_file) = @_;
-     my $leading_space;
-@@ -1830,7 +1830,7 @@ sub process_file($) {
- 		    $identifier = $1;
- 		}
+@@ -748,14 +748,59 @@ sub output_blockhead_rst(%) {
+     }
+ }
  
--		$state = STATE_FIELD;
-+		$state = STATE_BODY;
- 		# if there's no @param blocks need to set up default section
- 		# here
- 		$contents = "";
-@@ -1843,7 +1843,7 @@ sub process_file($) {
- 		    $descr =~ s/\s*$//;
- 		    $descr =~ s/\s+/ /g;
- 		    $declaration_purpose = $descr;
--		    $in_purpose = 1;
-+		    $state = STATE_BODY_MAYBE;
- 		} else {
- 		    $declaration_purpose = "";
- 		}
-@@ -1875,7 +1875,7 @@ sub process_file($) {
- 		++$warnings;
- 		$state = STATE_NORMAL;
- 	    }
--	} elsif ($state == STATE_FIELD) {	# look for head: lines, and include content
-+	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
- 	    if (/$doc_sect/i) { # case insensitive for supported section names
- 		$newsection = $1;
- 		$newcontents = $2;
-@@ -1902,7 +1902,7 @@ sub process_file($) {
- 		}
+-sub output_highlight_rst {
+-    my $contents = join "\n",@_;
+-    my $line;
+-
++#
++# Apply the RST highlights to a sub-block of text.
++#   
++sub highlight_block($) {
++    # The dohighlight kludge requires the text be called $contents
++    my $contents = shift;
+     eval $dohighlight;
+     die $@ if $@;
++    return $contents;
++}
  
- 		$in_doc_sect = 1;
--		$in_purpose = 0;
-+		$state = STATE_BODY;
- 		$contents = $newcontents;
-                 $new_start_line = $.;
- 		while (substr($contents, 0, 1) eq " ") {
-@@ -1941,8 +1941,8 @@ sub process_file($) {
- 		    } else {
- 			$contents .= "\n";
- 		    }
--		    $in_purpose = 0;
--		} elsif ($in_purpose == 1) {
-+		    $state = STATE_BODY;
-+		} elsif ($state == STATE_BODY_MAYBE) {
- 		    # Continued declaration purpose
- 		    chomp($declaration_purpose);
- 		    $declaration_purpose .= " " . $1;
+-    foreach $line (split "\n", $contents) {
++sub output_highlight_rst {
++    my $input = join "\n",@_;
++    my $output = "";
++    my $line;
++    my $in_literal = 0;
++    my $litprefix;
++    my $block = "";
++
++    # The "dohighlight" hack requires that the data be called "$contents"
++    foreach $line (split "\n",$input) {
++	#
++	# If we're in a literal block, see if we should drop out
++	# of it.  Otherwise pass the line straight through unmunged.
++	#
++	if ($in_literal) {
++	    if (! ($line =~ /$litprefix/ || $line =~ /^\s*$/)) {
++		$in_literal = 0;
++	    }
++	    else {
++		$output .= $line . "\n";
++	    }
++	}
++	#
++	# Not in a literal block (or just dropped out)
++	#
++	if (! $in_literal) {
++	    $block .= $line . "\n";
++	    if ($line =~ /^[^.].*::$/) {
++		$in_literal = 1;
++		# Note current indentation - we'll go as long as it's deeper.
++		$line =~ /^(\s*)/;
++		$litprefix = '^' . $1 . ' ';
++		$output .= highlight_block($block);
++		$block = ""
++	    }
++	}
++    }
++
++    if ($block) {
++	$output .= highlight_block($block);
++    }
++    foreach $line (split "\n", $output) {
+ 	print $lineprefix . $line . "\n";
+     }
+ }
 -- 
 2.14.3
