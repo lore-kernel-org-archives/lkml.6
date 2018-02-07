@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754038AbeBGRfJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:35:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44910 "EHLO mail.kernel.org"
+        id S932152AbeBGRfM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:35:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753721AbeBGRfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:35:07 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8F721788
+        id S1753721AbeBGRfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:35:10 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736AD217A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -15,9 +15,9 @@ To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] media: i2c: adv748x: Simplify regmap configuration
-Date: Wed,  7 Feb 2018 17:34:45 +0000
-Message-Id: <1518024886-842-2-git-send-email-kbingham@kernel.org>
+Subject: [PATCH 2/2] media: i2c: adv748x: Add missing CBUS page.
+Date: Wed,  7 Feb 2018 17:34:46 +0000
+Message-Id: <1518024886-842-3-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518024886-842-1-git-send-email-kbingham@kernel.org>
 References: <1518024886-842-1-git-send-email-kbingham@kernel.org>
@@ -27,142 +27,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The ADV748x has identical map configurations for each register map. The
-duplication of each map can be simplified using a helper macro such that
-each map is represented on a single line.
+The ADV748x has 12 pages mapped onto I2C addresses.
 
-Define ADV748X_REGMAP_CONF for this purpose and un-define after it's
-use.
+In the existing implementation only 11 are mapped correctly in the page
+enumerations, which causes an off-by-one fault on pages above the
+infoframe definition due to a missing 'CBUS' page.
+
+This causes the address for the CEC, SDP, TXA, and TXB to be incorrectly
+programmed during the iterations in adv748x_initialise_clients().
+
+Until now this has gone un-noticed due to the fact that following the
+creation of the clients - the device is reset and the addresses are
+reprogrammed in manually by the call to "adv748x_write_regs(state,
+adv748x_set_slave_address);"
+
+As part of moving to dynamic i2c address allocations repair this by
+providing the missing CBUS page definition.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/media/i2c/adv748x/adv748x-core.c | 111 ++++++-------------------------
- 1 file changed, 22 insertions(+), 89 deletions(-)
+ drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
+ drivers/media/i2c/adv748x/adv748x.h      | 2 ++
+ 2 files changed, 5 insertions(+)
 
 diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index fd92c9e4b519..71c69b816db2 100644
+index 71c69b816db2..6d62b817ed00 100644
 --- a/drivers/media/i2c/adv748x/adv748x-core.c
 +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -35,98 +35,31 @@
-  * Register manipulation
-  */
- 
--static const struct regmap_config adv748x_regmap_cnf[] = {
--	{
--		.name			= "io",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "dpll",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "cp",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "hdmi",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "edid",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "repeater",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "infoframe",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "cec",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "sdp",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--
--	{
--		.name			= "txb",
--		.reg_bits		= 8,
--		.val_bits		= 8,
--
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
--	{
--		.name			= "txa",
--		.reg_bits		= 8,
--		.val_bits		= 8,
-+#define ADV748X_REGMAP_CONF(n) \
-+{ \
-+	.name = n, \
-+	.reg_bits = 8, \
-+	.val_bits = 8, \
-+	.max_register = 0xff, \
-+	.cache_type = REGCACHE_NONE, \
-+}
- 
--		.max_register		= 0xff,
--		.cache_type		= REGCACHE_NONE,
--	},
-+static const struct regmap_config adv748x_regmap_cnf[] = {
-+	ADV748X_REGMAP_CONF("io"),
-+	ADV748X_REGMAP_CONF("dpll"),
-+	ADV748X_REGMAP_CONF("cp"),
-+	ADV748X_REGMAP_CONF("hdmi"),
-+	ADV748X_REGMAP_CONF("edid"),
-+	ADV748X_REGMAP_CONF("repeater"),
-+	ADV748X_REGMAP_CONF("infoframe"),
-+	ADV748X_REGMAP_CONF("cec"),
-+	ADV748X_REGMAP_CONF("sdp"),
-+	ADV748X_REGMAP_CONF("txa"),
-+	ADV748X_REGMAP_CONF("txb"),
- };
- 
-+#undef ADV748X_REGMAP_CONF
-+
- static int adv748x_configure_regmap(struct adv748x_state *state, int region)
- {
- 	int err;
+@@ -52,6 +52,7 @@ static const struct regmap_config adv748x_regmap_cnf[] = {
+ 	ADV748X_REGMAP_CONF("edid"),
+ 	ADV748X_REGMAP_CONF("repeater"),
+ 	ADV748X_REGMAP_CONF("infoframe"),
++	ADV748X_REGMAP_CONF("cbus"),
+ 	ADV748X_REGMAP_CONF("cec"),
+ 	ADV748X_REGMAP_CONF("sdp"),
+ 	ADV748X_REGMAP_CONF("txa"),
+@@ -91,6 +92,7 @@ static int adv748x_i2c_addresses[ADV748X_PAGE_MAX] = {
+ 	ADV748X_I2C_EDID,
+ 	ADV748X_I2C_REPEATER,
+ 	ADV748X_I2C_INFOFRAME,
++	ADV748X_I2C_CBUS,
+ 	ADV748X_I2C_CEC,
+ 	ADV748X_I2C_SDP,
+ 	ADV748X_I2C_TXB,
+@@ -354,6 +356,7 @@ static const struct adv748x_reg_value adv748x_set_slave_address[] = {
+ 	{ADV748X_PAGE_IO, 0xf6, ADV748X_I2C_EDID << 1},
+ 	{ADV748X_PAGE_IO, 0xf7, ADV748X_I2C_REPEATER << 1},
+ 	{ADV748X_PAGE_IO, 0xf8, ADV748X_I2C_INFOFRAME << 1},
++	{ADV748X_PAGE_IO, 0xf9, ADV748X_I2C_CBUS << 1},
+ 	{ADV748X_PAGE_IO, 0xfa, ADV748X_I2C_CEC << 1},
+ 	{ADV748X_PAGE_IO, 0xfb, ADV748X_I2C_SDP << 1},
+ 	{ADV748X_PAGE_IO, 0xfc, ADV748X_I2C_TXB << 1},
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 6789e2f3bc8c..725662edc4b8 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -35,6 +35,7 @@
+ #define ADV748X_I2C_EDID		0x36	/* EDID Map */
+ #define ADV748X_I2C_REPEATER		0x32	/* HDMI RX Repeater Map */
+ #define ADV748X_I2C_INFOFRAME		0x31	/* HDMI RX InfoFrame Map */
++#define ADV748X_I2C_CBUS		0x30	/* CBUS MHL Map */
+ #define ADV748X_I2C_CEC			0x41	/* CEC Map */
+ #define ADV748X_I2C_SDP			0x79	/* SDP Map */
+ #define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
+@@ -48,6 +49,7 @@ enum adv748x_page {
+ 	ADV748X_PAGE_EDID,
+ 	ADV748X_PAGE_REPEATER,
+ 	ADV748X_PAGE_INFOFRAME,
++	ADV748X_PAGE_CBUS,
+ 	ADV748X_PAGE_CEC,
+ 	ADV748X_PAGE_SDP,
+ 	ADV748X_PAGE_TXB,
 -- 
 2.7.4
