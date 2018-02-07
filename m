@@ -1,86 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754470AbeBGTij (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:38:39 -0500
-Received: from sauhun.de ([88.99.104.3]:44402 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754108AbeBGTih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:38:37 -0500
-Date: Wed, 7 Feb 2018 20:38:35 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 13/16] mmc: tmio: fix never-detected card insertion bug
-Message-ID: <20180207193835.ildbw2wt2zeha6eo@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-14-git-send-email-yamada.masahiro@socionext.com>
+        id S932080AbeBGTnk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:43:40 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43018 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753721AbeBGTni (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:43:38 -0500
+X-Google-Smtp-Source: AH8x227I3P5BPwKxtufmnVtSI5eOS9pOpmKa85hXRbesaFbxkLQ9sdSo3VX77gWIaO1yv4/CTeL/qVTR87IHJ3HwF+Q=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zw4qzvuln4pkl6sg"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-14-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180207192816.GA19536@pd.tnic>
+References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+ <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
+ <20180207183543.GA8897@pd.tnic> <20180207184933.GA25201@hirez.programming.kicks-ass.net>
+ <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
+ <20180207191451.GC25201@hirez.programming.kicks-ass.net> <20180207192816.GA19536@pd.tnic>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 7 Feb 2018 11:43:37 -0800
+X-Google-Sender-Auth: nMPgJJRsZQcXEGH73XA8_J4T6as
+Message-ID: <CA+55aFzSZzdVZXatze=xjGSwpOPO7kvbWnz7JiZ3sTx_2Pohjw@mail.gmail.com>
+Subject: Re: [linus:master] BUILD REGRESSION a2e5790d841658485d642196dbb0927303d6c22f
+To: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 7, 2018 at 11:28 AM, Borislav Petkov <bp@alien8.de> wrote:
+> On Wed, Feb 07, 2018 at 08:14:51PM +0100, Peter Zijlstra wrote:
+>> Then someone went and wrecked it.
+>
+> Yeah, note says UD0 didn't eat a ModRM byte on old CPUs. But then that
+> changed too. Fun stuff changing insn encoding underway.
+>
+> So if we opt for adding a ModRM byte, could a 0x90 NOP work so that it
+> doesn't shit itself on those old CPUs?
 
---zw4qzvuln4pkl6sg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We could just also decide that the only thing that the modrm bytes of
+UD0 actually *affect* is how the CPU might act for a page-crossing
+instruction.
 
-On Thu, Jan 18, 2018 at 01:28:13AM +0900, Masahiro Yamada wrote:
-> The TMIO mmc cannot detect the card insertion in native_hotplug mode
-> if the driver is probed without a card inserted.
->=20
-> The reason is obvious; all IRQs are disabled by tmio_mmc_host_probe(),
-> as follows:
->=20
->   tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
->=20
-> The card event IRQs are first enabled by tmio_mmc_start_command() as
-> follows:
->=20
->   if (!host->native_hotplug)
->           irq_mask &=3D ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
->   tmio_mmc_enable_mmc_irqs(host, irq_mask);
->=20
-> If the driver is probed without a card, tmio_mmc_start_command() is
-> never called in the first place.  So, the card is never detected.
->=20
-> The card event IRQs must be enabled in probe/resume functions.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Because I think that's the only semantic difference: if it's a
+page-crosser, the instruction could take a page fault before raising
+the #UD.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Is there any other decode issue we might want to look out for?
 
+Anyway, then we'd make the rule be:
 
---zw4qzvuln4pkl6sg
-Content-Type: application/pgp-signature; name="signature.asc"
+ - we promise to always pad up the following bytes (our extra warning
+information etc) so that we never have a missing page afterwards (this
+is presumably practically speaking already the case). It might still
+be a page-crossing instruction, but we won't take a page fault in
+kernel space (due to it being at the end of some text sectoin or
+whatever that changes the NX bit or due to DEBUG_PAGEALLOC having
+unmapped the next page).
 
------BEGIN PGP SIGNATURE-----
+ - we special-case the decoder so that we don't get this warning
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7VbcACgkQFA3kzBSg
-KbZafRAAp6E7dIQ958qKwfAz1I19l5Xq8APvj/XH6l0YDqVWKOn30/OxM1zOmsZ1
-qZz8pg28z6VFKOsIFyoBoAHvpOi3XofdHI5F9vLpWkGiw6PhpziL3LKKbTBEYatl
-Va/pbvfLc2d2LOLbrYcyOvrsrBdKibSyMhHhhvitvuYwux2haEsnEEKAlerYYil3
-gg2FsEtldw/zUN1lolwxy3mBRQruGACnY3JMwHmQxM76ud62ERbBRPP7Ec8jdf4n
-e1G/MletvlfauvvJh4TVcJTDZhHmnfzprGss1PNbDp+AieNKbJm6yZFw/MDq0cNA
-l50YsHtyH7PS+NyVqefi9hMmJjI3oznTGItfabX3C9Sqpv5iAEpkmpUI0OiO6T5D
-LwTzOtZxprDUFINKm1BfS7/jlB9bms9qHpM9QJyMC0vP+jwpy83jp8VMD8izcV9U
-o38HqCcBmVP4UdSoROjFqiEsi9N7ahZnJS99dIvVWXUKbW/HdyWSuau1KfuwDGAL
-MLjL5a5GDZVoT7ubahZF5VHpIQpllf3VweVhvbyZTy/CKotGWEcl/TUBGmoQnZAT
-0J4VaRVp4yU79rD+oAPnAQLxiMrsEhaxx1J5H7ETgfOCTtf1f9w27GC+YvNfP+Hc
-6K6vPvRVg7Okjo3/WmYcBGKAPwICayVK24ZJ52TSybjzuCg/7hk=
-=HLDO
------END PGP SIGNATURE-----
+and then we just ignore the issue entirely.
 
---zw4qzvuln4pkl6sg--
+Hmm?
+
+              Linus
