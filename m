@@ -1,92 +1,114 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-X-Google-Smtp-Source: AH8x225sCPIuAB82UzKbbh1fDEEmiD7k/1zjNou9oKLHQJ56Bx5ym/S+nsp2gA5SXiKuCnxczD4D
-ARC-Seal: i=1; a=rsa-sha256; t=1518029206; cv=none;
-        d=google.com; s=arc-20160816;
-        b=j0DzZHP2R5EURB2SJnKB7OUuV8G5qd2Sdc1+PRAZj4Gp5fTWWG1k4uMSkw/i7xioAX
-         g9yDgkE02s45nqxtOQgEJHYq+gmGNSfEuAvrdF0mkh0pyYYYzcy+DrGCLijqyHL2k6//
-         eSjTcoHZ3HXBAIdo4SjaZZl1t00p0FnaH1Nfg9hyqZj30iyIB1j3dUVGaReBBlJFPSaB
-         9/pTjmpIPn1iSqEWaLRPHwtZVnjdgEXZwqxGf2JrxJYGI4uHVmKXMu51KU12gwRAsLgP
-         hgzLZb+nup9ww4UfWinKbhQDm41rn/5Z25J82/5U6qzs+Kn6IryP5Ndt7nLgAt/GpXRF
-         cy+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=5e489fn2ZQXtRT1WtEz87LEWtoCTUwuMYemWT9nOvjM=;
-        b=GuFVmzFuSy+WH3pKjO5Xm26Tkgarl5hPdqFkUhOaQ6R79tiDehJNGxC69TYKqsAH52
-         /fXp6Z6kr9KtB+Ns0Cw73xHRT+mwN2G7HrAIvssv5QxPhQqrI6+ndcwZ54rwsOH3npgv
-         3cI/thxi2lazT9UDcbxm4PEjt9V/C/sNjOVWQeySP2Gqcsk2pnhayklUiV66tefZiUys
-         CTb+1/NAeAL3cJrfLbw5JaBbpD1H5MjOe0m258H6HrVu0+crAt/eHJymI2sWLdZ7rBam
-         rUZuboyLQA8rw4yTyo5/6I1w+ZTZUeKOzs+4zWDx5RJCWc15oOk+2jrrfQhwX5cg1BqG
-         2E0w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of alexandre.belloni@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=alexandre.belloni@free-electrons.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of alexandre.belloni@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=alexandre.belloni@free-electrons.com
-Date: Wed, 7 Feb 2018 19:46:43 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] char: nvram: disable on ARM
-Message-ID: <20180207184643.GA3404@piout.net>
-References: <20180206220534.9929-1-alexandre.belloni@bootlin.com>
- <CAK8P3a0Wmh6acO7W=weX37B2GNbecJQzPhZdVZcXXAwfT6jZ5A@mail.gmail.com>
- <20180207015509.GV3404@piout.net>
- <CAK8P3a3dkAESaqGgLAV9uKKet20rVtBXqBJ-eNGbwQv1i05K7A@mail.gmail.com>
- <20180207124839.GX3404@piout.net>
- <CAK8P3a2HscUSs-iV_3dp7+htN+LPFK2LnmiZNTKamQZwMSVxMA@mail.gmail.com>
- <20180207154700.GY3404@piout.net>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-422771-1518026373-2-2384579394924730754
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518026373; b=pQDZShyuvdNEEXmEDBRXi332GmEB94SHdedv/rSdTef2xwA
+    R9dRLdgq54K/avwHQxOpup3xOIBcy9WU1ND9dTs9W8WywODEkZZa/ShY0VZewnBq
+    c13GCDSOm+k3aH0/w3SvBedq2yV5PPHvh4UaSm9B/OViEgOTY8Q1SbdsPsujAZIo
+    Ip+ouFyAAgIROMaTeWOmXifO+6lspcS22IAz7ChSrdgis+pVbjb7D3t2oiOfvz/D
+    scWmyA5XKPywNehZ+uNLOHKiCz/ZXIaQv0SgnWk1oaPNEygLsgtfVzU3ln0lJTNM
+    SX3k8gsiY6baH3S1u7Gg1tya/u/fqumYUGw7ogQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518026373; bh=x
+    q1qk00Ry0gWqwn6x8TeBAviphHBoCRYlBEsalx2mHc=; b=L61aYgSpnKh5Eo4VG
+    RqWDKZ5ZNMllfE4hYNBkaPltvf2YAZWYbbihgrClnJBmzr7LYjo9g8bqnaTNtDCb
+    GXbK6o5NkJGu+OVLKQcEHUtI2rJT/fBfkPHPxcGTlLZ0e/ov1SDAUTEgqFUgTnbZ
+    RV+Bl3KzchSVz1ZJVXiDUes906mEDvig1A0sw+Jh6t4r2Jo9LClVPdoSRhwFkhhS
+    0xcGGRYQdOxv7vwtmdShNrWFBOVwU8AdJgCS39FPVNbHm85vmZSgwvdE37KO9jFu
+    2RG5hC/GdqKv1NY2pE/sTQR25ezsZNA6p1HgrFO/8KfGJWvQV94v/M8C8kwx/aBI
+    wqVrw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: devel@linuxdriverproject.org
+Subject: [PATCH RESEND 0/4] hv_balloon: fixes for num_pages_onlined accounting
+ and misc improvements
+Date: Wed,  7 Feb 2018 18:49:59 +0100
+Message-Id: <20180207175003.28859-1-vkuznets@redhat.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Eduardo Otubo <otubo@redhat.com>,
+ Stephen Hemminger <sthemmin@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Alex Ng <alexng@microsoft.com>,
+ linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207154700.GY3404@piout.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591690923969903275?=
-X-GMAIL-MSGID: =?utf-8?q?1591768993041678935?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 07/02/2018 at 16:47:00 +0100, Alexandre Belloni wrote:
-> > >> > I really don't think anyone is using that but I don't really know much
-> > >> > about x86 and the specification this may be part of.
-> > >> >
-> > >> > I see the info may be used in drivers/video/fbdev/ and
-> > >> > drivers/platform/x86/thinkpad_acpi.c
-> > >>
-> > >> The thinkpad_acpi driver seems to look at some other bytes
-> > >> in the nvram, which have a platform specific meaning.
-> > >>
-> > >
-> > > Yeah, I was more concerned that they need drivers/char/nvram.c for
-> > > nvram_read_byte so we can't simply remove the driver.
-> > 
-> > Ok, so the procfs interface may be obsolete, but we still need an
-> > interface into the CMOS NVRAM data.
-> > 
-> 
-> Actually, I just found
-> https://unix.stackexchange.com/questions/331419/is-dev-nvram-dangerous-to-write-to
-> 
-> So it seems to have real values for some people (even if they are
-> wrong).
-> 
-> That also points to https://sourceforge.net/projects/nvram-wakeup/ but I
-> don't think it is necessary. The RTC driver should be able to wakeup an
-> x86 platform.
-> 
-> All the other uses of /dev/nvram I could find with a simple google
-> search (i.e. saving and restoring CMOS settings) could just use
-> /sys/class/rtc/rtc0/device/nvram
-> 
+I just noticed that this series got lost; the initial submission was on
+Nov, 8 but nothing happened after. Resending.
 
-Ok, the chromeos guys are using it for verified boot it seems:
-https://chromium.googlesource.com/chromiumos/platform/vboot_reference
+Original description:
 
-I'm wondering whether they really care about the checksum though.
+While doing routing code review I noticed that commit 6df8d9aaf3af
+("Drivers: hv: balloon: Correctly update onlined page count") introduced
+an issue with num_pages_onlined accounting on memory offlining. Deeper look
+showed that the accounting was always buggy. This is fixed in PATCH3.
+PATCHes 1 and 2 are preparatory cleanups, PATCH4 adds a tracepoint to
+post_status so it's now possible to see what's being sent to the host and
+where the data comes from.
+
+Vitaly Kuznetsov (4):
+  hv_balloon: fix printk loglevel
+  hv_balloon: simplify hv_online_page()/hv_page_online_one()
+  hv_balloon: fix bugs in num_pages_onlined accounting
+  hv_balloon: trace post_status
+
+ drivers/hv/Makefile           |   1 +
+ drivers/hv/hv_balloon.c       | 121 +++++++++++++++++++++++++++++-------------
+ drivers/hv/hv_trace_balloon.h |  48 +++++++++++++++++
+ 3 files changed, 132 insertions(+), 38 deletions(-)
+ create mode 100644 drivers/hv/hv_trace_balloon.h
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.14.3
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
