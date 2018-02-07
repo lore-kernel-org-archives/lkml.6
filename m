@@ -1,112 +1,314 @@
-Return-Path: <b-liu@ti.com>
-X-Google-Smtp-Source: AH8x224vx/jW35DHaZKC9wEhy8/lgcgr78U11LVvfPn898WkBsc8AjdasmWsq2iBwed2daxF5JEv
-ARC-Seal: i=1; a=rsa-sha256; t=1518057492; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yXmETSMcgACpRUMYsn5NK2TAbOWb7j3D3v/hTV9PL2aogTBfr9WF6ZJiBlEOpnnaUo
-         X6P+DDrmvsAvlk8Qv3uWUsIcqzd2euu2t4IzB5vrtd15KoSYv5y4HD09zpmqs090KYT2
-         exmQSqKpMhYxUqOaYB1J6XmBNAGZbZRfRnHy2Tp1rE6q7zQ2rUBhOMVNWLibnvIXNzCi
-         8LMLNtKRrDNv+EgoZxN0IWun0gr6rHz5igWh6ZPDOO7SAWmlvhK7BBqM8aCy0cWyiHYf
-         l/qyEHJDpYw4lvM707Ez3a4ymJQN+mTlWwGRpWYcKlqCJYjCBCciLvilJztKwEPmRk4r
-         gRnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=3odAhgpAhRCOF0oRz3uS1Bo8zML42FGvz4vSoVC8sUA=;
-        b=ORsHsraE7qChdxzitoxYngOUpzZgPY7wwMp8LDuR46Y1xw4iYzxAi2of/wsfZc5vO1
-         qnm4wKdzB8mnGlOzNp20/sO/CuuWEgES73Niy5WVid7gj+ewbiNuMMW14gRtLmj7hfc/
-         CVPm/6Df8MEnyLL1jcRTXxL65FrRZMSUYpLI/oi5TG/f13k6aKTG1hb1aMd156+rlMUh
-         +O6q44Zh5UNgzEbkRnR3EFzkeuflO+EANods/vKwqNO6pEhfBiw+1R0PBTwZQcXFRAa8
-         iLUSPfbEeRffTZfcZ7pFET++A2PUbq9/HqGLnWWTKvjL+j6laQJcqbmaypox3rb4B7l7
-         BpGQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=OsdWVE2v;
-       spf=pass (google.com: domain of b-liu@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=b-liu@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=OsdWVE2v;
-       spf=pass (google.com: domain of b-liu@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=b-liu@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-Date: Wed, 7 Feb 2018 20:38:05 -0600
-From: Bin Liu <b-liu@ti.com>
-To: Maxim Uvarov <muvarov@gmail.com>
-CC: Yegor Yefremov <yegorslists@googlemail.com>,
-        kernel list
-	<linux-kernel@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        Greg
- KH <gregkh@linuxfoundation.org>,
-        <sergei.shtylyov@cogentembedded.com>,
-        Tomas
- Paukrt <tomas.paukrt@advantech-bb.cz>
-Subject: Re: [PATCHv2] musb_host: fix lockup on rxcsr_h_error
-Message-ID: <20180208023805.GE223@LTA0271908.dhcp.ti.com>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>, Maxim Uvarov <muvarov@gmail.com>,
-	Yegor Yefremov <yegorslists@googlemail.com>,
-	kernel list <linux-kernel@vger.kernel.org>,
-	linux-usb <linux-usb@vger.kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	sergei.shtylyov@cogentembedded.com,
-	Tomas Paukrt <tomas.paukrt@advantech-bb.cz>
-References: <20160427212823.GA14645@uda0271908>
- <CAJGZr0JwefevBRxbG_k5jPqf8Bi9ndMMieTcAKfkgCRGcbfjrg@mail.gmail.com>
- <20160428143714.GA7222@uda0271908>
- <CAGm1_ksaa8P1fs03-DSsjvVQu_=cg4yqw7xumb9Gbm+t19O01w@mail.gmail.com>
- <20160503134813.GA690@uda0271908>
- <CAGm1_kvLh-+kJVdtv+7i_1nVsPTQ67uE_5ZizRRfK2iEoWcj+w@mail.gmail.com>
- <20180125154508.GB6590@uda0271908>
- <CAJGZr0+8FRhbMEsKke=DoCAQ7-7gqDKCNJZ+oE==aovqm1kHBw@mail.gmail.com>
- <20180125163146.GD6590@uda0271908>
- <CAJGZr0LcMpdNea+VMZs-0Ln+2ScQK+4oWB95qQFt4uF9V=f9ww@mail.gmail.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3660584-1517995519-2-14125671607762612543
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='gbk'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1517995518; b=K+6/WXkrxszjHHGoT4DS3FKoaepmn/dXfL3RiP0SZXUTJ3V
+    yhxyllP+8plRw7uAbL/dmLQCSy/wRIYjoq3QoNWnRswUkqGQhSvlu92Njst52D9Z
+    yQcYvJBctfmvMrPuud3er2BXfBEBtb4P+YJtC0v+V+SXmuzUELBmdSm25bn3MkMj
+    TGBAWT2DNPJE8S1s3AuchmdG2SzjeZvWgRLffaMwnGtfuPipMAfHvVvKyzlJWzRN
+    fsRaP45BrS034yHFoj3e9WZRuVn+6gafbWy4g34AOUjYIp0KEnij/C9cTe/8cENv
+    KcSRQWcN/7vDqzGXRWK++m/qsnTIeFC0t+RCc9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1517995518; bh=MpNPkhZEZaeco8qatekwxpSWCWeZrbRY9wr6jDSD/O8=; b=I
+    35Akx6mJ3jbj204ggWoiZDFU2C8TwTHCyR7WMQE96+yTVqsbHp+uGuiDQqYSiAW6
+    EA4L7LdTYyvbtx0Thfkof0oHUe6cB+KM4xHidOUyl5r/ml0X6MSyJ4+QcjYF71PI
+    V9xm03kjR2G/zP1wMp8sQRSxxXvJyvVy4/uJU4X0ra+u9xuQNx9/++LHezHZ+X3Q
+    rBm+neboCanmxD7Eg3E9c3xD6gJcbM4KkSXBUuf29Hw2Ht62QTiPBm4q1OD36s9s
+    jx8n1w/NOvL0YofHYUIo3naB8TjRpyiX0T65jrdyLigza4H92vcNlaRj72v0p49k
+    cgQglUv7rn8laUqpgLTMA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cn.fujitsu.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=cn.fujitsu.com header.result=pass header_org.domain=fujitsu.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cn.fujitsu.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=cn.fujitsu.com header.result=pass header_org.domain=fujitsu.com header_org.result=pass header_is_org_domain=no
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753452AbeBGJZQ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Feb 2018 04:25:16 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:60841 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753147AbeBGJZO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Feb 2018 04:25:14 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="36893458"
+Subject: Re: [PATCH 4.14 023/159] mm/sparsemem: Allocate mem_section at
+ runtime for CONFIG_SPARSEMEM_EXTREME=y
+To: Mike Galbraith <efault@gmx.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC: Baoquan He <bhe@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dave Young <dyoung@redhat.com>, <kexec@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>, <linux-mm@kvack.org>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20171222084623.668990192@linuxfoundation.org>
+ <20171222084625.007160464@linuxfoundation.org>
+ <1515302062.6507.18.camel@gmx.de> <20180108160444.2ol4fvgqbxnjmlpg@gmail.com>
+ <20180108174653.7muglyihpngxp5tl@black.fi.intel.com>
+ <20180109001303.dy73bpixsaegn4ol@node.shutemov.name>
+ <1515469448.6766.12.camel@gmx.de>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <d71ba136-71ba-333a-f99b-b8283e2dc545@cn.fujitsu.com>
+Date: Wed, 7 Feb 2018 17:25:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAJGZr0LcMpdNea+VMZs-0Ln+2ScQK+4oWB95qQFt4uF9V=f9ww@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1515469448.6766.12.camel@gmx.de>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: AA69548AE761.AF04F
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+X-Remote-Spam-Status: No
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1532745413883099297?=
-X-GMAIL-MSGID: =?utf-8?q?1591798653092488654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Maxim,
+Hi All,
 
-On Fri, Jan 26, 2018 at 12:24:54PM +0300, Maxim Uvarov wrote:
-> Bin,
-> 
-> I looked to my local git and code does not have this latest line "goto
-> finish".  It was tested without it and everything worked. Right now I
-> can not get access to that hardware to check with and without. But
-> only can confirm that without "goto finish" function works with bunch
-> of drivers (usb ethernet, hids, hdd).
+I met the makedumpfile failed in the upstream kernel which contained
+this patch. Did I missed something else?
 
-Thanks for the confirmation. The revert patch has been sent out.
+In fedora27 host:
 
-Regards,
--Bin.
+[douly@localhost code]$ ./makedumpfile -d 31 --message-level 31 -x
+vmlinux_4.15+ vmcore_4.15+_from_cp_command vmcore_4.15+
 
+sadump: does not have partition header
+sadump: read dump device as unknown format
+sadump: unknown format
+LOAD (0)
+   phys_start : 1000000
+   phys_end   : 2a86000
+   virt_start : ffffffff81000000
+   virt_end   : ffffffff82a86000
+LOAD (1)
+   phys_start : 1000
+   phys_end   : 9fc00
+   virt_start : ffff880000001000
+   virt_end   : ffff88000009fc00
+LOAD (2)
+   phys_start : 100000
+   phys_end   : 13000000
+   virt_start : ffff880000100000
+   virt_end   : ffff880013000000
+LOAD (3)
+   phys_start : 33000000
+   phys_end   : 7ffd7000
+   virt_start : ffff880033000000
+   virt_end   : ffff88007ffd7000
+Linux kdump
+page_size    : 4096
+
+max_mapnr    : 7ffd7
+
+Buffer size for the cyclic mode: 131061
+The kernel version is not supported.
+The makedumpfile operation may be incomplete.
+
+num of NODEs : 1
+
+
+Memory type  : SPARSEMEM_EX
+
+mem_map (0)
+   mem_map    : ffff88007ff26000
+   pfn_start  : 0
+   pfn_end    : 8000
+mem_map (1)
+   mem_map    : 0
+   pfn_start  : 8000
+   pfn_end    : 10000
+mem_map (2)
+   mem_map    : 0
+   pfn_start  : 10000
+   pfn_end    : 18000
+mem_map (3)
+   mem_map    : 0
+   pfn_start  : 18000
+   pfn_end    : 20000
+mem_map (4)
+   mem_map    : 0
+   pfn_start  : 20000
+   pfn_end    : 28000
+mem_map (5)
+   mem_map    : 0
+   pfn_start  : 28000
+   pfn_end    : 30000
+mem_map (6)
+   mem_map    : 0
+   pfn_start  : 30000
+   pfn_end    : 38000
+mem_map (7)
+   mem_map    : 0
+   pfn_start  : 38000
+   pfn_end    : 40000
+mem_map (8)
+   mem_map    : 0
+   pfn_start  : 40000
+   pfn_end    : 48000
+mem_map (9)
+   mem_map    : 0
+   pfn_start  : 48000
+   pfn_end    : 50000
+mem_map (10)
+   mem_map    : 0
+   pfn_start  : 50000
+   pfn_end    : 58000
+mem_map (11)
+   mem_map    : 0
+   pfn_start  : 58000
+   pfn_end    : 60000
+mem_map (12)
+   mem_map    : 0
+   pfn_start  : 60000
+   pfn_end    : 68000
+mem_map (13)
+   mem_map    : 0
+   pfn_start  : 68000
+   pfn_end    : 70000
+mem_map (14)
+   mem_map    : 0
+   pfn_start  : 70000
+   pfn_end    : 78000
+mem_map (15)
+   mem_map    : 0
+   pfn_start  : 78000
+   pfn_end    : 7ffd7
+mmap() is available on the kernel.
+Checking for memory holes                         : [100.0 %] | 
+         STEP [Checking for memory holes  ] : 0.000060 seconds
+__vtop4_x86_64: Can't get a valid pte.
+readmem: Can't convert a virtual address(ffff88007ffd7000) to physical 
+address.
+readmem: type_addr: 0, addr:ffff88007ffd7000, size:32768
+__exclude_unnecessary_pages: Can't read the buffer of struct page.
+create_2nd_bitmap: Can't exclude unnecessary pages.
+Checking for memory holes                         : [100.0 %] \ 
+         STEP [Checking for memory holes  ] : 0.000010 seconds
+Checking for memory holes                         : [100.0 %] - 
+         STEP [Checking for memory holes  ] : 0.000004 seconds
+__vtop4_x86_64: Can't get a valid pte.
+readmem: Can't convert a virtual address(ffff88007ffd7000) to physical 
+address.
+readmem: type_addr: 0, addr:ffff88007ffd7000, size:32768
+__exclude_unnecessary_pages: Can't read the buffer of struct page.
+create_2nd_bitmap: Can't exclude unnecessary pages.
+
+Thanks,
+	dou
+At 01/09/2018 11:44 AM, Mike Galbraith wrote:
+> On Tue, 2018-01-09 at 03:13 +0300, Kirill A. Shutemov wrote:
+>>
+>> Mike, could you test this? (On top of the rest of the fixes.)
 > 
-> Best regards,
-> Maxim.
+> homer:..crash/2018-01-09-04:25 # ll
+> total 1863604
+> -rw------- 1 root root      66255 Jan  9 04:25 dmesg.txt
+> -rw-r--r-- 1 root root        182 Jan  9 04:25 README.txt
+> -rw-r--r-- 1 root root    2818240 Jan  9 04:25 System.map-4.15.0.gb2cd1df-master
+> -rw------- 1 root root 1832914928 Jan  9 04:25 vmcore
+> -rw-r--r-- 1 root root   72514993 Jan  9 04:25 vmlinux-4.15.0.gb2cd1df-master.gz
 > 
-> 2018-01-25 19:31 GMT+03:00 Bin Liu <b-liu@ti.com>:
-> > Maxim,
-> >
-> > On Thu, Jan 25, 2018 at 07:24:02PM +0300, Maxim Uvarov wrote:
-> >> [1] says that issue is with back ported driver to 3.12.10. Can the
-> >> latest kernel be tested on the same hw?
-> >
-> > Agreed that it should be tested with the latest kernel. But my concern
-> > now is if stopping scheduling urbs on errors is a right thing to do,
-> > that is why I asked if you can re-test your usecase with reverting the
-> > commit. I am unable to reproduce the original issue you had.
-> >
-> > Thanks,
-> > -Bin.
+> Yup, all better.
+> 
+>> Sorry for the mess.
+> 
+> (why, developers not installing shiny new bugs is a whole lot worse:)
+> 
+>>  From 100fd567754f1457be94732046aefca204c842d2 Mon Sep 17 00:00:00 2001
+>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>> Date: Tue, 9 Jan 2018 02:55:47 +0300
+>> Subject: [PATCH] kdump: Write a correct address of mem_section into vmcoreinfo
+>>
+>> Depending on configuration mem_section can now be an array or a pointer
+>> to an array allocated dynamically. In most cases, we can continue to refer
+>> to it as 'mem_section' regardless of what it is.
+>>
+>> But there's one exception: '&mem_section' means "address of the array" if
+>> mem_section is an array, but if mem_section is a pointer, it would mean
+>> "address of the pointer".
+>>
+>> We've stepped onto this in kdump code. VMCOREINFO_SYMBOL(mem_section)
+>> writes down address of pointer into vmcoreinfo, not array as we wanted.
+>>
+>> Let's introduce VMCOREINFO_ARRAY() that would handle the situation
+>> correctly for both cases.
+>>
+>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>> Fixes: 83e3c48729d9 ("mm/sparsemem: Allocate mem_section at runtime for CONFIG_SPARSEMEM_EXTREME=y")
+>> ---
+>>   include/linux/crash_core.h | 2 ++
+>>   kernel/crash_core.c        | 2 +-
+>>   2 files changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
+>> index 06097ef30449..83ae04950269 100644
+>> --- a/include/linux/crash_core.h
+>> +++ b/include/linux/crash_core.h
+>> @@ -42,6 +42,8 @@ phys_addr_t paddr_vmcoreinfo_note(void);
+>>   	vmcoreinfo_append_str("PAGESIZE=%ld\n", value)
+>>   #define VMCOREINFO_SYMBOL(name) \
+>>   	vmcoreinfo_append_str("SYMBOL(%s)=%lx\n", #name, (unsigned long)&name)
+>> +#define VMCOREINFO_ARRAY(name) \
+>> +	vmcoreinfo_append_str("SYMBOL(%s)=%lx\n", #name, (unsigned long)name)
+>>   #define VMCOREINFO_SIZE(name) \
+>>   	vmcoreinfo_append_str("SIZE(%s)=%lu\n", #name, \
+>>   			      (unsigned long)sizeof(name))
+>> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+>> index b3663896278e..d4122a837477 100644
+>> --- a/kernel/crash_core.c
+>> +++ b/kernel/crash_core.c
+>> @@ -410,7 +410,7 @@ static int __init crash_save_vmcoreinfo_init(void)
+>>   	VMCOREINFO_SYMBOL(contig_page_data);
+>>   #endif
+>>   #ifdef CONFIG_SPARSEMEM
+>> -	VMCOREINFO_SYMBOL(mem_section);
+>> +	VMCOREINFO_ARRAY(mem_section);
+>>   	VMCOREINFO_LENGTH(mem_section, NR_SECTION_ROOTS);
+>>   	VMCOREINFO_STRUCT_SIZE(mem_section);
+>>   	VMCOREINFO_OFFSET(mem_section, section_mem_map);
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
 > 
 > 
 > 
-> -- 
-> Best regards,
-> Maxim Uvarov
