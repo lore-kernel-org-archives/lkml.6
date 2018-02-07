@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeBGBvc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:51:32 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44276 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753167AbeBGBsz (ORCPT
+        id S1753593AbeBGBwI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:52:08 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43630 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752931AbeBGBsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:48:55 -0500
-X-Google-Smtp-Source: AH8x22693pB4f2R3taPZIRxfYeCfXzJRB9Nx60L8RSTXNyfuNdo0RAeSiwHroZU/CgHVrQjPHFjFSA==
+        Tue, 6 Feb 2018 20:48:40 -0500
+X-Google-Smtp-Source: AH8x2277+M6hhzRL3FccgOBPjWVCyqXmMcHRKtltoYlXZoXWJSvROYeKnhXvDmjG17Ppe2aM5Fd1YQ==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -18,11 +18,10 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Gustavo Padovan <gustavo.padovan@collabora.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv3 08/17] v4l2-ctrls: add core request API
-Date: Wed,  7 Feb 2018 10:48:12 +0900
-Message-Id: <20180207014821.164536-9-acourbot@chromium.org>
+Subject: [RFCv3 03/17] media: videobuf2: add support for requests
+Date: Wed,  7 Feb 2018 10:48:07 +0900
+Message-Id: <20180207014821.164536-4-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180207014821.164536-1-acourbot@chromium.org>
 References: <20180207014821.164536-1-acourbot@chromium.org>
@@ -30,204 +29,360 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+Make vb2 aware of requests. Drivers can specify whether a given queue
+can accept requests or not. Queues that accept requests will block on a
+buffer that is part of a request until that request is submitted.
 
-Add the four core request functions:
-
-v4l2_ctrl_request_init() initializes a new (empty) request.
-v4l2_ctrl_request_clone() resets a request based on another request
-(or clears it if that request is NULL).
-v4l2_ctrl_request_get(): increase refcount
-v4l2_ctrl_request_put(): decrease refcount and delete if it reaches 0.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-[acourbot@chromium.org: turn v4l2_ctrl_request_alloc into init function]
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/v4l2-ctrls.c | 106 ++++++++++++++++++++++++++++++++++-
- include/media/v4l2-ctrls.h           |   7 +++
- 2 files changed, 110 insertions(+), 3 deletions(-)
+ drivers/media/common/videobuf2/videobuf2-core.c | 133 ++++++++++++++++++++++--
+ drivers/media/common/videobuf2/videobuf2-v4l2.c |  28 ++++-
+ include/media/videobuf2-core.h                  |  15 ++-
+ 3 files changed, 168 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 1ff8fc59fff5..c692a6d925c6 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -1878,6 +1878,7 @@ EXPORT_SYMBOL(v4l2_ctrl_find);
- /* Allocate a new v4l2_ctrl_ref and hook it into the handler. */
- static int handler_new_ref(struct v4l2_ctrl_handler *hdl,
- 			   struct v4l2_ctrl *ctrl,
-+			   struct v4l2_ctrl_ref **ctrl_ref,
- 			   bool from_other_dev)
- {
- 	struct v4l2_ctrl_ref *ref;
-@@ -1885,6 +1886,10 @@ static int handler_new_ref(struct v4l2_ctrl_handler *hdl,
- 	u32 id = ctrl->id;
- 	u32 class_ctrl = V4L2_CTRL_ID2WHICH(id) | 1;
- 	int bucket = id % hdl->nr_of_buckets;	/* which bucket to use */
-+	unsigned int sz_extra = 0;
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+index f7109f827f6e..c1b9ccbdecb3 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -28,6 +28,7 @@
+ 
+ #include <media/videobuf2-core.h>
+ #include <media/v4l2-mc.h>
++#include <media/media-request.h>
+ 
+ #include <trace/events/vb2.h>
+ 
+@@ -930,6 +931,17 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+ 		vb->state = state;
+ 	}
+ 	atomic_dec(&q->owned_by_drv_count);
++	if (vb->request) {
++		struct media_request *req = vb->request;
 +
-+	if (ctrl_ref)
-+		*ctrl_ref = NULL;
- 
- 	/*
- 	 * Automatically add the control class if it is not yet present and
-@@ -1898,11 +1903,16 @@ static int handler_new_ref(struct v4l2_ctrl_handler *hdl,
- 	if (hdl->error)
- 		return hdl->error;
- 
--	new_ref = kzalloc(sizeof(*new_ref), GFP_KERNEL);
-+	if (hdl->is_request)
-+		sz_extra = ctrl->elems * ctrl->elem_size;
-+	new_ref = kzalloc(sizeof(*new_ref) + sz_extra, GFP_KERNEL);
- 	if (!new_ref)
- 		return handler_set_err(hdl, -ENOMEM);
- 	new_ref->ctrl = ctrl;
- 	new_ref->from_other_dev = from_other_dev;
-+	if (sz_extra)
-+		new_ref->p_req.p = &new_ref[1];
++		if (atomic_dec_and_test(&req->buf_cpt))
++			media_request_complete(vb->request);
 +
- 	if (ctrl->handler == hdl) {
- 		/* By default each control starts in a cluster of its own.
- 		   new_ref->ctrl is basically a cluster array with one
-@@ -1942,6 +1952,8 @@ static int handler_new_ref(struct v4l2_ctrl_handler *hdl,
- 	/* Insert the control node in the hash */
- 	new_ref->next = hdl->buckets[bucket];
- 	hdl->buckets[bucket] = new_ref;
-+	if (ctrl_ref)
-+		*ctrl_ref = new_ref;
++		/* release reference acquired during qbuf */
++		vb->request = NULL;
++		media_request_put(req);
++	}
++
+ 	spin_unlock_irqrestore(&q->done_lock, flags);
  
- unlock:
- 	mutex_unlock(hdl->lock);
-@@ -2083,7 +2095,7 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
- 		ctrl->type_ops->init(ctrl, idx, ctrl->p_new);
- 	}
- 
--	if (handler_new_ref(hdl, ctrl, false)) {
-+	if (handler_new_ref(hdl, ctrl, NULL, false)) {
- 		kvfree(ctrl);
- 		return NULL;
- 	}
-@@ -2276,7 +2288,7 @@ int v4l2_ctrl_add_handler(struct v4l2_ctrl_handler *hdl,
- 		/* Filter any unwanted controls */
- 		if (filter && !filter(ctrl))
- 			continue;
--		ret = handler_new_ref(hdl, ctrl, from_other_dev);
-+		ret = handler_new_ref(hdl, ctrl, NULL, from_other_dev);
- 		if (ret)
- 			break;
- 	}
-@@ -2685,6 +2697,94 @@ int v4l2_querymenu(struct v4l2_ctrl_handler *hdl, struct v4l2_querymenu *qm)
+ 	trace_vb2_buf_done(q, vb);
+@@ -1306,6 +1318,53 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb)
  }
- EXPORT_SYMBOL(v4l2_querymenu);
+ EXPORT_SYMBOL_GPL(vb2_core_prepare_buf);
  
-+int v4l2_ctrl_request_init(struct v4l2_ctrl_handler *hdl)
++/*
++ * vb2_check_buf_req_status() - Validate request state of a buffer
++ * @vb:		buffer to check
++ *
++ * Returns true if a buffer is ready to be passed to the driver request-wise.
++ * This means that neither this buffer nor any previously-queued buffer is
++ * associated to a request that is not yet submitted.
++ *
++ * If this function returns false, then the buffer shall not be passed to its
++ * driver since the request state is not completely built yet. In that case,
++ * this function will register a notifier to be called when the request is
++ * submitted and the queue can be unblocked.
++ *
++ * This function must be called with req_lock held.
++ */
++static bool vb2_check_buf_req_status(struct vb2_buffer *vb)
 +{
-+	int err;
++	struct media_request *req = vb->request;
++	struct vb2_queue *q = vb->vb2_queue;
++	int ret = false;
 +
-+	err = v4l2_ctrl_handler_init(hdl, 0);
-+	if (err)
-+		return err;
-+	hdl->is_request = true;
-+	kref_init(&hdl->ref);
++	mutex_lock(&q->req_lock);
++
++	if (!req) {
++		ret = !q->waiting_req;
++		goto done;
++	}
++
++	mutex_lock(&req->lock);
++	if (req->state == MEDIA_REQUEST_STATE_SUBMITTED) {
++		mutex_unlock(&req->lock);
++		ret = !q->waiting_req;
++		goto done;
++	}
++
++	if (!q->waiting_req) {
++		q->waiting_req = true;
++		atomic_notifier_chain_register(&req->submit_notif,
++					       &q->req_blk);
++	}
++	mutex_unlock(&req->lock);
++
++done:
++	mutex_unlock(&q->req_lock);
++	return ret;
++}
++
+ /*
+  * vb2_start_streaming() - Attempt to start streaming.
+  * @q:		videobuf2 queue
+@@ -1326,8 +1385,11 @@ static int vb2_start_streaming(struct vb2_queue *q)
+ 	 * If any buffers were queued before streamon,
+ 	 * we can now pass them to driver for processing.
+ 	 */
+-	list_for_each_entry(vb, &q->queued_list, queued_entry)
++	list_for_each_entry(vb, &q->queued_list, queued_entry) {
++		if (!vb2_check_buf_req_status(vb))
++			break;
+ 		__enqueue_in_driver(vb);
++	}
+ 
+ 	/* Tell the driver to start streaming */
+ 	q->start_streaming_called = 1;
+@@ -1369,7 +1431,46 @@ static int vb2_start_streaming(struct vb2_queue *q)
+ 	return ret;
+ }
+ 
+-int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
++/*
++ * vb2_unblock_requests() - unblock a queue waiting for a request submission
++ * @nb:		notifier block that has been registered
++ * @action:	unused
++ * @data:	request that has been submitted
++ *
++ * This is a callback function that is registered when
++ * vb2_check_buf_req_status() returns false. It is invoked when the request
++ * blocking the queue has been submitted. This means its buffers (and all
++ * following valid buffers) can be passed to drivers.
++ */
++static int vb2_unblock_requests(struct notifier_block *nb, unsigned long action,
++				void *data)
++{
++	struct vb2_queue *q = container_of(nb, struct vb2_queue, req_blk);
++	struct media_request *req = data;
++	struct vb2_buffer *vb;
++	bool found_request = false;
++
++	mutex_lock(&q->req_lock);
++	atomic_notifier_chain_unregister(&req->submit_notif, &q->req_blk);
++	q->waiting_req = false;
++	mutex_unlock(&q->req_lock);
++
++	list_for_each_entry(vb, &q->queued_list, queued_entry) {
++		/* All buffers before our request are already passed to the driver */
++		if (!found_request && vb->request != req)
++			continue;
++		found_request = true;
++
++		if (!vb2_check_buf_req_status(vb))
++			break;
++		__enqueue_in_driver(vb);
++	}
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(v4l2_ctrl_request_init);
 +
-+int v4l2_ctrl_request_clone(struct v4l2_ctrl_handler *hdl,
-+			    const struct v4l2_ctrl_handler *from,
-+			    bool (*filter)(const struct v4l2_ctrl *ctrl))
-+{
-+	struct v4l2_ctrl_ref *ref;
-+	int err;
++int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
++		  struct media_request *req, void *pb)
+ {
+ 	struct vb2_buffer *vb;
+ 	int ret;
+@@ -1392,6 +1493,24 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+ 		return -EINVAL;
+ 	}
+ 
++	vb->request = req;
++	if (req) {
++		struct vb2_buffer *_vb;
 +
-+	if (WARN_ON(!hdl || hdl == from))
-+		return -EINVAL;
++		/* does the queue support requests? */
++		if (!q->allow_requests)
++			return -EINVAL;
 +
-+	if (hdl->error)
-+		return hdl->error;
++		/* do we already have a buffer for this request in the queue? */
++		list_for_each_entry(_vb, &q->queued_list, queued_entry)
++			if (_vb->request == req)
++				return -EBUSY;
 +
-+	WARN_ON(hdl->lock != &hdl->_lock);
-+	v4l2_ctrl_handler_free(hdl);
-+	err = v4l2_ctrl_handler_init(hdl, (from->nr_of_buckets - 1) * 8);
-+	hdl->is_request = true;
-+	if (err)
-+		return err;
-+	if (!from)
-+		return 0;
-+
-+	mutex_lock(from->lock);
-+	list_for_each_entry(ref, &from->ctrl_refs, node) {
-+		struct v4l2_ctrl *ctrl = ref->ctrl;
-+		struct v4l2_ctrl_ref *new_ref;
-+
-+		/* Skip refs inherited from other devices */
-+		if (ref->from_other_dev)
-+			continue;
-+		/* And buttons and control classes */
-+		if (ctrl->type == V4L2_CTRL_TYPE_BUTTON ||
-+		    ctrl->type == V4L2_CTRL_TYPE_CTRL_CLASS)
-+			continue;
-+		/* Filter any unwanted controls */
-+		if (filter && !filter(ctrl))
-+			continue;
-+		err = handler_new_ref(hdl, ctrl, &new_ref, false);
-+		if (err)
-+			break;
-+		if (from->is_request)
-+			ptr_to_ptr(ctrl, ref->p_req, new_ref->p_req);
-+		else
-+			ptr_to_ptr(ctrl, ctrl->p_cur, new_ref->p_req);
++		/* make sure the request stays alive as long as we need */
++		media_request_get(req);
++		atomic_inc(&req->buf_cpt);
 +	}
-+	mutex_unlock(from->lock);
-+	return err;
-+}
-+EXPORT_SYMBOL(v4l2_ctrl_request_clone);
 +
-+void v4l2_ctrl_request_get(struct v4l2_ctrl_handler *hdl)
-+{
-+	if (WARN_ON(!hdl->is_request))
-+		return;
-+	kref_get(&hdl->ref);
-+}
-+EXPORT_SYMBOL(v4l2_ctrl_request_get);
-+
-+static void v4l2_ctrl_request_release(struct kref *kref)
-+{
-+	struct v4l2_ctrl_handler *hdl =
-+		container_of(kref, struct v4l2_ctrl_handler, ref);
-+
-+	v4l2_ctrl_handler_free(hdl);
-+	kfree(hdl);
-+}
-+
-+void v4l2_ctrl_request_put(struct v4l2_ctrl_handler *hdl)
-+{
-+	if (WARN_ON(!hdl->is_request))
-+		return;
-+	kref_put(&hdl->ref, v4l2_ctrl_request_release);
-+}
-+EXPORT_SYMBOL(v4l2_ctrl_request_put);
+ 	/*
+ 	 * Add to the queued buffers list, a buffer will stay on it until
+ 	 * dequeued in dqbuf.
+@@ -1410,7 +1529,7 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+ 	 * If already streaming, give the buffer to driver for processing.
+ 	 * If not, the buffer will be given to driver on next streamon.
+ 	 */
+-	if (q->start_streaming_called)
++	if (q->start_streaming_called && vb2_check_buf_req_status(vb))
+ 		__enqueue_in_driver(vb);
  
- /* Some general notes on the atomic requirements of VIDIOC_G/TRY/S_EXT_CTRLS:
+ 	/* Fill buffer information for the userspace */
+@@ -2004,6 +2123,8 @@ int vb2_core_queue_init(struct vb2_queue *q)
+ 	spin_lock_init(&q->done_lock);
+ 	mutex_init(&q->mmap_lock);
+ 	init_waitqueue_head(&q->done_wq);
++	mutex_init(&q->req_lock);
++	q->req_blk.notifier_call = vb2_unblock_requests;
  
-diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-index 22b6be78057f..bddceb794961 100644
---- a/include/media/v4l2-ctrls.h
-+++ b/include/media/v4l2-ctrls.h
-@@ -1052,6 +1052,13 @@ int v4l2_ctrl_subscribe_event(struct v4l2_fh *fh,
+ 	q->memory = VB2_MEMORY_UNKNOWN;
+ 
+@@ -2255,7 +2376,7 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+ 		 * Queue all buffers.
+ 		 */
+ 		for (i = 0; i < q->num_buffers; i++) {
+-			ret = vb2_core_qbuf(q, i, NULL);
++			ret = vb2_core_qbuf(q, i, NULL, NULL);
+ 			if (ret)
+ 				goto err_reqbufs;
+ 			fileio->bufs[i].queued = 1;
+@@ -2434,7 +2555,7 @@ static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_
+ 
+ 		if (copy_timestamp)
+ 			b->timestamp = ktime_get_ns();
+-		ret = vb2_core_qbuf(q, index, NULL);
++		ret = vb2_core_qbuf(q, index, NULL, NULL);
+ 		dprintk(5, "vb2_dbuf result: %d\n", ret);
+ 		if (ret)
+ 			return ret;
+@@ -2537,7 +2658,7 @@ static int vb2_thread(void *data)
+ 		if (copy_timestamp)
+ 			vb->timestamp = ktime_get_ns();
+ 		if (!threadio->stop)
+-			ret = vb2_core_qbuf(q, vb->index, NULL);
++			ret = vb2_core_qbuf(q, vb->index, NULL, NULL);
+ 		call_void_qop(q, wait_prepare, q);
+ 		if (ret || threadio->stop)
+ 			break;
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index 0034f4d190f2..69286e7f9dd0 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -30,6 +30,7 @@
+ #include <media/v4l2-common.h>
+ 
+ #include <media/videobuf2-v4l2.h>
++#include <media/media-request.h>
+ 
+ static int debug;
+ module_param(debug, int, 0644);
+@@ -563,6 +564,7 @@ EXPORT_SYMBOL_GPL(vb2_create_bufs);
+ 
+ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
+ {
++	struct media_request *req = NULL;
+ 	int ret;
+ 
+ 	if (vb2_fileio_is_active(q)) {
+@@ -570,8 +572,32 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
+ 		return -EBUSY;
+ 	}
+ 
++	/*
++	 * The caller should have validated that the request is valid,
++	 * so we just need to look it up without further checking
++	 */
++	if (b->request_fd > 0) {
++		req = media_request_get_from_fd(b->request_fd);
++		if (!req)
++			return -EINVAL;
++
++		mutex_lock(&req->lock);
++		if (req->state != MEDIA_REQUEST_STATE_IDLE) {
++			mutex_unlock(&req->lock);
++			media_request_put(req);
++			return -EINVAL;
++		}
++		mutex_unlock(&req->lock);
++	}
++
+ 	ret = vb2_queue_or_prepare_buf(q, b, "qbuf");
+-	return ret ? ret : vb2_core_qbuf(q, b->index, b);
++	if (!ret)
++		ret = vb2_core_qbuf(q, b->index, req, b);
++
++	if (req)
++		media_request_put(req);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(vb2_qbuf);
+ 
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index f3ee4c7c2fb3..ddd793e73022 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -238,6 +238,7 @@ struct vb2_queue;
+  * @num_planes:		number of planes in the buffer
+  *			on an internal driver queue.
+  * @timestamp:		frame timestamp in ns.
++ * @request:		request the buffer belongs to, if any.
   */
- unsigned int v4l2_ctrl_poll(struct file *file, struct poll_table_struct *wait);
+ struct vb2_buffer {
+ 	struct vb2_queue	*vb2_queue;
+@@ -246,6 +247,7 @@ struct vb2_buffer {
+ 	unsigned int		memory;
+ 	unsigned int		num_planes;
+ 	u64			timestamp;
++	struct media_request	*request;
  
-+int v4l2_ctrl_request_init(struct v4l2_ctrl_handler *hdl);
-+int v4l2_ctrl_request_clone(struct v4l2_ctrl_handler *hdl,
-+			    const struct v4l2_ctrl_handler *from,
-+			    bool (*filter)(const struct v4l2_ctrl *ctrl));
-+void v4l2_ctrl_request_get(struct v4l2_ctrl_handler *hdl);
-+void v4l2_ctrl_request_put(struct v4l2_ctrl_handler *hdl);
+ 	/* private: internal use only
+ 	 *
+@@ -446,6 +448,7 @@ struct vb2_buf_ops {
+  * @quirk_poll_must_check_waiting_for_buffers: Return %POLLERR at poll when QBUF
+  *              has not been called. This is a vb1 idiom that has been adopted
+  *              also by vb2.
++ * @allow_requests:	whether requests are supported on this queue.
+  * @lock:	pointer to a mutex that protects the &struct vb2_queue. The
+  *		driver can set this to a mutex to let the v4l2 core serialize
+  *		the queuing ioctls. If the driver wants to handle locking
+@@ -502,6 +505,9 @@ struct vb2_buf_ops {
+  *		when a buffer with the %V4L2_BUF_FLAG_LAST is dequeued.
+  * @fileio:	file io emulator internal data, used only if emulator is active
+  * @threadio:	thread io internal data, used only if thread is active
++ * @req_lock:	protects req_blk and waiting_req
++ * @req_blk:	notifier to be called when waiting for a request to be submitted
++ * @waiting_req:whether this queue is currently waiting on a request submission
+  */
+ struct vb2_queue {
+ 	unsigned int			type;
+@@ -513,6 +519,7 @@ struct vb2_queue {
+ 	unsigned			fileio_write_immediately:1;
+ 	unsigned			allow_zero_bytesused:1;
+ 	unsigned		   quirk_poll_must_check_waiting_for_buffers:1;
++	unsigned			allow_requests:1;
+ 
+ 	struct mutex			*lock;
+ 	void				*owner;
+@@ -556,6 +563,10 @@ struct vb2_queue {
+ 	struct vb2_fileio_data		*fileio;
+ 	struct vb2_threadio_data	*threadio;
+ 
++	struct mutex			req_lock;
++	struct notifier_block		req_blk;
++	bool				waiting_req;
 +
- /* Helpers for ioctl_ops */
+ #ifdef CONFIG_VIDEO_ADV_DEBUG
+ 	/*
+ 	 * Counters for how often these queue-related ops are
+@@ -743,6 +754,7 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
+  *
+  * @q:		pointer to &struct vb2_queue with videobuf2 queue.
+  * @index:	id number of the buffer
++ * @req:	request this buffer belongs to, if any
+  * @pb:		buffer structure passed from userspace to
+  *		v4l2_ioctl_ops->vidioc_qbuf handler in driver
+  *
+@@ -759,7 +771,8 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
+  *
+  * Return: returns zero on success; an error code otherwise.
+  */
+-int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb);
++int vb2_core_qbuf(struct vb2_queue *q, unsigned int index,
++		  struct media_request *req, void *pb);
  
  /**
+  * vb2_core_dqbuf() - Dequeue a buffer to the userspace
 -- 
 2.16.0.rc1.238.g530d649a79-goog
