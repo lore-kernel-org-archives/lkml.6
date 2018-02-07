@@ -1,95 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeBGIc4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:32:56 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50792 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbeBGIcy (ORCPT
+        id S1753456AbeBGIfD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:35:03 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55890 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750815AbeBGIfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:32:54 -0500
-X-Google-Smtp-Source: AH8x227954H3oif0VLlplGjUbMlUYb/8+Be40fXKIJvWVtvi51h0D093LJyRxH+DTJGtrINO9EHO+g==
-Date: Wed, 7 Feb 2018 09:32:51 +0100
-From: Christoffer Dall <christoffer.dall@linaro.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Jon Masters <jcm@redhat.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH v4 02/17] arm: KVM: Fix SMCCC handling of unimplemented
- SMC/HVC calls
-Message-ID: <20180207083251.GB29286@cbox>
-References: <20180206175621.929-1-marc.zyngier@arm.com>
- <20180206175621.929-3-marc.zyngier@arm.com>
+        Wed, 7 Feb 2018 03:35:02 -0500
+X-UUID: 2f4e98dcffda43e0a8e787d2b7d8097e-20180207
+Message-ID: <1517992498.9025.8.camel@mtkswgap22>
+Subject: Re: [PATCH v2 06/16] arm64: dts: mt7622: add cpufreq related device
+ nodes
+From: Sean Wang <sean.wang@mediatek.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Wed, 7 Feb 2018 16:34:58 +0800
+In-Reply-To: <20180207061837.GM28462@vireshk-i7>
+References: <cover.1517910489.git.sean.wang@mediatek.com>
+         <fc5bdf53b92bd7a96e94b714d8d13deebca95c28.1517910489.git.sean.wang@mediatek.com>
+         <20180207033331.GK28462@vireshk-i7> <1517984178.9025.2.camel@mtkswgap22>
+         <20180207061837.GM28462@vireshk-i7>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180206175621.929-3-marc.zyngier@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 05:56:06PM +0000, Marc Zyngier wrote:
-> KVM doesn't follow the SMCCC when it comes to unimplemented calls,
-> and inject an UNDEF instead of returning an error. Since firmware
-> calls are now used for security mitigation, they are becoming more
-> common, and the undef is counter productive.
+On Wed, 2018-02-07 at 11:48 +0530, Viresh Kumar wrote:
+> On 07-02-18, 14:16, Sean Wang wrote:
+> > On Wed, 2018-02-07 at 09:03 +0530, Viresh Kumar wrote:
+> > > On 06-02-18, 17:52, sean.wang@mediatek.com wrote:
+> > > >  	cpus {
+> > > >  		#address-cells = <2>;
+> > > >  		#size-cells = <0>;
+> > > > @@ -26,6 +70,10 @@
+> > > >  			device_type = "cpu";
+> > > >  			compatible = "arm,cortex-a53", "arm,armv8";
+> > > >  			reg = <0x0 0x0>;
+> > > > +			clocks = <&infracfg CLK_INFRA_MUX1_SEL>,
+> > > > +				 <&apmixedsys CLK_APMIXED_MAIN_CORE_EN>;
+> > > > +			clock-names = "cpu", "intermediate";
+> > > > +			operating-points-v2 = <&cpu_opp_table>;
+> > > >  			enable-method = "psci";
+> > > >  			clock-frequency = <1300000000>;
+> > > >  		};
+> > > > @@ -34,6 +82,7 @@
+> > > >  			device_type = "cpu";
+> > > >  			compatible = "arm,cortex-a53", "arm,armv8";
+> > > >  			reg = <0x0 0x1>;
+> > > > +			operating-points-v2 = <&cpu_opp_table>;
+> > > >  			enable-method = "psci";
+> > > >  			clock-frequency = <1300000000>;
+> > > >  		};
+> > > 
+> > > Sorry for not picking this earlier, but you should probably add the same clock
+> > > related properties for both cpu nodes here. Things will break if CPU1 is used by
+> > > the cpufreq core to bring the cpufreq policy online.
+> > > 
+> > > This can happen if cpufreq driver is a module, CPU0 is hotplugged out and then
+> > > the cpufreq driver is inserted.
+> > > 
+> > 
+> > mt7622 cpu0 does not support hotplug. do I still need to add same clock
+> > related properties for both cpu nodes here?
 > 
-> Instead, let's follow the SMCCC which states that -1 must be returned
-> to the caller when getting an unknown function number.
-
-Apparently I forgot to review this:
-
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-
+> Normally we should always add these properties to all the CPUs, as that's the
+> real scenario hardware configuration wise.
 > 
-> Cc: <stable@vger.kernel.org>
-> Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm/kvm/handle_exit.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+
+Agree on, I will add these missing clock properties also into the cpu1
+node to reflect the hardware actually should have. 
+
+That also is devicetree wants us to do to describe the device more
+closely.
+
+> But I am not sure if something else will break if you don't provide clocks in
+> CPU1.
 > 
-> diff --git a/arch/arm/kvm/handle_exit.c b/arch/arm/kvm/handle_exit.c
-> index cf8bf6bf87c4..a4bf0f6f024a 100644
-> --- a/arch/arm/kvm/handle_exit.c
-> +++ b/arch/arm/kvm/handle_exit.c
-> @@ -38,7 +38,7 @@ static int handle_hvc(struct kvm_vcpu *vcpu, struct kvm_run *run)
->  
->  	ret = kvm_psci_call(vcpu);
->  	if (ret < 0) {
-> -		kvm_inject_undefined(vcpu);
-> +		vcpu_set_reg(vcpu, 0, ~0UL);
->  		return 1;
->  	}
->  
-> @@ -47,7 +47,16 @@ static int handle_hvc(struct kvm_vcpu *vcpu, struct kvm_run *run)
->  
->  static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
->  {
-> -	kvm_inject_undefined(vcpu);
-> +	/*
-> +	 * "If an SMC instruction executed at Non-secure EL1 is
-> +	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
-> +	 * Trap exception, not a Secure Monitor Call exception [...]"
-> +	 *
-> +	 * We need to advance the PC after the trap, as it would
-> +	 * otherwise return to the same address...
-> +	 */
-> +	vcpu_set_reg(vcpu, 0, ~0UL);
-> +	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
->  	return 1;
->  }
->  
-> -- 
-> 2.14.2
+> @Rob @Mark: What do you suggest ?
 > 
