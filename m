@@ -1,52 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753554AbeBGIbL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:31:11 -0500
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:39858 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753491AbeBGIbJ (ORCPT
+        id S1753395AbeBGIc4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:32:56 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50792 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeBGIcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:31:09 -0500
-X-Google-Smtp-Source: AH8x225iGDsvj5F8jVS7J5ltmE2FSGLq5GNdYu/lXqKYZRAdvecLoaVZ7ZhPIByPU6W1RgwYDsJCxTB/yAqO9yhCf4Q=
+        Wed, 7 Feb 2018 03:32:54 -0500
+X-Google-Smtp-Source: AH8x227954H3oif0VLlplGjUbMlUYb/8+Be40fXKIJvWVtvi51h0D093LJyRxH+DTJGtrINO9EHO+g==
+Date: Wed, 7 Feb 2018 09:32:51 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Jones <drjones@redhat.com>, Hanjun Guo <guohanjun@huawei.com>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Jon Masters <jcm@redhat.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH v4 02/17] arm: KVM: Fix SMCCC handling of unimplemented
+ SMC/HVC calls
+Message-ID: <20180207083251.GB29286@cbox>
+References: <20180206175621.929-1-marc.zyngier@arm.com>
+ <20180206175621.929-3-marc.zyngier@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eRHzmU3Kfr0cxhy2Hrr-RybnjrsKHByoV27TdYffuuC3w@mail.gmail.com>
-References: <1517828686-29070-1-git-send-email-wanpengli@tencent.com>
- <CALMp9eQNB+2KLAR2Tv+By2oTthRLvAQMmJiEs61kFNrZDct3_g@mail.gmail.com>
- <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
- <CANRm+Cx_KVftOfeGWjqn_1P=j8R-NsNcH7w+pA9gCouM_4FDRw@mail.gmail.com> <CALMp9eRHzmU3Kfr0cxhy2Hrr-RybnjrsKHByoV27TdYffuuC3w@mail.gmail.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Wed, 7 Feb 2018 16:31:08 +0800
-Message-ID: <CANRm+CyqV6s6etBAveNTG2WjfMZrfuuN+HpF9Ub1ex=JjyA1yw@mail.gmail.com>
-Subject: Re: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
-To: Jim Mattson <jmattson@google.com>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180206175621.929-3-marc.zyngier@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-07 0:58 GMT+08:00 Jim Mattson <jmattson@google.com>:
-> On Mon, Feb 5, 2018 at 4:57 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
->
->> This is effective one, what I restore in this patch is
->> achitectural/guest visible.
->
-> This patch doesn't "restore" the guest visible CR4 to its value at the
-> time of VMLAUNCH/VMRESUME. It loads a new CR4 value from the vmcs12.
-> That behavior is incorrect.
+On Tue, Feb 06, 2018 at 05:56:06PM +0000, Marc Zyngier wrote:
+> KVM doesn't follow the SMCCC when it comes to unimplemented calls,
+> and inject an UNDEF instead of returning an error. Since firmware
+> calls are now used for security mitigation, they are becoming more
+> common, and the undef is counter productive.
+> 
+> Instead, let's follow the SMCCC which states that -1 must be returned
+> to the caller when getting an unknown function number.
 
-You have another pointing out about this.
-https://lkml.org/lkml/2018/2/5/518 vmcs12->host_cr3/host_cr4 has the
-up-to-date value when L1 is running, it is still up-to-date after
-vmexit due to L1 executes VMLAUNCH/VMRESUME, I think the value stays
-the same before L0 emulates the VMLAUNCH/VMRESUME, according to below
-comments, why vmcs12->host_cr3/cr4 is not the value which we should
-restore?
+Apparently I forgot to review this:
 
-* After an early L2 VM-entry failure, we're now back
-* in L1 which thinks it just finished a VMLAUNCH or
-* VMRESUME instruction
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
 
-Regards,
-Wanpeng Li
+> 
+> Cc: <stable@vger.kernel.org>
+> Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  arch/arm/kvm/handle_exit.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/kvm/handle_exit.c b/arch/arm/kvm/handle_exit.c
+> index cf8bf6bf87c4..a4bf0f6f024a 100644
+> --- a/arch/arm/kvm/handle_exit.c
+> +++ b/arch/arm/kvm/handle_exit.c
+> @@ -38,7 +38,7 @@ static int handle_hvc(struct kvm_vcpu *vcpu, struct kvm_run *run)
+>  
+>  	ret = kvm_psci_call(vcpu);
+>  	if (ret < 0) {
+> -		kvm_inject_undefined(vcpu);
+> +		vcpu_set_reg(vcpu, 0, ~0UL);
+>  		return 1;
+>  	}
+>  
+> @@ -47,7 +47,16 @@ static int handle_hvc(struct kvm_vcpu *vcpu, struct kvm_run *run)
+>  
+>  static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
+>  {
+> -	kvm_inject_undefined(vcpu);
+> +	/*
+> +	 * "If an SMC instruction executed at Non-secure EL1 is
+> +	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
+> +	 * Trap exception, not a Secure Monitor Call exception [...]"
+> +	 *
+> +	 * We need to advance the PC after the trap, as it would
+> +	 * otherwise return to the same address...
+> +	 */
+> +	vcpu_set_reg(vcpu, 0, ~0UL);
+> +	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+>  	return 1;
+>  }
+>  
+> -- 
+> 2.14.2
+> 
