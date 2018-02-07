@@ -1,189 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753502AbeBGIqr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:46:47 -0500
-Received: from foss.arm.com ([217.140.101.70]:46878 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753314AbeBGIqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:46:46 -0500
-Subject: Re: [PATCH v5 4/4] irqchip/gic-v3-its: add ability to resend MAPC on
- resume
-To: Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org
-Cc: Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        rafael.j.wysocki@intel.com, tglx@linutronix.de,
-        briannorris@chromium.org
-References: <20180207014117.62611-1-dbasehore@chromium.org>
- <20180207014117.62611-5-dbasehore@chromium.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <8276f426-e4a0-c400-9f87-31be3d6b1733@arm.com>
-Date: Wed, 7 Feb 2018 08:46:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753521AbeBGIrx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:47:53 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16582 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752829AbeBGIru (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 03:47:50 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 07 Feb 2018 00:47:50 -0800
+Date: Wed, 7 Feb 2018 10:47:44 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Message-ID: <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180207014117.62611-5-dbasehore@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180206163544.GI5681@sirena.org.uk>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.21.24.170]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 01:41, Derek Basehore wrote:
-> This adds functionality to resend the MAPC command to an ITS node on
-> resume. If the ITS is powered down during suspend and the collections
-> are not backed by memory, the ITS will lose that state. This just sets
-> up the known state for the collections after the ITS is restored.
+On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
+> * PGP Signed by an unknown key
 > 
-> This is enabled via the reset-on-suspend flag in the DTS for an ITS
-> that has a non-zero number of collections stored in it.
+> On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
+> > From: Laxman Dewangan <ldewangan@nvidia.com>
+> > 
+> > Add API to get min/max rail voltage configured from platform for
+> > given rails.
 > 
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c   | 80 ++++++++++++++++++++------------------
->  include/linux/irqchip/arm-gic-v3.h |  1 +
->  2 files changed, 43 insertions(+), 38 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 5e63635e2a7b..dd6cd6e68ed0 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -1942,52 +1942,53 @@ static void its_cpu_init_lpis(void)
->  	dsb(sy);
->  }
->  
-> -static void its_cpu_init_collection(void)
-> +static void its_cpu_init_collection(struct its_node *its)
->  {
-> -	struct its_node *its;
-> -	int cpu;
-> -
-> -	spin_lock(&its_lock);
-> -	cpu = smp_processor_id();
-> -
-> -	list_for_each_entry(its, &its_nodes, entry) {
-> -		u64 target;
-> +	int cpu = smp_processor_id();
-> +	u64 target;
->  
-> -		/* avoid cross node collections and its mapping */
-> -		if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
-> -			struct device_node *cpu_node;
-> +	/* avoid cross node collections and its mapping */
-> +	if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
-> +		struct device_node *cpu_node;
->  
-> -			cpu_node = of_get_cpu_node(cpu, NULL);
-> -			if (its->numa_node != NUMA_NO_NODE &&
-> -				its->numa_node != of_node_to_nid(cpu_node))
-> -				continue;
-> -		}
-> +		cpu_node = of_get_cpu_node(cpu, NULL);
-> +		if (its->numa_node != NUMA_NO_NODE &&
-> +			its->numa_node != of_node_to_nid(cpu_node))
-> +			return;
-> +	}
->  
-> +	/*
-> +	 * We now have to bind each collection to its target
-> +	 * redistributor.
-> +	 */
-> +	if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
->  		/*
-> -		 * We now have to bind each collection to its target
-> +		 * This ITS wants the physical address of the
->  		 * redistributor.
->  		 */
-> -		if (gic_read_typer(its->base + GITS_TYPER) & GITS_TYPER_PTA) {
-> -			/*
-> -			 * This ITS wants the physical address of the
-> -			 * redistributor.
-> -			 */
-> -			target = gic_data_rdist()->phys_base;
-> -		} else {
-> -			/*
-> -			 * This ITS wants a linear CPU number.
-> -			 */
-> -			target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
-> -			target = GICR_TYPER_CPU_NUMBER(target) << 16;
-> -		}
-> +		target = gic_data_rdist()->phys_base;
-> +	} else {
-> +		/* This ITS wants a linear CPU number. */
-> +		target = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
-> +		target = GICR_TYPER_CPU_NUMBER(target) << 16;
-> +	}
->  
-> -		/* Perform collection mapping */
-> -		its->collections[cpu].target_address = target;
-> -		its->collections[cpu].col_id = cpu;
-> +	/* Perform collection mapping */
-> +	its->collections[cpu].target_address = target;
-> +	its->collections[cpu].col_id = cpu;
->  
-> -		its_send_mapc(its, &its->collections[cpu], 1);
-> -		its_send_invall(its, &its->collections[cpu]);
-> -	}
-> +	its_send_mapc(its, &its->collections[cpu], 1);
-> +	its_send_invall(its, &its->collections[cpu]);
-> +}
-> +
-> +static void its_cpu_init_collections(void)
-> +{
-> +	struct its_node *its;
-> +
-> +	spin_lock(&its_lock);
-> +
-> +	list_for_each_entry(its, &its_nodes, entry)
-> +		its_cpu_init_collection(its);
->  
->  	spin_unlock(&its_lock);
->  }
-> @@ -3127,6 +3128,9 @@ static void its_restore_enable(void)
->  			its_write_baser(its, baser, baser->val);
->  		}
->  		writel_relaxed(its->ctlr_save, base + GITS_CTLR);
-> +
-> +		if (GITS_TYPER_HWCOLLCNT(gic_read_typer(base + GITS_TYPER)) > 0)
-> +			its_cpu_init_collection(its);
+> because...
 
-This isn't correct. Think of a system where half the collections are in
-HW, and the other half memory based (nothing in the spec forbids this).
-You must evaluate the CID of each collection and replay the MAPC *only*
-if it falls into the range [0..HCC-1]. The memory-based collections are
-already mapped, and remapping an already mapped collection requires
-extra care (see MAPC and the UNPREDICTABLE behaviour when V=1), so don't
-go there.
+of the next patch where this is used to retrieve the minimum rail voltage.
 
->  	}
->  	spin_unlock(&its_lock);
->  }
-> @@ -3393,7 +3397,7 @@ int its_cpu_init(void)
->  			return -ENXIO;
->  		}
->  		its_cpu_init_lpis();
-> -		its_cpu_init_collection();
-> +		its_cpu_init_collections();
->  	}
->  
->  	return 0;
-> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-> index c00c4c33e432..c9c33b91a1f1 100644
-> --- a/include/linux/irqchip/arm-gic-v3.h
-> +++ b/include/linux/irqchip/arm-gic-v3.h
-> @@ -313,6 +313,7 @@
->  #define GITS_TYPER_DEVBITS(r)		((((r) >> GITS_TYPER_DEVBITS_SHIFT) & 0x1f) + 1)
->  #define GITS_TYPER_PTA			(1UL << 19)
->  #define GITS_TYPER_HWCOLLCNT_SHIFT	24
-> +#define GITS_TYPER_HWCOLLCNT(r)		(((r) >> GITS_TYPER_HWCOLLCNT_SHIFT) & 0xff)
->  #define GITS_TYPER_VMOVP		(1ULL << 37)
->  
->  #define GITS_IIDR_REV_SHIFT		12
-> 
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Peter.
