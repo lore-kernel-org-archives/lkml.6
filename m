@@ -1,57 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754008AbeBGMh6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 07:37:58 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10557 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753763AbeBGMh5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 07:37:57 -0500
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 07 Feb 2018 04:37:56 -0800
-Date: Wed, 7 Feb 2018 14:37:51 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
- constraints
-Message-ID: <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
- <20180206163544.GI5681@sirena.org.uk>
- <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
- <20180207104351.GA6003@sirena.org.uk>
+        id S1754031AbeBGMiz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 07:38:55 -0500
+Received: from mout.gmx.net ([212.227.15.19]:60195 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753763AbeBGMiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 07:38:54 -0500
+To: linux-kernel@vger.kernel.org
+From: "Enrico Weigelt, metux IT consult" <metux@gmx.de>
+Subject: adding plan9-like usernames to the kernel
+Cc: aganti@google.com
+Message-ID: <0597ffe1-f80e-d5dd-e20d-da68bd8a189a@gmx.de>
+Date: Wed, 7 Feb 2018 13:38:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180207104351.GA6003@sirena.org.uk>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.21.24.170]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
- (10.26.138.13)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:DhWrWpr/WuoVHaIN9y7AfCn+QbYCqVJ8fi/TIZHaOysff8NuXV7
+ qQkTl/9BUxrDHuWy4o8MpjbE8gxiwVeABA5GllSBeP+Tol4VMDhslFm+EKP57YxwdjslXpB
+ WMICYscJFgqhDnZKwcf1qSeqSYVFObTEzCqzPuGV37oi3YL8QOC2XbLOUweY0Dt62siwewm
+ vQEr9+dJpGMPPnIAJ4xNQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KF3/urBnHiY=:DnKbjzwuOebDbM98JHNJVL
+ hXoKIL7tEWYGYIf9qvT5Oh1W/8NnHweeumwbfS6jAY8ZX68LF2m3ljJzapyuphiziaEGjFDii
+ 19Xf7O/xlNkx+O8XT8lnvmlF8eKEI3klPTmGQakI3R+h0c/Ecdfr7jci4YpIQImx0yUrO3pBW
+ 6lGma5hyDwgxhx4I8Jcn8OmgneTz7JFABYPy283FxMrkaUv+wQCsQt2JeVUG438bnjcvqDyHp
+ ppuzEqiCn+u7VHppGzl488TNU+PXEtX0YRGwdczvDggaBDldzFVslusBhKj05bpbHSw3vJEna
+ z6+Ts8a5wG1z1rVC8pdlu8BbFf7Po9nAPjoLt7kHp1Fr6057wu/PPlvqlEBfV+iMnDjCl+s3U
+ qH0Eo0xntiCy7YW0TmYixPBlQwYh7KQuy+il+f3oUJ+YszuJc0gLtTdFErFYLWuTnK35X3+L5
+ E6myVeBBULHfhoOpSJF648nRg+iIDWuXVcYibZYl66Z2Y7CWmR1idapL1VPBxFGsyXqgak1pH
+ pe22woQ4pYm6UCLno7EuvRuZm91PIKWgWwTPiz5AhP5oZjBslS8AzVRCi4zlifDJcbvpYVH1r
+ 2BB1tlXuPD3ISM6aUDXK76ivdZpkvPnXvZHADp9DsJgzu152GOn5lgQggwoWWGVz/bf/dR58o
+ WHH7IKv2JBpbyb248wooEMZsrbqO0vSbQPahlAypEKVZMJC4duXfWge3W0IRdys4FDOkL+Ie7
+ hthb46bWryON0AoS0WDdRPUNPyWf/46U0nT+AP+KOTSWZbTHpmIKvU8LYqUIlDsEHVcwaO2iz
+ 1OlImW4KAU+uBRLhYcOi7OY6I+W9naEjcbeK/gAmTm6KvR9KsM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 10:43:51AM +0000, Mark Brown wrote:
-> On Wed, Feb 07, 2018 at 10:47:44AM +0200, Peter De Schrijver wrote:
-> > On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
-> > > On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
-> 
-> > > > Add API to get min/max rail voltage configured from platform for
-> > > > given rails.
-> 
-> > > because...
-> 
-> > of the next patch where this is used to retrieve the minimum rail voltage.
-> 
-> And that in turn is needed for...?
+Hi folks,
 
-To calculate the required voltage for each frequency.
 
-Peter.
+as part as a little research project for bringing Plan9 semantics
+to Linux, I'd like to add textual usernames. In contrast to *nix,
+Plan9 doesn't use numerical IDs, but names.
+
+Obviously that needs some internal mapping between names and ids.
+
+Should this go into struct user_namespace (where per-namespace
+uid mapping lives) or to struct cred / struct user_struct ?
+
+The primary consumer of this username will be the /dev/caphash
+and /dev/capuse devices for switching the UID.
+(an interesting question of course is, how to allocate the
+numerical UIDs for given usernames)
+
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
