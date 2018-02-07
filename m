@@ -1,47 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeBGWpp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 17:45:45 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:40882 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751993AbeBGWnO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 17:43:14 -0500
-X-Google-Smtp-Source: AH8x224SEiCkDjR5nQNwgH+SwkGjUDVFwF/8GxeSfAnanZow837gt9jZ9XUygqNJonuDXcLS6YEwpg==
-From: Tim Harvey <tharvey@gateworks.com>
-To: linux-media@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH v9 2/8] media: v4l-ioctl: fix clearing pad for VIDIOC_DV_TIMIGNS_CAP
-Date: Wed,  7 Feb 2018 14:42:41 -0800
-Message-Id: <1518043367-11531-3-git-send-email-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518043367-11531-1-git-send-email-tharvey@gateworks.com>
-References: <1518043367-11531-1-git-send-email-tharvey@gateworks.com>
+        id S1751786AbeBGWsZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 17:48:25 -0500
+Received: from mga12.intel.com ([192.55.52.136]:64825 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750745AbeBGWsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 17:48:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
+   d="scan'208";a="172560436"
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+To: "intel-wired-lan@lists.osuosl.or" <intel-wired-lan@lists.osuosl.or>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+CC: Corentin Labbe <clabbe@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: Documentation: networking: ixgb: Remove reference to IXGB_NAPI
+Thread-Topic: Re: Documentation: networking: ixgb: Remove reference to
+ IXGB_NAPI
+Thread-Index: AdOgZYAlEzRn1l0PQnS43K30EESNoA==
+Date: Wed, 7 Feb 2018 22:48:21 +0000
+Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B8C7E2A92@ORSMSX103.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- drivers/media/v4l2-core/v4l2-ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> -----Original Message-----
+> Date: Mon, 29 Jan 2018 12:17:54 +0000
+> From: Corentin Labbe <clabbe@baylibre.com>
+> List-Id: Intel Wired Ethernet Linux Kernel Driver Development
+>  <intel-wired-lan.osuosl.org>
+> 
+> NAPI is enabled by default and IXGB_NAPI was removed since
+> commit 6d37ab282e24 ("ixgb: make NAPI the only option and the default")
+> Update the doc accordingly.
+>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  Documentation/networking/ixgb.txt | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 7961499..5f3670d 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -2638,7 +2638,7 @@ static struct v4l2_ioctl_info v4l2_ioctls[] = {
- 	IOCTL_INFO_FNC(VIDIOC_PREPARE_BUF, v4l_prepare_buf, v4l_print_buffer, INFO_FL_QUEUE),
- 	IOCTL_INFO_STD(VIDIOC_ENUM_DV_TIMINGS, vidioc_enum_dv_timings, v4l_print_enum_dv_timings, INFO_FL_CLEAR(v4l2_enum_dv_timings, pad)),
- 	IOCTL_INFO_STD(VIDIOC_QUERY_DV_TIMINGS, vidioc_query_dv_timings, v4l_print_dv_timings, INFO_FL_ALWAYS_COPY),
--	IOCTL_INFO_STD(VIDIOC_DV_TIMINGS_CAP, vidioc_dv_timings_cap, v4l_print_dv_timings_cap, INFO_FL_CLEAR(v4l2_dv_timings_cap, type)),
-+	IOCTL_INFO_STD(VIDIOC_DV_TIMINGS_CAP, vidioc_dv_timings_cap, v4l_print_dv_timings_cap, INFO_FL_CLEAR(v4l2_dv_timings_cap, pad)),
- 	IOCTL_INFO_FNC(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
- 	IOCTL_INFO_FNC(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
- 	IOCTL_INFO_FNC(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
--- 
-2.7.4
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
