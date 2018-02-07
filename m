@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755013AbeBGUcB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:32:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35756 "EHLO mail.kernel.org"
+        id S1754967AbeBGUb7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:31:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754638AbeBGU2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754641AbeBGU2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 15:28:18 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CCAC217DF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8F2217B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180207202816.058222771@goodmis.org>
+Message-Id: <20180207202816.204065489@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 07 Feb 2018 15:24:11 -0500
+Date: Wed, 07 Feb 2018 15:24:12 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -26,144 +26,108 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 09/20 v2] tracing: Add indexing of arguments for function based events
+Subject: [PATCH 10/20 v2] tracing: Make func_type enums for easier comparing of arg types
 References: <20180207202402.253089656@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0009-tracing-Add-indexing-of-arguments-for-function-based.patch
+Content-Disposition: inline; filename=0010-tracing-Make-func_type-enums-for-easier-comparing-of.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Currently reading of 8 byte words can only happen 8 bytes aligned from the
-argument. But there may be cases that they are 4 bytes aligned. To make the
-capturing of arguments more flexible, add a plus '+' operator that can index
-the variable at arbitrary indexes to get any location.
+For the function based event args, knowing quickly what type they are is
+advantageous, as decisions can be made quickly based on them. Having an
+enum for the types is useful for this purpose.
 
- u64 arg+4[3]
-
-Will get an 8 byte word at index 28 (3 * 8 + 4)
+Use macros to create both the func_type array as well as enums that
+match the type to the index into that array.
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/function-based-events.rst | 24 +++++++++++++++++++++++-
- kernel/trace/trace_event_ftrace.c             | 18 ++++++++++++++++++
- 2 files changed, 41 insertions(+), 1 deletion(-)
+ kernel/trace/trace_event_ftrace.c | 47 +++++++++++++++++++++++++--------------
+ 1 file changed, 30 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
-index 72e3e7730d63..bdb28f433bfb 100644
---- a/Documentation/trace/function-based-events.rst
-+++ b/Documentation/trace/function-based-events.rst
-@@ -100,10 +100,12 @@ as follows:
-          'x8' | 'x16' | 'x32' | 'x64' |
-          'char' | 'short' | 'int' | 'long' | 'size_t'
- 
-- FIELD := <name> | <name> INDEX
-+ FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX
- 
-  INDEX := '[' <number> ']'
- 
-+ OFFSET := '+' <number>
-+
-  Where <name> is a unique string starting with an alphabetic character
-  and consists only of letters and numbers and underscores.
- 
-@@ -221,3 +223,23 @@ format:
- print fmt: "%pS->%pS(skb=%u)", REC->__ip, REC->__parent_ip, REC->skb
- 
- It is now printed with a "%u".
-+
-+
-+Offsets
-+=======
-+
-+After the name of the variable, brackets '[' number ']' will index the value of
-+the argument by the number given times the size of the field.
-+
-+ int field[5] will dereference the value of the argument 20 bytes away (4 * 5)
-+  as sizeof(int) is 4.
-+
-+If there's a case where the type is of 8 bytes in size but is not 8 bytes
-+alligned in the structure, an offset may be required.
-+
-+  For example: x64 param+4[2]
-+
-+The above will take the parameter value, add it by 4, then index it by two
-+8 byte words. It's the same in C as: (u64 *)((void *)param + 4)[2]
-+
-+ Note: "int skb[32]" is the same as "int skb+4[31]".
 diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-index 8327346799eb..1fa281386fa0 100644
+index 1fa281386fa0..6e48361643c0 100644
 --- a/kernel/trace/trace_event_ftrace.c
 +++ b/kernel/trace/trace_event_ftrace.c
-@@ -19,6 +19,7 @@ struct func_arg {
- 	char				*type;
- 	char				*name;
- 	long				indirect;
-+	long				index;
- 	short				offset;
+@@ -24,6 +24,7 @@ struct func_arg {
  	short				size;
  	s8				arg;
-@@ -62,6 +63,7 @@ enum func_states {
- 	FUNC_STATE_INDIRECT,
- 	FUNC_STATE_UNSIGNED,
- 	FUNC_STATE_PIPE,
-+	FUNC_STATE_PLUS,
- 	FUNC_STATE_TYPE,
- 	FUNC_STATE_VAR,
- 	FUNC_STATE_COMMA,
-@@ -184,6 +186,7 @@ static char *next_token(char **ptr, char *last)
- 		    *str == ']' ||
- 		    *str == ',' ||
- 		    *str == '|' ||
-+		    *str == '+' ||
- 		    *str == ')')
- 			break;
- 	}
-@@ -325,6 +328,15 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 		}
- 		break;
+ 	u8				sign;
++	u8				func_type;
+ };
  
-+	case FUNC_STATE_PLUS:
-+		if (WARN_ON(!fevent->last_arg))
-+			break;
-+		ret = kstrtol(token, 0, &val);
-+		if (ret)
-+			break;
-+		fevent->last_arg->index += val;
-+		return FUNC_STATE_VAR;
+ struct func_event {
+@@ -79,31 +80,42 @@ typedef u8 x8;
+ #define TYPE_TUPLE(type)			\
+ 	{ #type, sizeof(type), is_signed_type(type) }
+ 
++#define FUNC_TYPES				\
++	TYPE_TUPLE(long),			\
++	TYPE_TUPLE(int),			\
++	TYPE_TUPLE(short),			\
++	TYPE_TUPLE(char),			\
++	TYPE_TUPLE(size_t),			\
++	TYPE_TUPLE(u64),			\
++	TYPE_TUPLE(s64),			\
++	TYPE_TUPLE(x64),			\
++	TYPE_TUPLE(u32),			\
++	TYPE_TUPLE(s32),			\
++	TYPE_TUPLE(x32),			\
++	TYPE_TUPLE(u16),			\
++	TYPE_TUPLE(s16),			\
++	TYPE_TUPLE(x16),			\
++	TYPE_TUPLE(u8),				\
++	TYPE_TUPLE(s8),				\
++	TYPE_TUPLE(x8)
 +
- 	case FUNC_STATE_VAR:
- 		switch (token[0]) {
- 		case ')':
-@@ -333,6 +345,8 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 			return FUNC_STATE_COMMA;
- 		case '|':
- 			return FUNC_STATE_PIPE;
-+		case '+':
-+			return FUNC_STATE_PLUS;
- 		case '[':
- 			return FUNC_STATE_BRACKET;
- 		}
-@@ -349,6 +363,8 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
- 	char buf[8];
- 	int ret;
+ static struct func_type {
+ 	char		*name;
+ 	int		size;
+ 	int		sign;
+ } func_types[] = {
+-	TYPE_TUPLE(long),
+-	TYPE_TUPLE(int),
+-	TYPE_TUPLE(short),
+-	TYPE_TUPLE(char),
+-	TYPE_TUPLE(size_t),
+-	TYPE_TUPLE(u64),
+-	TYPE_TUPLE(s64),
+-	TYPE_TUPLE(x64),
+-	TYPE_TUPLE(u32),
+-	TYPE_TUPLE(s32),
+-	TYPE_TUPLE(x32),
+-	TYPE_TUPLE(u16),
+-	TYPE_TUPLE(s16),
+-	TYPE_TUPLE(x16),
+-	TYPE_TUPLE(u8),
+-	TYPE_TUPLE(s8),
+-	TYPE_TUPLE(x8),
++	FUNC_TYPES,
+ 	{ NULL,		0,	0 }
+ };
  
-+	val += arg->index;
++#undef TYPE_TUPLE
++#define TYPE_TUPLE(type)	FUNC_TYPE_##type
 +
- 	if (!arg->indirect)
- 		return val;
++enum {
++	FUNC_TYPES,
++	FUNC_TYPE_MAX
++};
++
+ static int max_args __read_mostly = -1;
  
-@@ -781,6 +797,8 @@ static int func_event_seq_show(struct seq_file *m, void *v)
- 		last_arg = arg->arg;
- 		comma = true;
- 		seq_printf(m, "%s %s", arg->type, arg->name);
-+		if (arg->index)
-+			seq_printf(m, "+%ld", arg->index);
- 		if (arg->indirect && arg->size)
- 			seq_printf(m, "[%ld]",
- 				   (arg->indirect ^ INDIRECT_FLAG) / arg->size);
+ /**
+@@ -230,6 +242,7 @@ static int add_arg(struct func_event *fevent, int ftype, int unsign)
+ 	if (!unsign)
+ 		arg->sign = func_type->sign;
+ 	arg->offset = ALIGN(fevent->arg_offset, arg->size);
++	arg->func_type = ftype;
+ 	arg->arg = fevent->arg_cnt;
+ 	fevent->arg_offset = arg->offset + arg->size;
+ 
 -- 
 2.15.1
