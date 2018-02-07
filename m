@@ -1,68 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753419AbeBGH0M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 02:26:12 -0500
-Received: from mail-pl0-f41.google.com ([209.85.160.41]:40735 "EHLO
-        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753147AbeBGH0K (ORCPT
+        id S1753443AbeBGHlx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 02:41:53 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37928 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753147AbeBGHlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 02:26:10 -0500
-X-Google-Smtp-Source: AH8x227r3rdCe1Uy5w/rejdb8mNfmgG+/3s7B15RxTlTH0LkTkuG5xabsEMeuOfzIeO2/MJULnJr+g==
-Date: Wed, 7 Feb 2018 12:56:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        daniel.thompson@linaro.org
-Subject: Re: [PATCH 8/8] thermal/drivers/cpu_cooling: Add the combo cpu
- cooling device
-Message-ID: <20180207072606.GO28462@vireshk-i7>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-9-git-send-email-daniel.lezcano@linaro.org>
- <20180202104259.GA28462@vireshk-i7>
- <8dadd854-25ac-68aa-aa9f-33ba76a137a4@linaro.org>
- <20180205041734.GD28462@vireshk-i7>
- <911804cd-2f1d-a1f7-61a2-6c8b95a88d6b@linaro.org>
- <20180206042853.GI28462@vireshk-i7>
- <54081703-c48f-3e07-b79d-3a2831bc28d7@linaro.org>
+        Wed, 7 Feb 2018 02:41:52 -0500
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        David Airlie <airlied@linux.ie>, Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@gmail.com>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+ <20180207030636-mutt-send-email-mst@kernel.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <1b7ff044-23c8-1bf7-004e-dd6ea1a7006e@collabora.com>
+Date: Wed, 7 Feb 2018 08:41:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54081703-c48f-3e07-b79d-3a2831bc28d7@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180207030636-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-02-18, 11:48, Daniel Lezcano wrote:
-> On 06/02/2018 05:28, Viresh Kumar wrote:
-
-> > Surely we can do one thing at a time if that's the way we choose to do it.
+On 02/07/2018 02:09 AM, Michael S. Tsirkin wrote:
+> On Tue, Feb 06, 2018 at 03:23:02PM +0100, Gerd Hoffmann wrote:
+>>> Creation of shareable buffer by guest
+>>> -------------------------------------------------
+>>>
+>>> 1. Client requests virtio driver to create a buffer suitable for sharing
+>>> with host (DRM_VIRTGPU_RESOURCE_CREATE)
+>>
+>> client or guest proxy?
+>>
+>>> 4. QEMU maps that buffer to the guest's address space
+>>> (KVM_SET_USER_MEMORY_REGION), passes the guest PFN to the virtio driver
+>>
+>> That part is problematic.  The host can't simply allocate something in
+>> the physical address space, because most physical address space
+>> management is done by the guest.  All pci bars are mapped by the guest
+>> firmware for example (or by the guest OS in case of hotplug).
+>>
+>>> 4. QEMU pops data+buffers from the virtqueue, looks up shmem FD for each
+>>> resource, sends data + FDs to the compositor with SCM_RIGHTS
 > 
-> Easy to say :)
-> 
-> The current code is to introduce the feature without impacting the DT
-> bindings in order to keep focused on the thermal mitigation aspect.
-> 
-> There are still a lot of improvements to do after that. You are
-> basically asking me to implement the copy-on-write before the memory
-> management is complete.
+> If you squint hard, this sounds a bit like a use-case for vhost-user-gpu, does it not?
 
-Perhaps I wasn't clear. What I was trying to say is that we can do "one thing at
-a time" if we choose to create a "combo device" (the way you proposed). I am not
-trying to force you to solve all the problems in one go :)
+Can you extend on what makes you think that?
 
-> Can you give an example? Or your understanding is incorrect or I missed
-> the point.
+As an aside, crosvm runs the virtio-gpu device in a separate, jailed
+process, among other virtual devices.
 
-So I tried to write it down and realized I was assuming that different
-cooling-maps can be provided for different cooling strategies
-(cpufreq/cpuidle) and obviously that's not the case as its per device.
-Not sure if it would be correct to explore the possibility of doing
-that.
+https://chromium.googlesource.com/chromiumos/platform/crosvm/
 
--- 
-viresh
+Regards,
+
+Tomeu
