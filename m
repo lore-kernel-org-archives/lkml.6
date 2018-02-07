@@ -1,115 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754748AbeBGQcf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 11:32:35 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42344 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754682AbeBGQcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 11:32:03 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Brian Norris <briannorris@chromium.org>, groeck@chromium.org,
-        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>
-Subject: [PATCH 2/3] arm64: dts: rockchip: add cdn-dp node for rk3399.
-Date: Wed,  7 Feb 2018 17:31:49 +0100
-Message-Id: <20180207163150.16332-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180207163150.16332-1-enric.balletbo@collabora.com>
-References: <20180207163150.16332-1-enric.balletbo@collabora.com>
+        id S932130AbeBGQeV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 11:34:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754466AbeBGQeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 11:34:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9300D21788
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 7 Feb 2018 11:34:16 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        mingo@redhat.com, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, brouer@redhat.com,
+        rao.shoaib@oracle.com
+Subject: Re: [PATCH 0/2] rcu: Transform kfree_rcu() into kvfree_rcu()
+Message-ID: <20180207113416.33b6247b@gandalf.local.home>
+In-Reply-To: <20180207161846.GA902@bombadil.infradead.org>
+References: <151791170164.5994.8253310844733420079.stgit@localhost.localdomain>
+        <20180207021703.GC3617@linux.vnet.ibm.com>
+        <20180207042334.GA16175@bombadil.infradead.org>
+        <20180207050200.GH3617@linux.vnet.ibm.com>
+        <db9bda80-7506-ae25-2c0a-45eaa08963d9@virtuozzo.com>
+        <20180207083104.GK3617@linux.vnet.ibm.com>
+        <20180207085700.393f90d0@gandalf.local.home>
+        <20180207161846.GA902@bombadil.infradead.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Zhong <zyw@rock-chips.com>
+On Wed, 7 Feb 2018 08:18:46 -0800
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Add a node for the cdn DP controller which is embedded in the rk3399
-SoC.
+> Do we need to be able to free any of those objects in order to rename
+> kfree_rcu() to just free_rcu()?
 
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 50 ++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+I'm just nervous about tightly coupling free_rcu() with all the *free()
+from the memory management system. I've been burnt in the past by doing
+such things.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index beef28f7309d..2f2dee0e2f3c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -457,6 +457,46 @@
- 		};
- 	};
- 
-+        cdn_dp: dp@fec00000 {
-+                compatible = "rockchip,rk3399-cdn-dp";
-+                reg = <0x0 0xfec00000 0x0 0x100000>;
-+                interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+                clocks = <&cru SCLK_DP_CORE>, <&cru PCLK_DP_CTRL>,
-+                         <&cru SCLK_SPDIF_REC_DPTX>, <&cru PCLK_VIO_GRF>;
-+                clock-names = "core-clk", "pclk", "spdif", "grf";
-+                assigned-clocks = <&cru SCLK_DP_CORE>;
-+                assigned-clock-rates = <100000000>;
-+                power-domains = <&power RK3399_PD_HDCP>;
-+                phys = <&tcphy0_dp>, <&tcphy1_dp>;
-+                resets = <&cru SRST_DPTX_SPDIF_REC>, <&cru SRST_P_UPHY0_DPTX>,
-+                         <&cru SRST_P_UPHY0_APB>, <&cru SRST_DP_CORE>;
-+                reset-names = "spdif", "dptx", "apb", "core";
-+                rockchip,grf = <&grf>;
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+                #sound-dai-cells = <1>;
-+                status = "disabled";
-+
-+                ports {
-+                        #address-cells = <1>;
-+                        #size-cells = <0>;
-+
-+                        dp_in: port {
-+                                #address-cells = <1>;
-+                                #size-cells = <0>;
-+                                dp_in_vopb: endpoint@0 {
-+                                        reg = <0>;
-+                                        remote-endpoint = <&vopb_out_dp>;
-+                                };
-+
-+                                dp_in_vopl: endpoint@1 {
-+                                        reg = <1>;
-+                                        remote-endpoint = <&vopl_out_dp>;
-+                                };
-+                        };
-+                };
-+        };
-+
- 	gic: interrupt-controller@fee00000 {
- 		compatible = "arm,gic-v3";
- 		#interrupt-cells = <4>;
-@@ -1549,6 +1589,11 @@
- 				reg = <3>;
- 				remote-endpoint = <&mipi1_in_vopl>;
- 			};
-+
-+                        vopl_out_dp: endpoint@4 {
-+                                reg = <4>;
-+                                remote-endpoint = <&dp_in_vopl>;
-+                        };
- 		};
- 	};
- 
-@@ -1601,6 +1646,11 @@
- 				reg = <3>;
- 				remote-endpoint = <&mipi1_in_vopb>;
- 			};
-+
-+                        vopb_out_dp: endpoint@4 {
-+                                reg = <4>;
-+                                remote-endpoint = <&dp_in_vopb>;
-+                        };
- 		};
- 	};
- 
--- 
-2.15.1
+What's the down side of having a way of matching *free_rcu() with all
+the *free()s? I think it's easier to understand, and rcu doesn't need
+to worry about changes of *free() code.
+
+To me:
+
+	kfree_rcu(x);
+
+is just a quick way of doing 'kfree(x)' after a synchronize_rcu() call.
+
+But a "free_rcu(x)", is something I have to think about, because I
+don't know from the name exactly what it is doing.
+
+I know this may sound a bit bike shedding, but the less I need to think
+about how other sub systems work, the easier it is to concentrate on my
+own sub system.
+
+-- Steve
