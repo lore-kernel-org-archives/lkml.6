@@ -1,235 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753710AbeBGJp7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 04:45:59 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55014 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753675AbeBGJp5 (ORCPT
+        id S1753564AbeBGJt3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 04:49:29 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39700 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751153AbeBGJt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 04:45:57 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        AceLan Kao <acelan.kao@canonical.com>, linux-kernel@vger.kernel.org,
-        pali.rohar@gmail.com, Mario Limonciello <mario.limonciello@dell.com>
-Subject: Re: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI driver
-Date: Wed, 07 Feb 2018 10:44:15 +0100
-Message-ID: <2847124.91z6uqVLmE@aspire.rjw.lan>
-In-Reply-To: <20180131213726.GB21498@fury>
-References: <20180131182614.19524-1-andriy.shevchenko@linux.intel.com> <20180131213726.GB21498@fury>
+        Wed, 7 Feb 2018 04:49:27 -0500
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+Date: Wed, 7 Feb 2018 10:49:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, January 31, 2018 10:37:26 PM CET Darren Hart wrote:
-> On Wed, Jan 31, 2018 at 08:26:14PM +0200, Andy Shevchenko wrote:
-> > Remove code duplication by converting driver to pure ACPI one.
+On 02/06/2018 03:23 PM, Gerd Hoffmann wrote:
+>    Hi,
 > 
-> +Rafael
+>>> Hmm?  I'm assuming the wayland client (in the guest) talks to the
+>>> wayland proxy, using the wayland protocol, like it would talk to a
+>>> wayland display server.  Buffers must be passed from client to
+>>> server/proxy somehow, probably using fd passing, so where is the
+>>> problem?
+>>>
+>>> Or did I misunderstand the role of the proxy?
+>>
+>> Hi Gerd,
+>>
+>> it's starting to look to me that we're talking a bit past the other, so I
+>> have pasted below a few words describing my current plan regarding the 3 key
+>> scenarios that I'm addressing.
 > 
-> I don't see any reason *not* to do this, it seems the acpi driver model provides
-> some of the boilerplate stuff we were doing manually before as a platform
-> device. I'm scratching my head wondering why we did this as a platform-driver in
-> the first place now...
-
-We talked about it quite a bit before, I guess it needs to be documented
-somewhere, finally. :-)
-
-If you have a PCI device, you have a struct pci_dev representing it and then
-there may be a "companion" struct acpi_device associated with it.  In that
-case you clearly bind a driver to the struct pci_dev.
-
-This case is really analogous except that the platform bus type is sort of
-"fake" and it doesn't appear to be necessary to use it.
-
-Thanks,
-Rafael
-
-
+> You are describing the details, but I'm missing the big picture ...
 > 
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> > - not tested
-> >  drivers/platform/x86/intel-vbtn.c | 93 +++++++++------------------------------
-> >  1 file changed, 22 insertions(+), 71 deletions(-)
-> > 
-> > diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
-> > index b703d6f5b099..7201effdf37a 100644
-> > --- a/drivers/platform/x86/intel-vbtn.c
-> > +++ b/drivers/platform/x86/intel-vbtn.c
-> > @@ -24,6 +24,7 @@ static const struct acpi_device_id intel_vbtn_ids[] = {
-> >  	{"INT33D6", 0},
-> >  	{"", 0},
-> >  };
-> > +MODULE_DEVICE_TABLE(acpi, intel_vbtn_ids);
-> >  
-> >  /* In theory, these are HID usages. */
-> >  static const struct key_entry intel_vbtn_keymap[] = {
-> > @@ -47,9 +48,9 @@ struct intel_vbtn_priv {
-> >  	bool wakeup_mode;
-> >  };
-> >  
-> > -static int intel_vbtn_input_setup(struct platform_device *device)
-> > +static int intel_vbtn_input_setup(struct acpi_device *device)
-> >  {
-> > -	struct intel_vbtn_priv *priv = dev_get_drvdata(&device->dev);
-> > +	struct intel_vbtn_priv *priv = acpi_driver_data(device);
-> >  	int ret;
-> >  
-> >  	priv->input_dev = devm_input_allocate_device(&device->dev);
-> > @@ -60,17 +61,15 @@ static int intel_vbtn_input_setup(struct platform_device *device)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	priv->input_dev->dev.parent = &device->dev;
-> >  	priv->input_dev->name = "Intel Virtual Button driver";
-> >  	priv->input_dev->id.bustype = BUS_HOST;
-> >  
-> >  	return input_register_device(priv->input_dev);
-> >  }
-> >  
-> > -static void notify_handler(acpi_handle handle, u32 event, void *context)
-> > +static void notify_handler(struct acpi_device *device, u32 event)
-> >  {
-> > -	struct platform_device *device = context;
-> > -	struct intel_vbtn_priv *priv = dev_get_drvdata(&device->dev);
-> > +	struct intel_vbtn_priv *priv = acpi_driver_data(device);
-> >  	unsigned int val = !(event & 1); /* Even=press, Odd=release */
-> >  	const struct key_entry *ke_rel;
-> >  	bool autorelease;
-> > @@ -97,10 +96,10 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
-> >  	dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
-> >  }
-> >  
-> > -static int intel_vbtn_probe(struct platform_device *device)
-> > +static int intel_vbtn_add(struct acpi_device *device)
-> >  {
-> >  	struct acpi_buffer vgbs_output = { ACPI_ALLOCATE_BUFFER, NULL };
-> > -	acpi_handle handle = ACPI_HANDLE(&device->dev);
-> > +	acpi_handle handle = acpi_device_handle(device);
-> >  	struct intel_vbtn_priv *priv;
-> >  	acpi_status status;
-> >  	int err;
-> > @@ -114,11 +113,11 @@ static int intel_vbtn_probe(struct platform_device *device)
-> >  	priv = devm_kzalloc(&device->dev, sizeof(*priv), GFP_KERNEL);
-> >  	if (!priv)
-> >  		return -ENOMEM;
-> > -	dev_set_drvdata(&device->dev, priv);
-> > +	device->driver_data = priv;
-> >  
-> >  	err = intel_vbtn_input_setup(device);
-> >  	if (err) {
-> > -		pr_err("Failed to setup Intel Virtual Button\n");
-> > +		dev_warn(&device->dev, "Failed to setup Intel Virtual Button\n");
-> >  		return err;
-> >  	}
-> >  
-> > @@ -139,33 +138,14 @@ static int intel_vbtn_probe(struct platform_device *device)
-> >  
-> >  	kfree(vgbs_output.pointer);
-> >  
-> > -	status = acpi_install_notify_handler(handle,
-> > -					     ACPI_DEVICE_NOTIFY,
-> > -					     notify_handler,
-> > -					     device);
-> > -	if (ACPI_FAILURE(status))
-> > -		return -EBUSY;
-> > -
-> >  	device_init_wakeup(&device->dev, true);
-> >  	return 0;
-> >  }
-> >  
-> > -static int intel_vbtn_remove(struct platform_device *device)
-> > -{
-> > -	acpi_handle handle = ACPI_HANDLE(&device->dev);
-> > -
-> > -	acpi_remove_notify_handler(handle, ACPI_DEVICE_NOTIFY, notify_handler);
-> > -
-> > -	/*
-> > -	 * Even if we failed to shut off the event stream, we can still
-> > -	 * safely detach from the device.
-> > -	 */
-> > -	return 0;
-> > -}
-> > -
-> >  static int intel_vbtn_pm_prepare(struct device *dev)
-> >  {
-> > -	struct intel_vbtn_priv *priv = dev_get_drvdata(dev);
-> > +	struct acpi_device *device = to_acpi_device(dev);
-> > +	struct intel_vbtn_priv *priv = acpi_driver_data(device);
-> >  
-> >  	priv->wakeup_mode = true;
-> >  	return 0;
-> > @@ -173,7 +153,8 @@ static int intel_vbtn_pm_prepare(struct device *dev)
-> >  
-> >  static int intel_vbtn_pm_resume(struct device *dev)
-> >  {
-> > -	struct intel_vbtn_priv *priv = dev_get_drvdata(dev);
-> > +	struct acpi_device *device = to_acpi_device(dev);
-> > +	struct intel_vbtn_priv *priv = acpi_driver_data(device);
-> >  
-> >  	priv->wakeup_mode = false;
-> >  	return 0;
-> > @@ -186,46 +167,16 @@ static const struct dev_pm_ops intel_vbtn_pm_ops = {
-> >  	.thaw = intel_vbtn_pm_resume,
-> >  };
-> >  
-> > -static struct platform_driver intel_vbtn_pl_driver = {
-> > +static struct acpi_driver intel_vbtn_driver = {
-> > +	.name = "intel-vbtn",
-> > +	.class = ACPI_BUTTON_CLASS,
-> > +	.ids = intel_vbtn_ids,
-> > +	.ops = {
-> > +		.add = intel_vbtn_add,
-> > +		.notify = notify_handler,
-> > +	},
-> >  	.driver = {
-> > -		.name = "intel-vbtn",
-> > -		.acpi_match_table = intel_vbtn_ids,
-> >  		.pm = &intel_vbtn_pm_ops,
-> >  	},
-> > -	.probe = intel_vbtn_probe,
-> > -	.remove = intel_vbtn_remove,
-> >  };
-> > -MODULE_DEVICE_TABLE(acpi, intel_vbtn_ids);
-> > -
-> > -static acpi_status __init
-> > -check_acpi_dev(acpi_handle handle, u32 lvl, void *context, void **rv)
-> > -{
-> > -	const struct acpi_device_id *ids = context;
-> > -	struct acpi_device *dev;
-> > -
-> > -	if (acpi_bus_get_device(handle, &dev) != 0)
-> > -		return AE_OK;
-> > -
-> > -	if (acpi_match_device_ids(dev, ids) == 0)
-> > -		if (acpi_create_platform_device(dev, NULL))
-> > -			dev_info(&dev->dev,
-> > -				 "intel-vbtn: created platform device\n");
-> > -
-> > -	return AE_OK;
-> > -}
-> > -
-> > -static int __init intel_vbtn_init(void)
-> > -{
-> > -	acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
-> > -			    ACPI_UINT32_MAX, check_acpi_dev, NULL,
-> > -			    (void *)intel_vbtn_ids, NULL);
-> > -
-> > -	return platform_driver_register(&intel_vbtn_pl_driver);
-> > -}
-> > -module_init(intel_vbtn_init);
-> > -
-> > -static void __exit intel_vbtn_exit(void)
-> > -{
-> > -	platform_driver_unregister(&intel_vbtn_pl_driver);
-> > -}
-> > -module_exit(intel_vbtn_exit);
-> > +module_acpi_driver(intel_vbtn_driver);
+> So, virtualization aside, how do buffers work in wayland?  As far I know
+> it goes like this:
 > 
+>    (a) software rendering: client allocates shared memory buffer, renders
+>        into it, then passes a file handle for that shmem block together
+>        with some meta data (size, format, ...) to the wayland server.
 > 
+>    (b) gpu rendering: client opens a render node, allocates a buffer,
+>        asks the cpu to renders into it, exports the buffer as dma-buf
+>        (DRM_IOCTL_PRIME_HANDLE_TO_FD), passes this to the wayland server
+>        (again including meta data of course).
+> 
+> Is that correct?
+
+Both are correct descriptions of typical behaviors. But it isn't spec'ed 
+anywhere who has to do the buffer allocation.
+
+In practical terms, the buffer allocation happens in either the 2D GUI 
+toolkit (gtk+, for example), or the EGL implementation. Someone using 
+this in a real product would most probably be interested in avoiding any 
+extra copies and make sure that both allocate buffers via virtio-gpu, for 
+example.
+
+Depending on the use case, they could be also interested in supporting 
+unmodified clients with an extra copy per buffer presentation.
+
+That's to say that if we cannot come up with a zero-copy solution for 
+unmodified clients, we should at least support zero-copy for cooperative 
+clients.
+
+> Now, with virtualization added to the mix it becomes a bit more
+> complicated.  Client and server are unmodified.  The client talks to the
+> guest proxy (wayland protocol).  The guest proxy talks to the host proxy
+> (protocol to be defined). The host proxy talks to the server (wayland
+> protocol).
+> 
+> Buffers must be managed along the way, and we want avoid copying around
+> the buffers.  The host proxy could be implemented directly in qemu, or
+> as separate process which cooperates with qemu for buffer management.
+> 
+> Fine so far?
+
+Yep.
+
+>> I really think that whatever we come up with needs to support 3D clients as
+>> well.
+> 
+> Lets start with 3d clients, I think these are easier.  They simply use
+> virtio-gpu for 3d rendering as usual.  When they are done the rendered
+> buffer already lives in a host drm buffer (because virgl runs the actual
+> rendering on the host gpu).  So the client passes the dma-buf to the
+> guest proxy, the guest proxy imports it to look up the resource-id,
+> passes the resource-id to the host proxy, the host proxy looks up the
+> drm buffer and exports it as dma-buf, then passes it to the server.
+> Done, without any extra data copies.
+
+Yep.
+
+>> Creation of shareable buffer by guest
+>> -------------------------------------------------
+>>
+>> 1. Client requests virtio driver to create a buffer suitable for sharing
+>> with host (DRM_VIRTGPU_RESOURCE_CREATE)
+> 
+> client or guest proxy?
+
+As per the above, the GUI toolkit could have been modified so the client 
+directly creates a shareable buffer, and renders directly to it without 
+any extra copies.
+
+If clients cannot be modified, then it's the guest proxy what has to 
+create the shareable buffer and keep it in sync with the client's 
+non-shareable buffer at the right times, by intercepting 
+wl_surface.commit messages and copying buffer contents.
+
+>> 4. QEMU maps that buffer to the guest's address space
+>> (KVM_SET_USER_MEMORY_REGION), passes the guest PFN to the virtio driver
+> 
+> That part is problematic.  The host can't simply allocate something in
+> the physical address space, because most physical address space
+> management is done by the guest.  All pci bars are mapped by the guest
+> firmware for example (or by the guest OS in case of hotplug).
+
+How can KVM_SET_USER_MEMORY_REGION ever be safely used then? I would have 
+expected that callers of that ioctl have enough knowledge to be able to 
+choose a physical address that won't conflict with the guest's kernel.
+
+I see that the ivshmem device in QEMU registers the memory region in BAR 
+2 of a PCI device instead. Would that be better in your opinion?
+
+>> 4. QEMU pops data+buffers from the virtqueue, looks up shmem FD for each
+>> resource, sends data + FDs to the compositor with SCM_RIGHTS
+> 
+> BTW: Is there a 1:1 relationship between buffers and shmem blocks?  Or
+> does the wayland protocol allow for offsets in buffer meta data, so you
+> can place multiple buffers in a single shmem block?
+
+The latter: 
+https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_shm_pool
+
+Regards,
+
+Tomeu
