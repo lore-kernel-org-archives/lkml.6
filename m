@@ -1,135 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751624AbeBGXKW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 18:10:22 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:49638 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750807AbeBGXKU (ORCPT
+        id S1751738AbeBGXWI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 18:22:08 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36414 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeBGXWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 18:10:20 -0500
-Subject: Re: [RESEND RFC PATCH V3] sched: Improve scalability of
- select_idle_sibling using SMT balance
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dhaval.giani@oracle.com
-References: <20180129233102.19018-1-subhra.mazumdar@oracle.com>
- <20180201123335.GV2249@hirez.programming.kicks-ass.net>
- <911d42cf-54c7-4776-c13e-7c11f8ebfd31@oracle.com>
- <20180202171708.GN2269@hirez.programming.kicks-ass.net>
- <93db4b69-5ec6-732f-558e-5e64d9ba0cf9@oracle.com>
- <20180205121947.GW2269@hirez.programming.kicks-ass.net>
- <930364e4-bbfe-8c8f-d095-0dd4256a5104@oracle.com>
- <20180206091239.GA2269@hirez.programming.kicks-ass.net>
- <97500234-ebbb-4404-d4de-ab10d3ec79e1@oracle.com>
- <20180207084254.GI2269@hirez.programming.kicks-ass.net>
-From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <83ebc153-a09c-5d84-f1d5-c12b10c1494b@oracle.com>
-Date: Wed, 7 Feb 2018 15:10:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 7 Feb 2018 18:22:06 -0500
+X-Google-Smtp-Source: AH8x225LBbNNtoxWL6/a2EOBK3FQH+WDiNbcmpArbJ03bgJn6FmIkR/CYvEUzjhmgYdYzYd9/zUJdQ==
+Date: Wed, 7 Feb 2018 15:22:02 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org,
+        Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de
+Subject: Re: [PATCH v5 4/4] irqchip/gic-v3-its: add ability to resend MAPC on
+ resume
+Message-ID: <20180207232201.GB106856@ban.mtv.corp.google.com>
+References: <20180207014117.62611-1-dbasehore@chromium.org>
+ <20180207014117.62611-5-dbasehore@chromium.org>
+ <8276f426-e4a0-c400-9f87-31be3d6b1733@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180207084254.GI2269@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8798 signatures=668663
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802070292
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8276f426-e4a0-c400-9f87-31be3d6b1733@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Marc,
 
+I'm really not an expert on this, so take my observations with a large
+grain of salt:
 
-On 02/07/2018 12:42 AM, Peter Zijlstra wrote:
-> On Tue, Feb 06, 2018 at 04:30:03PM -0800, Subhra Mazumdar wrote:
->
->> I meant the SMT balance patch. That does comparison with only one other
->> random core and takes the decision in O(1). Any potential scan of all cores
->> or cpus is O(n) and doesn't scale and will only get worse in future. That
->> applies to both select_idle_core() and select_idle_cpu().
-> We only do the full scan if we think to know there is indeed an idle
-> core to be had, and if there are idle cores the machine isn't terribly
-> busy.
->
-> If there are no idle cores, we do not in fact scan everything. We limit
-> the amount of scanning based on the average idle time with a minimum of
-> 4.
-This logic may not be working as well as you may think it to be. I had
-sent the cost of select_idle_sibling() w/ and w/o my patch and there was
-huge difference:
+On Wed, Feb 07, 2018 at 08:46:42AM +0000, Marc Zyngier wrote:
+> On 07/02/18 01:41, Derek Basehore wrote:
+> > This adds functionality to resend the MAPC command to an ITS node on
+> > resume. If the ITS is powered down during suspend and the collections
+> > are not backed by memory, the ITS will lose that state. This just sets
+> > up the known state for the collections after the ITS is restored.
+> > 
+> > This is enabled via the reset-on-suspend flag in the DTS for an ITS
+> > that has a non-zero number of collections stored in it.
+> > 
+> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > ---
+> >  drivers/irqchip/irq-gic-v3-its.c   | 80 ++++++++++++++++++++------------------
+> >  include/linux/irqchip/arm-gic-v3.h |  1 +
+> >  2 files changed, 43 insertions(+), 38 deletions(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> > index 5e63635e2a7b..dd6cd6e68ed0 100644
+> > --- a/drivers/irqchip/irq-gic-v3-its.c
+> > +++ b/drivers/irqchip/irq-gic-v3-its.c
+> > @@ -1942,52 +1942,53 @@ static void its_cpu_init_lpis(void)
+> >  	dsb(sy);
+> >  }
+> >  
+> > -static void its_cpu_init_collection(void)
+> > +static void its_cpu_init_collection(struct its_node *its)
 
-Following is the cost (in us) of select_idle_sibling() with hackbench 16
-groups:
+...
 
-function                 baseline-rc6  %stdev patch               %stdev
-select_idle_sibling()    0.556         1.72    0.263 (-52.70%)     0.78
->
-> (Except when you switch off things like SIS_PROP, then you scan
-> unconditionally and reduce tail latency at the cost of throughput --
-> like said, some people want this).
->
-> O(1) sounds nice, but it has horrible worst case latencies.
->
-> And like I said, I don't see how a rotor is particularly more random
-> than the previous cpu the task you happen to be waking ran on.
-The rotor randomness is not the main point here. I think the benchmark
-improvements come from the fact that select_idle_sibling() cost has reduced
-a lot. To reduce it while still maintaining good spread of threads can be
-achieved by this SMT balance scheme which in turn requires a fast decent
-random number generator and rotor is just an easy way to achieve that.
->> Is there any reason this randomized approach is not acceptable even if
->> benchmarks show improvement? Are there other benchmarks I should try?
-> Looking at just one other core has a fairly high chance of not finding
-> idle. I really cannot remember all the benchmarks, but Mike did
-> something a little less random but still O(1) a few years back and that
-> crashed and burned.
->
->> Also your suggestion to keep the SMT utilization but still do a traversal of
->> cores
->> in select_idle_core() while remembering the least loaded core will still
->> have
->> the problem of potentially traversing all cores. I can compare this with a
->> core
->> level only SMT balancing, is that useful to decide? I will also test on
->> SPARC
->> machines with higher degree of SMT.
-> Please learn to use your email client, that's near unreadable for
-> whitespace damage, time is really too precious to try and untangle crap
-> like that.
-Sorry about that
->
->> You had also mentioned to do it for only SMT >2, not sure I understand why
->> as even for SMT=2 (intel) benchmarks show improvement. This clearly shows
->> the scalability problem.
-> For SMT2 you don't need the occupation counter with atomic crud, a
-> simple !atomic core-idle works just fine. And your 'patch' had soo many
-> moving parts it was too hard to say which aspect changed what.
->
-> hackbench really isn't _that_ interesting a benchmark and its fairly
-> easy to make it go faster, but doing so typically wrecks something else.
-I also had uperf and Oracle DB TPC-C numbers in the patch which showed
-improvements
->
-> There's a whole array of netperf benchmarks which you have to run at
-> different utilization levels, there's the sysbench oltp stuff, which you
-> can run on MariaDB and PostgreSQL, again at different utilization levels
-> (both databases behave quite differently). There's ebizzy, tbench,
-> dbench and others.
->
-> There's also NUMA stuff, like NAS benchmarks and specJBB nonsense.
->
-> There's the facebook schbench, which is a bit finnicky to set up.
->
-> And I'm sure I'm forgetting half, look at the patches and regression
-> reports for more clues, that's what Google is for. You could have
-> figured all that out yourself, much of these are listed in the
-> changelogs and if you'd bothered to find lkml regression reports you
-> could find more.
-Ok, will find out and run them.
+> > @@ -3127,6 +3128,9 @@ static void its_restore_enable(void)
+> >  			its_write_baser(its, baser, baser->val);
+> >  		}
+> >  		writel_relaxed(its->ctlr_save, base + GITS_CTLR);
+> > +
+> > +		if (GITS_TYPER_HWCOLLCNT(gic_read_typer(base + GITS_TYPER)) > 0)
+> > +			its_cpu_init_collection(its);
+> 
+> This isn't correct. Think of a system where half the collections are in
+> HW, and the other half memory based (nothing in the spec forbids this).
+> You must evaluate the CID of each collection and replay the MAPC *only*
+> if it falls into the range [0..HCC-1]. The memory-based collections are
+> already mapped, and remapping an already mapped collection requires
+> extra care (see MAPC and the UNPREDICTABLE behaviour when V=1), so don't
+> go there.
 
-Thanks,
-Subhra
+IIUC, this is only run on CPU0 (it's in syscore resume), so implicitly,
+CID is 0. Thus, the current condition is already doing what you ask:
+
+	HCC > 0 == CID
+
+which is equivalent to:
+
+	HCC - 1 >= CID
+
+Or should we really double check what CPU we're running on?
+
+Brian
