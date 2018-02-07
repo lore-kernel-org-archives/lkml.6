@@ -1,23 +1,23 @@
 Return-Path: <schwidefsky@de.ibm.com>
-X-Google-Smtp-Source: AH8x224QBcJR/3rnMbrGCamOcnfPL3UD144FGXtI5kfIdblvZf+6dKtNBScp4SbqxOySTrQ9n4pg
-ARC-Seal: i=1; a=rsa-sha256; t=1517986825; cv=none;
+X-Google-Smtp-Source: AH8x227LORtAHpPArJvBvSml50c7yS6FYIYLzDMkGS31c/terpLEkkHXfN9DxpUZBExgG+4T9G2y
+ARC-Seal: i=1; a=rsa-sha256; t=1517986823; cv=none;
         d=google.com; s=arc-20160816;
-        b=ibtaztLZfk/CIkhZ2tcxjQDuqG563AHbQRAoO/kAloXxV9Hjr3S5lo7XaY5gDtL8Jl
-         3aGrbZCE7qqwSf+/qYxwknsd9VQ9MYHPKZuwp4dgR43F38NKMO9VmBaUUt/QFwrUmGrx
-         MO9KhOZ9tUfTokpRT9tBa8t4JgG9hEG04BdPXXXdwWk162bYLOLwK+4L2jz41xD5LtVm
-         cQ0c8CTo4pdz5rZ18KizjxfTerkMzpVwaFRtewOFq35CNPIPAHuT8NFbmrTYHYaGYlw5
-         guDREGNg1HFO4CzNfYbJDD64mGvM3ZuhqgikviNxoiNQTIKAY6B8qH+sVzs2bQzp+17o
-         /HyA==
+        b=I+MD9M8MSrvbjmRUGnFURbi4ZobxNM0v/4MRcX3lhUe0xbmfEEZUMmTkrK6ZM1SK99
+         h0t1SLZ8ezWI5fW+8QSWvTrKIickCOcULRcqJ415gzW6RFwYJUKyG4aJPNRLmTm0o9/v
+         fSJsx7fQ311xWAcOlXOkSKlnZz88px8HcrqceE8AgEeHjBsQAxNS8BAtKZUVnUk1/fq1
+         /CZRQFrVUTYPYMhNKKsSsZ5D0uM1PgDLu5DBhp67WOi8LJwbwxxIbcMBNGln9X7YGLMo
+         C12XVmbrMLax/JQdEcSanxvL8DCT0ZWpI1p/pkxY8jhndUNyyHNKcgjGzK6wfDMf1VHx
+         fNmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:references:in-reply-to:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=h4V5FAKk3XQ57do0wIC1ssAAc4vkHTKa84NDoOo5q+c=;
-        b=MWbrgUoh+GnHfgJPpEHFgreHH1qghMFdCgJZH7Q2fSWzMeu7TtnqYs4WovFXDM5xmD
-         MvO8flGvu5OGgWb43n6zqUtmqET0uIph/AO2dKU9oi3VJJD1CyUetpHzMJZMP40iFua0
-         7Ct8GFf7a1LoZ0hpuuqpt9nwSQNZSqGIXEcMPLWRp4PtKsjuRK+DUnduwVQXliqEkizf
-         Pf3QTwqI/Mwt2pi4sJ6H3YQjRmS+9yWSO7P46UcmCIFSY1DZkeQHyu31xphTnquTbYvs
-         EqiUMbjiczfzxhHn+b/UOTA+SiIsZ+gq9NeZDtTEV8/6vc+tACJbey2GTDDvi4KhANj3
-         wKlw==
+        bh=R+IQhnx0RySWHG6TQPFT98WMKlKA4joluJu5wZiMaLg=;
+        b=LN5nuOflDIR4/h8VgvxfLbLsUGxAtN5O5gJbsU4XamPani/oelaCIh1LwB66H2YAE5
+         fUk5ycLR/WyetSps9Vu4UkI703P8vkpq2wVqhKa/tNfrvv1LWmgqgKQCtLLDnZ22ZF3i
+         gJqRUk5/fQm5UuSnGlI4Oji8TPlgfENVMMtMqyBWCUnpJH6azppdJQUjhxDuLYwEcQP6
+         AXa1ePr5dIAR+pXQtU6Pf8unwDB4GJJvB2PK0/X2B8M/dGzPwWU1f35GQuLNiuPOZkk7
+         mO8NXOuX0Vztlaq9M3RjNTj8AB2EMFQjq8qD/7WY9LaLfye/V87Xv+pixIMN7qkzZO5o
+         yo0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of schwidefsky@de.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=schwidefsky@de.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
@@ -36,16 +36,16 @@ Cc: Heiko Carstens <heiko.carstens@de.ibm.com>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Pavel Machek <pavel@ucw.cz>,
         David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH 3/6] s390/alternative: use a copy of the facility bit mask
-Date: Wed,  7 Feb 2018 08:00:08 +0100
+Subject: [PATCH 2/6] s390: add optimized array_index_mask_nospec
+Date: Wed,  7 Feb 2018 08:00:07 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1517986811-27819-1-git-send-email-schwidefsky@de.ibm.com>
 References: <1517986811-27819-1-git-send-email-schwidefsky@de.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020707-0020-0000-0000-000003F31BEA
+x-cbid: 18020707-0040-0000-0000-0000042D3883
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020707-0021-0000-0000-000042859545
-Message-Id: <1517986811-27819-4-git-send-email-schwidefsky@de.ibm.com>
+x-cbparentid: 18020707-0041-0000-0000-000020D0E9D0
+Message-Id: <1517986811-27819-3-git-send-email-schwidefsky@de.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -54,127 +54,53 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorit
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802070089
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591724553699834701?=
-X-GMAIL-MSGID: =?utf-8?q?1591724553699834701?=
+X-GMAIL-THRID: =?utf-8?q?1591724551566964006?=
+X-GMAIL-MSGID: =?utf-8?q?1591724551566964006?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-To be able to switch off specific CPU alternatives with kernel parameters
-make a copy of the facility bit mask provided by STFLE and use the copy
-for the decision to apply an alternative.
+Add an optimized version of the array_index_mask_nospec function for
+s390 based on a compare and a subtract with borrow.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 ---
- arch/s390/include/asm/facility.h | 18 ++++++++++++++++++
- arch/s390/include/asm/lowcore.h  |  3 ++-
- arch/s390/kernel/alternative.c   |  3 ++-
- arch/s390/kernel/early.c         |  3 +++
- arch/s390/kernel/setup.c         |  4 +++-
- arch/s390/kernel/smp.c           |  4 +++-
- 6 files changed, 31 insertions(+), 4 deletions(-)
+ arch/s390/include/asm/barrier.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/s390/include/asm/facility.h b/arch/s390/include/asm/facility.h
-index fbe0c4b..99c8ce3 100644
---- a/arch/s390/include/asm/facility.h
-+++ b/arch/s390/include/asm/facility.h
-@@ -15,6 +15,24 @@
+diff --git a/arch/s390/include/asm/barrier.h b/arch/s390/include/asm/barrier.h
+index 1043260..f9eddbc 100644
+--- a/arch/s390/include/asm/barrier.h
++++ b/arch/s390/include/asm/barrier.h
+@@ -49,6 +49,30 @@ do {									\
+ #define __smp_mb__before_atomic()	barrier()
+ #define __smp_mb__after_atomic()	barrier()
  
- #define MAX_FACILITY_BIT (sizeof(((struct lowcore *)0)->stfle_fac_list) * 8)
- 
-+static inline void __set_facility(unsigned long nr, void *facilities)
++/**
++ * array_index_mask_nospec - generate a mask for array_idx() that is
++ * ~0UL when the bounds check succeeds and 0 otherwise
++ * @index: array element index
++ * @size: number of elements in array
++ */
++#define array_index_mask_nospec array_index_mask_nospec
++static inline unsigned long array_index_mask_nospec(unsigned long index,
++						    unsigned long size)
 +{
-+	unsigned char *ptr = (unsigned char *) facilities;
++	unsigned long mask;
 +
-+	if (nr >= MAX_FACILITY_BIT)
-+		return;
-+	ptr[nr >> 3] |= 0x80 >> (nr & 7);
++	if (__builtin_constant_p(size) && size > 0) {
++		asm("	clgr	%2,%1\n"
++		    "	slbgr	%0,%0\n"
++		    :"=d" (mask) : "d" (size-1), "d" (index) :"cc");
++		return mask;
++	}
++	asm("	clgr	%1,%2\n"
++	    "	slbgr	%0,%0\n"
++	    :"=d" (mask) : "d" (size), "d" (index) :"cc");
++	return ~mask;
 +}
 +
-+static inline void __clear_facility(unsigned long nr, void *facilities)
-+{
-+	unsigned char *ptr = (unsigned char *) facilities;
-+
-+	if (nr >= MAX_FACILITY_BIT)
-+		return;
-+	ptr[nr >> 3] &= ~(0x80 >> (nr & 7));
-+}
-+
- static inline int __test_facility(unsigned long nr, void *facilities)
- {
- 	unsigned char *ptr;
-diff --git a/arch/s390/include/asm/lowcore.h b/arch/s390/include/asm/lowcore.h
-index ec6592e..c63986a 100644
---- a/arch/s390/include/asm/lowcore.h
-+++ b/arch/s390/include/asm/lowcore.h
-@@ -151,7 +151,8 @@ struct lowcore {
- 	__u8	pad_0x0e20[0x0f00-0x0e20];	/* 0x0e20 */
+ #include <asm-generic/barrier.h>
  
- 	/* Extended facility list */
--	__u64	stfle_fac_list[32];		/* 0x0f00 */
-+	__u64	stfle_fac_list[16];		/* 0x0f00 */
-+	__u64	alt_stfle_fac_list[16];		/* 0x0f80 */
- 	__u8	pad_0x1000[0x11b0-0x1000];	/* 0x1000 */
- 
- 	/* Pointer to the machine check extended save area */
-diff --git a/arch/s390/kernel/alternative.c b/arch/s390/kernel/alternative.c
-index 574e776..1abf4f3 100644
---- a/arch/s390/kernel/alternative.c
-+++ b/arch/s390/kernel/alternative.c
-@@ -75,7 +75,8 @@ static void __init_or_module __apply_alternatives(struct alt_instr *start,
- 		instr = (u8 *)&a->instr_offset + a->instr_offset;
- 		replacement = (u8 *)&a->repl_offset + a->repl_offset;
- 
--		if (!test_facility(a->facility))
-+		if (!__test_facility(a->facility,
-+				     S390_lowcore.alt_stfle_fac_list))
- 			continue;
- 
- 		if (unlikely(a->instrlen % 2 || a->replacementlen % 2)) {
-diff --git a/arch/s390/kernel/early.c b/arch/s390/kernel/early.c
-index 497a920..510f218 100644
---- a/arch/s390/kernel/early.c
-+++ b/arch/s390/kernel/early.c
-@@ -193,6 +193,9 @@ static noinline __init void setup_facility_list(void)
- {
- 	stfle(S390_lowcore.stfle_fac_list,
- 	      ARRAY_SIZE(S390_lowcore.stfle_fac_list));
-+	memcpy(S390_lowcore.alt_stfle_fac_list,
-+	       S390_lowcore.stfle_fac_list,
-+	       sizeof(S390_lowcore.alt_stfle_fac_list));
- }
- 
- static __init void detect_diag9c(void)
-diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index 793da97..bcd2a4a 100644
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -340,7 +340,9 @@ static void __init setup_lowcore(void)
- 	lc->preempt_count = S390_lowcore.preempt_count;
- 	lc->stfl_fac_list = S390_lowcore.stfl_fac_list;
- 	memcpy(lc->stfle_fac_list, S390_lowcore.stfle_fac_list,
--	       MAX_FACILITY_BIT/8);
-+	       sizeof(lc->stfle_fac_list));
-+	memcpy(lc->alt_stfle_fac_list, S390_lowcore.alt_stfle_fac_list,
-+	       sizeof(lc->alt_stfle_fac_list));
- 	nmi_alloc_boot_cpu(lc);
- 	vdso_alloc_boot_cpu(lc);
- 	lc->sync_enter_timer = S390_lowcore.sync_enter_timer;
-diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
-index a919b2f..fc28c95 100644
---- a/arch/s390/kernel/smp.c
-+++ b/arch/s390/kernel/smp.c
-@@ -266,7 +266,9 @@ static void pcpu_prepare_secondary(struct pcpu *pcpu, int cpu)
- 	__ctl_store(lc->cregs_save_area, 0, 15);
- 	save_access_regs((unsigned int *) lc->access_regs_save_area);
- 	memcpy(lc->stfle_fac_list, S390_lowcore.stfle_fac_list,
--	       MAX_FACILITY_BIT/8);
-+	       sizeof(lc->stfle_fac_list));
-+	memcpy(lc->alt_stfle_fac_list, S390_lowcore.alt_stfle_fac_list,
-+	       sizeof(lc->alt_stfle_fac_list));
- 	arch_spin_lock_setup(cpu);
- }
- 
+ #endif /* __ASM_BARRIER_H */
 -- 
 2.7.4
