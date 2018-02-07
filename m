@@ -1,81 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754591AbeBGTfC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:35:02 -0500
-Received: from sauhun.de ([88.99.104.3]:44380 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754355AbeBGTfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:35:01 -0500
-Date: Wed, 7 Feb 2018 20:34:59 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 12/16] mmc: tmio: support IP-builtin card detection
- logic
-Message-ID: <20180207193459.tsmci752idkayjxd@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-13-git-send-email-yamada.masahiro@socionext.com>
+        id S1754646AbeBGTgT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:36:19 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45988 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754002AbeBGTgR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:36:17 -0500
+X-Google-Smtp-Source: AH8x2268rY9pIlzDUJnB17ErtgwwgaZwAdqVJ7akwi6rhwO1oorf4Gpr8acBLxNa7Qf8O5grguRZqw==
+From: Mathieu Malaterre <malat@debian.org>
+To: "David S . Miller" <davem@davemloft.net>
+Cc: trivial@kernel.org, Mathieu Malaterre <malat@debian.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Egil Hjelmeland <privat@egil-hjelmeland.no>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: Extra '_get' in declaration of arch_get_platform_mac_address
+Date: Wed,  7 Feb 2018 20:35:00 +0100
+Message-Id: <20180207193501.25446-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4m25o3xbgccrgxf4"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-13-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In commit c7f5d105495a ("net: Add eth_platform_get_mac_address() helper."),
+two declarations were added:
 
---4m25o3xbgccrgxf4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
+  unsigned char *arch_get_platform_get_mac_address(void);
 
-On Thu, Jan 18, 2018 at 01:28:12AM +0900, Masahiro Yamada wrote:
-> A card detect GPIO is set up only for platforms with "cd-gpios"
-> DT property or TMIO_MMC_USE_GPIO_CD flag.  However, the driver
-> core always uses mmc_gpio_get_cd, which just fails with -ENOSYS
-> if ctx->cd_gpio is unset.
->=20
-> The bit 5 of the status register provides the current signal level
-> of the CD line.  Allow to use it if the GPIO is unused.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+An extra '_get' was introduced in arch_get_platform_get_mac_address, remove
+it. Fix compile warning using W=1:
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+  CC      net/ethernet/eth.o
+net/ethernet/eth.c:523:24: warning: no previous prototype for ‘arch_get_platform_mac_address’ [-Wmissing-prototypes]
+ unsigned char * __weak arch_get_platform_mac_address(void)
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  AR      net/ethernet/built-in.o
 
-> @@ -1095,7 +1103,7 @@ static const struct mmc_host_ops tmio_mmc_ops =3D {
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ include/linux/etherdevice.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I just wonder why the diff-tool puts 'const' in the definition. There is
-no const in my version here. And there shouldn't be because we modify
-the struct in this patch.
-
-
---4m25o3xbgccrgxf4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7VOMACgkQFA3kzBSg
-KbZGqQ/8DthXTG6l97SKntYj+pv4dvj8FsQzt8GO2RAxBDJlUkNUEWpy0H/udeHl
-hDOuk9DMB2yRyRlP+AsZztgSSIC7hpILa3WdpeAo+WSUDhXbiv942861NOPNR2J4
-ctsRJBT2eoeF/G+LsUd1G3Hxgb933TV0rZMJM1rRsBB/Py8pSRVJayPxWPLc1gNZ
-elAEIEYUnDFbr9XEooz6MzRi8hR3ZLnlDpngQfQZPeuojANbp7oHHXWKOJgQxAIq
-PafXaan5v1iHmCnNIDUZYEqlhAM0B2I/ZNWsHya6Mss4oUMVqg+Jyw9N0j/hfZuI
-lGw4BAFm2dKplVkJNwD4OLoL28H1K+tgAorCnIpxbCxyMBgS3Y5d8fUimNz22hpj
-l7yM5jfJyGsYocBRCfMVikNM4FC6qCEQBU5mjTIOCr5XvwX2hoZ7nw97eBhdNfEN
-4D+Ge/1SFKz72eKp+pcEbBCHQE3i87ptE5/OpixNL2abk2N3oQLM6gwqUoApz4zx
-QYci702qoREBOsohMAfqFJ9ObLGeL2h7cBNxt7NvQJMk4KPB9Amly/nRGGlckLP8
-yX0g7ZNhq3YcGJcGypTIwYFx55q5faYi/0CV7Ss2anE7w5/S+/AzMjiJHe+WPcyi
-YXEJ8LZwfYFNTt8OJFLuNYtey45WUGRu1jvx/NqvsYi+CHWUwFA=
-=M3qF
------END PGP SIGNATURE-----
-
---4m25o3xbgccrgxf4--
+diff --git a/include/linux/etherdevice.h b/include/linux/etherdevice.h
+index 263dbcad22fc..79563840c295 100644
+--- a/include/linux/etherdevice.h
++++ b/include/linux/etherdevice.h
+@@ -31,7 +31,7 @@
+ #ifdef __KERNEL__
+ struct device;
+ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
+-unsigned char *arch_get_platform_get_mac_address(void);
++unsigned char *arch_get_platform_mac_address(void);
+ u32 eth_get_headlen(void *data, unsigned int max_len);
+ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev);
+ extern const struct header_ops eth_header_ops;
+-- 
+2.11.0
