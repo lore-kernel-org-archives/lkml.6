@@ -1,149 +1,72 @@
-Return-Path: <jinqian@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518038709; cv=none;
+Return-Path: <sudipm.mukherjee@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518032883; cv=none;
         d=google.com; s=arc-20160816;
-        b=ofO+Lu7Sbciq9LxU8kDJ5pmhzExjeXW4lGWrhK2S3GiQVogbnCtYDEr0POizdXRs4U
-         +nfXNVasLyHF73zIJWZswHza9inQhJ4xMHeMEThjBuwvE+axE+lztLHLXS0zcymNXY5k
-         nmgL5ceK9UFYuTW6oJcFCPyTpebbj4rdEpM39BgXHWS0cGg+6Qr95bn6+s6dR+dCYPEB
-         3oELgSMFjMhV2wBqYrBO+CDylECLNqPl9+vnSm3TQ3H/4RCrX1vwsxPgOYr1/4XccMkO
-         88bA/MOAGdHksgCITQQ+fhgbDX5LG9m2ZlBgozqxX9kJsD9+9XnrL5rzXg1sttcghRi8
-         7eRg==
+        b=LgV+QH+3QyK5v5eFZZFGfYbPHhucg5UkWhy3OxqEzbq+4Qyz1bkPO1pr5hr5UAHeV3
+         Fy07irrYxZ7rH6+rMSLPtJGlIQcwLUAD/fx+mE2Xob+VD3srreyUfvR4ty7W15X7Hnrs
+         CdV38oykYQg+j1DueItzG0EAn3sVnPd0JlxLn2dU3KCIpgX7n90q70jXrC/vzEnCcj1W
+         AdVsouCz7FwRJGKu8B9G03BEiM9lHLMQh5HDkDw4kigyPOEsL6QoVzWF7xp/PleGWChd
+         6Wx6Xj+C2S2EC3Lef801wdnAIYmPVSJXtQyd6gYte6GCuFCG9HbCrLN/DgZT1Ofau16A
+         /pgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=wAhdHN+nDM6CTrXZRlcz3dyI0UM1bbFDxm1M1KbdGdg=;
-        b=yiuMR6HLbfj0WQfukT9z2jAeQpIkJywYLxmDjNg3oLrrsZ3kCGfOrQqe2Z0wW4g9zG
-         lVS15hnuwQ1Xy6oK1N7ItIfpgM5PJVLEBL3UNjFMCSrSaw+elj3zUiH3dyA4dr1SCDCJ
-         ll7OmzhHGyj3tVSu2lLJ6SOFdFOL+cetYPSsGLxEhidYI1R+3RKRmhzrP7ox4h0Aneui
-         GY+RYrb2e+b0qqOHtlxuhT1OebZuimj1O70MCxeqqqMrlnGRc3CdSR09F3xr/3D9l6z5
-         sXW4Ev4hkF98zZTPG1r6z/AcoUcWBelEBumjvLigdaALUqil7kwafNSx1VPhClA/Lpor
-         4ZRg==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=hMZ2p5Ekwc1VML+KBNxmw+uLx1jGSmxpPXQz1UPAl/U=;
+        b=lhX0qcnV53PKWla5p2cUQ00wkjq0GhAdBblP4Q72D7YrAZp5ZdeSnB2wrJ1fCyP33N
+         YA0A5F87BVtS1LQaq8f3/f5TGPu14dvmfHQZERDva2JBexpXsqxLnpRMl3Iiqyrb94Gq
+         6doznyEP2EVHgZMFeKJeYZRYRDLnMunlX5u7JdN7WfS1AtwpAD8Wr9/Hk+Lw70XCwX7e
+         /h4ngHEcrZhDEBUUS/2wWOhi2GtlSka2kMWF0gUdQCoeiyr/APLwhb86pYF5h+5AhSZC
+         GVHBfLQf6iaYeX/XtUOlKxlwhKZEkq8KfmORJ28hbxkGHXl6cJ60I+l3r/KQfrzxfCqp
+         FcMw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=IujEi/yq;
-       spf=pass (google.com: domain of jinqian@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinqian@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pzfnyfPH;
+       spf=pass (google.com: domain of sudipm.mukherjee@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sudipm.mukherjee@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=IujEi/yq;
-       spf=pass (google.com: domain of jinqian@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinqian@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AH8x224QLqLHH2IFUnq+hinoIqsPX0rHA8jQr3nnrx6L43Bzxg9BFGylr+HKuqYawVJAiE2Tg1x9/bikvtL7FQ6568U=
-MIME-Version: 1.0
-References: <20180206235354.79591-1-jinqian@android.com> <20180207200604.GB15309@kroah.com>
-In-Reply-To: <20180207200604.GB15309@kroah.com>
-From: Jin Qian <jinqian@google.com>
-Date: Wed, 07 Feb 2018 21:24:57 +0000
-Message-ID: <CAE3cK=Puf-hqXiMdQGRZf_VQ0O0mGXQjAJZtGBYoFPSPUjsdKQ@mail.gmail.com>
-Subject: Re: [PATCHv2 1/1] ext4/f2fs: don't put symlink in pagecache into highmem
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Jin Qian <jinqian@android.com>, "Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
-	Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@poochiereds.net>,
-	"J. Bruce Fields" <bfields@fieldses.org>, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-stable <stable@vger.kernel.org>
-Content-Type: multipart/alternative; boundary="001a113ad4aaf701ac0564a5edff"
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pzfnyfPH;
+       spf=pass (google.com: domain of sudipm.mukherjee@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sudipm.mukherjee@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x226BrrvuosP0QtR8sRnNqrDbwY2ef9EeMxBIzJoiqyPz2ER19qTR2epmpW66FG134kE3KGxiow==
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 01/12] parport: ax88796: Delete an error message for a failed memory allocation in parport_ax88796_probe()
+Date: Wed,  7 Feb 2018 19:47:48 +0000
+Message-Id: <1518032879-5844-1-git-send-email-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1591778957140204202?=
-X-GMAIL-MSGID: =?utf-8?q?1591778957140204202?=
+X-GMAIL-THRID: =?utf-8?q?1591772848657448336?=
+X-GMAIL-MSGID: =?utf-8?q?1591772848657448336?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---001a113ad4aaf701ac0564a5edff
-Content-Type: text/plain; charset="UTF-8"
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-It must be some weird gerrit stuff when I cherry-pick from linux to aosp to
-linux. Will keep a note for future uploads.
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks,
-jin
+This issue was detected by using the Coccinelle software.
 
-On Wed, Feb 7, 2018 at 1:18 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ drivers/parport/parport_ax88796.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> Some minor nits for when you send your next patch for stable:
->
-> On Tue, Feb 06, 2018 at 03:53:53PM -0800, Jin Qian wrote:
-> > From: Jin Qian <jinqian@google.com>
->
-> The original patch was written by Al Viro, please do not take the
-> original authorship off, that's not good.
->
-> > partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream
-> > to v4.4 to prevent virt_to_page on highmem.
-> >
-> > ext4_encrypted_follow_link uses kmap() for cpage
-> >   caddr = kmap(cpage);
-> >
-> > _ext4_fname_disk_to_usr calls virt_to_page on the kmapped address.
-> >   _ext4_fname_disk_to_usr()
-> >     ext4_fname_decrypt()
-> >       sg_init_one()
-> >         sg_init_one(&src_sg, iname->name, iname->len);
-> >           sg_set_page(sg, virt_to_page(buf), buflen,
-> offset_in_page(buf));
-> >
-> > Cc: linux-stable <stable@vger.kernel.org> # 4.4.y
-> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> > Signed-off-by: Jin Qian <jinqian@google.com>
-> > Signed-off-by: Jin Qian <jinqian@android.com>
->
-> Why did you sign off on this twice?
->
-> thanks,
->
-> greg k-h
->
-
---001a113ad4aaf701ac0564a5edff
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">It must be some weird gerrit stuff when I cherry-pick from=
- linux to aosp to linux. Will keep a note for future uploads.<div><br></div=
-><div>Thanks,</div><div>jin<br><div><br><div class=3D"gmail_quote"><div dir=
-=3D"ltr">On Wed, Feb 7, 2018 at 1:18 PM Greg KH &lt;<a href=3D"mailto:gregk=
-h@linuxfoundation.org" target=3D"_blank">gregkh@linuxfoundation.org</a>&gt;=
- wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8=
-ex;border-left:1px #ccc solid;padding-left:1ex">Some minor nits for when yo=
-u send your next patch for stable:<br>
-<br>
-On Tue, Feb 06, 2018 at 03:53:53PM -0800, Jin Qian wrote:<br>
-&gt; From: Jin Qian &lt;<a href=3D"mailto:jinqian@google.com" target=3D"_bl=
-ank">jinqian@google.com</a>&gt;<br>
-<br>
-The original patch was written by Al Viro, please do not take the<br>
-original authorship off, that&#39;s not good.<br>
-<br>
-&gt; partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174 upstrea=
-m<br>
-&gt; to v4.4 to prevent virt_to_page on highmem.<br>
-&gt;<br>
-&gt; ext4_encrypted_follow_link uses kmap() for cpage<br>
-&gt;=C2=A0 =C2=A0caddr =3D kmap(cpage);<br>
-&gt;<br>
-&gt; _ext4_fname_disk_to_usr calls virt_to_page on the kmapped address.<br>
-&gt;=C2=A0 =C2=A0_ext4_fname_disk_to_usr()<br>
-&gt;=C2=A0 =C2=A0 =C2=A0ext4_fname_decrypt()<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0sg_init_one()<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0sg_init_one(&amp;src_sg, iname-&gt;na=
-me, iname-&gt;len);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0sg_set_page(sg, virt_to_page(b=
-uf), buflen, offset_in_page(buf));<br>
-&gt;<br>
-&gt; Cc: linux-stable &lt;<a href=3D"mailto:stable@vger.kernel.org" target=
-=3D"_blank">stable@vger.kernel.org</a>&gt; # 4.4.y<br>
-&gt; Signed-off-by: Al Viro &lt;<a href=3D"mailto:viro@zeniv.linux.org.uk" =
-target=3D"_blank">viro@zeniv.linux.org.uk</a>&gt;<br>
-&gt; Signed-off-by: Jin Qian &lt;<a href=3D"mailto:jinqian@google.com" targ=
-et=3D"_blank">jinqian@google.com</a>&gt;<br>
-&gt; Signed-off-by: Jin Qian &lt;<a href=3D"mailto:jinqian@android.com" tar=
-get=3D"_blank">jinqian@android.com</a>&gt;<br>
-<br>
-Why did you sign off on this twice?<br>
-<br>
-thanks,<br>
-<br>
-greg k-h<br>
-</blockquote></div></div></div></div>
-
---001a113ad4aaf701ac0564a5edff--
+diff --git a/drivers/parport/parport_ax88796.c b/drivers/parport/parport_ax88796.c
+index 2fc91ed..ef0aec4 100644
+--- a/drivers/parport/parport_ax88796.c
++++ b/drivers/parport/parport_ax88796.c
+@@ -281,10 +281,8 @@ static int parport_ax88796_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	dd = kzalloc(sizeof(struct ax_drvdata), GFP_KERNEL);
+-	if (dd == NULL) {
+-		dev_err(_dev, "no memory for private data\n");
++	if (!dd)
+ 		return -ENOMEM;
+-	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (res == NULL) {
+-- 
+2.7.4
