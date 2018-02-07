@@ -1,117 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754301AbeBGRh2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753931AbeBGRh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:37:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B49721788
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x224LtKP/aYho1bQ0yKaNoxOPCb6ALydFFRCn2IBa1ML34bjfhC8EsCy36439b/YYXtckJ4K824as9ImsrWaKCL8=
+        id S1754108AbeBGRja (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:39:30 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7089 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753390AbeBGRj2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:39:28 -0500
+From: Hugues Fruchet <hugues.fruchet@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil@xs4all.nl>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>
+Subject: [PATCH] media: stm32-dcmi: fix lock scheme
+Date: Wed, 7 Feb 2018 18:39:07 +0100
+Message-ID: <1518025147-3058-1-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <43b34b44-f613-79c6-1fe4-01c9dfe85e62@codeaurora.org>
-References: <20180125163216.29018-1-rnayak@codeaurora.org> <20180125163216.29018-2-rnayak@codeaurora.org>
- <CAL_JsqLb4PQ+NkA_RBAgB-5MzFKd+6wBvfCjXvoH-i8pGzzdTg@mail.gmail.com> <43b34b44-f613-79c6-1fe4-01c9dfe85e62@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 7 Feb 2018 11:37:04 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKEgwU6YdFTeuQi5im8azUKzNi34XpamCXNZwxhJibUnQ@mail.gmail.com>
-Message-ID: <CAL_JsqKEgwU6YdFTeuQi5im8azUKzNi34XpamCXNZwxhJibUnQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 10:47 PM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> []..
->
->>> +
->>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +
->>> +/ {
->>> +       model = "Qualcomm Technologies, Inc. SDM845";
->>
->> This should only be in the board level file.
->
-> thanks, will fix.
->
->>
->>> +
->>> +       interrupt-parent = <&intc>;
->>> +
->>> +       #address-cells = <2>;
->>> +       #size-cells = <2>;
->>> +
->>> +       chosen { };
->>> +
->>> +       memory {
->>> +               device_type = "memory";
->>> +               /* We expect the bootloader to fill in the reg */
->>
->> The start address is variable? If not you should populate the base and
->> have a unit-address.
->
-> sure, I'll check and update.
->
->>
->>> +               reg = <0 0 0 0>;
->>> +       };
->>> +
->
-> []..
->>> +
->>> +       soc: soc {
->>> +               #address-cells = <1>;
->>> +               #size-cells = <1>;
->>> +               ranges = <0 0 0 0xffffffff>;
->>> +               compatible = "simple-bus";
->>> +
->>> +               intc: interrupt-controller@17a00000 {
->>> +                       compatible = "arm,gic-v3";
->>> +                       #interrupt-cells = <3>;
->>> +                       interrupt-controller;
->>> +                       #redistributor-regions = <1>;
->>> +                       redistributor-stride = <0x0 0x20000>;
->>> +                       reg = <0x17a00000 0x10000>,     /* GICD */
->>> +                             <0x17a60000 0x100000>;    /* GICR * 8 */
->>> +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->>> +               };
->>> +
->>> +               gcc: clock-controller@100000 {
->>> +                       compatible = "qcom,gcc-sdm845";
->>
->> sdm845-gcc is the preferred order.
->
-> This is still proposed as part of the GCC patch for sdm845 [1]
-> (which looks like has neither you nor the DT list copied :/ )
-> Also looking at Documentation/devicetree/bindings/clock/qcom,gcc.txt,
-> I see we seem to follow the gcc-<soc> convention for compatible all along :(
->
->                         "qcom,gcc-apq8064"
->                         "qcom,gcc-apq8084"
->                         "qcom,gcc-ipq8064"
->                         "qcom,gcc-ipq4019"
->                         "qcom,gcc-ipq8074"
->                         "qcom,gcc-msm8660"
->                         "qcom,gcc-msm8916"
->                         "qcom,gcc-msm8960"
->                         "qcom,gcc-msm8974"
->                         "qcom,gcc-msm8974pro"
->                         "qcom,gcc-msm8974pro-ac"
->                         "qcom,gcc-msm8994"
->                         "qcom,gcc-msm8996"
->                         "qcom,gcc-mdm9615"
+Fix lock scheme leading to spurious freeze.
 
-Okay, I guess the pattern for this is pretty much established.
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+---
+ drivers/media/platform/stm32/stm32-dcmi.c | 57 ++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 32 deletions(-)
 
-Rob
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 2fd8bed..4a75756 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -197,7 +197,7 @@ static void dcmi_dma_callback(void *param)
+ 	struct dma_tx_state state;
+ 	enum dma_status status;
+ 
+-	spin_lock(&dcmi->irqlock);
++	spin_lock_irq(&dcmi->irqlock);
+ 
+ 	/* Check DMA status */
+ 	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
+@@ -239,7 +239,7 @@ static void dcmi_dma_callback(void *param)
+ 				dcmi->errors_count++;
+ 				dcmi->active = NULL;
+ 
+-				spin_unlock(&dcmi->irqlock);
++				spin_unlock_irq(&dcmi->irqlock);
+ 				return;
+ 			}
+ 
+@@ -248,13 +248,11 @@ static void dcmi_dma_callback(void *param)
+ 
+ 			list_del_init(&dcmi->active->list);
+ 
+-			if (dcmi_start_capture(dcmi)) {
++			spin_unlock_irq(&dcmi->irqlock);
++			if (dcmi_start_capture(dcmi))
+ 				dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
+ 					__func__);
+-
+-				spin_unlock(&dcmi->irqlock);
+-				return;
+-			}
++			return;
+ 		}
+ 
+ 		break;
+@@ -263,7 +261,7 @@ static void dcmi_dma_callback(void *param)
+ 		break;
+ 	}
+ 
+-	spin_unlock(&dcmi->irqlock);
++	spin_unlock_irq(&dcmi->irqlock);
+ }
+ 
+ static int dcmi_start_dma(struct stm32_dcmi *dcmi,
+@@ -360,7 +358,7 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ {
+ 	struct stm32_dcmi *dcmi = arg;
+ 
+-	spin_lock(&dcmi->irqlock);
++	spin_lock_irq(&dcmi->irqlock);
+ 
+ 	/* Stop capture is required */
+ 	if (dcmi->state == STOPPING) {
+@@ -370,7 +368,7 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ 
+ 		complete(&dcmi->complete);
+ 
+-		spin_unlock(&dcmi->irqlock);
++		spin_unlock_irq(&dcmi->irqlock);
+ 		return IRQ_HANDLED;
+ 	}
+ 
+@@ -383,35 +381,34 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ 			 __func__);
+ 
+ 		dcmi->errors_count++;
+-		dmaengine_terminate_all(dcmi->dma_chan);
+-
+ 		dev_dbg(dcmi->dev, "Restarting capture after DCMI error\n");
+ 
+-		if (dcmi_start_capture(dcmi)) {
++		spin_unlock_irq(&dcmi->irqlock);
++		dmaengine_terminate_all(dcmi->dma_chan);
++
++		if (dcmi_start_capture(dcmi))
+ 			dev_err(dcmi->dev, "%s: Cannot restart capture on overflow or error\n",
+ 				__func__);
+-
+-			spin_unlock(&dcmi->irqlock);
+-			return IRQ_HANDLED;
+-		}
++		return IRQ_HANDLED;
+ 	}
+ 
+-	spin_unlock(&dcmi->irqlock);
++	spin_unlock_irq(&dcmi->irqlock);
+ 	return IRQ_HANDLED;
+ }
+ 
+ static irqreturn_t dcmi_irq_callback(int irq, void *arg)
+ {
+ 	struct stm32_dcmi *dcmi = arg;
++	unsigned long flags;
+ 
+-	spin_lock(&dcmi->irqlock);
++	spin_lock_irqsave(&dcmi->irqlock, flags);
+ 
+ 	dcmi->misr = reg_read(dcmi->regs, DCMI_MIS);
+ 
+ 	/* Clear interrupt */
+ 	reg_set(dcmi->regs, DCMI_ICR, IT_FRAME | IT_OVR | IT_ERR);
+ 
+-	spin_unlock(&dcmi->irqlock);
++	spin_unlock_irqrestore(&dcmi->irqlock, flags);
+ 
+ 	return IRQ_WAKE_THREAD;
+ }
+@@ -490,9 +487,8 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
+ 	struct stm32_dcmi *dcmi =  vb2_get_drv_priv(vb->vb2_queue);
+ 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+ 	struct dcmi_buf *buf = container_of(vbuf, struct dcmi_buf, vb);
+-	unsigned long flags = 0;
+ 
+-	spin_lock_irqsave(&dcmi->irqlock, flags);
++	spin_lock_irq(&dcmi->irqlock);
+ 
+ 	if ((dcmi->state == RUNNING) && (!dcmi->active)) {
+ 		dcmi->active = buf;
+@@ -500,19 +496,17 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
+ 		dev_dbg(dcmi->dev, "Starting capture on buffer[%d] queued\n",
+ 			buf->vb.vb2_buf.index);
+ 
+-		if (dcmi_start_capture(dcmi)) {
++		spin_unlock_irq(&dcmi->irqlock);
++		if (dcmi_start_capture(dcmi))
+ 			dev_err(dcmi->dev, "%s: Cannot restart capture on overflow or error\n",
+ 				__func__);
+-
+-			spin_unlock_irqrestore(&dcmi->irqlock, flags);
+-			return;
+-		}
++		return;
+ 	} else {
+ 		/* Enqueue to video buffers list */
+ 		list_add_tail(&buf->list, &dcmi->buffers);
+ 	}
+ 
+-	spin_unlock_irqrestore(&dcmi->irqlock, flags);
++	spin_unlock_irq(&dcmi->irqlock);
+ }
+ 
+ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+@@ -598,20 +592,17 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 
+ 	dev_dbg(dcmi->dev, "Start streaming, starting capture\n");
+ 
++	spin_unlock_irq(&dcmi->irqlock);
+ 	ret = dcmi_start_capture(dcmi);
+ 	if (ret) {
+ 		dev_err(dcmi->dev, "%s: Start streaming failed, cannot start capture\n",
+ 			__func__);
+-
+-		spin_unlock_irq(&dcmi->irqlock);
+ 		goto err_subdev_streamoff;
+ 	}
+ 
+ 	/* Enable interruptions */
+ 	reg_set(dcmi->regs, DCMI_IER, IT_FRAME | IT_OVR | IT_ERR);
+ 
+-	spin_unlock_irq(&dcmi->irqlock);
+-
+ 	return 0;
+ 
+ err_subdev_streamoff:
+@@ -654,7 +645,9 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ 		dev_err(dcmi->dev, "%s: Failed to stop streaming, subdev streamoff error (%d)\n",
+ 			__func__, ret);
+ 
++	spin_lock_irq(&dcmi->irqlock);
+ 	dcmi->state = STOPPING;
++	spin_unlock_irq(&dcmi->irqlock);
+ 
+ 	timeout = wait_for_completion_interruptible_timeout(&dcmi->complete,
+ 							    time_ms);
+-- 
+1.9.1
