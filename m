@@ -1,70 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752862AbeBGB6Q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:58:16 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:5003 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751558AbeBGB6O (ORCPT
+        id S1753044AbeBGB6v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:58:51 -0500
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:48402 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751558AbeBGB6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:58:14 -0500
-X-UUID: 2643ce14cd3c4b27bcc519ec5eef8b5e-20180207
-Message-ID: <1517968688.31641.12.camel@mtkswgap22>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-CC: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Wed, 7 Feb 2018 09:58:08 +0800
-In-Reply-To: <1517956309.2312.172.camel@kernel.crashing.org>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <CAL_JsqLZqrxxpuEnoWEGkT2WCuyjqn0bM1DP8PdAwnQsso8kOA@mail.gmail.com>
-         <1517563970.24622.9.camel@mtkswgap22>
-         <1517866584.2312.140.camel@kernel.crashing.org>
-         <1517884738.16010.27.camel@mtkswgap22>
-         <1517889903.2312.151.camel@kernel.crashing.org>
-         <1517891471.20869.6.camel@mtkswgap22>
-         <1517892624.2312.167.camel@kernel.crashing.org>
-         <1517895732.23319.21.camel@mtkswgap22>
-         <1517956309.2312.172.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Feb 2018 20:58:49 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FsAQApXHpah8mZ6ERcGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQngQAyg1uYVZtiCoU7AhqCQlgUAQEBAQEBAQECAQIQAQEBCgs?=
+ =?us-ascii?q?JCCgvgjgigksGIxFFEAIBCBoCJgICAkUQAgQODYots1iCJ4h4ggoBAQgBAQEBA?=
+ =?us-ascii?q?SOBD4NbghWDP4MuhQZogkuCZQWkLowdiU6CDgGSNpgAgTw2gXNwgxmCZIISjWi?=
+ =?us-ascii?q?BFwEBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2FsAQApXHpah8mZ6ERcGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?ngQAyg1uYVZtiCoU7AhqCQlgUAQEBAQEBAQECAQIQAQEBCgsJCCgvgjgigksGI?=
+ =?us-ascii?q?xFFEAIBCBoCJgICAkUQAgQODYots1iCJ4h4ggoBAQgBAQEBASOBD4NbghWDP4M?=
+ =?us-ascii?q?uhQZogkuCZQWkLowdiU6CDgGSNpgAgTw2gXNwgxmCZIISjWiBFwEBAQ?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.187
+X-IronPort-AV: E=Sophos;i="5.46,471,1511848800";
+   d="scan'208";a="1095816040"
+X-DLP: DLP_GlobalPCIDSS
+To: <andy.shevchenko@gmail.com>
+CC: <andriy.shevchenko@linux.intel.com>, <dvhart@infradead.org>,
+        <platform-driver-x86@vger.kernel.org>, <acelan.kao@canonical.com>,
+        <linux-kernel@vger.kernel.org>, <pali.rohar@gmail.com>,
+        <rjw@rjwysocki.net>
+Subject: RE: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI
+ driver
+Thread-Topic: [RFC, PATCH v1] platform/x86: intel-vbtn: Convert to pure ACPI
+ driver
+Thread-Index: AQHTmsD+s/l7/GkRX0mynZ6Nxv0e5aOO5nIAgAeCdoCAAXSPUIAAh90A///SwVA=
+Date: Wed, 7 Feb 2018 01:57:12 +0000
+Message-ID: <cb4a91870ca24f2487302de05ce8d7f5@ausx13mpc120.AMER.DELL.COM>
+References: <20180131182614.19524-1-andriy.shevchenko@linux.intel.com>
+ <20180131213726.GB21498@fury> <1517847491.22495.36.camel@linux.intel.com>
+ <c51e36664a6e4df6b641f3c684b0d189@ausx13mpc120.AMER.DELL.COM>
+ <CAHp75VeFSuQYu67DdnJDjZDoaLZiPuo7ag7Lz0q6eSCDjayobw@mail.gmail.com>
+In-Reply-To: <CAHp75VeFSuQYu67DdnJDjZDoaLZiPuo7ag7Lz0q6eSCDjayobw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w171wtrH028650
 
-Hi, Arnd
+>Yeah, that's fixed in the branch.
+>P.S. Apologies for top-posting, wrote from phone in order to not waste time
+Andy,
 
-On Wed, 2018-02-07 at 09:31 +1100, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-02-06 at 13:42 +0800, Ryder Lee wrote:
-> > Thanks for explanation.
-> > 
-> > So I guess the better way to achieve my aim - one IRQ per slot that is
-> > connected to all INTx and get propagated through the bridges (and for
-> > those root ports own interrupts (PME ..)} is to add interrupt-map
-> > properties in both parent and root port nodes.
-> > 
-> > Something like this: https://patchwork.kernel.org/patch/9970923// ,right?
-> 
-> Yup.
-> 
-> Cheers,
-> Ben.
-> 
+I tested your review branch on XPS 9365 which uses power button through 
+intel-vbtn.  I confirmed it worked properly both with usage in OS and during S2I.
 
-Do you have any thoughts on the original approach? If you are okay with
-it, I will resend the DT patch.
-
-Thanks.
+Thanks,
