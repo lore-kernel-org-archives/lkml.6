@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754370AbeBGBmx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:42:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45734 "EHLO mx1.redhat.com"
+        id S1754355AbeBGBmw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:42:52 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34964 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754300AbeBGBms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:42:48 -0500
+        id S1754302AbeBGBmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 20:42:49 -0500
 From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: slp@redhat.com, bhe@redhat.com, mst@redhat.com, somlo@cmu.edu,
         xiaolong.ye@intel.com,
         =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v13 3/4] fw_cfg: write vmcoreinfo details
-Date: Wed,  7 Feb 2018 02:35:24 +0100
-Message-Id: <20180207013525.1634-4-marcandre.lureau@redhat.com>
+Subject: [PATCH v13 4/4] RFC: fw_cfg: do DMA read operation
+Date: Wed,  7 Feb 2018 02:35:25 +0100
+Message-Id: <20180207013525.1634-5-marcandre.lureau@redhat.com>
 In-Reply-To: <20180207013525.1634-1-marcandre.lureau@redhat.com>
 References: <20180207013525.1634-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
@@ -23,240 +23,156 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
-the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
+Modify fw_cfg_read_blob() to use DMA if the device supports it.
+Return errors, because the operation may fail.
 
-The DMA operation is expected to run synchronously with today qemu,
-but the specification states that it may become async, so we run
-"control" field check in a loop for eventual changes.
+So far, only one call in fw_cfg_register_dir_entries() is using
+kmalloc'ed buf and is thus clearly eligible to DMA read.
+
+Initially, I didn't implement DMA read to speed up boot time, but as a
+first step before introducing DMA write (since read operations were
+already presents). Even more, I didn't realize fw-cfg entries were
+being read by the kernel during boot by default. But actally fw-cfg
+entries are being populated during module probe. I knew DMA improved a
+lot bios boot time (the main reason the DMA interface was added
+afaik). Let see the time it would take to read the whole ACPI
+tables (128kb allocated)
+
+ # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
+  - with DMA: sys 0m0.003s
+  - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
+
+FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
+boot to populate sysfs qemu_fw_cfg directory, and it is quite
+small (1-2kb). Since it does not expose itself, in order to measure
+the time it takes to read such small file, I took a comparable sized
+file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
+modified read_raw enabling DMA)
+
+ # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
+  - with DMA:
+          0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
+  - without DMA:
+          6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
+
+That's a few msec saved during boot by enabling DMA read (the gain
+would be more substantial if other & bigger fw-cfg entries are read by
+others from sysfs, unfortunately, it's not clear if we can always
+enable DMA there)
 
 Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
 ---
- drivers/firmware/qemu_fw_cfg.c | 157 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 154 insertions(+), 3 deletions(-)
+ drivers/firmware/qemu_fw_cfg.c | 47 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 740df0df2260..fd576ba7b337 100644
+index fd576ba7b337..3721dc868a2b 100644
 --- a/drivers/firmware/qemu_fw_cfg.c
 +++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -33,6 +33,9 @@
- #include <linux/slab.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
-+#include <linux/delay.h>
-+#include <linux/crash_dump.h>
-+#include <linux/crash_core.h>
- 
- MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
- MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
-@@ -43,12 +46,24 @@ MODULE_LICENSE("GPL");
- #define FW_CFG_ID         0x01
- #define FW_CFG_FILE_DIR   0x19
- 
-+#define FW_CFG_VERSION_DMA     0x02
-+#define FW_CFG_DMA_CTL_ERROR   0x01
-+#define FW_CFG_DMA_CTL_READ    0x02
-+#define FW_CFG_DMA_CTL_SKIP    0x04
-+#define FW_CFG_DMA_CTL_SELECT  0x08
-+#define FW_CFG_DMA_CTL_WRITE   0x10
-+
- /* size in bytes of fw_cfg signature */
- #define FW_CFG_SIG_SIZE 4
- 
- /* fw_cfg "file name" is up to 56 characters (including terminating nul) */
- #define FW_CFG_MAX_FILE_PATH 56
- 
-+#define VMCOREINFO_FORMAT_ELF 0x1
-+
-+/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
-+static u32 fw_cfg_rev;
-+
- /* fw_cfg file directory entry type */
- struct fw_cfg_file {
- 	u32 size;
-@@ -57,6 +72,12 @@ struct fw_cfg_file {
- 	char name[FW_CFG_MAX_FILE_PATH];
- };
- 
-+struct fw_cfg_dma {
-+	u32 control;
-+	u32 length;
-+	u64 address;
-+} __packed;
-+
- /* fw_cfg device i/o register addresses */
- static bool fw_cfg_is_mmio;
- static phys_addr_t fw_cfg_p_base;
-@@ -75,6 +96,59 @@ static inline u16 fw_cfg_sel_endianness(u16 key)
- 	return fw_cfg_is_mmio ? cpu_to_be16(key) : cpu_to_le16(key);
+@@ -150,11 +150,13 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
  }
  
-+static inline bool fw_cfg_dma_enabled(void)
-+{
-+	return fw_cfg_rev & FW_CFG_VERSION_DMA && fw_cfg_reg_dma;
-+}
-+
-+/* qemu fw_cfg device is sync today, but spec says it may become async */
-+static void fw_cfg_wait_for_control(struct fw_cfg_dma *d)
-+{
-+	do {
-+		u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
-+
-+		if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
-+			return;
-+
-+		usleep_range(50, 100);
-+	} while (true);
-+}
-+
-+static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
-+{
-+	phys_addr_t dma;
-+	struct fw_cfg_dma *d = NULL;
-+	ssize_t ret = length;
-+
-+	d = kmalloc(sizeof(*d), GFP_KERNEL);
-+	if (!d) {
-+		ret = -ENOMEM;
-+		goto end;
-+	}
-+
-+	*d = (struct fw_cfg_dma) {
-+		.address = address ? cpu_to_be64(virt_to_phys(address)) : 0,
-+		.length = cpu_to_be32(length),
-+		.control = cpu_to_be32(control)
-+	};
-+
-+	dma = virt_to_phys(d);
-+
-+	iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
-+	iowrite32be(dma, fw_cfg_reg_dma + 4);
-+
-+	fw_cfg_wait_for_control(d);
-+
-+	if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
-+		ret = -EIO;
-+	}
-+
-+end:
-+	kfree(d);
-+
-+	return ret;
-+}
-+
  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
- static inline void fw_cfg_read_blob(u16 key,
- 				    void *buf, loff_t pos, size_t count)
-@@ -103,6 +177,47 @@ static inline void fw_cfg_read_blob(u16 key,
- 	acpi_release_global_lock(glk);
- }
- 
-+#ifdef CONFIG_CRASH_CORE
-+/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
-+static ssize_t fw_cfg_write_blob(u16 key,
-+				 void *buf, loff_t pos, size_t count)
-+{
-+	u32 glk = -1U;
-+	acpi_status status;
+-static inline void fw_cfg_read_blob(u16 key,
+-				    void *buf, loff_t pos, size_t count)
++static ssize_t fw_cfg_read_blob(u16 key,
++				void *buf, loff_t pos, size_t count,
++				bool dma)
+ {
+ 	u32 glk = -1U;
+ 	acpi_status status;
 +	ssize_t ret = count;
-+
-+	/* If we have ACPI, ensure mutual exclusion against any potential
-+	 * device access by the firmware, e.g. via AML methods:
-+	 */
-+	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
-+	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
-+		/* Should never get here */
-+		WARN(1, "%s: Failed to lock ACPI!\n", __func__);
+ 
+ 	/* If we have ACPI, ensure mutual exclusion against any potential
+ 	 * device access by the firmware, e.g. via AML methods:
+@@ -164,17 +166,36 @@ static inline void fw_cfg_read_blob(u16 key,
+ 		/* Should never get here */
+ 		WARN(1, "fw_cfg_read_blob: Failed to lock ACPI!\n");
+ 		memset(buf, 0, count);
+-		return;
 +		return -EINVAL;
-+	}
-+
-+	mutex_lock(&fw_cfg_dev_lock);
-+	if (pos == 0) {
-+		ret = fw_cfg_dma_transfer(buf, count, key << 16
-+					  | FW_CFG_DMA_CTL_SELECT
-+					  | FW_CFG_DMA_CTL_WRITE);
+ 	}
+ 
+ 	mutex_lock(&fw_cfg_dev_lock);
+-	iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
+-	while (pos-- > 0)
+-		ioread8(fw_cfg_reg_data);
+-	ioread8_rep(fw_cfg_reg_data, buf, count);
++	if (dma && fw_cfg_dma_enabled()) {
++		if (pos == 0) {
++			ret = fw_cfg_dma_transfer(buf, count, key << 16
++						  | FW_CFG_DMA_CTL_SELECT
++						  | FW_CFG_DMA_CTL_READ);
++		} else {
++			iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
++			ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
++			if (ret < 0)
++				goto end;
++			ret = fw_cfg_dma_transfer(buf, count,
++						  FW_CFG_DMA_CTL_READ);
++		}
 +	} else {
 +		iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
-+		ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
-+		if (ret < 0)
-+			goto end;
-+		ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
++		while (pos-- > 0)
++			ioread8(fw_cfg_reg_data);
++		ioread8_rep(fw_cfg_reg_data, buf, count);
 +	}
 +
 +end:
-+	mutex_unlock(&fw_cfg_dev_lock);
-+
-+	acpi_release_global_lock(glk);
+ 	mutex_unlock(&fw_cfg_dev_lock);
+ 
+ 	acpi_release_global_lock(glk);
 +
 +	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* clean up fw_cfg device i/o */
- static void fw_cfg_io_cleanup(void)
- {
-@@ -201,9 +316,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
- 	return 0;
  }
  
--/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
--static u32 fw_cfg_rev;
--
- static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
- {
- 	return sprintf(buf, "%u\n", fw_cfg_rev);
-@@ -224,6 +336,37 @@ struct fw_cfg_sysfs_entry {
- 	struct list_head list;
- };
+ #ifdef CONFIG_CRASH_CORE
+@@ -307,7 +328,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+ #endif
  
-+#ifdef CONFIG_CRASH_CORE
-+static ssize_t write_vmcoreinfo(const struct fw_cfg_file *f)
-+{
-+	struct vmci {
-+		__le16 host_format;
-+		__le16 guest_format;
-+		__le32 size;
-+		__le64 paddr;
-+	} __packed;
-+	static struct vmci *data;
-+	ssize_t ret;
-+
-+	data = kmalloc(sizeof(struct vmci), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	*data = (struct vmci) {
-+		.guest_format = cpu_to_le16(VMCOREINFO_FORMAT_ELF),
-+		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
-+		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
-+	};
-+	/* spare ourself reading host format support for now since we
-+	 * don't know what else to format - host may ignore ours
-+	 */
-+	ret = fw_cfg_write_blob(f->select, data, 0, sizeof(struct vmci));
-+
-+	kfree(data);
-+	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* get fw_cfg_sysfs_entry from kobject member */
- static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
- {
-@@ -464,6 +607,14 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
- 	int err;
- 	struct fw_cfg_sysfs_entry *entry;
+ 	/* verify fw_cfg device signature */
+-	fw_cfg_read_blob(FW_CFG_SIGNATURE, sig, 0, FW_CFG_SIG_SIZE);
++	fw_cfg_read_blob(FW_CFG_SIGNATURE, sig, 0, FW_CFG_SIG_SIZE, false);
+ 	if (memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
+ 		fw_cfg_io_cleanup();
+ 		return -ENODEV;
+@@ -494,8 +515,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
+ 	if (count > entry->f.size - pos)
+ 		count = entry->f.size - pos;
  
-+#ifdef CONFIG_CRASH_CORE
-+	if (fw_cfg_dma_enabled() &&
-+		strcmp(f->name, "etc/vmcoreinfo") == 0 && !is_kdump_kernel()) {
-+		if (write_vmcoreinfo(f) < 0)
-+			pr_warn("fw_cfg: failed to write vmcoreinfo");
-+	}
-+#endif
-+
- 	/* allocate new entry */
- 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
- 	if (!entry)
+-	fw_cfg_read_blob(entry->f.select, buf, pos, count);
+-	return count;
++	/* do not use DMA, virt_to_phys(buf) might not be ok */
++	return fw_cfg_read_blob(entry->f.select, buf, pos, count, false);
+ }
+ 
+ static struct bin_attribute fw_cfg_sysfs_attr_raw = {
+@@ -656,7 +677,7 @@ static int fw_cfg_register_dir_entries(void)
+ 	struct fw_cfg_file *dir;
+ 	size_t dir_size;
+ 
+-	fw_cfg_read_blob(FW_CFG_FILE_DIR, &count, 0, sizeof(count));
++	fw_cfg_read_blob(FW_CFG_FILE_DIR, &count, 0, sizeof(count), false);
+ 	count = be32_to_cpu(count);
+ 	dir_size = count * sizeof(struct fw_cfg_file);
+ 
+@@ -664,7 +685,7 @@ static int fw_cfg_register_dir_entries(void)
+ 	if (!dir)
+ 		return -ENOMEM;
+ 
+-	fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(count), dir_size);
++	fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(count), dir_size, true);
+ 
+ 	for (i = 0; i < count; i++) {
+ 		dir[i].size = be32_to_cpu(dir[i].size);
+@@ -713,7 +734,7 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
+ 		goto err_probe;
+ 
+ 	/* get revision number, add matching top-level attribute */
+-	fw_cfg_read_blob(FW_CFG_ID, &fw_cfg_rev, 0, sizeof(fw_cfg_rev));
++	fw_cfg_read_blob(FW_CFG_ID, &fw_cfg_rev, 0, sizeof(fw_cfg_rev), false);
+ 	fw_cfg_rev = le32_to_cpu(fw_cfg_rev);
+ 	err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
+ 	if (err)
 -- 
 2.16.1.73.g5832b7e9f2
