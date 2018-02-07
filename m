@@ -1,51 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753801AbeBGLKV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:10:21 -0500
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:53692 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753720AbeBGLKT (ORCPT
+        id S1753745AbeBGLMY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:12:24 -0500
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:43679 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753454AbeBGLMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:10:19 -0500
-X-Google-Smtp-Source: AH8x226pFgqoV2b80Z/R837FymJdtgaBUHq7/cR4eIFqhShv8hhNoaAHWF+UGSb3T+3BnZUGY0B6xA==
-Date: Wed, 7 Feb 2018 14:10:16 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Kai Huang <kai.huang@linux.intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] x86/tme: Detect if TME and MKTME is activated by BIOS
-Message-ID: <20180207111016.st365i56w67gmjbj@node.shutemov.name>
-References: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
- <20180131091509.26531-3-kirill.shutemov@linux.intel.com>
- <1517978050.23889.23.camel@linux.intel.com>
- <20180207081627.eomxuyqw74eew756@node.shutemov.name>
- <1518001244.23889.32.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518001244.23889.32.camel@linux.intel.com>
-User-Agent: NeoMutt/20171215
+        Wed, 7 Feb 2018 06:12:22 -0500
+X-Google-Smtp-Source: AH8x227ajZXLNfNUlr8hvMA0RG9SCPeMkSkezHYDtSGlSCJVCGpWh4AbhgehkQrse9r7gmEjpPSIgA==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <1518001397.29698.6.camel@gmx.de>
+Date: Wed, 7 Feb 2018 12:12:18 +0100
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
+        SERENA ZIVIANI <169364@studenti.unimore.it>,
+        Serena Ziviani <ziviani.serena@gmail.com>,
+        =?utf-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
+Message-Id: <ADDEE2C2-9AC0-469D-BD28-05748C6EDCDA@linaro.org>
+References: <20180205190510.5499-1-paolo.valente@linaro.org>
+ <20180205190510.5499-2-paolo.valente@linaro.org>
+ <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
+ <1517903761.9843.12.camel@gmx.de>
+ <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
+ <1517918234.25841.31.camel@gmx.de>
+ <77124223e6116350a5184a5199850304@natalenko.name>
+ <1517924768.25841.32.camel@gmx.de>
+ <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
+ <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
+ <82ffc96aacc3945861cbb708df346338@natalenko.name>
+ <E52CCDEA-279A-40D8-AD9B-F4D1AF351BF1@linaro.org>
+ <1517995431.25619.5.camel@gmx.de>
+ <FBF6DCBB-B0F5-446B-8FD1-106E2538A9C1@linaro.org>
+ <1517998516.6606.1.camel@gmx.de>
+ <5584030F-8F4E-4C98-84A5-79873A1BF775@linaro.org>
+ <1518001397.29698.6.camel@gmx.de>
+To: Mike Galbraith <efault@gmx.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17BCTd9013438
 
-On Thu, Feb 08, 2018 at 12:00:44AM +1300, Kai Huang wrote:
-> > Suggestions?
+
+
+> Il giorno 07 feb 2018, alle ore 12:03, Mike Galbraith <efault@gmx.de> ha scritto:
 > 
-> I would go with 'tme_cryto_alg', and 'mktme_supported_crypto_algs' for
-> the two variables, and TME_CRYPTO_ALG(x), TME_CRYPTO_ALG_AES_XTS_128, 
-> MKTME_SUPPORTED_CRYPTO_ALGS(x), and MKTME_CRYPTO_ALG_AES_XTS_128 for
-> the macros, but it's up to you and other guys.
+> On Wed, 2018-02-07 at 11:27 +0100, Paolo Valente wrote:
+>> 
+>> 2. Could you please turn that BUG_ON into:
+>> if (!(rq->rq_flags & RQF_ELVPRIV))
+>> 	return;
+>> and see what happens?
+> 
+> That seems to make it forgets how to make boom.
+> 
 
-I'll leave it as is for now.
+Great! This deserves to be celebrated with a packet of Ikea chips.
 
-> Btw I do think AES_XTS should be AES_XTS_128, even you go with current
-> names, as AES cipher can also take 256-bit key.
+Just to be certain, before submitting a new patch: you changed *only*
+the BUG_ON at line 4742, on top of my instrumentation patch.
 
-Good point.
+Thanks,
+Paolo
 
--- 
- Kirill A. Shutemov
+
+> 	-Mike
