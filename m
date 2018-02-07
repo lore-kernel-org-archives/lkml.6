@@ -1,141 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754180AbeBGSQD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 13:16:03 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54518 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753794AbeBGSQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 13:16:02 -0500
-Subject: Re: [PATCH v2 10/20] arm64: capabilities: Restrict KPTI detection to
- boot-time CPUs
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-11-suzuki.poulose@arm.com>
- <20180207103845.GA5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <ec712e11-baa5-aa2c-1b70-be221ea36f9f@arm.com>
-Date: Wed, 7 Feb 2018 18:15:58 +0000
+        id S1754185AbeBGSTQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 13:19:16 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:31742 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753390AbeBGSTN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 13:19:13 -0500
+Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix net watchdog timeout
+To: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+References: <20180207011706.13393-1-grygorii.strashko@ti.com>
+ <20180207030316.GA7883@khorivan> <20180207133105.GB7883@khorivan>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+CC: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+Message-ID: <ed2d0226-05ac-3d9f-1ca6-1e7063f54d41@ti.com>
+Date: Wed, 7 Feb 2018 12:19:11 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180207103845.GA5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <20180207133105.GB7883@khorivan>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.247.59.147]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 10:38, Dave Martin wrote:
-> On Wed, Jan 31, 2018 at 06:27:57PM +0000, Suzuki K Poulose wrote:
->> KPTI is treated as a system wide feature, where we enable the feature
->> when all the CPUs on the system suffers from the security vulnerability,
-> 
-> Should that be "when any CPU"?
-> 
-
-Without this patch, we need all the CPUs to mandate the defense (as this
-is a system feature). This patch changes it. I will change it to :
-
-"KPTI is treated as a system wide feature and is only "detected" if all
-the CPUs on the system needs the defense. This is not sufficient, as the
-KPTI is turned off on a system with a mix of CPUs, where some CPUs can
-defend and others can't,
-
->> unless it is forced via kernel command line. Also, if a late CPU needs
->> KPTI but KPTI was not enabled at boot time, the CPU is currently allowed
->> to boot, which is a potential security vulnerability.  This patch ensures
-
-" This patch ensures that KPTI is turned on if at least one CPU requires the
-defense and any late CPUs are rejected..."
-.
->> that late CPUs are rejected as appropriate if they need KPTI but it wasn't
->> enabled.
+On 02/07/2018 07:31 AM, Ivan Khoronzhuk wrote:
+> On Wed, Feb 07, 2018 at 05:03:19AM +0200, Ivan Khoronzhuk wrote:
+>> On Tue, Feb 06, 2018 at 07:17:06PM -0600, Grygorii Strashko wrote:
+>>> It was discovered that simple program which indefinitely sends 200b UDP
+>>> packets and runs on TI AM574x SoC (SMP) under RT Kernel triggers network
+>>> watchdog timeout in TI CPSW driver (<6 hours run). The network watchdog
+>>> timeout is triggered due to race between cpsw_ndo_start_xmit() and
+>>> cpsw_tx_handler() [NAPI]
+>>>
+>>> cpsw_ndo_start_xmit()
+>>> 	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
+>>> 		txq = netdev_get_tx_queue(ndev, q_idx);
+>>> 		netif_tx_stop_queue(txq);
+>>>
+>>> ^^ as per [1] barrier has to be used after set_bit() otherwise new value
+>>> might not be visible to other cpus
+>>> 	}
+>>>
+>>> cpsw_tx_handler()
+>>> 	if (unlikely(netif_tx_queue_stopped(txq)))
+>>> 		netif_tx_wake_queue(txq);
+>>>
+>>> and when it happens ndev TX queue became disabled forever while driver's HW
+>>> TX queue is empty.
+>> I'm sure it fixes test case somehow but there is some strangeness.
+>> (I've thought about this some X months ago):
+>> 1. If no free desc, then there is bunch of descs on the queue ready to be sent
+>> 2. If one of this desc while this process was missed then next will wake queue,
+>> because there is bunch of them on the fly. So, if desc on top of the sent queue
+>> missed to enable the queue, then next one more likely will enable it anyway..
+>> then how it could happen? The described race is possible only on last
+>> descriptor, yes, packets are small the speed is hight, possibility is very small
+>> .....but then next situation is also possible:
+>> - packets are sent fast
+>> - all packets were sent, but no any descriptors are freed now by sw interrupt (NAPI)
+>> - when interrupt had started NAPI, the queue was enabled, all other next
+>> interrupts are throttled once NAPI not finished it's work yet.
+>> - when new packet submitted, no free descs are present yet (NAPI has not freed
+>> any yet), but all packets are sent, so no one can awake tx queue, as interrupt
+>> will not arise when NAPI is started to free first descriptor interrupts are
+>> disabled.....because h/w queue to be sent is empty...
+>> - how it can happen as submitting packet and handling packet operations is under
+>> channel lock? Not exactly, a period between handling and freeing the descriptor
+>> to the pool is not under channel lock, here:
 >>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/cpufeature.h |  9 +++++++++
->>   arch/arm64/kernel/cpufeature.c      | 11 ++++++-----
->>   2 files changed, 15 insertions(+), 5 deletions(-)
+>> 	spin_unlock_irqrestore(&chan->lock, flags);
+>> 	if (unlikely(status & CPDMA_DESC_TD_COMPLETE))
+>> 		cb_status = -ENOSYS;
+>> 	else
+>> 		cb_status = status;
 >>
->> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->> index 7bb3fdec827e..71993dd4afae 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -223,6 +223,15 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->>   	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	|	\
->>   	 ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
->>   
->> +/*
->> + * CPU feature detected at boot time, on one or more CPUs. A late CPU
->> + * is not allowed to have the capability when the system doesn't have it.
->> + * It is Ok for a late CPU to miss the feature.
->> + */
->> +#define ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE	\
->> +	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
->> +	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
->> +
->>   struct arm64_cpu_capabilities {
->>   	const char *desc;
->>   	u16 capability;
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index ecc87aa74c64..4a55492784b7 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -862,9 +862,8 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
->>   static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
->>   
->>   static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
->> -				int __unused)
->> +				int scope)
->>   {
->> -	u64 pfr0 = read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
->>   
->>   	/* Forced on command line? */
->>   	if (__kpti_forced) {
->> @@ -885,8 +884,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
->>   	}
->>   
->>   	/* Defer to CPU feature registers */
->> -	return !cpuid_feature_extract_unsigned_field(pfr0,
->> -						     ID_AA64PFR0_CSV3_SHIFT);
->> +	return !has_cpuid_feature(entry, scope);
->>   }
->>   
->>   static int __init parse_kpti(char *str)
->> @@ -1008,7 +1006,10 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->>   	{
->>   		.desc = "Kernel page table isolation (KPTI)",
->>   		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
->> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->> +		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
->> +		.sys_reg = SYS_ID_AA64PFR0_EL1,
->> +		.field_pos = ID_AA64PFR0_CSV3_SHIFT,
->> +		.min_field_value = 1,
->>   		.matches = unmap_kernel_at_el0,
-> 
-> Minor nit, but:
-> 
-> Can we have a comment here to explain that .min_field_value is the
-> minimum value that indicates that KPTI is _not_ required by this cpu?
-> This is the opposite of the usual semantics for this field.
+>> 	__cpdma_chan_free(chan, desc, outlen, cb_status);
+>> 	return status;
+>>
+>> unlock_ret:
+>> 	spin_unlock_irqrestore(&chan->lock, flags);
+>> 	return status;
+>>
+>> And:
+>> __cpdma_chan_free(chan, desc, outlen, cb_status);
+>> 	-> cpdma_desc_free(pool, desc, 1);
+>>
+>> As result, queue deadlock as you've described.
+>> Just thought, not checked, but theoretically possible.
+>> What do you think?
 
-Sure, will add it.
+Yep. And if this happens desc_alloc_fail should be >0 while i usually see it 0 when 
+watchdog triggers.
+I was able to reproduce this situation once, but with bunch of debug code added
+which changes timings:
+
+Prerequisite: only one free desc available.
+ cpsw_ndo_start_xmit1				cpsw_tx_poll
+  prepare and send packet 
+  ->Free desc queue is empty at this moment
+ if (unlikely(!cpdma_check_free_tx_desc(txch)))
+ 	netif_tx_stop_queue(txq);
+ --- tx queue stopped
+						cpdma_chan_process()
+							spin_lock_irqsave(&chan->lock, flags);
+ 							chan->count--
+							spin_unlock_irqrestore(&chan->lock, flags)
+
+							cpsw_tx_handler()
+							   if (unlikely(netif_tx_queue_stopped(txq)))
+								netif_tx_wake_queue(txq);
+ --- tx queue is woken up
+ cpsw_ndo_start_xmit2
+  prepare packet
+ ret = cpsw_tx_packet_submit(priv, skb, txch);
+ //fail as desc not returned to the pool yet
+	if (unlikely(ret != 0)) {
+		cpsw_err(priv, tx_err, "desc submit failed\n");
+		goto fail;
+	}
+							cpdma_desc_free()	
+
+fail:
+	ndev->stats.tx_dropped++;
+	netif_tx_stop_queue(txq);
+// oops.
+
+That's why I added double check and barrier in fail path also
+ 
 
 > 
-> Otherwise, this inversion of meaning is not obvious without digging into
-> unmap_kernel_at_el0() and spotting the ! in !has_cpuid_feature().
+> Better explanation, for rare race:
 > 
-> With that, or if this usage of !has_cpuid_feature() is already well-
-> established so that a comment is deemed unnecessary:
+> start conditions:
+> - all descs are submitted, except last one, and queue is not stopped
+> - any desc was returned to the pool yet (but packets can be sent)
+> 
+>      time
+>       ||
+>       \/
+> 
+> submit process				NAPI poll process
+> --------------------------------------------------------------------------------
+> new packet is scheduled for submission
+> stated that no free descs (with locks)
+> lock is freed
+> 					returned all descs to the pool
+> 					and queue is enabled
+> 					interrupt enabled, poll exit
+> queue is disabled
+> submit exit
+> 
+> Result:
+> - all descs are returned to the pool, submission to the queue disabled
+> - NAPI cannot wake queue, as all desc were handled already
+> 
+> According to packet size in 200B
+> Data size, bits: 200B * 63desc * 10 = 128000bit roughly
+> Time all of them are sent: 128000 / 1Gb = 128us
+> 
+> That's enough the CPU to be occupied by other process in RT even.
+> 
 
-This is the first time we have used it.
+First, in case of RT, it's not a "rare race" as all processing is done in threads
+and both xmit and cpsw_tx_poll can be kicked out any time -
+in case of xmit right before netif_tx_stop_queue().
 
-Cheers
-Suzuki
+It also better reproducible with low speed as xmit drains Free desc pool faster.
+
+Next, on SMP it not only execution race as netif_tx_stop_queue() is just set_bit(), so
+new value might not be visible to other cpus and due to netif_tx_queue_stopped(txq) check 
+cpsw_tx_handler() might fail to wake up the queue.
+
+By the way, I'm not inventing smth new here - I've checked bunch of net drivers and found
+that a lot of them have exactly the same  netif_tx_stop_queue/netif_tx_wake_queue handling.
+
+Do you want me to update description or there are other comments?
+
+-- 
+regards,
+-grygorii
