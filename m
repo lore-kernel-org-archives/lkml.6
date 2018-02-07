@@ -1,102 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753965AbeBGMQ1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 07:16:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753478AbeBGMQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 07:16:25 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28DC32179F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [PATCH] f2fs: add fi->commit_lock to protect commit GCed pages
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org,
-        yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com,
-        heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
-Date: Wed, 7 Feb 2018 20:16:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753768AbeBGMZE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 07:25:04 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:33297 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753539AbeBGMZD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 07:25:03 -0500
+Subject: Re: [PATCH] irqchip: mips-gic: Avoid spuriously handling masked
+ interrupts
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
+        "Jason Cooper" <jason@lakedaemon.net>, <linux-kernel@vger.kernel.org>
+References: <1517849136-29508-1-git-send-email-matt.redfearn@mips.com>
+ <bb76fb4e-5e6c-92eb-d79a-96045f74e91b@arm.com>
+ <e7ec98be-5a4b-ef54-797d-7e11cf2b14e5@mips.com>
+ <5d6348d6-a87f-d3b7-b758-9a2003d9c50e@arm.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <6b8c8416-a02a-940c-71b0-fc9c13101740@mips.com>
+Date: Wed, 7 Feb 2018 11:11:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5d6348d6-a87f-d3b7-b758-9a2003d9c50e@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1518006289-298552-28122-4331-3
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189765
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/6 11:49, Yunlong Song wrote:
-> This patch adds fi->commit_lock to avoid the case that GCed node pages
-> are committed but GCed data pages are not committed. This can avoid the
-> db file run into inconsistent state when sudden-power-off happens if
-> data pages of atomic file is allowed to be GCed before.
+Hi Marc,
 
-do_fsync:				GC:
-- mutex_lock(&fi->commit_lock);
-					- lock_page()
-					 - mutex_lock(&fi->commit_lock);
- - lock_page()
+On 07/02/18 10:41, Marc Zyngier wrote:
+> On 07/02/18 09:44, Matt Redfearn wrote:
+>> Hi Marc,
+>>
+>> On 07/02/18 09:41, Marc Zyngier wrote:
+>>> On 05/02/18 16:45, Matt Redfearn wrote:
+>>>> Commit 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading
+>>>> GIC_SH_MASK*") removed the read of the hardware mask register when
+>>>> handling shared interrupts, instead using the driver's shadow pcpu_masks
+>>>> entry as the effective mask. Unfortunately this did not take account of
+>>>> the write to pcpu_masks during gic_shared_irq_domain_map, which
+>>>> effectively unmasks the interrupt early. If an interrupt is asserted,
+>>>> gic_handle_shared_int decodes and processes the interrupt even though it
+>>>> has not yet been unmasked via gic_unmask_irq, which also sets the
+>>>> appropriate bit in pcpu_masks.
+>>>>
+>>>> On the MIPS Boston board, when a console command line of
+>>>> "console=ttyS0,115200n8r" is passed, the modem status IRQ is enabled in
+>>>> the UART, which is immediately raised to the GIC. The interrupt has been
+>>>> mapped, but no handler has yet been registered, nor is it expected to be
+>>>> unmasked. However, the write to pcpu_masks in gic_shared_irq_domain_map
+>>>> has effectively unmasked it, resulting in endless reports of:
+>>>>
+>>>> [    5.058454] irq 13, desc: ffffffff80a7ad80, depth: 1, count: 0, unhandled: 0
+>>>> [    5.062057] ->handle_irq():  ffffffff801b1838,
+>>>> [    5.062175] handle_bad_irq+0x0/0x2c0
+>>>>
+>>>> Where IRQ 13 is the UART interrupt.
+>>>>
+>>>> To fix this, just remove the write to pcpu_masks in
+>>>> gic_shared_irq_domain_map. The existing write in gic_unmask_irq is the
+>>>> correct place for what is now the effective unmasking.
+>>>>
+>>>> Fixes: 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading GIC_SH_MASK*")
+>>>> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+>>>> Reviewed-by: Paul Burton <paul.burton@mips.com>
+>>>>
+>>>> ---
+>>>>
+>>>>    drivers/irqchip/irq-mips-gic.c | 2 --
+>>>>    1 file changed, 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
+>>>> index b2cfc6d66d74..2c3684ba46e5 100644
+>>>> --- a/drivers/irqchip/irq-mips-gic.c
+>>>> +++ b/drivers/irqchip/irq-mips-gic.c
+>>>> @@ -429,8 +429,6 @@ static int gic_shared_irq_domain_map(struct irq_domain *d, unsigned int virq,
+>>>>    	spin_lock_irqsave(&gic_lock, flags);
+>>>>    	write_gic_map_pin(intr, GIC_MAP_PIN_MAP_TO_PIN | shared_cpu_pin);
+>>>>    	write_gic_map_vp(intr, BIT(mips_cm_vp_id(cpu)));
+>>>> -	gic_clear_pcpu_masks(intr);
+>>>> -	set_bit(intr, per_cpu_ptr(pcpu_masks, cpu));
+>>>>    	irq_data_update_effective_affinity(data, cpumask_of(cpu));
+>>>>    	spin_unlock_irqrestore(&gic_lock, flags);
+>>>>    
+>>>>
+>>>
+>>> Does this need to be Cc to stable (since it fixes something that was
+>>> merged in 4.14)?
+>>
+>> Sorry, missed stable off the CC list. Yes, it does indeed need to be
+>> backported. Should I resubmit?
+> No need, I'll add that to the patch.
 
+Great, thanks!
+Matt
 
-Well, please consider lock dependency & code complexity, IMO, reuse
-fi->dio_rwsem[WRITE] will be enough as below:
-
----
- fs/f2fs/file.c | 3 +++
- fs/f2fs/gc.c   | 5 -----
- 2 files changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 672a542e5464..1bdc11feb8d0 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
-
- 	inode_lock(inode);
-
-+	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
-+
- 	if (f2fs_is_volatile_file(inode))
- 		goto err_out;
-
-@@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
- 	}
- err_out:
-+	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
- 	inode_unlock(inode);
- 	mnt_drop_write_file(filp);
- 	return ret;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index b9d93fd532a9..e49416283563 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
- 		goto out;
-
--	if (f2fs_is_atomic_file(inode))
--		goto out;
--
- 	if (f2fs_is_pinned_file(inode)) {
- 		f2fs_pin_file_control(inode, true);
- 		goto out;
-@@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
- 		goto out;
-
--	if (f2fs_is_atomic_file(inode))
--		goto out;
- 	if (f2fs_is_pinned_file(inode)) {
- 		if (gc_type == FG_GC)
- 			f2fs_pin_file_control(inode, true);
--- 
-2.14.1.145.gb3622a4ee
-
-Thanks,
+> 
+> Thanks,
+> 
+> 	M.
+> 
