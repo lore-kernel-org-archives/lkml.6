@@ -1,54 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753896AbeBGLN7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:13:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:39720 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753595AbeBGLN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:13:58 -0500
-From: Colin King <colin.king@canonical.com>
-To: Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/bochs: make structure bochs_bo_driver static
-Date: Wed,  7 Feb 2018 11:13:53 +0000
-Message-Id: <20180207111353.30261-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1753828AbeBGLSA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:18:00 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43524 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753595AbeBGLR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:17:59 -0500
+Date: Wed, 7 Feb 2018 12:17:39 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: David Woodhouse <dwmw@amazon.co.uk>
+Cc: tglx@linutronix.de, torvalds@linux-foundation.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        tim.c.chen@linux.intel.com, dave.hansen@intel.com,
+        arjan.van.de.ven@intel.com
+Subject: Re: [RFC PATCH 3/4] x86/speculation: Use IBRS if available before
+ calling into firmware
+Message-ID: <20180207111739.GA8698@pd.tnic>
+References: <1517961794-14972-1-git-send-email-dwmw@amazon.co.uk>
+ <1517961794-14972-4-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1517961794-14972-4-git-send-email-dwmw@amazon.co.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Just some random thoughts:
 
-The structure bochs_bo_driver is local to the source and does not need to
-be in global scope, so make it static.
+On Wed, Feb 07, 2018 at 12:03:13AM +0000, David Woodhouse wrote:
+> +#define alternative_msr_write(_msr, _val, _feature)		\
+> +	asm volatile(ALTERNATIVE("",				\
+> +				 "movl %[msr], %%ecx\n\t"	\
+> +				 "movl %[val], %%eax\n\t"	\
+> +				 "movl $0, %%edx\n\t"		\
 
-Cleans up sparse warning:
-drivers/gpu/drm/bochs/bochs_mm.c:197:22: warning: symbol 'bochs_bo_driver'
-was not declared. Should it be static?
+We'll never write anything except 0 in %edx?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/bochs/bochs_mm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +				 "wrmsr",			\
+> +				 _feature)			\
+> +		     : : [msr] "i" (_msr), [val] "i" (_val)	\
+> +		     : "eax", "ecx", "edx", "memory")
 
-diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
-index 704e879711e4..b1d5aee46316 100644
---- a/drivers/gpu/drm/bochs/bochs_mm.c
-+++ b/drivers/gpu/drm/bochs/bochs_mm.c
-@@ -194,7 +194,7 @@ static struct ttm_tt *bochs_ttm_tt_create(struct ttm_bo_device *bdev,
- 	return tt;
- }
- 
--struct ttm_bo_driver bochs_bo_driver = {
-+static struct ttm_bo_driver bochs_bo_driver = {
- 	.ttm_tt_create = bochs_ttm_tt_create,
- 	.ttm_tt_populate = ttm_pool_populate,
- 	.ttm_tt_unpopulate = ttm_pool_unpopulate,
+So I'm not crazy about making it a separate macro because TBH it doesn't
+look too generic to do that but then again what do I know, considering
+recent history. :-)
+
+	 [ Maybe I need to not look at the spectral meltdown for a
+	   couple of weeks and simply take a break. ]
+
+I guess it is fine if it is in nospec-branch.h and not prefix it with
+alternative_ so that it doesn't give people ideas.
+
+Oh and firmware_restrict_branch_speculation_start/end() is just too long
+a name.
+
+All IMHO, of course.
+
 -- 
-2.15.1
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
