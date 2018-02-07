@@ -1,40 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753630AbeBGKUu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:20:50 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41229 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753376AbeBGKUs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:20:48 -0500
-X-Google-Smtp-Source: AH8x224ut/fjtddzKoo8wwdFxtzevAarNNj/sjYChOBnqmeMt7tJWbAOqRQRqXVsGCMHOhmw5iDjcg==
-Date: Wed, 7 Feb 2018 15:50:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 4/8] thermal/drivers/Kconfig: Convert the CPU cooling
- device to a choice
-Message-ID: <20180207102045.GR28462@vireshk-i7>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-5-git-send-email-daniel.lezcano@linaro.org>
- <20180207090448.GP28462@vireshk-i7>
- <4d66ce4f-c8eb-092a-04b5-a705793a1796@linaro.org>
+        id S1753735AbeBGKVr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:21:47 -0500
+Received: from foss.arm.com ([217.140.101.70]:48034 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753479AbeBGKVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 05:21:45 -0500
+Subject: Re: [PATCH v2 6/7] arm64: tegra: Add Tegra194 chip device tree
+To: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
+ <1517901757-15353-7-git-send-email-mperttunen@nvidia.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <458ba9f9-d703-9edf-8e7b-bc9d0f0ef0cc@arm.com>
+Date: Wed, 7 Feb 2018 10:21:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d66ce4f-c8eb-092a-04b5-a705793a1796@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1517901757-15353-7-git-send-email-mperttunen@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-02-18, 11:15, Daniel Lezcano wrote:
-> Do you mean s/CPU_THERMAL/CPU_FREQ_THERMAL/ in include/linux/cpu_cooling.h ?
+Hi Mikko,
 
-Yes, but also in the .c file (which you have done in 5/8 anyway).
+On 06/02/18 07:22, Mikko Perttunen wrote:
+> Add the chip-level device tree, including binding headers, for the
+> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
+> are initially available, enough to boot to UART console.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 342 +++++++++++++
+>  include/dt-bindings/clock/tegra194-clock.h     | 664 +++++++++++++++++++++++++
+>  include/dt-bindings/gpio/tegra194-gpio.h       |  59 +++
+>  include/dt-bindings/power/tegra194-powergate.h |  49 ++
+>  include/dt-bindings/reset/tegra194-reset.h     | 166 +++++++
+>  5 files changed, 1280 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
+>  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
+>  create mode 100644 include/dt-bindings/power/tegra194-powergate.h
+>  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> new file mode 100644
+> index 000000000000..dda28d758cab
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 
+[...]
+
+> +		gic: interrupt-controller@3881000 {
+> +			compatible = "arm,gic-400";
+> +			#interrupt-cells = <3>;
+> +			interrupt-controller;
+> +			reg = <0x03881000 0x1000>,
+> +			      <0x03882000 0x2000>;
+
+You're missing the GICH and GICV regions here.
+
+> +			interrupts = <GIC_PPI 9
+> +				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> +			interrupt-parent = <&gic>;
+> +		};
+Thanks,
+
+	M.
 -- 
-viresh
+Jazz is not dead. It just smells funny...
