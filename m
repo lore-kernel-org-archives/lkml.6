@@ -1,127 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754702AbeBGTGr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:06:47 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39862 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754141AbeBGTGp (ORCPT
+        id S1754723AbeBGTHC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:07:02 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:59769 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754177AbeBGTG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:06:45 -0500
-Date: Wed, 7 Feb 2018 11:06:42 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Yang Shi <yang.s@alibaba-inc.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        netdev <netdev@vger.kernel.org>, guro@fb.com,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs@googlegroups.com, Linux-MM <linux-mm@kvack.org>,
-        coreteam@netfilter.org, netfilter-devel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        David Miller <davem@davemloft.net>, Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [netfilter-core] kernel panic: Out of memory and no killable
- processes... (2)
-Message-Id: <20180207110642.dbb3fe499a134d1369f05a2f@linux-foundation.org>
-In-Reply-To: <20180207174439.esm4djxb4trbotne@salvia>
-References: <20180129182811.fze4vrb5zd5cojmr@node.shutemov.name>
-        <20180129223522.GG5906@breakpoint.cc>
-        <20180130075226.GL21609@dhcp22.suse.cz>
-        <20180130081127.GH5906@breakpoint.cc>
-        <20180130082817.cbax5qj4mxancx4b@node.shutemov.name>
-        <CACT4Y+bFKwoxopr1dwnc7OHUoHy28ksVguqtMY6tD=aRh-7LyQ@mail.gmail.com>
-        <20180130095739.GV21609@dhcp22.suse.cz>
-        <20180130140104.GE21609@dhcp22.suse.cz>
-        <20180130112745.934883e37e696ab7f875a385@linux-foundation.org>
-        <20180131081916.GO21609@dhcp22.suse.cz>
-        <20180207174439.esm4djxb4trbotne@salvia>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Feb 2018 14:06:59 -0500
+Date: Wed, 7 Feb 2018 20:06:51 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [linus:master] BUILD REGRESSION
+ a2e5790d841658485d642196dbb0927303d6c22f
+Message-ID: <20180207190651.GB25201@hirez.programming.kicks-ass.net>
+References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+ <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
+ <cab93459-5c44-4049-ae7e-096e37d43737@infradead.org>
+ <CA+55aFwV6qePNO9YbjN2ezXcGaF1dPcrcXyTq=1kOcABQ7+TaA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwV6qePNO9YbjN2ezXcGaF1dPcrcXyTq=1kOcABQ7+TaA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Feb 2018 18:44:39 +0100 Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-
-> Hi,
+On Wed, Feb 07, 2018 at 11:01:29AM -0800, Linus Torvalds wrote:
+> On Wed, Feb 7, 2018 at 10:38 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> > On 02/07/2018 10:13 AM, Linus Torvalds wrote:
+> >>
+> >> That said, intel only _documents_ UD2 (0f 0b).
+> >
+> > Intel Order Number: 325383-064US, October 2017, documents UD0, UD1, and UD2.
+> > Section A.2.5, Table A-1, says:
 > 
-> On Wed, Jan 31, 2018 at 09:19:16AM +0100, Michal Hocko wrote:
-> [...]
-> > Yeah, we do not BUG but rather fail instead. See __vmalloc_node_range.
-> > My excavation tools pointed me to "VM: Rework vmalloc code to support mapping of arbitray pages"
-> > by Christoph back in 2002. So yes, we can safely remove it finally. Se
-> > below.
-> > 
-> > 
-> > From 8d52e1d939d101b0dafed6ae5c3c1376183e65bb Mon Sep 17 00:00:00 2001
-> > From: Michal Hocko <mhocko@suse.com>
-> > Date: Wed, 31 Jan 2018 09:16:56 +0100
-> > Subject: [PATCH] net/netfilter/x_tables.c: remove size check
-> > 
-> > Back in 2002 vmalloc used to BUG on too large sizes. We are much better
-> > behaved these days and vmalloc simply returns NULL for those. Remove
-> > the check as it simply not needed and the comment even misleading.
-> > 
-> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  net/netfilter/x_tables.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-> > index b55ec5aa51a6..48a6ff620493 100644
-> > --- a/net/netfilter/x_tables.c
-> > +++ b/net/netfilter/x_tables.c
-> > @@ -999,10 +999,6 @@ struct xt_table_info *xt_alloc_table_info(unsigned int size)
-> >  	if (sz < sizeof(*info))
-> >  		return NULL;
-> >  
-> > -	/* Pedantry: prevent them from hitting BUG() in vmalloc.c --RR */
-> > -	if ((SMP_ALIGN(size) >> PAGE_SHIFT) + 2 > totalram_pages)
-> > -		return NULL;
-> > -
-> >  	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
-> >  	 * work reasonably well if sz is too large and bail out rather
-> >  	 * than shoot all processes down before realizing there is nothing
+> Ahh, I had an older version.
 > 
-> Patchwork didn't catch this patch for some reason, would you mind to
-> resend?
+> Looking at the latest one I can find (325462-065US), it does specify
+> that it has a modrm byte:
+> 
+>   0F FF /r   UD0 1 r32, r/m32
+> 
+> so I think that our opcode maps are wrong, and it's a bit dangerous to
+> put random constants right after the UD0.
+> 
+> Maybe we should make our use of UD0 have a third byte: add a harmless
+> modrm byte before the warning constants?
+> 
+> But yes, at least my objdump just thinks it's a bad 2-byte sequence,
+> and doesn't look at any modrm bytes at all.
 
-From: Michal Hocko <mhocko@suse.com>
-Subject: net/netfilter/x_tables.c: remove size check
+Look what my objdump does:
 
-Back in 2002 vmalloc used to BUG on too large sizes.  We are much better
-behaved these days and vmalloc simply returns NULL for those.  Remove the
-check as it simply not needed and the comment is even misleading.
+$ objdump --version
+GNU objdump (GNU Binutils for Debian) 2.29.90.20180122
 
-Link: http://lkml.kernel.org/r/20180131081916.GO21609@dhcp22.suse.cz
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: David S. Miller <davem@davemloft.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+$ objdump -dr defconfig-build/kernel/sched/core.o | grep ud0
+    183a:       0f ff 65 48             ud0    0x48(%rbp),%esp
+    1881:       0f ff c3                ud0    %ebx,%eax
+    18b1:       0f ff 89 c0 48 0f a3    ud0    -0x5cf0b740(%rcx),%ecx
+    1940:       0f ff 89 c0 48 0f a3    ud0    -0x5cf0b740(%rcx),%ecx
+    19c2:       0f ff 89 c0 48 0f a3    ud0    -0x5cf0b740(%rcx),%ecx
 
- net/netfilter/x_tables.c |    4 ----
- 1 file changed, 4 deletions(-)
+So yeah, we're screwed :-(
 
-diff -puN net/netfilter/x_tables.c~net-netfilter-x_tablesc-remove-size-check net/netfilter/x_tables.c
---- a/net/netfilter/x_tables.c~net-netfilter-x_tablesc-remove-size-check
-+++ a/net/netfilter/x_tables.c
-@@ -1004,10 +1004,6 @@ struct xt_table_info *xt_alloc_table_inf
- 	if (sz < sizeof(*info))
- 		return NULL;
- 
--	/* Pedantry: prevent them from hitting BUG() in vmalloc.c --RR */
--	if ((size >> PAGE_SHIFT) + 2 > totalram_pages)
--		return NULL;
--
- 	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
- 	 * work reasonably well if sz is too large and bail out rather
- 	 * than shoot all processes down before realizing there is nothing
-_
+Adding a harmless modr/m to our UD0 would grow the kernel image. ARGGH
