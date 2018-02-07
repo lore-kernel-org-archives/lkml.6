@@ -1,126 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754525AbeBGPAN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:00:13 -0500
-Received: from mga04.intel.com ([192.55.52.120]:60117 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754150AbeBGO73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 09:59:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
-   d="scan'208";a="16684306"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [RFC 2/3] x86/mm/encrypt: Convert __PHYSICAL_MASK to patchable constant
-Date: Wed,  7 Feb 2018 17:59:12 +0300
-Message-Id: <20180207145913.2703-3-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180207145913.2703-1-kirill.shutemov@linux.intel.com>
-References: <20180207145913.2703-1-kirill.shutemov@linux.intel.com>
+        id S932101AbeBGPCD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:02:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36316 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754108AbeBGPCB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 10:02:01 -0500
+Date: Wed, 7 Feb 2018 15:01:55 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Message-ID: <20180207150155.GD6003@sirena.org.uk>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
+ <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+ <20180207104351.GA6003@sirena.org.uk>
+ <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+ <20180207141846.GC6003@sirena.org.uk>
+ <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1sNVjLsmu1MXqwQ/"
+Content-Disposition: inline
+In-Reply-To: <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
+X-Cookie: 15% gratuity added for parties over 8.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AMD SME claims one bit from physical memory address to indicate that the
-page is encrypted. This bit has to be mask out from __PHYSICAL_MASK.
 
-As an alternative, we can replace __PHYSICAL_MASK with patchable
-constant and adjust it directly at boot time.
+--1sNVjLsmu1MXqwQ/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/x86/Kconfig                  |  1 +
- arch/x86/include/asm/page_types.h | 11 ++++++++++-
- arch/x86/kernel/patchable_const.c |  3 +++
- arch/x86/mm/mem_encrypt.c         |  5 +++++
- 4 files changed, 19 insertions(+), 1 deletion(-)
+On Wed, Feb 07, 2018 at 04:32:13PM +0200, Peter De Schrijver wrote:
+> On Wed, Feb 07, 2018 at 02:18:46PM +0000, Mark Brown wrote:
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 78fc28e4f643..2f791aaac1a8 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1471,6 +1471,7 @@ config ARCH_HAS_MEM_ENCRYPT
- config AMD_MEM_ENCRYPT
- 	bool "AMD Secure Memory Encryption (SME) support"
- 	depends on X86_64 && CPU_SUP_AMD
-+	select PATCHABLE_CONST
- 	---help---
- 	  Say yes to enable support for the encryption of system memory.
- 	  This requires an AMD processor that supports Secure Memory
-diff --git a/arch/x86/include/asm/page_types.h b/arch/x86/include/asm/page_types.h
-index 1e53560a84bb..8ff82468c9af 100644
---- a/arch/x86/include/asm/page_types.h
-+++ b/arch/x86/include/asm/page_types.h
-@@ -5,6 +5,7 @@
- #include <linux/const.h>
- #include <linux/types.h>
- #include <linux/mem_encrypt.h>
-+#include <asm/patchable_const.h>
- 
- /* PAGE_SHIFT determines the page size */
- #define PAGE_SHIFT		12
-@@ -17,7 +18,8 @@
- #define PUD_PAGE_SIZE		(_AC(1, UL) << PUD_SHIFT)
- #define PUD_PAGE_MASK		(~(PUD_PAGE_SIZE-1))
- 
--#define __PHYSICAL_MASK		((phys_addr_t)(__sme_clr((1ULL << __PHYSICAL_MASK_SHIFT) - 1)))
-+#define __PHYSICAL_MASK_DEFAULT	((_AC(1, ULL) << __PHYSICAL_MASK_SHIFT) - 1)
-+
- #define __VIRTUAL_MASK		((1UL << __VIRTUAL_MASK_SHIFT) - 1)
- 
- /* Cast *PAGE_MASK to a signed type so that it is sign-extended if
-@@ -55,6 +57,13 @@
- 
- #ifndef __ASSEMBLY__
- 
-+#ifdef CONFIG_AMD_MEM_ENCRYPT
-+DECLARE_PATCHABLE_CONST_U64(__PHYSICAL_MASK);
-+#define __PHYSICAL_MASK		__PHYSICAL_MASK_READ()
-+#else
-+#define __PHYSICAL_MASK		((phys_addr_t)__PHYSICAL_MASK_DEFAULT)
-+#endif
-+
- extern int devmem_is_allowed(unsigned long pagenr);
- 
- extern unsigned long max_low_pfn_mapped;
-diff --git a/arch/x86/kernel/patchable_const.c b/arch/x86/kernel/patchable_const.c
-index d44d91cafee2..8d48c4c101ca 100644
---- a/arch/x86/kernel/patchable_const.c
-+++ b/arch/x86/kernel/patchable_const.c
-@@ -89,9 +89,12 @@ int patch_const_u64(unsigned long **start, unsigned long **stop,
- 	return -EFAULT;
- }
- 
-+PATCHABLE_CONST_U64(__PHYSICAL_MASK);
-+
- #ifdef CONFIG_MODULES
- /* Add an entry for a constant here if it expected to be seen in the modules */
- static const struct const_u64_table const_u64_table[] = {
-+	{"__PHYSICAL_MASK", __PHYSICAL_MASK_DEFAULT, &__PHYSICAL_MASK_CURRENT},
- };
- 
- __init_or_module __nostackprotector
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index 1a53071e2e17..5135b59ce6a5 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -1033,4 +1033,9 @@ void __init __nostackprotector sme_enable(struct boot_params *bp)
- 		sme_me_mask = 0;
- 	else
- 		sme_me_mask = active_by_default ? me_mask : 0;
-+
-+	if (__PHYSICAL_MASK_SET(__PHYSICAL_MASK & ~sme_me_mask)) {
-+		/* Can we handle it? */
-+		BUG();
-+	}
- }
--- 
-2.15.1
+> > You're going to have to provide a much better explanation of what this
+> > is doing - right now it seems like an abuse of constraints.  Client
+> > drivers can already determine if a particular voltage they want to set
+> > is available via regulator_list_voltage() and so on, that's what
+> > constraints are there to set.  It sounds like you're trying to use them
+> > for something else but you're really not explaining your use case
+> > clearly.
+
+> There is no way to query what voltage I will actually get for a given input
+
+I looked at patch 2.  It looked like an abuse of what constraints do,
+and had zero explanation of why it was doing what it was doing.  In any
+case we need the regulator code and changelog to be clear about what the
+interface is for and why it should be used, that's not happening here.
+
+> voltage. If you read drivers/clk/tegra/cvb. (you did do that right?), you
+> will see that there is a minimum and maximum voltage defined by
+> charaterization which needs to be capped to the regulator generated voltages
+> for those points.
+
+I can't really tell what you're saying here.  If the driver needs to
+know if it can set the a given voltage there's already an API for doing
+that as I said.  If you're trying to convey this minimum and maximum
+voltage via the constraints that sounds like an abuse of the constraints.
+
+--1sNVjLsmu1MXqwQ/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp7FOIACgkQJNaLcl1U
+h9Aspgf+MssimMSW7Qbj2UivzOJ4IsFXPul0dhXEZnBgvN+DwYbMkV8MG7g1bWdr
+M7Z0LE3RLyd/oVzJihAA99ROWs1lFlwFVzKphlqMcMHU9x2ZzYfjJwhnlwNP9AjL
+SSGfYCyaD6BqfCF8aEWmpe0XXu107XivI7BYlYU5TBjbCh8NWMBDBXZjdC68PON+
+/bKFnhujKGW6kV+fksmorZQ4u3Tz0LXFJRQc3shsU8Aw4q+Jh2kirmXYP8Iu8Cp3
+0xRE49lwrhw//uwg61C7PY9VHzns/vFwH7goskLWhGVjbmmscz1qmnz0dQ9xrIjE
+TMZiVXKZonoqEXuJfWyDlTV6fCZhHg==
+=2qiR
+-----END PGP SIGNATURE-----
+
+--1sNVjLsmu1MXqwQ/--
