@@ -1,111 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754441AbeBGPDf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:03:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52157 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754138AbeBGPDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:03:34 -0500
-Date: Wed, 7 Feb 2018 16:03:28 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Adam Borowski <kilobyte@angband.pl>
-Cc: Kees Cook <keescook@chromium.org>, "Tobin C. Harding" <me@tobin.cc>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
-Message-ID: <20180207150328.nuk7f76nutq2trcg@pathway.suse.cz>
-References: <20180204174521.21383-1-kilobyte@angband.pl>
- <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
- <CAGXu5j+rWhT7_DH5Z96_7naPou96-6736x4mjq0r_8EG4iiQ_g@mail.gmail.com>
- <20180205201555.GQ29988@eros>
- <CAGXu5j+KSm3rOK46xiYPx8SRaO9T5LaeaXxOA3PSktJv4F__dg@mail.gmail.com>
- <20180205205817.72dy7e7xzjcnwmhs@angband.pl>
+        id S1754333AbeBGPH3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:07:29 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:56233 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754108AbeBGPH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 10:07:27 -0500
+X-Google-Smtp-Source: AH8x226R3fMCgbutbQZGcc86fVzcNqFXAD0zbMdyAMbWSw0YMrUYmdptr3rnn+5kKn5NBes04xpVow==
+Date: Wed, 7 Feb 2018 15:07:22 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] backlight: pwm_bl: linear interpolation between
+ brightness-levels
+Message-ID: <20180207150722.zblz6dnfcmrvlxa4@oak.lan>
+References: <20180207141337.22247-1-enric.balletbo@collabora.com>
+ <20180207141337.22247-2-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180205205817.72dy7e7xzjcnwmhs@angband.pl>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180207141337.22247-2-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-02-05 21:58:17, Adam Borowski wrote:
-> On Tue, Feb 06, 2018 at 07:32:32AM +1100, Kees Cook wrote:
-> > On Tue, Feb 6, 2018 at 7:15 AM, Tobin C. Harding <me@tobin.cc> wrote:
-> > > On Tue, Feb 06, 2018 at 05:57:17AM +1100, Kees Cook wrote:
-> > >> On Mon, Feb 5, 2018 at 8:44 PM, Petr Mladek <pmladek@suse.com> wrote:
-> > >> > On Sun 2018-02-04 18:45:21, Adam Borowski wrote:
-> > >> >> Like %pK already does, print "00000000" instead.
-> > >> >>
-> > >> >> This confused people -- the convention is that "(null)" means you tried to
-> > >> >> dereference a null pointer as opposed to printing the address.
-> > >
-> > > Leaving aside what is converting to %px.  If we consider that using %px
-> > > is meant to convey to us that we _really_ want the address, in hex hence
-> > > the 'x', then it is not surprising that we will get "00000000"'s for a
-> > > null pointer, right?  Yes it is different to before but since we are
-> > > changing the specifier does this not imply that there may be some
-> > > change?
-> > 
-> > I personally prefer 0000s, but if we're going to change this, we need
-> > to be aware of the difference.
+On Wed, Feb 07, 2018 at 03:13:34PM +0100, Enric Balletbo i Serra wrote:
+> Setting num-interpolated-steps in the dts will allow you to have linear
+> interpolation between values of brightness-levels. This way a high
+> resolution pwm duty cycle can be used without having to list out every
+> possible value in the dts. This system also allows for gamma corrected
+> values.
 > 
-> It's easy to paint this bikeshed any color you guys want to: there's an "if"
-> already.  My preference is also 0000; NULL would be good, too -- I just
-> don't want (null) as that has a special meaning in usual userspace
-> implementations; (null) also fits well most other modes of %p as they show
-> some object the argument points to.  Confusion = wasted debugging time.
-
-> Let's recap:
+> The most simple example is interpolate between two brightness values a
+> number of steps, this can be done setting the following in the dts:
 > 
-> Currently:
->               not-null              null
-> %pponies      object's description  (null)
-> %px           address               (null)
-> %pK           hash                  hash
+>   brightness-levels = <0 65535>;
+>   num-interpolated-steps = <1024>;
+>   default-brightness-level = <512>;
 > 
-> I'd propose:
->               not-null              null
-> %pponies      object's description  (null)
-> %px           address               00000000
-> %pK           hash                  00000000
+> This will create a brightness-level table with the following values:
+> 
+>   <0 63 126 189 252 315 378 441 ... 64260 64323 64386 64449 65535>
+> 
+> Another use case can be describe a gamma corrected curve, as we have
+> better sensitivity at low luminance than high luminance we probably
+> want have smaller steps for low brightness levels values and bigger
+> steps for high brightness levels values. This can be achieved with
+> the following in the dts:
+> 
+>   brightness-levels = <0 4096 65535>;
+>   num-interpolated-steps = <1024>;
+>   default-brightness-level = <512>;
+> 
+> This will create a brightness-levels table with the following values:
+> 
+>   <0 4 8 12 16 20 ... 4096 4156 4216 4276 ... 65535>
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-It makes sense to me[*], so
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-It seems that all people agree with this change. But there was also some
-confusion. I am going to give it few more days before I push it to
-Linus. It means waiting for 4.16-rc3 because I will be without
-reliable internet next week. Anyone, feel free to push it faster.
+I'd really like to ack this one (especially so given I'm extremely late 
+with a review) but unfortunately...
 
 
-[*] I made some archaeology:
+> ---
+> Changes since v1:
+> - None.
+> 
+>  drivers/video/backlight/pwm_bl.c | 86 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+> 
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index 8e3f1245f5c5..9dbf0b3e806f 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -147,7 +147,11 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>  				  struct platform_pwm_backlight_data *data)
+>  {
+>  	struct device_node *node = dev->of_node;
+> +	unsigned int num_levels = 0;
+> +	unsigned int levels_count;
+> +	unsigned int num_steps;
+>  	struct property *prop;
+> +	unsigned int *table;
+>  	int length;
+>  	u32 value;
+>  	int ret;
+> @@ -167,6 +171,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>  	/* read brightness levels from DT property */
+>  	if (data->max_brightness > 0) {
+>  		size_t size = sizeof(*data->levels) * data->max_brightness;
+> +		unsigned int i, j, n = 0;
+>  
+>  		data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
+>  		if (!data->levels)
+> @@ -184,6 +189,87 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>  			return ret;
+>  
+>  		data->dft_brightness = value;
+> +
+> +		/*
+> +		 * This property is optional, if is set enables linear
+> +		 * interpolation between each of the values of brightness levels
+> +		 * and creates a new pre-computed table.
+> +		 */
+> +		of_property_read_u32(node, "num-interpolated-steps",
+> +				     &num_steps);
+> +
+> +		/*
+> +		 * Make sure that there is at least two entries in the
+> +		 * brightness-levels table, otherwise we can't interpolate
+> +		 * between two points.
+> +		 */
+> +		if (num_steps) {
+> +			if (data->max_brightness < 2) {
+> +				dev_err(dev, "can't interpolate\n");
+> +				return -EINVAL;
+> +			}
+> +
+> +			/*
+> +			 * Recalculate the number of brightness levels, now
+> +			 * taking in consideration the number of interpolated
+> +			 * steps between two levels.
+> +			 */
+> +			for (i = 0; i < data->max_brightness - 1; i++) {
+> +				if ((data->levels[i + 1] - data->levels[i]) /
+> +				   num_steps)
+> +					num_levels += num_steps;
+> +				else
+> +					num_levels++;
+> +			}
+> +			num_levels++;
+> +			dev_dbg(dev, "new number of brightness levels: %d\n",
+> +				num_levels);
+> +
+> +			/*
+> +			 * Create a new table of brightness levels with all the
+> +			 * interpolated steps.
+> +			 */
+> +			table = kcalloc(num_levels, sizeof(*table), GFP_KERNEL);
+> +			if (!table)
+> +				return -ENOMEM;
+> +
+> +			/* Fill the interpolated table. */
+> +			levels_count = 0;
+> +			for (i = 0; i < data->max_brightness - 1; i++) {
+> +				value = data->levels[i];
+> +				n = (data->levels[i + 1] - value) / num_steps;
+> +				if (n > 0) {
+> +					for (j = 0; j < num_steps; j++) {
+> +						table[levels_count] = value;
+> +						value += n;
+> +						levels_count++;
+> +					}
+> +				} else {
+> +					table[levels_count] = data->levels[i];
+> +					levels_count++;
+> +				}
+> +			}
+> +			table[levels_count] = data->levels[i];
+> +
+> +			/*
+> +			 * As we use interpolation lets remove current
+> +			 * brightness levels table for the new interpolated
+> +			 * table.
+> +			 */
+> +			devm_kfree(dev, data->levels);
+> +			data->levels = devm_kcalloc(dev, num_levels,
+> +						    sizeof(*data->levels),
+> +						    GFP_KERNEL);
+> +			memcpy(data->levels, table,
+> +			       num_levels * sizeof(*table));
 
-The "(null)" string was added by the commit d97106ab53f812910
-("Make %p print '(null)' for NULL pointers").
+... this looks a bit too odd.
 
-It was a generic solution to prevent eventual crashes, see
-https://lkml.kernel.org/r/1230979341-23029-1-git-send-email-xyzzy@speakeasy.org
+I think I can live we a pre-calculated table (not my preference... but I
+can live with it). However the way table is allocated, then allocated 
+again and copied without a NULL check isn't OK.
 
->From this point, printing 00000000 for %px looks perfectly fine because
-it does not crash.
+Can't we just switch the first allocation over to a devres alloc and
+then just swap pointers here?
 
-In fact, it would have made perfect sense to print 00000000 for pure
-%p because it did not crash. But nobody has cared about the eventual
-confusion yet.
+And a minor nit: do we need calloc?  The loop should initialize every 
+element anyway.
 
-I am not sure if it makes sense to change the pure %p handling
-now. Note that printing "(null)" has the advantage that we
-get this string instead of the hash ;-)
 
-Best Regards,
-Petr
+Daniel.
+
+
+> +			kfree(table);
+> +			/*
+> +			 * Reassign max_brightness value to the new total number
+> +			 * of brightness levels.
+> +			 */
+> +			data->max_brightness = num_levels;
+> +		}
+> +
+>  		data->max_brightness--;
+>  	}
+>  
+> -- 
+> 2.15.1
+> 
