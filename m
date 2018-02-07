@@ -1,174 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754091AbeBGNDa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:03:30 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:49594 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753721AbeBGND3 (ORCPT
+        id S1754102AbeBGNE3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:04:29 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:27051 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753695AbeBGNE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:03:29 -0500
-Message-ID: <1518008590.3677.126.camel@infradead.org>
-Subject: Re: [PATCH] mm: Always print RLIMIT_DATA warning
-From: David Woodhouse <dwmw2@infradead.org>
-To: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Vladimir Davydov <vdavydov@virtuozzo.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Kees Cook <keescook@google.com>, Willy Tarreau <w@1wt.eu>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-In-Reply-To: <CALYGNiOUZXiOeWSYMgeF3792NNWAgpcxnAOMQ_Wb-d1-Xo_k0Q@mail.gmail.com>
-References: <1517935505-9321-1-git-send-email-dwmw@amazon.co.uk>
-         <CALYGNiOUZXiOeWSYMgeF3792NNWAgpcxnAOMQ_Wb-d1-Xo_k0Q@mail.gmail.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-HAzIh045t+cBjZiifTZP"
-Date: Wed, 07 Feb 2018 13:03:10 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 7 Feb 2018 08:04:26 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180207130424epoutp01a8ebb059d23d9d8128f9f49f988c8c1a~RDNZ2igXZ1589215892epoutp01C
+X-AuditID: b6c32a47-19fff7000000100c-47-5a7af9572876
+Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
+Date: Wed, 07 Feb 2018 14:04:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-version: 1.0
+In-reply-to: <5A7AE1E0.8000509@samsung.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7bCmhW74z6oog5srNC02zljPanH9y3NW
+        i02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfd4uIpV4sfZ7pZHDg93t9oZfe43NfL5LF5Sb1H
+        35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZfR82c1e0MZSsW7TfcYGxonMXYycHBICJhJH1p4B
+        srk4hAR2MErs6/vLCOF8Z5Q4sf0eXNWJL/ugqnYzSmzufs0C4dxnlPjxbT4jSJWwQLzEvocn
+        2UFsEQENiZl/r4CNYhZ4yyix/tQksFFsAoYSvUf7wBp4Bewklh99zwpiswioSjxd0QfWLCoQ
+        IbFw6lOoGkGJH5PvsYDYnALaErtnPACrYRbQlHjxZRILhC0ucez+TUYIW15i85q3UGdfZ5M4
+        eMegi5EDyHaRaFpRBBEWlnh1fAs7hC0t8WzVRrA7JQT6gV5e0wzlzGCUuNM+gQmiylri8PGL
+        rBAL+CQ6Dv9lhxjKK9HRJgRR4iHx5dx0VgjbUeL9vwXQEGplkrhyeR7zBEa5WUj+mYXkh1lI
+        fpiF5IcFjCyrGMVSC4pz01OLjQqM9YoTc4tL89L1kvNzNzGCE42W+w7Gbed8DjEKcDAq8fAa
+        bKiMEmJNLCuuzD3EKMHBrCTC+3NlVZQQb0piZVVqUX58UWlOavEhRmkOFiVx3tYAlyghgfTE
+        ktTs1NSC1CKYLBMHp1QDY+w/mf2KLXfSMusstk9y5j7Cp7XCemnj5k13im8UPf/D+NHKdXZJ
+        D3OxuvLxiatyDv0/wnb9ZoyNrohMivOGeK+isy3F1cEPD/Xkvj9/rOb+lrAV2lKqdxccyPm5
+        /8TWvn9mVju8J4ZyCrSFXWjXFH5ZnvbD5J1i7cq/vJ//C8Vu3BXX7eSapcRSnJFoqMVcVJwI
+        AMJLS0wwAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsVy+t9jAd3wn1VRBhtnCltsnLGe1eL6l+es
+        FpseX2O1+Nhzj9Xi8q45bBYzzu9jslh75C67xcVTrhY/znSzOHB6vL/Ryu5xua+XyWPzknqP
+        vi2rGD0+b5ILYI3isklJzcksSy3St0vgyuj5spu9oI2lYt2m+4wNjBOZuxg5OSQETCROfNkH
+        ZgsJ7GSUuDI7DMJ+yChx96MriC0sEC+x7+FJdhBbREBDYubfK4xdjFwczAJvGSXerIRpbmWS
+        OPJdCcRmEzCU6D3axwhi8wrYSSw/+p4VxGYRUJV4uqIPbJCoQIRE58r5LBA1ghI/Jt8DszkF
+        tCV2z3gAVMMBtEBdYsqUXJAws4C4xLH7NxkhbHmJzWveMk9gFJiFpHsWQscsJB2zkHQsYGRZ
+        xSiZWlCcm55bbFRglJdarlecmFtcmpeul5yfu4kRGBHbDmv172B8vCT+EKMAB6MSD6/Bhsoo
+        IdbEsuLK3EOMEhzMSiK8P1dWRQnxpiRWVqUW5ccXleakFh9ilOZgURLn5c8/FikkkJ5Ykpqd
+        mlqQWgSTZeLglGpgnHtN84JjOlMz3z375Te32XUWSn1YfWd/gdcXfjWT/R5zkvZLhVrcrXk+
+        bZWYplWoZk6vxjrRW3Nqzj/Ylfv1TDzndG9hrovizgIVeXwHSioCFUpyHpz6cWRRZf/de7bO
+        vyN33PWvZ1+kNmvZ7Ohs1ZdLSyXXrJ5gcsXOJnKqQ/nDI8vvHd5wSImlOCPRUIu5qDgRAP4M
+        HWuEAgAA
+X-CMS-MailID: 20180207130423epcas2p44591f17faf5283758bded97b276ae2c2
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
+X-RootMTR: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
+References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
+        <20180205142230.9755-1-s.nawrocki@samsung.com>
+        <5A7916A2.7010307@samsung.com>
+        <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
+        <5A7AE1E0.8000509@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/07/2018 12:24 PM, Chanwoo Choi wrote:
+> Could you share your equation?
+> because your result is a little bit different of my result.
+> - my equation : ((mdiv + kdiv/65535) x 24MHz) / (pdiv x POWER(2,sdiv))
 
---=-HAzIh045t+cBjZiifTZP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+It resembles the code from samsung_pll36xx_recalc_rate():
 
+(24 * 10^6 * (M * 2^16 + K)) / (P * 2^S) / 2^16
 
+and a more accurate one
 
-On Tue, 2018-02-06 at 20:48 +0300, Konstantin Khlebnikov wrote:
-> On Tue, Feb 6, 2018 at 7:45 PM, David Woodhouse <dwmw@amazon.co.uk> wrote=
-:
-> >=20
-> > The documentation for ignore_rlimit_data says that it will print a warn=
-ing
-> > at first misuse. Yet it doesn't seem to do that. Fix the code to print
-> > the warning even when we allow the process to continue.
->
-> Ack. But I think this was a misprint in docs.
-> Anyway, this knob is a kludge so we might warn once even if it is set.
+ROUNDDOWN(ROUNDDOWN(24 * 10^6 * (M * 2^16 + K), 0) / ROUNDDOWN(P * 2^S, 0) / 2^16, 0)
 
-Right. I think we definitely should. Otherwise, once set, there's no
-real path to ever being able to *unset* it. Nothing well ever get
-fixed.
+Shouldn't you substitute 65535 with 65536?
 
-> So, somebody still have problems with this change?
-> I remember concerns about that "warn_once" isn't enough to detect
-> what's going wrong.
-> And probably we should invent=C2=A0=C2=A0"warn_sometimes".
-
-That was covered by "should probably also do what Linus suggested=E2=80=A6"=
-:
-
-> > ---
-> > We should probably also do what Linus suggested in
-> > https://lkml.org/lkml/2016/9/16/585
-
---=-HAzIh045t+cBjZiifTZP
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDcxMzAzMTBaMC8GCSqG
-SIb3DQEJBDEiBCCOn08xaGpZmomeXZok60WKqzsiUOBDIeSAJxkY9/BN0TCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBABqSbUNzJeu4
-qBDfVGNIvpfAnPMJLafIRQswkULE4N3auFZqC7RKtFdDaIuhPSmipNSw8IKIjNRK2qfcDQaegxtR
-tz9ULsOjA3Bw/PY3PqsoZYfo5FPVG652/vWmCoKFHj2RvFievFUvlQNd7Ex7iu2j7hrQxQik3ZCh
-fvgta+5G5oJxq0tJ0qt7ly0kTMAzNMGATDUQbzPc/oWjLD1n30DAqAN9dKEDQ4UDX2on5tbVcUFw
-DhmMp2IrK6cLK30MIeG2RCPD8HsuQLOnx/4PjzssrdJUVQ+zjrmikNxpfu70z5k5hNV7ZjNeyJvh
-ijAo/e/lhfNTEJJ5+fdEdDLatVYAAAAAAAA=
-
-
---=-HAzIh045t+cBjZiifTZP--
+-- 
+Regards,
+Sylwester
