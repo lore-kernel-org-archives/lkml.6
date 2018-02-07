@@ -1,306 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753462AbeBGIWf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:22:35 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:60662 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753156AbeBGIWd (ORCPT
+        id S1753470AbeBGI3r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:29:47 -0500
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:35941 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753291AbeBGI3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:22:33 -0500
-Subject: Re: [PATCH v8 0/7] TDA1997x HDMI video reciver
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
- <c7771c44-a9ff-0207-38f6-28bcc06ccdee@xs4all.nl>
- <CAJ+vNU1oiM0Y0rO-DHi57nVOqnw60A7pn_1=h5b46-BrY7_p2Q@mail.gmail.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <605fd4a8-43ab-c566-57b6-abb1c9f8f0f8@xs4all.nl>
-Date: Wed, 7 Feb 2018 09:22:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 7 Feb 2018 03:29:45 -0500
+X-Google-Smtp-Source: AH8x227rc7dFBrduNcJ8YwCrJgAQ3Ww2XKCneE5xa2y1Omif9NS4v9FoJHZy/PSIbliLjh383un92w==
+Date: Wed, 7 Feb 2018 09:29:42 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>
+Subject: Re: linux-next: manual merge of the kvm tree with the arm64 tree
+Message-ID: <20180207082942.GA29286@cbox>
+References: <20180207122753.6e228f27@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CAJ+vNU1oiM0Y0rO-DHi57nVOqnw60A7pn_1=h5b46-BrY7_p2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIG+bGb+NzagCdg5J5zGFpOjROdhqS1NtEZsI0EDkIpQdakq1uL4+D2YBbniOOUo2a0Rlq0UHthqkyr+Nja2zNVUjrDD6SfFaFOepu8uEvKChc+CJsYC
- SkB9/70I++GN5VjrPMi6a2QRXACwKg9sPvJ/Yfl/an7m66D786u+wIAFmVG3hBaqdiMxXTUJJUJ08hwJ6mo7YX8pZh1zMoQmORHTKqponOgEgsFM5e1RlvlW
- Lukm8wv6ky0W58gG2oxMvSQkW+7Vqgu3MDQd3Qpm08BfMBlCR8WIexcEQcrAFMDJoAapfCjLiZgqdME7uieozlpqmiFlKd9g11IKunDRBmbnhXyFcdBV/Mub
- R1YY6FOsYCjT5m9K58ZXHANsSrAKtQH+HbNlMLL9QOKq+gDG/wJdG4Q/AdTAZql1vds4Eq6iEFeFsjfXR+UWMVTgu/rtOo/+tGCNAi20lAa2O5LFx5PSTUxs
- e5ceoKCPsRjXwU3t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180207122753.6e228f27@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/2018 12:29 AM, Tim Harvey wrote:
-> On Tue, Feb 6, 2018 at 1:21 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> On 02/06/2018 09:27 PM, Tim Harvey wrote:
->>
->> <snip>
->>
->>> v4l2-compliance test results:
->>>  - with the following kernel patches:
->>>    v4l2-subdev: clear reserved fields
->>>  . v4l2-subdev: without controls return -ENOTTY
->>>
->>> v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
->>> Media Driver Info:
->>>       Driver name      : imx-media
->>>       Model            : imx-media
->>>       Serial           :
->>>       Bus info         :
->>>       Media version    : 4.15.0
->>>       Hardware revision: 0x00000000 (0)
->>>       Driver version   : 4.15.0
->>> Interface Info:
->>>       ID               : 0x0300008f
->>>       Type             : V4L Sub-Device
->>> Entity Info:
->>>       ID               : 0x00000003 (3)
->>>       Name             : tda19971 2-0048
->>>       Function         : Unknown
->>
->> This is missing. It should be one of these:
->>
->> https://hverkuil.home.xs4all.nl/spec/uapi/mediactl/media-types.html#media-entity-type
->>
->> However, we don't have a proper function defined.
->>
->> I would suggest adding a new MEDIA_ENT_F_DTV_DECODER analogous to MEDIA_ENT_F_ATV_DECODER.
->>
->> It would be a new patch adding this + documentation.
+On Wed, Feb 07, 2018 at 12:27:53PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Hows this look for adding to my next series:
+> Today's linux-next merge of the kvm tree got a conflict in:
 > 
-> Author: Tim Harvey <tharvey@gateworks.com>
-> Date:   Tue Feb 6 14:12:52 2018 -0800
+>   arch/arm64/include/asm/pgtable-prot.h
 > 
->     [media] add digital video decoder video interface entity functions
+> between commit:
 > 
->     Add a new media entity function definition for digital TV decoders:
->     MEDIA_ENT_F_DTV_DECODER
+>   41acec624087 ("arm64: kpti: Make use of nG dependent on arm64_kernel_unmapped_at_el0()")
 > 
->     Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> from the arm64 tree and commit:
 > 
-> --- a/Documentation/media/uapi/mediactl/media-types.rst
-> +++ b/Documentation/media/uapi/mediactl/media-types.rst
-> @@ -321,6 +321,17 @@ Types and flags used to represent the media graph elements
->           MIPI CSI-2, ...), and outputs them on its source pad to an output
->           video bus of another type (eDP, MIPI CSI-2, parallel, ...).
+>   d0e22b4ac3ba ("KVM: arm/arm64: Limit icache invalidation to prefetch aborts")
 > 
-> +    -  ..  row 31
-> +
-> +       ..  _MEDIA-ENT-F-DTV-DECODER:
-> +
-> +       -  ``MEDIA_ENT_F_DTV_DECODER``
-> +
-> +       -  Digital video decoder. The basic function of the video decoder is
-> +         to accept digital video from a wide variety of sources
-> +         and output it in some digital video standard, with appropriate
-> +         timing signals.
-> +
->  ..  tabularcolumns:: |p{5.5cm}|p{12.0cm}|
+> from the kvm tree.
 > 
->  .. _media-entity-flag:
-> diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-> index b9b9446..6653e88 100644
-> --- a/include/uapi/linux/media.h
-> +++ b/include/uapi/linux/media.h
-> @@ -152,6 +152,7 @@ struct media_device_info {
->   * MEDIA_ENT_F_IF_VID_DECODER and/or MEDIA_ENT_F_IF_AUD_DECODER.
->   */
->  #define MEDIA_ENT_F_TUNER              (MEDIA_ENT_F_OLD_SUBDEV_BASE + 5)
-> +#define MEDIA_ENT_F_DTV_DECODER
-> (MEDIA_ENT_F_OLD_SUBDEV_BASE + 6)
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc arch/arm64/include/asm/pgtable-prot.h
+> index 2db84df5eb42,4e12dabd342b..000000000000
+> --- a/arch/arm64/include/asm/pgtable-prot.h
+> +++ b/arch/arm64/include/asm/pgtable-prot.h
+> @@@ -53,24 -47,23 +53,24 @@@
+>   #define PROT_SECT_NORMAL	(PROT_SECT_DEFAULT | PMD_SECT_PXN | PMD_SECT_UXN | PMD_ATTRINDX(MT_NORMAL))
+>   #define PROT_SECT_NORMAL_EXEC	(PROT_SECT_DEFAULT | PMD_SECT_UXN | PMD_ATTRINDX(MT_NORMAL))
+>   
+>  -#define _PAGE_DEFAULT		(PROT_DEFAULT | PTE_ATTRINDX(MT_NORMAL))
+>  +#define _PAGE_DEFAULT		(_PROT_DEFAULT | PTE_ATTRINDX(MT_NORMAL))
+>  +#define _HYP_PAGE_DEFAULT	_PAGE_DEFAULT
+>   
+>  -#define PAGE_KERNEL		__pgprot(_PAGE_DEFAULT | PTE_PXN | PTE_UXN | PTE_DIRTY | PTE_WRITE)
+>  -#define PAGE_KERNEL_RO		__pgprot(_PAGE_DEFAULT | PTE_PXN | PTE_UXN | PTE_DIRTY | PTE_RDONLY)
+>  -#define PAGE_KERNEL_ROX		__pgprot(_PAGE_DEFAULT | PTE_UXN | PTE_DIRTY | PTE_RDONLY)
+>  -#define PAGE_KERNEL_EXEC	__pgprot(_PAGE_DEFAULT | PTE_UXN | PTE_DIRTY | PTE_WRITE)
+>  -#define PAGE_KERNEL_EXEC_CONT	__pgprot(_PAGE_DEFAULT | PTE_UXN | PTE_DIRTY | PTE_WRITE | PTE_CONT)
+>  +#define PAGE_KERNEL		__pgprot(PROT_NORMAL)
+>  +#define PAGE_KERNEL_RO		__pgprot((PROT_NORMAL & ~PTE_WRITE) | PTE_RDONLY)
+>  +#define PAGE_KERNEL_ROX		__pgprot((PROT_NORMAL & ~(PTE_WRITE | PTE_PXN)) | PTE_RDONLY)
+>  +#define PAGE_KERNEL_EXEC	__pgprot(PROT_NORMAL & ~PTE_PXN)
+>  +#define PAGE_KERNEL_EXEC_CONT	__pgprot((PROT_NORMAL & ~PTE_PXN) | PTE_CONT)
+>   
+>  -#define PAGE_HYP		__pgprot(_PAGE_DEFAULT | PTE_HYP | PTE_HYP_XN)
+>  -#define PAGE_HYP_EXEC		__pgprot(_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY)
+>  -#define PAGE_HYP_RO		__pgprot(_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY | PTE_HYP_XN)
+>  +#define PAGE_HYP		__pgprot(_HYP_PAGE_DEFAULT | PTE_HYP | PTE_HYP_XN)
+>  +#define PAGE_HYP_EXEC		__pgprot(_HYP_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY)
+>  +#define PAGE_HYP_RO		__pgprot(_HYP_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY | PTE_HYP_XN)
+>   #define PAGE_HYP_DEVICE		__pgprot(PROT_DEVICE_nGnRE | PTE_HYP)
+>   
+> - #define PAGE_S2			__pgprot(_PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_NORMAL) | PTE_S2_RDONLY)
+> - #define PAGE_S2_DEVICE		__pgprot(_PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_DEVICE_nGnRE) | PTE_S2_RDONLY | PTE_UXN)
+>  -#define PAGE_S2			__pgprot(PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_NORMAL) | PTE_S2_RDONLY | PTE_S2_XN)
+>  -#define PAGE_S2_DEVICE		__pgprot(PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_DEVICE_nGnRE) | PTE_S2_RDONLY | PTE_S2_XN)
+> ++#define PAGE_S2			__pgprot(_PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_NORMAL) | PTE_S2_RDONLY | PTE_S2_XN)
+> ++#define PAGE_S2_DEVICE		__pgprot(_PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_DEVICE_nGnRE) | PTE_S2_RDONLY | PTE_S2_XN)
+>   
+>  -#define PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_VALID) | PTE_PROT_NONE | PTE_RDONLY | PTE_PXN | PTE_UXN)
+>  +#define PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_VALID) | PTE_PROT_NONE | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
+>   #define PAGE_SHARED		__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_NG | PTE_PXN | PTE_UXN | PTE_WRITE)
+>   #define PAGE_SHARED_EXEC	__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_NG | PTE_PXN | PTE_WRITE)
+>   #define PAGE_READONLY		__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
 
-Don't use MEDIA_ENT_F_OLD_SUBDEV_BASE for new functions.
 
-Use this instead:
+This looks correct to me.
 
-/*
- * Analog video decoder functions
- */
-#define MEDIA_ENT_F_DTV_DECODER			(MEDIA_ENT_F_BASE + 0x6001)
-
-Other than this, this patch looks great.
-
-> 
->  #define MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN        MEDIA_ENT_F_OLD_SUBDEV_BASE
-> 
-> 
-> Assigning this now shows a function but does not resolve the media
-> compliance results:
-> 
-> --- a/drivers/media/i2c/tda1997x.c
-> +++ b/drivers/media/i2c/tda1997x.c
-> @@ -2586,6 +2586,7 @@ static int tda1997x_probe(struct i2c_client *client,
->                  id->name, i2c_adapter_id(client->adapter),
->                  client->addr);
->         sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
-> +       sd->entity.function = MEDIA_ENT_F_DTV_DECODER;
->         sd->entity.ops = &tda1997x_media_ops;
-> 
->         /* set allowed mbus modes based on chip, bus-type, and bus-width */
-> 
-> 
-> root@ventana:~# v4l2-compliance -u1
-> v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
-> Media Driver Info:
->         Driver name      : imx-media
->         Model            : imx-media
->         Serial           :
->         Bus info         :
->         Media version    : 4.15.0
->         Hardware revision: 0x00000000 (0)
->         Driver version   : 4.15.0
-> Interface Info:
->         ID               : 0x0300008f
->         Type             : V4L Sub-Device
-> Entity Info:
->         ID               : 0x00000003 (3)
->         Name             : tda19971 2-0048
->         Function         : Unknown (00020006)
-
-Actually it does. The value above is now the new function.
-
->         Pad 0x01000004   : Source
->           Link 0x0200006f: to remote pad 0x1000063 of entity
-> 'ipu1_csi0_mux': Data
-> 
-> ...
-> 
-> root@ventana:~# v4l2-compliance -m0 -M
-> v4l2-compliance SHA   : b2f8f9049056eb6f9e028927dacb2c715a062df8
-> Media Driver Info:
->         Driver name      : imx-media
->         Model            : imx-media
->         Serial           :
->         Bus info         :
->         Media version    : 4.15.0
->         Hardware revision: 0x00000000 (0)
->         Driver version   : 4.15.0
-> 
-> Compliance test for device /dev/media0:
-> 
-> Required ioctls:
->         test MEDIA_IOC_DEVICE_INFO: OK
-> 
-> Allow for multiple opens:
->         test second /dev/media0 open: OK
->         test MEDIA_IOC_DEVICE_INFO: OK
->         test for unlimited opens: OK
-> 
-> Media Controller ioctls:
->                 fail: v4l2-test-media.cpp(141): ent.function ==
-> MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
-
-Weird, this shouldn't happen. I'll look into this a bit more.
-
->         test MEDIA_IOC_G_TOPOLOGY: FAIL
->                 fail: v4l2-test-media.cpp(256):
-> v2_entities_set.find(ent.id) == v2_entities_set.end()
-
-This is a v4l2-compliance bug that I have fixed. Just do another git pull.
-
-Regards,
-
-	Hans
-
->         test MEDIA_IOC_ENUM_ENTITIES/LINKS: FAIL
->         test MEDIA_IOC_SETUP_LINK: OK
-> 
-> Total: 7, Succeeded: 5, Failed: 2, Warnings: 0
-> 
->>
-> <snip>
->>>
->>> Sub-Device ioctls (Source Pad 0):
->>>       test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
->>>       test Try VIDIOC_SUBDEV_G/S_FMT: OK
->>>       test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
->>>       test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
->>>       test Active VIDIOC_SUBDEV_G/S_FMT: OK
->>>       test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
->>>       test VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
->>>
->>> Control ioctls:
->>>       test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>       test VIDIOC_QUERYCTRL: OK (Not Supported)
->>>       test VIDIOC_G/S_CTRL: OK (Not Supported)
->>>       test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>       test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
->>>       test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->>>       Standard Controls: 0 Private Controls: 0
->>
->> Why doesn't this show anything? You have at least one control, so this should
->> reflect that. Does 'v4l2-ctl -d /dev/v4l-subdev1 -l' show any controls?
->>
->> I think sd->ctrl_handler is never set to the v4l2_ctrl_handler pointer.
->>
->> Have you ever tested the controls?
->>
->> Looking closer I also notice that the control handler is never freed. Or
->> checked for errors when it is created in the probe function. Hmm, I should
->> have caught that earlier.
->>
-> 
-> Yes thanks - I missed this also:
-> 
-> --- a/drivers/media/i2c/tda1997x.c
-> +++ b/drivers/media/i2c/tda1997x.c
-> @@ -2726,6 +2726,12 @@ static int tda1997x_probe(struct i2c_client *client,
->                         &tda1997x_ctrl_ops,
->                         V4L2_CID_DV_RX_RGB_RANGE, V4L2_DV_RGB_RANGE_FULL, 0,
->                         V4L2_DV_RGB_RANGE_AUTO);
-> +       state->sd.ctrl_handler = hdl;
-> +       if (hdl->error) {
-> +               ret = hdl->error;
-> +               goto err_free_handler;
-> +       }
-> +       v4l2_ctrl_handler_setup(hdl);
-> 
->         /* initialize source pads */
->         state->pads[TDA1997X_PAD_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
-> @@ -2774,6 +2780,8 @@ static int tda1997x_probe(struct i2c_client *client,
-> 
->  err_free_media:
->         media_entity_cleanup(&sd->entity);
-> +err_free_handler:
-> +       v4l2_ctrl_handler_free(&state->hdl);
->  err_free_mutex:
->         cancel_delayed_work(&state->delayed_work_enable_hpd);
->         mutex_destroy(&state->page_lock);
-> @@ -2801,6 +2809,7 @@ static int tda1997x_remove(struct i2c_client *client)
-> 
->         v4l2_async_unregister_subdev(sd);
->         media_entity_cleanup(&sd->entity);
-> +       v4l2_ctrl_handler_free(&state->hdl);
->         regulator_bulk_disable(TDA1997X_NUM_SUPPLIES, state->supplies);
->         i2c_unregister_device(state->client_cec);
->         cancel_delayed_work(&state->delayed_work_enable_hpd);
-> 
-> root@ventana:~# v4l2-ctl -d /dev/v4l-subdev1 --list-ctrls
-> 
-> Digital Video Controls
-> 
->                   power_present 0x00a00964 (bitmask): max=0x00000001
-> default=0x00000000 value=0x00000000 flags=read-only
->       rx_rgb_quantization_range 0x00a00965 (menu)   : min=0 max=2
-> default=0 value=2
->              rx_it_content_type 0x00a00966 (menu)   : min=0 max=4
-> default=4 value=0 flags=read-only, volatile
-> 
-> And various sets/gets appear to work as designed (found that I wasn't
-> updating the csc when quantiation range was changed via ctrl and fixed
-> it).
-> 
-> Regards,
-> 
-> Tim
-> 
+Thanks,
+-Christoffer
