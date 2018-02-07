@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751095AbeBGFpw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 00:45:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55089 "EHLO mx2.suse.de"
+        id S1753147AbeBGFrb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 00:47:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55208 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750767AbeBGFpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 00:45:51 -0500
-Date: Wed, 07 Feb 2018 06:45:49 +0100
-Message-ID: <s5hvaf95p4i.wl-tiwai@suse.de>
+        id S1751023AbeBGFra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 00:47:30 -0500
+Date: Wed, 07 Feb 2018 06:47:29 +0100
+Message-ID: <s5htvut5p1q.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
-To: "Kirill Marinushkin" <k.marinushkin@gmail.com>
-Cc: <perex@perex.cz>, <alsa-devel@alsa-project.org>,
-        "Stephen Barber" <smbarber@chromium.org>,
-        "Bhumika Goyal" <bhumirks@gmail.com>,
-        "Jaejoong Kim" <climbbb.kim@gmail.com>,
-        "Julian Scheel" <julian@jusst.de>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE attribute
-In-Reply-To: <20180129053755.20136-1-k.marinushkin@gmail.com>
-References: <20180129053755.20136-1-k.marinushkin@gmail.com>
+To: "Lassi Ylikojola" <lassi.ylikojola@gmail.com>
+Cc: <alsa-devel@alsa-project.org>, <arvind.yadav.cs@gmail.com>,
+        <bhumirks@gmail.com>, <perex@perex.cz>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: usb-audio: add implicit fb quirk for Behringer UFX1204
+In-Reply-To: <0132cbb2-34f8-b85c-383d-d639d938c836@gmail.com>
+References: <0132cbb2-34f8-b85c-383d-d639d938c836@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -27,39 +24,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jan 2018 06:37:55 +0100,
-Kirill Marinushkin wrote:
+On Sat, 03 Feb 2018 15:42:40 +0100,
+Lassi Ylikojola wrote:
 > 
-> The layout of the UAC2 Control request and response varies depending on
-> the request type. With the current implementation, only the Layout 2
-> Parameter Block (with the 2-byte sized RANGE attribute) is handled
-> properly. For the Control requests with the 1-byte sized RANGE attribute
-> (Bass Control, Mid Control, Tremble Control), the response is parsed
-> incorrectly.
+> Add quirk to ensure a sync endpoint is properly configured.
+> This patch is a fix for same symptoms on Behringer UFX1204 as patch
+> from Albertto Aquirre on Dec 8 2016 for Axe-Fx II.
 > 
-> This commit:
-> * fixes the wLength field value in the request
-> * fixes parsing the range values from the response
-> 
-> Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
-> Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Takashi Iwai <tiwai@suse.com>
-> Cc: Jaejoong Kim <climbbb.kim@gmail.com>
-> Cc: Bhumika Goyal <bhumirks@gmail.com>
-> Cc: Stephen Barber <smbarber@chromium.org>
-> Cc: Julian Scheel <julian@jusst.de>
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Lassi Ylikojola <lassi.ylikojola@gmail.com>
 
-Sorry for the late reply, as I've been (and still) off.
-
-Does this bug actually hit on any real devices, or is it only a
-logical error so far?  In the former case, a Cc to stable is
-mandatory.
-
-In anyway, I'll review and merge it properly once after I back to
-work.
+The patch doesn't seem applied cleanly to the latest tree.
+Could you check it and repost with the proper patch for the latest
+Linus tree?
 
 
 thanks,
