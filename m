@@ -1,117 +1,108 @@
-Return-Path: <schwidefsky@de.ibm.com>
-X-Google-Smtp-Source: AH8x225JADCEXY8F4XXiQlcQ6E5SQqyCvNXZGv2nO3us9z9tIl+neeskO541BiQ0gNcOug7qseaJ
-ARC-Seal: i=1; a=rsa-sha256; t=1518005849; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518026148; cv=none;
         d=google.com; s=arc-20160816;
-        b=SNVvvM8i7q4sOnTwXG4HKSjEOL8IV5x9YR19lAX0xBPzig9mB/t6jF0HlKiZbmJCq7
-         6hDxmUeOQZrSOnH1uXvmQ8G1yAMM022OYL4Wf1mP59zKQ3uAqobG6Jx78qLuXmEqzpXL
-         0Ss6ZTolCaqgbutPx8pj380A/cyodIRzHDkIvPJXTHz5cysTB01GqCMvvbonnDki+zT2
-         0GpOQb2Gb1c21B4RLkz+68WYVtpodH6fOjkYUnTeRQwwuKWYMpe4DiEgN77Gt+YIKAGy
-         P+WjztTGunVsiQblDc9lcFEnmGpKS6OOQ3mKkCyxikVY67oJDuHUuIyaMyPLgECqjDmv
-         142A==
+        b=Ayq3LI+UN/z95fR2AjTcs0TaFq+IgNgCUwNL5QcJazMigR754bOFqnGbQjIcs0t83W
+         Fqqqbe9hZt9KMxFEP8FB5ghJDsut769zhww2EcFmIl5PUJxiW2lczvdCIvcsBvB682gY
+         BZ+iUvcjp+8MbKnhTFK/D+H1zSUOGnUey5T3980lVkN7Pan8+iVDaopRtR4c/Xe0km1z
+         43N2yid3ezka+NlJcCA/Wfcr5NEOXJVj/aHbKmwRNfw7/u1fX4OH1rk1eiPQkxYZDkGL
+         gU1nkZKNF2Ux+M6vo0wT7sypKiXA4dmnr8Zd/nufLSZpTt1htbwUyuNtltI79qszOJYf
+         4ezQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:mime-version:references
-         :in-reply-to:subject:cc:to:from:date:arc-authentication-results;
-        bh=rfzE0+NIbwOdLJcF18W1eVgNGACILKKRP8WSxcGkXc0=;
-        b=h1QBlwZdCZIYO9krO3J7zFhNC20aEMVnaZ1WdF0ksIuoK9eHPBrwmHFEZRZJbQkfza
-         pzOUWBIVu2MmpdyMtITUmhPX0fGR9Yg3xILbyH4TXnlkUOx03mM92w6IMqe+YySR7lMx
-         4WM406802WK06drBwqiX/v8GL+2EiamWTOHDGpiLOc7lcK91G6z9d8kqQz4PFJsOyRqK
-         y2VNxHXH4Ur6duFEjrueJ7K+LJJpRX2NUg/EuQUCt9acnooxZdUkP3/503/1pr3CfHYA
-         wo998Vhk62uj6NhK06QWEi9HF60bsUgynnJKpitm1mQbuumOjlEp2txEo+q0/VVLSiw2
-         vaxQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=eAmQPKhS94027lyhfvDt2LRCq/7BR7nQbHUNSijzlw8=;
+        b=l0JGtQCkDFZpwMtmfgIeoQ4s6EGKS+gg2oLy8b/3m/MNklsPPTfTgzjGgciSgkXgTt
+         jzsWOWwgGevvrH2q3LrOi4AhZyH0rc+o90h8ig6dxKHAkpQWxiFK3kzm3S2lyQ2mE2u8
+         hTf87V1rnImwiDrkoKsTiiAVJ55YSGhnf6krn8YKe0JUhOoHQS3UWviIZwBrPfMml3rH
+         NeS05mk9Z8rQSorIgzlzKq/RqHlYRLxs9JMqQSipeaiOc2xVWwlVptReKKNTeovuK6VY
+         M6//KwO41Dj2tzLbyPCH3sA1GC+N63ypiSCq6kqaWQ7CzXYWuIr2/eWeybtE9UHqi3dw
+         cf/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of schwidefsky@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=schwidefsky@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GMu94hRu;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of schwidefsky@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=schwidefsky@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Date: Wed, 7 Feb 2018 13:17:19 +0100
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: David Woodhouse <dwmw2@infradead.org>,
-        Linus Torvalds
- <torvalds@linux-foundation.org>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck
- <cohuck@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Masters <jcm@redhat.com>, Marcus Meissner <meissner@suse.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Dominik
- Brodowski <linux@dominikbrodowski.net>,
-        Alan Cox
- <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH 6/6] s390: introduce execute-trampolines for branches
-In-Reply-To: <1518005275.3677.112.camel@infradead.org>
-References: <1517986811-27819-1-git-send-email-schwidefsky@de.ibm.com>
-	<1517986811-27819-7-git-send-email-schwidefsky@de.ibm.com>
-	<20180207100726.GB31392@amd>
-	<1518005275.3677.112.camel@infradead.org>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GMu94hRu;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x2264YXVLWvOeqb9Ym1hb2ORteJTMqkzT+UpRVBVlYbb0KDjSe1D9RppPgfI1zbdXg9Rmtqhy+XpP/As6/3JVEeY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-TM-AS-GCONF: 00
-x-cbid: 18020712-0012-0000-0000-000005AC4A7C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020712-0013-0000-0000-00001928018C
-Message-Id: <20180207131719.4aeb316e@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802070154
+Sender: linus971@gmail.com
+In-Reply-To: <20180207131719.4aeb316e@mschwideX1>
+References: <1517986811-27819-1-git-send-email-schwidefsky@de.ibm.com>
+ <1517986811-27819-7-git-send-email-schwidefsky@de.ibm.com>
+ <20180207100726.GB31392@amd> <1518005275.3677.112.camel@infradead.org> <20180207131719.4aeb316e@mschwideX1>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 7 Feb 2018 09:55:47 -0800
+X-Google-Sender-Auth: RTtF7ZTBb-XWPP2pE1lElQo9geU
+Message-ID: <CA+55aFwVyCxWkcXk-y0WWo653XYWeZCRo-u4cy4rPWY++LMcgg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] s390: introduce execute-trampolines for branches
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, Pavel Machek <pavel@ucw.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-s390 <linux-s390@vger.kernel.org>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>,
+	Cornelia Huck <cohuck@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Masters <jcm@redhat.com>,
+	Marcus Meissner <meissner@suse.de>, Jiri Kosina <jkosina@suse.cz>,
+	Dominik Brodowski <linux@dominikbrodowski.net>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+	Kees Cook <keescook@chromium.org>, Ulf Magnusson <ulfalizer@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591724559737732044?=
-X-GMAIL-MSGID: =?utf-8?q?1591744501884839321?=
+X-GMAIL-MSGID: =?utf-8?q?1591765786161864103?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 07 Feb 2018 12:07:55 +0000
-David Woodhouse <dwmw2@infradead.org> wrote:
+On Wed, Feb 7, 2018 at 4:17 AM, Martin Schwidefsky
+<schwidefsky@de.ibm.com> wrote:
+>> That isn't, though. Linus asked us to drop the $(warning) part.
+>>
+>> ... and then spent a week building with a non-retpoline compiler and
+>> not noticing, so he might have changed his mind ;)
+>
+> I found the warning to have some value, it helps for the case where my
+> fingers are faster than my brain and I type "make" instead of "smake"
+> which uses the alternative compiler with the required support.
+>
+> @Linus: do you want a warning or prefer not to have one ?
 
-> On Wed, 2018-02-07 at 11:07 +0100, Pavel Machek wrote:
-> > This is really unfortunate naming of kernel option.
-> >=20
-> > spectre_v2=3Doff sounds like we are turning the "bug" off, but i somehow
-> > suspect you are turning the bug _workaround_ off. =20
->=20
-> That's consistent with what we have on x86.
->=20
-> > > +ifdef CONFIG_EXPOLINE
-> > > +=C2=A0=C2=A0ifeq ($(call cc-option-yn,$(CC_FLAGS_MARCH) -mindirect-b=
-ranch=3Dthunk),y)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0CC_FLAGS_EXPOLINE :=3D -mindirect-branch=3Dt=
-hunk
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0CC_FLAGS_EXPOLINE +=3D -mfunction-return=3Dt=
-hunk
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0CC_FLAGS_EXPOLINE +=3D -mindirect-branch-tab=
-le
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0export CC_FLAGS_EXPOLINE
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0cflags-y +=3D $(CC_FLAGS_EXPOLINE)
-> > > +=C2=A0=C2=A0else
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0$(warning "Your gcc lacks the -mindirect-bra=
-nch=3D option")
-> > > +=C2=A0=C2=A0endif
-> > > +endif =20
->=20
-> That isn't, though. Linus asked us to drop the $(warning) part.
->=20
-> ... and then spent a week building with a non-retpoline compiler and
-> not noticing, so he might have changed his mind ;)
+Honestly, I think I'd be much happier with the warning as part of the
+"make config" phase.
 
-I found the warning to have some value, it helps for the case where my
-fingers are faster than my brain and I type "make" instead of "smake"
-which uses the alternative compiler with the required support.
+What really annoyed me was that it showed up at every build.
 
-@Linus: do you want a warning or prefer not to have one ?
+What I would really want - and this is entirely unrelated to this
+particular case - is to have those damn compiler option tests as part
+of the config phase in general. We now have about a million of these
+crazy things, where we have config options that simply depend on which
+compiler we have, and we have no sane way to show them at
+configuration time.
 
---=20
-blue skies,
-   Martin.
+Though Andrew's tree I got yet another ugly hack
+(CONFIG_CC_STACKPROTECTOR_AUTO) that handles just _one_ special case
+by turning it into a special magic Kconfig entry in the main Makefile.
+See commit 44c6dc940b19 ("Makefile: introduce
+CONFIG_CC_STACKPROTECTOR_AUTO"). I wasn't sure if I really wanted it,
+and honestly, I'm still thinking of just reverting it, because it's
+_so_ ugly and _so_ wrong.
 
-"Reality continues to ruin my life." - Calvin.
+What we need is an extension to the Kconfig language itself so that we can do
+
+   config CC_HAS_RETPOLINE
+        cc_option "-mindirect-branch=thunk -mindirect-branch-table"
+
+or something. And then we can make sane _conditional_ dependencies at
+Kconfig time, and our makefiles would be much cleaner too when you
+could just do
+
+     cflags-$(USE_RETPOLINE) += -mfunction-return=thunk -mindirect-branch-table
+
+because the validity of the C compiler flag has been tested when configuring.
+
+And then we could add that warning at configure time (or just disable
+the option there thanks to "depends on CC_HAS_xyz" logic).
+
+All our compiler option handling right now is just nasty nasty nasty crud.
+
+Adding more people in the hopes that somebody gets motivated.. I've
+talked about this before, so far we haven't made any progress.
+
+              Linus
