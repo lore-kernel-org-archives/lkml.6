@@ -1,77 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754446AbeBGTbF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:31:05 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33994 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753995AbeBGTbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:31:04 -0500
-Subject: Re: [v6,3/3] x86/smpboot: Fix __max_logical_packages estimate
-To: Simon Gaiser <simon@invisiblethingslab.com>,
-        xen-devel <xen-devel@lists.xen.org>
-References: <20171114124257.22013-4-prarit@redhat.com>
- <370a7ab2-8f57-b99b-428b-d0b1dfe401e7@invisiblethingslab.com>
- <6fdee802-bf24-7fbb-c95a-a6e0d840fbde@redhat.com>
- <a6bdbf62-3d93-1f5c-6c05-c4c391bc8a9e@invisiblethingslab.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Piotr Luc <piotr.luc@intel.com>, Kan Liang <kan.liang@intel.com>,
-        Borislav Petkov <bp@suse.de>, Stephane Eranian <eranian@google.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        He Chen <he.chen@linux.intel.com>,
-        Mathias Krause <minipli@googlemail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-From: Prarit Bhargava <prarit@redhat.com>
-Message-ID: <02ccc129-83b5-18e9-de5c-b3eff81a8f22@redhat.com>
-Date: Wed, 7 Feb 2018 14:31:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        id S1754605AbeBGTbZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:31:25 -0500
+Received: from sauhun.de ([88.99.104.3]:44341 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754477AbeBGTbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:31:23 -0500
+Date: Wed, 7 Feb 2018 20:31:21 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 09/16] mmc: tmio: use MMC_CAP2_NO_WRITE_PROTECT
+ instead of TMIO own flag
+Message-ID: <20180207193121.eeydxcgwweory7c4@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-10-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <a6bdbf62-3d93-1f5c-6c05-c4c391bc8a9e@invisiblethingslab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gddbdaaca34w7fg5"
+Content-Disposition: inline
+In-Reply-To: <1516206496-16612-10-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--gddbdaaca34w7fg5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/07/2018 02:26 PM, Simon Gaiser wrote:
-> Prarit Bhargava:
->> On 02/07/2018 01:44 PM, Simon Gaiser wrote:
+On Thu, Jan 18, 2018 at 01:28:09AM +0900, Masahiro Yamada wrote:
+> TMIO_MMC_WRPROTECT_DISABLE is equivalent to MMC_CAP2_NO_WRITE_PROTECT.
+>=20
+> Only the difference is the TMIO_... makes tmio_mmc_get_ro() return 0
+> (i.e. it does not affect mmc_gpio_get_ro() at all), while MMC_CAP2_...
+> returns 0 before calling ->get_ro() hook (i.e. it affects both IP own
+> logic and GPIO detection).
+>=20
+> The TMIO MMC drivers do not set-up gpio_ro by themselves.  Only the
+> possibility, if any, would be DT specifies "wp-gpios" property, and
+> gpio_ro is set by mmc_gpiod_request_ro() called from mmc_of_parse().
+> However, it does not make sense to specify "wp-gpios" property and
+> "toshiba,mmc-wrprotect-disable" at the same time.
+>=20
+> I checked under arch/arm/boot/dts/ and arch/arm64/boot/dts/renesas/,
+> and I did not see any Renesas boards with "wp-gpios".  So, this
+> conversion should be safe.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-<snip>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
->>> This breaks booting as Xen PV domain for me. The problem seems to be
->>> that native_smp_cpus_done() is never called on a PV domain. So
->>> __max_logical_packages is uninitialized and this leads to a NULL
->>> pointer dereference in coretemp.
->>>
->>
->> I'll see if I can figure out a way to test that.
-> 
-> Ok, thanks. If you need some logs, or if I should test something just
-> ask.
-> 
+>  static void tmio_mmc_of_parse(struct platform_device *pdev,
+> -			      struct tmio_mmc_data *pdata)
+> +			      struct mmc_host *mmc)
 
-Thanks, I may send you a patch off-list to test.
+I like how this cleanups improves things in various parts of the code,
+like here. Nice!
 
->> Does 947134d9b00f
->> ("x86/smpboot: Do not use smp_num_siblings in __max_logical_packages
->> calculation") help?
-> 
-> No.
-> 
 
-Yeah, your description was absolutely correct.  native_smp_cpus_done() is only
-called for HVM guests and not PV.  I'm going to think about that and send you a
-patch in a bit.
+--gddbdaaca34w7fg5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-P.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7VAkACgkQFA3kzBSg
+Kbb1jQ/9EXil36iv/xpgBsFCyN+cX/tlqARCX1792u3Pem80vusK1eAHjdDxeYRF
+sRpqJeW6Q+BfBbEbir4KhFLUjNmC9CD294ZwsvNQE/tk+HXd5W3UZnSzNl1GRUr4
+AgchWls+13MVGv0IbD6Ox2eCXRfbpnjStUrxzxA1uWnHNTMeDGd4NQE+KQJ9HGhE
+RR8F+4NtMhyUawssHgFgi5Yt7hZmd+Yo2GZewSOYL+CGAseYIbtHOUqQLej1rRa2
+NJLj0G2tZJjxfA3fYqHucr5eOLUSUU6emFPrAJ1WuzpqVHpo38OpUA6KL/jcsqIT
+MOn/rGB9r4Nv6dk6F6ek+CIryHDBfHXC+eCZxpDaYECsR38CTp+vu/rGpmFa/U6e
+lsHPxVMdSmbd5KLyCWDVi71BEBpuUp1I1HYMTOzejLQDtCLy0AWrLnuM4SQhXLuh
+1kK3qMfZD2wnJyH4HZVYgaiMOkov03GkxK0TYUiwGuHThG8XX9daRGkEDXxdqeT5
+yQEyPUKqCjrrwIpsAMKGQMIsgG6GMRW91zBDEmEqwhVkIiSUCw0TRP3BB0uTmfYe
+Zhr+s3s7boV9C9vsn/qocrQuhkR1oSSHLAOr1dLzL/PkEpc7C1YgLhOpCK3TaqZY
+arJd8qtW9VZ5VF5CqlGblyfYVUnH8QjLX4z7k3hD0zGCZkx2jKs=
+=3gdZ
+-----END PGP SIGNATURE-----
+
+--gddbdaaca34w7fg5--
