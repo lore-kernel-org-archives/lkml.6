@@ -1,96 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754293AbeBGBWy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:22:54 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:40171 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754189AbeBGBWw (ORCPT
+        id S932213AbeBGB0e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:26:34 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42296 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754189AbeBGB0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:22:52 -0500
-Subject: Re: [PATCH v8 1/7] v4l2-dv-timings: add v4l2_hdmi_colorimetry()
-To: Tim Harvey <tharvey@gateworks.com>, linux-media@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
- <1517948874-21681-2-git-send-email-tharvey@gateworks.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c1dc5de9-e81d-b9bd-b587-1a94de96f97c@infradead.org>
-Date: Tue, 6 Feb 2018 17:22:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 6 Feb 2018 20:26:32 -0500
+To: Colin King <colin.king@canonical.com>
+Cc: Johannes Thumshirn <jth@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: libfc: remove redundant initialization of 'disc'
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180206142157.32001-1-colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 20:26:23 -0500
+In-Reply-To: <20180206142157.32001-1-colin.king@canonical.com> (Colin King's
+        message of "Tue, 6 Feb 2018 14:21:57 +0000")
+Message-ID: <yq1y3k5zj28.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1517948874-21681-2-git-send-email-tharvey@gateworks.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8797 signatures=668663
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=603
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802070013
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/2018 12:27 PM, Tim Harvey wrote:
-> From: Hans Verkuil <hverkuil@xs4all.nl>
-> 
-> Add the v4l2_hdmi_colorimetry() function so we have a single function
-> that determines the colorspace, YCbCr encoding, quantization range and
-> transfer function from the InfoFrame data.
-> 
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> ---
->  drivers/media/v4l2-core/v4l2-dv-timings.c | 141 ++++++++++++++++++++++++++++++
->  include/media/v4l2-dv-timings.h           |  21 +++++
->  2 files changed, 162 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-dv-timings.c b/drivers/media/v4l2-core/v4l2-dv-timings.c
-> index 930f9c5..0182d3d 100644
-> --- a/drivers/media/v4l2-core/v4l2-dv-timings.c
-> +++ b/drivers/media/v4l2-core/v4l2-dv-timings.c
-> @@ -27,6 +27,7 @@
->  #include <linux/v4l2-dv-timings.h>
->  #include <media/v4l2-dv-timings.h>
->  #include <linux/math64.h>
-> +#include <linux/hdmi.h>
->  
->  MODULE_AUTHOR("Hans Verkuil");
->  MODULE_DESCRIPTION("V4L2 DV Timings Helper Functions");
-> @@ -814,3 +815,143 @@ struct v4l2_fract v4l2_calc_aspect_ratio(u8 hor_landscape, u8 vert_portrait)
->  	return aspect;
->  }
->  EXPORT_SYMBOL_GPL(v4l2_calc_aspect_ratio);
-> +
-> +/** v4l2_hdmi_rx_colorimetry - determine HDMI colorimetry information
-> + *	based on various InfoFrames.
-> + * @avi - the AVI InfoFrame
-> + * @hdmi - the HDMI Vendor InfoFrame, may be NULL
-> + * @height - the frame height
 
-kernel-doc format for function parameters is like:
+Colin,
 
- * @avi: the AVI InfoFrame
+> Pointer disc is being intializated a value that is never read and then
+> re-assigned the same value later on, hence the initialization is redundant
+> and can be removed.
 
-etc.
+Applied to 4.17/scsi-queue.
 
-> + *
-> + * Determines the HDMI colorimetry information, i.e. how the HDMI
-> + * pixel color data should be interpreted.
-> + *
-> + * Note that some of the newer features (DCI-P3, HDR) are not yet
-> + * implemented: the hdmi.h header needs to be updated to the HDMI 2.0
-> + * and CTA-861-G standards.
-> + */
-> +struct v4l2_hdmi_colorimetry
-> +v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
-> +			 const struct hdmi_vendor_infoframe *hdmi,
-> +			 unsigned int height)
-> +{
-
-
-thanks,
 -- 
-~Randy
+Martin K. Petersen	Oracle Linux Engineering
