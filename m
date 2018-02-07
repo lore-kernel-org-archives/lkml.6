@@ -1,201 +1,398 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753167AbeBGEGP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 23:06:15 -0500
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:42185 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752862AbeBGEGN (ORCPT
+        id S1753364AbeBGEJc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 23:09:32 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37040 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752862AbeBGEJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 23:06:13 -0500
-X-Google-Smtp-Source: AH8x226MjIH00tScyuZ4jSSECk9wiVWv5bWWqN6nXMVABAbIgchfVkjIU+Xho5F7SuMxV2XjRv+pbG7G9uly2NGSLCg=
+        Tue, 6 Feb 2018 23:09:29 -0500
+X-Google-Smtp-Source: AH8x226Ij1zYIKd2jWEna5LARdRiNd6Bgz2nBv7Dg9PT1JUeJCw/qI3elAS/HET0erUCdq1JTQ4YLQ==
+Subject: Re: [RFC PATCH] vfio/pci: Add ioeventfd support
+To: Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
+References: <20180207000731.32764.95992.stgit@gimli.home>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
+Message-ID: <cfe31ae1-2557-d15a-45a2-0ba03d8d71fa@ozlabs.ru>
+Date: Wed, 7 Feb 2018 15:09:22 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <b3b0b170-f10b-fb8a-74f9-b6aa0cb41980@partner.samsung.com>
-References: <CGME20180205174022eucas1p101e8339284c1f0ac8f40f70c24de1c1f@eucas1p1.samsung.com>
- <224788c7-426b-d3a9-d0a6-412d2b8afb75@partner.samsung.com>
- <CANAwSgTO5_mL9GEYrXDJyKakY3JTeF+VxbCTuHczAvfVY0zUsg@mail.gmail.com> <b3b0b170-f10b-fb8a-74f9-b6aa0cb41980@partner.samsung.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 7 Feb 2018 09:35:51 +0530
-Message-ID: <CANAwSgRXFWC=kU+ZtDbGq5v9Ym60EKi-fdjWGuDG9F2JCfw6cw@mail.gmail.com>
-Subject: Re: [PATCH] crypto: s5p-sss.c: Fix kernel Oops in AES-ECB mode
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180207000731.32764.95992.stgit@gimli.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kamil
+On 07/02/18 11:08, Alex Williamson wrote:
+> The ioeventfd here is actually irqfd handling of an ioeventfd such as
+> supported in KVM.  A user is able to pre-program a device write to
+> occur when the eventfd triggers.  This is yet another instance of
+> eventfd-irqfd triggering between KVM and vfio.  The impetus for this
+> is high frequency writes to pages which are virtualized in QEMU.
+> Enabling this near-direct write path for selected registers within
+> the virtualized page can improve performance and reduce overhead.
+> Specifically this is initially targeted at NVIDIA graphics cards where
+> the driver issues a write to an MMIO register within a virtualized
+> region in order to allow the MSI interrupt to re-trigger.
+> 
+> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> ---
+>  drivers/vfio/pci/vfio_pci.c         |   33 +++++++
+>  drivers/vfio/pci/vfio_pci_private.h |   14 +++
+>  drivers/vfio/pci/vfio_pci_rdwr.c    |  165 ++++++++++++++++++++++++++++++++---
+>  include/uapi/linux/vfio.h           |   24 +++++
+>  4 files changed, 224 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index f041b1a6cf66..c8e7297a61a3 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -302,6 +302,7 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
+>  {
+>  	struct pci_dev *pdev = vdev->pdev;
+>  	struct vfio_pci_dummy_resource *dummy_res, *tmp;
+> +	struct vfio_pci_ioeventfd *ioeventfd, *ioeventfd_tmp;
+>  	int i, bar;
+>  
+>  	/* Stop the device from further DMA */
+> @@ -311,6 +312,14 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
+>  				VFIO_IRQ_SET_ACTION_TRIGGER,
+>  				vdev->irq_type, 0, 0, NULL);
+>  
+> +	/* Device closed, don't need mutex here */
+> +	list_for_each_entry_safe(ioeventfd, ioeventfd_tmp,
+> +				 &vdev->ioeventfds_list, next) {
+> +		vfio_virqfd_disable(&ioeventfd->virqfd);
+> +		list_del(&ioeventfd->next);
+> +		kfree(ioeventfd);
+> +	}
+> +
+>  	vdev->virq_disabled = false;
+>  
+>  	for (i = 0; i < vdev->num_regions; i++)
+> @@ -1039,6 +1048,28 @@ static long vfio_pci_ioctl(void *device_data,
+>  
+>  		kfree(groups);
+>  		return ret;
+> +	} else if (cmd == VFIO_DEVICE_IOEVENTFD) {
+> +		struct vfio_device_ioeventfd ioeventfd;
+> +		int count;
+> +
+> +		minsz = offsetofend(struct vfio_device_ioeventfd, fd);
+> +
+> +		if (copy_from_user(&ioeventfd, (void __user*)arg, minsz))
+> +			return -EFAULT;
+> +
+> +		if (ioeventfd.argsz < minsz)
+> +			return -EINVAL;
+> +
+> +		if (ioeventfd.flags & ~VFIO_DEVICE_IOEVENTFD_SIZE_MASK)
+> +			return -EINVAL;
+> +
+> +		count = ioeventfd.flags & VFIO_DEVICE_IOEVENTFD_SIZE_MASK;
+> +
+> +		if (hweight8(count) != 1 || ioeventfd.fd < -1)
+> +			return -EINVAL;
+> +
+> +		return vfio_pci_ioeventfd(vdev, ioeventfd.offset,
+> +					  ioeventfd.data, count, ioeventfd.fd);
+>  	}
+>  
+>  	return -ENOTTY;
+> @@ -1217,6 +1248,8 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  	vdev->irq_type = VFIO_PCI_NUM_IRQS;
+>  	mutex_init(&vdev->igate);
+>  	spin_lock_init(&vdev->irqlock);
+> +	mutex_init(&vdev->ioeventfds_lock);
+> +	INIT_LIST_HEAD(&vdev->ioeventfds_list);
+>  
+>  	ret = vfio_add_group_dev(&pdev->dev, &vfio_pci_ops, vdev);
+>  	if (ret) {
+> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+> index f561ac1c78a0..23797622396e 100644
+> --- a/drivers/vfio/pci/vfio_pci_private.h
+> +++ b/drivers/vfio/pci/vfio_pci_private.h
+> @@ -29,6 +29,15 @@
+>  #define PCI_CAP_ID_INVALID		0xFF	/* default raw access */
+>  #define PCI_CAP_ID_INVALID_VIRT		0xFE	/* default virt access */
+>  
+> +struct vfio_pci_ioeventfd {
+> +	struct list_head	next;
+> +	struct virqfd		*virqfd;
+> +	loff_t			pos;
+> +	uint64_t		data;
+> +	int			bar;
+> +	int			count;
+> +};
+> +
+>  struct vfio_pci_irq_ctx {
+>  	struct eventfd_ctx	*trigger;
+>  	struct virqfd		*unmask;
+> @@ -95,6 +104,8 @@ struct vfio_pci_device {
+>  	struct eventfd_ctx	*err_trigger;
+>  	struct eventfd_ctx	*req_trigger;
+>  	struct list_head	dummy_resources_list;
+> +	struct mutex		ioeventfds_lock;
+> +	struct list_head	ioeventfds_list;
+>  };
+>  
+>  #define is_intx(vdev) (vdev->irq_type == VFIO_PCI_INTX_IRQ_INDEX)
+> @@ -120,6 +131,9 @@ extern ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+>  extern ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
+>  			       size_t count, loff_t *ppos, bool iswrite);
+>  
+> +extern long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
+> +			       uint64_t data, int count, int fd);
+> +
+>  extern int vfio_pci_init_perm_bits(void);
+>  extern void vfio_pci_uninit_perm_bits(void);
+>  
+> diff --git a/drivers/vfio/pci/vfio_pci_rdwr.c b/drivers/vfio/pci/vfio_pci_rdwr.c
+> index 357243d76f10..55bb4517d4ba 100644
+> --- a/drivers/vfio/pci/vfio_pci_rdwr.c
+> +++ b/drivers/vfio/pci/vfio_pci_rdwr.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/pci.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/io.h>
+> +#include <linux/vfio.h>
+>  #include <linux/vgaarb.h>
+>  
+>  #include "vfio_pci_private.h"
+> @@ -113,6 +114,30 @@ static ssize_t do_io_rw(void __iomem *io, char __user *buf,
+>  	return done;
+>  }
+>  
+> +static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
+> +{
+> +	struct pci_dev *pdev = vdev->pdev;
+> +	int ret;
+> +	void __iomem *io;
+> +
+> +	if (vdev->barmap[bar])
+> +		return 0;
+> +
+> +	ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
+> +	if (ret)
+> +		return ret;
+> +
+> +	io = pci_iomap(pdev, bar, 0);
+> +	if (!io) {
+> +		pci_release_selected_regions(pdev, 1 << bar);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	vdev->barmap[bar] = io;
+> +
+> +	return 0;
+> +}
+> +
+>  ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+>  			size_t count, loff_t *ppos, bool iswrite)
+>  {
+> @@ -147,22 +172,13 @@ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+>  		if (!io)
+>  			return -ENOMEM;
+>  		x_end = end;
+> -	} else if (!vdev->barmap[bar]) {
+> -		int ret;
+> -
+> -		ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
+> +	} else {
+> +		int ret = vfio_pci_setup_barmap(vdev, bar);
+>  		if (ret)
+>  			return ret;
+>  
+> -		io = pci_iomap(pdev, bar, 0);
+> -		if (!io) {
+> -			pci_release_selected_regions(pdev, 1 << bar);
+> -			return -ENOMEM;
+> -		}
+> -
+> -		vdev->barmap[bar] = io;
+> -	} else
+>  		io = vdev->barmap[bar];
+> +	}
+>  
+>  	if (bar == vdev->msix_bar) {
+>  		x_start = vdev->msix_offset;
+> @@ -242,3 +258,128 @@ ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
+>  
+>  	return done;
+>  }
+> +
+> +static int vfio_pci_ioeventfd_handler8(void *opaque, void *data)
+> +{
+> +	iowrite8((unsigned long)data, opaque);
+> +	return 0;
+> +}
+> +
+> +static int vfio_pci_ioeventfd_handler16(void *opaque, void *data)
+> +{
+> +	iowrite16((unsigned long)data, opaque);
+> +	return 0;
+> +}
+> +
+> +static int vfio_pci_ioeventfd_handler32(void *opaque, void *data)
+> +{
+> +	iowrite32((unsigned long)data, opaque);
+> +	return 0;
+> +}
+> +
+> +#ifdef iowrite64
+> +static int vfio_pci_ioeventfd_handler64(void *opaque, void *data)
+> +{
+> +	iowrite64((unsigned long)data, opaque);
+> +	return 0;
+> +}
+> +#endif
+> +
+> +long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
+> +			uint64_t data, int count, int fd)
+> +{
+> +	struct pci_dev *pdev = vdev->pdev;
+> +	loff_t pos = offset & VFIO_PCI_OFFSET_MASK;
+> +	int ret, bar = VFIO_PCI_OFFSET_TO_INDEX(offset);
+> +	struct vfio_pci_ioeventfd *ioeventfd;
+> +	int (*handler)(void *, void *);
+> +	unsigned long val;
+> +
+> +	/* Only support ioeventfds into BARs */
+> +	if (bar > VFIO_PCI_BAR5_REGION_INDEX)
+> +		return -EINVAL;
+> +
+> +	if (pos + count > pci_resource_len(pdev, bar))
+> +		return -EINVAL;
+> +
+> +	/* Disallow ioeventfds working around MSI-X table writes */
+> +	if (bar == vdev->msix_bar &&
+> +	    !(pos + count <= vdev->msix_offset ||
+> +	      pos >= vdev->msix_offset + vdev->msix_size))
+> +		return -EINVAL;
+> +
+> +	switch (count) {
+> +	case 1:
+> +		handler = &vfio_pci_ioeventfd_handler8;
+> +		val = data;
+> +		break;
+> +	case 2:
+> +		handler = &vfio_pci_ioeventfd_handler16;
+> +		val = le16_to_cpu(data);
+> +		break;
+> +	case 4:
+> +		handler = &vfio_pci_ioeventfd_handler32;
+> +		val = le32_to_cpu(data);
+> +		break;
+> +#ifdef iowrite64
+> +	case 8:
+> +		handler = &vfio_pci_ioeventfd_handler64;
+> +		val = le64_to_cpu(data);
+> +		break;
+> +#endif
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = vfio_pci_setup_barmap(vdev, bar);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_lock(&vdev->ioeventfds_lock);
+> +
+> +	list_for_each_entry(ioeventfd, &vdev->ioeventfds_list, next) {
+> +		if (ioeventfd->pos == pos && ioeventfd->bar == bar &&
+> +		    ioeventfd->data == data && ioeventfd->count == count) {
+> +			if (fd == -1) {
+> +				vfio_virqfd_disable(&ioeventfd->virqfd);
+> +				list_del(&ioeventfd->next);
+> +				kfree(ioeventfd);
+> +				ret = 0;
+> +			} else
+> +				ret = -EEXIST;
+> +
+> +			goto out_unlock;
+> +		}
+> +	}
+> +
+> +	if (fd < 0) {
+> +		ret = -ENODEV;
+> +		goto out_unlock;
+> +	}
+> +
+> +	ioeventfd = kzalloc(sizeof(*ioeventfd), GFP_KERNEL);
+> +	if (!ioeventfd) {
+> +		ret = -ENOMEM;
+> +		goto out_unlock;
+> +	}
+> +
+> +	ioeventfd->pos = pos;
+> +	ioeventfd->bar = bar;
+> +	ioeventfd->data = data;
+> +	ioeventfd->count = count;
+> +
+> +	ret = vfio_virqfd_enable(vdev->barmap[ioeventfd->bar] + ioeventfd->pos,
+> +				 handler, NULL, (void *)val,
+> +				 &ioeventfd->virqfd, fd);
+> +	if (ret) {
+> +		kfree(ioeventfd);
+> +		goto out_unlock;
+> +	}
+> +
+> +	list_add(&ioeventfd->next, &vdev->ioeventfds_list);
+> +
+> +out_unlock:
+> +	mutex_unlock(&vdev->ioeventfds_lock);
+> +
+> +	return ret;
+> +}
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index e3301dbd27d4..07966a5f0832 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -503,6 +503,30 @@ struct vfio_pci_hot_reset {
+>  
+>  #define VFIO_DEVICE_PCI_HOT_RESET	_IO(VFIO_TYPE, VFIO_BASE + 13)
+>  
+> +/**
+> + * VFIO_DEVICE_IOEVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 14,
+> + *                              struct vfio_device_ioeventfd)
+> + *
+> + * Perform a write to the device at the specified device fd offset, with
+> + * the specified data and width when the provided eventfd is triggered.
+> + *
+> + * Return: 0 on success, -errno on failure.
+> + */
+> +struct vfio_device_ioeventfd {
+> +	__u32	argsz;
+> +	__u32	flags;
+> +#define VFIO_DEVICE_IOEVENTFD_8		(1 << 0) /* 1-byte write */
+> +#define VFIO_DEVICE_IOEVENTFD_16	(1 << 1) /* 2-byte write */
+> +#define VFIO_DEVICE_IOEVENTFD_32	(1 << 2) /* 4-byte write */
+> +#define VFIO_DEVICE_IOEVENTFD_64	(1 << 3) /* 8-byte write */
+> +#define VFIO_DEVICE_IOEVENTFD_SIZE_MASK	(0xf)
+> +	__u64	offset;			/* device fd offset of write */
+> +	__u64	data;			/* data to be written */
+> +	__s32	fd;			/* -1 for de-assignment */
+> +};
+> +
+> +#define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 14)
 
-On 6 February 2018 at 22:40, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
->
-> On 06.02.2018 17:48, Anand Moon wrote:
->> Hi Kamil,
->>
->> Thanks for providing the fix to this issue.
->>
->> On 5 February 2018 at 23:10, Kamil Konieczny
->> <k.konieczny@partner.samsung.com> wrote:
->>>
->>> In AES-ECB mode crypt is done with key only, so any use of IV
->>> can cause kernel Oops, as reported by Anand Moon.
->>
->> If possible could you avoid the name in commit message.
->
-> This is added after '---' line, so it will not appear in commit message.
->
 
-I know about '---' delimiter, but to be precise this will be part of
-commit message.
+Is this a first ioctl with endianness fixed to little-endian? I'd suggest
+to comment on that as things like vfio_info_cap_header do use the host
+endianness.
 
->>> Fixed it by using IV only in AES-CBC and AES-CTR.
->>>
->>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->>> Reported-by: Anand Moon <linux.amoon@gmail.com>
->>
->> [snip]
->>
->> Please add my. Tested on Odroid HC2
->>
->> Tested-by: Anand Moon <linux.amoon@gmail.com>
->
-> This will add you name in commit message,
-> additionally with 'Reported-by:' line.
->
->> Below are the result at my end.
->>
->> aes-cbc-essiv:sha256 (128 bit key)
->> WRITE:
->> 100+0 records in
->> 100+0 records out
->> 838860800 bytes (839 MB, 800 MiB) copied, 11.7225 s, 71.6 MB/s
->> [...]
->
-> is it from 'cryptsetup benchmark' ? benchmark did not cause oops.
-> Please test with luksFormat, ie. use
->
-> cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
->   --cipher aes-cbc-essiv:sha256 -h sha256 -s 128 /tmp/test.bin
->
-[snip]
 
-Below is the out put of aes-cbc-essiv:sha256 and aes-ctr-plain
 
-root@odroid:~# fallocate -l 128MiB /tmp/test.bin
-root@odroid:~# dd if=/dev/urandom of=/tmp/testkey.key bs=128 count=1
-1+0 records in
-1+0 records out
-128 bytes copied, 0.000231043 s, 554 kB/s
-root@odroid:~# sync
-root@odroid:~# cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
->   --cipher aes-cbc-essiv:sha256 -h sha256 -s 128 /tmp/test.bin
-# cryptsetup 1.6.6 processing "cryptsetup luksFormat --debug -q -d
-/tmp/testkey.key --cipher aes-cbc-essiv:sha256 -h sha256 -s 128
-/tmp/test.bin"
-# Running command luksFormat.
-# Locking memory.
-# Installing SIGINT/SIGTERM handler.
-# Unblocking interruption on signal.
-# Allocating crypt device /tmp/test.bin context.
-# Trying to open and read device /tmp/test.bin.
-# Initialising device-mapper backend library.
-# Timeout set to 0 miliseconds.
-# Iteration time set to 1000 miliseconds.
-# File descriptor passphrase entry requested.
-# Formatting device /tmp/test.bin as type LUKS1.
-# Crypto backend (gcrypt 1.6.5) initialized.
-# Detected kernel Linux 4.15.0-xu4krck armv7l.
-# Topology info for /tmp/test.bin not supported, using default offset
-1048576 bytes.
-# Checking if cipher aes-cbc-essiv:sha256 is usable.
-# Using userspace crypto wrapper to access keyslot area.
-# Generating LUKS header version 1 using hash sha256, aes,
-cbc-essiv:sha256, MK 16 bytes
-# KDF pbkdf2, hash sha256: 160824 iterations per second.
-# Data offset 2048, UUID fe5c0d54-9add-4454-a4cd-98eed8f2b75c, digest
-iterations 19625
-# Updating LUKS header of size 1024 on device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Reading LUKS header of size 1024 from device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Adding new keyslot -1 using volume key.
-# Calculating data for key slot 0
-# KDF pbkdf2, hash sha256: 161220 iterations per second.
-# Key slot 0 use 78720 password iterations.
-# Using hash sha256 for AF in key slot 0, 4000 stripes
-# Updating key slot 0 [0x1000] area.
-# Using userspace crypto wrapper to access keyslot area.
-# Key slot 0 was enabled in LUKS header.
-# Updating LUKS header of size 1024 on device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Reading LUKS header of size 1024 from device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Releasing crypt device /tmp/test.bin context.
-# Releasing device-mapper backend.
-# Unlocking memory.
-Command successful.
-root@odroid:~#
-root@odroid:~#
-root@odroid:~# fallocate -l 128MiB /tmp/test.bin
-root@odroid:~# dd if=/dev/urandom of=/tmp/testkey.key bs=128 count=1
-1+0 records in
-1+0 records out
-128 bytes copied, 0.000324001 s, 395 kB/s
-root@odroid:~# sync
-root@odroid:~# cryptsetup luksFormat --debug -q -d /tmp/testkey.key \
->   --cipher aes-ctr-plain -h sha256 -s 128 /tmp/test.bin
-# cryptsetup 1.6.6 processing "cryptsetup luksFormat --debug -q -d
-/tmp/testkey.key --cipher aes-ctr-plain -h sha256 -s 128
-/tmp/test.bin"
-# Running command luksFormat.
-# Locking memory.
-# Installing SIGINT/SIGTERM handler.
-# Unblocking interruption on signal.
-# Allocating crypt device /tmp/test.bin context.
-# Trying to open and read device /tmp/test.bin.
-# Initialising device-mapper backend library.
-# Timeout set to 0 miliseconds.
-# Iteration time set to 1000 miliseconds.
-# File descriptor passphrase entry requested.
-# Formatting device /tmp/test.bin as type LUKS1.
-# Crypto backend (gcrypt 1.6.5) initialized.
-# Detected kernel Linux 4.15.0-xu4krck armv7l.
-# Topology info for /tmp/test.bin not supported, using default offset
-1048576 bytes.
-# Checking if cipher aes-ctr-plain is usable.
-# Using userspace crypto wrapper to access keyslot area.
-# Generating LUKS header version 1 using hash sha256, aes, ctr-plain,
-MK 16 bytes
-# KDF pbkdf2, hash sha256: 162217 iterations per second.
-# Data offset 2048, UUID 3e2b2e4a-a908-4228-b2a1-746e163e8e7e, digest
-iterations 19750
-# Updating LUKS header of size 1024 on device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Reading LUKS header of size 1024 from device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Adding new keyslot -1 using volume key.
-# Calculating data for key slot 0
-# KDF pbkdf2, hash sha256: 160234 iterations per second.
-# Key slot 0 use 78239 password iterations.
-# Using hash sha256 for AF in key slot 0, 4000 stripes
-# Updating key slot 0 [0x1000] area.
-# Using userspace crypto wrapper to access keyslot area.
-# Key slot 0 was enabled in LUKS header.
-# Updating LUKS header of size 1024 on device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Reading LUKS header of size 1024 from device /tmp/test.bin
-# Key length 16, device size 262144 sectors, header size 1029 sectors.
-# Releasing crypt device /tmp/test.bin context.
-# Releasing device-mapper backend.
-# Unlocking memory.
-Command successful.
+> +
+>  /* -------- API for Type1 VFIO IOMMU -------- */
+>  
+>  /**
+> 
 
-Best Regards
--Anand
+
+-- 
+Alexey
