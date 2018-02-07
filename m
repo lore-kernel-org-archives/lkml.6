@@ -1,159 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753066AbeBGDDZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 22:03:25 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33305 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752688AbeBGDDX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 22:03:23 -0500
-X-Google-Smtp-Source: AH8x224nwwgDQEOGChJEjI8jTiVECPDq1t9LHemwrIjFW27xKNomIqm3nypAeNfH+WpH8ASbBCmefg==
-Date: Wed, 7 Feb 2018 05:03:19 +0200
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix net watchdog timeout
-Message-ID: <20180207030316.GA7883@khorivan>
-Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-References: <20180207011706.13393-1-grygorii.strashko@ti.com>
+        id S1752992AbeBGDJX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 22:09:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752439AbeBGDJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Feb 2018 22:09:22 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B54208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 6 Feb 2018 22:09:17 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH 01/18] tracing: Add function based events
+Message-ID: <20180206220917.1ca65b54@vmware.local.home>
+In-Reply-To: <20180205100050.75c04497@gandalf.local.home>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231017.160509978@goodmis.org>
+        <20180205082423.GB1253@krava>
+        <20180205100050.75c04497@gandalf.local.home>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207011706.13393-1-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 07:17:06PM -0600, Grygorii Strashko wrote:
-> It was discovered that simple program which indefinitely sends 200b UDP
-> packets and runs on TI AM574x SoC (SMP) under RT Kernel triggers network
-> watchdog timeout in TI CPSW driver (<6 hours run). The network watchdog
-> timeout is triggered due to race between cpsw_ndo_start_xmit() and
-> cpsw_tx_handler() [NAPI]
+On Mon, 5 Feb 2018 10:00:50 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Mon, 5 Feb 2018 09:24:23 +0100
+> Jiri Olsa <jolsa@redhat.com> wrote:
 > 
-> cpsw_ndo_start_xmit()
-> 	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
-> 		txq = netdev_get_tx_queue(ndev, q_idx);
-> 		netif_tx_stop_queue(txq);
 > 
-> ^^ as per [1] barier has to be used after set_bit() otherwise new value
-> might not be visible to other cpus
-> 	}
+> > should this be done under 'func_event_mutex' ?  
 > 
-> cpsw_tx_handler()
-> 	if (unlikely(netif_tx_queue_stopped(txq)))
-> 		netif_tx_wake_queue(txq);
-> 
-> and when it happens ndev TX queue became disabled forever while driver's HW
-> TX queue is empty.
-I'm sure it fixes test case somehow but there is some strangeness.
-(I've thought about this some X months ago):
-1. If no free desc, then there is bunch of descs on the queue ready to be sent
-2. If one of this desc while this process was missed then next will wake queue,
-because there is bunch of them on the fly. So, if desc on top of the sent queue
-missed to enable the queue, then next one more likely will enable it anyway..
-then how it could happen? The described race is possible only on last
-descriptor, yes, packets are small the speed is hight, possibility is very small
-.....but then next situation is also possible:
-- packets are sent fast
-- all packets were sent, but no any descriptors are freed now by sw interrupt (NAPI)
-- when interrupt had started NAPI, the queue was enabled, all other next 
-interrupts are throttled once NAPI not finished it's work yet.
-- when new packet submitted, no free descs are present yet (NAPI has not freed
-any yet), but all packets are sent, so no one can awake tx queue, as interrupt 
-will not arise when NAPI is started to free first descriptor interrupts are 
-disabled.....because h/w queue to be sent is empty...
-- how it can happen as submitting packet and handling packet operations is under 
-channel lock? Not exactly, a period between handling and freeing the descriptor
-to the pool is not under channel lock, here:
+> Probably.
 
-	spin_unlock_irqrestore(&chan->lock, flags);
-	if (unlikely(status & CPDMA_DESC_TD_COMPLETE))
-		cb_status = -ENOSYS;
-	else
-		cb_status = status;
-
-	__cpdma_chan_free(chan, desc, outlen, cb_status);
-	return status;
-
-unlock_ret:
-	spin_unlock_irqrestore(&chan->lock, flags);
-	return status;
-
-And:
-__cpdma_chan_free(chan, desc, outlen, cb_status);
-	-> cpdma_desc_free(pool, desc, 1);
-
-As result, queue deadlock as you've described.
-Just thought, not checked, but theoretically possible.
-What do you think?
+I think we only need to add the list.
 
 > 
-> Fix this, by adding smp_mb__after_atomic() after netif_tx_stop_queue()
-> calls and double check for free TX descriptors after stopping ndev TX queue
-> - if there are free TX descriptors wake up ndev TX queue.
+> > 
+> > I tried and crashed the system by running 2 scripts with:
+> > 
+> >   echo 'ip_rcv(u64 skb, u64 dev)' > /sys/kernel/debug/tracing/function_events
+> >   echo 'SyS_openat(int dfd, string buf, x32 flags, x32 mode)' >> /sys/kernel/debug/tracing/function_events
+> >   echo 'SyS_open(x8[32] buf, x32 flags, x32 mode)' >> /sys/kernel/debug/tracing/function_events
+> >  
 > 
-> [1] https://www.kernel.org/doc/html/latest/core-api/atomic_ops.html
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
->  drivers/net/ethernet/ti/cpsw.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-> index 10d7cbe..3805b13 100644
-> --- a/drivers/net/ethernet/ti/cpsw.c
-> +++ b/drivers/net/ethernet/ti/cpsw.c
-> @@ -1638,6 +1638,7 @@ static netdev_tx_t cpsw_ndo_start_xmit(struct sk_buff *skb,
->  		q_idx = q_idx % cpsw->tx_ch_num;
->  
->  	txch = cpsw->txv[q_idx].ch;
-> +	txq = netdev_get_tx_queue(ndev, q_idx);
->  	ret = cpsw_tx_packet_submit(priv, skb, txch);
->  	if (unlikely(ret != 0)) {
->  		cpsw_err(priv, tx_err, "desc submit failed\n");
-> @@ -1648,15 +1649,26 @@ static netdev_tx_t cpsw_ndo_start_xmit(struct sk_buff *skb,
->  	 * tell the kernel to stop sending us tx frames.
->  	 */
->  	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
-> -		txq = netdev_get_tx_queue(ndev, q_idx);
->  		netif_tx_stop_queue(txq);
-> +
-> +		/* Barrier, so that stop_queue visible to other cpus */
-> +		smp_mb__after_atomic();
-> +
-> +		if (cpdma_check_free_tx_desc(txch))
-> +			netif_tx_wake_queue(txq);
->  	}
->  
->  	return NETDEV_TX_OK;
->  fail:
->  	ndev->stats.tx_dropped++;
-> -	txq = netdev_get_tx_queue(ndev, skb_get_queue_mapping(skb));
->  	netif_tx_stop_queue(txq);
-> +
-> +	/* Barrier, so that stop_queue visible to other cpus */
-> +	smp_mb__after_atomic();
-> +
-> +	if (cpdma_check_free_tx_desc(txch))
-> +		netif_tx_wake_queue(txq);
-> +
->  	return NETDEV_TX_BUSY;
->  }
->  
-> -- 
-> 2.10.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
--- 
-Regards,
-Ivan Khoronzhuk
+There's no reason that we can't have more than one function  event
+attached to the same function. I'm adding this:
+
+diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
+index b145639eac45..928168fc2025 100644
+--- a/kernel/trace/trace_event_ftrace.c
++++ b/kernel/trace/trace_event_ftrace.c
+@@ -1275,12 +1275,6 @@ static int create_function_event(int argc, char **argv)
+ 	if (state != FUNC_STATE_END)
+ 		goto fail;
+ 
+-	ret = -EALREADY;
+-	list_for_each_entry(fe, &func_events, list) {
+-		if (strcmp(fe->func, func_event->func) == 0)
+-			goto fail;
+-	}
+-
+ 	ret = ftrace_set_filter(&func_event->ops, func_event->func,
+ 				strlen(func_event->func), 0);
+ 	if (ret < 0)
+@@ -1290,7 +1284,9 @@ static int create_function_event(int argc, char **argv)
+ 	if (ret < 0)
+ 		goto fail;
+ 
++	mutex_lock(&func_event_mutex);
+ 	list_add_tail(&func_event->list, &func_events);
++	mutex_unlock(&func_event_mutex);
+ 	return 0;
+  fail:
+ 	free_func_event(func_event);
+
+-- Steve
