@@ -1,69 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754212AbeBGN5F (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:57:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48632 "EHLO mail.kernel.org"
+        id S1754115AbeBGN5z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:57:55 -0500
+Received: from foss.arm.com ([217.140.101.70]:51262 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753763AbeBGN5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:57:04 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC882179F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 7 Feb 2018 08:57:00 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Matthew Wilcox <willy@infradead.org>, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        mingo@redhat.com, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, brouer@redhat.com,
-        rao.shoaib@oracle.com
-Subject: Re: [PATCH 0/2] rcu: Transform kfree_rcu() into kvfree_rcu()
-Message-ID: <20180207085700.393f90d0@gandalf.local.home>
-In-Reply-To: <20180207083104.GK3617@linux.vnet.ibm.com>
-References: <151791170164.5994.8253310844733420079.stgit@localhost.localdomain>
-        <20180207021703.GC3617@linux.vnet.ibm.com>
-        <20180207042334.GA16175@bombadil.infradead.org>
-        <20180207050200.GH3617@linux.vnet.ibm.com>
-        <db9bda80-7506-ae25-2c0a-45eaa08963d9@virtuozzo.com>
-        <20180207083104.GK3617@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753648AbeBGN5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 08:57:54 -0500
+From: Robert Walker <robert.walker@arm.com>
+To: acme@kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Robert Walker <robert.walker@arm.com>, coresight@lists.linaro.org
+Subject: [PATCH 0/2] Perf inject for ETM trace
+Date: Wed,  7 Feb 2018 13:57:23 +0000
+Message-Id: <1518011845-24063-1-git-send-email-robert.walker@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Feb 2018 00:31:04 -0800
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+Hi,
 
-> I see problems.  We would then have two different names for exactly the
-> same thing.
-> 
-> Seems like it would be a lot easier to simply document the existing
-> kfree_rcu() behavior, especially given that it apparently already works.
-> The really doesn't seem to me to be worth a name change.
+These patches add support for using perf inject to generate branch events,
+instruction events and branch stacks from CoreSight ETM traces.
 
-Honestly, I don't believe this is an RCU sub-system decision. This is a
-memory management decision.
+They apply to linus's tree with the memory cleanup fix from
+https://lkml.org/lkml/2018/1/25/432
 
-If we have kmalloc(), vmalloc(), kfree(), vfree() and kvfree(), and we
-want kmalloc() to be freed with kfree(), and vmalloc() to be freed with
-vfree(), and for strange reasons, we don't know how the data was
-allocated we have kvfree(). That's an mm decision not an rcu one. We
-should have kfree_rcu(), vfree_rcu() and kvfree_rcu(), and honestly,
-they should not depend on kvfree() doing the same thing for everything.
-Each should call the corresponding member that they represent. Which
-would change this patch set.
+Regards
 
-Why? Too much coupling between RCU and MM. What if in the future
-something changes and kvfree() goes away or changes drastically. We
-would then have to go through all the users of RCU to change them too.
+Rob Walker
 
-To me kvfree() is a special case and should not be used by RCU as a
-generic function. That would make RCU and MM much more coupled than
-necessary.
+Robert Walker (2):
+  perf tools: inject capabilitity for CoreSight traces
+  perf inject: Emit instruction records on ETM trace discontinuity
 
--- Steve
+ Documentation/trace/coresight.txt               |  51 +++
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  74 +++-
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |   2 +
+ tools/perf/util/cs-etm.c                        | 471 +++++++++++++++++++++---
+ 4 files changed, 532 insertions(+), 66 deletions(-)
+
+-- 
+2.7.4
