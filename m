@@ -1,56 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754772AbeBGVLm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:11:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754531AbeBGVLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:11:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6CF217B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
-From: Kieran Bingham <kbingham@kernel.org>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] media: i2c: adv748x: Fix cleanup jump on chip identification
-Date: Wed,  7 Feb 2018 21:11:35 +0000
-Message-Id: <1518037895-10921-1-git-send-email-kbingham@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1754809AbeBGVR2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 16:17:28 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:42103 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754397AbeBGVRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 16:17:25 -0500
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org, architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
+        Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v4 00/12] drm/sun4i: Add A83T HDMI support
+Date: Wed,  7 Feb 2018 22:17:01 +0100
+Message-Id: <20180207211713.3638-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+This patch series implements support for A83T DW HDMI and PHY. Contrary to
+v1 series, this one is based on latest linux-next, since all needed patches
+were merged.
 
-The error handling for the adv748x_identify_chip() call erroneously
-jumps to the err_cleanup_clients label before the clients have been
-established.
+While exactly this combination of HDMI controller and PHY is not common in
+Allwinner SoCs, this patch series nevertheless makes groundwork for other
+SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H5.
 
-Correct this by jumping to the next (and correct) label in the cleanup
-code: err_cleanup_dt.
+Please take a look.
 
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+Best regards,
+Jernej
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/i2c/adv748x/adv748x-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from v3:
+- Collected tags
+- drop patch for changing NKMP formula
+- add patch to use 64 bit intermediate variable for calculating NKMP
+  clock rate and thus preventing overflow in some cases
+- rework DT bindings patch according Rob's suggestions
+- move TMDS clock from PHY to controller driver, since documentation
+  suggest such relationship
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 6d62b817ed00..6ccaad7e9eca 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -651,7 +651,7 @@ static int adv748x_probe(struct i2c_client *client,
- 	ret = adv748x_identify_chip(state);
- 	if (ret) {
- 		adv_err(state, "Failed to identify chip");
--		goto err_cleanup_clients;
-+		goto err_cleanup_dt;
- 	}
- 
- 	/* Configure remaining pages as I2C clients with regmap access */
+Changes from v2:
+- Collected ACKs and Review-by tags
+- patch for deinit callback was replaced with the one which gives control
+  of drvdata to driver
+- fixed meson driver (renamed reset function)
+- prototypes for newly exported functions in dw_hdmi.h were reordered
+
+Changes from v1:
+- Collected ACKs
+- Separated bindings for controller and PHY
+- Split driver into two parts - controller and PHY
+- HDMI PHY driver now uses regmap for writes
+- added defines for PHY registers and bits
+- updated DT entries to accomodate new bindings
+- removed already merged clock patch
+- reworked first clock patch according to comments
+- added new clock patch which changes NKMP formula
+- split TCON patch in two, one for quirk and one for new compatible
+- reworked patch which exports DW HDMI PHY functions:
+  - remove "gen2" from some function names
+  - removed parameter from dw_hdmi_phy_reset()
+  - added address parameter to dw_hdmi_phy_i2c_set_addr()
+- updated most of commit messages
+
+Jernej Skrabec (12):
+  clk: sunxi-ng: Mask nkmp factors when setting register
+  clk: sunxi-ng: Use u64 for calculation of nkmp rate
+  drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
+  drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+  drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
+  dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+  drm/sun4i: Add has_channel_0 TCON quirk
+  drm/sun4i: Add support for A83T second TCON
+  drm/sun4i: Add support for A83T second DE2 mixer
+  drm/sun4i: Implement A83T HDMI driver
+  ARM: dts: sun8i: a83t: Add HDMI display pipeline
+  ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
+
+ .../bindings/display/sunxi/sun4i-drm.txt           | 195 ++++++++++++++-
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  25 ++
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 119 ++++++++-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |  42 +++-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  83 ++++---
+ drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  13 +-
+ drivers/gpu/drm/meson/meson_dw_hdmi.c              |  22 +-
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |  12 +-
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  13 +-
+ drivers/gpu/drm/sun4i/Kconfig                      |   9 +
+ drivers/gpu/drm/sun4i/Makefile                     |   4 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  46 +++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 196 +++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |  44 ++++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 270 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  11 +
+ include/drm/bridge/dw_hdmi.h                       |  24 +-
+ 18 files changed, 1040 insertions(+), 89 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+
 -- 
-2.7.4
+2.16.1
