@@ -1,39 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753491AbeBGBuZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:50:25 -0500
-Received: from mail-it0-f54.google.com ([209.85.214.54]:34917 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753045AbeBGBuW (ORCPT
+        id S1753508AbeBGBuw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:50:52 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:43232 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753091AbeBGBtG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:50:22 -0500
-X-Google-Smtp-Source: AH8x225iAj9AvWo3V8pGALkmeS2gNS9U5s2vrYJBFB5UNJsAoKQlbjDfqZ2BK/enHdBz9uOx+hEIEWLJ9AiE9TUTk4s=
-MIME-Version: 1.0
-In-Reply-To: <151796719550.10756.8688156573547110419.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151796719550.10756.8688156573547110419.stgit@dwillia2-desk3.amr.corp.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 6 Feb 2018 17:50:21 -0800
-X-Google-Sender-Auth: wH1-F_JWmLGDVs9SCNvSjOpLp00
-Message-ID: <CA+55aFy4UkbAgghSGN_vcLLF229avLmdx8nWyLMSBPRuD+vCvw@mail.gmail.com>
-Subject: Re: [PATCH] x86/nospec: Fixup array_index_nospec_mask() asm constraint
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Feb 2018 20:49:06 -0500
+X-Google-Smtp-Source: AH8x227tXyBnbXVIVTuHHHvbAmPQ4iySShch0C9talSHN3vRYlNImpjJGh2WQlsgzbLVU7MQR8LDXA==
+From: Alexandre Courbot <acourbot@chromium.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [RFCv3 12/17] v4l2: add request API support
+Date: Wed,  7 Feb 2018 10:48:16 +0900
+Message-Id: <20180207014821.164536-13-acourbot@chromium.org>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+In-Reply-To: <20180207014821.164536-1-acourbot@chromium.org>
+References: <20180207014821.164536-1-acourbot@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 5:33 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> Allow the compiler to handle @size as an immediate value rather than
-> allocating a register.
+Add a v4l2 request entity data structure that takes care of storing the
+request-related state of a V4L2 device ; in this case, its controls.
 
-Actually, maybe that "ir" should be "g".
+Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+---
+ drivers/media/v4l2-core/Makefile       |  2 +-
+ drivers/media/v4l2-core/v4l2-request.c | 54 ++++++++++++++++++++++++++++++++++
+ include/media/v4l2-request.h           | 34 +++++++++++++++++++++
+ 3 files changed, 89 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/media/v4l2-core/v4l2-request.c
+ create mode 100644 include/media/v4l2-request.h
 
-Because it's fine if it's a memory location too. "cmp" takes pretty
-much anything, as long as the thing we compare _to_ is a register.
-
-              Linus
+diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
+index 80de2cb9c476..1113dea1f4f9 100644
+--- a/drivers/media/v4l2-core/Makefile
++++ b/drivers/media/v4l2-core/Makefile
+@@ -15,7 +15,7 @@ obj-$(CONFIG_V4L2_FWNODE) += v4l2-fwnode.o
+ ifeq ($(CONFIG_TRACEPOINTS),y)
+   videodev-objs += vb2-trace.o v4l2-trace.o
+ endif
+-videodev-$(CONFIG_MEDIA_CONTROLLER) += v4l2-mc.o
++videodev-$(CONFIG_MEDIA_CONTROLLER) += v4l2-mc.o v4l2-request.o
+ 
+ obj-$(CONFIG_VIDEO_V4L2) += videodev.o
+ obj-$(CONFIG_VIDEO_V4L2) += v4l2-common.o
+diff --git a/drivers/media/v4l2-core/v4l2-request.c b/drivers/media/v4l2-core/v4l2-request.c
+new file mode 100644
+index 000000000000..7bc29d3cc332
+--- /dev/null
++++ b/drivers/media/v4l2-core/v4l2-request.c
+@@ -0,0 +1,54 @@
++/*
++ * Media requests support for V4L2
++ *
++ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/slab.h>
++
++#include <media/v4l2-request.h>
++
++struct media_request_entity_data *media_request_v4l2_entity_data_alloc(
++	struct v4l2_ctrl_handler *hdl)
++{
++	struct media_request_v4l2_entity_data *data;
++	int ret;
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++
++	ret = v4l2_ctrl_request_init(&data->ctrls);
++	if (ret) {
++		kfree(data);
++		return ERR_PTR(ret);
++	}
++
++	ret = v4l2_ctrl_request_clone(&data->ctrls, hdl, NULL);
++	if (ret) {
++		kfree(data);
++		return ERR_PTR(ret);
++	}
++
++	return &data->base;
++}
++EXPORT_SYMBOL_GPL(media_request_v4l2_entity_data_alloc);
++
++void
++media_request_v4l2_entity_data_free(struct media_request_entity_data *_data)
++{
++	struct media_request_v4l2_entity_data *data;
++
++	data = to_v4l2_entity_data(_data);
++
++	v4l2_ctrl_handler_free(&data->ctrls);
++	kfree(data);
++}
++EXPORT_SYMBOL_GPL(media_request_v4l2_entity_data_free);
+diff --git a/include/media/v4l2-request.h b/include/media/v4l2-request.h
+new file mode 100644
+index 000000000000..db38dc5fc460
+--- /dev/null
++++ b/include/media/v4l2-request.h
+@@ -0,0 +1,34 @@
++/*
++ * Media requests support for V4L2
++ *
++ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _MEDIA_REQUEST_V4L2_H
++#define _MEDIA_REQUEST_V4L2_H
++
++#include <media/media-request.h>
++#include <media/v4l2-ctrls.h>
++
++struct media_request_v4l2_entity_data {
++	struct media_request_entity_data base;
++
++	struct v4l2_ctrl_handler ctrls;
++};
++#define to_v4l2_entity_data(d) \
++	container_of(d, struct media_request_v4l2_entity_data, base)
++
++struct media_request_entity_data *media_request_v4l2_entity_data_alloc(
++	struct v4l2_ctrl_handler *hdl);
++void media_request_v4l2_entity_data_free(struct media_request_entity_data *data);
++
++#endif
+-- 
+2.16.0.rc1.238.g530d649a79-goog
