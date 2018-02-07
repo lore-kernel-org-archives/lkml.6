@@ -1,81 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753885AbeBGKX0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:23:26 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:20976 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753675AbeBGKW7 (ORCPT
+        id S1753901AbeBGKYg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:24:36 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39260 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753476AbeBGKYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:22:59 -0500
-X-UUID: 4d6d380a69b24900b75664282e1dd341-20180207
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <rjw@rjwysocki.net>,
-        <khilman@baylibre.com>
-CC: <ulf.hansson@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 3/4] soc: mediatek: avoid hardcoded value with bus_prot_mask
-Date: Wed, 7 Feb 2018 18:22:49 +0800
-Message-ID: <c101f416099f14521c4440058858007f5ff0a6c4.1517998367.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <ecfc548fc3d22aa335b50e552ad2ad88427a0bb2.1517998367.git.sean.wang@mediatek.com>
-References: <ecfc548fc3d22aa335b50e552ad2ad88427a0bb2.1517998367.git.sean.wang@mediatek.com>
+        Wed, 7 Feb 2018 05:24:32 -0500
+X-Google-Smtp-Source: AH8x224N5So5wmz4ZGIlR18MMT3SriEs/UAlHHgN1fOBX6e60kGmrYqreyz6xcKL8lv2/mfywvRvOQ==
+Subject: Re: [PATCH] [RESEND] x86/smpboot: avoid warning messages while
+ hot-removing physical cpu
+To: Masayoshi Mizuma <msys.mizuma@gmail.com>, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+References: <de21ed2c-2efe-87be-01ca-a613c78c1027@gmail.com>
+From: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+Message-ID: <f2ef2fb1-a6c3-24db-f755-c206be2e4054@gmail.com>
+Date: Wed, 7 Feb 2018 19:24:26 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <de21ed2c-2efe-87be-01ca-a613c78c1027@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+CC:+Andi Kleen
 
-use a meaningful definition for bus_prot_mask instead of just hardcoded
-for it.
+Hi Masayoshi,
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c     | 5 +++--
- include/linux/soc/mediatek/infracfg.h | 4 ++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+This issue is caused by the following commit:
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 435ce5e..5346f33 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -518,7 +518,8 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
- 		.name = "conn",
- 		.sta_mask = PWR_STATUS_CONN,
- 		.ctl_offs = SPM_CONN_PWR_CON,
--		.bus_prot_mask = 0x0104,
-+		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_CONN_M |
-+				 MT2701_TOP_AXI_PROT_EN_CONN_S,
- 		.clk_id = {CLK_NONE},
- 		.active_wakeup = true,
- 	},
-@@ -528,7 +529,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
- 		.ctl_offs = SPM_DIS_PWR_CON,
- 		.sram_pdn_bits = GENMASK(11, 8),
- 		.clk_id = {CLK_MM},
--		.bus_prot_mask = 0x0002,
-+		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_MM_M0,
- 		.active_wakeup = true,
- 	},
- 	[MT2701_POWER_DOMAIN_MFG] = {
-diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-index b0a507d..fd25f01 100644
---- a/include/linux/soc/mediatek/infracfg.h
-+++ b/include/linux/soc/mediatek/infracfg.h
-@@ -21,6 +21,10 @@
- #define MT8173_TOP_AXI_PROT_EN_MFG_M1		BIT(22)
- #define MT8173_TOP_AXI_PROT_EN_MFG_SNOOP_OUT	BIT(23)
- 
-+#define MT2701_TOP_AXI_PROT_EN_MM_M0		BIT(1)
-+#define MT2701_TOP_AXI_PROT_EN_CONN_M		BIT(2)
-+#define MT2701_TOP_AXI_PROT_EN_CONN_S		BIT(8)
-+
- #define MT7622_TOP_AXI_PROT_EN_ETHSYS		(BIT(3) | BIT(17))
- #define MT7622_TOP_AXI_PROT_EN_HIF0		(BIT(24) | BIT(25))
- #define MT7622_TOP_AXI_PROT_EN_HIF1		(BIT(26) | BIT(27) | \
--- 
-2.7.4
+commit 30bb9811856f667042e746d8033883b1091a46ce
+Author: Andi Kleen <ak@linux.intel.com>
+Date:   Tue Nov 14 07:42:56 2017 -0500
+
+    x86/topology: Avoid wasting 128k for package id array
+
+So you should add the following "Fixes:" tag in the description.
+
+Fixes: 30bb9811856f ("x86/topology: Avoid wasting 128k for package id array")
+
+Thanks,
+Yasuaki Ishimatsu
+
+On 02/05/2018 10:51 PM, Masayoshi Mizuma wrote:
+> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> 
+> When a physical cpu is hot-removed, the following warning message
+> are shown while the uncore device is removing in uncore_pci_remove().
+> 
+> WARNING: CPU: 120 PID: 5 at arch/x86/events/intel/uncore.c:988
+> uncore_pci_remove+0xf1/0x110
+> ...
+> CPU: 120 PID: 5 Comm: kworker/u1024:0 Not tainted 4.15.0-rc8 #1
+> Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+> ...
+> Call Trace:
+> pci_device_remove+0x36/0xb0
+> device_release_driver_internal+0x145/0x210
+> pci_stop_bus_device+0x76/0xa0
+> pci_stop_root_bus+0x44/0x60
+> acpi_pci_root_remove+0x1f/0x80
+> acpi_bus_trim+0x54/0x90
+> acpi_bus_trim+0x2e/0x90
+> acpi_device_hotplug+0x2bc/0x4b0
+> acpi_hotplug_work_fn+0x1a/0x30
+> process_one_work+0x141/0x340
+> worker_thread+0x47/0x3e0
+> kthread+0xf5/0x130
+> 
+> When uncore_pci_remove() runs, it tries to get package id to
+> clear the value of uncore_extra_pci_dev[].dev[] by using
+> topology_phys_to_logical_pkg(). The warning messesage are
+> shown because topology_phys_to_logical_pkg() returns -1.
+> 
+>   arch/x86/events/intel/uncore.c:
+>   static void uncore_pci_remove(struct pci_dev *pdev)
+>   {
+>   ...
+>           phys_id = uncore_pcibus_to_physid(pdev->bus);
+>   ...
+>                   pkg = topology_phys_to_logical_pkg(phys_id); //returns -1
+>                   for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
+>                           if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
+>                                   uncore_extra_pci_dev[pkg].dev[i] = NULL;
+>                                   break;
+>                           }
+>                   }
+>                   WARN_ON_ONCE(i >= UNCORE_EXTRA_PCI_DEV_MAX); //HERE!!
+> 
+> topology_phys_to_logical_pkg() tries to find
+> cpuinfo_x86->phys_proc_id that matches the phys_pkg argument.
+> 
+>   arch/x86/kernel/smpboot.c:
+>   int topology_phys_to_logical_pkg(unsigned int phys_pkg)
+>   {
+>           int cpu;
+>   
+>           for_each_possible_cpu(cpu) {
+>                   struct cpuinfo_x86 *c = &cpu_data(cpu);
+>   
+>                   if (c->initialized && c->phys_proc_id == phys_pkg)
+>                           return c->logical_proc_id;
+>           }
+>           return -1;
+>   }
+> 
+> However, the phys_proc_id is already set to 0 by remove_siblinginfo()
+> when the cpu was offlined.
+> So, topology_phys_to_logical_pkg() cannot find correct the
+> logical_proc_id and always returns -1.
+> As the result, uncore_pci_remove() calls WARN_ON_ONCE() and the warning
+> messages are shown.
+> 
+> To avoid this, remove the setting from remove_siblinginfo().
+> There is no influence about the removing because phys_proc_id is not
+> used after it is hot-removed and it is re-set while hot-addeding.
+> 
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+>  
+> ---
+>  arch/x86/kernel/smpboot.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index ed556d5..844279c 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -1431,7 +1431,6 @@ static void remove_siblinginfo(int cpu)
+>  	cpumask_clear(cpu_llc_shared_mask(cpu));
+>  	cpumask_clear(topology_sibling_cpumask(cpu));
+>  	cpumask_clear(topology_core_cpumask(cpu));
+> -	c->phys_proc_id = 0;
+>  	c->cpu_core_id = 0;
+>  	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
+>  	recompute_smt_state();
+> 
