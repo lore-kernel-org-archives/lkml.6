@@ -1,192 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753923AbeBGLs1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:48:27 -0500
-Received: from foss.arm.com ([217.140.101.70]:49794 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753478AbeBGLsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:48:25 -0500
-Date: Wed, 7 Feb 2018 11:48:20 +0000
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v4 1/3] sched/fair: add util_est on top of PELT
-Message-ID: <20180207114820.GI5739@e110439-lin>
-References: <20180206144131.31233-1-patrick.bellasi@arm.com>
- <20180206144131.31233-2-patrick.bellasi@arm.com>
- <20180206155056.GF2269@hirez.programming.kicks-ass.net>
- <20180206183315.GG5739@e110439-lin>
- <20180206190900.GN2249@hirez.programming.kicks-ass.net>
+        id S1754011AbeBGLu4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 06:50:56 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40475 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753630AbeBGLuy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 06:50:54 -0500
+X-Google-Smtp-Source: AH8x227RAx07COYM/Na7SQ9emk8RzEV+WVfL88jEsqbJ2od9j2UDmj3ScULpnkAldhdMEd5a5mnEhA==
+Date: Wed, 7 Feb 2018 12:50:51 +0100
+From: Christian Brauner <christian.brauner@canonical.com>
+To: Jiri Benc <jbenc@redhat.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>,
+        netdev@vger.kernel.org, ktkhai@virtuozzo.com,
+        stephen@networkplumber.org, w.bumiller@proxmox.com,
+        ebiederm@xmission.com, nicolas.dichtel@6wind.com,
+        linux-kernel@vger.kernel.org, dsahern@gmail.com, davem@davemloft.net
+Subject: Re: [PATCH net 1/1 v3] rtnetlink: require unique netns identifier
+Message-ID: <20180207115050.GA29047@gmail.com>
+References: <20180206131902.31937-1-christian.brauner@ubuntu.com>
+ <20180206131902.31937-2-christian.brauner@ubuntu.com>
+ <20180207121925.5fa1e534@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180206190900.GN2249@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180207121925.5fa1e534@redhat.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-Feb 20:09, Peter Zijlstra wrote:
-> On Tue, Feb 06, 2018 at 06:33:15PM +0000, Patrick Bellasi wrote:
+On Wed, Feb 07, 2018 at 12:19:25PM +0100, Jiri Benc wrote:
+> On Tue,  6 Feb 2018 14:19:02 +0100, Christian Brauner wrote:
+> > +/* Verify that rtnetlink requests supporting network namespace ids
+> > + * do not pass additional properties potentially referring to different
+> > + * network namespaces.
+> > + */
+> > +static int rtnl_ensure_unique_netns(struct nlattr *tb[],
+> > +				    struct netlink_ext_ack *extack)
+> > +{
+> > +	/* Requests without network namespace ids have been able to specify
+> > +	 * multiple properties referring to different network namespaces so
+> > +	 * don't regress them.
+> > +	 */
+> > +	if (!tb[IFLA_IF_NETNSID])
+> > +		return 0;
 > 
-> > Good point, I was actually expecting this question and I should have
-> > added it to the cover letter, sorry.
-> > 
-> > The reasoning was: the task's estimated utilization is defined as the
-> > max between PELT and the "estimation". Where "estimation" is
-> > the max between EWMA and the last ENQUEUED utilization.
-> > 
-> > Thus I was envisioning these two calls:
-> > 
-> >    _task_util_est := max(EWMA, ENQUEUED)
-> >     task_util_est := max(util_avg, _task_util_est)
-> > 
-> > but since now we have clients only for the first API, I've not added
-> > the second one. Still I would prefer to keep the "_" to make it clear
-> > that's and util_est's internal signal, not the actual task's estimated
-> > utilization.
-> > 
-> > Does it make sense?
-> > 
-> > Do you prefer I just remove the "_" and we will refactor it once we
-> > should add a customer for the proper task's util_est?
+> I agree with Eric that we should enforce this also for the existing
+> pid/fd attributes.
+
+Yes, I would prefer this too but in the Linux spirit of never regressing
+userspace I was afraid that there might already be userspace
+applications that stick a pid and an fd at the same time into an
+rtnetlink request. If we are ok with potentially breaking them then we
+should just go for it. It is definitely the cleaner solution.
+
 > 
-> Hurm... I was thinking:
+> > +
+> > +	/* Caller operates on the current network namespace. */
+> > +	if (!tb[IFLA_NET_NS_PID] && !tb[IFLA_NET_NS_FD])
+> > +		return 0;
+> > +
+> > +	NL_SET_ERR_MSG(extack, "multiple netns identifying attributes specified");
+> > +	return -EINVAL;
 > 
->   task_util_est := max(util_avg, EWMA)
+> But if we don't reach an agreement on that, this version is the next
+> best one. No reason to compare the namespaces whether they're the same,
+> a message with more than one such attribute is just invalid.
 > 
-> But the above mixes ENQUEUED into it.. *confused*.
+> > @@ -2649,6 +2675,10 @@ static int rtnl_dellink(struct sk_buff *skb, struct nlmsghdr *nlh,
+> >  	if (err < 0)
+> >  		return err;
+> >  
+> > +	err = rtnl_ensure_unique_netns(tb, extack);
+> > +	if (err < 0)
+> > +		return err;
+> > +
+> >  	if (tb[IFLA_IFNAME])
+> >  		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
+> >  
+> > @@ -3045,6 +3079,10 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+> >  	if (err < 0)
+> >  		return err;
+> >  
+> > +	err = rtnl_ensure_unique_netns(tb, extack);
+> > +	if (err < 0)
+> > +		return err;
+> > +
+> >  	if (tb[IFLA_IF_NETNSID]) {
+> >  		netnsid = nla_get_s32(tb[IFLA_IF_NETNSID]);
+> >  		tgt_net = get_target_net(NETLINK_CB(skb).sk, netnsid);
 > 
-> Also, I think I'm confused by the 'enqueued' name... it makes sense for
-> the cfs use-case, where we track the sum of all 'enqueued' tasks, but it
-> doesn't make sense for the task use-case where it tracks task_util() at
-> dequeue time.
+> dellink and getlink support only netnsid, we should just reject a
+> message with pid or fd set.
 
-Can be confusing at first, I've changed name in this version while
-trying to consolidate concepts in a reasonable way.
-
-Let see if I can cast some light...
-
-First of all:
-
-  a)  task_util_est := max(util_avg, EWMA, enqueued)
-  b)       enqueued := util_avg@dequeue time
-
-
-a) why we mix "enqueued" into?
-
-   I think we need all the three components to properly describe these
-   scenarios:
-
-   - a task becoming smaller:
-     the "EWMA" amortize the task's utilization reduction, usually
-     converging to the new lower utilization in ~6 activations, which
-     should be reasonable at least for some mobile use-cases.
-
-   - a task becoming bigger:
-     the "enqueued" value better represents the task utilization while
-     the "EWMA" catches up, but... that's true only from the second
-     longer running activation.
-     For the first bigger activation, when the task starts to run
-     longer then before, at a certain point the util_avg will be
-     bigger both "enqueued" and "EWMA", thus task_util_est() should
-     just track the PELT's "util_avg".
-
-   Here is a picture showing all these behaviors using a "ramp" task
-   generated with rt-app:
-
-      https://photos.app.goo.gl/kRYgvpS6PTgvu2AM2
-
-b) why enqueued for tasks?
-
-  Since v3 it was:
-
-     task : util_avg { util_est { last, ewma } }
-     cpu  :   cfs_rq { util_est_enqueued }
-
-  and Joel noticed that, since now util_est{} is part of util_avg{},
-  which is included also by cfs_rq{}, then we can use the same
-  util_avg{} for cfs_rq{} too.
-
-  Problem was that using cfs_rq::util_est::last was not meaningful to
-  me, hence I've try to find a concept which was working well for both
-  cpus and tasks.
-
-  Enqueued IMO seems to work for both, provided you read the task's
-  enqueued util_est as:
-     "the util_est of a task which is currently enqueued in its cfs_rq"
-  which (only) happens to be the util_avg@dequeue time.
-
-  IMO, also for tasks, that's not worst than util_est.last...
-  Maybe it's just matter to add a bit of documentation in the util_est
-  struct definition?
-
-Does that makes a bit more sense now?
-
-> > > > +/*
-> > > > + * Check if the specified (signed) value is within a specified margin,
-> > > > + * based on the observation that:
-> > > > + *     abs(x) < y := (unsigned)(x + y - 1) < (2 * y - 1)
-> > > > + */
-> > > > +static inline bool within_margin(long value, unsigned int margin)
-> > > 
-> > > This mixing of long and int is dodgy, do we want to consistently use int
-> > > here?
-> > 
-> > Right, perhaps better "unsigned int" for both params, isn't?
-> 
-> Can't, must be signed, since @value is supposed to be able to be
-> negative remember? ;-)
-
-Right... :)
-
-> > > > +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, util_est);
-> 
-> > > > +	WRITE_ONCE(p->se.avg.util_est.enqueued, util_last);
-> > > 
-> > > Two stores to that word... can we fix that nicely?
-> > 
-> > Good point, the single word comes from the goal to fit into the same
-> > cache line of sched_avg.
-> 
-> Its the above two stores I confuzzled to be the same. So n/m all that.
-
-Ok, fine... however, isn't a single WRITE_ONCE on "struct util_est"
-still better? Did not checked at generated code...
-
-> > > > +SCHED_FEAT(UTIL_EST, false)
-> > > 
-> > > Since you couldn't measure it, do we wants it true?
-> > 
-> > I'm just a single tester so far, I would be more confident once
-> > someone volunteer to turn this on to give a better coverage.
-> 
-> Lets just enable it by default, that way its far more likely someone
-> will complain about it :-), disabling it again is a trivial matter when
-> needed.
-
-Ok, at the end it's your call... but you right, this could help on
-testing it better.
-
-Moreover, on low-utilization (desktop like) workloads we do see
-measurable benefits for interactive tasks.
-
-> Also, your patch 2/3 have insufficient READ_ONCE()s.
-
-Damn, I'll look at it...
-
-Cheers Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Thanks for the feedback, I'll adapt the patch with the requested
+changes.
