@@ -1,49 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754819AbeBGR0i (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:26:38 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41608 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754412AbeBGR0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:26:37 -0500
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 0/8] Clean up kernel-doc and fix literal-block handling
-Date: Wed,  7 Feb 2018 10:26:16 -0700
-Message-Id: <20180207172624.24555-1-corbet@lwn.net>
-X-Mailer: git-send-email 2.14.3
+        id S1754829AbeBGR1A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:27:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53930 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754412AbeBGR06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:26:58 -0500
+Subject: Re: [PATCH] kconfig: Remove last trace of GENERIC_IO
+To: Rob Herring <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <422a4ff024038db02a2952158b0babe5b9281b2b.1517922544.git.robin.murphy@arm.com>
+ <CAL_JsqKZ8xzKD=ncTyT1LzCe0+gRL1pzcjDVOyBv61hUTGESnA@mail.gmail.com>
+ <16de2ed2-c2d8-8236-b001-2bc78e4c1d2f@arm.com>
+ <CAL_JsqJ1Hc8irF4LWM=1=OACC=fmRbg4c1evV777zKj3XOzi=w@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <dc837b10-a41d-4eb3-c14e-ca3fc69a55a9@arm.com>
+Date: Wed, 7 Feb 2018 17:26:56 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqJ1Hc8irF4LWM=1=OACC=fmRbg4c1evV777zKj3XOzi=w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So once upon a time I set out to fix the problem reported by Tobin wherein
-a literal block within a kerneldoc comment would be corrupted in
-processing.  On the way, though, I got annoyed at the way I have to learn
-how kernel-doc works from the beginning every time I tear into it.
+On 07/02/18 17:15, Rob Herring wrote:
+> On Feb 6, 2018 8:14 AM, "Robin Murphy" <robin.murphy@arm.com> wrote:
+>>
+>> On 06/02/18 16:06, Rob Herring wrote:
+>>>
+>>> On Tue, Feb 6, 2018 at 7:11 AM, Robin Murphy <robin.murphy@arm.com> wrote:
+>>>>
+>>>> Since commit 9de8da47742b ("kconfig: kill off GENERIC_IO option"), this
+>>>> select has done nothing, and is now just confusing. Clean it up.
+>>>>
+>>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>>>> ---
+>>>>    lib/Kconfig | 1 -
+>>>>    1 file changed, 1 deletion(-)
+>>>
+>>>
+>>> We already have:
+>>>
+>>> https://lkml.org/lkml/2018/1/17/924
+>>>
+>>> and this series:
+>>>
+>>> https://lkml.org/lkml/2018/2/4/208
+>>
+>>
+>> Agh, Ulf's patch is even sat in my inbox...
+>>
+>> This was just a drive-by from looking into HAS_IOMEM, sorry for the noise :)
+> 
+> What are you looking into there? IMO, we should get rid of HAS_IOMEM.
+> It's basically a !UML option to turn off a bunch of drivers in UML.
 
-As a result, seven of the following eight patches just get rid of some dead
-code and reorganize the rest - mostly turning the 500-line process_file()
-function into something a bit more rational.  Sphinx output is unchanged
-after these are applied.  Then, at the end, there's a tweak to stop messing
-with literal blocks.
+I was just having a quick investigate out of curiosity after Geert 
+raised it in the context of awkward COMPILE_TEST dependencies here:
 
-If anybody was unaware that I've not done any serious Perl since the
-1990's, they will certainly understand that fact now.
+https://lists.linuxfoundation.org/pipermail/iommu/2018-February/025963.html
 
-Jonathan Corbet (8):
-  docs: kernel-doc: Get rid of xml_escape() and friends
-  docs: kernel-doc: Rename and split STATE_FIELD
-  docs: kernel-doc: Move STATE_NORMAL processing into its own function
-  docs: kernel-doc: Move STATE_NAME processing into its own function
-  docs: kernel-doc: Move STATE_BODY processing to a separate function
-  docs: kernel-doc: Move STATE_PROTO processing into its own function
-  docs: kernel-doc: Finish moving STATE_* code out of process_file()
-  docs: kernel-doc: Don't mangle literal code blocks in comments
+I don't have the bandwidth myself to actually work on burying it, but it 
+does seem like that might be feasible.
 
- scripts/kernel-doc | 658 +++++++++++++++++++++++++++++------------------------
- 1 file changed, 357 insertions(+), 301 deletions(-)
-
--- 
-2.14.3
+Robin.
