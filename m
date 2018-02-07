@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753261AbeBGBtD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:49:03 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44284 "EHLO
+        id S1753311AbeBGBtI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:49:08 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45152 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752859AbeBGBs6 (ORCPT
+        with ESMTP id S1752859AbeBGBtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:48:58 -0500
-X-Google-Smtp-Source: AH8x227OVhDNZgW/9caussKBP2uOUnDis2dkhwfHtA+hgHEvU1WL1Dhr5rTGzPcW5eUmwAWaMiiuaA==
+        Tue, 6 Feb 2018 20:49:04 -0500
+X-Google-Smtp-Source: AH8x227FWStmpPkknKgmSwvpImwVoo6uTHdSLJneY/RenlCivJpjTH6J078i9MceLny+l2T/7613AA==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -20,9 +20,9 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv3 09/17] v4l2-ctrls: use ref in helper instead of ctrl
-Date: Wed,  7 Feb 2018 10:48:13 +0900
-Message-Id: <20180207014821.164536-10-acourbot@chromium.org>
+Subject: [RFCv3 11/17] v4l2-ctrls: add v4l2_ctrl_request_setup
+Date: Wed,  7 Feb 2018 10:48:15 +0900
+Message-Id: <20180207014821.164536-12-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180207014821.164536-1-acourbot@chromium.org>
 References: <20180207014821.164536-1-acourbot@chromium.org>
@@ -32,99 +32,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-The next patch needs the reference to a control instead of the
-control itself, so change struct v4l2_ctrl_helper accordingly.
+Add a helper function that can set controls from a request.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/v4l2-ctrls.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/media/v4l2-core/v4l2-ctrls.c | 71 ++++++++++++++++++++++++++++++++++++
+ include/media/v4l2-ctrls.h           |  2 +
+ 2 files changed, 73 insertions(+)
 
 diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index c692a6d925c6..9090a49eef91 100644
+index 4fa7adef7531..dccc27968df1 100644
 --- a/drivers/media/v4l2-core/v4l2-ctrls.c
 +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -37,8 +37,8 @@
- struct v4l2_ctrl_helper {
- 	/* Pointer to the control reference of the master control */
- 	struct v4l2_ctrl_ref *mref;
--	/* The control corresponding to the v4l2_ext_control ID field. */
--	struct v4l2_ctrl *ctrl;
-+	/* The control ref corresponding to the v4l2_ext_control ID field. */
+@@ -1662,6 +1662,14 @@ static void new_to_req(struct v4l2_ctrl_ref *ref)
+ 	ptr_to_ptr(ref->ctrl, ref->ctrl->p_new, ref->p_req);
+ }
+ 
++/* Copy the request value to the new value */
++static void req_to_new(struct v4l2_ctrl_ref *ref)
++{
++	if (!ref)
++		return;
++	ptr_to_ptr(ref->ctrl, ref->p_req, ref->ctrl->p_new);
++}
++
+ /* Return non-zero if one or more of the controls in the cluster has a new
+    value that differs from the current value. */
+ static int cluster_changed(struct v4l2_ctrl *master)
+@@ -3427,6 +3435,69 @@ int __v4l2_ctrl_s_ctrl_string(struct v4l2_ctrl *ctrl, const char *s)
+ }
+ EXPORT_SYMBOL(__v4l2_ctrl_s_ctrl_string);
+ 
++void v4l2_ctrl_request_setup(struct v4l2_ctrl_handler *hdl)
++{
 +	struct v4l2_ctrl_ref *ref;
- 	/* v4l2_ext_control index of the next control belonging to the
- 	   same cluster, or 0 if there isn't any. */
- 	u32 next;
-@@ -2856,6 +2856,7 @@ static int prepare_ext_ctrls(struct v4l2_ctrl_handler *hdl,
- 		ref = find_ref_lock(hdl, id);
- 		if (ref == NULL)
- 			return -EINVAL;
-+		h->ref = ref;
- 		ctrl = ref->ctrl;
- 		if (ctrl->flags & V4L2_CTRL_FLAG_DISABLED)
- 			return -EINVAL;
-@@ -2878,7 +2879,6 @@ static int prepare_ext_ctrls(struct v4l2_ctrl_handler *hdl,
- 		}
- 		/* Store the ref to the master control of the cluster */
- 		h->mref = ref;
--		h->ctrl = ctrl;
- 		/* Initially set next to 0, meaning that there is no other
- 		   control in this helper array belonging to the same
- 		   cluster */
-@@ -2963,7 +2963,7 @@ int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs
- 	cs->error_idx = cs->count;
++
++	if (!hdl)
++		return;
++
++	mutex_lock(hdl->lock);
++
++	list_for_each_entry(ref, &hdl->ctrl_refs, node)
++		ref->done = false;
++
++	list_for_each_entry(ref, &hdl->ctrl_refs, node) {
++		struct v4l2_ctrl *ctrl = ref->ctrl;
++		struct v4l2_ctrl *master = ctrl->cluster[0];
++		int i;
++
++		/* Skip if this control was already handled by a cluster. */
++		/* Skip button controls and read-only controls. */
++		if (ref->done || ctrl->type == V4L2_CTRL_TYPE_BUTTON ||
++		    (ctrl->flags & V4L2_CTRL_FLAG_READ_ONLY))
++			continue;
++
++		v4l2_ctrl_lock(master);
++		for (i = 0; i < master->ncontrols; i++) {
++			if (master->cluster[i]) {
++				struct v4l2_ctrl_ref *r =
++					find_ref(hdl, master->cluster[i]->id);
++
++				req_to_new(r);
++				master->cluster[i]->is_new = 1;
++				r->done = true;
++			}
++		}
++		/*
++		 * For volatile autoclusters that are currently in auto mode
++		 * we need to discover if it will be set to manual mode.
++		 * If so, then we have to copy the current volatile values
++		 * first since those will become the new manual values (which
++		 * may be overwritten by explicit new values from this set
++		 * of controls).
++		 */
++		if (master->is_auto && master->has_volatiles &&
++		    !is_cur_manual(master)) {
++			s32 new_auto_val = *master->p_new.p_s32;
++
++			/*
++			 * If the new value == the manual value, then copy
++			 * the current volatile values.
++			 */
++			if (new_auto_val == master->manual_mode_value)
++				update_from_auto_cluster(master);
++		}
++
++		try_or_set_cluster(NULL, master, true, 0);
++
++		v4l2_ctrl_unlock(master);
++	}
++
++	mutex_unlock(hdl->lock);
++}
++EXPORT_SYMBOL(v4l2_ctrl_request_setup);
++
+ void v4l2_ctrl_notify(struct v4l2_ctrl *ctrl, v4l2_ctrl_notify_fnc notify, void *priv)
+ {
+ 	if (ctrl == NULL)
+diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
+index bddceb794961..922824dbd7db 100644
+--- a/include/media/v4l2-ctrls.h
++++ b/include/media/v4l2-ctrls.h
+@@ -259,6 +259,7 @@ struct v4l2_ctrl_ref {
+ 	struct v4l2_ctrl *ctrl;
+ 	struct v4l2_ctrl_helper *helper;
+ 	union v4l2_ctrl_ptr p_req;
++	bool done;
+ 	bool from_other_dev;
+ };
  
- 	for (i = 0; !ret && i < cs->count; i++)
--		if (helpers[i].ctrl->flags & V4L2_CTRL_FLAG_WRITE_ONLY)
-+		if (helpers[i].ref->ctrl->flags & V4L2_CTRL_FLAG_WRITE_ONLY)
- 			ret = -EACCES;
+@@ -1056,6 +1057,7 @@ int v4l2_ctrl_request_init(struct v4l2_ctrl_handler *hdl);
+ int v4l2_ctrl_request_clone(struct v4l2_ctrl_handler *hdl,
+ 			    const struct v4l2_ctrl_handler *from,
+ 			    bool (*filter)(const struct v4l2_ctrl *ctrl));
++void v4l2_ctrl_request_setup(struct v4l2_ctrl_handler *hdl);
+ void v4l2_ctrl_request_get(struct v4l2_ctrl_handler *hdl);
+ void v4l2_ctrl_request_put(struct v4l2_ctrl_handler *hdl);
  
- 	for (i = 0; !ret && i < cs->count; i++) {
-@@ -2998,7 +2998,7 @@ int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs
- 
- 			do {
- 				ret = ctrl_to_user(cs->controls + idx,
--						   helpers[idx].ctrl);
-+						   helpers[idx].ref->ctrl);
- 				idx = helpers[idx].next;
- 			} while (!ret && idx);
- 		}
-@@ -3137,7 +3137,7 @@ static int validate_ctrls(struct v4l2_ext_controls *cs,
- 
- 	cs->error_idx = cs->count;
- 	for (i = 0; i < cs->count; i++) {
--		struct v4l2_ctrl *ctrl = helpers[i].ctrl;
-+		struct v4l2_ctrl *ctrl = helpers[i].ref->ctrl;
- 		union v4l2_ctrl_ptr p_new;
- 
- 		cs->error_idx = i;
-@@ -3249,7 +3249,7 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
- 			do {
- 				/* Check if the auto control is part of the
- 				   list, and remember the new value. */
--				if (helpers[tmp_idx].ctrl == master)
-+				if (helpers[tmp_idx].ref->ctrl == master)
- 					new_auto_val = cs->controls[tmp_idx].value;
- 				tmp_idx = helpers[tmp_idx].next;
- 			} while (tmp_idx);
-@@ -3262,7 +3262,7 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
- 		/* Copy the new caller-supplied control values.
- 		   user_to_new() sets 'is_new' to 1. */
- 		do {
--			struct v4l2_ctrl *ctrl = helpers[idx].ctrl;
-+			struct v4l2_ctrl *ctrl = helpers[idx].ref->ctrl;
- 
- 			ret = user_to_new(cs->controls + idx, ctrl);
- 			if (!ret && ctrl->is_ptr)
-@@ -3278,7 +3278,7 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
- 			idx = i;
- 			do {
- 				ret = new_to_user(cs->controls + idx,
--						helpers[idx].ctrl);
-+						helpers[idx].ref->ctrl);
- 				idx = helpers[idx].next;
- 			} while (!ret && idx);
- 		}
 -- 
 2.16.0.rc1.238.g530d649a79-goog
