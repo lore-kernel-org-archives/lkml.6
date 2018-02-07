@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754892AbeBGR1X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:27:23 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41668 "EHLO ms.lwn.net"
+        id S1754904AbeBGR1p (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:27:45 -0500
+Received: from ms.lwn.net ([45.79.88.28]:41654 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754466AbeBGR1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:27:07 -0500
+        id S1754831AbeBGR1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:27:05 -0500
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
         Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 8/8] docs: kernel-doc: Don't mangle literal code blocks in comments
-Date: Wed,  7 Feb 2018 10:26:24 -0700
-Message-Id: <20180207172624.24555-9-corbet@lwn.net>
+Subject: [PATCH 6/8] docs: kernel-doc: Move STATE_PROTO processing into its own function
+Date: Wed,  7 Feb 2018 10:26:22 -0700
+Message-Id: <20180207172624.24555-7-corbet@lwn.net>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180207172624.24555-1-corbet@lwn.net>
 References: <20180207172624.24555-1-corbet@lwn.net>
@@ -20,93 +20,76 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It can be useful to put code snippets into kerneldoc comments; that can be
-done with the "::" operator at the end of a line like this::
-
-   if (desperate)
-       run_in_circles();
-
-kernel-doc currently fails to understand these literal blocks and applies
-its normal markup to them, which is then treated as literal by sphinx.  The
-result is unsightly markup instead of a useful code snippet.
-
-Apply a hack to the output code to recognize literal blocks and avoid
-performing any special markup on them.  It's ugly, but that means it fits
-in well with the rest of the script.
+Move the top-level prototype-processing code out of process_file().
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/kernel-doc | 55 +++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 5 deletions(-)
+ scripts/kernel-doc | 46 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 18 deletions(-)
 
 diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index c6c9370a1e49..c984f82cb897 100755
+index a6a7bb46ea29..2deddb876156 100755
 --- a/scripts/kernel-doc
 +++ b/scripts/kernel-doc
-@@ -748,14 +748,59 @@ sub output_blockhead_rst(%) {
-     }
+@@ -1965,6 +1965,32 @@ sub process_body($$) {
  }
  
--sub output_highlight_rst {
--    my $contents = join "\n",@_;
--    my $line;
--
+ 
 +#
-+# Apply the RST highlights to a sub-block of text.
-+#   
-+sub highlight_block($) {
-+    # The dohighlight kludge requires the text be called $contents
-+    my $contents = shift;
-     eval $dohighlight;
-     die $@ if $@;
-+    return $contents;
++# STATE_PROTO: reading a function/whatever prototype.
++#
++sub process_proto($$) {
++    my $file = shift;
++
++    if (/$doc_inline_oneline/) {
++	$section = $1;
++	$contents = $2;
++	if ($contents ne "") {
++	    $contents .= "\n";
++	    dump_section($file, $section, $contents);
++	    $section = $section_default;
++	    $contents = "";
++	}
++    } elsif (/$doc_inline_start/) {
++	$state = STATE_INLINE;
++	$inline_doc_state = STATE_INLINE_NAME;
++    } elsif ($decl_type eq 'function') {
++	process_proto_function($_, $file);
++    } else {
++	process_proto_type($_, $file);
++    }
 +}
- 
--    foreach $line (split "\n", $contents) {
-+sub output_highlight_rst {
-+    my $input = join "\n",@_;
-+    my $output = "";
-+    my $line;
-+    my $in_literal = 0;
-+    my $litprefix;
-+    my $block = "";
 +
-+    # The "dohighlight" hack requires that the data be called "$contents"
-+    foreach $line (split "\n",$input) {
-+	#
-+	# If we're in a literal block, see if we should drop out
-+	# of it.  Otherwise pass the line straight through unmunged.
-+	#
-+	if ($in_literal) {
-+	    if (! ($line =~ /$litprefix/ || $line =~ /^\s*$/)) {
-+		$in_literal = 0;
-+	    }
-+	    else {
-+		$output .= $line . "\n";
-+	    }
-+	}
-+	#
-+	# Not in a literal block (or just dropped out)
-+	#
-+	if (! $in_literal) {
-+	    $block .= $line . "\n";
-+	    if ($line =~ /^[^.].*::$/) {
-+		$in_literal = 1;
-+		# Note current indentation - we'll go as long as it's deeper.
-+		$line =~ /^(\s*)/;
-+		$litprefix = '^' . $1 . ' ';
-+		$output .= highlight_block($block);
-+		$block = ""
-+	    }
-+	}
-+    }
 +
-+    if ($block) {
-+	$output .= highlight_block($block);
-+    }
-+    foreach $line (split "\n", $output) {
- 	print $lineprefix . $line . "\n";
-     }
- }
+ sub process_file($) {
+     my $file;
+     my $func;
+@@ -2031,24 +2057,8 @@ sub process_file($) {
+ 		    ++$warnings;
+ 		}
+ 	    }
+-	} elsif ($state == STATE_PROTO) {	# scanning for function '{' (end of prototype)
+-	    if (/$doc_inline_oneline/) {
+-		$section = $1;
+-		$contents = $2;
+-		if ($contents ne "") {
+-		    $contents .= "\n";
+-		    dump_section($file, $section, $contents);
+-		    $section = $section_default;
+-		    $contents = "";
+-		}
+-	    } elsif (/$doc_inline_start/) {
+-		$state = STATE_INLINE;
+-		$inline_doc_state = STATE_INLINE_NAME;
+-	    } elsif ($decl_type eq 'function') {
+-		process_proto_function($_, $file);
+-	    } else {
+-		process_proto_type($_, $file);
+-	    }
++	} elsif ($state == STATE_PROTO) {
++	    process_proto($file, $_);
+ 	} elsif ($state == STATE_DOCBLOCK) {
+ 		if (/$doc_end/)
+ 		{
 -- 
 2.14.3
