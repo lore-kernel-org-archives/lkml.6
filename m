@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeBGBuw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:50:52 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43232 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753091AbeBGBtG (ORCPT
+        id S1753521AbeBGBvP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:51:15 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33550 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752508AbeBGBtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:49:06 -0500
-X-Google-Smtp-Source: AH8x227tXyBnbXVIVTuHHHvbAmPQ4iySShch0C9talSHN3vRYlNImpjJGh2WQlsgzbLVU7MQR8LDXA==
+        Tue, 6 Feb 2018 20:49:01 -0500
+X-Google-Smtp-Source: AH8x224QSkWr84hQ4rtN03KyCQrYQ/pf7RoTHe9hPfzi7pAYdNW/k/1D8fQhQCEMamht9MmclM7P4w==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -18,10 +18,11 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Gustavo Padovan <gustavo.padovan@collabora.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv3 12/17] v4l2: add request API support
-Date: Wed,  7 Feb 2018 10:48:16 +0900
-Message-Id: <20180207014821.164536-13-acourbot@chromium.org>
+Subject: [RFCv3 10/17] v4l2-ctrls: support g/s_ext_ctrls for requests
+Date: Wed,  7 Feb 2018 10:48:14 +0900
+Message-Id: <20180207014821.164536-11-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 In-Reply-To: <20180207014821.164536-1-acourbot@chromium.org>
 References: <20180207014821.164536-1-acourbot@chromium.org>
@@ -29,130 +30,92 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a v4l2 request entity data structure that takes care of storing the
-request-related state of a V4L2 device ; in this case, its controls.
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
+The v4l2_g/s_ext_ctrls functions now support control handlers that
+represent requests.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/Makefile       |  2 +-
- drivers/media/v4l2-core/v4l2-request.c | 54 ++++++++++++++++++++++++++++++++++
- include/media/v4l2-request.h           | 34 +++++++++++++++++++++
- 3 files changed, 89 insertions(+), 1 deletion(-)
- create mode 100644 drivers/media/v4l2-core/v4l2-request.c
- create mode 100644 include/media/v4l2-request.h
+ drivers/media/v4l2-core/v4l2-ctrls.c | 37 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 33 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
-index 80de2cb9c476..1113dea1f4f9 100644
---- a/drivers/media/v4l2-core/Makefile
-+++ b/drivers/media/v4l2-core/Makefile
-@@ -15,7 +15,7 @@ obj-$(CONFIG_V4L2_FWNODE) += v4l2-fwnode.o
- ifeq ($(CONFIG_TRACEPOINTS),y)
-   videodev-objs += vb2-trace.o v4l2-trace.o
- endif
--videodev-$(CONFIG_MEDIA_CONTROLLER) += v4l2-mc.o
-+videodev-$(CONFIG_MEDIA_CONTROLLER) += v4l2-mc.o v4l2-request.o
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 9090a49eef91..4fa7adef7531 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -1528,6 +1528,13 @@ static int new_to_user(struct v4l2_ext_control *c,
+ 	return ptr_to_user(c, ctrl, ctrl->p_new);
+ }
  
- obj-$(CONFIG_VIDEO_V4L2) += videodev.o
- obj-$(CONFIG_VIDEO_V4L2) += v4l2-common.o
-diff --git a/drivers/media/v4l2-core/v4l2-request.c b/drivers/media/v4l2-core/v4l2-request.c
-new file mode 100644
-index 000000000000..7bc29d3cc332
---- /dev/null
-+++ b/drivers/media/v4l2-core/v4l2-request.c
-@@ -0,0 +1,54 @@
-+/*
-+ * Media requests support for V4L2
-+ *
-+ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/slab.h>
-+
-+#include <media/v4l2-request.h>
-+
-+struct media_request_entity_data *media_request_v4l2_entity_data_alloc(
-+	struct v4l2_ctrl_handler *hdl)
++/* Helper function: copy the request value back to the caller */
++static int req_to_user(struct v4l2_ext_control *c,
++		       struct v4l2_ctrl_ref *ref)
 +{
-+	struct media_request_v4l2_entity_data *data;
-+	int ret;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+
-+	ret = v4l2_ctrl_request_init(&data->ctrls);
-+	if (ret) {
-+		kfree(data);
-+		return ERR_PTR(ret);
-+	}
-+
-+	ret = v4l2_ctrl_request_clone(&data->ctrls, hdl, NULL);
-+	if (ret) {
-+		kfree(data);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return &data->base;
++	return ptr_to_user(c, ref->ctrl, ref->p_req);
 +}
-+EXPORT_SYMBOL_GPL(media_request_v4l2_entity_data_alloc);
 +
-+void
-+media_request_v4l2_entity_data_free(struct media_request_entity_data *_data)
+ /* Helper function: copy the initial control value back to the caller */
+ static int def_to_user(struct v4l2_ext_control *c, struct v4l2_ctrl *ctrl)
+ {
+@@ -1647,6 +1654,14 @@ static void cur_to_new(struct v4l2_ctrl *ctrl)
+ 	ptr_to_ptr(ctrl, ctrl->p_cur, ctrl->p_new);
+ }
+ 
++/* Copy the new value to the request value */
++static void new_to_req(struct v4l2_ctrl_ref *ref)
 +{
-+	struct media_request_v4l2_entity_data *data;
-+
-+	data = to_v4l2_entity_data(_data);
-+
-+	v4l2_ctrl_handler_free(&data->ctrls);
-+	kfree(data);
++	if (!ref)
++		return;
++	ptr_to_ptr(ref->ctrl, ref->ctrl->p_new, ref->p_req);
 +}
-+EXPORT_SYMBOL_GPL(media_request_v4l2_entity_data_free);
-diff --git a/include/media/v4l2-request.h b/include/media/v4l2-request.h
-new file mode 100644
-index 000000000000..db38dc5fc460
---- /dev/null
-+++ b/include/media/v4l2-request.h
-@@ -0,0 +1,34 @@
-+/*
-+ * Media requests support for V4L2
-+ *
-+ * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
 +
-+#ifndef _MEDIA_REQUEST_V4L2_H
-+#define _MEDIA_REQUEST_V4L2_H
+ /* Return non-zero if one or more of the controls in the cluster has a new
+    value that differs from the current value. */
+ static int cluster_changed(struct v4l2_ctrl *master)
+@@ -2971,7 +2986,8 @@ int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs
+ 				    struct v4l2_ctrl *ctrl);
+ 		struct v4l2_ctrl *master;
+ 
+-		ctrl_to_user = def_value ? def_to_user : cur_to_user;
++		ctrl_to_user = def_value ? def_to_user :
++			       (hdl->is_request ? NULL : cur_to_user);
+ 
+ 		if (helpers[i].mref == NULL)
+ 			continue;
+@@ -2997,8 +3013,12 @@ int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs
+ 			u32 idx = i;
+ 
+ 			do {
+-				ret = ctrl_to_user(cs->controls + idx,
+-						   helpers[idx].ref->ctrl);
++				if (ctrl_to_user)
++					ret = ctrl_to_user(cs->controls + idx,
++						helpers[idx].ref->ctrl);
++				else
++					ret = req_to_user(cs->controls + idx,
++						helpers[idx].ref);
+ 				idx = helpers[idx].next;
+ 			} while (!ret && idx);
+ 		}
+@@ -3271,7 +3291,16 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
+ 		} while (!ret && idx);
+ 
+ 		if (!ret)
+-			ret = try_or_set_cluster(fh, master, set, 0);
++			ret = try_or_set_cluster(fh, master,
++						 !hdl->is_request && set, 0);
++		if (!ret && hdl->is_request && set) {
++			for (j = 0; j < master->ncontrols; j++) {
++				struct v4l2_ctrl_ref *ref =
++					find_ref(hdl, master->cluster[j]->id);
 +
-+#include <media/media-request.h>
-+#include <media/v4l2-ctrls.h>
-+
-+struct media_request_v4l2_entity_data {
-+	struct media_request_entity_data base;
-+
-+	struct v4l2_ctrl_handler ctrls;
-+};
-+#define to_v4l2_entity_data(d) \
-+	container_of(d, struct media_request_v4l2_entity_data, base)
-+
-+struct media_request_entity_data *media_request_v4l2_entity_data_alloc(
-+	struct v4l2_ctrl_handler *hdl);
-+void media_request_v4l2_entity_data_free(struct media_request_entity_data *data);
-+
-+#endif
++				new_to_req(ref);
++			}
++		}
+ 
+ 		/* Copy the new values back to userspace. */
+ 		if (!ret) {
 -- 
 2.16.0.rc1.238.g530d649a79-goog
