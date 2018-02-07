@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754032AbeBGKi2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:38:28 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48506 "EHLO
+        id S1754054AbeBGKif (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:38:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48530 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753732AbeBGKi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:38:26 -0500
-Date: Wed, 7 Feb 2018 10:38:22 +0000
+        id S1753732AbeBGKie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 05:38:34 -0500
+Date: Wed, 7 Feb 2018 10:38:29 +0000
 From: Dave Martin <Dave.Martin@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
@@ -14,112 +14,235 @@ Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
         marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
         linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
         dave.martin@arm.com
-Subject: Re: [PATCH v2 07/20] arm64: capabilities: Filter the entries based
- on a given mask
-Message-ID: <20180207103821.GX5862@e103592.cambridge.arm.com>
+Subject: Re: [PATCH v2 08/20] arm64: capabilities: Group handling of features
+ and errata
+Message-ID: <20180207103829.GY5862@e103592.cambridge.arm.com>
 References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-8-suzuki.poulose@arm.com>
+ <20180131182807.32134-9-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180131182807.32134-8-suzuki.poulose@arm.com>
+In-Reply-To: <20180131182807.32134-9-suzuki.poulose@arm.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 06:27:54PM +0000, Suzuki K Poulose wrote:
-> While processing the list of capabilities, it is useful to
-> filter out some of the entries based on the given mask for the
-> scope of the capabilities to allow better control. This can be
-> used later for handling LOCAL vs SYSTEM wide capabilities and more.
-> All capabilities should have their scope set to either LOCAL_CPU or
-> SYSTEM. No functional/flow change.
+On Wed, Jan 31, 2018 at 06:27:55PM +0000, Suzuki K Poulose wrote:
+> So far we have had separate routes for triggering errata and feature
+> capability detection. Also, we never allowed "features" based on local
+> CPU and "errata" based on System wide safe registers. This patch
+> groups the handling of errata and features and also allows them
+> to have all the possible scopes. So we now run through both
+> arm64_features and arm64_errata, in two phases for detection.
+> 
+>  1) with SCOPE_LOCAL_CPU filter on each boot time enabled CPUs,
+>     via update_cpu_local_capabilities().
+> 
+>  2) with SCOPE_SYSTEM filter only once after all boot time enabled
+>     CPUs are active, triggered from setup_cpu_features().
+> 
+> A late CPU goes through both the tables for verification against
+> established capabilities, as before.
+> 
+> We could ideally merge the two tables into one. But leave it as
+> it is for easy access to the list of particular type.
 > 
 > Cc: Dave Martin <dave.martin@arm.com>
 > Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
 > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/include/asm/cpufeature.h |  2 ++
->  arch/arm64/kernel/cpufeature.c      | 35 ++++++++++++++++++++++++-----------
->  2 files changed, 26 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 69b5ce366598..cda62b70d338 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -198,6 +198,8 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->  /* Is it safe for a late CPU to miss this capability when system has it */
->  #define ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	((u16)BIT(5))
->  
-> +#define ARM64_CPUCAP_SCOPE_ALL			 \
-> +	(ARM64_CPUCAP_SCOPE_LOCAL_CPU | ARM64_CPUCAP_SCOPE_SYSTEM)
 
-Perhaps we could just use _MASK rather than having a separate #define,
-but it's good either way.
+I don't know if there's a way of splitting or refactoring this patch to
+make it easier to understand the changes, but I think I get what's going
+on here now.
 
-Is there a situation in which _ALL and _MASK would need to be
-different?
-
->  /*
->   * CPU errata detected at boot time based on feature of one or more CPUs.
->   * It is not safe for a late CPU to have this feature when the system doesn't
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 5e4d581c97f1..5163dc51b975 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1185,10 +1185,12 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
->  }
->  
->  static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
-> -			    const char *info)
-> +				    u16 scope_mask, const char *info)
->  {
-> +	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
->  	for (; caps->matches; caps++) {
-> -		if (!caps->matches(caps, cpucap_default_scope(caps)))
-> +		if (!(caps->type & scope_mask) ||
-> +		    !caps->matches(caps, cpucap_default_scope(caps)))
->  			continue;
->  
->  		if (!cpus_have_cap(caps->capability) && caps->desc)
-> @@ -1210,12 +1212,14 @@ static int __enable_cpu_capability(void *arg)
->   * Run through the enabled capabilities and enable() it on all active
->   * CPUs
->   */
-> -static void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
-> +static void __init
-> +enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mask)
->  {
-> +	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
->  	for (; caps->matches; caps++) {
->  		unsigned int num = caps->capability;
->  
-> -		if (!cpus_have_cap(num))
-> +		if (!(caps->type & scope_mask) || !cpus_have_cap(num))
->  			continue;
->  
->  		/* Ensure cpus_have_const_cap(num) works */
-> @@ -1240,12 +1244,18 @@ static void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *
->   *
->   * Returns "false" on conflicts.
->   */
-> -static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_list)
-> +static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_list,
-> +				    u16 scope_mask)
->  {
->  	bool cpu_has_cap, system_has_cap;
->  	const struct arm64_cpu_capabilities *caps = caps_list;
->  
-> +	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
->  	for (; caps->matches; caps++) {
-> +
-
-Nit: extra blank line?
-
-[...]
-
-With that fixed,
+So,
 
 Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+
+(But if you can see a good way to split it, I'll be happy to take
+another look.)
+
+> ---
+>  arch/arm64/kernel/cpufeature.c | 77 ++++++++++++++++++++++++------------------
+>  1 file changed, 44 insertions(+), 33 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 5163dc51b975..c710ef28524e 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -504,7 +504,7 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
+>  }
+>  
+>  extern const struct arm64_cpu_capabilities arm64_errata[];
+> -static void update_cpu_errata_workarounds(void);
+> +static void update_cpu_local_capabilities(void);
+>  
+>  void __init init_cpu_features(struct cpuinfo_arm64 *info)
+>  {
+> @@ -553,7 +553,7 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+>  	 * Run the errata work around checks on the boot CPU, once we have
+>  	 * initialised the cpu feature infrastructure.
+>  	 */
+> -	update_cpu_errata_workarounds();
+> +	update_cpu_local_capabilities();
+>  }
+>  
+>  static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
+> @@ -1184,8 +1184,8 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
+>  	return false;
+>  }
+>  
+> -static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+> -				    u16 scope_mask, const char *info)
+> +static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+> +				      u16 scope_mask, const char *info)
+>  {
+>  	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
+>  	for (; caps->matches; caps++) {
+> @@ -1199,6 +1199,13 @@ static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+>  	}
+>  }
+>  
+> +static void update_cpu_capabilities(u16 scope_mask)
+> +{
+> +	__update_cpu_capabilities(arm64_features, scope_mask,
+> +				"detected feature:");
+> +	__update_cpu_capabilities(arm64_errata, scope_mask,
+> +				"enabling work around for");
+> +}
+>  
+>  static int __enable_cpu_capability(void *arg)
+>  {
+> @@ -1213,7 +1220,7 @@ static int __enable_cpu_capability(void *arg)
+>   * CPUs
+>   */
+>  static void __init
+> -enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mask)
+> +__enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mask)
+>  {
+>  	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
+>  	for (; caps->matches; caps++) {
+> @@ -1293,6 +1300,12 @@ static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_li
+>  	return true;
+>  }
+>  
+> +static bool verify_local_cpu_caps(u16 scope_mask)
+> +{
+> +	return __verify_local_cpu_caps(arm64_features, scope_mask) &&
+> +	       __verify_local_cpu_caps(arm64_errata, scope_mask);
+> +}
+> +
+>  /*
+>   * Check for CPU features that are used in early boot
+>   * based on the Boot CPU value.
+> @@ -1315,12 +1328,6 @@ verify_local_elf_hwcaps(const struct arm64_cpu_capabilities *caps)
+>  		}
+>  }
+>  
+> -static void verify_local_cpu_features(void)
+> -{
+> -	if (!__verify_local_cpu_caps(arm64_features, ARM64_CPUCAP_SCOPE_ALL))
+> -		cpu_die_early();
+> -}
+> -
+>  static void verify_sve_features(void)
+>  {
+>  	u64 safe_zcr = read_sanitised_ftr_reg(SYS_ZCR_EL1);
+> @@ -1339,26 +1346,28 @@ static void verify_sve_features(void)
+>  }
+>  
+>  /*
+> - * The CPU Errata work arounds are detected and applied at boot time
+> - * and the related information is freed soon after. If the new CPU requires
+> - * an errata not detected at boot, fail this CPU.
+> + * Check for all capablities within the scope of local CPU.
+> + * This is run on all boot time activated CPUs.
+>   */
+> -static void verify_local_cpu_errata_workarounds(void)
+> +static void update_cpu_local_capabilities(void)
+>  {
+> -	if (!__verify_local_cpu_caps(arm64_errata, ARM64_CPUCAP_SCOPE_ALL))
+> -		cpu_die_early();
+> +	update_cpu_capabilities(ARM64_CPUCAP_SCOPE_LOCAL_CPU);
+>  }
+>  
+> -static void update_cpu_errata_workarounds(void)
+> +/*
+> + * Check for all capablities with a system wide scope.
+> + * This is run only once after all the boot CPUs are
+> + * brought online.
+> + */
+> +static void update_system_capabilities(void)
+>  {
+> -	update_cpu_capabilities(arm64_errata,
+> -				ARM64_CPUCAP_SCOPE_ALL,
+> -				"enabling workaround for");
+> +	update_cpu_capabilities(ARM64_CPUCAP_SCOPE_SYSTEM);
+>  }
+>  
+> -static void __init enable_errata_workarounds(void)
+> +static void enable_cpu_capabilities(u16 scope_mask)
+>  {
+> -	enable_cpu_capabilities(arm64_errata, ARM64_CPUCAP_SCOPE_ALL);
+> +	__enable_cpu_capabilities(arm64_errata, scope_mask);
+> +	__enable_cpu_capabilities(arm64_features, scope_mask);
+>  }
+>  
+>  /*
+> @@ -1371,8 +1380,8 @@ static void __init enable_errata_workarounds(void)
+>   */
+>  static void verify_local_cpu_capabilities(void)
+>  {
+> -	verify_local_cpu_errata_workarounds();
+> -	verify_local_cpu_features();
+> +	if (!verify_local_cpu_caps(ARM64_CPUCAP_SCOPE_ALL))
+> +		cpu_die_early();
+>  	verify_local_elf_hwcaps(arm64_elf_hwcaps);
+>  
+>  	if (system_supports_32bit_el0())
+> @@ -1400,16 +1409,20 @@ void check_local_cpu_capabilities(void)
+>  	 * advertised capabilities.
+>  	 */
+>  	if (!sys_caps_initialised)
+> -		update_cpu_errata_workarounds();
+> +		update_cpu_local_capabilities();
+>  	else
+>  		verify_local_cpu_capabilities();
+>  }
+>  
+> -static void __init setup_feature_capabilities(void)
+> +static void __init setup_system_capabilities(void)
+>  {
+> -	update_cpu_capabilities(arm64_features,
+> -				ARM64_CPUCAP_SCOPE_ALL, "detected feature:");
+> -	enable_cpu_capabilities(arm64_features, ARM64_CPUCAP_SCOPE_ALL);
+> +	/*
+> +	 * We have finalised the system wide safe feature registers,
+> +	 * finalise the capabilities that depend on it.
+> +	 */
+> +	update_system_capabilities();
+> +	/* Enable all the available capabilities */
+> +	enable_cpu_capabilities(ARM64_CPUCAP_SCOPE_ALL);
+>  }
+>  
+>  DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
+> @@ -1433,9 +1446,7 @@ void __init setup_cpu_features(void)
+>  	u32 cwg;
+>  	int cls;
+>  
+> -	/* Set the CPU feature capabilies */
+> -	setup_feature_capabilities();
+> -	enable_errata_workarounds();
+> +	setup_system_capabilities();
+>  	mark_const_caps_ready();
+>  	setup_elf_hwcaps(arm64_elf_hwcaps);
+>  
+> -- 
+> 2.14.3
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
