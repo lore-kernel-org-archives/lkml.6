@@ -1,97 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753835AbeBGL5O (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 06:57:14 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49890 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753497AbeBGL5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 06:57:13 -0500
-Date: Wed, 7 Feb 2018 11:57:07 +0000
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v4 1/3] sched/fair: add util_est on top of PELT
-Message-ID: <20180207115707.GJ5739@e110439-lin>
-References: <20180206144131.31233-1-patrick.bellasi@arm.com>
- <20180206144131.31233-2-patrick.bellasi@arm.com>
- <20180206155056.GF2269@hirez.programming.kicks-ass.net>
- <20180206183315.GG5739@e110439-lin>
- <20180206190900.GN2249@hirez.programming.kicks-ass.net>
- <20180206191507.GU2295@hirez.programming.kicks-ass.net>
+        id S1753884AbeBGMAb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 07:00:31 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:50914 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753738AbeBGMA3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 07:00:29 -0500
+Subject: Re: [PATCH v5 03/16] media: rkisp1: Add user space ABI definitions
+To: Shunqian Zheng <zhengsq@rock-chips.com>,
+        linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, tfiga@chromium.org,
+        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
+        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
+        allon.huang@rock-chips.com, devicetree@vger.kernel.org,
+        heiko@sntech.de, robh+dt@kernel.org, Joao.Pinto@synopsys.com,
+        Luis.Oliveira@synopsys.com, Jose.Abreu@synopsys.com,
+        jacob2.chen@rock-chips.com
+References: <1514533978-20408-1-git-send-email-zhengsq@rock-chips.com>
+ <1514533978-20408-4-git-send-email-zhengsq@rock-chips.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <e6160bef-29af-3905-6535-a18cb0caa601@xs4all.nl>
+Date: Wed, 7 Feb 2018 13:00:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180206191507.GU2295@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1514533978-20408-4-git-send-email-zhengsq@rock-chips.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfA/FUoZR2t9WIs/+q42pocHGYxK03AevDX76RIMXgF1QcoEAeiI5KYf+oqFPvwDraXrdXHFH4ia/YRkX1H/8nBJWfRry89vVUkhNBJPBQygJfbNCmFdu
+ rAWM9rSh+VuAKfS9sPOQMo7C6ZBeD+t2pLBF51Jg9XA/ohzDqvI0VbistdSTab1J+GCiqm9l4FqpYjfK/RWUGc7zPLVmANAQQvNI3Rw0NhWBc21tUSubDPzy
+ uPqQk4fRl2Xkr1JIW1M9V0lLS6giFHStEd1HZwzkZ+w5y85YtTmdNjeFQQbYrVaNwMxa5XKgOwFtR846gmwEXQcMzpMyIsHUHKOjGqPV+DEqXss3hMcZr6Vu
+ ti6lVFa2bJhr//VuG9xcHn8BoTV+R07eJOQLvV3NFanEff5ENkAynBnjv3gnHIMyBKirMjyROSnkLVjf92vVPEN9mBH2zGhlE28bi6hTocL1yhCJBsDWaD9q
+ R2EX2o1Zg+UgTeaHUGeV1KCzTsa0FIs7txQ+MMbr7O+0uQOHuEDeEmvWvFedv1Ee+NmoG/Jn1ErT/3TjEMyWG9w5YcliclQOaS3IxHKNm6HWHUeFiIEBFHON
+ FVEjgsB/ycGxk3FIBOMxigiCKbre6zo9yud7n2gfyZ9XOyrwjZCYTZ7OCDKMwRJ0Ku/UOSJDdjazGsBRNoaU/BEaF/ELEduAkWjNMWEJAmq2AqvMm/VdsTZX
+ 4Fo8VJyi/YzVXdAgaGKN/GrRpsoKClFddEJTFh6+QLzqGoQ+nCavTk/Ui3xoTAFUZIfDciThONlKaDjgLzVXyzEvA82S0l1ty1tLZU16TNUR9Dzc0EWijsn4
+ TWopvHqseFbeOsgPmRgP8SsHx0tMCim7pIpUJCJU4HzEjPZRczQ+bvEs1VmxLnCGE0Hkm1uLKnZaky6tUkSY0y/jV2UhVZCBd/zZHBu2nc3QaIvX8c35s7qz
+ 4z8RzGTrf5LnPl+bsj/8KkgqJRo=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-Feb 20:15, Peter Zijlstra wrote:
-> On Tue, Feb 06, 2018 at 08:09:00PM +0100, Peter Zijlstra wrote:
-> > On Tue, Feb 06, 2018 at 06:33:15PM +0000, Patrick Bellasi wrote:
-> > 
-> > > Good point, I was actually expecting this question and I should have
-> > > added it to the cover letter, sorry.
-> > > 
-> > > The reasoning was: the task's estimated utilization is defined as the
-> > > max between PELT and the "estimation". Where "estimation" is
-> > > the max between EWMA and the last ENQUEUED utilization.
-> > > 
-> > > Thus I was envisioning these two calls:
-> > > 
-> > >    _task_util_est := max(EWMA, ENQUEUED)
-> > >     task_util_est := max(util_avg, _task_util_est)
-> > > 
-> > > but since now we have clients only for the first API, I've not added
-> > > the second one. Still I would prefer to keep the "_" to make it clear
-> > > that's and util_est's internal signal, not the actual task's estimated
-> > > utilization.
-> > > 
-> > > Does it make sense?
-> > > 
-> > > Do you prefer I just remove the "_" and we will refactor it once we
-> > > should add a customer for the proper task's util_est?
-> > 
-> > Hurm... I was thinking:
-> > 
-> >   task_util_est := max(util_avg, EWMA)
-> > 
-> > But the above mixes ENQUEUED into it.. *confused*.
+On 12/29/17 08:52, Shunqian Zheng wrote:
+> From: Jeffy Chen <jeffy.chen@rock-chips.com>
 > 
-> So mixing in ENQUEUED seems to give it an upward BIAS if the very last
-> activation was 'high'. Thereby improving ramp-up.
-> 
-> That seems to be what we want.. might be nice to have that in a comment
-> ;-)
+> Add the header for userspace
 
-Ok, I should have read this one before... to avoid you a longer
-(boring) response to your previous email :/
+General note: I saw four cases where this documentation referred to the
+datasheet. Three comments on that:
 
-> I'm thinking we want a different name for max(EWMA, ENQUEUED) though,
-> but I really can't come up with a sensible suggestion, which I suppose,
-> is why you stuck an underscore on it and went on with things.
+1) You don't say which datasheet.
+2) I assume the datasheet is under NDA?
+3) You do need to give enough information so a reasonable default can be
+   used. I mentioned in an earlier review that creating an initial params
+   struct that can be used as a templete would be helpful (or even
+   required), and that would be a good place to put such defaults.
 
-The only sensible way I come up with is to consider that max as a
-util_est "internals"... while the actual task_util_est() (without "_")
-should consider util_avg as well, for PELT tracking when a task
-is becoming bigger the it's previous activations.
+Regards,
 
-Is that not reasonable enough?
-
-Potentially I can add also the task_util_est() version... but right
-now we do not have clients... still gcc should not be upset.
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+	Hans
