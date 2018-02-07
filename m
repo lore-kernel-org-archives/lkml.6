@@ -1,55 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754766AbeBGUTq (ORCPT <rfc822;w@1wt.eu>);
+        id S1754732AbeBGUTq (ORCPT <rfc822;w@1wt.eu>);
         Wed, 7 Feb 2018 15:19:46 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:59470 "EHLO
+Received: from isilmar-4.linta.de ([136.243.71.142]:59474 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754266AbeBGUTn (ORCPT
+        with ESMTP id S1754411AbeBGUTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 15:19:43 -0500
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, x86@kernel.org
 Cc: dan.j.williams@intel.com, tglx@linutronix.de, ak@linux.intel.com,
         torvalds@linux-foundation.org, luto@kernel.org
-Subject: [RFC v2 PATCH 0/7] x86/entry: simplify and unify SAVE/POP_REGS
-Date: Wed,  7 Feb 2018 21:15:10 +0100
-Message-Id: <20180207201517.6518-1-linux@dominikbrodowski.net>
+Subject: [RFC v2 PATCH 7/7] x86/entry: indent PUSH_AND_CLEAR_REGS and POP_REGS properly
+Date: Wed,  7 Feb 2018 21:15:17 +0100
+Message-Id: <20180207201517.6518-8-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180207201517.6518-1-linux@dominikbrodowski.net>
+References: <20180207201517.6518-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The starting point for this series was the intention to interleave
-the register clearing with register PUSH or MOV instructions, in order
-to minimize the cost of the additional instructions required for the
-register clearing. While at it, I noticed that a couple of macros in
-arch/x86/entry/calling.h are unused and can be cleaned up.
+... same as the other macros in arch/x86/entry/calling.h
 
-Based on a preliminary version of this patch,[*] Linus suggested to
-merge further codepaths and to use PUSH instead of MOV, as this should
-be faster on newer CPUs.
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ arch/x86/entry/calling.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-[*] http://lkml.kernel.org/r/20180206212546.GA2026@light.dominikbrodowski.net and
-    http://lkml.kernel.org/r/20180206213202.GB2026@light.dominikbrodowski.net
-
-NOTE / WARNING: Please be *extremely* stringent in reviewing these
-patches, *especially* concerning patch 6/7 (x86/entry: get rid of 
-ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS).
-
-
-Dominik Brodowski (7):
-  x86/entry: merge SAVE_C_REGS and SAVE_EXTRA_REGS, remove unused
-    extensions
-  x86/entry: merge POP_C_REGS and POP_EXTRA_REGS
-  x86/entry: interleave XOR register clearing with PUSH instructions
-  x86/entry: introduce PUSH_AND_CLEAN_REGS
-  x86/entry: use PUSH_AND_CLEAN_REGS in more cases
-  x86/entry: get rid of ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS
-  x86/entry: indent PUSH_AND_CLEAR_REGS and POP_REGS properly
-
- arch/x86/entry/calling.h  | 118 ++++++++++++++++++----------------------------
- arch/x86/entry/entry_64.S | 104 +++++++---------------------------------
- 2 files changed, 62 insertions(+), 160 deletions(-)
-
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 59675010c9a0..6985440c68fa 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -97,7 +97,7 @@ For 32-bit we have the following conventions - kernel is built with
+ 
+ #define SIZEOF_PTREGS	21*8
+ 
+-	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
++.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
+ 	/*
+ 	 * Push registers and sanitize registers of values that a
+ 	 * speculation attack might otherwise want to exploit. The
+@@ -131,9 +131,9 @@ For 32-bit we have the following conventions - kernel is built with
+ 	pushq	%r15		/* pt_regs->r15 */
+ 	xorq    %r15, %r15	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
+-	.endm
++.endm
+ 
+-	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
++.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+ 	popq %r13
+@@ -163,7 +163,7 @@ For 32-bit we have the following conventions - kernel is built with
+ 
+ 	.macro icebp
+ 	.byte 0xf1
+-	.endm
++.endm
+ 
+ /*
+  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
 -- 
 2.16.1
