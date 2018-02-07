@@ -1,47 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932234AbeBGVTX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 16:19:23 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45911 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932196AbeBGVTU (ORCPT
+        id S932267AbeBGVTi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 16:19:38 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34398 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932244AbeBGVTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:19:20 -0500
-X-Google-Smtp-Source: AH8x224dFpVJaVTgigg+tnCkeZF6BGC2W3u1PFiLPNslh9eiHYqLNUWDqO2DZoP135l3+ZVM9fJZNQ==
-Date: Wed, 7 Feb 2018 15:19:18 -0600
-From: Rob Herring <robh@kernel.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: linus.walleij@linaro.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, broonie@kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller
- documentation
-Message-ID: <20180207211918.whcxq2not7elokae@rob-hp-laptop>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517795460.git.baolin.wang@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517795460.git.baolin.wang@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Wed, 7 Feb 2018 16:19:35 -0500
+X-Google-Smtp-Source: AH8x224m6N1ouW9HjjQlZjB8JR55gIrtjg2lejZ7vJ6rZhbC5WJ8YIobWGttWqPsF+22WqcJ4C2dZw==
+From: Paolo Valente <paolo.valente@linaro.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        alban.browaeys@gmail.com, ming.lei@redhat.com, ivan@ludios.org,
+        169364@studenti.unimore.it, holger@applied-asynchrony.com,
+        efault@gmx.de, Paolo Valente <paolo.valente@linaro.org>,
+        Serena Ziviani <ziviani.serena@gmail.com>
+Subject: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
+Date: Wed,  7 Feb 2018 22:19:20 +0100
+Message-Id: <20180207211920.6343-1-paolo.valente@linaro.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 05, 2018 at 09:55:10AM +0800, Baolin Wang wrote:
-> This patch adds the device tree bindings for the Spreadtrum
-> GPIO controller. The gpios will be supported by the GPIO
-> generic library.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changes since v1:
->  - No updates.
-> ---
->  .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq via
+RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a device
+be re-inserted into the active I/O scheduler for that device. As a
+consequence, I/O schedulers may get the same request inserted again,
+even several times, without a finish_request invoked on that request
+before each re-insertion.
 
-Please add acks/reviews when posting new versions.
+This fact is the cause of the failure reported in [1]. For an I/O
+scheduler, every re-insertion of the same re-prepared request is
+equivalent to the insertion of a new request. For schedulers like
+mq-deadline or kyber, this fact causes no harm. In contrast, it
+confuses a stateful scheduler like BFQ, which keeps state for an I/O
+request, until the finish_request hook is invoked on the request. In
+particular, BFQ may get stuck, waiting forever for the number of
+request dispatches, of the same request, to be balanced by an equal
+number of request completions (while there will be one completion for
+that request). In this state, BFQ may refuse to serve I/O requests
+from other bfq_queues. The hang reported in [1] then follows.
 
-Rob
+However, the above re-prepared requests undergo a requeue, thus the
+requeue_request hook of the active elevator is invoked for these
+requests, if set. This commit then addresses the above issue by
+properly implementing the hook requeue_request in BFQ.
+
+[1] https://marc.info/?l=linux-block&m=151211117608676
+
+Reported-by: Ivan Kozik <ivan@ludios.org>
+Reported-by: Alban Browaeys <alban.browaeys@gmail.com>
+Tested-by: Mike Galbraith <efault@gmx.de>
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Serena Ziviani <ziviani.serena@gmail.com>
+---
+V2: contains fix to bug reported in [2]
+V3: implements the improvement suggested in [3]
+
+[2] https://lkml.org/lkml/2018/2/5/599
+[3] https://lkml.org/lkml/2018/2/7/532
+
+ block/bfq-iosched.c | 107 ++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 82 insertions(+), 25 deletions(-)
+
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 47e6ec7427c4..aeca22d91101 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -3823,24 +3823,26 @@ static struct request *__bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
+ 		}
+
+ 		/*
+-		 * We exploit the bfq_finish_request hook to decrement
+-		 * rq_in_driver, but bfq_finish_request will not be
+-		 * invoked on this request. So, to avoid unbalance,
+-		 * just start this request, without incrementing
+-		 * rq_in_driver. As a negative consequence,
+-		 * rq_in_driver is deceptively lower than it should be
+-		 * while this request is in service. This may cause
+-		 * bfq_schedule_dispatch to be invoked uselessly.
++		 * We exploit the bfq_finish_requeue_request hook to
++		 * decrement rq_in_driver, but
++		 * bfq_finish_requeue_request will not be invoked on
++		 * this request. So, to avoid unbalance, just start
++		 * this request, without incrementing rq_in_driver. As
++		 * a negative consequence, rq_in_driver is deceptively
++		 * lower than it should be while this request is in
++		 * service. This may cause bfq_schedule_dispatch to be
++		 * invoked uselessly.
+ 		 *
+ 		 * As for implementing an exact solution, the
+-		 * bfq_finish_request hook, if defined, is probably
+-		 * invoked also on this request. So, by exploiting
+-		 * this hook, we could 1) increment rq_in_driver here,
+-		 * and 2) decrement it in bfq_finish_request. Such a
+-		 * solution would let the value of the counter be
+-		 * always accurate, but it would entail using an extra
+-		 * interface function. This cost seems higher than the
+-		 * benefit, being the frequency of non-elevator-private
++		 * bfq_finish_requeue_request hook, if defined, is
++		 * probably invoked also on this request. So, by
++		 * exploiting this hook, we could 1) increment
++		 * rq_in_driver here, and 2) decrement it in
++		 * bfq_finish_requeue_request. Such a solution would
++		 * let the value of the counter be always accurate,
++		 * but it would entail using an extra interface
++		 * function. This cost seems higher than the benefit,
++		 * being the frequency of non-elevator-private
+ 		 * requests very low.
+ 		 */
+ 		goto start_rq;
+@@ -4515,6 +4517,8 @@ static inline void bfq_update_insert_stats(struct request_queue *q,
+ 					   unsigned int cmd_flags) {}
+ #endif
+
++static void bfq_prepare_request(struct request *rq, struct bio *bio);
++
+ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+ 			       bool at_head)
+ {
+@@ -4541,6 +4545,18 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+ 		else
+ 			list_add_tail(&rq->queuelist, &bfqd->dispatch);
+ 	} else {
++		if (WARN_ON_ONCE(!bfqq)) {
++			/*
++			 * This should never happen. Most likely rq is
++			 * a requeued regular request, being
++			 * re-inserted without being first
++			 * re-prepared. Do a prepare, to avoid
++			 * failure.
++			 */
++			bfq_prepare_request(rq, rq->bio);
++			bfqq = RQ_BFQQ(rq);
++		}
++
+ 		idle_timer_disabled = __bfq_insert_request(bfqd, rq);
+ 		/*
+ 		 * Update bfqq, because, if a queue merge has occurred
+@@ -4697,22 +4713,44 @@ static void bfq_completed_request(struct bfq_queue *bfqq, struct bfq_data *bfqd)
+ 		bfq_schedule_dispatch(bfqd);
+ }
+
+-static void bfq_finish_request_body(struct bfq_queue *bfqq)
++static void bfq_finish_requeue_request_body(struct bfq_queue *bfqq)
+ {
+ 	bfqq->allocated--;
+
+ 	bfq_put_queue(bfqq);
+ }
+
+-static void bfq_finish_request(struct request *rq)
++/*
++ * Handle either a requeue or a finish for rq. The things to do are
++ * the same in both cases: all references to rq are to be dropped. In
++ * particular, rq is considered completed from the point of view of
++ * the scheduler.
++ */
++static void bfq_finish_requeue_request(struct request *rq)
+ {
+-	struct bfq_queue *bfqq;
++	struct bfq_queue *bfqq = RQ_BFQQ(rq);
+ 	struct bfq_data *bfqd;
+
+-	if (!rq->elv.icq)
++	/*
++	 * Requeue and finish hooks are invoked in blk-mq without
++	 * checking whether the involved request is actually still
++	 * referenced in the scheduler. To handle this fact, the
++	 * following two checks make this function exit in case of
++	 * spurious invocations, for which there is nothing to do.
++	 *
++	 * First, check whether rq has nothing to do with an elevator.
++	 */
++	if (unlikely(!(rq->rq_flags & RQF_ELVPRIV)))
++		return;
++
++	/*
++	 * rq either is not associated with any icq, or is an already
++	 * requeued request that has not (yet) been re-inserted into
++	 * a bfq_queue.
++	 */
++	if (!rq->elv.icq || !bfqq)
+ 		return;
+
+-	bfqq = RQ_BFQQ(rq);
+ 	bfqd = bfqq->bfqd;
+
+ 	if (rq->rq_flags & RQF_STARTED)
+@@ -4727,13 +4765,14 @@ static void bfq_finish_request(struct request *rq)
+ 		spin_lock_irqsave(&bfqd->lock, flags);
+
+ 		bfq_completed_request(bfqq, bfqd);
+-		bfq_finish_request_body(bfqq);
++		bfq_finish_requeue_request_body(bfqq);
+
+ 		spin_unlock_irqrestore(&bfqd->lock, flags);
+ 	} else {
+ 		/*
+ 		 * Request rq may be still/already in the scheduler,
+-		 * in which case we need to remove it. And we cannot
++		 * in which case we need to remove it (this should
++		 * never happen in case of requeue). And we cannot
+ 		 * defer such a check and removal, to avoid
+ 		 * inconsistencies in the time interval from the end
+ 		 * of this function to the start of the deferred work.
+@@ -4748,9 +4787,26 @@ static void bfq_finish_request(struct request *rq)
+ 			bfqg_stats_update_io_remove(bfqq_group(bfqq),
+ 						    rq->cmd_flags);
+ 		}
+-		bfq_finish_request_body(bfqq);
++		bfq_finish_requeue_request_body(bfqq);
+ 	}
+
++	/*
++	 * Reset private fields. In case of a requeue, this allows
++	 * this function to correctly do nothing if it is spuriously
++	 * invoked again on this same request (see the check at the
++	 * beginning of the function). Probably, a better general
++	 * design would be to prevent blk-mq from invoking the requeue
++	 * or finish hooks of an elevator, for a request that is not
++	 * referred by that elevator.
++	 *
++	 * Resetting the following fields would break the
++	 * request-insertion logic if rq is re-inserted into a bfq
++	 * internal queue, without a re-preparation. Here we assume
++	 * that re-insertions of requeued requests, without
++	 * re-preparation, can happen only for pass_through or at_head
++	 * requests (which are not re-inserted into bfq internal
++	 * queues).
++	 */
+ 	rq->elv.priv[0] = NULL;
+ 	rq->elv.priv[1] = NULL;
+ }
+@@ -5426,7 +5482,8 @@ static struct elevator_type iosched_bfq_mq = {
+ 	.ops.mq = {
+ 		.limit_depth		= bfq_limit_depth,
+ 		.prepare_request	= bfq_prepare_request,
+-		.finish_request		= bfq_finish_request,
++		.requeue_request        = bfq_finish_requeue_request,
++		.finish_request		= bfq_finish_requeue_request,
+ 		.exit_icq		= bfq_exit_icq,
+ 		.insert_requests	= bfq_insert_requests,
+ 		.dispatch_request	= bfq_dispatch_request,
+--
+2.15.1
