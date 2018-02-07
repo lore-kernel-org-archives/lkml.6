@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754541AbeBGSjq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 13:39:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:54840 "EHLO foss.arm.com"
+        id S1754579AbeBGSjx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 13:39:53 -0500
+Received: from foss.arm.com ([217.140.101.70]:54862 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754493AbeBGSjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 13:39:44 -0500
-Message-ID: <5A7B475C.2080008@arm.com>
-Date: Wed, 07 Feb 2018 18:37:16 +0000
+        id S1754547AbeBGSjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 13:39:49 -0500
+Message-ID: <5A7B4761.3000808@arm.com>
+Date: Wed, 07 Feb 2018 18:37:21 +0000
 From: James Morse <james.morse@arm.com>
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
 MIME-Version: 1.0
@@ -19,9 +19,9 @@ CC: catalin.marinas@arm.com, will.deacon@arm.com,
         bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
         julien.thierry@arm.com, kexec@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 05/11] arm64: kexec_file: create purgatory
-References: <20171204025801.12161-1-takahiro.akashi@linaro.org> <20171204025801.12161-6-takahiro.akashi@linaro.org>
-In-Reply-To: <20171204025801.12161-6-takahiro.akashi@linaro.org>
+Subject: Re: [PATCH v7 00/11] arm64: kexec: add kexec_file_load() support
+References: <20171204025801.12161-1-takahiro.akashi@linaro.org>
+In-Reply-To: <20171204025801.12161-1-takahiro.akashi@linaro.org>
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -30,72 +30,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Akashi,
 
+I'm still getting my head round how all this works, so please forgive what may
+be stupid questions!
+
+
 On 04/12/17 02:57, AKASHI Takahiro wrote:
-> This is a basic purgatory, or a kind of glue code between the two kernels,
-> for arm64.
+> This is the seventh round of implementing kexec_file_load() support
+> on arm64.[1]
+> Most of the code is based on kexec-tools (along with some kernel code
+> from x86, which also came from kexec-tools).
 > 
-> Since purgatory is assumed to be relocatable (not executable) object by
-> kexec generic code, arch_kexec_apply_relocations_add() is required in
-> general. Arm64's purgatory, however, is a simple asm and all the references
-> can be resolved as local, no re-linking is needed here.
 > 
-> Please note that even if we don't support digest check at purgatory we
+> This patch series enables us to
+>   * load the kernel, Image, via kexec_file_load() system call, and
+>   * optionally verify its signature at load time for trusted boot.
 
-(You knew what I was going to ask!)
-
-
-> need purgatory_sha_regions and purgatory_sha256_digest as they are
-> referenced by generic kexec code.
-
-As somewhere to store the values? If we aren't doing the validation could we add
-something about why not to the commit message? I think its because we only worry
-about memory corruption for kdump, and for kdump we unmap the crash-kernel
-region during normal-operation to prevent it getting corrupted.
-
-As we aren't doing the hash validation, could we hide its core-code behind some
-ARCH_HAS_KEXEC_PURGATORY_HASH, instead of defining dummy symbols and doing
-unnecessary work to fill them in?
+Is kdump using kexec_file_load() possible? (questions on patch 3)
+I can't work out why additional elf-generating code would be necessary if kdump
+works today without it...
 
 
-> diff --git a/arch/arm64/purgatory/entry.S b/arch/arm64/purgatory/entry.S
-> new file mode 100644
-> index 000000000000..fe6e968076db
-> --- /dev/null
-> +++ b/arch/arm64/purgatory/entry.S
-> @@ -0,0 +1,55 @@
-> +/*
-> + * kexec core purgatory
-> + */
-> +#include <linux/linkage.h>
-> +#include <uapi/linux/kexec.h>
-> +
-> +#define SHA256_DIGEST_SIZE	32 /* defined in crypto/sha.h */
-> +
-> +.text
-> +
-> +ENTRY(purgatory_start)
-> +	/* Start new image. */
-> +	ldr	x17, __kernel_entry
-> +	ldr	x0, __dtb_addr
-> +	mov	x1, xzr
-> +	mov	x2, xzr
-> +	mov	x3, xzr
-> +	br	x17
-> +END(purgatory_start)
+> To load the kernel via kexec_file_load() system call, a small change
+> is also required on kexec-tools. See [2]. This enables '-s' option.
+> (Please use v7.2.1+ crash utility for v4.14+ kernel)
 
-Is this what arm64_relocate_new_kernel() drops into? I thought that had the
-kernel boot register values already so we wouldn't need another trampoline for
-kexec_file_load()...
+(what does the -s option do?)
 
-.. but now that I look, it doesn't have the DTB, presumably because for regular
-kexec we don't know where user-space put it.
 
-Could we add some x0_for_kexec that is 0 by default (if that's the ABI), or the
-DTB address for kexec_file_load()? This would avoid this extra trampoline, and
-patching in the values from load_other_segments().
+> As we discussed a long time ago, users may not be allowed to specify
+> device-tree file of the 2nd kernel explicitly with kexec-tools, hence
+> re-using the blob of the first kernel.
+> 
+> Regarding a kernel image verification, a signature must be presented
+> along with the binary itself. A signature is basically a hash value
+> calculated against the whole binary data and encrypted by a key which
+> will be authenticated by the system's trusted certificate.
+> Any attempt to read and load a to-be-kexec-ed kernel image through
+> a system call will be checked and blocked if the binary's hash value
+> doesn't match its associated signature.
 
-I'd love to avoid an in-kernel purgatory! (its code with funny
-compile/link/relocation requirements that is impossible to debug)
+> Concerns(or future works):
+
+(lets keep this stuff in the future)
+
+> * Even if the kernel is configured with CONFIG_RANDOMIZE_BASE, the 2nd
+>   kernel won't be placed at a randomized address. We will have to
+>   add some boot code similar to efi-stub to implement the randomization.
+
+I think there are two parts to this. The efistub may copy the kernel to a new
+~random location in physical memory. It also adds a seed used to randomise the
+virtual-addresses the kernel executes from.
+
+For kexec_file_load() the first-kernel could apply some randomness to the
+physical offset when it re-assembles the kexec-kernel. i.e. code in
+arm64_relocate_new_kernel(). I don't think we should do this without some hint
+that the new kernel supports this...
+
+For the virtual-addresses it would need to add a new kaslr-seed to the
+DT/chosen, which should be harmless.
+
+
+> for approach (1),
+> * While big-endian kernel can support kernel signing, I'm not sure that
+>   Image can be recognized as in PE format because x86 standard only
+>   defines little-endian-based format.
+
+What does the recognizing? (I don't think we should invent a new format..)
+
+
+> * vmlinux support
+
+(Patch 3 is why I'm here)
+
+I don't think we need to support this. I can't boot a vmlinux file via UEFI. As
+I understand it kexec_file_load() is all about the signature verification for
+UEFI:SecureBoot. The chances of me having a vmlinux signed for SecureBoot use is
+pretty low, chances are its a self-signed image I just built, in which case I
+can use the arm64 Image file that was built at the same time.
+
+Supporting two file formats is going to be a headache. Distributions ship
+separate debug info packages for debugging, I don't think we need to make them
+bootable...
 
 
 Thanks,
