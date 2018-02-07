@@ -1,63 +1,81 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517959452; cv=none;
+Return-Path: <alexandre.belloni@free-electrons.com>
+X-Google-Smtp-Source: AH8x224/SIwNJTuOkvpkc16xX2TmI3NC1ffw4UHqq9m5Ouud+LQUkdAA6t0JHqi4lPLljajOTOB8
+ARC-Seal: i=1; a=rsa-sha256; t=1517965466; cv=none;
         d=google.com; s=arc-20160816;
-        b=DA5pGofHMm3HeN9B2pvyfBm4q6VWV9lKama/l3jyajuoUC0gWF3ntQ54CXgU3DxA1n
-         RGygDYz03V0iO5Dj3EBJGDTmxW8DRkTmwC7Uu7M/yP+3xtBz5BYYJ+FhCwE3BTrCaAhn
-         CVd3EUxQ9DHVXEkbgCDuc6EpUQI8GBUo6+Qq9fmdznN2OzdccBf+EmeLqRrqB3xeywsq
-         VbSM+XuRjUWlK7Uy0X+K0rKBsfZebOHHoofMgKrBWbIPkG2PP4oDd0K6FPmVbVerm1Q4
-         qsUpbEzXGFBAwefAUCuae6RuFuWcbj4Yi0yAJ7scw4oqvO8q0Qcb5aEsQlXO0LTB0mGW
-         z94Q==
+        b=RWroEGGaJIny6sJtGl731getKmV6UTdiN4Eb0TWOSWuHWO0Je0d0DxNVefSk+6U39C
+         XHQCxcfbN+ElQJRUocXYCnh7yCqRWxAG2XQ+ft8KK3r7GdWkEQKr/qxSj/dctqO43c7K
+         oxLidcoHwgdvQ+Z/jC0RKns1DHN+cODNXoCe1sAqdV4uwhSi+kPN1elAGntqXJMxKmKK
+         +9OwaiI8JCVHOqP9ha4hzp+7AosIlU/1aVLJHKN9FWGjFZFAn8O6nvio8nyUwK+vJW6W
+         d5G6gFuQqttVwvgjG7mS5xGod3fHYeQhTjZ803qUPEVB4CgAZxRTpiNXmqkqPH7NsSi9
+         T5sA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=iq0AlYYquXrxGdLK3G/vIKPslNLdHIMS4Rch9JSMe04=;
-        b=agTAeRJVlwdDDwQop5SB83vUUKB1gBrVTNttwQQabvQqR7xJSb22V+2/AG27WSKeIv
-         LnIixhi5kEjliTZOfFw9Cev8IA1zZye9f0GivlH1YZ1oLuihvA1HUB+a+iIMXaIhPKsM
-         P5eU8HREXf6NhGt5tatf7LugRJ6EkT8bpdF2zW6Ov7HiY4wvQXkw0y+Kt1SQMqvwEtDN
-         HlGNcrgkZL90fEmuYHL3zQY3VoHToq5pD7wt3gusRhRxnXxxL9fMKEIwq6DJuFIrA27q
-         ozOOInAmiPdT5lnMTwecN2fPOQnbuxs2XZXu6NjtQJgZw10V6omrIVOVW9EZQZfUBios
-         VjVA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=jrdTVZvaDysXIIr90/qKGaZPomN3IQSltP5pFbIqtPI=;
+        b=UK8Y1x/59vB63bY2kSXTZdY44gT4zEQaaHc7oFNSUMv3DZi0b+70WvugJaYC8R6nPC
+         dYB/EGkIjx8dKqOvDuip9o3h2WaYCKasblqs1RhC9GWL/FIPPdIfPRJHRDDCFK46YFPr
+         qN4QR/GQ24VlGiPr7m8k6RXzlW9OKo0DhBt9LdAX9na1Pf6Pslz7mK9ZPwudhOCZkGi7
+         0HIQbzrnuhzkPwT4XnGHcyNcjSwjpjWuWZQgEiCLvutpB2ZR1hy+TA9fhi2y0HyTRwXa
+         OsyAq9c6ODYQj3yCLAJ9n24HVkKpvqIajJNkZGGwsQ9ydXlidMfXmJlmGqefv+WLo7lP
+         ouVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cpdNAGwX;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       spf=pass (google.com: domain of alexandre.belloni@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=alexandre.belloni@free-electrons.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cpdNAGwX;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AH8x225wRnLQLSR65bz2MAcis12WFN0t2gKPEhb1e7l8jsWAca2xsQ2ITlmJb0ASYtAucNcZulX8KcMPY2xaezCOkV0=
-MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20180206221226.10511-1-alexandre.belloni@bootlin.com>
-References: <20180206221226.10511-1-alexandre.belloni@bootlin.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 7 Feb 2018 00:24:11 +0100
-X-Google-Sender-Auth: md_YV5zDuuYQRDyJlHUdP_iny5Y
-Message-ID: <CAK8P3a3=DKk9XZN7mPCrVgH=uSmC6kVQc8DAbp4nCoWxTpQ+eA@mail.gmail.com>
-Subject: Re: [PATCH] char: rtc: remove unused rtc_control() API
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+       spf=pass (google.com: domain of alexandre.belloni@free-electrons.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=alexandre.belloni@free-electrons.com
+Date: Wed, 7 Feb 2018 02:04:22 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] char: rtc: remove unused rtc_control() API
+Message-ID: <20180207010422.GU3404@piout.net>
+References: <20180206221226.10511-1-alexandre.belloni@bootlin.com>
+ <CAK8P3a3=DKk9XZN7mPCrVgH=uSmC6kVQc8DAbp4nCoWxTpQ+eA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3=DKk9XZN7mPCrVgH=uSmC6kVQc8DAbp4nCoWxTpQ+eA@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591691353805740704?=
-X-GMAIL-MSGID: =?utf-8?q?1591695850894297011?=
+X-GMAIL-MSGID: =?utf-8?q?1591702157440423659?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 6, 2018 at 11:12 PM, Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> Since commit 34ce71a96dcb ("ALSA: timer: remove legacy rtctimer"), the
-> rtc_register/rtc_control/rtc_unregister API is unused. As it is highly
-> unlikely to be needed again, remove it.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
+On 07/02/2018 at 00:24:11 +0100, Arnd Bergmann wrote:
+> On Tue, Feb 6, 2018 at 11:12 PM, Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> > Since commit 34ce71a96dcb ("ALSA: timer: remove legacy rtctimer"), the
+> > rtc_register/rtc_control/rtc_unregister API is unused. As it is highly
+> > unlikely to be needed again, remove it.
+> >
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > ---
+> 
+> Nice!
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> I forgot what's stopping us from removing the rest of that driver ;-)
+> Since we can only build it on alpha and mips/loongson64 these
+> days, is there anything that this driver does that the normal
+> one doesn't? If it's just a question of testing, we could probably
+> just move it to staging and see if anyone notices a difference.
 
-Nice!
+I'd say it is a matter of testing. The loongsoon maintainers seem
+responsive so we may get testing for that architecture. I'm not so sure
+about alpha. Actually, I'm not even sure it is really used on alpha
+because arch/alpha/kernel/rtc.c seems to do the right thing.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+I think I'll start by ripping of all the x86 and sparc specific parts
+and see what's left.
 
-I forgot what's stopping us from removing the rest of that driver ;-)
-Since we can only build it on alpha and mips/loongson64 these
-days, is there anything that this driver does that the normal
-one doesn't? If it's just a question of testing, we could probably
-just move it to staging and see if anyone notices a difference.
+I would also love to get rid of drivers/char/efirtc.c but that probably
+means doing some testing on both an ARM/ARM64 platform with EFI and
+IA64.
+
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
