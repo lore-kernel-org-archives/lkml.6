@@ -1,97 +1,95 @@
-Return-Path: <tkjos@android.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518040672; cv=none;
-        d=google.com; s=arc-20160816;
-        b=sRCsNcS/C41EBGf52IjwyuEzvSWg6HxRqOXwuMSVRULtJdZIQB2t2aIBYswX90n8aR
-         9R/3/uQZU6QLxRqiBi8LNpEnnptgoHGid+AzChzm/1Cnre/J0c8S5U0hoyhpg/IqK/Kd
-         Bl+4gwOfmsE27VqLGb02AZQ2GcncP8ZskIbvX53KxfCtVT6zmqnjtf3BTrRI/QdLia3s
-         RWhR5Y1gi5tX2IYfM1q1vAaS23+Mh5y6aQGBr2d9WMggpAYFxfHMTkUuoKmTsf9T8CbB
-         WlUrKhPS2opdkgymro7uqpSqMInVVx4qx+ORSyxcHfRrQniip02VqtsD43DKe/icn4Ue
-         HN7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=+3JvWWN7bOSuAFhnIEkLDzQqJaROPb+1mhFVa7KgSw8=;
-        b=Hi4xdB1wLwuc+cIxmAnl6xA/EYyLXt3Yv9kF9SeqHFItGULgYSl9B8jIFZxgAKpWN7
-         yHKymHRkt2aETYQ6Jp6rtBch/M7Tnlgn6eO8PX+h1BXaR/8AKEeVuzNY65k0mfv4DlC4
-         ctIDTI9a2GY5Po/JuE9bWX/KQp60aSGt3wMmSJEwCLClMkTqqlQ698ZCyUaW8m1b7gTH
-         Ys2Y1/2JwYJJWvm/pxZaW5mgw+LABTbPSWQMZXZNQtClwKs7nOrHxnLHM46JNVG8JkLZ
-         HghxbFdKKA4XslLWtKpK7ybIo5P2kLAhB7r5W3/vf+AWBiOx14OnWDDUJtUPrh5Pvehr
-         UjUw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@android.com header.s=20161025 header.b=X3dPMYeM;
-       spf=pass (google.com: domain of tkjos@android.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tkjos@android.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=android.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@android.com header.s=20161025 header.b=X3dPMYeM;
-       spf=pass (google.com: domain of tkjos@android.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tkjos@android.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=android.com
-X-Google-Smtp-Source: AH8x226NKuOlc2yes9xUIdJ+2mDu6zna8Xvx8QuLoLnzgYIJ7duObpcX1y5qc+iSvwCiP5idv2mMPw==
-From: Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To: tkjos@google.com,
-	gregkh@linuxfoundation.org,
-	arve@android.com,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	maco@google.com
-Subject: [PATCH] binder: replace "%p" with "%pK"
-Date: Wed,  7 Feb 2018 13:57:37 -0800
-Message-Id: <20180207215737.251082-1-tkjos@google.com>
-X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-924688-1518044196-2-5152112880139537894
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518044195; b=iY5+Jk9bhgXiVhL8Qyr/BQ0EHuum4iXWCkP64So0WX3OsRY
+    OynqPU/0PMcRzn/9mDVf4LDLrsqSyKkDbwGzM17tKMcf/ndmd+hu8h3zJzh7a6Iz
+    cAe4ldP417c5cnmgpaywIwrhpxX1JgmC8OnbyrylYkmwHDhBxTBmXYnkDLoTstrh
+    1ID/+5QiLKWTa9/zcq1NIMPEPaaBSaUko5X3xoMCqVsswdrEltUpZgJZkInwq9Ab
+    Q9dIT2VCCCguR7bYpjh+fdJIg+lzdnzYygp+E/vW5s+I+GsJgDSzLNk/Pq/sDo8K
+    I5m7f/1Bd1pIXjheaED02QU3inUzJoQNjA7ot+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518044195; bh=T
+    /+BrPusMg5PrVPb7CU0p4b+BTX38iHDc4ZkH/nvnmU=; b=Vw6Gw6XoDEqnSHH8I
+    wySweG2gAyNt2gU9N+QhNFswXTOBbd4HU4JL0govM11Zxe2tCfxVuiP+njj2QYJF
+    wG4O94yd3kEnYOYKhggWavfC4YJ03DYMjBnwo43WH3nE5KhTYzb5bPAoWT051qhv
+    ACfJTRa8eANANSBC6l+8Adfm3DgpToy8vS3NfWk6dMwf+FRToP/xgzKI+hs1IfJ6
+    JgTxS1UjXL1xYE/0SsI3CfPra5+LQ7t6JtoN9nvEZvpIgmZgET2QX/q2QUVS9Nfb
+    /QR4siQ6TN7qNXi+K8nFX6d1niN9+ACKqRI8rk2IUk6O05FUYZ06kQ138P2K/ee2
+    e0y+A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Wed, 7 Feb 2018 16:56:28 -0600
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Todd Kjos <tkjos@android.com>
+Subject: Re: [PATCH] binder: replace "%p" with "%pK"
+Message-ID: <20180207225628.GC10647@kroah.com>
+References: <20180207215737.251082-1-tkjos@google.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20180207215737.251082-1-tkjos@google.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, arve@android.com, maco@google.com,
+ linux-kernel@vger.kernel.org, tkjos@google.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591781015607420162?=
-X-GMAIL-MSGID: =?utf-8?q?1591781015607420162?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The format specifier "%p" can leak kernel addresses. Use
-"%pK" instead. There were 4 remaining cases in binder.c.
+On Wed, Feb 07, 2018 at 01:57:37PM -0800, Todd Kjos wrote:
+> The format specifier "%p" can leak kernel addresses. Use
+> "%pK" instead. There were 4 remaining cases in binder.c.
 
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
----
- drivers/android/binder.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Luckily this isn't an issue in mainline as we don't print %p values out
+anymore as of 4.15.  That being said, this is a good fix and I'll queue
+it up after 4.16-rc1 is out, thanks.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 37289683939c..7da09b10dae8 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -2141,7 +2141,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
- 	int debug_id = buffer->debug_id;
- 
- 	binder_debug(BINDER_DEBUG_TRANSACTION,
--		     "%d buffer release %d, size %zd-%zd, failed at %p\n",
-+		     "%d buffer release %d, size %zd-%zd, failed at %pK\n",
- 		     proc->pid, buffer->debug_id,
- 		     buffer->data_size, buffer->offsets_size, failed_at);
- 
-@@ -3653,7 +3653,7 @@ static int binder_thread_write(struct binder_proc *proc,
- 				}
- 			}
- 			binder_debug(BINDER_DEBUG_DEAD_BINDER,
--				     "%d:%d BC_DEAD_BINDER_DONE %016llx found %p\n",
-+				     "%d:%d BC_DEAD_BINDER_DONE %016llx found %pK\n",
- 				     proc->pid, thread->pid, (u64)cookie,
- 				     death);
- 			if (death == NULL) {
-@@ -4968,7 +4968,7 @@ static void print_binder_transaction_ilocked(struct seq_file *m,
- 	spin_lock(&t->lock);
- 	to_proc = t->to_proc;
- 	seq_printf(m,
--		   "%s %d: %p from %d:%d to %d:%d code %x flags %x pri %ld r%d",
-+		   "%s %d: %pK from %d:%d to %d:%d code %x flags %x pri %ld r%d",
- 		   prefix, t->debug_id, t,
- 		   t->from ? t->from->proc->pid : 0,
- 		   t->from ? t->from->pid : 0,
-@@ -4992,7 +4992,7 @@ static void print_binder_transaction_ilocked(struct seq_file *m,
- 	}
- 	if (buffer->target_node)
- 		seq_printf(m, " node %d", buffer->target_node->debug_id);
--	seq_printf(m, " size %zd:%zd data %p\n",
-+	seq_printf(m, " size %zd:%zd data %pK\n",
- 		   buffer->data_size, buffer->offsets_size,
- 		   buffer->data);
- }
--- 
-2.16.0.rc1.238.g530d649a79-goog
+greg k-h
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
