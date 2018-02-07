@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754047AbeBGNn5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:43:57 -0500
-Received: from mga06.intel.com ([134.134.136.31]:55103 "EHLO mga06.intel.com"
+        id S1754115AbeBGNoO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:44:14 -0500
+Received: from mga09.intel.com ([134.134.136.24]:28778 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753781AbeBGNnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753796AbeBGNnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 08:43:51 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
-   d="xz'?scan'208";a="25597575"
-Date: Wed, 7 Feb 2018 21:43:30 +0800
+   d="xz'?scan'208";a="32825841"
+Date: Wed, 7 Feb 2018 21:43:29 +0800
 From: kernel test robot <fengguang.wu@intel.com>
 To: Joel Fernandes <joelaf@google.com>
 Cc: linux-kernel@vger.kernel.org, Joel Fernandes <joelaf@google.com>,
@@ -22,9 +22,9 @@ Cc: linux-kernel@vger.kernel.org, Joel Fernandes <joelaf@google.com>,
         Namhyung Kim <namhyung@kernel.org>, kernel-team@android.com,
         lkp@01.org
 Subject: [tracing]  8e130b0d92: WARNING:at_kernel/rcu/tree.c:#rcu_irq_exit
-Message-ID: <20180207134330.3vefcxheolg62wtu@inn>
+Message-ID: <20180207134329.6mms4lf4nw6yqwbb@inn>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="sd4tyr6izoxb54zc"
+Content-Type: multipart/mixed; boundary="swlqeqht5vzm4sfx"
 Content-Disposition: inline
 In-Reply-To: <20180206023950.64030-1-joelaf@google.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
@@ -36,7 +36,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---sd4tyr6izoxb54zc
+--swlqeqht5vzm4sfx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -108,7 +108,7 @@ To reproduce:
 Thanks,
 lkp
 
---sd4tyr6izoxb54zc
+--swlqeqht5vzm4sfx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="config-4.15.0-rc7-00430-g8e130b0"
 
@@ -4627,7 +4627,130 @@ CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
 CONFIG_SBITMAP=y
 # CONFIG_STRING_SELFTEST is not set
 
---sd4tyr6izoxb54zc
+--swlqeqht5vzm4sfx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=job-script
+
+#!/bin/sh
+
+export_top_env()
+{
+	export suite='boot'
+	export testcase='boot'
+	export timeout='10m'
+	export job_origin='/lkp/lkp/src/jobs/boot.yaml'
+	export queue='rand'
+	export testbox='vm-lkp-hsw01-yocto-x86_64-26'
+	export tbox_group='vm-lkp-hsw01-yocto-x86_64'
+	export branch='linux-review/Joel-Fernandes/tracing-Improve-design-of-preemptirq-tracepoints-and-its-users/20180207-195707'
+	export commit='8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112'
+	export kconfig='x86_64-nfsroot'
+	export repeat_to=2
+	export submit_id='5a7af8910b9a9312046c7045'
+	export job_file='/lkp/scheduled/vm-lkp-hsw01-yocto-x86_64-26/boot-1-yocto-minimal-x86_64-2016-04-22.cgz-8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112-20180207-70148-15cyihi-0.yaml'
+	export id='bc05f3670b50ef7e319460792e0d9d72a73a6dd0'
+	export model='qemu-system-x86_64 -enable-kvm'
+	export nr_vm=30
+	export nr_cpu=1
+	export memory='512M'
+	export rootfs='yocto-minimal-x86_64-2016-04-22.cgz'
+	export swap_partitions='/dev/vda'
+	export need_kconfig='CONFIG_KVM_GUEST=y'
+	export compiler='gcc-7'
+	export enqueue_time='2018-02-07 21:01:05 +0800'
+	export _id='5a7af8910b9a9312046c7045'
+	export _rt='/result/boot/1/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-nfsroot/gcc-7/8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112'
+	export user='lkp'
+	export kernel='/pkg/linux/x86_64-nfsroot/gcc-7/8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112/vmlinuz-4.15.0-rc7-00430-g8e130b0'
+	export result_root='/result/boot/1/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-nfsroot/gcc-7/8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112/0'
+	export dequeue_time='2018-02-07 21:01:23 +0800'
+	export LKP_SERVER='inn'
+	export max_uptime=600
+	export initrd='/osimage/yocto/yocto-minimal-x86_64-2016-04-22.cgz'
+	export bootloader_append='root=/dev/ram0
+user=lkp
+job=/lkp/scheduled/vm-lkp-hsw01-yocto-x86_64-26/boot-1-yocto-minimal-x86_64-2016-04-22.cgz-8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112-20180207-70148-15cyihi-0.yaml
+ARCH=x86_64
+kconfig=x86_64-nfsroot
+branch=linux-review/Joel-Fernandes/tracing-Improve-design-of-preemptirq-tracepoints-and-its-users/20180207-195707
+commit=8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112
+BOOT_IMAGE=/pkg/linux/x86_64-nfsroot/gcc-7/8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112/vmlinuz-4.15.0-rc7-00430-g8e130b0
+max_uptime=600
+RESULT_ROOT=/result/boot/1/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-nfsroot/gcc-7/8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112/0
+LKP_SERVER=inn
+debug
+apic=debug
+sysrq_always_enabled
+rcupdate.rcu_cpu_stall_timeout=100
+net.ifnames=0
+printk.devkmsg=on
+panic=-1
+softlockup_panic=1
+nmi_watchdog=panic
+oops=panic
+load_ramdisk=2
+prompt_ramdisk=0
+drbd.minor_count=8
+systemd.log_level=err
+ignore_loglevel
+console=tty0
+earlyprintk=ttyS0,115200
+console=ttyS0,115200
+vga=normal
+rw'
+	export modules_initrd='/pkg/linux/x86_64-nfsroot/gcc-7/8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112/modules.cgz'
+	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
+	export site='inn'
+	export LKP_CGI_PORT=80
+	export LKP_CIFS_PORT=139
+	export job_initrd='/lkp/scheduled/vm-lkp-hsw01-yocto-x86_64-26/boot-1-yocto-minimal-x86_64-2016-04-22.cgz-8e130b0d9284a0a01ca1d6ecf8f0896cfc28b112-20180207-70148-15cyihi-0.cgz'
+
+	[ -n "$LKP_SRC" ] ||
+	export LKP_SRC=/lkp/${user:-lkp}/src
+}
+
+run_job()
+{
+	echo $$ > $TMP/run-job.pid
+
+	. $LKP_SRC/lib/http.sh
+	. $LKP_SRC/lib/job.sh
+	. $LKP_SRC/lib/env.sh
+
+	export_top_env
+
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper boot-slabinfo
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper boot-meminfo
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper memmap
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
+	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/wrapper oom-killer
+	run_monitor $LKP_SRC/monitors/plain/watchdog
+
+	run_test $LKP_SRC/tests/wrapper sleep 1
+}
+
+extract_stats()
+{
+	$LKP_SRC/stats/wrapper boot-slabinfo
+	$LKP_SRC/stats/wrapper boot-meminfo
+	$LKP_SRC/stats/wrapper memmap
+	$LKP_SRC/stats/wrapper boot-memory
+	$LKP_SRC/stats/wrapper boot-time
+	$LKP_SRC/stats/wrapper kernel-size
+	$LKP_SRC/stats/wrapper kmsg
+
+	$LKP_SRC/stats/wrapper time sleep.time
+	$LKP_SRC/stats/wrapper time
+	$LKP_SRC/stats/wrapper dmesg
+	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper stderr
+	$LKP_SRC/stats/wrapper last_state
+}
+
+"$@"
+
+--swlqeqht5vzm4sfx
 Content-Type: application/x-xz
 Content-Disposition: attachment; filename="dmesg.xz"
 Content-Transfer-Encoding: base64
@@ -4910,4 +5033,4 @@ E1JXpL0JIZrOR7ZhW9QVVbkaxzo5kkaydPljpxbPcTtNoiAwgiIjFrjimebS9iAdvUzAJocn
 XMoC373ZvcVCHyjL05WMOvJGKpYmAtAC2nSa3/j139L2Cqmp4Rf8atQMbBpf2ugbHD9exXml
 iByURijO0Tp/GQAAnmzdZ9ARX4gAAb90heMDAEFIlX6xxGf7AgAAAAAEWVo=
 
---sd4tyr6izoxb54zc--
+--swlqeqht5vzm4sfx--
