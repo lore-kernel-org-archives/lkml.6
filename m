@@ -1,93 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753496AbeBGJEy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 04:04:54 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42773 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750986AbeBGJEw (ORCPT
+        id S1753548AbeBGJF4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 04:05:56 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35154 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750986AbeBGJFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 04:04:52 -0500
-X-Google-Smtp-Source: AH8x227cmwCw1sD+qS19cF4V0Upro4Qz5UveUfxRczoLYTto+2Dqsc/ExYGj6jKWklMMAxsMmfxe8Q==
-Date: Wed, 7 Feb 2018 14:34:48 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 4/8] thermal/drivers/Kconfig: Convert the CPU cooling
- device to a choice
-Message-ID: <20180207090448.GP28462@vireshk-i7>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-5-git-send-email-daniel.lezcano@linaro.org>
+        Wed, 7 Feb 2018 04:05:54 -0500
+X-Google-Smtp-Source: AH8x224TF6IgNfnkVmRQ1QgTsznqzBupQa07agVl1By2abdrbvwRImKZElEoQIxdLDi6ovV4agjc8XMPa4qxnhmCy00=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1516721671-16360-5-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Reply-To: usmanabu61@gmail.com
+From: usman abu <usmanabu315@gmail.com>
+Date: Wed, 7 Feb 2018 10:05:53 +0100
+Message-ID: <CAAQiKxG=Mpb5b5cP_Ry8OCmTb=WtG10TrB8gCSqc+Q9VjYDf+g@mail.gmail.com>
+Subject: FROM Mr USMAN ABU
+To: undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17961iF023386
 
-On 23-01-18, 16:34, Daniel Lezcano wrote:
-> The next changes will add new way to cool down a CPU. In order to
-> sanitize and make the overall cpu cooling code consistent and robust
-> we must prevent the cpu cooling devices to co-exists with the same
-> purpose at the same time in the kernel.
-> 
-> Make the CPU cooling device a choice in the Kconfig, so only one CPU
-> cooling strategy can be chosen.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/thermal/Kconfig | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 315ae29..925e73b 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -142,17 +142,31 @@ config THERMAL_GOV_POWER_ALLOCATOR
->  	  allocating and limiting power to devices.
->  
->  config CPU_THERMAL
-> -	bool "generic cpu cooling support"
-> -	depends on CPU_FREQ
-> +	bool "Generic cpu cooling support"
->  	depends on THERMAL_OF
->  	help
-> +	  Enable the CPU cooling features. If the system has no active
-> +	  cooling device available, this option allows to use the CPU
-> +	  as a cooling device.
-> +
-> +choice
-> +	prompt "CPU cooling strategies"
-> +	depends on CPU_THERMAL
-> +	default CPU_FREQ_THERMAL
-> +	help
-> +	  Select the CPU cooling strategy.
-> +
-> +config CPU_FREQ_THERMAL
+FROM Mr USMAN  ABU
+BILLS AND EXCHANGE MANAGER,
+In BANK OF AFRICA (B.O.A)
+Ouagadougou Burkina Faso, IN WEST AFRCA
 
-Perhaps you should start using this macro in code in this patch
-itself.
 
-> +        bool "CPU frequency cooling strategy"
-> +	depends on CPU_FREQ
-> +	help
->  	  This implements the generic cpu cooling mechanism through frequency
->  	  reduction. An ACPI version of this already exists
->  	  (drivers/acpi/processor_thermal.c).
->  	  This will be useful for platforms using the generic thermal interface
->  	  and not the ACPI interface.
->  
-> -	  If you want this support, you should say Y here.
-> +endchoice
->  
->  config CLOCK_THERMAL
->  	bool "Generic clock cooling support"
-> -- 
-> 2.7.4
+Please i want you to read this later very carefully and please do not
+joke with this message. I am Mr USMAN  AU, the bill and exchange
+manager in the boa bank of Africa Ouagadougou Burkina Faso.
 
--- 
-viresh
+In my department, I found the deposited fund amounted ($18.5 million)
+one of my bank clients who died Along with his entire family in air
+crash, On July 31 2000 please go through the
+website.http://news.bbc.co.uk/2/hi/europe/859479.stm
+
+Can you be able and capable to assist me provide your bank account
+where this $18.5 million will transfer into? Because I don’t want the
+money to go into our bank treasury account as an unclaimed fund, so
+this is the reason why I contacted you so that our bank will release
+this money to you as the nest of kin to the deceased customer. Please
+I would like you to keep this proposal as top secret.
+
+I shall give you 40% of the total fund as soon as this $18.5 million
+transferred into your bank account and I shall visit you in your
+country for the sharing of the funds.
+>From banking experience it will take up to ( 7 ) working days to
+conclude this transfer. I want you to also know that this transaction
+will involve a little expense which will be shared among both of us.
+
+Your Urgent response is needed immediately to enable me to send to you
+application later which you have to fill and apply to the bank for the
+transfer of the $18.5 million USA dollars. Before I send to you the
+application later, you have to Fill this form bellow and resend it
+back to me immediately for more trust.
+Your Name....
+Your home addresses ....
+Your country ....
+Your city ....
+Your home telephone ....
+Your private telephone ....
+Your age ....
+Your occupation ....
+Your religion…
+Your international passport or ID card ....
+
+Thanks and my regards to your family.
+Mr USMAN  ABU
