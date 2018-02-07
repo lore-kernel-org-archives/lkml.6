@@ -1,93 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754467AbeBGUJb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:09:31 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40339 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754127AbeBGUJ3 (ORCPT
+        id S1754487AbeBGULh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:11:37 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49002 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754129AbeBGULf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 15:09:29 -0500
-X-Google-Smtp-Source: AH8x224DMYdzMAabY5tZ/FYdP7LOyP9IvLfKZLBuDwd8JXvB8TbRW8wXxZOYpMH8aXfBFuXyX5t2/Q==
-Subject: Re: [PATCH] of: cache phandle nodes to decrease cost of
- of_find_node_by_phandle()
-To: Chintan Pandya <cpandya@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1517429142-25727-1-git-send-email-frowand.list@gmail.com>
- <5b84a166-c71b-3a41-9e7f-a7624a8441f6@codeaurora.org>
- <38cdcae5-ec0f-d1be-b024-1990d4387731@gmail.com>
- <9e23d32f-05a0-ce8a-41f8-9a1a3d66be37@codeaurora.org>
- <fd9f5f63-b08e-602e-1510-85a65889f550@gmail.com>
- <567731e8-8f89-bd6e-c3d4-e36400e69198@codeaurora.org>
- <0db129ef-ffd8-96fe-46a7-55fb575272e3@gmail.com>
- <0a178f4b-75fe-0564-7b0e-596f52fca1dc@codeaurora.org>
- <1768c791-7456-c1fe-578b-f6245e79746f@codeaurora.org>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <2e95e5f3-0f50-fb06-354e-918b48a55732@gmail.com>
-Date: Wed, 7 Feb 2018 12:09:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1768c791-7456-c1fe-578b-f6245e79746f@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 7 Feb 2018 15:11:35 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54CC1606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
+From: Tyler Baicar <tbaicar@codeaurora.org>
+To: helgaas@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Tyler Baicar <tbaicar@codeaurora.org>
+Subject: [PATCH v2] PCI/AER: update AER status string print to match other AER logs
+Date: Wed,  7 Feb 2018 15:11:25 -0500
+Message-Id: <1518034285-3543-1-git-send-email-tbaicar@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/18 04:44, Chintan Pandya wrote:
-> 
-> 
-> On 2/5/2018 5:53 PM, Chintan Pandya wrote:
->>
->>>
->>> My question was trying to determine whether the numbers reported above
->>> are for a debug configuration or a production configuration.
->> My reported numbers are from debug configuration.
->>
->>> not a production configuration, I was requesting the numbers for a
->>> production configuration.
->> I'm working on it. But please expect some delay in my response for this. As I mentioned earlier, I need to work with few teams to get these numbers.
->>
->>
->>> show a significant boot time reduction from the patch then there is
->>> less justification for adding complexity to the existing code.  I
->>> prefer to use simpler data structures and algorithms __if__ extra
->>> complexity does not provide any advantage.  The balance between
->>> complexity and benefits is a core software engineering issue.
->>>
->> Ok
-> 
-> Avg Kernel boot time comparison in production set up:
-> 
-> [0] Base: 4519ms
-> [1] 4115ms (~400ms improvement)
-> [2] 4115ms (~400ms improvement)
-> [3] 4177ms (~340ms improvement)
-> 
-> Full data:
-> [1] 1024 sized pre-populated cache
-> ITR-1    ITR-2    ITR-3    ITR-4    Avg
-> 4115    4123    4124    4107    4115
-> 
-> [2] Dynamic sized cache allocation/free
-> ITR-1    ITR-2    ITR-3    ITR-4    Avg
-> 4122    4131    4106    4118    4115
-> 
-> [3] Fixed 64 sized cache
-> ITR-1    ITR-2    ITR-3    ITR-4    Avg
-> 4153    4186    4198    4181    4177
-> 
-> 
-> [1] is my experimental patch and dirty enough to not get merged anywhere. So, I will not push it.
-> 
-> 
-> 
-> Chintan
+Currently the AER driver uses cper_print_bits() to print the AER status
+string. This causes the status string to not include the proper PCI device
+name prefix that the other AER prints include. Also, it has a different
+print level than all the other AER prints, and there is a potential to
+have multiple status prints based on string lengths.
 
-Thank you very much.  This looks like a real improvement to me.
+Update the AER driver to print the AER status string with the proper string
+prefix and proper print level, and abreviate the status strings similar to
+lspci -vv prints so they can be printed on the same line.
 
-I'll rebase my patches, updated to address the comments, on 4.16-rc1.
+Previous log example:
 
--Frank
+e1000e 0003:01:00.1: aer_status: 0x00000041, aer_mask: 0x00000000
+Receiver Error, Bad TLP
+e1000e 0003:01:00.1: aer_layer=Physical Layer, aer_agent=Receiver ID
+pcieport 0003:00:00.0: aer_status: 0x00001000, aer_mask: 0x0000e000
+Replay Timer Timeout
+pcieport 0003:00:00.0: aer_layer=Data Link Layer, aer_agent=Transmitter ID
+
+New log:
+
+e1000e 0003:01:00.1: aer_status: 0x00000041, aer_mask: 0x00000000
+e1000e 0003:01:00.1: RxErr, BadTLP
+e1000e 0003:01:00.1: aer_layer=Physical Layer, aer_agent=Receiver ID
+pcieport 0003:00:00.0: aer_status: 0x00001000, aer_mask: 0x0000e000
+pcieport 0003:00:00.0: Timeout
+pcieport 0003:00:00.0: aer_layer=Data Link Layer, aer_agent=Transmitter ID
+
+Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
+---
+ drivers/pci/pcie/aer/aerdrv_errprint.c | 71 ++++++++++++++++++++++------------
+ 1 file changed, 47 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+index 6a352e6..bb68dd4 100644
+--- a/drivers/pci/pcie/aer/aerdrv_errprint.c
++++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+@@ -72,22 +72,22 @@
+ };
+ 
+ static const char *aer_correctable_error_string[] = {
+-	"Receiver Error",		/* Bit Position 0	*/
++	"RxErr",			/* Bit Position 0	*/
+ 	NULL,
+ 	NULL,
+ 	NULL,
+ 	NULL,
+ 	NULL,
+-	"Bad TLP",			/* Bit Position 6	*/
+-	"Bad DLLP",			/* Bit Position 7	*/
+-	"RELAY_NUM Rollover",		/* Bit Position 8	*/
++	"BadTLP",			/* Bit Position 6	*/
++	"BadDLLP",			/* Bit Position 7	*/
++	"Rollover",			/* Bit Position 8	*/
+ 	NULL,
+ 	NULL,
+ 	NULL,
+-	"Replay Timer Timeout",		/* Bit Position 12	*/
+-	"Advisory Non-Fatal",		/* Bit Position 13	*/
+-	"Corrected Internal Error",	/* Bit Position 14	*/
+-	"Header Log Overflow",		/* Bit Position 15	*/
++	"Timeout",			/* Bit Position 12	*/
++	"NonFatalErr",			/* Bit Position 13	*/
++	"CorrIntErr",			/* Bit Position 14	*/
++	"HeaderOF",			/* Bit Position 15	*/
+ };
+ 
+ static const char *aer_uncorrectable_error_string[] = {
+@@ -95,28 +95,28 @@
+ 	NULL,
+ 	NULL,
+ 	NULL,
+-	"Data Link Protocol",		/* Bit Position 4	*/
+-	"Surprise Down Error",		/* Bit Position 5	*/
++	"DLP",				/* Bit Position 4	*/
++	"SDES",				/* Bit Position 5	*/
+ 	NULL,
+ 	NULL,
+ 	NULL,
+ 	NULL,
+ 	NULL,
+ 	NULL,
+-	"Poisoned TLP",			/* Bit Position 12	*/
+-	"Flow Control Protocol",	/* Bit Position 13	*/
+-	"Completion Timeout",		/* Bit Position 14	*/
+-	"Completer Abort",		/* Bit Position 15	*/
+-	"Unexpected Completion",	/* Bit Position 16	*/
+-	"Receiver Overflow",		/* Bit Position 17	*/
+-	"Malformed TLP",		/* Bit Position 18	*/
++	"TLP",				/* Bit Position 12	*/
++	"FCP",				/* Bit Position 13	*/
++	"CmpltTO",			/* Bit Position 14	*/
++	"CmpltAbrt",			/* Bit Position 15	*/
++	"UnxCmplt",			/* Bit Position 16	*/
++	"RxOF",				/* Bit Position 17	*/
++	"MalfTLP",			/* Bit Position 18	*/
+ 	"ECRC",				/* Bit Position 19	*/
+-	"Unsupported Request",		/* Bit Position 20	*/
+-	"ACS Violation",		/* Bit Position 21	*/
+-	"Uncorrectable Internal Error",	/* Bit Position 22	*/
+-	"MC Blocked TLP",		/* Bit Position 23	*/
+-	"AtomicOp Egress Blocked",	/* Bit Position 24	*/
+-	"TLP Prefix Blocked Error",	/* Bit Position 25	*/
++	"UnsupReq",			/* Bit Position 20	*/
++	"ACSViol",			/* Bit Position 21	*/
++	"UncorrIntErr",			/* Bit Position 22	*/
++	"BlockedTLP",			/* Bit Position 23	*/
++	"AtomicOpBlocked",		/* Bit Position 24	*/
++	"TLPBlockedErr",		/* Bit Position 25	*/
+ };
+ 
+ static const char *aer_agent_string[] = {
+@@ -203,6 +203,29 @@ void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+ }
+ 
+ #ifdef CONFIG_ACPI_APEI_PCIEAER
++
++#define MAX_PRINT_LENGTH		120
++
++void dev_print_bits(struct pci_dev *dev, unsigned int bits,
++		    const char * const strs[], unsigned int strs_size)
++{
++	unsigned int i;
++	char errs[MAX_PRINT_LENGTH];
++
++	errs[0] = '\0';
++
++	for (i = 0; i < strs_size; i++) {
++		if (!(bits & (1U << i)))
++			continue;
++		if (strs[i]) {
++			if (strlen(errs))
++				strlcat(errs, ", ", MAX_PRINT_LENGTH);
++			strlcat(errs, strs[i], MAX_PRINT_LENGTH);
++		}
++	}
++	dev_err(&dev->dev, "%s\n", errs);
++}
++
+ int cper_severity_to_aer(int cper_severity)
+ {
+ 	switch (cper_severity) {
+@@ -240,7 +263,7 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
+ 	agent = AER_GET_AGENT(aer_severity, status);
+ 
+ 	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
+-	cper_print_bits("", status, status_strs, status_strs_size);
++	dev_print_bits(dev, status, status_strs, status_strs_size);
+ 	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
+ 		aer_error_layer[layer], aer_agent_string[agent]);
+ 
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
