@@ -1,72 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754543AbeBGPJx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:09:53 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51975 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754151AbeBGPJw (ORCPT
+        id S1754562AbeBGPK2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:10:28 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55919 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754503AbeBGPK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:09:52 -0500
-X-Google-Smtp-Source: AH8x227Hah/UbEmP2C+/cc4vq0Lho+e1J3Y7A13yejohD61xBC9rrJvvG8QanXZPvA7QpDrJU99YtA==
-Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vladislav Valtchev <vladislav.valtchev@gmail.com>,
-        johannes.berg@intel.com, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, zsun@redhat.com
-References: <20180204032014.6962-1-sztsian@gmail.com>
- <20180204032014.6962-2-sztsian@gmail.com>
- <20180206181807.2d35393e@gandalf.local.home>
- <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
- <20180207094017.5a130e6a@gandalf.local.home>
-From: Zamir SUN <sztsian@gmail.com>
-Message-ID: <ca3062ba-7f87-dbf2-a50f-9d9bdb421159@gmail.com>
-Date: Wed, 7 Feb 2018 23:09:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 7 Feb 2018 10:10:26 -0500
+X-Google-Smtp-Source: AH8x226hNHezEqbg2YnCPEwYBOGtoh4n/fcn5eXoAEtJpWNc4N/y6W8Gill2bhvEaeh9YcUH2qiYbg==
+Date: Wed, 7 Feb 2018 16:10:23 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, Shanker Donthineni <shankerd@codeaurora.org>
+Subject: Re: [PATCH v1 02/16] irqchip: gicv3-its: Add helpers for handling
+ 52bit address
+Message-ID: <20180207151023.GD29286@cbox>
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-3-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180207094017.5a130e6a@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180109190414.4017-3-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Suzuki,
 
-
-On 02/07/2018 10:40 PM, Steven Rostedt wrote:
-> On Wed, 7 Feb 2018 22:01:46 +0800
-> Zamir SUN <sztsian@gmail.com> wrote:
+On Tue, Jan 09, 2018 at 07:03:57PM +0000, Suzuki K Poulose wrote:
+> Add helpers for encoding/decoding 52bit address in GICv3 ITS BASER
+> register. When ITS uses 64K page size, the 52bits of physical address
+> are encoded in BASER[47:12] as follows :
 > 
+>  Bits[47:16] of the register => bits[47:16] of the physical address
+>  Bits[15:12] of the register => bits[51:48] of the physical address
+>                                 bits[15:0] of the physical address are 0.
 > 
->> Thanks for the heads-up! I did not see that before.
->>
->> While just a note for this, in Fedora 27:
->>
->> $ if command -v swig; then echo 1; else echo 0; fi
->> /usr/bin/swig
->> 1
->>
->> Actually this test has the same problem as of `which swig` - When swig
->> exists, the var SWIG_DEFINED will not be 1 (as shown above).
->>
->> I see Vladislav is already on this thread. I hope this can be fixed
->> before merging the patch set.
->>
+> Also adds a mask for CBASER address. This will be used for adding 52bit
+> support for VGIC ITS. More importantly ignore the upper bits if 52bit
+> support is not enabled.
 > 
-> After doing some more testing, I'm going to push out the changes today.
-> Would you be able to add patches on top of the changes? We are doing a
-> restructuring of the directory such that it can grow more.
+> Cc: Shanker Donthineni <shankerd@codeaurora.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c   |  2 +-
+>  include/linux/irqchip/arm-gic-v3.h | 32 ++++++++++++++++++++++++++++++--
+>  2 files changed, 31 insertions(+), 3 deletions(-)
 > 
-> I'll be backporting these fixes to 2.6 and 2.7 as well.
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 4039e64cd342..e6aa84f806f7 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -1615,7 +1615,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>  		}
+>  
+>  		/* Convert 52bit PA to 48bit field */
+> -		baser_phys = GITS_BASER_PHYS_52_to_48(baser_phys);
+> +		baser_phys = GITS_BASER_ADDR64K_FROM_PHYS(baser_phys);
+>  	}
+>  
+>  retry_baser:
+> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+> index c00c4c33e432..b880b6682fa6 100644
+> --- a/include/linux/irqchip/arm-gic-v3.h
+> +++ b/include/linux/irqchip/arm-gic-v3.h
+> @@ -320,6 +320,15 @@
+>  #define GITS_IIDR_REV(r)		(((r) >> GITS_IIDR_REV_SHIFT) & 0xf)
+>  #define GITS_IIDR_PRODUCTID_SHIFT	24
+>  
+> +#ifdef CONFIG_ARM64_PA_BITS_52
+> +#define GITS_PA_HI_MASK			(0xfULL)
+> +#define GITS_PA_SHIFT			52
+> +#else
+> +/* Do not use the bits [51-48] if we don't support 52bit */
+> +#define GITS_PA_HI_MASK			0
+> +#define GITS_PA_SHIFT			48
+> +#endif
+> +
+>  #define GITS_CBASER_VALID			(1ULL << 63)
+>  #define GITS_CBASER_SHAREABILITY_SHIFT		(10)
+>  #define GITS_CBASER_INNER_CACHEABILITY_SHIFT	(59)
+> @@ -343,6 +352,7 @@
+>  #define GITS_CBASER_WaWb	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, WaWb)
+>  #define GITS_CBASER_RaWaWt	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWt)
+>  #define GITS_CBASER_RaWaWb	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWb)
+> +#define GITS_CBASER_ADDRESS(x)	((x) & GENMASK_ULL(GITS_PA_SHIFT, 12))
+>  
+>  #define GITS_BASER_NR_REGS		8
+>  
+> @@ -373,8 +383,26 @@
+>  #define GITS_BASER_ENTRY_SIZE_SHIFT		(48)
+>  #define GITS_BASER_ENTRY_SIZE(r)	((((r) >> GITS_BASER_ENTRY_SIZE_SHIFT) & 0x1f) + 1)
+>  #define GITS_BASER_ENTRY_SIZE_MASK	GENMASK_ULL(52, 48)
+> -#define GITS_BASER_PHYS_52_to_48(phys)					\
+> -	(((phys) & GENMASK_ULL(47, 16)) | (((phys) >> 48) & 0xf) << 12)
+> +
+> +/*
+> + * With 64K page size, the physical address can be upto 52bit and
+> + * uses the following encoding in the GITS_BASER[47:12]:
+> + *
+> + * Bits[47:16] of the register => bits[47:16] of the base physical address.
+> + * Bits[15:12] of the register => bits[51:48] of the base physical address.
+> + *                                bits[15:0] of the base physical address are 0.
+> + * Clear the upper bits if the kernel doesn't support 52bits.
+> + */
+> +#define GITS_BASER_ADDR64K_LO_MASK	GENMASK_ULL(47, 16)
+> +#define GITS_BASER_ADDR64K_HI_SHIFT	12
+> +#define GITS_BASER_ADDR64K_HI_MOVE	(48 - GITS_BASER_ADDR64K_HI_SHIFT)
+> +#define GITS_BASER_ADDR64K_HI_MASK	(GITS_PA_HI_MASK << GITS_BASER_ADDR64K_HI_SHIFT)
+> +#define GITS_BASER_ADDR64K_TO_PHYS(x)					\
+> +	(((x) & GITS_BASER_ADDR64K_LO_MASK) | 				\
+> +	 (((x) & GITS_BASER_ADDR64K_HI_MASK) << GITS_BASER_ADDR64K_HI_MOVE))
+> +#define GITS_BASER_ADDR64K_FROM_PHYS(p)					\
+> +	(((p) & GITS_BASER_ADDR64K_LO_MASK) | 				\
+> +	 (((p) >> GITS_BASER_ADDR64K_HI_MOVE) & GITS_BASER_ADDR64K_HI_MASK))
+
+I don't understand why you need this masking logic embedded in these
+macros?  Isn't it strictly an error if anyone passes a physical address
+with any of bits [51:48] set to the ITS on a system that doesn't support
+52 bit PAs, and just silently masking off those bits could lead to some
+interesting cases.
+
+This is also notably more difficult to read than the existing macro.
+
+If anything, I think it would be more useful to have
+GITS_BASER_TO_PHYS(x) and GITS_PHYS_TO_BASER(x) which takes into account
+CONFIG_ARM64_64K_PAGES.
+
+>  #define GITS_BASER_SHAREABILITY_SHIFT	(10)
+>  #define GITS_BASER_InnerShareable					\
+>  	GIC_BASER_SHAREABILITY(GITS_BASER, InnerShareable)
+> -- 
+> 2.13.6
 > 
 
-Sure, I will rebase after Vladislav's patch set is merged.
-
-Thanks!
-
-
--- 
-Zamir SUN
-Fedora user
-GPG : 1D86 6D4A 49CE 4BBD 72CF FCF5 D856 6E11 F2A0 525E
+Thanks,
+-Christoffer
