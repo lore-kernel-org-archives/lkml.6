@@ -1,49 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754278AbeBGRy1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:54:27 -0500
-Received: from resqmta-ch2-11v.sys.comcast.net ([69.252.207.43]:51412 "EHLO
-        resqmta-ch2-11v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753896AbeBGRyZ (ORCPT
+        id S1754238AbeBGR52 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:57:28 -0500
+Received: from sonic304-17.consmr.mail.bf2.yahoo.com ([74.6.128.40]:40438 "EHLO
+        sonic304-17.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753896AbeBGR51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:54:25 -0500
-Date: Wed, 7 Feb 2018 11:54:22 -0600 (CST)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Steven Rostedt <rostedt@goodmis.org>
-cc: Matthew Wilcox <willy@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        mingo@redhat.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, brouer@redhat.com,
-        rao.shoaib@oracle.com
-Subject: Re: [PATCH 0/2] rcu: Transform kfree_rcu() into kvfree_rcu()
-In-Reply-To: <20180207122910.1a91a48e@gandalf.local.home>
-Message-ID: <alpine.DEB.2.20.1802071152580.22710@nuc-kabylake>
-References: <151791170164.5994.8253310844733420079.stgit@localhost.localdomain> <20180207021703.GC3617@linux.vnet.ibm.com> <20180207042334.GA16175@bombadil.infradead.org> <alpine.DEB.2.20.1802071040570.22131@nuc-kabylake> <20180207120949.62fa815f@gandalf.local.home>
- <20180207171936.GA12446@bombadil.infradead.org> <20180207122910.1a91a48e@gandalf.local.home>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 7 Feb 2018 12:57:27 -0500
+X-YMail-OSG: yTaeiDMVM1mWQhp8n9X2QpSnlDlcrDMLS9rQbCEybbi3P57whYKDvX8iEeLUsiT
+ 6lmLWu3tXI6Ak5h9jBYbmrk_iSxi21Q87aMADyNrG_rK2IUzgXiB4NH5X0EMgIYn6_L.bW2PNVOB
+ cWRi2SqP4Qic0DIoUk6hL6MPDg7r3NZgSQjimRo7H3HfDw_s3hZVy3hCwxUFb10PLewA1rmYIt.E
+ QhZKh7gQRT_p2AINWkWqngJiQ6oglwsqqLsuLN6DAQTvYok_l_W7.IfFDG3THgnX8cG.QkEu0JiP
+ 22UbUY8hBSzJi.7srzpXGZ9bobQR6sCj_UNBpmg0ykHvaYBRc9xTKi3eaZDkoWXWaqH4yzrUrxj.
+ 6Mbxhf0RG6_UZ9.k5YN60KfV248tRDGnkygoQUA9vaHpti19fDYeDYBL73F.DleFLcOT8MvsyoHA
+ lff0ddd_DlbSbai.P5hG2GazCqIo9UWi.cZ2WbMBo7GWKgYjnyJ.WCB8i1H4V02s9PoSt9baH4gb
+ .mvI9lUHJ7oq5PsW.nGn9lamDa1FbashD0DstmX4u3QM8yhs-
+Subject: Re: adding plan9-like usernames to the kernel
+To: "Enrico Weigelt, metux IT consult" <metux@gmx.de>,
+        linux-kernel@vger.kernel.org
+Cc: aganti@google.com
+References: <0597ffe1-f80e-d5dd-e20d-da68bd8a189a@gmx.de>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <35e47ff4-7f61-c72d-f09f-a656dc8480df@schaufler-ca.com>
+Date: Wed, 7 Feb 2018 09:57:20 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfOnw7sutZvncgfyDJO89s+RkTHRH3/dniDNsnIDaRi91Vl1cOcWuONdCZpOAt4YuyHOHQOGgs8JdCC3UciNnRFEtgPTYLxP51vh121ZiGJzRd7zHoHkY
- i4Hqs4ISZMFsjXFL467BDDnUG8sz8tyxbFIgIninIoa/EQZTM8JsdhfkqbEIEOh7t6Yhn7ex7kLkvAQENdNPc/L9SHopQ8gEDzlEKAvJjmTkqhNR1hZoZoXN
- XiB1sewFnsLTh8fDYWqPUp9EYVJSmhT8eloAp0OPKVfHJ+PEXrhmC/bt3dzKI8dX8ffzacrSflt599Zre260D0UMYgCVxNkU4mc0FSquZJRcofNuJ9+ZThUc
- Vruyxl0X+xUPKaZqNluIpDIXdjgKctZ6JBhYeOY8U9RryfMWMMc/jiuAWYClyvHDil0Ao0uo4e2AjeYoXZGadcxqy1M3X1rmerr1V5uw6xbAgjpDwHPpCEJI
- HKSyLr3OrOxcmokq6VSC38b97kAcn8vGVoUVjaDtmcKVYW1y1nx/5PGTsxG6GDAwkhbxdi09/4K6mOuEthk69nlN+uQt06Gu9uvxue6gKYFHCdgrnmENY1wZ
- efIpfoqdbCE+kXOjLBir8HAwx2SUJ0YLnURu9gLrpJ9J4tNmJlhRohtROF4nIkKKdxkWRb/VRZ2HYbx7EmaePSrk
+In-Reply-To: <0597ffe1-f80e-d5dd-e20d-da68bd8a189a@gmx.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Feb 2018, Steven Rostedt wrote:
+On 2/7/2018 4:38 AM, Enrico Weigelt, metux IT consult wrote:
+> Hi folks,
+>
+>
+> as part as a little research project for bringing Plan9 semantics
+> to Linux, I'd like to add textual usernames. In contrast to *nix,
+> Plan9 doesn't use numerical IDs, but names.
+>
+> Obviously that needs some internal mapping between names and ids.
+>
+> Should this go into struct user_namespace (where per-namespace
+> uid mapping lives) or to struct cred / struct user_struct ?
 
-> But a generic "malloc" or "free" that does things differently depending
-> on the size is a different story.
+Why not keep a mapping associated with your devices?
 
-They would not be used for cases with special requirements but for the
-throwaway allows where noone cares about these details. Its just a
-convenience for the developers that do not need to be bothered with too
-much detail because they are not dealing with codepaths that have special
-requirements.
+>
+> The primary consumer of this username will be the /dev/caphash
+> and /dev/capuse devices for switching the UID.
+> (an interesting question of course is, how to allocate the
+> numerical UIDs for given usernames)
+
+You read it from /etc/passwd (or the equivalent service)
+and write it to your device based list via an ioctl, or a
+companion device (/dev/capset?). If no one outside your
+devices is using it this would be the logical place for
+the data to reside.
+
+>
+>
+> --mtx
+>
