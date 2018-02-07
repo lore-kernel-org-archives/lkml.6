@@ -1,70 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754656AbeBGTG3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:06:29 -0500
-Received: from sauhun.de ([88.99.104.3]:44180 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754566AbeBGTG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:06:28 -0500
-Date: Wed, 7 Feb 2018 20:06:25 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 05/16] mmc: slot-gpio: add a helper to check
- capability of GPIO WP detection
-Message-ID: <20180207190625.vaosboluf2jcfop6@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-6-git-send-email-yamada.masahiro@socionext.com>
+        id S1754674AbeBGTGi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:06:38 -0500
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:35018 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754505AbeBGTGg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:06:36 -0500
+X-Google-Smtp-Source: AH8x226GRw92qYVYtXBuncArxj/sSKcfwKgjRXV/Qy5rnH6HjsPCyKYntdazKfAkGjs00d27ldpYuDQK0+TjLTwGal8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7thxwjmuytw3bn4e"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-6-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CABXOdTefUzvLFd-QeQ_NBBwxiAD+AfoKhdJp_vmeBx8WULaf-A@mail.gmail.com>
+References: <20180207185843.75983-1-mka@chromium.org> <CABXOdTefUzvLFd-QeQ_NBBwxiAD+AfoKhdJp_vmeBx8WULaf-A@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 7 Feb 2018 14:06:35 -0500
+Message-ID: <CADnq5_M2V4iViiOCOnseFgSiMA9+JZq68gxtEeRk+HkAKr9c+w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/powerplay: Fix enum mismatch
+To: Guenter Roeck <groeck@google.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>, David Zhou <David1.Zhou@amd.com>,
+        Craig Bergstrom <craigb@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 7, 2018 at 2:01 PM, Guenter Roeck <groeck@google.com> wrote:
+> On Wed, Feb 7, 2018 at 10:58 AM, Matthias Kaehlcke <mka@chromium.org> wrote:
+>> In several locations the driver uses AMD_CG_STATE_UNGATE (type enum
+>> amd_clockgating_state) instead of AMD_PG_STATE_UNGATE (type enum
+>> amd_powergating_stat) and vice versa. Both constants have the same
+>> value, so this doesn't cause any problems, but we still want to pass
+>> the correct type.
+>>
+>> Fixing the mismatch resolves multiple warnings like this when building
+>> with clang:
+>>
+>> drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/cz_clockpowergating.c:169:7:
+>>   error: implicit conversion from enumeration type 'enum
+>>   amd_powergating_state' to different enumeration type 'enum
+>>   amd_clockgating_state' [-Werror,-Wenum-conversion]
+>>     AMD_PG_STATE_UNGATE);
+>>
+>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>
+> Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
---7thxwjmuytw3bn4e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied.  thanks!
 
-On Thu, Jan 18, 2018 at 01:28:05AM +0900, Masahiro Yamada wrote:
-> Like mmc_can_gpio_cd(), mmc_can_gpio_ro() will also be useful for host
-> drivers to know whether GPIO write-protect detection is supported.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Alex
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---7thxwjmuytw3bn4e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7Ti0ACgkQFA3kzBSg
-KbaKTw/9HmgEMusxqOgs1VlPUaSP1ydOlIDZXQc7Ff8M2JAQlu42xqmmu+UY6GLj
-6eiXKSgSpnYONORI3B1VhCrNPwOPPzeV579B8mSL8dGs4iP9AEYAdbhayVzukMnG
-qYiCRRGZMAQkSOhG4euhrrEeqDKiqMuBshWBI90df/fNseQqoLDkTzYKs4k0qpA/
-eoewx0Q3U3P5kN6paT4FX1REMmJZj2yTHNoosWicChrr7pxpQkCsTaR+i5ezzVKN
-Hvl4Gp16PuK1gZYjALNAKBWQRxMxWjMN1DxZ8tqSrNSsvN5bn8R2NlUr/5REYp4c
-IdBxdnZbU5cxXGCrjz3s++ZmW8sMf9BwEk+tZwCutiIgjPu2402dgUy1R/MHN6ZE
-YvcVrhuhxRKgyLrbwW/q2ftsICUVmhB3El2yqkVmDANJWIr+yUdWs1dg1+/X6Cbb
-QPRZIPukKfxHbzMElRQe0eFKHxTv4q7Exn2U+NU721q64NTV+ExJUHItMNyN97n8
-i+T9wfdcvxWGsRkaI+G/UCgOb/7bQEQPSF1wBrgnjUEPYjVHUZj4GT+pPPHLeCbw
-yPH0q4SYgtApXXqGAMTK2vMjzouriVesyrYLOvHlsPdzJEI7y1NM93MhNuQu1KiV
-WJXLy0wfRjI6TDmnbmranN0DY3crWLj3EiI1kYTtd3eHiEWpIho=
-=wfCH
------END PGP SIGNATURE-----
-
---7thxwjmuytw3bn4e--
+>
+>> ---
+>>  drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c   | 8 ++++----
+>>  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c | 2 +-
+>>  2 files changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
+>> index 44de0874629f..416abebb8b86 100644
+>> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
+>> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
+>> @@ -166,10 +166,10 @@ void cz_dpm_powergate_uvd(struct pp_hwmgr *hwmgr, bool bgate)
+>>                 cz_dpm_powerup_uvd(hwmgr);
+>>                 cgs_set_clockgating_state(hwmgr->device,
+>>                                                 AMD_IP_BLOCK_TYPE_UVD,
+>> -                                               AMD_PG_STATE_UNGATE);
+>> +                                               AMD_CG_STATE_UNGATE);
+>>                 cgs_set_powergating_state(hwmgr->device,
+>>                                                 AMD_IP_BLOCK_TYPE_UVD,
+>> -                                               AMD_CG_STATE_UNGATE);
+>> +                                               AMD_PG_STATE_UNGATE);
+>>                 cz_dpm_update_uvd_dpm(hwmgr, false);
+>>         }
+>>
+>> @@ -197,11 +197,11 @@ void cz_dpm_powergate_vce(struct pp_hwmgr *hwmgr, bool bgate)
+>>                 cgs_set_clockgating_state(
+>>                                         hwmgr->device,
+>>                                         AMD_IP_BLOCK_TYPE_VCE,
+>> -                                       AMD_PG_STATE_UNGATE);
+>> +                                       AMD_CG_STATE_UNGATE);
+>>                 cgs_set_powergating_state(
+>>                                         hwmgr->device,
+>>                                         AMD_IP_BLOCK_TYPE_VCE,
+>> -                                       AMD_CG_STATE_UNGATE);
+>> +                                       AMD_PG_STATE_UNGATE);
+>>                 cz_dpm_update_vce_dpm(hwmgr);
+>>                 cz_enable_disable_vce_dpm(hwmgr, true);
+>>         }
+>> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c
+>> index 69a0678ace98..402aa9cb1f78 100644
+>> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c
+>> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c
+>> @@ -162,7 +162,7 @@ void smu7_powergate_uvd(struct pp_hwmgr *hwmgr, bool bgate)
+>>                                 AMD_CG_STATE_UNGATE);
+>>                 cgs_set_powergating_state(hwmgr->device,
+>>                                                 AMD_IP_BLOCK_TYPE_UVD,
+>> -                                               AMD_CG_STATE_UNGATE);
+>> +                                               AMD_PG_STATE_UNGATE);
+>>                 smu7_update_uvd_dpm(hwmgr, false);
+>>         }
+>>
+>> --
+>> 2.16.0.rc1.238.g530d649a79-goog
+>>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
