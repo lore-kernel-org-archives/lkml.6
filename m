@@ -1,99 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753721AbeBGK2G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 05:28:06 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:50924 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753564AbeBGK2D (ORCPT
+        id S1753803AbeBGK3v (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 05:29:51 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:38084 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753496AbeBGK3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 05:28:03 -0500
-X-Google-Smtp-Source: AH8x227zQWEKu10FaEL05bCv7zkBdKeBFcbnGu0y6r2qsGzcM7BkRgq/Y1ejet9vGjpM9QjCYw3bRw==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <1517998516.6606.1.camel@gmx.de>
-Date: Wed, 7 Feb 2018 11:27:56 +0100
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
-        SERENA ZIVIANI <169364@studenti.unimore.it>,
-        Serena Ziviani <ziviani.serena@gmail.com>,
-        =?utf-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-Message-Id: <5584030F-8F4E-4C98-84A5-79873A1BF775@linaro.org>
-References: <20180205190510.5499-1-paolo.valente@linaro.org>
- <20180205190510.5499-2-paolo.valente@linaro.org>
- <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
- <1517903761.9843.12.camel@gmx.de>
- <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
- <1517918234.25841.31.camel@gmx.de>
- <77124223e6116350a5184a5199850304@natalenko.name>
- <1517924768.25841.32.camel@gmx.de>
- <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
- <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
- <82ffc96aacc3945861cbb708df346338@natalenko.name>
- <E52CCDEA-279A-40D8-AD9B-F4D1AF351BF1@linaro.org>
- <1517995431.25619.5.camel@gmx.de>
- <FBF6DCBB-B0F5-446B-8FD1-106E2538A9C1@linaro.org>
- <1517998516.6606.1.camel@gmx.de>
-To: Mike Galbraith <efault@gmx.de>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Wed, 7 Feb 2018 05:29:49 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180207102947epoutp0155222f6565cf66c1f07cfc6889af7d4d~RBGZh3ACH1440514405epoutp01Q
+X-AuditID: b6c32a45-3ebff70000001023-e3-5a7ad51a630d
+Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
+Date: Wed, 07 Feb 2018 11:29:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-version: 1.0
+In-reply-to: <5A7916A2.7010307@samsung.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7bCmha7U1aoogwf3WCw2zljPanH9y3NW
+        i02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfd4uIpV4sfZ7pZHDg93t9oZfe43NfL5LF5Sb1H
+        35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZSyZ/oCloImv4veHNrYGxvncXYycHBICJhI73r9j
+        AbGFBHYwSsy6mtbFyAVkf2eUWPCqjw2maObVA+wQid2MEpufHmWEcO4zSnw83sUIUiUsEC+x
+        7+FJdhBbREBDYubfK2BFzAJvGSXWn5rEDJJgEzCU6D3aB9bAK2AnsaR1K1gDi4CqxJ+5f8Bq
+        RAUiJBZOfQpVIyjxY/I9oPs4ODgFtCVevCoBCTMLaEq8+DKJBcIWlzh2/yYjhC0vsXnNW2aQ
+        vRICj9kkfi+6wATxgovE1yXtzBC2sMSr41vYIWxpiWerNjJCNPQzSpxY0wzlzGCUuNM+Aarb
+        WuLw8YusECv4JDoO/2UHuUhCgFeio00IosRD4su56awQtqPE+38LWCBBtJ5R4taWKywTGOVm
+        IXloFpIvZiH5YhaSLxYwsqxiFEstKM5NTy02KjDUK07MLS7NS9dLzs/dxAhONFquOxhnnPM5
+        xCjAwajEw9uxqTJKiDWxrLgy9xCjBAezkgjvz5VVUUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+        2wJcooQE0hNLUrNTUwtSi2CyTBycUg2M3O/ybTW/7nVgDluvwha8ruk2d2RCcMa15a+zzp3w
+        yYqrjm4ofpd91WJ5ztrlIev01jKffMdfa/KaZ/WzLbdLG6+/K7eQuRPRZSa7JGDv49Xrum2z
+        Cm0n6u3ceH6Ok0qEm0bexl6ryDdriraJ34u70dy1UHw9s1CYfMOG9Pclz5/f7c2bLfFfiaU4
+        I9FQi7moOBEA+CtSCzADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsVy+t9jAV3Jq1VRBge2qFlsnLGe1eL6l+es
+        FpseX2O1+Nhzj9Xi8q45bBYzzu9jslh75C67xcVTrhY/znSzOHB6vL/Ryu5xua+XyWPzknqP
+        vi2rGD0+b5ILYI3isklJzcksSy3St0vgylgy/QFLQRNfxe8PbWwNjPO5uxg5OSQETCRmXj3A
+        3sXIxSEksJNRou1hOxtIQkjgIaPE1/1yILawQLzEvocn2UFsEQENiZl/rzCCNDALvGWUeLNy
+        HzNE93pGiZX/TjGBVLEJGEr0Hu1jBLF5BewklrRuBetmEVCV+DP3DzOILSoQIdG5cj4LRI2g
+        xI/J94BsDg5OAW2JF69KQExmAXWJKVNyQSqYBcQljt2/yQhhy0tsXvOWeQKjwCwkzbMQOmYh
+        6ZiFpGMBI8sqRsnUguLc9NxiowKjvNRyveLE3OLSvHS95PzcTYzAmNh2WKt/B+PjJfGHGAU4
+        GJV4eA02VEYJsSaWFVfmHmKU4GBWEuH9ubIqSog3JbGyKrUoP76oNCe1+BCjNAeLkjgvf/6x
+        SCGB9MSS1OzU1ILUIpgsEwenVAPjYdMbBjmP57l02NS0bUhtU3+z/aaTwp1jG6a6iaVc2Zzq
+        kvlyseCn2Vm1vydPOmWbv/nt7XSlF37/S/7mfhR+kDDtr96R7coG01+2zrkR0imiPVX+c3Px
+        hk+SO/9HLTDvkd5VOivKo3rb0ueJ2Sk+H4SqY6qmC9QFGN/rZEif/vvnUcvWA4mzlFiKMxIN
+        tZiLihMBjKliqYUCAAA=
+X-CMS-MailID: 20180207102945epcas2p1a7849465bfdb23a0a67f40d1cabd9c7d
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
+X-RootMTR: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
+References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
+        <20180205142230.9755-1-s.nawrocki@samsung.com>
+        <5A7916A2.7010307@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17ASAve004953
 
+On 02/06/2018 03:44 AM, Chanwoo Choi wrote:
+> When I developed the clk-exynos5433.c I referred to the following description.
+> TRM specified that "Samsung recommends only the values
+> between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
 
+Thanks, I somehow missed it. There is also another sentence pointing to
+a contact person if other values are needed.
 
-> Il giorno 07 feb 2018, alle ore 11:15, Mike Galbraith <efault@gmx.de> ha scritto:
-> 
-> On Wed, 2018-02-07 at 10:45 +0100, Paolo Valente wrote:
->> 
->>> Il giorno 07 feb 2018, alle ore 10:23, Mike Galbraith <efault@gmx.de> ha scritto:
->>> 
->>> On Wed, 2018-02-07 at 10:08 +0100, Paolo Valente wrote:
->>>> 
->>>> The first piece of information I need is whether this failure happens
->>>> even without "BFQ hierarchical scheduling support".
->>> 
->>> I presume you mean BFQ_GROUP_IOSCHED, which I do not have enabled.
->>> 
->> 
->> Great (so to speak), this saves us one step.
->> 
->> So, here's my next request for help: please apply the attached patch
->> (compressed to preserve it from my email client) and retry. It adds
->> several anomaly checks. I hope I have not added any false-positive
->> check.
-> 
-> kernel BUG at block/bfq-iosched.c:4742!
-> 
-> 4742         BUG_ON(!(rq->rq_flags & RQF_ELVPRIV));
+> It looks like that you refer to clk-exynos5420.c driver.
+> But, I'm wondering exynos5433 might not guarantee the additional clock
+> of this patch as the stable clock.
 
-Oh my, this is as crazy as, fortunately, easy to fix.  The problem is
-that this is easy to fix in bfq, but increases the doubts I have
-expressed in my cover letter: is it ok that, in blk-mq, the functions
-of an elevator may get invoked, without control, on requests that do
-not belong to that elevator?
+I took the values from downstream SM-N910C_LL kernel, I would say they
+are well tested and reliable. How about adding just these 3 entries:
 
-Anyway, two requests, Mike, if you haven't had enough already:
++	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
++	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
++	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
+?
+ 
+They are needed for audio sample rates that are multiple of 32000, 44100
+or 48000 Hz. The AUD PLL frequency values which are currently defined
+are not useful for anything except fs 48000 (fpll = 393216000 Hz).
 
-1. Could you paste a stack trace for this OOPS, just to understand how we
-get there?
+We could add new PLL rates: 361267218, 262144000, but I'm not convinced
+these would be any better than values used in a shipped product. We would 
+need to confirm below values with the HW team, and I'm not sure what 
+would be the P, M, S, K set for 262144000 frequency.
 
-2. Could you please turn that BUG_ON into:
-if (!(rq->rq_flags & RQF_ELVPRIV))
-	return;
-and see what happens?
+	PLL_36XX_RATE(361267218U, 301, 5, 2,   3671),
 
-Thanks a lot,
-Paolo
+As it turns out, the 393216000 Hz entry needs correction, the actual 
+frequency value from the P, M, S, K equation is 393216003:
+
+-	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
++	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+
+Hmm, I have tested with the PLL frequency set to 393216003 Hz and there
+are some glitches during audio playback, I can't get it to work properly.
+
+--
+Regards,
+Sylwester
