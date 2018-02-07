@@ -1,83 +1,84 @@
 Return-Path: <sudipm.mukherjee@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518032893; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1518032892; cv=none;
         d=google.com; s=arc-20160816;
-        b=N90+7jSeVj5vllMvxQw+5pojplADb/CzVqqtS4DDA9yR0zq6VVz2Ne38KEHV0/B8y6
-         bYDZfavWbU8Petq42hCe6Oo4Csnka18RxxjjDq5hyb5wv5ZmlEoNte5sRQezTSPg6I+u
-         u91Aq21MmwnIbSrcvE4wls0+E9S/dfcbOLHzVxFjSehqQsLjRkqatD1J6jBWfWDHo8Sp
-         TXQQ3YjJGYyhGjuu2QU256jGaofCtfcXdeqwVFO8b7tXyR1aD7vfTxiPdoIEQmmu2nB7
-         XY/cg2DyYEauFJsK++8K8DCpgm36cpRiLXO7q/PquSuqUyhQEPQz0BH8ibee2W3gVxCG
-         hpvQ==
+        b=KkrXJc5022rJiCQ4And78CL/MWQS8m1U2cb5VXI2Q5q3ky7OfV7Mqm1wamjGmdrkgv
+         eoF0xg9M84Qjy17h7KvvoNzxPSS/comMw2Ouwy9q8QwyWtsYhCHFTNQv/YSpdmhHoo++
+         0Johk7M2OR1U2AkZpIxkVLKM+D9RNxWQFtWiPKM1k0G1kWRmK2rzYzAkxDnzLLjHzLh4
+         xxW46vGOC1hdkzcjjRIUujWqX48X7I5+xXAIBZ2t+yQoxtxVIxyq1liiodapemY6X5ut
+         4T08fZl46A1Awbrq2cOy8XINSK88zB4mVNlhrNxEGrjt2qQ/fYz3ro6ABZ4Bjk4qlNEQ
+         wuYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=CsyXrtxSIX0w0QyGUXWn99ZJzmef0KVTBU37Ecj31pA=;
-        b=fyNUBzixhSj84ssXUstK/a0EQTeZOnjANQhkTwq4Ike8NFjGWfc4GFmoxyIkO242eu
-         94vxPulgE5UTmw1nWjvSO+7MEdCJqbKvRqYXL1OlxdHQhVQaWgtvzBVm0pcOxvQ9GTra
-         6COvUIgckVdemsw5pXbIIgrbIbRz8ZHzBAOpHrEPAAqB+CiO9Hdzr1XsS9M21KBTrCdo
-         nKfhr6uHKXJB5pec6UyeqsxMynulAnLYVKItfA4xk8Jc8K5PSkjt7myx4sK4owIQF4kH
-         iribJ22AAexbXdAL9PD/NJVFsRpsVvpxJdERFvmFYhvxDNVWl3tgUcct2utNyIEWggBV
-         oyDg==
+        bh=TJzKoJmFvJVWsJywMmBKh3mQnmyTzxCKZqQ4QQNWAMI=;
+        b=zkdm7tH4txO3W6Lc533ioixYWUN3rLLysH529szeEuJVk0nCEUlu1LmU2fOiCBTZNV
+         xI3nsQboRn+HrR21qtrpO/6AT96jN0HCt0uFBS1rqrhLElvf24iE8yl86oDWKXg8Mj3Y
+         MHc8PkKhD8YAlx07krz3W868gP6Ynf41m5FPzPBEFdDJy071zeZTmv6mguiqsALncaW1
+         Crx/c5kSEtt/zcrlZRBF/o2pT91o5OEHVLppHmPUnAmcB96gxX5MGykbPaY6XvQIDG49
+         dbDGSVCCyN6W7qSxVtm1pEoWJFCFBPRKuAoZ1ZajP79P8+9Vqpjj1FAABTjS84VIae2u
+         ISAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rXEMYzzE;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=OFNdsF5p;
        spf=pass (google.com: domain of sudipm.mukherjee@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sudipm.mukherjee@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rXEMYzzE;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=OFNdsF5p;
        spf=pass (google.com: domain of sudipm.mukherjee@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sudipm.mukherjee@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x226evdX4ObJppZcSnmfZscYYWjYAYxs9BO3KNaCB/S45z+O7U0Ki/hxewKhQEUsC5VqqL2XuRA==
+X-Google-Smtp-Source: AH8x224flwgxCEMWxb00yVr4tiARWnoTxSCvItuuMYUShQ+2uOQeU1sL7/kGpOJGOG3gHwWApw3p3A==
 From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel@vger.kernel.org,
 	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 11/12] parport: Replace short License header by SPDX identifier
-Date: Wed,  7 Feb 2018 19:47:58 +0000
-Message-Id: <1518032879-5844-11-git-send-email-sudipm.mukherjee@gmail.com>
+Subject: [PATCH 10/12] parport: Sort headers alphabetically
+Date: Wed,  7 Feb 2018 19:47:57 +0000
+Message-Id: <1518032879-5844-10-git-send-email-sudipm.mukherjee@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1518032879-5844-1-git-send-email-sudipm.mukherjee@gmail.com>
 References: <1518032879-5844-1-git-send-email-sudipm.mukherjee@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591772858967406219?=
-X-GMAIL-MSGID: =?utf-8?q?1591772858967406219?=
+X-GMAIL-THRID: =?utf-8?q?1591772858026721909?=
+X-GMAIL-MSGID: =?utf-8?q?1591772858026721909?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-No functional changes involved.
+While here, remove init.h inclusion since we are not using it directly and
+module.h will do this for us.
+
+No functional changes intended.
 
 Tested-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 ---
- drivers/parport/parport_serial.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/parport/parport_serial.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
-index d141e31..4f8b260 100644
+index 08e218e..d141e31 100644
 --- a/drivers/parport/parport_serial.c
 +++ b/drivers/parport/parport_serial.c
-@@ -1,20 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Support for common PCI multi-I/O cards (which is most of them)
+@@ -17,14 +17,14 @@
   *
-  * Copyright (C) 2001  Tim Waugh <twaugh@redhat.com>
-  *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-- *
-- *
-  * Multi-function PCI cards are supposed to present separate logical
-  * devices on the bus.  A common thing to do seems to be to just use
-  * one logical device with lots of base address registers for both
-  * parallel ports and serial ports.  This driver is for dealing with
-  * that.
-- *
   */
  
+-#include <linux/types.h>
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/slab.h>
+-#include <linux/pci.h>
  #include <linux/interrupt.h>
++#include <linux/module.h>
+ #include <linux/parport.h>
+ #include <linux/parport_pc.h>
++#include <linux/pci.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++
+ #include <linux/8250_pci.h>
+ 
+ enum parport_pc_pci_cards {
 -- 
 2.7.4
