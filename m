@@ -1,183 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754622AbeBGTEe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:04:34 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754062AbeBGTEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:04:33 -0500
-Subject: Re: [v6,3/3] x86/smpboot: Fix __max_logical_packages estimate
-To: Simon Gaiser <simon@invisiblethingslab.com>,
-        xen-devel <xen-devel@lists.xen.org>
-References: <20171114124257.22013-4-prarit@redhat.com>
- <370a7ab2-8f57-b99b-428b-d0b1dfe401e7@invisiblethingslab.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Piotr Luc <piotr.luc@intel.com>, Kan Liang <kan.liang@intel.com>,
-        Borislav Petkov <bp@suse.de>, Stephane Eranian <eranian@google.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        He Chen <he.chen@linux.intel.com>,
-        Mathias Krause <minipli@googlemail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-From: Prarit Bhargava <prarit@redhat.com>
-Message-ID: <6fdee802-bf24-7fbb-c95a-a6e0d840fbde@redhat.com>
-Date: Wed, 7 Feb 2018 14:04:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        id S1754471AbeBGTGF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:06:05 -0500
+Received: from foss.arm.com ([217.140.101.70]:55056 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753995AbeBGTGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:06:04 -0500
+Message-ID: <5A7B4D87.9020207@arm.com>
+Date: Wed, 07 Feb 2018 19:03:35 +0000
+From: James Morse <james.morse@arm.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
 MIME-Version: 1.0
-In-Reply-To: <370a7ab2-8f57-b99b-428b-d0b1dfe401e7@invisiblethingslab.com>
-Content-Type: text/plain; charset=utf-8
+To: Xie XiuQi <xiexiuqi@huawei.com>
+CC: catalin.marinas@arm.com, will.deacon@arm.com, mingo@redhat.com,
+        mark.rutland@arm.com, ard.biesheuvel@linaro.org, Dave.Martin@arm.com,
+        takahiro.akashi@linaro.org, tbaicar@codeaurora.org,
+        stephen.boyd@linaro.org, bp@suse.de, julien.thierry@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, wangxiongfeng2@huawei.com,
+        zhengqiang10@huawei.com, gengdongjiu@huawei.com,
+        huawei.libin@huawei.com, wangkefeng.wang@huawei.com,
+        lijinyue@huawei.com, guohanjun@huawei.com, hanjun.guo@linaro.org,
+        cj.chengjian@huawei.com
+Subject: Re: [PATCH v5 1/3] arm64/ras: support sea error recovery
+References: <1516969885-150532-1-git-send-email-xiexiuqi@huawei.com> <1516969885-150532-2-git-send-email-xiexiuqi@huawei.com> <5A70C536.7040208@arm.com>
+In-Reply-To: <5A70C536.7040208@arm.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Xie XiuQi,
 
-
-On 02/07/2018 01:44 PM, Simon Gaiser wrote:
-> Prarit Bhargava:
->> A system booted with a small number of cores enabled per package
->> panics because the estimate of __max_logical_packages is too low.
->> This occurs when the total number of active cores across all packages
->> is less than the maximum core count for a single package.
+On 30/01/18 19:19, James Morse wrote:
+> On 26/01/18 12:31, Xie XiuQi wrote:
+>> With ARM v8.2 RAS Extension, SEA are usually triggered when memory errors
+>> are consumed. According to the existing process, errors occurred in the
+>> kernel, leading to direct panic, if it occurred the user-space, we should
+>> just kill process.
 >>
->> ie) On a 4 package system with 20 cores/package where only 4 cores
->> are enabled on each package, the value of __max_logical_packages is
->> calculated as DIV_ROUND_UP(16 / 20) = 1 and not 4.
->>
->> Calculate __max_logical_packages after the cpu enumeration has completed.
->> Use the boot cpu's data to extrapolate the number of packages.
->>
->> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: x86@kernel.org
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Andi Kleen <ak@linux.intel.com>
->> Cc: Dave Hansen <dave.hansen@intel.com>
->> Cc: Piotr Luc <piotr.luc@intel.com>
->> Cc: Kan Liang <kan.liang@intel.com>
->> Cc: Borislav Petkov <bp@suse.de>
->> Cc: Stephane Eranian <eranian@google.com>
->> Cc: Prarit Bhargava <prarit@redhat.com>
->> Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
->> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->> Cc: Tom Lendacky <thomas.lendacky@amd.com>
->> Cc: He Chen <he.chen@linux.intel.com>
->> Cc: Mathias Krause <minipli@googlemail.com>
->> Cc: Tim Chen <tim.c.chen@linux.intel.com>
->> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/kernel/smpboot.c | 55 +++++++++--------------------------------------
->>  1 file changed, 10 insertions(+), 45 deletions(-)
->>
->> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
->> index 838d36ff7ba6..2e3c5a394e79 100644
->> --- a/arch/x86/kernel/smpboot.c
->> +++ b/arch/x86/kernel/smpboot.c
->> @@ -308,12 +308,6 @@ int topology_update_package_map(unsigned int pkg, unsigned int cpu)
->>  	if (new >= 0)
->>  		goto found;
->>  
->> -	if (logical_packages >= __max_logical_packages) {
->> -		pr_warn("Package %u of CPU %u exceeds BIOS package data %u.\n",
->> -			logical_packages, cpu, __max_logical_packages);
->> -		return -ENOSPC;
->> -	}
->> -
->>  	new = logical_packages++;
->>  	if (new != pkg)
->>  		pr_info("CPU %u Converting physical %u to logical package %u\n",
->> @@ -323,44 +317,6 @@ int topology_update_package_map(unsigned int pkg, unsigned int cpu)
->>  	return 0;
->>  }
->>  
->> -static void __init smp_init_package_map(struct cpuinfo_x86 *c, unsigned int cpu)
->> -{
->> -	unsigned int ncpus;
->> -
->> -	/*
->> -	 * Today neither Intel nor AMD support heterogenous systems. That
->> -	 * might change in the future....
->> -	 *
->> -	 * While ideally we'd want '* smp_num_siblings' in the below @ncpus
->> -	 * computation, this won't actually work since some Intel BIOSes
->> -	 * report inconsistent HT data when they disable HT.
->> -	 *
->> -	 * In particular, they reduce the APIC-IDs to only include the cores,
->> -	 * but leave the CPUID topology to say there are (2) siblings.
->> -	 * This means we don't know how many threads there will be until
->> -	 * after the APIC enumeration.
->> -	 *
->> -	 * By not including this we'll sometimes over-estimate the number of
->> -	 * logical packages by the amount of !present siblings, but this is
->> -	 * still better than MAX_LOCAL_APIC.
->> -	 *
->> -	 * We use total_cpus not nr_cpu_ids because nr_cpu_ids can be limited
->> -	 * on the command line leading to a similar issue as the HT disable
->> -	 * problem because the hyperthreads are usually enumerated after the
->> -	 * primary cores.
->> -	 */
->> -	ncpus = boot_cpu_data.x86_max_cores;
->> -	if (!ncpus) {
->> -		pr_warn("x86_max_cores == zero !?!?");
->> -		ncpus = 1;
->> -	}
->> -
->> -	__max_logical_packages = DIV_ROUND_UP(total_cpus, ncpus);
->> -	pr_info("Max logical packages: %u\n", __max_logical_packages);
->> -
->> -	topology_update_package_map(c->phys_proc_id, cpu);
->> -}
->> -
->>  void __init smp_store_boot_cpu_info(void)
->>  {
->>  	int id = 0; /* CPU 0 */
->> @@ -368,7 +324,7 @@ void __init smp_store_boot_cpu_info(void)
->>  
->>  	*c = boot_cpu_data;
->>  	c->cpu_index = id;
->> -	smp_init_package_map(c, id);
->> +	topology_update_package_map(c->phys_proc_id, id);
->>  	cpu_data(id).set = 1;
->>  }
->>  
->> @@ -1371,7 +1327,16 @@ void __init native_smp_prepare_boot_cpu(void)
->>  
->>  void __init native_smp_cpus_done(unsigned int max_cpus)
->>  {
->> +	int ncpus;
->> +
->>  	pr_debug("Boot done\n");
->> +	/*
->> +	 * Today neither Intel nor AMD support heterogenous systems so
->> +	 * extrapolate the boot cpu's data to all packages.
->> +	 */
->> +	ncpus = cpu_data(0).booted_cores * smp_num_siblings;
->> +	__max_logical_packages = DIV_ROUND_UP(nr_cpu_ids, ncpus);
->> +	pr_info("Max logical packages: %u\n", __max_logical_packages);
->>  
->>  	if (x86_has_numa_in_package)
->>  		set_sched_topology(x86_numa_in_package_topology);
+>> But there is a class of error, in fact, is not necessary to kill
+>> process, you can recover and continue to run the process. Such as
+>> the instruction data corrupted, where the memory page might be
+>> read-only, which is has not been modified, the disk might have the
+>> correct data, so you can directly drop the page, ant reload it when
+>> necessary.
 > 
-> This breaks booting as Xen PV domain for me. The problem seems to be
-> that native_smp_cpus_done() is never called on a PV domain. So
-> __max_logical_packages is uninitialized and this leads to a NULL
-> pointer dereference in coretemp.
+> With firmware-first support, we do all this...
 > 
+> 
+>> So this patchset is just try to solve such problem: if the error is
+>> consumed in user-space and the error occurs on a clean page, you can
+>> directly drop the memory page without killing process.
+>>
+>> If the corrupted page is clean, just dropped it and return to user-space
+>> without side effects. And if corrupted page is dirty, memory_failure()
+>> will send SIGBUS with code=BUS_MCEERR_AR. While without this patchset,
+>> do_sea() will just send SIGBUS, so the process was killed in the same place.
+> 
+> ... but this happens too. I agree its something we should fix, but I don't think
+> this is the best way to do it.
+> 
+> This series is pulling the memory-failure-queue details back into the arch-code
+> to build a second list, that gets processed as extra work when we return to
+> user-space.
+> 
+> 
+> The root of the issue is ghes_notify_sea() claims the notification as something
+> APEI has dealt with, ... but it hasn't done it yet. The signals will be
+> generated by something currently stuck in a queue. (Evidently x86 doesn't handle
+> synchronous errors like this using firmware-first).
+> 
+> I think a smaller fix is to give the queues that may be holding the
+> memory_failure() work a kick as part of the code that calls ghes_notify_sea().
+> This means that by the time we return to do_sea() ghes_notify_sea()'s claim that
+> APEI has dealt with it is true as any generated signals are pending. We can then
+> skip the existing SIGBUS generation code.
+> 
+> 
+>> Because memory_failure() may sleep, we can not call it directly in SEA
+> 
+> (this one is more serious, I've attempted to fix it by moving all NMI-like
+> GHES-notifications to use the estatus queue).
+> 
+> 
+>> exception context. So we saved faulting physical address associated with
+>> a process in the ghes handler and set __TIF_SEA_NOTIFY. When we return
+>> from SEA exception context and get into do_notify_resume() before the
+>> process running, we could check it and call memory_failure() to do
+>> recovery.
+> 
+>> It's safe, because we are in process context.
+> 
+> I think this is the trick. When we take a Synchronous-external-abort out of
+> userspace, we're in process context too. We can add helpers to drain the
+> memory_failure_queue which can be called when do_sea() when we know we're
+> preemptible and interrupts-et-al are unmasked.
 
-I'll see if I can figure out a way to test that.  Does 947134d9b00f
-("x86/smpboot: Do not use smp_num_siblings in __max_logical_packages
-calculation") help?
+Something like... base on [0], in arch/arm64/kernel/acpi.c:
+-----------------%<-----------------
+int apei_claim_sea(struct pt_regs *regs)
+{
+        int cpu;
+        int err = -ENOENT;
+        unsigned long current_flags = arch_local_save_flags();
+        unsigned long interrupted_flags = current_flags;
 
-P.
+        if (!IS_ENABLED(CONFIG_ACPI_APEI_SEA))
+                return err;
+
+        if (regs)
+                interrupted_flags = regs->pstate;
+
+        /*
+         * APEI expects an NMI-like notification to always be called
+         * in NMI context.
+         */
+        local_daif_restore(DAIF_ERRCTX);
+        nmi_enter();
+        err = ghes_notify_sea();
+        cpu = smp_processor_id();
+        nmi_exit();
+
+        /*
+         * APEI NMI-like notifications are deferred to irq_work. Unless
+         * we interrupted irqs-masked code, we can do that now.
+         */
+        if (!err) {
+                if (!arch_irqs_disabled_flags(interrupted_flags)) {
+                        local_daif_restore(DAIF_PROCCTX_NOIRQ);
+                        irq_work_run();
+                } else {
+                        err = -EINPROGRESS;
+                }
+        }
+
+        local_daif_restore(current_flags);
+
+        if (IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE) && !err) {
+                /*
+                 * Memory failure work is scheduled on the local CPU.
+                 * If we interrupted userspace, or are in process context
+                 * we can do that now.
+                 */
+                if ((regs && !user_mode(regs)) || !preemptible())
+                        err = -EINPROGRESS;
+                else
+                        memory_failure_queue_kick(cpu);
+        }
+
+        return err;
+}
+-----------------%<-----------------
+
+
+and to mm/memory-failure.c:
+-----------------%<-----------------
+@@ -1355,7 +1355,7 @@ static void memory_failure_work_func(struct work_struct *w
+ork)
+        unsigned long proc_flags;
+        int gotten;
+
+-       mf_cpu = this_cpu_ptr(&memory_failure_cpu);
++       mf_cpu = container_of(work, struct memory_failure_cpu, work);
+        for (;;) {
+                spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+                gotten = kfifo_get(&mf_cpu->fifo, &entry);
+
+@@ -1369,6 +1369,22 @@ static void memory_failure_work_func(struct work_struct *
+work)
+        }
+ }
+
++/*
++ * Process memory_failure work queued on the specified CPU.
++ * Used to avoid return-to-userspace racing with the memory_failure workqueue.
++ */
++void memory_failure_queue_kick(int cpu)
++{
++       unsigned long flags;
++       struct memory_failure_cpu *mf_cpu;
++
++       might_sleep();
++
++       mf_cpu = &per_cpu(memory_failure_cpu, cpu);
++       cancel_work_sync(&mf_cpu->work);
++       memory_failure_work_func(&mf_cpu->work);
++}
++
+ static int __init memory_failure_init(void)
+ {
+        struct memory_failure_cpu *mf_cpu;
+-----------------%<-----------------
+
+I've cooked up some NOTFIY_SEA-ing APEI firmware using kvmtool to test this. I
+haven't yet managed to hit irq-masked code with NOTIFY_SEA. I'll try and tidy
+this up and post a branch to make it easier to test...
+
+I prefer this as it doesn't duplicate the state then come back on a TIF flag.
+I'd like to move the kicking logic into ghes.c, as that is where the queueing
+happened, but the 'do-this, restore these flags, do-that' is somewhat tasteless,
+and it looks like on arm64 has synchronous nmi-like notifications that must be
+handled before returning to user-space...
+
+
+
+Thanks,
+
+James
+
+[0] https://www.spinics.net/lists/linux-acpi/msg80149.html
