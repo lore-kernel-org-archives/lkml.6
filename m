@@ -1,152 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753398AbeBGIQb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 03:16:31 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50379 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbeBGIQa (ORCPT
+        id S1753419AbeBGIU1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 03:20:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55362 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750815AbeBGIUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 03:16:30 -0500
-X-Google-Smtp-Source: AH8x224jGSAJbS3Q6HyxmhCnPZ77az/W3XpyJmNKcuCU1zZzdtc8OFzOMfL3v8j0EXH5fa3jOjIAXQ==
-Date: Wed, 7 Feb 2018 11:16:27 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Kai Huang <kai.huang@linux.intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] x86/tme: Detect if TME and MKTME is activated by BIOS
-Message-ID: <20180207081627.eomxuyqw74eew756@node.shutemov.name>
-References: <20180131091509.26531-1-kirill.shutemov@linux.intel.com>
- <20180131091509.26531-3-kirill.shutemov@linux.intel.com>
- <1517978050.23889.23.camel@linux.intel.com>
+        Wed, 7 Feb 2018 03:20:25 -0500
+Date: Wed, 7 Feb 2018 00:20:29 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        mingo@redhat.com, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, brouer@redhat.com,
+        rao.shoaib@oracle.com
+Subject: Re: [PATCH 0/2] rcu: Transform kfree_rcu() into kvfree_rcu()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <151791170164.5994.8253310844733420079.stgit@localhost.localdomain>
+ <20180207021703.GC3617@linux.vnet.ibm.com>
+ <20180207042334.GA16175@bombadil.infradead.org>
+ <20180207050200.GH3617@linux.vnet.ibm.com>
+ <20180207075409.GA5726@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517978050.23889.23.camel@linux.intel.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180207075409.GA5726@localhost>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18020708-2213-0000-0000-00000268E743
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008489; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000248; SDB=6.00986147; UDB=6.00500439; IPR=6.00765514;
+ BA=6.00005816; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019419; XFM=3.00000015;
+ UTC=2018-02-07 08:20:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020708-2214-0000-0000-000059076B38
+Message-Id: <20180207082029.GJ3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802070106
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 05:34:10PM +1300, Kai Huang wrote:
-> On Wed, 2018-01-31 at 12:15 +0300, Kirill A. Shutemov wrote:
-> > IA32_TME_ACTIVATE MSR (0x982) can be used to check if BIOS has
-> > enabled
-> > TME and MKTME. It includes which encryption policy/algorithm is
-> > selected
-> > for TME or available for MKTME. For MKTME, the MSR also enumerates
-> > how
-> > many KeyIDs are available.
+On Tue, Feb 06, 2018 at 11:54:09PM -0800, Josh Triplett wrote:
+> On Tue, Feb 06, 2018 at 09:02:00PM -0800, Paul E. McKenney wrote:
+> > On Tue, Feb 06, 2018 at 08:23:34PM -0800, Matthew Wilcox wrote:
+> > > On Tue, Feb 06, 2018 at 06:17:03PM -0800, Paul E. McKenney wrote:
+> > > > So it is OK to kvmalloc() something and pass it to either kfree() or
+> > > > kvfree(), and it had better be OK to kvmalloc() something and pass it
+> > > > to kvfree().
+> > > > 
+> > > > Is it OK to kmalloc() something and pass it to kvfree()?
+> > > 
+> > > Yes, it absolutely is.
+> > > 
+> > > void kvfree(const void *addr)
+> > > {
+> > >         if (is_vmalloc_addr(addr))
+> > >                 vfree(addr);
+> > >         else
+> > >                 kfree(addr);
+> > > }
+> > > 
+> > > > If so, is it really useful to have two different names here, that is,
+> > > > both kfree_rcu() and kvfree_rcu()?
+> > > 
+> > > I think it's handy to have all three of kvfree_rcu(), kfree_rcu() and
+> > > vfree_rcu() available in the API for the symmetry of calling kmalloc()
+> > > / kfree_rcu().
+> > > 
+> > > Personally, I would like us to rename kvfree() to just free(), and have
+> > > malloc(x) be an alias to kvmalloc(x, GFP_KERNEL), but I haven't won that
+> > > fight yet.
 > > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > ---
-> >  arch/x86/kernel/cpu/intel.c | 83
-> > +++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 83 insertions(+)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/intel.c
-> > b/arch/x86/kernel/cpu/intel.c
-> > index 6936d14d4c77..5b95fa484837 100644
-> > --- a/arch/x86/kernel/cpu/intel.c
-> > +++ b/arch/x86/kernel/cpu/intel.c
-> > @@ -517,6 +517,86 @@ static void detect_vmx_virtcap(struct
-> > cpuinfo_x86 *c)
-> >  	}
-> >  }
-> >  
-> > +#define MSR_IA32_TME_ACTIVATE		0x982
+> > But why not just have the existing kfree_rcu() API cover both kmalloc()
+> > and kvmalloc()?  Perhaps I am not in the right forums, but I am not hearing
+> > anyone arguing that the RCU API has too few members.  ;-)
 > 
-> Should this MSR go into msr-index.h?
+> I don't have any problem with having just `kvfree_rcu`, but having just
+> `kfree_rcu` seems confusingly asymmetric.
 
-No. Comment from msr-index.h:
+I don't understand why kmalloc()/kvfree_rcu() would seem any less
+asymmetric than kvmalloc()/kfree_rcu().
 
- * Do not add new entries to this file unless the definitions are shared
- * between multiple compilation units.
+> (Also, count me in favor of having just one "free" function, too.)
 
-> > +
-> > +#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
-> > +#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
-> > +
-> > +#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	
-> > /* Bits 7:4 */
-> > +#define TME_ACTIVATE_POLICY_AES_XTS	0
-> > +
-> > +#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/
-> > * Bits 35:32 */
-> > +
-> > +#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	
-> > /* Bits 63:48 */
-> > +#define TME_ACTIVATE_CRYPTO_AES_XTS	1
-> > +
-> > +#define MKTME_ENABLED		0
-> > +#define MKTME_DISABLED		1
-> > +#define MKTME_UNINITIALIZED	2
-> > +static int mktme_status = MKTME_UNINITIALIZED;
-> > +
-> > +static void detect_tme(struct cpuinfo_x86 *c)
-> > +{
-> > +	u64 tme_activate, tme_policy, tme_crypto_algs;
-> > +	int keyid_bits = 0, nr_keyids = 0;
-> > +	static u64 tme_activate_cpu0 = 0;
-> > +
-> > +	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
-> > +
-> > +	if (mktme_status != MKTME_UNINITIALIZED) {
-> > +		/* Broken BIOS? */
-> > +		if (tme_activate != tme_activate_cpu0) {
-> > +			pr_err_once("TME: configuation is
-> > inconsistent between CPUs\n");
-> > +			mktme_status = MKTME_DISABLED;
-> > +		}
-> > +		goto out;
-> 
-> Why goto out here? If something goes wrong, I think it is pointless to
-> read keyID bits staff? IMHO if something goes wrong, you should set
-> mktme_status to disabled, and clear tme_activate_cpu0?
+We agree on that much, anyway.  ;-)
 
-We still have to mask out keyid bits from x86_phys_bits if CPU has TME
-enabled. But yeah, as you pointed below, I need to check that it actually
-locked and enabled.
-
-> > +	}
-> > +
-> > +	tme_activate_cpu0 = tme_activate;
-> > +
-> > +	if (!TME_ACTIVATE_LOCKED(tme_activate) ||
-> > !TME_ACTIVATE_ENABLED(tme_activate)) {
-> > +		pr_info("TME: not enabled by BIOS\n");
-> > +		mktme_status = MKTME_DISABLED;
-> > +		goto out;
-> 
-> I think it is pointless to read keyID bits staff if TME is not even
-> enabled.
-> 
-> > +	}
-> > +
-> > +	pr_info("TME: enabled by BIOS\n");
-> > +
-> > +	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
-> > +	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS)
-> > +		pr_warn("TME: Unknown policy is active: %#llx\n",
-> > tme_policy);
-> > +
-> > +	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
-> > +	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS)) {
-> > +		pr_err("MKTME: No known encryption algorithm is
-> > supported: %#llx\n",
-> > +				tme_crypto_algs);
-> > +		mktme_status = MKTME_DISABLED;
-> > +	}
-> 
-> To me it is a little bit confusing about the naming. tme_policy is the
-> crypto_alg used by TME keyID (0), and tme_crypto_algs is bitmap of
-> supported crypto_algs for MK-TME. Probably a better naming is needed?
-> And the naming of TME_ACTIVATE_POLICY(x), TME_ACTIVATE_CRYPTO_ALGS(x)
-> above as well?
-
-Suggestions?
-
--- 
- Kirill A. Shutemov
+							Thanx, Paul
