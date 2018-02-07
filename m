@@ -1,63 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754646AbeBGTgT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:36:19 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45988 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754002AbeBGTgR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:36:17 -0500
-X-Google-Smtp-Source: AH8x2268rY9pIlzDUJnB17ErtgwwgaZwAdqVJ7akwi6rhwO1oorf4Gpr8acBLxNa7Qf8O5grguRZqw==
-From: Mathieu Malaterre <malat@debian.org>
-To: "David S . Miller" <davem@davemloft.net>
-Cc: trivial@kernel.org, Mathieu Malaterre <malat@debian.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Egil Hjelmeland <privat@egil-hjelmeland.no>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: Extra '_get' in declaration of arch_get_platform_mac_address
-Date: Wed,  7 Feb 2018 20:35:00 +0100
-Message-Id: <20180207193501.25446-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
+        id S1754470AbeBGTij (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:38:39 -0500
+Received: from sauhun.de ([88.99.104.3]:44402 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754108AbeBGTih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:38:37 -0500
+Date: Wed, 7 Feb 2018 20:38:35 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 13/16] mmc: tmio: fix never-detected card insertion bug
+Message-ID: <20180207193835.ildbw2wt2zeha6eo@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-14-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zw4qzvuln4pkl6sg"
+Content-Disposition: inline
+In-Reply-To: <1516206496-16612-14-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit c7f5d105495a ("net: Add eth_platform_get_mac_address() helper."),
-two declarations were added:
 
-  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
-  unsigned char *arch_get_platform_get_mac_address(void);
+--zw4qzvuln4pkl6sg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-An extra '_get' was introduced in arch_get_platform_get_mac_address, remove
-it. Fix compile warning using W=1:
+On Thu, Jan 18, 2018 at 01:28:13AM +0900, Masahiro Yamada wrote:
+> The TMIO mmc cannot detect the card insertion in native_hotplug mode
+> if the driver is probed without a card inserted.
+>=20
+> The reason is obvious; all IRQs are disabled by tmio_mmc_host_probe(),
+> as follows:
+>=20
+>   tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
+>=20
+> The card event IRQs are first enabled by tmio_mmc_start_command() as
+> follows:
+>=20
+>   if (!host->native_hotplug)
+>           irq_mask &=3D ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
+>   tmio_mmc_enable_mmc_irqs(host, irq_mask);
+>=20
+> If the driver is probed without a card, tmio_mmc_start_command() is
+> never called in the first place.  So, the card is never detected.
+>=20
+> The card event IRQs must be enabled in probe/resume functions.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-  CC      net/ethernet/eth.o
-net/ethernet/eth.c:523:24: warning: no previous prototype for ‘arch_get_platform_mac_address’ [-Wmissing-prototypes]
- unsigned char * __weak arch_get_platform_mac_address(void)
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  AR      net/ethernet/built-in.o
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- include/linux/etherdevice.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/etherdevice.h b/include/linux/etherdevice.h
-index 263dbcad22fc..79563840c295 100644
---- a/include/linux/etherdevice.h
-+++ b/include/linux/etherdevice.h
-@@ -31,7 +31,7 @@
- #ifdef __KERNEL__
- struct device;
- int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
--unsigned char *arch_get_platform_get_mac_address(void);
-+unsigned char *arch_get_platform_mac_address(void);
- u32 eth_get_headlen(void *data, unsigned int max_len);
- __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev);
- extern const struct header_ops eth_header_ops;
--- 
-2.11.0
+--zw4qzvuln4pkl6sg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7VbcACgkQFA3kzBSg
+KbZafRAAp6E7dIQ958qKwfAz1I19l5Xq8APvj/XH6l0YDqVWKOn30/OxM1zOmsZ1
+qZz8pg28z6VFKOsIFyoBoAHvpOi3XofdHI5F9vLpWkGiw6PhpziL3LKKbTBEYatl
+Va/pbvfLc2d2LOLbrYcyOvrsrBdKibSyMhHhhvitvuYwux2haEsnEEKAlerYYil3
+gg2FsEtldw/zUN1lolwxy3mBRQruGACnY3JMwHmQxM76ud62ERbBRPP7Ec8jdf4n
+e1G/MletvlfauvvJh4TVcJTDZhHmnfzprGss1PNbDp+AieNKbJm6yZFw/MDq0cNA
+l50YsHtyH7PS+NyVqefi9hMmJjI3oznTGItfabX3C9Sqpv5iAEpkmpUI0OiO6T5D
+LwTzOtZxprDUFINKm1BfS7/jlB9bms9qHpM9QJyMC0vP+jwpy83jp8VMD8izcV9U
+o38HqCcBmVP4UdSoROjFqiEsi9N7ahZnJS99dIvVWXUKbW/HdyWSuau1KfuwDGAL
+MLjL5a5GDZVoT7ubahZF5VHpIQpllf3VweVhvbyZTy/CKotGWEcl/TUBGmoQnZAT
+0J4VaRVp4yU79rD+oAPnAQLxiMrsEhaxx1J5H7ETgfOCTtf1f9w27GC+YvNfP+Hc
+6K6vPvRVg7Okjo3/WmYcBGKAPwICayVK24ZJ52TSybjzuCg/7hk=
+=HLDO
+-----END PGP SIGNATURE-----
+
+--zw4qzvuln4pkl6sg--
