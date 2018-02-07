@@ -1,127 +1,304 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754582AbeBGPLQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:11:16 -0500
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:39096 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754389AbeBGPLO (ORCPT
+        id S1754392AbeBGPOQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:14:16 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38246 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754115AbeBGPOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:11:14 -0500
-X-Google-Smtp-Source: AH8x225upnVS4XJYheIiHhI+EX5L1l4RsIDOTULn07QkjGI5q2DsGVu4FBARQ0fBfS3j1i1Zj0oMCNGkmi6E1lqOOVQ=
+        Wed, 7 Feb 2018 10:14:14 -0500
+Subject: Re: [PATCH 2/2] drm: adv7511: Add support for
+ i2c_new_secondary_device
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        John Stultz <john.stultz@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Bhumika Goyal <bhumirks@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+References: <1516625389-6362-1-git-send-email-kieran.bingham@ideasonboard.com>
+ <1516625389-6362-3-git-send-email-kieran.bingham@ideasonboard.com>
+ <1650729.pzuqXiNcLL@avalon>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <22aa9d42-e7df-cbe7-4044-3b120cd242c3@ideasonboard.com>
+Date: Wed, 7 Feb 2018 15:14:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180207150328.nuk7f76nutq2trcg@pathway.suse.cz>
-References: <20180204174521.21383-1-kilobyte@angband.pl> <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
- <CAGXu5j+rWhT7_DH5Z96_7naPou96-6736x4mjq0r_8EG4iiQ_g@mail.gmail.com>
- <20180205201555.GQ29988@eros> <CAGXu5j+KSm3rOK46xiYPx8SRaO9T5LaeaXxOA3PSktJv4F__dg@mail.gmail.com>
- <20180205205817.72dy7e7xzjcnwmhs@angband.pl> <20180207150328.nuk7f76nutq2trcg@pathway.suse.cz>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 Feb 2018 16:11:13 +0100
-X-Google-Sender-Auth: -urN2c4tNmHOdJRggXi5EMWxEtY
-Message-ID: <CAMuHMdVJZnbFrLxBZm1m6C+sR1MKuk3=G4RoYVkAgcxYDHgMGw@mail.gmail.com>
-Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
-To: Petr Mladek <pmladek@suse.com>
-Cc: Adam Borowski <kilobyte@angband.pl>, Kees Cook <keescook@chromium.org>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1650729.pzuqXiNcLL@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
+Hi Laurent,
 
-On Wed, Feb 7, 2018 at 4:03 PM, Petr Mladek <pmladek@suse.com> wrote:
-> On Mon 2018-02-05 21:58:17, Adam Borowski wrote:
->> On Tue, Feb 06, 2018 at 07:32:32AM +1100, Kees Cook wrote:
->> > On Tue, Feb 6, 2018 at 7:15 AM, Tobin C. Harding <me@tobin.cc> wrote:
->> > > On Tue, Feb 06, 2018 at 05:57:17AM +1100, Kees Cook wrote:
->> > >> On Mon, Feb 5, 2018 at 8:44 PM, Petr Mladek <pmladek@suse.com> wrote:
->> > >> > On Sun 2018-02-04 18:45:21, Adam Borowski wrote:
->> > >> >> Like %pK already does, print "00000000" instead.
->> > >> >>
->> > >> >> This confused people -- the convention is that "(null)" means you tried to
->> > >> >> dereference a null pointer as opposed to printing the address.
->> > >
->> > > Leaving aside what is converting to %px.  If we consider that using %px
->> > > is meant to convey to us that we _really_ want the address, in hex hence
->> > > the 'x', then it is not surprising that we will get "00000000"'s for a
->> > > null pointer, right?  Yes it is different to before but since we are
->> > > changing the specifier does this not imply that there may be some
->> > > change?
->> >
->> > I personally prefer 0000s, but if we're going to change this, we need
->> > to be aware of the difference.
+On 29/01/18 10:26, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+
+Thanks for your review,
+
+> On Monday, 22 January 2018 14:50:00 EET Kieran Bingham wrote:
+>> The ADV7511 has four 256-byte maps that can be accessed via the main I²C
+>> ports. Each map has it own I²C address and acts as a standard slave
+>> device on the I²C bus.
 >>
->> It's easy to paint this bikeshed any color you guys want to: there's an "if"
->> already.  My preference is also 0000; NULL would be good, too -- I just
->> don't want (null) as that has a special meaning in usual userspace
->> implementations; (null) also fits well most other modes of %p as they show
->> some object the argument points to.  Confusion = wasted debugging time.
->
->> Let's recap:
+>> Allow a device tree node to override the default addresses so that
+>> address conflicts with other devices on the same bus may be resolved at
+>> the board description level.
 >>
->> Currently:
->>               not-null              null
->> %pponies      object's description  (null)
->> %px           address               (null)
->> %pK           hash                  hash
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>  .../bindings/display/bridge/adi,adv7511.txt        | 10 +++++-
+> 
+> I don't mind personally, but device tree maintainers usually ask for DT 
+> bindings changes to be split to a separate patch.
+> 
+>>  drivers/gpu/drm/bridge/adv7511/adv7511.h           |  4 +++
+>>  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 36 ++++++++++++-------
+>>  3 files changed, 37 insertions(+), 13 deletions(-)
 >>
->> I'd propose:
->>               not-null              null
->> %pponies      object's description  (null)
->> %px           address               00000000
->> %pK           hash                  00000000
->
-> It makes sense to me[*], so
->
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
->
-> It seems that all people agree with this change. But there was also some
-> confusion. I am going to give it few more days before I push it to
-> Linus. It means waiting for 4.16-rc3 because I will be without
-> reliable internet next week. Anyone, feel free to push it faster.
->
->
-> [*] I made some archaeology:
->
-> The "(null)" string was added by the commit d97106ab53f812910
-> ("Make %p print '(null)' for NULL pointers").
->
-> It was a generic solution to prevent eventual crashes, see
-> https://lkml.kernel.org/r/1230979341-23029-1-git-send-email-xyzzy@speakeasy.org
->
-> From this point, printing 00000000 for %px looks perfectly fine because
-> it does not crash.
->
-> In fact, it would have made perfect sense to print 00000000 for pure
-> %p because it did not crash. But nobody has cared about the eventual
-> confusion yet.
->
-> I am not sure if it makes sense to change the pure %p handling
-> now. Note that printing "(null)" has the advantage that we
-> get this string instead of the hash ;-)
+>> diff --git
+>> a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>> b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>> index 0047b1394c70..f6bb9f6d3f48 100644
+>> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>> @@ -70,6 +70,9 @@ Optional properties:
+>>    rather than generate its own timings for HDMI output.
+>>  - clocks: from common clock binding: reference to the CEC clock.
+>>  - clock-names: from common clock binding: must be "cec".
+>> +- reg-names : Names of maps with programmable addresses.
+>> +	It can contain any map needing a non-default address.
+>> +	Possible maps names are : "main", "edid", "cec", "packet"
+> 
+> Is the reg-names property (and the additional maps) mandatory or optional ? > If mandatory you should also update the existing DT sources that use those
+> bindings.
 
-Note that "(null)" is also used for printing strings, where you do dereference
-the pointer, unlike for printing pointers.
-In addition, "(null)" for strings is not just printed for real NULL
-pointers, but
-also for anything pointing within the first page of virtual memory.
+They are currently optional. I do prefer it that way - but perhaps due to an
+issue mentioned below we might need to make this driver mandatory ?
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> If optional you should define which I2C addresses will be used when 
+> the maps are not specified > (and in that case I think we should go for the
+> addresses listed as default in the datasheet, which correspond to the current 
+> driver implementation when the main address is 0x3d/0x7a).
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The current addresses do not correspond to the datasheet, even when the
+implementation main address is set to 0x3d.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thus, in my opinion - they are currently 'wrong' - but perhaps changing them is
+considered breakage too.
+
+A particular issue will arise here too - as on this device - when the device is
+in low-power mode (after probe, before use) - the maps will respond on their
+*hardware default* addresses (the ones implemented in this patch), and thus
+consume that address on the I2C bus regardless of their settings in the driver.
+
+
+> You should also update the definition of the reg property that currently just 
+> states
+> 
+> - reg: I2C slave address
+> 
+> And finally you might want to define the term "map" in this context. Here's a 
+> proposal (if we make all maps mandatory).
+> 
+> The ADV7511 internal registers are split into four pages exposed through 
+> different I2C addresses, creating four register maps. The I2C addresses of all 
+> four maps shall be specified by the reg and reg-names property.
+> 
+> - reg: I2C slave addresses, one per reg-names entry
+> - reg-names: map names, shall be "main", "edid", "cec", "packet"
+> 
+>>  Required nodes:
+>>  
+>> @@ -88,7 +91,12 @@ Example
+>>  
+>>  	adv7511w: hdmi@39 {
+>>  		compatible = "adi,adv7511w";
+>> -		reg = <39>;
+>> +		/*
+>> +		 * The EDID page will be accessible on address 0x66 on the i2c
+>> +		 * bus. All other maps continue to use their default addresses.
+>> +		 */
+>> +		reg = <0x39 0x66>;
+>> +		reg-names = "main", "edid";
+>>  		interrupt-parent = <&gpio3>;
+>>  		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
+>>  		clocks = <&cec_clock>;
+>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>> b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>> index d034b2cb5eee..7d81ce3808e0 100644
+>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>> @@ -53,8 +53,10 @@
+>>  #define ADV7511_REG_POWER			0x41
+>>  #define ADV7511_REG_STATUS			0x42
+>>  #define ADV7511_REG_EDID_I2C_ADDR		0x43
+>> +#define ADV7511_REG_EDID_I2C_ADDR_DEFAULT	0x3f
+>>  #define ADV7511_REG_PACKET_ENABLE1		0x44
+>>  #define ADV7511_REG_PACKET_I2C_ADDR		0x45
+>> +#define ADV7511_REG_PACKET_I2C_ADDR_DEFAULT	0x38
+>>  #define ADV7511_REG_DSD_ENABLE			0x46
+>>  #define ADV7511_REG_VIDEO_INPUT_CFG2		0x48
+>>  #define ADV7511_REG_INFOFRAME_UPDATE		0x4a
+>> @@ -89,6 +91,7 @@
+>>  #define ADV7511_REG_TMDS_CLOCK_INV		0xde
+>>  #define ADV7511_REG_ARC_CTRL			0xdf
+>>  #define ADV7511_REG_CEC_I2C_ADDR		0xe1
+>> +#define ADV7511_REG_CEC_I2C_ADDR_DEFAULT	0x3c
+>>  #define ADV7511_REG_CEC_CTRL			0xe2
+>>  #define ADV7511_REG_CHIP_ID_HIGH		0xf5
+>>  #define ADV7511_REG_CHIP_ID_LOW			0xf6
+>> @@ -322,6 +325,7 @@ struct adv7511 {
+>>  	struct i2c_client *i2c_main;
+>>  	struct i2c_client *i2c_edid;
+>>  	struct i2c_client *i2c_cec;
+>> +	struct i2c_client *i2c_packet;
+>>  
+>>  	struct regmap *regmap;
+>>  	struct regmap *regmap_cec;
+>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> index efa29db5fc2b..7ec33837752b 100644
+>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> @@ -969,8 +969,8 @@ static int adv7511_init_cec_regmap(struct adv7511 *adv)
+>> {
+>>  	int ret;
+>>  
+>> -	adv->i2c_cec = i2c_new_dummy(adv->i2c_main->adapter,
+>> -				     adv->i2c_main->addr - 1);
+>> +	adv->i2c_cec = i2c_new_secondary_device(adv->i2c_main, "cec",
+>> +					ADV7511_REG_CEC_I2C_ADDR_DEFAULT);
+>>  	if (!adv->i2c_cec)
+>>  		return -ENOMEM;
+>>  	i2c_set_clientdata(adv->i2c_cec, adv);
+>> @@ -1082,8 +1082,6 @@ static int adv7511_probe(struct i2c_client *i2c, const
+>> struct i2c_device_id *id)
+>>  	struct adv7511_link_config link_config;
+>>  	struct adv7511 *adv7511;
+>>  	struct device *dev = &i2c->dev;
+>> -	unsigned int main_i2c_addr = i2c->addr << 1;
+>> -	unsigned int edid_i2c_addr = main_i2c_addr + 4;
+>>  	unsigned int val;
+>>  	int ret;
+>>  
+>> @@ -1153,24 +1151,35 @@ static int adv7511_probe(struct i2c_client *i2c,
+>> const struct i2c_device_id *id)
+>>  	if (ret)
+>>  		goto uninit_regulators;
+>>  
+>> -	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR, edid_i2c_addr);
+>> -	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
+>> -		     main_i2c_addr - 0xa);
+>> -	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
+>> -		     main_i2c_addr - 2);
+>> -
+>>  	adv7511_packet_disable(adv7511, 0xffff);
+>>  
+>> -	adv7511->i2c_edid = i2c_new_dummy(i2c->adapter, edid_i2c_addr >> 1);
+>> +	adv7511->i2c_edid = i2c_new_secondary_device(i2c, "edid",
+>> +					ADV7511_REG_EDID_I2C_ADDR_DEFAULT);
+>>  	if (!adv7511->i2c_edid) {
+>>  		ret = -ENOMEM;
+> 
+> I wonder if this is the right error code. Maybe -EINVAL ? In most cases errors 
+> will be caused by invalid addresses (out of memory and device_register() 
+> failures can happen too but should be less common).
+
+It's arbitrary, as multiple error paths simply return NULL, but I think you are
+right - the 'most common' fault here is likely to be an in use address.
+
+-ENOMEM was chosen here to mirror the equivalent code returned from the adv7604
+driver.
+
+Either way - -EINVAL does feel better at the moment. Although when mirrored back
+to the ADV7604 that becomes a distinct change there.
+
+I don't think that matters though - so I'll apply this fix to both patches.
+
+
+
+> 
+> It would be nice if i2c_new_secondary_device() returned an ERR_PTR, but that's 
+> out of scope.
+
+I was about to say - well I'll add this, but the reality is it might require
+updating all users of i2c_new_device, and i2c_new_dummy. Updating
+i2c_new_secondary_device() on it's own seems a bit pointless otherwise.
+
+And that is definitely out of scope for the amount of time I currently have :D
+
+
+
+>>  		goto uninit_regulators;
+>>  	}
+>>  
+>> +	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR,
+>> +		     adv7511->i2c_edid->addr << 1);
+>> +
+>>  	ret = adv7511_init_cec_regmap(adv7511);
+>>  	if (ret)
+>>  		goto err_i2c_unregister_edid;
+>>  
+>> +	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
+>> +		     adv7511->i2c_cec->addr << 1);
+>> +
+>> +	adv7511->i2c_packet = i2c_new_secondary_device(i2c, "packet",
+>> +					ADV7511_REG_PACKET_I2C_ADDR_DEFAULT);
+>> +	if (!adv7511->i2c_packet) {
+>> +		ret = -ENOMEM;
+>> +		goto err_unregister_cec;
+>> +	}
+>> +
+>> +	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
+>> +		     adv7511->i2c_packet->addr << 1);
+>> +
+>>  	INIT_WORK(&adv7511->hpd_work, adv7511_hpd_work);
+>>  
+>>  	if (i2c->irq) {
+>> @@ -1181,7 +1190,7 @@ static int adv7511_probe(struct i2c_client *i2c, const
+>> struct i2c_device_id *id)
+>>  						IRQF_ONESHOT, dev_name(dev),
+>>  						adv7511);
+>>  		if (ret)
+>> -			goto err_unregister_cec;
+>> +			goto err_unregister_packet;
+>>  	}
+>>  
+>>  	adv7511_power_off(adv7511);
+>> @@ -1203,6 +1212,8 @@ static int adv7511_probe(struct i2c_client *i2c, const
+>> struct i2c_device_id *id)
+>>  	adv7511_audio_init(dev, adv7511);
+>>  	return 0;
+>>  
+>> +err_unregister_packet:
+>> +	i2c_unregister_device(adv7511->i2c_packet);
+>>  err_unregister_cec:
+>>  	i2c_unregister_device(adv7511->i2c_cec);
+>>  	if (adv7511->cec_clk)
+>> @@ -1234,6 +1245,7 @@ static int adv7511_remove(struct i2c_client *i2c)
+>>  	cec_unregister_adapter(adv7511->cec_adap);
+>>  
+>>  	i2c_unregister_device(adv7511->i2c_edid);
+>> +	i2c_unregister_device(adv7511->i2c_packet);
+>>  
+>>  	return 0;
+>>  }
+> 
