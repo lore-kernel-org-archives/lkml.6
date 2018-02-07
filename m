@@ -1,81 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754755AbeBGRd5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:33:57 -0500
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:52602 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754392AbeBGRd4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:33:56 -0500
-X-Google-Smtp-Source: AH8x224B2edcEq0poJ2b77CFWKHvXPFVtGwpVDw+uQc/6moXTkwEMg7YpZXbkULIiMIW6hEMETeyWA==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH BUGFIX 1/1] block, bfq: add requeue-request hook
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <9a99ff3cb52e475f48327c91e3d236d0@natalenko.name>
-Date: Wed, 7 Feb 2018 18:33:53 +0100
-Cc: Mike Galbraith <efault@gmx.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
-        SERENA ZIVIANI <169364@studenti.unimore.it>,
-        Serena Ziviani <ziviani.serena@gmail.com>,
-        =?utf-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-Message-Id: <FA000DEE-04FF-4BB4-80C7-A7B31ED10BDD@linaro.org>
-References: <20180205190510.5499-1-paolo.valente@linaro.org>
- <20180205190510.5499-2-paolo.valente@linaro.org>
- <ee76e49c0d1ceab07c20e9d27e2fdc46@natalenko.name>
- <1517903761.9843.12.camel@gmx.de>
- <899B68CC-5955-4418-8BFF-DC55A743A61B@linaro.org>
- <1517918234.25841.31.camel@gmx.de>
- <77124223e6116350a5184a5199850304@natalenko.name>
- <1517924768.25841.32.camel@gmx.de>
- <8842084cc8a26b7f46ae600bda8a7bd0@natalenko.name>
- <CC8CDDA5-A232-41A6-BE1E-CDB0B361C3DB@linaro.org>
- <82ffc96aacc3945861cbb708df346338@natalenko.name>
- <E52CCDEA-279A-40D8-AD9B-F4D1AF351BF1@linaro.org>
- <1517995431.25619.5.camel@gmx.de>
- <FBF6DCBB-B0F5-446B-8FD1-106E2538A9C1@linaro.org>
- <1517998516.6606.1.camel@gmx.de>
- <5584030F-8F4E-4C98-84A5-79873A1BF775@linaro.org>
- <8D356375-4C35-41EC-9F4D-0E321B08F9BF@linaro.org>
- <9a99ff3cb52e475f48327c91e3d236d0@natalenko.name>
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S1754038AbeBGRfJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:35:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753721AbeBGRfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:35:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8F721788
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
+From: Kieran Bingham <kbingham@kernel.org>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] media: i2c: adv748x: Simplify regmap configuration
+Date: Wed,  7 Feb 2018 17:34:45 +0000
+Message-Id: <1518024886-842-2-git-send-email-kbingham@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518024886-842-1-git-send-email-kbingham@kernel.org>
+References: <1518024886-842-1-git-send-email-kbingham@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w17HY4kr021412
 
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
+The ADV748x has identical map configurations for each register map. The
+duplication of each map can be simplified using a helper macro such that
+each map is represented on a single line.
 
-> Il giorno 07 feb 2018, alle ore 16:50, Oleksandr Natalenko <oleksandr@natalenko.name> ha scritto:
-> 
-> Hi.
-> 
-> 07.02.2018 12:27, Paolo Valente wrote:
->> Hi Oleksandr, Holger,
->> before I prepare a V2 candidate patch, could you please test my
->> instrumentation patch too, with the above change made.  For your
->> convenience, I have attached a compressed archive with both the
->> instrumentation patch and a patch making the above change.
->> Crossing my fingers,
->> Paolo
-> 
-> With all three patches applied I cannot reproduce neither cfdisk hang nor some kind of boom.
-> 
-> Thank you.
-> 
+Define ADV748X_REGMAP_CONF for this purpose and un-define after it's
+use.
 
-Thank you, Oleksandr. I'm now ready to prepare a new version of this patch.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/i2c/adv748x/adv748x-core.c | 111 ++++++-------------------------
+ 1 file changed, 22 insertions(+), 89 deletions(-)
 
-Paolo
-
-> Oleksandr
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index fd92c9e4b519..71c69b816db2 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -35,98 +35,31 @@
+  * Register manipulation
+  */
+ 
+-static const struct regmap_config adv748x_regmap_cnf[] = {
+-	{
+-		.name			= "io",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "dpll",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "cp",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "hdmi",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "edid",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "repeater",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "infoframe",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "cec",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "sdp",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-
+-	{
+-		.name			= "txb",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
+-
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
+-	{
+-		.name			= "txa",
+-		.reg_bits		= 8,
+-		.val_bits		= 8,
++#define ADV748X_REGMAP_CONF(n) \
++{ \
++	.name = n, \
++	.reg_bits = 8, \
++	.val_bits = 8, \
++	.max_register = 0xff, \
++	.cache_type = REGCACHE_NONE, \
++}
+ 
+-		.max_register		= 0xff,
+-		.cache_type		= REGCACHE_NONE,
+-	},
++static const struct regmap_config adv748x_regmap_cnf[] = {
++	ADV748X_REGMAP_CONF("io"),
++	ADV748X_REGMAP_CONF("dpll"),
++	ADV748X_REGMAP_CONF("cp"),
++	ADV748X_REGMAP_CONF("hdmi"),
++	ADV748X_REGMAP_CONF("edid"),
++	ADV748X_REGMAP_CONF("repeater"),
++	ADV748X_REGMAP_CONF("infoframe"),
++	ADV748X_REGMAP_CONF("cec"),
++	ADV748X_REGMAP_CONF("sdp"),
++	ADV748X_REGMAP_CONF("txa"),
++	ADV748X_REGMAP_CONF("txb"),
+ };
+ 
++#undef ADV748X_REGMAP_CONF
++
+ static int adv748x_configure_regmap(struct adv748x_state *state, int region)
+ {
+ 	int err;
+-- 
+2.7.4
