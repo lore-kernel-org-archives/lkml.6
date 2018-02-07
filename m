@@ -1,84 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752992AbeBGFB6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 00:01:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45800 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750745AbeBGFB4 (ORCPT
+        id S1751064AbeBGFcE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 00:32:04 -0500
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:58561 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeBGFcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 00:01:56 -0500
-Date: Tue, 6 Feb 2018 21:02:00 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, mingo@redhat.com, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, brouer@redhat.com, rao.shoaib@oracle.com
-Subject: Re: [PATCH 0/2] rcu: Transform kfree_rcu() into kvfree_rcu()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <151791170164.5994.8253310844733420079.stgit@localhost.localdomain>
- <20180207021703.GC3617@linux.vnet.ibm.com>
- <20180207042334.GA16175@bombadil.infradead.org>
+        Wed, 7 Feb 2018 00:32:03 -0500
+Subject: Re: [PATCH v3 0/2] phy: rockchip-emmc: fixes emmc-phy power on failed
+ with rk3399 SoCs
+To: Caesar Wang <wxt@rock-chips.com>
+References: <1515638427-15117-1-git-send-email-wxt@rock-chips.com>
+ <e67da623-d6fe-92d9-e6b3-79b8290405c9@rock-chips.com>
+CC: Heiko Stuebner <heiko@sntech.de>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <64bd750a-16b9-95ca-fa53-b7c1ab727a29@ti.com>
+Date: Wed, 7 Feb 2018 11:01:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207042334.GA16175@bombadil.infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18020705-0024-0000-0000-0000031FD3BD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008488; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000248; SDB=6.00986081; UDB=6.00500399; IPR=6.00765448;
- BA=6.00005813; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019415; XFM=3.00000015;
- UTC=2018-02-07 05:01:54
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020705-0025-0000-0000-000046E5FD2C
-Message-Id: <20180207050200.GH3617@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802070061
+In-Reply-To: <e67da623-d6fe-92d9-e6b3-79b8290405c9@rock-chips.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 08:23:34PM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 06, 2018 at 06:17:03PM -0800, Paul E. McKenney wrote:
-> > So it is OK to kvmalloc() something and pass it to either kfree() or
-> > kvfree(), and it had better be OK to kvmalloc() something and pass it
-> > to kvfree().
-> > 
-> > Is it OK to kmalloc() something and pass it to kvfree()?
-> 
-> Yes, it absolutely is.
-> 
-> void kvfree(const void *addr)
-> {
->         if (is_vmalloc_addr(addr))
->                 vfree(addr);
->         else
->                 kfree(addr);
-> }
-> 
-> > If so, is it really useful to have two different names here, that is,
-> > both kfree_rcu() and kvfree_rcu()?
-> 
-> I think it's handy to have all three of kvfree_rcu(), kfree_rcu() and
-> vfree_rcu() available in the API for the symmetry of calling kmalloc()
-> / kfree_rcu().
-> 
-> Personally, I would like us to rename kvfree() to just free(), and have
-> malloc(x) be an alias to kvmalloc(x, GFP_KERNEL), but I haven't won that
-> fight yet.
 
-But why not just have the existing kfree_rcu() API cover both kmalloc()
-and kvmalloc()?  Perhaps I am not in the right forums, but I am not hearing
-anyone arguing that the RCU API has too few members.  ;-)
 
-							Thanx, Paul
+On Wednesday 07 February 2018 06:47 AM, Caesar Wang wrote:
+> Kishon,
+> 
+> Can you help merge this in your  or next tree?  I'm hoping that we can land
+> this somewhere.:-)
+
+sure, I'll merge once -rc1 is tagged.
+
+Thanks
+Kishon
+
+> 
+> 
+> Thanks,
+> -Caesar
+> 在 2018年01月11日 10:40, Caesar Wang 写道:
+>> Hi Kishon,
+>>
+>> Since the Shawn isn't available, I take over this series patches for now.
+>>
+>> As the original bug had tracked on https://issuetracker.google.com/71561742.
+>> In some cases, the mmc phy power on failed during booting up.
+>> The log as below:
+>> ...
+>> [   2.375333] rockchip_emmc_phy_power: caldone timeout.
+>> [    2.377815] phy phy-ff770000.syscon:phy@f780.4: phy poweron failed --> -110
+>> ...
+>> [    2.489295] mmc0: mmc_select_hs400es failed, error -110
+>> [    2.489302] mmc0: error -110 whilst initialising MMC card
+>> ..
+>>
+>> The actual emulate, the wait 5us for calpad busy trimming, that's no enough.
+>> We need give the enough margin for it.
+>>
+>> Verified on url =
+>>         
+>> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4
+>> This series patches can apply and bring up with kernel-next on rk3399
+>> chromebook.
+>>
+>> -Caesar
+>>
+>>
+>> Changes in v3:
+>> - As Doug commented on both upstream and gerrit.
+>>    Change "5, 50" to "0, 50", and the message of print.
+>> - As Doug commented on https://patchwork.kernel.org/patch/10154797,
+>>    Change "1, 50" to "0, 50".
+>>
+>> Changes in v2:
+>> - print the return valut with regmap_read_poll_timeout failing.
+>> - As Brian commented on https://patchwork.kernel.org/patch/10139891/,
+>>    changed the note and added to print error value with
+>>    regmap_read_poll_timeout API.
+>>
+>> Shawn Lin (2):
+>>    phy: rockchip-emmc: retry calpad busy trimming
+>>    phy: rockchip-emmc: use regmap_read_poll_timeout to poll dllrdy
+>>
+>>   drivers/phy/rockchip/phy-rockchip-emmc.c | 60 +++++++++++++++-----------------
+>>   1 file changed, 28 insertions(+), 32 deletions(-)
+>>
+> 
+> 
