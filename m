@@ -1,128 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754836AbeBGTtM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:49:12 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:52826 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754822AbeBGTtJ (ORCPT
+        id S1754862AbeBGTtk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:49:40 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45351 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754438AbeBGTtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:49:09 -0500
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, douly.fnst@cn.fujitsu.com,
-        joro@8bytes.org, uobergfe@redhat.com, prarit@redhat.com
-References: <20180125141134.25053-1-bhe@redhat.com>
-        <20180125141134.25053-2-bhe@redhat.com> <87h8qsd8s8.fsf@xmission.com>
-        <877erobt47.fsf@xmission.com>
-Date: Wed, 07 Feb 2018 13:48:54 -0600
-In-Reply-To: <877erobt47.fsf@xmission.com> (Eric W. Biederman's message of
-        "Wed, 07 Feb 2018 11:35:20 -0600")
-Message-ID: <87eflwa8d5.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1ejViN-0004xS-Si;;;mid=<87eflwa8d5.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/+xxsHNY8lzhNo5Sycypzh9tzhO9DfzL0=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Baoquan He <bhe@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 306 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.6 (0.9%), b_tie_ro: 1.87 (0.6%), parse: 0.84 (0.3%),
-        extract_message_metadata: 11 (3.5%), get_uri_detail_list: 2.3 (0.7%),
-        tests_pri_-1000: 5 (1.8%), tests_pri_-950: 1.26 (0.4%), tests_pri_-900: 0.99
-        (0.3%), tests_pri_-400: 27 (8.9%), check_bayes: 26 (8.5%), b_tokenize: 9
-        (2.9%), b_tok_get_all: 9 (2.9%), b_comp_prob: 2.7 (0.9%), b_tok_touch_all:
-        3.8 (1.2%), b_finish: 0.59 (0.2%), tests_pri_0: 250 (81.9%),
-        check_dkim_signature: 0.48 (0.2%), check_dkim_adsp: 2.8 (0.9%),
-        tests_pri_500: 3.8 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 1/2] x86/apic/kexec: Enable legacy irq mode before jump to kexec/kdump kernel
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Wed, 7 Feb 2018 14:49:36 -0500
+X-Google-Smtp-Source: AH8x226+VU/+agbOjoBoOsCALatIHQ1ewOFsvzh5SpEDiWJDc7ZYtTUx2kxWPncyZ/2RfLvMOi7FiQ==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Tony Cheng <tony.cheng@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Joshua Aberback <Joshua.Aberback@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        Craig Bergstrom <craigb@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] drm/amd/display: Remove extra pairs of parentheses in dce_calcs.c
+Date: Wed,  7 Feb 2018 11:49:28 -0800
+Message-Id: <20180207194928.93869-1-mka@chromium.org>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+The double parentheses are not needed. Removing them fixes multiple
+warnings like this when building with clang:
 
-> ebiederm@xmission.com (Eric W. Biederman) writes:
->
->> Baoquan He <bhe@redhat.com> writes:
->>
->>> On kvm guest, kernel always prints warning during kdump kernel boots as
->>> below.
->>>
->>> [    0.001000] WARNING: CPU: 0 PID: 0 at arch/x86/kernel/apic/apic.c:1467 setup_local_APIC+0x228/0x330
->>> [    0.001000] Modules linked in:
->>> [    0.001000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.15.0-rc5+ #3
->>> [    0.001000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
->>> [    0.001000] RIP: 0010:setup_local_APIC+0x228/0x330
->>> [    0.001000] RSP: 0000:ffffffffb6e03eb8 EFLAGS: 00010286
->>> [    0.001000] RAX: 0000009edb4c4d84 RBX: 0000000000000000 RCX: 00000000b099d800
->>> [    0.001000] RDX: 0000009e00000000 RSI: 0000000000000000 RDI: 0000000000000810
->>> [    0.001000] RBP: 0000000000000000 R08: ffffffffffffffff R09: 0000000000000001
->>> [    0.001000] R10: ffff98ce6a801c00 R11: 0761076d072f0776 R12: 0000000000000001
->>> [    0.001000] R13: 00000000000000f0 R14: 0000000000004000 R15: ffffffffffffc6ff
->>> [    0.001000] FS:  0000000000000000(0000) GS:ffff98ce6bc00000(0000) knlGS:0000000000000000
->>> [    0.001000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [    0.001000] CR2: 00000000ffffffff CR3: 0000000022209000 CR4: 00000000000406b0
->>> [    0.001000] Call Trace:
->>> [    0.001000]  apic_bsp_setup+0x56/0x74
->>> [    0.001000]  x86_late_time_init+0x11/0x16
->>> [    0.001000]  start_kernel+0x3c9/0x486
->>> [    0.001000]  secondary_startup_64+0xa5/0xb0
->>> [    0.001000] Code: 00 85 c9 74 2d 0f 31 c1 e1 0a 48 c1 e2 20 41 89 cf 4c 03 7c 24 08 48 09 d0 49 29 c7 4c 89 3c 24 48 83 3c 24 00 0f 8f 8f fe ff
->>> ff <0f> ff e9 10 ff ff ff 48 83 2c 24 01 eb e7 48 83 c4 18 5b 5d 41
->>> [    0.001000] ---[ end trace b88e71b9a6ebebdd ]---
->>> [    0.001000] masked ExtINT on CPU#0
->>>
->>> The root cause is the legacy irq mode is disabled before jump to kexec/kdump
->>> kernel since commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown
->>> of the local APIC"). In that commit, lapic_shutdown() calling was moved after
->>> disable_IO_APIC(). In fact in disable_IO_APIC(), it not only calls
->>> clear_IO_APIC() to disable IO-APIC, and also sets LAPIC and IO-APIC to make
->>> system be PIC or Virtual wire mode. Hence local APIC is disabled completely
->>> by the calling of lapic_shutdown().
->>
->> The actions of lapic_shutdown do not depend on the actions of
->> disable_IO_APIC so this description and justificaiton are nonsense.
->>
->> Further we don't hardware disable the local APIC except when we hardware
->> enable it.  And only on 32bit at that.
->>
->> I keep wondering if the above oops is due to an emulation bug in kvm.
->> If that is the case it might be better to fix kvm.
->
-> Sigh.  Reading a little deeper I see where the local apic is affected.
-> It is the work of disconnect_bsp_APIC called from disable_IO_APIC.
->
-> Calling lapic_shutdown (which clears the local apic) after the local
-> apic has been placed into virtual wire mode would indeed be a problem.
->
-> Now that I see that I agree in essence with this patch series.
-> I don't agree with the implemenation details.
->
-> Can you please split disable_IO_APIC and switch_to_legacy_irq_mode
-> in a single patch.
+drivers/gpu/drm/amd/amdgpu/../display/dc/calcs/dce_calcs.c:617:42:
+  error: equality comparison with extraneous parentheses
+    [-Werror,-Wparentheses-equality]
+  if ((data->graphics_micro_tile_mode == bw_def_rotated_micro_tiling)) {
 
-Now that I think about it can you call the function not
-switch_to_legacy_irq_mode but restore_boot_irq_mode.  And the
-corresponding x86_io_apic_ops not .disable but .restore.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-That should make the purpose of the code clearer, and help avoid
-mistakes like the one that led to this regression.
-
-Eric
+diff --git a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
+index 2e11fac2a63d..bb03a9c64d5a 100644
+--- a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
++++ b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
+@@ -623,7 +623,7 @@ static void calculate_bandwidth(
+ 				}
+ 				else {
+ 					/*graphics portrait tiling mode*/
+-					if ((data->graphics_micro_tile_mode == bw_def_rotated_micro_tiling)) {
++					if (data->graphics_micro_tile_mode == bw_def_rotated_micro_tiling) {
+ 						data->orthogonal_rotation[i] = 0;
+ 					}
+ 					else {
+@@ -634,7 +634,7 @@ static void calculate_bandwidth(
+ 			else {
+ 				if ((i < 4)) {
+ 					/*underlay landscape tiling mode is only supported*/
+-					if ((data->underlay_micro_tile_mode == bw_def_display_micro_tiling)) {
++					if (data->underlay_micro_tile_mode == bw_def_display_micro_tiling) {
+ 						data->orthogonal_rotation[i] = 0;
+ 					}
+ 					else {
+@@ -643,7 +643,7 @@ static void calculate_bandwidth(
+ 				}
+ 				else {
+ 					/*graphics landscape tiling mode*/
+-					if ((data->graphics_micro_tile_mode == bw_def_display_micro_tiling)) {
++					if (data->graphics_micro_tile_mode == bw_def_display_micro_tiling) {
+ 						data->orthogonal_rotation[i] = 0;
+ 					}
+ 					else {
+@@ -947,14 +947,14 @@ static void calculate_bandwidth(
+ 	}
+ 	for (i = 0; i <= maximum_number_of_surfaces - 1; i++) {
+ 		if (data->enable[i]) {
+-			if ((data->number_of_displays == 1 && data->number_of_underlay_surfaces == 0)) {
++			if (data->number_of_displays == 1 && data->number_of_underlay_surfaces == 0) {
+ 				/*set maximum chunk limit if only one graphic pipe is enabled*/
+ 				data->outstanding_chunk_request_limit[i] = bw_int_to_fixed(127);
+ 			}
+ 			else {
+ 				data->outstanding_chunk_request_limit[i] = bw_ceil2(bw_div(data->adjusted_data_buffer_size[i], data->pipe_chunk_size_in_bytes[i]), bw_int_to_fixed(1));
+ 				/*clamp maximum chunk limit in the graphic display pipe*/
+-				if ((i >= 4)) {
++				if (i >= 4) {
+ 					data->outstanding_chunk_request_limit[i] = bw_max2(bw_int_to_fixed(127), data->outstanding_chunk_request_limit[i]);
+ 				}
+ 			}
+@@ -1337,7 +1337,7 @@ static void calculate_bandwidth(
+ 	/*if stutter and dram clock state change are gated before cursor then the cursor latency hiding does not limit stutter or dram clock state change*/
+ 	for (i = 0; i <= maximum_number_of_surfaces - 1; i++) {
+ 		if (data->enable[i]) {
+-			if ((dceip->graphics_lb_nodownscaling_multi_line_prefetching == 1)) {
++			if (dceip->graphics_lb_nodownscaling_multi_line_prefetching == 1) {
+ 				data->maximum_latency_hiding[i] = bw_add(data->minimum_latency_hiding[i], bw_mul(bw_frc_to_fixed(8, 10), data->total_dmifmc_urgent_latency));
+ 			}
+ 			else {
+@@ -1396,7 +1396,7 @@ static void calculate_bandwidth(
+ 	}
+ 	/*determine the number of displays with margin to switch in the v_active region*/
+ 	for (k = 0; k <= maximum_number_of_surfaces - 1; k++) {
+-		if ((data->enable[k] == 1 && data->display_pstate_change_enable[k] == 1)) {
++		if (data->enable[k] == 1 && data->display_pstate_change_enable[k] == 1) {
+ 			number_of_displays_enabled_with_margin = number_of_displays_enabled_with_margin + 1;
+ 		}
+ 	}
+@@ -1442,7 +1442,7 @@ static void calculate_bandwidth(
+ 		data->nbp_state_change_enable = bw_def_no;
+ 	}
+ 	/*dram clock change is possible only in vblank if all displays are aligned and have no margin*/
+-	if ((number_of_aligned_displays_with_no_margin == number_of_displays_enabled)) {
++	if (number_of_aligned_displays_with_no_margin == number_of_displays_enabled) {
+ 		nbp_state_change_enable_blank = bw_def_yes;
+ 	}
+ 	else {
+@@ -1470,7 +1470,7 @@ static void calculate_bandwidth(
+ 		}
+ 	}
+ 	/*compute minimum time to read one chunk from the dmif buffer*/
+-	if ((number_of_displays_enabled > 2)) {
++	if (number_of_displays_enabled > 2) {
+ 		data->chunk_request_delay = 0;
+ 	}
+ 	else {
+@@ -1804,7 +1804,7 @@ static void calculate_bandwidth(
+ 				data->stutter_exit_watermark[i] = bw_add(bw_sub(vbios->stutter_self_refresh_exit_latency, data->total_dmifmc_urgent_latency), data->urgent_watermark[i]);
+ 				data->stutter_entry_watermark[i] = bw_add(bw_sub(bw_add(vbios->stutter_self_refresh_exit_latency, vbios->stutter_self_refresh_entry_latency), data->total_dmifmc_urgent_latency), data->urgent_watermark[i]);
+ 				/*unconditionally remove black out time from the nb p_state watermark*/
+-				if ((data->display_pstate_change_enable[i] == 1)) {
++				if (data->display_pstate_change_enable[i] == 1) {
+ 					data->nbp_state_change_watermark[i] = bw_add(bw_add(vbios->nbp_state_change_latency, data->dmif_burst_time[data->y_clk_level][data->sclk_level]), bw_max2(data->line_source_pixels_transfer_time, data->dram_speed_change_line_source_transfer_time[i][data->y_clk_level][data->sclk_level]));
+ 				}
+ 				else {
+@@ -1816,7 +1816,7 @@ static void calculate_bandwidth(
+ 				data->urgent_watermark[i] = bw_add(bw_add(bw_add(bw_add(bw_add(vbios->mcifwrmc_urgent_latency, data->mcifwr_burst_time[data->y_clk_level][data->sclk_level]), bw_max2(data->line_source_pixels_transfer_time, data->line_source_transfer_time[i][data->y_clk_level][data->sclk_level])), vbios->blackout_duration), data->chunk_request_time), data->cursor_request_time);
+ 				data->stutter_exit_watermark[i] = bw_int_to_fixed(0);
+ 				data->stutter_entry_watermark[i] = bw_int_to_fixed(0);
+-				if ((data->display_pstate_change_enable[i] == 1)) {
++				if (data->display_pstate_change_enable[i] == 1) {
+ 					data->nbp_state_change_watermark[i] = bw_add(bw_add(vbios->nbp_state_change_latency, data->mcifwr_burst_time[data->y_clk_level][data->sclk_level]), bw_max2(data->line_source_pixels_transfer_time, data->dram_speed_change_line_source_transfer_time[i][data->y_clk_level][data->sclk_level]));
+ 				}
+ 				else {
+-- 
+2.16.0.rc1.238.g530d649a79-goog
