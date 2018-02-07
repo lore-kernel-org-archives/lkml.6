@@ -1,93 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754639AbeBGRB6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 12:01:58 -0500
-Received: from foss.arm.com ([217.140.101.70]:53576 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754392AbeBGRB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 12:01:56 -0500
-Subject: Re: [PATCH v2 07/20] arm64: capabilities: Filter the entries based on
- a given mask
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-8-suzuki.poulose@arm.com>
- <20180207103821.GX5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <ca7b79b2-f275-7413-a8f0-01925935a692@arm.com>
-Date: Wed, 7 Feb 2018 17:01:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1754692AbeBGRFF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 12:05:05 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52175 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754231AbeBGRFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 12:05:04 -0500
+X-Google-Smtp-Source: AH8x227OTfs0Dcp8qnlgiq9CI5Vi39cHCqUm1JMns9Itl2epyT0WJI3tasN8h+fyFyuILoncoUs9IrVmU02ZiwLWJHA=
 MIME-Version: 1.0
-In-Reply-To: <20180207103821.GX5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180207151854.GB10945@tassilo.jf.intel.com>
+References: <151787988045.7847.11830748914544718151.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180206091727.GB15925@isilmar-4.linta.de> <20180206105139.nwlg3fwdxyhhrtc4@gmail.com>
+ <20180206213202.GB2026@light.dominikbrodowski.net> <CA+55aFyXfMhUNoU9WveiMyKq32LftUGzF-BAP7hxEQOfwBTJrA@mail.gmail.com>
+ <20180206235402.GN30338@tassilo.jf.intel.com> <CA+55aFzRMn6+tFFkAbMT_iDcMphDZFU9+OALEn+ecqa7=RqvUA@mail.gmail.com>
+ <20180207151854.GB10945@tassilo.jf.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 7 Feb 2018 09:05:03 -0800
+X-Google-Sender-Auth: WkyqEX4Qvpd73NtX53kNhvyx-bw
+Message-ID: <CA+55aFzM8ynf4m-X6EPS10gxNqsKPN_8mGucGHvBp8H+OkgW3g@mail.gmail.com>
+Subject: Re: [PATCH tip-pti 2/2] x86/entry: interleave XOR register clearing
+ with PUSH/MOV instructions
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 10:38, Dave Martin wrote:
-> On Wed, Jan 31, 2018 at 06:27:54PM +0000, Suzuki K Poulose wrote:
->> While processing the list of capabilities, it is useful to
->> filter out some of the entries based on the given mask for the
->> scope of the capabilities to allow better control. This can be
->> used later for handling LOCAL vs SYSTEM wide capabilities and more.
->> All capabilities should have their scope set to either LOCAL_CPU or
->> SYSTEM. No functional/flow change.
->>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/cpufeature.h |  2 ++
->>   arch/arm64/kernel/cpufeature.c      | 35 ++++++++++++++++++++++++-----------
->>   2 files changed, 26 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->> index 69b5ce366598..cda62b70d338 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -198,6 +198,8 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->>   /* Is it safe for a late CPU to miss this capability when system has it */
->>   #define ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	((u16)BIT(5))
->>   
->> +#define ARM64_CPUCAP_SCOPE_ALL			 \
->> +	(ARM64_CPUCAP_SCOPE_LOCAL_CPU | ARM64_CPUCAP_SCOPE_SYSTEM)
-> 
-> Perhaps we could just use _MASK rather than having a separate #define,
-> but it's good either way.
-> 
-> Is there a situation in which _ALL and _MASK would need to be
-> different?
+On Wed, Feb 7, 2018 at 7:18 AM, Andi Kleen <ak@linux.intel.com> wrote:
+>
+> Fast path saves more than just register saving.  I changed the fast path
+> to save all registers in my earlier clearregs branches
 
-No, it just makes it easier to read the code. I have switched to:
+I know. I saw your patches. And I went "Eww".
 
->> -static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_list)
->> +static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_list,
->> +				    u16 scope_mask)
->>   {
->>   	bool cpu_has_cap, system_has_cap;
->>   	const struct arm64_cpu_capabilities *caps = caps_list;
->>   
->> +	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
->>   	for (; caps->matches; caps++) {
->> +
-> 
-> Nit: extra blank line?
+> It is still quite a bit faster than all the slow stuff the C do_syscall
+> code does (e.g. reloading all the arguments, setting up unnecessary
+> frame pointers etc.).
+>
+> Just take a look at the disassembly of that function. It's really
+> not very optimized.
 
-Fixed.
+Actually, only the argument reloading _really_ annoys me in do_syscall().
 
-> 
-> [...]
-> 
-> With that fixed,
-> 
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+And I do think we should be able to fix that fairly easily by moving
+it into the SYSCALLx() macros - at least for 64-bit (32-bit has nasty
+issues with 64-bit arguments).
 
-Thanks
-Suzuki
+The other thing we need to do is to just pass down the system call
+number as an argument instead of reloading it.
+
+         Linus
