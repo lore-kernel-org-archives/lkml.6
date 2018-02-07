@@ -1,55 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754538AbeBGPwp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 10:52:45 -0500
-Received: from mga01.intel.com ([192.55.52.88]:59346 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754377AbeBGPwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 10:52:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,473,1511856000";
-   d="scan'208";a="199409973"
-Date: Wed, 7 Feb 2018 07:52:29 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: syzbot <syzbot+283c3c447181741aea28@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, aryabinin@virtuozzo.com, jack@suse.cz,
-        jlayton@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mgorman@techsingularity.net, mingo@kernel.org, rgoldwyn@suse.com,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
-Subject: Re: INFO: task hung in sync_blockdev
-Message-ID: <20180207155229.GC10945@tassilo.jf.intel.com>
-References: <001a11447070ac6fcb0564a08cb1@google.com>
+        id S1754561AbeBGPy0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 10:54:26 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38394 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754231AbeBGPyZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 10:54:25 -0500
+Subject: Re: [PATCH 1/2] media: adv7604: Add support for
+ i2c_new_secondary_device
+To: Rob Herring <robh@kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+References: <1516625389-6362-1-git-send-email-kieran.bingham@ideasonboard.com>
+ <1516625389-6362-2-git-send-email-kieran.bingham@ideasonboard.com>
+ <20180129200813.ifaz2bkkxshiodga@rob-hp-laptop>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <4ff04149-9726-716c-306c-819130897c98@ideasonboard.com>
+Date: Wed, 7 Feb 2018 15:54:20 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a11447070ac6fcb0564a08cb1@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180129200813.ifaz2bkkxshiodga@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  #0:  (&bdev->bd_mutex){+.+.}, at: [<0000000040269370>]
-> __blkdev_put+0xbc/0x7f0 fs/block_dev.c:1757
-> 1 lock held by blkid/19199:
->  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<0000000033edf9f2>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 1 lock held by syz-executor5/19330:
->  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
-> 1 lock held by syz-executor5/19331:
->  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
+Hi Rob,
 
-It seems multiple processes deadlocked on the bd_mutex. 
-Unfortunately there's no backtrace for the lock acquisitions,
-so it's hard to see the exact sequence.
+On 29/01/18 20:08, Rob Herring wrote:
+> On Mon, Jan 22, 2018 at 12:49:56PM +0000, Kieran Bingham wrote:
+>> From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+>>
+>> The ADV7604 has thirteen 256-byte maps that can be accessed via the main
+>> I²C ports. Each map has it own I²C address and acts as a standard slave
+>> device on the I²C bus.
+>>
+>> Allow a device tree node to override the default addresses so that
+>> address conflicts with other devices on the same bus may be resolved at
+>> the board description level.
+>>
+>> Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+>> [Kieran: Re-adapted for mainline]
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>> Based upon the original posting :
+>>   https://lkml.org/lkml/2014/10/22/469
+>> ---
+>>  .../devicetree/bindings/media/i2c/adv7604.txt      | 18 ++++++-
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-It seems lockdep is already active, so it's likely not
-just an ordering violation, but something else.
+Thank you.
 
--Andi
+> In the future, please split bindings to separate patch.
+
+Yes, of course - sorry - I should probably have known better here.
+
+I was clearly being lazy as the original patch had bindings in with the driver.
+Although I don't think I've got an excuse for the second patch in the series :D
+
+I've split them out for the v2.
+
+--
+Kieran
+
+>>  drivers/media/i2c/adv7604.c                        | 60 ++++++++++++++--------
+>>  2 files changed, 55 insertions(+), 23 deletions(-)
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
