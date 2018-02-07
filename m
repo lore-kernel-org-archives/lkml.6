@@ -1,82 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754569AbeBGTL5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 14:11:57 -0500
-Received: from sauhun.de ([88.99.104.3]:44242 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754062AbeBGTLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:11:54 -0500
-Date: Wed, 7 Feb 2018 20:11:52 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
- cleanups
-Message-ID: <20180207191152.kvqrugblst2cko3c@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+        id S1754466AbeBGTPA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 14:15:00 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:35057 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754141AbeBGTO7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 14:14:59 -0500
+Date: Wed, 7 Feb 2018 20:14:51 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [linus:master] BUILD REGRESSION
+ a2e5790d841658485d642196dbb0927303d6c22f
+Message-ID: <20180207191451.GC25201@hirez.programming.kicks-ass.net>
+References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+ <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
+ <20180207183543.GA8897@pd.tnic>
+ <20180207184933.GA25201@hirez.programming.kicks-ass.net>
+ <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hmv3ictfz5w3jtha"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 07, 2018 at 11:03:42AM -0800, Linus Torvalds wrote:
+> On Wed, Feb 7, 2018 at 10:49 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > Right, we picked UD0 because we _thought_ everybody agreed it being 2
+> > bytes, just like UD2. This is now not true anymore?
+> 
+> Both UD0 and UD1 are documented to have modrm in the latest Intel SDM
+> I can find (Order number 325462-065US, December 2017):
 
---hmv3ictfz5w3jtha
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks, and yes :/ They changed it in October17 (which I actually had a copy
+of so I'm not sure why I was looking at March17).
 
+Back when we did that patch the SDM didn't have that extra ModR/M on,
+and binutils disassembled it as the 2 byte (bad) thing, which was all
+good.
 
-> I picked patch5 and patch6, as those seemed trivial. Unless there is a
-> rc9, let's aim for 4.17 for the rest.
-
-I can't find the branch where you picked these patches? I wanted to use
-it to apply the rest of the patches. They don't seem to fit on v4.15
-or current linus/master. Can you share this branch?
-
-I will do reviewing now "visually". But please wait until I tested them
-before applying.
-
-Thanks,
-
-   Wolfram
-
-
---hmv3ictfz5w3jtha
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7T3gACgkQFA3kzBSg
-KbYcLRAAi0hE9uVMzeGBlvgjQGw54Uj+EbBvYeUyO4pa7I38zge+HfGCGjF0mhBB
-y7ABAjSittWqEubxBhY1PRgkx3SduAyMV2muz4mUSYbn6fpllR9ov89t273b02FE
-d17wq52rLPUpQxw3TlBGmR9yKIxPW0fKVM91Pg+NfpbtMChwri+HMY4z5iT+qdSE
-757D3k1xwxr33yBQrlj83DA1ipusuGkYNzcKneDwT1qIheQUAZ/aSR5Q3m4AHKJ0
-dVTBpeepl7ei1enze8EhM/zi3fH5l4icGmnqT9WJbyYN48StYa7dEYpvECpqaG23
-cSo4ce3verU12aI/+BXkoGIQUc5xT8bQwVWqTdkX6fqp/hI5tV4kVMfd8H080Yv8
-mbqc/CjU2AV94EIgHrzaIlAm+DBeCzbdRlmFg/Pa2tINfQjzhxfBaSu02nfIqEsa
-uJ/G2BUPjanzVWebP2/mQtvMAVm67ZAiRMjg91aE2BXWK+LqSqaQ+L22MgBJiVf0
-b0QaCGMUmS12P+shRSqUn56Pxs33YGEEw3agIGYRhhsrns67lDiKrt63tK6rkINQ
-HM5TSfHviIVBtj75Lq9XoyPpqBj1askTtRsQxXUkTGqVrJI50UyJC3ANVzteOm/Y
-IKAmVgx+wn4eKr3A29PXQmpTlxuLqt0v5KKn+1x1rEW+b5e9hkU=
-=bDb4
------END PGP SIGNATURE-----
-
---hmv3ictfz5w3jtha--
+Then someone went and wrecked it.
