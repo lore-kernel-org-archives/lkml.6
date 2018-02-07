@@ -1,113 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754079AbeBGNFf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 08:05:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59212 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753630AbeBGNFd (ORCPT
+        id S1753991AbeBGNHz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 08:07:55 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:19252 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753539AbeBGNHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 08:05:33 -0500
-Subject: Re: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag
- FS_IMA_NO_CACHE
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Dongsu Park <dongsu@kinvolk.io>
-Cc: linux-kernel@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Date: Wed, 07 Feb 2018 08:05:21 -0500
-In-Reply-To: <CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
-References: <cover.1517314847.git.dongsu@kinvolk.io>
-         <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
-         <CAJfpegtVz=Y2yxkq26S4zp76suWFy4DsLqqDOrUCuc+VQJ=VVw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Wed, 7 Feb 2018 08:07:53 -0500
+Subject: Re: [PATCH] ARM: dts: da850-evm: add clock properties to the nand
+ node
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Lechner <david@lechnology.com>
+CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180205155222.22189-1-brgl@bgdev.pl>
+ <3f171f6a-bcea-65ec-d56d-f6ae24660f34@ti.com>
+ <CAMpxmJUDbwkcJt_kx9GX+qY10xiGAp-j3+kXM-q3WP1VGwr0UQ@mail.gmail.com>
+ <54dbdb98-e0e4-c8c9-fec4-2f050745d9be@ti.com>
+ <794024f3-f87a-58ed-2722-a4a2d09df3ce@lechnology.com>
+ <4aa2ab13-7890-6904-86b3-e2dbcb6d6daa@lechnology.com>
+ <CAMRc=Mcf0aEQvieNaZ3cMHJTE23Gf1jUNf0=vuO9-PA=9ObDvQ@mail.gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <37e034fe-5951-9a58-8698-d34226e8279e@ti.com>
+Date: Wed, 7 Feb 2018 18:36:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=Mcf0aEQvieNaZ3cMHJTE23Gf1jUNf0=vuO9-PA=9ObDvQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18020713-0012-0000-0000-000005AC4E47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020713-0013-0000-0000-00001928058A
-Message-Id: <1518008721.13312.44.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-07_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802070165
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-07 at 10:21 +0100, Miklos Szeredi wrote:
-> On Tue, Jan 30, 2018 at 7:06 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
-> > From: Alban Crequy <alban@kinvolk.io>
-> >
-> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
-> > re-appraised and re-audited each time. Cached integrity results should
-> > not be used.
-> >
-> > It is useful in FUSE because the userspace FUSE process can change the
-> > underlying files at any time without notifying the kernel.
-> >
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-integrity@vger.kernel.org
-> > Cc: linux-security-module@vger.kernel.org
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: Christoph Hellwig <hch@infradead.org>
-> > Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
-> > Acked-by: Seth Forshee <seth.forshee@canonical.com>
-> > Tested-by: Dongsu Park <dongsu@kinvolk.io>
-> > Signed-off-by: Alban Crequy <alban@kinvolk.io>
-> > ---
-> >  fs/fuse/inode.c    | 2 +-
-> >  include/linux/fs.h | 1 +
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index 624f18bb..0a9e5164 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
-> >  static struct file_system_type fuse_fs_type = {
-> >         .owner          = THIS_MODULE,
-> >         .name           = "fuse",
-> > -       .fs_flags       = FS_HAS_SUBTYPE,
-> > +       .fs_flags       = FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
-> >         .mount          = fuse_mount,
-> >         .kill_sb        = fuse_kill_sb_anon,
-> >  };
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 511fbaab..ced841ba 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2075,6 +2075,7 @@ struct file_system_type {
-> >  #define FS_BINARY_MOUNTDATA    2
-> >  #define FS_HAS_SUBTYPE         4
-> >  #define FS_USERNS_MOUNT                8       /* Can be mounted by userns root */
-> > +#define FS_IMA_NO_CACHE                16      /* Force IMA to re-measure, re-appraise, re-audit files */
+On Wednesday 07 February 2018 12:15 AM, Bartosz Golaszewski wrote:
+> 2018-02-06 19:25 GMT+01:00 David Lechner <david@lechnology.com>:
+>> On 02/06/2018 12:16 PM, David Lechner wrote:
+>>>
+>>> On 02/06/2018 07:51 AM, Sekhar Nori wrote:
+>>>>
+>>>> On Tuesday 06 February 2018 06:38 PM, Bartosz Golaszewski wrote:
+>>>>>
+>>>>> 2018-02-06 12:07 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
+>>>>>>
+>>>>>> On Monday 05 February 2018 09:22 PM, Bartosz Golaszewski wrote:
+>>>>>>>
+>>>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>>>
+>>>>>>> Make nand work with the common clock framework by specifying which
+>>>>>>> clock should be used and what name to look up.
+>>>>>>>
+>>>>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>>> ---
+>>>>>>>   arch/arm/boot/dts/da850-evm.dts | 3 +++
+>>>>>>>   1 file changed, 3 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/arch/arm/boot/dts/da850-evm.dts
+>>>>>>> b/arch/arm/boot/dts/da850-evm.dts
+>>>>>>> index a86a8a1816f2..2602ad8e99ee 100644
+>>>>>>> --- a/arch/arm/boot/dts/da850-evm.dts
+>>>>>>> +++ b/arch/arm/boot/dts/da850-evm.dts
+>>>>>>> @@ -296,6 +296,9 @@
+>>>>>>>                        reg = <0 0x02000000 0x02000000
+>>>>>>>                               1 0x00000000 0x00008000>;
+>>>>>>>
+>>>>>>> +                     clocks = <&psc0 3>;
+>>>>>>> +                     clock-names = "aemif";
+>>>>>>
+>>>>>>
+>>>>>> Looks like this is being added only to satisfy the devm_clk_get() call
+>>>>>> in nand_davinci_probe() which I think is superfluous since we also
+>>>>>> enable the same clock in aemif_probe().
+>>>>>>
+>>>>>> Perhaps the better solution is to drip the clk code in
+>>>>>> drivers/mtd/nand/davinci_nand.c and shift legacy code to start using
+>>>>>> drivers/memory/aemif.c as well? This way we can also drop
+>>>>>> arch/arm/mach-davinci/aemif.c
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Sekhar
+>>>>>
+>>>>>
+>>>>> Yes, this sounds good, but I think we should leave it for later as an
+>>>>> additional improvement, once everything else is in place. I think
+>>>>> these patches should be applied together with David's series in order
+>>>>> to not break the support on davinci boards and the aemif work would go
+>>>>> in later as a follow-up. How about that?
+>>>>
+>>>>
+>>>> No, I dont think we should add temporary hacks to DT to work around
+>>>> driver issues (I do think its a hack since the clock belongs to aemif
+>>>> module not NAND flash).
+>>>>
+>>>> An easier driver hack might be to not treat devm_clk_get() failure in
+>>>> davinci_nand.c as catastrophic. It will safely fail in DT case and we
+>>>> should get the clock in legacy boot case.
+>>>>
+>>>> I think we are looking at a driver update dependency anyway.
+>>>
+>>>
+>>> It looks like keystone.dtsi is using the clock-ranges property in the
+>>> aemif node to pass the clock to child nodes. Could we not do the same
+>>> in da850.dtsi?
+>>
+>>
+>> Bartosz, please try this instead of your patch.
+>>
+>> FYI, this is just following the existing memory-controllers/ti-aemif.txt
+>> device tree bindings, so not a "hack".
+>>
+>> ---
+>> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+>> index 3a1f2ce..ff9d807 100644
+>> --- a/arch/arm/boot/dts/da850.dtsi
+>> +++ b/arch/arm/boot/dts/da850.dtsi
+>> @@ -796,6 +796,8 @@
+>>                 ranges = <0 0 0x60000000 0x08000000
+>>                           1 0 0x68000000 0x00008000>;
+>>                 clocks = <&psc0 3>;
+>> +               clock-names = "aemif";
+>> +               clock-ranges;
+>>                 status = "disabled";
+>>         };
+>>         memctrl: memory-controller@b0000000 {
+>> ---
 > 
-> I think it would be more logical to change the order of the patches
-> (i.e. first patch adds this constant and the code handling it, and
-> second patch just adds it to fuse's .fs_flags).
-> 
-> Otherwise
-> 
-> Acked-by:   Miklos Szeredi <mszeredi@redhat.com>
+> Yes, this works. Sekhar: can we include it in David's series, while
+> still keeping the plan to move legacy boards to using the aemif
+> driver?
 
-Sure, thank you!
+Okay. Fine with me. Actually the chipselect node already has
+clock-ranges defined, but that doesn't have any meaning unless its also
+included in aemif node.
 
-Mimi 
+Thanks,
+Sekhar
