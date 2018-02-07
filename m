@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754908AbeBGUaQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 15:30:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35626 "EHLO mail.kernel.org"
+        id S1754992AbeBGUbJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 15:31:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754702AbeBGU2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754667AbeBGU2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Feb 2018 15:28:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3263F217C3
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 762EB217B9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180207202817.224736694@goodmis.org>
+Message-Id: <20180207202816.491776767@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 07 Feb 2018 15:24:19 -0500
+Date: Wed, 07 Feb 2018 15:24:14 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -26,282 +26,345 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 17/20 v2] tracing: Add indirect to indirect access for function based events
+Subject: [PATCH 12/20 v2] tracing: Add accessing direct address from function based events
 References: <20180207202402.253089656@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0017-tracing-Add-indirect-to-indirect-access-for-function.patch
+Content-Disposition: inline; filename=0012-tracing-Add-accessing-direct-address-from-function-b.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Allow the function based events to retrieve not only the parameters offsets,
-but also get data from a pointer within a parameter structure. Something
-like:
+Allow referencing any address during the function based event. The syntax is
+to use <type> <name>=<addr> For example:
 
- # echo 'ip_rcv(string skdev+16[0][0] | x8[6] skperm+16[0]+558)' > function_events
-
- # echo 1 > events/functions/ip_rcv/enable
+ # echo 'do_IRQ(long total_forks=0xffffffffa2a4b4c0)' > function_events
+ # echo 1 > events/function/enable
  # cat trace
-    <idle>-0     [003] ..s3   310.626391: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   310.626400: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   312.183775: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   312.184329: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   312.303895: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   312.304610: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   312.471980: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   312.472908: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-    <idle>-0     [003] ..s3   313.135804: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-
-That is, we retrieved the net_device of the sk_buff and displayed its name
-and perm_addr info.
-
-  sk->dev->name, sk->dev->perm_addr
+            sshd-832   [000] d... 221639.210845: ret_from_intr->do_IRQ(total_forks=855)
+            sshd-832   [000] d... 221639.211114: ret_from_intr->do_IRQ(total_forks=855)
+          <idle>-0     [000] d... 221639.211198: ret_from_intr->do_IRQ(total_forks=855)
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/function-based-events.rst |  40 +++++++++-
- kernel/trace/trace_event_ftrace.c             | 102 ++++++++++++++++++++++++--
- 2 files changed, 136 insertions(+), 6 deletions(-)
+ Documentation/trace/function-based-events.rst |  40 +++++++-
+ kernel/trace/trace_event_ftrace.c             | 129 +++++++++++++++++++++-----
+ 2 files changed, 143 insertions(+), 26 deletions(-)
 
 diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
-index b90b52b7061d..3b341992b93d 100644
+index f18c8f3ef330..b0e6725f3032 100644
 --- a/Documentation/trace/function-based-events.rst
 +++ b/Documentation/trace/function-based-events.rst
-@@ -101,12 +101,15 @@ as follows:
-          'char' | 'short' | 'int' | 'long' | 'size_t' |
- 	 'symbol' | 'string'
+@@ -91,7 +91,7 @@ as follows:
  
-- FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX
-+ FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX |
-+	 FIELD INDIRECT
+  ARGS := ARG | ARG ',' ARGS | ''
  
-  INDEX := '[' <number> ']'
+- ARG := TYPE FIELD | ARG '|' ARG
++ ARG := TYPE FIELD | TYPE <name> '=' ADDR | TYPE ADDR | ARG '|' ARG
+ 
+  TYPE := ATOM | 'unsigned' ATOM
+ 
+@@ -107,6 +107,8 @@ as follows:
  
   OFFSET := '+' <number>
  
-+ INDIRECT := INDEX | OFFSET | INDIRECT INDIRECT | ''
++ ADDR := A hexidecimal address starting with '0x'
 +
-  ADDR := A hexidecimal address starting with '0x'
- 
   Where <name> is a unique string starting with an alphabetic character
-@@ -385,3 +388,38 @@ based event.
- NULL can appear in any argument, to have them ignored. Note, skipping arguments
- does not give you access to later arguments if they are not supported by the
- architecture. The architecture only supplies the first set of arguments.
+  and consists only of letters and numbers and underscores.
+ 
+@@ -267,3 +269,39 @@ Again, using gdb to find the offset of the "func" field of struct work_struct
+      <idle>-0     [000] dNs3  6241.172004: delayed_work_timer_fn->__queue_work(cpu=128, wq=ffff88011a010800, func=vmstat_shepherd+0x0/0xb0)
+  worker/0:2-1689  [000] d..2  6241.172026: __queue_delayed_work->__queue_work(cpu=7, wq=ffff88011a11da00, func=vmstat_update+0x0/0x70)
+      <idle>-0     [005] d.s3  6241.347996: queue_work_on->__queue_work(cpu=128, wq=ffff88011a011200, func=fb_flashcursor+0x0/0x110 [fb])
 +
 +
-+The chain of indirects
-+======================
++Direct memory access
++====================
 +
-+When a parameter is a structure, and that structure points to another structure,
-+the data of that structure can still be found.
++Function arguments are not the only thing that can be recorded from a function
++based event. Memory addresses can also be examined. If there's a global variable
++that you want to monitor via an interrupt, you can put in the address directly.
 +
-+ssize_t __vfs_read(struct file *file, char __user *buf, size_t count,
-+		   loff_t *pos)
++  # grep total_forks /proc/kallsyms
++ffffffff82354c18 B total_forks
 +
-+has the following code.
++  # echo 'do_IRQ(int total_forks=0xffffffff82354c18)' > function_events
 +
-+	if (file->f_op->read)
-+		return file->f_op->read(file, buf, count, pos);
-+
-+To trace all the functions that are called by f_op->read(), that information
-+can be obtained from the file pointer.
-+
-+Using gdb again:
-+
-+   (gdb) printf "%d\n", &((struct file *)0)->f_op
-+40
-+   (gdb) printf "%d\n", &((struct file_operations *)0)->read
-+16
-+
-+    # echo '__vfs_read(symbol read+40[0]+16)' > function_events
-+
-+  # echo 1 > events/functions/__vfs_read/enable
++  # echo 1 events/functions/do_IRQ/enable
 +  # cat trace
-+         sshd-1343  [005] ...2   199.734752: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
-+         bash-1344  [003] ...2   199.734822: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
-+         sshd-1343  [005] ...2   199.734835: vfs_read->__vfs_read(read=tty_read+0x0/0xf0)
-+ avahi-daemon-910   [003] ...2   200.136740: vfs_read->__vfs_read(read=          (null))
-+ avahi-daemon-910   [003] ...2   200.136750: vfs_read->__vfs_read(read=          (null))
++    <idle>-0     [003] d..3   337.076709: ret_from_intr->do_IRQ(total_forks=1419)
++    <idle>-0     [003] d..3   337.077046: ret_from_intr->do_IRQ(total_forks=1419)
++    <idle>-0     [003] d..3   337.077076: ret_from_intr->do_IRQ(total_forks=1420)
++
++Note, address notations do not affect the argument count. For instance, with
++
++__visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
++
++  # echo 'do_IRQ(int total_forks=0xffffffff82354c18, symbol regs[16])' > function_events
++
++Is the same as
++
++  # echo 'do_IRQ(int total_forks=0xffffffff82354c18 | symbol regs[16])' > function_events
++
++  # cat trace
++    <idle>-0     [003] d..3   653.839546: ret_from_intr->do_IRQ(total_forks=1504, regs=cpuidle_enter_state+0xb1/0x330)
++    <idle>-0     [003] d..3   653.906011: ret_from_intr->do_IRQ(total_forks=1504, regs=cpuidle_enter_state+0xb1/0x330)
++    <idle>-0     [003] d..3   655.823498: ret_from_intr->do_IRQ(total_forks=1504, regs=tick_nohz_idle_enter+0x4c/0x50)
++    <idle>-0     [003] d..3   655.954096: ret_from_intr->do_IRQ(total_forks=1504, regs=cpuidle_enter_state+0xb1/0x330)
++
 diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-index 673e2d963319..732ba570466b 100644
+index 1359f714a1b1..97748edc8bcb 100644
 --- a/kernel/trace/trace_event_ftrace.c
 +++ b/kernel/trace/trace_event_ftrace.c
-@@ -14,8 +14,15 @@
- #define WRITE_BUFSIZE		4096
- #define INDIRECT_FLAG		0x10000000
+@@ -63,6 +63,8 @@ enum func_states {
+ 	FUNC_STATE_BRACKET_END,
+ 	FUNC_STATE_INDIRECT,
+ 	FUNC_STATE_UNSIGNED,
++	FUNC_STATE_ADDR,
++	FUNC_STATE_EQUAL,
+ 	FUNC_STATE_PIPE,
+ 	FUNC_STATE_PLUS,
+ 	FUNC_STATE_TYPE,
+@@ -201,6 +203,7 @@ static char *next_token(char **ptr, char *last)
+ 		    *str == ',' ||
+ 		    *str == '|' ||
+ 		    *str == '+' ||
++		    *str == '=' ||
+ 		    *str == ')')
+ 			break;
+ 	}
+@@ -245,12 +248,39 @@ static int add_arg(struct func_event *fevent, int ftype, int unsign)
+ 		arg->sign = func_type->sign;
+ 	arg->offset = ALIGN(fevent->arg_offset, arg->size);
+ 	arg->func_type = ftype;
+-	arg->arg = fevent->arg_cnt;
+ 	fevent->arg_offset = arg->offset + arg->size;
  
-+struct func_arg_redirect {
-+	struct list_head		list;
-+	long				index;
-+	long				indirect;
-+};
-+
- struct func_arg {
- 	struct list_head		list;
-+	struct list_head		redirects;
- 	char				*type;
- 	char				*name;
- 	long				indirect;
-@@ -73,6 +80,8 @@ enum func_states {
- 	FUNC_STATE_ARRAY,
- 	FUNC_STATE_ARRAY_SIZE,
- 	FUNC_STATE_ARRAY_END,
-+	FUNC_STATE_REDIRECT_PLUS,
-+	FUNC_STATE_REDIRECT_BRACKET,
- 	FUNC_STATE_VAR,
- 	FUNC_STATE_COMMA,
- 	FUNC_STATE_NULL,
-@@ -269,6 +278,8 @@ static int add_arg(struct func_event *fevent, int ftype, int unsign)
- 	if (!arg)
- 		return -ENOMEM;
- 
-+	INIT_LIST_HEAD(&arg->redirects);
-+
- 	if (unsign)
- 		arg->type = kasprintf(GFP_KERNEL, "unsigned %s",
- 				      func_type->name);
-@@ -331,6 +342,22 @@ static int update_arg_arg(struct func_event *fevent)
- 	return 0;
- }
- 
-+static int add_arg_redirect(struct func_arg *arg, long index, long indirect)
-+{
-+	struct func_arg_redirect *redirect;
-+
-+	redirect = kzalloc(sizeof(*redirect), GFP_KERNEL);
-+	if (!redirect)
-+		return -ENOMEM;
-+
-+	redirect->index = index;
-+	redirect->indirect = indirect;
-+
-+	list_add_tail(&redirect->list, &arg->redirects);
+ 	list_add_tail(&arg->list, &fevent->args);
+ 	fevent->last_arg = arg;
+-	fevent->arg_cnt++;
 +
 +	return 0;
 +}
 +
++static int update_arg_name(struct func_event *fevent, const char *name)
++{
++	struct func_arg *arg = fevent->last_arg;
++
++	if (WARN_ON(!arg))
++		return -EINVAL;
++
++	arg->name = kstrdup(name, GFP_KERNEL);
++	if (!arg->name)
++		return -ENOMEM;
++	return 0;
++}
++
++static int update_arg_arg(struct func_event *fevent)
++{
++	struct func_arg *arg = fevent->last_arg;
++
++	if (WARN_ON(!arg))
++		return -EINVAL;
++
++	/* Make sure the arch can support this many args */
++	if (fevent->arg_cnt >= max_args)
++		return -EINVAL;
++
++	arg->arg = fevent->arg_cnt;
+ 
+ 	return 0;
+ }
+@@ -258,14 +288,16 @@ static int add_arg(struct func_event *fevent, int ftype, int unsign)
  static enum func_states
  process_event(struct func_event *fevent, const char *token, enum func_states state)
  {
-@@ -461,6 +488,10 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
++	static bool update_arg;
+ 	static int unsign;
+-	long val;
++	unsigned long val;
+ 	int ret;
+ 	int i;
+ 
+ 	switch (state) {
+ 	case FUNC_STATE_INIT:
+ 		unsign = 0;
++		update_arg = false;
+ 		if (!isalpha(token[0]) && token[0] != '_')
+ 			break;
+ 		/* Do not allow wild cards */
+@@ -281,15 +313,15 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 			break;
+ 		return FUNC_STATE_PARAM;
+ 
+-	case FUNC_STATE_PIPE:
+-		fevent->arg_cnt--;
+-		goto comma;
+ 	case FUNC_STATE_PARAM:
+ 		if (token[0] == ')')
+ 			return FUNC_STATE_END;
+ 		/* Fall through */
+ 	case FUNC_STATE_COMMA:
+- comma:
++		if (update_arg)
++			fevent->arg_cnt++;
++		update_arg = false;
++	case FUNC_STATE_PIPE:
+ 		if (strcmp(token, "unsigned") == 0) {
+ 			unsign = 2;
+ 			return FUNC_STATE_UNSIGNED;
+@@ -309,18 +341,20 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 		return FUNC_STATE_TYPE;
+ 
+ 	case FUNC_STATE_TYPE:
+-		if (!isalpha(token[0]) || token[0] == '_')
+-			break;
+ 		if (WARN_ON(!fevent->last_arg))
+ 			break;
+-		fevent->last_arg->name = kstrdup(token, GFP_KERNEL);
+-		if (!fevent->last_arg->name)
++		if (update_arg_name(fevent, token) < 0)
++			break;
++		if (strncmp(token, "0x", 2) == 0)
++			goto equal;
++		if (!isalpha(token[0]) && token[0] != '_')
+ 			break;
++		update_arg = true;
+ 		return FUNC_STATE_VAR;
+ 
+ 	case FUNC_STATE_BRACKET:
+ 		WARN_ON(!fevent->last_arg);
+-		ret = kstrtol(token, 0, &val);
++		ret = kstrtoul(token, 0, &val);
+ 		if (ret)
+ 			break;
+ 		val *= fevent->last_arg->size;
+@@ -335,7 +369,7 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 	case FUNC_STATE_BRACKET_END:
+ 		switch (token[0]) {
+ 		case ')':
+-			return FUNC_STATE_END;
++			goto end;
+ 		case ',':
  			return FUNC_STATE_COMMA;
  		case '|':
- 			return FUNC_STATE_PIPE;
-+		case '+':
-+			return FUNC_STATE_REDIRECT_PLUS;
-+		case '[':
-+			return FUNC_STATE_REDIRECT_BRACKET;
- 		}
- 		break;
- 
-@@ -484,6 +515,30 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 		}
- 		break;
- 
-+	case FUNC_STATE_REDIRECT_PLUS:
-+		if (WARN_ON(!fevent->last_arg))
-+			break;
+@@ -346,16 +380,33 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 	case FUNC_STATE_PLUS:
+ 		if (WARN_ON(!fevent->last_arg))
+ 			break;
+-		ret = kstrtol(token, 0, &val);
 +		ret = kstrtoul(token, 0, &val);
-+		if (ret)
-+			break;
-+		ret = add_arg_redirect(fevent->last_arg, val, 0);
-+		if (ret)
-+			break;
-+		return FUNC_STATE_VAR;
-+
-+	case FUNC_STATE_REDIRECT_BRACKET:
-+		if (WARN_ON(!fevent->last_arg))
-+			break;
-+		ret = kstrtoul(token, 0, &val);
-+		if (ret)
-+			break;
-+		val *= fevent->last_arg->size;
-+		val ^= INDIRECT_FLAG;
-+		ret = add_arg_redirect(fevent->last_arg, 0, val);
-+		if (ret)
-+			break;
-+		return FUNC_STATE_INDIRECT;
+ 		if (ret)
+ 			break;
+ 		fevent->last_arg->index += val;
+ 		return FUNC_STATE_VAR;
+ 
++	case FUNC_STATE_ADDR:
++		switch (token[0]) {
++		case ')':
++			goto end;
++		case ',':
++			return FUNC_STATE_COMMA;
++		case '|':
++			return FUNC_STATE_PIPE;
++		}
++		break;
 +
  	case FUNC_STATE_VAR:
- 		if (token[0] == '=')
- 			return FUNC_STATE_EQUAL;
-@@ -543,20 +598,49 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
- 	return FUNC_STATE_END;
++		if (token[0] == '=')
++			return FUNC_STATE_EQUAL;
++		if (WARN_ON(!fevent->last_arg))
++			break;
++		update_arg_arg(fevent);
++		update_arg = true;
+ 		switch (token[0]) {
+ 		case ')':
+-			return FUNC_STATE_END;
++			goto end;
+ 		case ',':
+ 			return FUNC_STATE_COMMA;
+ 		case '|':
+@@ -367,10 +418,29 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 		}
+ 		break;
+ 
++	case FUNC_STATE_EQUAL:
++		if (strncmp(token, "0x", 2) != 0)
++			break;
++ equal:
++		if (WARN_ON(!fevent->last_arg))
++			break;
++		ret = kstrtoul(token, 0, &val);
++		if (ret < 0)
++			break;
++		update_arg = false;
++		fevent->last_arg->index = val;
++		fevent->last_arg->arg = -1;
++		fevent->last_arg->indirect = INDIRECT_FLAG;
++		return FUNC_STATE_ADDR;
++
+ 	default:
+ 		break;
+ 	}
+ 	return FUNC_STATE_ERROR;
++ end:
++	if (update_arg)
++		fevent->arg_cnt++;
++	return FUNC_STATE_END;
  }
  
--static long long __get_arg(struct func_arg *arg, unsigned long val)
-+static unsigned long process_redirects(struct func_arg *arg, unsigned long val,
-+				       char *buf)
-+{
-+	struct func_arg_redirect *redirect;
-+	int ret;
-+
-+	if (arg->indirect) {
-+		ret = probe_kernel_read(buf, (void *)val, sizeof(long));
-+		if (ret)
-+			return 0;
-+		val = *(unsigned long *)buf;
-+	}
-+
-+	list_for_each_entry(redirect, &arg->redirects, list) {
-+		val += redirect->index;
-+		if (redirect->indirect) {
-+			val += (redirect->indirect ^ INDIRECT_FLAG);
-+			ret = probe_kernel_read(buf, (void *)val, sizeof(long));
-+			if (ret)
-+				return 0;
-+		}
-+	}
-+	return val;
-+}
-+
-+static long long __get_arg(struct func_arg *arg, unsigned long long val)
- {
- 	char buf[8];
- 	int ret;
+ static long long get_arg(struct func_arg *arg, unsigned long val)
+@@ -419,7 +489,7 @@ static void func_event_trace(struct trace_event_file *trace_file,
+ 	long args[func_event->arg_cnt];
+ 	long long val = 1;
+ 	unsigned long irq_flags;
+-	int nr_args;
++	int nr_args = 0;
+ 	int size;
+ 	int pc;
  
- 	val += arg->index;
+@@ -440,12 +510,17 @@ static void func_event_trace(struct trace_event_file *trace_file,
+ 	entry = ring_buffer_event_data(event);
+ 	entry->ip = ip;
+ 	entry->parent_ip = parent_ip;
+-	nr_args = arch_get_func_args(pt_regs, 0, func_event->arg_cnt, args);
++	if (func_event->arg_cnt)
++		nr_args = arch_get_func_args(pt_regs, 0, func_event->arg_cnt, args);
  
--	if (!arg->indirect)
--		return val;
-+	if (arg->indirect)
-+		val += (arg->indirect ^ INDIRECT_FLAG);
-+
-+	if (!list_empty(&arg->redirects))
-+		val = process_redirects(arg, val, buf);
- 
--	val = val + (arg->indirect ^ INDIRECT_FLAG);
-+	if (!val)
-+		return 0;
- 
- 	/* Arrays and strings do their own indirect reads */
--	if (arg->array || arg->func_type == FUNC_TYPE_string)
-+	if (!arg->indirect || arg->array || arg->func_type == FUNC_TYPE_string)
- 		return val;
- 
- 	ret = probe_kernel_read(buf, (void *)val, arg->size);
-@@ -1164,6 +1248,7 @@ static void func_event_seq_stop(struct seq_file *m, void *v)
- static int func_event_seq_show(struct seq_file *m, void *v)
- {
- 	struct func_event *func_event = v;
-+	struct func_arg_redirect *redirect;
- 	struct func_arg *arg;
- 	bool comma = false;
- 	int last_arg = 0;
-@@ -1192,6 +1277,13 @@ static int func_event_seq_show(struct seq_file *m, void *v)
- 				seq_printf(m, "[%ld]",
- 					   (arg->indirect ^ INDIRECT_FLAG) / arg->size);
- 		}
-+		list_for_each_entry(redirect, &arg->redirects, list) {
-+			if (redirect->index)
-+				seq_printf(m, "+%ld", redirect->index);
-+			if (redirect->indirect)
+ 	list_for_each_entry(arg, &func_event->args, list) {
+-		if (arg->arg < nr_args)
+-			val = get_arg(arg, args[arg->arg]);
+-		else
++		if (arg->arg < nr_args) {
++			/* Is arg an address and not a parameter? */
++			if (arg->arg < 0)
++				val = get_arg(arg, 0);
++			else
++				val = get_arg(arg, args[arg->arg]);
++		} else
+ 			val = 0;
+ 		memcpy(&entry->data[arg->offset], &val, arg->size);
+ 	}
+@@ -817,11 +892,15 @@ static int func_event_seq_show(struct seq_file *m, void *v)
+ 		last_arg = arg->arg;
+ 		comma = true;
+ 		seq_printf(m, "%s %s", arg->type, arg->name);
+-		if (arg->index)
+-			seq_printf(m, "+%ld", arg->index);
+-		if (arg->indirect && arg->size)
+-			seq_printf(m, "[%ld]",
+-				   (arg->indirect ^ INDIRECT_FLAG) / arg->size);
++		if (arg->arg < 0) {
++			seq_printf(m, "=0x%lx", arg->index);
++		} else {
++			if (arg->index)
++				seq_printf(m, "+%ld", arg->index);
++			if (arg->indirect && arg->size)
 +				seq_printf(m, "[%ld]",
-+					   (redirect->indirect ^ INDIRECT_FLAG) / arg->size);
++					   (arg->indirect ^ INDIRECT_FLAG) / arg->size);
 +		}
  	}
  	seq_puts(m, ")\n");
