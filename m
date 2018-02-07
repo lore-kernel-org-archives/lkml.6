@@ -1,103 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753471AbeBGBuR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Feb 2018 20:50:17 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34593 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753045AbeBGBtM (ORCPT
+        id S1753491AbeBGBuZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Feb 2018 20:50:25 -0500
+Received: from mail-it0-f54.google.com ([209.85.214.54]:34917 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753045AbeBGBuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:49:12 -0500
-X-Google-Smtp-Source: AH8x227pXo1AGgn7zjv1JrF9vm/+0sRfak+0ccyudGZeFOCBIm9bWxWyPxQ+yxLOaS9NUsHGH5NjAw==
-From: Alexandre Courbot <acourbot@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv3 14/17] v4l2-ctrls: support requests in EXT_CTRLS ioctls
-Date: Wed,  7 Feb 2018 10:48:18 +0900
-Message-Id: <20180207014821.164536-15-acourbot@chromium.org>
-X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
-In-Reply-To: <20180207014821.164536-1-acourbot@chromium.org>
-References: <20180207014821.164536-1-acourbot@chromium.org>
+        Tue, 6 Feb 2018 20:50:22 -0500
+X-Google-Smtp-Source: AH8x225iAj9AvWo3V8pGALkmeS2gNS9U5s2vrYJBFB5UNJsAoKQlbjDfqZ2BK/enHdBz9uOx+hEIEWLJ9AiE9TUTk4s=
+MIME-Version: 1.0
+In-Reply-To: <151796719550.10756.8688156573547110419.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151796719550.10756.8688156573547110419.stgit@dwillia2-desk3.amr.corp.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Feb 2018 17:50:21 -0800
+X-Google-Sender-Auth: wH1-F_JWmLGDVs9SCNvSjOpLp00
+Message-ID: <CA+55aFy4UkbAgghSGN_vcLLF229avLmdx8nWyLMSBPRuD+vCvw@mail.gmail.com>
+Subject: Re: [PATCH] x86/nospec: Fixup array_index_nospec_mask() asm constraint
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read and use the request_fd field of struct v4l2_ext_controls to apply
-VIDIOC_G_EXT_CTRLS or VIDIOC_S_EXT_CTRLS to a request when asked by
-userspace.
+On Tue, Feb 6, 2018 at 5:33 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+> Allow the compiler to handle @size as an immediate value rather than
+> allocating a register.
 
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
----
- drivers/media/v4l2-core/v4l2-ioctl.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Actually, maybe that "ir" should be "g".
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 235acdde3111..cbaefcad9694 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -30,6 +30,7 @@
- #include <media/videobuf2-v4l2.h>
- #include <media/v4l2-mc.h>
- #include <media/media-request.h>
-+#include <media/v4l2-request.h>
- 
- #include <trace/events/v4l2.h>
- 
-@@ -2158,6 +2159,24 @@ static int v4l_g_ext_ctrls(const struct v4l2_ioctl_ops *ops,
- 		test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags) ? fh : NULL;
- 
- 	p->error_idx = p->count;
-+
-+	if (p->request_fd > 0) {
-+		struct media_request *req = NULL;
-+		struct media_request_entity_data *_data;
-+		struct media_request_v4l2_entity_data *data;
-+		int ret;
-+
-+		req = check_request(p->request_fd, file, fh, &_data);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+		data = to_v4l2_entity_data(_data);
-+
-+		ret = v4l2_g_ext_ctrls(&data->ctrls, p);
-+
-+		media_request_put(req);
-+		return ret;
-+	}
-+
- 	if (vfh && vfh->ctrl_handler)
- 		return v4l2_g_ext_ctrls(vfh->ctrl_handler, p);
- 	if (vfd->ctrl_handler)
-@@ -2177,6 +2196,23 @@ static int v4l_s_ext_ctrls(const struct v4l2_ioctl_ops *ops,
- 		test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags) ? fh : NULL;
- 
- 	p->error_idx = p->count;
-+	if (p->request_fd > 0) {
-+		struct media_request *req = NULL;
-+		struct media_request_entity_data *_data;
-+		struct media_request_v4l2_entity_data *data;
-+		int ret;
-+
-+		req = check_request(p->request_fd, file, fh, &_data);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+		data = to_v4l2_entity_data(_data);
-+
-+		ret = v4l2_s_ext_ctrls(vfh, &data->ctrls, p);
-+
-+		media_request_put(req);
-+		return ret;
-+	}
-+
- 	if (vfh && vfh->ctrl_handler)
- 		return v4l2_s_ext_ctrls(vfh, vfh->ctrl_handler, p);
- 	if (vfd->ctrl_handler)
--- 
-2.16.0.rc1.238.g530d649a79-goog
+Because it's fine if it's a memory location too. "cmp" takes pretty
+much anything, as long as the thing we compare _to_ is a register.
+
+              Linus
