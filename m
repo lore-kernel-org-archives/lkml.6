@@ -1,56 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeBHRje (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:39:34 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34728 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeBHRjd (ORCPT
+        id S1752222AbeBHRne (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:43:34 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:44050 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751756AbeBHRnd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:39:33 -0500
-X-Google-Smtp-Source: AH8x224jurcnBAy37e5AfNoVqyTq5dZChny1iIX4jDIyT2UhoZhjBVD0LwCm8SRSG5ohwKKR3OD/O6lYmAGkEXSInFA=
-MIME-Version: 1.0
-In-Reply-To: <20180208094710.qnjixhm6hybebdv7@gmail.com>
-References: <20180207201517.6518-1-linux@dominikbrodowski.net>
- <20180207201517.6518-7-linux@dominikbrodowski.net> <CA+55aFxZ-pyx88rwykT0Dzh-_bwGQcmc00GhrMQ4OEwXqMO+pA@mail.gmail.com>
- <20180207212915.GA4633@isilmar-4.linta.de> <20180208094710.qnjixhm6hybebdv7@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 8 Feb 2018 09:39:31 -0800
-X-Google-Sender-Auth: Mi6_EJSEfmVOZ05DAlhmkRwY0uw
-Message-ID: <CA+55aFwWDfzgfiJNQCZkrOd8uUXp13TupPhNYrKSeeXMY-dr2g@mail.gmail.com>
-Subject: Re: [RFC v2 PATCH 6/7] x86/entry: get rid of ALLOC_PT_GPREGS_ON_STACK
- and SAVE_AND_CLEAR_REGS
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Feb 2018 12:43:33 -0500
+X-Google-Smtp-Source: AH8x224HRzeNTBBk75JrY3IIHdO8zo+uU6S0MX9i2POdXIWQ9TyBB+cR5Nc21ryqKAs7gHZnnTxBqQ==
+From: Sergio Valverde <vlvrdv@gmail.com>
+Cc: Sergio Valverde <vlvrdv@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mmc: core: optimize mmc_calc_max_discard
+Date: Thu,  8 Feb 2018 11:41:43 -0600
+Message-Id: <1518111705-11122-1-git-send-email-vlvrdv@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518047981-23958-1-git-send-email-vlvrdv@gmail.com>
+References: <1518047981-23958-1-git-send-email-vlvrdv@gmail.com>
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 8, 2018 at 1:47 AM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> So for those reasons I'm really tempted by the all around simplification offered
-> by this series:
->
->    2 files changed, 62 insertions(+), 160 deletions(-)
->
-> Basically in this specific case I'd like to turn the argument around,
-> use this simpler design and put the burden of proof on the patches that
-> want to _complicate it_ beyond this simple, straightforward model
+If the max_discard value is zero, the conditional branch that checks the
+trim capabilities will never update this value with max_trim.
 
-You make a good argument.
+Change the condition statement to also check the max_discard value in order
+to avoid an unnecessary call to mmc_do_calc_max_discard.
 
-If the only real downside is slightly bigger static footprint (but the
-actual real dynamic I$ footprint is not really impacted), then let's
-just go for the simpler code.
+Signed-off-by: Sergio Valverde <vlvrdv@gmail.com>
+---
+Changes in v2:
+- Evaluate max_discard to avoid unnecessary calls to mmc_can_trim.
 
-It really would be lovely if our entry asm was understandable to mere mortals.
+ drivers/mmc/core/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-               Linus
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 1f0f44f..c32c0f4 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -2567,7 +2567,7 @@ unsigned int mmc_calc_max_discard(struct mmc_card *card)
+ 		return card->pref_erase;
+ 
+ 	max_discard = mmc_do_calc_max_discard(card, MMC_ERASE_ARG);
+-	if (mmc_can_trim(card)) {
++	if (max_discard && mmc_can_trim(card)) {
+ 		max_trim = mmc_do_calc_max_discard(card, MMC_TRIM_ARG);
+ 		if (max_trim < max_discard)
+ 			max_discard = max_trim;
+-- 
+2.7.4
