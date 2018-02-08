@@ -1,102 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752110AbeBHBlw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 20:41:52 -0500
-Received: from mga11.intel.com ([192.55.52.93]:58489 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751153AbeBHBlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 20:41:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,476,1511856000";
-   d="scan'208";a="28286809"
-Message-ID: <5A7BAB7D.7070805@intel.com>
-Date: Thu, 08 Feb 2018 09:44:29 +0800
-From: Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
-MIME-Version: 1.0
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        pbonzini@redhat.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, huangzhichao@huawei.com
-Subject: Re: [PATCH v27 3/4] mm/page_poison: expose page_poisoning_enabled
- to kernel modules
-References: <1517986471-15185-1-git-send-email-wei.w.wang@intel.com> <1517986471-15185-4-git-send-email-wei.w.wang@intel.com> <20180207203004-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180207203004-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1752172AbeBHBmH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 20:42:07 -0500
+Received: from smtpproxy19.qq.com ([184.105.206.84]:45832 "EHLO
+        smtpproxy19.qq.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751946AbeBHBmF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 20:42:05 -0500
+X-QQ-mid: bizesmtp2t1518054113triu705dj
+X-QQ-SSF: 01400000004000F0FG22000A0000000
+X-QQ-FEAT: q17Yoz/cMVoSSt4MCESbxrzGT53eatARnlfGYK+84eHjS8O5jH2f/lTlJP90F
+        GXVh0UO3ug+PIqw6SPxG+hGjVK5WWbzt1RH15emDqvsc4Uu4iTyoQ2S6JnK+xB13mxZl6FA
+        oRzjI1HntW8IeOZ99KibUtcWEabBMfUK5oOm9/W2lsnCaUMH2Ghg7aVVfMEVKAQ1SDqP7Tt
+        VF24QVOZ8d9OcTyOni5f5B0Y24MvolZkRIi2s95hn6TsAmMBC8rZ7FCKOG0lc5+p1FwXQKL
+        qFXyB4XS18Swu/vQ8Pmmzbf1iSMISDe9Qx2A==
+X-QQ-GoodBg: 2
+From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+To: rostedt@goodmis.org
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        liuzhengyuang521@gmail.com, linx.z.chen@intel.com
+Subject: [PATCH] ftrace: fix the file mode of graph tracer and stack tracer
+Date: Thu,  8 Feb 2018 09:41:53 +0800
+Message-Id: <1518054113-28096-1-git-send-email-liuzhengyuan@kylinos.cn>
+X-Mailer: git-send-email 2.7.4
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:kylinos.cn:qybgforeign:qybgforeign4
+X-QQ-Bgrelay: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/2018 02:34 AM, Michael S. Tsirkin wrote:
-> On Wed, Feb 07, 2018 at 02:54:30PM +0800, Wei Wang wrote:
->> In some usages, e.g. virtio-balloon, a kernel module needs to know if
->> page poisoning is in use. This patch exposes the page_poisoning_enabled
->> function to kernel modules.
->>
->> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Michal Hocko <mhocko@kernel.org>
->> Cc: Michael S. Tsirkin <mst@redhat.com>
->> ---
->>   mm/page_poison.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/mm/page_poison.c b/mm/page_poison.c
->> index e83fd44..c08d02a 100644
->> --- a/mm/page_poison.c
->> +++ b/mm/page_poison.c
->> @@ -30,6 +30,11 @@ bool page_poisoning_enabled(void)
->>   		debug_pagealloc_enabled()));
->>   }
->>   
->> +/**
->> + * page_poisoning_enabled - check if page poisoning is enabled
->> + *
->> + * Return true if page poisoning is enabled, or false if not.
->> + */
->>   static void poison_page(struct page *page)
->>   {
->>   	void *addr = kmap_atomic(page);
->> @@ -37,6 +42,7 @@ static void poison_page(struct page *page)
->>   	memset(addr, PAGE_POISON, PAGE_SIZE);
->>   	kunmap_atomic(addr);
->>   }
->> +EXPORT_SYMBOL_GPL(page_poisoning_enabled);
->>   
->>   static void poison_pages(struct page *page, int n)
->>   {
-> Looks like both the comment and the export are in the wrong place.
+It's something looks weird that those files could be written by root
+but shows with no write permission by ll command.
+Chen LinX <linx.z.chen@intel.com> has sent a similar patch to fix
+graph function file mode in 2000,  I didn't get the reason why that
+patch wasn't applied so I resend it.
 
-Thanks. Will be more careful.
+Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+---
+ kernel/trace/ftrace.c      | 4 ++--
+ kernel/trace/trace_stack.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-> I'm a bit concerned that callers also in fact poke at the
-> PAGE_POISON - exporting that seems to be more of an accident
-> as it's only used without page_poisoning.c - it might be
-> better to have page_poisoning_enabled get u8 * and set it.
->
-
-PAGE_POISON is a macro defined in the header, why would callers using it 
-be a concern?
-
-Do you suggest to have:
-
-bool page_poisoning_get(u8 *val)
-{
-     if (page_poisoning_enabled()) {
-         *val = PAGE_POISON;
-         return true;
-     }
-
-     return false;
-}
-EXPORT_SYMBOL_GPL(page_poisoning_get);
-
-
-Best,
-Wei
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index ccdf366..fe903dc8 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -5513,10 +5513,10 @@ static __init int ftrace_init_dyn_tracefs(struct dentry *d_tracer)
+ 	ftrace_create_filter_files(&global_ops, d_tracer);
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	trace_create_file("set_graph_function", 0444, d_tracer,
++	trace_create_file("set_graph_function", 0644, d_tracer,
+ 				    NULL,
+ 				    &ftrace_graph_fops);
+-	trace_create_file("set_graph_notrace", 0444, d_tracer,
++	trace_create_file("set_graph_notrace", 0644, d_tracer,
+ 				    NULL,
+ 				    &ftrace_graph_notrace_fops);
+ #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 734accc..4356f14 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -468,7 +468,7 @@ static __init int stack_trace_init(void)
+ 			NULL, &stack_trace_fops);
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+-	trace_create_file("stack_trace_filter", 0444, d_tracer,
++	trace_create_file("stack_trace_filter", 0644, d_tracer,
+ 			  &trace_ops, &stack_trace_filter_fops);
+ #endif
+ 
+-- 
+2.7.4
