@@ -1,184 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751756AbeBHNPO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:15:14 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46167 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751079AbeBHNPN (ORCPT
+        id S1752028AbeBHNPa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:15:30 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46278 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeBHNP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:15:13 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Philippe CORNU <philippe.cornu@st.com>
-Cc: "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        Mickael REULIER <mickael.reulier@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH] drm/bridge/synopsys: dsi: use adjusted_mode in mode_set
-Date: Thu, 08 Feb 2018 15:15:40 +0200
-Message-ID: <1802436.kt7XbhHcH5@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <7ec671c2-a777-5dcd-dcc9-e026fff89900@st.com>
-References: <20180125155504.8611-1-philippe.cornu@st.com> <108376394.4I4zMjzv2j@avalon> <7ec671c2-a777-5dcd-dcc9-e026fff89900@st.com>
+        Thu, 8 Feb 2018 08:15:28 -0500
+Date: Thu, 8 Feb 2018 14:15:22 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, morten.rasmussen@foss.arm.com,
+        brendan.jackman@arm.com, dietmar.eggemann@arm.com
+Subject: Re: [PATCH v2 1/3] sched: Stop nohz stats when decayed
+Message-ID: <20180208131522.GG25201@hirez.programming.kicks-ass.net>
+References: <1517944987-343-1-git-send-email-vincent.guittot@linaro.org>
+ <1517944987-343-2-git-send-email-vincent.guittot@linaro.org>
+ <780a5b3a-4829-4195-c8fd-95da27248a82@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <780a5b3a-4829-4195-c8fd-95da27248a82@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
-
-On Saturday, 3 February 2018 00:41:26 EET Philippe CORNU wrote:
-> On 01/29/2018 11:40 AM, Laurent Pinchart wrote:
-> > On Monday, 29 January 2018 12:17:37 EET Philippe CORNU wrote:
-> >> On 01/29/2018 10:46 AM, Laurent Pinchart wrote:
-> >>> On Thursday, 25 January 2018 17:55:04 EET Philippe Cornu wrote:
-> >>>> The "adjusted_mode" clock value (ie the real pixel clock) is more
-> >>>> accurate than "mode" clock value (ie the panel/bridge requested
-> >>>> clock value). It offers a better preciseness for timing
-> >>>> computations and allows to reduce the extra dsi bandwidth in
-> >>>> burst mode (from ~20% to ~10-12%, hw platform dependant).
-> >>>>
-> >>>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> >>>
-> >>> The adjusted mode is documented as
-> >>>
-> >>>   /**
-> >>>    * @adjusted_mode:
-> >>>    *
-> >>>    * Internal display timings which can be used by the driver to handle
-> >>>    * differences between the mode requested by userspace in @mode and
-> >>>    what
-> >>>    * is actually programmed into the hardware. It is purely driver
-> >>>    * implementation defined what exactly this adjusted mode means.
-> >>>    Usually
-> >>>    * it is used to store the hardware display timings used between the
-> >>>    * CRTC and encoder blocks.
-> >>>    */
-> >>>
-> >>> This is easy to handle when the CRTC and encoder are controlled by the
-> >>> same driver, as the field is "implementation defined" by a single
-> >>> driver. However, when using bridges, there are two drivers involved, and
-> >>> they must both agree to meaningfully use the adjusted mode. I can't see
-> >>> how to do so without standardizing the meaning of the adjusted mode
-> >>> field.
-> >>
-> >> This is exactly the reason why my first implementation used the dsi
-> >> bridge "optional pixel clock" instead of the adjusted_mode (see [1])
-> >>
-> >> But after digging more into the drm source code, I think using
-> >> adjusted_mode instead of the pixel clock here brings more advantages
-> >> because:
-> >> * adjusted_mode is an argument of bridge mode_set() probably for being
-> >> used in any manner, maybe like this :)
-> >> * if the bridge "user" (crtc or a master bridge drivers) does not need
-> >> to modify its adjusted_mode then mode & adjusted_mode mode_set()
-> >> arguments will have the same values so "no consequence" for the bridge.
-> >> * if the bridge "user" (crtc or master bridge drivers) needs to adjust
-> >> any value of the mode then this adjustment is available for the bridge.
-> > 
-> > Remember that there can be multiple chained bridges, and a single
-> > adjusted mode field.
-> > 
-> >> * rockchip crtc updates a part of the mode (the clock), stm is doing the
-> >> same (see [2]) but any future "user" of the dw_mipi_dsi bridge can
-> >> adjust something else (blankings...) and the dw_mipi_dsi bridge will be
-> >> then aware of...
-> >>
-> >> But maybe it is a wrong usage of the "adjusted_mode offer"...
-> > 
-> > I don't disagree that there's a need for using adjusted values, but I
-> > believe we need to create a clear API to do so. Using the adjust_mode
-> > field as-is when it's clearly documented as being implementation-defined
-> > is asking for trouble. 
+On Thu, Feb 08, 2018 at 12:46:53PM +0000, Valentin Schneider wrote:
+> On 02/06/2018 07:23 PM, Vincent Guittot wrote:
+> > [...]
+> > @@ -7826,8 +7842,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+> >  	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
+> >  		struct rq *rq = cpu_rq(i);
+> >  
+> > -		if (env->flags & LBF_NOHZ_STATS)
+> > -			update_nohz_stats(rq);
+> > +		if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq))
+> > +			env->flags |= LBF_NOHZ_AGAIN;
+> >  
+> >  		/* Bias balancing toward cpus of our domain */
+> >  		if (local_group)
+> > @@ -7979,18 +7995,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+> >  	struct sg_lb_stats *local = &sds->local_stat;
+> >  	struct sg_lb_stats tmp_sgs;
+> >  	int load_idx, prefer_sibling = 0;
+> > +	int has_blocked = READ_ONCE(nohz.has_blocked);
+> >  	bool overload = false;
+> >  
+> >  	if (child && child->flags & SD_PREFER_SIBLING)
+> >  		prefer_sibling = 1;
+> >  
+> >  #ifdef CONFIG_NO_HZ_COMMON
+> > -	if (env->idle == CPU_NEWLY_IDLE) {
+> > +	if (env->idle == CPU_NEWLY_IDLE && has_blocked)
+> >  		env->flags |= LBF_NOHZ_STATS;
+> > -
+> > -		if (cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd)))
+> > -			nohz.next_stats = jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD);
+> > -	}
+> >  #endif
+> >  
+> >  	load_idx = get_sd_load_idx(env->sd, env->idle);
+> > @@ -8046,6 +8059,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+> >  		sg = sg->next;
+> >  	} while (sg != env->sd->groups);
+> >  
+> > +#ifdef CONFIG_NO_HZ_COMMON
+> > +	if ((env->flags & LBF_NOHZ_AGAIN) &&
+> > +	    cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd))) {
+> > +
+> > +		WRITE_ONCE(nohz.next_blocked,
+> > +				jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD));
 > 
-> Laurent, do you think we can use "adjusted mode" here in this small 
-> patch as the actual 2 "users" of this bridge (rockchip & stm) use both 
-> "adjusted mode" in their crtc?
+> Here we push the stats update forward if we visited all the nohz CPUs but they
+> still have blocked load. IMO we should also clear the nohz.has_blocked flag
+> if we visited all the nohz CPUs and none had blocked load left.
 
-The Synopsys DSI driver might only be used by two display controller drivers 
-today, it is nonetheless a standard bridge driver that should not make any 
-assumption of a particular use of the adjusted_mode in particular display 
-controller drivers. To use the adjusted_mode value in bridge drivers we need 
-to standardize its usage, otherwise we'll end up with incompatibilities 
-between bridge drivers and display controller drivers.
-
-> >> [1] https://patchwork.freedesktop.org/patch/200240/
-> >> [2] https://patchwork.freedesktop.org/patch/200720/
-> >>
-> >>> Daniel, what's your opinion on this ?
-> 
-> Daniel, any opinion on the adjusted_mode usage?
-> 
-> >>>> ---
-> >>>> Note: This patch replaces "drm/bridge/synopsys: dsi: add optional
-> >>>> pixel clock"
-> >>>>
-> >>>> drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 12 ++++++------
-> >>>> 1 file changed, 6 insertions(+), 6 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> >>>> b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c index
-> >>>> ed8af32f8e52..b926b62e9e33 100644
-> >>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> >>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> >>>> @@ -707,20 +707,20 @@ static void dw_mipi_dsi_bridge_mode_set(struct
-> >>>> drm_bridge *bridge,
-> >>>>
-> >>>>    	clk_prepare_enable(dsi->pclk);
-> >>>>
-> >>>> -	ret = phy_ops->get_lane_mbps(priv_data, mode, dsi->mode_flags,
-> >>>> +	ret = phy_ops->get_lane_mbps(priv_data, adjusted_mode,
-> >>>> dsi->mode_flags,
-> >>>>    				     dsi->lanes, dsi->format, &dsi->lane_mbps);
-> >>>>    if (ret)
-> >>>>    	DRM_DEBUG_DRIVER("Phy get_lane_mbps() failed\n");
-> >>>>
-> >>>>    pm_runtime_get_sync(dsi->dev);
-> >>>>    dw_mipi_dsi_init(dsi);
-> >>>>
-> >>>> -	dw_mipi_dsi_dpi_config(dsi, mode);
-> >>>> +	dw_mipi_dsi_dpi_config(dsi, adjusted_mode);
-> >>>>    dw_mipi_dsi_packet_handler_config(dsi);
-> >>>>    dw_mipi_dsi_video_mode_config(dsi);
-> >>>> -	dw_mipi_dsi_video_packet_config(dsi, mode);
-> >>>> +	dw_mipi_dsi_video_packet_config(dsi, adjusted_mode);
-> >>>>    dw_mipi_dsi_command_mode_config(dsi);
-> >>>> -	dw_mipi_dsi_line_timer_config(dsi, mode);
-> >>>> -	dw_mipi_dsi_vertical_timing_config(dsi, mode);
-> >>>> +	dw_mipi_dsi_line_timer_config(dsi, adjusted_mode);
-> >>>> +	dw_mipi_dsi_vertical_timing_config(dsi, adjusted_mode);
-> >>>>    dw_mipi_dsi_dphy_init(dsi);
-> >>>>    dw_mipi_dsi_dphy_timing_config(dsi);
-> >>>>
-> >>>> @@ -734,7 +734,7 @@ static void dw_mipi_dsi_bridge_mode_set(struct
-> >>>> drm_bridge *bridge,
-> >>>>
-> >>>>    dw_mipi_dsi_dphy_enable(dsi);
-> >>>>
-> >>>> -	dw_mipi_dsi_wait_for_two_frames(mode);
-> >>>> +	dw_mipi_dsi_wait_for_two_frames(adjusted_mode);
-> >>>>
-> >>>>    /* Switch to cmd mode for panel-bridge pre_enable & panel prepare
-> >>>>    */
-> >>>>    dw_mipi_dsi_set_mode(dsi, 0);
-
--- 
-Regards,
-
-Laurent Pinchart
+You can't, new cpu's can have joined the set. I used to detect that, but
+that requires atomic ops.
