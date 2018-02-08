@@ -1,51 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752430AbeBHUKr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:10:47 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:42418 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeBHUKq (ORCPT
+        id S1752281AbeBHUOd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:14:33 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:48866 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbeBHUOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:10:46 -0500
-X-Google-Smtp-Source: AH8x224SMH3H0oyVVX4sY9P0/B3Cn7coRsRy5IoJ6oasftQ3Uo6g0MoPnOynE/uxFWcwJ+/C90TORQ==
-Date: Thu, 8 Feb 2018 15:10:44 -0500 (EST)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cramfs: better MTD dependency expression
-In-Reply-To: <CA+55aFzHtRbis95-D-nLB6v_FM8ZVPU6Wt=A04bG2zH+RukhaA@mail.gmail.com>
-Message-ID: <nycvar.YSQ.7.76.1802081500300.31719@knanqh.ubzr>
-References: <nycvar.YSQ.7.76.1802072149330.7021@knanqh.ubzr> <CA+55aFzHtRbis95-D-nLB6v_FM8ZVPU6Wt=A04bG2zH+RukhaA@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 8 Feb 2018 15:14:31 -0500
+Date: Thu, 08 Feb 2018 15:14:29 -0500 (EST)
+Message-Id: <20180208.151429.32851294514008981.davem@davemloft.net>
+To: malat@debian.org
+Cc: trivial@kernel.org, andrew@lunn.ch, privat@egil-hjelmeland.no,
+        vivien.didelot@savoirfairelinux.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: Extra '_get' in declaration of
+ arch_get_platform_mac_address
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180207193501.25446-1-malat@debian.org>
+References: <20180207193501.25446-1-malat@debian.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-7
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w18KEbnK005182
 
-On Thu, 8 Feb 2018, Linus Torvalds wrote:
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed,  7 Feb 2018 20:35:00 +0100
 
-> On Wed, Feb 7, 2018 at 7:08 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> >
-> > Viro once told me that my cramfs pull requests could go either to him or
-> > to you. I have only this one patch at the moment, and since it depends
-> > on a commit that recently appeared in your tree I'm therefore sending it
-> > directly to you.
+> In commit c7f5d105495a ("net: Add eth_platform_get_mac_address() helper."),
+> two declarations were added:
 > 
-> Applied.
-
-Thanks.
-
-> Although I'm not entirely convinced that the simpler dependency is
-> easier to _read_ and understand.
+>   int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
+>   unsigned char *arch_get_platform_get_mac_address(void);
 > 
-> It is clearly simpler, though.
+> An extra '_get' was introduced in arch_get_platform_get_mac_address, remove
+> it. Fix compile warning using W=1:
+> 
+>   CC      net/ethernet/eth.o
+> net/ethernet/eth.c:523:24: warning: no previous prototype for ¡arch_get_platform_mac_address¢ [-Wmissing-prototypes]
+>  unsigned char * __weak arch_get_platform_mac_address(void)
+>                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   AR      net/ethernet/built-in.o
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-Probably depends on the mental representation you make of it. If you 
-consider driver A depending on driver B then having A <= B in terms of 
-build level dependency is pretty natural. Maybe it is just me but the 
-alternative always gave me pause.
+I'm very surprised this warning didn't get triggered before.
 
+That's really weird!
 
-Nicolas
+Applied, thank you.
