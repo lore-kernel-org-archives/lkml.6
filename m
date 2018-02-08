@@ -1,82 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBHPWD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:22:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55982 "EHLO mail.kernel.org"
+        id S1752214AbeBHPXc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:23:32 -0500
+Received: from mga18.intel.com ([134.134.136.126]:65426 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750847AbeBHPWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:22:02 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4982172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 8 Feb 2018 10:21:49 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        liuzhengyuang521@gmail.com, linx.z.chen@intel.com
-Subject: Re: [PATCH] ftrace: fix the file mode of graph tracer and stack
- tracer
-Message-ID: <20180208102149.7e3bfe45@gandalf.local.home>
-In-Reply-To: <1518054113-28096-1-git-send-email-liuzhengyuan@kylinos.cn>
-References: <1518054113-28096-1-git-send-email-liuzhengyuan@kylinos.cn>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751786AbeBHPXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:23:31 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,479,1511856000";
+   d="scan'208";a="18306797"
+Date: Thu, 8 Feb 2018 08:27:30 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-block@vger.kernel.org, axboe@fb.com,
+        linux-nvme@lists.infradead.org, joshi.k@samsung.com
+Subject: Re: [PATCH] blk: optimization for classic polling
+Message-ID: <20180208152730.GA4906@localhost.localdomain>
+References: <CGME20180208143655epcas1p444bf34705526b7839a5a135f82761aad@epcas1p4.samsung.com>
+ <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  8 Feb 2018 09:41:53 +0800
-Zhengyuan Liu <liuzhengyuan@kylinos.cn> wrote:
-
-> It's something looks weird that those files could be written by root
-> but shows with no write permission by ll command.
-> Chen LinX <linx.z.chen@intel.com> has sent a similar patch to fix
-> graph function file mode in 2000,  I didn't get the reason why that
-> patch wasn't applied so I resend it.
+On Sun, May 30, 2083 at 09:51:06AM +0530, Nitesh Shetty wrote:
+> This removes the dependency on interrupts to wake up task. Set task
+> state as TASK_RUNNING, if need_resched() returns true,
+> while polling for IO completion.
+> Earlier, polling task used to sleep, relying on interrupt to wake it up.
+> This made some IO take very long when interrupt-coalescing is enabled in
+> NVMe.
 > 
-> Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+> Reference:
+> http://lists.infradead.org/pipermail/linux-nvme/2018-February/015435.html
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
 > ---
->  kernel/trace/ftrace.c      | 4 ++--
->  kernel/trace/trace_stack.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index ccdf366..fe903dc8 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -5513,10 +5513,10 @@ static __init int ftrace_init_dyn_tracefs(struct dentry *d_tracer)
->  	ftrace_create_filter_files(&global_ops, d_tracer);
->  
->  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> -	trace_create_file("set_graph_function", 0444, d_tracer,
-> +	trace_create_file("set_graph_function", 0644, d_tracer,
+>  fs/block_dev.c | 16 ++++++++++++----
+>  fs/direct-io.c |  8 ++++++--
+>  fs/iomap.c     | 10 +++++++---
+>  3 files changed, 25 insertions(+), 9 deletions(-)
 
-Thanks for resending the patch.
+I think it'd be simpler to have blk_poll set it back to running if
+need_resched is true rather than repeat this patter across all the
+callers:
 
-What's interesting is that this doesn't seem to affect whether or not
-root can write to the file. I wonder if that's a bug itself.
-
--- Steve
-
->  				    NULL,
->  				    &ftrace_graph_fops);
-> -	trace_create_file("set_graph_notrace", 0444, d_tracer,
-> +	trace_create_file("set_graph_notrace", 0644, d_tracer,
->  				    NULL,
->  				    &ftrace_graph_notrace_fops);
->  #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
-> diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-> index 734accc..4356f14 100644
-> --- a/kernel/trace/trace_stack.c
-> +++ b/kernel/trace/trace_stack.c
-> @@ -468,7 +468,7 @@ static __init int stack_trace_init(void)
->  			NULL, &stack_trace_fops);
->  
->  #ifdef CONFIG_DYNAMIC_FTRACE
-> -	trace_create_file("stack_trace_filter", 0444, d_tracer,
-> +	trace_create_file("stack_trace_filter", 0644, d_tracer,
->  			  &trace_ops, &stack_trace_filter_fops);
->  #endif
->  
+---
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index df93102e2149..40285fe1c8ad 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3164,6 +3164,7 @@ static bool __blk_mq_poll(struct blk_mq_hw_ctx *hctx, struct request *rq)
+ 		cpu_relax();
+ 	}
+ 
++	set_current_state(TASK_RUNNING);
+ 	return false;
+ }
+ 
+--
