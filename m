@@ -1,118 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752175AbeBHRB7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:01:59 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41779 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeBHRB5 (ORCPT
+        id S1752103AbeBHRFC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:05:02 -0500
+Received: from gateway36.websitewelcome.com ([192.185.193.12]:33299 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751094AbeBHRFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:01:57 -0500
-X-Google-Smtp-Source: AH8x224evjmFeRuwPtgbSRslDrvtDNzhuC1/5JVvBsTb1ZgJh2hxh+QRfjE0CmRN4P3fYBhXCCWfow==
-From: Claudio Scordino <claudio@evidence.eu.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Claudio Scordino <claudio@evidence.eu.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
-Date: Thu,  8 Feb 2018 18:01:42 +0100
-Message-Id: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 8 Feb 2018 12:05:01 -0500
+Subject: Re: [PATCH] ACPI / CPPC: Use 64-bit arithmetic instead of 32-bit
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180206233617.GA30829@embeddedgus>
+ <2503109.MpnWDuSnnD@aspire.rjw.lan>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <1f5cffd5-4806-a8e6-48d7-bc2f8ec1d440@embeddedor.com>
+Date: Thu, 8 Feb 2018 10:40:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <2503109.MpnWDuSnnD@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1ejpFX-002jTM-KD
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.69]) [189.175.4.238]:51026
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the SCHED_DEADLINE scheduling class increases the CPU utilization,
-we should not wait for the rate limit, otherwise we may miss some deadline.
 
-Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
-misses for tasks with low RT periods.
 
-The patch applies on top of the one recently proposed by Peter to drop the
-SCHED_CPUFREQ_* flags.
+On 02/08/2018 03:49 AM, Rafael J. Wysocki wrote:
+> On Wednesday, February 7, 2018 12:36:17 AM CET Gustavo A. R. Silva wrote:
+>> Add suffix ULL to constant 500 in order to give the compiler complete
+>> information about the proper arithmetic to use. Notice that this
+>> constant is used in a context that expects an expression of type
+>> u64 (64 bits, unsigned).
+>>
+>> The expression NUM_RETRIES * cppc_ss->latency at line 578, which at
+>> preprocessing time translates to 500 * cppc_ss->latency is currently
+>> being evaluated using 32-bit arithmetic.
+>>
+>> Addresses-Coverity-ID: 1382602
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>> Notice that another option is to cast NUM_RETRIES to u64 at line 578,
+>> but as there is only one instace in which this macro is being used I
+>> think adding the ULL is just enough.
+>>
+>>   drivers/acpi/cppc_acpi.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>> index 06ea474..0afbb26 100644
+>> --- a/drivers/acpi/cppc_acpi.c
+>> +++ b/drivers/acpi/cppc_acpi.c
+>> @@ -119,7 +119,7 @@ static DEFINE_PER_CPU(struct cpc_desc *, cpc_desc_ptr);
+>>    * to PCC commands. Keeping it high enough to cover emulators where
+>>    * the processors run painfully slow.
+>>    */
+>> -#define NUM_RETRIES 500
+>> +#define NUM_RETRIES 500ULL
+>>   
+>>   struct cppc_attr {
+>>   	struct attribute attr;
+>>
+> 
+> Applied, thanks!
+> 
+> 
 
-Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
-CC: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
-CC: Patrick Bellasi <patrick.bellasi@arm.com>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-CC: Morten Rasmussen <morten.rasmussen@arm.com>
-CC: Juri Lelli <juri.lelli@redhat.com>
-CC: Viresh Kumar <viresh.kumar@linaro.org>
-CC: Vincent Guittot <vincent.guittot@linaro.org>
-CC: Todd Kjos <tkjos@android.com>
-CC: Joel Fernandes <joelaf@google.com>
-CC: linux-pm@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- kernel/sched/cpufreq_schedutil.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Thank you, Rafael.
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index b0bd77d..d8dcba2 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -74,7 +74,10 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
- 
- /************************ Governor internals ***********************/
- 
--static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
-+static bool sugov_should_update_freq(struct sugov_policy *sg_policy,
-+				     u64 time,
-+				     struct sugov_cpu *sg_cpu_old,
-+				     struct sugov_cpu *sg_cpu_new)
- {
- 	s64 delta_ns;
- 
-@@ -111,6 +114,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
- 		return true;
- 	}
- 
-+	/* Ignore rate limit when DL increased utilization. */
-+	if (sg_cpu_new->util_dl > sg_cpu_old->util_dl)
-+		return true;
-+
- 	delta_ns = time - sg_policy->last_freq_update_time;
- 	return delta_ns >= sg_policy->freq_update_delay_ns;
- }
-@@ -271,6 +278,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
- 				unsigned int flags)
- {
- 	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-+	struct sugov_cpu sg_cpu_old = *sg_cpu;
- 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
- 	unsigned long util, max;
- 	unsigned int next_f;
-@@ -279,7 +287,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
- 	sugov_set_iowait_boost(sg_cpu, time, flags);
- 	sg_cpu->last_update = time;
- 
--	if (!sugov_should_update_freq(sg_policy, time))
-+	if (!sugov_should_update_freq(sg_policy, time, &sg_cpu_old, sg_cpu))
- 		return;
- 
- 	busy = sugov_cpu_is_busy(sg_cpu);
-@@ -350,6 +358,7 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
- 				unsigned int flags)
- {
- 	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-+	struct sugov_cpu sg_cpu_old = *sg_cpu;
- 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
- 	unsigned int next_f;
- 
-@@ -359,7 +368,7 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
- 	sugov_set_iowait_boost(sg_cpu, time, flags);
- 	sg_cpu->last_update = time;
- 
--	if (sugov_should_update_freq(sg_policy, time)) {
-+	if (sugov_should_update_freq(sg_policy, time, &sg_cpu_old, sg_cpu)) {
- 		next_f = sugov_next_freq_shared(sg_cpu, time);
- 		sugov_update_commit(sg_policy, time, next_f);
- 	}
 -- 
-2.7.4
+Gustavo
