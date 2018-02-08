@@ -1,81 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752059AbeBHM5h (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:57:37 -0500
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:38844 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751725AbeBHM5f (ORCPT
+        id S1751706AbeBHNCw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:02:52 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46234 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeBHNCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:57:35 -0500
-Subject: Re: [PATCH 2/7] soc: davinci: new genpd driver
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180207134553.13510-1-brgl@bgdev.pl>
- <20180207134553.13510-3-brgl@bgdev.pl>
- <65f2690c-c605-3c66-9d8a-9a882aaf446d@ti.com>
- <CAMRc=Mf+S3k_wfhUWEx2-39AZx1szkgy-u-bsZQUMiaY06UKww@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <34d3980b-2c94-1540-94f0-dc0c86743475@ti.com>
-Date: Thu, 8 Feb 2018 18:26:20 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 8 Feb 2018 08:02:50 -0500
+Date: Thu, 8 Feb 2018 14:02:32 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] objtool: Fix switch-table detection
+Message-ID: <20180208130232.GF25235@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=Mf+S3k_wfhUWEx2-39AZx1szkgy-u-bsZQUMiaY06UKww@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 08 February 2018 03:24 PM, Bartosz Golaszewski wrote:
-> 2018-02-08 10:30 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
->> On Wednesday 07 February 2018 07:15 PM, Bartosz Golaszewski wrote:
->>> +     /*
->>> +      * DaVinci always uses a single clock for power-management. We assume
->>> +      * it's the first one in the clocks property.
->>> +      */
->>> +     clk = of_clk_get(dev->of_node, 0);
->>> +     if (IS_ERR(clk))
->>> +             return PTR_ERR(clk);
->>
->> We already get this today with drivers/base/power/clock_ops.c once
->> .con_ids list is dropped from pm_clk_notifier_block (which I think it
->> should).
->>
->> If there is no reason to introduce thus functionality at this stage,
->> perhaps we should wait till such a time when its clearly needed?
->>
->> Thanks,
->> Sekhar
-> 
-> If I understand correctly: once we drop the con_ids list, we end up
-> calling clk_get(dev, NULL) from pm_clk_acquire(), which matches
-> against the clock with NULL con_id, which may not necessarily be the
-> first clock in the list.
 
-Hmm, not sure of this. In __of_clk_get_by_name() called by clk_get():
+Linus reported that GCC-7.3 generated a switch-table construct that
+confused objtool. It turns out that, in particular due to KASAN, it is
+possible to have unrelated .rodata usage in between the .rodata setup
+for the switch-table and the following indirect jump.
 
-int index = 0;
+The simple linear reverse search from the indirect jump would hit upon
+the KASAN .rodata usage first and fail to find a switch_table,
+resulting in a spurious 'sibling call with modified stack frame'
+warning.
 
-/*
- * For named clocks, first look up the name in the
- * "clock-names" property.  If it cannot be found, then
- * index will be an error code, and of_clk_get() will fail.
- */
-if (name)
-	index = of_property_match_string(np, "clock-names", name);
+Fix this by creating a 'jump-stack' which we can 'unwind' during
+reversal, thereby skipping over much of the in-between code.
 
-So, if no con_id is provided (name == NULL), then index is set to 0
-which will always get the first clock in clocks = list.
+This is not fool proof by any means, but is sufficient to make the
+known cases work. Future work would be to construct more comprehensive
+flow analysis code.
 
-Thanks,
-Sekhar
+Also, since Josh keeps asking, add myself to MAINTAINERS.
+
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ MAINTAINERS           |    1 +
+ tools/objtool/check.c |   41 +++++++++++++++++++++++++++++++++++++++--
+ tools/objtool/check.h |    1 +
+ 3 files changed, 41 insertions(+), 2 deletions(-)
+
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9847,6 +9847,7 @@ F:	drivers/nfc/nxp-nci
+ 
+ OBJTOOL
+ M:	Josh Poimboeuf <jpoimboe@redhat.com>
++M:	Peter Zijlstra <peterz@infradead.org>
+ S:	Supported
+ F:	tools/objtool/
+ 
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -851,8 +851,14 @@ static int add_switch_table(struct objto
+  *    This is a fairly uncommon pattern which is new for GCC 6.  As of this
+  *    writing, there are 11 occurrences of it in the allmodconfig kernel.
+  *
++ *    As of GCC 7 there are quite a few more of these and the 'in between' code
++ *    is significant. Esp. with KASAN enabled some of the code between the mov
++ *    and jmpq uses .rodata itself, which can confuse things.
++ *
+  *    TODO: Once we have DWARF CFI and smarter instruction decoding logic,
+  *    ensure the same register is used in the mov and jump instructions.
++ *
++ *    NOTE: RETPOLINE made it harder still to decode dynamic jumps.
+  */
+ static struct rela *find_switch_table(struct objtool_file *file,
+ 				      struct symbol *func,
+@@ -874,12 +880,25 @@ static struct rela *find_switch_table(st
+ 						text_rela->addend + 4);
+ 		if (!rodata_rela)
+ 			return NULL;
++
+ 		file->ignore_unreachables = true;
+ 		return rodata_rela;
+ 	}
+ 
+ 	/* case 3 */
+-	func_for_each_insn_continue_reverse(file, func, insn) {
++	/*
++	 * Backward search using the @first_jump_src links, these help avoid
++	 * much of the 'in between' code. Which avoids us getting confused by
++	 * it.
++	 */
++	for (insn = list_prev_entry(insn, list);
++
++	     &insn->list != &file->insn_list &&
++	     insn->sec == func->sec &&
++	     insn->offset >= func->offset;
++
++	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
++
+ 		if (insn->type == INSN_JUMP_DYNAMIC)
+ 			break;
+ 
+@@ -909,14 +928,32 @@ static struct rela *find_switch_table(st
+ 	return NULL;
+ }
+ 
++
+ static int add_func_switch_tables(struct objtool_file *file,
+ 				  struct symbol *func)
+ {
+-	struct instruction *insn, *prev_jump = NULL;
++	struct instruction *insn, *last = NULL, *prev_jump = NULL;
+ 	struct rela *rela, *prev_rela = NULL;
+ 	int ret;
+ 
+ 	func_for_each_insn(file, func, insn) {
++		if (!last)
++			last = insn;
++
++		/*
++		 * Store back-pointers for unconditional forward jumps such
++		 * that find_switch_table() can back-track using those and
++		 * avoid some potentially confusing code.
++		 */
++		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest &&
++		    insn->offset > last->offset &&
++		    insn->jump_dest->offset > insn->offset &&
++		    !insn->jump_dest->first_jump_src) {
++
++			insn->jump_dest->first_jump_src = insn;
++			last = insn->jump_dest;
++		}
++
+ 		if (insn->type != INSN_JUMP_DYNAMIC)
+ 			continue;
+ 
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -47,6 +47,7 @@ struct instruction {
+ 	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
++	struct instruction *first_jump_src;
+ 	struct list_head alts;
+ 	struct symbol *func;
+ 	struct stack_op stack_op;
