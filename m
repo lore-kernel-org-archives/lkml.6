@@ -1,59 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752046AbeBHC5i (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 21:57:38 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:39496 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751788AbeBHC5h (ORCPT
+        id S1752135AbeBHC6A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 21:58:00 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39757 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbeBHC56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 21:57:37 -0500
-Date: Wed, 07 Feb 2018 21:57:35 -0500 (EST)
-Message-Id: <20180207.215735.1518454397358783732.davem@davemloft.net>
-To: grygorii.strashko@ti.com
-Cc: netdev@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix net watchdog timeout
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180207011706.13393-1-grygorii.strashko@ti.com>
-References: <20180207011706.13393-1-grygorii.strashko@ti.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Feb 2018 21:57:58 -0500
+X-Google-Smtp-Source: AH8x227bxYwSAT/a66zEJVbBvOTt3bhBQsBNl6e4xl1IE2jBbDC/mGwL6GNEU5S1UaQEQpFyBMIw9g==
+Date: Thu, 8 Feb 2018 10:57:52 +0800
+From: Alan Kao <nonerkao@gmail.com>
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: albert@sifive.com, rostedt@goodmis.org, mingo@redhat.com,
+        yamada.masahiro@socionext.com, n54@gmx.com, akpm@linux-foundation.org,
+        patches@groups.riscv.org, linux-kernel@vger.kernel.org,
+        sorear2@gmail.com, alankao@andestech.com, greentime@andestech.com
+Subject: Re: [patches] [PATCH v3 0/6] Add dynamic ftrace support for RISC-V
+ platforms
+Message-ID: <20180208025750.GA3903@75c3b24ef355>
+References: <20180118154545.17987-1-alankao@andestech.com>
+ <mhng-375db8f6-17f2-41d6-922f-33b0c7fc9e1c@palmer-si-x1c4>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-375db8f6-17f2-41d6-922f-33b0c7fc9e1c@palmer-si-x1c4>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Tue, 6 Feb 2018 19:17:06 -0600
+On Wed, Feb 07, 2018 at 04:37:10PM -0800, Palmer Dabbelt wrote:
+> On Thu, 18 Jan 2018 07:45:39 PST (-0800), nonerkao@gmail.com wrote:
+> > This patch set includes the building blocks of dynamic ftrace features
+> > for RISC-V machines.
+> > 
+> > Changes in v3:
+> >  - Replace the nops at the tracer call sites into a "call ftrace_stub"
+> >    instruction for better understanding (1/6 and 2/6)
+> > 
+> > Changes in v2:
+> >  - Fix the return value as writing to kernel text goes wrong (2/6)
+> >  - Replace manual comparisons by calling memcmp (2/6)
+> >  - Simplify the conditional assignment in the Makefile (1/6)
+> > 
+> > Alan Kao (6):
+> >   riscv/ftrace: Add RECORD_MCOUNT support
+> >   riscv/ftrace: Add dynamic function tracer support
+> >   riscv/ftrace: Add dynamic function graph tracer support
+> >   riscv/ftrace: Add ARCH_SUPPORTS_FTRACE_OPS support
+> >   riscv/ftrace: Add DYNAMIC_FTRACE_WITH_REGS support
+> >   riscv/ftrace: Add HAVE_FUNCTION_GRAPH_RET_ADDR_PTR support
+> > 
+> >  arch/riscv/Kconfig              |   3 +
+> >  arch/riscv/Makefile             |   3 +
+> >  arch/riscv/include/asm/ftrace.h |  47 ++++++++
+> >  arch/riscv/kernel/Makefile      |   5 +-
+> >  arch/riscv/kernel/ftrace.c      | 142 ++++++++++++++++++++++-
+> >  arch/riscv/kernel/mcount-dyn.S  | 241 ++++++++++++++++++++++++++++++++++++++++
+> >  arch/riscv/kernel/mcount.S      |  22 ++--
+> >  arch/riscv/kernel/stacktrace.c  |   6 +
+> >  scripts/recordmcount.pl         |   5 +
+> >  9 files changed, 461 insertions(+), 13 deletions(-)
+> >  create mode 100644 arch/riscv/kernel/mcount-dyn.S
+> 
+> Sorry it took me a while to get around to these.  Do you mind submitting a
+> v4 that's based on linux-4.15?  I'm getting all sorts of merge errors trying
+> to "git am" these.
 
-> It was discovered that simple program which indefinitely sends 200b UDP
-> packets and runs on TI AM574x SoC (SMP) under RT Kernel triggers network
-> watchdog timeout in TI CPSW driver (<6 hours run). The network watchdog
-> timeout is triggered due to race between cpsw_ndo_start_xmit() and
-> cpsw_tx_handler() [NAPI]
-> 
-> cpsw_ndo_start_xmit()
-> 	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
-> 		txq = netdev_get_tx_queue(ndev, q_idx);
-> 		netif_tx_stop_queue(txq);
-> 
-> ^^ as per [1] barier has to be used after set_bit() otherwise new value
-> might not be visible to other cpus
-> 	}
-> 
-> cpsw_tx_handler()
-> 	if (unlikely(netif_tx_queue_stopped(txq)))
-> 		netif_tx_wake_queue(txq);
-> 
-> and when it happens ndev TX queue became disabled forever while driver's HW
-> TX queue is empty.
-> 
-> Fix this, by adding smp_mb__after_atomic() after netif_tx_stop_queue()
-> calls and double check for free TX descriptors after stopping ndev TX queue
-> - if there are free TX descriptors wake up ndev TX queue.
-> 
-> [1] https://www.kernel.org/doc/html/latest/core-api/atomic_ops.html
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
-Applied, thanks.
+Sorry for the misunderstanding in the previous email.  I will rebase the
+set on linux-4.15.  Thanks.
