@@ -1,70 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeBHKNu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:13:50 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60946 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752056AbeBHKNt (ORCPT
+        id S1752207AbeBHKOF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:14:05 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:38875 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750877AbeBHKOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:13:49 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Yu Chen <yu.c.chen@intel.com>
-Cc: Len Brown <lenb@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] cpufreq: intel_pstate: enable HWP after resumed
-Date: Thu, 08 Feb 2018 11:12:05 +0100
-Message-ID: <5530967.sVKap31zK9@aspire.rjw.lan>
-In-Reply-To: <7ddf56d88ed43701cd498fd42d1ae75e4eea1340.1517192577.git.yu.c.chen@intel.com>
-References: <d71a6cf7352de5595ac1419000bd72b6d068cce1.1517192577.git.yu.c.chen@intel.com> <7ddf56d88ed43701cd498fd42d1ae75e4eea1340.1517192577.git.yu.c.chen@intel.com>
+        Thu, 8 Feb 2018 05:14:03 -0500
+Date: Thu, 8 Feb 2018 11:13:48 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [linus:master] BUILD REGRESSION
+ a2e5790d841658485d642196dbb0927303d6c22f
+Message-ID: <20180208101348.GF25201@hirez.programming.kicks-ass.net>
+References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+ <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
+ <20180207183543.GA8897@pd.tnic>
+ <20180207184933.GA25201@hirez.programming.kicks-ass.net>
+ <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
+ <20180207191451.GC25201@hirez.programming.kicks-ass.net>
+ <20180207192816.GA19536@pd.tnic>
+ <CA+55aFzSZzdVZXatze=xjGSwpOPO7kvbWnz7JiZ3sTx_2Pohjw@mail.gmail.com>
+ <20180208091302.GD25201@hirez.programming.kicks-ass.net>
+ <c636fea6531b4c579f86e39c557b4c0d@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c636fea6531b4c579f86e39c557b4c0d@AcuMS.aculab.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, January 29, 2018 3:27:57 AM CET Yu Chen wrote:
-> When maxcpus=1 is appended the BP is responsible
-> for re-enabling the HWP - because currently only
-> the APs invoke intel_pstate_hwp_enable() during
-> their online process - which might put the system
-> into unstable state after resume.
-> 
-> Fix this by enabling the HWP explicitly on BP during
-> resume.
-> 
-> Reported-by: Doug Smythies <dsmythies@telus.net>
-> Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Signed-off-by: Yu Chen <yu.c.chen@intel.com>
-> ---
->  drivers/cpufreq/intel_pstate.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index 93a0e88bef76..89f637e8439c 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -779,6 +779,8 @@ static int intel_pstate_hwp_save_state(struct cpufreq_policy *policy)
->  	return 0;
->  }
->  
-> +static void intel_pstate_hwp_enable(struct cpudata *cpudata);
-> +
->  static int intel_pstate_resume(struct cpufreq_policy *policy)
->  {
->  	if (!hwp_active)
-> @@ -786,6 +788,8 @@ static int intel_pstate_resume(struct cpufreq_policy *policy)
->  
->  	mutex_lock(&intel_pstate_limits_lock);
->  
-> +	if (!policy->cpu)
-> +		intel_pstate_hwp_enable(all_cpu_data[policy->cpu]);
->  	all_cpu_data[policy->cpu]->epp_policy = 0;
->  	intel_pstate_hwp_set(policy->cpu);
->  
-> 
+On Thu, Feb 08, 2018 at 09:47:53AM +0000, David Laight wrote:
+> From: Peter Zijlstra
 
-I've applied this one (with minor modifications) as a temporary measure, but
-it is based on the CPU0=BP assumption which may not be the case.
+> > I went through the register opcodes and matched it against the ModR/M
+> > encoding, and the best option I've found so far is using 0xd6 as the
+> > next byte.
+> 
+> Wouldn't 0xc3 work as well.
+> A retq is probably better than an extra (bad).
+
+I explicity did not use c3 because that generates spurious "retq" in the
+code flow which is mighty confusing when you read the stuff.
