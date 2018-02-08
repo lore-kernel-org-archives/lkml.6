@@ -1,58 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeBHOHT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:07:19 -0500
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:37229 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751756AbeBHOHS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:07:18 -0500
-X-Google-Smtp-Source: AH8x227CoM8atcQDWpyqz/D/Lk4F+pbTHOY9W5dxZo/KT2+PnnnDr7zI4WbpUnmeHWLz+7o39DKwoA==
-Subject: Re: [PATCH 2/8] thermal/drivers/cpu_cooling: Add Software Package
- Data Exchange (SPDX)
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Javi Merino <javi.merino@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        "open list:THERMAL/CPU_COOLING" <linux-pm@vger.kernel.org>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-3-git-send-email-daniel.lezcano@linaro.org>
- <CAOFm3uEbg213MdHJrDthzH58udSAH4hErUo7osntZaMoAW5EDw@mail.gmail.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a6838bd4-be09-e716-0547-86601bdfa33a@linaro.org>
-Date: Thu, 8 Feb 2018 15:07:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAOFm3uEbg213MdHJrDthzH58udSAH4hErUo7osntZaMoAW5EDw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752230AbeBHOHp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:07:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750876AbeBHOHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:07:44 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F52C20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Thu, 8 Feb 2018 23:07:41 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [RFC][PATCH 5/6] selftests/ftrace: Add some missing glob checks
+Message-Id: <20180208230741.d108a8ab9126e130265870d6@kernel.org>
+In-Reply-To: <20180206224541.667281142@goodmis.org>
+References: <20180206224338.446477232@goodmis.org>
+        <20180206224541.667281142@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 15:05, Philippe Ombredanne wrote:
-> Daniel,
+On Tue, 06 Feb 2018 17:43:43 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-[ ... ]
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Al Viro discovered a bug in the glob ftrace filtering code where "*a*b" is
+> treated the same as "a*b", and functions that would be selected by "*a*b"
+> but not "a*b" are not selected with "*a*b".
+> 
+> Add tests for patterns "*a*b" and "a*b*" to the glob selftest.
 
-> Sorry for the late reply!
-> Thank you.
-> Acked-by: Philippe Ombredanne <pombredanne@nexB.com>
 
-No worries.
+Yeah, this is what we should have...
 
-Thanks for the ack.
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-  -- Daniel
+Thank you!
+
+> 
+> Link: http://lkml.kernel.org/r/20180127170748.GF13338@ZenIV.linux.org.uk
+> 
+> Cc: Shuah Khan <shuah@kernel.org>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
+> index 589d52b211b7..27a54a17da65 100644
+> --- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
+> @@ -29,6 +29,12 @@ ftrace_filter_check '*schedule*' '^.*schedule.*$'
+>  # filter by *, end match
+>  ftrace_filter_check 'schedule*' '^schedule.*$'
+>  
+> +# filter by *mid*end
+> +ftrace_filter_check '*aw*lock' '.*aw.*lock$'
+> +
+> +# filter by start*mid*
+> +ftrace_filter_check 'mutex*try*' '^mutex.*try.*'
+> +
+>  # Advanced full-glob matching feature is recently supported.
+>  # Skip the tests if we are sure the kernel does not support it.
+>  if grep -q 'accepts: .* glob-matching-pattern' README ; then
+> -- 
+> 2.15.1
+> 
+> 
 
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Masami Hiramatsu <mhiramat@kernel.org>
