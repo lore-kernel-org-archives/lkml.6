@@ -1,134 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeBHOv7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:51:59 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:36268 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeBHOv5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:51:57 -0500
-X-Google-Smtp-Source: AH8x227Sl2qpAblGTaa9alPqZ2EBZz4dZr43DTB1fcwvaiYiwWjkxUT/PWbFKxOYFo1ljtv9gC4Z64TNKJLtxTUbRdA=
+        id S1752037AbeBHOw6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:52:58 -0500
+Received: from 8bytes.org ([81.169.241.247]:53302 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750961AbeBHOw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:52:57 -0500
+Date: Thu, 8 Feb 2018 15:52:54 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [git pull] IOMMU Updates for Linux v4.16
+Message-ID: <20180208145249.fje5zfvjtz7qb3mi@8bytes.org>
 MIME-Version: 1.0
-In-Reply-To: <2e48794f-1ebb-6466-f4bf-aa409674bdaa@gmail.com>
-References: <1516875222-12293-1-git-send-email-baijiaju1990@gmail.com>
- <1808276.ZJn2ZeULZY@aspire.rjw.lan> <151808479008.28809.166946118004484639@mail.alporthouse.com>
- <1914141.qoxtLSqbUU@aspire.rjw.lan> <2e48794f-1ebb-6466-f4bf-aa409674bdaa@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 8 Feb 2018 15:51:56 +0100
-X-Google-Sender-Auth: wnSNlGunbG_i9yxsq3E-cW7S2p4
-Message-ID: <CAJZ5v0jUoSadyHiv5TpbLb+0pg8HzvK7GJprmODsOEAG1m=WuA@mail.gmail.com>
-Subject: Re: [PATCH] acpi: osl: Replace GFP_ATOMIC with GFP_KERNEL in acpi_os_execute
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Chris Wilson <chris@chris-wilson.co.uk>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="su7vmtkdwepeqdvh"
+Content-Disposition: inline
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 8, 2018 at 2:41 PM, Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
->
->
-> On 2018/2/8 18:20, Rafael J. Wysocki wrote:
->>
->> On Thursday, February 8, 2018 11:13:10 AM CET Chris Wilson wrote:
->>>
->>> Quoting Rafael J. Wysocki (2018-02-08 09:51:41)
->>>>
->>>> On Thursday, January 25, 2018 11:13:41 AM CET Jia-Ju Bai wrote:
->>>>>
->>>>> After checking all possible call chains to acpi_os_execute here,
->>>>> my tool finds that acpi_os_execute is never called in atomic context.
->>>>> And acpi_os_execute calls acpi_debugger_create_thread
->>>>> which calls mutex_lock,
->>>>> thus it proves again that acpi_os_execute can
->>>>> call functions which may sleep.
->>>>> Thus GFP_ATOMIC is not necessary, and it can be replaced with
->>>>> GFP_KERNEL.
->>>>>
->>>>> This is found by a static analysis tool named DCNS written by myself.
->>>>>
->>>>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->>>>> ---
->>>>>   drivers/acpi/osl.c |    2 +-
->>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
->>>>> index 3bb46cb..8ee605e 100644
->>>>> --- a/drivers/acpi/osl.c
->>>>> +++ b/drivers/acpi/osl.c
->>>>> @@ -1066,7 +1066,7 @@ acpi_status acpi_os_execute(acpi_execute_type
->>>>> type,
->>>>>         * having a static work_struct.
->>>>>         */
->>>>>   -     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_ATOMIC);
->>>>> +     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_KERNEL);
->>>>>        if (!dpc)
->>>>>                return AE_NO_MEMORY;
->>>>>
->>>>
->>>> Applied, thanks!
->>>
->>> Hmm, not this patch per se, but
->>>
->>> https://intel-gfx-ci.01.org/tree/next/next-20180207/fi-bxt-dsi/dmesg0.log
->>> [  111.378236] BUG: sleeping function called from invalid context at
->>> mm/slab.h:420
->>> [  111.378259] in_atomic(): 1, irqs_disabled(): 1, pid: 1701, name:
->>> gem_exec_flush
->>> [  111.378275] INFO: lockdep is turned off.
->>> [  111.378277] irq event stamp: 0
->>> [  111.378280] hardirqs last  enabled at (0): [<          (null)>]
->>> (null)
->>> [  111.378286] hardirqs last disabled at (0): [<00000000a01fa473>]
->>> copy_process.part.7+0x2f1/0x1db0
->>> [  111.378290] softirqs last  enabled at (0): [<00000000a01fa473>]
->>> copy_process.part.7+0x2f1/0x1db0
->>> [  111.378292] softirqs last disabled at (0): [<          (null)>]
->>> (null)
->>> [  111.378293] Preemption disabled at:
->>> [  111.378298] [<ffffffffa18f14f6>] __mutex_lock+0x56/0x9b0
->>> [  111.378311] CPU: 1 PID: 1701 Comm: gem_exec_flush Tainted: G     U  W
->>> 4.15.0-next-20180207-g5d1c98967100-next-20180207 #1
->>> [  111.378313] Hardware name: Intel Corp. Broxton P/Apollolake RVP1A,
->>> BIOS APLKRVPA.X64.0150.B11.1608081044 08/08/2016
->>> [  111.378314] Call Trace:
->>> [  111.378318]  <IRQ>
->>> [  111.378323]  dump_stack+0x5f/0x86
->>> [  111.378328]  ___might_sleep+0x1d9/0x240
->>> [  111.378334]  ? acpi_os_execute+0x2d/0x130
->>> [  111.378338]  kmem_cache_alloc_trace+0x1ae/0x2b0
->>> [  111.378344]  ? acpi_ev_asynch_enable_gpe+0x2d/0x2d
->>> [  111.378347]  acpi_os_execute+0x2d/0x130
->>> [  111.378351]  acpi_ev_gpe_dispatch+0xd7/0x120
->>> [  111.378355]  acpi_ev_gpe_detect+0x156/0x195
->>> [  111.378362]  acpi_ev_sci_xrupt_handler+0x16/0x28
->>> [  111.378365]  acpi_irq+0xd/0x30
->>> [  111.378369]  __handle_irq_event_percpu+0x3c/0x340
->>> [  111.378374]  handle_irq_event_percpu+0x1b/0x50
->>> [  111.378378]  handle_irq_event+0x2f/0x50
->>> [  111.378381]  handle_fasteoi_irq+0x93/0x150
->>> [  111.378386]  handle_irq+0x11/0x20
->>> [  111.378390]  do_IRQ+0x5e/0x120
->>> [  111.378395]  common_interrupt+0xbb/0xbb
->>> [  111.378397]  </IRQ>
->>>
->>> does tell us that acpi_os_execute() is called in irq context.
->>
->> Well, right, thanks!
->>
->> I overlooked this instance, so dropping the patch.
->
->
-> Sorry for my false positive.
 
-No worries.
+--su7vmtkdwepeqdvh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> My tool missed that acpi_ev_sci_xrupt_handler() is an interrupt handler, sorry.
+Hi Linus,
 
-That just means that the tool is not perfect, which is nothing unusual. :-)
+This time there are not a lot of changes coming from the IOMMU side.
+That is partly because I returned from my parental leave late in the
+development process and probably partly because everyone was busy with
+Spectre and Meltdown mitigation work and didn't find the time for IOMMU
+work. So here are the few changes that queued up for this merge window:
 
-I only would suggest double checking its findings before sending out
-patches next time.
+The following changes since commit a8750ddca918032d6349adbf9a4b6555e7db20da:
+
+  Linux 4.15-rc8 (2018-01-14 15:32:30 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v4.16
+
+for you to fetch changes up to fedbd940d1c2e37e6b11cf84f67b30dfcbf6fba5:
+
+  Merge branches 'arm/renesas', 'arm/omap', 'arm/exynos', 'x86/amd', 'x86/vt-d' and 'core' into next (2018-01-17 15:29:14 +0100)
+
+----------------------------------------------------------------
+IOMMU Updates for Linux v4.16
+
+Including:
+
+	- 5-level page-table support for the Intel IOMMU.
+
+	- Error reporting improvements for the AMD IOMMU driver
+
+	- Additional DT bindings for ipmmu-vmsa (Renesas)
+
+	- Smaller fixes and cleanups
+
+----------------------------------------------------------------
+Gary R Hook (2):
+      iommu/amd - Record more information about unknown events
+      iommu/amd: Set the device table entry PPR bit for IOMMU V2 devices
+
+Geert Uytterhoeven (1):
+      iommu/omap: Fix debugfs_create_*() usage
+
+Jerry Snitselaar (1):
+      iommu/vt-d: clean up pr_irq if request_threaded_irq fails
+
+Joerg Roedel (1):
+      Merge branches 'arm/renesas', 'arm/omap', 'arm/exynos', 'x86/amd', 'x86/vt-d' and 'core' into next
+
+Jordan Crouse (1):
+      iommu: Check the result of iommu_group_get() for NULL
+
+Magnus Damm (1):
+      iommu/ipmmu-vmsa: Add r8a7796 DT binding
+
+Peter Xu (1):
+      iommu/vt-d: Use domain instead of cache fetching
+
+Robin Murphy (4):
+      iommu/exynos: Don't unconditionally steal bus ops
+      iommu/msm: Claim bus ops on probe
+      iommu/ipmmu-vmsa: Remove redundant of_iommu_init_fn hook
+      iommu: Clean up of_iommu_init_fn
+
+Simon Horman (1):
+      iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
+
+Sohil Mehta (4):
+      iommu/vt-d: Enable upto 57 bits of domain address width
+      iommu/vt-d: Add a check for 1GB page support
+      iommu/vt-d: Add a check for 5-level paging support
+      iommu/vt-d: Enable 5-level paging mode in the PASID entry
+
+ .../bindings/iommu/renesas,ipmmu-vmsa.txt          |  3 ++
+ drivers/iommu/amd_iommu.c                          | 24 ++++++++++++----
+ drivers/iommu/amd_iommu_types.h                    |  2 ++
+ drivers/iommu/arm-smmu-v3.c                        |  2 +-
+ drivers/iommu/arm-smmu.c                           | 12 ++++----
+ drivers/iommu/exynos-iommu.c                       |  9 +++++-
+ drivers/iommu/intel-iommu.c                        |  5 ++--
+ drivers/iommu/intel-svm.c                          | 32 ++++++++++++++++++----
+ drivers/iommu/iommu.c                              |  5 ++++
+ drivers/iommu/ipmmu-vmsa.c                         | 14 ++--------
+ drivers/iommu/msm_iommu.c                          | 16 ++---------
+ drivers/iommu/of_iommu.c                           | 16 -----------
+ drivers/iommu/omap-iommu-debug.c                   |  4 +--
+ drivers/iommu/qcom_iommu.c                         |  2 +-
+ include/linux/intel-iommu.h                        |  2 ++
+ include/linux/of_iommu.h                           |  5 +---
+ 16 files changed, 83 insertions(+), 70 deletions(-)
+
+Please pull.
+
+Thanks,
+
+	Joerg
+
+--su7vmtkdwepeqdvh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJafGRBAAoJECvwRC2XARrjGoUP/jgNo29ZHAdP3zm3e0iKhH7g
+xX8zIRbJP3pTxm91AJQq4P5oKS9L9/HPKszEmtr7eblpniLKKxc38AuWrH93vgmP
+xs47jygThfmk+O2cVbY7564wgfyI9xJIhkdv72OxqDjaaP6NBZy6F82J31aYd4/k
+TlDxwCWLF0aCet/qQZ5jOQ1GpzFQIe3e9z9mpDxE4n3CmIQonI1Vb5Jfpl2WU0xT
+3K3+1dgOPq4osaPpUBgI044QcjTZgmSwAnP62dcyPdneBWXyIhYtDiHYUkCEz+/c
+LYSUVDUgLrBSWyqp6zYgFgHCs+8Ue1GgJnqFE7P4SUUSf5g6F81JLKAaSJ4FXChD
+7yNi1cp4ZGJfTiL3/f6SQcHLlrJTlcEaV6CkirWaZYGtsheLWhmycBTtbWzPAj4x
+SjmPYvEnxY+sKkQOQD1N4hhOXCePQzD2nGa368ZHoI5+enkFvsZr81jxaFBg65tc
+ry5tbj0jxWrnHwTKhTYOLqyxPe/goyrGO+DcCPvIaFMySgIDyban1l+TIKrxS83e
+uBYCAja4lyMGebFPsKqtvknyxZcbelprK/QxRcIesIuLOO4tw5t7EZf+9DKgdnDy
+v+hJ9Ix57FPhMU5G5c5Hb2OX0BVwnt3Xwo3WA5dgRyfR08mHvtDKMsvKnnILaeiH
+qv2Bl/PqzGjnC3StcQ4s
+=l3xU
+-----END PGP SIGNATURE-----
+
+--su7vmtkdwepeqdvh--
