@@ -1,80 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752154AbeBHQqH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:46:07 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48958 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751310AbeBHQqG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:46:06 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Philippe Cornu <philippe.cornu@st.com>
-Cc: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
-        Heiko Stubner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH v2] drm/bridge/synopsys: dsi: Adopt SPDX identifiers
-Date: Thu, 08 Feb 2018 18:46:34 +0200
-Message-ID: <101210971.aHjggv2rq0@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180208145805.24762-1-philippe.cornu@st.com>
-References: <20180208145805.24762-1-philippe.cornu@st.com>
+        id S1752126AbeBHQsX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 11:48:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54705 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751094AbeBHQsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 11:48:22 -0500
+Date: Thu, 8 Feb 2018 17:48:20 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2] printk: Relocate wake_klogd check close to the end of
+ console_unlock()
+Message-ID: <20180208164820.qsotvvywds6z6le4@pathway.suse.cz>
+References: <20180208130402.15157-1-pmladek@suse.com>
+ <20180208145307.GA485@tigerII.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208145307.GA485@tigerII.localdomain>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
-
-Thank you for the patch.
-
-On Thursday, 8 February 2018 16:58:05 EET Philippe Cornu wrote:
-> Add SPDX identifiers to the Synopsys DesignWare MIPI DSI
-> host controller driver.
+On Thu 2018-02-08 23:53:07, Sergey Senozhatsky wrote:
+> On (02/08/18 14:04), Petr Mladek wrote:
+> > We mark for waking up klogd whenever we see a new message sequence in
+> > the main loop.  However, the actual wakeup is always at the end of the
+> > function and we can easily test for the wakeup condition when we do
+> > the final should-we-repeat check.
+> > 
+> > Move the wake_klogd condition check out of the main loop.  This avoids
+> > doing the same thing repeatedly and groups similar checks into a
+> > common place.
+> > 
+> > This fixes a race introduced by the commit dbdda842fe96f8932 ("printk: Add
+> > console owner and waiter logic to load balance console writes").
+> > The current console owner might process the newly added message before
+> > the related printk() start waiting for the console lock. Then the lock
+> > is passed without waking klogd. The new owner sees the already updated
+> > seen_seq and does not know that the wakeup is needed.
 > 
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> I need to do more "research" on this. I though about it some time ago,
+> and I think that waking up klogd _only_ when we don't have any pending
+> logbuf messages still can be pretty late. Can't it? We can spin in
+> console_unlock() printing loop for a long time, probably passing
+> console_sem ownership between CPUs, without waking up the log_wait waiter.
+> May be we can wake it up from the printing loop, outside of logbuf_lock,
+> and let klogd to compete for logbuf_lock with the printing CPU. Why do
+> we wake it up only when we are done pushing messages to a potentially
+> slow serial console?
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+I thought about this as well but I was lazy. You made me to do some
+archaeology. It seems that it worked this way basically from the beginning.
+I have a git tree with pre-git commits. The oldest printk changes are
+there from 2.1.113.
 
-> ---
-> Changes in v2: Update to "GPL-2.0+" following comments from Laurent
-> Pinchart, Benjamin Gaignard & Philippe Ombredanne.
-> 
->  drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c index
-> 7bac101c285c..99f0e4f51716 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-> @@ -1,12 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
->   * Copyright (C) STMicroelectronics SA 2017
->   *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
->   * Modified by Philippe Cornu <philippe.cornu@st.com>
->   * This generic Synopsys DesignWare MIPI DSI host driver is based on the
->   * Rockchip version from rockchip/dw-mipi-dsi.c with phy & bridge APIs.
+In 2.1.113, logd was weaken directly from printk():
 
 
--- 
-Regards,
+asmlinkage int printk(const char *fmt, ...)
+{
+	spin_lock_irqsave(&console_lock, flags);
+[...]
+		for (; p < buf_end; p++) {
+			log_buf[(log_start+log_size) & (LOG_BUF_LEN-1)] = *p;
+			if (log_size < LOG_BUF_LEN)
+--->				log_size++;
+			else {
+--->				log_start++;
+				log_start &= LOG_BUF_LEN-1;
+			}
+		if (msg_level < console_loglevel && console_drivers) {
+			struct console *c = console_drivers;
+			while(c) {
+				if ((c->flags & CON_ENABLED) && c->write)
+--->					c->write(c, msg, p - msg + line_feed);
+				c = c->next;
+			}
+		}
+	}
+	spin_unlock_irqrestore(&console_lock, flags);
+--->	wake_up_interruptible(&log_wait);
 
-Laurent Pinchart
+
+log_wait seems to be used only in sys_syslog():
+
+asmlinkage int sys_syslog(int type, char * buf, int len)
+{
+
+	lock_kernel();
+
+	switch (type) {
+
+	case 2:		/* Read from log */
+---->		while (!log_size) {
+			if (signal_pending(current)) {
+				sti();
+				goto out;
+			}
+			interruptible_sleep_on(&log_wait);
+		}
+		i = 0;
+		while (log_size && i < len) {
+			c = *((char *) log_buf+log_start);
+---->			log_start++;
+---->			log_size--;
+			log_start &= LOG_BUF_LEN-1;
+			sti();
+			__put_user(c,buf);
+			buf++;
+			i++;
+			cli();
+		}
+		sti();
+		error = i;
+		break;
+		spin_unlock_irq(&logbuf_lock);
+
+
+There are few interesting things:
+
+   + synchronization is done using console_lock and the big kernel
+     lock
+   + consoles are written directly from printk()
+   + the big kernel lock is taken all the time in sys_syslog()
+   + sys_syslog() basically removes the messages from the buffer
+
+
+I am not sure how the console_lock and the big kernel lock worked
+together. But it seems that it was not possible to call consoles
+and call __put_user() in sys_syslog() in parallel.
+
+
+My opinion:
+
+IMHO, it would make perfect sense to wake klogd earlier and it should
+be safe these days.
+
+I am just slightly afraid of a potential contention on printk_lock.
+Consoles and klogd might delay each other. Another question is
+how to do so when console_unlock() is called with interrupts
+disabled (irq_work is queued on the same CPU). This is why
+I would suggest to do this change separately and not for 4.16.
+
+Note that we need Tejun's patch for-4.16 because it fixes a potential
+race introduced by the console waiter logic.
+
+Best Regards,
+Petr
