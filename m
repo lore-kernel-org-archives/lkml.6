@@ -1,124 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752255AbeBHOTN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:19:13 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:41359 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751974AbeBHOTM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:19:12 -0500
-X-Google-Smtp-Source: AH8x227A2RAitz2FBxQMqCd53tXeNVp3IVkVhc1b3A8bAhhl1WQNz7rAWrOUnLAETuYkManTuqGnWQ==
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        yasu.isimatu@gmail.com, ak@linux.intel.com
-Cc: linux-kernel@vger.kernel.org
-From: Masayoshi Mizuma <msys.mizuma@gmail.com>
-Subject: [RESEND] [PATCH] x86/smpboot: avoid warning messages while
- hot-removing physical cpu
-Message-ID: <ed738d54-0f01-b38b-b794-c31dc118c207@gmail.com>
-Date: Thu, 8 Feb 2018 09:19:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752172AbeBHOUT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:20:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751153AbeBHOUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:20:18 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCCD20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 8 Feb 2018 14:19:59 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Aleksandar Markovic <aleksandar.markovic@rt-rk.com>
+Cc: linux-mips@linux-mips.org,
+        Aleksandar Markovic <aleksandar.markovic@mips.com>,
+        Dengcheng Zhu <dengcheng.zhu@mips.com>,
+        Douglas Leung <douglas.leung@mips.com>,
+        Goran Ferenc <goran.ferenc@mips.com>, linux-kernel@vger.kernel.org,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Miodrag Dinic <miodrag.dinic@mips.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Petar Jovanovic <petar.jovanovic@mips.com>,
+        Raghu Gandham <raghu.gandham@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4 0/2] MIPS: Augment CPC support
+Message-ID: <20180208141958.GB31316@saruman>
+References: <1516376459-25672-1-git-send-email-aleksandar.markovic@rt-rk.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
+Content-Disposition: inline
+In-Reply-To: <1516376459-25672-1-git-send-email-aleksandar.markovic@rt-rk.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-When a physical cpu is hot-removed, the following warning message
-are shown while the uncore device is removing in uncore_pci_remove().
+--+pHx0qQiF2pBVqBT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-WARNING: CPU: 120 PID: 5 at arch/x86/events/intel/uncore.c:988
-uncore_pci_remove+0xf1/0x110
-...
-CPU: 120 PID: 5 Comm: kworker/u1024:0 Not tainted 4.15.0-rc8 #1
-Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-...
-Call Trace:
-pci_device_remove+0x36/0xb0
-device_release_driver_internal+0x145/0x210
-pci_stop_bus_device+0x76/0xa0
-pci_stop_root_bus+0x44/0x60
-acpi_pci_root_remove+0x1f/0x80
-acpi_bus_trim+0x54/0x90
-acpi_bus_trim+0x2e/0x90
-acpi_device_hotplug+0x2bc/0x4b0
-acpi_hotplug_work_fn+0x1a/0x30
-process_one_work+0x141/0x340
-worker_thread+0x47/0x3e0
-kthread+0xf5/0x130
+On Fri, Jan 19, 2018 at 04:40:47PM +0100, Aleksandar Markovic wrote:
+> From: Aleksandar Markovic <aleksandar.markovic@mips.com>
+>=20
+> v3->v4:
+>=20
+>     - documentation patch now contains updating of MAINTAINERS file
+>     - rebased to the latest code
 
-When uncore_pci_remove() runs, it tries to get package id to
-clear the value of uncore_extra_pci_dev[].dev[] by using
-topology_phys_to_logical_pkg(). The warning messesage are
-shown because topology_phys_to_logical_pkg() returns -1.
+Thanks, I've applied with the intention of squeezing into 4.16 (I
+presume this is important for Ranchu).
 
-  arch/x86/events/intel/uncore.c:
-  static void uncore_pci_remove(struct pci_dev *pdev)
-  {
-  ...
-          phys_id = uncore_pcibus_to_physid(pdev->bus);
-  ...
-                  pkg = topology_phys_to_logical_pkg(phys_id); //returns -1
-                  for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
-                          if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
-                                  uncore_extra_pci_dev[pkg].dev[i] = NULL;
-                                  break;
-                          }
-                  }
-                  WARN_ON_ONCE(i >= UNCORE_EXTRA_PCI_DEV_MAX); //HERE!!
+Cheers
+James
 
-topology_phys_to_logical_pkg() tries to find
-cpuinfo_x86->phys_proc_id that matches the phys_pkg argument.
+>=20
+> v2->v3:
+>=20
+>     - changed documentation file location from
+>         devicetree/bindings/misc to devicetree/bindings/power
+>     - minor commit message improvements
+>     - rebased to the latest code
+>=20
+> v1->v2:
+>=20
+>     - corrected wording in commit messages and documentation text
+>     - expanded cover letter to better explain the context of proposed
+>         changes
+>     - rebased to the latest code
+>=20
+> This series is based on two patches from the larger series submitted
+> some time ago (30 Aug 2016):
+>=20
+> https://www.linux-mips.org/archives/linux-mips/2016-08/msg00456.html
+>=20
+> Both patches deal with MIPS Cluster Power Controller (CPC) support.
+> More specifically, they add device tree related functionalities to
+> that support.
+>=20
+> This functionality is needed for further development of kernel support
+> for generic-based MIPS platforms that must be DT-based and will at the
+> same time make more extensive use of CPC.
+>=20
+> This series is reviewed by the original author of the above-mentioned
+> larger series:
+>=20
+> Reviewed-by: Paul Burton <paul.burton@mips.com>
+>=20
+> Paul Burton (2):
+>   dt-bindings: Document mti,mips-cpc binding
+>   MIPS: CPC: Map registers using DT in mips_cpc_default_phys_base()
+>=20
+>  Documentation/devicetree/bindings/power/mti,mips-cpc.txt |  8 ++++++++
+>  MAINTAINERS                                              |  1 +
+>  arch/mips/kernel/mips-cpc.c                              | 13 ++++++++++=
++++
+>  3 files changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/mti,mips-cpc.=
+txt
+>=20
+> --=20
+> 2.7.4
+>=20
 
-  arch/x86/kernel/smpboot.c:
-  int topology_phys_to_logical_pkg(unsigned int phys_pkg)
-  {
-          int cpu;
-  
-          for_each_possible_cpu(cpu) {
-                  struct cpuinfo_x86 *c = &cpu_data(cpu);
-  
-                  if (c->initialized && c->phys_proc_id == phys_pkg)
-                          return c->logical_proc_id;
-          }
-          return -1;
-  }
+--+pHx0qQiF2pBVqBT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-However, the phys_proc_id is already set to 0 by remove_siblinginfo()
-when the cpu was offlined.
-So, topology_phys_to_logical_pkg() cannot find correct the
-logical_proc_id and always returns -1.
-As the result, uncore_pci_remove() calls WARN_ON_ONCE() and the warning
-messages are shown.
+-----BEGIN PGP SIGNATURE-----
 
-To avoid this, remove the setting from remove_siblinginfo().
-There is no influence about the removing because phys_proc_id is not
-used after it is hot-removed and it is re-set while hot-adding.
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlp8XI4ACgkQbAtpk944
+dnrfOA/+In8If/1vp5ny+2e77cRKewe891ye8wgEVNE6FOoZDz8/+lgfDBpDmuGP
+tfPQX6SEFG/MZ4cIass3LlCDVugjG6ZZWvwDO5PBLnr0DP4M29KrVjFdTL1e/DHe
+TUjoHzoEptgBLdvs/pDINE320gsfvymO0GC93Qiaxd2k/Gl+Uk1/eUAVT8GYGZmg
+wrHmDT6zwfGv/HEW2eUrkQN+3WqQpFfWvyoQomdeXx+HSdQNvrK9pvlEFTecbuIk
+hls0kdc1717Rf4NalPiC1grWRGnyAAoLNsJM6MU3qAB+RnVV5yWo2On+3jzJhZRj
+zzxbH0jxjQ9J8E6LUR/PFBHURziBHvdbmkpU2XMfNemqgoPeZl9DNyIrh8eRGZIX
+llHLudOHyo/eGYFvBpH91SnC4tGIarfX9a2dVCY+AU/1xJ94BzM4JAxDUzIbdEog
+Yy1qeQLKkbsMlwKW50nDkUJ1uh2fjjO4Ff545U0v4E4A/v5iTejnWk/aZ7Yqa/oA
+AWv+YPS09mFYWGrwdrlhJ7Ei36+Lb/SfLtUHgqIW6hdQGvHakghccAIaFljUUtbK
+ZbgZTWzwLENKMUgwOB3VqFNXAr5T6x3VwyzvvORsFxlt3eF+zIpQBY8wVBWBVzOL
+fY3tzby41P4uRccg3oNKAyBuYIYNdp/DmiT6Sv4DdbgX0J6LMoA=
+=YWLJ
+-----END PGP SIGNATURE-----
 
-Fixes: 30bb9811856f ("x86/topology: Avoid wasting 128k for package id array")
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
- 
----
- arch/x86/kernel/smpboot.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index ed556d5..844279c 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1431,7 +1431,6 @@ static void remove_siblinginfo(int cpu)
- 	cpumask_clear(cpu_llc_shared_mask(cpu));
- 	cpumask_clear(topology_sibling_cpumask(cpu));
- 	cpumask_clear(topology_core_cpumask(cpu));
--	c->phys_proc_id = 0;
- 	c->cpu_core_id = 0;
- 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
- 	recompute_smt_state();
--- 
-1.8.3.1
-
-- Masayoshi
+--+pHx0qQiF2pBVqBT--
