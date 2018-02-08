@@ -1,70 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751014AbeBHGjz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 01:39:55 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33309 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750810AbeBHGjy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 01:39:54 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="36919703"
-From: Cao jin <caoj.fnst@cn.fujitsu.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>
-Subject: [PATCH] x86/linker script: drop superfluous ALIGN
-Date: Thu, 8 Feb 2018 14:38:57 +0800
-Message-ID: <20180208063857.15197-1-caoj.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
+        id S1752026AbeBHGkf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 01:40:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54657 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751544AbeBHGke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 01:40:34 -0500
+Date: Thu, 8 Feb 2018 15:40:26 +0900
+From: Benjamin Poirier <bpoirier@suse.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] Revert "e1000e: Do not read ICR in Other interrupt"
+Message-ID: <20180208064026.ht4y5orcw4m5qyyl@f1.synalogic.ca>
+References: <20180126091236.13044-1-bpoirier@suse.com>
+ <20180126091236.13044-4-bpoirier@suse.com>
+ <CAKgT0Ue+JNL91jr08Ks3+Oj21fNApwuQH=bDEs2o3BKPigpyEA@mail.gmail.com>
+ <20180129072805.7ifsjr3r6eziwp7a@f1.synalogic.ca>
+ <CAKgT0Ucozb6kyFavZUo=enjhpJkkiHDz-bZYG=KcCLoD=ByqoQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: 294D848AE922.AA201
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0Ucozb6kyFavZUo=enjhpJkkiHDz-bZYG=KcCLoD=ByqoQ@mail.gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ALIGN(8) is superfluous since macro TEXT_TEXT already has one.
+On 2018/01/29 09:22, Alexander Duyck wrote:
+[...]
+> 
+> > Consequently, we must clear OTHER manually from ICR, otherwise the
+> > interrupt is immediately re-raised after exiting the handler.
+> >
+> > These observations are the same whether the interrupt is triggered via a
+> > write to ICS or in hardware.
+> >
+> > Furthermore, I tested that this behavior is the same for other Other
+> > events (MDAC, SRPD, ACK, MNG). Those were tested via a write to ICS
+> > only, not in hardware.
+> >
+> > This is a version of the test patch that I used to trigger lsc and rxo in
+> > software and hardware. It applies over this patch series.
+> 
+> I plan to look into this some more over the next few days. Ideally if
+> we could mask these "OTHER" interrupts besides the LSC we could comply
+> with all the needed bits for MSI-X. My concern is that we are still
+> stuck reading the ICR at this point because of this and it is going to
+> make dealing with MSI-X challenging on 82574 since it seems like the
+> intention was that you weren't supposed to be reading the ICR when
+> MSI-X is enabled based on the list of current issues and HW errata.
 
-bonus: indentation fix, spaces -> tab.
-Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
----
- arch/x86/kernel/vmlinux.lds.S | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+I totally agree with you that it looks like the msi-x interface was
+designed so you don't need to read icr. That's also why I was happy to
+go that direction with the (now infamous) commit 16ecba59bc33 ("e1000e:
+Do not read ICR in Other interrupt", v4.5-rc1).
 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index a4009fb9be87..f4dc9e39ea40 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -96,7 +96,6 @@ SECTIONS
- 		_stext = .;
- 		/* bootstrapping code */
- 		HEAD_TEXT
--		. = ALIGN(8);
- 		TEXT_TEXT
- 		SCHED_TEXT
- 		CPUIDLE_TEXT
-@@ -175,7 +174,7 @@ SECTIONS
- 		. = __vvar_beginning_hack + PAGE_SIZE;
- 	} :data
- 
--       . = ALIGN(__vvar_page + PAGE_SIZE, PAGE_SIZE);
-+	. = ALIGN(__vvar_page + PAGE_SIZE, PAGE_SIZE);
- 
- 	/* Init code and data - will be freed after init */
- 	. = ALIGN(PAGE_SIZE);
-@@ -343,8 +342,8 @@ SECTIONS
- 	. = ALIGN(PAGE_SIZE);		/* keep VO_INIT_SIZE page aligned */
- 	_end = .;
- 
--        STABS_DEBUG
--        DWARF_DEBUG
-+	STABS_DEBUG
-+	DWARF_DEBUG
- 
- 	/* Sections to be discarded */
- 	DISCARDS
--- 
-2.14.3
+However, we looked at it before and there seems to be no way to mask
+individual Other interrupt causes (masking rxo but getting lsc). Because
+of that, I think we have to keep reading icr in the Other interrupt
+handler.
+
+> 
+> At this point it seems like the interrupts is firing and the
+> INT_ASSERTED is all we really need to be checking for if I understand
+> this all correctly. Basically if LSC is set it will trigger OTHER and
+> INT_ASSERTED, if any of the other causes are set they are only setting
+> OTHER.
+
+I think that's right and it's related to the fact that currently LSC is
+set in IMS but not the other causes. Since we have to read icr (as I
+wrote above) but we want to avoid reading it without INT_ASSERTED set
+(as per errata 12) the solution will be to set all of the causes related
+to Other in IMS. Patches incoming...
