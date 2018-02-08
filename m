@@ -1,63 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752402AbeBHQcl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:32:41 -0500
-Received: from cyberdimension.org ([80.67.179.20]:48164 "EHLO
-        lime1-a20.localdomain" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751706AbeBHQcj (ORCPT
+        id S1752319AbeBHQeA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 11:34:00 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34827 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeBHQd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:32:39 -0500
-From: "Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
-To: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        "Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
-Subject: [PATCH] bcma: add HP Stream Notebook
-Date: Thu,  8 Feb 2018 17:25:42 +0100
-Message-Id: <20180208162542.20100-1-GNUtoo@no-log.org>
-X-Mailer: git-send-email 2.16.1
+        Thu, 8 Feb 2018 11:33:57 -0500
+X-Google-Smtp-Source: AH8x227QF/CG9RnZb3ocoRuUlhvpgapc6tYDL5rJKBEmO5Rm2PH7NIUqnPMMOKizu/K/sG6rdyqzGQ==
+Subject: Re: [PATCH v2] spi: kconfig: Remove AVR32 dep. from SPI_ATMEL
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: broonie@kernel.org, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, viresh.kumar@linaro.org,
+        linux-pwm@vger.kernel.org, thierry.reding@gmail.com,
+        b.zolnierkie@samsung.com, daniel.vetter@ffwll.ch,
+        christophe.leroy@c-s.fr, seanpaul@chromium.org,
+        linux-spi@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+References: <20180206120825.GF5681@sirena.org.uk>
+ <20180206225519.20248-1-ulfalizer@gmail.com>
+ <7f2bebe1-2931-7ec9-ef9f-0d3e6dda6c0b@gmail.com>
+ <a8d2076b-6863-6ff1-5442-0587ad973766@gmail.com>
+ <20180208024414.jjcxvd2q4o5rifgh@huvuddator>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <97250c63-cb2b-b1e8-63ac-59b9c749fd52@gmail.com>
+Date: Thu, 8 Feb 2018 17:33:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180208024414.jjcxvd2q4o5rifgh@huvuddator>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In this laptop we have the following PCI device:
-02:00.0 Network controller [0280]: Broadcom Limited BCM43142 802.11b/g/n [14e4:4365] (rev 01)
-	Subsystem: Hewlett-Packard Company BCM43142 802.11b/g/n [103c:804a]
-	[...]
-	Region 0: Memory at 91000000 (64-bit, non-prefetchable) [size=32K]
-	[...]
 
-With this patch, we can now see its WiFi chip:
-  bcma: bus0: Found chip with id 43142, rev 0x01 and package 0x08
-  bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x28, class 0x0)
-  bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x21, class 0x0)
-  bcma: bus0: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x16, class 0x0)
-  bcma: bus0: Core 3 found: UNKNOWN (manuf 0x43B, id 0x368, rev 0x00, class 0x0)
-  bcma: bus0: Found rev 15 PMU (capabilities 0x518C5E0F)
-  bcma: bus0: SPROM offset 0x840
-  bcma: bus0: Found SPROM revision 10
-  bcma: bus0: Workarounds unknown or not needed for device 0xA886
-  bcma: bus0: Bus registered
 
-But it not yet supported by brcmsmac so it won't work for now:
-  brcmsmac bcma0:1: brcms_b_attach wl0: vendor 0x14e4 device 0x4365
-  brcmsmac: unknown device id 4365
+On 02/08/2018 03:44 AM, Ulf Magnusson wrote:
+> The AVR32 symbol was removed in commit 26202873bb51 ("avr32: remove
+> support for AVR32 architecture").
 
-Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
----
- drivers/bcma/host_pci.c | 1 +
- 1 file changed, 1 insertion(+)
+You forgot the Signed-off-by tag.
 
-diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
-index 925842996986..63410ecfe640 100644
---- a/drivers/bcma/host_pci.c
-+++ b/drivers/bcma/host_pci.c
-@@ -297,6 +297,7 @@ static const struct pci_device_id bcma_pci_bridge_tbl[] = {
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_DELL, 0x0016) },
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_DELL, 0x0018) },
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_FOXCONN, 0xe092) },
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_HP, 0x804a) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a0) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a9) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43aa) },
--- 
-2.16.1
+> ---
+> Changes in v2:
+> Remove the AVR32 reference from the help text too.
+> 
+>  drivers/spi/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 603783976b81..6fb0347a24f2 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -72,10 +72,10 @@ config SPI_ARMADA_3700
+>  config SPI_ATMEL
+>  	tristate "Atmel SPI Controller"
+>  	depends on HAS_DMA
+> -	depends on (ARCH_AT91 || AVR32 || COMPILE_TEST)
+> +	depends on (ARCH_AT91 || COMPILE_TEST)
+>  	help
+>  	  This selects a driver for the Atmel SPI Controller, present on
+> -	  many AT32 (AVR32) and AT91 (ARM) chips.
+> +	  many AT91 (ARM) chips.
+>  
+>  config SPI_AU1550
+>  	tristate "Au1550/Au1200/Au1300 SPI Controller"
+> 
