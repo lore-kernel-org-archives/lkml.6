@@ -1,61 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeBHXLE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 18:11:04 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:63324 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeBHXLD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 18:11:03 -0500
-To: chris@chris-wilson.co.uk, linux-kernel@vger.kernel.org
-Cc: mingo@kernel.org, akpm@linux-foundation.org, ak@linux.intel.com,
-        jack@suse.cz, aryabinin@virtuozzo.com, dvyukov@google.com
-Subject: Re: [PATCH] khungtaskd: Kick stuck processes
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20180208190753.17690-1-chris@chris-wilson.co.uk>
-In-Reply-To: <20180208190753.17690-1-chris@chris-wilson.co.uk>
-Message-Id: <201802090810.DBF09356.OFMQFVFJtOHOLS@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Fri, 9 Feb 2018 08:10:43 +0900
-Mime-Version: 1.0
+        id S1752185AbeBHXNr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 18:13:47 -0500
+Received: from muru.com ([72.249.23.125]:56360 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750961AbeBHXNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 18:13:45 -0500
+Date: Thu, 8 Feb 2018 15:13:41 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv2 0/8] omapdrm: DSI command mode panel support
+Message-ID: <20180208231341.GB4383@atomide.com>
+References: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chris Wilson wrote:
-> After spotting a stuck process, and having decided not to panic, give
-> the task a kick to see if that helps it to recover (e.g. to paper over a
-> missed wake up).
-
-Yes, we are seeing hangs at io_schedule(), but doesn't optionally allowing
-io_schedule() be replaced with timeout version (e.g. dump_page() upon timeout
-if io_schedule() was called for e.g. wait_on_page_bit()) give us more clue?
-
+* Sebastian Reichel <sebastian.reichel@collabora.co.uk> [180208 10:31]:
+> Hi,
 > 
-> References: https://bugs.freedesktop.org/show_bug.cgi?id=104009
-> References: https://bugs.freedesktop.org/show_bug.cgi?id=104682
-> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  kernel/hung_task.c | 2 ++
->  1 file changed, 2 insertions(+)
+> These are the remaining patches from my previous patchset to get
+> Droid 4 (omap4) display working. The patches have been rebased to
+> current master branch from Torvalds (581e400ff935). Since N950
+> (omap3) is broken even with the workaround I moved it to the end,
+> so that it can be skipped.
 > 
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 751593ed7c0b..b32acb6bcc63 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -132,6 +132,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
->  		trigger_all_cpu_backtrace();
->  		panic("hung_task: blocked tasks");
->  	}
-> +
-> +	wake_up_process(t);
->  }
->  
->  /*
-> -- 
-> 2.16.1
+> Working on Droid 4:
+>  * Framebuffer Console, updated at 1Hz due to blinking cursor
+>  * kmstest (static image)
+>  * Display blanking
+>  * Xorg with omap and modesetting driver
+>  * No updates send when nothing needs to be sent
+>  * Orientation DRM property is attached to the DSI panel
+
+Great, still works for me :) Seems like the dts change is
+safe to merge along with the driver changes once no more
+comments. For patches 1 - 7, please feel free to add:
+
+Tested-by: Tony Lindgren <tony@atomide.com>
