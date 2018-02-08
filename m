@@ -1,77 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752574AbeBHR7P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:59:15 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38360 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752555AbeBHR7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752558AbeBHR7M (ORCPT <rfc822;w@1wt.eu>);
         Thu, 8 Feb 2018 12:59:12 -0500
-Subject: Re: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable
- work around
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>, Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-18-suzuki.poulose@arm.com>
- <20180207103942.GH5862@e103592.cambridge.arm.com>
- <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
- <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
- <3b922643-ab97-e012-4268-c830b1bdaf10@arm.com>
-Message-ID: <77efc8b3-48c1-fbaf-ce11-15123755262a@arm.com>
-Date: Thu, 8 Feb 2018 17:59:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+Received: from mailgw02.mediatek.com ([210.61.82.184]:28994 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752501AbeBHR7I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:59:08 -0500
+X-UUID: 5ce6afcc35be4c399e9f71c14ccbfdd2-20180209
+From: <sean.wang@mediatek.com>
+To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+Subject: [PATCH v4 4/5] dmaengine: mediatek: mtk_hsdma_find_active_desc() can be static
+Date: Fri, 9 Feb 2018 01:58:50 +0800
+Message-ID: <d06926cb465f98c212ab3a6e14fc858ec49e48bf.1518110810.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1518110810.git.sean.wang@mediatek.com>
+References: <cover.1518110810.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <3b922643-ab97-e012-4268-c830b1bdaf10@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 16:58, Suzuki K Poulose wrote:
-> On 08/02/18 12:26, Marc Zyngier wrote:
->> On 08/02/18 12:19, Suzuki K Poulose wrote:
->>> On 07/02/18 10:39, Dave Martin wrote:
->>>> On Wed, Jan 31, 2018 at 06:28:04PM +0000, Suzuki K Poulose wrote:
->>>>> We defend against branch predictor training based exploits by
->>>>> taking specific actions (based on the CPU model) to invalidate
->>>>> the Branch predictor buffer (BPB). This is implemented by per-CPU
->>>>> ptr, which installs the specific actions for the CPU model.
->>>>>
->>>>> The core code can handle the following cases where:
->>>>>    1) some CPUs doesn't need any work around
->>>>>    2) a CPU can install the work around, when it is brought up,
->>>>>       irrespective of how late that happens.
->>>
->>> With the recent patches from Marc to expose this information to KVM
->>> guests, it looks like allowing a late CPU to turn this on is not going
->>> to be a good idea. We unconditionally set the capability even
->>> when we don't need the mitigation. So I am not really sure if
->>> we should go ahead with this patch. I am open to suggestions
->>>
->>> Marc,
->>>
->>> What do you think ?
->>
->> By the time we bring in that CPU that requires some level of mitigation,
->> we may be running a guest already, and we've told that guest that no
->> mitigation was required. If we bring in that CPU, we break that promise,
->> and the guest becomes vulnerable without knowing about it.
->>
->> The same thing is valid for userspace once we expose the status of the
->> mitigation in /sys, just like x86 does. If we transition from not
->> vulnerable to vulnerable (or even mitigated), we have lied to userspace.
->>
->> In either case, I don't think breaking this contract is acceptable.
-> 
-> Thanks Marc, I have dropped this patch from the series.
+From: kbuild test robot <lkp@intel.com>
 
-On a second thought, should we allow this if the KVM is not configured in ?
+Fixes: c8e4b2e4ca21 ("dmaengine: mediatek: Add MediaTek High-Speed DMA controller for MT7622 and MT7623 SoC")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Acked-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/dma/mediatek/mtk-hsdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Cheers
-Suzuki
+diff --git a/drivers/dma/mediatek/mtk-hsdma.c b/drivers/dma/mediatek/mtk-hsdma.c
+index d394fc6..42b5b23 100644
+--- a/drivers/dma/mediatek/mtk-hsdma.c
++++ b/drivers/dma/mediatek/mtk-hsdma.c
+@@ -644,8 +644,8 @@ static irqreturn_t mtk_hsdma_irq(int irq, void *devid)
+ 	return IRQ_HANDLED;
+ }
+ 
+-struct virt_dma_desc *mtk_hsdma_find_active_desc(struct dma_chan *c,
+-						 dma_cookie_t cookie)
++static struct virt_dma_desc *mtk_hsdma_find_active_desc(struct dma_chan *c,
++							dma_cookie_t cookie)
+ {
+ 	struct mtk_hsdma_vchan *hvc = to_hsdma_vchan(c);
+ 	struct virt_dma_desc *vd;
+-- 
+2.7.4
