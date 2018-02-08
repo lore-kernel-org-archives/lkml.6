@@ -1,81 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752087AbeBHQNU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:13:20 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37060 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750847AbeBHQNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:13:19 -0500
-Subject: Re: [PATCH] coresight replicator: set default y after Kconfig rename
-To: Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <4ed2bf14-206a-20c6-40a6-3ab9a2ec07b4@arm.com>
-Date: Thu, 8 Feb 2018 16:13:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752193AbeBHQNd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 11:13:33 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58052 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751079AbeBHQNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 11:13:31 -0500
+Date: Thu, 8 Feb 2018 18:13:27 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arvind.yadav.cs@gmail.com, cohuck@redhat.com, ebiggers@google.com,
+        elfring@users.sourceforge.net, gomonovych@gmail.com,
+        jasowang@redhat.com, jinli.zjl@alibaba-inc.com, mst@redhat.com,
+        peter.malone@gmail.com, rdunlap@infradead.org, rfreire@redhat.com,
+        somlo@cmu.edu, stefanha@redhat.com, tgolembi@redhat.com,
+        vincent.legoll@gmail.com, xiangxia.m.yue@gmail.com,
+        zhangweiping@didichuxing.com
+Subject: [PULL] virtio, vhost: fixes, cleanups, features
+Message-ID: <20180208181327-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Mutt-Fcc: =sent
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 21:03, Kim Phillips wrote:
-> Commit 1c8859848dbb ("coresight replicator: Cleanup programmable
-> replicator naming") changed the Kconfig symbol name from
-> QCOM_REPLICATOR, which, whilst not in the single arm64 defconfig,
-> was being set in my juno build script, which left the new symbol unset,
-> causing the following unexpected grief:
-> 
->   # ./perf record -vvv -C 0 -e cs_etm/@20070000.etr/ --per-thread true
->   ..<snip>..
->   sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
->   mmap size 528384B
->   AUX area mmap length 4194304
->   perf event ring buffer mmapped per cpu
->   failed to mmap AUX area
->   failed to mmap with 12 (Cannot allocate memory)
-> 
-> Make it default y to help not surprise unsuspecting users.
+The following changes since commit d8a5b80568a9cb66810e75b182018e9edb68e8ff:
 
-How many users are there relying on your Juno build script? :P
+  Linux 4.15 (2018-01-28 13:20:33 -0800)
 
-> Fixes: 1c8859848dbb ("coresight replicator: Cleanup programmable replicator naming")
+are available in the Git repository at:
 
-Before that commit, CORESIGHT_QCOM_REPLICATOR was not "default y", nor 
-selected by any in-tree configs, so whatever the problem may be this is 
-clearly not the correct fix.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> ---
->   drivers/hwtracing/coresight/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> index ef9cb3c164e1..b94bbd95efa6 100644
-> --- a/drivers/hwtracing/coresight/Kconfig
-> +++ b/drivers/hwtracing/coresight/Kconfig
-> @@ -73,6 +73,7 @@ config CORESIGHT_SOURCE_ETM4X
->   config CORESIGHT_DYNAMIC_REPLICATOR
->   	bool "CoreSight Programmable Replicator driver"
->   	depends on CORESIGHT_LINKS_AND_SINKS
-> +	default y
+for you to fetch changes up to d25cc43c6775bff6b8e3dad97c747954b805e421:
 
-CORESIGHT_LINKS_AND_SINKS is "default n" (as indeed is CORESIGHT), and 
-not selected by any defconfigs, so in general this doesn't really help 
-anyway.
+  vhost: don't hold onto file pointer for VHOST_SET_LOG_FD (2018-02-01 16:26:47 +0200)
 
-Robin.
+----------------------------------------------------------------
+virtio, vhost: fixes, cleanups, features
 
->   	help
->   	  This enables support for dynamic CoreSight replicator link driver.
->   	  The programmable ATB replicator allows independent filtering of the
-> 
+This includes the disk/cache memory stats for for the virtio balloon,
+as well as multiple fixes and cleanups.
+
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+----------------------------------------------------------------
+Arvind Yadav (1):
+      virtio: virtio_mmio: make of_device_ids const.
+
+Eric Biggers (3):
+      vhost: don't hold onto file pointer for VHOST_SET_VRING_CALL
+      vhost: don't hold onto file pointer for VHOST_SET_VRING_ERR
+      vhost: don't hold onto file pointer for VHOST_SET_LOG_FD
+
+Markus Elfring (1):
+      vhost/scsi: Improve a size determination in four functions
+
+Michael S. Tsirkin (2):
+      virtio/ringtest: fix up need_event math
+      virtio/ringtest: virtio_ring: fix up need_event math
+
+Peter Malone (1):
+      ringtest: ring.c malloc & memset to calloc
+
+Stefan Hajnoczi (1):
+      virtio_blk: print capacity at probe time
+
+Tomáš Golembiovský (1):
+      virtio_balloon: include disk/file caches memory statistics
+
+Tonghao Zhang (1):
+      vhost: Remove the unused variable.
+
+Vasyl Gomonovych (2):
+      virtio-mmio: Use PTR_ERR_OR_ZERO()
+      firmware: Use PTR_ERR_OR_ZERO()
+
+Vincent Legoll (1):
+      virtio: make VIRTIO a menuconfig to ease disabling it all
+
+weiping zhang (3):
+      virtio: split device_register into device_initialize and device_add
+      virtio_pci: don't kfree device on register failure
+      virtio_vop: don't kfree device on register failure
+
+夷则(Caspar) (1):
+      vhost: remove unused lock check flag in vhost_dev_cleanup()
+
+ drivers/block/virtio_blk.c              | 32 ++++++++--------
+ drivers/firmware/qemu_fw_cfg.c          |  4 +-
+ drivers/misc/mic/vop/vop_main.c         | 20 ++++++----
+ drivers/vhost/net.c                     |  2 +-
+ drivers/vhost/scsi.c                    | 11 +++---
+ drivers/vhost/test.c                    |  2 +-
+ drivers/vhost/vhost.c                   | 68 ++++++++-------------------------
+ drivers/vhost/vhost.h                   |  9 +----
+ drivers/vhost/vsock.c                   |  2 +-
+ drivers/virtio/Kconfig                  |  8 +++-
+ drivers/virtio/virtio.c                 | 18 +++++++--
+ drivers/virtio/virtio_balloon.c         |  4 ++
+ drivers/virtio/virtio_mmio.c            |  6 +--
+ drivers/virtio/virtio_pci_common.c      |  8 +++-
+ include/uapi/linux/virtio_balloon.h     |  3 +-
+ tools/virtio/ringtest/ring.c            | 30 ++++++++-------
+ tools/virtio/ringtest/virtio_ring_0_9.c | 24 +++++++-----
+ 17 files changed, 120 insertions(+), 131 deletions(-)
