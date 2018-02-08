@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeBHO3W (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:29:22 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63612 "EHLO
+        id S1752365AbeBHO3U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:29:20 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38727 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751756AbeBHO2f (ORCPT
+        by vger.kernel.org with ESMTP id S1751848AbeBHO2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Feb 2018 09:28:35 -0500
 From: Amelie Delaunay <amelie.delaunay@st.com>
@@ -17,10 +17,12 @@ To: Lee Jones <lee.jones@linaro.org>,
 CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         "Amelie Delaunay" <amelie.delaunay@st.com>
-Subject: [PATCH 0/6] Introduce STMicroelectronics MultiFunction eXpander
-Date: Thu, 8 Feb 2018 15:27:31 +0100
-Message-ID: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH 4/6] ARM: dts: stm32: add MFX support on I2C1 on stm32746g-eval
+Date: Thu, 8 Feb 2018 15:27:35 +0100
+Message-ID: <1518100057-23234-5-git-send-email-amelie.delaunay@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.201.20.5]
@@ -30,42 +32,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for STMicroelectronics MultiFunction eXpander
-(ST MFX), used on some STM32 discovery and evaluation boards.
+MFX is used as gpio expander on stm32746g-eval.
 
-ST MFX is an STM32L152 slave controller whose firmware embeds the following
-features:
-- I/O expander (16 GPIOs + 8 extra if the other features are not enabled),
-- resistive touchscreen controller,
-- IDD measurement.
-Using an I2C bus, the main MCU can control the MFX. MFX internal/external
-events are sent to the main MCU by the MFX_IRQ_OUT_PIN.
-  
-Amelie Delaunay (6):
-  dt-bindings: mfd: Add ST Multi-Function eXpander driver
-  mfd: Add ST Multi-Function eXpander core driver
-  gpio: Add GPIO support for the ST Multi-Function eXpander
-  ARM: dts: stm32: add MFX support on I2C1 on stm32746g-eval
-  ARM: dts: stm32: add joystick support on stm32746g-eval
-  ARM: configs: stm32: enable ST MFX and its GPIO expander feature
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ arch/arm/boot/dts/stm32746g-eval.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
- Documentation/devicetree/bindings/mfd/st-mfx.txt |  51 ++
- arch/arm/boot/dts/stm32746g-eval.dts             |  48 ++
- arch/arm/configs/stm32_defconfig                 |   2 +
- drivers/gpio/Kconfig                             |  10 +
- drivers/gpio/Makefile                            |   1 +
- drivers/gpio/gpio-st-mfx.c                       | 589 +++++++++++++++++++++++
- drivers/mfd/Kconfig                              |  15 +
- drivers/mfd/Makefile                             |   1 +
- drivers/mfd/st-mfx.c                             | 526 ++++++++++++++++++++
- include/dt-bindings/gpio/st-mfx-gpio.h           |  24 +
- include/linux/mfd/st-mfx.h                       | 116 +++++
- 11 files changed, 1383 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/st-mfx.txt
- create mode 100644 drivers/gpio/gpio-st-mfx.c
- create mode 100644 drivers/mfd/st-mfx.c
- create mode 100644 include/dt-bindings/gpio/st-mfx-gpio.h
- create mode 100644 include/linux/mfd/st-mfx.h
-
+diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
+index e74ae59..99739f7 100644
+--- a/arch/arm/boot/dts/stm32746g-eval.dts
++++ b/arch/arm/boot/dts/stm32746g-eval.dts
+@@ -128,6 +128,23 @@
+ 	i2c-scl-rising-time-ns = <185>;
+ 	i2c-scl-falling-time-ns = <20>;
+ 	status = "okay";
++
++	mfx: mfx@42 {
++		compatible = "st,mfx";
++		reg = <0x42>;
++		interrupts = <8 1>;
++		interrupt-parent = <&gpioi>;
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		mfxgpio: mfx_gpio {
++			compatible = "st,mfx-gpio";
++			interrupts = <0>;
++			interrupt-parent = <&mfx>;
++			gpio-controller;
++			#gpio-cells = <2>;
++		};
++	};
+ };
+ 
+ &mac {
 -- 
 2.7.4
