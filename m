@@ -1,87 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752233AbeBHR4r (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:56:47 -0500
-Received: from mail-ot0-f181.google.com ([74.125.82.181]:38607 "EHLO
-        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeBHR4q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:56:46 -0500
-X-Google-Smtp-Source: AH8x224KbjCnFoT2wu8kAyhcNyOsCAxHtEc9A40upvD+SFrSihXeduQ+xZKasLflYKY7nEfjnj+oPA==
-Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
- __GFP_HIGHMEM implicitly")
-To: Matthew Wilcox <willy@infradead.org>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc: Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
- <20180208130649.GA15846@bombadil.infradead.org>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <f8be3fc9-a96d-bf37-4da0-43220014caed@redhat.com>
-Date: Thu, 8 Feb 2018 09:56:42 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180208130649.GA15846@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752309AbeBHR6W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:58:22 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60788 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751700AbeBHR6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:58:21 -0500
+Message-ID: <1518112700.2911.0.camel@redhat.com>
+Subject: Re: [PATCH] perf: arm_pmu_acpi: Fix armpmu_alloc call from invalid
+ context
+From: Mark Salter <msalter@redhat.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Thu, 08 Feb 2018 12:58:20 -0500
+In-Reply-To: <20180208175433.p2a3g2q7tctfpk7c@lakrids.cambridge.arm.com>
+References: <20180208174504.30665-1-msalter@redhat.com>
+         <20180208175433.p2a3g2q7tctfpk7c@lakrids.cambridge.arm.com>
+Organization: Red Hat, Inc
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/2018 05:06 AM, Matthew Wilcox wrote:
-> On Thu, Feb 08, 2018 at 02:29:57PM +0800, Kai Heng Feng wrote:
->> A user with i386 instead of AMD64 machine reports [1] that commit 19809c2da28a ("mm, vmalloc: use __GFP_HIGHMEM implicitly”) causes a regression.
->> BUG_ON(PageHighMem(pg)) in drivers/media/common/saa7146/saa7146_core.c always gets triggered after that commit.
+On Thu, 2018-02-08 at 17:54 +0000, Mark Rutland wrote:
+> Hi Mark,
 > 
-> Well, the BUG_ON is wrong.  You can absolutely have pages which are both
-> HighMem and under the 4GB boundary.  Only the first 896MB (iirc) are LowMem,
-> and the next 3GB of pages are available to vmalloc_32().
+> On Thu, Feb 08, 2018 at 12:45:04PM -0500, Mark Salter wrote:
+> > When booting an arm64 debug kernel with ACPI, I see:
+> > 
+> >    BUG: sleeping function called from invalid context at mm/slab.h:420
+> >    in_atomic(): 0, irqs_disabled(): 128, pid: 12, name: cpuhp/0
+> >    1 lock held by cpuhp/0/12:
+> >     #0:  (cpuhp_state-up){+.+.}, at: [<0000000057aa0dae>] cpuhp_thread_fun+0x13c/0x258
+> >    irq event stamp: 28
+> >    hardirqs last  enabled at (27): [<000000000b861658>] _raw_spin_unlock_irq+0x38/0x58
+> >    hardirqs last disabled at (28): [<000000006231cfb1>] cpuhp_thread_fun+0xd0/0x258
+> >    softirqs last  enabled at (0): [<0000000054d9737a>] copy_process.isra.32.part.33+0x450/0x1480
+> >    softirqs last disabled at (0): [<          (null)>]           (null)
+> >    CPU: 0 PID: 12 Comm: cpuhp/0 Not tainted 4.15.0+ #18
+> >    Hardware name: AppliedMicro X-Gene Mustang Board/X-Gene Mustang Board, BIOS 3.06.25 Oct 17 2016
+> >    Call trace:
+> >     dump_backtrace+0x0/0x188
+> >     show_stack+0x24/0x2c
+> >     dump_stack+0xa4/0xe0
+> >     ___might_sleep+0x208/0x234
+> >     __might_sleep+0x58/0x8c
+> >     kmem_cache_alloc_trace+0x248/0x3e0
+> >     armpmu_alloc+0x38/0x1a8
+> >     arm_pmu_acpi_cpu_starting+0x11c/0x15c
+> >     cpuhp_invoke_callback+0x120/0x100c
+> >     cpuhp_thread_fun+0xe8/0x258
+> >     smpboot_thread_fn+0x170/0x268
+> >     kthread+0x110/0x13c
+> >     ret_from_fork+0x10/0x18
 > 
->> Also there are other BUG_ON(PageHighMem()) in drivers/media, I think they will get hit by same regression in 32bit machine too.
+> I have patches to address this:
 > 
-> I fixed one of them.  I think the other three are also bogus, but it's
-> hard to say; the comments say "DMA to HighMem might not work", and they
-> probably mean "above the 4GB boundary", but I really don't know.
-> 
-> (since two drivers now have this code, maybe it should be part of the core
-> MM API?  Or maybe there's already something better they should be using?)
-> 
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/557838.html
+> https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/acpi-pmu-lockdep
 
-The comment at the top said the function was copied from videobuf-dma-sg.c
-so might be worth making it common.
+Awesome, I completely missed that. Thanks.
 
-> diff --git a/drivers/media/common/saa7146/saa7146_core.c b/drivers/media/common/saa7146/saa7146_core.c
-> index 9f7c5b0a6b45..329fd43228ff 100644
-> --- a/drivers/media/common/saa7146/saa7146_core.c
-> +++ b/drivers/media/common/saa7146/saa7146_core.c
-> @@ -160,7 +160,7 @@ static struct scatterlist* vmalloc_to_sg(unsigned char *virt, int nr_pages)
->   		pg = vmalloc_to_page(virt);
->   		if (NULL == pg)
->   			goto err;
-> -		BUG_ON(PageHighMem(pg));
-> +		BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
->   		sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
->   	}
->   	return sglist;
-> diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-> index f412429cf5ba..b5ec74b9c867 100644
-> --- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-> +++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-> @@ -77,7 +77,7 @@ static struct scatterlist *videobuf_vmalloc_to_sg(unsigned char *virt,
->   		pg = vmalloc_to_page(virt);
->   		if (NULL == pg)
->   			goto err;
-> -		BUG_ON(PageHighMem(pg));
-> +		BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
->   		sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
->   	}
->   	return sglist;
 > 
-
-the vzalloc in this function needs to be switched to vmalloc32 if it
-actually wants to guarantee 32-bit memory.
-
-Thanks,
-Laura
+> > With commit 7d88eb695a1f ("arm/perf: Convert to hotplug state machine"),
+> > arm_pmu uses the cpuhotplug framework to initialize the PMU driver when
+> > using ACPI. However, the arm_pmu_acpi_cpu_starting() callback comes
+> > before CPUHP_AP_ONLINE is reached which means it runs with interrupts
+> > diabled and tries to allocate memory with GFP_KERNEL alloc which may
+> > sleep.
+> > 
+> > Move CPUHP_AP_PERF_ARM_ACPI_STARTING to come after CPUHP_AP_ONLINE so
+> > that the arm_pmu initialization runs with interrupts enabled as it
+> > does when booting with device tree.
+> > 
+> > Fixes: 7d88eb695a1f ("arm/perf: Convert to hotplug state machine")
+> > Signed-off-by: Mark Salter <msalter@redhat.com>
+> > ---
+> >  include/linux/cpuhotplug.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> > index 5172ad0..e07b2da 100644
+> > --- a/include/linux/cpuhotplug.h
+> > +++ b/include/linux/cpuhotplug.h
+> > @@ -114,7 +114,6 @@ enum cpuhp_state {
+> >  	CPUHP_AP_ARM_VFP_STARTING,
+> >  	CPUHP_AP_ARM64_DEBUG_MONITORS_STARTING,
+> >  	CPUHP_AP_PERF_ARM_HW_BREAKPOINT_STARTING,
+> > -	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+> >  	CPUHP_AP_PERF_ARM_STARTING,
+> >  	CPUHP_AP_ARM_L2X0_STARTING,
+> >  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+> > @@ -146,6 +145,7 @@ enum cpuhp_state {
+> >  	CPUHP_AP_SMPBOOT_THREADS,
+> >  	CPUHP_AP_X86_VDSO_VMA_ONLINE,
+> >  	CPUHP_AP_IRQ_AFFINITY_ONLINE,
+> > +	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+> 
+> We need CPUHP_AP_PERF_ARM_ACPI_STARTING to happen before
+> CPUHP_AP_PERF_ARM_STARTING, and I think this re-ordering prevents us
+> from correctly resetting the PMU and enabling percpu interrupts, at
+> least in heterogeneous configurations (e.g. big.LITTLE systems like
+> Juno).
+> 
+> I'm not sure whether we could safely move both callbacks this late.
+> 
+> Thanks,
+> Mark.
