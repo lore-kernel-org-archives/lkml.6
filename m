@@ -1,54 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeBHQDi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:03:38 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38384 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751079AbeBHQDg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:03:36 -0500
-X-Google-Smtp-Source: AH8x22708O/zvtSrVE4zhNYGtBO+WSSKSQTd8fERoezIvVlslnaCOPePiB5XLWBYAb3SDQByrnVzjQ==
-Subject: Re: [PATCH] blk: optimization for classic polling
-To: Keith Busch <keith.busch@intel.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Cc: axboe@fb.com, joshi.k@samsung.com, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-References: <CGME20180208143655epcas1p444bf34705526b7839a5a135f82761aad@epcas1p4.samsung.com>
- <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
- <20180208152730.GA4906@localhost.localdomain>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <2fa9340f-302b-1531-d51b-d4bfbdf50f86@grimberg.me>
-Date: Thu, 8 Feb 2018 18:03:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1752173AbeBHQDx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 11:03:53 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36934 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751094AbeBHQDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 11:03:37 -0500
+Date: Thu, 8 Feb 2018 16:03:41 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
+        morten.rasmussen@foss.arm.com, brendan.jackman@arm.com,
+        dietmar.eggemann@arm.com
+Subject: Re: [PATCH v2 1/3] sched: Stop nohz stats when decayed
+Message-ID: <20180208160341.GD17775@arm.com>
+References: <1517944987-343-1-git-send-email-vincent.guittot@linaro.org>
+ <1517944987-343-2-git-send-email-vincent.guittot@linaro.org>
+ <20180208140005.GH25201@hirez.programming.kicks-ass.net>
+ <20180208153030.GB17775@arm.com>
+ <20180208154643.GB25181@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180208152730.GA4906@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208154643.GB25181@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> I think it'd be simpler to have blk_poll set it back to running if
-> need_resched is true rather than repeat this patter across all the
-> callers:
+On Thu, Feb 08, 2018 at 04:46:43PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 08, 2018 at 03:30:31PM +0000, Will Deacon wrote:
+> > On Thu, Feb 08, 2018 at 03:00:05PM +0100, Peter Zijlstra wrote:
 > 
-> ---
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index df93102e2149..40285fe1c8ad 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -3164,6 +3164,7 @@ static bool __blk_mq_poll(struct blk_mq_hw_ctx *hctx, struct request *rq)
->   		cpu_relax();
->   	}
->   
-> +	set_current_state(TASK_RUNNING);
->   	return false;
->   }
->   
-> --
+> > > Without this ordering I think it would be possible to loose has_blocked
+> > > and not observe the CPU either.
+> > 
+> > I had a quick look at this, and I think you're right. This looks very much
+> > like an 'R'-shaped test, which means it's smp_mb() all round otherwise Power
+> > will go wrong. That also means the smp_mb__after_atomic() in
+> > nohz_balance_enter_idle *cannot* be an smp_wmb(), so you might want a
+> > comment stating that explicitly.
+> 
+> Thanks Will. BTW, where does that 'R' shape nomenclature come from?
+> This is the first I've heard of it.
 
-Nice!
+I don't know where it originates from, but the imfamous "test6.pdf" has it:
+
+https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/test6.pdf
+
+half way down the first page on the left. It says "needs sync+sync" which
+is about as bad as it gets for Power (compare with "2+2w", which gets away
+with lwsync+lwsync). See also:
+
+http://materials.dagstuhl.de/files/16/16471/16471.DerekWilliams.Slides.pdf
+
+for a light-hearted, yet technically accurate story about the latter.
+
+Will
