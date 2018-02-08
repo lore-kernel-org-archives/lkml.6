@@ -1,72 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeBHMKw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:10:52 -0500
-Received: from foss.arm.com ([217.140.101.70]:34078 "EHLO foss.arm.com"
+        id S1752482AbeBHMK5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:10:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53456 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751878AbeBHMKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:10:51 -0500
-Subject: Re: [PATCH v2 08/20] arm64: capabilities: Group handling of features
- and errata
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-9-suzuki.poulose@arm.com>
- <20180207103829.GY5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <86f23003-72bc-5bfc-af40-a92cc68def45@arm.com>
-Date: Thu, 8 Feb 2018 12:10:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751878AbeBHMKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:10:53 -0500
+Date: Thu, 8 Feb 2018 13:10:50 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Andrew Cooks <andrew.cooks@opengear.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, platypus-sw@opengear.com,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] gpio-pca953x: fall back to byte-at-a-time for 24-bit io
+Message-ID: <20180208131050.7c26717d@endymion>
+In-Reply-To: <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
+References: <1512440242-8983-1-git-send-email-andrew.cooks@opengear.com>
+        <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
+        <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180207103829.GY5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 10:38, Dave Martin wrote:
-> On Wed, Jan 31, 2018 at 06:27:55PM +0000, Suzuki K Poulose wrote:
->> So far we have had separate routes for triggering errata and feature
->> capability detection. Also, we never allowed "features" based on local
->> CPU and "errata" based on System wide safe registers. This patch
->> groups the handling of errata and features and also allows them
->> to have all the possible scopes. So we now run through both
->> arm64_features and arm64_errata, in two phases for detection.
->>
->>   1) with SCOPE_LOCAL_CPU filter on each boot time enabled CPUs,
->>      via update_cpu_local_capabilities().
->>
->>   2) with SCOPE_SYSTEM filter only once after all boot time enabled
->>      CPUs are active, triggered from setup_cpu_features().
->>
->> A late CPU goes through both the tables for verification against
->> established capabilities, as before.
->>
->> We could ideally merge the two tables into one. But leave it as
->> it is for easy access to the list of particular type.
->>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Mon, 29 Jan 2018 14:11:35 +1000, Andrew Cooks wrote:
+> On 29/12/17 19:44, Andy Shevchenko wrote:
+> > On Tue, Dec 5, 2017 at 4:17 AM, Andrew Cooks <andrew.cooks@opengear.com> wrote:  
+> >> Using TCA6424A with i2c-piix4 bus driver requires byte-at-a-time IO,
+> >> because the i2c-piix4 driver (and probably some SMBus controllers) don't
+> >> support I2C_SMBUS_I2C_BLOCK_DATA.  
+> > 
+> > Why not to fix piix4 for now?  
 > 
-> I don't know if there's a way of splitting or refactoring this patch to
-> make it easier to understand the changes, but I think I get what's going
-> on here now.
+> The piix4 driver applies to so many chips and has been around for such a long time, that I don't know if this kind of change is safe to make. Do you think it's safe to assume that all the implementations that use this driver can handle the 3byte block writes?
 > 
-> So,
-> 
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-> 
+> I've added Jean to the CC list to get the piix4 maintainer's perspective.
 
-Thanks,
+This is a hardware limitation, not a driver deficiency. The original
+Intel PIIX4 SMBus implementation did not support I2C Block transfers,
+only SMBus Block transfers. I2C Block transfer support was added by
+Intel to the 82801 (ICH5) only.
 
-> (But if you can see a good way to split it, I'll be happy to take
-> another look.)
+I have checked the few AMD datasheets I have here and it doesn't seem
+that AMD implemented I2C Block transfers support either.
 
-I did try this out, patches follows.
+> >> @@ -249,7 +261,7 @@ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+> >>  {
+> >>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> >>
+> >> -       return i2c_smbus_read_i2c_block_data(chip->client,
+> >> +       return i2c_smbus_read_i2c_block_data_or_emulated(chip->client,
+> >>                                              (reg << bank_shift) | REG_ADDR_AI,
+> >>                                              NBANK(chip), val);  
+> > 
+> > Don't we have a counter part for writing?
+> > 
+> > Perhaps, it might be another option.
+> 
+> Again, I don't know if it's safe to assume that the i2c controllers can do this and would appreciate comments.
+> 
+> Thanks for your review!
+
+I would be very cautious with
+i2c_smbus_read_i2c_block_data_or_emulated(). There are no official
+semantics attached to I2C transfers, each device can have its own
+idea of how it should react to a given transfer.
+i2c_smbus_read_i2c_block_data_or_emulated() was implemented with
+EEPROMs in mind and there is absolutely no guarantee that the
+"emulation" will do the right thing. Before calling it, you must check
+all the code paths in i2c_smbus_read_i2c_block_data_or_emulated() and
+ensure that all will do the right thing for your device.
+
+-- 
+Jean Delvare
+SUSE L3 Support
