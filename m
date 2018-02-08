@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x2260uoLeZ46xTfw9BuxL3bVEN4OO10fu7gg/R2cbdVi5IX4vqHuFuQAy1bfwxLjGe5YT6kNX
+X-Google-Smtp-Source: AH8x226XonXtY4IFh8E+prcoSAaNggWX63BxJ+Mpx5gRaZKl6Fil+HP4LaxBq8dQ83+vNS9eJ9B1
 ARC-Seal: i=1; a=rsa-sha256; t=1518106812; cv=none;
         d=google.com; s=arc-20160816;
-        b=NSrZJJ2iKDsPQdufT64ScdBgue723+zBGOpMw+cj9dD5mE58nqfuq186Z/kT9m1Npg
-         Di4DR8nemE26YQaO+uTUqbBHx/dGMdDR/0QRzOMVBcm+HlBUrtF/uHZ172RFOSKUbF4K
-         LAmkdSarjpdnvK4sEgUC4uOHZSk/sY8djuikhsOUUd+HcGG0xRtj17nNVvALY6voI9sR
-         /jZ3KZ7euMU5yOvFmUo9lzMD1IOwTnL3foaT+hx0iyTIaIeKmSlNxCsk20vnPCMwXHLx
-         wrgr8SEe1G64FZX2ICZJ04y4ZxdxVWF2Ply/zX5RommpKhGH5n37ioWSINRDAEkEaur0
-         QHzA==
+        b=dkH5KJXsb60ael5i7VrULTHz6DQNgihg2kwykLygGc/O9hXC5Qj2XASgF0C73ugagd
+         qelSkVbs92cyhtr9EkFyl6D2DqbcBgRx58NKjmiM0MsOI5Wpk9FzRmPdjUu1l5xv2drm
+         4s2JnS2/cAZQsGIKufrUyiTo7s35JZ2LYgiavtiXUejhAhdeYrxRPpSpC56Uds31jGiH
+         6j9jL54TWVDSD6RmDBcuu+WaIWpcntmIEwWMz/unTKy3W7zEJnfhNksPu7Gs7iYP//NY
+         niYnWdfCgrKC1Zlk9uyED5/bo3Nk4VpjScaZEZAmEWaVMwO2uGFLmg7o/ihUDnc2ZrxC
+         /OVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=vjBn6qmZtO3pYXfyXNULY3CphaqOCdqNsvaqSKBMzkE=;
-        b=Z5ou3AsUdqcznCGeSHE/nuOeOJH/WfxgkpeXIDq5HhP/Wl+oEl4KNJdFtC13xJpFtk
-         EB7P3Z/Tx5s5gL0tu9qkNWjWqO23ntmmiFY/1207h6ytzbO0YM1Jc8Xjx//VI3WAc7Ix
-         4ASmYTBYg7r+dTfiLtbMN67GozWivWvxu+gCIoOvcl+N6/Kky7WspfZTw3b5TOVgF0zl
-         iHl+7LU0Lw0GT/rIkFs8AMUM/x/FKBI8Jw2JI511ZCY0Tp1kkbLzDjvnTvEumQevMkVK
-         cpYzEPxO3BVkxzvbIkVqBmLBv1WIYtz3vm8opBUU0Y2HUEnIrVrJS4yKvPKQtniy/M4d
-         vJBA==
+        bh=I9Hg17wLX5kmhRTYQxGVGOrJ6uikTpQIK1iRwVy31w4=;
+        b=HZe/8i1ziifTZJGfc5a2O+DPQv1Y1aMi37dVTy3PF51pK7vkUX5R4IDQC4712qHVbT
+         lGR1eQZ3RfCHLuXzGavxRjNEW2Zf2rzQrVPCsn1/i8ZtXOc445aRGRb6tDmLsHot/Mga
+         rkf+IzZ8VVLwyj/do1/4VCOMTE44lNrP+iCW5I125eML1VzYF7iNuWjo5zE12q+VQKor
+         5TLb8NNvMvEbewO1bvIz/sCCO4vTfbCPpXgS6eP3+rzE7oHVD4tOnqnzTRKCk7QFbo9/
+         XBqqO1RPKwc3TGG+d33vGX27IdgRnnbQ4813nuPGgR7k/N2K0yiL7dJc77Ac5kW0jQKA
+         bS0g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=M6acOxXq;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=uOpsnhMm;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=M6acOxXq;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=uOpsnhMm;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w18GJP1I021191
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w18GJP1F021191
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -42,44 +42,73 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Kosina <jkosina@suse.cz>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 6/7] kconfig: add basic environments to evaluate C flags in Kconfig
-Date: Fri,  9 Feb 2018 01:19:11 +0900
-Message-Id: <1518106752-29228-7-git-send-email-yamada.masahiro@socionext.com>
+Subject: [RFC PATCH 3/7] kconfig: remove const qualifier from sym_expand_string_value()
+Date: Fri,  9 Feb 2018 01:19:08 +0900
+Message-Id: <1518106752-29228-4-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591850368790219309?=
-X-GMAIL-MSGID: =?utf-8?q?1591850368790219309?=
+X-GMAIL-THRID: =?utf-8?q?1591850369071440330?=
+X-GMAIL-MSGID: =?utf-8?q?1591850369071440330?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add minimum environments to start with.
+This function returns realloc'ed memory, so the returned pointer
+must be passed to free() when done.  Change the return value type
+to save casting.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- init/Kconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ scripts/kconfig/lkc_proto.h | 2 +-
+ scripts/kconfig/symbol.c    | 2 +-
+ scripts/kconfig/util.c      | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 64f9dd2..31fbc6e 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -25,6 +25,14 @@ config CC_VERSION_TEXT
- 	  text does not match, silentoldconfig will be invoked because we need
- 	  to re-compute compiler capabilities and symbols that depends on them.
+diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
+index 5d86e2d..9dc8abf 100644
+--- a/scripts/kconfig/lkc_proto.h
++++ b/scripts/kconfig/lkc_proto.h
+@@ -31,7 +31,7 @@ extern struct symbol * symbol_hash[SYMBOL_HASHSIZE];
  
-+config srctree
-+	string
-+	option env="srctree"
-+
-+config CC
-+	string
-+	option env="CC"
-+
- config CONSTRUCTORS
- 	bool
- 	depends on !UML
+ struct symbol * sym_lookup(const char *name, int flags);
+ struct symbol * sym_find(const char *name);
+-const char * sym_expand_string_value(const char *in);
++char *sym_expand_string_value(const char *in);
+ const char * sym_escape_string_value(const char *in);
+ struct symbol ** sym_re_search(const char *pattern);
+ const char * sym_type_name(enum symbol_type type);
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index bc3ec6a..893eae6 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -901,7 +901,7 @@ struct symbol *sym_find(const char *name)
+  * name to be expanded shall be prefixed by a '$'. Unknown symbol expands to
+  * the empty string.
+  */
+-const char *sym_expand_string_value(const char *in)
++char *sym_expand_string_value(const char *in)
+ {
+ 	const char *src;
+ 	char *res;
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index 01ead28..befaec9 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -14,11 +14,11 @@
+ struct file *file_lookup(const char *name)
+ {
+ 	struct file *file;
+-	const char *file_name = sym_expand_string_value(name);
++	char *file_name = sym_expand_string_value(name);
+ 
+ 	for (file = file_list; file; file = file->next) {
+ 		if (!strcmp(name, file->name)) {
+-			free((void *)file_name);
++			free(file_name);
+ 			return file;
+ 		}
+ 	}
 -- 
 2.7.4
