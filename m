@@ -1,708 +1,549 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeBHOaE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:30:04 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:42682 "EHLO
+        id S1752285AbeBHObF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:31:05 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:13030 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751094AbeBHO2f (ORCPT
+        by vger.kernel.org with ESMTP id S1751153AbeBHObC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:28:35 -0500
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "Alexandre Torgue" <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        "Amelie Delaunay" <amelie.delaunay@st.com>
-Subject: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function eXpander
-Date: Thu, 8 Feb 2018 15:27:34 +0100
-Message-ID: <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
-References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+        Thu, 8 Feb 2018 09:31:02 -0500
+From: Philippe Cornu <philippe.cornu@st.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Andrzej Hajda <a.hajda@samsung.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH v1 2/2] drm/panel: Add support for Raydium rm68200 panel driver
+Date: Thu, 8 Feb 2018 15:30:26 +0100
+Message-ID: <20180208143026.23009-3-philippe.cornu@st.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180208143026.23009-1-philippe.cornu@st.com>
+References: <20180208143026.23009-1-philippe.cornu@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
+X-Originating-IP: [10.201.23.32]
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-08_08:,,
  signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ST Multi-Function eXpander (MFX) can be used as GPIO expander.
-It has 16 fast GPIOs and can have 8 extra alternate GPIOs
-when other MFX features are not enabled.
+This patch adds Raydium Semiconductor Corporation rm68200
+5.5" 720x1280 TFT LCD panel driver (MIPI-DSI video mode).
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 ---
- drivers/gpio/Kconfig                   |  10 +
- drivers/gpio/Makefile                  |   1 +
- drivers/gpio/gpio-st-mfx.c             | 589 +++++++++++++++++++++++++++++++++
- include/dt-bindings/gpio/st-mfx-gpio.h |  24 ++
- 4 files changed, 624 insertions(+)
- create mode 100644 drivers/gpio/gpio-st-mfx.c
- create mode 100644 include/dt-bindings/gpio/st-mfx-gpio.h
+ drivers/gpu/drm/panel/Kconfig                 |   8 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ drivers/gpu/drm/panel/panel-raydium-rm68200.c | 464 ++++++++++++++++++++++++++
+ 3 files changed, 473 insertions(+)
+ create mode 100755 drivers/gpu/drm/panel/panel-raydium-rm68200.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index d6a8e85..7827af3 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1034,6 +1034,16 @@ config GPIO_STMPE
- 	  This enables support for the GPIOs found on the STMPE I/O
- 	  Expanders.
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 988048ebcc22..08d99dd46765 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -108,6 +108,14 @@ config DRM_PANEL_RASPBERRYPI_TOUCHSCREEN
+ 	  Pi 7" Touchscreen.  To compile this driver as a module,
+ 	  choose M here.
  
-+config GPIO_ST_MFX
-+	bool "ST-MFX GPIOs"
-+	depends on MFD_ST_MFX
-+	depends on OF_GPIO
-+	select GPIOLIB_IRQCHIP
++config DRM_PANEL_RAYDIUM_RM68200
++	tristate "Raydium rm68200 720x1280 dsi 2dl video mode panel"
++	depends on OF
++	depends on DRM_MIPI_DSI
 +	help
-+	  GPIO driver for STMicroelectronics Multi-Function eXpander.
++	  Say Y here if you want to enable support for Raydium rm68200
++	  720x1280 dsi 2dl video mode panel
 +
-+	  This provides GPIO interface supporting inputs and outputs.
-+
- config GPIO_TC3589X
- 	bool "TC3589X GPIOs"
- 	depends on MFD_TC3589X
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 4bc24fe..7013bfa 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -110,6 +110,7 @@ obj-$(CONFIG_GPIO_SODAVILLE)	+= gpio-sodaville.o
- obj-$(CONFIG_GPIO_SPEAR_SPICS)	+= gpio-spear-spics.o
- obj-$(CONFIG_GPIO_STA2X11)	+= gpio-sta2x11.o
- obj-$(CONFIG_GPIO_STMPE)	+= gpio-stmpe.o
-+obj-$(CONFIG_GPIO_ST_MFX) 	+= gpio-st-mfx.o
- obj-$(CONFIG_GPIO_STP_XWAY)	+= gpio-stp-xway.o
- obj-$(CONFIG_GPIO_SYSCON)	+= gpio-syscon.o
- obj-$(CONFIG_GPIO_TB10X)	+= gpio-tb10x.o
-diff --git a/drivers/gpio/gpio-st-mfx.c b/drivers/gpio/gpio-st-mfx.c
-new file mode 100644
-index 0000000..4e5235f
+ config DRM_PANEL_SAMSUNG_S6E3HA2
+ 	tristate "Samsung S6E3HA2 DSI video mode panel"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 3d2a88d0e965..f26efc11d746 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
+ obj-$(CONFIG_DRM_PANEL_ORISETECH_OTM8009A) += panel-orisetech-otm8009a.o
+ obj-$(CONFIG_DRM_PANEL_PANASONIC_VVX10F034N00) += panel-panasonic-vvx10f034n00.o
+ obj-$(CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN) += panel-raspberrypi-touchscreen.o
++obj-$(CONFIG_DRM_PANEL_RAYDIUM_RM68200) += panel-raydium-rm68200.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_LD9040) += panel-samsung-ld9040.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3HA2) += panel-samsung-s6e3ha2.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03) += panel-samsung-s6e63j0x03.o
+diff --git a/drivers/gpu/drm/panel/panel-raydium-rm68200.c b/drivers/gpu/drm/panel/panel-raydium-rm68200.c
+new file mode 100755
+index 000000000000..f3e15873d05a
 --- /dev/null
-+++ b/drivers/gpio/gpio-st-mfx.c
-@@ -0,0 +1,589 @@
++++ b/drivers/gpu/drm/panel/panel-raydium-rm68200.c
+@@ -0,0 +1,464 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * STMicroelectronics Multi-Function eXpander (ST-MFX) - GPIO expander driver.
++ * Copyright (C) STMicroelectronics SA 2017
 + *
-+ * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
-+ * Author(s): Amelie Delaunay <amelie.delaunay@st.com> for STMicroelectronics.
-+ *
-+ * License terms: GPL V2.0.
-+ *
-+ * st-mfx-gpio is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ *
-+ * st-mfx-gpio is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-+ * details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * st-mfx-gpio. If not, see <http://www.gnu.org/licenses/>.
++ * Authors: Philippe Cornu <philippe.cornu@st.com>
++ *          Yannick Fertre <yannick.fertre@st.com>
 + */
 +
-+#include <linux/interrupt.h>
-+#include <linux/mfd/st-mfx.h>
-+#include <linux/module.h>
-+#include <linux/of_gpio.h>
-+#include <linux/platform_device.h>
-+#include <linux/seq_file.h>
++#include <drm/drmP.h>
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_panel.h>
++#include <linux/backlight.h>
++#include <linux/gpio/consumer.h>
++#include <linux/regulator/consumer.h>
++#include <video/mipi_display.h>
 +
-+/* MFX has a maximum of 24 gpios, with 8 gpios per bank, so 3 banks maximum */
-+#define NR_MAX_GPIOS		24
-+#define NR_GPIOS_PER_BANK	8
-+#define NR_MAX_BANKS		(NR_MAX_GPIOS / NR_GPIOS_PER_BANK)
-+#define get_bank(offset)	((u8)((offset) / NR_GPIOS_PER_BANK))
-+#define get_mask(offset)	((u8)BIT((offset) % NR_GPIOS_PER_BANK))
++#define DRV_NAME "raydium_rm68200"
 +
-+/*
-+ * These registers are modified under the .irq_bus_lock and cached to avoid
-+ * unnecessary writes in .irq_bus_sync_unlock.
-+ */
-+enum { REG_IRQ_SRC, REG_IRQ_EVT, REG_IRQ_TYPE, NR_CACHE_IRQ_REGS };
++/*** Manufacturer Command Set ***/
++#define MCS_CMD_MODE_SW	0xFE /* CMD Mode Switch */
++#define MCS_CMD1_UCS	0x00 /* User Command Set (UCS = CMD1) */
++#define MCS_CMD2_P0	0x01 /* Manufacture Command Set Page0 (CMD2 P0) */
++#define MCS_CMD2_P1	0x02 /* Manufacture Command Set Page1 (CMD2 P1) */
++#define MCS_CMD2_P2	0x03 /* Manufacture Command Set Page2 (CMD2 P2) */
++#define MCS_CMD2_P3	0x04 /* Manufacture Command Set Page3 (CMD2 P3) */
 +
-+/*
-+ * This is MFX-specific flags, overloading Linux-specific of_gpio_flags,
-+ * needed in of_xlate callback.
-+ * on MFX: - if GPIO is output:
-+ *		* (0) means PUSH_PULL
-+ *		* OF_GPIO_SINGLE_ENDED (=2) means OPEN-DRAIN
-+ *	   - if GPIO is input:
-+ *		* (0) means NO_PULL
-+ *		* OF_MFX_GPI_PUSH_PULL (=2) means PUSH_PULL
-+ *
-+ *		* OF_MFX_GPIO_PULL_UP programs pull up resistor on the GPIO,
-+ *		  whatever its direction, without this flag, depending on
-+ *		  GPIO type and direction, it programs either no pull or
-+ *		  pull down resistor.
-+ */
-+enum of_mfx_gpio_flags {
-+	OF_MFX_GPI_PUSH_PULL = 0x2,
-+	OF_MFX_GPIO_PULL_UP = 0x4,
-+};
++/* CMD2 P0 commands (Display Options and Power) */
++#define MCS_STBCTR	0x12 /* TE1 Output Setting Zig-Zag Connection */
++#define MCS_SGOPCTR	0x16 /* Source Bias Current */
++#define MCS_SDCTR	0x1A /* Source Output Delay Time */
++#define MCS_INVCTR	0x1B /* Inversion Type */
++#define MCS_EXT_PWR_IC	0x24 /* External PWR IC Control */
++#define MCS_SETAVDD	0x27 /* PFM Control for AVDD Output */
++#define MCS_SETAVEE	0x29 /* PFM Control for AVEE Output */
++#define MCS_BT2CTR	0x2B /* DDVDL Charge Pump Control */
++#define MCS_BT3CTR	0x2F /* VGH Charge Pump Control */
++#define MCS_BT4CTR	0x34 /* VGL Charge Pump Control */
++#define MCS_VCMCTR	0x46 /* VCOM Output Level Control */
++#define MCS_SETVGN	0x52 /* VG M/S N Control */
++#define MCS_SETVGP	0x54 /* VG M/S P Control */
++#define MCS_SW_CTRL	0x5F /* Interface Control for PFM and MIPI */
 +
-+struct mfx_gpio {
-+	struct gpio_chip gc;
-+	struct mfx *mfx;
++/* CMD2 P2 commands (GOA Timing Control) - no description in datasheet */
++#define GOA_VSTV1	0x00
++#define GOA_VSTV2	0x07
++#define GOA_VCLK1	0x0E
++#define GOA_VCLK2	0x17
++#define GOA_VCLK_OPT1	0x20
++#define GOA_BICLK1	0x2A
++#define GOA_BICLK2	0x37
++#define GOA_BICLK3	0x44
++#define GOA_BICLK4	0x4F
++#define GOA_BICLK_OPT1	0x5B
++#define GOA_BICLK_OPT2	0x60
++#define MCS_GOA_GPO1	0x6D
++#define MCS_GOA_GPO2	0x71
++#define MCS_GOA_EQ	0x74
++#define MCS_GOA_CLK_GALLON 0x7C
++#define MCS_GOA_FS_SEL0	0x7E
++#define MCS_GOA_FS_SEL1	0x87
++#define MCS_GOA_FS_SEL2	0x91
++#define MCS_GOA_FS_SEL3	0x9B
++#define MCS_GOA_BS_SEL0	0xAC
++#define MCS_GOA_BS_SEL1	0xB5
++#define MCS_GOA_BS_SEL2	0xBF
++#define MCS_GOA_BS_SEL3	0xC9
++#define MCS_GOA_BS_SEL4	0xD3
++
++/* CMD2 P3 commands (Gamma) */
++#define MCS_GAMMA_VP	0x60 /* Gamma VP1~VP16 */
++#define MCS_GAMMA_VN	0x70 /* Gamma VN1~VN16 */
++
++struct rm68200 {
 +	struct device *dev;
-+	struct mutex irq_lock; /* IRQ bus lock */
-+	u32 flags[NR_MAX_GPIOS];
-+	/* Caches of interrupt control registers for bus_lock */
-+	u8 regs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
-+	u8 oldregs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
++	struct drm_panel panel;
++	struct gpio_desc *reset_gpio;
++	struct regulator *supply;
++	struct backlight_device *bl_dev;
++	bool prepared;
++	bool enabled;
 +};
 +
-+static int mfx_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	u8 reg = MFX_REG_GPIO_STATE + get_bank(offset);
-+	u8 mask = get_mask(offset);
-+	int ret;
-+
-+	ret = mfx_reg_read(mfx, reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!(ret & mask);
-+}
-+
-+static void mfx_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	int which = val ? MFX_REG_GPO_SET : MFX_REG_GPO_CLR;
-+	u8 reg = which + get_bank(offset);
-+	u8 mask = get_mask(offset);
-+
-+	mfx_reg_write(mfx, reg, mask);
-+}
-+
-+static int mfx_gpio_get_direction(struct gpio_chip *gc,
-+				  unsigned int offset)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	u8 reg = MFX_REG_GPIO_DIR + get_bank(offset);
-+	u8 mask = get_mask(offset);
-+	int ret;
-+
-+	ret = mfx_reg_read(mfx, reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !(ret & mask);
-+}
-+
-+static int mfx_gpio_direction_input(struct gpio_chip *gc,
-+				    unsigned int offset)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	u8 reg_type = MFX_REG_GPIO_TYPE + get_bank(offset);
-+	u8 reg_pupd = MFX_REG_GPIO_PUPD + get_bank(offset);
-+	u8 reg_dir = MFX_REG_GPIO_DIR + get_bank(offset);
-+	u8 mask = get_mask(offset);
-+	int ret;
-+
-+	/*
-+	 * In case of input direction, there is actually no way to apply some
-+	 * configuration in hardware, as it can be done with
-+	 * .set_config in case of output direction. That's why we apply
-+	 * here the MFX specific-flags.
-+	 */
-+	if (mfx_gpio->flags[offset] & OF_MFX_GPI_PUSH_PULL)
-+		ret = mfx_set_bits(mfx, reg_type, mask, mask);
-+	else
-+		ret = mfx_set_bits(mfx, reg_type, mask, 0);
-+
-+	if (ret)
-+		return ret;
-+
-+	if (mfx_gpio->flags[offset] & OF_MFX_GPIO_PULL_UP)
-+		ret = mfx_set_bits(mfx, reg_pupd, mask, mask);
-+	else
-+		ret = mfx_set_bits(mfx, reg_pupd, mask, 0);
-+
-+	if (ret)
-+		return ret;
-+
-+	return mfx_set_bits(mfx, reg_dir, mask, 0);
-+}
-+
-+static int mfx_gpio_direction_output(struct gpio_chip *gc,
-+				     unsigned int offset, int val)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	u8 reg = MFX_REG_GPIO_DIR + get_bank(offset);
-+	u8 mask = get_mask(offset);
-+
-+	mfx_gpio_set(gc, offset, val);
-+
-+	return mfx_set_bits(mfx, reg, mask, mask);
-+}
-+
-+static int mfx_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+			       unsigned long config)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	u8 reg_type = MFX_REG_GPIO_TYPE + get_bank(offset);
-+	u8 reg_pupd = MFX_REG_GPIO_PUPD + get_bank(offset);
-+	u8 mask = get_mask(offset);
-+	int ret;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		ret = mfx_set_bits(mfx, reg_type, mask, mask);
-+		if (ret)
-+			return ret;
-+		return mfx_set_bits(mfx, reg_pupd, mask, 0);
-+	case PIN_CONFIG_DRIVE_OPEN_SOURCE:
-+		ret = mfx_set_bits(mfx, reg_type, mask, mask);
-+		if (ret)
-+			return ret;
-+		return mfx_set_bits(mfx, reg_pupd, mask, mask);
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		ret = mfx_set_bits(mfx, reg_type, mask, 0);
-+		if (ret)
-+			return ret;
-+		return mfx_set_bits(mfx, reg_pupd, mask, 0);
-+	default:
-+		break;
-+	}
-+
-+	return -ENOTSUPP;
-+}
-+
-+static void mfx_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	u16 i;
-+
-+	for (i = 0; i < gc->ngpio; i++) {
-+		int gpio = i + gc->base;
-+		const char *label = gpiochip_is_requested(gc, i);
-+		int dir = mfx_gpio_get_direction(gc, i);
-+		int val = mfx_gpio_get(gc, i);
-+		u8 mask = get_mask(i);
-+		u8 reg;
-+		int type, pupd;
-+		int irqsrc, irqevt, irqtype, irqpending;
-+
-+		if (!label)
-+			label = "Unrequested";
-+
-+		seq_printf(s, " gpio-%-3d (%-20.20s) ", gpio, label);
-+
-+		reg = MFX_REG_GPIO_TYPE + get_bank(i);
-+		type = mfx_reg_read(mfx, reg);
-+		if (type < 0)
-+			return;
-+		type = !!(type & mask);
-+
-+		reg = MFX_REG_GPIO_PUPD + get_bank(i);
-+		pupd = mfx_reg_read(mfx, reg);
-+		if (pupd < 0)
-+			return;
-+		pupd = !!(pupd & mask);
-+
-+		reg = MFX_REG_IRQ_GPI_SRC + get_bank(i);
-+		irqsrc = mfx_reg_read(mfx, reg);
-+		if (irqsrc < 0)
-+			return;
-+		irqsrc = !!(irqsrc & mask);
-+
-+		reg = MFX_REG_IRQ_GPI_EVT + get_bank(i);
-+		irqevt = mfx_reg_read(mfx, reg);
-+		if (irqevt < 0)
-+			return;
-+		irqevt = !!(irqevt & mask);
-+
-+		reg = MFX_REG_IRQ_GPI_TYPE + get_bank(i);
-+		irqtype = mfx_reg_read(mfx, reg);
-+		if (irqtype < 0)
-+			return;
-+		irqtype = !!(irqtype & mask);
-+
-+		reg = MFX_REG_IRQ_GPI_PENDING + get_bank(i);
-+		irqpending = mfx_reg_read(mfx, reg);
-+		if (irqpending < 0)
-+			return;
-+		irqpending = !!(irqpending & mask);
-+
-+		if (!dir) {
-+			seq_printf(s, "out %s ", val ? "high" : "low");
-+			if (type)
-+				seq_puts(s, "open drain ");
-+			else
-+				seq_puts(s, "push pull ");
-+			if (pupd && type)
-+				seq_puts(s, "with internal pull-up ");
-+			else
-+				seq_puts(s, "without internal pull-up ");
-+		} else {
-+			seq_printf(s, "in %s ", val ? "high" : "low");
-+			if (type)
-+				seq_printf(s, "with internal pull-%s ",
-+					   pupd ? "up" : "down");
-+			else
-+				seq_printf(s, "%s ",
-+					   pupd ? "floating" : "analog");
-+		}
-+
-+		if (irqsrc) {
-+			seq_printf(s, "IRQ generated on %s %s",
-+				   !irqevt ?
-+				   (!irqtype ? "Low level" : "High level") :
-+				   (!irqtype ? "Falling edge" : "Rising edge"),
-+				   irqpending ? "(pending)" : "");
-+		}
-+
-+		seq_puts(s, "\n");
-+	}
-+}
-+
-+int mfx_gpio_of_xlate(struct gpio_chip *gc,
-+		      const struct of_phandle_args *gpiospec, u32 *flags)
-+{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	int ret;
-+
-+	ret = of_gpio_simple_xlate(gc, gpiospec, flags);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * In atomic context here, we can't access registers over I2C,
-+	 * that's why gpio flags are stored to be applied later.
-+	 */
-+	mfx_gpio->flags[gpiospec->args[0]] = gpiospec->args[1];
-+
-+	return ret;
-+}
-+
-+static const struct gpio_chip mfx_gpio_chip = {
-+	.label			= "MFX_GPIO",
-+	.owner			= THIS_MODULE,
-+	.get_direction		= mfx_gpio_get_direction,
-+	.direction_input	= mfx_gpio_direction_input,
-+	.direction_output	= mfx_gpio_direction_output,
-+	.get			= mfx_gpio_get,
-+	.set			= mfx_gpio_set,
-+	.set_config		= mfx_gpio_set_config,
-+	.dbg_show		= mfx_gpio_dbg_show,
-+	.can_sleep		= true,
-+	.of_gpio_n_cells	= 2,
-+	.of_xlate		= mfx_gpio_of_xlate,
++static const struct drm_display_mode default_mode = {
++	.clock = 52582,
++	.hdisplay = 720,
++	.hsync_start = 720 + 38,
++	.hsync_end = 720 + 38 + 8,
++	.htotal = 720 + 38 + 8 + 38,
++	.vdisplay = 1280,
++	.vsync_start = 1280 + 12,
++	.vsync_end = 1280 + 12 + 4,
++	.vtotal = 1280 + 12 + 4 + 12,
++	.vrefresh = 50,
++	.flags = 0,
++	.width_mm = 68,
++	.height_mm = 122,
 +};
 +
-+static void mfx_gpio_irq_toggle_trigger(struct gpio_chip *gc, int offset)
++static inline struct rm68200 *panel_to_rm68200(struct drm_panel *panel)
 +{
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	u8 bank = get_bank(offset);
-+	u8 mask = get_mask(offset);
-+	int val = mfx_gpio_get(gc, offset);
-+
-+	if (val < 0) {
-+		dev_err(mfx_gpio->dev, "can't get value of gpio%d: ret=%d\n",
-+			offset, val);
-+		return;
-+	}
-+
-+	if (val) {
-+		mfx_gpio->regs[REG_IRQ_TYPE][bank] &= ~mask;
-+		mfx_set_bits(mfx, MFX_REG_IRQ_GPI_TYPE + bank, mask, 0);
-+	} else {
-+		mfx_gpio->regs[REG_IRQ_TYPE][bank] |= mask;
-+		mfx_set_bits(mfx, MFX_REG_IRQ_GPI_TYPE + bank, mask, mask);
-+	}
++	return container_of(panel, struct rm68200, panel);
 +}
 +
-+static int mfx_gpio_irq_set_type(struct irq_data *d, unsigned int type)
++static void rm68200_dcs_write_buf(struct rm68200 *ctx, const void *data,
++				  size_t len)
 +{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	int bank = get_bank(d->hwirq);
-+	int mask = get_mask(d->hwirq);
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
 +
-+	if ((type & IRQ_TYPE_LEVEL_LOW) || (type & IRQ_TYPE_LEVEL_HIGH))
-+		mfx_gpio->regs[REG_IRQ_EVT][bank] &= ~mask;
-+	else
-+		mfx_gpio->regs[REG_IRQ_EVT][bank] |= mask;
++	if (mipi_dsi_dcs_write_buffer(dsi, data, len) < 0)
++		DRM_WARN("mipi dsi dcs write buffer failed\n");
++}
 +
-+	if ((type & IRQ_TYPE_EDGE_RISING) || (type & IRQ_TYPE_LEVEL_HIGH))
-+		mfx_gpio->regs[REG_IRQ_TYPE][bank] |= mask;
-+	else
-+		mfx_gpio->regs[REG_IRQ_TYPE][bank] &= ~mask;
++static void rm68200_dcs_write_cmd(struct rm68200 *ctx, u8 cmd, u8 value)
++{
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
 +
-+	/*
-+	 * In case of (type & IRQ_TYPE_EDGE_BOTH), we need to know current
-+	 * GPIO value to set the right edge trigger. But in atomic context
-+	 * here we can't access registers over I2C. That's why (type &
-+	 * IRQ_TYPE_EDGE_BOTH) will be managed in .irq_sync_unlock.
-+	 */
++	if (mipi_dsi_dcs_write(dsi, cmd, &value, 1) < 0)
++		DRM_WARN("mipi dsi dcs write failed\n");
++}
++
++#define dcs_write_seq(ctx, seq...)				\
++({								\
++	static const u8 d[] = { seq };				\
++	rm68200_dcs_write_buf(ctx, d, ARRAY_SIZE(d));		\
++})
++
++/*
++ * This panel is not able to auto-increment all cmd addresses so for some of
++ * them, we need to send them one by one...
++ */
++#define dcs_write_cmd_seq(ctx, cmd, seq...)			\
++({								\
++	static const u8 d[] = { seq };				\
++	static int i;						\
++	for (i = 0; i < ARRAY_SIZE(d) ; i++)			\
++		rm68200_dcs_write_cmd(ctx, cmd + i, d[i]);	\
++})
++
++static void rm68200_init_sequence(struct rm68200 *ctx)
++{
++	/* Enter CMD2 with page 0 */
++	dcs_write_seq(ctx, MCS_CMD_MODE_SW, MCS_CMD2_P0);
++	dcs_write_cmd_seq(ctx, MCS_EXT_PWR_IC, 0xC0, 0x53, 0x00);
++	dcs_write_seq(ctx, MCS_BT2CTR, 0xE5);
++	dcs_write_seq(ctx, MCS_SETAVDD, 0x0A);
++	dcs_write_seq(ctx, MCS_SETAVEE, 0x0A);
++	dcs_write_seq(ctx, MCS_SGOPCTR, 0x52);
++	dcs_write_seq(ctx, MCS_BT3CTR, 0x53);
++	dcs_write_seq(ctx, MCS_BT4CTR, 0x5A);
++	dcs_write_seq(ctx, MCS_INVCTR, 0x00);
++	dcs_write_seq(ctx, MCS_STBCTR, 0x0A);
++	dcs_write_seq(ctx, MCS_SDCTR, 0x06);
++	dcs_write_seq(ctx, MCS_VCMCTR, 0x56);
++	dcs_write_seq(ctx, MCS_SETVGN, 0xA0, 0x00);
++	dcs_write_seq(ctx, MCS_SETVGP, 0xA0, 0x00);
++	dcs_write_seq(ctx, MCS_SW_CTRL, 0x11); /* 2 data lanes, see doc */
++
++	dcs_write_seq(ctx, MCS_CMD_MODE_SW, MCS_CMD2_P2);
++	dcs_write_seq(ctx, GOA_VSTV1, 0x05);
++	dcs_write_seq(ctx, 0x02, 0x0B);
++	dcs_write_seq(ctx, 0x03, 0x0F);
++	dcs_write_seq(ctx, 0x04, 0x7D, 0x00, 0x50);
++	dcs_write_cmd_seq(ctx, GOA_VSTV2, 0x05, 0x16, 0x0D, 0x11, 0x7D, 0x00,
++			  0x50);
++	dcs_write_cmd_seq(ctx, GOA_VCLK1, 0x07, 0x08, 0x01, 0x02, 0x00, 0x7D,
++			  0x00, 0x85, 0x08);
++	dcs_write_cmd_seq(ctx, GOA_VCLK2, 0x03, 0x04, 0x05, 0x06, 0x00, 0x7D,
++			  0x00, 0x85, 0x08);
++	dcs_write_seq(ctx, GOA_VCLK_OPT1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++		      0x00, 0x00, 0x00, 0x00);
++	dcs_write_cmd_seq(ctx, GOA_BICLK1, 0x07, 0x08);
++	dcs_write_seq(ctx, 0x2D, 0x01);
++	dcs_write_seq(ctx, 0x2F, 0x02, 0x00, 0x40, 0x05, 0x08, 0x54, 0x7D,
++		      0x00);
++	dcs_write_cmd_seq(ctx, GOA_BICLK2, 0x03, 0x04, 0x05, 0x06, 0x00);
++	dcs_write_seq(ctx, 0x3D, 0x40);
++	dcs_write_seq(ctx, 0x3F, 0x05, 0x08, 0x54, 0x7D, 0x00);
++	dcs_write_seq(ctx, GOA_BICLK3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++		      0x00, 0x00, 0x00, 0x00, 0x00);
++	dcs_write_seq(ctx, GOA_BICLK4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++		      0x00, 0x00);
++	dcs_write_seq(ctx, 0x58, 0x00, 0x00, 0x00);
++	dcs_write_seq(ctx, GOA_BICLK_OPT1, 0x00, 0x00, 0x00, 0x00, 0x00);
++	dcs_write_seq(ctx, GOA_BICLK_OPT2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++		      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
++	dcs_write_seq(ctx, MCS_GOA_GPO1, 0x00, 0x00, 0x00, 0x00);
++	dcs_write_seq(ctx, MCS_GOA_GPO2, 0x00, 0x20, 0x00);
++	dcs_write_seq(ctx, MCS_GOA_EQ, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
++		      0x00, 0x00);
++	dcs_write_seq(ctx, MCS_GOA_CLK_GALLON, 0x00, 0x00);
++	dcs_write_cmd_seq(ctx, MCS_GOA_FS_SEL0, 0xBF, 0x02, 0x06, 0x14, 0x10,
++			  0x16, 0x12, 0x08, 0x3F);
++	dcs_write_cmd_seq(ctx, MCS_GOA_FS_SEL1, 0x3F, 0x3F, 0x3F, 0x3F, 0x0C,
++			  0x0A, 0x0E, 0x3F, 0x3F, 0x00);
++	dcs_write_cmd_seq(ctx, MCS_GOA_FS_SEL2, 0x04, 0x3F, 0x3F, 0x3F, 0x3F,
++			  0x05, 0x01, 0x3F, 0x3F, 0x0F);
++	dcs_write_cmd_seq(ctx, MCS_GOA_FS_SEL3, 0x0B, 0x0D, 0x3F, 0x3F, 0x3F,
++			  0x3F);
++	dcs_write_cmd_seq(ctx, 0xA2, 0x3F, 0x09, 0x13, 0x17, 0x11, 0x15);
++	dcs_write_cmd_seq(ctx, 0xA9, 0x07, 0x03, 0x3F);
++	dcs_write_cmd_seq(ctx, MCS_GOA_BS_SEL0, 0x3F, 0x05, 0x01, 0x17, 0x13,
++			  0x15, 0x11, 0x0F, 0x3F);
++	dcs_write_cmd_seq(ctx, MCS_GOA_BS_SEL1, 0x3F, 0x3F, 0x3F, 0x3F, 0x0B,
++			  0x0D, 0x09, 0x3F, 0x3F, 0x07);
++	dcs_write_cmd_seq(ctx, MCS_GOA_BS_SEL2, 0x03, 0x3F, 0x3F, 0x3F, 0x3F,
++			  0x02, 0x06, 0x3F, 0x3F, 0x08);
++	dcs_write_cmd_seq(ctx, MCS_GOA_BS_SEL3, 0x0C, 0x0A, 0x3F, 0x3F, 0x3F,
++			  0x3F, 0x3F, 0x0E, 0x10, 0x14);
++	dcs_write_cmd_seq(ctx, MCS_GOA_BS_SEL4, 0x12, 0x16, 0x00, 0x04, 0x3F);
++	dcs_write_seq(ctx, 0xDC, 0x02);
++	dcs_write_seq(ctx, 0xDE, 0x12);
++
++	dcs_write_seq(ctx, MCS_CMD_MODE_SW, 0x0E); /* No documentation */
++	dcs_write_seq(ctx, 0x01, 0x75);
++
++	dcs_write_seq(ctx, MCS_CMD_MODE_SW, MCS_CMD2_P3);
++	dcs_write_cmd_seq(ctx, MCS_GAMMA_VP, 0x00, 0x0C, 0x12, 0x0E, 0x06,
++			  0x12, 0x0E, 0x0B, 0x15, 0x0B, 0x10, 0x07, 0x0F,
++			  0x12, 0x0C, 0x00);
++	dcs_write_cmd_seq(ctx, MCS_GAMMA_VN, 0x00, 0x0C, 0x12, 0x0E, 0x06,
++			  0x12, 0x0E, 0x0B, 0x15, 0x0B, 0x10, 0x07, 0x0F,
++			  0x12, 0x0C, 0x00);
++
++	/* Exit CMD2 */
++	dcs_write_seq(ctx, MCS_CMD_MODE_SW, MCS_CMD1_UCS);
++}
++
++static int rm68200_disable(struct drm_panel *panel)
++{
++	struct rm68200 *ctx = panel_to_rm68200(panel);
++
++	if (!ctx->enabled)
++		return 0;
++
++	if (ctx->bl_dev) {
++		ctx->bl_dev->props.power = FB_BLANK_POWERDOWN;
++		ctx->bl_dev->props.state |= BL_CORE_FBBLANK;
++		backlight_update_status(ctx->bl_dev);
++	}
++
++	ctx->enabled = false;
 +
 +	return 0;
 +}
 +
-+static void mfx_gpio_irq_lock(struct irq_data *d)
++static int rm68200_unprepare(struct drm_panel *panel)
 +{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
++	struct rm68200 *ctx = panel_to_rm68200(panel);
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
++	int ret;
 +
-+	mutex_lock(&mfx_gpio->irq_lock);
-+}
++	if (!ctx->prepared)
++		return 0;
 +
-+static void mfx_gpio_irq_sync_unlock(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	static const u8 cache_regs[] = {
-+		[REG_IRQ_SRC] = MFX_REG_IRQ_GPI_SRC,
-+		[REG_IRQ_EVT] = MFX_REG_IRQ_GPI_EVT,
-+		[REG_IRQ_TYPE] = MFX_REG_IRQ_GPI_TYPE,
-+	};
-+	u8 i, bank;
++	ret = mipi_dsi_dcs_set_display_off(dsi);
++	if (ret)
++		DRM_WARN("failed to set display off: %d\n", ret);
 +
-+	/*
-+	 * In case of (type & IRQ_TYPE_EDGE_BOTH), read the current GPIO value
-+	 * (this couldn't be done in .irq_set_type because of atomic context)
-+	 * to set the right irq trigger type.
-+	 */
-+	if (irqd_get_trigger_type(d) & IRQ_TYPE_EDGE_BOTH) {
-+		int type;
++	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
++	if (ret)
++		DRM_WARN("failed to enter sleep mode: %d\n", ret);
 +
-+		if (mfx_gpio_get(gc, d->hwirq))
-+			type = IRQ_TYPE_EDGE_FALLING;
-+		else
-+			type = IRQ_TYPE_EDGE_RISING;
++	msleep(120);
 +
-+		mfx_gpio_irq_set_type(d, type);
++	if (ctx->reset_gpio) {
++		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++		msleep(20);
 +	}
 +
-+	for (i = 0; i < NR_CACHE_IRQ_REGS; i++) {
-+		for (bank = 0; bank < NR_MAX_BANKS; bank++) {
-+			u8 old = mfx_gpio->oldregs[i][bank];
-+			u8 new = mfx_gpio->regs[i][bank];
++	regulator_disable(ctx->supply);
 +
-+			if (new == old)
-+				continue;
++	ctx->prepared = false;
 +
-+			mfx_gpio->oldregs[i][bank] = new;
-+			mfx_reg_write(mfx, cache_regs[i] + bank, new);
-+		}
++	return 0;
++}
++
++static int rm68200_prepare(struct drm_panel *panel)
++{
++	struct rm68200 *ctx = panel_to_rm68200(panel);
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
++	int ret;
++
++	if (ctx->prepared)
++		return 0;
++
++	ret = regulator_enable(ctx->supply);
++	if (ret < 0) {
++		DRM_ERROR("failed to enable supply: %d\n", ret);
++		return ret;
 +	}
 +
-+	mutex_unlock(&mfx_gpio->irq_lock);
++	if (ctx->reset_gpio) {
++		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
++		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++		msleep(20);
++		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
++		msleep(100);
++	}
++
++	rm68200_init_sequence(ctx);
++
++	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
++	if (ret)
++		return ret;
++
++	msleep(125);
++
++	ret = mipi_dsi_dcs_set_display_on(dsi);
++	if (ret)
++		return ret;
++
++	msleep(20);
++
++	ctx->prepared = true;
++
++	return 0;
 +}
 +
-+static void mfx_gpio_irq_mask(struct irq_data *d)
++static int rm68200_enable(struct drm_panel *panel)
 +{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	int offset = d->hwirq;
-+	u8 bank = get_bank(offset);
-+	u8 mask = get_mask(offset);
++	struct rm68200 *ctx = panel_to_rm68200(panel);
 +
-+	mfx_gpio->regs[REG_IRQ_SRC][bank] &= ~mask;
++	if (ctx->enabled)
++		return 0;
++
++	if (ctx->bl_dev) {
++		ctx->bl_dev->props.state &= ~BL_CORE_FBBLANK;
++		ctx->bl_dev->props.power = FB_BLANK_UNBLANK;
++		backlight_update_status(ctx->bl_dev);
++	}
++
++	ctx->enabled = true;
++
++	return 0;
 +}
 +
-+static void mfx_gpio_irq_unmask(struct irq_data *d)
++static int rm68200_get_modes(struct drm_panel *panel)
 +{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
-+	int offset = d->hwirq;
-+	u8 bank = get_bank(offset);
-+	u8 mask = get_mask(offset);
++	struct drm_display_mode *mode;
 +
-+	mfx_gpio->regs[REG_IRQ_SRC][bank] |= mask;
++	mode = drm_mode_duplicate(panel->drm, &default_mode);
++	if (!mode) {
++		DRM_ERROR("failed to add mode %ux%ux@%u\n",
++			  default_mode.hdisplay, default_mode.vdisplay,
++			  default_mode.vrefresh);
++		return -ENOMEM;
++	}
++
++	drm_mode_set_name(mode);
++
++	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
++	drm_mode_probed_add(panel->connector, mode);
++
++	panel->connector->display_info.width_mm = mode->width_mm;
++	panel->connector->display_info.height_mm = mode->height_mm;
++
++	return 1;
 +}
 +
-+static struct irq_chip mfx_gpio_irq_chip = {
-+	.name			= "mfx-gpio",
-+	.irq_bus_lock		= mfx_gpio_irq_lock,
-+	.irq_bus_sync_unlock	= mfx_gpio_irq_sync_unlock,
-+	.irq_mask		= mfx_gpio_irq_mask,
-+	.irq_unmask		= mfx_gpio_irq_unmask,
-+	.irq_set_type		= mfx_gpio_irq_set_type,
++static const struct drm_panel_funcs rm68200_drm_funcs = {
++	.disable   = rm68200_disable,
++	.unprepare = rm68200_unprepare,
++	.prepare   = rm68200_prepare,
++	.enable    = rm68200_enable,
++	.get_modes = rm68200_get_modes,
 +};
 +
-+static irqreturn_t mfx_gpio_irq(int irq, void *dev)
++static int rm68200_probe(struct mipi_dsi_device *dsi)
 +{
-+	struct mfx_gpio *mfx_gpio = dev;
-+	struct mfx *mfx = mfx_gpio->mfx;
-+	int num_banks = mfx->num_gpio / 8;
-+	u8 status[num_banks];
-+	int ret;
-+	u8 bank;
-+
-+	ret = mfx_block_read(mfx, MFX_REG_IRQ_GPI_PENDING, ARRAY_SIZE(status),
-+			     status);
-+	if (ret < 0) {
-+		dev_err(mfx_gpio->dev, "can't get IRQ_GPI_PENDING: %d\n", ret);
-+		return IRQ_NONE;
-+	}
-+
-+	for (bank = 0; bank < ARRAY_SIZE(status); bank++) {
-+		u8 stat = status[bank];
-+
-+		if (!stat)
-+			continue;
-+
-+		while (stat) {
-+			int bit = __ffs(stat);
-+			int offset = bank * NR_GPIOS_PER_BANK + bit;
-+			int gpio_irq = irq_find_mapping(mfx_gpio->gc.irq.domain,
-+							offset);
-+			int irq_trigger = irq_get_trigger_type(gpio_irq);
-+
-+			handle_nested_irq(gpio_irq);
-+			stat &= ~(BIT(bit));
-+
-+			if (irq_trigger & IRQ_TYPE_EDGE_BOTH)
-+				mfx_gpio_irq_toggle_trigger(&mfx_gpio->gc,
-+							    offset);
-+		}
-+
-+		mfx_reg_write(mfx, MFX_REG_IRQ_GPI_ACK + bank, status[bank]);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mfx_gpio_probe(struct platform_device *pdev)
-+{
-+	struct mfx *mfx = dev_get_drvdata(pdev->dev.parent);
-+	struct mfx_gpio *mfx_gpio;
-+	int irq;
++	struct device *dev = &dsi->dev;
++	struct device_node *backlight;
++	struct rm68200 *ctx;
 +	int ret;
 +
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "failed to get irq: %d\n", irq);
-+
-+		return irq;
-+	}
-+
-+	mfx_gpio = devm_kzalloc(&pdev->dev, sizeof(struct mfx_gpio),
-+				GFP_KERNEL);
-+	if (!mfx_gpio)
++	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
 +		return -ENOMEM;
 +
-+	mutex_init(&mfx_gpio->irq_lock);
++	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(ctx->reset_gpio)) {
++		dev_err(dev, "cannot get reset-gpio\n");
++		return PTR_ERR(ctx->reset_gpio);
++	}
 +
-+	mfx_gpio->dev = &pdev->dev;
-+	mfx_gpio->mfx = mfx;
++	ctx->supply = devm_regulator_get(dev, "power");
++	if (IS_ERR(ctx->supply)) {
++		dev_err(dev, "cannot get regulator\n");
++		return PTR_ERR(ctx->supply);
++	}
 +
-+	mfx_gpio->gc = mfx_gpio_chip;
-+	mfx_gpio->gc.ngpio = mfx->num_gpio;
-+	mfx_gpio->gc.parent = &pdev->dev;
-+	mfx_gpio->gc.base = -1;
-+	mfx_gpio->gc.of_node = pdev->dev.of_node;
++	backlight = of_parse_phandle(dev->of_node, "backlight", 0);
++	if (backlight) {
++		ctx->bl_dev = of_find_backlight_by_node(backlight);
++		of_node_put(backlight);
 +
-+	if (mfx->blocks & MFX_BLOCK_ALTGPIO)
-+		ret = mfx_enable(mfx, MFX_BLOCK_GPIO | MFX_BLOCK_ALTGPIO);
-+	else
-+		ret = mfx_enable(mfx, MFX_BLOCK_GPIO);
++		if (!ctx->bl_dev)
++			return -EPROBE_DEFER;
++	}
 +
-+	if (ret < 0)
-+		return ret;
++	mipi_dsi_set_drvdata(dsi, ctx);
 +
-+	ret = devm_request_threaded_irq(&pdev->dev, irq,
-+					NULL, mfx_gpio_irq, IRQF_ONESHOT,
-+					"mfx-gpio", mfx_gpio);
-+	if (ret) {
-+		dev_err(&pdev->dev, "unable to request irq: %d\n", ret);
++	ctx->dev = dev;
++
++	dsi->lanes = 2;
++	dsi->format = MIPI_DSI_FMT_RGB888;
++	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
++			  MIPI_DSI_MODE_LPM;
++
++	drm_panel_init(&ctx->panel);
++	ctx->panel.dev = dev;
++	ctx->panel.funcs = &rm68200_drm_funcs;
++
++	drm_panel_add(&ctx->panel);
++
++	ret = mipi_dsi_attach(dsi);
++	if (ret < 0) {
++		dev_err(dev, "mipi_dsi_attach failed. Is host ready?\n");
++		drm_panel_remove(&ctx->panel);
++		if (ctx->bl_dev)
++			put_device(&ctx->bl_dev->dev);
 +		return ret;
 +	}
 +
-+	ret = devm_gpiochip_add_data(&pdev->dev, &mfx_gpio->gc, mfx_gpio);
-+	if (ret) {
-+		dev_err(&pdev->dev, "unable to add gpiochip: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = gpiochip_irqchip_add_nested(&mfx_gpio->gc, &mfx_gpio_irq_chip, 0,
-+					  handle_simple_irq, IRQ_TYPE_NONE);
-+	if (ret) {
-+		dev_err(&pdev->dev, "could not connect irqchip to gpiochip\n");
-+		return ret;
-+	}
-+
-+	gpiochip_set_nested_irqchip(&mfx_gpio->gc, &mfx_gpio_irq_chip, irq);
-+
-+	platform_set_drvdata(pdev, mfx_gpio);
-+
-+	dev_info(&pdev->dev, "ST-MFX (GPIO) initialized\n");
++	DRM_INFO(DRV_NAME "_panel %ux%u@%u %ubpp dsi %udl - ready\n",
++		 default_mode.hdisplay, default_mode.vdisplay,
++		 default_mode.vrefresh,
++		 mipi_dsi_pixel_format_to_bpp(dsi->format), dsi->lanes);
 +
 +	return 0;
 +}
 +
-+static int mfx_gpio_remove(struct platform_device *pdev)
++static int rm68200_remove(struct mipi_dsi_device *dsi)
 +{
-+	struct mfx *mfx = dev_get_drvdata(pdev->dev.parent);
++	struct rm68200 *ctx = mipi_dsi_get_drvdata(dsi);
 +
-+	return mfx_disable(mfx, MFX_BLOCK_GPIO | MFX_BLOCK_ALTGPIO);
++	if (ctx->bl_dev)
++		put_device(&ctx->bl_dev->dev);
++
++	mipi_dsi_detach(dsi);
++	drm_panel_remove(&ctx->panel);
++
++	return 0;
 +}
 +
-+static const struct of_device_id mfx_gpio_of_match[] = {
-+	{ .compatible = "st,mfx-gpio" },
++static const struct of_device_id raydium_rm68200_of_match[] = {
++	{ .compatible = "raydium,rm68200" },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(of, mfx_of_match);
++MODULE_DEVICE_TABLE(of, raydium_rm68200_of_match);
 +
-+static struct platform_driver mfx_gpio_driver = {
++static struct mipi_dsi_driver raydium_rm68200_driver = {
++	.probe  = rm68200_probe,
++	.remove = rm68200_remove,
 +	.driver = {
-+		.name	= "st-mfx-gpio",
-+		.of_match_table = mfx_gpio_of_match,
++		.name = DRV_NAME "_panel",
++		.of_match_table = raydium_rm68200_of_match,
 +	},
-+	.probe		= mfx_gpio_probe,
-+	.remove		= mfx_gpio_remove,
 +};
-+module_platform_driver(mfx_gpio_driver);
++module_mipi_dsi_driver(raydium_rm68200_driver);
 +
-+MODULE_DESCRIPTION("STMicroelectronics Multi-Function eXpander GPIO driver");
-+MODULE_AUTHOR("Amelie Delaunay <amelie.delaunay@st.com>");
++MODULE_AUTHOR("Philippe Cornu <philippe.cornu@st.com>");
++MODULE_AUTHOR("Yannick Fertre <yannick.fertre@st.com>");
++MODULE_DESCRIPTION("DRM Driver for Raydium RM68200 MIPI DSI panel");
 +MODULE_LICENSE("GPL v2");
-diff --git a/include/dt-bindings/gpio/st-mfx-gpio.h b/include/dt-bindings/gpio/st-mfx-gpio.h
-new file mode 100644
-index 0000000..78dc7c5
---- /dev/null
-+++ b/include/dt-bindings/gpio/st-mfx-gpio.h
-@@ -0,0 +1,24 @@
-+/*
-+ * This header provides constants for binding st,mfx-gpio.
-+ *
-+ * The first cell in ST MFX GPIO specifier is the gpio number.
-+ *
-+ * The second cell contains standard flag values specified in gpio.h and
-+ * specific flag values described here.
-+ */
-+
-+#ifndef _DT_BINDINGS_GPIO_ST_MFX_GPIO_H
-+#define _DT_BINDINGS_GPIO_ST_MFX_GPIO_H
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+#define GPIO_IN_NO_PULL		0
-+#define GPIO_IN_PUSH_PULL	2
-+#define GPIO_OUT_PUSH_PULL	GPIO_PUSH_PULL
-+#define GPIO_OUT_OPEN_DRAIN	GPIO_SINGLE_ENDED
-+
-+#define GPIO_NO_PULL		0
-+#define GPIO_PULL_DOWN		0
-+#define GPIO_PULL_UP		4
-+
-+#endif
 -- 
-2.7.4
+2.15.1
