@@ -1,64 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750941AbeBHFL6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 00:11:58 -0500
-Received: from mga17.intel.com ([192.55.52.151]:9549 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750711AbeBHFL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 00:11:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,476,1511856000";
-   d="scan'208";a="16402229"
-From: Chao Gao <chao.gao@intel.com>
-To: kvm@vger.kernel.org
-Cc: Chao Gao <chao.gao@intel.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH] x86/kvm/vmx: Don't halt vcpu when L1 is injecting events to L2
-Date: Thu,  8 Feb 2018 13:13:36 +0800
-Message-Id: <1518066816-7197-1-git-send-email-chao.gao@intel.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751068AbeBHFTU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 00:19:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37148 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeBHFTR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 00:19:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9697460790
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
+From: Vijay Viswanath <vviswana@codeaurora.org>
+Subject: Re: [PATCH RFC 2/2] mmc: sdhci-msm: support voltage pad switching
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Krishna Konda <kkonda@codeaurora.org>
+References: <1516262742-44326-1-git-send-email-vviswana@codeaurora.org>
+ <1516262742-44326-3-git-send-email-vviswana@codeaurora.org>
+ <20180202215154.GI12728@builder>
+Message-ID: <288d817a-0c9d-5c9f-c0bc-c5b523793670@codeaurora.org>
+Date: Thu, 8 Feb 2018 10:49:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180202215154.GI12728@builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although L2 is in halt state, it will be in the active state after
-VM entry if the VM entry is vectoring. Halting the vcpu here means
-the event won't be injected to L2 and this decision isn't reported
-to L1. Thus L0 drops an event that should be injected to L2.
 
-Because virtual interrupt delivery may wake L2 vcpu, if VID is enabled,
-do the same thing -- don't halt L2.
 
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- arch/x86/kvm/vmx.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+On 2/3/2018 3:21 AM, Bjorn Andersson wrote:
+> On Thu 18 Jan 00:05 PST 2018, Vijay Viswanath wrote:
+> 
+>> From: Krishna Konda <kkonda@codeaurora.org>
+>>
+>> The PADs for sdhc controller are dual-voltage that support 3v/1.8v.
+>> Those PADs have a control signal (io_pad_pwr_switch/mode18 ) that
+>> indicates whether the PAD works in 3v or 1.8v.
+>>
+>> SDHC core on msm platforms should have IO_PAD_PWR_SWITCH bit set/unset
+>> based on actual voltage used for IO lines. So when power irq is
+>> triggered for io high or io low, the driver should check the voltages
+>> supported and set the pad accordingly.
+>>
+> 
+> I'll try to find some time to check that this doesn't break 8916 and
+> 8974...again...
+>
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index bb5b488..e1fe4e4 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -10985,8 +10985,14 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 	if (ret)
- 		return ret;
- 
--	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT)
--		return kvm_vcpu_halt(vcpu);
-+	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT) {
-+		u32 intr_info = vmcs_read32(VM_ENTRY_INTR_INFO_FIELD);
-+		u32 exec_control = vmcs_read32(SECONDARY_VM_EXEC_CONTROL);
-+
-+		if (!(intr_info & VECTORING_INFO_VALID_MASK) &&
-+			!(exec_control & SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY))
-+			return kvm_vcpu_halt(vcpu);
-+	}
- 
- 	vmx->nested.nested_run_pending = 1;
- 
--- 
-1.9.1
+Thanks! Btwn, I had tested the code in db410c.
+
+>> Signed-off-by: Krishna Konda <kkonda@codeaurora.org>
+>> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+>> ---
+>>   drivers/mmc/host/sdhci-msm.c | 38 ++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 38 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+>> index 5c23e92..f5728a8 100644
+>> --- a/drivers/mmc/host/sdhci-msm.c
+>> +++ b/drivers/mmc/host/sdhci-msm.c
+>> @@ -78,6 +78,8 @@
+>>   #define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
+>>   #define CORE_HC_MCLK_SEL_HS400	(3 << 8)
+>>   #define CORE_HC_MCLK_SEL_MASK	(3 << 8)
+>> +#define CORE_IO_PAD_PWR_SWITCH_EN	(1 << 15)
+>> +#define CORE_IO_PAD_PWR_SWITCH  (1 << 16)
+>>   #define CORE_HC_SELECT_IN_EN	BIT(18)
+>>   #define CORE_HC_SELECT_IN_HS400	(6 << 19)
+>>   #define CORE_HC_SELECT_IN_MASK	(7 << 19)
+>> @@ -1166,6 +1168,35 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
+>>   	 */
+>>   	writel_relaxed(irq_ack, msm_host->core_mem + CORE_PWRCTL_CTL);
+>>   
+>> +	/*
+>> +	 * SDHC has core_mem and hc_mem device memory and these memory
+>> +	 * addresses do not fall within 1KB region. Hence, any update to
+>> +	 * core_mem address space would require an mb() to ensure this gets
+>> +	 * completed before its next update to registers within hc_mem.
+>> +	 */
+>> +	mb();
+> 
+> If you just use writel() instead of writel_relaxed() you don't need to
+> sprinkle the driver with comments like this. And you really should be
+> able to just say "Ensure ordering between core_mem and hc_mem writes" if
+> you really feel like making it explicit.
+> 
+>> +	/*
+>> +	 * We should unset IO PAD PWR switch only if the register write can
+>> +	 * set IO lines high and the regulator also switches to 3 V.
+>> +	 * Else, we should keep the IO PAD PWR switch set.
+>> +	 * This is applicable to certain targets where eMMC vccq supply is only
+>> +	 * 1.8V. In such targets, even during REQ_IO_HIGH, the IO PAD PWR
+>> +	 * switch must be kept set to reflect actual regulator voltage. This
+>> +	 * way, during initialization of controllers with only 1.8V, we will
+>> +	 * set the IO PAD bit without waiting for a REQ_IO_LOW.
+>> +	 */
+>> +	if ((io_level & REQ_IO_HIGH) && (msm_host->caps_0 & CORE_3_0V_SUPPORT))
+>> +		writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) &
+>> +					~CORE_IO_PAD_PWR_SWITCH), host->ioaddr +
+>> +				CORE_VENDOR_SPEC);
+> 
+> Please split this up in read, modify and write operations.
+> 
+
+Will do
+
+>> +	else if ((io_level & REQ_IO_LOW) ||
+>> +			(msm_host->caps_0 & CORE_1_8V_SUPPORT))
+>> +		writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) |
+>> +					CORE_IO_PAD_PWR_SWITCH), host->ioaddr +
+>> +				CORE_VENDOR_SPEC);
+>> +	/* Ensure that the IO PAD switches are updated before proceeding */
+> 
+> That's not what "mb()" does, it ensures that any writes that was done
+> before this line will hit the hardware before any writes that is done
+> after this line.
+> 
+
+Will update the comments.
+
+> But again, using writel() would save us from doing this explicitly
+> throughout the code.
+> 
+>> +	mb();
+>> +
+>>   	if (pwr_state)
+>>   		msm_host->curr_pwr_state = pwr_state;
+>>   	if (io_level)
+>> @@ -1518,6 +1549,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>>   	}
+>>   
+>>   	/*
+>> +	 * Set the PAD_PWR_SWITCH_EN bit so that the PAD_PWR_SWITCH bit can
+>> +	 * be used as required later on.
+>> +	 */
+>> +	writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) |
+>> +				CORE_IO_PAD_PWR_SWITCH_EN), host->ioaddr +
+>> +			CORE_VENDOR_SPEC);
+> 
+> Please rewrite as 3 operations.
+> 
+> Do we need to set the pwr switch value as well? Or we're fine relying on
+> the existing value here?
+
+After the IO_PAD_PWR_SWTCH is enabled, we will call 
+sdhci_msm_handle_pwr_irq. If there is any pending power irq interrupt, 
+that will set the appropriate pwr switch value. Otherwise, an 
+appropriate value will get set during REQ_BUS_ON event.
+
+> 
+> Regards,
+> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
