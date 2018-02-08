@@ -1,119 +1,510 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeBHPGU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:06:20 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:32914 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeBHPGT (ORCPT
+        id S1752191AbeBHPG3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:06:29 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:40851 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751079AbeBHPG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:06:19 -0500
-X-Google-Smtp-Source: AH8x224B6OCrIA7EbjpnpBw3msR6Zr+LTGFYqQB3wvgDcBLhHCWljjthQ609SZ2DngH8PC3mJnHN/NuWT7mbj6NMCgk=
+        Thu, 8 Feb 2018 10:06:27 -0500
+Subject: Re: [PATCH v9 6/8] media: i2c: Add TDA1997x HDMI receiver driver
+To: Tim Harvey <tharvey@gateworks.com>, linux-media@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1518043367-11531-1-git-send-email-tharvey@gateworks.com>
+ <1518043367-11531-7-git-send-email-tharvey@gateworks.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <f19fd00d-66fb-a4a2-295b-d4bfae3b4e51@xs4all.nl>
+Date: Thu, 8 Feb 2018 16:06:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180208140005.GH25201@hirez.programming.kicks-ass.net>
-References: <1517944987-343-1-git-send-email-vincent.guittot@linaro.org>
- <1517944987-343-2-git-send-email-vincent.guittot@linaro.org> <20180208140005.GH25201@hirez.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 8 Feb 2018 16:05:58 +0100
-Message-ID: <CAKfTPtB0dDmovt=iM=efXUG1EY7GnOAuTTCf0VqTvx08fatWeQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] sched: Stop nohz stats when decayed
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1518043367-11531-7-git-send-email-tharvey@gateworks.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGHQLRFZl4tRaXlRdde+Pix3KsFRINvqEq7P0RkNjQ+CbTi53yGtibVKvEBbpEcWuzpEEpEoceH2EboGQRv7tl0XJLLtiH5WEyX1FI7HCqPS9uQMlRuI
+ d1FiG6ErDvegzuXEi0zJbLdUaUSM2lkXQL9ZOr/q2GSheW5r1lZSMZuZGwoPaiHocglVMLDyYAQHVu4lj+WFE+Nf/cXGv2Z0pUyGueeQZkqHnQR873nw8zZU
+ gaLSIMevvdSZfL1FNtl+JP9eQ7ZF6R+T+7iMtQ+7JczIH6nMosc7pwBDtM8W2kaCG5OnuN1pURyicjkPN9xnFjvI9voGdMZo+CL6aPpznfbHlgV+/60K7dCJ
+ 6F35dHcH4UX6p4kPIOm/cCNfwukJMvQvUFnuw3bImg4UktU/J5NOT9LptvWIUZXhxmXExVx8HXyFY3/QPo8L4H6lCkvFwXAL8nl381oYHs7KjQmtsOyR9xdV
+ 9juMmNzUTDWhiRFf3NrloJ5fi9MaMfnHKfwu49w5NabtxC6yFt8eNKd/eS75bK2WmTDlZVndUjEMuYodVHAju1kwF7OVWGzkQWFs7Ry9b2wqRd/ZuR+QRUjX
+ pzE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8 February 2018 at 15:00, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, Feb 06, 2018 at 08:23:05PM +0100, Vincent Guittot wrote:
->
->> @@ -9207,13 +9231,15 @@ void nohz_balance_enter_idle(int cpu)
->>       if (!housekeeping_cpu(cpu, HK_FLAG_SCHED))
->>               return;
->>
->> +     rq->has_blocked_load = 1;
->> +
->>       if (rq->nohz_tick_stopped)
->> -             return;
->
-> this case is difficult... needs thinking
+Hi Tim,
 
-The use case happens when a CPU wakes up and goes back to idle before
-the tick fires and clears nohz_tick_stopped.
+I was so hoping I could make a pull request for this, but I still found
+problems with g/s/query_dv_timings.
 
->
->> +             goto out;
->>
->>       /*
->>        * If we're a completely isolated CPU, we don't play.
->>        */
->> -     if (on_null_domain(cpu_rq(cpu)))
->> +     if (on_null_domain(rq))
->>               return;
->>
->>       rq->nohz_tick_stopped = 1;
->> @@ -9222,6 +9248,13 @@ void nohz_balance_enter_idle(int cpu)
->>       atomic_inc(&nohz.nr_cpus);
->>
->>       set_cpu_sd_state_idle(cpu);
->
->         /*
->          * Ensures that if nohz_idle_balance() fails to observe our
->          * @idle_cpus_mask store, it must observe the @has_blocked
->          * store.
->          */
->         smp_mb__after_atomic();
->
->> +
->> +out:
->> +     /*
->> +      * Each time a cpu enter idle, we assume that it has blocked load and
->> +      * enable the periodic update of the load of idle cpus
->> +      */
->> +     WRITE_ONCE(nohz.has_blocked, 1);
->>  }
->
->
->
->> @@ -9374,6 +9407,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>
->>       SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
->>
->> +     /*
->> +      * We assume there will be no idle load after this update and clear
->> +      * the has_blocked flag. If a cpu enters idle in the mean time, it will
->> +      * set the has_blocked flag and trig another update of idle load.
->> +      * Because a cpu that becomes idle, is added to idle_cpus_mask before
->> +      * setting the flag, we are sure to not clear the state and not
->> +      * check the load of an idle cpu.
->> +      */
->> +     WRITE_ONCE(nohz.has_blocked, 0);
->
->         /*
->          * Ensures that if we miss the CPU, we must see the has_blocked
->          * store from nohz_balance_enter_idle().
->          */
->         smp_mb();
->
->>       for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
->>               if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
->>                       continue;
->
->
-> I _think_, but my brain isn't quite willing to turn on today.
->
-> Without this ordering I think it would be possible to loose has_blocked
-> and not observe the CPU either.
+I strongly suspect that v4l2-compliance would fail if you boot up the system
+*without* a source connected.
 
-I think that you are right.
-I also wondered if some barriers were necessary but wrongly concluded
-that set operation on nohz.idle_cpus_mask and WRITE_ONCE with volatile
-would be enough to ensure the right ordering
+And I discovered that I was missing additional checks in the timings tests
+for v4l2-compliance that would have found the same issue if run with a source
+connected. I've fixed and committed those tests now. I'll also try to test
+that a S_DV_TIMINGS calls updates the format.
 
->
->
+Details below:
+
+On 02/07/18 23:42, Tim Harvey wrote:
+> +struct tda1997x_state {
+
+...
+
+> +	struct v4l2_dv_timings timings;
+> +	const struct v4l2_dv_timings *detected_timings;
+
+...
+
+> +/* Configure frame detection window and VHREF timing generator */
+> +static int
+> +tda1997x_configure_vhref(struct v4l2_subdev *sd)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +	const struct v4l2_bt_timings *bt;
+> +	int width, lines;
+> +	u16 href_start, href_end;
+> +	u16 vref_f1_start, vref_f2_start;
+> +	u8 vref_f1_width, vref_f2_width;
+> +	u8 field_polarity;
+> +	u16 fieldref_f1_start, fieldref_f2_start;
+> +	u8 reg;
+> +
+> +	if (!state->detected_timings)
+> +		return -EINVAL;
+
+Why this test? Who cares if there are no detected timings? It's certainly
+not a failure. S_DV_TIMINGS should succeed regardless of whether there is
+a signal or not and regardless of the current detected timings.
+
+> +	bt = &state->detected_timings->bt;
+
+Ouch. The timings passed in with S_DV_TIMINGS should be used.
+
+Just use state->timings here, not detected_timings.
+
+> +	href_start = bt->hbackporch + bt->hsync + 1;
+> +	href_end = href_start + bt->width;
+> +	vref_f1_start = bt->height + bt->vbackporch + bt->vsync +
+> +			bt->il_vbackporch + bt->il_vsync +
+> +			bt->il_vfrontporch;
+> +	vref_f1_width = bt->vbackporch + bt->vsync + bt->vfrontporch;
+> +	vref_f2_start = 0;
+> +	vref_f2_width = 0;
+> +	fieldref_f1_start = 0;
+> +	fieldref_f2_start = 0;
+> +	if (bt->interlaced) {
+> +		vref_f2_start = (bt->height / 2) +
+> +				(bt->il_vbackporch + bt->il_vsync - 1);
+> +		vref_f2_width = bt->il_vbackporch + bt->il_vsync +
+> +				bt->il_vfrontporch;
+> +		fieldref_f2_start = vref_f2_start + bt->il_vfrontporch +
+> +				    fieldref_f1_start;
+> +	}
+> +	field_polarity = 0;
+> +
+> +	width = V4L2_DV_BT_FRAME_WIDTH(bt);
+> +	lines = V4L2_DV_BT_FRAME_HEIGHT(bt);
+> +
+> +	/*
+> +	 * Configure Frame Detection Window:
+> +	 *  horiz area where the VHREF module consider a VSYNC a new frame
+> +	 */
+> +	io_write16(sd, REG_FDW_S, 0x2ef); /* start position */
+> +	io_write16(sd, REG_FDW_E, 0x141); /* end position */
+> +
+> +	/* Set Pixel And Line Counters */
+> +	if (state->chip_revision == 0)
+> +		io_write16(sd, REG_PXCNT_PR, 4);
+> +	else
+> +		io_write16(sd, REG_PXCNT_PR, 1);
+> +	io_write16(sd, REG_PXCNT_NPIX, width & MASK_VHREF);
+> +	io_write16(sd, REG_LCNT_PR, 1);
+> +	io_write16(sd, REG_LCNT_NLIN, lines & MASK_VHREF);
+> +
+> +	/*
+> +	 * Configure the VHRef timing generator responsible for rebuilding all
+> +	 * horiz and vert synch and ref signals from its input allowing auto
+> +	 * detection algorithms and forcing predefined modes (480i & 576i)
+> +	 */
+> +	reg = VHREF_STD_DET_OFF << VHREF_STD_DET_SHIFT;
+> +	io_write(sd, REG_VHREF_CTRL, reg);
+> +
+> +	/*
+> +	 * Configure the VHRef timing values. In case the VHREF generator has
+> +	 * been configured in manual mode, this will allow to manually set all
+> +	 * horiz and vert ref values (non-active pixel areas) of the generator
+> +	 * and allows setting the frame reference params.
+> +	 */
+> +	/* horizontal reference start/end */
+> +	io_write16(sd, REG_HREF_S, href_start & MASK_VHREF);
+> +	io_write16(sd, REG_HREF_E, href_end & MASK_VHREF);
+> +	/* vertical reference f1 start/end */
+> +	io_write16(sd, REG_VREF_F1_S, vref_f1_start & MASK_VHREF);
+> +	io_write(sd, REG_VREF_F1_WIDTH, vref_f1_width);
+> +	/* vertical reference f2 start/end */
+> +	io_write16(sd, REG_VREF_F2_S, vref_f2_start & MASK_VHREF);
+> +	io_write(sd, REG_VREF_F2_WIDTH, vref_f2_width);
+> +
+> +	/* F1/F2 FREF, field polarity */
+> +	reg = fieldref_f1_start & MASK_VHREF;
+> +	reg |= field_polarity << 8;
+> +	io_write16(sd, REG_FREF_F1_S, reg);
+> +	reg = fieldref_f2_start & MASK_VHREF;
+> +	io_write16(sd, REG_FREF_F2_S, reg);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int
+> +tda1997x_detect_std(struct tda1997x_state *state)
+> +{
+> +	struct v4l2_subdev *sd = &state->sd;
+> +	u32 vper;
+> +	u16 hper;
+> +	u16 hsper;
+> +	int i;
+> +
+> +	/*
+> +	 * Read the FMT registers
+> +	 *   REG_V_PER: Period of a frame (or two fields) in MCLK(27MHz) cycles
+> +	 *   REG_H_PER: Period of a line in MCLK(27MHz) cycles
+> +	 *   REG_HS_WIDTH: Period of horiz sync pulse in MCLK(27MHz) cycles
+> +	 */
+> +	vper = io_read24(sd, REG_V_PER) & MASK_VPER;
+> +	hper = io_read16(sd, REG_H_PER) & MASK_HPER;
+> +	hsper = io_read16(sd, REG_HS_WIDTH) & MASK_HSWIDTH;
+> +	if (!vper || !hper || !hsper)
+> +		return -ENOLINK;
+> +	v4l2_dbg(1, debug, sd, "Signal Timings: %u/%u/%u\n", vper, hper, hsper);
+> +
+> +	for (i = 0; v4l2_dv_timings_presets[i].bt.width; i++) {
+> +		const struct v4l2_bt_timings *bt;
+> +		u32 lines, width, _hper, _hsper;
+> +		u32 vmin, vmax, hmin, hmax, hsmin, hsmax;
+> +		bool vmatch, hmatch, hsmatch;
+> +
+> +		bt = &v4l2_dv_timings_presets[i].bt;
+> +		width = V4L2_DV_BT_FRAME_WIDTH(bt);
+> +		lines = V4L2_DV_BT_FRAME_HEIGHT(bt);
+> +		_hper = (u32)bt->pixelclock / width;
+> +		if (bt->interlaced)
+> +			lines /= 2;
+> +		/* vper +/- 0.7% */
+> +		vmin = ((27000000 / 1000) * 993) / _hper * lines;
+> +		vmax = ((27000000 / 1000) * 1007) / _hper * lines;
+> +		/* hper +/- 1.0% */
+> +		hmin = ((27000000 / 100) * 99) / _hper;
+> +		hmax = ((27000000 / 100) * 101) / _hper;
+> +		/* hsper +/- 2 (take care to avoid 32bit overflow) */
+> +		_hsper = 27000 * bt->hsync / ((u32)bt->pixelclock/1000);
+> +		hsmin = _hsper - 2;
+> +		hsmax = _hsper + 2;
+> +
+> +		/* vmatch matches the framerate */
+> +		vmatch = ((vper <= vmax) && (vper >= vmin)) ? 1 : 0;
+> +		/* hmatch matches the width */
+> +		hmatch = ((hper <= hmax) && (hper >= hmin)) ? 1 : 0;
+> +		/* hsmatch matches the hswidth */
+> +		hsmatch = ((hsper <= hsmax) && (hsper >= hsmin)) ? 1 : 0;
+> +		if (hmatch && vmatch && hsmatch) {
+> +			state->detected_timings = &v4l2_dv_timings_presets[i];
+> +			v4l2_print_dv_timings(sd->name, "Detected format: ",
+> +					      state->detected_timings, false);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	v4l_err(state->client, "no resolution match for timings: %d/%d/%d\n",
+> +		vper, hper, hsper);
+> +	return -EINVAL;
+> +}
+
+...
+
+> +static void tda1997x_irq_sus(struct tda1997x_state *state, u8 *flags)
+> +{
+> +	struct v4l2_subdev *sd = &state->sd;
+> +	u8 reg, source;
+> +
+> +	source = io_read(sd, REG_INT_FLG_CLR_SUS);
+> +	io_write(sd, REG_INT_FLG_CLR_SUS, source);
+> +
+> +	if (source & MASK_MPT) {
+> +		/* reset MTP in use flag if set */
+> +		if (state->mptrw_in_progress)
+> +			state->mptrw_in_progress = 0;
+> +	}
+> +
+> +	if (source & MASK_SUS_END) {
+> +		/* reset audio FIFO */
+> +		reg = io_read(sd, REG_HDMI_INFO_RST);
+> +		reg |= MASK_SR_FIFO_FIFO_CTRL;
+> +		io_write(sd, REG_HDMI_INFO_RST, reg);
+> +		reg &= ~MASK_SR_FIFO_FIFO_CTRL;
+> +		io_write(sd, REG_HDMI_INFO_RST, reg);
+> +
+> +		/* reset HDMI flags */
+> +		state->hdmi_status = 0;
+> +	}
+> +
+> +	/* filter FMT interrupt based on SUS state */
+> +	reg = io_read(sd, REG_SUS_STATUS);
+> +	if (((reg & MASK_SUS_STATUS) != LAST_STATE_REACHED)
+> +	   || (source & MASK_MPT)) {
+> +		source &= ~MASK_FMT;
+> +	}
+> +
+> +	if (source & (MASK_FMT | MASK_SUS_END)) {
+> +		reg = io_read(sd, REG_SUS_STATUS);
+> +		if ((reg & MASK_SUS_STATUS) != LAST_STATE_REACHED) {
+> +			v4l_err(state->client, "BAD SUS STATUS\n");
+> +			return;
+> +		}
+> +
+> +		/* There is new activity, the status for HDCP repeater state */
+> +		state->state_c5_reached = 0;
+> +
+> +		/* Detect the new resolution */
+> +		if (!tda1997x_detect_std(state))
+> +			v4l2_subdev_notify_event(&state->sd, &tda1997x_ev_fmt);
+
+Why detect a new resolution here? That only need to be done when the user
+calls query_dv_timings. Just send the event unconditionally to tell userspace
+that the resolution changed.
+
+> +	}
+> +}
+
+...
+
+> +/* -----------------------------------------------------------------------------
+> + * v4l2_subdev_video_ops
+> + */
+> +
+> +static int
+> +tda1997x_g_input_status(struct v4l2_subdev *sd, u32 *status)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +
+> +	mutex_lock(&state->lock);
+> +	if (state->detected_timings)
+
+What this actually tests if the driver was able to detect a valid signal
+and lock to it.
+
+In practice you have three possible outcomes:
+
+- There is no HDMI signal at all: return V4L2_IN_ST_NO_SIGNAL
+- There is a signal, but the receiver could not lock to it: return V4L2_IN_ST_NO_SYNC
+- There is a signal, and the receiver could lock: return 0.
+
+Just because this returns 0, doesn't mean that QUERY_DV_TIMINGS will succeed.
+There may be other constraints (e.g. the driver doesn't support certain formats
+such as interlaced) that can cause QUERY_DV_TIMINGS to return an error, even
+though the receiver could sync.
+
+Usually the hardware has some bits that tell whether there is a signal
+(usually the TMDS clock) and whether it could sync or not (H and V syncs).
+
+That's really all you need to test here.
+
+> +		*status = 0;
+> +	else
+> +		*status |= V4L2_IN_ST_NO_SIGNAL;
+> +	mutex_unlock(&state->lock);
+> +
+> +	return 0;
+> +};
+> +
+> +static int tda1997x_s_dv_timings(struct v4l2_subdev *sd,
+> +				struct v4l2_dv_timings *timings)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +	int ret;
+> +
+> +	v4l_dbg(1, debug, state->client, "%s\n", __func__);
+> +	if (!timings)
+> +		return -EINVAL;
+
+These 'if (!timings)' tests are not needed and can be dropped here and
+elsewhere.
+
+> +
+> +	if (v4l2_match_dv_timings(&state->timings, timings, 0, false))
+> +		return 0; /* no changes */
+> +
+> +	if (!v4l2_valid_dv_timings(timings, &tda1997x_dv_timings_cap,
+> +				   NULL, NULL))
+> +		return -ERANGE;
+> +
+> +	mutex_lock(&state->lock);
+> +	state->timings = *timings;
+> +	/* setup frame detection window and VHREF timing generator */
+> +	ret = tda1997x_configure_vhref(sd);
+> +	if (ret)
+> +		goto error;
+> +	/* configure colorspace conversion */
+> +	ret = tda1997x_configure_csc(sd);
+> +	if (ret)
+> +		goto error;
+> +	mutex_unlock(&state->lock);
+> +
+> +	return 0;
+> +
+> +error:
+> +	mutex_unlock(&state->lock);
+> +	return ret;
+> +}
+> +
+> +static int tda1997x_g_dv_timings(struct v4l2_subdev *sd,
+> +				 struct v4l2_dv_timings *timings)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +
+> +	v4l_dbg(1, debug, state->client, "%s\n", __func__);
+> +	if (!timings)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&state->lock);
+> +	*timings = state->timings;
+> +	mutex_unlock(&state->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tda1997x_query_dv_timings(struct v4l2_subdev *sd,
+> +				     struct v4l2_dv_timings *timings)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +	int ret;
+> +
+> +	v4l_dbg(1, debug, state->client, "%s\n", __func__);
+> +	if (!timings)
+> +		return -EINVAL;
+> +
+> +	memset(timings, 0, sizeof(struct v4l2_dv_timings));
+> +	mutex_lock(&state->lock);
+> +	ret = tda1997x_detect_std(state);
+> +	if (!ret)
+> +		*timings = *state->detected_timings;
+
+I think you can just drop the 'detected_timings' field and just
+do tda1997x_detect_std(state, timings); here. That way you are not
+tempted to use 'detected_timings' in places where you shouldn't :-)
+
+> +	mutex_unlock(&state->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int tda1997x_s_stream(struct v4l2_subdev *sd, int enable)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +
+> +	v4l_dbg(1, debug, state->client, "%s %d\n", __func__, enable);
+> +	mutex_lock(&state->lock);
+> +	if (!state->detected_timings)
+> +		v4l_dbg(1, debug, state->client, "Invalid HDMI signal\n");
+> +	mutex_unlock(&state->lock);
+> +
+> +	return 0;
+> +}
+
+I'd drop this. It isn't helpful.
+
+> +
+> +static const struct v4l2_subdev_video_ops tda1997x_video_ops = {
+> +	.g_input_status = tda1997x_g_input_status,
+> +	.s_dv_timings = tda1997x_s_dv_timings,
+> +	.g_dv_timings = tda1997x_g_dv_timings,
+> +	.query_dv_timings = tda1997x_query_dv_timings,
+> +	.s_stream = tda1997x_s_stream,
+> +};
+> +
+> +
+> +/* -----------------------------------------------------------------------------
+> + * v4l2_subdev_pad_ops
+> + */
+> +
+> +static int tda1997x_init_cfg(struct v4l2_subdev *sd,
+> +			     struct v4l2_subdev_pad_config *cfg)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +	struct v4l2_mbus_framefmt *mf;
+> +
+> +	mf = v4l2_subdev_get_try_format(sd, cfg, 0);
+> +	mf->code = state->mbus_codes[0];
+> +
+> +	return 0;
+> +}
+> +
+> +static int tda1997x_enum_mbus_code(struct v4l2_subdev *sd,
+> +				  struct v4l2_subdev_pad_config *cfg,
+> +				  struct v4l2_subdev_mbus_code_enum *code)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +
+> +	v4l_dbg(1, debug, state->client, "%s %d/%d\n", __func__,
+> +		code->index, ARRAY_SIZE(state->mbus_codes));
+> +	if (code->index >= ARRAY_SIZE(state->mbus_codes))
+> +		return -EINVAL;
+> +
+> +	if (!state->mbus_codes[code->index])
+> +		return -EINVAL;
+> +
+> +	code->code = state->mbus_codes[code->index];
+> +
+> +	return 0;
+> +}
+> +
+> +static int tda1997x_fill_format(struct tda1997x_state *state,
+> +				struct v4l2_mbus_framefmt *format)
+> +{
+> +	const struct v4l2_bt_timings *bt;
+> +
+> +	v4l_dbg(1, debug, state->client, "%s\n", __func__);
+> +
+> +	if (!state->detected_timings)
+> +		return -EINVAL;
+
+Ouch. Just drop this.
+
+> +
+> +	memset(format, 0, sizeof(*format));
+> +	bt = &state->detected_timings->bt;
+
+and use &state->timings.bt here. That is how the receiver is configured.
+
+> +	format->width = bt->width;
+> +	format->height = bt->height;
+> +	format->colorspace = state->colorimetry.colorspace;
+> +	format->field = (bt->interlaced) ?
+> +		V4L2_FIELD_SEQ_TB : V4L2_FIELD_NONE;
+> +
+> +	return 0;
+> +}
+
+The *only* time you need to care about the actual detected timings is when
+userspace calls QUERY_DV_TIMINGS. Never anywhere else.
+
+s_input_status is used to test some basics (do I have a signal, can I lock)
+but doesn't go 'in-depth'.
+
+If the interrupt routine detects a resolution change or it loses a stable
+signal, then it sends an event to userspace, but nothing else should change.
+
+Look at adv7604.c: the only time it attempts to detect the timings with
+read_stdi() is when called from query_dv_timings (and log_status for debugging).
+
+Regards,
+
+	Hans
