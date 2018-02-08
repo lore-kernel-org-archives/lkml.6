@@ -1,84 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752507AbeBHRxk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:53:40 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50568 "EHLO
+        id S1752372AbeBHRyW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:54:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53262 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752448AbeBHRxX (ORCPT
+        with ESMTP id S1751988AbeBHRyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:53:23 -0500
+        Thu, 8 Feb 2018 12:54:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 234B560272
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers-next 2018-02-08
+Date: Thu, 08 Feb 2018 19:54:15 +0200
+Message-ID: <87shabe5a0.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Thu, 08 Feb 2018 09:53:21 -0800
-From: Subhash Jadavani <subhashj@codeaurora.org>
-To: Asutosh Das <asutoshd@codeaurora.org>
-Cc: cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        Maya Erez <merez@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-scsi-owner@vger.kernel.org
-Subject: Re: [PATCH 1/1] scsi: ufs: fix exception event handling
-In-Reply-To: <1517200492-2941-1-git-send-email-asutoshd@codeaurora.org>
-References: <1517200492-2941-1-git-send-email-asutoshd@codeaurora.org>
-Message-ID: <6c0b3d7d1c38ecb993125bc8e2b85799@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-01-28 20:34, Asutosh Das wrote:
-> From: Maya Erez <merez@codeaurora.org>
-> 
-> The device can set the exception event bit in one of the response UPIU,
-> for example to notify the need for urgent BKOPs operation.
-> In such a case the host driver calls ufshcd_exception_event_handler to
-> handle this notification.
-> When trying to check the exception event status (for finding the cause 
-> for
-> the exception event), the device may be busy with additional SCSI 
-> commands
-> handling and may not respond within the 100ms timeout.
-> 
-> To prevent that, we need to block SCSI commands during handling of
-> exception events and allow retransmissions of the query requests,
-> in case of timeout.
-> 
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> Signed-off-by: Maya Erez <merez@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 8af2af3..2dd488f 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -4955,6 +4955,7 @@ static void
-> ufshcd_exception_event_handler(struct work_struct *work)
->  	hba = container_of(work, struct ufs_hba, eeh_work);
-> 
->  	pm_runtime_get_sync(hba->dev);
-> +	scsi_block_requests(hba->host);
->  	err = ufshcd_get_ee_status(hba, &status);
->  	if (err) {
->  		dev_err(hba->dev, "%s: failed to get exception status %d\n",
-> @@ -4968,6 +4969,7 @@ static void
-> ufshcd_exception_event_handler(struct work_struct *work)
->  		ufshcd_bkops_exception_event_handler(hba);
-> 
->  out:
-> +	scsi_unblock_requests(hba->host);
->  	pm_runtime_put_sync(hba->dev);
->  	return;
->  }
+Hi Dave,
 
-Looks good to me.
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+first set of fixes for 4.16, unusually many when the merge window hasn't
+even closed yet. Especially the ssb fix is important so I hope there's
+still time to get this to 4.16-rc1. As you can see from the diffstat
+there's one PCI id addition but that has been acked by Bjorn.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Please let me know if you have any problems.
+
+Kalle
+
+The following changes since commit f813614f531114db796ad66ced75c5dc8db7aa3a:
+
+  ibmvnic: Wait for device response when changing MAC (2018-01-29 18:03:24 -0500)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next.git tags/wireless-drivers-next-for-davem-2018-02-08
+
+for you to fetch changes up to 99ffd198f07f46f3a8e64399249a8333c09063df:
+
+  Merge ath-current from git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git (2018-02-08 19:28:49 +0200)
+
+----------------------------------------------------------------
+wireless-drivers-next patches for 4.16
+
+The most important here is the ssb fix, it has been reported by the
+users frequently and the fix just missed the final v4.15. Also
+numerous other fixes, mt76 had multiple problems with aggregation and
+a long standing unaligned access bug in rtlwifi is finally fixed.
+
+Major changes:
+
+ath10k
+
+* correct firmware RAM dump length for QCA6174/QCA9377
+
+* add new QCA988X device id
+
+* fix a kernel panic during pci probe
+
+* revert a recent commit which broke ath10k firmware metadata parsing
+
+ath9k
+
+* fix a noise floor regression introduced during the merge window
+
+* add new device id
+
+rtlwifi
+
+* fix unaligned access seen on ARM architecture
+
+mt76
+
+* various aggregation fixes which fix connection stalls
+
+ssb
+
+* fix b43 and b44 on non-MIPS which broke in v4.15-rc9
+
+----------------------------------------------------------------
+Felix Fietkau (4):
+      mt76: implement AP_LINK_PS
+      mt76: implement processing of BlockAckReq frames
+      mt76: avoid re-queueing A-MPDU rx reorder work if no frames are pending
+      mt76: do not set status->aggr for NULL data frames
+
+Kalle Valo (2):
+      Merge git://git.kernel.org/.../kvalo/wireless-drivers.git
+      Merge ath-current from git://git.kernel.org/.../kvalo/ath.git
+
+Larry Finger (1):
+      rtlwifi: rtl8821ae: Fix connection lost problem correctly
+
+Oleksij Rempel (1):
+      ath9k_htc: add Altai WA1011N-GU
+
+Ryan Hsu (1):
+      Revert "ath10k: add sanity check to ie_len before parsing fw/board ie"
+
+Sven Joachim (1):
+      ssb: Do not disable PCI host on non-Mips
+
+Tobias Schramm (2):
+      PCI: Add Ubiquiti Networks vendor ID
+      ath10k: add support for Ubiquiti rebranded QCA988X v2
+
+Wojciech Dubowik (1):
+      ath9k: Fix get channel default noise floor
+
+Yu Wang (2):
+      ath10k: correct the length of DRAM dump for QCA6174 hw3.x/QCA9377 hw1.1
+      ath10k: fix kernel panic issue during pci probe
+
+ drivers/net/wireless/ath/ath10k/core.c             | 43 +++++++++++++++---
+ drivers/net/wireless/ath/ath10k/coredump.c         |  3 +-
+ drivers/net/wireless/ath/ath10k/debug.c            | 12 ++++-
+ drivers/net/wireless/ath/ath10k/hw.h               |  1 +
+ drivers/net/wireless/ath/ath10k/pci.c              |  6 +++
+ drivers/net/wireless/ath/ath9k/calib.c             |  2 +-
+ drivers/net/wireless/ath/ath9k/hif_usb.c           |  1 +
+ drivers/net/wireless/mediatek/mt76/agg-rx.c        | 40 ++++++++++++++++-
+ drivers/net/wireless/mediatek/mt76/mac80211.c      | 52 +++++++++++++++++++++-
+ drivers/net/wireless/mediatek/mt76/mt76.h          | 10 +++++
+ drivers/net/wireless/mediatek/mt76/mt76x2.h        |  2 +
+ drivers/net/wireless/mediatek/mt76/mt76x2_init.c   |  1 +
+ drivers/net/wireless/mediatek/mt76/mt76x2_mac.c    |  2 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_main.c   | 28 ++++++------
+ .../net/wireless/realtek/rtlwifi/rtl8821ae/hw.c    |  5 ++-
+ drivers/net/wireless/realtek/rtlwifi/wifi.h        |  1 +
+ drivers/ssb/Kconfig                                |  2 +-
+ include/linux/pci_ids.h                            |  2 +
+ 18 files changed, 181 insertions(+), 32 deletions(-)
