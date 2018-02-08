@@ -1,248 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeBHCaB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 21:30:01 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:42181 "EHLO
+        id S1752179AbeBHCaw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 21:30:52 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:49001 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751725AbeBHC36 (ORCPT
+        by vger.kernel.org with ESMTP id S1751130AbeBHCau (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 21:29:58 -0500
-X-ME-Sender: <xms:JbZ7WhAtnapk739iI_J12frXKJFzwDosZ2FdZo4Z-yiMOfhKszRs3g>
-Date: Thu, 8 Feb 2018 13:29:53 +1100
+        Wed, 7 Feb 2018 21:30:50 -0500
+X-ME-Sender: <xms:WbZ7WlFBwUQG0d-i-TgKAb9e_4MK-WZb9feH5mA8rGDwqcHoJAlHvA>
+Date: Thu, 8 Feb 2018 13:30:46 +1100
 From: "Tobin C. Harding" <me@tobin.cc>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         mchehab@kernel.org
-Subject: Re: [PATCH 7/8] docs: kernel-doc: Finish moving STATE_* code out of
- process_file()
-Message-ID: <20180208022953.GB3304@eros>
+Subject: Re: [PATCH 8/8] docs: kernel-doc: Don't mangle literal code blocks
+ in comments
+Message-ID: <20180208023046.GC3304@eros>
 References: <20180207172624.24555-1-corbet@lwn.net>
- <20180207172624.24555-8-corbet@lwn.net>
+ <20180207172624.24555-9-corbet@lwn.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180207172624.24555-8-corbet@lwn.net>
+In-Reply-To: <20180207172624.24555-9-corbet@lwn.net>
 X-Mailer: Mutt 1.5.24 (2015-08-30)
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 10:26:23AM -0700, Jonathan Corbet wrote:
-> Move STATE_INLINE and STATE_DOCBLOCK code out of process_file(), which now
-> actually fits on a single screen.  Delete an unused variable and add a
-> couple of comments while I'm at it.
-> 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  scripts/kernel-doc | 145 ++++++++++++++++++++++++++++++-----------------------
->  1 file changed, 83 insertions(+), 62 deletions(-)
-> 
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index 2deddb876156..c6c9370a1e49 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -1990,10 +1990,86 @@ sub process_proto($$) {
->      }
->  }
->  
-> +#
-> +# STATE_DOCBLOCK: within a DOC: block.
-> +#
-> +sub process_docblock($$) {
-> +    my $file = shift;
-> +
-> +    if (/$doc_end/)
-> +    {
-> +	dump_doc_section($file, $section, $contents);
-> +	$section = $section_default;
-> +	$contents = "";
-> +	$function = "";
-> +	%parameterdescs = ();
-> +	%parametertypes = ();
-> +	@parameterlist = ();
-> +	%sections = ();
-> +	@sectionlist = ();
-> +	$prototype = "";
-> +	$state = STATE_NORMAL;
-> +    }
-> +    elsif (/$doc_content/)
-> +    {
-> +	if ( $1 eq "" )
-> +	{
-> +	    $contents .= $blankline;
-> +	}
-> +	else
-> +	{
-> +	    $contents .= $1 . "\n";
-> +	}
-> +    }
-> +}
+On Wed, Feb 07, 2018 at 10:26:24AM -0700, Jonathan Corbet wrote:
 
-It doesn't appear to be introduced by you but the brace positions are
-non-uniform in this patch.
+[snip]
 
-if
-{
-  ...
-}
-else
-{
-  ...
-}
+>    if (desperate)
+>        run_in_circles();
 
-instead of
-
-if {
-  ...
-} else {
-  eee
-}
-
-Hope this helps,
-Tobin.
-
-
-(rest of patch left intentionally for reference)
-
-> +
-> +#
-> +# STATE_INLINE: docbook comments within a prototype.
-> +#
-> +sub process_inline($$) {
-> +    my $file = shift;
-> +
-> +    # First line (state 1) needs to be a @parameter
-> +    if ($inline_doc_state == STATE_INLINE_NAME && /$doc_inline_sect/o) {
-> +	$section = $1;
-> +	$contents = $2;
-> +	$new_start_line = $.;
-> +	if ($contents ne "") {
-> +	    while (substr($contents, 0, 1) eq " ") {
-> +		$contents = substr($contents, 1);
-> +	    }
-> +	    $contents .= "\n";
-> +	}
-> +	$inline_doc_state = STATE_INLINE_TEXT;
-> +	# Documentation block end */
-> +    } elsif (/$doc_inline_end/) {
-> +	if (($contents ne "") && ($contents ne "\n")) {
-> +	    dump_section($file, $section, $contents);
-> +	    $section = $section_default;
-> +	    $contents = "";
-> +	}
-> +	$state = STATE_PROTO;
-> +	$inline_doc_state = STATE_INLINE_NA;
-> +	# Regular text
-> +    } elsif (/$doc_content/) {
-> +	if ($inline_doc_state == STATE_INLINE_TEXT) {
-> +	    $contents .= $1 . "\n";
-> +	    # nuke leading blank lines
-> +	    if ($contents =~ /^\s*$/) {
-> +		$contents = "";
-> +	    }
-> +	} elsif ($inline_doc_state == STATE_INLINE_NAME) {
-> +	    $inline_doc_state = STATE_INLINE_ERROR;
-> +	    print STDERR "${file}:$.: warning: ";
-> +	    print STDERR "Incorrect use of kernel-doc format: $_";
-> +	    ++$warnings;
-> +	}
-> +    }
-> +}
-> +
->  
->  sub process_file($) {
->      my $file;
-> -    my $func;
->      my $initial_section_counter = $section_counter;
->      my ($orig_file) = @_;
->  
-> @@ -2014,6 +2090,8 @@ sub process_file($) {
->  	}
->  	# Replace tabs by spaces
->          while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
-> +
-> +	# Hand this line to the appropriate state handler
->  	if ($state == STATE_NORMAL) {
->  	    process_normal();
->  	} elsif ($state == STATE_NAME) {
-> @@ -2021,72 +2099,15 @@ sub process_file($) {
->  	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
->  	    process_body($file, $_);
->  	} elsif ($state == STATE_INLINE) { # scanning for inline parameters
-> -	    # First line (state 1) needs to be a @parameter
-> -	    if ($inline_doc_state == STATE_INLINE_NAME && /$doc_inline_sect/o) {
-> -		$section = $1;
-> -		$contents = $2;
-> -                $new_start_line = $.;
-> -		if ($contents ne "") {
-> -		    while (substr($contents, 0, 1) eq " ") {
-> -			$contents = substr($contents, 1);
-> -		    }
-> -		    $contents .= "\n";
-> -		}
-> -		$inline_doc_state = STATE_INLINE_TEXT;
-> -	    # Documentation block end */
-> -	    } elsif (/$doc_inline_end/) {
-> -		if (($contents ne "") && ($contents ne "\n")) {
-> -		    dump_section($file, $section, $contents);
-> -		    $section = $section_default;
-> -		    $contents = "";
-> -		}
-> -		$state = STATE_PROTO;
-> -		$inline_doc_state = STATE_INLINE_NA;
-> -	    # Regular text
-> -	    } elsif (/$doc_content/) {
-> -		if ($inline_doc_state == STATE_INLINE_TEXT) {
-> -		    $contents .= $1 . "\n";
-> -		    # nuke leading blank lines
-> -		    if ($contents =~ /^\s*$/) {
-> -			$contents = "";
-> -		    }
-> -		} elsif ($inline_doc_state == STATE_INLINE_NAME) {
-> -		    $inline_doc_state = STATE_INLINE_ERROR;
-> -		    print STDERR "${file}:$.: warning: ";
-> -		    print STDERR "Incorrect use of kernel-doc format: $_";
-> -		    ++$warnings;
-> -		}
-> -	    }
-> +	    process_inline($file, $_);
->  	} elsif ($state == STATE_PROTO) {
->  	    process_proto($file, $_);
->  	} elsif ($state == STATE_DOCBLOCK) {
-> -		if (/$doc_end/)
-> -		{
-> -			dump_doc_section($file, $section, $contents);
-> -			$section = $section_default;
-> -			$contents = "";
-> -			$function = "";
-> -			%parameterdescs = ();
-> -			%parametertypes = ();
-> -			@parameterlist = ();
-> -			%sections = ();
-> -			@sectionlist = ();
-> -			$prototype = "";
-> -			$state = STATE_NORMAL;
-> -		}
-> -		elsif (/$doc_content/)
-> -		{
-> -			if ( $1 eq "" )
-> -			{
-> -				$contents .= $blankline;
-> -			}
-> -			else
-> -			{
-> -				$contents .= $1 . "\n";
-> -			}
-> -		}
-> +	    process_docblock($file, $_);
->  	}
->      }
-> +
-> +    # Make sure we got something interesting.
->      if ($initial_section_counter == $section_counter) {
->  	if ($output_mode ne "none") {
->  	    print STDERR "${file}:1: warning: no structured comments found\n";
-> -- 
-> 2.14.3
-> 
+this is gold :)
