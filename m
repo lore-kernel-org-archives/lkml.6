@@ -1,76 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751019AbeBHF2L (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 00:28:11 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60251 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeBHF2K (ORCPT
+        id S1751946AbeBHF2T (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 00:28:19 -0500
+Received: from LGEAMRELO13.lge.com ([156.147.23.53]:54319 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751175AbeBHF2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 00:28:10 -0500
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: kvalo@codeaurora.org
-Cc: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] ath9k: turn on btcoex_enable as default
-Date: Thu,  8 Feb 2018 13:28:01 +0800
-Message-Id: <20180208052801.15670-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Thu, 8 Feb 2018 00:28:16 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Thu, 8 Feb 2018 14:28:13 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 04/18] tracing/x86: Add arch_get_func_args() function
+Message-ID: <20180208052813.GD24686@sejong>
+References: <20180202230458.840252014@goodmis.org>
+ <20180202231017.612058326@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180202231017.612058326@goodmis.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without btcoex_enable, WiFi activies make both WiFi and Bluetooth
-unstable if there's a bluetooth connection.
+Hi Steve,
 
-Enable this option when bt_ant_diversity is disabled.
+On Fri, Feb 02, 2018 at 06:05:02PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Add function to get the function arguments from pt_regs.
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  arch/x86/kernel/ftrace.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 01ebcb6f263e..5e845c8cf89d 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -46,6 +46,34 @@ int ftrace_arch_code_modify_post_process(void)
+>  	return 0;
+>  }
+>  
+> +int arch_get_func_args(struct pt_regs *regs,
+> +		       int start, int end, long *args)
+> +{
+> +#ifdef CONFIG_X86_64
+> +# define MAX_ARGS 6
+> +# define INIT_REGS				\
+> +	{	regs->di, regs->si, regs->dx,	\
+> +		regs->cx, regs->r8, regs->r9	\
+> +	}
+> +#else
+> +# define MAX_ARGS 3
+> +# define INIT_REGS				\
+> +	{	regs->ax, regs->dx, regs->cx	}
+> +#endif
+> +	if (!regs)
+> +		return MAX_ARGS;
+> +
+> +	{
+> +		long pt_args[] = INIT_REGS;
+> +		int i;
+> +
+> +		for (i = start; i <= end && i < MAX_ARGS; i++)
+                                ^^^^^^^^
 
-BugLink: https://bugs.launchpad.net/bugs/1746164
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/net/wireless/ath/ath9k/init.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+I expected it being 'i < end' based on your description.
 
-diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
-index e479fae5aab9..f8f6b091a077 100644
---- a/drivers/net/wireless/ath/ath9k/init.c
-+++ b/drivers/net/wireless/ath/ath9k/init.c
-@@ -56,7 +56,7 @@ static int ath9k_led_active_high = -1;
- module_param_named(led_active_high, ath9k_led_active_high, int, 0444);
- MODULE_PARM_DESC(led_active_high, "Invert LED polarity");
- 
--static int ath9k_btcoex_enable;
-+static int ath9k_btcoex_enable = 1;
- module_param_named(btcoex_enable, ath9k_btcoex_enable, int, 0444);
- MODULE_PARM_DESC(btcoex_enable, "Enable wifi-BT coexistence");
- 
-@@ -693,7 +693,6 @@ static int ath9k_init_softc(u16 devid, struct ath_softc *sc,
- 	common->hw = sc->hw;
- 	common->priv = sc;
- 	common->debug_mask = ath9k_debug;
--	common->btcoex_enabled = ath9k_btcoex_enable == 1;
- 	common->disable_ani = false;
- 
- 	/*
-@@ -715,14 +714,17 @@ static int ath9k_init_softc(u16 devid, struct ath_softc *sc,
- 	/*
- 	 * Enable WLAN/BT RX Antenna diversity only when:
- 	 *
--	 * - BTCOEX is disabled.
- 	 * - the user manually requests the feature.
- 	 * - the HW cap is set using the platform data.
- 	 */
--	if (!common->btcoex_enabled && ath9k_bt_ant_diversity &&
-+	if (ath9k_bt_ant_diversity &&
- 	    (pCap->hw_caps & ATH9K_HW_CAP_BT_ANT_DIV))
- 		common->bt_ant_diversity = 1;
- 
-+	/* Enable btcoex when ant_diversity is disabled */
-+	if (!common->bt_ant_diversity && ath9k_btcoex_enable)
-+		common->btcoex_enabled = 1;
-+
- 	spin_lock_init(&common->cc_lock);
- 	spin_lock_init(&sc->intr_lock);
- 	spin_lock_init(&sc->sc_serial_rw);
--- 
-2.15.1
+Thanks,
+Namhyung
+
+
+> +			args[i - start] = pt_args[i];
+> +
+> +		return i - start;
+> +	}
+> +}
+> +
+>  union ftrace_code_union {
+>  	char code[MCOUNT_INSN_SIZE];
+>  	struct {
+> -- 
+> 2.15.1
+> 
+> 
