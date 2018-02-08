@@ -1,65 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeBHVxF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 16:53:05 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:54096 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752126AbeBHVxD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 16:53:03 -0500
-X-Auth-Info: WnoivQky53usfjDs8rxL7JSMQCNkuoeOI1RjffCpOqE=
-Subject: Re: [PATCH v2 1/2] net, can, ifi: fix "write buffer full" error
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Heiko Schocher <hs@denx.de>,
-        linux-can@vger.kernel.org
-Cc: Markus Marb <markus@marb.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Wolfgang Grandegger <wg@grandegger.com>
-References: <20180208064748.17985-1-hs@denx.de>
- <59322f7d-4207-a5a4-89b5-dff1634e4183@pengutronix.de>
- <dfae1bda-9ccd-6a48-95f9-e061c1bd3828@denx.de>
- <ca1b9134-1e5a-ea83-146f-693ba38be413@pengutronix.de>
-From: Marek Vasut <marex@denx.de>
-Message-ID: <c4d4f09b-42c2-90b3-65b2-4b493262c649@denx.de>
-Date: Thu, 8 Feb 2018 22:44:58 +0100
+        id S1752507AbeBHV5Y (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 16:57:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37864 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752185AbeBHV5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 16:57:23 -0500
+Subject: Re: net: thunder: change q_len's type to handle max ring size
+To: David Miller <davem@davemloft.net>
+Cc: rric@kernel.org, sgoutham@cavium.com, netdev@vger.kernel.org,
+        Vadim.Lomovtsev@cavium.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <151811766130.10712.18293368656209944798.email-sent-by-dnelson@aqua>
+ <20180208.153453.774785043965984772.davem@davemloft.net>
+From: Dean Nelson <dnelson@redhat.com>
+Message-ID: <41824374-cdea-a3ef-0109-20565dbba43e@redhat.com>
+Date: Thu, 8 Feb 2018 15:57:21 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <ca1b9134-1e5a-ea83-146f-693ba38be413@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180208.153453.774785043965984772.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/2018 10:33 PM, Marc Kleine-Budde wrote:
-> On 02/08/2018 08:22 PM, Marek Vasut wrote:
->> On 02/08/2018 03:46 PM, Marc Kleine-Budde wrote:
->>> On 02/08/2018 07:47 AM, Heiko Schocher wrote:
->>>> the driver reads in the ISR first the IRQpending register,
->>>> and clears after that in a write *all* bits in it.
->>>>
->>>> It could happen that the isr register raise bits between
->>>> this 2 register accesses, which leads in lost bits ...
->>>>
->>>> In case it clears "TX message sent successfully", the driver
->>>> never sends any Tx data, and buffers to userspace run over.
->>>>
->>>> Fixed this:
->>>> clear only the bits in the IRQpending register, the
->>>> driver had read.
->>>>
->>>> Signed-off-by: Heiko Schocher <hs@denx.de>
->>>> Reviewed-by: Marek Vasut <marex@denx.de>
->>>
->>> Applied both to linux-can.
->>
->> Can you also apply them to stable, so they get into 4.9.x etc ?
+On 02/08/2018 02:34 PM, David Miller wrote:
+> From: Dean Nelson <dnelson@redhat.com>
+> Date:
 > 
-> I've already added stable on Cc, so they will be picked up by the stable
-> maintainers.
+>> The Cavium thunder nicvf driver supports rx/tx rings of up to 65536 entries per.
+>> The number of entires are stored in the q_len member of struct q_desc_mem. The
+>> problem is that q_len being a u16, results in 65536 becoming 0.
+>>
+>> In getting pointers to descriptors in the rings, the driver uses q_len minus 1
+>> as a mask after incrementing the pointer, in order to go back to the beginning
+>> and not go past the end of the ring.
+>>
+>> With the q_len set to 0 the mask is no longer correct and the driver does go
+>> beyond the end of the ring, causing various ills. Usually the first thing that
+>> shows up is a "NETDEV WATCHDOG: enP2p1s0f1 (nicvf): transmit queue 7 timed out"
+>> warning.
+>>
+>> This patch remedies the problem by changing q_len to a u32.
+>>
+>> Signed-off-by: Dean Nelson <dnelson@redhat.com>
+> 
+> Applied, thanks.
 
-Thanks!
+Thank you!
 
--- 
-Best regards,
-Marek Vasut
+> 
+> Another way to solve this could have been to encode that length
+> as "length - 1"
+
+True. I had pondered that, but felt that since changing q_len's type
+didn't add any length to the structure and that it was less impactful
+from a number-of-lines of code changed perspective, I'd opt for this
+route.
+
+Cavium, if you'd prefer this goes the route that Dave just mentioned,
+please let me know and I can make a new patch against what's been
+applied?
+
+Thanks,
+Dean
