@@ -1,72 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752403AbeBHUxm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:53:42 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34192 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752135AbeBHUxl (ORCPT
+        id S1752292AbeBHUxF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:53:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47574 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752020AbeBHUxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:53:41 -0500
-X-Google-Smtp-Source: AH8x225UZfF6akPpOacdAGADlkMj60BnLcLIyI/EmzLfrY3wsrSziTkc4y+y/Zv4Mi0zVGmReC1OqQ==
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        Justin TerAvest <teravest@chromium.org>,
-        Craig Bergstrom <craigb@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 1/4] amdgpu/dc/dml: Consolidate redundant CFLAGS
-Date: Thu,  8 Feb 2018 12:53:13 -0800
-Message-Id: <20180208205316.93330-1-mka@chromium.org>
-X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
+        Thu, 8 Feb 2018 15:53:04 -0500
+Date: Thu, 8 Feb 2018 12:53:01 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v7 00/24] Speculative page faults
+Message-Id: <20180208125301.99445c91979343756e4cca9b@linux-foundation.org>
+In-Reply-To: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
+References: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a variable for common CFLAGS instead of specifying the same flags
-for every source file.
+On Tue,  6 Feb 2018 17:49:46 +0100 Laurent Dufour <ldufour@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v3:
-- Use variable for compiler options instead of subdir-ccflags-y
+> This is a port on kernel 4.15 of the work done by Peter Zijlstra to
+> handle page fault without holding the mm semaphore [1].
+> 
+> The idea is to try to handle user space page faults without holding the
+> mmap_sem. This should allow better concurrency for massively threaded
+> process since the page fault handler will not wait for other threads memory
+> layout change to be done, assuming that this change is done in another part
+> of the process's memory space. This type page fault is named speculative
+> page fault. If the speculative page fault fails because of a concurrency is
+> detected or because underlying PMD or PTE tables are not yet allocating, it
+> is failing its processing and a classic page fault is then tried.
+> 
+> The speculative page fault (SPF) has to look for the VMA matching the fault
+> address without holding the mmap_sem, this is done by introducing a rwlock
+> which protects the access to the mm_rb tree. Previously this was done using
+> SRCU but it was introducing a lot of scheduling to process the VMA's
+> freeing
+> operation which was hitting the performance by 20% as reported by Kemi Wang
+> [2].Using a rwlock to protect access to the mm_rb tree is limiting the
+> locking contention to these operations which are expected to be in a O(log
+> n)
+> order. In addition to ensure that the VMA is not freed in our back a
+> reference count is added and 2 services (get_vma() and put_vma()) are
+> introduced to handle the reference count. When a VMA is fetch from the RB
+> tree using get_vma() is must be later freeed using put_vma(). Furthermore,
+> to allow the VMA to be used again by the classic page fault handler a
+> service is introduced can_reuse_spf_vma(). This service is expected to be
+> called with the mmap_sem hold. It checked that the VMA is still matching
+> the specified address and is releasing its reference count as the mmap_sem
+> is hold it is ensure that it will not be freed in our back. In general, the
+> VMA's reference count could be decremented when holding the mmap_sem but it
+> should not be increased as holding the mmap_sem is ensuring that the VMA is
+> stable. I can't see anymore the overhead I got while will-it-scale
+> benchmark anymore.
+> 
+> The VMA's attributes checked during the speculative page fault processing
+> have to be protected against parallel changes. This is done by using a per
+> VMA sequence lock. This sequence lock allows the speculative page fault
+> handler to fast check for parallel changes in progress and to abort the
+> speculative page fault in that case.
+> 
+> Once the VMA is found, the speculative page fault handler would check for
+> the VMA's attributes to verify that the page fault has to be handled
+> correctly or not. Thus the VMA is protected through a sequence lock which
+> allows fast detection of concurrent VMA changes. If such a change is
+> detected, the speculative page fault is aborted and a *classic* page fault
+> is tried.  VMA sequence lockings are added when VMA attributes which are
+> checked during the page fault are modified.
+> 
+> When the PTE is fetched, the VMA is checked to see if it has been changed,
+> so once the page table is locked, the VMA is valid, so any other changes
+> leading to touching this PTE will need to lock the page table, so no
+> parallel change is possible at this time.
+> 
+> The locking of the PTE is done with interrupts disabled, this allows to
+> check for the PMD to ensure that there is not an ongoing collapsing
+> operation. Since khugepaged is firstly set the PMD to pmd_none and then is
+> waiting for the other CPU to have catch the IPI interrupt, if the pmd is
+> valid at the time the PTE is locked, we have the guarantee that the
+> collapsing opertion will have to wait on the PTE lock to move foward. This
+> allows the SPF handler to map the PTE safely. If the PMD value is different
+> than the one recorded at the beginning of the SPF operation, the classic
+> page fault handler will be called to handle the operation while holding the
+> mmap_sem. As the PTE lock is done with the interrupts disabled, the lock is
+> done using spin_trylock() to avoid dead lock when handling a page fault
+> while a TLB invalidate is requested by an other CPU holding the PTE.
+> 
+> Support for THP is not done because when checking for the PMD, we can be
+> confused by an in progress collapsing operation done by khugepaged. The
+> issue is that pmd_none() could be true either if the PMD is not already
+> populate or if the underlying PTE are in the way to be collapsed. So we
+> cannot safely allocate a PMD if pmd_none() is true.
+> 
+> This series builds on top of v4.15-mmotm-2018-01-31-16-51 and is
+> functional on x86 and PowerPC.
 
- drivers/gpu/drm/amd/display/dc/dml/Makefile | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+One question which people will want to answer is "is this thing
+working".  ie, how frequently does the code fall back to the regular
+heavyweight fault path.
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-index 3488af2b5786..96b337a03172 100644
---- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
-+++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-@@ -24,15 +24,16 @@
- # It provides the general basic services required by other DAL
- # subcomponents.
- 
--CFLAGS_display_mode_vba.o := -mhard-float -msse -mpreferred-stack-boundary=4
--CFLAGS_display_mode_lib.o := -mhard-float -msse -mpreferred-stack-boundary=4
--CFLAGS_display_pipe_clocks.o := -mhard-float -msse -mpreferred-stack-boundary=4
--CFLAGS_display_rq_dlg_calc.o := -mhard-float -msse -mpreferred-stack-boundary=4
--CFLAGS_dml1_display_rq_dlg_calc.o := -mhard-float -msse -mpreferred-stack-boundary=4
--CFLAGS_display_rq_dlg_helpers.o := -mhard-float -msse -mpreferred-stack-boundary=4
--CFLAGS_soc_bounding_box.o := -mhard-float -msse -mpreferred-stack-boundary=4
--CFLAGS_dml_common_defs.o := -mhard-float -msse -mpreferred-stack-boundary=4
-+dml_ccflags := -mhard-float -msse -mpreferred-stack-boundary=4
- 
-+CFLAGS_display_mode_vba.o := $(dml_ccflags)
-+CFLAGS_display_mode_lib.o := $(dml_ccflags)
-+CFLAGS_display_pipe_clocks.o := $(dml_ccflags)
-+CFLAGS_display_rq_dlg_calc.o := $(dml_ccflags)
-+CFLAGS_dml1_display_rq_dlg_calc.o := $(dml_ccflags)
-+CFLAGS_display_rq_dlg_helpers.o := $(dml_ccflags)
-+CFLAGS_soc_bounding_box.o := $(dml_ccflags)
-+CFLAGS_dml_common_defs.o := $(dml_ccflags)
- 
- DML = display_mode_lib.o display_rq_dlg_calc.o \
- 	  display_rq_dlg_helpers.o dml1_display_rq_dlg_calc.o \
--- 
-2.16.0.rc1.238.g530d649a79-goog
+I see that trace events have been added for this, but the overall
+changelog doesn't describe them.  I think this material is important
+enough to justify including it here.
+
+Also, a few words to help people figure out how to gather these stats
+would be nice.  And maybe helper scripts if appropriate?
+
+I'm wondering if this info should even be presented via
+/proc/self/something, dunno.
+
+And it would be interesting to present the fallback frequency in the
+benchmark results.
+
+> ------------------
+> Benchmarks results
+> 
+> There is no functional change compared to the v6 so benchmark results are
+> the same.
+> Please see https://lkml.org/lkml/2018/1/12/515 for details.
+
+Please include this vitally important info in the [0/n], don't make
+people chase links.
+
+And I'd really like to see some quantitative testing results for real
+workloads, not just a bunch of microbenchmarks.  Help us understand how
+useful this patchset is to our users.
