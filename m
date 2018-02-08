@@ -1,147 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751424AbeBHAeW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 19:34:22 -0500
-Received: from LGEAMRELO11.lge.com ([156.147.23.51]:39040 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750745AbeBHAeV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 19:34:21 -0500
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: namhyung@kernel.org
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date: Thu, 8 Feb 2018 09:34:18 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
-Subject: Re: [PATCH 06/10] perf tools: Use machine__set_kernel_mmap instead
- of map_groups__fixup_end
-Message-ID: <20180208003418.GA24686@sejong>
-References: <20180207144838.16823-1-jolsa@kernel.org>
- <20180207144838.16823-7-jolsa@kernel.org>
+        id S1751835AbeBHAgA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 19:36:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38904 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbeBHAf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 19:35:58 -0500
+From: NeilBrown <neilb@suse.com>
+To: Joel Fernandes <joelaf@google.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date: Thu, 08 Feb 2018 11:35:43 +1100
+Cc: LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
+        Minchan Kim <minchan@kernel.org>,
+        "open list\:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH RFC] ashmem: Fix lockdep RECLAIM_FS false positive
+In-Reply-To: <CAJWu+opo+mE-ZAsi3=u8ogUYurVM0_qaHi7keZJ6h0Sfa7oULQ@mail.gmail.com>
+References: <20180206004903.224390-1-joelaf@google.com> <20180207080740.GH2269@hirez.programming.kicks-ass.net> <CAJWu+orvHb_-fSgtO0NqCai3PPc7fAe7LqNLVVhYbT+Wi-oATg@mail.gmail.com> <20180207165802.GC25219@hirez.programming.kicks-ass.net> <CAJWu+opo+mE-ZAsi3=u8ogUYurVM0_qaHi7keZJ6h0Sfa7oULQ@mail.gmail.com>
+Message-ID: <87k1vomi74.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180207144838.16823-7-jolsa@kernel.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
+--=-=-=
+Content-Type: text/plain
 
-On Wed, Feb 07, 2018 at 03:48:34PM +0100, Jiri Olsa wrote:
-> The machine__set_kernel_mmap does the same job as map_groups__fixup_end
-> when used on kernel maps within machine__create_kernel_maps call.
+On Wed, Feb 07 2018, Joel Fernandes wrote:
 
-I'm not sure.  Modules have end address after machine__create_module()
-but vmlinux_maps is not.  So map_groups__fixup() will set the end of
-vmlinux_maps but with this change it will have ~0ULL.
+> Hi Peter,
+>
+> On Wed, Feb 7, 2018 at 8:58 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> [...]
+>>
+>>> Lockdep reports this issue when GFP_FS is infact set, and we enter
+>>> this path and acquire the lock. So lockdep seems to be doing the right
+>>> thing however by design it is reporting a false-positive.
+>>
+>> So I'm not seeing how its a false positive. fs/inode.c sets a different
+>> lock class per filesystem type. So recursing on an i_mutex within a
+>> filesystem does sound dodgy.
+>
+> But directory inodes and file inodes in the same filesystem share the
+> same lock class right?
 
-Thanks,
-Namhyung
+Not since v2.6.24
+Commit: 14358e6ddaed ("lockdep: annotate dir vs file i_mutex")
 
+You were using 4.9.60. so they should be separate....
 
-> 
-> This way we can also remove map_groups__fixup_end function, because there's
-> no user to it. Also moving machine__set_kernel_mmap up in code, so we don't
-> need forward declaration.
-> 
-> Link: http://lkml.kernel.org/n/tip-9kqrs3bsojwe4ktwpnkxc6g4@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/util/machine.c | 49 ++++++++++++++++++-----------------------------
->  1 file changed, 19 insertions(+), 30 deletions(-)
-> 
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 7563b750137d..49ebd451151a 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -1028,13 +1028,6 @@ int machine__load_vmlinux_path(struct machine *machine, enum map_type type)
->  	return ret;
->  }
->  
-> -static void map_groups__fixup_end(struct map_groups *mg)
-> -{
-> -	int i;
-> -	for (i = 0; i < MAP__NR_TYPES; ++i)
-> -		__map_groups__fixup_end(mg, i);
-> -}
-> -
->  static char *get_kernel_version(const char *root_dir)
->  {
->  	char version[PATH_MAX];
-> @@ -1220,6 +1213,24 @@ static int machine__create_modules(struct machine *machine)
->  	return 0;
->  }
->  
-> +static void machine__set_kernel_mmap(struct machine *machine,
-> +				     u64 start, u64 end)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < MAP__NR_TYPES; i++) {
-> +		machine->vmlinux_maps[i]->start = start;
-> +		machine->vmlinux_maps[i]->end   = end;
-> +
-> +		/*
-> +		 * Be a bit paranoid here, some perf.data file came with
-> +		 * a zero sized synthesized MMAP event for the kernel.
-> +		 */
-> +		if (machine->vmlinux_maps[i]->end == 0)
-> +			machine->vmlinux_maps[i]->end = ~0ULL;
-> +	}
-> +}
-> +
->  int machine__create_kernel_maps(struct machine *machine)
->  {
->  	struct dso *kernel = machine__get_kernel(machine);
-> @@ -1244,11 +1255,6 @@ int machine__create_kernel_maps(struct machine *machine)
->  				 "continuing anyway...\n", machine->pid);
->  	}
->  
-> -	/*
-> -	 * Now that we have all the maps created, just set the ->end of them:
-> -	 */
-> -	map_groups__fixup_end(&machine->kmaps);
-> -
->  	if (!machine__get_running_kernel_start(machine, &name, &addr)) {
->  		if (name &&
->  		    maps__set_kallsyms_ref_reloc_sym(machine->vmlinux_maps, name, addr)) {
-> @@ -1257,27 +1263,10 @@ int machine__create_kernel_maps(struct machine *machine)
->  		}
->  	}
->  
-> +	machine__set_kernel_mmap(machine, addr, 0);
->  	return 0;
->  }
->  
-> -static void machine__set_kernel_mmap(struct machine *machine,
-> -				     u64 start, u64 end)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < MAP__NR_TYPES; i++) {
-> -		machine->vmlinux_maps[i]->start = start;
-> -		machine->vmlinux_maps[i]->end   = end;
-> -
-> -		/*
-> -		 * Be a bit paranoid here, some perf.data file came with
-> -		 * a zero sized synthesized MMAP event for the kernel.
-> -		 */
-> -		if (machine->vmlinux_maps[i]->end == 0)
-> -			machine->vmlinux_maps[i]->end = ~0ULL;
-> -	}
-> -}
-> -
->  static bool machine__uses_kcore(struct machine *machine)
->  {
->  	struct dso *dso;
-> -- 
-> 2.13.6
-> 
+Maybe shmem_get_inode() needs to call unlock_new_inode() or just
+lockdep_annotate_inode_mutex_key() after inode_init_owner().
+
+Maybe inode_init_owner() should call lockdep_annotate_inode_mutex_key()
+directly.
+
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlp7m2AACgkQOeye3VZi
+gbmNRRAAqi6V+r4APrjzTHcs4mwJs7pCOqF/4P0knHwKGEeWt4ZVlToQAKVo93bB
+Qm8g3Q80Xi242xobzmgDJBRSxdfU0E1TeqRU6UH+GWLAhLpZmGNhn6rDGmUDK/vQ
+SuAh52OUpGZ6qbe/1A3+4igCC1clK9kmhNyofLc6qt1OesiqlX7/P3EQ3/eLDu/A
+cF6RZJ2XtvxkHORl9eysHd131xOxvCH/0oC/h86qVUg/eqAU7P19BMJUU2veGY4t
+FwRqJlqo98vcdPVKMVqOjH2bNbRbR+ggS8BQ/cXKRIz9nH37tRT0NUDL6lLS50k+
+tV9I9YLpXrA5dIIeC7Ruh6ny5uz1voFqH70Y+ILxy1BFdkoVGC2xMAEHpo5HoAj/
+cImyNayfD5IoT2yYI6nbYmzAEo2pXDDxojDrN9XA46WSL0ToYwHoOdTFDFPmYlTC
+iSMWvM666qy/1DdF/woeHR2v9pIOn9D9N1r1lKGS8ou1sA8KSdnRoIj6ajeVybdP
+rQ7p5XWrnnYA2bmbZttyMstGCtgIUhCPyz9bWpZ8HMRlA/gKB03csfDOyCGGjnBg
+jY+C9DJei6mxKPFyZl/eSs8bhD3Np8v+PgU/Vm418QUCu4gSQ+tl7qX5F4wuq3Hg
+oWfWdrKz5jpXWKE7PwM0+DD7YubTtXY2QeBRqaNTnBcWQOG1+VU=
+=M4FL
+-----END PGP SIGNATURE-----
+--=-=-=--
