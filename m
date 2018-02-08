@@ -1,84 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751574AbeBHI4D (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 03:56:03 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:38102 "EHLO
+        id S1752117AbeBHI4m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 03:56:42 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36301 "EHLO
         mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750948AbeBHI4B (ORCPT
+        with ESMTP id S1751986AbeBHI4k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 03:56:01 -0500
-X-Google-Smtp-Source: AH8x225o7S/lnGEj++dEWbb6w0DcquR0QYLR8lbZnxT3dXWKOYDBG1O9fWiDJjKZFZMUoW7US6yaRxiHAhfH2TaEFh4=
+        Thu, 8 Feb 2018 03:56:40 -0500
+X-Google-Smtp-Source: AH8x226/ru2pViAW63tafSzlCb34rLomlWCJfQjRHCkjwPjLScwL4mT2wPJyGQlwVkr2Wn9fDwdc6A==
+Subject: Re: [PATCH] KVM: X86: Fix SMRAM accessing even if VM is shutdown
+To: Paolo Bonzini <pbonzini@redhat.com>, Wanpeng Li <kernellwp@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+References: <1517984706-47244-1-git-send-email-wanpengli@tencent.com>
+ <233cfca3-971e-c3c2-f0fe-b50dd69d2546@redhat.com>
+From: Xiao Guangrong <guangrong.xiao@gmail.com>
+Message-ID: <d21822e2-2982-7182-1d9a-be3e5b7e1553@gmail.com>
+Date: Thu, 8 Feb 2018 16:57:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <36aebdca-2a7d-07a3-8632-95992d74cae6@lechnology.com>
-References: <20180207134553.13510-1-brgl@bgdev.pl> <20180207134553.13510-2-brgl@bgdev.pl>
- <36aebdca-2a7d-07a3-8632-95992d74cae6@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 8 Feb 2018 09:56:00 +0100
-Message-ID: <CAMRc=Me5Qckp=_KpbPYprKb23Ujz1C9Um6FrHK59wY=XA2Jcvg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] dt-bindings: soc: new driver for DaVinci genpd
-To: David Lechner <david@lechnology.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <233cfca3-971e-c3c2-f0fe-b50dd69d2546@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-07 22:47 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 02/07/2018 07:45 AM, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> Add a simple document for the DaVinci genpd driver. We use clock pm
->> exclusively hence no reg property.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>   .../devicetree/bindings/soc/ti,davinci-pm-domains.txt       | 13
->> +++++++++++++
->>   1 file changed, 13 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/soc/ti,davinci-pm-domains.txt
->>
->> diff --git
->> a/Documentation/devicetree/bindings/soc/ti,davinci-pm-domains.txt
->> b/Documentation/devicetree/bindings/soc/ti,davinci-pm-domains.txt
->> new file mode 100644
->> index 000000000000..935d063c7b35
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soc/ti,davinci-pm-domains.txt
->> @@ -0,0 +1,13 @@
->> +Device tree bindings for the genpd driver for Texas Instruments DaVinci
->> SoCs
->> +
->> +Required properties:
->> +
->> +- compatible:           must be "ti,davinci-pm-domains"
->> +- #power-domain-cells:  must be 0
->> +
->> +Example:
->> +
->> +pwc1: power-controller@227000 {
->> +       compatible = "ti,davinci-pm-domains";
->> +       #power-domain-cells = <0>;
->> +};
->>
->
->
-> We already have the PSC @227000. Why not just add
-> #power-domain-cells = <0>; to that node instead of creating
-> a new "device" when this is really the same device?
 
-I thought about it too, but then noticed that most architectures do
-use a separate genpd driver even if it only calls routines placed in
-their respective clock driver.
 
-Let me prepare a v2 with this approach though.
+On 02/07/2018 10:16 PM, Paolo Bonzini wrote:
+> On 07/02/2018 07:25, Wanpeng Li wrote:
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index 786cd00..445e702 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -7458,6 +7458,11 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
+>>   		goto out;
+>>   	}
+>>   
+>> +	if (unlikely(vcpu->run->exit_reason == KVM_EXIT_SHUTDOWN)) {
+>> +		r = -EINVAL;
+>> +		goto out;
+>> +	}
+>> +
+>>   	if (vcpu->run->kvm_dirty_regs) {
+>>   		r = sync_regs(vcpu);
+>>   		if (r != 0)
+>>
+> 
+> This most likely breaks triple faults in the usual case where they
+> should result in resetting the system; the KVM API doesn't say that you
+> should clear vcpu->run->exit_reason before entering.
+> 
+> What exactly causes the EPT misconfig to reach the WARN?  That is, how
+> does kvm_mmu_page_fault end up returning a negative errno value?  If I
+> read the code correctly only tdp_page_fault can do so, so my guess would
+> be kvm_handle_bad_page:
+> 
+>          if (pfn == KVM_PFN_ERR_RO_FAULT)
+>                  return RET_PF_EMULATE;
+> 
+>          if (pfn == KVM_PFN_ERR_HWPOISON) {
+>                  kvm_send_hwpoison_signal(kvm_vcpu_gfn_to_hva(vcpu, gfn),
+> current);
+>                  return RET_PF_RETRY;
+>          }
+> 
+> 	/* KVM_PFN_ERR_FAULT */
+>          return -EFAULT;
+> 
+> Maybe it should return RET_PF_EMULATE, which would cause an emulation
+> failure and then an exit with KVM_EXIT_INTERNAL_ERROR.
 
-Thanks,
-Bartosz
+So the root cause is that a running vCPU accessing the memory whose memslot
+is being updated (met the condition KVM_MEMSLOT_INVALID is set on the its
+memslot).
+
+The normal #PF handler breaks KVM_RUN and returns -EFAULT to userspace, we'd
+better to make ept-misconfig's handler follow this style as well.
+
+Actually, the WARN_ON in ept-misconfig's handler is unnecessary as
+kvm_mmu_page_fault() will warn us if it is the real ept misconfig, so we can
+simply return kvm_mmu_page_fault().
