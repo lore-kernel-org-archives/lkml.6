@@ -1,101 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeBHLGA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:06:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33072 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750876AbeBHLF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:05:59 -0500
-Date: Thu, 8 Feb 2018 11:05:54 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 10/20] arm64: capabilities: Restrict KPTI detection to
- boot-time CPUs
-Message-ID: <20180208110550.GV5862@e103592.cambridge.arm.com>
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-11-suzuki.poulose@arm.com>
- <20180207103845.GA5862@e103592.cambridge.arm.com>
- <ec712e11-baa5-aa2c-1b70-be221ea36f9f@arm.com>
+        id S1752233AbeBHLIX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:08:23 -0500
+Received: from foss.arm.com ([217.140.101.70]:33122 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751995AbeBHLIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:08:22 -0500
+Subject: Re: [PATCH v1 05/16] arm64: Helper for parange to PASize
+To: Christoffer Dall <christoffer.dall@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-6-suzuki.poulose@arm.com> <20180208110042.GH29286@cbox>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <040b00f2-3e83-a475-ae20-5e9358fc580a@arm.com>
+Date: Thu, 8 Feb 2018 11:08:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec712e11-baa5-aa2c-1b70-be221ea36f9f@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180208110042.GH29286@cbox>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 06:15:58PM +0000, Suzuki K Poulose wrote:
-> On 07/02/18 10:38, Dave Martin wrote:
-> >On Wed, Jan 31, 2018 at 06:27:57PM +0000, Suzuki K Poulose wrote:
-> >>KPTI is treated as a system wide feature, where we enable the feature
-> >>when all the CPUs on the system suffers from the security vulnerability,
-> >
-> >Should that be "when any CPU"?
-> >
+On 08/02/18 11:00, Christoffer Dall wrote:
+> On Tue, Jan 09, 2018 at 07:04:00PM +0000, Suzuki K Poulose wrote:
+>> Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
+>                                                        *the*
+>> size shift. Limit the size to the maximum supported by the kernel.
 > 
-> Without this patch, we need all the CPUs to mandate the defense (as this
-> is a system feature). This patch changes it. I will change it to :
+> Is this just a cleanup or are we actually going to need this feature in
+> the subsequent patches?  That would be nice to motivate in the commit
+> letter.
+
+It is a cleanup, plus we are going to move the user of the code around from
+one place to the other. So this makes it a bit easier and cleaner.
+
+
+>>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   arch/arm64/include/asm/cpufeature.h | 16 ++++++++++++++++
+>>   arch/arm64/kvm/hyp/s2-setup.c       | 28 +++++-----------------------
+>>   2 files changed, 21 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+>> index ac67cfc2585a..0564e14616eb 100644
+>> --- a/arch/arm64/include/asm/cpufeature.h
+>> +++ b/arch/arm64/include/asm/cpufeature.h
+>> @@ -304,6 +304,22 @@ static inline u64 read_zcr_features(void)
+>>   	return zcr;
+>>   }
+>>   
+>> +static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+>> +{
+>> +	switch (parange) {
+>> +	case 0: return 32;
+>> +	case 1: return 36;
+>> +	case 2: return 40;
+>> +	case 3: return 42;
+>> +	case 4: return 44;
+>> +
+>> +	default:
 > 
-> "KPTI is treated as a system wide feature and is only "detected" if all
-> the CPUs on the system needs the defense. This is not sufficient, as the
-> KPTI is turned off on a system with a mix of CPUs, where some CPUs can
-> defend and others can't,
+> What is the case we want to cater for with making parange == 5 the
+> default for unrecognized values?
 > 
-> >>unless it is forced via kernel command line. Also, if a late CPU needs
-> >>KPTI but KPTI was not enabled at boot time, the CPU is currently allowed
-> >>to boot, which is a potential security vulnerability.  This patch ensures
+> (I have a feeling that default label comes from making the compiler
+> happy about potentially uninitialized values once upon a time before a
+> lot of refactoring happened here.)
+
+That is there to make sure we return 48 iff 52bit support (for that matter,
+if there is a new limit in the future) is not enabled.
+
 > 
-> " This patch ensures that KPTI is turned on if at least one CPU requires the
-> defense and any late CPUs are rejected..."
-> .
+>> +	case 5: return 48;
+>> +#ifdef CONFIG_ARM64_PA_BITS_52
+>> +	case 6: return 52;
+>> +#endif
+>> +	}
+>> +}
+>>   #endif /* __ASSEMBLY__ */
+>>   
 
-Yes, that makes sense.
 
-[...]
-
-> >>diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> >>index ecc87aa74c64..4a55492784b7 100644
-> >>--- a/arch/arm64/kernel/cpufeature.c
-> >>+++ b/arch/arm64/kernel/cpufeature.c
-
-[...]
-
-> >>@@ -1008,7 +1006,10 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
-> >>  	{
-> >>  		.desc = "Kernel page table isolation (KPTI)",
-> >>  		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
-> >>-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> >>+		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
-> >>+		.sys_reg = SYS_ID_AA64PFR0_EL1,
-> >>+		.field_pos = ID_AA64PFR0_CSV3_SHIFT,
-> >>+		.min_field_value = 1,
-> >>  		.matches = unmap_kernel_at_el0,
-> >
-> >Minor nit, but:
-> >
-> >Can we have a comment here to explain that .min_field_value is the
-> >minimum value that indicates that KPTI is _not_ required by this cpu?
-> >This is the opposite of the usual semantics for this field.
+>>
 > 
-> Sure, will add it.
+> Could you fold this change into the commit as well:
 > 
-> >
-> >Otherwise, this inversion of meaning is not obvious without digging into
-> >unmap_kernel_at_el0() and spotting the ! in !has_cpuid_feature().
-> >
-> >With that, or if this usage of !has_cpuid_feature() is already well-
-> >established so that a comment is deemed unnecessary:
-> 
-> This is the first time we have used it.
+> diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
+> index 603e1ee83e89..eea2fbd68b8a 100644
+> --- a/arch/arm64/kvm/hyp/s2-setup.c
+> +++ b/arch/arm64/kvm/hyp/s2-setup.c
+> @@ -29,7 +29,8 @@ u32 __hyp_text __init_stage2_translation(void)
+>   	/*
+>   	 * Read the PARange bits from ID_AA64MMFR0_EL1 and set the PS
+>   	 * bits in VTCR_EL2. Amusingly, the PARange is 4 bits, while
+> -	 * PS is only 3. Fortunately, bit 19 is RES0 in VTCR_EL2...
+> +	 * PS is only 3. Fortunately, only three bits is actually used to
+> +	 * enode the supported PARange values.
+>   	 */
+>   	parange = read_sysreg(id_aa64mmfr0_el1) & 7;
+>   	if (parange > ID_AA64MMFR0_PARANGE_MAX)
 
-Thought so, but I wasn't ruling out the possibility that I had missed
-it!
+Sure.
 
-Cheers
----Dave
+Thanks for the review.
+
+Suzuki
