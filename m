@@ -1,18 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBHQQH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:16:07 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36300 "EHLO mx1.redhat.com"
+        id S1752220AbeBHQQP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 11:16:15 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60536 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751756AbeBHQQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:16:06 -0500
-Subject: [PATCH 0/7] afs: Fixes and dynamic root
+        id S1751756AbeBHQQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 11:16:12 -0500
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/7] afs: Add missing afs_put_cell()
 From: David Howells <dhowells@redhat.com>
 To: torvalds@linux-foundation.org
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 08 Feb 2018 16:16:04 +0000
-Message-ID: <151810656463.20070.1477473037254016718.stgit@warthog.procyon.org.uk>
+Date: Thu, 08 Feb 2018 16:16:11 +0000
+Message-ID: <151810657110.20070.1125726424389861264.stgit@warthog.procyon.org.uk>
+In-Reply-To: <151810656463.20070.1477473037254016718.stgit@warthog.procyon.org.uk>
+References: <151810656463.20070.1477473037254016718.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,75 +27,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+afs_alloc_volume() needs to release the cell ref it obtained in the case of
+an error.  Fix this by adding an afs_put_cell() call into the error path.
 
-Hi Linus,
+This can triggered when a lookup for a cell in a dynamic root or an
+autocell mount returns an error whilst trying to look up the server (such
+as ENOMEDIUM).  This results in an assertion failure oops when the module
+is unloaded due to outstanding refs on a cell record.
 
-Here are a set of AFS patches, 4 fixes, 2 cleanups and 1 devel patch.  The
-fixes are:
-
- (1) Add a missing put.
-
- (2) & (3) Reset the address iteration cursor correctly.
-
- (4) Fix setting up the fileserver iteration cursor.
-
-The cleanups:
-
- (5) Remove some dead code.
-
- (6) Rearrange a function to be more logically laid out.
-
-And the development patch:
-
- (7) Support AFS dynamic root.
-
-With these patches, one should be able to do, say:
-
-	mkdir /afs
-	mount -t afs none /afs -o dyn
-
-to create a dynamic root and then, provided you have keyutils installed, do:
-
-	ls /afs/grand.central.org
-
-and:
-
-	ls /afs/umich.edu
-
-to list the root volumes of both those organisations' AFS cells without
-requiring any other setup (the kernel upcall to a program in the keyutils
-package to do DNS access as does NFS).
-
-The patches can be found here also:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
-
-tagged thusly:
-
-	afs-next-20180208
-
-David
+Fixes: d2ddc776a458 ("afs: Overhaul volume and server record caching and fileserver rotation")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: stable@vger.kernel.org
 ---
-David Howells (7):
-      afs: Add missing afs_put_cell()
-      afs: Fix missing cursor clearance
-      afs: Need to clear responded flag in addr cursor
-      afs: Fix server list handling
-      afs: Remove unused code
-      afs: Rearrange afs_select_fileserver() a little
-      afs: Support the AFS dynamic root
 
+ fs/afs/volume.c |    1 +
+ 1 file changed, 1 insertion(+)
 
- Documentation/filesystems/afs.txt |   17 ++
- fs/afs/addr_list.c                |   13 +-
- fs/afs/dir.c                      |  122 ++++++++++++++-
- fs/afs/inode.c                    |   48 ++++--
- fs/afs/internal.h                 |   12 +-
- fs/afs/mntpt.c                    |   20 +--
- fs/afs/rotate.c                   |  293 +++----------------------------------
- fs/afs/server_list.c              |    3 
- fs/afs/super.c                    |  132 +++++++++++------
- fs/afs/vlclient.c                 |   10 +
- fs/afs/volume.c                   |   47 ------
- net/dns_resolver/dns_query.c      |   22 ++-
- 12 files changed, 324 insertions(+), 415 deletions(-)
+diff --git a/fs/afs/volume.c b/fs/afs/volume.c
+index 684c48293353..79db9021f140 100644
+--- a/fs/afs/volume.c
++++ b/fs/afs/volume.c
+@@ -102,6 +102,7 @@ static struct afs_volume *afs_alloc_volume(struct afs_mount_params *params,
+ error_2:
+ 	afs_put_serverlist(params->net, slist);
+ error_1:
++	afs_put_cell(params->net, volume->cell);
+ 	kfree(volume);
+ error_0:
+ 	return ERR_PTR(ret);
