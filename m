@@ -1,114 +1,60 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2279207-1517450637-2-5337943513239872969
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES daen, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517450637; b=wECc4sp9lB0m8L0Qg6RPwpYJkOMnQB6qhBIJD/MmICs5bMI
-    cSdgxPJ5fq0g7mWUwGkcuRRh0+yG9LmiXdhgRWdwcUtyiaI0T9Vsm8UD+fIja4ko
-    Qhd2MFWXQnrajX0gFoF18PjNt8i4qd69QX/X8yat/UDlsP2fBUPTqersyHJALZW7
-    /+tol2YbxbN+Q86vHuR2TJuADgBoC30oF1khIfxXLVTEmIGYo4zbkBOMPlJIDxlI
-    /h4TecCJLHTxhjDM3pGCyDKvezVEzad4g9O8g662eXiJXBkHLIHpyTUC4D8IBBUP
-    AHlh9L78oMoC6qpprLgjQj3js8BMoXqBedG4wSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1517450637; bh=f
-    4o+e83st7O6dd6bYku3i9qOAnyXAPeOemPNbTkXSEI=; b=MMz3IQOd676IUmajH
-    nydvUCynci1uxzMC2ClNvdkX/1wCJ/XYokKsYuUS1tfoUxr1p4M3lRiNtBjyNLhm
-    570lYAYMCndH2Fp/oa5qqT2ZV3e43M41ZD5W0yXm8C8xBBuOVrdMpOlb4gXb2C4O
-    6CebkzitTE2tixhjBPziU+pjzXfgc5VO/j1jfQ8HIIfdIA7+8Niy8rMfo1/9J3IQ
-    tvnwPYDSPYbNakLSP43ggOGcl2MHJ8pgpyQwXe0qaQhBKPhOVX6577OuCa1eKGaN
-    vkt2xBrPNn53JSS794TpHaS4h62yIuPg2QTWm2uF4mx2d9Eu0CO9ZNrfImvHkoB7
-    vk+Vg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <gregkh@linuxfoundation.org>
-Subject: [PATCH resend 2/3] staging: android: ion: Remove unused include files
- for ion_page_pool.c
-Date: Thu, 1 Feb 2018 09:54:21 +0800
-Message-ID: <1517450062-16123-2-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1517450062-16123-1-git-send-email-xieyisheng1@huawei.com>
-References: <1517450062-16123-1-git-send-email-xieyisheng1@huawei.com>
+Return-Path: <chiu@endlessm.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518058870; cv=none;
+        d=google.com; s=arc-20160816;
+        b=em6ywwiOZFdNkI+tFX9uQxMvRxcQn1W3wY/nDpiRL87Cga+8OtTs7GqI3q9mjFsdAB
+         nxWv0OW0mxmEuCXQhYQAwXiAnjZUQQSknKleWvvEzctfVKWIPb+/bf22Qincg+kBytcX
+         MnEdxWknNYf8AApGtQvPQTb5s9VQSNLPCGytNQ0wqUdFEertanGey8PRoFFS1K27WPeM
+         odSmVxzMPqIGdhX9gY4cLB0oYuKJnPUs23t4Ge7gZcKVEipS8oMxjaW6e4PHZ3k8swZu
+         LqU1yEqjnE5hE4CRKsb92QhoAaUAOLjkXDnalqVIwzEpc/YuaNJTRr6u5f467UYLaUMr
+         /EaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature
+         :arc-authentication-results;
+        bh=6kkDKVAtMGzw7nikH2hdaDsEZl4g8WX5Cwrgr9FmL4s=;
+        b=Fpk4c5Nrf5Scl2gAiAo5FMWCqcr1VJEWW3JFBBvj0uaWxaq85i7Twp0zmTSKMp9YXO
+         /DqcJU2rX/aeuFcctYux5U6UEFyY8VH2P0NcHpC1LjqbDO2c6iNK7lqOuMm1vyXNlu0c
+         E7UEoRfwXdfTUhoYmptIG8oTHTF5f+Wm17Xkk1hKzPGSm1pQlWn8QhEuzFAo0QHzX6Qm
+         pKHyErnXSD+eH3w4GweRWRLL10TYUAuDik/yZAOwkWmwceKYfrlm2GHM0BkL2mOmPSLA
+         CSBrkeGw9hhy18nm+6gvMr0GSNDu49escrzh/jS7F6TWHbH2C3gkLio+EK2FYOnIByxB
+         CNBw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@endlessm-com.20150623.gappssmtp.com header.s=20150623 header.b=xshL99cP;
+       spf=pass (google.com: domain of chiu@endlessm.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chiu@endlessm.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@endlessm-com.20150623.gappssmtp.com header.s=20150623 header.b=xshL99cP;
+       spf=pass (google.com: domain of chiu@endlessm.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chiu@endlessm.com
+X-Google-Smtp-Source: AH8x2245hv6Wz0vobPCwwwMk+ZzvKKlVliBg4egq8120HHPdQ4L6qIQjVyH0aZ4mQmkLRi/C/SkH/LFZZcy09dcWYmw=
 MIME-Version: 1.0
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, xieyisheng1@huawei.com, sumit.semwal@linaro.org,
- linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Thu, 8 Feb 2018 11:01:09 +0800
+Message-ID: <CAB4CAwfino0JaeeZV1byp3aoaRrOGL1=BYgkruvxYMr6=c=5PQ@mail.gmail.com>
+Subject: ipmi_si fails to get BMC ID
+To: minyard@acm.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+	openipmi-developer@lists.sourceforge.net,
+	Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591800098576670064?=
+X-GMAIL-MSGID: =?utf-8?q?1591800098576670064?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-After rewrite of ion_page_pool, some of its include file is no need
-anymore, just remove it.
+Hi,
+    We are working with a new desktop Acer Veriton Z4640G and get
+stumbled on failing to enter S3 suspend with kernel version 4.14 even
+the latest 4.15+. Here's the kernel log
+https://gist.github.com/mschiu77/76888f1fd4eb56aa8959d76759a912bb.
 
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- drivers/staging/android/ion/ion_page_pool.c | 4 ----
- 1 file changed, 4 deletions(-)
+    As you see, it is due to "ipmi_probe+0x430/0x430 [ipmi_si]". After
+the message "ipmi_si 0000:02:00.3: There appears to be no BMC at this
+location" shows up, then it can really go to suspend w/o problem.
+Although it took around 3 mins. The IPMI device is probed from PCI and
+here's the output of lspci
+https://gist.github.com/mschiu77/33f0372be41670d8a69c97e64f833087. The
+IPMI device is "02:00.3 IPMI SMIC interface [0c07]". We get stuck here
+because we don't really know why it took so long in try_get_dev_id() /
+ipmi_si_intf.c. Any suggestion about this to help us moving forward?
+Thanks
 
-diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
-index 817849d..f2318c9 100644
---- a/drivers/staging/android/ion/ion_page_pool.c
-+++ b/drivers/staging/android/ion/ion_page_pool.c
-@@ -14,10 +14,6 @@
-  *
-  */
- 
--#include <linux/debugfs.h>
--#include <linux/dma-mapping.h>
--#include <linux/err.h>
--#include <linux/fs.h>
- #include <linux/list.h>
- #include <linux/init.h>
- #include <linux/slab.h>
--- 
-1.7.12.4
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Chris
