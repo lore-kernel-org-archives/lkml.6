@@ -1,59 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751574AbeBHI03 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 03:26:29 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35593 "EHLO
+        id S1751130AbeBHIbQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 03:31:16 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39255 "EHLO
         mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750881AbeBHI00 (ORCPT
+        with ESMTP id S1750815AbeBHIbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 03:26:26 -0500
-X-Google-Smtp-Source: AH8x224yMWkIATNnN1e8ApZcvR4FqthaTXOwB9GV7JsUrPso3IN6s4bIDHkj1NSAyjMn5d/qH4vYJQ==
+        Thu, 8 Feb 2018 03:31:14 -0500
+X-Google-Smtp-Source: AH8x225pLrRpbMGCSc5YKXa57UTEOUy04eF6NHgss66oKH4YIs1iMOIHnRYvPbV9JFaXH8DqVJRMKw==
 From: Corentin Labbe <clabbe@baylibre.com>
 To: awalls@md.metrocast.net, mchehab@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] media: cx18: remove unused cx18-alsa-mixer
-Date: Thu,  8 Feb 2018 08:26:14 +0000
-Message-Id: <1518078374-4150-1-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH] media: ivtv: remove ivtv-alsa-mixer
+Date: Thu,  8 Feb 2018 08:31:07 +0000
+Message-Id: <1518078667-4318-1-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cx18-alsa-mixer functions are not used since commit 4cb565cc2700 ("V4L/DVB: cx18: make it so cx18-alsa-main.c compiles")
-9 year later, lets just remove them.
+ivtv-alsa-mixer functions was introduced in commit 269c11fbac4f ("[media] ivtv, ivtv-alsa: Add initial ivtv-alsa interface driver for ivtv")
+But according to commit message, ivtv-alsa-mixer.c was already dead
+code.
+5 years after, we should remove it.
+
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- drivers/media/pci/cx18/cx18-alsa-main.c  |   1 -
- drivers/media/pci/cx18/cx18-alsa-mixer.c | 170 -------------------------------
- drivers/media/pci/cx18/cx18-alsa-mixer.h |  18 ----
- 3 files changed, 189 deletions(-)
- delete mode 100644 drivers/media/pci/cx18/cx18-alsa-mixer.c
- delete mode 100644 drivers/media/pci/cx18/cx18-alsa-mixer.h
+ drivers/media/pci/ivtv/ivtv-alsa-main.c  |  10 +-
+ drivers/media/pci/ivtv/ivtv-alsa-mixer.c | 165 -------------------------------
+ drivers/media/pci/ivtv/ivtv-alsa-mixer.h |  18 ----
+ 3 files changed, 1 insertion(+), 192 deletions(-)
+ delete mode 100644 drivers/media/pci/ivtv/ivtv-alsa-mixer.c
+ delete mode 100644 drivers/media/pci/ivtv/ivtv-alsa-mixer.h
 
-diff --git a/drivers/media/pci/cx18/cx18-alsa-main.c b/drivers/media/pci/cx18/cx18-alsa-main.c
-index 2531e4b81b60..93443d1457c5 100644
---- a/drivers/media/pci/cx18/cx18-alsa-main.c
-+++ b/drivers/media/pci/cx18/cx18-alsa-main.c
-@@ -32,7 +32,6 @@
- #include "cx18-driver.h"
- #include "cx18-version.h"
- #include "cx18-alsa.h"
--#include "cx18-alsa-mixer.h"
- #include "cx18-alsa-pcm.h"
+diff --git a/drivers/media/pci/ivtv/ivtv-alsa-main.c b/drivers/media/pci/ivtv/ivtv-alsa-main.c
+index 029f52733f70..cb74aeb3035c 100644
+--- a/drivers/media/pci/ivtv/ivtv-alsa-main.c
++++ b/drivers/media/pci/ivtv/ivtv-alsa-main.c
+@@ -160,15 +160,7 @@ static int snd_ivtv_init(struct v4l2_device *v4l2_dev)
+ 	/* (4) Set the driver ID and name strings */
+ 	snd_ivtv_card_set_names(itvsc);
  
- int cx18_alsa_debug;
-diff --git a/drivers/media/pci/cx18/cx18-alsa-mixer.c b/drivers/media/pci/cx18/cx18-alsa-mixer.c
+-	/* (5) Create other components: mixer, PCM, & proc files */
+-#if 0
+-	ret = snd_ivtv_mixer_create(itvsc);
+-	if (ret) {
+-		IVTV_ALSA_WARN("%s: snd_ivtv_mixer_create() failed with err %d: proceeding anyway\n",
+-			       __func__, ret);
+-	}
+-#endif
+-
++	/* (5) Create other components: PCM, & proc files */
+ 	ret = snd_ivtv_pcm_create(itvsc);
+ 	if (ret) {
+ 		IVTV_ALSA_ERR("%s: snd_ivtv_pcm_create() failed with err %d\n",
+diff --git a/drivers/media/pci/ivtv/ivtv-alsa-mixer.c b/drivers/media/pci/ivtv/ivtv-alsa-mixer.c
 deleted file mode 100644
-index cb04c3d820e2..000000000000
---- a/drivers/media/pci/cx18/cx18-alsa-mixer.c
+index aee453fcff37..000000000000
+--- a/drivers/media/pci/ivtv/ivtv-alsa-mixer.c
 +++ /dev/null
-@@ -1,170 +0,0 @@
+@@ -1,165 +0,0 @@
 -/*
 - *  ALSA mixer controls for the
-- *  ALSA interface to cx18 PCM capture streams
+- *  ALSA interface to ivtv PCM capture streams
 - *
-- *  Copyright (C) 2009  Andy Walls <awalls@md.metrocast.net>
+- *  Copyright (C) 2009,2012  Andy Walls <awalls@md.metrocast.net>
 - *
 - *  This program is free software; you can redistribute it and/or modify
 - *  it under the terms of the GNU General Public License as published by
@@ -66,23 +78,18 @@ index cb04c3d820e2..000000000000
 - *  GNU General Public License for more details.
 - */
 -
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/device.h>
--#include <linux/spinlock.h>
--#include <linux/videodev2.h>
+-#include "ivtv-alsa.h"
+-#include "ivtv-alsa-mixer.h"
+-#include "ivtv-driver.h"
 -
--#include <media/v4l2-device.h>
+-#include <linux/videodev2.h>
 -
 -#include <sound/core.h>
 -#include <sound/control.h>
 -#include <sound/tlv.h>
 -
--#include "cx18-alsa.h"
--#include "cx18-driver.h"
--
 -/*
-- * Note the cx18-av-core volume scale is funny, due to the alignment of the
+- * Note the cx25840-core volume scale is funny, due to the alignment of the
 - * scale with another chip's range:
 - *
 - * v4l2_control value	/512	indicated dB	actual dB	reg 0x8d4
@@ -97,7 +104,7 @@ index cb04c3d820e2..000000000000
 - * ...
 - * 0xfe00 - 0xffff	127	  +8		 +8		 20
 - */
--static inline int dB_to_cx18_av_vol(int dB)
+-static inline int dB_to_cx25840_vol(int dB)
 -{
 -	if (dB < -96)
 -		dB = -96;
@@ -106,7 +113,7 @@ index cb04c3d820e2..000000000000
 -	return (dB + 119) << 9;
 -}
 -
--static inline int cx18_av_vol_to_dB(int v)
+-static inline int cx25840_vol_to_dB(int v)
 -{
 -	if (v < (23 << 9))
 -		v = (23 << 9);
@@ -115,7 +122,7 @@ index cb04c3d820e2..000000000000
 -	return (v >> 9) - 119;
 -}
 -
--static int snd_cx18_mixer_tv_vol_info(struct snd_kcontrol *kcontrol,
+-static int snd_ivtv_mixer_tv_vol_info(struct snd_kcontrol *kcontrol,
 -				      struct snd_ctl_elem_info *uinfo)
 -{
 -	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
@@ -127,69 +134,69 @@ index cb04c3d820e2..000000000000
 -	return 0;
 -}
 -
--static int snd_cx18_mixer_tv_vol_get(struct snd_kcontrol *kctl,
+-static int snd_ivtv_mixer_tv_vol_get(struct snd_kcontrol *kctl,
 -				     struct snd_ctl_elem_value *uctl)
 -{
--	struct snd_cx18_card *cxsc = snd_kcontrol_chip(kctl);
--	struct cx18 *cx = to_cx18(cxsc->v4l2_dev);
+-	struct snd_ivtv_card *itvsc = snd_kcontrol_chip(kctl);
+-	struct ivtv *itv = to_ivtv(itvsc->v4l2_dev);
 -	struct v4l2_control vctrl;
 -	int ret;
 -
 -	vctrl.id = V4L2_CID_AUDIO_VOLUME;
--	vctrl.value = dB_to_cx18_av_vol(uctl->value.integer.value[0]);
+-	vctrl.value = dB_to_cx25840_vol(uctl->value.integer.value[0]);
 -
--	snd_cx18_lock(cxsc);
--	ret = v4l2_g_ctrl(cx->sd_av->ctrl_handler, &vctrl);
--	snd_cx18_unlock(cxsc);
+-	snd_ivtv_lock(itvsc);
+-	ret = v4l2_g_ctrl(itv->sd_audio->ctrl_handler, &vctrl);
+-	snd_ivtv_unlock(itvsc);
 -
 -	if (!ret)
--		uctl->value.integer.value[0] = cx18_av_vol_to_dB(vctrl.value);
+-		uctl->value.integer.value[0] = cx25840_vol_to_dB(vctrl.value);
 -	return ret;
 -}
 -
--static int snd_cx18_mixer_tv_vol_put(struct snd_kcontrol *kctl,
+-static int snd_ivtv_mixer_tv_vol_put(struct snd_kcontrol *kctl,
 -				     struct snd_ctl_elem_value *uctl)
 -{
--	struct snd_cx18_card *cxsc = snd_kcontrol_chip(kctl);
--	struct cx18 *cx = to_cx18(cxsc->v4l2_dev);
+-	struct snd_ivtv_card *itvsc = snd_kcontrol_chip(kctl);
+-	struct ivtv *itv = to_ivtv(itvsc->v4l2_dev);
 -	struct v4l2_control vctrl;
 -	int ret;
 -
 -	vctrl.id = V4L2_CID_AUDIO_VOLUME;
--	vctrl.value = dB_to_cx18_av_vol(uctl->value.integer.value[0]);
+-	vctrl.value = dB_to_cx25840_vol(uctl->value.integer.value[0]);
 -
--	snd_cx18_lock(cxsc);
+-	snd_ivtv_lock(itvsc);
 -
 -	/* Fetch current state */
--	ret = v4l2_g_ctrl(cx->sd_av->ctrl_handler, &vctrl);
+-	ret = v4l2_g_ctrl(itv->sd_audio->ctrl_handler, &vctrl);
 -
 -	if (ret ||
--	    (cx18_av_vol_to_dB(vctrl.value) != uctl->value.integer.value[0])) {
+-	    (cx25840_vol_to_dB(vctrl.value) != uctl->value.integer.value[0])) {
 -
 -		/* Set, if needed */
--		vctrl.value = dB_to_cx18_av_vol(uctl->value.integer.value[0]);
--		ret = v4l2_s_ctrl(cx->sd_av->ctrl_handler, &vctrl);
+-		vctrl.value = dB_to_cx25840_vol(uctl->value.integer.value[0]);
+-		ret = v4l2_s_ctrl(itv->sd_audio->ctrl_handler, &vctrl);
 -		if (!ret)
 -			ret = 1; /* Indicate control was changed w/o error */
 -	}
--	snd_cx18_unlock(cxsc);
+-	snd_ivtv_unlock(itvsc);
 -
 -	return ret;
 -}
 -
 -
 -/* This is a bit of overkill, the slider is already in dB internally */
--static DECLARE_TLV_DB_SCALE(snd_cx18_mixer_tv_vol_db_scale, -9600, 100, 0);
+-static DECLARE_TLV_DB_SCALE(snd_ivtv_mixer_tv_vol_db_scale, -9600, 100, 0);
 -
--static struct snd_kcontrol_new snd_cx18_mixer_tv_vol __initdata = {
+-static struct snd_kcontrol_new snd_ivtv_mixer_tv_vol __initdata = {
 -	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
 -	.name = "Analog TV Capture Volume",
 -	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE |
 -		  SNDRV_CTL_ELEM_ACCESS_TLV_READ,
--	.info = snd_cx18_mixer_tv_volume_info,
--	.get = snd_cx18_mixer_tv_volume_get,
--	.put = snd_cx18_mixer_tv_volume_put,
--	.tlv.p = snd_cx18_mixer_tv_vol_db_scale
+-	.info = snd_ivtv_mixer_tv_volume_info,
+-	.get = snd_ivtv_mixer_tv_volume_get,
+-	.put = snd_ivtv_mixer_tv_volume_put,
+-	.tlv.p = snd_ivtv_mixer_tv_vol_db_scale
 -};
 -
 -/* FIXME - add mute switch and balance, bass, treble sliders:
@@ -202,34 +209,34 @@ index cb04c3d820e2..000000000000
 -*/
 -
 -/* FIXME - add stereo, lang1, lang2, mono menu */
--/* FIXME - add CS5345 I2S volume for HVR-1600 */
+-/* FIXME - add I2S volume */
 -
--int __init snd_cx18_mixer_create(struct snd_cx18_card *cxsc)
+-int __init snd_ivtv_mixer_create(struct snd_ivtv_card *itvsc)
 -{
--	struct v4l2_device *v4l2_dev = cxsc->v4l2_dev;
--	struct snd_card *sc = cxsc->sc;
+-	struct v4l2_device *v4l2_dev = itvsc->v4l2_dev;
+-	struct snd_card *sc = itvsc->sc;
 -	int ret;
 -
--	strlcpy(sc->mixername, "CX23418 Mixer", sizeof(sc->mixername));
+-	strlcpy(sc->mixername, "CX2341[56] Mixer", sizeof(sc->mixername));
 -
--	ret = snd_ctl_add(sc, snd_ctl_new1(&snd_cx18_mixer_tv_vol, cxsc));
+-	ret = snd_ctl_add(sc, snd_ctl_new1(&snd_ivtv_mixer_tv_vol, itvsc));
 -	if (ret) {
--		CX18_ALSA_WARN("%s: failed to add %s control, err %d\n",
--				__func__, snd_cx18_mixer_tv_vol.name, ret);
+-		IVTV_ALSA_WARN("%s: failed to add %s control, err %d\n",
+-			       __func__, snd_ivtv_mixer_tv_vol.name, ret);
 -	}
 -	return ret;
 -}
-diff --git a/drivers/media/pci/cx18/cx18-alsa-mixer.h b/drivers/media/pci/cx18/cx18-alsa-mixer.h
+diff --git a/drivers/media/pci/ivtv/ivtv-alsa-mixer.h b/drivers/media/pci/ivtv/ivtv-alsa-mixer.h
 deleted file mode 100644
-index 3aed123955dd..000000000000
---- a/drivers/media/pci/cx18/cx18-alsa-mixer.h
+index 382bc36bc529..000000000000
+--- a/drivers/media/pci/ivtv/ivtv-alsa-mixer.h
 +++ /dev/null
 @@ -1,18 +0,0 @@
 -/*
 - *  ALSA mixer controls for the
-- *  ALSA interface to cx18 PCM capture streams
+- *  ALSA interface to ivtv PCM capture streams
 - *
-- *  Copyright (C) 2009  Andy Walls <awalls@md.metrocast.net>
+- *  Copyright (C) 2009,2012  Andy Walls <awalls@md.metrocast.net>
 - *
 - *  This program is free software; you can redistribute it and/or modify
 - *  it under the terms of the GNU General Public License as published by
@@ -242,6 +249,6 @@ index 3aed123955dd..000000000000
 - *  GNU General Public License for more details.
 - */
 -
--int __init snd_cx18_mixer_create(struct snd_cx18_card *cxsc);
+-int __init snd_ivtv_mixer_create(struct snd_ivtv_card *itvsc);
 -- 
 2.13.6
