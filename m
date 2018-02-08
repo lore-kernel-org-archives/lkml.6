@@ -1,188 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeBHK72 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:59:28 -0500
-Received: from LGEAMRELO13.lge.com ([156.147.23.53]:50750 "EHLO
-        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750982AbeBHK70 (ORCPT
+        id S1752167AbeBHLAk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:00:40 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36045 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbeBHLAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:59:26 -0500
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: namhyung@kernel.org
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date: Thu, 8 Feb 2018 19:59:24 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
-Subject: Re: [PATCH 09/18] tracing: Add indexing of arguments for function
- based events
-Message-ID: <20180208105924.GB26290@sejong>
-References: <20180202230458.840252014@goodmis.org>
- <20180202231018.338259949@goodmis.org>
+        Thu, 8 Feb 2018 06:00:38 -0500
+X-Google-Smtp-Source: AH8x225fWWdu1MtwKmd3vynZ92zw5XqzmcPcMZQ9+xkIdaN5203rVH2wZazFHJOnckEjredKbhoPJg==
+Date: Thu, 8 Feb 2018 12:00:35 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, Christoffer Dall <cdall@linaro.org>
+Subject: Re: [PATCH v1 14/16] kvm: arm64: Switch to per VM IPA
+Message-ID: <20180208110035.GG29286@cbox>
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-15-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180202231018.338259949@goodmis.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180109190414.4017-15-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 06:05:07PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Tue, Jan 09, 2018 at 07:04:09PM +0000, Suzuki K Poulose wrote:
+> Now that we can manage the stage2 page table per VM, switch the
+> configuration details to per VM instance. We keep track of the
+> IPA bits, number of page table levels and the VTCR bits (which
+> depends on the IPA and the number of levels).
 > 
-> Currently reading of 8 byte words can only happen 8 bytes aligned from the
-> argument. But there may be cases that they are 4 bytes aligned. To make the
-> capturing of arguments more flexible, add a plus '+' operator that can index
-> the variable at arbitrary indexes to get any location.
-> 
->  u64 arg+4[3]
-> 
-> Will get an 8 byte word at index 28 (3 * 8 + 4)
-> 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 > ---
->  Documentation/trace/function-based-events.rst | 24 +++++++++++++++++++++++-
->  kernel/trace/trace_event_ftrace.c             | 18 ++++++++++++++++++
->  2 files changed, 41 insertions(+), 1 deletion(-)
+>  arch/arm/include/asm/kvm_mmu.h          |  1 +
+>  arch/arm64/include/asm/kvm_host.h       | 12 ++++++++++++
+>  arch/arm64/include/asm/kvm_mmu.h        | 22 ++++++++++++++++++++--
+>  arch/arm64/include/asm/stage2_pgtable.h |  1 -
+>  arch/arm64/kvm/hyp/switch.c             |  3 +--
+>  virt/kvm/arm/arm.c                      |  2 +-
+>  6 files changed, 35 insertions(+), 6 deletions(-)
 > 
-> diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
-> index 72e3e7730d63..bdb28f433bfb 100644
-> --- a/Documentation/trace/function-based-events.rst
-> +++ b/Documentation/trace/function-based-events.rst
-> @@ -100,10 +100,12 @@ as follows:
->           'x8' | 'x16' | 'x32' | 'x64' |
->           'char' | 'short' | 'int' | 'long' | 'size_t'
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index 440c80589453..dd592fe45660 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -48,6 +48,7 @@
+>  #define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
 >  
-> - FIELD := <name> | <name> INDEX
-> + FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX
+>  #define stage2_pgd_size(kvm)	(PTRS_PER_S2_PGD * sizeof(pgd_t))
+> +#define kvm_init_stage2_config(kvm)	do { } while (0)
+>  int create_hyp_mappings(void *from, void *to, pgprot_t prot);
+>  int create_hyp_io_mappings(void *from, void *to, phys_addr_t);
+>  void free_hyp_pgds(void);
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 9a9ddeb33c84..1e66e5ab3dde 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -64,6 +64,18 @@ struct kvm_arch {
+>  	/* VTTBR value associated with above pgd and vmid */
+>  	u64    vttbr;
 >  
->   INDEX := '[' <number> ']'
->  
-> + OFFSET := '+' <number>
-> +
->   Where <name> is a unique string starting with an alphabetic character
->   and consists only of letters and numbers and underscores.
->  
-> @@ -221,3 +223,23 @@ format:
->  print fmt: "%pS->%pS(skb=%u)", REC->__ip, REC->__parent_ip, REC->skb
->  
->  It is now printed with a "%u".
-> +
-> +
-> +Offsets
-> +=======
-> +
-> +After the name of the variable, brackets '[' number ']' will index the value of
-> +the argument by the number given times the size of the field.
-> +
-> + int field[5] will dereference the value of the argument 20 bytes away (4 * 5)
-> +  as sizeof(int) is 4.
-> +
-> +If there's a case where the type is of 8 bytes in size but is not 8 bytes
-> +alligned in the structure, an offset may be required.
-> +
-> +  For example: x64 param+4[2]
-> +
-> +The above will take the parameter value, add it by 4, then index it by two
-> +8 byte words. It's the same in C as: (u64 *)((void *)param + 4)[2]
-> +
-> + Note: "int skb[32]" is the same as "int skb+4[31]".
-> diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
-> index 9548b93eb8cd..4c23fa18453d 100644
-> --- a/kernel/trace/trace_event_ftrace.c
-> +++ b/kernel/trace/trace_event_ftrace.c
-> @@ -19,6 +19,7 @@ struct func_arg {
->  	char				*type;
->  	char				*name;
->  	long				indirect;
-> +	long				index;
->  	short				offset;
->  	short				size;
->  	s8				arg;
-> @@ -62,6 +63,7 @@ enum func_states {
->  	FUNC_STATE_INDIRECT,
->  	FUNC_STATE_UNSIGNED,
->  	FUNC_STATE_PIPE,
-> +	FUNC_STATE_PLUS,
->  	FUNC_STATE_TYPE,
->  	FUNC_STATE_VAR,
->  	FUNC_STATE_COMMA,
-> @@ -182,6 +184,7 @@ static char *next_token(char **ptr, char *last)
->  		    *str == ']' ||
->  		    *str == ',' ||
->  		    *str == '|' ||
-> +		    *str == '+' ||
->  		    *str == ')')
->  			break;
->  	}
-> @@ -323,6 +326,15 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
->  		}
->  		break;
->  
-> +	case FUNC_STATE_PLUS:
-> +		if (WARN_ON(!fevent->last_arg))
-> +			break;
-> +		ret = kstrtol(token, 0, &val);
-> +		if (ret)
-> +			break;
-> +		fevent->last_arg->index += val;
-> +		return FUNC_STATE_VAR;
-> +
->  	case FUNC_STATE_VAR:
->  		switch (token[0]) {
->  		case ')':
-> @@ -331,6 +343,8 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
->  			return FUNC_STATE_COMMA;
->  		case '|':
->  			return FUNC_STATE_PIPE;
-> +		case '+':
-> +			return FUNC_STATE_PLUS;
->  		case '[':
->  			return FUNC_STATE_BRACKET;
->  		}
-> @@ -347,6 +361,8 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
->  	char buf[8];
->  	int ret;
->  
-> +	val += arg->index;
-> +
->  	if (!arg->indirect)
->  		return val;
+> +	/* Private bits of VTCR_EL2 for this VM */
+> +	u64    vtcr_private;
 
-So this also works without the indirect, and just add the immediate to
-the value.
+As to my comments in the previous patch, why isn't this simply u64 vtcr;
 
 Thanks,
-Namhyung
+-Christoffer
 
-
+> +	/* Size of the PA size for this guest */
+> +	u8     phys_shift;
+> +	/*
+> +	 * Number of levels in page table. We could always calculate
+> +	 * it from phys_shift above. We cache it for faster switches
+> +	 * in stage2 page table helpers.
+> +	 */
+> +	u8     s2_levels;
+> +
+> +
+>  	/* The last vcpu id that ran on each physical CPU */
+>  	int __percpu *last_vcpu_ran;
 >  
-> @@ -779,6 +795,8 @@ static int func_event_seq_show(struct seq_file *m, void *v)
->  		last_arg = arg->arg;
->  		comma = true;
->  		seq_printf(m, "%s %s", arg->type, arg->name);
-> +		if (arg->index)
-> +			seq_printf(m, "+%ld", arg->index);
->  		if (arg->indirect && arg->size)
->  			seq_printf(m, "[%ld]",
->  				   (arg->indirect ^ INDIRECT_FLAG) / arg->size);
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 483185ed2ecd..ab6a8b905065 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -134,11 +134,12 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
+>  /*
+>   * We currently only support a 40bit IPA.
+>   */
+> -#define KVM_PHYS_SHIFT	(40)
+> +#define KVM_PHYS_SHIFT_DEFAULT	(40)
+>  
+> -#define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
+> +#define kvm_phys_shift(kvm)		(kvm->arch.phys_shift)
+>  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
+>  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
+> +#define kvm_stage2_levels(kvm)		(kvm->arch.s2_levels)
+>  
+>  static inline bool kvm_page_empty(void *ptr)
+>  {
+> @@ -346,5 +347,22 @@ static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
+>  	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
+>  }
+>  
+> +/*
+> + * kvm_init_stage2_config: Initialise the VM specific stage2 page table
+> + * details to default IPA size.
+> + */
+> +static inline void kvm_init_stage2_config(struct kvm *kvm)
+> +{
+> +	/*
+> +	 * The stage2 PGD is dependent on the settings we initialise here
+> +	 * and should be allocated only after this step.
+> +	 */
+> +	VM_BUG_ON(kvm->arch.pgd != NULL);
+> +	kvm->arch.phys_shift = KVM_PHYS_SHIFT_DEFAULT;
+> +	kvm->arch.s2_levels = stage2_pt_levels(kvm->arch.phys_shift);
+> +	kvm->arch.vtcr_private = VTCR_EL2_SL0(kvm->arch.s2_levels) |
+> +				 TCR_T0SZ(kvm->arch.phys_shift);
+> +}
+> +
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* __ARM64_KVM_MMU_H__ */
+> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
+> index 33e8ebb25037..9b75b83da643 100644
+> --- a/arch/arm64/include/asm/stage2_pgtable.h
+> +++ b/arch/arm64/include/asm/stage2_pgtable.h
+> @@ -44,7 +44,6 @@
+>   */
+>  #define __s2_pgd_ptrs(pa, lvls)	(1 << ((pa) - pt_levels_pgdir_shift((lvls))))
+>  
+> -#define kvm_stage2_levels(kvm)		stage2_pt_levels(kvm_phys_shift(kvm))
+>  #define stage2_pgdir_shift(kvm)	\
+>  		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
+>  #define stage2_pgdir_size(kvm)		(_AC(1, UL) << stage2_pgdir_shift((kvm)))
+> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> index 523471f0af7b..d0725562ee3f 100644
+> --- a/arch/arm64/kvm/hyp/switch.c
+> +++ b/arch/arm64/kvm/hyp/switch.c
+> @@ -160,8 +160,7 @@ static void __hyp_text __activate_vm(struct kvm_vcpu *vcpu)
+>  	u64 vtcr = read_sysreg(vtcr_el2);
+>  
+>  	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
+> -	vtcr |= VTCR_EL2_SL0(stage2_pt_levels(kvm)) |
+> -		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
+> +	vtcr |= kvm->arch.vtcr_private;
+>  	write_sysreg(vtcr, vtcr_el2);
+>  	write_sysreg(kvm->arch.vttbr, vttbr_el2);
+>  }
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index 8564ed907b18..e0bf8d19fcfe 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -143,7 +143,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+>  	/* The maximum number of VCPUs is limited by the host's GIC model */
+>  	kvm->arch.max_vcpus = vgic_present ?
+>  				kvm_vgic_get_max_vcpus() : KVM_MAX_VCPUS;
+> -
+> +	kvm_init_stage2_config(kvm);
+>  	return ret;
+>  }
+>  
 > -- 
-> 2.15.1
-> 
+> 2.13.6
 > 
