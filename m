@@ -1,72 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752337AbeBHXK1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 18:10:27 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752018AbeBHXJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 18:09:59 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>
-Subject: [PATCH 1/2] objtool: Fix seg fault in ignore_unreachable_insn()
-Date: Thu,  8 Feb 2018 17:09:25 -0600
-Message-Id: <bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1518130694.git.jpoimboe@redhat.com>
-References: <20180208203146.GF577@pd.tnic> <cover.1518130694.git.jpoimboe@redhat.com>
+        id S1752436AbeBHXLE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 18:11:04 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:63324 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeBHXLD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 18:11:03 -0500
+To: chris@chris-wilson.co.uk, linux-kernel@vger.kernel.org
+Cc: mingo@kernel.org, akpm@linux-foundation.org, ak@linux.intel.com,
+        jack@suse.cz, aryabinin@virtuozzo.com, dvyukov@google.com
+Subject: Re: [PATCH] khungtaskd: Kick stuck processes
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <20180208190753.17690-1-chris@chris-wilson.co.uk>
+In-Reply-To: <20180208190753.17690-1-chris@chris-wilson.co.uk>
+Message-Id: <201802090810.DBF09356.OFMQFVFJtOHOLS@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Fri, 9 Feb 2018 08:10:43 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra's patch for converting WARN() to use UD2 triggered a
-bunch of false "unreachable instruction" warnings, which then triggered
-a seg fault in ignore_unreachable_insn().
+Chris Wilson wrote:
+> After spotting a stuck process, and having decided not to panic, give
+> the task a kick to see if that helps it to recover (e.g. to paper over a
+> missed wake up).
 
-The seg fault happened when it tried to dereference a NULL 'insn->func'
-pointer.  Thanks to static_cpu_has(), some functions can jump to a
-non-function area in the .altinstr_aux section.  That breaks
-ignore_unreachable_insn()'s assumption that it's always inside the
-original function.
+Yes, we are seeing hangs at io_schedule(), but doesn't optionally allowing
+io_schedule() be replaced with timeout version (e.g. dump_page() upon timeout
+if io_schedule() was called for e.g. wait_on_page_bit()) give us more clue?
 
-Make sure ignore_unreachable_insn() only follows jumps within the
-current function.
-
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- tools/objtool/check.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index b00b1896547e..4ec1a3bf7bf2 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1899,13 +1899,19 @@ static bool ignore_unreachable_insn(struct instruction *insn)
- 		if (is_kasan_insn(insn) || is_ubsan_insn(insn))
- 			return true;
- 
--		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest) {
--			insn = insn->jump_dest;
--			continue;
-+		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
-+			if (insn->jump_dest &&
-+			    insn->jump_dest->func == insn->func) {
-+				insn = insn->jump_dest;
-+				continue;
-+			}
-+
-+			break;
- 		}
- 
- 		if (insn->offset + insn->len >= insn->func->offset + insn->func->len)
- 			break;
-+
- 		insn = list_next_entry(insn, list);
- 	}
- 
--- 
-2.14.3
+> 
+> References: https://bugs.freedesktop.org/show_bug.cgi?id=104009
+> References: https://bugs.freedesktop.org/show_bug.cgi?id=104682
+> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  kernel/hung_task.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 751593ed7c0b..b32acb6bcc63 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -132,6 +132,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>  		trigger_all_cpu_backtrace();
+>  		panic("hung_task: blocked tasks");
+>  	}
+> +
+> +	wake_up_process(t);
+>  }
+>  
+>  /*
+> -- 
+> 2.16.1
