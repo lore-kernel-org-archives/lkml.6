@@ -1,87 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeBHEKh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 23:10:37 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44012 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751269AbeBHEKf (ORCPT
+        id S1751725AbeBHEVe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 23:21:34 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:42069 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeBHEVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 23:10:35 -0500
-Date: Wed, 7 Feb 2018 20:10:39 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        mingo@redhat.com, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        rao.shoaib@oracle.com
-Subject: Re: [PATCH 0/2] rcu: Transform kfree_rcu() into kvfree_rcu()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <151791170164.5994.8253310844733420079.stgit@localhost.localdomain>
- <20180207021703.GC3617@linux.vnet.ibm.com>
- <20180207042334.GA16175@bombadil.infradead.org>
- <20180207050200.GH3617@linux.vnet.ibm.com>
- <db9bda80-7506-ae25-2c0a-45eaa08963d9@virtuozzo.com>
- <20180207083104.GK3617@linux.vnet.ibm.com>
- <20180207085700.393f90d0@gandalf.local.home>
- <20180207174513.5cc9b503@redhat.com>
- <20180207181055.GB12446@bombadil.infradead.org>
- <20180207132619.6595e4a9@gandalf.local.home>
+        Wed, 7 Feb 2018 23:21:32 -0500
+X-Google-Smtp-Source: AH8x224XYvf1lVlktBQTWOaWHkRSLcU5cWbgUapJhq+b0i9QEQN18vATC1noakD52j/cP5hAi3IbDg==
+Date: Thu, 8 Feb 2018 14:21:14 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Li Wang <wangli.ahau@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Colin Cross <ccross@android.com>, linux-kernel@vger.kernel.org,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: linux/drivers/cpuidle: cpuidle_enter_state() issue
+Message-ID: <20180208142114.4b82bb72@roar.ozlabs.ibm.com>
+In-Reply-To: <616a847f-500b-f0ca-2aa4-de159ba48725@intel.com>
+References: <CAE1O6mjJRypMK9XapAeY3GY4OLXZODzDH_kBgphGD-p6SL448w@mail.gmail.com>
+        <616a847f-500b-f0ca-2aa4-de159ba48725@intel.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207132619.6595e4a9@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18020804-0056-0000-0000-000004178461
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008494; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000249; SDB=6.00986544; UDB=6.00500676; IPR=6.00765908;
- BA=6.00005819; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019434; XFM=3.00000015;
- UTC=2018-02-08 04:10:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020804-0057-0000-0000-0000084EF47D
-Message-Id: <20180208041039.GR3617@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-08_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802080036
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 01:26:19PM -0500, Steven Rostedt wrote:
-> On Wed, 7 Feb 2018 10:10:55 -0800
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > > For the record, I fully agree with Steve here. 
-> 
-> Thanks, but...
-> 
-> > > 
-> > > And being a performance "fanatic" I don't like to have the extra branch
-> > > (and compares) in the free code path... but it's a MM-decision (and
-> > > sometimes you should not listen to "fanatics" ;-))  
-> > 
-> > While free_rcu() is not withut its performance requirements, I think it's
-> > currently dominated by cache misses and not by branches.  By the time RCU
-> > gets to run callbacks, memory is certainly L1/L2 cache-cold and probably
-> > L3 cache-cold.  Also calling the callback functions is utterly impossible
-> > for the branch predictor.
-> 
-> I agree with Matthew.
-> 
-> This is far from any fast path. A few extra branches isn't going to
-> hurt anything here as it's mostly just garbage collection. With or
-> without the Spectre fixes.
+On Wed, 7 Feb 2018 14:51:56 +0100
+"Rafael J. Wysocki" <rafael.j.wysocki@intel.com> wrote:
 
-What Steve said!
+> On 2/7/2018 7:59 AM, Li Wang wrote:
+> > Hi Kernel-developers,
+> >
+> > The flowing call trace was catch from kernel-v4.15, could anyone help
+> > to analysis the cpuidle problem?
+> > or, if you need any more detail info pls let me know.
+> >
+> > Test Env:
+> > IBM KVM Guest on ibm-p8-kvm-03
+> > POWER8E (raw), altivec supported
+> > 9216 MB memory, 107 GB disk space
+> >
+> > --------8<----------------
+> > [15002.722413] swapper/15: page allocation failure: order:0,
+> > mode:0x1080020(GFP_ATOMIC), nodemask=(null)
+> > [15002.853793] swapper/15 cpuset=/ mems_allowed=0
+> > [15002.853932] CPU: 15 PID: 0 Comm: swapper/15 Not tainted 4.15.0 #1
+> > [15002.854019] Call Trace:
+> > [15002.854129] [c00000023ff77650] [c000000000940b50]
+> > .dump_stack+0xac/0xfc (unreliable)
+> > [15002.854285] [c00000023ff776e0] [c00000000026c678] .warn_alloc+0xe8/0x180
+> > [15002.854376] [c00000023ff777a0] [c00000000026d50c]
+> > .__alloc_pages_nodemask+0xd6c/0xf90
+> > [15002.854490] [c00000023ff77980] [c0000000002e9cc0]
+> > .alloc_pages_current+0x90/0x120
+> > [15002.854624] [c00000023ff77a10] [c0000000007990cc]
+> > .skb_page_frag_refill+0x8c/0x120
+> > [15002.854746] [c00000023ff77aa0] [d000000003a561a8]
+> > .try_fill_recv+0x368/0x620 [virtio_net]
+> > [15003.422855] [c00000023ff77ba0] [d000000003a568ec]
+> > .virtnet_poll+0x25c/0x380 [virtio_net]
+> > [15003.423864] [c00000023ff77c70] [c0000000007c18d0] .net_rx_action+0x330/0x4a0
+> > [15003.424024] [c00000023ff77d90] [c000000000960d50] .__do_softirq+0x150/0x3a8
+> > [15003.424197] [c00000023ff77e90] [c0000000000ff608] .irq_exit+0x198/0x1b0
+> > [15003.424342] [c00000023ff77f10] [c000000000015504] .__do_irq+0x94/0x1f0
+> > [15003.424485] [c00000023ff77f90] [c000000000026d5c] .call_do_irq+0x14/0x24
+> > [15003.424627] [c00000023bc63820] [c0000000000156ec] .do_IRQ+0x8c/0x100
+> > [15003.424776] [c00000023bc638c0] [c000000000008b34]
+> > hardware_interrupt_common+0x114/0x120
+> > [15003.424963] --- interrupt: 501 at .snooze_loop+0xa4/0x1c0
+> >      LR = .snooze_loop+0x60/0x1c0
+> > [15003.425164] [c00000023bc63bb0] [c00000023bc63c50]
+> > 0xc00000023bc63c50 (unreliable)
+> > [15003.425346] [c00000023bc63c30] [c00000000075104c]
+> > .cpuidle_enter_state+0xac/0x390
+> > [15003.425534] [c00000023bc63ce0] [c000000000157adc] .call_cpuidle+0x3c/0x70
+> > [15003.425669] [c00000023bc63d50] [c000000000157e90] .do_idle+0x2a0/0x300
+> > [15003.425815] [c00000023bc63e20] [c0000000001580ac]
+> > .cpu_startup_entry+0x2c/0x40
+> > [15003.425995] [c00000023bc63ea0] [c000000000045790]
+> > .start_secondary+0x4d0/0x520
+> > [15003.426170] [c00000023bc63f90] [c00000000000aa70]
+> > start_secondary_prolog+0x10/0x14
+> > -------------8<-------------------
+> >
+> > Any response will be appreciated!
+> >  
+> 
+> I'm not sure if this is a cpuidle problem in the first place.
+> 
+> It looks like the kernel was unable to allocate a page for something and 
+> it was trying to do an atomic allocation, so that's not guaranteed to be 
+> successful every time even though the failure here may be unexpected.
 
-							Thanx, Paul
+Yes you're right. An order-0 failure should be quite rare, but not impossible.
+This backtrace does not actually indicate a bug, but it's something to help
+kernel developers tune memory allocation.
+
+Is there any negative impact to the running system? Do the messages occur
+often?
+
+Thanks,
+Nick
