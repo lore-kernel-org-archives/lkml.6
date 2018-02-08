@@ -1,82 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeBHSBr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:01:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752400AbeBHR77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:59:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E421B21738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Wanpeng Li <kernellwp@gmail.com>,
-        Mike Galbraith <efault@gmx.de>, Rik van Riel <riel@redhat.com>
-Subject: [PATCH 1/6] sched: Rename init_rq_hrtick to hrtick_rq_init
-Date: Thu,  8 Feb 2018 18:59:34 +0100
-Message-Id: <1518112779-30196-2-git-send-email-frederic@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518112779-30196-1-git-send-email-frederic@kernel.org>
-References: <1518112779-30196-1-git-send-email-frederic@kernel.org>
+        id S1752642AbeBHSCK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:02:10 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39730 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752426AbeBHSCH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 13:02:07 -0500
+X-Google-Smtp-Source: AH8x225uSkEKa9KA5lRCHjA8KYEJUwfNF1SSGB5briLe6O/njElcuAsP1zq2Vpbae+rZZKpRnGLHiA==
+Date: Thu, 8 Feb 2018 10:02:04 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Derek Basehore <dbasehore@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Soby.Mathew@arm.com,
+        sudeep.holla@arm.com, devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de, marc.zyngier@arm.com
+Subject: Re: [PATCH v6 3/3] irqchip/gic-v3-its: add ability to resend MAPC on
+ resume
+Message-ID: <20180208180203.GD106856@ban.mtv.corp.google.com>
+References: <20180208023648.89124-1-dbasehore@chromium.org>
+ <20180208023648.89124-4-dbasehore@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208023648.89124-4-dbasehore@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do that rename in order to normalize the hrtick namespace.
+On Wed, Feb 07, 2018 at 06:36:48PM -0800, Derek Basehore wrote:
+> This adds functionality to resend the MAPC command to an ITS node on
+> resume. If the ITS is powered down during suspend and the collections
+> are not backed by memory, the ITS will lose that state. This just sets
+> up the known state for the collections after the ITS is restored.
+> 
+> This is enabled via the reset-on-suspend flag in the DTS. It only runs
+> for collections stored in the ITS itself.
+> 
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c   | 86 +++++++++++++++++++++-----------------
+>  include/linux/irqchip/arm-gic-v3.h |  1 +
+>  2 files changed, 49 insertions(+), 38 deletions(-)
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Chris Metcalf <cmetcalf@mellanox.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Luiz Capitulino <lcapitulino@redhat.com>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wanpeng Li <kernellwp@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+For the very little it's worth:
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 36f113a..fc9fa25 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -333,7 +333,7 @@ void hrtick_start(struct rq *rq, u64 delay)
- }
- #endif /* CONFIG_SMP */
- 
--static void init_rq_hrtick(struct rq *rq)
-+static void hrtick_rq_init(struct rq *rq)
- {
- #ifdef CONFIG_SMP
- 	rq->hrtick_csd_pending = 0;
-@@ -351,7 +351,7 @@ static inline void hrtick_clear(struct rq *rq)
- {
- }
- 
--static inline void init_rq_hrtick(struct rq *rq)
-+static inline void hrtick_rq_init(struct rq *rq)
- {
- }
- #endif	/* CONFIG_SCHED_HRTICK */
-@@ -6023,7 +6023,7 @@ void __init sched_init(void)
- 		rq->last_sched_tick = 0;
- #endif
- #endif /* CONFIG_SMP */
--		init_rq_hrtick(rq);
-+		hrtick_rq_init(rq);
- 		atomic_set(&rq->nr_iowait, 0);
- 	}
- 
--- 
-2.7.4
+Reviewed-by: Brian Norris <briannorris@chromium.org>
