@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752318AbeBHNyg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:54:36 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35230 "EHLO mx1.redhat.com"
+        id S1752402AbeBHNy4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:54:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55892 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752281AbeBHNyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:54:33 -0500
-Date: Thu, 8 Feb 2018 14:54:30 +0100
+        id S1752373AbeBHNyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:54:54 -0500
+Date: Thu, 8 Feb 2018 14:54:52 +0100
 From: Jiri Olsa <jolsa@redhat.com>
 To: John Garry <john.garry@huawei.com>
 Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
@@ -16,7 +16,7 @@ Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linuxarm@huawei.com, zhangshaokun@hisilicon.com,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
-Message-ID: <20180208135430.GD10234@krava>
+Message-ID: <20180208135452.GE10234@krava>
 References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
  <1517939104-230881-6-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
@@ -32,20 +32,43 @@ On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
 
 SNIP
 
-> @@ -940,6 +1090,7 @@ int main(int argc, char *argv[])
->  	const char *output_file;
->  	const char *start_dirname;
->  	struct stat stbuf;
-> +	struct event_struct *es1, *es2;
->  
->  	prog = basename(argv[0]);
->  	if (argc < 4) {
-> @@ -984,17 +1135,28 @@ int main(int argc, char *argv[])
->  
->  	maxfds = get_maxfds();
->  	mapfile = NULL;
 > +	rc = nftw(ldirname, preprocess_arch_std_files, get_maxfds(), 0);
+> +	if (rc && verbose) {
+> +		pr_info("%s: Error preprocessing arch standard files %s\n",
+> +			prog, ldirname);
+> +		goto empty_map;
+> +	} else if (rc < 0) {
+> +		/* Make build fail */
+> +		return 1;
+> +	}
+>  	rc = nftw(ldirname, process_one_file, maxfds, 0);
+>  	if (rc && verbose) {
+>  		pr_info("%s: Error walking file tree %s\n", prog, ldirname);
+> -		goto empty_map;
+> +		goto free_standard_arch_events;
+>  	} else if (rc < 0) {
+>  		/* Make build fail */
+>  		return 1;
+> -	} else if (rc) {
+> -		goto empty_map;
+>  	}
+>  
+> +	/* Free memories for architecture standard events */
+> +	list_for_each_entry_safe(es1, es2, &arch_std_events, list)
+> +		free(es1);
+> +
+>  	if (close_table)
+>  		print_events_table_suffix(eventsfp);
+>  
+> @@ -1011,6 +1173,9 @@ int main(int argc, char *argv[])
+>  
+>  	return 0;
+>  
+> +free_standard_arch_events:
+> +	list_for_each_entry_safe(es1, es2, &arch_std_events, list)
+> +		free(es1);
 
-you could use maxfds variable in here
+that could go into a function and be used also above
 
+thanks,
 jirka
