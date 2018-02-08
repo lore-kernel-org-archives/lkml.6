@@ -1,65 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeBHSTY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:19:24 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:62453 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeBHSTW (ORCPT
+        id S1752176AbeBHSX2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:23:28 -0500
+Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:59412 "EHLO
+        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751544AbeBHSX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:19:22 -0500
-Subject: Re: [PATCH] gpiolib: suppress error message on EPROBE_DEFER
-To: Linus Walleij <linus.walleij@linaro.org>,
-        David Lechner <david@lechnology.com>
-CC: <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1516566774-1786-1-git-send-email-david@lechnology.com>
- <CACRpkdbKWrdnbBp2e1kFd_3fYZxtWKnWPPgOd_FXSvXcOetLwA@mail.gmail.com>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <ee9d3352-6575-9e7b-d8d2-20caf609e0ef@ti.com>
-Date: Thu, 8 Feb 2018 12:18:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdbKWrdnbBp2e1kFd_3fYZxtWKnWPPgOd_FXSvXcOetLwA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 8 Feb 2018 13:23:26 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GEAAB1lHxahz+a6ERdGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQngQAyjX+OJplXghgKhTuCMVQYAQIBAQEBAQECAQIQAQEBCA0?=
+ =?us-ascii?q?JCCgvgjgig0oSAYEmAQQODYotsXSIeoI8hHyCFYY3hiSFMAWTGZESCZVzlEeYD?=
+ =?us-ascii?q?IE8H4IKcIMZgmSCEo0ugRcBAQE?=
+X-IPAS-Result: =?us-ascii?q?A2GEAAB1lHxahz+a6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?ngQAyjX+OJplXghgKhTuCMVQYAQIBAQEBAQECAQIQAQEBCA0JCCgvgjgig0oSA?=
+ =?us-ascii?q?YEmAQQODYotsXSIeoI8hHyCFYY3hiSFMAWTGZESCZVzlEeYDIE8H4IKcIMZgmS?=
+ =?us-ascii?q?CEo0ugRcBAQE?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.172
+X-IronPort-AV: E=Sophos;i="5.46,480,1511848800";
+   d="scan'208";a="211577494"
+X-DLP: DLP_GlobalPCIDSS
+To: <pali.rohar@gmail.com>
+CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dvhart@infradead.org>, <andy.shevchenko@gmail.com>
+Subject: Dell SMBIOS initializing before backends are ready
+Thread-Topic: Dell SMBIOS initializing before backends are ready
+Thread-Index: AdOhB+4zpnFDLdnqQwKU0CvE6GdPRQ==
+Date: Thu, 8 Feb 2018 18:23:23 +0000
+Message-ID: <8da25d14004a4bd6ac7415c5958bcfc8@ausx13mpc120.AMER.DELL.COM>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.247.59.147]
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w18INXQR015862
 
+After Paul's recent message regarding the odd wifi issue he had a 
+comment I wanted to investigate:
 
+dell_smbios: "No dell-smbios drivers are loaded"
 
-On 02/07/2018 06:57 AM, Linus Walleij wrote:
-> On Sun, Jan 21, 2018 at 9:32 PM, David Lechner <david@lechnology.com> wrote:
-> 
->> This suppresses printing an error message during probe of gpio drivers
->> when the error is EPROBE_DEFER.
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: David Lechner <david@lechnology.com>
-> 
-> I'm not sure about this.
-> 
-> GPIO can be very basic system components. If we don't
-> print this, defer a few times (for some reason) and then
-> the kernel gives up on retrying, silently (as it happens)
-> there is no trace in dmesg of what happened. That makes
-> things hard to debug.
-> 
-> This happened to me with some other driver, so it is not
-> a made up example.
-> 
-> What about an explicit deferral message for now?
-> 
+Coming up early in boot.  This is a side effect of dell-smbios having two
+backend drivers that can be compiled as modules but no tie to force
+them to initialize before calls to dell_smbios_call.
 
-The DD has debuging prints for all cases, so in general it can be used
-for boot debugging (really_probe()). So, in my opinion it make sense to 
-print gpiolib specific message only in case of !EPROBE_DEFER.
+So I believe what is happening is dell_micmute_led_set is called from
+the HDA driver and calls dell_smbios_call early too.
 
-5c
+I haven't tried it on a platform with mic mute, but I suspect it might cause
+the mic mute LED status to be wrong initially (but corrected later when 
+toggled).
 
--- 
-regards,
--grygorii
+Ideas that came to mind:
+
+1) In dell_smbios_call if no backends loaded, explicitly do a symbol_request
+for both backends and run initialization at that time.
+
+If that works, that would also resolve if someone manually unloaded both
+backends but a kernel module still tried to perform a request.
+
+2) Add a notifier chain for when the driver is ready (a backend is loaded)
+to all consumers of dell_smbios_call.  Don't let other modules call
+dell_smbios_call until notified.
+Don't let the HDA driver call dell_micmute_led_set either.
+
+3) try_module_get during dell-smbios initialization for both the backends
+
+What's the correct way to address this?
