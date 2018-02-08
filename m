@@ -1,58 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752132AbeBHJ2r (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 04:28:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39879 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750930AbeBHJ2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 04:28:43 -0500
-Date: Thu, 8 Feb 2018 10:28:39 +0100
-From: Jan Kara <jack@suse.cz>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: syzbot <syzbot+283c3c447181741aea28@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, aryabinin@virtuozzo.com, jack@suse.cz,
-        jlayton@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mgorman@techsingularity.net, mingo@kernel.org, rgoldwyn@suse.com,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
-Subject: Re: INFO: task hung in sync_blockdev
-Message-ID: <20180208092839.ebe5rk6mtvkk5da4@quack2.suse.cz>
-References: <001a11447070ac6fcb0564a08cb1@google.com>
- <20180207155229.GC10945@tassilo.jf.intel.com>
+        id S1751066AbeBHJcO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 04:32:14 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:44081 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeBHJcK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 04:32:10 -0500
+Subject: Re: [PATCH 2/7] soc: davinci: new genpd driver
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180207134553.13510-1-brgl@bgdev.pl>
+ <20180207134553.13510-3-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <65f2690c-c605-3c66-9d8a-9a882aaf446d@ti.com>
+Date: Thu, 8 Feb 2018 15:00:47 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207155229.GC10945@tassilo.jf.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180207134553.13510-3-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-02-18 07:52:29, Andi Kleen wrote:
-> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<0000000040269370>]
-> > __blkdev_put+0xbc/0x7f0 fs/block_dev.c:1757
-> > 1 lock held by blkid/19199:
-> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> > __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
-> >  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<0000000033edf9f2>]
-> > n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> > 1 lock held by syz-executor5/19330:
-> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> > __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
-> > 1 lock held by syz-executor5/19331:
-> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> > __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
-> 
-> It seems multiple processes deadlocked on the bd_mutex. 
-> Unfortunately there's no backtrace for the lock acquisitions,
-> so it's hard to see the exact sequence.
+On Wednesday 07 February 2018 07:15 PM, Bartosz Golaszewski wrote:
+> +	/*
+> +	 * DaVinci always uses a single clock for power-management. We assume
+> +	 * it's the first one in the clocks property.
+> +	 */
+> +	clk = of_clk_get(dev->of_node, 0);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
 
-Well, all in the report points to a situation where some IO was submitted
-to the block device and never completed (more exactly it took longer than
-those 120s to complete that IO). It would need more digging into the
-syzkaller program to find out what kind of device that was and possibly why
-the IO took so long to complete...
+We already get this today with drivers/base/power/clock_ops.c once
+.con_ids list is dropped from pm_clk_notifier_block (which I think it
+should).
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If there is no reason to introduce thus functionality at this stage,
+perhaps we should wait till such a time when its clearly needed?
+
+Thanks,
+Sekhar
