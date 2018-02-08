@@ -1,84 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeBHPis (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:38:48 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36792 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeBHPiq (ORCPT
+        id S1752218AbeBHPjc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:39:32 -0500
+Received: from aer-iport-1.cisco.com ([173.38.203.51]:48584 "EHLO
+        aer-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751079AbeBHPjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:38:46 -0500
-X-Google-Smtp-Source: AH8x226T90snR6GwVqI07I8kEvYH4a6y0pX903OAMolwMAyIbWwE/zKf1d4P7J1p6JR6x81qIALLww==
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph updates for 4.16-rc1
-Date: Thu,  8 Feb 2018 16:38:35 +0100
-Message-Id: <1518104315-11462-1-git-send-email-idryomov@gmail.com>
-X-Mailer: git-send-email 2.4.3
+        Thu, 8 Feb 2018 10:39:31 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0B3AQCZa3xa/xbLJq1dGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQ3QDCEDYsYjzSXVYIYCiOFGAKDBRYBAgEBAQEBAQJrKIUjAQE?=
+ =?us-ascii?q?BAQIBIwRSBQsLDgoCAggeAgJXBgEMCAEBiikIEK8QgW06hQCDd4F6AQEBAQEBA?=
+ =?us-ascii?q?QEBAQEBAQEBAQEBAQEBGAWBD4Nqg2yCEYMFgUmGcIJlBYpjiV6FY4oHCYgejV6?=
+ =?us-ascii?q?MOIgGjXyJYwIECwIZAYE8JgsngVAzGggbFYMEgmCCF0COCAEBAQ?=
+X-IronPort-AV: E=Sophos;i="5.46,479,1511827200";
+   d="scan'208";a="1944976"
+Subject: Re: [PATCH v8 0/7] TDA1997x HDMI video reciver
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil@xs4all.nl>, Tim Harvey <tharvey@gateworks.com>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+ <c7771c44-a9ff-0207-38f6-28bcc06ccdee@xs4all.nl>
+ <CAJ+vNU1oiM0Y0rO-DHi57nVOqnw60A7pn_1=h5b46-BrY7_p2Q@mail.gmail.com>
+ <605fd4a8-43ab-c566-57b6-abb1c9f8f0f8@xs4all.nl>
+ <7cf38465-7a79-5d81-a995-9acfbacf5023@xs4all.nl>
+ <CAJ+vNU014FJZsb44YnidE3fFiqeB6o8A7kvGinJWu7=yq3_dhA@mail.gmail.com>
+ <d188a172-fc00-eb46-c6f5-833a86475390@xs4all.nl>
+ <1518086816.4359.4.camel@pengutronix.de>
+ <3b95357c-e44f-eed9-efd3-e2b0e4ff9eb2@xs4all.nl>
+ <e13db87e-761a-b0e5-3802-348c9776674a@xs4all.nl>
+ <1518102837.4359.6.camel@pengutronix.de>
+From: Hans Verkuil <hansverk@cisco.com>
+Message-ID: <d2d376ef-c74e-3df0-01b3-3ab606664dba@cisco.com>
+Date: Thu, 8 Feb 2018 16:29:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <1518102837.4359.6.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-User: hansverk
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 02/08/18 16:13, Philipp Zabel wrote:
+> On Thu, 2018-02-08 at 13:01 +0100, Hans Verkuil wrote:
+>>> These are likely to be filled correctly already. I've just added a commit
+>>> to v4l2-compliance to make it easier to see what function is used:
+>>>
+>>> 	v4l2-compliance -m0 -v
+>>
+>> Actually, can you run this using the latest v4l-utils version for the imx
+>> and post the output?
+> 
+> I have tried with v4l-utils-1.14.0-111-g542af94c on a platform with a
+> Toshiba TC358743 connected via MIPI CSI-2. Apart from a crash [1], I get
+> a few:
+> - missing G_INPUT on the capture devices - is that really a bug?
 
-The following changes since commit d8a5b80568a9cb66810e75b182018e9edb68e8ff:
+Depends who you ask :-)  It's an open issue, we had a patch for this that
+was never picked up. Hopefully this will resurrect that patch.
 
-  Linux 4.15 (2018-01-28 13:20:33 -0800)
+> - cap->timeperframe.numerator == 0 || cap->timeperframe.denominator == 0,
+>   where there is nothing connected that could provide timing information
+> - missing enum_mbus_code
+> - check_0(reserved) errors on subdev ioctls
 
-are available in the git repository at:
+Should be fixed by https://patchwork.linuxtv.org/patch/46955/ and
+https://patchwork.linuxtv.org/patch/46950/
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-4.16-rc1
+> - node->enum_frame_interval_pad != (int)pad
+> - subscribe event failures
+> - g_ext_ctrls does not support count == 0 (which no subdev implements)
 
-for you to fetch changes up to 16515a6d54183349b858b9c05e483afc55fa7948:
+Was this patch applied? https://patchwork.linuxtv.org/patch/46958/
+That will probably fix this fail.
 
-  ceph: improving efficiency of syncfs (2018-01-30 21:10:15 +0100)
+> 
+> [1] https://patchwork.linuxtv.org/patch/46979/
+> 
+> The CSIs are currently marked as pixel formatters instead of IF bridges,
+>   
+> the vdics are marked as pixel formatters instead of deinterlacers, and
+> the ic_prp is marked as scaler instead of video splitter. The other
+> entity functions are initialized correctly.
 
-----------------------------------------------------------------
-Things have been very quiet on the rbd side, as work continues on the
-big ticket items slated for the next merge window.
+Thanks for testing this!
 
-On the CephFS side we have a large number of cap handling improvements,
-a fix for our long-standing abuse of ->journal_info in ceph_readpages()
-and yet another dentry pointer management patch.
+	Hans
 
-----------------------------------------------------------------
-Chengguang Xu (2):
-      libceph: check kstrndup() return value
-      ceph: improving efficiency of syncfs
+> Total: 1307, Succeeded: 1089, Failed: 218, Warnings: 4
 
-Ilya Dryomov (4):
-      rbd: obj_request->completion is unused
-      rbd: use kmem_cache_zalloc() in rbd_img_request_create()
-      rbd: don't NULL out ->obj_request in rbd_img_obj_parent_read_full()
-      rbd: whitelist RBD_FEATURE_OPERATIONS feature bit
+Total: 1307
 
-Yan, Zheng (13):
-      ceph: voluntarily drop Ax cap for requests that create new inode
-      ceph: voluntarily drop Lx cap for link/rename requests
-      ceph: properly drop caps for setattr request
-      ceph: voluntarily drop Fx cap for readdir request
-      ceph: cleanup traceless reply handling for rename
-      ceph: use atomic_t for ceph_inode_info::i_shared_gen
-      ceph: avoid dereferencing invalid pointer during cached readdir
-      ceph: track read contexts in ceph_file_info
-      ceph: fix un-balanced fsc->writeback_count update
-      ceph: fix incorrect snaprealm when adding caps
-      ceph: limit rate of cap import/export error messages
-      ceph: delete unreachable code in ceph_check_caps()
-      ceph: fix race of queuing delayed caps
+Cool!
 
-Zhi Zhang (1):
-      ceph: try to allocate enough memory for reserved caps
-
- drivers/block/rbd.c    |  22 ++-----
- fs/ceph/addr.c         |  28 +++++---
- fs/ceph/caps.c         | 170 ++++++++++++++++++++++++++++++++++---------------
- fs/ceph/dir.c          |  79 +++++++++++++----------
- fs/ceph/file.c         |  12 +++-
- fs/ceph/inode.c        |  56 ++++++++++++----
- fs/ceph/mds_client.c   |  33 +++++++---
- fs/ceph/mds_client.h   |   3 +
- fs/ceph/snap.c         |   8 ++-
- fs/ceph/super.h        |  53 ++++++++++++++-
- net/ceph/ceph_common.c |   4 ++
- 11 files changed, 323 insertions(+), 145 deletions(-)
+	Hans
