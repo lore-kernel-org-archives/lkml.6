@@ -1,95 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752310AbeBHUsP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:48:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33312 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeBHUsN (ORCPT
+        id S1752215AbeBHUvh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:51:37 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46871 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBHUvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:48:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E722160112
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date: Thu, 8 Feb 2018 13:48:08 -0700
-From: Jordan Crouse <jcrouse@codeaurora.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        sboyd@codeaurora.org, rnayak@codeaurora.org, msivasub@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drivers: qcom: add command DB driver
-Message-ID: <20180208204808.GA9676@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, sboyd@codeaurora.org,
-        rnayak@codeaurora.org, msivasub@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org
-References: <20180208195154.3580-1-ilina@codeaurora.org>
- <20180208195154.3580-2-ilina@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208195154.3580-2-ilina@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 8 Feb 2018 15:51:35 -0500
+X-Google-Smtp-Source: AH8x225EnT0FDEGa3XhgA1qRbWEsVY1vpeUGZqJZQuK0UrcXdY2Hyjw2iFyngC831vAJILwuTkuF4w==
+Date: Thu, 08 Feb 2018 12:51:33 -0800 (PST)
+X-Google-Original-Date: Thu, 08 Feb 2018 10:36:28 PST (-0800)
+Subject: Re: [PATCH 07/20] riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
+In-Reply-To: <CAFkk2KSUeepo0mSKeV9r2uMO1=euVV2L6QpsMAO0Ew6znG+BRQ@mail.gmail.com>
+CC: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
+        egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
+        mgorman@techsingularity.net, Christoph Hellwig <hch@lst.de>,
+        mina86@mina86.com, robh@kernel.org, sboyd@codeaurora.org,
+        paulus@ozlabs.org, Will Deacon <will.deacon@arm.com>, tony@atomide.com,
+        npiggin@gmail.com, yamada.masahiro@socionext.com, ulfalizer@gmail.com,
+        albert@sifive.com, linux-riscv@lists.infradead.org
+From: Palmer Dabbelt <palmer@sifive.com>
+To: ulfalizer@gmail.com
+Message-ID: <mhng-300ca2ca-2316-487a-aaa8-9e61b5b67b30@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 12:51:53PM -0700, Lina Iyer wrote:
-> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> 
-> Command DB is a simple database in the shared memory of QCOM SoCs, that
-> provides information regarding shared resources. Some shared resources
-> in the SoC have properties that are probed dynamically at boot by the
-> remote processor. The information pertaining to the SoC and the platform
-> are made available in the shared memory. Drivers can query this
-> information using predefined strings.
-> 
-> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
+On Sun, 04 Feb 2018 17:30:57 PST (-0800), ulfalizer@gmail.com wrote:
+> On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+>> The ARCH_WANT_OPTIONAL_GPIOLIB symbol was removed in commit 65053e1a7743
+>> ("gpio: delete ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB"). GPIOLIB should
+>> just be selected explicitly if needed.
+>>
+>> Remove the ARCH_WANT_OPTIONAL_GPIOLIB select from RISCV.
+>>
+>> See commit 0145071b3314 ("x86: Do away with
+>> ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") and commit da9a1c6767 ("arm64: do
+>> away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") as well.
+>>
+>> Discovered with the
+>> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+>> script.
+>>
+>> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+>> ---
+>>  arch/riscv/Kconfig | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index ff69c77b9e78..716e90e60e5c 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -19,7 +19,6 @@ config RISCV
+>>         select GENERIC_STRNLEN_USER
+>>         select GENERIC_SMP_IDLE_THREAD
+>>         select GENERIC_ATOMIC64 if !64BIT || !RISCV_ISA_A
+>> -       select ARCH_WANT_OPTIONAL_GPIOLIB
+>>         select HAVE_MEMBLOCK
+>>         select HAVE_MEMBLOCK_NODE_MAP
+>>         select HAVE_DMA_API_DEBUG
+>> --
+>> 2.14.1
+>>
+>
+> There's also a select of a globally undefined symbol RISCV_IRQ_INTC
+> here. I couldn't dig up any historical or unmerged definition for it
+> either. Googling just gets you the select.
 
-*snip*
+It looks like this slipped through, the symbol has been renamed RISCV_INTC.  A 
+patch to remove it is
 
-> diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-> new file mode 100644
-> index 000000000000..050a56da76c8
-> --- /dev/null
-> +++ b/drivers/soc/qcom/cmd-db.c
-> @@ -0,0 +1,321 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/types.h>
-> +
-> +#include <soc/qcom/cmd-db.h>
-> +
-> +#define NUM_PRIORITY		2
-> +#define MAX_SLV_ID		8
-> +#define CMD_DB_MAGIC		0x0C0330DBUL
-> +#define SLAVE_ID_MASK		0x7
-> +#define SLAVE_ID_SHIFT		16
-> +
-> +#define ENTRY_HEADER(hdr)	((void *)cmd_db_header +	\
-> +				sizeof(*cmd_db_header) +	\
-> +				hdr->header_offset)
-> +
-> +#define RSC_OFFSET(hdr, ent)	((void *)cmd_db_header +	\
-> +				sizeof(*cmd_db_header) +	\
-> +				hdr.data_offset + ent.offset)
-> +
-> +#define MIN(a, b)		(((a) < (b)) ? (a) : (b))
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
 
-I'm not sure if this was addressed before. Why use a custom macro and not min()
-or min_t()?
-
-Jordan
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+(and like the other ones, if you want it through my tree just say something)
