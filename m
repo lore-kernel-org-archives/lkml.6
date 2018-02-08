@@ -1,107 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeBHLVL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:21:11 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40269 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752292AbeBHLVJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:21:09 -0500
-X-Google-Smtp-Source: AH8x224q0dNxFqcgX3buMGScKKXWgMcYIi+qOrh0V91Tmy4D2hBmJ1U4miFaHVmwr+83KwMhdAKWdg==
-Date: Thu, 8 Feb 2018 12:21:06 +0100
-From: Christoffer Dall <christoffer.dall@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        id S1752203AbeBHLZi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:25:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:33350 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751066AbeBHLZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:25:37 -0500
+Date: Thu, 8 Feb 2018 11:25:41 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Christoffer Dall <christoffer.dall@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
         linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
         peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        ard.biesheuvel@linaro.org, mark.rutland@arm.com,
         catalin.marinas@arm.com
-Subject: Re: [PATCH v1 05/16] arm64: Helper for parange to PASize
-Message-ID: <20180208112106.GO29286@cbox>
+Subject: Re: [PATCH 00/16] kvm: arm64: Support for dynamic IPA size
+Message-ID: <20180208112540.GA17775@arm.com>
 References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180109190414.4017-6-suzuki.poulose@arm.com>
- <20180208110042.GH29286@cbox>
- <040b00f2-3e83-a475-ae20-5e9358fc580a@arm.com>
+ <20180208111844.GN29286@cbox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <040b00f2-3e83-a475-ae20-5e9358fc580a@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180208111844.GN29286@cbox>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 11:08:18AM +0000, Suzuki K Poulose wrote:
-> On 08/02/18 11:00, Christoffer Dall wrote:
-> >On Tue, Jan 09, 2018 at 07:04:00PM +0000, Suzuki K Poulose wrote:
-> >>Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
-> >                                                       *the*
-> >>size shift. Limit the size to the maximum supported by the kernel.
-> >
-> >Is this just a cleanup or are we actually going to need this feature in
-> >the subsequent patches?  That would be nice to motivate in the commit
-> >letter.
-> 
-> It is a cleanup, plus we are going to move the user of the code around from
-> one place to the other. So this makes it a bit easier and cleaner.
-> 
+I can comment on one part here:
 
-On its own I'm not sure it really is a cleanup, so it's good to mention
-that this is to make some operation easier later on in the commit
-letter.
+On Thu, Feb 08, 2018 at 12:18:44PM +0100, Christoffer Dall wrote:
+> Wasn't this also the decision taken for IOMMU page table allocation, and
+> why was that the right approach for the IOMMU but not for KVM stage 2
+> page tables?  Is there room for reuse of the IOMMU page table allocation
+> logic in KVM as well?
 
-> 
-> >>
-> >>Cc: Mark Rutland <mark.rutland@arm.com>
-> >>Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >>Cc: Will Deacon <will.deacon@arm.com>
-> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>  arch/arm64/include/asm/cpufeature.h | 16 ++++++++++++++++
-> >>  arch/arm64/kvm/hyp/s2-setup.c       | 28 +++++-----------------------
-> >>  2 files changed, 21 insertions(+), 23 deletions(-)
-> >>
-> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> >>index ac67cfc2585a..0564e14616eb 100644
-> >>--- a/arch/arm64/include/asm/cpufeature.h
-> >>+++ b/arch/arm64/include/asm/cpufeature.h
-> >>@@ -304,6 +304,22 @@ static inline u64 read_zcr_features(void)
-> >>  	return zcr;
-> >>  }
-> >>+static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
-> >>+{
-> >>+	switch (parange) {
-> >>+	case 0: return 32;
-> >>+	case 1: return 36;
-> >>+	case 2: return 40;
-> >>+	case 3: return 42;
-> >>+	case 4: return 44;
-> >>+
-> >>+	default:
-> >
-> >What is the case we want to cater for with making parange == 5 the
-> >default for unrecognized values?
-> >
-> >(I have a feeling that default label comes from making the compiler
-> >happy about potentially uninitialized values once upon a time before a
-> >lot of refactoring happened here.)
-> 
-> That is there to make sure we return 48 iff 52bit support (for that matter,
-> if there is a new limit in the future) is not enabled.
-> 
+There were a few reasons we did this for IOMMU page tables:
 
-duh, yeah, it's obvious when I look at it again now.
+  * Ability to use different page size/VA bits/levels from the CPU
+  * Ability to support different page table formats (e.g. short descriptor)
+  * Ability to determine page table attributes at runtime
+  * Requirement to map/unmap in atomic context
+  * Ability to cope with non-coherent page table walkers
+  * Ability to create both stage-1 and stage-2 mappings
+  * Easier to hook in our own TLB invalidation routines
+  * Support for lockless concurrent map/unmap within confines of the DMA API
+    usage
 
-> >
-> >>+	case 5: return 48;
-> >>+#ifdef CONFIG_ARM64_PA_BITS_52
-> >>+	case 6: return 52;
-> >>+#endif
-> >>+	}
-> >>+}
-> >>  #endif /* __ASSEMBLY__ */
-> 
-Thanks,
--Christoffer
+Will
