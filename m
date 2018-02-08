@@ -1,142 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeBHNMB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:12:01 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:32587 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751995AbeBHNL6 (ORCPT
+        id S1751756AbeBHNPO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:15:14 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46167 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751079AbeBHNPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:11:58 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180208131156epoutp017df20c107c637107e55a9fcf3fd2a34b~RW9Q2PHVn1884718847epoutp01v
-X-AuditID: b6c32a38-ac3ff70000001054-2e-5a7c4c9b4e71
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        geert@linux-m68k.org, stefan.kristiansson@saunalahti.fi,
-        tomi.valkeinen@ti.com, schwidefsky@de.ibm.com,
-        dri-devel@lists.freedesktop.org, Chen Liqin <liqin.linux@gmail.com>,
-        Lennox Wu <lennox.wu@gmail.com>, Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        user-mode-linux-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2 1/3] Kconfig : Remove HAS_IOMEM dependency for
- Graphics support
-Date: Thu, 08 Feb 2018 14:11:53 +0100
-Message-id: <1610039.4trOurtpys@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <246f92c9-15dc-223f-59d9-b2f0756cdf5e@de.ibm.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRiGe3fOzs5W09PUfFMsHQUpahlGJyup8Mcp/DGoQGZgI09TcnPu
-        qGRZaJKKH9PyK2f4hYQtUJmSTpflljMxRTetnJWlZF9mhgzNUHIeBf/d7/1cz83Nw4sjIiPX
-        C49XJtNqpSxBjAnQp2b/oKCqyHTpofbRMLIrcxYjKxrbUXLU8RsjZ+zPOGSz8TOPnC/I5pKv
-        NPNc0tb5ECOL67IQ0j5dhJElhllALgxl88hB/eM1uMaOkdrCUvSUK7W8auNRPVMmjDJoP/Ao
-        kzkXUJ9MrSg1md/HobpqFzjUeHUS1VOaj1F979o51IJ+j2S7VHAilk6IT6XVB8MvC+KsGgOm
-        mnS7Xv3+LpIBxl3zAB+HRCi0dVhAHhDgIqIDwH7LKOIciIhFAL80qTYhw+TSht8C4GJPGqsd
-        AN6fjXJqjAiD93J0a0E47k4chll/bjkzEWIAgb0TA6iTcSOiYInVyfBxlNgP/+W2c5xaSPhD
-        68vG9XwP4hxs685Z9/lEOFwZHuexzE64VPJxPQch9sLu52VcVgfCQUsTYHvqeHBqLsXZARIR
-        sNGWytpu8EdfG4+1vaG196Sz2hoN4N+xFcA+WgFceOvgsgvHoblvZCPfBc45CrjsshDmZotY
-        hIIjy5oN/DSsMRsAexIzgJ1NkmLgo93SWrultXZL61qA6MAuWsUo5DQTogoNZmQKJkUpD76S
-        qNCD9T8VQHYA41CkCRA4EO8QPjh6UyriylKZNIUJQBwRuwuNHulSkTBWlnaDVifGqFMSaMYE
-        vHFU7CmUSCKkIkIuS6av0bSKVm9OOTjfKwNkKGQv6iovevYrse9Kv9yGuHwVZ/VO0pHzel14
-        bGXqNrkuqogsxQ5sc0FHfvq+uS1tKBvU7Zu59LVTEF09wUCX6AtTAUO7K9J/aZ74HevNX5o7
-        kzlivRrzWhi8WOj7yFLv862cKjVWNduTVcMzVbrEwMnhs+X87qKg6XqJeqxFjDJxspAARM3I
-        /gMOuWd8TwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsVy+t9jQd3ZPjVRBjM3ylnsbnzDZjF9xXYW
-        iytf37NZPLu1l8li/Z6H7BYfetpYLU70fWC1uLxrDpvFhIXNzBa3HvezWUze+YbR4vO5NnaL
-        s5tWAhXPv8VmMat3CosDv8evf5fZPQ4+OsTmsXPWXXaPQ4c7GD0eHNrM4nG/+ziTx+4Fn5k8
-        bs4r9Dg4pZvN4/iN7UwenzfJBXBHcdmkpOZklqUW6dslcGVc6tvJVnBfuGLenVbmBsab/F2M
-        nBwSAiYSO+//YO5i5OIQEljHKDH98Sx2kISQwFdGidefLEBsNgEriYntqxi7GDk4RASMJJo/
-        1oLUMwucZpZYPuc/C0iNsECERNu5LmYQm0VAVeJ3x3YmEJtXQFPi0pEVYHFRAS+JLfvaweKc
-        AnYSfy/cZIdYfJhR4uPXl1ANghI/Jt8DG8osIC+xb/9UVghbS2L9zuNMExj5ZyEpm4WkbBaS
-        sgWMzKsYJVMLinPTc4uNCgzzUsv1ihNzi0vz0vWS83M3MQIjbNthrb4djPeXxB9iFOBgVOLh
-        nWFeHSXEmlhWXJl7iFGCg1lJhHePaE2UEG9KYmVValF+fFFpTmrxIUZpDhYlcd7beccihQTS
-        E0tSs1NTC1KLYLJMHJxSDYxbHSt8sy1Zsvk0Lx3u5pxaVpLtdVDQYN73fe++N0o03yw9WaL6
-        5V7N6odVaV2fJnVev/k+/5x3+p1vaz1vP4s/ccBoZwyvyY0dZUsCi4/F/2tY/2hlweI5uZnR
-        F4MPuaTPjddLvmrssMRsxcetkutmZzC9ujTD8Ny37NOVG1V1/l5bJ3nVb36bEktxRqKhFnNR
-        cSIAbYy7OKwCAAA=
-X-CMS-MailID: 20180208131155epcas1p350a541b3c662ab5e5b0abc37e4444715
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180202080007epcas5p306896fe66e4bbf4bf5f8d91306a5d016
-X-RootMTR: 20180202080007epcas5p306896fe66e4bbf4bf5f8d91306a5d016
-References: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
-        <CGME20180202080007epcas5p306896fe66e4bbf4bf5f8d91306a5d016@epcas5p3.samsung.com>
-        <246f92c9-15dc-223f-59d9-b2f0756cdf5e@de.ibm.com>
+        Thu, 8 Feb 2018 08:15:13 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Philippe CORNU <philippe.cornu@st.com>
+Cc: "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        Mickael REULIER <mickael.reulier@st.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCH] drm/bridge/synopsys: dsi: use adjusted_mode in mode_set
+Date: Thu, 08 Feb 2018 15:15:40 +0200
+Message-ID: <1802436.kt7XbhHcH5@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <7ec671c2-a777-5dcd-dcc9-e026fff89900@st.com>
+References: <20180125155504.8611-1-philippe.cornu@st.com> <108376394.4I4zMjzv2j@avalon> <7ec671c2-a777-5dcd-dcc9-e026fff89900@st.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Philippe,
 
-Hi,
-
-[ dri-devel ML & arch/[score,um] Maintainers added to Cc: ]
-
-On Friday, February 02, 2018 08:59:57 AM Christian Borntraeger wrote:
-> On 02/01/2018 07:41 PM, Farhan Ali wrote:
-> > The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
-> > added the HAS_IOMEM dependecy for "Graphics support". This disabled the
-> > "Graphics support" menu for S390. But if we enable VT layer for S390,
-> > we would also need to enable the dummy console. So let's remove the
-> > HAS_IOMEM dependency.
-> >
-> > Move this dependency to Opencores framebuffer driver which would fail to build
-> > with CONFIG_HAS_IOMEM disabled:
+On Saturday, 3 February 2018 00:41:26 EET Philippe CORNU wrote:
+> On 01/29/2018 11:40 AM, Laurent Pinchart wrote:
+> > On Monday, 29 January 2018 12:17:37 EET Philippe CORNU wrote:
+> >> On 01/29/2018 10:46 AM, Laurent Pinchart wrote:
+> >>> On Thursday, 25 January 2018 17:55:04 EET Philippe Cornu wrote:
+> >>>> The "adjusted_mode" clock value (ie the real pixel clock) is more
+> >>>> accurate than "mode" clock value (ie the panel/bridge requested
+> >>>> clock value). It offers a better preciseness for timing
+> >>>> computations and allows to reduce the extra dsi bandwidth in
+> >>>> burst mode (from ~20% to ~10-12%, hw platform dependant).
+> >>>>
+> >>>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> >>>
+> >>> The adjusted mode is documented as
+> >>>
+> >>>   /**
+> >>>    * @adjusted_mode:
+> >>>    *
+> >>>    * Internal display timings which can be used by the driver to handle
+> >>>    * differences between the mode requested by userspace in @mode and
+> >>>    what
+> >>>    * is actually programmed into the hardware. It is purely driver
+> >>>    * implementation defined what exactly this adjusted mode means.
+> >>>    Usually
+> >>>    * it is used to store the hardware display timings used between the
+> >>>    * CRTC and encoder blocks.
+> >>>    */
+> >>>
+> >>> This is easy to handle when the CRTC and encoder are controlled by the
+> >>> same driver, as the field is "implementation defined" by a single
+> >>> driver. However, when using bridges, there are two drivers involved, and
+> >>> they must both agree to meaningfully use the adjusted mode. I can't see
+> >>> how to do so without standardizing the meaning of the adjusted mode
+> >>> field.
+> >>
+> >> This is exactly the reason why my first implementation used the dsi
+> >> bridge "optional pixel clock" instead of the adjusted_mode (see [1])
+> >>
+> >> But after digging more into the drm source code, I think using
+> >> adjusted_mode instead of the pixel clock here brings more advantages
+> >> because:
+> >> * adjusted_mode is an argument of bridge mode_set() probably for being
+> >> used in any manner, maybe like this :)
+> >> * if the bridge "user" (crtc or a master bridge drivers) does not need
+> >> to modify its adjusted_mode then mode & adjusted_mode mode_set()
+> >> arguments will have the same values so "no consequence" for the bridge.
+> >> * if the bridge "user" (crtc or master bridge drivers) needs to adjust
+> >> any value of the mode then this adjustment is available for the bridge.
 > > 
-> > ERROR: "devm_ioremap_resource" [drivers/video/fbdev/ocfb.ko] undefined!
-
-"Graphics support" menu covers other things (i.e. DRM), I assume that
-they were also checked to not break due to this change?
-
-Moreover it seems that after this change "Graphics support" menu will
-be also enabled (besides s390) for score, tile and um architectures,
-I assume that this is okay?
-
-> > Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
-> > Tested-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> > Remember that there can be multiple chained bridges, and a single
+> > adjusted mode field.
+> > 
+> >> * rockchip crtc updates a part of the mode (the clock), stm is doing the
+> >> same (see [2]) but any future "user" of the dw_mipi_dsi bridge can
+> >> adjust something else (blankings...) and the dw_mipi_dsi bridge will be
+> >> then aware of...
+> >>
+> >> But maybe it is a wrong usage of the "adjusted_mode offer"...
+> > 
+> > I don't disagree that there's a need for using adjusted values, but I
+> > believe we need to create a clear API to do so. Using the adjust_mode
+> > field as-is when it's clearly documented as being implementation-defined
+> > is asking for trouble. 
 > 
-> This also enables several PCI based graphic device driver on s390.
-> This makes no sense but they all compile fine so I guess this is ok.
-> 
-> I think patch 2 and 3 are clearly for the s390 tree, patch 1 seems trivial
-> Also ccing Bart. Can we maybe get an ack to carry this patch also via the s390
-> tree?
-> 
-> 
-> > ---
-> >  drivers/video/Kconfig       | 1 -
-> >  drivers/video/fbdev/Kconfig | 2 +-
-> >  2 files changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-> > index 3c20af9..41e7ba9 100644
-> > --- a/drivers/video/Kconfig
-> > +++ b/drivers/video/Kconfig
-> > @@ -3,7 +3,6 @@
-> >  #
-> > 
-> >  menu "Graphics support"
-> > -	depends on HAS_IOMEM
-> > 
-> >  config HAVE_FB_ATMEL
-> >  	bool
-> > diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-> > index 2f615b7..ec9c9ce 100644
-> > --- a/drivers/video/fbdev/Kconfig
-> > +++ b/drivers/video/fbdev/Kconfig
-> > @@ -966,7 +966,7 @@ config FB_PVR2
-> > 
-> >  config FB_OPENCORES
-> >  	tristate "OpenCores VGA/LCD core 2.0 framebuffer support"
-> > -	depends on FB && HAS_DMA
-> > +	depends on FB && HAS_DMA && HAS_IOMEM
-> >  	select FB_CFB_FILLRECT
-> >  	select FB_CFB_COPYAREA
-> >  	select FB_CFB_IMAGEBLIT
+> Laurent, do you think we can use "adjusted mode" here in this small 
+> patch as the actual 2 "users" of this bridge (rockchip & stm) use both 
+> "adjusted mode" in their crtc?
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+The Synopsys DSI driver might only be used by two display controller drivers 
+today, it is nonetheless a standard bridge driver that should not make any 
+assumption of a particular use of the adjusted_mode in particular display 
+controller drivers. To use the adjusted_mode value in bridge drivers we need 
+to standardize its usage, otherwise we'll end up with incompatibilities 
+between bridge drivers and display controller drivers.
+
+> >> [1] https://patchwork.freedesktop.org/patch/200240/
+> >> [2] https://patchwork.freedesktop.org/patch/200720/
+> >>
+> >>> Daniel, what's your opinion on this ?
+> 
+> Daniel, any opinion on the adjusted_mode usage?
+> 
+> >>>> ---
+> >>>> Note: This patch replaces "drm/bridge/synopsys: dsi: add optional
+> >>>> pixel clock"
+> >>>>
+> >>>> drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 12 ++++++------
+> >>>> 1 file changed, 6 insertions(+), 6 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+> >>>> b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c index
+> >>>> ed8af32f8e52..b926b62e9e33 100644
+> >>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+> >>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+> >>>> @@ -707,20 +707,20 @@ static void dw_mipi_dsi_bridge_mode_set(struct
+> >>>> drm_bridge *bridge,
+> >>>>
+> >>>>    	clk_prepare_enable(dsi->pclk);
+> >>>>
+> >>>> -	ret = phy_ops->get_lane_mbps(priv_data, mode, dsi->mode_flags,
+> >>>> +	ret = phy_ops->get_lane_mbps(priv_data, adjusted_mode,
+> >>>> dsi->mode_flags,
+> >>>>    				     dsi->lanes, dsi->format, &dsi->lane_mbps);
+> >>>>    if (ret)
+> >>>>    	DRM_DEBUG_DRIVER("Phy get_lane_mbps() failed\n");
+> >>>>
+> >>>>    pm_runtime_get_sync(dsi->dev);
+> >>>>    dw_mipi_dsi_init(dsi);
+> >>>>
+> >>>> -	dw_mipi_dsi_dpi_config(dsi, mode);
+> >>>> +	dw_mipi_dsi_dpi_config(dsi, adjusted_mode);
+> >>>>    dw_mipi_dsi_packet_handler_config(dsi);
+> >>>>    dw_mipi_dsi_video_mode_config(dsi);
+> >>>> -	dw_mipi_dsi_video_packet_config(dsi, mode);
+> >>>> +	dw_mipi_dsi_video_packet_config(dsi, adjusted_mode);
+> >>>>    dw_mipi_dsi_command_mode_config(dsi);
+> >>>> -	dw_mipi_dsi_line_timer_config(dsi, mode);
+> >>>> -	dw_mipi_dsi_vertical_timing_config(dsi, mode);
+> >>>> +	dw_mipi_dsi_line_timer_config(dsi, adjusted_mode);
+> >>>> +	dw_mipi_dsi_vertical_timing_config(dsi, adjusted_mode);
+> >>>>    dw_mipi_dsi_dphy_init(dsi);
+> >>>>    dw_mipi_dsi_dphy_timing_config(dsi);
+> >>>>
+> >>>> @@ -734,7 +734,7 @@ static void dw_mipi_dsi_bridge_mode_set(struct
+> >>>> drm_bridge *bridge,
+> >>>>
+> >>>>    dw_mipi_dsi_dphy_enable(dsi);
+> >>>>
+> >>>> -	dw_mipi_dsi_wait_for_two_frames(mode);
+> >>>> +	dw_mipi_dsi_wait_for_two_frames(adjusted_mode);
+> >>>>
+> >>>>    /* Switch to cmd mode for panel-bridge pre_enable & panel prepare
+> >>>>    */
+> >>>>    dw_mipi_dsi_set_mode(dsi, 0);
+
+-- 
+Regards,
+
+Laurent Pinchart
