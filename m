@@ -1,157 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752482AbeBHW7I (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 17:59:08 -0500
-Received: from mail-dm3nam03on0081.outbound.protection.outlook.com ([104.47.41.81]:19443
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1752100AbeBHXDW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 18:03:22 -0500
+Received: from mail-by2nam01on0052.outbound.protection.outlook.com ([104.47.34.52]:28704
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752403AbeBHW7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 17:59:02 -0500
+        id S1751079AbeBHXDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 18:03:19 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Thomas.Lendacky@amd.com;
+Subject: Re: [RFC PATCH 0/2] KVM: MSR-based features
 From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [RFC PATCH 2/2] KVM: SVM: Add MSR feature support for serializing
- LFENCE
-To: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>,
-        Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Radim =?utf-8?b?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Date: Thu, 08 Feb 2018 16:58:56 -0600
-Message-ID: <20180208225856.22074.98252.stgit@tlendack-t1.amdoffice.net>
-In-Reply-To: <20180208225833.22074.25995.stgit@tlendack-t1.amdoffice.net>
+To: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 References: <20180208225833.22074.25995.stgit@tlendack-t1.amdoffice.net>
-User-Agent: StGit/0.17.1-dirty
+Message-ID: <4732839a-48bb-9183-be4e-0b7233094265@amd.com>
+Date: Thu, 8 Feb 2018 17:03:04 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180208225833.22074.25995.stgit@tlendack-t1.amdoffice.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: MWHPR13CA0021.namprd13.prod.outlook.com (10.169.208.31) To
- DM5PR12MB1148.namprd12.prod.outlook.com (10.168.236.143)
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: CO1PR15CA0050.namprd15.prod.outlook.com
+ (2603:10b6:101:1f::18) To CY4PR12MB1141.namprd12.prod.outlook.com
+ (2603:10b6:903:36::21)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: a2d7eb71-52da-4e1c-f24d-08d56f478b60
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1148;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1148;3:SNpzmVhX6iaDYcIjprgiucZAdt7xVpReD6Q+OYF0tIoIkWnuyDMD3nc0SP/tHLGuMoZuh+gqwAt3xpzNCsZrTym8w4MSjxAo87fUHGVYtrNAxE+lvWnljXXv4FHwiAYxQIKrmRUfsRO/JkygEXpzs3eeTjQW/f7/yZZEvvofxpGwcsbx7oadaCxc9bYBGV4aRK4OIYIYyc808/WwvNeWUEPzivC1nDg+hswB7Uq1sdegtwBGI7nTPz1RlAP01n9F;25:fd2NshFR9VTc//64gmWOwI4tbxCoMhB0P/IxWCrGpNSnEBFD861Mg3YN4JxO0HCFbtry6H1LfXQTPWF7qdHYgSNLlM7lb0iv3V6dbc6uippfjaFBsjETmzy5uvE4vH1IoLa1f1GXoT+YWqcD99jMNsSWkkkoRHLYMxSnkHsRORjZ0liyghn+SgHsSw/62HPqZeno/ryhB7nE4uPFk09DpQzFRL1czf1mkOzvt9vPoispa3YoCvuq+1dE0yCDQsJpTegMR2/G+NIjnW8cWK62dK5mpnwAeVQwhe86B9KQuJHxxwGpFjU3D3jZvzp5j1WZX27+YkKwtG0HvDCpvhaFIA==;31:yPYfOQx3scbSR51KGru6027VLz/iXQIRPb1w3Cl5hmXpf4vzHiLrVuvuRVLb9CQgu7F4wKKUx7LyeEgfJffk6XyaR1rVAgGDOog5+Vctr3gf1YaJIiGQISZyJOeejsoFu+wDfItY0YrLGRJ/NuVdeAba6FNIPKSLvHMm0CkSUkcrmZ0u7hCIGAGN+Ec847xf+w3qeXgaO4escnMxPPtblhihYmXh7F674EXVIpKbbbA=
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1148:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1148;20:4rWAiAQ7S6Z88XiornLLNzRntnCOGto4espGalhTxvL/BDOm/zUOznLJbQao1MibiTVZUcdEN3qxB/6To9QdvXzxGBzCn4FajvPyI6r9K9BEO55NwGid9zOIDY8obQEN2uzdDBk9xGnuLcKG4v4O5ZKdxQqPalhMrewNnBoWa6mt1BAoWyswVHY1jyDRTkOAylzEwrilp3+JKeIpo0XfVFR21Vu0g3xxeyqZ1Io0aK4FfQ0hv8SvDdpeNDo/bi1hayqH5/rZZPRWggbux8s5uG77SFDr5N4iW15HvIy7URNUaoB+BHXS72BTLezdWp3++MCn/Kj2gdJXsTeEBkkWOy9HpB/RsgCRnr5uutCVriFp9oE5PR1S2yzX40L4QYby3DSPvPVLko4OXD8PpwTbj797smMZbzCjzD5tE0B/hp1wYnbwe9e+fTiezoHvBJ4wBDLTzY59XacDoKQ6YcHdgCUDbPyxtAqmnVGPzkohv6idv1ET8jmZd8tqSpSDe99O;4:stj+MpY4RgSHOhI4rXc79MoC8xpko+r8vUygDtxb0j1hjg5zV3CUWMOxl2issNDZ1xRI+xmWC7RZVt2RFioFE60d5zCiR5xyiHJlgPU0uPD24EvIzuvH98jVbc12dWZqlCLPuHMKsXwpbWQJxCrr3XgotHMqg/zcF7Kv8op1X03A91zW7jFJejgCjNp1SEo+QvqpWgccPk8+xHPq+hsjtiD+VmWXhyvoGKG5MXfFgNhiCHgL8CiFaPTbJy1wgOmvKkceE8aFrdAJoemudnsUEh7JY/0n05AOJmB8n6Lc2kXE+E53vFOP0GzIOEUNpa9E
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1148C7BCEB5F52AE234A7E72ECF30@DM5PR12MB1148.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231101)(2400082)(944501161)(10201501046)(6055026)(6041288)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR12MB1148;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1148;
+X-MS-Office365-Filtering-Correlation-Id: fa2ffc6e-4674-48ec-d3ae-08d56f482478
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:CY4PR12MB1141;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1141;3:22CRLccv4x188PW7tpAzGTwYEZVEgINnmNbe1f8cYpIKimShEThBeX8E5231007BGlxkPEOY3ATN4UfPKN1tzEsu+YzLtdYRgHuaiKDm+jbU7CBPiybkndxCJ21EAC0UwnzhtPUl65/D5coXYet0qq04lZjnZgON68Q5rnjV/iGJtUybMH9hDK6Bx5ee75HbVIwteXOwtpGHDbKh4gZ8NoImrs240mEJOs0AA5xfXQUW1ai9byPFtEESipL/+xde;25:8kW8aYVzdpCodnTShaNzsjCt0LfTOiZAP4tXrMrQr2ONSTy/AtBPNOy+n2b4iQ1WfxBGPKsePhkPA5km7/1iSEDfIVPxmmhKxxJVSNApEsz1lSSUTR/UPPyIr0GsIvL/gH1rQI6VjHBtdQHlB15S9K+Bb946ELNon8vAFHk3DgE5HibT9auceGoVQcg8G/y3R6uGNL8os3+bpBf4NgH0gQG8NPDsaK0IOvzMnTcu/wx20GD/F9JV9Y1ukX8spdVxu/rOl3MQazZiLL4L+0uJKLK7TeLqb5g7/+roP1WUw07BcVZ96w+z+cXfRjRse/bH7yUg3Vwh9hDMFeMfkMRmGQ==;31:S5YFbMOcndRfn4uGO90wcQQ3whrSzgqBEr1WaNURwN4HbW3xLIHqvl8+guiPHsNEiA4qBI/kkL1IC+OWwq546E48hH5P4uBLoFxIvpcZukFU8fwL2VLG80Rdt94FCrLbvg+qIZrf3zf+iesfq5t+hmU/1ml/IVRJWczd2/gcWOIG8FQGsGSyhUZJgKbD6b+b/7OunkJzHOB4YUw/7/CHSnSCMsImqT2Cdik2/bbdx4E=
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1141:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1141;20:zIc2gk7WjNFqdtRY5KMTbrteIHwY3g9UOUTTy3Cg6VGRsOZYNCCUjdorCFkNlGow2EA6vyKzXxchkqhjgyH2Gk11MTa1vwL9JWSxgfhNC46YCOeldR9Guuydbn7AHH63mi3Fh8PfEGFR4vcjYL8N2g0ibNOc+pg5mV91kCjHFjwfSOceakD8IQC99zA9L5RUCOZiFadsrdxviXdvsQDmUFDwftzYOS+vWV//uIOyBa3kOMsnPrXAKAQ3TuE/i0/CynoEGXrk6kjEDK5dUk6SZBmp702l0jhZOgMWX0Or4Pu150naP94uHopSQDp9FqCAKWptChmZsdEzPwmkM/oN2F3G8D2rMjb6MQO6CKMZfqz62KiZIEk4LX1ZMtnAI3AAeCdRLErqf3Zprz2/hBZfqfYQpXAzrlaeCjum7R5xB8X+OBw+VsPUSdQIxXD7Vfy/ANvR5Fuuo52qR1ngZez4QedmA0K5WjUrsnY9kevZ8ethQ7lCcCNqDTNIFea9EVRL;4:LLOfX0VCWzxTL4SK6OiLjQX8ORAa+iiUW7BM0TZ/EGzhs00ErB2iB+pbC/y4c9ifeFha+3lPJrUZ3mlKTTY1n+w6Fr9rc5A2fZvYPj79xgB8tUAznoNFgzm3rKLy1XROdISjfimAIQPkmbb26mVFGOBBnrVWyYVdEkBcZ1hnmPfPOM8ce6CmiDLAXk1KtbaRdjGXS6F0qfpqP6kBAjmQe2zFV3nkFo20EKDFQDUQ2y1XsqiFztQaju385Md1gNCYuZEfoU7I2Jv5piyqrerlgA==
+X-Microsoft-Antispam-PRVS: <CY4PR12MB11416953664E395263B984A8ECF30@CY4PR12MB1141.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231101)(2400082)(944501161)(6055026)(6041288)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:CY4PR12MB1141;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1141;
 X-Forefront-PRVS: 0577AD41D6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(396003)(346002)(376002)(366004)(39860400002)(189003)(199004)(97736004)(53416004)(478600001)(66066001)(58126008)(68736007)(50466002)(54906003)(86362001)(25786009)(2486003)(7696005)(97746001)(103116003)(53936002)(1076002)(2906002)(6116002)(230700001)(316002)(52116002)(6666003)(26005)(7736002)(305945005)(6506007)(69596002)(76176011)(2950100002)(8676002)(3846002)(9686003)(23676004)(16526019)(8936002)(59450400001)(386003)(55016002)(106356001)(72206003)(186003)(5660300001)(81156014)(105586002)(81166006)(83506002)(47776003)(4326008)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1148;H:tlendack-t1.amdoffice.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxMTQ4OzIzOm5BVzdMWGtsWnF1WXBLSjQyRGo3a1FRblZn?=
- =?utf-8?B?dWczdzV0UEVZd1AzVTJjY1psejFQUk5PbUo3WEtyTmpYN3BNYjdmU0swUXls?=
- =?utf-8?B?SXUwUUwvWnVlZVVOQ2NzOHd6UVF2ZlpWTDJZNml5b3BqdWRWU0pvSU1zbE1Z?=
- =?utf-8?B?M0NPQ1Zmb0oyZGoyMkEvbXVIWWg1eUJNN0RpRGVTRjk1dFk2UnBpNVZRR2Jx?=
- =?utf-8?B?TnVRMHRkNFA2TDNtV2VwRDlMNGpkKzNYdHNuUXRxY2lib3dHUHFoSmlMRTJC?=
- =?utf-8?B?bW9rRjA3aGJEdDhlRHpIblhiOFAyU1lPSGxUcHNuZFh0NmE5MjRlSDZQV04w?=
- =?utf-8?B?WFZOV0lGQk9QU2dnUjJWT215eUI0SlAvUUpzbEU0VUJaczlTd1EzMnJYOUtR?=
- =?utf-8?B?Zm5mSEtnWTJwam9Od3BsdG1pUTRLaWloWWkzY3Fncy9ydTBSdVhaUDE4VEhn?=
- =?utf-8?B?MUhkbUZuWm5IOVl2ZGtZM3FyQnZPM2UvZHZVMWh4M05zQzBEWHJDVzFhcmRM?=
- =?utf-8?B?TCtxT2dncGJiSFNTR3FWcDZvOWlUTnBrTysxeEc2bDI3U0VEV3Vjcm5VVyth?=
- =?utf-8?B?TDYyaHVOampQQXNXbzBYYTloM2drb3FEa21kK1NBSTJadnRpbFV3Wnl0THVr?=
- =?utf-8?B?SEJIVTg1ZlYyNDR1R3NBdHJ1dWxzVFR6eUo4UmdhcEgwZEpNbHNqUURsczlu?=
- =?utf-8?B?SFk4U3hzTm9raHczcFpHNmpnQW9wRG54bUY3cHp4blFVR1htQ3FNZjM0VGl2?=
- =?utf-8?B?WXdnalVpYUUvVm1SSlFLeXExYzhEN2IrZUNVaktONG8zbEVCeDMwRlpOcWJh?=
- =?utf-8?B?NnhxUHJjVzZxNEZPTmkyVlNNb09wMDhOQ3JkUGV5M1FYSnlCZWdwYU9Femw4?=
- =?utf-8?B?Yk5oTWVOZUdFeVFnZjN2cHZiZ3FGY3ZxUFdQR0U5Lys1REY4Y2tVVlNOdHZQ?=
- =?utf-8?B?VEtiWWJDam9UeWlzVWhTdnVzcjAxQmJhWm1YbDJaRXc3OUQ2WWh2dlRvUXpu?=
- =?utf-8?B?Mzl0SHVEcHg4dlM5QXAySkpGSVZLS3ZiQzZlSVpqdHZqREF0QzFMU1Q4UFJq?=
- =?utf-8?B?ZlJPMk9vVThYajdlWkZROU1RbE8rVnRQQUE1NUFzZjhrUUxvNEpuY1dHdHJv?=
- =?utf-8?B?Y2wzVzZEMEhPTXpFbWJHdllxM2ZlcW1iWVZ5N1N5TjVzYmdKaUc1NkRFWXhV?=
- =?utf-8?B?SWlMUnBoK3N1WExtNnlvbENDajB6QnB2S2lVd2UyRXJUM3pqc3E5Tm1ZM3g5?=
- =?utf-8?B?VmNxcnNVaTg3cEx3MFB6WGR2Vlh1b3Fhc014bXliVjRZL1JDYlZXOFVMZzJQ?=
- =?utf-8?B?NzNlb0diRU8yLzVvZG1PUDRjUThWc0lXNUZKQTBFeCszMlJDS3haS3ppUlMz?=
- =?utf-8?B?eERYR2xCb0ZEYUdOcjdjSzRqMWViQklUTVUrR0ZkdFkyTEtnazVoNUQxZEdZ?=
- =?utf-8?B?ZzdYbkZXTms2NEkxRWRISGczbVR6bG1vNjAyeEVVb1FXZDVNbzU3QzZXS3dL?=
- =?utf-8?B?M01FTVJ5dEduTllaa0Z3RFIybTJ1MFNhNWcyQnY3TzBNSDJEelcvZGRoQ2F1?=
- =?utf-8?B?WDh5TWpqTFJUWUZJa25NVk1WdmxVTHNtZEJTRHNFWWpyNWxEamR3STYxYjR2?=
- =?utf-8?B?eWd3VzZ0Ykc0VXBvNDVRQ0tOMkRmREt4RWVCRmVBUko4eUhad01oZHdEaVJt?=
- =?utf-8?B?R2JjemVIYmgwM2R6SWlFVGp2dit4ZWJ1ZUgwbzM2a2ZaNzAxNFVkeEJEa2hF?=
- =?utf-8?B?ejRUMm05NmRnZGxxRFI3dz09?=
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1148;6:Zl9ZRfne5WHpwwXXUO/GiScOxAudqfolZdCs5qYmtlVT7SiiUVgwU9MHW8axplJ9GJvUx/eebOoy1YyF+KlzFp3Vq8IA8DgJETLfogid13+TGjtN5T/BnwfjWYTw9OIKFpfzxmytRnCrQpIgQJv/G4bXmOIBTLtTqpyjQSrGIPQNKTiM3cjWFHbmDI8EFJ2QO2XDn/uz8tZZVdzlCw5+I7Kf8PFxkasTGpDuGJ4YG0nP4kwkKyKd4RCAEUXKRvVB1coWwmn9GL4w/fzMVSMUF5bOmDSsHxILCj4g6b1cQ1+69m1/+qiTRccHvtJ6TXcEVibMne+CYCQU5qHXO/DKfva87FJpTWDiraWH6nxkWnk=;5:pximi+glMCd22Ck+gz0wn8RSOCK4hG35Fp/6h1/fZq7xm2WbcBZDu9yD/elroLoj2q3UzjCHiKzVAkHg2I6H28ZtwvVY/0p1O1SlXav5ifmV0dX1Eq0bAko3Gtm/7VZZvoV0HWXZ6RLctuPyK362CduQuY5cFgPc8eZKZn9/syE=;24:GsLakB5aaZi3IWtZgGtQccKC6kFJQ3wrXQmy+GS2su86jlcuQfpHI5HDk4LlwwIDN6PYCMCa+lDh/ivFZ9KOqREvmk/5WmRUaqlR4DlD1tI=;7:Vj/I2KbEGG0PwrsTIGbWQ5NR0ApTPt197Y6bAOxqIiHFjgnj6AvBDPI/pEo6UmVNW+0V/G6xy0HS/x83/QU0qKHAlDqzkVMRqDTZD5nWHKfUWNT132ZdRlAsqd8MJbbECCg8Z6wwjruXs2BpNkng/6qxutlFq+zJsRy/GmT4VinzxmFsMJJoo5QG1572YlgNZ/9wGsXg9o7HKgHgpj1h8geAtQz3peYlJM4ovWFkuTi4iFaBk4Q8BKNqtuR6jdwl
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(346002)(376002)(396003)(366004)(39380400002)(39860400002)(189003)(199004)(72206003)(316002)(6116002)(16526019)(6666003)(4326008)(386003)(186003)(5660300001)(76176011)(2906002)(25786009)(64126003)(58126008)(65826007)(3260700006)(97736004)(53546011)(3846002)(77096007)(50466002)(26005)(6246003)(16576012)(36756003)(54906003)(65956001)(65806001)(81166006)(81156014)(2486003)(53936002)(86362001)(8676002)(66066001)(52116002)(305945005)(23676004)(47776003)(6916009)(52146003)(2950100002)(229853002)(478600001)(31696002)(8936002)(7736002)(105586002)(68736007)(230700001)(6486002)(106356001)(31686004)(83506002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1141;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjEyTUIxMTQxOzIzOjU5TStETnd3UlBXNnV4ZlhtQkJaMjhVc1Bu?=
+ =?utf-8?B?Mm5MM0VsRGFyUkFJby8yaGpHQ1FNTVF1YWJPYmFoUi9Mc1RNK2xBNUFGQlEx?=
+ =?utf-8?B?ZWNpU09tTkV4aGpyZCsrWlZVNjZ5dWNaZmlod0hBNmZNYTJTa2laV3MvNzBn?=
+ =?utf-8?B?UG9OSlA5N3drbFFteldyMnM3TjhsbDZndG9ubDhiTkhjc2Z4Rk1SdnIyUzM4?=
+ =?utf-8?B?b1FMSmlGclJ1a1MydWFIQjh2ZEN5TEJSbUFIOWI3ZFdXdmF2NjFhQ2lqakhi?=
+ =?utf-8?B?K2NERFZNU2NtRWN6Q3llbU1ISTBBSmNoSHNIdExLdm1QWXQ1amp2b2R3bjRE?=
+ =?utf-8?B?MXUvUFcvelErSjFvYVR6TDNZcktmOXdFSXZoVUZVd1lybUQrYlFHekI1QVFu?=
+ =?utf-8?B?VXJnbUU4akEyaEE1dnBFVWFldjhmdjByeW1EbzVKeE9vdmdDaXJmci93MEZt?=
+ =?utf-8?B?eVFsOU9obVZKZXE3Um53c2JHcGFYR0xxS3VteHNkOWsvbW9sSmJyYnBjVTVD?=
+ =?utf-8?B?T0t3YjNKQlZxUzJET0RodCt0VDJMRjIxWFdSTzZuTmpra0FESmpwRjB1aVBJ?=
+ =?utf-8?B?QmxiZXJhR0o5TzRnRmR0VVJKZWdjbUczRzlCNXJiSFhvNmFaVDFkUWg4TDEy?=
+ =?utf-8?B?aTZhZEhid3lsY2dqSytnTWFCcUMvcDhVSmNEOTJ2TXMxcjh5bTV5OWZmajZu?=
+ =?utf-8?B?SzZvc1A0M2RIaWNKWldHSEpaSnhLZGxiMElvWFozOEE3MDQ3akphY2FNMzY0?=
+ =?utf-8?B?UkpqYmR1M1ExWnF5eWhDTXNxQU1XZGd4MUV1R1J4TDNNYVJyc3dNcDNkUzFK?=
+ =?utf-8?B?cW53UHovVFh1RGdYUlFKYVZKV3hyS01uQWZpNU1oOGxFVm5sZGV4cXNCVE1i?=
+ =?utf-8?B?amUzZlpiVW5SUjQzMlM3RE1ZNkg5OEY2OWtZVm9HQU9vT3dMLzhmM2dLRGJ4?=
+ =?utf-8?B?bS85a0VRSldzR2Vyb21jV3FNbHpiTlVtdXpIRlRiaWhFb1NzcEZtYnVuQ01y?=
+ =?utf-8?B?Z2UwSWZqQ0hqc09tckROZElBTVZaZW9CUkdTMVRKMlFISmpJYnRqWVphZFBR?=
+ =?utf-8?B?VEcwSHRXNit4aWhodExxWVg2VFpZRFdSSmRQb2FSZll5cWhJYS9MVUNib21V?=
+ =?utf-8?B?d2dMUVozZStCQ2tZWHVLRkxxWU1qUldkT3BHRkd3dytZT0lENHkwUWp1WGVs?=
+ =?utf-8?B?b2RvY0ovTTVqVFdQRXJINHFOVWJvZnAycS83RDdrVVJLWHUwQndyVUFLUzI0?=
+ =?utf-8?B?UVZyQUtNRUdKSXA0OTkwcGlhMzdzQm5iY2Jaby9aR2haamszKzJKVVlkMi9W?=
+ =?utf-8?B?cFBrL3RGYUVkMm80S1ptdUVxUDhiWkZsVGR0M2JnblJrV3VrK08xZlBabndo?=
+ =?utf-8?B?UGJQbFZlRXpUS2x0dGR3d1V4akhrb0VzKzB1UGxxN0V6bnBRNDFRelVlYllX?=
+ =?utf-8?B?N1Z5VFRieGNpaEZtRUFjcC81YmxBaDEyb3NYZkdvRVRMaTdnamE5bVpCRlpn?=
+ =?utf-8?B?VVkyZHI4YmpjTjJERDBiVnk3K0tmbU1CRVJhTDlOVmtVMVN4VHNmcDAxRHpD?=
+ =?utf-8?B?L2Z6VHR3L0NKY2RSS3BUUW5WTER2TU1JRUFUTDhmUmZ2YzBQTldUV0RzdDMw?=
+ =?utf-8?B?WjFsNUx3eDlBS3plSVEzSVlvRjAweXZmMmFTMEYwTTgrNUZDVnhrREhsb084?=
+ =?utf-8?B?NVFJMk9UUlkzVDRzU05vUU9sS3VKUXdzcm5BWUhRUVNkQ3o5MFk0bDBRcG9Q?=
+ =?utf-8?B?d1U0VE9FSUI0dnhmMGpScXJqb2hrby85QzBTSG9DS1Ftd0pWcWNrZmphVWxO?=
+ =?utf-8?B?RUx3OVg0a3hLL1hKMzB3TjJoL3Z5YmNBTk82Ny9OYVFKTGVEMThVM01rQkF5?=
+ =?utf-8?B?RXFMem1MUldUdmFJbm5qUWMzRW85NXlWaG5oekJsVyt3UnRQTzhodnNlVjY5?=
+ =?utf-8?Q?yRy9kUwIDnsw3qfnJDoW6Sh/oJkkwA=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1141;6:k/AZNxbhz9BlsSsSX0tE2cxiVVDpq/EE+k/QnlABraTf+IYi6lTlZ5FgkeTDspDeYX9TaPUMcBswDkp5TU2ORUF/0ZPhhYnHTtgH5Ibr1h+J7w0cEykzrJneiILFZ3Y5ILe2/PqdSww2+jKY2V0eTqUSZJxLIEVAk0VveEymXhn0TwlWSCX/9XLCOH1lV03Bdm5duAedWD8yb8ukYqBuohFNe+hpdV58vOPdONZIwKfM6rIJXqDZtQ1iazsAvIlo+lG9TAlw88Pl+Vhz+oBbhZJq5Y7Kdbrnp5BqJRPNRwWCt7qX0rSNBvkvZ7bVXF0+gW4n1KHiy6OCjN/zlniuZHKWVe5uhQ2wII/RwV2bTUg=;5:+oobVE45o6HzBMDtVLd0XH+O7kZmtj/mIlza1fKQuF4LMsfC1jdhLtXVVVuJw/OeK+zkZRWA+JjlXz0aaWHYquKEN40AhM+lAlGqWAmdkTNNftCkdUnVtv5VHRorR+jEvSRoamjM1bdQFfsYrj4x7zyiIs0231d8euLkO6QzEps=;24:NJ0JHdicsm8tf0sezvc+eK8Qbildv87ymikqx5jrsvqUKUCfGZCWoLnuTiMDmbbgP8HM8twKXL2PsAAtY3qBy8+gyZV1UDF7q+EhQCMChLY=;7:qXJrHCsX42cLPDjiRWObq+nluLnNhzKJkocvF2Xli6HxXndCORTXL8TO+LtDtC87Pp6oB7AWamPuIfG7E96UyY0hDYEvIMBwOwnDf2ks8gybfu5wbIK1UcDwIAJMFHCjRFlG3ThjOtz150xdbtabxS7gxvuN54uQrRiP0mK0xIMJprk/0ZeJPVx8KAq92AA+nwpchq9u/1wkNyqgkT2xkvTcvOnFxmRpaMie0T91CsPgAkb8iz6r0ZzC5UkZyx/S
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1148;20:wovlZxN6Wu/dhJgX27IwzBr8oVxWvBH446k88C7qWoErQKI0Iet8ZaANo/V4wD1qVeSuHpvt/Di5TvRMk0MUZqOoghNEpBaBaJ8tySm33BXPhqltLHS5txysAwqBlVZxVc56YKz0OPulerVyEmUQgUzQqlFENdVzvnl+ATZRUmSNdA33F26n6FN5NyHjBaPQ7bSQ6iQgBCEeZvJFCZJoyjr42MoQYVpe1uoNSR0OIQqTglaV0S3NFZ3uYIDszafs
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1141;20:mP5bFLaULWzE1OGMGkAAe4GZjStI/SKqtrXp156Y+GaWdE6pI10IeT2JB0M1JF58ta3H0yDBwBcrm5w58nY2Apex8tLUqe+mNCr1+A6bCyzer3S7XRp24aqyx1pshAea3yAnoZq55USuFEfVku5Zg+JXMB/JDgOnD0pCAjCJ+2aYsP5Fy+yEPGfBRi71Ldoz5dbPn0KOjPKnJ3+0XFQh8MGUKsxmkGgU5Lxl0ozECofbYm10cXboaCXEHGGsCsDX
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2018 22:59:00.4853 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2d7eb71-52da-4e1c-f24d-08d56f478b60
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2018 23:03:17.0676 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa2ffc6e-4674-48ec-d3ae-08d56f482478
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1148
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1141
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create an entry in the new MSR as a feature framework to allow a guest to
-recognize LFENCE as a serializing instruction on AMD processors.  The MSR
-can only be set by the host, any write by the guest will be ignored.  A
-read by the guest will return the value as set by the host.  In this way,
-the support to expose the feature to the guest is controlled by the
-hypervisor.
+On 2/8/2018 4:58 PM, Tom Lendacky wrote:
+> The following series implements support within KVM for MSR-based features.
+> The first patch creates the MSR-based feature framework used to initialize
+> and retrieve the MSR-based features.  The second patch adds support that
+> will allow a guest to determine if the LFENCE instruction is serializing
+> on AMD processors.
+> 
+> This series is based on the next branch.
+> 
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- arch/x86/kvm/svm.c |   16 ++++++++++++++++
- arch/x86/kvm/x86.c |    6 ++++++
- 2 files changed, 22 insertions(+)
+Paolo,
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 1bf20e9..f39e345 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -178,6 +178,8 @@ struct vcpu_svm {
- 	uint64_t sysenter_eip;
- 	uint64_t tsc_aux;
- 
-+	u64 msr_decfg;
-+
- 	u64 next_rip;
- 
- 	u64 host_user_msrs[NR_HOST_SAVE_USER_MSRS];
-@@ -3912,6 +3914,9 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 			msr_info->data = 0x1E;
- 		}
- 		break;
-+	case MSR_F10H_DECFG:
-+		msr_info->data = svm->msr_decfg;
-+		break;
- 	default:
- 		return kvm_get_msr_common(vcpu, msr_info);
- 	}
-@@ -4047,6 +4052,17 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	case MSR_VM_IGNNE:
- 		vcpu_unimpl(vcpu, "unimplemented wrmsr: 0x%x data 0x%llx\n", ecx, data);
- 		break;
-+	case MSR_F10H_DECFG:
-+		/* Only the host can set this MSR, silently ignore */
-+		if (!msr->host_initiated)
-+			break;
-+
-+		/* Check the supported bits */
-+		if (!kvm_valid_msr_feature(MSR_F10H_DECFG, data))
-+			return 1;
-+
-+		svm->msr_decfg = data;
-+		break;
- 	case MSR_IA32_APICBASE:
- 		if (kvm_vcpu_apicv_active(vcpu))
- 			avic_update_vapic_bar(to_svm(vcpu), data);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4251c34..21ec73b 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1060,7 +1060,13 @@ struct kvm_msr_based_features {
- 	u64 value;			/* MSR value */
- };
- 
-+static const struct x86_cpu_id msr_decfg_match[] = {
-+	{ X86_VENDOR_AMD, X86_FAMILY_ANY, X86_MODEL_ANY, X86_FEATURE_LFENCE_RDTSC },
-+	{}
-+};
-+
- static struct kvm_msr_based_features msr_based_features[] = {
-+	{ MSR_F10H_DECFG, MSR_F10H_DECFG_LFENCE_SERIALIZE, msr_decfg_match },
- 	{}
- };
- 
+Let me know if this is the direction you were thinking of for
+MSR-based features.
+
+Thanks,
+Tom
+
+> ---
+> 
+> Tom Lendacky (2):
+>       KVM: x86: Add a framework for supporting MSR-based features
+>       KVM: SVM: Add MSR feature support for serializing LFENCE
+> 
+> 
+>  arch/x86/include/asm/kvm_host.h |    1 
+>  arch/x86/kvm/svm.c              |   16 +++++
+>  arch/x86/kvm/x86.c              |  114 ++++++++++++++++++++++++++++++++++++++-
+>  include/uapi/linux/kvm.h        |    1 
+>  4 files changed, 130 insertions(+), 2 deletions(-)
+> 
