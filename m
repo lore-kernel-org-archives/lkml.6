@@ -1,63 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeBHP6Y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:58:24 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:44664 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752309AbeBHP6X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:58:23 -0500
-X-Google-Smtp-Source: AH8x225A8ktT9BbUHl3QDCmC+ipKe1B+LMNgDl6sQpSd27ciQ+vDwXUTCy6JkTARmuAd1O6/KOr/HM3OiPgAKcoZ5jQ=
+        id S1752409AbeBHP7F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:59:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750847AbeBHP7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:59:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1BC2204EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 8 Feb 2018 10:59:00 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH 11/20 v2] tracing: Add symbol type to function based
+ events
+Message-ID: <20180208105900.71a8ee8c@gandalf.local.home>
+In-Reply-To: <20180208112031.GB30958@krava>
+References: <20180207202402.253089656@goodmis.org>
+        <20180207202816.348135328@goodmis.org>
+        <20180208112031.GB30958@krava>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180118201348.18053-1-clabbe.montjoie@gmail.com>
-References: <20180118201348.18053-1-clabbe.montjoie@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 8 Feb 2018 16:58:22 +0100
-Message-ID: <CANiq72k4CqzAAOKcK0c4uGWPNxeztDn733+1cphzM7zOiz+N_Q@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: img-ascii-lcd: fix typo on select SYSCON/MFD_SYSCON
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, paul.burton@mips.com,
-        Ralf Baechle <ralf@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 9:13 PM, Corentin Labbe
-<clabbe.montjoie@gmail.com> wrote:
-> img-ascii-lcd select un-existing SYSCON kconfig name.
-> This patch fix this error by using the correct MFD_SYSCON kconfig name.
->
+On Thu, 8 Feb 2018 12:20:31 +0100
+Jiri Olsa <jolsa@redhat.com> wrote:
 
-CC'ing Paul & Ralf in case they want to ack.
+> > +Symbols (function names)
+> > +========================
+> > +
+> > +To display kallsyms "%pS" type of output, use the special type "symbol".
+> > +
+> > +Again, using gdb to find the offset of the "func" field of struct work_struct
+> > +
+> > +(gdb) printf "%d\n", &((struct work_struct *)0)->func
+> > +24  
+> 
+> you could also use Arnaldo's pahole for this, seems like less typing:
+> 
+>   $ pahole ./vmlinux -C work_struct
+>   die__process_function: tag not supported (INVALID)!
+>   struct work_struct {
+>           atomic_long_t              data;                 /*     0     8 */
+>           struct list_head           entry;                /*     8    16 */
+>           work_func_t                func;                 /*    24     8 */
+> 
+> it's in 'dwarves' package
 
-The mistake seems to be in the tree since the addition of the driver
-in 0cad855fbd08 ("auxdisplay: img-ascii-lcd: driver for simple ASCII
-LCD displays").
+Nice, I'll have to document that:
 
-Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+ $ pahole ./vmlinux -C net_device |grep perm
+        unsigned char              perm_addr[32];        /*   558    32 */
 
-Thanks,
-Miguel
 
-> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> ---
->  drivers/auxdisplay/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-> index 2c2ed9cf8796..d9ab60ed6c9b 100644
-> --- a/drivers/auxdisplay/Kconfig
-> +++ b/drivers/auxdisplay/Kconfig
-> @@ -138,7 +138,7 @@ config IMG_ASCII_LCD
->         tristate "Imagination Technologies ASCII LCD Display"
->         depends on HAS_IOMEM
->         default y if MIPS_MALTA || MIPS_SEAD3
-> -       select SYSCON
-> +       select MFD_SYSCON
->         help
->           Enable this to support the simple ASCII LCD displays found on
->           development boards such as the MIPS Boston, MIPS Malta & MIPS SEAD3
-> --
-> 2.13.6
->
+-- Steve
