@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x224cMAHyG8LpA4X7G+o1R6QR/cV69LFxJ7es5vl+qpQ/caMEfiJUBcQfM2QQEhN45tGX9UZ8
+X-Google-Smtp-Source: AH8x227jqPI3c+MFTntCFdgmDbrExKbb6bdpO9RgppKhI1R3j4nXK4xXe1bTtd7+xyNuKMtfoRRx
 ARC-Seal: i=1; a=rsa-sha256; t=1518106812; cv=none;
         d=google.com; s=arc-20160816;
-        b=d7j8lMCH05vs2435iNhI6p0Nrcdq0orMDK2twwqDQJegZfiSexAr9UpFIRAs2wwMSP
-         +ph8D6LXkCqezKnN3lLLyPLJjRyAuHfYHIF2M97fZUf85zd6QYct2Fm8v3jYP8JJ9+RW
-         Ud7441lI1MBhM/6CeIkqqbKALdj178bcOmqW1IoUkTvKJzA0mz3S6iXd7w0B5SZyT+SZ
-         zb2f0Rusmvm6rk4FHsG960er64LETW7ZqmAAgVJVyoUBz6eyqafO3dAvacYt1QyTBHbP
-         Ai+fO07BFFvEoXRDJf4o9iGEXOROhwKzZXj4xudM4/ZSrUw7KbDYNCqGP5hk0rUlWu2F
-         954g==
+        b=ohHgWueVY2UfUJ91gw+wiDYxNy4YZ8N8gaJbwsVzPcOx7SggTGpqA68O1r3ChFgjgz
+         5Z1TYh1IMB7BwAzN6OxEgAR+Ugb3Lb4tx4fbuN2m0/GQsTl2DLZBY69VByItgu1sveN3
+         agMILpfccNoqwcq5RbvRJjUqpNn7BeXmGHsa8Mb02d3r1LxWMdi6XHESX+nlJSpar6VY
+         0cUkLYaeJCOLNmCjpD313CNj3LYqA9I8hIaKCkyJvJJZ10UYrvIvZNJsyUs5lrMjQm+3
+         m915giG6uFuhh61NFKmX6XGmww6Md5+TrQX4VAaXi+5HqDkUTnB70t3Z4sR+IP5n+j7b
+         Vn6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-filter
-         :arc-authentication-results;
-        bh=YzitirJ/Q8VjI4HXMIX0Plvx4w1aL52mZmd+kxZQD80=;
-        b=ClSRu6P7AtZm4uU4wDcAfaNtEJPpJIlSHdk1JS4+dq0hD2lPR1yZZwHnp47GMkuTTT
-         xPE+hhtBnu1FdTYiuZCwbk6HSqgjwU5ihoebxJnClPoEmM67342m5mtF9hoDPcYObNP7
-         sfSwpjr1FvJ1wJTdfXfCnEnOWx3kEbtTg9FOpGimyVfttHADgL8+wr+AEOZVY+JZIyaa
-         w3pYyGD84CMg6ggBsgrFpx9//7uY9tlI6JIDogXiUAE5ABlFfpL+yREyRqW35jS3J44R
-         JFKn0PdXUrFF4+ljE/BxExVk8lYjtcy4H0ZcMQ+4H3zTErWfUQoIrP/IYnSoufTngKA0
-         jafg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=SjFMsbSS827T9u8KgXcclZ/8GFOfEMUu9MVypLM9Z3w=;
+        b=EdhzRT481huhpJNTypZnb+8MPxH+alcWb/HguShzZVJrpWslBVcbcgp4sePIr17CiF
+         H73B6OE3KaWQWG+RilKcIWA9bPIimIbtX3aqzzDX/q5kk1DYj5npaOrqPbgEmn5bRQpA
+         r2K3BBkOyr9CDC4v6bPtgDVpWXD7Q5Sr2JJf6rFhYzvzDEP49LCDSltcdG/fnBXh0CRO
+         ZCbJbqvSj+1cvR8yOQd7FJjukOLX5GfkL0xYSrGPvwJfMCqYhGYg5IBGuNEf+86OQMgl
+         k+U6FvA7/umfuGzSyDuN8zePt/ILBrhUj8FDDyQ3Pmv/uIIp5NOagQdaZyaEWffWg6d2
+         ASlQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=GE/4Nbyw;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=n9mJvTC8;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=GE/4Nbyw;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=n9mJvTC8;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w18GJP1C021191
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w18GJP1G021191
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -42,72 +42,233 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Kosina <jkosina@suse.cz>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/7] Kconfig: add new special property shell= to test compiler options in Kconfig
-Date: Fri,  9 Feb 2018 01:19:05 +0900
-Message-Id: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [RFC PATCH 4/7] kconfig: support new special property shell=
+Date: Fri,  9 Feb 2018 01:19:09 +0900
+Message-Id: <1518106752-29228-5-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591850368430758875?=
-X-GMAIL-MSGID: =?utf-8?q?1591850368430758875?=
+X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
+X-GMAIL-MSGID: =?utf-8?q?1591850368607646970?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This was prompted by the email from Linus today's morning.
+This works with bool, int, hex, string types.
 
-I implmented this in a rush today, so there are still many TODOs,
-but I put it here to start discussion.
+For bool, the symbol is set to 'y' or 'n' depending on the exit value
+of the command.
 
-I think it is working, but as you notice, it is tedious to repeat something
-like follows:
+For int, hex, string, the symbol is set to the value to the stdout
+of the command. (only the first line of the stdout)
+
+The following shows how to write this and how it works.
+
+--------------------(example Kconfig)------------------
+config srctree
+        string
+        option env="srctree"
+
+config CC
+        string
+        option env="CC"
 
 config CC_HAS_STACKPROTECTOR
         bool
         option shell="$CC -Werror -fstack-protector -c -x c /dev/null"
 
-One possiblity is to put this ugly code into script like follows,
+config CC_HAS_STACKPROTECTOR_STRONG
+        bool
+        option shell="$CC -Werror -fstack-protector-strong -c -x c /dev/null"
 
-config CC_STACKPROTECTOR
-          bool
-          option shell="$srctree/scripts/cc-option.sh $CC -fstack-protector"
+config CC_VERSION
+        int
+        option shell="$srctree/scripts/gcc-version.sh $CC | sed 's/^0*//'"
+        help
+          gcc-version.sh returns 4 digits number. Unfortunately, the preceding
+          zero would cause 'number is invalid'.  Cut it off.
 
-... but this is longer.
+config CC_IS_CLANG
+        bool
+        option shell="$CC --version | grep -q clang"
 
-I was thinking of something like follows:
+config CC_IS_GCC
+        bool
+        option shell="$CC --version | grep -q gcc"
+-----------------------------------------------------
 
-config CC_STACKPROTECTOR
-          bool
-          option shell="$(CC_OPTION -fstack-protector)"
+  $ make alldefconfig
+  scripts/kconfig/conf  --alldefconfig Kconfig
+  #
+  # configuration written to .config
+  #
+  $ cat .config
+  #
+  # Automatically generated file; DO NOT EDIT.
+  # Linux Kernel Configuration
+  #
+  CONFIG_CC_HAS_STACKPROTECTOR=y
+  CONFIG_CC_HAS_STACKPROTECTOR_STRONG=y
+  CONFIG_CC_VERSION=504
+  # CONFIG_CC_IS_CLANG is not set
+  CONFIG_CC_IS_GCC=y
 
-Need time to brush up details.
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Comments are appreciated.
+ scripts/kconfig/expr.h     |  1 +
+ scripts/kconfig/kconf_id.c |  1 +
+ scripts/kconfig/lkc.h      |  1 +
+ scripts/kconfig/menu.c     |  3 ++
+ scripts/kconfig/symbol.c   | 74 ++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 80 insertions(+)
 
-
-
-Masahiro Yamada (7):
-  kbuild: remove kbuild cache
-  kconfig: add xrealloc() helper
-  kconfig: remove const qualifier from sym_expand_string_value()
-  kconfig: support new special property shell=
-  kconfig: invoke silentoldconfig when compiler is updated
-  kconfig: add basic environments to evaluate C flags in Kconfig
-  Test stackprotector options in Kconfig to kill CC_STACKPROTECTOR_AUTO
-
- Makefile                    |  65 +++++++---------------------
- arch/Kconfig                |  54 +++++++++++++----------
- init/Kconfig                |  17 ++++++++
- scripts/Kbuild.include      | 101 ++++++--------------------------------------
- scripts/kconfig/confdata.c  |   2 +-
- scripts/kconfig/expr.h      |   1 +
- scripts/kconfig/kconf_id.c  |   1 +
- scripts/kconfig/lkc.h       |   2 +
- scripts/kconfig/lkc_proto.h |   2 +-
- scripts/kconfig/menu.c      |   3 ++
- scripts/kconfig/nconf.gui.c |   2 +-
- scripts/kconfig/symbol.c    |  78 +++++++++++++++++++++++++++++++++-
- scripts/kconfig/util.c      |  15 +++++--
- scripts/kconfig/zconf.l     |   2 +-
- 14 files changed, 176 insertions(+), 169 deletions(-)
-
+diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+index c16e82e..83029f92 100644
+--- a/scripts/kconfig/expr.h
++++ b/scripts/kconfig/expr.h
+@@ -183,6 +183,7 @@ enum prop_type {
+ 	P_IMPLY,    /* imply BAR */
+ 	P_RANGE,    /* range 7..100 (for a symbol) */
+ 	P_ENV,      /* value from environment variable */
++	P_SHELL,    /* shell command */
+ 	P_SYMBOL,   /* where a symbol is defined */
+ };
+ 
+diff --git a/scripts/kconfig/kconf_id.c b/scripts/kconfig/kconf_id.c
+index 3ea9c5f..0db9d1c 100644
+--- a/scripts/kconfig/kconf_id.c
++++ b/scripts/kconfig/kconf_id.c
+@@ -34,6 +34,7 @@ static struct kconf_id kconf_id_array[] = {
+ 	{ "defconfig_list",	T_OPT_DEFCONFIG_LIST,	TF_OPTION },
+ 	{ "env",		T_OPT_ENV,		TF_OPTION },
+ 	{ "allnoconfig_y",	T_OPT_ALLNOCONFIG_Y,	TF_OPTION },
++	{ "shell",		T_OPT_SHELL,		TF_OPTION },
+ };
+ 
+ #define KCONF_ID_ARRAY_SIZE (sizeof(kconf_id_array)/sizeof(struct kconf_id))
+diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+index 4e23feb..8d05042 100644
+--- a/scripts/kconfig/lkc.h
++++ b/scripts/kconfig/lkc.h
+@@ -60,6 +60,7 @@ enum conf_def_mode {
+ #define T_OPT_DEFCONFIG_LIST	2
+ #define T_OPT_ENV		3
+ #define T_OPT_ALLNOCONFIG_Y	4
++#define T_OPT_SHELL		5
+ 
+ struct kconf_id {
+ 	const char *name;
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 9922285..6254dfb 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -216,6 +216,9 @@ void menu_add_option(int token, char *arg)
+ 	case T_OPT_ENV:
+ 		prop_add_env(arg);
+ 		break;
++	case T_OPT_SHELL:
++		prop_add_shell(arg);
++		break;
+ 	case T_OPT_ALLNOCONFIG_Y:
+ 		current_entry->sym->flags |= SYMBOL_ALLNOCONFIG_Y;
+ 		break;
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 893eae6..02ac4f4 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <ctype.h>
++#include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <regex.h>
+@@ -1370,6 +1371,8 @@ const char *prop_get_type_name(enum prop_type type)
+ 		return "prompt";
+ 	case P_ENV:
+ 		return "env";
++	case P_SHELL:
++		return "shell";
+ 	case P_COMMENT:
+ 		return "comment";
+ 	case P_MENU:
+@@ -1420,3 +1423,74 @@ static void prop_add_env(const char *env)
+ 	else
+ 		menu_warn(current_entry, "environment variable %s undefined", env);
+ }
++
++static void prop_add_shell(const char *cmd)
++{
++	struct symbol *sym, *sym2;
++	struct property *prop;
++	char *expanded_cmd;
++	FILE *p;
++	char stdout[256];
++	int ret, len;
++
++	sym = current_entry->sym;
++	for_all_properties(sym, prop, P_SHELL) {
++		sym2 = prop_get_symbol(prop);
++		if (strcmp(sym2->name, cmd))
++			menu_warn(current_entry, "redefining shell command symbol from %s",
++				  sym2->name);
++		return;
++	}
++
++	prop = prop_alloc(P_SHELL, sym);
++	prop->expr = expr_alloc_symbol(sym_lookup(cmd, SYMBOL_CONST));
++
++	expanded_cmd = sym_expand_string_value(cmd);
++
++	/* surround the command with ( ) in case it is piped commands */
++	len = strlen(expanded_cmd);
++	expanded_cmd = xrealloc(expanded_cmd, len + 3);
++	memmove(expanded_cmd + 1, expanded_cmd, len);
++	expanded_cmd[0] = '(';
++	expanded_cmd[len + 1] = ')';
++	expanded_cmd[len + 2] = 0;
++
++	switch (sym->type) {
++	case S_BOOLEAN:
++		/* suppress both stdout and stderr. */
++		len = strlen(expanded_cmd) + strlen(" >/dev/null 2>&1") + 1;
++		expanded_cmd = realloc(expanded_cmd, len);
++		strcat(expanded_cmd, " >/dev/null 2>&1");
++
++		ret = system(expanded_cmd);
++		sym_add_default(sym, ret == 0 ? "y" : "n");
++		break;
++	case S_INT:
++	case S_HEX:
++	case S_STRING:
++		/* suppress only stderr. we want to get stdout. */
++		len = strlen(expanded_cmd) + strlen(" 2>/dev/null") + 1;
++		expanded_cmd = realloc(expanded_cmd, len);
++		strcat(expanded_cmd, " 2>/dev/null");
++
++		p = popen(expanded_cmd, "r");
++		if (!p)
++			goto free;
++		if (fgets(stdout, sizeof(stdout), p)) {
++			stdout[sizeof(stdout) - 1] = 0;
++			len = strlen(stdout);
++			if (stdout[len - 1] == '\n')
++				stdout[len - 1] = 0;
++		} else {
++			stdout[0] = 0;
++		}
++		sym_add_default(sym, stdout);
++		break;
++	default:
++		menu_warn(current_entry, "unsupported type for shell command\n");
++		break;
++	}
++
++free:
++	free(expanded_cmd);
++}
 -- 
 2.7.4
