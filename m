@@ -1,83 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751624AbeBHBMG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 20:12:06 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:34011 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeBHBMF (ORCPT
+        id S1751186AbeBHBWF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 20:22:05 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:38585 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750736AbeBHBWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 20:12:05 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w181BoYO004384
-X-Nifty-SrcIP: [209.85.217.182]
-X-Google-Smtp-Source: AH8x2274e9DGcH2T6rpnGEVlK5EM3rKZmwmSV3f99ibbY1cvfuN3RkGKNFl6PY3MANMJIfFwoQnoRRGNGJgiSjo0lqs=
-MIME-Version: 1.0
-In-Reply-To: <20180207214707.6d32d27towuofyyu@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com> <20180207214707.6d32d27towuofyyu@ninjato>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 8 Feb 2018 10:11:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQwXADUhscdp=C7c-2VfZmrj9kThc0o6JN4JDvcBSdCEw@mail.gmail.com>
-Message-ID: <CAK7LNAQwXADUhscdp=C7c-2VfZmrj9kThc0o6JN4JDvcBSdCEw@mail.gmail.com>
-Subject: Re: [PATCH v3 14/16] mmc: tmio: move TMIO_MASK_{READOP,WRITEOP}
- handling to correct place
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 7 Feb 2018 20:22:04 -0500
+X-Google-Smtp-Source: AH8x226kCxUBai90Oung/WMbBOv7m6qFrabXtTLt2Bw+i7efn85INY2A4+8xsxNMs7bydJR/P+367A==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        Craig Bergstrom <craigb@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 1/2] amdgpu/dc/dml: Consolidate redundant CFLAGS
+Date: Wed,  7 Feb 2018 17:21:55 -0800
+Message-Id: <20180208012156.165934-1-mka@chromium.org>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-08 6:47 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
-> On Thu, Jan 18, 2018 at 01:28:14AM +0900, Masahiro Yamada wrote:
->> As far as I tested the IP on UniPhier SoCs, TMIO_STAT_{RXRDY,TXRQ}
->> are asserted for DMA mode as well as for PIO.  I need to disable the
->> those IRQs in dma_ops->start hook, otherwise the DMA transfer fails
->> with the following error message:
->>   PIO IRQ in DMA mode!
->>
->> Renesas chips are the same cases since I see their dma_ops->start
->> hooks explicitly clear TMIO_STAT_{RXRDY,TXRQ} (with nice comment!).
->>
->> If we do this sanity check in TMIO MMC core, RXRDY/TXRQ handling
->> should be entirely moved to the core.  tmio_mmc_cmd_irq() will
->> be a suitable place to disable them.
->>
->> The probe function sets TMIO_MASK_{READOP,WRITEOP} but this is odd.
->>
->>     /* Unmask the IRQs we want to know about */
->>     if (!_host->chan_rx)
->>             irq_mask |= TMIO_MASK_READOP;
->>     if (!_host->chan_tx)
->>             irq_mask |= TMIO_MASK_WRITEOP;
->>
->> At this point, _host->{chan_rx,chan_tx} are _always_ NULL because
->> tmio_mmc_request_dma() is called after this code.  Consequently,
->> TMIO_MASK_{READOP,WRITEOP} are set here whether DMA is used or not.
->> Remove this pointless code.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> I need to stop reviewing here because I'd need the applied version for
-> checking. I hope Ulf can give me a base tomorrow.
->
-> Or Yamada-san, do you meanwhile have a git repo somewhere?
->
+Use subdir-ccflags instead of specifying the same flags for every source
+file.
 
-Patch 1-6 were pulled merged in this MW.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/gpu/drm/amd/display/dc/dml/Makefile | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-Patch 7-16 are cleanly applicable onto Linus' tree.
-(commit 581e400ff935d34 as of writing)
-
-
-
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+index 3488af2b5786..b8cadf833e71 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+@@ -24,15 +24,7 @@
+ # It provides the general basic services required by other DAL
+ # subcomponents.
+ 
+-CFLAGS_display_mode_vba.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-CFLAGS_display_mode_lib.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-CFLAGS_display_pipe_clocks.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-CFLAGS_display_rq_dlg_calc.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-CFLAGS_dml1_display_rq_dlg_calc.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-CFLAGS_display_rq_dlg_helpers.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-CFLAGS_soc_bounding_box.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-CFLAGS_dml_common_defs.o := -mhard-float -msse -mpreferred-stack-boundary=4
+-
++subdir-ccflags-y += -mhard-float -msse -mpreferred-stack-boundary=4
+ 
+ DML = display_mode_lib.o display_rq_dlg_calc.o \
+ 	  display_rq_dlg_helpers.o dml1_display_rq_dlg_calc.o \
 -- 
-Best Regards
-Masahiro Yamada
+2.16.0.rc1.238.g530d649a79-goog
