@@ -1,58 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752126AbeBHOxN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:53:13 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35820 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751079AbeBHOxM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:53:12 -0500
-X-Google-Smtp-Source: AH8x227AGhSyJycetLE8u9boJZ5GYpW7O74SAlpY60FkKsQ+5dhCWQSb4crz9+epDa1c8rl7rBSQ1A==
-Date: Thu, 8 Feb 2018 23:53:07 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2] printk: Relocate wake_klogd check close to the end of
- console_unlock()
-Message-ID: <20180208145307.GA485@tigerII.localdomain>
-References: <20180208130402.15157-1-pmladek@suse.com>
+        id S1752189AbeBHOy2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:54:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34640 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751079AbeBHOy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:54:27 -0500
+Date: Thu, 8 Feb 2018 15:54:22 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: John Garry <john.garry@huawei.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        ak@linux.intel.com, wcohen@redhat.com, will.deacon@arm.com,
+        ganapatrao.kulkarni@cavium.com, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, zhangshaokun@hisilicon.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
+Message-ID: <20180208145422.GB12817@krava>
+References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
+ <1517939104-230881-6-git-send-email-john.garry@huawei.com>
+ <20180208135512.GG10234@krava>
+ <77588a26-e216-b44d-fc9e-cea6c05444df@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180208130402.15157-1-pmladek@suse.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <77588a26-e216-b44d-fc9e-cea6c05444df@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/08/18 14:04), Petr Mladek wrote:
-> We mark for waking up klogd whenever we see a new message sequence in
-> the main loop.  However, the actual wakeup is always at the end of the
-> function and we can easily test for the wakeup condition when we do
-> the final should-we-repeat check.
+On Thu, Feb 08, 2018 at 02:45:37PM +0000, John Garry wrote:
+> On 08/02/2018 13:55, Jiri Olsa wrote:
+> > On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
+> > 
+> > SNIP
+> > 
+> > > +	char *perpkg;
+> > > +	char *unit;
+> > > +	char *metric_expr;
+> > > +	char *metric_name;
+> > > +	char *metric_group;
+> > > +	struct list_head list;
+> > > +	char strings[];
+> > > +};
+> > > +
+> > > +static LIST_HEAD(arch_std_events);
+> > > +
+> > > +#define ADD_EVENT_STRING(string) do { if (string) {		\
+> > > +	es->string = strings;					\
+> > > +	strings += snprintf(strings, len, "%s", string) + 1;	\
+> > > +} } while (0)
+> > > +
+> > > +static int save_arch_std_events(void *data, char *name, char *event,
+> > > +				char *desc, char *long_desc, char *pmu,
+> > > +				char *unit, char *perpkg, char *metric_expr,
+> > > +				char *metric_name, char *metric_group)
+> > > +{
+> > > +	struct event_struct *es;
+> > > +	struct stat *sb = data;
+> > > +	int len;
+> > > +	char *strings;
+> > > +
+> > > +	/*
+> > > +	 * Lazily allocate size of the json file to hold the
+> > > +	 * strings, which would be more than large enough.
+> > > +	 */
+> > > +	len = sb->st_size;
+> > > +
+> > > +	es = malloc(sizeof(*es) + len);
+> > 
+> > hum, so for single event you allocate buffer of the size
+> > of the entire file this event is defined in?
+> > 
+> > what do I miss? I assume there're more of those arch-defined
+> > events defined in the single file..
 > 
-> Move the wake_klogd condition check out of the main loop.  This avoids
-> doing the same thing repeatedly and groups similar checks into a
-> common place.
+> Hi Jirka,
 > 
-> This fixes a race introduced by the commit dbdda842fe96f8932 ("printk: Add
-> console owner and waiter logic to load balance console writes").
-> The current console owner might process the newly added message before
-> the related printk() start waiting for the console lock. Then the lock
-> is passed without waking klogd. The new owner sees the already updated
-> seen_seq and does not know that the wakeup is needed.
+> Yes, allocating the file size per event was just to make the code more
+> concise (instead of finding each string length), but obviously it is an
+> inefficient practice in terms of memory usage.
+> 
+> But since the JSONs are generally not huge, and in practice we would only be
+> accessing a fraction of the buffer's physical memory to save the event
+> strings, I thought it ok.
+> 
+> Anyway, I'll see if there is something more efficient I can do.
 
-I need to do more "research" on this. I though about it some time ago,
-and I think that waking up klogd _only_ when we don't have any pending
-logbuf messages still can be pretty late. Can't it? We can spin in
-console_unlock() printing loop for a long time, probably passing
-console_sem ownership between CPUs, without waking up the log_wait waiter.
-May be we can wake it up from the printing loop, outside of logbuf_lock,
-and let klogd to compete for logbuf_lock with the printing CPU. Why do
-we wake it up only when we are done pushing messages to a potentially
-slow serial console?
+maybe the json parser could provide the overall lenght?
 
-	-ss
+jirka
