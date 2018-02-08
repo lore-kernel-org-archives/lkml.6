@@ -1,104 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751269AbeBHKWY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:22:24 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61191 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeBHKWX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:22:23 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Jia-Ju Bai <baijiaju1990@gmail.com>, lenb@kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] acpi: osl: Replace GFP_ATOMIC with GFP_KERNEL in acpi_os_execute
-Date: Thu, 08 Feb 2018 11:20:39 +0100
-Message-ID: <1914141.qoxtLSqbUU@aspire.rjw.lan>
-In-Reply-To: <151808479008.28809.166946118004484639@mail.alporthouse.com>
-References: <1516875222-12293-1-git-send-email-baijiaju1990@gmail.com> <1808276.ZJn2ZeULZY@aspire.rjw.lan> <151808479008.28809.166946118004484639@mail.alporthouse.com>
+        id S1751424AbeBHKYa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:24:30 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57358 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750749AbeBHKY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 05:24:29 -0500
+Subject: Re: [PATCH v2] KVM: X86: Fix SMRAM accessing even if VM is shutdown
+To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1518075165-5376-1-git-send-email-wanpengli@tencent.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <75e8bfd0-6133-aabf-e1d0-d2e256d62994@redhat.com>
+Date: Thu, 8 Feb 2018 11:24:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1518075165-5376-1-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, February 8, 2018 11:13:10 AM CET Chris Wilson wrote:
-> Quoting Rafael J. Wysocki (2018-02-08 09:51:41)
-> > On Thursday, January 25, 2018 11:13:41 AM CET Jia-Ju Bai wrote:
-> > > After checking all possible call chains to acpi_os_execute here,
-> > > my tool finds that acpi_os_execute is never called in atomic context.
-> > > And acpi_os_execute calls acpi_debugger_create_thread 
-> > > which calls mutex_lock,
-> > > thus it proves again that acpi_os_execute can 
-> > > call functions which may sleep.
-> > > Thus GFP_ATOMIC is not necessary, and it can be replaced with GFP_KERNEL.
-> > > 
-> > > This is found by a static analysis tool named DCNS written by myself.
-> > > 
-> > > Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> > > ---
-> > >  drivers/acpi/osl.c |    2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-> > > index 3bb46cb..8ee605e 100644
-> > > --- a/drivers/acpi/osl.c
-> > > +++ b/drivers/acpi/osl.c
-> > > @@ -1066,7 +1066,7 @@ acpi_status acpi_os_execute(acpi_execute_type type,
-> > >        * having a static work_struct.
-> > >        */
-> > >  
-> > > -     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_ATOMIC);
-> > > +     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_KERNEL);
-> > >       if (!dpc)
-> > >               return AE_NO_MEMORY;
-> > >  
-> > > 
-> > 
-> > Applied, thanks!
+On 08/02/2018 08:32, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
 > 
-> Hmm, not this patch per se, but 
+> Reported by syzkaller:
 > 
-> https://intel-gfx-ci.01.org/tree/next/next-20180207/fi-bxt-dsi/dmesg0.log
-> [  111.378236] BUG: sleeping function called from invalid context at mm/slab.h:420
-> [  111.378259] in_atomic(): 1, irqs_disabled(): 1, pid: 1701, name: gem_exec_flush
-> [  111.378275] INFO: lockdep is turned off.
-> [  111.378277] irq event stamp: 0
-> [  111.378280] hardirqs last  enabled at (0): [<          (null)>]           (null)
-> [  111.378286] hardirqs last disabled at (0): [<00000000a01fa473>] copy_process.part.7+0x2f1/0x1db0
-> [  111.378290] softirqs last  enabled at (0): [<00000000a01fa473>] copy_process.part.7+0x2f1/0x1db0
-> [  111.378292] softirqs last disabled at (0): [<          (null)>]           (null)
-> [  111.378293] Preemption disabled at:
-> [  111.378298] [<ffffffffa18f14f6>] __mutex_lock+0x56/0x9b0
-> [  111.378311] CPU: 1 PID: 1701 Comm: gem_exec_flush Tainted: G     U  W        4.15.0-next-20180207-g5d1c98967100-next-20180207 #1
-> [  111.378313] Hardware name: Intel Corp. Broxton P/Apollolake RVP1A, BIOS APLKRVPA.X64.0150.B11.1608081044 08/08/2016
-> [  111.378314] Call Trace:
-> [  111.378318]  <IRQ>
-> [  111.378323]  dump_stack+0x5f/0x86
-> [  111.378328]  ___might_sleep+0x1d9/0x240
-> [  111.378334]  ? acpi_os_execute+0x2d/0x130
-> [  111.378338]  kmem_cache_alloc_trace+0x1ae/0x2b0
-> [  111.378344]  ? acpi_ev_asynch_enable_gpe+0x2d/0x2d
-> [  111.378347]  acpi_os_execute+0x2d/0x130
-> [  111.378351]  acpi_ev_gpe_dispatch+0xd7/0x120
-> [  111.378355]  acpi_ev_gpe_detect+0x156/0x195
-> [  111.378362]  acpi_ev_sci_xrupt_handler+0x16/0x28
-> [  111.378365]  acpi_irq+0xd/0x30
-> [  111.378369]  __handle_irq_event_percpu+0x3c/0x340
-> [  111.378374]  handle_irq_event_percpu+0x1b/0x50
-> [  111.378378]  handle_irq_event+0x2f/0x50
-> [  111.378381]  handle_fasteoi_irq+0x93/0x150
-> [  111.378386]  handle_irq+0x11/0x20
-> [  111.378390]  do_IRQ+0x5e/0x120
-> [  111.378395]  common_interrupt+0xbb/0xbb
-> [  111.378397]  </IRQ>
+>    WARNING: CPU: 6 PID: 2434 at arch/x86/kvm/vmx.c:6660 handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
+>    CPU: 6 PID: 2434 Comm: repro_test Not tainted 4.15.0+ #4
+>    RIP: 0010:handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
+>    Call Trace:
+>     vmx_handle_exit+0xbd/0xe20 [kvm_intel]
+>     kvm_arch_vcpu_ioctl_run+0xdaf/0x1d50 [kvm]
+>     kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
+>     do_vfs_ioctl+0xa4/0x6a0
+>     SyS_ioctl+0x79/0x90
+>     entry_SYSCALL_64_fastpath+0x25/0x9c
 > 
-> does tell us that acpi_os_execute() is called in irq context.
+> The syzkaller creates a former thread to issue KVM_SMI ioctl, and then creates
+> a latter thread to mmap and operate on the same vCPU, rsm emulation will not be 
+> executed since there is no something like seabios which implements smi handler 
+> when running syzkaller directly. This triggers a race condition when running 
+> the testcase with multiple threads. Sometimes one thread exit w/ SHUTDOWN 
+> reason, another thread mmaps and operates on the same vCPU, it continues to 
+> use CS=0x30000, IP=0x8000 to access the address of SMI handler which results 
+> in the above ept misconfig. This patch fixes it by returning RET_PF_EMULATE
+> in kvm_handle_bad_page() which would cause an emulation failure and then an 
+> exit with KVM_EXIT_INTERNAL_ERROR, the VM will stop instead of resetting and 
+> be taken advantage of.
+> 
+> Reported-by: syzbot+c1d9517cab094dae65e446c0c5b4de6c40f4dc58@syzkaller.appspotmail.com
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v1 -> v2:
+>  * return RET_PF_EMULATE
+> 
+>  arch/x86/kvm/mmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index 8eca1d0..6c5a82c 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -3029,7 +3029,7 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+>  		return RET_PF_RETRY;
+>  	}
+>  
+> -	return -EFAULT;
+> +	return RET_PF_EMULATE;
+>  }
+>  
+>  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+> 
 
-Well, right, thanks!
-
-I overlooked this instance, so dropping the patch.
-
-Thanks,
-Rafael
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
