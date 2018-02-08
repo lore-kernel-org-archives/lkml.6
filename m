@@ -1,46 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeBHMeI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:34:08 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4775 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752212AbeBHMeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:34:04 -0500
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] f2fs: set_code_data in move_data_block
-Date: Thu, 8 Feb 2018 20:33:37 +0800
-Message-ID: <1518093217-123705-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.107.193.250]
-X-CFilter-Loop: Reflected
+        id S1752302AbeBHMeN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:34:13 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:49137 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752255AbeBHMeK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:34:10 -0500
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: kishon@ti.com, Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/3] PCI: designware-ep: Return an error when requesting a too large BAR size
+Date: Thu,  8 Feb 2018 13:33:46 +0100
+Message-Id: <20180208123346.20784-4-niklas.cassel@axis.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180208123346.20784-1-niklas.cassel@axis.com>
+References: <20180208123346.20784-1-niklas.cassel@axis.com>
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/gc.c | 1 +
- 1 file changed, 1 insertion(+)
+pci_epc_set_bar() can be called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
+and can thus request a BAR size larger than 4 GB.
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index b9d93fd..2095630 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -692,6 +692,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	fio.op = REQ_OP_WRITE;
- 	fio.op_flags = REQ_SYNC;
- 	fio.new_blkaddr = newaddr;
-+	set_cold_data(fio.page);
- 	err = f2fs_submit_page_write(&fio);
- 	if (err) {
- 		if (PageWriteback(fio.encrypted_page))
+However, the pcie-designware-ep.c driver currently doesn't handle
+BAR sizes larger than 4 GB. (Since we are only writing the BAR_mask[x]
+register and not the BAR_mask[x+1] register.)
+
+For now, return an error when requesting a BAR size larger than 4 GB.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+Changes since v1:
+Use upper_32_bits() to avoid build warning on systems with 32-bit size_t.
+
+ drivers/pci/dwc/pcie-designware-ep.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index 3a6feeff5f5b..efb65a7c06b8 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -126,6 +126,11 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+ 	enum dw_pcie_as_type as_type;
+ 	u32 reg = PCI_BASE_ADDRESS_0 + (4 * bar);
+ 
++	if (upper_32_bits(size)) {
++		dev_err(pci->dev, "can't handle BAR larger than 4GB\n");
++		return -EINVAL;
++	}
++
+ 	if (!(flags & PCI_BASE_ADDRESS_SPACE))
+ 		as_type = DW_PCIE_AS_MEM;
+ 	else
 -- 
-1.8.5.2
+2.14.2
