@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeBHKBV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:01:21 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42806 "EHLO
+        id S1751910AbeBHKAk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:00:40 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50675 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbeBHKBS (ORCPT
+        with ESMTP id S1751066AbeBHKAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:01:18 -0500
+        Thu, 8 Feb 2018 05:00:38 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI / battery: Add quirk for Asus UX360UA and UX410UAK
-Date: Thu, 08 Feb 2018 10:59:35 +0100
-Message-ID: <1603805.FnSEaBbLeX@aspire.rjw.lan>
-In-Reply-To: <20180129054036.13599-1-kai.heng.feng@canonical.com>
-References: <20180129054036.13599-1-kai.heng.feng@canonical.com>
+To: Yu Chen <yu.c.chen@intel.com>
+Cc: Len Brown <lenb@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ACPI: processor_perflib: Do not send _PPC change notification if not ready
+Date: Thu, 08 Feb 2018 10:58:54 +0100
+Message-ID: <2410102.M4oN4ZjYrl@aspire.rjw.lan>
+In-Reply-To: <d71a6cf7352de5595ac1419000bd72b6d068cce1.1517192577.git.yu.c.chen@intel.com>
+References: <d71a6cf7352de5595ac1419000bd72b6d068cce1.1517192577.git.yu.c.chen@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -23,46 +24,96 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, January 29, 2018 6:40:36 AM CET Kai-Heng Feng wrote:
-> Same issue as other Asus laptops, ACPI incorrectly reports discharging
-> when battery is full and AC is plugged.
+On Monday, January 29, 2018 3:26:46 AM CET Yu Chen wrote:
+> The following warning was triggered after resumed from S3 -
+> if all the nonboot CPUs were put offline before suspend:
 > 
-> Use the same battery quirk can workaround the issue.
+> [ 1840.329515] unchecked MSR access error: RDMSR from 0x771 at rIP: 0xffffffff86061e3a (native_read_msr+0xa/0x30)
+> [ 1840.329516] Call Trace:
+> [ 1840.329521]  __rdmsr_on_cpu+0x33/0x50
+> [ 1840.329525]  generic_exec_single+0x81/0xb0
+> [ 1840.329527]  smp_call_function_single+0xd2/0x100
+> [ 1840.329530]  ? acpi_ds_result_pop+0xdd/0xf2
+> [ 1840.329532]  ? acpi_ds_create_operand+0x215/0x23c
+> [ 1840.329534]  rdmsrl_on_cpu+0x57/0x80
+> [ 1840.329536]  ? cpumask_next+0x1b/0x20
+> [ 1840.329538]  ? rdmsrl_on_cpu+0x57/0x80
+> [ 1840.329541]  intel_pstate_update_perf_limits+0xf3/0x220
+> [ 1840.329544]  ? notifier_call_chain+0x4a/0x70
+> [ 1840.329546]  intel_pstate_set_policy+0x4e/0x150
+> [ 1840.329548]  cpufreq_set_policy+0xcd/0x2f0
+> [ 1840.329550]  cpufreq_update_policy+0xb2/0x130
+> [ 1840.329552]  ? cpufreq_update_policy+0x130/0x130
+> [ 1840.329556]  acpi_processor_ppc_has_changed+0x65/0x80
+> [ 1840.329558]  acpi_processor_notify+0x80/0x100
+> [ 1840.329561]  acpi_ev_notify_dispatch+0x44/0x5c
+> [ 1840.329563]  acpi_os_execute_deferred+0x14/0x20
+> [ 1840.329565]  process_one_work+0x193/0x3c0
+> [ 1840.329567]  worker_thread+0x35/0x3b0
+> [ 1840.329569]  kthread+0x125/0x140
+> [ 1840.329571]  ? process_one_work+0x3c0/0x3c0
+> [ 1840.329572]  ? kthread_park+0x60/0x60
+> [ 1840.329575]  ? do_syscall_64+0x67/0x180
+> [ 1840.329577]  ret_from_fork+0x25/0x30
+> [ 1840.329585] unchecked MSR access error: WRMSR to 0x774 (tried to write 0x0000000000000000) at rIP: 0xffffffff86061f78 (native_write_msr+0x8/0x30)
+> [ 1840.329586] Call Trace:
+> [ 1840.329587]  __wrmsr_on_cpu+0x37/0x40
+> [ 1840.329589]  generic_exec_single+0x81/0xb0
+> [ 1840.329592]  smp_call_function_single+0xd2/0x100
+> [ 1840.329594]  ? acpi_ds_create_operand+0x215/0x23c
+> [ 1840.329595]  ? cpumask_next+0x1b/0x20
+> [ 1840.329597]  wrmsrl_on_cpu+0x57/0x70
+> [ 1840.329598]  ? rdmsrl_on_cpu+0x57/0x80
+> [ 1840.329599]  ? wrmsrl_on_cpu+0x57/0x70
+> [ 1840.329602]  intel_pstate_hwp_set+0xd3/0x150
+> [ 1840.329604]  intel_pstate_set_policy+0x119/0x150
+> [ 1840.329606]  cpufreq_set_policy+0xcd/0x2f0
+> [ 1840.329607]  cpufreq_update_policy+0xb2/0x130
+> [ 1840.329610]  ? cpufreq_update_policy+0x130/0x130
+> [ 1840.329613]  acpi_processor_ppc_has_changed+0x65/0x80
+> [ 1840.329615]  acpi_processor_notify+0x80/0x100
+> [ 1840.329617]  acpi_ev_notify_dispatch+0x44/0x5c
+> [ 1840.329619]  acpi_os_execute_deferred+0x14/0x20
+> [ 1840.329620]  process_one_work+0x193/0x3c0
+> [ 1840.329622]  worker_thread+0x35/0x3b0
+> [ 1840.329624]  kthread+0x125/0x140
+> [ 1840.329625]  ? process_one_work+0x3c0/0x3c0
+> [ 1840.329626]  ? kthread_park+0x60/0x60
+> [ 1840.329628]  ? do_syscall_64+0x67/0x180
+> [ 1840.329631]  ret_from_fork+0x25/0x30
 > 
-> BugLink: https://bugs.launchpad.net/bugs/1661876
-> BugLink: https://bugs.launchpad.net/bugs/1745032
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> This is because if there's only one online CPU, the MSR_PM_ENABLE
+> (package wide)can not be enabled after resumed, due to
+> intel_pstate_hwp_enable() will only be invoked on AP's online
+> process after resumed - if there's no AP online, the HWP remains
+> disabled after resumed (BIOS has disabled it in S3). Then if
+> there comes a _PPC change notification which touches HWP register
+> during this stage, the warning is triggered.
+> 
+> Since we don't call acpi_processor_register_performance() when
+> HWP is enabled, the pr->performance will be NULL. When this is
+> NULL we don't need to do _PPC change notification.
+> 
+> Reported-by: Doug Smythies <dsmythies@telus.net>
+> Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Signed-off-by: Yu Chen <yu.c.chen@intel.com>
 > ---
->  drivers/acpi/battery.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  drivers/acpi/processor_perflib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> index 19bc440820e6..7128488a3a72 100644
-> --- a/drivers/acpi/battery.c
-> +++ b/drivers/acpi/battery.c
-> @@ -1209,6 +1209,22 @@ static const struct dmi_system_id bat_dmi_table[] __initconst = {
->  			DMI_MATCH(DMI_PRODUCT_NAME, "UX305LA"),
->  		},
->  	},
-> +	{
-> +		.callback = battery_full_discharging_quirk,
-> +		.ident = "ASUS UX360UA",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "UX360UA"),
-> +		},
-> +	},
-> +	{
-> +		.callback = battery_full_discharging_quirk,
-> +		.ident = "ASUS UX410UAK",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "UX410UAK"),
-> +		},
-> +	},
->  	{},
->  };
+> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+> index 18b72eec3507..c7cf48ad5cb9 100644
+> --- a/drivers/acpi/processor_perflib.c
+> +++ b/drivers/acpi/processor_perflib.c
+> @@ -159,7 +159,7 @@ void acpi_processor_ppc_has_changed(struct acpi_processor *pr, int event_flag)
+>  {
+>  	int ret;
 >  
+> -	if (ignore_ppc) {
+> +	if (ignore_ppc || !pr->performance) {
+>  		/*
+>  		 * Only when it is notification event, the _OST object
+>  		 * will be evaluated. Otherwise it is skipped.
 > 
 
 Applied, thanks!
