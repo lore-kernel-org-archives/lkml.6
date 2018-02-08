@@ -1,62 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeBHSCm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:02:42 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:23600 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752436AbeBHR7A (ORCPT
+        id S1752248AbeBHSEL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:04:11 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:35175 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752021AbeBHSEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:59:00 -0500
-X-UUID: 9a6400d76795494089320c09a62b19a6-20180209
-From: <sean.wang@mediatek.com>
-To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v4 3/5] dmaengine: mediatek: update MAINTAINERS entry with MediaTek DMA driver
-Date: Fri, 9 Feb 2018 01:58:49 +0800
-Message-ID: <b2551734d0d6aefb9c6201884c470b9d643e10f1.1518110810.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1518110810.git.sean.wang@mediatek.com>
-References: <cover.1518110810.git.sean.wang@mediatek.com>
+        Thu, 8 Feb 2018 13:04:10 -0500
+Date: Thu, 8 Feb 2018 19:03:57 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>
+Subject: Re: [linus:master] BUILD REGRESSION
+ a2e5790d841658485d642196dbb0927303d6c22f
+Message-ID: <20180208180357.GC25181@hirez.programming.kicks-ass.net>
+References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+ <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
+ <20180207183543.GA8897@pd.tnic>
+ <20180207184933.GA25201@hirez.programming.kicks-ass.net>
+ <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
+ <20180207191451.GC25201@hirez.programming.kicks-ass.net>
+ <20180207192816.GA19536@pd.tnic>
+ <CA+55aFzSZzdVZXatze=xjGSwpOPO7kvbWnz7JiZ3sTx_2Pohjw@mail.gmail.com>
+ <20180208091302.GD25201@hirez.programming.kicks-ass.net>
+ <CA+55aFySLxYkUQyNf5YcEvitjm2O1whEp4-iKNASPaOpxG1j9w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFySLxYkUQyNf5YcEvitjm2O1whEp4-iKNASPaOpxG1j9w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Thu, Feb 08, 2018 at 09:27:56AM -0800, Linus Torvalds wrote:
+> On Thu, Feb 8, 2018 at 1:13 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > _The_ problem is that new binutils cannot sanely decode any function
+> > that has a WARN in (this very much includes perf annotate):
+> 
+> Ugh.
+> 
+> Is there any reason why we don't just use UD2 and avoid this whole issue?
 
-I work for MediaTek and maintain SoC targeting to home gateway and
-also will keep extending and testing the function.
+That's what I initially had, but then Arjan told me that a number of
+emulators fatally terminate on UD2 since they assume it to be BUG. Which
+is when we all went looking at UD1/UD0.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c90687e..48f85f4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8786,6 +8786,15 @@ M:	Sean Wang <sean.wang@mediatek.com>
- S:	Maintained
- F:	drivers/media/rc/mtk-cir.c
- 
-+MEDIATEK DMA DRIVER
-+M:	Sean Wang <sean.wang@mediatek.com>
-+L:	dmaengine@vger.kernel.org
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/dma/mtk-*
-+F:	drivers/dma/mediatek/
-+
- MEDIATEK PMIC LED DRIVER
- M:	Sean Wang <sean.wang@mediatek.com>
- S:	Maintained
--- 
-2.7.4
+But yes, for our purposes UD2 is perfectly fine too, it will just mess
+up the people doing bringup and the like.
