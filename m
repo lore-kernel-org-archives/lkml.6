@@ -1,180 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeBHNfN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:35:13 -0500
-Received: from mail-by2nam03on0068.outbound.protection.outlook.com ([104.47.42.68]:54599
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750961AbeBHNfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:35:11 -0500
-From: Javier Gonzalez <javier@cnexlabs.com>
-To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] lightnvm: add 2.0 geometry identification
-Thread-Topic: [PATCH 3/4] lightnvm: add 2.0 geometry identification
-Thread-Index: AQHTnnsLi3QMkLyuBUO/Xbh5ovboWKOahkuA
-Date: Thu, 8 Feb 2018 13:35:09 +0000
-Message-ID: <EC9FE5B1-5E13-4B4F-A925-07572859FBE9@cnexlabs.com>
-References: <20180205121505.27563-1-mb@lightnvm.io>
- <20180205121505.27563-4-mb@lightnvm.io>
-In-Reply-To: <20180205121505.27563-4-mb@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com;
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR06MB3282;7:Slp36dPmLqOw+NoFDBl/q2GSpfLICVy4ZNNzvixZ25pxISvATRIJdIVsSzG/GP67b4DZklsN4KBnKR9go2GUiTRKJQH7nQ8gkFJunJFrnZlBp+utxGXiOnw1NjhfTKX/x9LR8WXgQ42DQA4PLpZadOwv1zzryNpzo1Hp3AzrkOjWEgrg9Yi/JzfgI/qxUyPJJJ9AC7QPlslvLWI1nP6afWI/Fzd00JLAgSIFynwgkcZWE/Qk5AkAZnRoMrL09Esb
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: f7ea42d2-fc7a-48d8-3d7c-08d56ef8c5e7
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(49563074)(7193020);SRVR:BN6PR06MB3282;
-x-ms-traffictypediagnostic: BN6PR06MB3282:
-x-microsoft-antispam-prvs: <BN6PR06MB3282820B5DF372065DEEE56EBAF30@BN6PR06MB3282.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040501)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(10201501046)(3002001)(93006095)(93001095)(6041288)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:BN6PR06MB3282;BCL:0;PCL:0;RULEID:;SRVR:BN6PR06MB3282;
-x-forefront-prvs: 0577AD41D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(376002)(396003)(39840400004)(366004)(346002)(189003)(199004)(6436002)(6486002)(6116002)(3846002)(86362001)(106356001)(54906003)(83716003)(316002)(6246003)(3660700001)(3280700002)(99286004)(53936002)(478600001)(6512007)(33656002)(14454004)(6916009)(68736007)(82746002)(2900100001)(8676002)(81156014)(81166006)(229853002)(66066001)(105586002)(5660300001)(186003)(26005)(2950100002)(77096007)(76176011)(36756003)(102836004)(6506007)(8936002)(7736002)(305945005)(4326008)(2906002)(99936001)(25786009)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR06MB3282;H:BN6PR06MB2626.namprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: z/7LDwwvjA0f6FQZHmcmI/ceDrprEdq4JMvZVAYhbEidb6P8okXxjwxF72KMQX9NV3YiEZc2/Ozg73oV6s9tbA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_2550ADA7-9B57-4AB8-8C94-2AE842416BB3";
-        protocol="application/pgp-signature"; micalg=pgp-sha512
+        id S1752026AbeBHNhC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:37:02 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37773 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeBHNhB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:37:01 -0500
+X-Google-Smtp-Source: AH8x226GN2/JEb5en8GQF32Bi4sKei5w9q0kKa7humfvkl91YFZtEAxsS4xM+smDGcDS3f4CIsXlCZz8kumWW76qyHA=
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7ea42d2-fc7a-48d8-3d7c-08d56ef8c5e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2018 13:35:09.1816
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR06MB3282
+In-Reply-To: <780a5b3a-4829-4195-c8fd-95da27248a82@arm.com>
+References: <1517944987-343-1-git-send-email-vincent.guittot@linaro.org>
+ <1517944987-343-2-git-send-email-vincent.guittot@linaro.org> <780a5b3a-4829-4195-c8fd-95da27248a82@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 8 Feb 2018 14:36:40 +0100
+Message-ID: <CAKfTPtC0a1Ku4HxhTKBJFz2bamO+KQL9aCNab=gcd1FeNL1-ww@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] sched: Stop nohz stats when decayed
+To: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_2550ADA7-9B57-4AB8-8C94-2AE842416BB3
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+On 8 February 2018 at 13:46, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+> On 02/06/2018 07:23 PM, Vincent Guittot wrote:
+>> [...]
+>> @@ -7826,8 +7842,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>>       for_each_cpu_and(i, sched_group_span(group), env->cpus) {
+>>               struct rq *rq = cpu_rq(i);
+>>
+>> -             if (env->flags & LBF_NOHZ_STATS)
+>> -                     update_nohz_stats(rq);
+>> +             if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq))
+>> +                     env->flags |= LBF_NOHZ_AGAIN;
+>>
+>>               /* Bias balancing toward cpus of our domain */
+>>               if (local_group)
+>> @@ -7979,18 +7995,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+>>       struct sg_lb_stats *local = &sds->local_stat;
+>>       struct sg_lb_stats tmp_sgs;
+>>       int load_idx, prefer_sibling = 0;
+>> +     int has_blocked = READ_ONCE(nohz.has_blocked);
+>>       bool overload = false;
+>>
+>>       if (child && child->flags & SD_PREFER_SIBLING)
+>>               prefer_sibling = 1;
+>>
+>>  #ifdef CONFIG_NO_HZ_COMMON
+>> -     if (env->idle == CPU_NEWLY_IDLE) {
+>> +     if (env->idle == CPU_NEWLY_IDLE && has_blocked)
+>>               env->flags |= LBF_NOHZ_STATS;
+>> -
+>> -             if (cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd)))
+>> -                     nohz.next_stats = jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD);
+>> -     }
+>>  #endif
+>>
+>>       load_idx = get_sd_load_idx(env->sd, env->idle);
+>> @@ -8046,6 +8059,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+>>               sg = sg->next;
+>>       } while (sg != env->sd->groups);
+>>
+>> +#ifdef CONFIG_NO_HZ_COMMON
+>> +     if ((env->flags & LBF_NOHZ_AGAIN) &&
+>> +         cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd))) {
+>> +
+>> +             WRITE_ONCE(nohz.next_blocked,
+>> +                             jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD));
+>
+> Here we push the stats update forward if we visited all the nohz CPUs but they
+> still have blocked load. IMO we should also clear the nohz.has_blocked flag
+> if we visited all the nohz CPUs and none had blocked load left.
+>
+> If we don't do that, we could very well have cleared all of the nohz blocked
+> load in idle_balance and successfully pulled a task, but the flag isn't
+> cleared so we'll end up doing a _nohz_idle_balance() later on for nothing.
+>
+>
+> As I said in a previous comment, we also have this problem with periodic
+> load balance: if a CPU goes nohz (nohz.has_blocked is raised) but wakes up,
+> e.g. before the next nohz.next_blocked, we should stop kicking ILBs
+>
+> Now I'd need to test this, but I think it can actually get worse: if that
+> CPU keeps generating blocked load after this short idle period, no matter
+> how many _nohz_idle_balance() we go through we will never reach a point
+> where nohz.has_blocked gets cleared, and we'll keep kicking those ILBs to
+> update blocked load that already gets updated in the periodic balance.
+>
+> I think that's where a nohz blocked load cpumask can also help: on top of
+> skipping nohz CPUs that don't need an update, we can stop the whole remote
+> update machinery when the last nohz cpu with blocked load wakes up, or say
+> when it goes through its first periodic balance.
 
-> On 5 Feb 2018, at 13.15, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> Implement the geometry data structures for 2.0 and enable a drive
-> to be identified as one, including exposing the appropriate 2.0
-> sysfs entries.
->=20
-> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
-> ---
-> drivers/lightnvm/core.c      |   2 +-
-> drivers/nvme/host/lightnvm.c | 334 =
-+++++++++++++++++++++++++++++++++++++------
-> include/linux/lightnvm.h     |  11 +-
-> 3 files changed, 295 insertions(+), 52 deletions(-)
->=20
-> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-> index c72863b36439..250e74dfa120 100644
-> --- a/drivers/lightnvm/core.c
-> +++ b/drivers/lightnvm/core.c
-> @@ -934,7 +934,7 @@ static int nvm_init(struct nvm_dev *dev)
-> 	pr_debug("nvm: ver:%x nvm_vendor:%x\n",
-> 			dev->identity.ver_id, dev->identity.vmnt);
->=20
-> -	if (dev->identity.ver_id !=3D 1) {
-> +	if (dev->identity.ver_id !=3D 1 && dev->identity.ver_id !=3D 2) =
-{
-> 		pr_err("nvm: device not supported by kernel.");
-> 		goto err;
-> 	}
-> diff --git a/drivers/nvme/host/lightnvm.c =
-b/drivers/nvme/host/lightnvm.c
-> index 6412551ecc65..a9c010655ccc 100644
-> --- a/drivers/nvme/host/lightnvm.c
-> +++ b/drivers/nvme/host/lightnvm.c
-> @@ -184,6 +184,58 @@ struct nvme_nvm_bb_tbl {
-> 	__u8	blk[0];
-> };
->=20
-> +struct nvme_nvm_id20_addrf {
-> +	__u8			grp_len;
-> +	__u8			pu_len;
-> +	__u8			chk_len;
-> +	__u8			lba_len;
-> +	__u8			resv[4];
-> +};
-> +
-> +struct nvme_nvm_id20 {
-> +	__u8			mjr;
-> +	__u8			mnr;
-> +	__u8			resv[6];
-> +
-> +	struct nvme_nvm_id20_addrf lbaf;
-> +
-> +	__u32			mccap;
-> +	__u8			resv2[12];
-> +
-> +	__u8			wit;
-> +	__u8			resv3[31];
-> +
-> +	/* Geometry */
-> +	__u16			num_grp;
-> +	__u16			num_pu;
-> +	__u32			num_chk;
-> +	__u32			clba;
-> +	__u8			resv4[52];
-> +
-> +	/* Write data requirements */
-> +	__u32			ws_min;
-> +	__u32			ws_opt;
-> +	__u32			mw_cunits;
-> +	__u32			maxoc;
-> +	__u32			maxocpu;
-> +	__u8			resv5[44];
-> +
-> +	/* Performance related metrics */
-> +	__u32			trdt;
-> +	__u32			trdm;
-> +	__u32			twrt;
-> +	__u32			twrm;
-> +	__u32			tcrst;
-> +	__u32			tcrsm;
-> +	__u8			resv6[40];
-> +
-> +	/* Reserved area */
-> +	__u8			resv7[2816];
-> +
-> +	/* Vendor specific */
-> +	__u8			vs[1024];
-> +};
->=20
+The main question is : Do we want to remove all useless kicks to ilb
+or useless calls to _nohz_idle_balance at the cost of adding more
+latency in the idle/wakeup path because of the additional atomic
+operations to keep track of which CPUs are idle, tickless with blocked
+load or do we accept to kick ilb or call _nohz_idle_balance uselessly
+from time to time for some use cases
 
-All __u16, __u32 should be __le16, __le32
+I agree with you that there are some useless calls with the proposal
+which can be removed with additional checks, variables and cpumask
+manipulation. Which use case will benefits from these additional
+checks and does it worth ?
 
-Javier
+Vincent
 
---Apple-Mail=_2550ADA7-9B57-4AB8-8C94-2AE842416BB3
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlp8UgkACgkQIX4xUKFR
-nnQCEg//fM0N4+uLOozhUHivEp7vlULcpFYyTJ1lnNit3UuGsSZcFTFeqWMSBBVH
-4AitQD7QR+FuB38xugeX7RXHEiyf2HQliCseFPGLpPjUgB012xLCENhmsxWdTNJC
-MVJUHJAGWotxAVnYuhgllatDiIquG3HfBRLhIxW07DgFaP3XNMSnD4JcNo+azQgy
-bxROK+JNv6Ww/BW3L2zdk1R6c7SIZhf2qf89Fkg+5e/oTYK2YdXSiBNX5lxloA6W
-cPVc0jZQ+B1hIUACucfgY4FQroc3kBy3RH6EP5LTbW9YujaTa1kin90FjDywjsjM
-g9Wto3ZDmXdCMs1kcpXJSc6mlfElhcveuv4l57dJgFHIIAadAn/CLI1zM29xGqD1
-Pwf9tN1J39YZysIAhqNQf9ouF096FUnHthJ+jgS1KWeRLErRm9YiE85vUiL74ONU
-4vHHYOn49n6g3vd5GoLE2w85/FkVjo9UoZInxAVSk6CbVg9YAFN6lppF/wuIt8Nw
-q1pFBEibHxFv4Wo3QbIj5zP+3pzKAElWrHX08ArHxzNIVPE0WXrGM5p032s+8NsH
-DuFl1eH5G17XbXG8yfpQ/WF09oGTX6xZUUf09HcYLn5hGCaFGSXuOY8YDRb+EJy8
-L61Co1S5LFL4EHciG8uGi2e8d9SCwlH5qQAQ7eo6O1/CE8germ8=
-=rVcv
------END PGP SIGNATURE-----
-
---Apple-Mail=_2550ADA7-9B57-4AB8-8C94-2AE842416BB3--
+>
+>> +     }
+>> +#endif
+>> +
+>
