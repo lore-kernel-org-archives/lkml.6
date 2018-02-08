@@ -1,184 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeBHLbj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:31:39 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46252 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750881AbeBHLal (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:30:41 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Daniel Thompson <daniel.thompson@linaro.org>,
-        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: [PATCH v3 1/4] backlight: pwm_bl: linear interpolation between brightness-levels
-Date: Thu,  8 Feb 2018 12:30:29 +0100
-Message-Id: <20180208113032.27810-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180208113032.27810-1-enric.balletbo@collabora.com>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+        id S1752026AbeBHLgF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:36:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33494 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbeBHLgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:36:04 -0500
+Date: Thu, 8 Feb 2018 11:35:59 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, Julien Thierry <julien.thierry@arm.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        jnair@caviumnetworks.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 11/20] arm64: capabilities: Add support for features
+ enabled early
+Message-ID: <20180208113559.GW5862@e103592.cambridge.arm.com>
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-12-suzuki.poulose@arm.com>
+ <20180207103855.GB5862@e103592.cambridge.arm.com>
+ <a1275474-fbf0-91b2-befb-cbd59d5ccf1e@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a1275474-fbf0-91b2-befb-cbd59d5ccf1e@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setting num-interpolated-steps in the dts will allow you to have linear
-interpolation between values of brightness-levels. This way a high
-resolution pwm duty cycle can be used without having to list out every
-possible value in the dts. This system also allows for gamma corrected
-values.
+On Wed, Feb 07, 2018 at 06:34:37PM +0000, Suzuki K Poulose wrote:
+> On 07/02/18 10:38, Dave Martin wrote:
+> >On Wed, Jan 31, 2018 at 06:27:58PM +0000, Suzuki K Poulose wrote:
+> >>The kernel detects and uses some of the features based on the boot
+> >>CPU and expects that all the following CPUs conform to it. e.g,
+> >>with VHE and the boot CPU running at EL2, the kernel decides to
+> >>keep the kernel running at EL2. If another CPU is brought up without
+> >>this capability, we use custom hooks (via check_early_cpu_features())
+> >>to handle it. To handle such capabilities add support for detecting
+> >>and enabling capabilities based on the boot CPU.
+> >>
+> >>A bit is added to indicate if the capability should be detected
+> >>early on the boot CPU. The infrastructure then ensures that such
+> >>capabilities are probed and "enabled" early on in the boot CPU
+> >>and, enabled on the subsequent CPUs.
+> >>
+> >>Cc: Julien Thierry <julien.thierry@arm.com>
+> >>Cc: Dave Martin <dave.martin@arm.com>
+> >>Cc: Will Deacon <will.deacon@arm.com>
+> >>Cc: Mark Rutland <mark.rutland@arm.com>
+> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>---
+> >>  arch/arm64/include/asm/cpufeature.h | 48 +++++++++++++++++++++++++++++--------
+> >>  arch/arm64/kernel/cpufeature.c      | 48 +++++++++++++++++++++++++++----------
+> >>  2 files changed, 74 insertions(+), 22 deletions(-)
+> >>
+> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
 
-The most simple example is interpolate between two brightness values a
-number of steps, this can be done setting the following in the dts:
+[...]
 
-  brightness-levels = <0 65535>;
-  num-interpolated-steps = <1024>;
-  default-brightness-level = <512>;
+> >>   * 3) Verification: When a CPU is brought online (e.g, by user or by the kernel),
+> >>   *    the kernel should make sure that it is safe to use the CPU, by verifying
+> >>@@ -139,11 +148,22 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+> >>   *
+> >>   *    As explained in (2) above, capabilities could be finalised at different
+> >>   *    points in the execution. Each CPU is verified against the "finalised"
+> >>- *    capabilities and if there is a conflict, the kernel takes an action, based
+> >>- *    on the severity (e.g, a CPU could be prevented from booting or cause a
+> >>- *    kernel panic). The CPU is allowed to "affect" the state of the capability,
+> >>- *    if it has not been finalised already. See section 5 for more details on
+> >>- *    conflicts.
+> >>+ *    capabilities.
+> >>+ *
+> >>+ *	x------------------------------------------------------------------- x
+> >>+ *	| Verification:       | Boot CPU | SMP CPUs by kernel | CPUs by user |
+> >>+ *	|--------------------------------------------------------------------|
+> >>+ *	| Primary boot CPU    |          |                    |              |
+> >>+ *	|  capability         |   n      |      y             |       y      |
+> >>+ *	|--------------------------------------------------------------------|
+> >>+ *	| All others          |   n      |      n             |       y      |
+> >>+ *	x--------------------------------------------------------------------x
+> >
+> >Minor clarify nit: it's not obvious that "n" means "no conflict" and "y"
+> >means "conflict".
+> >
+> >Could we have blank cell versus "X" (with a note saying what that
+> >means), or "ok" versus "CONFLICT"?
+> 
+> This is not strictly about conflicts, but about what each CPU get
+> verified against.  Since there are multiple stages of "finalisation"
 
-This will create a brightness-level table with the following values:
+You're right: I meant something like "potential conflict", but I hadn't
+read the previous paragraph carefully enough and didn't explain what I
+meant very well.
 
-  <0 63 126 189 252 315 378 441 ... 64260 64323 64386 64449 65535>
+> for the capabilities, the table shows how the CPUs get verified.
+> 
+> Would it help if I changed the description above the table to :
+> 
+>  *    As explained in (2) above, capabilities could be finalised at different
+>  *    points in the execution. Each CPU is verified against the "finalised"
+>  *    capabilities. The following table shows, the capabilities verified
+>  *    against each CPU in the system.
+>  *
+>  *      x------------------------------------------------------------------- x
+>  *      | Verified against:   | Boot CPU | SMP CPUs by kernel | CPUs by user |
 
-Another use case can be describe a gamma corrected curve, as we have
-better sensitivity at low luminance than high luminance we probably
-want have smaller steps for low brightness levels values and bigger
-steps for high brightness levels values. This can be achieved with
-the following in the dts:
+I still find it a bit cryptic.
 
-  brightness-levels = <0 4096 65535>;
-  num-interpolated-steps = <1024>;
-  default-brightness-level = <512>;
+Would it be simpler just to write this out in prose, with reference to
+the actual capability types?  I feel that things have to be abbreviated
+a bit to fit nicely into the table otherwise.
 
-This will create a brightness-levels table with the following values:
+What about:
 
-  <0 4 8 12 16 20 ... 4096 4156 4216 4276 ... 65535>
+ * As explained in (2) above, capabilities could be finalised at different
+ * points in the execution, depending on the capability type. Each newly booted
+ * CPU is verified against those capabilities that have been finalised by the
+ * time that CPU boots:
+ *
+ *	* SCOPE_BOOT_CPU: all CPUs are verified against the capability except
+ *	  for the primary boot CPU.
+ *
+ *	* SCOPE_LOCAL_CPU, SCOPE_SYSTEM: all CPUs hotplugged on by the user
+ *	  after kernel boot are verified against the capability.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-Changes since v2:
-Requested by Daniel Thompson:
- - Use a devres alloc for table creatiion and then just swap pointers.
- - No need to use calloc because the loop initializes every element.
-Changes since v1:
-- None.
+> >>+ *    If there is a conflict, the kernel takes an action, based on the severity
+> >>+ *    (e.g, a CPU could be prevented from booting or cause a kernel panic).
+> >>+ *    The CPU is allowed to "affect" the state of the capability, if it has not
+> >>+ *    been finalised already. See section 5 for more details on conflicts.
+> >>   *
+> >>   * 4) Action: As mentioned in (2), the kernel can take an action for each detected
+> >>   *    capability, on all CPUs on the system. This is always initiated only after
 
- drivers/video/backlight/pwm_bl.c | 83 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+[...]
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 8e3f1245f5c5..f0a108ab570a 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -147,7 +147,11 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 				  struct platform_pwm_backlight_data *data)
- {
- 	struct device_node *node = dev->of_node;
-+	unsigned int num_levels = 0;
-+	unsigned int levels_count;
-+	unsigned int num_steps;
- 	struct property *prop;
-+	unsigned int *table;
- 	int length;
- 	u32 value;
- 	int ret;
-@@ -167,6 +171,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 	/* read brightness levels from DT property */
- 	if (data->max_brightness > 0) {
- 		size_t size = sizeof(*data->levels) * data->max_brightness;
-+		unsigned int i, j, n = 0;
- 
- 		data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
- 		if (!data->levels)
-@@ -184,6 +189,84 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 			return ret;
- 
- 		data->dft_brightness = value;
-+
-+		/*
-+		 * This property is optional, if is set enables linear
-+		 * interpolation between each of the values of brightness levels
-+		 * and creates a new pre-computed table.
-+		 */
-+		of_property_read_u32(node, "num-interpolated-steps",
-+				     &num_steps);
-+
-+		/*
-+		 * Make sure that there is at least two entries in the
-+		 * brightness-levels table, otherwise we can't interpolate
-+		 * between two points.
-+		 */
-+		if (num_steps) {
-+			if (data->max_brightness < 2) {
-+				dev_err(dev, "can't interpolate\n");
-+				return -EINVAL;
-+			}
-+
-+			/*
-+			 * Recalculate the number of brightness levels, now
-+			 * taking in consideration the number of interpolated
-+			 * steps between two levels.
-+			 */
-+			for (i = 0; i < data->max_brightness - 1; i++) {
-+				if ((data->levels[i + 1] - data->levels[i]) /
-+				   num_steps)
-+					num_levels += num_steps;
-+				else
-+					num_levels++;
-+			}
-+			num_levels++;
-+			dev_dbg(dev, "new number of brightness levels: %d\n",
-+				num_levels);
-+
-+			/*
-+			 * Create a new table of brightness levels with all the
-+			 * interpolated steps.
-+			 */
-+			size = sizeof(*table) * num_levels;
-+			table = devm_kzalloc(dev, size, GFP_KERNEL);
-+			if (!table)
-+				return -ENOMEM;
-+
-+			/* Fill the interpolated table. */
-+			levels_count = 0;
-+			for (i = 0; i < data->max_brightness - 1; i++) {
-+				value = data->levels[i];
-+				n = (data->levels[i + 1] - value) / num_steps;
-+				if (n > 0) {
-+					for (j = 0; j < num_steps; j++) {
-+						table[levels_count] = value;
-+						value += n;
-+						levels_count++;
-+					}
-+				} else {
-+					table[levels_count] = data->levels[i];
-+					levels_count++;
-+				}
-+			}
-+			table[levels_count] = data->levels[i];
-+
-+			/*
-+			 * As we use interpolation lets remove current
-+			 * brightness levels table and replace for the
-+			 * new interpolated table.
-+			 */
-+			devm_kfree(dev, data->levels);
-+			data->levels = table;
-+
-+			/*
-+			 * Reassign max_brightness value to the new total number
-+			 * of brightness levels.
-+			 */
-+			data->max_brightness = num_levels;
-+		}
-+
- 		data->max_brightness--;
- 	}
- 
--- 
-2.15.1
+Cheers
+---Dave
