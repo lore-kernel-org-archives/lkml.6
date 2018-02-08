@@ -1,57 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752207AbeBHXUK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 18:20:10 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:49029 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751910AbeBHXUI (ORCPT
+        id S1752318AbeBHXUj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 18:20:39 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45576 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752239AbeBHXUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 18:20:08 -0500
-Date: Thu, 8 Feb 2018 15:20:04 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc: Michal Hocko <mhocko@suse.com>, Laura Abbott <labbott@redhat.com>,
-        linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
- __GFP_HIGHMEM implicitly")
-Message-ID: <20180208232004.GA21027@bombadil.infradead.org>
-References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
- <20180208130649.GA15846@bombadil.infradead.org>
+        Thu, 8 Feb 2018 18:20:37 -0500
+X-Google-Smtp-Source: AH8x224F3KzMbcysbVRcMUOEWGnRMQmFkwfIjGwydP7kGsaTQVH8kDQoTiOIPvH4xpTHRQAJ4Al/LQ==
+Date: Fri, 9 Feb 2018 00:20:21 +0100
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        perex@perex.cz, tiwai@suse.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        tfiga@chromium.org, paul.burton@mips.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
+        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, Tony Lindgren <tony@atomide.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] ALSA: ac97: kconfig: Remove select of undefined symbol
+ AC97
+Message-ID: <20180208232021.ygw24klb7co6shrm@huvuddator>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
+ <CAFkk2KRafUf3ki2R7B1pE_wzYkYn-OdeqLnvL0kScSxdzDMEXw@mail.gmail.com>
+ <87lgg587ys.fsf@belgarion.home>
+ <20180208231536.xnlrldm4to4pfv57@huvuddator>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180208130649.GA15846@bombadil.infradead.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180208231536.xnlrldm4to4pfv57@huvuddator>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 05:06:49AM -0800, Matthew Wilcox wrote:
-> On Thu, Feb 08, 2018 at 02:29:57PM +0800, Kai Heng Feng wrote:
-> > A user with i386 instead of AMD64 machine reports [1] that commit 19809c2da28a ("mm, vmalloc: use __GFP_HIGHMEM implicitly”) causes a regression.
-> > BUG_ON(PageHighMem(pg)) in drivers/media/common/saa7146/saa7146_core.c always gets triggered after that commit.
+On Fri, Feb 09, 2018 at 12:15:36AM +0100, Ulf Magnusson wrote:
+> The AC97_BUS_NEW Kconfig symbol selects the globally undefined symbol
+> AC97.
 > 
-> Well, the BUG_ON is wrong.  You can absolutely have pages which are both
-> HighMem and under the 4GB boundary.  Only the first 896MB (iirc) are LowMem,
-> and the next 3GB of pages are available to vmalloc_32().
+> Robert Jarzmik confirmed in https://lkml.org/lkml/2018/2/7/96 that the
+> select was put in by mistake and can be safely removed, with no other
+> changes required. Remove it.
+> 
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+>  sound/ac97/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/sound/ac97/Kconfig b/sound/ac97/Kconfig
+> index f8a64e15e5bf..baa5f8ef89d2 100644
+> --- a/sound/ac97/Kconfig
+> +++ b/sound/ac97/Kconfig
+> @@ -5,7 +5,6 @@
+>  
+>  config AC97_BUS_NEW
+>  	tristate
+> -	select AC97
+>  	help
+>  	  This is the new AC97 bus type, successor of AC97_BUS. The ported
+>  	  drivers which benefit from the AC97 automatic probing should "select"
+> -- 
+> 2.14.1
+> 
 
-... nevertheless, 19809c2da28a does in fact break vmalloc_32 on 32-bit.  Look:
+I didn't have a particular tree in mind for this patchset by the way.
+Feel free to take the patch in wherever it makes sense.
 
-#if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
-#define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
-#elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
-#define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
-#else
-#define GFP_VMALLOC32 GFP_KERNEL
-#endif
-
-So we pass in GFP_KERNEL to __vmalloc_node, which calls __vmalloc_node_range
-which calls __vmalloc_area_node, which ORs in __GFP_HIGHMEM.
-
-So ... we could enable ZONE_DMA32 on 32-bit architectures.  I don't know
-what side-effects that might have; it's clearly only been tested on 64-bit
-architectures so far.
-
-It might be best to just revert 19809c2da28a and the follow-on 704b862f9efd.
+Cheers,
+Ulf
