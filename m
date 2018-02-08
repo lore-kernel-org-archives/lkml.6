@@ -1,92 +1,93 @@
-Return-Path: <David.Laight@aculab.com>
-X-Google-Smtp-Source: AH8x226JJxdI+yovBEi5C7U5MBHBDNgp88Mvxk3sFlYEWRq7agTbJusq9eTXgpygdarsEcUIDf2q
-ARC-Seal: i=1; a=rsa-sha256; t=1518109291; cv=none;
+Return-Path: <tedheadster@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518110849; cv=none;
         d=google.com; s=arc-20160816;
-        b=G/L1frYFurBmmQ3eACu9MEPuezjdOUb9g5OoZ/2t2AHIiX5FLbkEq3AD0UZtyCwBq8
-         gQHmvVlvPA9Away59Bbx7RfxNY+fgxfRzIO2Dh/Fpnti2akFICJWkHfvkVij6+8NINH1
-         Y06hhIDoBNQr70CF2iuA5ncE575tUw9DPDCn5SzuumB7FnCXWpSAYUs9mR6zuw0Q7Htv
-         sIqWhGqweozhnrPPD1uWZqP0TKCVLeEgkd93JDi3wSrNRLZqMJVmEtPlfD0bq5MzCmPv
-         GS73lkkmYn7QYPSxRXmO7fzlgJ8yBEAJmWB0QIHKMJOtfCbDrUpLE4hETZSNPugkzvmn
-         HPQg==
+        b=fBb2xasmCHytezwrvCkhl9NWgte9ua+5/NjaIE2y6ESjyrO+3rnobyr7wP8V5Eysjk
+         k9lhRfXHOfYAcAIc6NYwmOi02FU5Fr7ISmBSu8+Rg3d7FocJtsKXBjMsitqJuPPOtyKN
+         MEluapvpEMGImj3kRMlI1Ioe0M3LSxmayScskvgVhPAr4Da2pMX94xVYXKfn6gd3WsBo
+         Qa2u8iiD5tUkw10zfMBkMG2c7Eha72wp3iHxKTtOgY6YLwj65oO4QvGi7MjKGISuCh3k
+         QWU6NAFm5kDv3F3wnbyqJP70tLt0x/dWLcLXNBEufaIqrTAxpXmBb0uvfqGF28895VjS
+         aCqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=TplNujDA65wdGkG2D6OEktwli4J4JmWLOJbYs0oGK0o=;
-        b=Wmir+n7VsOmSiMEOzKVzxfvAH3ZapMZyXWRw929+vzTxTS97duux1PZoJ9b3qwhLI9
-         3yBia2BEwCO7mbVJ720C2FWMAnGkwJ/3ER3QIAm8N4BL8hC2cD/DHWZdNmAmxbb+HE7w
-         70NIsqtTvAABXaPAErN3XlGlDbjldN+VzNnXE8EabK4jrpfocsFfAjSNfxqBXou8x/yK
-         3Cr5EFLaimMKCkD0B3eZEAh97Fko8/Cfr2tQ+oPoZZ5rsf4vRNB+i16s6YtCk0i9IiLQ
-         7ZOO4leUfNqolRfJQucSKN390QVXP37CSahWzYwX54NKPMhmNZ1AYArywfgPRh7zCAML
-         dciw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=7qLhHLq7GgsQneXki9z7kk9Fc8dBcC0O7aN4Mba34Qc=;
+        b=j4hlZY3KlD41zTM3tTjI+pYDF0cmoXD3NJroeIWuaORUaUhi7sRyv/KZ+mUJHF2Bgl
+         IE3FmW0Yz6qvW2xCAzLx7Pxe9iclG6ey2+z6gJGWynrqorZBZ9q/yiurkDCbsGWAXEow
+         PkddgdA/fPaX77KF42qTy7Ngon+VZpVXEMXsT5oTZgpxx94Ca6KJe45t9WpjlwFnSJYz
+         7qsTjUHQqD6Ziqi46qfvwTePmfY6Z4OAOiJ3AybEY+2vBQMrTYFyFKJYChf2d5NqSFJy
+         fhlpDlDrWYyqpmnSHIyZX8exFEqLnQ8BKJbVTDJseukfcfstcRHfVY7aRm7LCAiDJ1TM
+         dAAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.217.181 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=sSYC56jh;
+       spf=pass (google.com: domain of tedheadster@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tedheadster@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.217.181 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Arnd Bergmann' <arnd@arndb.de>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-CC: Ondrej Zary <linux@rainbow-software.org>, "whiteheadm@acm.org"
-	<whiteheadm@acm.org>, David Woodhouse <dwmw2@infradead.org>, Guenter Roeck
-	<linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Hugh
- Dickins" <hughd@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, "Jiri
- Kosina" <jikos@kernel.org>, Borislav Petkov <bp@alien8.de>, Kees Cook
-	<keescook@chromium.org>, Jamie Iles <jamie@jamieiles.com>, Eduardo Valentin
-	<eduval@amazon.com>, Laura Abbott <labbott@redhat.com>, Rik van Riel
-	<riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>, "Linux Kernel
- Mailing List" <linux-kernel@vger.kernel.org>
-Subject: RE: [BUG] x86 : i486 reporting to be vulnerable to
- Meltdown/Spectre_V1/Spectre_V2
-Thread-Topic: [BUG] x86 : i486 reporting to be vulnerable to
- Meltdown/Spectre_V1/Spectre_V2
-Thread-Index: AQHToPDO+LB8+cTBLkCPgdNxHI8N26Oat6YA
-Date: Thu, 8 Feb 2018 17:02:14 +0000
-Message-ID: <63ca28c5acb64de5ba33a81b6da5c507@AcuMS.aculab.com>
-References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
- <1517950494.3677.30.camel@infradead.org>
- <CAP8WD_ZaewC-NE4szBzU3brvNhvV9PwoVo-uDFcEMTMWVbsxQQ@mail.gmail.com>
- <201802070918.18978.linux@rainbow-software.org>
- <20180208134908.4b516794@alans-desktop>
- <CAK8P3a2kuHXpJOVKux2v-B_=CrpnQBTMfV24sJqY+nQaSMf+KA@mail.gmail.com>
-In-Reply-To: <CAK8P3a2kuHXpJOVKux2v-B_=CrpnQBTMfV24sJqY+nQaSMf+KA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=sSYC56jh;
+       spf=pass (google.com: domain of tedheadster@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tedheadster@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x227YtGyvSfG/SPLU/Y5SoBw3eB34UXcQ5/zUcWqlFHes4kt8Hm352e/Xogkt/iRER1CGvL+t1YFSi4i+sD5Ar3Y=
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+Reply-To: whiteheadm@acm.org
+In-Reply-To: <63ca28c5acb64de5ba33a81b6da5c507@AcuMS.aculab.com>
+References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
+ <1517950494.3677.30.camel@infradead.org> <CAP8WD_ZaewC-NE4szBzU3brvNhvV9PwoVo-uDFcEMTMWVbsxQQ@mail.gmail.com>
+ <201802070918.18978.linux@rainbow-software.org> <20180208134908.4b516794@alans-desktop>
+ <CAK8P3a2kuHXpJOVKux2v-B_=CrpnQBTMfV24sJqY+nQaSMf+KA@mail.gmail.com> <63ca28c5acb64de5ba33a81b6da5c507@AcuMS.aculab.com>
+From: tedheadster <tedheadster@gmail.com>
+Date: Thu, 8 Feb 2018 12:27:08 -0500
+Message-ID: <CAP8WD_YujTxLjMD_iXMzmC0V=JVPZQtXfqD7aEEr-+SVaUaaLg@mail.gmail.com>
+Subject: Re: [BUG] x86 : i486 reporting to be vulnerable to Meltdown/Spectre_V1/Spectre_V2
+To: David Laight <David.Laight@aculab.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+	Ondrej Zary <linux@rainbow-software.org>, David Woodhouse <dwmw2@infradead.org>,
+	Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hugh Dickins <hughd@google.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Jiri Kosina <jikos@kernel.org>, Borislav Petkov <bp@alien8.de>, Kees Cook <keescook@chromium.org>,
+	Jamie Iles <jamie@jamieiles.com>, Eduardo Valentin <eduval@amazon.com>,
+	Laura Abbott <labbott@redhat.com>, Rik van Riel <riel@surriel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591354140743903681?=
-X-GMAIL-MSGID: =?utf-8?q?1591852968450895340?=
+X-GMAIL-MSGID: =?utf-8?q?1591854602097528341?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAwOCBGZWJydWFyeSAyMDE4IDE1OjIzDQouLi4N
-Cj4gVGhlIFdpbmNoaXAgaXMgd2hhdCBldmVudHVhbGx5IHR1cm5lZCBpbnRvIHRoZSBWSUEgTmFu
-bywgd2hpY2ggZG9lcw0KPiBoYXZlIHNwZWN1bGF0aXZlIGV4ZWN1dGlvbiwgYnV0IEkgZG9uJ3Qg
-dGhpbmsgdGhlIGVhcmxpZXIgQzMgYW5kIEM3IGRpZCwNCj4gdGhleSBhcmUgbXVjaCBjbG9zZXIg
-dG8gdGhlIG9yaWdpbmFsIFdpbmNoaXAgZGVzaWduLg0KDQpXZSBoYWQgdGVycmlibGUgdHJvdWJs
-ZSBnZXR0aW5nIChJSVJDKSB0aGUgQzcgdG8gZXhlY3V0ZSBmdW5jdGlvbnMNCnRoYXQgd2VyZSBj
-YWxsZWQgaW4gMTZiaXQgbW9kZSBhbmQgcmV0dXJuZWQgaW4gMzJiaXQgbW9kZSBhbmQgdi52Lg0K
-KGZvciBib290IGNvZGUgYmlvcyBjYWxscykuDQpUaGUgcHJvYmxlbXMgc2VlbWVkIHRvIGltcGx5
-IHRoYXQgaXQgd2FzIGNhY2hpbmcgcmV0dXJuIGFkZHJlc3Nlcw0KYW5kIHRoZSB0cmFuc2xhdGlv
-biAodG8gdW9wcykgb2YgdGhlIGluc3RydWN0aW9ucyB0aGF0IGZvbGxvd2VkLg0KU28gaXQgd291
-bGQgZWZmZWN0aXZlbHkgZGVjb2RlIHRoZSBmaXJzdCBmZXcgYnl0ZXMgaW4gdGhlIHdyb25nIG1v
-ZGUuDQpTbyB0aGVyZSBtaWdodCBiZSBzY29wZSBmb3Igb25lIG9mIHRoZXNlIGF0dGFja3MuDQoN
-Ck9UT0ggdGhlc2UgZGV2aWNlcyB3ZXJlIHNvIHNsb3cgdGhhdCBJIGRvdWJ0IGFueSBhcmUgdXNl
-ZCBmb3IgYW55dGhpbmcNCnNlcmlvdXMgLSBhbmQgY2VydGFpbmx5IHdvbid0IGdldCBhIGtlcm5l
-bCB1cGRhdGUgZXZlbiBpZiB0aGV5IGFyZS4NCg0KQWxzbyB3b3J0aCBub3RoaW5nIHRoYXQgdGhl
-IGRpZmZlcmVuY2UgYmV0d2VlbiB0aGUgY3B1IGFuZCBtZW1vcnkNCnNwZWVkcyBpcyBtdWNoIGxv
-d2VyIC0gc28gZmFyIGZld2VyIGluc3RydWN0aW9ucyBjb3VsZCBiZSBzcGVjdWxhdGl2ZWx5DQpl
-eGVjdXRlZCB3aGlsZSB3YWl0aW5nIGEgY2FjaGUgbWlzcy4NCg0KVGVtcHRpbmcgdG8gZGlzYWJs
-ZSBldmVyeXRoaW5nLg0KDQoJRGF2aWQNCg0K
+On Thu, Feb 8, 2018 at 12:02 PM, David Laight <David.Laight@aculab.com> wrote:
+> From: Arnd Bergmann
+>> Sent: 08 February 2018 15:23
+> ...
+>> The Winchip is what eventually turned into the VIA Nano, which does
+>> have speculative execution, but I don't think the earlier C3 and C7 did,
+>> they are much closer to the original Winchip design.
+>
+> We had terrible trouble getting (IIRC) the C7 to execute functions
+> that were called in 16bit mode and returned in 32bit mode and v.v.
+> (for boot code bios calls).
+> The problems seemed to imply that it was caching return addresses
+> and the translation (to uops) of the instructions that followed.
+> So it would effectively decode the first few bytes in the wrong mode.
+> So there might be scope for one of these attacks.
+>
+> OTOH these devices were so slow that I doubt any are used for anything
+> serious - and certainly won't get a kernel update even if they are.
+>
+> Also worth nothing that the difference between the cpu and memory
+> speeds is much lower - so far fewer instructions could be speculatively
+> executed while waiting a cache miss.
+>
+> Tempting to disable everything.
+>
+>         David
+
+You might think this absolutely crazy, but I would be willing to test
+such systems if I can get my hands on the needed hardware that I lack.
+I am already doing sanity testing on Intel
+i486/i586/i586-MMX/i686-PentiumPro systems, I just don't have the
+clone cpus (Cyrix, etc).
+
+While few people are using the 32bit kernel, I don't think we want to
+kill it completely just yet.
+
+- Matthew
