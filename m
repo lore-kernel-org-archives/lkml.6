@@ -1,46 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeBHP1F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:27:05 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:50008 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751963AbeBHP1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:27:03 -0500
-Date: Thu, 8 Feb 2018 16:26:42 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, bp@suse.de,
-        tony.luck@intel.com, x86@kernel.org
-Subject: Re: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized
- block
-Message-ID: <20180208152642.GF7964@pd.tnic>
-References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
- <20180201184813.82253-3-Yazen.Ghannam@amd.com>
+        id S1752266AbeBHP3G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:29:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60154 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751190AbeBHP3D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:29:03 -0500
+Subject: Re: [PATCH v2 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
+ support
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, geert@linux-m68k.org,
+        stefan.kristiansson@saunalahti.fi, tomi.valkeinen@ti.com,
+        schwidefsky@de.ibm.com, dri-devel@lists.freedesktop.org,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        user-mode-linux-devel@lists.sourceforge.net
+References: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
+ <CGME20180202080007epcas5p306896fe66e4bbf4bf5f8d91306a5d016@epcas5p3.samsung.com>
+ <246f92c9-15dc-223f-59d9-b2f0756cdf5e@de.ibm.com>
+ <1610039.4trOurtpys@amdc3058>
+From: Farhan Ali <alifm@linux.vnet.ibm.com>
+Date: Thu, 8 Feb 2018 10:28:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180201184813.82253-3-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1610039.4trOurtpys@amdc3058>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18020815-0040-0000-0000-000003F0BFF7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008497; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000249; SDB=6.00986770; UDB=6.00500810; IPR=6.00766129;
+ BA=6.00005820; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019444; XFM=3.00000015;
+ UTC=2018-02-08 15:29:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020815-0041-0000-0000-000007E633FB
+Message-Id: <00fb2500-7656-f604-4253-3b7e73b9730a@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802080180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 12:48:13PM -0600, Yazen Ghannam wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> The block address is saved after the block is initialized when
-> threshold_init_device() is called.
-> 
-> Use the saved block address, if available, rather than trying to
-> rediscover it.
-> 
-> We can avoid some *on_cpu() calls in the init path that will cause a
-> call trace when resuming from suspend.
 
-Ditto.
 
--- 
-Regards/Gruss,
-    Boris.
+On 02/08/2018 08:11 AM, Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+> [ dri-devel ML & arch/[score,um] Maintainers added to Cc: ]
+> 
+> On Friday, February 02, 2018 08:59:57 AM Christian Borntraeger wrote:
+>> On 02/01/2018 07:41 PM, Farhan Ali wrote:
+>>> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
+>>> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
+>>> "Graphics support" menu for S390. But if we enable VT layer for S390,
+>>> we would also need to enable the dummy console. So let's remove the
+>>> HAS_IOMEM dependency.
+>>>
+>>> Move this dependency to Opencores framebuffer driver which would fail to build
+>>> with CONFIG_HAS_IOMEM disabled:
+>>>
+>>> ERROR: "devm_ioremap_resource" [drivers/video/fbdev/ocfb.ko] undefined!
+> 
+> "Graphics support" menu covers other things (i.e. DRM), I assume that
+> they were also checked to not break due to this change?
+> 
+Yes, DRM compiled fine. And we (s390) would need the DRM subsystem for 
+Virtio GPU as well.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> Moreover it seems that after this change "Graphics support" menu will
+> be also enabled (besides s390) for score, tile and um architectures,
+> I assume that this is okay?
+> 
+>>> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
+>>> Tested-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+>>
+>> This also enables several PCI based graphic device driver on s390.
+>> This makes no sense but they all compile fine so I guess this is ok.
+>>
+>> I think patch 2 and 3 are clearly for the s390 tree, patch 1 seems trivial
+>> Also ccing Bart. Can we maybe get an ack to carry this patch also via the s390
+>> tree?
+>>
+>>
+>>> ---
+>>>   drivers/video/Kconfig       | 1 -
+>>>   drivers/video/fbdev/Kconfig | 2 +-
+>>>   2 files changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+>>> index 3c20af9..41e7ba9 100644
+>>> --- a/drivers/video/Kconfig
+>>> +++ b/drivers/video/Kconfig
+>>> @@ -3,7 +3,6 @@
+>>>   #
+>>>
+>>>   menu "Graphics support"
+>>> -	depends on HAS_IOMEM
+>>>
+>>>   config HAVE_FB_ATMEL
+>>>   	bool
+>>> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+>>> index 2f615b7..ec9c9ce 100644
+>>> --- a/drivers/video/fbdev/Kconfig
+>>> +++ b/drivers/video/fbdev/Kconfig
+>>> @@ -966,7 +966,7 @@ config FB_PVR2
+>>>
+>>>   config FB_OPENCORES
+>>>   	tristate "OpenCores VGA/LCD core 2.0 framebuffer support"
+>>> -	depends on FB && HAS_DMA
+>>> +	depends on FB && HAS_DMA && HAS_IOMEM
+>>>   	select FB_CFB_FILLRECT
+>>>   	select FB_CFB_COPYAREA
+>>>   	select FB_CFB_IMAGEBLIT
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
