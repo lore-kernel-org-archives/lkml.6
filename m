@@ -1,173 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752391AbeBHMCD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:02:03 -0500
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:50661 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752258AbeBHMCB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:02:01 -0500
-Subject: Re: [PATCH v8 0/7] TDA1997x HDMI video reciver
-From: Hans Verkuil <hverkuil@xs4all.nl>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Tim Harvey <tharvey@gateworks.com>
-Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
- <c7771c44-a9ff-0207-38f6-28bcc06ccdee@xs4all.nl>
- <CAJ+vNU1oiM0Y0rO-DHi57nVOqnw60A7pn_1=h5b46-BrY7_p2Q@mail.gmail.com>
- <605fd4a8-43ab-c566-57b6-abb1c9f8f0f8@xs4all.nl>
- <7cf38465-7a79-5d81-a995-9acfbacf5023@xs4all.nl>
- <CAJ+vNU014FJZsb44YnidE3fFiqeB6o8A7kvGinJWu7=yq3_dhA@mail.gmail.com>
- <d188a172-fc00-eb46-c6f5-833a86475390@xs4all.nl>
- <1518086816.4359.4.camel@pengutronix.de>
- <3b95357c-e44f-eed9-efd3-e2b0e4ff9eb2@xs4all.nl>
-Message-ID: <e13db87e-761a-b0e5-3802-348c9776674a@xs4all.nl>
-Date: Thu, 8 Feb 2018 13:01:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1752402AbeBHME1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:04:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33942 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750877AbeBHME0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:04:26 -0500
+Date: Thu, 8 Feb 2018 12:04:22 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
+Subject: Re: [PATCH v2 16/20] arm64: Handle shared capability entries
+Message-ID: <20180208120421.GY5862@e103592.cambridge.arm.com>
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-17-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <3b95357c-e44f-eed9-efd3-e2b0e4ff9eb2@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAl4rO7EcLhrbP1nNpV0t1174FwGp27adGw2GTT5GG8scITcbxrxxkTWyOSxvbtiZn9EXluKi9YmJh4ednTDd6ovSf7eq8Gzuv/hFAvtNu7cVFmVZf1Q
- iDbz+mNx8XO8sewq+ME7T5mG0U3+mbVlqAQaUYdLFjztomYQUY8bpAkhHDua5wRbXa1UtfViWiMw4drv+CbaE1fSbQV/z+f1ObRkpm4gbyqB/BRjHSWIz7KI
- 4dU4wHuSuEBhGZaAdvi/kUG1tylu/KcD0o8KCZoaZ7KNDN9vO9YwzDaxC9o2UKZsMMaM5OR/leIVfEMCkF9TEF12+jPDNB9EY7ZcmLTCBpIVeQJ2p++rI9lM
- 0MerW9HKnagAgZbhZXP88hdW9sWc4/p/Ofccu6zFrNKKA6JWyvTrRTITlYS0tY1sUPAuas4RCy5mjWCE6POqxmaklwITlAHg98ngehB54e6Yl3DAHO7ztmQH
- Z9xHe/NtQLRXs706P7P7byLTKRuqFKKzPTcsW3njybMhtiafOlk6NiDxZkd2RSFY8sPTpV/aSiz9IuQ1rIB2EvPxVeJOvILtwq0xobQIUq3B/c4cd/UKii9o
- 7Kw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180131182807.32134-17-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/18 12:56, Hans Verkuil wrote:
-> On 02/08/18 11:46, Philipp Zabel wrote:
->> On Wed, 2018-02-07 at 23:19 +0100, Hans Verkuil wrote:
->>> On 02/07/2018 11:05 PM, Tim Harvey wrote:
->>>> On Wed, Feb 7, 2018 at 1:09 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>>> On 02/07/18 09:22, Hans Verkuil wrote:
->>>>>> On 02/07/2018 12:29 AM, Tim Harvey wrote:
->>>>>>> Media Controller ioctls:
->>>>>>>                 fail: v4l2-test-media.cpp(141): ent.function ==
->>>>>>> MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
->>>>>>
->>>>>> Weird, this shouldn't happen. I'll look into this a bit more.
->>>>>
->>>>> Can you run 'mc_nextgen_test -e -i' and post the output?
->>>>>
->>>>> It's found in contrib/test.
->>>>>
->>>>
->>>> root@ventana:~# ./v4l-utils/contrib/test/mc_nextgen_test -e -i
->>>> Device: imx-media (driver imx-media)
->>>> Bus:
->>>> version: 0
->>>> number of entities: 24
->>>> number of interfaces: 24
->>>> number of pads: 48
->>>> number of links: 50
->>>> entity entity#1: 'unknown entity type' adv7180 2-0020, 1 pad(s), 1 source(s)
->>>> entity entity#3: 'unknown entity type' tda19971 2-0048, 1 pad(s), 1 source(s)
->>>> entity entity#5: 'unknown entity type' ipu1_vdic, 3 pad(s), 2 sink(s),
->>>> 1 source(s)
->>>> entity entity#9: 'unknown entity type' ipu2_vdic, 3 pad(s), 2 sink(s),
->>>> 1 source(s)
->>>> entity entity#13: 'unknown entity type' ipu1_ic_prp, 3 pad(s), 1
->>>> sink(s), 2 source(s)
->>>> entity entity#17: 'unknown entity type' ipu1_ic_prpenc, 2 pad(s), 1
->>>> sink(s), 1 source(s)
->>>> entity entity#20: 'V4L I/O' ipu1_ic_prpenc capture, 1 pad(s), 1 sink(s)
->>>> entity entity#26: 'unknown entity type' ipu1_ic_prpvf, 2 pad(s), 1
->>>> sink(s), 1 source(s)
->>>> entity entity#29: 'V4L I/O' ipu1_ic_prpvf capture, 1 pad(s), 1 sink(s)
->>>> entity entity#35: 'unknown entity type' ipu2_ic_prp, 3 pad(s), 1
->>>> sink(s), 2 source(s)
->>>> entity entity#39: 'unknown entity type' ipu2_ic_prpenc, 2 pad(s), 1
->>>> sink(s), 1 source(s)
->>>> entity entity#42: 'V4L I/O' ipu2_ic_prpenc capture, 1 pad(s), 1 sink(s)
->>>> entity entity#48: 'unknown entity type' ipu2_ic_prpvf, 2 pad(s), 1
->>>> sink(s), 1 source(s)
->>>> entity entity#51: 'V4L I/O' ipu2_ic_prpvf capture, 1 pad(s), 1 sink(s)
->>>> entity entity#57: 'unknown entity type' ipu1_csi0, 3 pad(s), 1
->>>> sink(s), 2 source(s)
->>>> entity entity#61: 'V4L I/O' ipu1_csi0 capture, 1 pad(s), 1 sink(s)
->>>> entity entity#67: 'unknown entity type' ipu1_csi1, 3 pad(s), 1
->>>> sink(s), 2 source(s)
->>>> entity entity#71: 'V4L I/O' ipu1_csi1 capture, 1 pad(s), 1 sink(s)
->>>> entity entity#77: 'unknown entity type' ipu2_csi0, 3 pad(s), 1
->>>> sink(s), 2 source(s)
->>>> entity entity#81: 'V4L I/O' ipu2_csi0 capture, 1 pad(s), 1 sink(s)
->>>> entity entity#87: 'unknown entity type' ipu2_csi1, 3 pad(s), 1
->>>> sink(s), 2 source(s)
->>>> entity entity#91: 'V4L I/O' ipu2_csi1 capture, 1 pad(s), 1 sink(s)
->>>> entity entity#97: 'unknown entity type' ipu1_csi0_mux, 3 pad(s), 2
->>>> sink(s), 1 source(s)
->>>> entity entity#101: 'unknown entity type' ipu2_csi1_mux, 3 pad(s), 2
->>>> sink(s), 1 source(s)
->>>
->>> Yuck. So nobody in imx (and adv7180!) is setting a valid function.
->>> And I see the mc_nextgen_test.c doesn't know all the latest functions
->>> anyway.
->>
->> That's probably because for most of the entities it's a bit unclear
->> which function should be assigned.
+On Wed, Jan 31, 2018 at 06:28:03PM +0000, Suzuki K Poulose wrote:
+> Some capabilities have different criteria for detection and associated
+> actions based on the matching criteria, even though they all share the
+> same capability bit. So far we have used multiple entries with the same
+> capability bit to handle this. This is prone to errors, as the
+> cpu_enable is invoked for each entry, irrespective of whether the
+> detection rule applies to the CPU or not. And also this complicates
+> other helpers, e.g, __this_cpu_has_cap.
 > 
-> Well, that's one reason. The other is that there never was a utility
-> to test this :-)
+> This patch adds a wrapper entry to cover all the possible variations
+> of a capability and ensures :
+>  1) The capabilitiy is set when at least one of the entry detects
+>  2) Action is only taken for the entries that detects.
 > 
->> ipu[12]_csi[01]_mux are video multiplexers, so MEDIA_ENT_F_VID_MUX. I
->> thought those should already be set correctly in the video-mux driver.
+> This avoids explicit checks in the call backs. The only constraint
+> here is that, all the entries should have the same "type".
 > 
-> They are. The mc_nextgen_test, media-ctl and now v4l2-ctl/v4l2-compliance
-> all have their own list of functions that they know about and it's all
-> different. It's one of the things I want to fix.
-> 
->> ipu[12]_csi[01] are the interfaces to the outside parallel busses, but
->> they can also 'downscale' by skipping, skip frames and pack or expand
->> pixels from the bus into the internal FIFOs that lead to the next
->> element. These are not MEDIA_ENT_F_VID_IF_BRIDGE, are they?
-> 
-> Yes, they are. One limitation of the current API is that you cannot
-> represent correctly devices with multiple functions. This is planned for
-> a long time now, but nobody actually did the work. So for now just fill
-> in the primary function with a comment that in the future other functions
-> should be set as well.
-> 
->> ipu[12]_vdic are mainly deinterlacers, so a new function
->> MEDIA_ENT_F_PROC_VIDEO_DEINTERLACER ? These entities could also be used
->> as composers in a mem2mem scenario (MEDIA_ENT_F_PROC_VIDEO_COMPOSER ?),
->> but this is currently not supported.
-> 
-> Yes, we need a PROC_VIDEO_DEINTERLACER function.
-> 
->>
->> ipu[12]_ic_prp is just a tee element that feeds both ipu[12]_ic_prpenc
->> and ipu[12]_ic_prpvf. These are both scalers and colorspace converters.
->> MEDIA_ENT_F_PROC_VIDEO_SCALER ?
->> MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV ?
-> 
-> The tee element would be a new PROC_VIDEO_SPLITTER function.
-> 
-> The other two would be scalers, but should add the VIDEO_PIXEL_ENC_CONV
-> function once it is possible to do so.
-> 
->>
->> "ipu[12]_csi[01] capture" are the DMA elements writing to memory, so
->> MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER ?
-> 
-> These are likely to be filled correctly already. I've just added a commit
-> to v4l2-compliance to make it easier to see what function is used:
-> 
-> 	v4l2-compliance -m0 -v
+> Cc: Dave Martin <dave.martin@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
 
-Actually, can you run this using the latest v4l-utils version for the imx
-and post the output?
+[...]
 
-Regards,
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
 
-	Hans
+[...]
+
+> @@ -1275,7 +1274,7 @@ static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_li
+>  		if (!(caps->type & scope_mask))
+>  			continue;
+>  
+> -		cpu_has_cap = __this_cpu_has_cap(caps_list, caps->capability);
+> +		cpu_has_cap = caps->matches(caps, SCOPE_LOCAL_CPU);
+
+One other minor thing: the original caps_list argument seems no longer
+to be needed in this function after this change.
+
+Can we rename the caps_list argument to "caps" and remove the local
+variable of the same name?
+
+Cheers
+---Dave
