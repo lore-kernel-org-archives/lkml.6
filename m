@@ -1,128 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeBHLgv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:36:51 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33524 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752117AbeBHLgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:36:49 -0500
-Subject: Re: [PATCH v1 02/16] irqchip: gicv3-its: Add helpers for handling
- 52bit address
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>
-Cc: mark.rutland@arm.com, peter.maydell@linaro.org, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, marc.zyngier@arm.com, catalin.marinas@arm.com,
-        ard.biesheuvel@linaro.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        Shanker Donthineni <shankerd@codeaurora.org>, pbonzini@redhat.com,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180109190414.4017-3-suzuki.poulose@arm.com> <20180207151023.GD29286@cbox>
- <a9e37c29-3be0-8759-a8e3-3e0a273e151d@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <11d269bd-2cb3-5aa3-fa0d-44fca2d3373e@arm.com>
-Date: Thu, 8 Feb 2018 11:36:45 +0000
+        id S1752192AbeBHLns (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:43:48 -0500
+Received: from foss.arm.com ([217.140.101.70]:33628 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750961AbeBHLnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:43:47 -0500
+Subject: Re: [PATCH v2 11/20] arm64: capabilities: Add support for features
+ enabled early
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, Julien Thierry <julien.thierry@arm.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        jnair@caviumnetworks.com, linux-arm-kernel@lists.infradead.org
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-12-suzuki.poulose@arm.com>
+ <20180207103855.GB5862@e103592.cambridge.arm.com>
+ <a1275474-fbf0-91b2-befb-cbd59d5ccf1e@arm.com>
+ <20180208113559.GW5862@e103592.cambridge.arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <56ca9a17-b8db-8c3e-0267-049cedf28edc@arm.com>
+Date: Thu, 8 Feb 2018 11:43:44 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <a9e37c29-3be0-8759-a8e3-3e0a273e151d@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180208113559.GW5862@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 11:20, Suzuki K Poulose wrote:
-> On 07/02/18 15:10, Christoffer Dall wrote:
->> Hi Suzuki,
->>
->> On Tue, Jan 09, 2018 at 07:03:57PM +0000, Suzuki K Poulose wrote:
->>> Add helpers for encoding/decoding 52bit address in GICv3 ITS BASER
->>> register. When ITS uses 64K page size, the 52bits of physical address
->>> are encoded in BASER[47:12] as follows :
->>>
->>>   Bits[47:16] of the register => bits[47:16] of the physical address
->>>   Bits[15:12] of the register => bits[51:48] of the physical address
->>>                                  bits[15:0] of the physical address 
->>> are 0.
->>>
->>> Also adds a mask for CBASER address. This will be used for adding 52bit
->>> support for VGIC ITS. More importantly ignore the upper bits if 52bit
->>> support is not enabled.
->>>
->>> Cc: Shanker Donthineni <shankerd@codeaurora.org>
->>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> ---
-> 
-> 
->>> +
->>> +/*
->>> + * With 64K page size, the physical address can be upto 52bit and
->>> + * uses the following encoding in the GITS_BASER[47:12]:
->>> + *
->>> + * Bits[47:16] of the register => bits[47:16] of the base physical 
->>> address.
->>> + * Bits[15:12] of the register => bits[51:48] of the base physical 
->>> address.
->>> + *                                bits[15:0] of the base physical 
->>> address are 0.
->>> + * Clear the upper bits if the kernel doesn't support 52bits.
->>> + */
->>> +#define GITS_BASER_ADDR64K_LO_MASK    GENMASK_ULL(47, 16)
->>> +#define GITS_BASER_ADDR64K_HI_SHIFT    12
->>> +#define GITS_BASER_ADDR64K_HI_MOVE    (48 - 
->>> GITS_BASER_ADDR64K_HI_SHIFT)
->>> +#define GITS_BASER_ADDR64K_HI_MASK    (GITS_PA_HI_MASK << 
->>> GITS_BASER_ADDR64K_HI_SHIFT)
->>> +#define GITS_BASER_ADDR64K_TO_PHYS(x)                    \
->>> +    (((x) & GITS_BASER_ADDR64K_LO_MASK) |                 \
->>> +     (((x) & GITS_BASER_ADDR64K_HI_MASK) << 
->>> GITS_BASER_ADDR64K_HI_MOVE))
->>> +#define GITS_BASER_ADDR64K_FROM_PHYS(p)                    \
->>> +    (((p) & GITS_BASER_ADDR64K_LO_MASK) |                 \
->>> +     (((p) >> GITS_BASER_ADDR64K_HI_MOVE) & 
->>> GITS_BASER_ADDR64K_HI_MASK))
->>
->> I don't understand why you need this masking logic embedded in these
->> macros?  Isn't it strictly an error if anyone passes a physical address
->> with any of bits [51:48] set to the ITS on a system that doesn't support
->> 52 bit PAs, and just silently masking off those bits could lead to some
->> interesting cases.
-> 
-> What do you think is the best way to handle such cases ? May be I could add
-> some checks where we get those addresses and handle it before we use this
-> macro ?
-> 
->>
->> This is also notably more difficult to read than the existing macro.
->>
->> If anything, I think it would be more useful to have
->> GITS_BASER_TO_PHYS(x) and GITS_PHYS_TO_BASER(x) which takes into account
->> CONFIG_ARM64_64K_PAGES.
-> 
-> I thought the 64K_PAGES is not kernel page size, but the page-size 
-> configured
-> by the "requester" for ITS. So, it doesn't really mean 
-> CONFIG_ARM64_64K_PAGES.
-> But the other way around, we can't handle 52bit address unless 
-> CONFIG_ARM64_64K_PAGES
-> is selected. Also, if the guest uses a 4K page size and uses a 48 bit 
-> address,
-> we could potentially mask Bits[15:12] to 0, which is not nice.
-> 
-> So I still think we need to have a special macro for handling addresses 
-> with 64K
-> page size in ITS.
+On 08/02/18 11:35, Dave Martin wrote:
+> On Wed, Feb 07, 2018 at 06:34:37PM +0000, Suzuki K Poulose wrote:
+>> On 07/02/18 10:38, Dave Martin wrote:
+>>> On Wed, Jan 31, 2018 at 06:27:58PM +0000, Suzuki K Poulose wrote:
 
-If it's allowed to go wrong for invalid input, then you don't even need 
-to consider the page size at all, except if you care about 
-micro-optimising out a couple of instructions. For valid page-aligned 
-addresses, [51:48] and [15:12] can never *both* be nonzero, therefore 
-just this should be fine for all granules:
+>>>>    * 3) Verification: When a CPU is brought online (e.g, by user or by the kernel),
+>>>>    *    the kernel should make sure that it is safe to use the CPU, by verifying
+>>>> @@ -139,11 +148,22 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>>>>    *
+>>>>    *    As explained in (2) above, capabilities could be finalised at different
+>>>>    *    points in the execution. Each CPU is verified against the "finalised"
+>>>> - *    capabilities and if there is a conflict, the kernel takes an action, based
+>>>> - *    on the severity (e.g, a CPU could be prevented from booting or cause a
+>>>> - *    kernel panic). The CPU is allowed to "affect" the state of the capability,
+>>>> - *    if it has not been finalised already. See section 5 for more details on
+>>>> - *    conflicts.
+>>>> + *    capabilities.
+>>>> + *
+>>>> + *	x------------------------------------------------------------------- x
+>>>> + *	| Verification:       | Boot CPU | SMP CPUs by kernel | CPUs by user |
+>>>> + *	|--------------------------------------------------------------------|
+>>>> + *	| Primary boot CPU    |          |                    |              |
+>>>> + *	|  capability         |   n      |      y             |       y      |
+>>>> + *	|--------------------------------------------------------------------|
+>>>> + *	| All others          |   n      |      n             |       y      |
+>>>> + *	x--------------------------------------------------------------------x
+>>>
+>>> Minor clarify nit: it's not obvious that "n" means "no conflict" and "y"
+>>> means "conflict".
+>>>
+>>> Could we have blank cell versus "X" (with a note saying what that
+>>> means), or "ok" versus "CONFLICT"?
+>>
+>> This is not strictly about conflicts, but about what each CPU get
+>> verified against.  Since there are multiple stages of "finalisation"
+> 
+> You're right: I meant something like "potential conflict", but I hadn't
+> read the previous paragraph carefully enough and didn't explain what I
+> meant very well.
+> 
+>> for the capabilities, the table shows how the CPUs get verified.
+>>
+>> Would it help if I changed the description above the table to :
+>>
+>>   *    As explained in (2) above, capabilities could be finalised at different
+>>   *    points in the execution. Each CPU is verified against the "finalised"
+>>   *    capabilities. The following table shows, the capabilities verified
+>>   *    against each CPU in the system.
+>>   *
+>>   *      x------------------------------------------------------------------- x
+>>   *      | Verified against:   | Boot CPU | SMP CPUs by kernel | CPUs by user |
+> 
+> I still find it a bit cryptic.
+> 
+> Would it be simpler just to write this out in prose, with reference to
+> the actual capability types?  I feel that things have to be abbreviated
+> a bit to fit nicely into the table otherwise.
+> 
+> What about:
+> 
+>   * As explained in (2) above, capabilities could be finalised at different
+>   * points in the execution, depending on the capability type. Each newly booted
+>   * CPU is verified against those capabilities that have been finalised by the
+>   * time that CPU boots:
+>   *
+>   *	* SCOPE_BOOT_CPU: all CPUs are verified against the capability except
+>   *	  for the primary boot CPU.
+>   *
+>   *	* SCOPE_LOCAL_CPU, SCOPE_SYSTEM: all CPUs hotplugged on by the user
+>   *	  after kernel boot are verified against the capability.
 
--	(((phys) & GENMASK_ULL(47, 16)) | (((phys) >> 48) & 0xf) << 12)
-+	(((phys) & GENMASK_ULL(47, 0)) | (((phys) >> 48) & 0xf) << 12)
-
-Robin.
+Sure, looks better.
