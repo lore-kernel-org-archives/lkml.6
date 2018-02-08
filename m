@@ -1,186 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752488AbeBHRxY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:53:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:38216 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752411AbeBHRxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:53:21 -0500
-Subject: Re: [PATCH v1 15/16] kvm: arm64: Allow configuring physical address
- space size
-To: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, Christoffer Dall <cdall@linaro.org>
-References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180109190414.4017-16-suzuki.poulose@arm.com> <20180208111414.GM29286@cbox>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <31e5bf40-4fcb-934e-6036-ff2670f793df@arm.com>
-Date: Thu, 8 Feb 2018 17:53:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752507AbeBHRxk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:53:40 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50568 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752448AbeBHRxX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:53:23 -0500
 MIME-Version: 1.0
-In-Reply-To: <20180208111414.GM29286@cbox>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Thu, 08 Feb 2018 09:53:21 -0800
+From: Subhash Jadavani <subhashj@codeaurora.org>
+To: Asutosh Das <asutoshd@codeaurora.org>
+Cc: cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Maya Erez <merez@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH 1/1] scsi: ufs: fix exception event handling
+In-Reply-To: <1517200492-2941-1-git-send-email-asutoshd@codeaurora.org>
+References: <1517200492-2941-1-git-send-email-asutoshd@codeaurora.org>
+Message-ID: <6c0b3d7d1c38ecb993125bc8e2b85799@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 11:14, Christoffer Dall wrote:
-> On Tue, Jan 09, 2018 at 07:04:10PM +0000, Suzuki K Poulose wrote:
->> Allow the guests to choose a larger physical address space size.
->> The default and minimum size is 40bits. A guest can change this
->> right after the VM creation, but before the stage2 entry page
->> tables are allocated (i.e, before it registers a memory range
->> or maps a device address). The size is restricted to the maximum
->> supported by the host. Also, the guest can only increase the PA size,
->> from the existing value, as reducing it could break the devices which
->> may have verified their physical address for validity and may do a
->> lazy mapping(e.g, VGIC).
->>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@linaro.org>
->> Cc: Peter Maydell <peter.maydell@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   Documentation/virtual/kvm/api.txt | 27 ++++++++++++++++++++++++++
->>   arch/arm/include/asm/kvm_host.h   |  7 +++++++
->>   arch/arm64/include/asm/kvm_host.h |  1 +
->>   arch/arm64/include/asm/kvm_mmu.h  | 41 ++++++++++++++++++++++++++++++---------
->>   arch/arm64/kvm/reset.c            | 28 ++++++++++++++++++++++++++
->>   include/uapi/linux/kvm.h          |  4 ++++
->>   virt/kvm/arm/arm.c                |  2 +-
->>   7 files changed, 100 insertions(+), 10 deletions(-)
->>
->> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
->> index 57d3ee9e4bde..a203faf768c4 100644
->> --- a/Documentation/virtual/kvm/api.txt
->> +++ b/Documentation/virtual/kvm/api.txt
->> @@ -3403,6 +3403,33 @@ invalid, if invalid pages are written to (e.g. after the end of memory)
->>   or if no page table is present for the addresses (e.g. when using
->>   hugepages).
->>   
->> +4.109 KVM_ARM_GET_PHYS_SHIFT
->> +
->> +Capability: KVM_CAP_ARM_CONFIG_PHYS_SHIFT
->> +Architectures: arm64
->> +Type: vm ioctl
->> +Parameters: __u32 (out)
->> +Returns: 0 on success, a negative value on error
->> +
->> +This ioctl is used to get the current maximum physical address size for
->> +the VM. The value is Log2(Maximum_Physical_Address). This is neither the
->> + amount of physical memory assigned to the VM nor the maximum physical address
->> +that a real CPU on the host can handle. Rather, this is the upper limit of the
->> +guest physical address that can be used by the VM.
+On 2018-01-28 20:34, Asutosh Das wrote:
+> From: Maya Erez <merez@codeaurora.org>
 > 
-> What is the point of this?  Presumably if userspace has set the size, it
-> already knows the size?
-
-This can help the userspace know, what the "default" limit is. As such I am
-not particular about keeping this around.
-
+> The device can set the exception event bit in one of the response UPIU,
+> for example to notify the need for urgent BKOPs operation.
+> In such a case the host driver calls ufshcd_exception_event_handler to
+> handle this notification.
+> When trying to check the exception event status (for finding the cause 
+> for
+> the exception event), the device may be busy with additional SCSI 
+> commands
+> handling and may not respond within the 100ms timeout.
 > 
->> +
->> +4.109 KVM_ARM_SET_PHYS_SHIFT
->> +
->> +Capability: KVM_CAP_ARM_CONFIG_PHYS_SHIFT
->> +Architectures: arm64
->> +Type: vm ioctl
->> +Parameters: __u32 (in)
->> +Returns: 0 on success, a negative value on error
->> +
->> +This ioctl is used to set the maximum physical address size for
->> +the VM. The value is Log2(Maximum_Physical_Address). The value can only
->> +be increased from the existing setting. The value cannot be changed
->> +after the stage-2 page tables are allocated and will return an error.
->> +
+> To prevent that, we need to block SCSI commands during handling of
+> exception events and allow retransmissions of the query requests,
+> in case of timeout.
 > 
-> Is there a way for userspace to discover what the underlying hardware
-> can actually support, beyond trial-and-error on this ioctl?
-
-Unfortunately, there is none. We don't expose ID_AA64MMFR0 via mrs emulation.
-
->> +static inline int kvm_reconfig_stage2(struct kvm *kvm, u32 phys_shift)
->> +{
->> +	int rc = 0;
->> +	unsigned int pa_max, parange;
->> +
->> +	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
->> +	pa_max = id_aa64mmfr0_parange_to_phys_shift(parange);
->> +	/* Raise it to 40bits for backward compatibility */
->> +	pa_max = (pa_max < 40) ? 40 : pa_max;
->> +	/* Make sure the size is supported/available */
->> +	if (phys_shift > PHYS_MASK_SHIFT || phys_shift > pa_max)
->> +		return -EINVAL;
->> +	/*
->> +	 * The stage2 PGD is dependent on the settings we initialise here
->> +	 * and should be allocated only after this step. We cannot allow
->> +	 * down sizing the IPA size as there could be devices or memory
->> +	 * regions, that depend on the previous size.
->> +	 */
->> +	mutex_lock(&kvm->slots_lock);
->> +	if (kvm->arch.pgd || phys_shift < kvm->arch.phys_shift) {
->> +		rc = -EPERM;
->> +	} else if (phys_shift > kvm->arch.phys_shift) {
->> +		kvm->arch.phys_shift = phys_shift;
->> +		kvm->arch.s2_levels = stage2_pt_levels(kvm->arch.phys_shift);
->> +		kvm->arch.vtcr_private = VTCR_EL2_SL0(kvm->arch.s2_levels) |
->> +					 TCR_T0SZ(kvm->arch.phys_shift);
->> +	}
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Maya Erez <merez@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> I think you can rework the above to make it more obvious what's going on
-> in this way:
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 8af2af3..2dd488f 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -4955,6 +4955,7 @@ static void
+> ufshcd_exception_event_handler(struct work_struct *work)
+>  	hba = container_of(work, struct ufs_hba, eeh_work);
 > 
-> 	rc = -EPERM;
-> 	if (kvm->arch.pgd || phys_shift < kvm->arch.phys_shift)
-> 		goto out_unlock;
+>  	pm_runtime_get_sync(hba->dev);
+> +	scsi_block_requests(hba->host);
+>  	err = ufshcd_get_ee_status(hba, &status);
+>  	if (err) {
+>  		dev_err(hba->dev, "%s: failed to get exception status %d\n",
+> @@ -4968,6 +4969,7 @@ static void
+> ufshcd_exception_event_handler(struct work_struct *work)
+>  		ufshcd_bkops_exception_event_handler(hba);
 > 
-> 	rc = 0;
-> 	if (phys_shift == kvm->arch.phys_shift)
-> 		goto out_unlock;
-> 
-> 	kvm->arch.phys_shift = phys_shift;
-> 	kvm->arch.s2_levels = stage2_pt_levels(kvm->arch.phys_shift);
-> 	kvm->arch.vtcr_private = VTCR_EL2_SL0(kvm->arch.s2_levels) |
-> 				 TCR_T0SZ(kvm->arch.phys_shift);
-> 
-> out_unlock:
-> 
+>  out:
+> +	scsi_unblock_requests(hba->host);
+>  	pm_runtime_put_sync(hba->dev);
+>  	return;
+>  }
 
-Sure.
+Looks good to me.
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
 
-
-
->> --- a/virt/kvm/arm/arm.c
->> +++ b/virt/kvm/arm/arm.c
->> @@ -1136,7 +1136,7 @@ long kvm_arch_vm_ioctl(struct file *filp,
->>   		return 0;
->>   	}
->>   	default:
->> -		return -EINVAL;
->> +		return kvm_arch_dev_vm_ioctl(kvm, ioctl, arg);
->>   	}
->>   }
->>   
->> -- 
->> 2.13.6
->>
-> 
-> Have you considered making this capability a generic capability and
-> encoding this in the 'type' argument to KVM_CREATE_VM?  This would
-> significantly simplify all the above and would allow you to drop patch 8
-> and 9 I think.
-
-No. I will take a look. Btw, there were patches flying around to support
-"userspace" requesting specific values for ID feature registers. But even that
-doesn't help with the detection part. May be that is another way to configure
-the size, but not sure about the current status of that work.
-
-Cheers
-Suzuki
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
