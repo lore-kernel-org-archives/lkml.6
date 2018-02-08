@@ -1,36 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751076AbeBHIkv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 03:40:51 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59469 "EHLO huawei.com"
+        id S1751319AbeBHIq3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 03:46:29 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33120 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750806AbeBHIkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 03:40:47 -0500
-Subject: Re: [PATCH v5 1/3] arm64/ras: support sea error recovery
-To: James Morse <james.morse@arm.com>
+        id S1750865AbeBHIq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 03:46:28 -0500
+Subject: Re: [PATCH v5 2/3] GHES: add a notify chain for process memory
+ section
+To: Borislav Petkov <bp@suse.de>
 References: <1516969885-150532-1-git-send-email-xiexiuqi@huawei.com>
- <1516969885-150532-2-git-send-email-xiexiuqi@huawei.com>
- <5A70C536.7040208@arm.com> <5A7B4D87.9020207@arm.com>
+ <1516969885-150532-3-git-send-email-xiexiuqi@huawei.com>
+ <20180207103145.GC8944@pd.tnic>
 CC: <catalin.marinas@arm.com>, <will.deacon@arm.com>, <mingo@redhat.com>,
         <mark.rutland@arm.com>, <ard.biesheuvel@linaro.org>,
-        <Dave.Martin@arm.com>, <takahiro.akashi@linaro.org>,
-        <tbaicar@codeaurora.org>, <stephen.boyd@linaro.org>, <bp@suse.de>,
-        <julien.thierry@arm.com>, <shiju.jose@huawei.com>,
-        <zjzhang@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <wangxiongfeng2@huawei.com>, <zhengqiang10@huawei.com>,
-        <gengdongjiu@huawei.com>, <huawei.libin@huawei.com>,
-        <wangkefeng.wang@huawei.com>, <lijinyue@huawei.com>,
-        <guohanjun@huawei.com>, <hanjun.guo@linaro.org>,
+        <james.morse@arm.com>, <Dave.Martin@arm.com>,
+        <takahiro.akashi@linaro.org>, <tbaicar@codeaurora.org>,
+        <stephen.boyd@linaro.org>, <julien.thierry@arm.com>,
+        <shiju.jose@huawei.com>, <zjzhang@codeaurora.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <wangxiongfeng2@huawei.com>,
+        <zhengqiang10@huawei.com>, <gengdongjiu@huawei.com>,
+        <huawei.libin@huawei.com>, <wangkefeng.wang@huawei.com>,
+        <lijinyue@huawei.com>, <guohanjun@huawei.com>, <hanjun.guo@linaro.org>,
         <cj.chengjian@huawei.com>
 From: Xie XiuQi <xiexiuqi@huawei.com>
-Message-ID: <7dacf375-4645-ba34-62d1-96d9f67dbcc2@huawei.com>
-Date: Thu, 8 Feb 2018 16:35:44 +0800
+Message-ID: <a26d3082-ef72-9684-5f22-4d65b8adb998@huawei.com>
+Date: Thu, 8 Feb 2018 16:41:23 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
  Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <5A7B4D87.9020207@arm.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180207103145.GC8944@pd.tnic>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.177.19.210]
 X-CFilter-Loop: Reflected
@@ -38,200 +39,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Hi Boris,
 
-Sorry for reply late.
+Thanks for your comments.
 
-On 2018/2/8 3:03, James Morse wrote:
-> Hi Xie XiuQi,
-> 
-> On 30/01/18 19:19, James Morse wrote:
->> On 26/01/18 12:31, Xie XiuQi wrote:
->>> With ARM v8.2 RAS Extension, SEA are usually triggered when memory errors
->>> are consumed. According to the existing process, errors occurred in the
->>> kernel, leading to direct panic, if it occurred the user-space, we should
->>> just kill process.
->>>
->>> But there is a class of error, in fact, is not necessary to kill
->>> process, you can recover and continue to run the process. Such as
->>> the instruction data corrupted, where the memory page might be
->>> read-only, which is has not been modified, the disk might have the
->>> correct data, so you can directly drop the page, ant reload it when
->>> necessary.
+On 2018/2/7 18:31, Borislav Petkov wrote:
+> On Fri, Jan 26, 2018 at 08:31:24PM +0800, Xie XiuQi wrote:
+>> Add a notify chain for process memory section, with
+>> which other modules might do error recovery.
 >>
->> With firmware-first support, we do all this...
+>> Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
+>> Tested-by: Wang Xiongfeng <wangxiongfeng2@huawei.com>
+>> Tested-by: Tyler Baicar <tbaicar@codeaurora.org>
+>> ---
+>>  drivers/acpi/apei/ghes.c | 10 ++++++++++
+>>  include/acpi/ghes.h      |  8 ++++++++
+>>  2 files changed, 18 insertions(+)
 >>
->>
->>> So this patchset is just try to solve such problem: if the error is
->>> consumed in user-space and the error occurs on a clean page, you can
->>> directly drop the memory page without killing process.
->>>
->>> If the corrupted page is clean, just dropped it and return to user-space
->>> without side effects. And if corrupted page is dirty, memory_failure()
->>> will send SIGBUS with code=BUS_MCEERR_AR. While without this patchset,
->>> do_sea() will just send SIGBUS, so the process was killed in the same place.
->>
->> ... but this happens too. I agree its something we should fix, but I don't think
->> this is the best way to do it.
->>
->> This series is pulling the memory-failure-queue details back into the arch-code
->> to build a second list, that gets processed as extra work when we return to
->> user-space.
->>
->>
->> The root of the issue is ghes_notify_sea() claims the notification as something
->> APEI has dealt with, ... but it hasn't done it yet. The signals will be
->> generated by something currently stuck in a queue. (Evidently x86 doesn't handle
->> synchronous errors like this using firmware-first).
->>
->> I think a smaller fix is to give the queues that may be holding the
->> memory_failure() work a kick as part of the code that calls ghes_notify_sea().
->> This means that by the time we return to do_sea() ghes_notify_sea()'s claim that
->> APEI has dealt with it is true as any generated signals are pending. We can then
->> skip the existing SIGBUS generation code.
->>
->>
->>> Because memory_failure() may sleep, we can not call it directly in SEA
->>
->> (this one is more serious, I've attempted to fix it by moving all NMI-like
->> GHES-notifications to use the estatus queue).
->>
->>
->>> exception context. So we saved faulting physical address associated with
->>> a process in the ghes handler and set __TIF_SEA_NOTIFY. When we return
->>> from SEA exception context and get into do_notify_resume() before the
->>> process running, we could check it and call memory_failure() to do
->>> recovery.
->>
->>> It's safe, because we are in process context.
->>
->> I think this is the trick. When we take a Synchronous-external-abort out of
->> userspace, we're in process context too. We can add helpers to drain the
->> memory_failure_queue which can be called when do_sea() when we know we're
->> preemptible and interrupts-et-al are unmasked.
+>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>> index cff671d..1f0ebfb 100644
+>> --- a/drivers/acpi/apei/ghes.c
+>> +++ b/drivers/acpi/apei/ghes.c
+>> @@ -109,6 +109,9 @@ static inline bool is_hest_type_generic_v2(struct ghes *ghes)
+>>  static LIST_HEAD(ghes_hed);
+>>  static DEFINE_MUTEX(ghes_list_mutex);
+>>  
+>> +ATOMIC_NOTIFIER_HEAD(ghes_mem_err_chain);
+>> +EXPORT_SYMBOL(ghes_mem_err_chain);
 > 
-> Something like... base on [0], in arch/arm64/kernel/acpi.c:
-
-I am very glad that you are trying to solve the problem, which is very helpful.
-I agree with your proposal, and I'll test it on by box latter.
-
-Indeed, we're in precess context when we are in sea handler. I was thought we
-can't call schedule() in the exception handler before.
-
-Thank you very much!
-
-> -----------------%<-----------------
-> int apei_claim_sea(struct pt_regs *regs)
-> {
->         int cpu;
->         int err = -ENOENT;
->         unsigned long current_flags = arch_local_save_flags();
->         unsigned long interrupted_flags = current_flags;
+> Definitely not EXPORT_SYMBOL.
 > 
->         if (!IS_ENABLED(CONFIG_ACPI_APEI_SEA))
->                 return err;
+> And certainly not export the notifier head. Have register and unregister
+> functions instead.
 > 
->         if (regs)
->                 interrupted_flags = regs->pstate;
-> 
->         /*
->          * APEI expects an NMI-like notification to always be called
->          * in NMI context.
->          */
->         local_daif_restore(DAIF_ERRCTX);
->         nmi_enter();
->         err = ghes_notify_sea();
->         cpu = smp_processor_id();
->         nmi_exit();
-> 
->         /*
->          * APEI NMI-like notifications are deferred to irq_work. Unless
->          * we interrupted irqs-masked code, we can do that now.
->          */
->         if (!err) {
->                 if (!arch_irqs_disabled_flags(interrupted_flags)) {
->                         local_daif_restore(DAIF_PROCCTX_NOIRQ);
->                         irq_work_run();
->                 } else {
->                         err = -EINPROGRESS;
->                 }
->         }
-> 
->         local_daif_restore(current_flags);
-> 
->         if (IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE) && !err) {
->                 /*
->                  * Memory failure work is scheduled on the local CPU.
->                  * If we interrupted userspace, or are in process context
->                  * we can do that now.
->                  */
->                 if ((regs && !user_mode(regs)) || !preemptible())
->                         err = -EINPROGRESS;
->                 else
->                         memory_failure_queue_kick(cpu);
->         }
-> 
->         return err;
-> }
-> -----------------%<-----------------
-> 
-> 
-> and to mm/memory-failure.c:
-> -----------------%<-----------------
-> @@ -1355,7 +1355,7 @@ static void memory_failure_work_func(struct work_struct *w
-> ork)
->         unsigned long proc_flags;
->         int gotten;
-> 
-> -       mf_cpu = this_cpu_ptr(&memory_failure_cpu);
-> +       mf_cpu = container_of(work, struct memory_failure_cpu, work);
->         for (;;) {
->                 spin_lock_irqsave(&mf_cpu->lock, proc_flags);
->                 gotten = kfifo_get(&mf_cpu->fifo, &entry);
-> 
-> @@ -1369,6 +1369,22 @@ static void memory_failure_work_func(struct work_struct *
-> work)
->         }
->  }
-> 
-> +/*
-> + * Process memory_failure work queued on the specified CPU.
-> + * Used to avoid return-to-userspace racing with the memory_failure workqueue.
-> + */
-> +void memory_failure_queue_kick(int cpu)
-> +{
-> +       unsigned long flags;
-> +       struct memory_failure_cpu *mf_cpu;
-> +
-> +       might_sleep();
-> +
-> +       mf_cpu = &per_cpu(memory_failure_cpu, cpu);
-> +       cancel_work_sync(&mf_cpu->work);
-> +       memory_failure_work_func(&mf_cpu->work);
-> +}
-> +
->  static int __init memory_failure_init(void)
->  {
->         struct memory_failure_cpu *mf_cpu;
-> -----------------%<-----------------
-> 
-> I've cooked up some NOTFIY_SEA-ing APEI firmware using kvmtool to test this. I
-> haven't yet managed to hit irq-masked code with NOTIFY_SEA. I'll try and tidy
-> this up and post a branch to make it easier to test...
-> 
-> I prefer this as it doesn't duplicate the state then come back on a TIF flag.
-> I'd like to move the kicking logic into ghes.c, as that is where the queueing
-> happened, but the 'do-this, restore these flags, do-that' is somewhat tasteless,
-> and it looks like on arm64 has synchronous nmi-like notifications that must be
-> handled before returning to user-space...
-> 
-> Thanks,
-> 
-> James
-> 
-> [0] https://www.spinics.net/lists/linux-acpi/msg80149.html
+> That is, *if* you can't solve it differently with James. Notifiers
+> should be avoided if possible.
 > 
 
+Yes, I saw the patchset, I agree. I will work with James to solve the problem.
 
 -- 
 Thanks,
