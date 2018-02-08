@@ -1,49 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeBHOrc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:47:32 -0500
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:45637 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752207AbeBHOra (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:47:30 -0500
-X-Google-Smtp-Source: AH8x227QQSWItRNeb2qNVaJw2OvkC4WPQYl8jkllMN+r3F3R3dek0QLf/gqwNjSZRzuwnAXbNKYCgPmFc8AANESxvXo=
+        id S1752103AbeBHOtf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:49:35 -0500
+Received: from mga06.intel.com ([134.134.136.31]:65430 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750961AbeBHOtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:49:33 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,479,1511856000";
+   d="scan'208";a="16300267"
+Date: Thu, 8 Feb 2018 06:49:18 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Jan Kara <jack@suse.cz>
+Cc: syzbot <syzbot+283c3c447181741aea28@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, aryabinin@virtuozzo.com, jlayton@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, mingo@kernel.org, rgoldwyn@suse.com,
+        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
+Subject: Re: INFO: task hung in sync_blockdev
+Message-ID: <20180208144918.GF10945@tassilo.jf.intel.com>
+References: <001a11447070ac6fcb0564a08cb1@google.com>
+ <20180207155229.GC10945@tassilo.jf.intel.com>
+ <20180208092839.ebe5rk6mtvkk5da4@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <38270e84210144d52178def5ec7364b966a616eb.1517910489.git.sean.wang@mediatek.com>
-References: <cover.1517910489.git.sean.wang@mediatek.com> <38270e84210144d52178def5ec7364b966a616eb.1517910489.git.sean.wang@mediatek.com>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Thu, 8 Feb 2018 15:46:49 +0100
-Message-ID: <CAOFm3uHhhZYonXGE1keoEkVWKDP4a9_F7W8tXfVrFH-Arxb-6A@mail.gmail.com>
-Subject: Re: [PATCH v2 05/16] arm64: dts: mt7622: add PMIC MT6380 related nodes
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208092839.ebe5rk6mtvkk5da4@quack2.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean,
+> > It seems multiple processes deadlocked on the bd_mutex. 
+> > Unfortunately there's no backtrace for the lock acquisitions,
+> > so it's hard to see the exact sequence.
+> 
+> Well, all in the report points to a situation where some IO was submitted
+> to the block device and never completed (more exactly it took longer than
+> those 120s to complete that IO). It would need more digging into the
 
-On Tue, Feb 6, 2018 at 10:52 AM,  <sean.wang@mediatek.com> wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
->
-> Enable pwrap and MT6380 on mt7622-rfb1 board. Also add all mt6380
-> regulator nodes in an alone file to allow similar boards using MT6380
-> able to resue the configuration.
->
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Are you sure? I didn't think outstanding IO would take bd_mutex.
 
-Thank you for the use of SPDX licenses ids!
-
-Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+-Andi
