@@ -1,96 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752087AbeBHMq1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:46:27 -0500
-Received: from mga11.intel.com ([192.55.52.93]:20102 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750881AbeBHMqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:46:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,478,1511856000";
-   d="scan'208";a="16589801"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
- granting locality
-Thread-Topic: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
- granting locality
-Thread-Index: AQHTmHTVmx/EguNS8EGzZkDVTfYkOKOJwfqwgA32iYCAAC9fsIACes6AgAAhwRA=
-Date: Thu, 8 Feb 2018 12:46:20 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421AB87@hasmsx108.ger.corp.intel.com>
-References: <20180128075101.6883-1-tomas.winkler@intel.com>
- <20180128075101.6883-2-tomas.winkler@intel.com>
- <20180128201559.GG23869@ziepe.ca>
- <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
- <20180206200255.ib7hblberqj6anh5@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
- <20180208124431.26f43gj66c36gugz@linux.intel.com>
-In-Reply-To: <20180208124431.26f43gj66c36gugz@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiN2U2Mjg0YWMtMDNiYy00YjMwLWExYTUtMjA0ZGEwYjZkZDFiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJ3ZWwrZHRQNkZvOWFXdFpycjJNUU54MXppVE9vNEJyd1BcL0l5WndDdTg0aGpaVW9SZ24ycWtycjVvbU9pRjVaMiJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.12.126.96]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752155AbeBHMq5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:46:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34636 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752018AbeBHMqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:46:55 -0500
+Subject: Re: [PATCH v2 1/3] sched: Stop nohz stats when decayed
+To: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org
+Cc: morten.rasmussen@foss.arm.com, brendan.jackman@arm.com,
+        dietmar.eggemann@arm.com
+References: <1517944987-343-1-git-send-email-vincent.guittot@linaro.org>
+ <1517944987-343-2-git-send-email-vincent.guittot@linaro.org>
+From: Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <780a5b3a-4829-4195-c8fd-95da27248a82@arm.com>
+Date: Thu, 8 Feb 2018 12:46:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1517944987-343-2-git-send-email-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/06/2018 07:23 PM, Vincent Guittot wrote:
+> [...]
+> @@ -7826,8 +7842,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>  	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
+>  		struct rq *rq = cpu_rq(i);
+>  
+> -		if (env->flags & LBF_NOHZ_STATS)
+> -			update_nohz_stats(rq);
+> +		if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq))
+> +			env->flags |= LBF_NOHZ_AGAIN;
+>  
+>  		/* Bias balancing toward cpus of our domain */
+>  		if (local_group)
+> @@ -7979,18 +7995,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+>  	struct sg_lb_stats *local = &sds->local_stat;
+>  	struct sg_lb_stats tmp_sgs;
+>  	int load_idx, prefer_sibling = 0;
+> +	int has_blocked = READ_ONCE(nohz.has_blocked);
+>  	bool overload = false;
+>  
+>  	if (child && child->flags & SD_PREFER_SIBLING)
+>  		prefer_sibling = 1;
+>  
+>  #ifdef CONFIG_NO_HZ_COMMON
+> -	if (env->idle == CPU_NEWLY_IDLE) {
+> +	if (env->idle == CPU_NEWLY_IDLE && has_blocked)
+>  		env->flags |= LBF_NOHZ_STATS;
+> -
+> -		if (cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd)))
+> -			nohz.next_stats = jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD);
+> -	}
+>  #endif
+>  
+>  	load_idx = get_sd_load_idx(env->sd, env->idle);
+> @@ -8046,6 +8059,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+>  		sg = sg->next;
+>  	} while (sg != env->sd->groups);
+>  
+> +#ifdef CONFIG_NO_HZ_COMMON
+> +	if ((env->flags & LBF_NOHZ_AGAIN) &&
+> +	    cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd))) {
+> +
+> +		WRITE_ONCE(nohz.next_blocked,
+> +				jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD));
 
-> 
-> On Tue, Feb 06, 2018 at 09:26:15PM +0000, Winkler, Tomas wrote:
-> > >
-> > > On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
-> > > >
-> > > > >
-> > > > > On Sun, Jan 28, 2018 at 09:51:00AM +0200, Tomas Winkler wrote:
-> > > > >
-> > > > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
-> > > > > > bcdd3790e94d..06639fb6ab85 100644
-> > > > > > +++ b/include/linux/tpm.h
-> > > > > > @@ -44,7 +44,7 @@ struct tpm_class_ops {
-> > > > > >  	bool (*update_timeouts)(struct tpm_chip *chip,
-> > > > > >  				unsigned long *timeout_cap);
-> > > > > >  	int (*request_locality)(struct tpm_chip *chip, int loc);
-> > > > > > -	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > > > > > +	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > > > >
-> > > > > This seems wrong.. What is the core code supposed to do if
-> > > > > relinquish
-> > > fails?
-> > > >
-> > > > Not much just propage the error to the caller and leave the policy
-> > > > decision to it.
-> > >
-> > > Your patch set must either cover this or keep it as void.
-> >
-> >
-> > How the code is covering other failures in the transmit functions, how
-> > is this one different from for example request_locality failure?
-> > Why we should not propage this error up?
-> >
-> > >
-> > > A better idea is to print an error to klog.
-> > We can do that in addition.
-> 
-> I guess you are right. This can be propagated to the user space so that it
-> knows that there is problem. To make the root more visible the klog
-> message would make sense.
+Here we push the stats update forward if we visited all the nohz CPUs but they
+still have blocked load. IMO we should also clear the nohz.has_blocked flag
+if we visited all the nohz CPUs and none had blocked load left.
 
-Thanks, will add an error message.
-Tomas
+If we don't do that, we could very well have cleared all of the nohz blocked
+load in idle_balance and successfully pulled a task, but the flag isn't
+cleared so we'll end up doing a _nohz_idle_balance() later on for nothing.
+
+
+As I said in a previous comment, we also have this problem with periodic
+load balance: if a CPU goes nohz (nohz.has_blocked is raised) but wakes up,
+e.g. before the next nohz.next_blocked, we should stop kicking ILBs
+
+Now I'd need to test this, but I think it can actually get worse: if that 
+CPU keeps generating blocked load after this short idle period, no matter 
+how many _nohz_idle_balance() we go through we will never reach a point 
+where nohz.has_blocked gets cleared, and we'll keep kicking those ILBs to
+update blocked load that already gets updated in the periodic balance.
+
+I think that's where a nohz blocked load cpumask can also help: on top of
+skipping nohz CPUs that don't need an update, we can stop the whole remote
+update machinery when the last nohz cpu with blocked load wakes up, or say
+when it goes through its first periodic balance.
+
+> +	}
+> +#endif
+> +
