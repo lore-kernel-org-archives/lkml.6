@@ -1,151 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752215AbeBHTzq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 14:55:46 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35938 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751544AbeBHTzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 14:55:44 -0500
-Date: Thu, 8 Feb 2018 21:55:38 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Wei Wang <wei.w.wang@intel.com>
-Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        pbonzini@redhat.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, huangzhichao@huawei.com
-Subject: Re: [PATCH v28 0/4] Virtio-balloon: support free page reporting
-Message-ID: <20180208215048-mutt-send-email-mst@kernel.org>
-References: <1518083420-11108-1-git-send-email-wei.w.wang@intel.com>
+        id S1752203AbeBHT6E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 14:58:04 -0500
+Received: from ms.lwn.net ([45.79.88.28]:55636 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751094AbeBHT6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 14:58:03 -0500
+Date: Thu, 8 Feb 2018 12:58:00 -0700
+From: Jonathan Corbet <corbet@lwn.net>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mchehab@kernel.org
+Subject: Re: [PATCH 7/8] docs: kernel-doc: Finish moving STATE_* code out of
+ process_file()
+Message-ID: <20180208125800.3dae9456@lwn.net>
+In-Reply-To: <20180208022953.GB3304@eros>
+References: <20180207172624.24555-1-corbet@lwn.net>
+        <20180207172624.24555-8-corbet@lwn.net>
+        <20180208022953.GB3304@eros>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518083420-11108-1-git-send-email-wei.w.wang@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 05:50:16PM +0800, Wei Wang wrote:
-> This patch series is separated from the previous "Virtio-balloon
-> Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
-> implemented by this series enables the virtio-balloon driver to report
-> hints of guest free pages to the host. It can be used to accelerate live
-> migration of VMs. Here is an introduction of this usage:
+On Thu, 8 Feb 2018 13:29:53 +1100
+"Tobin C. Harding" <me@tobin.cc> wrote:
+
+> It doesn't appear to be introduced by you but the brace positions are
+> non-uniform in this patch.
 > 
-> Live migration needs to transfer the VM's memory from the source machine
-> to the destination round by round. For the 1st round, all the VM's memory
-> is transferred. From the 2nd round, only the pieces of memory that were
-> written by the guest (after the 1st round) are transferred. One method
-> that is popularly used by the hypervisor to track which part of memory is
-> written is to write-protect all the guest memory.
+> if
+> {
+>   ...
+> }
+> else
+> {
+>   ...
+> }
 > 
-> This feature enables the optimization of the 1st round memory transfer -
-> the hypervisor can skip the transfer of guest free pages in the 1st round.
-> It is not concerned that the memory pages are used after they are given
-> to the hypervisor as a hint of the free pages, because they will be
-> tracked by the hypervisor and transferred in the next round if they are
-> used and written.
-
-At this point I think it's a good idea to focus on the qemu
-side, that code is still not really ready yet.
-
-> * Tests
-> - Migration time improvement
-> Result:
-> Live migration time is reduced to 14% with this optimization.
-> Details:
-> Local live migration of 8GB idle guest, the legacy live migration takes
-> ~1817ms. With this optimization, it takes ~254ms, which reduces the time
-> to 14%.
-
-
-
-> - Workload tests
-> Results:
-> Running this feature has no impact on the linux compilation workload
-> running inside the guest.
-
-I think you should try something memory intensive. Try asking
-qemu migration guys for hints on a good test to run.
-
-
-> Details:
-> Set up a Ping-Pong local live migration, where the guest ceaselessy
-> migrates between the source and destination. Linux compilation,
-> i.e. make bzImage -j4, is performed during the Ping-Pong migration. The
-> legacy case takes 5min14s to finish the compilation. With this
-> optimization patched, it takes 5min12s.
-
-How is migration time affected in this case?
- 
-> ChangeLog:
-> v27->v28:
->     - mm/page_poison: Move PAGE_POISON to page_poison.c and add a function
->       to expose page poison val to kernel modules.
-> v26->v27:
->     - add a new patch to expose page_poisoning_enabled to kernel modules
->     - virtio-balloon: set poison_val to 0xaaaaaaaa, instead of 0xaa
-> v25->v26: virtio-balloon changes only
->     - remove kicking free page vq since the host now polls the vq after
->       initiating the reporting
->     - report_free_page_func: detach all the used buffers after sending
->       the stop cmd id. This avoids leaving the detaching burden (i.e.
->       overhead) to the next cmd id. Detaching here isn't considered
->       overhead since the stop cmd id has been sent, and host has already
->       moved formard.
-> v24->v25:
->     - mm: change walk_free_mem_block to return 0 (instead of true) on
->           completing the report, and return a non-zero value from the
->           callabck, which stops the reporting.
->     - virtio-balloon:
->         - use enum instead of define for VIRTIO_BALLOON_VQ_INFLATE etc.
->         - avoid __virtio_clear_bit when bailing out;
->         - a new method to avoid reporting the some cmd id to host twice
->         - destroy_workqueue can cancel free page work when the feature is
->           negotiated;
->         - fail probe when the free page vq size is less than 2.
-> v23->v24:
->     - change feature name VIRTIO_BALLOON_F_FREE_PAGE_VQ to
->       VIRTIO_BALLOON_F_FREE_PAGE_HINT
->     - kick when vq->num_free < half full, instead of "= half full"
->     - replace BUG_ON with bailing out
->     - check vb->balloon_wq in probe(), if null, bail out
->     - add a new feature bit for page poisoning
->     - solve the corner case that one cmd id being sent to host twice
-> v22->v23:
->     - change to kick the device when the vq is half-way full;
->     - open-code batch_free_page_sg into add_one_sg;
->     - change cmd_id from "uint32_t" to "__virtio32";
->     - reserver one entry in the vq for the driver to send cmd_id, instead
->       of busywaiting for an available entry;
->     - add "stop_update" check before queue_work for prudence purpose for
->       now, will have a separate patch to discuss this flag check later;
->     - init_vqs: change to put some variables on stack to have simpler
->       implementation;
->     - add destroy_workqueue(vb->balloon_wq);
+> instead of
 > 
-> v21->v22:
->     - add_one_sg: some code and comment re-arrangement
->     - send_cmd_id: handle a cornercase
-> 
-> For previous ChangeLog, please reference
-> https://lwn.net/Articles/743660/
-> 
-> Wei Wang (4):
->   mm: support reporting free page blocks
->   virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
->   mm/page_poison: add a function to expose page poison val to kernel
->     modules
->   virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
-> 
->  drivers/virtio/virtio_balloon.c     | 258 +++++++++++++++++++++++++++++++-----
->  include/linux/mm.h                  |   8 ++
->  include/linux/poison.h              |   7 -
->  include/uapi/linux/virtio_balloon.h |   7 +
->  mm/page_alloc.c                     |  96 ++++++++++++++
->  mm/page_poison.c                    |  24 ++++
->  6 files changed, 357 insertions(+), 43 deletions(-)
-> 
-> -- 
-> 2.7.4
+> if {
+>   ...
+> } else {
+>   eee
+> }
+
+True, that's worth fixing up while I'm in the neighborhood.  I'll do that
+before I commit the set.
+
+Thanks,
+
+jon
