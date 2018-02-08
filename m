@@ -1,52 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeBHTJ6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 14:09:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54490 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752154AbeBHTJ5 (ORCPT
+        id S1752297AbeBHTNC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 14:13:02 -0500
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:42181 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBHTNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 14:09:57 -0500
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH] mm/zpool: zpool_evictable: fix mismatch in parameter name and kernel-doc
-Date: Thu,  8 Feb 2018 21:09:44 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18020819-0008-0000-0000-000004CAE139
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020819-0009-0000-0000-00001E5E9633
-Message-Id: <1518116984-21141-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-08_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802080219
+        Thu, 8 Feb 2018 14:13:01 -0500
+X-Google-Smtp-Source: AH8x224b5D3o/1s+H5yvlAMW8MQDHpLvoRF/VWFQ5cTjTkU7HNThK0OZUnfWZk8dLvlh/kgtQ25Gqw==
+Date: Thu, 8 Feb 2018 11:12:48 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, mhocko@suse.com, hughd@google.com
+Subject: Re: [PATCH] mm/migrate: Rename various page allocation helper
+ functions
+In-Reply-To: <5458c2c9-3534-c00d-7abf-3315debbf896@linux.vnet.ibm.com>
+Message-ID: <alpine.LSU.2.11.1802081059190.16719@eggly.anvils>
+References: <20180204065816.6885-1-khandual@linux.vnet.ibm.com> <5458c2c9-3534-c00d-7abf-3315debbf896@linux.vnet.ibm.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- mm/zpool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 8 Feb 2018, Anshuman Khandual wrote:
+> On 02/04/2018 12:28 PM, Anshuman Khandual wrote:
+> > Allocation helper functions for migrate_pages() remmain scattered with
+> > similar names making them really confusing. Rename these functions based
+> > on type of the intended migration. Function alloc_misplaced_dst_page()
+> > remains unchanged as its highly specialized. The renamed functions are
+> > listed below. Functionality of migration remains unchanged.
+> > 
+> > 1. alloc_migrate_target -> new_page_alloc
+> > 2. new_node_page -> new_page_alloc_othernode
+> > 3. new_page -> new_page_alloc_keepnode
+> > 4. alloc_new_node_page -> new_page_alloc_node
+> > 5. new_page -> new_page_alloc_mempolicy
+> 
+> Hello Michal/Hugh,
+> 
+> Does the renaming good enough or we should just not rename these.
 
-diff --git a/mm/zpool.c b/mm/zpool.c
-index f8cb83e7699b..9d53a1ef8f1e 100644
---- a/mm/zpool.c
-+++ b/mm/zpool.c
-@@ -360,7 +360,7 @@ u64 zpool_get_total_size(struct zpool *zpool)
- 
- /**
-  * zpool_evictable() - Test if zpool is potentially evictable
-- * @pool	The zpool to test
-+ * @zpool	The zpool to test
-  *
-  * Zpool is only potentially evictable when it's created with struct
-  * zpool_ops.evict and its driver implements struct zpool_driver.shrink.
--- 
-2.7.4
+I'll neither ack nor nack, I don't greatly care: my concern was
+to head you away from gathering them into a single header file.
+
+Though alloc_new_node_page seems to me a *much* better name than
+new_page_alloc_node; and I'm puzzled why you would demand this
+conformity of some but not all of the functions of that type.
+
+Hugh
