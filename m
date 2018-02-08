@@ -1,77 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752176AbeBHSX2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:23:28 -0500
-Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:59412 "EHLO
-        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751544AbeBHSX0 (ORCPT
+        id S1752166AbeBHSap (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:30:45 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48542 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbeBHSan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:23:26 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GEAAB1lHxahz+a6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQngQAyjX+OJplXghgKhTuCMVQYAQIBAQEBAQECAQIQAQEBCA0?=
- =?us-ascii?q?JCCgvgjgig0oSAYEmAQQODYotsXSIeoI8hHyCFYY3hiSFMAWTGZESCZVzlEeYD?=
- =?us-ascii?q?IE8H4IKcIMZgmSCEo0ugRcBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2GEAAB1lHxahz+a6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?ngQAyjX+OJplXghgKhTuCMVQYAQIBAQEBAQECAQIQAQEBCA0JCCgvgjgig0oSA?=
- =?us-ascii?q?YEmAQQODYotsXSIeoI8hHyCFYY3hiSFMAWTGZESCZVzlEeYDIE8H4IKcIMZgmS?=
- =?us-ascii?q?CEo0ugRcBAQE?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.172
-X-IronPort-AV: E=Sophos;i="5.46,480,1511848800";
-   d="scan'208";a="211577494"
-X-DLP: DLP_GlobalPCIDSS
-To: <pali.rohar@gmail.com>
-CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dvhart@infradead.org>, <andy.shevchenko@gmail.com>
-Subject: Dell SMBIOS initializing before backends are ready
-Thread-Topic: Dell SMBIOS initializing before backends are ready
-Thread-Index: AdOhB+4zpnFDLdnqQwKU0CvE6GdPRQ==
-Date: Thu, 8 Feb 2018 18:23:23 +0000
-Message-ID: <8da25d14004a4bd6ac7415c5958bcfc8@ausx13mpc120.AMER.DELL.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+        Thu, 8 Feb 2018 13:30:43 -0500
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Sebastian Reichel <sre@kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv2 0/8] omapdrm: DSI command mode panel support
+Date: Thu,  8 Feb 2018 19:30:27 +0100
+Message-Id: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w18INXQR015862
 
-After Paul's recent message regarding the odd wifi issue he had a 
-comment I wanted to investigate:
+Hi,
 
-dell_smbios: "No dell-smbios drivers are loaded"
+These are the remaining patches from my previous patchset to get
+Droid 4 (omap4) display working. The patches have been rebased to
+current master branch from Torvalds (581e400ff935). Since N950
+(omap3) is broken even with the workaround I moved it to the end,
+so that it can be skipped.
 
-Coming up early in boot.  This is a side effect of dell-smbios having two
-backend drivers that can be compiled as modules but no tie to force
-them to initialize before calls to dell_smbios_call.
+Working on Droid 4:
+ * Framebuffer Console, updated at 1Hz due to blinking cursor
+ * kmstest (static image)
+ * Display blanking
+ * Xorg with omap and modesetting driver
+ * No updates send when nothing needs to be sent
+ * Orientation DRM property is attached to the DSI panel
 
-So I believe what is happening is dell_micmute_led_set is called from
-the HDA driver and calls dell_smbios_call early too.
+Known issues:
+ * N950 (omap3) is broken. I have updated the omap3 fifo workaround,
+   but it's not enough to fix omap3.
+ * N950 (and N9) has first and last few lines covered by plastic, so
+   we should expose a smaller screen
 
-I haven't tried it on a platform with mic mute, but I suspect it might cause
-the mic mute LED status to be wrong initially (but corrected later when 
-toggled).
+Changes since PATCHv1:
+ * Drop patches, that were queued by Tomi
+ * Rebase to current master
+ * Rework the omap3 workaround patch to only affect omap3
+ * Add orientation DRM property support
 
-Ideas that came to mind:
+-- Sebastian
 
-1) In dell_smbios_call if no backends loaded, explicitly do a symbol_request
-for both backends and run initialization at that time.
 
-If that works, that would also resolve if someone manually unloaded both
-backends but a kernel module still tried to perform a request.
+Sebastian Reichel (8):
+  drm/omap: add framedone interrupt support
+  drm/omap: add manual update detection helper
+  drm/omap: add support for manually updated displays
+  dt-bindings: panel: common: document orientation property
+  drm/omap: add support for orientation hints from display drivers
+  drm/omap: panel-dsi-cm: add orientation support
+  ARM: dts: omap4-droid4: Add LCD panel orientation property
+  drm/omap: plane: update fifo size on ovl setup
 
-2) Add a notifier chain for when the driver is ready (a backend is loaded)
-to all consumers of dell_smbios_call.  Don't let other modules call
-dell_smbios_call until notified.
-Don't let the HDA driver call dell_micmute_led_set either.
+ .../bindings/display/panel/panel-common.txt        |  12 ++
+ arch/arm/boot/dts/omap4-droid4-xt894.dts           |   3 +
+ drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c    |  13 ++
+ drivers/gpu/drm/omapdrm/dss/dispc.c                |  36 ++++-
+ drivers/gpu/drm/omapdrm/dss/omapdss.h              |   2 +
+ drivers/gpu/drm/omapdrm/omap_connector.c           |  18 ++-
+ drivers/gpu/drm/omapdrm/omap_connector.h           |   1 +
+ drivers/gpu/drm/omapdrm/omap_crtc.c                | 158 +++++++++++++++++++--
+ drivers/gpu/drm/omapdrm/omap_crtc.h                |   2 +
+ drivers/gpu/drm/omapdrm/omap_fb.c                  |  20 +++
+ drivers/gpu/drm/omapdrm/omap_irq.c                 |  24 ++++
+ drivers/gpu/drm/omapdrm/omap_irq.h                 |   1 +
+ include/dt-bindings/display/common.h               |  14 ++
+ 13 files changed, 294 insertions(+), 10 deletions(-)
+ create mode 100644 include/dt-bindings/display/common.h
 
-3) try_module_get during dell-smbios initialization for both the backends
-
-What's the correct way to address this?
+-- 
+2.15.1
