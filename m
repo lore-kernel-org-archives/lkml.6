@@ -1,48 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752184AbeBHSSE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:18:04 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:48725 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeBHSSD (ORCPT
+        id S1752220AbeBHSTY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:19:24 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:62453 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBHSTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:18:03 -0500
-Date: Thu, 8 Feb 2018 10:18:00 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
- __GFP_HIGHMEM implicitly")
-Message-ID: <20180208181800.GA9524@bombadil.infradead.org>
-References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
- <20180208130649.GA15846@bombadil.infradead.org>
- <f8be3fc9-a96d-bf37-4da0-43220014caed@redhat.com>
+        Thu, 8 Feb 2018 13:19:22 -0500
+Subject: Re: [PATCH] gpiolib: suppress error message on EPROBE_DEFER
+To: Linus Walleij <linus.walleij@linaro.org>,
+        David Lechner <david@lechnology.com>
+CC: <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1516566774-1786-1-git-send-email-david@lechnology.com>
+ <CACRpkdbKWrdnbBp2e1kFd_3fYZxtWKnWPPgOd_FXSvXcOetLwA@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <ee9d3352-6575-9e7b-d8d2-20caf609e0ef@ti.com>
+Date: Thu, 8 Feb 2018 12:18:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8be3fc9-a96d-bf37-4da0-43220014caed@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CACRpkdbKWrdnbBp2e1kFd_3fYZxtWKnWPPgOd_FXSvXcOetLwA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.247.59.147]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 09:56:42AM -0800, Laura Abbott wrote:
-> > +++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-> > @@ -77,7 +77,7 @@ static struct scatterlist *videobuf_vmalloc_to_sg(unsigned char *virt,
-> >   		pg = vmalloc_to_page(virt);
-> >   		if (NULL == pg)
-> >   			goto err;
-> > -		BUG_ON(PageHighMem(pg));
-> > +		BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
-> >   		sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
-> >   	}
-> >   	return sglist;
-> > 
-> 
-> the vzalloc in this function needs to be switched to vmalloc32 if it
-> actually wants to guarantee 32-bit memory.
 
-Whoops, you got confused between the sglist allocation and the allocation
-of the pages which will be mapped ...
+
+On 02/07/2018 06:57 AM, Linus Walleij wrote:
+> On Sun, Jan 21, 2018 at 9:32 PM, David Lechner <david@lechnology.com> wrote:
+> 
+>> This suppresses printing an error message during probe of gpio drivers
+>> when the error is EPROBE_DEFER.
+>>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+> 
+> I'm not sure about this.
+> 
+> GPIO can be very basic system components. If we don't
+> print this, defer a few times (for some reason) and then
+> the kernel gives up on retrying, silently (as it happens)
+> there is no trace in dmesg of what happened. That makes
+> things hard to debug.
+> 
+> This happened to me with some other driver, so it is not
+> a made up example.
+> 
+> What about an explicit deferral message for now?
+> 
+
+The DD has debuging prints for all cases, so in general it can be used
+for boot debugging (really_probe()). So, in my opinion it make sense to 
+print gpiolib specific message only in case of !EPROBE_DEFER.
+
+5c
+
+-- 
+regards,
+-grygorii
