@@ -1,74 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751671AbeBHM0j (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:26:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:34358 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750876AbeBHM0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:26:38 -0500
-Subject: Re: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable
- work around
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-18-suzuki.poulose@arm.com>
- <20180207103942.GH5862@e103592.cambridge.arm.com>
- <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
-Date: Thu, 8 Feb 2018 12:26:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751153AbeBHMat (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:30:49 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34408 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbeBHMar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:30:47 -0500
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] mm: hwpoison: disable memory error handling on 1GB hugepage
+References: <20180130013919.GA19959@hori1.linux.bs1.fc.nec.co.jp>
+        <1517284444-18149-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+        <87inbbjx2w.fsf@e105922-lin.cambridge.arm.com>
+        <20180207011455.GA15214@hori1.linux.bs1.fc.nec.co.jp>
+Date: Thu, 08 Feb 2018 12:30:45 +0000
+In-Reply-To: <20180207011455.GA15214@hori1.linux.bs1.fc.nec.co.jp> (Naoya
+        Horiguchi's message of "Wed, 7 Feb 2018 01:14:57 +0000")
+Message-ID: <87fu6bfytm.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 12:19, Suzuki K Poulose wrote:
-> On 07/02/18 10:39, Dave Martin wrote:
->> On Wed, Jan 31, 2018 at 06:28:04PM +0000, Suzuki K Poulose wrote:
->>> We defend against branch predictor training based exploits by
->>> taking specific actions (based on the CPU model) to invalidate
->>> the Branch predictor buffer (BPB). This is implemented by per-CPU
->>> ptr, which installs the specific actions for the CPU model.
->>>
->>> The core code can handle the following cases where:
->>>   1) some CPUs doesn't need any work around
->>>   2) a CPU can install the work around, when it is brought up,
->>>      irrespective of how late that happens.
-> 
-> With the recent patches from Marc to expose this information to KVM
-> guests, it looks like allowing a late CPU to turn this on is not going
-> to be a good idea. We unconditionally set the capability even
-> when we don't need the mitigation. So I am not really sure if
-> we should go ahead with this patch. I am open to suggestions
-> 
-> Marc,
-> 
-> What do you think ?
+Horiguchi-san,
 
-By the time we bring in that CPU that requires some level of mitigation,
-we may be running a guest already, and we've told that guest that no
-mitigation was required. If we bring in that CPU, we break that promise,
-and the guest becomes vulnerable without knowing about it.
+Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> writes:
 
-The same thing is valid for userspace once we expose the status of the
-mitigation in /sys, just like x86 does. If we transition from not
-vulnerable to vulnerable (or even mitigated), we have lied to userspace.
+> Hi Punit,
+>
+> On Mon, Feb 05, 2018 at 03:05:43PM +0000, Punit Agrawal wrote:
+>> Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> writes:
+>> 
 
-In either case, I don't think breaking this contract is acceptable.
+[...]
+
+>> >
+>> > You can easily reproduce this by calling madvise(MADV_HWPOISON) twice on
+>> > a 1GB hugepage. This happens because get_user_pages_fast() is not aware
+>> > of a migration entry on pud that was created in the 1st madvise() event.
+>> 
+>> Maybe I'm doing something wrong but I wasn't able to reproduce the issue
+>> using the test at the end. I get -
+>> 
+>>     $ sudo ./hugepage
+>> 
+>>     Poisoning page...once
+>>     [  121.295771] Injecting memory failure for pfn 0x8300000 at process virtual address 0x400000000000
+>>     [  121.386450] Memory failure: 0x8300000: recovery action for huge page: Recovered
+>> 
+>>     Poisoning page...once again
+>>     madvise: Bad address
+>> 
+>> What am I missing?
+>
+> The test program below is exactly what I intended, so you did right
+> testing.
+
+Thanks for the confirmation. And the flow outline below. 
+
+> I try to guess what could happen. The related code is like below:
+>
+>   static int gup_pud_range(p4d_t p4d, unsigned long addr, unsigned long end,
+>                            int write, struct page **pages, int *nr)
+>   {
+>           ...
+>           do {
+>                   pud_t pud = READ_ONCE(*pudp);
+>
+>                   next = pud_addr_end(addr, end);
+>                   if (pud_none(pud))
+>                           return 0;
+>                   if (unlikely(pud_huge(pud))) {
+>                           if (!gup_huge_pud(pud, pudp, addr, next, write,
+>                                             pages, nr))
+>                                   return 0;
+>
+> pud_none() always returns false for hwpoison entry in any arch.
+> I guess that pud_huge() could behave in undefined manner for hwpoison entry
+> because pud_huge() assumes that a given pud has the present bit set, which
+> is not true for hwpoison entry.
+
+This is where the arm64 helpers behaves differently (though more by
+chance then design). A poisoned pud passes pud_huge() as it doesn't seem
+to be explicitly checking for the present bit.
+
+    int pud_huge(pud_t pud)
+    {
+            return pud_val(pud) && !(pud_val(pud) & PUD_TABLE_BIT);
+    }
+
+
+This doesn't lead to a crash as the first thing gup_huge_pud() does is
+check for pud_access_permitted() which does check for the present bit.
+
+I was able to crash the kernel by changing pud_huge() to check for the
+present bit.
+
+> As a result, pud_huge() checks an irrelevant bit used for other
+> purpose depending on non-present page table format of each arch. If
+> pud_huge() returns false for hwpoison entry, we try to go to the lower
+> level and the kernel highly likely to crash. So I guess your kernel
+> fell back the slow path and somehow ended up with returning EFAULT.
+
+Makes sense. Due to the difference above on arm64, it ends up falling
+back to the slow path which eventually returns -EFAULT (via
+follow_hugetlb_page) for poisoned pages.
+
+>
+> So I don't think that the above test result means that errors are properly
+> handled, and the proposed patch should help for arm64.
+
+Although, the deviation of pud_huge() avoids a kernel crash the code
+would be easier to maintain and reason about if arm64 helpers are
+consistent with expectations by core code.
+
+I'll look to update the arm64 helpers once this patch gets merged. But
+it would be helpful if there was a clear expression of semantics for
+pud_huge() for various cases. Is there any version that can be used as
+reference?
+
+Also, do you know what the plans are for re-enabling hugepage poisoning
+disabled here?
 
 Thanks,
+Punit
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+[...]
