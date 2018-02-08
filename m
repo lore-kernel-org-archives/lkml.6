@@ -1,82 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBHPJh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:09:37 -0500
-Received: from mail02.prevas.se ([62.95.78.10]:22395 "EHLO mail02.prevas.se"
+        id S1752046AbeBHPLK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:11:10 -0500
+Received: from mga09.intel.com ([134.134.136.24]:15652 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751317AbeBHPJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:09:32 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FCAQBoZ3xa/2h+ugUNUBwBAQEEAQEKA?=
- =?us-ascii?q?QGJNJpLmW0KhTsCgwUUAQIBAQEBAQECA4Y1AQEBAyNWEAsYAgImAgJXBg0IAQG?=
- =?us-ascii?q?4b26CJ4UAg3eCCgEBAQEBAQQBAQEBJIEPg2qDbIIRgwWIOYJlBZJMkV8JgkyTM?=
- =?us-ascii?q?JQ+mAyBPDaBc02DPIR3jkgBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2FCAQBoZ3xa/2h+ugUNUBwBAQEEAQEKAQGJNJpLmW0KhTs?=
- =?us-ascii?q?CgwUUAQIBAQEBAQECA4Y1AQEBAyNWEAsYAgImAgJXBg0IAQG4b26CJ4UAg3eCC?=
- =?us-ascii?q?gEBAQEBAQQBAQEBJIEPg2qDbIIRgwWIOYJlBZJMkV8JgkyTMJQ+mAyBPDaBc02?=
- =?us-ascii?q?DPIR3jkgBAQE?=
-X-IronPort-AV: E=Sophos;i="5.46,479,1511823600";
-   d="scan'208";a="3031129"
-Subject: Re: [PATCH v4 2/2] dt/bindings: Add bindings for Layerscape external
- irqs
-To: Rob Herring <robh@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Andy Tang <andy.tang@nxp.com>,
-        Alexander Stein <alexander.stein@systec-electronic.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20180122092133.23177-1-rasmus.villemoes@prevas.dk>
- <20180125150230.7234-1-rasmus.villemoes@prevas.dk>
- <20180125150230.7234-2-rasmus.villemoes@prevas.dk>
- <20180205060705.cg3qywtqs65w74ee@rob-hp-laptop>
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Message-ID: <15ac0da3-e85b-c6be-366a-368934752018@prevas.dk>
-Date: Thu, 8 Feb 2018 16:08:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1750847AbeBHPLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:11:09 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,479,1511856000";
+   d="scan'208";a="33143685"
+Date: Thu, 8 Feb 2018 08:15:08 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc: axboe@fb.com, sagi@grimberg.me, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, hch@lst.de
+Subject: Re: [PATCH 2/6] nvme-pci: fix the freeze and quiesce for shutdown
+ and reset case
+Message-ID: <20180208151508.GA4797@localhost.localdomain>
+References: <20180202182413.GH24417@localhost.localdomain>
+ <d93d115b-bdb1-24c0-71be-72f1b7563e5a@oracle.com>
+ <20180205151314.GP24417@localhost.localdomain>
+ <d218f5f5-45f7-6036-00a5-48769101080f@oracle.com>
+ <20180206151335.GE31110@localhost.localdomain>
+ <e1994613-3cb6-f82b-3296-0f4afdb16314@oracle.com>
+ <c5ae0bc0-260e-3a72-5c47-304c0b5034a6@oracle.com>
+ <20180207161345.GB1337@localhost.localdomain>
+ <1826ebc1-d419-23da-12d4-dd7b1b3fe598@oracle.com>
+ <958cae59-1a01-d60f-822b-cf81cfa31b8f@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180205060705.cg3qywtqs65w74ee@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <958cae59-1a01-d60f-822b-cf81cfa31b8f@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-05 07:07, Rob Herring wrote:
->> +Example:
->> +	scfg: scfg@1570000 {
->> +		compatible = "fsl,ls1021a-scfg", "syscon";
->> +		...
->> +		extirq: interrupt-controller {
->> +			compatible = "fsl,ls1021a-extirq";
->> +			#interrupt-cells = <3>;
->> +			interrupt-controller;
->> +			interrupt-parent = <&gic>;
->> +			offset = <0x1ac>;
+On Thu, Feb 08, 2018 at 10:17:00PM +0800, jianchao.wang wrote:
+> There is a dangerous scenario which caused by nvme_wait_freeze in nvme_reset_work.
+> please consider it.
 > 
-> Use reg here instead (with a length).
-
-Hm, ok, but what does the length buy us? Should the driver just ignore
-it, or should it check that it is 4 and bail out if not?
-
->> +			interrupts = <163 164 165 167 168 169>;
+> nvme_reset_work
+>   -> nvme_start_queues
+>   -> nvme_wait_freeze
 > 
-> These don't look like GIC interrupt cells. Building this with current 
-> dtc will have errors.
+> if the controller no response, we have to rely on the timeout path.
+> there are issues below:
+> nvme_dev_disable need to be invoked.
+> nvme_dev_disable will quiesce queues, cancel and requeue and outstanding requests.
+> nvme_reset_work will hang at nvme_wait_freeze
 
-Indeed, they are not. They simply record which interrupt lines on the
-GIC the external interrupt lines IRQ0...IRQ5 map to (the arm64 socs
-apparently have 12 such lines, but I don't know what they map to). I
-originally had that mapping in the driver, but I was asked to move it to
-DT. Is the problem the use of the name "interrupts" for this property?
-I'm happy to use something else (parent-interrupts, interrupt-mapping,
-...) I find it very hard to figure out which property names have
-magic/reserved meanings.
-
-I don't see any warnings/errors from dtc in the 4.14 tree I'm working
-on. Does it require an even newer dtc than that?
-
-Thanks,
-Rasmus
+We used to not requeue timed out commands, so that wasn't a problem
+before. Oh well, I'll take a look.
