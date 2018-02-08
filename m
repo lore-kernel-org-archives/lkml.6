@@ -1,82 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751424AbeBHKYa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:24:30 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57358 "EHLO mx1.redhat.com"
+        id S1751984AbeBHKaE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:30:04 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57272 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750749AbeBHKY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:24:29 -0500
-Subject: Re: [PATCH v2] KVM: X86: Fix SMRAM accessing even if VM is shutdown
-To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1518075165-5376-1-git-send-email-wanpengli@tencent.com>
+        id S1751014AbeBHKaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 05:30:03 -0500
+Subject: Re: [PATCH] x86/kvm/vmx: Don't halt vcpu when L1 is injecting events
+ to L2
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+References: <1518066816-7197-1-git-send-email-chao.gao@intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <75e8bfd0-6133-aabf-e1d0-d2e256d62994@redhat.com>
-Date: Thu, 8 Feb 2018 11:24:18 +0100
+Message-ID: <7de4e758-08cc-2c45-b0aa-dfe28dfef398@redhat.com>
+Date: Thu, 8 Feb 2018 11:29:49 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <1518075165-5376-1-git-send-email-wanpengli@tencent.com>
+In-Reply-To: <1518066816-7197-1-git-send-email-chao.gao@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 08:32, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 08/02/2018 06:13, Chao Gao wrote:
+> Although L2 is in halt state, it will be in the active state after
+> VM entry if the VM entry is vectoring. Halting the vcpu here means
+> the event won't be injected to L2 and this decision isn't reported
+> to L1. Thus L0 drops an event that should be injected to L2.
 > 
-> Reported by syzkaller:
-> 
->    WARNING: CPU: 6 PID: 2434 at arch/x86/kvm/vmx.c:6660 handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
->    CPU: 6 PID: 2434 Comm: repro_test Not tainted 4.15.0+ #4
->    RIP: 0010:handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
->    Call Trace:
->     vmx_handle_exit+0xbd/0xe20 [kvm_intel]
->     kvm_arch_vcpu_ioctl_run+0xdaf/0x1d50 [kvm]
->     kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
->     do_vfs_ioctl+0xa4/0x6a0
->     SyS_ioctl+0x79/0x90
->     entry_SYSCALL_64_fastpath+0x25/0x9c
-> 
-> The syzkaller creates a former thread to issue KVM_SMI ioctl, and then creates
-> a latter thread to mmap and operate on the same vCPU, rsm emulation will not be 
-> executed since there is no something like seabios which implements smi handler 
-> when running syzkaller directly. This triggers a race condition when running 
-> the testcase with multiple threads. Sometimes one thread exit w/ SHUTDOWN 
-> reason, another thread mmaps and operates on the same vCPU, it continues to 
-> use CS=0x30000, IP=0x8000 to access the address of SMI handler which results 
-> in the above ept misconfig. This patch fixes it by returning RET_PF_EMULATE
-> in kvm_handle_bad_page() which would cause an emulation failure and then an 
-> exit with KVM_EXIT_INTERNAL_ERROR, the VM will stop instead of resetting and 
-> be taken advantage of.
-> 
-> Reported-by: syzbot+c1d9517cab094dae65e446c0c5b4de6c40f4dc58@syzkaller.appspotmail.com
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> v1 -> v2:
->  * return RET_PF_EMULATE
-> 
->  arch/x86/kvm/mmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index 8eca1d0..6c5a82c 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -3029,7 +3029,7 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
->  		return RET_PF_RETRY;
->  	}
->  
-> -	return -EFAULT;
-> +	return RET_PF_EMULATE;
->  }
->  
->  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
-> 
+> Because virtual interrupt delivery may wake L2 vcpu, if VID is enabled,
+> do the same thing -- don't halt L2.
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+This second part seems wrong to me, or at least overly general.  Perhaps
+you mean if RVI>0?
+
+Thanks,
+
+Paolo
+
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>  arch/x86/kvm/vmx.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index bb5b488..e1fe4e4 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -10985,8 +10985,14 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT)
+> -		return kvm_vcpu_halt(vcpu);
+> +	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT) {
+> +		u32 intr_info = vmcs_read32(VM_ENTRY_INTR_INFO_FIELD);
+> +		u32 exec_control = vmcs_read32(SECONDARY_VM_EXEC_CONTROL);
+> +
+> +		if (!(intr_info & VECTORING_INFO_VALID_MASK) &&
+> +			!(exec_control & SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY))
+> +			return kvm_vcpu_halt(vcpu);
+> +	}
+
+>  	vmx->nested.nested_run_pending = 1;
+>  
+> 
