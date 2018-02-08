@@ -1,108 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeBHAA6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 19:00:58 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36008 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751756AbeBHAAz (ORCPT
+        id S1751424AbeBHAeW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 19:34:22 -0500
+Received: from LGEAMRELO11.lge.com ([156.147.23.51]:39040 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeBHAeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 19:00:55 -0500
-X-Google-Smtp-Source: AH8x225pqx+aK5xZFiM/Y4Ty75cXuG8Pk/Fh00yuwgh+W9Z87+tq2Ur74rm/4CtfNHlZXWf14CJmmJClWzBi2HPOxek=
+        Wed, 7 Feb 2018 19:34:21 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Thu, 8 Feb 2018 09:34:18 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
+Subject: Re: [PATCH 06/10] perf tools: Use machine__set_kernel_mmap instead
+ of map_groups__fixup_end
+Message-ID: <20180208003418.GA24686@sejong>
+References: <20180207144838.16823-1-jolsa@kernel.org>
+ <20180207144838.16823-7-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180207232201.GB106856@ban.mtv.corp.google.com>
-References: <20180207014117.62611-1-dbasehore@chromium.org>
- <20180207014117.62611-5-dbasehore@chromium.org> <8276f426-e4a0-c400-9f87-31be3d6b1733@arm.com>
- <20180207232201.GB106856@ban.mtv.corp.google.com>
-From: "dbasehore ." <dbasehore@chromium.org>
-Date: Wed, 7 Feb 2018 16:00:53 -0800
-X-Google-Sender-Auth: yRoVR4itInqSa-NvRrq3aEW2Imk
-Message-ID: <CAGAzgsprocoZRtccPrbArUqyBTYiQm=vr6qjrK-5rAMSeusZ-Q@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] irqchip/gic-v3-its: add ability to resend MAPC on resume
-To: Brian Norris <briannorris@chromium.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Soby Mathew <Soby.Mathew@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180207144838.16823-7-jolsa@kernel.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 7, 2018 at 3:22 PM, Brian Norris <briannorris@chromium.org> wrote:
-> Hi Marc,
->
-> I'm really not an expert on this, so take my observations with a large
-> grain of salt:
->
-> On Wed, Feb 07, 2018 at 08:46:42AM +0000, Marc Zyngier wrote:
->> On 07/02/18 01:41, Derek Basehore wrote:
->> > This adds functionality to resend the MAPC command to an ITS node on
->> > resume. If the ITS is powered down during suspend and the collections
->> > are not backed by memory, the ITS will lose that state. This just sets
->> > up the known state for the collections after the ITS is restored.
->> >
->> > This is enabled via the reset-on-suspend flag in the DTS for an ITS
->> > that has a non-zero number of collections stored in it.
->> >
->> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
->> > ---
->> >  drivers/irqchip/irq-gic-v3-its.c   | 80 ++++++++++++++++++++------------------
->> >  include/linux/irqchip/arm-gic-v3.h |  1 +
->> >  2 files changed, 43 insertions(+), 38 deletions(-)
->> >
->> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->> > index 5e63635e2a7b..dd6cd6e68ed0 100644
->> > --- a/drivers/irqchip/irq-gic-v3-its.c
->> > +++ b/drivers/irqchip/irq-gic-v3-its.c
->> > @@ -1942,52 +1942,53 @@ static void its_cpu_init_lpis(void)
->> >     dsb(sy);
->> >  }
->> >
->> > -static void its_cpu_init_collection(void)
->> > +static void its_cpu_init_collection(struct its_node *its)
->
-> ...
->
->> > @@ -3127,6 +3128,9 @@ static void its_restore_enable(void)
->> >                     its_write_baser(its, baser, baser->val);
->> >             }
->> >             writel_relaxed(its->ctlr_save, base + GITS_CTLR);
->> > +
->> > +           if (GITS_TYPER_HWCOLLCNT(gic_read_typer(base + GITS_TYPER)) > 0)
->> > +                   its_cpu_init_collection(its);
->>
->> This isn't correct. Think of a system where half the collections are in
->> HW, and the other half memory based (nothing in the spec forbids this).
->> You must evaluate the CID of each collection and replay the MAPC *only*
->> if it falls into the range [0..HCC-1]. The memory-based collections are
->> already mapped, and remapping an already mapped collection requires
->> extra care (see MAPC and the UNPREDICTABLE behaviour when V=1), so don't
->> go there.
->
-> IIUC, this is only run on CPU0 (it's in syscore resume), so implicitly,
-> CID is 0. Thus, the current condition is already doing what you ask:
->
->         HCC > 0 == CID
->
-> which is equivalent to:
->
->         HCC - 1 >= CID
->
-> Or should we really double check what CPU we're running on?
+Hi Jiri,
 
-There seems to be the edge case where you hotplug CPU 0 before
-suspending. In that case, I believe you're on the lowest number CPU
-left?
+On Wed, Feb 07, 2018 at 03:48:34PM +0100, Jiri Olsa wrote:
+> The machine__set_kernel_mmap does the same job as map_groups__fixup_end
+> when used on kernel maps within machine__create_kernel_maps call.
 
-It seems that all of the CPUs that are disabled have the ITS
-reinitialized from scratch via enable_nonboot_cpus(). This code runs
-on only the CPU that firmware resumes with. If that CPU isn't CPU 0
-for whatever reason, we need to make sure that it's processor ID is
-less than HCC.
+I'm not sure.  Modules have end address after machine__create_module()
+but vmlinux_maps is not.  So map_groups__fixup() will set the end of
+vmlinux_maps but with this change it will have ~0ULL.
 
->
-> Brian
+Thanks,
+Namhyung
+
+
+> 
+> This way we can also remove map_groups__fixup_end function, because there's
+> no user to it. Also moving machine__set_kernel_mmap up in code, so we don't
+> need forward declaration.
+> 
+> Link: http://lkml.kernel.org/n/tip-9kqrs3bsojwe4ktwpnkxc6g4@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/machine.c | 49 ++++++++++++++++++-----------------------------
+>  1 file changed, 19 insertions(+), 30 deletions(-)
+> 
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 7563b750137d..49ebd451151a 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -1028,13 +1028,6 @@ int machine__load_vmlinux_path(struct machine *machine, enum map_type type)
+>  	return ret;
+>  }
+>  
+> -static void map_groups__fixup_end(struct map_groups *mg)
+> -{
+> -	int i;
+> -	for (i = 0; i < MAP__NR_TYPES; ++i)
+> -		__map_groups__fixup_end(mg, i);
+> -}
+> -
+>  static char *get_kernel_version(const char *root_dir)
+>  {
+>  	char version[PATH_MAX];
+> @@ -1220,6 +1213,24 @@ static int machine__create_modules(struct machine *machine)
+>  	return 0;
+>  }
+>  
+> +static void machine__set_kernel_mmap(struct machine *machine,
+> +				     u64 start, u64 end)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < MAP__NR_TYPES; i++) {
+> +		machine->vmlinux_maps[i]->start = start;
+> +		machine->vmlinux_maps[i]->end   = end;
+> +
+> +		/*
+> +		 * Be a bit paranoid here, some perf.data file came with
+> +		 * a zero sized synthesized MMAP event for the kernel.
+> +		 */
+> +		if (machine->vmlinux_maps[i]->end == 0)
+> +			machine->vmlinux_maps[i]->end = ~0ULL;
+> +	}
+> +}
+> +
+>  int machine__create_kernel_maps(struct machine *machine)
+>  {
+>  	struct dso *kernel = machine__get_kernel(machine);
+> @@ -1244,11 +1255,6 @@ int machine__create_kernel_maps(struct machine *machine)
+>  				 "continuing anyway...\n", machine->pid);
+>  	}
+>  
+> -	/*
+> -	 * Now that we have all the maps created, just set the ->end of them:
+> -	 */
+> -	map_groups__fixup_end(&machine->kmaps);
+> -
+>  	if (!machine__get_running_kernel_start(machine, &name, &addr)) {
+>  		if (name &&
+>  		    maps__set_kallsyms_ref_reloc_sym(machine->vmlinux_maps, name, addr)) {
+> @@ -1257,27 +1263,10 @@ int machine__create_kernel_maps(struct machine *machine)
+>  		}
+>  	}
+>  
+> +	machine__set_kernel_mmap(machine, addr, 0);
+>  	return 0;
+>  }
+>  
+> -static void machine__set_kernel_mmap(struct machine *machine,
+> -				     u64 start, u64 end)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < MAP__NR_TYPES; i++) {
+> -		machine->vmlinux_maps[i]->start = start;
+> -		machine->vmlinux_maps[i]->end   = end;
+> -
+> -		/*
+> -		 * Be a bit paranoid here, some perf.data file came with
+> -		 * a zero sized synthesized MMAP event for the kernel.
+> -		 */
+> -		if (machine->vmlinux_maps[i]->end == 0)
+> -			machine->vmlinux_maps[i]->end = ~0ULL;
+> -	}
+> -}
+> -
+>  static bool machine__uses_kcore(struct machine *machine)
+>  {
+>  	struct dso *dso;
+> -- 
+> 2.13.6
+> 
