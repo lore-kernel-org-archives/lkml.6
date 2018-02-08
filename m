@@ -1,157 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeBHLoN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:44:13 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:38052 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750877AbeBHLoM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:44:12 -0500
-To: peterz@infradead.org
-Cc: torvalds@linux-foundation.org, davej@codemonkey.org.uk,
-        npiggin@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, mhocko@kernel.org, linux-btrfs@vger.kernel.org
-Subject: [PATCH v2] lockdep: Fix fs_reclaim warning.
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <8f1c776d-b791-e0b9-1e5c-62b03dcd1d74@I-love.SAKURA.ne.jp>
-        <20180129102746.GQ2269@hirez.programming.kicks-ass.net>
-        <201801292047.EHC05241.OHSQOJOVtFMFLF@I-love.SAKURA.ne.jp>
-        <20180129135547.GR2269@hirez.programming.kicks-ass.net>
-        <201802012036.FEE78102.HOMFFOtJVFOSQL@I-love.SAKURA.ne.jp>
-In-Reply-To: <201802012036.FEE78102.HOMFFOtJVFOSQL@I-love.SAKURA.ne.jp>
-Message-Id: <201802082043.FFJ39503.SVQFFFOJMHLOtO@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Thu, 8 Feb 2018 20:43:36 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1752210AbeBHL4L (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:56:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751153AbeBHL4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:56:09 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAD62178E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 8 Feb 2018 11:55:59 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Miodrag Dinic <Miodrag.Dinic@mips.com>
+Cc: Paul Burton <Paul.Burton@mips.com>,
+        Maciej Rozycki <Maciej.Rozycki@mips.com>,
+        Aleksandar Markovic <aleksandar.markovic@rt-rk.com>,
+        Aleksandar Markovic <Aleksandar.Markovic@mips.com>,
+        David Daney <ddaney@caviumnetworks.com>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        DengCheng Zhu <DengCheng.Zhu@mips.com>,
+        Ding Tianhong <dingtianhong@huawei.com>,
+        Douglas Leung <Douglas.Leung@mips.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Goran Ferenc <Goran.Ferenc@mips.com>, Ingo Molnar <mingo@kernel.org>,
+        James Cowgill <James.Cowgill@imgtec.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matt Redfearn <Matt.Redfearn@mips.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Petar Jovanovic <Petar.Jovanovic@mips.com>,
+        Raghu Gandham <Raghu.Gandham@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Saeger <tom.saeger@oracle.com>
+Subject: Re: [PATCH v2] MIPS: Add nonxstack=on|off kernel parameter
+Message-ID: <20180208115559.GA31316@saruman>
+References: <1511272574-10509-1-git-send-email-aleksandar.markovic@rt-rk.com>
+ <dda5572e-0617-3427-7a90-07b3cf43d808@caviumnetworks.com>
+ <48924BBB91ABDE4D9335632A6B179DD6A8CFEA@MIPSMAIL01.mipstec.com>
+ <20171130100957.GG5027@jhogan-linux.mipstec.com>
+ <48924BBB91ABDE4D9335632A6B179DD6A8D102@MIPSMAIL01.mipstec.com>
+ <alpine.DEB.2.00.1712061657520.4584@tp.orcam.me.uk>
+ <20171206182400.6va3pqdmgisbino7@pburton-laptop>
+ <48924BBB91ABDE4D9335632A6B179DD6A8E6B2@MIPSMAIL01.mipstec.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Disposition: inline
+In-Reply-To: <48924BBB91ABDE4D9335632A6B179DD6A8E6B2@MIPSMAIL01.mipstec.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 361d37a7d36978020dfb4c11ec1f4800937ccb68 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Thu, 8 Feb 2018 10:35:35 +0900
-Subject: [PATCH v2] lockdep: Fix fs_reclaim warning.
 
-Dave Jones reported fs_reclaim lockdep warnings.
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  ============================================
-  WARNING: possible recursive locking detected
-  4.15.0-rc9-backup-debug+ #1 Not tainted
-  --------------------------------------------
-  sshd/24800 is trying to acquire lock:
-   (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+Hi,
 
-  but task is already holding lock:
-   (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+On Thu, Dec 07, 2017 at 11:33:47AM +0000, Miodrag Dinic wrote:
+> > On Wed, Dec 06, 2017 at 05:50:52PM +0000, Maciej W. Rozycki wrote:
+> > >  What problem are you trying to solve anyway?  Is it not something th=
+at=20
+> > > can be handled with the `execstack' utility?
+> >=20
+> > The commit message states that for Android "non-exec stack is required".
+> > Is Android checking that then Aleksandar? If so, how?=20
+>=20
+> Android is using SELinux configured to disallow NX mappings by handling
+> the following sepolicy rules :
+> * Executable stack (execstack)
+> * Executable heap (execheap)
+> * File-based executable code which has been modified (execmod)
+> * All other executable memory (execmem)
 
-  other info that might help us debug this:
-   Possible unsafe locking scenario:
+=2E..
 
-         CPU0
-         ----
-    lock(fs_reclaim);
-    lock(fs_reclaim);
+> The effect of not having some workaround like this in the kernel, would
+> be to run Android only in SELinux permissive mode.
 
-   *** DEADLOCK ***
+So you want to override the lack of RIXI so that SELinux sees an
+RX->RW->RX transition as execmod instead of execmem (since without RIXI
+its effectively RX->RWX->RX which is execmem)?
 
-   May be due to missing lock nesting notation
+Looking at file_map_prot_check(), it does the execmem check on this
+condition:
 
-  2 locks held by sshd/24800:
-   #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000001a069652>] tcp_sendmsg+0x19/0x40
-   #1:  (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+if (default_noexec &&
+    (prot & PROT_EXEC) && (!file || IS_PRIVATE(file_inode(file)) ||
+			   (!shared && (prot & PROT_WRITE)))) {
+	/*
+	 * We are making executable an anonymous mapping or a
+	 * private file mapping that will also be writable.
+	 * This has an additional check.
+	 */
 
-  stack backtrace:
-  CPU: 3 PID: 24800 Comm: sshd Not tainted 4.15.0-rc9-backup-debug+ #1
-  Call Trace:
-   dump_stack+0xbc/0x13f
-   __lock_acquire+0xa09/0x2040
-   lock_acquire+0x12e/0x350
-   fs_reclaim_acquire.part.102+0x29/0x30
-   kmem_cache_alloc+0x3d/0x2c0
-   alloc_extent_state+0xa7/0x410
-   __clear_extent_bit+0x3ea/0x570
-   try_release_extent_mapping+0x21a/0x260
-   __btrfs_releasepage+0xb0/0x1c0
-   btrfs_releasepage+0x161/0x170
-   try_to_release_page+0x162/0x1c0
-   shrink_page_list+0x1d5a/0x2fb0
-   shrink_inactive_list+0x451/0x940
-   shrink_node_memcg.constprop.88+0x4c9/0x5e0
-   shrink_node+0x12d/0x260
-   try_to_free_pages+0x418/0xaf0
-   __alloc_pages_slowpath+0x976/0x1790
-   __alloc_pages_nodemask+0x52c/0x5c0
-   new_slab+0x374/0x3f0
-   ___slab_alloc.constprop.81+0x47e/0x5a0
-   __slab_alloc.constprop.80+0x32/0x60
-   __kmalloc_track_caller+0x267/0x310
-   __kmalloc_reserve.isra.40+0x29/0x80
-   __alloc_skb+0xee/0x390
-   sk_stream_alloc_skb+0xb8/0x340
-   tcp_sendmsg_locked+0x8e6/0x1d30
-   tcp_sendmsg+0x27/0x40
-   inet_sendmsg+0xd0/0x310
-   sock_write_iter+0x17a/0x240
-   __vfs_write+0x2ab/0x380
-   vfs_write+0xfb/0x260
-   SyS_write+0xb6/0x140
-   do_syscall_64+0x1e5/0xc05
-   entry_SYSCALL64_slow_path+0x25/0x25
+default_noexec is set if VM_DATA_DEFAULT_FLAGS doesn't have the exec
+flag set, and that flag depends on current->personality &
+READ_IMPLIES_EXEC, which depends on elf_read_implies_exec(), i.e.
+mips_elf_read_implies_exec(), and that should already return 1 if RIXI
+is unavailable.
 
-This warning is caused by commit d92a8cfcb37ecd13 ("locking/lockdep: Rework
-FS_RECLAIM annotation") which replaced lockdep_set_current_reclaim_state()/
-lockdep_clear_current_reclaim_state() in __perform_reclaim() and
-lockdep_trace_alloc() in slab_pre_alloc_hook() with fs_reclaim_acquire()/
-fs_reclaim_release(). Since __kmalloc_reserve() from __alloc_skb() adds
-__GFP_NOMEMALLOC | __GFP_NOWARN to gfp_mask, and all reclaim path simply
-propagates __GFP_NOMEMALLOC, fs_reclaim_acquire() in slab_pre_alloc_hook()
-is trying to grab the 'fake' lock again when __perform_reclaim() already
-grabbed the 'fake' lock.
+I.e.
 
-The
+mips_elf_read_implies_exec() =3D=3D 1
 
-  /* this guy won't enter reclaim */
-  if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
-          return false;
+elf_read_implies_exec() =3D=3D 1
 
-test which causes slab_pre_alloc_hook() to try to grab the 'fake' lock
-was added by commit cf40bd16fdad42c0 ("lockdep: annotate reclaim context
-(__GFP_NOFS)"). But that test is outdated because PF_MEMALLOC thread won't
-enter reclaim regardless of __GFP_NOMEMALLOC after commit 341ce06f69abfafa
-("page allocator: calculate the alloc_flags for allocation only once")
-added the PF_MEMALLOC safeguard (
+READ_IMPLIES_EXEC will be set in current->personality
 
-  /* Avoid recursion of direct reclaim */
-  if (p->flags & PF_MEMALLOC)
-          goto nopage;
+VM_DATA_DEFAULT_FLAGS will have VM_EXEC set
 
-in __alloc_pages_slowpath()).
+default_noexec will be set to 0 in selinux_init()
 
-Thus, let's fix outdated test by removing __GFP_NOMEMALLOC test and allow
-__need_fs_reclaim() to return false.
+none of the execmem, execheap, execstack, execmod permission
+checks should take place.
 
-Reported-and-tested-by: Dave Jones <davej@codemonkey.org.uk>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Nick Piggin <npiggin@gmail.com>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So whats the problem exactly? Perhaps I misinterpreted something.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 81e18ce..19fb76b 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3590,7 +3590,7 @@ static bool __need_fs_reclaim(gfp_t gfp_mask)
- 		return false;
- 
- 	/* this guy won't enter reclaim */
--	if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
-+	if (current->flags & PF_MEMALLOC)
- 		return false;
- 
- 	/* We're only interested __GFP_FS allocations for now */
--- 
-1.8.3.1
+Cheers
+James
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlp8OskACgkQbAtpk944
+dnpXnRAAg8eCnu8MmRP7+MTOs3F4aNFTs3o5Wp9ERlenik4MfNwkHimTj1uwrvuu
+sgMn6qc2x2HuctxuOXBNFlfix84qUFmAEggTUq9skE4PagLhy/6wmdCtlGBsmIPN
+tmxgrGEoq0Zt0hT0puvDYOForX8nUAnO/B2zzhbTkIAeDj3VCamx8wR5d0JgoHit
+F8Ls313c64AEI+3jN7eyFE18NbgMbtf/1APkIvHJLZm3hF3nSaks5X7gmpV4YrtY
+TFglq8n9P/HBRs41JhKVdUShKip4H38ESVy0sBniemicC3OxwLP+B6GuftzsoX2G
+OaNgYV4PNiQ4NOAiZgyBAC4oTyKEU+xgZwXzJjDjgitpkidDQYMhAw2oUu4SGZGX
+BWgB7dHTGGO1eZzESuuf/9xjp7ZM2C8S5yK0/YstY+HLaaoi0b5h1iP+VH+hFcM2
+PUeGZuCVYs6TCBBOVmEFtBhBDzlB/F9lnn60Fw7F7FrB6YbFTo+9V3Id4f1DUtmV
+OjnvLji4DlVXlOAs2S7qwFRyZ0d6j6GdLx9MguxP0VezGTQzelUXiyBp9NcsD+du
+rRAloaYtdAKkAj7t9RZmEaOdPLII3IDPCuvwvDeT1IFmtLo3ZEcxzoCjwgelv8dp
+gyX8vyrV4TMIZJ8TeblON1vFiluXYzzmrucM/8o+PbQFfPvJoCA=
+=ZezC
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
