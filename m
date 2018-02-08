@@ -1,48 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750877AbeBHHD5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 02:03:57 -0500
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:33036 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeBHHDz (ORCPT
+        id S1751094AbeBHHFm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 02:05:42 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:45771 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeBHHFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 02:03:55 -0500
-X-Google-Smtp-Source: AH8x225Ak21rNH7dt2cq6iISRohGb+a/4h/BardenO0g5i518KkskmwpTtMVW3H9RrjSmuG+FCdtvQ==
-Date: Thu, 8 Feb 2018 08:03:50 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <20180208070350.mxirhg32zljp2e4k@gmail.com>
-References: <20180206114048.6c8ced1c@canb.auug.org.au>
- <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com>
- <20180206135512.GB22740@arm.com>
- <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com>
- <20180206141118.GC22740@arm.com>
+        Thu, 8 Feb 2018 02:05:40 -0500
+X-Google-Smtp-Source: AH8x224lbfWkNDLsBlTeeIUnZ+nFxyYR5vbqWHG25wYRdWlonbMB5IGk+LFpN+o5YLHWO+EK0HxC8q1pijJ+WIbtYQM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180206141118.GC22740@arm.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAFkk2KSstFf2+w2gbm0AGk+Kdy2Kcxhdq74rv7djGOYqdm1+Zw@mail.gmail.com>
+References: <1518069400-7037-1-git-send-email-yamada.masahiro@socionext.com>
+ <1518069400-7037-2-git-send-email-yamada.masahiro@socionext.com>
+ <CAFkk2KQC6GbfkXETFdKEhy-rTfuuH7zeuXvezGzwMy_=2V03Dg@mail.gmail.com> <CAFkk2KSstFf2+w2gbm0AGk+Kdy2Kcxhdq74rv7djGOYqdm1+Zw@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Thu, 8 Feb 2018 08:05:39 +0100
+Message-ID: <CAFkk2KTWw80Fp_79i1PC5JAJyjtKVzxMyXRC0amHB8Up0F_23A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kconfig: echo stdin to stdout if either is redirected
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Herbert <marc.herbert@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 8, 2018 at 7:51 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> On Thu, Feb 8, 2018 at 7:35 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+>> On Thu, Feb 8, 2018 at 6:56 AM, Masahiro Yamada
+>> <yamada.masahiro@socionext.com> wrote:
+>>> If stdio is not tty, conf_askvalue() puts additional new line to
+>>> prevent prompts are all concatenated into a single line.  This care
+>>> is missing in conf_choice(), so a 'choice' prompt and the next prompt
+>>> are shown in the same line.
+>>>
+>>> Move the code into xfgets() to take care of all cases.  To improve
+>>> this more, echo stdin to stdout.  This clarifies what keys were input
+>>> from stdio and the stdout looks like as if it were from tty.
+>>>
+>>> I removed the isatty(2) check since stderr is unrelated here.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> ---
+>>>
+>>>  scripts/kconfig/conf.c | 7 ++++---
+>>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+>>> index 358e2e4..c5318d3 100644
+>>> --- a/scripts/kconfig/conf.c
+>>> +++ b/scripts/kconfig/conf.c
+>>> @@ -76,6 +76,9 @@ static void xfgets(char *str, int size, FILE *in)
+>>>  {
+>>>         if (!fgets(str, size, in))
+>>>                 fprintf(stderr, "\nError in reading or end of file.\n");
+>>> +
+>>> +       if (!tty_stdio)
+>>> +               printf("%s", str);
+>>>  }
+>>>
+>>>  static int conf_askvalue(struct symbol *sym, const char *def)
+>>> @@ -106,8 +109,6 @@ static int conf_askvalue(struct symbol *sym, const char *def)
+>>>         case oldaskconfig:
+>>>                 fflush(stdout);
+>>>                 xfgets(line, sizeof(line), stdin);
+>>> -               if (!tty_stdio)
+>>> -                       printf("\n");
+>>>                 return 1;
+>>>         default:
+>>>                 break;
+>>> @@ -495,7 +496,7 @@ int main(int ac, char **av)
+>>>         bindtextdomain(PACKAGE, LOCALEDIR);
+>>>         textdomain(PACKAGE);
+>>>
+>>> -       tty_stdio = isatty(0) && isatty(1) && isatty(2);
+>>> +       tty_stdio = isatty(0) && isatty(1);
+>>>
+>>>         while ((opt = getopt_long(ac, av, "s", long_opts, NULL)) != -1) {
+>>>                 if (opt == 's') {
+>>> --
+>>> 2.7.4
+>>>
+>>
+>> Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+>>
+>> Might be some case I'm not thinking of, but wouldn't it make sense to
+>> just check isatty(1) as well? If stdout is a regular file, it seems
+>> it'd be nice to have the input appear there, regardless of where stdin
+>> is from.
+>>
+>> Maybe the tty_stdio variable could be removed then as well, replaced
+>> with just 'if (!isatty(1))'.
+>>
+>> Cheers,
+>> Ulf
+>
+> Hmm... if stdout is a tty and stdin isn't, this would prevent the
+> input from showing up on the terminal though, so I guess it makes
+> sense. That case seems more important than the weird
+> stdin=tty/stdout=file case.
+>
+> Tricky stuff. :)
+>
+> Cheers,
+> Ulf
 
-* Will Deacon <will.deacon@arm.com> wrote:
+Oh... and that one's already taken care of too, reading closer.
 
-> For the sake of avoiding the conflict, can we just drop it for now, please?
+stdin | stdout | wants stdin written to stdout
+------+--------+-------------------------------------
+tty   | tty    | no (already echoed by tty)
+tty   | file   | yes (echoed by tty, written to file)
+file  | tty    | yes (not echoed by tty)
+file  | file   | yes
 
-Yeah, so I resolved the conflict by merging the (already upstream) bits and Linus 
-pulled that resolution. From now on the level of comments you want there is up to 
-you! :-)
+So !(tty(0) && tty(1)) makes sense. Excuse the rambling...
 
-Thanks,
-
-	Ingo
+Cheers,
+Ulf
