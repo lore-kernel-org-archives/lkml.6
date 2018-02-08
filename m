@@ -1,70 +1,113 @@
-Return-Path: <richard@sigma-star.at>
-X-Google-Smtp-Source: AH8x226skE+K+kD1LD4zaz/K2YX3XWXPQUukibznoKSM/DTTMgfmSuP91wGBMZOr15PfYP1EsR8/
-ARC-Seal: i=1; a=rsa-sha256; t=1518738254; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x224cMAHyG8LpA4X7G+o1R6QR/cV69LFxJ7es5vl+qpQ/caMEfiJUBcQfM2QQEhN45tGX9UZ8
+ARC-Seal: i=1; a=rsa-sha256; t=1518106812; cv=none;
         d=google.com; s=arc-20160816;
-        b=b1bW7s2yDcwaniW6RVz7l13KhGEr0pfx0fCwPpnyjKeOeT+M9SU173qnkulRxgL6VT
-         UnVLfWUfMOEmUXgDRnset/1jka1PVafrtiBPqWxLn3AyR7+Vnx8IE/IlNigKVxRIed+N
-         XCy5tJFaFX81yJ0UpbdSGySC8gro+H6GKiC2c595H2dPycN9dVNsuRQ/aBT1axakhagh
-         rZXvHiZVlGF9tMpnyWb4n3i4RfcZVF83jbDeSGp2tVt9+SspfUFDXweURNH4CcJcao9S
-         obMNe6+Dw9dCi/UUDGWu+mFFcWmlFhz4O7ujgS8mZ9DyxNoTJ5keDbThV/iM6mjS7krh
-         +1bg==
+        b=d7j8lMCH05vs2435iNhI6p0Nrcdq0orMDK2twwqDQJegZfiSexAr9UpFIRAs2wwMSP
+         +ph8D6LXkCqezKnN3lLLyPLJjRyAuHfYHIF2M97fZUf85zd6QYct2Fm8v3jYP8JJ9+RW
+         Ud7441lI1MBhM/6CeIkqqbKALdj178bcOmqW1IoUkTvKJzA0mz3S6iXd7w0B5SZyT+SZ
+         zb2f0Rusmvm6rk4FHsG960er64LETW7ZqmAAgVJVyoUBz6eyqafO3dAvacYt1QyTBHbP
+         Ai+fO07BFFvEoXRDJf4o9iGEXOROhwKzZXj4xudM4/ZSrUw7KbDYNCqGP5hk0rUlWu2F
+         954g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=mOen61VHbGkB9Mzf+na23+IVNOCEM1/B0Za0RU0YHPA=;
-        b=X7tOjRmyGxbXwzrAxON1T/1s7BvntJ3Y1YdDGNNzvDv+/JXz6IXI9XsGH+80VSSGDf
-         BSjFREviBELigY9kh9l1mOrNBQo3RlwoQeoMp6JLLsU88fHZp7x2UXtQbGJJEadtCZw5
-         Sv1CcJNjPmvUAtCeXG2QbnU7Z1L79xHn/G4fiM9Cyph+64JuST4zhgiKCZz9k2WAMO9C
-         oN6GKO/SN6jKgi3Egcy1tAL/gHvfYvd/sjIu/ViEpe3vB/tf4gFpjTUDtHdTAnLGBxEG
-         W+oFGx9wcbhAFq0drZnP+FAviJhdplM2UgCluosNStWEMNtQ4KDAoR9+fi7Fj+h5RT6c
-         wABA==
+        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-filter
+         :arc-authentication-results;
+        bh=YzitirJ/Q8VjI4HXMIX0Plvx4w1aL52mZmd+kxZQD80=;
+        b=ClSRu6P7AtZm4uU4wDcAfaNtEJPpJIlSHdk1JS4+dq0hD2lPR1yZZwHnp47GMkuTTT
+         xPE+hhtBnu1FdTYiuZCwbk6HSqgjwU5ihoebxJnClPoEmM67342m5mtF9hoDPcYObNP7
+         sfSwpjr1FvJ1wJTdfXfCnEnOWx3kEbtTg9FOpGimyVfttHADgL8+wr+AEOZVY+JZIyaa
+         w3pYyGD84CMg6ggBsgrFpx9//7uY9tlI6JIDogXiUAE5ABlFfpL+yREyRqW35jS3J44R
+         JFKn0PdXUrFF4+ljE/BxExVk8lYjtcy4H0ZcMQ+4H3zTErWfUQoIrP/IYnSoufTngKA0
+         jafg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of richard@sigma-star.at designates 109.75.188.150 as permitted sender) smtp.mailfrom=richard@sigma-star.at
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=GE/4Nbyw;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of richard@sigma-star.at designates 109.75.188.150 as permitted sender) smtp.mailfrom=richard@sigma-star.at
-From: Richard Weinberger <richard@sigma-star.at>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: mingo@kernel.org, luto@kernel.org, arjan@linux.intel.com, bp@alien8.de, dan.j.williams@intel.com, dave.hansen@linux.intel.com, gregkh@linuxfoundation.org, jpoimboe@redhat.com, torvalds@linux-foundation.org, peterz@infradead.org, tglx@linutronix.de, arjan.van.de.ven@intel.com, dave.hansen@intel.com, jmattson@google.com, karahmed@amazon.de, kvm@vger.kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com, sironi@amazon.de, linux-kernel@vger.kernel.org
-Subject: Re: Revert "x86/speculation: Simplify indirect_branch_prediction_barrier()" crashes KVM guest
-Date: Fri, 16 Feb 2018 00:45:29 +0100
-Message-ID: <3378738.8dlq1zuRqp@blindfold>
-In-Reply-To: <1518737310.7876.10.camel@infradead.org>
-References: <1753460.Vme2X1QhPT@blindfold> <1518737310.7876.10.camel@infradead.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=GE/4Nbyw;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w18GJP1C021191
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-s390@vger.kernel.org,
+        Jiri Kosina <jkosina@suse.cz>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/7] Kconfig: add new special property shell= to test compiler options in Kconfig
+Date: Fri,  9 Feb 2018 01:19:05 +0900
+Message-Id: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592510409183573045?=
-X-GMAIL-MSGID: =?utf-8?q?1592512483856498443?=
+X-GMAIL-THRID: =?utf-8?q?1591850368430758875?=
+X-GMAIL-MSGID: =?utf-8?q?1591850368430758875?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Am Freitag, 16. Februar 2018, 00:28:30 CET schrieb David Woodhouse:
-> On Fri, 2018-02-16 at 00:12 +0100, Richard Weinberger wrote:
-> > [    2.791518] Code: 8b 45 00 49 8b 7d 08 49 83 c5 18 31 d2 31 f6 ff
-> > d0 49 8b 45 00 48 85 c0 75 e9 eb b1 b9 49 00 00 00 b8 01 00 00 00 ba
-> > 00 00 00 00 <0f> 30 e9 68 fd ff ff 9c 58 0f 1f 44 00 00 48 89 c5 fa
-> > 66 0f 1f
->=20
->   23:   b9 49 00 00 00          mov    $0x49,%ecx
->   28:   b8 01 00 00 00          mov    $0x1,%eax
->   2d:   ba 00 00 00 00          mov    $0x0,%edx
->   32:   0f 30                   wrmsr =20
->=20
-> The faulting instruction is the wrmsr itself. That shouldn't happen; if
-> the CPUID bit indicates that the MSR exists, then it should exist.
->=20
-> The reverted patch did use the C __wrmsr() macro which contained a
-> fixup for this GP# but it was just a side-effect of the "cleanup" =E2=80=
-=94 it
-> wasn't intentional because that really shouldn't happen. That looks
-> like a qemu bug as first glance.
+This was prompted by the email from Linus today's morning.
 
-Hmmm, yes seems so. Just gave latest qemu a try, works fine. ;-\
+I implmented this in a rush today, so there are still many TODOs,
+but I put it here to start discussion.
 
-Thanks,
-//richard
+I think it is working, but as you notice, it is tedious to repeat something
+like follows:
 
-=2D-=20
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+config CC_HAS_STACKPROTECTOR
+        bool
+        option shell="$CC -Werror -fstack-protector -c -x c /dev/null"
+
+One possiblity is to put this ugly code into script like follows,
+
+config CC_STACKPROTECTOR
+          bool
+          option shell="$srctree/scripts/cc-option.sh $CC -fstack-protector"
+
+... but this is longer.
+
+I was thinking of something like follows:
+
+config CC_STACKPROTECTOR
+          bool
+          option shell="$(CC_OPTION -fstack-protector)"
+
+Need time to brush up details.
+
+Comments are appreciated.
+
+
+
+Masahiro Yamada (7):
+  kbuild: remove kbuild cache
+  kconfig: add xrealloc() helper
+  kconfig: remove const qualifier from sym_expand_string_value()
+  kconfig: support new special property shell=
+  kconfig: invoke silentoldconfig when compiler is updated
+  kconfig: add basic environments to evaluate C flags in Kconfig
+  Test stackprotector options in Kconfig to kill CC_STACKPROTECTOR_AUTO
+
+ Makefile                    |  65 +++++++---------------------
+ arch/Kconfig                |  54 +++++++++++++----------
+ init/Kconfig                |  17 ++++++++
+ scripts/Kbuild.include      | 101 ++++++--------------------------------------
+ scripts/kconfig/confdata.c  |   2 +-
+ scripts/kconfig/expr.h      |   1 +
+ scripts/kconfig/kconf_id.c  |   1 +
+ scripts/kconfig/lkc.h       |   2 +
+ scripts/kconfig/lkc_proto.h |   2 +-
+ scripts/kconfig/menu.c      |   3 ++
+ scripts/kconfig/nconf.gui.c |   2 +-
+ scripts/kconfig/symbol.c    |  78 +++++++++++++++++++++++++++++++++-
+ scripts/kconfig/util.c      |  15 +++++--
+ scripts/kconfig/zconf.l     |   2 +-
+ 14 files changed, 176 insertions(+), 169 deletions(-)
+
+-- 
+2.7.4
