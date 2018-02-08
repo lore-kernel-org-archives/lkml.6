@@ -1,73 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeBHJyn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 04:54:43 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:42488 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751186AbeBHJyk (ORCPT
+        id S1752285AbeBHJyx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 04:54:53 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:41558 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeBHJyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 04:54:40 -0500
-X-Google-Smtp-Source: AH8x225A5Jzox3tgWwSIS6Sgmc92cRt8/D57yB7VJH4EcPImBiUwAvmZVbZltzdkyGEDc8jrxKIz0gNXEx2TRi5KIm4=
+        Thu, 8 Feb 2018 04:54:50 -0500
+X-Google-Smtp-Source: AH8x227rY91h+kyFrVSN2obn6brRxBHA+gXWSI0H6thvzB6+W1lDBtlQIYASalEYPs9OrPLoJ3TBThNOVIorSMjNJiQ=
 MIME-Version: 1.0
-In-Reply-To: <20180207160002.GA9292@embeddedgus>
-References: <20180207160002.GA9292@embeddedgus>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 8 Feb 2018 09:54:38 +0000
-Message-ID: <CAKv+Gu9hmxLSS0ekr8av-ADt3OQjBV=Bt-hRq_-SzWaGODs4SQ@mail.gmail.com>
-Subject: Re: [PATCH] spi: bcm2835aux: use 64-bit arithmetic instead of 32-bit
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
+In-Reply-To: <65f2690c-c605-3c66-9d8a-9a882aaf446d@ti.com>
+References: <20180207134553.13510-1-brgl@bgdev.pl> <20180207134553.13510-3-brgl@bgdev.pl>
+ <65f2690c-c605-3c66-9d8a-9a882aaf446d@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 8 Feb 2018 10:54:49 +0100
+Message-ID: <CAMRc=Mf+S3k_wfhUWEx2-39AZx1szkgy-u-bsZQUMiaY06UKww@mail.gmail.com>
+Subject: Re: [PATCH 2/7] soc: davinci: new genpd driver
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-spi@vger.kernel.org
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7 February 2018 at 16:00, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
-> Add suffix ULL to constant 9 in order to give the compiler complete
-> information about the proper arithmetic to use. Notice that this
-> constant is used in a context that expects an expression of type
-> unsigned long long (64 bits, unsigned).
+2018-02-08 10:30 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
+> On Wednesday 07 February 2018 07:15 PM, Bartosz Golaszewski wrote:
+>> +     /*
+>> +      * DaVinci always uses a single clock for power-management. We assume
+>> +      * it's the first one in the clocks property.
+>> +      */
+>> +     clk = of_clk_get(dev->of_node, 0);
+>> +     if (IS_ERR(clk))
+>> +             return PTR_ERR(clk);
 >
-> The expression tfr->len * 9 * 1000000 is currently being evaluated
-> using 32-bit arithmetic.
+> We already get this today with drivers/base/power/clock_ops.c once
+> .con_ids list is dropped from pm_clk_notifier_block (which I think it
+> should).
 >
-> Addresses-Coverity-ID: 1339619
+> If there is no reason to introduce thus functionality at this stage,
+> perhaps we should wait till such a time when its clearly needed?
+>
+> Thanks,
+> Sekhar
 
-What does this number mean? If it is an index into some internal
-database, please remove it.
+If I understand correctly: once we drop the con_ids list, we end up
+calling clk_get(dev, NULL) from pm_clk_acquire(), which matches
+against the clock with NULL con_id, which may not necessarily be the
+first clock in the list.
 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/spi/spi-bcm2835aux.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
-> index 7428091..a768c23 100644
-> --- a/drivers/spi/spi-bcm2835aux.c
-> +++ b/drivers/spi/spi-bcm2835aux.c
-> @@ -363,7 +363,7 @@ static int bcm2835aux_spi_transfer_one(struct spi_master *master,
->          * chunk getting transferred - in our case the chunk size
->          * is 3 bytes, so we approximate this by 9 bits/byte
->          */
-> -       xfer_time_us = tfr->len * 9 * 1000000;
-> +       xfer_time_us = tfr->len * 9ULL * 1000000;
->         do_div(xfer_time_us, spi_used_hz);
->
->         /* run in polling mode for short transfers */
-> --
-> 2.7.4
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+I'm working on extending the psc driver with the power-domain code (as
+suggested by David), which should be much smaller and simplier - how
+about that?
+
+Thanks,
+Bartosz
