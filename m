@@ -1,54 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeBHGIX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 01:08:23 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52896 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751788AbeBHGIV (ORCPT
+        id S1750930AbeBHGVi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 01:21:38 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53842 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeBHGVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 01:08:21 -0500
-Date: Thu, 8 Feb 2018 07:08:12 +0100
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the s390 tree
-In-Reply-To: <20180208073539.706e942f@canb.auug.org.au>
-References: <20180208073539.706e942f@canb.auug.org.au>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Thu, 8 Feb 2018 01:21:37 -0500
+X-Google-Smtp-Source: AH8x2255EYFtVh5wQsTqcMWL27kve2QPMjlWJ2QpPTkiakPaD/Bqn0l23hi5GLuaB10OGwkgt8728A==
+Subject: Re: [PATCH] ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE
+ attribute
+To: Takashi Iwai <tiwai@suse.de>
+Cc: perex@perex.cz, alsa-devel@alsa-project.org,
+        Stephen Barber <smbarber@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Jaejoong Kim <climbbb.kim@gmail.com>, Julian Scheel <julian@jusst.de>,
+        linux-kernel@vger.kernel.org
+References: <20180129053755.20136-1-k.marinushkin@gmail.com>
+ <s5hvaf95p4i.wl-tiwai@suse.de>
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
+Message-ID: <40196230-8f73-4cca-08e5-d67bfbea2d6e@gmail.com>
+Date: Thu, 8 Feb 2018 07:21:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18020806-0020-0000-0000-000003F38154
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020806-0021-0000-0000-00004285FE01
-Message-Id: <20180208070812.7dd4e1b6@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-08_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802080061
+In-Reply-To: <s5hvaf95p4i.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Feb 2018 07:35:39 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 02/07/18 06:45, Takashi Iwai wrote:
+> On Mon, 29 Jan 2018 06:37:55 +0100,
+> Kirill Marinushkin wrote:
+>> The layout of the UAC2 Control request and response varies depending on
+>> the request type. With the current implementation, only the Layout 2
+>> Parameter Block (with the 2-byte sized RANGE attribute) is handled
+>> properly. For the Control requests with the 1-byte sized RANGE attribute
+>> (Bass Control, Mid Control, Tremble Control), the response is parsed
+>> incorrectly.
+>>
+>> This commit:
+>> * fixes the wLength field value in the request
+>> * fixes parsing the range values from the response
+>>
+>> Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
+>> Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+>> Cc: Jaroslav Kysela <perex@perex.cz>
+>> Cc: Takashi Iwai <tiwai@suse.com>
+>> Cc: Jaejoong Kim <climbbb.kim@gmail.com>
+>> Cc: Bhumika Goyal <bhumirks@gmail.com>
+>> Cc: Stephen Barber <smbarber@chromium.org>
+>> Cc: Julian Scheel <julian@jusst.de>
+>> Cc: alsa-devel@alsa-project.org
+>> Cc: linux-kernel@vger.kernel.org
+> Sorry for the late reply, as I've been (and still) off.
+>
+> Does this bug actually hit on any real devices, or is it only a
+> logical error so far?  In the former case, a Cc to stable is
+> mandatory.
+>
+> In anyway, I'll review and merge it properly once after I back to
+> work.
+>
+>
+> thanks,
+>
+> Takashi
 
-> Commit
-> 
->   b175210bd231 ("s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select")
-> 
-> is missing a Signed-off-by from its committer.
- 
-It is always that "last" one you add. Fixed. Thanks.
+Hello Takashi,
 
--- 
-blue skies,
-   Martin.
+Thank you for your answer. I will wait until you are back to work, don't 
+worry about the late replies.
 
-"Reality continues to ruin my life." - Calvin.
+I did not hit the issue on a real device.
+
+During my UAC2 experiments, I reproduced this issue on the development 
+board, and then tested my solution on it.
+ 
+Best Regards,
+Kirill
