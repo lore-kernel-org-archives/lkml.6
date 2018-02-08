@@ -1,125 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeBHWPr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 17:15:47 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:39026 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbeBHWPp (ORCPT
+        id S1752135AbeBHWPu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 17:15:50 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34906 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752013AbeBHWPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 17:15:45 -0500
+        Thu, 8 Feb 2018 17:15:47 -0500
 From: Rohit Jain <rohit.k.jain@oracle.com>
 To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org, mingo@redhat.com, steven.sistare@oracle.com,
         joelaf@google.com, jbacik@fb.com, riel@redhat.com,
         juri.lelli@redhat.com, dhaval.giani@oracle.com, efault@gmx.de
-Subject: [RFC 1/2] sched: reduce migration cost between faster caches for idle_balance
-Date: Thu,  8 Feb 2018 14:19:54 -0800
-Message-Id: <1518128395-14606-2-git-send-email-rohit.k.jain@oracle.com>
+Subject: [RFC 0/2] sched: Make idle_balance smarter about topology
+Date: Thu,  8 Feb 2018 14:19:53 -0800
+Message-Id: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
-References: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=1 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=1 mlxscore=1 mlxlogscore=185
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802080255
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch makes idle_balance more dynamic as the sched_migration_cost
-is now accounted on a sched_domain level. This in turn is done in
-sd_init when we know what the topology relationships are.
+Current idle_balance does a check against migration cost (fixed value)
+with the average idle time of a CPU. There is a huge difference in
+migration costs between CPUs of the same core, different cores and
+different sockets. Since sched_domain already captures the architectural
+dependencies, this patch tries to encapsulate the migration cost based
+on the topology of the machine.
 
-For introduction sakes cost of migration within the same core is set as
-0, across cores is 50 usec and across sockets is 500 usec. sysctl for
-these variables are introduced in patch 2.
+Test Results:
 
-Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
----
- include/linux/sched/topology.h | 1 +
- kernel/sched/fair.c            | 6 +++---
- kernel/sched/topology.c        | 5 +++++
- 3 files changed, 9 insertions(+), 3 deletions(-)
+* Wins:
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index cf257c2..bcb4db2 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -104,6 +104,7 @@ struct sched_domain {
- 	u64 max_newidle_lb_cost;
- 	unsigned long next_decay_max_lb_cost;
- 
-+	u64 sched_migration_cost;
- 	u64 avg_scan_cost;		/* select_idle_sibling */
- 
- #ifdef CONFIG_SCHEDSTATS
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2fe3aa8..61d3508 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8782,8 +8782,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
- 	 */
- 	rq_unpin_lock(this_rq, rf);
- 
--	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
--	    !this_rq->rd->overload) {
-+	if (!this_rq->rd->overload) {
- 		rcu_read_lock();
- 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
- 		if (sd)
-@@ -8804,7 +8803,8 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
- 		if (!(sd->flags & SD_LOAD_BALANCE))
- 			continue;
- 
--		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost) {
-+		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost +
-+		    sd->sched_migration_cost) {
- 			update_next_balance(sd, &next_balance);
- 			break;
- 		}
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 034cbed..bcd8c64 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1148,12 +1148,14 @@ sd_init(struct sched_domain_topology_level *tl,
- 		sd->flags |= SD_PREFER_SIBLING;
- 		sd->imbalance_pct = 110;
- 		sd->smt_gain = 1178; /* ~15% */
-+		sd->sched_migration_cost = 0;
- 
- 	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
- 		sd->flags |= SD_PREFER_SIBLING;
- 		sd->imbalance_pct = 117;
- 		sd->cache_nice_tries = 1;
- 		sd->busy_idx = 2;
-+		sd->sched_migration_cost = 500000UL;
- 
- #ifdef CONFIG_NUMA
- 	} else if (sd->flags & SD_NUMA) {
-@@ -1162,6 +1164,7 @@ sd_init(struct sched_domain_topology_level *tl,
- 		sd->idle_idx = 2;
- 
- 		sd->flags |= SD_SERIALIZE;
-+		sd->sched_migration_cost = 5000000UL;
- 		if (sched_domains_numa_distance[tl->numa_level] > RECLAIM_DISTANCE) {
- 			sd->flags &= ~(SD_BALANCE_EXEC |
- 				       SD_BALANCE_FORK |
-@@ -1174,6 +1177,7 @@ sd_init(struct sched_domain_topology_level *tl,
- 		sd->cache_nice_tries = 1;
- 		sd->busy_idx = 2;
- 		sd->idle_idx = 1;
-+		sd->sched_migration_cost = 5000000UL;
- 	}
- 
- 	/*
-@@ -1622,6 +1626,7 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
- 		}
- 
- 	}
-+
- 	set_domain_attribute(sd, attr);
- 
- 	return sd;
+1) hackbench results on 44 core (22 core per socket), 2 socket Intel x86
+machine (lower is better)
+
++-------+----+-------+-------------------+--------------------------+
+|       |    |       | Without patch     |With patch                |
++-------+----+-------+---------+---------+----------------+---------+
+|Loops  |FD  |Groups | Average |%Std Dev |Average         |%Std Dev |
++-------+----+-------+---------+---------+----------------+---------+
+|100000 |40  |4      | 9.701   |0.78     |9.623  (+0.81%) |3.67     |
+|100000 |40  |8      | 17.186  |0.77     |17.068 (+0.68%) |1.89     |
+|100000 |40  |16     | 30.378  |0.55     |30.072 (+1.52%) |0.46     |
+|100000 |40  |32     | 54.712  |0.54     |53.588 (+2.28%) |0.21     |
++-------+----+-------+---------+---------+----------------+---------+
+
+Note: I start with 4 groups because the Standard Deviation for groups 1
+and 2 was very high.
+
+2) sysbench MySQL results on 2 socket, 44 core and 88 threads Intel x86
+machine (higher is better):
+
++-----------+--------------------------------+-------------------------------+
+|           | Without Patch                  | With Patch                    |
++-----------+--------+------------+----------+--------------------+----------+
+|Approx.    | Num    |  Average   |          |  Average           |          |
+|Utilization| Threads|  througput | %Std Dev |  througput         | %Std Dev |
++-----------+--------+------------+----------+--------------------+----------+
+|10.00%     |    8   |  133658.2  |  0.66    |  135071.6 (+1.06%) | 1.39     |
+|20.00%     |    16  |  266540    |  0.48    |  268417.4 (+0.70%) | 0.88     |
+|40.00%     |    32  |  466315.6  |  0.15    |  468289.0 (+0.42%) | 0.45     |
+|75.00%     |    64  |  720039.4  |  0.23    |  726244.2 (+0.86%) | 0.03     |
+|82.00%     |    72  |  757284.4  |  0.25    |  769020.6 (+1.55%) | 0.18     |
+|90.00%     |    80  |  807955.6  |  0.22    |  818989.4 (+1.37%) | 0.22     |
+|98.00%     |    88  |  863173.8  |  0.25    |  876121.8 (+1.50%) | 0.28     |
+|100.00%    |    96  |  882950.8  |  0.32    |  890678.8 (+0.88%) | 0.51     |
+|100.00%    |    128 |  895112.6  |  0.13    |  899149.6 (+0.47%) | 0.44     |
++-----------+--------+------------+----------+--------------------+----------+
+
+* No change:
+
+3) tbench sample results on 2 socket, 44 core and 88 threads Intel x86
+machine:
+
+With Patch:
+
+Throughput 555.834 MB/sec  2 clients    2 procs  max_latency=0.330 ms
+Throughput 1388.19 MB/sec  5 clients    5 procs  max_latency=3.666 ms
+Throughput 2737.96 MB/sec  10 clients  10 procs  max_latency=1.646 ms
+Throughput 5220.17 MB/sec  20 clients  20 procs  max_latency=3.666 ms
+Throughput 8324.46 MB/sec  40 clients  40 procs  max_latency=0.732 ms
+
+Without patch:
+
+Throughput 557.142 MB/sec  2 clients    2 procs  max_latency=0.264 ms
+Throughput 1381.59 MB/sec  5 clients    5 procs  max_latency=0.335 ms
+Throughput 2726.84 MB/sec  10 clients  10 procs  max_latency=0.352 ms
+Throughput 5230.12 MB/sec  20 clients  20 procs  max_latency=1.632 ms
+Throughput 8474.5 MB/sec  40 clients   40 procs  max_latency=7.756 ms
+
+Note: High variation observed in max_latency in different runs
+
+Rohit Jain (2):
+  sched: reduce migration cost between faster caches for idle_balance
+  Introduce sysctl(s) for the migration costs
+
+ include/linux/sched/sysctl.h   |  2 ++
+ include/linux/sched/topology.h |  1 +
+ kernel/sched/fair.c            | 10 ++++++----
+ kernel/sched/topology.c        |  5 +++++
+ kernel/sysctl.c                | 14 ++++++++++++++
+ 5 files changed, 28 insertions(+), 4 deletions(-)
+
 -- 
 2.7.4
