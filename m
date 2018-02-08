@@ -1,41 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752176AbeBHTil (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 14:38:41 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43967 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752020AbeBHTik (ORCPT
+        id S1752222AbeBHTjb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 14:39:31 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54646 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbeBHTj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 14:38:40 -0500
-X-Google-Smtp-Source: AH8x226JH3IIksyrtdwnR0O9vbsrGVQP1oLH9TLX85Bj+VWUOA5HRqK3oGbZ2fsIMtCMhguTrYUpUtv8EnOZx10hG04=
-MIME-Version: 1.0
-In-Reply-To: <nycvar.YSQ.7.76.1802072149330.7021@knanqh.ubzr>
-References: <nycvar.YSQ.7.76.1802072149330.7021@knanqh.ubzr>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 8 Feb 2018 11:38:38 -0800
-X-Google-Sender-Auth: WmYWmGLhYhl1_GE8XiWxIFGZlpE
-Message-ID: <CA+55aFzHtRbis95-D-nLB6v_FM8ZVPU6Wt=A04bG2zH+RukhaA@mail.gmail.com>
-Subject: Re: [PATCH] cramfs: better MTD dependency expression
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Feb 2018 14:39:29 -0500
+X-Google-Smtp-Source: AH8x226mzaySdNPQ3A3WTeNDWtJjkYWbH+p/Ay1BzfAHf97yqVW5jYfK5wcaO5fOFjDopPC0AlK/2A==
+From: Corentin Labbe <clabbe@baylibre.com>
+To: fenghua.yu@intel.com, tony.luck@intel.com, hch@lst.de,
+        christian.koenig@amd.com
+Cc: linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] ia64: fix build failure with CONFIG_SWIOTLB
+Date: Thu,  8 Feb 2018 19:39:20 +0000
+Message-Id: <1518118760-5224-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 7, 2018 at 7:08 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
->
-> Viro once told me that my cramfs pull requests could go either to him or
-> to you. I have only this one patch at the moment, and since it depends
-> on a commit that recently appeared in your tree I'm therefore sending it
-> directly to you.
+arch/ia64/kernel/pci-swiotlb.c is removed in commit 4fac8076df85 ("ia64: clean up swiotlb support")
+but pci-swiotlb.o is still present in Makefile, and so build fail when
+CONFIG_SWIOTLB is enabled.
+Fix the build failure by removing pci-swiotlb.o from makefile
 
-Applied.
+Fixes: 4fac8076df85 ("ia64: clean up swiotlb support")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ arch/ia64/kernel/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
-Although I'm not entirely convinced that the simpler dependency is
-easier to _read_ and understand.
-
-It is clearly simpler, though.
-
-            Linus
+diff --git a/arch/ia64/kernel/Makefile b/arch/ia64/kernel/Makefile
+index 0b4c65a1af25..498f3da3f225 100644
+--- a/arch/ia64/kernel/Makefile
++++ b/arch/ia64/kernel/Makefile
+@@ -41,7 +41,6 @@ ifneq ($(CONFIG_IA64_ESI),)
+ obj-y				+= esi_stub.o	# must be in kernel proper
+ endif
+ obj-$(CONFIG_INTEL_IOMMU)	+= pci-dma.o
+-obj-$(CONFIG_SWIOTLB)		+= pci-swiotlb.o
+ 
+ obj-$(CONFIG_BINFMT_ELF)	+= elfcore.o
+ 
+-- 
+2.13.6
