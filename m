@@ -1,79 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeBHN7E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:59:04 -0500
-Received: from foss.arm.com ([217.140.101.70]:35394 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751014AbeBHN7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:59:02 -0500
-Date: Thu, 8 Feb 2018 13:58:56 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Jia He <hejianet@gmail.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] ACPI/IORT: Remove linker section for IORT entries again
-Message-ID: <20180208135856.GA4360@e107981-ln.cambridge.arm.com>
-References: <1517976694-2004-1-git-send-email-hejianet@gmail.com>
- <20180207114104.GA22549@e107981-ln.cambridge.arm.com>
- <c2f09386-90c6-809c-127b-87bd3d80c7ca@gmail.com>
+        id S1752265AbeBHN7I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:59:08 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:64234
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751094AbeBHN7G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:59:06 -0500
+X-IronPort-AV: E=Sophos;i="5.46,478,1511823600";
+   d="scan'208";a="254083239"
+Date: Thu, 8 Feb 2018 14:58:56 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Dan Carpenter <dan.carpenter@oracle.com>
+cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/coccinelle/misc/shift.cocci: detect < or > that
+ should be a shift
+In-Reply-To: <20180208135350.e4yljburdpq7f5ny@mwanda>
+Message-ID: <alpine.DEB.2.20.1802081457350.13345@hadrien>
+References: <1518094434-12852-1-git-send-email-Julia.Lawall@lip6.fr> <20180208135350.e4yljburdpq7f5ny@mwanda>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2f09386-90c6-809c-127b-87bd3d80c7ca@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 10:37:54AM +0800, Jia He wrote:
-> 
-> 
-> On 2/7/2018 7:41 PM, Lorenzo Pieralisi Wrote:
-> >On Tue, Feb 06, 2018 at 08:11:34PM -0800, Jia He wrote:
-> >>In commit 316ca8804ea8 ("ACPI/IORT: Remove linker section for IORT entries
-> >>probing"), iort entries was removed in vmlinux.lds.h. But in
-> >>commit 2fcc112af37f ("clocksource/drivers: Rename clksrc table to timer"),
-> >>this line was back incorrectly.
-> >>
-> >>It does no harm except for adding some useless symbols, so fix it.
-> >>
-> >>Signed-off-by: Jia He <hejianet@gmail.com>
-> forget to add another Signed-off-by line(because of my company's opensource
-> rules)
-> 
-> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
-> 
-> >>---
-> >>  include/asm-generic/vmlinux.lds.h | 1 -
-> >>  1 file changed, 1 deletion(-)
-> >Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+
+
+On Thu, 8 Feb 2018, Dan Carpenter wrote:
+
+> On Thu, Feb 08, 2018 at 01:53:54PM +0100, Julia Lawall wrote:
+> > This checks for a comparison using < or > between two constants,
+> > considering both explicit constants (1, 2, etc) and macros defined
+> > with #define.  False positives are possible in the latter case, when
+> > a macro may have multiple possible definitions and it is indeed
+> > necessary to check the value.  There are currently two such false
+> > positives, in drivers/net/ethernet/chelsio/cxgb3/sge.c:
 > >
-> >Who is picking this up ?
-> Sorry, do you mean who is picking up acpi/iort subsystem?
+> >        q->fl[0].use_pages = FL0_PG_CHUNK_SIZE > 0;
+> >        q->fl[1].use_pages = FL1_PG_CHUNK_SIZE > 0;
+> >
+>
+> We could eliminate both these false postives by ignoring >> vs >.  Did
+> searching for > actually find any bugs?  I think you were right that
+> right shifting a constant is way less common than left shifting and I
+> have some smatch scripts where I ignore right shifting bugs.
+>
+> On the other hand, two false positives are not a big deal.
 
-No, I meant who (as-in me or Daniel) will merge this patch.
+I found no bugs with > at the moment.  I figured that the person could
+have just as easily written 0 < FL0_PG_CHUNK_SIZE, so it was not worth
+making a special case.  But if anyone wants me to drop the case id > cst,
+then I can do that.
 
-I will take it.
-
-Lorenzo
-
-> I can't answer this question. I find this minor bug while doing the code
-> review.
-> 
-> Cheers,
-> Jia
-> >>diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> >>index 1ab0e52..58b1dab 100644
-> >>--- a/include/asm-generic/vmlinux.lds.h
-> >>+++ b/include/asm-generic/vmlinux.lds.h
-> >>@@ -589,7 +589,6 @@
-> >>  	IRQCHIP_OF_MATCH_TABLE()					\
-> >>  	ACPI_PROBE_TABLE(irqchip)					\
-> >>  	ACPI_PROBE_TABLE(timer)						\
-> >>-	ACPI_PROBE_TABLE(iort)						\
-> >>  	EARLYCON_TABLE()
-> >>  #define INIT_TEXT							\
-> >>-- 
-> >>2.7.4
-> >>
+thanks,
+julia
