@@ -1,47 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeBHUFk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:05:40 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:48760 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeBHUFj (ORCPT
+        id S1752218AbeBHUJn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:09:43 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:49856 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbeBHUJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:05:39 -0500
-Date: Thu, 08 Feb 2018 15:05:36 -0500 (EST)
-Message-Id: <20180208.150536.1732289776944691235.davem@davemloft.net>
-To: gustavo@embeddedor.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        garsilva@embeddedor.com
-Subject: Re: [PATCH] atm: he: use 64-bit arithmetic instead of 32-bit
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180207161729.GA10329@embeddedgus>
-References: <20180207161729.GA10329@embeddedgus>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Thu, 8 Feb 2018 15:09:41 -0500
+X-Auth-Info: o2gjdkrS2hdGA8safKrxHmSS27Xq8fbwNJIR/H7sS/w=
+Subject: Re: [PATCH v2 1/2] net, can, ifi: fix "write buffer full" error
+To: Marc Kleine-Budde <mkl@pengutronix.de>, Heiko Schocher <hs@denx.de>,
+        linux-can@vger.kernel.org
+Cc: Markus Marb <markus@marb.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Wolfgang Grandegger <wg@grandegger.com>
+References: <20180208064748.17985-1-hs@denx.de>
+ <59322f7d-4207-a5a4-89b5-dff1634e4183@pengutronix.de>
+From: Marek Vasut <marex@denx.de>
+Message-ID: <dfae1bda-9ccd-6a48-95f9-e061c1bd3828@denx.de>
+Date: Thu, 8 Feb 2018 20:22:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <59322f7d-4207-a5a4-89b5-dff1634e4183@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Wed, 7 Feb 2018 10:17:29 -0600
+On 02/08/2018 03:46 PM, Marc Kleine-Budde wrote:
+> On 02/08/2018 07:47 AM, Heiko Schocher wrote:
+>> the driver reads in the ISR first the IRQpending register,
+>> and clears after that in a write *all* bits in it.
+>>
+>> It could happen that the isr register raise bits between
+>> this 2 register accesses, which leads in lost bits ...
+>>
+>> In case it clears "TX message sent successfully", the driver
+>> never sends any Tx data, and buffers to userspace run over.
+>>
+>> Fixed this:
+>> clear only the bits in the IRQpending register, the
+>> driver had read.
+>>
+>> Signed-off-by: Heiko Schocher <hs@denx.de>
+>> Reviewed-by: Marek Vasut <marex@denx.de>
+> 
+> Applied both to linux-can.
 
-> Add suffix ULL to constants 272, 204, 136 and 68 in order to give the
-> compiler complete information about the proper arithmetic to use.
-> Notice that these constants are used in contexts that expect
-> expressions of type unsigned long long (64 bits, unsigned).
-> 
-> The following expressions are currently being evaluated using 32-bit
-> arithmetic:
-> 
-> 272 * mult
-> 204 * mult
-> 136 * mult
-> 68 * mult
-> 
-> Addresses-Coverity-ID: 201058
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Can you also apply them to stable, so they get into 4.9.x etc ?
 
-Applied, thanks.
+Thanks!
+
+-- 
+Best regards,
+Marek Vasut
