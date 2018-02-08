@@ -1,216 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeBHW2P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 17:28:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:49468 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeBHW2O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 17:28:14 -0500
-Subject: Re: [PATCH v2 1/1] mm: initialize pages on demand during boot
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        m.mizuma@jp.fujitsu.com, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20180208184555.5855-1-pasha.tatashin@oracle.com>
- <20180208184555.5855-2-pasha.tatashin@oracle.com>
- <20180208120334.0779ed0726bb527a9cad0336@linux-foundation.org>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Message-ID: <92cb25ed-cd60-f3fa-dde5-72aa8b839808@oracle.com>
-Date: Thu, 8 Feb 2018 17:27:34 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752058AbeBHWcl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 17:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751424AbeBHWcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 17:32:39 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4202721738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Thu, 8 Feb 2018 23:32:36 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] dt-bindings: power: reset: Document ocelot-reset
+ binding
+Message-ID: <20180208223236.47g2gzi4mb6blxgi@earth.universe>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-3-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20180208120334.0779ed0726bb527a9cad0336@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802080259
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wpl5yojfuctp43sn"
+Content-Disposition: inline
+In-Reply-To: <20180116101240.5393-3-alexandre.belloni@free-electrons.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
 
-Thank you for your comments. My replies below:
+--wpl5yojfuctp43sn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +
->> +/*
->> + * Protects some early interrupt threads, and also for a short period of time
->> + * from  smp_init() to page_alloc_init_late() when deferred pages are
->> + * initialized.
->> + */
->> +static __initdata DEFINE_SPINLOCK(deferred_zone_grow_lock);
-> 
-> Comment is a little confusing.  Locks don't protect "threads" - they
-> protect data.  Can we be specific about which data is being protected?
+Hi,
 
-I will update the comment, explaining that this lock protects 
-first_deferred_pfn in all zones. The lock is discarded after boot, hence 
-it is in __initdata.
+On Tue, Jan 16, 2018 at 11:12:34AM +0100, Alexandre Belloni wrote:
+> Add binding documentation for the Microsemi Ocelot reset block.
+>=20
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-> 
-> Why is a new lock needed here?  Those data structures already have
-> designated locks, don't they?
+Thanks, queued. My public for-next branch is waiting for 4.16-rc1
+tag, though.
 
-No, there is no lock for this particular purpose. Before this commit, 
-first_deferred_pfn was only updated early in boot before the boot thread 
-can be preempted. And, only once after all pages are initialized to mark 
-that there are no deferred pages anymore. With this commit, the number 
-of deferred pages can change later in boot, this is why we need this new 
-lock, but for a relatively short period of boot time.
+-- Sebastian
 
-> 
-> If the lock protects "early interrupt threads" then it's surprising to
-> see it taken with spin_lock() and not spin_lock_irqsave()?
+>  .../devicetree/bindings/power/reset/ocelot-reset.txt       | 14 ++++++++=
+++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/reset/ocelot-=
+reset.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/reset/ocelot-reset.t=
+xt b/Documentation/devicetree/bindings/power/reset/ocelot-reset.txt
+> new file mode 100644
+> index 000000000000..1b4213eb3473
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/reset/ocelot-reset.txt
+> @@ -0,0 +1,14 @@
+> +Microsemi Ocelot reset controller
+> +
+> +The DEVCPU_GCB:CHIP_REGS have a SOFT_RST register that can be used to re=
+set the
+> +SoC MIPS core.
+> +
+> +Required Properties:
+> + - compatible: "mscc,ocelot-chip-reset"
+> +
+> +Example:
+> +	reset@1070008 {
+> +		compatible =3D "mscc,ocelot-chip-reset";
+> +		reg =3D <0x1070008 0x4>;
+> +	};
+> +
+> --=20
+> 2.15.1
+>=20
 
-Yes, I will update the code to use spin_lock_irqsave(), thank you.
+--wpl5yojfuctp43sn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
->> +DEFINE_STATIC_KEY_TRUE(deferred_pages);
->> +
->> +/*
->> + * If this zone has deferred pages, try to grow it by initializing enough
->> + * deferred pages to satisfy the allocation specified by order, rounded up to
->> + * the nearest PAGES_PER_SECTION boundary.  So we're adding memory in increments
->> + * of SECTION_SIZE bytes by initializing struct pages in increments of
->> + * PAGES_PER_SECTION * sizeof(struct page) bytes.
->> + */
-> 
-> Please also document the return value.
-> 
->> +static noinline bool __init
-> 
-> Why was noinline needed?
+-----BEGIN PGP SIGNATURE-----
 
-To save space after boot. We want the body of this function to be 
-unloaded after the boot when __init pages are unmapped, and we do not 
-want this function to be inlined into : _deferred_grow_zone() which is 
-__ref function.
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlp8z/4ACgkQ2O7X88g7
++pqtghAAgiEC59PSz82T7Q3MqiphoBzYiWxy1CoAtoheS2dFaM7E/EMJUSXJdD/z
+JSGXtbkL4PsJ7Xxn5kcl3mg/fEQT/AjhnSA8K09CnfYrflySatb+aggMbSYjuvV2
++QlAyTPHwQl6WdhYbhurrl/OsR2tuU8D9iD1Jy9On8XbwGRrZ9Lmgq2bVko9RAYV
+SIMnssSBeigwkcLGzFS7CJVOYByKrNjhY9daqUzIoG9SShqV6dz47owLVSgpGojn
+e4DnkoIAD+GxLvMQx+vfTmmOzj25geJtyAGZOKQtd/JJJ0IpDK5BCQlL1nnR+nbD
+opoKWErAaBr5gLxABnIrBfvfZak39tQ7dPPlK1iUMPCrdANjBdgTCyizZilim3/u
+0lNd6GlA1Xz1AoQiUhjSyAT2Kqqx9b5DHgF9opcUZ1Tu7S/m12NkZSTcfpw1YCEI
+vu/fLCVQD9qiplZZ6yrM6BlKKx1bnPOFBaQHOVWQkn2zZ3VM+6wHMzHKToH3c0lb
+zJs00jQ96NrG/lJwz+iDUhzuhHV/7qaWEUFfRrLy1Js/gHOIC/uS7pZ5jvNSgPUx
+9Winvj3lMCCQnujmNplG5DsHe3+rWRWgfHEETM5r89/ncN2bnIJ9eh2vTokaK5dh
+d4UEv1ig4U7t27o+cOJy4FhUatzGLezI3or/pGmA4fst2HUzhDs=
+=Ubpn
+-----END PGP SIGNATURE-----
 
-> 
->> +deferred_grow_zone(struct zone *zone, unsigned int order)
->> +{
->> +	int zid = zone_idx(zone);
->> +	int nid = zone->node;
->> +	pg_data_t *pgdat = NODE_DATA(nid);
->> +	unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
->> +	unsigned long nr_pages = 0;
->> +	unsigned long first_init_pfn, first_deferred_pfn, spfn, epfn, t;
->> +	phys_addr_t spa, epa;
->> +	u64 i;
->> +
->> +	/* Only the last zone may have deferred pages */
->> +	if (zone_end_pfn(zone) != pgdat_end_pfn(pgdat))
->> +		return false;
->> +
->> +	first_deferred_pfn = READ_ONCE(pgdat->first_deferred_pfn);
-> 
-> It would be nice to have a little comment explaining why READ_ONCE was
-> needed.
-> 
-> Would it still be needed if this code was moved into the locked region?
-
-No, we would need to use READ_ONCE() if we grabbed 
-deferred_zone_grow_lock before this code. In fact I do not even think we 
-strictly need READ_ONCE() here, as it is a single load anyway. But, 
-because we are outside of the lock, and we want to quickly fetch the 
-data with a single load, I think it makes sense to emphasize it using 
-READ_ONCE() without expected compiler to simply do the write thing for us.
-
-> 
->> +	first_init_pfn = max(zone->zone_start_pfn, first_deferred_pfn);
->> +
->> +	if (first_init_pfn >= pgdat_end_pfn(pgdat))
->> +		return false;
->> +
->> +	spin_lock(&deferred_zone_grow_lock);
->> +	/*
->> +	 * Bail if we raced with another thread that disabled on demand
->> +	 * initialization.
->> +	 */
->> +	if (!static_branch_unlikely(&deferred_pages)) {
->> +		spin_unlock(&deferred_zone_grow_lock);
->> +		return false;
->> +	}
->> +
->> +	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
->> +		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
->> +		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
->> +
->> +		while (spfn < epfn && nr_pages < nr_pages_needed) {
->> +			t = ALIGN(spfn + PAGES_PER_SECTION, PAGES_PER_SECTION);
->> +			first_deferred_pfn = min(t, epfn);
->> +			nr_pages += deferred_init_pages(nid, zid, spfn,
->> +							first_deferred_pfn);
->> +			spfn = first_deferred_pfn;
->> +		}
->> +
->> +		if (nr_pages >= nr_pages_needed)
->> +			break;
->> +	}
->> +
->> +	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
->> +		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
->> +		epfn = min_t(unsigned long, first_deferred_pfn, PFN_DOWN(epa));
->> +		deferred_free_pages(nid, zid, spfn, epfn);
->> +
->> +		if (first_deferred_pfn == epfn)
->> +			break;
->> +	}
->> +	WRITE_ONCE(pgdat->first_deferred_pfn, first_deferred_pfn);
->> +	spin_unlock(&deferred_zone_grow_lock);
->> +
->> +	return nr_pages >= nr_pages_needed;
->> +}
->> +
->> +/*
->> + * deferred_grow_zone() is __init, but it is called from
->> + * get_page_from_freelist() during early boot until deferred_pages permanently
->> + * disables this call. This is why, we have refdata wrapper to avoid warning,
->> + * and ensure that the function body gets unloaded.
-> 
-> s/why,/why/
-> s/ensure/to ensure/
-
-OK, thank you.
-
-> 
->> + */
->> +static bool __ref
->> +_deferred_grow_zone(struct zone *zone, unsigned int order)
->> +{
->> +	return deferred_grow_zone(zone, order);
->> +}
->> +
->>   #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
->>   
->>   void __init page_alloc_init_late(void)
->> @@ -1613,6 +1665,14 @@ void __init page_alloc_init_late(void)
->>   #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
->>   	int nid;
->>   
->> +	/*
->> +	 * We are about to initialize the rest of deferred pages, permanently
->> +	 * disable on-demand struct page initialization.
->> +	 */
->> +	spin_lock(&deferred_zone_grow_lock);
->> +	static_branch_disable(&deferred_pages);
->> +	spin_unlock(&deferred_zone_grow_lock);
-> 
-> Ah, so the new lock is to protect the static branch machinery only?
-
-This lock is needed when several threads are trying to allocate memory 
-simultaneously, and there is no enough pages in the zone to do so, but 
-there are still deferred pages available.
-
-Thank you,
-Pavel
+--wpl5yojfuctp43sn--
