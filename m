@@ -1,111 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeBHP3X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:29:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752268AbeBHP3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:29:17 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25FEC2172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 8 Feb 2018 10:29:13 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
-Subject: Re: [PATCH 04/18] tracing/x86: Add arch_get_func_args() function
-Message-ID: <20180208102913.36aecd86@gandalf.local.home>
-In-Reply-To: <20180208052813.GD24686@sejong>
-References: <20180202230458.840252014@goodmis.org>
-        <20180202231017.612058326@goodmis.org>
-        <20180208052813.GD24686@sejong>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752394AbeBHP3q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:29:46 -0500
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:33298 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752110AbeBHP3Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:29:16 -0500
+X-Google-Smtp-Source: AH8x2273NA8NTul84i7ClNaV+LDk3uUrFXnqO5KhzddoxVTA2sA2nqtzQpUsW7PsgMobKj+YHT1T6bnTyqlVxywaXZA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180207154116.xvojw3bzmnmexkav@pathway.suse.cz>
+References: <20180204174521.21383-1-kilobyte@angband.pl> <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
+ <CAGXu5j+rWhT7_DH5Z96_7naPou96-6736x4mjq0r_8EG4iiQ_g@mail.gmail.com>
+ <20180205201555.GQ29988@eros> <CAGXu5j+KSm3rOK46xiYPx8SRaO9T5LaeaXxOA3PSktJv4F__dg@mail.gmail.com>
+ <20180205205817.72dy7e7xzjcnwmhs@angband.pl> <20180207150328.nuk7f76nutq2trcg@pathway.suse.cz>
+ <CAMuHMdVJZnbFrLxBZm1m6C+sR1MKuk3=G4RoYVkAgcxYDHgMGw@mail.gmail.com> <20180207154116.xvojw3bzmnmexkav@pathway.suse.cz>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 8 Feb 2018 17:29:14 +0200
+Message-ID: <CAHp75VeSds86y9+YBebhfVAS-ZOA1yeMXUD2o2du0SkbQjPDAw@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
+To: Petr Mladek <pmladek@suse.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Adam Borowski <kilobyte@angband.pl>, Kees Cook <keescook@chromium.org>,
+        "Tobin C. Harding" <me@tobin.cc>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Feb 2018 14:28:13 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
+On Wed, Feb 7, 2018 at 5:41 PM, Petr Mladek <pmladek@suse.com> wrote:
+> On Wed 2018-02-07 16:11:13, Geert Uytterhoeven wrote:
 
-> Hi Steve,
-> 
-> On Fri, Feb 02, 2018 at 06:05:02PM -0500, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > Add function to get the function arguments from pt_regs.
-> > 
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >  arch/x86/kernel/ftrace.c | 28 ++++++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> > 
-> > diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-> > index 01ebcb6f263e..5e845c8cf89d 100644
-> > --- a/arch/x86/kernel/ftrace.c
-> > +++ b/arch/x86/kernel/ftrace.c
-> > @@ -46,6 +46,34 @@ int ftrace_arch_code_modify_post_process(void)
-> >  	return 0;
-> >  }
-> >  
-> > +int arch_get_func_args(struct pt_regs *regs,
-> > +		       int start, int end, long *args)
-> > +{
-> > +#ifdef CONFIG_X86_64
-> > +# define MAX_ARGS 6
-> > +# define INIT_REGS				\
-> > +	{	regs->di, regs->si, regs->dx,	\
-> > +		regs->cx, regs->r8, regs->r9	\
-> > +	}
-> > +#else
-> > +# define MAX_ARGS 3
-> > +# define INIT_REGS				\
-> > +	{	regs->ax, regs->dx, regs->cx	}
-> > +#endif
-> > +	if (!regs)
-> > +		return MAX_ARGS;
-> > +
-> > +	{
-> > +		long pt_args[] = INIT_REGS;
-> > +		int i;
-> > +
-> > +		for (i = start; i <= end && i < MAX_ARGS; i++)  
->                                 ^^^^^^^^
-> 
-> I expected it being 'i < end' based on your description.
-> 
+> To make it clear. I was talking about "%p" format that is handled
+> in the pointer() function in lib/vsprintf.c. The "(null)" makes
+> sense only for the many modifiers that do deference of
+> the pointer, e.g. "%pa", "%pE", "%ph".
 
-Ug. Thanks for pointing that out.
+JFYI: I have a patch to eliminate those for %pE & %ph.
 
--- Steve
+Google for "lib/vsprintf: Remove useless NULL checks" as a first in
+the series for new extension to print times.
 
-> 
-> > +			args[i - start] = pt_args[i];
-> > +
-> > +		return i - start;
-> > +	}
-> > +}
-> > +
-> >  union ftrace_code_union {
-> >  	char code[MCOUNT_INSN_SIZE];
-> >  	struct {
-> > -- 
-> > 2.15.1
-> > 
-> >   
+I just need time to address comments and resend the series.
+
+-- 
+With Best Regards,
+Andy Shevchenko
