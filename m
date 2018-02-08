@@ -1,98 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752046AbeBHNEZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:04:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33784 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750929AbeBHNEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:04:24 -0500
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v2] printk: Relocate wake_klogd check close to the end of console_unlock()
-Date: Thu,  8 Feb 2018 14:04:02 +0100
-Message-Id: <20180208130402.15157-1-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.6
+        id S1751848AbeBHNGy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:06:54 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:49433 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbeBHNGx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:06:53 -0500
+Date: Thu, 8 Feb 2018 05:06:49 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc: Michal Hocko <mhocko@suse.com>, Laura Abbott <labbott@redhat.com>,
+        linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
+ __GFP_HIGHMEM implicitly")
+Message-ID: <20180208130649.GA15846@bombadil.infradead.org>
+References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+On Thu, Feb 08, 2018 at 02:29:57PM +0800, Kai Heng Feng wrote:
+> A user with i386 instead of AMD64 machine reports [1] that commit 19809c2da28a ("mm, vmalloc: use __GFP_HIGHMEM implicitly”) causes a regression.
+> BUG_ON(PageHighMem(pg)) in drivers/media/common/saa7146/saa7146_core.c always gets triggered after that commit.
 
-We mark for waking up klogd whenever we see a new message sequence in
-the main loop.  However, the actual wakeup is always at the end of the
-function and we can easily test for the wakeup condition when we do
-the final should-we-repeat check.
+Well, the BUG_ON is wrong.  You can absolutely have pages which are both
+HighMem and under the 4GB boundary.  Only the first 896MB (iirc) are LowMem,
+and the next 3GB of pages are available to vmalloc_32().
 
-Move the wake_klogd condition check out of the main loop.  This avoids
-doing the same thing repeatedly and groups similar checks into a
-common place.
+> Also there are other BUG_ON(PageHighMem()) in drivers/media, I think they will get hit by same regression in 32bit machine too.
 
-This fixes a race introduced by the commit dbdda842fe96f8932 ("printk: Add
-console owner and waiter logic to load balance console writes").
-The current console owner might process the newly added message before
-the related printk() start waiting for the console lock. Then the lock
-is passed without waking klogd. The new owner sees the already updated
-seen_seq and does not know that the wakeup is needed.
+I fixed one of them.  I think the other three are also bogus, but it's
+hard to say; the comments say "DMA to HighMem might not work", and they
+probably mean "above the 4GB boundary", but I really don't know.
 
-Fixes: dbdda842fe96f8932 ("printk: Add console owner and waiter logic to load balance console writes")
-Signed-off-by: Tejun Heo <tj@kernel.org>
-[pmladek@suse.com: Describe the new race with console waiter]
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
----
-The patch [1] was lost in the discussions about the solution
-of printk softlockups. I make sense on its own.
+(since two drivers now have this code, maybe it should be part of the core
+MM API?  Or maybe there's already something better they should be using?)
 
-Important: It actually fixes a race caused by the new console waiter
-logic. This is why I resend it with an updated commit message.
-
-[1] https://lkml.kernel.org/r/20171102135146.GN3252168@devbig577.frc2.facebook.com
-
-
- kernel/printk/printk.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index db4b9b8929eb..2682209b1c90 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2335,10 +2335,6 @@ void console_unlock(void)
- 
- 		printk_safe_enter_irqsave(flags);
- 		raw_spin_lock(&logbuf_lock);
--		if (seen_seq != log_next_seq) {
--			wake_klogd = true;
--			seen_seq = log_next_seq;
--		}
- 
- 		if (console_seq < log_first_seq) {
- 			len = sprintf(text, "** %u printk messages dropped **\n",
-@@ -2417,12 +2413,17 @@ void console_unlock(void)
- 	up_console_sem();
- 
- 	/*
--	 * Someone could have filled up the buffer again, so re-check if there's
--	 * something to flush. In case we cannot trylock the console_sem again,
--	 * there's a new owner and the console_unlock() from them will do the
--	 * flush, no worries.
-+	 * Check whether userland needs notification.  Also, someone could
-+	 * have filled up the buffer again, so re-check if there's
-+	 * something to flush. In case we cannot trylock the console_sem
-+	 * again, there's a new owner and the console_unlock() from them
-+	 * will do the flush, no worries.
- 	 */
- 	raw_spin_lock(&logbuf_lock);
-+	if (seen_seq != log_next_seq) {
-+		wake_klogd = true;
-+		seen_seq = log_next_seq;
-+	}
- 	retry = console_seq != log_next_seq;
- 	raw_spin_unlock(&logbuf_lock);
- 	printk_safe_exit_irqrestore(flags);
--- 
-2.13.6
+diff --git a/drivers/media/common/saa7146/saa7146_core.c b/drivers/media/common/saa7146/saa7146_core.c
+index 9f7c5b0a6b45..329fd43228ff 100644
+--- a/drivers/media/common/saa7146/saa7146_core.c
++++ b/drivers/media/common/saa7146/saa7146_core.c
+@@ -160,7 +160,7 @@ static struct scatterlist* vmalloc_to_sg(unsigned char *virt, int nr_pages)
+ 		pg = vmalloc_to_page(virt);
+ 		if (NULL == pg)
+ 			goto err;
+-		BUG_ON(PageHighMem(pg));
++		BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
+ 		sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
+ 	}
+ 	return sglist;
+diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
+index f412429cf5ba..b5ec74b9c867 100644
+--- a/drivers/media/v4l2-core/videobuf-dma-sg.c
++++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+@@ -77,7 +77,7 @@ static struct scatterlist *videobuf_vmalloc_to_sg(unsigned char *virt,
+ 		pg = vmalloc_to_page(virt);
+ 		if (NULL == pg)
+ 			goto err;
+-		BUG_ON(PageHighMem(pg));
++		BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
+ 		sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
+ 	}
+ 	return sglist;
