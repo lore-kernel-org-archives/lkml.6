@@ -1,48 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeBHOZM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:25:12 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:41405 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751079AbeBHOZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:25:11 -0500
-X-Google-Smtp-Source: AH8x224GVffpwzJR7+8+9CegWMMZ4sUx4pNISRMwAM4exJDdSimwSTKCUDMqCfEzefBFGIwPwuR7TUcQFUtgS28ozAk=
+        id S1752237AbeBHO0B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:26:01 -0500
+Received: from mail02.prevas.se ([62.95.78.10]:20889 "EHLO mail02.prevas.se"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750929AbeBHOZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:25:59 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HYAADQXHxa/2h+ugUNUBsBAQEBAwEBA?=
+ =?us-ascii?q?QkBAQGFT4NlmkuZbQqFOwKDBRQBAgEBAQEBAQIDhjUBAQEDI1YQCxgCAiYCAlc?=
+ =?us-ascii?q?GDQYCAQG4Zm6CJ4UAg3eCCgEBAQEBAQEDAQEBAQEjgQ+DaoNsgWgpDIJ5gy8Eh?=
+ =?us-ascii?q?QaCZQWkKwmCTJMwlD6YDIE8NoFzTYM7hHh3jVEBAQE?=
+X-IPAS-Result: =?us-ascii?q?A2HYAADQXHxa/2h+ugUNUBsBAQEBAwEBAQkBAQGFT4Nlmku?=
+ =?us-ascii?q?ZbQqFOwKDBRQBAgEBAQEBAQIDhjUBAQEDI1YQCxgCAiYCAlcGDQYCAQG4Zm6CJ?=
+ =?us-ascii?q?4UAg3eCCgEBAQEBAQEDAQEBAQEjgQ+DaoNsgWgpDIJ5gy8EhQaCZQWkKwmCTJM?=
+ =?us-ascii?q?wlD6YDIE8NoFzTYM7hHh3jVEBAQE?=
+X-IronPort-AV: E=Sophos;i="5.46,479,1511823600";
+   d="scan'208";a="3030768"
+Subject: Re: [PATCH] ARM: dts: ls1021a: add quadspi node
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180126142014.13819-1-rasmus.villemoes@prevas.dk>
+ <20180205080323.GP31354@dragon>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Message-ID: <43c533e2-2b93-9672-3905-5f4ba8d6db19@prevas.dk>
+Date: Thu, 8 Feb 2018 15:24:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAErzpmt5Z_bVkO-86yCNNWMNSYXWMzvABGtTEuYV1Y1qk=2LJQ@mail.gmail.com>
-References: <20180118053126.22082-1-dolinux.peng@gmail.com>
- <CAHp75VcefO1L-E8ymHX7MibLiOXkRZ3+3FbkF_L+ywMV-i3Mvw@mail.gmail.com>
- <20180123173732.GI7600@sirena.org.uk> <CAErzpmt5Z_bVkO-86yCNNWMNSYXWMzvABGtTEuYV1Y1qk=2LJQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 8 Feb 2018 16:25:10 +0200
-Message-ID: <CAHp75Ve-Nq+hbzf9XRDjQrMz_W7BCSW_58o_vA0H1RGqEFpYrA@mail.gmail.com>
-Subject: Re: [PATCH v2] ASoC: use seq_file to dump the contents of
- dai_list,platform_list and codec_list
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180205080323.GP31354@dragon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 9:16 AM, Donglin Peng <dolinux.peng@gmail.com> wrote:
-> On Wed, Jan 24, 2018 at 1:37 AM, Mark Brown <broonie@kernel.org> wrote:
->> On Tue, Jan 23, 2018 at 07:08:15PM +0200, Andy Shevchenko wrote:
+On 2018-02-05 09:03, Shawn Guo wrote:
+> On Fri, Jan 26, 2018 at 03:20:14PM +0100, Rasmus Villemoes wrote:
+>> Add a node to device tree repesenting the QuadSPI controller present on
+>> LS1021a. Driver support has been present since e8c034b2fbe5 (mtd:
+>> spi-nor: fsl-quadspi: add support for ls1021a).
 >>
->>> If it's not critical, I would suggest to wait till v4.16-rc1, where I
->>> would like to push [1], and switch to DEFINE_SHOW_ATTRIBUTE() macro.
->>
->> Too late, I already applied this - a further conversion for the new
->> macro would be good.
-> I can send another patch after the following patch is merged:
-> https://patchwork.kernel.org/patch/10178813/
+>> Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+> 
+> Applied, thanks.
+> 
 
-It's merged. I think whenever Mark switched his repositories for new
-cycle you may be able to submit a patch.
+Sorry, I didn't know you already had a similar patch queued for 4.16
+(85f8ee78ab ARM: dts: ls1021a: Add support for QSPI with ls1021a SoC),
+so I have to ask you to unapply (or do you want me to send a revert?) -
+the ls1021a.dtsi in your imx/dt branch now has two almost-identical
+qspi: nodes.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Rasmus
