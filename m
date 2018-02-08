@@ -1,91 +1,90 @@
-Return-Path: <gnomes@lxorguk.ukuu.org.uk>
-X-Google-Smtp-Source: AH8x227uejJtsQ41YWhh2y3sjZw0nbPJCGddwJy/m1M6uoqOwVXqgs77UCGAuMiEbur2APJ7dUB7
-ARC-Seal: i=1; a=rsa-sha256; t=1518097797; cv=none;
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518103361; cv=none;
         d=google.com; s=arc-20160816;
-        b=ihKV5Ambf2ZudsBG87S3k6RlsJCb7sfLuwe74NP5srcMeH/24dcK4myDyxUy4yy13n
-         ejmJT0iIOMKyTBJQRlNuWxNunJ/kg1Biit0iz8IuEXyMygtHYLNLCKxfFwPOg1wJvFVW
-         OUrKNbOVlpayY3uEB/1xs6Aq3hN50YIfzUetaPb6kPCjfIxz97HW3kQOfY4q5ZKtmPWg
-         OHw/ST6SGqjWwe8aEbWrQDAggvHFpvlPYj+NGJV7ZvxNDSkAJpNs4Iynyq2Y/07kIWDM
-         RSv7Nj3Ix6ifDDf4c4eEQeW+rd8w3LAte8S74dIh/QMlDxR+jA1q/Qre5vFIZc6ua05R
-         S+Tg==
+        b=F2oXlm7BvBcqkE7k2CtoWKqlxql16R7Idem2yvgtvOLEv8mFpFWkkldJ13lRSxpJyE
+         YRPwBVIyMqzaUuKp06gDov0h0nPktuSh967spwuI5gbT9iMaX6KJYqd1igs8Ox8DrsUv
+         FET2LZfKm+Z8Zd+bMyMgwMQkrIrhWXZPYSLp2Ug6oqAkBOmFftbmMNE43HJWmkLW2pXs
+         oJ7ZKHtDYDDoXOWMBVE73ZEbrWaLmPGkqL9Wky1Tj2jRk77hi7HyJD+eIUpHW5li/9gs
+         /G5+9VhxwC+T/DS3qx588RLNtXYDq52DmHDcwhnJ4NRBVvMkiv0MdZXSTDQiohdGYBst
+         rdtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=+diRqNWzBlxsRAlhEdQYMIXtq6QkpgBNkTJezZ2VHbY=;
-        b=uLNSD1NfAsFGZQC5kAv5wgaPokbuQVdAOD3QiAbSZ96k2YXL9gF55nC3aTUnwY5iOG
-         Cxhn4sZeITP9YATozN72mU3VAaJmxys4X9IlfKGRCH1j1U/LSkIpYtPKwj0T8wYenwvc
-         rID8FtEh9sDkVog5JWm7PsEYVG8uNAT62ZVL6QRN9kmdKQVJfJjfFA1Br194Sfm3HX0S
-         GW//Opgoa1DodLa3LfZMztdh9o4aZ1N6gqWNiBvjHNfrhmT17WcEljEX3sAvB6dFRQor
-         ffD9wKYTvvLV1Oy1LcVxNiiGcQ90oHjk4lwLQ7HxJ57jHD9x7PphCxRXUw0Zv04QSUVM
-         tIZQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=X8wc6TAgtQHjGQYzrES1L2Ia676MyLNLpVAZhReTMH4=;
+        b=jgnB3Hy7sDqXCjqvySMIi16ZWhXPAbt0bUG8tiwtOblVAGGKxEPODckFxldOXP+xTF
+         G6WnoNULFSvtY0oIvGP7gMUDYA7GuuItaCehrFvOJlc6Mp52kQKDFQaJYvAHJOrwDVmd
+         MjENmIRcBN1DqLIVDz/KnjvesMO0szLZ7i+cfdyL3oirzXpgh/sbUfMGi/gyG53jmwjd
+         6eIC1p9ozDuyTa+tsMebegSc+OJyeF41aGAY6lQTRVMtf2JKE9CgXMLGe+l02c3/h9GN
+         v8MLxbwnRMIM7tWbfdU4iEeKpO7cgZcXjC6d/VxBBnU9qxplv8LS+XOsyAxf2ACii7Y+
+         yfoA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PvJcT4ph;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
-Date: Thu, 8 Feb 2018 13:49:08 +0000
-From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To: Ondrej Zary <linux@rainbow-software.org>
-Cc: whiteheadm@acm.org, David Woodhouse <dwmw2@infradead.org>,
-        Guenter Roeck
- <linux@roeck-us.net>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Hugh Dickins <hughd@google.com>, dave.hansen@linux.intel.com,
-        jikos@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Kees Cook
- <keescook@chromium.org>, Jamie Iles <jamie@jamieiles.com>,
-        eduval@amazon.com, labbott@redhat.com, Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [BUG] x86 : i486 reporting to be vulnerable to
- Meltdown/Spectre_V1/Spectre_V2
-Message-ID: <20180208134908.4b516794@alans-desktop>
-In-Reply-To: <201802070918.18978.linux@rainbow-software.org>
-References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
-	<1517950494.3677.30.camel@infradead.org>
-	<CAP8WD_ZaewC-NE4szBzU3brvNhvV9PwoVo-uDFcEMTMWVbsxQQ@mail.gmail.com>
-	<201802070918.18978.linux@rainbow-software.org>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PvJcT4ph;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AH8x2276/7azXSKX8BA43fF6jQF2J1H4nfM5q6ZcS7H3jJgusQnK85cjH09JuJYb8tRZUN043wdXKLqVL2S6jwfzaCk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20180208134908.4b516794@alans-desktop>
+References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
+ <1517950494.3677.30.camel@infradead.org> <CAP8WD_ZaewC-NE4szBzU3brvNhvV9PwoVo-uDFcEMTMWVbsxQQ@mail.gmail.com>
+ <201802070918.18978.linux@rainbow-software.org> <20180208134908.4b516794@alans-desktop>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 8 Feb 2018 16:22:40 +0100
+X-Google-Sender-Auth: u0VHc2hMoQtvJK2CgP0dBk1Y2yA
+Message-ID: <CAK8P3a2kuHXpJOVKux2v-B_=CrpnQBTMfV24sJqY+nQaSMf+KA@mail.gmail.com>
+Subject: Re: [BUG] x86 : i486 reporting to be vulnerable to Meltdown/Spectre_V1/Spectre_V2
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: Ondrej Zary <linux@rainbow-software.org>, whiteheadm@acm.org,
+	David Woodhouse <dwmw2@infradead.org>, Guenter Roeck <linux@roeck-us.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hugh Dickins <hughd@google.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Jiri Kosina <jikos@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Kees Cook <keescook@chromium.org>, Jamie Iles <jamie@jamieiles.com>,
+	Eduardo Valentin <eduval@amazon.com>, Laura Abbott <labbott@redhat.com>, Rik van Riel <riel@surriel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591354140743903681?=
-X-GMAIL-MSGID: =?utf-8?q?1591840915878930272?=
+X-GMAIL-MSGID: =?utf-8?q?1591846750566295367?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> What about Pentium II and 3? I'm using 5 such machines (and also a Pentium 
-> MMX). I've tried a spectre test before and it wasn't reading anything useful. 
-> Don't know about meltdown. Is there a complete test program? (The web is so 
-> full of crap that even google can't find anything useful.)
+On Thu, Feb 8, 2018 at 2:49 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>> What about Pentium II and 3? I'm using 5 such machines (and also a Pentium
+>> MMX). I've tried a spectre test before and it wasn't reading anything useful.
+>> Don't know about meltdown. Is there a complete test program? (The web is so
+>> full of crap that even google can't find anything useful.)
+>
+> For x86 speculation came in (as far as I can tell) in
+>
+> AMD Am5x86
+> Cyrix 5x86, but branch predictors are disabled by default according to
+> the docs
+> Cyrix 6x86, branch prediction on by default
+> Pentium Pro
+>
+> There are later processors that don't have speculation: Quark series, Nat
+> Semi/Cyrix Geode, earliest AMD geode (I think), some Intel Atom
+> processors.
 
-Pentium MMX does not speculate. Pentium II does.
+Wasn't Am5x86 just a 486 clone? AFAICT, speculation only came with the
+K6 (Am6x86 aka NexGen Nx6x86)
 
-For meltdown there are some reasonably easy tests to run to look for a
-positive. Proving a negative is much much harder however and as far as I
-am aware nobody has done a full evaluation of processors that old.
+All the Geode are apparently derived from Cyrix 5x86 (I always thought
+it was a 6x86, but the internet disagrees). For Geode GX, a
+specification update at [1] mentions a special procedure for enabling
+branch prediction, Geode LX apparently gets this right and always
+has branch prediction.
 
-For x86 speculation came in (as far as I can tell) in
+> The more obscure ones - the Transmeta apparently may, the IDT Winchip
+> documentation strongly implies it doesn't
 
-AMD Am5x86
-Cyrix 5x86, but branch predictors are disabled by default according to
-the docs
-Cyrix 6x86, branch prediction on by default
-Pentium Pro
+The Winchip is what eventually turned into the VIA Nano, which does
+have speculative execution, but I don't think the earlier C3 and C7 did,
+they are much closer to the original Winchip design.
 
-There are later processors that don't have speculation: Quark series, Nat
-Semi/Cyrix Geode, earliest AMD geode (I think), some Intel Atom
-processors.
+       Arnd
 
-The more obscure ones - the Transmeta apparently may, the IDT Winchip
-documentation strongly implies it doesn't, the Vortex86 (aka
-SiS55X/Rise mP6) says it doesn't and things like the NexGen I have no
-idea about.
-
-The problem is that it's very hard to definitively answer questions on
-these processors and vulnerabilities like they are obsolete, almost
-nobody uses them for anything but retro stuff and the return on the effort
-of figuring out defiitive answers is close to nil.
-
-Alan
+[1] http://support.amd.com/TechDocs/31533E_gx_2.1_specupdate.pdf
