@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeBHSa7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:30:59 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48630 "EHLO
+        id S1752433AbeBHSbE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:31:04 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48642 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752193AbeBHSa5 (ORCPT
+        with ESMTP id S1752335AbeBHSbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:30:57 -0500
+        Thu, 8 Feb 2018 13:31:01 -0500
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Sebastian Reichel <sre@kernel.org>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -17,9 +17,9 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv2 5/8] drm/omap: add support for orientation hints from display drivers
-Date: Thu,  8 Feb 2018 19:30:32 +0100
-Message-Id: <20180208183035.8461-6-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv2 6/8] drm/omap: panel-dsi-cm: add orientation support
+Date: Thu,  8 Feb 2018 19:30:33 +0100
+Message-Id: <20180208183035.8461-7-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
 References: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
@@ -27,62 +27,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for setting DRM panel orientation property
-based on information from the display driver.
+Add support to inform the DRM subsystem about the orientation
+the display has been mounted to the casing.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/gpu/drm/omapdrm/dss/omapdss.h    |  2 ++
- drivers/gpu/drm/omapdrm/omap_connector.c | 10 +++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss.h b/drivers/gpu/drm/omapdrm/dss/omapdss.h
-index f8f83e826a56..72ebd82409d3 100644
---- a/drivers/gpu/drm/omapdrm/dss/omapdss.h
-+++ b/drivers/gpu/drm/omapdrm/dss/omapdss.h
-@@ -565,6 +565,8 @@ struct omap_dss_driver {
- 			    struct videomode *vm);
- 	void (*get_size)(struct omap_dss_device *dssdev,
- 			 unsigned int *width, unsigned int *height);
-+	void (*get_orientation)(struct omap_dss_device *dssdev,
-+				int *orientation);
+diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
+index 15399a1a666b..7a63d6775a27 100644
+--- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
++++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
+@@ -68,6 +68,7 @@ struct panel_drv_data {
  
- 	int (*set_wss)(struct omap_dss_device *dssdev, u32 wss);
- 	u32 (*get_wss)(struct omap_dss_device *dssdev);
-diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
-index a33b51484b2d..2f296d29b74b 100644
---- a/drivers/gpu/drm/omapdrm/omap_connector.c
-+++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-@@ -249,6 +249,7 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
- 	struct drm_connector *connector = NULL;
- 	struct omap_connector *omap_connector;
- 	bool hpd_supported = false;
-+	int ret;
+ 	int width_mm;
+ 	int height_mm;
++	int orientation;
  
- 	DBG("%s", dssdev->name);
+ 	struct omap_dsi_pin_config pin_config;
  
-@@ -267,7 +268,7 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
- 	drm_connector_helper_add(connector, &omap_connector_helper_funcs);
+@@ -1198,6 +1199,14 @@ static void dsicm_get_size(struct omap_dss_device *dssdev,
+ 	*height = ddata->height_mm;
+ }
  
- 	if (dssdev->driver->register_hpd_cb) {
--		int ret = dssdev->driver->register_hpd_cb(dssdev,
-+		ret = dssdev->driver->register_hpd_cb(dssdev,
- 							  omap_connector_hpd_cb,
- 							  omap_connector);
- 		if (!ret)
-@@ -288,6 +289,13 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
- 	connector->interlace_allowed = 1;
- 	connector->doublescan_allowed = 0;
- 
-+	if (dssdev->driver->get_orientation)
-+		dssdev->driver->get_orientation(dssdev, &connector->display_info.panel_orientation);
++static void dsicm_get_orientation(struct omap_dss_device *dssdev,
++				  int *orientation)
++{
++	struct panel_drv_data *ddata = to_panel_data(dssdev);
 +
-+	ret = drm_connector_init_panel_orientation_property(connector, 0, 0);
-+	if (ret)
-+		DBG("%s: Failed to init orientation property (%d)", dssdev->name, ret);
++	*orientation = ddata->orientation;
++}
 +
- 	return connector;
+ static struct omap_dss_driver dsicm_ops = {
+ 	.connect	= dsicm_connect,
+ 	.disconnect	= dsicm_disconnect,
+@@ -1211,6 +1220,7 @@ static struct omap_dss_driver dsicm_ops = {
+ 	.get_timings	= dsicm_get_timings,
+ 	.check_timings	= dsicm_check_timings,
+ 	.get_size	= dsicm_get_size,
++	.get_orientation = dsicm_get_orientation,
  
- fail:
+ 	.enable_te	= dsicm_enable_te,
+ 	.get_te		= dsicm_get_te,
+@@ -1259,6 +1269,9 @@ static int dsicm_probe_of(struct platform_device *pdev)
+ 	ddata->height_mm = 0;
+ 	of_property_read_u32(node, "height-mm", &ddata->height_mm);
+ 
++	ddata->orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
++	of_property_read_u32(node, "orientation", &ddata->orientation);
++
+ 	in = omapdss_of_find_source_for_first_ep(node);
+ 	if (IS_ERR(in)) {
+ 		dev_err(&pdev->dev, "failed to find video source\n");
 -- 
 2.15.1
