@@ -1,92 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752293AbeBHODZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:03:25 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44100 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeBHODU (ORCPT
+        id S1752197AbeBHOEV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:04:21 -0500
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:39317 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751310AbeBHOEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:03:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 44B2E60112
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH 01/12] i2c: qup: fixed releasing dma without flush
- operation completion
-To: Abhishek Sahu <absahu@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-2-git-send-email-absahu@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <0ff28076-b105-9280-a7e0-767f923768fa@codeaurora.org>
-Date: Thu, 8 Feb 2018 19:33:14 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1517644697-30806-2-git-send-email-absahu@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 8 Feb 2018 09:04:20 -0500
+X-Google-Smtp-Source: AH8x224ADeSRrKuo43j9KltSh6RV6CB+iWIN0qqw/VXmcHRlu/XpWYhl2vywefGcenEefTdK7ao+kA==
+Message-ID: <1518098657.2670.3.camel@gmail.com>
+Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
+From: Vladislav Valtchev <vladislav.valtchev@gmail.com>
+To: Zamir SUN <sztsian@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
+        linux-kernel@vger.kernel.org, zsun@redhat.com
+Date: Thu, 08 Feb 2018 16:04:17 +0200
+In-Reply-To: <a1c2c3f6-8d69-227d-51d4-1c40c53e0645@gmail.com>
+References: <20180204032014.6962-1-sztsian@gmail.com>
+         <20180204032014.6962-2-sztsian@gmail.com>
+         <20180206181807.2d35393e@gandalf.local.home>
+         <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
+         <1518024315.3742.16.camel@gmail.com>
+         <a1c2c3f6-8d69-227d-51d4-1c40c53e0645@gmail.com>
+Organization: VMware
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
-
-On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
-> The QUP BSLP BAM generates the following error sometimes if the
-> current I2C DMA transfer fails and the flush operation has been
-> scheduled
+On Thu, 2018-02-08 at 20:05 +0800, Zamir SUN wrote:
 > 
->     “bam-dma-engine 7884000.dma: Cannot free busy channel”
+> Hi Vladislav,
 > 
-> If any I2C error comes during BAM DMA transfer, then the QUP I2C
-> interrupt will be generated and the flush operation will be
-> carried out to make i2c consume all scheduled DMA transfer.
-> Currently, the same completion structure is being used for BAM
-> transfer which has already completed without reinit. It will make
-> flush operation wait_for_completion_timeout completed immediately
-> and will proceed for freeing the DMA resources where the
-> descriptors are still in process.
+> Thanks for the URL. I tried to build from your make8 branch, it works
+> fine. I must made some copy-paste mistake yesterday.
 > 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/i2c/busses/i2c-qup.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Sorry for the noise.
 > 
-> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-> index 08f8e01..9faa26c41a 100644
-> --- a/drivers/i2c/busses/i2c-qup.c
-> +++ b/drivers/i2c/busses/i2c-qup.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2009-2013, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2009-2013, 2016-2018, The Linux Foundation. All rights reserved.
+> Thanks.
 
-Not sure, if this was an intended change. But given that you are fixing this,
-you can change the header to the new SPDX one.
+No problem, Zamir.
+I'm happy that it works.
 
->   * Copyright (c) 2014, Sony Mobile Communications AB.
->   *
->   *
-> @@ -844,6 +844,8 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->  	}
->  
->  	if (ret || qup->bus_err || qup->qup_err) {
-> +		reinit_completion(&qup->xfer);
-> +
->  		if (qup_i2c_change_state(qup, QUP_RUN_STATE)) {
->  			dev_err(qup->dev, "change to run state timed out");
->  			goto desc_err;
-> 
+The series has been merged in the master branch by Steven now.
 
-Except for the above nit,
-  Acked-by: Sricharan R <sricharan@codeaurora.org>
+Anyway, I think your patch 2/2 is still necessary: thanks for it!
 
-Regards,
- Sricharan
+Vlad
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Vladislav Valtchev
+VMware Open Source Technology Center
