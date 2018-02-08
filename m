@@ -1,105 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeBHQbx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:31:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:37274 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751986AbeBHQbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:31:51 -0500
-Subject: Re: [PATCH 1/2] arm64: capabilities: Allow flexibility in scope
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-References: <86f23003-72bc-5bfc-af40-a92cc68def45@arm.com>
- <20180208121238.18792-1-suzuki.poulose@arm.com>
- <20180208161015.GZ5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <08474a1a-3abd-9b89-ce75-d01e4b6fa659@arm.com>
-Date: Thu, 8 Feb 2018 16:31:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180208161015.GZ5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752402AbeBHQcl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 11:32:41 -0500
+Received: from cyberdimension.org ([80.67.179.20]:48164 "EHLO
+        lime1-a20.localdomain" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751706AbeBHQcj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 11:32:39 -0500
+From: "Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        "Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
+Subject: [PATCH] bcma: add HP Stream Notebook
+Date: Thu,  8 Feb 2018 17:25:42 +0100
+Message-Id: <20180208162542.20100-1-GNUtoo@no-log.org>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 16:10, Dave Martin wrote:
-> On Thu, Feb 08, 2018 at 12:12:37PM +0000, Suzuki K Poulose wrote:
->> So far we have restricted the scopes for the capabilities
->> as follows :
->>   1) Errata workaround check are run all CPUs (i.e, always
->>      SCOPE_LOCAL_CPU)
->>   2) Arm64 features are run only once after the sanitised
->>      feature registers are available using the SCOPE_SYSTEM.
->>
->> This prevents detecting cpu features that can be detected
->> on one or more CPUs with SCOPE_LOCAL_CPU (e.g KPTI). Similarly
->> for errata workaround with SCOPE_SYSTEM.
->>
->> This patch makes sure that we allow flexibility of having
->> any scope for a capability. So, we now run through both
->> arm64_features and arm64_errata in two phases for detection:
->>
->>   a) with SCOPE_LOCAL_CPU filter on each boot time enabled
->>      CPUs.
->>   b) with SCOPE_SYSTEM filter only once after all boot time
->>      enabled CPUs are active.
->>
+In this laptop we have the following PCI device:
+02:00.0 Network controller [0280]: Broadcom Limited BCM43142 802.11b/g/n [14e4:4365] (rev 01)
+	Subsystem: Hewlett-Packard Company BCM43142 802.11b/g/n [103c:804a]
+	[...]
+	Region 0: Memory at 91000000 (64-bit, non-prefetchable) [size=32K]
+	[...]
 
+With this patch, we can now see its WiFi chip:
+  bcma: bus0: Found chip with id 43142, rev 0x01 and package 0x08
+  bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x28, class 0x0)
+  bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x21, class 0x0)
+  bcma: bus0: Core 2 found: PCIe (manuf 0x4BF, id 0x820, rev 0x16, class 0x0)
+  bcma: bus0: Core 3 found: UNKNOWN (manuf 0x43B, id 0x368, rev 0x00, class 0x0)
+  bcma: bus0: Found rev 15 PMU (capabilities 0x518C5E0F)
+  bcma: bus0: SPROM offset 0x840
+  bcma: bus0: Found SPROM revision 10
+  bcma: bus0: Workarounds unknown or not needed for device 0xA886
+  bcma: bus0: Bus registered
 
->>   
->>   static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
->> @@ -1387,13 +1389,15 @@ static void verify_local_cpu_errata_workarounds(void)
->>   static void update_cpu_errata_workarounds(void)
->>   {
->>   	update_cpu_capabilities(arm64_errata,
->> -				ARM64_CPUCAP_SCOPE_ALL,
->> +				ARM64_CPUCAP_SCOPE_LOCAL_CPU,
-> 
-> In isolation, this looks strange because it seems to handle only a
-> subset of arm64_errata now.
-> 
-> I think I understand the change as follows:
-> 
->   * all previously-existing errata workarounds SCOPE_LOCAL_CPU
->     anyway, so the behavior here doesn't change for any existing
->     caps;
-> 
->   * the non SCOPE_SYSTEM workarounds (which this patch prepares for)
-"the SCOPE_SYSTEM" workarounds..."
+But it not yet supported by brcmsmac so it won't work for now:
+  brcmsmac bcma0:1: brcms_b_attach wl0: vendor 0x14e4 device 0x4365
+  brcmsmac: unknown device id 4365
 
->     are handled by the new setup_errata_workaround() path.
+Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+---
+ drivers/bcma/host_pci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> Similarly, the features handling is split into two: one mirroring
-> the current behaviour (for SCOPE_SYSTEM this time) and one handling> the rest, for supporting SCOPE_CPU_LOCAL features in subsequent
-> patches.
-
-Right. The changes here are :
-
-New behavior:
-   - Run SCOPE_LOCAL_CPU filter on arm64_features on all CPUs (newly added with
-     this patch) via (newly added)update_cpu_local_features().
-
-Split of existing behavior:
-   - Run SCOPE_LOCAL_CPU(instead of the earlier SCOPE_ALL) on all CPUs in
-     update_cpu_errata_workarounds()
-   - Run SCOPE_SYSTEM filter on arm64_errata, once, via setup_errata_workarounds()
-
-> 
-> Does that sound right?
-> 
-> I'm not sure we need extra comments or documentation; I just want
-> to check that I've understood the patch correctly.
-
-So, would you prefer this split to the original patch ?
-
-Cheers
-Suzuki
+diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
+index 925842996986..63410ecfe640 100644
+--- a/drivers/bcma/host_pci.c
++++ b/drivers/bcma/host_pci.c
+@@ -297,6 +297,7 @@ static const struct pci_device_id bcma_pci_bridge_tbl[] = {
+ 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_DELL, 0x0016) },
+ 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_DELL, 0x0018) },
+ 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_FOXCONN, 0xe092) },
++	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_HP, 0x804a) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a0) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a9) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43aa) },
+-- 
+2.16.1
