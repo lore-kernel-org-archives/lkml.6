@@ -1,68 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeBHPnD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:43:03 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37404 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752404AbeBHPnC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:43:02 -0500
-Date: Thu, 8 Feb 2018 15:42:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Donglin Peng <dolinux.peng@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ASoC: use seq_file to dump the contents of
- dai_list,platform_list and codec_list
-Message-ID: <20180208154252.GB27520@sirena.org.uk>
-References: <20180118053126.22082-1-dolinux.peng@gmail.com>
- <CAHp75VcefO1L-E8ymHX7MibLiOXkRZ3+3FbkF_L+ywMV-i3Mvw@mail.gmail.com>
- <20180123173732.GI7600@sirena.org.uk>
- <CAErzpmt5Z_bVkO-86yCNNWMNSYXWMzvABGtTEuYV1Y1qk=2LJQ@mail.gmail.com>
- <CAHp75Ve-Nq+hbzf9XRDjQrMz_W7BCSW_58o_vA0H1RGqEFpYrA@mail.gmail.com>
+        id S1752448AbeBHPnu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:43:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750961AbeBHPnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:43:47 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2128021738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 8 Feb 2018 10:43:43 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 09/18] tracing: Add indexing of arguments for function
+ based events
+Message-ID: <20180208104343.2fa63eda@gandalf.local.home>
+In-Reply-To: <20180208105924.GB26290@sejong>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231018.338259949@goodmis.org>
+        <20180208105924.GB26290@sejong>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
-Content-Disposition: inline
-In-Reply-To: <CAHp75Ve-Nq+hbzf9XRDjQrMz_W7BCSW_58o_vA0H1RGqEFpYrA@mail.gmail.com>
-X-Cookie: I'm wet!  I'm wild!
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 8 Feb 2018 19:59:24 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
---4SFOXa2GPu3tIq4H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > @@ -347,6 +361,8 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
+> >  	char buf[8];
+> >  	int ret;
+> >  
+> > +	val += arg->index;
+> > +
+> >  	if (!arg->indirect)
+> >  		return val;  
+> 
+> So this also works without the indirect, and just add the immediate to
+> the value.
 
-On Thu, Feb 08, 2018 at 04:25:10PM +0200, Andy Shevchenko wrote:
-> On Fri, Jan 26, 2018 at 9:16 AM, Donglin Peng <dolinux.peng@gmail.com> wrote:
+Not sure what you are asking here. The immediate adds to the current
+value, where as the indirect will then look what's at that location.
 
-> > I can send another patch after the following patch is merged:
-> > https://patchwork.kernel.org/patch/10178813/
+If the arg (val) is 0xffffffffabcd0000
 
-> It's merged. I think whenever Mark switched his repositories for new
-> cycle you may be able to submit a patch.
+	u64 val+8
 
-Send it any time, I'll just not apply it until after -rc1 comes out.
+Will return: 0xffffffffabcd0008
 
---4SFOXa2GPu3tIq4H
-Content-Type: application/pgp-signature; name="signature.asc"
+	u64 val[1]
 
------BEGIN PGP SIGNATURE-----
+will return what's at location 0xffffffffabcd0008
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp8b/sACgkQJNaLcl1U
-h9B+RQf/YFk9qt6DHq6reakGRMOM2xxvCCq8vLPQD1kAMjyfQheixI7FeBXQ5PAN
-IEFTEcYouC+qIEoiIBQA40VROVDm2RUTkuzFgAxSA36m6pEVnqbRYQG/GFI/HUIm
-tOpVN8frG5FDKwX9C6iG3p6M6hesT6BUR0JRarTns7jo+vg+PplorW/1zn+UL4K0
-1aJc7YGdJ4N/J2ceImTyMqyOUxWM6Eb6gEjk3pLu5tLiWSUiFkPprWoSIhyBEP/B
-n+TbeJvDZXUNUDKl5FAibyywsIaxQIZNQo+KZfhH/k68DEXX8Yq7qnRTOWZHirrl
-7UJa4pxxdbgqEGinZJX6MN1pevhmEA==
-=8eH5
------END PGP SIGNATURE-----
+"u64 val+8[0]" is the same as "u64 val[1]"
 
---4SFOXa2GPu3tIq4H--
+Note: "u64 val[0]+8" will return what's at location 0xffffffffabcd0000
+plus 8.
+
+-- Steve
