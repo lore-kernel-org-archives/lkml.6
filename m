@@ -1,62 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeBHOpV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:45:21 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:44046 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751562AbeBHOpR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:45:17 -0500
-X-Google-Smtp-Source: AH8x226PWb6JejtWDujtYs7l4xoY6GUexS2IRrz8y8s4z45VTjOGWNrNJkHGIzJ7jTBk7pj5qpMJrw==
-Date: Thu, 8 Feb 2018 20:15:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: vireshk@kernel.org, nm@ti.com, sboyd@codeaurora.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] opp: cpu: Replace GFP_ATOMIC with GFP_KERNEL in
- dev_pm_opp_init_cpufreq_table
-Message-ID: <20180208144513.GW28462@vireshk-i7>
-References: <1516956529-32264-1-git-send-email-baijiaju1990@gmail.com>
+        id S1752320AbeBHOqJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:46:09 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5211 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752028AbeBHOqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:46:08 -0500
+Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
+To: Jiri Olsa <jolsa@redhat.com>
+References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
+ <1517939104-230881-6-git-send-email-john.garry@huawei.com>
+ <20180208135512.GG10234@krava>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
+        <ak@linux.intel.com>, <wcohen@redhat.com>, <will.deacon@arm.com>,
+        <ganapatrao.kulkarni@cavium.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <zhangshaokun@hisilicon.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <77588a26-e216-b44d-fc9e-cea6c05444df@huawei.com>
+Date: Thu, 8 Feb 2018 14:45:37 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1516956529-32264-1-git-send-email-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180208135512.GG10234@krava>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-01-18, 16:48, Jia-Ju Bai wrote:
-> After checking all possible call chains to 
-> dev_pm_opp_init_cpufreq_table() here,
-> my tool finds that this function is never called in atomic context, 
-> namely never in an interrupt handler or holding a spinlock.
-> And dev_pm_opp_init_cpufreq_table() calls dev_pm_opp_get_opp_count(), 
-> which calls mutex_lock that can sleep.
-> It indicates that atmtcp_v_send() can call functions which may sleep.
-> Thus GFP_ATOMIC is not necessary, and it can be replaced with GFP_KERNEL.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  drivers/opp/cpu.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/opp/cpu.c b/drivers/opp/cpu.c
-> index 2d87bc1..0c09107 100644
-> --- a/drivers/opp/cpu.c
-> +++ b/drivers/opp/cpu.c
-> @@ -55,7 +55,7 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
->  	if (max_opps <= 0)
->  		return max_opps ? max_opps : -ENODATA;
->  
-> -	freq_table = kcalloc((max_opps + 1), sizeof(*freq_table), GFP_ATOMIC);
-> +	freq_table = kcalloc((max_opps + 1), sizeof(*freq_table), GFP_KERNEL);
->  	if (!freq_table)
->  		return -ENOMEM;
+On 08/02/2018 13:55, Jiri Olsa wrote:
+> On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
+>
+> SNIP
+>
+>> +	char *perpkg;
+>> +	char *unit;
+>> +	char *metric_expr;
+>> +	char *metric_name;
+>> +	char *metric_group;
+>> +	struct list_head list;
+>> +	char strings[];
+>> +};
+>> +
+>> +static LIST_HEAD(arch_std_events);
+>> +
+>> +#define ADD_EVENT_STRING(string) do { if (string) {		\
+>> +	es->string = strings;					\
+>> +	strings += snprintf(strings, len, "%s", string) + 1;	\
+>> +} } while (0)
+>> +
+>> +static int save_arch_std_events(void *data, char *name, char *event,
+>> +				char *desc, char *long_desc, char *pmu,
+>> +				char *unit, char *perpkg, char *metric_expr,
+>> +				char *metric_name, char *metric_group)
+>> +{
+>> +	struct event_struct *es;
+>> +	struct stat *sb = data;
+>> +	int len;
+>> +	char *strings;
+>> +
+>> +	/*
+>> +	 * Lazily allocate size of the json file to hold the
+>> +	 * strings, which would be more than large enough.
+>> +	 */
+>> +	len = sb->st_size;
+>> +
+>> +	es = malloc(sizeof(*es) + len);
+>
+> hum, so for single event you allocate buffer of the size
+> of the entire file this event is defined in?
+>
+> what do I miss? I assume there're more of those arch-defined
+> events defined in the single file..
 
-Applied thanks.
+Hi Jirka,
 
--- 
-viresh
+Yes, allocating the file size per event was just to make the code more 
+concise (instead of finding each string length), but obviously it is an 
+inefficient practice in terms of memory usage.
+
+But since the JSONs are generally not huge, and in practice we would 
+only be accessing a fraction of the buffer's physical memory to save the 
+event strings, I thought it ok.
+
+Anyway, I'll see if there is something more efficient I can do.
+
+Thanks,
+John
+
+>
+> jirka
+>
+> .
+>
