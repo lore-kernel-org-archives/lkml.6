@@ -1,62 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752302AbeBHMeN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:34:13 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:49137 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752255AbeBHMeK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:34:10 -0500
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: kishon@ti.com, Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] PCI: designware-ep: Return an error when requesting a too large BAR size
-Date: Thu,  8 Feb 2018 13:33:46 +0100
-Message-Id: <20180208123346.20784-4-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180208123346.20784-1-niklas.cassel@axis.com>
-References: <20180208123346.20784-1-niklas.cassel@axis.com>
-X-TM-AS-GCONF: 00
+        id S1752362AbeBHMeY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:34:24 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32914 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752316AbeBHMeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:34:23 -0500
+Date: Thu, 8 Feb 2018 20:34:18 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, douly.fnst@cn.fujitsu.com,
+        joro@8bytes.org, uobergfe@redhat.com, prarit@redhat.com
+Subject: Re: [PATCH v2 1/2] x86/apic/kexec: Enable legacy irq mode before
+ jump to kexec/kdump kernel
+Message-ID: <20180208123418.GG30270@localhost.localdomain>
+References: <20180125141134.25053-1-bhe@redhat.com>
+ <20180125141134.25053-2-bhe@redhat.com>
+ <87h8qsd8s8.fsf@xmission.com>
+ <877erobt47.fsf@xmission.com>
+ <87eflwa8d5.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87eflwa8d5.fsf@xmission.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pci_epc_set_bar() can be called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
-and can thus request a BAR size larger than 4 GB.
+On 02/07/18 at 01:48pm, Eric W. Biederman wrote:
+> ebiederm@xmission.com (Eric W. Biederman) writes:
 
-However, the pcie-designware-ep.c driver currently doesn't handle
-BAR sizes larger than 4 GB. (Since we are only writing the BAR_mask[x]
-register and not the BAR_mask[x+1] register.)
+> > Now that I see that I agree in essence with this patch series.
+> > I don't agree with the implemenation details.
+> >
+> > Can you please split disable_IO_APIC and switch_to_legacy_irq_mode
+> > in a single patch.
+> 
+> Now that I think about it can you call the function not
+> switch_to_legacy_irq_mode but restore_boot_irq_mode.  And the
+> corresponding x86_io_apic_ops not .disable but .restore.
+> 
+> That should make the purpose of the code clearer, and help avoid
+> mistakes like the one that led to this regression.
 
-For now, return an error when requesting a BAR size larger than 4 GB.
+Thanks for your comments and great suggestion. Have made change as you
+suggested, will post after test passed.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
----
-Changes since v1:
-Use upper_32_bits() to avoid build warning on systems with 32-bit size_t.
-
- drivers/pci/dwc/pcie-designware-ep.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-index 3a6feeff5f5b..efb65a7c06b8 100644
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -126,6 +126,11 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
- 	enum dw_pcie_as_type as_type;
- 	u32 reg = PCI_BASE_ADDRESS_0 + (4 * bar);
- 
-+	if (upper_32_bits(size)) {
-+		dev_err(pci->dev, "can't handle BAR larger than 4GB\n");
-+		return -EINVAL;
-+	}
-+
- 	if (!(flags & PCI_BASE_ADDRESS_SPACE))
- 		as_type = DW_PCIE_AS_MEM;
- 	else
--- 
-2.14.2
+Thanks
+Baoquan
