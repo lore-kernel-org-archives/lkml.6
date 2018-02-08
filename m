@@ -1,81 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752621AbeBHSAB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:00:01 -0500
-Received: from foss.arm.com ([217.140.101.70]:38414 "EHLO foss.arm.com"
+        id S1752641AbeBHSAI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:00:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752589AbeBHR76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:59:58 -0500
-Subject: Re: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable
- work around
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>, Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-18-suzuki.poulose@arm.com>
- <20180207103942.GH5862@e103592.cambridge.arm.com>
- <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
- <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
- <3b922643-ab97-e012-4268-c830b1bdaf10@arm.com>
- <77efc8b3-48c1-fbaf-ce11-15123755262a@arm.com>
-Message-ID: <5908ea11-a007-ff9f-b714-6dc0a6a1af01@arm.com>
-Date: Thu, 8 Feb 2018 17:59:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <77efc8b3-48c1-fbaf-ce11-15123755262a@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752171AbeBHSAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 13:00:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E4B217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>, Wanpeng Li <kernellwp@gmail.com>,
+        Mike Galbraith <efault@gmx.de>, Rik van Riel <riel@redhat.com>
+Subject: [PATCH 3/6] sched/isolation: Isolate workqueues when "nohz_full=" is set
+Date: Thu,  8 Feb 2018 18:59:36 +0100
+Message-Id: <1518112779-30196-4-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518112779-30196-1-git-send-email-frederic@kernel.org>
+References: <1518112779-30196-1-git-send-email-frederic@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 17:59, Suzuki K Poulose wrote:
-> On 08/02/18 16:58, Suzuki K Poulose wrote:
->> On 08/02/18 12:26, Marc Zyngier wrote:
->>> On 08/02/18 12:19, Suzuki K Poulose wrote:
->>>> On 07/02/18 10:39, Dave Martin wrote:
->>>>> On Wed, Jan 31, 2018 at 06:28:04PM +0000, Suzuki K Poulose wrote:
->>>>>> We defend against branch predictor training based exploits by
->>>>>> taking specific actions (based on the CPU model) to invalidate
->>>>>> the Branch predictor buffer (BPB). This is implemented by per-CPU
->>>>>> ptr, which installs the specific actions for the CPU model.
->>>>>>
->>>>>> The core code can handle the following cases where:
->>>>>>    1) some CPUs doesn't need any work around
->>>>>>    2) a CPU can install the work around, when it is brought up,
->>>>>>       irrespective of how late that happens.
->>>>
->>>> With the recent patches from Marc to expose this information to KVM
->>>> guests, it looks like allowing a late CPU to turn this on is not going
->>>> to be a good idea. We unconditionally set the capability even
->>>> when we don't need the mitigation. So I am not really sure if
->>>> we should go ahead with this patch. I am open to suggestions
->>>>
->>>> Marc,
->>>>
->>>> What do you think ?
->>>
->>> By the time we bring in that CPU that requires some level of mitigation,
->>> we may be running a guest already, and we've told that guest that no
->>> mitigation was required. If we bring in that CPU, we break that promise,
->>> and the guest becomes vulnerable without knowing about it.
->>>
->>> The same thing is valid for userspace once we expose the status of the
->>> mitigation in /sys, just like x86 does. If we transition from not
->>> vulnerable to vulnerable (or even mitigated), we have lied to userspace.
->>>
->>> In either case, I don't think breaking this contract is acceptable.
->>
->> Thanks Marc, I have dropped this patch from the series.
-> 
-> On a second thought, should we allow this if the KVM is not configured in ?
+As we prepare for offloading the residual 1hz scheduler ticks to
+workqueue, let's affine those to housekeepers so that they don't
+interrupt the CPUs that don't want to be disturbed.
 
-Oops, no! Please ignore it. We are going to expose this to other userpsace anyway.
-Sorry about the noise.
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wanpeng Li <kernellwp@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/sched/isolation.h | 1 +
+ kernel/sched/isolation.c        | 4 +++-
+ kernel/workqueue.c              | 3 ++-
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
-Suzuki
+diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+index d849431..4a6582c 100644
+--- a/include/linux/sched/isolation.h
++++ b/include/linux/sched/isolation.h
+@@ -12,6 +12,7 @@ enum hk_flags {
+ 	HK_FLAG_SCHED		= (1 << 3),
+ 	HK_FLAG_TICK		= (1 << 4),
+ 	HK_FLAG_DOMAIN		= (1 << 5),
++	HK_FLAG_WQ		= (1 << 6),
+ };
+ 
+ #ifdef CONFIG_CPU_ISOLATION
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index b71b436..8f1c1de 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -3,6 +3,7 @@
+  *  any CPU: unbound workqueues, timers, kthreads and any offloadable work.
+  *
+  * Copyright (C) 2017 Red Hat, Inc., Frederic Weisbecker
++ * Copyright (C) 2017-2018 SUSE, Frederic Weisbecker
+  *
+  */
+ 
+@@ -119,7 +120,8 @@ static int __init housekeeping_nohz_full_setup(char *str)
+ {
+ 	unsigned int flags;
+ 
+-	flags = HK_FLAG_TICK | HK_FLAG_TIMER | HK_FLAG_RCU | HK_FLAG_MISC;
++	flags = HK_FLAG_TICK | HK_FLAG_WQ | HK_FLAG_TIMER |
++		HK_FLAG_RCU | HK_FLAG_MISC;
+ 
+ 	return housekeeping_setup(str, flags);
+ }
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 017044c..0cee2d6 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5570,7 +5570,8 @@ int __init workqueue_init_early(void)
+ 	WARN_ON(__alignof__(struct pool_workqueue) < __alignof__(long long));
+ 
+ 	BUG_ON(!alloc_cpumask_var(&wq_unbound_cpumask, GFP_KERNEL));
+-	cpumask_copy(wq_unbound_cpumask, housekeeping_cpumask(HK_FLAG_DOMAIN));
++	cpumask_copy(wq_unbound_cpumask,
++		     housekeeping_cpumask(HK_FLAG_DOMAIN | HK_FLAG_WQ));
+ 
+ 	pwq_cache = KMEM_CACHE(pool_workqueue, SLAB_PANIC);
+ 
+-- 
+2.7.4
