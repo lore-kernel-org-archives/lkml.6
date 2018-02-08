@@ -1,83 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752214AbeBHOIi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:08:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39627 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751190AbeBHOIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:08:37 -0500
-Date: Thu, 8 Feb 2018 15:08:33 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jan Kara <jack@suse.cz>, Andi Kleen <ak@linux.intel.com>,
-        syzbot <syzbot+283c3c447181741aea28@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, jlayton@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Ingo Molnar <mingo@kernel.org>, rgoldwyn@suse.com,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
-Subject: Re: INFO: task hung in sync_blockdev
-Message-ID: <20180208140833.lpr4yjn7g3v3cdy3@quack2.suse.cz>
-References: <001a11447070ac6fcb0564a08cb1@google.com>
- <20180207155229.GC10945@tassilo.jf.intel.com>
- <20180208092839.ebe5rk6mtvkk5da4@quack2.suse.cz>
- <CACT4Y+ZTNDhEhAAP2PYRH5WxEeEM0xHdp4UKqtNaWhU6w4sj_g@mail.gmail.com>
+        id S1752026AbeBHOJv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:09:51 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39918 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeBHOJu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:09:50 -0500
+X-Google-Smtp-Source: AH8x2241PjzSwb6sQFnBonAe4SiUZdq0KpSSla+IGnpeC8mU2kICPCO0I9o7qVqgbVo5zLLb4iRyrJ5PaIicuNLx2DQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZTNDhEhAAP2PYRH5WxEeEM0xHdp4UKqtNaWhU6w4sj_g@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CA+M3ks4kCpcNfd1NyVLDtPOKmDniteXw2-iUqUikeicRdRAa6A@mail.gmail.com>
+References: <20180122102608.12565-1-philippe.cornu@st.com> <3169703.7pajs7FEnH@avalon>
+ <2bf185e2-9b02-3632-dc9a-baf8f4109b44@st.com> <2205915.z0ubSpqczI@avalon> <CA+M3ks4kCpcNfd1NyVLDtPOKmDniteXw2-iUqUikeicRdRAa6A@mail.gmail.com>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Thu, 8 Feb 2018 15:09:08 +0100
+Message-ID: <CAOFm3uFZeMNBGnvAtPMiMMXuV-3tFTbxH-Y1cv-hAgZ4dUmA=A@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge/synopsys: dsi: Adopt SPDX identifiers
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>, Heiko Stubner <heiko@sntech.de>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        Mickael REULIER <mickael.reulier@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 08-02-18 14:28:08, Dmitry Vyukov wrote:
-> On Thu, Feb 8, 2018 at 10:28 AM, Jan Kara <jack@suse.cz> wrote:
-> > On Wed 07-02-18 07:52:29, Andi Kleen wrote:
-> >> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<0000000040269370>]
-> >> > __blkdev_put+0xbc/0x7f0 fs/block_dev.c:1757
-> >> > 1 lock held by blkid/19199:
-> >> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> >> > __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
-> >> >  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<0000000033edf9f2>]
-> >> > n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> >> > 1 lock held by syz-executor5/19330:
-> >> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> >> > __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
-> >> > 1 lock held by syz-executor5/19331:
-> >> >  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000b4dcaa18>]
-> >> > __blkdev_get+0x158/0x10e0 fs/block_dev.c:1439
-> >>
-> >> It seems multiple processes deadlocked on the bd_mutex.
-> >> Unfortunately there's no backtrace for the lock acquisitions,
-> >> so it's hard to see the exact sequence.
-> >
-> > Well, all in the report points to a situation where some IO was submitted
-> > to the block device and never completed (more exactly it took longer than
-> > those 120s to complete that IO). It would need more digging into the
-> > syzkaller program to find out what kind of device that was and possibly why
-> > the IO took so long to complete...
-> 
-> 
-> Would a traceback of all task stacks help in this case?
-> What I've seen in several "task hung" reports is that the CPU
-> traceback is not showing anything useful. So perhaps it should be
-> changed to task traceback? Or it would not help either?
+Benjamin,
 
-Task stack traceback for all tasks (usually only tasks in D state - i.e.
-sysrq-w - are enough actually) would definitely help for debugging
-deadlocks on sleeping locks. For this particular case I'm not sure if it
-would help or not since it is quite possible the IO is just sitting in some
-queue never getting processed due to some racing syzkaller process tearing
-down the device in the wrong moment or something like that... Such case is
-very difficult to debug without full kernel crashdump of the hung kernel
-(or a reproducer for that matter) and even with that it is usually rather
-time consuming. But for the deadlocks which do occur more frequently it
-would be probably worth the time so it would be nice if such option was
-eventually available.
+On Wed, Jan 24, 2018 at 9:57 AM, Benjamin Gaignard
+<benjamin.gaignard@linaro.org> wrote:
+> 2018-01-24 0:32 GMT+01:00 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+>> Hi Philippe,
+>>
+>> On Tuesday, 23 January 2018 12:25:51 EET Philippe CORNU wrote:
+>>> On 01/23/2018 12:30 AM, Laurent Pinchart wrote:
+>>> > On Monday, 22 January 2018 12:26:08 EET Philippe Cornu wrote:
+>>> >> Add SPDX identifiers to the Synopsys DesignWare MIPI DSI
+>>> >> host controller driver.
+>>> >>
+>>> >> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>>> >> ---
+>>> >>
+>>> >>   drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 6 +-----
+>>> >>   1 file changed, 1 insertion(+), 5 deletions(-)
+>>> >>
+>>> >> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>> >> b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c index
+>>> >> 46b0e73404d1..e06836dec77c 100644
+>>> >> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>> >> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>> >> @@ -1,12 +1,8 @@
+>>> >> +// SPDX-License-Identifier: GPL-2.0
+>>> >
+>>> > According to Documentation/process/license-rules.txt this would change
+>>> > the existing license. The correct identifier is GPL-2.0+.
+>>>
+>>> You are right, I did not put the correct identifier :(
+>>>
+>>> After reading more spdx.org, I wonder if the correct value should be
+>>> GPL-2.0-or-later instead of GPL-2.0+
+>>>
+>>> https://spdx.org/licenses/GPL-2.0-or-later.html
+>>> https://spdx.org/licenses/GPL-2.0+.html
+>>>
+>>> What is your opinion?
+>>
+>> I agree in principle, and I've even asked for that before, but I've been told
+>> that we should stick to the license identifiers defined in Documentation/
+>> process/license-rules.txt. The file might get updated to use GPL-2.0-or-later
+>> and GPL-2.0-only later, and kernel sources will likely then get patched in one
+>> go.
+>
+> + Philippe O. to check what I'm writing just below.
+>
+> In -next branch I only see reference to GPL-2.0+ identifier so for me
+> it fine to use it here.
+> Is that right ? or should we use GPL-2.0-or-later keyword ?
 
-								Honza
+
+Sorry for the late reply!
+IMHO it is essential to stick to what is in the kernel doc, meaning
+that you should not use the GPL-2.0-or-later identifier until it is
+part of the kernel doc. Otherwise this is going to be a mess ;)
+Consistency matters a lot.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cordially
+Philippe Ombredanne
