@@ -1,82 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeBHAgA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 19:36:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38904 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750806AbeBHAf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 19:35:58 -0500
-From: NeilBrown <neilb@suse.com>
-To: Joel Fernandes <joelaf@google.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Date: Thu, 08 Feb 2018 11:35:43 +1100
-Cc: LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
-        Minchan Kim <minchan@kernel.org>,
-        "open list\:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH RFC] ashmem: Fix lockdep RECLAIM_FS false positive
-In-Reply-To: <CAJWu+opo+mE-ZAsi3=u8ogUYurVM0_qaHi7keZJ6h0Sfa7oULQ@mail.gmail.com>
-References: <20180206004903.224390-1-joelaf@google.com> <20180207080740.GH2269@hirez.programming.kicks-ass.net> <CAJWu+orvHb_-fSgtO0NqCai3PPc7fAe7LqNLVVhYbT+Wi-oATg@mail.gmail.com> <20180207165802.GC25219@hirez.programming.kicks-ass.net> <CAJWu+opo+mE-ZAsi3=u8ogUYurVM0_qaHi7keZJ6h0Sfa7oULQ@mail.gmail.com>
-Message-ID: <87k1vomi74.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        id S1752056AbeBHAhN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 19:37:13 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35269 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeBHAhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 19:37:12 -0500
+X-Google-Smtp-Source: AH8x225Nv/W+qBiBNTqmmGfQoPQG0uoV2iO7/XzhJV48B041ydl0nH2tXnSW7QQdKQegaCACxZa8yQ==
+Date: Wed, 07 Feb 2018 16:37:10 -0800 (PST)
+X-Google-Original-Date: Wed, 07 Feb 2018 16:37:08 PST (-0800)
+Subject: Re: [patches] [PATCH v3 0/6] Add dynamic ftrace support for RISC-V platforms
+In-Reply-To: <20180118154545.17987-1-alankao@andestech.com>
+CC: albert@sifive.com, rostedt@goodmis.org, mingo@redhat.com,
+        yamada.masahiro@socionext.com, n54@gmx.com, akpm@linux-foundation.org,
+        patches@groups.riscv.org, linux-kernel@vger.kernel.org,
+        sorear2@gmail.com, alankao@andestech.com, greentime@andestech.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: nonerkao@gmail.com
+Message-ID: <mhng-375db8f6-17f2-41d6-922f-33b0c7fc9e1c@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-
-On Wed, Feb 07 2018, Joel Fernandes wrote:
-
-> Hi Peter,
+On Thu, 18 Jan 2018 07:45:39 PST (-0800), nonerkao@gmail.com wrote:
+> This patch set includes the building blocks of dynamic ftrace features
+> for RISC-V machines.
 >
-> On Wed, Feb 7, 2018 at 8:58 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> [...]
->>
->>> Lockdep reports this issue when GFP_FS is infact set, and we enter
->>> this path and acquire the lock. So lockdep seems to be doing the right
->>> thing however by design it is reporting a false-positive.
->>
->> So I'm not seeing how its a false positive. fs/inode.c sets a different
->> lock class per filesystem type. So recursing on an i_mutex within a
->> filesystem does sound dodgy.
+> Changes in v3:
+>  - Replace the nops at the tracer call sites into a "call ftrace_stub"
+>    instruction for better understanding (1/6 and 2/6)
 >
-> But directory inodes and file inodes in the same filesystem share the
-> same lock class right?
+> Changes in v2:
+>  - Fix the return value as writing to kernel text goes wrong (2/6)
+>  - Replace manual comparisons by calling memcmp (2/6)
+>  - Simplify the conditional assignment in the Makefile (1/6)
+>
+> Alan Kao (6):
+>   riscv/ftrace: Add RECORD_MCOUNT support
+>   riscv/ftrace: Add dynamic function tracer support
+>   riscv/ftrace: Add dynamic function graph tracer support
+>   riscv/ftrace: Add ARCH_SUPPORTS_FTRACE_OPS support
+>   riscv/ftrace: Add DYNAMIC_FTRACE_WITH_REGS support
+>   riscv/ftrace: Add HAVE_FUNCTION_GRAPH_RET_ADDR_PTR support
+>
+>  arch/riscv/Kconfig              |   3 +
+>  arch/riscv/Makefile             |   3 +
+>  arch/riscv/include/asm/ftrace.h |  47 ++++++++
+>  arch/riscv/kernel/Makefile      |   5 +-
+>  arch/riscv/kernel/ftrace.c      | 142 ++++++++++++++++++++++-
+>  arch/riscv/kernel/mcount-dyn.S  | 241 ++++++++++++++++++++++++++++++++++++++++
+>  arch/riscv/kernel/mcount.S      |  22 ++--
+>  arch/riscv/kernel/stacktrace.c  |   6 +
+>  scripts/recordmcount.pl         |   5 +
+>  9 files changed, 461 insertions(+), 13 deletions(-)
+>  create mode 100644 arch/riscv/kernel/mcount-dyn.S
 
-Not since v2.6.24
-Commit: 14358e6ddaed ("lockdep: annotate dir vs file i_mutex")
-
-You were using 4.9.60. so they should be separate....
-
-Maybe shmem_get_inode() needs to call unlock_new_inode() or just
-lockdep_annotate_inode_mutex_key() after inode_init_owner().
-
-Maybe inode_init_owner() should call lockdep_annotate_inode_mutex_key()
-directly.
-
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlp7m2AACgkQOeye3VZi
-gbmNRRAAqi6V+r4APrjzTHcs4mwJs7pCOqF/4P0knHwKGEeWt4ZVlToQAKVo93bB
-Qm8g3Q80Xi242xobzmgDJBRSxdfU0E1TeqRU6UH+GWLAhLpZmGNhn6rDGmUDK/vQ
-SuAh52OUpGZ6qbe/1A3+4igCC1clK9kmhNyofLc6qt1OesiqlX7/P3EQ3/eLDu/A
-cF6RZJ2XtvxkHORl9eysHd131xOxvCH/0oC/h86qVUg/eqAU7P19BMJUU2veGY4t
-FwRqJlqo98vcdPVKMVqOjH2bNbRbR+ggS8BQ/cXKRIz9nH37tRT0NUDL6lLS50k+
-tV9I9YLpXrA5dIIeC7Ruh6ny5uz1voFqH70Y+ILxy1BFdkoVGC2xMAEHpo5HoAj/
-cImyNayfD5IoT2yYI6nbYmzAEo2pXDDxojDrN9XA46WSL0ToYwHoOdTFDFPmYlTC
-iSMWvM666qy/1DdF/woeHR2v9pIOn9D9N1r1lKGS8ou1sA8KSdnRoIj6ajeVybdP
-rQ7p5XWrnnYA2bmbZttyMstGCtgIUhCPyz9bWpZ8HMRlA/gKB03csfDOyCGGjnBg
-jY+C9DJei6mxKPFyZl/eSs8bhD3Np8v+PgU/Vm418QUCu4gSQ+tl7qX5F4wuq3Hg
-oWfWdrKz5jpXWKE7PwM0+DD7YubTtXY2QeBRqaNTnBcWQOG1+VU=
-=M4FL
------END PGP SIGNATURE-----
---=-=-=--
+Sorry it took me a while to get around to these.  Do you mind submitting a v4 
+that's based on linux-4.15?  I'm getting all sorts of merge errors trying to 
+"git am" these.
