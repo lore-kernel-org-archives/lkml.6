@@ -1,126 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeBHNqC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:46:02 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33227 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeBHNqA (ORCPT
+        id S1752178AbeBHNql (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:46:41 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39737 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbeBHNqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:46:00 -0500
-X-Google-Smtp-Source: AH8x225NbKqpQ0+/gGEGRchWbzBtEoqQV1oOm3aoAcgMZApGRL3NvfnPz6qXLU7mo/88n9yZRm6oyg==
-Date: Thu, 8 Feb 2018 14:45:57 +0100
-From: Christoffer Dall <christoffer.dall@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, Shanker Donthineni <shankerd@codeaurora.org>
-Subject: Re: [PATCH v1 02/16] irqchip: gicv3-its: Add helpers for handling
- 52bit address
-Message-ID: <20180208134557.GQ29286@cbox>
-References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180109190414.4017-3-suzuki.poulose@arm.com>
- <20180207151023.GD29286@cbox>
- <a9e37c29-3be0-8759-a8e3-3e0a273e151d@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9e37c29-3be0-8759-a8e3-3e0a273e151d@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 8 Feb 2018 08:46:38 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180208134635euoutp0159e9a1abba9d6e5e8981c471a32c3060~RXbhcnw9x2157821578euoutp01d
+X-AuditID: cbfec7f4-f790c6d0000075d3-a8-5a7c54ba4044
+Subject: Re: [PATCH v2 0/4] ARM/arm64: exynos: Fix missing missing reg
+ warning for syscon restart nodes
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <4642d2d0-61c9-33b6-0289-76f487aa45ab@samsung.com>
+Date: Thu, 08 Feb 2018 14:46:32 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-version: 1.0
+In-reply-to: <20180130211819.17139-1-krzk@kernel.org>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+Content-transfer-encoding: 7bit
+Content-language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXfO2TmuTpyWlyeLhNENq1Vg8KZldznklz7Uh2ZiIw8qOZNN
+        Rc1SlMVc0UVZjilWTkXEtKaO7qATjQxNLC9QJhrZNKnhqTRL63QW+O33f5//8zzv/+VlCPUo
+        FcqkpGUIxjR9qkapIt2dcz3bHh3P0+3wWsPxaKVbiX+XdNL4vr2Jwl9qryA8KE5Q+FZHD4Wv
+        jU8RuLf3Ho1d4wMU7n9UocT23mcK3G57inDNYJ8CvxicUeKqVpHG5qcdNPb6npP7V/INlQ2I
+        7x/oI/j5nyWId9UXK/nm6nz+9fNCir/aUo/4Gde6Y4xOtSdRSE3JEozbo0+rkp3fFqj04hXZ
+        FpuTLkB3VFYUwAAXAf32eVrmYHg10qS0IhWj5moQTIh3FbKYQTB8+Tb9v2No2EbIhVoE9aLd
+        75pAMDjXSlkRw6ziUqC2CUvngdx1AubLS2lJEJyIwFNa92+UktsJ1mmrUmKWiwant5GQmOQ2
+        wLvhd7Q0KIg7BVO/YmTLSpgtHSElDuB2wY/GNoXEBBcJHxfMlMxh0NwwTcgcAkXmYVLaC5yb
+        htfWElKOcBjE/m5/nFUw2dXi57VQbGlTyA3XECwsev3CjqDJZ/a7osDT1edftwJK3GWEdFPg
+        WLBcUssWHsZeFihkPgAO8RMlP5EFQcWQl7qOwhxLEjmWpHAsSeFYkuI2IutRoJBpMiQJpgit
+        SW8wZaYlac+cM7jQ33/XvdAlPkDOzsh2xDFIs5z9uvu8Tk3ps0w5hnYEDKEJZJ8E5enUbKI+
+        J1cwnkswZqYKpna0hiE1Iexe3aWTai5JnyGcFYR0wfi/qmACQgvQDWtMxWUtF/i5aAftWJ8a
+        VRX0+AQ7hM8Ge9JtHt+hRvM+duMTW8jsm9zmRG1p4ost2TcfNvjmfWPvqxfjP9x8tezIUbfq
+        0K+kyOo6Q7NjpjzHvIlg70YO4dC4PVs921cfjJ12xId+VxwtzEkeidDGXXRtLot+O3khNr8w
+        YVa0FGtIU7J+ZzhhNOn/AIAewsBzAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsVy+t/xy7q7QmqiDI4c57R4MG8bm8XfScfY
+        LTbOWM9q8X5ZD6PF9S/PWS3mHznHatH/+DWzxfnzG9gtNj2+xmpxedccNosZ5/cxWRyaupfR
+        Yun1i0wWp65/ZrNYtPULu0Xr3iPsFi8/nmBxEPRYM28No8flaxeZPX7/msTosWlVJ5vH5iX1
+        HldONLF69G1ZxejxeZNcAEcUl01Kak5mWWqRvl0CV8bir/9YCzr5KjqmLmZvYFzI1cXIySEh
+        YCJx4+ZUZghbTOLCvfVsXYxcHEICSxglvl+fzQLhPGeUODfjCDtIlbBApsT/OxuZQBIiAhOY
+        JR63nQNzmAW+MEqc7zjHCNHSxSjx+ssTsMFsAoYSXW+72EBsXgE7icUv14HFWQRUJe7evAs2
+        VlQgRmLqx42sEDWCEj8m32MBsTkFTCW+rzvIBGIzC5hJfHl5mBXClpfYvOYtM4QtLtHcepNl
+        AqPgLCTts5C0zELSMgtJywJGllWMIqmlxbnpucWGesWJucWleel6yfm5mxiBsbnt2M/NOxgv
+        bQw+xCjAwajEw/vBsjpKiDWxrLgy9xCjBAezkgjvHtGaKCHelMTKqtSi/Pii0pzU4kOM0hws
+        SuK85w0qo4QE0hNLUrNTUwtSi2CyTBycUg2MgVor6zfy75Jw8mgUTqhh32y9IO4Y07I+Kbfb
+        m6r416ZsCivg1JD75pP7WNJ+tg7Tzb7sNTbrk1m26DxWO1R21zH517951cXHGzRc7HXd/q/4
+        dlzeMttbQetthLqr33frx19lrpy4tcNyfdr7NX2enbZ22+Jedjpv2BsoXrt6z84n6tdd5mgq
+        sRRnJBpqMRcVJwIA1maAf8kCAAA=
+X-CMS-MailID: 20180208134634eucas1p1c4858334217aa881ac0b834048391a5c
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180130211855epcas1p25cce42a195d8b407f4267309f9b5ccb9
+X-RootMTR: 20180130211855epcas1p25cce42a195d8b407f4267309f9b5ccb9
+References: <CGME20180130211855epcas1p25cce42a195d8b407f4267309f9b5ccb9@epcas1p2.samsung.com>
+        <20180130211819.17139-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 11:20:02AM +0000, Suzuki K Poulose wrote:
-> On 07/02/18 15:10, Christoffer Dall wrote:
-> >Hi Suzuki,
-> >
-> >On Tue, Jan 09, 2018 at 07:03:57PM +0000, Suzuki K Poulose wrote:
-> >>Add helpers for encoding/decoding 52bit address in GICv3 ITS BASER
-> >>register. When ITS uses 64K page size, the 52bits of physical address
-> >>are encoded in BASER[47:12] as follows :
-> >>
-> >>  Bits[47:16] of the register => bits[47:16] of the physical address
-> >>  Bits[15:12] of the register => bits[51:48] of the physical address
-> >>                                 bits[15:0] of the physical address are 0.
-> >>
-> >>Also adds a mask for CBASER address. This will be used for adding 52bit
-> >>support for VGIC ITS. More importantly ignore the upper bits if 52bit
-> >>support is not enabled.
-> >>
-> >>Cc: Shanker Donthineni <shankerd@codeaurora.org>
-> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> 
-> 
-> >>+
-> >>+/*
-> >>+ * With 64K page size, the physical address can be upto 52bit and
-> >>+ * uses the following encoding in the GITS_BASER[47:12]:
-> >>+ *
-> >>+ * Bits[47:16] of the register => bits[47:16] of the base physical address.
-> >>+ * Bits[15:12] of the register => bits[51:48] of the base physical address.
-> >>+ *                                bits[15:0] of the base physical address are 0.
-> >>+ * Clear the upper bits if the kernel doesn't support 52bits.
-> >>+ */
-> >>+#define GITS_BASER_ADDR64K_LO_MASK	GENMASK_ULL(47, 16)
-> >>+#define GITS_BASER_ADDR64K_HI_SHIFT	12
-> >>+#define GITS_BASER_ADDR64K_HI_MOVE	(48 - GITS_BASER_ADDR64K_HI_SHIFT)
-> >>+#define GITS_BASER_ADDR64K_HI_MASK	(GITS_PA_HI_MASK << GITS_BASER_ADDR64K_HI_SHIFT)
-> >>+#define GITS_BASER_ADDR64K_TO_PHYS(x)					\
-> >>+	(((x) & GITS_BASER_ADDR64K_LO_MASK) | 				\
-> >>+	 (((x) & GITS_BASER_ADDR64K_HI_MASK) << GITS_BASER_ADDR64K_HI_MOVE))
-> >>+#define GITS_BASER_ADDR64K_FROM_PHYS(p)					\
-> >>+	(((p) & GITS_BASER_ADDR64K_LO_MASK) | 				\
-> >>+	 (((p) >> GITS_BASER_ADDR64K_HI_MOVE) & GITS_BASER_ADDR64K_HI_MASK))
-> >
-> >I don't understand why you need this masking logic embedded in these
-> >macros?  Isn't it strictly an error if anyone passes a physical address
-> >with any of bits [51:48] set to the ITS on a system that doesn't support
-> >52 bit PAs, and just silently masking off those bits could lead to some
-> >interesting cases.
-> 
-> What do you think is the best way to handle such cases ? May be I could add
-> some checks where we get those addresses and handle it before we use this
-> macro ?
-> 
+Hi Krzysztof,
 
-I don't think the conversion macros should try to hide programming
-errors.  I think we should limit the functionality in the macros to be
-simple bit masking and shifting.
+On 2018-01-30 22:18, Krzysztof Kozlowski wrote:
+> Hi,
+>
+> Changes since v1:
+> 1. New patch (1/4) calling devm_of_platform_populate() in PMU driver,
+>     following Rob's advice.
+> 2. The DTS patches moving reboot/poweroff nodes (3/4 and 4/4) now depend
+>     on this.
 
-Any validation and masking depending on 52 PA support in the kernel
-should be done in the context of the functionality, just like the ITS
-driver already does.
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> >
-> >This is also notably more difficult to read than the existing macro.
-> >
-> >If anything, I think it would be more useful to have
-> >GITS_BASER_TO_PHYS(x) and GITS_PHYS_TO_BASER(x) which takes into account
-> >CONFIG_ARM64_64K_PAGES.
-> 
-> I thought the 64K_PAGES is not kernel page size, but the page-size configured
-> by the "requester" for ITS. So, it doesn't really mean CONFIG_ARM64_64K_PAGES.
+Tested following boards and reboot works fine:
+Exynos3250 (artik5-eval)
+Exynos4412 (trats2)
+Exynos5410 (odroid xu)
+Exynos5422 (odroid xu3/xu4)
+Exynos5433 (tm2)
 
-You're right, I skimmed this logic too quickly.
+> Best regards,
+> Krzysztof
+>
+>
+> Krzysztof Kozlowski (4):
+>    soc: samsung: pmu: Populate children syscon nodes
+>    ARM: dts: exynos: Remove duplicated inclusion of syscon restart nodes
+>      on Exynos5410
+>    ARM: dts: exynos: Fix missing missing reg warning for syscon restart
+>      nodes
+>    arm64: dts: exynos: Fix missing missing reg warning for syscon restart
+>      nodes
+>
+>   .../devicetree/bindings/arm/samsung/pmu.txt        |  6 +++++
+>   arch/arm/boot/dts/exynos-syscon-restart.dtsi       | 28 ++++++++++------------
+>   arch/arm/boot/dts/exynos3250.dtsi                  |  2 +-
+>   arch/arm/boot/dts/exynos4.dtsi                     |  3 ++-
+>   arch/arm/boot/dts/exynos5.dtsi                     |  1 -
+>   arch/arm/boot/dts/exynos5250.dtsi                  |  1 +
+>   arch/arm/boot/dts/exynos5410.dtsi                  |  2 +-
+>   arch/arm/boot/dts/exynos5420.dtsi                  |  1 +
+>   arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 14 +++++------
+>   arch/arm64/boot/dts/exynos/exynos7.dtsi            | 12 +++++-----
+>   drivers/soc/samsung/exynos-pmu.c                   |  3 +++
+>   11 files changed, 40 insertions(+), 33 deletions(-)
+>
 
-> But the other way around, we can't handle 52bit address unless CONFIG_ARM64_64K_PAGES
-> is selected. Also, if the guest uses a 4K page size and uses a 48 bit address,
-> we could potentially mask Bits[15:12] to 0, which is not nice.
-> 
-> So I still think we need to have a special macro for handling addresses with 64K
-> page size in ITS.
-> 
-I think it's easier to have the current GITS_BASER_PHYS_52_to_48 and
-have a corresponding GITS_BASER_PHYS_48_to_52, following Robin's
-observation.
-
-Any additional logic can be written directly in the C code to check
-consitency etc.
-
-Thanks,
--Christoffer
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
