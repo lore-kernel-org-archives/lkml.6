@@ -1,74 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752237AbeBHOkX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:40:23 -0500
-Received: from mout.web.de ([212.227.15.14]:48049 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752208AbeBHOkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:40:20 -0500
-Subject: [PATCH 3/3] drm/gma500: Delete an unnecessary return statement in
- oaktrail_crtc_hdmi_dpms()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
-Message-ID: <9871ef86-0cd6-aab8-1252-53bc08fc79af@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 15:40:14 +0100
+        id S1752196AbeBHOkP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:40:15 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42147 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751706AbeBHOkO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:40:14 -0500
+Subject: Re: [PATCH] can: m_can: change comparison to bitshift when dealing
+ with a mask
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <a15c4dbc-0f62-b4af-9dbd-49b599c873fe@pengutronix.de>
+Date: Thu, 8 Feb 2018 15:39:30 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:Ibl/1P3Ude+R8+TEt6nxAqPEteQaRDpiJ2eqasNE+H7ftvmQ0xJ
- cKPQJ1MlLkTrw4+79f02UX4FtZWWduQNOTP9VyMcoP/j8CwFxKHz5dvEvsEmHQD8T4NBQv1
- owBsIuNZW2tIRspf+YYtGpbcBwSe34VlbH4ZMGlo3xbTXre4fBykcmInELqkd2am1mqNnPf
- vb8Gl7dmXayuUtWA3NyzA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:5sDfNeVJ2Jk=:hDH08bHv1ZcHwL0MpewAUY
- wb0VrdZzI/Nu5GuPZiZ4CFiit3iecAoVv6PiWGdz4VrHrVmXUKoe3qafJGY2wHNIPhQCnMa/Q
- f1+lBFWlWHgp9x+YbuxuqtlrR+s+mv5Mc5wvYGWccxCdCdnPlrYCcel2KlGyKvrxE1ecIwVzt
- U35lENPAcJXbYu/4xewurP8TkGRX9bih70D2K+6uCoptWV5j6XbH6Tj26JYR7jVs7hKicxIYd
- iDJ5aGE5a4DX5p1Hwg8fFHGXJm8CsJoSGS/Fig4izr2VICflsFsRRNgC8IL4dK5Syqesce9rh
- 1YiVIrIIgFCE3fm/3poQCKEv7Kg8JqrvPglyWtp5khimRomZhhiuNREem5CjCxbMllOAT63Yg
- hrbD6OsAn5EqUwagMlevltp87PQL+PxdQEgCcEiZG4J2fHkT4HLCdITbG9WPmjcbmD5IoEhKH
- vcrCc8FtHX9f3fiVNTpTa8q1WWISN3f6t9h7r8Dm529lFvfKja3wNfjmF0jTBAAqDqg3h+2u6
- f6aszuqcnJr8mO7qAx3BPWXZbOWgc6iMrKsuuwQdMvjxGKYXnDEe6u39dK7RaV1eNUpjyM2Ls
- DxDD99aULheux9FSTAHcolqDUFeDQk/aHXU8xNig38xBOsH2lXKDxEPNFzeOBO8NVZa98U4Pm
- 8Ohig28o97h5cvLb7Lyymso4+1FPbwgm7ACjGUJ6twSD7kwZ1sdXwUdzh2RjkErf0mMGcHIsP
- AA/lr/exs59wwkNPfmYA7S2t949Y9b8ChgOg1Zza4bYpTk4SOvTHOWUO4685XHRdfS68N4lbC
- F+bYHImwBsHWSZJVdOeEsxEKXMkwlUzpsieHVhdCmqmUNZRFpk=
+In-Reply-To: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="eMziEACJF3HIaxgX3ChwiNv7cnMJ08KCv"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 15:17:48 +0100
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--eMziEACJF3HIaxgX3ChwiNv7cnMJ08KCv
+Content-Type: multipart/mixed; boundary="u523Bk4iYEMvFScKxGSQWBDbg4gSbO1gO";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfgang Grandegger
+ <wg@grandegger.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Message-ID: <a15c4dbc-0f62-b4af-9dbd-49b599c873fe@pengutronix.de>
+Subject: Re: [PATCH] can: m_can: change comparison to bitshift when dealing
+ with a mask
+References: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+--u523Bk4iYEMvFScKxGSQWBDbg4gSbO1gO
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-WARNING: void function return statements are not generally useful
+On 02/06/2018 09:52 AM, Wolfram Sang wrote:
+> Due to a typo, the mask was destroyed by a comparison instead of a bit
+> shift.
+>=20
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thus remove such a statement in the affected function.
+Applied to can.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/gma500/oaktrail_hdmi.c | 2 --
- 1 file changed, 2 deletions(-)
+tnx,
+Marc
 
-diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi.c b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-index dbc58e5130bb..24c7c6edfca5 100644
---- a/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-+++ b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-@@ -484,8 +484,6 @@ void oaktrail_crtc_hdmi_dpms(struct drm_crtc *crtc, int mode)
- 
- 	/* LNC Chicken Bits - Squawk! */
- 	REG_WRITE(0x70400, 0x4000);
--
--	return;
- }
- 
- static void oaktrail_hdmi_dpms(struct drm_encoder *encoder, int mode)
--- 
-2.16.1
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--u523Bk4iYEMvFScKxGSQWBDbg4gSbO1gO--
+
+--eMziEACJF3HIaxgX3ChwiNv7cnMJ08KCv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlp8YSIACgkQk9IU1zQo
+ZfFhHwf/QUaAQJJGrBh1eAPA15MIV0S4p9VZXF3+YzJaQsu96Ptjr5j0o9RnbVxE
+VFxp5HuDEoPfbkbOUeaNrD/Ct+IjgqJxH2pBHQCshXUC+kvCYxhkiypWxQGnTTkC
+CCekQBIKut191s8TE8Sk1FZxI9VC0e7VxN3bvBOax7Syzjiby5kImnjBjwLARRhW
+0GBnEjZg63gQORX5K90EXndmCtuNb6hJxJ72ZNLhRobk7Ts79s25j5x04IenMM9k
+bwrGBA8j3uoYBMMBTbcFr5asKwmwVsFt6OCm/HOW4hryDs8hR4LcPkoQxsP9SD7t
+aEzWO2C6nshi1uYLPy7mNVK6dn+ueg==
+=FEKQ
+-----END PGP SIGNATURE-----
+
+--eMziEACJF3HIaxgX3ChwiNv7cnMJ08KCv--
