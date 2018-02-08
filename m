@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752483AbeBHNzR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:55:17 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35264 "EHLO mx1.redhat.com"
+        id S1752506AbeBHNzY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:55:24 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54290 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752448AbeBHNzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:55:15 -0500
-Date: Thu, 8 Feb 2018 14:55:12 +0100
+        id S1751848AbeBHNzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:55:22 -0500
+Date: Thu, 8 Feb 2018 14:55:19 +0100
 From: Jiri Olsa <jolsa@redhat.com>
 To: John Garry <john.garry@huawei.com>
 Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
@@ -16,7 +16,7 @@ Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linuxarm@huawei.com, zhangshaokun@hisilicon.com,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
-Message-ID: <20180208135512.GG10234@krava>
+Message-ID: <20180208135519.GH10234@krava>
 References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
  <1517939104-230881-6-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
@@ -32,44 +32,19 @@ On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
 
 SNIP
 
-> +	char *perpkg;
-> +	char *unit;
-> +	char *metric_expr;
-> +	char *metric_name;
-> +	char *metric_group;
-> +	struct list_head list;
-> +	char strings[];
-> +};
-> +
-> +static LIST_HEAD(arch_std_events);
-> +
-> +#define ADD_EVENT_STRING(string) do { if (string) {		\
-> +	es->string = strings;					\
-> +	strings += snprintf(strings, len, "%s", string) + 1;	\
-> +} } while (0)
-> +
-> +static int save_arch_std_events(void *data, char *name, char *event,
-> +				char *desc, char *long_desc, char *pmu,
-> +				char *unit, char *perpkg, char *metric_expr,
-> +				char *metric_name, char *metric_group)
-> +{
-> +	struct event_struct *es;
-> +	struct stat *sb = data;
-> +	int len;
-> +	char *strings;
-> +
-> +	/*
-> +	 * Lazily allocate size of the json file to hold the
-> +	 * strings, which would be more than large enough.
-> +	 */
-> +	len = sb->st_size;
-> +
-> +	es = malloc(sizeof(*es) + len);
+>  	rc = nftw(ldirname, process_one_file, maxfds, 0);
+>  	if (rc && verbose) {
+>  		pr_info("%s: Error walking file tree %s\n", prog, ldirname);
+> -		goto empty_map;
+> +		goto free_standard_arch_events;
+>  	} else if (rc < 0) {
+>  		/* Make build fail */
+>  		return 1;
+> -	} else if (rc) {
+> -		goto empty_map;
+>  	}
 
-hum, so for single event you allocate buffer of the size
-of the entire file this event is defined in?
+please put this change into separate patch
 
-what do I miss? I assume there're more of those arch-defined
-events defined in the single file..
-
+thanks,
 jirka
