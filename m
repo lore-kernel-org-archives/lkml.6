@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeBHJrO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 04:47:14 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36520 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750882AbeBHJrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 04:47:12 -0500
-Date: Thu, 8 Feb 2018 10:46:51 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [linus:master] BUILD REGRESSION
- a2e5790d841658485d642196dbb0927303d6c22f
-Message-ID: <20180208094651.GA7964@pd.tnic>
-References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
- <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
- <20180207183543.GA8897@pd.tnic>
- <20180207184933.GA25201@hirez.programming.kicks-ass.net>
- <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
- <20180207191451.GC25201@hirez.programming.kicks-ass.net>
- <20180207192816.GA19536@pd.tnic>
- <CA+55aFzSZzdVZXatze=xjGSwpOPO7kvbWnz7JiZ3sTx_2Pohjw@mail.gmail.com>
- <20180208091302.GD25201@hirez.programming.kicks-ass.net>
+        id S1752028AbeBHJvd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 04:51:33 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:62050 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751562AbeBHJvb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 04:51:31 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] ACPI / CPPC: Use 64-bit arithmetic instead of 32-bit
+Date: Thu, 08 Feb 2018 10:49:47 +0100
+Message-ID: <2503109.MpnWDuSnnD@aspire.rjw.lan>
+In-Reply-To: <20180206233617.GA30829@embeddedgus>
+References: <20180206233617.GA30829@embeddedgus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180208091302.GD25201@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 10:13:02AM +0100, Peter Zijlstra wrote:
-> diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-> index 34d99af43994..f0d5b4a1512d 100644
-> --- a/arch/x86/include/asm/bug.h
-> +++ b/arch/x86/include/asm/bug.h
-> @@ -12,16 +12,21 @@
->   * (binutils knows about "ud1" but {en,de}codes it as 2 bytes, whereas
->   *  our kernel decoder thinks it takes a ModRM byte, which seems consistent
->   *  with various things like the Intel SDM instruction encoding rules)
-> + *
-> + * And now someone went and taught binutils about UD0 as taking a ModR/M too
-> + * and it generates crap when disassembling the kernel. Stick a pointless 0xD6
-> + * ModR/M on, which the old binutils decodes as (bad) and the new binutils sees
-> + * as a valid single byte ModR/M.
+On Wednesday, February 7, 2018 12:36:17 AM CET Gustavo A. R. Silva wrote:
+> Add suffix ULL to constant 500 in order to give the compiler complete
+> information about the proper arithmetic to use. Notice that this
+> constant is used in a context that expects an expression of type
+> u64 (64 bits, unsigned).
+> 
+> The expression NUM_RETRIES * cppc_ss->latency at line 578, which at
+> preprocessing time translates to 500 * cppc_ss->latency is currently
+> being evaluated using 32-bit arithmetic.
+> 
+> Addresses-Coverity-ID: 1382602
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+> Notice that another option is to cast NUM_RETRIES to u64 at line 578,
+> but as there is only one instace in which this macro is being used I
+> think adding the ULL is just enough.
+> 
+>  drivers/acpi/cppc_acpi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index 06ea474..0afbb26 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -119,7 +119,7 @@ static DEFINE_PER_CPU(struct cpc_desc *, cpc_desc_ptr);
+>   * to PCC commands. Keeping it high enough to cover emulators where
+>   * the processors run painfully slow.
 >   */
+> -#define NUM_RETRIES 500
+> +#define NUM_RETRIES 500ULL
 >  
-> -#define ASM_UD0		".byte 0x0f, 0xff"
-> +#define ASM_UD0		".byte 0x0f, 0xff, 0xd6"
+>  struct cppc_attr {
+>  	struct attribute attr;
+> 
 
-Yeah, we probably should say that it was SALC:
-
-http://ref.x86asm.net/geek.html#xD6
-
-but undefined after P4.
-
-Not that it matters a whole lot after an UD0. And it still won't matter
-if it gets redefined to some new fancy prefix.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Applied, thanks!
