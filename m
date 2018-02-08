@@ -1,140 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752372AbeBHRyW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:54:22 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53262 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751988AbeBHRyU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:54:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 234B560272
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: pull-request: wireless-drivers-next 2018-02-08
-Date: Thu, 08 Feb 2018 19:54:15 +0200
-Message-ID: <87shabe5a0.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1752537AbeBHRym (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:54:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38268 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752508AbeBHRyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:54:40 -0500
+Date: Thu, 8 Feb 2018 17:54:33 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Mark Salter <msalter@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm_pmu_acpi: Fix armpmu_alloc call from invalid
+ context
+Message-ID: <20180208175433.p2a3g2q7tctfpk7c@lakrids.cambridge.arm.com>
+References: <20180208174504.30665-1-msalter@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208174504.30665-1-msalter@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+Hi Mark,
 
-first set of fixes for 4.16, unusually many when the merge window hasn't
-even closed yet. Especially the ssb fix is important so I hope there's
-still time to get this to 4.16-rc1. As you can see from the diffstat
-there's one PCI id addition but that has been acked by Bjorn.
+On Thu, Feb 08, 2018 at 12:45:04PM -0500, Mark Salter wrote:
+> When booting an arm64 debug kernel with ACPI, I see:
+> 
+>    BUG: sleeping function called from invalid context at mm/slab.h:420
+>    in_atomic(): 0, irqs_disabled(): 128, pid: 12, name: cpuhp/0
+>    1 lock held by cpuhp/0/12:
+>     #0:  (cpuhp_state-up){+.+.}, at: [<0000000057aa0dae>] cpuhp_thread_fun+0x13c/0x258
+>    irq event stamp: 28
+>    hardirqs last  enabled at (27): [<000000000b861658>] _raw_spin_unlock_irq+0x38/0x58
+>    hardirqs last disabled at (28): [<000000006231cfb1>] cpuhp_thread_fun+0xd0/0x258
+>    softirqs last  enabled at (0): [<0000000054d9737a>] copy_process.isra.32.part.33+0x450/0x1480
+>    softirqs last disabled at (0): [<          (null)>]           (null)
+>    CPU: 0 PID: 12 Comm: cpuhp/0 Not tainted 4.15.0+ #18
+>    Hardware name: AppliedMicro X-Gene Mustang Board/X-Gene Mustang Board, BIOS 3.06.25 Oct 17 2016
+>    Call trace:
+>     dump_backtrace+0x0/0x188
+>     show_stack+0x24/0x2c
+>     dump_stack+0xa4/0xe0
+>     ___might_sleep+0x208/0x234
+>     __might_sleep+0x58/0x8c
+>     kmem_cache_alloc_trace+0x248/0x3e0
+>     armpmu_alloc+0x38/0x1a8
+>     arm_pmu_acpi_cpu_starting+0x11c/0x15c
+>     cpuhp_invoke_callback+0x120/0x100c
+>     cpuhp_thread_fun+0xe8/0x258
+>     smpboot_thread_fn+0x170/0x268
+>     kthread+0x110/0x13c
+>     ret_from_fork+0x10/0x18
 
-Please let me know if you have any problems.
+I have patches to address this:
 
-Kalle
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/557838.html
+https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/acpi-pmu-lockdep
 
-The following changes since commit f813614f531114db796ad66ced75c5dc8db7aa3a:
+> With commit 7d88eb695a1f ("arm/perf: Convert to hotplug state machine"),
+> arm_pmu uses the cpuhotplug framework to initialize the PMU driver when
+> using ACPI. However, the arm_pmu_acpi_cpu_starting() callback comes
+> before CPUHP_AP_ONLINE is reached which means it runs with interrupts
+> diabled and tries to allocate memory with GFP_KERNEL alloc which may
+> sleep.
+> 
+> Move CPUHP_AP_PERF_ARM_ACPI_STARTING to come after CPUHP_AP_ONLINE so
+> that the arm_pmu initialization runs with interrupts enabled as it
+> does when booting with device tree.
+> 
+> Fixes: 7d88eb695a1f ("arm/perf: Convert to hotplug state machine")
+> Signed-off-by: Mark Salter <msalter@redhat.com>
+> ---
+>  include/linux/cpuhotplug.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index 5172ad0..e07b2da 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -114,7 +114,6 @@ enum cpuhp_state {
+>  	CPUHP_AP_ARM_VFP_STARTING,
+>  	CPUHP_AP_ARM64_DEBUG_MONITORS_STARTING,
+>  	CPUHP_AP_PERF_ARM_HW_BREAKPOINT_STARTING,
+> -	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+>  	CPUHP_AP_PERF_ARM_STARTING,
+>  	CPUHP_AP_ARM_L2X0_STARTING,
+>  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+> @@ -146,6 +145,7 @@ enum cpuhp_state {
+>  	CPUHP_AP_SMPBOOT_THREADS,
+>  	CPUHP_AP_X86_VDSO_VMA_ONLINE,
+>  	CPUHP_AP_IRQ_AFFINITY_ONLINE,
+> +	CPUHP_AP_PERF_ARM_ACPI_STARTING,
 
-  ibmvnic: Wait for device response when changing MAC (2018-01-29 18:03:24 -0500)
+We need CPUHP_AP_PERF_ARM_ACPI_STARTING to happen before
+CPUHP_AP_PERF_ARM_STARTING, and I think this re-ordering prevents us
+from correctly resetting the PMU and enabling percpu interrupts, at
+least in heterogeneous configurations (e.g. big.LITTLE systems like
+Juno).
 
-are available in the git repository at:
+I'm not sure whether we could safely move both callbacks this late.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next.git tags/wireless-drivers-next-for-davem-2018-02-08
-
-for you to fetch changes up to 99ffd198f07f46f3a8e64399249a8333c09063df:
-
-  Merge ath-current from git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git (2018-02-08 19:28:49 +0200)
-
-----------------------------------------------------------------
-wireless-drivers-next patches for 4.16
-
-The most important here is the ssb fix, it has been reported by the
-users frequently and the fix just missed the final v4.15. Also
-numerous other fixes, mt76 had multiple problems with aggregation and
-a long standing unaligned access bug in rtlwifi is finally fixed.
-
-Major changes:
-
-ath10k
-
-* correct firmware RAM dump length for QCA6174/QCA9377
-
-* add new QCA988X device id
-
-* fix a kernel panic during pci probe
-
-* revert a recent commit which broke ath10k firmware metadata parsing
-
-ath9k
-
-* fix a noise floor regression introduced during the merge window
-
-* add new device id
-
-rtlwifi
-
-* fix unaligned access seen on ARM architecture
-
-mt76
-
-* various aggregation fixes which fix connection stalls
-
-ssb
-
-* fix b43 and b44 on non-MIPS which broke in v4.15-rc9
-
-----------------------------------------------------------------
-Felix Fietkau (4):
-      mt76: implement AP_LINK_PS
-      mt76: implement processing of BlockAckReq frames
-      mt76: avoid re-queueing A-MPDU rx reorder work if no frames are pending
-      mt76: do not set status->aggr for NULL data frames
-
-Kalle Valo (2):
-      Merge git://git.kernel.org/.../kvalo/wireless-drivers.git
-      Merge ath-current from git://git.kernel.org/.../kvalo/ath.git
-
-Larry Finger (1):
-      rtlwifi: rtl8821ae: Fix connection lost problem correctly
-
-Oleksij Rempel (1):
-      ath9k_htc: add Altai WA1011N-GU
-
-Ryan Hsu (1):
-      Revert "ath10k: add sanity check to ie_len before parsing fw/board ie"
-
-Sven Joachim (1):
-      ssb: Do not disable PCI host on non-Mips
-
-Tobias Schramm (2):
-      PCI: Add Ubiquiti Networks vendor ID
-      ath10k: add support for Ubiquiti rebranded QCA988X v2
-
-Wojciech Dubowik (1):
-      ath9k: Fix get channel default noise floor
-
-Yu Wang (2):
-      ath10k: correct the length of DRAM dump for QCA6174 hw3.x/QCA9377 hw1.1
-      ath10k: fix kernel panic issue during pci probe
-
- drivers/net/wireless/ath/ath10k/core.c             | 43 +++++++++++++++---
- drivers/net/wireless/ath/ath10k/coredump.c         |  3 +-
- drivers/net/wireless/ath/ath10k/debug.c            | 12 ++++-
- drivers/net/wireless/ath/ath10k/hw.h               |  1 +
- drivers/net/wireless/ath/ath10k/pci.c              |  6 +++
- drivers/net/wireless/ath/ath9k/calib.c             |  2 +-
- drivers/net/wireless/ath/ath9k/hif_usb.c           |  1 +
- drivers/net/wireless/mediatek/mt76/agg-rx.c        | 40 ++++++++++++++++-
- drivers/net/wireless/mediatek/mt76/mac80211.c      | 52 +++++++++++++++++++++-
- drivers/net/wireless/mediatek/mt76/mt76.h          | 10 +++++
- drivers/net/wireless/mediatek/mt76/mt76x2.h        |  2 +
- drivers/net/wireless/mediatek/mt76/mt76x2_init.c   |  1 +
- drivers/net/wireless/mediatek/mt76/mt76x2_mac.c    |  2 +-
- drivers/net/wireless/mediatek/mt76/mt76x2_main.c   | 28 ++++++------
- .../net/wireless/realtek/rtlwifi/rtl8821ae/hw.c    |  5 ++-
- drivers/net/wireless/realtek/rtlwifi/wifi.h        |  1 +
- drivers/ssb/Kconfig                                |  2 +-
- include/linux/pci_ids.h                            |  2 +
- 18 files changed, 181 insertions(+), 32 deletions(-)
+Thanks,
+Mark.
