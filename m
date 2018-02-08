@@ -1,69 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752545AbeBHVVo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 16:21:44 -0500
-Received: from mga18.intel.com ([134.134.136.126]:21394 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752519AbeBHVVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 16:21:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,480,1511856000";
-   d="scan'208";a="29299067"
-From: Alexey Skidanov <alexey.skidanov@intel.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexey Skidanov <alexey.skidanov@intel.com>
-Subject: [PATCH] mm: Free CMA pages to the buddy allocator instead of per-cpu-pagelists
-Date: Thu,  8 Feb 2018 23:21:53 +0200
-Message-Id: <1518124913-31290-1-git-send-email-alexey.skidanov@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752322AbeBHVXh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 16:23:37 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41420 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeBHVXf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 16:23:35 -0500
+X-Google-Smtp-Source: AH8x226soCeMJe3d0CXf6YQEN25Z7kRXPCCF9TGFBzDqCR++SGvmcy7sI3CKO/rKTEMyDAGfVG+KbQRrUi5e4ghj9NA=
+MIME-Version: 1.0
+In-Reply-To: <CABGGisyaqV5HtTUL5LdjH3ZcU3_RTPmzMvEAhv5wZjCD_XCujg@mail.gmail.com>
+References: <20180208152028.9997-1-enric.balletbo@collabora.com>
+ <20180208152028.9997-2-enric.balletbo@collabora.com> <CABGGisyaqV5HtTUL5LdjH3ZcU3_RTPmzMvEAhv5wZjCD_XCujg@mail.gmail.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Thu, 8 Feb 2018 22:23:33 +0100
+Message-ID: <CAFqH_53-iN9m=U+WdQh6_rKyxE5c9RUQO9qD1QaY0QePM_pOZA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Documentation: bindings: add usb3-host-disable and
+ usb3-host-port for Rockchip USB Type-C PHY
+To: Rob Herring <robh@kernel.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
+        huang lin <hl@rock-chips.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code frees pages to the per-cpu-pagelists (pcp) according to
-their migrate type. The exception is isolated pages that are freed
-directly to the buddy allocator.
+Hi Rob,
 
-The pages are marked as isolate to indicate the buddy allocator that
-they are not supposed to be allocated as opposite to the pages located
-in the pcp lists that are immediate candidates for the upcoming
-allocation requests.
+2018-02-08 18:52 GMT+01:00 Rob Herring <robh@kernel.org>:
+> On Thu, Feb 8, 2018 at 9:20 AM, Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+>> From: William wu <wulf@rock-chips.com>
+>>
+>> rockchip,usb3-host-disable is the register of type-c phy disable usb3 host
+>> rockchip,usb3-host-port is the register of type-c phy usb3 port number
+>>
+>> Signed-off-by: William wu <wulf@rock-chips.com>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>  Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
+>> index c3be83be9615..9085d95d0079 100644
+>> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
+>> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
+>> @@ -36,6 +36,12 @@ offset, enable bit, write mask bit.
+>>   - rockchip,uphy-dp-sel : the register of type-c phy enable DP function
+>>     for type-c phy0, it must be <0x6268 19 19>;
+>>     for type-c phy1, it must be <0x6268 3 19>;
+>> + - rockchip,usb3-host-disable : the register of type-c phy disable usb3 host
+>> +   for type-c phy0, it must be <0x2434 0 16>;
+>> +   for type-c phy1, it must be <0x2444 0 16>;
+>> + - rockchip,usb3-host-port : the register of type-c phy usb3 port number
+>> +   for type-c phy0, it must be <0x2434 12 28>;
+>> +   for type-c phy1, it must be <0x2444 12 28>;
+>
+> When does this list stop? Adding properties for various register
+> fields doesn't scale. This information should be in the driver and
+> based on the compatible string if necessary.
+>
 
-This was likely an oversight when the CMA migrate type was added. As a
-result of this, freed CMA pages go to the MIGRATE_MOVABLE per-cpu-list.
-This sometime leads to CMA page allocation instead of Movable one,
-increasing the probability of CMA page pining, which may cause to CMA
-allocation failure. In addition, there is no gain to free CMA page to
-the pcp because the CMA pages mainly allocated for DMA purpose.
+I see, seams reasonable to me, is this applicable to the new ones only
+or I should get rid of all the proprieties like this from the DT
+(including the old ones)?
 
-To fix this, we free CMA page directly to the buddy allocator. This
-avoids the CMA page allocation instead of MOVABLE one. Actually, the CMA
-pages are very similar to the isolated ones - both of them should not be
-supposed as immediate candidates for upcoming allocation requests and
-thus shouldn't be freed to pcp. I've audited all the other checks for
-isolated pageblocks to ensure that this mistake was not repeated elsewhere.
+Thanks,
+  Enric
 
-Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
----
- mm/page_alloc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 59d5921..9a76b68 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2644,7 +2644,8 @@ static void free_unref_page_commit(struct page *page, unsigned long pfn)
- 	 * excessively into the page allocator
- 	 */
- 	if (migratetype >= MIGRATE_PCPTYPES) {
--		if (unlikely(is_migrate_isolate(migratetype))) {
-+		if (unlikely(is_migrate_isolate(migratetype) ||
-+				is_migrate_cma(migratetype))) {
- 			free_one_page(zone, page, pfn, 0, migratetype);
- 			return;
- 		}
--- 
-2.7.4
+> Rob
