@@ -1,119 +1,888 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeBHKAk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:00:40 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50675 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751066AbeBHKAi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:00:38 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Yu Chen <yu.c.chen@intel.com>
-Cc: Len Brown <lenb@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ACPI: processor_perflib: Do not send _PPC change notification if not ready
-Date: Thu, 08 Feb 2018 10:58:54 +0100
-Message-ID: <2410102.M4oN4ZjYrl@aspire.rjw.lan>
-In-Reply-To: <d71a6cf7352de5595ac1419000bd72b6d068cce1.1517192577.git.yu.c.chen@intel.com>
-References: <d71a6cf7352de5595ac1419000bd72b6d068cce1.1517192577.git.yu.c.chen@intel.com>
+        id S1752126AbeBHKBf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:01:35 -0500
+Received: from smtpbg302.qq.com ([184.105.206.27]:46524 "EHLO smtpbg302.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbeBHKBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 05:01:31 -0500
+X-QQ-mid: esmtp12t1518083652t6bzrxzr6
+X-QQ-SSF: 01000000000000000H111000000000Z
+X-QQ-FEAT: 57HUhu7kqcjSZs4snAEKCLztOpMMtO8GTAO+2qRwA6N+AnObzsuVVjk4fnTi2
+        RICS09jOEH2mcmDq8NMYLORRx+gV8nqxfGx2dDwAq/jQQv4OBo2WDk6a45/EUvYXR418K+3
+        FkfIPeAVq48j92pPY4bcZAvNpHcRqcU1O3QembATY4RDk+sYrY5f3TKojr9faOOtOmAUTWz
+        E8E4iNxuFqhroii37GtsQwysmlkpgKr8fgogJMrt6LiL1GBrJOROLBJW2lPLf1+QqJmegOW
+        bVR/e3jVF6QnRDo8fyZfO3c/TCx6kQZujyQg==
+X-QQ-GoodBg: 0
+X-Google-Smtp-Source: AH8x224AsdkBDX07KCgj5UZLhM9IMVRNq4YrxUeUTreIl3dpYUrARJ9kK/usM8BLLCPc9kw672qqY4SOaulorLUYhFQ=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <13ff39e5-242d-2307-d429-60cd0a0a18e5@xs4all.nl>
+References: <1514533978-20408-1-git-send-email-zhengsq@rock-chips.com>
+ <1514533978-20408-5-git-send-email-zhengsq@rock-chips.com> <13ff39e5-242d-2307-d429-60cd0a0a18e5@xs4all.nl>
+From: Jacob Chen <jacob-chen@iotwrt.com>
+Date: Thu, 8 Feb 2018 17:54:08 +0800
+X-Gmail-Original-Message-ID: <CAFLEztTPeGAe-Mo5Qo=BTcYwUz1fDDpFBAyZjUnEbQz0bHhZng@mail.gmail.com>+33FBDE1F3775C702
+Message-ID: <CAFLEztTPeGAe-Mo5Qo=BTcYwUz1fDDpFBAyZjUnEbQz0bHhZng@mail.gmail.com>
+Subject: Re: [PATCH v5 04/16] media: rkisp1: add Rockchip MIPI Synopsys DPHY driver
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Shunqian Zheng <zhengsq@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
+        Eddie Cai <eddie.cai.linux@gmail.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Allon Huang <allon.huang@rock-chips.com>, devicetree@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>, robh+dt@kernel.org,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Luis Oliveira <Luis.Oliveira@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
+X-QQ-SENDSIZE: 520
+X-QQ-FName: 8EC5F23655B74ECA8CAC2680809D7CD2
+X-QQ-LocalIP: 10.208.130.95
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, January 29, 2018 3:26:46 AM CET Yu Chen wrote:
-> The following warning was triggered after resumed from S3 -
-> if all the nonboot CPUs were put offline before suspend:
-> 
-> [ 1840.329515] unchecked MSR access error: RDMSR from 0x771 at rIP: 0xffffffff86061e3a (native_read_msr+0xa/0x30)
-> [ 1840.329516] Call Trace:
-> [ 1840.329521]  __rdmsr_on_cpu+0x33/0x50
-> [ 1840.329525]  generic_exec_single+0x81/0xb0
-> [ 1840.329527]  smp_call_function_single+0xd2/0x100
-> [ 1840.329530]  ? acpi_ds_result_pop+0xdd/0xf2
-> [ 1840.329532]  ? acpi_ds_create_operand+0x215/0x23c
-> [ 1840.329534]  rdmsrl_on_cpu+0x57/0x80
-> [ 1840.329536]  ? cpumask_next+0x1b/0x20
-> [ 1840.329538]  ? rdmsrl_on_cpu+0x57/0x80
-> [ 1840.329541]  intel_pstate_update_perf_limits+0xf3/0x220
-> [ 1840.329544]  ? notifier_call_chain+0x4a/0x70
-> [ 1840.329546]  intel_pstate_set_policy+0x4e/0x150
-> [ 1840.329548]  cpufreq_set_policy+0xcd/0x2f0
-> [ 1840.329550]  cpufreq_update_policy+0xb2/0x130
-> [ 1840.329552]  ? cpufreq_update_policy+0x130/0x130
-> [ 1840.329556]  acpi_processor_ppc_has_changed+0x65/0x80
-> [ 1840.329558]  acpi_processor_notify+0x80/0x100
-> [ 1840.329561]  acpi_ev_notify_dispatch+0x44/0x5c
-> [ 1840.329563]  acpi_os_execute_deferred+0x14/0x20
-> [ 1840.329565]  process_one_work+0x193/0x3c0
-> [ 1840.329567]  worker_thread+0x35/0x3b0
-> [ 1840.329569]  kthread+0x125/0x140
-> [ 1840.329571]  ? process_one_work+0x3c0/0x3c0
-> [ 1840.329572]  ? kthread_park+0x60/0x60
-> [ 1840.329575]  ? do_syscall_64+0x67/0x180
-> [ 1840.329577]  ret_from_fork+0x25/0x30
-> [ 1840.329585] unchecked MSR access error: WRMSR to 0x774 (tried to write 0x0000000000000000) at rIP: 0xffffffff86061f78 (native_write_msr+0x8/0x30)
-> [ 1840.329586] Call Trace:
-> [ 1840.329587]  __wrmsr_on_cpu+0x37/0x40
-> [ 1840.329589]  generic_exec_single+0x81/0xb0
-> [ 1840.329592]  smp_call_function_single+0xd2/0x100
-> [ 1840.329594]  ? acpi_ds_create_operand+0x215/0x23c
-> [ 1840.329595]  ? cpumask_next+0x1b/0x20
-> [ 1840.329597]  wrmsrl_on_cpu+0x57/0x70
-> [ 1840.329598]  ? rdmsrl_on_cpu+0x57/0x80
-> [ 1840.329599]  ? wrmsrl_on_cpu+0x57/0x70
-> [ 1840.329602]  intel_pstate_hwp_set+0xd3/0x150
-> [ 1840.329604]  intel_pstate_set_policy+0x119/0x150
-> [ 1840.329606]  cpufreq_set_policy+0xcd/0x2f0
-> [ 1840.329607]  cpufreq_update_policy+0xb2/0x130
-> [ 1840.329610]  ? cpufreq_update_policy+0x130/0x130
-> [ 1840.329613]  acpi_processor_ppc_has_changed+0x65/0x80
-> [ 1840.329615]  acpi_processor_notify+0x80/0x100
-> [ 1840.329617]  acpi_ev_notify_dispatch+0x44/0x5c
-> [ 1840.329619]  acpi_os_execute_deferred+0x14/0x20
-> [ 1840.329620]  process_one_work+0x193/0x3c0
-> [ 1840.329622]  worker_thread+0x35/0x3b0
-> [ 1840.329624]  kthread+0x125/0x140
-> [ 1840.329625]  ? process_one_work+0x3c0/0x3c0
-> [ 1840.329626]  ? kthread_park+0x60/0x60
-> [ 1840.329628]  ? do_syscall_64+0x67/0x180
-> [ 1840.329631]  ret_from_fork+0x25/0x30
-> 
-> This is because if there's only one online CPU, the MSR_PM_ENABLE
-> (package wide)can not be enabled after resumed, due to
-> intel_pstate_hwp_enable() will only be invoked on AP's online
-> process after resumed - if there's no AP online, the HWP remains
-> disabled after resumed (BIOS has disabled it in S3). Then if
-> there comes a _PPC change notification which touches HWP register
-> during this stage, the warning is triggered.
-> 
-> Since we don't call acpi_processor_register_performance() when
-> HWP is enabled, the pr->performance will be NULL. When this is
-> NULL we don't need to do _PPC change notification.
-> 
-> Reported-by: Doug Smythies <dsmythies@telus.net>
-> Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Signed-off-by: Yu Chen <yu.c.chen@intel.com>
-> ---
->  drivers/acpi/processor_perflib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-> index 18b72eec3507..c7cf48ad5cb9 100644
-> --- a/drivers/acpi/processor_perflib.c
-> +++ b/drivers/acpi/processor_perflib.c
-> @@ -159,7 +159,7 @@ void acpi_processor_ppc_has_changed(struct acpi_processor *pr, int event_flag)
->  {
->  	int ret;
->  
-> -	if (ignore_ppc) {
-> +	if (ignore_ppc || !pr->performance) {
->  		/*
->  		 * Only when it is notification event, the _OST object
->  		 * will be evaluated. Otherwise it is skipped.
-> 
+Hi hans,
 
-Applied, thanks!
+2018-02-06 21:21 GMT+08:00 Hans Verkuil <hverkuil@xs4all.nl>:
+> On 12/29/17 08:52, Shunqian Zheng wrote:
+>> From: Jacob Chen <jacob2.chen@rock-chips.com>
+>>
+>> This commit adds a subdev driver for Rockchip MIPI Synopsys DPHY driver
+>>
+>> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+>> Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
+>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+>> ---
+>>  .../media/platform/rockchip/isp1/mipi_dphy_sy.c    | 787 +++++++++++++++++++++
+>>  1 file changed, 787 insertions(+)
+>>  create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+>>
+>> diff --git a/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c b/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+>> new file mode 100644
+>> index 0000000..9421183
+>> --- /dev/null
+>> +++ b/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+>> @@ -0,0 +1,787 @@
+>> +/*
+>> + * Rockchip MIPI Synopsys DPHY driver
+>> + *
+>> + * Copyright (C) 2017 Fuzhou Rockchip Electronics Co., Ltd.
+>> + *
+>> + * This software is available to you under a choice of one of two
+>> + * licenses.  You may choose to be licensed under the terms of the GNU
+>> + * General Public License (GPL) Version 2, available from the file
+>> + * COPYING in the main directory of this source tree, or the
+>> + * OpenIB.org BSD license below:
+>> + *
+>> + *     Redistribution and use in source and binary forms, with or
+>> + *     without modification, are permitted provided that the following
+>> + *     conditions are met:
+>> + *
+>> + *      - Redistributions of source code must retain the above
+>> + *        copyright notice, this list of conditions and the following
+>> + *        disclaimer.
+>> + *
+>> + *      - Redistributions in binary form must reproduce the above
+>> + *        copyright notice, this list of conditions and the following
+>> + *        disclaimer in the documentation and/or other materials
+>> + *        provided with the distribution.
+>> + *
+>> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>> + * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+>> + * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>> + * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+>> + * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+>> + * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+>> + * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+>> + * SOFTWARE.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <media/media-entity.h>
+>> +#include <media/v4l2-ctrls.h>
+>> +#include <media/v4l2-fwnode.h>
+>> +#include <media/v4l2-subdev.h>
+>> +
+>> +#define RK3288_GRF_SOC_CON6  0x025c
+>> +#define RK3288_GRF_SOC_CON8  0x0264
+>> +#define RK3288_GRF_SOC_CON9  0x0268
+>> +#define RK3288_GRF_SOC_CON10 0x026c
+>> +#define RK3288_GRF_SOC_CON14 0x027c
+>> +#define RK3288_GRF_SOC_STATUS21      0x02d4
+>> +#define RK3288_GRF_IO_VSEL   0x0380
+>> +#define RK3288_GRF_SOC_CON15 0x03a4
+>> +
+>> +#define RK3399_GRF_SOC_CON9  0x6224
+>> +#define RK3399_GRF_SOC_CON21 0x6254
+>> +#define RK3399_GRF_SOC_CON22 0x6258
+>> +#define RK3399_GRF_SOC_CON23 0x625c
+>> +#define RK3399_GRF_SOC_CON24 0x6260
+>> +#define RK3399_GRF_SOC_CON25 0x6264
+>> +#define RK3399_GRF_SOC_STATUS1       0xe2a4
+>> +
+>> +#define CLOCK_LANE_HS_RX_CONTROL             0x34
+>> +#define LANE0_HS_RX_CONTROL                  0x44
+>> +#define LANE1_HS_RX_CONTROL                  0x54
+>> +#define LANE2_HS_RX_CONTROL                  0x84
+>> +#define LANE3_HS_RX_CONTROL                  0x94
+>> +#define HS_RX_DATA_LANES_THS_SETTLE__CONTROL 0x75
+>> +
+>> +#define HIWORD_UPDATE(val, mask, shift) \
+>> +     ((val) << (shift) | (mask) << ((shift) + 16))
+>> +
+>> +enum mipi_dphy_sy_pads {
+>> +     MIPI_DPHY_SY_PAD_SINK = 0,
+>> +     MIPI_DPHY_SY_PAD_SOURCE,
+>> +     MIPI_DPHY_SY_PADS_NUM,
+>> +};
+>> +
+>> +enum dphy_reg_id {
+>> +     GRF_DPHY_RX0_TURNDISABLE = 0,
+>> +     GRF_DPHY_RX0_FORCERXMODE,
+>> +     GRF_DPHY_RX0_FORCETXSTOPMODE,
+>> +     GRF_DPHY_RX0_ENABLE,
+>> +     GRF_DPHY_RX0_TESTCLR,
+>> +     GRF_DPHY_RX0_TESTCLK,
+>> +     GRF_DPHY_RX0_TESTEN,
+>> +     GRF_DPHY_RX0_TESTDIN,
+>> +     GRF_DPHY_RX0_TURNREQUEST,
+>> +     GRF_DPHY_RX0_TESTDOUT,
+>> +     GRF_DPHY_TX0_TURNDISABLE,
+>> +     GRF_DPHY_TX0_FORCERXMODE,
+>> +     GRF_DPHY_TX0_FORCETXSTOPMODE,
+>> +     GRF_DPHY_TX0_TURNREQUEST,
+>> +     GRF_DPHY_TX1RX1_TURNDISABLE,
+>> +     GRF_DPHY_TX1RX1_FORCERXMODE,
+>> +     GRF_DPHY_TX1RX1_FORCETXSTOPMODE,
+>> +     GRF_DPHY_TX1RX1_ENABLE,
+>> +     GRF_DPHY_TX1RX1_MASTERSLAVEZ,
+>> +     GRF_DPHY_TX1RX1_BASEDIR,
+>> +     GRF_DPHY_TX1RX1_ENABLECLK,
+>> +     GRF_DPHY_TX1RX1_TURNREQUEST,
+>> +     GRF_DPHY_RX1_SRC_SEL,
+>> +     /* rk3288 only */
+>> +     GRF_CON_DISABLE_ISP,
+>> +     GRF_CON_ISP_DPHY_SEL,
+>> +     GRF_DSI_CSI_TESTBUS_SEL,
+>> +     GRF_DVP_V18SEL,
+>> +     /* below is for rk3399 only */
+>> +     GRF_DPHY_RX0_CLK_INV_SEL,
+>> +     GRF_DPHY_RX1_CLK_INV_SEL,
+>> +};
+>> +
+>> +struct dphy_reg {
+>> +     u32 offset;
+>> +     u32 mask;
+>> +     u32 shift;
+>> +};
+>> +
+>> +#define PHY_REG(_offset, _width, _shift) \
+>> +     { .offset = _offset, .mask = BIT(_width) - 1, .shift = _shift, }
+>> +
+>> +static const struct dphy_reg rk3399_grf_dphy_regs[] = {
+>> +     [GRF_DPHY_RX0_TURNREQUEST] = PHY_REG(RK3399_GRF_SOC_CON9, 4, 0),
+>> +     [GRF_DPHY_RX0_CLK_INV_SEL] = PHY_REG(RK3399_GRF_SOC_CON9, 1, 10),
+>> +     [GRF_DPHY_RX1_CLK_INV_SEL] = PHY_REG(RK3399_GRF_SOC_CON9, 1, 11),
+>> +     [GRF_DPHY_RX0_ENABLE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 0),
+>> +     [GRF_DPHY_RX0_FORCERXMODE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 4),
+>> +     [GRF_DPHY_RX0_FORCETXSTOPMODE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 8),
+>> +     [GRF_DPHY_RX0_TURNDISABLE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 12),
+>> +     [GRF_DPHY_TX0_FORCERXMODE] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 0),
+>> +     [GRF_DPHY_TX0_FORCETXSTOPMODE] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 4),
+>> +     [GRF_DPHY_TX0_TURNDISABLE] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 8),
+>> +     [GRF_DPHY_TX0_TURNREQUEST] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 12),
+>> +     [GRF_DPHY_TX1RX1_ENABLE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 0),
+>> +     [GRF_DPHY_TX1RX1_FORCERXMODE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 4),
+>> +     [GRF_DPHY_TX1RX1_FORCETXSTOPMODE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 8),
+>> +     [GRF_DPHY_TX1RX1_TURNDISABLE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 12),
+>> +     [GRF_DPHY_TX1RX1_TURNREQUEST] = PHY_REG(RK3399_GRF_SOC_CON24, 4, 0),
+>> +     [GRF_DPHY_RX1_SRC_SEL] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 4),
+>> +     [GRF_DPHY_TX1RX1_BASEDIR] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 5),
+>> +     [GRF_DPHY_TX1RX1_ENABLECLK] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 6),
+>> +     [GRF_DPHY_TX1RX1_MASTERSLAVEZ] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 7),
+>> +     [GRF_DPHY_RX0_TESTDIN] = PHY_REG(RK3399_GRF_SOC_CON25, 8, 0),
+>> +     [GRF_DPHY_RX0_TESTEN] = PHY_REG(RK3399_GRF_SOC_CON25, 1, 8),
+>> +     [GRF_DPHY_RX0_TESTCLK] = PHY_REG(RK3399_GRF_SOC_CON25, 1, 9),
+>> +     [GRF_DPHY_RX0_TESTCLR] = PHY_REG(RK3399_GRF_SOC_CON25, 1, 10),
+>> +     [GRF_DPHY_RX0_TESTDOUT] = PHY_REG(RK3399_GRF_SOC_STATUS1, 8, 0),
+>> +};
+>> +
+>> +static const struct dphy_reg rk3288_grf_dphy_regs[] = {
+>> +     [GRF_CON_DISABLE_ISP] = PHY_REG(RK3288_GRF_SOC_CON6, 1, 0),
+>> +     [GRF_CON_ISP_DPHY_SEL] = PHY_REG(RK3288_GRF_SOC_CON6, 1, 1),
+>> +     [GRF_DSI_CSI_TESTBUS_SEL] = PHY_REG(RK3288_GRF_SOC_CON6, 1, 14),
+>> +     [GRF_DPHY_TX0_TURNDISABLE] = PHY_REG(RK3288_GRF_SOC_CON8, 4, 0),
+>> +     [GRF_DPHY_TX0_FORCERXMODE] = PHY_REG(RK3288_GRF_SOC_CON8, 4, 4),
+>> +     [GRF_DPHY_TX0_FORCETXSTOPMODE] = PHY_REG(RK3288_GRF_SOC_CON8, 4, 8),
+>> +     [GRF_DPHY_TX1RX1_TURNDISABLE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 0),
+>> +     [GRF_DPHY_TX1RX1_FORCERXMODE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 4),
+>> +     [GRF_DPHY_TX1RX1_FORCETXSTOPMODE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 8),
+>> +     [GRF_DPHY_TX1RX1_ENABLE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 12),
+>> +     [GRF_DPHY_RX0_TURNDISABLE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 0),
+>> +     [GRF_DPHY_RX0_FORCERXMODE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 4),
+>> +     [GRF_DPHY_RX0_FORCETXSTOPMODE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 8),
+>> +     [GRF_DPHY_RX0_ENABLE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 12),
+>> +     [GRF_DPHY_RX0_TESTCLR] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 0),
+>> +     [GRF_DPHY_RX0_TESTCLK] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 1),
+>> +     [GRF_DPHY_RX0_TESTEN] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 2),
+>> +     [GRF_DPHY_RX0_TESTDIN] = PHY_REG(RK3288_GRF_SOC_CON14, 8, 3),
+>> +     [GRF_DPHY_TX1RX1_ENABLECLK] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 12),
+>> +     [GRF_DPHY_RX1_SRC_SEL] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 13),
+>> +     [GRF_DPHY_TX1RX1_MASTERSLAVEZ] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 14),
+>> +     [GRF_DPHY_TX1RX1_BASEDIR] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 15),
+>> +     [GRF_DPHY_RX0_TURNREQUEST] = PHY_REG(RK3288_GRF_SOC_CON15, 4, 0),
+>> +     [GRF_DPHY_TX1RX1_TURNREQUEST] = PHY_REG(RK3288_GRF_SOC_CON15, 4, 4),
+>> +     [GRF_DPHY_TX0_TURNREQUEST] = PHY_REG(RK3288_GRF_SOC_CON15, 3, 8),
+>> +     [GRF_DVP_V18SEL] = PHY_REG(RK3288_GRF_IO_VSEL, 1, 1),
+>> +     [GRF_DPHY_RX0_TESTDOUT] = PHY_REG(RK3288_GRF_SOC_STATUS21, 8, 0),
+>> +};
+>> +
+>> +struct hsfreq_range {
+>> +     u32 range_h;
+>> +     u8 cfg_bit;
+>> +};
+>> +
+>> +struct dphy_drv_data {
+>> +     const char * const *clks;
+>> +     int num_clks;
+>> +     const struct hsfreq_range *hsfreq_ranges;
+>> +     int num_hsfreq_ranges;
+>> +     const struct dphy_reg *regs;
+>> +};
+>> +
+>> +struct sensor_async_subdev {
+>> +     struct v4l2_async_subdev asd;
+>> +     struct v4l2_mbus_config mbus;
+>> +     int lanes;
+>> +};
+>> +
+>> +#define MAX_DPHY_CLK         8
+>> +#define MAX_DPHY_SENSORS     2
+>> +
+>> +struct mipidphy_sensor {
+>> +     struct v4l2_subdev *sd;
+>> +     struct v4l2_mbus_config mbus;
+>> +     int lanes;
+>> +};
+>> +
+>> +struct mipidphy_priv {
+>> +     struct device *dev;
+>> +     struct regmap *regmap_grf;
+>> +     const struct dphy_reg *grf_regs;
+>> +     struct clk *clks[MAX_DPHY_CLK];
+>> +     const struct dphy_drv_data *drv_data;
+>> +     u64 data_rate_mbps;
+>> +     struct v4l2_async_notifier notifier;
+>> +     struct v4l2_subdev sd;
+>> +     struct media_pad pads[MIPI_DPHY_SY_PADS_NUM];
+>> +     struct mipidphy_sensor sensors[MAX_DPHY_SENSORS];
+>> +     int num_sensors;
+>> +     bool is_streaming;
+>> +};
+>> +
+>> +static inline struct mipidphy_priv *to_dphy_priv(struct v4l2_subdev *subdev)
+>> +{
+>> +     return container_of(subdev, struct mipidphy_priv, sd);
+>> +}
+>> +
+>> +static inline void write_reg(struct mipidphy_priv *priv, int index, u8 value)
+>> +{
+>> +     const struct dphy_reg *reg = &priv->grf_regs[index];
+>> +     unsigned int val = HIWORD_UPDATE(value, reg->mask, reg->shift);
+>> +
+>> +     WARN_ON(!reg->offset);
+>> +     regmap_write(priv->regmap_grf, reg->offset, val);
+>> +}
+>> +
+>> +static void mipidphy_wr_reg(struct mipidphy_priv *priv,
+>> +                         u8 test_code, u8 test_data)
+>> +{
+>> +     /*
+>> +      * With the falling edge on TESTCLK, the TESTDIN[7:0] signal content
+>> +      * is latched internally as the current test code. Test data is
+>> +      * programmed internally by rising edge on TESTCLK.
+>> +      */
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTCLK, 1);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTDIN, test_code);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTEN, 1);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTCLK, 0);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTEN, 0);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTDIN, test_data);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTCLK, 1);
+>> +}
+>> +
+>> +static struct v4l2_subdev *get_remote_sensor(struct v4l2_subdev *sd)
+>> +{
+>> +     struct media_pad *local, *remote;
+>> +     struct media_entity *sensor_me;
+>> +
+>> +     local = &sd->entity.pads[MIPI_DPHY_SY_PAD_SINK];
+>> +     remote = media_entity_remote_pad(local);
+>> +     if (!remote) {
+>> +             v4l2_warn(sd, "No link between dphy and sensor\n");
+>> +             return NULL;
+>> +     }
+>> +
+>> +     sensor_me = media_entity_remote_pad(local)->entity;
+>> +     return media_entity_to_v4l2_subdev(sensor_me);
+>> +}
+>> +
+>> +static struct mipidphy_sensor *sd_to_sensor(struct mipidphy_priv *priv,
+>> +                                         struct v4l2_subdev *sd)
+>> +{
+>> +     int i;
+>> +
+>> +     for (i = 0; i < priv->num_sensors; ++i)
+>> +             if (priv->sensors[i].sd == sd)
+>> +                     return &priv->sensors[i];
+>> +
+>> +     return NULL;
+>> +}
+>> +
+>> +static int mipidphy_get_sensor_data_rate(struct v4l2_subdev *sd)
+>> +{
+>> +     struct mipidphy_priv *priv = to_dphy_priv(sd);
+>> +     struct v4l2_subdev *sensor_sd = get_remote_sensor(sd);
+>> +     struct v4l2_ctrl *link_freq;
+>> +     struct v4l2_querymenu qm = { .id = V4L2_CID_LINK_FREQ, };
+>> +     int ret;
+>> +
+>> +     link_freq = v4l2_ctrl_find(sensor_sd->ctrl_handler, V4L2_CID_LINK_FREQ);
+>> +     if (!link_freq) {
+>> +             v4l2_warn(sd, "No pixel rate control in subdev\n");
+>> +             return -EPIPE;
+>> +     }
+>> +
+>> +     qm.index = v4l2_ctrl_g_ctrl(link_freq);
+>> +     ret = v4l2_querymenu(sensor_sd->ctrl_handler, &qm);
+>> +     if (ret < 0) {
+>> +             v4l2_err(sd, "Failed to get menu item\n");
+>> +             return ret;
+>> +     }
+>> +
+>> +     if (!qm.value) {
+>> +             v4l2_err(sd, "Invalid link_freq\n");
+>> +             return -EINVAL;
+>> +     }
+>> +     priv->data_rate_mbps = qm.value * 2;
+>> +     do_div(priv->data_rate_mbps, 1000 * 1000);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int mipidphy_s_stream_start(struct v4l2_subdev *sd)
+>> +{
+>> +     struct mipidphy_priv *priv = to_dphy_priv(sd);
+>> +     const struct dphy_drv_data *drv_data = priv->drv_data;
+>> +     const struct hsfreq_range *hsfreq_ranges = drv_data->hsfreq_ranges;
+>> +     int num_hsfreq_ranges = drv_data->num_hsfreq_ranges;
+>> +     struct v4l2_subdev *sensor_sd = get_remote_sensor(sd);
+>> +     struct mipidphy_sensor *sensor = sd_to_sensor(priv, sensor_sd);
+>> +     int i, ret, hsfreq = 0;
+>> +
+>> +     if (priv->is_streaming)
+>> +             return 0;
+>> +
+>> +     ret = mipidphy_get_sensor_data_rate(sd);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     for (i = 0; i < num_hsfreq_ranges; i++) {
+>> +             if (hsfreq_ranges[i].range_h >= priv->data_rate_mbps) {
+>> +                     hsfreq = hsfreq_ranges[i].cfg_bit;
+>> +                     break;
+>> +             }
+>> +     }
+>> +
+>> +     write_reg(priv, GRF_DPHY_RX0_FORCERXMODE, 0);
+>> +     write_reg(priv, GRF_DPHY_RX0_FORCETXSTOPMODE, 0);
+>> +     /* Disable lan turn around, which is ignored in receive mode */
+>> +     write_reg(priv, GRF_DPHY_RX0_TURNREQUEST, 0);
+>> +     write_reg(priv, GRF_DPHY_RX0_TURNDISABLE, 0xf);
+>> +
+>> +     write_reg(priv, GRF_DPHY_RX0_ENABLE, GENMASK(sensor->lanes - 1, 0));
+>> +
+>> +     /* dphy start */
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTCLK, 1);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTCLR, 1);
+>> +     usleep_range(100, 150);
+>> +     write_reg(priv, GRF_DPHY_RX0_TESTCLR, 0);
+>> +     usleep_range(100, 150);
+>> +
+>> +     /* set clock lane */
+>> +     /* HS hsfreq_range & lane 0  settle bypass */
+>> +     mipidphy_wr_reg(priv, CLOCK_LANE_HS_RX_CONTROL, 0);
+>> +     /* HS RX Control of lane0 */
+>> +     mipidphy_wr_reg(priv, LANE0_HS_RX_CONTROL, hsfreq << 1);
+>> +     /* HS RX Control of lane1 */
+>> +     mipidphy_wr_reg(priv, LANE1_HS_RX_CONTROL, 0);
+>> +     /* HS RX Control of lane2 */
+>> +     mipidphy_wr_reg(priv, LANE2_HS_RX_CONTROL, 0);
+>> +     /* HS RX Control of lane3 */
+>> +     mipidphy_wr_reg(priv, LANE3_HS_RX_CONTROL, 0);
+>> +     /* HS RX Data Lanes Settle State Time Control */
+>> +     mipidphy_wr_reg(priv, HS_RX_DATA_LANES_THS_SETTLE__CONTROL, 0x04);
+>> +
+>> +     /* Normal operation */
+>> +     mipidphy_wr_reg(priv, 0x0, 0);
+>> +
+>> +     priv->is_streaming = true;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int mipidphy_s_stream_stop(struct v4l2_subdev *sd)
+>> +{
+>> +     struct mipidphy_priv *priv = to_dphy_priv(sd);
+>> +
+>> +     if (!priv->is_streaming)
+>> +             return 0;
+>
+> 'if' can be dropped.
+>
+>> +
+>> +     priv->is_streaming = false;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int mipidphy_s_stream(struct v4l2_subdev *sd, int on)
+>> +{
+>> +     if (on)
+>> +             return mipidphy_s_stream_start(sd);
+>> +     else
+>> +             return mipidphy_s_stream_stop(sd);
+>> +}
+>> +
+>> +static int mipidphy_g_mbus_config(struct v4l2_subdev *sd,
+>> +                               struct v4l2_mbus_config *config)
+>> +{
+>> +     struct mipidphy_priv *priv = to_dphy_priv(sd);
+>> +     struct v4l2_subdev *sensor_sd = get_remote_sensor(sd);
+>> +     struct mipidphy_sensor *sensor = sd_to_sensor(priv, sensor_sd);
+>> +
+>> +     *config = sensor->mbus;
+>> +
+>> +     return 0;
+>> +}
+>
+> As with the previous patch: please remove g_mbus_config, it shouldn't
+> be used in new drivers.
+
+Ok, so it's a deprecated API.
+
+We use it because:
+PHY is like a multiplexer, and its actual mbus type depend on current
+active sensor.
+ISP driver should use g_mbus_config to call to phy driver to get the
+current mbus type.
+
+Since this API is deprecated,
+I have to use v4l2_fwnode_endpoint_parse to get mbus type every times
+rather than
+store it in phy drvier and get it by calling g_mbus_config.
+
+
+>
+>> +
+>> +static int mipidphy_s_power(struct v4l2_subdev *sd, int on)
+>> +{
+>> +     struct mipidphy_priv *priv = to_dphy_priv(sd);
+>> +
+>> +     if (on)
+>> +             return pm_runtime_get_sync(priv->dev);
+>> +     else
+>> +             return pm_runtime_put(priv->dev);
+>> +}
+>> +
+>> +static int mipidphy_runtime_suspend(struct device *dev)
+>> +{
+>> +     struct media_entity *me = dev_get_drvdata(dev);
+>> +     struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(me);
+>> +     struct mipidphy_priv *priv = to_dphy_priv(sd);
+>> +     int i, num_clks;
+>> +
+>> +     num_clks = priv->drv_data->num_clks;
+>> +     for (i = num_clks - 1; i >= 0; i--)
+>> +             clk_disable_unprepare(priv->clks[i]);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int mipidphy_runtime_resume(struct device *dev)
+>> +{
+>> +     struct media_entity *me = dev_get_drvdata(dev);
+>> +     struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(me);
+>> +     struct mipidphy_priv *priv = to_dphy_priv(sd);
+>> +     int i, num_clks, ret;
+>> +
+>> +     num_clks = priv->drv_data->num_clks;
+>> +     for (i = 0; i < num_clks; i++) {
+>> +             ret = clk_prepare_enable(priv->clks[i]);
+>> +             if (ret < 0)
+>> +                     goto err;
+>> +     }
+>> +
+>> +     return 0;
+>> +err:
+>> +     while (--i >= 0)
+>> +             clk_disable_unprepare(priv->clks[i]);
+>> +     return ret;
+>> +}
+>> +
+>> +/* dphy accepts all fmt/size from sensor */
+>> +static int mipidphy_get_set_fmt(struct v4l2_subdev *sd,
+>> +                             struct v4l2_subdev_pad_config *cfg,
+>> +                             struct v4l2_subdev_format *fmt)
+>> +{
+>> +     struct v4l2_subdev *sensor = get_remote_sensor(sd);
+>> +
+>> +     /*
+>> +      * Do not allow format changes and just relay whatever
+>> +      * set currently in the sensor.
+>> +      */
+>> +     return v4l2_subdev_call(sensor, pad, get_fmt, NULL, fmt);
+>> +}
+>> +
+>> +static const struct v4l2_subdev_pad_ops mipidphy_subdev_pad_ops = {
+>> +     .set_fmt = mipidphy_get_set_fmt,
+>> +     .get_fmt = mipidphy_get_set_fmt,
+>> +};
+>> +
+>> +static const struct v4l2_subdev_core_ops mipidphy_core_ops = {
+>> +     .s_power = mipidphy_s_power,
+>> +};
+>> +
+>> +static const struct v4l2_subdev_video_ops mipidphy_video_ops = {
+>> +     .g_mbus_config = mipidphy_g_mbus_config,
+>> +     .s_stream = mipidphy_s_stream,
+>> +};
+>> +
+>> +static const struct v4l2_subdev_ops mipidphy_subdev_ops = {
+>> +     .core = &mipidphy_core_ops,
+>> +     .video = &mipidphy_video_ops,
+>> +     .pad = &mipidphy_subdev_pad_ops,
+>> +};
+>> +
+>> +/* These tables must be sorted by .range_h ascending. */
+>> +static const struct hsfreq_range rk3288_mipidphy_hsfreq_ranges[] = {
+>> +     {  89, 0x00}, {  99, 0x10}, { 109, 0x20}, { 129, 0x01},
+>> +     { 139, 0x11}, { 149, 0x21}, { 169, 0x02}, { 179, 0x12},
+>> +     { 199, 0x22}, { 219, 0x03}, { 239, 0x13}, { 249, 0x23},
+>> +     { 269, 0x04}, { 299, 0x14}, { 329, 0x05}, { 359, 0x15},
+>> +     { 399, 0x25}, { 449, 0x06}, { 499, 0x16}, { 549, 0x07},
+>> +     { 599, 0x17}, { 649, 0x08}, { 699, 0x18}, { 749, 0x09},
+>> +     { 799, 0x19}, { 849, 0x29}, { 899, 0x39}, { 949, 0x0a},
+>> +     { 999, 0x1a}
+>> +};
+>> +
+>> +static const struct hsfreq_range rk3399_mipidphy_hsfreq_ranges[] = {
+>> +     {  89, 0x00}, {  99, 0x10}, { 109, 0x20}, { 129, 0x01},
+>> +     { 139, 0x11}, { 149, 0x21}, { 169, 0x02}, { 179, 0x12},
+>> +     { 199, 0x22}, { 219, 0x03}, { 239, 0x13}, { 249, 0x23},
+>> +     { 269, 0x04}, { 299, 0x14}, { 329, 0x05}, { 359, 0x15},
+>> +     { 399, 0x25}, { 449, 0x06}, { 499, 0x16}, { 549, 0x07},
+>> +     { 599, 0x17}, { 649, 0x08}, { 699, 0x18}, { 749, 0x09},
+>> +     { 799, 0x19}, { 849, 0x29}, { 899, 0x39}, { 949, 0x0a},
+>> +     { 999, 0x1a}, {1049, 0x2a}, {1099, 0x3a}, {1149, 0x0b},
+>> +     {1199, 0x1b}, {1249, 0x2b}, {1299, 0x3b}, {1349, 0x0c},
+>> +     {1399, 0x1c}, {1449, 0x2c}, {1500, 0x3c}
+>> +};
+>> +
+>> +static const char * const rk3399_mipidphy_clks[] = {
+>> +     "dphy-ref",
+>> +     "dphy-cfg",
+>> +     "grf",
+>> +};
+>> +
+>> +static const char * const rk3288_mipidphy_clks[] = {
+>> +     "dphy-ref",
+>> +     "pclk",
+>> +};
+>> +
+>> +static const struct dphy_drv_data rk3288_mipidphy_drv_data = {
+>> +     .clks = rk3288_mipidphy_clks,
+>> +     .num_clks = ARRAY_SIZE(rk3288_mipidphy_clks),
+>> +     .hsfreq_ranges = rk3288_mipidphy_hsfreq_ranges,
+>> +     .num_hsfreq_ranges = ARRAY_SIZE(rk3288_mipidphy_hsfreq_ranges),
+>> +     .regs = rk3288_grf_dphy_regs,
+>> +};
+>> +
+>> +static const struct dphy_drv_data rk3399_mipidphy_drv_data = {
+>> +     .clks = rk3399_mipidphy_clks,
+>> +     .num_clks = ARRAY_SIZE(rk3399_mipidphy_clks),
+>> +     .hsfreq_ranges = rk3399_mipidphy_hsfreq_ranges,
+>> +     .num_hsfreq_ranges = ARRAY_SIZE(rk3399_mipidphy_hsfreq_ranges),
+>> +     .regs = rk3399_grf_dphy_regs,
+>> +};
+>> +
+>> +static const struct of_device_id rockchip_mipidphy_match_id[] = {
+>> +     {
+>> +             .compatible = "rockchip,rk3399-mipi-dphy",
+>> +             .data = &rk3399_mipidphy_drv_data,
+>> +     },
+>> +     {
+>> +             .compatible = "rockchip,rk3288-mipi-dphy",
+>> +             .data = &rk3288_mipidphy_drv_data,
+>> +     },
+>> +     {}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rockchip_mipidphy_match_id);
+>> +
+>> +/* The .bound() notifier callback when a match is found */
+>> +static int
+>> +rockchip_mipidphy_notifier_bound(struct v4l2_async_notifier *notifier,
+>> +                              struct v4l2_subdev *sd,
+>> +                              struct v4l2_async_subdev *asd)
+>> +{
+>> +     struct mipidphy_priv *priv = container_of(notifier,
+>> +                                               struct mipidphy_priv,
+>> +                                               notifier);
+>> +     struct sensor_async_subdev *s_asd = container_of(asd,
+>> +                                     struct sensor_async_subdev, asd);
+>> +     struct mipidphy_sensor *sensor;
+>> +     unsigned int pad, ret;
+>> +
+>> +     if (priv->num_sensors == ARRAY_SIZE(priv->sensors))
+>> +             return -EBUSY;
+>> +
+>> +     sensor = &priv->sensors[priv->num_sensors++];
+>> +     sensor->lanes = s_asd->lanes;
+>> +     sensor->mbus = s_asd->mbus;
+>> +     sensor->sd = sd;
+>> +
+>> +     for (pad = 0; pad < sensor->sd->entity.num_pads; pad++)
+>> +             if (sensor->sd->entity.pads[pad].flags
+>> +                                     & MEDIA_PAD_FL_SOURCE)
+>> +                     break;
+>> +
+>> +     if (pad == sensor->sd->entity.num_pads) {
+>> +             dev_err(priv->dev,
+>> +                     "failed to find src pad for %s\n",
+>> +                     sensor->sd->name);
+>> +
+>> +             return -ENXIO;
+>> +     }
+>> +
+>> +     ret = media_create_pad_link(
+>> +                     &sensor->sd->entity, pad,
+>> +                     &priv->sd.entity, MIPI_DPHY_SY_PAD_SINK,
+>> +                     priv->num_sensors != 1 ? 0 : MEDIA_LNK_FL_ENABLED);
+>> +     if (ret) {
+>> +             dev_err(priv->dev,
+>> +                     "failed to create link for %s\n",
+>> +                     sensor->sd->name);
+>> +             return ret;
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +/* The .unbind callback */
+>> +static void
+>> +rockchip_mipidphy_notifier_unbind(struct v4l2_async_notifier *notifier,
+>> +                               struct v4l2_subdev *sd,
+>> +                               struct v4l2_async_subdev *asd)
+>> +{
+>> +     struct mipidphy_priv *priv = container_of(notifier,
+>> +                                               struct mipidphy_priv,
+>> +                                               notifier);
+>> +     struct mipidphy_sensor *sensor = sd_to_sensor(priv, sd);
+>> +
+>> +     sensor->sd = NULL;
+>> +}
+>> +
+>> +static const struct
+>> +v4l2_async_notifier_operations rockchip_mipidphy_async_ops = {
+>> +     .bound = rockchip_mipidphy_notifier_bound,
+>> +     .unbind = rockchip_mipidphy_notifier_unbind,
+>> +};
+>> +
+>> +static int rockchip_mipidphy_fwnode_parse(struct device *dev,
+>> +                          struct v4l2_fwnode_endpoint *vep,
+>> +                          struct v4l2_async_subdev *asd)
+>> +{
+>> +     struct sensor_async_subdev *s_asd =
+>> +                     container_of(asd, struct sensor_async_subdev, asd);
+>> +     struct v4l2_mbus_config *config = &s_asd->mbus;
+>> +
+>> +     if (vep->bus_type != V4L2_MBUS_CSI2) {
+>> +             dev_err(dev, "Only CSI2 bus type is currently supported\n");
+>> +             return -EINVAL;
+>> +     }
+>> +
+>> +     if (vep->base.port != 0) {
+>> +             dev_err(dev, "The PHY has only port 0\n");
+>> +             return -EINVAL;
+>> +     }
+>> +
+>> +     config->type = V4L2_MBUS_CSI2;
+>> +     config->flags = vep->bus.mipi_csi2.flags;
+>> +     s_asd->lanes = vep->bus.mipi_csi2.num_data_lanes;
+>> +
+>> +     switch (vep->bus.mipi_csi2.num_data_lanes) {
+>> +     case 1:
+>> +             config->flags |= V4L2_MBUS_CSI2_1_LANE;
+>> +             break;
+>> +     case 2:
+>> +             config->flags |= V4L2_MBUS_CSI2_2_LANE;
+>> +             break;
+>> +     case 3:
+>> +             config->flags |= V4L2_MBUS_CSI2_3_LANE;
+>> +             break;
+>> +     case 4:
+>> +             config->flags |= V4L2_MBUS_CSI2_4_LANE;
+>> +             break;
+>> +     default:
+>> +             return -EINVAL;
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int rockchip_mipidphy_media_init(struct mipidphy_priv *priv)
+>> +{
+>> +     int ret;
+>> +
+>> +     priv->pads[MIPI_DPHY_SY_PAD_SOURCE].flags =
+>> +             MEDIA_PAD_FL_SOURCE | MEDIA_PAD_FL_MUST_CONNECT;
+>> +     priv->pads[MIPI_DPHY_SY_PAD_SINK].flags =
+>> +             MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_MUST_CONNECT;
+>> +
+>> +     ret = media_entity_pads_init(&priv->sd.entity,
+>> +                              MIPI_DPHY_SY_PADS_NUM, priv->pads);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+>> +             priv->dev, &priv->notifier,
+>> +             sizeof(struct sensor_async_subdev), 0,
+>> +             rockchip_mipidphy_fwnode_parse);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     if (!priv->notifier.num_subdevs)
+>> +             return -ENODEV; /* no endpoint */
+>> +
+>> +     priv->sd.subdev_notifier = &priv->notifier;
+>> +     priv->notifier.ops = &rockchip_mipidphy_async_ops;
+>> +     ret = v4l2_async_subdev_notifier_register(&priv->sd, &priv->notifier);
+>> +     if (ret) {
+>> +             dev_err(priv->dev,
+>> +                     "failed to register async notifier : %d\n", ret);
+>> +             v4l2_async_notifier_cleanup(&priv->notifier);
+>> +             return ret;
+>> +     }
+>> +
+>> +     return v4l2_async_register_subdev(&priv->sd);
+>> +}
+>> +
+>> +static int rockchip_mipidphy_probe(struct platform_device *pdev)
+>> +{
+>> +     struct device *dev = &pdev->dev;
+>> +     struct v4l2_subdev *sd;
+>> +     struct mipidphy_priv *priv;
+>> +     struct regmap *grf;
+>> +     const struct of_device_id *of_id;
+>> +     const struct dphy_drv_data *drv_data;
+>> +     int i, ret;
+>> +
+>> +     priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> +     if (!priv)
+>> +             return -ENOMEM;
+>> +     priv->dev = dev;
+>> +
+>> +     of_id = of_match_device(rockchip_mipidphy_match_id, dev);
+>> +     if (!of_id)
+>> +             return -EINVAL;
+>> +
+>> +     grf = syscon_node_to_regmap(dev->parent->of_node);
+>> +     if (IS_ERR(grf)) {
+>> +             dev_err(dev, "Can't find GRF syscon\n");
+>> +             return -ENODEV;
+>> +     }
+>> +     priv->regmap_grf = grf;
+>> +
+>> +     drv_data = of_id->data;
+>> +     for (i = 0; i < drv_data->num_clks; i++) {
+>> +             priv->clks[i] = devm_clk_get(dev, drv_data->clks[i]);
+>> +
+>> +             if (IS_ERR(priv->clks[i])) {
+>> +                     dev_err(dev, "Failed to get %s\n", drv_data->clks[i]);
+>> +                     return PTR_ERR(priv->clks[i]);
+>> +             }
+>> +     }
+>> +
+>> +     priv->grf_regs = drv_data->regs;
+>> +     priv->drv_data = drv_data;
+>> +
+>> +     sd = &priv->sd;
+>> +     v4l2_subdev_init(sd, &mipidphy_subdev_ops);
+>> +     sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+>> +     snprintf(sd->name, sizeof(sd->name), "rockchip-sy-mipi-dphy");
+>> +     sd->dev = dev;
+>> +
+>> +     platform_set_drvdata(pdev, &sd->entity);
+>> +
+>> +     ret = rockchip_mipidphy_media_init(priv);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     pm_runtime_enable(&pdev->dev);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int rockchip_mipidphy_remove(struct platform_device *pdev)
+>> +{
+>> +     struct media_entity *me = platform_get_drvdata(pdev);
+>> +     struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(me);
+>> +
+>> +     media_entity_cleanup(&sd->entity);
+>> +
+>> +     pm_runtime_disable(&pdev->dev);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static const struct dev_pm_ops rockchip_mipidphy_pm_ops = {
+>> +     SET_RUNTIME_PM_OPS(mipidphy_runtime_suspend,
+>> +                        mipidphy_runtime_resume, NULL)
+>> +};
+>> +
+>> +static struct platform_driver rockchip_isp_mipidphy_driver = {
+>> +     .probe = rockchip_mipidphy_probe,
+>> +     .remove = rockchip_mipidphy_remove,
+>> +     .driver = {
+>> +                     .name = "rockchip-sy-mipi-dphy",
+>> +                     .pm = &rockchip_mipidphy_pm_ops,
+>> +                     .of_match_table = rockchip_mipidphy_match_id,
+>> +     },
+>> +};
+>> +
+>> +module_platform_driver(rockchip_isp_mipidphy_driver);
+>> +MODULE_AUTHOR("Rockchip Camera/ISP team");
+>> +MODULE_DESCRIPTION("Rockchip MIPI DPHY driver");
+>> +MODULE_LICENSE("Dual BSD/GPL");
+>>
+>
+> Regards,
+>
+>         Hans
