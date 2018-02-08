@@ -1,81 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752482AbeBHMK5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:10:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53456 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751878AbeBHMKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:10:53 -0500
-Date: Thu, 8 Feb 2018 13:10:50 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: Andrew Cooks <andrew.cooks@opengear.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, platypus-sw@opengear.com,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] gpio-pca953x: fall back to byte-at-a-time for 24-bit io
-Message-ID: <20180208131050.7c26717d@endymion>
-In-Reply-To: <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
-References: <1512440242-8983-1-git-send-email-andrew.cooks@opengear.com>
-        <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
-        <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752365AbeBHMNF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:13:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34130 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752020AbeBHMNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:13:04 -0500
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: dave.martin@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 1/2] arm64: capabilities: Allow flexibility in scope
+Date: Thu,  8 Feb 2018 12:12:37 +0000
+Message-Id: <20180208121238.18792-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <86f23003-72bc-5bfc-af40-a92cc68def45@arm.com>
+References: <86f23003-72bc-5bfc-af40-a92cc68def45@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jan 2018 14:11:35 +1000, Andrew Cooks wrote:
-> On 29/12/17 19:44, Andy Shevchenko wrote:
-> > On Tue, Dec 5, 2017 at 4:17 AM, Andrew Cooks <andrew.cooks@opengear.com> wrote:  
-> >> Using TCA6424A with i2c-piix4 bus driver requires byte-at-a-time IO,
-> >> because the i2c-piix4 driver (and probably some SMBus controllers) don't
-> >> support I2C_SMBUS_I2C_BLOCK_DATA.  
-> > 
-> > Why not to fix piix4 for now?  
-> 
-> The piix4 driver applies to so many chips and has been around for such a long time, that I don't know if this kind of change is safe to make. Do you think it's safe to assume that all the implementations that use this driver can handle the 3byte block writes?
-> 
-> I've added Jean to the CC list to get the piix4 maintainer's perspective.
+So far we have restricted the scopes for the capabilities
+as follows :
+ 1) Errata workaround check are run all CPUs (i.e, always
+    SCOPE_LOCAL_CPU)
+ 2) Arm64 features are run only once after the sanitised
+    feature registers are available using the SCOPE_SYSTEM.
 
-This is a hardware limitation, not a driver deficiency. The original
-Intel PIIX4 SMBus implementation did not support I2C Block transfers,
-only SMBus Block transfers. I2C Block transfer support was added by
-Intel to the 82801 (ICH5) only.
+This prevents detecting cpu features that can be detected
+on one or more CPUs with SCOPE_LOCAL_CPU (e.g KPTI). Similarly
+for errata workaround with SCOPE_SYSTEM.
 
-I have checked the few AMD datasheets I have here and it doesn't seem
-that AMD implemented I2C Block transfers support either.
+This patch makes sure that we allow flexibility of having
+any scope for a capability. So, we now run through both
+arm64_features and arm64_errata in two phases for detection:
 
-> >> @@ -249,7 +261,7 @@ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
-> >>  {
-> >>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-> >>
-> >> -       return i2c_smbus_read_i2c_block_data(chip->client,
-> >> +       return i2c_smbus_read_i2c_block_data_or_emulated(chip->client,
-> >>                                              (reg << bank_shift) | REG_ADDR_AI,
-> >>                                              NBANK(chip), val);  
-> > 
-> > Don't we have a counter part for writing?
-> > 
-> > Perhaps, it might be another option.
-> 
-> Again, I don't know if it's safe to assume that the i2c controllers can do this and would appreciate comments.
-> 
-> Thanks for your review!
+ a) with SCOPE_LOCAL_CPU filter on each boot time enabled
+    CPUs.
+ b) with SCOPE_SYSTEM filter only once after all boot time
+    enabled CPUs are active.
 
-I would be very cautious with
-i2c_smbus_read_i2c_block_data_or_emulated(). There are no official
-semantics attached to I2C transfers, each device can have its own
-idea of how it should react to a given transfer.
-i2c_smbus_read_i2c_block_data_or_emulated() was implemented with
-EEPROMs in mind and there is absolutely no guarantee that the
-"emulation" will do the right thing. Before calling it, you must check
-all the code paths in i2c_smbus_read_i2c_block_data_or_emulated() and
-ensure that all will do the right thing for your device.
+Cc: Dave Martin <dave.martin@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ arch/arm64/kernel/cpufeature.c | 33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
 
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 61d4c3cfb1cc..e1a56fa889a5 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -505,6 +505,7 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
+ 
+ extern const struct arm64_cpu_capabilities arm64_errata[];
+ static void update_cpu_errata_workarounds(void);
++static void update_cpu_local_features(void);
+ 
+ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+ {
+@@ -554,6 +555,7 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+ 	 * initialised the cpu feature infrastructure.
+ 	 */
+ 	update_cpu_errata_workarounds();
++	update_cpu_local_features();
+ }
+ 
+ static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
+@@ -1387,13 +1389,15 @@ static void verify_local_cpu_errata_workarounds(void)
+ static void update_cpu_errata_workarounds(void)
+ {
+ 	update_cpu_capabilities(arm64_errata,
+-				ARM64_CPUCAP_SCOPE_ALL,
++				ARM64_CPUCAP_SCOPE_LOCAL_CPU,
+ 				"enabling workaround for");
+ }
+ 
+-static void __init enable_errata_workarounds(void)
++static void update_cpu_local_features(void)
+ {
+-	enable_cpu_capabilities(arm64_errata, ARM64_CPUCAP_SCOPE_ALL);
++	update_cpu_capabilities(arm64_features,
++				ARM64_CPUCAP_SCOPE_LOCAL_CPU,
++				"detected feature:");
+ }
+ 
+ /*
+@@ -1430,23 +1434,34 @@ void check_local_cpu_capabilities(void)
+ 
+ 	/*
+ 	 * If we haven't finalised the system capabilities, this CPU gets
+-	 * a chance to update the errata work arounds.
++	 * a chance to update the errata work arounds and local CPU features.
+ 	 * Otherwise, this CPU should verify that it has all the system
+ 	 * advertised capabilities.
+ 	 */
+-	if (!sys_caps_initialised)
++	if (!sys_caps_initialised) {
+ 		update_cpu_errata_workarounds();
+-	else
++		update_cpu_local_features();
++	} else {
+ 		verify_local_cpu_capabilities();
++	}
+ }
+ 
+ static void __init setup_feature_capabilities(void)
+ {
+ 	update_cpu_capabilities(arm64_features,
+-				ARM64_CPUCAP_SCOPE_ALL, "detected feature:");
++				ARM64_CPUCAP_SCOPE_SYSTEM,
++				"detected feature:");
+ 	enable_cpu_capabilities(arm64_features, ARM64_CPUCAP_SCOPE_ALL);
+ }
+ 
++static void __init setup_errata_workarounds(void)
++{
++	update_cpu_capabilities(arm64_errata,
++				ARM64_CPUCAP_SCOPE_SYSTEM,
++				"enabling workaround for");
++	enable_cpu_capabilities(arm64_errata, ARM64_CPUCAP_SCOPE_ALL);
++}
++
+ DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
+ EXPORT_SYMBOL(arm64_const_caps_ready);
+ 
+@@ -1468,9 +1483,9 @@ void __init setup_cpu_features(void)
+ 	u32 cwg;
+ 	int cls;
+ 
+-	/* Set the CPU feature capabilies */
++	/* Finalise the CPU capabilities */
+ 	setup_feature_capabilities();
+-	enable_errata_workarounds();
++	setup_errata_workarounds();
+ 	mark_const_caps_ready();
+ 	setup_elf_hwcaps(arm64_elf_hwcaps);
+ 
 -- 
-Jean Delvare
-SUSE L3 Support
+2.14.3
