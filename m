@@ -1,104 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751796AbeBHBlO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Feb 2018 20:41:14 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:45872 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbeBHBlM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Feb 2018 20:41:12 -0500
-Subject: Re: [PATCH 2/6] nvme-pci: fix the freeze and quiesce for shutdown and
- reset case
-To: Keith Busch <keith.busch@intel.com>
-Cc: axboe@fb.com, linux-kernel@vger.kernel.org, hch@lst.de,
-        linux-nvme@lists.infradead.org, sagi@grimberg.me
-References: <1517554849-7802-1-git-send-email-jianchao.w.wang@oracle.com>
- <1517554849-7802-3-git-send-email-jianchao.w.wang@oracle.com>
- <20180202182413.GH24417@localhost.localdomain>
- <d93d115b-bdb1-24c0-71be-72f1b7563e5a@oracle.com>
- <20180205151314.GP24417@localhost.localdomain>
- <d218f5f5-45f7-6036-00a5-48769101080f@oracle.com>
- <20180206151335.GE31110@localhost.localdomain>
- <e1994613-3cb6-f82b-3296-0f4afdb16314@oracle.com>
- <c5ae0bc0-260e-3a72-5c47-304c0b5034a6@oracle.com>
- <20180207161345.GB1337@localhost.localdomain>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <1826ebc1-d419-23da-12d4-dd7b1b3fe598@oracle.com>
-Date: Thu, 8 Feb 2018 09:40:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752110AbeBHBlw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Feb 2018 20:41:52 -0500
+Received: from mga11.intel.com ([192.55.52.93]:58489 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751153AbeBHBlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Feb 2018 20:41:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,476,1511856000";
+   d="scan'208";a="28286809"
+Message-ID: <5A7BAB7D.7070805@intel.com>
+Date: Thu, 08 Feb 2018 09:44:29 +0800
+From: Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180207161345.GB1337@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com
+Subject: Re: [PATCH v27 3/4] mm/page_poison: expose page_poisoning_enabled
+ to kernel modules
+References: <1517986471-15185-1-git-send-email-wei.w.wang@intel.com> <1517986471-15185-4-git-send-email-wei.w.wang@intel.com> <20180207203004-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180207203004-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8798 signatures=668663
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802080013
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keith
+On 02/08/2018 02:34 AM, Michael S. Tsirkin wrote:
+> On Wed, Feb 07, 2018 at 02:54:30PM +0800, Wei Wang wrote:
+>> In some usages, e.g. virtio-balloon, a kernel module needs to know if
+>> page poisoning is in use. This patch exposes the page_poisoning_enabled
+>> function to kernel modules.
+>>
+>> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Michael S. Tsirkin <mst@redhat.com>
+>> ---
+>>   mm/page_poison.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/mm/page_poison.c b/mm/page_poison.c
+>> index e83fd44..c08d02a 100644
+>> --- a/mm/page_poison.c
+>> +++ b/mm/page_poison.c
+>> @@ -30,6 +30,11 @@ bool page_poisoning_enabled(void)
+>>   		debug_pagealloc_enabled()));
+>>   }
+>>   
+>> +/**
+>> + * page_poisoning_enabled - check if page poisoning is enabled
+>> + *
+>> + * Return true if page poisoning is enabled, or false if not.
+>> + */
+>>   static void poison_page(struct page *page)
+>>   {
+>>   	void *addr = kmap_atomic(page);
+>> @@ -37,6 +42,7 @@ static void poison_page(struct page *page)
+>>   	memset(addr, PAGE_POISON, PAGE_SIZE);
+>>   	kunmap_atomic(addr);
+>>   }
+>> +EXPORT_SYMBOL_GPL(page_poisoning_enabled);
+>>   
+>>   static void poison_pages(struct page *page, int n)
+>>   {
+> Looks like both the comment and the export are in the wrong place.
+
+Thanks. Will be more careful.
+
+> I'm a bit concerned that callers also in fact poke at the
+> PAGE_POISON - exporting that seems to be more of an accident
+> as it's only used without page_poisoning.c - it might be
+> better to have page_poisoning_enabled get u8 * and set it.
+>
+
+PAGE_POISON is a macro defined in the header, why would callers using it 
+be a concern?
+
+Do you suggest to have:
+
+bool page_poisoning_get(u8 *val)
+{
+     if (page_poisoning_enabled()) {
+         *val = PAGE_POISON;
+         return true;
+     }
+
+     return false;
+}
+EXPORT_SYMBOL_GPL(page_poisoning_get);
 
 
-Really thanks for your your precious time and kindly directive.
-That's really appreciated. :)
-
-On 02/08/2018 12:13 AM, Keith Busch wrote:
-> On Wed, Feb 07, 2018 at 10:13:51AM +0800, jianchao.wang wrote:
->> What's the difference ? Can you please point out.
->> I have shared my understanding below.
->> But actually, I don't get the point what's the difference you said.
-> 
-> It sounds like you have all the pieces. Just keep this in mind: we don't
-> want to fail IO if we can prevent it.
-> 
-Yes, absolutely.
-
-> A request is allocated from an hctx pool of tags. Once the request is
-> allocated, it is permently tied to that hctx because that's where its
-> tag came from. If that hctx becomes invalid, the request has to be ended
-> with an error, and we can't do anything about that[*].
-> 
-> Prior to a reset, we currently halt new requests from being allocated by
-> freezing the request queues. We unfreeze the queues after the new state
-> of the hctx's is established. This way all IO requests that were gating
-> on the unfreeze are guaranteed to enter into a valid context.
-> 
-> You are proposing to skip freeze on a reset. New requests will then be
-> allocated before we've established the hctx map. Any request allocated
-> will have to be terminated in failure if the hctx is no longer valid
-> once the reset completes.
-Yes, if any previous hctx doesn't come back, the requests on that hctx
-will be drained with BLK_STS_IOERR.
-__blk_mq_update_nr_hw_queues
-  -> blk_mq_freeze_queue
-    -> blk_freeze_queue
-      -> blk_mq_freeze_queue_wait 
-But the nvmeq's cq_vector is -1.
- 
-> Yes, it's entirely possible today a request allocated prior to the reset
-> may need to be terminated after the reset. There's nothing we can do
-> about those except end them in failure, but we can prevent new ones from
-> sharing the same fate. You are removing that prevention, and that's what
-> I am complaining about.
-
-Thanks again for your precious time to detail this.
-So I got what you concern about is that this patch doesn't freeze the queue for reset case
-any more. And there maybe new requests enter, which will be failed when the associated
-hctx doesn't come back during reset procedure. And this should be avoided.
-
-I will change this in next V3 version.
-
-
->  * Future consideration: we recently obtained a way to "steal" bios that
-> looks like it may be used to back out certain types of requests and let
-> the bio create a new one.
-> 
-Yeah, that will be a great idea to reduce the loss when hctx is gone.
-
-Sincerely
-Jianchao
+Best,
+Wei
