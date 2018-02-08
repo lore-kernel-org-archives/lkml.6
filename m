@@ -1,70 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeBHTEK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 14:04:10 -0500
-Received: from mail.efficios.com ([167.114.142.141]:40852 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeBHTEI (ORCPT
+        id S1752229AbeBHTIS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 14:08:18 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:63845 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751544AbeBHTIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 14:04:08 -0500
-Date: Thu, 8 Feb 2018 19:04:56 +0000 (UTC)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <989035723.18493.1518116696482.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180208185637.GB16314@arm.com>
-References: <20180206114048.6c8ced1c@canb.auug.org.au> <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com> <20180206135512.GB22740@arm.com> <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com> <20180206141118.GC22740@arm.com> <20180208070350.mxirhg32zljp2e4k@gmail.com> <20180208185637.GB16314@arm.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.141]
-X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
-Thread-Topic: linux-next: manual merge of the tip tree with Linus' tree
-Thread-Index: Pd48GZLaS4EM9B8eZq6y5lwvdnxSPA==
+        Thu, 8 Feb 2018 14:08:17 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+From: Chris Wilson <chris@chris-wilson.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Chris Wilson <chris@chris-wilson.co.uk>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] khungtaskd: Kick stuck processes
+Date: Thu,  8 Feb 2018 19:07:53 +0000
+Message-Id: <20180208190753.17690-1-chris@chris-wilson.co.uk>
+X-Mailer: git-send-email 2.16.1
+X-Originating-IP: 78.156.65.138
+X-Country: code=GB country="United Kingdom" ip=78.156.65.138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 8, 2018, at 1:56 PM, Will Deacon will.deacon@arm.com wrote:
+After spotting a stuck process, and having decided not to panic, give
+the task a kick to see if that helps it to recover (e.g. to paper over a
+missed wake up).
 
-> On Thu, Feb 08, 2018 at 08:03:50AM +0100, Ingo Molnar wrote:
->> 
->> * Will Deacon <will.deacon@arm.com> wrote:
->> 
->> > For the sake of avoiding the conflict, can we just drop it for now, please?
->> 
->> Yeah, so I resolved the conflict by merging the (already upstream) bits and
->> Linus
->> pulled that resolution. From now on the level of comments you want there is up
->> to
->> you! :-)
-> 
-> Haha, ok! Mathieu -- are you still planning to add something under
-> Documentation/? Regardless of my preference on comments, I think it would
-> be useful.
+References: https://bugs.freedesktop.org/show_bug.cgi?id=104009
+References: https://bugs.freedesktop.org/show_bug.cgi?id=104682
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ kernel/hung_task.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I submitted it as RFC a few days ago, and I'm still awaiting feedback:
-
-http://lkml.kernel.org/r/1517936413-19675-1-git-send-email-mathieu.desnoyers@efficios.com
-
-If you guys are OK with the approach, I can submit it again, this time without the RFC
-tag.
-
-Thanks,
-
-Mathieu
-
-> 
-> Will
-
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 751593ed7c0b..b32acb6bcc63 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -132,6 +132,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		trigger_all_cpu_backtrace();
+ 		panic("hung_task: blocked tasks");
+ 	}
++
++	wake_up_process(t);
+ }
+ 
+ /*
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.16.1
