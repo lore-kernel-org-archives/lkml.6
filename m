@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeBHSap (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:30:45 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48542 "EHLO
+        id S1752322AbeBHSa4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:30:56 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48612 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeBHSan (ORCPT
+        with ESMTP id S1752267AbeBHSaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:30:43 -0500
+        Thu, 8 Feb 2018 13:30:55 -0500
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Sebastian Reichel <sre@kernel.org>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -17,70 +17,70 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv2 0/8] omapdrm: DSI command mode panel support
-Date: Thu,  8 Feb 2018 19:30:27 +0100
-Message-Id: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv2 4/8] dt-bindings: panel: common: document orientation property
+Date: Thu,  8 Feb 2018 19:30:31 +0100
+Message-Id: <20180208183035.8461-5-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
+References: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Introduce new "orientation" property for describing in which
+orientation a panel has been mounted to the device. This can
+be used by the operating system to automatically rotate the
+display correctly.
 
-These are the remaining patches from my previous patchset to get
-Droid 4 (omap4) display working. The patches have been rebased to
-current master branch from Torvalds (581e400ff935). Since N950
-(omap3) is broken even with the workaround I moved it to the end,
-so that it can be skipped.
-
-Working on Droid 4:
- * Framebuffer Console, updated at 1Hz due to blinking cursor
- * kmstest (static image)
- * Display blanking
- * Xorg with omap and modesetting driver
- * No updates send when nothing needs to be sent
- * Orientation DRM property is attached to the DSI panel
-
-Known issues:
- * N950 (omap3) is broken. I have updated the omap3 fifo workaround,
-   but it's not enough to fix omap3.
- * N950 (and N9) has first and last few lines covered by plastic, so
-   we should expose a smaller screen
-
-Changes since PATCHv1:
- * Drop patches, that were queued by Tomi
- * Rebase to current master
- * Rework the omap3 workaround patch to only affect omap3
- * Add orientation DRM property support
-
--- Sebastian
-
-
-Sebastian Reichel (8):
-  drm/omap: add framedone interrupt support
-  drm/omap: add manual update detection helper
-  drm/omap: add support for manually updated displays
-  dt-bindings: panel: common: document orientation property
-  drm/omap: add support for orientation hints from display drivers
-  drm/omap: panel-dsi-cm: add orientation support
-  ARM: dts: omap4-droid4: Add LCD panel orientation property
-  drm/omap: plane: update fifo size on ovl setup
-
- .../bindings/display/panel/panel-common.txt        |  12 ++
- arch/arm/boot/dts/omap4-droid4-xt894.dts           |   3 +
- drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c    |  13 ++
- drivers/gpu/drm/omapdrm/dss/dispc.c                |  36 ++++-
- drivers/gpu/drm/omapdrm/dss/omapdss.h              |   2 +
- drivers/gpu/drm/omapdrm/omap_connector.c           |  18 ++-
- drivers/gpu/drm/omapdrm/omap_connector.h           |   1 +
- drivers/gpu/drm/omapdrm/omap_crtc.c                | 158 +++++++++++++++++++--
- drivers/gpu/drm/omapdrm/omap_crtc.h                |   2 +
- drivers/gpu/drm/omapdrm/omap_fb.c                  |  20 +++
- drivers/gpu/drm/omapdrm/omap_irq.c                 |  24 ++++
- drivers/gpu/drm/omapdrm/omap_irq.h                 |   1 +
- include/dt-bindings/display/common.h               |  14 ++
- 13 files changed, 294 insertions(+), 10 deletions(-)
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+---
+ .../devicetree/bindings/display/panel/panel-common.txt     | 12 ++++++++++++
+ include/dt-bindings/display/common.h                       | 14 ++++++++++++++
+ 2 files changed, 26 insertions(+)
  create mode 100644 include/dt-bindings/display/common.h
 
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.txt b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+index 557fa765adcb..c646b8908458 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
++++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+@@ -18,6 +18,18 @@ Descriptive Properties
+   physical area where images are displayed. These properties are expressed in
+   millimeters and rounded to the closest unit.
+ 
++- orientation: The orientation property specifies the panel orientation
++  in relation to the device's casing. The following values are possible:
++
++   * 0 = The top side of the panel matches the top side of the device's
++         casing.
++   * 1 = The top side of the panel matches the bottom side of the device's
++         casing. In other words the panel is mounted upside-down.
++   * 2 = The left side of the panel matches the top side of the device's
++         casing.
++   * 3 = The right side of the panel matches the top side of the device's
++         casing.
++
+ - label: The label property specifies a symbolic name for the panel as a
+   string suitable for use by humans. It typically contains a name inscribed on
+   the system (e.g. as an affixed label) or specified in the system's
+diff --git a/include/dt-bindings/display/common.h b/include/dt-bindings/display/common.h
+new file mode 100644
+index 000000000000..a864775445a0
+--- /dev/null
++++ b/include/dt-bindings/display/common.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides common constants for displays
++ */
++
++#ifndef _DT_BINDINGS_DISPLAY_COMMON_H
++#define _DT_BINDINGS_DISPLAY_COMMON_H
++
++#define PANEL_ORIENTATION_NORMAL 0
++#define PANEL_ORIENTATION_BOTTOM_UP 1
++#define PANEL_ORIENTATION_LEFT_UP 2
++#define PANEL_ORIENTATION_RIGHT_UP 3
++
++#endif
 -- 
 2.15.1
