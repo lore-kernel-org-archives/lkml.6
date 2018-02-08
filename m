@@ -1,60 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeBHXvD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 18:51:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38255 "EHLO mx2.suse.de"
+        id S1752054AbeBHXzB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 18:55:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750750AbeBHXvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 18:51:02 -0500
-Date: Fri, 9 Feb 2018 00:48:46 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>, Qu Wenruo <wqu@suse.com>
-Subject: Re: linux-next: build failure after merge of the btrfs-kdave tree
-Message-ID: <20180208234846.GF3003@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>, Qu Wenruo <wqu@suse.com>
-References: <20180209104057.0e999c19@canb.auug.org.au>
+        id S1750750AbeBHXzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 18:55:00 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F55204EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 8 Feb 2018 18:54:56 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: sztsian@gmail.com
+Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
+        linux-kernel@vger.kernel.org, zsun@redhat.com
+Subject: Re: [PATCH 2/2] trace-cmd: Change the way of getting python
+ ldflags.
+Message-ID: <20180208185456.55e6e712@gandalf.local.home>
+In-Reply-To: <20180204032014.6962-3-sztsian@gmail.com>
+References: <20180204032014.6962-1-sztsian@gmail.com>
+        <20180204032014.6962-3-sztsian@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209104057.0e999c19@canb.auug.org.au>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 10:40:57AM +1100, Stephen Rothwell wrote:
-> Hi David,
-> 
-> [Seems I somehow failed to actually send the following message a couple
-> of days ago, sorry.]
-> 
-> After merging the btrfs-kdave tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/btrfs/tree-checker.c:33:10: fatal error: hash.h: No such file or directory
->  #include "hash.h"
->           ^~~~~~~~
-> 
-> Caused by commit
-> 
->   8bd2a9b19fd7 ("btrfs: Remove custom crc32c init code")
-> 
-> interacting with commit
-> 
->   ad7b0368f33c ("btrfs: tree-checker: Add checker for dir item")
-> 
-> from Linus' tree.
-> 
-> It should have been fixed up in commit
-> 
->   99ca8d38ea90 ("Merge branch 'ext/nikbor/libcrc32c' into for-next-next-v4.16-20180206")
+On Sun,  4 Feb 2018 11:20:14 +0800
+sztsian@gmail.com wrote:
 
-Right, I had fixed it in my local branch but did not push the update,
-sorry.  Current for-next, top commit 993b08a92e32 builds fine.
+> From: Zamir SUN <sztsian@gmail.com>
+> 
+> Prior than this patch, Makefile detects python ldflags using a hardcoded
+> python command. It will cause problems if we are building against
+> python3 in the future when ldflags for python2 and python3 are
+> different. With this patch, python ldflags are detected by
+> corresponding python{,3}-config which will detect the right config for
+> python plugins.
+
+Thanks, applied.
+
+-- Steve
