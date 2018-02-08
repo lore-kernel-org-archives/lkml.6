@@ -1,64 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751562AbeBHH55 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 02:57:57 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:32925 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeBHH54 (ORCPT
+        id S1751014AbeBHICN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 03:02:13 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41616 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbeBHICL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 02:57:56 -0500
-X-Google-Smtp-Source: AH8x227bNCXaf2m6yERkoQcoT+54B2EsjqiM69klNd/Eh1brq6uxzYwd9NmWTbcouMkUpub75Myigw==
-Subject: Re: [PATCH] ACPI/IORT: Remove linker section for IORT entries again
-To: Jia He <hejianet@gmail.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <1517976694-2004-1-git-send-email-hejianet@gmail.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <39b1c62f-8784-e55a-3db0-5e7909031b65@linaro.org>
-Date: Thu, 8 Feb 2018 08:57:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1517976694-2004-1-git-send-email-hejianet@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 8 Feb 2018 03:02:11 -0500
+X-Google-Smtp-Source: AH8x227q+Q3T6cWP0lXQhhvf+YR7jbFmA2CA0o/f0Z2Sd5/4OKCVKKTcUAQ8MGQCgce40olzCYgvLw==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org,
+        andy.shevchenko@gmail.com
+Subject: [PATCH 1/2] dt-bindings: gpio: Add Spreadtrum EIC controller documentation
+Date: Thu,  8 Feb 2018 16:01:42 +0800
+Message-Id: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 05:11, Jia He wrote:
-> In commit 316ca8804ea8 ("ACPI/IORT: Remove linker section for IORT entries
-> probing"), iort entries was removed in vmlinux.lds.h. But in
-> commit 2fcc112af37f ("clocksource/drivers: Rename clksrc table to timer"),
-> this line was back incorrectly.
-> 
-> It does no harm except for adding some useless symbols, so fix it.
-> 
-> Signed-off-by: Jia He <hejianet@gmail.com>
+This patch adds the device tree bindings for the Spreadtrum EIC
+controller. The EIC can be recognized as one special type of GPIO,
+which can only be used as input.
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |   51 ++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
 
-> ---
->  include/asm-generic/vmlinux.lds.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> index 1ab0e52..58b1dab 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -589,7 +589,6 @@
->  	IRQCHIP_OF_MATCH_TABLE()					\
->  	ACPI_PROBE_TABLE(irqchip)					\
->  	ACPI_PROBE_TABLE(timer)						\
-> -	ACPI_PROBE_TABLE(iort)						\
->  	EARLYCON_TABLE()
->  
->  #define INIT_TEXT							\
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+new file mode 100644
+index 0000000..34f194f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+@@ -0,0 +1,51 @@
++Spreadtrum EIC controller bindings
++
++The EIC is the abbreviation of external interrupt controller, which
++is only can be used as input mode. The EIC controller includes 4
++sub-modules: EIC-Debounce, EIC-Latch, EIC-Async, EIC-Sync.
++
++The EIC-debounce sub-module provides up to 8 source input signal
++connection. A debounce machanism is used to capture input signal's
++stable status (ms grade) and a single-trigger mechanism is introduced
++into this sub-module to enhance the input event detection reliability.
++In addition, this sub-module's clock can be shut-off automatically to
++reduce power dissipation. The debounce range is from 1ms to 4s with
++the step of 1ms. If the input signal is shorter than 1ms, it will be
++omitted as this sub-module.
++
++The EIC-latch sub-module is used to latch some special input signal
++and send interrupts to MCU core, and it can provide up to 8 latch
++source input signal connection.
++
++The EIC-async sub-module uses 32k clock to capture short signal (us
++grade) to generate interrupt to MCU by level or edge trigger.
++
++The EIC-sync is similar with GPIO's input function.
++
++Required properties:
++- compatible: Should be one of the following:
++  "sprd,sc9860-eic-debounce",
++  "sprd,sc9860-eic-latch",
++  "sprd,sc9860-eic-async",
++  "sprd,sc9860-eic-sync",
++  "sprd,sc27xx-eic-debounce".
++- reg: Define the base and range of the I/O address space containing
++  the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++  the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++  to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	eic_debounce: eic@40210000 {
++		compatible = "sprd,sc9860-eic-debounce";
++		reg = <0 0x40210000 0 0x80>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++	};
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+1.7.9.5
