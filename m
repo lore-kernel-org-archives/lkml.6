@@ -1,62 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752409AbeBHUPA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:15:00 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:56270 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752368AbeBHUO7 (ORCPT
+        id S1752470AbeBHUQZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:16:25 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:48942 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeBHUQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:14:59 -0500
-X-Google-Smtp-Source: AH8x224SNSck6yY7IRM0EmUJbk3O5WoZEQiUWqge1oBYqFu/Wuu3PW3lmtbdrDcI8waVKjI1bXPT4A==
-Message-ID: <1518120895.2849.14.camel@arista.com>
-Subject: Re: [RFC PATCH 2/4] softirq: Per vector deferment to workqueue
-From: Dmitry Safonov <dima@arista.com>
-To: David Miller <davem@davemloft.net>, bigeasy@linutronix.de
-Cc: frederic@kernel.org, linux-kernel@vger.kernel.org,
-        alexander.levin@verizon.com, peterz@infradead.org,
-        mchehab@s-opensource.com, torvalds@linux-foundation.org,
-        hannes@stressinduktion.org, paulmck@linux.vnet.ibm.com,
-        wanpeng.li@hotmail.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        pabeni@redhat.com, rrendec@arista.com, mingo@kernel.org,
-        sgruszka@redhat.com, riel@redhat.com, edumazet@google.com
-Date: Thu, 08 Feb 2018 20:14:55 +0000
-In-Reply-To: <20180208.134506.1374787894560277876.davem@davemloft.net>
-References: <1516376774-24076-1-git-send-email-frederic@kernel.org>
-         <1516376774-24076-3-git-send-email-frederic@kernel.org>
-         <20180208174450.qjvjy752jf4ngt2g@breakpoint.cc>
-         <20180208.134506.1374787894560277876.davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+        Thu, 8 Feb 2018 15:16:23 -0500
+Date: Thu, 08 Feb 2018 15:16:21 -0500 (EST)
+Message-Id: <20180208.151621.581060088482890871.davem@davemloft.net>
+To: keescook@chromium.org
+Cc: syzbot+e2d6cfb305e9f3911dea@syzkaller.appspotmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ebiggers3@gmail.com, james.morse@arm.com, keun-o.park@darkmatter.ae,
+        labbott@redhat.com, linux-mm@kvack.org
+Subject: Re: [PATCH] net: Whitelist the skbuff_head_cache "cb" field
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180208014438.GA12186@beast>
+References: <20180208014438.GA12186@beast>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-08 at 13:45 -0500, David Miller wrote:
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Date: Thu, 8 Feb 2018 18:44:52 +0100
-> 
-> > May I instead suggest to stick to ksoftirqd? So you run in softirq
-> > context (after return from IRQ) and if takes too long, you offload
-> the
-> > vector to ksoftirqd instead. You may want to play with the metric
-> on
-> > which you decide when you want switch to ksoftirqd / account how
-> long a
-> > vector runs.
-> 
-> Having read over this stuff for the past few weeks this is how I feel
-> as well.  Just make ksofbitrq do what we want (only execute the
-> overloaded softirq vectors).
-> 
-> The more I look at the workqueue stuff, the more complications and
-> weird behavioral artifacts we are getting for questionable gain.
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 7 Feb 2018 17:44:38 -0800
 
-What about creating several ksoftirqd threads per-cpu?
-Like I did with boot parameter to specify how many threads and which
-softirqs to serve.
+> Most callers of put_cmsg() use a "sizeof(foo)" for the length argument.
+> Within put_cmsg(), a copy_to_user() call is made with a dynamic size, as a
+> result of the cmsg header calculations. This means that hardened usercopy
+> will examine the copy, even though it was technically a fixed size and
+> should be implicitly whitelisted. All the put_cmsg() calls being built
+> from values in skbuff_head_cache are coming out of the protocol-defined
+> "cb" field, so whitelist this field entirely instead of creating per-use
+> bounce buffers, for which there are concerns about performance.
+> 
+> Original report was:
+ ...
+> Reported-by: syzbot+e2d6cfb305e9f3911dea@syzkaller.appspotmail.com
+> Fixes: 6d07d1cd300f ("usercopy: Restrict non-usercopy caches to size 0")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> I tried the inlining, it was awful. Splitting put_cmsg() was awful. So,
+> instead, whitelist the "cb" field as the least bad option if bounce
+> buffers are unacceptable. Dave, do you want to take this through net, or
+> should I take it through the usercopy tree?
 
--- 
-Thanks,
-             Dmitry
+Thanks Kees, I'll take this through my 'net' tree.
