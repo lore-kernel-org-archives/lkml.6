@@ -1,121 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeBHJm7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 04:42:59 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46381 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752210AbeBHJm4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752230AbeBHJm4 (ORCPT <rfc822;w@1wt.eu>);
         Thu, 8 Feb 2018 04:42:56 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: lenb@kernel.org, andy.shevchenko@gmail.com, erik.schmauss@intel.com,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: Re: [PATCH v4] ACPI: Parse entire table as a term_list for Dell XPS 9570 and Precision M5530
-Date: Thu, 08 Feb 2018 10:41:12 +0100
-Message-ID: <2007331.yMPN9LMbQs@aspire.rjw.lan>
-In-Reply-To: <20180205051924.10186-1-kai.heng.feng@canonical.com>
-References: <20180205051924.10186-1-kai.heng.feng@canonical.com>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41323 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751738AbeBHJms (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 04:42:48 -0500
+X-Google-Smtp-Source: AH8x225SixWdz93+7XspWlt5TjMOXwkBzXQXxT6vLD+5wSf/KcWezi/jNNGHnZCeUsJyCQTRtifNcA==
+Subject: Re: [PATCH 0/4] lightnvm: base 2.0 implementation
+To: Javier Gonzalez <javier@cnexlabs.com>
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180205121505.27563-1-mb@lightnvm.io>
+ <DA4E2087-F1E8-4903-9B53-95CFECD6B868@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <8b50ed33-226a-760a-e888-51ff573b9557@lightnvm.io>
+Date: Thu, 8 Feb 2018 10:42:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <DA4E2087-F1E8-4903-9B53-95CFECD6B868@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, February 5, 2018 6:19:24 AM CET Kai-Heng Feng wrote:
-> The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
-> of box.
+On 02/08/2018 10:35 AM, Javier Gonzalez wrote:
+>> On 5 Feb 2018, at 13.15, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> Hi,
+>>
+>> A couple of patches for 2.0 support for the lightnvm subsystem. They
+>> form the basis for integrating 2.0 support.
+>>
+>> For the rest of the support, Javier has code that implements report
+>> chunk and sets up the LBA format data structure. He also has a bunch
+>> of patches that brings pblk up to speed.
+>>
+>> The first two patches is preparation for the 2.0 work. The third patch
+>> implements the 2.0 data structures, the geometry command, and exposes
+>> the sysfs attributes that comes with the 2.0 specification. Note that
+>> the attributes between 1.2 and 2.0 are different, and it is expected
+>> that user-space shall use the version sysfs attribute to know which
+>> attributes will be available.
+>>
+>> The last patch implements support for using the nvme namespace logical
+>> block and metadata fields and sync it with the internal lightnvm
+>> identify structures.
+>>
+>> -Matias
+>>
+>> Matias Bjørling (4):
+>>   lightnvm: make 1.2 data structures explicit
+>>   lightnvm: flatten nvm_id_group into nvm_id
+>>   lightnvm: add 2.0 geometry identification
+>>   nvme: lightnvm: add late setup of block size and metadata
+>>
+>> drivers/lightnvm/core.c      |  27 ++-
+>> drivers/nvme/host/core.c     |   2 +
+>> drivers/nvme/host/lightnvm.c | 508 ++++++++++++++++++++++++++++++++-----------
+>> drivers/nvme/host/nvme.h     |   2 +
+>> include/linux/lightnvm.h     |  64 +++---
+>> 5 files changed, 426 insertions(+), 177 deletions(-)
+>>
+>> --
+>> 2.11.0
 > 
-> The touchpad relies on its _INI method to update its _HID value from
-> XXXX0000 to SYNA2393.
-> Also, the _STA relies on value of I2CN to report correct status.
+> Thanks for posting these. I have started rebasing my patches on top of
+> the new geometry - it is a bit different of how I implemented it, but
+> I'll take care of it.
 > 
-> Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
-> correctly set up, and _INI can get run. The ACPI table in this machine
-> is designed to get parsed this way.
-> 
-> Also, change the quirk table to a more generic name.
-> 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198515
-> Cc: Mario Limonciello <mario.limonciello@dell.com>
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> v4: Remove unnecessary message for user.
-> 
-> v3: Put the function under right #ifdef, comment adjustment
-> 
-> v2: Andy's suggestion, merge to a single quirk table.
->  drivers/acpi/bus.c | 38 +++++++++++++++++++++++++++++++-------
->  1 file changed, 31 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-> index f87ed3be779a..11c6dda233d6 100644
-> --- a/drivers/acpi/bus.c
-> +++ b/drivers/acpi/bus.c
-> @@ -66,10 +66,37 @@ static int set_copy_dsdt(const struct dmi_system_id *id)
->  	return 0;
->  }
->  #endif
-> +static int set_gbl_term_list(const struct dmi_system_id *id)
-> +{
-> +	acpi_gbl_parse_table_as_term_list = 1;
-> +	return 0;
-> +}
->  
-> -static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
-> +static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
-> +	/*
-> +	 * Touchpad on Dell XPS 9570/Precision M5530 doesn't work under I2C
-> +	 * mode.
-> +	 * https://bugzilla.kernel.org/show_bug.cgi?id=198515
-> +	 */
-> +	{
-> +		.callback = set_gbl_term_list,
-> +		.ident = "Dell Precision M5530",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Precision M5530"),
-> +		},
-> +	},
-> +	{
-> +		.callback = set_gbl_term_list,
-> +		.ident = "Dell XPS 15 9570",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9570"),
-> +		},
-> +	},
->  	/*
->  	 * Invoke DSDT corruption work-around on all Toshiba Satellite.
-> +	 * DSDT will be copied to memory.
->  	 * https://bugzilla.kernel.org/show_bug.cgi?id=14679
->  	 */
->  	{
-> @@ -83,7 +110,7 @@ static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
->  	{}
->  };
->  #else
-> -static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
-> +static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
->  	{}
->  };
->  #endif
-> @@ -1019,11 +1046,8 @@ void __init acpi_early_init(void)
->  
->  	acpi_permanent_mmap = true;
->  
-> -	/*
-> -	 * If the machine falls into the DMI check table,
-> -	 * DSDT will be copied to memory
-> -	 */
-> -	dmi_check_system(dsdt_dmi_table);
-> +	/* Check machine-specific quirks */
-> +	dmi_check_system(acpi_quirks_dmi_table);
->  
->  	status = acpi_reallocate_root_table();
->  	if (ACPI_FAILURE(status)) {
+> I'll review as I go - some of the changes I have might make sense to
+> squash in your patches to keep a clean history...
 > 
 
-Applied, thanks!
+Thanks.
+
+> I'll add a couple of patches abstracting the geometry so that at core.c
+> level we only work with a single geometry structure. This is they way it
+> is done in the early patches I pointe you to before. Then it is patches
+> building bottom-up support for the new features in 2.0.
+> 
+
+Yep, I was expecting that. I skipped that part since it went into pblk 
+and you already had some patches for it.
+
+> Javier
+> 
