@@ -1,52 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeBHLZi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:25:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:33350 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751066AbeBHLZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:25:37 -0500
-Date: Thu, 8 Feb 2018 11:25:41 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        ard.biesheuvel@linaro.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com
-Subject: Re: [PATCH 00/16] kvm: arm64: Support for dynamic IPA size
-Message-ID: <20180208112540.GA17775@arm.com>
-References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180208111844.GN29286@cbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208111844.GN29286@cbox>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1752267AbeBHLap (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:30:45 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46266 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751014AbeBHLam (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:30:42 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>,
+        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: [PATCH v3 2/4] dt-bindings: pwm-backlight: add a num-interpolation-steps property.
+Date: Thu,  8 Feb 2018 12:30:30 +0100
+Message-Id: <20180208113032.27810-3-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180208113032.27810-1-enric.balletbo@collabora.com>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I can comment on one part here:
+The num-interpolated-steps property specifies the number of
+interpolated steps between each value of brightness-level table. This is
+useful for high resolution PWMs to not have to list out every possible
+value in the brightness-level array.
 
-On Thu, Feb 08, 2018 at 12:18:44PM +0100, Christoffer Dall wrote:
-> Wasn't this also the decision taken for IOMMU page table allocation, and
-> why was that the right approach for the IOMMU but not for KVM stage 2
-> page tables?  Is there room for reuse of the IOMMU page table allocation
-> logic in KVM as well?
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
+Changes since v2:
+- Add Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Changes since v1:
+- Add an example with a small but realistic curve. Suggested by Rob and
+  Daniel
 
-There were a few reasons we did this for IOMMU page tables:
+ .../bindings/leds/backlight/pwm-backlight.txt         | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-  * Ability to use different page size/VA bits/levels from the CPU
-  * Ability to support different page table formats (e.g. short descriptor)
-  * Ability to determine page table attributes at runtime
-  * Requirement to map/unmap in atomic context
-  * Ability to cope with non-coherent page table walkers
-  * Ability to create both stage-1 and stage-2 mappings
-  * Easier to hook in our own TLB invalidation routines
-  * Support for lockless concurrent map/unmap within confines of the DMA API
-    usage
-
-Will
+diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+index 310810906613..ce9b5746b774 100644
+--- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
++++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+@@ -21,6 +21,11 @@ Optional properties:
+                           and enabling the backlight using GPIO.
+   - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
+                       and setting PWM value to 0.
++  - num-interpolated-steps: Number of interpolated steps between each value
++                            of brightness-levels table. This way a high
++                            resolution pwm duty cycle can be used without
++                            having to list out every possible value in the
++                            brightness-level array.
+ 
+ [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+ [1]: Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -39,3 +44,17 @@ Example:
+ 		post-pwm-on-delay-ms = <10>;
+ 		pwm-off-delay-ms = <10>;
+ 	};
++
++Example using num-interpolation-steps:
++
++	backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm 0 5000000>;
++
++		brightness-levels = <0 2048 4096 8192 16384 65535>;
++		num-interpolated-steps = <2048>;
++		default-brightness-level = <4096>;
++
++		power-supply = <&vdd_bl_reg>;
++		enable-gpios = <&gpio 58 0>;
++	};
+-- 
+2.15.1
