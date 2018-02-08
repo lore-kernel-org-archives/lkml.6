@@ -1,56 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752091AbeBHNny (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:43:54 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:31460 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751878AbeBHNnw (ORCPT
+        id S1752100AbeBHNqC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:46:02 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33227 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeBHNqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:43:52 -0500
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <broonie@kernel.org>, <lgirdwood@gmail.com>
-CC: <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
-        <fabrice.gasnier@st.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] regulator: stm32-vrefbuf: fix check on ready flag
-Date: Thu, 8 Feb 2018 14:43:05 +0100
-Message-ID: <1518097385-7449-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 8 Feb 2018 08:46:00 -0500
+X-Google-Smtp-Source: AH8x225NbKqpQ0+/gGEGRchWbzBtEoqQV1oOm3aoAcgMZApGRL3NvfnPz6qXLU7mo/88n9yZRm6oyg==
+Date: Thu, 8 Feb 2018 14:45:57 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, Shanker Donthineni <shankerd@codeaurora.org>
+Subject: Re: [PATCH v1 02/16] irqchip: gicv3-its: Add helpers for handling
+ 52bit address
+Message-ID: <20180208134557.GQ29286@cbox>
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-3-suzuki.poulose@arm.com>
+ <20180207151023.GD29286@cbox>
+ <a9e37c29-3be0-8759-a8e3-3e0a273e151d@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-08_07:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9e37c29-3be0-8759-a8e3-3e0a273e151d@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stm32_vrefbuf_enable() wrongly checks VRR bit: 0 stands for not ready,
-1 for ready. It currently checks the opposite.
-This makes enable routine to exit immediately without waiting for ready
-flag.
+On Thu, Feb 08, 2018 at 11:20:02AM +0000, Suzuki K Poulose wrote:
+> On 07/02/18 15:10, Christoffer Dall wrote:
+> >Hi Suzuki,
+> >
+> >On Tue, Jan 09, 2018 at 07:03:57PM +0000, Suzuki K Poulose wrote:
+> >>Add helpers for encoding/decoding 52bit address in GICv3 ITS BASER
+> >>register. When ITS uses 64K page size, the 52bits of physical address
+> >>are encoded in BASER[47:12] as follows :
+> >>
+> >>  Bits[47:16] of the register => bits[47:16] of the physical address
+> >>  Bits[15:12] of the register => bits[51:48] of the physical address
+> >>                                 bits[15:0] of the physical address are 0.
+> >>
+> >>Also adds a mask for CBASER address. This will be used for adding 52bit
+> >>support for VGIC ITS. More importantly ignore the upper bits if 52bit
+> >>support is not enabled.
+> >>
+> >>Cc: Shanker Donthineni <shankerd@codeaurora.org>
+> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>---
+> 
+> 
+> >>+
+> >>+/*
+> >>+ * With 64K page size, the physical address can be upto 52bit and
+> >>+ * uses the following encoding in the GITS_BASER[47:12]:
+> >>+ *
+> >>+ * Bits[47:16] of the register => bits[47:16] of the base physical address.
+> >>+ * Bits[15:12] of the register => bits[51:48] of the base physical address.
+> >>+ *                                bits[15:0] of the base physical address are 0.
+> >>+ * Clear the upper bits if the kernel doesn't support 52bits.
+> >>+ */
+> >>+#define GITS_BASER_ADDR64K_LO_MASK	GENMASK_ULL(47, 16)
+> >>+#define GITS_BASER_ADDR64K_HI_SHIFT	12
+> >>+#define GITS_BASER_ADDR64K_HI_MOVE	(48 - GITS_BASER_ADDR64K_HI_SHIFT)
+> >>+#define GITS_BASER_ADDR64K_HI_MASK	(GITS_PA_HI_MASK << GITS_BASER_ADDR64K_HI_SHIFT)
+> >>+#define GITS_BASER_ADDR64K_TO_PHYS(x)					\
+> >>+	(((x) & GITS_BASER_ADDR64K_LO_MASK) | 				\
+> >>+	 (((x) & GITS_BASER_ADDR64K_HI_MASK) << GITS_BASER_ADDR64K_HI_MOVE))
+> >>+#define GITS_BASER_ADDR64K_FROM_PHYS(p)					\
+> >>+	(((p) & GITS_BASER_ADDR64K_LO_MASK) | 				\
+> >>+	 (((p) >> GITS_BASER_ADDR64K_HI_MOVE) & GITS_BASER_ADDR64K_HI_MASK))
+> >
+> >I don't understand why you need this masking logic embedded in these
+> >macros?  Isn't it strictly an error if anyone passes a physical address
+> >with any of bits [51:48] set to the ITS on a system that doesn't support
+> >52 bit PAs, and just silently masking off those bits could lead to some
+> >interesting cases.
+> 
+> What do you think is the best way to handle such cases ? May be I could add
+> some checks where we get those addresses and handle it before we use this
+> macro ?
+> 
 
-Fixes: 0cdbf481e927 ("regulator: Add support for stm32-vrefbuf")
+I don't think the conversion macros should try to hide programming
+errors.  I think we should limit the functionality in the macros to be
+simple bit masking and shifting.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- drivers/regulator/stm32-vrefbuf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Any validation and masking depending on 52 PA support in the kernel
+should be done in the context of the functionality, just like the ITS
+driver already does.
 
-diff --git a/drivers/regulator/stm32-vrefbuf.c b/drivers/regulator/stm32-vrefbuf.c
-index 72c8b3e..e0a9c44 100644
---- a/drivers/regulator/stm32-vrefbuf.c
-+++ b/drivers/regulator/stm32-vrefbuf.c
-@@ -51,7 +51,7 @@ static int stm32_vrefbuf_enable(struct regulator_dev *rdev)
- 	 * arbitrary timeout.
- 	 */
- 	ret = readl_poll_timeout(priv->base + STM32_VREFBUF_CSR, val,
--				 !(val & STM32_VRR), 650, 10000);
-+				 val & STM32_VRR, 650, 10000);
- 	if (ret) {
- 		dev_err(&rdev->dev, "stm32 vrefbuf timed out!\n");
- 		val = readl_relaxed(priv->base + STM32_VREFBUF_CSR);
--- 
-1.9.1
+> >
+> >This is also notably more difficult to read than the existing macro.
+> >
+> >If anything, I think it would be more useful to have
+> >GITS_BASER_TO_PHYS(x) and GITS_PHYS_TO_BASER(x) which takes into account
+> >CONFIG_ARM64_64K_PAGES.
+> 
+> I thought the 64K_PAGES is not kernel page size, but the page-size configured
+> by the "requester" for ITS. So, it doesn't really mean CONFIG_ARM64_64K_PAGES.
+
+You're right, I skimmed this logic too quickly.
+
+> But the other way around, we can't handle 52bit address unless CONFIG_ARM64_64K_PAGES
+> is selected. Also, if the guest uses a 4K page size and uses a 48 bit address,
+> we could potentially mask Bits[15:12] to 0, which is not nice.
+> 
+> So I still think we need to have a special macro for handling addresses with 64K
+> page size in ITS.
+> 
+I think it's easier to have the current GITS_BASER_PHYS_52_to_48 and
+have a corresponding GITS_BASER_PHYS_48_to_52, following Robin's
+observation.
+
+Any additional logic can be written directly in the C code to check
+consitency etc.
+
+Thanks,
+-Christoffer
