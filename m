@@ -1,93 +1,963 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751094AbeBHHjb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 02:39:31 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50066 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeBHHj3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 02:39:29 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180208073927euoutp0194e8a6f4775fdfc8d7ebfe6cd410efca~RSa9nKNTM1064310643euoutp01_
-X-AuditID: cbfec7f2-f793b6d000003243-42-5a7bfead477a
-Subject: Re: [PATCH v2] drm/bridge/synopsys: dsi: Add 1.31 version support
-To: Philippe Cornu <philippe.cornu@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
-        Heiko Stubner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc: Yannick Fertre <yannick.fertre@st.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-id: <bbe3ffeb-2e93-f36f-a8be-0319e16572e5@samsung.com>
-Date: Thu, 08 Feb 2018 08:39:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-MIME-version: 1.0
-In-reply-to: <20180206084251.303-1-philippe.cornu@st.com>
-Content-type: text/plain; charset="utf-8"
-Content-transfer-encoding: 7bit
-Content-language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXcuOw4nx2n5qpE18ENBmqziaCYVBSeR6ktUktnI44W8talo
-        Vi6vm6ampuHUUDSLDMUz0+ziPafOtGEKgjdKl5fWSlOsUNs8Bn77Pc/z/78P/4eXQERGzIkI
-        i4xhZJHScDEuQBu7fw8eqF1P9D9YG0BlD/TyqPppHaCSlUaMSu7ow6nFiVycYn+aMOrTsgmn
-        Nj4vYFRZ/h1KlVfFp9gvIxg19LrULJvaQKip1FmM6h9uQ6kMVRp+nKRLFHqUHsrJ5tHN6nE+
-        XaIsxuixkbc43bQyhdGTWVoeralKotfUrSjdNPIYoWdW3yH0Erv7vLW/wDuICQ+LY2TuPtcE
-        oeULM1h0GRrfqh/HFKASyQRWBCQPwWRWw+N4J/w4UYdnAgEhIp8AONz+B+OKJQCXu+vMKmLT
-        ocvzshhEZDWAhcabnMYAoLGlArMM7Ehf+K2tjG8Z2JPJKByZLkUsBUIqADSUFeEWFU7ug2ua
-        0U0Wkj5wuLho042SrnCAXeFbeAd5CVYUzgBOYwtXCyZQC1uRnrBYlbuZATG/M/srH+XYBWpe
-        GLf6DjAlbRS1LIZkHx/m6Lq2Qp+Cc91FW2wH57UNfI53QZWynccZsgDsa1EhXPEQwMH5oa0z
-        HYWdWj3GrbCB+Y2PEO4wQqhMF3ESGk7Ut6Acn4C1mhQ+d6T7ADb3lvAeABf1tkTqbSnU21Ko
-        t6UoB+hzYM/EyiNCGLnETS6NkMdGhrhdj4pggfkT6ta1i6/Aco9XByAJILYW/vBM9Bdh0jh5
-        QkQHgAQithee8TO3hEHShFuMLCpQFhvOyDuAM4GKHYTH/NMvi8gQaQxzg2GiGdn/KY+wclIA
-        4WR/keezVElhQicik5x2XDi7pGA9DDk1h9/71vQ2lZ6rGTPcdnW56hwTsOg3Gxivi4/dc9Gn
-        8sLJ8Ko36gJJQ1flPXDXxiU74Yh7xrytMDj7r0bygWd6yTr2qAq+pybVR3t7E2Bv1xxRPXvl
-        q7XdU6VuxqRV2tTou1kbNjhMjMpDpR77EZlc+g+GBP60gAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xa7pr/1VHGfS85rfoPXeSyWLjk9OM
-        Fk0db1ktmg6dYrP4dK+fzWLTx/esFle+vmez+P/oNavF3Em1Fp0Tl7BbbHp8jdXi8q45QGUP
-        /jNbPGh5wWpx5uoBFov2zlY2BwGP2Q0XWTwu9/UyeeycdZfdY3bHTFaPO9f2sHls//aA1eN+
-        93Emj81L6j3+ztrP4rH92jxmj6c/9jJ7fN4kF8ATxWWTkpqTWZZapG+XwJWx4PVT1oK5LBX7
-        L95lbWBczNzFyMEhIWAicXqiVRcjJ5ApJnHh3nq2LkYuDiGBJYwSnU2ToJxnjBKr/h1hBKkS
-        FvCSeHNgLjtIQkSghUVi79ObYFXMAk2MEle+7mKHaOljlPi2cz8zSAubgKbE380gVZwcvAJ2
-        EldnTmMFsVkEVCXObfrGDmKLCkRIdK6czwJRIyjxY/I9MJtTwFJiZmc/2K3MAuoSU6bkgoSZ
-        BeQlNq95ywxhi0s0t95kmcAoOAtJ9yyEjllIOmYh6VjAyLKKUSS1tDg3PbfYUK84Mbe4NC9d
-        Lzk/dxMjMGK3Hfu5eQfjpY3BhxgFOBiVeHg/WFZHCbEmlhVX5h5ilOBgVhLh9fQBCvGmJFZW
-        pRblxxeV5qQWH2KU5mBREuc9b1AZJSSQnliSmp2aWpBaBJNl4uCUamD0mt5R9IutIzzxYci5
-        O3uMTTwkPLgv/vsTm7568TPL3dku+V7qD1yXT5XLbhFssn5fHTHnYaqfnJRTgNPJgJfVslIq
-        h2/9nzxtUcjGUnn7J1UHAkXt5blMf+p9WzxjlsyUg7cy3yrm5Hp5bXjeobjCr397ud9DdWb9
-        ChGxdb7ZxZfj/wgt/6HEUpyRaKjFXFScCADfNIQ51AIAAA==
-X-CMS-MailID: 20180208073925eucas1p182e0fbcd5959c28f4d0eb08fd65bf0fe
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf
-X-RootMTR: 20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf
-References: <CGME20180206084357epcas1p32e11d1e3c84de7da9d5ba150ded77cdf@epcas1p3.samsung.com>
-        <20180206084251.303-1-philippe.cornu@st.com>
+        id S1750941AbeBHHsA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 02:48:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750793AbeBHHr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 02:47:58 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B32EA2173B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Thu, 8 Feb 2018 15:47:32 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        max.oss.09@gmail.com, marcel.ziswiler@toradex.com
+Subject: Re: [PATCH v2] ARM: dts: imx6ull: add Toradex Colibri iMX6ULL support
+Message-ID: <20180208074730.GF31910@dragon>
+References: <20180206164903.24913-1-stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180206164903.24913-1-stefan@agner.ch>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.02.2018 09:42, Philippe Cornu wrote:
-> Add support for the Synopsys DesignWare MIPI DSI version 1.31
-> Two registers need to be updated/added for supporting 1.31:
-> * PHY_TMR_CFG 0x9c (updated)
->   1.30 [31:24] phy_hs2lp_time
->        [23:16] phy_lp2hs_time
->        [14: 0] max_rd_time
->
->   1.31 [25:16] phy_hs2lp_time
->        [ 9: 0] phy_lp2hs_time
->
-> * PHY_TMR_RD_CFG 0xf4 (new)
->   1.31 [14: 0] max_rd_time
->
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-Queued to drm-misc-next.
---
-Regards
-Andrzej
+On Tue, Feb 06, 2018 at 05:49:03PM +0100, Stefan Agner wrote:
+> Add support for the Computer on Module Colibri iMX6ULL and its
+> Bluetooth/Wifi variant along with the development/evaluation carrier
+> board device trees. Follow the usual hierarchic include model,
+> maintaining shared configuration in imx6ull-colibri.dtsi and
+> imx6ull-colibri-eval-v3.dtsi respectively.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> This depends on the following patchsets work:
+> - https://lkml.org/lkml/2018/1/6/129 (applied)
+> - https://lkml.org/lkml/2018/1/10/998 (applied)
+> - https://www.spinics.net/lists/arm-kernel/msg632671.html (pending, required)
+> - https://lkml.org/lkml/2018/1/18/850 (only for highest CPU frequency)
+
+So the only dependency is the cpufreq change now.  So we have two
+options:
+
+1. Hold the patch until the cpufreq change appear on my tree.  That
+   will require us wait for another release cycle.
+
+2. Drop the highest CPU frequency, so that we can apply the patch right
+   away, and add that setpoint after dependant cpufreq change lands
+   mainline.
+
+Shawn
+
+> 
+> Changes in v2:
+> - Dropped new unnecessary lines
+> - Sorting pinctrl nodes alphabetically
+> - Switch RTC label/node name
+> - Use wakeup-source instead of enable-sdio-wakeup
+> - Followed renaming of mux mode name REF_CLK_32K to OSC32K_32K_OUT
+> - Use fixed ECC strenght/size
+> 
+>  arch/arm/boot/dts/Makefile                         |   4 +-
+>  arch/arm/boot/dts/imx6ull-colibri-eval-v3.dts      |  14 +
+>  arch/arm/boot/dts/imx6ull-colibri-eval-v3.dtsi     | 157 ++++++
+>  arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi     |  24 +
+>  arch/arm/boot/dts/imx6ull-colibri-wifi-eval-v3.dts |  14 +
+>  arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi        |  65 +++
+>  arch/arm/boot/dts/imx6ull-colibri.dtsi             | 554 +++++++++++++++++++++
+>  7 files changed, 831 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/imx6ull-colibri-eval-v3.dts
+>  create mode 100644 arch/arm/boot/dts/imx6ull-colibri-eval-v3.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ull-colibri-wifi-eval-v3.dts
+>  create mode 100644 arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ull-colibri.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 7fc7bcefc3a0..6411b3069e8d 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -525,7 +525,9 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
+>  	imx6ul-tx6ul-0010.dtb \
+>  	imx6ul-tx6ul-0011.dtb \
+>  	imx6ul-tx6ul-mainboard.dtb \
+> -	imx6ull-14x14-evk.dtb
+> +	imx6ull-14x14-evk.dtb \
+> +	imx6ull-colibri-eval-v3.dtb \
+> +	imx6ull-colibri-wifi-eval-v3.dtb
+>  dtb-$(CONFIG_SOC_IMX7D) += \
+>  	imx7d-cl-som-imx7.dtb \
+>  	imx7d-colibri-emmc-eval-v3.dtb \
+> diff --git a/arch/arm/boot/dts/imx6ull-colibri-eval-v3.dts b/arch/arm/boot/dts/imx6ull-colibri-eval-v3.dts
+> new file mode 100644
+> index 000000000000..08669a18349e
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ull-colibri-eval-v3.dts
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2018 Toradex AG
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "imx6ull-colibri-nonwifi.dtsi"
+> +#include "imx6ull-colibri-eval-v3.dtsi"
+> +
+> +/ {
+> +	model = "Toradex Colibri iMX6ULL 256MB on Colibri Evaluation Board V3";
+> +	compatible = "toradex,colibri-imx6ull-eval", "fsl,imx6ull";
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ull-colibri-eval-v3.dtsi b/arch/arm/boot/dts/imx6ull-colibri-eval-v3.dtsi
+> new file mode 100644
+> index 000000000000..006690ea98c0
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ull-colibri-eval-v3.dtsi
+> @@ -0,0 +1,157 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2017 Toradex AG
+> + */
+> +
+> +/ {
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	/* fixed crystal dedicated to mcp2515 */
+> +	clk16m: clk16m {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <16000000>;
+> +	};
+> +
+> +	panel: panel {
+> +		compatible = "edt,et057090dhu";
+> +		backlight = <&bl>;
+> +		power-supply = <&reg_3v3>;
+> +
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint = <&lcdif_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	reg_3v3: regulator-3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "3.3V";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	reg_5v0: regulator-5v0 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "5V";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +	};
+> +
+> +	reg_usbh_vbus: regulator-usbh-vbus {
+> +		compatible = "regulator-fixed";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_usbh_reg>;
+> +		regulator-name = "VCC_USB[1-4]";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		gpio = <&gpio1 2 GPIO_ACTIVE_LOW>;
+> +		vin-supply = <&reg_5v0>;
+> +	};
+> +};
+> +
+> +&adc1 {
+> +	status = "okay";
+> +};
+> +
+> +&bl {
+> +	brightness-levels = <0 4 8 16 32 64 128 255>;
+> +	default-brightness-level = <6>;
+> +	power-supply = <&reg_3v3>;
+> +	pwms = <&pwm4 0 5000000 1>;
+> +	status = "okay";
+> +};
+> +
+> +&ecspi1 {
+> +	status = "okay";
+> +
+> +	mcp2515: can@0 {
+> +		compatible = "microchip,mcp2515";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_can_int>;
+> +		reg = <0>;
+> +		clocks = <&clk16m>;
+> +		interrupt-parent = <&gpio2>;
+> +		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
+> +		spi-max-frequency = <10000000>;
+> +		vdd-supply = <&reg_3v3>;
+> +		xceiver-supply = <&reg_5v0>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&i2c1 {
+> +	status = "okay";
+> +
+> +	/* M41T0M6 real time clock on carrier board */
+> +	m41t0m6: rtc@68 {
+> +		compatible = "st,m41t0";
+> +		reg = <0x68>;
+> +	};
+> +};
+> +
+> +&lcdif {
+> +	status = "okay";
+> +
+> +	port {
+> +		lcdif_out: endpoint {
+> +			remote-endpoint = <&panel_in>;
+> +		};
+> +	};
+> +};
+> +
+> +/* PWM <A> */
+> +&pwm4 {
+> +	status = "okay";
+> +};
+> +
+> +/* PWM <B> */
+> +&pwm5 {
+> +	status = "okay";
+> +};
+> +
+> +/* PWM <C> */
+> +&pwm6 {
+> +	status = "okay";
+> +};
+> +
+> +/* PWM <D> */
+> +&pwm7 {
+> +	status = "okay";
+> +};
+> +
+> +&uart1 {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+> +
+> +&uart5 {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg2 {
+> +	vbus-supply = <&reg_usbh_vbus>;
+> +	status = "okay";
+> +};
+> +
+> +&usdhc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc1 &pinctrl_snvs_usdhc1_cd>;
+> +	no-1-8-v;
+> +	cd-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	wakeup-source;
+> +	keep-power-in-suspend;
+> +	vmmc-supply = <&reg_3v3>;
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi b/arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi
+> new file mode 100644
+> index 000000000000..4558618efc51
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi
+> @@ -0,0 +1,24 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2018 Toradex AG
+> + */
+> +
+> +#include "imx6ull-colibri.dtsi"
+> +
+> +/ {
+> +	memory {
+> +		reg = <0x80000000 0x10000000>;
+> +	};
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_gpio1 &pinctrl_gpio2 &pinctrl_gpio3
+> +		&pinctrl_gpio4 &pinctrl_gpio5 &pinctrl_gpio6>;
+> +};
+> +
+> +&iomuxc_snvs {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_snvs_gpio1 &pinctrl_snvs_gpio2 &pinctrl_snvs_gpio3>;
+> +};
+> +
+> diff --git a/arch/arm/boot/dts/imx6ull-colibri-wifi-eval-v3.dts b/arch/arm/boot/dts/imx6ull-colibri-wifi-eval-v3.dts
+> new file mode 100644
+> index 000000000000..df72ce1ae2cb
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ull-colibri-wifi-eval-v3.dts
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2018 Toradex AG
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "imx6ull-colibri-wifi.dtsi"
+> +#include "imx6ull-colibri-eval-v3.dtsi"
+> +
+> +/ {
+> +	model = "Toradex Colibri iMX6ULL 512MB on Colibri Evaluation Board V3";
+> +	compatible = "toradex,colibri-imx6ull-wifi-eval", "fsl,imx6ull";
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+> new file mode 100644
+> index 000000000000..f48291b7cbf0
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+> @@ -0,0 +1,65 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2018 Toradex AG
+> + */
+> +
+> +#include "imx6ull-colibri.dtsi"
+> +
+> +/ {
+> +	memory {
+> +		reg = <0x80000000 0x20000000>;
+> +	};
+> +
+> +	wifi_pwrseq: sdio-pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_snvs_wifi_pdn>;
+> +		reset-gpios = <&gpio5 11 GPIO_ACTIVE_LOW>;
+> +	};
+> +};
+> +
+> +&cpu0 {
+> +	clock-frequency = <792000000>;
+> +	operating-points = <
+> +		/* kHz	uV */
+> +		792000  1225000
+> +		528000	1175000
+> +		396000	1025000
+> +		198000	950000
+> +	>;
+> +	fsl,soc-operating-points = <
+> +		/* KHz	uV */
+> +		792000  1175000
+> +		528000	1175000
+> +		396000	1175000
+> +		198000	1175000
+> +	>;
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_gpio1 &pinctrl_gpio2 &pinctrl_gpio3
+> +		&pinctrl_gpio4 &pinctrl_gpio5>;
+> +
+> +};
+> +
+> +&iomuxc_snvs {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_snvs_gpio1 &pinctrl_snvs_gpio2>;
+> +};
+> +
+> +&usdhc2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc2>;
+> +	assigned-clocks = <&clks IMX6UL_CLK_USDHC2_SEL>, <&clks IMX6UL_CLK_USDHC2>;
+> +	assigned-clock-parents = <&clks IMX6UL_CLK_PLL2_PFD2>;
+> +	assigned-clock-rates = <0>, <198000000>;
+> +	cap-power-off-card;
+> +	keep-power-in-suspend;
+> +	mmc-pwrseq = <&wifi_pwrseq>;
+> +	no-1-8-v;
+> +	non-removable;
+> +	vmmc-supply = <&reg_module_3v3>;
+> +	wakeup-source;
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ull-colibri.dtsi b/arch/arm/boot/dts/imx6ull-colibri.dtsi
+> new file mode 100644
+> index 000000000000..b478b567fc5e
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ull-colibri.dtsi
+> @@ -0,0 +1,554 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2018 Toradex AG
+> + */
+> +
+> +#include "imx6ull.dtsi"
+> +
+> +/ {
+> +	aliases {
+> +		ethernet0 = &fec2;
+> +		ethernet1 = &fec1;
+> +	};
+> +
+> +	bl: backlight {
+> +		compatible = "pwm-backlight";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_gpio_bl_on>;
+> +		enable-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+> +		status = "disabled";
+> +	};
+> +
+> +	reg_module_3v3: regulator-module-3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-always-on;
+> +		regulator-name = "+V3.3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	reg_module_3v3_avdd: regulator-module-3v3-avdd {
+> +		compatible = "regulator-fixed";
+> +		regulator-always-on;
+> +		regulator-name = "+V3.3_AVDD_AUDIO";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	reg_sd1_vmmc: regulator-sd1-vmmc {
+> +		compatible = "regulator-gpio";
+> +		gpio = <&gpio5 9 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_snvs_reg_sd>;
+> +		regulator-always-on;
+> +		regulator-name = "+V3.3_1.8_SD";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		states = <1800000 0x1 3300000 0x0>;
+> +		vin-supply = <&reg_module_3v3>;
+> +	};
+> +};
+> +
+> +&adc1 {
+> +	num-channels = <10>;
+> +	vref-supply = <&reg_module_3v3_avdd>;
+> +};
+> +
+> +/* Colibri SPI */
+> +&ecspi1 {
+> +	cs-gpios = <&gpio3 26 GPIO_ACTIVE_HIGH>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_ecspi1 &pinctrl_ecspi1_cs>;
+> +};
+> +
+> +&fec2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_enet2>;
+> +	phy-mode = "rmii";
+> +	phy-handle = <&ethphy1>;
+> +	status = "okay";
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ethphy1: ethernet-phy@2 {
+> +			compatible = "ethernet-phy-ieee802.3-c22";
+> +			max-speed = <100>;
+> +			reg = <2>;
+> +		};
+> +	};
+> +};
+> +
+> +&gpmi {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_gpmi_nand>;
+> +	nand-on-flash-bbt;
+> +	nand-ecc-mode = "hw";
+> +	nand-ecc-strength = <8>;
+> +	nand-ecc-step-size = <512>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +	pinctrl-names = "default", "gpio";
+> +	pinctrl-0 = <&pinctrl_i2c1>;
+> +	pinctrl-1 = <&pinctrl_i2c1_gpio>;
+> +	sda-gpios = <&gpio1 29 GPIO_ACTIVE_LOW>;
+> +	scl-gpios = <&gpio1 28 GPIO_ACTIVE_LOW>;
+> +};
+> +
+> +&i2c2 {
+> +	pinctrl-names = "default", "gpio";
+> +	pinctrl-0 = <&pinctrl_i2c2>;
+> +	pinctrl-1 = <&pinctrl_i2c2_gpio>;
+> +	sda-gpios = <&gpio1 31 GPIO_ACTIVE_LOW>;
+> +	scl-gpios = <&gpio1 30 GPIO_ACTIVE_LOW>;
+> +	status = "okay";
+> +
+> +	ad7879@2c {
+> +		compatible = "adi,ad7879-1";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_snvs_ad7879_int>;
+> +		reg = <0x2c>;
+> +		interrupt-parent = <&gpio5>;
+> +		interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
+> +		touchscreen-max-pressure = <4096>;
+> +		adi,resistance-plate-x = <120>;
+> +		adi,first-conversion-delay = /bits/ 8 <3>;
+> +		adi,acquisition-time = /bits/ 8 <1>;
+> +		adi,median-filter-size = /bits/ 8 <2>;
+> +		adi,averaging = /bits/ 8 <1>;
+> +		adi,conversion-interval = /bits/ 8 <255>;
+> +	};
+> +};
+> +
+> +&lcdif {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_lcdif_dat
+> +		     &pinctrl_lcdif_ctrl>;
+> +};
+> +
+> +&pwm4 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm4>;
+> +	#pwm-cells = <3>;
+> +};
+> +
+> +&pwm5 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm5>;
+> +	#pwm-cells = <3>;
+> +};
+> +
+> +&pwm6 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm6>;
+> +	#pwm-cells = <3>;
+> +};
+> +
+> +&pwm7 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm7>;
+> +	#pwm-cells = <3>;
+> +};
+> +
+> +&sdma {
+> +	status = "okay";
+> +};
+> +
+> +&snvs_pwrkey {
+> +	status = "disabled";
+> +};
+> +
+> +&uart1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart1 &pinctrl_uart1_ctrl1>;
+> +	uart-has-rtscts;
+> +	fsl,dte-mode;
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart2>;
+> +	uart-has-rtscts;
+> +	fsl,dte-mode;
+> +};
+> +
+> +&uart5 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart5>;
+> +	fsl,dte-mode;
+> +};
+> +
+> +&usbotg1 {
+> +	dr_mode = "otg";
+> +	srp-disable;
+> +	hnp-disable;
+> +	adp-disable;
+> +};
+> +
+> +&usbotg2 {
+> +	dr_mode = "host";
+> +};
+> +
+> +&usdhc1 {
+> +	assigned-clocks = <&clks IMX6UL_CLK_USDHC1_SEL>, <&clks IMX6UL_CLK_USDHC1>;
+> +	assigned-clock-parents = <&clks IMX6UL_CLK_PLL2_PFD2>;
+> +	assigned-clock-rates = <0>, <198000000>;
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_can_int: canint-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET1_TX_DATA1__GPIO2_IO04	0X14 /* SODIMM 73 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_enet2: enet2-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO06__ENET2_MDIO	0x1b0b0
+> +			MX6UL_PAD_GPIO1_IO07__ENET2_MDC		0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x4001b031
+> +			MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN	0x1b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_ecspi1_cs: ecspi1-cs-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_DATA21__GPIO3_IO26	0x000a0
+> +		>;
+> +	};
+> +
+> +	pinctrl_ecspi1: ecspi1-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_DATA20__ECSPI1_SCLK	0x000a0
+> +			MX6UL_PAD_LCD_DATA22__ECSPI1_MOSI	0x000a0
+> +			MX6UL_PAD_LCD_DATA23__ECSPI1_MISO	0x100a0
+> +		>;
+> +	};
+> +
+> +	pinctrl_flexcan2: flexcan2-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET1_TX_DATA0__FLEXCAN2_RX	0x1b020
+> +			MX6UL_PAD_ENET1_RX_EN__FLEXCAN2_TX	0x1b020
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio_bl_on: gpio-bl-on-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_TMS__GPIO1_IO11		0x000a0
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio1: gpio1-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET1_RX_DATA0__GPIO2_IO00	0x74 /* SODIMM 55 */
+> +			MX6UL_PAD_ENET1_RX_DATA1__GPIO2_IO01	0x74 /* SODIMM 63 */
+> +			MX6UL_PAD_UART3_RX_DATA__GPIO1_IO25	0X14 /* SODIMM 77 */
+> +			MX6UL_PAD_JTAG_TCK__GPIO1_IO14		0x14 /* SODIMM 99 */
+> +			MX6UL_PAD_NAND_CE1_B__GPIO4_IO14	0x14 /* SODIMM 133 */
+> +			MX6UL_PAD_UART3_TX_DATA__GPIO1_IO24	0x14 /* SODIMM 135 */
+> +			MX6UL_PAD_UART3_CTS_B__GPIO1_IO26	0x14 /* SODIMM 100 */
+> +			MX6UL_PAD_JTAG_TRST_B__GPIO1_IO15	0x14 /* SODIMM 102 */
+> +			MX6UL_PAD_ENET1_RX_ER__GPIO2_IO07	0x14 /* SODIMM 104 */
+> +			MX6UL_PAD_UART3_RTS_B__GPIO1_IO27	0x14 /* SODIMM 186 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio2: gpio2-grp { /* Camera */
+> +		fsl,pins = <
+> +			MX6UL_PAD_CSI_DATA04__GPIO4_IO25	0x74 /* SODIMM 69 */
+> +			MX6UL_PAD_CSI_MCLK__GPIO4_IO17		0x14 /* SODIMM 75 */
+> +			MX6UL_PAD_CSI_DATA06__GPIO4_IO27	0x14 /* SODIMM 85 */
+> +			MX6UL_PAD_CSI_PIXCLK__GPIO4_IO18	0x14 /* SODIMM 96 */
+> +			MX6UL_PAD_CSI_DATA05__GPIO4_IO26	0x14 /* SODIMM 98 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio3: gpio3-grp { /* CAN2 */
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET1_RX_EN__GPIO2_IO02	0x14 /* SODIMM 178 */
+> +			MX6UL_PAD_ENET1_TX_DATA0__GPIO2_IO03	0x14 /* SODIMM 188 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio4: gpio4-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_CSI_DATA07__GPIO4_IO28	0x74 /* SODIMM 65 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio5: gpio5-grp { /* ATMEL MXT TOUCH */
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_MOD__GPIO1_IO10		0x74 /* SODIMM 106 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio6: gpio6-grp { /* Wifi pins */
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03	0x14 /* SODIMM 89 */
+> +			MX6UL_PAD_CSI_DATA02__GPIO4_IO23	0x14 /* SODIMM 79 */
+> +			MX6UL_PAD_CSI_VSYNC__GPIO4_IO19		0x14 /* SODIMM 81 */
+> +			MX6UL_PAD_CSI_DATA03__GPIO4_IO24	0x14 /* SODIMM 97 */
+> +			MX6UL_PAD_CSI_DATA00__GPIO4_IO21	0x14 /* SODIMM 101 */
+> +			MX6UL_PAD_CSI_DATA01__GPIO4_IO22	0x14 /* SODIMM 103 */
+> +			MX6UL_PAD_CSI_HSYNC__GPIO4_IO20		0x14 /* SODIMM 94 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpmi_nand: gpmi-nand-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00	0x100a9
+> +			MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01	0x100a9
+> +			MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02	0x100a9
+> +			MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03	0x100a9
+> +			MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04	0x100a9
+> +			MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05	0x100a9
+> +			MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06	0x100a9
+> +			MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07	0x100a9
+> +			MX6UL_PAD_NAND_CLE__RAWNAND_CLE		0x100a9
+> +			MX6UL_PAD_NAND_ALE__RAWNAND_ALE		0x100a9
+> +			MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B	0x100a9
+> +			MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B	0x100a9
+> +			MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B	0x100a9
+> +			MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B	0x100a9
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c1: i2c1-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART4_TX_DATA__I2C1_SCL 0x4001b8b0
+> +			MX6UL_PAD_UART4_RX_DATA__I2C1_SDA 0x4001b8b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c1_gpio: i2c1-gpio-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART4_TX_DATA__GPIO1_IO28 0x4001b8b0
+> +			MX6UL_PAD_UART4_RX_DATA__GPIO1_IO29 0x4001b8b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c2: i2c2-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART5_TX_DATA__I2C2_SCL 0x4001b8b0
+> +			MX6UL_PAD_UART5_RX_DATA__I2C2_SDA 0x4001b8b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c2_gpio: i2c2-gpio-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART5_TX_DATA__GPIO1_IO30 0x4001b8b0
+> +			MX6UL_PAD_UART5_RX_DATA__GPIO1_IO31 0x4001b8b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_lcdif_dat: lcdif-dat-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_DATA00__LCDIF_DATA00  0x00079
+> +			MX6UL_PAD_LCD_DATA01__LCDIF_DATA01  0x00079
+> +			MX6UL_PAD_LCD_DATA02__LCDIF_DATA02  0x00079
+> +			MX6UL_PAD_LCD_DATA03__LCDIF_DATA03  0x00079
+> +			MX6UL_PAD_LCD_DATA04__LCDIF_DATA04  0x00079
+> +			MX6UL_PAD_LCD_DATA05__LCDIF_DATA05  0x00079
+> +			MX6UL_PAD_LCD_DATA06__LCDIF_DATA06  0x00079
+> +			MX6UL_PAD_LCD_DATA07__LCDIF_DATA07  0x00079
+> +			MX6UL_PAD_LCD_DATA08__LCDIF_DATA08  0x00079
+> +			MX6UL_PAD_LCD_DATA09__LCDIF_DATA09  0x00079
+> +			MX6UL_PAD_LCD_DATA10__LCDIF_DATA10  0x00079
+> +			MX6UL_PAD_LCD_DATA11__LCDIF_DATA11  0x00079
+> +			MX6UL_PAD_LCD_DATA12__LCDIF_DATA12  0x00079
+> +			MX6UL_PAD_LCD_DATA13__LCDIF_DATA13  0x00079
+> +			MX6UL_PAD_LCD_DATA14__LCDIF_DATA14  0x00079
+> +			MX6UL_PAD_LCD_DATA15__LCDIF_DATA15  0x00079
+> +			MX6UL_PAD_LCD_DATA16__LCDIF_DATA16  0x00079
+> +			MX6UL_PAD_LCD_DATA17__LCDIF_DATA17  0x00079
+> +		>;
+> +	};
+> +
+> +	pinctrl_lcdif_ctrl: lcdif-ctrl-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_CLK__LCDIF_CLK	    0x00079
+> +			MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE  0x00079
+> +			MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC    0x00079
+> +			MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC    0x00079
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm4: pwm4-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_NAND_WP_B__PWM4_OUT	0x00079
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm5: pwm5-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_NAND_DQS__PWM5_OUT	0x00079
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm6: pwm6-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET1_TX_EN__PWM6_OUT	0x00079
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm7: pwm7-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET1_TX_CLK__PWM7_OUT	0x00079
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1: uart1-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART1_TX_DATA__UART1_DTE_RX	0x1b0b1
+> +			MX6UL_PAD_UART1_RX_DATA__UART1_DTE_TX	0x1b0b1
+> +			MX6UL_PAD_UART1_RTS_B__UART1_DTE_CTS	0x1b0b1
+> +			MX6UL_PAD_UART1_CTS_B__UART1_DTE_RTS	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1_ctrl1: uart1-ctrl1-grp { /* Additional DTR, DCD */
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_TDI__GPIO1_IO13		0x1b0b1 /* DCD */
+> +			MX6UL_PAD_LCD_DATA18__GPIO3_IO23	0x1b0b1 /* DSR */
+> +			MX6UL_PAD_JTAG_TDO__GPIO1_IO12		0x1b0b1 /* DTR */
+> +			MX6UL_PAD_LCD_DATA19__GPIO3_IO24        0x1b0b1 /* RI */
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2: uart2-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART2_TX_DATA__UART2_DTE_RX	0x1b0b1
+> +			MX6UL_PAD_UART2_RX_DATA__UART2_DTE_TX	0x1b0b1
+> +			MX6UL_PAD_UART2_CTS_B__UART2_DTE_RTS	0x1b0b1
+> +			MX6UL_PAD_UART2_RTS_B__UART2_DTE_CTS	0x1b0b1
+> +		>;
+> +	};
+> +	pinctrl_uart5: uart5-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO04__UART5_DTE_RX	0x1b0b1
+> +			MX6UL_PAD_GPIO1_IO05__UART5_DTE_TX	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usbh_reg: gpio-usbh-reg {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO02__GPIO1_IO02	0x1b0b1 /* SODIMM 129 USBH PEN */
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1: usdhc1-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x17059
+> +			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x10059
+> +			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x17059
+> +			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x17059
+> +			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x17059
+> +			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1_100mhz: usdhc1-100mhz-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x170b9
+> +			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x100b9
+> +			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x170b9
+> +			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x170b9
+> +			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x170b9
+> +			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x170b9
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1_200mhz: usdhc1-200mhz-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x170f9
+> +			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x100f9
+> +			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x170b9
+> +			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x170b9
+> +			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x170b9
+> +			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x170b9
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2: usdhc2-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_CSI_DATA00__USDHC2_DATA0	0x17059
+> +			MX6UL_PAD_CSI_DATA01__USDHC2_DATA1	0x17059
+> +			MX6UL_PAD_CSI_DATA02__USDHC2_DATA2	0x17059
+> +			MX6UL_PAD_CSI_DATA03__USDHC2_DATA3	0x17059
+> +			MX6UL_PAD_CSI_HSYNC__USDHC2_CMD		0x17059
+> +			MX6UL_PAD_CSI_VSYNC__USDHC2_CLK		0x17059
+> +
+> +			MX6UL_PAD_GPIO1_IO03__OSC32K_32K_OUT	0x14
+> +		>;
+> +	};
+> +};
+> +
+> +&iomuxc_snvs {
+> +	pinctrl_snvs_gpio1: snvs-gpio1-grp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER6__GPIO5_IO06	0x14 /* SODIMM 93 */
+> +			MX6ULL_PAD_SNVS_TAMPER3__GPIO5_IO03	0x14 /* SODIMM 95 */
+> +			MX6ULL_PAD_BOOT_MODE0__GPIO5_IO10	0x74 /* SODIMM 105 */
+> +			MX6ULL_PAD_SNVS_TAMPER5__GPIO5_IO05	0x14 /* SODIMM 131 USBH OC */
+> +			MX6ULL_PAD_SNVS_TAMPER8__GPIO5_IO08	0x74 /* SODIMM 138 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_gpio2: snvs-gpio2-grp { /* ATMEL MXT TOUCH */
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x74 /* SODIMM 107 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_gpio3: snvs-gpio3-grp { /* Wifi pins */
+> +		fsl,pins = <
+> +			MX6ULL_PAD_BOOT_MODE1__GPIO5_IO11	0x14 /* SODIMM 127 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_ad7879_int: snvs-ad7879-int-grp { /* TOUCH Interrupt */
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x1b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_reg_sd: snvs-reg-sd-grp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x4001b8b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_usbc_det: snvs-usbc-det-grp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x1b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_gpiokeys: snvs-gpiokeys-grp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x130b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_usdhc1_cd: snvs-usdhc1-cd-grp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER0__GPIO5_IO00	0x1b0b0 /* CD */
+> +		>;
+> +	};
+> +
+> +	pinctrl_snvs_wifi_pdn: snvs-wifi-pdn-grp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_BOOT_MODE1__GPIO5_IO11	0x14
+> +		>;
+> +	};
+> +};
+> +
+> -- 
+> 2.16.1
+> 
