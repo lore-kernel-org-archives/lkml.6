@@ -1,69 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752531AbeBHR7I (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:59:08 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:43995 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752465AbeBHR7C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:59:02 -0500
-X-UUID: 06c08d010b2a4fe0ba7142859d50567f-20180209
-From: <sean.wang@mediatek.com>
-To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH v4 5/5] dmaengine: mediatek: fix zalloc-simple.cocci warnings
-Date: Fri, 9 Feb 2018 01:58:51 +0800
-Message-ID: <ede5702c460a5b4b41186a8cff1e3c29b2380c08.1518110810.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1518110810.git.sean.wang@mediatek.com>
-References: <cover.1518110810.git.sean.wang@mediatek.com>
+        id S1752574AbeBHR7P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:59:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38360 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752555AbeBHR7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:59:12 -0500
+Subject: Re: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable
+ work around
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>, Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-18-suzuki.poulose@arm.com>
+ <20180207103942.GH5862@e103592.cambridge.arm.com>
+ <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
+ <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
+ <3b922643-ab97-e012-4268-c830b1bdaf10@arm.com>
+Message-ID: <77efc8b3-48c1-fbaf-ce11-15123755262a@arm.com>
+Date: Thu, 8 Feb 2018 17:59:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <3b922643-ab97-e012-4268-c830b1bdaf10@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fengguang Wu <fengguang.wu@intel.com>
+On 08/02/18 16:58, Suzuki K Poulose wrote:
+> On 08/02/18 12:26, Marc Zyngier wrote:
+>> On 08/02/18 12:19, Suzuki K Poulose wrote:
+>>> On 07/02/18 10:39, Dave Martin wrote:
+>>>> On Wed, Jan 31, 2018 at 06:28:04PM +0000, Suzuki K Poulose wrote:
+>>>>> We defend against branch predictor training based exploits by
+>>>>> taking specific actions (based on the CPU model) to invalidate
+>>>>> the Branch predictor buffer (BPB). This is implemented by per-CPU
+>>>>> ptr, which installs the specific actions for the CPU model.
+>>>>>
+>>>>> The core code can handle the following cases where:
+>>>>>    1) some CPUs doesn't need any work around
+>>>>>    2) a CPU can install the work around, when it is brought up,
+>>>>>       irrespective of how late that happens.
+>>>
+>>> With the recent patches from Marc to expose this information to KVM
+>>> guests, it looks like allowing a late CPU to turn this on is not going
+>>> to be a good idea. We unconditionally set the capability even
+>>> when we don't need the mitigation. So I am not really sure if
+>>> we should go ahead with this patch. I am open to suggestions
+>>>
+>>> Marc,
+>>>
+>>> What do you think ?
+>>
+>> By the time we bring in that CPU that requires some level of mitigation,
+>> we may be running a guest already, and we've told that guest that no
+>> mitigation was required. If we bring in that CPU, we break that promise,
+>> and the guest becomes vulnerable without knowing about it.
+>>
+>> The same thing is valid for userspace once we expose the status of the
+>> mitigation in /sys, just like x86 does. If we transition from not
+>> vulnerable to vulnerable (or even mitigated), we have lied to userspace.
+>>
+>> In either case, I don't think breaking this contract is acceptable.
+> 
+> Thanks Marc, I have dropped this patch from the series.
 
- Use zeroing allocator rather than allocator followed by memset with 0
+On a second thought, should we allow this if the KVM is not configured in ?
 
-Generated by: scripts/coccinelle/api/alloc/zalloc-simple.cocci
-
-Fixes: c8e4b2e4ca21 ("dmaengine: mediatek: Add MediaTek High-Speed DMA controller for MT7622 and MT7623 SoC")
-Cc: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/dma/mediatek/mtk-hsdma.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/dma/mediatek/mtk-hsdma.c b/drivers/dma/mediatek/mtk-hsdma.c
-index 42b5b23..d3b90fe 100644
---- a/drivers/dma/mediatek/mtk-hsdma.c
-+++ b/drivers/dma/mediatek/mtk-hsdma.c
-@@ -325,13 +325,11 @@ static int mtk_hsdma_alloc_pchan(struct mtk_hsdma_device *hsdma,
- 	 * and [MTK_DMA_SIZE ... 2 * MTK_DMA_SIZE - 1] is for RX ring.
- 	 */
- 	pc->sz_ring = 2 * MTK_DMA_SIZE * sizeof(*ring->txd);
--	ring->txd = dma_alloc_coherent(hsdma2dev(hsdma),
--				       pc->sz_ring, &ring->tphys,
--				       GFP_ATOMIC | __GFP_ZERO);
-+	ring->txd = dma_zalloc_coherent(hsdma2dev(hsdma), pc->sz_ring,
-+					&ring->tphys, GFP_ATOMIC);
- 	if (!ring->txd)
- 		return -ENOMEM;
- 
--	memset(ring->txd, 0, pc->sz_ring);
- 	ring->rxd = &ring->txd[MTK_DMA_SIZE];
- 	ring->rphys = ring->tphys + MTK_DMA_SIZE * sizeof(*ring->txd);
- 	ring->cur_tptr = 0;
--- 
-2.7.4
+Cheers
+Suzuki
