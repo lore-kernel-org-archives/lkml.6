@@ -1,110 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeBHRjH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:39:07 -0500
-Received: from 6.mo68.mail-out.ovh.net ([46.105.63.100]:42301 "EHLO
-        6.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751700AbeBHRjG (ORCPT
+        id S1752231AbeBHRje (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:39:34 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34728 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeBHRjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:39:06 -0500
-Subject: [PATCH] net/9p: avoid -ERESTARTSYS leak to userspace
-From: Greg Kurz <groug@kaod.org>
-To: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Date: Thu, 08 Feb 2018 18:38:49 +0100
-Message-ID: <151811152925.12219.16418114797025615002.stgit@bahia.lab.toulouse-stg.fr.ibm.com>
-User-Agent: StGit/0.17.1-46-g6855-dirty
+        Thu, 8 Feb 2018 12:39:33 -0500
+X-Google-Smtp-Source: AH8x224jurcnBAy37e5AfNoVqyTq5dZChny1iIX4jDIyT2UhoZhjBVD0LwCm8SRSG5ohwKKR3OD/O6lYmAGkEXSInFA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 10031486696758942086
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrudekgddutdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+In-Reply-To: <20180208094710.qnjixhm6hybebdv7@gmail.com>
+References: <20180207201517.6518-1-linux@dominikbrodowski.net>
+ <20180207201517.6518-7-linux@dominikbrodowski.net> <CA+55aFxZ-pyx88rwykT0Dzh-_bwGQcmc00GhrMQ4OEwXqMO+pA@mail.gmail.com>
+ <20180207212915.GA4633@isilmar-4.linta.de> <20180208094710.qnjixhm6hybebdv7@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 8 Feb 2018 09:39:31 -0800
+X-Google-Sender-Auth: Mi6_EJSEfmVOZ05DAlhmkRwY0uw
+Message-ID: <CA+55aFwWDfzgfiJNQCZkrOd8uUXp13TupPhNYrKSeeXMY-dr2g@mail.gmail.com>
+Subject: Re: [RFC v2 PATCH 6/7] x86/entry: get rid of ALLOC_PT_GPREGS_ON_STACK
+ and SAVE_AND_CLEAR_REGS
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If it was interrupted by a signal, the 9p client may need to send some
-more requests to the server for cleanup before returning to userspace.
+On Thu, Feb 8, 2018 at 1:47 AM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> So for those reasons I'm really tempted by the all around simplification offered
+> by this series:
+>
+>    2 files changed, 62 insertions(+), 160 deletions(-)
+>
+> Basically in this specific case I'd like to turn the argument around,
+> use this simpler design and put the burden of proof on the patches that
+> want to _complicate it_ beyond this simple, straightforward model
 
-To avoid such a last minute request to be interrupted right away, the
-client memorizes if a signal is pending, clear TIF_SIGPENDING, handle
-the request and call recalc_sigpending() before returning.
+You make a good argument.
 
-Unfortunately, if the transmission of this cleanup request fails for any
-reason, the transport returns an error and the client propagates it right
-away, without calling recalc_sigpending().
+If the only real downside is slightly bigger static footprint (but the
+actual real dynamic I$ footprint is not really impacted), then let's
+just go for the simpler code.
 
-This ends up with -ERESTARTSYS from the initially interrupted request
-crawling up to syscall exit, with TIF_SIGPENDING cleared by the cleanup
-request. The specific signal handling code, which is responsible for
-converting -ERESTARTSYS to -EINTR is not called, and userspace receives
-the confusing errno value:
+It really would be lovely if our entry asm was understandable to mere mortals.
 
-open: Unknown error 512 (512)
-
-This is really hard to hit in real life. I discovered the issue while
-working on hot-unplug of a virtio-9p-pci device with an instrumented
-QEMU allowing to control request completion.
-
-Both p9_client_zc_rpc() and p9_client_rpc() functions have this buggy
-error path actually. Their code flow is a bit obscure and the best
-thing to do would probably be a full rewrite: to really ensure this
-situation of clearing TIF_SIGPENDING and returning -ERESTARTSYS can
-never happen.
-
-But given the general lack of interest for the 9p code, I won't risk
-breaking more things. So this patch simply fix the buggy paths in both
-functions with a trivial label+goto.
-
-Thanks to Laurent Dufour for his help and suggestions on how to find
-the root cause and how to fix it.
-
-Signed-off-by: Greg Kurz <groug@kaod.org>
----
- net/9p/client.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 4c8cf9c1631a..5154eaf19fff 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -769,7 +769,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
- 	if (err < 0) {
- 		if (err != -ERESTARTSYS && err != -EFAULT)
- 			c->status = Disconnected;
--		goto reterr;
-+		goto recalc_sigpending;
- 	}
- again:
- 	/* Wait for the response */
-@@ -804,6 +804,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
- 		if (req->status == REQ_STATUS_RCVD)
- 			err = 0;
- 	}
-+recalc_sigpending:
- 	if (sigpending) {
- 		spin_lock_irqsave(&current->sighand->siglock, flags);
- 		recalc_sigpending();
-@@ -867,7 +868,7 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
- 		if (err == -EIO)
- 			c->status = Disconnected;
- 		if (err != -ERESTARTSYS)
--			goto reterr;
-+			goto recalc_sigpending;
- 	}
- 	if (req->status == REQ_STATUS_ERROR) {
- 		p9_debug(P9_DEBUG_ERROR, "req_status error %d\n", req->t_err);
-@@ -885,6 +886,7 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
- 		if (req->status == REQ_STATUS_RCVD)
- 			err = 0;
- 	}
-+recalc_sigpending:
- 	if (sigpending) {
- 		spin_lock_irqsave(&current->sighand->siglock, flags);
- 		recalc_sigpending();
+               Linus
