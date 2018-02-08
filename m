@@ -1,46 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752103AbeBHOtf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:49:35 -0500
-Received: from mga06.intel.com ([134.134.136.31]:65430 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750961AbeBHOtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:49:33 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,479,1511856000";
-   d="scan'208";a="16300267"
-Date: Thu, 8 Feb 2018 06:49:18 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Jan Kara <jack@suse.cz>
-Cc: syzbot <syzbot+283c3c447181741aea28@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, aryabinin@virtuozzo.com, jlayton@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mgorman@techsingularity.net, mingo@kernel.org, rgoldwyn@suse.com,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
-Subject: Re: INFO: task hung in sync_blockdev
-Message-ID: <20180208144918.GF10945@tassilo.jf.intel.com>
-References: <001a11447070ac6fcb0564a08cb1@google.com>
- <20180207155229.GC10945@tassilo.jf.intel.com>
- <20180208092839.ebe5rk6mtvkk5da4@quack2.suse.cz>
+        id S1751968AbeBHOv7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:51:59 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:36268 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeBHOv5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:51:57 -0500
+X-Google-Smtp-Source: AH8x227Sl2qpAblGTaa9alPqZ2EBZz4dZr43DTB1fcwvaiYiwWjkxUT/PWbFKxOYFo1ljtv9gC4Z64TNKJLtxTUbRdA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208092839.ebe5rk6mtvkk5da4@quack2.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <2e48794f-1ebb-6466-f4bf-aa409674bdaa@gmail.com>
+References: <1516875222-12293-1-git-send-email-baijiaju1990@gmail.com>
+ <1808276.ZJn2ZeULZY@aspire.rjw.lan> <151808479008.28809.166946118004484639@mail.alporthouse.com>
+ <1914141.qoxtLSqbUU@aspire.rjw.lan> <2e48794f-1ebb-6466-f4bf-aa409674bdaa@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 8 Feb 2018 15:51:56 +0100
+X-Google-Sender-Auth: wnSNlGunbG_i9yxsq3E-cW7S2p4
+Message-ID: <CAJZ5v0jUoSadyHiv5TpbLb+0pg8HzvK7GJprmODsOEAG1m=WuA@mail.gmail.com>
+Subject: Re: [PATCH] acpi: osl: Replace GFP_ATOMIC with GFP_KERNEL in acpi_os_execute
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Chris Wilson <chris@chris-wilson.co.uk>, Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > It seems multiple processes deadlocked on the bd_mutex. 
-> > Unfortunately there's no backtrace for the lock acquisitions,
-> > so it's hard to see the exact sequence.
-> 
-> Well, all in the report points to a situation where some IO was submitted
-> to the block device and never completed (more exactly it took longer than
-> those 120s to complete that IO). It would need more digging into the
+On Thu, Feb 8, 2018 at 2:41 PM, Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+>
+>
+> On 2018/2/8 18:20, Rafael J. Wysocki wrote:
+>>
+>> On Thursday, February 8, 2018 11:13:10 AM CET Chris Wilson wrote:
+>>>
+>>> Quoting Rafael J. Wysocki (2018-02-08 09:51:41)
+>>>>
+>>>> On Thursday, January 25, 2018 11:13:41 AM CET Jia-Ju Bai wrote:
+>>>>>
+>>>>> After checking all possible call chains to acpi_os_execute here,
+>>>>> my tool finds that acpi_os_execute is never called in atomic context.
+>>>>> And acpi_os_execute calls acpi_debugger_create_thread
+>>>>> which calls mutex_lock,
+>>>>> thus it proves again that acpi_os_execute can
+>>>>> call functions which may sleep.
+>>>>> Thus GFP_ATOMIC is not necessary, and it can be replaced with
+>>>>> GFP_KERNEL.
+>>>>>
+>>>>> This is found by a static analysis tool named DCNS written by myself.
+>>>>>
+>>>>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>>>>> ---
+>>>>>   drivers/acpi/osl.c |    2 +-
+>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+>>>>> index 3bb46cb..8ee605e 100644
+>>>>> --- a/drivers/acpi/osl.c
+>>>>> +++ b/drivers/acpi/osl.c
+>>>>> @@ -1066,7 +1066,7 @@ acpi_status acpi_os_execute(acpi_execute_type
+>>>>> type,
+>>>>>         * having a static work_struct.
+>>>>>         */
+>>>>>   -     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_ATOMIC);
+>>>>> +     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_KERNEL);
+>>>>>        if (!dpc)
+>>>>>                return AE_NO_MEMORY;
+>>>>>
+>>>>
+>>>> Applied, thanks!
+>>>
+>>> Hmm, not this patch per se, but
+>>>
+>>> https://intel-gfx-ci.01.org/tree/next/next-20180207/fi-bxt-dsi/dmesg0.log
+>>> [  111.378236] BUG: sleeping function called from invalid context at
+>>> mm/slab.h:420
+>>> [  111.378259] in_atomic(): 1, irqs_disabled(): 1, pid: 1701, name:
+>>> gem_exec_flush
+>>> [  111.378275] INFO: lockdep is turned off.
+>>> [  111.378277] irq event stamp: 0
+>>> [  111.378280] hardirqs last  enabled at (0): [<          (null)>]
+>>> (null)
+>>> [  111.378286] hardirqs last disabled at (0): [<00000000a01fa473>]
+>>> copy_process.part.7+0x2f1/0x1db0
+>>> [  111.378290] softirqs last  enabled at (0): [<00000000a01fa473>]
+>>> copy_process.part.7+0x2f1/0x1db0
+>>> [  111.378292] softirqs last disabled at (0): [<          (null)>]
+>>> (null)
+>>> [  111.378293] Preemption disabled at:
+>>> [  111.378298] [<ffffffffa18f14f6>] __mutex_lock+0x56/0x9b0
+>>> [  111.378311] CPU: 1 PID: 1701 Comm: gem_exec_flush Tainted: G     U  W
+>>> 4.15.0-next-20180207-g5d1c98967100-next-20180207 #1
+>>> [  111.378313] Hardware name: Intel Corp. Broxton P/Apollolake RVP1A,
+>>> BIOS APLKRVPA.X64.0150.B11.1608081044 08/08/2016
+>>> [  111.378314] Call Trace:
+>>> [  111.378318]  <IRQ>
+>>> [  111.378323]  dump_stack+0x5f/0x86
+>>> [  111.378328]  ___might_sleep+0x1d9/0x240
+>>> [  111.378334]  ? acpi_os_execute+0x2d/0x130
+>>> [  111.378338]  kmem_cache_alloc_trace+0x1ae/0x2b0
+>>> [  111.378344]  ? acpi_ev_asynch_enable_gpe+0x2d/0x2d
+>>> [  111.378347]  acpi_os_execute+0x2d/0x130
+>>> [  111.378351]  acpi_ev_gpe_dispatch+0xd7/0x120
+>>> [  111.378355]  acpi_ev_gpe_detect+0x156/0x195
+>>> [  111.378362]  acpi_ev_sci_xrupt_handler+0x16/0x28
+>>> [  111.378365]  acpi_irq+0xd/0x30
+>>> [  111.378369]  __handle_irq_event_percpu+0x3c/0x340
+>>> [  111.378374]  handle_irq_event_percpu+0x1b/0x50
+>>> [  111.378378]  handle_irq_event+0x2f/0x50
+>>> [  111.378381]  handle_fasteoi_irq+0x93/0x150
+>>> [  111.378386]  handle_irq+0x11/0x20
+>>> [  111.378390]  do_IRQ+0x5e/0x120
+>>> [  111.378395]  common_interrupt+0xbb/0xbb
+>>> [  111.378397]  </IRQ>
+>>>
+>>> does tell us that acpi_os_execute() is called in irq context.
+>>
+>> Well, right, thanks!
+>>
+>> I overlooked this instance, so dropping the patch.
+>
+>
+> Sorry for my false positive.
 
-Are you sure? I didn't think outstanding IO would take bd_mutex.
+No worries.
 
--Andi
+> My tool missed that acpi_ev_sci_xrupt_handler() is an interrupt handler, sorry.
+
+That just means that the tool is not perfect, which is nothing unusual. :-)
+
+I only would suggest double checking its findings before sending out
+patches next time.
