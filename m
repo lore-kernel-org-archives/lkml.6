@@ -1,103 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752222AbeBHKSX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:18:23 -0500
-Received: from LGEAMRELO12.lge.com ([156.147.23.52]:38177 "EHLO
-        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752155AbeBHKSU (ORCPT
+        id S1751269AbeBHKWY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:22:24 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61191 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeBHKWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:18:20 -0500
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: namhyung@kernel.org
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date: Thu, 8 Feb 2018 19:18:18 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
-Subject: Re: [PATCH 03/18] tracing: Add simple arguments to function based
- events
-Message-ID: <20180208101818.GA26290@sejong>
-References: <20180202230458.840252014@goodmis.org>
- <20180202231017.459764446@goodmis.org>
+        Thu, 8 Feb 2018 05:22:23 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Jia-Ju Bai <baijiaju1990@gmail.com>, lenb@kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] acpi: osl: Replace GFP_ATOMIC with GFP_KERNEL in acpi_os_execute
+Date: Thu, 08 Feb 2018 11:20:39 +0100
+Message-ID: <1914141.qoxtLSqbUU@aspire.rjw.lan>
+In-Reply-To: <151808479008.28809.166946118004484639@mail.alporthouse.com>
+References: <1516875222-12293-1-git-send-email-baijiaju1990@gmail.com> <1808276.ZJn2ZeULZY@aspire.rjw.lan> <151808479008.28809.166946118004484639@mail.alporthouse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180202231017.459764446@goodmis.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 06:05:01PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Thursday, February 8, 2018 11:13:10 AM CET Chris Wilson wrote:
+> Quoting Rafael J. Wysocki (2018-02-08 09:51:41)
+> > On Thursday, January 25, 2018 11:13:41 AM CET Jia-Ju Bai wrote:
+> > > After checking all possible call chains to acpi_os_execute here,
+> > > my tool finds that acpi_os_execute is never called in atomic context.
+> > > And acpi_os_execute calls acpi_debugger_create_thread 
+> > > which calls mutex_lock,
+> > > thus it proves again that acpi_os_execute can 
+> > > call functions which may sleep.
+> > > Thus GFP_ATOMIC is not necessary, and it can be replaced with GFP_KERNEL.
+> > > 
+> > > This is found by a static analysis tool named DCNS written by myself.
+> > > 
+> > > Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> > > ---
+> > >  drivers/acpi/osl.c |    2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+> > > index 3bb46cb..8ee605e 100644
+> > > --- a/drivers/acpi/osl.c
+> > > +++ b/drivers/acpi/osl.c
+> > > @@ -1066,7 +1066,7 @@ acpi_status acpi_os_execute(acpi_execute_type type,
+> > >        * having a static work_struct.
+> > >        */
+> > >  
+> > > -     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_ATOMIC);
+> > > +     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_KERNEL);
+> > >       if (!dpc)
+> > >               return AE_NO_MEMORY;
+> > >  
+> > > 
+> > 
+> > Applied, thanks!
 > 
-> The function based events can now have arguments passed in. A weak function
-> arch_get_func_args() is created so that archs can fill in the arguments
-> based on pt_regs. Currently no arch implements this function, so no
-> arguments are returned. Passing NULL for pt_regs into this function returns
-> the number of supported args that can be processed, and the format will
-> only allow the user to add valid args. Which currently are all arguments
-> until an arch implements the arg_get_func_args() function.
+> Hmm, not this patch per se, but 
 > 
-> [ missing 'static' found by Fengguang Wu's kbuild test robot ]
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
+> https://intel-gfx-ci.01.org/tree/next/next-20180207/fi-bxt-dsi/dmesg0.log
+> [  111.378236] BUG: sleeping function called from invalid context at mm/slab.h:420
+> [  111.378259] in_atomic(): 1, irqs_disabled(): 1, pid: 1701, name: gem_exec_flush
+> [  111.378275] INFO: lockdep is turned off.
+> [  111.378277] irq event stamp: 0
+> [  111.378280] hardirqs last  enabled at (0): [<          (null)>]           (null)
+> [  111.378286] hardirqs last disabled at (0): [<00000000a01fa473>] copy_process.part.7+0x2f1/0x1db0
+> [  111.378290] softirqs last  enabled at (0): [<00000000a01fa473>] copy_process.part.7+0x2f1/0x1db0
+> [  111.378292] softirqs last disabled at (0): [<          (null)>]           (null)
+> [  111.378293] Preemption disabled at:
+> [  111.378298] [<ffffffffa18f14f6>] __mutex_lock+0x56/0x9b0
+> [  111.378311] CPU: 1 PID: 1701 Comm: gem_exec_flush Tainted: G     U  W        4.15.0-next-20180207-g5d1c98967100-next-20180207 #1
+> [  111.378313] Hardware name: Intel Corp. Broxton P/Apollolake RVP1A, BIOS APLKRVPA.X64.0150.B11.1608081044 08/08/2016
+> [  111.378314] Call Trace:
+> [  111.378318]  <IRQ>
+> [  111.378323]  dump_stack+0x5f/0x86
+> [  111.378328]  ___might_sleep+0x1d9/0x240
+> [  111.378334]  ? acpi_os_execute+0x2d/0x130
+> [  111.378338]  kmem_cache_alloc_trace+0x1ae/0x2b0
+> [  111.378344]  ? acpi_ev_asynch_enable_gpe+0x2d/0x2d
+> [  111.378347]  acpi_os_execute+0x2d/0x130
+> [  111.378351]  acpi_ev_gpe_dispatch+0xd7/0x120
+> [  111.378355]  acpi_ev_gpe_detect+0x156/0x195
+> [  111.378362]  acpi_ev_sci_xrupt_handler+0x16/0x28
+> [  111.378365]  acpi_irq+0xd/0x30
+> [  111.378369]  __handle_irq_event_percpu+0x3c/0x340
+> [  111.378374]  handle_irq_event_percpu+0x1b/0x50
+> [  111.378378]  handle_irq_event+0x2f/0x50
+> [  111.378381]  handle_fasteoi_irq+0x93/0x150
+> [  111.378386]  handle_irq+0x11/0x20
+> [  111.378390]  do_IRQ+0x5e/0x120
+> [  111.378395]  common_interrupt+0xbb/0xbb
+> [  111.378397]  </IRQ>
+> 
+> does tell us that acpi_os_execute() is called in irq context.
 
-[SNIP]
-> @@ -129,9 +284,14 @@ static void func_event_trace(struct trace_event_file *trace_file,
->  	struct trace_event_call *call = &func_event->call;
->  	struct ring_buffer_event *event;
->  	struct ring_buffer *buffer;
-> +	struct func_arg *arg;
-> +	long args[func_event->arg_cnt];
-> +	long long val = 1;
->  	unsigned long irq_flags;
-> +	int nr_args;
->  	int size;
->  	int pc;
-> +	int i = 0;
->  
->  	if (trace_trigger_soft_disabled(trace_file))
->  		return;
-> @@ -139,7 +299,7 @@ static void func_event_trace(struct trace_event_file *trace_file,
->  	local_save_flags(irq_flags);
->  	pc = preempt_count();
->  
-> -	size = sizeof(*entry);
-> +	size = func_event->arg_offset + sizeof(*entry);
->  
->  	event = trace_event_buffer_lock_reserve(&buffer, trace_file,
->  						call->event.type,
-> @@ -150,6 +310,15 @@ static void func_event_trace(struct trace_event_file *trace_file,
->  	entry = ring_buffer_event_data(event);
->  	entry->ip = ip;
->  	entry->parent_ip = parent_ip;
-> +	nr_args = arch_get_func_args(pt_regs, 0, func_event->arg_cnt, args);
-> +
-> +	list_for_each_entry(arg, &func_event->args, list) {
-> +		if (i < nr_args)
-> +			val = args[i];
-> +		else
-> +			val = 0;
-> +		memcpy(&entry->data[arg->offset], &val, arg->size);
-> +	}
+Well, right, thanks!
 
-Where is the 'i' increased?
+I overlooked this instance, so dropping the patch.
 
 Thanks,
-Namhyung
+Rafael
