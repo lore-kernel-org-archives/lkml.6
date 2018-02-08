@@ -1,99 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751984AbeBHMYH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:24:07 -0500
-Received: from lucky1.263xmail.com ([211.157.147.130]:44530 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbeBHMYG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:24:06 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: andy.yan@rock-chips.com
-X-FST-TO: robh+dt@kernel.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: andy.yan@rock-chips.com
-X-UNIQUE-TAG: <7c028d2e0f72b760144530f71dd451f3>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Andy Yan <andy.yan@rock-chips.com>
-To: robh+dt@kernel.org, shawn.lin@rock-chips.com, heiko@sntech.de
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v8 3/3] ARM: dts: rockchip: enable sfc for rv1108 evb
-Date: Thu,  8 Feb 2018 20:20:33 +0800
-Message-Id: <1518092433-3893-1-git-send-email-andy.yan@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518091958-3672-1-git-send-email-andy.yan@rock-chips.com>
-References: <1518091958-3672-1-git-send-email-andy.yan@rock-chips.com>
+        id S1751671AbeBHM0j (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:26:39 -0500
+Received: from foss.arm.com ([217.140.101.70]:34358 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750876AbeBHM0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:26:38 -0500
+Subject: Re: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable
+ work around
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-18-suzuki.poulose@arm.com>
+ <20180207103942.GH5862@e103592.cambridge.arm.com>
+ <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
+Date: Thu, 8 Feb 2018 12:26:35 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the sfc support for rv1108 evaluation board.
+On 08/02/18 12:19, Suzuki K Poulose wrote:
+> On 07/02/18 10:39, Dave Martin wrote:
+>> On Wed, Jan 31, 2018 at 06:28:04PM +0000, Suzuki K Poulose wrote:
+>>> We defend against branch predictor training based exploits by
+>>> taking specific actions (based on the CPU model) to invalidate
+>>> the Branch predictor buffer (BPB). This is implemented by per-CPU
+>>> ptr, which installs the specific actions for the CPU model.
+>>>
+>>> The core code can handle the following cases where:
+>>>   1) some CPUs doesn't need any work around
+>>>   2) a CPU can install the work around, when it is brought up,
+>>>      irrespective of how late that happens.
+> 
+> With the recent patches from Marc to expose this information to KVM
+> guests, it looks like allowing a late CPU to turn this on is not going
+> to be a good idea. We unconditionally set the capability even
+> when we don't need the mitigation. So I am not really sure if
+> we should go ahead with this patch. I am open to suggestions
+> 
+> Marc,
+> 
+> What do you think ?
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
+By the time we bring in that CPU that requires some level of mitigation,
+we may be running a guest already, and we've told that guest that no
+mitigation was required. If we bring in that CPU, we break that promise,
+and the guest becomes vulnerable without knowing about it.
 
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+The same thing is valid for userspace once we expose the status of the
+mitigation in /sys, just like x86 does. If we transition from not
+vulnerable to vulnerable (or even mitigated), we have lied to userspace.
 
- arch/arm/boot/dts/rv1108-evb.dts | 10 ++++++++++
- arch/arm/boot/dts/rv1108.dtsi    | 13 +++++++++++++
- 2 files changed, 23 insertions(+)
+In either case, I don't think breaking this contract is acceptable.
 
-diff --git a/arch/arm/boot/dts/rv1108-evb.dts b/arch/arm/boot/dts/rv1108-evb.dts
-index ac27e11..5d0ebe3 100644
---- a/arch/arm/boot/dts/rv1108-evb.dts
-+++ b/arch/arm/boot/dts/rv1108-evb.dts
-@@ -239,6 +239,16 @@
- 	};
- };
- 
-+&sfc {
-+	status = "okay";
-+	spi-nor@0 {
-+		compatible = "jedec,spi-nor";
-+		spi-max-frequency = <100000000>;
-+		m25p,fast-read;
-+		reg = <0>;
-+	};
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index 76ea246..30435fc 100644
---- a/arch/arm/boot/dts/rv1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -554,6 +554,19 @@
- 		status = "disabled";
- 	};
- 
-+	sfc: sfc@301c0000 {
-+		compatible = "rockchip,rv1108-sfc", "rockchip,sfc";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&cru SCLK_SFC>, <&cru HCLK_SFC>;
-+		clock-names = "sfc", "hsfc";
-+		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+		reg = <0x301c0000 0x1000>;
-+		/* If you want to use PIO mode, activate this */
-+		/*rockchip,sfc-no-dma;*/
-+		status = "disabled";
-+	};
-+
- 	gic: interrupt-controller@32010000 {
- 		compatible = "arm,gic-400";
- 		interrupt-controller;
+Thanks,
+
+	M.
 -- 
-2.7.4
+Jazz is not dead. It just smells funny...
