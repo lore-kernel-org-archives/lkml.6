@@ -1,153 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBHKx5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:53:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32794 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752089AbeBHKx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:53:56 -0500
-Subject: Re: [PATCH v2 16/20] arm64: Handle shared capability entries
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-17-suzuki.poulose@arm.com>
- <20180207103934.GG5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <831ad839-3c68-fc1e-d578-f951b46ed6ed@arm.com>
-Date: Thu, 8 Feb 2018 10:53:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752056AbeBHK72 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:59:28 -0500
+Received: from LGEAMRELO13.lge.com ([156.147.23.53]:50750 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeBHK70 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 05:59:26 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Thu, 8 Feb 2018 19:59:24 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 09/18] tracing: Add indexing of arguments for function
+ based events
+Message-ID: <20180208105924.GB26290@sejong>
+References: <20180202230458.840252014@goodmis.org>
+ <20180202231018.338259949@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <20180207103934.GG5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180202231018.338259949@goodmis.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 10:39, Dave Martin wrote:
-> On Wed, Jan 31, 2018 at 06:28:03PM +0000, Suzuki K Poulose wrote:
->> Some capabilities have different criteria for detection and associated
->> actions based on the matching criteria, even though they all share the
->> same capability bit. So far we have used multiple entries with the same
->> capability bit to handle this. This is prone to errors, as the
->> cpu_enable is invoked for each entry, irrespective of whether the
->> detection rule applies to the CPU or not. And also this complicates
->> other helpers, e.g, __this_cpu_has_cap.
->>
->> This patch adds a wrapper entry to cover all the possible variations
->> of a capability and ensures :
->>   1) The capabilitiy is set when at least one of the entry detects
->>   2) Action is only taken for the entries that detects.
+On Fri, Feb 02, 2018 at 06:05:07PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> I guess this means that where we have a single cpu_enable() method
-> but complex match criteria that require multiple entries, then that
-> cpu_enable() method might get called multiple times on a given CPU.
-
-A CPU executes cpu_enable() only for the "matching" entries in the list,
-unlike earlier. So as long as there is a single entry "matching" the given
-CPU, the cpu_enable() will not be duplicated. May be we *should* mandate
-that a CPU cannot be matched by multiple entries.
-
+> Currently reading of 8 byte words can only happen 8 bytes aligned from the
+> argument. But there may be cases that they are 4 bytes aligned. To make the
+> capturing of arguments more flexible, add a plus '+' operator that can index
+> the variable at arbitrary indexes to get any location.
 > 
-> Could be worth a comment if cpu_enable() methods must be robust
-> against this.
+>  u64 arg+4[3]
 > 
->> This avoids explicit checks in the call backs. The only constraint
->> here is that, all the entries should have the same "type".
->>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/cpufeature.h |  1 +
->>   arch/arm64/kernel/cpu_errata.c      | 53 ++++++++++++++++++++++++++++++++-----
->>   arch/arm64/kernel/cpufeature.c      |  7 +++--
->>   3 files changed, 50 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->> index 462c35d1a38c..b73247c27f00 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -290,6 +290,7 @@ struct arm64_cpu_capabilities {
->>   			bool sign;
->>   			unsigned long hwcap;
->>   		};
->> +		const struct arm64_cpu_capabilities *cap_list;
+> Will get an 8 byte word at index 28 (3 * 8 + 4)
 > 
-> Should desc, capability, def_scope and/or cpu_enable match for every cap
-> in such a group?
-
-As mentioned above, the "type" field should match, which implies scope
-must match. The code ignores the scope, capability and desc of the individual
-entries in the list. They should be shared by the parent entry.
-
-cpu_enable could be duplicated as long as a CPU is not matched by multiple
-entries.
-
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  Documentation/trace/function-based-events.rst | 24 +++++++++++++++++++++++-
+>  kernel/trace/trace_event_ftrace.c             | 18 ++++++++++++++++++
+>  2 files changed, 41 insertions(+), 1 deletion(-)
 > 
-> I'd expected something maybe like this:
-> 
-> struct arm64_cpu_capabilities {
-> 	const char *desc;
-> 	u16 capability;
-> 	struct arm64_capability_match {
-> 		bool (*matches)(const struct arm64_cpu_capabilities *, int);
-> 		int (*cpu_enable)(void);
-> 		union {
-> 			struct { ... midr ... };
-> 			struct { ... sysreg ... };
-> 			const struct arm64_capability_match *list;
-> 		};
->>   	};
->>   };
+> diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
+> index 72e3e7730d63..bdb28f433bfb 100644
+> --- a/Documentation/trace/function-based-events.rst
+> +++ b/Documentation/trace/function-based-events.rst
+> @@ -100,10 +100,12 @@ as follows:
+>           'x8' | 'x16' | 'x32' | 'x64' |
+>           'char' | 'short' | 'int' | 'long' | 'size_t'
+>  
+> - FIELD := <name> | <name> INDEX
+> + FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX
+>  
+>   INDEX := '[' <number> ']'
+>  
+> + OFFSET := '+' <number>
+> +
+>   Where <name> is a unique string starting with an alphabetic character
+>   and consists only of letters and numbers and underscores.
+>  
+> @@ -221,3 +223,23 @@ format:
+>  print fmt: "%pS->%pS(skb=%u)", REC->__ip, REC->__parent_ip, REC->skb
+>  
+>  It is now printed with a "%u".
+> +
+> +
+> +Offsets
+> +=======
+> +
+> +After the name of the variable, brackets '[' number ']' will index the value of
+> +the argument by the number given times the size of the field.
+> +
+> + int field[5] will dereference the value of the argument 20 bytes away (4 * 5)
+> +  as sizeof(int) is 4.
+> +
+> +If there's a case where the type is of 8 bytes in size but is not 8 bytes
+> +alligned in the structure, an offset may be required.
+> +
+> +  For example: x64 param+4[2]
+> +
+> +The above will take the parameter value, add it by 4, then index it by two
+> +8 byte words. It's the same in C as: (u64 *)((void *)param + 4)[2]
+> +
+> + Note: "int skb[32]" is the same as "int skb+4[31]".
+> diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
+> index 9548b93eb8cd..4c23fa18453d 100644
+> --- a/kernel/trace/trace_event_ftrace.c
+> +++ b/kernel/trace/trace_event_ftrace.c
+> @@ -19,6 +19,7 @@ struct func_arg {
+>  	char				*type;
+>  	char				*name;
+>  	long				indirect;
+> +	long				index;
+>  	short				offset;
+>  	short				size;
+>  	s8				arg;
+> @@ -62,6 +63,7 @@ enum func_states {
+>  	FUNC_STATE_INDIRECT,
+>  	FUNC_STATE_UNSIGNED,
+>  	FUNC_STATE_PIPE,
+> +	FUNC_STATE_PLUS,
+>  	FUNC_STATE_TYPE,
+>  	FUNC_STATE_VAR,
+>  	FUNC_STATE_COMMA,
+> @@ -182,6 +184,7 @@ static char *next_token(char **ptr, char *last)
+>  		    *str == ']' ||
+>  		    *str == ',' ||
+>  		    *str == '|' ||
+> +		    *str == '+' ||
+>  		    *str == ')')
+>  			break;
+>  	}
+> @@ -323,6 +326,15 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+>  		}
+>  		break;
+>  
+> +	case FUNC_STATE_PLUS:
+> +		if (WARN_ON(!fevent->last_arg))
+> +			break;
+> +		ret = kstrtol(token, 0, &val);
+> +		if (ret)
+> +			break;
+> +		fevent->last_arg->index += val;
+> +		return FUNC_STATE_VAR;
+> +
+>  	case FUNC_STATE_VAR:
+>  		switch (token[0]) {
+>  		case ')':
+> @@ -331,6 +343,8 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+>  			return FUNC_STATE_COMMA;
+>  		case '|':
+>  			return FUNC_STATE_PIPE;
+> +		case '+':
+> +			return FUNC_STATE_PLUS;
+>  		case '[':
+>  			return FUNC_STATE_BRACKET;
+>  		}
+> @@ -347,6 +361,8 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
+>  	char buf[8];
+>  	int ret;
+>  
+> +	val += arg->index;
+> +
+>  	if (!arg->indirect)
+>  		return val;
 
-Yes, thats makes it more explicit. However, it makes the "matches()"
-complicated, as we have to change the prototype for matches to accept
-struct arm64_capability_match *, to point to the right "matches" for
-items in the list. And that makes a bit more of an invasive change, where
-each matches() would then loose a way to get to the "capabilities" entry,
-as they could be called with either the "match" in the top level or
-the one in the list.
+So this also works without the indirect, and just add the immediate to
+the value.
 
->>   		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index 65a8e5cc600c..13e30c1b1e99 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -1181,9 +1181,8 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
->>   		return false;
->>   
->>   	for (caps = cap_array; caps->matches; caps++)
->> -		if (caps->capability == cap &&
->> -		    caps->matches(caps, SCOPE_LOCAL_CPU))
->> -			return true;
->> +		if (caps->capability == cap)
->> +			return caps->matches(caps, SCOPE_LOCAL_CPU);
-> 
-> If we went for my capability { cap; match criteria or list; } approach,
-> would it still be necessary to iterate over the whole list here?
+Thanks,
+Namhyung
 
-Sorry, I couldn't follow this. With this patch, we already stop scanning
-the list as soon as we find the first entry. It is upto "the entry" to run
-individual match criteria to decide.
 
+>  
+> @@ -779,6 +795,8 @@ static int func_event_seq_show(struct seq_file *m, void *v)
+>  		last_arg = arg->arg;
+>  		comma = true;
+>  		seq_printf(m, "%s %s", arg->type, arg->name);
+> +		if (arg->index)
+> +			seq_printf(m, "+%ld", arg->index);
+>  		if (arg->indirect && arg->size)
+>  			seq_printf(m, "[%ld]",
+>  				   (arg->indirect ^ INDIRECT_FLAG) / arg->size);
+> -- 
+> 2.15.1
 > 
-> This seems preferable if this function is used by other paths that
-> don't expect it to be so costly.  Currently I only see a call in
-> arch/arm64/kvm/handle_exit.c:handle_exit_early() for the SError case --
-> which is probably not expected to be a fast path.
-uu>
-> [...]
 > 
-> Cheers
-> ---Dave
-> 
-
-Cheers
-Suzuki
