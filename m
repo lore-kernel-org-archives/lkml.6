@@ -1,49 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeBHSCK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:02:10 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:39730 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752426AbeBHSCH (ORCPT
+        id S1752751AbeBHSCn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:02:43 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:29009 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752433AbeBHR67 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:02:07 -0500
-X-Google-Smtp-Source: AH8x225uSkEKa9KA5lRCHjA8KYEJUwfNF1SSGB5briLe6O/njElcuAsP1zq2Vpbae+rZZKpRnGLHiA==
-Date: Thu, 8 Feb 2018 10:02:04 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Derek Basehore <dbasehore@chromium.org>
-Cc: linux-kernel@vger.kernel.org, Soby.Mathew@arm.com,
-        sudeep.holla@arm.com, devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        rafael.j.wysocki@intel.com, tglx@linutronix.de, marc.zyngier@arm.com
-Subject: Re: [PATCH v6 3/3] irqchip/gic-v3-its: add ability to resend MAPC on
- resume
-Message-ID: <20180208180203.GD106856@ban.mtv.corp.google.com>
-References: <20180208023648.89124-1-dbasehore@chromium.org>
- <20180208023648.89124-4-dbasehore@chromium.org>
+        Thu, 8 Feb 2018 12:58:59 -0500
+X-UUID: 7336b5bc5b3e49d7ba5d0837c69f1a5b-20180209
+From: <sean.wang@mediatek.com>
+To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v4 1/5] dt-bindings: dmaengine: Add MediaTek High-Speed DMA controller bindings
+Date: Fri, 9 Feb 2018 01:58:47 +0800
+Message-ID: <8e5bfa200cf28056741034c5b32c9b68e1974b5f.1518110810.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1518110810.git.sean.wang@mediatek.com>
+References: <cover.1518110810.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208023648.89124-4-dbasehore@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 06:36:48PM -0800, Derek Basehore wrote:
-> This adds functionality to resend the MAPC command to an ITS node on
-> resume. If the ITS is powered down during suspend and the collections
-> are not backed by memory, the ITS will lose that state. This just sets
-> up the known state for the collections after the ITS is restored.
-> 
-> This is enabled via the reset-on-suspend flag in the DTS. It only runs
-> for collections stored in the ITS itself.
-> 
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c   | 86 +++++++++++++++++++++-----------------
->  include/linux/irqchip/arm-gic-v3.h |  1 +
->  2 files changed, 49 insertions(+), 38 deletions(-)
+From: Sean Wang <sean.wang@mediatek.com>
 
-For the very little it's worth:
+Document the devicetree bindings for MediaTek High-Speed DMA controller
+which could be found on MT7623 SoC or other similar Mediatek SoCs.
 
-Reviewed-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ .../devicetree/bindings/dma/mtk-hsdma.txt          | 33 ++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/mtk-hsdma.txt
+
+diff --git a/Documentation/devicetree/bindings/dma/mtk-hsdma.txt b/Documentation/devicetree/bindings/dma/mtk-hsdma.txt
+new file mode 100644
+index 0000000..4bb31735
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/mtk-hsdma.txt
+@@ -0,0 +1,33 @@
++MediaTek High-Speed DMA Controller
++==================================
++
++This device follows the generic DMA bindings defined in dma/dma.txt.
++
++Required properties:
++
++- compatible:	Must be one of
++		  "mediatek,mt7622-hsdma": for MT7622 SoC
++		  "mediatek,mt7623-hsdma": for MT7623 SoC
++- reg:		Should contain the register's base address and length.
++- interrupts:	Should contain a reference to the interrupt used by this
++		device.
++- clocks:	Should be the clock specifiers corresponding to the entry in
++		clock-names property.
++- clock-names:	Should contain "hsdma" entries.
++- power-domains: Phandle to the power domain that the device is part of
++- #dma-cells: 	The length of the DMA specifier, must be <1>. This one cell
++		in dmas property of a client device represents the channel
++		number.
++Example:
++
++        hsdma: dma-controller@1b007000 {
++		compatible = "mediatek,mt7623-hsdma";
++		reg = <0 0x1b007000 0 0x1000>;
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&ethsys CLK_ETHSYS_HSDMA>;
++		clock-names = "hsdma";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
++		#dma-cells = <1>;
++	};
++
++DMA clients must use the format described in dma/dma.txt file.
+-- 
+2.7.4
