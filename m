@@ -1,87 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752306AbeBHRWR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:22:17 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37826 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751988AbeBHRWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:22:16 -0500
-Date: Thu, 8 Feb 2018 11:22:13 -0600
-From: Kim Phillips <kim.phillips@arm.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH] coresight replicator: set default y after Kconfig
- rename
-Message-Id: <20180208112213.2f466a1c09f942e8e158a168@arm.com>
-In-Reply-To: <CANLsYkwMUG9pwcMH9UdLWVqS9pzJCOFJa5Y0Y1NX0SqznUdx+w@mail.gmail.com>
-References: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
-        <CANLsYkwMUG9pwcMH9UdLWVqS9pzJCOFJa5Y0Y1NX0SqznUdx+w@mail.gmail.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752394AbeBHRWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:22:34 -0500
+Received: from foss.arm.com ([217.140.101.70]:37844 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752322AbeBHRWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:22:33 -0500
+Subject: Re: [PATCH v1 14/16] kvm: arm64: Switch to per VM IPA
+To: Christoffer Dall <christoffer.dall@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, Christoffer Dall <cdall@linaro.org>
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-15-suzuki.poulose@arm.com> <20180208110035.GG29286@cbox>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <94aae952-d6c0-0a69-955f-81885ddb2f06@arm.com>
+Date: Thu, 8 Feb 2018 17:22:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180208110035.GG29286@cbox>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Feb 2018 08:59:30 -0700
-Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-
-> On 7 February 2018 at 14:03, Kim Phillips <kim.phillips@arm.com> wrote:
-> > Commit 1c8859848dbb ("coresight replicator: Cleanup programmable
-> > replicator naming") changed the Kconfig symbol name from
-> > QCOM_REPLICATOR, which, whilst not in the single arm64 defconfig,
-> > was being set in my juno build script, which left the new symbol unset,
-> > causing the following unexpected grief:
-> >
-> >  # ./perf record -vvv -C 0 -e cs_etm/@20070000.etr/ --per-thread true
-> >  ..<snip>..
-> >  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
-> >  mmap size 528384B
-> >  AUX area mmap length 4194304
-> >  perf event ring buffer mmapped per cpu
-> >  failed to mmap AUX area
-> >  failed to mmap with 12 (Cannot allocate memory)
-> >
-> > Make it default y to help not surprise unsuspecting users.
-> >
-> > Fixes: 1c8859848dbb ("coresight replicator: Cleanup programmable replicator naming")
-> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> > ---
-> >  drivers/hwtracing/coresight/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> > index ef9cb3c164e1..b94bbd95efa6 100644
-> > --- a/drivers/hwtracing/coresight/Kconfig
-> > +++ b/drivers/hwtracing/coresight/Kconfig
-> > @@ -73,6 +73,7 @@ config CORESIGHT_SOURCE_ETM4X
-> >  config CORESIGHT_DYNAMIC_REPLICATOR
-> >         bool "CoreSight Programmable Replicator driver"
-> >         depends on CORESIGHT_LINKS_AND_SINKS
-> > +       default y
-> >         help
-> >           This enables support for dynamic CoreSight replicator link driver.
-> >           The programmable ATB replicator allows independent filtering of the
+On 08/02/18 11:00, Christoffer Dall wrote:
+> On Tue, Jan 09, 2018 at 07:04:09PM +0000, Suzuki K Poulose wrote:
+>> Now that we can manage the stage2 page table per VM, switch the
+>> configuration details to per VM instance. We keep track of the
+>> IPA bits, number of page table levels and the VTCR bits (which
+>> depends on the IPA and the number of levels).
+>>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <cdall@linaro.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   arch/arm/include/asm/kvm_mmu.h          |  1 +
+>>   arch/arm64/include/asm/kvm_host.h       | 12 ++++++++++++
+>>   arch/arm64/include/asm/kvm_mmu.h        | 22 ++++++++++++++++++++--
+>>   arch/arm64/include/asm/stage2_pgtable.h |  1 -
+>>   arch/arm64/kvm/hyp/switch.c             |  3 +--
+>>   virt/kvm/arm/arm.c                      |  2 +-
+>>   6 files changed, 35 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+>> index 440c80589453..dd592fe45660 100644
+>> --- a/arch/arm/include/asm/kvm_mmu.h
+>> +++ b/arch/arm/include/asm/kvm_mmu.h
+>> @@ -48,6 +48,7 @@
+>>   #define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
+>>   
+>>   #define stage2_pgd_size(kvm)	(PTRS_PER_S2_PGD * sizeof(pgd_t))
+>> +#define kvm_init_stage2_config(kvm)	do { } while (0)
+>>   int create_hyp_mappings(void *from, void *to, pgprot_t prot);
+>>   int create_hyp_io_mappings(void *from, void *to, phys_addr_t);
+>>   void free_hyp_pgds(void);
+>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+>> index 9a9ddeb33c84..1e66e5ab3dde 100644
+>> --- a/arch/arm64/include/asm/kvm_host.h
+>> +++ b/arch/arm64/include/asm/kvm_host.h
+>> @@ -64,6 +64,18 @@ struct kvm_arch {
+>>   	/* VTTBR value associated with above pgd and vmid */
+>>   	u64    vttbr;
+>>   
+>> +	/* Private bits of VTCR_EL2 for this VM */
+>> +	u64    vtcr_private;
 > 
-> As I said before don't see why it needs to be treated differently than other CS
-> blocks
+> As to my comments in the previous patch, why isn't this simply u64 vtcr;
 
-I don't think it does either, but this one is special since it recently
-underwent a rename, which breaks its users that were setting the old
-name in their config builds.  The default y keeps it set in those
-cases, thereby discontinuing any such regression.
+nit: I haven't received your response to the previous patch.
 
-> - intelligent replicators show up on the AMBA bus and need to
-> be declared in the DT.  As such people are expected to enable the proper
-> option.
+We could. I thought this gives a bit more clarity on what changes per-VM.
 
-The driver should only run given a replicator in the device tree; if
-that's not the case, then that's another problem, and orthogonal to
-this one.
-
-Kim
+Thanks
+Suzuki
