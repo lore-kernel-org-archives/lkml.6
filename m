@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752506AbeBHNzY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:55:24 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54290 "EHLO mx1.redhat.com"
+        id S1752523AbeBHNzi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:55:38 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35330 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751848AbeBHNzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:55:22 -0500
-Date: Thu, 8 Feb 2018 14:55:19 +0100
+        id S1751343AbeBHNzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:55:36 -0500
+Date: Thu, 8 Feb 2018 14:55:33 +0100
 From: Jiri Olsa <jolsa@redhat.com>
 To: John Garry <john.garry@huawei.com>
 Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
@@ -16,7 +16,7 @@ Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linuxarm@huawei.com, zhangshaokun@hisilicon.com,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
-Message-ID: <20180208135519.GH10234@krava>
+Message-ID: <20180208135533.GI10234@krava>
 References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
  <1517939104-230881-6-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
@@ -32,19 +32,33 @@ On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
 
 SNIP
 
->  	rc = nftw(ldirname, process_one_file, maxfds, 0);
->  	if (rc && verbose) {
->  		pr_info("%s: Error walking file tree %s\n", prog, ldirname);
-> -		goto empty_map;
-> +		goto free_standard_arch_events;
->  	} else if (rc < 0) {
->  		/* Make build fail */
->  		return 1;
-> -	} else if (rc) {
-> -		goto empty_map;
->  	}
+>  
+> +static int is_json_file(const char *name)
+> +{
+> +	const char *suffix;
+> +
+> +	if (strlen(name) < 5)
+> +		return 0;
+> +
+> +	suffix = name + strlen(name) - 5;
+> +
+> +	if (strncmp(suffix, ".json", 5) == 0)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+> +static int preprocess_arch_std_files(const char *fpath, const struct stat *sb,
+> +				int typeflag, struct FTW *ftwbuf)
+> +{
+> +	int level = ftwbuf->level;
+> +	int is_file = typeflag == FTW_F;
+> +
+> +	if (level == 1 && is_file && is_json_file(fpath))
+> +		return json_events(fpath, save_arch_std_events, (void *)sb);
 
-please put this change into separate patch
+so any .json file will pass.. just wondering you'd want to put
+some name restriction for recomended events file like this -recomended
+suffix you used later.. but that can be added later in case we'll
+need some other json files in here ;-)
 
-thanks,
 jirka
