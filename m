@@ -1,11 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752314AbeBHUmZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:42:25 -0500
-Received: from mout.web.de ([212.227.15.4]:44193 "EHLO mout.web.de"
+        id S1752403AbeBHUoB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:44:01 -0500
+Received: from mout.web.de ([212.227.15.14]:51147 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751700AbeBHUmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:42:23 -0500
+        id S1751700AbeBHUn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 15:43:59 -0500
+Subject: [PATCH 1/3] drm/amd/powerplay/hwmgr: Delete an error message for a
+ failed memory allocation in three functions
+From: SF Markus Elfring <elfring@users.sourceforge.net>
 To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         Alex Deucher <alexander.deucher@amd.com>,
         =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
@@ -16,55 +19,94 @@ To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         Junwei Zhang <Jerry.Zhang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
         Tom St Denis <tom.stdenis@amd.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/3] drm/amd/powerplay/hwmgr: Adjustments for eight function
- implementations
-Message-ID: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 21:42:06 +0100
+References: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
+Message-ID: <29e72072-809b-9e8c-8087-0daa9665430d@users.sourceforge.net>
+Date: Thu, 8 Feb 2018 21:43:45 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:03CvmUbQpXQrcn9QspyHZDB4p/ht2b7kwX1fBhOlNrj1u+H1fPM
- 1WRcLx2gwVfbvxibHMUW0rvqXIPVE5/PO8cBq+gt/2f4jqxz1Xx93bvNsfVQXB2rQUpPf9c
- KTlQW73zEpmBDJ96sIbQ1r853TdxzyGOEMP5de/47fUQQftS/he/wKGJbMrCoibYrg1riMh
- STjWUNHqttE1cJu3ubNtQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:XOttM7E6o60=:1rlSV4bmL/dNdOan0sY1Lm
- 0mGedLie54XUvehCJgIUIwBKn2LEoGSi+VYqEpfarRduHkp+3OyxEMvFl2nwyQg5RWATw6RMF
- 1SITXbGCjyqEKyXfuZMbERbwLMrzq69tPP8cPJDL0HoOx9mi0OV2rIX+jeRZsdFIppYcv+mg/
- 7M8jraid8BPH0w/lYXcoqRb4kSUI7WVBXPfWOf3gy/M9Yv5Hhq5p5x4viA6zuC/HJXRYv8Yoe
- AcuGjUcQbPV8QWGsa2hXXRPNnerlH4JNWi90Qm+EIx3YFQ/xNupAhBdSIU9ysy5+EvVtW7uwi
- 8frPbAE+VrcaRx5gsxd4E6jdadavDLk41EJqI6H1dDv0JZIQvArYheC9QP/ee2DucLkVJVAwZ
- hLTQStOaXA0kpDymKgDlnT0K0maGF5RZ6EL+uMraouwQWVWRGFlckEmje/p9TMtnxPR0oPAWQ
- PqudNZi8cSkaWkwFz8IIMoi0lm0aVmZs0etYP+esI+ai8ETTFNCek+zvcum+H8x7pWerXMRzn
- a7z4orMrXB/TC52KdO1CsjCTemInI325TO3Q75UN41Qk1Y+kNAV2oMk5mM2d5cZd5j/tZUA0Y
- 54aru31w2PEZ8ltBY9x93HCeXIl9ZcaXfCr0ddqRO7T7/crPVViTsSfX5LMc2JFuuctqTLOCP
- f6+u1bOm4wi2+USVfe83Yhej5mjKLQKELjQn27+TfxkEd6rzDqog2sdhXj7ZUnrSzUyFYGhQj
- 6LDidTTaoFz0S2eMcWvgNjmsG3JRv0JOCOef6PK+biWrWVSVPjDBuScAOUbOrMdK19Fy87h0O
- ICOJR3DotonX8gEv4wGm9lQXzzxa7hwAYeJtUBtJd+msabqBUE=
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:bsaTw6T5qyx0f44FctA2YX774LUYej5K0UvP5lPK7SnSK6vL1gO
+ ziZwAx6P7JEPD0wCkmzlxu9wiQqAZGWBV05jtX9Tk/pBwWhWjdV2Q0xWMK7LVV7aBrNtEVQ
+ Gu6SYVR2W0pO+CyC4rq1X7tLlOZbKQqjKwfCoKfofrOsEZO+jhL0QuwHWsoF7eEQ01U/xZJ
+ wRtUCcNd1i4+OTsQRRQXQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iOqXZYEc0Lg=:IXBTUchctKz0K9x/VBmxg7
+ cRaij2x+BAXXICLUn8zOVgRsB6Sy+1LWcGgQuvslXNrRYUgcQDaLBrZWuPYjSLK3zfsiSGAn9
+ 7W7K63fpYTyng+aJ0FbPKeOmCkggt1tyEuYjd/t8IkQ/Q5JBj3GJX8PEdgdVkJ2PfspQ13u4p
+ r1A2krbstI60Bmsrh0RlyW/j0Eq7PCtzT8BP9UjuP0HFihN8TajMmP9SI5pH4RB0lAiVz4jIq
+ E0A/yAFY/FSd0e4out+N3epdHSicSTXcPEGJHqjUFozfT9fEnl1Z3ikPOex6si3YIXv5niGnd
+ amNQwABLcwJ/sDICs6gvBZT58qCcFJcj+DqoJsowBPuSDTRUIKlhU386c2fWdWfp222n2JUWt
+ fijvGMkGHAIVg73OwiKRmoRme0bCw8Qf5VxswQ6UBcFakQkm1GVX+fBesJavSDx1WVJrabayj
+ ocyo9KGsJb5o5fmsWpea0zsMngBDYJ6UuoBe2SuC7j5z12e7eHeZqQIxQWOhUWmWbcFIqDGLF
+ eOJEnct82jsl9kFZ1euSfs7KXMtMgQNzMoZHabK9VhZRZrRzMzRWElRLdAobkcu1L7NzSLtPq
+ Nz8BFunPYDKRq+oEhWJxvzvCtF6scEXKZrAvyQ4ZLQ/ANaKKWqR9RZX9PvbL8hZhrHVUcNZGg
+ Mxpjf5ahyCGlWokUGq59ymNLJbd/OZt4ZQuGS+nV9/iPZuYupJf7p4DfMSROFlh+7rr3+kDD4
+ wuVrRelYCmBr67f+wS7J3qSuNoOdFOqdaSxujvllnJ90A9RPPiVh4bvc4TglgNSZ94h92yKE0
+ HiSLIbsozWGStOd4477MMJElYGSWOp5gZ8XsAaGPzKao9qEPxg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 21:37:42 +0100
+Date: Thu, 8 Feb 2018 20:32:39 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in these functions.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in three functions
-  Adjust layout for source code from five if statements
-  Delete an unnecessary return statement in three functions
+This issue was detected by using the Coccinelle software.
 
- drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c     | 37 ++++++++++------------
- drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c        | 35 +++++++++-----------
- drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c   |  5 +--
- drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c     |  4 +--
- drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c |  1 -
- 5 files changed, 35 insertions(+), 47 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c | 4 +---
+ drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c    | 1 -
+ drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c | 4 +---
+ 3 files changed, 2 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c
+index b314d09d41af..c0699b884894 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c
+@@ -286,10 +286,8 @@ static int cz_init_dynamic_state_adjustment_rule_settings(
+ 	struct phm_clock_voltage_dependency_table *table_clk_vlt =
+ 					kzalloc(table_size, GFP_KERNEL);
+ 
+-	if (NULL == table_clk_vlt) {
+-		pr_err("Can not allocate memory!\n");
++	if (!table_clk_vlt)
+ 		return -ENOMEM;
+-	}
+ 
+ 	table_clk_vlt->count = 8;
+ 	table_clk_vlt->entries[0].clk = PP_DAL_POWERLEVEL_0;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+index 0229f774f7a9..ded33ed03f11 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+@@ -815,7 +815,6 @@ int phm_initializa_dynamic_state_adjustment_rule_settings(struct pp_hwmgr *hwmgr
+ 	table_clk_vlt = kzalloc(table_size, GFP_KERNEL);
+ 
+ 	if (NULL == table_clk_vlt) {
+-		pr_err("Can not allocate space for vddc_dep_on_dal_pwrl! \n");
+ 		return -ENOMEM;
+ 	} else {
+ 		table_clk_vlt->count = 4;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c
+index 569073e3a5a1..967b93e56113 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c
+@@ -107,10 +107,8 @@ static int rv_init_dynamic_state_adjustment_rule_settings(
+ 	struct phm_clock_voltage_dependency_table *table_clk_vlt =
+ 					kzalloc(table_size, GFP_KERNEL);
+ 
+-	if (NULL == table_clk_vlt) {
+-		pr_err("Can not allocate memory!\n");
++	if (!table_clk_vlt)
+ 		return -ENOMEM;
+-	}
+ 
+ 	table_clk_vlt->count = 8;
+ 	table_clk_vlt->entries[0].clk = PP_DAL_POWERLEVEL_0;
 -- 
 2.16.1
