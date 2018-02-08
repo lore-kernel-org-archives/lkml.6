@@ -1,82 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeBHRWe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:22:34 -0500
-Received: from foss.arm.com ([217.140.101.70]:37844 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752322AbeBHRWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:22:33 -0500
-Subject: Re: [PATCH v1 14/16] kvm: arm64: Switch to per VM IPA
-To: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, Christoffer Dall <cdall@linaro.org>
-References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180109190414.4017-15-suzuki.poulose@arm.com> <20180208110035.GG29286@cbox>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <94aae952-d6c0-0a69-955f-81885ddb2f06@arm.com>
-Date: Thu, 8 Feb 2018 17:22:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180208110035.GG29286@cbox>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752484AbeBHR1m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:27:42 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44797 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752092AbeBHR1k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:27:40 -0500
+X-Google-Smtp-Source: AH8x226EeYa71KPJLqfqlRPMe2U/dL2iGAbK10BMVOEozLGHgs3n5nU2TNrZ7TCd7ehixuMg65Hadw==
+Date: Thu, 08 Feb 2018 09:27:38 -0800 (PST)
+X-Google-Original-Date: Thu, 08 Feb 2018 09:27:30 PST (-0800)
+Subject: Re: [PATCH v2 1/2] Add notrace to lib/ucmpdi2.c
+In-Reply-To: <20180130224202.7682-2-antonynpavlov@gmail.com>
+CC: linux-mips@linux-mips.org, jhogan@kernel.org, ralf@linux-mips.org,
+        linux-kernel@vger.kernel.org, matt.redfearn@mips.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: antonynpavlov@gmail.com
+Message-ID: <mhng-58c9bb50-e7d0-4b58-81ed-bf77161f9ec3@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 11:00, Christoffer Dall wrote:
-> On Tue, Jan 09, 2018 at 07:04:09PM +0000, Suzuki K Poulose wrote:
->> Now that we can manage the stage2 page table per VM, switch the
->> configuration details to per VM instance. We keep track of the
->> IPA bits, number of page table levels and the VTCR bits (which
->> depends on the IPA and the number of levels).
->>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm/include/asm/kvm_mmu.h          |  1 +
->>   arch/arm64/include/asm/kvm_host.h       | 12 ++++++++++++
->>   arch/arm64/include/asm/kvm_mmu.h        | 22 ++++++++++++++++++++--
->>   arch/arm64/include/asm/stage2_pgtable.h |  1 -
->>   arch/arm64/kvm/hyp/switch.c             |  3 +--
->>   virt/kvm/arm/arm.c                      |  2 +-
->>   6 files changed, 35 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
->> index 440c80589453..dd592fe45660 100644
->> --- a/arch/arm/include/asm/kvm_mmu.h
->> +++ b/arch/arm/include/asm/kvm_mmu.h
->> @@ -48,6 +48,7 @@
->>   #define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
->>   
->>   #define stage2_pgd_size(kvm)	(PTRS_PER_S2_PGD * sizeof(pgd_t))
->> +#define kvm_init_stage2_config(kvm)	do { } while (0)
->>   int create_hyp_mappings(void *from, void *to, pgprot_t prot);
->>   int create_hyp_io_mappings(void *from, void *to, phys_addr_t);
->>   void free_hyp_pgds(void);
->> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
->> index 9a9ddeb33c84..1e66e5ab3dde 100644
->> --- a/arch/arm64/include/asm/kvm_host.h
->> +++ b/arch/arm64/include/asm/kvm_host.h
->> @@ -64,6 +64,18 @@ struct kvm_arch {
->>   	/* VTTBR value associated with above pgd and vmid */
->>   	u64    vttbr;
->>   
->> +	/* Private bits of VTCR_EL2 for this VM */
->> +	u64    vtcr_private;
-> 
-> As to my comments in the previous patch, why isn't this simply u64 vtcr;
+On Tue, 30 Jan 2018 14:42:01 PST (-0800), antonynpavlov@gmail.com wrote:
+> From: Palmer Dabbelt <palmer@sifive.com>
+>
+> As part of the MIPS conversion to use the generic GCC library routines,
+> Matt Redfearn discovered that I'd missed a notrace on __ucmpdi2().  This
+> patch rectifies the problem.
+>
+> CC: Matt Redfearn <matt.redfearn@mips.com>
+> CC: Antony Pavlov <antonynpavlov@gmail.com>
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> ---
+>  lib/ucmpdi2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/ucmpdi2.c b/lib/ucmpdi2.c
+> index 25ca2d4c1e19..597998169a96 100644
+> --- a/lib/ucmpdi2.c
+> +++ b/lib/ucmpdi2.c
+> @@ -17,7 +17,7 @@
+>  #include <linux/module.h>
+>  #include <linux/libgcc.h>
+>
+> -word_type __ucmpdi2(unsigned long long a, unsigned long long b)
+> +word_type notrace __ucmpdi2(unsigned long long a, unsigned long long b)
+>  {
+>  	const DWunion au = {.ll = a};
+>  	const DWunion bu = {.ll = b};
 
-nit: I haven't received your response to the previous patch.
-
-We could. I thought this gives a bit more clarity on what changes per-VM.
-
-Thanks
-Suzuki
+Thanks for submitting this, I've gotten quite a bit behind due to FOSDEM.
