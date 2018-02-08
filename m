@@ -1,169 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeBHMBU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:01:20 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33828 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750853AbeBHMBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:01:19 -0500
-Date: Thu, 8 Feb 2018 12:01:14 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 16/20] arm64: Handle shared capability entries
-Message-ID: <20180208120114.GX5862@e103592.cambridge.arm.com>
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-17-suzuki.poulose@arm.com>
- <20180207103934.GG5862@e103592.cambridge.arm.com>
- <831ad839-3c68-fc1e-d578-f951b46ed6ed@arm.com>
+        id S1752391AbeBHMCD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:02:03 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:50661 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752258AbeBHMCB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:02:01 -0500
+Subject: Re: [PATCH v8 0/7] TDA1997x HDMI video reciver
+From: Hans Verkuil <hverkuil@xs4all.nl>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Tim Harvey <tharvey@gateworks.com>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+ <c7771c44-a9ff-0207-38f6-28bcc06ccdee@xs4all.nl>
+ <CAJ+vNU1oiM0Y0rO-DHi57nVOqnw60A7pn_1=h5b46-BrY7_p2Q@mail.gmail.com>
+ <605fd4a8-43ab-c566-57b6-abb1c9f8f0f8@xs4all.nl>
+ <7cf38465-7a79-5d81-a995-9acfbacf5023@xs4all.nl>
+ <CAJ+vNU014FJZsb44YnidE3fFiqeB6o8A7kvGinJWu7=yq3_dhA@mail.gmail.com>
+ <d188a172-fc00-eb46-c6f5-833a86475390@xs4all.nl>
+ <1518086816.4359.4.camel@pengutronix.de>
+ <3b95357c-e44f-eed9-efd3-e2b0e4ff9eb2@xs4all.nl>
+Message-ID: <e13db87e-761a-b0e5-3802-348c9776674a@xs4all.nl>
+Date: Thu, 8 Feb 2018 13:01:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <831ad839-3c68-fc1e-d578-f951b46ed6ed@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <3b95357c-e44f-eed9-efd3-e2b0e4ff9eb2@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfAl4rO7EcLhrbP1nNpV0t1174FwGp27adGw2GTT5GG8scITcbxrxxkTWyOSxvbtiZn9EXluKi9YmJh4ednTDd6ovSf7eq8Gzuv/hFAvtNu7cVFmVZf1Q
+ iDbz+mNx8XO8sewq+ME7T5mG0U3+mbVlqAQaUYdLFjztomYQUY8bpAkhHDua5wRbXa1UtfViWiMw4drv+CbaE1fSbQV/z+f1ObRkpm4gbyqB/BRjHSWIz7KI
+ 4dU4wHuSuEBhGZaAdvi/kUG1tylu/KcD0o8KCZoaZ7KNDN9vO9YwzDaxC9o2UKZsMMaM5OR/leIVfEMCkF9TEF12+jPDNB9EY7ZcmLTCBpIVeQJ2p++rI9lM
+ 0MerW9HKnagAgZbhZXP88hdW9sWc4/p/Ofccu6zFrNKKA6JWyvTrRTITlYS0tY1sUPAuas4RCy5mjWCE6POqxmaklwITlAHg98ngehB54e6Yl3DAHO7ztmQH
+ Z9xHe/NtQLRXs706P7P7byLTKRuqFKKzPTcsW3njybMhtiafOlk6NiDxZkd2RSFY8sPTpV/aSiz9IuQ1rIB2EvPxVeJOvILtwq0xobQIUq3B/c4cd/UKii9o
+ 7Kw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 10:53:52AM +0000, Suzuki K Poulose wrote:
-> On 07/02/18 10:39, Dave Martin wrote:
-> >On Wed, Jan 31, 2018 at 06:28:03PM +0000, Suzuki K Poulose wrote:
-> >>Some capabilities have different criteria for detection and associated
-> >>actions based on the matching criteria, even though they all share the
-> >>same capability bit. So far we have used multiple entries with the same
-> >>capability bit to handle this. This is prone to errors, as the
-> >>cpu_enable is invoked for each entry, irrespective of whether the
-> >>detection rule applies to the CPU or not. And also this complicates
-> >>other helpers, e.g, __this_cpu_has_cap.
-> >>
-> >>This patch adds a wrapper entry to cover all the possible variations
-> >>of a capability and ensures :
-> >>  1) The capabilitiy is set when at least one of the entry detects
-> >>  2) Action is only taken for the entries that detects.
-> >
-> >I guess this means that where we have a single cpu_enable() method
-> >but complex match criteria that require multiple entries, then that
-> >cpu_enable() method might get called multiple times on a given CPU.
+On 02/08/18 12:56, Hans Verkuil wrote:
+> On 02/08/18 11:46, Philipp Zabel wrote:
+>> On Wed, 2018-02-07 at 23:19 +0100, Hans Verkuil wrote:
+>>> On 02/07/2018 11:05 PM, Tim Harvey wrote:
+>>>> On Wed, Feb 7, 2018 at 1:09 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>>> On 02/07/18 09:22, Hans Verkuil wrote:
+>>>>>> On 02/07/2018 12:29 AM, Tim Harvey wrote:
+>>>>>>> Media Controller ioctls:
+>>>>>>>                 fail: v4l2-test-media.cpp(141): ent.function ==
+>>>>>>> MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
+>>>>>>
+>>>>>> Weird, this shouldn't happen. I'll look into this a bit more.
+>>>>>
+>>>>> Can you run 'mc_nextgen_test -e -i' and post the output?
+>>>>>
+>>>>> It's found in contrib/test.
+>>>>>
+>>>>
+>>>> root@ventana:~# ./v4l-utils/contrib/test/mc_nextgen_test -e -i
+>>>> Device: imx-media (driver imx-media)
+>>>> Bus:
+>>>> version: 0
+>>>> number of entities: 24
+>>>> number of interfaces: 24
+>>>> number of pads: 48
+>>>> number of links: 50
+>>>> entity entity#1: 'unknown entity type' adv7180 2-0020, 1 pad(s), 1 source(s)
+>>>> entity entity#3: 'unknown entity type' tda19971 2-0048, 1 pad(s), 1 source(s)
+>>>> entity entity#5: 'unknown entity type' ipu1_vdic, 3 pad(s), 2 sink(s),
+>>>> 1 source(s)
+>>>> entity entity#9: 'unknown entity type' ipu2_vdic, 3 pad(s), 2 sink(s),
+>>>> 1 source(s)
+>>>> entity entity#13: 'unknown entity type' ipu1_ic_prp, 3 pad(s), 1
+>>>> sink(s), 2 source(s)
+>>>> entity entity#17: 'unknown entity type' ipu1_ic_prpenc, 2 pad(s), 1
+>>>> sink(s), 1 source(s)
+>>>> entity entity#20: 'V4L I/O' ipu1_ic_prpenc capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#26: 'unknown entity type' ipu1_ic_prpvf, 2 pad(s), 1
+>>>> sink(s), 1 source(s)
+>>>> entity entity#29: 'V4L I/O' ipu1_ic_prpvf capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#35: 'unknown entity type' ipu2_ic_prp, 3 pad(s), 1
+>>>> sink(s), 2 source(s)
+>>>> entity entity#39: 'unknown entity type' ipu2_ic_prpenc, 2 pad(s), 1
+>>>> sink(s), 1 source(s)
+>>>> entity entity#42: 'V4L I/O' ipu2_ic_prpenc capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#48: 'unknown entity type' ipu2_ic_prpvf, 2 pad(s), 1
+>>>> sink(s), 1 source(s)
+>>>> entity entity#51: 'V4L I/O' ipu2_ic_prpvf capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#57: 'unknown entity type' ipu1_csi0, 3 pad(s), 1
+>>>> sink(s), 2 source(s)
+>>>> entity entity#61: 'V4L I/O' ipu1_csi0 capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#67: 'unknown entity type' ipu1_csi1, 3 pad(s), 1
+>>>> sink(s), 2 source(s)
+>>>> entity entity#71: 'V4L I/O' ipu1_csi1 capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#77: 'unknown entity type' ipu2_csi0, 3 pad(s), 1
+>>>> sink(s), 2 source(s)
+>>>> entity entity#81: 'V4L I/O' ipu2_csi0 capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#87: 'unknown entity type' ipu2_csi1, 3 pad(s), 1
+>>>> sink(s), 2 source(s)
+>>>> entity entity#91: 'V4L I/O' ipu2_csi1 capture, 1 pad(s), 1 sink(s)
+>>>> entity entity#97: 'unknown entity type' ipu1_csi0_mux, 3 pad(s), 2
+>>>> sink(s), 1 source(s)
+>>>> entity entity#101: 'unknown entity type' ipu2_csi1_mux, 3 pad(s), 2
+>>>> sink(s), 1 source(s)
+>>>
+>>> Yuck. So nobody in imx (and adv7180!) is setting a valid function.
+>>> And I see the mc_nextgen_test.c doesn't know all the latest functions
+>>> anyway.
+>>
+>> That's probably because for most of the entities it's a bit unclear
+>> which function should be assigned.
 > 
-> A CPU executes cpu_enable() only for the "matching" entries in the list,
-> unlike earlier. So as long as there is a single entry "matching" the given
-> CPU, the cpu_enable() will not be duplicated. May be we *should* mandate
-> that a CPU cannot be matched by multiple entries.
+> Well, that's one reason. The other is that there never was a utility
+> to test this :-)
 > 
-> >
-> >Could be worth a comment if cpu_enable() methods must be robust
-> >against this.
-
-Could we say something like:
-
-"Where a single capability has multiple entries, mutiple cpu_enable()
-methods may be called if more than one entry matches.  Where this is
-not desired, care should be taken to ensure that the entries are
-mutually exclusive: for example, two entries for a single capability
-that match on MIDR should be configured to match MIDR ranges that do
-not overlap."
-
-This is more verbose than I would like however.  Maybe there's a simpler
-way to say it.
-
-> >>This avoids explicit checks in the call backs. The only constraint
-> >>here is that, all the entries should have the same "type".
-> >>
-> >>Cc: Dave Martin <dave.martin@arm.com>
-> >>Cc: Will Deacon <will.deacon@arm.com>
-> >>Cc: Mark Rutland <mark.rutland@arm.com>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>  arch/arm64/include/asm/cpufeature.h |  1 +
-> >>  arch/arm64/kernel/cpu_errata.c      | 53 ++++++++++++++++++++++++++++++++-----
-> >>  arch/arm64/kernel/cpufeature.c      |  7 +++--
-> >>  3 files changed, 50 insertions(+), 11 deletions(-)
-> >>
-> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> >>index 462c35d1a38c..b73247c27f00 100644
-> >>--- a/arch/arm64/include/asm/cpufeature.h
-> >>+++ b/arch/arm64/include/asm/cpufeature.h
-> >>@@ -290,6 +290,7 @@ struct arm64_cpu_capabilities {
-> >>  			bool sign;
-> >>  			unsigned long hwcap;
-> >>  		};
-> >>+		const struct arm64_cpu_capabilities *cap_list;
-> >
-> >Should desc, capability, def_scope and/or cpu_enable match for every cap
-> >in such a group?
+>> ipu[12]_csi[01]_mux are video multiplexers, so MEDIA_ENT_F_VID_MUX. I
+>> thought those should already be set correctly in the video-mux driver.
 > 
-> As mentioned above, the "type" field should match, which implies scope
-> must match. The code ignores the scope, capability and desc of the individual
-> entries in the list. They should be shared by the parent entry.
+> They are. The mc_nextgen_test, media-ctl and now v4l2-ctl/v4l2-compliance
+> all have their own list of functions that they know about and it's all
+> different. It's one of the things I want to fix.
 > 
-> cpu_enable could be duplicated as long as a CPU is not matched by multiple
-> entries.
+>> ipu[12]_csi[01] are the interfaces to the outside parallel busses, but
+>> they can also 'downscale' by skipping, skip frames and pack or expand
+>> pixels from the bus into the internal FIFOs that lead to the next
+>> element. These are not MEDIA_ENT_F_VID_IF_BRIDGE, are they?
 > 
-> >
-> >I'd expected something maybe like this:
-> >
-> >struct arm64_cpu_capabilities {
-> >	const char *desc;
-> >	u16 capability;
-> >	struct arm64_capability_match {
-> >		bool (*matches)(const struct arm64_cpu_capabilities *, int);
-> >		int (*cpu_enable)(void);
-> >		union {
-> >			struct { ... midr ... };
-> >			struct { ... sysreg ... };
-> >			const struct arm64_capability_match *list;
-> >		};
-> >>  	};
-> >>  };
+> Yes, they are. One limitation of the current API is that you cannot
+> represent correctly devices with multiple functions. This is planned for
+> a long time now, but nobody actually did the work. So for now just fill
+> in the primary function with a comment that in the future other functions
+> should be set as well.
 > 
-> Yes, thats makes it more explicit. However, it makes the "matches()"
-> complicated, as we have to change the prototype for matches to accept
-> struct arm64_capability_match *, to point to the right "matches" for
-> items in the list. And that makes a bit more of an invasive change, where
-> each matches() would then loose a way to get to the "capabilities" entry,
-> as they could be called with either the "match" in the top level or
-> the one in the list.
-
-Yes, that's true.  matches() could take a pointer to the cap struct
-_and_ the relevant match entry, but I'm not sure it's worth it.  In any
-case, my previous objection below doesn't make as much sense as I
-thought.
-
-> >>  		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
-> >>diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> >>index 65a8e5cc600c..13e30c1b1e99 100644
-> >>--- a/arch/arm64/kernel/cpufeature.c
-> >>+++ b/arch/arm64/kernel/cpufeature.c
-> >>@@ -1181,9 +1181,8 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
-> >>  		return false;
-> >>  	for (caps = cap_array; caps->matches; caps++)
-> >>-		if (caps->capability == cap &&
-> >>-		    caps->matches(caps, SCOPE_LOCAL_CPU))
-> >>-			return true;
-> >>+		if (caps->capability == cap)
-> >>+			return caps->matches(caps, SCOPE_LOCAL_CPU);
-> >
-> >If we went for my capability { cap; match criteria or list; } approach,
-> >would it still be necessary to iterate over the whole list here?
+>> ipu[12]_vdic are mainly deinterlacers, so a new function
+>> MEDIA_ENT_F_PROC_VIDEO_DEINTERLACER ? These entities could also be used
+>> as composers in a mem2mem scenario (MEDIA_ENT_F_PROC_VIDEO_COMPOSER ?),
+>> but this is currently not supported.
 > 
-> Sorry, I couldn't follow this. With this patch, we already stop scanning
-> the list as soon as we find the first entry. It is upto "the entry" to run
-> individual match criteria to decide.
+> Yes, we need a PROC_VIDEO_DEINTERLACER function.
+> 
+>>
+>> ipu[12]_ic_prp is just a tee element that feeds both ipu[12]_ic_prpenc
+>> and ipu[12]_ic_prpvf. These are both scalers and colorspace converters.
+>> MEDIA_ENT_F_PROC_VIDEO_SCALER ?
+>> MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV ?
+> 
+> The tee element would be a new PROC_VIDEO_SPLITTER function.
+> 
+> The other two would be scalers, but should add the VIDEO_PIXEL_ENC_CONV
+> function once it is possible to do so.
+> 
+>>
+>> "ipu[12]_csi[01] capture" are the DMA elements writing to memory, so
+>> MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER ?
+> 
+> These are likely to be filled correctly already. I've just added a commit
+> to v4l2-compliance to make it easier to see what function is used:
+> 
+> 	v4l2-compliance -m0 -v
 
-Ah, I'm talking nonsense here.  Patch 6 iterates over the entire
-capability list via the call to __this_cpu_has_cap() in
-__verify_local_cpu_caps(), but this patch now changes the behaviour so
-that this doesn't happen any more.
+Actually, can you run this using the latest v4l-utils version for the imx
+and post the output?
 
-The only other users of this_cpu_has_cap() don't have the right cap
-pointer already, so a scan over the whole list is required in those
-cases -- and anyway, those look like fast paths (RAS exceptions).
+Regards,
 
-[...]
-
-Cheers
----Dave
+	Hans
