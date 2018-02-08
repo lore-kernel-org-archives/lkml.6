@@ -1,115 +1,73 @@
-Return-Path: <kernel-hardening-return-11654-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x226aJQVeXI3Vx/qQgffzFA+GVi3yCpMCIvrVTy7e4gP1Mp75kHvPZ6Ccgy8uK5kPhO5vg/H+
-ARC-Seal: i=1; a=rsa-sha256; t=1518059910; cv=none;
+Return-Path: <kernel-hardening-return-11656-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x226xK4Tp09pirWr4wS3nJb1bdBEN+nIEkG4/XA0vHAAMglKsOzC9ZezLGZDC98m9KcHUHmxd
+ARC-Seal: i=1; a=rsa-sha256; t=1518062833; cv=none;
         d=google.com; s=arc-20160816;
-        b=NxLycRl/E3KZMbDCQmulpWF9n6VFaQ739kDdGD9sMpfIW+l87hD4AbR8O4kjrKQCw4
-         z6l9PbfFPV6go/4aszcXByfJ8A9bztguuuQQyxAYuUICLfdYgUVjTvecXl6Bcr4E7wDR
-         46tf9sqH5fTf3QWyxfEYPceM2h7pFeXZwm1IbbqIuyxeeDdSmnHXrzN5BbLCnwWHkFtn
-         vadA1ONnVEPVDq78XcoNhTx0A1Ndh7ntDxRfCnXkczXNpOKr9tP+VrdDDGLxmnUr9lKC
-         DNwIyaWspwHQqDWI/nFrxmdJC7q0j7KJ4bLMHyo29BLVVaeMABGgZAMzqYw34fcmEkDu
-         caPw==
+        b=BHsjY6SJEx1xsykRSGmuQb59frSh3f1sysfL1DODKk/fs+b0bGUjMbDd+1PxCHJtyo
+         gSIJ6pUH9e1btRNvvMm3B3H4CsoFs5UR7RzR4dzf2DSbEy4kDjTmcIreZ6mWY5PoRta6
+         eaDDuSmytSRyFjB9DgQqH6FF/Xv3lklV5rgv/7Fy0MgC5K6xgeXaaQKT2njSOAow0u4V
+         D2PbmLW7rgaMTtWFUk2h05gSFCONnGiIWo28Cpblc9F/S8dBWcJC4v7bgf3XXg0XA7le
+         C62ZyvdbXifvnno3VFKXGJlb6fWm1V5ujM/2dl5QbCrb0TIWKAvwTHLhMCd91O7J2kO7
+         zQjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=oo4j8PQRS2FUqH91CRt43JycK5uE8XFygGpYiPKIhDI=;
-        b=dxjarix44UloLfFquvjFgtERXHkj2GYl0qdPuL4e9QV6woX/6QMdz6BcbRrfBqHSb/
-         +vC++Z16RCRzfWUslRiBbydG+7qF6jLZJ4HDc3AQ+Tw8wSM2XkQ8qM8D5SZE7IIGXVWd
-         0UossJ+RFpKXpKSF/5iuWDUtdAtyK7wL01CzdHEkgo0AnTaopZeMyHw4p57+2lMhqttU
-         xWEvj+dTQO3HIbHT9zXHeHDvwrTQpX85XIaQ+Ceb6c4GkU3j2Wk5+o7rCSocD8MXZkg9
-         noRTfw21OC4Fi//hvfoMnniHgQyy7JcJ1CYpCrQDjtbnKo/RV3nUpiwzJXk63MyKcWnn
-         IS9g==
+         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=R9nnssFPF9ywdef9ImzpTBWz7oMqSHut8meIUnwwVTM=;
+        b=LzYeRm3M61pRWF5my3/xKqKBNIFiNttyFlR4QZzgq7v1suDCs3gZUiOOcZHG7rTJuu
+         nQDRTooC4vJSFcodfK4SC17vhmQ7Q681qn6QvM3CTadEkK+Wdyn08AiYjJq+/AqkIL4I
+         tKLdt4S1FuMI8W6J2gR52nAUN9cXBWXkU9zHVxJJB5xwV31TpI2nByyeslVif+5C1MJM
+         soAIzqmPJaki4xBxIz5TCH9vLX0GjDnE0ctOu6sICxTw+bM7f/Xyc68j3kckgFd2mL2v
+         h1UCKjKKIprzJ/jQuxT3ObxHN+ODQGPombN9Zg2ZR4F0Ir4LQvNb53J4ZzKS+RFWVq6o
+         ZooA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=j8nNWOEh;
-       dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=ISmYfg0o;
-       spf=pass (google.com: domain of kernel-hardening-return-11654-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11654-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=che3nTqo;
+       spf=pass (google.com: domain of kernel-hardening-return-11656-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11656-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=j8nNWOEh;
-       dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=ISmYfg0o;
-       spf=pass (google.com: domain of kernel-hardening-return-11654-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11654-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=che3nTqo;
+       spf=pass (google.com: domain of kernel-hardening-return-11656-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11656-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:b8F7Whjx5hA4kDFbda8Gq8KlVKSpLEAAIq4fMDpkFwEnFC9a-v02SA>
-Date: Thu, 8 Feb 2018 14:18:04 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Matthew Wilcox <willy@infradead.org>
+Date: Wed, 7 Feb 2018 20:06:55 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: "Tobin C. Harding" <me@tobin.cc>
 Cc: linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
 	linux-kernel@vger.kernel.org,
 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Subject: Re: [RFC] Warn the user when they could overflow mapcount
-Message-ID: <20180208031804.GD3304@eros>
+Message-ID: <20180208040655.GD14918@bombadil.infradead.org>
 References: <20180208021112.GB14918@bombadil.infradead.org>
+ <20180208031804.GD3304@eros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180208021112.GB14918@bombadil.infradead.org>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180208031804.GD3304@eros>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591796976786547518?=
-X-GMAIL-MSGID: =?utf-8?q?1591801188495640449?=
+X-GMAIL-MSGID: =?utf-8?q?1591804254179712103?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 07, 2018 at 06:11:12PM -0800, Matthew Wilcox wrote:
+On Thu, Feb 08, 2018 at 02:18:04PM +1100, Tobin C. Harding wrote:
+> > +++ b/Documentation/sysctl/vm.txt
+> > @@ -379,7 +379,8 @@ While most applications need less than a thousand maps, certain
+> >  programs, particularly malloc debuggers, may consume lots of them,
+> >  e.g., up to one or two maps per allocation.
+> >  
+> > -The default value is 65536.
+> > +The default value is 65530.  Increasing this value without decreasing
+> > +pid_max may allow a hostile user to corrupt kernel memory.
 > 
-> Kirill and I were talking about trying to overflow page->_mapcount
-> the other day and realised that the default settings of pid_max and
-> max_map_count prevent it [1].  But there isn't even documentation to
-> warn a sysadmin that they've just opened themselves up to the possibility
-> that they've opened their system up to a sufficiently-determined attacker.
-> 
-> I'm not sufficiently wise in the ways of the MM to understand exactly
-> what goes wrong if we do wrap mapcount.  Kirill says:
-> 
->   rmap depends on mapcount to decide when the page is not longer mapped.
->   If it sees page_mapcount() == 0 due to 32-bit wrap we are screwed;
->   data corruption, etc.
-> 
-> That seems pretty bad.  So here's a patch which adds documentation to the
-> two sysctls that a sysadmin could use to shoot themselves in the foot,
-> and adds a warning if they change either of them to a dangerous value.
-> It's possible to get into a dangerous situation without triggering this
-> warning (already have the file mapped a lot of times, then lower pid_max,
-> then raise max_map_count, then map the file a lot more times), but it's
-> unlikely to happen.
-> 
-> Comments?
-> 
-> [1] map_count counts the number of times that a page is mapped to
-> userspace; max_map_count restricts the number of times a process can
-> map a page and pid_max restricts the number of processes that can exist.
-> So map_count can never be larger than pid_max * max_map_count.
-> 
-> diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-> index 412314eebda6..ec90cd633e99 100644
-> --- a/Documentation/sysctl/kernel.txt
-> +++ b/Documentation/sysctl/kernel.txt
-> @@ -718,6 +718,8 @@ pid_max:
->  PID allocation wrap value.  When the kernel's next PID value
->  reaches this value, it wraps back to a minimum PID value.
->  PIDs of value pid_max or larger are not allocated.
-> +Increasing this value without decreasing vm.max_map_count may
-> +allow a hostile user to corrupt kernel memory
->  
->  ==============================================================
->  
-> diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
-> index ff234d229cbb..0ab306ea8f80 100644
-> --- a/Documentation/sysctl/vm.txt
-> +++ b/Documentation/sysctl/vm.txt
-> @@ -379,7 +379,8 @@ While most applications need less than a thousand maps, certain
->  programs, particularly malloc debuggers, may consume lots of them,
->  e.g., up to one or two maps per allocation.
->  
-> -The default value is 65536.
-> +The default value is 65530.  Increasing this value without decreasing
-> +pid_max may allow a hostile user to corrupt kernel memory.
+> Just checking - did you mean the final '0' on this value?
 
-Just checking - did you mean the final '0' on this value?
+That's what my laptop emits ...
 
-	Tobin
+mm/mmap.c:int max_map_count __read_mostly = DEFAULT_MAX_MAP_COUNT;
+include/linux/mm.h:#define DEFAULT_MAX_MAP_COUNT        (USHRT_MAX - MAPCOUNT_ELF_CORE_MARGIN)
+include/linux/mm.h:#define MAPCOUNT_ELF_CORE_MARGIN     (5)
+
+should be the same value for everybody.
