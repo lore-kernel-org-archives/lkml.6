@@ -1,92 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeBHLUi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:20:38 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59040 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751014AbeBHLUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:20:34 -0500
-Date: Thu, 8 Feb 2018 12:20:31 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH 11/20 v2] tracing: Add symbol type to function based
- events
-Message-ID: <20180208112031.GB30958@krava>
-References: <20180207202402.253089656@goodmis.org>
- <20180207202816.348135328@goodmis.org>
+        id S1752436AbeBHLVL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:21:11 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40269 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752292AbeBHLVJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:21:09 -0500
+X-Google-Smtp-Source: AH8x224q0dNxFqcgX3buMGScKKXWgMcYIi+qOrh0V91Tmy4D2hBmJ1U4miFaHVmwr+83KwMhdAKWdg==
+Date: Thu, 8 Feb 2018 12:21:06 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com
+Subject: Re: [PATCH v1 05/16] arm64: Helper for parange to PASize
+Message-ID: <20180208112106.GO29286@cbox>
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-6-suzuki.poulose@arm.com>
+ <20180208110042.GH29286@cbox>
+ <040b00f2-3e83-a475-ae20-5e9358fc580a@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180207202816.348135328@goodmis.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <040b00f2-3e83-a475-ae20-5e9358fc580a@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 03:24:13PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Thu, Feb 08, 2018 at 11:08:18AM +0000, Suzuki K Poulose wrote:
+> On 08/02/18 11:00, Christoffer Dall wrote:
+> >On Tue, Jan 09, 2018 at 07:04:00PM +0000, Suzuki K Poulose wrote:
+> >>Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
+> >                                                       *the*
+> >>size shift. Limit the size to the maximum supported by the kernel.
+> >
+> >Is this just a cleanup or are we actually going to need this feature in
+> >the subsequent patches?  That would be nice to motivate in the commit
+> >letter.
 > 
-> Add a special type "symbol" that will use %pS to display the field of a
-> function based event.
+> It is a cleanup, plus we are going to move the user of the code around from
+> one place to the other. So this makes it a bit easier and cleaner.
 > 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  Documentation/trace/function-based-events.rst | 26 +++++++++++++++++++++++++-
->  kernel/trace/trace_event_ftrace.c             | 13 ++++++++++---
->  2 files changed, 35 insertions(+), 4 deletions(-)
+
+On its own I'm not sure it really is a cleanup, so it's good to mention
+that this is to make some operation easier later on in the commit
+letter.
+
 > 
-> diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
-> index bdb28f433bfb..f18c8f3ef330 100644
-> --- a/Documentation/trace/function-based-events.rst
-> +++ b/Documentation/trace/function-based-events.rst
-> @@ -98,7 +98,8 @@ as follows:
->   ATOM := 'u8' | 'u16' | 'u32' | 'u64' |
->           's8' | 's16' | 's32' | 's64' |
->           'x8' | 'x16' | 'x32' | 'x64' |
-> -         'char' | 'short' | 'int' | 'long' | 'size_t'
-> +         'char' | 'short' | 'int' | 'long' | 'size_t' |
-> +	 'symbol'
->  
->   FIELD := <name> | <name> INDEX | <name> OFFSET | <name> OFFSET INDEX
->  
-> @@ -243,3 +244,26 @@ The above will take the parameter value, add it by 4, then index it by two
->  8 byte words. It's the same in C as: (u64 *)((void *)param + 4)[2]
->  
->   Note: "int skb[32]" is the same as "int skb+4[31]".
-> +
-> +
-> +Symbols (function names)
-> +========================
-> +
-> +To display kallsyms "%pS" type of output, use the special type "symbol".
-> +
-> +Again, using gdb to find the offset of the "func" field of struct work_struct
-> +
-> +(gdb) printf "%d\n", &((struct work_struct *)0)->func
-> +24
+> >>
+> >>Cc: Mark Rutland <mark.rutland@arm.com>
+> >>Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>Cc: Will Deacon <will.deacon@arm.com>
+> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>---
+> >>  arch/arm64/include/asm/cpufeature.h | 16 ++++++++++++++++
+> >>  arch/arm64/kvm/hyp/s2-setup.c       | 28 +++++-----------------------
+> >>  2 files changed, 21 insertions(+), 23 deletions(-)
+> >>
+> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> >>index ac67cfc2585a..0564e14616eb 100644
+> >>--- a/arch/arm64/include/asm/cpufeature.h
+> >>+++ b/arch/arm64/include/asm/cpufeature.h
+> >>@@ -304,6 +304,22 @@ static inline u64 read_zcr_features(void)
+> >>  	return zcr;
+> >>  }
+> >>+static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+> >>+{
+> >>+	switch (parange) {
+> >>+	case 0: return 32;
+> >>+	case 1: return 36;
+> >>+	case 2: return 40;
+> >>+	case 3: return 42;
+> >>+	case 4: return 44;
+> >>+
+> >>+	default:
+> >
+> >What is the case we want to cater for with making parange == 5 the
+> >default for unrecognized values?
+> >
+> >(I have a feeling that default label comes from making the compiler
+> >happy about potentially uninitialized values once upon a time before a
+> >lot of refactoring happened here.)
+> 
+> That is there to make sure we return 48 iff 52bit support (for that matter,
+> if there is a new limit in the future) is not enabled.
+> 
 
-you could also use Arnaldo's pahole for this, seems like less typing:
+duh, yeah, it's obvious when I look at it again now.
 
-  $ pahole ./vmlinux -C work_struct
-  die__process_function: tag not supported (INVALID)!
-  struct work_struct {
-          atomic_long_t              data;                 /*     0     8 */
-          struct list_head           entry;                /*     8    16 */
-          work_func_t                func;                 /*    24     8 */
-
-it's in 'dwarves' package
-
-jirka
+> >
+> >>+	case 5: return 48;
+> >>+#ifdef CONFIG_ARM64_PA_BITS_52
+> >>+	case 6: return 52;
+> >>+#endif
+> >>+	}
+> >>+}
+> >>  #endif /* __ASSEMBLY__ */
+> 
+Thanks,
+-Christoffer
