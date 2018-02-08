@@ -1,55 +1,73 @@
-Return-Path: <dan.carpenter@oracle.com>
-X-Google-Smtp-Source: AH8x224M+vyk9qCSRowFYEBQLDo8k1p92f7JIBOw7/tDfxl392+M53eqjfYbAKfbNQ7TQtxudCRA
-ARC-Seal: i=1; a=rsa-sha256; t=1518074738; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AH8x226syDgc9dbPs8rDY55D6PWzQHqbO3i2YIWtdDUvCY4EmGexu5LbJ81Q74RuCWOIS/3NmbW7
+ARC-Seal: i=1; a=rsa-sha256; t=1518104509; cv=none;
         d=google.com; s=arc-20160816;
-        b=Sbc00ksoceTy12taEQwdxN1bF++0XONYAh4ZbpBO+vfHT+IZl5Mno9cFKxCSHVazjS
-         A5Zn++St4RAefs2++QTow6UVBVDHc//6/QN03QWvM78niBtXx985UtZvYW5WI7MHJgjs
-         YLNMeOhpAsIoqsmLPAekc5Jacl+IHvJrWj/I6Ni4NP/e+SI6O7CrlYhb1j8sSigOovcF
-         I6rZtFbcOA8peIHb8UXgmKcWoCQuxNg6Qh0jo+ukvR4XU22oZcbuzlAbr6Qd75B4E/yI
-         H8uoiOQ+SrhZp2HyvrfNFvmPEcu75GNigXtebLloVxODYReHqdXKSbeU2YVSUg3CyTMW
-         eExg==
+        b=Y7uSI9/Q58VJnHiFvD5/6XMh6dElH5b9hGSUMsevrMpUt/1fx5lWJ0KmG6sr8BfqH8
+         gl8VO8rNu0sB9Kb1sSMwGRLdG0PY5hMdtDrNG4kEtyF4nb2wHi4nA1RQ5yPCQW/Lq/le
+         nxRRCCw86kZHaK3AByvbTlQTWHKqa6pGGDaIJIFBzp893+P47lW47HrpnKiWxB+w2X2r
+         UK0nSoyv3x5Xyrtktyhy0BhWLdou4/N8q/Lcu+V/serVmjV5hoBfwYDB84+MCDX8MhQn
+         fSU0oOFVR9M+C+jPkZ4BGNCAnTxH5asXhfBgbpgQkD5XafniUzMTNPggM1JSH1MMqs77
+         gEEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:message-id
-         :subject:cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=6mFzCh3KVdbvFuqMP/yr0oJOfg9Z4UQZYHgc9jATRB4=;
-        b=bm8OKWhdhrtO2JcYBSqig6cgSXld7TqZr935FKj1FbJSFP9QADExd1iDuPfVuaEdhy
-         Cbjpea5+IV2QD+DXplJ/eW3qVi5aTR/1aT0RRxRldBcX6Wrzu++fmydYrgnd+MEdH66P
-         sCUqX9UFgsU6DgfgFfwZKqRfrBilk4xIQ8OYsg/234TmnDiuU6rXEbPZDQhrHgUE4mP4
-         oHDJJ6aTY7Fc+EqHD8xvU0jfb+Zu+8nHxHLJ56mar9gLWJmOsOgGcusmEiEKYCVET/MH
-         I032DJOII6hoSnF9nOU5ksJ0Likucm3ay86xvQ+ZQHxRN4qR1HXQPru8YepU+lwRQbcF
-         pZ4g==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=9nSj5Yz+7o6NxRL0oimm6ivY6aABmJijw4kqUbuvByQ=;
+        b=hW6nVLlCL9U87TZQOG8V4co0XfLl0Yi2wFg1qzlOHDbo4b2iSpLJKp2VTmmkYpDyB8
+         JuAD/ly9RWIH4Pcm4EC0Px43LOACGm+52Z0LVi9JDwzJZvoAGAnTFQRDWOQwMYpyfnQF
+         oCOTYWmbhmmDmxi4f+2Zn7T3/8stT+yOrihMu6ZJnFnLmPZu2M7BCOzTAeGagR++f+ZS
+         fmQkoP3vcvJgcZLw5rmM/uir66lrJm2grnxfM0iUgVKZ71MDpV4qzHUlnhMPsBmx6e9C
+         EofLv70hc0Ci2+8SqSwgM/WX0FwN0jzzs6msO3Zw+0V7jB+1DrJEDo+12y/SLimZ3m8u
+         zlYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=DFcBoENX;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=anBOl8QI;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=DFcBoENX;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Thu, 8 Feb 2018 10:25:28 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Mark Brown <broonie@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] regmap-i2c: Off by one in
- regmap_i2c_smbus_i2c_read/write()
-Message-ID: <20180208072528.GB18158@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208072344.GA18158@mwanda>
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8798 signatures=668663
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802080078
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=anBOl8QI;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+From: Mark Brown <broonie@kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regmap-i2c: Off by one in regmap_i2c_smbus_i2c_read/write()" to the regmap tree
+In-Reply-To: <20180208072528.GB18158@mwanda>
+Message-Id: <E1ejoKX-0008Uq-88@debutante>
+Date: Thu, 08 Feb 2018 15:41:45 +0000
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591816737545967751?=
-X-GMAIL-MSGID: =?utf-8?q?1591816737545967751?=
+X-GMAIL-THRID: =?utf-8?q?1591847953762061807?=
+X-GMAIL-MSGID: =?utf-8?q?1591847953762061807?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   regmap-i2c: Off by one in regmap_i2c_smbus_i2c_read/write()
+
+has been applied to the regmap tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 86effbe0d198aaf57459ec9ad3855e88e29ecb1c Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 8 Feb 2018 10:25:28 +0300
+Subject: [PATCH] regmap-i2c: Off by one in regmap_i2c_smbus_i2c_read/write()
 
 The commit message says that we are allowed to read and write up to 32
 bytes but the code only allows us to write 31 bytes.  In other words,
@@ -58,8 +76,10 @@ regmap_raw_read()/write() so we can just remove the if statemetents.
 
 Fixes: 29332534e2b6 ("regmap-i2c: Add smbus i2c block support")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Not tested.
+ drivers/base/regmap/regmap-i2c.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/drivers/base/regmap/regmap-i2c.c b/drivers/base/regmap/regmap-i2c.c
 index 4735318f4268..056acde5e7d3 100644
@@ -83,3 +103,5 @@ index 4735318f4268..056acde5e7d3 100644
  
  	ret = i2c_smbus_read_i2c_block_data(i2c, ((u8 *)reg)[0], val_size, val);
  	if (ret == val_size)
+-- 
+2.15.1
