@@ -1,70 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeBHWAh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 17:00:37 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41183 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752172AbeBHWAe (ORCPT
+        id S1752248AbeBHWH0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 17:07:26 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38692 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751756AbeBHWHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 17:00:34 -0500
-X-Google-Smtp-Source: AH8x225VIO4Qn0uZt6cyp9KytWJ3yLnLywj3IoRT0YU7neeuybnV83HnJxNx/APWBanq2BpdiGtzqA==
-Date: Thu, 8 Feb 2018 23:00:16 +0100
-From: Ulf Magnusson <ulfalizer@gmail.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: broonie@kernel.org, linux-kernel@vger.kernel.org,
-        clabbe.montjoie@gmail.com, viresh.kumar@linaro.org,
-        linux-pwm@vger.kernel.org, thierry.reding@gmail.com,
-        b.zolnierkie@samsung.com, daniel.vetter@ffwll.ch,
-        christophe.leroy@c-s.fr, seanpaul@chromium.org,
-        linux-spi@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: [PATCH v3] spi: kconfig: Remove AVR32 dep. from SPI_ATMEL
-Message-ID: <20180208220016.w7km4f233nc3uw34@huvuddator>
-References: <20180206120825.GF5681@sirena.org.uk>
- <20180206225519.20248-1-ulfalizer@gmail.com>
- <7f2bebe1-2931-7ec9-ef9f-0d3e6dda6c0b@gmail.com>
- <a8d2076b-6863-6ff1-5442-0587ad973766@gmail.com>
- <20180208024414.jjcxvd2q4o5rifgh@huvuddator>
- <97250c63-cb2b-b1e8-63ac-59b9c749fd52@gmail.com>
+        Thu, 8 Feb 2018 17:07:25 -0500
+X-Google-Smtp-Source: AH8x226+cb45e0xmWmaKpvfZiz1oW2pG/fz5pGuyhGqkKeXLRzg/dpKYX/OPZYs8oFMThPL0+nQc0g==
+Date: Thu, 8 Feb 2018 14:07:23 -0800
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Harry Wentland <harry.wentland@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Craig Bergstrom <craigb@chromium.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Justin TerAvest <teravest@chromium.org>, amd-gfx@lists.freedesktop.org,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [PATCH v3 4/4] amdgpu/dc/calcs: Support clang option for stack
+ alignment
+Message-ID: <20180208220723.GE116483@google.com>
+References: <20180208205316.93330-1-mka@chromium.org>
+ <20180208205316.93330-4-mka@chromium.org>
+ <953daf8c-b195-e983-ecc4-4b369515e9ac@amd.com>
+ <dc344f23-663e-0e61-0b89-c4e358811e23@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <97250c63-cb2b-b1e8-63ac-59b9c749fd52@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <dc344f23-663e-0e61-0b89-c4e358811e23@amd.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AVR32 symbol was removed in commit 26202873bb51 ("avr32: remove
-support for AVR32 architecture").
+El Thu, Feb 08, 2018 at 04:44:21PM -0500 Harry Wentland ha dit:
 
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
----
-Changes in v3:
-Add Signed-off-by tag
+> On 2018-02-08 04:03 PM, Harry Wentland wrote:
+> > On 2018-02-08 03:53 PM, Matthias Kaehlcke wrote:
+> >> calcs uses the compiler option -mpreferred-stack-boundary=4 to configure
+> >> a stack alignment of 16 bytes. Clang uses the option -mstack-alignment
+> >> instead, which expects as parameter the alignment in bytes, and not a
+> >> power of two like -mpreferred-stack-boundary.
+> >>
+> >> Probe for both compiler options and use the correct one, similar to
+> >> what is done in arch/x86/Makefile.
+> >>
+> >> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > 
+> > Series is
+> > Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+> 
+> ... and merged to amd-staging-drm-next.
 
-Changes in v2:
-Remove the AVR32 reference from the help text too.
+Thanks!
 
- drivers/spi/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> I had to resolve a small conflict with patches 1 & 2. Not a big deal but curious what development branch you use. We normally use this for amd-gfx development: https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next (although it might be a bit behind our internal dev tree).
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 603783976b81..6fb0347a24f2 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -72,10 +72,10 @@ config SPI_ARMADA_3700
- config SPI_ATMEL
- 	tristate "Atmel SPI Controller"
- 	depends on HAS_DMA
--	depends on (ARCH_AT91 || AVR32 || COMPILE_TEST)
-+	depends on (ARCH_AT91 || COMPILE_TEST)
- 	help
- 	  This selects a driver for the Atmel SPI Controller, present on
--	  many AT32 (AVR32) and AT91 (ARM) chips.
-+	  many AT91 (ARM) chips.
- 
- config SPI_AU1550
- 	tristate "Au1550/Au1200/Au1300 SPI Controller"
--- 
-2.14.1
+I typically use Linus' tree as base, will try to remember to check
+future patches against amd-staging-drm-next.
+
+> >> ---
+> >> Changes in v3:
+> >> - patch added
+> >>
+> >> Note to self: if this patterns proliferates further we probably want to
+> >> put the evaluation of the correct compiler flag in some common place.
+> >>
+> >>  drivers/gpu/drm/amd/display/dc/calcs/Makefile | 8 +++++++-
+> >>  1 file changed, 7 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/amd/display/dc/calcs/Makefile b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> >> index af0f452f3c9f..95f332ee3e7e 100644
+> >> --- a/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> >> +++ b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> >> @@ -24,7 +24,13 @@
+> >>  # It calculates Bandwidth and Watermarks values for HW programming
+> >>  #
+> >>  
+> >> -calcs_ccflags := -mhard-float -msse -mpreferred-stack-boundary=4
+> >> +ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
+> >> +	cc_stack_align := -mpreferred-stack-boundary=4
+> >> +else ifneq ($(call cc-option, -mstack-alignment=16),)
+> >> +	cc_stack_align := -mstack-alignment=16
+> >> +endif
+> >> +
+> >> +calcs_ccflags := -mhard-float -msse $(cc_stack_align)
+> >>  
+> >>  CFLAGS_dcn_calcs.o := $(calcs_ccflags)
+> >>  CFLAGS_dcn_calc_auto.o := $(calcs_ccflags)
+> >>
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > 
