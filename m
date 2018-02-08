@@ -1,138 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752092AbeBHMgf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:36:35 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:34395 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeBHMgc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:36:32 -0500
-X-IronPort-AV: E=Sophos;i="5.46,478,1511827200";
-   d="scan'208";a="718755655"
-From: "Sironi, Filippo" <sironi@amazon.de>
-To: David Woodhouse <dwmw2@infradead.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "x86@kernel.org" <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "arjan.van.de.ven@intel.com" <arjan.van.de.ven@intel.com>,
-        KVM list <kvm@vger.kernel.org>
-Subject: Re: [Fwd: [RFC PATCH 2/4] KVM: x86: Reduce retpoline performance
- impact in slot_handle_level_range()]
-Thread-Topic: [Fwd: [RFC PATCH 2/4] KVM: x86: Reduce retpoline performance
- impact in slot_handle_level_range()]
-Thread-Index: AQHToNb3bSxUHhkeYk6zvWFKRQTOqqOabtwA
-Date: Thu, 8 Feb 2018 12:28:05 +0000
-Message-ID: <9305C305-6BDD-4A1B-873E-35161C254AAB@amazon.de>
-References: <1517961794-14972-3-git-send-email-dwmw@amazon.co.uk>
- <1518092274.3677.177.camel@infradead.org>
-In-Reply-To: <1518092274.3677.177.camel@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.16]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D03EF90D3FB44747BB662BA83753C10E@amazon.com>
+        id S1751995AbeBHMoj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:44:39 -0500
+Received: from mga11.intel.com ([192.55.52.93]:20028 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751079AbeBHMog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:44:36 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,478,1511856000";
+   d="scan'208";a="16193265"
+Date: Thu, 8 Feb 2018 14:44:31 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
+ granting locality
+Message-ID: <20180208124431.26f43gj66c36gugz@linux.intel.com>
+References: <20180128075101.6883-1-tomas.winkler@intel.com>
+ <20180128075101.6883-2-tomas.winkler@intel.com>
+ <20180128201559.GG23869@ziepe.ca>
+ <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
+ <20180206200255.ib7hblberqj6anh5@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w18CagYO001527
 
+On Tue, Feb 06, 2018 at 09:26:15PM +0000, Winkler, Tomas wrote:
+> > 
+> > On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
+> > >
+> > > >
+> > > > On Sun, Jan 28, 2018 at 09:51:00AM +0200, Tomas Winkler wrote:
+> > > >
+> > > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
+> > > > > bcdd3790e94d..06639fb6ab85 100644
+> > > > > +++ b/include/linux/tpm.h
+> > > > > @@ -44,7 +44,7 @@ struct tpm_class_ops {
+> > > > >  	bool (*update_timeouts)(struct tpm_chip *chip,
+> > > > >  				unsigned long *timeout_cap);
+> > > > >  	int (*request_locality)(struct tpm_chip *chip, int loc);
+> > > > > -	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
+> > > > > +	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+> > > >
+> > > > This seems wrong.. What is the core code supposed to do if relinquish
+> > fails?
+> > >
+> > > Not much just propage the error to the caller and leave the policy
+> > > decision to it.
+> > 
+> > Your patch set must either cover this or keep it as void.
+> 
+> 
+> How the code is covering other failures in the transmit functions,  
+> how is this one different from for example request_locality failure?
+> Why we should not propage this error up?
+> 
+> > 
+> > A better idea is to print an error to klog.
+> We can do that in addition.
 
-> On 8. Feb 2018, at 13:17, David Woodhouse <dwmw2@infradead.org> wrote:
-> 
-> 
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> Subject: [RFC PATCH 2/4] KVM: x86: Reduce retpoline performance impact in slot_handle_level_range()
-> Date: 7. February 2018 at 01:03:12 GMT+1
-> To: tglx@linutronix.de, torvalds@linux-foundation.org, x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org, tim.c.chen@linux.intel.com, dave.hansen@intel.com, arjan.van.de.ven@intel.com
-> 
-> 
-> With retpoline, tight loops of "call this function for every XXX" are
-> very much pessimised by taking a prediction miss *every* time. This one
-> showed up very high in our early testing.
-> 
-> By marking the iterator slot_handle_…() functions always_inline, we can
-> ensure that the indirect function call can be optimised away into a
-> direct call and it actually generates slightly smaller code because
-> some of the other conditionals can get optimised away too.
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
-> arch/x86/kvm/mmu.c | 10 +++++-----
-> 1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index 2b8eb4d..cc83bdc 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -5058,7 +5058,7 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
-> typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
-> 
-> /* The caller should hold mmu-lock before calling this function. */
-> -static bool
-> +static __always_inline bool
-> slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 			slot_level_handler fn, int start_level, int end_level,
-> 			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
-> @@ -5088,7 +5088,7 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 	return flush;
-> }
-> 
-> -static bool
-> +static __always_inline bool
-> slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 		  slot_level_handler fn, int start_level, int end_level,
-> 		  bool lock_flush_tlb)
-> @@ -5099,7 +5099,7 @@ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 			lock_flush_tlb);
-> }
-> 
-> -static bool
-> +static __always_inline bool
-> slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 		      slot_level_handler fn, bool lock_flush_tlb)
-> {
-> @@ -5107,7 +5107,7 @@ slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
-> }
-> 
-> -static bool
-> +static __always_inline bool
-> slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 			slot_level_handler fn, bool lock_flush_tlb)
-> {
-> @@ -5115,7 +5115,7 @@ slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
-> }
-> 
-> -static bool
-> +static __always_inline bool
-> slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
-> 		 slot_level_handler fn, bool lock_flush_tlb)
-> {
-> -- 
-> 2.7.4
+I guess you are right. This can be propagated to the user space so that
+it knows that there is problem. To make the root more visible the klog
+message would make sense.
 
-+kvm@vger.kernel.org
-
-With this patch, launches of "large instances" are pretty close to what we see with
-nospectre_v2 (within tens of milliseconds).
-
-Reviewed-by: Filippo Sironi <sironi@amazon.de>
-Tested-by: Filippo Sironi <sironi@amazon.de>
-
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+/Jarkko
