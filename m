@@ -1,117 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752233AbeBHTbG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 14:31:06 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35168 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751094AbeBHTbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 14:31:05 -0500
-Date: Thu, 8 Feb 2018 21:31:03 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Wei Wang <wei.w.wang@intel.com>
-Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        pbonzini@redhat.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, huangzhichao@huawei.com
-Subject: Re: [PATCH v28 4/4] virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
-Message-ID: <20180208213008-mutt-send-email-mst@kernel.org>
-References: <1518083420-11108-1-git-send-email-wei.w.wang@intel.com>
- <1518083420-11108-5-git-send-email-wei.w.wang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518083420-11108-5-git-send-email-wei.w.wang@intel.com>
+        id S1752208AbeBHTeA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 14:34:00 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:48338 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBHTd7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 14:33:59 -0500
+Date: Thu, 08 Feb 2018 14:33:56 -0500 (EST)
+Message-Id: <20180208.143356.2044831753683027153.davem@davemloft.net>
+To: christian.brauner@ubuntu.com
+Cc: netdev@vger.kernel.org, ktkhai@virtuozzo.com,
+        stephen@networkplumber.org, w.bumiller@proxmox.com,
+        ebiederm@xmission.com, jbenc@redhat.com, nicolas.dichtel@6wind.com,
+        linux-kernel@vger.kernel.org, dsahern@gmail.com
+Subject: Re: [PATCH net 1/1 v4] rtnetlink: require unique netns identifier
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180207125320.9103-2-christian.brauner@ubuntu.com>
+References: <20180207125320.9103-1-christian.brauner@ubuntu.com>
+        <20180207125320.9103-2-christian.brauner@ubuntu.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 05:50:20PM +0800, Wei Wang wrote:
-> The VIRTIO_BALLOON_F_PAGE_POISON feature bit is used to indicate if the
-> guest is using page poisoning. Guest writes to the poison_val config
-> field to tell host about the page poisoning value in use.
-> 
-> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Wed,  7 Feb 2018 13:53:20 +0100
 
-I'd reorder this before 2/4 this way host can always rely
-on the poison feature being supported if free page
-tracking is supported.
-
-> ---
->  drivers/virtio/virtio_balloon.c     | 13 +++++++++++++
->  include/uapi/linux/virtio_balloon.h |  3 +++
->  2 files changed, 16 insertions(+)
+> Since we've added support for IFLA_IF_NETNSID for RTM_{DEL,GET,SET,NEW}LINK
+> it is possible for userspace to send us requests with three different
+> properties to identify a target network namespace. This affects at least
+> RTM_{NEW,SET}LINK. Each of them could potentially refer to a different
+> network namespace which is confusing. For legacy reasons the kernel will
+> pick the IFLA_NET_NS_PID property first and then look for the
+> IFLA_NET_NS_FD property but there is no reason to extend this type of
+> behavior to network namespace ids. The regression potential is quite
+> minimal since the rtnetlink requests in question either won't allow
+> IFLA_IF_NETNSID requests before 4.16 is out (RTM_{NEW,SET}LINK) or don't
+> support IFLA_NET_NS_{PID,FD} (RTM_{DEL,GET}LINK) in the first place.
 > 
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index 39ecce3..9fa7fcf 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -685,6 +685,7 @@ static struct file_system_type balloon_fs = {
->  static int virtballoon_probe(struct virtio_device *vdev)
->  {
->  	struct virtio_balloon *vb;
-> +	__u32 poison_val;
->  	int err;
->  
->  	if (!vdev->config->get) {
-> @@ -728,6 +729,12 @@ static int virtballoon_probe(struct virtio_device *vdev)
->  			goto out_del_vqs;
->  		}
->  		INIT_WORK(&vb->report_free_page_work, report_free_page_func);
-> +		if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
-> +			page_poison_val_get((u8 *)&poison_val);
-> +			memset(&poison_val, poison_val, sizeof(poison_val));
-> +			virtio_cwrite(vb->vdev, struct virtio_balloon_config,
-> +				      poison_val, &poison_val);
-> +		}
->  	}
->  
->  	vb->nb.notifier_call = virtballoon_oom_notify;
-> @@ -846,6 +853,11 @@ static int virtballoon_restore(struct virtio_device *vdev)
->  
->  static int virtballoon_validate(struct virtio_device *vdev)
->  {
-> +	uint8_t unused;
-> +
-> +	if (!page_poison_val_get(&unused))
-> +		__virtio_clear_bit(vdev, VIRTIO_BALLOON_F_PAGE_POISON);
-> +
->  	__virtio_clear_bit(vdev, VIRTIO_F_IOMMU_PLATFORM);
->  	return 0;
->  }
-> @@ -855,6 +867,7 @@ static unsigned int features[] = {
->  	VIRTIO_BALLOON_F_STATS_VQ,
->  	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
->  	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
-> +	VIRTIO_BALLOON_F_PAGE_POISON,
->  };
->  
->  static struct virtio_driver virtio_balloon_driver = {
-> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-> index 0c654db..3f97067 100644
-> --- a/include/uapi/linux/virtio_balloon.h
-> +++ b/include/uapi/linux/virtio_balloon.h
-> @@ -35,6 +35,7 @@
->  #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
->  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
->  #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
-> +#define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
->  
->  /* Size of a PFN in the balloon interface. */
->  #define VIRTIO_BALLOON_PFN_SHIFT 12
-> @@ -47,6 +48,8 @@ struct virtio_balloon_config {
->  	__u32 actual;
->  	/* Free page report command id, readonly by guest */
->  	__u32 free_page_report_cmd_id;
-> +	/* Stores PAGE_POISON if page poisoning is in use */
-> +	__u32 poison_val;
->  };
->  
->  #define VIRTIO_BALLOON_S_SWAP_IN  0   /* Amount of memory swapped in */
-> -- 
-> 2.7.4
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+
+Applied, thanks Christian.
