@@ -1,73 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeBHQ6j (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:58:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:37536 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751310AbeBHQ6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:58:37 -0500
-Subject: Re: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable
- work around
-To: Marc Zyngier <marc.zyngier@arm.com>, Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-18-suzuki.poulose@arm.com>
- <20180207103942.GH5862@e103592.cambridge.arm.com>
- <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
- <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <3b922643-ab97-e012-4268-c830b1bdaf10@arm.com>
-Date: Thu, 8 Feb 2018 16:58:34 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752175AbeBHRB7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:01:59 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41779 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeBHRB5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:01:57 -0500
+X-Google-Smtp-Source: AH8x224evjmFeRuwPtgbSRslDrvtDNzhuC1/5JVvBsTb1ZgJh2hxh+QRfjE0CmRN4P3fYBhXCCWfow==
+From: Claudio Scordino <claudio@evidence.eu.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Claudio Scordino <claudio@evidence.eu.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+Date: Thu,  8 Feb 2018 18:01:42 +0100
+Message-Id: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/18 12:26, Marc Zyngier wrote:
-> On 08/02/18 12:19, Suzuki K Poulose wrote:
->> On 07/02/18 10:39, Dave Martin wrote:
->>> On Wed, Jan 31, 2018 at 06:28:04PM +0000, Suzuki K Poulose wrote:
->>>> We defend against branch predictor training based exploits by
->>>> taking specific actions (based on the CPU model) to invalidate
->>>> the Branch predictor buffer (BPB). This is implemented by per-CPU
->>>> ptr, which installs the specific actions for the CPU model.
->>>>
->>>> The core code can handle the following cases where:
->>>>    1) some CPUs doesn't need any work around
->>>>    2) a CPU can install the work around, when it is brought up,
->>>>       irrespective of how late that happens.
->>
->> With the recent patches from Marc to expose this information to KVM
->> guests, it looks like allowing a late CPU to turn this on is not going
->> to be a good idea. We unconditionally set the capability even
->> when we don't need the mitigation. So I am not really sure if
->> we should go ahead with this patch. I am open to suggestions
->>
->> Marc,
->>
->> What do you think ?
-> 
-> By the time we bring in that CPU that requires some level of mitigation,
-> we may be running a guest already, and we've told that guest that no
-> mitigation was required. If we bring in that CPU, we break that promise,
-> and the guest becomes vulnerable without knowing about it.
-> 
-> The same thing is valid for userspace once we expose the status of the
-> mitigation in /sys, just like x86 does. If we transition from not
-> vulnerable to vulnerable (or even mitigated), we have lied to userspace.
-> 
-> In either case, I don't think breaking this contract is acceptable.
+When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+we should not wait for the rate limit, otherwise we may miss some deadline.
 
-Thanks Marc, I have dropped this patch from the series.
+Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
+misses for tasks with low RT periods.
 
-Cheers
-Suzuki
+The patch applies on top of the one recently proposed by Peter to drop the
+SCHED_CPUFREQ_* flags.
+
+Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+CC: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
+CC: Patrick Bellasi <patrick.bellasi@arm.com>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+CC: Morten Rasmussen <morten.rasmussen@arm.com>
+CC: Juri Lelli <juri.lelli@redhat.com>
+CC: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Vincent Guittot <vincent.guittot@linaro.org>
+CC: Todd Kjos <tkjos@android.com>
+CC: Joel Fernandes <joelaf@google.com>
+CC: linux-pm@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ kernel/sched/cpufreq_schedutil.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index b0bd77d..d8dcba2 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -74,7 +74,10 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+ 
+ /************************ Governor internals ***********************/
+ 
+-static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
++static bool sugov_should_update_freq(struct sugov_policy *sg_policy,
++				     u64 time,
++				     struct sugov_cpu *sg_cpu_old,
++				     struct sugov_cpu *sg_cpu_new)
+ {
+ 	s64 delta_ns;
+ 
+@@ -111,6 +114,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+ 		return true;
+ 	}
+ 
++	/* Ignore rate limit when DL increased utilization. */
++	if (sg_cpu_new->util_dl > sg_cpu_old->util_dl)
++		return true;
++
+ 	delta_ns = time - sg_policy->last_freq_update_time;
+ 	return delta_ns >= sg_policy->freq_update_delay_ns;
+ }
+@@ -271,6 +278,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 				unsigned int flags)
+ {
+ 	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
++	struct sugov_cpu sg_cpu_old = *sg_cpu;
+ 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
+ 	unsigned long util, max;
+ 	unsigned int next_f;
+@@ -279,7 +287,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 	sugov_set_iowait_boost(sg_cpu, time, flags);
+ 	sg_cpu->last_update = time;
+ 
+-	if (!sugov_should_update_freq(sg_policy, time))
++	if (!sugov_should_update_freq(sg_policy, time, &sg_cpu_old, sg_cpu))
+ 		return;
+ 
+ 	busy = sugov_cpu_is_busy(sg_cpu);
+@@ -350,6 +358,7 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
+ 				unsigned int flags)
+ {
+ 	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
++	struct sugov_cpu sg_cpu_old = *sg_cpu;
+ 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
+ 	unsigned int next_f;
+ 
+@@ -359,7 +368,7 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
+ 	sugov_set_iowait_boost(sg_cpu, time, flags);
+ 	sg_cpu->last_update = time;
+ 
+-	if (sugov_should_update_freq(sg_policy, time)) {
++	if (sugov_should_update_freq(sg_policy, time, &sg_cpu_old, sg_cpu)) {
+ 		next_f = sugov_next_freq_shared(sg_cpu, time);
+ 		sugov_update_commit(sg_policy, time, next_f);
+ 	}
+-- 
+2.7.4
