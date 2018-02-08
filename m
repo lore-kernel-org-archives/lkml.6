@@ -1,152 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeBHL4L (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 06:56:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46340 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751153AbeBHL4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 06:56:09 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAD62178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Thu, 8 Feb 2018 11:55:59 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Miodrag Dinic <Miodrag.Dinic@mips.com>
-Cc: Paul Burton <Paul.Burton@mips.com>,
-        Maciej Rozycki <Maciej.Rozycki@mips.com>,
-        Aleksandar Markovic <aleksandar.markovic@rt-rk.com>,
-        Aleksandar Markovic <Aleksandar.Markovic@mips.com>,
-        David Daney <ddaney@caviumnetworks.com>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        DengCheng Zhu <DengCheng.Zhu@mips.com>,
-        Ding Tianhong <dingtianhong@huawei.com>,
-        Douglas Leung <Douglas.Leung@mips.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Goran Ferenc <Goran.Ferenc@mips.com>, Ingo Molnar <mingo@kernel.org>,
-        James Cowgill <James.Cowgill@imgtec.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Redfearn <Matt.Redfearn@mips.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Petar Jovanovic <Petar.Jovanovic@mips.com>,
-        Raghu Gandham <Raghu.Gandham@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Saeger <tom.saeger@oracle.com>
-Subject: Re: [PATCH v2] MIPS: Add nonxstack=on|off kernel parameter
-Message-ID: <20180208115559.GA31316@saruman>
-References: <1511272574-10509-1-git-send-email-aleksandar.markovic@rt-rk.com>
- <dda5572e-0617-3427-7a90-07b3cf43d808@caviumnetworks.com>
- <48924BBB91ABDE4D9335632A6B179DD6A8CFEA@MIPSMAIL01.mipstec.com>
- <20171130100957.GG5027@jhogan-linux.mipstec.com>
- <48924BBB91ABDE4D9335632A6B179DD6A8D102@MIPSMAIL01.mipstec.com>
- <alpine.DEB.2.00.1712061657520.4584@tp.orcam.me.uk>
- <20171206182400.6va3pqdmgisbino7@pburton-laptop>
- <48924BBB91ABDE4D9335632A6B179DD6A8E6B2@MIPSMAIL01.mipstec.com>
+        id S1752343AbeBHL4d (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 06:56:33 -0500
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:44078 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752233AbeBHL4b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 06:56:31 -0500
+Subject: Re: [PATCH v8 0/7] TDA1997x HDMI video reciver
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Tim Harvey <tharvey@gateworks.com>
+Cc: linux-media <linux-media@vger.kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1517948874-21681-1-git-send-email-tharvey@gateworks.com>
+ <c7771c44-a9ff-0207-38f6-28bcc06ccdee@xs4all.nl>
+ <CAJ+vNU1oiM0Y0rO-DHi57nVOqnw60A7pn_1=h5b46-BrY7_p2Q@mail.gmail.com>
+ <605fd4a8-43ab-c566-57b6-abb1c9f8f0f8@xs4all.nl>
+ <7cf38465-7a79-5d81-a995-9acfbacf5023@xs4all.nl>
+ <CAJ+vNU014FJZsb44YnidE3fFiqeB6o8A7kvGinJWu7=yq3_dhA@mail.gmail.com>
+ <d188a172-fc00-eb46-c6f5-833a86475390@xs4all.nl>
+ <1518086816.4359.4.camel@pengutronix.de>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <3b95357c-e44f-eed9-efd3-e2b0e4ff9eb2@xs4all.nl>
+Date: Thu, 8 Feb 2018 12:56:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Content-Disposition: inline
-In-Reply-To: <48924BBB91ABDE4D9335632A6B179DD6A8E6B2@MIPSMAIL01.mipstec.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <1518086816.4359.4.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfK/DTb+GpJAWvlNCHG2DeXpXezOfeQLgDPvGdGoO3yacfQ9NpUjHZ5hLyWpzUhIBwPdkg5HBMsYjE9lC83TFPAyXiS90/8+cGn1HyXnsekNJqqReY6zE
+ 1ii4I+Msf5rVpnFLtWUSWQzchaQg8ZkPxmmSQh6ocaGcw+cVZUMwpI0NJxkRDYoi90ktHzjmZyBQx8WGbBHnG6xydiZVuVXUvTYOfGTM8vU7fXjCqokggwwS
+ 3MXSxkt7BU8OInT8INgnwxiQ2N4lgKoZ+9ZeHpo4Hzn6yTyMeAYdQF+ZWmlgRksyP7ycCgwckO2f5HeIXwuqIhaQqWpZb4YED1r+cMxoeHBQ0kAOssOTaa96
+ zr9XWXqUQlwVp9BHnofHP6uHDbZ4U0zLP5Xn61C0wa8EaKzDSOOjT5Dz3M2ZxY+W99EzipzxuGVyZFo8NZ2m1NfF7mLA61gVrJ9RF2Kagos8OkCku0bRAit4
+ UJXdwWVcyk39VBunXelE9ybDRpVdprUYq7eSWTLLI7GU3fRVPGU5/d9qzelUoRS1GflNMPW7qv7dZ5FkVSQ/6HCLwoXDY+e+IBXMcd8YCVE0Au9XMIKfDKo6
+ fME=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/08/18 11:46, Philipp Zabel wrote:
+> On Wed, 2018-02-07 at 23:19 +0100, Hans Verkuil wrote:
+>> On 02/07/2018 11:05 PM, Tim Harvey wrote:
+>>> On Wed, Feb 7, 2018 at 1:09 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>> On 02/07/18 09:22, Hans Verkuil wrote:
+>>>>> On 02/07/2018 12:29 AM, Tim Harvey wrote:
+>>>>>> Media Controller ioctls:
+>>>>>>                 fail: v4l2-test-media.cpp(141): ent.function ==
+>>>>>> MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
+>>>>>
+>>>>> Weird, this shouldn't happen. I'll look into this a bit more.
+>>>>
+>>>> Can you run 'mc_nextgen_test -e -i' and post the output?
+>>>>
+>>>> It's found in contrib/test.
+>>>>
+>>>
+>>> root@ventana:~# ./v4l-utils/contrib/test/mc_nextgen_test -e -i
+>>> Device: imx-media (driver imx-media)
+>>> Bus:
+>>> version: 0
+>>> number of entities: 24
+>>> number of interfaces: 24
+>>> number of pads: 48
+>>> number of links: 50
+>>> entity entity#1: 'unknown entity type' adv7180 2-0020, 1 pad(s), 1 source(s)
+>>> entity entity#3: 'unknown entity type' tda19971 2-0048, 1 pad(s), 1 source(s)
+>>> entity entity#5: 'unknown entity type' ipu1_vdic, 3 pad(s), 2 sink(s),
+>>> 1 source(s)
+>>> entity entity#9: 'unknown entity type' ipu2_vdic, 3 pad(s), 2 sink(s),
+>>> 1 source(s)
+>>> entity entity#13: 'unknown entity type' ipu1_ic_prp, 3 pad(s), 1
+>>> sink(s), 2 source(s)
+>>> entity entity#17: 'unknown entity type' ipu1_ic_prpenc, 2 pad(s), 1
+>>> sink(s), 1 source(s)
+>>> entity entity#20: 'V4L I/O' ipu1_ic_prpenc capture, 1 pad(s), 1 sink(s)
+>>> entity entity#26: 'unknown entity type' ipu1_ic_prpvf, 2 pad(s), 1
+>>> sink(s), 1 source(s)
+>>> entity entity#29: 'V4L I/O' ipu1_ic_prpvf capture, 1 pad(s), 1 sink(s)
+>>> entity entity#35: 'unknown entity type' ipu2_ic_prp, 3 pad(s), 1
+>>> sink(s), 2 source(s)
+>>> entity entity#39: 'unknown entity type' ipu2_ic_prpenc, 2 pad(s), 1
+>>> sink(s), 1 source(s)
+>>> entity entity#42: 'V4L I/O' ipu2_ic_prpenc capture, 1 pad(s), 1 sink(s)
+>>> entity entity#48: 'unknown entity type' ipu2_ic_prpvf, 2 pad(s), 1
+>>> sink(s), 1 source(s)
+>>> entity entity#51: 'V4L I/O' ipu2_ic_prpvf capture, 1 pad(s), 1 sink(s)
+>>> entity entity#57: 'unknown entity type' ipu1_csi0, 3 pad(s), 1
+>>> sink(s), 2 source(s)
+>>> entity entity#61: 'V4L I/O' ipu1_csi0 capture, 1 pad(s), 1 sink(s)
+>>> entity entity#67: 'unknown entity type' ipu1_csi1, 3 pad(s), 1
+>>> sink(s), 2 source(s)
+>>> entity entity#71: 'V4L I/O' ipu1_csi1 capture, 1 pad(s), 1 sink(s)
+>>> entity entity#77: 'unknown entity type' ipu2_csi0, 3 pad(s), 1
+>>> sink(s), 2 source(s)
+>>> entity entity#81: 'V4L I/O' ipu2_csi0 capture, 1 pad(s), 1 sink(s)
+>>> entity entity#87: 'unknown entity type' ipu2_csi1, 3 pad(s), 1
+>>> sink(s), 2 source(s)
+>>> entity entity#91: 'V4L I/O' ipu2_csi1 capture, 1 pad(s), 1 sink(s)
+>>> entity entity#97: 'unknown entity type' ipu1_csi0_mux, 3 pad(s), 2
+>>> sink(s), 1 source(s)
+>>> entity entity#101: 'unknown entity type' ipu2_csi1_mux, 3 pad(s), 2
+>>> sink(s), 1 source(s)
+>>
+>> Yuck. So nobody in imx (and adv7180!) is setting a valid function.
+>> And I see the mc_nextgen_test.c doesn't know all the latest functions
+>> anyway.
+> 
+> That's probably because for most of the entities it's a bit unclear
+> which function should be assigned.
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, that's one reason. The other is that there never was a utility
+to test this :-)
 
-Hi,
+> ipu[12]_csi[01]_mux are video multiplexers, so MEDIA_ENT_F_VID_MUX. I
+> thought those should already be set correctly in the video-mux driver.
 
-On Thu, Dec 07, 2017 at 11:33:47AM +0000, Miodrag Dinic wrote:
-> > On Wed, Dec 06, 2017 at 05:50:52PM +0000, Maciej W. Rozycki wrote:
-> > >  What problem are you trying to solve anyway?  Is it not something th=
-at=20
-> > > can be handled with the `execstack' utility?
-> >=20
-> > The commit message states that for Android "non-exec stack is required".
-> > Is Android checking that then Aleksandar? If so, how?=20
->=20
-> Android is using SELinux configured to disallow NX mappings by handling
-> the following sepolicy rules :
-> * Executable stack (execstack)
-> * Executable heap (execheap)
-> * File-based executable code which has been modified (execmod)
-> * All other executable memory (execmem)
+They are. The mc_nextgen_test, media-ctl and now v4l2-ctl/v4l2-compliance
+all have their own list of functions that they know about and it's all
+different. It's one of the things I want to fix.
 
-=2E..
+> ipu[12]_csi[01] are the interfaces to the outside parallel busses, but
+> they can also 'downscale' by skipping, skip frames and pack or expand
+> pixels from the bus into the internal FIFOs that lead to the next
+> element. These are not MEDIA_ENT_F_VID_IF_BRIDGE, are they?
 
-> The effect of not having some workaround like this in the kernel, would
-> be to run Android only in SELinux permissive mode.
+Yes, they are. One limitation of the current API is that you cannot
+represent correctly devices with multiple functions. This is planned for
+a long time now, but nobody actually did the work. So for now just fill
+in the primary function with a comment that in the future other functions
+should be set as well.
 
-So you want to override the lack of RIXI so that SELinux sees an
-RX->RW->RX transition as execmod instead of execmem (since without RIXI
-its effectively RX->RWX->RX which is execmem)?
+> ipu[12]_vdic are mainly deinterlacers, so a new function
+> MEDIA_ENT_F_PROC_VIDEO_DEINTERLACER ? These entities could also be used
+> as composers in a mem2mem scenario (MEDIA_ENT_F_PROC_VIDEO_COMPOSER ?),
+> but this is currently not supported.
 
-Looking at file_map_prot_check(), it does the execmem check on this
-condition:
+Yes, we need a PROC_VIDEO_DEINTERLACER function.
 
-if (default_noexec &&
-    (prot & PROT_EXEC) && (!file || IS_PRIVATE(file_inode(file)) ||
-			   (!shared && (prot & PROT_WRITE)))) {
-	/*
-	 * We are making executable an anonymous mapping or a
-	 * private file mapping that will also be writable.
-	 * This has an additional check.
-	 */
+> 
+> ipu[12]_ic_prp is just a tee element that feeds both ipu[12]_ic_prpenc
+> and ipu[12]_ic_prpvf. These are both scalers and colorspace converters.
+> MEDIA_ENT_F_PROC_VIDEO_SCALER ?
+> MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV ?
 
-default_noexec is set if VM_DATA_DEFAULT_FLAGS doesn't have the exec
-flag set, and that flag depends on current->personality &
-READ_IMPLIES_EXEC, which depends on elf_read_implies_exec(), i.e.
-mips_elf_read_implies_exec(), and that should already return 1 if RIXI
-is unavailable.
+The tee element would be a new PROC_VIDEO_SPLITTER function.
 
-I.e.
+The other two would be scalers, but should add the VIDEO_PIXEL_ENC_CONV
+function once it is possible to do so.
 
-mips_elf_read_implies_exec() =3D=3D 1
+> 
+> "ipu[12]_csi[01] capture" are the DMA elements writing to memory, so
+> MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER ?
 
-elf_read_implies_exec() =3D=3D 1
+These are likely to be filled correctly already. I've just added a commit
+to v4l2-compliance to make it easier to see what function is used:
 
-READ_IMPLIES_EXEC will be set in current->personality
+	v4l2-compliance -m0 -v
 
-VM_DATA_DEFAULT_FLAGS will have VM_EXEC set
+Regards,
 
-default_noexec will be set to 0 in selinux_init()
-
-none of the execmem, execheap, execstack, execmod permission
-checks should take place.
-
-So whats the problem exactly? Perhaps I misinterpreted something.
-
-Cheers
-James
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlp8OskACgkQbAtpk944
-dnpXnRAAg8eCnu8MmRP7+MTOs3F4aNFTs3o5Wp9ERlenik4MfNwkHimTj1uwrvuu
-sgMn6qc2x2HuctxuOXBNFlfix84qUFmAEggTUq9skE4PagLhy/6wmdCtlGBsmIPN
-tmxgrGEoq0Zt0hT0puvDYOForX8nUAnO/B2zzhbTkIAeDj3VCamx8wR5d0JgoHit
-F8Ls313c64AEI+3jN7eyFE18NbgMbtf/1APkIvHJLZm3hF3nSaks5X7gmpV4YrtY
-TFglq8n9P/HBRs41JhKVdUShKip4H38ESVy0sBniemicC3OxwLP+B6GuftzsoX2G
-OaNgYV4PNiQ4NOAiZgyBAC4oTyKEU+xgZwXzJjDjgitpkidDQYMhAw2oUu4SGZGX
-BWgB7dHTGGO1eZzESuuf/9xjp7ZM2C8S5yK0/YstY+HLaaoi0b5h1iP+VH+hFcM2
-PUeGZuCVYs6TCBBOVmEFtBhBDzlB/F9lnn60Fw7F7FrB6YbFTo+9V3Id4f1DUtmV
-OjnvLji4DlVXlOAs2S7qwFRyZ0d6j6GdLx9MguxP0VezGTQzelUXiyBp9NcsD+du
-rRAloaYtdAKkAj7t9RZmEaOdPLII3IDPCuvwvDeT1IFmtLo3ZEcxzoCjwgelv8dp
-gyX8vyrV4TMIZJ8TeblON1vFiluXYzzmrucM/8o+PbQFfPvJoCA=
-=ZezC
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+	Hans
