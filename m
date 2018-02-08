@@ -1,45 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeBHKbX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 05:31:23 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57560 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750806AbeBHKbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:31:22 -0500
-Subject: Re: [PATCH] KVM: X86: Fix SMRAM accessing even if VM is shutdown
-To: Xiao Guangrong <guangrong.xiao@gmail.com>,
-        Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <1517984706-47244-1-git-send-email-wanpengli@tencent.com>
- <233cfca3-971e-c3c2-f0fe-b50dd69d2546@redhat.com>
- <d21822e2-2982-7182-1d9a-be3e5b7e1553@gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <5664ca7f-f391-0301-3a0d-666b73f17b15@redhat.com>
-Date: Thu, 8 Feb 2018 11:31:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751796AbeBHKfT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 05:35:19 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:35981 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeBHKfS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 05:35:18 -0500
+Date: Thu, 8 Feb 2018 11:35:16 +0100
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-cris-kernel@axis.com
+Subject: [GIT PULL] CRIS urgent fixes for 4.16
+Message-ID: <20180208103516.GR11498@axis.com>
 MIME-Version: 1.0
-In-Reply-To: <d21822e2-2982-7182-1d9a-be3e5b7e1553@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 09:57, Xiao Guangrong wrote:
->> Maybe it should return RET_PF_EMULATE, which would cause an emulation
->> failure and then an exit with KVM_EXIT_INTERNAL_ERROR.
-> 
-> So the root cause is that a running vCPU accessing the memory whose memslot
-> is being updated (met the condition KVM_MEMSLOT_INVALID is set on the its
-> memslot).
-> 
-> The normal #PF handler breaks KVM_RUN and returns -EFAULT to userspace,
-> we'd better to make ept-misconfig's handler follow this style as well.
+Hi Linus,
 
-Why return -EFAULT and not attempt emulation (which will fail)?
+Please pull the below tag for an urgent fix for build
+problems in the CRIS-port.
 
-Paolo
+The following changes since commit e237f98a9c134c3d600353f21e07db915516875b:
+
+  Merge tag 'xfs-4.16-merge-5' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux (2018-02-05 13:35:56 -0800)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jesper/cris.git tags/cris-for-4.16-urgent
+
+for you to fetch changes up to 6e0377212c4e45d7350cff018f6a95633937c031:
+
+  CRIS: Restore mistakenly cleared kernel Makefile (2018-02-08 11:12:10 +0100)
+
+----------------------------------------------------------------
+CRIS urgent breakage fix for 4.16
+
+The main Makefile for the CRIS port was
+overzealously scrubbed in 4.15-rc3,
+breaking the build for all CRIS SoCs.
+
+----------------------------------------------------------------
+Jesper Nilsson (1):
+      CRIS: Restore mistakenly cleared kernel Makefile
+
+ arch/cris/kernel/Makefile | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
