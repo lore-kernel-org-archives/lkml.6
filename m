@@ -1,58 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752237AbeBHO0B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:26:01 -0500
-Received: from mail02.prevas.se ([62.95.78.10]:20889 "EHLO mail02.prevas.se"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750929AbeBHOZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:25:59 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HYAADQXHxa/2h+ugUNUBsBAQEBAwEBA?=
- =?us-ascii?q?QkBAQGFT4NlmkuZbQqFOwKDBRQBAgEBAQEBAQIDhjUBAQEDI1YQCxgCAiYCAlc?=
- =?us-ascii?q?GDQYCAQG4Zm6CJ4UAg3eCCgEBAQEBAQEDAQEBAQEjgQ+DaoNsgWgpDIJ5gy8Eh?=
- =?us-ascii?q?QaCZQWkKwmCTJMwlD6YDIE8NoFzTYM7hHh3jVEBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2HYAADQXHxa/2h+ugUNUBsBAQEBAwEBAQkBAQGFT4Nlmku?=
- =?us-ascii?q?ZbQqFOwKDBRQBAgEBAQEBAQIDhjUBAQEDI1YQCxgCAiYCAlcGDQYCAQG4Zm6CJ?=
- =?us-ascii?q?4UAg3eCCgEBAQEBAQEDAQEBAQEjgQ+DaoNsgWgpDIJ5gy8EhQaCZQWkKwmCTJM?=
- =?us-ascii?q?wlD6YDIE8NoFzTYM7hHh3jVEBAQE?=
-X-IronPort-AV: E=Sophos;i="5.46,479,1511823600";
-   d="scan'208";a="3030768"
-Subject: Re: [PATCH] ARM: dts: ls1021a: add quadspi node
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180126142014.13819-1-rasmus.villemoes@prevas.dk>
- <20180205080323.GP31354@dragon>
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Message-ID: <43c533e2-2b93-9672-3905-5f4ba8d6db19@prevas.dk>
-Date: Thu, 8 Feb 2018 15:24:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752248AbeBHO0u (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:26:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40071 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751153AbeBHO0s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:26:48 -0500
+From: Colin King <colin.king@canonical.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: ocelot: make function ocelot_pinctrl_probe static
+Date: Thu,  8 Feb 2018 14:24:37 +0000
+Message-Id: <20180208142437.11217-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <20180205080323.GP31354@dragon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-05 09:03, Shawn Guo wrote:
-> On Fri, Jan 26, 2018 at 03:20:14PM +0100, Rasmus Villemoes wrote:
->> Add a node to device tree repesenting the QuadSPI controller present on
->> LS1021a. Driver support has been present since e8c034b2fbe5 (mtd:
->> spi-nor: fsl-quadspi: add support for ls1021a).
->>
->> Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-> 
-> Applied, thanks.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry, I didn't know you already had a similar patch queued for 4.16
-(85f8ee78ab ARM: dts: ls1021a: Add support for QSPI with ls1021a SoC),
-so I have to ask you to unapply (or do you want me to send a revert?) -
-the ls1021a.dtsi in your imx/dt branch now has two almost-identical
-qspi: nodes.
+The function ocelot_pinctrl_probe is local to the source and does not
+need to be in global scope, so make it static.
 
-Rasmus
+Cleans up sparse warning:
+drivers/pinctrl/pinctrl-ocelot.c:465:5: warning: symbol
+'ocelot_pinctrl_probe' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 01a50d969111..a9423238471e 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -462,7 +462,7 @@ static const struct of_device_id ocelot_pinctrl_of_match[] = {
+ 	{},
+ };
+ 
+-int ocelot_pinctrl_probe(struct platform_device *pdev)
++static int ocelot_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ocelot_pinctrl *info;
+-- 
+2.15.1
