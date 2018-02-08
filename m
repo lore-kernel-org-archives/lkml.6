@@ -1,87 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBHIWa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 03:22:30 -0500
-Received: from mga02.intel.com ([134.134.136.20]:20671 "EHLO mga02.intel.com"
+        id S1752018AbeBHIYR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 03:24:17 -0500
+Received: from anholt.net ([50.246.234.109]:44710 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750986AbeBHIW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 03:22:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,477,1511856000";
-   d="scan'208";a="33063165"
-From: changbin.du@intel.com
-To: jolsa@redhat.com
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v2] perf ftrace: Fix the buffer size in __write_tracing_file
-Date: Thu,  8 Feb 2018 16:13:20 +0800
-Message-Id: <1518077600-19615-1-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1750923AbeBHIYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 03:24:16 -0500
+From: Eric Anholt <eric@anholt.net>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mark Brown <broonie@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc: linux-spi@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] spi: bcm2835aux: use 64-bit arithmetic instead of 32-bit
+In-Reply-To: <20180207160002.GA9292@embeddedgus>
+References: <20180207160002.GA9292@embeddedgus>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Thu, 08 Feb 2018 08:22:54 +0000
+Message-ID: <87inb7c2ld.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Changbin Du <changbin.du@intel.com>
+--=-=-=
+Content-Type: text/plain
 
-The terminal character '\0' should take into account into size of the
-string buffer. Without this fix, the '--graph-funcs', '--nograph-funcs'
-and '--trace-funcs' options didn't work as expected when the <func>
-doesn't exist. If usersapce writes a non-terminated string, the kernel
-side will always return success but actually no filter applied.
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
 
-As discussed before, the kernel now support '\0' to mark the end of string:
-https://lkml.org/lkml/2018/1/16/116
+> Add suffix ULL to constant 9 in order to give the compiler complete
+> information about the proper arithmetic to use. Notice that this
+> constant is used in a context that expects an expression of type
+> unsigned long long (64 bits, unsigned).
+>
+> The expression tfr->len * 9 * 1000000 is currently being evaluated
+> using 32-bit arithmetic.
+>
+> Addresses-Coverity-ID: 1339619
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-After this fix in userspace, the perf will report correct error state. Also
-let it print an error if reset_tracing_files() fails.
+The effect looks like it would be that we would have chosen polling mode
+instead of waiting for interrupts for some transfers >477 seconds.
+Seems like a good fix for an unlikely bug.
 
-The problem:
-$ sudo ./perf ftrace -a --graph-depth 1 --graph-funcs abcdefg
- 0)   0.140 us    |  rcu_all_qs();
- 3)   0.304 us    |  mutex_unlock();
- 0)   0.153 us    |  find_vma();
- 3)   0.088 us    |  __fsnotify_parent();
- 0)   6.145 us    |  handle_mm_fault();
- 3)   0.089 us    |  fsnotify();
- 3)   0.161 us    |  __sb_end_write();
- 3)   0.710 us    |  SyS_close();
- 3)   7.848 us    |  exit_to_usermode_loop();
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
-On above example, I specified function filter 'abcdefg' but all functions
-are enabled. The expected error is hidden.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- tools/perf/builtin-ftrace.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-index 25a42ac..a87e9b3 100644
---- a/tools/perf/builtin-ftrace.c
-+++ b/tools/perf/builtin-ftrace.c
-@@ -69,7 +69,7 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
- {
- 	char *file;
- 	int fd, ret = -1;
--	ssize_t size = strlen(val);
-+	ssize_t size = strlen(val) + 1;
- 	int flags = O_WRONLY;
- 	char errbuf[512];
- 
-@@ -280,8 +280,10 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
- 	signal(SIGCHLD, sig_handler);
- 	signal(SIGPIPE, sig_handler);
- 
--	if (reset_tracing_files(ftrace) < 0)
-+	if (reset_tracing_files(ftrace) < 0) {
-+		pr_err("failed to reset ftrace\n");
- 		goto out;
-+	}
- 
- 	/* reset ftrace buffer */
- 	if (write_tracing_file("trace", "0") < 0)
--- 
-2.7.4
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlp8CN8ACgkQtdYpNtH8
+nuhFJg/+If8zqN025T35hzY8SlSSyWxwWL0VFvyljQaDUkwMYkEvcgdpAMF7NX+N
+86SO2VtTAmxDc/bFQCHhdMrU65LTpsuFE4Vx8KP0MAYtw7jZF+caMYp+n7xpTG5U
+2+3o6GyOpXX5A4iKPc2J0yw70YsRmah+s/mpZPH/EcSh89tmZdEcEdwSXAGjgND2
+Dn/XEuUXuLB8AozI1feyMyM1c8pzq04PDiu6Kx8hqSB5h0UtiemnrmPL12CLvypa
+l1lEyArkAmd8URtMEr6fWXZxHq2ikst8BFk9QGvtsp3UeePDgbcRA0hmJh+rsLJM
+0ATE8Grcb6Do/NC6NDQw/seSHjvR90RxZ98TEGVFCTl4+11RUU8YhCGUOBe3+9SB
+VBSMEsd3vk1tPnauM+qkLic2gjjdM9Qbeh09pzMxDL6svMti4wVsbIz4zDiRL0/v
+7zDWpCXwBH0QJlNXJWPmZ0A5KppoloYPuPwg9YVm7gb2SnL21tWCoy5tP0SsFi3A
+w7yd4XDbsqGJwB0dh6qiWM20fGaqqz6OPUB1KdQwNdPk0h44z8KAKJKugwisfGy2
+j06VhvLK+iEGR/4d5UKZAWgN9KRIZtYO8NZDLuNQQQlExirMsOTMSsg/wZl1ZN+p
+qep7mpfKkh2vaCr3y+FXNE2AzrQ1KiN6Qf8zCH2PRxLPuJIuh6M=
+=n2nX
+-----END PGP SIGNATURE-----
+--=-=-=--
