@@ -1,153 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751706AbeBHNCw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:02:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:46234 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbeBHNCu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:02:50 -0500
-Date: Thu, 8 Feb 2018 14:02:32 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Subject: [PATCH] objtool: Fix switch-table detection
-Message-ID: <20180208130232.GF25235@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752046AbeBHNEZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:04:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33784 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750929AbeBHNEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:04:24 -0500
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v2] printk: Relocate wake_klogd check close to the end of console_unlock()
+Date: Thu,  8 Feb 2018 14:04:02 +0100
+Message-Id: <20180208130402.15157-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Tejun Heo <tj@kernel.org>
 
-Linus reported that GCC-7.3 generated a switch-table construct that
-confused objtool. It turns out that, in particular due to KASAN, it is
-possible to have unrelated .rodata usage in between the .rodata setup
-for the switch-table and the following indirect jump.
+We mark for waking up klogd whenever we see a new message sequence in
+the main loop.  However, the actual wakeup is always at the end of the
+function and we can easily test for the wakeup condition when we do
+the final should-we-repeat check.
 
-The simple linear reverse search from the indirect jump would hit upon
-the KASAN .rodata usage first and fail to find a switch_table,
-resulting in a spurious 'sibling call with modified stack frame'
-warning.
+Move the wake_klogd condition check out of the main loop.  This avoids
+doing the same thing repeatedly and groups similar checks into a
+common place.
 
-Fix this by creating a 'jump-stack' which we can 'unwind' during
-reversal, thereby skipping over much of the in-between code.
+This fixes a race introduced by the commit dbdda842fe96f8932 ("printk: Add
+console owner and waiter logic to load balance console writes").
+The current console owner might process the newly added message before
+the related printk() start waiting for the console lock. Then the lock
+is passed without waking klogd. The new owner sees the already updated
+seen_seq and does not know that the wakeup is needed.
 
-This is not fool proof by any means, but is sufficient to make the
-known cases work. Future work would be to construct more comprehensive
-flow analysis code.
-
-Also, since Josh keeps asking, add myself to MAINTAINERS.
-
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Fixes: dbdda842fe96f8932 ("printk: Add console owner and waiter logic to load balance console writes")
+Signed-off-by: Tejun Heo <tj@kernel.org>
+[pmladek@suse.com: Describe the new race with console waiter]
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 ---
- MAINTAINERS           |    1 +
- tools/objtool/check.c |   41 +++++++++++++++++++++++++++++++++++++++--
- tools/objtool/check.h |    1 +
- 3 files changed, 41 insertions(+), 2 deletions(-)
+The patch [1] was lost in the discussions about the solution
+of printk softlockups. I make sense on its own.
 
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9847,6 +9847,7 @@ F:	drivers/nfc/nxp-nci
+Important: It actually fixes a race caused by the new console waiter
+logic. This is why I resend it with an updated commit message.
+
+[1] https://lkml.kernel.org/r/20171102135146.GN3252168@devbig577.frc2.facebook.com
+
+
+ kernel/printk/printk.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index db4b9b8929eb..2682209b1c90 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2335,10 +2335,6 @@ void console_unlock(void)
  
- OBJTOOL
- M:	Josh Poimboeuf <jpoimboe@redhat.com>
-+M:	Peter Zijlstra <peterz@infradead.org>
- S:	Supported
- F:	tools/objtool/
+ 		printk_safe_enter_irqsave(flags);
+ 		raw_spin_lock(&logbuf_lock);
+-		if (seen_seq != log_next_seq) {
+-			wake_klogd = true;
+-			seen_seq = log_next_seq;
+-		}
  
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -851,8 +851,14 @@ static int add_switch_table(struct objto
-  *    This is a fairly uncommon pattern which is new for GCC 6.  As of this
-  *    writing, there are 11 occurrences of it in the allmodconfig kernel.
-  *
-+ *    As of GCC 7 there are quite a few more of these and the 'in between' code
-+ *    is significant. Esp. with KASAN enabled some of the code between the mov
-+ *    and jmpq uses .rodata itself, which can confuse things.
-+ *
-  *    TODO: Once we have DWARF CFI and smarter instruction decoding logic,
-  *    ensure the same register is used in the mov and jump instructions.
-+ *
-+ *    NOTE: RETPOLINE made it harder still to decode dynamic jumps.
-  */
- static struct rela *find_switch_table(struct objtool_file *file,
- 				      struct symbol *func,
-@@ -874,12 +880,25 @@ static struct rela *find_switch_table(st
- 						text_rela->addend + 4);
- 		if (!rodata_rela)
- 			return NULL;
-+
- 		file->ignore_unreachables = true;
- 		return rodata_rela;
- 	}
+ 		if (console_seq < log_first_seq) {
+ 			len = sprintf(text, "** %u printk messages dropped **\n",
+@@ -2417,12 +2413,17 @@ void console_unlock(void)
+ 	up_console_sem();
  
- 	/* case 3 */
--	func_for_each_insn_continue_reverse(file, func, insn) {
-+	/*
-+	 * Backward search using the @first_jump_src links, these help avoid
-+	 * much of the 'in between' code. Which avoids us getting confused by
-+	 * it.
-+	 */
-+	for (insn = list_prev_entry(insn, list);
-+
-+	     &insn->list != &file->insn_list &&
-+	     insn->sec == func->sec &&
-+	     insn->offset >= func->offset;
-+
-+	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
-+
- 		if (insn->type == INSN_JUMP_DYNAMIC)
- 			break;
- 
-@@ -909,14 +928,32 @@ static struct rela *find_switch_table(st
- 	return NULL;
- }
- 
-+
- static int add_func_switch_tables(struct objtool_file *file,
- 				  struct symbol *func)
- {
--	struct instruction *insn, *prev_jump = NULL;
-+	struct instruction *insn, *last = NULL, *prev_jump = NULL;
- 	struct rela *rela, *prev_rela = NULL;
- 	int ret;
- 
- 	func_for_each_insn(file, func, insn) {
-+		if (!last)
-+			last = insn;
-+
-+		/*
-+		 * Store back-pointers for unconditional forward jumps such
-+		 * that find_switch_table() can back-track using those and
-+		 * avoid some potentially confusing code.
-+		 */
-+		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest &&
-+		    insn->offset > last->offset &&
-+		    insn->jump_dest->offset > insn->offset &&
-+		    !insn->jump_dest->first_jump_src) {
-+
-+			insn->jump_dest->first_jump_src = insn;
-+			last = insn->jump_dest;
-+		}
-+
- 		if (insn->type != INSN_JUMP_DYNAMIC)
- 			continue;
- 
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -47,6 +47,7 @@ struct instruction {
- 	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
- 	struct symbol *call_dest;
- 	struct instruction *jump_dest;
-+	struct instruction *first_jump_src;
- 	struct list_head alts;
- 	struct symbol *func;
- 	struct stack_op stack_op;
+ 	/*
+-	 * Someone could have filled up the buffer again, so re-check if there's
+-	 * something to flush. In case we cannot trylock the console_sem again,
+-	 * there's a new owner and the console_unlock() from them will do the
+-	 * flush, no worries.
++	 * Check whether userland needs notification.  Also, someone could
++	 * have filled up the buffer again, so re-check if there's
++	 * something to flush. In case we cannot trylock the console_sem
++	 * again, there's a new owner and the console_unlock() from them
++	 * will do the flush, no worries.
+ 	 */
+ 	raw_spin_lock(&logbuf_lock);
++	if (seen_seq != log_next_seq) {
++		wake_klogd = true;
++		seen_seq = log_next_seq;
++	}
+ 	retry = console_seq != log_next_seq;
+ 	raw_spin_unlock(&logbuf_lock);
+ 	printk_safe_exit_irqrestore(flags);
+-- 
+2.13.6
