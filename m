@@ -1,127 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752335AbeBHVHW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 16:07:22 -0500
-Received: from foss.arm.com ([217.140.101.70]:40480 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752046AbeBHVHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 16:07:21 -0500
-Date: Thu, 8 Feb 2018 15:07:18 -0600
-From: Kim Phillips <kim.phillips@arm.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH] coresight replicator: set default y after Kconfig
- rename
-Message-Id: <20180208150718.36e72e4c3e96e3f4357e5c08@arm.com>
-In-Reply-To: <8cdc4fe6-faf6-412e-51af-a65d576ecc3f@infradead.org>
-References: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
-        <4ed2bf14-206a-20c6-40a6-3ab9a2ec07b4@arm.com>
-        <20180208132354.5d66ab91234bd7c7d971c1b1@arm.com>
-        <8cdc4fe6-faf6-412e-51af-a65d576ecc3f@infradead.org>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752215AbeBHVMQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 16:12:16 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47350 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeBHVMO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 16:12:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 312FE60314
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Thu, 8 Feb 2018 21:12:12 +0000
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        sboyd@codeaurora.org, rnayak@codeaurora.org, msivasub@codeaurora.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] drivers: qcom: add command DB driver
+Message-ID: <20180208211212.GA7084@codeaurora.org>
+References: <20180208195154.3580-1-ilina@codeaurora.org>
+ <20180208195154.3580-2-ilina@codeaurora.org>
+ <20180208204808.GA9676@jcrouse-lnx.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180208204808.GA9676@jcrouse-lnx.qualcomm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Feb 2018 11:53:44 -0800
-Randy Dunlap <rdunlap@infradead.org> wrote:
+On Thu, Feb 08 2018 at 20:48 +0000, Jordan Crouse wrote:
+>On Thu, Feb 08, 2018 at 12:51:53PM -0700, Lina Iyer wrote:
+>> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+>>
+>> Command DB is a simple database in the shared memory of QCOM SoCs, that
+>> provides information regarding shared resources. Some shared resources
+>> in the SoC have properties that are probed dynamically at boot by the
+>> remote processor. The information pertaining to the SoC and the platform
+>> are made available in the shared memory. Drivers can query this
+>> information using predefined strings.
+>>
+>> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> ---
+>
+>*snip*
+>
+>> diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
+>> new file mode 100644
+>> index 000000000000..050a56da76c8
+>> --- /dev/null
+>> +++ b/drivers/soc/qcom/cmd-db.c
+>> @@ -0,0 +1,321 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/of_reserved_mem.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/types.h>
+>> +
+>> +#include <soc/qcom/cmd-db.h>
+>> +
+>> +#define NUM_PRIORITY		2
+>> +#define MAX_SLV_ID		8
+>> +#define CMD_DB_MAGIC		0x0C0330DBUL
+>> +#define SLAVE_ID_MASK		0x7
+>> +#define SLAVE_ID_SHIFT		16
+>> +
+>> +#define ENTRY_HEADER(hdr)	((void *)cmd_db_header +	\
+>> +				sizeof(*cmd_db_header) +	\
+>> +				hdr->header_offset)
+>> +
+>> +#define RSC_OFFSET(hdr, ent)	((void *)cmd_db_header +	\
+>> +				sizeof(*cmd_db_header) +	\
+>> +				hdr.data_offset + ent.offset)
+>> +
+>> +#define MIN(a, b)		(((a) < (b)) ? (a) : (b))
+>
+>I'm not sure if this was addressed before. Why use a custom macro and not min()
+>or min_t()?
+>
+I didn't realize the existance of this. cscope brought out a ton of 'min' defn.
+Will fix in the next spin.
 
-> On 02/08/2018 11:23 AM, Kim Phillips wrote:
-> > On Thu, 8 Feb 2018 16:13:16 +0000
-> > Robin Murphy <robin.murphy@arm.com> wrote:
-> > 
-> >> On 07/02/18 21:03, Kim Phillips wrote:
-> >>> Commit 1c8859848dbb ("coresight replicator: Cleanup programmable
-> >>> replicator naming") changed the Kconfig symbol name from
-> >>> QCOM_REPLICATOR, which, whilst not in the single arm64 defconfig,
-> >>> was being set in my juno build script, which left the new symbol unset,
-> >>> causing the following unexpected grief:
-> >>>
-> >>>   # ./perf record -vvv -C 0 -e cs_etm/@20070000.etr/ --per-thread true
-> >>>   ..<snip>..
-> >>>   sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
-> >>>   mmap size 528384B
-> >>>   AUX area mmap length 4194304
-> >>>   perf event ring buffer mmapped per cpu
-> >>>   failed to mmap AUX area
-> >>>   failed to mmap with 12 (Cannot allocate memory)
-> >>>
-> >>> Make it default y to help not surprise unsuspecting users.
-> >>
-> >> How many users are there relying on your Juno build script? :P
-> > 
-> > This shouldn't be that uncommon for coresight users:
-> > 
-> > make defconfig
-> > scripts/config -e CONFIG_CORESIGHT
-> > scripts/config -e CONFIG_CORESIGHT_LINK_AND_SINK_TMC
-> > scripts/config -e CONFIG_CORESIGHT_SINK_TPIU
-> > scripts/config -e CONFIG_CORESIGHT_SINK_ETBV10
-> > scripts/config -e CONFIG_CORESIGHT_LINKS_AND_SINKS
-> > scripts/config -e CONFIG_CORESIGHT_SOURCE_ETM3X
-> > scripts/config -e CONFIG_CORESIGHT_SOURCE_ETM4X
-> > #scripts/config -e CONFIG_CORESIGHT_QCOM_REPLICATOR
-> > scripts/config -e CONFIG_CORESIGHT_DYNAMIC_REPLICATOR
-> > scripts/config -e CONFIG_CORESIGHT_STM
-> > scripts/config -e CONFIG_CORESIGHT_CPU_DEBUG
-> > 
-> > FWIW, Mathieu - who helped me track the cannot allocate memory problem
-> > down to this config symbol - has also benn caught by this issue.
-> > 
-> >>> Fixes: 1c8859848dbb ("coresight replicator: Cleanup programmable replicator naming")
-> >>
-> >> Before that commit, CORESIGHT_QCOM_REPLICATOR was not "default y", nor 
-> >> selected by any in-tree configs, so whatever the problem may be this is 
-> >> clearly not the correct fix.
-> > 
-> > Well, there's only one defconfig for arm64.  I don't know why it
-> > doesn't set CORESIGHT, but you're right, this is taking the build fix
-> > one step further to facilitate user coresight configuration.  I can
-> > change the patch to make the change to the arm64 defconfig, but I still
-> > believe CORESIGHT_DYNAMIC_REPLICATOR should be default=y, and the
-> > defconfig just set CORESIGHT.
-> > 
-> >>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> >>> ---
-> >>>   drivers/hwtracing/coresight/Kconfig | 1 +
-> >>>   1 file changed, 1 insertion(+)
-> >>>
-> >>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> >>> index ef9cb3c164e1..b94bbd95efa6 100644
-> >>> --- a/drivers/hwtracing/coresight/Kconfig
-> >>> +++ b/drivers/hwtracing/coresight/Kconfig
-> >>> @@ -73,6 +73,7 @@ config CORESIGHT_SOURCE_ETM4X
-> >>>   config CORESIGHT_DYNAMIC_REPLICATOR
-> >>>   	bool "CoreSight Programmable Replicator driver"
-> >>>   	depends on CORESIGHT_LINKS_AND_SINKS
-> >>> +	default y
-> >>
-> >> CORESIGHT_LINKS_AND_SINKS is "default n" (as indeed is CORESIGHT), and 
-> >> not selected by any defconfigs, so in general this doesn't really help 
-> >> anyway.
-> > 
-> > Yeah, CORESIGHT_LINKS_AND_SINKS should probably be default y too.
-> 
-> Are they required for system operation?  If not, they should not default to y.
-
-They're not required for general purpose system operation: they're
-protected by an if CORESIGHT.  All the other CORESIGHT symbols select
-CORESIGHT_LINKS_AND_SINKS except CORESIGHT_CPU_DEBUG, which doesn't
-need to be protected by the if CORESIGHT.
-
-> and if they are required, it seems odd that they are in drivers/hwtracing/.
-
-Right, they are required for tracing using the Coresight subsystem, not
-general purpose system operation, so they can be 'default y' under 'if
-CORESIGHT' protection.
-
-Kim
+Thanks,
+Lina
