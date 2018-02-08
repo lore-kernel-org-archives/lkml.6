@@ -1,117 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752593AbeBHTxv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 14:53:51 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49336 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752212AbeBHTxu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 14:53:50 -0500
-Subject: Re: [PATCH] coresight replicator: set default y after Kconfig rename
-To: Kim Phillips <kim.phillips@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
- <4ed2bf14-206a-20c6-40a6-3ab9a2ec07b4@arm.com>
- <20180208132354.5d66ab91234bd7c7d971c1b1@arm.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8cdc4fe6-faf6-412e-51af-a65d576ecc3f@infradead.org>
-Date: Thu, 8 Feb 2018 11:53:44 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752215AbeBHTzq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 14:55:46 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35938 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751544AbeBHTzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 14:55:44 -0500
+Date: Thu, 8 Feb 2018 21:55:38 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Wei Wang <wei.w.wang@intel.com>
+Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com
+Subject: Re: [PATCH v28 0/4] Virtio-balloon: support free page reporting
+Message-ID: <20180208215048-mutt-send-email-mst@kernel.org>
+References: <1518083420-11108-1-git-send-email-wei.w.wang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180208132354.5d66ab91234bd7c7d971c1b1@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518083420-11108-1-git-send-email-wei.w.wang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/2018 11:23 AM, Kim Phillips wrote:
-> On Thu, 8 Feb 2018 16:13:16 +0000
-> Robin Murphy <robin.murphy@arm.com> wrote:
+On Thu, Feb 08, 2018 at 05:50:16PM +0800, Wei Wang wrote:
+> This patch series is separated from the previous "Virtio-balloon
+> Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
+> implemented by this series enables the virtio-balloon driver to report
+> hints of guest free pages to the host. It can be used to accelerate live
+> migration of VMs. Here is an introduction of this usage:
 > 
->> On 07/02/18 21:03, Kim Phillips wrote:
->>> Commit 1c8859848dbb ("coresight replicator: Cleanup programmable
->>> replicator naming") changed the Kconfig symbol name from
->>> QCOM_REPLICATOR, which, whilst not in the single arm64 defconfig,
->>> was being set in my juno build script, which left the new symbol unset,
->>> causing the following unexpected grief:
->>>
->>>   # ./perf record -vvv -C 0 -e cs_etm/@20070000.etr/ --per-thread true
->>>   ..<snip>..
->>>   sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
->>>   mmap size 528384B
->>>   AUX area mmap length 4194304
->>>   perf event ring buffer mmapped per cpu
->>>   failed to mmap AUX area
->>>   failed to mmap with 12 (Cannot allocate memory)
->>>
->>> Make it default y to help not surprise unsuspecting users.
->>
->> How many users are there relying on your Juno build script? :P
+> Live migration needs to transfer the VM's memory from the source machine
+> to the destination round by round. For the 1st round, all the VM's memory
+> is transferred. From the 2nd round, only the pieces of memory that were
+> written by the guest (after the 1st round) are transferred. One method
+> that is popularly used by the hypervisor to track which part of memory is
+> written is to write-protect all the guest memory.
 > 
-> This shouldn't be that uncommon for coresight users:
-> 
-> make defconfig
-> scripts/config -e CONFIG_CORESIGHT
-> scripts/config -e CONFIG_CORESIGHT_LINK_AND_SINK_TMC
-> scripts/config -e CONFIG_CORESIGHT_SINK_TPIU
-> scripts/config -e CONFIG_CORESIGHT_SINK_ETBV10
-> scripts/config -e CONFIG_CORESIGHT_LINKS_AND_SINKS
-> scripts/config -e CONFIG_CORESIGHT_SOURCE_ETM3X
-> scripts/config -e CONFIG_CORESIGHT_SOURCE_ETM4X
-> #scripts/config -e CONFIG_CORESIGHT_QCOM_REPLICATOR
-> scripts/config -e CONFIG_CORESIGHT_DYNAMIC_REPLICATOR
-> scripts/config -e CONFIG_CORESIGHT_STM
-> scripts/config -e CONFIG_CORESIGHT_CPU_DEBUG
-> 
-> FWIW, Mathieu - who helped me track the cannot allocate memory problem
-> down to this config symbol - has also benn caught by this issue.
-> 
->>> Fixes: 1c8859848dbb ("coresight replicator: Cleanup programmable replicator naming")
->>
->> Before that commit, CORESIGHT_QCOM_REPLICATOR was not "default y", nor 
->> selected by any in-tree configs, so whatever the problem may be this is 
->> clearly not the correct fix.
-> 
-> Well, there's only one defconfig for arm64.  I don't know why it
-> doesn't set CORESIGHT, but you're right, this is taking the build fix
-> one step further to facilitate user coresight configuration.  I can
-> change the patch to make the change to the arm64 defconfig, but I still
-> believe CORESIGHT_DYNAMIC_REPLICATOR should be default=y, and the
-> defconfig just set CORESIGHT.
-> 
->>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
->>> ---
->>>   drivers/hwtracing/coresight/Kconfig | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
->>> index ef9cb3c164e1..b94bbd95efa6 100644
->>> --- a/drivers/hwtracing/coresight/Kconfig
->>> +++ b/drivers/hwtracing/coresight/Kconfig
->>> @@ -73,6 +73,7 @@ config CORESIGHT_SOURCE_ETM4X
->>>   config CORESIGHT_DYNAMIC_REPLICATOR
->>>   	bool "CoreSight Programmable Replicator driver"
->>>   	depends on CORESIGHT_LINKS_AND_SINKS
->>> +	default y
->>
->> CORESIGHT_LINKS_AND_SINKS is "default n" (as indeed is CORESIGHT), and 
->> not selected by any defconfigs, so in general this doesn't really help 
->> anyway.
-> 
-> Yeah, CORESIGHT_LINKS_AND_SINKS should probably be default y too.
+> This feature enables the optimization of the 1st round memory transfer -
+> the hypervisor can skip the transfer of guest free pages in the 1st round.
+> It is not concerned that the memory pages are used after they are given
+> to the hypervisor as a hint of the free pages, because they will be
+> tracked by the hypervisor and transferred in the next round if they are
+> used and written.
 
-Are they required for system operation?  If not, they should not default to y.
+At this point I think it's a good idea to focus on the qemu
+side, that code is still not really ready yet.
 
-and if they are required, it seems odd that they are in drivers/hwtracing/.
+> * Tests
+> - Migration time improvement
+> Result:
+> Live migration time is reduced to 14% with this optimization.
+> Details:
+> Local live migration of 8GB idle guest, the legacy live migration takes
+> ~1817ms. With this optimization, it takes ~254ms, which reduces the time
+> to 14%.
 
 
--- 
-~Randy
+
+> - Workload tests
+> Results:
+> Running this feature has no impact on the linux compilation workload
+> running inside the guest.
+
+I think you should try something memory intensive. Try asking
+qemu migration guys for hints on a good test to run.
+
+
+> Details:
+> Set up a Ping-Pong local live migration, where the guest ceaselessy
+> migrates between the source and destination. Linux compilation,
+> i.e. make bzImage -j4, is performed during the Ping-Pong migration. The
+> legacy case takes 5min14s to finish the compilation. With this
+> optimization patched, it takes 5min12s.
+
+How is migration time affected in this case?
+ 
+> ChangeLog:
+> v27->v28:
+>     - mm/page_poison: Move PAGE_POISON to page_poison.c and add a function
+>       to expose page poison val to kernel modules.
+> v26->v27:
+>     - add a new patch to expose page_poisoning_enabled to kernel modules
+>     - virtio-balloon: set poison_val to 0xaaaaaaaa, instead of 0xaa
+> v25->v26: virtio-balloon changes only
+>     - remove kicking free page vq since the host now polls the vq after
+>       initiating the reporting
+>     - report_free_page_func: detach all the used buffers after sending
+>       the stop cmd id. This avoids leaving the detaching burden (i.e.
+>       overhead) to the next cmd id. Detaching here isn't considered
+>       overhead since the stop cmd id has been sent, and host has already
+>       moved formard.
+> v24->v25:
+>     - mm: change walk_free_mem_block to return 0 (instead of true) on
+>           completing the report, and return a non-zero value from the
+>           callabck, which stops the reporting.
+>     - virtio-balloon:
+>         - use enum instead of define for VIRTIO_BALLOON_VQ_INFLATE etc.
+>         - avoid __virtio_clear_bit when bailing out;
+>         - a new method to avoid reporting the some cmd id to host twice
+>         - destroy_workqueue can cancel free page work when the feature is
+>           negotiated;
+>         - fail probe when the free page vq size is less than 2.
+> v23->v24:
+>     - change feature name VIRTIO_BALLOON_F_FREE_PAGE_VQ to
+>       VIRTIO_BALLOON_F_FREE_PAGE_HINT
+>     - kick when vq->num_free < half full, instead of "= half full"
+>     - replace BUG_ON with bailing out
+>     - check vb->balloon_wq in probe(), if null, bail out
+>     - add a new feature bit for page poisoning
+>     - solve the corner case that one cmd id being sent to host twice
+> v22->v23:
+>     - change to kick the device when the vq is half-way full;
+>     - open-code batch_free_page_sg into add_one_sg;
+>     - change cmd_id from "uint32_t" to "__virtio32";
+>     - reserver one entry in the vq for the driver to send cmd_id, instead
+>       of busywaiting for an available entry;
+>     - add "stop_update" check before queue_work for prudence purpose for
+>       now, will have a separate patch to discuss this flag check later;
+>     - init_vqs: change to put some variables on stack to have simpler
+>       implementation;
+>     - add destroy_workqueue(vb->balloon_wq);
+> 
+> v21->v22:
+>     - add_one_sg: some code and comment re-arrangement
+>     - send_cmd_id: handle a cornercase
+> 
+> For previous ChangeLog, please reference
+> https://lwn.net/Articles/743660/
+> 
+> Wei Wang (4):
+>   mm: support reporting free page blocks
+>   virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+>   mm/page_poison: add a function to expose page poison val to kernel
+>     modules
+>   virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
+> 
+>  drivers/virtio/virtio_balloon.c     | 258 +++++++++++++++++++++++++++++++-----
+>  include/linux/mm.h                  |   8 ++
+>  include/linux/poison.h              |   7 -
+>  include/uapi/linux/virtio_balloon.h |   7 +
+>  mm/page_alloc.c                     |  96 ++++++++++++++
+>  mm/page_poison.c                    |  24 ++++
+>  6 files changed, 357 insertions(+), 43 deletions(-)
+> 
+> -- 
+> 2.7.4
