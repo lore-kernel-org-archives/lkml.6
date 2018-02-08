@@ -1,82 +1,102 @@
-Return-Path: <andy.shevchenko@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518102968; cv=none;
+Return-Path: <vigneshr@ti.com>
+X-Google-Smtp-Source: AH8x226Ptjjkk5s68wvvF+CPPmP9R/0gF6v4FR1tLgt8w2cHgC2Yo9RLLSektgDm50zRc58N17uD
+ARC-Seal: i=1; a=rsa-sha256; t=1518110164; cv=none;
         d=google.com; s=arc-20160816;
-        b=KxBNTqVUTC8/wofWrplGZ3QdyEprF9lwIk/4UFlhCCc+VqwPWGs0VKvmP50Lgp4Q1l
-         LlDtF1+mM0r1LpStvRnCQgUnW2uKyp6ovsMUIIuLCc+rVM0uUKKOTMXUE2poFSWjsfHv
-         /2MtuIVjfxraegaesuoSn5I40pLOHBqh7ezaUO/Ti4nqm9B3sQ+NKhPejVmCPwOdSJPe
-         stHjsrW1s//6V9DxlLQfaqrpoglV+YNQEIXaSeTbAEvDw11IzhTh19uOsd773Pnv5HzY
-         98jseeS0uyZw114xHs7FaIjHhUC2HIBDqzbC4lv0vDDSRqK3s3JLc0FyEDzEKPZVdA7a
-         IlQA==
+        b=r5aTbaYQiPMCFI2CuaPKob1088/kSfDDOYdEzwcs8tAaJurcpitagOt0AkQlG60qUn
+         YjbDXOWbRxhrF9hiZA1KW6t0Kbj/zjGqa1/BM9x5/MXB9rO9IevywUU/wy86CaraxOUN
+         qNMmFGcVG7iSNH2brbXIJ1/hg7yoUgC9Y4fnQAw2tSId8wuxWur7Dn6XipymG34JxTFH
+         7QJ/mtTxKU4YcsGPlyequKMGRNJ2zFtZSSvDssfiFwmFM/1MxGEdAUUj7ceikDGdEnPJ
+         UesOz9AgYX16a6NQngsaA0p/1FqMOCndFDRNmv0PS5B6oz+EA78jPo5LGEaxQVSOKOOr
+         f1qA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=IOoWewXpxQBFexBdocWfsmbLR+CJev3P1zkvZTr7D0U=;
-        b=ijTtwntjCLptk84w3znujHghUGIvcFxOPttPiCE3jht9rlKNZRuRk3AXgxvXOv22C5
-         qnAp+X5pq8QPyBOwNPPc+pVpdUe6EjVUac5LFIEaWxAnekM2l2YJebF5y4WQdmcNC4Z2
-         mFJjH3oOu7Nxy8yp2QXg/VSuwONpyTdjFmnH6uJA6hKsO8mUv1cucYzRdJPyj3cATsxI
-         wYq0ajrZf4ohQEyKQ57lXAldubjo6idC4vdETmON/hsZfbt7DJdepLyouNre6wGsQOFB
-         bsWauwZV5deerf+yEBNhDtJONOKBZHgQbOgl+Ye6smeeHuI7lQG73rAwFXOGebqunLAp
-         4hBg==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=kQY2/alGybGE5OVjDWw2eVnAvCmueAxTyulUCaiiIQE=;
+        b=SFGcAHXqPMwJCGTbi+7LcVxzmnxTYEOYRop3BTZxj+K2szad2mF2dFJHloVPYwVw/T
+         xJMQBRvluyyUKMHCX8DQv+8pRaqVgELif/KxEldiqPpQHX8f3tcNR81GXqSmT7rxN9WN
+         A65DySm7iYLdC23K8rUxc9khuSc6wVhNYycLV9aBS1UwXs01tlEfngqlq/68XzuQvP4O
+         d5x9XmwLiNbR4k6YPMbWy69GhfOP3cm4ZefPXBgNOyp3zDHBT1c/1Im3d+Su3rnJweKE
+         jgqD4rRZ/mWs8MgpgQD6ROJHlvjfH9YNKwiDqxkf9rsOgQW2QJGZA3NcZ4NGpEJgK1O8
+         C1+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=P3XY5BXu;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=xUO/Ll3G;
+       spf=pass (google.com: domain of vigneshr@ti.com designates 198.47.19.16 as permitted sender) smtp.mailfrom=vigneshr@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=P3XY5BXu;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x225tvP54D7HausB0oEm5mjVSvtuzylH5uDZTn6ODegqoWp7Ag7oKEKCgPiJ/6c243mGXA3Ek0EkuRmF7fpvPIrs=
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=xUO/Ll3G;
+       spf=pass (google.com: domain of vigneshr@ti.com designates 198.47.19.16 as permitted sender) smtp.mailfrom=vigneshr@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+Subject: Re: [PATCH 1/2] serial: 8250: Don't service RX FIFO if interrupts are
+ disabled
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jslaby@suse.com>, <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        Linux OMAP Mailing List
+	<linux-omap@vger.kernel.org>,
+        linux-arm Mailing List
+	<linux-arm-kernel@lists.infradead.org>
+References: <20180208125542.15649-1-vigneshr@ti.com>
+ <20180208125542.15649-2-vigneshr@ti.com>
+ <CAHp75Vdo+B=Z+ScUgYvoWMSP7G6iC=LOiW57dViXCXm=g2gOLw@mail.gmail.com>
+From: Vignesh R <vigneshr@ti.com>
+Message-ID: <e50c8af2-0d9f-b589-29c8-e903576d8b70@ti.com>
+Date: Thu, 8 Feb 2018 22:45:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180208125542.15649-2-vigneshr@ti.com>
-References: <20180208125542.15649-1-vigneshr@ti.com> <20180208125542.15649-2-vigneshr@ti.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 8 Feb 2018 17:16:07 +0200
-Message-ID: <CAHp75Vdo+B=Z+ScUgYvoWMSP7G6iC=LOiW57dViXCXm=g2gOLw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] serial: 8250: Don't service RX FIFO if interrupts are disabled
-To: Vignesh R <vigneshr@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
-	linux-serial@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75Vdo+B=Z+ScUgYvoWMSP7G6iC=LOiW57dViXCXm=g2gOLw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591837469077469236?=
-X-GMAIL-MSGID: =?utf-8?q?1591846338961832540?=
+X-GMAIL-MSGID: =?utf-8?q?1591853883840523208?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 8, 2018 at 2:55 PM, Vignesh R <vigneshr@ti.com> wrote:
-> Currently, data in RX FIFO is read based on UART_LSR register state even
-> if RDI and RLSI interrupts are disabled in UART_IER register.
-> This is because when IRQ handler is called due to TX FIFO empty event,
-> RX FIFO is serviced based on UART_LSR register status instead of
-> UART_IIR status. This defeats the purpose of disabling UART RX
-> FIFO interrupts during throttling(see, omap_8250_throttle()) as IRQ
-> handler continues to drain UART RX FIFO resulting in overflow of buffer
-> at tty layer.
-> Fix this by making sure that driver drains UART RX FIFO only when
-> UART_IIR_RDI is set along with UART_LSR_BI or UART_LSR_DR bits.
->
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
 
-> -       if (status & (UART_LSR_DR | UART_LSR_BI)) {
-> +       if (status & (UART_LSR_DR | UART_LSR_BI) &&
-> +           iir & UART_IIR_RDI) {
 
->                 if (!up->dma || handle_rx_dma(up, iir))
+On 08-Feb-18 8:46 PM, Andy Shevchenko wrote:
+> On Thu, Feb 8, 2018 at 2:55 PM, Vignesh R <vigneshr@ti.com> wrote:
+>> Currently, data in RX FIFO is read based on UART_LSR register state even
+>> if RDI and RLSI interrupts are disabled in UART_IER register.
+>> This is because when IRQ handler is called due to TX FIFO empty event,
+>> RX FIFO is serviced based on UART_LSR register status instead of
+>> UART_IIR status. This defeats the purpose of disabling UART RX
+>> FIFO interrupts during throttling(see, omap_8250_throttle()) as IRQ
+>> handler continues to drain UART RX FIFO resulting in overflow of buffer
+>> at tty layer.
+>> Fix this by making sure that driver drains UART RX FIFO only when
+>> UART_IIR_RDI is set along with UART_LSR_BI or UART_LSR_DR bits.
+>>
+>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> 
+>> -       if (status & (UART_LSR_DR | UART_LSR_BI)) {
+>> +       if (status & (UART_LSR_DR | UART_LSR_BI) &&
+>> +           iir & UART_IIR_RDI) {
+> 
+>>                 if (!up->dma || handle_rx_dma(up, iir))
+> 
+> handle_rx_dma() checks for IRQ status as well.
+> 
+> But for now it seems we are on safe side since checks are done versus
+> IRQ status with bit 2 set, meaning that iir & RDI will be true.
+> 
+>>                         status = serial8250_rx_chars(up, status);
+>>         }
+> 
+> Anyway, thanks for the patch, though I need some time to test it on
+> non-OMAP hardware with DMA enabled.
 
-handle_rx_dma() checks for IRQ status as well.
+This patch is needed even when DMA is not enabled.
+It would be great if you could test this. But, I don't see any other
+8250 drivers apart from 8250_omap.c implementing
+.throttle()/.unthrottle() callbacks.
 
-But for now it seems we are on safe side since checks are done versus
-IRQ status with bit 2 set, meaning that iir & RDI will be true.
-
->                         status = serial8250_rx_chars(up, status);
->         }
-
-Anyway, thanks for the patch, though I need some time to test it on
-non-OMAP hardware with DMA enabled.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Regards
+Vignesh
