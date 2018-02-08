@@ -1,106 +1,77 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x224OzOJ9IjTRZ2HH2OTuaEYG1hzizMkxedRoKe6An87Xm6EVRoIiHwA6TfTa7XMgpVd4UWKJ
-ARC-Seal: i=1; a=rsa-sha256; t=1518557423; cv=none;
+Return-Path: <daniel.diaz@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1518069080; cv=none;
         d=google.com; s=arc-20160816;
-        b=lXR2fT1fr203pbxbIbmw+qWUaqkugWncCUoQjeeHgDDJUFHm5dvVO8Cl7EBRTRtFuO
-         ZNVQIlzD/oOkRud6xNGqfKnj+oQQSEbaQkXrYSubOUnUhLbWTjzPhmcpMmqbSvUVM85t
-         oKoME7w/UgRJ7jkmENQN4cJCM8gxvPyZ9Cqehh6e6hlBPkC0gH8AMbMIhxLq0rRrRyix
-         FCevAwAaXAfRUlHi10rUB3cjszmujd6fNC3etir66KoYKSQzUWEvS5CDPT/m2HJ+Q38T
-         CwQ7fy8PjeRuUrho28PaR1ru1EgP1qhQtsuS8UeOpMEuEL4aTtpC8+71LUduqqCToQ93
-         q+Xw==
+        b=Bit1OZ2dAfntrrOWRnV41IXP4mZAAgld+Phqj9v5KcMbGhHqCBoCNs+fNPiKPcRGe0
+         viQdDUok65u3lI1A0jbHGVP/k4u8dchiJaQuh5Na6VtT7GTw2uHJnD1duooHQdi2y82X
+         NlGln9PAYR2V/63m0CGvWS4aB81W2jgTFgubw/RnlXQz7aJgiKVvYNNxKS4FfVSODzew
+         tOV2tnj8BWql5MMdOVp5TIlrszMp8rH8k0dWrBpYp6rFvSkbma8IUFl+q5aGGPON7C+y
+         2EI4wWDi75mQux1mY8qGwMzusZz1MfKpwNGihK7PY/Z7zFDj72qrN4vDMrg/Q8FXwI9E
+         P7PQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:to:subject:reply-to
-         :arc-authentication-results;
-        bh=0QZjdpJ/lhE47PW/Zv7YR5BloSd/ObyeM2JrtbtIGyY=;
-        b=qpBEMmXeOUg8SyG23j9bFZJOYnefx/fLf/Qnff3fpyW6UVcpXMVpzPlQxNamDNfCQm
-         VgBFDaBaI+QMoQxSNn/yzd56jlJVSBYia/J7Yy+GALUJaw2yjSL2VupvK0wBBJXKG+HZ
-         P33qugGhkgldzfRoSZ0GvO8vbDUFxYhRQXRMwlNvFGYNzF6hg5VGxI5wU2RUllmxVtqv
-         cnIgH99W/JHhBl6VLKuNKNcIEOoZhvxdPYCOlXHRKcwRadbFtJd+QYeCi13ItTsrbTiU
-         cHfGEn9iOfgDq9B5yIyLEoK5a+Q14P8iHgcPDWtqR9HWmMTyflPar4weAyUxcBs6xpUy
-         3GuA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:arc-authentication-results;
+        bh=wIt6kyFnAckOMA0oTtoea/6OIgG7OylPKyDa4AgqUO4=;
+        b=y7uJ+1jmk/it43p4cKDiUu21wQKRor2qfa9Ff9OdVV/RxXugLDONuia0G41jjEM/iZ
+         j04SbEtFw5aINQQHiy9RyH0GKZAed0HU1FwW8b/4CeZwl67Y8j9NTk1PCEBwO4ftuBzp
+         NR1OZM81gk4ioO0w95qBsai7sntMx9sM86MR1dsqRCZQe7K/XGSIzg8IcxWdlaYmk//S
+         hniMlRVo8241VT9eCAXNdBccp1lzaHyewqyaJEWPadq27L0s62iVqXK16W/vKkHmHxqH
+         PPFVPLBfrL4zDBlFrrqpDUdFfUCGlcCxyxjpIgeX6gi0L9N/abUE48BePi2vP+i2jyPY
+         TCMA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=Sbau/OCb;
+       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965814AbeBMVaW (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 13 Feb 2018 16:30:22 -0500
-Received: from mailout.easymail.ca ([64.68.200.34]:57434 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965749AbeBMVaW (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 13 Feb 2018 16:30:22 -0500
-Reply-To: shuah@kernel.org
-Subject: Re: [PATCH] selftest/vDSO: fix O=
-To: Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180211105950.14720-1-linux@dominikbrodowski.net>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <03fc8983-8ed2-0a49-4268-6dd1f79d22fa@kernel.org>
-Date: Tue, 13 Feb 2018 14:30:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       dkim=pass header.i=@linaro.org header.s=google header.b=Sbau/OCb;
+       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AH8x224LKDP6oX778nMmISaH6cne0Q7aJdDzca7nxigjF/jHHleg/Z+X039Mj7Z0j88GNvUtk2xGtg==
+From: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
+To: shuahkh@osg.samsung.com,
+	linux-kselftest@vger.kernel.org
+Cc: aneesh.kumar@linux.vnet.ibm.com,
+	=?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dmitry Safonov <dima@arista.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] selftests/x86: Remove 5lvl test from Makefile
+Date: Wed,  7 Feb 2018 23:50:28 -0600
+Message-Id: <1518069029-22457-1-git-send-email-daniel.diaz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180211105950.14720-1-linux@dominikbrodowski.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592102802145440139?=
-X-GMAIL-MSGID: =?utf-8?q?1592322868644324396?=
+X-GMAIL-THRID: =?utf-8?q?1591810804203183380?=
+X-GMAIL-MSGID: =?utf-8?q?1591810804203183380?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/11/2018 03:59 AM, Dominik Brodowski wrote:
-> The vDSO selftests ignored the O= or KBUILD_OUTPUT= parameters. Fix it.
-> 
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-> ---
->  tools/testing/selftests/vDSO/Makefile | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-> index 3d5a62ff7d31..f5d7a7851e21 100644
-> --- a/tools/testing/selftests/vDSO/Makefile
-> +++ b/tools/testing/selftests/vDSO/Makefile
-> @@ -1,4 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +include ../lib.mk
-> +
->  ifndef CROSS_COMPILE
->  CFLAGS := -std=gnu99
->  CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
-> @@ -6,16 +8,14 @@ ifeq ($(CONFIG_X86_32),y)
->  LDLIBS += -lgcc_s
->  endif
->  
-> -TEST_PROGS := vdso_test vdso_standalone_test_x86
-> +TEST_PROGS := $(OUTPUT)/vdso_test $(OUTPUT)/vdso_standalone_test_x86
->  
->  all: $(TEST_PROGS)
-> -vdso_test: parse_vdso.c vdso_test.c
-> -vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
-> +$(OUTPUT)/vdso_test: parse_vdso.c vdso_test.c
-> +$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
->  	$(CC) $(CFLAGS) $(CFLAGS_vdso_standalone_test_x86) \
->  		vdso_standalone_test_x86.c parse_vdso.c \
-> -		-o vdso_standalone_test_x86
-> +		-o $@
->  
-> -include ../lib.mk
-> -clean:
-> -	rm -fr $(TEST_PROGS)
-> +EXTRA_CLEAN := $(TEST_PROGS)
->  endif
-> 
+The 5lvl.c test file was incorporated into another one in
+selftests/vm (va_128TBswitch.c) in commit 235266b8.
 
-Thanks for the patch. Applied to linux-kselftest fixes for 4.16-rc3
+Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+---
+ tools/testing/selftests/x86/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
--- Shuah
+diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
+index 10ca46d..ce2615a 100644
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -11,7 +11,7 @@ TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_sysc
+ TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
+ 			test_FCMOV test_FCOMI test_FISTTP \
+ 			vdso_restorer
+-TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip 5lvl
++TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
+ 
+ TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
+ TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
+-- 
+2.7.4
