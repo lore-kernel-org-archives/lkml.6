@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752268AbeBHNyb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:54:31 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35210 "EHLO mx1.redhat.com"
+        id S1752318AbeBHNyg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:54:36 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35230 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752026AbeBHNy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:54:26 -0500
-Date: Thu, 8 Feb 2018 14:54:23 +0100
+        id S1752281AbeBHNyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:54:33 -0500
+Date: Thu, 8 Feb 2018 14:54:30 +0100
 From: Jiri Olsa <jolsa@redhat.com>
 To: John Garry <john.garry@huawei.com>
 Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
@@ -16,7 +16,7 @@ Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linuxarm@huawei.com, zhangshaokun@hisilicon.com,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
-Message-ID: <20180208135423.GC10234@krava>
+Message-ID: <20180208135430.GD10234@krava>
 References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
  <1517939104-230881-6-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
@@ -32,20 +32,20 @@ On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
 
 SNIP
 
->  static void print_events_table_suffix(FILE *outfp)
->  {
->  	fprintf(outfp, "{\n");
-> @@ -407,6 +469,52 @@ static char *real_event(const char *name, char *event)
->  	return event;
->  }
+> @@ -940,6 +1090,7 @@ int main(int argc, char *argv[])
+>  	const char *output_file;
+>  	const char *start_dirname;
+>  	struct stat stbuf;
+> +	struct event_struct *es1, *es2;
 >  
-> +static void fixup_field(char *from, char **to)
-> +{
-> +	*to = malloc(strlen(from));
-> +
-> +	strcpy(*to, from);
-> +}
+>  	prog = basename(argv[0]);
+>  	if (argc < 4) {
+> @@ -984,17 +1135,28 @@ int main(int argc, char *argv[])
+>  
+>  	maxfds = get_maxfds();
+>  	mapfile = NULL;
+> +	rc = nftw(ldirname, preprocess_arch_std_files, get_maxfds(), 0);
 
-could you just call '*to = strdup(from)' in here?
+you could use maxfds variable in here
 
 jirka
