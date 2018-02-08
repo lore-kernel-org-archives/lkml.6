@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752433AbeBHSbE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:31:04 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48642 "EHLO
+        id S1752472AbeBHSbK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:31:10 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48692 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752335AbeBHSbB (ORCPT
+        with ESMTP id S1752439AbeBHSbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:31:01 -0500
+        Thu, 8 Feb 2018 13:31:07 -0500
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Sebastian Reichel <sre@kernel.org>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -17,9 +17,9 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv2 6/8] drm/omap: panel-dsi-cm: add orientation support
-Date: Thu,  8 Feb 2018 19:30:33 +0100
-Message-Id: <20180208183035.8461-7-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv2 8/8] drm/omap: plane: update fifo size on ovl setup
+Date: Thu,  8 Feb 2018 19:30:35 +0100
+Message-Id: <20180208183035.8461-9-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
 References: <20180208183035.8461-1-sebastian.reichel@collabora.co.uk>
@@ -27,58 +27,128 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to inform the DRM subsystem about the orientation
-the display has been mounted to the casing.
+This is a workaround for a hardware bug occuring on OMAP3
+with manually updated panels. Details about the HW bug are
+unknown to me, but without this fix the panel refresh does
+not work at all on Nokia N950. This is not the case for the
+OMAP4 based Droid 4, which works perfectly fine with default
+settings.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpu/drm/omapdrm/dss/dispc.c | 36 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-index 15399a1a666b..7a63d6775a27 100644
---- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-+++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-@@ -68,6 +68,7 @@ struct panel_drv_data {
+diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c b/drivers/gpu/drm/omapdrm/dss/dispc.c
+index 4e8f68efd169..0904c3201914 100644
+--- a/drivers/gpu/drm/omapdrm/dss/dispc.c
++++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
+@@ -157,6 +157,8 @@ struct dispc_features {
+ 	bool has_gamma_table:1;
  
- 	int width_mm;
- 	int height_mm;
-+	int orientation;
+ 	bool has_gamma_i734_bug:1;
++
++	bool has_fifo_stallmode_bug:1;
+ };
  
- 	struct omap_dsi_pin_config pin_config;
- 
-@@ -1198,6 +1199,14 @@ static void dsicm_get_size(struct omap_dss_device *dssdev,
- 	*height = ddata->height_mm;
+ #define DISPC_MAX_NR_FIFOS 5
+@@ -1489,6 +1491,18 @@ void dispc_ovl_compute_fifo_thresholds(enum omap_plane_id plane,
+ 	}
  }
  
-+static void dsicm_get_orientation(struct omap_dss_device *dssdev,
-+				  int *orientation)
++static void dispc_ovl_set_manual_fifo_threshold(enum omap_plane_id plane)
 +{
-+	struct panel_drv_data *ddata = to_panel_data(dssdev);
++	u32 fifo_low, fifo_high;
++	bool use_fifo_merge = false;
++	bool use_manual_update = true;
 +
-+	*orientation = ddata->orientation;
++	dispc_ovl_compute_fifo_thresholds(plane, &fifo_low, &fifo_high,
++					  use_fifo_merge, use_manual_update);
++
++	dispc_ovl_set_fifo_threshold(plane, fifo_low, fifo_high);
 +}
 +
- static struct omap_dss_driver dsicm_ops = {
- 	.connect	= dsicm_connect,
- 	.disconnect	= dsicm_disconnect,
-@@ -1211,6 +1220,7 @@ static struct omap_dss_driver dsicm_ops = {
- 	.get_timings	= dsicm_get_timings,
- 	.check_timings	= dsicm_check_timings,
- 	.get_size	= dsicm_get_size,
-+	.get_orientation = dsicm_get_orientation,
+ static void dispc_ovl_set_mflag(enum omap_plane_id plane, bool enable)
+ {
+ 	int bit;
+@@ -2651,8 +2665,21 @@ static int dispc_ovl_setup(enum omap_plane_id plane,
+ 		oi->out_width, oi->out_height, oi->fourcc, oi->rotation,
+ 		oi->zorder, oi->pre_mult_alpha, oi->global_alpha,
+ 		oi->rotation_type, replication, vm, mem_to_mem);
++	if (r)
++		return r;
  
- 	.enable_te	= dsicm_enable_te,
- 	.get_te		= dsicm_get_te,
-@@ -1259,6 +1269,9 @@ static int dsicm_probe_of(struct platform_device *pdev)
- 	ddata->height_mm = 0;
- 	of_property_read_u32(node, "height-mm", &ddata->height_mm);
- 
-+	ddata->orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
-+	of_property_read_u32(node, "orientation", &ddata->orientation);
+-	return r;
++	/*
++	 * OMAP3 chips have non-working FIFO thresholds for manually updated
++	 * displays. The issue is not fully understood, but this workaround
++	 * fixes the issue. OMAP4 is known to work with default thresholds.
++	 */
++	if (mgr_fld_read(channel, DISPC_MGR_FLD_STALLMODE) &&
++	    dispc.feat->has_fifo_stallmode_bug) {
++		DSSDBG("Enable OMAP3 FIFO stallmode bug workaround!\n");
++		dispc_ovl_set_manual_fifo_threshold(plane);
++	}
 +
- 	in = omapdss_of_find_source_for_first_ep(node);
- 	if (IS_ERR(in)) {
- 		dev_err(&pdev->dev, "failed to find video source\n");
++	return 0;
+ }
+ 
+ int dispc_wb_setup(const struct omap_dss_writeback_info *wi,
+@@ -4067,6 +4094,7 @@ static const struct dispc_features omap24xx_dispc_feats = {
+ 	.no_framedone_tv	=	true,
+ 	.set_max_preload	=	false,
+ 	.last_pixel_inc_missing	=	true,
++	.has_fifo_stallmode_bug	=	true,
+ };
+ 
+ static const struct dispc_features omap34xx_rev1_0_dispc_feats = {
+@@ -4101,6 +4129,7 @@ static const struct dispc_features omap34xx_rev1_0_dispc_feats = {
+ 	.no_framedone_tv	=	true,
+ 	.set_max_preload	=	false,
+ 	.last_pixel_inc_missing	=	true,
++	.has_fifo_stallmode_bug	=	true,
+ };
+ 
+ static const struct dispc_features omap34xx_rev3_0_dispc_feats = {
+@@ -4135,6 +4164,7 @@ static const struct dispc_features omap34xx_rev3_0_dispc_feats = {
+ 	.no_framedone_tv	=	true,
+ 	.set_max_preload	=	false,
+ 	.last_pixel_inc_missing	=	true,
++	.has_fifo_stallmode_bug	=	true,
+ };
+ 
+ static const struct dispc_features omap36xx_dispc_feats = {
+@@ -4169,6 +4199,7 @@ static const struct dispc_features omap36xx_dispc_feats = {
+ 	.no_framedone_tv	=	true,
+ 	.set_max_preload	=	false,
+ 	.last_pixel_inc_missing	=	true,
++	.has_fifo_stallmode_bug	=	true,
+ };
+ 
+ static const struct dispc_features am43xx_dispc_feats = {
+@@ -4203,6 +4234,7 @@ static const struct dispc_features am43xx_dispc_feats = {
+ 	.no_framedone_tv	=	true,
+ 	.set_max_preload	=	false,
+ 	.last_pixel_inc_missing	=	true,
++	.has_fifo_stallmode_bug	=	false,
+ };
+ 
+ static const struct dispc_features omap44xx_dispc_feats = {
+@@ -4242,6 +4274,7 @@ static const struct dispc_features omap44xx_dispc_feats = {
+ 	.reverse_ilace_field_order =	true,
+ 	.has_gamma_table	=	true,
+ 	.has_gamma_i734_bug	=	true,
++	.has_fifo_stallmode_bug	=	false,
+ };
+ 
+ static const struct dispc_features omap54xx_dispc_feats = {
+@@ -4282,6 +4315,7 @@ static const struct dispc_features omap54xx_dispc_feats = {
+ 	.reverse_ilace_field_order =	true,
+ 	.has_gamma_table	=	true,
+ 	.has_gamma_i734_bug	=	true,
++	.has_fifo_stallmode_bug	=	false,
+ };
+ 
+ static irqreturn_t dispc_irq_handler(int irq, void *arg)
 -- 
 2.15.1
