@@ -1,61 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752515AbeBHUQr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:16:47 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:45519 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752179AbeBHUQp (ORCPT
+        id S1752533AbeBHURb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:17:31 -0500
+Received: from mail-it0-f41.google.com ([209.85.214.41]:36636 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBHUR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:16:45 -0500
-X-Google-Smtp-Source: AH8x225Jz4a9U8fpTN/+OXJzFh+MfXneWoRmPfmSteklNM7uvkUyHMls1kRKdNoGjWc151dY/YADJA==
-Date: Thu, 8 Feb 2018 14:16:43 -0600
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 2/6] pinctrl: sunxi: add support for the Allwinner H6
- main pin controller
-Message-ID: <20180208201643.vqj7o5v5rzlwsoch@rob-hp-laptop>
-References: <20180203154942.63566-1-icenowy@aosc.io>
- <20180203154942.63566-3-icenowy@aosc.io>
+        Thu, 8 Feb 2018 15:17:29 -0500
+X-Google-Smtp-Source: AH8x225SrrUvYebsAsPlb7p+ZeyzGIO95gfzuakfvNQXgm9d7yuEgZBPgJKAEeBvSE/lxlv7gsHKRfGwd1oS559y018=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180203154942.63566-3-icenowy@aosc.io>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <151810656463.20070.1477473037254016718.stgit@warthog.procyon.org.uk>
+References: <151810656463.20070.1477473037254016718.stgit@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 8 Feb 2018 12:17:28 -0800
+X-Google-Sender-Auth: 971Llko5xLTsH_aoZrOW9HTo8vQ
+Message-ID: <CA+55aFwFZZg=otsDvTKrV3fgYdF0=w-Qa1P5o_UeDkfwdd+=uA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] afs: Fixes and dynamic root
+To: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-afs@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 03, 2018 at 11:49:38PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has two pin controllers, one main controller
-> (called CPUX-PORT in user manual) and one controller in CPUs power
-> domain (called CPUS-PORT in user manual).
-> 
-> This commit introduces support for the main pin controller on H6.
-> 
-> The pin bank A and B are not wired out and hidden from the SoC's
-> documents, however it's shown that the "ATE" (an AC200 chip
-> co-packaged with the H6 die) is connected to the main SoC die via these
-> pin banks. The information about these banks is just copied from the BSP
-> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
-> format.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v2:
-> - Dropped without_bus_gate description.
-> - Switched to SPDX license identifier.
-> 
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+On Thu, Feb 8, 2018 at 8:16 AM, David Howells <dhowells@redhat.com> wrote:
+>
+>
+> The patches can be found here also:
+>
+>         http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
+>
+> tagged thusly:
+>
+>         afs-next-20180208
 
-Acked-by: Rob Herring <robh@kernel.org>
+Please just write this as
 
->  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          | 676 +++++++++++++++++++++
->  4 files changed, 682 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+afs-next-20180208
+
+so that I don't have to first munge the repository address, and then
+undo the merge and do it all over again when I notice that I didn't
+get the tag, and instead had used just the branch you had indicated in
+the first line..
+
+           Linus
