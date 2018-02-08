@@ -1,75 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752592AbeBHR76 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:59:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50986 "EHLO mail.kernel.org"
+        id S1752621AbeBHSAB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:00:01 -0500
+Received: from foss.arm.com ([217.140.101.70]:38414 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752389AbeBHR74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:59:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3FC021796
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Wanpeng Li <kernellwp@gmail.com>,
-        Mike Galbraith <efault@gmx.de>, Rik van Riel <riel@redhat.com>
-Subject: [PATCH 0/6] isolation: 1Hz residual tick offloading v5
-Date: Thu,  8 Feb 2018 18:59:33 +0100
-Message-Id: <1518112779-30196-1-git-send-email-frederic@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1752589AbeBHR76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:59:58 -0500
+Subject: Re: [PATCH v2 17/20] arm64: bp hardening: Allow late CPUs to enable
+ work around
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>, Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com
+References: <20180131182807.32134-1-suzuki.poulose@arm.com>
+ <20180131182807.32134-18-suzuki.poulose@arm.com>
+ <20180207103942.GH5862@e103592.cambridge.arm.com>
+ <b4705fa2-39aa-9fea-78c4-03ac5eb48a49@arm.com>
+ <bea7947f-79e1-53e5-30ec-3f28bda46e5a@arm.com>
+ <3b922643-ab97-e012-4268-c830b1bdaf10@arm.com>
+ <77efc8b3-48c1-fbaf-ce11-15123755262a@arm.com>
+Message-ID: <5908ea11-a007-ff9f-b714-6dc0a6a1af01@arm.com>
+Date: Thu, 8 Feb 2018 17:59:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <77efc8b3-48c1-fbaf-ce11-15123755262a@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series should address most reviews from Peterz in v4:
+On 08/02/18 17:59, Suzuki K Poulose wrote:
+> On 08/02/18 16:58, Suzuki K Poulose wrote:
+>> On 08/02/18 12:26, Marc Zyngier wrote:
+>>> On 08/02/18 12:19, Suzuki K Poulose wrote:
+>>>> On 07/02/18 10:39, Dave Martin wrote:
+>>>>> On Wed, Jan 31, 2018 at 06:28:04PM +0000, Suzuki K Poulose wrote:
+>>>>>> We defend against branch predictor training based exploits by
+>>>>>> taking specific actions (based on the CPU model) to invalidate
+>>>>>> the Branch predictor buffer (BPB). This is implemented by per-CPU
+>>>>>> ptr, which installs the specific actions for the CPU model.
+>>>>>>
+>>>>>> The core code can handle the following cases where:
+>>>>>>    1) some CPUs doesn't need any work around
+>>>>>>    2) a CPU can install the work around, when it is brought up,
+>>>>>>       irrespective of how late that happens.
+>>>>
+>>>> With the recent patches from Marc to expose this information to KVM
+>>>> guests, it looks like allowing a late CPU to turn this on is not going
+>>>> to be a good idea. We unconditionally set the capability even
+>>>> when we don't need the mitigation. So I am not really sure if
+>>>> we should go ahead with this patch. I am open to suggestions
+>>>>
+>>>> Marc,
+>>>>
+>>>> What do you think ?
+>>>
+>>> By the time we bring in that CPU that requires some level of mitigation,
+>>> we may be running a guest already, and we've told that guest that no
+>>> mitigation was required. If we bring in that CPU, we break that promise,
+>>> and the guest becomes vulnerable without knowing about it.
+>>>
+>>> The same thing is valid for userspace once we expose the status of the
+>>> mitigation in /sys, just like x86 does. If we transition from not
+>>> vulnerable to vulnerable (or even mitigated), we have lied to userspace.
+>>>
+>>> In either case, I don't think breaking this contract is acceptable.
+>>
+>> Thanks Marc, I have dropped this patch from the series.
+> 
+> On a second thought, should we allow this if the KVM is not configured in ?
 
-* Check that the remote tick doesn't come way too late. For that we
-  track the last time we called update_curr() with checking
-  tsk->se.exec_start which doesn't only account for ticks but also queue
-  and dequeue events.
+Oops, no! Please ignore it. We are going to expose this to other userpsace anyway.
+Sorry about the noise.
 
-* Add comment to explain why we use HZ as a delay
-
-* Feed changelog with explanation about correctness assumptions on
-  calling rq::task_tick() remotely.
-
-The last element is to enforce unbound workqueues to queue a work on
-a CPU of the same node when the enqueuer is outside the unbound mask.
-This will be sorted out seperately.
-
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
-	sched/0hz-v5
-
-HEAD: 62711eb7856882d443615f0ef0ba9518977b7abd
-
-Thanks,
-	Frederic
----
-
-Frederic Weisbecker (6):
-      sched: Rename init_rq_hrtick to hrtick_rq_init
-      nohz: Allow to check if remote CPU tick is stopped
-      sched/isolation: Isolate workqueues when "nohz_full=" is set
-      sched/isolation: Residual 1Hz scheduler tick offload
-      sched/nohz: Remove the 1 Hz tick code
-      sched/isolation: Tick offload documentation
-
-
- Documentation/admin-guide/kernel-parameters.txt |   6 +-
- include/linux/sched/isolation.h                 |   1 +
- include/linux/sched/nohz.h                      |   4 -
- include/linux/tick.h                            |   2 +
- kernel/sched/core.c                             | 116 ++++++++++++++++++------
- kernel/sched/idle_task.c                        |   1 -
- kernel/sched/isolation.c                        |   8 +-
- kernel/sched/sched.h                            |  13 +--
- kernel/time/tick-sched.c                        |  13 +--
- kernel/workqueue.c                              |   3 +-
- 10 files changed, 115 insertions(+), 52 deletions(-)
+Suzuki
