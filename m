@@ -1,76 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeBHPb7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:31:59 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5213 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751968AbeBHPb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:31:57 -0500
-Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
-To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Jiri Olsa <jolsa@redhat.com>
-References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
- <1517939104-230881-6-git-send-email-john.garry@huawei.com>
- <20180208135423.GC10234@krava> <20180208140250.43a10b84@alans-desktop>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
-        <ak@linux.intel.com>, <wcohen@redhat.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <zhangshaokun@hisilicon.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <7d5b53dd-2e86-da0e-a7b6-9dd94ebcb49c@huawei.com>
-Date: Thu, 8 Feb 2018 15:31:24 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1752322AbeBHPbS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:31:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58536 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751788AbeBHPbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:31:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7878B2172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 8 Feb 2018 10:31:15 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Vladislav Valtchev (VMware)" <vladislav.valtchev@gmail.com>
+Cc: linux-trace-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        y.karadz@gmail.com
+Subject: Re: [PATCH] trace-cmd: Make the build messages to show only file
+ names
+Message-ID: <20180208103115.762f6ee3@gandalf.local.home>
+In-Reply-To: <20180208091820.4920-1-vladislav.valtchev@gmail.com>
+References: <20180208091820.4920-1-vladislav.valtchev@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180208140250.43a10b84@alans-desktop>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 14:02, Alan Cox wrote:
-> On Thu, 8 Feb 2018 14:54:23 +0100
-> Jiri Olsa <jolsa@redhat.com> wrote:
->
->> On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
->>
->> SNIP
->>
->>>  static void print_events_table_suffix(FILE *outfp)
->>>  {
->>>  	fprintf(outfp, "{\n");
->>> @@ -407,6 +469,52 @@ static char *real_event(const char *name, char *event)
->>>  	return event;
->>>  }
->>>
->>> +static void fixup_field(char *from, char **to)
->>> +{
->>> +	*to = malloc(strlen(from));
->>> +
->>> +	strcpy(*to, from);
->>> +}
->>
->> could you just call '*to = strdup(from)' in here?
+On Thu,  8 Feb 2018 11:18:20 +0200
+"Vladislav Valtchev (VMware)" <vladislav.valtchev@gmail.com> wrote:
 
-Right
-
->
-> And check for malloc returning NULL.
+> Currently, the typical trace-cmd build messages like "COMPILE <file>" and
+> "BUILD STATIC LIB <file>" show file's full path, instead of just the file
+> name, as it used to happen before the full support for out-of-tree builds.
+> This simple patch makes the build messages to look exactly like in the past
+> by stripping the directory part of each file path, before printing the
+> message.
+> 
 >
 
-Right again,
+Thanks, applied!
 
-> Alan
->
-
-I should have concentrated on the coding as much as the feature being 
-added...
-
-Thanks,
-John
-> .
->
+-- Steve
