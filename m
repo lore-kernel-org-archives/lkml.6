@@ -1,69 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752507AbeBHV5Y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 16:57:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37864 "EHLO mx1.redhat.com"
+        id S1752581AbeBHV5l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 16:57:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752185AbeBHV5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 16:57:23 -0500
-Subject: Re: net: thunder: change q_len's type to handle max ring size
-To: David Miller <davem@davemloft.net>
-Cc: rric@kernel.org, sgoutham@cavium.com, netdev@vger.kernel.org,
-        Vadim.Lomovtsev@cavium.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <151811766130.10712.18293368656209944798.email-sent-by-dnelson@aqua>
- <20180208.153453.774785043965984772.davem@davemloft.net>
-From: Dean Nelson <dnelson@redhat.com>
-Message-ID: <41824374-cdea-a3ef-0109-20565dbba43e@redhat.com>
-Date: Thu, 8 Feb 2018 15:57:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752514AbeBHV5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 16:57:38 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F2121796
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 8 Feb 2018 15:57:35 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Niklas Cassel <niklas.cassel@axis.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Sekhar Nori <nsekhar@ti.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Niklas Cassel <niklass@axis.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+        John Keeping <john@metanate.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] PCI: endpoint: Handle 64-bit BARs properly
+Message-ID: <20180208215735.GD98765@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180208123346.20784-1-niklas.cassel@axis.com>
+ <20180208123346.20784-2-niklas.cassel@axis.com>
+ <da5004d3-c3e8-d9fd-6698-3b12c3ab624a@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180208.153453.774785043965984772.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da5004d3-c3e8-d9fd-6698-3b12c3ab624a@ti.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/2018 02:34 PM, David Miller wrote:
-> From: Dean Nelson <dnelson@redhat.com>
-> Date:
+On Thu, Feb 08, 2018 at 06:17:32PM +0530, Kishon Vijay Abraham I wrote:
+> Hi,
 > 
->> The Cavium thunder nicvf driver supports rx/tx rings of up to 65536 entries per.
->> The number of entires are stored in the q_len member of struct q_desc_mem. The
->> problem is that q_len being a u16, results in 65536 becoming 0.
->>
->> In getting pointers to descriptors in the rings, the driver uses q_len minus 1
->> as a mask after incrementing the pointer, in order to go back to the beginning
->> and not go past the end of the ring.
->>
->> With the q_len set to 0 the mask is no longer correct and the driver does go
->> beyond the end of the ring, causing various ills. Usually the first thing that
->> shows up is a "NETDEV WATCHDOG: enP2p1s0f1 (nicvf): transmit queue 7 timed out"
->> warning.
->>
->> This patch remedies the problem by changing q_len to a u32.
->>
->> Signed-off-by: Dean Nelson <dnelson@redhat.com>
+> On Thursday 08 February 2018 06:03 PM, Niklas Cassel wrote:
+> > A 64-bit BAR uses the succeeding BAR for the upper bits, therefore
+> > we cannot call pci_epc_set_bar() on a BAR that follows a 64-bit BAR.
+> > 
+> > If pci_epc_set_bar() is called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
 > 
-> Applied, thanks.
+> Not related to $patch. But I have a query on when
+> PCI_BASE_ADDRESS_MEM_TYPE_64 should be set. Whether if the size is >
+> 4G or if the address can be mapped anywhere in the 64-bit PCIe
+> address space or both?
 
-Thank you!
+In general, PCI_BASE_ADDRESS_MEM_TYPE_64 should be set if the BAR is
+64 bits wide.  IORESOURCE_MEM_64 is similar.
 
-> 
-> Another way to solve this could have been to encode that length
-> as "length - 1"
+It doesn't matter what the current value of the BAR is.
 
-True. I had pondered that, but felt that since changing q_len's type
-didn't add any length to the structure and that it was less impactful
-from a number-of-lines of code changed perspective, I'd opt for this
-route.
+It's easy to look at the current address or size of a resource if we
+need to know where it is or how big it is.  But if we lose track of
+the width of the BAR register, we have no way to know whether it's
+*capable* of holding a 64-bit value.
 
-Cavium, if you'd prefer this goes the route that Dave just mentioned,
-please let me know and I can make a new patch against what's been
-applied?
-
-Thanks,
-Dean
+> > it has to be up to the controller driver to write both BAR[x] and BAR[x+1]
+> > (and BAR_mask[x] and BAR_mask[x+1]).
+> > 
+> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> > ---
+> >  drivers/pci/endpoint/functions/pci-epf-test.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > index 800da09d9005..eef85820f59e 100644
+> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > @@ -382,6 +382,8 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+> >  			if (bar == test_reg_bar)
+> >  				return ret;
+> >  		}
+> > +		if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
+> > +			bar++;
+> >  	}
+> >  
+> >  	return 0;
+> > 
