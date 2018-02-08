@@ -1,52 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeBHSPd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:15:33 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34585 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752028AbeBHSPc (ORCPT
+        id S1752184AbeBHSSE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:18:04 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:48725 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeBHSSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:15:32 -0500
-X-Google-Smtp-Source: AH8x227raClyZtUesDUftblvipXUpFleMnR5YBpphun1GR/eB30jhCHc+CBQcUwZ890Pw+rLl+/Cstfie4TqUPbOqeY=
+        Thu, 8 Feb 2018 13:18:03 -0500
+Date: Thu, 8 Feb 2018 10:18:00 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
+ __GFP_HIGHMEM implicitly")
+Message-ID: <20180208181800.GA9524@bombadil.infradead.org>
+References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
+ <20180208130649.GA15846@bombadil.infradead.org>
+ <f8be3fc9-a96d-bf37-4da0-43220014caed@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180208180357.GC25181@hirez.programming.kicks-ass.net>
-References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
- <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
- <20180207183543.GA8897@pd.tnic> <20180207184933.GA25201@hirez.programming.kicks-ass.net>
- <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
- <20180207191451.GC25201@hirez.programming.kicks-ass.net> <20180207192816.GA19536@pd.tnic>
- <CA+55aFzSZzdVZXatze=xjGSwpOPO7kvbWnz7JiZ3sTx_2Pohjw@mail.gmail.com>
- <20180208091302.GD25201@hirez.programming.kicks-ass.net> <CA+55aFySLxYkUQyNf5YcEvitjm2O1whEp4-iKNASPaOpxG1j9w@mail.gmail.com>
- <20180208180357.GC25181@hirez.programming.kicks-ass.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 8 Feb 2018 10:15:30 -0800
-X-Google-Sender-Auth: AxmS_C9efPAESFZrgUstUNwykKs
-Message-ID: <CA+55aFx7=cw0myoidwzhEfKd_L2Q6u0=AdcH_ZBmXu2_nD=4Jw@mail.gmail.com>
-Subject: Re: [linus:master] BUILD REGRESSION a2e5790d841658485d642196dbb0927303d6c22f
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8be3fc9-a96d-bf37-4da0-43220014caed@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 8, 2018 at 10:03 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> But yes, for our purposes UD2 is perfectly fine too, it will just mess
-> up the people doing bringup and the like.
+On Thu, Feb 08, 2018 at 09:56:42AM -0800, Laura Abbott wrote:
+> > +++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+> > @@ -77,7 +77,7 @@ static struct scatterlist *videobuf_vmalloc_to_sg(unsigned char *virt,
+> >   		pg = vmalloc_to_page(virt);
+> >   		if (NULL == pg)
+> >   			goto err;
+> > -		BUG_ON(PageHighMem(pg));
+> > +		BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
+> >   		sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
+> >   	}
+> >   	return sglist;
+> > 
+> 
+> the vzalloc in this function needs to be switched to vmalloc32 if it
+> actually wants to guarantee 32-bit memory.
 
-Oh, we'll inconvenience people inside Intel?
-
-The same people who changed and screwed up the definition of UD0 just
-a couple of months ago?
-
-I'm *so* sorry for the inconvenience to those people /s.
-
-F*ck them. They introduced the problem, they get to live with it.
-
-                 Linus
+Whoops, you got confused between the sglist allocation and the allocation
+of the pages which will be mapped ...
