@@ -1,137 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751153AbeBHMat (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 07:30:49 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34408 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750806AbeBHMar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:30:47 -0500
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mm: hwpoison: disable memory error handling on 1GB hugepage
-References: <20180130013919.GA19959@hori1.linux.bs1.fc.nec.co.jp>
-        <1517284444-18149-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-        <87inbbjx2w.fsf@e105922-lin.cambridge.arm.com>
-        <20180207011455.GA15214@hori1.linux.bs1.fc.nec.co.jp>
-Date: Thu, 08 Feb 2018 12:30:45 +0000
-In-Reply-To: <20180207011455.GA15214@hori1.linux.bs1.fc.nec.co.jp> (Naoya
-        Horiguchi's message of "Wed, 7 Feb 2018 01:14:57 +0000")
-Message-ID: <87fu6bfytm.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752013AbeBHMcD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 07:32:03 -0500
+Received: from mga17.intel.com ([192.55.52.151]:45883 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751725AbeBHMcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:32:01 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,478,1511856000";
+   d="scan'208";a="29866918"
+Date: Thu, 8 Feb 2018 19:20:28 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: Re: [PATCH] x86/kvm/vmx: Don't halt vcpu when L1 is injecting events
+ to L2
+Message-ID: <20180208112027.GA116170@skl-4s-chao.sh.intel.com>
+References: <1518066816-7197-1-git-send-email-chao.gao@intel.com>
+ <7de4e758-08cc-2c45-b0aa-dfe28dfef398@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7de4e758-08cc-2c45-b0aa-dfe28dfef398@redhat.com>
+User-Agent: Mutt/1.8.0 (2017-02-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Horiguchi-san,
-
-Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> writes:
-
-> Hi Punit,
+On Thu, Feb 08, 2018 at 11:29:49AM +0100, Paolo Bonzini wrote:
+>On 08/02/2018 06:13, Chao Gao wrote:
+>> Although L2 is in halt state, it will be in the active state after
+>> VM entry if the VM entry is vectoring. Halting the vcpu here means
+>> the event won't be injected to L2 and this decision isn't reported
+>> to L1. Thus L0 drops an event that should be injected to L2.
+>> 
+>> Because virtual interrupt delivery may wake L2 vcpu, if VID is enabled,
+>> do the same thing -- don't halt L2.
 >
-> On Mon, Feb 05, 2018 at 03:05:43PM +0000, Punit Agrawal wrote:
->> Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> writes:
->> 
+>This second part seems wrong to me, or at least overly general.  Perhaps
+>you mean if RVI>0?
 
-[...]
+Yes. It is a little general.
 
->> >
->> > You can easily reproduce this by calling madvise(MADV_HWPOISON) twice on
->> > a 1GB hugepage. This happens because get_user_pages_fast() is not aware
->> > of a migration entry on pud that was created in the 1st madvise() event.
->> 
->> Maybe I'm doing something wrong but I wasn't able to reproduce the issue
->> using the test at the end. I get -
->> 
->>     $ sudo ./hugepage
->> 
->>     Poisoning page...once
->>     [  121.295771] Injecting memory failure for pfn 0x8300000 at process virtual address 0x400000000000
->>     [  121.386450] Memory failure: 0x8300000: recovery action for huge page: Recovered
->> 
->>     Poisoning page...once again
->>     madvise: Bad address
->> 
->> What am I missing?
->
-> The test program below is exactly what I intended, so you did right
-> testing.
+How about this patch:
+-- 8> --
+Subject: [PATCH] x86/kvm/vmx: Don't halt vcpu when L1 is injecting events to
+ L2
 
-Thanks for the confirmation. And the flow outline below. 
+Although L2 is in halt state, it will be in the active state after
+VM entry if the VM entry is vectoring. Halting the vcpu here means
+the event won't be injected to L2 and this decision isn't reported
+to L1. Thus L0 drops an event that should be injected to L2.
 
-> I try to guess what could happen. The related code is like below:
->
->   static int gup_pud_range(p4d_t p4d, unsigned long addr, unsigned long end,
->                            int write, struct page **pages, int *nr)
->   {
->           ...
->           do {
->                   pud_t pud = READ_ONCE(*pudp);
->
->                   next = pud_addr_end(addr, end);
->                   if (pud_none(pud))
->                           return 0;
->                   if (unlikely(pud_huge(pud))) {
->                           if (!gup_huge_pud(pud, pudp, addr, next, write,
->                                             pages, nr))
->                                   return 0;
->
-> pud_none() always returns false for hwpoison entry in any arch.
-> I guess that pud_huge() could behave in undefined manner for hwpoison entry
-> because pud_huge() assumes that a given pud has the present bit set, which
-> is not true for hwpoison entry.
+Because virtual interrupt delivery may wake L2 vcpu, if VID is enabled
+and RVI > 0, do the same thing -- don't halt L2.
 
-This is where the arm64 helpers behaves differently (though more by
-chance then design). A poisoned pud passes pud_huge() as it doesn't seem
-to be explicitly checking for the present bit.
+Signed-off-by: Chao Gao <chao.gao@intel.com>
+---
+ arch/x86/kvm/vmx.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-    int pud_huge(pud_t pud)
-    {
-            return pud_val(pud) && !(pud_val(pud) & PUD_TABLE_BIT);
-    }
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index bb5b488..fa889c8 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10985,7 +10985,13 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+        if (ret)
+                return ret;
 
+-       if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT)
++       /*
++        * If we're entering a halted L2 vcpu and the L2 vcpu won't be woken
++        * by event injection or VID, halt vcpu for optimization.
++        */
++       if ((vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT) &&
++           !(vmcs12->vm_entry_intr_info_field & VECTORING_INFO_VALID_MASK) &&
++           !(nested_cpu_has_vid(vmcs12) && (vmcs12->guest_intr_status & 0xff)))
+                return kvm_vcpu_halt(vcpu);
 
-This doesn't lead to a crash as the first thing gup_huge_pud() does is
-check for pud_access_permitted() which does check for the present bit.
-
-I was able to crash the kernel by changing pud_huge() to check for the
-present bit.
-
-> As a result, pud_huge() checks an irrelevant bit used for other
-> purpose depending on non-present page table format of each arch. If
-> pud_huge() returns false for hwpoison entry, we try to go to the lower
-> level and the kernel highly likely to crash. So I guess your kernel
-> fell back the slow path and somehow ended up with returning EFAULT.
-
-Makes sense. Due to the difference above on arm64, it ends up falling
-back to the slow path which eventually returns -EFAULT (via
-follow_hugetlb_page) for poisoned pages.
+        vmx->nested.nested_run_pending = 1;
+--
 
 >
-> So I don't think that the above test result means that errors are properly
-> handled, and the proposed patch should help for arm64.
-
-Although, the deviation of pud_huge() avoids a kernel crash the code
-would be easier to maintain and reason about if arm64 helpers are
-consistent with expectations by core code.
-
-I'll look to update the arm64 helpers once this patch gets merged. But
-it would be helpful if there was a clear expression of semantics for
-pud_huge() for various cases. Is there any version that can be used as
-reference?
-
-Also, do you know what the plans are for re-enabling hugepage poisoning
-disabled here?
-
-Thanks,
-Punit
-
-[...]
+>Thanks,
+>
+>Paolo
+>
+>> Signed-off-by: Chao Gao <chao.gao@intel.com>
+>> ---
+>>  arch/x86/kvm/vmx.c | 10 ++++++++--
+>>  1 file changed, 8 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index bb5b488..e1fe4e4 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -10985,8 +10985,14 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT)
+>> -		return kvm_vcpu_halt(vcpu);
+>> +	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT) {
+>> +		u32 intr_info = vmcs_read32(VM_ENTRY_INTR_INFO_FIELD);
+>> +		u32 exec_control = vmcs_read32(SECONDARY_VM_EXEC_CONTROL);
+>> +
+>> +		if (!(intr_info & VECTORING_INFO_VALID_MASK) &&
+>> +			!(exec_control & SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY))
+>> +			return kvm_vcpu_halt(vcpu);
+>> +	}
+>
+>>  	vmx->nested.nested_run_pending = 1;
+>>  
+>> 
+>
