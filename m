@@ -1,119 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752026AbeBHNhC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:37:02 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37773 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeBHNhB (ORCPT
+        id S1751984AbeBHNmE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:42:04 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:37385 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeBHNmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:37:01 -0500
-X-Google-Smtp-Source: AH8x226GN2/JEb5en8GQF32Bi4sKei5w9q0kKa7humfvkl91YFZtEAxsS4xM+smDGcDS3f4CIsXlCZz8kumWW76qyHA=
+        Thu, 8 Feb 2018 08:42:00 -0500
+X-Google-Smtp-Source: AH8x226DmW+p1DbZiZv9r52OQBAB8oqeb+ViuRtp9BreZ2OFJe/IoI9mmwWfvchOj193n82cr/lUvA==
+Subject: Re: [PATCH] acpi: osl: Replace GFP_ATOMIC with GFP_KERNEL in
+ acpi_os_execute
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1516875222-12293-1-git-send-email-baijiaju1990@gmail.com>
+ <1808276.ZJn2ZeULZY@aspire.rjw.lan>
+ <151808479008.28809.166946118004484639@mail.alporthouse.com>
+ <1914141.qoxtLSqbUU@aspire.rjw.lan>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <2e48794f-1ebb-6466-f4bf-aa409674bdaa@gmail.com>
+Date: Thu, 8 Feb 2018 21:41:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <780a5b3a-4829-4195-c8fd-95da27248a82@arm.com>
-References: <1517944987-343-1-git-send-email-vincent.guittot@linaro.org>
- <1517944987-343-2-git-send-email-vincent.guittot@linaro.org> <780a5b3a-4829-4195-c8fd-95da27248a82@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 8 Feb 2018 14:36:40 +0100
-Message-ID: <CAKfTPtC0a1Ku4HxhTKBJFz2bamO+KQL9aCNab=gcd1FeNL1-ww@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] sched: Stop nohz stats when decayed
-To: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1914141.qoxtLSqbUU@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8 February 2018 at 13:46, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
-> On 02/06/2018 07:23 PM, Vincent Guittot wrote:
->> [...]
->> @@ -7826,8 +7842,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->>       for_each_cpu_and(i, sched_group_span(group), env->cpus) {
->>               struct rq *rq = cpu_rq(i);
->>
->> -             if (env->flags & LBF_NOHZ_STATS)
->> -                     update_nohz_stats(rq);
->> +             if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq))
->> +                     env->flags |= LBF_NOHZ_AGAIN;
->>
->>               /* Bias balancing toward cpus of our domain */
->>               if (local_group)
->> @@ -7979,18 +7995,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
->>       struct sg_lb_stats *local = &sds->local_stat;
->>       struct sg_lb_stats tmp_sgs;
->>       int load_idx, prefer_sibling = 0;
->> +     int has_blocked = READ_ONCE(nohz.has_blocked);
->>       bool overload = false;
->>
->>       if (child && child->flags & SD_PREFER_SIBLING)
->>               prefer_sibling = 1;
->>
->>  #ifdef CONFIG_NO_HZ_COMMON
->> -     if (env->idle == CPU_NEWLY_IDLE) {
->> +     if (env->idle == CPU_NEWLY_IDLE && has_blocked)
->>               env->flags |= LBF_NOHZ_STATS;
->> -
->> -             if (cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd)))
->> -                     nohz.next_stats = jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD);
->> -     }
->>  #endif
->>
->>       load_idx = get_sd_load_idx(env->sd, env->idle);
->> @@ -8046,6 +8059,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
->>               sg = sg->next;
->>       } while (sg != env->sd->groups);
->>
->> +#ifdef CONFIG_NO_HZ_COMMON
->> +     if ((env->flags & LBF_NOHZ_AGAIN) &&
->> +         cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd))) {
->> +
->> +             WRITE_ONCE(nohz.next_blocked,
->> +                             jiffies + msecs_to_jiffies(LOAD_AVG_PERIOD));
->
-> Here we push the stats update forward if we visited all the nohz CPUs but they
-> still have blocked load. IMO we should also clear the nohz.has_blocked flag
-> if we visited all the nohz CPUs and none had blocked load left.
->
-> If we don't do that, we could very well have cleared all of the nohz blocked
-> load in idle_balance and successfully pulled a task, but the flag isn't
-> cleared so we'll end up doing a _nohz_idle_balance() later on for nothing.
->
->
-> As I said in a previous comment, we also have this problem with periodic
-> load balance: if a CPU goes nohz (nohz.has_blocked is raised) but wakes up,
-> e.g. before the next nohz.next_blocked, we should stop kicking ILBs
->
-> Now I'd need to test this, but I think it can actually get worse: if that
-> CPU keeps generating blocked load after this short idle period, no matter
-> how many _nohz_idle_balance() we go through we will never reach a point
-> where nohz.has_blocked gets cleared, and we'll keep kicking those ILBs to
-> update blocked load that already gets updated in the periodic balance.
->
-> I think that's where a nohz blocked load cpumask can also help: on top of
-> skipping nohz CPUs that don't need an update, we can stop the whole remote
-> update machinery when the last nohz cpu with blocked load wakes up, or say
-> when it goes through its first periodic balance.
 
-The main question is : Do we want to remove all useless kicks to ilb
-or useless calls to _nohz_idle_balance at the cost of adding more
-latency in the idle/wakeup path because of the additional atomic
-operations to keep track of which CPUs are idle, tickless with blocked
-load or do we accept to kick ilb or call _nohz_idle_balance uselessly
-from time to time for some use cases
 
-I agree with you that there are some useless calls with the proposal
-which can be removed with additional checks, variables and cpumask
-manipulation. Which use case will benefits from these additional
-checks and does it worth ?
-
-Vincent
-
+On 2018/2/8 18:20, Rafael J. Wysocki wrote:
+> On Thursday, February 8, 2018 11:13:10 AM CET Chris Wilson wrote:
+>> Quoting Rafael J. Wysocki (2018-02-08 09:51:41)
+>>> On Thursday, January 25, 2018 11:13:41 AM CET Jia-Ju Bai wrote:
+>>>> After checking all possible call chains to acpi_os_execute here,
+>>>> my tool finds that acpi_os_execute is never called in atomic context.
+>>>> And acpi_os_execute calls acpi_debugger_create_thread
+>>>> which calls mutex_lock,
+>>>> thus it proves again that acpi_os_execute can
+>>>> call functions which may sleep.
+>>>> Thus GFP_ATOMIC is not necessary, and it can be replaced with GFP_KERNEL.
+>>>>
+>>>> This is found by a static analysis tool named DCNS written by myself.
+>>>>
+>>>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>>>> ---
+>>>>   drivers/acpi/osl.c |    2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+>>>> index 3bb46cb..8ee605e 100644
+>>>> --- a/drivers/acpi/osl.c
+>>>> +++ b/drivers/acpi/osl.c
+>>>> @@ -1066,7 +1066,7 @@ acpi_status acpi_os_execute(acpi_execute_type type,
+>>>>         * having a static work_struct.
+>>>>         */
+>>>>   
+>>>> -     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_ATOMIC);
+>>>> +     dpc = kzalloc(sizeof(struct acpi_os_dpc), GFP_KERNEL);
+>>>>        if (!dpc)
+>>>>                return AE_NO_MEMORY;
+>>>>   
+>>>>
+>>> Applied, thanks!
+>> Hmm, not this patch per se, but
+>>
+>> https://intel-gfx-ci.01.org/tree/next/next-20180207/fi-bxt-dsi/dmesg0.log
+>> [  111.378236] BUG: sleeping function called from invalid context at mm/slab.h:420
+>> [  111.378259] in_atomic(): 1, irqs_disabled(): 1, pid: 1701, name: gem_exec_flush
+>> [  111.378275] INFO: lockdep is turned off.
+>> [  111.378277] irq event stamp: 0
+>> [  111.378280] hardirqs last  enabled at (0): [<          (null)>]           (null)
+>> [  111.378286] hardirqs last disabled at (0): [<00000000a01fa473>] copy_process.part.7+0x2f1/0x1db0
+>> [  111.378290] softirqs last  enabled at (0): [<00000000a01fa473>] copy_process.part.7+0x2f1/0x1db0
+>> [  111.378292] softirqs last disabled at (0): [<          (null)>]           (null)
+>> [  111.378293] Preemption disabled at:
+>> [  111.378298] [<ffffffffa18f14f6>] __mutex_lock+0x56/0x9b0
+>> [  111.378311] CPU: 1 PID: 1701 Comm: gem_exec_flush Tainted: G     U  W        4.15.0-next-20180207-g5d1c98967100-next-20180207 #1
+>> [  111.378313] Hardware name: Intel Corp. Broxton P/Apollolake RVP1A, BIOS APLKRVPA.X64.0150.B11.1608081044 08/08/2016
+>> [  111.378314] Call Trace:
+>> [  111.378318]  <IRQ>
+>> [  111.378323]  dump_stack+0x5f/0x86
+>> [  111.378328]  ___might_sleep+0x1d9/0x240
+>> [  111.378334]  ? acpi_os_execute+0x2d/0x130
+>> [  111.378338]  kmem_cache_alloc_trace+0x1ae/0x2b0
+>> [  111.378344]  ? acpi_ev_asynch_enable_gpe+0x2d/0x2d
+>> [  111.378347]  acpi_os_execute+0x2d/0x130
+>> [  111.378351]  acpi_ev_gpe_dispatch+0xd7/0x120
+>> [  111.378355]  acpi_ev_gpe_detect+0x156/0x195
+>> [  111.378362]  acpi_ev_sci_xrupt_handler+0x16/0x28
+>> [  111.378365]  acpi_irq+0xd/0x30
+>> [  111.378369]  __handle_irq_event_percpu+0x3c/0x340
+>> [  111.378374]  handle_irq_event_percpu+0x1b/0x50
+>> [  111.378378]  handle_irq_event+0x2f/0x50
+>> [  111.378381]  handle_fasteoi_irq+0x93/0x150
+>> [  111.378386]  handle_irq+0x11/0x20
+>> [  111.378390]  do_IRQ+0x5e/0x120
+>> [  111.378395]  common_interrupt+0xbb/0xbb
+>> [  111.378397]  </IRQ>
+>>
+>> does tell us that acpi_os_execute() is called in irq context.
+> Well, right, thanks!
 >
->> +     }
->> +#endif
->> +
->
+> I overlooked this instance, so dropping the patch.
+
+Sorry for my false positive.
+My tool missed that acpi_ev_sci_xrupt_handler() is an interrupt handler, 
+sorry.
+Thank Chris for testing my patch.
+
+
+Best wishes,
+Jia-Ju Bai
