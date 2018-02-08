@@ -1,63 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752285AbeBHJyx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 04:54:53 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:41558 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752237AbeBHJyu (ORCPT
+        id S1752343AbeBHJzK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 04:55:10 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50386 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752026AbeBHJyl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 04:54:50 -0500
-X-Google-Smtp-Source: AH8x227rY91h+kyFrVSN2obn6brRxBHA+gXWSI0H6thvzB6+W1lDBtlQIYASalEYPs9OrPLoJ3TBThNOVIorSMjNJiQ=
+        Thu, 8 Feb 2018 04:54:41 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Timur Tabi <timur@codeaurora.org>, Eric Auger <eric.auger@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c <linux-i2c@vger.kernel.org>, Len Brown <lenb@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] ACPI: Force I2C to be selected as a built-in module
+Date: Thu, 08 Feb 2018 10:52:57 +0100
+Message-ID: <1702559.i3Y6HFQMvP@aspire.rjw.lan>
+In-Reply-To: <2902c0aa-b7d4-ea2f-e687-bc5cd19631e1@codeaurora.org>
+References: <1516895011-17588-1-git-send-email-okaya@codeaurora.org> <30a108bc-c85f-55d9-67c5-586534a987c0@infradead.org> <2902c0aa-b7d4-ea2f-e687-bc5cd19631e1@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <65f2690c-c605-3c66-9d8a-9a882aaf446d@ti.com>
-References: <20180207134553.13510-1-brgl@bgdev.pl> <20180207134553.13510-3-brgl@bgdev.pl>
- <65f2690c-c605-3c66-9d8a-9a882aaf446d@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 8 Feb 2018 10:54:49 +0100
-Message-ID: <CAMRc=Mf+S3k_wfhUWEx2-39AZx1szkgy-u-bsZQUMiaY06UKww@mail.gmail.com>
-Subject: Re: [PATCH 2/7] soc: davinci: new genpd driver
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-08 10:30 GMT+01:00 Sekhar Nori <nsekhar@ti.com>:
-> On Wednesday 07 February 2018 07:15 PM, Bartosz Golaszewski wrote:
->> +     /*
->> +      * DaVinci always uses a single clock for power-management. We assume
->> +      * it's the first one in the clocks property.
->> +      */
->> +     clk = of_clk_get(dev->of_node, 0);
->> +     if (IS_ERR(clk))
->> +             return PTR_ERR(clk);
->
-> We already get this today with drivers/base/power/clock_ops.c once
-> .con_ids list is dropped from pm_clk_notifier_block (which I think it
-> should).
->
-> If there is no reason to introduce thus functionality at this stage,
-> perhaps we should wait till such a time when its clearly needed?
->
-> Thanks,
-> Sekhar
+On Tuesday, February 6, 2018 3:25:58 PM CET Sinan Kaya wrote:
+> Hi Rafael,
+> 
+> On 1/25/2018 12:36 PM, Randy Dunlap wrote:
+> > On 01/25/2018 08:25 AM, Rafael J. Wysocki wrote:
+> >> On Thu, Jan 25, 2018 at 4:43 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
+> >>> From: Auger Eric <eric.auger@redhat.com>
+> >>>
+> >>> If I2C is built as a module, ACPI_I2C_OPREGION cannot be set
+> >>> and any ACPI opregion calls targeting I2C fail with no opregion found.
+> >>>
+> >>> Commit da3c6647ee08 ("I2C/ACPI: Clean up I2C ACPI code and Add
+> >>> CONFIG_I2C_ACPI config") says following:
+> >>>
+> >>> "Current there is a race between removing I2C ACPI operation region
+> >>> and ACPI AML code accessing."
+> >>>
+> >>> This patch forces core I2C support to be compiled as a built-in
+> >>> module if ACPI is selected as code is not ready for dynamic module
+> >>> removal.
+> >>>
+> >>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> >>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> >>> ---
+> >>>  drivers/acpi/Kconfig | 2 ++
+> >>>  1 file changed, 2 insertions(+)
+> >>>
+> >>> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> >>> index 4650539..5b48098 100644
+> >>> --- a/drivers/acpi/Kconfig
+> >>> +++ b/drivers/acpi/Kconfig
+> >>> @@ -9,6 +9,8 @@ menuconfig ACPI
+> >>>         depends on IA64 || X86 || ARM64
+> >>>         depends on PCI
+> >>>         select PNP
+> >>> +       # force building I2C in on ACPI systems, for opregion availability
+> >>> +       imply I2C
+> >>>         default y if (IA64 || X86)
+> >>>         help
+> >>>           Advanced Configuration and Power Interface (ACPI) support for
+> >>> --
+> >>
+> >> I'm not sure how much this helps.
+> >>
+> >> I2C opregions will only work if the requisite I2C controller driver is
+> >> present anyway and this change doesn't guarantee that AFAICS.
+> >>
+> >> OTOH, there are systems using ACPI without I2C opregions, so are we
+> >> really better off by forcing everybody using ACPI to also build I2C?
+> > 
+> > Definitely not.
+> > 
+> 
+> Where do we stand on this? Do you have a better suggestion?
 
-If I understand correctly: once we drop the con_ids list, we end up
-calling clk_get(dev, NULL) from pm_clk_acquire(), which matches
-against the clock with NULL con_id, which may not necessarily be the
-first clock in the list.
-
-I'm working on extending the psc driver with the power-domain code (as
-suggested by David), which should be much smaller and simplier - how
-about that?
+Not at the moment, but I also don't think that this approach is valid.
 
 Thanks,
-Bartosz
+Rafael
