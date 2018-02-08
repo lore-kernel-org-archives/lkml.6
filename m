@@ -1,79 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750877AbeBHF5e (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 00:57:34 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:44785 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750749AbeBHF5c (ORCPT
+        id S1751998AbeBHF6I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 00:58:08 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:58454 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbeBHF6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 00:57:32 -0500
-X-UUID: e3f5e06b960a43dd8e2135b967e4e7a6-20180208
-Message-ID: <1518069447.28878.4.camel@mtkswgap22>
-Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
- device
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Garlic Tseng <garlic.tseng@mediatek.com>
-Date: Thu, 8 Feb 2018 13:57:27 +0800
-In-Reply-To: <0e0e703c-0ac9-06ad-91c5-abdf16de1ee9@gmail.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
-         <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
-         <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
-         <1517803655.1173.12.camel@mtkswgap22>
-         <0e0e703c-0ac9-06ad-91c5-abdf16de1ee9@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
+        Thu, 8 Feb 2018 00:58:04 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w185uhG3007816
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Marc Herbert <marc.herbert@intel.com>
+Subject: [PATCH 2/2] kconfig: echo stdin to stdout if either is redirected
+Date: Thu,  8 Feb 2018 14:56:40 +0900
+Message-Id: <1518069400-7037-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518069400-7037-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1518069400-7037-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-07 at 16:18 +0100, Matthias Brugger wrote:
-> 
-> On 02/05/2018 05:07 AM, Ryder Lee wrote:
-> > On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
-> >>
-> >> On 01/31/2018 08:42 AM, Ryder Lee wrote:
-> >>> As the new MFD parent is in place, switch probing method to adapt it.
-> >>>
-> >>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> >>> ---
-> >>>  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
-> >>>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-> >>> index 13f752d..8c18536 100644
-> >>> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
-> >>> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-> >>> @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
-> >>>  {
-> >>>  	struct clk_onecell_data *clk_data;
-> >>>  	struct device_node *node = pdev->dev.of_node;
-> >>> +	struct device_node *pnode = pdev->dev.parent->of_node;
-> >>>  	int r;
-> >>>  
-> >>>  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
-> >>>  
-> >>> -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> >>> +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
-> >>
-> >> We will need a fallback here for older device tree bindings.
-> >>
-> >> Regards,
-> >> Matthias
-> > 
-> > Up to now, I didn't see both driver and bindings are used anywhere.
-> > Should I still care about that?
-> > 
-> 
-> Yes please, we have to ensure that newer kernel work with older bindings and
-> vice-versa.
+If stdio is not tty, conf_askvalue() puts additional new line to
+prevent prompts are all concatenated into a single line.  This care
+is missing in conf_choice(), so a 'choice' prompt and the next prompt
+are shown in the same line.
 
-OKay. An unrelated question - is it possible to change the compatible
-string (*-audsys-clk) without breaking backward compatible?
+Move the code into xfgets() to take care of all cases.  To improve
+this more, echo stdin to stdout.  This clarifies what keys were input
+from stdio and the stdout looks like as if it were from tty.
+
+I removed the isatty(2) check since stderr is unrelated here.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/kconfig/conf.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+index 358e2e4..c5318d3 100644
+--- a/scripts/kconfig/conf.c
++++ b/scripts/kconfig/conf.c
+@@ -76,6 +76,9 @@ static void xfgets(char *str, int size, FILE *in)
+ {
+ 	if (!fgets(str, size, in))
+ 		fprintf(stderr, "\nError in reading or end of file.\n");
++
++	if (!tty_stdio)
++		printf("%s", str);
+ }
+ 
+ static int conf_askvalue(struct symbol *sym, const char *def)
+@@ -106,8 +109,6 @@ static int conf_askvalue(struct symbol *sym, const char *def)
+ 	case oldaskconfig:
+ 		fflush(stdout);
+ 		xfgets(line, sizeof(line), stdin);
+-		if (!tty_stdio)
+-			printf("\n");
+ 		return 1;
+ 	default:
+ 		break;
+@@ -495,7 +496,7 @@ int main(int ac, char **av)
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
+-	tty_stdio = isatty(0) && isatty(1) && isatty(2);
++	tty_stdio = isatty(0) && isatty(1);
+ 
+ 	while ((opt = getopt_long(ac, av, "s", long_opts, NULL)) != -1) {
+ 		if (opt == 's') {
+-- 
+2.7.4
