@@ -1,78 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeBHWKE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 17:10:04 -0500
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:46452 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752028AbeBHWKC (ORCPT
+        id S1752021AbeBHWPr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 17:15:47 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:39026 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbeBHWPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 17:10:02 -0500
-X-Google-Smtp-Source: AH8x224lYkqkC13CXMZqY1CutMiOAU1VzOWupjfO+og9JJSqfRCuuUR7sL9vhJ2qCkbbAoS20WasjvsT4jmNz8AS4MM=
-MIME-Version: 1.0
-In-Reply-To: <mhng-2395f66f-11f6-4209-86b2-71482e5cf52b@palmer-si-x1c4>
-References: <20180205012146.23981-7-ulfalizer@gmail.com> <mhng-2395f66f-11f6-4209-86b2-71482e5cf52b@palmer-si-x1c4>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Thu, 8 Feb 2018 23:10:01 +0100
-Message-ID: <CAFkk2KQwjf0SRgNEmufKBU3FPozZYt1cNqNeAu6KT7jCXDH6QA@mail.gmail.com>
-Subject: Re: [PATCH 06/20] riscv: Remove ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE select
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        tfiga@chromium.org, paul.burton@mips.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vineet Gupta <vgupta@synopsys.com>, mgorman@techsingularity.net,
-        Christoph Hellwig <hch@lst.de>, mina86@mina86.com,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Will Deacon <will.deacon@arm.com>,
-        Tony Lindgren <tony@atomide.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Albert Ou <albert@sifive.com>, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Feb 2018 17:15:45 -0500
+From: Rohit Jain <rohit.k.jain@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, steven.sistare@oracle.com,
+        joelaf@google.com, jbacik@fb.com, riel@redhat.com,
+        juri.lelli@redhat.com, dhaval.giani@oracle.com, efault@gmx.de
+Subject: [RFC 1/2] sched: reduce migration cost between faster caches for idle_balance
+Date: Thu,  8 Feb 2018 14:19:54 -0800
+Message-Id: <1518128395-14606-2-git-send-email-rohit.k.jain@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
+References: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802080255
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 8, 2018 at 7:34 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
-> On Sun, 04 Feb 2018 17:21:18 PST (-0800), ulfalizer@gmail.com wrote:
->>
->> The ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE symbol was removed in
->> commit 51a021244b9d ("atomic64: no need for
->> CONFIG_ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE").
->>
->> Remove the ARCH_HAS_ATOMIC64_DEC_IS_POSITIVE select from RISCV.
->>
->> Discovered with the
->>
->> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
->> script.
->>
->> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->> ---
->>  arch/riscv/Kconfig | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index b6722c246d9c..ff69c77b9e78 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -8,7 +8,6 @@ config RISCV
->>         select OF
->>         select OF_EARLY_FLATTREE
->>         select OF_IRQ
->> -       select ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE
->>         select ARCH_WANT_FRAME_POINTERS
->>         select CLONE_BACKWARDS
->>         select COMMON_CLK
->
->
-> Thanks!
->
-> Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+This patch makes idle_balance more dynamic as the sched_migration_cost
+is now accounted on a sched_domain level. This in turn is done in
+sd_init when we know what the topology relationships are.
 
-I didn't have a particular tree in mind for these patches by the way,
-so feel free to pull it in yourselves.
+For introduction sakes cost of migration within the same core is set as
+0, across cores is 50 usec and across sockets is 500 usec. sysctl for
+these variables are introduced in patch 2.
 
-Cheers,
-Ulf
+Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+---
+ include/linux/sched/topology.h | 1 +
+ kernel/sched/fair.c            | 6 +++---
+ kernel/sched/topology.c        | 5 +++++
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index cf257c2..bcb4db2 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -104,6 +104,7 @@ struct sched_domain {
+ 	u64 max_newidle_lb_cost;
+ 	unsigned long next_decay_max_lb_cost;
+ 
++	u64 sched_migration_cost;
+ 	u64 avg_scan_cost;		/* select_idle_sibling */
+ 
+ #ifdef CONFIG_SCHEDSTATS
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 2fe3aa8..61d3508 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8782,8 +8782,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+ 	 */
+ 	rq_unpin_lock(this_rq, rf);
+ 
+-	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+-	    !this_rq->rd->overload) {
++	if (!this_rq->rd->overload) {
+ 		rcu_read_lock();
+ 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+ 		if (sd)
+@@ -8804,7 +8803,8 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+ 		if (!(sd->flags & SD_LOAD_BALANCE))
+ 			continue;
+ 
+-		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost) {
++		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost +
++		    sd->sched_migration_cost) {
+ 			update_next_balance(sd, &next_balance);
+ 			break;
+ 		}
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 034cbed..bcd8c64 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1148,12 +1148,14 @@ sd_init(struct sched_domain_topology_level *tl,
+ 		sd->flags |= SD_PREFER_SIBLING;
+ 		sd->imbalance_pct = 110;
+ 		sd->smt_gain = 1178; /* ~15% */
++		sd->sched_migration_cost = 0;
+ 
+ 	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
+ 		sd->flags |= SD_PREFER_SIBLING;
+ 		sd->imbalance_pct = 117;
+ 		sd->cache_nice_tries = 1;
+ 		sd->busy_idx = 2;
++		sd->sched_migration_cost = 500000UL;
+ 
+ #ifdef CONFIG_NUMA
+ 	} else if (sd->flags & SD_NUMA) {
+@@ -1162,6 +1164,7 @@ sd_init(struct sched_domain_topology_level *tl,
+ 		sd->idle_idx = 2;
+ 
+ 		sd->flags |= SD_SERIALIZE;
++		sd->sched_migration_cost = 5000000UL;
+ 		if (sched_domains_numa_distance[tl->numa_level] > RECLAIM_DISTANCE) {
+ 			sd->flags &= ~(SD_BALANCE_EXEC |
+ 				       SD_BALANCE_FORK |
+@@ -1174,6 +1177,7 @@ sd_init(struct sched_domain_topology_level *tl,
+ 		sd->cache_nice_tries = 1;
+ 		sd->busy_idx = 2;
+ 		sd->idle_idx = 1;
++		sd->sched_migration_cost = 5000000UL;
+ 	}
+ 
+ 	/*
+@@ -1622,6 +1626,7 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
+ 		}
+ 
+ 	}
++
+ 	set_domain_attribute(sd, attr);
+ 
+ 	return sd;
+-- 
+2.7.4
