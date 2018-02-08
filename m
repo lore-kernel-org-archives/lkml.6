@@ -1,81 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752581AbeBHV5l (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 16:57:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752514AbeBHV5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 16:57:38 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F2121796
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Thu, 8 Feb 2018 15:57:35 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Niklas Cassel <niklas.cassel@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Sekhar Nori <nsekhar@ti.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Niklas Cassel <niklass@axis.com>, Shawn Lin <shawn.lin@rock-chips.com>,
-        John Keeping <john@metanate.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] PCI: endpoint: Handle 64-bit BARs properly
-Message-ID: <20180208215735.GD98765@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180208123346.20784-1-niklas.cassel@axis.com>
- <20180208123346.20784-2-niklas.cassel@axis.com>
- <da5004d3-c3e8-d9fd-6698-3b12c3ab624a@ti.com>
+        id S1752373AbeBHWAh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 17:00:37 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41183 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752172AbeBHWAe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 17:00:34 -0500
+X-Google-Smtp-Source: AH8x225VIO4Qn0uZt6cyp9KytWJ3yLnLywj3IoRT0YU7neeuybnV83HnJxNx/APWBanq2BpdiGtzqA==
+Date: Thu, 8 Feb 2018 23:00:16 +0100
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: broonie@kernel.org, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, viresh.kumar@linaro.org,
+        linux-pwm@vger.kernel.org, thierry.reding@gmail.com,
+        b.zolnierkie@samsung.com, daniel.vetter@ffwll.ch,
+        christophe.leroy@c-s.fr, seanpaul@chromium.org,
+        linux-spi@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Subject: [PATCH v3] spi: kconfig: Remove AVR32 dep. from SPI_ATMEL
+Message-ID: <20180208220016.w7km4f233nc3uw34@huvuddator>
+References: <20180206120825.GF5681@sirena.org.uk>
+ <20180206225519.20248-1-ulfalizer@gmail.com>
+ <7f2bebe1-2931-7ec9-ef9f-0d3e6dda6c0b@gmail.com>
+ <a8d2076b-6863-6ff1-5442-0587ad973766@gmail.com>
+ <20180208024414.jjcxvd2q4o5rifgh@huvuddator>
+ <97250c63-cb2b-b1e8-63ac-59b9c749fd52@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <da5004d3-c3e8-d9fd-6698-3b12c3ab624a@ti.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <97250c63-cb2b-b1e8-63ac-59b9c749fd52@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 06:17:32PM +0530, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Thursday 08 February 2018 06:03 PM, Niklas Cassel wrote:
-> > A 64-bit BAR uses the succeeding BAR for the upper bits, therefore
-> > we cannot call pci_epc_set_bar() on a BAR that follows a 64-bit BAR.
-> > 
-> > If pci_epc_set_bar() is called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
-> 
-> Not related to $patch. But I have a query on when
-> PCI_BASE_ADDRESS_MEM_TYPE_64 should be set. Whether if the size is >
-> 4G or if the address can be mapped anywhere in the 64-bit PCIe
-> address space or both?
+The AVR32 symbol was removed in commit 26202873bb51 ("avr32: remove
+support for AVR32 architecture").
 
-In general, PCI_BASE_ADDRESS_MEM_TYPE_64 should be set if the BAR is
-64 bits wide.  IORESOURCE_MEM_64 is similar.
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+Changes in v3:
+Add Signed-off-by tag
 
-It doesn't matter what the current value of the BAR is.
+Changes in v2:
+Remove the AVR32 reference from the help text too.
 
-It's easy to look at the current address or size of a resource if we
-need to know where it is or how big it is.  But if we lose track of
-the width of the BAR register, we have no way to know whether it's
-*capable* of holding a 64-bit value.
+ drivers/spi/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > it has to be up to the controller driver to write both BAR[x] and BAR[x+1]
-> > (and BAR_mask[x] and BAR_mask[x+1]).
-> > 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > ---
-> >  drivers/pci/endpoint/functions/pci-epf-test.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > index 800da09d9005..eef85820f59e 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > @@ -382,6 +382,8 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
-> >  			if (bar == test_reg_bar)
-> >  				return ret;
-> >  		}
-> > +		if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-> > +			bar++;
-> >  	}
-> >  
-> >  	return 0;
-> > 
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 603783976b81..6fb0347a24f2 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -72,10 +72,10 @@ config SPI_ARMADA_3700
+ config SPI_ATMEL
+ 	tristate "Atmel SPI Controller"
+ 	depends on HAS_DMA
+-	depends on (ARCH_AT91 || AVR32 || COMPILE_TEST)
++	depends on (ARCH_AT91 || COMPILE_TEST)
+ 	help
+ 	  This selects a driver for the Atmel SPI Controller, present on
+-	  many AT32 (AVR32) and AT91 (ARM) chips.
++	  many AT91 (ARM) chips.
+ 
+ config SPI_AU1550
+ 	tristate "Au1550/Au1200/Au1300 SPI Controller"
+-- 
+2.14.1
