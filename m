@@ -1,56 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeBHOEV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 09:04:21 -0500
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:39317 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751310AbeBHOEU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 09:04:20 -0500
-X-Google-Smtp-Source: AH8x224ADeSRrKuo43j9KltSh6RV6CB+iWIN0qqw/VXmcHRlu/XpWYhl2vywefGcenEefTdK7ao+kA==
-Message-ID: <1518098657.2670.3.camel@gmail.com>
-Subject: Re: [PATCH 1/2] trace-cmd: Fix the detection for swig
-From: Vladislav Valtchev <vladislav.valtchev@gmail.com>
-To: Zamir SUN <sztsian@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: johannes.berg@intel.com, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, zsun@redhat.com
-Date: Thu, 08 Feb 2018 16:04:17 +0200
-In-Reply-To: <a1c2c3f6-8d69-227d-51d4-1c40c53e0645@gmail.com>
-References: <20180204032014.6962-1-sztsian@gmail.com>
-         <20180204032014.6962-2-sztsian@gmail.com>
-         <20180206181807.2d35393e@gandalf.local.home>
-         <df980185-aa29-f65b-d5b0-f42d85a66a51@gmail.com>
-         <1518024315.3742.16.camel@gmail.com>
-         <a1c2c3f6-8d69-227d-51d4-1c40c53e0645@gmail.com>
-Organization: VMware
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        id S1752380AbeBHOEd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 09:04:33 -0500
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:34708 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751079AbeBHOEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 09:04:30 -0500
+Date: Thu, 8 Feb 2018 14:02:50 +0000
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: John Garry <john.garry@huawei.com>, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, ak@linux.intel.com, wcohen@redhat.com,
+        will.deacon@arm.com, ganapatrao.kulkarni@cavium.com,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        zhangshaokun@hisilicon.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
+Message-ID: <20180208140250.43a10b84@alans-desktop>
+In-Reply-To: <20180208135423.GC10234@krava>
+References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
+        <1517939104-230881-6-git-send-email-john.garry@huawei.com>
+        <20180208135423.GC10234@krava>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-08 at 20:05 +0800, Zamir SUN wrote:
+On Thu, 8 Feb 2018 14:54:23 +0100
+Jiri Olsa <jolsa@redhat.com> wrote:
+
+> On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
 > 
-> Hi Vladislav,
+> SNIP
 > 
-> Thanks for the URL. I tried to build from your make8 branch, it works
-> fine. I must made some copy-paste mistake yesterday.
+> >  static void print_events_table_suffix(FILE *outfp)
+> >  {
+> >  	fprintf(outfp, "{\n");
+> > @@ -407,6 +469,52 @@ static char *real_event(const char *name, char *event)
+> >  	return event;
+> >  }
+> >  
+> > +static void fixup_field(char *from, char **to)
+> > +{
+> > +	*to = malloc(strlen(from));
+> > +
+> > +	strcpy(*to, from);
+> > +}  
 > 
-> Sorry for the noise.
-> 
-> Thanks.
+> could you just call '*to = strdup(from)' in here?
 
-No problem, Zamir.
-I'm happy that it works.
+And check for malloc returning NULL.
 
-The series has been merged in the master branch by Steven now.
-
-Anyway, I think your patch 2/2 is still necessary: thanks for it!
-
-Vlad
-
--- 
-Vladislav Valtchev
-VMware Open Source Technology Center
+Alan
