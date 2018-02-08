@@ -1,78 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752448AbeBHPnu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:43:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750961AbeBHPnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:43:47 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2128021738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 8 Feb 2018 10:43:43 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
-Subject: Re: [PATCH 09/18] tracing: Add indexing of arguments for function
- based events
-Message-ID: <20180208104343.2fa63eda@gandalf.local.home>
-In-Reply-To: <20180208105924.GB26290@sejong>
-References: <20180202230458.840252014@goodmis.org>
-        <20180202231018.338259949@goodmis.org>
-        <20180208105924.GB26290@sejong>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752111AbeBHPov (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:44:51 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36142 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750847AbeBHPot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:44:49 -0500
+Date: Thu, 8 Feb 2018 17:44:48 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net] ptr_ring: fail early if queue occupies more than
+ KMALLOC_MAX_SIZE
+Message-ID: <20180208174301-mutt-send-email-mst@kernel.org>
+References: <1517990905-15737-1-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517990905-15737-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Feb 2018 19:59:24 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
-
-> > @@ -347,6 +361,8 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
-> >  	char buf[8];
-> >  	int ret;
-> >  
-> > +	val += arg->index;
-> > +
-> >  	if (!arg->indirect)
-> >  		return val;  
+On Wed, Feb 07, 2018 at 04:08:25PM +0800, Jason Wang wrote:
+> To avoid slab to warn about exceeded size, fail early if queue
+> occupies more than KMALLOC_MAX_SIZE.
 > 
-> So this also works without the indirect, and just add the immediate to
-> the value.
+> Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  include/linux/ptr_ring.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> index 1883d61..4b862da 100644
+> --- a/include/linux/ptr_ring.h
+> +++ b/include/linux/ptr_ring.h
+> @@ -466,6 +466,8 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
+>  
+>  static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
+>  {
+> +	if (size > KMALLOC_MAX_SIZE)
+> +		return NULL;
+>  	return kcalloc(size, sizeof(void *), gfp);
+>  }
 
-Not sure what you are asking here. The immediate adds to the current
-value, where as the indirect will then look what's at that location.
+I guess this approach does begin to make more sense
+at least as a temporary stop-gap.
 
-If the arg (val) is 0xffffffffabcd0000
+But does this actually prevent the crash in all cases?
 
-	u64 val+8
+size is in void* entry units, KMALLOC_MAX_SIZE is in bytes.
 
-Will return: 0xffffffffabcd0008
 
-	u64 val[1]
-
-will return what's at location 0xffffffffabcd0008
-
-"u64 val+8[0]" is the same as "u64 val[1]"
-
-Note: "u64 val[0]+8" will return what's at location 0xffffffffabcd0000
-plus 8.
-
--- Steve
+>  
+> -- 
+> 2.7.4
