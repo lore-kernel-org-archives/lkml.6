@@ -1,169 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751068AbeBHFTU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 00:19:20 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37148 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeBHFTR (ORCPT
+        id S1751019AbeBHF2L (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 00:28:11 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60251 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeBHF2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 00:19:17 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9697460790
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-From: Vijay Viswanath <vviswana@codeaurora.org>
-Subject: Re: [PATCH RFC 2/2] mmc: sdhci-msm: support voltage pad switching
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Krishna Konda <kkonda@codeaurora.org>
-References: <1516262742-44326-1-git-send-email-vviswana@codeaurora.org>
- <1516262742-44326-3-git-send-email-vviswana@codeaurora.org>
- <20180202215154.GI12728@builder>
-Message-ID: <288d817a-0c9d-5c9f-c0bc-c5b523793670@codeaurora.org>
-Date: Thu, 8 Feb 2018 10:49:10 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180202215154.GI12728@builder>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Feb 2018 00:28:10 -0500
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: kvalo@codeaurora.org
+Cc: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] ath9k: turn on btcoex_enable as default
+Date: Thu,  8 Feb 2018 13:28:01 +0800
+Message-Id: <20180208052801.15670-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Without btcoex_enable, WiFi activies make both WiFi and Bluetooth
+unstable if there's a bluetooth connection.
 
+Enable this option when bt_ant_diversity is disabled.
 
-On 2/3/2018 3:21 AM, Bjorn Andersson wrote:
-> On Thu 18 Jan 00:05 PST 2018, Vijay Viswanath wrote:
-> 
->> From: Krishna Konda <kkonda@codeaurora.org>
->>
->> The PADs for sdhc controller are dual-voltage that support 3v/1.8v.
->> Those PADs have a control signal (io_pad_pwr_switch/mode18 ) that
->> indicates whether the PAD works in 3v or 1.8v.
->>
->> SDHC core on msm platforms should have IO_PAD_PWR_SWITCH bit set/unset
->> based on actual voltage used for IO lines. So when power irq is
->> triggered for io high or io low, the driver should check the voltages
->> supported and set the pad accordingly.
->>
-> 
-> I'll try to find some time to check that this doesn't break 8916 and
-> 8974...again...
->
+BugLink: https://bugs.launchpad.net/bugs/1746164
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/net/wireless/ath/ath9k/init.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Thanks! Btwn, I had tested the code in db410c.
-
->> Signed-off-by: Krishna Konda <kkonda@codeaurora.org>
->> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->> ---
->>   drivers/mmc/host/sdhci-msm.c | 38 ++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 38 insertions(+)
->>
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index 5c23e92..f5728a8 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
->> @@ -78,6 +78,8 @@
->>   #define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
->>   #define CORE_HC_MCLK_SEL_HS400	(3 << 8)
->>   #define CORE_HC_MCLK_SEL_MASK	(3 << 8)
->> +#define CORE_IO_PAD_PWR_SWITCH_EN	(1 << 15)
->> +#define CORE_IO_PAD_PWR_SWITCH  (1 << 16)
->>   #define CORE_HC_SELECT_IN_EN	BIT(18)
->>   #define CORE_HC_SELECT_IN_HS400	(6 << 19)
->>   #define CORE_HC_SELECT_IN_MASK	(7 << 19)
->> @@ -1166,6 +1168,35 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->>   	 */
->>   	writel_relaxed(irq_ack, msm_host->core_mem + CORE_PWRCTL_CTL);
->>   
->> +	/*
->> +	 * SDHC has core_mem and hc_mem device memory and these memory
->> +	 * addresses do not fall within 1KB region. Hence, any update to
->> +	 * core_mem address space would require an mb() to ensure this gets
->> +	 * completed before its next update to registers within hc_mem.
->> +	 */
->> +	mb();
-> 
-> If you just use writel() instead of writel_relaxed() you don't need to
-> sprinkle the driver with comments like this. And you really should be
-> able to just say "Ensure ordering between core_mem and hc_mem writes" if
-> you really feel like making it explicit.
-> 
->> +	/*
->> +	 * We should unset IO PAD PWR switch only if the register write can
->> +	 * set IO lines high and the regulator also switches to 3 V.
->> +	 * Else, we should keep the IO PAD PWR switch set.
->> +	 * This is applicable to certain targets where eMMC vccq supply is only
->> +	 * 1.8V. In such targets, even during REQ_IO_HIGH, the IO PAD PWR
->> +	 * switch must be kept set to reflect actual regulator voltage. This
->> +	 * way, during initialization of controllers with only 1.8V, we will
->> +	 * set the IO PAD bit without waiting for a REQ_IO_LOW.
->> +	 */
->> +	if ((io_level & REQ_IO_HIGH) && (msm_host->caps_0 & CORE_3_0V_SUPPORT))
->> +		writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) &
->> +					~CORE_IO_PAD_PWR_SWITCH), host->ioaddr +
->> +				CORE_VENDOR_SPEC);
-> 
-> Please split this up in read, modify and write operations.
-> 
-
-Will do
-
->> +	else if ((io_level & REQ_IO_LOW) ||
->> +			(msm_host->caps_0 & CORE_1_8V_SUPPORT))
->> +		writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) |
->> +					CORE_IO_PAD_PWR_SWITCH), host->ioaddr +
->> +				CORE_VENDOR_SPEC);
->> +	/* Ensure that the IO PAD switches are updated before proceeding */
-> 
-> That's not what "mb()" does, it ensures that any writes that was done
-> before this line will hit the hardware before any writes that is done
-> after this line.
-> 
-
-Will update the comments.
-
-> But again, using writel() would save us from doing this explicitly
-> throughout the code.
-> 
->> +	mb();
->> +
->>   	if (pwr_state)
->>   		msm_host->curr_pwr_state = pwr_state;
->>   	if (io_level)
->> @@ -1518,6 +1549,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->>   	}
->>   
->>   	/*
->> +	 * Set the PAD_PWR_SWITCH_EN bit so that the PAD_PWR_SWITCH bit can
->> +	 * be used as required later on.
->> +	 */
->> +	writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC) |
->> +				CORE_IO_PAD_PWR_SWITCH_EN), host->ioaddr +
->> +			CORE_VENDOR_SPEC);
-> 
-> Please rewrite as 3 operations.
-> 
-> Do we need to set the pwr switch value as well? Or we're fine relying on
-> the existing value here?
-
-After the IO_PAD_PWR_SWTCH is enabled, we will call 
-sdhci_msm_handle_pwr_irq. If there is any pending power irq interrupt, 
-that will set the appropriate pwr switch value. Otherwise, an 
-appropriate value will get set during REQ_BUS_ON event.
-
-> 
-> Regards,
-> Bjorn
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
+index e479fae5aab9..f8f6b091a077 100644
+--- a/drivers/net/wireless/ath/ath9k/init.c
++++ b/drivers/net/wireless/ath/ath9k/init.c
+@@ -56,7 +56,7 @@ static int ath9k_led_active_high = -1;
+ module_param_named(led_active_high, ath9k_led_active_high, int, 0444);
+ MODULE_PARM_DESC(led_active_high, "Invert LED polarity");
+ 
+-static int ath9k_btcoex_enable;
++static int ath9k_btcoex_enable = 1;
+ module_param_named(btcoex_enable, ath9k_btcoex_enable, int, 0444);
+ MODULE_PARM_DESC(btcoex_enable, "Enable wifi-BT coexistence");
+ 
+@@ -693,7 +693,6 @@ static int ath9k_init_softc(u16 devid, struct ath_softc *sc,
+ 	common->hw = sc->hw;
+ 	common->priv = sc;
+ 	common->debug_mask = ath9k_debug;
+-	common->btcoex_enabled = ath9k_btcoex_enable == 1;
+ 	common->disable_ani = false;
+ 
+ 	/*
+@@ -715,14 +714,17 @@ static int ath9k_init_softc(u16 devid, struct ath_softc *sc,
+ 	/*
+ 	 * Enable WLAN/BT RX Antenna diversity only when:
+ 	 *
+-	 * - BTCOEX is disabled.
+ 	 * - the user manually requests the feature.
+ 	 * - the HW cap is set using the platform data.
+ 	 */
+-	if (!common->btcoex_enabled && ath9k_bt_ant_diversity &&
++	if (ath9k_bt_ant_diversity &&
+ 	    (pCap->hw_caps & ATH9K_HW_CAP_BT_ANT_DIV))
+ 		common->bt_ant_diversity = 1;
+ 
++	/* Enable btcoex when ant_diversity is disabled */
++	if (!common->bt_ant_diversity && ath9k_btcoex_enable)
++		common->btcoex_enabled = 1;
++
+ 	spin_lock_init(&common->cc_lock);
+ 	spin_lock_init(&sc->intr_lock);
+ 	spin_lock_init(&sc->sc_serial_rw);
+-- 
+2.15.1
