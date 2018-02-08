@@ -1,464 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeBHTwN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 14:52:13 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35794 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752178AbeBHTwJ (ORCPT
+        id S1752593AbeBHTxv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 14:53:51 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49336 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752212AbeBHTxu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 14:52:09 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 112D26076A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sboyd@codeaurora.org, rnayak@codeaurora.org, msivasub@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v2 1/2] drivers: qcom: add command DB driver
-Date: Thu,  8 Feb 2018 12:51:53 -0700
-Message-Id: <20180208195154.3580-2-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180208195154.3580-1-ilina@codeaurora.org>
-References: <20180208195154.3580-1-ilina@codeaurora.org>
+        Thu, 8 Feb 2018 14:53:50 -0500
+Subject: Re: [PATCH] coresight replicator: set default y after Kconfig rename
+To: Kim Phillips <kim.phillips@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20180207150351.ce930e929bc0d7f6cfb1aa56@arm.com>
+ <4ed2bf14-206a-20c6-40a6-3ab9a2ec07b4@arm.com>
+ <20180208132354.5d66ab91234bd7c7d971c1b1@arm.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <8cdc4fe6-faf6-412e-51af-a65d576ecc3f@infradead.org>
+Date: Thu, 8 Feb 2018 11:53:44 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180208132354.5d66ab91234bd7c7d971c1b1@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+On 02/08/2018 11:23 AM, Kim Phillips wrote:
+> On Thu, 8 Feb 2018 16:13:16 +0000
+> Robin Murphy <robin.murphy@arm.com> wrote:
+> 
+>> On 07/02/18 21:03, Kim Phillips wrote:
+>>> Commit 1c8859848dbb ("coresight replicator: Cleanup programmable
+>>> replicator naming") changed the Kconfig symbol name from
+>>> QCOM_REPLICATOR, which, whilst not in the single arm64 defconfig,
+>>> was being set in my juno build script, which left the new symbol unset,
+>>> causing the following unexpected grief:
+>>>
+>>>   # ./perf record -vvv -C 0 -e cs_etm/@20070000.etr/ --per-thread true
+>>>   ..<snip>..
+>>>   sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+>>>   mmap size 528384B
+>>>   AUX area mmap length 4194304
+>>>   perf event ring buffer mmapped per cpu
+>>>   failed to mmap AUX area
+>>>   failed to mmap with 12 (Cannot allocate memory)
+>>>
+>>> Make it default y to help not surprise unsuspecting users.
+>>
+>> How many users are there relying on your Juno build script? :P
+> 
+> This shouldn't be that uncommon for coresight users:
+> 
+> make defconfig
+> scripts/config -e CONFIG_CORESIGHT
+> scripts/config -e CONFIG_CORESIGHT_LINK_AND_SINK_TMC
+> scripts/config -e CONFIG_CORESIGHT_SINK_TPIU
+> scripts/config -e CONFIG_CORESIGHT_SINK_ETBV10
+> scripts/config -e CONFIG_CORESIGHT_LINKS_AND_SINKS
+> scripts/config -e CONFIG_CORESIGHT_SOURCE_ETM3X
+> scripts/config -e CONFIG_CORESIGHT_SOURCE_ETM4X
+> #scripts/config -e CONFIG_CORESIGHT_QCOM_REPLICATOR
+> scripts/config -e CONFIG_CORESIGHT_DYNAMIC_REPLICATOR
+> scripts/config -e CONFIG_CORESIGHT_STM
+> scripts/config -e CONFIG_CORESIGHT_CPU_DEBUG
+> 
+> FWIW, Mathieu - who helped me track the cannot allocate memory problem
+> down to this config symbol - has also benn caught by this issue.
+> 
+>>> Fixes: 1c8859848dbb ("coresight replicator: Cleanup programmable replicator naming")
+>>
+>> Before that commit, CORESIGHT_QCOM_REPLICATOR was not "default y", nor 
+>> selected by any in-tree configs, so whatever the problem may be this is 
+>> clearly not the correct fix.
+> 
+> Well, there's only one defconfig for arm64.  I don't know why it
+> doesn't set CORESIGHT, but you're right, this is taking the build fix
+> one step further to facilitate user coresight configuration.  I can
+> change the patch to make the change to the arm64 defconfig, but I still
+> believe CORESIGHT_DYNAMIC_REPLICATOR should be default=y, and the
+> defconfig just set CORESIGHT.
+> 
+>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+>>> ---
+>>>   drivers/hwtracing/coresight/Kconfig | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+>>> index ef9cb3c164e1..b94bbd95efa6 100644
+>>> --- a/drivers/hwtracing/coresight/Kconfig
+>>> +++ b/drivers/hwtracing/coresight/Kconfig
+>>> @@ -73,6 +73,7 @@ config CORESIGHT_SOURCE_ETM4X
+>>>   config CORESIGHT_DYNAMIC_REPLICATOR
+>>>   	bool "CoreSight Programmable Replicator driver"
+>>>   	depends on CORESIGHT_LINKS_AND_SINKS
+>>> +	default y
+>>
+>> CORESIGHT_LINKS_AND_SINKS is "default n" (as indeed is CORESIGHT), and 
+>> not selected by any defconfigs, so in general this doesn't really help 
+>> anyway.
+> 
+> Yeah, CORESIGHT_LINKS_AND_SINKS should probably be default y too.
 
-Command DB is a simple database in the shared memory of QCOM SoCs, that
-provides information regarding shared resources. Some shared resources
-in the SoC have properties that are probed dynamically at boot by the
-remote processor. The information pertaining to the SoC and the platform
-are made available in the shared memory. Drivers can query this
-information using predefined strings.
+Are they required for system operation?  If not, they should not default to y.
 
-Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- drivers/soc/qcom/Kconfig  |   9 ++
- drivers/soc/qcom/Makefile |   1 +
- drivers/soc/qcom/cmd-db.c | 321 ++++++++++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/cmd-db.h |  50 ++++++++
- 4 files changed, 381 insertions(+)
- create mode 100644 drivers/soc/qcom/cmd-db.c
- create mode 100644 include/soc/qcom/cmd-db.h
+and if they are required, it seems odd that they are in drivers/hwtracing/.
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index b81374bb6713..7facac2cae23 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -3,6 +3,15 @@
- #
- menu "Qualcomm SoC drivers"
- 
-+config QCOM_COMMAND_DB
-+	bool "Qualcomm Command DB"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  Command DB queries shared memory by key string for shared system
-+	  resources. Platform drivers that require to set state of a shared
-+	  resource on a RPM-hardened platform must use this database to get
-+	  SoC specific identifier and information for the shared resources.
-+
- config QCOM_GLINK_SSR
- 	tristate "Qualcomm Glink SSR driver"
- 	depends on RPMSG
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 40c56f67e94a..fdec77c26b3f 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
- obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-new file mode 100644
-index 000000000000..050a56da76c8
---- /dev/null
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -0,0 +1,321 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
-+
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+
-+#include <soc/qcom/cmd-db.h>
-+
-+#define NUM_PRIORITY		2
-+#define MAX_SLV_ID		8
-+#define CMD_DB_MAGIC		0x0C0330DBUL
-+#define SLAVE_ID_MASK		0x7
-+#define SLAVE_ID_SHIFT		16
-+
-+#define ENTRY_HEADER(hdr)	((void *)cmd_db_header +	\
-+				sizeof(*cmd_db_header) +	\
-+				hdr->header_offset)
-+
-+#define RSC_OFFSET(hdr, ent)	((void *)cmd_db_header +	\
-+				sizeof(*cmd_db_header) +	\
-+				hdr.data_offset + ent.offset)
-+
-+#define MIN(a, b)		(((a) < (b)) ? (a) : (b))
-+
-+/**
-+ * entry_header: header for each entry in cmddb
-+ *
-+ * @id: resource's identifier
-+ * @priority: unused
-+ * @addr: the address of the resource
-+ * @len: length of the data
-+ * @offset: offset at which data starts
-+ */
-+struct entry_header {
-+	u64 id;
-+	u32 priority[NUM_PRIORITY];
-+	u32 addr;
-+	u16 len;
-+	u16 offset;
-+};
-+
-+/**
-+ * rsc_hdr: resource header information
-+ *
-+ * @slv_id: id for the resource
-+ * @header_offset: Entry header offset from data
-+ * @data_offset: Entry offset for data location
-+ * @cnt: number of entries for HW type
-+ * @version: MSB is major, LSB is minor
-+ */
-+struct rsc_hdr {
-+	u16 slv_id;
-+	u16 header_offset;
-+	u16 data_offset;
-+	u16 cnt;
-+	u16 version;
-+	u16 reserved[3];
-+};
-+
-+/**
-+ * cmd_db_header: The DB header information
-+ *
-+ * @version: The cmd db version
-+ * @magic_number: constant expected in the database
-+ * @header: array of resources
-+ * @check_sum: check sum for the header. Unused.
-+ * @reserved: reserved memory
-+ * @data: driver specific data
-+ */
-+struct cmd_db_header {
-+	u32 version;
-+	u32 magic_num;
-+	struct rsc_hdr header[MAX_SLV_ID];
-+	u32 check_sum;
-+	u32 reserved;
-+	u8 data[];
-+};
-+
-+/**
-+ * DOC: Description of the Command DB database.
-+ *
-+ * At the start of the command DB memory is the cmd_db_header structure.
-+ * The cmd_db_header holds the version, checksum, magic key as well as an
-+ * array for header for each slave (depicted by the rsc_header). Each h/w
-+ * based accelerator is a 'slave' (shared resource) and has slave id indicating
-+ * the type of accelerator. The rsc_header is the header for such individual
-+ * slaves of a given type. The entries for each of these slaves begin at the
-+ * rsc_hdr.header_offset. In addition each slave could have auxiliary data
-+ * that may be needed by the driver. The data for the slave starts at the
-+ * entry_header.offset to the location pointed to by the rsc_hdr.data_offset.
-+ *
-+ * Drivers have a stringified key to a slave/resource. They can query the slave
-+ * information and get the slave id and the auxiliary data and the length of the
-+ * data. Using this information, they can format the request to be sent to the
-+ * h/w accelerator and request a resource state.
-+ */
-+
-+static struct cmd_db_header *cmd_db_header;
-+
-+/**
-+ * cmd_db_ready - Indicates if command DB is available
-+ *
-+ * Return: 0 on success, errno otherwise
-+ */
-+int cmd_db_ready(void)
-+{
-+	if (cmd_db_header == NULL)
-+		return -EPROBE_DEFER;
-+	else if (cmd_db_header->magic_num != CMD_DB_MAGIC)
-+		return -EINVAL;
-+	else
-+		return 0;
-+}
-+EXPORT_SYMBOL(cmd_db_ready);
-+
-+static u64 cmd_db_get_u64_id(const char *id)
-+{
-+	u64 rsc_id = 0;
-+	u8 *ch = (u8 *)&rsc_id;
-+	int i;
-+
-+	for (i = 0; i < sizeof(rsc_id) && id[i]; i++)
-+		ch[i] = id[i];
-+
-+	return rsc_id;
-+}
-+
-+static int cmd_db_get_header(u64 query, struct entry_header *eh,
-+			    struct rsc_hdr *rh)
-+{
-+	struct rsc_hdr *rsc_hdr;
-+	struct entry_header *ent;
-+	int ret, i, j;
-+
-+	ret = cmd_db_ready();
-+	if (ret)
-+		return ret;
-+
-+	if (!eh || !rh)
-+		return -EINVAL;
-+
-+	for (i = 0; i < MAX_SLV_ID; i++) {
-+		rsc_hdr = &cmd_db_header->header[i];
-+		if (!rsc_hdr->slv_id)
-+			break;
-+
-+		ent = ENTRY_HEADER(rsc_hdr);
-+		for (j = 0; j < rsc_hdr->cnt; j++, ent++) {
-+			if (ent->id == query)
-+				break;
-+		}
-+
-+		if (j < rsc_hdr->cnt) {
-+			memcpy(eh, ent, sizeof(*ent));
-+			memcpy(rh, rsc_hdr, sizeof(*rh));
-+			return 0;
-+		}
-+	}
-+
-+	return -ENODEV;
-+}
-+
-+static int cmd_db_get_header_by_rsc_id(const char *id,
-+				      struct entry_header *ent_hdr,
-+				      struct rsc_hdr *rsc_hdr)
-+{
-+	u64 rsc_id = cmd_db_get_u64_id(id);
-+
-+	return cmd_db_get_header(rsc_id, ent_hdr, rsc_hdr);
-+}
-+
-+/**
-+ * cmd_db_read_addr() - Query command db for resource id address.
-+ *
-+ *  @id: resource id to query for address
-+ *
-+ * This is used to retrieve resource address based on resource
-+ * id.
-+ *  Return: resource address on success, 0 on error
-+ */
-+u32 cmd_db_read_addr(const char *id)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+
-+	return ret < 0 ? 0 : ent.addr;
-+}
-+EXPORT_SYMBOL(cmd_db_read_addr);
-+
-+/**
-+ * cmd_db_read_aux_data() - Query command db for aux data.
-+ *
-+ *  @id : Resource to retrieve AUX Data on.
-+ *  @data : Data buffer to copy returned aux data to. Returns size on NULL
-+ *  @len : Caller provides size of data buffer passed in.
-+ *
-+ *  Return: size of data on success, errno on error
-+ */
-+int cmd_db_read_aux_data(const char *id, u8 *data, int len)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	if (!data)
-+		return -EINVAL;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+	if (ret)
-+		return ret;
-+
-+	if (len < ent.len)
-+		return -EINVAL;
-+
-+	len = MIN(ent.len, len);
-+	memcpy(data, RSC_OFFSET(rsc_hdr, ent), len);
-+
-+	return len;
-+}
-+EXPORT_SYMBOL(cmd_db_read_aux_data);
-+
-+/**
-+ * cmd_db_read_aux_data_len - Get the length of the auxllary data stored in DB.
-+ *
-+ * @id: Resource to retrieve AUX Data.
-+ *
-+ * Return: size on success, 0 on error
-+ */
-+size_t cmd_db_read_aux_data_len(const char *id)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+
-+	return ret < 0 ? 0 : ent.len;
-+}
-+EXPORT_SYMBOL(cmd_db_read_aux_data_len);
-+
-+/**
-+ * cmd_db_read_slave_id - Get the slave ID for a given resource address
-+ *
-+ * @id: Resource id to query the DB for version
-+ *
-+ * Return: cmd_db_hw_type enum on success, CMD_DB_HW_INVALID on error
-+ */
-+enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+
-+	return ret < 0 ? CMD_DB_HW_INVALID :
-+		       (ent.addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
-+}
-+EXPORT_SYMBOL(cmd_db_read_slave_id);
-+
-+static int cmd_db_dev_probe(struct platform_device *pdev)
-+{
-+	struct reserved_mem *rmem;
-+	void *dict, *start_addr;
-+	int ret = 0;
-+
-+	rmem = of_reserved_mem_lookup(pdev->dev.of_node);
-+	if (!rmem) {
-+		dev_err(&pdev->dev, "failed to acquire memory region\n");
-+		return -EINVAL;
-+	}
-+
-+	dict = devm_memremap(&pdev->dev, rmem->base, rmem->size, MEMREMAP_WB);
-+	if (IS_ERR(dict))
-+		return -ENOMEM;
-+
-+	start_addr = memremap(readl_relaxed(dict), readl_relaxed(dict + 0x4),
-+			     MEMREMAP_WB);
-+	if (IS_ERR_OR_NULL(start_addr)) {
-+		ret = PTR_ERR(start_addr);
-+		goto done;
-+	}
-+
-+	cmd_db_header = start_addr;
-+	if (cmd_db_header->magic_num != CMD_DB_MAGIC) {
-+		ret = -EINVAL;
-+		dev_err(&pdev->dev, "Invalid Command DB Magic\n");
-+		goto done;
-+	}
-+
-+done:
-+	devm_iounmap(&pdev->dev, dict);
-+	return ret;
-+}
-+
-+static const struct of_device_id cmd_db_match_table[] = {
-+	{ .compatible = "qcom,cmd-db" },
-+	{ },
-+};
-+
-+static struct platform_driver cmd_db_dev_driver = {
-+	.probe  = cmd_db_dev_probe,
-+	.driver = {
-+		  .name = "cmd-db",
-+		  .of_match_table = cmd_db_match_table,
-+	},
-+};
-+
-+static int __init cmd_db_device_init(void)
-+{
-+	return platform_driver_register(&cmd_db_dev_driver);
-+}
-+arch_initcall(cmd_db_device_init);
-diff --git a/include/soc/qcom/cmd-db.h b/include/soc/qcom/cmd-db.h
-new file mode 100644
-index 000000000000..483d09ea1689
---- /dev/null
-+++ b/include/soc/qcom/cmd-db.h
-@@ -0,0 +1,50 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef __QCOM_COMMAND_DB_H__
-+#define __QCOM_COMMAND_DB_H__
-+
-+
-+enum cmd_db_hw_type {
-+	CMD_DB_HW_INVALID = 0,
-+	CMD_DB_HW_MIN = 3,
-+	CMD_DB_HW_ARC = CMD_DB_HW_MIN,
-+	CMD_DB_HW_VRM = 4,
-+	CMD_DB_HW_BCM = 5,
-+	CMD_DB_HW_MAX = CMD_DB_HW_BCM,
-+	CMD_DB_HW_ALL = 0xff,
-+};
-+
-+#if IS_ENABLED(CONFIG_QCOM_COMMAND_DB)
-+u32 cmd_db_read_addr(const char *resource_id);
-+int cmd_db_read_aux_data(const char *resource_id, u8 *data, int len);
-+size_t cmd_db_read_aux_data_len(const char *resource_id);
-+enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id);
-+int cmd_db_ready(void);
-+#else
-+
-+static inline u32 cmd_db_read_addr(const char *resource_id)
-+{
-+	return 0;
-+}
-+static inline int cmd_db_read_aux_data(const char *resource_id, u8 *data,
-+				     int len)
-+{
-+	return -ENODEV;
-+}
-+static inline size_t cmd_db_read_aux_data_len(const char *resource_id)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id)
-+{
-+	return -ENODEV;
-+}
-+static inline int cmd_db_ready(void)
-+{
-+	return -ENODEV;
-+}
-+
-+#endif /* CONFIG_QCOM_COMMAND_DB */
-+#endif /* __QCOM_COMMAND_DB_H__ */
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+~Randy
