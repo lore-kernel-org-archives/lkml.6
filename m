@@ -1,58 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeBHUSY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 15:18:24 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46348 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752028AbeBHUSW (ORCPT
+        id S1752507AbeBHUTt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 15:19:49 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34257 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752203AbeBHUTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 15:18:22 -0500
-X-Google-Smtp-Source: AH8x225TNWfVI2+JB+FwMnvaY1L1HJCIaxq3nZ1iQtWLjnmleQpZah7BvMN49y581wOsrjjYseb60w==
-Date: Thu, 8 Feb 2018 14:18:19 -0600
+        Thu, 8 Feb 2018 15:19:47 -0500
+X-Google-Smtp-Source: AH8x22644is1KKLy2eQijgjGpvZ74zz73FRRC6KhoA55gcGh2pqT2ZJlzmkfuF5BMLOa76/7hd6Gxg==
+Date: Thu, 8 Feb 2018 14:19:45 -0600
 From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+To: sean.wang@mediatek.com
+Cc: rui.zhang@intel.com, edubezval@gmail.com, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 4/6] clk: sunxi-ng: add support for the Allwinner H6
- CCU
-Message-ID: <20180208201819.dxc4e3utyybocbyj@rob-hp-laptop>
-References: <20180203154942.63566-1-icenowy@aosc.io>
- <20180203154942.63566-5-icenowy@aosc.io>
+        Shunli Wang <shunli.wang@mediatek.com>
+Subject: Re: [PATCH 1/2] dt-bindings: thermal: add binding for MT7622 SoC
+Message-ID: <20180208201945.pssycij3tmj7clfn@rob-hp-laptop>
+References: <0b7dabc3b2c7ed93b88ec0923c2cce2f84fba5b1.1517817887.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180203154942.63566-5-icenowy@aosc.io>
+In-Reply-To: <0b7dabc3b2c7ed93b88ec0923c2cce2f84fba5b1.1517817887.git.sean.wang@mediatek.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 03, 2018 at 11:49:40PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has a CCU which has been largely rearranged.
+On Mon, Feb 05, 2018 at 04:11:51PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> Add support for it in the sunxi-ng CCU framework.
+> Add devicetree bindings for MediaTek MT7622 thermal controller
 > 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
 > ---
-> Changes in v2:
-> - Exported APB1 bus clock for PIO.
-> - Switch to SPDX license identifier.
-> 
->  .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
+>  Documentation/devicetree/bindings/thermal/mediatek-thermal.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
-
->  drivers/clk/sunxi-ng/Kconfig                       |    5 +
->  drivers/clk/sunxi-ng/Makefile                      |    1 +
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1199 ++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   57 +
->  include/dt-bindings/clock/sun50i-h6-ccu.h          |  125 ++
->  include/dt-bindings/reset/sun50i-h6-ccu.h          |   74 ++
->  7 files changed, 1462 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
->  create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
+Reviewed-by: Rob Herring <robh@kernel.org>
