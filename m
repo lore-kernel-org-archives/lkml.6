@@ -1,180 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeBHJrV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 04:47:21 -0500
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:45746 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751984AbeBHJrP (ORCPT
+        id S1752190AbeBHJrs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 04:47:48 -0500
+Received: from smtp-out6.electric.net ([192.162.217.184]:52476 "EHLO
+        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbeBHJrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 04:47:15 -0500
-X-Google-Smtp-Source: AH8x226gCRThAKsn44ndQ/CQz2kEqEgMGi+3qn5J03egZbPmeE2G/YcQDePqHxWpusw1EmLCEhHWOQ==
-Date: Thu, 8 Feb 2018 10:47:10 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [RFC v2 PATCH 6/7] x86/entry: get rid of
- ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS
-Message-ID: <20180208094710.qnjixhm6hybebdv7@gmail.com>
-References: <20180207201517.6518-1-linux@dominikbrodowski.net>
- <20180207201517.6518-7-linux@dominikbrodowski.net>
- <CA+55aFxZ-pyx88rwykT0Dzh-_bwGQcmc00GhrMQ4OEwXqMO+pA@mail.gmail.com>
- <20180207212915.GA4633@isilmar-4.linta.de>
+        Thu, 8 Feb 2018 04:47:13 -0500
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Peter Zijlstra'" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC: Borislav Petkov <bp@alien8.de>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Subject: RE: [linus:master] BUILD REGRESSION
+ a2e5790d841658485d642196dbb0927303d6c22f
+Thread-Topic: [linus:master] BUILD REGRESSION
+ a2e5790d841658485d642196dbb0927303d6c22f
+Thread-Index: AQHToL03icJf9dEsh0CUsXZRWYp/2aOaQUaA
+Date: Thu, 8 Feb 2018 09:47:53 +0000
+Message-ID: <c636fea6531b4c579f86e39c557b4c0d@AcuMS.aculab.com>
+References: <5a7ae6af.WSMpvDEeUt6oucKB%fengguang.wu@intel.com>
+ <CA+55aFxU7TArLUdcndeLnhfRKLO-Vu-1d0Q6VPb9NYt+-S-LNg@mail.gmail.com>
+ <20180207183543.GA8897@pd.tnic>
+ <20180207184933.GA25201@hirez.programming.kicks-ass.net>
+ <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
+ <20180207191451.GC25201@hirez.programming.kicks-ass.net>
+ <20180207192816.GA19536@pd.tnic>
+ <CA+55aFzSZzdVZXatze=xjGSwpOPO7kvbWnz7JiZ3sTx_2Pohjw@mail.gmail.com>
+ <20180208091302.GD25201@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180208091302.GD25201@hirez.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180207212915.GA4633@isilmar-4.linta.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
-
-> On Wed, Feb 07, 2018 at 12:44:41PM -0800, Linus Torvalds wrote:
-> > On Wed, Feb 7, 2018 at 12:15 PM, Dominik Brodowski
-> > <linux@dominikbrodowski.net> wrote:
+From: Peter Zijlstra
+> Sent: 08 February 2018 09:13
+...
+> > > Yeah, note says UD0 didn't eat a ModRM byte on old CPUs. But then that
+> > > changed too. Fun stuff changing insn encoding underway.
 > > >
-> > > Note: The testb $3, CS(%rsp) instruction in idtentry() does not need
-> > > modification. Previously %rsp was manually decreased by 15*8; with
-> > > this patch, %rsp is decreased by 15 pushq instructions. Moreover,
-> > > error_entry did and does the exact same test (with offset=8) after
-> > > the registers have been moved/pushed and cleared.
-> > 
-> > So this has the problem that now those save/clear instructions will
-> > all be done in that idtentry macro.
-> > 
-> > So now that code will be duplicated for all the users of that macro.
-> > 
-> > The old code did the saving in the common error_entry and
-> > paranoid_entry routines, in order to be able to share all the code,
-> > and making the duplicated stub functions generated by the idtentry
-> > macro smaller.
-> > 
-> > Now, admittedly the new push sequence is much smaller than the old
-> > movq sequence, so the duplication doesn't hurt as much, but it's still
-> > likely quite noticeable.
-> > 
-> > So this removes lines of asm code, but it adds a lot of instructions
-> > to the end result thanks to the macro, I think.
+> > > So if we opt for adding a ModRM byte, could a 0x90 NOP work so that it
+> > > doesn't shit itself on those old CPUs?
+> >
+> > We could just also decide that the only thing that the modrm bytes of
+> > UD0 actually *affect* is how the CPU might act for a page-crossing
+> > instruction.
+> >
+> > Because I think that's the only semantic difference: if it's a
+> > page-crosser, the instruction could take a page fault before raising
+> > the #UD.
+> >
+> > Is there any other decode issue we might want to look out for?
 > 
-> Indeed, that is the case (see below). However, if we want to switch to
-> PUSH instructions and do this in a routine which is call'ed and which
-> ret'urns, %rsp needs to be moved around even more often than the old
-> ALLOC_PT_GPREGS_ON_STACK macro did (which you wanted to get rid of,
-> IIUYC). Or do I miss something?
+> _The_ problem is that new binutils cannot sanely decode any function
+> that has a WARN in (this very much includes perf annotate):
 > 
->    text	   data	    bss	    dec	    hex	filename
->   19500	      0	      0	  19500	   4c2c	arch/x86/entry/entry_64.o-orig
->   19510	      0	      0	  19510	   4c36	arch/x86/entry/entry_64.o-3_of_7
->   21105	      0	      0	  21105	   5271	arch/x86/entry/entry_64.o-5_of_7
->   24307	      0	      0	  24307	   5ef3	arch/x86/entry/entry_64.o-7_of_7
+> old:
+> 
+> 00000000000016a0 <copy_overflow>:
+>     16a0:       48 89 f2                mov    %rsi,%rdx
+>     16a3:       89 fe                   mov    %edi,%esi
+>     16a5:       48 c7 c7 00 00 00 00    mov    $0x0,%rdi
+>                         16a8: R_X86_64_32S      .rodata.str1.8+0x288
+>     16ac:       e8 00 00 00 00          callq  16b1 <copy_overflow+0x11>
+>                         16ad: R_X86_64_PC32     __warn_printk-0x4
+>     16b1:       0f ff                   (bad)
+>     16b3:       c3                      retq
+>     16b4:       66 90                   xchg   %ax,%ax
+>     16b6:       66 2e 0f 1f 84 00 00    nopw   %cs:0x0(%rax,%rax,1)
+>     16bd:       00 00 00
+> 
+> new:
+> 
+> 00000000000016a0 <copy_overflow>:
+>     16a0:       48 89 f2                mov    %rsi,%rdx
+>     16a3:       89 fe                   mov    %edi,%esi
+>     16a5:       48 c7 c7 00 00 00 00    mov    $0x0,%rdi
+>                         16a8: R_X86_64_32S      .rodata.str1.8+0x288
+>     16ac:       e8 00 00 00 00          callq  16b1 <copy_overflow+0x11>
+>                         16ad: R_X86_64_PC32     __warn_printk-0x4
+>     16b1:       0f ff c3                ud0    %ebx,%eax
+>     16b4:       66 90                   xchg   %ax,%ax
+>     16b6:       66 2e 0f 1f 84 00 00    nopw   %cs:0x0(%rax,%rax,1)
+>     16bd:       00 00 00
+> 
+> 
+> I went through the register opcodes and matched it against the ModR/M
+> encoding, and the best option I've found so far is using 0xd6 as the
+> next byte.
 
-So while this shows a +~5K increase in text size, these numbers also _very_ 
-significantly over-represent the extra footprint. The assumptions that resulted in 
-us compressing the IRQ entry code have changed very significantly with the new x86 
-IRQ allocation code we introduced in the last year:
+Wouldn't 0xc3 work as well.
+A retq is probably better than an extra (bad).
 
-- IRQ vectors are usually populated in tightly clustered groups.
+Actually objdump ought to be more explicit than (bad) for the explicit UD0/1
 
-  With our new vector allocator code the typical per CPU allocation percentage on
-  x86 systems is ~3 device vectors and ~10 fixed vectors out of ~220 vectors -
-  i.e. a very low ~6% utilization (!). This means that the _real_ text footprint
-  increase is probably closer to 0.1K of text...
-
-  This is a very typical picture on an average desktop system:
-
-  /sys/kernel/debug/irq/domains/VECTORS:
-
-   Online bitmaps:       40
-   Global available:   8007
-   Global reserved:      24
-   Total allocated:      73
-   System: 42: 0-19,32,50,128,237-255
-
- | CPU | avl | man | act | vectors
-     0   199     0     3  33-34,48
-     1   199     0     3  33-35
-     2   199     0     3  33-35
-     3   199     0     3  33-35
-     4   199     0     3  33-35
-     5   199     0     3  33-35
-     6   199     0     3  33-35
-     7   199     0     3  33-35
-     8   199     0     3  33-35
-     9   199     0     3  33-35
-    10   201     0     1  33
-    11   201     0     1  33
-    12   201     0     1  33
-    13   201     0     1  33
-    14   201     0     1  33
-    15   201     0     1  33
-    16   201     0     1  33
-    17   201     0     1  33
-    18   201     0     1  33
-    19   201     0     1  33
-    20   199     0     3  33-35
-    21   199     0     3  33-35
-    22   199     0     3  33-35
-    23   199     0     3  33-35
-    24   199     0     3  33-35
-    25   199     0     3  33-35
-    26   199     0     3  33-35
-    27   199     0     3  33-35
-    28   199     0     3  33-35
-    29   199     0     3  33-35
-    30   201     0     1  33
-    31   201     0     1  33
-    32   201     0     1  33
-    33   202     0     0  
-    34   202     0     0  
-    35   202     0     0  
-    36   202     0     0  
-    37   202     0     0  
-    38   202     0     0  
-    39   202     0     0  
-
-  I.e. the average number of (device) IRQ vectors per CPU is around 2, with the 
-  max being 3.
-
-  The days where we allocated a lot of vectors on every CPU and the compression 
-  of the IRQ entry code text mattered are over.
-
-- Another issue is that only a small minority of vectors is frequent enough to
-  actually matter to cache utilization in practice: 3-4 key IPIs and 1-2 device 
-  IRQs at most - and those vectors tend to be tightly clustered as well into about 
-  two groups, and are probably already on 2-3 cache lines in practice.
-
-  For the common case of 'cache cold' IRQs it's the depth of the call chain and 
-  the fragmentation of the resulting I$ that should be the main performance limit
-  - not the overall size of it.
-
-- The CPU side cost of IRQ delivery is still very expensive even in the best, most 
-  cached case, as in 'over a thousand cycles'. So much stuff is done that maybe 
-  contemporary x86 IRQ entry microcode already prefetches the IDT entry and its 
-  expected call target address.
-
-So for those reasons I'm really tempted by the all around simplification offered 
-by this series:
-
-   2 files changed, 62 insertions(+), 160 deletions(-)
-
-Basically in this specific case I'd like to turn the argument around,
-use this simpler design and put the burden of proof on the patches that
-want to _complicate it_ beyond this simple, straightforward model: show us
-the numbers that it truly makes a difference: it's not that hard to 
-spray a CPU with IRQs by using IPIs, and the cache miss rate and the
-overall perf counter stats should tell a clear story about whether it
-makes sense to cache-compress (and complicate) the IRQ entry sequences.
-
-Thanks,
-
-	Ingo
+	David
