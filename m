@@ -1,107 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752537AbeBHRym (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 12:54:42 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38268 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752508AbeBHRyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:54:40 -0500
-Date: Thu, 8 Feb 2018 17:54:33 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Mark Salter <msalter@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: arm_pmu_acpi: Fix armpmu_alloc call from invalid
- context
-Message-ID: <20180208175433.p2a3g2q7tctfpk7c@lakrids.cambridge.arm.com>
-References: <20180208174504.30665-1-msalter@redhat.com>
+        id S1752408AbeBHRzS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 12:55:18 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43116 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752192AbeBHRzQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 12:55:16 -0500
+X-Google-Smtp-Source: AH8x225P1ExxUWWiWI8Z3mqaGQW2/plmu+yumkfMhL/Y2VdhP+lub+HUoltaNlbNvRZQYQ3I7cBhFw==
+Date: Thu, 8 Feb 2018 09:55:12 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Derek Basehore <dbasehore@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Soby.Mathew@arm.com,
+        sudeep.holla@arm.com, devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de, marc.zyngier@arm.com
+Subject: Re: [PATCH v6 1/3] irqchip/gic-v3-its: add ability to save/restore
+ ITS state
+Message-ID: <20180208175511.GC106856@ban.mtv.corp.google.com>
+References: <20180208023648.89124-1-dbasehore@chromium.org>
+ <20180208023648.89124-2-dbasehore@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180208174504.30665-1-msalter@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180208023648.89124-2-dbasehore@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+Hi Derek,
 
-On Thu, Feb 08, 2018 at 12:45:04PM -0500, Mark Salter wrote:
-> When booting an arm64 debug kernel with ACPI, I see:
+On Wed, Feb 07, 2018 at 06:36:46PM -0800, Derek Basehore wrote:
+> Some platforms power off GIC logic in suspend, so we need to
+> save/restore state. The distributor and redistributor registers need
+> to be handled in platform code due to access permissions on those
+> registers, but the ITS registers can be restored in the kernel.
 > 
->    BUG: sleeping function called from invalid context at mm/slab.h:420
->    in_atomic(): 0, irqs_disabled(): 128, pid: 12, name: cpuhp/0
->    1 lock held by cpuhp/0/12:
->     #0:  (cpuhp_state-up){+.+.}, at: [<0000000057aa0dae>] cpuhp_thread_fun+0x13c/0x258
->    irq event stamp: 28
->    hardirqs last  enabled at (27): [<000000000b861658>] _raw_spin_unlock_irq+0x38/0x58
->    hardirqs last disabled at (28): [<000000006231cfb1>] cpuhp_thread_fun+0xd0/0x258
->    softirqs last  enabled at (0): [<0000000054d9737a>] copy_process.isra.32.part.33+0x450/0x1480
->    softirqs last disabled at (0): [<          (null)>]           (null)
->    CPU: 0 PID: 12 Comm: cpuhp/0 Not tainted 4.15.0+ #18
->    Hardware name: AppliedMicro X-Gene Mustang Board/X-Gene Mustang Board, BIOS 3.06.25 Oct 17 2016
->    Call trace:
->     dump_backtrace+0x0/0x188
->     show_stack+0x24/0x2c
->     dump_stack+0xa4/0xe0
->     ___might_sleep+0x208/0x234
->     __might_sleep+0x58/0x8c
->     kmem_cache_alloc_trace+0x248/0x3e0
->     armpmu_alloc+0x38/0x1a8
->     arm_pmu_acpi_cpu_starting+0x11c/0x15c
->     cpuhp_invoke_callback+0x120/0x100c
->     cpuhp_thread_fun+0xe8/0x258
->     smpboot_thread_fn+0x170/0x268
->     kthread+0x110/0x13c
->     ret_from_fork+0x10/0x18
-
-I have patches to address this:
-
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/557838.html
-https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/acpi-pmu-lockdep
-
-> With commit 7d88eb695a1f ("arm/perf: Convert to hotplug state machine"),
-> arm_pmu uses the cpuhotplug framework to initialize the PMU driver when
-> using ACPI. However, the arm_pmu_acpi_cpu_starting() callback comes
-> before CPUHP_AP_ONLINE is reached which means it runs with interrupts
-> diabled and tries to allocate memory with GFP_KERNEL alloc which may
-> sleep.
-> 
-> Move CPUHP_AP_PERF_ARM_ACPI_STARTING to come after CPUHP_AP_ONLINE so
-> that the arm_pmu initialization runs with interrupts enabled as it
-> does when booting with device tree.
-> 
-> Fixes: 7d88eb695a1f ("arm/perf: Convert to hotplug state machine")
-> Signed-off-by: Mark Salter <msalter@redhat.com>
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 > ---
->  include/linux/cpuhotplug.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/irqchip/irq-gic-v3-its.c | 103 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 103 insertions(+)
 > 
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index 5172ad0..e07b2da 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -114,7 +114,6 @@ enum cpuhp_state {
->  	CPUHP_AP_ARM_VFP_STARTING,
->  	CPUHP_AP_ARM64_DEBUG_MONITORS_STARTING,
->  	CPUHP_AP_PERF_ARM_HW_BREAKPOINT_STARTING,
-> -	CPUHP_AP_PERF_ARM_ACPI_STARTING,
->  	CPUHP_AP_PERF_ARM_STARTING,
->  	CPUHP_AP_ARM_L2X0_STARTING,
->  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
-> @@ -146,6 +145,7 @@ enum cpuhp_state {
->  	CPUHP_AP_SMPBOOT_THREADS,
->  	CPUHP_AP_X86_VDSO_VMA_ONLINE,
->  	CPUHP_AP_IRQ_AFFINITY_ONLINE,
-> +	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 06f025fd5726..35ad48f51dfa 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/of_platform.h>
+>  #include <linux/percpu.h>
+>  #include <linux/slab.h>
+> +#include <linux/syscore_ops.h>
+>  
+>  #include <linux/irqchip.h>
+>  #include <linux/irqchip/arm-gic-v3.h>
+> @@ -46,6 +47,7 @@
+>  #define ITS_FLAGS_CMDQ_NEEDS_FLUSHING		(1ULL << 0)
+>  #define ITS_FLAGS_WORKAROUND_CAVIUM_22375	(1ULL << 1)
+>  #define ITS_FLAGS_WORKAROUND_CAVIUM_23144	(1ULL << 2)
+> +#define ITS_FLAGS_SAVE_SUSPEND_STATE		(1ULL << 3)
+>  
+>  #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING	(1 << 0)
+>  
+> @@ -101,6 +103,8 @@ struct its_node {
+>  	struct its_collection	*collections;
+>  	struct fwnode_handle	*fwnode_handle;
+>  	u64			(*get_msi_base)(struct its_device *its_dev);
+> +	u64			cbaser_save;
+> +	u32			ctlr_save;
+>  	struct list_head	its_device_list;
+>  	u64			flags;
+>  	unsigned long		list_nr;
+> @@ -3042,6 +3046,100 @@ static void its_enable_quirks(struct its_node *its)
+>  	gic_enable_quirks(iidr, its_quirks, its);
+>  }
+>  
+> +static int its_save_disable(void)
+> +{
+> +	struct its_node *its;
+> +	int err = 0;
+> +
+> +	spin_lock(&its_lock);
+> +	list_for_each_entry(its, &its_nodes, entry) {
+> +		void __iomem *base;
+> +
+> +		if (!(its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE))
+> +			continue;
+> +
+> +		base = its->base;
+> +		its->ctlr_save = readl_relaxed(base + GITS_CTLR);
+> +		err = its_force_quiescent(base);
+> +		if (err) {
+> +			pr_err("ITS failed to quiesce\n");
 
-We need CPUHP_AP_PERF_ARM_ACPI_STARTING to happen before
-CPUHP_AP_PERF_ARM_STARTING, and I think this re-ordering prevents us
-from correctly resetting the PMU and enabling percpu interrupts, at
-least in heterogeneous configurations (e.g. big.LITTLE systems like
-Juno).
+Isn't this a case where it was suggested to print the PA? Also, printing
+the error code never hurts. Like:
 
-I'm not sure whether we could safely move both callbacks this late.
+			pr_err("ITS@%pa: failed to quiesce: %d\n",
+			       &its->phys_base, err);
 
-Thanks,
-Mark.
+> +			writel_relaxed(its->ctlr_save, base + GITS_CTLR);
+> +			goto err;
+> +		}
+> +
+> +		its->cbaser_save = gits_read_cbaser(base + GITS_CBASER);
+> +	}
+> +
+> +err:
+> +	if (err) {
+> +		list_for_each_entry_continue_reverse(its, &its_nodes, entry) {
+> +			void __iomem *base;
+> +
+> +			if (!(its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE))
+> +				continue;
+> +
+> +			base = its->base;
+> +			writel_relaxed(its->ctlr_save, base + GITS_CTLR);
+> +		}
+> +	}
+> +	spin_unlock(&its_lock);
+> +
+> +	return err;
+> +}
+> +
+> +static void its_restore_enable(void)
+> +{
+> +	struct its_node *its;
+> +
+> +	spin_lock(&its_lock);
+> +	list_for_each_entry(its, &its_nodes, entry) {
+> +		void __iomem *base;
+> +		int i;
+> +
+> +		if (!(its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE))
+> +			continue;
+> +
+> +		base = its->base;
+> +
+> +		/*
+> +		 * Make sure that the ITS is disabled. If it fails to quiesce,
+> +		 * don't restore it since writing to CBASER or BASER<n>
+> +		 * registers is undefined according to the GIC v3 ITS
+> +		 * Specification.
+> +		 */
+> +		if (its_force_quiescent(base)) {
+> +			pr_err("ITS(%p): failed to quiesce on resume\n", base);
+
+I think Marc was requesting the PA, not the VA. The VA isn't really very
+useful. Also, might as well log with similar style to the existing logs
+(ITS@xxx), and log the error code:
+
+			pr_err("ITS@%pa: failed to quiesce on resume: %d\n",
+			       &its->phys_base, ret);
+
+Brian
+
+> +			continue;
+> +		}
+> +
+> +		gits_write_cbaser(its->cbaser_save, base + GITS_CBASER);
+> +
+> +		/*
+> +		 * Writing CBASER resets CREADR to 0, so make CWRITER and
+> +		 * cmd_write line up with it.
+> +		 */
+> +		its->cmd_write = its->cmd_base;
+> +		gits_write_cwriter(0, base + GITS_CWRITER);
+> +
+> +		/* Restore GITS_BASER from the value cache. */
+> +		for (i = 0; i < GITS_BASER_NR_REGS; i++) {
+> +			struct its_baser *baser = &its->tables[i];
+> +
+> +			if (!(baser->val & GITS_BASER_VALID))
+> +				continue;
+> +
+> +			its_write_baser(its, baser, baser->val);
+> +		}
+> +		writel_relaxed(its->ctlr_save, base + GITS_CTLR);
+> +	}
+> +	spin_unlock(&its_lock);
+> +}
+> +
+> +static struct syscore_ops its_syscore_ops = {
+> +	.suspend = its_save_disable,
+> +	.resume = its_restore_enable,
+> +};
+> +
+>  static int its_init_domain(struct fwnode_handle *handle, struct its_node *its)
+>  {
+>  	struct irq_domain *inner_domain;
+> @@ -3261,6 +3359,9 @@ static int __init its_probe_one(struct resource *res,
+>  		ctlr |= GITS_CTLR_ImDe;
+>  	writel_relaxed(ctlr, its->base + GITS_CTLR);
+>  
+> +	if (fwnode_property_present(handle, "reset-on-suspend"))
+> +		its->flags |= ITS_FLAGS_SAVE_SUSPEND_STATE;
+> +
+>  	err = its_init_domain(handle, its);
+>  	if (err)
+>  		goto out_free_tables;
+> @@ -3515,5 +3616,7 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
+>  		}
+>  	}
+>  
+> +	register_syscore_ops(&its_syscore_ops);
+> +
+>  	return 0;
+>  }
+> -- 
+> 2.16.0.rc1.238.g530d649a79-goog
+> 
