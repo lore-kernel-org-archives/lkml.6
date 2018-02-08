@@ -1,103 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeBHPAW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 10:00:22 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5212 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750961AbeBHPAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:00:20 -0500
-Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
-To: Jiri Olsa <jolsa@redhat.com>
-References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
- <1517939104-230881-6-git-send-email-john.garry@huawei.com>
- <20180208135549.GK10234@krava>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
-        <ak@linux.intel.com>, <wcohen@redhat.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <zhangshaokun@hisilicon.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <d57da74d-c5f6-ca84-124c-255e90d315f7@huawei.com>
-Date: Thu, 8 Feb 2018 14:59:44 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1751988AbeBHPBQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 10:01:16 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:34025 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeBHPBO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 10:01:14 -0500
+Date: Thu, 8 Feb 2018 07:00:25 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v7 04/24] mm: Dont assume page-table invariance during
+ faults
+Message-ID: <20180208150025.GD15846@bombadil.infradead.org>
+References: <1517935810-31177-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1517935810-31177-5-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180206202831.GB16511@bombadil.infradead.org>
+ <484242d8-e632-9e39-5c99-2e1b4b3b69a5@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180208135549.GK10234@krava>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <484242d8-e632-9e39-5c99-2e1b4b3b69a5@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 13:55, Jiri Olsa wrote:
-> On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
->> For some architectures (like arm), there are architecture-
->> defined events. Sometimes these events may be "recommended"
->> according to the architecture standard, in that the
->> implementer is free ignore the "recommendation" and create
->> its custom event.
->>
->> This patch adds support for parsing standard events from
->> arch-defined JSONs, and fixing up vendor events when they
->> have implemented these events as standard.
->>
->> Support is also ensured that the vendor may implement their
->> own custom events.
->>
->> A new step is added to the pmu events parsing to fix up the
->> vendor events with the arch-standard events.
->>
->> The arch-defined JSONs must be placed in the arch root
->> folder for preprocessing prior to tree JSON processing.
->>
->> In the vendor JSON, to specify that the arch event is
->> supported, the keyword "ArchStdEvent" should be used,
->> like this:
->> [
->>     {
->>         "ArchStdEvent": "0x41",
->> 	"BriefDescription": "L1D cache access, write"
->>     },
->> ]
->>
->> No other JSON objects are strictly required. However,
->> for other objects added, these take precedence over
->> architecture defined standard events, thus supporting
->> separate events which have the same event code.
->>
->> Signed-off-by: John Garry <john.garry@huawei.com>
->> ---
->>  tools/perf/pmu-events/Build     |   1 +
->>  tools/perf/pmu-events/README    |   6 ++
->>  tools/perf/pmu-events/jevents.c | 185 +++++++++++++++++++++++++++++++++++++---
->>  3 files changed, 182 insertions(+), 10 deletions(-)
->>
->> diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
->> index 999a4e8..f9e8466 100644
->> --- a/tools/perf/pmu-events/Build
->> +++ b/tools/perf/pmu-events/Build
->> @@ -1,5 +1,6 @@
->>  hostprogs := jevents
->>
->> +CHOSTFLAGS	= -I$(srctree)/tools/include
->
-> Ithink this could be just CHOSTFLAGS_jevents.o = -I$(srctree)/tools/include
+On Thu, Feb 08, 2018 at 03:35:58PM +0100, Laurent Dufour wrote:
+> I reviewed that part of code, and I think I could now change the way
+> pte_unmap_safe() is checking for the pte's value. Since we now have all the
+> needed details in the vm_fault structure, I will pass it to
+> pte_unamp_same() and deal with the VMA checks when locking for the pte as
+> it is done in the other part of the page fault handler by calling
+> pte_spinlock().
 
-Fine, it could be argued to keep as is, but not a big deal
+This does indeed look much better!  Thank you!
 
-> it's just for the list.h right?
->
+> This means that this patch will be dropped, and pte_unmap_same() will become :
+> 
+> static inline int pte_unmap_same(struct vm_fault *vmf, int *same)
+> {
+> 	int ret = 0;
+> 
+> 	*same = 1;
+> #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
+> 	if (sizeof(pte_t) > sizeof(unsigned long)) {
+> 		if (pte_spinlock(vmf)) {
+> 			*same = pte_same(*vmf->pte, vmf->orig_pte);
+> 			spin_unlock(vmf->ptl);
+> 		}
+> 		else
+> 			ret = VM_FAULT_RETRY;
+> 	}
+> #endif
+> 	pte_unmap(vmf->pte);
+> 	return ret;
+> }
 
-Right, for linux/list.h
+I'm not a huge fan of auxiliary return values.  Perhaps we could do this
+instead:
 
-John
+	ret = pte_unmap_same(vmf);
+	if (ret != VM_FAULT_NOTSAME) {
+		if (page)
+			put_page(page);
+		goto out;
+	}
+	ret = 0;
 
-
-
-> jirka
->
-> .
->
+(we have a lot of unused bits in VM_FAULT_, so adding a new one shouldn't
+be a big deal)
