@@ -1,70 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeBHQPD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 11:15:03 -0500
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:39990 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeBHQPB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:15:01 -0500
-X-Google-Smtp-Source: AH8x227U7uwB/qidSco1PBDbHP+tTY93o9gDyfoiBz+gXtXxVH0ItvaSJ9IDVJUkV6kasoZUWKeHlQ==
-Subject: Re: [PATCH v3 0/6] cpufreq: schedutil: fixes for flags updates
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>
-References: <20171130114723.29210-1-patrick.bellasi@arm.com>
- <20171220153029.dqrtjbyowhqdl56r@hirez.programming.kicks-ass.net>
- <f574036c-7572-9b97-79a0-794ff48e4d49@evidence.eu.com>
- <20180206154319.GF5739@e110439-lin>
- <68afaf84-893e-6770-b9f1-619cd2b6dc9c@evidence.eu.com>
- <20180206183623.GH5739@e110439-lin>
-From: Claudio Scordino <claudio@evidence.eu.com>
-Message-ID: <574fa064-3551-27e8-5abf-bd625ba928de@evidence.eu.com>
-Date: Thu, 8 Feb 2018 17:14:58 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752179AbeBHQQH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 11:16:07 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36300 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751756AbeBHQQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 11:16:06 -0500
+Subject: [PATCH 0/7] afs: Fixes and dynamic root
+From: David Howells <dhowells@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Thu, 08 Feb 2018 16:16:04 +0000
+Message-ID: <151810656463.20070.1477473037254016718.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180206183623.GH5739@e110439-lin>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: it-IT
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrick,
 
-Il 06/02/2018 19:36, Patrick Bellasi ha scritto:
-> On 06-Feb 19:14, Claudio Scordino wrote:
->> Hi Patrick,
-> 
->>> At first glance, your proposal below makes to make sense.
->>>
->>> However, I'm wondering if we cannot get it working using
->>> rq->dl's provided information instead of flags?
->>
->> Yes, we can use the value of rq->dl to check if there has been an increase of the deadline utilization.
->> Even if schedutil might have been triggered by a different scheduling class, the effect should be almost the same.
->>
->> Below a potential patch. I've kept all frequency update decisions in a single point (i.e. sugov_should_update_freq).
->> Not yet tested (waiting for further comments).
-> 
-> I have a todo list entry to backport/test Peter's series on Android...
-> will add this patch too. Thanks.
+Hi Linus,
 
-Please discard my latest patch, as the tests on Odroid have shown performance regressions
-(likely due to sugov_next_freq_shared being called more often)
+Here are a set of AFS patches, 4 fixes, 2 cleanups and 1 devel patch.  The
+fixes are:
 
-Never mind. I have already tested another (even simpler) patch.
-Sending soon as a new thread on LKML.
+ (1) Add a missing put.
 
-Many thanks and best regards,
+ (2) & (3) Reset the address iteration cursor correctly.
 
-                 Claudio
+ (4) Fix setting up the fileserver iteration cursor.
+
+The cleanups:
+
+ (5) Remove some dead code.
+
+ (6) Rearrange a function to be more logically laid out.
+
+And the development patch:
+
+ (7) Support AFS dynamic root.
+
+With these patches, one should be able to do, say:
+
+	mkdir /afs
+	mount -t afs none /afs -o dyn
+
+to create a dynamic root and then, provided you have keyutils installed, do:
+
+	ls /afs/grand.central.org
+
+and:
+
+	ls /afs/umich.edu
+
+to list the root volumes of both those organisations' AFS cells without
+requiring any other setup (the kernel upcall to a program in the keyutils
+package to do DNS access as does NFS).
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
+
+tagged thusly:
+
+	afs-next-20180208
+
+David
+---
+David Howells (7):
+      afs: Add missing afs_put_cell()
+      afs: Fix missing cursor clearance
+      afs: Need to clear responded flag in addr cursor
+      afs: Fix server list handling
+      afs: Remove unused code
+      afs: Rearrange afs_select_fileserver() a little
+      afs: Support the AFS dynamic root
+
+
+ Documentation/filesystems/afs.txt |   17 ++
+ fs/afs/addr_list.c                |   13 +-
+ fs/afs/dir.c                      |  122 ++++++++++++++-
+ fs/afs/inode.c                    |   48 ++++--
+ fs/afs/internal.h                 |   12 +-
+ fs/afs/mntpt.c                    |   20 +--
+ fs/afs/rotate.c                   |  293 +++----------------------------------
+ fs/afs/server_list.c              |    3 
+ fs/afs/super.c                    |  132 +++++++++++------
+ fs/afs/vlclient.c                 |   10 +
+ fs/afs/volume.c                   |   47 ------
+ net/dns_resolver/dns_query.c      |   22 ++-
+ 12 files changed, 324 insertions(+), 415 deletions(-)
