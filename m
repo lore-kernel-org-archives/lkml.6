@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeBHNyW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 08:54:22 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33368 "EHLO mx1.redhat.com"
+        id S1752268AbeBHNyb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 08:54:31 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35210 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752026AbeBHNyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:54:19 -0500
-Date: Thu, 8 Feb 2018 14:54:16 +0100
+        id S1752026AbeBHNy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:54:26 -0500
+Date: Thu, 8 Feb 2018 14:54:23 +0100
 From: Jiri Olsa <jolsa@redhat.com>
 To: John Garry <john.garry@huawei.com>
 Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
@@ -16,7 +16,7 @@ Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linuxarm@huawei.com, zhangshaokun@hisilicon.com,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 5/9] perf utils: add support for arch standard events
-Message-ID: <20180208135416.GB10234@krava>
+Message-ID: <20180208135423.GC10234@krava>
 References: <1517939104-230881-1-git-send-email-john.garry@huawei.com>
  <1517939104-230881-6-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
@@ -32,34 +32,20 @@ On Wed, Feb 07, 2018 at 01:45:00AM +0800, John Garry wrote:
 
 SNIP
 
-> @@ -366,6 +367,67 @@ static int print_events_table_entry(void *data, char *name, char *event,
->  	return 0;
+>  static void print_events_table_suffix(FILE *outfp)
+>  {
+>  	fprintf(outfp, "{\n");
+> @@ -407,6 +469,52 @@ static char *real_event(const char *name, char *event)
+>  	return event;
 >  }
 >  
-> +struct event_struct {
-> +	char *name;
-> +	char *event;
-> +	char *desc;
-> +	char *long_desc;
-> +	char *pmu;
-> +	char *filter;
-> +	char *perpkg;
-> +	char *unit;
-> +	char *metric_expr;
-> +	char *metric_name;
-> +	char *metric_group;
-> +	struct list_head list;
-> +	char strings[];
-> +};
+> +static void fixup_field(char *from, char **to)
+> +{
+> +	*to = malloc(strlen(from));
 > +
-> +static LIST_HEAD(arch_std_events);
-> +
-> +#define ADD_EVENT_STRING(string) do { if (string) {		\
-> +	es->string = strings;					\
-> +	strings += snprintf(strings, len, "%s", string) + 1;	\
-> +} } while (0)
+> +	strcpy(*to, from);
+> +}
 
-please indent the code in macro like normal code
+could you just call '*to = strdup(from)' in here?
 
-thanks,
 jirka
