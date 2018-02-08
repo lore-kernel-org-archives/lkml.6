@@ -1,165 +1,175 @@
-Return-Path: <niveditas98@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517618337; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZiPbVi8xKVpmB7SChsJU70CKxZZA2NbD9YHho8eJuYIcYhuyIsdPeRwkSLAhigY9Jw
-         Jk5t7ZfjBnbdRmJ5bj8qqSnxrI5yrM7UmLWPk7sC0udsQyFbxV5jC8vrdpqI7EzdUPsH
-         75OlGpffRr2rQ60MTosIAksIUwQ7lwXZdwzOMar9rwaLlZQEuSxAjn1X85yVX1AWdfJ5
-         dainw6ikc5tSwsnCptKF1BP8zxEZqDCXHgtcZt/HI5apRboGmYWAdIgr6sBc8uD5XwS/
-         a8GiKHrebgLLbEDd/v34t94wA7/4vAH98MjUXqWDwh44kZUtFet9TKb99hor8McUUWPn
-         Zu1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=dPZ+G9ofmSnfLrS0kTNjWbHSBdzfQ2EIC7v4uIegrbo=;
-        b=lozfcLNlw19zOZUWa8wH/4p8dEQ7Cn5bMqzk9iL+v2TurMxE2tZCqL/6wAlHcXAHoF
-         /hzmZPSE/a7QhqsR9rUT2qDzTi7Zjk9ZCmFhm5Mz8D2AwDwhi9dVJ1TF6ILS/OQ1rYdF
-         exNwPuYkg2pOXN95Vgiq0pTq0cB8EkvJz4LW/wYYC33Zfb5eJHoDRdbs+8NmnvLNBydY
-         QPPbb0cWDeIn3agnRtjicbJqo7PevuGgEkKUSmFbyoa5BJofNAmwNTYR1VKYee+FoYme
-         WhLdBWmxBw8tLpeqEjqgcfAxh1dlUBUFhLBk3pfiV7ZE1RkNhYFU6+8rejnvKu+JHFrn
-         c6pg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of niveditas98@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=niveditas98@gmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of niveditas98@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=niveditas98@gmail.com
-X-Google-Smtp-Source: AH8x226qQZxr1a54I4G6e3a/fxmoP8GYEVnTM1YR2U/1TMDdqa7SsvSTr30NuFUb9q/hOLlpKuhhNQ==
-Date: Fri, 2 Feb 2018 19:38:51 -0500
-From: Arvind Sankar <nivedita@alum.mit.edu>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] tools: libsubcmd: Drop the less hack that was inherited
- from Git.
-Message-ID: <20180203003850.GA62570@rani.riverdale>
-References: <20180124003831.GA34667@rani.riverdale>
- <20180124205411.lpzcpqnuw3nlyg4n@treble>
- <20180125081652.GA23548@kernel.org>
- <20180125132425.GA27283@rani.riverdale>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1860525-1518072231-2-14299309291679556405
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518072230; b=TjfF5FGtqSpMMT1cd3AuiPDDR5SCofZRvuDk1OBjlp18OJ/
+    z2Pv5P3zY99H160oNycQBTzoKX8DcaLF6WchFMsvoWNPYwmF3ydMERaLWhU9sEei
+    bUbj49ZL3t07Nu0coVZwkaduhJJ9Hzvjhu29dsmbdxYFmk+1TtebKa9QoJgqJRXW
+    DihBBnSSRyveVAgmi6bFrOc/FYbZcqHk8NKQm2VeR1bNoRoztuKrG1mohLvW0bSV
+    FE+5EuIG3uGOHTUkQg//yCC6uD50qgDQiHd/Lit9MICS2vvXGokvTeYCDXRnT8aH
+    7YQDBRiYrQx6DfIcq1HxLUUNFxWX4T0jWg3WToA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1518072230; bh=vZSEBMOh7l31gwWJVyOZaLvMGa
+    x+sW2lOR9pd1+nEA8=; b=QRE/qWQnC8ypPhSJft2dlzHW0711Psjcu2P3eYphP/
+    AlvTrMnPOOFy7ivRvmczkwwEkoyY7S5VWRni1kTyAYmeqzFh0JrRMDEHhk6mU04d
+    kbPoZGerAQlRB2fakTLZysEAf6teKGSRjfBDs324VbLni50HrUPQDdRwejjwgLxu
+    7K4Agk/XOVU290G5Z87XE+Tx41u/8NRTAQUtkXL/2I2MRLJijr3JoK8FLkaUkxHE
+    5UeGtDZetTK1QqOJwFQObGc+jXbuKlONr1TZRALaTrWNOnOq2JFteqRbWkujwYEU
+    cP0ibAFThi+7FSp5VM3r74bgSSS/Ji2UtXGWYoloYEfg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750839AbeBHGnb (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Feb 2018 01:43:31 -0500
+Received: from mga09.intel.com ([134.134.136.24]:57668 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750810AbeBHGnb (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Feb 2018 01:43:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,477,1511856000";
+   d="scan'208";a="199583961"
+Subject: [PATCH] mpls, nospec: Sanitize array index in mpls_label_ok()
+From: Dan Williams <dan.j.williams@intel.com>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 Feb 2018 22:34:24 -0800
+Message-ID: <151807166425.3807.8813780890075479680.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180125132425.GA27283@rani.riverdale>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590432180841544172?=
-X-GMAIL-MSGID: =?utf-8?q?1591338165323639888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi, it looks like Sergey has put in a patch to fix the aliasing, looking
-at the linux-next tree.
+mpls_label_ok() validates that the 'platform_label' array index from a
+userspace netlink message payload is valid. Under speculation the
+mpls_label_ok() result may not resolve in the CPU pipeline until after
+the index is used to access an array element. Sanitize the index to zero
+to prevent userspace-controlled arbitrary out-of-bounds speculation, a
+precursor for a speculative execution side channel vulnerability.
 
-Are we still looking to remove this hack altogether?
+Cc: <stable@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ net/mpls/af_mpls.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-Thanks
-
-On Thu, Jan 25, 2018 at 08:24:26AM -0500, Arvind Sankar wrote:
-> Thanks.
-> 
-> This was found because gcc 8 appears to be enabling -Wrestrict in -Wall,
-> so there is a build failure with mainline gcc.
-> 
-> On Thu, Jan 25, 2018 at 05:16:52AM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Wed, Jan 24, 2018 at 02:54:11PM -0600, Josh Poimboeuf escreveu:
-> > > On Tue, Jan 23, 2018 at 07:38:37PM -0500, Arvind Sankar wrote:
-> > > > We inherited this hack with the original code from the Git project. The
-> > > > select call is invalid as the two fd_set pointers should not be aliased.
-> > > > 
-> > > > We could fix it, but the Git project removed this hack in 2012 in commit
-> > > > e8320f3 (pager: drop "wait for output to run less" hack). The bug it
-> > > > worked around was apparently fixed in less back in June 2007.
-> > > > 
-> > > > So remove the hack from here as well.
-> > > > 
-> > > > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-> > > 
-> > > Looks good to me.
-> > > 
-> > >   Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> > > 
-> > > Libsubcmd is used by perf and objtool, so adding the perf maintainers to
-> > > CC.  Arnaldo, do you want to pick this one up?
-> > 
-> > Sure, I'll put it in my perf/core branch.
-> > 
-> > - Arnaldo
-> >  
-> > > > ---
-> > > >  tools/lib/subcmd/pager.c       | 17 -----------------
-> > > >  tools/lib/subcmd/run-command.c |  2 --
-> > > >  tools/lib/subcmd/run-command.h |  1 -
-> > > >  3 files changed, 20 deletions(-)
-> > > > 
-> > > > diff --git a/tools/lib/subcmd/pager.c b/tools/lib/subcmd/pager.c
-> > > > index 5ba754d17952..94d61d9b511f 100644
-> > > > --- a/tools/lib/subcmd/pager.c
-> > > > +++ b/tools/lib/subcmd/pager.c
-> > > > @@ -1,5 +1,4 @@
-> > > >  // SPDX-License-Identifier: GPL-2.0
-> > > > -#include <sys/select.h>
-> > > >  #include <stdlib.h>
-> > > >  #include <stdio.h>
-> > > >  #include <string.h>
-> > > > @@ -23,21 +22,6 @@ void pager_init(const char *pager_env)
-> > > >  	subcmd_config.pager_env = pager_env;
-> > > >  }
-> > > >  
-> > > > -static void pager_preexec(void)
-> > > > -{
-> > > > -	/*
-> > > > -	 * Work around bug in "less" by not starting it until we
-> > > > -	 * have real input
-> > > > -	 */
-> > > > -	fd_set in;
-> > > > -
-> > > > -	FD_ZERO(&in);
-> > > > -	FD_SET(0, &in);
-> > > > -	select(1, &in, NULL, &in, NULL);
-> > > > -
-> > > > -	setenv("LESS", "FRSX", 0);
-> > > > -}
-> > > > -
-> > > >  static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
-> > > >  static struct child_process pager_process;
-> > > >  
-> > > > @@ -84,7 +68,6 @@ void setup_pager(void)
-> > > >  	pager_argv[2] = pager;
-> > > >  	pager_process.argv = pager_argv;
-> > > >  	pager_process.in = -1;
-> > > > -	pager_process.preexec_cb = pager_preexec;
-> > > >  
-> > > >  	if (start_command(&pager_process))
-> > > >  		return;
-> > > > diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/run-command.c
-> > > > index 5cdac2162532..9e9dca717ed7 100644
-> > > > --- a/tools/lib/subcmd/run-command.c
-> > > > +++ b/tools/lib/subcmd/run-command.c
-> > > > @@ -120,8 +120,6 @@ int start_command(struct child_process *cmd)
-> > > >  					unsetenv(*cmd->env);
-> > > >  			}
-> > > >  		}
-> > > > -		if (cmd->preexec_cb)
-> > > > -			cmd->preexec_cb();
-> > > >  		if (cmd->exec_cmd) {
-> > > >  			execv_cmd(cmd->argv);
-> > > >  		} else {
-> > > > diff --git a/tools/lib/subcmd/run-command.h b/tools/lib/subcmd/run-command.h
-> > > > index 17d969c6add3..6256268802b5 100644
-> > > > --- a/tools/lib/subcmd/run-command.h
-> > > > +++ b/tools/lib/subcmd/run-command.h
-> > > > @@ -46,7 +46,6 @@ struct child_process {
-> > > >  	unsigned no_stderr:1;
-> > > >  	unsigned exec_cmd:1; /* if this is to be external sub-command */
-> > > >  	unsigned stdout_to_stderr:1;
-> > > > -	void (*preexec_cb)(void);
-> > > >  };
-> > > >  
-> > > >  int start_command(struct child_process *);
-> > > > -- 
-> > > > 2.13.6
-> > > > 
-> > > 
-> > > -- 
-> > > Josh
+diff --git a/net/mpls/af_mpls.c b/net/mpls/af_mpls.c
+index 8ca9915befc8..aae3565c3a92 100644
+--- a/net/mpls/af_mpls.c
++++ b/net/mpls/af_mpls.c
+@@ -8,6 +8,7 @@
+ #include <linux/ipv6.h>
+ #include <linux/mpls.h>
+ #include <linux/netconf.h>
++#include <linux/nospec.h>
+ #include <linux/vmalloc.h>
+ #include <linux/percpu.h>
+ #include <net/ip.h>
+@@ -935,24 +936,27 @@ static int mpls_nh_build_multi(struct mpls_route_config *cfg,
+ 	return err;
+ }
+ 
+-static bool mpls_label_ok(struct net *net, unsigned int index,
++static bool mpls_label_ok(struct net *net, unsigned int *index,
+ 			  struct netlink_ext_ack *extack)
+ {
++	bool is_ok = true;
++
+ 	/* Reserved labels may not be set */
+-	if (index < MPLS_LABEL_FIRST_UNRESERVED) {
++	if (*index < MPLS_LABEL_FIRST_UNRESERVED) {
+ 		NL_SET_ERR_MSG(extack,
+ 			       "Invalid label - must be MPLS_LABEL_FIRST_UNRESERVED or higher");
+-		return false;
++		is_ok = false;
+ 	}
+ 
+ 	/* The full 20 bit range may not be supported. */
+-	if (index >= net->mpls.platform_labels) {
++	if (is_ok && *index >= net->mpls.platform_labels) {
+ 		NL_SET_ERR_MSG(extack,
+ 			       "Label >= configured maximum in platform_labels");
+-		return false;
++		is_ok = false;
+ 	}
+ 
+-	return true;
++	*index = array_index_nospec(*index, net->mpls.platform_labels);
++	return is_ok;
+ }
+ 
+ static int mpls_route_add(struct mpls_route_config *cfg,
+@@ -975,7 +979,7 @@ static int mpls_route_add(struct mpls_route_config *cfg,
+ 		index = find_free_label(net);
+ 	}
+ 
+-	if (!mpls_label_ok(net, index, extack))
++	if (!mpls_label_ok(net, &index, extack))
+ 		goto errout;
+ 
+ 	/* Append makes no sense with mpls */
+@@ -1052,7 +1056,7 @@ static int mpls_route_del(struct mpls_route_config *cfg,
+ 
+ 	index = cfg->rc_label;
+ 
+-	if (!mpls_label_ok(net, index, extack))
++	if (!mpls_label_ok(net, &index, extack))
+ 		goto errout;
+ 
+ 	mpls_route_update(net, index, NULL, &cfg->rc_nlinfo);
+@@ -1810,7 +1814,7 @@ static int rtm_to_route_config(struct sk_buff *skb,
+ 				goto errout;
+ 
+ 			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
+-					   cfg->rc_label, extack))
++					   &cfg->rc_label, extack))
+ 				goto errout;
+ 			break;
+ 		}
+@@ -2137,7 +2141,7 @@ static int mpls_getroute(struct sk_buff *in_skb, struct nlmsghdr *in_nlh,
+ 			goto errout;
+ 		}
+ 
+-		if (!mpls_label_ok(net, in_label, extack)) {
++		if (!mpls_label_ok(net, &in_label, extack)) {
+ 			err = -EINVAL;
+ 			goto errout;
+ 		}
