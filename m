@@ -1,34 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752327AbeBHSue (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 13:50:34 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:47968 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeBHSud (ORCPT
+        id S1752374AbeBHSvQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 13:51:16 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:33624 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752233AbeBHSvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 13:50:33 -0500
-Date: Thu, 08 Feb 2018 13:50:31 -0500 (EST)
-Message-Id: <20180208.135031.1017713600177598876.davem@davemloft.net>
-To: grygorii.strashko@ti.com
-Cc: netdev@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix net watchdog timeout
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <e1ef5d15-91f9-c4ad-9a85-cc360a0b425a@ti.com>
-References: <20180207011706.13393-1-grygorii.strashko@ti.com>
-        <20180207.215735.1518454397358783732.davem@davemloft.net>
-        <e1ef5d15-91f9-c4ad-9a85-cc360a0b425a@ti.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Feb 2018 13:51:15 -0500
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
+        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
+        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
+        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, paul.burton@mips.com,
+        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2 0/1] initialize pages on demand during boot
+Date: Thu,  8 Feb 2018 13:45:54 -0500
+Message-Id: <20180208184555.5855-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802080217
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Thu, 8 Feb 2018 10:04:31 -0600
+Change log:
+	v1 - v2: Added Tested-by: Masayoshi Mizuma
 
-> Could this be marked as stable material 4.9+?
+Answering Andrew Morton's questions:
 
-Sure, queued up.
+> Presumably this fixes some real-world problem which someone has observed?
+
+Yes, linked below.
+
+> Please describe that problem for us in lavish detail.
+
+This change helps for three reasons:
+
+1. Insufficient amount of reserved memory due to arguments provided by
+user. User may request some buffers, increased hash tables sizes etc.
+Currently, machine panics during boot if it can't allocate memory due
+to insufficient amount of reserved memory. With this change, it will
+be able to grow zone before deferred pages are initialized.
+
+One observed example is described in the linked discussion [1] Mel
+Gorman writes:
+
+"
+Yasuaki Ishimatsu reported a premature OOM when trace_buf_size=100m was
+specified on a machine with many CPUs. The kernel tried to allocate 38.4GB
+but only 16GB was available due to deferred memory initialisation.
+"
+
+The allocations in the above scenario happen per-cpu in smp_init(),
+and before deferred pages are initialized. So, there is no way to
+predict how much memory we should put aside to boot successfully with
+deferred page initialization feature compiled in.
+
+2. The second reason is future proof. The kernel memory requirements
+may change, and we do not want to constantly update
+reset_deferred_meminit() to satisfy the new requirements. In addition,
+this function is currently in common code, but potentially would need
+to be split into arch specific variants, as more arches will start
+taking advantage of deferred page initialization feature.
+
+3. On demand initialization of reserved pages guarantees that we will
+initialize only as many pages early in boot using only one thread as
+needed, the rest are going to be efficiently initialized in parallel.
+
+[1] https://www.spinics.net/lists/linux-mm/msg139087.html
+
+Pavel Tatashin (1):
+  mm: initialize pages on demand during boot
+
+ include/linux/memblock.h |  10 ---
+ mm/memblock.c            |  23 -------
+ mm/page_alloc.c          | 164 ++++++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 125 insertions(+), 72 deletions(-)
+
+-- 
+2.16.1
