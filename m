@@ -1,62 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeBIQcx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 11:32:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51500 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751028AbeBIQcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 11:32:52 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Nikita Leshenko <nikita.leshchenko@oracle.com>
-Cc: kvm <kvm@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Peter Xu <peterx@redhat.com>
-Subject: Re: [PATCH] KVM: lapic: stop advertising DIRECTED_EOI when in-kernel IOAPIC is in use
-References: <20180209130133.28387-1-vkuznets@redhat.com>
-        <292414F1-6978-497E-9CE2-3847E171150B@oracle.com>
-Date: Fri, 09 Feb 2018 17:32:47 +0100
-In-Reply-To: <292414F1-6978-497E-9CE2-3847E171150B@oracle.com> (Nikita
-        Leshenko's message of "Fri, 9 Feb 2018 17:20:48 +0200")
-Message-ID: <877ermyvgw.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1752201AbeBIQeU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 11:34:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751038AbeBIQeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 11:34:19 -0500
+Date: Fri, 9 Feb 2018 14:34:17 -0200
+From: Eduardo Habkost <ehabkost@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v2 1/2] KVM: x86: Add dedicated vCPU hint
+ KVM_HINTS_DEDICATED
+Message-ID: <20180209163417.GM13981@localhost.localdomain>
+References: <1518187673-70832-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518187673-70832-1-git-send-email-wanpengli@tencent.com>
+X-Fnord: you can see the fnord
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nikita Leshenko <nikita.leshchenko@oracle.com> writes:
+On Fri, Feb 09, 2018 at 06:47:52AM -0800, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Waiman Long mentioned that:
+> 
+>  Generally speaking, unfair lock performs well for VMs with a small
+>  number of vCPUs. Native qspinlock may perform better than pvqspinlock
+>  if there is vCPU pinning and there is no vCPU over-commitment.
+> 
+> This patch adds a performance hint to allow hypervisor admin to choose
+> the qspinlock to be used when a dedicated pCPU is available.
+> 
+> PV_DEDICATED = 1, PV_UNHALT = anything: default is qspinlock
+> PV_DEDICATED = 0, PV_UNHALT = 1: default is Hybrid PV queued/unfair lock
+> PV_DEDICATED = 0, PV_UNHALT = 0: default is tas
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Eduardo Habkost <ehabkost@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v1 -> v2:
+>  * update to KVM_HINTS_DEDICATED
+> 
+>  Documentation/virtual/kvm/cpuid.txt  | 6 ++++++
+>  arch/x86/include/uapi/asm/kvm_para.h | 2 ++
+>  arch/x86/kernel/kvm.c                | 6 ++++++
+>  3 files changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
+> index 87a7506..d54cc79 100644
+> --- a/Documentation/virtual/kvm/cpuid.txt
+> +++ b/Documentation/virtual/kvm/cpuid.txt
+> @@ -66,3 +66,9 @@ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
+>                                     ||       || per-cpu warps are expected in
+>                                     ||       || kvmclock.
+>  ------------------------------------------------------------------------------
+> +KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit
+> +                                   ||       || to determine if they run on
+> +                                   ||       || dedicated vCPUs, allowing opti-
+> +                                   ||       || mizations such as usage of
+> +                                   ||       || qspinlocks.
 
-> The patch looks correct, however I’m confused about why you consider
-> this to be a bug in the guest rather than a bug in KVM.
->
-> The spec for x2APIC states:
-> "The support for Directed EOI capability can be detected by means of
-> bit 24 in the Local APIC Version Register” (Intel’s x2APIC spec, 2.5.1
-> Directed EOI)
-> It seems to me that Windows did the right thing by testing for the
-> presence of directed EOI feature rather than implying it exists by
-> testing a version number. KVM did the wrong thing by advertising a
-> feature it doesn’t support.
->
-> Therefore I think that you should change the comment to something like
-> “KVM’s in-kernel IOAPIC doesn’t support Directed EOI register, so don’t
-> advertise this capability in the LAPIC Version Register.” instead of
-> talking about buggy guests, as it may confuse future readers of this
-> code.
->
+I assume you don't mean CPUID[0x40000001].EAX[bit 0] here,
+because it is already used for KVM_FEATURE_CLOCKSOURCE.
 
-Before disabling EOI broadcast guests should check if IOAPIC is of
-proper version - the fact that you can disable EOI broadcast doesn't
-automatically mean that you can later do EOI through IOAPIC... 
+I guess you will want a separate table for CPUID[0x40000001].EDX
+bits?
 
-Anyway, I got the impression that last time conversation ended up with
-'this is a guest bug' conclusion
-(https://www.spinics.net/lists/kvm/msg148187.html - see Radim's and
-Ladi's comments) but I'm not insisting - if now we conclude this is not a
-Windows issue let it be it. But let's just fix it once and for all :-)
+
+> +------------------------------------------------------------------------------
+> diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
+> index 6cfa9c8..d65b16b 100644
+> --- a/arch/x86/include/uapi/asm/kvm_para.h
+> +++ b/arch/x86/include/uapi/asm/kvm_para.h
+> @@ -28,6 +28,8 @@
+>  #define KVM_FEATURE_PV_TLB_FLUSH	9
+>  #define KVM_FEATURE_ASYNC_PF_VMEXIT	10
+>  
+> +#define KVM_HINTS_DEDICATED 0
+> +
+>  /* The last 8 bits are used to indicate how to interpret the flags field
+>   * in pvclock structure. If no bits are set, all flags are ignored.
+>   */
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 971babe..7f4c92d 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -724,6 +724,12 @@ void __init kvm_spinlock_init(void)
+>  {
+>  	if (!kvm_para_available())
+>  		return;
+> +
+> +	if (kvm_para_has_feature(KVM_HINTS_DEDICATED)) {
+
+This is checking CPUID{0x40000001].EAX[bit 0]
+(KVM_FEATURE_CLOCKSOURCE), isn't it?
+
+> +		static_branch_disable(&virt_spin_lock_key);
+> +		return;
+> +	}
+> +
+>  	/* Does host kernel support KVM_FEATURE_PV_UNHALT? */
+>  	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
+>  		return;
+> -- 
+> 2.7.4
+> 
 
 -- 
-  Vitaly
+Eduardo
