@@ -1,114 +1,76 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AH8x224yOAkpF4+YhrzgRhN1c8LRpb+oYRXUrZzF/79v2ZYT/Z0DsMgg6+8fTihjExdpEhGsBara
-ARC-Seal: i=1; a=rsa-sha256; t=1518210558; cv=none;
+Return-Path: <amc96@hermes.cam.ac.uk>
+X-Google-Smtp-Source: AH8x2263WVefQkTCQws09pa+gI1qrcPTxXkU3PDsEG1EcT+e7ppsZM3gYqXjeSan4WPh8f9miDZO
+ARC-Seal: i=1; a=rsa-sha256; t=1518211695; cv=none;
         d=google.com; s=arc-20160816;
-        b=O8Tm2TuKUSgH0yH9S28f6nvmEg9gCGEG3YWWtR4bs14gk8xFwbrXpwxWStviR254MO
-         1aOiwjJX1//dTGtUDatRrOtI0ZmqtXH/zoxTVHz1O6IMuzOsqDFe+8iv4Dw6iRvI2UV0
-         8GcnQA/MlBoKwLQZhs/mS+SBTytVmyrze5SYFgDxSNMAqSRX9IfcARi4jpV5PBUZLTHO
-         OziSC4zgE7iJ2WGoLdI1s1SPDVZKdX3b4OJLpyOCc/tR4gDoiEJv3JpEpZ+rtE8qBMNB
-         UY3EFiqR1rjkX9mh5KAcJ3Sfzjs88Plfji1CW2JV9nz/JV3Hs0/qaM8BjCw7HahnorWt
-         9tpQ==
+        b=c8ZnXBGR0gPPDTgW2ABJASeV+267M3vWi4sxcEAo5pqR59E3pZu0Dzz3YoCEj+Dykv
+         CNgHRr3UY73mNSoNNj5Zmpr3bxB9z8lV1RlEB4yMp4f3QV+XTbyD+mrycUM6CZDeFdW8
+         AJVyD6j1lF1J0tr7CyDcArtzbImwDlbix7O6KGly77tU0m4MAlxbIGtRQ7aOPu8/rDJA
+         mYpavixSunLYONbffwNs7Yy/dAaJtVUhSS11lYv9U0cL+twGVfLy+QOm17VcOYghOAzR
+         gOZq/kkstHg2xMtCpVgk3ZfhMqEJRlal6+N+7eYV1wMMy1aWRxgmO4pyrpwzcQ7pWJ/O
+         FPlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=VkfdadkEGZs3WnISVAlFGkfnSB24HdgcHUlJm4PIOts=;
-        b=tsG9XlZjtlhrK0xvdYoYpPBTi+IpeWPypXR9FO8plTlDel8QcWANj4eHRHu1ww+g60
-         LrbIuu3NU9GfUD8ALMHHE9wIE1wAyKRr3Ji6+BWFQAqngCIkY2n6cezhMS+i51SxVoPV
-         kIpEm3cpIslFMFcsN/CGfkyfA4b2lPpdWJPYVGIY169QGNmIhpUpeJv/LZf+3kWOOGGb
-         OzeqRJgcxaP3Yn1MXuQp7sb7xmI0i4aZ5UQwGK4AoaIJl6WsWegJQwi6JX/VQ9PD4Wlu
-         5zSES5rIPUHmkf+jrVQiCIp1fXqEt/g4FXEnugir0mh30MT6EEjm/4WR3V58QfJ3TeB0
-         HvDQ==
+        h=sender:content-language:content-transfer-encoding:in-reply-to
+         :mime-version:user-agent:date:message-id:from:references:cc:to
+         :subject:arc-authentication-results;
+        bh=ajg1E7vi4ULo4GX98hQJSJgodv/4iaVvuJgVjc5m9DY=;
+        b=MD+SkMHfZbmJxO8TMJGqp6z84oKDFSE3PsD0JnwhI2W36b7Fs5iOOvzGwQjsqRShZC
+         ytcNdxWKrNZdf1tcx9lxBzW6O7c1rg2ii1t9wF07k3zefHXdKBPDne/hiASHszkv1js9
+         2bOcU2GmsfsLWYiwaiY/tXs8qVq2bM/GEdfBZDoHyXLBggWRe36rF86Q1jtSwxZmvDBa
+         PUbgW8PMQN0SMQK4LIZ8Wm5E+RMHAKBp+kg+Qjpj6xfuXGHHkOIXHuQ17tkzeMRb9XqG
+         a+1xcQhqh0OCe3TId4bvirKK8rqsr9fyDrQx/RjjQ3VlTnXTimIh0rppJbzU5DuLrp97
+         pYDg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+       spf=pass (google.com: domain of amc96@hermes.cam.ac.uk designates 131.111.8.130 as permitted sender) smtp.mailfrom=amc96@hermes.cam.ac.uk
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Fri, 9 Feb 2018 22:09:18 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Joerg Roedel <jroedel@suse.de>
+       spf=pass (google.com: domain of amc96@hermes.cam.ac.uk designates 131.111.8.130 as permitted sender) smtp.mailfrom=amc96@hermes.cam.ac.uk
+X-Cam-AntiVirus: no malware found
+X-Cam-ScannerInfo: http://help.uis.cam.ac.uk/email-scanner-virus
 Subject: Re: [PATCH 00/31 v2] PTI support for x86_32
-Message-ID: <20180209210918.GA7333@amd>
+To: Pavel Machek <pavel@ucw.cz>, Andy Lutomirski <luto@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+ X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Linux-MM <linux-mm@kvack.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Dave Hansen <dave.hansen@intel.com>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+ Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+ Jiri Kosina <jkosina@suse.cz>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Brian Gerst <brgerst@gmail.com>, David Laight <David.Laight@aculab.com>,
+ Denys Vlasenko <dvlasenk@redhat.com>, Eduardo Valentin <eduval@amazon.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Will Deacon <will.deacon@arm.com>,
+ "Liguori, Anthony" <aliguori@amazon.com>,
+ Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
+ Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
+ Waiman Long <llong@redhat.com>, Joerg Roedel <jroedel@suse.de>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
  <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
+ <20180209210918.GA7333@amd>
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Message-ID: <a5e37af1-cfa3-1284-cb1c-3912c30505e3@citrix.com>
+Date: Fri, 9 Feb 2018 21:28:08 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-Content-Disposition: inline
-In-Reply-To: <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180209210918.GA7333@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Sender: Andrew Cooper <amc96@hermes.cam.ac.uk>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914900490843452?=
-X-GMAIL-MSGID: =?utf-8?q?1591959154814868003?=
+X-GMAIL-MSGID: =?utf-8?q?1591960346680424191?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 09/02/2018 21:09, Pavel Machek wrote:
+> On Fri 2018-02-09 17:47:43, Andy Lutomirski wrote:
+>> PCID bit set in CPUID should print a big fat warning like "WARNING:
+>> you are using 32-bit PTI on a 64-bit PCID-capable CPU.  Your
+>> performance will increase dramatically if you switch to a 64-bit
+>> kernel."
+> Hardware supports PCID even on 32-bit kernels, no?
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Attempting to set CR4.PCIDE is disallowed outside of long mode.  It is
+strictly a 64bit-only feature.
 
-On Fri 2018-02-09 17:47:43, Andy Lutomirski wrote:
-> On Fri, Feb 9, 2018 at 9:25 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> > Hi,
-> >
-> > here is the second version of my PTI implementation for
-> > x86_32, based on tip/x86-pti-for-linus. It took a lot longer
-> > than I had hoped, but there have been a number of obstacles
-> > on the way. It also isn't the small patch-set anymore that v1
-> > was, but compared to it this one actually works :)
->=20
-> One thing worth noting is that performance of this whole series is
-> going to be abysmal due to the complete lack of 32-bit PCID.  Maybe
-> any kernel built with this option set that runs on a CPU that has
->the
-
-What kind of slowdown are we talking about here?
-
-> PCID bit set in CPUID should print a big fat warning like "WARNING:
-> you are using 32-bit PTI on a 64-bit PCID-capable CPU.  Your
-> performance will increase dramatically if you switch to a 64-bit
-> kernel."
-
-Hardware supports PCID even on 32-bit kernels, no?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlp+Df0ACgkQMOfwapXb+vLUOQCgsuGLg/bps5hW4emf9c2c6MEJ
-DcAAn1C0vweSUfM1H+KV6WqM9hqO0T5s
-=CfYt
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
+~Andrew
