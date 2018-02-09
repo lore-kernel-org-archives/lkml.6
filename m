@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185588-2-18147134835206911300
+X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185578-2-1355251837923300225
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185587; b=hQ1l/wG/CGDhAy1M6X9kk/b13yZTVhJzQID6Z2uE91Z0cS8
-    nEkgSbFqS/HKGtK+s3QydZZCd+FBvrqIxxeqoG+DnUoMyModJ9goWZfgXRWlfEUj
-    Ttp+05qvcUuLDOt2hJ5vNmfMYslll01HKHWC1JG0U0A9rKXI2X6nW3c9f/kliDRp
-    n30ayQ/X+BpLlWFv0JE2BMBhNyEd6WLVgO0qNbU8Ie2SL7F/2vgPyCSl+42bwYh0
-    GUkP5IAnJeg/VvYL8goBcITub8gxJ+YSEP4Gxtg2k5pZ8upLcADIHWLJc7mujhiy
-    wnJY7ldtiXkZHSz1n2BWUhTtfEG/HBw9d44B3tg==
+    t=1518185578; b=cxwbUotSThxDp6DIs9yGZKViG7o5CcMVkJdMUVv1n0g3f/J
+    mOd/TlwHmi75abjf8R+cD1yozOcUU14xCbrKzFskeExOP2N5wQiYJP7fU58VrQn3
+    1FJ/MnyvPufSeYcpAsZyYa517F60Uzo8/J08zfQoLCuurglDrV8zKMUCUA/4x5aa
+    vxBR5fQzGr7yPZKxMn3n7VIViWE9RYheCeMI2fk3/2bchz0asnIpyMjb+e3SUSBo
+    nQ1020TgneAw5qpaCFp5fq5LpFKp71x6bGfAbE0SoVbeXmLVoc3Xld32jbb7+vBM
+    1RbaiKck29g6gCfcvJRLwumJayWK0jfNVF7nRuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185587; bh=UYATGTTR27JjU6D6V1WhRTZtD8
-    B4JyWoC67m8pYbRoU=; b=fgWg1N1oxTY6BVOBOlolPMBOBglQ8gfPo50uVknBU7
-    PiPXaVtyTIYXuODGXbBRQWARqphgVNINeR7uyYL2JtyyFbSl70evfLQb3rVmYQyB
-    E/uNkQJkeVgcmoVJxsyvoIHP2l2BUdpg1pl6BwQPdrr8YpLUxtdvDwexBgVttdFz
-    LS7G4LghPdHrrr6bjVbqKRGI2IEc1kgKBZigsFDu2MyXuEidvXQzFeqnh+at4CUK
-    U3YlhOHNH703jIjlSC4qMVTHWow3MUPLV22bAO6k1T5ylSqnaxX5qSE9hhMpDSlq
-    s9/BuyDtod4M3GaLb9rPs4RT41XUT9ggm89Qbm7yu31g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185578; bh=Qr7nwHH8eTsLzx7DxTIlHdKeEj
+    CXr0WnyFlyF15Zcq0=; b=bveszfp2luiYnQxKj/MI5io7jMUVcNwc/Epl6c5n5S
+    MbuiFA4osIOj7uNW765BwEz6ue99oFq4yYEaEn9iC4tTUaSg8GDJysRSAcqTklg3
+    kpvdjFFzTYuwRNWTG/9UTmZK4LHz0Z5ftiic2aXhdPgk0Q+TKhU9EfsgPBxt5Slw
+    btef8jBLHi5n0dnD2kduPQ3ue3Thz+BXYcAghnmKBOUEMUGk9iTop8oWR/d4dbyz
+    dpEn2vNfUblncyZYlvIwRXD0+CNTsH4mEWOkhgVj3H7LqDVPzQ5dMHihrORmIHCO
+    ynWuMz9SQcAT13ndwlMUNDmBPnLxOuIa0kmu1pENch9g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,35 +47,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752726AbeBINlv (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:41:51 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49406 "EHLO
+        id S1752740AbeBINlw (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:41:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49372 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeBINlt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:49 -0500
+        with ESMTP id S1752703AbeBINlr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:47 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Law <law@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kees Cook <keescook@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Paul Turner <pjt@google.com>,
-        Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Subject: [PATCH 4.9 35/92] x86/retpoline: Remove the esp/rsp thunk
-Date: Fri,  9 Feb 2018 14:39:04 +0100
-Message-Id: <20180209133933.717506516@linuxfoundation.org>
+        stable@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Jin Qian <jinqian@google.com>
+Subject: [PATCH 4.9 34/92] KEYS: encrypted: fix buffer overread in valid_master_desc()
+Date: Fri,  9 Feb 2018 14:39:03 +0100
+Message-Id: <20180209133933.630472581@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -92,56 +80,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Eric Biggers <ebiggers@google.com>
 
-(cherry picked from commit 1df37383a8aeabb9b418698f0bcdffea01f4b1b2)
+commit 794b4bc292f5d31739d89c0202c54e7dc9bc3add upstream.
 
-It doesn't make sense to have an indirect call thunk with esp/rsp as
-retpoline code won't work correctly with the stack pointer register.
-Removing it will help compiler writers to catch error in case such
-a thunk call is emitted incorrectly.
+With the 'encrypted' key type it was possible for userspace to provide a
+data blob ending with a master key description shorter than expected,
+e.g. 'keyctl add encrypted desc "new x" @s'.  When validating such a
+master key description, validate_master_desc() could read beyond the end
+of the buffer.  Fix this by using strncmp() instead of memcmp().  [Also
+clean up the code to deduplicate some logic.]
 
-Fixes: 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
-Suggested-by: Jeff Law <law@redhat.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Kees Cook <keescook@google.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/1516658974-27852-1-git-send-email-longman@redhat.com
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
+Signed-off-by: Jin Qian <jinqian@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/asm-prototypes.h |    1 -
- arch/x86/lib/retpoline.S              |    1 -
- 2 files changed, 2 deletions(-)
 
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -37,5 +37,4 @@ INDIRECT_THUNK(dx)
- INDIRECT_THUNK(si)
- INDIRECT_THUNK(di)
- INDIRECT_THUNK(bp)
--INDIRECT_THUNK(sp)
- #endif /* CONFIG_RETPOLINE */
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -36,7 +36,6 @@ GENERATE_THUNK(_ASM_DX)
- GENERATE_THUNK(_ASM_SI)
- GENERATE_THUNK(_ASM_DI)
- GENERATE_THUNK(_ASM_BP)
--GENERATE_THUNK(_ASM_SP)
- #ifdef CONFIG_64BIT
- GENERATE_THUNK(r8)
- GENERATE_THUNK(r9)
+---
+ security/keys/encrypted-keys/encrypted.c |   31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
+
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -141,23 +141,22 @@ static int valid_ecryptfs_desc(const cha
+  */
+ static int valid_master_desc(const char *new_desc, const char *orig_desc)
+ {
+-	if (!memcmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_TRUSTED_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_TRUSTED_PREFIX_LEN))
+-				goto out;
+-	} else if (!memcmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_USER_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_USER_PREFIX_LEN))
+-				goto out;
+-	} else
+-		goto out;
++	int prefix_len;
++
++	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
++		prefix_len = KEY_TRUSTED_PREFIX_LEN;
++	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
++		prefix_len = KEY_USER_PREFIX_LEN;
++	else
++		return -EINVAL;
++
++	if (!new_desc[prefix_len])
++		return -EINVAL;
++
++	if (orig_desc && strncmp(new_desc, orig_desc, prefix_len))
++		return -EINVAL;
++
+ 	return 0;
+-out:
+-	return -EINVAL;
+ }
+ 
+ /*
