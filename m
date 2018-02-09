@@ -1,77 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeBIPeq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:34:46 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41081 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbeBIPeo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:34:44 -0500
-X-Google-Smtp-Source: AH8x225w1a7gYcvBEcOMGnv8nqAhQJt0F5ktJEjwYTLREmkybAW6bmGV7lhuX9Ub9sq/P4yAqtEb9A==
-Date: Fri, 9 Feb 2018 16:34:41 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: i2c: adv748x: Fix cleanup jump on chip
- identification
-Message-ID: <20180209153441.GD7666@bigcity.dyn.berto.se>
-References: <1518037895-10921-1-git-send-email-kbingham@kernel.org>
+        id S1751424AbeBIPjN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 10:39:13 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56128 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751038AbeBIPjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 10:39:11 -0500
+Date: Fri, 9 Feb 2018 17:39:10 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH V4 1/2] ptr_ring: fail early if queue occupies more than
+ KMALLOC_MAX_SIZE
+Message-ID: <20180209173856-mutt-send-email-mst@kernel.org>
+References: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1518037895-10921-1-git-send-email-kbingham@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+On Fri, Feb 09, 2018 at 05:45:49PM +0800, Jason Wang wrote:
+> To avoid slab to warn about exceeded size, fail early if queue
+> occupies more than KMALLOC_MAX_SIZE.
+> 
+> Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
+> Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-Thanks for your patch.
-
-On 2018-02-07 21:11:35 +0000, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> The error handling for the adv748x_identify_chip() call erroneously
-> jumps to the err_cleanup_clients label before the clients have been
-> established.
-> 
-> Correct this by jumping to the next (and correct) label in the cleanup
-> code: err_cleanup_dt.
-> 
-> Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
 > ---
->  drivers/media/i2c/adv748x/adv748x-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/linux/ptr_ring.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-> index 6d62b817ed00..6ccaad7e9eca 100644
-> --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> @@ -651,7 +651,7 @@ static int adv748x_probe(struct i2c_client *client,
->  	ret = adv748x_identify_chip(state);
->  	if (ret) {
->  		adv_err(state, "Failed to identify chip");
-> -		goto err_cleanup_clients;
-> +		goto err_cleanup_dt;
->  	}
+> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> index 1883d61..6051a5f 100644
+> --- a/include/linux/ptr_ring.h
+> +++ b/include/linux/ptr_ring.h
+> @@ -466,6 +466,8 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
 >  
->  	/* Configure remaining pages as I2C clients with regmap access */
+>  static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
+>  {
+> +	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
+> +		return NULL;
+>  	return kcalloc(size, sizeof(void *), gfp);
+>  }
+>  
 > -- 
 > 2.7.4
-> 
-
--- 
-Regards,
-Niklas Söderlund
