@@ -1,46 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753352AbeBIX6J (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 18:58:09 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33360 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeBIX6I (ORCPT
+        id S1753374AbeBIX6o (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 18:58:44 -0500
+Received: from mxf98a.netcup.net ([46.38.249.138]:43894 "EHLO
+        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753258AbeBIX6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 18:58:08 -0500
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-scsi@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] scsi: sym53c416: avoid section mismatch with LTO
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180202131225.1658853-1-arnd@arndb.de>
-        <20180202131225.1658853-4-arnd@arndb.de>
-Date: Fri, 09 Feb 2018 18:47:58 -0500
-In-Reply-To: <20180202131225.1658853-4-arnd@arndb.de> (Arnd Bergmann's message
-        of "Fri, 2 Feb 2018 14:12:17 +0100")
-Message-ID: <yq1tvupu3m9.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=504
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090302
+        Fri, 9 Feb 2018 18:58:43 -0500
+Authentication-Results: mxf98a;
+        spf=pass (sender IP is 77.7.123.133) smtp.mailfrom=rabel@robertabel.eu smtp.helo=buildbert.robertabel.eu
+From: Robert Abel <rabel@robertabel.eu>
+To: miguel.ojeda.sandonis@gmail.com
+Cc: linux-kernel@vger.kernel.org, Robert Abel <rabel@robertabel.eu>
+Subject: [PATCH 3/3] auxdisplay: charlcd: replace octal literal with form-feed
+ escape sequence
+Date: Sat, 10 Feb 2018 00:50:12 +0100
+Message-Id: <20180209235012.4993-4-rabel@robertabel.eu>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180209235012.4993-3-rabel@robertabel.eu>
+References: <20180209235012.4993-1-rabel@robertabel.eu>
+ <20180209235012.4993-2-rabel@robertabel.eu>
+ <20180209235012.4993-3-rabel@robertabel.eu>
+X-PPP-Message-ID: <20180209235040.28635.65214@mxf98a.netcup.net>
+X-PPP-Vhost: robertabel.eu
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is no need to resort to octal escape sequence for the form feed character when an established escape sequence exists.
 
-Arnd,
+Signed-off-by: Robert Abel <rabel@robertabel.eu>
+---
+ drivers/auxdisplay/charlcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Building with link time optimizations produces a false-postive section
-> mismatch warning:
-
-Applied to 4.17/scsi-queue, thanks!
-
+diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+index 92549c8344a4..a3486db03d81 100644
+--- a/drivers/auxdisplay/charlcd.c
++++ b/drivers/auxdisplay/charlcd.c
+@@ -555,7 +555,7 @@ static void charlcd_write_char(struct charlcd *lcd, char c)
+ 			/* back one char again */
+ 			lcd->ops->write_cmd(lcd, LCD_CMD_SHIFT);
+ 			break;
+-		case '\014':
++		case '\f':
+ 			/* quickly clear the display */
+ 			charlcd_clear_fast(lcd);
+ 			break;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
