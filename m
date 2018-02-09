@@ -1,134 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751049AbeBIMyG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:54:06 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:42817 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeBIMyF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:54:05 -0500
-Date: Fri, 9 Feb 2018 13:53:58 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Rohit Jain <rohit.k.jain@oracle.com>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com, joelaf@google.com,
-        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
-        morten.rasmussen@arm.com, eas-dev@lists.linaro.org
-Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
- select_idle_sibling
-Message-ID: <20180209125358.GO25201@hirez.programming.kicks-ass.net>
-References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
+        id S1751998AbeBIMyw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:54:52 -0500
+Received: from mga14.intel.com ([192.55.52.115]:65319 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751052AbeBIMyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:54:50 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,483,1511856000";
+   d="scan'208";a="17230859"
+Date: Fri, 9 Feb 2018 18:28:18 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: sean.wang@mediatek.com
+Cc: dan.j.williams@intel.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH v4 5/5] dmaengine: mediatek: fix zalloc-simple.cocci
+ warnings
+Message-ID: <20180209125817.GB3666@localhost>
+References: <cover.1518110810.git.sean.wang@mediatek.com>
+ <ede5702c460a5b4b41186a8cff1e3c29b2380c08.1518110810.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <ede5702c460a5b4b41186a8cff1e3c29b2380c08.1518110810.git.sean.wang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 03:27:09PM -0800, Rohit Jain wrote:
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 26a71eb..ce5ccf8 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5625,6 +5625,11 @@ static unsigned long capacity_orig_of(int cpu)
->  	return cpu_rq(cpu)->cpu_capacity_orig;
->  }
->  
-> +static inline bool full_capacity(int cpu)
-> +{
-> +	return capacity_of(cpu) >= (capacity_orig_of(cpu)*3)/4;
-> +}
-
-I don't like that name; >.75 != 1.
-
-Maybe invert things and do something like:
-
-static inline bool reduced_capacity(int cpu)
-{
-	return capacity_of(cpu) < (3*capacity_orig_of(cpu))/4;
-}
-
-> @@ -6110,11 +6116,13 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
->  	for_each_cpu(cpu, cpu_smt_mask(target)) {
->  		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
->  			continue;
-> +		if (idle_cpu(cpu) && (capacity_of(cpu) > max_cap)) {
-> +			max_cap = capacity_of(cpu);
-> +			rcpu = cpu;
-> +		}
-
-		if (idle_cpu(cpu)) {
-			if (!reduced_capacity(cpu))
-				return cpu;
-
-			if (capacity_cpu(cpu) > max_cap) {
-				max_cap = capacity_cpu(cpu);
-				rcpu = cpu;
-			}
-		}
-
-Would be more consistent, I think.
-
->  	}
->  
-> -	return -1;
-> +	return rcpu;
->  }
-
-
-
-> @@ -6143,6 +6151,8 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->  	u64 time, cost;
->  	s64 delta;
->  	int cpu, nr = INT_MAX;
-> +	int best_cpu = -1;
-> +	unsigned int best_cap = 0;
-
-Randomly different names for the same thing as in select_idle_smt().
-Thinking up two different names for the same thing is more work; be more
-lazy.
-
->  	this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
->  	if (!this_sd)
-> @@ -6173,8 +6183,15 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->  			return -1;
->  		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
->  			continue;
-> +		if (idle_cpu(cpu)) {
-> +			if (full_capacity(cpu)) {
-> +				best_cpu = cpu;
-> +				break;
-> +			} else if (capacity_of(cpu) > best_cap) {
-> +				best_cap = capacity_of(cpu);
-> +				best_cpu = cpu;
-> +			}
-> +		}
-
-No need for the else. And you'll note you're once again inconsistent
-with your previous self.
-
-But here I worry about big.little a wee bit. I think we're allowed big
-and little cores on the same L3 these days, and you can't directly
-compare capacity between them.
-
-Morten / Dietmar, any comments?
-
-> @@ -6193,13 +6210,14 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->  	struct sched_domain *sd;
->  	int i;
->  
-> -	if (idle_cpu(target))
-> +	if (idle_cpu(target) && full_capacity(target))
->  		return target;
->  
->  	/*
->  	 * If the previous cpu is cache affine and idle, don't be stupid.
+On Fri, Feb 09, 2018 at 01:58:51AM +0800, sean.wang@mediatek.com wrote:
+> From: Fengguang Wu <fengguang.wu@intel.com>
+> 
+>  Use zeroing allocator rather than allocator followed by memset with 0
+> 
+> Generated by: scripts/coccinelle/api/alloc/zalloc-simple.cocci
+> 
+> Fixes: c8e4b2e4ca21 ("dmaengine: mediatek: Add MediaTek High-Speed DMA controller for MT7622 and MT7623 SoC")
+> Cc: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+> Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  drivers/dma/mediatek/mtk-hsdma.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/dma/mediatek/mtk-hsdma.c b/drivers/dma/mediatek/mtk-hsdma.c
+> index 42b5b23..d3b90fe 100644
+> --- a/drivers/dma/mediatek/mtk-hsdma.c
+> +++ b/drivers/dma/mediatek/mtk-hsdma.c
+> @@ -325,13 +325,11 @@ static int mtk_hsdma_alloc_pchan(struct mtk_hsdma_device *hsdma,
+>  	 * and [MTK_DMA_SIZE ... 2 * MTK_DMA_SIZE - 1] is for RX ring.
 >  	 */
-> -	if (prev != target && cpus_share_cache(prev, target) && idle_cpu(prev))
-> +	if (prev != target && cpus_share_cache(prev, target) && idle_cpu(prev) &&
-> +	    full_capacity(prev))
->  		return prev;
+>  	pc->sz_ring = 2 * MTK_DMA_SIZE * sizeof(*ring->txd);
+> -	ring->txd = dma_alloc_coherent(hsdma2dev(hsdma),
+> -				       pc->sz_ring, &ring->tphys,
+> -				       GFP_ATOMIC | __GFP_ZERO);
+> +	ring->txd = dma_zalloc_coherent(hsdma2dev(hsdma), pc->sz_ring,
+> +					&ring->tphys, GFP_ATOMIC);
+>  	if (!ring->txd)
+>  		return -ENOMEM;
+>  
+> -	memset(ring->txd, 0, pc->sz_ring);
 
-split before idle_cpu() for a better balance.
+This should be folded back..
+
+>  	ring->rxd = &ring->txd[MTK_DMA_SIZE];
+>  	ring->rphys = ring->tphys + MTK_DMA_SIZE * sizeof(*ring->txd);
+>  	ring->cur_tptr = 0;
+> -- 
+> 2.7.4
+> 
+
+-- 
+~Vinod
