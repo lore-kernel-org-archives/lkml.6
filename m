@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185153-2-11705615957511013106
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518185143-2-6347230916068688414
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185153; b=UjowfPm8lEIR/lMPCY+GahZ6oDj95YFAQfxr2mvs/7XHSWa
-    FbLth2KVXR2OHzKqVlHCLgsyUW6JUIgvuMZMcCx1bW+mlqJUmiapDK5pCxrS7NVT
-    pMgbbmmKz7PZpZqgsYPdqeKyO7pxiz1ePSn9btJXG3hflbhLtqRj60fAPQ76NV2s
-    p9b8Ugv1UoVnVPUV0Vck5jb5pOfIPZSXCcbhpaWX8wCo3V+Pcn9VJJY1FWWEArfj
-    ZAuyqveNF3Fzi4ip/sz8lqbJL7aiCUkw5hLFwIIbZc19g9bvZogbSfQZF/Hp61f6
-    5TJmNWLMl1wavNR2KqwtGCc1aTV70muU+Q1RYzA==
+    t=1518185141; b=ftOo4FN5rsizigYK2RzHZW/eWSgd1trtpVGjLNwWKpEp7zH
+    neUKHv5br8hZo8qZatEUiTmhhWYHHEf34jm7e4JtC2DyV+/2ezb5kweQwlnazg2W
+    SxdbNlIvz4E9rp/ll+G/OscfsOyCs3lveFhMaNlVMToNUoUcQ06BH5pL1cyhBLA+
+    uwYjJZ64e/VOcoP0AFqktTMx+jEvW/D7SUu69ayQ1Sb0kDeOv9A7iRWGnMP9XHuF
+    eSZ+URX55kLQmwwCsm40wxix1udWKLM0koYF3Q4OXq2Y6dhQqU3J8763gooIBXzt
+    U2ajsMcNcIUkCAIaH47R8Eot/jbT6f3GqeZPjiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185153; bh=kjtrU5i1/ZicKHxq/smXclSBWz
-    kz1a7rI0CXrqf6+0c=; b=Qbmkt1R89TV/8ovodHvZBEFrjlXbHFpStwP+fjr7xe
-    xzygxpoel0OTWh6E+e1g8u8JGVxAbDf34dbOmK555hNyNMjOVtDqYTcQQV3LtKpU
-    9OeqqYWRLnuYLegTpUvj1PUx7qo15QE7oPP54XAUG+bpFdzs7gtuq/CJ5h142Xvf
-    Uvxj1mptJCXOaLi0KOLLww/pyv/yCfrB2FmXdtMDOHhDCk1o7+SSGcIfngslKVH2
-    yrMVn6+jdoSOV/1A/q9qb3KmjqoW8CliXs2Bku16ubHEUjoPq00qjqCa/qghYSEC
-    hRPGFNqh18tRDTZsVSols+yYgJVL6Q1sZ6b/1qutyiXw==
+    :list-id; s=arctest; t=1518185141; bh=9VdAL43X0iVHRLq8teIaNJP9jP
+    GPolld+EJJzDX0TeU=; b=vpaHG/0lZxsayAZywlSu+uUR+THuHZ1U9zJxS1A/75
+    xmts9b55rZIJNEe2NcFMuurP+YKg7k7htG3d2pAG/irYogK0yMuly0HNZBMvZfOp
+    NvUcHa/o/syMEqIiPCtoZz76POhZEBktVwD7+OJGkoRnkClB/YSomUOv2tIVTAyS
+    bnDI1R8UcDd8MJb8UDYQS5mjcM5HTwn0gaYiYgFHSYbWudBuFxYuP8tJx6JCryEr
+    zU6/q0ZnpILcLRw4gdueZ9mDOK8seyfKoZH1v7IYmryR1ZR+/+79vrwgXmb5wrBV
+    jM4qhYcXryRQPY7pFyji9H/tkKUjl7iE9+BTsm8d7Iow==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,12 +47,12 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752721AbeBINm6 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:42:58 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50086 "EHLO
+        id S1751049AbeBINnC (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:43:02 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50118 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753128AbeBINm5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:57 -0500
+        with ESMTP id S1752469AbeBINm7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:59 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -67,9 +67,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         kernel-hardening@lists.openwall.com,
         Al Viro <viro@zeniv.linux.org.uk>, alan@linux.intel.com,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 59/92] x86: Introduce barrier_nospec
-Date: Fri,  9 Feb 2018 14:39:28 +0100
-Message-Id: <20180209133935.497488184@linuxfoundation.org>
+Subject: [PATCH 4.9 60/92] x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
+Date: Fri,  9 Feb 2018 14:39:29 +0100
+Message-Id: <20180209133935.579350557@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -89,16 +89,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Dan Williams <dan.j.williams@intel.com>
 
 
-(cherry picked from commit b3d7ad85b80bbc404635dca80f5b129f6242bc7a)
+(cherry picked from commit b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd)
 
-Rename the open coded form of this instruction sequence from
-rdtsc_ordered() into a generic barrier primitive, barrier_nospec().
+For __get_user() paths, do not allow the kernel to speculate on the value
+of a user controlled pointer. In addition to the 'stac' instruction for
+Supervisor Mode Access Protection (SMAP), a barrier_nospec() causes the
+access_ok() result to resolve in the pipeline before the CPU might take any
+speculative action on the pointer value. Given the cost of 'stac' the
+speculation barrier is placed after 'stac' to hopefully overlap the cost of
+disabling SMAP with the cost of flushing the instruction pipeline.
 
-One of the mitigations for Spectre variant1 vulnerabilities is to fence
-speculative execution after successfully validating a bounds check. I.e.
-force the result of a bounds check to resolve in the instruction pipeline
-to ensure speculative execution honors that result before potentially
-operating on out-of-bounds data.
+Since __get_user is a major kernel interface that deals with user
+controlled pointers, the __uaccess_begin_nospec() mechanism will prevent
+speculative execution past an access_ok() permission check. While
+speculative execution past access_ok() is not enough to lead to a kernel
+memory leak, it is a necessary precondition.
+
+To be clear, __uaccess_begin_nospec() is addressing a class of potential
+problems near __get_user() usages.
+
+Note, that while the barrier_nospec() in __uaccess_begin_nospec() is used
+to protect __get_user(), pointer masking similar to array_index_nospec()
+will be used for get_user() since it incorporates a bounds check near the
+usage.
+
+uaccess_try_nospec provides the same mechanism for get_user_try.
 
 No functional changes.
 
@@ -114,36 +129,35 @@ Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727415361.33451.9049453007262764675.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727415922.33451.5796614273104346583.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/barrier.h |    4 ++++
- arch/x86/include/asm/msr.h     |    3 +--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/uaccess.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -47,6 +47,10 @@ static inline unsigned long array_index_
- /* Override the default implementation from linux/nospec.h. */
- #define array_index_mask_nospec array_index_mask_nospec
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -123,6 +123,11 @@ extern int __get_user_bad(void);
  
-+/* Prevent speculative execution past this barrier. */
-+#define barrier_nospec() alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC, \
-+					   "lfence", X86_FEATURE_LFENCE_RDTSC)
+ #define __uaccess_begin() stac()
+ #define __uaccess_end()   clac()
++#define __uaccess_begin_nospec()	\
++({					\
++	stac();				\
++	barrier_nospec();		\
++})
+ 
+ /*
+  * This is a type: either unsigned long, if the argument fits into
+@@ -474,6 +479,10 @@ struct __large_struct { unsigned long bu
+ 	__uaccess_begin();						\
+ 	barrier();
+ 
++#define uaccess_try_nospec do {						\
++	current->thread.uaccess_err = 0;				\
++	__uaccess_begin_nospec();					\
 +
- #ifdef CONFIG_X86_PPRO_FENCE
- #define dma_rmb()	rmb()
- #else
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -188,8 +188,7 @@ static __always_inline unsigned long lon
- 	 * that some other imaginary CPU is updating continuously with a
- 	 * time stamp.
- 	 */
--	alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC,
--			  "lfence", X86_FEATURE_LFENCE_RDTSC);
-+	barrier_nospec();
- 	return rdtsc();
- }
- 
+ #define uaccess_catch(err)						\
+ 	__uaccess_end();						\
+ 	(err) |= (current->thread.uaccess_err ? -EFAULT : 0);		\
