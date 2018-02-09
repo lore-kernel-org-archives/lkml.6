@@ -1,89 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751139AbeBIMFa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:05:30 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:39175 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeBIMF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:05:29 -0500
+        id S1751092AbeBIMGy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:06:54 -0500
+Received: from anholt.net ([50.246.234.109]:51238 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750863AbeBIMGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:06:53 -0500
+From: Eric Anholt <eric@anholt.net>
+To: Tuomas Tynkkynen <tuomas@tuxera.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Tuomas Tynkkynen <tuomas@tuxera.com>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable serial console on RPi 3
+In-Reply-To: <20180207005309.14365-1-tuomas@tuxera.com>
+References: <20180207005309.14365-1-tuomas@tuxera.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Fri, 09 Feb 2018 11:12:45 +0000
+Message-ID: <87fu6aa02a.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Fri, 09 Feb 2018 13:05:27 +0100
-From: Stefan Agner <stefan@agner.ch>
-To: fabio.estevam@nxp.com, leonard.crestez@nxp.com
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, viresh.kumar@linaro.org,
-        shawnguo@kernel.org, octavian.purdila@nxp.com, max.oss.09@gmail.com,
-        marcel.ziswiler@toradex.com, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: imx6q: support frequencies >528MHz for
- i.MX6UL/ULL
-In-Reply-To: <1619001.eqAapW3X4z@aspire.rjw.lan>
-References: <20180118235836.17393-1-stefan@agner.ch>
- <1619001.eqAapW3X4z@aspire.rjw.lan>
-Message-ID: <fedd9d818b58e5c19ad3201e68a1e55e@agner.ch>
-User-Agent: Roundcube Webmail/1.3.3
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.02.2018 12:52, Rafael J. Wysocki wrote:
-> On Friday, January 19, 2018 12:58:36 AM CET Stefan Agner wrote:
->> Depending on SKU i.MX6UL/i.MX6ULL support frequencies up to 900MHz.
->> Use PLL1 sys clock for all operating points higher than 528MHz.
->>
->> Note: For higher operating points VDD_SOC_IN needs to be 125mV
->> higher than the ARM set-point (see datasheet). Specifically, the
->> i.MX6UL/ULL EVK boards have an external DC regulator which needs
->> adjustment. The regulator adjustment is not covered with this
->> change.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> 
-> This makes sense to me, but I need someone with the requisite platform
-> knowledge to review it.
-> 
+--=-=-=
+Content-Type: text/plain
 
-Fabio, Leonard, maybe one of you could have a look at it?
+Tuomas Tynkkynen <tuomas@tuxera.com> writes:
 
-It is similar to what ("cpufreq: imx: Add support for 700MHz setpoint in
-cpufreq") in downstream is doing, it avoids changing pll twice though.
+> The Raspberry Pi 3 uses the 8250-based auxilary UART of the BCM2837 SoC
+> as the primary serial console of the board, so enable it in the
+> multiplatform defconfig.
+>
+> Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
 
-And, as mentioned in the commit log, the dc_reg part is missing. This is
-because it is not required on our Colibri iMX6ULL since it uses a higher
-(not switchable) VDD_SOC_IN voltage by default.
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
---
-Stefan
+I'm planning on putting this in -next once rc1 shows up, unless people
+really want it in -fixes.
 
->> ---
->>  drivers/cpufreq/imx6q-cpufreq.c | 14 ++++++++------
->>  1 file changed, 8 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
->> index 628fe899cb48..840f6386c780 100644
->> --- a/drivers/cpufreq/imx6q-cpufreq.c
->> +++ b/drivers/cpufreq/imx6q-cpufreq.c
->> @@ -114,12 +114,14 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
->>  		 */
->>  		clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
->>  		clk_set_parent(pll1_sw_clk, pll1_sys_clk);
->> -		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
->> -			clk_set_parent(secondary_sel_clk, pll2_bus_clk);
->> -		else
->> -			clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
->> -		clk_set_parent(step_clk, secondary_sel_clk);
->> -		clk_set_parent(pll1_sw_clk, step_clk);
->> +		if (freq_hz <= clk_get_rate(pll2_bus_clk)) {
->> +			if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
->> +				clk_set_parent(secondary_sel_clk, pll2_bus_clk);
->> +			else
->> +				clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
->> +			clk_set_parent(step_clk, secondary_sel_clk);
->> +			clk_set_parent(pll1_sw_clk, step_clk);
->> +		}
->>  	} else {
->>  		clk_set_parent(step_clk, pll2_pfd2_396m_clk);
->>  		clk_set_parent(pll1_sw_clk, step_clk);
->>
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlp9gi0ACgkQtdYpNtH8
+nuiraQ/+MdikkFU38G3v9Z5o7tk/dDoD8ypEMGTjIKRZZMbRnTigUqOPOOCMQhs/
+ihMhC9lwxc8geL3Qd5PJcgJsSKwwiR8gyYbLrLoRGaQDzs0Mge0LvbVQR3t37Bfv
+ANScJqoE88cVuDVtvPgi/BmRIgnNLrpqu2dprlxN3erYEGFC2dibNnUOpPvWMfP1
+PSfR9KKE8E0vLvPPKJq/qUmJyQ8vdau8eqol42ZI8e1QlH8Yrp5kwW9p4gpqMWTb
+5/Ttg48G0VS2GCmMd7taS36ijF0BNFUu/oSH8e4CX0zvzIuRYDe/vNYsOWGlWJHv
+ATFZe+SOYgRvXik6jiCUQDqucWi2L7eKceXym3G3LXDfjth3LwwK3jfuQ7QSxBqy
+zX10lndJqun8dFs2I+oH5zGe0tV7kO5RZCfVFb8oqFVrPAsbwYFGzBwxtTdjiOyg
+ciGGvOa8FzPtVoBZqL56JGgyRCfYBuw2ZwFl7J+GaYVBRxWWB5NI1BivpL0Tw9eq
+WiRj1OarYCP9dEhm1qERsyvYKhpuEOReXjcv7jY+QTKHkDsxUAXO5XFUOmhb2gNF
++vJEsX+oWhU2fQb2GsJpXZUASwk3LnLYA0dDfPHS2B6yCIS8aZ1V6R6UbY0JHCS4
+7IxgdL7tcDaMdRxQLllLiFluiTlyxuFPzRXSEtKcghhv7a9lvN8=
+=73Ce
+-----END PGP SIGNATURE-----
+--=-=-=--
