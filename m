@@ -1,40 +1,46 @@
-Return-Path: <jroedel@suse.de>
-X-Google-Smtp-Source: AH8x225/QdgEN8bZjxixdHHL6teFF4spps9C53BLGCykJcaiCwtcYcW7yDsvHSX+Uo7xNqYEDoD2
-ARC-Seal: i=1; a=rsa-sha256; t=1518203359; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AH8x224aLZPmHOm7mOHEV9trPVJcjwUsy/M0KKPwCOtCUihSLFKbSxuj4LQoP1x+Srqs3cfl6l8g
+ARC-Seal: i=1; a=rsa-sha256; t=1518168362; cv=none;
         d=google.com; s=arc-20160816;
-        b=m/91Bt+kLeZuGNYFMcc/jks5LwSH8zvT2g+q6V4yRerp0MjzSbGKJZgUzacunnhRWp
-         5bmHmWeoLsUm5o7wyvrojX3zz/YUiFNhWVufLUOsco9rf/wXx6zghKDi73D+80c6fc3w
-         A9DLFtwf1D1/e6s0dWEpTwem/MC7/skKSRA2XRxnNTn46d9CR2smsR872O3vaEQbJJpp
-         tRgchYBT3EABe80SlHbP78HxR+J9KuzP4kWXDAgAaUzkA8nsI4xTgViPmQq55iQta9nx
-         nqVUO9Wn9G3yOP/vb85JPk6QzEBebWBE6/AecvQN2/+CE6wJI87RyRgNptM5+wGaiDYd
-         Y+Mw==
+        b=pg2G67kw2sWNGNN0qHn28NIHI7HNPLoCPRgwMCeMlEpYbetcv36fPupZ8mA/b8InWI
+         gxgWYZNHK+SPXvtebYzIsynvnnv1FztTWJPP1/dZYohcZZ/tD2T+Ug6AGNtPP+AXkb9e
+         PwmMjJyhQE1tmOdXmiXEsC8Y/C8enJ5fKsg6FItH9/mjR2pQWvJXTSSjqpvDN6jfHY3/
+         GRnT/TRMLlalfkZFga+Om2UpYYCocO87drqdBZ8L5LbhmgR82JIBCb1wBvi2C6YDSvrL
+         /rGyIoscNvsGj5Pe21bhAafxBx2fxUtnK31LJiuCFWOYmWYQrBR/UZrTSeGUmykYmoBw
+         ZqVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=tF/i6xNxrvaJJEuDdYOsyHFu+65WygS7BbnVtfWSQqI=;
-        b=DRlvJ/wfl+ZbJqtMAI2V8gib4LRt7dqpf3sDoxGT1pnGRqAku/6gIDU43im1bRmRsT
-         OrpdP6QIhoWT7bdmIarao3hmuAbIzLKbeFlnXbXyRjwhDskbMTWRx6oY1qjBDyV4z5H4
-         ERrrvLGzBNDx0BnPj6hN0Z6X+k4XSMi2XRULngk4IiXwc4q5p8fasSbU0qYdeF3FAluu
-         OzzREKtIXJyAQJGnQQrgMcsVc2DflzLoIxqQkjPdcnIJ2lP3m0bmxXJPKdgGZVIUnOei
-         KQ788Gd7NDJ8rZL4W8zeXmeGXNhMWKYdHZE5sT+t/0+CU0j07Eed2hi+6vqehVAN4n/L
-         oICw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=1NttUfG1dbBu4q1Ghm8E6zuzd47Oa/dg7nGYF58eE7I=;
+        b=jS5MVkzxyseAd4VtxB4ZDvi2KTjb91Zs/maSqP0tiXx9MKhIpkyaE+wLeocyRbp1fr
+         iIyDnbckMsi1H7rRXx7LaKTXcx9HQwU3Lo042grk1A5p/p7/j4MFOpm5Bc0Ohjl77jxE
+         +DarEUjhf2J86SywU10wk+wTJmZlsKE4TiHHC8S9GLnk9FmTtpncB8wduUnbRpeRd4ko
+         4DmuJ9Y1sqrTsDUmASRvyMaScofhOf95tXk5ERAAtQvqgA4dCKoEab/HRGYGXFzjeysp
+         TNBqCJ4T8DRSK54vpSceX92bRjnJXQr+tlIGXW2L7kQ4RIsNs2oaxlm7t3/gZ0nrUwQw
+         Y/UA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=hbQ6+qgh;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
-Date: Fri, 9 Feb 2018 20:09:15 +0100
-From: Joerg Roedel <jroedel@suse.de>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>,
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=hbQ6+qgh;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
 	Dave Hansen <dave.hansen@intel.com>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Borislav Petkov <bp@alien8.de>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Brian Gerst <brgerst@gmail.com>,
 	David Laight <David.Laight@aculab.com>,
@@ -42,37 +48,60 @@ Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
 	Eduardo Valentin <eduval@amazon.com>,
 	Greg KH <gregkh@linuxfoundation.org>,
 	Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
+	aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at,
+	hughd@google.com,
+	keescook@google.com,
 	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 20/31] x86/mm/pae: Populate the user page-table with user
- pgd's
-Message-ID: <20180209190915.tevittkx5d3ngnyr@suse.de>
+	Waiman Long <llong@redhat.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	jroedel@suse.de,
+	joro@8bytes.org
+Subject: [PATCH 23/31] x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
+Date: Fri,  9 Feb 2018 10:25:32 +0100
+Message-Id: <1518168340-9392-24-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
- <1518168340-9392-21-git-send-email-joro@8bytes.org>
- <CALCETrUgk3s0uDZrHqy-HjudFXLeWN=oKz6EH9i-NCdWQEnAqw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUgk3s0uDZrHqy-HjudFXLeWN=oKz6EH9i-NCdWQEnAqw@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914910930783866?=
-X-GMAIL-MSGID: =?utf-8?q?1591951605682083964?=
+X-GMAIL-THRID: =?utf-8?q?1591914909315393823?=
+X-GMAIL-MSGID: =?utf-8?q?1591914909315393823?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 09, 2018 at 05:48:36PM +0000, Andy Lutomirski wrote:
-> Can you rename the helper from pti_set_user_pgd() to
-> pti_set_user_top_level_entry() or similar?  The name was already a bit
-> absurd, but now it's just nuts.
+From: Joerg Roedel <jroedel@suse.de>
 
-Sure, I can do that, just pti_set_user_top_level_entry() is a bit long.
-I try to find a shorter name.
+Move it out of the X86_64 specific processor defines so
+that its visible for 32bit too.
 
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/include/asm/processor-flags.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
-
-	Joerg
+diff --git a/arch/x86/include/asm/processor-flags.h b/arch/x86/include/asm/processor-flags.h
+index 625a52a..02c2cbd 100644
+--- a/arch/x86/include/asm/processor-flags.h
++++ b/arch/x86/include/asm/processor-flags.h
+@@ -39,10 +39,6 @@
+ #define CR3_PCID_MASK	0xFFFull
+ #define CR3_NOFLUSH	BIT_ULL(63)
+ 
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-# define X86_CR3_PTI_PCID_USER_BIT	11
+-#endif
+-
+ #else
+ /*
+  * CR3_ADDR_MASK needs at least bits 31:5 set on PAE systems, and we save
+@@ -53,4 +49,8 @@
+ #define CR3_NOFLUSH	0
+ #endif
+ 
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++# define X86_CR3_PTI_PCID_USER_BIT	11
++#endif
++
+ #endif /* _ASM_X86_PROCESSOR_FLAGS_H */
+-- 
+2.7.4
