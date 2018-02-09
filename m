@@ -1,87 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751189AbeBINZv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:25:51 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:51226 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeBINZt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:25:49 -0500
-X-Google-Smtp-Source: AH8x226p9cx/cUW9UtTJqRJDx0xunyQoZwEtPYPat5XPoGjAnN3evZUBgwPF4jRQYuypunYN0vBe+w==
-Date: Fri, 9 Feb 2018 14:25:44 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
-Message-ID: <20180209132544.GI12979@localhost.localdomain>
-References: <197c26ba-c2a6-2de7-dffa-5b884079f746@evidence.eu.com>
- <11598161.veS9VGWB8G@aspire.rjw.lan>
- <20180209105305.GD12979@localhost.localdomain>
- <CAJZ5v0h9L2mMEaV6oECk9f2ob42Nr9zyqafymwvb+UP+G1q04Q@mail.gmail.com>
- <20180209112618.GE12979@localhost.localdomain>
- <CAJZ5v0g4bgDKP96rivKPE-EMr7SuUhL9OO=M+MQuAjbdq9R45g@mail.gmail.com>
- <20180209115155.GG12979@localhost.localdomain>
- <CAJZ5v0g-ypbVT77vSpjTX5mrpedu_=eH+O3b5d6PE5ydL1=VRQ@mail.gmail.com>
- <20180209125245.GH12979@localhost.localdomain>
- <CAJZ5v0i9ZpRZKd7FNLnC6SucJnOump4xhQhf9QabXOSTf_qfyw@mail.gmail.com>
+        id S1752089AbeBIN0l (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:26:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751024AbeBIN0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 08:26:40 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE7821789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+Subject: Re: [PATCH] f2fs: add fi->commit_lock to protect commit GCed pages
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org,
+        yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com,
+        heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+ <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
+ <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
+ <134848f9-2dd6-0efa-3ccf-3c29eeaf5534@huawei.com>
+ <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
+ <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <d67aae9c-778a-50bd-9f73-f90c3efd9b73@kernel.org>
+Date: Fri, 9 Feb 2018 21:26:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0i9ZpRZKd7FNLnC6SucJnOump4xhQhf9QabXOSTf_qfyw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/18 13:56, Rafael J. Wysocki wrote:
-> On Fri, Feb 9, 2018 at 1:52 PM, Juri Lelli <juri.lelli@redhat.com> wrote:
-> > On 09/02/18 13:08, Rafael J. Wysocki wrote:
-> >> On Fri, Feb 9, 2018 at 12:51 PM, Juri Lelli <juri.lelli@redhat.com> wrote:
+On 2018/2/9 20:56, Yunlong Song wrote:
+> As what I point in last mail, if the atomic file is not committed
+> yet, gc_data_segment will register_inmem_page the GCed data pages.
 
-[...]
+We will skip GCing that page as below check:
 
-> >> > My impression is that rate limit helps a lot for CFS, where the "true"
-> >> > utilization is not known in advance, and being too responsive might
-> >> > actually be counterproductive.
-> >> >
-> >> > For DEADLINE (and RT, with differences) we should always respond as
-> >> > quick as we can (and probably remember that a frequency transition was
-> >> > requested if hw was already performing one, but that's another patch)
-> >> > because, if we don't, a task belonging to a lower priority class might
-> >> > induce deadline misses in highest priority activities. E.g., a CFS task
-> >> > that happens to trigger a freq switch right before a DEADLINE task wakes
-> >> > up and needs an higher frequency to meet its deadline: if we wait for
-> >> > the rate limit of the CFS originated transition.. deadline miss!
-> >>
-> >> Fair enough, but if there's too much overhead as a result of this, you
-> >> can't guarantee the deadlines to be met anyway.
-> >
-> > Indeed. I guess this only works if corner cases as the one above don't
-> > happen too often.
+- move_data_{page,block}
+ - f2fs_is_atomic_file()
+   skip out;
+
+No?
+
+Thanks,
+
+> This will cause these data pages written twice, the first write
+> happens in move_data_page->do_write_data_page, and the second
+> write happens in later __commit_inmem_pages->do_write_data_page.
 > 
-> Well, that's the point.
+> On 2018/2/9 20:44, Chao Yu wrote:
+>> On 2018/2/8 11:11, Yunlong Song wrote:
+>>> Then the GCed data pages are totally mixed with the inmem atomic pages,
+>>
+>> If we add dio_rwsem, GC flow is exclude with atomic write flow. There
+>> will be not race case to mix GCed page into atomic pages.
+>>
+>> Or you mean:
+>>
+>>                     - gc_data_segment
+>>                      - move_data_page
+>>                       - f2fs_is_atomic_file
+>> - f2fs_ioc_start_atomic_write
+>>   - set_inode_flag(inode, FI_ATOMIC_FILE);
+>>                       - f2fs_set_data_page_dirty
+>>                        - register_inmem_page
+>>
+>> In this case, GCed page can be mixed into database transaction, but could
+>> it cause any problem except break rule of isolation for transaction.
+>>
+>>> this will cause the atomic commit ops write the GCed data pages twice
+>>> (the first write happens in GC).
+>>>
+>>> How about using the early two patches to separate the inmem data pages
+>>> and GCed data pages, and use dio_rwsem instead of this patch to fix the
+>>> dnode page problem (dnode page commited but data page are not committed
+>>> for the GCed page)?
+>>
+>> Could we fix the race case first, based on that fixing, and then find the
+>> place that we can improve?
+>>
+>>>
+>>>
+>>> On 2018/2/7 20:16, Chao Yu wrote:
+>>>> On 2018/2/6 11:49, Yunlong Song wrote:
+>>>>> This patch adds fi->commit_lock to avoid the case that GCed node pages
+>>>>> are committed but GCed data pages are not committed. This can avoid the
+>>>>> db file run into inconsistent state when sudden-power-off happens if
+>>>>> data pages of atomic file is allowed to be GCed before.
+>>>>
+>>>> do_fsync:                GC:
+>>>> - mutex_lock(&fi->commit_lock);
+>>>>                      - lock_page()
+>>>>                       - mutex_lock(&fi->commit_lock);
+>>>>    - lock_page()
+>>>>
+>>>>
+>>>> Well, please consider lock dependency & code complexity, IMO, reuse
+>>>> fi->dio_rwsem[WRITE] will be enough as below:
+>>>>
+>>>> ---
+>>>>    fs/f2fs/file.c | 3 +++
+>>>>    fs/f2fs/gc.c   | 5 -----
+>>>>    2 files changed, 3 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>> index 672a542e5464..1bdc11feb8d0 100644
+>>>> --- a/fs/f2fs/file.c
+>>>> +++ b/fs/f2fs/file.c
+>>>> @@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>>>>
+>>>>        inode_lock(inode);
+>>>>
+>>>> +    down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>>>> +
+>>>>        if (f2fs_is_volatile_file(inode))
+>>>>            goto err_out;
+>>>>
+>>>> @@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>>>>            ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+>>>>        }
+>>>>    err_out:
+>>>> +    up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>>>>        inode_unlock(inode);
+>>>>        mnt_drop_write_file(filp);
+>>>>        return ret;
+>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>> index b9d93fd532a9..e49416283563 100644
+>>>> --- a/fs/f2fs/gc.c
+>>>> +++ b/fs/f2fs/gc.c
+>>>> @@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>>>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>>            goto out;
+>>>>
+>>>> -    if (f2fs_is_atomic_file(inode))
+>>>> -        goto out;
+>>
+>> Seems that we need this check.
+>>
+>>>> -
+>>>>        if (f2fs_is_pinned_file(inode)) {
+>>>>            f2fs_pin_file_control(inode, true);
+>>>>            goto out;
+>>>> @@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>>>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>>            goto out;
+>>>>
+>>>> -    if (f2fs_is_atomic_file(inode))
+>>>> -        goto out;
+>>
+>> Ditto.
+>>
+>> Thanks,
+>>
+>>>>        if (f2fs_is_pinned_file(inode)) {
+>>>>            if (gc_type == FG_GC)
+>>>>                f2fs_pin_file_control(inode, true);
+>>>>
+>>>
+>>
+>> .
+>>
 > 
-> So there is a tradeoff: do we want to allow deadlines to be missed
-> because of excessive overhead or do we want to allow deadlines to be
-> missed because of the rate limit.
-
-The difference between the two seems to be that while overhead is an
-intrisic hw thing, rate limit is something we have mostly to cope with
-the nature of certain classes of tasks and how we describe/track them
-(at least IMHO). I'd say that for other classes of tasks (DL/RT) we
-would be better off consciously living with the former only and accept
-that real world is "seldom" not ideal.
-
-But then again this is just another theory, experiments might easily
-prove me wrong. :)
