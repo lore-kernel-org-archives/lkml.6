@@ -1,70 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751040AbeBIMew (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:34:52 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36722 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeBIMeu (ORCPT
+        id S1751131AbeBIMf0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:35:26 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34374 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbeBIMfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:34:50 -0500
-X-Google-Smtp-Source: AH8x226RQyAJ76sf+tHfTiY6vC8uBTtPkQ7s03sobHVLj+xe1uWB83WSjsuxfyBud5qNuSm7hhZ6Rw==
-Date: Fri, 9 Feb 2018 21:34:46 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH 1/2] zsmalloc: introduce zs_huge_object() function
-Message-ID: <20180209123446.GB485@tigerII.localdomain>
-References: <20180207092919.19696-1-sergey.senozhatsky@gmail.com>
- <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
- <20180208163006.GB17354@rapoport-lnx>
- <20180209025520.GA3423@jagdpanzerIV>
- <20180209041046.GB23828@bombadil.infradead.org>
- <20180209053630.GC689@jagdpanzerIV>
- <20180209111102.GB2044@rapoport-lnx>
+        Fri, 9 Feb 2018 07:35:24 -0500
+Date: Fri, 9 Feb 2018 13:35:10 +0100
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Dmitry Safonov <dima@arista.com>, David Miller <davem@davemloft.net>,
+        frederic@kernel.org, linux-kernel@vger.kernel.org,
+        alexander.levin@verizon.com, peterz@infradead.org,
+        mchehab@s-opensource.com, torvalds@linux-foundation.org,
+        hannes@stressinduktion.org, paulmck@linux.vnet.ibm.com,
+        wanpeng.li@hotmail.com, tglx@linutronix.de, akpm@linux-foundation.org,
+        pabeni@redhat.com, rrendec@arista.com, mingo@kernel.org,
+        sgruszka@redhat.com, riel@redhat.com, edumazet@google.com
+Subject: Re: [RFC PATCH 2/4] softirq: Per vector deferment to workqueue
+Message-ID: <20180209123510.2qxgkky5juejjvcg@linutronix.de>
+References: <20180208174450.qjvjy752jf4ngt2g@breakpoint.cc>
+ <20180208.134506.1374787894560277876.davem@davemloft.net>
+ <1518120895.2849.14.camel@arista.com>
+ <20180208.152236.2148696725742511754.davem@davemloft.net>
+ <1518121820.2849.17.camel@arista.com>
+ <1518149468.24350.40.camel@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180209111102.GB2044@rapoport-lnx>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1518149468.24350.40.camel@gmx.de>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/09/18 13:11), Mike Rapoport wrote:
-[..]
-> > +/**
-> > + * zs_huge_object() - Test if a compressed object's size is too big for normal
-> > + *                    zspool classes and it will be stored in a huge class.
+On 2018-02-09 05:11:08 [+0100], Mike Galbraith wrote:
+> On Thu, 2018-02-08 at 20:30 +0000, Dmitry Safonov wrote:
+> > On Thu, 2018-02-08 at 15:22 -0500, David Miller wrote:
+> > > Why do we need more than one per cpu?
+> > 
+> > Ugh, yeah, I remember why I did it - I tried to reuse scheduler for
+> > each ksoftirqd thread to decide if it need to run now or later.
+> > That would give an admin a way to prioritise softirqs with nice.
+> > Not sure if it's a nice idea at all..
 > 
-> Maybe "it should be stored ..."?
+> For RT that can be handy, but for the general case it's a waste of
+> cycles, so would want to be opt-in.
 
-Agreed.
+We used to have it in RT. It got replaced because the context switch from
+one thread to the other simply took time.
+If you need to prioritise one softirqs over the other I think you would
+be better off running with threaded-interrupts. In "normal" mode, if you
+have a raised NAPI and say a TASKLET then once both IRQ handler complete
+(and interrupts get enabled again) then the softirqs are run. With
+threaded interrupts enabled, the NAPI-softirq is invoked once the
+threaded-handler completes that raised it - same goes the other threaded
+handler which raised the tasklet softirq.
+So you could simply change the priority of the threaded interrupt in
+order to prefer NAPI over tasklet handling (or the other way around).
 
-> > + * @sz: Size in bytes of the compressed object.
-> > + *
-> > + * The functions checks if the object's size falls into huge_class area.
-> > + * We must take ZS_HANDLE_SIZE into account and test the actual size we
-> 
->                 ^ %ZS_HANDLE_SIZE
+> 	-Mike
 
-Indeed. ``%CONST``
-
-> > + * are going to use up, because zs_malloc() unconditionally adds the
-> 
-> I think 's/use up/use/' here
-
-Agreed.
-
-> > + * handle size before it performs size_class lookup.
-> 
->                                    ^ &size_class
-
-OK. ``&struct name``
-
-Thanks for reviewing it!
-
-	-ss
+Sebastian
