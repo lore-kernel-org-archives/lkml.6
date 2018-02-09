@@ -1,235 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752657AbeBIGfM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 01:35:12 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34267 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751031AbeBIGcz (ORCPT
+        id S1750953AbeBIGwn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 01:52:43 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34284 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750778AbeBIGwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 01:32:55 -0500
-X-Google-Smtp-Source: AH8x226Zrg0M7Icm1bnSMb/7Fgl6tI+74xMCwqsggAcK88jS87MDTjqraz0aZQUGs/C1OdKZBDlnxg==
-From: Tim Harvey <tharvey@gateworks.com>
-To: linux-media@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCH v10 1/8] v4l2-dv-timings: add v4l2_hdmi_colorimetry()
-Date: Thu,  8 Feb 2018 22:32:29 -0800
-Message-Id: <1518157956-14220-2-git-send-email-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518157956-14220-1-git-send-email-tharvey@gateworks.com>
-References: <1518157956-14220-1-git-send-email-tharvey@gateworks.com>
+        Fri, 9 Feb 2018 01:52:42 -0500
+X-Google-Smtp-Source: AH8x2262C6Jar37YrCJvWQ0p9r47exg9Lg0pC58l+s5DS6AW35tu9+zg4Lh8tPThuuMao4qGww6ERQ==
+From: Peng Donglin <dolinux.peng@gmail.com>
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, andy.shevchenko@gmail.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Peng Donglin <dolinux.peng@gmail.com>
+Subject: [PATCH] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication
+Date: Fri,  9 Feb 2018 14:52:05 +0800
+Message-Id: <20180209065206.15543-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+There is some duplicate code in soc-core.c,and the kernel provides
+DEFINE_SHOW_ATTRIBUTE() helper macro to decrease it in seq_file.h.
 
-Add the v4l2_hdmi_colorimetry() function so we have a single function
-that determines the colorspace, YCbCr encoding, quantization range and
-transfer function from the InfoFrame data.
-
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Peng Donglin <dolinux.peng@gmail.com>
 ---
-v9:
- - fix kernel-doc format (Randy)
+ sound/soc/soc-core.c | 51 +++++++++------------------------------------------
+ 1 file changed, 9 insertions(+), 42 deletions(-)
 
- drivers/media/v4l2-core/v4l2-dv-timings.c | 141 ++++++++++++++++++++++++++++++
- include/media/v4l2-dv-timings.h           |  21 +++++
- 2 files changed, 162 insertions(+)
-
-diff --git a/drivers/media/v4l2-core/v4l2-dv-timings.c b/drivers/media/v4l2-core/v4l2-dv-timings.c
-index 930f9c5..5663d86 100644
---- a/drivers/media/v4l2-core/v4l2-dv-timings.c
-+++ b/drivers/media/v4l2-core/v4l2-dv-timings.c
-@@ -27,6 +27,7 @@
- #include <linux/v4l2-dv-timings.h>
- #include <media/v4l2-dv-timings.h>
- #include <linux/math64.h>
-+#include <linux/hdmi.h>
- 
- MODULE_AUTHOR("Hans Verkuil");
- MODULE_DESCRIPTION("V4L2 DV Timings Helper Functions");
-@@ -814,3 +815,143 @@ struct v4l2_fract v4l2_calc_aspect_ratio(u8 hor_landscape, u8 vert_portrait)
- 	return aspect;
- }
- EXPORT_SYMBOL_GPL(v4l2_calc_aspect_ratio);
-+
-+/** v4l2_hdmi_rx_colorimetry - determine HDMI colorimetry information
-+ *	based on various InfoFrames.
-+ * @avi: the AVI InfoFrame
-+ * @hdmi: the HDMI Vendor InfoFrame, may be NULL
-+ * @height: the frame height
-+ *
-+ * Determines the HDMI colorimetry information, i.e. how the HDMI
-+ * pixel color data should be interpreted.
-+ *
-+ * Note that some of the newer features (DCI-P3, HDR) are not yet
-+ * implemented: the hdmi.h header needs to be updated to the HDMI 2.0
-+ * and CTA-861-G standards.
-+ */
-+struct v4l2_hdmi_colorimetry
-+v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
-+			 const struct hdmi_vendor_infoframe *hdmi,
-+			 unsigned int height)
-+{
-+	struct v4l2_hdmi_colorimetry c = {
-+		V4L2_COLORSPACE_SRGB,
-+		V4L2_YCBCR_ENC_DEFAULT,
-+		V4L2_QUANTIZATION_FULL_RANGE,
-+		V4L2_XFER_FUNC_SRGB
-+	};
-+	bool is_ce = avi->video_code || (hdmi && hdmi->vic);
-+	bool is_sdtv = height <= 576;
-+	bool default_is_lim_range_rgb = avi->video_code > 1;
-+
-+	switch (avi->colorspace) {
-+	case HDMI_COLORSPACE_RGB:
-+		/* RGB pixel encoding */
-+		switch (avi->colorimetry) {
-+		case HDMI_COLORIMETRY_EXTENDED:
-+			switch (avi->extended_colorimetry) {
-+			case HDMI_EXTENDED_COLORIMETRY_ADOBE_RGB:
-+				c.colorspace = V4L2_COLORSPACE_ADOBERGB;
-+				c.xfer_func = V4L2_XFER_FUNC_ADOBERGB;
-+				break;
-+			case HDMI_EXTENDED_COLORIMETRY_BT2020:
-+				c.colorspace = V4L2_COLORSPACE_BT2020;
-+				c.xfer_func = V4L2_XFER_FUNC_709;
-+				break;
-+			default:
-+				break;
-+			}
-+			break;
-+		default:
-+			break;
-+		}
-+		switch (avi->quantization_range) {
-+		case HDMI_QUANTIZATION_RANGE_LIMITED:
-+			c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
-+			break;
-+		case HDMI_QUANTIZATION_RANGE_FULL:
-+			break;
-+		default:
-+			if (default_is_lim_range_rgb)
-+				c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
-+			break;
-+		}
-+		break;
-+
-+	default:
-+		/* YCbCr pixel encoding */
-+		c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
-+		switch (avi->colorimetry) {
-+		case HDMI_COLORIMETRY_NONE:
-+			if (!is_ce)
-+				break;
-+			if (is_sdtv) {
-+				c.colorspace = V4L2_COLORSPACE_SMPTE170M;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
-+			} else {
-+				c.colorspace = V4L2_COLORSPACE_REC709;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_709;
-+			}
-+			c.xfer_func = V4L2_XFER_FUNC_709;
-+			break;
-+		case HDMI_COLORIMETRY_ITU_601:
-+			c.colorspace = V4L2_COLORSPACE_SMPTE170M;
-+			c.ycbcr_enc = V4L2_YCBCR_ENC_601;
-+			c.xfer_func = V4L2_XFER_FUNC_709;
-+			break;
-+		case HDMI_COLORIMETRY_ITU_709:
-+			c.colorspace = V4L2_COLORSPACE_REC709;
-+			c.ycbcr_enc = V4L2_YCBCR_ENC_709;
-+			c.xfer_func = V4L2_XFER_FUNC_709;
-+			break;
-+		case HDMI_COLORIMETRY_EXTENDED:
-+			switch (avi->extended_colorimetry) {
-+			case HDMI_EXTENDED_COLORIMETRY_XV_YCC_601:
-+				c.colorspace = V4L2_COLORSPACE_REC709;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_XV709;
-+				c.xfer_func = V4L2_XFER_FUNC_709;
-+				break;
-+			case HDMI_EXTENDED_COLORIMETRY_XV_YCC_709:
-+				c.colorspace = V4L2_COLORSPACE_REC709;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_XV601;
-+				c.xfer_func = V4L2_XFER_FUNC_709;
-+				break;
-+			case HDMI_EXTENDED_COLORIMETRY_S_YCC_601:
-+				c.colorspace = V4L2_COLORSPACE_SRGB;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
-+				c.xfer_func = V4L2_XFER_FUNC_SRGB;
-+				break;
-+			case HDMI_EXTENDED_COLORIMETRY_ADOBE_YCC_601:
-+				c.colorspace = V4L2_COLORSPACE_ADOBERGB;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
-+				c.xfer_func = V4L2_XFER_FUNC_ADOBERGB;
-+				break;
-+			case HDMI_EXTENDED_COLORIMETRY_BT2020:
-+				c.colorspace = V4L2_COLORSPACE_BT2020;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_BT2020;
-+				c.xfer_func = V4L2_XFER_FUNC_709;
-+				break;
-+			case HDMI_EXTENDED_COLORIMETRY_BT2020_CONST_LUM:
-+				c.colorspace = V4L2_COLORSPACE_BT2020;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_BT2020_CONST_LUM;
-+				c.xfer_func = V4L2_XFER_FUNC_709;
-+				break;
-+			default: /* fall back to ITU_709 */
-+				c.colorspace = V4L2_COLORSPACE_REC709;
-+				c.ycbcr_enc = V4L2_YCBCR_ENC_709;
-+				c.xfer_func = V4L2_XFER_FUNC_709;
-+				break;
-+			}
-+			break;
-+		default:
-+			break;
-+		}
-+		/*
-+		 * YCC Quantization Range signaling is more-or-less broken,
-+		 * let's just ignore this.
-+		 */
-+		break;
-+	}
-+	return c;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_hdmi_rx_colorimetry);
-diff --git a/include/media/v4l2-dv-timings.h b/include/media/v4l2-dv-timings.h
-index 61a1889..835aef7 100644
---- a/include/media/v4l2-dv-timings.h
-+++ b/include/media/v4l2-dv-timings.h
-@@ -223,5 +223,26 @@ static inline  bool can_reduce_fps(struct v4l2_bt_timings *bt)
- 	return false;
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 96c44f6576c9..cb52d1e8e0b9 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -349,33 +349,22 @@ static void soc_init_codec_debugfs(struct snd_soc_component *component)
+ 			"ASoC: Failed to create codec register debugfs file\n");
  }
  
-+/**
-+ * struct v4l2_hdmi_rx_colorimetry - describes the HDMI colorimetry information
-+ * @colorspace:		enum v4l2_colorspace, the colorspace
-+ * @ycbcr_enc:		enum v4l2_ycbcr_encoding, Y'CbCr encoding
-+ * @quantization:	enum v4l2_quantization, colorspace quantization
-+ * @xfer_func:		enum v4l2_xfer_func, colorspace transfer function
-+ */
-+struct v4l2_hdmi_colorimetry {
-+	enum v4l2_colorspace colorspace;
-+	enum v4l2_ycbcr_encoding ycbcr_enc;
-+	enum v4l2_quantization quantization;
-+	enum v4l2_xfer_func xfer_func;
-+};
-+
-+struct hdmi_avi_infoframe;
-+struct hdmi_vendor_infoframe;
-+
-+struct v4l2_hdmi_colorimetry
-+v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
-+			 const struct hdmi_vendor_infoframe *hdmi,
-+			 unsigned int height);
+-static int codec_list_seq_show(struct seq_file *m, void *v)
++static int codec_list_show(struct seq_file *s, void *v)
+ {
+ 	struct snd_soc_codec *codec;
  
- #endif
+ 	mutex_lock(&client_mutex);
+ 
+ 	list_for_each_entry(codec, &codec_list, list)
+-		seq_printf(m, "%s\n", codec->component.name);
++		seq_printf(s, "%s\n", codec->component.name);
+ 
+ 	mutex_unlock(&client_mutex);
+ 
+ 	return 0;
+ }
++DEFINE_SHOW_ATTRIBUTE(codec_list);
+ 
+-static int codec_list_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, codec_list_seq_show, NULL);
+-}
+-
+-static const struct file_operations codec_list_fops = {
+-	.open = codec_list_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+-static int dai_list_seq_show(struct seq_file *m, void *v)
++static int dai_list_show(struct seq_file *s, void *v)
+ {
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_dai *dai;
+@@ -384,50 +373,28 @@ static int dai_list_seq_show(struct seq_file *m, void *v)
+ 
+ 	list_for_each_entry(component, &component_list, list)
+ 		list_for_each_entry(dai, &component->dai_list, list)
+-			seq_printf(m, "%s\n", dai->name);
++			seq_printf(s, "%s\n", dai->name);
+ 
+ 	mutex_unlock(&client_mutex);
+ 
+ 	return 0;
+ }
++DEFINE_SHOW_ATTRIBUTE(dai_list);
+ 
+-static int dai_list_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, dai_list_seq_show, NULL);
+-}
+-
+-static const struct file_operations dai_list_fops = {
+-	.open = dai_list_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+-static int platform_list_seq_show(struct seq_file *m, void *v)
++static int platform_list_show(struct seq_file *s, void *v)
+ {
+ 	struct snd_soc_platform *platform;
+ 
+ 	mutex_lock(&client_mutex);
+ 
+ 	list_for_each_entry(platform, &platform_list, list)
+-		seq_printf(m, "%s\n", platform->component.name);
++		seq_printf(s, "%s\n", platform->component.name);
+ 
+ 	mutex_unlock(&client_mutex);
+ 
+ 	return 0;
+ }
+-
+-static int platform_list_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, platform_list_seq_show, NULL);
+-}
+-
+-static const struct file_operations platform_list_fops = {
+-	.open = platform_list_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(platform_list);
+ 
+ static void soc_init_card_debugfs(struct snd_soc_card *card)
+ {
 -- 
-2.7.4
+2.16.1
