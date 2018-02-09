@@ -1,115 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBIP4C (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:56:02 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.216]:15108 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751097AbeBIP4B (ORCPT
+        id S1751140AbeBIQCR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 11:02:17 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36133 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeBIQCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:56:01 -0500
-Date: Fri, 09 Feb 2018 09:56:00 -0600
-Message-ID: <20180209095600.Horde.e7EqwCs_5bRLfE3Nnkfl3L3@gator4166.hostgator.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/nldev: Fix multiple potential NULL pointer
- dereferences
-References: <20180209063702.GA28685@embeddedgus>
- <20180209122549.GK2197@mtr-leonro.local>
- <20180209073649.Horde.OueGLKMtzpLyz4w36quXUca@gator4166.hostgator.com>
- <20180209143541.GN2197@mtr-leonro.local>
-In-Reply-To: <20180209143541.GN2197@mtr-leonro.local>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 108.167.133.22
-X-Source-L: Yes
-X-Exim-ID: 1ekB1s-00337G-Fh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:60260
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Fri, 9 Feb 2018 11:02:16 -0500
+X-Google-Smtp-Source: AH8x2256lt3HseL1WS6HsnkzsIs1PNWhaEGv/S3fJ7jxike4J0DWPHndwTyAglf9Z6ACpZJTkEQrow==
+From: Juri Lelli <juri.lelli@redhat.com>
+To: peterz@infradead.org, mingo@redhat.com, corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-doc@vger.kernel.org
+Subject: [PATCH] Documentation/locking/mutex-design: update to reflect latest changes
+Date: Fri,  9 Feb 2018 17:01:14 +0100
+Message-Id: <20180209160114.19980-1-juri.lelli@redhat.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit 3ca0ff571b09 ("locking/mutex: Rework mutex::owner") reworked the
+basic mutex implementation to deal with several problems. Documentation
+was however left unchanged and became stale.
 
-Quoting Leon Romanovsky <leon@kernel.org>:
+Update mutex-design.txt to reflect changes introduced by the above commit.
 
-> On Fri, Feb 09, 2018 at 07:36:49AM -0600, Gustavo A. R. Silva wrote:
->> Hi Leon,
->>
->> Quoting Leon Romanovsky <leon@kernel.org>:
->>
->> > On Fri, Feb 09, 2018 at 12:37:02AM -0600, Gustavo A. R. Silva wrote:
->> > > In case the message header and payload cannot be stored, function
->> > > nlmsg_put returns null.
->> > >
->> > > Fix this by adding multiple sanity checks and avoid a potential
->> > > null dereference on _nlh_ when calling nlmsg_end.
->> > >
->> > > Addresses-Coverity-ID: 1454215 ("Dereference null return value")
->> > > Addresses-Coverity-ID: 1454223 ("Dereference null return value")
->> > > Addresses-Coverity-ID: 1454224 ("Dereference null return value")
->> > > Addresses-Coverity-ID: 1464669 ("Dereference null return value")
->> > > Addresses-Coverity-ID: 1464670 ("Dereference null return value")
->> > > Addresses-Coverity-ID: 1464672 ("Dereference null return value")
->> > > Fixes: e5c9469efcb1 ("RDMA/netlink: Add nldev device doit  
->> implementation")
->> > > Fixes: c3f66f7b0052 ("RDMA/netlink: Implement nldev port doit callback")
->> > > Fixes: 7d02f605f0dc ("RDMA/netlink: Add nldev port dumpit  
->> implementation")
->> > > Fixes: b5fa635aab8f ("RDMA/nldev: Provide detailed QP information")
->> > > Fixes: bf3c5a93c523 ("RDMA/nldev: Provide global resource utilization")
->> > > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> > > ---
->> > >  drivers/infiniband/core/nldev.c | 26 +++++++++++++++++++++++++-
->> > >  1 file changed, 25 insertions(+), 1 deletion(-)
->> > >
->> >
->> > It will be much better to fix the tool instead of fixing ghost case.
->> > This scenario is impossible for all those flows.
->> > We can receive the skv/msg in two ways:
->> >  * First by allocating new message with NLMSG_DEFAULT_SIZE, which has
->> > more room
->> >    than nlmsg_total_size(payload), payload is 0.
->> >  * Second by getting from netlink.c and it will be at least "struct
->> > nlmsghdr" too.
->> >
->> > Can you please add this info to the commit message?
->> >
->>
->> Actually, I was planing to send a new version of this patch. This time using
->> the unlikely macro for all the null checks on nlh.
->>
->> What do you think?
->
-> It is not datapath, so "unlikely" is not needed. Let's assume that  
-> smart enough
-> compiler will optimize such flow anyway, because nlmsg_put returns NULL
-> in unlikely scenario, so this check will be unlikely automatically too.
->
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/locking/mutex-design.txt | 49 ++++++++++++----------------------
+ 1 file changed, 17 insertions(+), 32 deletions(-)
 
-I'm curious about why the return value of nlmsg_put is null checked  
-118 out of 129 times (based on Coverity reports) in the last  
-linux-next tree.
-
-So based on what you mention, do you think all those checks are  
-actually unnecessary and, maybe they should be removed?
-
-Thanks
---
-Gustavo
+diff --git a/Documentation/locking/mutex-design.txt b/Documentation/locking/mutex-design.txt
+index 60c482df1a38..42de80cb2449 100644
+--- a/Documentation/locking/mutex-design.txt
++++ b/Documentation/locking/mutex-design.txt
+@@ -21,37 +21,23 @@ Implementation
+ --------------
+ 
+ Mutexes are represented by 'struct mutex', defined in include/linux/mutex.h
+-and implemented in kernel/locking/mutex.c. These locks use a three
+-state atomic counter (->count) to represent the different possible
+-transitions that can occur during the lifetime of a lock:
+-
+-	  1: unlocked
+-	  0: locked, no waiters
+-   negative: locked, with potential waiters
+-
+-In its most basic form it also includes a wait-queue and a spinlock
+-that serializes access to it. CONFIG_SMP systems can also include
+-a pointer to the lock task owner (->owner) as well as a spinner MCS
+-lock (->osq), both described below in (ii).
++and implemented in kernel/locking/mutex.c. These locks use an atomic variable
++(->owner) to keep track of the lock state during its lifetime.  Field owner
++actually contains 'struct task_struct *' to the current lock owner and it is
++therefore NULL if not currently owned. Since task_struct pointers are aligned
++at at least L1_CACHE_BYTES, low bits (3) are used to store extra state (e.g.,
++if waiter list is non-empty).  In its most basic form it also includes a
++wait-queue and a spinlock that serializes access to it. Furthermore,
++CONFIG_MUTEX_SPIN_ON_OWNER systems use a spinner MCS lock (->osq), described
++below in (ii).
+ 
+ When acquiring a mutex, there are three possible paths that can be
+ taken, depending on the state of the lock:
+ 
+-(i) fastpath: tries to atomically acquire the lock by decrementing the
+-    counter. If it was already taken by another task it goes to the next
+-    possible path. This logic is architecture specific. On x86-64, the
+-    locking fastpath is 2 instructions:
+-
+-    0000000000000e10 <mutex_lock>:
+-    e21:   f0 ff 0b                lock decl (%rbx)
+-    e24:   79 08                   jns    e2e <mutex_lock+0x1e>
+-
+-   the unlocking fastpath is equally tight:
+-
+-    0000000000000bc0 <mutex_unlock>:
+-    bc8:   f0 ff 07                lock incl (%rdi)
+-    bcb:   7f 0a                   jg     bd7 <mutex_unlock+0x17>
+-
++(i) fastpath: tries to atomically acquire the lock by cmpxchg the owner with
++    current task. This only works in the uncontended case (cmpxchg checks
++    against 0UL, so all 3 state bits above have to be 0). If the lock is
++    contended it goes to the next possible path.
+ 
+ (ii) midpath: aka optimistic spinning, tries to spin for acquisition
+      while the lock owner is running and there are no other tasks ready
+@@ -143,11 +129,10 @@ Test if the mutex is taken:
+ Disadvantages
+ -------------
+ 
+-Unlike its original design and purpose, 'struct mutex' is larger than
+-most locks in the kernel. E.g: on x86-64 it is 40 bytes, almost twice
+-as large as 'struct semaphore' (24 bytes) and tied, along with rwsems,
+-for the largest lock in the kernel. Larger structure sizes mean more
+-CPU cache and memory footprint.
++Unlike its original design and purpose, 'struct mutex' is among the largest
++locks in the kernel. E.g: on x86-64 it is 32 bytes, where 'struct semaphore'
++is 24 bytes and rw_semaphore is 40 bytes. Larger structure sizes mean more CPU
++cache and memory footprint.
+ 
+ When to use mutexes
+ -------------------
+-- 
+2.14.3
