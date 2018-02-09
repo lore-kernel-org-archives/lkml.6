@@ -1,136 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeBIABk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 19:01:40 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47536 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751786AbeBIABj (ORCPT
+        id S1752103AbeBIAHs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 19:07:48 -0500
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:36747 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeBIAHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 19:01:39 -0500
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig102.frc2.facebook.com
-To: <linux-kernel@vger.kernel.org>, <peterz@infradead.org>
-CC: <kernel-team@fb.com>, <ak@linux.intel.com>, <kan.liang@intel.com>,
-        Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: frc2c02
-Subject: [RFC perf] perf: try schedule more hw events, even when previous groups failed
-Date: Thu, 8 Feb 2018 15:59:48 -0800
-Message-ID: <20180208235948.2222416-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        Thu, 8 Feb 2018 19:07:46 -0500
+X-Google-Smtp-Source: AH8x22669fsB8ne0N/J7W2KglbTW1+Nlbse009uwXeYlPXSvd2Scq8oe9Lwwlo7nir/qHrOIRHJgciQFdl4s4Yat4NY=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-08_12:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CAHb3i=uvj_KS4tZ_qZjQdMZ2CCg9_+11FbmvmF4D5DFGtaAW=g@mail.gmail.com>
+References: <1517818975-11427-1-git-send-email-tmaimon77@gmail.com>
+ <1517818975-11427-3-git-send-email-tmaimon77@gmail.com> <CAFd5g445Ae-uBO52sn1WH67tMgc0n_sbi6cS-SuKLhR__D98kg@mail.gmail.com>
+ <CAHb3i=un-LjnV+DWBMkEcDKNFyEi63wh0RR0dHWsHpv2K9erTw@mail.gmail.com> <CAHb3i=uvj_KS4tZ_qZjQdMZ2CCg9_+11FbmvmF4D5DFGtaAW=g@mail.gmail.com>
+From: Brendan Higgins <brendanhiggins@google.com>
+Date: Thu, 8 Feb 2018 16:07:44 -0800
+Message-ID: <CAFd5g44vTyOciaT5+YcVOdxd0=7sxWb3r+gO6_DFv3bmS=EL-w@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] clk: npcm: add NPCM7xx clock driver
+To: Tali Perry <tali.perry1@gmail.com>
+Cc: =?UTF-8?Q?=E2=80=8B_Tomer_Maimon?= <tmaimon77@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Avi Fishman <avifishman70@gmail.com>, Joel Stanley <joel@jms.id.au>,
+        linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In current perf event scheduling, once a hw group failed to schedule, we
-will not try to schedule other hw groups in the list. This behavior is
-reasonable in most cases, but it is weird with ref-cycles on Intel CPUs.
+<snip>
+>> +
+>> +       /* Define fixed clocks.
+>> +        * Notice: the following clocks are fixed value on NPCM7XX and should
+>> +        * not be changed.
+>> +        * therefor they are not exposed to the dev tree .
+>
+> I am not convinced. The top level .dtsi is usually SoC specific.
+>
+> - CLKREF should be fixed on 25MHz. I didn't want to put it in DT since
+> it might appear as something that is changeable.
+>  on npcm750 all clocks are set in ROM +BB (several possible settings)
+> , so this entire driver is only used for reading the current clock
+> settings. All clocks are read only and derived from CLKREF. CLKREF is
+> fixed so no point in putting it in DT and exposing it outside of this
+> driver.
 
-For recent Intel CPUs, ref-cycles can only be served on fixed PMC
-counter2. If there are two perf_events for ref-cycles, schedule will
-fail even when there are still free PMC. Then the scheduler will not
-try other events. In the following example, there are always free PMC
-for event "cycles", but it is only scheduled 66% of time.
+I understand your rationale, but the *.dtsi is typically used to describe the
+SoC, things that cannot change. For example, consider
+arch/arm/boot/dts/nuvoton-npcm750.dtsi, it describes the CPU cores, cache
+hierarchy, peripherals and what busses they reside on, memory layout, etc. None
+of these things are configurable; the *.dtsi just describes the SoC. Typically,
+a *.dts is made for a particular board and imports a *.dtsi and does some
+configuration, but it is not supposed to override things like what I listed
+above (amoung other things).
 
-[root@localhost ~] perf stat -C 0 -e cycles,ref-cycles,ref-cycles  -- sleep 1
- Performance counter stats for 'CPU(s) 0':
+There are several reasons that you put this information that cannot change in a
+*.dtsi. For one it is a convenient, all in one place description of the SoC that
+serves as a form of documentation. But more importantly, if you were to create a
+variation of the 750 with a different number of cores, a different memory
+layout, a different reference clock, etc, you could potentiallly use the same
+drivers for both SoCs, and you would only have to write a new *.dtsi. I know you
+may have no intention to do this, but many other CPU vendors do. And for this
+reason, this is how drivers are expected to be written.
 
-        50,197,136      cycles                             (66.64%)
-        70,278,035      ref-cycles                         (66.67%)
-        73,521,750      ref-cycles                         (33.33%)
+I hope this makes sense.
 
-       1.000860603 seconds time elapsed
-
-This patch slightly change the behavior of the scheduler by always try
-all event groups. With the patch, the same perf command will monitor
-cycles 100% of time.
-
-[root@localhost ~]# perf stat -C 0 -e cycles,ref-cycles,ref-cycles  -- sleep 1
- Performance counter stats for 'CPU(s) 0':
-
-        48,737,503      cycles
-        81,706,878      ref-cycles                         (66.63%)
-        78,632,325      ref-cycles                         (33.37%)
-
-       1.001283168 seconds time elapsed
-
-I understand that this will make scheduling more expensive for some use
-cases. It can be improved by exposing more information from
-event_sched_in() and use different strategies for ref-cycles conflicts
-and all PMC busy cases. But that would be a much bigger change, so I
-would like suggestions before moving ahead with it.
-
-Please share your comments and suggestions on this.
-
-Thanks in advance.
----
- kernel/events/core.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5a54630..efdae82 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2159,8 +2159,7 @@ group_sched_in(struct perf_event *group_event,
-  * Work out whether we can put this event group on the CPU now.
-  */
- static int group_can_go_on(struct perf_event *event,
--			   struct perf_cpu_context *cpuctx,
--			   int can_add_hw)
-+			   struct perf_cpu_context *cpuctx)
- {
- 	/*
- 	 * Groups consisting entirely of software events can always go on.
-@@ -2179,11 +2178,8 @@ static int group_can_go_on(struct perf_event *event,
- 	 */
- 	if (event->attr.exclusive && cpuctx->active_oncpu)
- 		return 0;
--	/*
--	 * Otherwise, try to add it if all previous groups were able
--	 * to go on.
--	 */
--	return can_add_hw;
-+
-+	return 1;
- }
- 
- static void add_event_to_ctx(struct perf_event *event,
-@@ -3004,7 +3000,7 @@ ctx_pinned_sched_in(struct perf_event_context *ctx,
- 		if (!event_filter_match(event))
- 			continue;
- 
--		if (group_can_go_on(event, cpuctx, 1))
-+		if (group_can_go_on(event, cpuctx))
- 			group_sched_in(event, cpuctx, ctx);
- 
- 		/*
-@@ -3021,7 +3017,6 @@ ctx_flexible_sched_in(struct perf_event_context *ctx,
- 		      struct perf_cpu_context *cpuctx)
- {
- 	struct perf_event *event;
--	int can_add_hw = 1;
- 
- 	list_for_each_entry(event, &ctx->flexible_groups, group_entry) {
- 		/* Ignore events in OFF or ERROR state */
-@@ -3034,10 +3029,8 @@ ctx_flexible_sched_in(struct perf_event_context *ctx,
- 		if (!event_filter_match(event))
- 			continue;
- 
--		if (group_can_go_on(event, cpuctx, can_add_hw)) {
--			if (group_sched_in(event, cpuctx, ctx))
--				can_add_hw = 0;
--		}
-+		if (group_can_go_on(event, cpuctx))
-+			group_sched_in(event, cpuctx, ctx);
- 	}
- }
- 
--- 
-2.9.5
+>
+>> +        */
+>> +       pr_debug("\tclk register fixed clocks\n");
+>> +       hw = clk_hw_register_fixed_rate(NULL, NPCM7XX_CLK_S_REFCLK,
+>> +               NULL, 0, 25000000);
+>> +       hw = clk_hw_register_fixed_rate(NULL, NPCM7XX_CLK_S_SYSBYPCK,
+>> +               NULL, 0, 800000000); // rarely used. mostly testing. TBD: remove
+>> +       hw = clk_hw_register_fixed_rate(NULL, NPCM7XX_CLK_S_MCBYPCK,
+>> +               NULL, 0, 800000000); // rarely used.  mostly testing. TBD:remove
+>> +
+>> +
+<snip>
