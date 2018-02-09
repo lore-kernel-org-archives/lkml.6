@@ -1,43 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeBIPvj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:51:39 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:56828 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751004AbeBIPvi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:51:38 -0500
-Date: Fri, 9 Feb 2018 23:51:32 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Artem Savkov <artem.savkov@gmail.com>
-Cc: Corentin Labbe <clabbe.montjoie@gmail.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] sun4i_ss_prng fixes
-Message-ID: <20180209155132.GD22273@gondor.apana.org.au>
-References: <20180206212022.1309-1-artem.savkov@gmail.com>
+        id S1751248AbeBIPxx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 10:53:53 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751004AbeBIPxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 10:53:51 -0500
+Date: Fri, 9 Feb 2018 17:53:50 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH V4 2/2] ptr_ring: try vmalloc() when kmalloc() fails
+Message-ID: <20180209173914-mutt-send-email-mst@kernel.org>
+References: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
+ <1518169550-5987-2-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180206212022.1309-1-artem.savkov@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1518169550-5987-2-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 10:20:20PM +0100, Artem Savkov wrote:
-> IPSec hasn't been working on my a10 board since 4.14 and it turned out to be
-> caused by sun4i_ss_rng driver.
-> 
-> Artem Savkov (2):
->   sun4i_ss_prng: fix return value of sun4i_ss_prng_generate
->   sun4i_ss_prng: convert lock to _bh in sun4i_ss_prng_generate
-> 
->  drivers/crypto/sunxi-ss/sun4i-ss-prng.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, Feb 09, 2018 at 05:45:50PM +0800, Jason Wang wrote:
+> This patch switch to use kvmalloc_array() for using a vmalloc()
+> fallback to help in case kmalloc() fails.
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Above isn't really saying anything about the motivation, it
+just explains what kvmalloc_array does.
+
+How about:
+
+Switch ptr_ring from kmalloc to kvmalloc. This way it can support larger
+ring sizes.
+
+> 
+> Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
+> Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
+
+I don't see this as a bugfix - it's more of an enhancement.
+
+Do we need this in net or can we defer this to net-next?
+
+I'm not sure myself. For now
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+
+
+> ---
+>  include/linux/ptr_ring.h | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> index 6051a5f..b884b77 100644
+> --- a/include/linux/ptr_ring.h
+> +++ b/include/linux/ptr_ring.h
+> @@ -464,11 +464,14 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
+>  	__PTR_RING_PEEK_CALL_v; \
+>  })
+>  
+> +/* Not all gfp_t flags (besides GFP_KERNEL) are allowed. See
+> + * documentation for vmalloc for which of them are legal.
+> + */
+>  static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
+>  {
+>  	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
+>  		return NULL;
+> -	return kcalloc(size, sizeof(void *), gfp);
+> +	return kvmalloc_array(size, sizeof(void *), gfp | __GFP_ZERO);
+>  }
+>  
+>  static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
+> @@ -603,7 +606,7 @@ static inline int ptr_ring_resize(struct ptr_ring *r, int size, gfp_t gfp,
+>  	spin_unlock(&(r)->producer_lock);
+>  	spin_unlock_irqrestore(&(r)->consumer_lock, flags);
+>  
+> -	kfree(old);
+> +	kvfree(old);
+>  
+>  	return 0;
+>  }
+> @@ -643,7 +646,7 @@ static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
+>  	}
+>  
+>  	for (i = 0; i < nrings; ++i)
+> -		kfree(queues[i]);
+> +		kvfree(queues[i]);
+>  
+>  	kfree(queues);
+>  
+> @@ -651,7 +654,7 @@ static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
+>  
+>  nomem:
+>  	while (--i >= 0)
+> -		kfree(queues[i]);
+> +		kvfree(queues[i]);
+>  
+>  	kfree(queues);
+>  
+> @@ -666,7 +669,7 @@ static inline void ptr_ring_cleanup(struct ptr_ring *r, void (*destroy)(void *))
+>  	if (destroy)
+>  		while ((ptr = ptr_ring_consume(r)))
+>  			destroy(ptr);
+> -	kfree(r->queue);
+> +	kvfree(r->queue);
+>  }
+>  
+>  #endif /* _LINUX_PTR_RING_H  */
+> -- 
+> 2.7.4
