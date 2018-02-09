@@ -1,65 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751131AbeBIMf0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:35:26 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:34374 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751058AbeBIMfY (ORCPT
+        id S1751195AbeBIMfw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:35:52 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:53260 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750918AbeBIMfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:35:24 -0500
-Date: Fri, 9 Feb 2018 13:35:10 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Dmitry Safonov <dima@arista.com>, David Miller <davem@davemloft.net>,
-        frederic@kernel.org, linux-kernel@vger.kernel.org,
-        alexander.levin@verizon.com, peterz@infradead.org,
-        mchehab@s-opensource.com, torvalds@linux-foundation.org,
-        hannes@stressinduktion.org, paulmck@linux.vnet.ibm.com,
-        wanpeng.li@hotmail.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        pabeni@redhat.com, rrendec@arista.com, mingo@kernel.org,
-        sgruszka@redhat.com, riel@redhat.com, edumazet@google.com
-Subject: Re: [RFC PATCH 2/4] softirq: Per vector deferment to workqueue
-Message-ID: <20180209123510.2qxgkky5juejjvcg@linutronix.de>
-References: <20180208174450.qjvjy752jf4ngt2g@breakpoint.cc>
- <20180208.134506.1374787894560277876.davem@davemloft.net>
- <1518120895.2849.14.camel@arista.com>
- <20180208.152236.2148696725742511754.davem@davemloft.net>
- <1518121820.2849.17.camel@arista.com>
- <1518149468.24350.40.camel@gmx.de>
+        Fri, 9 Feb 2018 07:35:51 -0500
+Date: Fri, 9 Feb 2018 13:35:39 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: Rohit Jain <rohit.k.jain@oracle.com>, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        "Cc: EAS Dev" <eas-dev@lists.linaro.org>
+Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
+ select_idle_sibling
+Message-ID: <20180209123539.GM25201@hirez.programming.kicks-ass.net>
+References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
+ <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518149468.24350.40.camel@gmx.de>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-09 05:11:08 [+0100], Mike Galbraith wrote:
-> On Thu, 2018-02-08 at 20:30 +0000, Dmitry Safonov wrote:
-> > On Thu, 2018-02-08 at 15:22 -0500, David Miller wrote:
-> > > Why do we need more than one per cpu?
-> > 
-> > Ugh, yeah, I remember why I did it - I tried to reuse scheduler for
-> > each ksoftirqd thread to decide if it need to run now or later.
-> > That would give an admin a way to prioritise softirqs with nice.
-> > Not sure if it's a nice idea at all..
+On Mon, Jan 29, 2018 at 07:39:15PM -0800, Joel Fernandes wrote:
+
+> > @@ -6081,7 +6086,7 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
+> >
+> >                 for_each_cpu(cpu, cpu_smt_mask(core)) {
+> >                         cpumask_clear_cpu(cpu, cpus);
+> > -                       if (!idle_cpu(cpu))
+> > +                       if (!idle_cpu(cpu) || !full_capacity(cpu))
+> >                                 idle = false;
+> >                 }
 > 
-> For RT that can be handy, but for the general case it's a waste of
-> cycles, so would want to be opt-in.
+> There's some difference in logic between select_idle_core and
+> select_idle_cpu as far as the full_capacity stuff you're adding goes.
+> In select_idle_core, if all CPUs are !full_capacity, you're returning
+> -1. But in select_idle_cpu you're returning the best idle CPU that's
+> the most cap among the !full_capacity ones. Why there is this
+> different in logic? Did I miss something?
 
-We used to have it in RT. It got replaced because the context switch from
-one thread to the other simply took time.
-If you need to prioritise one softirqs over the other I think you would
-be better off running with threaded-interrupts. In "normal" mode, if you
-have a raised NAPI and say a TASKLET then once both IRQ handler complete
-(and interrupts get enabled again) then the softirqs are run. With
-threaded interrupts enabled, the NAPI-softirq is invoked once the
-threaded-handler completes that raised it - same goes the other threaded
-handler which raised the tasklet softirq.
-So you could simply change the priority of the threaded interrupt in
-order to prefer NAPI over tasklet handling (or the other way around).
+select_idle_core() wants to find a whole core that's idle, the way he
+changed it we'll not consider a core idle if one (or more) of the
+siblings have a heavy IRQ load.
 
-> 	-Mike
+select_idle_cpu() just wants an idle (logical) CPU, and here it looks
+for 
 
-Sebastian
+> >
+> > @@ -6102,7 +6107,8 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
+> >   */
+> >  static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int target)
+> >  {
+> > -       int cpu;
+> > +       int cpu, rcpu = -1;
+> > +       unsigned long max_cap = 0;
+> >
+> >         if (!static_branch_likely(&sched_smt_present))
+> >                 return -1;
+> > @@ -6110,11 +6116,13 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+> >         for_each_cpu(cpu, cpu_smt_mask(target)) {
+> >                 if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+> >                         continue;
+> > -               if (idle_cpu(cpu))
+> > -                       return cpu;
+> > +               if (idle_cpu(cpu) && (capacity_of(cpu) > max_cap)) {
+> > +                       max_cap = capacity_of(cpu);
+> > +                       rcpu = cpu;
+> 
+> At the SMT level, do you need to bother with choosing best capacity
+> among threads? If RT is eating into one of the SMT thread's underlying
+> capacity, it would eat into the other's. Wondering what's the benefit
+> of doing this here.
+
+Its about latency mostly I think; scheduling on the other sibling gets
+you to run faster -- the core will interleave the SMT threads and you
+don't get to suffer the interrupt load _as_bad_.
+
+If people really cared about their RT workload, they would not allow
+regular tasks on its siblings in any case.
