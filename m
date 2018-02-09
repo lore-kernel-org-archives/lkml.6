@@ -1,214 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750952AbeBIJJj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:09:39 -0500
-Received: from mga03.intel.com ([134.134.136.65]:27033 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750789AbeBIJJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:09:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,482,1511856000";
-   d="scan'208";a="29434595"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/8] docs: kernel-doc: Get rid of xml_escape() and friends
-In-Reply-To: <20180207172624.24555-2-corbet@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180207172624.24555-1-corbet@lwn.net> <20180207172624.24555-2-corbet@lwn.net>
-Date: Fri, 09 Feb 2018 11:09:27 +0200
-Message-ID: <87inb6a5rs.fsf@intel.com>
+        id S1751070AbeBIJLY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:11:24 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41194 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750825AbeBIJLS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:11:18 -0500
+X-Google-Smtp-Source: AH8x225ec5QR4QgtbTHHT6SqHmK0EwMyMaGB9w8ypibyeJHKV+Muf0yKfxg2K9ws7iQ6NaTaGKjkKQ==
+Date: Fri, 9 Feb 2018 10:11:10 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        stern@rowland.harvard.edu, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        boqun.feng@gmail.com, will.deacon@arm.com, npiggin@gmail.com,
+        dhowells@redhat.com, elena.reshetova@intel.com, mhocko@suse.com,
+        akiyks@gmail.com
+Subject: Re: [GIT PULL tools] Linux kernel memory model
+Message-ID: <20180209091110.GA14128@andrea>
+References: <20180125093440.GA875@linux.vnet.ibm.com>
+ <20180208184106.GA17043@e110439-lin>
+ <20180208200219.GE25181@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208200219.GE25181@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 07 Feb 2018, Jonathan Corbet <corbet@lwn.net> wrote:
-> XML escaping is a worry that came with DocBook, which we no longer have any
-> dealings with.  So get rid of the useless xml_escape()/xml_unescape()
-> functions.  No change to the generated output.
+On Thu, Feb 08, 2018 at 09:02:19PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 08, 2018 at 06:41:06PM +0000, Patrick Bellasi wrote:
+> > Hi Paul,
+> > thanks to you and all the involved guys for this useful tool.
+> > 
+> > I give it a try today and found that by installing herd7 by just
+> > following the instruction in herdtools7/INSTALL.md, and precisely
+> > installing it via:
+> > 
+> >    opam install herdtools7
+> > 
+> > it seems to give you a tool which fails to run the basic example in
+> > your README with this error:
+> > 
+> >    File "./linux-kernel.def", line 44, characters 29-30: unexpected '-' (in macros)
+> > 
+> > As suggested by Will, by building instead herd7 HEAD (commit 44d69c2)
+> > everything works fine.
+> > 
+> > Maybe it's a know issue, in case just ignore me. :)
+> > 
+> > Otherwise, maybe it can be worth to add to the README a note on which
+> > minimum version of the herd7 tool is required.
+> > 
+> >  opma   version (not working)    : 7.47, Rev: exported
+> >  master version (working for me) : 7.47+7(dev), Rev: 44d69c2b1b5ca0f97bd138899d31532ee5e4e084
+> 
+> Urgh. So that's why it wouldn't work.
+> 
+> I remember Paul saying you needed the latest version, which is why I
+> rebuild from opam, but building top of git is a bit much.
 
-I think this will break at least the -docbook output option, perhaps
-also -html and -html5 options. If you think it's okay to break them,
-would it not be better to just axe those off first?
++1
 
-I guess this boils down to, is kernel-doc the script a general purpose
-tool, or just a very specific part of the kernel documentation build
-process?
+_Sadly_ enough, co-developers and I were aware of this issue,
+but it was only mildly reported here (c.f.,
 
-FWIW I think the latter, and why don't you throw docbook/html support
-out already!
+  https://marc.info/?l=linux-kernel&m=151638196427685&w=2 ).
 
+This bisects to that (crazy):
 
-BR,
-Jani.
+  2d5fba7782d669c6a1cc577dbc3bf507780273bb
+  ("linux-kernel*: Make RCU identifiers match ASPLOS paper")
 
+  From repo.: https://github.com/aparri/memory-model
 
->
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  scripts/kernel-doc | 65 ++++++++----------------------------------------------
->  1 file changed, 9 insertions(+), 56 deletions(-)
->
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index fee8952037b1..5aa4ce211fc6 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -553,10 +553,9 @@ sub output_highlight {
->  	}
->  	if ($line eq ""){
->  	    if (! $output_preformatted) {
-> -		print $lineprefix, local_unescape($blankline);
-> +		print $lineprefix, $blankline;
->  	    }
->  	} else {
-> -	    $line =~ s/\\\\\\/\&/g;
->  	    if ($output_mode eq "man" && substr($line, 0, 1) eq ".") {
->  		print "\\&$line";
->  	    } else {
-> @@ -751,9 +750,6 @@ sub output_highlight_rst {
->      my $contents = join "\n",@_;
->      my $line;
->  
-> -    # undo the evil effects of xml_escape() earlier
-> -    $contents = xml_unescape($contents);
-> -
->      eval $dohighlight;
->      die $@ if $@;
->  
-> @@ -1422,8 +1418,6 @@ sub push_parameter($$$$) {
->  		}
->  	}
->  
-> -	$param = xml_escape($param);
-> -
->  	# strip spaces from $param so that it is one continuous string
->  	# on @parameterlist;
->  	# this fixes a problem where check_sections() cannot find
-> @@ -1748,47 +1742,6 @@ sub process_proto_type($$) {
->      }
->  }
->  
-> -# xml_escape: replace <, >, and & in the text stream;
-> -#
-> -# however, formatting controls that are generated internally/locally in the
-> -# kernel-doc script are not escaped here; instead, they begin life like
-> -# $blankline_html (4 of '\' followed by a mnemonic + ':'), then these strings
-> -# are converted to their mnemonic-expected output, without the 4 * '\' & ':',
-> -# just before actual output; (this is done by local_unescape())
-> -sub xml_escape($) {
-> -	my $text = shift;
-> -	if ($output_mode eq "man") {
-> -		return $text;
-> -	}
-> -	$text =~ s/\&/\\\\\\amp;/g;
-> -	$text =~ s/\</\\\\\\lt;/g;
-> -	$text =~ s/\>/\\\\\\gt;/g;
-> -	return $text;
-> -}
-> -
-> -# xml_unescape: reverse the effects of xml_escape
-> -sub xml_unescape($) {
-> -	my $text = shift;
-> -	if ($output_mode eq "man") {
-> -		return $text;
-> -	}
-> -	$text =~ s/\\\\\\amp;/\&/g;
-> -	$text =~ s/\\\\\\lt;/</g;
-> -	$text =~ s/\\\\\\gt;/>/g;
-> -	return $text;
-> -}
-> -
-> -# convert local escape strings to html
-> -# local escape strings look like:  '\\\\menmonic:' (that's 4 backslashes)
-> -sub local_unescape($) {
-> -	my $text = shift;
-> -	if ($output_mode eq "man") {
-> -		return $text;
-> -	}
-> -	$text =~ s/\\\\\\\\lt:/</g;
-> -	$text =~ s/\\\\\\\\gt:/>/g;
-> -	return $text;
-> -}
->  
->  sub map_filename($) {
->      my $file;
-> @@ -1889,7 +1842,7 @@ sub process_file($) {
->  		    $descr =~ s/^\s*//;
->  		    $descr =~ s/\s*$//;
->  		    $descr =~ s/\s+/ /g;
-> -		    $declaration_purpose = xml_escape($descr);
-> +		    $declaration_purpose = $descr;
->  		    $in_purpose = 1;
->  		} else {
->  		    $declaration_purpose = "";
-> @@ -1944,7 +1897,7 @@ sub process_file($) {
->  			print STDERR "${file}:$.: warning: contents before sections\n";
->  			++$warnings;
->  		    }
-> -		    dump_section($file, $section, xml_escape($contents));
-> +		    dump_section($file, $section, $contents);
->  		    $section = $section_default;
->  		}
->  
-> @@ -1962,7 +1915,7 @@ sub process_file($) {
->  		$leading_space = undef;
->  	    } elsif (/$doc_end/) {
->  		if (($contents ne "") && ($contents ne "\n")) {
-> -		    dump_section($file, $section, xml_escape($contents));
-> +		    dump_section($file, $section, $contents);
->  		    $section = $section_default;
->  		    $contents = "";
->  		}
-> @@ -1981,7 +1934,7 @@ sub process_file($) {
->  		# @parameter line to signify start of description
->  		if ($1 eq "") {
->  		    if ($section =~ m/^@/ || $section eq $section_context) {
-> -			dump_section($file, $section, xml_escape($contents));
-> +			dump_section($file, $section, $contents);
->  			$section = $section_default;
->  			$contents = "";
->                          $new_start_line = $.;
-> @@ -1992,7 +1945,7 @@ sub process_file($) {
->  		} elsif ($in_purpose == 1) {
->  		    # Continued declaration purpose
->  		    chomp($declaration_purpose);
-> -		    $declaration_purpose .= " " . xml_escape($1);
-> +		    $declaration_purpose .= " " . $1;
->  		    $declaration_purpose =~ s/\s+/ /g;
->  		} else {
->  		    my $cont = $1;
-> @@ -2030,7 +1983,7 @@ sub process_file($) {
->  	    # Documentation block end */
->  	    } elsif (/$doc_inline_end/) {
->  		if (($contents ne "") && ($contents ne "\n")) {
-> -		    dump_section($file, $section, xml_escape($contents));
-> +		    dump_section($file, $section, $contents);
->  		    $section = $section_default;
->  		    $contents = "";
->  		}
-> @@ -2057,7 +2010,7 @@ sub process_file($) {
->  		$contents = $2;
->  		if ($contents ne "") {
->  		    $contents .= "\n";
-> -		    dump_section($file, $section, xml_escape($contents));
-> +		    dump_section($file, $section, $contents);
->  		    $section = $section_default;
->  		    $contents = "";
->  		}
-> @@ -2072,7 +2025,7 @@ sub process_file($) {
->  	} elsif ($state == STATE_DOCBLOCK) {
->  		if (/$doc_end/)
->  		{
-> -			dump_doc_section($file, $section, xml_escape($contents));
-> +			dump_doc_section($file, $section, $contents);
->  			$section = $section_default;
->  			$contents = "";
->  			$function = "";
+which not only did break 7.47, but also made the bell uglier
+by mixing dashes and underscores in a very same block.
 
--- 
-Jani Nikula, Intel Open Source Technology Center
+As a solution to this issue, I can envisage a partial revert
+of that commit (just replace those dashes); Paul, Jade, Luc:
+any better solution?
+
+(Sorry for being late on IRC, glad this came out here,)
+
+  Andrea
