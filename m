@@ -1,143 +1,269 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752703AbeBIJ3e (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:29:34 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46082 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751093AbeBIJ1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:27:37 -0500
-Date: Fri, 9 Feb 2018 10:27:34 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Stephane Eranian <eranian@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH] perf report: Add support to display group output for non
- group events
-Message-ID: <20180209092734.GB20449@krava>
-References: <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
- <20180202202849.GA8297@kernel.org>
- <20180202204004.GB8297@kernel.org>
- <CABPqkBQniVqi_7OuEmWQohWSsnp17BkDMRYgOE1RQYE00GpuVw@mail.gmail.com>
- <20180205151720.GA29340@krava>
- <CABPqkBRDVfoTEfR-4XLkYKKbPenpFfQ0QkibSBO1iTTAYQbzLA@mail.gmail.com>
- <20180205211340.GD25353@kernel.org>
- <CABPqkBQ272K=f7eYzk1MkgG04sy_szkMuyyTmyNEVSyBdYo-Og@mail.gmail.com>
- <20180206093553.GA8065@krava>
- <CABPqkBTXhL1U0HBbc2J0mdpGDiC2LG=Cm8MN+Pp_K=a_euDuUg@mail.gmail.com>
+        id S1752533AbeBIJc4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:32:56 -0500
+Received: from mga12.intel.com ([192.55.52.136]:60334 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750973AbeBIJcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:32:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,482,1511856000";
+   d="scan'208";a="29438417"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 5/8] docs: kernel-doc: Move STATE_BODY processing to a separate function
+In-Reply-To: <20180207172624.24555-6-corbet@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180207172624.24555-1-corbet@lwn.net> <20180207172624.24555-6-corbet@lwn.net>
+Date: Fri, 09 Feb 2018 11:32:45 +0200
+Message-ID: <877erma4oy.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBTXhL1U0HBbc2J0mdpGDiC2LG=Cm8MN+Pp_K=a_euDuUg@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 10:52:35AM -0800, Stephane Eranian wrote:
+On Wed, 07 Feb 2018, Jonathan Corbet <corbet@lwn.net> wrote:
+> Also group the pseudo-global $leading_space variable with its peers.
+>
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/kernel-doc | 193 ++++++++++++++++++++++++++++-------------------------
+>  1 file changed, 101 insertions(+), 92 deletions(-)
+>
+> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+> index a27c7016f72d..a6a7bb46ea29 100755
+> --- a/scripts/kernel-doc
+> +++ b/scripts/kernel-doc
+> @@ -336,6 +336,7 @@ use constant {
+>  };
+>  my $state;
+>  my $in_doc_sect;
+> +my $leading_space;
+>  
+>  # Inline documentation state
+>  use constant {
+> @@ -1865,12 +1866,110 @@ sub process_name($$) {
+>      }
+>  }
+>  
+> +
+> +#
+> +# STATE_BODY and STATE_BODY_MAYBE: the bulk of a kerneldoc comment.
+> +#
+> +sub process_body($$) {
+> +    my $file = shift;
+> +
+> +    if (/$doc_sect/i) { # case insensitive for supported section names
+> +	$newsection = $1;
+> +	$newcontents = $2;
+> +
+> +	# map the supported section names to the canonical names
+> +	if ($newsection =~ m/^description$/i) {
+> +	    $newsection = $section_default;
+> +	} elsif ($newsection =~ m/^context$/i) {
+> +	    $newsection = $section_context;
+> +	} elsif ($newsection =~ m/^returns?$/i) {
+> +	    $newsection = $section_return;
+> +	} elsif ($newsection =~ m/^\@return$/) {
+> +	    # special: @return is a section, not a param description
+> +	    $newsection = $section_return;
+> +	}
+> +
+> +	if (($contents ne "") && ($contents ne "\n")) {
+> +	    if (!$in_doc_sect && $verbose) {
+> +		print STDERR "${file}:$.: warning: contents before sections\n";
+> +		++$warnings;
+> +	    }
+> +	    dump_section($file, $section, $contents);
+> +	    $section = $section_default;
+> +	}
+> +
+> +	$in_doc_sect = 1;
+> +	$state = STATE_BODY;
+> +	$contents = $newcontents;
+> +	$new_start_line = $.;
+> +	while (substr($contents, 0, 1) eq " ") {
+> +	    $contents = substr($contents, 1);
+> +	}
+> +	if ($contents ne "") {
+> +	    $contents .= "\n";
+> +	}
+> +	$section = $newsection;
+> +	$leading_space = undef;
+> +    } elsif (/$doc_end/) {
+> +	if (($contents ne "") && ($contents ne "\n")) {
+> +	    dump_section($file, $section, $contents);
+> +	    $section = $section_default;
+> +	    $contents = "";
+> +	}
+> +	# look for doc_com + <text> + doc_end:
+> +	if ($_ =~ m'\s*\*\s*[a-zA-Z_0-9:\.]+\*/') {
+> +	    print STDERR "${file}:$.: warning: suspicious ending line: $_";
+> +	    ++$warnings;
+> +	}
+> +
+> +	$prototype = "";
+> +	$state = STATE_PROTO;
+> +	$brcount = 0;
+> +    } elsif (/$doc_content/) {
+> +	# miguel-style comment kludge, look for blank lines after
+> +	# @parameter line to signify start of description
 
-SNIP
+The "miguel-style" always intrigued me, but its origin predates git
+history. Does anyone know?
 
-> >> Similar to what I get if I do instead:
-> >> $ perf record -e '{branches,branches,branches,branches}' my_test
-> >> $ perf report --group
-> >>
-> >> But here, I would have to ensure all events fits in a group to allow
-> >> the reporting
-> >> I want. So that would limit me to 4 events.
-> >>
-> >> I think perf report --group should work regardless of how the events
-> >> were grouped.
-> >> Is there already a way to work around this?
-> >
-> > no workaround.. please try attached patch, it seems
-> > to work for what you described
-> >
-> Works for me. That's great!
-> Thanks.
-> 
-> Tested-By: Stephane Eranian <eranian@google.com>
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
-thanks, full patch attached
+> +	if ($1 eq "") {
+> +	    if ($section =~ m/^@/ || $section eq $section_context) {
+> +		dump_section($file, $section, $contents);
+> +		$section = $section_default;
+> +		$contents = "";
+> +		$new_start_line = $.;
+> +	    } else {
+> +		$contents .= "\n";
+> +	    }
+> +	    $state = STATE_BODY;
+> +	} elsif ($state == STATE_BODY_MAYBE) {
+> +	    # Continued declaration purpose
+> +	    chomp($declaration_purpose);
+> +	    $declaration_purpose .= " " . $1;
+> +	    $declaration_purpose =~ s/\s+/ /g;
+> +	} else {
+> +	    my $cont = $1;
+> +	    if ($section =~ m/^@/ || $section eq $section_context) {
+> +		if (!defined $leading_space) {
+> +		    if ($cont =~ m/^(\s+)/) {
+> +			$leading_space = $1;
+> +		    } else {
+> +			$leading_space = "";
+> +		    }
+> +		}
+> +		$cont =~ s/^$leading_space//;
+> +	    }
+> +	    $contents .= $cont . "\n";
+> +	}
+> +    } else {
+> +	# i dont know - bad line?  ignore.
+> +	print STDERR "${file}:$.: warning: bad line: $_";
+> +	++$warnings;
+> +    }
+> +}
+> +
+> +
+>  sub process_file($) {
+>      my $file;
+>      my $func;
+>      my $initial_section_counter = $section_counter;
+>      my ($orig_file) = @_;
+> -    my $leading_space;
+>  
+>      $file = map_filename($orig_file);
+>  
+> @@ -1894,97 +1993,7 @@ sub process_file($) {
+>  	} elsif ($state == STATE_NAME) {
+>  	    process_name($file, $_);
+>  	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
+> -	    if (/$doc_sect/i) { # case insensitive for supported section names
+> -		$newsection = $1;
+> -		$newcontents = $2;
+> -
+> -		# map the supported section names to the canonical names
+> -		if ($newsection =~ m/^description$/i) {
+> -		    $newsection = $section_default;
+> -		} elsif ($newsection =~ m/^context$/i) {
+> -		    $newsection = $section_context;
+> -		} elsif ($newsection =~ m/^returns?$/i) {
+> -		    $newsection = $section_return;
+> -		} elsif ($newsection =~ m/^\@return$/) {
+> -		    # special: @return is a section, not a param description
+> -		    $newsection = $section_return;
+> -		}
+> -
+> -		if (($contents ne "") && ($contents ne "\n")) {
+> -		    if (!$in_doc_sect && $verbose) {
+> -			print STDERR "${file}:$.: warning: contents before sections\n";
+> -			++$warnings;
+> -		    }
+> -		    dump_section($file, $section, $contents);
+> -		    $section = $section_default;
+> -		}
+> -
+> -		$in_doc_sect = 1;
+> -		$state = STATE_BODY;
+> -		$contents = $newcontents;
+> -                $new_start_line = $.;
+> -		while (substr($contents, 0, 1) eq " ") {
+> -		    $contents = substr($contents, 1);
+> -		}
+> -		if ($contents ne "") {
+> -		    $contents .= "\n";
+> -		}
+> -		$section = $newsection;
+> -		$leading_space = undef;
+> -	    } elsif (/$doc_end/) {
+> -		if (($contents ne "") && ($contents ne "\n")) {
+> -		    dump_section($file, $section, $contents);
+> -		    $section = $section_default;
+> -		    $contents = "";
+> -		}
+> -		# look for doc_com + <text> + doc_end:
+> -		if ($_ =~ m'\s*\*\s*[a-zA-Z_0-9:\.]+\*/') {
+> -		    print STDERR "${file}:$.: warning: suspicious ending line: $_";
+> -		    ++$warnings;
+> -		}
+> -
+> -		$prototype = "";
+> -		$state = STATE_PROTO;
+> -		$brcount = 0;
+> -#		print STDERR "end of doc comment, looking for prototype\n";
+> -	    } elsif (/$doc_content/) {
+> -		# miguel-style comment kludge, look for blank lines after
+> -		# @parameter line to signify start of description
+> -		if ($1 eq "") {
+> -		    if ($section =~ m/^@/ || $section eq $section_context) {
+> -			dump_section($file, $section, $contents);
+> -			$section = $section_default;
+> -			$contents = "";
+> -                        $new_start_line = $.;
+> -		    } else {
+> -			$contents .= "\n";
+> -		    }
+> -		    $state = STATE_BODY;
+> -		} elsif ($state == STATE_BODY_MAYBE) {
+> -		    # Continued declaration purpose
+> -		    chomp($declaration_purpose);
+> -		    $declaration_purpose .= " " . $1;
+> -		    $declaration_purpose =~ s/\s+/ /g;
+> -		} else {
+> -		    my $cont = $1;
+> -		    if ($section =~ m/^@/ || $section eq $section_context) {
+> -			if (!defined $leading_space) {
+> -			    if ($cont =~ m/^(\s+)/) {
+> -				$leading_space = $1;
+> -			    } else {
+> -				$leading_space = "";
+> -			    }
+> -			}
+> -
+> -			$cont =~ s/^$leading_space//;
+> -		    }
+> -		    $contents .= $cont . "\n";
+> -		}
+> -	    } else {
+> -		# i dont know - bad line?  ignore.
+> -		print STDERR "${file}:$.: warning: bad line: $_";
+> -		++$warnings;
+> -	    }
+> +	    process_body($file, $_);
+>  	} elsif ($state == STATE_INLINE) { # scanning for inline parameters
+>  	    # First line (state 1) needs to be a @parameter
+>  	    if ($inline_doc_state == STATE_INLINE_NAME && /$doc_inline_sect/o) {
 
-jirka
-
-
----
-Add support to display group output for if non grouped events
-are detected and user forces --group option. Now for non-group
-events recorded like:
-
-  $ perf record -e 'cycles,instructions' ls
-
-you can still get group output by using --group option
-in report:
-
-  $ perf report --group --stdio
-  ...
-  #         Overhead  Command  Shared Object     Symbol
-  # ................  .......  ................  ......................
-  #
-      17.67%   0.00%  ls       libc-2.25.so      [.] _IO_do_write@@GLIB
-      15.59%  25.94%  ls       ls                [.] calculate_columns
-      15.41%  31.35%  ls       libc-2.25.so      [.] __strcoll_l
-  ...
-
-Requested-and-Tested-by: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/n/tip-m1ffikw8c3a55b3uaxrmk5w3@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/Documentation/perf-report.txt | 3 ++-
- tools/perf/builtin-report.c              | 6 +++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index 907e505b6309..a76b871f78a6 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -354,7 +354,8 @@ OPTIONS
-         Path to objdump binary.
- 
- --group::
--	Show event group information together.
-+	Show event group information together. It forces group output also
-+	if there are no groups defined in data file.
- 
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 8ef71669e7a0..1eedb1815c4c 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -938,6 +938,7 @@ int cmd_report(int argc, const char **argv)
- 		"perf report [<options>]",
- 		NULL
- 	};
-+	bool group_set = false;
- 	struct report report = {
- 		.tool = {
- 			.sample		 = process_sample_event,
-@@ -1057,7 +1058,7 @@ int cmd_report(int argc, const char **argv)
- 		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
- 	OPT_BOOLEAN(0, "show-total-period", &symbol_conf.show_total_period,
- 		    "Show a column with the sum of periods"),
--	OPT_BOOLEAN(0, "group", &symbol_conf.event_group,
-+	OPT_BOOLEAN_SET(0, "group", &symbol_conf.event_group, &group_set,
- 		    "Show event group information together"),
- 	OPT_CALLBACK_NOOPT('b', "branch-stack", &branch_mode, "",
- 		    "use branch records for per branch histogram filling",
-@@ -1174,6 +1175,9 @@ int cmd_report(int argc, const char **argv)
- 	has_br_stack = perf_header__has_feat(&session->header,
- 					     HEADER_BRANCH_STACK);
- 
-+	if (group_set && !session->evlist->nr_groups)
-+		perf_evlist__set_leader(session->evlist);
-+
- 	if (itrace_synth_opts.last_branch)
- 		has_br_stack = true;
- 
 -- 
-2.13.6
+Jani Nikula, Intel Open Source Technology Center
