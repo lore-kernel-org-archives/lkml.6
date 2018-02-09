@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeBIWlh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 17:41:37 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43558 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753076AbeBIWlf (ORCPT
+        id S1753178AbeBIWnE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 17:43:04 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:37024 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752910AbeBIWnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 17:41:35 -0500
-X-Google-Smtp-Source: AH8x224agCLRxNBjScyWq+Pe6gzsoWybprVDvw1BQCRFpWp/mQHvwvoX7iss9/AhuWjxXcYVVHxItA==
-Date: Fri, 9 Feb 2018 14:41:33 -0800
+        Fri, 9 Feb 2018 17:43:02 -0500
+X-Google-Smtp-Source: AH8x2253Vw/1xeTWxh4bDFNiVLaVkezXL96KKgfrMRwLwNXCKyMdu0u3EXRTxypu6tuw1rLcG1Litg==
+Date: Fri, 9 Feb 2018 14:43:00 -0800
 From: Guenter Roeck <linux@roeck-us.net>
 To: Marcus Folkesson <marcus.folkesson@gmail.com>
 Cc: Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
@@ -28,7 +28,7 @@ Cc: Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
         linux-mediatek@lists.infradead.org
 Subject: Re: [PATCH 4/7] watchdog: pnx4008: make use of timeout-secs provided
  in devicetree
-Message-ID: <20180209224133.GE19627@roeck-us.net>
+Message-ID: <20180209224300.GF19627@roeck-us.net>
 References: <marcus.folkesson@gmail.com>
  <20180209192724.1227-1-marcus.folkesson@gmail.com>
  <20180209192724.1227-5-marcus.folkesson@gmail.com>
