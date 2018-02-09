@@ -1,97 +1,86 @@
-Return-Path: <David.Laight@aculab.com>
-X-Google-Smtp-Source: AH8x225bEzi8dipOPGNAClOJF0I8gbsW7/Gh9uuLy+lnOsopzUDjmSyibcG9u9BGRp32wqVWdgKD
-ARC-Seal: i=1; a=rsa-sha256; t=1518277246; cv=none;
+Return-Path: <dvlasenk@redhat.com>
+X-Google-Smtp-Source: AH8x2260IAwc5Y64qZWknsxyzyI4hD3p6PspCHI64Okwmqbmysvz2KLFdHVIKjLZE/CWlBKdQCGM
+ARC-Seal: i=1; a=rsa-sha256; t=1518204661; cv=none;
         d=google.com; s=arc-20160816;
-        b=zFDSdGkFmf7UqvnV/z186QnoB2OhcWBa/aoCblFBBh2/gTLTl6dqLyOScRmMCNmae/
-         hkHbKZzRTesD54d5zRsCnrPKK4lsN+gHoyzS5SomQv5oR7944PWw5WV+wBE0qUXTpHvF
-         iO3yAR9C88oCP85xdSThVPSvBKX+1r7XKMrqkat3hE3BZ1x9YnOfStBChz6DxziFMChy
-         z4YZ7D0DZEVCSygeG8EkNjqAAV5TsjBcSPKmaCuTeaQi23JE6r5eZjavm1KcbSyCZRBD
-         f8EHWv8DvGgsYZV9JUM5DLmOsMyDqGcC/WmgJR81ecFbcWcEzv+49c8dGtb4DcegoA31
-         Qg2w==
+        b=ttvhWnJg0KFsJu5wUbMvcTN4xf2jeUfOwXyOirzVeCZnUaA6F1or2IsrDpBCadgywG
+         j8vssi/SFfW2E6MwuRDztd79/s0JfqtHqoivjyGPhGX9V2x1jnEqwV2HsrrCxsQOQdX/
+         Yr+s4Ve+cgL2o0XwU63h5200GEEZMegcjVCey7TDwOKhb0HsdZLfn2vRenQsWZi0LIVH
+         1y3vgmpHhTCdH6Ce/vPCNRCzhBsx4AAQW9vHktSWNqCol3IN0UrB7rcdiOsTQg3zNmsz
+         76YJwfs6h2cxZjoPVaWiMNu/Ym5GnmEaUfW/p0rYTRau9T8OXubWupAJHQImhRyoow2V
+         lMbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=e09b1B+qXSR7Oa7jGfXTEWPPIXHwAyBXCWHu4wKqllE=;
-        b=UMC+z9Mo91a5L/sDVB3In1I6GCp0AEKGSiAGelwyNk7USpN4Of5oxbMrjbug5jlfQf
-         Lt6SKR8kqKXosL4MolWqHD0EvnopOh5EaZlOxcc+oTtmxY0vPxdNybOmMc5jl1TZVpX1
-         k+nDF2WRMjTHE48k4sHnMrYzwP0xJapeb/qK9vRdPvdbIh5+FoHO62uFdEapSoGVvu15
-         KPjE7kTOFb3vYvRGzM0gHyWwtfj53sxlPZTeE0uPDgHMG4LXNWB1l1GTPkLGyUwtX+aN
-         y3aQCAlh1/H25CdW4OrtxlNs1NwBMS8yAg8EmEEidj/zu9aAjuJJJNeb4eL3IwtqRqKa
-         EQfg==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=23adVBBkUNSiD70uO5DoUs4J9YYD/Oc0ixpW79NxSXc=;
+        b=knnh/7wq7lAf2GnZuAM7EHkt2Xr/v627bBbjkxnDfRCtp97XCdXE4UyfTALpNMn9ul
+         /dWMsGSynID0fZzGxCUYDHktCJLvV0rESqvcCt+d9wmVaOlqmJCtRipVFRkP8dHMNIhF
+         aLMHxtaWD6aPThGz/Cmnbeh57Qw00VGUVtx4pPd0rh1Z9UxDMyfHoc2yoZt3q0auG1zc
+         pigCCdxIRAG+Vda9oFZvfCTy1QpcDfgDWfs/ps9LYYKUChUxe3Q5qVlX3TPf+uz89627
+         sy/KyfVFEO4VKsO0OpN9GDKzl2VkQKwE4w7eqWgcDfxFpDmxhngZazie0bjZ7fAbG/Um
+         Q7Sw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.216.184 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
+       spf=pass (google.com: domain of dvlasenk@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=dvlasenk@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of david.laight@aculab.com designates 192.162.216.184 as permitted sender) smtp.mailfrom=David.Laight@aculab.com
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>, Joerg Roedel
-	<jroedel@suse.de>
-CC: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
-	"Ingo Molnar" <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, "the
- arch/x86 maintainers" <x86@kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, "Andy
- Lutomirski" <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>, "Josh
- Poimboeuf" <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>, "Peter
- Zijlstra" <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Jiri Kosina
-	<jkosina@suse.cz>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Brian Gerst
-	<brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>, Eduardo Valentin
-	<eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>, Will Deacon
-	<will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>, Daniel Gruss
-	<daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>, Kees Cook
-	<keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>, Waiman Long
-	<llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Subject: RE: [PATCH 09/31] x86/entry/32: Leave the kernel via trampoline stack
-Thread-Topic: [PATCH 09/31] x86/entry/32: Leave the kernel via trampoline
- stack
-Thread-Index: AQHTod8GduOBYzH6Y06ZOLi7EtO7oqOdxTWQ
-Date: Sat, 10 Feb 2018 15:41:06 +0000
-Message-ID: <aca58942b1424f83a0673318dc42c1f8@AcuMS.aculab.com>
+       spf=pass (google.com: domain of dvlasenk@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=dvlasenk@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Subject: Re: [PATCH 09/31] x86/entry/32: Leave the kernel via trampoline stack
+To: Joerg Roedel <jroedel@suse.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-mm <linux-mm@kvack.org>, Andy Lutomirski <luto@kernel.org>,
+ Dave Hansen <dave.hansen@intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+ Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Brian Gerst
+ <brgerst@gmail.com>, David Laight <David.Laight@aculab.com>,
+ Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
+ Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
+ Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
+ Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
+ Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
  <1518168340-9392-10-git-send-email-joro@8bytes.org>
  <CA+55aFzB9H=RT6YB3onZCephZMs9ccz4aJ_jcPcfEkKJD_YDCQ@mail.gmail.com>
  <20180209190226.lqh6twf7thfg52cq@suse.de>
- <CA+55aFzy6ZJDUpgHY0J2_z4kODaiYPgyHuOsMGiXmrhgR3kyPQ@mail.gmail.com>
- <20180209192515.qvvixkn5rz77oz6l@suse.de>
- <CA+55aFw643jQxVDrm05ZJ6YkVdqBBJ8WH-+=QCx3SDXrVN-TxA@mail.gmail.com>
-In-Reply-To: <CA+55aFw643jQxVDrm05ZJ6YkVdqBBJ8WH-+=QCx3SDXrVN-TxA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Denys Vlasenko <dvlasenk@redhat.com>
+Message-ID: <4a047ea5-7717-d089-48bf-597434be7c4c@redhat.com>
+Date: Fri, 9 Feb 2018 20:30:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <20180209190226.lqh6twf7thfg52cq@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914904027044040?=
-X-GMAIL-MSGID: =?utf-8?q?1592029081864107067?=
+X-GMAIL-MSGID: =?utf-8?q?1591952970371370656?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDkgRmVicnVhcnkgMjAxOCAxOTo0OQ0KLi4u
-DQo+IEkgdGhpbmsgdGhlIGluc3RydWN0aW9uIHNjaGVkdWxpbmcgZW5kcyB1cCBiYXNpY2FsbHkg
-YnJlYWtpbmcgYXJvdW5kDQo+IG1pY3JvY29kZWQgaW5zdHJ1Y3Rpb25zLCB3aGljaCBpcyB3aHkg
-eW91J2xsIGdldCBzb21ldGhpbmcgbGlrZSAxMituDQo+IGN5Y2xlcyBmb3IgInJlcCBtb3ZzIiBv
-biBzb21lIHVhcmNocywgYnV0IGF0IHRoYXQgcG9pbnQgaXQncyBwcm9iYWJseQ0KPiBtb3N0bHkg
-aW4gdGhlIG5vaXNlIGNvbXBhcmVkIHRvIGFsbCB0aGUgb3RoZXIgbmFzdHkgUFRJIHRoaW5ncy4N
-Cg0KT3IgNDgrbiBvbiBQNA0KDQo+IFlvdSB3b24ndCBzZWUgYW55IG9mIHRoZSBfcmVhbF8gYWR2
-YW50YWdlcyAod2hpY2ggYXJlIGFib3V0IG1vdmluZw0KPiBjYWNoZWxpbmVzIGF0IGEgdGltZSks
-IHNvIHdpdGggc21hbGxpc2ggY29waWVzIHlvdSByZWFsbHkgb25seSBzZWUgdGhlDQo+IGRvd25z
-aWRlcyBvZiAicmVwIG1vdnMiLCB3aGljaCBpcyBtYWlubHkgdGhhdCBpbnN0cnVjdGlvbiBzY2hl
-ZHVsaW5nDQo+IGhpY2t1cCB3aXRoIGFueSBtaW9jcm9jb2RlLg0KDQpJIHRob3VnaHQgdGhhdCB0
-aGUgaGFyZHdhcmUgb3B0aW1pc2F0aW9uIGZvciAncmVwIG1vdnNiJyBvbiByZWNlbnQNCkludGVs
-IGNwdXMgZ2VuZXJhdGVkIHdvcmQgc2l6ZWQgbWVtb3J5IGFjY2Vzc2VzIGV2ZW4gZm9yIG1pc2Fs
-aWduZWQNCnNob3J0IHRyYW5zZmVycy4NCk15IHRob3VnaHRzIHdlcmUgdGhhdCB0aGV5J2QgaW1w
-bGVtZW50ZWQgYSBjYWNoZSBsaW5lIHNpemVkIGJhcnJlbA0Kc2hpZnQgcmVnaXN0ZXIuDQpJZiB0
-aGF0IGlzbid0IHRydWUgdGhlbiB1c2luZyBpdCBmb3IgYWxsIG1lbWNweSgpIGlzIHByb2JhYmx5
-IHN0dXBpZA0KKGJ1dCBub3QgYXMgc3R1cGlkIGFzIGRvaW5nIGFsbCBtZW1jcHkgYmFja3dhcmRz
-ISkNCg0KCURhdmlkDQoNCg0K
+On 02/09/2018 08:02 PM, Joerg Roedel wrote:
+> On Fri, Feb 09, 2018 at 09:05:02AM -0800, Linus Torvalds wrote:
+>> On Fri, Feb 9, 2018 at 1:25 AM, Joerg Roedel <joro@8bytes.org> wrote:
+>>> +
+>>> +       /* Copy over the stack-frame */
+>>> +       cld
+>>> +       rep movsb
+>>
+>> Ugh. This is going to be horrendous. Maybe not noticeable on modern
+>> CPU's, but the whole 32-bit code is kind of pointless on a modern CPU.
+>>
+>> At least use "rep movsl". If the kernel stack isn't 4-byte aligned,
+>> you have issues.
+>
+> Okay, I used movsb because I remembered that being the recommendation
+> for the most efficient memcpy, and it safes me an instruction. But that
+> is probably only true on modern CPUs.
+
+It's fast (copies data with full-width loads and stores,
+up to 64-byte wide on latest Intel CPUs), but this kicks in only for
+largish blocks. In your case, you are copying less than 100 bytes.
