@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752659AbeBIJ1r (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:27:47 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:37251 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752626AbeBIJ1l (ORCPT
+        id S1752686AbeBIJ1w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:27:52 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39391 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752650AbeBIJ1r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:27:41 -0500
-X-Google-Smtp-Source: AH8x225VQiAMFr5cLNTaRKiu5kwLh6pUtBeUXl5m6qFyf8lgez8gaFmaTk0ezdz5cjObxOwINLo7jQ==
+        Fri, 9 Feb 2018 04:27:47 -0500
+X-Google-Smtp-Source: AH8x227yi8I5zogYYye3xrazXp1YLZKBVR53s9HuTGTNfe0kUq+4NzqYsgTsZVgTtFgHmk5RNv1NwA==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         javier@cnexlabs.com,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH V2 0/4] lightnvm: base 2.0 implementation
-Date: Fri,  9 Feb 2018 10:27:15 +0100
-Message-Id: <20180209092719.10679-1-mb@lightnvm.io>
+Subject: [PATCH V2 3/4] lightnvm: add 2.0 geometry identification
+Date: Fri,  9 Feb 2018 10:27:18 +0100
+Message-Id: <20180209092719.10679-4-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180209092719.10679-1-mb@lightnvm.io>
+References: <20180209092719.10679-1-mb@lightnvm.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -24,42 +26,493 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A couple of patches for 2.0 support for the lightnvm subsystem. They
-form the basis for integrating 2.0 support.
+Implement the geometry data structures for 2.0 and enable a drive
+to be identified as one, including exposing the appropriate 2.0
+sysfs entries.
 
-For the rest of the support, Javier has code that implements report
-chunk and sets up the LBA format data structure. He also has a bunch
-of patches that brings pblk up to speed.
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/core.c      |   8 +-
+ drivers/nvme/host/lightnvm.c | 334 +++++++++++++++++++++++++++++++++++++------
+ include/linux/lightnvm.h     |  11 +-
+ 3 files changed, 297 insertions(+), 56 deletions(-)
 
-The first two patches is preparation for the 2.0 work. The third patch
-implements the 2.0 data structures, the geometry command, and exposes
-the sysfs attributes that comes with the 2.0 specification. Note that
-the attributes between 1.2 and 2.0 are different, and it is expected
-that user-space shall use the version sysfs attribute to know which
-attributes will be available.
-
-The last patch implements support for using the nvme namespace logical
-block and metadata fields and sync it with the internal lightnvm
-identify structures.
-
-Changes since v1:
-
- - pr_err fix from Randy.
- - Address type fix from Javier.
- - Also CC the nvme mailing list.
-
-Matias Bjørling (4):
-  lightnvm: make 1.2 data structures explicit
-  lightnvm: flatten nvm_id_group into nvm_id
-  lightnvm: add 2.0 geometry identification
-  nvme: lightnvm: add late setup of block size and metadata
-
- drivers/lightnvm/core.c      |  33 ++-
- drivers/nvme/host/core.c     |   2 +
- drivers/nvme/host/lightnvm.c | 508 ++++++++++++++++++++++++++++++++-----------
- drivers/nvme/host/nvme.h     |   2 +
- include/linux/lightnvm.h     |  64 +++---
- 5 files changed, 428 insertions(+), 181 deletions(-)
-
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index c72863b36439..9b1255b3e05e 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -931,11 +931,9 @@ static int nvm_init(struct nvm_dev *dev)
+ 		goto err;
+ 	}
+ 
+-	pr_debug("nvm: ver:%x nvm_vendor:%x\n",
+-			dev->identity.ver_id, dev->identity.vmnt);
+-
+-	if (dev->identity.ver_id != 1) {
+-		pr_err("nvm: device not supported by kernel.");
++	if (dev->identity.ver_id != 1 && dev->identity.ver_id != 2) {
++		pr_err("nvm: device ver_id %d not supported by kernel.\n",
++				dev->identity.ver_id);
+ 		goto err;
+ 	}
+ 
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 6412551ecc65..8b243af8a949 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -184,6 +184,58 @@ struct nvme_nvm_bb_tbl {
+ 	__u8	blk[0];
+ };
+ 
++struct nvme_nvm_id20_addrf {
++	__u8			grp_len;
++	__u8			pu_len;
++	__u8			chk_len;
++	__u8			lba_len;
++	__u8			resv[4];
++};
++
++struct nvme_nvm_id20 {
++	__u8			mjr;
++	__u8			mnr;
++	__u8			resv[6];
++
++	struct nvme_nvm_id20_addrf lbaf;
++
++	__le32			mccap;
++	__u8			resv2[12];
++
++	__u8			wit;
++	__u8			resv3[31];
++
++	/* Geometry */
++	__le16			num_grp;
++	__le16			num_pu;
++	__le32			num_chk;
++	__le32			clba;
++	__u8			resv4[52];
++
++	/* Write data requirements */
++	__le32			ws_min;
++	__le32			ws_opt;
++	__le32			mw_cunits;
++	__le32			maxoc;
++	__le32			maxocpu;
++	__u8			resv5[44];
++
++	/* Performance related metrics */
++	__le32			trdt;
++	__le32			trdm;
++	__le32			twrt;
++	__le32			twrm;
++	__le32			tcrst;
++	__le32			tcrsm;
++	__u8			resv6[40];
++
++	/* Reserved area */
++	__u8			resv7[2816];
++
++	/* Vendor specific */
++	__u8			vs[1024];
++};
++
+ /*
+  * Check we didn't inadvertently grow the command struct
+  */
+@@ -198,6 +250,8 @@ static inline void _nvme_nvm_check_size(void)
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_addrf) != 16);
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12) != NVME_IDENTIFY_DATA_SIZE);
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20_addrf) != 8);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20) != NVME_IDENTIFY_DATA_SIZE);
+ }
+ 
+ static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
+@@ -256,6 +310,49 @@ static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
+ 	return 0;
+ }
+ 
++static int nvme_nvm_setup_12(struct nvm_dev *nvmdev, struct nvm_id *nvm_id,
++		struct nvme_nvm_id12 *id)
++{
++	nvm_id->ver_id = id->ver_id;
++	nvm_id->vmnt = id->vmnt;
++	nvm_id->cap = le32_to_cpu(id->cap);
++	nvm_id->dom = le32_to_cpu(id->dom);
++	memcpy(&nvm_id->ppaf, &id->ppaf,
++					sizeof(struct nvm_addr_format));
++
++	return init_grp(nvm_id, id);
++}
++
++static int nvme_nvm_setup_20(struct nvm_dev *nvmdev, struct nvm_id *nvm_id,
++		struct nvme_nvm_id20 *id)
++{
++	nvm_id->ver_id = id->mjr;
++
++	nvm_id->num_ch = le16_to_cpu(id->num_grp);
++	nvm_id->num_lun = le16_to_cpu(id->num_pu);
++	nvm_id->num_chk = le32_to_cpu(id->num_chk);
++	nvm_id->clba = le32_to_cpu(id->clba);
++
++	nvm_id->ws_min = le32_to_cpu(id->ws_min);
++	nvm_id->ws_opt = le32_to_cpu(id->ws_opt);
++	nvm_id->mw_cunits = le32_to_cpu(id->mw_cunits);
++
++	nvm_id->trdt = le32_to_cpu(id->trdt);
++	nvm_id->trdm = le32_to_cpu(id->trdm);
++	nvm_id->tprt = le32_to_cpu(id->twrt);
++	nvm_id->tprm = le32_to_cpu(id->twrm);
++	nvm_id->tbet = le32_to_cpu(id->tcrst);
++	nvm_id->tbem = le32_to_cpu(id->tcrsm);
++
++	/* calculated values */
++	nvm_id->ws_per_chk = nvm_id->clba / nvm_id->ws_min;
++
++	/* 1.2 compatibility */
++	nvm_id->ws_seq = NVM_IO_SNGL_ACCESS;
++
++	return 0;
++}
++
+ static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
+ {
+ 	struct nvme_ns *ns = nvmdev->q->queuedata;
+@@ -277,14 +374,24 @@ static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
+ 		goto out;
+ 	}
+ 
+-	nvm_id->ver_id = id->ver_id;
+-	nvm_id->vmnt = id->vmnt;
+-	nvm_id->cap = le32_to_cpu(id->cap);
+-	nvm_id->dom = le32_to_cpu(id->dom);
+-	memcpy(&nvm_id->ppaf, &id->ppaf,
+-					sizeof(struct nvm_addr_format));
+-
+-	ret = init_grp(nvm_id, id);
++	/*
++	 * The 1.2 and 2.0 specifications share the first byte in their geometry
++	 * command to make it possible to know what version a device implements.
++	 */
++	switch (id->ver_id) {
++	case 1:
++		ret = nvme_nvm_setup_12(nvmdev, nvm_id, id);
++		break;
++	case 2:
++		ret = nvme_nvm_setup_20(nvmdev, nvm_id,
++				(struct nvme_nvm_id20 *)id);
++		break;
++	default:
++		dev_err(ns->ctrl->device,
++			"OCSSD revision not supported (%d)\n",
++			nvm_id->ver_id);
++		ret = -EINVAL;
++	}
+ out:
+ 	kfree(id);
+ 	return ret;
+@@ -733,7 +840,7 @@ void nvme_nvm_unregister(struct nvme_ns *ns)
+ }
+ 
+ static ssize_t nvm_dev_attr_show(struct device *dev,
+-				 struct device_attribute *dattr, char *page)
++		struct device_attribute *dattr, char *page)
+ {
+ 	struct nvme_ns *ns = nvme_get_ns_from_dev(dev);
+ 	struct nvm_dev *ndev = ns->ndev;
+@@ -748,10 +855,36 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+ 
+ 	if (strcmp(attr->name, "version") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->ver_id);
+-	} else if (strcmp(attr->name, "vendor_opcode") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", id->vmnt);
+ 	} else if (strcmp(attr->name, "capabilities") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->cap);
++	} else if (strcmp(attr->name, "read_typ") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdt);
++	} else if (strcmp(attr->name, "read_max") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdm);
++	} else {
++		return scnprintf(page,
++				 PAGE_SIZE,
++				 "Unhandled attr(%s) in `nvm_dev_attr_show`\n",
++				 attr->name);
++	}
++}
++
++static ssize_t nvm_dev_attr_show_12(struct device *dev,
++		struct device_attribute *dattr, char *page)
++{
++	struct nvme_ns *ns = nvme_get_ns_from_dev(dev);
++	struct nvm_dev *ndev = ns->ndev;
++	struct nvm_id *id;
++	struct attribute *attr;
++
++	if (!ndev)
++		return 0;
++
++	id = &ndev->identity;
++	attr = &dattr->attr;
++
++	if (strcmp(attr->name, "vendor_opcode") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->vmnt);
+ 	} else if (strcmp(attr->name, "device_mode") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->dom);
+ 	/* kept for compatibility */
+@@ -786,10 +919,6 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->csecs);
+ 	} else if (strcmp(attr->name, "oob_sector_size") == 0) {/* u32 */
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->sos);
+-	} else if (strcmp(attr->name, "read_typ") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdt);
+-	} else if (strcmp(attr->name, "read_max") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdm);
+ 	} else if (strcmp(attr->name, "prog_typ") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprt);
+ 	} else if (strcmp(attr->name, "prog_max") == 0) {
+@@ -808,48 +937,99 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+ 	} else {
+ 		return scnprintf(page,
+ 				 PAGE_SIZE,
+-				 "Unhandled attr(%s) in `nvm_dev_attr_show`\n",
++				 "Unhandled attr(%s) in `nvm_dev_attr_show_12`\n",
+ 				 attr->name);
+ 	}
+ }
+ 
+-#define NVM_DEV_ATTR_RO(_name)						\
++static ssize_t nvm_dev_attr_show_20(struct device *dev,
++		struct device_attribute *dattr, char *page)
++{
++	struct nvme_ns *ns = nvme_get_ns_from_dev(dev);
++	struct nvm_dev *ndev = ns->ndev;
++	struct nvm_id *id;
++	struct attribute *attr;
++
++	if (!ndev)
++		return 0;
++
++	id = &ndev->identity;
++	attr = &dattr->attr;
++
++	if (strcmp(attr->name, "groups") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_ch);
++	} else if (strcmp(attr->name, "punits") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_lun);
++	} else if (strcmp(attr->name, "chunks") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_chk);
++	} else if (strcmp(attr->name, "clba") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->clba);
++	} else if (strcmp(attr->name, "ws_min") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->ws_min);
++	} else if (strcmp(attr->name, "ws_opt") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->ws_opt);
++	} else if (strcmp(attr->name, "mw_cunits") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->mw_cunits);
++	} else if (strcmp(attr->name, "write_typ") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprt);
++	} else if (strcmp(attr->name, "write_max") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprm);
++	} else if (strcmp(attr->name, "reset_typ") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tbet);
++	} else if (strcmp(attr->name, "reset_max") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", id->tbem);
++	} else {
++		return scnprintf(page,
++				 PAGE_SIZE,
++				 "Unhandled attr(%s) in `nvm_dev_attr_show_20`\n",
++				 attr->name);
++	}
++}
++
++#define NVM_DEV_ATTR_RO(_name)					\
+ 	DEVICE_ATTR(_name, S_IRUGO, nvm_dev_attr_show, NULL)
++#define NVM_DEV_ATTR_12_RO(_name)					\
++	DEVICE_ATTR(_name, S_IRUGO, nvm_dev_attr_show_12, NULL)
++#define NVM_DEV_ATTR_20_RO(_name)					\
++	DEVICE_ATTR(_name, S_IRUGO, nvm_dev_attr_show_20, NULL)
+ 
++/* general attributes */
+ static NVM_DEV_ATTR_RO(version);
+-static NVM_DEV_ATTR_RO(vendor_opcode);
+ static NVM_DEV_ATTR_RO(capabilities);
+-static NVM_DEV_ATTR_RO(device_mode);
+-static NVM_DEV_ATTR_RO(ppa_format);
+-static NVM_DEV_ATTR_RO(media_manager);
+ 
+-static NVM_DEV_ATTR_RO(media_type);
+-static NVM_DEV_ATTR_RO(flash_media_type);
+-static NVM_DEV_ATTR_RO(num_channels);
+-static NVM_DEV_ATTR_RO(num_luns);
+-static NVM_DEV_ATTR_RO(num_planes);
+-static NVM_DEV_ATTR_RO(num_blocks);
+-static NVM_DEV_ATTR_RO(num_pages);
+-static NVM_DEV_ATTR_RO(page_size);
+-static NVM_DEV_ATTR_RO(hw_sector_size);
+-static NVM_DEV_ATTR_RO(oob_sector_size);
+ static NVM_DEV_ATTR_RO(read_typ);
+ static NVM_DEV_ATTR_RO(read_max);
+-static NVM_DEV_ATTR_RO(prog_typ);
+-static NVM_DEV_ATTR_RO(prog_max);
+-static NVM_DEV_ATTR_RO(erase_typ);
+-static NVM_DEV_ATTR_RO(erase_max);
+-static NVM_DEV_ATTR_RO(multiplane_modes);
+-static NVM_DEV_ATTR_RO(media_capabilities);
+-static NVM_DEV_ATTR_RO(max_phys_secs);
+ 
+-static struct attribute *nvm_dev_attrs[] = {
++/* 1.2 values */
++static NVM_DEV_ATTR_12_RO(vendor_opcode);
++static NVM_DEV_ATTR_12_RO(device_mode);
++static NVM_DEV_ATTR_12_RO(ppa_format);
++static NVM_DEV_ATTR_12_RO(media_manager);
++static NVM_DEV_ATTR_12_RO(media_type);
++static NVM_DEV_ATTR_12_RO(flash_media_type);
++static NVM_DEV_ATTR_12_RO(num_channels);
++static NVM_DEV_ATTR_12_RO(num_luns);
++static NVM_DEV_ATTR_12_RO(num_planes);
++static NVM_DEV_ATTR_12_RO(num_blocks);
++static NVM_DEV_ATTR_12_RO(num_pages);
++static NVM_DEV_ATTR_12_RO(page_size);
++static NVM_DEV_ATTR_12_RO(hw_sector_size);
++static NVM_DEV_ATTR_12_RO(oob_sector_size);
++static NVM_DEV_ATTR_12_RO(prog_typ);
++static NVM_DEV_ATTR_12_RO(prog_max);
++static NVM_DEV_ATTR_12_RO(erase_typ);
++static NVM_DEV_ATTR_12_RO(erase_max);
++static NVM_DEV_ATTR_12_RO(multiplane_modes);
++static NVM_DEV_ATTR_12_RO(media_capabilities);
++static NVM_DEV_ATTR_12_RO(max_phys_secs);
++
++static struct attribute *nvm_dev_attrs_12[] = {
+ 	&dev_attr_version.attr,
++	&dev_attr_capabilities.attr,
++
+ 	&dev_attr_vendor_opcode.attr,
+-	&dev_attr_capabilities.attr,
+ 	&dev_attr_device_mode.attr,
+ 	&dev_attr_media_manager.attr,
+-
+ 	&dev_attr_ppa_format.attr,
+ 	&dev_attr_media_type.attr,
+ 	&dev_attr_flash_media_type.attr,
+@@ -870,22 +1050,82 @@ static struct attribute *nvm_dev_attrs[] = {
+ 	&dev_attr_multiplane_modes.attr,
+ 	&dev_attr_media_capabilities.attr,
+ 	&dev_attr_max_phys_secs.attr,
++
++	NULL,
++};
++
++static const struct attribute_group nvm_dev_attr_group_12 = {
++	.name		= "lightnvm",
++	.attrs		= nvm_dev_attrs_12,
++};
++
++/* 2.0 values */
++static NVM_DEV_ATTR_20_RO(groups);
++static NVM_DEV_ATTR_20_RO(punits);
++static NVM_DEV_ATTR_20_RO(chunks);
++static NVM_DEV_ATTR_20_RO(clba);
++static NVM_DEV_ATTR_20_RO(ws_min);
++static NVM_DEV_ATTR_20_RO(ws_opt);
++static NVM_DEV_ATTR_20_RO(mw_cunits);
++static NVM_DEV_ATTR_20_RO(write_typ);
++static NVM_DEV_ATTR_20_RO(write_max);
++static NVM_DEV_ATTR_20_RO(reset_typ);
++static NVM_DEV_ATTR_20_RO(reset_max);
++
++static struct attribute *nvm_dev_attrs_20[] = {
++	&dev_attr_version.attr,
++	&dev_attr_capabilities.attr,
++
++	&dev_attr_groups.attr,
++	&dev_attr_punits.attr,
++	&dev_attr_chunks.attr,
++	&dev_attr_clba.attr,
++	&dev_attr_ws_min.attr,
++	&dev_attr_ws_opt.attr,
++	&dev_attr_mw_cunits.attr,
++
++	&dev_attr_read_typ.attr,
++	&dev_attr_read_max.attr,
++	&dev_attr_write_typ.attr,
++	&dev_attr_write_max.attr,
++	&dev_attr_reset_typ.attr,
++	&dev_attr_reset_max.attr,
++
+ 	NULL,
+ };
+ 
+-static const struct attribute_group nvm_dev_attr_group = {
++static const struct attribute_group nvm_dev_attr_group_20 = {
+ 	.name		= "lightnvm",
+-	.attrs		= nvm_dev_attrs,
++	.attrs		= nvm_dev_attrs_20,
+ };
+ 
+ int nvme_nvm_register_sysfs(struct nvme_ns *ns)
+ {
+-	return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group);
++	if (!ns->ndev)
++		return -EINVAL;
++
++	switch (ns->ndev->identity.ver_id) {
++	case 1:
++		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_12);
++	case 2:
++		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_20);
++	}
++
++	return -EINVAL;
+ }
+ 
+ void nvme_nvm_unregister_sysfs(struct nvme_ns *ns)
+ {
+-	sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+-					&nvm_dev_attr_group);
++	switch (ns->ndev->identity.ver_id) {
++	case 1:
++		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_12);
++		break;
++	case 2:
++		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
++					&nvm_dev_attr_group_20);
++		break;
++	}
+ }
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 94b704a8d83d..b717c000b712 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -184,10 +184,9 @@ struct nvm_id {
+ 	u16	csecs;
+ 	u16	sos;
+ 
+-	u16	ws_min;
+-	u16	ws_opt;
+-	u16	ws_seq;
+-	u16	ws_per_chk;
++	u32	ws_min;
++	u32	ws_opt;
++	u32	mw_cunits;
+ 
+ 	u32	trdt;
+ 	u32	trdm;
+@@ -199,6 +198,10 @@ struct nvm_id {
+ 	u32	mccap;
+ 	u16	cpar;
+ 
++	/* calculated values */
++	u16	ws_seq;
++	u16	ws_per_chk;
++
+ 	/* 1.2 compatibility */
+ 	u8	mtype;
+ 	u8	fmtype;
 -- 
 2.11.0
