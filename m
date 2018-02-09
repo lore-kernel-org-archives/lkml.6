@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x226PJ0rZ4Vk3biLgGE3LhzlP8xCKMNHBxhzX9fb6rqCWxRBp09iFJ9X5lnzadJiGEG7Cojum
-ARC-Seal: i=1; a=rsa-sha256; t=1518168367; cv=none;
+X-Google-Smtp-Source: AH8x2251kl4SkRqm87MdrhoqCIkHPZtResqh/E4Vq1puhX5Ji156eOutZkwTODKE1wqWRIojbUiH
+ARC-Seal: i=1; a=rsa-sha256; t=1518168365; cv=none;
         d=google.com; s=arc-20160816;
-        b=rwOBbjXXXx8fuw/6rCIbQLHnb6olfxX4DlXzpx3eXDlOVTuc36DMglio0SFjPmE0r5
-         zPUaaooD56SDFIWRcg0uF6+0yHXuxEcnyX7gTQGvImJeQQrheaqi+pl+5gJs/XE0BjiL
-         1QfDP/tzO9reJ5nbbBsmqIhWFCryo1uSYn8lEI25D5rbvGWUKyxtdabBY1n0UwSudCIT
-         mICR5rHrO7sqT/aQI9xRKnVbgPpOjBVSnrlt17RqueB+vlPD+meiEp1p4eqx5oFWfksa
-         voFO0euTBc4MnHEkgjdMnqXYRQuEV91iXSL5Ai/qYJUuLbkUWgTkPbkwcauKr85IMdza
-         W08A==
+        b=ShdWyh+jw130JiYLJfvt54nJVlTTWSdopt0uZu+ATNldNhF+wkzDuGtFvJJWqI+qvu
+         F9cqSsqUk9qnb84kRzTS6IgibaTQDtscRfSfpRcpvmZm0Omlm0Xy/BPrEEtG9ofHkKny
+         u6bhrgB4GWo07EZSJfq2BpwbmqArNEZtWS+O0cvyHPbsf5h6IBLHGqvOjeQmO0R1+8Lr
+         t2Mc+GPR8sCobi5LRtzFgNeIIDoKIF+F2u1la5jieti/2CY0z3tt0+8Oqb6Rz53CWaTU
+         Z1I2ZR8/TVBgDGLIeev5Y+2J2ozxF9zEQi++nSJRWsIHtee6QAQ2cTsufG9vschSoozi
+         h7Lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=N4WE/Zg3/azljJ9vk+e7rysEuRey95VTb4WIU/mTR/Y=;
-        b=MCGXRhqr7gL0u4daLnLINgXZh+UGAsIaknFAFFNpXuXLxgLI8q1iyt3+7cJYfGE1JF
-         BvNRc4NWqlksaIQKboHsqDFls6T5zWBAQzA2APEKk6epIfTaEbk0WP92IfTZCFrNMvbq
-         NXiqw+v6X5fjUeYNWGetFzUm/jflGUGHDJcgVwfHuzXS+ObgddZOIwPqfp+1kZ2jN9P2
-         Tc3RKToUECHByCsdi6EELErYPMosEjcGR00TRr+vbwb896UdhODUBMPtv04rN296bLby
-         75ePOo7yQfc3m+UEgUucDzHUNqBFvbCDggZtnLGZuEeynNodkGQz02QTXDSIe6G+PWBt
-         BCag==
+        bh=igYQ/x+Bee3t5LU4V9asteXT8ZgIi1BJyc7+25PZsZk=;
+        b=HJRy0uvm8vGw8cb0T6c6dfEZBvWYhpgdLjfLVlBEmT7oRMwy7FzvZPx+rhB9Mij9Zq
+         nALqjGOzwCcqq/qzqqKn3j0D/JBxXOFzCvCDP+Kd7vYUetXph9aYmWemfvtMSC1X6b6n
+         ikO8Vpj3j2TrmuhZ5dQsY0xZIqt8HCndRlJfAvxBoqEqEEYGEjtroWB9d+/nFkyzBsiU
+         9ZalJbKWF1GiyWuuN8BpiiPt0/UqC+BBwDPWUEkAtubksT0eEhk953POgJZ3TBMlfQYg
+         WtaD14AY1EMv9NwNIw+pbw/+4+QAeGwN1wn0vgvgz/ReWacTUW8SmwpkqVwU2s7ca+xu
+         UJTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KaU25J3C;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Q706Uo9s;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KaU25J3C;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Q706Uo9s;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,85 +57,157 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 27/31] x86/ldt: Reserve address-space range on 32 bit for the LDT
-Date: Fri,  9 Feb 2018 10:25:36 +0100
-Message-Id: <1518168340-9392-28-git-send-email-joro@8bytes.org>
+Subject: [PATCH 29/31] x86/ldt: Split out sanity check in map_ldt_struct()
+Date: Fri,  9 Feb 2018 10:25:38 +0100
+Message-Id: <1518168340-9392-30-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914914052328004?=
-X-GMAIL-MSGID: =?utf-8?q?1591914914052328004?=
+X-GMAIL-THRID: =?utf-8?q?1591914912408052280?=
+X-GMAIL-MSGID: =?utf-8?q?1591914912408052280?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Reserve 2MB/4MB of address-space for mapping the LDT to
-user-space on 32 bit PTI kernels.
+This splits out the mapping sanity check and the actual
+mapping of the LDT to user-space from the map_ldt_struct()
+function in a way so that it is re-usable for PAE paging.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_32_types.h | 7 +++++--
- arch/x86/mm/dump_pagetables.c           | 9 +++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ arch/x86/kernel/ldt.c | 82 ++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 58 insertions(+), 24 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
-index 0777e18..eb2e97a 100644
---- a/arch/x86/include/asm/pgtable_32_types.h
-+++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -48,13 +48,16 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
- 	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
- 	 & PMD_MASK)
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index f3c2fbf..8ab7df9 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -100,6 +100,49 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
+ 	return new_ldt;
+ }
  
--#define PKMAP_BASE		\
-+#define LDT_BASE_ADDR		\
- 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
- 
-+#define PKMAP_BASE		\
-+	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
 +
- #ifdef CONFIG_HIGHMEM
- # define VMALLOC_END	(PKMAP_BASE - 2 * PAGE_SIZE)
- #else
--# define VMALLOC_END	(CPU_ENTRY_AREA_BASE - 2 * PAGE_SIZE)
-+# define VMALLOC_END	(LDT_BASE_ADDR - 2 * PAGE_SIZE)
- #endif
++static void do_sanity_check(struct mm_struct *mm,
++			    bool had_kernel_mapping,
++			    bool had_user_mapping)
++{
++	if (mm->context.ldt) {
++		/*
++		 * We already had an LDT.  The top-level entry should already
++		 * have been allocated and synchronized with the usermode
++		 * tables.
++		 */
++		WARN_ON(!had_kernel_mapping);
++		if (static_cpu_has(X86_FEATURE_PTI))
++			WARN_ON(!had_user_mapping);
++	} else {
++		/*
++		 * This is the first time we're mapping an LDT for this process.
++		 * Sync the pgd to the usermode tables.
++		 */
++		WARN_ON(had_kernel_mapping);
++		if (static_cpu_has(X86_FEATURE_PTI))
++			WARN_ON(had_user_mapping);
++	}
++}
++
++static void map_ldt_struct_to_user(struct mm_struct *mm)
++{
++	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
++
++	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
++		set_pgd(kernel_to_user_pgdp(pgd), *pgd);
++}
++
++static void sanity_check_ldt_mapping(struct mm_struct *mm)
++{
++	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
++	bool had_kernel = (pgd->pgd != 0);
++	bool had_user   = (kernel_to_user_pgdp(pgd)->pgd != 0);
++
++	do_sanity_check(mm, had_kernel, had_user);
++}
++
+ /*
+  * If PTI is enabled, this maps the LDT into the kernelmode and
+  * usermode tables for the given mm.
+@@ -115,9 +158,8 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
+ static int
+ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ {
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-	bool is_vmalloc, had_top_level_entry;
+ 	unsigned long va;
++	bool is_vmalloc;
+ 	spinlock_t *ptl;
+ 	pgd_t *pgd;
+ 	int i;
+@@ -131,13 +173,15 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ 	 */
+ 	WARN_ON(ldt->slot != -1);
  
- #define MODULES_VADDR	VMALLOC_START
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 2151ebb..fdefdf0 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -117,6 +117,9 @@ enum address_markers_idx {
- #ifdef CONFIG_HIGHMEM
- 	PKMAP_BASE_NR,
- #endif
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	LDT_NR,
-+#endif
- 	CPU_ENTRY_AREA_NR,
- 	FIXADDR_START_NR,
- 	END_OF_SPACE_NR,
-@@ -130,6 +133,9 @@ static struct addr_marker address_markers[] = {
- #ifdef CONFIG_HIGHMEM
- 	[PKMAP_BASE_NR]		= { 0UL,		"Persistent kmap() Area" },
- #endif
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	[LDT_NR]		= { 0UL,		"LDT remap" },
-+#endif
- 	[CPU_ENTRY_AREA_NR]	= { 0UL,		"CPU entry area" },
- 	[FIXADDR_START_NR]	= { 0UL,		"Fixmap area" },
- 	[END_OF_SPACE_NR]	= { -1,			NULL }
-@@ -579,6 +585,9 @@ static int __init pt_dump_init(void)
- # endif
- 	address_markers[FIXADDR_START_NR].start_address = FIXADDR_START;
- 	address_markers[CPU_ENTRY_AREA_NR].start_address = CPU_ENTRY_AREA_BASE;
-+# ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
-+# endif
- #endif
++	/* Check if the current mappings are sane */
++	sanity_check_ldt_mapping(mm);
++
+ 	/*
+ 	 * Did we already have the top level entry allocated?  We can't
+ 	 * use pgd_none() for this because it doens't do anything on
+ 	 * 4-level page table kernels.
+ 	 */
+ 	pgd = pgd_offset(mm, LDT_BASE_ADDR);
+-	had_top_level_entry = (pgd->pgd != 0);
+ 
+ 	is_vmalloc = is_vmalloc_addr(ldt->entries);
+ 
+@@ -168,35 +212,25 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ 		pte_unmap_unlock(ptep, ptl);
+ 	}
+ 
+-	if (mm->context.ldt) {
+-		/*
+-		 * We already had an LDT.  The top-level entry should already
+-		 * have been allocated and synchronized with the usermode
+-		 * tables.
+-		 */
+-		WARN_ON(!had_top_level_entry);
+-		if (static_cpu_has(X86_FEATURE_PTI))
+-			WARN_ON(!kernel_to_user_pgdp(pgd)->pgd);
+-	} else {
+-		/*
+-		 * This is the first time we're mapping an LDT for this process.
+-		 * Sync the pgd to the usermode tables.
+-		 */
+-		WARN_ON(had_top_level_entry);
+-		if (static_cpu_has(X86_FEATURE_PTI)) {
+-			WARN_ON(kernel_to_user_pgdp(pgd)->pgd);
+-			set_pgd(kernel_to_user_pgdp(pgd), *pgd);
+-		}
+-	}
++	/* Propagate LDT mapping to the user page-table */
++	map_ldt_struct_to_user(mm);
+ 
+ 	va = (unsigned long)ldt_slot_va(slot);
+ 	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, 0);
+ 
+ 	ldt->slot = slot;
+-#endif
  	return 0;
  }
+ 
++#else /* !CONFIG_PAGE_TABLE_ISOLATION */
++
++static int
++map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
++{
++	return 0;
++}
++#endif /* CONFIG_PAGE_TABLE_ISOLATION */
++
+ static void free_ldt_pgtables(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
 -- 
 2.7.4
