@@ -1,34 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752193AbeBIAWl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 19:22:41 -0500
-Received: from ozlabs.org ([103.22.144.67]:39561 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751317AbeBIAWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 19:22:40 -0500
-Date: Fri, 9 Feb 2018 11:22:37 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: status of the idr tree
-Message-ID: <20180209112237.5c9ca99e@canb.auug.org.au>
+        id S1752267AbeBIAYT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 19:24:19 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40254 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeBIAYR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 19:24:17 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Thu, 08 Feb 2018 16:24:16 -0800
+From: Channa <ckadabi@codeaurora.org>
+To: Matt Sealey <neko@bakuhatsu.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
+        kyan@codeaurora.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: Documentation for qcom,llcc
+In-Reply-To: <CAHCPf3vt-ZCXgTfCZ-LSW3TSXAk5KBz3wCu-LuTOBdCB+sgGgw@mail.gmail.com>
+References: <1516924513-20183-1-git-send-email-ckadabi@codeaurora.org>
+ <1516924513-20183-2-git-send-email-ckadabi@codeaurora.org>
+ <CAHCPf3vt-ZCXgTfCZ-LSW3TSXAk5KBz3wCu-LuTOBdCB+sgGgw@mail.gmail.com>
+Message-ID: <0ce690ab886d4896506ba916d2d39554@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Willy,
+On 2018-02-08 08:52, Matt Sealey wrote:
+> Hiya,
+> 
+> On 25 January 2018 at 17:55, Channagoud Kadabi <ckadabi@codeaurora.org> 
+> wrote:
+>> Documentation for last level cache controller device tree bindings,
+>> client bindings usage examples.
+> 
+> [snippety snip]
+> 
+>> +- llcc-bank-off:
+>> +       Usage: required
+>> +       Value Type: <u32 array>
+>> +       Definition: Offsets of llcc banks from llcc base address 
+>> starting from
+>> +                   LLCC bank0.
+>> +
+>> +- llcc-broadcast-off:
+>> +       Usage: required
+>> +       Value Type: <u32>
+>> +       Definition: Offset of broadcast register from LLCC bank0 
+>> address.
+> 
+> What's with the redundant namespacing?
+> 
+> Have we not, as a community, realised that we do not need to namespace
+> properties which are only present under
+> a single binding or node, or even those that aren't? This mess started
+> with the regulator bindings and it's never
+> stopped. What are we at now, 25 years of device trees, 10 years of FDT 
+> on Arm?
+> 
+> Notwithstanding the complete waste of rodata in the kernel image for
+> matching (& increased time to compare), why
+> wouldn't you consider why "bank-offset" for your node be any different
+> than a common property for any other node?
 
-Just wondering if I should keep tracking the idr tree
-(git://git.infradead.org/users/willy/linux-dax.git#idr-4.11) which
-(unsuprisedly) hasn't been updated since March last year.
+I will clean up the name space and use bank-offset for the property 
+name.
 
-If there is to be more work in this area, maybe you could create a
-for-next branch (or something else release agnostic) for me to track.
+> 
+> And if you need to describe register offsets... why aren't you able to
+> use the reg property?
+
+Reg property did not suit well for my need, so I choose to maintain 
+offsets instead.
+
+The registers in the HW block are organized as
+                 (offset1)    (offset2)     (offset3)     (offset4)
+Base(Block0) -- Block1 -- Block 2 -- Block 3 -- Broadcast_Block
+
+Each block has identical register mapping. You can think of it as 4 
+instances of identical HW.
+Broadcast block is to simplify writes, you don't need to write to 
+individual blocks instead write to broadcast block.
+
+I use simple-mfd/syscon as the hardware has multiple functions.
+Doing regmap on the the Base (Block0) and maintaining offset makes the 
+driver cleaner rather than using the reg property for
+each instance.
+
+> 
+> Ta,
+> Matt
 
 -- 
-Cheers,
-Stephen Rothwell
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+a Linux Foundation Collaborative Project
