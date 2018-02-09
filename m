@@ -1,114 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeBIDvv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 22:51:51 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35550 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752201AbeBIDvs (ORCPT
+        id S1752616AbeBIDwB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 22:52:01 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:9403 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752201AbeBIDv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 22:51:48 -0500
-X-Google-Smtp-Source: AH8x2274YU2XhiMiLY4ssVz4h4S49r2nak8syosZvCeTwH9gl7AzjkDiHiO0l3JwERwMX+3DfQQuQQ==
-Date: Fri, 9 Feb 2018 09:21:43 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Claudio Scordino <claudio@evidence.eu.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
-Message-ID: <20180209035143.GX28462@vireshk-i7>
-References: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+        Thu, 8 Feb 2018 22:51:59 -0500
+X-UUID: cc7858a86feb4ba182ba676ca6eda9b6-20180209
+Message-ID: <1518148312.9025.17.camel@mtkswgap22>
+Subject: Re: [PATCH v2 14/16] arm64: dts: mt7622: add thermal and related
+ nodes
+From: Sean Wang <sean.wang@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Fri, 9 Feb 2018 11:51:52 +0800
+In-Reply-To: <4db5c81b-0e55-3676-d7c8-d1b6aefb99c4@gmail.com>
+References: <cover.1517910489.git.sean.wang@mediatek.com>
+         <687a7c43e3e3260ebdf004a96d2cde143f563250.1517910489.git.sean.wang@mediatek.com>
+         <4db5c81b-0e55-3676-d7c8-d1b6aefb99c4@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-02-18, 18:01, Claudio Scordino wrote:
-> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
-> we should not wait for the rate limit, otherwise we may miss some deadline.
+On Wed, 2018-02-07 at 12:43 +0100, Matthias Brugger wrote:
 > 
-> Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
-> misses for tasks with low RT periods.
+> On 02/06/2018 10:53 AM, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > add nodes for the thermal controller and associated thermal zone using
+> > CPU as the cooling device for each trip point. In addition, add a fixup
+> > for thermal_calibration on nvmem should be 12 bytes as the minimal
+> > requirement.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 72 +++++++++++++++++++++++++++++++-
+> >  1 file changed, 71 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> > index e6dd4f6..6cf67dd 100644
+> > --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> > +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> > @@ -12,6 +12,7 @@
+> >  #include <dt-bindings/phy/phy.h>
+> >  #include <dt-bindings/power/mt7622-power.h>
+> >  #include <dt-bindings/reset/mt7622-reset.h>
+> > +#include <dt-bindings/thermal/thermal.h>
+> >  
+> >  / {
+> >  	compatible = "mediatek,mt7622";
+> > @@ -75,6 +76,7 @@
+> >  				 <&apmixedsys CLK_APMIXED_MAIN_CORE_EN>;
+> >  			clock-names = "cpu", "intermediate";
+> >  			operating-points-v2 = <&cpu_opp_table>;
+> > +			#cooling-cells = <2>;
+> >  			enable-method = "psci";
+> >  			clock-frequency = <1300000000>;
+> >  		};
+> > @@ -119,6 +121,58 @@
+> >  		};
+> >  	};
+> >  
+> > +	thermal-zones {
+> > +		cpu_thermal: cpu-thermal {
+> > +			polling-delay-passive = <1000>;
+> > +			polling-delay = <1000>;
+> > +
+> > +			thermal-sensors = <&thermal 0>;
+> > +
+> > +			trips {
+> > +				cpu_passive: cpu-passive {
+> > +					temperature = <47000>;
+> > +					hysteresis = <2000>;
+> > +					type = "passive";
+> > +				};
+> > +
+> > +				cpu_active: cpu-active {
+> > +					temperature = <67000>;
+> > +					hysteresis = <2000>;
+> > +					type = "active";
+> > +				};
+> > +
+> > +				cpu_hot: cpu-hot {
+> > +					temperature = <87000>;
+> > +					hysteresis = <2000>;
+> > +					type = "hot";
+> > +				};
+> > +
+> > +				cpu-crit {
+> > +					temperature = <107000>;
+> > +					hysteresis = <2000>;
+> > +					type = "critical";
+> > +				};
+> > +			};
+> > +
+> > +			cooling-maps {
+> > +				map0 {
+> > +					trip = <&cpu_passive>;
+> > +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > +				};
+> > +
+> > +				map1 {
+> > +					trip = <&cpu_active>;
+> > +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > +				};
+> > +
+> > +				map2 {
+> > +					trip = <&cpu_hot>;
+> > +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > +
+> >  	timer {
+> >  		compatible = "arm,armv8-timer";
+> >  		interrupt-parent = <&gic>;
+> > @@ -201,7 +255,7 @@
+> >  		#size-cells = <1>;
+> >  
+> >  		thermal_calibration: calib@198 {
+> > -			reg = <0x198 0x8>;
+> > +			reg = <0x198 0xc>;
 > 
-> The patch applies on top of the one recently proposed by Peter to drop the
-> SCHED_CPUFREQ_* flags.
+> Any reason why this is not part of patch 8/16?
 > 
-> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
-> CC: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
-> CC: Patrick Bellasi <patrick.bellasi@arm.com>
-> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> CC: Morten Rasmussen <morten.rasmussen@arm.com>
-> CC: Juri Lelli <juri.lelli@redhat.com>
-> CC: Viresh Kumar <viresh.kumar@linaro.org>
-> CC: Vincent Guittot <vincent.guittot@linaro.org>
-> CC: Todd Kjos <tkjos@android.com>
-> CC: Joel Fernandes <joelaf@google.com>
-> CC: linux-pm@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  kernel/sched/cpufreq_schedutil.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
 
-So the previous commit was surely incorrect as it relied on comparing
-frequencies instead of dl-util, and freq requirements could have even
-changed due to CFS.
+There's no strong reason wanting me to do that. patch 8 has contained a
+lot of nodes and patch 16 is present just in v2. So, I felt it should be
+a little bit easy that people reviews those patches if they are put into
+separate patches. But, It's still fine to make them into one in the next
+version.
 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index b0bd77d..d8dcba2 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -74,7 +74,10 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
->  
->  /************************ Governor internals ***********************/
->  
-> -static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
-> +static bool sugov_should_update_freq(struct sugov_policy *sg_policy,
-> +				     u64 time,
-> +				     struct sugov_cpu *sg_cpu_old,
-> +				     struct sugov_cpu *sg_cpu_new)
->  {
->  	s64 delta_ns;
->  
-> @@ -111,6 +114,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->  		return true;
->  	}
->  
-> +	/* Ignore rate limit when DL increased utilization. */
-> +	if (sg_cpu_new->util_dl > sg_cpu_old->util_dl)
-> +		return true;
-> +
-
-Changing the frequency has a penalty, specially in the ARM world (and
-that's where you are testing your stuff). I am worried that we will
-have (corner) cases where we will waste a lot of time changing the
-frequencies. For example (I may be wrong here), what if 10 small DL
-tasks are queued one after the other? The util will keep on changing
-and so will the frequency ? There may be more similar cases ?
-
-Is it possible to (somehow) check here if the DL tasks will miss
-deadline if we continue to run at current frequency? And only ignore
-rate-limit if that is the case ?
-
->  	delta_ns = time - sg_policy->last_freq_update_time;
->  	return delta_ns >= sg_policy->freq_update_delay_ns;
->  }
-> @@ -271,6 +278,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
->  				unsigned int flags)
->  {
->  	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-> +	struct sugov_cpu sg_cpu_old = *sg_cpu;
-
-Not really a big deal, but this structure is 80 bytes on ARM64, why
-copy everything when what we need is just 8 bytes ?
-
--- 
-viresh
+> Regards,
+> Matthias
+> 
