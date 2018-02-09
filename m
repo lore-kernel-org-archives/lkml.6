@@ -1,59 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeBINUx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:20:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48699 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751004AbeBINUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:20:52 -0500
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH TRIVIAL] edd: don't spam log if no EDD information is present
-Date: Fri,  9 Feb 2018 14:20:45 +0100
-Message-Id: <20180209132045.21433-1-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.13.6
+        id S1751941AbeBINVV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:21:21 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46689 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751304AbeBINVT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 08:21:19 -0500
+X-Google-Smtp-Source: AH8x224/shiPd9PKDc9IlRJb6K7qflm2Xk+SF97PUvK9u8APJ6NPcCcwfXkv4P75OI/0X8jgqpPuRQNym8weqwEysE0=
+MIME-Version: 1.0
+In-Reply-To: <CAErzpmuKgMyxascCdq3KuF1F1K4e2ciZq7FKsOha6WSBgg-WYw@mail.gmail.com>
+References: <CAErzpmuKgMyxascCdq3KuF1F1K4e2ciZq7FKsOha6WSBgg-WYw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 9 Feb 2018 15:21:17 +0200
+Message-ID: <CAHp75Vdm3O5xiemr-H_nF__g43pe_f-Gp6QsOoRW-DXAXrm+YQ@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We've had reports from users being concerned about messages like:
+On Fri, Feb 9, 2018 at 8:58 AM, Donglin Peng <dolinux.peng@gmail.com> wrote:
+> There is some duplicate code in soc-core.c,and the kernel provides
 
-  [    4.487246] BIOS EDD facility v0.16 2004-Jun-25, 0 devices found
-  [    4.487251] EDD information not available.
+'core.c,and' -> 'core.c, and'
 
-While these are more or less irrelevant, tell edd.c to not annoy anyone.
+> +static int codec_list_show(struct seq_file *s, void *v)
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
----
-Jiri, I know you're not the edd maintainer (there's none) but I've seen you've
-taken edd patches, so ;-).
+No need to rename m -> s.
 
- drivers/firmware/edd.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> +static int dai_list_show(struct seq_file *s, void *v)
 
-diff --git a/drivers/firmware/edd.c b/drivers/firmware/edd.c
-index 60a8f1363a10..1b82c89a49df 100644
---- a/drivers/firmware/edd.c
-+++ b/drivers/firmware/edd.c
-@@ -748,14 +748,12 @@ edd_init(void)
- 	int rc=0;
- 	struct edd_device *edev;
- 
-+	if (!edd_num_devices())
-+		return -ENODEV;
-+
- 	printk(KERN_INFO "BIOS EDD facility v%s %s, %d devices found\n",
- 	       EDD_VERSION, EDD_DATE, edd_num_devices());
- 
--	if (!edd_num_devices()) {
--		printk(KERN_INFO "EDD information not available.\n");
--		return -ENODEV;
--	}
--
- 	edd_kset = kset_create_and_add("edd", NULL, firmware_kobj);
- 	if (!edd_kset)
- 		return -ENOMEM;
+Ditto.
+
+> +static int platform_list_show(struct seq_file *s, void *v)
+
+Ditto.
+
+After addressing above,
+
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
 -- 
-2.13.6
+With Best Regards,
+Andy Shevchenko
