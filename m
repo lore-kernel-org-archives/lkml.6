@@ -1,63 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753078AbeBIOKs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:10:48 -0500
-Received: from mout.web.de ([212.227.17.11]:52719 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752086AbeBIOKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:10:45 -0500
-To: cocci@systeme.lip6.fr, Julia Lawall <julia.lawall@lip6.fr>
-References: <1518094434-12852-1-git-send-email-Julia.Lawall@lip6.fr>
-Subject: Re: scripts/coccinelle/misc/shift.cocci: Refactoring?
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        id S1752900AbeBIOMf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:12:35 -0500
+Received: from smtp-out6.electric.net ([192.162.217.184]:56975 "EHLO
+        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752089AbeBIOMc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 09:12:32 -0500
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Arnd Bergmann'" <arnd@arndb.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <a241776d-85bf-cbf1-067b-fbd0b80c0e5e@users.sourceforge.net>
-Date: Fri, 9 Feb 2018 15:10:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1518094434-12852-1-git-send-email-Julia.Lawall@lip6.fr>
-Content-Type: text/plain; charset=utf-8
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: RE: [Xen-devel] [PATCH] [v2] xen: hypercall: fix out-of-bounds memcpy
+Thread-Topic: [Xen-devel] [PATCH] [v2] xen: hypercall: fix out-of-bounds
+ memcpy
+Thread-Index: AQHToaW2hAmOQzi7s0y/ZNGjmF+sSaOcGtMw
+Date: Fri, 9 Feb 2018 14:13:14 +0000
+Message-ID: <42258ad55dac4191813d258e43a44e0e@AcuMS.aculab.com>
+References: <20180205150340.328921-1-arnd@arndb.de>
+ <67d8f0f1-0846-876d-d36a-c8a9f9366243@citrix.com>
+ <CAK8P3a36O-NbrKkt-DEEZE2A2JQ5Gu9GZ98j0BjoFET4kgTaWw@mail.gmail.com>
+In-Reply-To: <CAK8P3a36O-NbrKkt-DEEZE2A2JQ5Gu9GZ98j0BjoFET4kgTaWw@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:XQwnOoYNdXPOiyuhX3h1nZPTruHR8EdBXD9zt7D0qrSS2Zdvi+k
- KIOkrnarafSFVu3vKJ5jv+b0pjakyzBQ83we150G7qbi8E7Ni8MmTBIZfi2re/RmZW4iZ5M
- srTvV2pbOjyBiLETFsXpvGyvKSBhh1Z/VL8GnWjrwL9qzegjtp00P+tI5/C/Y2e1kxACYYB
- yZ9TCFFs6VEQDsI4+dI9g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:s0xL8Ohyb4c=:cyFMSnSfkW+WUhSZ/nxfT8
- VijayZNpC1wFU+2cIPPUbGFJvr7thBqPwy/XNeYG3OscfkvzL/0Y68rGcO4J0bP0IHVLI2Yiy
- vt1SY8zAybQjJeQDxckrtkyc2W9dX7DIyDnqHQDUA/JWu4sq7EylsgtUTiqapfgLKa7PVibEp
- IzvyKpyriIf08rKFcwEZZLrfHJFacCAtGxG02+HrEttDPYfju7w97TSNjAZ9NVdhpbBpKH4rl
- ThFvWw/D86ViJOJuqr585vTPeEBDk0CI6+ev3dTP4MC9aYXm8WgxRtpKtLTmWj1yRfVs/h86W
- bRhVtiN+IpfXvHc1lQCVBWZ5ecOjxKCyenq67RhB4ZHTS1fvEVu9OePspcEKwxBNUoex1EARE
- 8z4C/XdEFubiW/I0Qm5F1x1VaAIYO/f+TMVTAAOzlihkHRBaFSatknEE7JIsXX8JxfBhtjRN1
- TyNMeVYstxDIjI6ZnsG4I4q1JHhaPKwr9J3TISQ4VPB6Kf0kqBUpVZvk9cmeLG4H2uOnyhP0R
- q1lpwj8dSUQO0YGUbstjjbdw+9b3Gc0yZs6ebW5Qbs+66rSNh6nt3rbc3lD25YUyerMpqGcTa
- D8ns6yquVmmpR34VgErci8wC11HNCY3tJz3oh/3tc+Pqfpi/tPYi6Nc1+gRk3YRN1EF5NUwWf
- hH8YSb44Soo4HDuX1m3i68+NYAiptWRIJppDEq1/nz9lvVi6JIOrl8sRsEr+vNAav2eBOhBWS
- cMDGl/Qv4BYZhb1KbOf9t19lDDJoFkPq4wNvoYImMRr/RQwIM+7CHpFSrr5tj5h9eP8PWk5C/
- PTJPYsvoxgFet+3BKxegTwNvvuJrJGW7sh8H1i0vgbltOU4V4M=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w19ECfd8031278
 
-> +|
-> +WARN_ON(x op@p y)
-> +|
-> +WARN_ON_ONCE(x op@p y)
-> +|
+From: Arnd Bergmann
+> Sent: 09 February 2018 12:58
+...
+> However, aside from this driver, I wonder if we should be worried about
+> Spectre type 1 attacks on similar code, when gcc-8 turns a switch/case
+> statement into an array lookup behind our back, e.g. in an ioctl handler.
+> Has anybody got this on their radar?
 
-Can it be nice to work with nested SmPL disjunctions so that a bit of
-duplicate SmPL code will be reduced?
+The canonical code for a switch statement is to jump indirect on an array
+of code pointers.
+ioctl handlers probably use a series of compares because the values are
+sparse.
 
+Also remember that gcc-8 will convert dense switch statements that just
+load a value into a data array lookup.
 
-> +coccilib.org.print_todo(j0[0], msg)
+I guess both those jump tables are potential attack vectors.
+Not quite sure how they might be used to leak info though.
 
-Will it be nicer to pass a string literal instead of a variable for the message
-as a method parameter?
-
-Regards,
-Markus
+	David
