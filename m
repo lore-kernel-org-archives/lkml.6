@@ -1,207 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeBIJ1c (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:27:32 -0500
-Received: from mga03.intel.com ([134.134.136.65]:28183 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751034AbeBIJ12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:27:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,482,1511856000";
-   d="scan'208";a="29437356"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 4/8] docs: kernel-doc: Move STATE_NAME processing into its own function
-In-Reply-To: <20180207172624.24555-5-corbet@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180207172624.24555-1-corbet@lwn.net> <20180207172624.24555-5-corbet@lwn.net>
-Date: Fri, 09 Feb 2018 11:27:20 +0200
-Message-ID: <87a7wia4xz.fsf@intel.com>
+        id S1752639AbeBIJ1l (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:27:41 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751034AbeBIJ1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:27:34 -0500
+Date: Fri, 9 Feb 2018 10:27:29 +0100
+From: Andrew Jones <drjones@redhat.com>
+To: Christoffer Dall <christoffer.dall@linaro.org>
+Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, Christoffer Dall <cdall@linaro.org>
+Subject: Re: [PATCH v1 15/16] kvm: arm64: Allow configuring physical address
+ space size
+Message-ID: <20180209092729.o55kl2tjg5hplk52@hawk.localdomain>
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-16-suzuki.poulose@arm.com>
+ <20180208111414.GM29286@cbox>
+ <31e5bf40-4fcb-934e-6036-ff2670f793df@arm.com>
+ <20180209081606.GC7339@cbox>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209081606.GC7339@cbox>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 07 Feb 2018, Jonathan Corbet <corbet@lwn.net> wrote:
-> Move this code out of process_file() in the name of readability and
-> maintainability.
+On Fri, Feb 09, 2018 at 09:16:06AM +0100, Christoffer Dall wrote:
+> On Thu, Feb 08, 2018 at 05:53:17PM +0000, Suzuki K Poulose wrote:
+> > On 08/02/18 11:14, Christoffer Dall wrote:
+> > >On Tue, Jan 09, 2018 at 07:04:10PM +0000, Suzuki K Poulose wrote:
+> > >>Allow the guests to choose a larger physical address space size.
+> > >>The default and minimum size is 40bits. A guest can change this
+> > >>right after the VM creation, but before the stage2 entry page
+> > >>tables are allocated (i.e, before it registers a memory range
+> > >>or maps a device address). The size is restricted to the maximum
+> > >>supported by the host. Also, the guest can only increase the PA size,
+> > >>from the existing value, as reducing it could break the devices which
+> > >>may have verified their physical address for validity and may do a
+> > >>lazy mapping(e.g, VGIC).
+> > >>
+> > >>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > >>Cc: Christoffer Dall <cdall@linaro.org>
+> > >>Cc: Peter Maydell <peter.maydell@linaro.org>
+> > >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > >>---
+> > >>  Documentation/virtual/kvm/api.txt | 27 ++++++++++++++++++++++++++
+> > >>  arch/arm/include/asm/kvm_host.h   |  7 +++++++
+> > >>  arch/arm64/include/asm/kvm_host.h |  1 +
+> > >>  arch/arm64/include/asm/kvm_mmu.h  | 41 ++++++++++++++++++++++++++++++---------
+> > >>  arch/arm64/kvm/reset.c            | 28 ++++++++++++++++++++++++++
+> > >>  include/uapi/linux/kvm.h          |  4 ++++
+> > >>  virt/kvm/arm/arm.c                |  2 +-
+> > >>  7 files changed, 100 insertions(+), 10 deletions(-)
+> > >>
+> > >>diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> > >>index 57d3ee9e4bde..a203faf768c4 100644
+> > >>--- a/Documentation/virtual/kvm/api.txt
+> > >>+++ b/Documentation/virtual/kvm/api.txt
+> > >>@@ -3403,6 +3403,33 @@ invalid, if invalid pages are written to (e.g. after the end of memory)
+> > >>  or if no page table is present for the addresses (e.g. when using
+> > >>  hugepages).
+> > >>+4.109 KVM_ARM_GET_PHYS_SHIFT
+> > >>+
+> > >>+Capability: KVM_CAP_ARM_CONFIG_PHYS_SHIFT
+> > >>+Architectures: arm64
+> > >>+Type: vm ioctl
+> > >>+Parameters: __u32 (out)
+> > >>+Returns: 0 on success, a negative value on error
+> > >>+
+> > >>+This ioctl is used to get the current maximum physical address size for
+> > >>+the VM. The value is Log2(Maximum_Physical_Address). This is neither the
+> > >>+ amount of physical memory assigned to the VM nor the maximum physical address
+> > >>+that a real CPU on the host can handle. Rather, this is the upper limit of the
+> > >>+guest physical address that can be used by the VM.
+> > >
+> > >What is the point of this?  Presumably if userspace has set the size, it
+> > >already knows the size?
+> > 
+> > This can help the userspace know, what the "default" limit is. As such I am
+> > not particular about keeping this around.
+> > 
+> 
+> Userspace has to already know, since otherwise things don't work today,
+> so I think we can omit this.
+> 
+> > >
+> > >>+
+> > >>+4.109 KVM_ARM_SET_PHYS_SHIFT
+> > >>+
+> > >>+Capability: KVM_CAP_ARM_CONFIG_PHYS_SHIFT
+> > >>+Architectures: arm64
+> > >>+Type: vm ioctl
+> > >>+Parameters: __u32 (in)
+> > >>+Returns: 0 on success, a negative value on error
+> > >>+
+> > >>+This ioctl is used to set the maximum physical address size for
+> > >>+the VM. The value is Log2(Maximum_Physical_Address). The value can only
+> > >>+be increased from the existing setting. The value cannot be changed
+> > >>+after the stage-2 page tables are allocated and will return an error.
+> > >>+
+> > >
+> > >Is there a way for userspace to discover what the underlying hardware
+> > >can actually support, beyond trial-and-error on this ioctl?
+> > 
+> > Unfortunately, there is none. We don't expose ID_AA64MMFR0 via mrs emulation.
+> > 
+> 
+> We should probably think about that.  Perhaps it could be tied to the
+> return value of KVM_CAP_ARM_CONFIG_PHYS_SHIFT ?
+
+FWIW, that sounds good to me.
+
+> 
+> > >>+static inline int kvm_reconfig_stage2(struct kvm *kvm, u32 phys_shift)
+> > >>+{
+> > >>+	int rc = 0;
+> > >>+	unsigned int pa_max, parange;
+> > >>+
+> > >>+	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
+> > >>+	pa_max = id_aa64mmfr0_parange_to_phys_shift(parange);
+> > >>+	/* Raise it to 40bits for backward compatibility */
+> > >>+	pa_max = (pa_max < 40) ? 40 : pa_max;
+> > >>+	/* Make sure the size is supported/available */
+> > >>+	if (phys_shift > PHYS_MASK_SHIFT || phys_shift > pa_max)
+> > >>+		return -EINVAL;
+> > >>+	/*
+> > >>+	 * The stage2 PGD is dependent on the settings we initialise here
+> > >>+	 * and should be allocated only after this step. We cannot allow
+> > >>+	 * down sizing the IPA size as there could be devices or memory
+> > >>+	 * regions, that depend on the previous size.
+> > >>+	 */
+> > >>+	mutex_lock(&kvm->slots_lock);
+> > >>+	if (kvm->arch.pgd || phys_shift < kvm->arch.phys_shift) {
+> > >>+		rc = -EPERM;
+> > >>+	} else if (phys_shift > kvm->arch.phys_shift) {
+> > >>+		kvm->arch.phys_shift = phys_shift;
+> > >>+		kvm->arch.s2_levels = stage2_pt_levels(kvm->arch.phys_shift);
+> > >>+		kvm->arch.vtcr_private = VTCR_EL2_SL0(kvm->arch.s2_levels) |
+> > >>+					 TCR_T0SZ(kvm->arch.phys_shift);
+> > >>+	}
+> > >
+> > >I think you can rework the above to make it more obvious what's going on
+> > >in this way:
+> > >
+> > >	rc = -EPERM;
+> > >	if (kvm->arch.pgd || phys_shift < kvm->arch.phys_shift)
+> > >		goto out_unlock;
+> > >
+> > >	rc = 0;
+> > >	if (phys_shift == kvm->arch.phys_shift)
+> > >		goto out_unlock;
+> > >
+> > >	kvm->arch.phys_shift = phys_shift;
+> > >	kvm->arch.s2_levels = stage2_pt_levels(kvm->arch.phys_shift);
+> > >	kvm->arch.vtcr_private = VTCR_EL2_SL0(kvm->arch.s2_levels) |
+> > >				 TCR_T0SZ(kvm->arch.phys_shift);
+> > >
+> > >out_unlock:
+> > >
+> > 
+> > Sure.
+> > 
+> > 
+> > 
+> > >>--- a/virt/kvm/arm/arm.c
+> > >>+++ b/virt/kvm/arm/arm.c
+> > >>@@ -1136,7 +1136,7 @@ long kvm_arch_vm_ioctl(struct file *filp,
+> > >>  		return 0;
+> > >>  	}
+> > >>  	default:
+> > >>-		return -EINVAL;
+> > >>+		return kvm_arch_dev_vm_ioctl(kvm, ioctl, arg);
+> > >>  	}
+> > >>  }
+> > >>-- 
+> > >>2.13.6
+> > >>
+> > >
+> > >Have you considered making this capability a generic capability and
+> > >encoding this in the 'type' argument to KVM_CREATE_VM?  This would
+> > >significantly simplify all the above and would allow you to drop patch 8
+> > >and 9 I think.
+> > 
+> > No. I will take a look. Btw, there were patches flying around to support
+> > "userspace" requesting specific values for ID feature registers. But even that
+> > doesn't help with the detection part. May be that is another way to configure
+> > the size, but not sure about the current status of that work.
+> > 
+> 
+> It's a bit stranded.  Drew was driving this work (on cc).  But the ID
+> register exposed to the guest should represent the actual limits
+> of the VM, so I don't think we need userspace to configure this, but we
+> can implement this in KVM based on the PA range configured for the VM.
 >
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 
-I admit I don't fully understand the semantics of perl parameter
-passing, but looks okay.
+I heard there were some patches being worked by someone at Arm, which
+haven't been posted yet (obviously), but maybe that was just a rumor?
+I was about to revisit this topic myself, at least to some degree, to
+attempt to address PMU hiding. We really need to put some thought into
+how best to generally give userspace control of the VM's ID registers,
+within the constraints of the host. Anyway, I guess that should be done
+in a separate thread, so I won't start brainstorming now, here.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-> ---
->  scripts/kernel-doc | 137 ++++++++++++++++++++++++++++-------------------------
->  1 file changed, 72 insertions(+), 65 deletions(-)
->
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index 65150b7c8472..a27c7016f72d 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -1793,13 +1793,81 @@ sub process_normal() {
->      }
->  }
->  
-> +#
-> +# STATE_NAME: Looking for the "name - description" line
-> +#
-> +sub process_name($$) {
-> +    my $file = shift;
-> +    my $identifier;
-> +    my $descr;
-> +
-> +    if (/$doc_block/o) {
-> +	$state = STATE_DOCBLOCK;
-> +	$contents = "";
-> +	$new_start_line = $. + 1;
-> +
-> +	if ( $1 eq "" ) {
-> +	    $section = $section_intro;
-> +	} else {
-> +	    $section = $1;
-> +	}
-> +    }
-> +    elsif (/$doc_decl/o) {
-> +	$identifier = $1;
-> +	if (/\s*([\w\s]+?)\s*-/) {
-> +	    $identifier = $1;
-> +	}
->  
-> +	$state = STATE_BODY;
-> +	# if there's no @param blocks need to set up default section
-> +	# here
-> +	$contents = "";
-> +	$section = $section_default;
-> +	$new_start_line = $. + 1;
-> +	if (/-(.*)/) {
-> +	    # strip leading/trailing/multiple spaces
-> +	    $descr= $1;
-> +	    $descr =~ s/^\s*//;
-> +	    $descr =~ s/\s*$//;
-> +	    $descr =~ s/\s+/ /g;
-> +	    $declaration_purpose = $descr;
-> +	    $state = STATE_BODY_MAYBE;
-> +	} else {
-> +	    $declaration_purpose = "";
-> +	}
-> +
-> +	if (($declaration_purpose eq "") && $verbose) {
-> +	    print STDERR "${file}:$.: warning: missing initial short description on line:\n";
-> +	    print STDERR $_;
-> +	    ++$warnings;
-> +	}
-> +
-> +	if ($identifier =~ m/^struct/) {
-> +	    $decl_type = 'struct';
-> +	} elsif ($identifier =~ m/^union/) {
-> +	    $decl_type = 'union';
-> +	} elsif ($identifier =~ m/^enum/) {
-> +	    $decl_type = 'enum';
-> +	} elsif ($identifier =~ m/^typedef/) {
-> +	    $decl_type = 'typedef';
-> +	} else {
-> +	    $decl_type = 'function';
-> +	}
-> +
-> +	if ($verbose) {
-> +	    print STDERR "${file}:$.: info: Scanning doc for $identifier\n";
-> +	}
-> +    } else {
-> +	print STDERR "${file}:$.: warning: Cannot understand $_ on line $.",
-> +	    " - I thought it was a doc line\n";
-> +	++$warnings;
-> +	$state = STATE_NORMAL;
-> +    }
-> +}
->  
->  sub process_file($) {
->      my $file;
-> -    my $identifier;
->      my $func;
-> -    my $descr;
->      my $initial_section_counter = $section_counter;
->      my ($orig_file) = @_;
->      my $leading_space;
-> @@ -1823,69 +1891,8 @@ sub process_file($) {
->          while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
->  	if ($state == STATE_NORMAL) {
->  	    process_normal();
-> -	} elsif ($state == STATE_NAME) {# this line is the function name (always)
-> -	    if (/$doc_block/o) {
-> -		$state = STATE_DOCBLOCK;
-> -		$contents = "";
-> -                $new_start_line = $. + 1;
-> -
-> -		if ( $1 eq "" ) {
-> -			$section = $section_intro;
-> -		} else {
-> -			$section = $1;
-> -		}
-> -	    }
-> -	    elsif (/$doc_decl/o) {
-> -		$identifier = $1;
-> -		if (/\s*([\w\s]+?)\s*-/) {
-> -		    $identifier = $1;
-> -		}
-> -
-> -		$state = STATE_BODY;
-> -		# if there's no @param blocks need to set up default section
-> -		# here
-> -		$contents = "";
-> -		$section = $section_default;
-> -		$new_start_line = $. + 1;
-> -		if (/-(.*)/) {
-> -		    # strip leading/trailing/multiple spaces
-> -		    $descr= $1;
-> -		    $descr =~ s/^\s*//;
-> -		    $descr =~ s/\s*$//;
-> -		    $descr =~ s/\s+/ /g;
-> -		    $declaration_purpose = $descr;
-> -		    $state = STATE_BODY_MAYBE;
-> -		} else {
-> -		    $declaration_purpose = "";
-> -		}
-> -
-> -		if (($declaration_purpose eq "") && $verbose) {
-> -			print STDERR "${file}:$.: warning: missing initial short description on line:\n";
-> -			print STDERR $_;
-> -			++$warnings;
-> -		}
-> -
-> -		if ($identifier =~ m/^struct/) {
-> -		    $decl_type = 'struct';
-> -		} elsif ($identifier =~ m/^union/) {
-> -		    $decl_type = 'union';
-> -		} elsif ($identifier =~ m/^enum/) {
-> -		    $decl_type = 'enum';
-> -		} elsif ($identifier =~ m/^typedef/) {
-> -		    $decl_type = 'typedef';
-> -		} else {
-> -		    $decl_type = 'function';
-> -		}
-> -
-> -		if ($verbose) {
-> -		    print STDERR "${file}:$.: info: Scanning doc for $identifier\n";
-> -		}
-> -	    } else {
-> -		print STDERR "${file}:$.: warning: Cannot understand $_ on line $.",
-> -		" - I thought it was a doc line\n";
-> -		++$warnings;
-> -		$state = STATE_NORMAL;
-> -	    }
-> +	} elsif ($state == STATE_NAME) {
-> +	    process_name($file, $_);
->  	} elsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE) {
->  	    if (/$doc_sect/i) { # case insensitive for supported section names
->  		$newsection = $1;
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+Thanks,
+drew
