@@ -1,88 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752215AbeBIJqA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:46:00 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46678 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752135AbeBIJp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:45:57 -0500
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: Jason Wang <jasowang@redhat.com>
-Subject: [PATCH V4 2/2] ptr_ring: try vmalloc() when kmalloc() fails
-Date: Fri,  9 Feb 2018 17:45:50 +0800
-Message-Id: <1518169550-5987-2-git-send-email-jasowang@redhat.com>
-In-Reply-To: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
-References: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
+        id S1752293AbeBIJrG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:47:06 -0500
+Received: from foss.arm.com ([217.140.101.70]:44886 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750942AbeBIJrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:47:04 -0500
+Subject: Re: [PATCH v4 2/2] dt/bindings: Add bindings for Layerscape external
+ irqs
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Rob Herring <robh@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Mark Rutland <mark.rutland@arm.com>, Andy Tang <andy.tang@nxp.com>,
+        Alexander Stein <alexander.stein@systec-electronic.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20180122092133.23177-1-rasmus.villemoes@prevas.dk>
+ <20180125150230.7234-1-rasmus.villemoes@prevas.dk>
+ <20180125150230.7234-2-rasmus.villemoes@prevas.dk>
+ <20180205060705.cg3qywtqs65w74ee@rob-hp-laptop>
+ <15ac0da3-e85b-c6be-366a-368934752018@prevas.dk>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <6186117d-ff4f-a64f-9b5e-c3b3fac8bb88@arm.com>
+Date: Fri, 9 Feb 2018 09:47:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <15ac0da3-e85b-c6be-366a-368934752018@prevas.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch switch to use kvmalloc_array() for using a vmalloc()
-fallback to help in case kmalloc() fails.
+On 08/02/18 15:08, Rasmus Villemoes wrote:
+> On 2018-02-05 07:07, Rob Herring wrote:
+>>> +Example:
+>>> +	scfg: scfg@1570000 {
+>>> +		compatible = "fsl,ls1021a-scfg", "syscon";
+>>> +		...
+>>> +		extirq: interrupt-controller {
+>>> +			compatible = "fsl,ls1021a-extirq";
+>>> +			#interrupt-cells = <3>;
+>>> +			interrupt-controller;
+>>> +			interrupt-parent = <&gic>;
+>>> +			offset = <0x1ac>;
+>>
+>> Use reg here instead (with a length).
+> 
+> Hm, ok, but what does the length buy us? Should the driver just ignore
+> it, or should it check that it is 4 and bail out if not?
+> 
+>>> +			interrupts = <163 164 165 167 168 169>;
+>>
+>> These don't look like GIC interrupt cells. Building this with current 
+>> dtc will have errors.
+> 
+> Indeed, they are not. They simply record which interrupt lines on the
+> GIC the external interrupt lines IRQ0...IRQ5 map to (the arm64 socs
+> apparently have 12 such lines, but I don't know what they map to). I
+> originally had that mapping in the driver, but I was asked to move it to
+> DT. Is the problem the use of the name "interrupts" for this property?
+> I'm happy to use something else (parent-interrupts, interrupt-mapping,
+> ...) I find it very hard to figure out which property names have
+> magic/reserved meanings.
+> 
+> I don't see any warnings/errors from dtc in the 4.14 tree I'm working
+> on. Does it require an even newer dtc than that?
 
-Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
-Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- include/linux/ptr_ring.h | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Most interrupt controllers use a private property, potentially with a
+range (see the recent example of the Qualcomm PDC [1]).
 
-diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-index 6051a5f..b884b77 100644
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-@@ -464,11 +464,14 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
- 	__PTR_RING_PEEK_CALL_v; \
- })
- 
-+/* Not all gfp_t flags (besides GFP_KERNEL) are allowed. See
-+ * documentation for vmalloc for which of them are legal.
-+ */
- static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
- {
- 	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
- 		return NULL;
--	return kcalloc(size, sizeof(void *), gfp);
-+	return kvmalloc_array(size, sizeof(void *), gfp | __GFP_ZERO);
- }
- 
- static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
-@@ -603,7 +606,7 @@ static inline int ptr_ring_resize(struct ptr_ring *r, int size, gfp_t gfp,
- 	spin_unlock(&(r)->producer_lock);
- 	spin_unlock_irqrestore(&(r)->consumer_lock, flags);
- 
--	kfree(old);
-+	kvfree(old);
- 
- 	return 0;
- }
-@@ -643,7 +646,7 @@ static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
- 	}
- 
- 	for (i = 0; i < nrings; ++i)
--		kfree(queues[i]);
-+		kvfree(queues[i]);
- 
- 	kfree(queues);
- 
-@@ -651,7 +654,7 @@ static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
- 
- nomem:
- 	while (--i >= 0)
--		kfree(queues[i]);
-+		kvfree(queues[i]);
- 
- 	kfree(queues);
- 
-@@ -666,7 +669,7 @@ static inline void ptr_ring_cleanup(struct ptr_ring *r, void (*destroy)(void *))
- 	if (destroy)
- 		while ((ptr = ptr_ring_consume(r)))
- 			destroy(ptr);
--	kfree(r->queue);
-+	kvfree(r->queue);
- }
- 
- #endif /* _LINUX_PTR_RING_H  */
+Thanks,
+
+	M.
+
+[1] https://patchwork.kernel.org/patch/10208037/
 -- 
-2.7.4
+Jazz is not dead. It just smells funny...
