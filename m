@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753451AbeBIOIL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:08:11 -0500
-Received: from mga06.intel.com ([134.134.136.31]:30397 "EHLO mga06.intel.com"
+        id S1753426AbeBIOIJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:08:09 -0500
+Received: from mga12.intel.com ([192.55.52.136]:17069 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753208AbeBIOIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753231AbeBIOIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Feb 2018 09:08:05 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,483,1511856000";
-   d="scan'208";a="199940822"
+   d="scan'208";a="30163081"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
@@ -18,9 +18,9 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv3 2/5] x86/tme: Detect if TME and MKTME is activated by BIOS
-Date: Fri,  9 Feb 2018 17:07:51 +0300
-Message-Id: <20180209140754.17062-3-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv3 1/5] x86/cpufeatures: Add Intel Total Memory Encryption cpufeature
+Date: Fri,  9 Feb 2018 17:07:50 +0300
+Message-Id: <20180209140754.17062-2-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
 References: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
@@ -28,130 +28,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IA32_TME_ACTIVATE MSR (0x982) can be used to check if BIOS has enabled
-TME and MKTME. It includes which encryption policy/algorithm is selected
-for TME or available for MKTME. For MKTME, the MSR also enumerates how
-many KeyIDs are available.
-
-We would need to exclude KeyID bits from physical address bits.
-detect_tme() would adjust cpuinfo_x86::x86_phys_bits accordingly.
-
-We have to do this even if we are not going to use KeyID bits
-ourself. VM guests still have to know that these bits are not usable
-for physical address.
+CPUID.0x7.0x0:ECX[13] indicates whether CPU supports Intel Total Memory
+Encryption.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/kernel/cpu/intel.c | 90 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 319bf989fad1..5aa51efc2ff2 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -506,6 +506,93 @@ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
- 	}
- }
- 
-+#define MSR_IA32_TME_ACTIVATE		0x982
-+
-+/* Helpers to access TME_ACTIVATE MSR */
-+#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
-+#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
-+
-+#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	/* Bits 7:4 */
-+#define TME_ACTIVATE_POLICY_AES_XTS_128	0
-+
-+#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/* Bits 35:32 */
-+
-+#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	/* Bits 63:48 */
-+#define TME_ACTIVATE_CRYPTO_AES_XTS_128	1
-+
-+/* Values for mktme_status (SW only construct) */
-+#define MKTME_ENABLED			0
-+#define MKTME_DISABLED			1
-+#define MKTME_UNINITIALIZED		2
-+static int mktme_status = MKTME_UNINITIALIZED;
-+
-+static void detect_tme(struct cpuinfo_x86 *c)
-+{
-+	u64 tme_activate, tme_policy, tme_crypto_algs;
-+	int keyid_bits = 0, nr_keyids = 0;
-+	static u64 tme_activate_cpu0 = 0;
-+
-+	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
-+
-+	if (mktme_status != MKTME_UNINITIALIZED) {
-+		if (tme_activate != tme_activate_cpu0) {
-+			/* Broken BIOS? */
-+			pr_err_once("x86/tme: configuation is inconsistent between CPUs\n");
-+			pr_err_once("x86/tme: MKTME is not usable\n");
-+			mktme_status = MKTME_DISABLED;
-+
-+			/* Proceed. We may need to exclude bits from x86_phys_bits. */
-+		}
-+	} else {
-+		tme_activate_cpu0 = tme_activate;
-+	}
-+
-+	if (!TME_ACTIVATE_LOCKED(tme_activate) || !TME_ACTIVATE_ENABLED(tme_activate)) {
-+		pr_info_once("x86/tme: not enabled by BIOS\n");
-+		mktme_status = MKTME_DISABLED;
-+		return;
-+	}
-+
-+	if (mktme_status != MKTME_UNINITIALIZED)
-+		goto detect_keyid_bits;
-+
-+	pr_info("x86/tme: enabled by BIOS\n");
-+
-+	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
-+	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS_128)
-+		pr_warn("x86/tme: Unknown policy is active: %#llx\n", tme_policy);
-+
-+	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
-+	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS_128)) {
-+		pr_err("x86/mktme: No known encryption algorithm is supported: %#llx\n",
-+				tme_crypto_algs);
-+		mktme_status = MKTME_DISABLED;
-+	}
-+detect_keyid_bits:
-+	keyid_bits = TME_ACTIVATE_KEYID_BITS(tme_activate);
-+	nr_keyids = (1UL << keyid_bits) - 1;
-+	if (nr_keyids) {
-+		pr_info_once("x86/mktme: enabled by BIOS\n");
-+		pr_info_once("x86/mktme: %d KeyIDs available\n", nr_keyids);
-+	} else {
-+		pr_info_once("x86/mktme: disabled by BIOS\n");
-+	}
-+
-+	if (mktme_status == MKTME_UNINITIALIZED) {
-+		/* MKTME is usable */
-+		mktme_status = MKTME_ENABLED;
-+	}
-+
-+	/*
-+	 * Exclude KeyID bits from physical address bits.
-+	 *
-+	 * We have to do this even if we are not going to use KeyID bits
-+	 * ourself. VM guests still have to know that these bits are not usable
-+	 * for physical address.
-+	 */
-+	c->x86_phys_bits -= keyid_bits;
-+}
-+
- static void init_intel_energy_perf(struct cpuinfo_x86 *c)
- {
- 	u64 epb;
-@@ -676,6 +763,9 @@ static void init_intel(struct cpuinfo_x86 *c)
- 	if (cpu_has(c, X86_FEATURE_VMX))
- 		detect_vmx_virtcap(c);
- 
-+	if (cpu_has(c, X86_FEATURE_TME))
-+		detect_tme(c);
-+
- 	init_intel_energy_perf(c);
- 
- 	init_intel_misc_features(c);
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 14c3aa2b5f90..d3702d9ac012 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -315,6 +315,7 @@
+ #define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less Multiplication Double Quadword */
+ #define X86_FEATURE_AVX512_VNNI		(16*32+11) /* Vector Neural Network Instructions */
+ #define X86_FEATURE_AVX512_BITALG	(16*32+12) /* Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
++#define X86_FEATURE_TME			(16*32+13) /* Intel Total Memory Encryption */
+ #define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* POPCNT for vectors of DW/QW */
+ #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
+ #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
 -- 
 2.15.1
