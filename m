@@ -1,51 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227bD4rn/vppv/rEFxIb8nJ3aAC5MapDL5y3x7U9YVAwtr3BvxB0oYLHtkWvbRLGdhFjBx0u
-ARC-Seal: i=1; a=rsa-sha256; t=1518183839; cv=none;
-        d=google.com; s=arc-20160816;
-        b=etSPhxCjGPrZ/Db71i60n+TaxYcGmx/RDjjIcX7qOymklDr48Xw5Bqoe+oeFYnPOIx
-         9f+RuOhSQv/J5zwO5riRqTWLOLEQ5MxMaum1JPeW0sgQR3CPDxR87N90tpP9FV+We52d
-         l38FtxEyWjMUlr+KjaBbSN4IkK5jJAZElXO1Y3qWL2BGVzz6oR1zBuuPxss4kOREyZAd
-         19DY0YevJR1dsa9beq5LLAYx+buLtaAsH+Su1c0hWl7s/FvbivFuzgevcoA0ZgCbklQU
-         xwHFRupLTcQec3vAZcAj2hmmw+p3IlHOW+Uo5T6yLUgDYsOz0zYJrNkhAlThZTjdu22S
-         ke9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=u6Zj8wxBZbp0QXclzbgRAUlb1KBlpAsB3+2AqZS87Ek=;
-        b=wQtDpnKepPHOsjaFXaz9jAxr/c8A7xVEGvtTtVEf3i/PgWoHkuMbMd+R6MrCthvT2n
-         bnpWwHneeF3aHC2IZpg9znQVigxD2/mR0KGRf+7qg3ophx+h7q/4LsGlKAiXchBP0QkP
-         Ke1qIg4Xqmzp+y7lTbuuE/MLYs0TvO/CDnrIHQVns8+oba0hn9vpfYfB3KXpB4hIGDFz
-         ev1+QJ6HuciTRfMLPE49gcQafHeio4pUhobZdVBG1l6vOyAdv6b/H7tzsEshr9fcb9AC
-         bzbkADU9R/HWunmxf4Yjlpc7MFTvofJhdH9WqWX24knDIZ52vBQdw/ndzw8OHGbBdbs+
-         LulQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518183838-2-17005360514452039645
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518183837; b=er/rJ1zginfmsGapP4zyQZXDCNulPIrP70JcDS28pYxzns8
+    Icvl6nsklfxSsH/CdJMsW67m88xH6OnCOENk6uYNjKEcuZaWsGvvUBYhl93u7DWm
+    TChJty8H+19nxyoY3sVO5ZK8hhqh8GkwsSl4fUIZBKPwYY3SVYYryW3HdcPHXzNo
+    J7LNhTiKK5nFseQjEyBtm+u7bQQ80l24P7/tec+rf2fcHzZq7v8CQQOHO8Otzv4o
+    FbNGNLtNUlmtnTOz7rrPd+n7q6wlXnq7QhQQ0Jhhvv3dSZlcOJBSG4FgU03lLHD3
+    JbWNLKSL20BCJ+/BCknlEIUCfMJfF6qg/FdYh+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518183837; bh=Gde4GuCXVdMJqBWVopiXHL7W3P
+    vwh5LglPW7FmiSGmY=; b=kLIDTjjvjIB6QxZ7lENtRG3clpJrwy96j40C3FiWwy
+    7PvZVO2LqZQtJbsx2WC13fLqGjjDYev/QCz30mQoKRXC86LjgA48bZ+7w1p4O9/F
+    z/SbjW7FlNaM9hym9cKutJv/7Qy176iJzQA3gQaZ3sHT2I7OFANwBHf4b9iPk11+
+    hw8ZGPSb9TQlShYQhPHJbx6Qrz9ZI7534Inkf7d8xw7PZZV5cZur2oqgF+QwLUlR
+    KqINhk46qU/YRYHNdiHIVI0ZOvH6cvF8gDNVxTQovR7yYIQ/zNLU/aIZFM3wvY9/
+    DIvtpVnAsUxEYQOv3fM+7KUX3nIFB5IeN8NKf6bT6Phg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752626AbeBINng (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:43:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50864 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753234AbeBINnf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:43:35 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jim Mattson <jmattson@google.com>,
-	Mark Kanda <mark.kanda@oracle.com>,
-	Ameya More <ameya.more@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 79/92] KVM: nVMX: Eliminate vmcs02 pool
-Date: Fri,  9 Feb 2018 14:39:48 +0100
-Message-Id: <20180209133936.891018935@linuxfoundation.org>
+        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-arch@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        linux-wireless@vger.kernel.org, torvalds@linux-foundation.org,
+        "David S. Miller" <davem@davemloft.net>, alan@linux.intel.com,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 66/92] nl80211: Sanitize array index in parse_txq_params
+Date: Fri,  9 Feb 2018 14:39:35 +0100
+Message-Id: <20180209133936.035590734@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591931138070351113?=
-X-GMAIL-MSGID: =?utf-8?q?1591931138070351113?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,288 +84,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jim Mattson <jmattson@google.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
 
-(cherry picked from commit de3a0021a60635de96aa92713c1a31a96747d72c)
+(cherry picked from commit 259d8c1e984318497c84eef547bbb6b1d9f4eb05)
 
-The potential performance advantages of a vmcs02 pool have never been
-realized. To simplify the code, eliminate the pool. Instead, a single
-vmcs02 is allocated per VCPU when the VCPU enters VMX operation.
+Wireless drivers rely on parse_txq_params to validate that txq_params->ac
+is less than NL80211_NUM_ACS by the time the low-level driver's ->conf_tx()
+handler is called. Use a new helper, array_index_nospec(), to sanitize
+txq_params->ac with respect to speculation. I.e. ensure that any
+speculation into ->conf_tx() handlers is done with a value of
+txq_params->ac that is within the bounds of [0, NL80211_NUM_ACS).
 
-Cc: stable@vger.kernel.org       # prereq for Spectre mitigation
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Mark Kanda <mark.kanda@oracle.com>
-Reviewed-by: Ameya More <ameya.more@oracle.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Reported-by: Christian Lamparter <chunkeey@gmail.com>
+Reported-by: Elena Reshetova <elena.reshetova@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-arch@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com
+Cc: gregkh@linuxfoundation.org
+Cc: linux-wireless@vger.kernel.org
+Cc: torvalds@linux-foundation.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: alan@linux.intel.com
+Link: https://lkml.kernel.org/r/151727419584.33451.7700736761686184303.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |  146 ++++++++---------------------------------------------
- 1 file changed, 23 insertions(+), 123 deletions(-)
+ net/wireless/nl80211.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -174,7 +174,6 @@ module_param(ple_window_max, int, S_IRUG
- extern const ulong vmx_return;
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -16,6 +16,7 @@
+ #include <linux/nl80211.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/netlink.h>
++#include <linux/nospec.h>
+ #include <linux/etherdevice.h>
+ #include <net/net_namespace.h>
+ #include <net/genetlink.h>
+@@ -2014,20 +2015,22 @@ static const struct nla_policy txq_param
+ static int parse_txq_params(struct nlattr *tb[],
+ 			    struct ieee80211_txq_params *txq_params)
+ {
++	u8 ac;
++
+ 	if (!tb[NL80211_TXQ_ATTR_AC] || !tb[NL80211_TXQ_ATTR_TXOP] ||
+ 	    !tb[NL80211_TXQ_ATTR_CWMIN] || !tb[NL80211_TXQ_ATTR_CWMAX] ||
+ 	    !tb[NL80211_TXQ_ATTR_AIFS])
+ 		return -EINVAL;
  
- #define NR_AUTOLOAD_MSRS 8
--#define VMCS02_POOL_SIZE 1
+-	txq_params->ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
++	ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
+ 	txq_params->txop = nla_get_u16(tb[NL80211_TXQ_ATTR_TXOP]);
+ 	txq_params->cwmin = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMIN]);
+ 	txq_params->cwmax = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMAX]);
+ 	txq_params->aifs = nla_get_u8(tb[NL80211_TXQ_ATTR_AIFS]);
  
- struct vmcs {
- 	u32 revision_id;
-@@ -208,7 +207,7 @@ struct shared_msr_entry {
-  * stored in guest memory specified by VMPTRLD, but is opaque to the guest,
-  * which must access it using VMREAD/VMWRITE/VMCLEAR instructions.
-  * More than one of these structures may exist, if L1 runs multiple L2 guests.
-- * nested_vmx_run() will use the data here to build a vmcs02: a VMCS for the
-+ * nested_vmx_run() will use the data here to build the vmcs02: a VMCS for the
-  * underlying hardware which will be used to run L2.
-  * This structure is packed to ensure that its layout is identical across
-  * machines (necessary for live migration).
-@@ -387,13 +386,6 @@ struct __packed vmcs12 {
-  */
- #define VMCS12_SIZE 0x1000
- 
--/* Used to remember the last vmcs02 used for some recently used vmcs12s */
--struct vmcs02_list {
--	struct list_head list;
--	gpa_t vmptr;
--	struct loaded_vmcs vmcs02;
--};
+-	if (txq_params->ac >= NL80211_NUM_ACS)
++	if (ac >= NL80211_NUM_ACS)
+ 		return -EINVAL;
 -
- /*
-  * The nested_vmx structure is part of vcpu_vmx, and holds information we need
-  * for correct emulation of VMX (i.e., nested VMX) on this vcpu.
-@@ -420,15 +412,15 @@ struct nested_vmx {
- 	 */
- 	bool sync_shadow_vmcs;
- 
--	/* vmcs02_list cache of VMCSs recently used to run L2 guests */
--	struct list_head vmcs02_pool;
--	int vmcs02_num;
- 	bool change_vmcs01_virtual_x2apic_mode;
- 	/* L2 must run next, and mustn't decide to exit to L1. */
- 	bool nested_run_pending;
-+
-+	struct loaded_vmcs vmcs02;
-+
- 	/*
--	 * Guest pages referred to in vmcs02 with host-physical pointers, so
--	 * we must keep them pinned while L2 runs.
-+	 * Guest pages referred to in the vmcs02 with host-physical
-+	 * pointers, so we must keep them pinned while L2 runs.
- 	 */
- 	struct page *apic_access_page;
- 	struct page *virtual_apic_page;
-@@ -6678,94 +6670,6 @@ static int handle_monitor(struct kvm_vcp
++	txq_params->ac = array_index_nospec(ac, NL80211_NUM_ACS);
+ 	return 0;
  }
  
- /*
-- * To run an L2 guest, we need a vmcs02 based on the L1-specified vmcs12.
-- * We could reuse a single VMCS for all the L2 guests, but we also want the
-- * option to allocate a separate vmcs02 for each separate loaded vmcs12 - this
-- * allows keeping them loaded on the processor, and in the future will allow
-- * optimizations where prepare_vmcs02 doesn't need to set all the fields on
-- * every entry if they never change.
-- * So we keep, in vmx->nested.vmcs02_pool, a cache of size VMCS02_POOL_SIZE
-- * (>=0) with a vmcs02 for each recently loaded vmcs12s, most recent first.
-- *
-- * The following functions allocate and free a vmcs02 in this pool.
-- */
--
--/* Get a VMCS from the pool to use as vmcs02 for the current vmcs12. */
--static struct loaded_vmcs *nested_get_current_vmcs02(struct vcpu_vmx *vmx)
--{
--	struct vmcs02_list *item;
--	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
--		if (item->vmptr == vmx->nested.current_vmptr) {
--			list_move(&item->list, &vmx->nested.vmcs02_pool);
--			return &item->vmcs02;
--		}
--
--	if (vmx->nested.vmcs02_num >= max(VMCS02_POOL_SIZE, 1)) {
--		/* Recycle the least recently used VMCS. */
--		item = list_last_entry(&vmx->nested.vmcs02_pool,
--				       struct vmcs02_list, list);
--		item->vmptr = vmx->nested.current_vmptr;
--		list_move(&item->list, &vmx->nested.vmcs02_pool);
--		return &item->vmcs02;
--	}
--
--	/* Create a new VMCS */
--	item = kmalloc(sizeof(struct vmcs02_list), GFP_KERNEL);
--	if (!item)
--		return NULL;
--	item->vmcs02.vmcs = alloc_vmcs();
--	item->vmcs02.shadow_vmcs = NULL;
--	if (!item->vmcs02.vmcs) {
--		kfree(item);
--		return NULL;
--	}
--	loaded_vmcs_init(&item->vmcs02);
--	item->vmptr = vmx->nested.current_vmptr;
--	list_add(&(item->list), &(vmx->nested.vmcs02_pool));
--	vmx->nested.vmcs02_num++;
--	return &item->vmcs02;
--}
--
--/* Free and remove from pool a vmcs02 saved for a vmcs12 (if there is one) */
--static void nested_free_vmcs02(struct vcpu_vmx *vmx, gpa_t vmptr)
--{
--	struct vmcs02_list *item;
--	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
--		if (item->vmptr == vmptr) {
--			free_loaded_vmcs(&item->vmcs02);
--			list_del(&item->list);
--			kfree(item);
--			vmx->nested.vmcs02_num--;
--			return;
--		}
--}
--
--/*
-- * Free all VMCSs saved for this vcpu, except the one pointed by
-- * vmx->loaded_vmcs. We must be running L1, so vmx->loaded_vmcs
-- * must be &vmx->vmcs01.
-- */
--static void nested_free_all_saved_vmcss(struct vcpu_vmx *vmx)
--{
--	struct vmcs02_list *item, *n;
--
--	WARN_ON(vmx->loaded_vmcs != &vmx->vmcs01);
--	list_for_each_entry_safe(item, n, &vmx->nested.vmcs02_pool, list) {
--		/*
--		 * Something will leak if the above WARN triggers.  Better than
--		 * a use-after-free.
--		 */
--		if (vmx->loaded_vmcs == &item->vmcs02)
--			continue;
--
--		free_loaded_vmcs(&item->vmcs02);
--		list_del(&item->list);
--		kfree(item);
--		vmx->nested.vmcs02_num--;
--	}
--}
--
--/*
-  * The following 3 functions, nested_vmx_succeed()/failValid()/failInvalid(),
-  * set the success or error code of an emulated VMX instruction, as specified
-  * by Vol 2B, VMX Instruction Reference, "Conventions".
-@@ -7078,6 +6982,12 @@ static int handle_vmon(struct kvm_vcpu *
- 		return 1;
- 	}
- 
-+	vmx->nested.vmcs02.vmcs = alloc_vmcs();
-+	vmx->nested.vmcs02.shadow_vmcs = NULL;
-+	if (!vmx->nested.vmcs02.vmcs)
-+		goto out_vmcs02;
-+	loaded_vmcs_init(&vmx->nested.vmcs02);
-+
- 	if (cpu_has_vmx_msr_bitmap()) {
- 		vmx->nested.msr_bitmap =
- 				(unsigned long *)__get_free_page(GFP_KERNEL);
-@@ -7100,9 +7010,6 @@ static int handle_vmon(struct kvm_vcpu *
- 		vmx->vmcs01.shadow_vmcs = shadow_vmcs;
- 	}
- 
--	INIT_LIST_HEAD(&(vmx->nested.vmcs02_pool));
--	vmx->nested.vmcs02_num = 0;
--
- 	hrtimer_init(&vmx->nested.preemption_timer, CLOCK_MONOTONIC,
- 		     HRTIMER_MODE_REL_PINNED);
- 	vmx->nested.preemption_timer.function = vmx_preemption_timer_fn;
-@@ -7120,6 +7027,9 @@ out_cached_vmcs12:
- 	free_page((unsigned long)vmx->nested.msr_bitmap);
- 
- out_msr_bitmap:
-+	free_loaded_vmcs(&vmx->nested.vmcs02);
-+
-+out_vmcs02:
- 	return -ENOMEM;
- }
- 
-@@ -7205,7 +7115,7 @@ static void free_nested(struct vcpu_vmx
- 		vmx->vmcs01.shadow_vmcs = NULL;
- 	}
- 	kfree(vmx->nested.cached_vmcs12);
--	/* Unpin physical memory we referred to in current vmcs02 */
-+	/* Unpin physical memory we referred to in the vmcs02 */
- 	if (vmx->nested.apic_access_page) {
- 		nested_release_page(vmx->nested.apic_access_page);
- 		vmx->nested.apic_access_page = NULL;
-@@ -7221,7 +7131,7 @@ static void free_nested(struct vcpu_vmx
- 		vmx->nested.pi_desc = NULL;
- 	}
- 
--	nested_free_all_saved_vmcss(vmx);
-+	free_loaded_vmcs(&vmx->nested.vmcs02);
- }
- 
- /* Emulate the VMXOFF instruction */
-@@ -7255,8 +7165,6 @@ static int handle_vmclear(struct kvm_vcp
- 			vmptr + offsetof(struct vmcs12, launch_state),
- 			&zero, sizeof(zero));
- 
--	nested_free_vmcs02(vmx, vmptr);
--
- 	skip_emulated_instruction(vcpu);
- 	nested_vmx_succeed(vcpu);
- 	return 1;
-@@ -8045,10 +7953,11 @@ static bool nested_vmx_exit_handled(stru
- 
- 	/*
- 	 * The host physical addresses of some pages of guest memory
--	 * are loaded into VMCS02 (e.g. L1's Virtual APIC Page). The CPU
--	 * may write to these pages via their host physical address while
--	 * L2 is running, bypassing any address-translation-based dirty
--	 * tracking (e.g. EPT write protection).
-+	 * are loaded into the vmcs02 (e.g. vmcs12's Virtual APIC
-+	 * Page). The CPU may write to these pages via their host
-+	 * physical address while L2 is running, bypassing any
-+	 * address-translation-based dirty tracking (e.g. EPT write
-+	 * protection).
- 	 *
- 	 * Mark them dirty on every exit from L2 to prevent them from
- 	 * getting out of sync with dirty tracking.
-@@ -10212,7 +10121,6 @@ static int nested_vmx_run(struct kvm_vcp
- 	struct vmcs12 *vmcs12;
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	int cpu;
--	struct loaded_vmcs *vmcs02;
- 	bool ia32e;
- 	u32 msr_entry_idx;
- 
-@@ -10352,17 +10260,13 @@ static int nested_vmx_run(struct kvm_vcp
- 	 * the nested entry.
- 	 */
- 
--	vmcs02 = nested_get_current_vmcs02(vmx);
--	if (!vmcs02)
--		return -ENOMEM;
--
- 	enter_guest_mode(vcpu);
- 
- 	if (!(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS))
- 		vmx->nested.vmcs01_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
- 
- 	cpu = get_cpu();
--	vmx->loaded_vmcs = vmcs02;
-+	vmx->loaded_vmcs = &vmx->nested.vmcs02;
- 	vmx_vcpu_put(vcpu);
- 	vmx_vcpu_load(vcpu, cpu);
- 	vcpu->cpu = cpu;
-@@ -10877,10 +10781,6 @@ static void nested_vmx_vmexit(struct kvm
- 	vm_exit_controls_reset_shadow(vmx);
- 	vmx_segment_cache_clear(vmx);
- 
--	/* if no vmcs02 cache requested, remove the one we used */
--	if (VMCS02_POOL_SIZE == 0)
--		nested_free_vmcs02(vmx, vmx->nested.current_vmptr);
--
- 	load_vmcs12_host_state(vcpu, vmcs12);
- 
- 	/* Update any VMCS fields that might have changed while L2 ran */
