@@ -1,96 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751091AbeBIHZe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 02:25:34 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:38645 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbeBIHZb (ORCPT
+        id S1751005AbeBIHau (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 02:30:50 -0500
+Received: from terminus.zytor.com ([65.50.211.136]:46757 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750830AbeBIHat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 02:25:31 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180209072529epoutp0371a02273572343b1ce5c6e85d8de2f2a~Rl4EDZjVm1605116051epoutp03Z
-X-AuditID: b6c32a45-403ff70000001023-c4-5a7d4ce97b61
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Message-id: <5A7D4CE9.6070900@samsung.com>
-Date: Fri, 09 Feb 2018 16:25:29 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-In-reply-to: <086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdljTVPelT22Uwa0PfBYbZ6xntdj0+Bqr
-        xceee6wWl3fNYbOYcX4fk8XaI3fZLS6ecrU4/Kad1eLHmW4WB06P9zda2T0u9/UyeWxeUu/R
-        t2UVo8fnTXIBrFGpNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+
-        AbpumTlA5ygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJWiDQ2N9AwNzPWMjIz0TIxjrYxM
-        gUoSUjM+nDvAWrCPteLSyqNMDYzzWboYOTgkBEwkHj3K72Lk4hAS2MEo8f56LzuE851R4nVb
-        KxtM0ZRjIhDx3YwSE56cA2rm5OAVEJT4Mfke2CBmAXmJI5eyQcLMApoSL75MYoGov8co8fDy
-        fKh6LYmWvcvZQWwWAVWJOdf3M4PYbEDx/S9usIHY/AKKEld/PGYEsUUFIiR2zv8GVi8ioC+x
-        ZNVFNpChzAJvGSXWn5oE1iwsEC+x7+FJsCJOAXuJQz/fgzVLCNxmk2j9FwBhu0hc71/EAmEL
-        S7w6voUdwpaWeLZqIyPIUAmBdkaJ9r3zmCGcKYwS567fY4KoMpZ4trCLCeI3PomOw3/ZIcHC
-        K9HRJgRR4iHx5dx0VgjbUeL9vwVQ7+9ikpjw9AXjBEa5WUghNgsRYrOQQmwBI/MqRrHUguLc
-        9NRiowJDveLE3OLSvHS95PzcTYzgBKjluoNxxjmfQ4wCHIxKPLwTYmqihFgTy4orcw8xSnAw
-        K4nw5pnURgnxpiRWVqUW5ccXleakFh9iNAUG+ERmKdHkfGByziuJNzSxNDAxMzMyN7MAJjBx
-        3rYAlyghgfTEktTs1NSC1CKYPiYOTqkGRr4SgfNnCrYE/fvrtqDfIWNd0UVZzc9rBET95hnw
-        y/MofQ2sbAmdvtTDJdAvjbl10YkZJoJslv5Nck9e3l+9aQmb4u2sp3csGVr9xf6XvPudLrlu
-        wvTkWe8jBYv3/s+OMIj5vlZR6/R3Tt2Wcyts5T6ueuIetmfajcwplp/ypfakGefslnbjUmIp
-        zkg01GIuKk4EAODRioWWAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t9jAd0XPrVRBhsOaVtsnLGe1WLT42us
-        Fh977rFaXN41h81ixvl9TBZrj9xlt7h4ytXi8Jt2VosfZ7pZHDg93t9oZfe43NfL5LF5Sb1H
-        35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZXw4d4C1YB9rxaWVR5kaGOezdDFycEgImEhMOSbS
-        xcjFISSwk1Git2EGYxcjJwevgKDEj8n3wGqYBeQljlzKhjDVJaZMyYUof8AosX3HFCaIci2J
-        lr3L2UFsFgFViTnX9zOD2GxA8f0vbrCB2PwCihJXfzxmBJkjKhAh0X2iEiQsIqAvsWTVRTaQ
-        mcwCbxkl3qzcB9YrLBAvse/hSXaIZbuYJKb3TQa7jVPAXuLQz/eMExgFZiE5dRbCqbMQTl3A
-        yLyKUTK1oDg3PbfYqMAoL7Vcrzgxt7g0L10vOT93EyMw7Lcd1urfwfh4SfwhRgEORiUe3hdx
-        NVFCrIllxZW5hxglOJiVRHjzTGqjhHhTEiurUovy44tKc1KLDzFKc7AoifPy5x+LFBJITyxJ
-        zU5NLUgtgskycXBKNTA2XGJn0xQ5Ir0gctOR1qgKNa+r+Xn2n3XaFFa+uVGZFnnJfNvpDsX/
-        E6wEfnxbX3r9yn+F7Rt9rx6eOyV9rqDe/9ylfXdsPu+pb/8/9fHs6R9KZ8vodHdU+XTtOm1b
-        1dtwutZrrj7fnfSfu+WlFdI5xc3mGffKsL18uL9Q6mv+3R9yi+7NLFygxFKckWioxVxUnAgA
-        JKhEX3cCAAA=
-X-CMS-MailID: 20180209072528epcas2p3f61251be066e88db396aae558177a136
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
-X-RootMTR: 20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
-        <20180205142230.9755-1-s.nawrocki@samsung.com>
-        <5A7916A2.7010307@samsung.com>
-        <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
-        <5A7AE1E0.8000509@samsung.com>
-        <086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
+        Fri, 9 Feb 2018 02:30:49 -0500
+Date: Thu, 8 Feb 2018 23:25:33 -0800
+From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-99ce7962d52d1948ad6f2785e308d48e76e0a6ef@git.kernel.org>
+Cc: bp@alien8.de, jpoimboe@redhat.com, mingo@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, hpa@zytor.com, jpoimboe@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+In-Reply-To: <20180208130232.GF25235@hirez.programming.kicks-ass.net>
+References: <20180208130232.GF25235@hirez.programming.kicks-ass.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] objtool: Fix switch-table detection
+Git-Commit-ID: 99ce7962d52d1948ad6f2785e308d48e76e0a6ef
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 02월 07일 22:04, Sylwester Nawrocki wrote:
-> On 02/07/2018 12:24 PM, Chanwoo Choi wrote:
->> Could you share your equation?
->> because your result is a little bit different of my result.
->> - my equation : ((mdiv + kdiv/65535) x 24MHz) / (pdiv x POWER(2,sdiv))
-> 
-> It resembles the code from samsung_pll36xx_recalc_rate():
-> 
-> (24 * 10^6 * (M * 2^16 + K)) / (P * 2^S) / 2^16
-> 
-> and a more accurate one
-> 
-> ROUNDDOWN(ROUNDDOWN(24 * 10^6 * (M * 2^16 + K), 0) / ROUNDDOWN(P * 2^S, 0) / 2^16, 0)
-> 
-> Shouldn't you substitute 65535 with 65536?
+Commit-ID:  99ce7962d52d1948ad6f2785e308d48e76e0a6ef
+Gitweb:     https://git.kernel.org/tip/99ce7962d52d1948ad6f2785e308d48e76e0a6ef
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Thu, 8 Feb 2018 14:02:32 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 9 Feb 2018 07:20:23 +0100
 
-65536 is right. It is my mistake using 65535.
-Thanks for your share.
+objtool: Fix switch-table detection
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Linus reported that GCC-7.3 generated a switch-table construct that
+confused objtool. It turns out that, in particular due to KASAN, it is
+possible to have unrelated .rodata usage in between the .rodata setup
+for the switch-table and the following indirect jump.
+
+The simple linear reverse search from the indirect jump would hit upon
+the KASAN .rodata usage first and fail to find a switch_table,
+resulting in a spurious 'sibling call with modified stack frame'
+warning.
+
+Fix this by creating a 'jump-stack' which we can 'unwind' during
+reversal, thereby skipping over much of the in-between code.
+
+This is not fool proof by any means, but is sufficient to make the
+known cases work. Future work would be to construct more comprehensive
+flow analysis code.
+
+Reported-and-tested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180208130232.GF25235@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/objtool/check.c | 41 +++++++++++++++++++++++++++++++++++++++--
+ tools/objtool/check.h |  1 +
+ 2 files changed, 40 insertions(+), 2 deletions(-)
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 9cd028a..2e458eb 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -851,8 +851,14 @@ static int add_switch_table(struct objtool_file *file, struct symbol *func,
+  *    This is a fairly uncommon pattern which is new for GCC 6.  As of this
+  *    writing, there are 11 occurrences of it in the allmodconfig kernel.
+  *
++ *    As of GCC 7 there are quite a few more of these and the 'in between' code
++ *    is significant. Esp. with KASAN enabled some of the code between the mov
++ *    and jmpq uses .rodata itself, which can confuse things.
++ *
+  *    TODO: Once we have DWARF CFI and smarter instruction decoding logic,
+  *    ensure the same register is used in the mov and jump instructions.
++ *
++ *    NOTE: RETPOLINE made it harder still to decode dynamic jumps.
+  */
+ static struct rela *find_switch_table(struct objtool_file *file,
+ 				      struct symbol *func,
+@@ -874,12 +880,25 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 						text_rela->addend + 4);
+ 		if (!rodata_rela)
+ 			return NULL;
++
+ 		file->ignore_unreachables = true;
+ 		return rodata_rela;
+ 	}
+ 
+ 	/* case 3 */
+-	func_for_each_insn_continue_reverse(file, func, insn) {
++	/*
++	 * Backward search using the @first_jump_src links, these help avoid
++	 * much of the 'in between' code. Which avoids us getting confused by
++	 * it.
++	 */
++	for (insn = list_prev_entry(insn, list);
++
++	     &insn->list != &file->insn_list &&
++	     insn->sec == func->sec &&
++	     insn->offset >= func->offset;
++
++	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
++
+ 		if (insn->type == INSN_JUMP_DYNAMIC)
+ 			break;
+ 
+@@ -909,14 +928,32 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 	return NULL;
+ }
+ 
++
+ static int add_func_switch_tables(struct objtool_file *file,
+ 				  struct symbol *func)
+ {
+-	struct instruction *insn, *prev_jump = NULL;
++	struct instruction *insn, *last = NULL, *prev_jump = NULL;
+ 	struct rela *rela, *prev_rela = NULL;
+ 	int ret;
+ 
+ 	func_for_each_insn(file, func, insn) {
++		if (!last)
++			last = insn;
++
++		/*
++		 * Store back-pointers for unconditional forward jumps such
++		 * that find_switch_table() can back-track using those and
++		 * avoid some potentially confusing code.
++		 */
++		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest &&
++		    insn->offset > last->offset &&
++		    insn->jump_dest->offset > insn->offset &&
++		    !insn->jump_dest->first_jump_src) {
++
++			insn->jump_dest->first_jump_src = insn;
++			last = insn->jump_dest;
++		}
++
+ 		if (insn->type != INSN_JUMP_DYNAMIC)
+ 			continue;
+ 
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index dbadb30..23a1d06 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -47,6 +47,7 @@ struct instruction {
+ 	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
++	struct instruction *first_jump_src;
+ 	struct list_head alts;
+ 	struct symbol *func;
+ 	struct stack_op stack_op;
