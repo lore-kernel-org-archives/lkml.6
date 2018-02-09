@@ -1,108 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751371AbeBIQC4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 11:02:56 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52094 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751077AbeBIQCz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 11:02:55 -0500
-X-Google-Smtp-Source: AH8x227oJ39QMmFGPAhlRUMZgyu+tUJ4UoIwUfamMitm+meoOqPjC9LESUg6swzHqgzTKzDqXH39Wg==
-Subject: Re: [PATCH RFC tools/lkmm] Miscellaneous fixes
-To: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, Akira Yokosawa <akiyks@gmail.com>
-References: <20180209141832.GA17505@linux.vnet.ibm.com>
-From: Akira Yokosawa <akiyks@gmail.com>
-Message-ID: <df87e89b-7fbe-37a7-42cb-62df74591df4@gmail.com>
-Date: Sat, 10 Feb 2018 01:02:48 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S1751725AbeBIQE6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 11:04:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48784 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751028AbeBIQE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 11:04:57 -0500
+Subject: Re: [PATCH] irqchip: Use %px to print pointer value
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        Jaedon Shin <jaedon.shin@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc: Kevin Cernekee <cernekee@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180209021031.20631-1-jaedon.shin@gmail.com>
+ <ba5fb474-4e45-8d8d-ee5d-9f1a211090e3@arm.com>
+ <45424653-235D-4C4B-8908-417943F5283C@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <6bf05e81-2334-f3ac-08a7-e53ee59bb4c0@arm.com>
+Date: Fri, 9 Feb 2018 16:04:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180209141832.GA17505@linux.vnet.ibm.com>
+In-Reply-To: <45424653-235D-4C4B-8908-417943F5283C@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/02/09 23:18, Paul E. McKenney wrote:
-> Hello!
+On 09/02/18 15:54, Florian Fainelli wrote:
+> On February 9, 2018 12:51:33 AM PST, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>> On 09/02/18 02:10, Jaedon Shin wrote:
+>>> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+>>> pointers printed with %p are hashed. Use %px instead of %p to print
+>>> pointer value.
+>>>
+>>> Signed-off-by: Jaedon Shin <jaedon.shin@gmail.com>
+>>> ---
+>>>  drivers/irqchip/irq-bcm7038-l1.c | 2 +-
+>>>  drivers/irqchip/irq-bcm7120-l2.c | 2 +-
+>>>  drivers/irqchip/irq-brcmstb-l2.c | 2 +-
+>>>  3 files changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/irqchip/irq-bcm7038-l1.c
+>> b/drivers/irqchip/irq-bcm7038-l1.c
+>>> index 55cfb986225b..f604c1d89b3b 100644
+>>> --- a/drivers/irqchip/irq-bcm7038-l1.c
+>>> +++ b/drivers/irqchip/irq-bcm7038-l1.c
+>>> @@ -339,7 +339,7 @@ int __init bcm7038_l1_of_init(struct device_node
+>> *dn,
+>>>  		goto out_unmap;
+>>>  	}
+>>>  
+>>> -	pr_info("registered BCM7038 L1 intc (mem: 0x%p, IRQs: %d)\n",
+>>> +	pr_info("registered BCM7038 L1 intc (mem: 0x%px, IRQs: %d)\n",
+>>>  		intc->cpus[0]->map_base, IRQS_PER_WORD * intc->n_words);
+>>>  
+>>>  	return 0;
+>>> diff --git a/drivers/irqchip/irq-bcm7120-l2.c
+>> b/drivers/irqchip/irq-bcm7120-l2.c
+>>> index 983640eba418..1cc4dd1d584a 100644
+>>> --- a/drivers/irqchip/irq-bcm7120-l2.c
+>>> +++ b/drivers/irqchip/irq-bcm7120-l2.c
+>>> @@ -318,7 +318,7 @@ static int __init bcm7120_l2_intc_probe(struct
+>> device_node *dn,
+>>>  		}
+>>>  	}
+>>>  
+>>> -	pr_info("registered %s intc (mem: 0x%p, parent IRQ(s): %d)\n",
+>>> +	pr_info("registered %s intc (mem: 0x%px, parent IRQ(s): %d)\n",
+>>>  			intc_name, data->map_base[0], data->num_parent_irqs);
+>>>  
+>>>  	return 0;
+>>> diff --git a/drivers/irqchip/irq-brcmstb-l2.c
+>> b/drivers/irqchip/irq-brcmstb-l2.c
+>>> index 691d20eb0bec..6760edeeb666 100644
+>>> --- a/drivers/irqchip/irq-brcmstb-l2.c
+>>> +++ b/drivers/irqchip/irq-brcmstb-l2.c
+>>> @@ -262,7 +262,7 @@ static int __init brcmstb_l2_intc_of_init(struct
+>> device_node *np,
+>>>  		ct->chip.irq_set_wake = irq_gc_set_wake;
+>>>  	}
+>>>  
+>>> -	pr_info("registered L2 intc (mem: 0x%p, parent irq: %d)\n",
+>>> +	pr_info("registered L2 intc (mem: 0x%px, parent irq: %d)\n",
+>>>  			base, parent_irq);
+>>>  
+>>>  	return 0;
+>>>
+>>
+>> Why is that something useful to do? This just tells you where the
+>> device
+>> is mapped in the VA space, and I doubt that's a useful information,
+>> hashed pointers or not. Am I missing something obvious?
 > 
-> This RFC series adds some miscellaneous updates to the Linux kernel
-> memory model:
-> 
-> 1.	Clarify the origin and scope of the tool name to avoid confusion
-> 	between "memory model" and "memory management", courtesy of
-> 	Andrea Parri.
-> 
-> 2.	Move the maintainer list for LKMM to the main MAINTAINERS file,
-> 	courtesy of Andrea Parri.
-> 
-> 3.	Add memory-barriers.txt to the LKMM MAINTAINERS entry, courtesy
-> 	of Andrea Parri.
-> 
-> 4.	Add comments explaining the purpose of the various litmus tests.
-> 
-> 5.	Fix puntuation errors in litmus-tests/README.
-> 
-> 6.	Add LKMM acronym to MAINTAINERS entry.  If there are no objections,
-> 	this will be squashed with #3 above.
-> 
-> 7.	Add Akira Yokosawa as an LKMM reviewer.
-> 
-> 8-10.	Replace underscores with hyphens for smp_mb__*() workings.  Note that
-> 	this patch leaves rb_dep alone because the underscore is set by herd7.
-> 	If there are no objections, these will be squashed together.
+> No you are right there is not much value in printing the register
+> virtual address (sometimes there is e.g: on MIPS) either we fix the
+> prints to show the physical address of the base register or we could
+> possibly drop the prints entirely.
 
-Paul, Patches 8-10 made the problem even worse with herd7 7.47.
-I'll submit an alternative patch in reply to this message.
+Displaying the PA can be useful if you have several identical blocks in
+your system and you want to be able to identify them. Given that there
+is probably only one of these controllers per system, the address is
+pretty pointless.
 
-      Thanks, Akira
+If you send me a patch removing the prints, I'll queue it.
 
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
->  /tools/memory-model/MAINTAINERS                                                            |   15 -------
->  b/MAINTAINERS                                                                              |   20 +++++++++-
->  b/tools/memory-model/MAINTAINERS                                                           |    2 -
->  b/tools/memory-model/README                                                                |   14 +++----
->  b/tools/memory-model/linux-kernel.bell                                                     |    8 ++--
->  b/tools/memory-model/linux-kernel.cat                                                      |    8 ++--
->  b/tools/memory-model/linux-kernel.def                                                      |    6 +--
->  b/tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus                              |    7 +++
->  b/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus                              |    7 +++
->  b/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus                              |    7 +++
->  b/tools/memory-model/litmus-tests/CoWW+poonceonce.litmus                                   |    7 +++
->  b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus                         |   10 +++++
->  b/tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus                         |   10 +++++
->  b/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus                                  |    9 ++++
->  b/tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus |   11 +++++
->  b/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus                        |   11 +++++
->  b/tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus                    |    8 ++++
->  b/tools/memory-model/litmus-tests/LB+poonceonces.litmus                                    |    7 +++
->  b/tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus                           |   11 +++++
->  b/tools/memory-model/litmus-tests/MP+polocks.litmus                                        |   11 +++++
->  b/tools/memory-model/litmus-tests/MP+poonceonces.litmus                                    |    7 +++
->  b/tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus                    |    8 ++++
->  b/tools/memory-model/litmus-tests/MP+porevlocks.litmus                                     |   11 +++++
->  b/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus                        |    8 ++++
->  b/tools/memory-model/litmus-tests/R+mbonceonces.litmus                                     |    9 ++++
->  b/tools/memory-model/litmus-tests/R+poonceonces.litmus                                     |    8 ++++
->  b/tools/memory-model/litmus-tests/README                                                   |    4 +-
->  b/tools/memory-model/litmus-tests/S+poonceonces.litmus                                     |    9 ++++
->  b/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus                       |    7 +++
->  b/tools/memory-model/litmus-tests/SB+mbonceonces.litmus                                    |    9 ++++
->  b/tools/memory-model/litmus-tests/SB+poonceonces.litmus                                    |    8 ++++
->  b/tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus                              |    8 ++++
->  b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus                |    8 ++++
->  b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus               |    9 ++++
->  b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus               |    8 ++++
->  b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus    |   14 +++++++
->  36 files changed, 286 insertions(+), 38 deletions(-)
-> 
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
