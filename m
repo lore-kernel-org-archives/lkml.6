@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185276-2-5059075305206222839
+X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185245-2-1913463042325104305
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185276; b=h9WQrKSJcZerXmGbFQLGCDF+Bssup+aqZqHksK6bAaRsMMg
-    TBJ9aALry1Ae26cvENU1IPsfp2cZ/5SYvmNzjysq0g1GPoOO2y895byEDeq+Ddfl
-    gnmAGXhh1ddJ1N2Fcz+iqiJj5pmkmacH2kZ1STqf2XzglTltgIwXZF9X2ivaRzOL
-    3xuqSaOKnG7POoKNCt4HvkYwRCEPctVCKnjR8nLN7LKwEhZInRaIOl+EOj4ND1/X
-    LEo8X1QVWkRBRazj+zabp/VhRztum2//hJ9TABMBLOYe34ns+kTFe3p3rmB7XjRU
-    S43/OTNA9Iqtqn97sHWiQcLw+9arAXyR8yk0Y7w==
+    t=1518185244; b=rF5uUkKjSjewe1XP3nUPUXw7u0pGGaC37kwh05l8SNSEYrI
+    9noMz5ArVzb3x8FCDVnKZI13yt4CkMhzsCLzZ0mvtuk0x2+zs632oUTN7VnbXkB1
+    fkUoP/TGqkRnDNSpPDcq5MxvDzO149dIjn5IWK0VXHY9l0CUPmAhVD/aPZOVGiX5
+    NSFRvzSRAIUzZ4P9G12NYm6FnwJSZsHcLvSjifUJDWnHcI3qh8hcBfyTGl9AIfpN
+    SG42Pm0w7CZLzkJ3YzN8cbNbzglfe5mZWQBqR3bVGYKKNdlvZohpKGWzW9alXjoP
+    u/PvRj6FeE8NNmGE8g+vbMKpFsWKkoouiWmu/Ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185276; bh=P0uTFN9SQ9mRer4suSe/aBxZ9c
-    vH9s14itO79fI9R5c=; b=Le51+OjlX0drqYX9MtdjfZV2AxiFRNT1EJB220Im4m
-    3Jt/b0kc7fk8x1NSh7n/a/9+MAY6wIGMv5UE7BI4FfQNnQrI7cXqB4WcO2918Hno
-    +Ua4jmxj2KowLqflgG3k9RXipakFN/QAp324ecy72gyA/noCvxmAElf1ACJDnH55
-    ih3z9X0FwEtjqWf8aNBTyNIr1aaTJ1izJKSm7vnU2cFOdx0d9ePFa796C3Ycfy1J
-    LAlGVpjNWDZH2COcAZFmNjKnW+2EmYDRAaw2yY+jhe6v87TEh2Z19UD0Du0Zc+kP
-    tqv0yJhI5oZ+ILbtAqL3jbVT4El1ZhEcslqBEwdF/qIg==
+    :list-id; s=arctest; t=1518185244; bh=qw4wQuyyf6TTy+vXkeyS2h+5xE
+    3jMh1IDEw2yEmpRU8=; b=MB8iH0ZrL6qISr+OuKHtZ3d0rRh4FZbQLQmIwldl6l
+    3B1WVopQKKgPOO2zvaZUkhifnQIEoFomIWKBYSGYiwS1le/l4H0NpCDj1lk6DEKY
+    H5VGvNtXpS59cHAhmd5/aUjFOa116BsR9SSlNgDw9qzg/CVGGm+lfPdfBPPMMnoV
+    8hemFrfsXfh+lQiTjhKbJS3PtEQ8Gf4MKNTbibEx0YAIm+TxJM8Ixi3JoWUd5zm4
+    kkOKTixs1jA11yjo8amuPvVrG7UiqNtGvvfnY4YKJzU8H7eYU46XPmeQtQDroFQ4
+    2/KITRnHsR4gySP6lpalxhah3PtAf+jmUcpsnTrMWKtg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752957AbeBINmf (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:42:35 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49850 "EHLO
+        id S1752988AbeBINmi (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:42:38 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752923AbeBINm2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:28 -0500
+        with ESMTP id S1752978AbeBINmh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:37 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 14/92] ASoC: pcm512x: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  9 Feb 2018 14:38:43 +0100
-Message-Id: <20180209133932.303856473@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>, Hugh Dickins <hughd@google.com>
+Subject: [PATCH 4.9 17/92] kaiser: allocate pgd with order 0 when pti=off
+Date: Fri,  9 Feb 2018 14:38:46 +0100
+Message-Id: <20180209133932.516958922@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -77,35 +78,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Hugh Dickins <hughd@google.com>
 
-commit 0cab20cec0b663b7be8e2be5998d5a4113647f86 upstream.
+The 4.9.77 version of "x86/pti/efi: broken conversion from efi to kernel
+page table" looked nicer than the 4.4.112 version, but was suboptimal on
+machines booted with "pti=off" (or on AMD machines): it allocated pgd
+with an order 1 page whatever the setting of kaiser_enabled.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+Fix that by moving the definition of PGD_ALLOCATION_ORDER from
+asm/pgalloc.h to asm/pgtable.h, which already defines kaiser_enabled.
 
-WARNING: modpost: missing MODULE_LICENSE() in sound/soc/codecs/snd-soc-pcm512x-spi.o
-see include/linux/module.h for more information
-
-This adds the license as "GPL v2", which matches the header of the file.
-
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 1b92c48a2eeb ("x86/pti/efi: broken conversion from efi to kernel page table")
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Hugh Dickins <hughd@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/pcm512x-spi.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/include/asm/pgalloc.h |   11 -----------
+ arch/x86/include/asm/pgtable.h |    6 ++++++
+ 2 files changed, 6 insertions(+), 11 deletions(-)
 
---- a/sound/soc/codecs/pcm512x-spi.c
-+++ b/sound/soc/codecs/pcm512x-spi.c
-@@ -70,3 +70,7 @@ static struct spi_driver pcm512x_spi_dri
- };
+--- a/arch/x86/include/asm/pgalloc.h
++++ b/arch/x86/include/asm/pgalloc.h
+@@ -27,17 +27,6 @@ static inline void paravirt_release_pud(
+  */
+ extern gfp_t __userpte_alloc_gfp;
  
- module_spi_driver(pcm512x_spi_driver);
-+
-+MODULE_DESCRIPTION("ASoC PCM512x codec driver - SPI");
-+MODULE_AUTHOR("Mark Brown <broonie@kernel.org>");
-+MODULE_LICENSE("GPL v2");
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-/*
+- * Instead of one PGD, we acquire two PGDs.  Being order-1, it is
+- * both 8k in size and 8k-aligned.  That lets us just flip bit 12
+- * in a pointer to swap between the two 4k halves.
+- */
+-#define PGD_ALLOCATION_ORDER 1
+-#else
+-#define PGD_ALLOCATION_ORDER 0
+-#endif
+-
+ /*
+  * Allocate and free page tables.
+  */
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -20,9 +20,15 @@
+ 
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ extern int kaiser_enabled;
++/*
++ * Instead of one PGD, we acquire two PGDs.  Being order-1, it is
++ * both 8k in size and 8k-aligned.  That lets us just flip bit 12
++ * in a pointer to swap between the two 4k halves.
++ */
+ #else
+ #define kaiser_enabled 0
+ #endif
++#define PGD_ALLOCATION_ORDER kaiser_enabled
+ 
+ void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd);
+ void ptdump_walk_pgd_level_checkwx(void);
