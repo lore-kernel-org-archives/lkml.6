@@ -1,82 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1427278-1518183838-2-17005360514452039645
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518183837; b=er/rJ1zginfmsGapP4zyQZXDCNulPIrP70JcDS28pYxzns8
-    Icvl6nsklfxSsH/CdJMsW67m88xH6OnCOENk6uYNjKEcuZaWsGvvUBYhl93u7DWm
-    TChJty8H+19nxyoY3sVO5ZK8hhqh8GkwsSl4fUIZBKPwYY3SVYYryW3HdcPHXzNo
-    J7LNhTiKK5nFseQjEyBtm+u7bQQ80l24P7/tec+rf2fcHzZq7v8CQQOHO8Otzv4o
-    FbNGNLtNUlmtnTOz7rrPd+n7q6wlXnq7QhQQ0Jhhvv3dSZlcOJBSG4FgU03lLHD3
-    JbWNLKSL20BCJ+/BCknlEIUCfMJfF6qg/FdYh+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518183837; bh=Gde4GuCXVdMJqBWVopiXHL7W3P
-    vwh5LglPW7FmiSGmY=; b=kLIDTjjvjIB6QxZ7lENtRG3clpJrwy96j40C3FiWwy
-    7PvZVO2LqZQtJbsx2WC13fLqGjjDYev/QCz30mQoKRXC86LjgA48bZ+7w1p4O9/F
-    z/SbjW7FlNaM9hym9cKutJv/7Qy176iJzQA3gQaZ3sHT2I7OFANwBHf4b9iPk11+
-    hw8ZGPSb9TQlShYQhPHJbx6Qrz9ZI7534Inkf7d8xw7PZZV5cZur2oqgF+QwLUlR
-    KqINhk46qU/YRYHNdiHIVI0ZOvH6cvF8gDNVxTQovR7yYIQ/zNLU/aIZFM3wvY9/
-    DIvtpVnAsUxEYQOv3fM+7KUX3nIFB5IeN8NKf6bT6Phg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752626AbeBINng (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:43:36 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50864 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753234AbeBINnf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:43:35 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227eMnJXMG9hsPMDVOpeb2oe90Rl8ehtAzBp73L5dEkR+BTFKUTk4HUXLOdAE/2apxN9Yjqg
+ARC-Seal: i=1; a=rsa-sha256; t=1518183836; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bcQ6ESwpIszBuqwIDBIgPs5EWbsnoL+DH3JVHX0mCDUX7Fom/cesLTvFUnvsADSThy
+         +yRZrL8TXFoFnjZzjVzw7HevURCeXWxnIKOt0IzS+V8Lc7zuc/twGO7HcH4M3SJVIXF7
+         FSNMI7D52QF62sSp9Y73eCMVe2xY6XJUfGE9gCunt0MC83+TUOW02kUZl8uh+crUy4Ai
+         zLlbvMY8Oj7UPYjGtO5VvRPNiH9y4Yilubp1nRsM0MRYPQ/3PsJ92Kg3gUm5iBybXIAm
+         cZAUNebgf9UaEja0LILCPYBW+vmTwR9OdTWQfP+g2uqR+BJkmfhl+q3muntbA3f5KBJg
+         J4Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=te5TFzDHaj8Gm/NjD+rgWgMB7ZpBcpkihyzRJRktL5M=;
+        b=rqW/6ps7zCdLjb6caCRTXWTJjCv/Wv3EtveoS2CJDMAvPwlShSxcNwBf/F92BuHJUI
+         BeSN2+aLE7lVfMGYp+zvmBvxJwoabhv2JOh5E6RzTdnik0OjCwjdq+aEb+XDIarHCr5Y
+         jvcDyD73daOJaQc2YsgpTqHn4WsfOaMY80vgdJIEZGoyB6OiMCJuHiOTsNK9X+MWF8Gh
+         TDPUpRAxMGU7grAeAlSNEJw+aKhLxsJsgN9Wyc9O+oFD9jq553y/sRaGcY5bBV5uSalg
+         1cVkV+1kPczo22DybDf4wa+u3PdBrLHuZeQU+x50Dsw0Mvth5wQv1X0IdPYjgVHkGcy0
+         dMUw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-arch@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        linux-wireless@vger.kernel.org, torvalds@linux-foundation.org,
-        "David S. Miller" <davem@davemloft.net>, alan@linux.intel.com,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 66/92] nl80211: Sanitize array index in parse_txq_params
-Date: Fri,  9 Feb 2018 14:39:35 +0100
-Message-Id: <20180209133936.035590734@linuxfoundation.org>
+	stable@vger.kernel.org,
+	David Matlack <dmatlack@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 78/92] KVM: nVMX: mark vmcs12 pages dirty on L2 exit
+Date: Fri,  9 Feb 2018 14:39:47 +0100
+Message-Id: <20180209133936.840471945@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591931135242307815?=
+X-GMAIL-MSGID: =?utf-8?q?1591931135242307815?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -84,70 +50,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: David Matlack <dmatlack@google.com>
 
 
-(cherry picked from commit 259d8c1e984318497c84eef547bbb6b1d9f4eb05)
+(cherry picked from commit c9f04407f2e0b3fc9ff7913c65fcfcb0a4b61570)
 
-Wireless drivers rely on parse_txq_params to validate that txq_params->ac
-is less than NL80211_NUM_ACS by the time the low-level driver's ->conf_tx()
-handler is called. Use a new helper, array_index_nospec(), to sanitize
-txq_params->ac with respect to speculation. I.e. ensure that any
-speculation into ->conf_tx() handlers is done with a value of
-txq_params->ac that is within the bounds of [0, NL80211_NUM_ACS).
+The host physical addresses of L1's Virtual APIC Page and Posted
+Interrupt descriptor are loaded into the VMCS02. The CPU may write
+to these pages via their host physical address while L2 is running,
+bypassing address-translation-based dirty tracking (e.g. EPT write
+protection). Mark them dirty on every exit from L2 to prevent them
+from getting out of sync with dirty tracking.
 
-Reported-by: Christian Lamparter <chunkeey@gmail.com>
-Reported-by: Elena Reshetova <elena.reshetova@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-arch@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: linux-wireless@vger.kernel.org
-Cc: torvalds@linux-foundation.org
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727419584.33451.7700736761686184303.stgit@dwillia2-desk3.amr.corp.intel.com
+Also mark the virtual APIC page and the posted interrupt descriptor
+dirty when KVM is virtualizing posted interrupt processing.
+
+Signed-off-by: David Matlack <dmatlack@google.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/nl80211.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/kvm/vmx.c |   53 +++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 43 insertions(+), 10 deletions(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -16,6 +16,7 @@
- #include <linux/nl80211.h>
- #include <linux/rtnetlink.h>
- #include <linux/netlink.h>
-+#include <linux/nospec.h>
- #include <linux/etherdevice.h>
- #include <net/net_namespace.h>
- #include <net/genetlink.h>
-@@ -2014,20 +2015,22 @@ static const struct nla_policy txq_param
- static int parse_txq_params(struct nlattr *tb[],
- 			    struct ieee80211_txq_params *txq_params)
- {
-+	u8 ac;
-+
- 	if (!tb[NL80211_TXQ_ATTR_AC] || !tb[NL80211_TXQ_ATTR_TXOP] ||
- 	    !tb[NL80211_TXQ_ATTR_CWMIN] || !tb[NL80211_TXQ_ATTR_CWMAX] ||
- 	    !tb[NL80211_TXQ_ATTR_AIFS])
- 		return -EINVAL;
- 
--	txq_params->ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
-+	ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
- 	txq_params->txop = nla_get_u16(tb[NL80211_TXQ_ATTR_TXOP]);
- 	txq_params->cwmin = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMIN]);
- 	txq_params->cwmax = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMAX]);
- 	txq_params->aifs = nla_get_u8(tb[NL80211_TXQ_ATTR_AIFS]);
- 
--	if (txq_params->ac >= NL80211_NUM_ACS)
-+	if (ac >= NL80211_NUM_ACS)
- 		return -EINVAL;
--
-+	txq_params->ac = array_index_nospec(ac, NL80211_NUM_ACS);
- 	return 0;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4736,6 +4736,28 @@ static bool vmx_get_enable_apicv(void)
+ 	return enable_apicv;
  }
+ 
++static void nested_mark_vmcs12_pages_dirty(struct kvm_vcpu *vcpu)
++{
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
++	gfn_t gfn;
++
++	/*
++	 * Don't need to mark the APIC access page dirty; it is never
++	 * written to by the CPU during APIC virtualization.
++	 */
++
++	if (nested_cpu_has(vmcs12, CPU_BASED_TPR_SHADOW)) {
++		gfn = vmcs12->virtual_apic_page_addr >> PAGE_SHIFT;
++		kvm_vcpu_mark_page_dirty(vcpu, gfn);
++	}
++
++	if (nested_cpu_has_posted_intr(vmcs12)) {
++		gfn = vmcs12->posted_intr_desc_addr >> PAGE_SHIFT;
++		kvm_vcpu_mark_page_dirty(vcpu, gfn);
++	}
++}
++
++
+ static void vmx_complete_nested_posted_interrupt(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+@@ -4743,18 +4765,15 @@ static void vmx_complete_nested_posted_i
+ 	void *vapic_page;
+ 	u16 status;
+ 
+-	if (vmx->nested.pi_desc &&
+-	    vmx->nested.pi_pending) {
+-		vmx->nested.pi_pending = false;
+-		if (!pi_test_and_clear_on(vmx->nested.pi_desc))
+-			return;
+-
+-		max_irr = find_last_bit(
+-			(unsigned long *)vmx->nested.pi_desc->pir, 256);
++	if (!vmx->nested.pi_desc || !vmx->nested.pi_pending)
++		return;
+ 
+-		if (max_irr == 256)
+-			return;
++	vmx->nested.pi_pending = false;
++	if (!pi_test_and_clear_on(vmx->nested.pi_desc))
++		return;
+ 
++	max_irr = find_last_bit((unsigned long *)vmx->nested.pi_desc->pir, 256);
++	if (max_irr != 256) {
+ 		vapic_page = kmap(vmx->nested.virtual_apic_page);
+ 		__kvm_apic_update_irr(vmx->nested.pi_desc->pir, vapic_page);
+ 		kunmap(vmx->nested.virtual_apic_page);
+@@ -4766,6 +4785,8 @@ static void vmx_complete_nested_posted_i
+ 			vmcs_write16(GUEST_INTR_STATUS, status);
+ 		}
+ 	}
++
++	nested_mark_vmcs12_pages_dirty(vcpu);
+ }
+ 
+ static inline bool kvm_vcpu_trigger_posted_interrupt(struct kvm_vcpu *vcpu)
+@@ -8022,6 +8043,18 @@ static bool nested_vmx_exit_handled(stru
+ 				vmcs_read32(VM_EXIT_INTR_ERROR_CODE),
+ 				KVM_ISA_VMX);
+ 
++	/*
++	 * The host physical addresses of some pages of guest memory
++	 * are loaded into VMCS02 (e.g. L1's Virtual APIC Page). The CPU
++	 * may write to these pages via their host physical address while
++	 * L2 is running, bypassing any address-translation-based dirty
++	 * tracking (e.g. EPT write protection).
++	 *
++	 * Mark them dirty on every exit from L2 to prevent them from
++	 * getting out of sync with dirty tracking.
++	 */
++	nested_mark_vmcs12_pages_dirty(vcpu);
++
+ 	if (vmx->nested.nested_run_pending)
+ 		return false;
  
