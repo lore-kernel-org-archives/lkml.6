@@ -1,131 +1,224 @@
-Return-Path: <dan.carpenter@oracle.com>
-X-Google-Smtp-Source: AH8x224XUghTin525g1Yo7bUD/QnnImM4XA9Ev5tEA+4je0iXQAV5fA9PBb0oxzWCrqINNeQc6Yc
-ARC-Seal: i=1; a=rsa-sha256; t=1518421610; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AcCavlHQ4G4crwqk4JMxQXnXfKmC6VfFzqPlh67jDI+TNr8M6FK9UexnMpdrHzBWS0
-         rY3NcyDVaMXbWXPMhMlCl4fymSQAJqyqc91EFrZyPqUA0Uh89uuPX2uE1Ud+bLda/r1Y
-         OoZqQbj4hQk0WNkRq3ax2dSf1VkgizQsMJwwgntijcgHST0i37zmwD0TGugqP6SezyNJ
-         OO1pLq+b/ucMDtC0VyAM9IwsJSaPpBuskTUIusAvq0HlpCP2c7ScuED4HCJtYzzwCin9
-         qK7aVpKdvMqsSbu6fBAXFVx1sI/nDIY8fUjhfsPnotnRYZypho4HYy66mlVfpPgArV7k
-         Fdlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=ebpeR5yk3oCjd7REgyHfAw3O56b3ApcyZQauI1VZ+J4=;
-        b=qdxi6ivCiG05eUXuPgjWRE9dNn/O+1sKQs5AhalCJjcnCs/YaqTo76ooMZKkOzjjN2
-         ssueoJ2Qa18RqxQxthUuwUMq3oELPS5gRyPl48zxyauEpv6uTGv9xYQztcl65RLhF36Z
-         ISZubtIvCSF3ba+A1gc+A6WyKjzQhYE0Aw7a3TdyLHN36gm1LjHCA8XvePaxKi7UzB51
-         ehDwquc7tVMq3GwM3/lb3Ikvau+O82CHrMaxXt7V30ezSdB2zdLsDn6G72wRwM60MHA+
-         LbWCBtdtkFqrVQxQlBGcnlfNbJu4KYVBi2iv+i4lZlTFRF+EQ204hKuVXWE8AGwKYVAQ
-         rA6g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=JS1b1FDj;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=JS1b1FDj;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Mon, 12 Feb 2018 10:41:07 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: NeilBrown <neilb@suse.com>
-Cc: James Simmons <jsimmons@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>, wang di <di.wang@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4121567-1518141710-2-4623744927918261867
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518141709; b=oiQDahyQD3ijl9SxW1c6lEVwSnyfzydF2D1EVXUpOw3SAtt
+    AAI5uFZT0uyKULzueYuA59WzyWtY8AoFxWb9Pc9kD/vu6b2y/NVEYLszca4+mOiq
+    Qxqfhtw+Z00Nk76uKhL1P1+k34HAaUZw+9f4HAl/HbxoaV9PxOv1a0xfPGwwlJjz
+    bzw0TnUOUUmKsqmxP6tYqFMAeETGQ+aYuJc+7EETiEjmpSXQGtRaC4Qfe4PH9w4h
+    Y68grZynDe3xOtSb6OKpjUuxlPuELclz6rNKafd7eg6gxnm+x4Ix5nRG4L+AcPRV
+    fxkTuEDLzwYZkVKlITuiBA6kVCQ+wJcCDN6IJ1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:subject:from:in-reply-to
+    :date:message-id:references:to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518141709; bh=Z
+    uyhRN9imkB4x4ZsYlYxsGtw/HgkhP7wphQ3yixcDQA=; b=sO1DIWM2BwPVuXNSX
+    fmD4junwy3zFj9x5HewJQfcpKTcYa5Zcwj95rcYQCoVpHySxhRTSBWXH4MHxIMnL
+    f2cLqhxb1X8yLiGcMleRCqUe9XHvbT09zbP/NhadLOXhOc200k4R4Z154m8qaSnx
+    Q6cio70inK3oJCvnMYG9k2M2zvlxY8zBqGRCG4tQ0BNoTVVQVXCOVdNCDnj+Mke3
+    +73DzHPJ5mqPt2Y8WIFr7jom5CInXkko0gvIONKfG42cRSWuBVpwwSOfIARZJm1A
+    NclRLqRUndGLY/FK/RQ/EcXWfTba5tJjHPByZyQP1d5Qg3MRmAwhEWwzaNQji14Z
+    GLQzQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,481,1511856000"; d="scan'208";a="30045793"
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
 Subject: Re: [PATCH 41/80] staging: lustre: lmv: separate master object with
  master stripe
-Message-ID: <20180212074107.ulp52nikjv5m5mf2@mwanda>
+From: Oleg Drokin <oleg.drokin@intel.com>
+In-Reply-To: <87r2pvkkl5.fsf@notabene.neil.brown.name>
+Date: Thu, 8 Feb 2018 21:01:35 -0500
+Message-Id: <09CE6CEC-52BC-4B29-B609-40DE68A64A33@intel.com>
 References: <1471378773-24590-1-git-send-email-jsimmons@infradead.org>
  <1471378773-24590-42-git-send-email-jsimmons@infradead.org>
  <87r2pvkkl5.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r2pvkkl5.fsf@notabene.neil.brown.name>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802120101
+To: NeilBrown <neilb@suse.com>
+X-Mailer: Apple Mail (2.3273)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ wang di <di.wang@intel.com>, Andreas Dilger <andreas.dilger@intel.com>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1542852481688536081?=
-X-GMAIL-MSGID: =?utf-8?q?1592180458177963273?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 09, 2018 at 12:39:18PM +1100, NeilBrown wrote:
-> On Tue, Aug 16 2016, James Simmons wrote:
-> 
-> >  
-> > +static inline bool
-> > +lsm_md_eq(const struct lmv_stripe_md *lsm1, const struct lmv_stripe_md *lsm2)
-> > +{
-> > +	int idx;
-> > +
-> > +	if (lsm1->lsm_md_magic != lsm2->lsm_md_magic ||
-> > +	    lsm1->lsm_md_stripe_count != lsm2->lsm_md_stripe_count ||
-> > +	    lsm1->lsm_md_master_mdt_index != lsm2->lsm_md_master_mdt_index ||
-> > +	    lsm1->lsm_md_hash_type != lsm2->lsm_md_hash_type ||
-> > +	    lsm1->lsm_md_layout_version != lsm2->lsm_md_layout_version ||
-> > +	    !strcmp(lsm1->lsm_md_pool_name, lsm2->lsm_md_pool_name))
-> > +		return false;
-> 
-> Hi James and all,
->  This patch (8f18c8a48b736c2f in linux) is different from the
->  corresponding patch in lustre-release (60e07b972114df).
-> 
-> In that patch, the last clause in the 'if' condition is
-> 
-> +           strcmp(lsm1->lsm_md_pool_name,
-> +                     lsm2->lsm_md_pool_name) != 0)
-> 
-> Whoever converted it to "!strcmp()" inverted the condition.  This is a
-> perfect example of why I absolutely *loathe* the "!strcmp()" construct!!
-
-People think that "if (!strcmp()) " is prefered kernel style but it's
-not.
-
-	if (foo != NULL) {
-
-The != NULL is a double negative.  I don't think it adds anything.
-Some kernel developers like this style because it's explicit about the
-type.  I have never seen any bugs caused by this format or solved by
-this format.  Anyway checkpatch complains.
-
-	if (ret != 0) {
-
-In this situation "ret" is not a number, it's an error code.  The != 0
-is a double negative and complicated to think about.  Btw, I sort of
-prefer "if (ret)" to "if (ret < 0)", not because of style but it's
-easier for Smatch.  No subsystems are totally consistent so the (by
-definition inconsistent) "if (ret < 0)" checks cause false positives in
-Smatch.
-
-	if (len != 0)
-
-This is OK.  "len" is a number.
-
-	if (strcmp(one, two) != 0) {
-
-With strcmp() I really prefer == 0 and != 0 because it works like this:
-
-	strcmp(one, two) == 0  --> means one == two
-	strcmp(one, two) < 0   --> means one < two
-        strcmp(one, two) != 0  --> means one != two
-
-Either style is accepted in the kernel but I think == 0 just makes so
-much sense.  I mostly see bugs from this when people are "fixing" the
-style from == 0 to !strcmp() so my sample is very biased.  Normally, if
-the original author writes the code any bugs are caught in testing so
-either way is going to be bug free.
-
-But the only thing that checkpatch complains about is == NULL and
-!= NULL.
-
-regards,
-dan carpenter
+Cj4gT24gRmViIDgsIDIwMTgsIGF0IDg6MzkgUE0sIE5laWxCcm93biA8bmVpbGJAc3VzZS5jb20+
+IHdyb3RlOgo+IAo+IE9uIFR1ZSwgQXVnIDE2IDIwMTYsIEphbWVzIFNpbW1vbnMgd3JvdGU6Cgpt
+eSB0aGF04oCZcyBhbiBvbGQgcGF0Y2gKCj4gCj4+IAo+PiArc3RhdGljIGlubGluZSBib29sCj4+
+ICtsc21fbWRfZXEoY29uc3Qgc3RydWN0IGxtdl9zdHJpcGVfbWQgKmxzbTEsIGNvbnN0IHN0cnVj
+dCBsbXZfc3RyaXBlX21kICpsc20yKQo+PiArewo+PiArCWludCBpZHg7Cj4+ICsKPj4gKwlpZiAo
+bHNtMS0+bHNtX21kX21hZ2ljICE9IGxzbTItPmxzbV9tZF9tYWdpYyB8fAo+PiArCSAgICBsc20x
+LT5sc21fbWRfc3RyaXBlX2NvdW50ICE9IGxzbTItPmxzbV9tZF9zdHJpcGVfY291bnQgfHwKPj4g
+KwkgICAgbHNtMS0+bHNtX21kX21hc3Rlcl9tZHRfaW5kZXggIT0gbHNtMi0+bHNtX21kX21hc3Rl
+cl9tZHRfaW5kZXggfHwKPj4gKwkgICAgbHNtMS0+bHNtX21kX2hhc2hfdHlwZSAhPSBsc20yLT5s
+c21fbWRfaGFzaF90eXBlIHx8Cj4+ICsJICAgIGxzbTEtPmxzbV9tZF9sYXlvdXRfdmVyc2lvbiAh
+PSBsc20yLT5sc21fbWRfbGF5b3V0X3ZlcnNpb24gfHwKPj4gKwkgICAgIXN0cmNtcChsc20xLT5s
+c21fbWRfcG9vbF9uYW1lLCBsc20yLT5sc21fbWRfcG9vbF9uYW1lKSkKPj4gKwkJcmV0dXJuIGZh
+bHNlOwo+IAo+IEhpIEphbWVzIGFuZCBhbGwsCj4gVGhpcyBwYXRjaCAoOGYxOGM4YTQ4YjczNmMy
+ZiBpbiBsaW51eCkgaXMgZGlmZmVyZW50IGZyb20gdGhlCj4gY29ycmVzcG9uZGluZyBwYXRjaCBp
+biBsdXN0cmUtcmVsZWFzZSAoNjBlMDdiOTcyMTE0ZGYpLgo+IAo+IEluIHRoYXQgcGF0Y2gsIHRo
+ZSBsYXN0IGNsYXVzZSBpbiB0aGUgJ2lmJyBjb25kaXRpb24gaXMKPiAKPiArICAgICAgICAgICBz
+dHJjbXAobHNtMS0+bHNtX21kX3Bvb2xfbmFtZSwKPiArICAgICAgICAgICAgICAgICAgICAgbHNt
+Mi0+bHNtX21kX3Bvb2xfbmFtZSkgIT0gMCkKPiAKPiBXaG9ldmVyIGNvbnZlcnRlZCBpdCB0byAi
+IXN0cmNtcCgpIiBpbnZlcnRlZCB0aGUgY29uZGl0aW9uLiAgVGhpcyBpcyBhCj4gcGVyZmVjdCBl
+eGFtcGxlIG9mIHdoeSBJIGFic29sdXRlbHkgKmxvYXRoZSogdGhlICIhc3RyY21wKCkiIGNvbnN0
+cnVjdCEhCj4gCj4gVGhpcyBjYXVzZXMgbWFueSB0ZXN0cyBpbiB0aGUgJ3Nhbml0eScgdGVzdCBz
+dWl0ZSB0byByZXR1cm4KPiAtRU5PTUVNICh0aGF0IGhhZCBtZSBwdXp6bGVkIGZvciBhIHdoaWxl
+ISEpLgoKaHVoPyBJIGFtIG5vdCBzZWVpbmcgYW55dGhpbmcgb2YgdGhlIHNvcnQgYW5kIEkgd2Fz
+IHJ1bm5pbmcgc2FuaXR5CmFsbCB0aGUgdGltZSB1bnRpbCBhIHJlY2VudCBwYXVzZSAoYnV0IGdv
+aW5nIHRvIHJlc3VtZSkuCgo+IFRoaXMgc2VlbXMgdG8gc3VnZ2VzdCB0aGF0IG5vLW9uZSBoYXMg
+YmVlbiB0ZXN0aW5nIHRoZSBtYWlubGluZSBsaW51eAo+IGx1c3RyZS4KPiBJdCBhbHNvIHNlZW1z
+IHRvIHN1Z2dlc3QgdGhhdCB0aGVyZSBpcyBhIGdvb2QgY2hhbmNlIHRoYXQgdGhlcmUKPiBhcmUg
+b3RoZXIgYnVncyB0aGF0IGhhdmUgY3JlcHQgaW4gd2hpbGUgbm8tb25lIGhhcyByZWFsbHkgYmVl
+biBjYXJpbmcuCj4gR2l2ZW4gdGhhdCB0aGUgc2FuaXR5IHRlc3Qgc3VpdGUgZG9lc24ndCBjb21w
+bGV0ZSBmb3IgbWUsIGJ1dCBqdXN0Cj4gaGFuZ3MgKGluIHRlc3RfMjd6IEkgdGhpbmspLCB0aGF0
+IHNlZW1zIHBhcnRpY3VsYXJseSBsaWtlbHkuCgpXb3JrcyBmb3IgbWUsIGhlcmXigJlzIGEgcnVu
+IGZyb20gZWFybGllciB0b2RheSBvbiA0LjE1LjA6Cj09IHNhbml0eSB0ZXN0IDI3ejogY2hlY2sg
+U0VRL09JRCBvbiB0aGUgTURUIGFuZCBPU1QgZmlsZXN5c3RlbXMgPT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PSAxNjo0Mzo1OCAoMTUxODEyNjIzOCkKMSswIHJlY29yZHMgaW4K
+MSswIHJlY29yZHMgb3V0CjEwNDg1NzYgYnl0ZXMgKDEuMCBNQiwgMS4wIE1pQikgY29waWVkLCAw
+LjAxNjk1NDggcywgNjEuOCBNQi9zCjIrMCByZWNvcmRzIGluCjIrMCByZWNvcmRzIG91dAoyMDk3
+MTUyIGJ5dGVzICgyLjEgTUIsIDIuMCBNaUIpIGNvcGllZCwgMC4wMjc4MiBzLCA3NS40IE1CL3MK
+Y2hlY2sgZmlsZSAvbW50L2x1c3RyZS9kMjd6LnNhbml0eS9mMjd6LnNhbml0eS0xCkZJRCBzZXEg
+MHgyMDAwMDA0MDEsIG9pZCAweDQ2NDAgdmVyIDB4MApMT1Ygc2VxIDB4MjAwMDAwNDAxLCBvaWQg
+MHg0NjQwLCBjb3VudDogMQp3YW50OiBzdHJpcGU6MCBvc3Q6MCBvaWQ6MzE0LzB4MTNhIHNlcTow
+ClN0b3BwaW5nIC9tbnQvbHVzdHJlLW9zdDEgKG9wdHM6KSBvbiBjZW50b3M2LTE3CnBkc2hAZmVk
+b3JhMTogY2VudG9zNi0xNzogc3NoIGV4aXRlZCB3aXRoIGV4aXQgY29kZSAxCnBkc2hAZmVkb3Jh
+MTogY2VudG9zNi0xNzogc3NoIGV4aXRlZCB3aXRoIGV4aXQgY29kZSAxCnBkc2hAZmVkb3JhMTog
+Y2VudG9zNi0xNzogc3NoIGV4aXRlZCB3aXRoIGV4aXQgY29kZSAxClN0YXJ0aW5nIG9zdDE6ICAg
+LW8gbG9vcCAvdG1wL2x1c3RyZS1vc3QxIC9tbnQvbHVzdHJlLW9zdDEKRmFpbGVkIHRvIGluaXRp
+YWxpemUgWkZTIGxpYnJhcnk6IDI1NgpoMnRjcDogZGVwcmVjYXRlZCwgdXNlIGgybmV0dHlwZSBp
+bnN0ZWFkCmNlbnRvczYtMTcubG9jYWxuZXQ6IGV4ZWN1dGluZyBzZXRfZGVmYXVsdF9kZWJ1ZyB2
+ZnN0cmFjZSBycGN0cmFjZSBkbG10cmFjZSBuZXRlcnJvciBoYSBjb25maWcgaW9jdGwgc3VwZXIg
+YWxsIC1sbmV0IC1sbmQgLXBpbmdlciAxNgpwZHNoQGZlZG9yYTE6IGNlbnRvczYtMTc6IHNzaCBl
+eGl0ZWQgd2l0aCBleGl0IGNvZGUgMQpwZHNoQGZlZG9yYTE6IGNlbnRvczYtMTc6IHNzaCBleGl0
+ZWQgd2l0aCBleGl0IGNvZGUgMQpTdGFydGVkIGx1c3RyZS1PU1QwMDAwCi9tbnQvbHVzdHJlLW9z
+dDEvTy8wL2QyNi8zMTQ6IHBhcmVudD1bMHgyMDAwMDA0MDE6MHg0NjQwOjB4MF0gc3RyaXBlPTAg
+c3RyaXBlX3NpemU9MCBzdHJpcGVfY291bnQ9MApjaGVjayBmaWxlIC9tbnQvbHVzdHJlL2QyN3ou
+c2FuaXR5L2YyN3ouc2FuaXR5LTIKRklEIHNlcSAweDIwMDAwMDQwMSwgb2lkIDB4NDY0MiB2ZXIg
+MHgwCkxPViBzZXEgMHgyMDAwMDA0MDEsIG9pZCAweDQ2NDIsIGNvdW50OiAyCndhbnQ6IHN0cmlw
+ZTowIG9zdDoxIG9pZDoxMTg3LzB4NGEzIHNlcTowClN0b3BwaW5nIC9tbnQvbHVzdHJlLW9zdDIg
+KG9wdHM6KSBvbiBjZW50b3M2LTE3CnBkc2hAZmVkb3JhMTogY2VudG9zNi0xNzogc3NoIGV4aXRl
+ZCB3aXRoIGV4aXQgY29kZSAxCnBkc2hAZmVkb3JhMTogY2VudG9zNi0xNzogc3NoIGV4aXRlZCB3
+aXRoIGV4aXQgY29kZSAxCnBkc2hAZmVkb3JhMTogY2VudG9zNi0xNzogc3NoIGV4aXRlZCB3aXRo
+IGV4aXQgY29kZSAxClN0YXJ0aW5nIG9zdDI6ICAgLW8gbG9vcCAvdG1wL2x1c3RyZS1vc3QyIC9t
+bnQvbHVzdHJlLW9zdDIKRmFpbGVkIHRvIGluaXRpYWxpemUgWkZTIGxpYnJhcnk6IDI1NgpoMnRj
+cDogZGVwcmVjYXRlZCwgdXNlIGgybmV0dHlwZSBpbnN0ZWFkCmNlbnRvczYtMTcubG9jYWxuZXQ6
+IGV4ZWN1dGluZyBzZXRfZGVmYXVsdF9kZWJ1ZyB2ZnN0cmFjZSBycGN0cmFjZSBkbG10cmFjZSBu
+ZXRlcnJvciBoYSBjb25maWcgaW9jdGwgc3VwZXIgYWxsIC1sbmV0IC1sbmQgLXBpbmdlciAxNgpw
+ZHNoQGZlZG9yYTE6IGNlbnRvczYtMTc6IHNzaCBleGl0ZWQgd2l0aCBleGl0IGNvZGUgMQpwZHNo
+QGZlZG9yYTE6IGNlbnRvczYtMTc6IHNzaCBleGl0ZWQgd2l0aCBleGl0IGNvZGUgMQpTdGFydGVk
+IGx1c3RyZS1PU1QwMDAxCi9tbnQvbHVzdHJlLW9zdDIvTy8wL2QzLzExODc6IHBhcmVudD1bMHgy
+MDAwMDA0MDE6MHg0NjQyOjB4MF0gc3RyaXBlPTAgc3RyaXBlX3NpemU9MCBzdHJpcGVfY291bnQ9
+MAp3YW50OiBzdHJpcGU6MSBvc3Q6MCBvaWQ6MzE1LzB4MTNiIHNlcTowCmdvdDogb2JqaWQ9MCBz
+ZXE9MCBwYXJlbnQ9WzB4MjAwMDAwNDAxOjB4NDY0MjoweDBdIHN0cmlwZT0xClJlc2V0dGluZyBm
+YWlsX2xvYyBvbiBhbGwgbm9kZXMuLi5kb25lLgoxNjo0NDozMiAoMTUxODEyNjI3Mikgd2FpdGlu
+ZyBmb3IgY2VudG9zNi0xNiBuZXR3b3JrIDUgc2VjcyAuLi4KMTY6NDQ6MzIgKDE1MTgxMjYyNzIp
+IG5ldHdvcmsgaW50ZXJmYWNlIGlzIFVQCjE2OjQ0OjMzICgxNTE4MTI2MjczKSB3YWl0aW5nIGZv
+ciBjZW50b3M2LTE3IG5ldHdvcmsgNSBzZWNzIC4uLgoxNjo0NDozMyAoMTUxODEyNjI3MykgbmV0
+d29yayBpbnRlcmZhY2UgaXMgVVAKCgo+IFNvIG15IHJlYWwgcXVlc3Rpb24gLSB0byBhbnlvbmUg
+aW50ZXJlc3RlZCBpbiBsdXN0cmUgZm9yIG1haW5saW5lIGxpbnV4Cj4gLSBpczogY2FuIHdlIGFj
+dHVhbGx5IHRydXN0IHRoaXMgY29kZSBhdCBhbGw/CgpBYnNvbHV0ZWx5LiBTZWVtcyB0aGF0IHlv
+dSBqdXN0IHN0dW1ibGVkIHVwb24gYSBjb3JuZXIgY2FzZSB0aGF0IHdhcyBub3QKYmVpbmcgaGl0
+IGJ5IHBlb3BsZSB0aGF0IGRvIHRoZSB0ZXN0aW5nLCBzbyB5b3UgaGF2ZSBzb21ldGhpbmcgdW5p
+cXVlIGFib3V0CnlvdXIgc2V0dXAsIEkgZ3Vlc3MuCgo+IEknbSBzZXJpb3VzbHkgdGVtcHRlZCB0
+byBzdWdnZXN0IHRoYXQgd2UganVzdAo+ICBybSAtciBkcml2ZXJzL3N0YWdpbmcvbHVzdHJlCj4g
+Cj4gZHJpdmVycy9zdGFnaW5nIGlzIGdyZWF0IGZvciBsZXR0aW5nIHRoZSBjb21tdW5pdHkgd29y
+ayBvbiBjb2RlIHRoYXQgaGFzCj4gYmVlbiAidGhyb3duIG92ZXIgdGhlIHdhbGwiIGFuZCBpcyBu
+b3Qgb3Blbmx5IGRldmVsb3BlZCBlbHNld2hlcmUsIGJ1dAo+IHRoYXQgaXMgbm90IHRoZSBjYXNl
+IGZvciBsdXN0cmUuICBsdXN0cmUgaGFzIChvciBzZWVtcyB0byBoYXZlKSBhbiBvcGVuCj4gZGV2
+ZWxvcG1lbnQgcHJvY2Vzcy4gIEhhdmluZyBvbi1nb2luZyBkZXZlbG9wbWVudCBoYXBwZW4gYm90
+aCB0aGVyZSBhbmQKPiBpbiBkcml2ZXJzL3N0YWdpbmcgc2VlbXMgYSB3YXN0ZSBvZiByZXNvdXJj
+ZXMuCgpJdCBpcyBhIGJpdCBvZiBhIHdhc3RlIG9mIHJlc291cmNlcywgYnV0IHRoZXJlIGFyZSBz
+b21lIG90aGVyIHRoaW5ncyBoZXJlLgpFLmcuIHdlIGNhbm5vdCBoYXZlIGFueSBBUElzIHdpdGgg
+bm8gdXNlcnMgaW4gdGhlIGtlcm5lbC4KQWxzbyBzb21lIHBlb3BsZSBsaWtlIHRvIGhhdmUgaW4t
+a2VybmVsIG1vZHVsZXMgY29taW5nIHdpdGggdGhlaXIgZGlzdHJvcwoodGhlcmUgd2VyZSBzb21l
+IHVzZXJzIHRoYXQgdXNlZCBzdGFnaW5nIGNsaWVudCBvbiB1YnVudHUgYXMgdGhlaXIKc2V0dXAp
+LgoKSW5zdGVhZCB0aGUgcGxhbiB3YXMgdG8gY2xlYW4gdXAgdGhlIHN0YWdpbmcgY2xpZW50IGlu
+dG8gYWNjZXB0YWJsZSBzdGF0ZSwKbW92ZSBpdCBvdXQgb2Ygc3RhZ2luZywgYnJpbmcgaW4gYWxs
+IHRoZSBtaXNzaW5nIGZlYXR1cmVzIGFuZCB0aGVuCmRyb3AgdGhlIGNsaWVudCAobW9yZSBvciBs
+ZXNzKSBmcm9tIHRoZSBsdXN0cmUtcmVsZWFzZS4gCgo+IE1pZ2h0IGl0IG1ha2Ugc2Vuc2UgdG8g
+aW5zdGVhZCBzdGFydCBjbGVhbmluZyB1cCB0aGUgY29kZSBpbgo+IGx1c3RyZS1yZWxlYXNlIHNv
+IGFzIHRvIG1ha2UgaXQgbWVldCB0aGUgdXBzdHJlYW0ga2VybmVsIHN0YW5kYXJkcy4KPiBUaGVu
+IHdoZW4gdGhlIHRpbWUgaXMgcmlnaHQsIHRoZSBrZXJuZWwgY29kZSBjYW4gYmUgbW92ZWQgKm91
+dCogb2YKPiBsdXN0cmUtcmVsZWFzZSBhbmQgKmluKiB0byBsaW51eC4gIFRoZW4gZGV2ZWxvcG1l
+bnQgY2FuIGNvbnRpbnVlIGluCj4gTGludXggKGp1c3QgbGlrZSBpdCBkb2VzIHdpdGggb3RoZXIg
+TGludXggZmlsZXN5c3RlbXMpLgoKV2hpbGUgd2UgY2FuIGJlIGNsZWFuaW5nIGx1c3RyZSBpbiBs
+dXN0cmUtcmVsZWFzZSwgdGhlcmUgYXJlIHNvbWUgdGhpbmdzCndlIGNhbm5vdCBkbyBhcyBlYXNp
+bHksIGUuZy4gZGVjb3VwbGluZyBMdXN0cmUgY2xpZW50IGZyb20gdGhlIHNlcnZlci4KQWxzbyBp
+dCB3b3VsZCBub3QgYXR0cmFjdCBhbnkgcmV2aWV3cyBmcm9tIGFsbCB0aGUgamFuaXRvciBvcgoo
+bW9yZSBpbXBvcnRhbnRseSkgQWwgVmlybyBhbmQgb3RoZXIgcGVvcGxlIHdpdGggYSBzaGFycCBl
+eWVzLgoKPiBBbiBhZGRlZCBib251cyBvZiB0aGlzIGlzIHRoYXQgdGhlcmUgaXMgYW4gb2J2aW91
+cyBwYXRoIHRvIGdldHRpbmcKPiBzZXJ2ZXIgc3VwcG9ydCBpbiBtYWlubGluZSBMaW51eC4gIFRo
+ZSBjdXJyZW50IHNpdHVhdGlvbiBvZiBjbGllbnQtb25seQo+IHN1cHBvcnQgc2VlbXMgd2VpcmQg
+Z2l2ZW4gaG93IGludGVyZGVwZW5kZW50IHRoZSB0d28gYXJlLgoKR2l2ZW4gdGhlIHB1c2hiYWNr
+IEx1c3RyZSBjbGllbnQgd2FzIGdpdmVuIEkgaGF2ZSBubyBob3BlIEx1c3RyZSBzZXJ2ZXIKd2ls
+bCBnZXQgaW50byBtYWlubGluZSBpbiBteSBsaWZldGltZS4KCj4gV2hhdCBkbyBvdGhlcnMgdGhp
+bms/ICBJcyB0aGVyZSBhbnkgY2hhbmNlIHRoYXQgdGhlIGN1cnJlbnQgbHVzdHJlIGluCj4gTGlu
+dXggd2lsbCBldmVyIGJlIG1vcmUgdGhhbiBhIHBvb3Igc2Vjb25kLWNvdXNpbiB0byB0aGUgZXh0
+ZXJuYWwKPiBsdXN0cmUtcmVsZWFzZS4gIElmIHRoZXJlIGlzbid0LCBzaG91bGQgd2UganVzdCBk
+aXNjYXJkIGl0IG5vdyBhbmQgbW92ZQo+IG9uPwoKCkkgdGhpbmsgbWFueSB1c2VmdWwgY2xlYW51
+cHMgYW5kIGZpeGVzIGNhbWUgZnJvbSB0aGUgc3RhZ2luZyB0cmVlIGF0CnRoZSB2ZXJ5IGxlYXN0
+LgpUaGUgYmlnZ2VzdCBwcm9ibGVtIHdpdGggaXQgYWxsIGlzIHRoYXQgd2UgYXJlIGluIHN0YWdp
+bmcgdHJlZSBzbwp3ZSBjYW5ub3QgYnJpbmcgaXQgdG8gcGFyaXR5IG11Y2guIEFuZCB3ZSBhcmUg
+aW4gc3RhZ2luZyB0cmVlIGJlY2F1c2UKdGhlcmXigJlzIGEgd2hvbGUgYnVuY2ggb2Yg4oCcY2xl
+YW51cHPigJ0gcmVxdWVzdGVkIHRoYXQgdGFrZSBhIGxvdCBvZiBlZmZvcnQKKGluIGJvdGggaW1w
+bGVtZW50aW5nIHRoZW0gYW5kIHRoZW4gaW4gZmluZGluZyBvdGhlciB3YXlzIG9mIGFjaGlldmlu
+Zwp0aGluZ3MgdGhhdCB3ZXJlIGRvbmUgaW4gb2xkIHdheXMgYmVmb3JlKS4KSSB1bmRlcnN0YW5k
+IHRoYXQgYmVnZ2FycyBjYW5ub3QgYmUgY2hvb3NlcnMgYW5kIHdoaWxlIHRoZXJlIGFyZSBwZW9w
+bGUKdGhhdCBhcmUgZ3JhbmRmYXRoZXJlZCB3aXRoIHRoZWlyIGF0cm9jaXRpZXMgaW4gY3VycmVu
+dCBrZXJuZWwgdHJlZSwKd2UgbXVzdCBhZGhlcmUgdG8gdGhlIHNoaW5pbmcgc3RhbmRhcmRzIGZp
+cnN0IGJlZm9yZSBoYXZpbmcgb3VyIGNoYW5jZSwKYnV0IHRoZSBzdGFuZGFyZHMgYXJlIG5vdCBl
+YXN5IHRvIGFkaGVyZSB0byBpbiBhbiBlc3RhYmxpc2hlZCBzaXplYWJsZQpjb2RlYmFzZS4KClJl
+YWxpc3RpY2FsbHkgc3BlYWtpbmcgSSBzdXNwZWN0IGlmIHdlIGRyb3AgTHVzdHJlIGZyb20gc3Rh
+Z2luZywKaXTigJlzIHVubGlrZWx5IHRoZXJlIHdvdWxkIHJlbWFpbiBhbnkgc3RlYW0gYmVoaW5k
+IHRoZSBjbGVhbnVwIGVmZm9ydHMKYXQgYWxsLgoKQnllLAogICAgT2xlZwpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2
+ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJv
+amVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
