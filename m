@@ -1,167 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBIRqq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:46:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:49916 "EHLO foss.arm.com"
+        id S1751910AbeBIRuk convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:50:40 -0500
+Received: from mout.gmx.net ([212.227.15.15]:53697 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751028AbeBIRqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:46:43 -0500
-Message-ID: <5A7DDDEE.9050306@arm.com>
-Date: Fri, 09 Feb 2018 17:44:14 +0000
-From: James Morse <james.morse@arm.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
-MIME-Version: 1.0
-To: gengdongjiu <gengdongjiu@huawei.com>
-CC: "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "lv.zheng@intel.com" <lv.zheng@intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        Huangshaoyu <huangshaoyu@huawei.com>
-Subject: Re: [PATCH v9 5/7] arm64: kvm: Introduce KVM_ARM_SET_SERROR_ESR ioctl
-References: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com> <5A70C5A0.1050600@arm.com> <d1b17dae-9d9c-970a-d164-a41c618d449b@huawei.com>
-In-Reply-To: <d1b17dae-9d9c-970a-d164-a41c618d449b@huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+        id S1751004AbeBIRuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:50:39 -0500
+Message-ID: <1518198609.26824.43.camel@gmx.de>
+Subject: Re: [RFC 2/2] Introduce sysctl(s) for the migration costs
+From: Mike Galbraith <efault@gmx.de>
+To: Steven Sistare <steven.sistare@oracle.com>,
+        Rohit Jain <rohit.k.jain@oracle.com>, linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, joelaf@google.com,
+        jbacik@fb.com, riel@redhat.com, juri.lelli@redhat.com,
+        dhaval.giani@oracle.com
+Date: Fri, 09 Feb 2018 18:50:09 +0100
+In-Reply-To: <88efe20e-75a9-6805-3ae4-dc67742f9057@oracle.com>
+References: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
+         <1518128395-14606-3-git-send-email-rohit.k.jain@oracle.com>
+         <1518148447.24350.34.camel@gmx.de>
+         <dcc94ac7-e910-9114-2976-ac61f0ade215@oracle.com>
+         <1518196102.26824.25.camel@gmx.de>
+         <88efe20e-75a9-6805-3ae4-dc67742f9057@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K0:0nJ77jhCzr7aACMAKD7OQoVZJ1Adw6jp0KKeXtD87hpYGGr7vmb
+ cb+xU/cHETvgHoJgu8wh2oyQK4NjHJaIts/I3o2PRShH1xhIn6+K5rUUtRCDr+1ctzgu7xV
+ 0vG2tN2IW9GW8FA4akPhIBpSVbaUyCM/Qf3J8SMQt6vVOzb0WpZrXtGAzhlfnjpjXWAROPv
+ MWWBYnV0X24+S1eQnIsHQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Qj/NrfNYLjE=:mChXHqUlc/Gs3BcOMMcS2B
+ sODaEY456+24lxF4JKJP9BcDYoHmdr0lhRt5bmjOxUSZpNV3CUacwPJq0542HyoXo1/e0+2uX
+ R4yj70mOqNU7aP7FsceWnNcP8WT1CKBUv6+1KMsXvsEVVsqkhqcmf3bBfhB3S+FKlgMfkURFR
+ QxEX2vBEOQwUBLHZdafsauoHHcG7a0coveNykoODrjDgfc6S+OYnHcjrF8MfPtsUfO0iUZ5zI
+ SAgO/wV1/1P/1Ph2m4T5RSQnpvGA+xvObNIPwLA9Q7FvrAOAfrY0HYRMvPOEEZioKAm9cZKsf
+ z6jRh9etWdtmVPZc10aLASJx0QIOYRhq4glmniahHoik9XEMpSrYse9Silc9Okv/KKBBUIB0i
+ ELECsprQ89KU1+mRNyYn/g5soRi35TcfShjtVBkCmfK9AlpI0VM2LG4gJr7nprr9XZgXT9AEU
+ X19fnV5B+3k6FmrI+Qfv0rBl3aKkhQOoEDpDVBC5WyKB0csddh0UE3lCa+OtzFcmW3ZzH2APR
+ 5uCVUat4Apw5RyVL/JcsLw8sQC1Jx1ZXtA1DHNm+R8gsUJL4NViCi4f3oadOpdd8ECe1jWjl1
+ zvailDeYhD3/iYzRgQqAVcJhF0Gp8wLwiLIoy43tQD7wIFV7jLWqgJ7GdeCcyFyM4gds0M6f/
+ wOwTiEo77L8aqrEKF0CLshBPXZR4xdvX91Krm2DKRdrMVH6STgKPDLl2Xom4I57ym62bRoAOR
+ x0P2e+B3iKQHIs+oP5KErUjY+y/PdZoc+Krc1UxQu9YGbFIreRggBMukdltubXJLK3KQrsKXl
+ /xSKhYlpNfO+kYUPvl8KoBdJ6SJQFab/n7pX3AhOEKDFiD1wYk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi gengdongjiu,
-
-On 05/02/18 06:19, gengdongjiu wrote:
-> On 2018/1/31 3:21, James Morse wrote:
->> On 24/01/18 20:06, gengdongjiu wrote:
->>>> On 06/01/18 16:02, Dongjiu Geng wrote:
->>>>> The ARM64 RAS SError Interrupt(SEI) syndrome value is specific to the
->>>>> guest and user space needs a way to tell KVM this value. So we add a
->>>>> new ioctl. Before user space specifies the Exception Syndrome Register
->>>>> ESR(ESR), it firstly checks that whether KVM has the capability to set
->>>>> the guest ESR, If has, will set it. Otherwise, nothing to do.
->>>>>
->>>>> For this ESR specifying, Only support for AArch64, not support AArch32.
->>>>
->>>> After this patch user-space can trigger an SError in the guest. If it wants to migrate the guest, how does the pending SError get migrated?
->>>>
->>>> I think we need to fix migration first. Andrew Jones suggested using
->>>> KVM_GET/SET_VCPU_EVENTS:
->>>> https://www.spinics.net/lists/arm-kernel/msg616846.html
->>>>
->>>> Given KVM uses kvm_inject_vabt() on v8.0 hardware too, we should cover systems without the v8.2 RAS Extensions with the same API. I
->>>> think this means a bit to read/write whether SError is pending, and another to indicate the ESR should be set/read.
->>>> CPUs without the v8.2 RAS Extensions can reject pending-SError that had an ESR.
->>>
->>> For the CPUs without the v8.2 RAS Extensions, its ESR is always 0, 
->>> we only can inject a SError with ESR 0 to guest, cannot set its ESR.
->>
->> 0? It's always implementation-defined. On Juno it seems to be always-0, but
->> other systems may behave differently. (Juno may generate another ESR value when
->> I'm not watching it...)
-
-> For the armv8.0 cpu without RAS Extensions, it does not have vsesr_el2, so when
-> guest take a virtual SError,
-
-> its ESR is 0, can not control the virtual SError's syndrom value, it does not have
-> such registers to control that.
-
-My point was its more nuanced than this: the ARM-ARM's
-TakeVirtualSErrorException() pseudo-code lets virtual-SError have an
-implementation defined syndrome. I've never seen Juno generate anything other
-than '0', but it might do something different on a thursday.
-
-The point? We can't know what a CPU without the RAS extensions puts in there.
-
-Why Does this matter? When migrating a pending SError we have to know the
-difference between 'use this 64bit value', and 'the CPU will generate it'.
-If I make an SError pending with ESR=0 on a CPU with VSESR, I can't migrated to
-a system that generates an impdef SError-ESR, because I can't know it will be 0.
-
-
-> Does Juno not have RAS Extension? 
-
-It's two types of v8.0 CPU, no RAS extensions.
-
-
-> if yes, I think we can only inject an SError, but can not change its ESR value,
-> because it does not have vsesr_el2.
-
-I agree, this means we need to be able to tell the difference between 'pending'
-and 'pending with this ESR'.
-
-
->> Just because we can't control the ESR doesn't mean injecting an SError isn't
->> something user-space may want to do.
-
-> yes, we may need to support user-space injects an SError even through CPU does not have RAS Extension.
+On Fri, 2018-02-09 at 12:33 -0500, Steven Sistare wrote:
+> On 2/9/2018 12:08 PM, Mike Galbraith wrote:
 > 
->> If we tackle migration of pending-SError first, I think that will give us the
->> API to create a new pending SError with/without an ESR as appropriate.
+> > Shrug.  It's bogus no mater what we do.  Once Upon A Time, a cost
+> > number was generated via measurement, but the end result was just as
+> > bogus as a number pulled out of the ether.  How much bandwidth you have
+> > when blasting data to/from wherever says nothing about misses you avoid
+> > vs those you generate.
 > 
-> sure, we should. Last week, I checked the KVM_GET/SET_VCPU_EVENTS IOCTL, it should meet our
-> migration requirements
+> Yes, yes and yes. I cannot make the original tunable less bogus.  Using a smaller
+> cost for closer caches still makes logical sense and is supported by the data.
 
-Great!
+You forgot to write "microscopic" before "data" :)  I'm mostly agnostic
+about this, but don't like the yet more knobs that 99.99% won't touch.
 
-
-Thanks,
-
-James
-
-
-
->>> The IOCTL KVM_GET/SET_VCPU_EVENTS has been used by X86.
->>
->> We would be re-using the struct to have values with slightly different meanings.
->> But for migration the upshot is the same, call KVM_GET_VCPU_EVENTS on one
->> system, and pass the struct to KVM_SET_VCPU_EVENTS on the new system. If we're
->> lucky Qemu may be able to do this in shared x86/arm64 code.
->>
-> Thanks for the reminder, I know your meaning.
-> In the x86, the kvm_vcpu_events includes exception/interrupt/nmi/smi. For the RAS, we
-> only involves the exception, so Qemu handling logic is different. Anyway, I will try to
-> share code for the two platform in Qemu.
-> 
-> 
-> /* for KVM_GET/SET_VCPU_EVENTS */
-> struct kvm_vcpu_events {
-> 	struct {
-> 		__u8 injected;
-> 		__u8 nr;
-> 		__u8 has_error_code;
-> 		__u8 pad;
-> 		__u32 error_code;
-> 	} exception;
-> 	struct {
-> 		__u8 injected;
-> 		__u8 nr;
-> 		__u8 soft;
-> 		__u8 shadow;
-> 	} interrupt;
-> 	struct {
-> 		__u8 injected;
-> 		__u8 pending;
-> 		__u8 masked;
-> 		__u8 pad;
-> 	} nmi;
-> 	__u32 sipi_vector;
-> 	__u32 flags;
-> 	struct {
-> 		__u8 smm;
-> 		__u8 pending;
-> 		__u8 smm_inside_nmi;
-> 		__u8 latched_init;
-> 	} smi;
-> 	__u32 reserved[9];
-> };
-> 
+	-Mike
