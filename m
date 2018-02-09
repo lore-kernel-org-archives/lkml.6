@@ -1,75 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751096AbeBII1J (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 03:27:09 -0500
-Received: from mga11.intel.com ([192.55.52.93]:14584 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeBII1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 03:27:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,482,1511856000";
-   d="scan'208";a="26018399"
-From: Wei Wang <wei.w.wang@intel.com>
-To: linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mst@redhat.com, mhocko@kernel.org, akpm@linux-foundation.org
-Subject: [PATCH] mm/page_poison: move PAGE_POISON to page_poison.c
-Date: Fri,  9 Feb 2018 16:08:14 +0800
-Message-Id: <1518163694-27155-1-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751151AbeBII1v (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 03:27:51 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44696 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750925AbeBII1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 03:27:51 -0500
+Date: Fri, 9 Feb 2018 16:27:43 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] printk: move dump stack related code to lib/dump_stack.c
+Message-ID: <20180209082743.GA14845@dhcp-128-65.nay.redhat.com>
+References: <20180209080624.GA2607@dhcp-128-65.nay.redhat.com>
+ <20180209081604.GE689@jagdpanzerIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209081604.GE689@jagdpanzerIV>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PAGE_POISON macro is used in page_poison.c only, so avoid exporting
-it. Also remove the "mm/debug-pagealloc.c" related comment, which is
-obsolete.
+On 02/09/18 at 05:16pm, Sergey Senozhatsky wrote:
+> Hi,
+> 
+> On (02/09/18 16:06), Dave Young wrote:
+> [..]
+> > +void __init dump_stack_set_arch_desc(const char *fmt, ...)
+> ..
+> > +void dump_stack_print_info(const char *log_lvl)
+> ..
+> > +void show_regs_print_info(const char *log_lvl)
+> ..
+> 
+> Seems that those functions are still defined in printk header.
+> Did you test !CONFIG_PRINTK build?
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Michael S. Tsirkin <mst@redhat.com>
----
- include/linux/poison.h | 7 -------
- mm/page_poison.c       | 6 ++++++
- 2 files changed, 6 insertions(+), 7 deletions(-)
+!CONFIG_PRINTK will use the dummy functions in printk.h, I did not test
+the build, doing it now to double confirm..
 
-diff --git a/include/linux/poison.h b/include/linux/poison.h
-index 15927eb..348bf67 100644
---- a/include/linux/poison.h
-+++ b/include/linux/poison.h
-@@ -30,13 +30,6 @@
-  */
- #define TIMER_ENTRY_STATIC	((void *) 0x300 + POISON_POINTER_DELTA)
- 
--/********** mm/debug-pagealloc.c **********/
--#ifdef CONFIG_PAGE_POISONING_ZERO
--#define PAGE_POISON 0x00
--#else
--#define PAGE_POISON 0xaa
--#endif
--
- /********** mm/page_alloc.c ************/
- 
- #define TAIL_MAPPING	((void *) 0x400 + POISON_POINTER_DELTA)
-diff --git a/mm/page_poison.c b/mm/page_poison.c
-index e83fd44..8aaf076 100644
---- a/mm/page_poison.c
-+++ b/mm/page_poison.c
-@@ -7,6 +7,12 @@
- #include <linux/poison.h>
- #include <linux/ratelimit.h>
- 
-+#ifdef CONFIG_PAGE_POISONING_ZERO
-+#define PAGE_POISON 0x00
-+#else
-+#define PAGE_POISON 0xaa
-+#endif
-+
- static bool want_page_poisoning __read_mostly;
- 
- static int early_page_poison_param(char *buf)
--- 
-2.7.4
+Thanks
+Dave
+
+> 
+> 	-ss
