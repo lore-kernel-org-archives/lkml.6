@@ -1,607 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752421AbeBIOWD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:22:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56034 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750970AbeBIOWA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752294AbeBIOWA (ORCPT <rfc822;w@1wt.eu>);
         Fri, 9 Feb 2018 09:22:00 -0500
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH RFC tip/lkmm 04/10] EXP litmus_tests:  Add comments explaining tests' purposes
-Date: Fri,  9 Feb 2018 06:20:25 -0800
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180209141832.GA17505@linux.vnet.ibm.com>
-References: <20180209141832.GA17505@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18020914-0052-0000-0000-000002B2C2A6
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008503; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000250; SDB=6.00987228; UDB=6.00501083; IPR=6.00766586;
- BA=6.00005821; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019457; XFM=3.00000015;
- UTC=2018-02-09 14:21:57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020914-0053-0000-0000-000053875EDD
-Message-Id: <1518186031-17997-4-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802090184
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:44764 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750970AbeBIOV4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 09:21:56 -0500
+X-Google-Smtp-Source: AH8x224vM/bkGzL0wHKWNUFk6pQJrtm+nPzMyKg+XA4o+yUEffn0K420WwN+R9Gw4o/hemCbxW2mlX9p5L++mStWhD8=
+MIME-Version: 1.0
+In-Reply-To: <42258ad55dac4191813d258e43a44e0e@AcuMS.aculab.com>
+References: <20180205150340.328921-1-arnd@arndb.de> <67d8f0f1-0846-876d-d36a-c8a9f9366243@citrix.com>
+ <CAK8P3a36O-NbrKkt-DEEZE2A2JQ5Gu9GZ98j0BjoFET4kgTaWw@mail.gmail.com> <42258ad55dac4191813d258e43a44e0e@AcuMS.aculab.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 9 Feb 2018 15:21:55 +0100
+X-Google-Sender-Auth: wF-pjlwAJy0ehl-DLZjsdsYOmT0
+Message-ID: <CAK8P3a0EVW-shM0JNz0fsMWx19Z+BT3kvB6McwotSLGtThhAdA@mail.gmail.com>
+Subject: Re: [Xen-devel] [PATCH] [v2] xen: hypercall: fix out-of-bounds memcpy
+To: David Laight <David.Laight@aculab.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds comments to the litmus tests summarizing what these
-tests are intended to demonstrate.
+On Fri, Feb 9, 2018 at 3:13 PM, David Laight <David.Laight@aculab.com> wrote:
+> From: Arnd Bergmann
+>> Sent: 09 February 2018 12:58
+> ...
+>> However, aside from this driver, I wonder if we should be worried about
+>> Spectre type 1 attacks on similar code, when gcc-8 turns a switch/case
+>> statement into an array lookup behind our back, e.g. in an ioctl handler.
+>> Has anybody got this on their radar?
+>
+> The canonical code for a switch statement is to jump indirect on an array
+> of code pointers.
+> ioctl handlers probably use a series of compares because the values are
+> sparse.
 
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-[ paulmck: Apply Andrea's and Alan's feedback. ]
----
- .../memory-model/litmus-tests/CoRR+poonceonce+Once.litmus  |  7 +++++++
- .../memory-model/litmus-tests/CoRW+poonceonce+Once.litmus  |  7 +++++++
- .../memory-model/litmus-tests/CoWR+poonceonce+Once.litmus  |  7 +++++++
- tools/memory-model/litmus-tests/CoWW+poonceonce.litmus     |  7 +++++++
- .../litmus-tests/IRIW+mbonceonces+OnceOnce.litmus          | 10 ++++++++++
- .../litmus-tests/IRIW+poonceonces+OnceOnce.litmus          | 10 ++++++++++
- tools/memory-model/litmus-tests/ISA2+poonceonces.litmus    |  9 +++++++++
- ...SA2+pooncerelease+poacquirerelease+poacquireonce.litmus | 11 +++++++++++
- .../litmus-tests/LB+ctrlonceonce+mbonceonce.litmus         | 11 +++++++++++
- .../litmus-tests/LB+poacquireonce+pooncerelease.litmus     |  8 ++++++++
- tools/memory-model/litmus-tests/LB+poonceonces.litmus      |  7 +++++++
- .../litmus-tests/MP+onceassign+derefonce.litmus            | 11 ++++++++++-
- tools/memory-model/litmus-tests/MP+polocks.litmus          | 11 +++++++++++
- tools/memory-model/litmus-tests/MP+poonceonces.litmus      |  7 +++++++
- .../litmus-tests/MP+pooncerelease+poacquireonce.litmus     |  8 ++++++++
- tools/memory-model/litmus-tests/MP+porevlocks.litmus       | 11 +++++++++++
- .../litmus-tests/MP+wmbonceonce+rmbonceonce.litmus         |  8 ++++++++
- tools/memory-model/litmus-tests/R+mbonceonces.litmus       |  9 +++++++++
- tools/memory-model/litmus-tests/R+poonceonces.litmus       |  8 ++++++++
- tools/memory-model/litmus-tests/S+poonceonces.litmus       |  9 +++++++++
- .../litmus-tests/S+wmbonceonce+poacquireonce.litmus        |  7 +++++++
- tools/memory-model/litmus-tests/SB+mbonceonces.litmus      |  9 +++++++++
- tools/memory-model/litmus-tests/SB+poonceonces.litmus      |  8 ++++++++
- .../memory-model/litmus-tests/WRC+poonceonces+Once.litmus  |  8 ++++++++
- .../litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus |  8 ++++++++
- .../Z6.0+pooncelock+poonceLock+pombonce.litmus             |  9 +++++++++
- .../Z6.0+pooncelock+pooncelock+pombonce.litmus             |  8 ++++++++
- .../Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus  | 14 ++++++++++++++
- 28 files changed, 246 insertions(+), 1 deletion(-)
+The majority of ioctl handlers is sparse enough that a table lookup wouldn't
+work, but there are still subsystems that never fully adopted the _IOC()
+macros, e.g. tty or socket ioctls are just consecutive numbers.
 
-diff --git a/tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus b/tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus
-index 5b83d57f6ac5..967f9f2a6226 100644
---- a/tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus
-+++ b/tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus
-@@ -1,5 +1,12 @@
- C CoRR+poonceonce+Once
- 
-+(*
-+ * Result: Never
-+ *
-+ * Test of read-read coherence, that is, whether or not two successive
-+ * reads from the same variable are ordered.
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus b/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus
-index fab91c13d52c..4635739f3974 100644
---- a/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus
-+++ b/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus
-@@ -1,5 +1,12 @@
- C CoRW+poonceonce+Once
- 
-+(*
-+ * Result: Never
-+ *
-+ * Test of read-write coherence, that is, whether or not a read from
-+ * a given variable and a later write to that same variable are ordered.
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus b/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus
-index 6a35ec2042ea..bb068c92d8da 100644
---- a/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus
-+++ b/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus
-@@ -1,5 +1,12 @@
- C CoWR+poonceonce+Once
- 
-+(*
-+ * Result: Never
-+ *
-+ * Test of write-read coherence, that is, whether or not a write to a
-+ * given variable and a later read from that same variable are ordered.
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/CoWW+poonceonce.litmus b/tools/memory-model/litmus-tests/CoWW+poonceonce.litmus
-index 32a96b832021..0d9f0a958799 100644
---- a/tools/memory-model/litmus-tests/CoWW+poonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/CoWW+poonceonce.litmus
-@@ -1,5 +1,12 @@
- C CoWW+poonceonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * Test of write-write coherence, that is, whether or not two successive
-+ * writes to the same variable are ordered.
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-index 7eba2c68992b..50d5db9ea983 100644
---- a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-+++ b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-@@ -1,5 +1,15 @@
- C IRIW+mbonceonces+OnceOnce
- 
-+(*
-+ * Result: Never
-+ *
-+ * Test of independent reads from independent writes with smp_mb()
-+ * between each pairs of reads.  In other words, is smp_mb() sufficient to
-+ * cause two different reading processes to agree on the order of a pair
-+ * of writes, where each write is to a different variable by a different
-+ * process?
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus
-index b0556c6c75d4..793fa8a74100 100644
---- a/tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus
-+++ b/tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus
-@@ -1,5 +1,15 @@
- C IRIW+poonceonces+OnceOnce
- 
-+(*
-+ * Result: Never
-+ *
-+ * Test of independent reads from independent writes with nothing
-+ * between each pairs of reads.  In other words, is anything at all
-+ * needed to cause two different reading processes to agree on the order
-+ * of a pair of writes, where each write is to a different variable by a
-+ * different process?
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus b/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus
-index 9a1a233d70c3..b321aa6f4ea5 100644
---- a/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus
-@@ -1,5 +1,14 @@
- C ISA2+poonceonces
- 
-+(*
-+ * Result: Sometimes
-+ *
-+ * Given a release-acquire chain ordering the first process's store
-+ * against the last process's load, is ordering preserved if all of the
-+ * smp_store_release() invocations are replaced by WRITE_ONCE() and all
-+ * of the smp_load_acquire() invocations are replaced by READ_ONCE()?
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-index 235195e87d4e..025b0462ec9b 100644
---- a/tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-+++ b/tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-@@ -1,5 +1,16 @@
- C ISA2+pooncerelease+poacquirerelease+poacquireonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates that a release-acquire chain suffices
-+ * to order P0()'s initial write against P2()'s final read.  The reason
-+ * that the release-acquire chain suffices is because in all but one
-+ * case (P2() to P0()), each process reads from the preceding process's
-+ * write.  In memory-model-speak, there is only one non-reads-from
-+ * (AKA non-rf) link, so release-acquire is all that is needed.
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus b/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-index dd5ac3a8974a..de6708229dd1 100644
---- a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-@@ -1,5 +1,16 @@
- C LB+ctrlonceonce+mbonceonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates that lightweight ordering suffices for
-+ * the load-buffering pattern, in other words, preventing all processes
-+ * reading from the preceding process's write.  In this example, the
-+ * combination of a control dependency and a full memory barrier are enough
-+ * to do the trick.  (But the full memory barrier could be replaced with
-+ * another control dependency and order would still be maintained.)
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus b/tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus
-index 47bd61319d93..07b9904b0e49 100644
---- a/tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus
-+++ b/tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus
-@@ -1,5 +1,13 @@
- C LB+poacquireonce+pooncerelease
- 
-+(*
-+ * Result: Never
-+ *
-+ * Does a release-acquire pair suffice for the load-buffering litmus
-+ * test, where each process reads from one of two variables then writes
-+ * to the other?
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/LB+poonceonces.litmus b/tools/memory-model/litmus-tests/LB+poonceonces.litmus
-index a5cdf027e34b..74c49cb3c37b 100644
---- a/tools/memory-model/litmus-tests/LB+poonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/LB+poonceonces.litmus
-@@ -1,5 +1,12 @@
- C LB+poonceonces
- 
-+(*
-+ * Result: Sometimes
-+ *
-+ * Can the counter-intuitive outcome for the load-buffering pattern
-+ * be prevented even with no explicit ordering?
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus b/tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus
-index 1a2fe5830381..97731b4bbdd8 100644
---- a/tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus
-+++ b/tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus
-@@ -1,4 +1,13 @@
--C MP+onceassign+derefonce.litmus
-+C MP+onceassign+derefonce
-+
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates that rcu_assign_pointer() and
-+ * rcu_dereference() suffice to ensure that an RCU reader will not see
-+ * pre-initialization garbage when it traverses an RCU-protected data
-+ * structure containing a newly inserted element.
-+ *)
- 
- {
- y=z;
-diff --git a/tools/memory-model/litmus-tests/MP+polocks.litmus b/tools/memory-model/litmus-tests/MP+polocks.litmus
-index 5fe6f1e3c452..712a4fcdf6ce 100644
---- a/tools/memory-model/litmus-tests/MP+polocks.litmus
-+++ b/tools/memory-model/litmus-tests/MP+polocks.litmus
-@@ -1,5 +1,16 @@
- C MP+polocks
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates how lock acquisitions and releases can
-+ * stand in for smp_load_acquire() and smp_store_release(), respectively.
-+ * In other words, when holding a given lock (or indeed after releasing a
-+ * given lock), a CPU is not only guaranteed to see the accesses that other
-+ * CPUs made while previously holding that lock, it is also guaranteed
-+ * to see all prior accesses by those other CPUs.
-+ *)
-+
- {}
- 
- P0(int *x, int *y, spinlock_t *mylock)
-diff --git a/tools/memory-model/litmus-tests/MP+poonceonces.litmus b/tools/memory-model/litmus-tests/MP+poonceonces.litmus
-index 46e1ac7ba126..b2b60b84fb9d 100644
---- a/tools/memory-model/litmus-tests/MP+poonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/MP+poonceonces.litmus
-@@ -1,5 +1,12 @@
- C MP+poonceonces
- 
-+(*
-+ * Result: Maybe
-+ *
-+ * Can the counter-intuitive message-passing outcome be prevented with
-+ * no ordering at all?
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus b/tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus
-index 0b00cc7293ba..d52c68429722 100644
---- a/tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus
-+++ b/tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus
-@@ -1,5 +1,13 @@
- C MP+pooncerelease+poacquireonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates that smp_store_release() and
-+ * smp_load_acquire() provide sufficient ordering for the message-passing
-+ * pattern.
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/MP+porevlocks.litmus b/tools/memory-model/litmus-tests/MP+porevlocks.litmus
-index 90d011c34f33..72c9276b363e 100644
---- a/tools/memory-model/litmus-tests/MP+porevlocks.litmus
-+++ b/tools/memory-model/litmus-tests/MP+porevlocks.litmus
-@@ -1,5 +1,16 @@
- C MP+porevlocks
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates how lock acquisitions and releases can
-+ * stand in for smp_load_acquire() and smp_store_release(), respectively.
-+ * In other words, when holding a given lock (or indeed after releasing a
-+ * given lock), a CPU is not only guaranteed to see the accesses that other
-+ * CPUs made while previously holding that lock, it is also guaranteed to
-+ * see all prior accesses by those other CPUs.
-+ *)
-+
- {}
- 
- P0(int *x, int *y, spinlock_t *mylock)
-diff --git a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus b/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-index 604ad41ea0c2..c078f38ff27a 100644
---- a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-@@ -1,5 +1,13 @@
- C MP+wmbonceonce+rmbonceonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates that smp_wmb() and smp_rmb() provide
-+ * sufficient ordering for the message-passing pattern.  However, it
-+ * is usually better to use smp_store_release() and smp_load_acquire().
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/R+mbonceonces.litmus b/tools/memory-model/litmus-tests/R+mbonceonces.litmus
-index e69b9e3e9436..a0e884ad2132 100644
---- a/tools/memory-model/litmus-tests/R+mbonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/R+mbonceonces.litmus
-@@ -1,5 +1,14 @@
- C R+mbonceonces
- 
-+(*
-+ * Result: Never
-+ *
-+ * This is the fully ordered (via smp_mb()) version of one of the classic
-+ * counterintuitive litmus tests that illustrates the effects of store
-+ * propagation delays.  Note that weakening either of the barriers would
-+ * cause the resulting test to be allowed.
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/R+poonceonces.litmus b/tools/memory-model/litmus-tests/R+poonceonces.litmus
-index f7a12e00f82d..5386f128a131 100644
---- a/tools/memory-model/litmus-tests/R+poonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/R+poonceonces.litmus
-@@ -1,5 +1,13 @@
- C R+poonceonces
- 
-+(*
-+ * Result: Sometimes
-+ *
-+ * This is the unordered (thus lacking smp_mb()) version of one of the
-+ * classic counterintuitive litmus tests that illustrates the effects of
-+ * store propagation delays.
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/S+poonceonces.litmus b/tools/memory-model/litmus-tests/S+poonceonces.litmus
-index d0d541c8ec7d..8c9c2f81a580 100644
---- a/tools/memory-model/litmus-tests/S+poonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/S+poonceonces.litmus
-@@ -1,5 +1,14 @@
- C S+poonceonces
- 
-+(*
-+ * Result: Sometimes
-+ *
-+ * Starting with a two-process release-acquire chain ordering P0()'s
-+ * first store against P1()'s final load, if the smp_store_release()
-+ * is replaced by WRITE_ONCE() and the smp_load_acquire() replaced by
-+ * READ_ONCE(), is ordering preserved?
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus b/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-index 1d292d0d6603..c53350205d28 100644
---- a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-+++ b/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-@@ -1,5 +1,12 @@
- C S+wmbonceonce+poacquireonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * Can a smp_wmb(), instead of a release, and an acquire order a prior
-+ * store against a subsequent store?
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus b/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-index b76caa5af1af..74b874ffa8da 100644
---- a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-@@ -1,5 +1,14 @@
- C SB+mbonceonces
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates that full memory barriers suffice to
-+ * order the store-buffering pattern, where each process writes to the
-+ * variable that the preceding process reads.  (Locking and RCU can also
-+ * suffice, but not much else.)
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/SB+poonceonces.litmus b/tools/memory-model/litmus-tests/SB+poonceonces.litmus
-index c1797e03807e..10d550730b25 100644
---- a/tools/memory-model/litmus-tests/SB+poonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/SB+poonceonces.litmus
-@@ -1,5 +1,13 @@
- C SB+poonceonces
- 
-+(*
-+ * Result: Sometimes
-+ *
-+ * This litmus test demonstrates that at least some ordering is required
-+ * to order the store-buffering pattern, where each process writes to the
-+ * variable that the preceding process reads.
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
-diff --git a/tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus b/tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus
-index f5e7c92f61cc..6a2bc12a1af1 100644
---- a/tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus
-+++ b/tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus
-@@ -1,5 +1,13 @@
- C WRC+poonceonces+Once
- 
-+(*
-+ * Result: Sometimes
-+ *
-+ * This litmus test is an extension of the message-passing pattern,
-+ * where the first write is moved to a separate process.  Note that this
-+ * test has no ordering at all.
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-index e3d0018025dd..97fcbffde9a0 100644
---- a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-+++ b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-@@ -1,5 +1,13 @@
- C WRC+pooncerelease+rmbonceonce+Once
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test is an extension of the message-passing pattern, where
-+ * the first write is moved to a separate process.  Because it features
-+ * a release and a read memory barrier, it should be forbidden.
-+ *)
-+
- {}
- 
- P0(int *x)
-diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
-index 9c2cb53e6ef0..415248fb6699 100644
---- a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
-+++ b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
-@@ -1,5 +1,14 @@
- C Z6.0+pooncelock+poonceLock+pombonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * This litmus test demonstrates how smp_mb__after_spinlock() may be
-+ * used to ensure that accesses in different critical sections for a
-+ * given lock running on different CPUs are nevertheless seen in order
-+ * by CPUs not holding that lock.
-+ *)
-+
- {}
- 
- P0(int *x, int *y, spinlock_t *mylock)
-diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-index c9a1f1a49ae1..fad47258a3e3 100644
---- a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-+++ b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-@@ -1,5 +1,13 @@
- C Z6.0+pooncelock+pooncelock+pombonce
- 
-+(*
-+ * Result: Never
-+ *
-+ * This example demonstrates that a pair of accesses made by different
-+ * processes each while holding a given lock will not necessarily be
-+ * seen as ordered by a third process not holding that lock.
-+ *)
-+
- {}
- 
- P0(int *x, int *y, spinlock_t *mylock)
-diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-index 25409a033514..a20fc3fafb53 100644
---- a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-@@ -1,5 +1,19 @@
- C Z6.0+pooncerelease+poacquirerelease+mbonceonce
- 
-+(*
-+ * Result: Sometimes
-+ *
-+ * This litmus test shows that a release-acquire chain, while sufficient
-+ * when there is but one non-reads-from (AKA non-rf) link, does not suffice
-+ * if there is more than one.  Of the three processes, only P1() reads from
-+ * P0's write, which means that there are two non-rf links: P1() to P2()
-+ * is a write-to-write link (AKA a "coherence" or just "co" link) and P2()
-+ * to P0() is a read-to-write link (AKA a "from-reads" or just "fr" link).
-+ * When there are two or more non-rf links, you typically will need one
-+ * full barrier for each non-rf link.  (Exceptions include some cases
-+ * involving locking.)
-+ *)
-+
- {}
- 
- P0(int *x, int *y)
--- 
-2.5.2
+> Also remember that gcc-8 will convert dense switch statements that just
+> load a value into a data array lookup.
+
+Right, that's the case I'm interested in here. I don't know how many of
+those exist in the kernel, as this would again be a small subset of the
+switch()/case statements that use consecutive numbers.
+
+> I guess both those jump tables are potential attack vectors.
+> Not quite sure how they might be used to leak info though.
+
+When I tested the xen fallback code with gcc-7.3, I noticed a retpoline
+getting generated for pointer array, so that should be safe.
+
+      Arnd
