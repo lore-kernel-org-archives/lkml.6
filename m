@@ -1,187 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751097AbeBIIGc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 03:06:32 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45706 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750886AbeBIIGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 03:06:31 -0500
-Date: Fri, 9 Feb 2018 16:06:24 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH] printk: move dump stack related code to lib/dump_stack.c
-Message-ID: <20180209080624.GA2607@dhcp-128-65.nay.redhat.com>
+        id S1751071AbeBIIIl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 03:08:41 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:51295 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750863AbeBIIIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 03:08:39 -0500
+Subject: Re: [PATCH v10 6/8] media: i2c: Add TDA1997x HDMI receiver driver
+To: Tim Harvey <tharvey@gateworks.com>, linux-media@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <1518157956-14220-1-git-send-email-tharvey@gateworks.com>
+ <1518157956-14220-7-git-send-email-tharvey@gateworks.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <cf5c51f4-ca86-e468-ba16-d47d224a2428@xs4all.nl>
+Date: Fri, 9 Feb 2018 09:08:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1518157956-14220-7-git-send-email-tharvey@gateworks.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNZL8ue7NvMp4hbWcfem8Uwa7AG1XAowiWAaOMEO1aILg9i6pMcFG8dDq3ID8NHGbGsf5QcVgFXN6vA4V30xQ2gYVxweoC3OpJXswjIxnTLSkF/ci6f8
+ Ywz9I2cejtWFj4wtlrw2TZE308eBX6FM6Fn74O3UTzHWvWjDa0sgsMfSPfgkSHeqnRLTtfRxIpNfUMhok7fbhBmIXaaEshLQnT8KXTUsO88MTlC/sorhxjp+
+ Ks3VpE9MpDbaeA2y5z7+x/uMH0txooBF4hXBY9mwpuwB8OI0XBNniVsGUMzyPRkkwx/pcK9lVX61wsNgLgztHGT9K4BxMvV121KEjDKRiiva5JufVCC5Kfpj
+ /az29n3Ga9V8akzK6uUrNCMkiqo7Es/NnBzMN5Zpd5EkpKtJuBfVXNKcDmjOAiA2rdgM+e2HcZ0KyxvXusSwqGofvNLsKZp7kJxdb0CpjFWDnRw3BRwke3OW
+ 1KO2mbbVuVQUNn0S
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dump_stack related stuff should belong to lib/dump_stack.c thus move them
-there.
+Hi Tim,
 
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
----
-Note: dump stack etc still share printk.h as before, I would keep it as is
-since a lot of files need it.
-This patch is based on printk for-4.17 branch
- kernel/printk/printk.c |   60 -------------------------------------------------
- lib/dump_stack.c       |   60 +++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+), 60 deletions(-)
+We're almost there. Two more comments:
 
---- linux-x86.orig/kernel/printk/printk.c
-+++ linux-x86/kernel/printk/printk.c
-@@ -42,13 +42,11 @@
- #include <linux/rculist.h>
- #include <linux/poll.h>
- #include <linux/irq_work.h>
--#include <linux/utsname.h>
- #include <linux/ctype.h>
- #include <linux/uio.h>
- #include <linux/sched/clock.h>
- #include <linux/sched/debug.h>
- #include <linux/sched/task_stack.h>
--#include <linux/kexec.h>
- 
- #include <linux/uaccess.h>
- #include <asm/sections.h>
-@@ -3257,62 +3255,4 @@ void kmsg_dump_rewind(struct kmsg_dumper
- }
- EXPORT_SYMBOL_GPL(kmsg_dump_rewind);
- 
--static char dump_stack_arch_desc_str[128];
--
--/**
-- * dump_stack_set_arch_desc - set arch-specific str to show with task dumps
-- * @fmt: printf-style format string
-- * @...: arguments for the format string
-- *
-- * The configured string will be printed right after utsname during task
-- * dumps.  Usually used to add arch-specific system identifiers.  If an
-- * arch wants to make use of such an ID string, it should initialize this
-- * as soon as possible during boot.
-- */
--void __init dump_stack_set_arch_desc(const char *fmt, ...)
--{
--	va_list args;
--
--	va_start(args, fmt);
--	vsnprintf(dump_stack_arch_desc_str, sizeof(dump_stack_arch_desc_str),
--		  fmt, args);
--	va_end(args);
--}
--
--/**
-- * dump_stack_print_info - print generic debug info for dump_stack()
-- * @log_lvl: log level
-- *
-- * Arch-specific dump_stack() implementations can use this function to
-- * print out the same debug information as the generic dump_stack().
-- */
--void dump_stack_print_info(const char *log_lvl)
--{
--	printk("%sCPU: %d PID: %d Comm: %.20s %s%s %s %.*s\n",
--	       log_lvl, raw_smp_processor_id(), current->pid, current->comm,
--	       kexec_crash_loaded() ? "Kdump: loaded " : "",
--	       print_tainted(),
--	       init_utsname()->release,
--	       (int)strcspn(init_utsname()->version, " "),
--	       init_utsname()->version);
--
--	if (dump_stack_arch_desc_str[0] != '\0')
--		printk("%sHardware name: %s\n",
--		       log_lvl, dump_stack_arch_desc_str);
--
--	print_worker_info(log_lvl, current);
--}
--
--/**
-- * show_regs_print_info - print generic debug info for show_regs()
-- * @log_lvl: log level
-- *
-- * show_regs() implementations can use this function to print out generic
-- * debug information.
-- */
--void show_regs_print_info(const char *log_lvl)
--{
--	dump_stack_print_info(log_lvl);
--}
--
- #endif
---- linux-x86.orig/lib/dump_stack.c
-+++ linux-x86/lib/dump_stack.c
-@@ -10,6 +10,66 @@
- #include <linux/sched/debug.h>
- #include <linux/smp.h>
- #include <linux/atomic.h>
-+#include <linux/kexec.h>
-+#include <linux/utsname.h>
-+
-+static char dump_stack_arch_desc_str[128];
-+
-+/**
-+ * dump_stack_set_arch_desc - set arch-specific str to show with task dumps
-+ * @fmt: printf-style format string
-+ * @...: arguments for the format string
-+ *
-+ * The configured string will be printed right after utsname during task
-+ * dumps.  Usually used to add arch-specific system identifiers.  If an
-+ * arch wants to make use of such an ID string, it should initialize this
-+ * as soon as possible during boot.
-+ */
-+void __init dump_stack_set_arch_desc(const char *fmt, ...)
-+{
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vsnprintf(dump_stack_arch_desc_str, sizeof(dump_stack_arch_desc_str),
-+		  fmt, args);
-+	va_end(args);
-+}
-+
-+/**
-+ * dump_stack_print_info - print generic debug info for dump_stack()
-+ * @log_lvl: log level
-+ *
-+ * Arch-specific dump_stack() implementations can use this function to
-+ * print out the same debug information as the generic dump_stack().
-+ */
-+void dump_stack_print_info(const char *log_lvl)
-+{
-+	printk("%sCPU: %d PID: %d Comm: %.20s %s%s %s %.*s\n",
-+	       log_lvl, raw_smp_processor_id(), current->pid, current->comm,
-+	       kexec_crash_loaded() ? "Kdump: loaded " : "",
-+	       print_tainted(),
-+	       init_utsname()->release,
-+	       (int)strcspn(init_utsname()->version, " "),
-+	       init_utsname()->version);
-+
-+	if (dump_stack_arch_desc_str[0] != '\0')
-+		printk("%sHardware name: %s\n",
-+		       log_lvl, dump_stack_arch_desc_str);
-+
-+	print_worker_info(log_lvl, current);
-+}
-+
-+/**
-+ * show_regs_print_info - print generic debug info for show_regs()
-+ * @log_lvl: log level
-+ *
-+ * show_regs() implementations can use this function to print out generic
-+ * debug information.
-+ */
-+void show_regs_print_info(const char *log_lvl)
-+{
-+	dump_stack_print_info(log_lvl);
-+}
- 
- static void __dump_stack(void)
- {
+On 02/09/2018 07:32 AM, Tim Harvey wrote:
+> +static int
+> +tda1997x_detect_std(struct tda1997x_state *state,
+> +		    struct v4l2_dv_timings *timings)
+> +{
+> +	struct v4l2_subdev *sd = &state->sd;
+> +	u32 vper;
+> +	u16 hper;
+> +	u16 hsper;
+> +	int i;
+> +
+> +	/*
+> +	 * Read the FMT registers
+> +	 *   REG_V_PER: Period of a frame (or two fields) in MCLK(27MHz) cycles
+> +	 *   REG_H_PER: Period of a line in MCLK(27MHz) cycles
+> +	 *   REG_HS_WIDTH: Period of horiz sync pulse in MCLK(27MHz) cycles
+> +	 */
+> +	vper = io_read24(sd, REG_V_PER) & MASK_VPER;
+> +	hper = io_read16(sd, REG_H_PER) & MASK_HPER;
+> +	hsper = io_read16(sd, REG_HS_WIDTH) & MASK_HSWIDTH;
+> +	if (!vper || !hper || !hsper)
+> +		return -ENOLINK;
+
+See my comment for g_input_status below. This condition looks more like a
+ENOLCK.
+
+Or perhaps it should be:
+
+	if (!vper && !hper && !hsper)
+		return -ENOLINK;
+	if (!vper || !hper || !hsper)
+		return -ENOLCK;
+
+I would recommend that you test a bit with no signal and a bad signal (perhaps
+one that uses a pixelclock that is too high for this device?).
+
+> +	v4l2_dbg(1, debug, sd, "Signal Timings: %u/%u/%u\n", vper, hper, hsper);
+> +
+> +	for (i = 0; v4l2_dv_timings_presets[i].bt.width; i++) {
+> +		const struct v4l2_bt_timings *bt;
+> +		u32 lines, width, _hper, _hsper;
+> +		u32 vmin, vmax, hmin, hmax, hsmin, hsmax;
+> +		bool vmatch, hmatch, hsmatch;
+> +
+> +		bt = &v4l2_dv_timings_presets[i].bt;
+> +		width = V4L2_DV_BT_FRAME_WIDTH(bt);
+> +		lines = V4L2_DV_BT_FRAME_HEIGHT(bt);
+> +		_hper = (u32)bt->pixelclock / width;
+> +		if (bt->interlaced)
+> +			lines /= 2;
+> +		/* vper +/- 0.7% */
+> +		vmin = ((27000000 / 1000) * 993) / _hper * lines;
+> +		vmax = ((27000000 / 1000) * 1007) / _hper * lines;
+> +		/* hper +/- 1.0% */
+> +		hmin = ((27000000 / 100) * 99) / _hper;
+> +		hmax = ((27000000 / 100) * 101) / _hper;
+> +		/* hsper +/- 2 (take care to avoid 32bit overflow) */
+> +		_hsper = 27000 * bt->hsync / ((u32)bt->pixelclock/1000);
+> +		hsmin = _hsper - 2;
+> +		hsmax = _hsper + 2;
+> +
+> +		/* vmatch matches the framerate */
+> +		vmatch = ((vper <= vmax) && (vper >= vmin)) ? 1 : 0;
+> +		/* hmatch matches the width */
+> +		hmatch = ((hper <= hmax) && (hper >= hmin)) ? 1 : 0;
+> +		/* hsmatch matches the hswidth */
+> +		hsmatch = ((hsper <= hsmax) && (hsper >= hsmin)) ? 1 : 0;
+> +		if (hmatch && vmatch && hsmatch) {
+> +			*timings = v4l2_dv_timings_presets[i];
+> +			v4l2_print_dv_timings(sd->name, "Detected format: ",
+> +					      timings, false);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	v4l_err(state->client, "no resolution match for timings: %d/%d/%d\n",
+> +		vper, hper, hsper);
+> +	return -EINVAL;
+> +}
+
+-EINVAL isn't the correct error code here. I would go for -ERANGE. It's not
+perfect, but close enough.
+
+-EINVAL indicates that the user filled in wrong values, but that's not the
+case here.
+
+> +static int
+> +tda1997x_g_input_status(struct v4l2_subdev *sd, u32 *status)
+> +{
+> +	struct tda1997x_state *state = to_state(sd);
+> +	u32 vper;
+> +	u16 hper;
+> +	u16 hsper;
+> +
+> +	mutex_lock(&state->lock);
+> +	v4l2_dbg(1, debug, sd, "inputs:%d/%d\n",
+> +		 state->input_detect[0], state->input_detect[1]);
+> +	if (state->input_detect[0] || state->input_detect[1])
+
+I'm confused. This device has two HDMI inputs?
+
+Does 'detecting input' equate to 'I see a signal and I am locked'?
+I gather from the irq function that sets these values that it is closer
+to 'I see a signal' and that 'I am locked' is something you would test
+by looking at the vper/hper/hsper.
+
+> +		*status = 0;
+> +	else {
+> +		vper = io_read24(sd, REG_V_PER) & MASK_VPER;
+> +		hper = io_read16(sd, REG_H_PER) & MASK_HPER;
+> +		hsper = io_read16(sd, REG_HS_WIDTH) & MASK_HSWIDTH;
+> +		v4l2_dbg(1, debug, sd, "timings:%d/%d/%d\n", vper, hper, hsper);
+> +		if (!vper || !hper || !hsper)
+> +			*status |= V4L2_IN_ST_NO_SYNC;
+> +		else
+> +			*status |= V4L2_IN_ST_NO_SIGNAL;
+
+So if we have valid vper, hper and hsper, then there is no signal? That doesn't
+make sense.
+
+I'd expect to see something like this:
+
+	if (!input_detect[0] && !input_detect[1])
+		// no signal
+	else if (!vper || !hper || !vsper)
+		// no sync
+	else
+		// have signal and sync
+
+I'm not sure about the precise meaning of input_detect, so I might be wrong about
+that bit.
+
+Regards,
+
+	Hans
