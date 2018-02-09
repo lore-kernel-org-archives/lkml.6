@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752995AbeBIVNa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 16:13:30 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59354 "EHLO
+        id S1753080AbeBIVNu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 16:13:50 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:59324 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752907AbeBIVND (ORCPT
+        with ESMTP id S1752902AbeBIVNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 16:13:03 -0500
+        Fri, 9 Feb 2018 16:13:02 -0500
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -14,14 +14,14 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
         mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
         douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com
-Subject: [PATCH v10 7/7] kvm/x86: remove kvm memblock dependency
-Date: Fri,  9 Feb 2018 16:11:43 -0500
-Message-Id: <20180209211143.16215-8-pasha.tatashin@oracle.com>
+Subject: [PATCH v10 6/7] x86/tsc: use tsc early
+Date: Fri,  9 Feb 2018 16:11:42 -0500
+Message-Id: <20180209211143.16215-7-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209211143.16215-1-pasha.tatashin@oracle.com>
 References: <20180209211143.16215-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802090267
@@ -29,184 +29,195 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM clock is initialized later compared to other hypervisor because it has
-dependency on memblock allocator.
+This patch adds early clock feature to x86 platforms.
 
-This patch removes this dependency by using memory from BSS instead of
-allocating it.
+tsc_early_init():
+Determines offset, shift and multiplier for the early clock based on the
+TSC frequency.
 
-The benefits:
-- remove ifdef from common code
-- earlier availability of TSC.
-- remove dependency on memblock, and reduce code
+tsc_early_fini()
+Implement the finish part of early tsc feature, prints message about the
+offset, which can be useful to find out how much time was spent in post and
+boot manager (if TSC starts from 0 during boot)
+
+sched_clock_early():
+TSC based implementation of early clock and is called from sched_clock().
+
+start_early_clock():
+Calls tsc_early_init(), and makes sched_clock() to use early boot clock
+
+set_final_clock():
+Sets the final clock which is either platform specific or
+native_sched_clock(). Also calls tsc_early_fini() if early clock was
+previously initialized.
+
+Call start_early_clock() to start using early boot time stamps
+functionality on the supported x86 platforms, and call set_final_clock() to
+finish this feature and switch back to the default clock. The supported x86
+systems are those where TSC frequency is determined early in boot.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/x86/kernel/kvm.c      |  1 +
- arch/x86/kernel/kvmclock.c | 64 +++++++---------------------------------------
- arch/x86/kernel/setup.c    |  7 +----
- 3 files changed, 11 insertions(+), 61 deletions(-)
+ arch/x86/include/asm/paravirt.h |  2 +-
+ arch/x86/kernel/tsc.c           | 98 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 97 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index b40ffbf156c1..5fed337836b0 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -582,6 +582,7 @@ const __initconst struct hypervisor_x86 x86_hyper_kvm = {
- 	.name			= "KVM",
- 	.detect			= kvm_detect,
- 	.type			= X86_HYPER_KVM,
-+	.init.init_platform	= kvmclock_init,
- 	.init.guest_late_init	= kvm_guest_init,
- 	.init.x2apic_available	= kvm_para_available,
- };
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index 8b26c9e01cc4..11bae04a19a7 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -23,9 +23,9 @@
- #include <asm/apic.h>
- #include <linux/percpu.h>
- #include <linux/hardirq.h>
--#include <linux/memblock.h>
- #include <linux/sched.h>
- #include <linux/sched/clock.h>
-+#include <linux/mm.h>
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index 892df375b615..17b04919c71a 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -171,7 +171,7 @@ static inline int rdmsrl_safe(unsigned msr, unsigned long long *p)
  
- #include <asm/mem_encrypt.h>
- #include <asm/x86_init.h>
-@@ -44,6 +44,11 @@ static int parse_no_kvmclock(char *arg)
- }
- early_param("no-kvmclock", parse_no_kvmclock);
- 
-+/* Aligned to page sizes to match whats mapped via vsyscalls to userspace */
-+#define HV_CLOCK_SIZE	(sizeof(struct pvclock_vsyscall_time_info) * NR_CPUS)
-+#define WALL_CLOCK_SIZE	(sizeof(struct pvclock_wall_clock))
-+static u8 hv_clock_mem[PAGE_ALIGN(HV_CLOCK_SIZE)] __aligned(PAGE_SIZE);
-+static u8 wall_clock_mem[PAGE_ALIGN(WALL_CLOCK_SIZE)] __aligned(PAGE_SIZE);
- /* The hypervisor will put information about time periodically here */
- static struct pvclock_vsyscall_time_info *hv_clock;
- static struct pvclock_wall_clock *wall_clock;
-@@ -244,43 +249,12 @@ static void kvm_shutdown(void)
- 	native_machine_shutdown();
- }
- 
--static phys_addr_t __init kvm_memblock_alloc(phys_addr_t size,
--					     phys_addr_t align)
--{
--	phys_addr_t mem;
--
--	mem = memblock_alloc(size, align);
--	if (!mem)
--		return 0;
--
--	if (sev_active()) {
--		if (early_set_memory_decrypted((unsigned long)__va(mem), size))
--			goto e_free;
--	}
--
--	return mem;
--e_free:
--	memblock_free(mem, size);
--	return 0;
--}
--
--static void __init kvm_memblock_free(phys_addr_t addr, phys_addr_t size)
--{
--	if (sev_active())
--		early_set_memory_encrypted((unsigned long)__va(addr), size);
--
--	memblock_free(addr, size);
--}
--
- void __init kvmclock_init(void)
+ static inline unsigned long long paravirt_sched_clock(void)
  {
- 	struct pvclock_vcpu_time_info *vcpu_time;
--	unsigned long mem, mem_wall_clock;
--	int size, cpu, wall_clock_size;
-+	int cpu;
- 	u8 flags;
+-	return PVOP_CALL0(unsigned long long, pv_time_ops.sched_clock);
++	return PVOP_CALL0(unsigned long long, pv_time_ops.active_sched_clock);
+ }
  
--	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
--
- 	if (!kvm_para_available())
- 		return;
+ struct static_key;
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 700a61cbafa5..d492f5dcea67 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -182,6 +182,84 @@ static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_
+ 	local_irq_restore(flags);
+ }
  
-@@ -290,28 +264,11 @@ void __init kvmclock_init(void)
- 	} else if (!(kvmclock && kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE)))
- 		return;
- 
--	wall_clock_size = PAGE_ALIGN(sizeof(struct pvclock_wall_clock));
--	mem_wall_clock = kvm_memblock_alloc(wall_clock_size, PAGE_SIZE);
--	if (!mem_wall_clock)
--		return;
--
--	wall_clock = __va(mem_wall_clock);
--	memset(wall_clock, 0, wall_clock_size);
--
--	mem = kvm_memblock_alloc(size, PAGE_SIZE);
--	if (!mem) {
--		kvm_memblock_free(mem_wall_clock, wall_clock_size);
--		wall_clock = NULL;
--		return;
--	}
--
--	hv_clock = __va(mem);
--	memset(hv_clock, 0, size);
-+	wall_clock = (struct pvclock_wall_clock *)wall_clock_mem;
-+	hv_clock = (struct pvclock_vsyscall_time_info *)hv_clock_mem;
- 
- 	if (kvm_register_clock("primary cpu clock")) {
- 		hv_clock = NULL;
--		kvm_memblock_free(mem, size);
--		kvm_memblock_free(mem_wall_clock, wall_clock_size);
- 		wall_clock = NULL;
- 		return;
++static struct cyc2ns_data  cyc2ns_early;
++
++static u64 sched_clock_early(void)
++{
++	u64 ns = mul_u64_u32_shr(rdtsc(), cyc2ns_early.cyc2ns_mul,
++				 cyc2ns_early.cyc2ns_shift);
++	return ns + cyc2ns_early.cyc2ns_offset;
++}
++
++/*
++ * Initialize clock for early time stamps
++ */
++static void __init tsc_early_init(unsigned int khz)
++{
++	clocks_calc_mult_shift(&cyc2ns_early.cyc2ns_mul,
++			       &cyc2ns_early.cyc2ns_shift,
++			       khz, NSEC_PER_MSEC, 0);
++	cyc2ns_early.cyc2ns_offset = -sched_clock_early();
++}
++
++/*
++ * Finish clock for early time stamps, and hand over to permanent clock by
++ * setting __sched_clock_offset appropriately for continued time keeping.
++ */
++static void __init tsc_early_fini(void)
++{
++	unsigned long long t;
++	unsigned long r;
++
++	t = -cyc2ns_early.cyc2ns_offset;
++	r = do_div(t, NSEC_PER_SEC);
++
++	__sched_clock_offset = sched_clock_early() - sched_clock();
++	pr_info("early sched clock is finished, offset [%lld.%09lds]\n", t, r);
++}
++
++#ifdef CONFIG_PARAVIRT
++static inline void __init start_early_clock(void)
++{
++	tsc_early_init(tsc_khz);
++	pv_time_ops.active_sched_clock = sched_clock_early;
++}
++
++static inline void __init set_final_clock(void)
++{
++	pv_time_ops.active_sched_clock = pv_time_ops.sched_clock;
++
++	/* We did not have early sched clock if multiplier is 0 */
++	if (cyc2ns_early.cyc2ns_mul)
++		tsc_early_fini();
++}
++#else /* CONFIG_PARAVIRT */
++/*
++ * For native clock we use two switches static and dynamic, the static switch is
++ * initially true, so we check the dynamic switch, which is initially false.
++ * Later  when early clock is disabled, we can alter the static switch in order
++ * to avoid branch check on every sched_clock() call.
++ */
++static bool __tsc_early;
++static DEFINE_STATIC_KEY_TRUE(__tsc_early_static);
++
++static inline void __init start_early_clock(void)
++{
++	tsc_early_init(tsc_khz);
++	__tsc_early = true;
++}
++
++static inline void __init set_final_clock(void)
++{
++	__tsc_early = false;
++	static_branch_disable(&__tsc_early_static);
++
++	/* We did not have early sched clock if multiplier is 0 */
++	if (cyc2ns_early.cyc2ns_mul)
++		tsc_early_fini();
++}
++#endif /* CONFIG_PARAVIRT */
++
+ /*
+  * Scheduler clock - returns current time in nanosec units.
+  */
+@@ -194,6 +272,13 @@ u64 native_sched_clock(void)
+ 		return cycles_2_ns(tsc_now);
  	}
-@@ -354,13 +311,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
- 	int cpu;
- 	u8 flags;
- 	struct pvclock_vcpu_time_info *vcpu_time;
--	unsigned int size;
  
- 	if (!hv_clock)
- 		return 0;
++#ifndef CONFIG_PARAVIRT
++	if (static_branch_unlikely(&__tsc_early_static)) {
++		if (__tsc_early)
++			return sched_clock_early();
++	}
++#endif /* !CONFIG_PARAVIRT */
++
+ 	/*
+ 	 * Fall back to jiffies if there's no TSC available:
+ 	 * ( But note that we still use it if the TSC is marked
+@@ -1313,6 +1398,7 @@ void __init tsc_early_delay_calibrate(void)
+ 	lpj = tsc_khz * 1000;
+ 	do_div(lpj, HZ);
+ 	loops_per_jiffy = lpj;
++	start_early_clock();
+ }
  
--	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
--
- 	cpu = get_cpu();
+ void __init tsc_init(void)
+@@ -1322,7 +1408,7 @@ void __init tsc_init(void)
  
- 	vcpu_time = &hv_clock[cpu].pvti;
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 1ae67e982af7..9a691306ce8b 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -48,7 +48,6 @@
- #include <linux/pci.h>
- #include <asm/pci-direct.h>
- #include <linux/init_ohci1394_dma.h>
--#include <linux/kvm_para.h>
- #include <linux/dma-contiguous.h>
+ 	if (!boot_cpu_has(X86_FEATURE_TSC)) {
+ 		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+-		return;
++		goto final_sched_clock;
+ 	}
  
- #include <linux/errno.h>
-@@ -1007,6 +1006,7 @@ void __init setup_arch(char **cmdline_p)
- 	 */
- 	init_hypervisor_platform();
+ 	cpu_khz = x86_platform.calibrate_cpu();
+@@ -1341,7 +1427,7 @@ void __init tsc_init(void)
+ 	if (!tsc_khz) {
+ 		mark_tsc_unstable("could not calculate TSC khz");
+ 		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+-		return;
++		goto final_sched_clock;
+ 	}
  
-+	tsc_early_delay_calibrate();
- 	x86_init.resources.probe_roms();
+ 	pr_info("Detected %lu.%03lu MHz processor\n",
+@@ -1389,6 +1475,14 @@ void __init tsc_init(void)
  
- 	/* after parse_early_param, so could debug it */
-@@ -1192,11 +1192,6 @@ void __init setup_arch(char **cmdline_p)
+ 	clocksource_register_khz(&clocksource_tsc_early, tsc_khz);
+ 	detect_art();
++final_sched_clock:
++	/*
++	 * Final sched clock is either platform specific clock when
++	 * CONFIG_PARAVIRT is defined, or native_sched_clock() with disabled
++	 * static branch for early tsc clock. We must call this function even if
++	 * start_early_clock() was never called.
++	 */
++	set_final_clock();
+ }
  
- 	memblock_find_dma_reserve();
- 
--#ifdef CONFIG_KVM_GUEST
--	kvmclock_init();
--#endif
--
--	tsc_early_delay_calibrate();
- 	if (!early_xdbc_setup_hardware())
- 		early_xdbc_register_console();
- 
+ #ifdef CONFIG_SMP
 -- 
 2.16.1
