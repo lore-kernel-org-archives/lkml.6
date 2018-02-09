@@ -1,134 +1,140 @@
-Return-Path: <kernel-hardening-return-11575-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x225KV49g0UHMNRWCw7umbM/4CXE5A2OrhfKNaf+DNsLJDDM8K4+VAY9xhHWtj49K7VaTER5U
-ARC-Seal: i=1; a=rsa-sha256; t=1517762941; cv=none;
+Return-Path: <baolin.wang@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1518156539; cv=none;
         d=google.com; s=arc-20160816;
-        b=nMIUl4x8eFSbU3G5jNK/s73SuxW/2BEm0/HU7PWrMrxrSqs+Zzw+Yf4/37Ki4fcFaL
-         fCo1B34/kvPJRE/s3M0W2ItK+CR6wPfg1koJaM5JFJpS4smJgmG4pDRNMaSEQquraib9
-         qTA0tO4HW90zO3Mz0THBIZYxhSqOB4SUqYDAbVrGlcYqiK5nRnDSfgMb2ngJvbxzEEHk
-         m1mjtS6ZrXkpYsknFXL7qht5CPsMR4IS+PWCpigzkVxdBOIiimsqZGkpHvDCBDaziRcq
-         vX0ThBonRotAXkhSRJveY4HyEGFAmVfA8JUWEU4YhUcZ0tn4fqLj7yybgVq9qXOO59Hy
-         1FjQ==
+        b=dinlIrZ3xg1IM648Y7Nx5vZMpvXqM0FsPxUzM5cXR0SsC8SXIxp96zAVqfnvSuB95i
+         nJSiPV7mcEEzE0thPDYm0XCfKFkc+vuFZ9wKRWZK8QJOQHIuD8zDZNS6ZcsDypXB0oTb
+         uYBV2pKaBe24DglV4R27QsDcXkghyOrTp4NmJcykJNbPxHbhUqYdRZkI3tV3jSlrP+Ee
+         PKr3xTZmlP/mSU26Zq8O/X033sZMF1xMO0CGSyKEJvps7XROXLjOYL3LPDjVZI5Ri80W
+         jgbDXdwav1aw12Z4teEHvQf4dvZ6tGQ89c+q4uuqmw7QP/lXYkxqQkTQbl+IBS+W1O3H
+         z1sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=l7roqBLRVLzDM4aj81m3Gm/yZfg4xdj1GitJFRaMfJ0=;
-        b=oh8FZ7N4OwipUIVYxm78DsKW2vWdtruF0qGoI0d+w4LZQoka4KVyNjuWGonnsQzPww
-         hK7vpJNx7JpV5vISb+kOkz3u2RIIYjsrl/2zRgYWcs8Z+rT/v7CXNiYufDELM3XxUdlQ
-         525y++t8Aej2+wny3z58SQ0k2yInFwclEN1mF6D0qNTuofCXpHv+VlHfuWIgyi5d7ji2
-         jOimAzrvW+1P0GhikViOTYiJjOGv8wu6fxh+8Fywg7zp4z95DMoYXehtzYgFkstmVVqO
-         JPcOPtNkiezI/eG7ZShK22Wqupa/VTmh0nbx/6diaXKmRXuTCtFZRQDDXeQR4mTQgg8x
-         k4pw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=0Q3uPb8gySQcgsQtVQr2S/bAzu9nETicVrLVrKTSbf8=;
+        b=E0Aj+O1FAD13+jTnwYr8jKxabNCYCgVqunswB4mhbYJ/5MqIB93QmwWcIiM9wGKsjs
+         3NYHrQP34v+bD9+NrjVszRwybZfWfCnllT1zViR4v9+xy6onPpCFBe/EUg8Mtd+4Aq44
+         6XWVzP0VHjBTjSLfNZa2BzwInDPBrTCagIdzVSCh9kHqVZlDh6Uns4bS5Ny9dEkAIJ39
+         64L/eEZtaD6QqBWcmM6yVg+Y6UPA0GF9xJUZDpug+GBf+NFY6TkYRltc3zwTEsj5+b/c
+         kuUdpgDFI2AWELaMqwzNeU3sHlVqFtM8lLQK7PRMkQF/X09FqYRR2BhHqlZ6ZOIFFKXn
+         LGFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11575-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11575-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=WhEc8+uS;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11575-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11575-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Igor Stoppa <igor.stoppa@huawei.com>
-To: <jglisse@redhat.com>, <keescook@chromium.org>, <mhocko@kernel.org>,
-	<labbott@redhat.com>, <hch@infradead.org>, <willy@infradead.org>
-CC: <cl@linux.com>, <linux-security-module@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [PATCH 3/6] struct page: add field for vm_struct
-Date: Sun, 4 Feb 2018 18:47:29 +0200
-Message-ID: <20180204164732.28241-4-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.16.0
-In-Reply-To: <20180204164732.28241-1-igor.stoppa@huawei.com>
-References: <20180204164732.28241-1-igor.stoppa@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.122.225.51]
-X-CFilter-Loop: Reflected
+       dkim=pass header.i=@linaro.org header.s=google header.b=WhEc8+uS;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AH8x224EXPEitfsd8LsobSkqR5c+kgIjD8Whnbbgvr0NJfYFmBRODMkrS1jXrWyf9QjAYSmeQfmdyQ==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: dmitry.torokhov@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org,
+	lumotuwe@gmail.com,
+	arvind.yadav.cs@gmail.com,
+	josephl@nvidia.com,
+	kstewart@linuxfoundation.org,
+	pombredanne@nexb.com,
+	tglx@linutronix.de,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	linus.walleij@linaro.org,
+	baolin.wang@linaro.org
+Subject: [PATCH] Input: gpio_keys: Add level trigger support for GPIO keys
+Date: Fri,  9 Feb 2018 14:08:28 +0800
+Message-Id: <6c53b9ccfd4a56fc1b00e243bb9e7cae9e124932.1518155780.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591489793963012538?=
-X-GMAIL-MSGID: =?utf-8?q?1591489793963012538?=
+X-GMAIL-THRID: =?utf-8?q?1591902511604872416?=
+X-GMAIL-MSGID: =?utf-8?q?1591902511604872416?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When a page is used for virtual memory, it is often necessary to obtian
-a handler to the corresponding vm_struct, which refers to the virtually
-continuous area generated when invoking vmalloc.
+On some platforms (such as Spreadtrum platform), the GPIO keys can only
+be triggered by level type. So this patch introduces one property to
+indicate if the GPIO trigger type is level trigger or edge trigger.
 
-The struct page has a "mapping" field, which can be re-used, to store a
-pointer to the parent area. This will avoid more expensive searches.
-
-As example, the function find_vm_area is reimplemented, to take advantage
-of the newly introduced field.
-
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- include/linux/mm_types.h |  1 +
- mm/vmalloc.c             | 18 +++++++++++++-----
- 2 files changed, 14 insertions(+), 5 deletions(-)
+ .../devicetree/bindings/input/gpio-keys.txt        |    2 ++
+ drivers/input/keyboard/gpio_keys.c                 |   22 +++++++++++++++++++-
+ include/linux/gpio_keys.h                          |    1 +
+ 3 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index cfd0ac4e5e0e..2abd540b969f 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -56,6 +56,7 @@ struct page {
- 		void *s_mem;			/* slab first object */
- 		atomic_t compound_mapcount;	/* first tail page */
- 		/* page_deferred_list().next	 -- second tail page */
-+		struct vm_struct *area;
- 	};
+diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
+index a949404..e3104bd 100644
+--- a/Documentation/devicetree/bindings/input/gpio-keys.txt
++++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
+@@ -29,6 +29,8 @@ Optional subnode-properties:
+ 	- linux,can-disable: Boolean, indicates that button is connected
+ 	  to dedicated (not shared) interrupt which can be disabled to
+ 	  suppress events from the button.
++	- gpio-key,level-trigger: Boolean, indicates that button's interrupt
++	  type is level trigger. Otherwise it is edge trigger as default.
  
- 	/* Second double word */
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 673942094328..44c5dfcb2fd7 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1466,13 +1466,16 @@ struct vm_struct *get_vm_area_caller(unsigned long size, unsigned long flags,
-  */
- struct vm_struct *find_vm_area(const void *addr)
- {
--	struct vmap_area *va;
-+	struct page *page;
+ Example nodes:
  
--	va = find_vmap_area((unsigned long)addr);
--	if (va && va->flags & VM_VM_AREA)
--		return va->vm;
-+	if (unlikely(!is_vmalloc_addr(addr)))
-+		return NULL;
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 87e613d..d3b4bb6 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -385,6 +385,19 @@ static void gpio_keys_gpio_work_func(struct work_struct *work)
+ 	struct gpio_button_data *bdata =
+ 		container_of(work, struct gpio_button_data, work.work);
  
--	return NULL;
-+	page = vmalloc_to_page(addr);
-+	if (unlikely(!page))
-+		return NULL;
++	if (bdata->button->level_trigger) {
++		unsigned int trigger =
++			irq_get_trigger_type(bdata->irq) & ~IRQF_TRIGGER_MASK;
++		int state = gpiod_get_raw_value_cansleep(bdata->gpiod);
 +
-+	return page->area;
- }
- 
- /**
-@@ -1536,6 +1539,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
- 			struct page *page = area->pages[i];
- 
- 			BUG_ON(!page);
-+			page->area = NULL;
- 			__free_pages(page, 0);
- 		}
- 
-@@ -1744,6 +1748,7 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 			const void *caller)
- {
- 	struct vm_struct *area;
-+	unsigned int page_counter;
- 	void *addr;
- 	unsigned long real_size = size;
- 
-@@ -1769,6 +1774,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 
- 	kmemleak_vmalloc(area, size, gfp_mask);
- 
-+	for (page_counter = 0; page_counter < area->nr_pages; page_counter++)
-+		area->pages[page_counter]->area = area;
++		if (state)
++			trigger |= IRQF_TRIGGER_LOW;
++		else
++			trigger |= IRQF_TRIGGER_HIGH;
 +
- 	return addr;
++		irq_set_irq_type(bdata->irq, trigger);
++	}
++
+ 	gpio_keys_gpio_report_event(bdata);
  
- fail:
+ 	if (bdata->button->wakeup)
+@@ -566,7 +579,11 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+ 		INIT_DELAYED_WORK(&bdata->work, gpio_keys_gpio_work_func);
+ 
+ 		isr = gpio_keys_gpio_isr;
+-		irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
++		if (button->level_trigger)
++			irqflags = gpiod_is_active_low(bdata->gpiod) ?
++				IRQF_TRIGGER_LOW : IRQF_TRIGGER_HIGH;
++		else
++			irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
+ 
+ 	} else {
+ 		if (!button->irq) {
+@@ -721,6 +738,9 @@ static void gpio_keys_close(struct input_dev *input)
+ 		button->can_disable =
+ 			fwnode_property_read_bool(child, "linux,can-disable");
+ 
++		button->level_trigger =
++			fwnode_property_read_bool(child, "gpio-key,level-trigger");
++
+ 		if (fwnode_property_read_u32(child, "debounce-interval",
+ 					 &button->debounce_interval))
+ 			button->debounce_interval = 5;
+diff --git a/include/linux/gpio_keys.h b/include/linux/gpio_keys.h
+index d06bf77..5095645 100644
+--- a/include/linux/gpio_keys.h
++++ b/include/linux/gpio_keys.h
+@@ -28,6 +28,7 @@ struct gpio_keys_button {
+ 	int wakeup;
+ 	int debounce_interval;
+ 	bool can_disable;
++	bool level_trigger;
+ 	int value;
+ 	unsigned int irq;
+ };
 -- 
-2.16.0
+1.7.9.5
