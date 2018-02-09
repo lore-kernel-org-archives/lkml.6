@@ -1,66 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752318AbeBIPta (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:49:30 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:56810 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeBIPt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:49:29 -0500
-Date: Fri, 9 Feb 2018 23:49:20 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] crypto: talitos: fix Kernel Oops on hashing an empty file
-Message-ID: <20180209154920.GB22273@gondor.apana.org.au>
-References: <20180126160959.BEA466EFCA@localhost.localdomain>
+        id S1752387AbeBIPtj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 10:49:39 -0500
+Received: from mga14.intel.com ([192.55.52.115]:8548 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752335AbeBIPth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 10:49:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,483,1511856000";
+   d="scan'208";a="17259741"
+Subject: Re: [PATCH V3 1/5] perf/x86/intel: fix event update for auto-reload
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, acme@kernel.org,
+        tglx@linutronix.de, jolsa@redhat.com, eranian@google.com,
+        ak@linux.intel.com
+References: <1517243373-355481-1-git-send-email-kan.liang@linux.intel.com>
+ <1517243373-355481-2-git-send-email-kan.liang@linux.intel.com>
+ <20180206150648.GK2249@hirez.programming.kicks-ass.net>
+ <ae4c7aff-da12-8cb3-4fac-4637ab001060@linux.intel.com>
+ <20180209140905.GG25181@hirez.programming.kicks-ass.net>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <cafc7994-bb39-14a3-ad20-1357d688a7ff@linux.intel.com>
+Date: Fri, 9 Feb 2018 10:49:35 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180126160959.BEA466EFCA@localhost.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180209140905.GG25181@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 26, 2018 at 05:09:59PM +0100, Christophe Leroy wrote:
-> Performing the hash of an empty file leads to a kernel Oops
-> 
-> [   44.504600] Unable to handle kernel paging request for data at address 0x0000000c
-> [   44.512819] Faulting instruction address: 0xc02d2be8
-> [   44.524088] Oops: Kernel access of bad area, sig: 11 [#1]
-> [   44.529171] BE PREEMPT CMPC885
-> [   44.532232] CPU: 0 PID: 491 Comm: md5sum Not tainted 4.15.0-rc8-00211-g3a968610b6ea #81
-> [   44.540814] NIP:  c02d2be8 LR: c02d2984 CTR: 00000000
-> [   44.545812] REGS: c6813c90 TRAP: 0300   Not tainted  (4.15.0-rc8-00211-g3a968610b6ea)
-> [   44.554223] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 48222822  XER: 20000000
-> [   44.560855] DAR: 0000000c DSISR: c0000000
-> [   44.560855] GPR00: c02d28fc c6813d40 c6828000 c646fa40 00000001 00000001 00000001 00000000
-> [   44.560855] GPR08: 0000004c 00000000 c000bfcc 00000000 28222822 100280d4 00000000 10020008
-> [   44.560855] GPR16: 00000000 00000020 00000000 00000000 10024008 00000000 c646f9f0 c6179a10
-> [   44.560855] GPR24: 00000000 00000001 c62f0018 c6179a10 00000000 c6367a30 c62f0000 c646f9c0
-> [   44.598542] NIP [c02d2be8] ahash_process_req+0x448/0x700
-> [   44.603751] LR [c02d2984] ahash_process_req+0x1e4/0x700
-> [   44.608868] Call Trace:
-> [   44.611329] [c6813d40] [c02d28fc] ahash_process_req+0x15c/0x700 (unreliable)
-> [   44.618302] [c6813d90] [c02060c4] hash_recvmsg+0x11c/0x210
-> [   44.623716] [c6813db0] [c0331354] ___sys_recvmsg+0x98/0x138
-> [   44.629226] [c6813eb0] [c03332c0] __sys_recvmsg+0x40/0x84
-> [   44.634562] [c6813f10] [c03336c0] SyS_socketcall+0xb8/0x1d4
-> [   44.640073] [c6813f40] [c000d1ac] ret_from_syscall+0x0/0x38
-> [   44.645530] Instruction dump:
-> [   44.648465] 38c00001 7f63db78 4e800421 7c791b78 54690ffe 0f090000 80ff0190 2f870000
-> [   44.656122] 40befe50 2f990001 409e0210 813f01bc <8129000c> b39e003a 7d29c214 913e003c
-> 
-> This patch fixes that Oops by checking if src is NULL.
-> 
-> Fixes: 6a1e8d14156d4 ("crypto: talitos - making mapping helpers more generic")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+On 2/9/2018 9:09 AM, Peter Zijlstra wrote:
+> On Tue, Feb 06, 2018 at 12:58:23PM -0500, Liang, Kan wrote:
+>>
+>>
+>>> With the exception of handling 'empty' buffers, I ended up with the
+>>> below. Please try again.
+>>>
+>>
+>> There are two small errors. After fixing them, the patch works well.
+> 
+> Well, it still doesn't do A, two read()s without PEBS record in between.
+> So that needs fixing. What 3/5 does, call x86_perf_event_update() after
+> drain_pebs() is actively wrong after this patch.
+>
+
+As my understanding, for case A, drain_pebs() will return immediately. 
+It cannot reach the patch.
+Because there is no PEBS record ready. So the ds->pebs_index should be 
+the same as ds->pebs_buffer_base.
+
+3/5 is to handle case A.
+
+Thanks,
+Kan
+
+>>> +
+>>> +	/*
+>>> +	 * Careful, not all hw sign-extends above the physical width
+>>> +	 * of the counter.
+>>> +	 */
+>>> +	delta = (new_raw_count << shift) - (prev_raw_count << shift);
+>>> +	delta >>= shift;
+>>
+>> new_raw_count could be smaller than prev_raw_count.
+>> The sign bit will be set. The delta>> could be wrong.
+>>
+>> I think we can add a period here to prevent it.
+>> +       delta = (period << shift) + (new_raw_count << shift) -
+>> +               (prev_raw_count << shift);
+>> +       delta >>= shift;
+>> ......
+>> +       local64_add(delta + period * (count - 1), &event->count);
+>>
+> 
+> Right it does, but that wrecks case A again, because then we get here
+> with !@count.
+> 
+> Maybe something like:
+> 
+> 
+> 	s64 new, old;
+> 
+> 	new = ((s64)(new_raw_count << shift) >> shift);
+> 	old = ((s64)(old_raw_count << shift) >> shift);
+> 
+> 	local64_add(new - old + count * period, &event->count);
+> 
+> 
+> And then make intel_pmu_drain_pebs_*(), call this function even when !n.
+> 
