@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x224EYUadZKz15nrBSuzLQFwX0VYge38jntSSnRaY7z9Nmy9/hHgo04Et7c/nrXY0c+ZK9ntK
-ARC-Seal: i=1; a=rsa-sha256; t=1518168358; cv=none;
+X-Google-Smtp-Source: AH8x227tGEKEBnkdue84WNV4mkY+IrfI0vcGCZxz6+z3HYD0/AtRnw5/6JHqNtrVDnKoP3GWNFZD
+ARC-Seal: i=1; a=rsa-sha256; t=1518168357; cv=none;
         d=google.com; s=arc-20160816;
-        b=p1CIqhpVLGnhGV2xzGqFIgYFOqhL35Oy74Z7uPyeIE3IPZcZKLtX4DaNYXzGk086tq
-         uB7wtz4A9/RRBaVxABFlFiho3VNhKrOR3s8CvC1K5SfBdlzz0oQD1DLFebiVQGtN+6ye
-         o0Y3qaZ3HHvOGOhL5zbGggn8SIxTkzHuB42Ex0JQ8Y/MIMRhj+JHAB8dC6fbnNL59V4y
-         qIPICALrlEN/ROMG3COLQ4V9xySLlXL+LRyf9+fokrfKSs9CuTqQp6IWFMRXreOLUdYZ
-         XrR3/gb2QhM2sotMyxziP8HHVuWY+rXVGjgB7h809Y93ckUqhGCNSfVqDNQAnWbCGACu
-         1Cqg==
+        b=mEKksbbYQQNxCJUdj+qVqDttsB90YiUf3UUTCLiG/+HqrC9lgJWpwZhZyYu45Fh8Be
+         lN9FwfRpKIi/lFo8S3K3d7q50DaPo0AbHx3VmsSNsS6eUdj+rkvvOOk/+QpnNV0Hye/0
+         TqRVvYKibPfdY+XBYzF28JnUT8aLsBp4AhxfGVXBrAamJx5rJRcjqeh79iFHLHQwJSRp
+         6Qi0UB+CjWN+hyTRsj2FqwWZrKJRlYtPqWyJUvlPStxqsQDxUtRssCKotfvRAejjLVDy
+         TZR+jB9I+IyjqWQIyGoa0xZ74sFHNB2e+1YRBzy/B/Zqjqq4obfG7ulRKLwL4GPhrYgV
+         cBYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=DrqeQNOm0g8Mc4vr7QAR9T+xeBlp8SjMqmZj74xwEDw=;
-        b=XqkAkveFydukdDL3ZPVZpGv7yy3d2aOfMgsQFfG5WoXKms6TTIkROSHxkFkXNy5ll9
-         mODxfhs/d6dc5S8lMUajQW1f48dpPaEWFy+BTuimYDMjOOXV3HmdRuErePvLKuBJl1/H
-         MoNIQ9FO68srPLjZ3LbhEjYCyO4KdtXXS7U/ulmqiBZsOO0+DrFNUGTC/E3KRtCakLa2
-         IEmBEmKmilyu2kt+SedtyiQGVW8HEgJjuQcAKbDEGxaXMlWcNwRQHbQGnDiPw5wP28RO
-         DiTXhXXTsAFJNaACQYR4VUjwe32IqJKKr9tmjMN2gqStQveIfrbhK0GG0uUkPm9Ee9lc
-         UhKw==
+        bh=lFVEWZD8iyFBLPwCnkcx5rWQZtK2TQ+3za/aoOilQ44=;
+        b=prmKQ0QhZBkygoOP1Zq0M3ExE9yfIIAE6luyjd35Jtew8XqtVDmlK1DVYBISDQJ8AG
+         s9Ve2z8exLcv1g0JCeNTGjKu3aKof+cPBsfPuPLCoedi0ofARJXNAOdbAIFtqgU/o/KH
+         5e6HHVhJWgaOEzqxq+yGwWQ3uMnkxjnXCLEgZ11zH8QY9yDY+tLs50OmxwfhxMxRvISk
+         oSS85DmDr0wceuPjcgIKikzOm3seVs/2YBEyoBNyknm8w4KRjhVFt2CC9iQm4RUuZiGn
+         Qnw6ZeBFaSwFDrgWRh5qiYAEPp8ZRLr7HHy6dOHbRFG6Fkt0LZLdcS4fz6hYPDHdkbQN
+         Jo7A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=CNLxIxPL;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Zk9J6ua8;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=CNLxIxPL;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Zk9J6ua8;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,207 +57,148 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 13/31] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
-Date: Fri,  9 Feb 2018 10:25:22 +0100
-Message-Id: <1518168340-9392-14-git-send-email-joro@8bytes.org>
+Subject: [PATCH 04/31] x86/entry/32: Put ESPFIX code into a macro
+Date: Fri,  9 Feb 2018 10:25:13 +0100
+Message-Id: <1518168340-9392-5-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914904806211394?=
-X-GMAIL-MSGID: =?utf-8?q?1591914904806211394?=
+X-GMAIL-THRID: =?utf-8?q?1591914903392005228?=
+X-GMAIL-MSGID: =?utf-8?q?1591914903392005228?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-It can happen that we enter the kernel from kernel-mode and
-on the entry-stack. The most common way this happens is when
-we get an exception while loading the user-space segment
-registers on the kernel-to-userspace exit path.
-
-The segment loading needs to be done after the entry-stack
-switch, because the stack-switch needs kernel %fs for
-per_cpu access.
-
-When this happens, we need to make sure that we leave the
-kernel with the entry-stack again, so that the interrupted
-code-path runs on the right stack when switching to the
-user-cr3.
-
-We do this by detecting this condition on kernel-entry by
-checking CS.RPL and %esp, and if it happens, we copy over
-the complete content of the entry stack to the task-stack.
-This needs to be done because once we enter the exception
-handlers we might be scheduled out or even migrated to a
-different CPU, so that we can't rely on the entry-stack
-contents. We also leave a marker in the stack-frame to
-detect this condition on the exit path.
-
-On the exit path the copy is reversed, we copy all of the
-remaining task-stack back to the entry-stack and switch
-to it.
+This makes it easier to split up the shared iret code path.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 109 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 108 insertions(+), 1 deletion(-)
+ arch/x86/entry/entry_32.S | 97 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 49 insertions(+), 48 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index b5ef003..d94dab6 100644
+index e659776..0289bde 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -358,6 +358,9 @@
-  * copied there. So allocate the stack-frame on the task-stack and
-  * switch to it before we do any copying.
-  */
-+
-+#define CS_FROM_ENTRY_STACK	(1 << 31)
-+
- .macro SWITCH_TO_KERNEL_STACK
- 
- 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-@@ -381,6 +384,10 @@
- 	/* Load top of task-stack into %edi */
- 	movl	TSS_entry_stack(%edi), %edi
- 
-+	/* Special case - entry from kernel mode via entry stack */
-+	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
-+	jz	.Lentry_from_kernel_\@
-+
- 	/* Bytes to copy */
- 	movl	$PTREGS_SIZE, %ecx
- 
-@@ -394,8 +401,8 @@
- 	 */
- 	addl	$(4 * 4), %ecx
- 
--.Lcopy_pt_regs_\@:
- #endif
-+.Lcopy_pt_regs_\@:
- 
- 	/* Allocate frame on task-stack */
- 	subl	%ecx, %edi
-@@ -410,6 +417,56 @@
- 	cld
- 	rep movsb
- 
-+	jmp .Lend_\@
-+
-+.Lentry_from_kernel_\@:
-+
-+	/*
-+	 * This handles the case when we enter the kernel from
-+	 * kernel-mode and %esp points to the entry-stack. When this
-+	 * happens we need to switch to the task-stack to run C code,
-+	 * but switch back to the entry-stack again when we approach
-+	 * iret and return to the interrupted code-path. This usually
-+	 * happens when we hit an exception while restoring user-space
-+	 * segment registers on the way back to user-space.
-+	 *
-+	 * When we switch to the task-stack here, we can't trust the
-+	 * contents of the entry-stack anymore, as the exception handler
-+	 * might be scheduled out or moved to another CPU. Therefore we
-+	 * copy the complete entry-stack to the task-stack and set a
-+	 * marker in the iret-frame (bit 31 of the CS dword) to detect
-+	 * what we've done on the iret path.
-+	 *
-+	 * On the iret path we copy everything back and switch to the
-+	 * entry-stack, so that the interrupted kernel code-path
-+	 * continues on the same stack it was interrupted with.
-+	 *
-+	 * Be aware that an NMI can happen anytime in this code.
-+	 *
-+	 * %esi: Entry-Stack pointer (same as %esp)
-+	 * %edi: Top of the task stack
-+	 */
-+
-+	/* Calculate number of bytes on the entry stack in %ecx */
-+	movl	%esi, %ecx
-+
-+	/* %ecx to the top of entry-stack */
-+	andl	$(MASK_entry_stack), %ecx
-+	addl	$(SIZEOF_entry_stack), %ecx
-+
-+	/* Number of bytes on the entry stack to %ecx */
-+	sub	%esi, %ecx
-+
-+	/* Mark stackframe as coming from entry stack */
-+	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+
-+	/*
-+	 * %esi and %edi are unchanged, %ecx contains the number of
-+	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
-+	 * the stack-frame on task-stack and copy everything over
-+	 */
-+	jmp .Lcopy_pt_regs_\@
-+
- .Lend_\@:
+@@ -221,6 +221,54 @@
+ 	POP_GS_EX
  .endm
  
-@@ -467,6 +524,55 @@
- .endm
- 
- /*
-+ * This macro handles the case when we return to kernel-mode on the iret
-+ * path and have to switch back to the entry stack.
-+ *
-+ * See the comments below the .Lentry_from_kernel_\@ label in the
-+ * SWITCH_TO_KERNEL_STACK macro for more details.
-+ */
-+.macro PARANOID_EXIT_TO_KERNEL_MODE
++.macro CHECK_AND_APPLY_ESPFIX
++#ifdef CONFIG_X86_ESPFIX32
++#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
++
++	ALTERNATIVE	"jmp .Lend_\@", "", X86_BUG_ESPFIX
++
++	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
++	/*
++	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
++	 * are returning to the kernel.
++	 * See comments in process.c:copy_thread() for details.
++	 */
++	movb	PT_OLDSS(%esp), %ah
++	movb	PT_CS(%esp), %al
++	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
++	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
++	jne	.Lend_\@	# returning to user-space with LDT SS
 +
 +	/*
-+	 * Test if we entered the kernel with the entry-stack. Most
-+	 * likely we did not, because this code only runs on the
-+	 * return-to-kernel path.
++	 * Setup and switch to ESPFIX stack
++	 *
++	 * We're returning to userspace with a 16 bit stack. The CPU will not
++	 * restore the high word of ESP for us on executing iret... This is an
++	 * "official" bug of all the x86-compatible CPUs, which we can work
++	 * around to make dosemu and wine happy. We do this by preloading the
++	 * high word of ESP with the high word of the userspace ESP while
++	 * compensating for the offset by changing to the ESPFIX segment with
++	 * a base address that matches for the difference.
 +	 */
-+	testl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+	jz	.Lend_\@
-+
-+	/* Unlikely slow-path */
-+
-+	/* Clear marker from stack-frame */
-+	andl	$(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
-+
-+	/* Copy the remaining task-stack contents to entry-stack */
-+	movl	%esp, %esi
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
-+
-+	/* Bytes on the task-stack to ecx */
-+	movl	PER_CPU_VAR(cpu_current_top_of_stack), %ecx
-+	subl	%esi, %ecx
-+
-+	/* Allocate stack-frame on entry-stack */
-+	subl	%ecx, %edi
-+
++	mov	%esp, %edx			/* load kernel esp */
++	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
++	mov	%dx, %ax			/* eax: new kernel esp */
++	sub	%eax, %edx			/* offset (low word is 0) */
++	shr	$16, %edx
++	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
++	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
++	pushl	$__ESPFIX_SS
++	pushl	%eax				/* new kernel esp */
 +	/*
-+	 * Save future stack-pointer, we must not switch until the
-+	 * copy is done, otherwise the NMI handler could destroy the
-+	 * contents of the task-stack we are about to copy.
++	 * Disable interrupts, but do not irqtrace this section: we
++	 * will soon execute iret and the tracer was already set to
++	 * the irqstate after the IRET:
 +	 */
-+	movl	%edi, %ebx
-+
-+	/* Do the copy */
-+	cld
-+	rep movsb
-+
-+	/* Safe to switch to entry-stack now */
-+	movl	%ebx, %esp
-+
++	DISABLE_INTERRUPTS(CLBR_ANY)
++	lss	(%esp), %esp			/* switch to espfix segment */
 +.Lend_\@:
++#endif /* CONFIG_X86_ESPFIX32 */
 +.endm
-+/*
+ /*
   * %eax: prev task
   * %edx: next task
-  */
-@@ -837,6 +943,7 @@ restore_all:
- 
- restore_all_kernel:
+@@ -548,21 +596,7 @@ ENTRY(entry_INT80_32)
+ restore_all:
  	TRACE_IRQS_IRET
-+	PARANOID_EXIT_TO_KERNEL_MODE
- 	RESTORE_REGS 4
- 	jmp	.Lirq_return
+ .Lrestore_all_notrace:
+-#ifdef CONFIG_X86_ESPFIX32
+-	ALTERNATIVE	"jmp .Lrestore_nocheck", "", X86_BUG_ESPFIX
+-
+-	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
+-	/*
+-	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
+-	 * are returning to the kernel.
+-	 * See comments in process.c:copy_thread() for details.
+-	 */
+-	movb	PT_OLDSS(%esp), %ah
+-	movb	PT_CS(%esp), %al
+-	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
+-	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
+-	je .Lldt_ss				# returning to user-space with LDT SS
+-#endif
++	CHECK_AND_APPLY_ESPFIX
+ .Lrestore_nocheck:
+ 	RESTORE_REGS 4				# skip orig_eax/error_code
+ .Lirq_return:
+@@ -575,39 +609,6 @@ ENTRY(iret_exc	)
+ 	jmp	common_exception
+ .previous
+ 	_ASM_EXTABLE(.Lirq_return, iret_exc)
+-
+-#ifdef CONFIG_X86_ESPFIX32
+-.Lldt_ss:
+-/*
+- * Setup and switch to ESPFIX stack
+- *
+- * We're returning to userspace with a 16 bit stack. The CPU will not
+- * restore the high word of ESP for us on executing iret... This is an
+- * "official" bug of all the x86-compatible CPUs, which we can work
+- * around to make dosemu and wine happy. We do this by preloading the
+- * high word of ESP with the high word of the userspace ESP while
+- * compensating for the offset by changing to the ESPFIX segment with
+- * a base address that matches for the difference.
+- */
+-#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
+-	mov	%esp, %edx			/* load kernel esp */
+-	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
+-	mov	%dx, %ax			/* eax: new kernel esp */
+-	sub	%eax, %edx			/* offset (low word is 0) */
+-	shr	$16, %edx
+-	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
+-	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
+-	pushl	$__ESPFIX_SS
+-	pushl	%eax				/* new kernel esp */
+-	/*
+-	 * Disable interrupts, but do not irqtrace this section: we
+-	 * will soon execute iret and the tracer was already set to
+-	 * the irqstate after the IRET:
+-	 */
+-	DISABLE_INTERRUPTS(CLBR_ANY)
+-	lss	(%esp), %esp			/* switch to espfix segment */
+-	jmp	.Lrestore_nocheck
+-#endif
+ ENDPROC(entry_INT80_32)
  
+ .macro FIXUP_ESPFIX_STACK
 -- 
 2.7.4
