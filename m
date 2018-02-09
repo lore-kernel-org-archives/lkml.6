@@ -1,111 +1,105 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2177121-1518207834-2-12163268839637310590
+X-Cyrus-Session-Id: sloti22d1t05-2177121-1518207588-2-15505386348001942212
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518207834; b=HKdWkF/QEHWkMv48wL8eAVsyQe4qtHv38u1TNq10EieCdek
-    ASoFPcXTSkYlFKRmIud1eJbaxLXQ1FVLCFMTlkZybip7hDXVFhGhMVbz9c6kP4/Z
-    zN8g35i1Ei9U4Bjb7VkVWfXPM9yBtIl+L32JOnsixCowbepHdMi/+d6Om5cIYNsu
-    ht/sIumsKhS31HlZUPd0gmzcTy6hhqE8RfkLgd4lVdM3KbM5WXuSQJ8SlgWr1hwK
-    nVlw26SIQXA2vqK1fx5HqPg3dud6heZYXZuWI/66WZpDwiScFMb1KwZj7Fft5lms
-    T5osCHNTQPnvgNuVv6BO+fbx3ASMtflrKoTEMxw==
+    t=1518207588; b=VUzSWbJpDz9LJJtospG76g25yzsLIAjbt6BeUnHBA5AKXA6
+    7RzuD6xWvK68etS37tmnUdvdg/LuYJTss4eRaKsZDAokwtd/u2jwjZLTGy19KL/q
+    rKZzv8eFffRFHXogngVNuzR2sCmqA7eMLZu+SYVEFa950A8ZMx5iDoh0Wzm2nT9F
+    V0nBNXF+c/ROA+979/IDS2MJgL+GcTarv3dMCv97kAwgMIhLej/U5/JceZ7ZaQBZ
+    /WgT/7zsOOkAFk/g8BMMDfhVxvCdZUeWXiy5uWnjVebU01Pn95RWbv49S1fJRNZ/
+    /33co+GVrVmW6i7ItXf0LMG8VkL+UgQI9pw+8dA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1518207834; bh=cZVJb+aOVbX9kHyEnKrsQUN6rLtm/2ONZKRMn8
-    kKgfU=; b=GPOoxeCjoK1Yx7IGLjGwXaeT5x2O7eiLAXpwzUKXfdlVoX7bp2Zy7N
-    FyTMMCvPC5gRbVBAM1PyDOGe6dkEqubIuo9LOT0a4qAAB0CSHKxmp5qQ+o6iyQ8r
-    3nAazB51I1HSFvukQJUA9dqu+m8XyypT4lJexIKUeHTDsJIjM+cs6FAAEl+44zNY
-    no+OIUrgg1UquvmwRJnaES4NtofKuB2unedLNPWPDB+NAW+brPsxXYT9dh7KF9Af
-    RJrDEEBQzGecw21YXxIgW7U4c/s3MxUo7PHPvl6HmSMfM5jfiO5kkzpuzD5XgfFr
-    0TJgvy5N/2bDPnzcSKazHWGVtlCSZ5dA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1518207588; bh=I7E6AkpOAQrDyMsdZTPYRkGxjKS5XMtY8thbN93N/Jg=; b=r
+    r6vxsQbr/PBcMsNv76kTGdIqLAtDrSfAb8O7H5Xby+J4aaE26a1wF+VrBM7myvhS
+    YBnh7tb5Tjq1OpopHJOjHKfE2/ktlt9rMVIuJcAavzZlJQ49DSXq32xen0LitymR
+    LRpP1CR9c+ParBFO6HMakLeIgT35Zcr8CXjQVhEsIA5iARKUa+xFfTEX0U4zrJoh
+    6AjgJCnBdm1Y6C3GcMFp8LhmZj9Eof1eHq25yTGduiqi5SUdSv4Ww2yUI6UhJ9sH
+    qbbTsfIcrJakYooOCtywMN5Z/49p9zhSoPejiIj+XkPfvounA2HsCg0ntRFi/mrs
+    FOiLIYY65fg1u81x3mtrw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752635AbeBIUXv (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 15:23:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54212 "EHLO mail.kernel.org"
+        id S1752736AbeBIUTr (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 15:19:47 -0500
+Received: from osg.samsung.com ([64.30.133.232]:42769 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752409AbeBIUXv (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 9 Feb 2018 15:23:51 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52858217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=khilman@kernel.org
-X-Google-Smtp-Source: AH8x224QhE8pgoC7OJBsMi8LaXXRgLkQgoqLcSsSymO24fSQxLp4E4+x3/ZkZMmXBPNsDkkaDv6ZCNcqeHmRveS/uz0=
-MIME-Version: 1.0
-In-Reply-To: <5a7df838.2696df0a.9695f.475e@mx.google.com>
-References: <20180209133934.024795822@linuxfoundation.org> <5a7df838.2696df0a.9695f.475e@mx.google.com>
-From: Kevin Hilman <khilman@kernel.org>
-Date: Fri, 9 Feb 2018 12:23:47 -0800
-X-Gmail-Original-Message-ID: <CAOi56cU8LBDB5sQpouGiQEMyAntxospAxcJO1qmNj8aV57DVkQ@mail.gmail.com>
-Message-ID: <CAOi56cU8LBDB5sQpouGiQEMyAntxospAxcJO1qmNj8aV57DVkQ@mail.gmail.com>
+        id S1752218AbeBIUTq (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 9 Feb 2018 15:19:46 -0500
 Subject: Re: [PATCH 4.14 00/22] 4.14.19-stable review
-To: "kernelci.org bot" <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, "# 3.4.x" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+References: <20180209133934.024795822@linuxfoundation.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Message-ID: <a4defd89-6c9a-2ff3-4608-f3c391bfa00e@osg.samsung.com>
+Date: Fri, 9 Feb 2018 13:19:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 9, 2018 at 11:36 AM, kernelci.org bot <bot@kernelci.org> wrote:
-> stable-rc/linux-4.14.y boot: 111 boots: 2 failed, 109 passed (v4.14.18-23-g8d861f5b27b0)
->
-> Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.14.y/kernel/v4.14.18-23-g8d861f5b27b0/
-> Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.y/kernel/v4.14.18-23-g8d861f5b27b0/
->
-> Tree: stable-rc
-> Branch: linux-4.14.y
-> Git Describe: v4.14.18-23-g8d861f5b27b0
-> Git Commit: 8d861f5b27b05466ce2a9d3c4108367555dccefe
-> Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> Tested: 63 unique boards, 22 SoC families, 16 builds out of 185
+On 02/09/2018 06:39 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.19 release.
+> There are 22 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun Feb 11 13:39:12 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.19-rc1.gz
+> or in the git tree and branch at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-TL;DR;  All is well.
+Compiled and booted on my test system. No dmesg regressions.
 
-> Boot Regressions Detected:
->
-> arm64:
->
->     defconfig:
->         bcm2837-rpi-3-b:
->             lab-baylibre: new failure (last pass: v4.14.18-19-g44b8fc264b98)
->         r8a7795-salvator-x:
->             lab-baylibre: new failure (last pass: v4.14.18-19-g44b8fc264b98)
-
-Both of these are a bootloader failure to TFTP a kernel image.
-
-Kevin
+thanks,
+-- Shuah
