@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185676-2-3583282339282446080
+X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185663-2-9992499193792816654
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185676; b=JtnbsLHCEW6JAqV9rA2G09HcKn55B3C1mRHzGzxBBZzOxn0
-    GWhsJMSEq5olkmvdYT+sJfvDFU8BnfMBB1UoA2G6gW+vfjlmprJ72WprYsbf0ppQ
-    9Mtg/l13KLrwBUr9GyQoas1XNlOA5+tznjfEELhv0n3/kbBJ4uaRfta3R1CnCrrU
-    EYYIsbZjAcmkUsq9C3yVr/NjHNRjAklCgjyrIiGTflonRZ8oL7t2Bf1JROx5PNir
-    8TkcRhEYALuSTrIrTCYR/tbwIrwwqve/d4XOJBrZZN+V8n19ZSfgCWW4Lkq1qHdK
-    vhdI0cg8n21Pr3ttJBFPe9im1kNzwsY5JK28Ang==
+    t=1518185663; b=csoDJ9r48ftIaZVLU+j2CZhj118VIoMhw2HySHIGMh2UDQN
+    lA42t+e6gmEt1wl16L3NUlV4AFLzSlqS96Sxexm/rdoS67CsLCdor2xDUb5ILEyB
+    VP180eaqAql2xMkPU7BT7AzaROloIOmL5KHvGI5NI9I7ees59b96DC+V+1rwLHIE
+    3X8MrTYJQ8HVsD/46A/4JcFsqG4o7z7dv+tGF/N9GzS03TsHrpmsMJ1/tyJxO+o9
+    8okRmC0kxur7czuEdaihR+HAL82VyHxHaEDz3KuVIlVVwUhVLwoGQJWXD+OnghSr
+    VynEXzOxtrSM/q8KwHCClMaXUSWv5JhwosuzDTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185676; bh=PNhWg+vjSSythD4h3xXKO1HSoP
-    GLeFCa2YOrVFFxaIg=; b=Xepwwsaf5bZK4GyMcD6L5VckFMoz57ZR/b/ZmgNdRR
-    UL7YUT2ML4ed9t/Z18DPNX9ThZiW1PHatxnIFXxLxLCTJSSxC7qpq7dCpwS5iQDs
-    HhWN1pmFpkx+V4laauSW0id2KjAE3IFph2bLVwAy4cUsJJMh6zF3DaJJyrv/Xihh
-    DPP1gfcnYHKEZQ8BtEkYEY4JDhBkxaNspIzSeuBRjHOeDPA+8Ifhjr5DBsVAEOUu
-    NqUECgq/Fcro3vyf/kSH62E0dq6pZQUAITeimmQODAsuFFGWScuKIkoyuqgSv5s8
-    5olXFwsUH6XrIP663Bl3BOIehjaXd9am97gWE9D7vF9A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185663; bh=qlAYqloOOeeY3CSeTCN8U8CSad
+    s33A5NKEIik7bvdpQ=; b=UJZgFsH6XLDsCVuq4TPD3kL7+NOJNgq8VMUZvICw2U
+    hEdisR99Irx6+FJdXTeMTypp9AN5a0XAiGKplSI+CWto2jRofin+YDQJtFVcc4J9
+    +d0LiEASYQsickMzJDHuMTCdLPaJFqoRRaHoerwDMU+UaNYAZTImQOK+RYTtZ2g9
+    rh2b8V2/c3xlGY8BykHwfF3LI2CGrq9XmOFVFeiVMuUqa1h5RtuHaswWrRjTdgIZ
+    YzEGB73k00q+lfW0eCYxt+MPqqLIjrxALZHBlGLf2qunMKOJuy+CzFfDbQeG0OuG
+    fEWPpIPMq/zGhPfaC6QjKedaPjtkB1Ff/SLxciyMFTZg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,23 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeBIOOU (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 09:14:20 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48716 "EHLO
+        id S1752570AbeBINl0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:41:26 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752497AbeBINlZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:25 -0500
+        with ESMTP id S1751024AbeBINlX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:23 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Beyers Cronje <bcronje@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 27/92] cls_u32: add missing RCU annotation.
-Date: Fri,  9 Feb 2018 14:38:56 +0100
-Message-Id: <20180209133933.184130086@linuxfoundation.org>
+Subject: [PATCH 4.9 26/92] tcp_bbr: fix pacing_gain to always be unity when using lt_bw
+Date: Fri,  9 Feb 2018 14:38:55 +0100
+Message-Id: <20180209133933.136876360@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -78,68 +80,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Neal Cardwell <ncardwell@google.com>
 
 
-[ Upstream commit 058a6c033488494a6b1477b05fe8e1a16e344462 ]
+[ Upstream commit 3aff3b4b986e51bcf4ab249e5d48d39596e0df6a ]
 
-In a couple of points of the control path, n->ht_down is currently
-accessed without the required RCU annotation. The accesses are
-safe, but sparse complaints. Since we already held the
-rtnl lock, let use rtnl_dereference().
+This commit fixes the pacing_gain to remain at BBR_UNIT (1.0) when
+using lt_bw and returning from the PROBE_RTT state to PROBE_BW.
 
-Fixes: a1b7c5fd7fe9 ("net: sched: add cls_u32 offload hooks for netdevs")
-Fixes: de5df63228fc ("net: sched: cls_u32 changes to knode must appear atomic to readers")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Previously, when using lt_bw, upon exiting PROBE_RTT and entering
+PROBE_BW the bbr_reset_probe_bw_mode() code could sometimes randomly
+end up with a cycle_idx of 0 and hence have bbr_advance_cycle_phase()
+set a pacing gain above 1.0. In such cases this would result in a
+pacing rate that is 1.25x higher than intended, potentially resulting
+in a high loss rate for a little while until we stop using the lt_bw a
+bit later.
+
+This commit is a stable candidate for kernels back as far as 4.9.
+
+Fixes: 0f8782ea1497 ("tcp_bbr: add BBR congestion control")
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
+Reported-by: Beyers Cronje <bcronje@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/cls_u32.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ net/ipv4/tcp_bbr.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/sched/cls_u32.c
-+++ b/net/sched/cls_u32.c
-@@ -496,6 +496,7 @@ static void u32_clear_hw_hnode(struct tc
- static int u32_replace_hw_knode(struct tcf_proto *tp, struct tc_u_knode *n,
- 				u32 flags)
+--- a/net/ipv4/tcp_bbr.c
++++ b/net/ipv4/tcp_bbr.c
+@@ -452,7 +452,8 @@ static void bbr_advance_cycle_phase(stru
+ 
+ 	bbr->cycle_idx = (bbr->cycle_idx + 1) & (CYCLE_LEN - 1);
+ 	bbr->cycle_mstamp = tp->delivered_mstamp;
+-	bbr->pacing_gain = bbr_pacing_gain[bbr->cycle_idx];
++	bbr->pacing_gain = bbr->lt_use_bw ? BBR_UNIT :
++					    bbr_pacing_gain[bbr->cycle_idx];
+ }
+ 
+ /* Gain cycling: cycle pacing gain to converge to fair share of available bw. */
+@@ -461,8 +462,7 @@ static void bbr_update_cycle_phase(struc
  {
-+	struct tc_u_hnode *ht = rtnl_dereference(n->ht_down);
- 	struct net_device *dev = tp->q->dev_queue->dev;
- 	struct tc_cls_u32_offload u32_offload = {0};
- 	struct tc_to_netdev offload;
-@@ -520,7 +521,7 @@ static int u32_replace_hw_knode(struct t
- 	offload.cls_u32->knode.sel = &n->sel;
- 	offload.cls_u32->knode.exts = &n->exts;
- 	if (n->ht_down)
--		offload.cls_u32->knode.link_handle = n->ht_down->handle;
-+		offload.cls_u32->knode.link_handle = ht->handle;
+ 	struct bbr *bbr = inet_csk_ca(sk);
  
- 	err = dev->netdev_ops->ndo_setup_tc(dev, tp->q->handle,
- 					    tp->protocol, &offload);
-@@ -788,8 +789,9 @@ static void u32_replace_knode(struct tcf
- static struct tc_u_knode *u32_init_knode(struct tcf_proto *tp,
- 					 struct tc_u_knode *n)
- {
--	struct tc_u_knode *new;
-+	struct tc_u_hnode *ht = rtnl_dereference(n->ht_down);
- 	struct tc_u32_sel *s = &n->sel;
-+	struct tc_u_knode *new;
+-	if ((bbr->mode == BBR_PROBE_BW) && !bbr->lt_use_bw &&
+-	    bbr_is_next_cycle_phase(sk, rs))
++	if (bbr->mode == BBR_PROBE_BW && bbr_is_next_cycle_phase(sk, rs))
+ 		bbr_advance_cycle_phase(sk);
+ }
  
- 	new = kzalloc(sizeof(*n) + s->nkeys*sizeof(struct tc_u32_key),
- 		      GFP_KERNEL);
-@@ -807,11 +809,11 @@ static struct tc_u_knode *u32_init_knode
- 	new->fshift = n->fshift;
- 	new->res = n->res;
- 	new->flags = n->flags;
--	RCU_INIT_POINTER(new->ht_down, n->ht_down);
-+	RCU_INIT_POINTER(new->ht_down, ht);
- 
- 	/* bump reference count as long as we hold pointer to structure */
--	if (new->ht_down)
--		new->ht_down->refcnt++;
-+	if (ht)
-+		ht->refcnt++;
- 
- #ifdef CONFIG_CLS_U32_PERF
- 	/* Statistics may be incremented by readers during update
