@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225XY0cQnd+QQDEo831HvvWBUs/pIB0sS1k6tykVGT/+7tBUz0AdFwetnCcQ9rnWzH8Qw2Xa
-ARC-Seal: i=1; a=rsa-sha256; t=1518184031; cv=none;
+X-Google-Smtp-Source: AH8x224XkiT4DxqNcxmKqx4pi80D9ZPlPY62Il1QOo6U8rPI8sL+Btkk+2XHHESBC9P7Ufzi8121
+ARC-Seal: i=1; a=rsa-sha256; t=1518184028; cv=none;
         d=google.com; s=arc-20160816;
-        b=NA2KmKFD5X245O/ngzYY4QReZoqFHRVmWk8IjxX/gVfneWIpwzz3gTwca/uvQ9umlJ
-         maJ1U4gBMYztF6fP5f/nUFCtRjsQtZs3+ohWyp3tQmrYamTgfu5PaREpploXgqK2aKZ+
-         uXmtqgohp4zNm0BmA3BMmkS84nBnUnEIr4qQ4DivrCWftfVAYApwUSgrE6eqtXYQOye2
-         7zVAi5Tm+rJ8l3+AKVxJkf+rlxzL3rrIebJB6k/3WeMHcodU/mXxRGkpFVzku67ZboIo
-         BXDGLq3476iTprqGRBr/Fcf7HdKoZqo1RSzZHeP5uHtGHdQb5w1rcNgyrzRYG66hpsMd
-         mHLw==
+        b=oKUKb3V9L+CCv+jcpKVGxNYcXjYG6Y3PH0S8Ft6u0+L6wbWdFsMSVyCGVoSDsLmmvp
+         PvB6HT5ShsNL3wvHf84f9qIn/7NpX7GjzrEljI4V654rGdGUi3Ed6Xzk17lah37c5Z2V
+         ylq6Ua0xQUsLlSbL/9ObDYu7EBABdQqrQ3KlP3OEvgGL6g2U8WeobolC3Bv8i/AIH50m
+         Wam3K+UCysJHMjyZLWxILOB2bCvhC7d7VQSBTf+TXTDzouuXTDxTvD42UPkqc2zLUkjd
+         BWpU3+YQ1TcBpbTQP4bBYcfPyFVSn6iXG/d9E5JE5MqKZfQKFVO7OnZKmKO9vfch/s5P
+         EmfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=twhpDdGeteXOy+1arg43KBbAJQYU02ZuWhy624JtcQs=;
-        b=AjablmFtEJOrPN52OJEzTGNoyq/OmbGCiqZX6Kc3VTPwtapZf/nJFEZUVvMc0SypFq
-         zDo+PfAqFDevg8jUIE8aoutW1aAmhdl5ncecXUkHfLOr/AphdKBRbHQIlYiwFp9AU7oC
-         VXGtxneIOp4FYocNsr8CU6PdYyaDiOARMfdvmhnJySOd32ulJqfIUQgwMWY6op47fmKc
-         cw8lpv+h53sXKZ+vGhTlUk5H1doP6e0vHmPU6FcV34Ac1PmSXpYlZgOcha+IKtZWmfj3
-         5GJSZ6qWbItirF1CklqT0AONKRkYwjOmtrnXvC74FS8L6eyDGZYVhgvhxLl7CA3TtgmR
-         rhcg==
+        bh=0kCqkTFR8fU7K2CTsaJWB8RoZeMumHJBZtqyqI4J91w=;
+        b=PeAfPRHD75hMHwxaweJD9mAgvT1sQo5tdHVzuj6/VnXY8XwXAAuRFMJs1OBmDfhSEV
+         4uYUfRm1vZCCfihpSBIyI61s7zK7mHzz3m1vw/LS/2CCuJ+DacjcsG3B5XXPG4PaxQA6
+         WWNYfOjpz4kAaVyF8A/hfoNCdpX2uN8U8xrMPqmumU1W7mXWwRsBq15bGYaVSNmBegK+
+         M67WlLwYRMkFsTTLOYpeW5DkSf9xrUravK6dyjEwzZHEzMJh40v94l7thFoB4epliVFR
+         LZ1C6c5q+LjOdNcuJkv4ByXfXJoruYt5H6Xg8C9H6viitjfqbAfFpeXBdESyq9THQ51s
+         1A/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Ido Schimmel <idosch@mellanox.com>,
+	syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com,
+	Jason Wang <jasowang@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 08/23] ipv6: addrconf: break critical section in addrconf_verify_rtnl()
-Date: Fri,  9 Feb 2018 14:40:06 +0100
-Message-Id: <20180209133938.806392940@linuxfoundation.org>
+Subject: [PATCH 4.15 07/23] vhost_net: stop device during reset owner
+Date: Fri,  9 Feb 2018 14:40:05 +0100
+Message-Id: <20180209133938.758131929@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133938.366024920@linuxfoundation.org>
 References: <20180209133938.366024920@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591931339240258812?=
-X-GMAIL-MSGID: =?utf-8?q?1591931339240258812?=
+X-GMAIL-THRID: =?utf-8?q?1591930971044037305?=
+X-GMAIL-MSGID: =?utf-8?q?1591931335825146549?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,114 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jason Wang <jasowang@redhat.com>
 
 
-[ Upstream commit e64e469b9a2c22d41b3dd7172118760cec22d473 ]
+[ Upstream commit 4cd879515d686849eec5f718aeac62a70b067d82 ]
 
-Heiner reported a lockdep splat [1]
+We don't stop device before reset owner, this means we could try to
+serve any virtqueue kick before reset dev->worker. This will result a
+warn since the work was pending at llist during owner resetting. Fix
+this by stopping device during owner reset.
 
-This is caused by attempting GFP_KERNEL allocation while RCU lock is
-held and BH blocked.
-
-We believe that addrconf_verify_rtnl() could run for a long period,
-so instead of using GFP_ATOMIC here as Ido suggested, we should break
-the critical section and restart it after the allocation.
-
-[1]
-[86220.125562] =============================
-[86220.125586] WARNING: suspicious RCU usage
-[86220.125612] 4.15.0-rc7-next-20180110+ #7 Not tainted
-[86220.125641] -----------------------------
-[86220.125666] kernel/sched/core.c:6026 Illegal context switch in RCU-bh read-side critical section!
-[86220.125711]
-               other info that might help us debug this:
-
-[86220.125755]
-               rcu_scheduler_active = 2, debug_locks = 1
-[86220.125792] 4 locks held by kworker/0:2/1003:
-[86220.125817]  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
-[86220.125895]  #1:  ((addr_chk_work).work){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
-[86220.125959]  #2:  (rtnl_mutex){+.+.}, at: [<00000000b06d9510>] rtnl_lock+0x12/0x20
-[86220.126017]  #3:  (rcu_read_lock_bh){....}, at: [<00000000aef52299>] addrconf_verify_rtnl+0x1e/0x510 [ipv6]
-[86220.126111]
-               stack backtrace:
-[86220.126142] CPU: 0 PID: 1003 Comm: kworker/0:2 Not tainted 4.15.0-rc7-next-20180110+ #7
-[86220.126185] Hardware name: ZOTAC ZBOX-CI321NANO/ZBOX-CI321NANO, BIOS B246P105 06/01/2015
-[86220.126250] Workqueue: ipv6_addrconf addrconf_verify_work [ipv6]
-[86220.126288] Call Trace:
-[86220.126312]  dump_stack+0x70/0x9e
-[86220.126337]  lockdep_rcu_suspicious+0xce/0xf0
-[86220.126365]  ___might_sleep+0x1d3/0x240
-[86220.126390]  __might_sleep+0x45/0x80
-[86220.126416]  kmem_cache_alloc_trace+0x53/0x250
-[86220.126458]  ? ipv6_add_addr+0xfe/0x6e0 [ipv6]
-[86220.126498]  ipv6_add_addr+0xfe/0x6e0 [ipv6]
-[86220.126538]  ipv6_create_tempaddr+0x24d/0x430 [ipv6]
-[86220.126580]  ? ipv6_create_tempaddr+0x24d/0x430 [ipv6]
-[86220.126623]  addrconf_verify_rtnl+0x339/0x510 [ipv6]
-[86220.126664]  ? addrconf_verify_rtnl+0x339/0x510 [ipv6]
-[86220.126708]  addrconf_verify_work+0xe/0x20 [ipv6]
-[86220.126738]  process_one_work+0x258/0x680
-[86220.126765]  worker_thread+0x35/0x3f0
-[86220.126790]  kthread+0x124/0x140
-[86220.126813]  ? process_one_work+0x680/0x680
-[86220.126839]  ? kthread_create_worker_on_cpu+0x40/0x40
-[86220.126869]  ? umh_complete+0x40/0x40
-[86220.126893]  ? call_usermodehelper_exec_async+0x12a/0x160
-[86220.126926]  ret_from_fork+0x4b/0x60
-[86220.126999] BUG: sleeping function called from invalid context at mm/slab.h:420
-[86220.127041] in_atomic(): 1, irqs_disabled(): 0, pid: 1003, name: kworker/0:2
-[86220.127082] 4 locks held by kworker/0:2/1003:
-[86220.127107]  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
-[86220.127179]  #1:  ((addr_chk_work).work){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
-[86220.127242]  #2:  (rtnl_mutex){+.+.}, at: [<00000000b06d9510>] rtnl_lock+0x12/0x20
-[86220.127300]  #3:  (rcu_read_lock_bh){....}, at: [<00000000aef52299>] addrconf_verify_rtnl+0x1e/0x510 [ipv6]
-[86220.127414] CPU: 0 PID: 1003 Comm: kworker/0:2 Not tainted 4.15.0-rc7-next-20180110+ #7
-[86220.127463] Hardware name: ZOTAC ZBOX-CI321NANO/ZBOX-CI321NANO, BIOS B246P105 06/01/2015
-[86220.127528] Workqueue: ipv6_addrconf addrconf_verify_work [ipv6]
-[86220.127568] Call Trace:
-[86220.127591]  dump_stack+0x70/0x9e
-[86220.127616]  ___might_sleep+0x14d/0x240
-[86220.127644]  __might_sleep+0x45/0x80
-[86220.127672]  kmem_cache_alloc_trace+0x53/0x250
-[86220.127717]  ? ipv6_add_addr+0xfe/0x6e0 [ipv6]
-[86220.127762]  ipv6_add_addr+0xfe/0x6e0 [ipv6]
-[86220.127807]  ipv6_create_tempaddr+0x24d/0x430 [ipv6]
-[86220.127854]  ? ipv6_create_tempaddr+0x24d/0x430 [ipv6]
-[86220.127903]  addrconf_verify_rtnl+0x339/0x510 [ipv6]
-[86220.127950]  ? addrconf_verify_rtnl+0x339/0x510 [ipv6]
-[86220.127998]  addrconf_verify_work+0xe/0x20 [ipv6]
-[86220.128032]  process_one_work+0x258/0x680
-[86220.128063]  worker_thread+0x35/0x3f0
-[86220.128091]  kthread+0x124/0x140
-[86220.128117]  ? process_one_work+0x680/0x680
-[86220.128146]  ? kthread_create_worker_on_cpu+0x40/0x40
-[86220.128180]  ? umh_complete+0x40/0x40
-[86220.128207]  ? call_usermodehelper_exec_async+0x12a/0x160
-[86220.128243]  ret_from_fork+0x4b/0x60
-
-Fixes: f3d9832e56c4 ("ipv6: addrconf: cleanup locking in ipv6_add_addr")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com
+Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/addrconf.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/vhost/net.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -4352,9 +4352,11 @@ restart:
- 						spin_lock(&ifpub->lock);
- 						ifpub->regen_count = 0;
- 						spin_unlock(&ifpub->lock);
-+						rcu_read_unlock_bh();
- 						ipv6_create_tempaddr(ifpub, ifp, true);
- 						in6_ifa_put(ifpub);
- 						in6_ifa_put(ifp);
-+						rcu_read_lock_bh();
- 						goto restart;
- 					}
- 				} else if (time_before(ifp->tstamp + ifp->prefered_lft * HZ - regen_advance * HZ, next))
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1208,6 +1208,7 @@ static long vhost_net_reset_owner(struct
+ 	}
+ 	vhost_net_stop(n, &tx_sock, &rx_sock);
+ 	vhost_net_flush(n);
++	vhost_dev_stop(&n->dev);
+ 	vhost_dev_reset_owner(&n->dev, umem);
+ 	vhost_net_vq_reset(n);
+ done:
