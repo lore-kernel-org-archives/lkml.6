@@ -1,78 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeBIRx3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:53:29 -0500
-Received: from gateway23.websitewelcome.com ([192.185.48.104]:29533 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752261AbeBIRxT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:53:19 -0500
-Date: Fri, 9 Feb 2018 11:53:16 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] tracing: Use swap macro in update_max_tr
-Message-ID: <20180209175316.GA18720@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1ekCrO-000dNN-2e
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.4.238]:34036
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1751725AbeBIR5E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:57:04 -0500
+Received: from foss.arm.com ([217.140.101.70]:50154 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751004AbeBIR5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:57:03 -0500
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
+        jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
+        ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 00/21] arm64: Rework cpu capabilities handling
+Date: Fri,  9 Feb 2018 17:54:30 +0000
+Message-Id: <20180209175513.17100-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of the swap macro and remove unnecessary variable _buf_.
-This makes the code easier to read and maintain. Also, reduces the
-stack usage.
+This series reworks the arm64 CPU capabilities handling (which
+manages the system features and errata). The current infrastructure
+doesn't allow fine control for handling different features or errata.
+There is one rule for features and another rule for errata.
 
-This code was detected with the help of Coccinelle.
+* Features are checked only once, after all the boot time CPUs are
+  activated. Any new CPU that is brought up is prevented from booting
+  if it misses a feature already established. If the new CPU has a
+  feature not enabled already, it is allowed to boot.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- kernel/trace/trace.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+* Errata checks are performed on all the CPUs and any new CPU is
+  OK to miss the capability. However if a late CPU requires a work around,
+  then we fail the CPU.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 5660853..6dcd740 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1351,8 +1351,6 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- void
- update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- {
--	struct ring_buffer *buf;
--
- 	if (tr->stop_count)
- 		return;
- 
-@@ -1366,9 +1364,7 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 
- 	arch_spin_lock(&tr->max_lock);
- 
--	buf = tr->trace_buffer.buffer;
--	tr->trace_buffer.buffer = tr->max_buffer.buffer;
--	tr->max_buffer.buffer = buf;
-+	swap(tr->trace_buffer.buffer, tr->max_buffer.buffer);
- 
- 	__update_max_tr(tr, tsk, cpu);
- 	arch_spin_unlock(&tr->max_lock);
+  This doesn't always apply to some features. e.g, KPTI is a security
+  feature which should be applied when at least one CPU needs it. So,
+  the tests should be performed on all the booting CPUs individually.
+  Also, if a CPU that needs this security feature is brought up later,
+  when the system has not enabled it, the CPU can boot making the system
+  insecure. Another exception is the hardware DBM for page tables. The
+  kernel can safely run with a mix of CPUs that have the feature turned
+  on and off. This again causes problem when a new CPU is brought up
+  which may not have the feature, which is killed.
+
+  Also there are other features like, GICV3 system register access,
+  which now need to be enabled very early based on the boot CPU to
+  allow the use of Priority handling to implement NMI.
+
+This calls for finer level of control per capability and the series
+implements the same by defining how to deal with a conflict of a
+given capability on a CPU with that of the system level state. It
+also consolidates the handling of features and errata into generic
+helpers. The table of features and errata are left as they are to
+allow easier look up for a given type.
+
+The series also gets rid of duplicate entries for a single capability
+by introducing a wrapper entry which takes care of managing a list
+of entries with distinct matches/enable pair.
+
+We also cleans up the MIDR range handling and cleans up some of the
+errata checks where the entries were duplicated for checking different
+CPU models. Finally it also implements a work around for Arm Cortex-A55
+erratum 1024718 based on the new infrastructure.
+
+Applies on arm64 for-next/core. The tree is available at :
+
+	git://linux-arm.org/linux-skp.git cpu-cap-rework/v3
+
+Changes since V2
+ - Mostly address review comments from Dave
+ - Drop "Change the type for BP hardening to accept late CPUs"
+   as we can't fake the capability, which is exposed to KVM guests.
+ - Split the "arm64: capabilities: Group handling of features and
+   errata" to smaller patches.
+ - Add tags from Dave.
+ - Use SCOPE_* in the Code instead of the ARM64_CPUCAP_SCOPE_* version.
+ - Hide description for DBM feature, as we turn the capability on always
+   irrespective of whether the CPUs have it or not.
+
+Changes since V1
+ - Pickup almost all suggestions by Dave.
+ - Rename flags for handling conflicts
+ - Rename the "enable" call back to cpu_enable
+ - Update prototype for cpu_enable to void.
+ - Handle capabilities with multiple table entries, simplifying the
+   core logic.
+ - Add capabilities based on Boot CPU.
+ - Change the type for BP Hardening to accept late CPUs.
+ - More usersfor midr_range list.
+ - More commentary in the code.
+ - Flip type of Software prefetching capability to Weak from Strict.
+
+
+Dave Martin (1):
+  arm64: capabilities: Update prototype for enable call back
+
+Suzuki K Poulose (21):
+  arm64: capabilities: Move errata work around check on boot CPU
+  arm64: capabilities: Move errata processing code
+  arm64: capabilities: Prepare for fine grained capabilities
+  arm64: capabilities: Add flags to handle the conflicts on late CPU
+  arm64: capabilities: Unify the verification
+  arm64: capabilities: Filter the entries based on a given mask
+  arm64: capabilities: Prepare for grouping features and errata work
+    arounds
+  arm64: capabilities: Split the processing of errata work arounds
+  arm64: capabilities: Allow features based on local CPU scope
+  arm64: capabilities: Group handling of features and errata workarounds
+  arm64: capabilities: Introduce weak features based on local CPU
+  arm64: capabilities: Restrict KPTI detection to boot-time CPUs
+  arm64: capabilities: Add support for features enabled early
+  arm64: capabilities: Change scope of VHE to Boot CPU feature
+  arm64: capabilities: Clean up midr range helpers
+  arm64: Add helpers for checking CPU MIDR against a range
+  arm64: capabilities: Add support for checks based on a list of MIDRs
+  arm64: capabilities: Handle shared entries
+  arm64: Add MIDR encoding for Arm Cortex-A55 and Cortex-A35
+  arm64: Delay enabling hardware DBM feature
+  arm64: Add work around for Arm Cortex-A55 Erratum 1024718
+
+ Documentation/arm64/silicon-errata.txt |   1 +
+ arch/arm64/Kconfig                     |  14 ++
+ arch/arm64/include/asm/cpucaps.h       |   3 +-
+ arch/arm64/include/asm/cpufeature.h    | 253 +++++++++++++++++++++--
+ arch/arm64/include/asm/cputype.h       |  42 ++++
+ arch/arm64/include/asm/fpsimd.h        |   4 +-
+ arch/arm64/include/asm/processor.h     |   7 +-
+ arch/arm64/include/asm/virt.h          |   6 -
+ arch/arm64/kernel/cpu_errata.c         | 276 +++++++++++++------------
+ arch/arm64/kernel/cpufeature.c         | 361 +++++++++++++++++++++++++--------
+ arch/arm64/kernel/fpsimd.c             |   5 +-
+ arch/arm64/kernel/smp.c                |  44 ----
+ arch/arm64/kernel/traps.c              |   4 +-
+ arch/arm64/mm/fault.c                  |   3 +-
+ arch/arm64/mm/proc.S                   |  13 +-
+ 15 files changed, 733 insertions(+), 303 deletions(-)
+
 -- 
-2.7.4
+2.14.3
