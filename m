@@ -1,136 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752181AbeBIRgn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:36:43 -0500
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:31106 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751091AbeBIRgm (ORCPT
+        id S1752185AbeBIRiO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:38:14 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:49560 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeBIRiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:36:42 -0500
-Date: Fri, 09 Feb 2018 11:36:40 -0600
-Message-ID: <20180209113640.Horde.xafidJ_CTj9RROQxEbXk8Qi@gator4166.hostgator.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/nldev: Fix multiple potential NULL pointer
- dereferences
-References: <20180209063702.GA28685@embeddedgus>
- <20180209122549.GK2197@mtr-leonro.local>
- <20180209073649.Horde.OueGLKMtzpLyz4w36quXUca@gator4166.hostgator.com>
- <20180209143541.GN2197@mtr-leonro.local>
- <20180209095600.Horde.e7EqwCs_5bRLfE3Nnkfl3L3@gator4166.hostgator.com>
- <20180209164918.GP2197@mtr-leonro.local>
-In-Reply-To: <20180209164918.GP2197@mtr-leonro.local>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 108.167.133.22
-X-Source-L: Yes
-X-Exim-ID: 1ekCbJ-000M2o-2r
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:14988
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Fri, 9 Feb 2018 12:38:13 -0500
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
+        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
+        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
+        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, paul.burton@mips.com,
+        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v3 0/1] initialize pages on demand during boot
+Date: Fri,  9 Feb 2018 12:27:19 -0500
+Message-Id: <20180209172720.10145-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802090223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Change log:
+	v2 - v3
+	Andrew Morton's comments:
+	- Moved read of pgdat->first_deferred_pfn into
+	  deferred_zone_grow_lock, thus got rid of READ_ONCE()/WRITE_ONCE()
+	- Replaced spin_lock() with spin_lock_irqsave() in
+	  deferred_grow_zone
+	- Updated comments for deferred_zone_grow_lock
+	- Updated comment before deferred_grow_zone() explaining return
+	  value, and also noinline specifier.
+	- Fixed comment before _deferred_grow_zone().
 
-Quoting Leon Romanovsky <leon@kernel.org>:
+	v1 - v2
+	Added Tested-by: Masayoshi Mizuma
 
-> On Fri, Feb 09, 2018 at 09:56:00AM -0600, Gustavo A. R. Silva wrote:
->>
->> Quoting Leon Romanovsky <leon@kernel.org>:
->>
->> > On Fri, Feb 09, 2018 at 07:36:49AM -0600, Gustavo A. R. Silva wrote:
->> > > Hi Leon,
->> > >
->> > > Quoting Leon Romanovsky <leon@kernel.org>:
->> > >
->> > > > On Fri, Feb 09, 2018 at 12:37:02AM -0600, Gustavo A. R. Silva wrote:
->> > > > > In case the message header and payload cannot be stored, function
->> > > > > nlmsg_put returns null.
->> > > > >
->> > > > > Fix this by adding multiple sanity checks and avoid a potential
->> > > > > null dereference on _nlh_ when calling nlmsg_end.
->> > > > >
->> > > > > Addresses-Coverity-ID: 1454215 ("Dereference null return value")
->> > > > > Addresses-Coverity-ID: 1454223 ("Dereference null return value")
->> > > > > Addresses-Coverity-ID: 1454224 ("Dereference null return value")
->> > > > > Addresses-Coverity-ID: 1464669 ("Dereference null return value")
->> > > > > Addresses-Coverity-ID: 1464670 ("Dereference null return value")
->> > > > > Addresses-Coverity-ID: 1464672 ("Dereference null return value")
->> > > > > Fixes: e5c9469efcb1 ("RDMA/netlink: Add nldev device doit
->> > > implementation")
->> > > > > Fixes: c3f66f7b0052 ("RDMA/netlink: Implement nldev port  
->> doit callback")
->> > > > > Fixes: 7d02f605f0dc ("RDMA/netlink: Add nldev port dumpit
->> > > implementation")
->> > > > > Fixes: b5fa635aab8f ("RDMA/nldev: Provide detailed QP information")
->> > > > > Fixes: bf3c5a93c523 ("RDMA/nldev: Provide global resource  
->> utilization")
->> > > > > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> > > > > ---
->> > > > >  drivers/infiniband/core/nldev.c | 26 +++++++++++++++++++++++++-
->> > > > >  1 file changed, 25 insertions(+), 1 deletion(-)
->> > > > >
->> > > >
->> > > > It will be much better to fix the tool instead of fixing ghost case.
->> > > > This scenario is impossible for all those flows.
->> > > > We can receive the skv/msg in two ways:
->> > > >  * First by allocating new message with NLMSG_DEFAULT_SIZE, which has
->> > > > more room
->> > > >    than nlmsg_total_size(payload), payload is 0.
->> > > >  * Second by getting from netlink.c and it will be at least "struct
->> > > > nlmsghdr" too.
->> > > >
->> > > > Can you please add this info to the commit message?
->> > > >
->> > >
->> > > Actually, I was planing to send a new version of this patch.  
->> This time using
->> > > the unlikely macro for all the null checks on nlh.
->> > >
->> > > What do you think?
->> >
->> > It is not datapath, so "unlikely" is not needed. Let's assume that smart
->> > enough
->> > compiler will optimize such flow anyway, because nlmsg_put returns NULL
->> > in unlikely scenario, so this check will be unlikely automatically too.
->> >
->>
->> I'm curious about why the return value of nlmsg_put is null checked 118 out
->> of 129 times (based on Coverity reports) in the last linux-next tree.
->>
->> So based on what you mention, do you think all those checks are actually
->> unnecessary and, maybe they should be removed?
->
-> I honestly don't know about all cases, but if message is allocated with
-> NLMSG_DEFAULT_SIZE and payload is 0, this check won't be needed.
->
+This change helps for three reasons:
 
-I got it.
+1. Insufficient amount of reserved memory due to arguments provided by
+user. User may request some buffers, increased hash tables sizes etc.
+Currently, machine panics during boot if it can't allocate memory due
+to insufficient amount of reserved memory. With this change, it will
+be able to grow zone before deferred pages are initialized.
 
-> So go ahead, add check if (!...) in all places, but be cautious with
-> "potential null dereference" claims, it is not always true.
->
+One observed example is described in the linked discussion [1] Mel
+Gorman writes:
 
-You are right. I will update the subject and commit message.
+"
+Yasuaki Ishimatsu reported a premature OOM when trace_buf_size=100m was
+specified on a machine with many CPUs. The kernel tried to allocate 38.4GB
+but only 16GB was available due to deferred memory initialisation.
+"
 
-Thanks for the feedback, Leon.
-I appreciate it.
---
-Gustavo
+The allocations in the above scenario happen per-cpu in smp_init(),
+and before deferred pages are initialized. So, there is no way to
+predict how much memory we should put aside to boot successfully with
+deferred page initialization feature compiled in.
+
+2. The second reason is future proof. The kernel memory requirements
+may change, and we do not want to constantly update
+reset_deferred_meminit() to satisfy the new requirements. In addition,
+this function is currently in common code, but potentially would need
+to be split into arch specific variants, as more arches will start
+taking advantage of deferred page initialization feature.
+
+3. On demand initialization of reserved pages guarantees that we will
+initialize only as many pages early in boot using only one thread as
+needed, the rest are going to be efficiently initialized in parallel.
+
+[1] https://www.spinics.net/lists/linux-mm/msg139087.html
+
+Pavel Tatashin (1):
+  mm: initialize pages on demand during boot
+
+ include/linux/memblock.h |  10 ---
+ mm/memblock.c            |  23 -------
+ mm/page_alloc.c          | 175 ++++++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 136 insertions(+), 72 deletions(-)
+
+-- 
+2.16.1
