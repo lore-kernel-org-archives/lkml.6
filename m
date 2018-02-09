@@ -1,168 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752089AbeBIN0l (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:26:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751024AbeBIN0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:26:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE7821789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [PATCH] f2fs: add fi->commit_lock to protect commit GCed pages
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org,
-        yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com,
-        heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net,
+        id S1751756AbeBINZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:25:56 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:39233 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751185AbeBINZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 08:25:52 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kalle Valo <kvalo@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
- <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
- <134848f9-2dd6-0efa-3ccf-3c29eeaf5534@huawei.com>
- <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
- <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <d67aae9c-778a-50bd-9f73-f90c3efd9b73@kernel.org>
-Date: Fri, 9 Feb 2018 21:26:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] rtlwifi: rtl8192cu: remove pointless memcpy
+Date: Fri,  9 Feb 2018 14:24:41 +0100
+Message-Id: <20180209132531.2755482-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:RWBl3G8cH5p9u51X2ua0AkG1ltzUmI6b0tqV4YZ8t7HUck+ryPp
+ CqPiaYJLbOXErZhien9xzrPJs1rKimHDChtW6Pptj5uaqs6UbenlR2Vw6XZT5WUagGgFd0z
+ S5hJAzYajRe7LqTlSZ958RbtkjBlAR/OkUTVtQx8iJQBb+ruzwSEleELy67VcUma1NvCMBg
+ K5A1w77cJnW4ezvFn3IWw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iOmuxAw0i2A=:whEsezpDFz/1pd+SnDJgG2
+ /D8pKk59JIdzRqpOwYXvDbQjTG27nH7Wn8FXRrh5RJqGoXBdPLRAQEa98AhSQtlfRQRWv800C
+ tdLIygKFuIy5uyO9SoWe3p3tFG1PtnFUAXG4XGeW8YMAmZhZz5932dOvH1Wk8iZRYOptyOhQW
+ o1dvXic4JVL9pv9kiI1qObfmT9pd96/2svqTVOoCYCTHqE9Dgz7Fpd6w5vKWNnFJ1uSdSorIY
+ xcMhYXRnUmB5m0+xqDHlSpT53ib8sv82kbMpqW9vmqTndNB+D9bj2X6BktaoNd7tnG8WRPUav
+ 3bW/pCcf3XCiydzzfEWEmhVlS/lV5DmKkGRxFljC44YZ51pHKb9dpMMTstiVskrLYX0s/5WXQ
+ /cj2UKSCvSg/ouUWHTPz78YK1G4ZKUUce4zIau76K60wy9b349nfZErZfnkCabjnCcxRt/fLy
+ URN8/bb9iCOe8ptCbHXJDL9eHZUWHHiKKkiSM7JEuO46dbylhIWI5gonQOc+U2auReKUGOdd0
+ F0tDxv0TfnEXYb2kMRXSzG+HtEHedBsDojfU0hd5klfxODU2vOjqcsiNHEGqwOwTZ4wiSP0rN
+ MujyqujgtOXZOiZefcs4oOLo+ueOz9fOQviy822w4xjYOX7xxBwmcJu875VUuUDauuz7JFVlv
+ Lx8wpLsDT4XYQZgLp9G++rN1aiOD2PkVHbvWrijEnkitmUaifjH6/3kWmXAvWCdGHDVPxUbDp
+ RHEu9AKKZmLoSkO2+QW5Mxx/TCee1CqeHnrlwQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/9 20:56, Yunlong Song wrote:
-> As what I point in last mail, if the atomic file is not committed
-> yet, gc_data_segment will register_inmem_page the GCed data pages.
+gcc-8 points out that source and destination of the memcpy() are
+always the same pointer, so the effect of memcpy() is undefined
+here (its arguments must not overlap):
 
-We will skip GCing that page as below check:
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c: In function '_rtl_rx_process':
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c:430:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
 
-- move_data_{page,block}
- - f2fs_is_atomic_file()
-   skip out;
+Most likely this is harmless, but it's easy to just remove the
+line and get rid of the warning.
 
-No?
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks,
-
-> This will cause these data pages written twice, the first write
-> happens in move_data_page->do_write_data_page, and the second
-> write happens in later __commit_inmem_pages->do_write_data_page.
-> 
-> On 2018/2/9 20:44, Chao Yu wrote:
->> On 2018/2/8 11:11, Yunlong Song wrote:
->>> Then the GCed data pages are totally mixed with the inmem atomic pages,
->>
->> If we add dio_rwsem, GC flow is exclude with atomic write flow. There
->> will be not race case to mix GCed page into atomic pages.
->>
->> Or you mean:
->>
->>                     - gc_data_segment
->>                      - move_data_page
->>                       - f2fs_is_atomic_file
->> - f2fs_ioc_start_atomic_write
->>   - set_inode_flag(inode, FI_ATOMIC_FILE);
->>                       - f2fs_set_data_page_dirty
->>                        - register_inmem_page
->>
->> In this case, GCed page can be mixed into database transaction, but could
->> it cause any problem except break rule of isolation for transaction.
->>
->>> this will cause the atomic commit ops write the GCed data pages twice
->>> (the first write happens in GC).
->>>
->>> How about using the early two patches to separate the inmem data pages
->>> and GCed data pages, and use dio_rwsem instead of this patch to fix the
->>> dnode page problem (dnode page commited but data page are not committed
->>> for the GCed page)?
->>
->> Could we fix the race case first, based on that fixing, and then find the
->> place that we can improve?
->>
->>>
->>>
->>> On 2018/2/7 20:16, Chao Yu wrote:
->>>> On 2018/2/6 11:49, Yunlong Song wrote:
->>>>> This patch adds fi->commit_lock to avoid the case that GCed node pages
->>>>> are committed but GCed data pages are not committed. This can avoid the
->>>>> db file run into inconsistent state when sudden-power-off happens if
->>>>> data pages of atomic file is allowed to be GCed before.
->>>>
->>>> do_fsync:                GC:
->>>> - mutex_lock(&fi->commit_lock);
->>>>                      - lock_page()
->>>>                       - mutex_lock(&fi->commit_lock);
->>>>    - lock_page()
->>>>
->>>>
->>>> Well, please consider lock dependency & code complexity, IMO, reuse
->>>> fi->dio_rwsem[WRITE] will be enough as below:
->>>>
->>>> ---
->>>>    fs/f2fs/file.c | 3 +++
->>>>    fs/f2fs/gc.c   | 5 -----
->>>>    2 files changed, 3 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index 672a542e5464..1bdc11feb8d0 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>>
->>>>        inode_lock(inode);
->>>>
->>>> +    down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>> +
->>>>        if (f2fs_is_volatile_file(inode))
->>>>            goto err_out;
->>>>
->>>> @@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>>            ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
->>>>        }
->>>>    err_out:
->>>> +    up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>>        inode_unlock(inode);
->>>>        mnt_drop_write_file(filp);
->>>>        return ret;
->>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>> index b9d93fd532a9..e49416283563 100644
->>>> --- a/fs/f2fs/gc.c
->>>> +++ b/fs/f2fs/gc.c
->>>> @@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>            goto out;
->>>>
->>>> -    if (f2fs_is_atomic_file(inode))
->>>> -        goto out;
->>
->> Seems that we need this check.
->>
->>>> -
->>>>        if (f2fs_is_pinned_file(inode)) {
->>>>            f2fs_pin_file_control(inode, true);
->>>>            goto out;
->>>> @@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>            goto out;
->>>>
->>>> -    if (f2fs_is_atomic_file(inode))
->>>> -        goto out;
->>
->> Ditto.
->>
->> Thanks,
->>
->>>>        if (f2fs_is_pinned_file(inode)) {
->>>>            if (gc_type == FG_GC)
->>>>                f2fs_pin_file_control(inode, true);
->>>>
->>>
->>
->> .
->>
-> 
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+index ac4a82de40c7..9ab56827124e 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+@@ -427,7 +427,6 @@ static void _rtl_rx_process(struct ieee80211_hw *hw, struct sk_buff *skb)
+ 		 (u32)hdr->addr1[0], (u32)hdr->addr1[1],
+ 		 (u32)hdr->addr1[2], (u32)hdr->addr1[3],
+ 		 (u32)hdr->addr1[4], (u32)hdr->addr1[5]);
+-	memcpy(IEEE80211_SKB_RXCB(skb), rx_status, sizeof(*rx_status));
+ 	ieee80211_rx(hw, skb);
+ }
+ 
+-- 
+2.9.0
