@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185708-2-9415766647220552459
+X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185699-2-6255406424084970315
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185707; b=fqdiy1lxcBXh9stDSqEotN52MXEjYKQnUQVg276tq2hCWsA
-    LM1m7G3mtnpL9f/jtZfSI1tQwbpAt5aoMMrea1ODQ+J+zaznbG1/wZ8WA4WwMox8
-    RnN1ZB83GaQhs4iWdell8264zLXkC/2vP8u25dsyy6A+GV/9/Cn9OAMqcuGHJkgm
-    Z8L/lOjyHHPVMHe5uptis9mKVbPe+53ej+9B8u33Ieq3958zclLN/genvHMSLOyZ
-    nzWO4BcbWUtPdMGcBMy59nsIQ8iObAP34X6/rtA4GRthJ5yVksdsrG8LtqGHZLk4
-    jDArS2PAvFaUU0DZ140LFcy7nxZrcH5wUZT5Ekg==
+    t=1518185698; b=d+ahb6StC0sCOSL6w47XoGMC1NLExF78rIGc8/ysc/hxgOJ
+    i1SNFKny0DgaCBv67tILsMcot+l3TkrucsKVJERntVf74xeGaNFCCJGTW9raGVZh
+    kNAJP5pT4gpvc/ZdyR2qyS0zzQp0nIjhJzO6mi5mZmzJHSfRtYNblpY1IhssMtxr
+    uCy+UIfapvqKBpIn6s4yNJA8yjvD6bBwuMWJEfLNp5O3uhnrcCpW/30ImHG1aDpv
+    GcMXnTi7KS+stnNJ97j21gc5/+UXr8fU6RGyBdJMuVUsUTVwUXIxjY0n+CWVGku6
+    4hne+kgO5knTQh8RdtQC5XecZuGIeceI8+DVr0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185707; bh=pojljAPd+Wlh93v818iAKXjgG5
-    0fI7xEYBnyyNtlzKE=; b=ALTvt61ap/fCAhWp9UyzY/Au8kR0Zg1uMl+JAeJTXB
-    eAIdABb+dA+dXY37xlAySJxSjLz7JwLSloKq23BGKSdISoK9wvoKWX8ySmFsMDr7
-    3vB7dnAhQdXJOrGLzeal8X5sxgGi6L3/BWwfbeC6IA1DHIvOd6j7LtLqtmU8qrkw
-    ld5LweL3KG403FJe7SrUNbNZ7rl3wBij01Xoo0KWz/3cbEZls2xIyplzgLVMfriY
-    eXGYjBTbzXdzerrKesgirOyrNm+/rfUn7TAEI0W+s7idavMUEDOTemfMGEIpFUkp
-    WyYniI03iLi6V6LE70VCmPyOyTd9CGdTvme6g4JJGMPw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185698; bh=uPjpGBUiZJ9ULMZNVP9K+g2xMh
+    iSyn5xlSTWzm1eu1g=; b=d2p0YizF2Fj8wMk7heEHQf7DDTesbhqPIebsKfaRxP
+    1eKcsNRLzt2PgICEl+fSNa7pU+X5tU/x5Sn7fhRM6ZMD0uQ7cXbHAPsY/so0S7GE
+    Mc2Ru/SG6WsanuBtgngSPZhHC/bFOrpWAVvIqtyXxsOZlKWhhLGlb20SvQAtSEH5
+    qq1F3c2SinMUXhebGqQMjiFMOQxe7ebYRtSrba2FlC5crlfIzmoJltqWU3KsVHjI
+    iz3/D7vqjdcVzgo+H+rnVrrnuNdZGX7h/W5jOzRM5PF+dT4GwK03HztmdBjx/SV7
+    fJa7xGK4aLmdqdvg2zErCyH16GHNZA/XM6pwhMu9x8Nw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeBINlP (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:41:15 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48434 "EHLO
+        id S1752497AbeBIOOo (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 09:14:44 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48558 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752497AbeBINlO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:14 -0500
+        with ESMTP id S1752539AbeBINlU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:20 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunhao Lin <hau@realtek.com>,
+        stable@vger.kernel.org,
+        syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 23/92] r8169: fix RTL8168EP take too long to complete driver initialization.
-Date: Fri,  9 Feb 2018 14:38:52 +0100
-Message-Id: <20180209133932.946813663@linuxfoundation.org>
+Subject: [PATCH 4.9 25/92] vhost_net: stop device during reset owner
+Date: Fri,  9 Feb 2018 14:38:54 +0100
+Message-Id: <20180209133933.053777448@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -77,40 +79,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chunhao Lin <hau@realtek.com>
+From: Jason Wang <jasowang@redhat.com>
 
 
-[ Upstream commit 086ca23d03c0d2f4088f472386778d293e15c5f6 ]
+[ Upstream commit 4cd879515d686849eec5f718aeac62a70b067d82 ]
 
-Driver check the wrong register bit in rtl_ocp_tx_cond() that keep driver
-waiting until timeout.
+We don't stop device before reset owner, this means we could try to
+serve any virtqueue kick before reset dev->worker. This will result a
+warn since the work was pending at llist during owner resetting. Fix
+this by stopping device during owner reset.
 
-Fix this by waiting for the right register bit.
-
-Signed-off-by: Chunhao Lin <hau@realtek.com>
+Reported-by: syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com
+Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/vhost/net.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -1387,7 +1387,7 @@ DECLARE_RTL_COND(rtl_ocp_tx_cond)
- {
- 	void __iomem *ioaddr = tp->mmio_addr;
- 
--	return RTL_R8(IBISR0) & 0x02;
-+	return RTL_R8(IBISR0) & 0x20;
- }
- 
- static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
-@@ -1395,7 +1395,7 @@ static void rtl8168ep_stop_cmac(struct r
- 	void __iomem *ioaddr = tp->mmio_addr;
- 
- 	RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
--	rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
-+	rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
- 	RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
- 	RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
- }
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1078,6 +1078,7 @@ static long vhost_net_reset_owner(struct
+ 	}
+ 	vhost_net_stop(n, &tx_sock, &rx_sock);
+ 	vhost_net_flush(n);
++	vhost_dev_stop(&n->dev);
+ 	vhost_dev_reset_owner(&n->dev, umem);
+ 	vhost_net_vq_reset(n);
+ done:
