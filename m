@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184485-2-5412701023438234743
+X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184476-2-9010039335127699052
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184485; b=B18whu/E3Vt64EjJIgCC3ALNZT76tN5VvVvybxeDHfbfZEF
-    DU83p4J7w1i3DgUaKSjLTAfXI1nf1ZO8bH4EtTvxjpo9Lt7Lx24K+/H/bVwE3yQr
-    b7YX1EiKwhvRVr8ypmFInZsdIqguVUaRBqkYWYeLmbWZOuiKTqcveEZj5JGTfdKW
-    9X+dTBR94moWt0lolT0ZT43OmojQQ+cCzbue7rXrRm4RmcJHx8uxALGRqzYvelSr
-    9UK+5H6lcWrKmnu1ZgzkT9XwgZFFPYqiK46dBKgkeOGejPTrDkp0H75d5ovg/pyR
-    EKPlJCkjt5tsL+1nmmgdJZuosKGyZprG8JeTx/g==
+    t=1518184475; b=rjoBDQpnkCFzy9NoWvJAtEkTihf16gTNDP+eXQBBCHUQJkC
+    VPhsDHo9aEAYiJdqknGLlzAlEtbwZEqjuRYqPDudRSrmXCEHIy8lfYOJyVkAsKIy
+    txmFSTbEt+DDVaR7ERtAwR8JGmjVHTf9JHqeLMKh20V6rHGrW3ogs63qzzevC63u
+    URNJlGmModhxuS9568kAE8fJR2W7Q1y12G1GEzmtYI2NLFEikWAT/bS5QdD258PF
+    OgUdmTigeyaoRF/bARdzOea2g2jZ3CQthscTKg8HHS9PUVhgiQARDq9tL57v7xE3
+    C2OMnbgKTurhTNwMl8mC5NyC482NDq8lzUU8cuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184485; bh=nlG88uuyiEj7eyJLWJDQDZ2TCS
-    s5x5Kmp9FVkIZx7nw=; b=fJGQFUAm3gU7QEVZjKKOotxpuY/Np7Lk69hjS/SnDC
-    l5JkXwZ8Hf7pAkEMhBIYK8C8LaTu0z8ovlTlr0IQbhd1eDb7LmvNK9eqVVHj0rA3
-    njlhJCwdl0J43/ateN7mmctj5YTLv5CzDvYKaxiXvGTos8TK+J6DhoAh5zr7BTiq
-    gwZgl2kn1vYKrHfFGsOzk3IuS2HDGZcqWbHlTiIk6K6ejD5jfejTIAk2mxOhv3Kf
-    Je1V0Q6scs3FKVtPgPcLhDL7Nn0zhXCaN6TBIEqELiWaMsJseGToqmGk6jabcUCJ
-    275LDwpCQlhsin2MvV1jV5ZJ9HpoOcdPrpKSbqaVn3ZA==
+    :list-id; s=arctest; t=1518184475; bh=xZJzh6lH0uRjJnLz22qumCN1h2
+    ZWrKl7xBtA/eQJKxU=; b=F1FVuWf8mCKPCKGaXATc9rJAdCdeowFbqtFwYSV8p3
+    2UtbW4VgFoWmjrv/GCJbZQyDxnrAxC1tFgoSPmDzIClbuD9oUz6rhR+lhgfcoC6/
+    TD3CCQIGdUp3q0JTHWW/L9BgsnM8D66P6Q+czcixY8py4j6U9pvSef0J1D8B/emt
+    e591wB1QvhjJqpiMQUOvV0zkFGbn1lCeeQ0XvSeUSKMZSS92KrDP7dSnxEdth8rX
+    clEdyNdTNPPiukX0WE3Qtxn7oIOPoQtWBnGKITt+fsGwBPO/NaYOx1P8wFeoDQPP
+    fZj9gyOIeq3L8b9QPvYnCrNDbpTXmcWqS8KdB/RNZUUA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753685AbeBINpk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:45:40 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51920 "EHLO
+        id S1753688AbeBINpq (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:45:46 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51956 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753658AbeBINpi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:38 -0500
+        with ESMTP id S1753682AbeBINpo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:44 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Cathy Avery <cavery@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Long Li <longli@microsoft.com>
-Subject: [PATCH 4.14 22/22] scsi: storvsc: missing error code in storvsc_probe()
-Date: Fri,  9 Feb 2018 14:40:11 +0100
-Message-Id: <20180209133935.764813846@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot
+        <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 04/22] ip6mr: fix stale iterator
+Date: Fri,  9 Feb 2018 14:39:53 +0100
+Message-Id: <20180209133934.373011789@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
 References: <20180209133934.024795822@linuxfoundation.org>
@@ -80,36 +80,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit ca8dc694045e9aa248e9916e0f614deb0494cb3d upstream.
 
-We should set the error code if fc_remote_port_add() fails.
+[ Upstream commit 4adfa79fc254efb7b0eb3cd58f62c2c3f805f1ba ]
 
-Cc: <stable@vger.kernel.org> #v4.12+
-Fixes: daf0cd445a21 ("scsi: storvsc: Add support for FC rport.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Cathy Avery <cavery@redhat.com>
-Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+When we dump the ip6mr mfc entries via proc, we initialize an iterator
+with the table to dump but we don't clear the cache pointer which might
+be initialized from a prior read on the same descriptor that ended. This
+can result in lock imbalance (an unnecessary unlock) leading to other
+crashes and hangs. Clear the cache pointer like ipmr does to fix the issue.
+Thanks for the reliable reproducer.
+
+Here's syzbot's trace:
+ WARNING: bad unlock balance detected!
+ 4.15.0-rc3+ #128 Not tainted
+ syzkaller971460/3195 is trying to release lock (mrt_lock) at:
+ [<000000006898068d>] ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+ but there are no more locks to release!
+
+ other info that might help us debug this:
+ 1 lock held by syzkaller971460/3195:
+  #0:  (&p->lock){+.+.}, at: [<00000000744a6565>] seq_read+0xd5/0x13d0
+ fs/seq_file.c:165
+
+ stack backtrace:
+ CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+ Google 01/01/2011
+ Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:53
+  print_unlock_imbalance_bug+0x12f/0x140 kernel/locking/lockdep.c:3561
+  __lock_release kernel/locking/lockdep.c:3775 [inline]
+  lock_release+0x5f9/0xda0 kernel/locking/lockdep.c:4023
+  __raw_read_unlock include/linux/rwlock_api_smp.h:225 [inline]
+  _raw_read_unlock+0x1a/0x30 kernel/locking/spinlock.c:255
+  ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+  traverse+0x3bc/0xa00 fs/seq_file.c:135
+  seq_read+0x96a/0x13d0 fs/seq_file.c:189
+  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
+  do_loop_readv_writev fs/read_write.c:673 [inline]
+  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
+  compat_readv+0x1bf/0x270 fs/read_write.c:1140
+  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
+  C_SYSC_preadv fs/read_write.c:1209 [inline]
+  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
+  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+ RIP: 0023:0xf7f73c79
+ RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
+ RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
+ RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ BUG: sleeping function called from invalid context at lib/usercopy.c:25
+ in_atomic(): 1, irqs_disabled(): 0, pid: 3195, name: syzkaller971460
+ INFO: lockdep is turned off.
+ CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+ Google 01/01/2011
+ Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:53
+  ___might_sleep+0x2b2/0x470 kernel/sched/core.c:6060
+  __might_sleep+0x95/0x190 kernel/sched/core.c:6013
+  __might_fault+0xab/0x1d0 mm/memory.c:4525
+  _copy_to_user+0x2c/0xc0 lib/usercopy.c:25
+  copy_to_user include/linux/uaccess.h:155 [inline]
+  seq_read+0xcb4/0x13d0 fs/seq_file.c:279
+  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
+  do_loop_readv_writev fs/read_write.c:673 [inline]
+  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
+  compat_readv+0x1bf/0x270 fs/read_write.c:1140
+  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
+  C_SYSC_preadv fs/read_write.c:1209 [inline]
+  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
+  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+ RIP: 0023:0xf7f73c79
+ RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
+ RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
+ RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ WARNING: CPU: 1 PID: 3195 at lib/usercopy.c:26 _copy_to_user+0xb5/0xc0
+ lib/usercopy.c:26
+
+Reported-by: syzbot <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Long Li <longli@microsoft.com>
-
 ---
- drivers/scsi/storvsc_drv.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv6/ip6mr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1826,8 +1826,10 @@ static int storvsc_probe(struct hv_devic
- 		fc_host_node_name(host) = stor_device->node_name;
- 		fc_host_port_name(host) = stor_device->port_name;
- 		stor_device->rport = fc_remote_port_add(host, 0, &ids);
--		if (!stor_device->rport)
-+		if (!stor_device->rport) {
-+			ret = -ENOMEM;
- 			goto err_out3;
-+		}
- 	}
- #endif
- 	return 0;
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -496,6 +496,7 @@ static void *ipmr_mfc_seq_start(struct s
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	it->mrt = mrt;
++	it->cache = NULL;
+ 	return *pos ? ipmr_mfc_seq_idx(net, seq->private, *pos - 1)
+ 		: SEQ_START_TOKEN;
+ }
