@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x225zYKbVOS4b1b3YI6O1QsVzER9yp7jfGOQlgA/DFuCM+FsbR2SLEcvhhxm83IG0CBkG5h4t
-ARC-Seal: i=1; a=rsa-sha256; t=1518168363; cv=none;
+X-Google-Smtp-Source: AH8x224989Fdpo/PTEFJWzsdku7Amzehbvl5qoQvgYCWi565579mTcOka52jggDZ2FGBUdgOnepJ
+ARC-Seal: i=1; a=rsa-sha256; t=1518168361; cv=none;
         d=google.com; s=arc-20160816;
-        b=fS193+8Ip9kxeSvI5KpXECaaErEzlfizvFCAuqSgdGPWokwo0hk87KgKA9FnC3OGDe
-         jM14q2dHaJhLFZftWcPj42RUxZey12kb7oivrYIXdDPoH3cc+hSVoOgxSY9ZW1UFYcdE
-         giLuhazSgIvLQAcHSw6+FelwLe+RA4B05oiUvpwcMNayovOZ5j2v9wqk2QTZod9JkznF
-         rOW9gVYrk8Fc0R91b/6edNr1Z4Unj1S95IqqcjTtlOAhLO/LiKyDnQGniW90iz5aoikM
-         R/EvDk/P9Ml2aHJ4bzltDikhJLSRS+J78u26y0j2GsQ2E6C9QiLidZhyQrf2/XQIhbXo
-         8DUA==
+        b=uBVQsjRHDK0Y2z4qcpWK7YjDx2bz5HQ6yhtfDdZDUw+upEw8cdxQUv5x/pF89Qmn0Y
+         ct6Nnbzu/rU5oawI5Ja/77so+EMttao7NnfrbSqP5Ukbpm2VZnmpCnNtEcGal9CQFuFR
+         0RNerVMz0KHWPl+sy7t2zQvzVQHLh7YfLniZgvDbml8BKa+aI+SH+eqL2N/CCbmuYWl3
+         XmqLHONlOJR9X6Eq3uMUxlhLJhmhTuOk6zcnIcOkos+KIm+fZ/cXNU0PRer5TT6q/ol8
+         vgPIPJVAWGD+mPFJpKB5d1Yfn1UPGcpn/FQoz/ncr37XBn5az2Lw6qBWb7vl1keINWoZ
+         f1Ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=xg+AaEAuaGjZ1uB3W9vPyacpGtnPhtq2PnVl56DOf1k=;
-        b=cpWaxS6lJ5XBs//d1kiMdqXLo729NnctrVAF1pCtD2qWj6704ovKDMVi/YV/2NEOa4
-         rqG2y0rHKscxNgTYd7yYH5cIFd5If152C1dB1ixMeuUcaVhz0ZltlkyRile2MA5ZTMGj
-         TaYVrh3Sg60Olp8Y5NsPBraOr+G56H4yQ/rrfU3u9rFFk8XJD+8hReBOfLj76LWezRes
-         Mk5tq5SlBkFpXp435AdN5/tP8/iOcT2CohGbrFgAkbzB3CeqglMgFlymSracohLmIg4o
-         HTkw4jY+p4Jzne6ZeFsJHnPRxtGHP/qHiK0X8kIGovS2aQw3sVo+VH5xubtQtT0EzVc0
-         95iA==
+        bh=iNi3ozSu6hzNBUfRiaDyqHTFW/rnLWBdKx/P7bSqJi8=;
+        b=uv9+bAaKxl7zcNZGRKp8643hUoGhmDSu2ZBJ3PwieUSui5SgBcXT9q6pkO85xWA8GX
+         shDzvYhihZpGAVg+sYq2eQYuaeWQoTG9K73taVtjR4O+yQybw+r+llKFLUp9X+wgOb3G
+         +6l13UmJgBCdjywSnk1tQSjgkIgEMBcAVS0jAp2zADWV7bdKXBUT7KfPxYX5bUdGzzk/
+         U8+MWOTJG4QgzIbxQzcsZsqPnlPZliyEG8cMBNj976w3bpHo8iFHjUCvlXI5IGwsHwjE
+         zItyOqQvtUVCJ2A4TeHVkzajJiaJeOM3raCMAXbMIErQh13KBZC+iHuGQTjfxTysZyw4
+         CfDA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=LIyfyuma;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=HEyg9TOD;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=LIyfyuma;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=HEyg9TOD;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,60 +57,147 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 21/31] x86/mm/legacy: Populate the user page-table with user pgd's
-Date: Fri,  9 Feb 2018 10:25:30 +0100
-Message-Id: <1518168340-9392-22-git-send-email-joro@8bytes.org>
+Subject: [PATCH 16/31] x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
+Date: Fri,  9 Feb 2018 10:25:25 +0100
+Message-Id: <1518168340-9392-17-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914909730752112?=
-X-GMAIL-MSGID: =?utf-8?q?1591914909730752112?=
+X-GMAIL-THRID: =?utf-8?q?1591914908153739899?=
+X-GMAIL-MSGID: =?utf-8?q?1591914908153739899?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Also populate the user-spage pgd's in the user page-table.
+Make them available on 32 bit and clone_pgd_range() happy.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable-2level.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/include/asm/pgtable.h    | 49 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/pgtable_64.h | 49 ---------------------------------------
+ 2 files changed, 49 insertions(+), 49 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable-2level.h b/arch/x86/include/asm/pgtable-2level.h
-index 685ffe8..d772554 100644
---- a/arch/x86/include/asm/pgtable-2level.h
-+++ b/arch/x86/include/asm/pgtable-2level.h
-@@ -19,6 +19,9 @@ static inline void native_set_pte(pte_t *ptep , pte_t pte)
- 
- static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
- {
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pmd.pud.p4d.pgd = pti_set_user_pgd(&pmdp->pud.p4d.pgd, pmd.pud.p4d.pgd);
-+#endif
- 	*pmdp = pmd;
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index e42b894..0a9f746 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1109,6 +1109,55 @@ static inline int pud_write(pud_t pud)
+ 	return pud_flags(pud) & _PAGE_RW;
  }
  
-@@ -58,6 +61,9 @@ static inline pte_t native_ptep_get_and_clear(pte_t *xp)
- #ifdef CONFIG_SMP
- static inline pmd_t native_pmdp_get_and_clear(pmd_t *xp)
- {
 +#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pti_set_user_pgd(&xp->pud.p4d.pgd, __pgd(0));
-+#endif
- 	return __pmd(xchg((pmdval_t *)xp, 0));
++/*
++ * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
++ * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
++ * the user one is in the last 4k.  To switch between them, you
++ * just need to flip the 12th bit in their addresses.
++ */
++#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
++
++/*
++ * This generates better code than the inline assembly in
++ * __set_bit().
++ */
++static inline void *ptr_set_bit(void *ptr, int bit)
++{
++	unsigned long __ptr = (unsigned long)ptr;
++
++	__ptr |= BIT(bit);
++	return (void *)__ptr;
++}
++static inline void *ptr_clear_bit(void *ptr, int bit)
++{
++	unsigned long __ptr = (unsigned long)ptr;
++
++	__ptr &= ~BIT(bit);
++	return (void *)__ptr;
++}
++
++static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
++{
++	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
++{
++	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
++{
++	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
++{
++	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
++}
++#endif /* CONFIG_PAGE_TABLE_ISOLATION */
++
+ /*
+  * clone_pgd_range(pgd_t *dst, pgd_t *src, int count);
+  *
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 81462e9..58d7f10 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -131,55 +131,6 @@ static inline pud_t native_pudp_get_and_clear(pud_t *xp)
+ #endif
  }
- #else
-@@ -67,6 +73,9 @@ static inline pmd_t native_pmdp_get_and_clear(pmd_t *xp)
- #ifdef CONFIG_SMP
- static inline pud_t native_pudp_get_and_clear(pud_t *xp)
- {
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pti_set_user_pgd(&xp->p4d.pgd, __pgd(0));
-+#endif
- 	return __pud(xchg((pudval_t *)xp, 0));
- }
- #else
+ 
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-/*
+- * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
+- * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
+- * the user one is in the last 4k.  To switch between them, you
+- * just need to flip the 12th bit in their addresses.
+- */
+-#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
+-
+-/*
+- * This generates better code than the inline assembly in
+- * __set_bit().
+- */
+-static inline void *ptr_set_bit(void *ptr, int bit)
+-{
+-	unsigned long __ptr = (unsigned long)ptr;
+-
+-	__ptr |= BIT(bit);
+-	return (void *)__ptr;
+-}
+-static inline void *ptr_clear_bit(void *ptr, int bit)
+-{
+-	unsigned long __ptr = (unsigned long)ptr;
+-
+-	__ptr &= ~BIT(bit);
+-	return (void *)__ptr;
+-}
+-
+-static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
+-{
+-	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
+-{
+-	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
+-{
+-	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
+-{
+-	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-#endif /* CONFIG_PAGE_TABLE_ISOLATION */
+-
+ /*
+  * Page table pages are page-aligned.  The lower half of the top
+  * level is used for userspace and the top half for the kernel.
 -- 
 2.7.4
