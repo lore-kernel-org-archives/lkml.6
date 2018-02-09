@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184621-2-1386229316689394332
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184607-2-11260151687839236470
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184620; b=gbv8tvnLIvfoE2H/eo82R986McJnkbj8c+RippEEie8ld89
-    5Nb8El31xU1UGuN+A939zWumu9SqL74Rq78aruQ0sHJFBxyBcuxjxm0KcZMF1o5S
-    WGEWHsVMc4sCbAud4VBlbFZKLUxyx8orMU5T0gR/KpZUFVjeutJqF23qfw3/ALXg
-    StWVTa6T0FBE2nrUr3eUmNXk6o6mAoHynfmW/cd2ucaaecxyhuOu3woSJLCZRjrB
-    BNU1xl+NEVZpfSBaFvsZ+ncMCVCDJXXcf5UgH66VD4koDMK0qo60Nv9G0A64Q/Yr
-    lgBZYzJxe4XM0TqwmAQiY4AKaZmm8H72Sj3W4hw==
+    t=1518184607; b=aruRdq7XIlPuqI3Me0KG6v1qMqxwj+B5csyC7piDFb5LNON
+    RbzdUaD5eY9Ky9738nUdFEu5WOV4weOSdUk+eKkZIVUpcaV8uSq8V+FvLo/imLjy
+    Y8NwybwhQz9AXfH7v2y/0boC0WDdNbY3T91hoR0fHbkUSEPvLfHeV2u7T300m7xl
+    DFtN3I9DAQY6z+4Px+DZqaSXxoEHbNwBkl64092Qy8XbezbLy0Dtj3EuMto5jU4I
+    oszi+EmGJEiIqJnnhFIAh4qwohDrdNYdmVX7Y7tAk7qorQ6CHYLukdQWEZTcVdaa
+    IpWtKx5C4ULBIMETul2K5/nUFXeqDyzPtHZ2QLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184620; bh=m6LNs2srpzOrVEG8OEW8kMSB1q
-    HuYoG9Vcd1ggroqqk=; b=NDB5qTi4TYO5EzpvGMK/PFe8AAhc+S5jyOqIW0JHJD
-    qP97CDjrukVylbMHDRIAHn2By1hkC3zeQ+wID5ZUPUl6NgOLfnPTwyxq+Z1o3e7o
-    GO3lRuDeEyo/D4QgNyeoYqBFxISQOvqmw9NfsBIxRF4UpalnhCCPLGiQrp5i+doD
-    yedAO3yl58TkNtbNe5aLDV+w449gY0U3gb9NNDmrf7zuZN4Yz69DQTa3KpJbauq5
-    +F51d8JnF0SAFBGPWAtssTxCrzgBy5Awyt2ocXYy8tP7tQf37nEXnsb8sbV+zvYM
-    Jgcsnrhf5L30t5QCndgPh2LBpQPlWQbUjGX3b28pTs/A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184607; bh=ryzw77gUy7qK1slvZS1QRO5u25
+    2KmL0UFw9dqvbiinU=; b=c5iI1JhICqGxPm2e+Ki0q0Mgp/aVLc06tPoIZ37cK6
+    j7VxG2jM1sOyd4W1XghHSen9cE5Iz6XZO96+8ZJbDCh3H91A/tTHjl2W1izhu22X
+    NfLLGXu+K9M0mR2xlS7Txl2vQ7IqWxeTzKRhx9QJR/dMGayEsdwTR68ZgtTdv+o0
+    3GaKGtvhC+cEkWc1V2OTL6VujgS2X6DCiaGxixRZ0nepnQtAFNx76UEMcG+omTkC
+    TTCaCLbyiuCsI7o0D5z9xAY+rKU5h4dKAPVW7yYAe98KeSSKEcDrAzZwGdzdKLW0
+    hJPRocssLHt2JV3qS3m2qh3lDkfSzBCfxFsbPXRY1F9g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753614AbeBIN4s (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:56:48 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51662 "EHLO
+        id S1753541AbeBINpF (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:45:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51692 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753058AbeBINpB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:01 -0500
+        with ESMTP id S1753475AbeBINpE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:04 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 10/22] vhost_net: stop device during reset owner
-Date: Fri,  9 Feb 2018 14:39:59 +0100
-Message-Id: <20180209133934.805941111@linuxfoundation.org>
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.14 11/22] Revert "defer call to mem_cgroup_sk_alloc()"
+Date: Fri,  9 Feb 2018 14:40:00 +0100
+Message-Id: <20180209133934.875219838@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
 References: <20180209133934.024795822@linuxfoundation.org>
@@ -79,32 +79,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Roman Gushchin <guro@fb.com>
 
 
-[ Upstream commit 4cd879515d686849eec5f718aeac62a70b067d82 ]
+[ Upstream commit edbe69ef2c90fc86998a74b08319a01c508bd497 ]
 
-We don't stop device before reset owner, this means we could try to
-serve any virtqueue kick before reset dev->worker. This will result a
-warn since the work was pending at llist during owner resetting. Fix
-this by stopping device during owner reset.
+This patch effectively reverts commit 9f1c2674b328 ("net: memcontrol:
+defer call to mem_cgroup_sk_alloc()").
 
-Reported-by: syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com
-Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+Moving mem_cgroup_sk_alloc() to the inet_csk_accept() completely breaks
+memcg socket memory accounting, as packets received before memcg
+pointer initialization are not accounted and are causing refcounting
+underflow on socket release.
+
+Actually the free-after-use problem was fixed by
+commit c0576e397508 ("net: call cgroup_sk_alloc() earlier in
+sk_clone_lock()") for the cgroup pointer.
+
+So, let's revert it and call mem_cgroup_sk_alloc() just before
+cgroup_sk_alloc(). This is safe, as we hold a reference to the socket
+we're cloning, and it holds a reference to the memcg.
+
+Also, let's drop BUG_ON(mem_cgroup_is_root()) check from
+mem_cgroup_sk_alloc(). I see no reasons why bumping the root
+memcg counter is a good reason to panic, and there are no realistic
+ways to hit it.
+
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/net.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/memcontrol.c                 |   14 ++++++++++++++
+ net/core/sock.c                 |    5 +----
+ net/ipv4/inet_connection_sock.c |    1 -
+ 3 files changed, 15 insertions(+), 5 deletions(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1212,6 +1212,7 @@ static long vhost_net_reset_owner(struct
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5828,6 +5828,20 @@ void mem_cgroup_sk_alloc(struct sock *sk
+ 	if (!mem_cgroup_sockets_enabled)
+ 		return;
+ 
++	/*
++	 * Socket cloning can throw us here with sk_memcg already
++	 * filled. It won't however, necessarily happen from
++	 * process context. So the test for root memcg given
++	 * the current task's memcg won't help us in this case.
++	 *
++	 * Respecting the original socket's memcg is a better
++	 * decision in this case.
++	 */
++	if (sk->sk_memcg) {
++		css_get(&sk->sk_memcg->css);
++		return;
++	}
++
+ 	rcu_read_lock();
+ 	memcg = mem_cgroup_from_task(current);
+ 	if (memcg == root_mem_cgroup)
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1677,16 +1677,13 @@ struct sock *sk_clone_lock(const struct
+ 		newsk->sk_dst_pending_confirm = 0;
+ 		newsk->sk_wmem_queued	= 0;
+ 		newsk->sk_forward_alloc = 0;
+-
+-		/* sk->sk_memcg will be populated at accept() time */
+-		newsk->sk_memcg = NULL;
+-
+ 		atomic_set(&newsk->sk_drops, 0);
+ 		newsk->sk_send_head	= NULL;
+ 		newsk->sk_userlocks	= sk->sk_userlocks & ~SOCK_BINDPORT_LOCK;
+ 		atomic_set(&newsk->sk_zckey, 0);
+ 
+ 		sock_reset_flag(newsk, SOCK_DONE);
++		mem_cgroup_sk_alloc(newsk);
+ 		cgroup_sk_alloc(&newsk->sk_cgrp_data);
+ 
+ 		rcu_read_lock();
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -475,7 +475,6 @@ struct sock *inet_csk_accept(struct sock
+ 		}
+ 		spin_unlock_bh(&queue->fastopenq.lock);
  	}
- 	vhost_net_stop(n, &tx_sock, &rx_sock);
- 	vhost_net_flush(n);
-+	vhost_dev_stop(&n->dev);
- 	vhost_dev_reset_owner(&n->dev, umem);
- 	vhost_net_vq_reset(n);
- done:
+-	mem_cgroup_sk_alloc(newsk);
+ out:
+ 	release_sock(sk);
+ 	if (req)
