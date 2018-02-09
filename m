@@ -1,351 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752960AbeBIVPF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 16:15:05 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33820 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752724AbeBIVPD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 16:15:03 -0500
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
-        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v3 1/1] mm: initialize pages on demand during boot
-Date: Fri,  9 Feb 2018 12:27:20 -0500
-Message-Id: <20180209172720.10145-2-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180209172720.10145-1-pasha.tatashin@oracle.com>
-References: <20180209172720.10145-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090268
+        id S1752848AbeBIVVC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 16:21:02 -0500
+Received: from mail.blih.net ([212.83.177.182]:51832 "EHLO mail.blih.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750993AbeBIVVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 16:21:00 -0500
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Fri, 09 Feb 2018 22:20:57 +0100
+From: Emmanuel Vadot <manu@bidouilliste.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: devicetree@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] Revert "ARM: dts: sunxi: Add regulators for Sinovoip
+ BPI-M2"
+Organization: Bidouilliste
+In-Reply-To: <207CD143-6535-42C9-BEF3-9D2614336482@aosc.io>
+References: <20180203112353.13497-1-icenowy@aosc.io>
+ <20180205095558.2e713c24cdb7c3232943db52@bidouilliste.com>
+ <207CD143-6535-42C9-BEF3-9D2614336482@aosc.io>
+Message-ID: <c59ee4bd3246172ec62705967bb8f751@megadrive.org>
+User-Agent: Roundcube Webmail/1.1.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deferred page initialization allows the boot cpu to initialize a small
-subset of the system's pages early in boot, with other cpus doing the rest
-later on.
+On 2018-02-05 10:05, Icenowy Zheng wrote:
+> 于 2018年2月5日 GMT+08:00 下午4:55:58, Emmanuel Vadot <manu@bidouilliste.com> 
+> 写到:
+>> 
+>> Hello,
+>> 
+>> On Sat,  3 Feb 2018 19:23:53 +0800
+>> Icenowy Zheng <icenowy@aosc.io> wrote:
+>> 
+>>> This reverts commit 7daa213700758b5b08fc0daab09bb139dd334165.
+>>> 
+>>> The original commit has several problems:
+>>> 
+>>> - vdd-cpus and aldo3 (AVCC of the SoC) are not set to always-on,
+>> which
+>>> leads to system hang when disabling unused regulators.
+>> 
+>> Indeed I should have make those always-on.
+>> 
+>>> - GMAC (which uses dldo1 and aldo2) and Wi-Fi (which uses aldo1) are
+>> not
+>>> considered, and will fail to work after adding this commit.
+>> 
+>> While I understand the problem with vdd-cpus and aldo3 I don't see why
+>> when you don't declare regulator the code should do something with it.
+>> DT is supposed to describe the hardware and the code should not use
+>> hardware not described right ?
+>> The gmac node doesn't declare any regulators and the mmc2 uses
+>> reg_vcc3v0 (haven't checked on the schematics yet if it is correct).
+> 
+> It's because the regulator support isn't present before
+> this commit. However these parts really need special
+> regulators. I don't have M2 schematics at hand, so you'd
+> check it by yourself.
 
-It is, however, problematic to know how many pages the kernel needs during
-boot.  Different modules and kernel parameters may change the requirement,
-so the boot cpu either initializes too many pages or runs out of memory.
+  Yes but why does the PMIC should disable regulators not defined in the 
+DTS ? That the part I don't understand and want to know where it is 
+described/documented.
 
-To fix that, initialize early pages on demand.  This ensures the kernel
-does the minimum amount of work to initialize pages during boot and leaves
-the rest to be divided in the multithreaded initialization path
-(deferred_init_memmap).
+> P.S. a proper device tree with AXP shouldn't use
+> reg_vcc3v0/3v3/1v8/etc. They're dummy
+> regulator nodes for
+> not implemented or not controllable regulators.
+> 
+>> 
+>>> This indicates that this patch should be not tested at all.
+>> 
+>> This have indeed not been tested with linux.
+>> I think that this commit should not be reverted, I'll send a proper
+>> patch tonight or tomorow night max.
+> 
+> Please test patches sent to Linux on Linux :-)
 
-The on-demand code is permanently disabled using static branching once
-deferred pages are initialized.  After the static branch is changed to
-false, the overhead is up-to two branch-always instructions if the zone
-watermark check fails or if rmqueue fails.
+  If my patches adhere to the bindings I don't see why.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Reviewed-by: Steven Sistare <steven.sistare@oracle.com>
-Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- include/linux/memblock.h |  10 ---
- mm/memblock.c            |  23 -------
- mm/page_alloc.c          | 175 ++++++++++++++++++++++++++++++++++++-----------
- 3 files changed, 136 insertions(+), 72 deletions(-)
+>> 
+>> P.S.: Also as I'm the original sender I think I should have been in CC
+>> no ?
+> 
+> get_maintainer.pl didn't mention you and I forgot... sorry.
+> 
+>> 
+>> Cheers,
+>> 
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>>  arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 57
+>> ------------------------
+>>>  1 file changed, 57 deletions(-)
+>>> 
+>>> diff --git a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+>> b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+>>> index 51e6f1d21c32..a565316eb340 100644
+>>> --- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+>>> +++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+>>> @@ -86,10 +86,6 @@
+>>>  	};
+>>>  };
+>>> 
+>>> -&cpu0 {
+>>> -	cpu-supply = <&reg_dcdc3>;
+>>> -};
+>>> -
+>>>  &ehci0 {
+>>>  	status = "okay";
+>>>  };
+>>> @@ -155,17 +151,6 @@
+>>>  	status = "okay";
+>>>  };
+>>> 
+>>> -&p2wi {
+>>> -	status = "okay";
+>>> -
+>>> -	axp22x: pmic@68 {
+>>> -		compatible = "x-powers,axp221";
+>>> -		reg = <0x68>;
+>>> -		interrupt-parent = <&nmi_intc>;
+>>> -		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>>> -	};
+>>> -};
+>>> -
+>>>  &pio {
+>>>  	gmac_phy_reset_pin_bpi_m2: gmac_phy_reset_pin@0 {
+>>>  		pins = "PA21";
+>>> @@ -191,48 +176,6 @@
+>>>  	};
+>>>  };
+>>> 
+>>> -#include "axp22x.dtsi"
+>>> -
+>>> -&reg_dc5ldo {
+>>> -	regulator-min-microvolt = <700000>;
+>>> -	regulator-max-microvolt = <1320000>;
+>>> -	regulator-name = "vdd-cpus";
+>>> -};
+>>> -
+>>> -&reg_dcdc1 {
+>>> -	regulator-always-on;
+>>> -	regulator-min-microvolt = <3000000>;
+>>> -	regulator-max-microvolt = <3000000>;
+>>> -	regulator-name = "vdd-3v0";
+>>> -};
+>>> -
+>>> -&reg_dcdc2 {
+>>> -	regulator-min-microvolt = <700000>;
+>>> -	regulator-max-microvolt = <1320000>;
+>>> -	regulator-name = "vdd-gpu";
+>>> -};
+>>> -
+>>> -&reg_dcdc3 {
+>>> -	regulator-always-on;
+>>> -	regulator-min-microvolt = <700000>;
+>>> -	regulator-max-microvolt = <1320000>;
+>>> -	regulator-name = "vdd-cpu";
+>>> -};
+>>> -
+>>> -&reg_dcdc4 {
+>>> -	regulator-always-on;
+>>> -	regulator-min-microvolt = <700000>;
+>>> -	regulator-max-microvolt = <1320000>;
+>>> -	regulator-name = "vdd-sys-dll";
+>>> -};
+>>> -
+>>> -&reg_dcdc5 {
+>>> -	regulator-always-on;
+>>> -	regulator-min-microvolt = <1500000>;
+>>> -	regulator-max-microvolt = <1500000>;
+>>> -	regulator-name = "vcc-dram";
+>>> -};
+>>> -
+>>>  &uart0 {
+>>>  	pinctrl-names = "default";
+>>>  	pinctrl-0 = <&uart0_pins_a>;
+>>> --
+>>> 2.15.1
+>>> 
+>>> 
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 8be5077efb5f..6c305afd95ab 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -417,21 +417,11 @@ static inline void early_memtest(phys_addr_t start, phys_addr_t end)
- {
- }
- #endif
--
--extern unsigned long memblock_reserved_memory_within(phys_addr_t start_addr,
--		phys_addr_t end_addr);
- #else
- static inline phys_addr_t memblock_alloc(phys_addr_t size, phys_addr_t align)
- {
- 	return 0;
- }
--
--static inline unsigned long memblock_reserved_memory_within(phys_addr_t start_addr,
--		phys_addr_t end_addr)
--{
--	return 0;
--}
--
- #endif /* CONFIG_HAVE_MEMBLOCK */
- 
- #endif /* __KERNEL__ */
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 5a9ca2a1751b..4120e9f536f7 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1778,29 +1778,6 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
- 	}
- }
- 
--extern unsigned long __init_memblock
--memblock_reserved_memory_within(phys_addr_t start_addr, phys_addr_t end_addr)
--{
--	struct memblock_region *rgn;
--	unsigned long size = 0;
--	int idx;
--
--	for_each_memblock_type(idx, (&memblock.reserved), rgn) {
--		phys_addr_t start, end;
--
--		if (rgn->base + rgn->size < start_addr)
--			continue;
--		if (rgn->base > end_addr)
--			continue;
--
--		start = rgn->base;
--		end = start + rgn->size;
--		size += end - start;
--	}
--
--	return size;
--}
--
- void __init_memblock __memblock_dump_all(void)
- {
- 	pr_info("MEMBLOCK configuration:\n");
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 81e18ceef579..5938523eb309 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -291,40 +291,6 @@ EXPORT_SYMBOL(nr_online_nodes);
- int page_group_by_mobility_disabled __read_mostly;
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
--
--/*
-- * Determine how many pages need to be initialized during early boot
-- * (non-deferred initialization).
-- * The value of first_deferred_pfn will be set later, once non-deferred pages
-- * are initialized, but for now set it ULONG_MAX.
-- */
--static inline void reset_deferred_meminit(pg_data_t *pgdat)
--{
--	phys_addr_t start_addr, end_addr;
--	unsigned long max_pgcnt;
--	unsigned long reserved;
--
--	/*
--	 * Initialise at least 2G of a node but also take into account that
--	 * two large system hashes that can take up 1GB for 0.25TB/node.
--	 */
--	max_pgcnt = max(2UL << (30 - PAGE_SHIFT),
--			(pgdat->node_spanned_pages >> 8));
--
--	/*
--	 * Compensate the all the memblock reservations (e.g. crash kernel)
--	 * from the initial estimation to make sure we will initialize enough
--	 * memory to boot.
--	 */
--	start_addr = PFN_PHYS(pgdat->node_start_pfn);
--	end_addr = PFN_PHYS(pgdat->node_start_pfn + max_pgcnt);
--	reserved = memblock_reserved_memory_within(start_addr, end_addr);
--	max_pgcnt += PHYS_PFN(reserved);
--
--	pgdat->static_init_pgcnt = min(max_pgcnt, pgdat->node_spanned_pages);
--	pgdat->first_deferred_pfn = ULONG_MAX;
--}
--
- /* Returns true if the struct page for the pfn is uninitialised */
- static inline bool __meminit early_page_uninitialised(unsigned long pfn)
- {
-@@ -357,10 +323,6 @@ static inline bool update_defer_init(pg_data_t *pgdat,
- 	return true;
- }
- #else
--static inline void reset_deferred_meminit(pg_data_t *pgdat)
--{
--}
--
- static inline bool early_page_uninitialised(unsigned long pfn)
- {
- 	return false;
-@@ -1604,6 +1566,107 @@ static int __init deferred_init_memmap(void *data)
- 	pgdat_init_report_one_done();
- 	return 0;
- }
-+
-+/*
-+ * This lock grantees that only one thread at a time is allowed to grow zones
-+ * (decrease number of deferred pages).
-+ * Protects first_deferred_pfn field in all zones during early boot before
-+ * deferred pages are initialized.  Deferred pages are initialized in
-+ * page_alloc_init_late() soon after smp_init() is complete.
-+ */
-+static __initdata DEFINE_SPINLOCK(deferred_zone_grow_lock);
-+DEFINE_STATIC_KEY_TRUE(deferred_pages);
-+
-+/*
-+ * If this zone has deferred pages, try to grow it by initializing enough
-+ * deferred pages to satisfy the allocation specified by order, rounded up to
-+ * the nearest PAGES_PER_SECTION boundary.  So we're adding memory in increments
-+ * of SECTION_SIZE bytes by initializing struct pages in increments of
-+ * PAGES_PER_SECTION * sizeof(struct page) bytes.
-+ *
-+ * Return true when zone was grown by at least number of pages specified by
-+ * order. Otherwise return false.
-+ *
-+ * Note: We use noinline because this function is needed only during boot, and
-+ * it is called from a __ref function _deferred_grow_zone. This way we are
-+ * making sure that it is not inlined into permanent text section.
-+ */
-+static noinline bool __init
-+deferred_grow_zone(struct zone *zone, unsigned int order)
-+{
-+	int zid = zone_idx(zone);
-+	int nid = zone->node;
-+	pg_data_t *pgdat = NODE_DATA(nid);
-+	unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
-+	unsigned long nr_pages = 0;
-+	unsigned long first_init_pfn, first_deferred_pfn, spfn, epfn, t, flags;
-+	phys_addr_t spa, epa;
-+	u64 i;
-+
-+	/* Only the last zone may have deferred pages */
-+	if (zone_end_pfn(zone) != pgdat_end_pfn(pgdat))
-+		return false;
-+
-+	spin_lock_irqsave(&deferred_zone_grow_lock, flags);
-+	/*
-+	 * Bail if we raced with another thread that disabled on demand
-+	 * initialization.
-+	 */
-+	if (!static_branch_unlikely(&deferred_pages)) {
-+		spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
-+		return false;
-+	}
-+
-+	first_deferred_pfn = pgdat->first_deferred_pfn;
-+	first_init_pfn = max(zone->zone_start_pfn, first_deferred_pfn);
-+
-+	if (first_init_pfn >= pgdat_end_pfn(pgdat)) {
-+		spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
-+		return false;
-+	}
-+
-+	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
-+		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
-+		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
-+
-+		while (spfn < epfn && nr_pages < nr_pages_needed) {
-+			t = ALIGN(spfn + PAGES_PER_SECTION, PAGES_PER_SECTION);
-+			first_deferred_pfn = min(t, epfn);
-+			nr_pages += deferred_init_pages(nid, zid, spfn,
-+							first_deferred_pfn);
-+			spfn = first_deferred_pfn;
-+		}
-+
-+		if (nr_pages >= nr_pages_needed)
-+			break;
-+	}
-+
-+	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
-+		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
-+		epfn = min_t(unsigned long, first_deferred_pfn, PFN_DOWN(epa));
-+		deferred_free_pages(nid, zid, spfn, epfn);
-+
-+		if (first_deferred_pfn == epfn)
-+			break;
-+	}
-+	pgdat->first_deferred_pfn = first_deferred_pfn;
-+	spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
-+
-+	return nr_pages >= nr_pages_needed;
-+}
-+
-+/*
-+ * deferred_grow_zone() is __init, but it is called from
-+ * get_page_from_freelist() during early boot until deferred_pages permanently
-+ * disables this call. This is why we have refdata wrapper to avoid warning,
-+ * and to ensure that the function body gets unloaded.
-+ */
-+static bool __ref
-+_deferred_grow_zone(struct zone *zone, unsigned int order)
-+{
-+	return deferred_grow_zone(zone, order);
-+}
-+
- #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
- void __init page_alloc_init_late(void)
-@@ -1613,6 +1676,14 @@ void __init page_alloc_init_late(void)
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
- 	int nid;
- 
-+	/*
-+	 * We are about to initialize the rest of deferred pages, permanently
-+	 * disable on-demand struct page initialization.
-+	 */
-+	spin_lock(&deferred_zone_grow_lock);
-+	static_branch_disable(&deferred_pages);
-+	spin_unlock(&deferred_zone_grow_lock);
-+
- 	/* There will be num_node_state(N_MEMORY) threads */
- 	atomic_set(&pgdat_init_n_undone, num_node_state(N_MEMORY));
- 	for_each_node_state(nid, N_MEMORY) {
-@@ -3199,6 +3270,16 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 				       ac_classzone_idx(ac), alloc_flags)) {
- 			int ret;
- 
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+			/*
-+			 * Watermark failed for this zone, but see if we can
-+			 * grow this zone if it contains deferred pages.
-+			 */
-+			if (static_branch_unlikely(&deferred_pages)) {
-+				if (_deferred_grow_zone(zone, order))
-+					goto try_this_zone;
-+			}
-+#endif
- 			/* Checked here to keep the fast path fast */
- 			BUILD_BUG_ON(ALLOC_NO_WATERMARKS < NR_WMARK);
- 			if (alloc_flags & ALLOC_NO_WATERMARKS)
-@@ -3240,6 +3321,14 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 				reserve_highatomic_pageblock(page, zone, order);
- 
- 			return page;
-+		} else {
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+			/* Try again if zone has deferred pages */
-+			if (static_branch_unlikely(&deferred_pages)) {
-+				if (_deferred_grow_zone(zone, order))
-+					goto try_this_zone;
-+			}
-+#endif
- 		}
- 	}
- 
-@@ -6247,7 +6336,15 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
- 
- 	alloc_node_mem_map(pgdat);
- 
--	reset_deferred_meminit(pgdat);
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+	/*
-+	 * We start only with one section of pages, more pages are added as
-+	 * needed until the rest of deferred pages are initialized.
-+	 */
-+	pgdat->static_init_pgcnt = min(PAGES_PER_SECTION,
-+				       pgdat->node_spanned_pages);
-+	pgdat->first_deferred_pfn = ULONG_MAX;
-+#endif
- 	free_area_init_core(pgdat);
- }
- 
 -- 
-2.16.1
+Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
