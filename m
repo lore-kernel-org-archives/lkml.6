@@ -1,65 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752285AbeBISsn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 13:48:43 -0500
-Received: from mail-io0-f180.google.com ([209.85.223.180]:44518 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeBISsm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 13:48:42 -0500
-X-Google-Smtp-Source: AH8x227FXt2Wy+c7WWgZZlldz/q6U2wi5cVw+7kJd8NZHvDORa9mMFrxE+ERH/1Fx9cmDt8PgdsyX7sGWOyzSX8Lwas=
+        id S1752230AbeBISxK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 13:53:10 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:42124 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751004AbeBISxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 13:53:09 -0500
+From: Heiko Stuebner <heiko@sntech.de>
+To: Klaus Goger <klaus.goger@theobroma-systems.com>
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: enable I2S codec on rk3399-puma-haikou
+Date: Fri, 09 Feb 2018 19:52:59 +0100
+Message-ID: <2448065.tRKBKgXtGg@phil>
+In-Reply-To: <20180203155016.51909-3-klaus.goger@theobroma-systems.com>
+References: <20180203155016.51909-1-klaus.goger@theobroma-systems.com> <20180203155016.51909-3-klaus.goger@theobroma-systems.com>
 MIME-Version: 1.0
-In-Reply-To: <20180209142800.25485-1-jgross@suse.com>
-References: <20180209142800.25485-1-jgross@suse.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 9 Feb 2018 10:48:40 -0800
-X-Google-Sender-Auth: neCzTx_FXP4lzeRscsw4KICF2j0
-Message-ID: <CA+55aFxyEpQUgpZtkRbc1ESbMBw6FcbLgbzB3ioPN_097HpzOg@mail.gmail.com>
-Subject: Re: [GIT PULL] xen: fixes for 4.16 rc1
-To: Juergen Gross <jgross@suse.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 9, 2018 at 6:28 AM, Juergen Gross <jgross@suse.com> wrote:
->
->  git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.16-rc1-tag
+Hi Klaus,
 
-So I've pulled this, but the back-merges *really* annoy me.
+Am Samstag, 3. Februar 2018, 16:50:16 CET schrieb Klaus Goger:
+> Enable the NXP SGTL5000 audio codec on the RK3399-Q7 EVK baseboard
+> Haikou.
+> 
+> The i2s0_2ch_bus definition is only done in the SoM dtsi as it is
+> missing the LRCK_RX pin (that is used otherwise) and therefore not
+> generic enough for the SoC dtsi.
+> 
+> Signed-off-by: Klaus Goger <klaus.goger@theobroma-systems.com>
 
-Seriously, DON'T DO MERGES IF YOU CANNOT EVEN BE BOTHERED TO WRITE A
-REASON FOR THEM!
+as we talked about today at Fosdem, please add the changes as below
 
-There are two back-merges in that tree, and while they both merge
-reasonable merge points (v4.14 and v4.15 respectively), neither of
-them has *any* explanation of why the f*ck the merge was done. The
-v4.15 merge doesn't even make it clear that it merges v4.15 - it just
-says "master".
+> +	i2s0_sound {
 
-Having random commits with no explanation of what the hell they are
-doing is NOT OK. It's not ok when they do real changes, but it's EVEN
-MORE not ok when they are just random merges that bring in
-who-the-hell-knows-what.
+nit: is20-sound
 
-Merge commits need explanations of what they merge and why they merge it. This:
+[...]
 
-    Merge branch 'master' of
-ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/torvalds/linux
+>  		regulator-name = "vcc5v0_otg";
+>  		regulator-always-on;
+>  	};
+> +
+> +	vdda_codec: vdda-codec {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vdda_codec";
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
 
-(which is all the explanation there is in commit ddb9e13af3bb) is
-simply not acceptable.
+vin-supply, so that the regulator-tree becomes an actual tree?
 
-At least the other merge merged the v4.14 _tag_, so just looking at
-the merge it's at least clear that you merged a real release. It still
-doesn't explain _why_ it was merged.
+> +	};
+> +
+> +	vddd_codec: vddd-codec {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vddd_codec";
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <1600000>;
+> +		regulator-max-microvolt = <1600000>;
 
-If you cannot state a good reason for the merge, or you can't be
-bothered to write one, DO NOT DO THE MERGE.
+vin-supply?
 
-It's really that simple.
 
-          Linus "grumble" Torvalds
+> -&i2s0 {
+> -	status = "okay";
+> -	rockchip,playback-channels = <8>;
+> -	rockchip,capture-channels = <8>;
+> -	#sound-dai-cells = <0>;
+> -	status = "okay";
+> -};
+> -
+
+please do the move of the &i2s0 block in a separate patch
+
+> @@ -461,6 +469,23 @@
+>  		};
+>  	};
+>  
+> +	i2s0 {
+> +		/*
+> +		 * As Q7 does not specify neither a global nor a RX clock for I2S these
+> +		 * signals are not used. Furthermore I2S0_LRCK_RX is used as GPIO.
+> +		 * Therefore we have to redefine the i2s0_2ch_bus definition to prevent
+> +		 * conflicts.
+> +		 */
+> +		/delete-node/ i2s0_2ch_bus;
+> +		i2s0_2ch_bus: i2s0-2ch-bus {
+> +			rockchip,pins =
+> +				<RK_GPIO3 RK_PD0 RK_FUNC_1 &pcfg_pull_none>,
+> +				<RK_GPIO3 RK_PD2 RK_FUNC_1 &pcfg_pull_none>,
+> +				<RK_GPIO3 RK_PD3 RK_FUNC_1 &pcfg_pull_none>,
+> +				<RK_GPIO3 RK_PD7 RK_FUNC_1 &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+
+please keep the comment but make this an
+&i2s0_2ch_bus {
+	rockchip,pins =
+}
+
+as overriding only a single property doesn't require the /delete-node/
+magic.
+
+
+Thanks
+Heiko
