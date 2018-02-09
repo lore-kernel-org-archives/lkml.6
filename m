@@ -1,60 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeBIMry (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:47:54 -0500
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:30682 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751007AbeBIMrw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:47:52 -0500
-Subject: Re: [PATCH v6 41/41] ARM: dts: da850: Add clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-42-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <075d9f68-ad82-c8c0-c302-3b07162ecb2e@ti.com>
-Date: Fri, 9 Feb 2018 18:16:44 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751307AbeBIMsb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:48:31 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:39910 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeBIMs3 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 9 Feb 2018 07:48:29 -0500
+From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+To: Colin King <colin.king@canonical.com>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] CIFS: SMBD: fix spelling mistake: "faield" and "legnth"
+In-Reply-To: <20180209121415.564-1-colin.king@canonical.com>
+References: <20180209121415.564-1-colin.king@canonical.com>
+Date: Fri, 09 Feb 2018 13:48:25 +0100
+Message-ID: <87k1vmib1i.fsf@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-42-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-> index c66cf78..7f4acd7 100644
-> --- a/arch/arm/boot/dts/da850.dtsi
-> +++ b/arch/arm/boot/dts/da850.dtsi
-> @@ -21,6 +21,36 @@
->  			#interrupt-cells = <1>;
->  			ti,intc-size = <101>;
->  			reg = <0xfffee000 0x2000>;
-> +			clocks = <&psc0 6>;
-> +		};
-> +	};
-> +	clocks: clocks {
-> +		ref_clk: ref_clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <24000000>;
-> +			clock-output-names = "ref_clk";
-> +		};
 
-The ref_clk clock-frequency should rather be added in each board file
-since its not fixed by the SoC. In general we dont want any SoC defined
-properties to be overwritten by board files (except the status = property).
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 
-Thanks,
-Sekhar
+-- 
+Aurélien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
