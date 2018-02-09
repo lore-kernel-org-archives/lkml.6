@@ -1,101 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751998AbeBIMbP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:31:15 -0500
-Received: from 5.mo3.mail-out.ovh.net ([87.98.178.36]:59486 "EHLO
-        5.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeBIMbN (ORCPT
+        id S1752166AbeBIMb4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:31:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59146 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751142AbeBIMby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:31:13 -0500
-Date: Fri, 9 Feb 2018 12:49:22 +0100
-From: Greg Kurz <groug@kaod.org>
-To: Veaceslav Falico <veaceslav.falico@huawei.com>
-Cc: jiangyiwen <jiangyiwen@huawei.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        <v9fs-developer@lists.sourceforge.net>, <qemu-devel@nongnu.org>,
-        <aneesh.kumar@linux.vnet.ibm.com>, Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [V9fs-developer] [RFC] we should solve create-unlink-getattr
- idiom
-Message-ID: <20180209124922.3a215c34@bahia.lan>
-In-Reply-To: <a1ef7be5-d368-fe31-4386-1d40762b5849@huawei.com>
-References: <5A7D4976.6060407@huawei.com>
-        <a1ef7be5-d368-fe31-4386-1d40762b5849@huawei.com>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Fri, 9 Feb 2018 07:31:54 -0500
+Date: Fri, 9 Feb 2018 04:31:59 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Ildar Ismagilov <devix84@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] srcu: Prevent sdp->srcu_gp_seq_needed_exp counter
+ wrap
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180131193954.28386-1-devix84@gmail.com>
+ <20180203091628.GF3617@linux.vnet.ibm.com>
+ <CADCZxWdVnpjS7Xqs_-tJcxLRTONrEEh8yF32F=mZUNhyj8bBfw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 10112832966719740358
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrvddtgdefhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADCZxWdVnpjS7Xqs_-tJcxLRTONrEEh8yF32F=mZUNhyj8bBfw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18020912-0044-0000-0000-000003DE2359
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008503; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000250; SDB=6.00987191; UDB=6.00501061; IPR=6.00766549;
+ BA=6.00005821; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019456; XFM=3.00000015;
+ UTC=2018-02-09 12:31:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020912-0045-0000-0000-0000080D95E7
+Message-Id: <20180209123159.GZ3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802090160
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Feb 2018 08:21:52 +0100
-Veaceslav Falico <veaceslav.falico@huawei.com> wrote:
+On Tue, Feb 06, 2018 at 01:44:10PM +0300, Ildar Ismagilov wrote:
+> The results of rcutorture tests in attachment. I only tested: SRCU-N,
+> SRCU-P, SRCU-t and SRCU-u configs.
 
-> Hi Yiwen, all,
+That is a good set for an SRUC change, thank you!
+
+							Thanx, Paul
+
+> 2018-02-03 12:16 GMT+03:00 Paul E. McKenney <paulmck@linux.vnet.ibm.com>:
+> > On Wed, Jan 31, 2018 at 10:39:53PM +0300, Ildar Ismagilov wrote:
+> >> Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
+> >
+> > I did apply this for testing and review, thank you and good eyes!
+> >
+> > However, I had to:
+> >
+> > 1.      hand-edit it to make it work against the rcu/dev
+> >         branch of my -rcu tree:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+> >
+> > 2.      fill out the commit logs.
+> >
+> > Please see below for the updated patch, and please let me know if I
+> > messed something up.
+> >
+> > In the future, could you please apply your patches against the rcu/dev
+> > branch of -rcu and provide more complete commit logs?  The commit log
+> > should describe the problem and how that problem is fixed.
+> >
+> > Also, are you able to test these using rcutorture?  If not, let's get you
+> > set up for that, as I am prone to testing backlogs just now.  Plus I am
+> > writing this while 34,000 feet over Western Australia.  So it would mean
+> > fewer delays for you if you could test your own patches.  ;-)
+> >
+> >                                                         Thanx, Paul
+> >
+> > ------------------------------------------------------------------------
+> >
+> > commit 753abb606ba61012c8838c73e2c888aea20efe13
+> > Author: Ildar Ismagilov <devix84@gmail.com>
+> > Date:   Wed Jan 31 22:39:53 2018 +0300
+> >
+> >     srcu: Prevent sdp->srcu_gp_seq_needed_exp counter wrap
+> >
+> >     SRCU checks each srcu_data structure's grace-period number for counter
+> >     wrap four times per cycle by default.  This frequency guarantees that
+> >     normal comparisons will detect potential wrap.  However, the expedited
+> >     grace-period number is not checked.  The consquences are not too horrible
+> >     (a failure to expedite a grace period when requested), but it would be
+> >     good to avoid such things.  This commit therefore adds this check to
+> >     the expedited grace-period number.
+> >
+> >     Signed-off-by: Ildar Ismagilov <devix84@gmail.com>
+> >     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> >
+> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> > index 2878387d4189..ad3e1aa5e6ea 100644
+> > --- a/kernel/rcu/srcutree.c
+> > +++ b/kernel/rcu/srcutree.c
+> > @@ -579,6 +579,9 @@ static void srcu_gp_end(struct srcu_struct *sp)
+> >                                 if (ULONG_CMP_GE(gpseq,
+> >                                                  sdp->srcu_gp_seq_needed + 100))
+> >                                         sdp->srcu_gp_seq_needed = gpseq;
+> > +                               if (ULONG_CMP_GE(gpseq,
+> > +                                                sdp->srcu_gp_seq_needed_exp + 100))
+> > +                                       sdp->srcu_gp_seq_needed_exp = gpseq;
+> >                                 spin_unlock_irqrestore_rcu_node(sdp, flags);
+> >                         }
+> >         }
+> >
 > 
-> On 2/9/2018 8:10 AM, jiangyiwen wrote:
-> > Hi Eric and Greg,
-> > 
-> > I encountered the similar problem with create-unlink-getattr idiom.
-> > I use the testcase that create-unlink-setattr idiom, and I see the
-> > bug is reported at https://bugs.launchpad.net/qemu/+bug/1336794.
-> > Then I also see you already fix the issue and push the patch to upstream.
-> > https://github.com/ericvh/linux/commit/eaf70223eac094291169f5a6de580351890162a2
-> > http://patchwork.ozlabs.org/patch/626194/
-> > 
-> > Unfortunately, the two patches are not merged into master, I don't know
-> > the reason, so I suggest if the patche can be merged into master, and
-> > it will solve the create-unlink-getattr idiom.  
-> 
-> As a follow up - the create-unlink-setattr (mainly ftruncate and anything
-> else which works on fd instead of path) isn't fixed by these patches, but
-> I'm currently working on a new patch, obviously on top of those two, to
-> make the setattr work too.
-> 
-> It's based on the same logic as the above patches though - use FIDs with
-> open fd's guest side and use open fd's host side if possible with f*
-> functions, otherwise path with l* functions.
-> 
-> It's bigger than the QEMU getattr patch, as there are no f* functions
-> available for ftruncate case, for example.
-> 
-
-As I was saying to Yiwen, maybe have a look at:
-
-https://github.com/gkurz/qemu/commits/9p-attr-fixes
-
-It is probably too old to rebase cleanly on current master, but it gives
-the general idea.
-
-IIRC, the cause for this not moving forward was because of an issue
-unveiled/introduced by patch 3/3 in the linux 9p driver:
-
-https://sourceforge.net/p/v9fs/mailman/v9fs-developer/thread/20160704141655.GA5799%40u-isr-cdi-08/#msg35199720
-
-and a general lack of care for the 9p code at the time... but it seems
-you guys are willing to go forward, and that's cool ! :)
-
-Cheers,
-
---
-Greg
-
-> So if those two patches could be merged it'd be a lot easier to then
-> go forward with the setattr fix.
-> 
-> Thank you!
-> 
-> > 
-> > Thanks,
-> > Yiwen
-> > 
-> > .
-> >   
 > 
 > 
+> -- 
+> Best regards
+> Ildar
