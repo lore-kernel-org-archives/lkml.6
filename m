@@ -1,86 +1,72 @@
-Return-Path: <jroedel@suse.de>
-X-Google-Smtp-Source: AH8x226B0alKU5LLcf61V0uZABJZl7MB/v4VvQ49/OMXPfi+Bgq7P58p0A6mQfgMUr8tElLnrpXg
-ARC-Seal: i=1; a=rsa-sha256; t=1518202953; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518203856; cv=none;
         d=google.com; s=arc-20160816;
-        b=mljBnWSNyxOt4XT0dD5pIfXiNNy6hPeuT9GFuFsuIjAiIcCgOcOoLVNjZPmQ/O2aQK
-         y7QfPeViN0y0NGct8Nh7lgzH13EpJu/mtdVVKGp/JY9OO7F0jvODszmcefg0LiydzONO
-         cMoTMBUrYG92IQUcLN9e5kQnUwAeDzZCNqFeatMRHbxItvWXA02cJWFLfxQcjRFfJ6d9
-         o8Lyp/g7KFTVlXhSWTtZ5KeVaGdlj8afz3qhMAfvK9wtVs2Lhzfb8jSQTPlVR3HS/Ntd
-         qs9/krHKYcau0l4KfYjY+hLb9EPKsfnJ6Lkc4LC3bmfmREWlpQkMmcVK8bEcRwZ0gZ/p
-         K0Og==
+        b=HkgCfjulsZ9b9Gu6B41ie3cC6IHSKuRYNCh5rz034PiacWkvBX+F0n1Ih6P5BPuBYh
+         ZdnfaCvkDXufP7BGWOBWCwYzKk7+2+psUtjEwh+V7ALpXApWDG3Nja/NhYFwmq6wa0XK
+         szy1EjbyKBvtFKKAJqdUIDLF27owrgu9iV3vxHZIIgcAEPaTRCRU+MYOOLDpMgWElgTz
+         rDQrXxYsmuGdheFY5ZQDJbk45q8mkEW6hCpHjtcr52FjaebjP5o5a2ltEnl250BaZ4N4
+         nOPvsOkXYKpJTq8Y9y6ocksx96nuivtXqkxKlcH4hQyleXGf6vyZ/3Htrp+CyzpiqtrN
+         2D3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=fH+cy3t31i3Dkxm/+r8yWAn0O5AHgUeFZFT6foFNEj8=;
-        b=JdlHhxQVVeVbG+CGAXHokpapLSmEXbKl6S5ElywTNa8vK++vy2prSBYhlBiorInljQ
-         tP3z107KKe/0sfZW4JeJ8wN7BoSXp1OmBIGGlQuuOH8PnpPYGf2L6cS0WFIYjrKTJLqw
-         4U+HPyQ+GYhJSu1iLp/E2jmI+K4LJLguQCd/F6u9kky/MsRrp1UkI2sU5wdtjiSecKee
-         gxu3g3/tXEOfIWtzE24jdJsllBZ2x0uUt/54UcLIyu+Szv94XGu0i1XWrwUovQKbbERF
-         1rjVokF3wiRS6yodmfc6y32B1lRuaSblZUxXbLQRsV1LAYnb0j5pxEN62qbxt23VqDl5
-         Rj0Q==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=I/arvUcUKIlpe1kgARr0ggMZ4cFI3JvQrAPM/Y1Yd6A=;
+        b=KOnVPndYopsc3aypwRdQ30GsGknBHgP3WNr30CiyMbPDtDpP2a1RpUAjyRm2BNUC0K
+         Zk98uuw8HEs6V/zqGOIzdQCoJcSs8NqPlBzgOZIKJtbd7d7Sg4DZ1borEciDMe+OogcJ
+         knhzFo5aH/manoqI4WtaRuKt8H2IfPdj5s+ZyXi6LfqixlDuJPIV5bktS3Y2qPnxPptr
+         P0GXqVNttiwUhJMKIhuYed/du84VT2AQm2qO2obdgmHCbb04v5gtSGbrXnoVe6VHsG51
+         8uK02UtpgEfaA6xtXRpvTlLq0WNmsAG3Cu9+azq/e41OuebFM8xiDIUD6qeMBCnnY9Lq
+         GKug==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VqxrH8+O;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
-Date: Fri, 9 Feb 2018 20:02:26 +0100
-From: Joerg Roedel <jroedel@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, Andy Lutomirski <luto@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 09/31] x86/entry/32: Leave the kernel via trampoline stack
-Message-ID: <20180209190226.lqh6twf7thfg52cq@suse.de>
-References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
- <1518168340-9392-10-git-send-email-joro@8bytes.org>
- <CA+55aFzB9H=RT6YB3onZCephZMs9ccz4aJ_jcPcfEkKJD_YDCQ@mail.gmail.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VqxrH8+O;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x227+a30Oys5WTgoCNgXjmPcVJlTaVxXg0OwUB5wcCR5elkzt2k9paavoa/9oe5sxKpfsZDdy34ANiyA2eR9GGjk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzB9H=RT6YB3onZCephZMs9ccz4aJ_jcPcfEkKJD_YDCQ@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Sender: linus971@gmail.com
+In-Reply-To: <20180209190226.lqh6twf7thfg52cq@suse.de>
+References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
+ <1518168340-9392-10-git-send-email-joro@8bytes.org> <CA+55aFzB9H=RT6YB3onZCephZMs9ccz4aJ_jcPcfEkKJD_YDCQ@mail.gmail.com>
+ <20180209190226.lqh6twf7thfg52cq@suse.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Feb 2018 11:17:35 -0800
+X-Google-Sender-Auth: dE0jcPgjrO-d56xYOmg3SgjsQNA
+Message-ID: <CA+55aFzy6ZJDUpgHY0J2_z4kODaiYPgyHuOsMGiXmrhgR3kyPQ@mail.gmail.com>
+Subject: Re: [PATCH 09/31] x86/entry/32: Leave the kernel via trampoline stack
+To: Joerg Roedel <jroedel@suse.de>
+Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, "the arch/x86 maintainers" <x86@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+	Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
+	Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
+	Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914904027044040?=
-X-GMAIL-MSGID: =?utf-8?q?1591951180330843357?=
+X-GMAIL-MSGID: =?utf-8?q?1591952127088498526?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 09, 2018 at 09:05:02AM -0800, Linus Torvalds wrote:
-> On Fri, Feb 9, 2018 at 1:25 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> > +
-> > +       /* Copy over the stack-frame */
-> > +       cld
-> > +       rep movsb
-> 
-> Ugh. This is going to be horrendous. Maybe not noticeable on modern
-> CPU's, but the whole 32-bit code is kind of pointless on a modern CPU.
-> 
-> At least use "rep movsl". If the kernel stack isn't 4-byte aligned,
-> you have issues.
+On Fri, Feb 9, 2018 at 11:02 AM, Joerg Roedel <jroedel@suse.de> wrote:
+>
+> Okay, I used movsb because I remembered that being the recommendation
+> for the most efficient memcpy, and it safes me an instruction. But that
+> is probably only true on modern CPUs.
 
-Okay, I used movsb because I remembered that being the recommendation
-for the most efficient memcpy, and it safes me an instruction. But that
-is probably only true on modern CPUs. I'll change it to use movsl here
-and in the other patches.
+Yeah, it's only true on the very latest uarchs, and even there it's
+not perfect for small copies.
 
-Thanks,
+On the older machines that are relevant for 32-bit code, it's often
+tens of cycles just for the ucode overhead, I think, and "rep movsb"
+actually does things literally a byte at a time.
 
-	Joerg
+              Linus
