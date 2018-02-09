@@ -1,128 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeBIMTK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:19:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:46500 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752054AbeBIMTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:19:06 -0500
-Subject: Re: [PATCH 4/4] arm64: capabilities: Group handling of features and
- errata workarounds
-To: dave.martin@arm.com
-Cc: mark.rutland@arm.com, will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jnair@caviumnetworks.com, ckadabi@codeaurora.org
-References: <20180208173229.GA5862@e103592.cambridge.arm.com>
- <20180209121605.14091-1-suzuki.poulose@arm.com>
- <20180209121605.14091-5-suzuki.poulose@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <038c374e-39db-e5d0-0205-7001c7ffc618@arm.com>
-Date: Fri, 9 Feb 2018 12:19:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751087AbeBIMUu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:20:50 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49045 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751003AbeBIMUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:20:48 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Cc: viresh.kumar@linaro.org, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] cpufreq: powernv: Add support of frequency domain
+Date: Fri, 09 Feb 2018 13:19:04 +0100
+Message-ID: <2235126.ZWAqWlELuo@aspire.rjw.lan>
+In-Reply-To: <1516609054-13244-1-git-send-email-huntbag@linux.vnet.ibm.com>
+References: <1516609054-13244-1-git-send-email-huntbag@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180209121605.14091-5-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/18 12:16, Suzuki K Poulose wrote:
-> Now that the features and errata workarounds have the same
-> rules and flow, group the handling of the tables.
+On Monday, January 22, 2018 9:17:34 AM CET Abhishek Goel wrote:
+> Frequency-domain indicates group of CPUs that would share same frequency.
+> It is detected using device-tree node "frequency-domain-indicator".
+> frequency-domain-indicator is a bitmask which will have different value
+> depending upon the generation of the processor.
 > 
-> Cc: Dave Martin <dave.martin@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> CPUs of the same chip for which the result of a bitwise AND between
+> their PIR and the frequency-domain-indicator is the same share the same
+> frequency.
+> 
+> In this patch, we define hash-table indexed by the aforementioned
+> bitwise ANDed value to store the cpumask of the CPUs sharing the same
+> frequency domain. Further, the cpufreq policy will be created per
+> frequency-domain
+> 
+> So for POWER9, a cpufreq policy is created per quad while for POWER8 it
+> is created per core. Governor decides frequency for each policy but
+> multiple cores may come under same policy. In such case frequency needs
+> to be set on each core sharing that policy.
+> 
+> Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
 > ---
->   arch/arm64/kernel/cpufeature.c | 72 ++++++++++++++++++++++++------------------
->   1 file changed, 41 insertions(+), 31 deletions(-)
 > 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 45bac0c4ae91..e97ec8d5fd89 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -504,8 +504,7 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
->   }
->   
->   extern const struct arm64_cpu_capabilities arm64_errata[];
-> -static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
-> -				    u16 scope_mask, const char *info);
-> +static void update_cpu_capabilities(u16 scope_mask);
->   
->   void __init init_cpu_features(struct cpuinfo_arm64 *info)
->   {
-> @@ -554,10 +553,7 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
->   	 * Run the errata work around and local feature checks on the
->   	 * boot CPU, once we have initialised the cpu feature infrastructure.
->   	 */
-> -	update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
-> -				"enabling workaround for");
-> -	update_cpu_capabilities(arm64_features, SCOPE_LOCAL_CPU,
-> -				"detected feature:");
-> +	update_cpu_capabilities(SCOPE_LOCAL_CPU);
->   }
->   
->   static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
-> @@ -1225,7 +1221,7 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
->   	return false;
->   }
->   
-> -static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
-> +static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
->   				    u16 scope_mask, const char *info)
->   {
->   	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
-> @@ -1240,6 +1236,14 @@ static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
->   	}
->   }
->   
-> +static void update_cpu_capabilities(u16 scope_mask)
+> Skiboot patch required for the corresponding device-tree changes have been
+> posted here : http://patchwork.ozlabs.org/patch/862256/
+> 
+>  drivers/cpufreq/powernv-cpufreq.c | 104 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 95 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+> index b6d7c4c..aab23a4 100644
+> --- a/drivers/cpufreq/powernv-cpufreq.c
+> +++ b/drivers/cpufreq/powernv-cpufreq.c
+> @@ -37,6 +37,7 @@
+>  #include <asm/smp.h> /* Required for cpu_sibling_mask() in UP configs */
+>  #include <asm/opal.h>
+>  #include <linux/timer.h>
+> +#include <linux/hashtable.h>
+>  
+>  #define POWERNV_MAX_PSTATES	256
+>  #define PMSR_PSAFE_ENABLE	(1UL << 30)
+> @@ -130,6 +131,9 @@ enum throttle_reason_type {
+>  static int nr_chips;
+>  static DEFINE_PER_CPU(struct chip *, chip_info);
+>  
+> +static u32 freq_domain_indicator;
+> +static bool p9_occ_quirk;
+> +
+>  /*
+>   * Note:
+>   * The set of pstates consists of contiguous integers.
+> @@ -194,6 +198,38 @@ static inline void reset_gpstates(struct cpufreq_policy *policy)
+>  	gpstates->last_gpstate_idx = 0;
+>  }
+>  
+> +#define SIZE NR_CPUS
+> +#define ORDER_FREQ_MAP ilog2(SIZE)
+> +
+> +static DEFINE_HASHTABLE(freq_domain_map, ORDER_FREQ_MAP);
+> +
+> +struct hashmap {
+> +	cpumask_t mask;
+> +	int chip_id;
+> +	u32 pir_key;
+> +	struct hlist_node hash_node;
+> +};
+> +
+> +static void insert(u32 key, int cpu)
 > +{
-> +	__update_cpu_capabilities(arm64_features, scope_mask,
-> +				  "detected feature:");
-> +	__update_cpu_capabilities(arm64_errata, scope_mask,
-> +				  "enabling workaround for");
+> +	struct hashmap *data;
+> +
+> +	hash_for_each_possible(freq_domain_map, data, hash_node, key%SIZE) {
+> +		if (data->chip_id == cpu_to_chip_id(cpu) &&
+> +			data->pir_key == key) {
+> +			cpumask_set_cpu(cpu, &data->mask);
+> +			return;
+> +		}
+> +	}
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	hash_add(freq_domain_map, &data->hash_node, key%SIZE);
+> +	cpumask_set_cpu(cpu, &data->mask);
+> +	data->chip_id = cpu_to_chip_id(cpu);
+> +	data->pir_key = key;
+> +
 > +}
 > +
->   static int __enable_cpu_capability(void *arg)
->   {
->   	const struct arm64_cpu_capabilities *cap = arg;
-> @@ -1253,7 +1257,7 @@ static int __enable_cpu_capability(void *arg)
->    * CPUs
->    */
->   static void __init
-> -enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mask)
-> +__enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mask)
->   {
->   	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
->   	for (; caps->matches; caps++) {
-> @@ -1277,6 +1281,12 @@ enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mas
->   	}
->   }
->   
-> +static void __init enable_cpu_capabilities(u16 scope_mask)
-> +{
-> +	__enable_cpu_capabilities(arm64_features, scope_mask);
-> +	__enable_cpu_capabilities(arm64_errata, scope_mask);
-> +}
+>  /*
+>   * Initialize the freq table based on data obtained
+>   * from the firmware passed via device-tree
+> @@ -206,6 +242,7 @@ static int init_powernv_pstates(void)
+>  	u32 len_ids, len_freqs;
+>  	u32 pstate_min, pstate_max, pstate_nominal;
+>  	u32 pstate_turbo, pstate_ultra_turbo;
+> +	u32 key;
+>  
+>  	power_mgt = of_find_node_by_path("/ibm,opal/power-mgt");
+>  	if (!power_mgt) {
+> @@ -246,9 +283,18 @@ static int init_powernv_pstates(void)
+>  	else
+>  		powernv_pstate_info.wof_enabled = true;
+>  
+> +	if (of_device_is_compatible(power_mgt, "freq-domain-v1") &&
+> +		of_property_read_u32(power_mgt, "ibm,freq-domain-indicator",
+> +				&freq_domain_indicator))
+> +		pr_warn("ibm,freq-domain-indicator not found\n");
 > +
->   /*
->    * Run through the list of capabilities to check for conflicts.
->    * If the system has already detected a capability, take necessary
-> @@ -1332,6 +1342,12 @@ static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_li
->   	return true;
->   }
->   
-> +static bool verify_local_cpu_caps(u16 scope_mask)
-> +{
-> +	return __verify_local_cpu_caps(arm64_errata, scope_mask) &&
+> +        if (of_device_is_compatible(power_mgt, "p9-occ-quirk"))
+> +		p9_occ_quirk = true;
+> +
+>  next:
+>  	pr_info("cpufreq pstate min %d nominal %d max %d\n", pstate_min,
+>  		pstate_nominal, pstate_max);
+> +	pr_info("frequency domain indicator %d", freq_domain_indicator);
+>  	pr_info("Workload Optimized Frequency is %s in the platform\n",
+>  		(powernv_pstate_info.wof_enabled) ? "enabled" : "disabled");
+>  
+> @@ -276,6 +322,15 @@ static int init_powernv_pstates(void)
+>  		return -ENODEV;
+>  	}
+>  
+> +	if (freq_domain_indicator) {
+> +		hash_init(freq_domain_map);
+> +		for_each_possible_cpu(i) {
+> +			key = ((u32) get_hard_smp_processor_id(i) &
+> +				freq_domain_indicator);
+> +			insert(key, i);
+> +		}
+> +	}
+> +
+>  	powernv_pstate_info.nr_pstates = nr_pstates;
+>  	pr_debug("NR PStates %d\n", nr_pstates);
+>  	for (i = 0; i < nr_pstates; i++) {
+> @@ -760,25 +815,56 @@ static int powernv_cpufreq_target_index(struct cpufreq_policy *policy,
+>  
+>  	spin_unlock(&gpstates->gpstate_lock);
+>  
+> -	/*
+> -	 * Use smp_call_function to send IPI and execute the
+> -	 * mtspr on target CPU.  We could do that without IPI
+> -	 * if current CPU is within policy->cpus (core)
+> +	/* The current DVFS implementation in firmware requires that to set a
+> +	 * frequency in a quad, all cores of the quad need to set frequency in
+> +	 * their respective PMCR's. Ideally setting frequency on any of the
+> +	 * core of that quad should change frequency for the quad.
+>  	 */
+> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
+> +	if (p9_occ_quirk) {
+> +		cpumask_t temp;
+> +		u32 cpu;
+> +
+> +		cpumask_copy(&temp, policy->cpus);
+> +		while (!cpumask_empty(&temp)) {
+> +			cpu = cpumask_first(&temp);
+> +			smp_call_function_any(cpu_sibling_mask(cpu),
+> +					set_pstate, &freq_data, 1);
+> +			cpumask_andnot(&temp, &temp, cpu_sibling_mask(cpu));
+> +		}
+> +	} else {
+> +		smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+>  static int powernv_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  {
+> -	int base, i, ret;
+> +	int ret;
+>  	struct kernfs_node *kn;
+>  	struct global_pstate_info *gpstates;
+>  
+> -	base = cpu_first_thread_sibling(policy->cpu);
+> +	if (!freq_domain_indicator) {
 
+IMO it would be more straightforward to write this conditional as
 
-> +	       __verify_local_cpu_caps(arm64_errata, scope_mask);
+if (freq_domain_indicator) {
+   do something
+} else {
+   do something else
+}
 
-Err.. this is arm64_features. Fixed up locally.
+> +		int base, i;
+>  
+> -	for (i = 0; i < threads_per_core; i++)
+> -		cpumask_set_cpu(base + i, policy->cpus);
+> +		base = cpu_first_thread_sibling(policy->cpu);
+> +		for (i = 0; i < threads_per_core; i++)
+> +			cpumask_set_cpu(base + i, policy->cpus);
+> +	} else {
+> +		u32 key;
+> +		struct hashmap *data;
+> +
+> +		key = ((u32) get_hard_smp_processor_id(policy->cpu) &
+> +				freq_domain_indicator);
 
-Suzuki
+The outer paren on the right-hand side is not necessary.
+
+The explicit case to u32 isn't necessary as well AFAICS.
+
+> +		hash_for_each_possible(freq_domain_map, data, hash_node,
+> +								 key%SIZE) {
+> +			if (data->chip_id == cpu_to_chip_id(policy->cpu) &&
+> +				data->pir_key == key) {
+
+You have slightly confusing indentation here, as the continuation of the
+condition is at the same level as the statements in the conditional block.
+
+> +				cpumask_copy(policy->cpus, &data->mask);
+> +				break;
+> +			}
+> +		}
+> +	}
+>  
+>  	kn = kernfs_find_and_get(policy->kobj.sd, throttle_attr_grp.name);
+>  	if (!kn) {
+> 
+
+Overall, from cpufreq perspective, I don't see anything to complain about
+here.
+
+Thanks,
+Rafael
