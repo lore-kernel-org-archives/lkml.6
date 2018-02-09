@@ -1,72 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751038AbeBIMDS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:03:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40258 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750895AbeBIMDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:03:17 -0500
-Date: Fri, 9 Feb 2018 13:03:13 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Adam Borowski <kilobyte@angband.pl>, Kees Cook <keescook@chromium.org>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] vsprintf: avoid misleading "(null)" for %px
-Message-ID: <20180209120313.rckq3s54nr6yyus4@pathway.suse.cz>
-References: <20180204174521.21383-1-kilobyte@angband.pl>
- <20180205094438.pfd7ffymlvklpxe7@pathway.suse.cz>
- <CAGXu5j+rWhT7_DH5Z96_7naPou96-6736x4mjq0r_8EG4iiQ_g@mail.gmail.com>
- <20180205201555.GQ29988@eros>
- <CAGXu5j+KSm3rOK46xiYPx8SRaO9T5LaeaXxOA3PSktJv4F__dg@mail.gmail.com>
- <20180205205817.72dy7e7xzjcnwmhs@angband.pl>
- <20180207150328.nuk7f76nutq2trcg@pathway.suse.cz>
- <CAMuHMdVJZnbFrLxBZm1m6C+sR1MKuk3=G4RoYVkAgcxYDHgMGw@mail.gmail.com>
- <20180207154116.xvojw3bzmnmexkav@pathway.suse.cz>
- <CAHp75VeSds86y9+YBebhfVAS-ZOA1yeMXUD2o2du0SkbQjPDAw@mail.gmail.com>
+        id S1751144AbeBIMDz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:03:55 -0500
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:29054 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751007AbeBIMDx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:03:53 -0500
+From: Vignesh R <vigneshr@ti.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>
+CC: Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Niklas Cassel <niklas.cassel@axis.com>, <linux-omap@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vignesh R <vigneshr@ti.com>
+Subject: [PATCH 1/3] Revert "PCI: dwc: Clear MSI interrupt status after it is handled, not before"
+Date: Fri, 9 Feb 2018 17:34:13 +0530
+Message-ID: <20180209120415.17590-2-vigneshr@ti.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180209120415.17590-1-vigneshr@ti.com>
+References: <20180209120415.17590-1-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeSds86y9+YBebhfVAS-ZOA1yeMXUD2o2du0SkbQjPDAw@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-02-08 17:29:14, Andy Shevchenko wrote:
-> On Wed, Feb 7, 2018 at 5:41 PM, Petr Mladek <pmladek@suse.com> wrote:
-> > On Wed 2018-02-07 16:11:13, Geert Uytterhoeven wrote:
-> 
-> > To make it clear. I was talking about "%p" format that is handled
-> > in the pointer() function in lib/vsprintf.c. The "(null)" makes
-> > sense only for the many modifiers that do deference of
-> > the pointer, e.g. "%pa", "%pE", "%ph".
-> 
-> JFYI: I have a patch to eliminate those for %pE & %ph.
->
-> Google for "lib/vsprintf: Remove useless NULL checks" as a first in
-> the series for new extension to print times.
+Since commit 06e15e6883bed ("PCI: dwc: Clear MSI interrupt status after
+it is handled, not before"), MSI IRQ status in PCIE_MSI_INTR0_STATUS
+register is cleared after calling EP's IRQ handler.
+But, MSI IRQs in case of PCIe are bit like edge interrupts. If a
+another MSI IRQ is raised and the end of current EP's IRQ handler call
+but before clearing the MSI IRQ status in PCIE_MSI_INTR0_STATUS register
+then the new MSI IRQ is lost.
 
-I am slightly confused. IMHO, it makes sense to printk "(null)"
-for %pE and %ph.
+This issue has been observed in case of USB-Ethernet adapter connected
+to PCIe USB card running iperf3 test. iperf3 client stalls after
+sometime as reported here[1]. This is because XHCI raises MSI IRQ at the
+end of its IRQ handler but before PCIe driver has cleared its status
+in PCIE_MSI_INTR0_STATUS register. Hence, the new IRQ is never
+registered by PCIe designware core. Since, XHCI does not raise any more
+IRQs until the previous one is handled, it leads to a stall in
+communication.
+Therefore driver should always clear the MSI IRQ status in
+PCIE_MSI_INTR0_STATUS before calling EP's IRQ handler. This make sure
+that DW PCIe core catches new IRQ raised during the call to EP's IRQ
+handler
 
-Or do you just want to avoid the duplicit check in hex_string()
-and escaped_string()?
+[1] https://lkml.kernel.org/r/BN6PR18MB124994D85EAC4B5B1AD5EC56866E0@BN6PR18MB1249.namprd18.prod.outlook.com
 
-Well, it might be better to discuss this once you send the patch.
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
+ drivers/pci/dwc/pcie-designware-host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I just need time to address comments and resend the series.
-
-Good to know.
-
-Best Regards,
-Petr
+diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
+index 8de2d5c69b1d..c29cbcd430f4 100644
+--- a/drivers/pci/dwc/pcie-designware-host.c
++++ b/drivers/pci/dwc/pcie-designware-host.c
+@@ -68,9 +68,9 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+ 		while ((pos = find_next_bit((unsigned long *) &val, 32,
+ 					    pos)) != 32) {
+ 			irq = irq_find_mapping(pp->irq_domain, i * 32 + pos);
+-			generic_handle_irq(irq);
+ 			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12,
+ 					    4, 1 << pos);
++			generic_handle_irq(irq);
+ 			pos++;
+ 		}
+ 	}
+-- 
+2.16.1
