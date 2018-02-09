@@ -1,210 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753573AbeBIN6u (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:58:50 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46751 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751195AbeBIN6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:58:48 -0500
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add fi->commit_lock to protect commit
- GCed pages
-To: Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>, <heyunlei@huawei.com>,
-        <miaoxie@huawei.com>
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
- <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
- <134848f9-2dd6-0efa-3ccf-3c29eeaf5534@huawei.com>
- <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
- <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
- <d67aae9c-778a-50bd-9f73-f90c3efd9b73@kernel.org>
- <33b262b8-7701-a150-09e5-9ae1b4733835@huawei.com>
- <0b3d2792-b3cf-3302-8313-404a25c86854@kernel.org>
-From: Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <f87ba022-0959-e56e-6769-c8481a7054fc@huawei.com>
-Date: Fri, 9 Feb 2018 21:57:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <0b3d2792-b3cf-3302-8313-404a25c86854@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+        id S1753529AbeBIOA5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:00:57 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:56087 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752752AbeBIOAx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 09:00:53 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180209140051epoutp04c96aa96c653070fb4ac5782fdb0fcc14~RrRQolw9S2020120201epoutp04C
+X-AuditID: b6c32a37-44bff70000001029-4a-5a7da9921043
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [GIT PULL] fbdev fix for v4.16
+Date: Fri, 09 Feb 2018 15:00:47 +0100
+Message-id: <2724350.XWj4eWGWql@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsWy7bCmnu6klbVRBlM+C1lc+fqezeJE3wdW
+        i8u75rBZrJ9/i81i/xUvi0d9b9kd2Dy+fZ3E4nFixm8Wj/vdx5k8jt/YzuTxeZNcAGsUl01K
+        ak5mWWqRvl0CV8bNrYoFT8Uqnnw5x9zA+Fa4i5GDQ0LARKL9hlUXIxeHkMAORon37SeYIZzv
+        jBIzd/9ihCnqP8AGEd/NKNH7+jkThPOVUWLr1fPsXYycHGwCVhIT21cxgtgiAkYSn19cYQUp
+        YhZYwyhxfGsPWJGwgLrE4Rk9TCA2i4CqRP+JqcwgNq+ApkTDo1tgzaICXhJb9rUzQcQFJX5M
+        vscCYjMLyEvs2z+VFcLWkTh7bB1YvYTAHDaJxvZqCNtF4tumflYIW1ji1fEt7BAfSEtcOmoL
+        co+EwCpGiZ9X/zJCOJsZJT5f/wrVYC1x+PhFqAV8Eu++9rBCNPNKdLQJQZR4SLRtbYba6yhx
+        p+8CG4gtJBAr8XfJccYJjDKzkJw9C8nZs5CcvYCReRWjWGpBcW56arFhgbFecWJucWleul5y
+        fu4mRnD0a5nvYNxwzucQowAHoxIP74u4migh1sSy4srcQ4wSHMxKIryXV9RGCfGmJFZWpRbl
+        xxeV5qQWH2KU5mBREucNCHCJEhJITyxJzU5NLUgtgskycXBKNTCafns7Y7aqaHzh5AkabNl6
+        4udlX3C8bl8bv+HmxpeV39ceXK2geYz3JP8v6VluMSfklGQaqhIeHrNZotG5MOvRLoVUlebf
+        7htXlShOeMp5Ys/J60mzONpvenPO4euSYQk8ypidnP6GJ2CmU1VCWtGCFA6bxuzDN+JYnl+c
+        OemogLS93nrbdiMlluKMREMt5qLiRAD7JkFh+gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsVy+t9jAd2JK2ujDNaf1bK48vU9m8WJvg+s
+        Fpd3zWGzWD//FpvF/iteFo/63rI7sHl8+zqJxePEjN8sHve7jzN5HL+xncnj8ya5ANYoLpuU
+        1JzMstQifbsEroybWxULnopVPPlyjrmB8a1wFyMHh4SAiUT/AbYuRi4OIYGdjBJTPz9lhHC+
+        Mkos+/uTuYuRk4NNwEpiYvsqRhBbRMBI4vOLK6wgNrPAGkaJt5N1QGxhAXWJwzN6mEBsFgFV
+        if4TU8F6eQU0JRoe3QLrFRXwktiyr50JIi4o8WPyPRaIOfIS+/ZPhZqpJbF+53GmCYy8s5CU
+        zUJSNgtJ2QJG5lWMkqkFxbnpucVGBYZ5qeV6xYm5xaV56XrJ+bmbGIFhue2wVt8OxvtL4g8x
+        CnAwKvHwToipiRJiTSwrrsw9xCjBwawkwnt5RW2UEG9KYmVValF+fFFpTmrxIUZpDhYlcd7b
+        eccihQTSE0tSs1NTC1KLYLJMHJxSDYxlUcHmjUUK+65EBAmX/ROxNHkRKu2/j/9vG5/5rqxp
+        gs84ty+b3/WMpWjt53Xmkrylizca6D08yO+/Pjoy13//BdHNPhW3vHP8l3NOKM5Rt7D+d+Hl
+        2dijydEJB/fv9zJU/zBFZ3KfwNKLyRN/HUntV+JOf2JwX6Vp0v1HN5pvdzaxmLzatlOJpTgj
+        0VCLuag4EQA5PamjRwIAAA==
+X-CMS-MailID: 20180209140049epcas1p2f634bd4306a16e4cf7ee7b411b811f0b
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180209140049epcas1p2f634bd4306a16e4cf7ee7b411b811f0b
+X-RootMTR: 20180209140049epcas1p2f634bd4306a16e4cf7ee7b411b811f0b
+References: <CGME20180209140049epcas1p2f634bd4306a16e4cf7ee7b411b811f0b@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is that you can not find a proper value of the threshold
-time, when f2fs_gc select the GCed data page of the atomic file (which
-has atomic started but not atomic committed yet), then f2fs_gc will
-run into loop, and all the f2fs ops will be blocked in f2fs_balane_fs.
-If the threshold time is set larger (e.g. 5s? Then all the f2fs ops will
-block 5s, which will cause unexpected bad result of user experience).
-And if the threshold time is set smaller (e.g. 500ms? Then the atomic
-ops will probably fail frequently). BTW, some more patches are needed
-to notify the atomic ops itself that it has run time out, and should
-handle the inmem pages....
 
-Back to these two patches, why not use them to separate inmem pages
-and GCed data pages in such a simple way.
+Hi Linus,
 
-On 2018/2/9 21:38, Chao Yu wrote:
-> On 2018/2/9 21:29, Yunlong Song wrote:
->> Back to the problem, if we skip out, then the f2fs_gc will go
->> into dead loop if the apps only atomic start but never atomic
-> 
-> That's another issue, which I have suggest to set a threshold time
-> to release atomic/volatile pages by balance_fs_bg.
-> 
-> Thanks,
-> 
->> commit. The main aim of my two patches is to remove the skip
->> action to avoid the dead loop.
->>
->> On 2018/2/9 21:26, Chao Yu wrote:
->>> On 2018/2/9 20:56, Yunlong Song wrote:
->>>> As what I point in last mail, if the atomic file is not committed
->>>> yet, gc_data_segment will register_inmem_page the GCed data pages.
->>>
->>> We will skip GCing that page as below check:
->>>
->>> - move_data_{page,block}
->>>    - f2fs_is_atomic_file()
->>>      skip out;
->>>
->>> No?
->>>
->>> Thanks,
->>>
->>>> This will cause these data pages written twice, the first write
->>>> happens in move_data_page->do_write_data_page, and the second
->>>> write happens in later __commit_inmem_pages->do_write_data_page.
->>>>
->>>> On 2018/2/9 20:44, Chao Yu wrote:
->>>>> On 2018/2/8 11:11, Yunlong Song wrote:
->>>>>> Then the GCed data pages are totally mixed with the inmem atomic pages,
->>>>>
->>>>> If we add dio_rwsem, GC flow is exclude with atomic write flow. There
->>>>> will be not race case to mix GCed page into atomic pages.
->>>>>
->>>>> Or you mean:
->>>>>
->>>>>                       - gc_data_segment
->>>>>                        - move_data_page
->>>>>                         - f2fs_is_atomic_file
->>>>> - f2fs_ioc_start_atomic_write
->>>>>     - set_inode_flag(inode, FI_ATOMIC_FILE);
->>>>>                         - f2fs_set_data_page_dirty
->>>>>                          - register_inmem_page
->>>>>
->>>>> In this case, GCed page can be mixed into database transaction, but could
->>>>> it cause any problem except break rule of isolation for transaction.
->>>>>
->>>>>> this will cause the atomic commit ops write the GCed data pages twice
->>>>>> (the first write happens in GC).
->>>>>>
->>>>>> How about using the early two patches to separate the inmem data pages
->>>>>> and GCed data pages, and use dio_rwsem instead of this patch to fix the
->>>>>> dnode page problem (dnode page commited but data page are not committed
->>>>>> for the GCed page)?
->>>>>
->>>>> Could we fix the race case first, based on that fixing, and then find the
->>>>> place that we can improve?
->>>>>
->>>>>>
->>>>>>
->>>>>> On 2018/2/7 20:16, Chao Yu wrote:
->>>>>>> On 2018/2/6 11:49, Yunlong Song wrote:
->>>>>>>> This patch adds fi->commit_lock to avoid the case that GCed node pages
->>>>>>>> are committed but GCed data pages are not committed. This can avoid the
->>>>>>>> db file run into inconsistent state when sudden-power-off happens if
->>>>>>>> data pages of atomic file is allowed to be GCed before.
->>>>>>>
->>>>>>> do_fsync:                GC:
->>>>>>> - mutex_lock(&fi->commit_lock);
->>>>>>>                        - lock_page()
->>>>>>>                         - mutex_lock(&fi->commit_lock);
->>>>>>>      - lock_page()
->>>>>>>
->>>>>>>
->>>>>>> Well, please consider lock dependency & code complexity, IMO, reuse
->>>>>>> fi->dio_rwsem[WRITE] will be enough as below:
->>>>>>>
->>>>>>> ---
->>>>>>>      fs/f2fs/file.c | 3 +++
->>>>>>>      fs/f2fs/gc.c   | 5 -----
->>>>>>>      2 files changed, 3 insertions(+), 5 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>>>> index 672a542e5464..1bdc11feb8d0 100644
->>>>>>> --- a/fs/f2fs/file.c
->>>>>>> +++ b/fs/f2fs/file.c
->>>>>>> @@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>>>>>
->>>>>>>          inode_lock(inode);
->>>>>>>
->>>>>>> +    down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>>>>> +
->>>>>>>          if (f2fs_is_volatile_file(inode))
->>>>>>>              goto err_out;
->>>>>>>
->>>>>>> @@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>>>>>              ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
->>>>>>>          }
->>>>>>>      err_out:
->>>>>>> +    up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>>>>>          inode_unlock(inode);
->>>>>>>          mnt_drop_write_file(filp);
->>>>>>>          return ret;
->>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>>> index b9d93fd532a9..e49416283563 100644
->>>>>>> --- a/fs/f2fs/gc.c
->>>>>>> +++ b/fs/f2fs/gc.c
->>>>>>> @@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>>>>>          if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>>              goto out;
->>>>>>>
->>>>>>> -    if (f2fs_is_atomic_file(inode))
->>>>>>> -        goto out;
->>>>>
->>>>> Seems that we need this check.
->>>>>
->>>>>>> -
->>>>>>>          if (f2fs_is_pinned_file(inode)) {
->>>>>>>              f2fs_pin_file_control(inode, true);
->>>>>>>              goto out;
->>>>>>> @@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>>>>>          if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>>              goto out;
->>>>>>>
->>>>>>> -    if (f2fs_is_atomic_file(inode))
->>>>>>> -        goto out;
->>>>>
->>>>> Ditto.
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>>          if (f2fs_is_pinned_file(inode)) {
->>>>>>>              if (gc_type == FG_GC)
->>>>>>>                  f2fs_pin_file_control(inode, true);
->>>>>>>
->>>>>>
->>>>>
->>>>> .
->>>>>
->>>>
->>>
->>> .
->>>
->>
-> 
-> .
-> 
+Please pull fbdev fix for v4.16 (just a single fix to make
+omapfb driver build again).
 
--- 
-Thanks,
-Yunlong Song
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+The following changes since commit f1517df8701c9f12dae9ce7f43a5d300a6917619:
+
+  Merge tag 'nfsd-4.16' of git://linux-nfs.org/~bfields/linux (2018-02-08 15:18:32 -0800)
+
+are available in the git repository at:
+
+  https://github.com/bzolnier/linux.git tags/fbdev-v4.16-fix
+
+for you to fetch changes up to b9058afcd6c725a8d293bb0a1b30bad68113235e:
+
+  video: omapfb: fix missing #includes (2018-02-09 14:43:49 +0100)
+
+----------------------------------------------------------------
+fbdev fix for v4.16:
+
+- fix building of the omapfb driver (Tomi Valkeinen)
+
+----------------------------------------------------------------
+Tomi Valkeinen (1):
+      video: omapfb: fix missing #includes
+
+ drivers/video/fbdev/omap2/omapfb/dss/dss.c      | 1 +
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c | 2 ++
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi_pll.c | 1 +
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi_wp.c  | 2 ++
+ 4 files changed, 6 insertions(+)
+
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dss.c b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
+index 39fe724..f0cac9e 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/dss.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
+@@ -40,6 +40,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/suspend.h>
+ #include <linux/component.h>
++#include <linux/pinctrl/consumer.h>
+ 
+ #include <video/omapfb_dss.h>
+ 
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c
+index eee09b4b..11dbc05 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c
+@@ -13,6 +13,8 @@
+ #include <linux/io.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/seq_file.h>
++
+ #include <video/omapfb_dss.h>
+ 
+ #include "dss.h"
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_pll.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_pll.c
+index eac3665..bc591fc 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_pll.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_pll.c
+@@ -16,6 +16,7 @@
+ #include <linux/io.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/seq_file.h>
+ 
+ #include <video/omapfb_dss.h>
+ 
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_wp.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_wp.c
+index 705373e..4af6ba2 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_wp.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_wp.c
+@@ -14,6 +14,8 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/platform_device.h>
++#include <linux/seq_file.h>
++
+ #include <video/omapfb_dss.h>
+ 
+ #include "dss.h"
