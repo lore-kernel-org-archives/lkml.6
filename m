@@ -1,62 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeBIJA1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:00:27 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750778AbeBIJA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:00:26 -0500
-Date: Fri, 9 Feb 2018 17:00:18 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] printk: move dump stack related code to lib/dump_stack.c
-Message-ID: <20180209090018.GA7129@dhcp-128-65.nay.redhat.com>
-References: <20180209080624.GA2607@dhcp-128-65.nay.redhat.com>
- <20180209081604.GE689@jagdpanzerIV>
- <20180209082743.GA14845@dhcp-128-65.nay.redhat.com>
- <20180209084235.GF689@jagdpanzerIV>
- <20180209085116.GB5454@dhcp-128-65.nay.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209085116.GB5454@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752529AbeBIJA4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:00:56 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39616 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751134AbeBII6s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 03:58:48 -0500
+X-Google-Smtp-Source: AH8x227X6JH95STvawxyb/gHhsELsm8R3fvQ0P2DSqO790GHEACTQ4PUeOlvHoqxv9IiY1vJgadb9w==
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Rafael Wysocki <rjw@rjwysocki.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, daniel.lezcano@linaro.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH 03/10] ARM: dts: mt7623: Remove "cooling-{min|max}-level" for CPU nodes
+Date: Fri,  9 Feb 2018 14:28:03 +0530
+Message-Id: <33d7494641d2f89c827e5e09d1143f125c33e784.1518166039.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
+In-Reply-To: <cover.1518166039.git.viresh.kumar@linaro.org>
+References: <cover.1518166039.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1518166039.git.viresh.kumar@linaro.org>
+References: <cover.1518166039.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/09/18 at 04:51pm, Dave Young wrote:
-> On 02/09/18 at 05:42pm, Sergey Senozhatsky wrote:
-> > On (02/09/18 16:27), Dave Young wrote:
-> > > > Seems that those functions are still defined in printk header.
-> > > > Did you test !CONFIG_PRINTK build?
-> > 
-> > Apparently dump_stack(void) is also in printk.h
-> > 
-> > extern asmlinkage void dump_stack(void) __cold;
-> > 
-> > so it's "OK" to keep those functions in printk.h, I guess. I thought
-> > that dump_stack() had its own header file...
-> 
-> It has not unfortunately..  The build failed because we have dummy
-> functions in printk.h and redefined in lib/dump_stack.c.  I'm hesitating
-> to add #ifdef CONFIG_PRINTK in lib/dump_stack.c.
+The "cooling-min-level" and "cooling-max-level" properties are not
+parsed by any part of the kernel currently and the max cooling state of
+a CPU cooling device is found by referring to the cpufreq table instead.
 
-Maybe conditionally build dump_stack.o only when CONFIG_PRINTK is true,
-but not sure if there are some historic reason this is not done before,
-will do some testing see if it works.
+Remove the unused properties from the CPU nodes.
 
-> 
-> > 
-> > > !CONFIG_PRINTK will use the dummy functions in printk.h, I did not test
-> > > the build, doing it now to double confirm..
-> > 
-> > Not sure. Please test.
-> > 
-> > 	-ss
-> 
-> Thanks
-> Dave
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt | 4 ----
+ arch/arm/boot/dts/mt7623.dtsi                                  | 2 --
+ 2 files changed, 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+index f6403089edcf..d36f07e0a2bb 100644
+--- a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
++++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+@@ -21,8 +21,6 @@ Binding for MediaTek's CPUFreq driver
+ 	       flow is handled by hardware, hence no software "voltage tracking" is
+ 	       needed.
+ - #cooling-cells:
+-- cooling-min-level:
+-- cooling-max-level:
+ 	Please refer to Documentation/devicetree/bindings/thermal/thermal.txt
+ 	for detail.
+ 
+@@ -67,8 +65,6 @@ Binding for MediaTek's CPUFreq driver
+ 		clock-names = "cpu", "intermediate";
+ 		operating-points-v2 = <&cpu_opp_table>;
+ 		#cooling-cells = <2>;
+-		cooling-min-level = <0>;
+-		cooling-max-level = <7>;
+ 	};
+ 	cpu@1 {
+ 		device_type = "cpu";
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index b750da5362f7..8e7c65464c9d 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -87,8 +87,6 @@
+ 			clock-names = "cpu", "intermediate";
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <7>;
+ 			clock-frequency = <1300000000>;
+ 		};
+ 
+-- 
+2.15.0.194.g9af6a3dea062
