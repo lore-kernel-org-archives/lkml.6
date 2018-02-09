@@ -1,131 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752541AbeBIDmu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 22:42:50 -0500
-Received: from mout.gmx.net ([212.227.17.21]:50531 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752192AbeBIDmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 22:42:49 -0500
-Message-ID: <1518147735.24350.26.camel@gmx.de>
-Subject: Re: [RFC 1/2] sched: reduce migration cost between faster caches
- for idle_balance
-From: Mike Galbraith <efault@gmx.de>
-To: Rohit Jain <rohit.k.jain@oracle.com>, linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, mingo@redhat.com, steven.sistare@oracle.com,
-        joelaf@google.com, jbacik@fb.com, riel@redhat.com,
-        juri.lelli@redhat.com, dhaval.giani@oracle.com
-Date: Fri, 09 Feb 2018 04:42:15 +0100
-In-Reply-To: <1518128395-14606-2-git-send-email-rohit.k.jain@oracle.com>
-References: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
-         <1518128395-14606-2-git-send-email-rohit.k.jain@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:8JpYxf1EggyA4Ni32dLBZ8rKz1PWb2OME+t1wj7CuwDKtf029g6
- VzJvU1Lx90lgbeb7FB3UowMBvAYMQvY6jZViJthXF/59zrvwuW3KWryXU39ErgZdMvZ3kbN
- lYUFOsX+LZA/WD8jUgF8ulRWBemH/kL+BmyaXijJYBzctbd4rKniM/IQABAB/+LbqKbxqfO
- APt8BmtPVZ2PXW7n0Xb0g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:8cKTKQVnSmQ=:QIwBtQA3vTHLs+aitrttus
- 06KmAXl6YeNzIc/jr9gqZdVcZOfcbp1Wm4U/t87vneWBDqbGLAmU3t++TdQ5iQxDQwG2o0eko
- gjQXY9jQnUHERukGyPRUG5BoHrDxz5/kyzdfokeroWBzUoFE7IAw63Hla3mNGEjP58D+prQpE
- NhT4SRZ5zyRMb1wonUGCfXoxP0LW4sxJlEVjfrVN5DF6rzSZ6wt8A1CNJy6SWJSnQ5hE5OtN/
- I+QxHzAFb3Fz9AC4FpXrBbdOeROOAfz4OdFbfxyw/KsvYpgtWNzKD1I5tQtmkEh5zR28cAIOD
- EHelOsx5DV1tT/c4Ufd+sBXEtJX8X0VfT5KsRLYvbs+ib9UNh4wW0PjvWOHA87yXcUPztcglh
- joe5Vv6ZZO2JPpN8yLwGxlgo6v91D4br7FveI4iLGZ/QHf/lRAZvkENEoWto/X9kXeT/SAZ5z
- B9j7ByHW8F0G52Fy/3XwMcJLPTBK4FW9FTH+7a5OGoc8VvDh72lYHfFiRSE4a0mNFdX9nG8+a
- 3JWByvufpc15zcE+Ku6u0+RNQwjRm5Iwi1Rh39KudD/zYPQhSgRfasFoB/IfCpHGEqnlajBpr
- ksjj4LkCPr3apXQtEtk7GlUxiPG7zSulC/H6+TXbljfzdE5zutNWtNs6m5oOPRTR0+I8XJMl4
- DKQuCqGSFsflxBX9BdoF88IPwMFXSVjDlymn73zCvJRidp+4IePcei6QtvIH2vQTIRLkdd+LM
- Y7/wlHx4qCHjRsIvrA883YoQCLx+CdrHOGhf33Er+if7ndBvrZv7prMZoTDXvr3QmQvXEZ0KE
- dElLXyh3GokIE8w6o7EfXcqyLGgs4jLyJYxo+rz8MzTQmLQ+lw=
+        id S1752584AbeBIDvv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 22:51:51 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35550 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752201AbeBIDvs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 22:51:48 -0500
+X-Google-Smtp-Source: AH8x2274YU2XhiMiLY4ssVz4h4S49r2nak8syosZvCeTwH9gl7AzjkDiHiO0l3JwERwMX+3DfQQuQQ==
+Date: Fri, 9 Feb 2018 09:21:43 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Claudio Scordino <claudio@evidence.eu.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+Message-ID: <20180209035143.GX28462@vireshk-i7>
+References: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-08 at 14:19 -0800, Rohit Jain wrote:
-> This patch makes idle_balance more dynamic as the sched_migration_cost
-> is now accounted on a sched_domain level. This in turn is done in
-> sd_init when we know what the topology relationships are.
+On 08-02-18, 18:01, Claudio Scordino wrote:
+> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+> we should not wait for the rate limit, otherwise we may miss some deadline.
 > 
-> For introduction sakes cost of migration within the same core is set as
-> 0, across cores is 50 usec and across sockets is 500 usec. sysctl for
-> these variables are introduced in patch 2.
+> Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
+> misses for tasks with low RT periods.
 > 
-> Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+> The patch applies on top of the one recently proposed by Peter to drop the
+> SCHED_CPUFREQ_* flags.
+> 
+> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+> CC: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
+> CC: Patrick Bellasi <patrick.bellasi@arm.com>
+> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> CC: Morten Rasmussen <morten.rasmussen@arm.com>
+> CC: Juri Lelli <juri.lelli@redhat.com>
+> CC: Viresh Kumar <viresh.kumar@linaro.org>
+> CC: Vincent Guittot <vincent.guittot@linaro.org>
+> CC: Todd Kjos <tkjos@android.com>
+> CC: Joel Fernandes <joelaf@google.com>
+> CC: linux-pm@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
 > ---
->  include/linux/sched/topology.h | 1 +
->  kernel/sched/fair.c            | 6 +++---
->  kernel/sched/topology.c        | 5 +++++
->  3 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index cf257c2..bcb4db2 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -104,6 +104,7 @@ struct sched_domain {
->  	u64 max_newidle_lb_cost;
->  	unsigned long next_decay_max_lb_cost;
->  
-> +	u64 sched_migration_cost;
->  	u64 avg_scan_cost;		/* select_idle_sibling */
->  
->  #ifdef CONFIG_SCHEDSTATS
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 2fe3aa8..61d3508 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8782,8 +8782,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
->  	 */
->  	rq_unpin_lock(this_rq, rf);
->  
-> -	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
-> -	    !this_rq->rd->overload) {
-> +	if (!this_rq->rd->overload) {
->  		rcu_read_lock();
->  		sd = rcu_dereference_check_sched_domain(this_rq->sd);
->  		if (sd)
+>  kernel/sched/cpufreq_schedutil.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
 
-Unexplained/unrelated change.
+So the previous commit was surely incorrect as it relied on comparing
+frequencies instead of dl-util, and freq requirements could have even
+changed due to CFS.
 
-> @@ -8804,7 +8803,8 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
->  		if (!(sd->flags & SD_LOAD_BALANCE))
->  			continue;
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index b0bd77d..d8dcba2 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -74,7 +74,10 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
 >  
-> -		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost) {
-> +		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost +
-> +		    sd->sched_migration_cost) {
->  			update_next_balance(sd, &next_balance);
->  			break;
->  		}
-
-Ditto.
-
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 034cbed..bcd8c64 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1148,12 +1148,14 @@ sd_init(struct sched_domain_topology_level *tl,
->  		sd->flags |= SD_PREFER_SIBLING;
->  		sd->imbalance_pct = 110;
->  		sd->smt_gain = 1178; /* ~15% */
-> +		sd->sched_migration_cost = 0;
+>  /************************ Governor internals ***********************/
 >  
->  	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
->  		sd->flags |= SD_PREFER_SIBLING;
->  		sd->imbalance_pct = 117;
->  		sd->cache_nice_tries = 1;
->  		sd->busy_idx = 2;
-> +		sd->sched_migration_cost = 500000UL;
+> -static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> +static bool sugov_should_update_freq(struct sugov_policy *sg_policy,
+> +				     u64 time,
+> +				     struct sugov_cpu *sg_cpu_old,
+> +				     struct sugov_cpu *sg_cpu_new)
+>  {
+>  	s64 delta_ns;
 >  
->  #ifdef CONFIG_NUMA
->  	} else if (sd->flags & SD_NUMA) {
-> @@ -1162,6 +1164,7 @@ sd_init(struct sched_domain_topology_level *tl,
->  		sd->idle_idx = 2;
+> @@ -111,6 +114,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>  		return true;
+>  	}
 >  
->  		sd->flags |= SD_SERIALIZE;
-> +		sd->sched_migration_cost = 5000000UL;
+> +	/* Ignore rate limit when DL increased utilization. */
+> +	if (sg_cpu_new->util_dl > sg_cpu_old->util_dl)
+> +		return true;
+> +
 
-That's not 500us.
+Changing the frequency has a penalty, specially in the ARM world (and
+that's where you are testing your stuff). I am worried that we will
+have (corner) cases where we will waste a lot of time changing the
+frequencies. For example (I may be wrong here), what if 10 small DL
+tasks are queued one after the other? The util will keep on changing
+and so will the frequency ? There may be more similar cases ?
 
-	-Mike
+Is it possible to (somehow) check here if the DL tasks will miss
+deadline if we continue to run at current frequency? And only ignore
+rate-limit if that is the case ?
+
+>  	delta_ns = time - sg_policy->last_freq_update_time;
+>  	return delta_ns >= sg_policy->freq_update_delay_ns;
+>  }
+> @@ -271,6 +278,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+>  				unsigned int flags)
+>  {
+>  	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
+> +	struct sugov_cpu sg_cpu_old = *sg_cpu;
+
+Not really a big deal, but this structure is 80 bytes on ARM64, why
+copy everything when what we need is just 8 bytes ?
+
+-- 
+viresh
