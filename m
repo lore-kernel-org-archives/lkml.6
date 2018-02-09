@@ -1,53 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeBIPLg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:11:36 -0500
-Received: from gate.crashing.org ([63.228.1.57]:40287 "EHLO gate.crashing.org"
+        id S1752013AbeBIPPx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 10:15:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752046AbeBIPLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:11:34 -0500
-Date: Fri, 9 Feb 2018 09:11:16 -0600
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc: linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, Albert Herranz <albert_herranz@yahoo.es>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
-Message-ID: <20180209151116.GQ21977@gate.crashing.org>
-References: <20180209120732.17863-1-j.neuschaefer@gmx.net> <20180209120732.17863-3-j.neuschaefer@gmx.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+        id S1751053AbeBIPPw (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 10:15:52 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F148B20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 9 Feb 2018 12:15:49 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf report: Fix wrong jump arrow
+Message-ID: <20180209151549.GL3451@kernel.org>
+References: <1517223473-14750-1-git-send-email-yao.jin@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180209120732.17863-3-j.neuschaefer@gmx.net>
-User-Agent: Mutt/1.4.2.3i
+In-Reply-To: <1517223473-14750-1-git-send-email-yao.jin@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 01:07:29PM +0100, Jonathan Neusch�fer wrote:
-> The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
-> that supports a configurable number of pins (up to 32), interrupts, and
-> some special mechanisms to share the controller between the system's
-> security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
-> not supported.
+Em Mon, Jan 29, 2018 at 06:57:53PM +0800, Jin Yao escreveu:
+> When we use perf report interactive annotate view, we can see
+> the position of jump arrow is not correct. For example,
 > 
-> This patch adds a basic driver for this GPIO controller. Interrupt
-> support will come in a later patch.
+> 1. perf record -b ...
+> 2. perf report
+> 3. In interactive mode, select Annotate 'function'
 > 
-> This patch is based on code developed by Albert Herranz and the GameCube
-> Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
-> available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
-> has grown quite dissimilar.
-> 
-> Signed-off-by: Jonathan Neusch�fer <j.neuschaefer@gmx.net>
-> Cc: Albert Herranz <albert_herranz@yahoo.es>
-> Cc: Segher Boessenkool <segher@kernel.crashing.org>
+> Percent│ IPC Cycle
+>        │                                if (flag)
+>   1.37 │0.4┌──   1      ↓ je     82
+>        │   │                                    x += x / y + y / x;
 
-Reviewed-by: Segher Boessenkool <segher@kernel.crashing.org>
+Applied and added this to the cset log, please check:
 
-Looks just fine to me :-)
+Committer notes:
 
+Please note that only from LBRv5 (according to Jiri) onwards, i.e. >=
+Skylake is that we'll have the cycles counts in each branch record
+entry, so to see the Cycles and IPC columns, and be able to test this
+patch, one need a capable hardware.
 
-Segher
+While applying this I first tested it on a Broadwell class machine and
+couldn't get those columns, will add code to the annotate browser to
+warn the user about that, i.e. you have branch records, but no cycles,
+use a more recent hardware to get the cycles and IPC columns.
+
+- Arnaldo
