@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185757-2-13114071442072145841
+X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185726-2-11978284292516257547
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185757; b=KEvvqPlGZrpoe/cyDyY5LyiO+etAdbCfn9XdnKdoeRak3Nq
-    1LG+cFiGbvHsBvAcdqV6xhCbMmWyyz9V6+t7sZUjD550zljadhvMwhL5+3+SP5fL
-    vsFivMfSKrSEja9/hA+SQmkPzCIhAbszTJYUERrM7IkUOxRDG5HSa5UERrigCLAI
-    4DzFizxDaMQ220pEtJOmCcCifL8miv1pCxzLdcsh7h4XmCHDHVFk00sHc2+cUELL
-    roBY42jHdKZTBnkMqQzMk8DWZ+J5bks+njbnn99w5UJKsjyWRl9xoJ3TNCaQDtLG
-    gvhqR5oUv7wEBDzyA4gHyqfFCA0R1tclI73c25g==
+    t=1518185725; b=l2IaII6h7xordhYWoyxq70z9+hIQUgKq2usw7cHxnvyVJ7A
+    YaYqUULj1/pLQJWiBvXyP3KUb7LSNT2IbanQQ8FZ42xsIKXW/JOTJMr82mykgcnu
+    6R81obAspo4THAqeNP/JKSInR1ldp37LWsDGjO7WAFkLbtZKQwAys7MkR1K1uhFJ
+    pLNrHAj7sZc6q5DFB40Rvch/NiJsxdUQkaPO0ZljkN5T9IZI6QW1NYqbOPx3pXAq
+    /RGUcS3UaKVTioYyGT5H0MGi/kGTQiDPtkSJ5Pu1PvLIiRG0p5Iyc0QydQk7GDNO
+    yhTUmT6OiMGQmocn99hjmDKWZO2HWi6vmuhgIrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185757; bh=G25RoJgQ4eBEf4E9l23qdacMYY
-    DnsKCt1GGCqrKYaVM=; b=qjX21BP2friem9Jpnw068UDaWHgC+FSy3hcoJ7xb6c
-    2dPPXDTOXf+ku7o8yd0chvBbb1zYfS7ttubhie3OsDfHtnB0T/C4uKCtvCjhXOZJ
-    W0fyCiQVhTqdUvbAFm9MNMeiBffmjy3dDWRZpCDQkl5zLZTMU6/npFtv19+V/zxC
-    R4uC76d7t1Yj36O6FAPTfSXTTcJ55rDkEE/NR0BKRd0D1rfICHnLLx3mkOO0NCpw
-    kp6GU9RCeEKRPX6eYSNbSvaKJXU2p4fyndsGwfIRKssXf7FMYk12Bii6B/pY0i6p
-    fdnKkRor/jj1MsJobCkgWJqxof48wTqZK5wfMDfLGJlA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185725; bh=dNb4QAurH4pZNvS5a/V1XYNXlE
+    /QZD4J1IBUMD0dgUs=; b=aEqfD/XTbvh7Mjab9lblvdovaQ2MXcgoJli61tJq6w
+    B7lRKEKsdlvh74PMa/ZNJ7h1pJOo5ZAV/s+1UAOZyZW0C/j+GPeVd9lU2oTZ1k1j
+    hEPmzK2pX49Il3yuz/1FQrlebMfJyZMWzriE97T1TCzqGQ2GzRqTELOKFF+p1hfo
+    x6ACiimYX2GDyZZLbJdRCMgzhHBfBcg3HQ7nbkJyn7X796fh+u3Ixywvc9FucGXu
+    qB5EuIXr0JmaHnmZ96EmbT1nkEYHUvdt89c6suxkE+wM0cYm3MXeG4D05uHYYtrL
+    9ZLVK3D5H3iSMKkLfwFPHNnMbsoocVOfv68MAwU/9OCg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752612AbeBIOPk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 09:15:40 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48366 "EHLO
+        id S1752384AbeBINlN (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:41:13 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752396AbeBINlF (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:05 -0500
+        with ESMTP id S1752450AbeBINlI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:08 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 20/92] net: igmp: add a missing rcu locking section
-Date: Fri,  9 Feb 2018 14:38:49 +0100
-Message-Id: <20180209133932.748694457@linuxfoundation.org>
+Subject: [PATCH 4.9 21/92] qlcnic: fix deadlock bug
+Date: Fri,  9 Feb 2018 14:38:50 +0100
+Message-Id: <20180209133932.801681725@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -78,79 +77,189 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Junxiao Bi <junxiao.bi@oracle.com>
 
 
-[ Upstream commit e7aadb27a5415e8125834b84a74477bfbee4eff5 ]
+[ Upstream commit 233ac3891607f501f08879134d623b303838f478 ]
 
-Newly added igmpv3_get_srcaddr() needs to be called under rcu lock.
+The following soft lockup was caught. This is a deadlock caused by
+recusive locking.
 
-Timer callbacks do not ensure this locking.
+Process kworker/u40:1:28016 was holding spin lock "mbx->queue_lock" in
+qlcnic_83xx_mailbox_worker(), while a softirq came in and ask the same spin
+lock in qlcnic_83xx_enqueue_mbx_cmd(). This lock should be hold by disable
+bh..
 
-=============================
-WARNING: suspicious RCU usage
-4.15.0+ #200 Not tainted
------------------------------
-./include/linux/inetdevice.h:216 suspicious rcu_dereference_check() usage!
+[161846.962125] NMI watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [kworker/u40:1:28016]
+[161846.962367] Modules linked in: tun ocfs2 xen_netback xen_blkback xen_gntalloc xen_gntdev xen_evtchn xenfs xen_privcmd autofs4 ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs bnx2fc fcoe libfcoe libfc sunrpc 8021q mrp garp bridge stp llc bonding dm_round_robin dm_multipath iTCO_wdt iTCO_vendor_support pcspkr sb_edac edac_core i2c_i801 shpchp lpc_ich mfd_core ioatdma ipmi_devintf ipmi_si ipmi_msghandler sg ext4 jbd2 mbcache2 sr_mod cdrom sd_mod igb i2c_algo_bit i2c_core ahci libahci megaraid_sas ixgbe dca ptp pps_core vxlan udp_tunnel ip6_udp_tunnel qla2xxx scsi_transport_fc qlcnic crc32c_intel be2iscsi bnx2i cnic uio cxgb4i cxgb4 cxgb3i libcxgbi ipv6 cxgb3 mdio libiscsi_tcp qla4xxx iscsi_boot_sysfs libiscsi scsi_transport_iscsi dm_mirror dm_region_hash dm_log dm_mod
+[161846.962454]
+[161846.962460] CPU: 1 PID: 28016 Comm: kworker/u40:1 Not tainted 4.1.12-94.5.9.el6uek.x86_64 #2
+[161846.962463] Hardware name: Oracle Corporation SUN SERVER X4-2L      /ASSY,MB,X4-2L         , BIOS 26050100 09/19/2017
+[161846.962489] Workqueue: qlcnic_mailbox qlcnic_83xx_mailbox_worker [qlcnic]
+[161846.962493] task: ffff8801f2e34600 ti: ffff88004ca5c000 task.ti: ffff88004ca5c000
+[161846.962496] RIP: e030:[<ffffffff810013aa>]  [<ffffffff810013aa>] xen_hypercall_sched_op+0xa/0x20
+[161846.962506] RSP: e02b:ffff880202e43388  EFLAGS: 00000206
+[161846.962509] RAX: 0000000000000000 RBX: ffff8801f6996b70 RCX: ffffffff810013aa
+[161846.962511] RDX: ffff880202e433cc RSI: ffff880202e433b0 RDI: 0000000000000003
+[161846.962513] RBP: ffff880202e433d0 R08: 0000000000000000 R09: ffff8801fe893200
+[161846.962516] R10: ffff8801fe400538 R11: 0000000000000206 R12: ffff880202e4b000
+[161846.962518] R13: 0000000000000050 R14: 0000000000000001 R15: 000000000000020d
+[161846.962528] FS:  0000000000000000(0000) GS:ffff880202e40000(0000) knlGS:ffff880202e40000
+[161846.962531] CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+[161846.962533] CR2: 0000000002612640 CR3: 00000001bb796000 CR4: 0000000000042660
+[161846.962536] Stack:
+[161846.962538]  ffff880202e43608 0000000000000000 ffffffff813f0442 ffff880202e433b0
+[161846.962543]  0000000000000000 ffff880202e433cc ffffffff00000001 0000000000000000
+[161846.962547]  00000009813f03d6 ffff880202e433e0 ffffffff813f0460 ffff880202e43440
+[161846.962552] Call Trace:
+[161846.962555]  <IRQ>
+[161846.962565]  [<ffffffff813f0442>] ? xen_poll_irq_timeout+0x42/0x50
+[161846.962570]  [<ffffffff813f0460>] xen_poll_irq+0x10/0x20
+[161846.962578]  [<ffffffff81014222>] xen_lock_spinning+0xe2/0x110
+[161846.962583]  [<ffffffff81013f01>] __raw_callee_save_xen_lock_spinning+0x11/0x20
+[161846.962592]  [<ffffffff816e5c57>] ? _raw_spin_lock+0x57/0x80
+[161846.962609]  [<ffffffffa028acfc>] qlcnic_83xx_enqueue_mbx_cmd+0x7c/0xe0 [qlcnic]
+[161846.962623]  [<ffffffffa028e008>] qlcnic_83xx_issue_cmd+0x58/0x210 [qlcnic]
+[161846.962636]  [<ffffffffa028caf2>] qlcnic_83xx_sre_macaddr_change+0x162/0x1d0 [qlcnic]
+[161846.962649]  [<ffffffffa028cb8b>] qlcnic_83xx_change_l2_filter+0x2b/0x30 [qlcnic]
+[161846.962657]  [<ffffffff8160248b>] ? __skb_flow_dissect+0x18b/0x650
+[161846.962670]  [<ffffffffa02856e5>] qlcnic_send_filter+0x205/0x250 [qlcnic]
+[161846.962682]  [<ffffffffa0285c77>] qlcnic_xmit_frame+0x547/0x7b0 [qlcnic]
+[161846.962691]  [<ffffffff8160ac22>] xmit_one+0x82/0x1a0
+[161846.962696]  [<ffffffff8160ad90>] dev_hard_start_xmit+0x50/0xa0
+[161846.962701]  [<ffffffff81630112>] sch_direct_xmit+0x112/0x220
+[161846.962706]  [<ffffffff8160b80f>] __dev_queue_xmit+0x1df/0x5e0
+[161846.962710]  [<ffffffff8160bc33>] dev_queue_xmit_sk+0x13/0x20
+[161846.962721]  [<ffffffffa0575bd5>] bond_dev_queue_xmit+0x35/0x80 [bonding]
+[161846.962729]  [<ffffffffa05769fb>] __bond_start_xmit+0x1cb/0x210 [bonding]
+[161846.962736]  [<ffffffffa0576a71>] bond_start_xmit+0x31/0x60 [bonding]
+[161846.962740]  [<ffffffff8160ac22>] xmit_one+0x82/0x1a0
+[161846.962745]  [<ffffffff8160ad90>] dev_hard_start_xmit+0x50/0xa0
+[161846.962749]  [<ffffffff8160bb1e>] __dev_queue_xmit+0x4ee/0x5e0
+[161846.962754]  [<ffffffff8160bc33>] dev_queue_xmit_sk+0x13/0x20
+[161846.962760]  [<ffffffffa05cfa72>] vlan_dev_hard_start_xmit+0xb2/0x150 [8021q]
+[161846.962764]  [<ffffffff8160ac22>] xmit_one+0x82/0x1a0
+[161846.962769]  [<ffffffff8160ad90>] dev_hard_start_xmit+0x50/0xa0
+[161846.962773]  [<ffffffff8160bb1e>] __dev_queue_xmit+0x4ee/0x5e0
+[161846.962777]  [<ffffffff8160bc33>] dev_queue_xmit_sk+0x13/0x20
+[161846.962789]  [<ffffffffa05adf74>] br_dev_queue_push_xmit+0x54/0xa0 [bridge]
+[161846.962797]  [<ffffffffa05ae4ff>] br_forward_finish+0x2f/0x90 [bridge]
+[161846.962807]  [<ffffffff810b0dad>] ? ttwu_do_wakeup+0x1d/0x100
+[161846.962811]  [<ffffffff815f929b>] ? __alloc_skb+0x8b/0x1f0
+[161846.962818]  [<ffffffffa05ae04d>] __br_forward+0x8d/0x120 [bridge]
+[161846.962822]  [<ffffffff815f613b>] ? __kmalloc_reserve+0x3b/0xa0
+[161846.962829]  [<ffffffff810be55e>] ? update_rq_runnable_avg+0xee/0x230
+[161846.962836]  [<ffffffffa05ae176>] br_forward+0x96/0xb0 [bridge]
+[161846.962845]  [<ffffffffa05af85e>] br_handle_frame_finish+0x1ae/0x420 [bridge]
+[161846.962853]  [<ffffffffa05afc4f>] br_handle_frame+0x17f/0x260 [bridge]
+[161846.962862]  [<ffffffffa05afad0>] ? br_handle_frame_finish+0x420/0x420 [bridge]
+[161846.962867]  [<ffffffff8160d057>] __netif_receive_skb_core+0x1f7/0x870
+[161846.962872]  [<ffffffff8160d6f2>] __netif_receive_skb+0x22/0x70
+[161846.962877]  [<ffffffff8160d913>] netif_receive_skb_internal+0x23/0x90
+[161846.962884]  [<ffffffffa07512ea>] ? xenvif_idx_release+0xea/0x100 [xen_netback]
+[161846.962889]  [<ffffffff816e5a10>] ? _raw_spin_unlock_irqrestore+0x20/0x50
+[161846.962893]  [<ffffffff8160e624>] netif_receive_skb_sk+0x24/0x90
+[161846.962899]  [<ffffffffa075269a>] xenvif_tx_submit+0x2ca/0x3f0 [xen_netback]
+[161846.962906]  [<ffffffffa0753f0c>] xenvif_tx_action+0x9c/0xd0 [xen_netback]
+[161846.962915]  [<ffffffffa07567f5>] xenvif_poll+0x35/0x70 [xen_netback]
+[161846.962920]  [<ffffffff8160e01b>] napi_poll+0xcb/0x1e0
+[161846.962925]  [<ffffffff8160e1c0>] net_rx_action+0x90/0x1c0
+[161846.962931]  [<ffffffff8108aaba>] __do_softirq+0x10a/0x350
+[161846.962938]  [<ffffffff8108ae75>] irq_exit+0x125/0x130
+[161846.962943]  [<ffffffff813f03a9>] xen_evtchn_do_upcall+0x39/0x50
+[161846.962950]  [<ffffffff816e7ffe>] xen_do_hypervisor_callback+0x1e/0x40
+[161846.962952]  <EOI>
+[161846.962959]  [<ffffffff816e5c4a>] ? _raw_spin_lock+0x4a/0x80
+[161846.962964]  [<ffffffff816e5b1e>] ? _raw_spin_lock_irqsave+0x1e/0xa0
+[161846.962978]  [<ffffffffa028e279>] ? qlcnic_83xx_mailbox_worker+0xb9/0x2a0 [qlcnic]
+[161846.962991]  [<ffffffff810a14e1>] ? process_one_work+0x151/0x4b0
+[161846.962995]  [<ffffffff8100c3f2>] ? check_events+0x12/0x20
+[161846.963001]  [<ffffffff810a1960>] ? worker_thread+0x120/0x480
+[161846.963005]  [<ffffffff816e187b>] ? __schedule+0x30b/0x890
+[161846.963010]  [<ffffffff810a1840>] ? process_one_work+0x4b0/0x4b0
+[161846.963015]  [<ffffffff810a1840>] ? process_one_work+0x4b0/0x4b0
+[161846.963021]  [<ffffffff810a6b3e>] ? kthread+0xce/0xf0
+[161846.963025]  [<ffffffff810a6a70>] ? kthread_freezable_should_stop+0x70/0x70
+[161846.963031]  [<ffffffff816e6522>] ? ret_from_fork+0x42/0x70
+[161846.963035]  [<ffffffff810a6a70>] ? kthread_freezable_should_stop+0x70/0x70
+[161846.963037] Code: cc 51 41 53 b8 1c 00 00 00 0f 05 41 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 51 41 53 b8 1d 00 00 00 0f 05 <41> 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
 
-other info that might help us debug this:
-
-rcu_scheduler_active = 2, debug_locks = 1
-3 locks held by syzkaller616973/4074:
- #0:  (&mm->mmap_sem){++++}, at: [<00000000bfce669e>] __do_page_fault+0x32d/0xc90 arch/x86/mm/fault.c:1355
- #1:  ((&im->timer)){+.-.}, at: [<00000000619d2f71>] lockdep_copy_map include/linux/lockdep.h:178 [inline]
- #1:  ((&im->timer)){+.-.}, at: [<00000000619d2f71>] call_timer_fn+0x1c6/0x820 kernel/time/timer.c:1316
- #2:  (&(&im->lock)->rlock){+.-.}, at: [<000000005f833c5c>] spin_lock_bh include/linux/spinlock.h:315 [inline]
- #2:  (&(&im->lock)->rlock){+.-.}, at: [<000000005f833c5c>] igmpv3_send_report+0x98/0x5b0 net/ipv4/igmp.c:600
-
-stack backtrace:
-CPU: 0 PID: 4074 Comm: syzkaller616973 Not tainted 4.15.0+ #200
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x257 lib/dump_stack.c:53
- lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4592
- __in_dev_get_rcu include/linux/inetdevice.h:216 [inline]
- igmpv3_get_srcaddr net/ipv4/igmp.c:329 [inline]
- igmpv3_newpack+0xeef/0x12e0 net/ipv4/igmp.c:389
- add_grhead.isra.27+0x235/0x300 net/ipv4/igmp.c:432
- add_grec+0xbd3/0x1170 net/ipv4/igmp.c:565
- igmpv3_send_report+0xd5/0x5b0 net/ipv4/igmp.c:605
- igmp_send_report+0xc43/0x1050 net/ipv4/igmp.c:722
- igmp_timer_expire+0x322/0x5c0 net/ipv4/igmp.c:831
- call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1cc/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:541 [inline]
- smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:938
-
-Fixes: a46182b00290 ("net: igmp: Use correct source address on IGMPv3 reports")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/igmp.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -386,7 +386,11 @@ static struct sk_buff *igmpv3_newpack(st
- 	pip->frag_off = htons(IP_DF);
- 	pip->ttl      = 1;
- 	pip->daddr    = fl4.daddr;
-+
-+	rcu_read_lock();
- 	pip->saddr    = igmpv3_get_srcaddr(dev, &fl4);
-+	rcu_read_unlock();
-+
- 	pip->protocol = IPPROTO_IGMP;
- 	pip->tot_len  = 0;	/* filled in later */
- 	ip_select_ident(net, skb, NULL);
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+@@ -3849,7 +3849,7 @@ static void qlcnic_83xx_flush_mbx_queue(
+ 	struct list_head *head = &mbx->cmd_q;
+ 	struct qlcnic_cmd_args *cmd = NULL;
+ 
+-	spin_lock(&mbx->queue_lock);
++	spin_lock_bh(&mbx->queue_lock);
+ 
+ 	while (!list_empty(head)) {
+ 		cmd = list_entry(head->next, struct qlcnic_cmd_args, list);
+@@ -3860,7 +3860,7 @@ static void qlcnic_83xx_flush_mbx_queue(
+ 		qlcnic_83xx_notify_cmd_completion(adapter, cmd);
+ 	}
+ 
+-	spin_unlock(&mbx->queue_lock);
++	spin_unlock_bh(&mbx->queue_lock);
+ }
+ 
+ static int qlcnic_83xx_check_mbx_status(struct qlcnic_adapter *adapter)
+@@ -3896,12 +3896,12 @@ static void qlcnic_83xx_dequeue_mbx_cmd(
+ {
+ 	struct qlcnic_mailbox *mbx = adapter->ahw->mailbox;
+ 
+-	spin_lock(&mbx->queue_lock);
++	spin_lock_bh(&mbx->queue_lock);
+ 
+ 	list_del(&cmd->list);
+ 	mbx->num_cmds--;
+ 
+-	spin_unlock(&mbx->queue_lock);
++	spin_unlock_bh(&mbx->queue_lock);
+ 
+ 	qlcnic_83xx_notify_cmd_completion(adapter, cmd);
+ }
+@@ -3966,7 +3966,7 @@ static int qlcnic_83xx_enqueue_mbx_cmd(s
+ 		init_completion(&cmd->completion);
+ 		cmd->rsp_opcode = QLC_83XX_MBX_RESPONSE_UNKNOWN;
+ 
+-		spin_lock(&mbx->queue_lock);
++		spin_lock_bh(&mbx->queue_lock);
+ 
+ 		list_add_tail(&cmd->list, &mbx->cmd_q);
+ 		mbx->num_cmds++;
+@@ -3974,7 +3974,7 @@ static int qlcnic_83xx_enqueue_mbx_cmd(s
+ 		*timeout = cmd->total_cmds * QLC_83XX_MBX_TIMEOUT;
+ 		queue_work(mbx->work_q, &mbx->work);
+ 
+-		spin_unlock(&mbx->queue_lock);
++		spin_unlock_bh(&mbx->queue_lock);
+ 
+ 		return 0;
+ 	}
+@@ -4070,15 +4070,15 @@ static void qlcnic_83xx_mailbox_worker(s
+ 		mbx->rsp_status = QLC_83XX_MBX_RESPONSE_WAIT;
+ 		spin_unlock_irqrestore(&mbx->aen_lock, flags);
+ 
+-		spin_lock(&mbx->queue_lock);
++		spin_lock_bh(&mbx->queue_lock);
+ 
+ 		if (list_empty(head)) {
+-			spin_unlock(&mbx->queue_lock);
++			spin_unlock_bh(&mbx->queue_lock);
+ 			return;
+ 		}
+ 		cmd = list_entry(head->next, struct qlcnic_cmd_args, list);
+ 
+-		spin_unlock(&mbx->queue_lock);
++		spin_unlock_bh(&mbx->queue_lock);
+ 
+ 		mbx_ops->encode_cmd(adapter, cmd);
+ 		mbx_ops->nofity_fw(adapter, QLC_83XX_MBX_REQUEST);
