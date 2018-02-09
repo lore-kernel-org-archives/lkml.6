@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227oly0FLbRDlCsO3HneWFYtsH2KBpg5wBM6skuTz6QXei0SDvzs+nyvozMbcJKQEzINdsF/
-ARC-Seal: i=1; a=rsa-sha256; t=1518184033; cv=none;
+X-Google-Smtp-Source: AH8x225XY0cQnd+QQDEo831HvvWBUs/pIB0sS1k6tykVGT/+7tBUz0AdFwetnCcQ9rnWzH8Qw2Xa
+ARC-Seal: i=1; a=rsa-sha256; t=1518184031; cv=none;
         d=google.com; s=arc-20160816;
-        b=XGyskvHDSZxGh4zROuqffB6CPHI9qfU6qDwGHXd+LXWDJlU0A+jw2pbfWvLClLcHkT
-         6LZiuFuc480W4WQjh1L/Ul1TYFf4x0R2lEu1rqkzCwliZ2jvDIIfopt10z1HnR7bcy9T
-         2gHjY0iO/r3URUe/oX8kmqRGY+919aLTN0KyYGacH39mT/qZR+PhJUBR1/78LcEAQRYg
-         6n7QC4ZFRzdCEikax1heWSG0psTupBwvwdp26OeXx+y56nSJz8YYGXxJvlMSvTXAne7n
-         6gUAQ3XcD9c62pt7NpOEqU0MCTcipWh5QVgwyDXrPNUN/uWXI2dV/nqqJd96XQuc2ozm
-         xb+A==
+        b=NA2KmKFD5X245O/ngzYY4QReZoqFHRVmWk8IjxX/gVfneWIpwzz3gTwca/uvQ9umlJ
+         maJ1U4gBMYztF6fP5f/nUFCtRjsQtZs3+ohWyp3tQmrYamTgfu5PaREpploXgqK2aKZ+
+         uXmtqgohp4zNm0BmA3BMmkS84nBnUnEIr4qQ4DivrCWftfVAYApwUSgrE6eqtXYQOye2
+         7zVAi5Tm+rJ8l3+AKVxJkf+rlxzL3rrIebJB6k/3WeMHcodU/mXxRGkpFVzku67ZboIo
+         BXDGLq3476iTprqGRBr/Fcf7HdKoZqo1RSzZHeP5uHtGHdQb5w1rcNgyrzRYG66hpsMd
+         mHLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4wRl9CqA03B3h8g6lpEI9CZWf2qK0LwWm0REpoCdB4c=;
-        b=qq6O5+t6X6Hmjbw9v2QfQ4VR1AITkc4Xh2VWZAUcDNdTwgxzzPUTUmtNizpQSnC9OE
-         viaPejyXalsIDkpEy4JbjeQ0xb3YzCDOc4Q8v4EGnI39lAWmZOmlPlQn3vyGzIb89DEc
-         VR+Ca2qaEwwgP1z30GisLjyXX9eQ/bK6KrHYZcve7W10NpTWquNsUaaf7LdjM6nXBjDP
-         Yu/mlaTbBcfl0FO+o1EHxm0Fak9yW/tN44TbwW8nWFtXBmeG1N2ZvSWy9shdioiFs/af
-         WkMSBQHPqdJYwjAKnrFVhpXmEfY6+wsjrlpqP61omByD/aiAr/CDoPUHkIYVeCPtEkXV
-         eMlA==
+        bh=twhpDdGeteXOy+1arg43KBbAJQYU02ZuWhy624JtcQs=;
+        b=AjablmFtEJOrPN52OJEzTGNoyq/OmbGCiqZX6Kc3VTPwtapZf/nJFEZUVvMc0SypFq
+         zDo+PfAqFDevg8jUIE8aoutW1aAmhdl5ncecXUkHfLOr/AphdKBRbHQIlYiwFp9AU7oC
+         VXGtxneIOp4FYocNsr8CU6PdYyaDiOARMfdvmhnJySOd32ulJqfIUQgwMWY6op47fmKc
+         cw8lpv+h53sXKZ+vGhTlUk5H1doP6e0vHmPU6FcV34Ac1PmSXpYlZgOcha+IKtZWmfj3
+         5GJSZ6qWbItirF1CklqT0AONKRkYwjOmtrnXvC74FS8L6eyDGZYVhgvhxLl7CA3TtgmR
+         rhcg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Wei Wang <weiwan@google.com>,
 	Eric Dumazet <edumazet@google.com>,
-	Martin KaFai Lau <kafai@fb.com>,
-	Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Ido Schimmel <idosch@mellanox.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 09/23] ipv6: change route cache aging logic
-Date: Fri,  9 Feb 2018 14:40:07 +0100
-Message-Id: <20180209133938.854044659@linuxfoundation.org>
+Subject: [PATCH 4.15 08/23] ipv6: addrconf: break critical section in addrconf_verify_rtnl()
+Date: Fri,  9 Feb 2018 14:40:06 +0100
+Message-Id: <20180209133938.806392940@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133938.366024920@linuxfoundation.org>
 References: <20180209133938.366024920@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591931341619920020?=
-X-GMAIL-MSGID: =?utf-8?q?1591931341619920020?=
+X-GMAIL-THRID: =?utf-8?q?1591931339240258812?=
+X-GMAIL-MSGID: =?utf-8?q?1591931339240258812?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,66 +50,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wei Wang <weiwan@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 31afeb425f7fad8bcf9561aeb0b8405479f97a98 ]
+[ Upstream commit e64e469b9a2c22d41b3dd7172118760cec22d473 ]
 
-In current route cache aging logic, if a route has both RTF_EXPIRE and
-RTF_GATEWAY set, the route will only be removed if the neighbor cache
-has no NTF_ROUTER flag. Otherwise, even if the route has expired, it
-won't get deleted.
-Fix this logic to always check if the route has expired first and then
-do the gateway neighbor cache check if previous check decide to not
-remove the exception entry.
+Heiner reported a lockdep splat [1]
 
-Fixes: 1859bac04fb6 ("ipv6: remove from fib tree aged out RTF_CACHE dst")
-Signed-off-by: Wei Wang <weiwan@google.com>
+This is caused by attempting GFP_KERNEL allocation while RCU lock is
+held and BH blocked.
+
+We believe that addrconf_verify_rtnl() could run for a long period,
+so instead of using GFP_ATOMIC here as Ido suggested, we should break
+the critical section and restart it after the allocation.
+
+[1]
+[86220.125562] =============================
+[86220.125586] WARNING: suspicious RCU usage
+[86220.125612] 4.15.0-rc7-next-20180110+ #7 Not tainted
+[86220.125641] -----------------------------
+[86220.125666] kernel/sched/core.c:6026 Illegal context switch in RCU-bh read-side critical section!
+[86220.125711]
+               other info that might help us debug this:
+
+[86220.125755]
+               rcu_scheduler_active = 2, debug_locks = 1
+[86220.125792] 4 locks held by kworker/0:2/1003:
+[86220.125817]  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
+[86220.125895]  #1:  ((addr_chk_work).work){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
+[86220.125959]  #2:  (rtnl_mutex){+.+.}, at: [<00000000b06d9510>] rtnl_lock+0x12/0x20
+[86220.126017]  #3:  (rcu_read_lock_bh){....}, at: [<00000000aef52299>] addrconf_verify_rtnl+0x1e/0x510 [ipv6]
+[86220.126111]
+               stack backtrace:
+[86220.126142] CPU: 0 PID: 1003 Comm: kworker/0:2 Not tainted 4.15.0-rc7-next-20180110+ #7
+[86220.126185] Hardware name: ZOTAC ZBOX-CI321NANO/ZBOX-CI321NANO, BIOS B246P105 06/01/2015
+[86220.126250] Workqueue: ipv6_addrconf addrconf_verify_work [ipv6]
+[86220.126288] Call Trace:
+[86220.126312]  dump_stack+0x70/0x9e
+[86220.126337]  lockdep_rcu_suspicious+0xce/0xf0
+[86220.126365]  ___might_sleep+0x1d3/0x240
+[86220.126390]  __might_sleep+0x45/0x80
+[86220.126416]  kmem_cache_alloc_trace+0x53/0x250
+[86220.126458]  ? ipv6_add_addr+0xfe/0x6e0 [ipv6]
+[86220.126498]  ipv6_add_addr+0xfe/0x6e0 [ipv6]
+[86220.126538]  ipv6_create_tempaddr+0x24d/0x430 [ipv6]
+[86220.126580]  ? ipv6_create_tempaddr+0x24d/0x430 [ipv6]
+[86220.126623]  addrconf_verify_rtnl+0x339/0x510 [ipv6]
+[86220.126664]  ? addrconf_verify_rtnl+0x339/0x510 [ipv6]
+[86220.126708]  addrconf_verify_work+0xe/0x20 [ipv6]
+[86220.126738]  process_one_work+0x258/0x680
+[86220.126765]  worker_thread+0x35/0x3f0
+[86220.126790]  kthread+0x124/0x140
+[86220.126813]  ? process_one_work+0x680/0x680
+[86220.126839]  ? kthread_create_worker_on_cpu+0x40/0x40
+[86220.126869]  ? umh_complete+0x40/0x40
+[86220.126893]  ? call_usermodehelper_exec_async+0x12a/0x160
+[86220.126926]  ret_from_fork+0x4b/0x60
+[86220.126999] BUG: sleeping function called from invalid context at mm/slab.h:420
+[86220.127041] in_atomic(): 1, irqs_disabled(): 0, pid: 1003, name: kworker/0:2
+[86220.127082] 4 locks held by kworker/0:2/1003:
+[86220.127107]  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
+[86220.127179]  #1:  ((addr_chk_work).work){+.+.}, at: [<00000000da8e9b73>] process_one_work+0x1de/0x680
+[86220.127242]  #2:  (rtnl_mutex){+.+.}, at: [<00000000b06d9510>] rtnl_lock+0x12/0x20
+[86220.127300]  #3:  (rcu_read_lock_bh){....}, at: [<00000000aef52299>] addrconf_verify_rtnl+0x1e/0x510 [ipv6]
+[86220.127414] CPU: 0 PID: 1003 Comm: kworker/0:2 Not tainted 4.15.0-rc7-next-20180110+ #7
+[86220.127463] Hardware name: ZOTAC ZBOX-CI321NANO/ZBOX-CI321NANO, BIOS B246P105 06/01/2015
+[86220.127528] Workqueue: ipv6_addrconf addrconf_verify_work [ipv6]
+[86220.127568] Call Trace:
+[86220.127591]  dump_stack+0x70/0x9e
+[86220.127616]  ___might_sleep+0x14d/0x240
+[86220.127644]  __might_sleep+0x45/0x80
+[86220.127672]  kmem_cache_alloc_trace+0x53/0x250
+[86220.127717]  ? ipv6_add_addr+0xfe/0x6e0 [ipv6]
+[86220.127762]  ipv6_add_addr+0xfe/0x6e0 [ipv6]
+[86220.127807]  ipv6_create_tempaddr+0x24d/0x430 [ipv6]
+[86220.127854]  ? ipv6_create_tempaddr+0x24d/0x430 [ipv6]
+[86220.127903]  addrconf_verify_rtnl+0x339/0x510 [ipv6]
+[86220.127950]  ? addrconf_verify_rtnl+0x339/0x510 [ipv6]
+[86220.127998]  addrconf_verify_work+0xe/0x20 [ipv6]
+[86220.128032]  process_one_work+0x258/0x680
+[86220.128063]  worker_thread+0x35/0x3f0
+[86220.128091]  kthread+0x124/0x140
+[86220.128117]  ? process_one_work+0x680/0x680
+[86220.128146]  ? kthread_create_worker_on_cpu+0x40/0x40
+[86220.128180]  ? umh_complete+0x40/0x40
+[86220.128207]  ? call_usermodehelper_exec_async+0x12a/0x160
+[86220.128243]  ret_from_fork+0x4b/0x60
+
+Fixes: f3d9832e56c4 ("ipv6: addrconf: cleanup locking in ipv6_add_addr")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
+Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ net/ipv6/addrconf.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1586,12 +1586,19 @@ static void rt6_age_examine_exception(st
- 	 * EXPIRES exceptions - e.g. pmtu-generated ones are pruned when
- 	 * expired, independently from their aging, as per RFC 8201 section 4
- 	 */
--	if (!(rt->rt6i_flags & RTF_EXPIRES) &&
--	    time_after_eq(now, rt->dst.lastuse + gc_args->timeout)) {
--		RT6_TRACE("aging clone %p\n", rt);
-+	if (!(rt->rt6i_flags & RTF_EXPIRES)) {
-+		if (time_after_eq(now, rt->dst.lastuse + gc_args->timeout)) {
-+			RT6_TRACE("aging clone %p\n", rt);
-+			rt6_remove_exception(bucket, rt6_ex);
-+			return;
-+		}
-+	} else if (time_after(jiffies, rt->dst.expires)) {
-+		RT6_TRACE("purging expired route %p\n", rt);
- 		rt6_remove_exception(bucket, rt6_ex);
- 		return;
--	} else if (rt->rt6i_flags & RTF_GATEWAY) {
-+	}
-+
-+	if (rt->rt6i_flags & RTF_GATEWAY) {
- 		struct neighbour *neigh;
- 		__u8 neigh_flags = 0;
- 
-@@ -1606,11 +1613,8 @@ static void rt6_age_examine_exception(st
- 			rt6_remove_exception(bucket, rt6_ex);
- 			return;
- 		}
--	} else if (__rt6_check_expired(rt)) {
--		RT6_TRACE("purging expired route %p\n", rt);
--		rt6_remove_exception(bucket, rt6_ex);
--		return;
- 	}
-+
- 	gc_args->more++;
- }
- 
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -4352,9 +4352,11 @@ restart:
+ 						spin_lock(&ifpub->lock);
+ 						ifpub->regen_count = 0;
+ 						spin_unlock(&ifpub->lock);
++						rcu_read_unlock_bh();
+ 						ipv6_create_tempaddr(ifpub, ifp, true);
+ 						in6_ifa_put(ifpub);
+ 						in6_ifa_put(ifp);
++						rcu_read_lock_bh();
+ 						goto restart;
+ 					}
+ 				} else if (time_before(ifp->tstamp + ifp->prefered_lft * HZ - regen_advance * HZ, next))
