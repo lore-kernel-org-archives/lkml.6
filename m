@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeBIOZQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:25:16 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58648 "EHLO
+        id S1752669AbeBIOZd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:25:33 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60064 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752189AbeBIOV6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752167AbeBIOV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Feb 2018 09:21:58 -0500
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -14,22 +14,22 @@ Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
         npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
         luc.maranget@inria.fr, akiyks@gmail.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH RFC tip/lkmm 08/10] EXP Remove understore from smp_mb__before_atomic() workings
-Date: Fri,  9 Feb 2018 06:20:29 -0800
+Subject: [PATCH RFC tip/lkmm 02/10] MAINTAINERS: Add the Memory Consistency Model subsystem
+Date: Fri,  9 Feb 2018 06:20:23 -0800
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180209141832.GA17505@linux.vnet.ibm.com>
 References: <20180209141832.GA17505@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18020914-0008-0000-0000-000002CF3CB1
+x-cbid: 18020914-0052-0000-0000-000002B2C2A1
 X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008504; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000250; SDB=6.00987228; UDB=6.00501083; IPR=6.00766585;
+X-IBM-SpamModules-Versions: BY=3.00008503; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000250; SDB=6.00987227; UDB=6.00501083; IPR=6.00766586;
  BA=6.00005821; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
  ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019457; XFM=3.00000015;
  UTC=2018-02-09 14:21:55
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020914-0009-0000-0000-0000383403C8
-Message-Id: <1518186031-17997-8-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18020914-0053-0000-0000-000053875ED4
+Message-Id: <1518186031-17997-2-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -41,51 +41,71 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Andrea Parri <parri.andrea@gmail.com>
+
+Move the contents of tools/memory-model/MAINTAINERS into the main
+MAINTAINERS file, removing tools/memory-model/MAINTAINERS. This
+allows get_maintainer.pl to correctly identify the maintainers of
+tools/memory-model/.
+
+Suggested-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- tools/memory-model/linux-kernel.bell | 2 +-
- tools/memory-model/linux-kernel.cat  | 2 +-
- tools/memory-model/linux-kernel.def  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ MAINTAINERS                    | 16 ++++++++++++++++
+ tools/memory-model/MAINTAINERS | 15 ---------------
+ 2 files changed, 16 insertions(+), 15 deletions(-)
+ delete mode 100644 tools/memory-model/MAINTAINERS
 
-diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-index b984bbda01a5..558bbef9e08a 100644
---- a/tools/memory-model/linux-kernel.bell
-+++ b/tools/memory-model/linux-kernel.bell
-@@ -28,7 +28,7 @@ enum Barriers = 'wmb (*smp_wmb*) ||
- 		'rcu-lock (*rcu_read_lock*)  ||
- 		'rcu-unlock (*rcu_read_unlock*) ||
- 		'sync-rcu (*synchronize_rcu*) ||
--		'before_atomic (*smp_mb__before_atomic*) ||
-+		'before-atomic (*smp_mb__before_atomic*) ||
- 		'after_atomic (*smp_mb__after_atomic*) ||
- 		'after_spinlock (*smp_mb__after_spinlock*)
- instructions F[Barriers]
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index babe2b3b0bb3..31c08a44c088 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -29,7 +29,7 @@ let rb-dep = [R] ; fencerel(Rb_dep) ; [R]
- let rmb = [R \ Noreturn] ; fencerel(Rmb) ; [R \ Noreturn]
- let wmb = [W] ; fencerel(Wmb) ; [W]
- let mb = ([M] ; fencerel(Mb) ; [M]) |
--	([M] ; fencerel(Before_atomic) ; [RMW] ; po? ; [M]) |
-+	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
- 	([M] ; po? ; [RMW] ; fencerel(After_atomic) ; [M]) |
- 	([M] ; po? ; [LKW] ; fencerel(After_spinlock) ; [M])
- let gp = po ; [Sync-rcu] ; po?
-diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-index a397387f77cc..ff4b756f4a44 100644
---- a/tools/memory-model/linux-kernel.def
-+++ b/tools/memory-model/linux-kernel.def
-@@ -21,7 +21,7 @@ smp_mb() { __fence{mb} ; }
- smp_rmb() { __fence{rmb} ; }
- smp_wmb() { __fence{wmb} ; }
- smp_read_barrier_depends() { __fence{rb_dep}; }
--smp_mb__before_atomic() { __fence{before_atomic} ; }
-+smp_mb__before_atomic() { __fence{before-atomic} ; }
- smp_mb__after_atomic() { __fence{after_atomic} ; }
- smp_mb__after_spinlock() { __fence{after_spinlock} ; }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e3581413420c..ba4dc08fbe95 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8086,6 +8086,22 @@ M:	Kees Cook <keescook@chromium.org>
+ S:	Maintained
+ F:	drivers/misc/lkdtm*
  
++LINUX KERNEL MEMORY CONSISTENCY MODEL
++M:	Alan Stern <stern@rowland.harvard.edu>
++M:	Andrea Parri <parri.andrea@gmail.com>
++M:	Will Deacon <will.deacon@arm.com>
++M:	Peter Zijlstra <peterz@infradead.org>
++M:	Boqun Feng <boqun.feng@gmail.com>
++M:	Nicholas Piggin <npiggin@gmail.com>
++M:	David Howells <dhowells@redhat.com>
++M:	Jade Alglave <j.alglave@ucl.ac.uk>
++M:	Luc Maranget <luc.maranget@inria.fr>
++M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++L:	linux-kernel@vger.kernel.org
++S:	Supported
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
++F:	tools/memory-model/
++
+ LINUX SECURITY MODULE (LSM) FRAMEWORK
+ M:	Chris Wright <chrisw@sous-sol.org>
+ L:	linux-security-module@vger.kernel.org
+diff --git a/tools/memory-model/MAINTAINERS b/tools/memory-model/MAINTAINERS
+deleted file mode 100644
+index db3bd3fc0435..000000000000
+--- a/tools/memory-model/MAINTAINERS
++++ /dev/null
+@@ -1,15 +0,0 @@
+-LINUX KERNEL MEMORY CONSISTENCY MODEL
+-M:	Alan Stern <stern@rowland.harvard.edu>
+-M:	Andrea Parri <parri.andrea@gmail.com>
+-M:	Will Deacon <will.deacon@arm.com>
+-M:	Peter Zijlstra <peterz@infradead.org>
+-M:	Boqun Feng <boqun.feng@gmail.com>
+-M:	Nicholas Piggin <npiggin@gmail.com>
+-M:	David Howells <dhowells@redhat.com>
+-M:	Jade Alglave <j.alglave@ucl.ac.uk>
+-M:	Luc Maranget <luc.maranget@inria.fr>
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+-L:	linux-kernel@vger.kernel.org
+-S:	Supported
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+-F:	tools/memory-model/
 -- 
 2.5.2
