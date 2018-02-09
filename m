@@ -1,399 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752426AbeBIQ6K (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 11:58:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34406 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752208AbeBIQ5q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 11:57:46 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21EBD60790
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, asathyak@codeaurora.org,
-        Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v6 1/2] drivers: irqchip: pdc: Add PDC interrupt controller for QCOM SoCs
-Date: Fri,  9 Feb 2018 09:57:34 -0700
-Message-Id: <20180209165735.19151-2-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180209165735.19151-1-ilina@codeaurora.org>
-References: <20180209165735.19151-1-ilina@codeaurora.org>
+        id S1752230AbeBIQ7N (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 11:59:13 -0500
+Received: from mout.gmx.net ([212.227.17.20]:36465 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751150AbeBIQ7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 11:59:10 -0500
+Date: Fri, 9 Feb 2018 17:58:58 +0100
+From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT"
+        <linuxppc-dev@lists.ozlabs.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Albert Herranz <albert_herranz@yahoo.es>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
+Message-ID: <20180209165858.ebm7ed7f4b5uakju@latitude>
+References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
+ <20180209120732.17863-3-j.neuschaefer@gmx.net>
+ <CAHp75Vf=Z7DTMvbacLN+E-hScBD3ZNpnf6Ch+5xm=JNbX2cbVg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="i7quqgrx7stws5lv"
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf=Z7DTMvbacLN+E-hScBD3ZNpnf6Ch+5xm=JNbX2cbVg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K0:2fSTFeuf3tn0sfi5VBhwPZ29pJqZaZ++bpu6KzeNcCj+YxbEnBQ
+ 33jFsYNNZPZFdp4QE+9LXIgHjbaLBcKemT5PG/OIXw+/zvn6lSWFaHY78By0SuLeLe/eT92
+ AFMdPubfCEsHw81+MBy17V3qGmfU+aa0QTLRCkqeLZAc8wkddp3TkmYrnVgfPPQkeprryeL
+ I7OqcmHRJ0OU5a3NxVvcA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:DT5ASuMO/uo=:1+9htVVJN9brB6S/MbNyt0
+ 0yeaajFMM/Y4E3NGssd13/XwnJlDsdmNAVScGFB8VYyPze9vLvtCW4iAtuxu8fbEPHMO+IYZP
+ kriP162yx0k/I+NczhoQ0fhsID1PPW0w27thosN7CMZ2YHHXAMwnxzu8XtRNrPAS6A1uIfJZD
+ /zUrk1CWyd9ctw9Ny7E0mp0H+OIYEjaDPT7upbXaE6Cj07nboptAsLuJSSKKDXrCTF6yQLTZw
+ 06EsHFFFcJ6SHoXn01dQb29aXi9yK18L6qTmxPPs6Xk2hKrPOWPKwR/9Uweo3EYLPw9/rNRf8
+ SesHgoXwGADinqM9ohNuP9hYq35n3krAYreevtYhIdIAiRO468m93Tu3Y4wbl6kmEeIg0FsZT
+ m5EJ9+Ls7Zmi3buTBcg1ZI8IAZ9WAlSu7lewb5o7vDfXnpw3kYvmWZWPtfrqoCG7NwUAVy4DS
+ uZoloi13oK8AyaRbS62ZsTJm9UhXfjrzYHP3/CW+yF4fjRqcJd/3AMCpYhl7GRegEL3wvkdB+
+ +QiV8jQbg5+YAgyhhtULlzq31lqnU57dBsNCv39xn1tomfexLZ0rhgxSk5wuAhK056C4oLOpq
+ oB4ur5lpMeTD/ln+59iJWPe+xTFTwnchIuH7nZ55TEnOlhNHQ5X09tmKXNfk75ldxDOQg6bus
+ jkAklmSc/q5aMmIf5hhq34df8JlqQLuPz0NPfhmHYMzIrZk1PxiKERTnj3TEWK9O8RE5RlpP6
+ 8Sgseer3mNjPPGiZkVWv5JKlMH+ptek4f7B4lBKwX5/2S9SE1RzZC3tNnTJAubioo1+5gLNPz
+ Jxlk9f1OAddFKHYkdKTi42KiQIWXw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From : Archana Sathyakumar <asathyak@codeaurora.org>
 
-The Power Domain Controller (PDC) on QTI SoCs like SDM845 houses an
-interrupt controller along with other domain control functions to handle
-interrupt related functions like handle falling edge or active low which
-are not detected at the GIC and handle wakeup interrupts.
+--i7quqgrx7stws5lv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The interrupt controller is on an always-on domain for the purpose of
-waking up the processor. Only a subset of the processor's interrupts are
-routed through the PDC to the GIC. The PDC powers on the processors'
-domain, when in low power mode and replays pending interrupts so the GIC
-may wake up the processor.
+On Fri, Feb 09, 2018 at 05:30:55PM +0200, Andy Shevchenko wrote:
+> On Fri, Feb 9, 2018 at 2:07 PM, Jonathan Neusch=C3=A4fer
+> <j.neuschaefer@gmx.net> wrote:
+> > The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
+> > that supports a configurable number of pins (up to 32), interrupts, and
+> > some special mechanisms to share the controller between the system's
+> > security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
+> > not supported.
+> >
+> > This patch adds a basic driver for this GPIO controller. Interrupt
+> > support will come in a later patch.
+> >
+> > This patch is based on code developed by Albert Herranz and the GameCube
+> > Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
+> > available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
+> > has grown quite dissimilar.
+> >
+>=20
+> Fine to me, though one comment below.
+> In any case,
+>=20
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Signed-off-by: Archana Sathyakumar <asathyak@codeaurora.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- drivers/irqchip/Kconfig    |   9 ++
- drivers/irqchip/Makefile   |   1 +
- drivers/irqchip/qcom-pdc.c | 314 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 324 insertions(+)
- create mode 100644 drivers/irqchip/qcom-pdc.c
+Thank you.
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index c70476b34a53..506c6aa7f0b4 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -343,4 +343,13 @@ config MESON_IRQ_GPIO
-        help
-          Support Meson SoC Family GPIO Interrupt Multiplexer
- 
-+config QCOM_PDC
-+	bool "QCOM PDC"
-+	depends on ARCH_QCOM
-+	select IRQ_DOMAIN
-+	select IRQ_DOMAIN_HIERARCHY
-+	help
-+	  Power Domain Controller driver to manage and configure wakeup
-+	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
-+
- endmenu
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index d2df34a54d38..280723d83916 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -84,3 +84,4 @@ obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
- obj-$(CONFIG_IRQ_UNIPHIER_AIDET)	+= irq-uniphier-aidet.o
- obj-$(CONFIG_ARCH_SYNQUACER)		+= irq-sni-exiu.o
- obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
-+obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-new file mode 100644
-index 000000000000..714e95858837
---- /dev/null
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -0,0 +1,314 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqdomain.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/spinlock.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+
-+#define PDC_MAX_IRQS		126
-+
-+#define CLEAR_INTR(reg, intr)	(reg & ~(1 << intr))
-+#define ENABLE_INTR(reg, intr)	(reg | (1 << intr))
-+
-+#define IRQ_ENABLE_BANK		0x10
-+#define IRQ_i_CFG		0x110
-+
-+struct pdc_pin_region {
-+	u32 pin_base;
-+	u32 parent_base;
-+	u32 cnt;
-+};
-+
-+static DEFINE_RAW_SPINLOCK(pdc_lock);
-+static void __iomem *pdc_base;
-+static struct pdc_pin_region *pdc_region;
-+static int pdc_region_cnt;
-+
-+static void pdc_reg_write(int reg, u32 i, u32 val)
-+{
-+	writel_relaxed(val, pdc_base + reg + i * sizeof(u32));
-+}
-+
-+static u32 pdc_reg_read(int reg, u32 i)
-+{
-+	return readl_relaxed(pdc_base + reg + i * sizeof(u32));
-+}
-+
-+static void pdc_enable_intr(struct irq_data *d, bool on)
-+{
-+	int pin_out = d->hwirq;
-+	u32 index, mask;
-+	u32 enable;
-+
-+	index = pin_out / 32;
-+	mask = pin_out % 32;
-+
-+	raw_spin_lock(&pdc_lock);
-+	enable = pdc_reg_read(IRQ_ENABLE_BANK, index);
-+	enable = on ? ENABLE_INTR(enable, mask) : CLEAR_INTR(enable, mask);
-+	pdc_reg_write(IRQ_ENABLE_BANK, index, enable);
-+	raw_spin_unlock(&pdc_lock);
-+}
-+
-+static void qcom_pdc_gic_mask(struct irq_data *d)
-+{
-+	pdc_enable_intr(d, false);
-+	irq_chip_mask_parent(d);
-+}
-+
-+static void qcom_pdc_gic_unmask(struct irq_data *d)
-+{
-+	pdc_enable_intr(d, true);
-+	irq_chip_unmask_parent(d);
-+}
-+
-+/*
-+ * GIC does not handle falling edge or active low. To allow falling edge and
-+ * active low interrupts to be handled at GIC, PDC has an inverter that inverts
-+ * falling edge into a rising edge and active low into an active high.
-+ * For the inverter to work, the polarity bit in the IRQ_CONFIG register has to
-+ * set as per the table below.
-+ * (polarity, falling edge, rising edge ) POLARITY
-+ * 3'b0 00  Level sensitive active low    LOW
-+ * 3'b0 01  Rising edge sensitive         NOT USED
-+ * 3'b0 10  Falling edge sensitive        LOW
-+ * 3'b0 11  Dual Edge sensitive           NOT USED
-+ * 3'b1 00  Level sensitive active High   HIGH
-+ * 3'b1 01  Falling Edge sensitive        NOT USED
-+ * 3'b1 10  Rising edge sensitive         HIGH
-+ * 3'b1 11  Dual Edge sensitive           HIGH
-+ */
-+enum pdc_irq_config_bits {
-+	PDC_POLARITY_LOW	= 0,
-+	PDC_FALLING_EDGE	= 2,
-+	PDC_POLARITY_HIGH	= 4,
-+	PDC_RISING_EDGE		= 6,
-+	PDC_DUAL_EDGE		= 7,
-+};
-+
-+/**
-+ * qcom_pdc_gic_set_type: Configure PDC for the interrupt
-+ *
-+ * @d: the interrupt data
-+ * @type: the interrupt type
-+ *
-+ * If @type is edge triggered, forward that as Rising edge as PDC
-+ * takes care of converting falling edge to rising edge signal
-+ * If @type is level, then forward that as level high as PDC
-+ * takes care of converting falling edge to rising edge signal
-+ */
-+static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
-+{
-+	int pin_out = d->hwirq;
-+	enum pdc_irq_config_bits pdc_type;
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		pdc_type = PDC_RISING_EDGE;
-+		type = IRQ_TYPE_EDGE_RISING;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		pdc_type = PDC_FALLING_EDGE;
-+		type = IRQ_TYPE_EDGE_RISING;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		pdc_type = PDC_DUAL_EDGE;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		pdc_type = PDC_POLARITY_HIGH;
-+		type = IRQ_TYPE_LEVEL_HIGH;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		pdc_type = PDC_POLARITY_LOW;
-+		type = IRQ_TYPE_LEVEL_HIGH;
-+		break;
-+	default:
-+		WARN_ON(1);
-+		return -EINVAL;
-+	}
-+
-+	pdc_reg_write(IRQ_i_CFG, pin_out, pdc_type);
-+
-+	return irq_chip_set_type_parent(d, type);
-+}
-+
-+static struct irq_chip qcom_pdc_gic_chip = {
-+	.name			= "PDC",
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_mask		= qcom_pdc_gic_mask,
-+	.irq_unmask		= qcom_pdc_gic_unmask,
-+	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-+	.irq_set_type		= qcom_pdc_gic_set_type,
-+	.flags			= IRQCHIP_MASK_ON_SUSPEND |
-+				  IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE,
-+	.irq_set_vcpu_affinity	= irq_chip_set_vcpu_affinity_parent,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+};
-+
-+static irq_hw_number_t get_parent_hwirq(int pin)
-+{
-+	int i;
-+	struct pdc_pin_region *region;
-+
-+	for (i = 0; i < pdc_region_cnt; i++) {
-+		region = &pdc_region[i];
-+		if (pin >= region->pin_base &&
-+		   pin < region->pin_base + region->cnt)
-+			return (region->parent_base + pin - region->pin_base);
-+	}
-+
-+	WARN_ON(1);
-+	return ~0UL;
-+}
-+
-+static int qcom_pdc_translate(struct irq_domain *d,
-+	struct irq_fwspec *fwspec, unsigned long *hwirq, unsigned int *type)
-+{
-+	if (is_of_node(fwspec->fwnode)) {
-+		if (fwspec->param_count != 2)
-+			return -EINVAL;
-+
-+		*hwirq = fwspec->param[0];
-+		*type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int qcom_pdc_alloc(struct irq_domain *domain,
-+			unsigned int virq, unsigned int nr_irqs, void *data)
-+{
-+	struct irq_fwspec *fwspec = data;
-+	struct irq_fwspec parent_fwspec;
-+	irq_hw_number_t hwirq, parent_hwirq;
-+	unsigned int type;
-+	int ret;
-+
-+	ret = qcom_pdc_translate(domain, fwspec, &hwirq, &type);
-+	if (ret)
-+		return -EINVAL;
-+
-+	parent_hwirq = get_parent_hwirq(hwirq);
-+	if (parent_hwirq == ~0UL)
-+		return -EINVAL;
-+
-+	ret  = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
-+					    &qcom_pdc_gic_chip, NULL);
-+	if (ret)
-+		return ret;
-+
-+	if (type & IRQ_TYPE_EDGE_BOTH)
-+		type = IRQ_TYPE_EDGE_RISING;
-+
-+	if (type & IRQ_TYPE_LEVEL_MASK)
-+		type = IRQ_TYPE_LEVEL_HIGH;
-+
-+	parent_fwspec.fwnode      = domain->parent->fwnode;
-+	parent_fwspec.param_count = 3;
-+	parent_fwspec.param[0]    = 0;
-+	parent_fwspec.param[1]    = parent_hwirq;
-+	parent_fwspec.param[2]    = type;
-+
-+	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
-+					   &parent_fwspec);
-+}
-+
-+static const struct irq_domain_ops qcom_pdc_ops = {
-+	.translate	= qcom_pdc_translate,
-+	.alloc		= qcom_pdc_alloc,
-+	.free		= irq_domain_free_irqs_common,
-+};
-+
-+static int pdc_setup_pin_mapping(struct device_node *np)
-+{
-+	int ret, n;
-+
-+	n = of_property_count_elems_of_size(np, "qcom,pdc-ranges", sizeof(u32));
-+	if (n <= 0 || n % 3)
-+		return -EINVAL;
-+
-+	pdc_region_cnt = n / 3;
-+	pdc_region = kcalloc(pdc_region_cnt, sizeof(*pdc_region), GFP_KERNEL);
-+	if (!pdc_region) {
-+		pdc_region_cnt = 0;
-+		return -ENOMEM;
-+	}
-+
-+	for (n = 0; n < pdc_region_cnt; n++) {
-+		ret = of_property_read_u32_index(np, "qcom,pdc-ranges",
-+						n * 3 + 0,
-+						&pdc_region[n].pin_base);
-+		if (ret)
-+			return ret;
-+		ret = of_property_read_u32_index(np, "qcom,pdc-ranges",
-+						n * 3 + 1,
-+						&pdc_region[n].parent_base);
-+		if (ret)
-+			return ret;
-+		ret = of_property_read_u32_index(np, "qcom,pdc-ranges",
-+						n * 3 + 2,
-+						&pdc_region[n].cnt);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qcom_pdc_init(struct device_node *node, struct device_node *parent)
-+{
-+	struct irq_domain *parent_domain, *pdc_domain;
-+	int ret;
-+
-+	pdc_base = of_iomap(node, 0);
-+	if (!pdc_base) {
-+		pr_err("%pOF: unable to map PDC registers\n", node);
-+		return -ENXIO;
-+	}
-+
-+	parent_domain = irq_find_host(parent);
-+	if (!parent_domain) {
-+		pr_err("%pOF: unable to find PDC's parent domain\n", node);
-+		ret = -ENXIO;
-+		goto fail;
-+	}
-+
-+	ret = pdc_setup_pin_mapping(node);
-+	if (ret) {
-+		pr_err("%pOF: failed to init PDC pin-hwirq mapping\n", node);
-+		goto fail;
-+	}
-+
-+	pdc_domain = irq_domain_create_hierarchy(parent_domain, 0, PDC_MAX_IRQS,
-+						of_fwnode_handle(node),
-+						&qcom_pdc_ops, NULL);
-+	if (!pdc_domain) {
-+		pr_err("%pOF: GIC domain add failed\n", node);
-+		ret = -ENOMEM;
-+		goto fail;
-+	}
-+
-+	return 0;
-+
-+fail:
-+	kfree(pdc_region);
-+	iounmap(pdc_base);
-+	return ret;
-+}
-+
-+IRQCHIP_DECLARE(pdc_sdm845, "qcom,sdm845-pdc", qcom_pdc_init);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+[...]
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index d6a8e851ad13..47606dfe06cc 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -229,6 +229,15 @@ config GPIO_GRGPIO
+> >           Select this to support Aeroflex Gaisler GRGPIO cores from the=
+ GRLIB
+> >           VHDL IP core library.
+> >
+> > +config GPIO_HLWD
+> > +       tristate "Nintendo Wii (Hollywood) GPIO"
+>=20
+> > +       depends on OF_GPIO
+>=20
+> You may get rid of it if...
+
+[ Even if this driver isn't switched to the unified device property API,
+  I think "depends on OF" would be enough here, because it doesn't use
+  the code that's guarded by CONFIG_OF_GPIO (gpiolib-of.c), but this
+  applies to other drivers (e.g. gpio-aspeed, gpio-bcm-kona) as well, so
+  this would ideally be a bigger cleanup patch. ]
+
+
+> > +       res =3D of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpi=
+os);
+>=20
+> ...if you switch to unified device property API.
+
+I don't think this change is worth making, unless/until the of_property
+API is deprecated. I'm rather sure this GPIO controller won't appear in
+an ACPI-based system.
+
+
+Thanks,
+Jonathan Neusch=C3=A4fer
+
+--i7quqgrx7stws5lv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAABAgAGBQJafdNLAAoJEAgwRJqO81/bixcQAIr1riJeusqVnVSqFoRF5AnI
+E5rzLIjuyrWdakM/xRDFvHhKJs2CVNVWyzxsPefEfdYZjPx7jxy9g2ZC0fOR8MRd
+F26NvxC6+x5piXsGXixyWdveWSe5ePsp041xQylW/6J8c9rWN6/H2K0PFaig/oEC
+eRuzu3Ow4G4m6PHYDeiorz7CHZGKYF9bCqPxSXhJRL1GWv2eahlB6MHe+fnSxI/3
+YogJGou88lMQryAG2zLy2JUuXMFR2wcixjso8Np9VwqQiTIWTr+ONqhMDx/P7rfB
+IU1PW027x/571T7dC40jDrtGERe7IPtGtqx86qnO71cczBJFla6Hu8Tjdirs+haZ
++0AeTpshCXNEG2Hnb1FML9LzO5bMwTqMWFsF8loek4XtJR9/ZJ/xmLk6ieE1ShWD
++yjjgPpMoqeGFaCZkwzITFZ9XbUV51nuElSLWbwFjagUAzWx48G5/2iml6coFlCA
+a4Z17JNZw9ue68es/nakJiwPiUpA7/73Ck8JzIq4AIXdW+Aiz8H72rnudqCX6qZ5
+ccBbhW2VgAtSE7RYQqK6i6q09Y1RzheUqTwhcDIQ+kGAhWeGCG02mzOHcyUYPUGG
+tsBoqPTeqibSkmo4ZMYTKDacXFq5MYdTZ5M/rxz+sXxLKVYFzNJwHbzvogCXom2G
+6YvcnxSVm0mft+2eLQqs
+=SLYv
+-----END PGP SIGNATURE-----
+
+--i7quqgrx7stws5lv--
