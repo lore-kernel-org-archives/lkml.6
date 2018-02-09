@@ -1,94 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751124AbeBINgw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:36:52 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.66]:23644 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751004AbeBINgu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:36:50 -0500
-Date: Fri, 09 Feb 2018 07:36:49 -0600
-Message-ID: <20180209073649.Horde.OueGLKMtzpLyz4w36quXUca@gator4166.hostgator.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/nldev: Fix multiple potential NULL pointer
- dereferences
-References: <20180209063702.GA28685@embeddedgus>
- <20180209122549.GK2197@mtr-leonro.local>
-In-Reply-To: <20180209122549.GK2197@mtr-leonro.local>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        id S1751093AbeBINiv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750924AbeBINiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 08:38:50 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E74A2173B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add fi->commit_lock to protect commit
+ GCed pages
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org,
+        yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        heyunlei@huawei.com, miaoxie@huawei.com
+References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+ <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
+ <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
+ <134848f9-2dd6-0efa-3ccf-3c29eeaf5534@huawei.com>
+ <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
+ <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
+ <d67aae9c-778a-50bd-9f73-f90c3efd9b73@kernel.org>
+ <33b262b8-7701-a150-09e5-9ae1b4733835@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <0b3d2792-b3cf-3302-8313-404a25c86854@kernel.org>
+Date: Fri, 9 Feb 2018 21:38:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 108.167.133.22
-X-Source-L: Yes
-X-Exim-ID: 1ek8rB-000SNI-Fm
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:28610
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <33b262b8-7701-a150-09e5-9ae1b4733835@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leon,
+On 2018/2/9 21:29, Yunlong Song wrote:
+> Back to the problem, if we skip out, then the f2fs_gc will go
+> into dead loop if the apps only atomic start but never atomic
 
-Quoting Leon Romanovsky <leon@kernel.org>:
+That's another issue, which I have suggest to set a threshold time
+to release atomic/volatile pages by balance_fs_bg.
 
-> On Fri, Feb 09, 2018 at 12:37:02AM -0600, Gustavo A. R. Silva wrote:
->> In case the message header and payload cannot be stored, function
->> nlmsg_put returns null.
+Thanks,
+
+> commit. The main aim of my two patches is to remove the skip
+> action to avoid the dead loop.
+> 
+> On 2018/2/9 21:26, Chao Yu wrote:
+>> On 2018/2/9 20:56, Yunlong Song wrote:
+>>> As what I point in last mail, if the atomic file is not committed
+>>> yet, gc_data_segment will register_inmem_page the GCed data pages.
 >>
->> Fix this by adding multiple sanity checks and avoid a potential
->> null dereference on _nlh_ when calling nlmsg_end.
+>> We will skip GCing that page as below check:
 >>
->> Addresses-Coverity-ID: 1454215 ("Dereference null return value")
->> Addresses-Coverity-ID: 1454223 ("Dereference null return value")
->> Addresses-Coverity-ID: 1454224 ("Dereference null return value")
->> Addresses-Coverity-ID: 1464669 ("Dereference null return value")
->> Addresses-Coverity-ID: 1464670 ("Dereference null return value")
->> Addresses-Coverity-ID: 1464672 ("Dereference null return value")
->> Fixes: e5c9469efcb1 ("RDMA/netlink: Add nldev device doit implementation")
->> Fixes: c3f66f7b0052 ("RDMA/netlink: Implement nldev port doit callback")
->> Fixes: 7d02f605f0dc ("RDMA/netlink: Add nldev port dumpit implementation")
->> Fixes: b5fa635aab8f ("RDMA/nldev: Provide detailed QP information")
->> Fixes: bf3c5a93c523 ("RDMA/nldev: Provide global resource utilization")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/infiniband/core/nldev.c | 26 +++++++++++++++++++++++++-
->>  1 file changed, 25 insertions(+), 1 deletion(-)
+>> - move_data_{page,block}
+>>   - f2fs_is_atomic_file()
+>>     skip out;
 >>
->
-> It will be much better to fix the tool instead of fixing ghost case.
-> This scenario is impossible for all those flows.
-> We can receive the skv/msg in two ways:
->  * First by allocating new message with NLMSG_DEFAULT_SIZE, which  
-> has more room
->    than nlmsg_total_size(payload), payload is 0.
->  * Second by getting from netlink.c and it will be at least "struct  
-> nlmsghdr" too.
->
-> Can you please add this info to the commit message?
->
-
-Actually, I was planing to send a new version of this patch. This time  
-using the unlikely macro for all the null checks on nlh.
-
-What do you think?
-
-Thanks
---
-Gustavo
+>> No?
+>>
+>> Thanks,
+>>
+>>> This will cause these data pages written twice, the first write
+>>> happens in move_data_page->do_write_data_page, and the second
+>>> write happens in later __commit_inmem_pages->do_write_data_page.
+>>>
+>>> On 2018/2/9 20:44, Chao Yu wrote:
+>>>> On 2018/2/8 11:11, Yunlong Song wrote:
+>>>>> Then the GCed data pages are totally mixed with the inmem atomic pages,
+>>>>
+>>>> If we add dio_rwsem, GC flow is exclude with atomic write flow. There
+>>>> will be not race case to mix GCed page into atomic pages.
+>>>>
+>>>> Or you mean:
+>>>>
+>>>>                      - gc_data_segment
+>>>>                       - move_data_page
+>>>>                        - f2fs_is_atomic_file
+>>>> - f2fs_ioc_start_atomic_write
+>>>>    - set_inode_flag(inode, FI_ATOMIC_FILE);
+>>>>                        - f2fs_set_data_page_dirty
+>>>>                         - register_inmem_page
+>>>>
+>>>> In this case, GCed page can be mixed into database transaction, but could
+>>>> it cause any problem except break rule of isolation for transaction.
+>>>>
+>>>>> this will cause the atomic commit ops write the GCed data pages twice
+>>>>> (the first write happens in GC).
+>>>>>
+>>>>> How about using the early two patches to separate the inmem data pages
+>>>>> and GCed data pages, and use dio_rwsem instead of this patch to fix the
+>>>>> dnode page problem (dnode page commited but data page are not committed
+>>>>> for the GCed page)?
+>>>>
+>>>> Could we fix the race case first, based on that fixing, and then find the
+>>>> place that we can improve?
+>>>>
+>>>>>
+>>>>>
+>>>>> On 2018/2/7 20:16, Chao Yu wrote:
+>>>>>> On 2018/2/6 11:49, Yunlong Song wrote:
+>>>>>>> This patch adds fi->commit_lock to avoid the case that GCed node pages
+>>>>>>> are committed but GCed data pages are not committed. This can avoid the
+>>>>>>> db file run into inconsistent state when sudden-power-off happens if
+>>>>>>> data pages of atomic file is allowed to be GCed before.
+>>>>>>
+>>>>>> do_fsync:                GC:
+>>>>>> - mutex_lock(&fi->commit_lock);
+>>>>>>                       - lock_page()
+>>>>>>                        - mutex_lock(&fi->commit_lock);
+>>>>>>     - lock_page()
+>>>>>>
+>>>>>>
+>>>>>> Well, please consider lock dependency & code complexity, IMO, reuse
+>>>>>> fi->dio_rwsem[WRITE] will be enough as below:
+>>>>>>
+>>>>>> ---
+>>>>>>     fs/f2fs/file.c | 3 +++
+>>>>>>     fs/f2fs/gc.c   | 5 -----
+>>>>>>     2 files changed, 3 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>>>> index 672a542e5464..1bdc11feb8d0 100644
+>>>>>> --- a/fs/f2fs/file.c
+>>>>>> +++ b/fs/f2fs/file.c
+>>>>>> @@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>>>>>>
+>>>>>>         inode_lock(inode);
+>>>>>>
+>>>>>> +    down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>>>>>> +
+>>>>>>         if (f2fs_is_volatile_file(inode))
+>>>>>>             goto err_out;
+>>>>>>
+>>>>>> @@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>>>>>>             ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+>>>>>>         }
+>>>>>>     err_out:
+>>>>>> +    up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>>>>>>         inode_unlock(inode);
+>>>>>>         mnt_drop_write_file(filp);
+>>>>>>         return ret;
+>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>>> index b9d93fd532a9..e49416283563 100644
+>>>>>> --- a/fs/f2fs/gc.c
+>>>>>> +++ b/fs/f2fs/gc.c
+>>>>>> @@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>>>>>>         if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>>>>             goto out;
+>>>>>>
+>>>>>> -    if (f2fs_is_atomic_file(inode))
+>>>>>> -        goto out;
+>>>>
+>>>> Seems that we need this check.
+>>>>
+>>>>>> -
+>>>>>>         if (f2fs_is_pinned_file(inode)) {
+>>>>>>             f2fs_pin_file_control(inode, true);
+>>>>>>             goto out;
+>>>>>> @@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>>>>>>         if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>>>>             goto out;
+>>>>>>
+>>>>>> -    if (f2fs_is_atomic_file(inode))
+>>>>>> -        goto out;
+>>>>
+>>>> Ditto.
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>>         if (f2fs_is_pinned_file(inode)) {
+>>>>>>             if (gc_type == FG_GC)
+>>>>>>                 f2fs_pin_file_control(inode, true);
+>>>>>>
+>>>>>
+>>>>
+>>>> .
+>>>>
+>>>
+>>
+>> .
+>>
+> 
