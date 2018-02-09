@@ -1,148 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeBIDzx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 22:55:53 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:28943 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752201AbeBIDzv (ORCPT
+        id S1752391AbeBIEIS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 23:08:18 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:49049 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752178AbeBIEIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 22:55:51 -0500
-X-UUID: a7b7c364dd934e4893c164b8fb084c4a-20180209
-Message-ID: <1518148546.9025.20.camel@mtkswgap22>
-Subject: Re: [PATCH] arm: dts: mt7623: enable all four available UARTs on
- bananapi-r2
-From: Sean Wang <sean.wang@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Fri, 9 Feb 2018 11:55:46 +0800
-In-Reply-To: <cd1df7f9-89f4-06d5-5384-9f3b9f7ade48@gmail.com>
-References: <b4e84a68da76c1ca538150a730777ff530c1db5a.1513922513.git.sean.wang@mediatek.com>
-         <dc3c28c7-03c3-f1c6-39c1-b8df8be4fac3@gmail.com>
-         <1514043318.30687.10.camel@mtkswgap22>
-         <1516697505.12197.30.camel@mtkswgap22>
-         <cd1df7f9-89f4-06d5-5384-9f3b9f7ade48@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Feb 2018 23:08:17 -0500
+Date: Thu, 8 Feb 2018 20:08:14 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc: Michal Hocko <mhocko@suse.com>, Laura Abbott <labbott@redhat.com>,
+        linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
+ __GFP_HIGHMEM implicitly")
+Message-ID: <20180209040814.GA23828@bombadil.infradead.org>
+References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
+ <20180208130649.GA15846@bombadil.infradead.org>
+ <20180208232004.GA21027@bombadil.infradead.org>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208232004.GA21027@bombadil.infradead.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-07 at 17:01 +0100, Matthias Brugger wrote:
+On Thu, Feb 08, 2018 at 03:20:04PM -0800, Matthew Wilcox wrote:
+> So ... we could enable ZONE_DMA32 on 32-bit architectures.  I don't know
+> what side-effects that might have; it's clearly only been tested on 64-bit
+> architectures so far.
 > 
-> On 01/23/2018 09:51 AM, Sean Wang wrote:
-> > On Sat, 2017-12-23 at 23:35 +0800, Sean Wang wrote:
-> >> On Sat, 2017-12-23 at 08:52 +0100, Matthias Brugger wrote:
-> >>>
-> >>> On 12/22/2017 07:06 AM, sean.wang@mediatek.com wrote:
-> >>>> From: Sean Wang <sean.wang@mediatek.com>
-> >>>>
-> >>>> On bpi-r2 board, totally there're four uarts which we usually called
-> >>>> uart[0-3] helpful to extend slow I/O devices. Among those ones, uart2 has
-> >>>> dedicated pin slot which is used to conolse log. uart[0-1] appear at the
-> >>>> 40-pins connector and uart3 has no pinout, but just has test points (TP47
-> >>>> for TX and TP48 for RX, respectively) nearby uart2. Also, some missing
-> >>>> pinctrl is being complemented for those devices.
-> >>>>
-> >>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> >>>> ---
-> >>>>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 26 ++++++++++++++++++++++++--
-> >>>>  1 file changed, 24 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> >>>> index 7bf5aa2..64bf5db 100644
-> >>>> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> >>>> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> >>>> @@ -409,6 +409,20 @@
-> >>>>  				 <MT7623_PIN_82_UTXD1_FUNC_UTXD1>;
-> >>>>  		};do you like it or quite want me to remove the uart3 node?
-> >>>>  	};
-> >>>> +
-> >>>> +	uart2_pins_a: uart@2 {
-> >>>> +		pins_dat {
-> >>>> +			pinmux = <MT7623_PIN_14_GPIO14_FUNC_URXD2>,
-> >>>> +				 <MT7623_PIN_15_GPIO15_FUNC_UTXD2>;
-> >>>> +		};
-> >>>> +	};
-> >>>> +
-> >>>> +	uart3_pins_a: uart@3 {
-> >>>> +		pins_dat {
-> >>>> +			pinmux = <MT7623_PIN_242_URTS2_FUNC_URTS2>,
-> >>>> +				 <MT7623_PIN_243_UCTS2_FUNC_UTXD3>;
-> >>>> +		};
-> >>>> +	};
-> >>>>  };
-> >>>>  
-> >>>>  &pwm {
-> >>>> @@ -454,16 +468,24 @@
-> >>>>  &uart0 {
-> >>>>  	pinctrl-names = "default";
-> >>>>  	pinctrl-0 = <&uart0_pins_a>;
-> >>>> -	status = "disabled";
-> >>>> +	status = "okay";
-> >>>>  };
-> >>>>  
-> >>>>  &uart1 {
-> >>>>  	pinctrl-names = "default";
-> >>>>  	pinctrl-0 = <&uart1_pins_a>;
-> >>>> -	status = "disabled";
-> >>>> +	status = "okay";
-> >>>>  };
-> >>>>  
-> >>>>  &uart2 {
-> >>>> +	pinctrl-names = "default";
-> >>>> +	pinctrl-0 = <&uart2_pins_a>;
-> >>>> +	status = "okay";
-> >>>> +};
-> >>>> +
-> >>>> +&uart3 {
-> >>>> +	pinctrl-names = "default";
-> >>>> +	pinctrl-0 = <&uart3_pins_a>;
-> >>>>  	status = "okay";
-> >>>>  };
-> >>>>  
-> >>>
-> >>> Why do we want to enable uart3 when there are only test points?
-> >>> It is not very useful, or do I oversee something?
-> >>>
-> > 
-> >> I have been listening to the sound from potential users of bpi-r2 to
-> >> understand what assistance I have to provide to them. Something could
-> >> be seen through [1] in the forum to know they had been trying hard to
-> >> explore all available UARTs from the SoC in the last weeks. The patch
-> >> should be really useful for these people and for the extra soldering
-> >> it shouldn't become a problem for these makers.
-> >>
-> >> [1] http://forum.banana-pi.org/t/gpio-uart-not-the-debug-port/3748
-> >>
-> >> 	Sean 
-> >>
-> > 
-> > Hi, Matthias
-> > 
-> > do you like it or quite want me to remove the uart3 node?
-> > 
-> > I can take it into account along with other pending dts changes in my
-> > queue.
-> > 
-> 
-> Sorry for the late answer.
-> Do I understand correctly that uart3 is routed to TP47 and TP48, and these test
-> points are accessible through the SATA connector? Doesn't they break SATA then?
-> 
+> It might be best to just revert 19809c2da28a and the follow-on 704b862f9efd.
 
-TP47 and TP48 are directly pins out from SoC, not through the SATA
-connector.
+Alternatively, try this.  It passes in GFP_DMA32 from vmalloc_32,
+regardless of whether ZONE_DMA32 exists or not.  If ZONE_DMA32 doesn't
+exist, then we clear it in __vmalloc_area_node(), after using it to
+determine that we shouldn't set __GFP_HIGHMEM.
 
-> I think as they are only available through a non-documented test point, we
-> shouldn't enable it.
-> 
-
-Okay, let's drop uart 3 setting here.
-
-> Regards,
-> Matthias
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 673942094328..91e8a95123c4 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1669,10 +1669,11 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	struct page **pages;
+ 	unsigned int nr_pages, array_size, i;
+ 	const gfp_t nested_gfp = (gfp_mask & GFP_RECLAIM_MASK) | __GFP_ZERO;
+-	const gfp_t alloc_mask = gfp_mask | __GFP_NOWARN;
+-	const gfp_t highmem_mask = (gfp_mask & (GFP_DMA | GFP_DMA32)) ?
+-					0 :
+-					__GFP_HIGHMEM;
++	gfp_t alloc_mask = gfp_mask | __GFP_NOWARN;
++	if (!(alloc_mask & GFP_ZONEMASK))
++		alloc_mask |= __GFP_HIGHMEM;
++	if (!IS_ENABLED(CONFIG_ZONE_DMA32) && (alloc_mask & __GFP_DMA32))
++		alloc_mask &= ~__GFP_DMA32;
+ 
+ 	nr_pages = get_vm_area_size(area) >> PAGE_SHIFT;
+ 	array_size = (nr_pages * sizeof(struct page *));
+@@ -1680,7 +1681,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	area->nr_pages = nr_pages;
+ 	/* Please note that the recursion is strictly bounded. */
+ 	if (array_size > PAGE_SIZE) {
+-		pages = __vmalloc_node(array_size, 1, nested_gfp|highmem_mask,
++		pages = __vmalloc_node(array_size, 1, nested_gfp|__GFP_HIGHMEM,
+ 				PAGE_KERNEL, node, area->caller);
+ 	} else {
+ 		pages = kmalloc_node(array_size, nested_gfp, node);
+@@ -1696,9 +1697,9 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 		struct page *page;
+ 
+ 		if (node == NUMA_NO_NODE)
+-			page = alloc_page(alloc_mask|highmem_mask);
++			page = alloc_page(alloc_mask);
+ 		else
+-			page = alloc_pages_node(node, alloc_mask|highmem_mask, 0);
++			page = alloc_pages_node(node, alloc_mask, 0);
+ 
+ 		if (unlikely(!page)) {
+ 			/* Successfully allocated i pages, free them in __vunmap() */
+@@ -1706,7 +1707,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 			goto fail;
+ 		}
+ 		area->pages[i] = page;
+-		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
++		if (gfpflags_allow_blocking(gfp_mask))
+ 			cond_resched();
+ 	}
+ 
+@@ -1942,12 +1943,10 @@ void *vmalloc_exec(unsigned long size)
+ 			      NUMA_NO_NODE, __builtin_return_address(0));
+ }
+ 
+-#if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+-#define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
+-#elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
++#if defined(CONFIG_64BIT) && !defined(CONFIG_ZONE_DMA32)
+ #define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
+ #else
+-#define GFP_VMALLOC32 GFP_KERNEL
++#define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
+ #endif
+ 
+ /**
