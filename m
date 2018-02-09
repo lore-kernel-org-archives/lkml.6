@@ -1,42 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753199AbeBIWzv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 17:55:51 -0500
-Received: from mail-io0-f179.google.com ([209.85.223.179]:40470 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeBIWzt (ORCPT
+        id S1753228AbeBIXB6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 18:01:58 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35827 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753142AbeBIXB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 17:55:49 -0500
-X-Google-Smtp-Source: AH8x227VPztHwKQ2kvuwykRmPXQ3hPTcVjpIuhxzeTfoUOfJmwIpgSDSzgnuKBpilQ4+Xl/uXm8QUZaznqzPVTAxH1o=
+        Fri, 9 Feb 2018 18:01:56 -0500
+X-Google-Smtp-Source: AH8x224W2Lmr1gWLZ5Jjg1t2kYqbCouGXM1eSesv4UrFiCyd+qXmRe4XLDGosLS60BaOKcNZxpkFHhM5VPV+UP/EUgc=
 MIME-Version: 1.0
-In-Reply-To: <b12b9a53-2793-5317-bc59-535b615eb903@amazon.com>
-References: <1517856451-2932-1-git-send-email-karahmed@amazon.de>
- <1517856451-2932-4-git-send-email-karahmed@amazon.de> <CALMp9eRhHfoy7cL0x3qUMOHn4DUacHGc_497ac1QMPbiGU9O5g@mail.gmail.com>
- <b12b9a53-2793-5317-bc59-535b615eb903@amazon.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 9 Feb 2018 14:55:47 -0800
-Message-ID: <CALMp9eQPLwT5Fd2J_uKpW0OymbL6RQ1bSbsU=xXwbfP=sBFs9g@mail.gmail.com>
-Subject: Re: [RFC 03/12] KVM/VMX: Use the new host mapping API for virtual_apic_page
-To: KarimAllah Ahmed <karahmed@amazon.com>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+In-Reply-To: <8b079d9c-f436-eb11-0060-9cad1525aa62@canonical.com>
+References: <8b079d9c-f436-eb11-0060-9cad1525aa62@canonical.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Feb 2018 15:01:55 -0800
+X-Google-Sender-Auth: f9KICf_a2TiQZojiKrL5BCbViVA
+Message-ID: <CA+55aFx7fnnV+ECGKxtQB5wwmzS8kqO=UrO1VdwvXMsT=+4nSA@mail.gmail.com>
+Subject: Re: [GIT PULL] apparmor updates for v4.16
+To: John Johansen <john.johansen@canonical.com>
+Cc: LKLM <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM"
+        <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 9, 2018 at 4:15 AM, KarimAllah Ahmed <karahmed@amazon.com> wrote:
+On Fri, Feb 9, 2018 at 12:19 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+>
+> Please pull these apparmor changes for v4.16
 
-> Can you elaborate a bit? I do not really understand what is the concern.
+No.
 
-I can't find the posting that gave me this impression. The only thing
-I can find is the following in Documentation/vm/highmem.txt:
+You had an extra two weeks because 4.15 was delayed.
 
- (*) kmap().  This permits a short duration mapping of a single page.  It needs
-     global synchronization, but is amortized somewhat.  It is also prone to
-     deadlocks when using in a nested fashion, and so it is not recommended for
-     new code.
+Yet you send me a series of patches that have been committed today, on
+a Friday before the weekend when the merge window closes.
 
-What constitutes a "short duration," and does this new usage qualify?
+And none of this appears to have been in linux-next, at least not as
+of February 1st, when the merge window opened.
+
+No no no.
+
+This can all wait for 4.17. And if the same problem persists, it can
+wait longer.
+
+               Linus
