@@ -1,72 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeBIBHd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 20:07:33 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:53240 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752116AbeBIBHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 20:07:32 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Sxugoqr_1518138436;
-Subject: Re: [PATCH 2/2] x86/mm/64: Add vsyscall page to /proc/kcore
- conditionally
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc: Jiri Olsa <jolsa@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517294579-117473-1-git-send-email-zhang.jia@linux.alibaba.com>
- <1517294579-117473-2-git-send-email-zhang.jia@linux.alibaba.com>
- <20180205092644.GA23191@krava>
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <084400a6-4b8b-4050-b92a-d3737c1a5565@linux.alibaba.com>
-Date: Fri, 9 Feb 2018 09:08:03 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        id S1752454AbeBIBKJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 20:10:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60710 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752261AbeBIBKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 20:10:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706F721789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 8 Feb 2018 20:10:03 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 12/18] tracing: Add accessing direct address from
+ function based events
+Message-ID: <20180208201003.62ad9526@gandalf.local.home>
+In-Reply-To: <20180209003436.GB28206@sejong>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231018.828677654@goodmis.org>
+        <20180209003436.GB28206@sejong>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180205092644.GA23191@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 9 Feb 2018 09:34:36 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-Anybody else here who can give an attention on this review?
+> > +Direct memory access
+> > +====================
+> > +
+> > +Function arguments are not the only thing that can be recorded from a function
+> > +based event. Memory addresses can also be examined. If there's a global variable
+> > +that you want to monitor via an interrupt, you can put in the address directly.
+> > +
+> > +  # grep total_forks /proc/kallsyms
+> > +ffffffff82354c18 B total_forks
+> > +
+> > +  # echo 'do_IRQ(int total_forks=0xffffffff82354c18)' > function_events  
+> 
+> Couldn't we use the symbol name directly?  Maybe it needs a syntax to
+> indicate global variable.  Like this?
+> 
+>   # echo 'do_IRQ(int $total_forks)' > function_events
 
-Thanks,
-Jia
+Or perhaps use "@"?
 
-On 2018/2/5 下午5:26, Jiri Olsa wrote:
-> On Tue, Jan 30, 2018 at 02:42:59PM +0800, Jia Zhang wrote:
->> The vsyscall page should be visible only if
->> vsyscall=emulate/native when dumping /proc/kcore.
->>
->> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
->> ---
->>  arch/x86/mm/init_64.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->> index dab78f6..3d4cf33 100644
->> --- a/arch/x86/mm/init_64.c
->> +++ b/arch/x86/mm/init_64.c
->> @@ -1186,8 +1186,9 @@ void __init mem_init(void)
->>  	register_page_bootmem_info();
->>  
->>  	/* Register memory areas for /proc/kcore */
->> -	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
->> -		   PAGE_SIZE, KCORE_USER);
->> +	if (get_gate_vma(&init_mm))
->> +		kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
->> +			   PAGE_SIZE, KCORE_USER);
+But that's a good idea and not hard to implement.
+
+
+> >  	case FUNC_STATE_TYPE:
+> > -		if (!isalpha(token[0]) || token[0] == '_')
+> > -			break;
+> >  		if (WARN_ON(!fevent->last_arg))
+> >  			break;
+> > -		fevent->last_arg->name = kstrdup(token, GFP_KERNEL);
+> > -		if (!fevent->last_arg->name)
+> > +		if (update_arg_name(fevent, token) < 0)
+> > +			break;
+> > +		if (strncmp(token, "0x", 2) == 0)
+> > +			goto equal;  
 > 
-> nit, we use { } when there's more than 1 line code 
+> Not sure it's needed here.  IIUC it should see '=' first and you used
+> the same token with arg->name.  Hmm.. do you want support accessing to
+> an unnamed address directly like below?
 > 
-> anyway the approach looks ok to me
+>   # echo 'do_IRQ(int 0xffffffff82354c18)' > function_events 
+
+Yes this works, and was the original way. Someone at DevConf.cz
+(Arnaldo maybe, can't remember) recommended giving a name and then we
+came up with the "=" sign to use.
+
 > 
-> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> > +		if (!isalpha(token[0]) && token[0] != '_')
+> >  			break;  
 > 
-> thanks,
-> jirka
-> 
+> Maybe you want to check it before the update_arg_name().
+
+Hmm, perhaps, I guess I should see what the error messages shows.
+
+Thanks!
+
+-- Steve
