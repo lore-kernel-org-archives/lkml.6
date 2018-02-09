@@ -1,141 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeBIPsE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:48:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46278 "EHLO mail.kernel.org"
+        id S1752233AbeBIPsV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 10:48:21 -0500
+Received: from mout.gmx.net ([212.227.15.18]:40577 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeBIPsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:48:02 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2317E21789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 9 Feb 2018 10:47:58 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
-Subject: Re: [PATCH 17/18] tracing: Add indirect to indirect access for
- function based events
-Message-ID: <20180209104758.093d31ad@gandalf.local.home>
-In-Reply-To: <20180209051301.GE28206@sejong>
-References: <20180202230458.840252014@goodmis.org>
-        <20180202231019.582037880@goodmis.org>
-        <20180209051301.GE28206@sejong>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751038AbeBIPsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 10:48:17 -0500
+Date: Fri, 9 Feb 2018 16:48:08 +0100
+From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc: linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, Albert Herranz <albert_herranz@yahoo.es>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
+Message-ID: <20180209154807.xkfarpxzpieznfsh@latitude>
+References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
+ <20180209120732.17863-3-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="blzswmp6chmlj3mw"
+Content-Disposition: inline
+In-Reply-To: <20180209120732.17863-3-j.neuschaefer@gmx.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K0:G5R2X5idfNoNBkojBV2YHVacumuQjakVYWmVi73SZ+USLjgwHrM
+ MbS1tZ9kGRqrPCfA8NfdEht8oW7c3H4EOfvEAVPdkiBxGMpFJh/gHcFKYNoZX+pMKVGcM1o
+ 0YQUZHwUkpPMuvsD44CX5r+yaUL15LWVOUhJOnMma43mRwOFNMhZSXXhN9xrc+MR1h6NpsV
+ arW1iCGoXnQqaldeANBXA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:I6YR967hINA=:m9o2/x9qRuDnKT7yq3rglS
+ sssaf/AJj4+hXbi5B7uvzsAPHFIkxbI97QJMWF1Kn4lpQV43KfJBEOk/qiQM8mmJCgSLZLbKm
+ e1V+Ob1X4VlKmz+tK/z5sHladPvHeh5tZnecGCXi7Ipr/I94EOeViNqQyqeweW/g6q1IhysdI
+ JcKAcH9CLxzRhXvNXFURcWHyiifaenVgEDO/5/LxGcxTKITpfbRbLiKUymSsB6DtITbxGoslp
+ 8Wt7bBaovklUt2LEFlGWneGUXD1Kx1TWVDG051SZ5Lqv0UUDhUC2Wlz5ODRBoR8EsxlH8a+CL
+ YpXmMQiwCdPfwph7dveE83ZxEtTyoTOc72Z1OTlxnLQuYlCTmnGWPaQ3b9QDd4noRWUa8NbGc
+ 1k3dxkpoFNdskNJ6fs0U1ATjo3G9cL/VgUK/vIA6f/eAGkzsrUfny9Za2SD+4FeSOQJbO25bH
+ l0o9nx5Qqfj+2gn06QCG3dq5rUP84NHRj390xSctnbq4XrFIIjgvDbPUDexWrMRCD0YzzciVT
+ LwweVRKtFZ8zu7DRrgmXSIIp95pdau9QYC/BLOZNJJgV98upr/DXrxCczTTJvgnP216/ybODe
+ U8CI7TFSO/kjDDhkD+OZ2Qwjk4J6tTHboLM3qyCiNkjjpVq4O5uNRmnOHb5hxXJGaKuHiY5H3
+ ga6wFpavxNo15CIsgdi9DBz9fbm1uW1NCM9GSBV7Bz3o4ad6BtGAGKo1AC9W79AroUtOcjdQR
+ Gp/iR50RhjFNvd+FqoeAUPfxBjp3t3jIQitzB57U95rXWEMRPG5yvmM+Q0kUU8ksmfx9B/vMw
+ xrqNbLnbSRvxixA0PJpWEwXVv9ePA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Feb 2018 14:13:01 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
 
-> On Fri, Feb 02, 2018 at 06:05:15PM -0500, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > Allow the function based events to retrieve not only the parameters offsets,
-> > but also get data from a pointer within a parameter structure. Something
-> > like:
-> > 
-> >  # echo 'ip_rcv(string skdev+16[0][0] | x8[6] skperm+16[0]+558)' > function_events
-> > 
-> >  # echo 1 > events/functions/ip_rcv/enable
-> >  # cat trace
-> >     <idle>-0     [003] ..s3   310.626391: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   310.626400: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   312.183775: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   312.184329: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   312.303895: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   312.304610: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   312.471980: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   312.472908: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> >     <idle>-0     [003] ..s3   313.135804: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
-> > 
-> > That is, we retrieved the net_device of the sk_buff and displayed its name
-> > and perm_addr info.
-> > 
-> >   sk->dev->name, sk->dev->perm_addr
-> > 
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---  
-> 
-> [SNIP]
-> > +static unsigned long process_redirects(struct func_arg *arg, unsigned long val,
-> > +				       char *buf)
-> > +{
-> > +	struct func_arg_redirect *redirect;
-> > +	int ret;
-> > +
-> > +	if (arg->indirect) {
-> > +		ret = probe_kernel_read(buf, (void *)val, sizeof(long));
-> > +		if (ret)
-> > +			return 0;
-> > +		val = *(unsigned long *)buf;
-> > +	}
-> > +
-> > +	list_for_each_entry(redirect, &arg->redirects, list) {
-> > +		val += redirect->index;
-> > +		if (redirect->indirect) {
-> > +			val += (redirect->indirect ^ INDIRECT_FLAG);
-> > +			ret = probe_kernel_read(buf, (void *)val, sizeof(long));
-> > +			if (ret)
-> > +				return 0;
-> > +		}
-> > +	}
-> > +	return val;
-> > +}
-> > +
-> > +static long long __get_arg(struct func_arg *arg, unsigned long long val)
-> >  {
-> >  	char buf[8];
-> >  	int ret;
-> >  
-> >  	val += arg->index;
-> >  
-> > -	if (!arg->indirect)
-> > -		return val;
-> > +	if (arg->indirect)
-> > +		val += (arg->indirect ^ INDIRECT_FLAG);
-> >  
-> > -	val = val + (arg->indirect ^ INDIRECT_FLAG);
-> > +	if (!list_empty(&arg->redirects))
-> > +		val = process_redirects(arg, val, buf);
-> > +
-> > +	if (!val)
-> > +		return 0;
-> >  
-> >  	/* Arrays and strings do their own indirect reads */
-> > -	if (arg->array || arg->func_type == FUNC_TYPE_string)
-> > +	if (!arg->indirect || arg->array || arg->func_type == FUNC_TYPE_string)
-> >  		return val;  
-> 
-> It seems the indirect is processed twice with redirects.  Consider
-> "x64 foo[0]+4", the process_redirects() will call probe_kernel_read()
-> and then here again.
-> 
+--blzswmp6chmlj3mw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Feb 09, 2018 at 01:07:29PM +0100, Jonathan Neusch=C3=A4fer wrote:
+> The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
+> that supports a configurable number of pins (up to 32), interrupts, and
+> some special mechanisms to share the controller between the system's
+> security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
+> not supported.
+>=20
+> This patch adds a basic driver for this GPIO controller. Interrupt
+> support will come in a later patch.
+>=20
+> This patch is based on code developed by Albert Herranz and the GameCube
+> Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
+> available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
+> has grown quite dissimilar.
+>=20
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> Cc: Albert Herranz <albert_herranz@yahoo.es>
+> Cc: Segher Boessenkool <segher@kernel.crashing.org>
+> <---
+
+Ooops, I just noticed that I broke the separator here. This should be a
+normal --- line, obviously.
 
 
-Good catch!
+Jonathan Neusch=C3=A4fer
 
-It should have been:
+--blzswmp6chmlj3mw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-		return process_redirects(arg, val, buf);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Thanks!
+iQIcBAABAgAGBQJafcKwAAoJEAgwRJqO81/bYKIQALAd9vMfeRv6ofuyS2/g+wEE
+ZSTvxxfogE+fHJuTxz1eFHlfisMX74qVW7kmjtB01oHhugVkElI4f22vCB+q83+D
+J5dCcxB+QtwoDNURRN3VD2S7dr9oaCmKz2cFSEXBUiM1Kzol1B2W/rmPOPGk6hOv
+Sz8zIfgkGFL/CUqXA7OIqlhccl3vpmg3xTDeVFbMz9L0/m35UzkwHyp3BZ5KhIcJ
+R2EN9+n2ApKmkYgc0ZiiM65TgvKlkXMd3HQQFml86v9naRzaVPgR0Ft+h9s4uDjE
+XhBx96TSi7Zjg4R6a7UfNyoH/watS2L8oiGPt5z+tgqK8zoV3rbwRL/xmoEIWha6
+vVg1ALrb0Ww5d9/XHHWeebG5s8R5dAtA6HGiO6I8mPCGo5Toc+8kvOjQ28/Se6p3
+L9thxpC62pem4aPzlkUPUPn/GV5QHdBz/Lfu9lkjOa9Vx2wgvxkz3WLM4cAVJIna
+h+pfccA/qYHu/BdrU8E5GXJiC3PV+QAbfII18FF9sJSi+PS8wjvb+5pq59eXWxsC
+ENQ9MmxNYstjahGgC4YgeK44zix/i90CGOUkZGTKIN1w/iRF9aKlDAPMbbg/5ptT
+jDka6KhlH/UCPkHT2JPgL/E0i3sGodOJkXOS5GV8yE8WWrCmN0n6tDfLW0E0CuAC
+DVcUna8tarsDfOLtlByd
+=EsLr
+-----END PGP SIGNATURE-----
 
--- Steve
+--blzswmp6chmlj3mw--
