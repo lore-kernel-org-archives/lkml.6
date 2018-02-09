@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184446-2-14138417182778864043
+X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184410-2-15843086857366774101
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184445; b=Z6/99Hk1F9p2LKeCMrFAerm6/rPkj9hDq/u5Y/OijrxkPSS
-    lU4IdUPP9moLB1tSrUPQKiFgForTQ/mELa93yreaUtwBBH9gJ2tHbG5K4T3AuiRD
-    pL+U8F3MCjzvmtZAOWIDig3xVa7vbGNIGpG0QIRFrDDK1dp4+w0JwmNYOejORLi6
-    dXAFZh9mGR7KWDiO38bm3ecqCEpQdwVjQoZiK5uERgazYKFPMKJT6L6uoxhusQV8
-    oQffHRmtW+KMmLV8Y/HejUlDLdaIiXKX/Vzi3OwfhkrE1q/r5W+3E1/3cly75FzY
-    DwJ0Sp9TNEAUXoi/mahHySquJrqwra2AatFRK0A==
+    t=1518184409; b=R8hgEi9gNuw1EgVVAr6Mx6eUFMNQ4Yqhy466HAga1I9EC13
+    51uXzD58MQctkCnT3BVPuVLGkXzZM1ViysreoJ3tNCf+jGLR0BdBYmqf67Ab5agO
+    pZflAC21EJj8A0GgFOpD63dRyNY5PFuDzWTfw8dRiA4di1j/DWDFw7aIbEn0w83G
+    JQRWjL8VlJiuGvaDVn2RSXPLorH9FcSO6AXgwJL8KLCA4uwMJTOYnqBFMbCqAL/Z
+    ZxYtMpGoU4XpFf3uYGz1Z3wtSBnLa7nNzyYAcSxQSRa2uVKXPX11XDeeg99lAVnA
+    J4Nad+BTnChwdTg9qm7EbaAgTbkS5K367JPKkYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184445; bh=p2JonsfyZpyRfvxvPoGr0D6OO0
-    LogNNi4j49C2t4SnE=; b=qrs1MoLHt0RIWsioxMke4Th7jZNuU74HAXBgaPUAfm
-    qIJW79JEcODfiRWZpzZUKiCTV9qPGi3gBWGT224Dak6ESvkv5uFWvs1XV+U0kfuT
-    002ILeAe+UJx08SidrD6u+wKaF/ZzJ7uk9+M+BZS8wi7Q9KQ4IjnrQXdfLQuUM8z
-    VfuC6+7KZtKOkVCwkhmVELZyT45RUCeo0zsYTsQGaVeFjnfLKfnn+qtNKOYB/ALx
-    VGHxLBzT+0qB+WZ7Tw02GS/PzWTpM19rhyW2m5Frx92VTIp+x5AUMcezg+sVRX2r
-    cac32xStCxTYmJpUPHDfm8k16ckEbLF6yQJ9DwTFHtzg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184409; bh=abJHj47hnMpAn7G/owfdoYMwdi
+    z6oj5yw5c/NASORtg=; b=GDh22F2KVBjRI7Gnl6O1+QVj2ceWMyYbMMWodcbLGc
+    ZGdKiYGtU875U/YhWib4IXXqPRvhWMEoqerrHjfR5l2CLAvx0e1khwsSOysVrJ/h
+    xruJbXEyM8A7KH5KXdGHaZcAJpTS5MCAINzf/xRI7+By1cMfFdBAKY4kG3z57Wea
+    ldV3rjipQCgopv5GxFwdBbBta6MA3nrgGn1TkkNUJdGN4dhVRTFUZstyXw/7xQfE
+    XFZ/B4zjIgBZcwAWi/JDNVJnIpugewBLvhGiM+d19Ex+jiNUKe+iRTKnkR80c1XM
+    3JKxPKSoNY+9v5/lB87y6y/acwYkBzkUfidT/QvAu+6A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753712AbeBINpw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:45:52 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52034 "EHLO
+        id S1753718AbeBINqB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:46:01 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52272 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753708AbeBINpu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:50 -0500
+        with ESMTP id S1753707AbeBINp6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:58 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
+        stable@vger.kernel.org, Chunhao Lin <hau@realtek.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 06/22] qlcnic: fix deadlock bug
-Date: Fri,  9 Feb 2018 14:39:55 +0100
-Message-Id: <20180209133934.520215121@linuxfoundation.org>
+Subject: [PATCH 4.14 08/22] r8169: fix RTL8168EP take too long to complete driver initialization.
+Date: Fri,  9 Feb 2018 14:39:57 +0100
+Message-Id: <20180209133934.661753199@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
 References: <20180209133934.024795822@linuxfoundation.org>
@@ -77,189 +77,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+From: Chunhao Lin <hau@realtek.com>
 
 
-[ Upstream commit 233ac3891607f501f08879134d623b303838f478 ]
+[ Upstream commit 086ca23d03c0d2f4088f472386778d293e15c5f6 ]
 
-The following soft lockup was caught. This is a deadlock caused by
-recusive locking.
+Driver check the wrong register bit in rtl_ocp_tx_cond() that keep driver
+waiting until timeout.
 
-Process kworker/u40:1:28016 was holding spin lock "mbx->queue_lock" in
-qlcnic_83xx_mailbox_worker(), while a softirq came in and ask the same spin
-lock in qlcnic_83xx_enqueue_mbx_cmd(). This lock should be hold by disable
-bh..
+Fix this by waiting for the right register bit.
 
-[161846.962125] NMI watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [kworker/u40:1:28016]
-[161846.962367] Modules linked in: tun ocfs2 xen_netback xen_blkback xen_gntalloc xen_gntdev xen_evtchn xenfs xen_privcmd autofs4 ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs bnx2fc fcoe libfcoe libfc sunrpc 8021q mrp garp bridge stp llc bonding dm_round_robin dm_multipath iTCO_wdt iTCO_vendor_support pcspkr sb_edac edac_core i2c_i801 shpchp lpc_ich mfd_core ioatdma ipmi_devintf ipmi_si ipmi_msghandler sg ext4 jbd2 mbcache2 sr_mod cdrom sd_mod igb i2c_algo_bit i2c_core ahci libahci megaraid_sas ixgbe dca ptp pps_core vxlan udp_tunnel ip6_udp_tunnel qla2xxx scsi_transport_fc qlcnic crc32c_intel be2iscsi bnx2i cnic uio cxgb4i cxgb4 cxgb3i libcxgbi ipv6 cxgb3 mdio libiscsi_tcp qla4xxx iscsi_boot_sysfs libiscsi scsi_transport_iscsi dm_mirror dm_region_hash dm_log dm_mod
-[161846.962454]
-[161846.962460] CPU: 1 PID: 28016 Comm: kworker/u40:1 Not tainted 4.1.12-94.5.9.el6uek.x86_64 #2
-[161846.962463] Hardware name: Oracle Corporation SUN SERVER X4-2L      /ASSY,MB,X4-2L         , BIOS 26050100 09/19/2017
-[161846.962489] Workqueue: qlcnic_mailbox qlcnic_83xx_mailbox_worker [qlcnic]
-[161846.962493] task: ffff8801f2e34600 ti: ffff88004ca5c000 task.ti: ffff88004ca5c000
-[161846.962496] RIP: e030:[<ffffffff810013aa>]  [<ffffffff810013aa>] xen_hypercall_sched_op+0xa/0x20
-[161846.962506] RSP: e02b:ffff880202e43388  EFLAGS: 00000206
-[161846.962509] RAX: 0000000000000000 RBX: ffff8801f6996b70 RCX: ffffffff810013aa
-[161846.962511] RDX: ffff880202e433cc RSI: ffff880202e433b0 RDI: 0000000000000003
-[161846.962513] RBP: ffff880202e433d0 R08: 0000000000000000 R09: ffff8801fe893200
-[161846.962516] R10: ffff8801fe400538 R11: 0000000000000206 R12: ffff880202e4b000
-[161846.962518] R13: 0000000000000050 R14: 0000000000000001 R15: 000000000000020d
-[161846.962528] FS:  0000000000000000(0000) GS:ffff880202e40000(0000) knlGS:ffff880202e40000
-[161846.962531] CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-[161846.962533] CR2: 0000000002612640 CR3: 00000001bb796000 CR4: 0000000000042660
-[161846.962536] Stack:
-[161846.962538]  ffff880202e43608 0000000000000000 ffffffff813f0442 ffff880202e433b0
-[161846.962543]  0000000000000000 ffff880202e433cc ffffffff00000001 0000000000000000
-[161846.962547]  00000009813f03d6 ffff880202e433e0 ffffffff813f0460 ffff880202e43440
-[161846.962552] Call Trace:
-[161846.962555]  <IRQ>
-[161846.962565]  [<ffffffff813f0442>] ? xen_poll_irq_timeout+0x42/0x50
-[161846.962570]  [<ffffffff813f0460>] xen_poll_irq+0x10/0x20
-[161846.962578]  [<ffffffff81014222>] xen_lock_spinning+0xe2/0x110
-[161846.962583]  [<ffffffff81013f01>] __raw_callee_save_xen_lock_spinning+0x11/0x20
-[161846.962592]  [<ffffffff816e5c57>] ? _raw_spin_lock+0x57/0x80
-[161846.962609]  [<ffffffffa028acfc>] qlcnic_83xx_enqueue_mbx_cmd+0x7c/0xe0 [qlcnic]
-[161846.962623]  [<ffffffffa028e008>] qlcnic_83xx_issue_cmd+0x58/0x210 [qlcnic]
-[161846.962636]  [<ffffffffa028caf2>] qlcnic_83xx_sre_macaddr_change+0x162/0x1d0 [qlcnic]
-[161846.962649]  [<ffffffffa028cb8b>] qlcnic_83xx_change_l2_filter+0x2b/0x30 [qlcnic]
-[161846.962657]  [<ffffffff8160248b>] ? __skb_flow_dissect+0x18b/0x650
-[161846.962670]  [<ffffffffa02856e5>] qlcnic_send_filter+0x205/0x250 [qlcnic]
-[161846.962682]  [<ffffffffa0285c77>] qlcnic_xmit_frame+0x547/0x7b0 [qlcnic]
-[161846.962691]  [<ffffffff8160ac22>] xmit_one+0x82/0x1a0
-[161846.962696]  [<ffffffff8160ad90>] dev_hard_start_xmit+0x50/0xa0
-[161846.962701]  [<ffffffff81630112>] sch_direct_xmit+0x112/0x220
-[161846.962706]  [<ffffffff8160b80f>] __dev_queue_xmit+0x1df/0x5e0
-[161846.962710]  [<ffffffff8160bc33>] dev_queue_xmit_sk+0x13/0x20
-[161846.962721]  [<ffffffffa0575bd5>] bond_dev_queue_xmit+0x35/0x80 [bonding]
-[161846.962729]  [<ffffffffa05769fb>] __bond_start_xmit+0x1cb/0x210 [bonding]
-[161846.962736]  [<ffffffffa0576a71>] bond_start_xmit+0x31/0x60 [bonding]
-[161846.962740]  [<ffffffff8160ac22>] xmit_one+0x82/0x1a0
-[161846.962745]  [<ffffffff8160ad90>] dev_hard_start_xmit+0x50/0xa0
-[161846.962749]  [<ffffffff8160bb1e>] __dev_queue_xmit+0x4ee/0x5e0
-[161846.962754]  [<ffffffff8160bc33>] dev_queue_xmit_sk+0x13/0x20
-[161846.962760]  [<ffffffffa05cfa72>] vlan_dev_hard_start_xmit+0xb2/0x150 [8021q]
-[161846.962764]  [<ffffffff8160ac22>] xmit_one+0x82/0x1a0
-[161846.962769]  [<ffffffff8160ad90>] dev_hard_start_xmit+0x50/0xa0
-[161846.962773]  [<ffffffff8160bb1e>] __dev_queue_xmit+0x4ee/0x5e0
-[161846.962777]  [<ffffffff8160bc33>] dev_queue_xmit_sk+0x13/0x20
-[161846.962789]  [<ffffffffa05adf74>] br_dev_queue_push_xmit+0x54/0xa0 [bridge]
-[161846.962797]  [<ffffffffa05ae4ff>] br_forward_finish+0x2f/0x90 [bridge]
-[161846.962807]  [<ffffffff810b0dad>] ? ttwu_do_wakeup+0x1d/0x100
-[161846.962811]  [<ffffffff815f929b>] ? __alloc_skb+0x8b/0x1f0
-[161846.962818]  [<ffffffffa05ae04d>] __br_forward+0x8d/0x120 [bridge]
-[161846.962822]  [<ffffffff815f613b>] ? __kmalloc_reserve+0x3b/0xa0
-[161846.962829]  [<ffffffff810be55e>] ? update_rq_runnable_avg+0xee/0x230
-[161846.962836]  [<ffffffffa05ae176>] br_forward+0x96/0xb0 [bridge]
-[161846.962845]  [<ffffffffa05af85e>] br_handle_frame_finish+0x1ae/0x420 [bridge]
-[161846.962853]  [<ffffffffa05afc4f>] br_handle_frame+0x17f/0x260 [bridge]
-[161846.962862]  [<ffffffffa05afad0>] ? br_handle_frame_finish+0x420/0x420 [bridge]
-[161846.962867]  [<ffffffff8160d057>] __netif_receive_skb_core+0x1f7/0x870
-[161846.962872]  [<ffffffff8160d6f2>] __netif_receive_skb+0x22/0x70
-[161846.962877]  [<ffffffff8160d913>] netif_receive_skb_internal+0x23/0x90
-[161846.962884]  [<ffffffffa07512ea>] ? xenvif_idx_release+0xea/0x100 [xen_netback]
-[161846.962889]  [<ffffffff816e5a10>] ? _raw_spin_unlock_irqrestore+0x20/0x50
-[161846.962893]  [<ffffffff8160e624>] netif_receive_skb_sk+0x24/0x90
-[161846.962899]  [<ffffffffa075269a>] xenvif_tx_submit+0x2ca/0x3f0 [xen_netback]
-[161846.962906]  [<ffffffffa0753f0c>] xenvif_tx_action+0x9c/0xd0 [xen_netback]
-[161846.962915]  [<ffffffffa07567f5>] xenvif_poll+0x35/0x70 [xen_netback]
-[161846.962920]  [<ffffffff8160e01b>] napi_poll+0xcb/0x1e0
-[161846.962925]  [<ffffffff8160e1c0>] net_rx_action+0x90/0x1c0
-[161846.962931]  [<ffffffff8108aaba>] __do_softirq+0x10a/0x350
-[161846.962938]  [<ffffffff8108ae75>] irq_exit+0x125/0x130
-[161846.962943]  [<ffffffff813f03a9>] xen_evtchn_do_upcall+0x39/0x50
-[161846.962950]  [<ffffffff816e7ffe>] xen_do_hypervisor_callback+0x1e/0x40
-[161846.962952]  <EOI>
-[161846.962959]  [<ffffffff816e5c4a>] ? _raw_spin_lock+0x4a/0x80
-[161846.962964]  [<ffffffff816e5b1e>] ? _raw_spin_lock_irqsave+0x1e/0xa0
-[161846.962978]  [<ffffffffa028e279>] ? qlcnic_83xx_mailbox_worker+0xb9/0x2a0 [qlcnic]
-[161846.962991]  [<ffffffff810a14e1>] ? process_one_work+0x151/0x4b0
-[161846.962995]  [<ffffffff8100c3f2>] ? check_events+0x12/0x20
-[161846.963001]  [<ffffffff810a1960>] ? worker_thread+0x120/0x480
-[161846.963005]  [<ffffffff816e187b>] ? __schedule+0x30b/0x890
-[161846.963010]  [<ffffffff810a1840>] ? process_one_work+0x4b0/0x4b0
-[161846.963015]  [<ffffffff810a1840>] ? process_one_work+0x4b0/0x4b0
-[161846.963021]  [<ffffffff810a6b3e>] ? kthread+0xce/0xf0
-[161846.963025]  [<ffffffff810a6a70>] ? kthread_freezable_should_stop+0x70/0x70
-[161846.963031]  [<ffffffff816e6522>] ? ret_from_fork+0x42/0x70
-[161846.963035]  [<ffffffff810a6a70>] ? kthread_freezable_should_stop+0x70/0x70
-[161846.963037] Code: cc 51 41 53 b8 1c 00 00 00 0f 05 41 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 51 41 53 b8 1d 00 00 00 0f 05 <41> 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
-
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Signed-off-by: Chunhao Lin <hau@realtek.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -3891,7 +3891,7 @@ static void qlcnic_83xx_flush_mbx_queue(
- 	struct list_head *head = &mbx->cmd_q;
- 	struct qlcnic_cmd_args *cmd = NULL;
- 
--	spin_lock(&mbx->queue_lock);
-+	spin_lock_bh(&mbx->queue_lock);
- 
- 	while (!list_empty(head)) {
- 		cmd = list_entry(head->next, struct qlcnic_cmd_args, list);
-@@ -3902,7 +3902,7 @@ static void qlcnic_83xx_flush_mbx_queue(
- 		qlcnic_83xx_notify_cmd_completion(adapter, cmd);
- 	}
- 
--	spin_unlock(&mbx->queue_lock);
-+	spin_unlock_bh(&mbx->queue_lock);
- }
- 
- static int qlcnic_83xx_check_mbx_status(struct qlcnic_adapter *adapter)
-@@ -3938,12 +3938,12 @@ static void qlcnic_83xx_dequeue_mbx_cmd(
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -1388,7 +1388,7 @@ DECLARE_RTL_COND(rtl_ocp_tx_cond)
  {
- 	struct qlcnic_mailbox *mbx = adapter->ahw->mailbox;
+ 	void __iomem *ioaddr = tp->mmio_addr;
  
--	spin_lock(&mbx->queue_lock);
-+	spin_lock_bh(&mbx->queue_lock);
- 
- 	list_del(&cmd->list);
- 	mbx->num_cmds--;
- 
--	spin_unlock(&mbx->queue_lock);
-+	spin_unlock_bh(&mbx->queue_lock);
- 
- 	qlcnic_83xx_notify_cmd_completion(adapter, cmd);
+-	return RTL_R8(IBISR0) & 0x02;
++	return RTL_R8(IBISR0) & 0x20;
  }
-@@ -4008,7 +4008,7 @@ static int qlcnic_83xx_enqueue_mbx_cmd(s
- 		init_completion(&cmd->completion);
- 		cmd->rsp_opcode = QLC_83XX_MBX_RESPONSE_UNKNOWN;
  
--		spin_lock(&mbx->queue_lock);
-+		spin_lock_bh(&mbx->queue_lock);
+ static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
+@@ -1396,7 +1396,7 @@ static void rtl8168ep_stop_cmac(struct r
+ 	void __iomem *ioaddr = tp->mmio_addr;
  
- 		list_add_tail(&cmd->list, &mbx->cmd_q);
- 		mbx->num_cmds++;
-@@ -4016,7 +4016,7 @@ static int qlcnic_83xx_enqueue_mbx_cmd(s
- 		*timeout = cmd->total_cmds * QLC_83XX_MBX_TIMEOUT;
- 		queue_work(mbx->work_q, &mbx->work);
- 
--		spin_unlock(&mbx->queue_lock);
-+		spin_unlock_bh(&mbx->queue_lock);
- 
- 		return 0;
- 	}
-@@ -4112,15 +4112,15 @@ static void qlcnic_83xx_mailbox_worker(s
- 		mbx->rsp_status = QLC_83XX_MBX_RESPONSE_WAIT;
- 		spin_unlock_irqrestore(&mbx->aen_lock, flags);
- 
--		spin_lock(&mbx->queue_lock);
-+		spin_lock_bh(&mbx->queue_lock);
- 
- 		if (list_empty(head)) {
--			spin_unlock(&mbx->queue_lock);
-+			spin_unlock_bh(&mbx->queue_lock);
- 			return;
- 		}
- 		cmd = list_entry(head->next, struct qlcnic_cmd_args, list);
- 
--		spin_unlock(&mbx->queue_lock);
-+		spin_unlock_bh(&mbx->queue_lock);
- 
- 		mbx_ops->encode_cmd(adapter, cmd);
- 		mbx_ops->nofity_fw(adapter, QLC_83XX_MBX_REQUEST);
+ 	RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
+-	rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
++	rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
+ 	RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
+ 	RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
+ }
