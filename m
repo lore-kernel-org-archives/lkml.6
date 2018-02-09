@@ -1,173 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeBIKGb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 05:06:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47560 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751034AbeBIKG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 05:06:29 -0500
-Date: Fri, 9 Feb 2018 11:06:27 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/7] livepatch: Free only structures with initialized
- kobject
-In-Reply-To: <20180206103424.10829-3-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1802070933070.1099@pobox.suse.cz>
-References: <20180206103424.10829-1-pmladek@suse.com> <20180206103424.10829-3-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1751029AbeBIKLr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 05:11:47 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52662 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750895AbeBIKLp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 05:11:45 -0500
+Date: Fri, 9 Feb 2018 11:11:28 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: linxiulei@gmail.com
+Cc: jolsa@redhat.com, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        eranian@gmail.com, torvalds@linux-foundation.org,
+        brendan.d.gregg@gmail.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, yang_oliver@hotmail.com,
+        jinli.zjl@alibaba-inc.com, "leilei.lin" <leilei.lin@alibaba-inc.com>
+Subject: Re: [PATCH RESEND v4] perf/core: Fix installing cgroup event into cpu
+Message-ID: <20180209101128.GF25181@hirez.programming.kicks-ass.net>
+References: <20180208033344.71933-1-linxiulei@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208033344.71933-1-linxiulei@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Feb 2018, Petr Mladek wrote:
-
-> We are going to add a feature called atomic replace. It will allow to
-> create a patch that would replace all already registered patches.
-> For this, we will need to dynamically create funcs and objects
-> for functions that are not longer patched.
-
-s/not longer/no longer/
-
-It applies to the other changelogs as well.
- 
-> We will want to reuse the existing init() and free() functions. Up to now,
-> the free() functions checked a limit and were called only for structures
-> with initialized kobject. But we will want to call them also for structures
-> that were allocated but where the kobject was not initialized yet.
+On Thu, Feb 08, 2018 at 11:33:44AM +0800, linxiulei@gmail.com wrote:
+> From: "leilei.lin" <leilei.lin@alibaba-inc.com>
 > 
-> This patch removes the limit. It calls klp_free*() functions for all
-> structures. But only the ones with initialized kobject are freed.
-> The handling of un-initialized structures will be added later with
-> the support for dynamic structures.
+> Do not install cgroup event into the CPU context and schedule it
+> if the cgroup is not running on this CPU
 > 
-> This patch does not change the existing behavior.
+> While there is no task of cgroup running specified CPU, current
+> kernel still install cgroup event into CPU context that causes
+> another cgroup event can't be installed into this CPU.
 > 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Cc: Miroslav Benes <mbenes@suse.cz>
-> Cc: Jason Baron <jbaron@akamai.com>
+> This patch prevent scheduling events at __perf_install_in_context()
+> and installing events at list_update_cgroup_event() if cgroup isn't
+> running on specified CPU.
+> 
+> Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
 > ---
->  kernel/livepatch/core.c | 42 ++++++++++++++++++++----------------------
->  1 file changed, 20 insertions(+), 22 deletions(-)
+>  v2: Set cpuctx->cgrp only if the same cgroup is running on this
+>    CPU otherwise following events couldn't be activated immediately
+>  v3: Enhance the comments and commit message
+>  v4: Adjust to config
 > 
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index 1d525f4a270a..ef7c3b5f561b 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -654,16 +654,17 @@ static struct kobj_type klp_ktype_func = {
->  };
->  
->  /*
-> - * Free all functions' kobjects in the array up to some limit. When limit is
-> - * NULL, all kobjects are freed.
-> + * Free all funcs that have the kobject initialized. Otherwise,
-> + * nothing is needed.
-
-s/needed/done/ ?
-
-I'd remove the second sentence in that case.
-
->   */
-> -static void klp_free_funcs_limited(struct klp_object *obj,
-> -				   struct klp_func *limit)
-> +static void klp_free_funcs(struct klp_object *obj)
+>  kernel/events/core.c | 50 +++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 37 insertions(+), 13 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 4df5b69..fd28d61 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -933,31 +933,41 @@ list_update_cgroup_event(struct perf_event *event,
 >  {
->  	struct klp_func *func;
+>  	struct perf_cpu_context *cpuctx;
+>  	struct list_head *cpuctx_entry;
+> +	struct perf_cgroup *cgrp;
 >  
-> -	for (func = obj->funcs; func->old_name && func != limit; func++)
-> -		kobject_put(&func->kobj);
-> +	klp_for_each_func(obj, func) {
-> +		if (func->kobj.state_initialized)
-> +			kobject_put(&func->kobj);
-> +	}
->  }
+>  	if (!is_cgroup_event(event))
+>  		return;
 >  
->  /* Clean up when a patched object is unloaded */
-> @@ -678,23 +679,25 @@ static void klp_free_object_loaded(struct klp_object *obj)
->  }
+>  	/*
+>  	 * Because cgroup events are always per-cpu events,
+>  	 * this will always be called from the right CPU.
+>  	 */
+>  	cpuctx = __get_cpu_context(ctx);
+> +	cgrp = perf_cgroup_from_task(current, ctx);
 >  
->  /*
-> - * Free all objects' kobjects in the array up to some limit. When limit is
-> - * NULL, all kobjects are freed.
-> + * Free all funcs and objects that have the kobject initialized.
-> + * Otherwise, nothing is needed.
-
-Same here.
-
->   */
-> -static void klp_free_objects_limited(struct klp_patch *patch,
-> -				     struct klp_object *limit)
-> +static void klp_free_objects(struct klp_patch *patch)
->  {
->  	struct klp_object *obj;
->  
-> -	for (obj = patch->objs; obj->funcs && obj != limit; obj++) {
-> -		klp_free_funcs_limited(obj, NULL);
-> -		kobject_put(&obj->kobj);
-> +	klp_for_each_object(patch, obj) {
-> +		klp_free_funcs(obj);
-> +
-> +		if (obj->kobj.state_initialized)
-> +			kobject_put(&obj->kobj);
+> +	/*
+> +	 * if only the cgroup is running on this cpu,
+> +	 * we put/remove this cgroup into cpu context.
+> +	 * Or it would case mismatch in following cgroup
+> +	 * events at event_filter_match()
+> +	 */
+> +	if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup)) {
+> +		if (add)
+>  			cpuctx->cgrp = cgrp;
+> +		else
+> +			cpuctx->cgrp = NULL;
 >  	}
->  }
->  
->  static void klp_free_patch(struct klp_patch *patch)
->  {
-> -	klp_free_objects_limited(patch, NULL);
-> +	klp_free_objects(patch);
-> +
->  	if (!list_empty(&patch->list))
->  		list_del(&patch->list);
->  }
-> @@ -791,21 +794,16 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
->  	klp_for_each_func(obj, func) {
->  		ret = klp_init_func(obj, func);
->  		if (ret)
-> -			goto free;
-> +			return ret;
->  	}
->  
->  	if (klp_is_object_loaded(obj)) {
->  		ret = klp_init_object_loaded(patch, obj);
->  		if (ret)
-> -			goto free;
-> +			return ret;
->  	}
->  
->  	return 0;
-> -
-> -free:
-> -	klp_free_funcs_limited(obj, func);
-> -	kobject_put(&obj->kobj);
-> -	return ret;
->  }
 
-I'm slightly worried about not keeping the error handling here but 
-offloading it to the caller, because we may forget to update it one day. 
-But yes, it keeps things simple and I can live with that.
+I am still not convinced this is correct.
 
->  static int klp_init_patch(struct klp_patch *patch)
-> @@ -842,7 +840,7 @@ static int klp_init_patch(struct klp_patch *patch)
->  	return 0;
->  
->  free:
-> -	klp_free_objects_limited(patch, obj);
-> +	klp_free_objects(patch);
->  
->  	mutex_unlock(&klp_mutex);
+Suppose we have
 
-With those nits fixed
+   R
+  / \
+ A   B
+    / \
+   C
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+And our current task is of B, and B has an event.
 
-Miroslav
+We then install an event in C, if we then destroy our event in C, it
+would clear cpuctx->cgrp, which is wrong, since there is still an event
+in B.
+
+Simpler still, if B were to have 2 events, and we'd remove one, that
+would still clear cpuctx->cgrp, even though there is an event left.
+
+This is the exact issue I pointed out last time, and I still don't see
+how it would now be correct.
+
+Northing explains why its ok to have NULL cpuctx->cgrp when there are in
+fact still cgroup events on the CPU.
