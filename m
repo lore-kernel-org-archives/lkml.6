@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185407-2-1757010389837348667
+X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185391-2-524728403528835168
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enfrro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185406; b=BG6L/LeXHcu8BITVaDQ4vSJnIKmmkrPRSkyjYnChxiK/Tni
-    /Lwej7I7/c/6TcfEG15pTOrqOwFPerPEGivFvKQdQD4z6sCQvvNyQeU807gwSOwt
-    IbC/tqNQVUJQUu8Pne3fthQKtE4UR9SBwQSPIMQ2SLqKtNNvForbjFWj1PyBMa+4
-    HtO0UF5yAplljWdSZjWI933TCpzplrPaJe2A06pvt4Er2wMMNJ4VsdSyJ5B55+Yr
-    a9I8O8mfXZoFg6v+DOya/hQmWDWpAiZ6wIyrhohuvnVs4iiJh4/cIb+vVcPSBZEX
-    zo2u2iQEaBxy7zVT67B7LBZ/lqgG1Fk4QeVy78g==
+    t=1518185390; b=o15aqJPn9IgvYcbv+dS0KwP2JtbbTDRRyY37yE6Z1a+HY/K
+    kfr7DbH9DsZXPWlTP26EoiJ4RIW20xh9dBI7J3BkA5M2xfdiNQbqRj6xnZpAf2iS
+    EsV6QLdmpukRgsbg7SOHHptnaj0j1OQJX/+SmZqyjfbDaTKoUS/NqdpDzy7PfPwM
+    L4KPMgLiXQiZGg2BcDEhoNlCKcCUStDAefVtCWH50j/hXSD6g2bqd0FlZoKTUa2p
+    KanEp4gUbNY2K6/HylpeBtsCqw42WgLWKfFBx9cnlPyra+vucY5ujOvljJ2T6uX/
+    PpF/scSL7i1erGjcua5Y1Cf64nyW+fD/wG6vXIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185406; bh=+L/gRF+My25BVq4a6nRMXN5KSe
-    8e3b/h6HnPfB03/cE=; b=tN6bkS3erwEcCBNj6AHjuR89EwP7oKaGXW0OhNPrES
-    URvMjzwvBYxdrGztFeRQqOlZwo9hwmTp/S0v3ApEsoQv0nSweaGGuwEOce3fAIMG
-    J13JGzALnK1aasLbmj0nGh52o1/XwNYm2FgE4YDf6eCe8vENaytMzRZj0WscO0Eb
-    ULPtvp1pHMWlKr4oEQiWkm3R3eX7rv4M64+AuABeyTM6H7D/bo698cls4WkeHBUb
-    EhgyrsfrYeq5c3RuK/0iPnPCO1PAa6CZul5L/grLahO9a3rX2G+wXxyqdXOBhjtW
-    1icYE6uzjA4IrhtnuAjIlHpAt6lNS+1liluv4cyGAhrQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185390; bh=taXpUteJFSjjvAkXcIqX45GXvd
+    3DrmXhwyvn0Pv6K3g=; b=PBl/f4+BSLAe+Wtrfu9OCJ+yp6a4IMWMTBfs5vQAYY
+    Cxoor6mqoTNQ33w9p6WH4JjI9Qov9TZjyjKGuXrNIzpG4Bl6qVUn1WN/9jf8I8eH
+    TWHgybfgFwhct4HasSg+6JfiYjT5B6sC9GoZWeVJWXP/wl/1tIxsCXeNpwrhV15a
+    VL3bAjLQNAonTMv8tRN1elUJ82W1u9zqWK/cCOEe/sNZ5JzCKOK3ryewCBgUcA0Q
+    6JyHKtQsUIFjnW2iTJN4qYdFLLrrU58rjzoCYeBfzlLvTYTWFQhdGc9N4uJlw7eo
+    IcRcaYoUJZ5S3RIRD5xf0kSRXA/D7CFHfflndIEJ6p+g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751113AbeBIOJu (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 09:09:50 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49822 "EHLO
+        id S1752915AbeBINm1 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:42:27 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49836 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752897AbeBINmW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:22 -0500
+        with ESMTP id S1752862AbeBINmZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:25 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, KarimAllah Ahmed <karahmed@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
-        ashok.raj@intel.com, dave.hansen@intel.com, arjan@linux.intel.com,
-        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
-        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
-        gregkh@linux-foundation.org
-Subject: [PATCH 4.9 45/92] x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support
-Date: Fri,  9 Feb 2018 14:39:14 +0100
-Message-Id: <20180209133934.414899680@linuxfoundation.org>
+        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.9 13/92] pinctrl: pxa: pxa2xx: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Fri,  9 Feb 2018 14:38:42 +0100
+Message-Id: <20180209133932.216272000@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -82,92 +77,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Jesse Chan <jc@linux.com>
 
-(cherry picked from commit 20ffa1caecca4db8f79fe665acdeaa5af815a24d)
+commit 0b9335cbd38e3bd2025bcc23b5758df4ac035f75 upstream.
 
-Expose indirect_branch_prediction_barrier() for use in subsequent patches.
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-[ tglx: Add IBPB status to spectre_v2 sysfs file ]
+WARNING: modpost: missing MODULE_LICENSE() in drivers/pinctrl/pxa/pinctrl-pxa2xx.o
+see include/linux/module.h for more information
 
-Co-developed-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: ak@linux.intel.com
-Cc: ashok.raj@intel.com
-Cc: dave.hansen@intel.com
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-8-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+This adds the license as "GPL v2", which matches the header of the file.
+
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/cpufeatures.h   |    2 ++
- arch/x86/include/asm/nospec-branch.h |   13 +++++++++++++
- arch/x86/kernel/cpu/bugs.c           |   10 +++++++++-
- 3 files changed, 24 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -202,6 +202,8 @@
- /* Because the ALTERNATIVE scheme is for members of the X86_FEATURE club... */
- #define X86_FEATURE_KAISER	( 7*32+31) /* CONFIG_PAGE_TABLE_ISOLATION w/o nokaiser */
- 
-+#define X86_FEATURE_IBPB		( 7*32+21) /* Indirect Branch Prediction Barrier enabled*/
-+
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
- #define X86_FEATURE_VNMI        ( 8*32+ 1) /* Intel Virtual NMI */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -218,5 +218,18 @@ static inline void vmexit_fill_RSB(void)
- #endif
+---
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
++++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+@@ -436,3 +436,7 @@ int pxa2xx_pinctrl_exit(struct platform_
+ 	return 0;
  }
- 
-+static inline void indirect_branch_prediction_barrier(void)
-+{
-+	asm volatile(ALTERNATIVE("",
-+				 "movl %[msr], %%ecx\n\t"
-+				 "movl %[val], %%eax\n\t"
-+				 "movl $0, %%edx\n\t"
-+				 "wrmsr",
-+				 X86_FEATURE_IBPB)
-+		     : : [msr] "i" (MSR_IA32_PRED_CMD),
-+			 [val] "i" (PRED_CMD_IBPB)
-+		     : "eax", "ecx", "edx", "memory");
-+}
+ EXPORT_SYMBOL_GPL(pxa2xx_pinctrl_exit);
 +
- #endif /* __ASSEMBLY__ */
- #endif /* __NOSPEC_BRANCH_H__ */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -262,6 +262,13 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
- 		pr_info("Filling RSB on context switch\n");
- 	}
-+
-+	/* Initialize Indirect Branch Prediction Barrier if supported */
-+	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL) ||
-+	    boot_cpu_has(X86_FEATURE_AMD_PRED_CMD)) {
-+		setup_force_cpu_cap(X86_FEATURE_IBPB);
-+		pr_info("Enabling Indirect Branch Prediction Barrier\n");
-+	}
- }
- 
- #undef pr_fmt
-@@ -291,7 +298,8 @@ ssize_t cpu_show_spectre_v2(struct devic
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
- 
--	return sprintf(buf, "%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IPBP" : "",
- 		       spectre_v2_bad_module ? " - vulnerable module loaded" : "");
- }
- #endif
++MODULE_AUTHOR("Robert Jarzmik <robert.jarzmik@free.fr>");
++MODULE_DESCRIPTION("Marvell PXA2xx pinctrl driver");
++MODULE_LICENSE("GPL v2");
