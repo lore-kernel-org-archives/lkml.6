@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2049716-1518206689-2-4949858047228820351
+X-Cyrus-Session-Id: sloti22d1t05-2049716-1518206645-2-13980103523483433001
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -9,28 +9,28 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='ISO-8859-15'
-X-Attached: 0001-ftrace-Remove-incorrect-setting-of-glob-search-field.patch
+X-Attached: 0002-tracing-Fix-parsing-of-globs-with-a-wildcard-at-the-.patch
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518206688; b=op7VJeL7TLO27G3wTwtr6LO/gvq0kor3Ww+MJiCCEZbFhbX
-    1/6dNA19i3tn+Zj3ns1gGJXWcb6eAoJTKHp8cNbRzre1eS2VrBQnQBB0fO9QK+FH
-    dg9/D72rIXElv3nNfr9cR0xpA4l3cPUlSTbxmMf4Zt4IFxX1WegUzzZRdx4hhrgz
-    75E9X7AjtIZWqDhrkQvV5YeP9MRTx1fbEbbDexkYGumtU6VqMcF9HYzslWQSqKd1
-    b0K7//dN0FH2OCap2AUuM7bIyJotwxxHmN6WpGfoqbEKUDgD16G1gM5JbOY+yr0b
-    WFjQp0ychKADAaB/8yJxBSqQNyq6IptZSQVS6aQ==
+    t=1518206644; b=gONIMYpEeoyV8TFgo19nBzY9lO1saCC9Wx6LnImJtD7YUu0
+    Rkx6sVvUCnatdo9bI8Jh4pKU9k1j4PbL/+hSl1FXUZmhfgulCJRGuexUtW0Rl0tK
+    ArF7PhWpNHmLkrTJ4KG6Zu/Lx9TaDsi8+c/e16d6Wd5y8Rd5yxXKbwMcOtqotyRZ
+    VqFfrtWikTFkV8PcXsAvCZ1tjO1PaOyJrWwUubzBMUfgg4CBJG0DufeLwjHyA91J
+    2Zzse3JJPjuFQzfZRX5zZufevNCkuy27G1gqr7lkRwYRP98p4VbCsv0QNBVKhowA
+    E7kCe2Rd/qp+VLozjSMXAejqV8Jtv/luhAxl3iQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=message-id:date:from:to:cc:subject
     :references:mime-version:content-type:sender:list-id; s=arctest;
-    t=1518206688; bh=PClKy3zmqZkrGo6G4FrxO8Hx9UWztYUyQO8AQbcZWEs=; b=
-    iGGTJ/aI15Dti7CxaFRVY+2Gdj8ziGD5pXEUoMwFeRYKKFgOXlsAkSVewtA2tZm2
-    xu+ZufqzWY2d7ro/KGiPhFu3rwFaLwpqPeG4QfHiTCHkaA9guCW4TL3Gi5tPsBzf
-    wdHgYtJtSA9+MUpGRw4KsMQAgCE/fCGTDL7tVwNQh36FHA8u0v/JKzrd0z+AYoFH
-    6YEp3fz48pHWaRbgOPpwyM+o7SEOTTwTFz4z6yMgmLHpxHOBtwLms7tMfEbTanRb
-    VgSIqUhVKmHAxZlPOfvTIo2UoHS+QW5dymPfsiFfyYORrCBR9WmPh2f85Ra5JwI4
-    +XxTENHuzOXk2CTayGxygw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    t=1518206644; bh=xcWkYwuDlO/jUY0orU7m6lyXP32FTIF4BMXoJqfaDOg=; b=
+    BBeXK/XNRmlgzIbPNChCabgO+ZXSNNAM0JQA4ZvTrmyjMnQLS7nb6ntFz8Ff/jd7
+    GTq2xI6uQh9AppwuFr6G0JQuISqqeHA/04flJ03fksDqoIX+RhH3ckJ0ctJ8hShJ
+    5Qa3HwNcX7YSPOCkiDa8mVcKVPIhp5zhRXl/M+uyUB/QmRxORlAQ+nj+21lft7ab
+    9Lp7hvsDNA+Srntgxk5BuSwZMWlIRmxOJsKkr39QSKUbFJWv83fsLkAocvZqd+E+
+    E4cB7SsJuqXIOh001IiJBQEPWtr6tRtJrseTlVCWUb1NZkvzyOanYuUl+VfU9aCv
+    jeHmoL8+jzAC2/0ZDCEnGA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
@@ -48,18 +48,18 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeBIUEC (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 15:04:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752560AbeBIUEB (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1752604AbeBIUEB (ORCPT <rfc822;greg@kroah.com>);
         Fri, 9 Feb 2018 15:04:01 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB67217A5
+Received: from mail.kernel.org ([198.145.29.99]:52552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752190AbeBIUEB (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 9 Feb 2018 15:04:01 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55EA2217AA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180209200359.208217487@goodmis.org>
+Message-Id: <20180209200359.343519342@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 09 Feb 2018 15:03:05 -0500
+Date: Fri, 09 Feb 2018 15:03:06 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -68,11 +68,11 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@ZenIV.linux.org.uk>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Dmitry Safonov <0x7f454c46@gmail.com>, stable@vger.kernel.org
-Subject: [PATCH 1/6] ftrace: Remove incorrect setting of glob search field
+Subject: [PATCH 2/6] tracing: Fix parsing of globs with a wildcard at the beginning
 References: <20180209200304.703130163@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0001-ftrace-Remove-incorrect-setting-of-glob-search-field.patch
+Content-Disposition: inline; filename=0002-tracing-Fix-parsing-of-globs-with-a-wildcard-at-the-.patch
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -81,49 +81,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-__unregister_ftrace_function_probe() will incorrectly parse the glob filter
-because it resets the search variable that was setup by filter_parse_regex().
+Al Viro reported:
 
-Al Viro reported this:
+    For substring - sure, but what about something like "*a*b" and "a*b"?
+    AFAICS, filter_parse_regex() ends up with identical results in both
+    cases - MATCH_GLOB and *search = "a*b".  And no way for the caller
+    to tell one from another.
 
-    After that call of filter_parse_regex() we could have func_g.search not
-    equal to glob only if glob started with '!' or '*'.  In the former case
-    we would've buggered off with -EINVAL (not = 1).  In the latter we
-    would've set func_g.search equal to glob + 1, calculated the length of
-    that thing in func_g.len and proceeded to reset func_g.search back to
-    glob.
+Testing this with the following:
 
-    Suppose the glob is e.g. *foo*.  We end up with
-	    func_g.type = MATCH_MIDDLE_ONLY;
-	    func_g.len = 3;
-	    func_g.search = "*foo";
-    Feeding that to ftrace_match_record() will not do anything sane - we
-    will be looking for names containing "*foo" (->len is ignored for that
-    one).
+ # cd /sys/kernel/tracing
+ # echo '*raw*lock' > set_ftrace_filter
+ bash: echo: write error: Invalid argument
 
-Link: http://lkml.kernel.org/r/20180127031706.GE13338@ZenIV.linux.org.uk
+With this patch:
+
+ # echo '*raw*lock' > set_ftrace_filter
+ # cat set_ftrace_filter
+_raw_read_trylock
+_raw_write_trylock
+_raw_read_unlock
+_raw_spin_unlock
+_raw_write_unlock
+_raw_spin_trylock
+_raw_spin_lock
+_raw_write_lock
+_raw_read_lock
+
+Al recommended not setting the search buffer to skip the first '*' unless we
+know we are not using MATCH_GLOB. This implements his suggested logic.
+
+Link: http://lkml.kernel.org/r/20180127170748.GF13338@ZenIV.linux.org.uk
 
 Cc: stable@vger.kernel.org
-Fixes: 3ba009297149f ("ftrace: Introduce ftrace_glob structure")
-Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Fixes: 60f1d5e3bac44 ("ftrace: Support full glob matching")
 Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Suggsted-by: Al Viro <viro@ZenIV.linux.org.uk>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/trace/trace_events_filter.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index dabd9d167d42..eac9ce2c57a2 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4456,7 +4456,6 @@ unregister_ftrace_function_probe_func(char *glob, struct trace_array *tr,
- 		func_g.type = filter_parse_regex(glob, strlen(glob),
- 						 &func_g.search, &not);
- 		func_g.len = strlen(func_g.search);
--		func_g.search = glob;
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 61e7f0678d33..a764aec3c9a1 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -400,7 +400,6 @@ enum regex_type filter_parse_regex(char *buff, int len, char **search, int *not)
+ 	for (i = 0; i < len; i++) {
+ 		if (buff[i] == '*') {
+ 			if (!i) {
+-				*search = buff + 1;
+ 				type = MATCH_END_ONLY;
+ 			} else if (i == len - 1) {
+ 				if (type == MATCH_END_ONLY)
+@@ -410,14 +409,14 @@ enum regex_type filter_parse_regex(char *buff, int len, char **search, int *not)
+ 				buff[i] = 0;
+ 				break;
+ 			} else {	/* pattern continues, use full glob */
+-				type = MATCH_GLOB;
+-				break;
++				return MATCH_GLOB;
+ 			}
+ 		} else if (strchr("[?\\", buff[i])) {
+-			type = MATCH_GLOB;
+-			break;
++			return MATCH_GLOB;
+ 		}
+ 	}
++	if (buff[0] == '*')
++		*search = buff + 1;
  
- 		/* we do not support '!' for function probes */
- 		if (WARN_ON(not))
+ 	return type;
+ }
 -- 
 2.15.1
