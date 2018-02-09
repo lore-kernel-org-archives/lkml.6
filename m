@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184410-2-15843086857366774101
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184373-5-10442050559958249234
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184409; b=R8hgEi9gNuw1EgVVAr6Mx6eUFMNQ4Yqhy466HAga1I9EC13
-    51uXzD58MQctkCnT3BVPuVLGkXzZM1ViysreoJ3tNCf+jGLR0BdBYmqf67Ab5agO
-    pZflAC21EJj8A0GgFOpD63dRyNY5PFuDzWTfw8dRiA4di1j/DWDFw7aIbEn0w83G
-    JQRWjL8VlJiuGvaDVn2RSXPLorH9FcSO6AXgwJL8KLCA4uwMJTOYnqBFMbCqAL/Z
-    ZxYtMpGoU4XpFf3uYGz1Z3wtSBnLa7nNzyYAcSxQSRa2uVKXPX11XDeeg99lAVnA
-    J4Nad+BTnChwdTg9qm7EbaAgTbkS5K367JPKkYQ==
+    t=1518184373; b=S+IikNmbdWbcOu0rkYZxgqjT9RIvLMU7DnIGol/jaFDMKGB
+    d0WjBYhfTzARf3LRUwCm66yfgnevVko/Hz6oPh3ChhKj30tZmZo8T1WPWeqhnYai
+    lP6I7IEtzcVhkezB6I7R+OeWGaVF7c6NsSsEeGaEqe7WrEvlsL13uHZM1iCVYdlz
+    M24PJrcgThTYKtE8o9G/WHhZoZV833v2hyUVbYzgWB69+oqXjb7q8PaaPAng3ITm
+    h6uZ8gJ9M+4s7o1+gc7LdK8Pt+8IorAuTUpQTHMNzvO+YrXj5nigOqfskOGVmDuh
+    XRvpms3jzDBxZ+zh005H/huLlgyCkVrXnnufWAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184409; bh=abJHj47hnMpAn7G/owfdoYMwdi
-    z6oj5yw5c/NASORtg=; b=GDh22F2KVBjRI7Gnl6O1+QVj2ceWMyYbMMWodcbLGc
-    ZGdKiYGtU875U/YhWib4IXXqPRvhWMEoqerrHjfR5l2CLAvx0e1khwsSOysVrJ/h
-    xruJbXEyM8A7KH5KXdGHaZcAJpTS5MCAINzf/xRI7+By1cMfFdBAKY4kG3z57Wea
-    ldV3rjipQCgopv5GxFwdBbBta6MA3nrgGn1TkkNUJdGN4dhVRTFUZstyXw/7xQfE
-    XFZ/B4zjIgBZcwAWi/JDNVJnIpugewBLvhGiM+d19Ex+jiNUKe+iRTKnkR80c1XM
-    3JKxPKSoNY+9v5/lB87y6y/acwYkBzkUfidT/QvAu+6A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184373; bh=hI+308x+y5NM9k2SUQ5AkHRyuQ
+    0QyetEYxWn7yNVBfw=; b=n6PGYbBi4vC0IdzV89EX12Ze5UCxVtBbpLvLZCBuHc
+    i1b/Anliqqg4vYtqFtgJdtuYGLSgl7nFYuEOBBhNh2zn0DBrgW6l0MUrJwkzSB6t
+    l4Fll9moorm/tSB9OWlJysmoxL/cqjEgMlqiHotn0re8ESc10uYkHa3RmPtqI3oG
+    njBmr38vqPsske6q1AZBVaVW4jzsZ9I9FUi6IuUJkJut/Nxj/WQrQQYh9CUwTsTN
+    oEywSDqAu/VF6UMdDgEAfFUmKwObfmU2z6A0l/V2iTZuO3n/VpkWCPV2pbb9BJr2
+    R1QpZIXHMufn8gA4Q0/ubdKBjJaePy7vZLgiqtFlxEgg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753718AbeBINqB (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:46:01 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52272 "EHLO
+        id S1753731AbeBINqE (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:46:04 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753707AbeBINp6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:58 -0500
+        with ESMTP id S1753707AbeBINqC (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:46:02 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunhao Lin <hau@realtek.com>,
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 08/22] r8169: fix RTL8168EP take too long to complete driver initialization.
-Date: Fri,  9 Feb 2018 14:39:57 +0100
-Message-Id: <20180209133934.661753199@linuxfoundation.org>
+Subject: [PATCH 4.14 09/22] tcp: release sk_frag.page in tcp_disconnect
+Date: Fri,  9 Feb 2018 14:39:58 +0100
+Message-Id: <20180209133934.727817804@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
 References: <20180209133934.024795822@linuxfoundation.org>
@@ -77,40 +78,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chunhao Lin <hau@realtek.com>
+From: Li RongQing <lirongqing@baidu.com>
 
 
-[ Upstream commit 086ca23d03c0d2f4088f472386778d293e15c5f6 ]
+[ Upstream commit 9b42d55a66d388e4dd5550107df051a9637564fc ]
 
-Driver check the wrong register bit in rtl_ocp_tx_cond() that keep driver
-waiting until timeout.
+socket can be disconnected and gets transformed back to a listening
+socket, if sk_frag.page is not released, which will be cloned into
+a new socket by sk_clone_lock, but the reference count of this page
+is increased, lead to a use after free or double free issue
 
-Fix this by waiting for the right register bit.
-
-Signed-off-by: Chunhao Lin <hau@realtek.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Cc: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/tcp.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -1388,7 +1388,7 @@ DECLARE_RTL_COND(rtl_ocp_tx_cond)
- {
- 	void __iomem *ioaddr = tp->mmio_addr;
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2379,6 +2379,12 @@ int tcp_disconnect(struct sock *sk, int
  
--	return RTL_R8(IBISR0) & 0x02;
-+	return RTL_R8(IBISR0) & 0x20;
- }
+ 	WARN_ON(inet->inet_num && !icsk->icsk_bind_hash);
  
- static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
-@@ -1396,7 +1396,7 @@ static void rtl8168ep_stop_cmac(struct r
- 	void __iomem *ioaddr = tp->mmio_addr;
- 
- 	RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
--	rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
-+	rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
- 	RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
- 	RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
++	if (sk->sk_frag.page) {
++		put_page(sk->sk_frag.page);
++		sk->sk_frag.page = NULL;
++		sk->sk_frag.offset = 0;
++	}
++
+ 	sk->sk_error_report(sk);
+ 	return err;
  }
