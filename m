@@ -1,79 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeBILEt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 06:04:49 -0500
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:38102 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752181AbeBILEr (ORCPT
+        id S1751052AbeBILIF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 06:08:05 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38815 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750895AbeBILIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 06:04:47 -0500
-X-Google-Smtp-Source: AH8x225N6zMz1j1M6miT5bhwkYteuMp2e7H6tdfVtApuCGC2+2fHtnniBntQphG1U5H1N0vfl8Z0P65axbAsK7sLceE=
+        Fri, 9 Feb 2018 06:08:02 -0500
+X-Google-Smtp-Source: AH8x227jppiJuxMFJqXuFM2e0wI5HzDCC1XfnSbgPqsk3Tsg4/ztdVsqox6c/b52wz98eBOA9hQLpqa2DaDughCKDns=
 MIME-Version: 1.0
-In-Reply-To: <20180209105305.GD12979@localhost.localdomain>
-References: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
- <20180209035143.GX28462@vireshk-i7> <197c26ba-c2a6-2de7-dffa-5b884079f746@evidence.eu.com>
- <11598161.veS9VGWB8G@aspire.rjw.lan> <20180209105305.GD12979@localhost.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 9 Feb 2018 12:04:46 +0100
-X-Google-Sender-Auth: msgNT1OTMZLj8JZJIzhZsod0Jes
-Message-ID: <CAJZ5v0h9L2mMEaV6oECk9f2ob42Nr9zyqafymwvb+UP+G1q04Q@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180209070026.193879-2-yixun.lan@amlogic.com>
+References: <20180209070026.193879-1-yixun.lan@amlogic.com> <20180209070026.193879-2-yixun.lan@amlogic.com>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Fri, 9 Feb 2018 12:07:20 +0100
+Message-ID: <CAOFm3uFj-7kZNp6b3SerOzQ8Amfa5Usod+MxwvZJ1E1Z_V9VJA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 9, 2018 at 11:53 AM, Juri Lelli <juri.lelli@redhat.com> wrote:
-> Hi,
+On Fri, Feb 9, 2018 at 8:00 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+> Add dt-bindings headers for the Meson-AXG's AO clock and
+> reset controller.
 >
-> On 09/02/18 11:36, Rafael J. Wysocki wrote:
->> On Friday, February 9, 2018 9:02:34 AM CET Claudio Scordino wrote:
->> > Hi Viresh,
->> >
->> > Il 09/02/2018 04:51, Viresh Kumar ha scritto:
->> > > On 08-02-18, 18:01, Claudio Scordino wrote:
->> > >> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
->> > >> we should not wait for the rate limit, otherwise we may miss some deadline.
->> > >>
->> > >> Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
->> > >> misses for tasks with low RT periods.
->> > >>
->> > >> The patch applies on top of the one recently proposed by Peter to drop the
->> > >> SCHED_CPUFREQ_* flags.
->> > >>
->>
->> [cut]
->>
->> >
->> > >
->> > > Is it possible to (somehow) check here if the DL tasks will miss
->> > > deadline if we continue to run at current frequency? And only ignore
->> > > rate-limit if that is the case ?
+> CC: <devicetree@vger.kernel.org>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
+>  include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
 >
-> Isn't it always the case? Utilization associated to DL tasks is given by
-> what the user said it's needed to meet a task deadlines (admission
-> control). If that task wakes up and we realize that adding its
-> utilization contribution is going to require a frequency change, we
-> should _theoretically_ always do it, or it will be too late. Now, user
-> might have asked for a bit more than what strictly required (this is
-> usually the case to compensate for discrepancies between theory and real
-> world, e.g.  hw transition limits), but I don't think there is a way to
-> know "how much". :/
+> diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
+> new file mode 100644
+> index 000000000000..78683abb4247
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/axg-aoclkc.h
+> @@ -0,0 +1,26 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD) */
 
-You are right.
+nit... BSD is not a valid license id as documented in LICENSES [1] :
+please use one of these:
+BSD-2-Clause or BSD-3-Clause
 
-I'm somewhat concerned about "fast switch" cases when the rate limit
-is used to reduce overhead.
+Thank you!
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/LICENSES/preferred
+-- 
+Cordially
+Philippe Ombredanne
