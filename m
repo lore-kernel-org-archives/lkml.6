@@ -1,68 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751756AbeBINZ4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:25:56 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:39233 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751185AbeBINZw (ORCPT
+        id S1752100AbeBIN3K (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:29:10 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:56421 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751140AbeBIN3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:25:52 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kalle Valo <kvalo@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8192cu: remove pointless memcpy
-Date: Fri,  9 Feb 2018 14:24:41 +0100
-Message-Id: <20180209132531.2755482-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:RWBl3G8cH5p9u51X2ua0AkG1ltzUmI6b0tqV4YZ8t7HUck+ryPp
- CqPiaYJLbOXErZhien9xzrPJs1rKimHDChtW6Pptj5uaqs6UbenlR2Vw6XZT5WUagGgFd0z
- S5hJAzYajRe7LqTlSZ958RbtkjBlAR/OkUTVtQx8iJQBb+ruzwSEleELy67VcUma1NvCMBg
- K5A1w77cJnW4ezvFn3IWw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:iOmuxAw0i2A=:whEsezpDFz/1pd+SnDJgG2
- /D8pKk59JIdzRqpOwYXvDbQjTG27nH7Wn8FXRrh5RJqGoXBdPLRAQEa98AhSQtlfRQRWv800C
- tdLIygKFuIy5uyO9SoWe3p3tFG1PtnFUAXG4XGeW8YMAmZhZz5932dOvH1Wk8iZRYOptyOhQW
- o1dvXic4JVL9pv9kiI1qObfmT9pd96/2svqTVOoCYCTHqE9Dgz7Fpd6w5vKWNnFJ1uSdSorIY
- xcMhYXRnUmB5m0+xqDHlSpT53ib8sv82kbMpqW9vmqTndNB+D9bj2X6BktaoNd7tnG8WRPUav
- 3bW/pCcf3XCiydzzfEWEmhVlS/lV5DmKkGRxFljC44YZ51pHKb9dpMMTstiVskrLYX0s/5WXQ
- /cj2UKSCvSg/ouUWHTPz78YK1G4ZKUUce4zIau76K60wy9b349nfZErZfnkCabjnCcxRt/fLy
- URN8/bb9iCOe8ptCbHXJDL9eHZUWHHiKKkiSM7JEuO46dbylhIWI5gonQOc+U2auReKUGOdd0
- F0tDxv0TfnEXYb2kMRXSzG+HtEHedBsDojfU0hd5klfxODU2vOjqcsiNHEGqwOwTZ4wiSP0rN
- MujyqujgtOXZOiZefcs4oOLo+ueOz9fOQviy822w4xjYOX7xxBwmcJu875VUuUDauuz7JFVlv
- Lx8wpLsDT4XYQZgLp9G++rN1aiOD2PkVHbvWrijEnkitmUaifjH6/3kWmXAvWCdGHDVPxUbDp
- RHEu9AKKZmLoSkO2+QW5Mxx/TCee1CqeHnrlwQ==
+        Fri, 9 Feb 2018 08:29:07 -0500
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: Palmer Dabbelt <palmer@sifive.com>, <antonynpavlov@gmail.com>
+CC: <linux-mips@linux-mips.org>, <jhogan@kernel.org>,
+        <ralf@linux-mips.org>, <linux-kernel@vger.kernel.org>,
+        Matt Redfearn <matt.redfearn@mips.com>
+Subject: [PATCH] lib: Rename compiler intrinsic selects to GENERIC_LIB_*
+Date: Fri, 9 Feb 2018 13:22:52 +0000
+Message-ID: <1518182572-23376-1-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <mhng-f000d448-7ead-4cee-9e2f-5d58692c0922@palmer-si-x1c4>
+References: <mhng-f000d448-7ead-4cee-9e2f-5d58692c0922@palmer-si-x1c4>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1518182925-298555-3570-44439-3
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189854
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc-8 points out that source and destination of the memcpy() are
-always the same pointer, so the effect of memcpy() is undefined
-here (its arguments must not overlap):
+When these are included into arch Kconfig files, maintaining
+alphabetical ordering of the selects means these get split up. To allow
+for keeping things tidier and alphabetical, rename the selects to
+GENERIC_LIB_*
 
-drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c: In function '_rtl_rx_process':
-drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c:430:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
-
-Most likely this is harmless, but it's easy to just remove the
-line and get rid of the warning.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/riscv/Kconfig |  6 +++---
+ lib/Kconfig        | 12 ++++++------
+ lib/Makefile       | 12 ++++++------
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
-index ac4a82de40c7..9ab56827124e 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
-@@ -427,7 +427,6 @@ static void _rtl_rx_process(struct ieee80211_hw *hw, struct sk_buff *skb)
- 		 (u32)hdr->addr1[0], (u32)hdr->addr1[1],
- 		 (u32)hdr->addr1[2], (u32)hdr->addr1[3],
- 		 (u32)hdr->addr1[4], (u32)hdr->addr1[5]);
--	memcpy(IEEE80211_SKB_RXCB(skb), rx_status, sizeof(*rx_status));
- 	ieee80211_rx(hw, skb);
- }
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 2c6adf12713a..5f1e2188d029 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -99,9 +99,9 @@ config ARCH_RV32I
+ 	bool "RV32I"
+ 	select CPU_SUPPORTS_32BIT_KERNEL
+ 	select 32BIT
+-	select GENERIC_ASHLDI3
+-	select GENERIC_ASHRDI3
+-	select GENERIC_LSHRDI3
++	select GENERIC_LIB_ASHLDI3
++	select GENERIC_LIB_ASHRDI3
++	select GENERIC_LIB_LSHRDI3
  
+ config ARCH_RV64I
+ 	bool "RV64I"
+diff --git a/lib/Kconfig b/lib/Kconfig
+index c5e84fbcb30b..946d0890aad6 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -584,20 +584,20 @@ config STRING_SELFTEST
+ 
+ endmenu
+ 
+-config GENERIC_ASHLDI3
++config GENERIC_LIB_ASHLDI3
+ 	bool
+ 
+-config GENERIC_ASHRDI3
++config GENERIC_LIB_ASHRDI3
+ 	bool
+ 
+-config GENERIC_LSHRDI3
++config GENERIC_LIB_LSHRDI3
+ 	bool
+ 
+-config GENERIC_MULDI3
++config GENERIC_LIB_MULDI3
+ 	bool
+ 
+-config GENERIC_CMPDI2
++config GENERIC_LIB_CMPDI2
+ 	bool
+ 
+-config GENERIC_UCMPDI2
++config GENERIC_LIB_UCMPDI2
+ 	bool
+diff --git a/lib/Makefile b/lib/Makefile
+index d11c48ec8ffd..7e1ef77e86a3 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -252,9 +252,9 @@ obj-$(CONFIG_SBITMAP) += sbitmap.o
+ obj-$(CONFIG_PARMAN) += parman.o
+ 
+ # GCC library routines
+-obj-$(CONFIG_GENERIC_ASHLDI3) += ashldi3.o
+-obj-$(CONFIG_GENERIC_ASHRDI3) += ashrdi3.o
+-obj-$(CONFIG_GENERIC_LSHRDI3) += lshrdi3.o
+-obj-$(CONFIG_GENERIC_MULDI3) += muldi3.o
+-obj-$(CONFIG_GENERIC_CMPDI2) += cmpdi2.o
+-obj-$(CONFIG_GENERIC_UCMPDI2) += ucmpdi2.o
++obj-$(CONFIG_GENERIC_LIB_ASHLDI3) += ashldi3.o
++obj-$(CONFIG_GENERIC_LIB_ASHRDI3) += ashrdi3.o
++obj-$(CONFIG_GENERIC_LIB_LSHRDI3) += lshrdi3.o
++obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
++obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
++obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
 -- 
-2.9.0
+2.7.4
