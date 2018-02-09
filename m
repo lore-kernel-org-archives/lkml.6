@@ -1,49 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753361AbeBIXY7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 18:24:59 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:48156 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753269AbeBIXY5 (ORCPT
+        id S1753252AbeBIX0z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 18:26:55 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:39301 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753085AbeBIX0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 18:24:57 -0500
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-scsi@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        QLogic-Storage-Upstream@cavium.com,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        Chad Dupuis <chad.dupuis@cavium.com>,
-        Nilesh Javali <nilesh.javali@cavium.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] scsi: qedf: fix LTO-enabled build
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180202131225.1658853-1-arnd@arndb.de>
-        <20180202131225.1658853-5-arnd@arndb.de>
-Date: Fri, 09 Feb 2018 18:24:42 -0500
-In-Reply-To: <20180202131225.1658853-5-arnd@arndb.de> (Arnd Bergmann's message
-        of "Fri, 2 Feb 2018 14:12:18 +0100")
-Message-ID: <yq1mv0hvj9h.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 9 Feb 2018 18:26:53 -0500
+X-Google-Smtp-Source: AH8x224qeh0BL45+CWaQYLG0K8XkCt3D5K/F57K2I0Pecbo3ye5JLU5FXcCifWPA4XS7b4XX4Dwh4nzd5Wdziu6wGR8=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=481
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090294
+In-Reply-To: <1518130410-6583-3-git-send-email-karahmed@amazon.de>
+References: <1518130410-6583-1-git-send-email-karahmed@amazon.de> <1518130410-6583-3-git-send-email-karahmed@amazon.de>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 9 Feb 2018 15:26:51 -0800
+Message-ID: <CALMp9eThOMGTru3hnuupJ_m4jPA7Hf=5=8ZJ4ygmC50vsDmngw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] X86/nVMX: Update the MSR_BITMAP field with the L02
+ MSR BITMAP
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w19NQxYo018510
 
+On Thu, Feb 8, 2018 at 2:53 PM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
+> ... otherwise we will just be running with the L1 MSR BITMAP!
+>
+> It does not seem that we ever update the MSR_BITMAP when the nested guest
+> is running. The only place where we update the MSR_BITMAP field in VMCS is
+> for the L1 guest!
+>
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/x86/kvm/vmx.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 91e3539..f40be10 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -10589,6 +10589,9 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+>         vmcs_writel(GUEST_GDTR_BASE, vmcs12->guest_gdtr_base);
+>         vmcs_writel(GUEST_IDTR_BASE, vmcs12->guest_idtr_base);
+>
+> +       if (cpu_has_vmx_msr_bitmap())
+> +               vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
+> +
 
-Arnd,
+This is already in David's "[PATCH 5/9] KVM: VMX: make MSR bitmaps
+per-VCPU," isn't it?
 
-> The prototype for qedf_dbg_fops/qedf_debugfs_ops doesn't match the
-> definition, which causes the final link to fail with link-time
-> optimizations:
-
-Applied to 4.17/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+>         if (from_vmentry &&
+>             (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS)) {
+>                 kvm_set_dr(vcpu, 7, vmcs12->guest_dr7);
+> --
+> 2.7.4
+>
