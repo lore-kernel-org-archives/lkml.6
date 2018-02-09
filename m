@@ -1,47 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753320AbeBIXum (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 18:50:42 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:49090 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753203AbeBIXul (ORCPT
+        id S1753308AbeBIX51 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 18:57:27 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39864 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753221AbeBIX5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 18:50:41 -0500
-To: Colin King <colin.king@canonical.com>
-Cc: Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: isci: remove redundant initialization to 'bit'
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180206141236.31651-1-colin.king@canonical.com>
-Date: Fri, 09 Feb 2018 18:50:32 -0500
-In-Reply-To: <20180206141236.31651-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 6 Feb 2018 14:12:36 +0000")
-Message-ID: <yq1po5du3hz.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 9 Feb 2018 18:57:25 -0500
+X-Google-Smtp-Source: AH8x2261REVOADaZbJoHSo1/mjD+MEHcAKXwyd8mIBdvBsKLcg8N9A3Y5LPfOODsh5PBCEL6uSWEm8xYN2aFIcDQ2RI=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=567
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090300
+In-Reply-To: <20180209121415.564-1-colin.king@canonical.com>
+References: <20180209121415.564-1-colin.king@canonical.com>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 9 Feb 2018 17:57:03 -0600
+Message-ID: <CAH2r5muR7bKGxjQBgjLbrsDPKOLut_j71vTrq-QNKefNhiJB1w@mail.gmail.com>
+Subject: Re: [PATCH][V2] CIFS: SMBD: fix spelling mistake: "faield" and "legnth"
+To: Colin King <colin.king@canonical.com>
+Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+merged into cifs-2.6.git for-next
 
-Colin,
+On Fri, Feb 9, 2018 at 6:14 AM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in log_rdma_send and log_rdma_mr
+> message text.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/cifs/smbdirect.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+> index 91710eb571fb..5aa0b54b32ce 100644
+> --- a/fs/cifs/smbdirect.c
+> +++ b/fs/cifs/smbdirect.c
+> @@ -1025,7 +1025,7 @@ static int smbd_post_send(struct smbd_connection *info,
+>
+>         for (i = 0; i < request->num_sge; i++) {
+>                 log_rdma_send(INFO,
+> -                       "rdma_request sge[%d] addr=%llu legnth=%u\n",
+> +                       "rdma_request sge[%d] addr=%llu length=%u\n",
+>                         i, request->sge[0].addr, request->sge[0].length);
+>                 ib_dma_sync_single_for_device(
+>                         info->id->device,
+> @@ -2295,7 +2295,7 @@ static void smbd_mr_recovery_work(struct work_struct *work)
+>                                 rc = ib_dereg_mr(smbdirect_mr->mr);
+>                                 if (rc) {
+>                                         log_rdma_mr(ERR,
+> -                                               "ib_dereg_mr faield rc=%x\n",
+> +                                               "ib_dereg_mr failed rc=%x\n",
+>                                                 rc);
+>                                         smbd_disconnect_rdma_connection(info);
+>                                 }
+> --
+> 2.15.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-> Variable bit is initialized with a value that is never read and is
-> being updated immediately after the initialization, hence the
-> initialization is redundant and can be removed.
 
-Applied to 4.17/scsi-queue. Thanks!
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Thanks,
+
+Steve
