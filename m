@@ -1,92 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751077AbeBINY3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:24:29 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39235 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeBINY0 (ORCPT
+        id S1751189AbeBINZv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:25:51 -0500
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:51226 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbeBINZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:24:26 -0500
-X-Google-Smtp-Source: AH8x226oM88Kf4j09y+qYSf1ICuowM1Ug8hdjwe28+EeuTVdcjuOH4IamvAJ8gjeQwK7ftsDKCQGuQ==
-Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
- device
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
- <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
- <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
- <1517803655.1173.12.camel@mtkswgap22>
- <0e0e703c-0ac9-06ad-91c5-abdf16de1ee9@gmail.com>
- <1518069447.28878.4.camel@mtkswgap22>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <6fc674ba-a540-ef25-932d-afdc9d8e7fbe@gmail.com>
-Date: Fri, 9 Feb 2018 14:24:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 9 Feb 2018 08:25:49 -0500
+X-Google-Smtp-Source: AH8x226p9cx/cUW9UtTJqRJDx0xunyQoZwEtPYPat5XPoGjAnN3evZUBgwPF4jRQYuypunYN0vBe+w==
+Date: Fri, 9 Feb 2018 14:25:44 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+Message-ID: <20180209132544.GI12979@localhost.localdomain>
+References: <197c26ba-c2a6-2de7-dffa-5b884079f746@evidence.eu.com>
+ <11598161.veS9VGWB8G@aspire.rjw.lan>
+ <20180209105305.GD12979@localhost.localdomain>
+ <CAJZ5v0h9L2mMEaV6oECk9f2ob42Nr9zyqafymwvb+UP+G1q04Q@mail.gmail.com>
+ <20180209112618.GE12979@localhost.localdomain>
+ <CAJZ5v0g4bgDKP96rivKPE-EMr7SuUhL9OO=M+MQuAjbdq9R45g@mail.gmail.com>
+ <20180209115155.GG12979@localhost.localdomain>
+ <CAJZ5v0g-ypbVT77vSpjTX5mrpedu_=eH+O3b5d6PE5ydL1=VRQ@mail.gmail.com>
+ <20180209125245.GH12979@localhost.localdomain>
+ <CAJZ5v0i9ZpRZKd7FNLnC6SucJnOump4xhQhf9QabXOSTf_qfyw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1518069447.28878.4.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0i9ZpRZKd7FNLnC6SucJnOump4xhQhf9QabXOSTf_qfyw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 09/02/18 13:56, Rafael J. Wysocki wrote:
+> On Fri, Feb 9, 2018 at 1:52 PM, Juri Lelli <juri.lelli@redhat.com> wrote:
+> > On 09/02/18 13:08, Rafael J. Wysocki wrote:
+> >> On Fri, Feb 9, 2018 at 12:51 PM, Juri Lelli <juri.lelli@redhat.com> wrote:
 
+[...]
 
-On 02/08/2018 06:57 AM, Ryder Lee wrote:
-> On Wed, 2018-02-07 at 16:18 +0100, Matthias Brugger wrote:
->>
->> On 02/05/2018 05:07 AM, Ryder Lee wrote:
->>> On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
->>>>
->>>> On 01/31/2018 08:42 AM, Ryder Lee wrote:
->>>>> As the new MFD parent is in place, switch probing method to adapt it.
->>>>>
->>>>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
->>>>> ---
->>>>>  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
->>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
->>>>> index 13f752d..8c18536 100644
->>>>> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
->>>>> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
->>>>> @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
->>>>>  {
->>>>>  	struct clk_onecell_data *clk_data;
->>>>>  	struct device_node *node = pdev->dev.of_node;
->>>>> +	struct device_node *pnode = pdev->dev.parent->of_node;
->>>>>  	int r;
->>>>>  
->>>>>  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
->>>>>  
->>>>> -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
->>>>> +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
->>>>
->>>> We will need a fallback here for older device tree bindings.
->>>>
->>>> Regards,
->>>> Matthias
->>>
->>> Up to now, I didn't see both driver and bindings are used anywhere.
->>> Should I still care about that?
->>>
->>
->> Yes please, we have to ensure that newer kernel work with older bindings and
->> vice-versa.
+> >> > My impression is that rate limit helps a lot for CFS, where the "true"
+> >> > utilization is not known in advance, and being too responsive might
+> >> > actually be counterproductive.
+> >> >
+> >> > For DEADLINE (and RT, with differences) we should always respond as
+> >> > quick as we can (and probably remember that a frequency transition was
+> >> > requested if hw was already performing one, but that's another patch)
+> >> > because, if we don't, a task belonging to a lower priority class might
+> >> > induce deadline misses in highest priority activities. E.g., a CFS task
+> >> > that happens to trigger a freq switch right before a DEADLINE task wakes
+> >> > up and needs an higher frequency to meet its deadline: if we wait for
+> >> > the rate limit of the CFS originated transition.. deadline miss!
+> >>
+> >> Fair enough, but if there's too much overhead as a result of this, you
+> >> can't guarantee the deadlines to be met anyway.
+> >
+> > Indeed. I guess this only works if corner cases as the one above don't
+> > happen too often.
 > 
-> OKay. An unrelated question - is it possible to change the compatible
-> string (*-audsys-clk) without breaking backward compatible?
+> Well, that's the point.
 > 
+> So there is a tradeoff: do we want to allow deadlines to be missed
+> because of excessive overhead or do we want to allow deadlines to be
+> missed because of the rate limit.
 
-You can't change the compatible string, but you can add a new one, if the DT
-maintainer are ok with that. Beware that you won't be able to re-use the old one
-in a different driver.
+The difference between the two seems to be that while overhead is an
+intrisic hw thing, rate limit is something we have mostly to cope with
+the nature of certain classes of tasks and how we describe/track them
+(at least IMHO). I'd say that for other classes of tasks (DL/RT) we
+would be better off consciously living with the former only and accept
+that real world is "seldom" not ideal.
 
-Regards,
-Matthias
+But then again this is just another theory, experiments might easily
+prove me wrong. :)
