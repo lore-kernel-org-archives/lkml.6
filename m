@@ -1,55 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750890AbeBIFEn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 00:04:43 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38105 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750746AbeBIFEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 00:04:42 -0500
-X-Google-Smtp-Source: AH8x224N3IJwfgGNcgyRN8U+zoIrDOmA+0lPFe/if5+HTZy7fKRi62SW1E/Up+8LO+ya+MUjJZfNxw==
-Date: Fri, 9 Feb 2018 14:04:36 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH 1/2] zsmalloc: introduce zs_huge_object() function
-Message-ID: <20180209050436.GB689@jagdpanzerIV>
-References: <20180207092919.19696-1-sergey.senozhatsky@gmail.com>
- <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
- <20180208163006.GB17354@rapoport-lnx>
- <20180209025520.GA3423@jagdpanzerIV>
- <20180209041046.GB23828@bombadil.infradead.org>
+        id S1750993AbeBIFFI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 00:05:08 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40028 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750924AbeBIFFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 00:05:06 -0500
+Subject: Re: [PATCH v5 1/3] arm64/ras: support sea error recovery
+To: James Morse <james.morse@arm.com>, Xie XiuQi <xiexiuqi@huawei.com>
+CC: <catalin.marinas@arm.com>, <will.deacon@arm.com>, <mingo@redhat.com>,
+        <mark.rutland@arm.com>, <ard.biesheuvel@linaro.org>,
+        <Dave.Martin@arm.com>, <takahiro.akashi@linaro.org>,
+        <tbaicar@codeaurora.org>, <stephen.boyd@linaro.org>, <bp@suse.de>,
+        <julien.thierry@arm.com>, <shiju.jose@huawei.com>,
+        <zjzhang@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <wangxiongfeng2@huawei.com>, <zhengqiang10@huawei.com>,
+        <huawei.libin@huawei.com>, <wangkefeng.wang@huawei.com>,
+        <lijinyue@huawei.com>, <guohanjun@huawei.com>, <hanjun.guo@linaro.org>,
+        <cj.chengjian@huawei.com>
+References: <1516969885-150532-1-git-send-email-xiexiuqi@huawei.com>
+ <1516969885-150532-2-git-send-email-xiexiuqi@huawei.com>
+ <5A70C536.7040208@arm.com> <5A7B4D87.9020207@arm.com>
+From: gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <92585a44-aeac-4e0e-f879-e2d00b30040f@huawei.com>
+Date: Fri, 9 Feb 2018 13:04:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209041046.GB23828@bombadil.infradead.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <5A7B4D87.9020207@arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/08/18 20:10), Matthew Wilcox wrote:
-> > > > +/*
-> > > > + * Check if the object's size falls into huge_class area. We must take
-> > > > + * ZS_HANDLE_SIZE into account and test the actual size we are going to
-> > > > + * use up. zs_malloc() unconditionally adds handle size before it performs
-> > > > + * size_class lookup, so we may endup in a huge class yet zs_huge_object()
-> > > > + * returned 'false'.
-> > > > + */
-> > > 
-> > > Can you please reformat this comment as kernel-doc?
-> > 
-> > Is this - Documentation/doc-guide/kernel-doc.rst - the right thing
-> > to use as a reference?
+
+
+On 2018/2/8 3:03, James Morse wrote:
+> Hi Xie XiuQi,
 > 
-> Yes.  I just sent a revision to it that makes it (I think) a little
-> easier to read.  Try this version:
+> On 30/01/18 19:19, James Morse wrote:
+>> On 26/01/18 12:31, Xie XiuQi wrote:
+>>> With ARM v8.2 RAS Extension, SEA are usually triggered when memory errors
+>>> are consumed. According to the existing process, errors occurred in the
+>>> kernel, leading to direct panic, if it occurred the user-space, we should
+>>> just kill process.
+>>>
+>>> But there is a class of error, in fact, is not necessary to kill
+>>> process, you can recover and continue to run the process. Such as
+>>> the instruction data corrupted, where the memory page might be
+>>> read-only, which is has not been modified, the disk might have the
+>>> correct data, so you can directly drop the page, ant reload it when
+>>> necessary.
+>>
+>> With firmware-first support, we do all this...
+>>
+>>
+>>> So this patchset is just try to solve such problem: if the error is
+>>> consumed in user-space and the error occurs on a clean page, you can
+>>> directly drop the memory page without killing process.
+>>>
+>>> If the corrupted page is clean, just dropped it and return to user-space
+>>> without side effects. And if corrupted page is dirty, memory_failure()
+>>> will send SIGBUS with code=BUS_MCEERR_AR. While without this patchset,
+>>> do_sea() will just send SIGBUS, so the process was killed in the same place.
+>>
+>> ... but this happens too. I agree its something we should fix, but I don't think
+>> this is the best way to do it.
+>>
+>> This series is pulling the memory-failure-queue details back into the arch-code
+>> to build a second list, that gets processed as extra work when we return to
+>> user-space.
+>>
+>>
+>> The root of the issue is ghes_notify_sea() claims the notification as something
+>> APEI has dealt with, ... but it hasn't done it yet. The signals will be
+>> generated by something currently stuck in a queue. (Evidently x86 doesn't handle
+>> synchronous errors like this using firmware-first).
+>>
+>> I think a smaller fix is to give the queues that may be holding the
+>> memory_failure() work a kick as part of the code that calls ghes_notify_sea().
+>> This means that by the time we return to do_sea() ghes_notify_sea()'s claim that
+>> APEI has dealt with it is true as any generated signals are pending. We can then
+>> skip the existing SIGBUS generation code.
+>>
+>>
+>>> Because memory_failure() may sleep, we can not call it directly in SEA
+>>
+>> (this one is more serious, I've attempted to fix it by moving all NMI-like
+>> GHES-notifications to use the estatus queue).
+>>
+>>
+>>> exception context. So we saved faulting physical address associated with
+>>> a process in the ghes handler and set __TIF_SEA_NOTIFY. When we return
+>>> from SEA exception context and get into do_notify_resume() before the
+>>> process running, we could check it and call memory_failure() to do
+>>> recovery.
+>>
+>>> It's safe, because we are in process context.
+>>
+>> I think this is the trick. When we take a Synchronous-external-abort out of
+>> userspace, we're in process context too. We can add helpers to drain the
+>> memory_failure_queue which can be called when do_sea() when we know we're
+>> preemptible and interrupts-et-al are unmasked.
+> 
+> Something like... base on [0], in arch/arm64/kernel/acpi.c:
+> -----------------%<-----------------
+> int apei_claim_sea(struct pt_regs *regs)
+> {
+>         int cpu;
+>         int err = -ENOENT;
+>         unsigned long current_flags = arch_local_save_flags();
+>         unsigned long interrupted_flags = current_flags;
+> 
+>         if (!IS_ENABLED(CONFIG_ACPI_APEI_SEA))
+>                 return err;
+> 
+>         if (regs)
+>                 interrupted_flags = regs->pstate;
+> 
+>         /*
+>          * APEI expects an NMI-like notification to always be called
+>          * in NMI context.
+>          */
+>         local_daif_restore(DAIF_ERRCTX);
+>         nmi_enter();
+>         err = ghes_notify_sea();
+>         cpu = smp_processor_id();
+>         nmi_exit();
+> 
+>         /*
+>          * APEI NMI-like notifications are deferred to irq_work. Unless
+>          * we interrupted irqs-masked code, we can do that now.
+>          */
+>         if (!err) {
+>                 if (!arch_irqs_disabled_flags(interrupted_flags)) {
+>                         local_daif_restore(DAIF_PROCCTX_NOIRQ);
+>                         irq_work_run();
+>                 } else {
+>                         err = -EINPROGRESS;
+>                 }
+>         }
+> 
+>         local_daif_restore(current_flags);
+> 
+>         if (IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE) && !err) {
+>                 /*
+>                  * Memory failure work is scheduled on the local CPU.
+>                  * If we interrupted userspace, or are in process context
+>                  * we can do that now.
+>                  */
+>                 if ((regs && !user_mode(regs)) || !preemptible())
+>                         err = -EINPROGRESS;
+>                 else
+>                         memory_failure_queue_kick(cpu);
+>         }
+> 
+>         return err;
+> }
+> -----------------%<-----------------
+> 
+> 
+> and to mm/memory-failure.c:
+> -----------------%<-----------------
+> @@ -1355,7 +1355,7 @@ static void memory_failure_work_func(struct work_struct *w
+> ork)
+>         unsigned long proc_flags;
+>         int gotten;
+> 
+> -       mf_cpu = this_cpu_ptr(&memory_failure_cpu);
+> +       mf_cpu = container_of(work, struct memory_failure_cpu, work);
+>         for (;;) {
+>                 spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+>                 gotten = kfifo_get(&mf_cpu->fifo, &entry);
+> 
+> @@ -1369,6 +1369,22 @@ static void memory_failure_work_func(struct work_struct *
+> work)
+>         }
+>  }
+> 
+> +/*
+> + * Process memory_failure work queued on the specified CPU.
+> + * Used to avoid return-to-userspace racing with the memory_failure workqueue.
+> + */
+> +void memory_failure_queue_kick(int cpu)
+> +{
+> +       unsigned long flags;
+> +       struct memory_failure_cpu *mf_cpu;
+> +
+> +       might_sleep();
+> +
+> +       mf_cpu = &per_cpu(memory_failure_cpu, cpu);
+> +       cancel_work_sync(&mf_cpu->work);
+> +       memory_failure_work_func(&mf_cpu->work);
+> +}
+> +
+>  static int __init memory_failure_init(void)
+>  {
+>         struct memory_failure_cpu *mf_cpu;
+> -----------------%<-----------------
 
-That's helpful, thanks! Will take a look and re-spin the patch.
+It look like the change is reasonable, thanks James's solving.
 
-	-ss
+> 
+> I've cooked up some NOTFIY_SEA-ing APEI firmware using kvmtool to test this. I
+> haven't yet managed to hit irq-masked code with NOTIFY_SEA. I'll try and tidy
+> this up and post a branch to make it easier to test...
+> 
+> I prefer this as it doesn't duplicate the state then come back on a TIF flag.
+> I'd like to move the kicking logic into ghes.c, as that is where the queueing
+> happened, but the 'do-this, restore these flags, do-that' is somewhat tasteless,
+> and it looks like on arm64 has synchronous nmi-like notifications that must be
+> handled before returning to user-space...
+> 
+> 
+> 
+> Thanks,
+> 
+> James
+> 
+> [0] https://www.spinics.net/lists/linux-acpi/msg80149.html
+> 
+> 
+> 
+> 
+> .
+> 
