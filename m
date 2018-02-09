@@ -1,62 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752380AbeBIMKq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:10:46 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50726 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752331AbeBIMKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:10:43 -0500
-From: Baoquan He <bhe@redhat.com>
-To: linux-kernel@vger.kernel.org, ebiederm@xmission.com
-Cc: mingo@kernel.org, tglx@linutronix.de, x86@kernel.org,
-        douly.fnst@cn.fujitsu.com, joro@8bytes.org, uobergfe@redhat.com,
-        prarit@redhat.com, Baoquan He <bhe@redhat.com>
-Subject: [PATCH v3 5/5] x86/apic: Set up through-local-APIC on boot CPU if 'noapic' specified
-Date: Fri,  9 Feb 2018 20:10:08 +0800
-Message-Id: <20180209121008.28980-6-bhe@redhat.com>
-In-Reply-To: <20180209121008.28980-1-bhe@redhat.com>
-References: <20180209121008.28980-1-bhe@redhat.com>
+        id S1752389AbeBIMLF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:11:05 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55555 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752086AbeBIMLD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:11:03 -0500
+X-Google-Smtp-Source: AH8x226i8/qUD4MXEmDxFIJC5WFUn74TrNglXJgM4VlIeNmu58CuyUHRqQljb2pBu9I0kxeG6oN4wA==
+From: Shreeya Patel <shreeya.patel23498@gmail.com>
+To: daniel@ffwll.ch, airlied@redhat.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        seanpaul@chromium.org
+Cc: Shreeya Patel <shreeya.patel23498@gmail.com>
+Subject: [PATCH] gpu/drm/udl: Replace struct_mutex with driver private lock
+Date: Fri,  9 Feb 2018 17:40:56 +0530
+Message-Id: <1518178256-17157-1-git-send-email-shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently kdump kernel becomes very slow if 'noapic' is specified.
-Normal kernel won't.
+dev->struct_mutex is the Big DRM Lock and the only bit where
+it’s mandatory is serializing GEM buffer object destruction.
+Which unfortunately means drivers have to keep track of that
+lock and either call unreference or unreference_locked
+depending upon context. Core GEM doesn’t have a need for
+struct_mutex any more since kernel 4.8.
 
-Kernel parameter 'noapic' is used to disable IO-APIC in system for
-testing or special purpose. Here the root cause is that in kdump
-kernel LAPIC is disabled since commit 522e664644
-("x86/apic: Disable I/O APIC before shutdown of the local APIC").
-In this case We need set up through-local-APIC on boot CPU in
-setup_local_APIC().
+For drivers that need struct_mutex it should be replaced by a driver
+private lock.
 
-While In normal kernel the legacy irq mode is enabled in BIOS. If
-it is virtual wire mode, the local-APIC has been enabled and set as
-through-local-APIC.
-
-Though we fix the regression introduced by criminal commit 522e664644,
-for safety and clarity, better set up through-local-APIC explicitly,
-but not rely on the default boot irq mode.
-
-Do it now.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
+Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
 ---
- arch/x86/kernel/apic/apic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/udl/udl_dmabuf.c | 5 +++--
+ drivers/gpu/drm/udl/udl_drv.h    | 1 +
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 25ddf02598d2..3fc259b4dd2d 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1570,7 +1570,7 @@ void setup_local_APIC(void)
- 	 * TODO: set up through-local-APIC from through-I/O-APIC? --macro
- 	 */
- 	value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
--	if (!cpu && (pic_mode || !value)) {
-+	if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
- 		value = APIC_DM_EXTINT;
- 		apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n", cpu);
- 	} else {
+diff --git a/drivers/gpu/drm/udl/udl_dmabuf.c b/drivers/gpu/drm/udl/udl_dmabuf.c
+index 2867ed1..120d2d9 100644
+--- a/drivers/gpu/drm/udl/udl_dmabuf.c
++++ b/drivers/gpu/drm/udl/udl_dmabuf.c
+@@ -76,6 +76,7 @@ static struct sg_table *udl_map_dma_buf(struct dma_buf_attachment *attach,
+ 	struct udl_drm_dmabuf_attachment *udl_attach = attach->priv;
+ 	struct udl_gem_object *obj = to_udl_bo(attach->dmabuf->priv);
+ 	struct drm_device *dev = obj->base.dev;
++	struct udl_device *udl = dev->dev_private;
+ 	struct scatterlist *rd, *wr;
+ 	struct sg_table *sgt = NULL;
+ 	unsigned int i;
+@@ -112,7 +113,7 @@ static struct sg_table *udl_map_dma_buf(struct dma_buf_attachment *attach,
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	mutex_lock(&dev->struct_mutex);
++	mutex_lock(&udl->urbs.plock);
+ 
+ 	rd = obj->sg->sgl;
+ 	wr = sgt->sgl;
+@@ -137,7 +138,7 @@ static struct sg_table *udl_map_dma_buf(struct dma_buf_attachment *attach,
+ 	attach->priv = udl_attach;
+ 
+ err_unlock:
+-	mutex_unlock(&dev->struct_mutex);
++	mutex_unlock(&udl->urbs.plock);
+ 	return sgt;
+ }
+ 
+diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+index 2a75ab8..24cca17 100644
+--- a/drivers/gpu/drm/udl/udl_drv.h
++++ b/drivers/gpu/drm/udl/udl_drv.h
+@@ -39,6 +39,7 @@ struct urb_node {
+ 
+ struct urb_list {
+ 	struct list_head list;
++	struct mutex plock;
+ 	spinlock_t lock;
+ 	struct semaphore limit_sem;
+ 	int available;
 -- 
-2.13.6
+2.7.4
