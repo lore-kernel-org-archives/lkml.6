@@ -1,66 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751139AbeBINBh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:01:37 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44968 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750993AbeBINBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:01:36 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Peter Xu <peterx@redhat.com>
-Subject: [PATCH] KVM: lapic: stop advertising DIRECTED_EOI when in-kernel IOAPIC is in use
-Date: Fri,  9 Feb 2018 14:01:33 +0100
-Message-Id: <20180209130133.28387-1-vkuznets@redhat.com>
+        id S1751142AbeBINHX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:07:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33862 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751028AbeBINHV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 08:07:21 -0500
+Date: Fri, 9 Feb 2018 14:07:13 +0100
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [GIT PULL] s390 updates for 4.16 merge window
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+x-cbid: 18020913-0040-0000-0000-0000042E2B9E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18020913-0041-0000-0000-000020D1E57B
+Message-Id: <20180209130713.GA3876@osiris>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802090168
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Devices which use level-triggered interrupts under Windows 2016 with
-Hyper-V role enabled don't work: Windows disables EOI broadcast in SPIV
-unconditionally. Our in-kernel IOAPIC implementation emulates an old IOAPIC
-version which has no EOI register so EOI never happens.
+Hello Linus,
 
-The issue was discovered and discussed a while ago:
-https://www.spinics.net/lists/kvm/msg148098.html
+since Martin is on vacation you get the s390 pull request from me:
 
-While this is a guest OS bug (it should check that IOAPIC has the required
-capabilities before disabling EOI broadcast) we can workaround it in KVM:
-advertising DIRECTED_EOI with in-kernel IOAPIC makes little sense anyway.
+please pull from the 'for-linus' branch of
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-- Radim's suggestion was to disable DIRECTED_EOI unconditionally but I'm not
-  that radical :-) In theory, we may have multiple IOAPICs in userspace in
-  future and DIRECTED_EOI can be leveraged.
----
- arch/x86/kvm/lapic.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+	git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 924ac8ce9d50..5339287fee63 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -321,8 +321,16 @@ void kvm_apic_set_version(struct kvm_vcpu *vcpu)
- 	if (!lapic_in_kernel(vcpu))
- 		return;
- 
-+	/*
-+	 * KVM emulates 82093AA datasheet (with in-kernel IOAPIC implementation)
-+	 * which doesn't have EOI register; Some buggy OSes (e.g. Windows with
-+	 * Hyper-V role) disable EOI broadcast in lapic not checking for IOAPIC
-+	 * version first and level-triggered interrupts never get EOIed in
-+	 * IOAPIC.
-+	 */
- 	feat = kvm_find_cpuid_entry(apic->vcpu, 0x1, 0);
--	if (feat && (feat->ecx & (1 << (X86_FEATURE_X2APIC & 31))))
-+	if (feat && (feat->ecx & (1 << (X86_FEATURE_X2APIC & 31))) &&
-+	    !ioapic_in_kernel(vcpu->kvm))
- 		v |= APIC_LVR_DIRECTED_EOI;
- 	kvm_lapic_set_reg(apic, APIC_LVR, v);
- }
--- 
-2.14.3
+to receive the following updates:
+
+The main thing in this merge is the defense for the Spectre vulnerabilities.
+But there are other updates as well, the changes in more detail:
+
+* An s390 specific implementation of the array_index_mask_nospec function
+  to the defense against spectre v1
+
+* Two patches to utilize the new PPA-12/PPA-13 instructions to run the
+  kernel and/or user space with reduced branch predicton.
+
+* The s390 variant of the 'retpoline' spectre v2 defense called 'expoline'.
+  There is no return instruction for s390, instead an indirect branch is
+  used for function return. The s390 defense mechanism for indirect
+  branches works by using an execute-type instruction with the indirect
+  branch as the target of the execute. In effect that turns off the
+  prediction for the indirect branch.
+
+* Scrub registers in entry.S that contain user controlled values to
+  prevent the speculative use of these values.
+
+* Re-add the second parameter for the s390 specific runtime-instrumentation
+  system call and move the header file to uapi. The second parameter will
+  continue to do nothing but older kernel versions only accepted valid
+  real-time signal numbers. The details will be documented in the man-page
+  for the system call.
+
+* Corrections and improvements for the s390 specific documentation
+
+* Add a line to /proc/sysinfo to display the CPU model dependent
+  license-internal-code identifier
+
+* A header file include fix for eadm.
+
+* An error message fix in the kprobes code.
+
+* The removal of an outdated ARCH_xxx select statement.
+
+Thanks,
+Heiko
+
+Cornelia Huck (3):
+      s390/cmf: fix kerneldoc
+      s390/docs: mention subchannel types
+      s390/docs: reword airq section
+
+Heiko Carstens (2):
+      s390/runtime instrumentation: provide uapi header file
+      s390/runtime_instrumentation: re-add signum system call parameter
+
+Hendrik Brueckner (2):
+      s390/sysinfo: add and display licensed internal code identifier
+      s390/cpum_cf: correct counter number of LAST_HOST_TRANSLATIONS
+
+Martin Schwidefsky (6):
+      s390: scrub registers on kernel entry and KVM exit
+      s390: add optimized array_index_mask_nospec
+      s390/alternative: use a copy of the facility bit mask
+      s390: add options to change branch prediction behaviour for the kernel
+      s390: run user space and KVM guests with modified branch prediction
+      s390: introduce execute-trampolines for branches
+
+Masami Hiramatsu (1):
+      s390/kprobes: Fix %p uses in error messages
+
+Sebastian Ott (2):
+      s390/eadm: fix CONFIG_BLOCK include dependency
+      s390/cio: fix kernel-doc usage
+
+Ulf Magnusson (1):
+      s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
+
+ Documentation/driver-api/s390-drivers.rst  |  32 +++-
+ arch/s390/Kconfig                          |  46 +++++-
+ arch/s390/Makefile                         |  10 ++
+ arch/s390/include/asm/barrier.h            |  24 +++
+ arch/s390/include/asm/eadm.h               |   2 +-
+ arch/s390/include/asm/facility.h           |  18 +++
+ arch/s390/include/asm/lowcore.h            |   9 +-
+ arch/s390/include/asm/nospec-branch.h      |  18 +++
+ arch/s390/include/asm/processor.h          |   4 +
+ arch/s390/include/asm/runtime_instr.h      |  67 +-------
+ arch/s390/include/asm/sysinfo.h            |   3 +-
+ arch/s390/include/asm/thread_info.h        |   4 +
+ arch/s390/include/uapi/asm/runtime_instr.h |  74 +++++++++
+ arch/s390/kernel/Makefile                  |   4 +
+ arch/s390/kernel/alternative.c             |  26 ++-
+ arch/s390/kernel/early.c                   |   5 +
+ arch/s390/kernel/entry.S                   | 249 ++++++++++++++++++++++++++---
+ arch/s390/kernel/ipl.c                     |   1 +
+ arch/s390/kernel/kprobes.c                 |   2 +-
+ arch/s390/kernel/module.c                  |  62 +++++--
+ arch/s390/kernel/nospec-branch.c           | 100 ++++++++++++
+ arch/s390/kernel/perf_cpum_cf_events.c     |   2 +-
+ arch/s390/kernel/processor.c               |  18 +++
+ arch/s390/kernel/runtime_instr.c           |  10 +-
+ arch/s390/kernel/setup.c                   |   8 +-
+ arch/s390/kernel/smp.c                     |   7 +-
+ arch/s390/kernel/sysinfo.c                 |   2 +
+ arch/s390/kernel/vmlinux.lds.S             |  14 ++
+ drivers/s390/char/Makefile                 |   2 +
+ drivers/s390/cio/chp.c                     |  10 +-
+ drivers/s390/cio/cio.c                     |   2 +-
+ drivers/s390/cio/cmf.c                     |  15 +-
+ drivers/s390/cio/itcw.c                    |   2 +-
+ drivers/s390/cio/qdio_main.c               |   4 +-
+ drivers/s390/cio/vfio_ccw_cp.c             |   2 +-
+ 35 files changed, 725 insertions(+), 133 deletions(-)
+ create mode 100644 arch/s390/include/asm/nospec-branch.h
+ create mode 100644 arch/s390/include/uapi/asm/runtime_instr.h
+ create mode 100644 arch/s390/kernel/nospec-branch.c
