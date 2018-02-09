@@ -1,68 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeBICQU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 21:16:20 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39784 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752056AbeBICQS (ORCPT
+        id S1752492AbeBICWm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 21:22:42 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38875 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752111AbeBICWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 21:16:18 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F18D260272
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH 03/12] i2c: qup: remove redundant variables for BAM SG
- count
-To: Abhishek Sahu <absahu@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-4-git-send-email-absahu@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <a20dc9c0-e012-d1a5-e182-5c7ddbcc8515@codeaurora.org>
-Date: Fri, 9 Feb 2018 07:46:10 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 8 Feb 2018 21:22:40 -0500
+X-Google-Smtp-Source: AH8x226CuGSDpGWaCK9vLVJrw9OgR0hpqXGxk+S4l7UmcviSoZy+/EEybehhqorDfY7zrLojzxOVmQ==
+Date: Thu, 8 Feb 2018 20:22:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+        tali.perry1@gmail.com, avifishman70@gmail.com,
+        brendanhiggins@google.com, joel@jms.id.au, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v1 1/2] dt-binding: clock: document NPCM7xx clock DT
+ bindings
+Message-ID: <20180209022238.v52rw5filxcig6mg@rob-hp-laptop>
+References: <1517818975-11427-1-git-send-email-tmaimon77@gmail.com>
+ <1517818975-11427-2-git-send-email-tmaimon77@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1517644697-30806-4-git-send-email-absahu@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517818975-11427-2-git-send-email-tmaimon77@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
-
-On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
-> The rx_nents and tx_nents are redundant. rx_buf and tx_buf can
-> be used for total number of SG entries.
+On Mon, Feb 05, 2018 at 10:22:54AM +0200, Tomer Maimon wrote:
+> Added device tree binding documentation for Nuvoton NPCM7xx clocks.
 > 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-qup.c | 26 ++++++++++----------------
->  1 file changed, 10 insertions(+), 16 deletions(-)
+>  .../bindings/clock/nuvoton,npcm7xx-clk.txt         | 84 ++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
 > 
-> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-> index c68f433..bb83a2967 100644
-> --- a/drivers/i2c/busses/i2c-qup.c
-> +++ b/drivers/i2c/busses/i2c-qup.c
-> @@ -692,7 +692,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
->  	struct dma_async_tx_descriptor *txd, *rxd = NULL;
->  	int ret = 0, idx = 0, limit = QUP_READ_LIMIT;
->  	dma_cookie_t cookie_rx, cookie_tx;
-> -	u32 rx_nents = 0, tx_nents = 0, len, blocks, rem;
-> +	u32 len, blocks, rem;
->  	u32 i, tlen, tx_len, tx_buf = 0, rx_buf = 0, off = 0;
->  	u8 *tags;
->  
+> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
+> new file mode 100644
+> index 000000000000..1ba1945d3616
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
+> @@ -0,0 +1,84 @@
+> +* Nuvoton NPCM7XX Clock Controller
+> +
+> +Nuvoton Poleg BMC NPCM7XX contain integrated clock
 
- This is correct. Just a nit, may be rx/tx_buf can be changed to
- rx/tx_count to make it more clear.
+s/contain/contains/
 
-Regards,
- Sricharan
+And your line break is strange.
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> +controller, which generates and supplies clock to all modules within the BMC.
+
+s/clock/clocks/
+
+> +
+> +Required Properties:
+> +
+> +- compatible: should be one of following:
+> +	- "nuvoton,npcm750-clk" : for clock controller of Nuvoton
+> +	  Poleg BMC NPCM750
+> +
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +
+> +
+> +- #clock-cells: should be 1.
+> +
+> +All available clocks are defined as preprocessor macros in
+> +dt-bindings/clock/nuvoton,npcm7xx-clock.h header and can beused in device tree
+
+This file should be part of this patch.
+
+> +sources.
+> +
+> +External clocks:
+> +
+> +There are several clocks that are generated outside the BMC. All clocks are of
+> +a known fixed value that cannot be chagned. Therefor these values are hard coded
+
+s/chagned/changed/
+
+s/Therefor/Therefore/
+
+> +inside the driver and registered on init.
+> +
+> +The clock modules contains 4 PLL, 20 dividers and 11 muxes. All these settings
+> +are set before Linux boot and are not to be altered by the Linux. This driver is
+> +used only to read the values clocks, not to set them.
+> +
+> +In addition to the clock driver, there are 3 external clocks suppling the
+
+The binding describes h/w, not a driver.
+
+> +network, which are of fixed values, set on on the device tree, but not used by
+> + the clock module. Example can be found below.
+   ^
+extra space
+
+All this description belongs at the top of this doc.
+
+> +
+> +Example: Clock controller node:
+> +
+> +	clk: clock-controller@f0801000 {
+> +		compatible = "nuvoton,npcm750-clk";
+> +		#clock-cells = <1>;
+> +		clock-controller;
+> +		reg = <0xf0801000 0x1000>;
+> +		status = "okay";
+> +	};
+> +
+> +Example: Required external clocks for network:
+> +
+> +		/* external clock signal rg1refck, supplied by the phy */
+> +		clk_rg1refck: clk_rg1refck {
+
+Use '-' rather than '_' in node names.
+
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <125000000>;
+> +			clock-output-names = "clk_rg1refck";
+> +		};
+> +
+> +		/* external clock signal rg2refck, supplied by the phy */
+> +		clk_rg2refck: clk_rg2refck {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <125000000>;
+> +			clock-output-names = "clk_rg2refck";
+> +		};
+> +
+> +		clk_xin: clk_xin {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <50000000>;
+> +			clock-output-names = "clk_xin";
+> +		};
+> +
+> +Example: UART controller node that consumes the clock generated by the clock
+> +  controller (refer to the standard clock bindings for information about
+> +  "clocks" and "clock-names" properties):
+> +
+> +	uart0: serial@e2900000 {
+> +		compatible = "Nuvoton,s5pv210-uart";
+
+s/Nuvoton/nuvoton/
+
+> +		reg = <0xe2900000 0x400>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <10>;
+> +		clock-names = "uart", "clk_uart_baud0",
+> +				"clk_uart_baud1";
+> +		clocks = <&clocks UART0>, <&clocks UART0>,
+> +				<&clocks SCLK_UART0>;
+> +	};
+> -- 
+> 2.14.1
+> 
