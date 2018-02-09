@@ -1,113 +1,80 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1557122-1518187856-2-16353643939452371358
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518187856; b=DmBCL38+eZJ8sqKxC4ZfTssVmdlLfriqrXOZhhtXcvMEdQo
-    q3eZm3d687ZOFbBXeGZ0M7W4AlNSXTA/zm12T6opXyatxRhdG1rcVMo2IDb48/wX
-    MPxQbSHc/NTGUDfxiwJ88MbUMyW8alfVHAzT1lbwk0Vis+seFIqdfeP0MG39EkUf
-    OI1GXpuio6r5xTMgwdL+4VfDrpdB4fOlnk4gLODLch5nRVeoXOzSpRADItLD49hw
-    meHoecAOnD2pW+yA224WnCSMlj9yu7JxbKCkPlJ2nFqVWBbnG+2P4/NOKmT7vfHj
-    Wgl6IeDl9YTuJq+4V2gOhibYg9J6Q7kSmY11xxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1518187856; bh=CAwmHSgkPC7Pg7Bqya0HQQBmRd
-    obxgwmOriY2yEmDj8=; b=s2L11zZoh+c45SiCWJMBnbcGDF1Erp2PxAW9weL5aE
-    1AntWNoaC3wxWhdesQoNIbQJkwO52KnmqrDvXv8sxMIg5oFAgMZZhG5JpJVQQw+5
-    K8Mxldn+je1NQDc3rUXr2ezOxphO0R13IoDGtF+WTyD0ENybL5qdKL0WgQ48j4No
-    zzpWoZBm1MNUnSODw+oS4FOQeYVphqp/88usH53gLddsiY2Iu2TkMhgnvAJk3FUH
-    Y6gUaX4Pc7g9iiO5TpHrlb90yr7JtcI0ikS7QpH8ctst/Ntqsmdrd9XxAbh/UExH
-    K2t82S/XULdWyX2IdLGJTKzQuOhPgV1ZlxAnRZzrXZBQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751092AbeBIOul (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 09:50:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751053AbeBIOuk (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:50:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FB421789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
-From: Kieran Bingham <kbingham@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        "Stable v4.14+" <stable@vger.kernel.org>
-Subject: [PATCH] v4l: vsp1: Fix header display list status check in continuous mode
-Date: Fri,  9 Feb 2018 14:50:34 +0000
-Message-Id: <1518187834-21267-1-git-send-email-kbingham@kernel.org>
-X-Mailer: git-send-email 2.7.4
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <darren.kenny@oracle.com>
+X-Google-Smtp-Source: AH8x226Chjt5C2XQPoibfuqPBaOkrnH1l36siT/QoPlCNuMJOUJVTi9zsdKsTcQgG4gIAE1/m8KE
+ARC-Seal: i=1; a=rsa-sha256; t=1518185492; cv=none;
+        d=google.com; s=arc-20160816;
+        b=t3XPqbp+JGYdxzRV+NzrbWiJOV6U3hNu0qeR3CPbOZ56OWTpGTySXsgHpmPpKjaxSs
+         XNrP91W4vRfM9sCPijh7YETKrwLEIzPGsB1GVnVeD1ty+VmXYnr5G0NxPjc5pmOAgud1
+         pTZPze/eT2iJ6cOIzM2gRwNmcJeAbkLkvPptUNx+dNcS0+jcD8ORlgtSHJeVMFr63yi1
+         tS7Sr7y5j3nstbtrwr4sS3n28kyFJ58/ukP0zmBFm8oRcaUzH1raQ9F/6ALV2non6RBt
+         LnJHs727pBZJI7KXHdfY3LvK/eu/Ud06Mz3W7efsFnq2PJDJyzOj9Go7camZ4mBRRY/S
+         UkMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=rj4y74AqlPP0fhtlYuEoQnU8MhgJynbS/eSSJIhBpyc=;
+        b=vVdMGVdfDSXzt9pTjUvrnZ/qSPDWxbxmwDS1Jj8RYOAOpyuBruAIkF6w273daNLT+c
+         iC9x+HdtNjSL/ZAhynnwWbfayuDncUxveKtJEkoop9df5SnL6+7NUrTBpLbAJRP64p3d
+         BJydW9C5wfj7uDaxx0aGmBzNiuiFB9k6BxXDNUB9/p689pj8OlTmcSomL5K1LAguCBnT
+         fPdKQOfluIcuk9kpfABBaxeh/5nsjdFEYN013aMDcuLCSx7J8zSB+FamcyDe1uWqrS/n
+         mYFCOzttppk2P4xco9q3dp5a6GBIdqjXQh5c74jowFkWh5jL3U+vUiUFqVU4ZBtT+cA6
+         8K+A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=s1GA3F0k;
+       spf=pass (google.com: domain of darren.kenny@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=darren.kenny@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=s1GA3F0k;
+       spf=pass (google.com: domain of darren.kenny@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=darren.kenny@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Date: Fri, 9 Feb 2018 14:10:54 +0000
+From: Darren Kenny <darren.kenny@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        David Woodhouse <dwmw@amazon.co.uk>, Kyle Huey <me@kylehuey.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>
+Subject: [PATCH] x86/spectre_v2: Remove 0xc2 from spectre_bad_microcodes
+Message-ID: <20180209141054.gfzioctavbpnjckl@starbug-vm.ie.oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=816
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802090182
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591932870470343348?=
+X-GMAIL-MSGID: =?utf-8?q?1591932870470343348?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+According to the latest microcode update from Intel (on Feb 8, 2018) on
+Skylake we should be using the microcode revisions 0xC2***, so we need
+to remove that from the blacklist now.
 
-To allow dual pipelines utilising two WPF entities when available, the
-VSP was updated to support header-mode display list in continuous
-pipelines.
-
-A small bug in the status check of the command register causes the
-second pipeline to be directly afflicted by the running of the first;
-appearing as a perceived performance issue with stuttering display.
-
-Fix the vsp1_dl_list_hw_update_pending() call to ensure that the read
-comparison corresponds to the correct pipeline.
-
-Fixes: eaf4bfad6ad8 ("v4l: vsp1: Add support for header display
-lists in continuous mode")
-Cc: "Stable v4.14+" <stable@vger.kernel.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Tested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 8cd03ee45f79..34b5ed2592f8 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -509,7 +509,8 @@ static bool vsp1_dl_list_hw_update_pending(struct vsp1_dl_manager *dlm)
- 		return !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE)
- 			  & VI6_DL_BODY_SIZE_UPD);
- 	else
--		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index) & VI6_CMD_UPDHDR));
-+		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index))
-+			  & VI6_CMD_UPDHDR);
- }
- 
- static bool vsp1_dl_hw_active(struct vsp1_dl_manager *dlm)
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 319bf98..276bfe2 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -123,8 +123,6 @@ static const struct sku_microcode spectre_bad_microcodes[] = {
+ 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
+-	{ INTEL_FAM6_SKYLAKE_MOBILE,	0x03,	0xc2 },
+-	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
+ 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
+ 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
+ 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
 -- 
-2.7.4
+2.9.5
