@@ -1,48 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753228AbeBIXB6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 18:01:58 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35827 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753142AbeBIXB4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 18:01:56 -0500
-X-Google-Smtp-Source: AH8x224W2Lmr1gWLZ5Jjg1t2kYqbCouGXM1eSesv4UrFiCyd+qXmRe4XLDGosLS60BaOKcNZxpkFHhM5VPV+UP/EUgc=
+        id S1753152AbeBIXA4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 18:00:56 -0500
+Received: from mga14.intel.com ([192.55.52.115]:32315 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752521AbeBIXAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 18:00:55 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,485,1511856000";
+   d="scan'208";a="16668572"
+Date: Fri, 9 Feb 2018 15:00:41 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+        Nicolas Pitre <nico@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] x86 bugfixes for LTO
+Message-ID: <20180209230041.GI10945@tassilo.jf.intel.com>
+References: <20180202145434.100626-1-arnd@arndb.de>
+ <151821507347.9954.4785393248908071074@mail.alporthouse.com>
 MIME-Version: 1.0
-In-Reply-To: <8b079d9c-f436-eb11-0060-9cad1525aa62@canonical.com>
-References: <8b079d9c-f436-eb11-0060-9cad1525aa62@canonical.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 9 Feb 2018 15:01:55 -0800
-X-Google-Sender-Auth: f9KICf_a2TiQZojiKrL5BCbViVA
-Message-ID: <CA+55aFx7fnnV+ECGKxtQB5wwmzS8kqO=UrO1VdwvXMsT=+4nSA@mail.gmail.com>
-Subject: Re: [GIT PULL] apparmor updates for v4.16
-To: John Johansen <john.johansen@canonical.com>
-Cc: LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM"
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <151821507347.9954.4785393248908071074@mail.alporthouse.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 9, 2018 at 12:19 PM, John Johansen
-<john.johansen@canonical.com> wrote:
->
-> Please pull these apparmor changes for v4.16
+On Fri, Feb 09, 2018 at 10:24:33PM +0000, Chris Wilson wrote:
+> Quoting Arnd Bergmann (2018-02-02 14:54:28)
+> > Here are three bugfixes for x86 that I needed to get LTO-enabled
+> > kernels to build reliably. I'm not sure abouto that first one
+> > though.
+> 
+> Is there a howto on how to build LTO kernels? I tried Andi's lto-415-2
+> branch, but linking fails with lots of arcane PIE-vs-PIC errors. We are
+> wanting to investigate how we can use LTO to reduce our (i915.ko) module
+> size (by e.g. supporting a subset of chipsets).
 
-No.
+What are the errors? Kernel shouldn't use PIE or PIC
 
-You had an extra two weeks because 4.15 was delayed.
-
-Yet you send me a series of patches that have been committed today, on
-a Friday before the weekend when the merge window closes.
-
-And none of this appears to have been in linux-next, at least not as
-of February 1st, when the merge window opened.
-
-No no no.
-
-This can all wait for 4.17. And if the same problem persists, it can
-wait longer.
-
-               Linus
+-Andi
