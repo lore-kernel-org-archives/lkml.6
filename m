@@ -1,71 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751185AbeBIMHl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:07:41 -0500
-Received: from mout.gmx.net ([212.227.17.20]:53751 "EHLO mout.gmx.net"
+        id S1751550AbeBIMHv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:07:51 -0500
+Received: from mout.gmx.net ([212.227.17.21]:48211 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750863AbeBIMHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:07:39 -0500
+        id S1750942AbeBIMHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:07:47 -0500
 From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To: linux-kernel@vger.kernel.org
 Cc: Joel Stanley <joel@jms.id.au>, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH v3 0/4] Nintendo Wii GPIO driver
-Date: Fri,  9 Feb 2018 13:07:27 +0100
-Message-Id: <20180209120732.17863-1-j.neuschaefer@gmx.net>
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH v3 1/4] powerpc: wii: Explicitly configure GPIO owner for poweroff pin
+Date: Fri,  9 Feb 2018 13:07:28 +0100
+Message-Id: <20180209120732.17863-2-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180209120732.17863-1-j.neuschaefer@gmx.net>
+References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:n4AYcxVYkUmK320ZnYqYhTtji/zhTj8NSC5jUQ6zeslnxrmUqkz
- 1+rjkmHM7M+riAeuVW2/n56wRj1iLpgmNW/BkOMRk+2i1MHXooF5wEIl5jgTIYWQAPSaps8
- g9iSjfbxs6fkOeTuLhWsddX76YE1HSDVhCQMFUHgjwDsMepBKdrychOPJ2ff33F8xRSRJXE
- rjEKaJfZJoCnYYz6K8uLQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:fTVrENPqqrY=:mrSJzh+bKUAu/plXahQIGp
- 8hP47Smm9duOVtdXCDcb8plp4QatKCc0OkyJWTdvWXnBY7Haen5n2Aov+ZD1xYwTeY71WlDha
- s9ajA2cJ9AhBVCJF/rqWELXWumNStZNuDh5cEqLMNQqewwIt62n2hfUgBT1FMcuXDLApJ8sIs
- CheNchZLotSTLYl1MqDzy+LD9DAI+0ya1u/s4wTFB+yWbglEnchw1UdUgvjM9bjRNujOJ2XmE
- tPKdzvFovqt3gs14TIhV3KAfZfHY85ZJ0Y6COvX4PtUUWxF5AlO/PD8mCJSmnDjNYRfXsyIKo
- OYJTmOepQB+OKifoOG48JSr63nUfFFAUsGLTE/sf/y3bAbgzIYS7ZL5UJ2h33uIPZbIMi8UUn
- G3OPhvORtWyYj3sEu8UQNoQvrDxzH+2WjZkFHssw4Yz9LcaG3ceBRoKcHS0LvCRpuRGld2cfE
- NXf7al8PPGcvaDOpEqm3XQgEJ7kpUuIIuvi7mBNudkL1OjDsBRr1SqTom2LOqMLK8ZGhA7AUU
- TVPVM3n195HjBPMZDvWm66v3oEhDawbtINAZn4h2Yq0jEKt2+wUJDViF1H1f9QC9ejUim94TY
- X5NMRrHHKyRwa8lrQCnBR9pVtrEj4a5rRBhK1zuKLXHMqlcR1QAoTe/VCVnpaMuYrYPVXH4kZ
- 5VkaHSG4C9XV9xYSSlEvrylpVdQSPmkh9YMwvOstvRSLVKZU0yIspjW4RJ9vkfgxW+2eBZD/O
- F0dZkRj/IBZtoEvQ1KUaakdbulQ605ftxR7kRYloV+nI/w7l4kmgAaVfPXCfsVOfLM1VNI6IP
- tu7D0Gok1pJDrbqOhuiamaipjSX0jnv2wUxk7qcc3w10O/GHis=
+X-Provags-ID: V03:K0:dwLhG+vJnBnKptY5IqOxTJLwj5v5as+LNQrGxAQmMFa8W0gxhXA
+ 9d4RQxrXNzt6agQEOfVuBMpJGgJAL+FqsxPr/lq6rZxSFNIkzOiknh74b90v0OAwae2x5Ep
+ tWTGmomrYFdne9lpvStGMXb0KX+wWxBd+tMkMWJ3iPSyQ6YCpdBw9MPSlrwvKhFWp2uUJsF
+ UTALXubE03ifHL2ZucqSg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:bdFSbI8cPuw=:UuMsvnPwtgza2lb819+o6Q
+ aMYKEaLtpAzybytfGVEnzxPxzNQBeuDoksU7PvkF79aQbVdZr9bxrP3hAC41SkK2UwJ3KkcRY
+ +1E9UbF2O5w+7IvzwpsEPX2kujZ1AIUoUcHsZgg0u2CCZwFj8L1TPWFX/I3szMVeMLSkH4Yi1
+ jXhoyG42p+cJOmkrfIaP1nvxi+BrBe0EAH38idvMmNjhtPbgv/+K1Q/VspKvB1sydKP6qoJtg
+ 7ugAEA476uuguViBwVTQEfl5sAEIH99wmrMk3G5WCvggNTMfX2gQmOdwRQdC1YT7Y6GBq1/D1
+ Y3tMGj04eOwQFhc8RoDllnjJV7xABXW0TFJXn+2VnyH+9iNXjO6KzsFaUJfgbagMs9lSAvhgu
+ 9idu4UW0ylf0GC7/+nxzBytVVGFqQM9/8UcFiCvbiE39cEg0PpotAzEg0C6Nro5Y/342JntLD
+ IQ2jj0wi7F3+UJwaL/OB4572FuY6OtrO7QT7gU2Lr2n0cNKGor3KNioFB9/XcNslKStVS/HPo
+ nvo021BhTrTXsF8C+esqbMHbnC0MsjnP8mTkd+M1PCrDqmuDs0CezjWEZrAbVJRPFX+bLzi6q
+ kN0mAs2PkhGGkrwCLp0TN454h7eRgGI+ifbn1uppCGIAkxobh9hN+rZGzI9jsknxP+8AEH4VP
+ UXnglk4gxxYin83JxMM22anJfiJMT+iQjboig/OI41PvcMa5pZd/Bk/oCHl7hMA63Eo51obAL
+ MLEifCkTKOSRSyHbD05NpkFgww8EDbJEcRm7HikW8dqPKAVzDwlgKNiUD1hlrJcorydGZyaYP
+ Cp3lu2u5Q9XnKdvYcJYNQ/pHtAmbBn0XulWIwGiRx9rdphMZZw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v2: https://www.spinics.net/lists/devicetree/msg211283.html
+The Hollywood chipset's GPIO controller has two sets of registers: One
+for access by the PowerPC CPU, and one for access by the ARM coprocessor
+(but both are accessible from the PPC because the memory firewall
+(AHBPROT) is usually disabled when booting Linux, today).
 
-This series adds a driver for the GPIO controller used in the Nintendo
-Wii game console.
+The wii_power_off function currently assumes that the poweroff GPIO pin
+is configured for use via the ARM side, but the upcoming GPIO driver
+configures all pins for use via the PPC side, breaking poweroff.
 
-Previous versions of this series included a patch to kernel/resource.c
-("resource: Extend the PPC32 reserved memory hack") to work around a
-resource allocation problem on PPC32. In this version, I dropped this
-patch, because the problem will be solved differently and in a separate
-patchset.
+Configure the owner register explicitly in wii_power_off to make
+wii_power_off work with and without the new GPIO driver.
 
-I also dropped the dt-bindings patch, because Linus Walleij has already
-applied it.
+I think the Wii can be switched to the generic gpio-poweroff driver,
+after the GPIO driver is merged.
 
-Jonathan Neuschäfer (4):
-  powerpc: wii: Explicitly configure GPIO owner for poweroff pin
-  gpio: Add GPIO driver for Nintendo Wii
-  powerpc: wii.dts: Add ngpios property
-  powerpc: wii.dts: Add GPIO line names
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
 
- arch/powerpc/boot/dts/wii.dts            |   9 +++
- arch/powerpc/platforms/embedded6xx/wii.c |   7 ++
- drivers/gpio/Kconfig                     |   9 +++
- drivers/gpio/Makefile                    |   1 +
- drivers/gpio/gpio-hlwd.c                 | 115 +++++++++++++++++++++++++++++++
- 5 files changed, 141 insertions(+)
- create mode 100644 drivers/gpio/gpio-hlwd.c
+v2, v3:
+- no change
+---
+ arch/powerpc/platforms/embedded6xx/wii.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/arch/powerpc/platforms/embedded6xx/wii.c b/arch/powerpc/platforms/embedded6xx/wii.c
+index 160fa09533ba..4682327f76a9 100644
+--- a/arch/powerpc/platforms/embedded6xx/wii.c
++++ b/arch/powerpc/platforms/embedded6xx/wii.c
+@@ -45,6 +45,7 @@
+ #define HW_GPIO_BASE(idx)	(idx * 0x20)
+ #define HW_GPIO_OUT(idx)	(HW_GPIO_BASE(idx) + 0)
+ #define HW_GPIO_DIR(idx)	(HW_GPIO_BASE(idx) + 4)
++#define HW_GPIO_OWNER		(HW_GPIO_BASE(1) + 0x1c)
+ 
+ #define HW_GPIO_SHUTDOWN	(1<<1)
+ #define HW_GPIO_SLOT_LED	(1<<5)
+@@ -177,6 +178,12 @@ static void wii_power_off(void)
+ 	local_irq_disable();
+ 
+ 	if (hw_gpio) {
++		/*
++		 * set the owner of the shutdown pin to ARM, because it is
++		 * accessed through the registers for the ARM, below
++		 */
++		clrbits32(hw_gpio + HW_GPIO_OWNER, HW_GPIO_SHUTDOWN);
++
+ 		/* make sure that the poweroff GPIO is configured as output */
+ 		setbits32(hw_gpio + HW_GPIO_DIR(1), HW_GPIO_SHUTDOWN);
+ 
 -- 
 2.15.1
