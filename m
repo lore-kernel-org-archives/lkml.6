@@ -1,26 +1,27 @@
 Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AH8x224m30xmu20bpBZa9OBgjWl7H5h0NFVmBO0xY8LWov5iFb8g/YWU1OOI5ROIDiXvpiiLjORm
-ARC-Seal: i=1; a=rsa-sha256; t=1518177348; cv=none;
+X-Google-Smtp-Source: AH8x2263o2aUgWcbiGZCOu9K3BMAI2Zd/vWI9AcM3OfE3iqBANd6SCnBoGzpJr9PhagaLr8ouO4N
+ARC-Seal: i=1; a=rsa-sha256; t=1518177351; cv=none;
         d=google.com; s=arc-20160816;
-        b=jES/RkzBO/IwaqteW3/Mmeg34q/mPI1nCvywdUJTO7djpacT7nMqQu7tmvtKPBLyaJ
-         yVN6RYnVT1MKujWlhBPoH1b+I27uFvuNUHrt6jaIdaHYKfiEe0ej2mddWPBJyeBqgrLB
-         AH4HxVfO0v5PvWcvqM4tipnOKFAgUdX91eYRdCSPGEuJnu4zLJmLmtVrSC9sXTCbowvC
-         HrzFA4HRTWOBoEVItzD5PU8AJhlWsanwdMjMFrf055+IrSyHnZvfelT1R8yH12tYhUpE
-         QMH9ZLBHVT3Pdsm3/X1SXJn3xY+DE/BKgeRt/dBHmH83iOUPrKCWjNWo4TohCOwWUDZ9
-         2j1Q==
+        b=H6I+Wa8EKthmGwnk8jd83GtuyBhnhogQxPdkzKub6G2ZB2G8LbiR5QYULI8zvttRRn
+         lxHYOVzUHKTXiMuaDiQLn9sNObLeBu9gq1xC9hYoRl91YXJw+L/wNIOkkduRSM2M1gsh
+         twuyqK2sigzmo+Log1GqWVtibi9hB+XJ1aksmSg3Zj/aWYfc8ElY4ioaHNfUsBBTu95S
+         BziKodgM6slwUXc5QgZSfw4x4xrNP+JC5GtIfTzch2z2qs/BEBPP2jaHjE5Ql1+mayqE
+         F4TQYn5bs4enS2EIRXl7mFR1hVDzI2c+YGmd0gyivOJqHvFSdrhrEG40NqG+q2dggNrk
+         J0Hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=LeKB8CQTGidxopG093AvLCXkJhQtmhNzhfWi31UWc1w=;
-        b=hK4RpOgXncXIZIGtMmbEy0riHtQY2hmquC+Qpw9G9cp03sBR7l0f892BXI0dH2a5Xu
-         gkwVE8uo4VaaT3J40oEBYeFDigwoG9fBk7a9EdvfYOp5bVr5vpWz6KHOOhYj1Hi8ZEDx
-         s/Prz+lOGVqJ8ZEa4qvRxEWOgFgDGBBfoxBBLCgxqfv35uwDm8noJBwPMRr9lm53MrFi
-         tGokp7SqraGQKz0KwsDBcIYJdkyby072LOHat7jpmQ+W4nGT5BTjC/ALd1M3J8jMKCvP
-         Om5blhZWHCJVftMx6LN9RiCDgiybGY5F6pVmzPOFLzYuzWRGkvP7RjS+X7OGzSZb+xMH
-         5tOQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=dGEgUgsjTKCgZ56qQV7KJG/NaJmPiTUp7lnnc3gYRdw=;
+        b=zqbyk0AqUz+mM/3l+/DJGjKoNB/DfFuI6D1fPpIuLqHrj/6aJb7s/oGajZUobxrWR7
+         2fp5VEMHg0qrM8iy5s/4X1hPb8sKGR7HpxggcJX67V+YLzD+EBjzQrT2V1tKarZAJM4t
+         wd3w/hdJ8L+CXgQlOOPV+07frcj1jTZeu5K89cVBiKrnJ+78cMQ7Hfv3gPcDd+uhQnhz
+         UH0Be0LKWITJOPWtsz3+8h5sJTT4rcoaSfSVhbmXrXAOuGlBF5hltJKkGF9dOVnHj2o6
+         KrBxZtkC/vcbhL7R0sxGf0QZ2bViI8/A/S1M57V7DzoPPQ3Q5a5hXHbCFXXKtx4cglju
+         iAYw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.21 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.16 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.21 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.16 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -30,7 +31,7 @@ X-RL-SENDER: jeffy.chen@rock-chips.com
 X-FST-TO: linux-kernel@vger.kernel.org
 X-SENDER-IP: 103.29.142.67
 X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <e181df13398397706a4d16b8051030ca>
+X-UNIQUE-TAG: <a3fbe9e62233394c7b605a7a4f71dcce>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
@@ -40,54 +41,120 @@ Cc: briannorris@google.com,
 	dianders@google.com,
 	Jeffy Chen <jeffy.chen@rock-chips.com>,
 	Guenter Roeck <linux@roeck-us.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joseph Lo <josephl@nvidia.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Brian Norris <briannorris@chromium.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	linux-rockchip@lists.infradead.org,
+	Joseph Lo <josephl@nvidia.com>,
+	stephen lu <lumotuwe@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
 	linux-input@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	devicetree@vger.kernel.org,
-	stephen lu <lumotuwe@gmail.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 0/3] gpio-keys: Add support for specifying wakeup interrupt trigger type
-Date: Fri,  9 Feb 2018 19:55:07 +0800
-Message-Id: <20180209115510.11868-1-jeffy.chen@rock-chips.com>
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH 1/3] Input: gpio-keys - add support for wakeup interrupt trigger type
+Date: Fri,  9 Feb 2018 19:55:08 +0800
+Message-Id: <20180209115510.11868-2-jeffy.chen@rock-chips.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180209115510.11868-1-jeffy.chen@rock-chips.com>
+References: <20180209115510.11868-1-jeffy.chen@rock-chips.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591924330873383134?=
-X-GMAIL-MSGID: =?utf-8?q?1591924330873383134?=
+X-GMAIL-THRID: =?utf-8?q?1591924334357410386?=
+X-GMAIL-MSGID: =?utf-8?q?1591924334357410386?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Add support for specifying a different interrupt trigger type for wakeup
+when using the gpio-keys input device as a wakeup source.
 
-On chromebook kevin, we are using gpio-keys for pen insert event. But
-we only want it to wakeup the system when ejecting the pen.
+This would allow the device to configure when to wakeup the system. For
+example a gpio-keys input device for pen insert, may only want to wakeup
+the system when ejecting the pen.
 
-So we may need to change the interrupt trigger type during suspending.
+Suggested-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
+ drivers/input/keyboard/gpio_keys.c | 20 ++++++++++++++++++--
+ include/linux/gpio_keys.h          |  2 ++
+ 2 files changed, 20 insertions(+), 2 deletions(-)
 
-Jeffy Chen (3):
-  Input: gpio-keys - add support for wakeup interrupt trigger type
-  Input: gpio-keys - allow setting wakeup interrupt trigger type in DT
-  arm64: dts: rockchip: Avoid wakeup when inserting the pen
-
- .../devicetree/bindings/input/gpio-keys.txt          |  9 +++++++++
- arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts    |  2 ++
- drivers/input/keyboard/gpio_keys.c                   | 20 ++++++++++++++++++--
- include/linux/gpio_keys.h                            |  2 ++
- 4 files changed, 31 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 87e613dc33b8..5e5c93b75a71 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -45,6 +45,7 @@ struct gpio_button_data {
+ 	unsigned int software_debounce;	/* in msecs, for GPIO-driven buttons */
+ 
+ 	unsigned int irq;
++	unsigned int irq_trigger_type;
+ 	spinlock_t lock;
+ 	bool disabled;
+ 	bool key_pressed;
+@@ -618,6 +619,8 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+ 		return error;
+ 	}
+ 
++	bdata->irq_trigger_type = irq_get_trigger_type(bdata->irq);
++
+ 	return 0;
+ }
+ 
+@@ -718,6 +721,9 @@ gpio_keys_get_devtree_pdata(struct device *dev)
+ 			/* legacy name */
+ 			fwnode_property_read_bool(child, "gpio-key,wakeup");
+ 
++		fwnode_property_read_u32(child, "wakeup-trigger-type",
++					 &button->wakeup_trigger_type);
++
+ 		button->can_disable =
+ 			fwnode_property_read_bool(child, "linux,can-disable");
+ 
+@@ -854,7 +860,12 @@ static int __maybe_unused gpio_keys_suspend(struct device *dev)
+ 	if (device_may_wakeup(dev)) {
+ 		for (i = 0; i < ddata->pdata->nbuttons; i++) {
+ 			struct gpio_button_data *bdata = &ddata->data[i];
+-			if (bdata->button->wakeup)
++			const struct gpio_keys_button *button = bdata->button;
++
++			if (button->wakeup && button->wakeup_trigger_type)
++				irq_set_irq_type(bdata->irq,
++						 button->wakeup_trigger_type);
++			if (button->wakeup)
+ 				enable_irq_wake(bdata->irq);
+ 			bdata->suspended = true;
+ 		}
+@@ -878,7 +889,12 @@ static int __maybe_unused gpio_keys_resume(struct device *dev)
+ 	if (device_may_wakeup(dev)) {
+ 		for (i = 0; i < ddata->pdata->nbuttons; i++) {
+ 			struct gpio_button_data *bdata = &ddata->data[i];
+-			if (bdata->button->wakeup)
++			const struct gpio_keys_button *button = bdata->button;
++
++			if (button->wakeup && button->wakeup_trigger_type)
++				irq_set_irq_type(bdata->irq,
++						 bdata->irq_trigger_type);
++			if (button->wakeup)
+ 				disable_irq_wake(bdata->irq);
+ 			bdata->suspended = false;
+ 		}
+diff --git a/include/linux/gpio_keys.h b/include/linux/gpio_keys.h
+index d06bf77400f1..9b7e7137f768 100644
+--- a/include/linux/gpio_keys.h
++++ b/include/linux/gpio_keys.h
+@@ -13,6 +13,7 @@ struct device;
+  * @desc:		label that will be attached to button's gpio
+  * @type:		input event type (%EV_KEY, %EV_SW, %EV_ABS)
+  * @wakeup:		configure the button as a wake-up source
++ * @wakeup_trigger_type:	wakeup interrupt trigger type
+  * @debounce_interval:	debounce ticks interval in msecs
+  * @can_disable:	%true indicates that userspace is allowed to
+  *			disable button via sysfs
+@@ -26,6 +27,7 @@ struct gpio_keys_button {
+ 	const char *desc;
+ 	unsigned int type;
+ 	int wakeup;
++	int wakeup_trigger_type;
+ 	int debounce_interval;
+ 	bool can_disable;
+ 	int value;
 -- 
 2.11.0
