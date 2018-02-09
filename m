@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753469AbeBIOIN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:08:13 -0500
-Received: from mga12.intel.com ([192.55.52.136]:17069 "EHLO mga12.intel.com"
+        id S1753451AbeBIOIL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:08:11 -0500
+Received: from mga06.intel.com ([134.134.136.31]:30397 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753141AbeBIOIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753208AbeBIOIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Feb 2018 09:08:05 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,483,1511856000";
-   d="scan'208";a="16764947"
+   d="scan'208";a="199940822"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
@@ -18,9 +18,9 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv3 4/5] x86/pconfig: Detect PCONFIG targets
-Date: Fri,  9 Feb 2018 17:07:53 +0300
-Message-Id: <20180209140754.17062-5-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv3 2/5] x86/tme: Detect if TME and MKTME is activated by BIOS
+Date: Fri,  9 Feb 2018 17:07:51 +0300
+Message-Id: <20180209140754.17062-3-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
 References: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
@@ -28,140 +28,130 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel PCONFIG targets are enumerated via new CPUID leaf 0x1b. This patch
-detects all supported targets of PCONFIG and implements helper to check
-if the target is supported.
+IA32_TME_ACTIVATE MSR (0x982) can be used to check if BIOS has enabled
+TME and MKTME. It includes which encryption policy/algorithm is selected
+for TME or available for MKTME. For MKTME, the MSR also enumerates how
+many KeyIDs are available.
+
+We would need to exclude KeyID bits from physical address bits.
+detect_tme() would adjust cpuinfo_x86::x86_phys_bits accordingly.
+
+We have to do this even if we are not going to use KeyID bits
+ourself. VM guests still have to know that these bits are not usable
+for physical address.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/include/asm/intel_pconfig.h | 15 +++++++
- arch/x86/kernel/cpu/Makefile         |  2 +-
- arch/x86/kernel/cpu/intel_pconfig.c  | 82 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 98 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/include/asm/intel_pconfig.h
- create mode 100644 arch/x86/kernel/cpu/intel_pconfig.c
+ arch/x86/kernel/cpu/intel.c | 90 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-diff --git a/arch/x86/include/asm/intel_pconfig.h b/arch/x86/include/asm/intel_pconfig.h
-new file mode 100644
-index 000000000000..fb7a37c3798b
---- /dev/null
-+++ b/arch/x86/include/asm/intel_pconfig.h
-@@ -0,0 +1,15 @@
-+#ifndef	_ASM_X86_INTEL_PCONFIG_H
-+#define	_ASM_X86_INTEL_PCONFIG_H
-+
-+#include <asm/asm.h>
-+#include <asm/processor.h>
-+
-+enum pconfig_target {
-+	INVALID_TARGET	= 0,
-+	MKTME_TARGET	= 1,
-+	PCONFIG_TARGET_NR
-+};
-+
-+int pconfig_target_supported(enum pconfig_target target);
-+
-+#endif	/* _ASM_X86_INTEL_PCONFIG_H */
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 570e8bb1f386..a66229f51b12 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -28,7 +28,7 @@ obj-y			+= cpuid-deps.o
- obj-$(CONFIG_PROC_FS)	+= proc.o
- obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 319bf989fad1..5aa51efc2ff2 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -506,6 +506,93 @@ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
+ 	}
+ }
  
--obj-$(CONFIG_CPU_SUP_INTEL)		+= intel.o
-+obj-$(CONFIG_CPU_SUP_INTEL)		+= intel.o intel_pconfig.o
- obj-$(CONFIG_CPU_SUP_AMD)		+= amd.o
- obj-$(CONFIG_CPU_SUP_CYRIX_32)		+= cyrix.o
- obj-$(CONFIG_CPU_SUP_CENTAUR)		+= centaur.o
-diff --git a/arch/x86/kernel/cpu/intel_pconfig.c b/arch/x86/kernel/cpu/intel_pconfig.c
-new file mode 100644
-index 000000000000..0771a905b286
---- /dev/null
-+++ b/arch/x86/kernel/cpu/intel_pconfig.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Intel PCONFIG instruction support.
-+ *
-+ * Copyright (C) 2017 Intel Corporation
-+ *
-+ * Author:
-+ *	Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-+ */
++#define MSR_IA32_TME_ACTIVATE		0x982
 +
-+#include <asm/cpufeature.h>
-+#include <asm/intel_pconfig.h>
++/* Helpers to access TME_ACTIVATE MSR */
++#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
++#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
 +
-+#define	PCONFIG_CPUID			0x1b
++#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	/* Bits 7:4 */
++#define TME_ACTIVATE_POLICY_AES_XTS_128	0
 +
-+#define PCONFIG_CPUID_SUBLEAF_MASK	((1 << 12) - 1)
++#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/* Bits 35:32 */
 +
-+/* Subleaf type (EAX) for PCONFIG CPUID leaf (0x1B) */
-+enum {
-+	PCONFIG_CPUID_SUBLEAF_INVALID	= 0,
-+	PCONFIG_CPUID_SUBLEAF_TARGETID	= 1,
-+};
++#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	/* Bits 63:48 */
++#define TME_ACTIVATE_CRYPTO_AES_XTS_128	1
 +
-+/* Bitmask of supported targets */
-+static u64 targets_supported __read_mostly;
++/* Values for mktme_status (SW only construct) */
++#define MKTME_ENABLED			0
++#define MKTME_DISABLED			1
++#define MKTME_UNINITIALIZED		2
++static int mktme_status = MKTME_UNINITIALIZED;
 +
-+int pconfig_target_supported(enum pconfig_target target)
++static void detect_tme(struct cpuinfo_x86 *c)
 +{
-+	/*
-+	 * We would need to re-think the implementation once we get > 64
-+	 * PCONFIG targets. Spec allows up to 2^32 targets.
-+	 */
-+	BUILD_BUG_ON(PCONFIG_TARGET_NR >= 64);
++	u64 tme_activate, tme_policy, tme_crypto_algs;
++	int keyid_bits = 0, nr_keyids = 0;
++	static u64 tme_activate_cpu0 = 0;
 +
-+	if (WARN_ON_ONCE(target >= 64))
-+		return 0;
-+	return targets_supported & (1ULL << target);
-+}
++	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
 +
-+static int __init intel_pconfig_init(void)
-+{
-+	int subleaf;
++	if (mktme_status != MKTME_UNINITIALIZED) {
++		if (tme_activate != tme_activate_cpu0) {
++			/* Broken BIOS? */
++			pr_err_once("x86/tme: configuation is inconsistent between CPUs\n");
++			pr_err_once("x86/tme: MKTME is not usable\n");
++			mktme_status = MKTME_DISABLED;
 +
-+	if (!boot_cpu_has(X86_FEATURE_PCONFIG))
-+		return 0;
-+
-+	/*
-+	 * Scan subleafs of PCONFIG CPUID leaf.
-+	 *
-+	 * Subleafs of the same type need not to be consecutive.
-+	 *
-+	 * Stop on the first invalid subleaf type. All subleafs after the first
-+	 * invalid are invalid too.
-+	 */
-+	for (subleaf = 0; subleaf < INT_MAX; subleaf++) {
-+		struct cpuid_regs regs;
-+
-+		cpuid_count(PCONFIG_CPUID, subleaf,
-+				&regs.eax, &regs.ebx, &regs.ecx, &regs.edx);
-+
-+		switch (regs.eax & PCONFIG_CPUID_SUBLEAF_MASK) {
-+		case PCONFIG_CPUID_SUBLEAF_INVALID:
-+			/* Stop on the first invalid subleaf */
-+			goto out;
-+		case PCONFIG_CPUID_SUBLEAF_TARGETID:
-+			/* Mark supported PCONFIG targets */
-+			if (regs.ebx < 64)
-+				targets_supported |= (1ULL << regs.ebx);
-+			if (regs.ecx < 64)
-+				targets_supported |= (1ULL << regs.ecx);
-+			if (regs.edx < 64)
-+				targets_supported |= (1ULL << regs.edx);
-+			break;
-+		default:
-+			/* Unknown CPUID.PCONFIG subleaf: ignore */
-+			break;
++			/* Proceed. We may need to exclude bits from x86_phys_bits. */
 +		}
++	} else {
++		tme_activate_cpu0 = tme_activate;
 +	}
-+out:
-+	return 0;
++
++	if (!TME_ACTIVATE_LOCKED(tme_activate) || !TME_ACTIVATE_ENABLED(tme_activate)) {
++		pr_info_once("x86/tme: not enabled by BIOS\n");
++		mktme_status = MKTME_DISABLED;
++		return;
++	}
++
++	if (mktme_status != MKTME_UNINITIALIZED)
++		goto detect_keyid_bits;
++
++	pr_info("x86/tme: enabled by BIOS\n");
++
++	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
++	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS_128)
++		pr_warn("x86/tme: Unknown policy is active: %#llx\n", tme_policy);
++
++	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
++	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS_128)) {
++		pr_err("x86/mktme: No known encryption algorithm is supported: %#llx\n",
++				tme_crypto_algs);
++		mktme_status = MKTME_DISABLED;
++	}
++detect_keyid_bits:
++	keyid_bits = TME_ACTIVATE_KEYID_BITS(tme_activate);
++	nr_keyids = (1UL << keyid_bits) - 1;
++	if (nr_keyids) {
++		pr_info_once("x86/mktme: enabled by BIOS\n");
++		pr_info_once("x86/mktme: %d KeyIDs available\n", nr_keyids);
++	} else {
++		pr_info_once("x86/mktme: disabled by BIOS\n");
++	}
++
++	if (mktme_status == MKTME_UNINITIALIZED) {
++		/* MKTME is usable */
++		mktme_status = MKTME_ENABLED;
++	}
++
++	/*
++	 * Exclude KeyID bits from physical address bits.
++	 *
++	 * We have to do this even if we are not going to use KeyID bits
++	 * ourself. VM guests still have to know that these bits are not usable
++	 * for physical address.
++	 */
++	c->x86_phys_bits -= keyid_bits;
 +}
-+arch_initcall(intel_pconfig_init);
++
+ static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+ {
+ 	u64 epb;
+@@ -676,6 +763,9 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 	if (cpu_has(c, X86_FEATURE_VMX))
+ 		detect_vmx_virtcap(c);
+ 
++	if (cpu_has(c, X86_FEATURE_TME))
++		detect_tme(c);
++
+ 	init_intel_energy_perf(c);
+ 
+ 	init_intel_misc_features(c);
 -- 
 2.15.1
