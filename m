@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeBISHY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 13:07:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:50206 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752255AbeBIR5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:57:13 -0500
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
-        jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
-        ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 02/22] arm64: capabilities: Move errata work around check on boot CPU
-Date: Fri,  9 Feb 2018 17:54:34 +0000
-Message-Id: <20180209175513.17100-5-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180209175513.17100-1-suzuki.poulose@arm.com>
-References: <20180209175513.17100-1-suzuki.poulose@arm.com>
+        id S1752528AbeBISIZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 13:08:25 -0500
+Received: from gateway30.websitewelcome.com ([192.185.197.25]:31045 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752201AbeBISIX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 13:08:23 -0500
+Date: Fri, 9 Feb 2018 12:08:21 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] ACPI: SPCR: Mark expected switch fall-through in
+ acpi_parse_spcr
+Message-ID: <20180209180821.GA20326@embeddedgus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1ekD5y-000uzJ-BQ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.4.238]:35108
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We trigger CPU errata work around check on the boot CPU from
-smp_prepare_boot_cpu() to make sure that we run the checks only
-after the CPU feature infrastructure is initialised. While this
-is correct, we can also do this from init_cpu_features() which
-initilises the infrastructure, and is called only on the
-Boot CPU. This helps to consolidate the CPU capability handling
-to cpufeature.c. No functional changes.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Addresses-Coverity-ID: 1465078
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/arm64/kernel/cpufeature.c | 6 ++++++
- arch/arm64/kernel/smp.c        | 6 ------
- 2 files changed, 6 insertions(+), 6 deletions(-)
+This code was compiled with GCC 7.3.0
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index dc7efed09135..5c08d886b53d 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -545,6 +545,12 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
- 		init_cpu_ftr_reg(SYS_ZCR_EL1, info->reg_zcr);
- 		sve_init_vq_map();
- 	}
-+
-+	/*
-+	 * Run the errata work around checks on the boot CPU, once we have
-+	 * initialised the cpu feature infrastructure.
-+	 */
-+	update_cpu_errata_workarounds();
- }
- 
- static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 3b8ad7be9c33..5cef11450183 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -448,12 +448,6 @@ void __init smp_prepare_boot_cpu(void)
- 	jump_label_init();
- 	cpuinfo_store_boot_cpu();
- 	save_boot_cpu_run_el();
--	/*
--	 * Run the errata work around checks on the boot CPU, once we have
--	 * initialised the cpu feature infrastructure from
--	 * cpuinfo_store_boot_cpu() above.
--	 */
--	update_cpu_errata_workarounds();
- }
- 
- static u64 __init of_get_cpu_mpidr(struct device_node *dn)
+ drivers/acpi/spcr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+index 89e97d2..9d52743 100644
+--- a/drivers/acpi/spcr.c
++++ b/drivers/acpi/spcr.c
+@@ -115,6 +115,7 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
+ 			table->serial_port.access_width))) {
+ 		default:
+ 			pr_err("Unexpected SPCR Access Width.  Defaulting to byte size\n");
++			/* fall through */
+ 		case 8:
+ 			iotype = "mmio";
+ 			break;
 -- 
-2.14.3
+2.7.4
