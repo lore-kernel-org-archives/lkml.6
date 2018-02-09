@@ -1,76 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBIOtQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:49:16 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37457 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbeBIOtO (ORCPT
+        id S1752089AbeBIOuZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:50:25 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:45452 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbeBIOuX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:49:14 -0500
-X-Google-Smtp-Source: AH8x225+XoNPpUBa6yQMyTY3xUdAGRM9DYe1Ky162H/sN1tNdtHd49KxymmvPPSIUL5/f1EXHgTw1w==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-Subject: [PATCH v2 2/2] KVM: X86: Don't use PV TLB flush with dedicated vCPUs and steal time disabled
-Date: Fri,  9 Feb 2018 06:47:53 -0800
-Message-Id: <1518187673-70832-2-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518187673-70832-1-git-send-email-wanpengli@tencent.com>
-References: <1518187673-70832-1-git-send-email-wanpengli@tencent.com>
+        Fri, 9 Feb 2018 09:50:23 -0500
+X-Google-Smtp-Source: AH8x225dZjqlNSHAsP1l7DmtL5patsQ/DF44JZbXNyHz+vpUq/iGM6EzuuQSNl9BSVPiH5D5LubihEX5TcLvQWT9+GM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180209142318.14451-1-carlo@caione.org>
+References: <20180209142318.14451-1-carlo@caione.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 9 Feb 2018 16:50:22 +0200
+Message-ID: <CAHp75VdrZVJ+mgx=9PkLuGbtTCru3S-0jVDNVcBft4a5Nr+pyw@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: rt5645: Introduce mapping for ACPI-defined GPIO
+To: Carlo Caione <carlo@caione.org>
+Cc: Linux Upstreaming Team <linux@endlessm.com>,
+        Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Carlo Caione <carlo@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Fri, Feb 9, 2018 at 4:23 PM, Carlo Caione <carlo@caione.org> wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+>
+> On at least one notebook (ECS EF20EA) the 'hp-detect' GPIO is defined in
+> the DSDT table by the ACPI GpioIo resources in _CRS. Add this mapping to
+> the rt5645 driver to enable the jack detection also on non-DT platforms.
+>
+> Method (_CRS, 0, NotSerialized)
+> {
+>   Name (SBUF, ResourceTemplate ()
+>   {
+>     I2cSerialBusV2 (0x001A, ControllerInitiated, 0x00061A80,
+>         AddressingMode7Bit, "\\_SB.PCI0.I2C2",
+>         0x00, ResourceConsumer, , Exclusive,
+>         )
+>     GpioInt (Edge, ActiveBoth, SharedAndWake, PullNone, 0x0000,
+>         "\\_SB.GPO3", 0x00, ResourceConsumer, ,
+>         )
+>         {   // Pin list
+>             0x004F
+>         }
+>     GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly,
+>         "\\_SB.GPO3", 0x00, ResourceConsumer, ,
+>         )
+>         {   // Pin list
+>             0x004F
+>         }
+>   })
+>   Return (SBUF) /* \_SB_.PCI0.I2C2.RTK2._CRS.SBUF */
+> }
+>
 
-vCPUs are very unlikely to get preempted when they are the only task
-running on a CPU.  PV TLB flush is slower that the native flush in that
-case. In addition, avoid traversing all the cpus for pv tlb flush when 
-steal time is disabled since pv tlb flush depends on the field in steal 
-time for shared data.
+Sorry everyone, hit reply only to Carlo, but everything he addressed
+here is like I proposed.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Eduardo Habkost <ehabkost@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-v1 -> v2:
- * update to KVM_HINTS_DEDICATED
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Carlo Caione <carlo@endlessm.com>
+> ---
+>
+> Changelog:
+>
+> v2:
+>   - s/ACPI_HANDLE/has_acpi_companion/
+> ---
+>  sound/soc/codecs/rt5645.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
+> index 8f140c8b93ac..8e3d1e4ddb63 100644
+> --- a/sound/soc/codecs/rt5645.c
+> +++ b/sound/soc/codecs/rt5645.c
+> @@ -3764,6 +3764,13 @@ static int rt5645_parse_dt(struct rt5645_priv *rt5645, struct device *dev)
+>         return 0;
+>  }
+>
+> +static const struct acpi_gpio_params hp_detect_gpios = { 1, 0, false };
+> +
+> +static const struct acpi_gpio_mapping cht_rt5645_gpios[] = {
+> +       { "hp-detect-gpios", &hp_detect_gpios, 1 },
+> +       {},
+> +};
+> +
+>  static int rt5645_i2c_probe(struct i2c_client *i2c,
+>                     const struct i2c_device_id *id)
+>  {
+> @@ -3779,6 +3786,10 @@ static int rt5645_i2c_probe(struct i2c_client *i2c,
+>         if (rt5645 == NULL)
+>                 return -ENOMEM;
+>
+> +       if (has_acpi_companion(&i2c->dev))
+> +               if (devm_acpi_dev_add_driver_gpios(&i2c->dev, cht_rt5645_gpios))
+> +                       dev_dbg(&i2c->dev, "Failed to add driver gpios\n");
+> +
+>         rt5645->i2c = i2c;
+>         i2c_set_clientdata(i2c, rt5645);
+>
+> --
+> 2.14.1
+>
 
- arch/x86/kernel/kvm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 7f4c92d..b92311a 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -545,7 +545,9 @@ static void __init kvm_guest_init(void)
- 		pv_time_ops.steal_clock = kvm_steal_clock;
- 	}
- 
--	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH))
-+	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-+		!kvm_para_has_feature(KVM_HINTS_DEDICATED) &&
-+		!kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
- 		pv_mmu_ops.flush_tlb_others = kvm_flush_tlb_others;
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
-@@ -633,7 +635,9 @@ static __init int kvm_setup_pv_tlb_flush(void)
- {
- 	int cpu;
- 
--	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH)) {
-+	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-+		!kvm_para_has_feature(KVM_HINTS_DEDICATED) &&
-+		!kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
- 		for_each_possible_cpu(cpu) {
- 			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
- 				GFP_KERNEL, cpu_to_node(cpu));
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
