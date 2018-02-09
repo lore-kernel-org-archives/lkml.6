@@ -1,176 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751087AbeBILtR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 06:49:17 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51720 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeBILtP (ORCPT
+        id S1751047AbeBILwB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 06:52:01 -0500
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:39283 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeBILv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 06:49:15 -0500
-X-Google-Smtp-Source: AH8x226b02CzFhPWdK5KVfKZ0S5OOXxR3RSZlu8S/14B/X7zqIFzVi93Dso9g2la3HAa07RpFRizDA==
-Date: Fri, 9 Feb 2018 20:49:04 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: James Morse <james.morse@arm.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        akpm@linux-foundation.org, mpe@ellerman.id.au, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        julien.thierry@arm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/11] arm64: kexec: add kexec_file_load() support
-Message-ID: <20180209114903.gaex3pge4ndzgbhd@fireball>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, bauerman@linux.vnet.ibm.com,
-        dhowells@redhat.com, vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, akpm@linux-foundation.org, mpe@ellerman.id.au,
-        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, julien.thierry@arm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20171204025801.12161-1-takahiro.akashi@linaro.org>
- <5A7B4761.3000808@arm.com>
+        Fri, 9 Feb 2018 06:51:59 -0500
+X-Google-Smtp-Source: AH8x225qODyLJr89HI3tZM//KAb/wWwRsvi5BeNyC2JsAJ3zLvBSnr+mJB6y5aNQo47sQxW96rLD7A==
+Date: Fri, 9 Feb 2018 12:51:55 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+Message-ID: <20180209115155.GG12979@localhost.localdomain>
+References: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+ <20180209035143.GX28462@vireshk-i7>
+ <197c26ba-c2a6-2de7-dffa-5b884079f746@evidence.eu.com>
+ <11598161.veS9VGWB8G@aspire.rjw.lan>
+ <20180209105305.GD12979@localhost.localdomain>
+ <CAJZ5v0h9L2mMEaV6oECk9f2ob42Nr9zyqafymwvb+UP+G1q04Q@mail.gmail.com>
+ <20180209112618.GE12979@localhost.localdomain>
+ <CAJZ5v0g4bgDKP96rivKPE-EMr7SuUhL9OO=M+MQuAjbdq9R45g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5A7B4761.3000808@arm.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAJZ5v0g4bgDKP96rivKPE-EMr7SuUhL9OO=M+MQuAjbdq9R45g@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
-
-On Wed, Feb 07, 2018 at 06:37:21PM +0000, James Morse wrote:
-> Hi Akashi,
+On 09/02/18 12:37, Rafael J. Wysocki wrote:
+> On Fri, Feb 9, 2018 at 12:26 PM, Juri Lelli <juri.lelli@redhat.com> wrote:
+> > On 09/02/18 12:04, Rafael J. Wysocki wrote:
+> >> On Fri, Feb 9, 2018 at 11:53 AM, Juri Lelli <juri.lelli@redhat.com> wrote:
+> >> > Hi,
+> >> >
+> >> > On 09/02/18 11:36, Rafael J. Wysocki wrote:
+> >> >> On Friday, February 9, 2018 9:02:34 AM CET Claudio Scordino wrote:
+> >> >> > Hi Viresh,
+> >> >> >
+> >> >> > Il 09/02/2018 04:51, Viresh Kumar ha scritto:
+> >> >> > > On 08-02-18, 18:01, Claudio Scordino wrote:
+> >> >> > >> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+> >> >> > >> we should not wait for the rate limit, otherwise we may miss some deadline.
+> >> >> > >>
+> >> >> > >> Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
+> >> >> > >> misses for tasks with low RT periods.
+> >> >> > >>
+> >> >> > >> The patch applies on top of the one recently proposed by Peter to drop the
+> >> >> > >> SCHED_CPUFREQ_* flags.
+> >> >> > >>
+> >> >>
+> >> >> [cut]
+> >> >>
+> >> >> >
+> >> >> > >
+> >> >> > > Is it possible to (somehow) check here if the DL tasks will miss
+> >> >> > > deadline if we continue to run at current frequency? And only ignore
+> >> >> > > rate-limit if that is the case ?
+> >> >
+> >> > Isn't it always the case? Utilization associated to DL tasks is given by
+> >> > what the user said it's needed to meet a task deadlines (admission
+> >> > control). If that task wakes up and we realize that adding its
+> >> > utilization contribution is going to require a frequency change, we
+> >> > should _theoretically_ always do it, or it will be too late. Now, user
+> >> > might have asked for a bit more than what strictly required (this is
+> >> > usually the case to compensate for discrepancies between theory and real
+> >> > world, e.g.  hw transition limits), but I don't think there is a way to
+> >> > know "how much". :/
+> >>
+> >> You are right.
+> >>
+> >> I'm somewhat concerned about "fast switch" cases when the rate limit
+> >> is used to reduce overhead.
+> >
+> > Mmm, right. I'm thinking that in those cases we could leave rate limit
+> > as is. The user should then be aware of it and consider it as proper
+> > overhead when designing her/his system.
+> >
+> > But then, isn't it the same for "non fast switch" platforms? I mean,
+> > even in the latter case we can't go faster than hw limits.. mmm, maybe
+> > the difference is that in the former case we could go as fast as theory
+> > would expect.. but we shouldn't. :)
 > 
-> I'm still getting my head round how all this works, so please forgive what may
-> be stupid questions!
-
-It is my pleasure.
-Hopefully I will be able to address all of your concerns before submitting
-a new version sometime next week.
-
+> Well, in practical terms that means "no difference" IMO. :-)
 > 
-> On 04/12/17 02:57, AKASHI Takahiro wrote:
-> > This is the seventh round of implementing kexec_file_load() support
-> > on arm64.[1]
-> > Most of the code is based on kexec-tools (along with some kernel code
-> > from x86, which also came from kexec-tools).
-> > 
-> > 
-> > This patch series enables us to
-> >   * load the kernel, Image, via kexec_file_load() system call, and
-> >   * optionally verify its signature at load time for trusted boot.
+> I can imagine that in some cases this approach may lead to better
+> results than reducing the rate limit overall, but the general case I'm
+> not sure about.
 > 
-> Is kdump using kexec_file_load() possible? (questions on patch 3)
-> I can't work out why additional elf-generating code would be necessary if kdump
-> works today without it...
+> I mean, if overriding the rate limit doesn't take place very often,
+> then it really should make no difference overhead-wise.  Now, of
+> course, how to define "not very often" is a good question as that
+> leads to rate-limiting the overriding of the original rate limit and
+> that scheme may continue indefinitely ...
 
-The code that probably you are mentioning is the one for
-creating a content of an ELF header (elfcoreheader) of /proc/vmcore.
-The memory region is allocated by the kernel, but the content itself
-will be filled up by kexec-tools for kexec_load syscall, while by
-the kernel for kexec_file_load syscall.
-(In former case, a "user" buffer is passed via kexec_load syscall
-and copied into the crash dump kernel memory.)
+:)
 
-Please see kexec/crashdump.c and crashdump-elf.c on kexec-tools.
+My impression is that rate limit helps a lot for CFS, where the "true"
+utilization is not known in advance, and being too responsive might
+actually be counterproductive.
 
-> 
-> 
-> > To load the kernel via kexec_file_load() system call, a small change
-> > is also required on kexec-tools. See [2]. This enables '-s' option.
-> > (Please use v7.2.1+ crash utility for v4.14+ kernel)
-> 
-> (what does the -s option do?)
-
-It is a switch for using kexec_file_load syscall instead of kexec_load
-syscall.
-
-> 
-> > As we discussed a long time ago, users may not be allowed to specify
-> > device-tree file of the 2nd kernel explicitly with kexec-tools, hence
-> > re-using the blob of the first kernel.
-> > 
-> > Regarding a kernel image verification, a signature must be presented
-> > along with the binary itself. A signature is basically a hash value
-> > calculated against the whole binary data and encrypted by a key which
-> > will be authenticated by the system's trusted certificate.
-> > Any attempt to read and load a to-be-kexec-ed kernel image through
-> > a system call will be checked and blocked if the binary's hash value
-> > doesn't match its associated signature.
-> 
-> > Concerns(or future works):
-> 
-> (lets keep this stuff in the future)
-
-Sure.
-
-> > * Even if the kernel is configured with CONFIG_RANDOMIZE_BASE, the 2nd
-> >   kernel won't be placed at a randomized address. We will have to
-> >   add some boot code similar to efi-stub to implement the randomization.
-> 
-> I think there are two parts to this. The efistub may copy the kernel to a new
-> ~random location in physical memory. It also adds a seed used to randomise the
-> virtual-addresses the kernel executes from.
-
-> For kexec_file_load() the first-kernel could apply some randomness to the
-> physical offset when it re-assembles the kexec-kernel. i.e. code in
-> arm64_relocate_new_kernel(). I don't think we should do this without some hint
-> that the new kernel supports this...
-
-Indeed. arm64_relocate_new_kernel belongs to the first kernel, while
-efistub to crash dump kernel.
-
-> For the virtual-addresses it would need to add a new kaslr-seed to the
-> DT/chosen, which should be harmless.
-
-Yeah, adding a seed is quite easy.
-
-> 
-> > for approach (1),
-> > * While big-endian kernel can support kernel signing, I'm not sure that
-> >   Image can be recognized as in PE format because x86 standard only
-> >   defines little-endian-based format.
-> 
-> What does the recognizing? (I don't think we should invent a new format..)
-
-The obvious problem is that there exists no defition of PE format for
-BE architecture. (I believe that MS only defines the format for x86).
-For exmaple, what magic number should we use? Are the fields in a header
-in BE or LE? I don't invent a new format, neither.
-
-Anyhow, if we allow for IMA-base kexec_file_load, it perfectly resolve
-the issue without any changes (maybe).
-
-> 
-> 
-> > * vmlinux support
-> 
-> (Patch 3 is why I'm here)
-> 
-> I don't think we need to support this. I can't boot a vmlinux file via UEFI. As
-> I understand it kexec_file_load() is all about the signature verification for
-> UEFI:SecureBoot. The chances of me having a vmlinux signed for SecureBoot use is
-> pretty low, chances are its a self-signed image I just built, in which case I
-> can use the arm64 Image file that was built at the same time.
-> 
-> Supporting two file formats is going to be a headache. Distributions ship
-> separate debug info packages for debugging, I don't think we need to make them
-> bootable...
-
-As I said somewhere before, the only reason that we may want to have
-vmlinux support is that kexec-tools (and in turn kexec_load syscall)
-supports both file types.
-(I don't know why Jeoff added this support first.)
-
-Thanks,
--Takahiro AKASHI
-
-
-> 
-> Thanks,
-> 
-> James
+For DEADLINE (and RT, with differences) we should always respond as
+quick as we can (and probably remember that a frequency transition was
+requested if hw was already performing one, but that's another patch)
+because, if we don't, a task belonging to a lower priority class might
+induce deadline misses in highest priority activities. E.g., a CFS task
+that happens to trigger a freq switch right before a DEADLINE task wakes
+up and needs an higher frequency to meet its deadline: if we wait for
+the rate limit of the CFS originated transition.. deadline miss!
