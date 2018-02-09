@@ -1,67 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752846AbeBIUF0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 15:05:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52650 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752592AbeBIUEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 15:04:01 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE513217BF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180209200359.775843987@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Fri, 09 Feb 2018 15:03:09 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>, Shuah Khan <shuah@kernel.org>
-Subject: [PATCH 5/6] selftests/ftrace: Add some missing glob checks
-References: <20180209200304.703130163@goodmis.org>
+        id S1752647AbeBIUIN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 15:08:13 -0500
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:46445 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752409AbeBIUIM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 15:08:12 -0500
+X-Google-Smtp-Source: AH8x225SWWfhggof1tw6wknQR96u9YHdgBAYAWv2HwHu8smhwHTWtZG/mgAAXOzwvczgTZQak5VpshYKCX3lXDphYHI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0005-selftests-ftrace-Add-some-missing-glob-checks.patch
+In-Reply-To: <20180209170358.7227-2-sebastian.reichel@collabora.co.uk>
+References: <20180209170358.7227-1-sebastian.reichel@collabora.co.uk> <20180209170358.7227-2-sebastian.reichel@collabora.co.uk>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 9 Feb 2018 18:08:11 -0200
+Message-ID: <CAOMZO5BvV8W0ORUG4K6OXE8OuZRn6Az6PeYd8niHe=RgzWJskw@mail.gmail.com>
+Subject: Re: [PATCHv3 1/2] ARM: imx53: add secure-reg-access support for PMU
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>, Ian Ray <ian.ray@ge.com>,
+        Nandor Han <nandor.han@ge.com>, kernel@collabora.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Fri, Feb 9, 2018 at 3:03 PM, Sebastian Reichel
+<sebastian.reichel@collabora.co.uk> wrote:
 
-Al Viro discovered a bug in the glob ftrace filtering code where "*a*b" is
-treated the same as "a*b", and functions that would be selected by "*a*b"
-but not "a*b" are not selected with "*a*b".
+> +       gpc_reg = ioremap(MXC_CORTEXA8_PLAT_GPC, 4);
+> +       if (!gpc_reg) {
+> +               pr_warning("unable to map GPC to enable perf\n");
+> +               return;
+> +       }
+> +
+> +       gpc = __raw_readl(gpc_reg);
 
-Add tests for patterns "*a*b" and "a*b*" to the glob selftest.
+You could use readl_relaxed() instead.
 
-Link: http://lkml.kernel.org/r/20180127170748.GF13338@ZenIV.linux.org.uk
+> +       gpc |= GPC_DBG_EN;
+> +       __raw_writel(gpc, gpc_reg);
 
-Cc: Shuah Khan <shuah@kernel.org>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc | 6 ++++++
- 1 file changed, 6 insertions(+)
+You could use writel_relaxed() instead.
 
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
-index 589d52b211b7..27a54a17da65 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-glob.tc
-@@ -29,6 +29,12 @@ ftrace_filter_check '*schedule*' '^.*schedule.*$'
- # filter by *, end match
- ftrace_filter_check 'schedule*' '^schedule.*$'
- 
-+# filter by *mid*end
-+ftrace_filter_check '*aw*lock' '.*aw.*lock$'
-+
-+# filter by start*mid*
-+ftrace_filter_check 'mutex*try*' '^mutex.*try.*'
-+
- # Advanced full-glob matching feature is recently supported.
- # Skip the tests if we are sure the kernel does not support it.
- if grep -q 'accepts: .* glob-matching-pattern' README ; then
--- 
-2.15.1
+> +
+> +       return;
+
+This 'return' can be removed.
+
+> +}
