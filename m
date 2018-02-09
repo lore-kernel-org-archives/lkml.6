@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753039AbeBIR7H (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:59:07 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50726 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752967AbeBIR6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:58:41 -0500
+        id S1753088AbeBIR7b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:59:31 -0500
+Received: from foss.arm.com ([217.140.101.70]:50690 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752944AbeBIR6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:58:37 -0500
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
         ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 21/22] arm64: Delay enabling hardware DBM feature
-Date: Fri,  9 Feb 2018 17:55:12 +0000
-Message-Id: <20180209175513.17100-43-suzuki.poulose@arm.com>
+Subject: [PATCH v3 20/21] arm64: Delay enabling hardware DBM feature
+Date: Fri,  9 Feb 2018 17:55:10 +0000
+Message-Id: <20180209175513.17100-41-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180209175513.17100-1-suzuki.poulose@arm.com>
 References: <20180209175513.17100-1-suzuki.poulose@arm.com>
@@ -37,23 +37,22 @@ this capability and enable it, even if the active CPUs don't.
 
 To get this handled properly by the infrastructure, we
 unconditionally set the capability and only enable it
-on CPUs which really have the feature. Also, we print the
-feature detection from the "matches" call back to make sure
-we don't mislead the user when none of the CPUs could use the
-feature.
+on CPUs which really have the feature.
 
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dave Martin <dave.martin@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
-Changes since V2
- - Print the feature detection message only when at least one CPU
-   is actually using it.
+
+Changes since v2:
+ - Hide the description of the DBM capability to not mislead
+   the user that the capability is detected while none of the
+   CPUs actuall use it.
 ---
- arch/arm64/include/asm/cpucaps.h |  3 +-
- arch/arm64/kernel/cpufeature.c   | 71 ++++++++++++++++++++++++++++++++++++++++
- arch/arm64/mm/proc.S             | 13 ++++----
- 3 files changed, 79 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/cpucaps.h |  3 ++-
+ arch/arm64/kernel/cpufeature.c   | 53 ++++++++++++++++++++++++++++++++++++++++
+ arch/arm64/mm/proc.S             | 13 +++++-----
+ 3 files changed, 61 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
 index bb263820de13..8df80cc828ac 100644
@@ -70,13 +69,23 @@ index bb263820de13..8df80cc828ac 100644
  
  #endif /* __ASM_CPUCAPS_H */
 diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index d8663822c604..a96a1f94f427 100644
+index d8663822c604..72431d983d87 100644
 --- a/arch/arm64/kernel/cpufeature.c
 +++ b/arch/arm64/kernel/cpufeature.c
-@@ -939,6 +939,57 @@ static int __init parse_kpti(char *str)
+@@ -939,6 +939,32 @@ static int __init parse_kpti(char *str)
  __setup("kpti=", parse_kpti);
  #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
  
++/*
++ * Dummy matches call back for capabilities that are always
++ * turned ON.
++ */
++static bool cpu_cap_always_on(const struct arm64_cpu_capabilities *__unused,
++			      int __unused_scope)
++{
++	return true;
++}
++
 +#ifdef CONFIG_ARM64_HW_AFDBM
 +static inline void __cpu_enable_hw_dbm(void)
 +{
@@ -86,52 +95,17 @@ index d8663822c604..a96a1f94f427 100644
 +	isb();
 +}
 +
-+static bool cpu_can_use_dbm(const struct arm64_cpu_capabilities *cap)
-+{
-+	return has_cpuid_feature(cap, SCOPE_LOCAL_CPU);
-+}
-+
 +static void cpu_enable_hw_dbm(struct arm64_cpu_capabilities const *cap)
 +{
-+	if (cpu_can_use_dbm(cap))
++	if (has_cpuid_feature(cap, SCOPE_LOCAL_CPU))
 +		__cpu_enable_hw_dbm();
 +}
-+
-+static bool has_hw_dbm(const struct arm64_cpu_capabilities *cap,
-+		       int __unused)
-+{
-+	static bool detected = false;
-+	/*
-+	 * DBM is a non-conflicting feature. i.e, the kernel can safely
-+	 * run a mix of CPUs with and without the feature. So, we
-+	 * unconditionally enable the capability to allow any late CPU
-+	 * to use the feature. We only enable the control bits on the
-+	 * CPU, if it actually supports.
-+	 *
-+	 * We have to make sure we print the "feature" detection only
-+	 * when at least one CPU actually uses it. So check if this CPU
-+	 * can actually use it and print the message exactly once.
-+	 *
-+	 * This is safe as all CPUs (including secondary CPUs - due to the
-+	 * LOCAL_CPU scope - and the hotplugged CPUs - via verification)
-+	 * goes through the "matches" check exactly once. Also if a CPU
-+	 * matches the criteria, it is guaranteed that the CPU will turn
-+	 * the DBM on, as the capability is unconditionally enabled.
-+	 */
-+	if (!detected && cpu_can_use_dbm(cap)) {
-+		detected = true;
-+		pr_info("detected feature: Hardware dirty bit management\n");
-+	}
-+
-+	return true;
-+}
-+
 +#endif
 +
  static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
  {
  	/*
-@@ -1103,6 +1154,26 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+@@ -1103,6 +1129,33 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
  		.cpu_enable = cpu_clear_disr,
  	},
  #endif /* CONFIG_ARM64_RAS_EXTN */
@@ -151,7 +125,14 @@ index d8663822c604..a96a1f94f427 100644
 +		.sign = FTR_UNSIGNED,
 +		.field_pos = ID_AA64MMFR1_HADBS_SHIFT,
 +		.min_field_value = 2,
-+		.matches = has_hw_dbm,
++		/*
++		 * DBM is a non-conflicting feature. i.e, the kernel can safely
++		 * run a mix of CPUs with and without the feature. So, we
++		 * unconditionally enable the capability to allow any late CPU
++		 * to use the feature. We only enable the control bits on the
++		 * CPU, if it actually supports.
++		 */
++		.matches = cpu_cap_always_on,
 +		.cpu_enable = cpu_enable_hw_dbm,
 +	},
 +#endif
