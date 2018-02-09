@@ -1,73 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752409AbeBICHo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 21:07:44 -0500
-Received: from smtp-proxy004.phy.lolipop.jp ([157.7.104.45]:53944 "EHLO
-        smtp-proxy004.phy.lolipop.jp" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752172AbeBICHn (ORCPT
+        id S1752465AbeBICK6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 21:10:58 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:42223 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752239AbeBICK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 21:07:43 -0500
-Subject: Re: [PATCH] ASoC: Intel: Skylake: make function skl_clk_round_rate
- static
-To: Colin King <colin.king@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>,
-        alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180208143530.11450-1-colin.king@canonical.com>
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Message-ID: <88ad9256-5c68-1e36-dd72-eba8ecba66e7@sakamocchi.jp>
-Date: Fri, 9 Feb 2018 11:07:41 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180208143530.11450-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Feb 2018 21:10:57 -0500
+X-Google-Smtp-Source: AH8x225+0a4woUk1KBd7b3+yeCbliUYP2Ncz76I8OMKbHyV0UYEaO866Le41XWOCmNyQWtBu38kk+w==
+From: Jaedon Shin <jaedon.shin@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: Kevin Cernekee <cernekee@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jaedon Shin <jaedon.shin@gmail.com>
+Subject: [PATCH] irqchip: Use %px to print pointer value
+Date: Fri,  9 Feb 2018 11:10:31 +0900
+Message-Id: <20180209021031.20631-1-jaedon.shin@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+pointers printed with %p are hashed. Use %px instead of %p to print
+pointer value.
 
-On Feb 8 2018 23:35, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function skl_clk_round_rate is local to the source and does not
-> need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> sound/soc/intel/skylake/skl-ssp-clk.c:250:6: warning: symbol
-> 'skl_clk_round_rate' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   sound/soc/intel/skylake/skl-ssp-clk.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Jaedon Shin <jaedon.shin@gmail.com>
+---
+ drivers/irqchip/irq-bcm7038-l1.c | 2 +-
+ drivers/irqchip/irq-bcm7120-l2.c | 2 +-
+ drivers/irqchip/irq-brcmstb-l2.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-
-> diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
-> index 7fbddf5e3b00..cda1b5fa7436 100644
-> --- a/sound/soc/intel/skylake/skl-ssp-clk.c
-> +++ b/sound/soc/intel/skylake/skl-ssp-clk.c
-> @@ -247,8 +247,8 @@ static unsigned long skl_clk_recalc_rate(struct clk_hw *hw,
->   }
->   
->   /* Not supported by clk driver. Implemented to satisfy clk fw */
-> -long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				unsigned long *parent_rate)
-> +static long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long *parent_rate)
->   {
->   	return rate;
->   }
-
-
-Thanks
-
-Takashi Sakamoto
+diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
+index 55cfb986225b..f604c1d89b3b 100644
+--- a/drivers/irqchip/irq-bcm7038-l1.c
++++ b/drivers/irqchip/irq-bcm7038-l1.c
+@@ -339,7 +339,7 @@ int __init bcm7038_l1_of_init(struct device_node *dn,
+ 		goto out_unmap;
+ 	}
+ 
+-	pr_info("registered BCM7038 L1 intc (mem: 0x%p, IRQs: %d)\n",
++	pr_info("registered BCM7038 L1 intc (mem: 0x%px, IRQs: %d)\n",
+ 		intc->cpus[0]->map_base, IRQS_PER_WORD * intc->n_words);
+ 
+ 	return 0;
+diff --git a/drivers/irqchip/irq-bcm7120-l2.c b/drivers/irqchip/irq-bcm7120-l2.c
+index 983640eba418..1cc4dd1d584a 100644
+--- a/drivers/irqchip/irq-bcm7120-l2.c
++++ b/drivers/irqchip/irq-bcm7120-l2.c
+@@ -318,7 +318,7 @@ static int __init bcm7120_l2_intc_probe(struct device_node *dn,
+ 		}
+ 	}
+ 
+-	pr_info("registered %s intc (mem: 0x%p, parent IRQ(s): %d)\n",
++	pr_info("registered %s intc (mem: 0x%px, parent IRQ(s): %d)\n",
+ 			intc_name, data->map_base[0], data->num_parent_irqs);
+ 
+ 	return 0;
+diff --git a/drivers/irqchip/irq-brcmstb-l2.c b/drivers/irqchip/irq-brcmstb-l2.c
+index 691d20eb0bec..6760edeeb666 100644
+--- a/drivers/irqchip/irq-brcmstb-l2.c
++++ b/drivers/irqchip/irq-brcmstb-l2.c
+@@ -262,7 +262,7 @@ static int __init brcmstb_l2_intc_of_init(struct device_node *np,
+ 		ct->chip.irq_set_wake = irq_gc_set_wake;
+ 	}
+ 
+-	pr_info("registered L2 intc (mem: 0x%p, parent irq: %d)\n",
++	pr_info("registered L2 intc (mem: 0x%px, parent irq: %d)\n",
+ 			base, parent_irq);
+ 
+ 	return 0;
+-- 
+2.16.1
