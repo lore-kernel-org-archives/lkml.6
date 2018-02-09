@@ -1,200 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeBIVVC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 16:21:02 -0500
-Received: from mail.blih.net ([212.83.177.182]:51832 "EHLO mail.blih.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750993AbeBIVVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 16:21:00 -0500
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Fri, 09 Feb 2018 22:20:57 +0100
-From: Emmanuel Vadot <manu@bidouilliste.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: devicetree@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] Revert "ARM: dts: sunxi: Add regulators for Sinovoip
- BPI-M2"
-Organization: Bidouilliste
-In-Reply-To: <207CD143-6535-42C9-BEF3-9D2614336482@aosc.io>
-References: <20180203112353.13497-1-icenowy@aosc.io>
- <20180205095558.2e713c24cdb7c3232943db52@bidouilliste.com>
- <207CD143-6535-42C9-BEF3-9D2614336482@aosc.io>
-Message-ID: <c59ee4bd3246172ec62705967bb8f751@megadrive.org>
-User-Agent: Roundcube Webmail/1.1.1
+        id S1752888AbeBIVVg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 16:21:36 -0500
+Received: from smtprelay0076.hostedemail.com ([216.40.44.76]:56482 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750993AbeBIVVf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 16:21:35 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2828:2859:2892:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4184:4321:5007:8660:9025:10004:10400:10848:11232:11658:11854:11914:12043:12296:12324:12663:12740:12760:12895:12903:13069:13148:13230:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21080:21324:21433:21451:21611:21627:30054:30060:30062:30075:30083:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
+X-HE-Tag: top51_2ab8996490057
+X-Filterd-Recvd-Size: 1878
+Message-ID: <1518211292.14014.34.camel@perches.com>
+Subject: Re: New project: get_maintainer.pl web app
+From: Joe Perches <joe@perches.com>
+To: Laura Abbott <labbott@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Jeremy Cline <jcline@redhat.com>, Jonathan Corbet <corbet@lwn.net>
+Date: Fri, 09 Feb 2018 13:21:32 -0800
+In-Reply-To: <8089f485-a0f6-aa5f-ad19-16b69eb07f46@redhat.com>
+References: <8089f485-a0f6-aa5f-ad19-16b69eb07f46@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-05 10:05, Icenowy Zheng wrote:
-> 于 2018年2月5日 GMT+08:00 下午4:55:58, Emmanuel Vadot <manu@bidouilliste.com> 
-> 写到:
->> 
->> Hello,
->> 
->> On Sat,  3 Feb 2018 19:23:53 +0800
->> Icenowy Zheng <icenowy@aosc.io> wrote:
->> 
->>> This reverts commit 7daa213700758b5b08fc0daab09bb139dd334165.
->>> 
->>> The original commit has several problems:
->>> 
->>> - vdd-cpus and aldo3 (AVCC of the SoC) are not set to always-on,
->> which
->>> leads to system hang when disabling unused regulators.
->> 
->> Indeed I should have make those always-on.
->> 
->>> - GMAC (which uses dldo1 and aldo2) and Wi-Fi (which uses aldo1) are
->> not
->>> considered, and will fail to work after adding this commit.
->> 
->> While I understand the problem with vdd-cpus and aldo3 I don't see why
->> when you don't declare regulator the code should do something with it.
->> DT is supposed to describe the hardware and the code should not use
->> hardware not described right ?
->> The gmac node doesn't declare any regulators and the mmc2 uses
->> reg_vcc3v0 (haven't checked on the schematics yet if it is correct).
+On Fri, 2018-02-09 at 13:07 -0800, Laura Abbott wrote:
+> Hi,
 > 
-> It's because the regulator support isn't present before
-> this commit. However these parts really need special
-> regulators. I don't have M2 schematics at hand, so you'd
-> check it by yourself.
+> get_maintainers.pl has been the standard script for figuring out where to
+> send patches or bug reports. It has the disadvantage of requiring a kernel
+> tree to actually run though, which makes it harder for bug reports to
+> came in. I've started working on a small project to expose get_maintainers.pl
+> as a web app. This would let users enter information from a patch or crash
+> and call out to get_maintainers.pl. The current project just lets users
+> enter in a file path and it displays the output as is. There's lots of options
+> for what we could do with the output (omitting e-mails for those maintainers
+> who don't want to participate, printing out more helpful warnings etc.)
+> 
+> The project is at https://pagure.io/get_maintainers and is not even close
+> to ready for primetime (passing data to get_maintainer.pl almost certainly
+> needs more thought). I'm mostly interested if anyone else would find this
+> useful or has general feedback.
 
-  Yes but why does the PMIC should disable regulators not defined in the 
-DTS ? That the part I don't understand and want to know where it is 
-described/documented.
-
-> P.S. a proper device tree with AXP shouldn't use
-> reg_vcc3v0/3v3/1v8/etc. They're dummy
-> regulator nodes for
-> not implemented or not controllable regulators.
-> 
->> 
->>> This indicates that this patch should be not tested at all.
->> 
->> This have indeed not been tested with linux.
->> I think that this commit should not be reverted, I'll send a proper
->> patch tonight or tomorow night max.
-> 
-> Please test patches sent to Linux on Linux :-)
-
-  If my patches adhere to the bindings I don't see why.
-
->> 
->> P.S.: Also as I'm the original sender I think I should have been in CC
->> no ?
-> 
-> get_maintainer.pl didn't mention you and I forgot... sorry.
-> 
->> 
->> Cheers,
->> 
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>>  arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 57
->> ------------------------
->>>  1 file changed, 57 deletions(-)
->>> 
->>> diff --git a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->> b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->>> index 51e6f1d21c32..a565316eb340 100644
->>> --- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->>> +++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->>> @@ -86,10 +86,6 @@
->>>  	};
->>>  };
->>> 
->>> -&cpu0 {
->>> -	cpu-supply = <&reg_dcdc3>;
->>> -};
->>> -
->>>  &ehci0 {
->>>  	status = "okay";
->>>  };
->>> @@ -155,17 +151,6 @@
->>>  	status = "okay";
->>>  };
->>> 
->>> -&p2wi {
->>> -	status = "okay";
->>> -
->>> -	axp22x: pmic@68 {
->>> -		compatible = "x-powers,axp221";
->>> -		reg = <0x68>;
->>> -		interrupt-parent = <&nmi_intc>;
->>> -		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->>> -	};
->>> -};
->>> -
->>>  &pio {
->>>  	gmac_phy_reset_pin_bpi_m2: gmac_phy_reset_pin@0 {
->>>  		pins = "PA21";
->>> @@ -191,48 +176,6 @@
->>>  	};
->>>  };
->>> 
->>> -#include "axp22x.dtsi"
->>> -
->>> -&reg_dc5ldo {
->>> -	regulator-min-microvolt = <700000>;
->>> -	regulator-max-microvolt = <1320000>;
->>> -	regulator-name = "vdd-cpus";
->>> -};
->>> -
->>> -&reg_dcdc1 {
->>> -	regulator-always-on;
->>> -	regulator-min-microvolt = <3000000>;
->>> -	regulator-max-microvolt = <3000000>;
->>> -	regulator-name = "vdd-3v0";
->>> -};
->>> -
->>> -&reg_dcdc2 {
->>> -	regulator-min-microvolt = <700000>;
->>> -	regulator-max-microvolt = <1320000>;
->>> -	regulator-name = "vdd-gpu";
->>> -};
->>> -
->>> -&reg_dcdc3 {
->>> -	regulator-always-on;
->>> -	regulator-min-microvolt = <700000>;
->>> -	regulator-max-microvolt = <1320000>;
->>> -	regulator-name = "vdd-cpu";
->>> -};
->>> -
->>> -&reg_dcdc4 {
->>> -	regulator-always-on;
->>> -	regulator-min-microvolt = <700000>;
->>> -	regulator-max-microvolt = <1320000>;
->>> -	regulator-name = "vdd-sys-dll";
->>> -};
->>> -
->>> -&reg_dcdc5 {
->>> -	regulator-always-on;
->>> -	regulator-min-microvolt = <1500000>;
->>> -	regulator-max-microvolt = <1500000>;
->>> -	regulator-name = "vcc-dram";
->>> -};
->>> -
->>>  &uart0 {
->>>  	pinctrl-names = "default";
->>>  	pinctrl-0 = <&uart0_pins_a>;
->>> --
->>> 2.15.1
->>> 
->>> 
->>> _______________________________________________
->>> linux-arm-kernel mailing list
->>> linux-arm-kernel@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+Is there a website already setup too?
