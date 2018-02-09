@@ -1,295 +1,78 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-807989-1518163566-2-15663208967804041486
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii', plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518163564; b=Ol/fB4zN+BKEgTncNFLGuQdZXSNPqk669kMJgZIu9zTOImz
-    U6nVaoNBYuuxHHibUqVsjFlVXqSPjCAjLkhs4MAJK6QFS55AtXpC4AMCNGb987vn
-    fAHQjFFSOH93T3Dd6t7Pbt59UrK6f5ZK6ZGGEg2l5wt40biP3YltZVCU8FG43opx
-    9qjc0W4NMwU5uB3YKq3shF5rtz7VNrG//dkgmCXYO0k5CXdRDXKCmDjofJ4qadeK
-    dsKHpy+/KH9XZP7szYySqKxJMU9JtDbuSxnGnVOREcthhesH9CutyXPuyGWnUv/W
-    yDnBQFFwADPI2FHwQUZTmHZ2BiYmKSJrd7SLbYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :sender; s=arctest; t=1518163564; bh=qm5ZhK7WQ2CD3YtxhNUxIQnyNaK
-    tK3O4ZYC5dADxupU=; b=Lcam3d9SVkYfHngGiHjUhtOv6313jz48r112wrj3hPn
-    CPQL3wbzBx46UYqeQfGD4rzjeObilhSxNlcO0v/GXGs6YDmTbv5UnacDECzBnObl
-    znko974BFJU1yK3WfHvZVzMDayxZuPrkjBNYzuOj8vOuINqWNTz98B+wWaYPU59b
-    Q1QvZs7G8Do4URWErQWSaSsbwobHunytnSfVpdglbWu+fU/9G8BcxpGauePAzyS8
-    EwrcJHRWxxKL4XDYPmxBTHcnPefSluD6k1W+p2HlHtfqnS/yLmm0IyN+pUdB4kwH
-    Q8FDqZzSGe88Cb3szcv/xyTy2hzQcQu388HR3sVgUgg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=bootlin.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=bootlin.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Fri, 9 Feb 2018 09:05:41 +0100
-From: Quentin Schulz <quentin.schulz@bootlin.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 2/2] mmc: Add mmc_force_detect_change_begin / _end
- functions
-Message-ID: <20180209080541.edgjbhjo542vq3h6@qschulz>
-References: <20170721143502.1991-1-quentin.schulz@free-electrons.com>
- <20170721143502.1991-3-quentin.schulz@free-electrons.com>
- <4015f7df-36ca-c762-5b9a-94a270f65475@redhat.com>
- <CAPDyKFpePxfAc20NCO7xvbGca8m=Bymc=5KBYFF570rnACViQA@mail.gmail.com>
- <20180208145952.qlq4sxohqd3s7m7o@qschulz>
- <CAPDyKFrbRVgOFRKpO5TdwHO-XQ035exrUt_bgM=BaxnEPmCvrw@mail.gmail.com>
+Return-Path: <ulf.hansson@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1518184862; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Bt62mZtG4fZjKUwYFNfDd5+KiP/IhpuqwbOLFtsnJ8DSA67fV68bcIzVh02P+24R42
+         S4sWZ8pnWlGQUNcs8y8JFrCNdjM29IjMvfumjEHYDZ2fXFQCB5JMuBik6cgiiTpvUAs9
+         1sSRKQnHQn0nQWfSebn2wfoHeZwRHy88TGv56okYxblQCRZugp6dmWwlSHpfL/OCauOc
+         pjsoXzpevzS2N5OHhW5szTA3q7hwm02sD8uGC8TFrrMDsYU6pVB30qNdJ3gRPgNveqEO
+         3KjorDlLcaH2na1V4SVJT5C2jvh3Ripq/aTv4JiwJI1yZ3igUz5+VweV6G5i6tGQaecI
+         NSGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=S6qCzJ3ld3D+a+oSdLLsCJ4uW7NqvzqvzebpLnIZnTU=;
+        b=OeB5FY6CjYeUlIHe4HRFmdvr4UKmVnf26nB85IoJTBTwdeRW1sMejxFkVnlEBWLAXS
+         72lA4cEQDG21UFG2W97a6SKRRywdnZ5Wc/rkTfbjy7QXrKO97JwtDLo4uPAm/flQ5i/e
+         VGZIrcRE644ajH5Mcy2fbh+JmIB2+WvpKMnCSUR7bro2ZuVZ8G0fsKNxDyd76HfUGb6V
+         YQG589czWMUsl2TNtPbcGR2uU7to8H4W2fdGSDsCwlZMNNdX5MHHQu/zmWPdtM1itsf7
+         VZgxA+R90CWQ5iGh4guJy9l6Mf20h0GU5hLHeyBHyS7qQn8h1dPvj9kUMN4+kDDbpe2H
+         wpFA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Lgd9fI6T;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Lgd9fI6T;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AH8x226IledUs9ncbrW98bINUXKLloByP+usmK/CMZ88+uWQy2dZiJICwFm0Wkd5yMz1G5fSznWasouHoXFtfERBTec=
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrbRVgOFRKpO5TdwHO-XQ035exrUt_bgM=BaxnEPmCvrw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: driverdevel <devel@driverdev.osuosl.org>,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Baolin Wang <baolin.wang@linaro.org>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Shawn Lin <shawn.lin@rock-chips.com>
-Content-Type: multipart/mixed; boundary="===============8720948917128415574=="
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180209080541.edgjbhjo542vq3h6@qschulz>
+References: <20170721143502.1991-1-quentin.schulz@free-electrons.com>
+ <20170721143502.1991-3-quentin.schulz@free-electrons.com> <4015f7df-36ca-c762-5b9a-94a270f65475@redhat.com>
+ <CAPDyKFpePxfAc20NCO7xvbGca8m=Bymc=5KBYFF570rnACViQA@mail.gmail.com>
+ <20180208145952.qlq4sxohqd3s7m7o@qschulz> <CAPDyKFrbRVgOFRKpO5TdwHO-XQ035exrUt_bgM=BaxnEPmCvrw@mail.gmail.com>
+ <20180209080541.edgjbhjo542vq3h6@qschulz>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 9 Feb 2018 15:01:00 +0100
+Message-ID: <CAPDyKFqDrdD+N+foLCwsVABtboz1Vn=OtJs14gp07zJfXHVKSA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: Add mmc_force_detect_change_begin / _end functions
+To: Quentin Schulz <quentin.schulz@bootlin.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>, Adrian Hunter <adrian.hunter@intel.com>,
+	Baolin Wang <baolin.wang@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>,
+	Icenowy Zheng <icenowy@aosc.xyz>, Chen-Yu Tsai <wens@csie.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1573543183974033537?=
+X-GMAIL-MSGID: =?utf-8?q?1591932210025227696?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+[...]
 
---===============8720948917128415574==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xuf3jspe2anqcsl3"
-Content-Disposition: inline
+>> > I'd like to know if any progress has been made on that problem (I may
+>> > have missed patches).
+>> > Had you had the time to look at the issue?
+>>
+>> I have looked at the issue, but not manage to cook some patches for it.
+>>
+>> However, it's on my top of my TODO list for mmc. No promises, but
+>> perhaps and hopefully I manage to get something posted during the
+>> coming release cycle.
+>>
+>
+> Cool! If you ever need some testing, I'd be glad to test your patches
+> (even if they are in a draft/RFC state).
+>
+> Also, when you send patches, I'd appreciate being Cc'ed so that I can
+> put my Tested-by :) Thanks!
 
+Absolutely! I appreciate it.
 
---xuf3jspe2anqcsl3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Ulf,
-
-On Thu, Feb 08, 2018 at 10:31:39PM +0100, Ulf Hansson wrote:
-> On 8 February 2018 at 15:59, Quentin Schulz <quentin.schulz@bootlin.com> =
-wrote:
-> > Hi Ulf,
-> >
-> > On Wed, Aug 30, 2017 at 03:43:49PM +0200, Ulf Hansson wrote:
-> >> On 30 August 2017 at 14:44, Hans de Goede <hdegoede@redhat.com> wrote:
-> >> > Hi,
-> >> >
-> >> >
-> >> > On 21-07-17 16:35, Quentin Schulz wrote:
-> >> >>
-> >> >> From: Hans de Goede <hdegoede@redhat.com>
-> >> >>
-> >> >> Some sdio devices have a multiple stage bring-up process. Specifica=
-lly
-> >> >> the esp8089 (for which an out of tree driver is available) loads fi=
-rmware
-> >> >> on the first call to its sdio-drivers' probe function and then rese=
-ts
-> >> >> the device causing it to reboot from its RAM with the new firmware.
-> >> >>
-> >> >> When this sdio device reboots it comes back up in 1 bit 400 KHz mode
-> >> >> again, and we need to walk through the whole ios negatiation and sd=
-io
-> >> >> setup
-> >> >> again.
-> >> >>
-> >> >> There are 2 problems with this:
-> >> >>
-> >> >> 1) Typically these devices are soldered onto some (ARM) tablet / SBC
-> >> >> PCB and as such are described in devicetree as "non-removable", whi=
-ch
-> >> >> causes the mmc-core to scan them only once and not poll for the dev=
-ice
-> >> >> dropping of the bus. Normally this is the right thing todo but in t=
-he
-> >> >> eso8089 example we need the mmc-core to notice the module has disco=
-nnected
-> >> >> (since it is now in 1 bit mode again it will not talk to the host i=
-n 4 bit
-> >> >> mode). This can be worked around by using "broken-cd" in devicetree
-> >> >> instead of "non-removable", but that is not a proper fix since the =
-device
-> >> >> really is non-removable.
-> >> >>
-> >> >> 2) When the mmc-core detects the device has disconnected it will po=
-weroff
-> >> >> the device, causing the RAM loaded firmware to be lost. This can be=
- worked
-> >> >> around in devicetree by using regulator-always-on (and avoiding the=
- use of
-> >> >> mmc-pwrseq), but again that is more of a hack then a proper fix.
-> >> >>
-> >> >> This commmit fixes 1) by adding a mmc_force_detect_change function =
-which
-> >> >> will cause scanning for device removal / insertion until a new devi=
-ce is
-> >> >> detected. 2) Is fixed by a keep_power flag to the mmc_force_detect_=
-change
-> >> >> function which when set causes the mmc-core to keep the power to the
-> >> >> device
-> >> >> on during the rescan.
-> >> >>
-> >> >> Cc: Icenowy Zheng <icenowy@aosc.xyz>
-> >> >> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> >> >> Cc: Chen-Yu Tsai <wens@csie.org>
-> >> >> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> >> >
-> >> >
-> >> > So when I posted this patch quite a while back, there was some discu=
-ssion
-> >> > about this and a consensus that this is not the right solution.
-> >> >
-> >> > So first of all lets describe the problem:
-> >> >
-> >> > The esp8089 sdio wifi chip is really an ARM core with a wifi phy
-> >> > connected to it (as many wifi chipsets are).
-> >> >
-> >> > But this one comes up in some really generic sdio capable boot-loader
-> >> > mode and we need to feed it firmware and then reboot it into the
-> >> > new firmware.
-> >> >
-> >> > The reboot is where the problems happens. It seems to fallback
-> >> > from the negotiated 4 wire sdio mode to single wire spi mode then.
-> >> >
-> >> > The out of tree version of the driver deals with this by not setting
-> >> > the non-removable flag as well as setting the broken_cd flag so that
-> >> > the mmc core polls the device, after the reboot the poll fails
-> >> > because the mmc-controller and the esp8089 are using a different
-> >> > amount of wires so the mmc-cmd the poll uses times out.
-> >> >
-> >> > After which the esp8089 drivers remove function gets called, and
-> >> > the mmc stack re-discovers the esp8089 by restarting the whole
-> >> > number of wires (and speed) used negotiation. After which the
-> >> > esp8089 driver's probe function gets called (again) and on
-> >> > firmware loading is has set a global flag, so now it actually
-> >> > acts as a wifi driver rather then trying to load the firmware
-> >> > a second time.
-> >> >
-> >> > Since I did not want to rely on broken_cd polling I came up
-> >> > with the hack which is this patch.
-> >> >
-> >> > So when this patch was first discussed we came to the conclusion
-> >> > that what we really need is some sort of mmc_reprobe_device
-> >> > function which the driver can call from probe which will
-> >> > redo the number of wires (and speed) used negotiation,
-> >> > while keeping the sdio_function device as is so that probe can
-> >> > simply continue after this and we also don't need the ugly
-> >> > global flag.
-> >> >
-> >> > The idea would be for this function to be some wrapper
-> >> > around mmc_init_card() which resets the ios settings as is
-> >> > normally done on remove and then call mmc_init_card()
-> >> > passing in the existing card the same way as is done
-> >> > one resume, so that the existing card / sdio_function
-> >> > devices get reused.
-> >> >
-> >> > IIRC Ulf would look into writing this mmc_reprobe_device
-> >> > function and then I would test it with the esp8089, but
-> >> > Ulf never got around to writing the function and I ended
-> >> > up working on other things too.
-> >>
-> >> Thanks for summary!
-> >>
-> >> Just to let you know, I haven't forgot about this problem. I am
-> >> planning for a major update of the SDIO for power management support,
-> >> within a not too far future.
-> >> The issue described above, is then also one of the things I also plan
-> >> to look into.
-> >>
-> >
-> > I'd like to know if any progress has been made on that problem (I may
-> > have missed patches).
-> > Had you had the time to look at the issue?
->=20
-> I have looked at the issue, but not manage to cook some patches for it.
->=20
-> However, it's on my top of my TODO list for mmc. No promises, but
-> perhaps and hopefully I manage to get something posted during the
-> coming release cycle.
->=20
-
-Cool! If you ever need some testing, I'd be glad to test your patches
-(even if they are in a draft/RFC state).
-
-Also, when you send patches, I'd appreciate being Cc'ed so that I can
-put my Tested-by :) Thanks!
-
-Best regards,
-Quentin
-
---xuf3jspe2anqcsl3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJafVZSAAoJEIS4mnU+4PGjVqEP/jA52IMS4EaSxvEuy7OCT/eY
-MUzeeQ34ZCgNNxpNkkFq7v5W2dpmxd6cNDUrW7UgDOazZWiH84fUWJ1ZCLSX8/cM
-AIm1tKqwEHWmRCi7Uz/h9VPYKUBJkX6YOsrm+CUAlXDKUSKufOoXuLT66EUQESdH
-2q4IlSOYqKyJ09vvkBGwRA2+nkcxM1TLY0EysjwFUy8vh16NHs4EPgoaDtr3+dd2
-cSvk6fXq6DmLgK6QuzAwZZDgY3/xREg8S+t56ZMqozk66/xISNi6RSw5ZAMCVLXq
-xY20c4pxHbldWjNMspo1W/xypqxeKh+Mphk98cXgSNz2hBxHVHRvz6s4Kf2CeqKs
-rS61IceBXXTL+Iuf4Rq3VbhYbL12udL+3m3iGUlRfHJRlAytebeox8h6jtlgwA4Y
-iR/s3xAupuz3uKafuSRcvbrvAloLdO4LV3Lj+wu2hZWxw/PDw5sOhyKkbR7vltvZ
-v6jzprLXk7seVyoqQapq17zO/w12+/WdfZbxvj9ocu8qMt2Na9Anbd4TMIpUdLnc
-CeseM313IjKVzWZKyOGDvydVeu/OsAOXdCnaOB2nvtam7kh2GLOILRCFC8XjA+hr
-3UWPVUwXfUmUZf8Vti8jStb2AyNWFWApILzSAZooKlHIw3leP97G5kC5T8c/6zkE
-dSEu21t/nYmA10rawjfO
-=7BeV
------END PGP SIGNATURE-----
-
---xuf3jspe2anqcsl3--
-
---===============8720948917128415574==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============8720948917128415574==--
+Br
+Uffe
