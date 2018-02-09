@@ -1,96 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeBIOX2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:23:28 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35507 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbeBIOXZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:23:25 -0500
-X-Google-Smtp-Source: AH8x227d+N72ZXIqthEFpbTnFo6sSdhvM/bArcubLceYV7e0CcZoKMkSEsGwYnAontUIfDugOlkX5A==
-From: Carlo Caione <carlo@caione.org>
-To: linux@endlessm.com, bardliao@realtek.com, oder_chiou@realtek.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2] ASoC: rt5645: Introduce mapping for ACPI-defined GPIO
-Date: Fri,  9 Feb 2018 14:23:18 +0000
-Message-Id: <20180209142318.14451-1-carlo@caione.org>
-X-Mailer: git-send-email 2.14.1
+        id S1752485AbeBIOXq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:23:46 -0500
+Received: from mga07.intel.com ([134.134.136.100]:34688 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752635AbeBIOWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 09:22:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,483,1511856000";
+   d="scan'208";a="29488041"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv9 2/4] x86/boot/compressed/64: Introduce paging_prepare()
+Date: Fri,  9 Feb 2018 17:22:26 +0300
+Message-Id: <20180209142228.21231-3-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180209142228.21231-1-kirill.shutemov@linux.intel.com>
+References: <20180209142228.21231-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Carlo Caione <carlo@endlessm.com>
+This patch renames l5_paging_required() into paging_prepare() and
+changes the interface of the function.
 
-On at least one notebook (ECS EF20EA) the 'hp-detect' GPIO is defined in
-the DSDT table by the ACPI GpioIo resources in _CRS. Add this mapping to
-the rt5645 driver to enable the jack detection also on non-DT platforms.
+This is a preparation for the next patch, which would make the function
+also allocate memory for the 32-bit trampoline.
 
-Method (_CRS, 0, NotSerialized)
-{
-  Name (SBUF, ResourceTemplate ()
-  {
-    I2cSerialBusV2 (0x001A, ControllerInitiated, 0x00061A80,
-        AddressingMode7Bit, "\\_SB.PCI0.I2C2",
-        0x00, ResourceConsumer, , Exclusive,
-        )
-    GpioInt (Edge, ActiveBoth, SharedAndWake, PullNone, 0x0000,
-        "\\_SB.GPO3", 0x00, ResourceConsumer, ,
-        )
-        {   // Pin list
-            0x004F
-        }
-    GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly,
-        "\\_SB.GPO3", 0x00, ResourceConsumer, ,
-        )
-        {   // Pin list
-            0x004F
-        }
-  })
-  Return (SBUF) /* \_SB_.PCI0.I2C2.RTK2._CRS.SBUF */
-}
+The function now returns a 128-bit structure. RAX would return
+trampoline memory address (zero for now) and RDX would indicate if we
+need to enabled 5-level paging.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
+ arch/x86/boot/compressed/head_64.S    | 41 ++++++++++++++++-------------------
+ arch/x86/boot/compressed/pgtable_64.c | 25 ++++++++++-----------
+ 2 files changed, 31 insertions(+), 35 deletions(-)
 
-Changelog:
-
-v2:
-  - s/ACPI_HANDLE/has_acpi_companion/
----
- sound/soc/codecs/rt5645.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
-index 8f140c8b93ac..8e3d1e4ddb63 100644
---- a/sound/soc/codecs/rt5645.c
-+++ b/sound/soc/codecs/rt5645.c
-@@ -3764,6 +3764,13 @@ static int rt5645_parse_dt(struct rt5645_priv *rt5645, struct device *dev)
- 	return 0;
- }
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index fc313e29fe2c..10b4df46de84 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -304,20 +304,6 @@ ENTRY(startup_64)
+ 	/* Set up the stack */
+ 	leaq	boot_stack_end(%rbx), %rsp
  
-+static const struct acpi_gpio_params hp_detect_gpios = { 1, 0, false };
+-#ifdef CONFIG_X86_5LEVEL
+-	/*
+-	 * Check if we need to enable 5-level paging.
+-	 * RSI holds real mode data and need to be preserved across
+-	 * a function call.
+-	 */
+-	pushq	%rsi
+-	call	l5_paging_required
+-	popq	%rsi
+-
+-	/* If l5_paging_required() returned zero, we're done here. */
+-	cmpq	$0, %rax
+-	je	lvl5
+-
+ 	/*
+ 	 * At this point we are in long mode with 4-level paging enabled,
+ 	 * but we want to enable 5-level paging.
+@@ -325,12 +311,28 @@ ENTRY(startup_64)
+ 	 * The problem is that we cannot do it directly. Setting LA57 in
+ 	 * long mode would trigger #GP. So we need to switch off long mode
+ 	 * first.
++	 */
 +
-+static const struct acpi_gpio_mapping cht_rt5645_gpios[] = {
-+	{ "hp-detect-gpios", &hp_detect_gpios, 1 },
-+	{},
++	/*
++	 * paging_prepare() would set up the trampoline and check if we need to
++	 * enable 5-level paging.
+ 	 *
+-	 * NOTE: This is not going to work if bootloader put us above 4G
+-	 * limit.
++	 * Address of the trampoline is returned in RAX.
++	 * Non zero RDX on return means we need to enable 5-level paging.
+ 	 *
+-	 * The first step is go into compatibility mode.
++	 * RSI holds real mode data and need to be preserved across
++	 * a function call.
+ 	 */
++	pushq	%rsi
++	call	paging_prepare
++	popq	%rsi
++
++	/* Save the trampoline address in RCX */
++	movq	%rax, %rcx
++
++	/* Check if we need to enable 5-level paging */
++	cmpq	$0, %rdx
++	jz	lvl5
+ 
+ 	/* Clear additional page table */
+ 	leaq	lvl5_pgtable(%rbx), %rdi
+@@ -352,7 +354,6 @@ ENTRY(startup_64)
+ 	pushq	%rax
+ 	lretq
+ lvl5:
+-#endif
+ 
+ 	/* Zero EFLAGS */
+ 	pushq	$0
+@@ -490,7 +491,6 @@ relocated:
+ 	jmp	*%rax
+ 
+ 	.code32
+-#ifdef CONFIG_X86_5LEVEL
+ compatible_mode:
+ 	/* Setup data and stack segments */
+ 	movl	$__KERNEL_DS, %eax
+@@ -526,7 +526,6 @@ compatible_mode:
+ 	movl	%eax, %cr0
+ 
+ 	lret
+-#endif
+ 
+ no_longmode:
+ 	/* This isn't an x86-64 CPU so hang */
+@@ -585,7 +584,5 @@ boot_stack_end:
+ 	.balign 4096
+ pgtable:
+ 	.fill BOOT_PGT_SIZE, 1, 0
+-#ifdef CONFIG_X86_5LEVEL
+ lvl5_pgtable:
+ 	.fill PAGE_SIZE, 1, 0
+-#endif
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index b4469a37e9a1..3f1697fcc7a8 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -9,20 +9,19 @@
+  */
+ unsigned long __force_order;
+ 
+-int l5_paging_required(void)
+-{
+-	/* Check if leaf 7 is supported. */
+-
+-	if (native_cpuid_eax(0) < 7)
+-		return 0;
++struct paging_config {
++	unsigned long trampoline_start;
++	unsigned long l5_required;
 +};
-+
- static int rt5645_i2c_probe(struct i2c_client *i2c,
- 		    const struct i2c_device_id *id)
- {
-@@ -3779,6 +3786,10 @@ static int rt5645_i2c_probe(struct i2c_client *i2c,
- 	if (rt5645 == NULL)
- 		return -ENOMEM;
  
-+	if (has_acpi_companion(&i2c->dev))
-+		if (devm_acpi_dev_add_driver_gpios(&i2c->dev, cht_rt5645_gpios))
-+			dev_dbg(&i2c->dev, "Failed to add driver gpios\n");
-+
- 	rt5645->i2c = i2c;
- 	i2c_set_clientdata(i2c, rt5645);
+-	/* Check if la57 is supported. */
+-	if (!(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
+-		return 0;
++struct paging_config paging_prepare(void)
++{
++	struct paging_config paging_config = {};
  
+-	/* Check if 5-level paging has already been enabled. */
+-	if (native_read_cr4() & X86_CR4_LA57)
+-		return 0;
++	/* Check if LA57 is desired and supported */
++	if (IS_ENABLED(CONFIG_X86_5LEVEL) && native_cpuid_eax(0) >= 7 &&
++			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
++		paging_config.l5_required = 1;
+ 
+-	return 1;
++	return paging_config;
+ }
 -- 
-2.14.1
+2.15.1
