@@ -1,216 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751053AbeBILdz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 06:33:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43988 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750918AbeBILdy (ORCPT
+        id S1751049AbeBILhr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 06:37:47 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:39248 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750925AbeBILhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 06:33:54 -0500
-Date: Fri, 9 Feb 2018 03:33:57 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        stern@rowland.harvard.edu, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, boqun.feng@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
-        elena.reshetova@intel.com, mhocko@suse.com, akiyks@gmail.com
-Subject: Re: [GIT PULL tools] Linux kernel memory model
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180125093440.GA875@linux.vnet.ibm.com>
- <20180208184106.GA17043@e110439-lin>
+        Fri, 9 Feb 2018 06:37:45 -0500
+X-Google-Smtp-Source: AH8x2251R1heFIW3uCosevrnutQ3urRdyhx0MAFrKt26JlFxqLa4eeKPO1nyXpsphylVDaf2Sw691bIEXjSI4G5g9VA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208184106.GA17043@e110439-lin>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18020911-2213-0000-0000-0000026A357E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008503; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000250; SDB=6.00987171; UDB=6.00501049; IPR=6.00766529;
- BA=6.00005821; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019456; XFM=3.00000015;
- UTC=2018-02-09 11:33:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020911-2214-0000-0000-0000590DD3A5
-Message-Id: <20180209113357.GV3617@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802090147
+In-Reply-To: <20180209112618.GE12979@localhost.localdomain>
+References: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+ <20180209035143.GX28462@vireshk-i7> <197c26ba-c2a6-2de7-dffa-5b884079f746@evidence.eu.com>
+ <11598161.veS9VGWB8G@aspire.rjw.lan> <20180209105305.GD12979@localhost.localdomain>
+ <CAJZ5v0h9L2mMEaV6oECk9f2ob42Nr9zyqafymwvb+UP+G1q04Q@mail.gmail.com> <20180209112618.GE12979@localhost.localdomain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 9 Feb 2018 12:37:44 +0100
+X-Google-Sender-Auth: 9XBdWo2uBiAImtmmTjAf5A5U9ug
+Message-ID: <CAJZ5v0g4bgDKP96rivKPE-EMr7SuUhL9OO=M+MQuAjbdq9R45g@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 06:41:06PM +0000, Patrick Bellasi wrote:
-> Hi Paul,
-> thanks to you and all the involved guys for this useful tool.
-> 
-> I give it a try today and found that by installing herd7 by just
-> following the instruction in herdtools7/INSTALL.md, and precisely
-> installing it via:
-> 
->    opam install herdtools7
-> 
-> it seems to give you a tool which fails to run the basic example in
-> your README with this error:
-> 
->    File "./linux-kernel.def", line 44, characters 29-30: unexpected '-' (in macros)
-> 
-> As suggested by Will, by building instead herd7 HEAD (commit 44d69c2)
-> everything works fine.
-> 
-> Maybe it's a know issue, in case just ignore me. :)
-> 
-> Otherwise, maybe it can be worth to add to the README a note on which
-> minimum version of the herd7 tool is required.
-> 
->  opma   version (not working)    : 7.47, Rev: exported
->  master version (working for me) : 7.47+7(dev), Rev: 44d69c2b1b5ca0f97bd138899d31532ee5e4e084
+On Fri, Feb 9, 2018 at 12:26 PM, Juri Lelli <juri.lelli@redhat.com> wrote:
+> On 09/02/18 12:04, Rafael J. Wysocki wrote:
+>> On Fri, Feb 9, 2018 at 11:53 AM, Juri Lelli <juri.lelli@redhat.com> wrote:
+>> > Hi,
+>> >
+>> > On 09/02/18 11:36, Rafael J. Wysocki wrote:
+>> >> On Friday, February 9, 2018 9:02:34 AM CET Claudio Scordino wrote:
+>> >> > Hi Viresh,
+>> >> >
+>> >> > Il 09/02/2018 04:51, Viresh Kumar ha scritto:
+>> >> > > On 08-02-18, 18:01, Claudio Scordino wrote:
+>> >> > >> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+>> >> > >> we should not wait for the rate limit, otherwise we may miss some deadline.
+>> >> > >>
+>> >> > >> Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
+>> >> > >> misses for tasks with low RT periods.
+>> >> > >>
+>> >> > >> The patch applies on top of the one recently proposed by Peter to drop the
+>> >> > >> SCHED_CPUFREQ_* flags.
+>> >> > >>
+>> >>
+>> >> [cut]
+>> >>
+>> >> >
+>> >> > >
+>> >> > > Is it possible to (somehow) check here if the DL tasks will miss
+>> >> > > deadline if we continue to run at current frequency? And only ignore
+>> >> > > rate-limit if that is the case ?
+>> >
+>> > Isn't it always the case? Utilization associated to DL tasks is given by
+>> > what the user said it's needed to meet a task deadlines (admission
+>> > control). If that task wakes up and we realize that adding its
+>> > utilization contribution is going to require a frequency change, we
+>> > should _theoretically_ always do it, or it will be too late. Now, user
+>> > might have asked for a bit more than what strictly required (this is
+>> > usually the case to compensate for discrepancies between theory and real
+>> > world, e.g.  hw transition limits), but I don't think there is a way to
+>> > know "how much". :/
+>>
+>> You are right.
+>>
+>> I'm somewhat concerned about "fast switch" cases when the rate limit
+>> is used to reduce overhead.
+>
+> Mmm, right. I'm thinking that in those cases we could leave rate limit
+> as is. The user should then be aware of it and consider it as proper
+> overhead when designing her/his system.
+>
+> But then, isn't it the same for "non fast switch" platforms? I mean,
+> even in the latter case we can't go faster than hw limits.. mmm, maybe
+> the difference is that in the former case we could go as fast as theory
+> would expect.. but we shouldn't. :)
 
-Thank you for trying it out, and apologies for the hassle!
+Well, in practical terms that means "no difference" IMO. :-)
 
-These sort of "flag day" updates have happened from time to time due to
-the occasional need to have coordinated updates adding features to herd7
-to enable new features in LKMM.  As Andrea pointed out, this particular
-flag day could be argued to be a bit less necessary than most, and again,
-apologies for the hassle.
+I can imagine that in some cases this approach may lead to better
+results than reducing the rate limit overall, but the general case I'm
+not sure about.
 
-We will get this straightened out one way or another...
-
-							Thanx, Paul
-
-> Cheers Patrick
-> 
-> On 25-Jan 01:34, Paul E. McKenney wrote:
-> > Hello, Ingo,
-> > 
-> > This pull request contains a single commit that adds a memory model to
-> > the tools directory.  This memory model can (roughly speaking) be thought
-> > of as an automated version of memory-barriers.txt.  It is written in the
-> > "cat" language, which is executable by the externally provided "herd7"
-> > simulator, which exhaustively explores the state space of small litmus
-> > tests.
-> > 
-> > This memory model is accompanied by extensive documentation on its use
-> > and its design.  Two versions have been sent to LKML and feedback
-> > incorporated:
-> > 
-> > 1.	http://lkml.kernel.org/r/20171113184031.GA26302@linux.vnet.ibm.com
-> > 2.	http://lkml.kernel.org/r/20180119035855.GA29296@linux.vnet.ibm.com
-> > 
-> > This model has been presented and demoed at a number of Linux gatherings,
-> > including the 2016 LinuxCon EU, the 2016 Linux Plumbers Conference,
-> > the 2016 Linux Kernel Summit, the 2017 linux.conf.au, and the 2017 Linux
-> > Plumbers Conference, which featured a workshop helping a number of Linux
-> > kernel hackers install and use the tool.
-> > 
-> > This memory model has matured to the point where it would be good to include
-> > it in the Linux kernel, for example, to allow it to track changes as new
-> > hardware and use cases are added.  We expect the rate of change to be similar
-> > to that of Documentation/memory-barriers.txt.
-> > 
-> > This memory model is available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git 
-> > 
-> > for you to fetch changes up to 1c27b644c0fdbc61e113b8faee14baeb8df32486:
-> > 
-> >   Automate memory-barriers.txt; provide Linux-kernel memory model (2018-01-24 20:53:49 -0800)
-> > 
-> > ----------------------------------------------------------------
-> > Paul E. McKenney (1):
-> >       Automate memory-barriers.txt; provide Linux-kernel memory model
-> > 
-> >  tools/memory-model/Documentation/cheatsheet.txt    |   30 +
-> >  tools/memory-model/Documentation/explanation.txt   | 1840 ++++++++++++++++++++
-> >  tools/memory-model/Documentation/recipes.txt       |  570 ++++++
-> >  tools/memory-model/Documentation/references.txt    |  107 ++
-> >  tools/memory-model/MAINTAINERS                     |   15 +
-> >  tools/memory-model/README                          |  220 +++
-> >  tools/memory-model/linux-kernel.bell               |   53 +
-> >  tools/memory-model/linux-kernel.cat                |  124 ++
-> >  tools/memory-model/linux-kernel.cfg                |   21 +
-> >  tools/memory-model/linux-kernel.def                |  108 ++
-> >  .../litmus-tests/CoRR+poonceonce+Once.litmus       |   19 +
-> >  .../litmus-tests/CoRW+poonceonce+Once.litmus       |   18 +
-> >  .../litmus-tests/CoWR+poonceonce+Once.litmus       |   18 +
-> >  .../litmus-tests/CoWW+poonceonce.litmus            |   11 +
-> >  .../litmus-tests/IRIW+mbonceonces+OnceOnce.litmus  |   35 +
-> >  .../litmus-tests/IRIW+poonceonces+OnceOnce.litmus  |   33 +
-> >  .../litmus-tests/ISA2+poonceonces.litmus           |   28 +
-> >  ...cerelease+poacquirerelease+poacquireonce.litmus |   28 +
-> >  .../litmus-tests/LB+ctrlonceonce+mbonceonce.litmus |   23 +
-> >  .../LB+poacquireonce+pooncerelease.litmus          |   21 +
-> >  .../litmus-tests/LB+poonceonces.litmus             |   21 +
-> >  .../litmus-tests/MP+onceassign+derefonce.litmus    |   25 +
-> >  tools/memory-model/litmus-tests/MP+polocks.litmus  |   24 +
-> >  .../litmus-tests/MP+poonceonces.litmus             |   20 +
-> >  .../MP+pooncerelease+poacquireonce.litmus          |   20 +
-> >  .../memory-model/litmus-tests/MP+porevlocks.litmus |   24 +
-> >  .../litmus-tests/MP+wmbonceonce+rmbonceonce.litmus |   22 +
-> >  .../memory-model/litmus-tests/R+mbonceonces.litmus |   21 +
-> >  .../memory-model/litmus-tests/R+poonceonces.litmus |   19 +
-> >  tools/memory-model/litmus-tests/README             |  125 ++
-> >  .../memory-model/litmus-tests/S+poonceonces.litmus |   19 +
-> >  .../S+wmbonceonce+poacquireonce.litmus             |   20 +
-> >  .../litmus-tests/SB+mbonceonces.litmus             |   23 +
-> >  .../litmus-tests/SB+poonceonces.litmus             |   21 +
-> >  .../litmus-tests/WRC+poonceonces+Once.litmus       |   27 +
-> >  .../WRC+pooncerelease+rmbonceonce+Once.litmus      |   28 +
-> >  .../Z6.0+pooncelock+poonceLock+pombonce.litmus     |   33 +
-> >  .../Z6.0+pooncelock+pooncelock+pombonce.litmus     |   32 +
-> >  ...ooncerelease+poacquirerelease+mbonceonce.litmus |   28 +
-> >  tools/memory-model/lock.cat                        |   99 ++
-> >  40 files changed, 3973 insertions(+)
-> >  create mode 100644 tools/memory-model/Documentation/cheatsheet.txt
-> >  create mode 100644 tools/memory-model/Documentation/explanation.txt
-> >  create mode 100644 tools/memory-model/Documentation/recipes.txt
-> >  create mode 100644 tools/memory-model/Documentation/references.txt
-> >  create mode 100644 tools/memory-model/MAINTAINERS
-> >  create mode 100644 tools/memory-model/README
-> >  create mode 100644 tools/memory-model/linux-kernel.bell
-> >  create mode 100644 tools/memory-model/linux-kernel.cat
-> >  create mode 100644 tools/memory-model/linux-kernel.cfg
-> >  create mode 100644 tools/memory-model/linux-kernel.def
-> >  create mode 100644 tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/CoWW+poonceonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/ISA2+poonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/LB+poonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/MP+polocks.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/MP+poonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/MP+porevlocks.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/R+mbonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/R+poonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/README
-> >  create mode 100644 tools/memory-model/litmus-tests/S+poonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/SB+poonceonces.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-> >  create mode 100644 tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-> >  create mode 100644 tools/memory-model/lock.cat
-> > 
-> 
-> -- 
-> #include <best/regards.h>
-> 
-> Patrick Bellasi
-> 
+I mean, if overriding the rate limit doesn't take place very often,
+then it really should make no difference overhead-wise.  Now, of
+course, how to define "not very often" is a good question as that
+leads to rate-limiting the overriding of the original rate limit and
+that scheme may continue indefinitely ...
