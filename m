@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185768-2-16358613700169035638
+X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185761-2-5191697702369554496
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES caen,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185767; b=C1/i/gKtpkIQwgd6BmCSsU0XftwPYimybZMYCmcAKpdFbyj
-    cT3RDvRLNk7jalSwt4aEyNB/1Fo/zcQUJFXSGnO2fpxm5ykIeXTrijo2p6BJbJJi
-    pPRZ0DVQjIQWcmhclK9aQQWDxUkFuNtHMvEhRlYbxDuQmUghKZTqYs0k2skK5YAc
-    U1B+nfHoiHkJ8kjiYJFUAwBwBdZceTqd/6mQmrB6qEIxcWKRwOjRuPtt/EXOAtuz
-    tmG+PhZL0ya55Qd4K2tgQKWd6ofBXNu6ahglrlu3O4ghqz5PgUVPouRIjHw8B8h3
-    +z91OH/IlSybvKuw8s3eZhEjPehDqbFy7FI8LzA==
+    t=1518185761; b=PAXnXtc/hEmc6hyva1GutNywqBAocBe8dvfGK4lID3uSmBQ
+    wy1EG0cL+EsWQd5Sm2mdJyCj9CSPH/CzXT8ghqjo9PLvEl924kuOtNxuzCyAQoU/
+    V9+htv2e0YYAbubayOCZmVwfU/ZsE32hK2eZS76rWQMDNYQITrV3H95JBw8nUmMU
+    3W9biniZoZMrpNE6F8z8Jc+pZhtUdFbM5ZN5/Q6USjJ6/HCFv5U8t7LS1cgYsMfx
+    pp5rRD+dSYs/gShirFencJaQwhPos67mfEEgSmmnIZjU26fQKoRGmWbqXaaUl0pq
+    u3MlU4CHOicJFAKx4Fnef/hgrFmuRsBAQNEbeuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185767; bh=ldry68c7hwOy/DD0jpgsZuAmET
-    vz0YDuJKdRBuOP5Yg=; b=FbXIb8tHwEaX+Iq3zeULnMQXZxULArSD/xzPhoGWUe
-    Rj24++660AlW/Yusg114xzxbUOXX7F8m+91hOI/x9tFaGzfi8u5/iuCpdpA98tBd
-    eEBfZZnjeVzg9PYHQVmYF8q4+yQ4F3CfA3HJF9NsVNyA0GjshMUX5iDggOpyqJ8c
-    x1RI3tMslytrHbP51MqLQwXXncJ9xYIwDxTeIFTOs2RRuZNvTzBqsJwX5X8Jr8Ml
-    +e7vs8ZrI8HEXP/B2XajCDslFig2lqsKwoLi1rWhP8w7afU0oilWfVAy6xJbN9Oo
-    H8fiU1rPcHu3rZ1ACgVTYjyYt4hljuk71l1BT/txuZiQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185761; bh=8jqFrF/ATGJEDYH7WmDh4X4mFJ
+    +lxM1Dd6pWDPgV6qA=; b=H5ParURSAoJ7StI16aD2au1YPPXHcaDOuC2BRHGLib
+    wF739kdt8YzAUwnmWO6tBPREvHUETDxSkSeyY1f2A/YioL+Sn9tZyLzVY/nfCqHH
+    h26bcAV3Qb4MirF0phBZXgj1iqdRVr+nagJXTrNbpsVXHOD8GkBxt7JLB3RDSK2o
+    /geMbKNftySN3DDBf2zonosQKlZ9fgoPpI1SNM4KxJSmbRX2wiTmG6jJ/tSoKVdj
+    6+utdOmlf2Yf7cjLVnYW2BI/J4oatqhtx2eU6KHAlLSwQMmP7+KBuVsssAksdyHq
+    9cvwx2H/0dsF+r7qRK8Hc8wPQ4nIk6ZRsq2oOnI1K4Ng==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,23 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752335AbeBINk5 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:40:57 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48314 "EHLO
+        id S1752403AbeBINlF (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:41:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48356 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752261AbeBINky (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:40:54 -0500
+        with ESMTP id S1752327AbeBINlD (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:03 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 08/92] powerpc/pseries: Query hypervisor for RFI flush settings
-Date: Fri,  9 Feb 2018 14:38:37 +0100
-Message-Id: <20180209133931.874865385@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot
+        <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 19/92] ip6mr: fix stale iterator
+Date: Fri,  9 Feb 2018 14:38:48 +0100
+Message-Id: <20180209133932.686900142@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -77,70 +80,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 8989d56878a7735dfdb234707a2fee6faf631085 upstream.
 
-A new hypervisor call is available which tells the guest settings
-related to the RFI flush. Use it to query the appropriate flush
-instruction(s), and whether the flush is required.
+[ Upstream commit 4adfa79fc254efb7b0eb3cd58f62c2c3f805f1ba ]
 
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+When we dump the ip6mr mfc entries via proc, we initialize an iterator
+with the table to dump but we don't clear the cache pointer which might
+be initialized from a prior read on the same descriptor that ended. This
+can result in lock imbalance (an unnecessary unlock) leading to other
+crashes and hangs. Clear the cache pointer like ipmr does to fix the issue.
+Thanks for the reliable reproducer.
+
+Here's syzbot's trace:
+ WARNING: bad unlock balance detected!
+ 4.15.0-rc3+ #128 Not tainted
+ syzkaller971460/3195 is trying to release lock (mrt_lock) at:
+ [<000000006898068d>] ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+ but there are no more locks to release!
+
+ other info that might help us debug this:
+ 1 lock held by syzkaller971460/3195:
+  #0:  (&p->lock){+.+.}, at: [<00000000744a6565>] seq_read+0xd5/0x13d0
+ fs/seq_file.c:165
+
+ stack backtrace:
+ CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+ Google 01/01/2011
+ Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:53
+  print_unlock_imbalance_bug+0x12f/0x140 kernel/locking/lockdep.c:3561
+  __lock_release kernel/locking/lockdep.c:3775 [inline]
+  lock_release+0x5f9/0xda0 kernel/locking/lockdep.c:4023
+  __raw_read_unlock include/linux/rwlock_api_smp.h:225 [inline]
+  _raw_read_unlock+0x1a/0x30 kernel/locking/spinlock.c:255
+  ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+  traverse+0x3bc/0xa00 fs/seq_file.c:135
+  seq_read+0x96a/0x13d0 fs/seq_file.c:189
+  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
+  do_loop_readv_writev fs/read_write.c:673 [inline]
+  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
+  compat_readv+0x1bf/0x270 fs/read_write.c:1140
+  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
+  C_SYSC_preadv fs/read_write.c:1209 [inline]
+  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
+  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+ RIP: 0023:0xf7f73c79
+ RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
+ RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
+ RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ BUG: sleeping function called from invalid context at lib/usercopy.c:25
+ in_atomic(): 1, irqs_disabled(): 0, pid: 3195, name: syzkaller971460
+ INFO: lockdep is turned off.
+ CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+ Google 01/01/2011
+ Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:53
+  ___might_sleep+0x2b2/0x470 kernel/sched/core.c:6060
+  __might_sleep+0x95/0x190 kernel/sched/core.c:6013
+  __might_fault+0xab/0x1d0 mm/memory.c:4525
+  _copy_to_user+0x2c/0xc0 lib/usercopy.c:25
+  copy_to_user include/linux/uaccess.h:155 [inline]
+  seq_read+0xcb4/0x13d0 fs/seq_file.c:279
+  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
+  do_loop_readv_writev fs/read_write.c:673 [inline]
+  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
+  compat_readv+0x1bf/0x270 fs/read_write.c:1140
+  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
+  C_SYSC_preadv fs/read_write.c:1209 [inline]
+  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
+  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+ RIP: 0023:0xf7f73c79
+ RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
+ RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
+ RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ WARNING: CPU: 1 PID: 3195 at lib/usercopy.c:26 _copy_to_user+0xb5/0xc0
+ lib/usercopy.c:26
+
+Reported-by: syzbot <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/platforms/pseries/setup.c |   35 +++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ net/ipv6/ip6mr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -450,6 +450,39 @@ static void __init find_and_init_phbs(vo
- 	of_pci_check_probe_only();
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -495,6 +495,7 @@ static void *ipmr_mfc_seq_start(struct s
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	it->mrt = mrt;
++	it->cache = NULL;
+ 	return *pos ? ipmr_mfc_seq_idx(net, seq->private, *pos - 1)
+ 		: SEQ_START_TOKEN;
  }
- 
-+static void pseries_setup_rfi_flush(void)
-+{
-+	struct h_cpu_char_result result;
-+	enum l1d_flush_type types;
-+	bool enable;
-+	long rc;
-+
-+	/* Enable by default */
-+	enable = true;
-+
-+	rc = plpar_get_cpu_characteristics(&result);
-+	if (rc == H_SUCCESS) {
-+		types = L1D_FLUSH_NONE;
-+
-+		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
-+			types |= L1D_FLUSH_MTTRIG;
-+		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
-+			types |= L1D_FLUSH_ORI;
-+
-+		/* Use fallback if nothing set in hcall */
-+		if (types == L1D_FLUSH_NONE)
-+			types = L1D_FLUSH_FALLBACK;
-+
-+		if (!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR))
-+			enable = false;
-+	} else {
-+		/* Default to fallback if case hcall is not available */
-+		types = L1D_FLUSH_FALLBACK;
-+	}
-+
-+	setup_rfi_flush(types, enable);
-+}
-+
- static void __init pSeries_setup_arch(void)
- {
- 	set_arch_panic_timeout(10, ARCH_PANIC_TIMEOUT);
-@@ -467,6 +500,8 @@ static void __init pSeries_setup_arch(vo
- 
- 	fwnmi_init();
- 
-+	pseries_setup_rfi_flush();
-+
- 	/* By default, only probe PCI (can be overridden by rtas_pci) */
- 	pci_add_flags(PCI_PROBE_ONLY);
- 
