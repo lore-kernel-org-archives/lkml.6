@@ -1,73 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752294AbeBIBvk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 20:51:40 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:57900 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752100AbeBIBvj (ORCPT
+        id S1752468AbeBIBwt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 20:52:49 -0500
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:34040 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752285AbeBIBwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 20:51:39 -0500
-Subject: Re: [PATCH V2 0/6]nvme-pci: fixes on nvme_timeout and
- nvme_dev_disable
-To: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>
-Cc: axboe@fb.com, hch@lst.de, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1517822415-11710-1-git-send-email-jianchao.w.wang@oracle.com>
- <073ce416-fd26-b41a-187d-1db9210c48b0@grimberg.me>
- <20180208175606.GD5039@localhost.localdomain>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <db5fe34b-3ffb-a658-d4d6-a1c619b2d590@oracle.com>
-Date: Fri, 9 Feb 2018 09:50:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 8 Feb 2018 20:52:47 -0500
+X-Google-Smtp-Source: AH8x227x27Ut05lNpJJp1DKWaU6GkFGtaFLmYZa8H04iPeYFLkGHCPVmT44hREfwSMdiZcX5FDjD+6crTtMCfzR8vXA=
 MIME-Version: 1.0
-In-Reply-To: <20180208175606.GD5039@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090019
+In-Reply-To: <20180208153648.GC12817@krava>
+References: <20180208033344.71933-1-linxiulei@gmail.com> <20180208153648.GC12817@krava>
+From: Lin Xiulei <linxiulei@gmail.com>
+Date: Fri, 9 Feb 2018 09:52:46 +0800
+Message-ID: <CALPjY3ky4kKbJbVfbigZ87MMiqpn8Q1EX1EKwJ8F+e8P=euzzg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v4] perf/core: Fix installing cgroup event into cpu
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        tglx@linutronix.de, Stephane Eranian <eranian@gmail.com>,
+        torvalds@linux-foundation.org,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        yang_oliver@hotmail.com, jinli.zjl@alibaba-inc.com,
+        "leilei.lin" <leilei.lin@alibaba-inc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keith and Sagi
+2018-02-08 23:36 GMT+08:00 Jiri Olsa <jolsa@redhat.com>:
+>
+> On Thu, Feb 08, 2018 at 11:33:44AM +0800, linxiulei@gmail.com wrote:
+> > From: "leilei.lin" <leilei.lin@alibaba-inc.com>
+> >
+> > Do not install cgroup event into the CPU context and schedule it
+> > if the cgroup is not running on this CPU
+> >
+> > While there is no task of cgroup running specified CPU, current
+> > kernel still install cgroup event into CPU context that causes
+> > another cgroup event can't be installed into this CPU.
+> >
+> > This patch prevent scheduling events at __perf_install_in_context()
+> > and installing events at list_update_cgroup_event() if cgroup isn't
+> > running on specified CPU.
+> >
+> > Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
+> > ---
+> >  v2: Set cpuctx->cgrp only if the same cgroup is running on this
+> >    CPU otherwise following events couldn't be activated immediately
+> >  v3: Enhance the comments and commit message
+> >  v4: Adjust to config
+> >
+> >  kernel/events/core.c | 50 +++++++++++++++++++++++++++++++++++++-------------
+> >  1 file changed, 37 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 4df5b69..fd28d61 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -933,31 +933,41 @@ list_update_cgroup_event(struct perf_event *event,
+> >  {
+> >       struct perf_cpu_context *cpuctx;
+> >       struct list_head *cpuctx_entry;
+> > +     struct perf_cgroup *cgrp;
+> >
+> >       if (!is_cgroup_event(event))
+> >               return;
+> >
+> > -     if (add && ctx->nr_cgroups++)
+> > -             return;
+> > -     else if (!add && --ctx->nr_cgroups)
+> > -             return;
+>
+> I might be missing something, but should this check stay on
+> the top regardles of the cgroup_is_descendant check below?
+>
 
-Many thanks for your kindly response.
-That's really appreciated.
+I don't think so,  if event A on cgroup A is opened and immediately
+followed by a event B opened on cgroup B, then
+"if (add && ctx->nr_cgroups++)" would __return__ with
+ cpuctx->cgrp = cgroup A, that is incorrect.
 
-On 02/09/2018 01:56 AM, Keith Busch wrote:
-> On Thu, Feb 08, 2018 at 05:56:49PM +0200, Sagi Grimberg wrote:
->> Given the discussion on this set, you plan to respin again
->> for 4.16?
-> 
-> With the exception of maybe patch 1, this needs more consideration than
-> I'd feel okay with for the 4.16 release.
-> 
-Currently, one of the block is the nvme_wait_freeze in nvme_reset_work.
-This cause some issues when I test this patchset yesterday.
-As I posted on the V1 patchset mail thread:
+And previous thread is here https://lkml.org/lkml/2018/1/24/79
 
-if we set NVME_REQ_CANCELLED and return BLK_EH_HANDLED as the RESETTING case,
-nvme_reset_work will hang forever, because no one could complete the entered requests.
+>
+> you could put NULL into cpuctx->cgrp on context with cgroup
+> event in the list
+>
 
-if we invoke nvme_reset_ctrl after modify the state machine to be able to change to RESETTING
-to RECONNECTING and queue reset_work, we still cannot move things forward, because the reset_work
-is being executed.
+what's the harm? It's invoked by perf_remove_from_context() when
+an event is ready to be released. And whenever process/cgroup is
+scheduled, cpuctx->cgrp will be set
 
-if we use nvme_wait_freeze_timeout in nvme_reset_work, unfreeze and return if expires. But the 
-timeout value is tricky..
+In case that the patch was not sorted well, I put the patched code
 
+```
+static inline void
+list_update_cgroup_event(struct perf_event *event,
+             struct perf_event_context *ctx, bool add)
+{
+    struct perf_cpu_context *cpuctx;
+    struct list_head *cpuctx_entry;
+    struct perf_cgroup *cgrp;
 
-And actually, one of the possible solution to fix this cleanly is blk_set_preempt_only.
-It is a lightweight way to gate the new bios out of generic_make_request.
+    if (!is_cgroup_event(event))
+        return;
 
-Looking forward your advice on this.
-And many thanks for your precious time on this.
+    /*
+     * Because cgroup events are always per-cpu events,
+     * this will always be called from the right CPU.
+     */
+    cpuctx = __get_cpu_context(ctx);
+    cgrp = perf_cgroup_from_task(current, ctx);
 
-Sincerely
-Thanks
-Jianchao
+    /*
+     * if only the cgroup is running on this cpu,
+     * we put/remove this cgroup into cpu context.
+     * Or it would case mismatch in following cgroup
+     * events at event_filter_match()
+     */
+    if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup)) {
+        if (add)
+            cpuctx->cgrp = cgrp;
+        else
+            cpuctx->cgrp = NULL;
+    }
+
+    if (add && ctx->nr_cgroups++)
+        return;
+    else if (!add && --ctx->nr_cgroups)
+        return;
+
+    cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
+    if (add)
+        list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
+    else
+        list_del(cpuctx_entry);
+}
+```
+
+thanks
+
+>
+> thanks,
+> jirka
+>
+> >       /*
+> >        * Because cgroup events are always per-cpu events,
+> >        * this will always be called from the right CPU.
+> >        */
+> >       cpuctx = __get_cpu_context(ctx);
+> > -     cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
+> > -     /* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
+> > -     if (add) {
+> > -             struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
+> > +     cgrp = perf_cgroup_from_task(current, ctx);
+> >
+> > -             list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
+> > -             if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
+> > +     /*
+> > +      * if only the cgroup is running on this cpu,
+> > +      * we put/remove this cgroup into cpu context.
+> > +      * Or it would case mismatch in following cgroup
+> > +      * events at event_filter_match()
+> > +      */
+> > +     if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup)) {
+> > +             if (add)
+> >                       cpuctx->cgrp = cgrp;
+> > -     } else {
+> > -             list_del(cpuctx_entry);
+> > -             cpuctx->cgrp = NULL;
+> > +             else
+> > +                     cpuctx->cgrp = NULL;
+>
+> SNIP
+>
