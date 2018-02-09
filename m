@@ -1,67 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752421AbeBIAt5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 19:49:57 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37301 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752026AbeBIAtz (ORCPT
+        id S1752335AbeBIA5a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 19:57:30 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:43839 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750750AbeBIA52 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 19:49:55 -0500
-X-Google-Smtp-Source: AH8x225ZobPvxqWMf6MxBz1tUUjqy71/eop7czQqP4/ukswNhuhmIfVTobz8Xz5Jt26h6qw2YL4HWw==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Carlo Caione <carlo@caione.org>,
-        Arnaud Patard <arnaud.patard@rtp-net.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] meson-gx-socinfo: make local function meson_gx_socinfo_init static
-Organization: BayLibre
-References: <1515593988-78626-1-git-send-email-weiyongjun1@huawei.com>
-        <3cb83737-bb60-7648-e72e-2d39590c8418@baylibre.com>
-Date: Thu, 08 Feb 2018 16:49:52 -0800
-In-Reply-To: <3cb83737-bb60-7648-e72e-2d39590c8418@baylibre.com> (Neil
-        Armstrong's message of "Tue, 6 Feb 2018 13:25:19 +0100")
-Message-ID: <7hh8qr9ebz.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 8 Feb 2018 19:57:28 -0500
+X-Google-Smtp-Source: AH8x224kVsvZ8tIskX5mvSQwWsh2nJ6SGp2Fy2J2mpDLgn4ZYcYAE15f1xpd/sUQIYdhkMoTVFxZFg==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        Craig Bergstrom <craigb@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2] rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
+Date: Thu,  8 Feb 2018 16:57:12 -0800
+Message-Id: <20180209005712.29353-1-mka@chromium.org>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
+is assigned to itself in an if ... else statement, apparently only to
+document that the branch condition is handled and that a previously read
+value should be returned unmodified. The self-assignment causes clang to
+raise the following warning:
 
-> On 10/01/2018 15:19, Wei Yongjun wrote:
->> Fixes the following sparse warnings:
->> 
->> drivers/soc/amlogic/meson-gx-socinfo.c:100:12: warning:
->>  symbol 'meson_gx_socinfo_init' was not declared. Should it be static?
->> 
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->> ---
->>  drivers/soc/amlogic/meson-gx-socinfo.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
->> index f2d8c3c..ea091f1 100644
->> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
->> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
->> @@ -97,7 +97,7 @@ static const char *socinfo_to_soc_id(u32 socinfo)
->>  	return "Unknown";
->>  }
->>  
->> -int __init meson_gx_socinfo_init(void)
->> +static int __init meson_gx_socinfo_init(void)
->>  {
->>  	struct soc_device_attribute *soc_dev_attr;
->>  	struct soc_device *soc_dev;
->> 
->> 
->> 
->
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
+  error: explicitly assigning value of variable of type 'u32'
+    (aka 'unsigned int') to itself [-Werror,-Wself-assign]
+  writeVal = writeVal;
 
-Applied for v4.17, with Neil's ack.
+Delete the branch with the self-assignment.
 
-Kevin
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+Changes in v2:
+- Delete the 'else if' branch entirely
+
+ drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+index 9cff6bc4049c..cf551785eb08 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+@@ -299,9 +299,6 @@ static void _rtl92c_get_txpower_writeval_by_regulatory(struct ieee80211_hw *hw,
+ 			writeVal = 0x00000000;
+ 		if (rtlpriv->dm.dynamic_txhighpower_lvl == TXHIGHPWRLEVEL_BT1)
+ 			writeVal = writeVal - 0x06060606;
+-		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
+-			 TXHIGHPWRLEVEL_BT2)
+-			writeVal = writeVal;
+ 		*(p_outwriteval + rf) = writeVal;
+ 	}
+ }
+-- 
+2.16.0.rc1.238.g530d649a79-goog
