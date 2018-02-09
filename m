@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185800-2-2515163503668264127
+X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185768-2-16358613700169035638
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185793; b=luOZJ2xTY3BPh8AGRGPNkBXg2Txn2a5RgDQudTZVkue5+T9
-    VYFgLYVU5xqVfoeG6pvvyKQI4g6uptZLVaYVyNNbcqB0DutrOr9SQuWL3RygI4ZG
-    T/3cWz+6NwsBGhh1t9eDz3YEMJqfGmB/kg//YuzP/gvGsdzEVOqeWUPooyi9LC94
-    2XhbKoACQQv/YkFcWebUVfdeIRZcVjVlq/+P1PAGzK7EiylYS4VgYm76P+xmvZ5X
-    nCzteIp8YYqeCaNKBcQEw0UPoqIoxAjYtjwL7qzo0IpuEtDv6d0L8YZ/03vbq1GB
-    SswdI8XUG7KmBcAhQwZBYo9WLInLiPGDFsOudyw==
+    t=1518185767; b=C1/i/gKtpkIQwgd6BmCSsU0XftwPYimybZMYCmcAKpdFbyj
+    cT3RDvRLNk7jalSwt4aEyNB/1Fo/zcQUJFXSGnO2fpxm5ykIeXTrijo2p6BJbJJi
+    pPRZ0DVQjIQWcmhclK9aQQWDxUkFuNtHMvEhRlYbxDuQmUghKZTqYs0k2skK5YAc
+    U1B+nfHoiHkJ8kjiYJFUAwBwBdZceTqd/6mQmrB6qEIxcWKRwOjRuPtt/EXOAtuz
+    tmG+PhZL0ya55Qd4K2tgQKWd6ofBXNu6ahglrlu3O4ghqz5PgUVPouRIjHw8B8h3
+    +z91OH/IlSybvKuw8s3eZhEjPehDqbFy7FI8LzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185793; bh=nW2FEL+ZDnQl2gsHCRZiNxYbE+
-    sXzUoB0tfyVkQFm+g=; b=o2jDbFZ/1327PvvYn6N8J3pz1KdfxbOVMmW0hWA/dI
-    C12VGjixwVoSvHXSXIk7qxYpO6httOwsWXuTTySQWzDf5IP6hNlQB6v8W7d3z6nq
-    1OYFCU0Q6l7Sl3PKyzFcCfHZBPeMbekDK9XojymqCUXbnZLJbhylpN7MTmz7BAzs
-    C0658CJe3EYiea08bJWcb89nbvRHnQ7YrLoJhpqlcMOHJx6DW0x4/157DTu+K46P
-    egNMo4lvdh3a6M3Ox19+vMo7AptQpR07AO5XToI8QnqhS4fSvK1JewznhEQJDpV4
-    vuF4mACGzX8+hCoVVIjx2kFjc7q5e0hquF6STuVIuI7w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185767; bh=ldry68c7hwOy/DD0jpgsZuAmET
+    vz0YDuJKdRBuOP5Yg=; b=FbXIb8tHwEaX+Iq3zeULnMQXZxULArSD/xzPhoGWUe
+    Rj24++660AlW/Yusg114xzxbUOXX7F8m+91hOI/x9tFaGzfi8u5/iuCpdpA98tBd
+    eEBfZZnjeVzg9PYHQVmYF8q4+yQ4F3CfA3HJF9NsVNyA0GjshMUX5iDggOpyqJ8c
+    x1RI3tMslytrHbP51MqLQwXXncJ9xYIwDxTeIFTOs2RRuZNvTzBqsJwX5X8Jr8Ml
+    +e7vs8ZrI8HEXP/B2XajCDslFig2lqsKwoLi1rWhP8w7afU0oilWfVAy6xJbN9Oo
+    H8fiU1rPcHu3rZ1ACgVTYjyYt4hljuk71l1BT/txuZiQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeBINkw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:40:52 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48272 "EHLO
+        id S1752335AbeBINk5 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:40:57 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48314 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752261AbeBINkt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:40:49 -0500
+        with ESMTP id S1752261AbeBINky (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:40:54 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Masters <jcm@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Balbir Singh <bsingharora@gmail.com>
-Subject: [PATCH 4.9 06/92] powerpc/64s: Add support for RFI flush of L1-D cache
-Date: Fri,  9 Feb 2018 14:38:35 +0100
-Message-Id: <20180209133931.755950465@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 08/92] powerpc/pseries: Query hypervisor for RFI flush settings
+Date: Fri,  9 Feb 2018 14:38:37 +0100
+Message-Id: <20180209133931.874865385@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -79,467 +77,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Michael Neuling <mikey@neuling.org>
 
-commit aa8a5e0062ac940f7659394f4817c948dc8c0667 upstream.
+commit 8989d56878a7735dfdb234707a2fee6faf631085 upstream.
 
-On some CPUs we can prevent the Meltdown vulnerability by flushing the
-L1-D cache on exit from kernel to user mode, and from hypervisor to
-guest.
+A new hypervisor call is available which tells the guest settings
+related to the RFI flush. Use it to query the appropriate flush
+instruction(s), and whether the flush is required.
 
-This is known to be the case on at least Power7, Power8 and Power9. At
-this time we do not know the status of the vulnerability on other CPUs
-such as the 970 (Apple G5), pasemi CPUs (AmigaOne X1000) or Freescale
-CPUs. As more information comes to light we can enable this, or other
-mechanisms on those CPUs.
-
-The vulnerability occurs when the load of an architecturally
-inaccessible memory region (eg. userspace load of kernel memory) is
-speculatively executed to the point where its result can influence the
-address of a subsequent speculatively executed load.
-
-In order for that to happen, the first load must hit in the L1,
-because before the load is sent to the L2 the permission check is
-performed. Therefore if no kernel addresses hit in the L1 the
-vulnerability can not occur. We can ensure that is the case by
-flushing the L1 whenever we return to userspace. Similarly for
-hypervisor vs guest.
-
-In order to flush the L1-D cache on exit, we add a section of nops at
-each (h)rfi location that returns to a lower privileged context, and
-patch that with some sequence. Newer firmwares are able to advertise
-to us that there is a special nop instruction that flushes the L1-D.
-If we do not see that advertised, we fall back to doing a displacement
-flush in software.
-
-For guest kernels we support migration between some CPU versions, and
-different CPUs may use different flush instructions. So that we are
-prepared to migrate to a machine with a different flush instruction
-activated, we may have to patch more than one flush instruction at
-boot if the hypervisor tells us to.
-
-In the end this patch is mostly the work of Nicholas Piggin and
-Michael Ellerman. However a cast of thousands contributed to analysis
-of the issue, earlier versions of the patch, back ports testing etc.
-Many thanks to all of them.
-
-Tested-by: Jon Masters <jcm@redhat.com>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Neuling <mikey@neuling.org>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-[Balbir - back ported to stable with changes]
-Signed-off-by: Balbir Singh <bsingharora@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/include/asm/exception-64s.h  |   40 +++++++++++--
- arch/powerpc/include/asm/feature-fixups.h |   15 +++++
- arch/powerpc/include/asm/paca.h           |   10 +++
- arch/powerpc/include/asm/setup.h          |   13 ++++
- arch/powerpc/kernel/asm-offsets.c         |    4 +
- arch/powerpc/kernel/exceptions-64s.S      |   86 ++++++++++++++++++++++++++++++
- arch/powerpc/kernel/setup_64.c            |   79 +++++++++++++++++++++++++++
- arch/powerpc/kernel/vmlinux.lds.S         |    9 +++
- arch/powerpc/lib/feature-fixups.c         |   42 ++++++++++++++
- 9 files changed, 290 insertions(+), 8 deletions(-)
 
---- a/arch/powerpc/include/asm/exception-64s.h
-+++ b/arch/powerpc/include/asm/exception-64s.h
-@@ -51,34 +51,58 @@
- #define EX_PPR		88	/* SMT thread status register (priority) */
- #define EX_CTR		96
- 
--/* Macros for annotating the expected destination of (h)rfid */
-+/*
-+ * Macros for annotating the expected destination of (h)rfid
-+ *
-+ * The nop instructions allow us to insert one or more instructions to flush the
-+ * L1-D cache when returning to userspace or a guest.
-+ */
-+#define RFI_FLUSH_SLOT							\
-+	RFI_FLUSH_FIXUP_SECTION;					\
-+	nop;								\
-+	nop;								\
-+	nop
- 
- #define RFI_TO_KERNEL							\
- 	rfid
- 
- #define RFI_TO_USER							\
--	rfid
-+	RFI_FLUSH_SLOT;							\
-+	rfid;								\
-+	b	rfi_flush_fallback
- 
- #define RFI_TO_USER_OR_KERNEL						\
--	rfid
-+	RFI_FLUSH_SLOT;							\
-+	rfid;								\
-+	b	rfi_flush_fallback
- 
- #define RFI_TO_GUEST							\
--	rfid
-+	RFI_FLUSH_SLOT;							\
-+	rfid;								\
-+	b	rfi_flush_fallback
- 
- #define HRFI_TO_KERNEL							\
- 	hrfid
- 
- #define HRFI_TO_USER							\
--	hrfid
-+	RFI_FLUSH_SLOT;							\
-+	hrfid;								\
-+	b	hrfi_flush_fallback
- 
- #define HRFI_TO_USER_OR_KERNEL						\
--	hrfid
-+	RFI_FLUSH_SLOT;							\
-+	hrfid;								\
-+	b	hrfi_flush_fallback
- 
- #define HRFI_TO_GUEST							\
--	hrfid
-+	RFI_FLUSH_SLOT;							\
-+	hrfid;								\
-+	b	hrfi_flush_fallback
- 
- #define HRFI_TO_UNKNOWN							\
--	hrfid
-+	RFI_FLUSH_SLOT;							\
-+	hrfid;								\
-+	b	hrfi_flush_fallback
- 
- #ifdef CONFIG_RELOCATABLE
- #define __EXCEPTION_RELON_PROLOG_PSERIES_1(label, h)			\
---- a/arch/powerpc/include/asm/feature-fixups.h
-+++ b/arch/powerpc/include/asm/feature-fixups.h
-@@ -189,4 +189,19 @@ void apply_feature_fixups(void);
- void setup_feature_keys(void);
- #endif
- 
-+#define RFI_FLUSH_FIXUP_SECTION				\
-+951:							\
-+	.pushsection __rfi_flush_fixup,"a";		\
-+	.align 2;					\
-+952:							\
-+	FTR_ENTRY_OFFSET 951b-952b;			\
-+	.popsection;
-+
-+
-+#ifndef __ASSEMBLY__
-+
-+extern long __start___rfi_flush_fixup, __stop___rfi_flush_fixup;
-+
-+#endif
-+
- #endif /* __ASM_POWERPC_FEATURE_FIXUPS_H */
---- a/arch/powerpc/include/asm/paca.h
-+++ b/arch/powerpc/include/asm/paca.h
-@@ -205,6 +205,16 @@ struct paca_struct {
- 	struct sibling_subcore_state *sibling_subcore_state;
- #endif
- #endif
-+#ifdef CONFIG_PPC_BOOK3S_64
-+	/*
-+	 * rfi fallback flush must be in its own cacheline to prevent
-+	 * other paca data leaking into the L1d
-+	 */
-+	u64 exrfi[13] __aligned(0x80);
-+	void *rfi_flush_fallback_area;
-+	u64 l1d_flush_congruence;
-+	u64 l1d_flush_sets;
-+#endif
- };
- 
- #ifdef CONFIG_PPC_BOOK3S
---- a/arch/powerpc/include/asm/setup.h
-+++ b/arch/powerpc/include/asm/setup.h
-@@ -38,6 +38,19 @@ static inline void pseries_big_endian_ex
- static inline void pseries_little_endian_exceptions(void) {}
- #endif /* CONFIG_PPC_PSERIES */
- 
-+void rfi_flush_enable(bool enable);
-+
-+/* These are bit flags */
-+enum l1d_flush_type {
-+	L1D_FLUSH_NONE		= 0x1,
-+	L1D_FLUSH_FALLBACK	= 0x2,
-+	L1D_FLUSH_ORI		= 0x4,
-+	L1D_FLUSH_MTTRIG	= 0x8,
-+};
-+
-+void __init setup_rfi_flush(enum l1d_flush_type, bool enable);
-+void do_rfi_flush_fixups(enum l1d_flush_type types);
-+
- #endif /* !__ASSEMBLY__ */
- 
- #endif	/* _ASM_POWERPC_SETUP_H */
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -240,6 +240,10 @@ int main(void)
- #ifdef CONFIG_PPC_BOOK3S_64
- 	DEFINE(PACAMCEMERGSP, offsetof(struct paca_struct, mc_emergency_sp));
- 	DEFINE(PACA_IN_MCE, offsetof(struct paca_struct, in_mce));
-+	DEFINE(PACA_RFI_FLUSH_FALLBACK_AREA, offsetof(struct paca_struct, rfi_flush_fallback_area));
-+	DEFINE(PACA_EXRFI, offsetof(struct paca_struct, exrfi));
-+	DEFINE(PACA_L1D_FLUSH_CONGRUENCE, offsetof(struct paca_struct, l1d_flush_congruence));
-+	DEFINE(PACA_L1D_FLUSH_SETS, offsetof(struct paca_struct, l1d_flush_sets));
- #endif
- 	DEFINE(PACAHWCPUID, offsetof(struct paca_struct, hw_cpu_id));
- 	DEFINE(PACAKEXECSTATE, offsetof(struct paca_struct, kexec_state));
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -1594,6 +1594,92 @@ END_FTR_SECTION_IFSET(CPU_FTR_CFAR)
- 	bl	kernel_bad_stack
- 	b	1b
- 
-+	.globl rfi_flush_fallback
-+rfi_flush_fallback:
-+	SET_SCRATCH0(r13);
-+	GET_PACA(r13);
-+	std	r9,PACA_EXRFI+EX_R9(r13)
-+	std	r10,PACA_EXRFI+EX_R10(r13)
-+	std	r11,PACA_EXRFI+EX_R11(r13)
-+	std	r12,PACA_EXRFI+EX_R12(r13)
-+	std	r8,PACA_EXRFI+EX_R13(r13)
-+	mfctr	r9
-+	ld	r10,PACA_RFI_FLUSH_FALLBACK_AREA(r13)
-+	ld	r11,PACA_L1D_FLUSH_SETS(r13)
-+	ld	r12,PACA_L1D_FLUSH_CONGRUENCE(r13)
-+	/*
-+	 * The load adresses are at staggered offsets within cachelines,
-+	 * which suits some pipelines better (on others it should not
-+	 * hurt).
-+	 */
-+	addi	r12,r12,8
-+	mtctr	r11
-+	DCBT_STOP_ALL_STREAM_IDS(r11) /* Stop prefetch streams */
-+
-+	/* order ld/st prior to dcbt stop all streams with flushing */
-+	sync
-+1:	li	r8,0
-+	.rept	8 /* 8-way set associative */
-+	ldx	r11,r10,r8
-+	add	r8,r8,r12
-+	xor	r11,r11,r11	// Ensure r11 is 0 even if fallback area is not
-+	add	r8,r8,r11	// Add 0, this creates a dependency on the ldx
-+	.endr
-+	addi	r10,r10,128 /* 128 byte cache line */
-+	bdnz	1b
-+
-+	mtctr	r9
-+	ld	r9,PACA_EXRFI+EX_R9(r13)
-+	ld	r10,PACA_EXRFI+EX_R10(r13)
-+	ld	r11,PACA_EXRFI+EX_R11(r13)
-+	ld	r12,PACA_EXRFI+EX_R12(r13)
-+	ld	r8,PACA_EXRFI+EX_R13(r13)
-+	GET_SCRATCH0(r13);
-+	rfid
-+
-+	.globl hrfi_flush_fallback
-+hrfi_flush_fallback:
-+	SET_SCRATCH0(r13);
-+	GET_PACA(r13);
-+	std	r9,PACA_EXRFI+EX_R9(r13)
-+	std	r10,PACA_EXRFI+EX_R10(r13)
-+	std	r11,PACA_EXRFI+EX_R11(r13)
-+	std	r12,PACA_EXRFI+EX_R12(r13)
-+	std	r8,PACA_EXRFI+EX_R13(r13)
-+	mfctr	r9
-+	ld	r10,PACA_RFI_FLUSH_FALLBACK_AREA(r13)
-+	ld	r11,PACA_L1D_FLUSH_SETS(r13)
-+	ld	r12,PACA_L1D_FLUSH_CONGRUENCE(r13)
-+	/*
-+	 * The load adresses are at staggered offsets within cachelines,
-+	 * which suits some pipelines better (on others it should not
-+	 * hurt).
-+	 */
-+	addi	r12,r12,8
-+	mtctr	r11
-+	DCBT_STOP_ALL_STREAM_IDS(r11) /* Stop prefetch streams */
-+
-+	/* order ld/st prior to dcbt stop all streams with flushing */
-+	sync
-+1:	li	r8,0
-+	.rept	8 /* 8-way set associative */
-+	ldx	r11,r10,r8
-+	add	r8,r8,r12
-+	xor	r11,r11,r11	// Ensure r11 is 0 even if fallback area is not
-+	add	r8,r8,r11	// Add 0, this creates a dependency on the ldx
-+	.endr
-+	addi	r10,r10,128 /* 128 byte cache line */
-+	bdnz	1b
-+
-+	mtctr	r9
-+	ld	r9,PACA_EXRFI+EX_R9(r13)
-+	ld	r10,PACA_EXRFI+EX_R10(r13)
-+	ld	r11,PACA_EXRFI+EX_R11(r13)
-+	ld	r12,PACA_EXRFI+EX_R12(r13)
-+	ld	r8,PACA_EXRFI+EX_R13(r13)
-+	GET_SCRATCH0(r13);
-+	hrfid
-+
- /*
-  * Called from arch_local_irq_enable when an interrupt needs
-  * to be resent. r3 contains 0x500, 0x900, 0xa00 or 0xe80 to indicate
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -678,4 +678,83 @@ static int __init disable_hardlockup_det
- 	return 0;
- }
- early_initcall(disable_hardlockup_detector);
-+
-+#ifdef CONFIG_PPC_BOOK3S_64
-+static enum l1d_flush_type enabled_flush_types;
-+static void *l1d_flush_fallback_area;
-+bool rfi_flush;
-+
-+static void do_nothing(void *unused)
-+{
-+	/*
-+	 * We don't need to do the flush explicitly, just enter+exit kernel is
-+	 * sufficient, the RFI exit handlers will do the right thing.
-+	 */
-+}
-+
-+void rfi_flush_enable(bool enable)
-+{
-+	if (rfi_flush == enable)
-+		return;
-+
-+	if (enable) {
-+		do_rfi_flush_fixups(enabled_flush_types);
-+		on_each_cpu(do_nothing, NULL, 1);
-+	} else
-+		do_rfi_flush_fixups(L1D_FLUSH_NONE);
-+
-+	rfi_flush = enable;
-+}
-+
-+static void init_fallback_flush(void)
-+{
-+	u64 l1d_size, limit;
-+	int cpu;
-+
-+	l1d_size = ppc64_caches.dsize;
-+	limit = min(safe_stack_limit(), ppc64_rma_size);
-+
-+	/*
-+	 * Align to L1d size, and size it at 2x L1d size, to catch possible
-+	 * hardware prefetch runoff. We don't have a recipe for load patterns to
-+	 * reliably avoid the prefetcher.
-+	 */
-+	l1d_flush_fallback_area = __va(memblock_alloc_base(l1d_size * 2, l1d_size, limit));
-+	memset(l1d_flush_fallback_area, 0, l1d_size * 2);
-+
-+	for_each_possible_cpu(cpu) {
-+		/*
-+		 * The fallback flush is currently coded for 8-way
-+		 * associativity. Different associativity is possible, but it
-+		 * will be treated as 8-way and may not evict the lines as
-+		 * effectively.
-+		 *
-+		 * 128 byte lines are mandatory.
-+		 */
-+		u64 c = l1d_size / 8;
-+
-+		paca[cpu].rfi_flush_fallback_area = l1d_flush_fallback_area;
-+		paca[cpu].l1d_flush_congruence = c;
-+		paca[cpu].l1d_flush_sets = c / 128;
-+	}
-+}
-+
-+void __init setup_rfi_flush(enum l1d_flush_type types, bool enable)
-+{
-+	if (types & L1D_FLUSH_FALLBACK) {
-+		pr_info("rfi-flush: Using fallback displacement flush\n");
-+		init_fallback_flush();
-+	}
-+
-+	if (types & L1D_FLUSH_ORI)
-+		pr_info("rfi-flush: Using ori type flush\n");
-+
-+	if (types & L1D_FLUSH_MTTRIG)
-+		pr_info("rfi-flush: Using mttrig type flush\n");
-+
-+	enabled_flush_types = types;
-+
-+	rfi_flush_enable(enable);
-+}
-+#endif /* CONFIG_PPC_BOOK3S_64 */
- #endif
---- a/arch/powerpc/kernel/vmlinux.lds.S
-+++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -132,6 +132,15 @@ SECTIONS
- 	/* Read-only data */
- 	RODATA
- 
-+#ifdef CONFIG_PPC64
-+	. = ALIGN(8);
-+	__rfi_flush_fixup : AT(ADDR(__rfi_flush_fixup) - LOAD_OFFSET) {
-+		__start___rfi_flush_fixup = .;
-+		*(__rfi_flush_fixup)
-+		__stop___rfi_flush_fixup = .;
-+	}
-+#endif
-+
- 	EXCEPTION_TABLE(0)
- 
- 	NOTES :kernel :notes
---- a/arch/powerpc/lib/feature-fixups.c
-+++ b/arch/powerpc/lib/feature-fixups.c
-@@ -23,6 +23,7 @@
- #include <asm/sections.h>
- #include <asm/setup.h>
- #include <asm/firmware.h>
-+#include <asm/setup.h>
- 
- struct fixup_entry {
- 	unsigned long	mask;
-@@ -115,6 +116,47 @@ void do_feature_fixups(unsigned long val
- 	}
+---
+ arch/powerpc/platforms/pseries/setup.c |   35 +++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -450,6 +450,39 @@ static void __init find_and_init_phbs(vo
+ 	of_pci_check_probe_only();
  }
  
-+#ifdef CONFIG_PPC_BOOK3S_64
-+void do_rfi_flush_fixups(enum l1d_flush_type types)
++static void pseries_setup_rfi_flush(void)
 +{
-+	unsigned int instrs[3], *dest;
-+	long *start, *end;
-+	int i;
++	struct h_cpu_char_result result;
++	enum l1d_flush_type types;
++	bool enable;
++	long rc;
 +
-+	start = PTRRELOC(&__start___rfi_flush_fixup),
-+	end = PTRRELOC(&__stop___rfi_flush_fixup);
++	/* Enable by default */
++	enable = true;
 +
-+	instrs[0] = 0x60000000; /* nop */
-+	instrs[1] = 0x60000000; /* nop */
-+	instrs[2] = 0x60000000; /* nop */
++	rc = plpar_get_cpu_characteristics(&result);
++	if (rc == H_SUCCESS) {
++		types = L1D_FLUSH_NONE;
 +
-+	if (types & L1D_FLUSH_FALLBACK)
-+		/* b .+16 to fallback flush */
-+		instrs[0] = 0x48000010;
++		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
++			types |= L1D_FLUSH_MTTRIG;
++		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
++			types |= L1D_FLUSH_ORI;
 +
-+	i = 0;
-+	if (types & L1D_FLUSH_ORI) {
-+		instrs[i++] = 0x63ff0000; /* ori 31,31,0 speculation barrier */
-+		instrs[i++] = 0x63de0000; /* ori 30,30,0 L1d flush*/
++		/* Use fallback if nothing set in hcall */
++		if (types == L1D_FLUSH_NONE)
++			types = L1D_FLUSH_FALLBACK;
++
++		if (!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR))
++			enable = false;
++	} else {
++		/* Default to fallback if case hcall is not available */
++		types = L1D_FLUSH_FALLBACK;
 +	}
 +
-+	if (types & L1D_FLUSH_MTTRIG)
-+		instrs[i++] = 0x7c12dba6; /* mtspr TRIG2,r0 (SPR #882) */
-+
-+	for (i = 0; start < end; start++, i++) {
-+		dest = (void *)start + *start;
-+
-+		pr_devel("patching dest %lx\n", (unsigned long)dest);
-+
-+		patch_instruction(dest, instrs[0]);
-+		patch_instruction(dest + 1, instrs[1]);
-+		patch_instruction(dest + 2, instrs[2]);
-+	}
-+
-+	printk(KERN_DEBUG "rfi-flush: patched %d locations\n", i);
++	setup_rfi_flush(types, enable);
 +}
-+#endif /* CONFIG_PPC_BOOK3S_64 */
 +
- void do_lwsync_fixups(unsigned long value, void *fixup_start, void *fixup_end)
+ static void __init pSeries_setup_arch(void)
  {
- 	long *start, *end;
+ 	set_arch_panic_timeout(10, ARCH_PANIC_TIMEOUT);
+@@ -467,6 +500,8 @@ static void __init pSeries_setup_arch(vo
+ 
+ 	fwnmi_init();
+ 
++	pseries_setup_rfi_flush();
++
+ 	/* By default, only probe PCI (can be overridden by rtas_pci) */
+ 	pci_add_flags(PCI_PROBE_ONLY);
+ 
