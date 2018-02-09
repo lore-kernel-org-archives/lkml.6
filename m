@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752941AbeBIVyf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 16:54:35 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:44595 "EHLO
+        id S1753027AbeBIVz5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 16:55:57 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44682 "EHLO
         mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750993AbeBIVyd (ORCPT
+        with ESMTP id S1752910AbeBIVzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 16:54:33 -0500
-X-Google-Smtp-Source: AH8x225hvTamQyvyH5MJtIlAw2jy7EPum0BBdLMWHs/nfIMZJ+JlirjLOKJnzWjdfVKM0NL8bCW17A==
+        Fri, 9 Feb 2018 16:55:55 -0500
+X-Google-Smtp-Source: AH8x227f3HXmIsEAEWURLsKBOVjnsuNSrdfn1Qk17kIFqAKr5kGyVO4o6zieHzuK/pm0zFezbEHYRQ==
 From: Ken Lin <yungching0725@gmail.com>
 To: shawnguo@kernel.org
 Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
@@ -15,8 +15,8 @@ Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: [v4] ARM: dts: imx: Add support for Advantech DMS-BA16
-Date: Sat, 10 Feb 2018 05:53:52 +0800
-Message-Id: <20180209215352.31015-1-yungching0725@gmail.com>
+Date: Sat, 10 Feb 2018 05:55:15 +0800
+Message-Id: <20180209215515.31136-1-yungching0725@gmail.com>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,6 +27,10 @@ the Advantech BA-16 module.
 
 Signed-off-by: Ken Lin <yungching0725@gmail.com>
 ---
+Changes in v4:
+- Fix the pinctrl entries order issue
+- Correct the USB_OTG_ID pinmux
+
  arch/arm/boot/dts/Makefile           |   1 +
  arch/arm/boot/dts/imx6q-dms-ba16.dts | 139 +++++++++++++++++++++++++++++++++++
  2 files changed, 140 insertions(+)
