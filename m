@@ -1,201 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeBIPnr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:43:47 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34041 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751139AbeBIPnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:43:45 -0500
-Subject: Re: [PATCH 1/2] media: i2c: adv748x: Simplify regmap configuration
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1518024886-842-1-git-send-email-kbingham@kernel.org>
- <1518024886-842-2-git-send-email-kbingham@kernel.org>
- <20180209153915.GE7666@bigcity.dyn.berto.se>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <88e7c065-f2cb-f203-1f62-579760b7b6c2@ideasonboard.com>
-Date: Fri, 9 Feb 2018 15:43:41 +0000
+        id S1751248AbeBIPq6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 10:46:58 -0500
+Received: from foss.arm.com ([217.140.101.70]:48598 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751034AbeBIPq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 10:46:57 -0500
+Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
+ select_idle_sibling
+To: Peter Zijlstra <peterz@infradead.org>,
+        Rohit Jain <rohit.k.jain@oracle.com>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com, joelaf@google.com,
+        vincent.guittot@linaro.org, morten.rasmussen@arm.com,
+        eas-dev@lists.linaro.org
+References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
+ <20180209125358.GO25201@hirez.programming.kicks-ass.net>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <2b3a903f-fbb6-cc0e-8a5d-e3329e1276c7@arm.com>
+Date: Fri, 9 Feb 2018 16:46:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180209153915.GE7666@bigcity.dyn.berto.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180209125358.GO25201@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
+On 02/09/2018 01:53 PM, Peter Zijlstra wrote:
+> On Mon, Jan 29, 2018 at 03:27:09PM -0800, Rohit Jain wrote:
 
-On 09/02/18 15:39, Niklas Söderlund wrote:
-> Hi Kieran,
-> 
-> Thanks for your patch.
-> 
-> On 2018-02-07 17:34:45 +0000, Kieran Bingham wrote:
->> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>
->> The ADV748x has identical map configurations for each register map. The
->> duplication of each map can be simplified using a helper macro such that
->> each map is represented on a single line.
->>
->> Define ADV748X_REGMAP_CONF for this purpose and un-define after it's
->> use.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  drivers/media/i2c/adv748x/adv748x-core.c | 111 ++++++-------------------------
->>  1 file changed, 22 insertions(+), 89 deletions(-)
->>
->> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
->> index fd92c9e4b519..71c69b816db2 100644
->> --- a/drivers/media/i2c/adv748x/adv748x-core.c
->> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
->> @@ -35,98 +35,31 @@
->>   * Register manipulation
->>   */
->>  
->> -static const struct regmap_config adv748x_regmap_cnf[] = {
->> -	{
->> -		.name			= "io",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "dpll",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "cp",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "hdmi",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "edid",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "repeater",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "infoframe",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "cec",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "sdp",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -
->> -	{
->> -		.name			= "txb",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> -
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> -	{
->> -		.name			= "txa",
->> -		.reg_bits		= 8,
->> -		.val_bits		= 8,
->> +#define ADV748X_REGMAP_CONF(n) \
->> +{ \
->> +	.name = n, \
->> +	.reg_bits = 8, \
->> +	.val_bits = 8, \
->> +	.max_register = 0xff, \
->> +	.cache_type = REGCACHE_NONE, \
->> +}
->>  
->> -		.max_register		= 0xff,
->> -		.cache_type		= REGCACHE_NONE,
->> -	},
->> +static const struct regmap_config adv748x_regmap_cnf[] = {
->> +	ADV748X_REGMAP_CONF("io"),
->> +	ADV748X_REGMAP_CONF("dpll"),
->> +	ADV748X_REGMAP_CONF("cp"),
->> +	ADV748X_REGMAP_CONF("hdmi"),
->> +	ADV748X_REGMAP_CONF("edid"),
->> +	ADV748X_REGMAP_CONF("repeater"),
->> +	ADV748X_REGMAP_CONF("infoframe"),
->> +	ADV748X_REGMAP_CONF("cec"),
->> +	ADV748X_REGMAP_CONF("sdp"),
->> +	ADV748X_REGMAP_CONF("txa"),
->> +	ADV748X_REGMAP_CONF("txb"),
->>  };
->>  
->> +#undef ADV748X_REGMAP_CONF
->> +
-> 
-> Why is this macro undefined here? It have a rather limited scope as it's 
-> only local to this C file and it have a good prefix of ADV748X_ so 
-> conflicts are highly unlikely. Is there something I'm missing?
-> 
-> Is it really customary to undefine helper macros like this once they are 
-> used to populate the structure?
+[...]
 
-You are right - this is probably unnecessary, as the scope is limited to this
-file. I guess I was trying to further highlight that the scope of the macro is
-limited to this specific table as well.
-
-Certainly likely to be required if this was a header, but it's not. So I'm happy
-to remove...
-
+>> @@ -6173,8 +6183,15 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>>   			return -1;
+>>   		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+>>   			continue;
+>> +		if (idle_cpu(cpu)) {
+>> +			if (full_capacity(cpu)) {
+>> +				best_cpu = cpu;
+>> +				break;
+>> +			} else if (capacity_of(cpu) > best_cap) {
+>> +				best_cap = capacity_of(cpu);
+>> +				best_cpu = cpu;
+>> +			}
+>> +		}
 > 
->>  static int adv748x_configure_regmap(struct adv748x_state *state, int region)
->>  {
->>  	int err;
->> -- 
->> 2.7.4
->>
+> No need for the else. And you'll note you're once again inconsistent
+> with your previous self.
 > 
+> But here I worry about big.little a wee bit. I think we're allowed big
+> and little cores on the same L3 these days, and you can't directly
+> compare capacity between them.
+> 
+> Morten / Dietmar, any comments?
+
+Yes, for DynamIQ (big.little successor) systems, those cpus can have 
+different capacity_orig_of() values already.
