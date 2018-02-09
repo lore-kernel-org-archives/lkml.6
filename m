@@ -1,105 +1,69 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2177121-1518207588-2-15505386348001942212
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518207588; b=VUzSWbJpDz9LJJtospG76g25yzsLIAjbt6BeUnHBA5AKXA6
-    7RzuD6xWvK68etS37tmnUdvdg/LuYJTss4eRaKsZDAokwtd/u2jwjZLTGy19KL/q
-    rKZzv8eFffRFHXogngVNuzR2sCmqA7eMLZu+SYVEFa950A8ZMx5iDoh0Wzm2nT9F
-    V0nBNXF+c/ROA+979/IDS2MJgL+GcTarv3dMCv97kAwgMIhLej/U5/JceZ7ZaQBZ
-    /WgT/7zsOOkAFk/g8BMMDfhVxvCdZUeWXiy5uWnjVebU01Pn95RWbv49S1fJRNZ/
-    /33co+GVrVmW6i7ItXf0LMG8VkL+UgQI9pw+8dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1518207588; bh=I7E6AkpOAQrDyMsdZTPYRkGxjKS5XMtY8thbN93N/Jg=; b=r
-    r6vxsQbr/PBcMsNv76kTGdIqLAtDrSfAb8O7H5Xby+J4aaE26a1wF+VrBM7myvhS
-    YBnh7tb5Tjq1OpopHJOjHKfE2/ktlt9rMVIuJcAavzZlJQ49DSXq32xen0LitymR
-    LRpP1CR9c+ParBFO6HMakLeIgT35Zcr8CXjQVhEsIA5iARKUa+xFfTEX0U4zrJoh
-    6AjgJCnBdm1Y6C3GcMFp8LhmZj9Eof1eHq25yTGduiqi5SUdSv4Ww2yUI6UhJ9sH
-    qbbTsfIcrJakYooOCtywMN5Z/49p9zhSoPejiIj+XkPfvounA2HsCg0ntRFi/mrs
-    FOiLIYY65fg1u81x3mtrw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeBIUTr (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 15:19:47 -0500
-Received: from osg.samsung.com ([64.30.133.232]:42769 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752218AbeBIUTq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 9 Feb 2018 15:19:46 -0500
-Subject: Re: [PATCH 4.14 00/22] 4.14.19-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180209133934.024795822@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <a4defd89-6c9a-2ff3-4608-f3c391bfa00e@osg.samsung.com>
-Date: Fri, 9 Feb 2018 13:19:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <timur@codeaurora.org>
+X-Google-Smtp-Source: AH8x227HupwcGlAFwLPzVxRJ8kkC8pdlmGn9oxMPi0jA+bAMbz/yKl5B+ttaitf2rsMYnMCpfN2B
+ARC-Seal: i=1; a=rsa-sha256; t=1518199309; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xS/Ec9mk+ytxs6h1wky58E7uyqlf214YTzjZTzfVc6kCXikOIHqMRQuynst48xeIqn
+         rs0rqooO8GPMkpejgw+9W1CL5wU23QTYcOhbYQpXoJGD4uFOOhe6L6DvmMU6BOgnTxq9
+         FzigoYRrN+uVobZbhgqqeu5oBifjTBx4jcHIQLDHE+MF74rq8FUf1usXj2CnndFdoFXh
+         oW3f6fC2Rw1/yHvyL/+JmArLmnCKDokESou3INQ8e5kbDbladuOXMZxavarLxOWEaY7E
+         HOW7ibZ1bu7sR7TpTrpQ97nIJUuO9ZH+/LPvWjvaaNf1h4FdyyJZVzDVlErBJ04zFiuW
+         utFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=QxkoSQrKMAt7v2a3UXeh8E1XopiduAqi/PlwPh2zYXE=;
+        b=jJJhRA8QE6XIKzbMvhWZKZyk8uKv7oP26S5qZ4r+9a/vm+3tqsBGVotvWhskXOtSqv
+         7hx/PULQlPHWU4DuI8I1G4vyNJybQ7e/7Ey0Yoimk2vv+6bNYI93amoxp7linMMiCmWy
+         KXk7NPVYv1/FmG+P9kaUVFcTboOxMUnsIJecAFVJG+Ix7sO0tm8ewbXx28Bu1d/XcTSC
+         jOkFmWBS6xuspesxeqQZH115Ozxift6D47HPgf9ZJiiKfZckOk4kpqms3gR8vDKUeEMx
+         RBhnpHKZNzF17fzP1TiQqHMZVALbpYbX1xE/K5+1atdOd6O2UhqyV+PTywVQ/QrPCvXG
+         Bb9w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=lP7hzXHv;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=YnPS2j7k;
+       spf=pass (google.com: domain of timur@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=timur@codeaurora.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=lP7hzXHv;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=YnPS2j7k;
+       spf=pass (google.com: domain of timur@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=timur@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 551A860A54
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
 MIME-Version: 1.0
 In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+References: <20180209133934.024795822@linuxfoundation.org>
+From: Timur Tabi <timur@codeaurora.org>
+Date: Fri, 9 Feb 2018 12:01:45 -0600
+X-Gmail-Original-Message-ID: <CAOZdJXUqWbNT9uQfcVtau=FTzp61m6xiLpwwDF-8e=5bF2vonw@mail.gmail.com>
+Message-ID: <CAOZdJXUqWbNT9uQfcVtau=FTzp61m6xiLpwwDF-8e=5bF2vonw@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/22] 4.14.19-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, akpm@linux-foundation.org,
+	Guenter Roeck <linux@roeck-us.net>, shuahkh@osg.samsung.com, patches@kernelci.org,
+	ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591931271366574701?=
+X-GMAIL-MSGID: =?utf-8?q?1591947359351829355?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/09/2018 06:39 AM, Greg Kroah-Hartman wrote:
+On Fri, Feb 9, 2018 at 7:39 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 > This is the start of the stable review cycle for the 4.14.19 release.
 > There are 22 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
-> 
-> Responses should be made by Sun Feb 11 13:39:12 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.19-rc1.gz
-> or in the git tree and branch at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
+Is it too late to add these two patches?
 
-thanks,
--- Shuah
+https://www.spinics.net/lists/arm-kernel/msg632667.html
+
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
