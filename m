@@ -1,153 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751142AbeBINHX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:07:23 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33862 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751028AbeBINHV (ORCPT
+        id S1751166AbeBINLd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:11:33 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:44798 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeBINLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:07:21 -0500
-Date: Fri, 9 Feb 2018 14:07:13 +0100
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [GIT PULL] s390 updates for 4.16 merge window
+        Fri, 9 Feb 2018 08:11:30 -0500
+X-Google-Smtp-Source: AH8x224eLjxr/nU+sjE7eiEhO0Zs09SxYk8mQYVlI/uiTxP0dmtN8K0BOxePt28vMWfzYVUkBtWQWg==
+Subject: Re: [PATCH 1/2] Documentation/memory-barriers.txt: cross-reference
+ "tools/memory-model/"
+To: Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        stern@rowland.harvard.edu, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, corbet@lwn.net,
+        Akira Yokosawa <akiyks@gmail.com>
+References: <20180203012103.GD3617@linux.vnet.ibm.com>
+ <8b4db282-2705-ed96-cf23-b0cdf94bbac8@gmail.com>
+ <20180204183708.GA10437@andrea> <20180209123100.GY3617@linux.vnet.ibm.com>
+ <20180209125051.GA21678@andrea>
+From: Akira Yokosawa <akiyks@gmail.com>
+Message-ID: <4b6f1278-9c73-576a-2072-e49622c0a1ee@gmail.com>
+Date: Fri, 9 Feb 2018 22:11:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-x-cbid: 18020913-0040-0000-0000-0000042E2B9E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020913-0041-0000-0000-000020D1E57B
-Message-Id: <20180209130713.GA3876@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802090168
+In-Reply-To: <20180209125051.GA21678@andrea>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On 2018/02/09 21:50, Andrea Parri wrote:
+> On Fri, Feb 09, 2018 at 04:31:00AM -0800, Paul E. McKenney wrote:
+>> On Sun, Feb 04, 2018 at 07:37:08PM +0100, Andrea Parri wrote:
+>>> Hi Akira,
+>>>
+>>> On Mon, Feb 05, 2018 at 01:14:10AM +0900, Akira Yokosawa wrote:
+>>>> Hi Paul,
+>>>> CC: Andrea
+>>>>
+>>>> This is intentionally off the list, as I was not cc'd in the thread.
+>>>> If you think it is worthwhile, could you help me join the thread by
+>>>> forwarding the following part as a reply to your message, plus CC: to me.
+>>>
+>>> [CCing lists and other people]
+>>>
+>>>
+>>>>
+>>>> On Fri, Feb 02, 2018 at 17:21:03AM -0800, Paul E. McKenney wrote:
+>>>>> On Fri, Feb 02, 2018 at 10:12:48AM +0100, Andrea Parri wrote:
+>>>>>> Recent efforts led to the specification of a memory consistency model
+>>>>>> for the Linux kernel [1], which "can (roughly speaking) be thought of
+>>>>>> as an automated version of memory-barriers.txt" and which is (in turn)
+>>>>>> "accompanied by extensive documentation on its use and its design".
+>>>>>>
+>>>>>> Make sure that the (occasional) reader of memory-barriers.txt will be
+>>>>>> aware of these developments.
+>>>>>>
+>>>>>> [1] https://marc.info/?l=linux-kernel&m=151687290114799&w=2
+>>>>>>
+>>>>>> Signed-off-by: Andrea Parri <parri.andrea@xxxxxxxxx>
+>>>>>
+>>>>> I am inclined to pull in something along these lines, but would like
+>>>>> some feedback on the wording, especially how "official" we want to
+>>>>> make the memory model to be.
+>>>>>
+>>>>> Thoughts?
+>>>>
+>>>> The change log of commit e7720af5f9ac ("locking/Documentation: Add disclaimer") says:
+>>>>     
+>>>>     It appears people are reading this document as a requirements list for
+>>>>     building hardware. This is not the intent of this document. Nor is it
+>>>>     particularly suited for this purpose.
+>>>>     
+>>>>     The primary purpose of this document is our collective attempt to define
+>>>>     a set of primitives that (hopefully) allow us to write correct code on
+>>>>     the myriad of SMP platforms Linux supports.
+>>>>     
+>>>>     Its a definite work in progress as our understanding of these platforms,
+>>>>     and memory ordering in general, progresses.
+>>>>     
+>>>>     Nor does being mentioned in this document mean we think its a
+>>>>     particularly good idea; the data dependency barrier required by Alpha
+>>>>     being a prime example. Yes we have it, no you're insane to require it
+>>>>     when building new hardware.
+>>>>
+>>>> My take on the Linux Kernel memory-consistency model is a supplement of
+>>>> memory-barriers.txt and the disclaimer also applies to the memory model.
+>>>>
+>>>>>
+>>>>> If I don't hear otherwise in a couple of days, I will pull this as is.
+>>>>>
+>>>>> 							Thanx, Paul
+>>>>>
+>>>>>> ---
+>>>>>>  Documentation/memory-barriers.txt | 4 +++-
+>>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+>>>>>> index a863009849a3b..8cc3f098f4a7d 100644
+>>>>>> --- a/Documentation/memory-barriers.txt
+>>>>>> +++ b/Documentation/memory-barriers.txt
+>>>>>> @@ -17,7 +17,9 @@ meant as a guide to using the various memory barriers provided by Linux, but
+>>>>>>  in case of any doubt (and there are many) please ask.
+>>>>>>
+>>>>>>  To repeat, this document is not a specification of what Linux expects from
+>>>>>> -hardware.
+>>>>>> +hardware.  For such a specification, in the form of a memory consistency
+>>>>>> +model, and for documentation about its usage and its design, the reader is
+>>>>>> +referred to "tools/memory-model/".
+>>>>>>
+>>>>
+>>>> Adding cross-reference in this way can _weaken_ the message of the disclaimer.
+>>>
+>>> Thank you for your remarks; I do share the same concern.
+>>>
+>>>> What about adding it in the previous sentence as the patch appended bellow?
+>>>
+>>> I do like this idea: I believe that my phrasing (and that "what Linux
+>>> expects from hardware") may be easily subject to misinterpretation...
+>>> which your solution can avoid.
+>>
+>> Any objections to Akira's patch below?  (Give or take the usual
+>> wordsmithing.)
+>>
+>> Andrea, should I interpret your paragraph above ask an Acked-by?
+> 
+> Well, I am among the Signed-off-by: of the patch; it didn't seem too fair
+> to me to Ack my own patch... ;-) Is the wording sound? other suggestions?
+> 
+>   Andrea
 
-since Martin is on vacation you get the s390 pull request from me:
+Well, I should have kept the author of the patch.
+I.e. I guess the author should have been
 
-please pull from the 'for-linus' branch of
+    From: Andrea Parri <parri.andrea@gmail.com>
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
+???
 
-to receive the following updates:
+If you'd like, I can respin the patch.
 
-The main thing in this merge is the defense for the Spectre vulnerabilities.
-But there are other updates as well, the changes in more detail:
+      Thanks, Akira
 
-* An s390 specific implementation of the array_index_mask_nospec function
-  to the defense against spectre v1
-
-* Two patches to utilize the new PPA-12/PPA-13 instructions to run the
-  kernel and/or user space with reduced branch predicton.
-
-* The s390 variant of the 'retpoline' spectre v2 defense called 'expoline'.
-  There is no return instruction for s390, instead an indirect branch is
-  used for function return. The s390 defense mechanism for indirect
-  branches works by using an execute-type instruction with the indirect
-  branch as the target of the execute. In effect that turns off the
-  prediction for the indirect branch.
-
-* Scrub registers in entry.S that contain user controlled values to
-  prevent the speculative use of these values.
-
-* Re-add the second parameter for the s390 specific runtime-instrumentation
-  system call and move the header file to uapi. The second parameter will
-  continue to do nothing but older kernel versions only accepted valid
-  real-time signal numbers. The details will be documented in the man-page
-  for the system call.
-
-* Corrections and improvements for the s390 specific documentation
-
-* Add a line to /proc/sysinfo to display the CPU model dependent
-  license-internal-code identifier
-
-* A header file include fix for eadm.
-
-* An error message fix in the kprobes code.
-
-* The removal of an outdated ARCH_xxx select statement.
-
-Thanks,
-Heiko
-
-Cornelia Huck (3):
-      s390/cmf: fix kerneldoc
-      s390/docs: mention subchannel types
-      s390/docs: reword airq section
-
-Heiko Carstens (2):
-      s390/runtime instrumentation: provide uapi header file
-      s390/runtime_instrumentation: re-add signum system call parameter
-
-Hendrik Brueckner (2):
-      s390/sysinfo: add and display licensed internal code identifier
-      s390/cpum_cf: correct counter number of LAST_HOST_TRANSLATIONS
-
-Martin Schwidefsky (6):
-      s390: scrub registers on kernel entry and KVM exit
-      s390: add optimized array_index_mask_nospec
-      s390/alternative: use a copy of the facility bit mask
-      s390: add options to change branch prediction behaviour for the kernel
-      s390: run user space and KVM guests with modified branch prediction
-      s390: introduce execute-trampolines for branches
-
-Masami Hiramatsu (1):
-      s390/kprobes: Fix %p uses in error messages
-
-Sebastian Ott (2):
-      s390/eadm: fix CONFIG_BLOCK include dependency
-      s390/cio: fix kernel-doc usage
-
-Ulf Magnusson (1):
-      s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select
-
- Documentation/driver-api/s390-drivers.rst  |  32 +++-
- arch/s390/Kconfig                          |  46 +++++-
- arch/s390/Makefile                         |  10 ++
- arch/s390/include/asm/barrier.h            |  24 +++
- arch/s390/include/asm/eadm.h               |   2 +-
- arch/s390/include/asm/facility.h           |  18 +++
- arch/s390/include/asm/lowcore.h            |   9 +-
- arch/s390/include/asm/nospec-branch.h      |  18 +++
- arch/s390/include/asm/processor.h          |   4 +
- arch/s390/include/asm/runtime_instr.h      |  67 +-------
- arch/s390/include/asm/sysinfo.h            |   3 +-
- arch/s390/include/asm/thread_info.h        |   4 +
- arch/s390/include/uapi/asm/runtime_instr.h |  74 +++++++++
- arch/s390/kernel/Makefile                  |   4 +
- arch/s390/kernel/alternative.c             |  26 ++-
- arch/s390/kernel/early.c                   |   5 +
- arch/s390/kernel/entry.S                   | 249 ++++++++++++++++++++++++++---
- arch/s390/kernel/ipl.c                     |   1 +
- arch/s390/kernel/kprobes.c                 |   2 +-
- arch/s390/kernel/module.c                  |  62 +++++--
- arch/s390/kernel/nospec-branch.c           | 100 ++++++++++++
- arch/s390/kernel/perf_cpum_cf_events.c     |   2 +-
- arch/s390/kernel/processor.c               |  18 +++
- arch/s390/kernel/runtime_instr.c           |  10 +-
- arch/s390/kernel/setup.c                   |   8 +-
- arch/s390/kernel/smp.c                     |   7 +-
- arch/s390/kernel/sysinfo.c                 |   2 +
- arch/s390/kernel/vmlinux.lds.S             |  14 ++
- drivers/s390/char/Makefile                 |   2 +
- drivers/s390/cio/chp.c                     |  10 +-
- drivers/s390/cio/cio.c                     |   2 +-
- drivers/s390/cio/cmf.c                     |  15 +-
- drivers/s390/cio/itcw.c                    |   2 +-
- drivers/s390/cio/qdio_main.c               |   4 +-
- drivers/s390/cio/vfio_ccw_cp.c             |   2 +-
- 35 files changed, 725 insertions(+), 133 deletions(-)
- create mode 100644 arch/s390/include/asm/nospec-branch.h
- create mode 100644 arch/s390/include/uapi/asm/runtime_instr.h
- create mode 100644 arch/s390/kernel/nospec-branch.c
+> 
+> 
+>>
+>> 							Thanx, Paul
+>>
+>>>   Andrea
+>>>
+>>>
+>>>>
+>>>> The tag use in the change log may need adjustments. I'm not familiar with the
+>>>> manner in modifying other persons' patches. Of course, the wording itself can
+>>>> be improved further.  Any feedback is welcome.
+>>>>
+>>>>      Thanks, Akira
+>>>>
+>>>>>>  The purpose of this document is twofold:
+>>>>>>
+>>>>>> -- 
+>>>>>> 2.7.4
+>>>>>>
+>>>>
+>>>> ----8<-------
+>>>> From 714e8c4b09acd6e965de116532dce05070b9e636 Mon Sep 17 00:00:00 2001
+>>>> From: Akira Yokosawa <akiyks@gmail.com>
+>>>> Date: Mon, 5 Feb 2018 00:28:36 +0900
+>>>> Subject: [PATCH] Documentation/memory-barriers.txt: cross-reference "tools/memory-model/"
+>>>>
+>>>> Recent efforts led to the specification of a memory consistency model
+>>>> for the Linux kernel [1], which "can (roughly speaking) be thought of
+>>>> as an automated version of memory-barriers.txt" and which is (in turn)
+>>>> "accompanied by extensive documentation on its use and its design".
+>>>>
+>>>> Make sure that the (occasional) reader of memory-barriers.txt will be
+>>>> aware of these developments.
+>>>>
+>>>> [1] https://marc.info/?l=linux-kernel&m=151687290114799&w=2
+>>>>
+>>>> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>>>> Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
+>>>> ---
+>>>>  Documentation/memory-barriers.txt | 4 +++-
+>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+>>>> index 479ecec..975488d 100644
+>>>> --- a/Documentation/memory-barriers.txt
+>>>> +++ b/Documentation/memory-barriers.txt
+>>>> @@ -14,7 +14,9 @@ DISCLAIMER
+>>>>  This document is not a specification; it is intentionally (for the sake of
+>>>>  brevity) and unintentionally (due to being human) incomplete. This document is
+>>>>  meant as a guide to using the various memory barriers provided by Linux, but
+>>>> -in case of any doubt (and there are many) please ask.
+>>>> +in case of any doubt (and there are many) please ask. For clarification of such
+>>>> +doubt, in the form of a memory consistency model, and for documentation about
+>>>> +its usage and its design, the reader is referred to "tools/memory-model/".
+>>>>  
+>>>>  To repeat, this document is not a specification of what Linux expects from
+>>>>  hardware.
+>>>> -- 
+>>>> 2.7.4
+>>>>
+>>>>
+>>>>
+>>>
+>>
