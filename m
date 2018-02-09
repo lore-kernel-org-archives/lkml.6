@@ -1,86 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBIJX1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:23:27 -0500
-Received: from mga04.intel.com ([192.55.52.120]:60052 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750942AbeBIJXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:23:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,482,1511856000";
-   d="scan'208";a="29436691"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 3/8] docs: kernel-doc: Move STATE_NORMAL processing into its own function
-In-Reply-To: <20180207172624.24555-4-corbet@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180207172624.24555-1-corbet@lwn.net> <20180207172624.24555-4-corbet@lwn.net>
-Date: Fri, 09 Feb 2018 11:23:17 +0200
-Message-ID: <87d11ea54q.fsf@intel.com>
+        id S1751424AbeBIJZY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:25:24 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39386 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751030AbeBIJZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:25:22 -0500
+Date: Fri, 9 Feb 2018 04:21:39 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-audit@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] audit: deprecate the AUDIT_FILTER_ENTRY filter
+Message-ID: <20180209092139.puragxfx6ynzwzij@madcap2.tricolour.ca>
+References: <0b3961849e1fdcb10b95dd3ca0dc818e8997a8f5.1518002656.git.rgb@redhat.com>
+ <CAHC9VhRWq-iW4kKkhKLiORSVtDXyeWNLyGX1wcmT4LwuoDiDgw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRWq-iW4kKkhKLiORSVtDXyeWNLyGX1wcmT4LwuoDiDgw@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 07 Feb 2018, Jonathan Corbet <corbet@lwn.net> wrote:
-> Begin the process of splitting up the nearly 500-line process_file()
-> function by moving STATE_NORMAL processing to a separate function.
->
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  scripts/kernel-doc | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
->
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index ad30c52f91ef..65150b7c8472 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -1780,6 +1780,21 @@ sub process_export_file($) {
->      close(IN);
->  }
->  
-> +#
-> +# Parsers for the various processing states.
-> +#
-> +# STATE_NORMAL: looking for the /** to begin everything.
-> +#
-> +sub process_normal() {
-> +    if (/$doc_start/o) {
-> +	$state = STATE_NAME;	# next line is always the function name
-> +	$in_doc_sect = 0;
-> +	$declaration_start_line = $. + 1;
-> +    }
-> +}
-> +
-> +
-> +
+On 2018-02-08 18:58, Paul Moore wrote:
+> On Wed, Feb 7, 2018 at 6:24 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > The audit entry filter has been long deprecated with userspace support
+> > finally removed in audit-v2.6.7 and plans to remove kernel support have
+> > existed since kernel-v2.6.31.
+> > Remove it.
+> >
+> > Passes audit-testsuite.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/6
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  kernel/auditfilter.c | 4 ++--
+> >  kernel/auditsc.c     | 3 ++-
+> >  2 files changed, 4 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> > index 4a1758a..1bbf5de 100644
+> > --- a/kernel/auditfilter.c
+> > +++ b/kernel/auditfilter.c
+> > @@ -258,8 +258,8 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
+> >                 goto exit_err;
+> >  #ifdef CONFIG_AUDITSYSCALL
+> >         case AUDIT_FILTER_ENTRY:
+> > -               if (rule->action == AUDIT_ALWAYS)
+> > -                       goto exit_err;
+> > +               pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
+> > +               goto exit_err;
+> >         case AUDIT_FILTER_EXIT:
+> >         case AUDIT_FILTER_TASK:
+> >  #endif
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index e80459f..9348302 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -1530,7 +1530,8 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
+> >         context->dummy = !audit_n_rules;
+> >         if (!context->dummy && state == AUDIT_BUILD_CONTEXT) {
+> >                 context->prio = 0;
+> > -               state = audit_filter_syscall(tsk, context, &audit_filter_list[AUDIT_FILTER_ENTRY]);
+> > +               if (auditd_test_task(tsk))
+> > +                       return;
+> 
+> Since we are removing the call to audit_filter_syscall() entirely -
+> which would appear to be the right thing - I wonder if it would be a
+> good idea to move the auditd_test_task() check earlier in the function
+> (fail early).  I'm thinking up where we check audit_enabled, before we
+> start populating context.
 
-Superfluous whitespace, but fixed in the next patch so I'll look the
-other way.
+Ok, agreed, along some other minor code shuffles.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+> >         }
+> >         if (state == AUDIT_DISABLED)
+> >                 return;
+> > --
+> 
+> paul moore
 
->  sub process_file($) {
->      my $file;
->      my $identifier;
-> @@ -1807,11 +1822,7 @@ sub process_file($) {
->  	# Replace tabs by spaces
->          while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
->  	if ($state == STATE_NORMAL) {
-> -	    if (/$doc_start/o) {
-> -		$state = STATE_NAME;	# next line is always the function name
-> -		$in_doc_sect = 0;
-> -		$declaration_start_line = $. + 1;
-> -	    }
-> +	    process_normal();
->  	} elsif ($state == STATE_NAME) {# this line is the function name (always)
->  	    if (/$doc_block/o) {
->  		$state = STATE_DOCBLOCK;
+- RGB
 
--- 
-Jani Nikula, Intel Open Source Technology Center
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
