@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751085AbeBIJEF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:04:05 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37963 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbeBIJEA (ORCPT
+        id S1751205AbeBIJEO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:04:14 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41425 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751098AbeBIJEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:04:00 -0500
-X-Google-Smtp-Source: AH8x226pQOC/FlBsKPmneTfUoil4FQ3QWKujNk6ig4ZsNs3NLKogFR4mX6t9YcrtAKKfTS489SDDLg==
-Subject: Re: [PATCH 06/10] ARM64: dts: meson: Remove "cooling-{min|max}-level"
- for CPU nodes
+        Fri, 9 Feb 2018 04:04:07 -0500
+X-Google-Smtp-Source: AH8x227U4KYcB0dfK5Z7jln63jTf6wlbQSMKuaCLjUONscWM/4aSYkkJq7A+g+Wc/0ITZvaHq4YUPA==
+Subject: Re: [PATCH 08/10] ARM64: dts: meson: Remove "cooling-{min|max}-level"
+ for gpio-fan node
 To: Viresh Kumar <viresh.kumar@linaro.org>,
         Rafael Wysocki <rjw@rjwysocki.net>, Carlo Caione <carlo@caione.org>,
         Kevin Hilman <khilman@baylibre.com>
@@ -20,15 +20,15 @@ Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>, linux-amlogic@lists.infradead.org,
         Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
 References: <cover.1518166039.git.viresh.kumar@linaro.org>
- <6c91ebfecf86da98a7682c6d262ff1218a1d7343.1518166039.git.viresh.kumar@linaro.org>
+ <24b53440922491982c781a3eb032b04c167d733d.1518166039.git.viresh.kumar@linaro.org>
 From: Neil Armstrong <narmstrong@baylibre.com>
 Organization: Baylibre
-Message-ID: <303e6c56-8076-e590-c778-81cb8c0181ed@baylibre.com>
-Date: Fri, 9 Feb 2018 10:03:57 +0100
+Message-ID: <3237154b-18a9-9e8b-1e5f-a7ce261fe3ae@baylibre.com>
+Date: Fri, 9 Feb 2018 10:04:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <6c91ebfecf86da98a7682c6d262ff1218a1d7343.1518166039.git.viresh.kumar@linaro.org>
+In-Reply-To: <24b53440922491982c781a3eb032b04c167d733d.1518166039.git.viresh.kumar@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -39,33 +39,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 09/02/2018 09:58, Viresh Kumar wrote:
 > The "cooling-min-level" and "cooling-max-level" properties are not
 > parsed by any part of the kernel currently and the max cooling state of
-> a CPU cooling device is found by referring to the cpufreq table instead.
+> gpio-fan cooling device is found by referring to the
+> "gpio-fan,speed-map" instead.
 > 
-> Remove the unused properties from the CPU nodes.
+> Remove the unused properties from the gpio-fan node.
 > 
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 4 ----
->  1 file changed, 4 deletions(-)
+>  arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 2 --
+>  1 file changed, 2 deletions(-)
 > 
 > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> index 1448c3dba08e..658215c9822c 100644
+> index 658215c9822c..8ee4a693c438 100644
 > --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 > +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> @@ -209,14 +209,10 @@
->  };
->  
->  &cpu0 {
-> -	cooling-min-level = <0>;
-> -	cooling-max-level = <6>;
->  	#cooling-cells = <2>;
->  };
->  
->  &cpu4 {
-> -	cooling-min-level = <0>;
-> -	cooling-max-level = <4>;
->  	#cooling-cells = <2>;
->  };
+> @@ -59,8 +59,6 @@
+>  				      1 1
+>  				      2 2
+>  				      3 3>;
+> -		cooling-min-level = <0>;
+> -		cooling-max-level = <3>;
+>  		#cooling-cells = <2>;
+>  	};
 >  
 > 
 
