@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184629-2-16086666890561468180
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184621-2-1386229316689394332
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184628; b=L1e+pcmzH+LzdDhFht0G8fDkyyG9NM+J5fRpW+jsx60uEUT
-    fqQ33GkO0UGN/Z3nMfyJuhHeZ76cqTHbg6RrdIFOUTnGmcGOyjmnE6VZxkjsRwt9
-    wqlfT7eXXzpMjLunv+CWpszEZQHPYN/RRAnr7sp/qajAUOrokJic4btoOt3Bd3AA
-    a56MHqKfdyLZyi5n80mQG2/Dizf2EFRQSRqU4pwXikEVqv2EwMpS4ZstextzRTp2
-    Xw2z9S9xvTMQQ1rIsffC2lEAilkHyR7pSoPJ7UJ1q4yzq8mo9ngT1EO0TylvJeQ2
-    GXUqCtq/E0ef2Rbu7UdwWyiXMfXw2BaTbqyMTwg==
+    t=1518184620; b=gbv8tvnLIvfoE2H/eo82R986McJnkbj8c+RippEEie8ld89
+    5Nb8El31xU1UGuN+A939zWumu9SqL74Rq78aruQ0sHJFBxyBcuxjxm0KcZMF1o5S
+    WGEWHsVMc4sCbAud4VBlbFZKLUxyx8orMU5T0gR/KpZUFVjeutJqF23qfw3/ALXg
+    StWVTa6T0FBE2nrUr3eUmNXk6o6mAoHynfmW/cd2ucaaecxyhuOu3woSJLCZRjrB
+    BNU1xl+NEVZpfSBaFvsZ+ncMCVCDJXXcf5UgH66VD4koDMK0qo60Nv9G0A64Q/Yr
+    lgBZYzJxe4XM0TqwmAQiY4AKaZmm8H72Sj3W4hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184628; bh=B7C5UtEFraJojnxpHGFUfAc/1Y
-    vBRG6NAzvMJt+J/38=; b=XfOjf5HHV8Vmsfg8bY5vt7yv8thVVOC8fqvh+2SEJH
-    BJFwbYlMDW8i/8YSI2xnAFzTm1uDSGxISN9kVjDvbS9IlRIb6L4dbQdtmNR/gtp4
-    uKcATGCfGtAsbXFxxkRyRNC+j6mZRChyxX7rKAxeqdmea4ZiMdWWuU+LayM08Ito
-    Yl37nKxmTjkO0PkjL9nb3Kkzk9GHmwggNJQmPNednW6Spq8FeOcFBzcss8BupISK
-    D+xfz7RAYVIrVz06p1ePcs1mBksMhXd1WDL0uSWs5fPpnm21Kp4JnCy5eB5/Ig5+
-    toLOE5qQkoUgKpcpKeQs+npN1pt6l2CT2ReTvKC+mHWQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184620; bh=m6LNs2srpzOrVEG8OEW8kMSB1q
+    HuYoG9Vcd1ggroqqk=; b=NDB5qTi4TYO5EzpvGMK/PFe8AAhc+S5jyOqIW0JHJD
+    qP97CDjrukVylbMHDRIAHn2By1hkC3zeQ+wID5ZUPUl6NgOLfnPTwyxq+Z1o3e7o
+    GO3lRuDeEyo/D4QgNyeoYqBFxISQOvqmw9NfsBIxRF4UpalnhCCPLGiQrp5i+doD
+    yedAO3yl58TkNtbNe5aLDV+w449gY0U3gb9NNDmrf7zuZN4Yz69DQTa3KpJbauq5
+    +F51d8JnF0SAFBGPWAtssTxCrzgBy5Awyt2ocXYy8tP7tQf37nEXnsb8sbV+zvYM
+    Jgcsnrhf5L30t5QCndgPh2LBpQPlWQbUjGX3b28pTs/A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753044AbeBINpB (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:45:01 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51648 "EHLO
+        id S1753614AbeBIN4s (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:56:48 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51662 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753475AbeBINo6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:44:58 -0500
+        with ESMTP id S1753058AbeBINpB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:01 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.14 01/22] .gitignore: sort normal pattern rules alphabetically
-Date: Fri,  9 Feb 2018 14:39:50 +0100
-Message-Id: <20180209133934.128031413@linuxfoundation.org>
+        syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 10/22] vhost_net: stop device during reset owner
+Date: Fri,  9 Feb 2018 14:39:59 +0100
+Message-Id: <20180209133934.805941111@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
 References: <20180209133934.024795822@linuxfoundation.org>
@@ -78,80 +79,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Jason Wang <jasowang@redhat.com>
 
-commit 1377dd3e29878b8f5d9f5c9000975f50a428a0cd upstream.
 
-We are having more and more ignore patterns.  Sort the list
-alphabetically.  We will easily catch duplicated patterns if any.
+[ Upstream commit 4cd879515d686849eec5f718aeac62a70b067d82 ]
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+We don't stop device before reset owner, this means we could try to
+serve any virtqueue kick before reset dev->worker. This will result a
+warn since the work was pending at llist during owner resetting. Fix
+this by stopping device during owner reset.
+
+Reported-by: syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com
+Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- .gitignore |   42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/vhost/net.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/.gitignore
-+++ b/.gitignore
-@@ -7,38 +7,38 @@
- # command after changing this file, to see if there are
- # any tracked files which get ignored after the change.
- #
--# Normal rules
-+# Normal rules (sorted alphabetically)
- #
- .*
-+*.a
-+*.bin
-+*.bz2
-+*.c.[012]*.*
-+*.dwo
-+*.elf
-+*.gcno
-+*.gz
-+*.i
-+*.ko
-+*.ll
-+*.lst
-+*.lz4
-+*.lzma
-+*.lzo
-+*.mod.c
- *.o
- *.o.*
--*.a
-+*.order
-+*.patch
- *.s
--*.ko
- *.so
- *.so.dbg
--*.mod.c
--*.i
--*.lst
-+*.su
- *.symtypes
--*.order
--*.elf
--*.bin
- *.tar
--*.gz
--*.bz2
--*.lzma
- *.xz
--*.lz4
--*.lzo
--*.patch
--*.gcno
--*.ll
--modules.builtin
- Module.symvers
--*.dwo
--*.su
--*.c.[012]*.*
-+modules.builtin
- 
- #
- # Top-level generic files
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1212,6 +1212,7 @@ static long vhost_net_reset_owner(struct
+ 	}
+ 	vhost_net_stop(n, &tx_sock, &rx_sock);
+ 	vhost_net_flush(n);
++	vhost_dev_stop(&n->dev);
+ 	vhost_dev_reset_owner(&n->dev, umem);
+ 	vhost_net_vq_reset(n);
+ done:
