@@ -1,97 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751140AbeBIKFW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 05:05:22 -0500
-Received: from foss.arm.com ([217.140.101.70]:45006 "EHLO foss.arm.com"
+        id S1751277AbeBIKGQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 05:06:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47387 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751005AbeBIKFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 05:05:21 -0500
-Date: Fri, 9 Feb 2018 10:05:16 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 16/20] arm64: Handle shared capability entries
-Message-ID: <20180209100512.GB5862@e103592.cambridge.arm.com>
-References: <20180131182807.32134-1-suzuki.poulose@arm.com>
- <20180131182807.32134-17-suzuki.poulose@arm.com>
- <20180207103934.GG5862@e103592.cambridge.arm.com>
- <831ad839-3c68-fc1e-d578-f951b46ed6ed@arm.com>
- <20180208120114.GX5862@e103592.cambridge.arm.com>
- <c10b7441-4643-4277-c6fc-a205f3687673@arm.com>
+        id S1751034AbeBIKGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 05:06:14 -0500
+Date: Fri, 9 Feb 2018 11:06:11 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/7] livepatch: Initial support for dynamic
+ structures
+In-Reply-To: <20180206103424.10829-4-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1802081643010.18225@pobox.suse.cz>
+References: <20180206103424.10829-1-pmladek@suse.com> <20180206103424.10829-4-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c10b7441-4643-4277-c6fc-a205f3687673@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 12:32:56PM +0000, Robin Murphy wrote:
-> On 08/02/18 12:01, Dave Martin wrote:
-> >On Thu, Feb 08, 2018 at 10:53:52AM +0000, Suzuki K Poulose wrote:
-> >>On 07/02/18 10:39, Dave Martin wrote:
-> >>>On Wed, Jan 31, 2018 at 06:28:03PM +0000, Suzuki K Poulose wrote:
-> >>>>Some capabilities have different criteria for detection and associated
-> >>>>actions based on the matching criteria, even though they all share the
-> >>>>same capability bit. So far we have used multiple entries with the same
-> >>>>capability bit to handle this. This is prone to errors, as the
-> >>>>cpu_enable is invoked for each entry, irrespective of whether the
-> >>>>detection rule applies to the CPU or not. And also this complicates
-> >>>>other helpers, e.g, __this_cpu_has_cap.
-> >>>>
-> >>>>This patch adds a wrapper entry to cover all the possible variations
-> >>>>of a capability and ensures :
-> >>>>  1) The capabilitiy is set when at least one of the entry detects
-> >>>>  2) Action is only taken for the entries that detects.
-> >>>
-> >>>I guess this means that where we have a single cpu_enable() method
-> >>>but complex match criteria that require multiple entries, then that
-> >>>cpu_enable() method might get called multiple times on a given CPU.
-> >>
-> >>A CPU executes cpu_enable() only for the "matching" entries in the list,
-> >>unlike earlier. So as long as there is a single entry "matching" the given
-> >>CPU, the cpu_enable() will not be duplicated. May be we *should* mandate
-> >>that a CPU cannot be matched by multiple entries.
-> >>
-> >>>
-> >>>Could be worth a comment if cpu_enable() methods must be robust
-> >>>against this.
-> >
-> >Could we say something like:
-> >
-> >"Where a single capability has multiple entries, mutiple cpu_enable()
-> >methods may be called if more than one entry matches.  Where this is
-> >not desired, care should be taken to ensure that the entries are
-> >mutually exclusive: for example, two entries for a single capability
-> >that match on MIDR should be configured to match MIDR ranges that do
-> >not overlap."
-> >
-> >This is more verbose than I would like however.  Maybe there's a simpler
-> >way to say it.
+On Tue, 6 Feb 2018, Petr Mladek wrote:
+
+> From: Jason Baron <jbaron@akamai.com>
 > 
-> If we're not also talking about a capability having mutually exclusive
-> enable methods (it doesn't seem so, but I'm not necessarily 100% clear), how
-> about:
+> We are going to add a feature called atomic replace. It will allow to
+> create a patch that would replace all already registered patches.
+> For this, we will need to dynamically create funcs and objects
+> for functions that are not longer patched.
 > 
-> "If a cpu_enable() method is associated with multiple matches for a single
-> capability, care should be taken that either the match criteria are mutually
-> exclusive, or that the method is robust against being called multiple
-> times."
+> This patch adds basic framework to handle such dynamic structures.
+> 
+> It adds enum klp_func_type that allows to distinguish the dynamically
+> allocated funcs' structures. Note that objects' structures do not have
+> a clear type. Namely the static objects' structures might list both static
+> and dynamic funcs' structures.
+> 
+> The function type is then used to limit klp_free() functions. We will
+> want to free the dynamic structures separately when they are not
+> longer needed. At the same time, we also want to make our life easier,
+> and introduce _any_ type that will allow to process all existing
+> structures in one go.
+> 
+> We need to be careful here. First, objects' structures must be freed
+> only when all listed funcs' structures are freed. Also we must avoid
+> double free. Both problems are solved by removing the freed structures
+> from the list.
+> 
+> Also note that klp_free*() functions are called also in klp_init_patch()
+> error path when only some kobjects have been initialized. The other
+> dynamic structures must be freed immediately by calling the respective
+> klp_free_*_dynamic() functions.
+> 
+> Finally, the dynamic objects' structures are generic. The respective
+> klp_allocate_object_dynamic() and klp_free_object_dynamic() can
+> be implemented here. On the other hand, klp_free_func_dynamic()
+> is empty. It must be updated when a particular dynamic
+> klp_func_type is introduced.
+> 
+> Signed-off-by: Jason Baron <jbaron@akamai.com>
+> [pmladek@suse.com: Converted into a generic API]
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Jiri Kosina <jikos@kernel.org>
+> Cc: Miroslav Benes <mbenes@suse.cz>
 
-This is one reason why I wondered if we could pull cpu_enable() out of
-the match criteria struct so that we don't duplicate it: in that case
-there's no chance of multiple incompatible cpu_enable() methods.
+This patch introduces klp_get_or_add_object(), but it is not used here. 
+One of the later patches adds its call site. GCC warns about this. I like 
+it being introduced here, because it belongs to the patch. Someone may 
+complain though.
 
-But Suzuki is right that this would be a somewhat invasive change at
-this point, and I think it's sufficient to warn about the possibility
-of incompatible cpu_enable()s in a comment.
+Also klp_free_objects() is not declared as static and sparse complains 
+about it. Petr, you can make it static here and drop the keyword later.
 
-Otherwise, your text sounds good.
+Otherwise it looks good.
 
-Cheers
----Dave
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+
+Miroslav
