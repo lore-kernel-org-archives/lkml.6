@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x225/KVUt15gJDL0ONWVOB9Q31CwVyxMY+/zvM0D4tsldBzbZvhcjj5OlTnGW+seB/v4APewf
-ARC-Seal: i=1; a=rsa-sha256; t=1518168358; cv=none;
+X-Google-Smtp-Source: AH8x2246jsWK6sdlB3BW+a6OXv8QsbPZoE8OZUR7YODbkBe3X1zaz9v5lPs/a0ewF5q8i2dAPS7z
+ARC-Seal: i=1; a=rsa-sha256; t=1518168366; cv=none;
         d=google.com; s=arc-20160816;
-        b=xLKyLsWDR5KnNEkubvyqYtJMyOqlvslv4g9IHS0YoRugMcdnXS/oTpC6TjaTjtSLZg
-         C4eZtpCHmlNfxYUdtYmgDa329Qt1HJFrPq02pkEzsBFV5M1BhcJ5su1BgwlGvfDqJ+OJ
-         IlU8Ty1mHzP2h0XWs3IiC47sOjI4RHXNJKZb2S7j+WTDSxp7FgDkWuDM8kAmpJCeWgEP
-         CFohkeHrMKu1PpvlmWJFzGyIrtQ0tarrSeEIa16fWbgDOjmQay/QteIe2q8LUlsgC5n1
-         YZzVJNj2AktrrraJ0orV352gueSg92rGzQvw/M+EcMcRq5KabXdBmzfudLkoFTavxkxD
-         RQrg==
+        b=ZOqdtSSnIEcq1tudS1sKaO3+LvmCZwPFRdgHltnxiGfJCNPPwaRQozb1yiDIyt4Y7p
+         /pTI6z7unBD9C+IvPXwxq3TIRfcMmfh6EX8BUPYZdPa0TrLq8l5D5PrV8FH4FggekiVi
+         WEblWCmQTUZkfCk0q9zHgtnIYOt88laMC01iCjsLK+uuOvveDBpptcE/JsyIGqIamHH0
+         MtgBFKDCa5tof3tzUV2WDitJ53iRRKJ/eOaGJ5imGWEmTmcMMWtUUl+q5fhnUI9n27kC
+         /zKV0qv/mmuTwnE0tsbbpuiYBjudbMjgacMpA7WpRfx+/U0Sr3Mh6Z6wekvkCzazheoz
+         577g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=FsHr9cyDtWkPGmYU2PDo95OfsWWzAjreN/HkHHuHYlM=;
-        b=MiTklFpSksmfxGtLQtYz6cuDzWMLiCLmgG4yn0GF3GX4dFFNzYc+vKz72FzktQOHTL
-         gli+X2ab4fHTe5mVdnZ2xUxR6iS/bqszTW8P+Yk4eAA1T0r8iRlNfU+SvaBSNnPxZQyf
-         liSbfLWsLJ405QgCCRq3mJHI9Mfqjb+uEXQu1bI/BHJT7dbEYpw8nQesCwvcdQjavNl1
-         OC4vov2N+9yogQShDC6Z4Dmpk3SBHnyNEauy9oKcZNNd4wVuVUB3PpdzAkYU2MQ5h40C
-         Gv5gbX+M8hIKls49yPA0hetbNWOQDLn1e9OXegRzHdJKEzdyY0uKIezdCZrLYL9gwueU
-         yKmA==
+        bh=TBtohe2X5SHsmPjdTDHZdNzRuX9gI4sKHKxpvfjShHc=;
+        b=QK8V+mTtEwe+o6Z8Xe7jUAUNQm2pbEdnUOGONijM2ETBBKV8aNSnj3g8LIVTaoAViP
+         JZKjdg5xI0HtcWZjC2qkoTtXK50rHoUH5tDAOOK82T84rlNy3SOuoYZRVRt94dNTaoW6
+         qkO0B0KwDlu2kTFQ4cYcwn7EJi/X1mkv2GGayVLODOegamnBYORDL9OkNb64CdMX3rXV
+         cbzz+lkdQr3OWIv5LhxEes9mfl8t7D6ZEf0WqyeHm3iazARjKd+AL0hOIQ3yJMcVlaiA
+         VW0eSBhj8hNV658BB6qKMqQ85HN7rHOHGAL8Jr3P0tQqc7gviCIMPt4eTub9ClAHZcIH
+         oGQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=elXEVgVH;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=QvcKtZ4u;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=elXEVgVH;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=QvcKtZ4u;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,122 +57,72 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 07/31] x86/entry/32: Restore segments before int registers
-Date: Fri,  9 Feb 2018 10:25:16 +0100
-Message-Id: <1518168340-9392-8-git-send-email-joro@8bytes.org>
+Subject: [PATCH 25/31] x86/mm/dump_pagetables: Define INIT_PGD
+Date: Fri,  9 Feb 2018 10:25:34 +0100
+Message-Id: <1518168340-9392-26-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914904268770431?=
-X-GMAIL-MSGID: =?utf-8?q?1591914904268770431?=
+X-GMAIL-THRID: =?utf-8?q?1591914913663684449?=
+X-GMAIL-MSGID: =?utf-8?q?1591914913663684449?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Restoring the segments can cause exceptions that need to be
-handled. With PTI enabled, we still need to be on kernel cr3
-when the exception happens. For the cr3-switch we need
-at least one integer scratch register, so we can't switch
-with the user integer registers already loaded.
-
-Avoid a push/pop cycle to free a register for the cr3 switch
-by restoring the segments first. That way the integer
-registers are not live yet and we can use them for the cr3
-switch.
-
-This also helps in the NMI path, where we need to leave with
-the same cr3 as we entered. There we still have the
-callee-saved registers live when switching cr3s.
+Define INIT_PGD to point to the correct initial page-table
+for 32 and 64 bit and use it where needed. This fixes the
+build on 32 bit with CONFIG_PAGE_TABLE_ISOLATION enabled.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 50 ++++++++++++++++++++---------------------------
- 1 file changed, 21 insertions(+), 29 deletions(-)
+ arch/x86/mm/dump_pagetables.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 9bd7718..b39c5e2 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -92,11 +92,6 @@
- .macro PUSH_GS
- 	pushl	$0
- .endm
--.macro POP_GS pop=0
--	addl	$(4 + \pop), %esp
--.endm
--.macro POP_GS_EX
--.endm
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 2a4849e..2151ebb 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -105,6 +105,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
  
-  /* all the rest are no-op */
- .macro PTGS_TO_GS
-@@ -116,20 +111,6 @@
- 	pushl	%gs
- .endm
- 
--.macro POP_GS pop=0
--98:	popl	%gs
--  .if \pop <> 0
--	add	$\pop, %esp
--  .endif
--.endm
--.macro POP_GS_EX
--.pushsection .fixup, "ax"
--99:	movl	$0, (%esp)
--	jmp	98b
--.popsection
--	_ASM_EXTABLE(98b, 99b)
--.endm
--
- .macro PTGS_TO_GS
- 98:	mov	PT_GS(%esp), %gs
- .endm
-@@ -201,24 +182,35 @@
- 	popl	%eax
- .endm
- 
--.macro RESTORE_REGS pop=0
--	RESTORE_INT_REGS
--1:	popl	%ds
--2:	popl	%es
--3:	popl	%fs
--	POP_GS \pop
-+.macro RESTORE_SEGMENTS
-+1:	mov	PT_DS(%esp), %ds
-+2:	mov	PT_ES(%esp), %es
-+3:	mov	PT_FS(%esp), %fs
-+	PTGS_TO_GS
- .pushsection .fixup, "ax"
--4:	movl	$0, (%esp)
-+4:	movl	$0, PT_DS(%esp)
- 	jmp	1b
--5:	movl	$0, (%esp)
-+5:	movl	$0, PT_ES(%esp)
- 	jmp	2b
--6:	movl	$0, (%esp)
-+6:	movl	$0, PT_FS(%esp)
- 	jmp	3b
- .popsection
- 	_ASM_EXTABLE(1b, 4b)
- 	_ASM_EXTABLE(2b, 5b)
- 	_ASM_EXTABLE(3b, 6b)
--	POP_GS_EX
-+	PTGS_TO_GS_EX
-+.endm
++#define INIT_PGD	((pgd_t *) &init_top_pgt)
 +
-+.macro RESTORE_SKIP_SEGMENTS pop=0
-+	/* Jump over the segments stored on stack */
-+	addl	$((4 * 4) + \pop), %esp
-+.endm
-+
-+.macro RESTORE_REGS pop=0
-+	RESTORE_SEGMENTS
-+	RESTORE_INT_REGS
-+	/* Skip over already restored segment registers */
-+	RESTORE_SKIP_SEGMENTS \pop
- .endm
+ #else /* CONFIG_X86_64 */
  
- .macro CHECK_AND_APPLY_ESPFIX
+ enum address_markers_idx {
+@@ -133,6 +135,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
+ 
++#define INIT_PGD	(swapper_pg_dir)
++
+ #endif /* !CONFIG_X86_64 */
+ 
+ /* Multipliers for offsets within the PTEs */
+@@ -478,11 +482,7 @@ static inline bool is_hypervisor_range(int idx)
+ static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
+ 				       bool checkwx, bool dmesg)
+ {
+-#ifdef CONFIG_X86_64
+-	pgd_t *start = (pgd_t *) &init_top_pgt;
+-#else
+-	pgd_t *start = swapper_pg_dir;
+-#endif
++	pgd_t *start = INIT_PGD;
+ 	pgprotval_t prot;
+ 	int i;
+ 	struct pg_state st = {};
+@@ -543,7 +543,7 @@ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
+ static void ptdump_walk_user_pgd_level_checkwx(void)
+ {
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+-	pgd_t *pgd = (pgd_t *) &init_top_pgt;
++	pgd_t *pgd = INIT_PGD;
+ 
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
 -- 
 2.7.4
