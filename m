@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752621AbeBIT2K (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 14:28:10 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41520 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752403AbeBIT2F (ORCPT
+        id S1752742AbeBITad (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 14:30:33 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46499 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeBIT2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 14:28:05 -0500
-X-Google-Smtp-Source: AH8x225UIHaccei9YlPAvearP9VXhf/zxjQouuPjCYhe8iiDZQgEb4ejHWbejHvVBOkeX8Kkzx+i6w==
+        Fri, 9 Feb 2018 14:28:12 -0500
+X-Google-Smtp-Source: AH8x225Xmfqm+1oIf3+CmxK8KqvFo1uLgXKCUdOdLo0bqpQTdJQQ7RMr+lirKLVknvneutcUC+r3KQ==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -25,9 +25,9 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH 2/7] watchdog: sunxi: allow setting timeout in devicetree
-Date: Fri,  9 Feb 2018 20:27:19 +0100
-Message-Id: <20180209192724.1227-3-marcus.folkesson@gmail.com>
+Subject: [PATCH 5/7] watchdog: mtk: allow setting timeout in devicetree
+Date: Fri,  9 Feb 2018 20:27:22 +0100
+Message-Id: <20180209192724.1227-6-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180209192724.1227-1-marcus.folkesson@gmail.com>
 References: <marcus.folkesson@gmail.com>
@@ -45,40 +45,40 @@ let us to set timout-sec property in devicetree.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
- Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt | 4 ++++
- drivers/watchdog/sunxi_wdt.c                             | 2 +-
+ Documentation/devicetree/bindings/watchdog/mtk-wdt.txt | 4 ++++
+ drivers/watchdog/mtk_wdt.c                             | 2 +-
  2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-index 62dd5baad70e..49900e72f6b1 100644
---- a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-@@ -6,9 +6,13 @@ Required properties:
-                "allwinner,sun6i-a31-wdt"
+diff --git a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
+index 5b38a30e608c..859dee167b91 100644
+--- a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
+@@ -11,9 +11,13 @@ Required properties:
+ 
  - reg : Specifies base physical address and size of the registers.
  
 +Optional properties:
-+- timeout-sec : Contains the watchdog timeout in seconds
++- timeout-sec: contains the watchdog timeout in seconds.
 +
  Example:
  
- wdt: watchdog@1c20c90 {
- 	compatible = "allwinner,sun4i-a10-wdt";
- 	reg = <0x01c20c90 0x10>;
+ wdt: watchdog@10000000 {
+ 	compatible = "mediatek,mt6589-wdt";
+ 	reg = <0x10000000 0x18>;
 +	timeout-sec = <10>;
  };
-diff --git a/drivers/watchdog/sunxi_wdt.c b/drivers/watchdog/sunxi_wdt.c
-index 9728fa32c357..55f166bec0ca 100644
---- a/drivers/watchdog/sunxi_wdt.c
-+++ b/drivers/watchdog/sunxi_wdt.c
-@@ -39,7 +39,7 @@
+diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
+index 7ed417a765c7..fcdc10ec28a3 100644
+--- a/drivers/watchdog/mtk_wdt.c
++++ b/drivers/watchdog/mtk_wdt.c
+@@ -57,7 +57,7 @@
  #define DRV_VERSION		"1.0"
  
  static bool nowayout = WATCHDOG_NOWAYOUT;
 -static unsigned int timeout = WDT_MAX_TIMEOUT;
 +static unsigned int timeout;
  
- /*
-  * This structure stores the register offsets for different variants
+ struct mtk_wdt_dev {
+ 	struct watchdog_device wdt_dev;
 -- 
 2.15.1
