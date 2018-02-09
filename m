@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185629-2-9059187078102436715
+X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185628-2-12801824241101902613
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185628; b=BQ65Ja8/W/neHhaKJ4Xa6vUjYdqcGopn3Q38GUNnA5h11Tg
-    I2seiRwBgYO7UpOITC96w+6DCSNIOKyp7tQvZrAc7iVz7njajvQDfUNma9d1LIWJ
-    NJvTvElyHY/OIOok2jcThrrzl61elDOS13E0/r2kiTcRWedeD01DpONnaVuvN7tb
-    9dzUd2keVwA+gkLe4rNPprVwJnOFjaLwMBgZ6KSitNaZxoy89DmWLycxIgkh77hi
-    0XIqywXUY/F/AoxnpAWc9ujGFZo/bRaGTrUhsfJa0WRB3kB9G71W8XKTso/FTNVN
-    YZP2gQPzWpDHcmODwkA5FPhy7Yb2p9Pze/wrLcw==
+    t=1518185627; b=isSOuJ1xNMrqg7bJgn2l8QKNQmhrrp7CdoTv8PCs77Qh2+c
+    UcqFHjNmoQ1xIxuDqq0hpCQZAwzyNewXkDpgGkyFouMdubWA/DddEYkUNJikk/2m
+    0D7WCwqFj1aqJ1yyAoNhcIZCBoI+fub5FlrghTgRp1RBF+0qstHNffU4L3LpluRR
+    Yc4vDDdVFsCRh7qTsslox8fBqgFLoQv9WAVd3NO6dbqLif9XoAIaWZmfjRmbXpM/
+    XxTD5gRus/ixATJZHbT4u28l3Uh54GWqRTaPni+EuemkvylK2bLRe0tDq8K7nc1t
+    4wNDDKlZ8a6Wrf6DQs+7wprMffDky7nmkOvPg7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185628; bh=2wATy5gn+PHHPjLBG/njnTnDVl
-    HX403dvc58UtnInwA=; b=b0/SEPKvL+1CtFHRDdEwmUBhG3ejPicZV/wBlbjMrt
-    0NthJlfAMoj0Oa5ztk/743+BEnFibDb/vq6r4VhkI8lxNjHOMBK/xRTN1V30GtaS
-    sSN8JnFh5pBZ6fRNS0s7qBiSMvSi744FQfQSy+WjWAY4ym1x4Rv8bzQDhyJZC90d
-    g139oiyjy2LHM6ROtKUcHDzdqGyZfK8g4NpIZkcsvV+FHtEZ3OskbVBHnoS+x6on
-    XusEmmyIYG44Cp0Uo4t5X0lzC0BqMWGQeCuoX+kXc4vBHKlzTz718WMZPODbnzrp
-    zrSUbL5pRBSA4/limshFo9amJgBrILHiYBH840jHZ0DQ==
+    :list-id; s=arctest; t=1518185627; bh=NrExqCn6jJz38zituwFUoW59qY
+    4O0v38o6XeG1LgpVc=; b=nNQIvQqTLjadBMt0A/K5G0F9XU3lAV8OnTV3Rb4js8
+    KOYRQXboQ+E36v50qqzG2Z7Hnqxta5MJxOcaKv75S4dPMtw3BEc5e8TE5VEB0j3a
+    v0LZU7Cm+RhE7+onKFNBCTPXOrYrbq+84i6+Mw+vOgMyt746HW0apkHu3mekrKPT
+    PtxV4TFOl4DsLL6ueIBPeWLA5K0Xkln1rqHPXDiG6IURfyE3DvUGc6XxTkKQ0+3T
+    z6plrNVuOU9GSWUtr89tpdc+jX9e8SGNGGSzXHw0L1qYwqFPPJiNeeaIaT2up+aG
+    X+5+SRSirbnqhj6dEjkBA3LOr8HUeJW6+udYYA7g6QmA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,30 +47,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752659AbeBINlo (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:41:44 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49116 "EHLO
+        id S1751038AbeBION3 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 09:13:29 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49362 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeBINlg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:36 -0500
+        with ESMTP id S1752657AbeBINlo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:44 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitriy Vyukov <dvyukov@google.com>, LKP <lkp@01.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Miguel Bernal Marin <miguel.bernal.marin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 30/92] x86/asm: Fix inline asm call constraints for GCC 4.4
-Date: Fri,  9 Feb 2018 14:38:59 +0100
-Message-Id: <20180209133933.368347262@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 33/92] b43: Add missing MODULE_FIRMWARE()
+Date: Fri,  9 Feb 2018 14:39:02 +0100
+Message-Id: <20180209133933.556318090@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -87,83 +77,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 520a13c530aeb5f63e011d668c42db1af19ed349 upstream.
+commit 3c89a72ad80c64bdbd5ff851ee9c328a191f7e01 upstream.
 
-The kernel test bot (run by Xiaolong Ye) reported that the following commit:
+Some firmware entries were forgotten to be added via MODULE_FIRMWARE(), which
+may result in the non-functional state when the driver is loaded in initrd.
 
-  f5caf621ee35 ("x86/asm: Fix inline asm call constraints for Clang")
-
-is causing double faults in a kernel compiled with GCC 4.4.
-
-Linus subsequently diagnosed the crash pattern and the buggy commit and found that
-the issue is with this code:
-
-  register unsigned int __asm_call_sp asm("esp");
-  #define ASM_CALL_CONSTRAINT "+r" (__asm_call_sp)
-
-Even on a 64-bit kernel, it's using ESP instead of RSP.  That causes GCC
-to produce the following bogus code:
-
-  ffffffff8147461d:       89 e0                   mov    %esp,%eax
-  ffffffff8147461f:       4c 89 f7                mov    %r14,%rdi
-  ffffffff81474622:       4c 89 fe                mov    %r15,%rsi
-  ffffffff81474625:       ba 20 00 00 00          mov    $0x20,%edx
-  ffffffff8147462a:       89 c4                   mov    %eax,%esp
-  ffffffff8147462c:       e8 bf 52 05 00          callq  ffffffff814c98f0 <copy_user_generic_unrolled>
-
-Despite the absurdity of it backing up and restoring the stack pointer
-for no reason, the bug is actually the fact that it's only backing up
-and restoring the lower 32 bits of the stack pointer.  The upper 32 bits
-are getting cleared out, corrupting the stack pointer.
-
-So change the '__asm_call_sp' register variable to be associated with
-the actual full-size stack pointer.
-
-This also requires changing the __ASM_SEL() macro to be based on the
-actual compiled arch size, rather than the CONFIG value, because
-CONFIG_X86_64 compiles some files with '-m32' (e.g., realmode and vdso).
-Otherwise Clang fails to build the kernel because it complains about the
-use of a 64-bit register (RSP) in a 32-bit file.
-
-Reported-and-Bisected-and-Tested-by: kernel test robot <xiaolong.ye@intel.com>
-Diagnosed-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Dmitriy Vyukov <dvyukov@google.com>
-Cc: LKP <lkp@01.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Miguel Bernal Marin <miguel.bernal.marin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: f5caf621ee35 ("x86/asm: Fix inline asm call constraints for Clang")
-Link: http://lkml.kernel.org/r/20170928215826.6sdpmwtkiydiytim@treble
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
+Link: http://bugzilla.opensuse.org/show_bug.cgi?id=1037344
+Fixes: 15be8e89cdd9 ("b43: add more bcma cores")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/asm.h |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/b43/main.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -11,10 +11,12 @@
- # define __ASM_FORM_COMMA(x) " " #x ","
- #endif
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -71,8 +71,18 @@ MODULE_FIRMWARE("b43/ucode11.fw");
+ MODULE_FIRMWARE("b43/ucode13.fw");
+ MODULE_FIRMWARE("b43/ucode14.fw");
+ MODULE_FIRMWARE("b43/ucode15.fw");
++MODULE_FIRMWARE("b43/ucode16_lp.fw");
+ MODULE_FIRMWARE("b43/ucode16_mimo.fw");
++MODULE_FIRMWARE("b43/ucode24_lcn.fw");
++MODULE_FIRMWARE("b43/ucode25_lcn.fw");
++MODULE_FIRMWARE("b43/ucode25_mimo.fw");
++MODULE_FIRMWARE("b43/ucode26_mimo.fw");
++MODULE_FIRMWARE("b43/ucode29_mimo.fw");
++MODULE_FIRMWARE("b43/ucode33_lcn40.fw");
++MODULE_FIRMWARE("b43/ucode30_mimo.fw");
+ MODULE_FIRMWARE("b43/ucode5.fw");
++MODULE_FIRMWARE("b43/ucode40.fw");
++MODULE_FIRMWARE("b43/ucode42.fw");
+ MODULE_FIRMWARE("b43/ucode9.fw");
  
--#ifdef CONFIG_X86_32
-+#ifndef __x86_64__
-+/* 32 bit */
- # define __ASM_SEL(a,b) __ASM_FORM(a)
- # define __ASM_SEL_RAW(a,b) __ASM_FORM_RAW(a)
- #else
-+/* 64 bit */
- # define __ASM_SEL(a,b) __ASM_FORM(b)
- # define __ASM_SEL_RAW(a,b) __ASM_FORM_RAW(b)
- #endif
+ static int modparam_bad_frames_preempt;
