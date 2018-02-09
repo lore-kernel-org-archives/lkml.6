@@ -1,55 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751231AbeBIIvZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 03:51:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46648 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750933AbeBIIvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 03:51:24 -0500
-Date: Fri, 9 Feb 2018 16:51:16 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] printk: move dump stack related code to lib/dump_stack.c
-Message-ID: <20180209085116.GB5454@dhcp-128-65.nay.redhat.com>
-References: <20180209080624.GA2607@dhcp-128-65.nay.redhat.com>
- <20180209081604.GE689@jagdpanzerIV>
- <20180209082743.GA14845@dhcp-128-65.nay.redhat.com>
- <20180209084235.GF689@jagdpanzerIV>
+        id S1751371AbeBIIvi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 03:51:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:44052 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750895AbeBIIvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 03:51:36 -0500
+Subject: Re: [PATCH] irqchip: Use %px to print pointer value
+To: Jaedon Shin <jaedon.shin@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: Kevin Cernekee <cernekee@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180209021031.20631-1-jaedon.shin@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <ba5fb474-4e45-8d8d-ee5d-9f1a211090e3@arm.com>
+Date: Fri, 9 Feb 2018 08:51:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209084235.GF689@jagdpanzerIV>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180209021031.20631-1-jaedon.shin@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/09/18 at 05:42pm, Sergey Senozhatsky wrote:
-> On (02/09/18 16:27), Dave Young wrote:
-> > > Seems that those functions are still defined in printk header.
-> > > Did you test !CONFIG_PRINTK build?
+On 09/02/18 02:10, Jaedon Shin wrote:
+> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+> pointers printed with %p are hashed. Use %px instead of %p to print
+> pointer value.
 > 
-> Apparently dump_stack(void) is also in printk.h
+> Signed-off-by: Jaedon Shin <jaedon.shin@gmail.com>
+> ---
+>  drivers/irqchip/irq-bcm7038-l1.c | 2 +-
+>  drivers/irqchip/irq-bcm7120-l2.c | 2 +-
+>  drivers/irqchip/irq-brcmstb-l2.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> extern asmlinkage void dump_stack(void) __cold;
+> diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
+> index 55cfb986225b..f604c1d89b3b 100644
+> --- a/drivers/irqchip/irq-bcm7038-l1.c
+> +++ b/drivers/irqchip/irq-bcm7038-l1.c
+> @@ -339,7 +339,7 @@ int __init bcm7038_l1_of_init(struct device_node *dn,
+>  		goto out_unmap;
+>  	}
+>  
+> -	pr_info("registered BCM7038 L1 intc (mem: 0x%p, IRQs: %d)\n",
+> +	pr_info("registered BCM7038 L1 intc (mem: 0x%px, IRQs: %d)\n",
+>  		intc->cpus[0]->map_base, IRQS_PER_WORD * intc->n_words);
+>  
+>  	return 0;
+> diff --git a/drivers/irqchip/irq-bcm7120-l2.c b/drivers/irqchip/irq-bcm7120-l2.c
+> index 983640eba418..1cc4dd1d584a 100644
+> --- a/drivers/irqchip/irq-bcm7120-l2.c
+> +++ b/drivers/irqchip/irq-bcm7120-l2.c
+> @@ -318,7 +318,7 @@ static int __init bcm7120_l2_intc_probe(struct device_node *dn,
+>  		}
+>  	}
+>  
+> -	pr_info("registered %s intc (mem: 0x%p, parent IRQ(s): %d)\n",
+> +	pr_info("registered %s intc (mem: 0x%px, parent IRQ(s): %d)\n",
+>  			intc_name, data->map_base[0], data->num_parent_irqs);
+>  
+>  	return 0;
+> diff --git a/drivers/irqchip/irq-brcmstb-l2.c b/drivers/irqchip/irq-brcmstb-l2.c
+> index 691d20eb0bec..6760edeeb666 100644
+> --- a/drivers/irqchip/irq-brcmstb-l2.c
+> +++ b/drivers/irqchip/irq-brcmstb-l2.c
+> @@ -262,7 +262,7 @@ static int __init brcmstb_l2_intc_of_init(struct device_node *np,
+>  		ct->chip.irq_set_wake = irq_gc_set_wake;
+>  	}
+>  
+> -	pr_info("registered L2 intc (mem: 0x%p, parent irq: %d)\n",
+> +	pr_info("registered L2 intc (mem: 0x%px, parent irq: %d)\n",
+>  			base, parent_irq);
+>  
+>  	return 0;
 > 
-> so it's "OK" to keep those functions in printk.h, I guess. I thought
-> that dump_stack() had its own header file...
 
-It has not unfortunately..  The build failed because we have dummy
-functions in printk.h and redefined in lib/dump_stack.c.  I'm hesitating
-to add #ifdef CONFIG_PRINTK in lib/dump_stack.c.
+Why is that something useful to do? This just tells you where the device
+is mapped in the VA space, and I doubt that's a useful information,
+hashed pointers or not. Am I missing something obvious?
 
-> 
-> > !CONFIG_PRINTK will use the dummy functions in printk.h, I did not test
-> > the build, doing it now to double confirm..
-> 
-> Not sure. Please test.
-> 
-> 	-ss
+Thanks,
 
-Thanks
-Dave
+	M.
+-- 
+Jazz is not dead. It just smells funny...
