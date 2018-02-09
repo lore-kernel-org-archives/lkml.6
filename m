@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753020AbeBISBF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 13:01:05 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50580 "EHLO
+        id S1753050AbeBISB1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 13:01:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50550 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752837AbeBIR6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:58:16 -0500
+        id S1752815AbeBIR6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:58:11 -0500
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
         ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 16/21] arm64: Add helpers for checking CPU MIDR against a range
-Date: Fri,  9 Feb 2018 17:55:01 +0000
-Message-Id: <20180209175513.17100-32-suzuki.poulose@arm.com>
+Subject: [PATCH v3 15/22] arm64: capabilities: Change scope of VHE to Boot CPU feature
+Date: Fri,  9 Feb 2018 17:54:59 +0000
+Message-Id: <20180209175513.17100-30-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180209175513.17100-1-suzuki.poulose@arm.com>
 References: <20180209175513.17100-1-suzuki.poulose@arm.com>
@@ -22,135 +22,143 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add helpers for checking if the given CPU midr falls in a range
-of variants/revisions for a given model.
+We expect all CPUs to be running at the same EL inside the kernel
+with or without VHE enabled and we have strict checks to ensure
+that any mismatch triggers a kernel panic. If VHE is enabled,
+we use the feature based on the boot CPU and all other CPUs
+should follow. This makes it a perfect candidate for a cpability
+based on the boot CPU,  which should be matched by all the CPUs
+(both when is ON and OFF). This saves us some not-so-pretty
+hooks and special code, just for verifying the conflict.
 
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Dave Martin <dave.martin@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h |  7 ++-----
- arch/arm64/include/asm/cputype.h    | 30 ++++++++++++++++++++++++++++++
- arch/arm64/kernel/cpu_errata.c      | 16 +++++-----------
- 3 files changed, 37 insertions(+), 16 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |  7 +++++++
+ arch/arm64/include/asm/virt.h       |  6 ------
+ arch/arm64/kernel/cpufeature.c      |  5 +++--
+ arch/arm64/kernel/smp.c             | 38 -------------------------------------
+ 4 files changed, 10 insertions(+), 46 deletions(-)
 
 diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index dfce93f79ae7..e47f39f62440 100644
+index 5f56a8342065..dfce93f79ae7 100644
 --- a/arch/arm64/include/asm/cpufeature.h
 +++ b/arch/arm64/include/asm/cpufeature.h
-@@ -10,6 +10,7 @@
- #define __ASM_CPUFEATURE_H
- 
- #include <asm/cpucaps.h>
-+#include <asm/cputype.h>
- #include <asm/fpsimd.h>
- #include <asm/hwcap.h>
- #include <asm/sigcontext.h>
-@@ -295,11 +296,7 @@ struct arm64_cpu_capabilities {
- 	 */
- 	void (*cpu_enable)(const struct arm64_cpu_capabilities *cap);
- 	union {
--		struct {	/* To be used for erratum handling only */
--			u32 midr_model;
--			u32 midr_range_min, midr_range_max;
--		};
--
-+		struct midr_range midr_range;	/* To be used for erratum handling only */
- 		struct {	/* Feature register checking */
- 			u32 sys_reg;
- 			u8 field_pos;
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 2f8d39ed9c2e..6c45acb6ef38 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -115,6 +115,36 @@
- 
- #define read_cpuid(reg)			read_sysreg_s(SYS_ ## reg)
+@@ -276,6 +276,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+ 	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
+ 	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
  
 +/*
-+ * Represent a range of MIDR values for a given CPU model and a
-+ * range of variant/revision values.
-+ *
-+ * @model	- CPU model as defined by MIDR_CPU_MODEL
-+ * @rv_min	- Minimum value for the revision/variant as defined by
-+ *		  MIDR_CPU_VAR_REV
-+ * @rv_max	- Maximum value for the variant/revision for the range.
++ * Critical CPU feature used early in the boot based on the boot CPU.
++ * The feature should be matched by all booting CPU (both miss and hit
++ * cases).
 + */
-+struct midr_range {
-+	u32 model;
-+	u32 rv_min;
-+	u32 rv_max;
-+};
++#define ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE ARM64_CPUCAP_SCOPE_BOOT_CPU
 +
-+#define MIDR_RANGE(m, v_min, r_min, v_max, r_max)		\
-+	{							\
-+		.model = m,					\
-+		.rv_min = MIDR_CPU_VAR_REV(v_min, r_min),	\
-+		.rv_max = MIDR_CPU_VAR_REV(v_max, r_max),	\
-+	}
-+
-+#define MIDR_ALL_VERSIONS(m) MIDR_RANGE(m, 0, 0, 0xf, 0xf)
-+
-+static inline bool is_midr_in_range(u32 midr, struct midr_range const *range)
-+{
-+	return MIDR_IS_CPU_MODEL_RANGE(midr, range->model,
-+				 range->rv_min, range->rv_max);
-+}
-+
- /*
-  * The CPU ID never changes at run time, so we might as well tell the
-  * compiler that it's constant.  Use this function to read the CPU ID
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 22ea61141596..5f903e37a267 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -25,9 +25,7 @@ static bool __maybe_unused
- is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
- {
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
--	return MIDR_IS_CPU_MODEL_RANGE(read_cpuid_id(), entry->midr_model,
--				       entry->midr_range_min,
--				       entry->midr_range_max);
-+	return is_midr_in_range(read_cpuid_id(), &entry->midr_range);
+ struct arm64_cpu_capabilities {
+ 	const char *desc;
+ 	u16 capability;
+diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
+index c5f89442785c..9d1e24e030b3 100644
+--- a/arch/arm64/include/asm/virt.h
++++ b/arch/arm64/include/asm/virt.h
+@@ -102,12 +102,6 @@ static inline bool has_vhe(void)
+ 	return false;
  }
  
- static bool __maybe_unused
-@@ -41,7 +39,7 @@ is_kryo_midr(const struct arm64_cpu_capabilities *entry, int scope)
- 	model &= MIDR_IMPLEMENTOR_MASK | (0xf00 << MIDR_PARTNUM_SHIFT) |
- 		 MIDR_ARCHITECTURE_MASK;
+-#ifdef CONFIG_ARM64_VHE
+-extern void verify_cpu_run_el(void);
+-#else
+-static inline void verify_cpu_run_el(void) {}
+-#endif
+-
+ #endif /* __ASSEMBLY__ */
  
--	return model == entry->midr_model;
-+	return model == entry->midr_range.model;
- }
- 
- static bool
-@@ -227,15 +225,11 @@ qcom_enable_link_stack_sanitization(const struct arm64_cpu_capabilities *entry)
- 
- #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
- 	.matches = is_affected_midr_range,			\
--	.midr_model = model,					\
--	.midr_range_min = MIDR_CPU_VAR_REV(v_min, r_min),	\
--	.midr_range_max = MIDR_CPU_VAR_REV(v_max, r_max)
-+	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
- 
- #define CAP_MIDR_ALL_VERSIONS(model)					\
- 	.matches = is_affected_midr_range,				\
--	.midr_model = model,						\
--	.midr_range_min = MIDR_CPU_VAR_REV(0, 0),			\
--	.midr_range_max = (MIDR_VARIANT_MASK | MIDR_REVISION_MASK)
-+	.midr_range = MIDR_ALL_VERSIONS(model)
- 
- #define ERRATA_MIDR_RANGE(model, v_min, r_min, v_max, r_max)		\
- 	.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,				\
-@@ -366,7 +360,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 		.desc = "Qualcomm Technologies Kryo erratum 1003",
- 		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
--		.midr_model = MIDR_QCOM_KRYO,
-+		.midr_range.model = MIDR_QCOM_KRYO,
- 		.matches = is_kryo_midr,
+ #endif /* ! __ASM__VIRT_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 7625e2962e2b..f66e66c79916 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1016,11 +1016,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
  	},
- #endif
+ #endif /* CONFIG_ARM64_PAN */
+ 	{
++#ifdef CONFIG_ARM64_VHE
+ 		.desc = "Virtualization Host Extensions",
+ 		.capability = ARM64_HAS_VIRT_HOST_EXTN,
+-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.type = ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE,
+ 		.matches = runs_at_el2,
+ 		.cpu_enable = cpu_copy_el2regs,
++#endif
+ 	},
+ 	{
+ 		.desc = "32-bit EL0 Support",
+@@ -1369,7 +1371,6 @@ static bool verify_local_cpu_caps(u16 scope_mask)
+  */
+ static void check_early_cpu_features(void)
+ {
+-	verify_cpu_run_el();
+ 	verify_cpu_asid_bits();
+ 	/*
+ 	 * Early features are used by the kernel already. If there
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 5cef11450183..f3e2e3aec0b0 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -85,43 +85,6 @@ enum ipi_msg_type {
+ 	IPI_WAKEUP
+ };
+ 
+-#ifdef CONFIG_ARM64_VHE
+-
+-/* Whether the boot CPU is running in HYP mode or not*/
+-static bool boot_cpu_hyp_mode;
+-
+-static inline void save_boot_cpu_run_el(void)
+-{
+-	boot_cpu_hyp_mode = is_kernel_in_hyp_mode();
+-}
+-
+-static inline bool is_boot_cpu_in_hyp_mode(void)
+-{
+-	return boot_cpu_hyp_mode;
+-}
+-
+-/*
+- * Verify that a secondary CPU is running the kernel at the same
+- * EL as that of the boot CPU.
+- */
+-void verify_cpu_run_el(void)
+-{
+-	bool in_el2 = is_kernel_in_hyp_mode();
+-	bool boot_cpu_el2 = is_boot_cpu_in_hyp_mode();
+-
+-	if (in_el2 ^ boot_cpu_el2) {
+-		pr_crit("CPU%d: mismatched Exception Level(EL%d) with boot CPU(EL%d)\n",
+-					smp_processor_id(),
+-					in_el2 ? 2 : 1,
+-					boot_cpu_el2 ? 2 : 1);
+-		cpu_panic_kernel();
+-	}
+-}
+-
+-#else
+-static inline void save_boot_cpu_run_el(void) {}
+-#endif
+-
+ #ifdef CONFIG_HOTPLUG_CPU
+ static int op_cpu_kill(unsigned int cpu);
+ #else
+@@ -447,7 +410,6 @@ void __init smp_prepare_boot_cpu(void)
+ 	 */
+ 	jump_label_init();
+ 	cpuinfo_store_boot_cpu();
+-	save_boot_cpu_run_el();
+ }
+ 
+ static u64 __init of_get_cpu_mpidr(struct device_node *dn)
 -- 
 2.14.3
