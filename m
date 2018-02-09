@@ -1,177 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751071AbeBIIIl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 03:08:41 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:51295 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750863AbeBIIIj (ORCPT
+        id S1751098AbeBIILq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 03:11:46 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55153 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751007AbeBIILp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 03:08:39 -0500
-Subject: Re: [PATCH v10 6/8] media: i2c: Add TDA1997x HDMI receiver driver
-To: Tim Harvey <tharvey@gateworks.com>, linux-media@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-References: <1518157956-14220-1-git-send-email-tharvey@gateworks.com>
- <1518157956-14220-7-git-send-email-tharvey@gateworks.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <cf5c51f4-ca86-e468-ba16-d47d224a2428@xs4all.nl>
-Date: Fri, 9 Feb 2018 09:08:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 9 Feb 2018 03:11:45 -0500
+X-Google-Smtp-Source: AH8x225EGgxEZuy+WGhT2gf6UvYVCmKZiluYU+CP5kEeGuGIkp4Mx0ZtCb0N3o1C/dcS13yV52jamw==
+Date: Fri, 9 Feb 2018 09:11:41 +0100
+From: Christoffer Dall <christoffer.dall@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, Christoffer Dall <cdall@linaro.org>
+Subject: Re: [PATCH v1 08/16] kvm: arm/arm64: Clean up stage2 pgd life time
+Message-ID: <20180209081141.GA7339@cbox>
+References: <20180109190414.4017-1-suzuki.poulose@arm.com>
+ <20180109190414.4017-9-suzuki.poulose@arm.com>
+ <20180208110059.GK29286@cbox>
+ <4b31c124-ccb2-b794-c2b2-350975b8a1cc@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1518157956-14220-7-git-send-email-tharvey@gateworks.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNZL8ue7NvMp4hbWcfem8Uwa7AG1XAowiWAaOMEO1aILg9i6pMcFG8dDq3ID8NHGbGsf5QcVgFXN6vA4V30xQ2gYVxweoC3OpJXswjIxnTLSkF/ci6f8
- Ywz9I2cejtWFj4wtlrw2TZE308eBX6FM6Fn74O3UTzHWvWjDa0sgsMfSPfgkSHeqnRLTtfRxIpNfUMhok7fbhBmIXaaEshLQnT8KXTUsO88MTlC/sorhxjp+
- Ks3VpE9MpDbaeA2y5z7+x/uMH0txooBF4hXBY9mwpuwB8OI0XBNniVsGUMzyPRkkwx/pcK9lVX61wsNgLgztHGT9K4BxMvV121KEjDKRiiva5JufVCC5Kfpj
- /az29n3Ga9V8akzK6uUrNCMkiqo7Es/NnBzMN5Zpd5EkpKtJuBfVXNKcDmjOAiA2rdgM+e2HcZ0KyxvXusSwqGofvNLsKZp7kJxdb0CpjFWDnRw3BRwke3OW
- 1KO2mbbVuVQUNn0S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b31c124-ccb2-b794-c2b2-350975b8a1cc@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tim,
+On Thu, Feb 08, 2018 at 05:19:22PM +0000, Suzuki K Poulose wrote:
+> On 08/02/18 11:00, Christoffer Dall wrote:
+> >On Tue, Jan 09, 2018 at 07:04:03PM +0000, Suzuki K Poulose wrote:
+> >>On arm/arm64 we pre-allocate the entry level page tables when
+> >>a VM is created and is free'd when either all the mm users are
+> >>gone or the KVM is about to get destroyed. i.e, kvm_free_stage2_pgd
+> >>is triggered via kvm_arch_flush_shadow_all() which can be invoked
+> >>from two different paths :
+> >>
+> >>  1) do_exit()-> .-> mmu_notifier->release()-> ..-> kvm_arch_flush_shadow_all()
+> >>     OR
+> >>  2) kvm_destroy_vm()-> mmu_notifier_unregister-> kvm_arch_flush_shadow_all()
+> >>
+> >>This has created lot of race conditions in the past as some of
+> >>the VCPUs could be active when we free the stage2 via path (1).
+> >
+> >How??  mmu_notifier->release() is called via __mput->exit_mmap(), which
+> >is only called if mm_users == 0, which means there are no more threads
+> >left than the one currently doing exit().
+> 
+> IIRC, if the process is sent a fatal signal, that could cause all the threads
+> to exit, leaving the "last" thread to do the clean up. The files could still
+> be open, implying that the KVM fds are still active, without a stage2, even
+> though we are not going to run anything. (The race was fixed by moving the
+> stage2 teardown to mmu_notifier->release()).
+> 
+> 
 
-We're almost there. Two more comments:
+Hmm, if the last thread is do_exit(), by definition there can't be any
+other VCPU thread (because then it wouldn't be the last one) and
+therefore only this last exiting thread can have the fd open, and since
+it's in the middle of do_exit(), it will close the fds before anything
+will have chance to run.
 
-On 02/09/2018 07:32 AM, Tim Harvey wrote:
-> +static int
-> +tda1997x_detect_std(struct tda1997x_state *state,
-> +		    struct v4l2_dv_timings *timings)
-> +{
-> +	struct v4l2_subdev *sd = &state->sd;
-> +	u32 vper;
-> +	u16 hper;
-> +	u16 hsper;
-> +	int i;
-> +
-> +	/*
-> +	 * Read the FMT registers
-> +	 *   REG_V_PER: Period of a frame (or two fields) in MCLK(27MHz) cycles
-> +	 *   REG_H_PER: Period of a line in MCLK(27MHz) cycles
-> +	 *   REG_HS_WIDTH: Period of horiz sync pulse in MCLK(27MHz) cycles
-> +	 */
-> +	vper = io_read24(sd, REG_V_PER) & MASK_VPER;
-> +	hper = io_read16(sd, REG_H_PER) & MASK_HPER;
-> +	hsper = io_read16(sd, REG_HS_WIDTH) & MASK_HSWIDTH;
-> +	if (!vper || !hper || !hsper)
-> +		return -ENOLINK;
+> >
+> >>
+> >>On a closer look, all we need to do with kvm_arch_flush_shadow_all() is,
+> >>to ensure that the stage2 mappings are cleared. This doesn't mean we
+> >>have to free up the stage2 entry level page tables yet, which could
+> >>be delayed until the kvm is destroyed. This would avoid issues
+> >>of use-after-free,
+> >
+> >do we have any of those left?
+> 
+> None that we know of.
+> 
 
-See my comment for g_input_status below. This condition looks more like a
-ENOLCK.
+Then I think this commit text is misleading and pretty confusing.  If
+we have a correct implementation, but we want to clean something up,
+then this commit message shouldn't talk about races or use-after-free,
+it should just say that we rearrange code to change the flow, and
+describe why/how.
 
-Or perhaps it should be:
+> >
+> >>This will be later used for delaying
+> >>the allocation of the stage2 entry level page tables until we really
+> >>need to do something with it.
+> >
+> >Fine, but you don't actually explain why this change of flow is
+> >necessary for what you're trying to do later?
+> 
+> This patch is not mandatory for the series. But, since we are delaying
+> the "allocation" stage2 tables anyway later, I thought it would be
+> good to clean up the "free" path.
+> 
 
-	if (!vper && !hper && !hsper)
-		return -ENOLINK;
-	if (!vper || !hper || !hsper)
-		return -ENOLCK;
+Hmm, I'm not really sure it is a cleanup.  In any case, the motivation
+for this change should be clear.  I do like the idea of getting read of
+the kvm->arch.pgd checks in the various stage2 manipulation functions.
 
-I would recommend that you test a bit with no signal and a bad signal (perhaps
-one that uses a pixelclock that is too high for this device?).
+> >>  int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+> >>diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> >>index 78253fe00fc4..c94c61ac38b9 100644
+> >>--- a/virt/kvm/arm/mmu.c
+> >>+++ b/virt/kvm/arm/mmu.c
+> >>@@ -298,11 +298,10 @@ static void unmap_stage2_range(struct kvm *kvm, phys_addr_t start, u64 size)
+> >>  	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+> >>  	do {
+> >>  		/*
+> >>-		 * Make sure the page table is still active, as another thread
+> >>-		 * could have possibly freed the page table, while we released
+> >>-		 * the lock.
+> >>+		 * The page table shouldn't be free'd as we still hold a reference
+> >>+		 * to the KVM.
+> >
+> >To avoid confusion about references to the kernel module KVM and a
+> >specific KVM VM instance, please s/KVM/VM/.
+> 
+> ok.
+> 
+> >
+> >>  		 */
+> >>-		if (!READ_ONCE(kvm->arch.pgd))
+> >>+		if (WARN_ON(!READ_ONCE(kvm->arch.pgd)))
+> >
+> >This reads a lot like a defensive implementation now, and I think for
+> >this patch to make sense, we shouldn't try to handle a buggy super-racy
+> >implementation gracefully, but rather have VM_BUG_ON() (if we care about
+> >performance of the check) or simply BUG_ON().
+> >
+> >The rationale being that if we've gotten this flow incorrect and freed
+> >the pgd at the wrong time, we don't want to leave a ticking bomb to blow
+> >up somewhere else randomly (which it will!), but instead crash and burn.
+> 
+> Ok.
+> 
+> >
+> >>  			break;
+> >>  		next = stage2_pgd_addr_end(addr, end);
+> >>  		if (!stage2_pgd_none(*pgd))
+> >>@@ -837,30 +836,33 @@ void stage2_unmap_vm(struct kvm *kvm)
+> >>  	up_read(&current->mm->mmap_sem);
+> >>  	srcu_read_unlock(&kvm->srcu, idx);
+> >>  }
+> >>-
+> >>-/**
+> >>- * kvm_free_stage2_pgd - free all stage-2 tables
+> >>- * @kvm:	The KVM struct pointer for the VM.
+> >>- *
+> >>- * Walks the level-1 page table pointed to by kvm->arch.pgd and frees all
+> >>- * underlying level-2 and level-3 tables before freeing the actual level-1 table
+> >>- * and setting the struct pointer to NULL.
+> >>+/*
+> >>+ * kvm_flush_stage2_all: Unmap the entire stage2 mappings including
+> >>+ * device and regular RAM backing memory.
+> >>   */
+> >>-void kvm_free_stage2_pgd(struct kvm *kvm)
+> >>+static void kvm_flush_stage2_all(struct kvm *kvm)
+> >>  {
+> >>-	void *pgd = NULL;
+> >>-
+> >>  	spin_lock(&kvm->mmu_lock);
+> >>-	if (kvm->arch.pgd) {
+> >>+	if (kvm->arch.pgd)
+> >>  		unmap_stage2_range(kvm, 0, KVM_PHYS_SIZE);
+> >>-		pgd = READ_ONCE(kvm->arch.pgd);
+> >>-		kvm->arch.pgd = NULL;
+> >>-	}
+> >>  	spin_unlock(&kvm->mmu_lock);
+> >>+}
+> >>-	/* Free the HW pgd, one page at a time */
+> >>-	if (pgd)
+> >>-		free_pages_exact(pgd, S2_PGD_SIZE);
+> >>+/**
+> >>+ * kvm_free_stage2_pgd - Free the entry level page tables in stage-2.
+> >
+> >nit: you should put the parameter description here and leave a blank
+> >line before the lengthy discussion.
+> >
+> >>+ * This is called when all reference to the KVM has gone away and we
+> >>+ * really don't need any protection in resetting the PGD. This also
+> >
+> >I don't think I understand the last part of this sentence.
+> 
+> i.e, we don't have to use the spin_lock to reset the PGD.
+> 
 
-> +	v4l2_dbg(1, debug, sd, "Signal Timings: %u/%u/%u\n", vper, hper, hsper);
-> +
-> +	for (i = 0; v4l2_dv_timings_presets[i].bt.width; i++) {
-> +		const struct v4l2_bt_timings *bt;
-> +		u32 lines, width, _hper, _hsper;
-> +		u32 vmin, vmax, hmin, hmax, hsmin, hsmax;
-> +		bool vmatch, hmatch, hsmatch;
-> +
-> +		bt = &v4l2_dv_timings_presets[i].bt;
-> +		width = V4L2_DV_BT_FRAME_WIDTH(bt);
-> +		lines = V4L2_DV_BT_FRAME_HEIGHT(bt);
-> +		_hper = (u32)bt->pixelclock / width;
-> +		if (bt->interlaced)
-> +			lines /= 2;
-> +		/* vper +/- 0.7% */
-> +		vmin = ((27000000 / 1000) * 993) / _hper * lines;
-> +		vmax = ((27000000 / 1000) * 1007) / _hper * lines;
-> +		/* hper +/- 1.0% */
-> +		hmin = ((27000000 / 100) * 99) / _hper;
-> +		hmax = ((27000000 / 100) * 101) / _hper;
-> +		/* hsper +/- 2 (take care to avoid 32bit overflow) */
-> +		_hsper = 27000 * bt->hsync / ((u32)bt->pixelclock/1000);
-> +		hsmin = _hsper - 2;
-> +		hsmax = _hsper + 2;
-> +
-> +		/* vmatch matches the framerate */
-> +		vmatch = ((vper <= vmax) && (vper >= vmin)) ? 1 : 0;
-> +		/* hmatch matches the width */
-> +		hmatch = ((hper <= hmax) && (hper >= hmin)) ? 1 : 0;
-> +		/* hsmatch matches the hswidth */
-> +		hsmatch = ((hsper <= hsmax) && (hsper >= hsmin)) ? 1 : 0;
-> +		if (hmatch && vmatch && hsmatch) {
-> +			*timings = v4l2_dv_timings_presets[i];
-> +			v4l2_print_dv_timings(sd->name, "Detected format: ",
-> +					      timings, false);
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	v4l_err(state->client, "no resolution match for timings: %d/%d/%d\n",
-> +		vper, hper, hsper);
-> +	return -EINVAL;
-> +}
+Ah, then I think it should say
 
--EINVAL isn't the correct error code here. I would go for -ERANGE. It's not
-perfect, but close enough.
+"We can set kvm->arch.pgd = NULL without holding a spinlock because this
+function is only called when the exiting thread is the only process
+holding a refernce to the struct kvm."
 
--EINVAL indicates that the user filled in wrong values, but that's not the
-case here.
-
-> +static int
-> +tda1997x_g_input_status(struct v4l2_subdev *sd, u32 *status)
-> +{
-> +	struct tda1997x_state *state = to_state(sd);
-> +	u32 vper;
-> +	u16 hper;
-> +	u16 hsper;
-> +
-> +	mutex_lock(&state->lock);
-> +	v4l2_dbg(1, debug, sd, "inputs:%d/%d\n",
-> +		 state->input_detect[0], state->input_detect[1]);
-> +	if (state->input_detect[0] || state->input_detect[1])
-
-I'm confused. This device has two HDMI inputs?
-
-Does 'detecting input' equate to 'I see a signal and I am locked'?
-I gather from the irq function that sets these values that it is closer
-to 'I see a signal' and that 'I am locked' is something you would test
-by looking at the vper/hper/hsper.
-
-> +		*status = 0;
-> +	else {
-> +		vper = io_read24(sd, REG_V_PER) & MASK_VPER;
-> +		hper = io_read16(sd, REG_H_PER) & MASK_HPER;
-> +		hsper = io_read16(sd, REG_HS_WIDTH) & MASK_HSWIDTH;
-> +		v4l2_dbg(1, debug, sd, "timings:%d/%d/%d\n", vper, hper, hsper);
-> +		if (!vper || !hper || !hsper)
-> +			*status |= V4L2_IN_ST_NO_SYNC;
-> +		else
-> +			*status |= V4L2_IN_ST_NO_SIGNAL;
-
-So if we have valid vper, hper and hsper, then there is no signal? That doesn't
-make sense.
-
-I'd expect to see something like this:
-
-	if (!input_detect[0] && !input_detect[1])
-		// no signal
-	else if (!vper || !hper || !vsper)
-		// no sync
-	else
-		// have signal and sync
-
-I'm not sure about the precise meaning of input_detect, so I might be wrong about
-that bit.
-
-Regards,
-
-	Hans
+> >This function is pretty self-explanatory really, and I think we can
+> >either drop the documentation all together or simply say that this
+> >function clears all stage 2 page table entries to release the memory of
+> >the lower-level page tables themselves and then frees the pgd in the
+> >end.  The VM is known to go away and no more VCPUs exist at this point.
+> >
+> 
+> Ok.
+> 
+> >>+ * means that nobody should be touching stage2 at this point, as we
+> >>+ * have unmapped the entire stage2 already and all dynamic entities,
+> >>+ * (VCPUs and devices) are no longer active.
+> >>+ *
+> >>+ * @kvm:	The KVM struct pointer for the VM.
+> >>+ */
+> >>+void kvm_free_stage2_pgd(struct kvm *kvm)
+> >>+{
+> >>+	kvm_flush_stage2_all(kvm);
+> >>+	free_pages_exact(kvm->arch.pgd, S2_PGD_SIZE);
+> >>+	kvm->arch.pgd = NULL;
+> >>  }
+> >>  static pud_t *stage2_get_pud(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+> >>@@ -1189,12 +1191,12 @@ static void stage2_wp_range(struct kvm *kvm, phys_addr_t addr, phys_addr_t end)
+> >>  		 * large. Otherwise, we may see kernel panics with
+> >>  		 * CONFIG_DETECT_HUNG_TASK, CONFIG_LOCKUP_DETECTOR,
+> >>  		 * CONFIG_LOCKDEP. Additionally, holding the lock too long
+> >>-		 * will also starve other vCPUs. We have to also make sure
+> >>-		 * that the page tables are not freed while we released
+> >>-		 * the lock.
+> >>+		 * will also starve other vCPUs.
+> >>+		 * The page tables shouldn't be free'd while we released the
+> >
+> >s/shouldn't/can't/
+> >
+> 
+> ok
+> >>+		 * lock, since we hold a reference to the KVM.
+> >
+> >s/KVM/VM/
+> >
+> 
+> ok.
+> 
+> 
+Thanks,
+-Christoffer
