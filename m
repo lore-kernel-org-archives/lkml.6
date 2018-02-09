@@ -1,98 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752802AbeBIOJJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:09:09 -0500
-Received: from mga12.intel.com ([192.55.52.136]:17069 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753257AbeBIOIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:08:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,483,1511856000";
-   d="scan'208";a="16764954"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv3 5/5] x86/pconfig: Provide defines and helper to run MKTME_KEY_PROG leaf
-Date: Fri,  9 Feb 2018 17:07:54 +0300
-Message-Id: <20180209140754.17062-6-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
-References: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
+        id S1753031AbeBIOJQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:09:16 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:52105 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752830AbeBIOJM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 09:09:12 -0500
+Date: Fri, 9 Feb 2018 15:09:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, acme@kernel.org,
+        tglx@linutronix.de, jolsa@redhat.com, eranian@google.com,
+        ak@linux.intel.com
+Subject: Re: [PATCH V3 1/5] perf/x86/intel: fix event update for auto-reload
+Message-ID: <20180209140905.GG25181@hirez.programming.kicks-ass.net>
+References: <1517243373-355481-1-git-send-email-kan.liang@linux.intel.com>
+ <1517243373-355481-2-git-send-email-kan.liang@linux.intel.com>
+ <20180206150648.GK2249@hirez.programming.kicks-ass.net>
+ <ae4c7aff-da12-8cb3-4fac-4637ab001060@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae4c7aff-da12-8cb3-4fac-4637ab001060@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MKTME_KEY_PROG allows to manipulate MKTME keys in the CPU.
+On Tue, Feb 06, 2018 at 12:58:23PM -0500, Liang, Kan wrote:
+> 
+> 
+> > With the exception of handling 'empty' buffers, I ended up with the
+> > below. Please try again.
+> > 
+> 
+> There are two small errors. After fixing them, the patch works well.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/x86/include/asm/intel_pconfig.h | 50 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Well, it still doesn't do A, two read()s without PEBS record in between.
+So that needs fixing. What 3/5 does, call x86_perf_event_update() after
+drain_pebs() is actively wrong after this patch.
 
-diff --git a/arch/x86/include/asm/intel_pconfig.h b/arch/x86/include/asm/intel_pconfig.h
-index fb7a37c3798b..3cb002b1d0f9 100644
---- a/arch/x86/include/asm/intel_pconfig.h
-+++ b/arch/x86/include/asm/intel_pconfig.h
-@@ -12,4 +12,54 @@ enum pconfig_target {
- 
- int pconfig_target_supported(enum pconfig_target target);
- 
-+enum pconfig_leaf {
-+	MKTME_KEY_PROGRAM	= 0,
-+	PCONFIG_LEAF_INVALID,
-+};
-+
-+#define PCONFIG ".byte 0x0f, 0x01, 0xc5"
-+
-+/* Defines and structure for MKTME_KEY_PROGRAM of PCONFIG instruction */
-+
-+/* mktme_key_program::keyid_ctrl COMMAND, bits [7:0] */
-+#define MKTME_KEYID_SET_KEY_DIRECT	0
-+#define MKTME_KEYID_SET_KEY_RANDOM	1
-+#define MKTME_KEYID_CLEAR_KEY		2
-+#define MKTME_KEYID_NO_ENCRYPT		3
-+
-+/* mktme_key_program::keyid_ctrl ENC_ALG, bits [23:8] */
-+#define MKTME_AES_XTS_128	(1 << 8)
-+
-+/* Return codes from the PCONFIG MKTME_KEY_PROGRAM */
-+#define MKTME_PROG_SUCCESS	0
-+#define MKTME_INVALID_PROG_CMD	1
-+#define MKTME_ENTROPY_ERROR	2
-+#define MKTME_INVALID_KEYID	3
-+#define MKTME_INVALID_ENC_ALG	4
-+#define MKTME_DEVICE_BUSY	5
-+
-+/* Hardware requires the structure to be 256 byte alinged. Otherwise #GP(0). */
-+struct mktme_key_program {
-+	u16 keyid;
-+	u32 keyid_ctrl;
-+	u8 __rsvd[58];
-+	u8 key_field_1[64];
-+	u8 key_field_2[64];
-+} __packed __aligned(256);
-+
-+static inline int mktme_key_program(struct mktme_key_program *key_program)
-+{
-+	unsigned long rax = MKTME_KEY_PROGRAM;
-+
-+	if (!pconfig_target_supported(MKTME_TARGET))
-+		return -ENXIO;
-+
-+	asm volatile(PCONFIG
-+		: "=a" (rax), "=b" (key_program)
-+		: "0" (rax), "1" (key_program)
-+		: "memory", "cc");
-+
-+	return rax;
-+}
-+
- #endif	/* _ASM_X86_INTEL_PCONFIG_H */
--- 
-2.15.1
+> > +
+> > +	/*
+> > +	 * Careful, not all hw sign-extends above the physical width
+> > +	 * of the counter.
+> > +	 */
+> > +	delta = (new_raw_count << shift) - (prev_raw_count << shift);
+> > +	delta >>= shift;
+> 
+> new_raw_count could be smaller than prev_raw_count.
+> The sign bit will be set. The delta>> could be wrong.
+> 
+> I think we can add a period here to prevent it.
+> +       delta = (period << shift) + (new_raw_count << shift) -
+> +               (prev_raw_count << shift);
+> +       delta >>= shift;
+> ......
+> +       local64_add(delta + period * (count - 1), &event->count);
+> 
+
+Right it does, but that wrecks case A again, because then we get here
+with !@count.
+
+Maybe something like:
+
+
+	s64 new, old;
+
+	new = ((s64)(new_raw_count << shift) >> shift);
+	old = ((s64)(old_raw_count << shift) >> shift);
+
+	local64_add(new - old + count * period, &event->count);
+
+
+And then make intel_pmu_drain_pebs_*(), call this function even when !n.
