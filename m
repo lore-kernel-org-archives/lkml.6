@@ -1,41 +1,46 @@
-Return-Path: <jroedel@suse.de>
-X-Google-Smtp-Source: AH8x224/ZEiHkwfCaeLjoIQEHY1udO26I/9EcZ7nS+NpgkHlYqtBK4HglCC/UCx4f0Ep8/gOyk73
-ARC-Seal: i=1; a=rsa-sha256; t=1518203218; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AH8x2246C94oGt91XOfZ21K4/QCjCliieuHcctQMen9ZygXtmoJnJ7z2WDZoFJDSSFpDzcE1qKNw
+ARC-Seal: i=1; a=rsa-sha256; t=1518168364; cv=none;
         d=google.com; s=arc-20160816;
-        b=XMekM45bbRMoihG8Mb2+P26v/GAIlqiCh6kZkMBDji29i0hNp2s0MAVccj8kx+HSql
-         1yU9Q6QWczFt0hb5rj+q9BzMz7Y1+0skg/YkQH0P98gKrdfWwEBS0gh29fIzgKJhoKoX
-         Tc9k6AE2XNUOIEvKu9EjQy4Nf5hDhaXgb0irWtJt6kyM0nvVZqZYw5kYdBNkCFrvhSaW
-         rc84EsI2eRWU2OySuQ1PZrMMMe88qD8AHW1uo2esmCH0P9Myf+KoxwxxkMNQKe+Sttql
-         QdmyouhITYFiXyd46W/qUyFbQRhCbHuRd6uNS3+UZ7IDoB8Ej+gf7wvW8lKz0RyzuTX8
-         YTig==
+        b=PvN52CbVFIvYi/FeY2AL+j/ZGo299Dr1uima6n8KeWLnDebiFlcHPeEfMTtXS6Wz4a
+         smN4s+FPRvpmbjIDLNyFv/yMpkkf6CEyqk38A/6UrZBSD++ceFG1YsDacrjb6msTg2ek
+         cQhLxfYT+/ud/QRPy6v+EGTOf/qirQwUdSLIddPMyGWxcwNTfkxExyyU9zsKmNxm9Yls
+         WGJcs/b9kFluxvsEL1PKdbHLVbsdWC7n7nnmb0VrghMIEeTi6sGWz5Z6B11WLieBYvFd
+         kzE4JlP/TbXVaHCu9DC6iwqlJ05BcFleopXYjf/ufB9IunRhuiGlF2EgxR+xH20f/R/P
+         dRcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=VOZoRlX6Ah4SMldH1YNr8s8Qz1NWz7gzFpvNpcr7GRM=;
-        b=gNMsjrt1owsXptjXsz7ZCncz5uKMc+momzfl7gQsiYNFAOoqIAEWca5ZhjHPUUW8br
-         zdQz8V1w0I/xCNI3lQr3AAtpJWsanImbZtjmEOTExUULMAR6UMxOZyv89tUPRxc/uDvN
-         pCAR4nf2Z4McOaT1rxJcEVZ3mkEIBCvmuhCaLqrDI2eJ4M++D1h1Bb1Q+u1tEKWnwudO
-         /ndPQGTGf34ltaSJpDmva57lSG9v3jsGS6fGziy5Jy60HysHRHPRBLuHlkNThIg0hrbX
-         bNRzdtYtFer9FytFqoCPpdUEeKziYjNkHZ3rL44IT8tHGZnvS/2n/SpJBV5b2qm19IXM
-         gA3g==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=RSY1WN7/qksWLFMQ3sD1qFl/qtSJ5fxfios+fq9yDg8=;
+        b=UNKvL1PYq/yEA8lxrpzM0Viqi3WyX36HW8OhkZtUHKDwRqrjGfOhTkSoJro0YM2i7B
+         9m5/mJZMYqwLkFnaSGf3F5/yilJ3rOqA74PnaO/egGu3pfVxhE/3wh8l5Ouf7SpnImQp
+         ap898SWGDug4+bx2O4IZq+45sTTLnc8dEB3k5vpyaqhv49WpCHWkSRi+DEYhy9+HVK9p
+         20CqQivktc2vkoD4syuDEqDMLKjC8IPHbEvrYSHnTjF6odpBeL/mUKEQKXovcQZLEbsK
+         k0Mul+6DY3AUHtApUj41pQJq/H7rObepa57A2rPH6NFdqlAeCV8tQakxlDxLoZPZi030
+         Ns3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=kJAw4kZ6;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
-Date: Fri, 9 Feb 2018 20:06:54 +0100
-From: Joerg Roedel <jroedel@suse.de>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, Dave Hansen <dave.hansen@intel.com>,
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=kJAw4kZ6;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Borislav Petkov <bp@alien8.de>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Brian Gerst <brgerst@gmail.com>,
 	David Laight <David.Laight@aculab.com>,
@@ -43,38 +48,61 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Eduardo Valentin <eduval@amazon.com>,
 	Greg KH <gregkh@linuxfoundation.org>,
 	Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
+	aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at,
+	hughd@google.com,
+	keescook@google.com,
 	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 09/31] x86/entry/32: Leave the kernel via trampoline stack
-Message-ID: <20180209190654.cvlrp22ly5gbxbxr@suse.de>
+	Waiman Long <llong@redhat.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	jroedel@suse.de,
+	joro@8bytes.org
+Subject: [PATCH 20/31] x86/mm/pae: Populate the user page-table with user pgd's
+Date: Fri,  9 Feb 2018 10:25:29 +0100
+Message-Id: <1518168340-9392-21-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
- <1518168340-9392-10-git-send-email-joro@8bytes.org>
- <CA+55aFzB9H=RT6YB3onZCephZMs9ccz4aJ_jcPcfEkKJD_YDCQ@mail.gmail.com>
- <CALCETrUfMk67QeubuujbzKXeJFT4hBcq6kuAX3r1bOOeU1bNSQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUfMk67QeubuujbzKXeJFT4hBcq6kuAX3r1bOOeU1bNSQ@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914904027044040?=
-X-GMAIL-MSGID: =?utf-8?q?1591951458089088018?=
+X-GMAIL-THRID: =?utf-8?q?1591914910930783866?=
+X-GMAIL-MSGID: =?utf-8?q?1591914910930783866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 09, 2018 at 05:43:55PM +0000, Andy Lutomirski wrote:
+From: Joerg Roedel <jroedel@suse.de>
+
+When we populate a PGD entry, make sure we populate it in
+the user page-table too.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/include/asm/pgtable-3level.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/x86/include/asm/pgtable-3level.h b/arch/x86/include/asm/pgtable-3level.h
+index bc4af54..1a0661b 100644
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -98,6 +98,9 @@ static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
  
-> The 64-bit code mostly uses a bunch of push instructions for this.
-
-I had it implemented with tons of push instructions first, but that
-doesn't work in cases where the stack switch needs to happen only after
-everything is copied over.
-
-So I switched to 'rep movsb', which in my eyes also makes the code
-easier to understand.
-
-
-	Joerg
+ static inline void native_set_pud(pud_t *pudp, pud_t pud)
+ {
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++	pud.p4d.pgd = pti_set_user_pgd(&pudp->p4d.pgd, pud.p4d.pgd);
++#endif
+ 	set_64bit((unsigned long long *)(pudp), native_pud_val(pud));
+ }
+ 
+@@ -194,6 +197,10 @@ static inline pud_t native_pudp_get_and_clear(pud_t *pudp)
+ {
+ 	union split_pud res, *orig = (union split_pud *)pudp;
+ 
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++	pti_set_user_pgd(&pudp->p4d.pgd, __pgd(0));
++#endif
++
+ 	/* xchg acts as a barrier before setting of the high bits */
+ 	res.pud_low = xchg(&orig->pud_low, 0);
+ 	res.pud_high = orig->pud_high;
+-- 
+2.7.4
