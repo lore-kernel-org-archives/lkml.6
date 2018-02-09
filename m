@@ -1,41 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752306AbeBIRP6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:15:58 -0500
-Received: from smtp3.ono.com ([62.42.230.163]:7298 "EHLO smtp3.ono.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751029AbeBIRP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:15:57 -0500
-X-Junkmail-Premium-Raw: score=35/50,refid=2.7.2:2018.2.9.164515:17:35.434,ip=62.42.230.144,rules=__HAS_MSGID,
- __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
- FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, __MIME_VERSION,
- __CT, __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS, __ANY_URI,
- __FRAUD_BODY_WEBMAIL, __URI_NO_WWW, __FRAUD_INTRO, ECARD_KNOWN_DOMAINS,
- __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __FRAUD_MONEY_CURRENCY_DOLLAR,
- __INT_PROD_LOC, __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_400_LESS,
- BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_300_399, __MIME_TEXT_P1,
- __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
- __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
- __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
- WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, FRAUD_LITTLE_BODY,
- __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS, BODY_SIZE_2000_LESS,
- __PHISH_SPEAR_STRUCTURE_2, __MIME_TEXT_P, REPLYTO_FROM_DIFF_ADDY,
- NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
-Message-ID: <28805107.4282541518196529951.JavaMail.defaultUser@defaultHost>
-Date: Fri, 9 Feb 2018 18:15:29 +0100 (CET)
-From: Dr Kabor Zongo <hsatre@ono.com>
-Reply-To: zongokab2017@yahoo.com
-Subject: Compliment of the day ,
+        id S1752411AbeBIRRl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:17:41 -0500
+Received: from mail-io0-f169.google.com ([209.85.223.169]:46098 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751277AbeBIRRi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:17:38 -0500
+X-Google-Smtp-Source: AH8x22434ctwbWW7v0IpWPRoeZsjhQvD12MhoH/qWM6a7Wi3VJASRlWdESAQMpLeH1cfmFZJv7u/vw==
+Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
+To: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc: linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
+        169364@studenti.unimore.it, holger@applied-asynchrony.com,
+        efault@gmx.de, Serena Ziviani <ziviani.serena@gmail.com>
+References: <20180207211920.6343-1-paolo.valente@linaro.org>
+ <17c57205-7cc0-5577-0322-dc35914e50e5@kernel.dk>
+ <34041F0A-F460-4736-9A6C-76D861EA0070@linaro.org>
+ <b5d4a3bc8946db0a696e8398b68adba0@natalenko.name>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <760ae85e-be4c-cf13-53f2-579ab4646b09@kernel.dk>
+Date: Fri, 9 Feb 2018 10:17:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101
+ Thunderbird/58.0
 MIME-Version: 1.0
-Content-Type: text/plain;charset="UTF-8"
+In-Reply-To: <b5d4a3bc8946db0a696e8398b68adba0@natalenko.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compliment of the day , I am a professional banker with International 
-and Qualified Experience. Please i seek your Urgent Attention and 
-Cooperation to transfer the sum of $8.5M into your account. Risk free 
-and Beneficial. Waiting response so that we can proceed to the next 
-level(zongokab2017@yahoo.com)
+On 2/9/18 6:21 AM, Oleksandr Natalenko wrote:
+> Hi.
+> 
+> 08.02.2018 08:16, Paolo Valente wrote:
+>>> Il giorno 07 feb 2018, alle ore 23:18, Jens Axboe <axboe@kernel.dk> ha 
+>>> scritto:
+>>>
+>>> On 2/7/18 2:19 PM, Paolo Valente wrote:
+>>>> Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq 
+>>>> via
+>>>> RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a 
+>>>> device
+>>>> be re-inserted into the active I/O scheduler for that device. As a
+>>>> consequence, I/O schedulers may get the same request inserted again,
+>>>> even several times, without a finish_request invoked on that request
+>>>> before each re-insertion.
+>>>>
+>>>> This fact is the cause of the failure reported in [1]. For an I/O
+>>>> scheduler, every re-insertion of the same re-prepared request is
+>>>> equivalent to the insertion of a new request. For schedulers like
+>>>> mq-deadline or kyber, this fact causes no harm. In contrast, it
+>>>> confuses a stateful scheduler like BFQ, which keeps state for an I/O
+>>>> request, until the finish_request hook is invoked on the request. In
+>>>> particular, BFQ may get stuck, waiting forever for the number of
+>>>> request dispatches, of the same request, to be balanced by an equal
+>>>> number of request completions (while there will be one completion for
+>>>> that request). In this state, BFQ may refuse to serve I/O requests
+>>>> from other bfq_queues. The hang reported in [1] then follows.
+>>>>
+>>>> However, the above re-prepared requests undergo a requeue, thus the
+>>>> requeue_request hook of the active elevator is invoked for these
+>>>> requests, if set. This commit then addresses the above issue by
+>>>> properly implementing the hook requeue_request in BFQ.
+>>>
+>>> Thanks, applied.
+>>>
+>>
+>> I Jens,
+>> I forgot to add
+>> Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+>> in the patch.
+>>
+>> Is it still possible to add it?
+>>
+> 
+> In addition to this I think it should be worth considering CC'ing Greg 
+> to pull this fix into 4.15 stable tree.
+
+I can't add the tested-by anymore, but it's easy enough to target for
+stable after-the-fact.
+
+
+-- 
+Jens Axboe
