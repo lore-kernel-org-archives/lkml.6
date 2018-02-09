@@ -1,72 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752403AbeBIJgx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:36:53 -0500
-Received: from mga03.intel.com ([134.134.136.65]:28817 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750973AbeBIJgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:36:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,482,1511856000";
-   d="scan'208";a="29439115"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, "Tobin C. Harding" <me@tobin.cc>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mchehab@kernel.org
-Subject: Re: [PATCH 7/8] docs: kernel-doc: Finish moving STATE_* code out of process_file()
-In-Reply-To: <20180208125800.3dae9456@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180207172624.24555-1-corbet@lwn.net> <20180207172624.24555-8-corbet@lwn.net> <20180208022953.GB3304@eros> <20180208125800.3dae9456@lwn.net>
-Date: Fri, 09 Feb 2018 11:36:42 +0200
-Message-ID: <871shua4id.fsf@intel.com>
+        id S1751098AbeBIJlG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:41:06 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37422 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750828AbeBIJlD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:41:03 -0500
+X-Google-Smtp-Source: AH8x226E+/i88Tj+4vl1E0dVj3GKv11hWE6c/owrUAx/FVsYUGh6jsjmVe7RuiP9RY8sDQahO20+xA==
+Date: Fri, 9 Feb 2018 15:11:00 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
+ cooling driver
+Message-ID: <20180209094100.GM28462@vireshk-i7>
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
+ <20180207091231.GQ28462@vireshk-i7>
+ <54759b82-29e9-f376-bbe8-dcf683ed0cce@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54759b82-29e9-f376-bbe8-dcf683ed0cce@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Feb 2018, Jonathan Corbet <corbet@lwn.net> wrote:
-> On Thu, 8 Feb 2018 13:29:53 +1100
-> "Tobin C. Harding" <me@tobin.cc> wrote:
->
->> It doesn't appear to be introduced by you but the brace positions are
->> non-uniform in this patch.
->> 
->> if
->> {
->>   ...
->> }
->> else
->> {
->>   ...
->> }
->> 
->> instead of
->> 
->> if {
->>   ...
->> } else {
->>   eee
->> }
->
-> True, that's worth fixing up while I'm in the neighborhood.  I'll do that
-> before I commit the set.
+On 07-02-18, 11:34, Daniel Lezcano wrote:
+> On 07/02/2018 10:12, Viresh Kumar wrote:
+> > What about cpuidle_cooling_unregister() ?
+> 
+> The unregister function is not needed because cpuidle can't be unloaded.
+> The cpuidle cooling device is registered after the cpuidle successfully
+> initialized itself, there is no error path.
 
-With that,
+Okay, then there are two more things here.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+First, you don't need a kref in your patch and simple counter should
+be used instead, as kref is obviously more heavy to be used for the
+single error path here.
 
-
->
-> Thanks,
->
-> jon
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-doc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Secondly, what about CPU hotplug ? For example, the cpu-freq cooling
+device gets removed currently if all CPUs of a cluster are
+hotplugged-out. But with your code, even if the CPUs are gone, their
+cpu-idle cooling device will stay.
 
 -- 
-Jani Nikula, Intel Open Source Technology Center
+viresh
