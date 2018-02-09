@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185225-2-17477784468093544150
+X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185194-2-7512863963730737900
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185225; b=LFSGcZFCTqgnEXdmxBhLl5vrJ7JcPkUh+za//ProXcCHSb7
-    P/f5Gkew2rLFFe8glFNt587yuF/kkm3ClfQz3Uu5FYEsm6ncmEXBdeccCSoeBj+G
-    DpLEdLpvTjEi6vY/5AAMS7+z93hT2QEJBMG2EjAKd9oet9Ug9wevPXd/vpeuVtLk
-    sVBUgijRVZLUk2w/DDihugYYOz63QENm6ehNTiNCFPFNzmYdgiz+lRm6ZTzw4iqk
-    hSGs9RFX3iP0PbVfUr/bDqlvUkXtJJNfqzY4hpxdgaSGtnKf4rzDAy2UpvRJSPNT
-    ApYJZegAFk1F3Y6TiVyM1YhRidiFuoa8kWqgDig==
+    t=1518185192; b=YLF/Gzhi7F2SwrOPIUWCG7GvPbX2cBlJ2VL00aGE2DRTusk
+    /tWRYddGkwtq1RuvzIeEHjWgt2PjHTQZ8LNfKsPdKaeQ/OP9x3uLyD6aQLSGI0zD
+    ztRlulytOQoHcens0mn9ZBmkdtiKuYcKJpLqsCjg8GNu5fh+0Z4t/v+G9rNgkDbk
+    0FQDLpUiuuADNsHj3AZ0+iHiCEspNWMjyPIC/tLFt682bolU2PgiPpiadmsXZBD4
+    HdAjRekOxsu/6fKlKyFM4l3ydhwgLk3HZ45su3zP9pqIFdjzXGoaLQ6XhkHBfQTd
+    Zbar2XShErJPiMg2FGYD7B+V4j94zC3idJvGpyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185225; bh=Md/cfxDtb1z+8Dva7bwBMe6KWP
-    vUgJrPnoG5fYNSSM0=; b=QlzZhMFvFDyOHgqd/xs6J15WPI0Su+UtHZ+jxsReZZ
-    0HrA/VWucfShf1Zvd+v++3MTept8BuOJrjHdmudybIbwZoli+1DSyulbvu9cmMzB
-    S+BuWUnDPHlXFrb/cy8QXi+p6haBrZlNxv8W1BA5XZ8FNGgWmB5Z4evviLbI/BJA
-    kj9Kc324BOCEC4DQzv6WMxtM23vDEzOAJh156uI89OUlSCYcsnZCQ4vXHAUOXDin
-    0OFXWYFpymjsvIG+GOys84YGu1biI/YBt7jwldkBglNOEPP8lKHAdVUWJRzD0IwN
-    P+RqawYgM35K1AIP+hy/OCjC056kmkuX1aoNSDaD79Ww==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185192; bh=68sidBXRhfeKSC1Y7RWV2FTYwW
+    mdfPLcsajhuCVHN2s=; b=XtYyC8XwOER7VhQ9hv2QGc5F33mOLxAr4JIsH0ZWYT
+    3F4GT1Xp30kL+nlc2YlxRoE4ld6wPSPbpDnVK9NfOid3PuSjlMwzwubzO7lmsRdc
+    5pO96wpOqnnYrHBVElSUGhSk5lTfmhrSMMKzUrMUBQ3fbYGu8aXJfun0HvRbXUqR
+    eP323AIL56RFOfCwfH9syv/16ysYJpZNbc3cyaI1paJLBMoS3mZEucqkezguaTv2
+    ezr929MSCS1P4BynJqT/aS8tcorLe61PczVD+yccQcJFnhi4uSG8ZPzjH91QzdRK
+    D5JVHDNANehkbG8+sX7LR6a8Hm/IrL2eZ5L82LPVYKlg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753033AbeBINmp (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:42:45 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49952 "EHLO
+        id S1753067AbeBINmu (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:42:50 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50000 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752946AbeBINmn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:43 -0500
+        with ESMTP id S1753028AbeBINms (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:48 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver OHalloran <oohall@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 09/92] powerpc/powernv: Check device-tree for RFI flush settings
-Date: Fri,  9 Feb 2018 14:38:38 +0100
-Message-Id: <20180209133931.925990571@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>, linux-arch@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel-hardening@lists.openwall.com, torvalds@linux-foundation.org,
+        alan@linux.intel.com, David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 56/92] Documentation: Document array_index_nospec
+Date: Fri,  9 Feb 2018 14:39:25 +0100
+Message-Id: <20180209133935.257746808@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -77,86 +84,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oliver O'Halloran <oohall@gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 6e032b350cd1fdb830f18f8320ef0e13b4e24094 upstream.
 
-New device-tree properties are available which tell the hypervisor
-settings related to the RFI flush. Use them to determine the
-appropriate flush instruction to use, and whether the flush is
-required.
+(cherry picked from commit f84a56f73dddaeac1dba8045b007f742f61cd2da)
 
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Document the rationale and usage of the new array_index_nospec() helper.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: linux-arch@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: gregkh@linuxfoundation.org
+Cc: kernel-hardening@lists.openwall.com
+Cc: torvalds@linux-foundation.org
+Cc: alan@linux.intel.com
+Link: https://lkml.kernel.org/r/151727413645.33451.15878817161436755393.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/platforms/powernv/setup.c |   50 +++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ Documentation/speculation.txt |   90 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+ create mode 100644 Documentation/speculation.txt
 
---- a/arch/powerpc/platforms/powernv/setup.c
-+++ b/arch/powerpc/platforms/powernv/setup.c
-@@ -35,13 +35,63 @@
- #include <asm/opal.h>
- #include <asm/kexec.h>
- #include <asm/smp.h>
-+#include <asm/tm.h>
-+#include <asm/setup.h>
- 
- #include "powernv.h"
- 
-+static void pnv_setup_rfi_flush(void)
-+{
-+	struct device_node *np, *fw_features;
-+	enum l1d_flush_type type;
-+	int enable;
+--- /dev/null
++++ b/Documentation/speculation.txt
+@@ -0,0 +1,90 @@
++This document explains potential effects of speculation, and how undesirable
++effects can be mitigated portably using common APIs.
 +
-+	/* Default to fallback in case fw-features are not available */
-+	type = L1D_FLUSH_FALLBACK;
-+	enable = 1;
++===========
++Speculation
++===========
 +
-+	np = of_find_node_by_name(NULL, "ibm,opal");
-+	fw_features = of_get_child_by_name(np, "fw-features");
-+	of_node_put(np);
++To improve performance and minimize average latencies, many contemporary CPUs
++employ speculative execution techniques such as branch prediction, performing
++work which may be discarded at a later stage.
 +
-+	if (fw_features) {
-+		np = of_get_child_by_name(fw_features, "inst-l1d-flush-trig2");
-+		if (np && of_property_read_bool(np, "enabled"))
-+			type = L1D_FLUSH_MTTRIG;
++Typically speculative execution cannot be observed from architectural state,
++such as the contents of registers. However, in some cases it is possible to
++observe its impact on microarchitectural state, such as the presence or
++absence of data in caches. Such state may form side-channels which can be
++observed to extract secret information.
 +
-+		of_node_put(np);
++For example, in the presence of branch prediction, it is possible for bounds
++checks to be ignored by code which is speculatively executed. Consider the
++following code:
 +
-+		np = of_get_child_by_name(fw_features, "inst-l1d-flush-ori30,30,0");
-+		if (np && of_property_read_bool(np, "enabled"))
-+			type = L1D_FLUSH_ORI;
-+
-+		of_node_put(np);
-+
-+		/* Enable unless firmware says NOT to */
-+		enable = 2;
-+		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-hv-1-to-0");
-+		if (np && of_property_read_bool(np, "disabled"))
-+			enable--;
-+
-+		of_node_put(np);
-+
-+		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-pr-0-to-1");
-+		if (np && of_property_read_bool(np, "disabled"))
-+			enable--;
-+
-+		of_node_put(np);
-+		of_node_put(fw_features);
++	int load_array(int *array, unsigned int index)
++	{
++		if (index >= MAX_ARRAY_ELEMS)
++			return 0;
++		else
++			return array[index];
 +	}
 +
-+	setup_rfi_flush(type, enable > 0);
-+}
++Which, on arm64, may be compiled to an assembly sequence such as:
 +
- static void __init pnv_setup_arch(void)
- {
- 	set_arch_panic_timeout(10, ARCH_PANIC_TIMEOUT);
- 
-+	pnv_setup_rfi_flush();
++	CMP	<index>, #MAX_ARRAY_ELEMS
++	B.LT	less
++	MOV	<returnval>, #0
++	RET
++  less:
++	LDR	<returnval>, [<array>, <index>]
++	RET
 +
- 	/* Initialize SMP */
- 	pnv_smp_init();
- 
++It is possible that a CPU mis-predicts the conditional branch, and
++speculatively loads array[index], even if index >= MAX_ARRAY_ELEMS. This
++value will subsequently be discarded, but the speculated load may affect
++microarchitectural state which can be subsequently measured.
++
++More complex sequences involving multiple dependent memory accesses may
++result in sensitive information being leaked. Consider the following
++code, building on the prior example:
++
++	int load_dependent_arrays(int *arr1, int *arr2, int index)
++	{
++		int val1, val2,
++
++		val1 = load_array(arr1, index);
++		val2 = load_array(arr2, val1);
++
++		return val2;
++	}
++
++Under speculation, the first call to load_array() may return the value
++of an out-of-bounds address, while the second call will influence
++microarchitectural state dependent on this value. This may provide an
++arbitrary read primitive.
++
++====================================
++Mitigating speculation side-channels
++====================================
++
++The kernel provides a generic API to ensure that bounds checks are
++respected even under speculation. Architectures which are affected by
++speculation-based side-channels are expected to implement these
++primitives.
++
++The array_index_nospec() helper in <linux/nospec.h> can be used to
++prevent information from being leaked via side-channels.
++
++A call to array_index_nospec(index, size) returns a sanitized index
++value that is bounded to [0, size) even under cpu speculation
++conditions.
++
++This can be used to protect the earlier load_array() example:
++
++	int load_array(int *array, unsigned int index)
++	{
++		if (index >= MAX_ARRAY_ELEMS)
++			return 0;
++		else {
++			index = array_index_nospec(index, MAX_ARRAY_ELEMS);
++			return array[index];
++		}
++	}
