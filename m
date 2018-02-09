@@ -1,45 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751550AbeBIJoZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:44:25 -0500
-Received: from mail-it0-f46.google.com ([209.85.214.46]:50252 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeBIJoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:44:22 -0500
-X-Google-Smtp-Source: AH8x224zdx8YlqQB3xkFnajMfz18Lh9l938TRm58Y/auLgfioNTmKGS8ND8TrE3IM4+D8bNrn0Yvsw==
-Date: Fri, 9 Feb 2018 15:14:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        daniel.thompson@linaro.org
-Subject: Re: [PATCH 8/8] thermal/drivers/cpu_cooling: Add the combo cpu
- cooling device
-Message-ID: <20180209094419.GN28462@vireshk-i7>
-References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
- <1516721671-16360-9-git-send-email-daniel.lezcano@linaro.org>
- <20180202104259.GA28462@vireshk-i7>
- <8dadd854-25ac-68aa-aa9f-33ba76a137a4@linaro.org>
+        id S1752059AbeBIJpL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:45:11 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:36860 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750878AbeBIJpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:45:09 -0500
+From: Heiko Stuebner <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Brian Norris <briannorris@chromium.org>, groeck@chromium.org,
+        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH 1/3] arm64: dts: rockchip: introduce pclk_vio_grf in eDP device node
+Date: Fri, 09 Feb 2018 10:45:03 +0100
+Message-ID: <2524920.mM517gbyb6@phil>
+In-Reply-To: <20180207163150.16332-1-enric.balletbo@collabora.com>
+References: <20180207163150.16332-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8dadd854-25ac-68aa-aa9f-33ba76a137a4@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-02-18, 15:30, Daniel Lezcano wrote:
-> Agree the cpufreq driver can be unloaded and this part needs some
-> adjustments.
+Am Mittwoch, 7. Februar 2018, 17:31:48 CET schrieb Enric Balletbo i Serra:
+> From: Yakir Yang <ykk@rock-chips.com>
+> 
+> The pclk_vio_grf supply power for VIO GRF IOs, if it is disabled,
+> driver would failed to operate the VIO GRF registers.
+> 
+> The clock is optional but one of the side effects of don't have this clk
+> is that the Samsung Chromebook Plus fails to recover display after a
+> suspend/resume with following errors:
+> 
+>     rockchip-dp ff970000.edp: Input stream clock not detected.
+>     rockchip-dp ff970000.edp: Timeout of video streamclk ok
+>     rockchip-dp ff970000.edp: unable to config video
+> 
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Also note that the cpufreq cooling device has two separate set of
-callbacks, one for the power-specific callbacks. You haven't taken
-care of them in the combo thing.
+as you said in IRC that his should also fix the failures when rockchip-drm
+is build as module, I've applied this patch as fix for 4.16
 
--- 
-viresh
+
+Thanks
+Heiko
