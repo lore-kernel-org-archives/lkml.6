@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeBISF4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 13:05:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:50270 "EHLO foss.arm.com"
+        id S1752362AbeBIR5V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:57:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:50242 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752493AbeBIR5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:57:24 -0500
+        id S1752337AbeBIR5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:57:20 -0500
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
         ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 05/22] arm64: capabilities: Add flags to handle the conflicts on late CPU
-Date: Fri,  9 Feb 2018 17:54:39 +0000
-Message-Id: <20180209175513.17100-10-suzuki.poulose@arm.com>
+Subject: [PATCH v3 04/21] arm64: capabilities: Add flags to handle the conflicts on late CPU
+Date: Fri,  9 Feb 2018 17:54:37 +0000
+Message-Id: <20180209175513.17100-8-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180209175513.17100-1-suzuki.poulose@arm.com>
 References: <20180209175513.17100-1-suzuki.poulose@arm.com>
