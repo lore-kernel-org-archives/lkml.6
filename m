@@ -1,190 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeBID2i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 22:28:38 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:44358 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752201AbeBID2h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 22:28:37 -0500
-X-Google-Smtp-Source: AH8x224rrv9ndsBbblR5znM4Ygqi+bfe1K7g8PpWoT2CIUh0RjDoB2lafq+3l2q2k9Muzy56gAqaeA==
-Date: Fri, 9 Feb 2018 12:28:30 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2] printk: Relocate wake_klogd check close to the end of
- console_unlock()
-Message-ID: <20180209032830.GA689@jagdpanzerIV>
-References: <20180208130402.15157-1-pmladek@suse.com>
- <20180208145307.GA485@tigerII.localdomain>
- <20180208164820.qsotvvywds6z6le4@pathway.suse.cz>
+        id S1752324AbeBIDb7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 22:31:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752154AbeBIDb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 22:31:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B122172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 8 Feb 2018 22:31:53 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 15/18] tracing: Add string type for dynamic strings in
+ function based events
+Message-ID: <20180208223153.3bc3c87d@vmware.local.home>
+In-Reply-To: <20180209031547.GD28206@sejong>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231019.285051395@goodmis.org>
+        <20180209031547.GD28206@sejong>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208164820.qsotvvywds6z6le4@pathway.suse.cz>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/08/18 17:48), Petr Mladek wrote:
-[..]
-> > 
-> > I need to do more "research" on this. I though about it some time ago,
-> > and I think that waking up klogd _only_ when we don't have any pending
-> > logbuf messages still can be pretty late. Can't it? We can spin in
-> > console_unlock() printing loop for a long time, probably passing
-> > console_sem ownership between CPUs, without waking up the log_wait waiter.
-> > May be we can wake it up from the printing loop, outside of logbuf_lock,
-> > and let klogd to compete for logbuf_lock with the printing CPU. Why do
-> > we wake it up only when we are done pushing messages to a potentially
-> > slow serial console?
+On Fri, 9 Feb 2018 12:15:47 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
+
+> > @@ -124,6 +128,16 @@ enum {
+> >  	FUNC_TYPE_MAX
+> >  };
+> >  
+> > +#define MAX_STR		512
+> > +
+> > +/* Two contexts, normal and NMI, hence the " * 2" */
+> > +struct func_string {
+> > +	char		buf[MAX_STR * 2];
+> > +};
+> > +
+> > +static struct func_string __percpu *str_buffer;
+> > +static int nr_strings;  
 > 
-> I thought about this as well but I was lazy. You made me to do some
-> archaeology. It seems that it worked this way basically from the beginning.
-> I have a git tree with pre-git commits. The oldest printk changes are
-> there from 2.1.113.
-> 
-> In 2.1.113, logd was weaken directly from printk():
+> What protects it?
 
-Thanks!
+Grumble, I was thinking that the entire create_function_event was under
+the func_event_mutex, which it is not. So nr_strings is not fully
+protected. I'll fix that thanks.
 
-Was going to do the same today. Will take a look.
-
-[..]
-> My opinion:
-> 
-> IMHO, it would make perfect sense to wake klogd earlier and it should
-> be safe these days.
-> 
-> I am just slightly afraid of a potential contention on printk_lock.
-> Consoles and klogd might delay each other. Another question is
-> how to do so when console_unlock() is called with interrupts
-> disabled (irq_work is queued on the same CPU). This is why
-> I would suggest to do this change separately and not for 4.16.
-
-By postponing klogd wakeup we don't really address logbuf_lock
-contention. We have no guarantees that no new printk will come
-while klogd is active. Besides, consoles don't really delay
-klogd - I tend to ignore the impact of msg_print_text(), it should
-be fast. We call console drivers outside of logbuf_lock scope, so
-everything should fine (tm).
+As for str_buffer, I should comment this as it is rather subtle.
 
 
-Another question - do we need to wake it up from console_unlock()?
-
-Basically,
-- if consoles are suspended, we also "suspend" user space klogd.
-  Does it really make sense?
-
-- if console_lock is acquired by a preemptible task and that task
-  is getting scheduled out for a long time (OOM, etc) then we postpone
-  user space logging for unknown period of time. First the console_lock
-  will have to flush pending messages and only afterwards it will wakeup
-  klogd. Does it really make sense?
-
-- If current console_lock owner jumps to retry (new pending messages
-  were appended to the logbuf) label, user space klogd wakeup is getting
-  postponed even further.
-
-So, the final question is - since there in only one legitimate way
-(modulo user space writes to kmsg) to append new messages to the
-logbuf, shall we put klogd wakeup there? IOW, to vprintk_emit().
-
-Something like this:
-
----
-
- kernel/printk/printk.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index db4b9b8929eb..2c8992d54a59 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -423,6 +423,9 @@ static u32 log_next_idx;
- static u64 console_seq;
- static u32 console_idx;
- 
-+/* The last message seq klogd have seen */
-+static u64 klogd_seen_seq;
++static int read_string(char *str, unsigned long addr)
++{
++	unsigned long flags;
++	struct func_string *strbuf;
++	char *ptr = (void *)addr;
++	char *buf;
++	int ret;
 +
- /* the next printk record to read after the last 'clear' command */
- static u64 clear_seq;
- static u32 clear_idx;
-@@ -1888,6 +1891,10 @@ asmlinkage int vprintk_emit(int facility, int level,
- 
- 	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
- 
-+	if (klogd_seen_seq != log_next_seq) {
-+		klogd_seen_seq = log_next_seq;
-+		wake_up_klogd();
-+	}
- 	logbuf_unlock_irqrestore(flags);
- 
- 	/* If called from the scheduler, we can not call up(). */
-@@ -2289,9 +2296,7 @@ void console_unlock(void)
- {
- 	static char ext_text[CONSOLE_EXT_LOG_MAX];
- 	static char text[LOG_LINE_MAX + PREFIX_MAX];
--	static u64 seen_seq;
- 	unsigned long flags;
--	bool wake_klogd = false;
- 	bool do_cond_resched, retry;
- 
- 	if (console_suspended) {
-@@ -2335,11 +2340,6 @@ void console_unlock(void)
- 
- 		printk_safe_enter_irqsave(flags);
- 		raw_spin_lock(&logbuf_lock);
--		if (seen_seq != log_next_seq) {
--			wake_klogd = true;
--			seen_seq = log_next_seq;
--		}
--
- 		if (console_seq < log_first_seq) {
- 			len = sprintf(text, "** %u printk messages dropped **\n",
- 				      (unsigned)(log_first_seq - console_seq));
-@@ -2429,9 +2429,6 @@ void console_unlock(void)
- 
- 	if (retry && console_trylock())
- 		goto again;
--
--	if (wake_klogd)
--		wake_up_klogd();
- }
- EXPORT_SYMBOL(console_unlock);
- 
----
++	if (!str_buffer)
++		return 0;
++
++	strbuf = this_cpu_ptr(str_buffer);
++	buf = &strbuf->buf[0];
++
++	if (in_nmi())
++		buf += MAX_STR;
++
++	local_irq_save(flags);
 
-So, essentially, instead of:
+Like I said, this is really subtle, and desperately needs a comment.
 
-- OK, there is a new kernel message. Let's first print it to all of the
-  consoles (if !suspended and if can use console) and only afterwards let
-  user space to read it and to, probably, persist it in syslog journal file.
+The str_buffer is per cpu and can only be access under irqs disabled.
+If we are in NMI, then we move the starting position forward by MAX_STR.
 
-and now we have
+I'll add comments and protect create_function_event with the mutex.
 
-- OK, there is a new kernel message. Let's try to wakeup klogd so it
-  probably can persist it in syslog journal file while, in parallel, we
-  will print it to the consoles (if !suspended and if can use console).
+Thanks for pointing this out!
 
-Opinions?
+-- Steve
 
-> Note that we need Tejun's patch for-4.16 because it fixes a potential
-> race introduced by the console waiter logic.
 
-I understand it. I think I put my Reviewed-by on v1, maybe not...
-Here it is
-
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-
-But can we may be come up with a more general solution? Like the one
-that we discussed above. I've seen some user space klogd lost messages
-reports recently. I assume it was partly caused by that very late
-wakeup that we have.
-
-	-ss
++	ret = strncpy_from_unsafe(buf, ptr, MAX_STR);
++	if (ret < 0)
++		ret = 0;
++	if (ret > 0 && str)
++		memcpy(str, buf, ret);
++	local_irq_restore(flags);
++
++	return ret;
++}
