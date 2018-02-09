@@ -1,57 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751070AbeBILxr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 06:53:47 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33415 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeBILxp (ORCPT
+        id S1751179AbeBILyJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 06:54:09 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:54139 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbeBILyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 06:53:45 -0500
-From: Colin King <colin.king@canonical.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: GPD pocket fan: fix spelling mistake: "Mill-celcius" -> "millicelsius"
-Date: Fri,  9 Feb 2018 11:53:40 +0000
-Message-Id: <20180209115340.32347-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Fri, 9 Feb 2018 06:54:08 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Stefan Agner <stefan@agner.ch>
+Cc: viresh.kumar@linaro.org, fabio.estevam@nxp.com,
+        octavian.purdila@nxp.com, shawnguo@kernel.org, max.oss.09@gmail.com,
+        marcel.ziswiler@toradex.com, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: imx6q: support frequencies >528MHz for i.MX6UL/ULL
+Date: Fri, 09 Feb 2018 12:52:22 +0100
+Message-ID: <1619001.eqAapW3X4z@aspire.rjw.lan>
+In-Reply-To: <20180118235836.17393-1-stefan@agner.ch>
+References: <20180118235836.17393-1-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Friday, January 19, 2018 12:58:36 AM CET Stefan Agner wrote:
+> Depending on SKU i.MX6UL/i.MX6ULL support frequencies up to 900MHz.
+> Use PLL1 sys clock for all operating points higher than 528MHz.
+> 
+> Note: For higher operating points VDD_SOC_IN needs to be 125mV
+> higher than the ARM set-point (see datasheet). Specifically, the
+> i.MX6UL/ULL EVK boards have an external DC regulator which needs
+> adjustment. The regulator adjustment is not covered with this
+> change.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Trivial fix to spelling mistake in MODULE_PARM_DESC text and remove
-unnecessary hyphen
+This makes sense to me, but I need someone with the requisite platform
+knowledge to review it.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/platform/x86/gpd-pocket-fan.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
-index 2d645c505f81..3b923df15b9b 100644
---- a/drivers/platform/x86/gpd-pocket-fan.c
-+++ b/drivers/platform/x86/gpd-pocket-fan.c
-@@ -19,12 +19,12 @@
- static int temp_limits[3] = { 55000, 60000, 65000 };
- module_param_array(temp_limits, int, NULL, 0444);
- MODULE_PARM_DESC(temp_limits,
--		 "Milli-celcius values above which the fan speed increases");
-+		 "Millicelsius values above which the fan speed increases");
- 
- static int hysteresis = 3000;
- module_param(hysteresis, int, 0444);
- MODULE_PARM_DESC(hysteresis,
--		 "Hysteresis in milli-celcius before lowering the fan speed");
-+		 "Hysteresis in millicelsius before lowering the fan speed");
- 
- static int speed_on_ac = 2;
- module_param(speed_on_ac, int, 0444);
--- 
-2.15.1
+> ---
+>  drivers/cpufreq/imx6q-cpufreq.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+> index 628fe899cb48..840f6386c780 100644
+> --- a/drivers/cpufreq/imx6q-cpufreq.c
+> +++ b/drivers/cpufreq/imx6q-cpufreq.c
+> @@ -114,12 +114,14 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+>  		 */
+>  		clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
+>  		clk_set_parent(pll1_sw_clk, pll1_sys_clk);
+> -		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
+> -			clk_set_parent(secondary_sel_clk, pll2_bus_clk);
+> -		else
+> -			clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
+> -		clk_set_parent(step_clk, secondary_sel_clk);
+> -		clk_set_parent(pll1_sw_clk, step_clk);
+> +		if (freq_hz <= clk_get_rate(pll2_bus_clk)) {
+> +			if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
+> +				clk_set_parent(secondary_sel_clk, pll2_bus_clk);
+> +			else
+> +				clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
+> +			clk_set_parent(step_clk, secondary_sel_clk);
+> +			clk_set_parent(pll1_sw_clk, step_clk);
+> +		}
+>  	} else {
+>  		clk_set_parent(step_clk, pll2_pfd2_396m_clk);
+>  		clk_set_parent(pll1_sw_clk, step_clk);
+> 
