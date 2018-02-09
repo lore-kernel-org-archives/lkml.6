@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184702-2-1339074863749425883
+X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184686-2-12356728385158678479
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184702; b=rDOa3cCwVSJ3MEBiis7p3NgyaVfRWWKiuLPuW8oxD8RorjK
-    wAeZGXCyL7IWk/ZZM6ODrT0iIP+dnPan/8eQWrhIgx0DdT3L8bjhncL0aRue/izc
-    2UepNwITKPpk9fRgpfgi7aTT2v+gZjaDJu773nJXOcck8spZTx9jqMpgU+K4spA1
-    br9kU+K78+ZCjEEXJYKdXCDTmDIpvvqJMF+M/Jz1yV+u+aFeKNkgDAPiETj8njd3
-    93OhH2/pYO0r2aMHKdUVrAeH30SdXj1NVpPS6hEPSRIbqhJP4fjnzDUImCS8NXFZ
-    GMnqacycClr/f5yMox3zGf57gkVXNjqeNkBCezw==
+    t=1518184686; b=fRAQ9elzyOj8ZS2TJ5M//yVF9V6MCTL6TuXK6ktZVRbqxL3
+    +0T9cVJZD8lf2vfgE/8guC38o7830loOfz8dQnH+psGUclt6l6nx62WzbHbysJJK
+    YsTiQvgXRM/MWL13oP1CzYXJOkqHKobsd7H+Q3ogX+FO/NEK7Gd++I+mceIBzg1U
+    TEVC+tSas4j77/x7GWacxWV+0QG/BaUKZcjsfZ2qFX03J3i7TfXLcfpyveXG8uPZ
+    Wc9CxkzbOKuIpgxlWq6C36tPTEWMjRArmukO2nWM+lJ1JoDA182S03trvKBD/SUC
+    3yrJiSCe2aTysaP6LpDL8DaRtCyyDQTGYsvQNnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184702; bh=8dv78VmjRxHTa7oqCmwBdlSv1e
-    6fv8RbxEcylZR2F6U=; b=Xf433cLlB6p/uVfzXmlQvlzYnNJWuaZa5jJ6PE/d+m
-    ap6QD7lV5aexVjhKHOO1P6vVZ+Zwn4Q7x0mXHLdPctg4ocKtZhFpjtge5Q5Zbem9
-    EPG7/UE6mPo36Hku22U+y5gVphLaQaYlin4DEHMaER3BEW5oqjsCYC+pSSrj4gSX
-    AMLIjuu04X7ZwnZY77PnOmrbJLvkZYOXabNqjL3My50gBE2ydIQN1DyFRhXicmB1
-    MCsuutZG2ROqtQ9B9CPanreKJ0OKOKNmaPq4xvpUkltPXNaJOvs4SEP/viOkhmcM
-    Bowy3xtF1DxFRit5Apy+zV279O37uysv9ygs2cBTbXQw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184686; bh=tFCE5IcAjYfqyJ44n0QP9yDftz
+    7Pcc6sP2+X+sA0C/4=; b=n94G5cuYd7kQhYFyyDFZhorIfAkzdIjC4y5vzX1T4c
+    pLaKoNxeE9Dqffn776D6jYvjnUjLErl26keDT5cQVqeKssjPI/oo1gz6dNdYjSRT
+    XSi4CPQ4uHl0NtB2lyvTcK7pt3ePjeCAhGTPIWr78oG2Hg64DSe3GJaqpy1OtHBk
+    jhqZOPFEptUACtS5NuK7pGeQQi8c4RZu8cc225XWEuUrXmLyC3gi3+uUFcagLBJM
+    dqXN5FhvUr5JWinfOskYGAQTf+9AX11dXkbeBP2N29SbudVmdKcaB/O2J2d15auk
+    ihLPikwzEIize3WDr1APh2ioQrclspL7Szs9W9T9BHeA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,24 +47,23 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752343AbeBIN6G (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:58:06 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51524 "EHLO
+        id S1752649AbeBINoq (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:44:46 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51538 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753461AbeBINom (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:44:42 -0500
+        with ESMTP id S1752862AbeBINop (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:44:45 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
         Mark Brown <broonie@kernel.org>,
         thongsyho <thong.ho.px@rvc.renesas.com>,
         Nhan Nguyen <nhan.nguyen.yb@renesas.com>
-Subject: [PATCH 4.9 88/92] ASoC: rsnd: dont call free_irq() on Parent SSI
-Date: Fri,  9 Feb 2018 14:39:57 +0100
-Message-Id: <20180209133937.429631758@linuxfoundation.org>
+Subject: [PATCH 4.9 89/92] ASoC: rsnd: avoid duplicate free_irq()
+Date: Fri,  9 Feb 2018 14:39:58 +0100
+Message-Id: <20180209133937.472738403@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -83,39 +82,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 1f8754d4daea5f257370a52a30fcb22798c54516 upstream.
+commit e0936c3471a8411a5df327641fa3ffe12a2fb07b upstream.
 
-If SSI uses shared pin, some SSI will be used as parent SSI.
-Then, normal SSI's remove and Parent SSI's remove
-(these are same SSI) will be called when unbind or remove timing.
-In this case, free_irq() will be called twice.
-This patch solve this issue.
+commit 1f8754d4daea5f ("ASoC: rsnd: don't call free_irq() on
+Parent SSI") fixed Parent SSI duplicate free_irq().
+But on Renesas Sound, not only Parent SSI but also Multi SSI
+have same issue.
+This patch avoid duplicate free_irq() if it was not pure SSI.
 
+Fixes: 1f8754d4daea5f ("ASoC: rsnd: don't call free_irq() on Parent SSI")
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: thongsyho <thong.ho.px@rvc.renesas.com>
 Signed-off-by: Nhan Nguyen <nhan.nguyen.yb@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/sh/rcar/ssi.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/sh/rcar/ssi.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 --- a/sound/soc/sh/rcar/ssi.c
 +++ b/sound/soc/sh/rcar/ssi.c
-@@ -699,9 +699,14 @@ static int rsnd_ssi_dma_remove(struct rs
+@@ -699,12 +699,12 @@ static int rsnd_ssi_dma_remove(struct rs
  			       struct rsnd_priv *priv)
  {
  	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
-+	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
+-	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
++	struct rsnd_mod *pure_ssi_mod = rsnd_io_to_mod_ssi(io);
  	struct device *dev = rsnd_priv_to_dev(priv);
  	int irq = ssi->irq;
  
-+	/* Do nothing for SSI parent mod */
-+	if (ssi_parent_mod == mod)
-+		return 0;
-+
- 	/* PIO will request IRQ again */
- 	devm_free_irq(dev, irq, mod);
+-	/* Do nothing for SSI parent mod */
+-	if (ssi_parent_mod == mod)
++	/* Do nothing if non SSI (= SSI parent, multi SSI) mod */
++	if (pure_ssi_mod != mod)
+ 		return 0;
  
+ 	/* PIO will request IRQ again */
