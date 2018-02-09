@@ -1,140 +1,151 @@
-Return-Path: <sre@kernel.org>
-X-Google-Smtp-Source: AH8x225RxdjwoalW1VkW7+wh2wIDv97iQ7cRieDJHSa9rc5gByotcCzteZG6P8OnhzPCx+C41hLr
-ARC-Seal: i=1; a=rsa-sha256; t=1518188512; cv=none;
+Return-Path: <Adam.Thomson.Opensource@diasemi.com>
+X-Google-Smtp-Source: AH8x225sJMiz7mWPGNk0Zp/ETXHlOOn+uSSu8MVXY/OG4S/o/XUyIOZTW3WSVvg7ucgzcBtKEOn3
+ARC-Seal: i=1; a=rsa-sha256; t=1518191020; cv=none;
         d=google.com; s=arc-20160816;
-        b=a78sjQb54QRPN3aswX5RWOASAaDERUNcLm+cKqZy7gtL1SVqPwSms1Bt5eICx1F/2C
-         sh9cYgsfzo3+KjW0Ll2dr4zCsUB9drVCI4/TFWgL+HS6b/dipdZDsxA2N24VaJ2sPuK6
-         en21OORl9ndETbWv0NKsv8sIP0KG3avJavWYxtTvo05BbIqw99GiEqHmAeGtP2Y08of9
-         GYzeWU2cNenG2sEYiZlyMa/FLiA1Ibt+tElL5NFYXAA4g3a+8AkHIO65vk2U3sYhnfae
-         WnEdLG30MxKogCq0EoAKxpSUlMI3CesJyI47AN+xNEMUFy89I0Pva+O+RyyLqJqPDYnw
-         172Q==
+        b=pO3XrJXHFMW4nYEwa06SPTKAcmPYghix9h1uYhDAqMG61m/HwFsF/jiV2QF7snVfde
+         jJHNXxOn+jszHr7GbX6spmsovqQ9O5SazHtf/33/O3GVVD9NCQDXhvFFc0V3GlmaLxw5
+         dL9Il4LYTTUnW87hov7C/vnz2Z0C4Hr9Ymm8/WBAO4CwkYn43qebTiTGPkr39+bLfTP7
+         nH6QAc5TwSLLL8sYtK2nKdc3blZ9QNYR0OAwHcOwKCCdh8zp+tbfkRhGozaICWpq1PDK
+         i/hWptt7wRDi3itUnx4xNdMy7yJZjvPuyait23NFDWn9acj0bVVrwNyXmmwbL3QzPOnH
+         yhdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=uDSFJJfHbTLc8wZhmes09zd1NdS0L3TtQgDyfii++oc=;
-        b=uBlrNhEfWFRZLXxaZCWuBxYUW5frQoikBvnludw0LOdVW54t2OuOxq3JQAI81nHqX7
-         WCRDXRnf8ELp19WtD6d4GJMdCEVbGk3VJJMjk5tnkI952ScJ/YlIqLnYD9eSySh7WApS
-         NNZLZ3x6Qo1EiBOfn42ui0KMSvrxXQZy28Ihm/RTHJddBFRiIcNNZ8sj/vHJ2H5lem7s
-         96zcbbzNCP4+n8A+G+bcXyGq5tj0UZ/NOdk96yKw+bXnbJw09UV5wasAdIdnnGNRkzR0
-         T9bkhtmOKh6VjvKrE1yt5l9a01aIzjtXOiVaImBlA8DkS7x4myMlfxJ208U5STmkDnKc
-         XOuA==
+        h=mime-version:content-transfer-encoding:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:arc-authentication-results;
+        bh=+ztEYHiCTwV4L+EOCQ6GyhUqnTLVviQWsbGwnP+NJjw=;
+        b=G91lDiskHBsJ7nkBCBSM7f82d/BuyM7lkngDDmg/4wFcx22KZQIcDNH17VWfHbZ9k7
+         4p0m/malsCRG9NqsiQx6Zu4AAlmj2L7lrnrIGQUXjKWjQsyo2C6zoyQN++CEUTppp5Il
+         B8VExyuEqc6zgIByM9HtTy9U5xg1f4PCr3HQxvjmIPO392DTAVQjmPkLfZqhkSVQEG0S
+         Cy3o7dQSpiKDxRjxYgLdEtMbFpc9uXn9CNxb4MUXJGamKrO8A7r2ku5rjZ8nKcYfedcz
+         tHQlHPd+uqzO0jry9logbULiEm9Zg8JxpUt55VhZv7JKGwsLua70+f9eaa7NvnrYla/U
+         bWnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of sre@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sre@kernel.org
+       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 85.158.142.3 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of sre@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sre@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 983A521789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Fri, 9 Feb 2018 16:01:48 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Yueyao Zhu <yueyao.zhu@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Support Opensource <Support.Opensource@diasemi.com>
-Subject: Re: [PATCH v4 5/7] power: supply: Add 'connected_type' property and
+       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 85.158.142.3 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDKsWRWlGSWpSXmKPExsUSt3Opse6yg7V
+  RBs/vy1g0L17PZvHm+HQmi67VO1ksLu+aw2bxufcIo8WiZa3MFk8WnmGyaFzwnsXi9O4Siz/P
+  b7E5cHnsnHWX3WPTqk42j3knAz32z13D7vF+31U2j53fG9g9Pm+SC2CPYs3MS8qvSGDNWLj2O
+  2tBj0jF9POTWBsY//J3MXJxCAksZZRYs7+ZtYuRk4NNwEJi8okHbCC2iEC0xIQ5h1lAipgFnj
+  FL/N+wFiwhLBArsWnHelaIojiJzbtvMkPYbhL7u76A2SwCKhK9vZvBangFAiS2/d3LCrHtPJN
+  Ew58HYAlOAVuJY/83MYLYjAKyEl8aV4M1MwuIS9x6Mp8JxJYQEJBYsuc8M4QtKvHy8T9WCFte
+  Yvu33+wQtr3E63vvgC7lALL1JfoaiyHChhKrph1ggbDNJW4uf8YKMV5HYsHuT2wQtrbEsoWvm
+  SHuFJQ4OfMJywRG8VlIrpiFpGUWkpZZSFoWMLKsYrRMKspMzyjJTczM0TU0MNA1NDTWNdY1Mr
+  DUS6zSTdRLLdVNTs0rKUoEyuollhfrFVfmJuek6OWllmxiBKYEBiDYwTjhUOIhRkkOJiVR3vW
+  zaqOE+JLyUyozEosz4otKc1KLDzHKcHAoSfDeOwCUEyxKTU+tSMvMASYnmLQEB4+SCK8kSJq3
+  uCAxtzgzHSJ1ilGX48aL123MQix5+XmpUuK8r0GKBECKMkrz4EbAEuUlRlkpYV5GoKOEeApSi
+  3IzS1DlXzGKczAqCfM+BpnCk5lXArfpFdARTEBH3HUAO6IkESEl1cDIzqIoEVByfr/R+bsL+n
+  5/mhl022+mUsZ0p5KzH3UqvhcECRxzuXFPmrlfoZ/zTnvh0Sap1VtW3etcGhvOrhPJ7/oq83K
+  b/6HGbxv+Vl9pmxv0w3OzuafS5h6H9BXbT9r0HzS2UD7hIOyjy3J/9rY3VT4rrgV7X96T4pBg
+  /6rvTMy7tm/vz4YosRRnJBpqMRcVJwIAGxtBt48DAAA=
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-40.tower-223.messagelabs.com!1518191007!1458531!1
+X-Originating-IP: [94.185.165.51]
+X-StarScan-Received: 
+X-StarScan-Version: 9.4.45; banners=-,-,-
+X-VirusChecked: Checked
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+To: Sebastian Reichel <sre@kernel.org>, Adam Thomson
+	<Adam.Thomson.Opensource@diasemi.com>
+CC: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck
+	<linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Hans
+ de Goede" <hdegoede@redhat.com>, Yueyao Zhu <yueyao.zhu@gmail.com>, "Rui
+ Miguel Silva" <rmfrfs@gmail.com>, "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Support Opensource
+	<Support.Opensource@diasemi.com>
+Subject: RE: [PATCH v4 5/7] power: supply: Add 'connected_type' property and
  supporting code
-Message-ID: <20180209150148.624fb4qb34wuml6l@earth.universe>
+Thread-Topic: [PATCH v4 5/7] power: supply: Add 'connected_type' property
+ and supporting code
+Thread-Index: AQHTg+F4XZuNE7krHk+5wBw2HzfVcKObQG8AgADp4ZCAADu9AIAAC10A
+Date: Fri, 9 Feb 2018 15:43:26 +0000
+Message-ID: <2E89032DDAA8B9408CB92943514A0337014C1C2030@SW-EX-MBX01.diasemi.com>
 References: <cover.1514904982.git.Adam.Thomson.Opensource@diasemi.com>
  <3af7db87e0e6bdfa46ef3c1c9053297f711aee5a.1514904983.git.Adam.Thomson.Opensource@diasemi.com>
  <20180208213054.oqgoktru3lzjiyyn@earth.universe>
  <2E89032DDAA8B9408CB92943514A0337014C1C1FDA@SW-EX-MBX01.diasemi.com>
+ <20180209150148.624fb4qb34wuml6l@earth.universe>
+In-Reply-To: <20180209150148.624fb4qb34wuml6l@earth.universe>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.20.24.43]
+x-kse-attachmentfiltering-interceptor-info: protection disabled
+x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 09/02/2018 09:49:00
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ia2pxk24in2rjaux"
-Content-Disposition: inline
-In-Reply-To: <2E89032DDAA8B9408CB92943514A0337014C1C1FDA@SW-EX-MBX01.diasemi.com>
-User-Agent: NeoMutt/20171215
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1588496437968457675?=
-X-GMAIL-MSGID: =?utf-8?q?1591936037456032691?=
+X-GMAIL-MSGID: =?utf-8?q?1591938667150084068?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 09 February 2018 15:02, Sebastian Reichel wrote:
 
---ia2pxk24in2rjaux
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Feb 09, 2018 at 11:28:42AM +0000, Adam Thomson wrote:
-> On 08 February 2018 21:31, Sebastian Reichel wrote:
-> > On Tue, Jan 02, 2018 at 03:50:53PM +0000, Adam Thomson wrote:
-> > > This commit adds the 'connected_type' property to represent supplies
-> > > which can report a number of different types of supply based on a
-> > > connection event.
-> > >
-> > > Examples of this already exist in drivers whereby the existing 'type'
-> > > property is updated, based on an event, to represent what was
-> > > connected (e.g. USB_DCP, USB_ACA, ...). Current implementations
-> > > however don't show all supported connectable types, so this knowledge
-> > > has to be exlicitly known for each driver that supports this.
-> > >
-> > > The 'connected_type' property is intended to fill this void and show
-> > > users all possible types supported by a driver. The property, when
-> > > read, shows all available types for the driver, and the one currently
-> > > chosen is highlighted/bracketed. It is expected that the 'type'
-> > > property would then just show the top-level type, such as 'USB', and
-> > > this would be static.
-> > >
-> > > Currently the 'conn_type' enum contains all of the USB variant types
-> > > that exist for the 'type' enum at this time, and in addition has
-> > > the PPS type. In the future this can be extended further for other
-> > > types which have multiple connected types supported. The mirroring
-> > > is intentional so as to not impact existing usage of the 'type'
-> > > property.
-> > >
-> > > Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-> >
-> > Thanks for the patch. I think, that it's a good idea to provide the
-> > subtype in its own property and just set the type property to "USB".
-> > I would prefer to name this "usb_type". Otherwise
-> >
-> > Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> >
-> > -- Sebastian
+> Hi,
 >=20
-> Thanks for your review. I chose 'connected_type' as I thought this would =
-be more
-> generic in case other main types would have some dynamic connection eleme=
-nt to
-> them and could also benefit from this. If we don't see that as being some=
-thing
-> we want though then I can make this just for USB.
+> On Fri, Feb 09, 2018 at 11:28:42AM +0000, Adam Thomson wrote:
+> > On 08 February 2018 21:31, Sebastian Reichel wrote:
+> > > On Tue, Jan 02, 2018 at 03:50:53PM +0000, Adam Thomson wrote:
+> > > > This commit adds the 'connected_type' property to represent supplie=
+s
+> > > > which can report a number of different types of supply based on a
+> > > > connection event.
+> > > >
+> > > > Examples of this already exist in drivers whereby the existing 'typ=
+e'
+> > > > property is updated, based on an event, to represent what was
+> > > > connected (e.g. USB_DCP, USB_ACA, ...). Current implementations
+> > > > however don't show all supported connectable types, so this knowled=
+ge
+> > > > has to be exlicitly known for each driver that supports this.
+> > > >
+> > > > The 'connected_type' property is intended to fill this void and sho=
+w
+> > > > users all possible types supported by a driver. The property, when
+> > > > read, shows all available types for the driver, and the one current=
+ly
+> > > > chosen is highlighted/bracketed. It is expected that the 'type'
+> > > > property would then just show the top-level type, such as 'USB', an=
+d
+> > > > this would be static.
+> > > >
+> > > > Currently the 'conn_type' enum contains all of the USB variant type=
+s
+> > > > that exist for the 'type' enum at this time, and in addition has
+> > > > the PPS type. In the future this can be extended further for other
+> > > > types which have multiple connected types supported. The mirroring
+> > > > is intentional so as to not impact existing usage of the 'type'
+> > > > property.
+> > > >
+> > > > Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+> > >
+> > > Thanks for the patch. I think, that it's a good idea to provide the
+> > > subtype in its own property and just set the type property to "USB".
+> > > I would prefer to name this "usb_type". Otherwise
+> > >
+> > > Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> > >
+> > > -- Sebastian
+> >
+> > Thanks for your review. I chose 'connected_type' as I thought this woul=
+d be more
+> > generic in case other main types would have some dynamic connection ele=
+ment to
+> > them and could also benefit from this. If we don't see that as being so=
+mething
+> > we want though then I can make this just for USB.
+>=20
+> If such a thing appears at some point we can add another property.
+> I think usb_type is easier to understand from a user point of view
+> and it helps to keep our enums clean.
 
-If such a thing appears at some point we can add another property.
-I think usb_type is easier to understand from a user point of view
-and it helps to keep our enums clean.
-
--- Sebastian
-
---ia2pxk24in2rjaux
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlp9t9kACgkQ2O7X88g7
-+pqIsw//YTGtow/RCInDMNnwvWIWwJ4pGDvT6FhQ+nnEx1Gz8z9e5rxKEHoY7why
-Akq5tfsto87k4vcO3w68zAhlJuHfwlY36VXlP253ao2cj0X4MM9IPWZ/FupDhkex
-ZwB9Hl/OHkyJNRSXyni0b+mV7fDTwYK9fH3xexeqqlPfSpuGC68asTH95Bq5ixX3
-g33rT5KC4U3WLcs69qTRIPnd1vgLGilfSM81l+mm4kdp34qaIIvodeg6r6hCSPrf
-iUGxM61C54TRtxqMQ9UDR5qbPRfloX2lsBgxWX4QndgUqfXyFjDS4zudyePE2RV3
-Nt1oGtTBHaT8fmif3NaCZt6VWfVJqzd7cVQ0EQhl7dZ89Ea50o6gR5ThR3vLKDN5
-mevRiuLzvQbezd/IdlvT+5eMLZgLRCu/JSJg3zK83hnkIfuFGlfB/w1aFd/CSBV5
-z7ixEnxWW15/F6CZtOUsoZqikbToUkEAHOQKH2t8WDLsS+s/iZeA29A77DVqe167
-/LivgymItXpZ9F2vzkaWtfmdMlQHOmNjb1zEg2anW/VRd4nfzkhB8G4fTVusmDQe
-+c+GnU6ulbao+QJqhanQmVuQyThuwRikDK0pThRp7H+mY+kD2X4B/8mVsFNsbu9/
-qHTMDFEfaNgO9pR9r2PEC1dY4g1r8fdDgDWSTSaxCzZDF5hTRBs=
-=ClSJ
------END PGP SIGNATURE-----
-
---ia2pxk24in2rjaux--
+Ok, fair enough. Will update accordingly.
