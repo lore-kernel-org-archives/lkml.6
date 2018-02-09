@@ -1,299 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752441AbeBIDlY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 22:41:24 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:10250 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752154AbeBIDlX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 22:41:23 -0500
-X-UUID: 648912cc536b4972ae16c950e300d20f-20180209
-Message-ID: <1518147677.9025.10.camel@mtkswgap22>
-Subject: Re: [PATCH v2 04/16] arm64: dts: mt7622: add pinctrl related device
- nodes
-From: Sean Wang <sean.wang@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Fri, 9 Feb 2018 11:41:17 +0800
-In-Reply-To: <7f7d3d94-7d4e-9b66-048a-e100a45a2137@gmail.com>
-References: <cover.1517910489.git.sean.wang@mediatek.com>
-         <98781a6d32fcc8d42e4646a183246e70d5139154.1517910489.git.sean.wang@mediatek.com>
-         <7f7d3d94-7d4e-9b66-048a-e100a45a2137@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1752541AbeBIDmu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 22:42:50 -0500
+Received: from mout.gmx.net ([212.227.17.21]:50531 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752192AbeBIDmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 22:42:49 -0500
+Message-ID: <1518147735.24350.26.camel@gmx.de>
+Subject: Re: [RFC 1/2] sched: reduce migration cost between faster caches
+ for idle_balance
+From: Mike Galbraith <efault@gmx.de>
+To: Rohit Jain <rohit.k.jain@oracle.com>, linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, steven.sistare@oracle.com,
+        joelaf@google.com, jbacik@fb.com, riel@redhat.com,
+        juri.lelli@redhat.com, dhaval.giani@oracle.com
+Date: Fri, 09 Feb 2018 04:42:15 +0100
+In-Reply-To: <1518128395-14606-2-git-send-email-rohit.k.jain@oracle.com>
+References: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
+         <1518128395-14606-2-git-send-email-rohit.k.jain@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
+X-Provags-ID: V03:K0:8JpYxf1EggyA4Ni32dLBZ8rKz1PWb2OME+t1wj7CuwDKtf029g6
+ VzJvU1Lx90lgbeb7FB3UowMBvAYMQvY6jZViJthXF/59zrvwuW3KWryXU39ErgZdMvZ3kbN
+ lYUFOsX+LZA/WD8jUgF8ulRWBemH/kL+BmyaXijJYBzctbd4rKniM/IQABAB/+LbqKbxqfO
+ APt8BmtPVZ2PXW7n0Xb0g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8cKTKQVnSmQ=:QIwBtQA3vTHLs+aitrttus
+ 06KmAXl6YeNzIc/jr9gqZdVcZOfcbp1Wm4U/t87vneWBDqbGLAmU3t++TdQ5iQxDQwG2o0eko
+ gjQXY9jQnUHERukGyPRUG5BoHrDxz5/kyzdfokeroWBzUoFE7IAw63Hla3mNGEjP58D+prQpE
+ NhT4SRZ5zyRMb1wonUGCfXoxP0LW4sxJlEVjfrVN5DF6rzSZ6wt8A1CNJy6SWJSnQ5hE5OtN/
+ I+QxHzAFb3Fz9AC4FpXrBbdOeROOAfz4OdFbfxyw/KsvYpgtWNzKD1I5tQtmkEh5zR28cAIOD
+ EHelOsx5DV1tT/c4Ufd+sBXEtJX8X0VfT5KsRLYvbs+ib9UNh4wW0PjvWOHA87yXcUPztcglh
+ joe5Vv6ZZO2JPpN8yLwGxlgo6v91D4br7FveI4iLGZ/QHf/lRAZvkENEoWto/X9kXeT/SAZ5z
+ B9j7ByHW8F0G52Fy/3XwMcJLPTBK4FW9FTH+7a5OGoc8VvDh72lYHfFiRSE4a0mNFdX9nG8+a
+ 3JWByvufpc15zcE+Ku6u0+RNQwjRm5Iwi1Rh39KudD/zYPQhSgRfasFoB/IfCpHGEqnlajBpr
+ ksjj4LkCPr3apXQtEtk7GlUxiPG7zSulC/H6+TXbljfzdE5zutNWtNs6m5oOPRTR0+I8XJMl4
+ DKQuCqGSFsflxBX9BdoF88IPwMFXSVjDlymn73zCvJRidp+4IePcei6QtvIH2vQTIRLkdd+LM
+ Y7/wlHx4qCHjRsIvrA883YoQCLx+CdrHOGhf33Er+if7ndBvrZv7prMZoTDXvr3QmQvXEZ0KE
+ dElLXyh3GokIE8w6o7EfXcqyLGgs4jLyJYxo+rz8MzTQmLQ+lw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-07 at 12:31 +0100, Matthias Brugger wrote:
+On Thu, 2018-02-08 at 14:19 -0800, Rohit Jain wrote:
+> This patch makes idle_balance more dynamic as the sched_migration_cost
+> is now accounted on a sched_domain level. This in turn is done in
+> sd_init when we know what the topology relationships are.
 > 
-> On 02/06/2018 10:52 AM, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > add pinctrl device nodes and rfb1 board, additionally include all pin
-> > groups possible being used on rfb1 board and available gpio keys.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 200 +++++++++++++++++++++++++++
-> >  arch/arm64/boot/dts/mediatek/mt7622.dtsi     |   7 +
-> >  2 files changed, 207 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-> > index c08309d..bd1093a 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-> > +++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-> > @@ -7,6 +7,8 @@
-> >   */
-> >  
-> >  /dts-v1/;
-> > +#include <dt-bindings/input/input.h>
-> > +
-> >  #include "mt7622.dtsi"
-> >  
-> >  / {
-> > @@ -17,11 +19,209 @@
-> >  		bootargs = "console=ttyS0,115200n1";
-> >  	};
-> >  
-> > +	gpio-keys {
-> > +		compatible = "gpio-keys-polled";
-> > +		poll-interval = <100>;
-> > +
-> > +		factory {
-> > +			label = "factory";
-> > +			linux,code = <BTN_0>;
-> > +			gpios = <&pio 0 0>;
-> > +		};
-> > +
-> > +		wps {
-> > +			label = "wps";
-> > +			linux,code = <KEY_WPS_BUTTON>;
-> > +			gpios = <&pio 102 0>;
-> > +		};
-> > +	};
-> > +
-> >  	memory {
-> >  		reg = <0 0x40000000 0 0x3F000000>;
-> >  	};
-> >  };
-> >  
-> > +&pio {
-> > +	/* eMMC is shared pin with parallel NAND */
-> > +	emmc_pins_default: emmc-pins-default {
-> > +		mux {
-> > +			function = "emmc", "emmc_rst";
-> > +			groups = "emmc";
-> > +		};
-> > +	};
-> > +
-> > +	emmc_pins_uhs: emmc-pins-uhs {
-> > +		mux {
-> > +			function = "emmc";
-> > +			groups = "emmc";
-> > +		};
-> > +	};
-> > +
-> > +	eth_pins: eth-pins {
-> > +		mux {
-> > +			function = "eth";
-> > +			groups = "mdc_mdio", "rgmii_via_gmac2";
-> > +		};
-> > +	};
-> > +
-> > +	i2c1_pins: i2c1-pins {
-> > +		mux {
-> > +			function = "i2c";
-> > +			groups =  "i2c1_0";
-> > +		};
-> > +	};
-> > +
-> > +	i2c2_pins: i2c2-pins {
-> > +		mux {
-> > +			function = "i2c";
-> > +			groups =  "i2c2_0";
-> > +		};
-> > +	};
-> > +
-> > +	i2s1_pins: i2s1-pins {
-> > +		mux {
-> > +			function = "i2s";
-> > +			groups =  "i2s_out_bclk_ws_mclk",
-> > +				  "i2s1_in_data",
-> > +				  "i2s1_out_data";
-> > +		};
-> > +	};
-> > +
-> > +	irrx_pins: irrx-pins {
-> > +		mux {
-> > +			function = "ir";
-> > +			groups =  "ir_1_rx";
-> > +		};
-> > +	};
-> > +
-> > +	irtx_pins: irtx-pins {
-> > +		mux {
-> > +			function = "ir";
-> > +			groups =  "ir_1_tx";
-> > +		};
-> > +	};
-> > +
-> > +	/* Parallel nand is shared pin with eMMC */
-> > +	parallel_nand_pins: parallel-nand-pins {
-> > +		mux {
-> > +			function = "flash";
-> > +			groups = "par_nand";
-> > +		};
-> > +	};
-> > +
-> > +	pcie0_pins: pcie0-pins {
-> > +		mux {
-> > +			groups = "pcie0_pad_perst",
-> > +				 "pcie0_1_waken",
-> > +				 "pcie0_1_clkreq";
-> > +			function = "pcie";
-> > +		};
-> > +	};
-> > +
-> > +	pcie1_pins: pcie1-pins {
-> > +		mux {
-> > +			groups = "pcie1_pad_perst",
-> > +				 "pcie1_0_waken",
-> > +				 "pcie1_0_clkreq";
-> > +			function = "pcie";
-> > +		};
-> > +	};
-> > +
-> > +	pmic_bus_pins: pmic-bus-pins {
-> > +		mux {
-> > +			groups = "pmic_bus";
-> > +			function = "pmic";
-> > +		};
-> > +	};
+> For introduction sakes cost of migration within the same core is set as
+> 0, across cores is 50 usec and across sockets is 500 usec. sysctl for
+> these variables are introduced in patch 2.
 > 
-> Some bikeshedding here. Can you please add function before groups, so that it is
-> uniform through out the file?
+> Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+> ---
+>  include/linux/sched/topology.h | 1 +
+>  kernel/sched/fair.c            | 6 +++---
+>  kernel/sched/topology.c        | 5 +++++
+>  3 files changed, 9 insertions(+), 3 deletions(-)
 > 
-> Thanks,
-> Matthias
-> 
+> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+> index cf257c2..bcb4db2 100644
+> --- a/include/linux/sched/topology.h
+> +++ b/include/linux/sched/topology.h
+> @@ -104,6 +104,7 @@ struct sched_domain {
+>  	u64 max_newidle_lb_cost;
+>  	unsigned long next_decay_max_lb_cost;
+>  
+> +	u64 sched_migration_cost;
+>  	u64 avg_scan_cost;		/* select_idle_sibling */
+>  
+>  #ifdef CONFIG_SCHEDSTATS
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 2fe3aa8..61d3508 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8782,8 +8782,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>  	 */
+>  	rq_unpin_lock(this_rq, rf);
+>  
+> -	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+> -	    !this_rq->rd->overload) {
+> +	if (!this_rq->rd->overload) {
+>  		rcu_read_lock();
+>  		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+>  		if (sd)
 
-okay, will make them all aligned
+Unexplained/unrelated change.
 
-> > +
-> > +	pwm7_pins: pwm1-2-pins {
-> > +		mux {
-> > +			function = "pwm";
-> > +			groups = "pwm_ch7_2";
-> > +		};
-> > +	};
-> > +
-> > +	wled_pins: wled-pins {
-> > +		mux {
-> > +			function = "led";
-> > +			groups = "wled";
-> > +		};
-> > +	};
-> > +
-> > +	sd0_pins_default: sd0-pins-default {
-> > +		mux {
-> > +			function = "sd";
-> > +			groups = "sd_0";
-> > +		};
-> > +	};
-> > +
-> > +	sd0_pins_uhs: sd0-pins-uhs {
-> > +		mux {
-> > +			function = "sd";
-> > +			groups = "sd_0";
-> > +		};
-> > +	};
-> > +
-> > +	/* Serial NAND is shared pin with SPI-NOR */
-> > +	serial_nand_pins: serial-nand-pins {
-> > +		mux {
-> > +			function = "flash";
-> > +			groups = "snfi";
-> > +		};
-> > +	};
-> > +
-> > +	spic0_pins: spic0-pins {
-> > +		mux {
-> > +			function = "spi";
-> > +			groups = "spic0_0";
-> > +		};
-> > +	};
-> > +
-> > +	spic1_pins: spic1-pins {
-> > +		mux {
-> > +			function = "spi";
-> > +			groups = "spic1_0";
-> > +		};
-> > +	};
-> > +
-> > +	/* SPI-NOR is shared pin with serial NAND */
-> > +	spi_nor_pins: spi-nor-pins {
-> > +		mux {
-> > +			function = "flash";
-> > +			groups = "spi_nor";
-> > +		};
-> > +	};
-> > +
-> > +	/* serial NAND is shared pin with SPI-NOR */
-> > +	serial_nand_pins: serial-nand-pins {
-> > +		mux {
-> > +			function = "flash";
-> > +			groups = "snfi";
-> > +		};
-> > +	};
-> > +
-> > +	uart0_pins: uart0-pins {
-> > +		mux {
-> > +			function = "uart";
-> > +			groups = "uart0_0_tx_rx" ;
-> > +		};
-> > +	};
-> > +
-> > +	uart2_pins: uart2-pins {
-> > +		mux {
-> > +			function = "uart";
-> > +			groups = "uart2_1_tx_rx" ;
-> > +		};
-> > +	};
-> > +
-> > +	watchdog_pins: watchdog-pins {
-> > +		mux {
-> > +			function = "watchdog";
-> > +			groups = "watchdog";
-> > +		};
-> > +	};
-> > +};
-> > +
-> >  &uart0 {
-> >  	status = "okay";
-> >  };
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> > index 81207e6..8211bf7 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> > @@ -147,6 +147,13 @@
-> >  		#clock-cells = <1>;
-> >  	};
-> >  
-> > +	pio: pinctrl@10211000 {
-> > +		compatible = "mediatek,mt7622-pinctrl";
-> > +		reg = <0 0x10211000 0 0x1000>;
-> > +		gpio-controller;
-> > +		#gpio-cells = <2>;
-> > +	};
-> > +
-> >  	gic: interrupt-controller@10300000 {
-> >  		compatible = "arm,gic-400";
-> >  		interrupt-controller;
-> > 
-> 
+> @@ -8804,7 +8803,8 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>  		if (!(sd->flags & SD_LOAD_BALANCE))
+>  			continue;
+>  
+> -		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost) {
+> +		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost +
+> +		    sd->sched_migration_cost) {
+>  			update_next_balance(sd, &next_balance);
+>  			break;
+>  		}
+
+Ditto.
+
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 034cbed..bcd8c64 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -1148,12 +1148,14 @@ sd_init(struct sched_domain_topology_level *tl,
+>  		sd->flags |= SD_PREFER_SIBLING;
+>  		sd->imbalance_pct = 110;
+>  		sd->smt_gain = 1178; /* ~15% */
+> +		sd->sched_migration_cost = 0;
+>  
+>  	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
+>  		sd->flags |= SD_PREFER_SIBLING;
+>  		sd->imbalance_pct = 117;
+>  		sd->cache_nice_tries = 1;
+>  		sd->busy_idx = 2;
+> +		sd->sched_migration_cost = 500000UL;
+>  
+>  #ifdef CONFIG_NUMA
+>  	} else if (sd->flags & SD_NUMA) {
+> @@ -1162,6 +1164,7 @@ sd_init(struct sched_domain_topology_level *tl,
+>  		sd->idle_idx = 2;
+>  
+>  		sd->flags |= SD_SERIALIZE;
+> +		sd->sched_migration_cost = 5000000UL;
+
+That's not 500us.
+
+	-Mike
