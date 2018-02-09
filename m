@@ -1,112 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751140AbeBIQCR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 11:02:17 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36133 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeBIQCQ (ORCPT
+        id S1751371AbeBIQC4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 11:02:56 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:52094 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751077AbeBIQCz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 11:02:16 -0500
-X-Google-Smtp-Source: AH8x2256lt3HseL1WS6HsnkzsIs1PNWhaEGv/S3fJ7jxike4J0DWPHndwTyAglf9Z6ACpZJTkEQrow==
-From: Juri Lelli <juri.lelli@redhat.com>
-To: peterz@infradead.org, mingo@redhat.com, corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
-        Davidlohr Bueso <dave@stgolabs.net>, linux-doc@vger.kernel.org
-Subject: [PATCH] Documentation/locking/mutex-design: update to reflect latest changes
-Date: Fri,  9 Feb 2018 17:01:14 +0100
-Message-Id: <20180209160114.19980-1-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.14.3
+        Fri, 9 Feb 2018 11:02:55 -0500
+X-Google-Smtp-Source: AH8x227oJ39QMmFGPAhlRUMZgyu+tUJ4UoIwUfamMitm+meoOqPjC9LESUg6swzHqgzTKzDqXH39Wg==
+Subject: Re: [PATCH RFC tools/lkmm] Miscellaneous fixes
+To: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, Akira Yokosawa <akiyks@gmail.com>
+References: <20180209141832.GA17505@linux.vnet.ibm.com>
+From: Akira Yokosawa <akiyks@gmail.com>
+Message-ID: <df87e89b-7fbe-37a7-42cb-62df74591df4@gmail.com>
+Date: Sat, 10 Feb 2018 01:02:48 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180209141832.GA17505@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 3ca0ff571b09 ("locking/mutex: Rework mutex::owner") reworked the
-basic mutex implementation to deal with several problems. Documentation
-was however left unchanged and became stale.
+On 2018/02/09 23:18, Paul E. McKenney wrote:
+> Hello!
+> 
+> This RFC series adds some miscellaneous updates to the Linux kernel
+> memory model:
+> 
+> 1.	Clarify the origin and scope of the tool name to avoid confusion
+> 	between "memory model" and "memory management", courtesy of
+> 	Andrea Parri.
+> 
+> 2.	Move the maintainer list for LKMM to the main MAINTAINERS file,
+> 	courtesy of Andrea Parri.
+> 
+> 3.	Add memory-barriers.txt to the LKMM MAINTAINERS entry, courtesy
+> 	of Andrea Parri.
+> 
+> 4.	Add comments explaining the purpose of the various litmus tests.
+> 
+> 5.	Fix puntuation errors in litmus-tests/README.
+> 
+> 6.	Add LKMM acronym to MAINTAINERS entry.  If there are no objections,
+> 	this will be squashed with #3 above.
+> 
+> 7.	Add Akira Yokosawa as an LKMM reviewer.
+> 
+> 8-10.	Replace underscores with hyphens for smp_mb__*() workings.  Note that
+> 	this patch leaves rb_dep alone because the underscore is set by herd7.
+> 	If there are no objections, these will be squashed together.
 
-Update mutex-design.txt to reflect changes introduced by the above commit.
+Paul, Patches 8-10 made the problem even worse with herd7 7.47.
+I'll submit an alternative patch in reply to this message.
 
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
----
- Documentation/locking/mutex-design.txt | 49 ++++++++++++----------------------
- 1 file changed, 17 insertions(+), 32 deletions(-)
+      Thanks, Akira
 
-diff --git a/Documentation/locking/mutex-design.txt b/Documentation/locking/mutex-design.txt
-index 60c482df1a38..42de80cb2449 100644
---- a/Documentation/locking/mutex-design.txt
-+++ b/Documentation/locking/mutex-design.txt
-@@ -21,37 +21,23 @@ Implementation
- --------------
- 
- Mutexes are represented by 'struct mutex', defined in include/linux/mutex.h
--and implemented in kernel/locking/mutex.c. These locks use a three
--state atomic counter (->count) to represent the different possible
--transitions that can occur during the lifetime of a lock:
--
--	  1: unlocked
--	  0: locked, no waiters
--   negative: locked, with potential waiters
--
--In its most basic form it also includes a wait-queue and a spinlock
--that serializes access to it. CONFIG_SMP systems can also include
--a pointer to the lock task owner (->owner) as well as a spinner MCS
--lock (->osq), both described below in (ii).
-+and implemented in kernel/locking/mutex.c. These locks use an atomic variable
-+(->owner) to keep track of the lock state during its lifetime.  Field owner
-+actually contains 'struct task_struct *' to the current lock owner and it is
-+therefore NULL if not currently owned. Since task_struct pointers are aligned
-+at at least L1_CACHE_BYTES, low bits (3) are used to store extra state (e.g.,
-+if waiter list is non-empty).  In its most basic form it also includes a
-+wait-queue and a spinlock that serializes access to it. Furthermore,
-+CONFIG_MUTEX_SPIN_ON_OWNER systems use a spinner MCS lock (->osq), described
-+below in (ii).
- 
- When acquiring a mutex, there are three possible paths that can be
- taken, depending on the state of the lock:
- 
--(i) fastpath: tries to atomically acquire the lock by decrementing the
--    counter. If it was already taken by another task it goes to the next
--    possible path. This logic is architecture specific. On x86-64, the
--    locking fastpath is 2 instructions:
--
--    0000000000000e10 <mutex_lock>:
--    e21:   f0 ff 0b                lock decl (%rbx)
--    e24:   79 08                   jns    e2e <mutex_lock+0x1e>
--
--   the unlocking fastpath is equally tight:
--
--    0000000000000bc0 <mutex_unlock>:
--    bc8:   f0 ff 07                lock incl (%rdi)
--    bcb:   7f 0a                   jg     bd7 <mutex_unlock+0x17>
--
-+(i) fastpath: tries to atomically acquire the lock by cmpxchg the owner with
-+    current task. This only works in the uncontended case (cmpxchg checks
-+    against 0UL, so all 3 state bits above have to be 0). If the lock is
-+    contended it goes to the next possible path.
- 
- (ii) midpath: aka optimistic spinning, tries to spin for acquisition
-      while the lock owner is running and there are no other tasks ready
-@@ -143,11 +129,10 @@ Test if the mutex is taken:
- Disadvantages
- -------------
- 
--Unlike its original design and purpose, 'struct mutex' is larger than
--most locks in the kernel. E.g: on x86-64 it is 40 bytes, almost twice
--as large as 'struct semaphore' (24 bytes) and tied, along with rwsems,
--for the largest lock in the kernel. Larger structure sizes mean more
--CPU cache and memory footprint.
-+Unlike its original design and purpose, 'struct mutex' is among the largest
-+locks in the kernel. E.g: on x86-64 it is 32 bytes, where 'struct semaphore'
-+is 24 bytes and rw_semaphore is 40 bytes. Larger structure sizes mean more CPU
-+cache and memory footprint.
- 
- When to use mutexes
- -------------------
--- 
-2.14.3
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+>  /tools/memory-model/MAINTAINERS                                                            |   15 -------
+>  b/MAINTAINERS                                                                              |   20 +++++++++-
+>  b/tools/memory-model/MAINTAINERS                                                           |    2 -
+>  b/tools/memory-model/README                                                                |   14 +++----
+>  b/tools/memory-model/linux-kernel.bell                                                     |    8 ++--
+>  b/tools/memory-model/linux-kernel.cat                                                      |    8 ++--
+>  b/tools/memory-model/linux-kernel.def                                                      |    6 +--
+>  b/tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus                              |    7 +++
+>  b/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus                              |    7 +++
+>  b/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus                              |    7 +++
+>  b/tools/memory-model/litmus-tests/CoWW+poonceonce.litmus                                   |    7 +++
+>  b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus                         |   10 +++++
+>  b/tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus                         |   10 +++++
+>  b/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus                                  |    9 ++++
+>  b/tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus |   11 +++++
+>  b/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus                        |   11 +++++
+>  b/tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus                    |    8 ++++
+>  b/tools/memory-model/litmus-tests/LB+poonceonces.litmus                                    |    7 +++
+>  b/tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus                           |   11 +++++
+>  b/tools/memory-model/litmus-tests/MP+polocks.litmus                                        |   11 +++++
+>  b/tools/memory-model/litmus-tests/MP+poonceonces.litmus                                    |    7 +++
+>  b/tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus                    |    8 ++++
+>  b/tools/memory-model/litmus-tests/MP+porevlocks.litmus                                     |   11 +++++
+>  b/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus                        |    8 ++++
+>  b/tools/memory-model/litmus-tests/R+mbonceonces.litmus                                     |    9 ++++
+>  b/tools/memory-model/litmus-tests/R+poonceonces.litmus                                     |    8 ++++
+>  b/tools/memory-model/litmus-tests/README                                                   |    4 +-
+>  b/tools/memory-model/litmus-tests/S+poonceonces.litmus                                     |    9 ++++
+>  b/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus                       |    7 +++
+>  b/tools/memory-model/litmus-tests/SB+mbonceonces.litmus                                    |    9 ++++
+>  b/tools/memory-model/litmus-tests/SB+poonceonces.litmus                                    |    8 ++++
+>  b/tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus                              |    8 ++++
+>  b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus                |    8 ++++
+>  b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus               |    9 ++++
+>  b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus               |    8 ++++
+>  b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus    |   14 +++++++
+>  36 files changed, 286 insertions(+), 38 deletions(-)
+> 
