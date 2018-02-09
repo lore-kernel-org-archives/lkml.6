@@ -1,117 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752795AbeBIOQl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:16:41 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:38655 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752696AbeBIOQ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:16:28 -0500
-X-Google-Smtp-Source: AH8x224+gJzTyVEJ12hc+DKuayJn6KR8btPidGO0QrZuIrgm2BSih3Rl2efjEIOyi8Sm44G/wWdoDA==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Eduardo Habkost <ehabkost@redhat.com>
-Subject: [PATCH v2] target-i386: add KVM_HINTS_DEDICATED performance hint
-Date: Fri,  9 Feb 2018 06:15:25 -0800
-Message-Id: <1518185725-69559-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751756AbeBIOVc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:21:32 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47800 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750993AbeBIOVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 09:21:31 -0500
+Date: Fri, 9 Feb 2018 14:21:26 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] arm64: capabilities: Allow flexibility in scope
+Message-ID: <20180209142126.GC5862@e103592.cambridge.arm.com>
+References: <20180208173229.GA5862@e103592.cambridge.arm.com>
+ <20180209121605.14091-1-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209121605.14091-1-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Fri, Feb 09, 2018 at 12:16:01PM +0000, Suzuki K Poulose wrote:
+> >>> I'm not sure we need extra comments or documentation; I just want
+> >>> to check that I've understood the patch correctly.
+> >>
+> >> So, would you prefer this split to the original patch ?
+> > 
+> > I think splitting out this patch (1/2) makes sense.
+> > 
+> > 
+> > For the second part (2/2) of the split, I still find that hard to
+> > review.  The commit message suggests trivially obvious refactoring
+> > only, but I think there are three things going on:
+> > 
+> >   1) moving functions around (with the intention of merging them)
+> >   2) merging functions together
+> >   3) other miscellaneous bits of refactoring, and cleanups that become
+> >      "obvious" after steps (1) and (2).
+> > 
+> > The refactoring is likely straightfoward, but the resulting diff is
+> > not (at least, I struggle to read it).
+> > 
+> > Could you split the second part along the lines if (1)..(3) above?
+> > I think that would make for much easier review.  (Sorry to be a pain!)
+> > 
+> > Also, the second patch leaves at least one function that does nothing
+> > except call a second function that has no other caller.  It may do
+> > no harm to remove and inline any such function.  (Falls under (3),
+> > I guess.)
+> > 
+> 
+> Here it goes...
+> 
+> Suzuki K Poulose (4):
+>   arm64: capabilities: Prepare for grouping features and errata work
+>     arounds
+>   arm64: capabilities: Split the processing of errata work arounds
+>   arm64: capabilities: Allow features based on local CPU scope
+>   arm64: capabilities: Group handling of features and errata workarounds
 
-Add KVM_HINTS_DEDICATED performance hint, guest checks this feature bit
-to determine if they run on dedicated vCPUs, allowing optimizations such 
-as usage of qspinlocks.  
+This is a lot easier to follow now, thanks.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Eduardo Habkost <ehabkost@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-v1 -> v2:
- * add a new feature word
+The patches look OK to me, but I'll comment when you repost whole
+series in its updated form, so I don't get confused about which
+patches are live now...
 
- target/i386/cpu.c | 14 ++++++++++++++
- target/i386/cpu.h |  3 +++
- target/i386/kvm.c |  4 ++++
- 3 files changed, 21 insertions(+)
 
-diff --git a/target/i386/cpu.c b/target/i386/cpu.c
-index d70954b..e2974ad 100644
---- a/target/i386/cpu.c
-+++ b/target/i386/cpu.c
-@@ -358,6 +358,20 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
-         .cpuid_eax = KVM_CPUID_FEATURES, .cpuid_reg = R_EAX,
-         .tcg_features = TCG_KVM_FEATURES,
-     },
-+    [FEAT_KVM_HINTS] = {
-+        .feat_names = {
-+            "hint-dedicated", NULL, NULL, NULL,
-+            NULL, NULL, NULL, NULL,
-+            NULL, NULL, NULL, NULL,
-+            NULL, NULL, NULL, NULL,
-+            NULL, NULL, NULL, NULL,
-+            NULL, NULL, NULL, NULL,
-+            NULL, NULL, NULL, NULL,
-+            NULL, NULL, NULL, NULL,
-+        },
-+        .cpuid_eax = KVM_CPUID_FEATURES, .cpuid_reg = R_EDX,
-+        .tcg_features = TCG_KVM_FEATURES,
-+    },
-     [FEAT_HYPERV_EAX] = {
-         .feat_names = {
-             NULL /* hv_msr_vp_runtime_access */, NULL /* hv_msr_time_refcount_access */,
-diff --git a/target/i386/cpu.h b/target/i386/cpu.h
-index f91e37d..9f73692 100644
---- a/target/i386/cpu.h
-+++ b/target/i386/cpu.h
-@@ -475,6 +475,7 @@ typedef enum FeatureWord {
-     FEAT_8000_0008_EBX, /* CPUID[8000_0008].EBX */
-     FEAT_C000_0001_EDX, /* CPUID[C000_0001].EDX */
-     FEAT_KVM,           /* CPUID[4000_0001].EAX (KVM_CPUID_FEATURES) */
-+    FEAT_KVM_HINTS,     /* CPUID[4000_0001].EDX */
-     FEAT_HYPERV_EAX,    /* CPUID[4000_0003].EAX */
-     FEAT_HYPERV_EBX,    /* CPUID[4000_0003].EBX */
-     FEAT_HYPERV_EDX,    /* CPUID[4000_0003].EDX */
-@@ -670,6 +671,8 @@ typedef uint32_t FeatureWordArray[FEATURE_WORDS];
- #define CPUID_7_0_EDX_AVX512_4FMAPS (1U << 3) /* AVX512 Multiply Accumulation Single Precision */
- #define CPUID_7_0_EDX_SPEC_CTRL     (1U << 26) /* Speculation Control */
- 
-+#define KVM_HINTS_DEDICATED (1U << 0)
-+
- #define CPUID_8000_0008_EBX_IBPB    (1U << 12) /* Indirect Branch Prediction Barrier */
- 
- #define CPUID_XSAVE_XSAVEOPT   (1U << 0)
-diff --git a/target/i386/kvm.c b/target/i386/kvm.c
-index ad4b159..44ee524 100644
---- a/target/i386/kvm.c
-+++ b/target/i386/kvm.c
-@@ -383,6 +383,9 @@ uint32_t kvm_arch_get_supported_cpuid(KVMState *s, uint32_t function,
-         if (!kvm_irqchip_in_kernel()) {
-             ret &= ~(1U << KVM_FEATURE_PV_UNHALT);
-         }
-+    } else if (function == KVM_CPUID_FEATURES && reg == R_EDX) {
-+        ret |= KVM_HINTS_DEDICATED;
-+        found = 1;
-     }
- 
-     /* fallback for older kernels */
-@@ -801,6 +804,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
-         c = &cpuid_data.entries[cpuid_i++];
-         c->function = KVM_CPUID_FEATURES | kvm_base;
-         c->eax = env->features[FEAT_KVM];
-+        c->edx = env->features[FEAT_KVM_HINTS];
-     }
- 
-     cpu_x86_cpuid(env, 0, 0, &limit, &unused, &unused, &unused);
--- 
-2.7.4
+Cheers
+---Dave
