@@ -1,178 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752468AbeBIBwt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 20:52:49 -0500
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:34040 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752285AbeBIBwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 20:52:47 -0500
-X-Google-Smtp-Source: AH8x227x27Ut05lNpJJp1DKWaU6GkFGtaFLmYZa8H04iPeYFLkGHCPVmT44hREfwSMdiZcX5FDjD+6crTtMCfzR8vXA=
+        id S1752449AbeBIByh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 20:54:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752178AbeBIByg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 20:54:36 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EB621789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 8 Feb 2018 20:54:31 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 13/18] tracing: Add array type to function based events
+Message-ID: <20180208205431.4c0ef9eb@vmware.local.home>
+In-Reply-To: <20180209011745.GC28206@sejong>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231018.977452228@goodmis.org>
+        <20180209011745.GC28206@sejong>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180208153648.GC12817@krava>
-References: <20180208033344.71933-1-linxiulei@gmail.com> <20180208153648.GC12817@krava>
-From: Lin Xiulei <linxiulei@gmail.com>
-Date: Fri, 9 Feb 2018 09:52:46 +0800
-Message-ID: <CALPjY3ky4kKbJbVfbigZ87MMiqpn8Q1EX1EKwJ8F+e8P=euzzg@mail.gmail.com>
-Subject: Re: [PATCH RESEND v4] perf/core: Fix installing cgroup event into cpu
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, Stephane Eranian <eranian@gmail.com>,
-        torvalds@linux-foundation.org,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        yang_oliver@hotmail.com, jinli.zjl@alibaba-inc.com,
-        "leilei.lin" <leilei.lin@alibaba-inc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-08 23:36 GMT+08:00 Jiri Olsa <jolsa@redhat.com>:
->
-> On Thu, Feb 08, 2018 at 11:33:44AM +0800, linxiulei@gmail.com wrote:
-> > From: "leilei.lin" <leilei.lin@alibaba-inc.com>
-> >
-> > Do not install cgroup event into the CPU context and schedule it
-> > if the cgroup is not running on this CPU
-> >
-> > While there is no task of cgroup running specified CPU, current
-> > kernel still install cgroup event into CPU context that causes
-> > another cgroup event can't be installed into this CPU.
-> >
-> > This patch prevent scheduling events at __perf_install_in_context()
-> > and installing events at list_update_cgroup_event() if cgroup isn't
-> > running on specified CPU.
-> >
-> > Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
-> > ---
-> >  v2: Set cpuctx->cgrp only if the same cgroup is running on this
-> >    CPU otherwise following events couldn't be activated immediately
-> >  v3: Enhance the comments and commit message
-> >  v4: Adjust to config
-> >
-> >  kernel/events/core.c | 50 +++++++++++++++++++++++++++++++++++++-------------
-> >  1 file changed, 37 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 4df5b69..fd28d61 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -933,31 +933,41 @@ list_update_cgroup_event(struct perf_event *event,
-> >  {
-> >       struct perf_cpu_context *cpuctx;
-> >       struct list_head *cpuctx_entry;
-> > +     struct perf_cgroup *cgrp;
-> >
-> >       if (!is_cgroup_event(event))
-> >               return;
-> >
-> > -     if (add && ctx->nr_cgroups++)
-> > -             return;
-> > -     else if (!add && --ctx->nr_cgroups)
-> > -             return;
->
-> I might be missing something, but should this check stay on
-> the top regardles of the cgroup_is_descendant check below?
->
+On Fri, 9 Feb 2018 10:17:45 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-I don't think so,  if event A on cgroup A is opened and immediately
-followed by a event B opened on cgroup B, then
-"if (add && ctx->nr_cgroups++)" would __return__ with
- cpuctx->cgrp = cgroup A, that is incorrect.
+> > + # echo 1 > events/functions/ip_rcv/enable
+> > + # cat trace
+> > +    <idle>-0     [003] ..s3   219.813582: __netif_receive_skb_core->ip_rcv(skb=ffff880118195e00, perm_addr=b4,b5,2f,ce,18,65)
+> > +    <idle>-0     [003] ..s3   219.813595: __netif_receive_skb_core->ip_rcv(skb=ffff880118195e00, perm_addr=b4,b5,2f,ce,18,65)
+> > +    <idle>-0     [003] ..s3   220.115053: __netif_receive_skb_core->ip_rcv(skb=ffff880118195c00, perm_addr=b4,b5,2f,ce,18,65)
+> > +    <idle>-0     [003] ..s3   220.115293: __netif_receive_skb_core->ip_rcv(skb=ffff880118195c00, perm_addr=b4,b5,2f,ce,18,65)  
+> 
+> What about adding braces to indicate array type like below?
+> 
+> ... ip_rcv(skb=ffff880118195c00, perm_addr={b4,b5,2f,ce,18,65})
+> 
 
-And previous thread is here https://lkml.org/lkml/2018/1/24/79
+That's a nice idea, I'll add it.
 
->
-> you could put NULL into cpuctx->cgrp on context with cgroup
-> event in the list
->
+> > +	case FUNC_STATE_ARRAY:
+> >  	case FUNC_STATE_BRACKET:
+> > -		WARN_ON(!fevent->last_arg);
+> > +		if (WARN_ON(!fevent->last_arg))
+> > +			break;
+> >  		ret = kstrtoul(token, 0, &val);
+> >  		if (ret)
+> >  			break;
+> > -		val *= fevent->last_arg->size;
+> > -		fevent->last_arg->indirect = val ^ INDIRECT_FLAG;
+> > -		return FUNC_STATE_INDIRECT;
+> > +		if (state == FUNC_STATE_BRACKET) {
+> > +			val *= fevent->last_arg->size;
+> > +			fevent->last_arg->indirect = val ^ INDIRECT_FLAG;
+> > +			return FUNC_STATE_INDIRECT;
+> > +		}
+> > +		if (val <= 0)
+> > +			break;  
+> 
+> The val is unsigned long type.
 
-what's the harm? It's invoked by perf_remove_from_context() when
-an event is ready to be released. And whenever process/cgroup is
-scheduled, cpuctx->cgrp will be set
+I probably should make it a cap it for the array, as arrays that are
+too big will simply fail to allocate on the ring buffer.
 
-In case that the patch was not sorted well, I put the patched code
+But it should only check for zero.
 
-```
-static inline void
-list_update_cgroup_event(struct perf_event *event,
-             struct perf_event_context *ctx, bool add)
-{
-    struct perf_cpu_context *cpuctx;
-    struct list_head *cpuctx_entry;
-    struct perf_cgroup *cgrp;
+> 
+> 
+> > +		fevent->last_arg->array = val;
+> > +		type = kasprintf(GFP_KERNEL, "%s[%d]", fevent->last_arg->type, (unsigned)val);  
+> 
+> s/%d/%lu/  and no need to cast it.
 
-    if (!is_cgroup_event(event))
-        return;
+Sure.
 
-    /*
-     * Because cgroup events are always per-cpu events,
-     * this will always be called from the right CPU.
-     */
-    cpuctx = __get_cpu_context(ctx);
-    cgrp = perf_cgroup_from_task(current, ctx);
+> 
+> 
+> > +		if (!type)
+> > +			break;
+> > +		kfree(fevent->last_arg->type);
+> > +		fevent->last_arg->type = type;
+> > +		/*
+> > +		 * arg_offset has already been updated once by size.
+> > +		 * This update needs to account for that (hence the "- 1").
+> > +		 */
+> > +		fevent->arg_offset += fevent->last_arg->size * (fevent->last_arg->array - 1);
+> > +		return FUNC_STATE_ARRAY_SIZE;
+> > +
+> > +	case FUNC_STATE_ARRAY_SIZE:
+> > +		if (token[0] != ']')
+> > +			break;
+> > +		return FUNC_STATE_ARRAY_END;
+> >  
+> >  	case FUNC_STATE_INDIRECT:
+> >  		if (token[0] != ']')
+> > @@ -453,6 +485,10 @@ static long long get_arg(struct func_arg *arg, unsigned long val)
+> >  
+> >  	val = val + (arg->indirect ^ INDIRECT_FLAG);
+> >  
+> > +	/* Arrays do their own indirect reads */
+> > +	if (arg->array)
+> > +		return val;
+> > +  
+> 
+> Not sure about this.  After this change it would make 'x64[1] foo' and
+> 'x64[1] foo[0]' equivalent, right?
 
-    /*
-     * if only the cgroup is running on this cpu,
-     * we put/remove this cgroup into cpu context.
-     * Or it would case mismatch in following cgroup
-     * events at event_filter_match()
-     */
-    if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup)) {
-        if (add)
-            cpuctx->cgrp = cgrp;
-        else
-            cpuctx->cgrp = NULL;
-    }
+Yeah, I may need to re-think this. I originally had the "array"
+use the "indirect" code, but I'm thinking that isn't necessary.
 
-    if (add && ctx->nr_cgroups++)
-        return;
-    else if (!add && --ctx->nr_cgroups)
-        return;
+Thanks for the input.
 
-    cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
-    if (add)
-        list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
-    else
-        list_del(cpuctx_entry);
-}
-```
-
-thanks
-
->
-> thanks,
-> jirka
->
-> >       /*
-> >        * Because cgroup events are always per-cpu events,
-> >        * this will always be called from the right CPU.
-> >        */
-> >       cpuctx = __get_cpu_context(ctx);
-> > -     cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
-> > -     /* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
-> > -     if (add) {
-> > -             struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
-> > +     cgrp = perf_cgroup_from_task(current, ctx);
-> >
-> > -             list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
-> > -             if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
-> > +     /*
-> > +      * if only the cgroup is running on this cpu,
-> > +      * we put/remove this cgroup into cpu context.
-> > +      * Or it would case mismatch in following cgroup
-> > +      * events at event_filter_match()
-> > +      */
-> > +     if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup)) {
-> > +             if (add)
-> >                       cpuctx->cgrp = cgrp;
-> > -     } else {
-> > -             list_del(cpuctx_entry);
-> > -             cpuctx->cgrp = NULL;
-> > +             else
-> > +                     cpuctx->cgrp = NULL;
->
-> SNIP
->
+-- Steve
