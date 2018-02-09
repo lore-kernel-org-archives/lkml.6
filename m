@@ -1,173 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751341AbeBILOp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 06:14:45 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:52308 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeBILOn (ORCPT
+        id S1752191AbeBILOv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 06:14:51 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:45239 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750970AbeBILOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 06:14:43 -0500
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
-        kernel@collabora.com, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
-References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
- <20180126135803.29781-2-tomeu.vizoso@collabora.com>
- <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
- <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
- <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
- <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
- <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
- <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
- <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
- <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
-Message-ID: <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
-Date: Fri, 9 Feb 2018 12:14:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 9 Feb 2018 06:14:47 -0500
+X-Google-Smtp-Source: AH8x224pIJH2EgQ8JtyOhUQ6XN8HxYPH912GK3aPvA7e3K/+hq25h8rfeq31RI8DnJKWUdsuWK/ycutkdsmsT1jMhkc=
 MIME-Version: 1.0
-In-Reply-To: <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+References: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 9 Feb 2018 12:14:45 +0100
+X-Google-Sender-Auth: XTAGXR5wjFdvXxBdDIc4fFwXkPw
+Message-ID: <CAJZ5v0h25d9CCOBzU30mDggTSwbJ7UVnUbRD773UXhhAanqCdg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+To: Claudio Scordino <claudio@evidence.eu.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gerd and Stefan,
+On Thu, Feb 8, 2018 at 6:01 PM, Claudio Scordino
+<claudio@evidence.eu.com> wrote:
+> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+> we should not wait for the rate limit, otherwise we may miss some deadline.
+>
+> Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
+> misses for tasks with low RT periods.
+>
+> The patch applies on top of the one recently proposed by Peter to drop the
+> SCHED_CPUFREQ_* flags.
+>
+> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+> CC: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
+> CC: Patrick Bellasi <patrick.bellasi@arm.com>
+> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> CC: Morten Rasmussen <morten.rasmussen@arm.com>
+> CC: Juri Lelli <juri.lelli@redhat.com>
+> CC: Viresh Kumar <viresh.kumar@linaro.org>
+> CC: Vincent Guittot <vincent.guittot@linaro.org>
+> CC: Todd Kjos <tkjos@android.com>
+> CC: Joel Fernandes <joelaf@google.com>
+> CC: linux-pm@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index b0bd77d..d8dcba2 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -74,7 +74,10 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+>
+>  /************************ Governor internals ***********************/
+>
+> -static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> +static bool sugov_should_update_freq(struct sugov_policy *sg_policy,
+> +                                    u64 time,
+> +                                    struct sugov_cpu *sg_cpu_old,
+> +                                    struct sugov_cpu *sg_cpu_new)
 
-can we reach agreement on whether vsock should be involved in this?
+This looks somewhat excessive for using just one field from each of these.
 
-Thanks,
+>  {
+>         s64 delta_ns;
+>
+> @@ -111,6 +114,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>                 return true;
+>         }
+>
+> +       /* Ignore rate limit when DL increased utilization. */
+> +       if (sg_cpu_new->util_dl > sg_cpu_old->util_dl)
+> +               return true;
+> +
+>         delta_ns = time - sg_policy->last_freq_update_time;
+>         return delta_ns >= sg_policy->freq_update_delay_ns;
+>  }
+> @@ -271,6 +278,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+>                                 unsigned int flags)
+>  {
+>         struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
+> +       struct sugov_cpu sg_cpu_old = *sg_cpu;
 
-Tomeu
+And here you copy the entire struct to pass a pointer to the copy to a
+helper function so that it can access one field.
 
-On 02/07/2018 10:49 AM, Tomeu Vizoso wrote:
-> On 02/06/2018 03:23 PM, Gerd Hoffmann wrote:
->>    Hi,
->>
->>>> Hmm?  I'm assuming the wayland client (in the guest) talks to the
->>>> wayland proxy, using the wayland protocol, like it would talk to a
->>>> wayland display server.  Buffers must be passed from client to
->>>> server/proxy somehow, probably using fd passing, so where is the
->>>> problem?
->>>>
->>>> Or did I misunderstand the role of the proxy?
->>>
->>> Hi Gerd,
->>>
->>> it's starting to look to me that we're talking a bit past the other, so I
->>> have pasted below a few words describing my current plan regarding the 
->>> 3 key
->>> scenarios that I'm addressing.
->>
->> You are describing the details, but I'm missing the big picture ...
->>
->> So, virtualization aside, how do buffers work in wayland?  As far I know
->> it goes like this:
->>
->>    (a) software rendering: client allocates shared memory buffer, renders
->>        into it, then passes a file handle for that shmem block together
->>        with some meta data (size, format, ...) to the wayland server.
->>
->>    (b) gpu rendering: client opens a render node, allocates a buffer,
->>        asks the cpu to renders into it, exports the buffer as dma-buf
->>        (DRM_IOCTL_PRIME_HANDLE_TO_FD), passes this to the wayland server
->>        (again including meta data of course).
->>
->> Is that correct?
-> 
-> Both are correct descriptions of typical behaviors. But it isn't spec'ed 
-> anywhere who has to do the buffer allocation.
-> 
-> In practical terms, the buffer allocation happens in either the 2D GUI 
-> toolkit (gtk+, for example), or the EGL implementation. Someone using 
-> this in a real product would most probably be interested in avoiding any 
-> extra copies and make sure that both allocate buffers via virtio-gpu, for 
-> example.
-> 
-> Depending on the use case, they could be also interested in supporting 
-> unmodified clients with an extra copy per buffer presentation.
-> 
-> That's to say that if we cannot come up with a zero-copy solution for 
-> unmodified clients, we should at least support zero-copy for cooperative 
-> clients.
-> 
->> Now, with virtualization added to the mix it becomes a bit more
->> complicated.  Client and server are unmodified.  The client talks to the
->> guest proxy (wayland protocol).  The guest proxy talks to the host proxy
->> (protocol to be defined). The host proxy talks to the server (wayland
->> protocol).
->>
->> Buffers must be managed along the way, and we want avoid copying around
->> the buffers.  The host proxy could be implemented directly in qemu, or
->> as separate process which cooperates with qemu for buffer management.
->>
->> Fine so far?
-> 
-> Yep.
-> 
->>> I really think that whatever we come up with needs to support 3D 
->>> clients as
->>> well.
->>
->> Lets start with 3d clients, I think these are easier.  They simply use
->> virtio-gpu for 3d rendering as usual.  When they are done the rendered
->> buffer already lives in a host drm buffer (because virgl runs the actual
->> rendering on the host gpu).  So the client passes the dma-buf to the
->> guest proxy, the guest proxy imports it to look up the resource-id,
->> passes the resource-id to the host proxy, the host proxy looks up the
->> drm buffer and exports it as dma-buf, then passes it to the server.
->> Done, without any extra data copies.
-> 
-> Yep.
-> 
->>> Creation of shareable buffer by guest
->>> -------------------------------------------------
->>>
->>> 1. Client requests virtio driver to create a buffer suitable for sharing
->>> with host (DRM_VIRTGPU_RESOURCE_CREATE)
->>
->> client or guest proxy?
-> 
-> As per the above, the GUI toolkit could have been modified so the client 
-> directly creates a shareable buffer, and renders directly to it without 
-> any extra copies.
-> 
-> If clients cannot be modified, then it's the guest proxy what has to 
-> create the shareable buffer and keep it in sync with the client's 
-> non-shareable buffer at the right times, by intercepting 
-> wl_surface.commit messages and copying buffer contents.
-> 
->>> 4. QEMU maps that buffer to the guest's address space
->>> (KVM_SET_USER_MEMORY_REGION), passes the guest PFN to the virtio driver
->>
->> That part is problematic.  The host can't simply allocate something in
->> the physical address space, because most physical address space
->> management is done by the guest.  All pci bars are mapped by the guest
->> firmware for example (or by the guest OS in case of hotplug).
-> 
-> How can KVM_SET_USER_MEMORY_REGION ever be safely used then? I would have 
-> expected that callers of that ioctl have enough knowledge to be able to 
-> choose a physical address that won't conflict with the guest's kernel.
-> 
-> I see that the ivshmem device in QEMU registers the memory region in BAR 
-> 2 of a PCI device instead. Would that be better in your opinion?
-> 
->>> 4. QEMU pops data+buffers from the virtqueue, looks up shmem FD for each
->>> resource, sends data + FDs to the compositor with SCM_RIGHTS
->>
->> BTW: Is there a 1:1 relationship between buffers and shmem blocks?  Or
->> does the wayland protocol allow for offsets in buffer meta data, so you
->> can place multiple buffers in a single shmem block?
-> 
-> The latter: 
-> https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_shm_pool
-> 
-> Regards,
-> 
-> Tomeu
+That doesn't look particularly straightforward to me, let alone the overhead.
+
+I guess you may do the check before calling sugov_should_update_freq()
+and set sg_policy->need_freq_update if its true, as you know upfront
+that the previous sg_policy->next_freq value isn't going to be used
+anyway in that case.
