@@ -1,120 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeBIQeU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 11:34:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40918 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeBIQeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 11:34:19 -0500
-Date: Fri, 9 Feb 2018 14:34:17 -0200
-From: Eduardo Habkost <ehabkost@redhat.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v2 1/2] KVM: x86: Add dedicated vCPU hint
- KVM_HINTS_DEDICATED
-Message-ID: <20180209163417.GM13981@localhost.localdomain>
-References: <1518187673-70832-1-git-send-email-wanpengli@tencent.com>
+        id S1751700AbeBIQoX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 11:44:23 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41790 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751029AbeBIQoV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 11:44:21 -0500
+X-Google-Smtp-Source: AH8x224ZAHQnfidENXNCIDdCJGd3fNZxSjoZ8du7EqLqa2b/JXtI8BwLy9cT6n/cP/n49nuphUALhQ==
+Subject: Re: [PATCH] rtlwifi: rtl8192cu: remove pointless memcpy
+To: Arnd Bergmann <arnd@arndb.de>, Ping-Ke Shih <pkshih@realtek.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180209132531.2755482-1-arnd@arndb.de>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <62048535-6455-e4ac-040a-ca2bf60fc0f7@lwfinger.net>
+Date: Fri, 9 Feb 2018 10:44:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1518187673-70832-1-git-send-email-wanpengli@tencent.com>
-X-Fnord: you can see the fnord
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180209132531.2755482-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 06:47:52AM -0800, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 02/09/2018 07:24 AM, Arnd Bergmann wrote:
+> gcc-8 points out that source and destination of the memcpy() are
+> always the same pointer, so the effect of memcpy() is undefined
+> here (its arguments must not overlap):
 > 
-> Waiman Long mentioned that:
+> drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c: In function '_rtl_rx_process':
+> drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c:430:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
 > 
->  Generally speaking, unfair lock performs well for VMs with a small
->  number of vCPUs. Native qspinlock may perform better than pvqspinlock
->  if there is vCPU pinning and there is no vCPU over-commitment.
+> Most likely this is harmless, but it's easy to just remove the
+> line and get rid of the warning.
 > 
-> This patch adds a performance hint to allow hypervisor admin to choose
-> the qspinlock to be used when a dedicated pCPU is available.
-> 
-> PV_DEDICATED = 1, PV_UNHALT = anything: default is qspinlock
-> PV_DEDICATED = 0, PV_UNHALT = 1: default is Hybrid PV queued/unfair lock
-> PV_DEDICATED = 0, PV_UNHALT = 0: default is tas
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Eduardo Habkost <ehabkost@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> v1 -> v2:
->  * update to KVM_HINTS_DEDICATED
+>   drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
->  Documentation/virtual/kvm/cpuid.txt  | 6 ++++++
->  arch/x86/include/uapi/asm/kvm_para.h | 2 ++
->  arch/x86/kernel/kvm.c                | 6 ++++++
->  3 files changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-> index 87a7506..d54cc79 100644
-> --- a/Documentation/virtual/kvm/cpuid.txt
-> +++ b/Documentation/virtual/kvm/cpuid.txt
-> @@ -66,3 +66,9 @@ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
->                                     ||       || per-cpu warps are expected in
->                                     ||       || kvmclock.
->  ------------------------------------------------------------------------------
-> +KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit
-> +                                   ||       || to determine if they run on
-> +                                   ||       || dedicated vCPUs, allowing opti-
-> +                                   ||       || mizations such as usage of
-> +                                   ||       || qspinlocks.
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+> index ac4a82de40c7..9ab56827124e 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+> @@ -427,7 +427,6 @@ static void _rtl_rx_process(struct ieee80211_hw *hw, struct sk_buff *skb)
+>   		 (u32)hdr->addr1[0], (u32)hdr->addr1[1],
+>   		 (u32)hdr->addr1[2], (u32)hdr->addr1[3],
+>   		 (u32)hdr->addr1[4], (u32)hdr->addr1[5]);
+> -	memcpy(IEEE80211_SKB_RXCB(skb), rx_status, sizeof(*rx_status));
+>   	ieee80211_rx(hw, skb);
+>   }
 
-I assume you don't mean CPUID[0x40000001].EAX[bit 0] here,
-because it is already used for KVM_FEATURE_CLOCKSOURCE.
+No, the warning is pointing to the wrong place. The routine in question does the 
+following:
 
-I guess you will want a separate table for CPUID[0x40000001].EDX
-bits?
+1. Loads the rx_status struct from skb->cb.
+2. Overwrites the contents with 0.
+3. Fills various members of the struct.
+4. Writes the revised struct back into skb->cb.
 
+Thus eliminating step 4 negates all the things done in step 3, and is wrong. The 
+correct fix is to change step 1 to create a NULL-filled rx_status struct, and 
+eliminate step 2.
 
-> +------------------------------------------------------------------------------
-> diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
-> index 6cfa9c8..d65b16b 100644
-> --- a/arch/x86/include/uapi/asm/kvm_para.h
-> +++ b/arch/x86/include/uapi/asm/kvm_para.h
-> @@ -28,6 +28,8 @@
->  #define KVM_FEATURE_PV_TLB_FLUSH	9
->  #define KVM_FEATURE_ASYNC_PF_VMEXIT	10
->  
-> +#define KVM_HINTS_DEDICATED 0
-> +
->  /* The last 8 bits are used to indicate how to interpret the flags field
->   * in pvclock structure. If no bits are set, all flags are ignored.
->   */
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 971babe..7f4c92d 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -724,6 +724,12 @@ void __init kvm_spinlock_init(void)
->  {
->  	if (!kvm_para_available())
->  		return;
-> +
-> +	if (kvm_para_has_feature(KVM_HINTS_DEDICATED)) {
+NACK.
 
-This is checking CPUID{0x40000001].EAX[bit 0]
-(KVM_FEATURE_CLOCKSOURCE), isn't it?
-
-> +		static_branch_disable(&virt_spin_lock_key);
-> +		return;
-> +	}
-> +
->  	/* Does host kernel support KVM_FEATURE_PV_UNHALT? */
->  	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
->  		return;
-> -- 
-> 2.7.4
-> 
-
--- 
-Eduardo
+Larry
