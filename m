@@ -1,76 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518183707-5-5608283093431263732
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518183706; b=pMxgAPcyjFjJims+hP/1M9GmViNqXev/UtlV3uaszOqV+zd
-    +/ZxP9BHuBq6hrzHIxPr35RoHdG8G2IMGRw1LLqZaBtoIHNpGWzBUaThwVzOsf1y
-    S9H3+UgmPkt9Z5Dj8xO1NL9zYsbLdOOh8jPGc3sJSfcUOHCv/2npNYU+TOjm77aX
-    iW5wtg/K27FL7O2Ps5+oXfGuK9+oOVrUdjUr/Ox5Y7JTXWYOaI00BFjERwOF8Krz
-    s7aZh5Zfg+D0wUWX9hYUO/NoFRehwfX+rbP570/G774RmEn6zdPHo6HmW3BFZpYV
-    SBwxS/j8Uijdz4HPgXBRruF1AzUh0maN3ONKNJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518183706; bh=1bE8FKj2nsCFw/NFkDDlpleFBT
-    yEfT2zJonPwy7HAok=; b=Fmy2+gA3HiNHJ1pUX4s0ZXPi4ZaBI7j0UZ2YvHEUI4
-    U2gmn1i9oiA0yCvmxCu9kBUE9SRgCk6CJ3435C3jpQ6toy3LDQwdAceMpq1DfXrn
-    cQOa2THn32K7YGnSB4cEA/f1uCusX5VFq6KeX1C8K2CaFGXLWRgUeW1XQOaerk3M
-    y6Yd9Rhvfgpwiu5qXZLCCJV4nDRF/wLMv1bplrgA6itCzvE7hTqnhyaesfhyJofJ
-    K1QcMFF30ka1KvrsZn6dlMMEqFTO8EOw28uOcgBPBTGgEITu2rLiizbjBNsVTZiw
-    pW97gLXvUdfkfROyKPyAJQsI1W1WRLdAO8yOnthnzopA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752649AbeBINln (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:41:43 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49308 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbeBINll (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:41 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224D/Tv/FwioYERMUqwdoL1I4+MuxwnMJglslcHIIgMsIzrvyqaE1BIO520tDBneAGK2i9JW
+ARC-Seal: i=1; a=rsa-sha256; t=1518183694; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nOZEAVTZ4JBfcYd0BCyMEO8Z3+CzaLm4AEGSSkYabG7oDs57hNKqPCEuI5oLVjfLwn
+         FocJBtovBjcLRQLpdRJCEFIhkkKRSEE0yI95Z7pE+Xs5UAJ6XoMQW8vWMM6YIfHkzWYL
+         3igAOBNmY8841/QNY0QRGvr5t308DE8hrNC+CyPB5jlGYXUF8xMY930Jp40QBFWHIvJ4
+         7TDa/+GPhmCCSFv1VeFH5PRExqcLJvDcWJ1NvT0T9xX/UNTuSmHo4ZFoCuo/+5mXB7DN
+         iANGgDspjn8jylwXy1YjM67Vq7i5/EMaHw9VvE9d2u82ZSn+CKnTpQgTUmFQWOivchQ7
+         /AwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=XQyYtcok5mMfd0tdHpi3JSYoapJLbX7PVVlSJG5wEbk=;
+        b=09QNUX9UfSgktnjQ9Hr6yE4ChQEdjhbW2Io7dWwmhaR7d5QqQnQxq8r97uvF8u0gmB
+         XiRk0LlJK5S1eiJGBNwf0rXuyXbu1OQfwnPgQYD+L+reeq5mIAvbOHbSOrIbUj7Ctmad
+         tX+raQgG253TavW43YmyMBGH3F5aeFzns1CUz8DpHMuYfZEVARQ4+XIeqH6jiLfSsXif
+         rFU9X8UNokJhtGbQOknDzJKl7UY2K8Z6wwh9CxP6qfXJmNe++wL2K0OZrtefO/Cv+I9w
+         +u4JmyBdghvNQQnSIOjDIY9oj9Qp1tXkyvZYGsnfLfPeSDrmIHk1aas0q9jC9unSlYVi
+         Qmyg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.9 32/92] media: soc_camera: soc_scale_crop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  9 Feb 2018 14:39:01 +0100
-Message-Id: <20180209133933.496449619@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	syzbot+c0ea2226f77a42936bf7@syzkaller.appspotmail.com,
+	Craig Gallek <kraig@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 29/92] soreuseport: fix mem leak in reuseport_add_sock()
+Date: Fri,  9 Feb 2018 14:38:58 +0100
+Message-Id: <20180209133933.311308506@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591930985749093640?=
+X-GMAIL-MSGID: =?utf-8?q?1591930985749093640?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,36 +50,118 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 5331aec1bf9c9da557668174e0a4bfcee39f1121 upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+[ Upstream commit 4db428a7c9ab07e08783e0fcdc4ca0f555da0567 ]
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/soc_camera/soc_scale_crop.o
-see include/linux/module.h for more information
+reuseport_add_sock() needs to deal with attaching a socket having
+its own sk_reuseport_cb, after a prior
+setsockopt(SO_ATTACH_REUSEPORT_?BPF)
 
-This adds the license as "GPL", which matches the header of the file.
+Without this fix, not only a WARN_ONCE() was issued, but we were also
+leaking memory.
 
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+Thanks to sysbot and Eric Biggers for providing us nice C repros.
 
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+------------[ cut here ]------------
+socket already in reuseport group
+WARNING: CPU: 0 PID: 3496 at net/core/sock_reuseport.c:119  
+reuseport_add_sock+0x742/0x9b0 net/core/sock_reuseport.c:117
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 3496 Comm: syzkaller869503 Not tainted 4.15.0-rc6+ #245
+Hardware name: Google Google Compute Engine/Google Compute Engine,
+BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x211/0x2d0 lib/bug.c:184
+  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1079
+
+Fixes: ef456144da8e ("soreuseport: define reuseport groups")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot+c0ea2226f77a42936bf7@syzkaller.appspotmail.com
+Acked-by: Craig Gallek <kraig@google.com>
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/platform/soc_camera/soc_scale_crop.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/core/sock_reuseport.c |   35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
---- a/drivers/media/platform/soc_camera/soc_scale_crop.c
-+++ b/drivers/media/platform/soc_camera/soc_scale_crop.c
-@@ -418,3 +418,7 @@ void soc_camera_calc_client_output(struc
- 	mf->height = soc_camera_shift_scale(rect->height, shift, scale_v);
+--- a/net/core/sock_reuseport.c
++++ b/net/core/sock_reuseport.c
+@@ -93,6 +93,16 @@ static struct sock_reuseport *reuseport_
+ 	return more_reuse;
  }
- EXPORT_SYMBOL(soc_camera_calc_client_output);
+ 
++static void reuseport_free_rcu(struct rcu_head *head)
++{
++	struct sock_reuseport *reuse;
 +
-+MODULE_DESCRIPTION("soc-camera scaling-cropping functions");
-+MODULE_AUTHOR("Guennadi Liakhovetski <kernel@pengutronix.de>");
-+MODULE_LICENSE("GPL");
++	reuse = container_of(head, struct sock_reuseport, rcu);
++	if (reuse->prog)
++		bpf_prog_destroy(reuse->prog);
++	kfree(reuse);
++}
++
+ /**
+  *  reuseport_add_sock - Add a socket to the reuseport group of another.
+  *  @sk:  New socket to add to the group.
+@@ -101,7 +111,7 @@ static struct sock_reuseport *reuseport_
+  */
+ int reuseport_add_sock(struct sock *sk, struct sock *sk2)
+ {
+-	struct sock_reuseport *reuse;
++	struct sock_reuseport *old_reuse, *reuse;
+ 
+ 	if (!rcu_access_pointer(sk2->sk_reuseport_cb)) {
+ 		int err = reuseport_alloc(sk2);
+@@ -112,10 +122,13 @@ int reuseport_add_sock(struct sock *sk,
+ 
+ 	spin_lock_bh(&reuseport_lock);
+ 	reuse = rcu_dereference_protected(sk2->sk_reuseport_cb,
+-					  lockdep_is_held(&reuseport_lock)),
+-	WARN_ONCE(rcu_dereference_protected(sk->sk_reuseport_cb,
+-					    lockdep_is_held(&reuseport_lock)),
+-		  "socket already in reuseport group");
++					  lockdep_is_held(&reuseport_lock));
++	old_reuse = rcu_dereference_protected(sk->sk_reuseport_cb,
++					     lockdep_is_held(&reuseport_lock));
++	if (old_reuse && old_reuse->num_socks != 1) {
++		spin_unlock_bh(&reuseport_lock);
++		return -EBUSY;
++	}
+ 
+ 	if (reuse->num_socks == reuse->max_socks) {
+ 		reuse = reuseport_grow(reuse);
+@@ -133,19 +146,11 @@ int reuseport_add_sock(struct sock *sk,
+ 
+ 	spin_unlock_bh(&reuseport_lock);
+ 
++	if (old_reuse)
++		call_rcu(&old_reuse->rcu, reuseport_free_rcu);
+ 	return 0;
+ }
+ 
+-static void reuseport_free_rcu(struct rcu_head *head)
+-{
+-	struct sock_reuseport *reuse;
+-
+-	reuse = container_of(head, struct sock_reuseport, rcu);
+-	if (reuse->prog)
+-		bpf_prog_destroy(reuse->prog);
+-	kfree(reuse);
+-}
+-
+ void reuseport_detach_sock(struct sock *sk)
+ {
+ 	struct sock_reuseport *reuse;
