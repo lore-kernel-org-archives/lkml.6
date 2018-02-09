@@ -1,351 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752515AbeBITX2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 14:23:28 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:36880 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752468AbeBITXY (ORCPT
+        id S1752534AbeBIT2B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 14:28:01 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33402 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeBIT17 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 14:23:24 -0500
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
-        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v3 1/1] mm: initialize pages on demand during boot
-Date: Fri,  9 Feb 2018 14:22:16 -0500
-Message-Id: <20180209192216.20509-2-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180209192216.20509-1-pasha.tatashin@oracle.com>
-References: <20180209192216.20509-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090245
+        Fri, 9 Feb 2018 14:27:59 -0500
+X-Google-Smtp-Source: AH8x2253ZAJgtyd99T5N4vZGeRTSTWMG/pQ2OkODtDA7EMkwj62VHN3YFIEe8JHpc+4JpprVPy3Y1Q==
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH 0/7] watchdog: make use of timeout-secs
+Date: Fri,  9 Feb 2018 20:27:17 +0100
+Message-Id: <20180209192724.1227-1-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <marcus.folkesson@gmail.com>
+References: <marcus.folkesson@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deferred page initialization allows the boot cpu to initialize a small
-subset of the system's pages early in boot, with other cpus doing the rest
-later on.
+All these drivers is using watchdog_init_timeout() to set timeout.
+If the timeout-parameter is set to an valid value, it will allways pick
+that and not even consider if timeout-secs is set in the devicetree.
 
-It is, however, problematic to know how many pages the kernel needs during
-boot.  Different modules and kernel parameters may change the requirement,
-so the boot cpu either initializes too many pages or runs out of memory.
+Most of the patches will just remove the initial value for
+timeout-parameter.
 
-To fix that, initialize early pages on demand.  This ensures the kernel
-does the minimum amount of work to initialize pages during boot and leaves
-the rest to be divided in the multithreaded initialization path
-(deferred_init_memmap).
+Some of the drivers allready has documented device-tree-bindings for
+timeout-secs (but will not work), add property for those which not.
 
-The on-demand code is permanently disabled using static branching once
-deferred pages are initialized.  After the static branch is changed to
-false, the overhead is up-to two branch-always instructions if the zone
-watermark check fails or if rmqueue fails.
+I wrote a similiar (tested) patch for imx2 and simply did the same to these drivers.
+These patches is *NOT* tested, so please review extra carefully.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Reviewed-by: Steven Sistare <steven.sistare@oracle.com>
-Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- include/linux/memblock.h |  10 ---
- mm/memblock.c            |  23 -------
- mm/page_alloc.c          | 175 ++++++++++++++++++++++++++++++++++++-----------
- 3 files changed, 136 insertions(+), 72 deletions(-)
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 8be5077efb5f..6c305afd95ab 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -417,21 +417,11 @@ static inline void early_memtest(phys_addr_t start, phys_addr_t end)
- {
- }
- #endif
--
--extern unsigned long memblock_reserved_memory_within(phys_addr_t start_addr,
--		phys_addr_t end_addr);
- #else
- static inline phys_addr_t memblock_alloc(phys_addr_t size, phys_addr_t align)
- {
- 	return 0;
- }
--
--static inline unsigned long memblock_reserved_memory_within(phys_addr_t start_addr,
--		phys_addr_t end_addr)
--{
--	return 0;
--}
--
- #endif /* CONFIG_HAVE_MEMBLOCK */
- 
- #endif /* __KERNEL__ */
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 5a9ca2a1751b..4120e9f536f7 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1778,29 +1778,6 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
- 	}
- }
- 
--extern unsigned long __init_memblock
--memblock_reserved_memory_within(phys_addr_t start_addr, phys_addr_t end_addr)
--{
--	struct memblock_region *rgn;
--	unsigned long size = 0;
--	int idx;
--
--	for_each_memblock_type(idx, (&memblock.reserved), rgn) {
--		phys_addr_t start, end;
--
--		if (rgn->base + rgn->size < start_addr)
--			continue;
--		if (rgn->base > end_addr)
--			continue;
--
--		start = rgn->base;
--		end = start + rgn->size;
--		size += end - start;
--	}
--
--	return size;
--}
--
- void __init_memblock __memblock_dump_all(void)
- {
- 	pr_info("MEMBLOCK configuration:\n");
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 81e18ceef579..5938523eb309 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -291,40 +291,6 @@ EXPORT_SYMBOL(nr_online_nodes);
- int page_group_by_mobility_disabled __read_mostly;
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
--
--/*
-- * Determine how many pages need to be initialized during early boot
-- * (non-deferred initialization).
-- * The value of first_deferred_pfn will be set later, once non-deferred pages
-- * are initialized, but for now set it ULONG_MAX.
-- */
--static inline void reset_deferred_meminit(pg_data_t *pgdat)
--{
--	phys_addr_t start_addr, end_addr;
--	unsigned long max_pgcnt;
--	unsigned long reserved;
--
--	/*
--	 * Initialise at least 2G of a node but also take into account that
--	 * two large system hashes that can take up 1GB for 0.25TB/node.
--	 */
--	max_pgcnt = max(2UL << (30 - PAGE_SHIFT),
--			(pgdat->node_spanned_pages >> 8));
--
--	/*
--	 * Compensate the all the memblock reservations (e.g. crash kernel)
--	 * from the initial estimation to make sure we will initialize enough
--	 * memory to boot.
--	 */
--	start_addr = PFN_PHYS(pgdat->node_start_pfn);
--	end_addr = PFN_PHYS(pgdat->node_start_pfn + max_pgcnt);
--	reserved = memblock_reserved_memory_within(start_addr, end_addr);
--	max_pgcnt += PHYS_PFN(reserved);
--
--	pgdat->static_init_pgcnt = min(max_pgcnt, pgdat->node_spanned_pages);
--	pgdat->first_deferred_pfn = ULONG_MAX;
--}
--
- /* Returns true if the struct page for the pfn is uninitialised */
- static inline bool __meminit early_page_uninitialised(unsigned long pfn)
- {
-@@ -357,10 +323,6 @@ static inline bool update_defer_init(pg_data_t *pgdat,
- 	return true;
- }
- #else
--static inline void reset_deferred_meminit(pg_data_t *pgdat)
--{
--}
--
- static inline bool early_page_uninitialised(unsigned long pfn)
- {
- 	return false;
-@@ -1604,6 +1566,107 @@ static int __init deferred_init_memmap(void *data)
- 	pgdat_init_report_one_done();
- 	return 0;
- }
-+
-+/*
-+ * This lock grantees that only one thread at a time is allowed to grow zones
-+ * (decrease number of deferred pages).
-+ * Protects first_deferred_pfn field in all zones during early boot before
-+ * deferred pages are initialized.  Deferred pages are initialized in
-+ * page_alloc_init_late() soon after smp_init() is complete.
-+ */
-+static __initdata DEFINE_SPINLOCK(deferred_zone_grow_lock);
-+DEFINE_STATIC_KEY_TRUE(deferred_pages);
-+
-+/*
-+ * If this zone has deferred pages, try to grow it by initializing enough
-+ * deferred pages to satisfy the allocation specified by order, rounded up to
-+ * the nearest PAGES_PER_SECTION boundary.  So we're adding memory in increments
-+ * of SECTION_SIZE bytes by initializing struct pages in increments of
-+ * PAGES_PER_SECTION * sizeof(struct page) bytes.
-+ *
-+ * Return true when zone was grown by at least number of pages specified by
-+ * order. Otherwise return false.
-+ *
-+ * Note: We use noinline because this function is needed only during boot, and
-+ * it is called from a __ref function _deferred_grow_zone. This way we are
-+ * making sure that it is not inlined into permanent text section.
-+ */
-+static noinline bool __init
-+deferred_grow_zone(struct zone *zone, unsigned int order)
-+{
-+	int zid = zone_idx(zone);
-+	int nid = zone->node;
-+	pg_data_t *pgdat = NODE_DATA(nid);
-+	unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
-+	unsigned long nr_pages = 0;
-+	unsigned long first_init_pfn, first_deferred_pfn, spfn, epfn, t, flags;
-+	phys_addr_t spa, epa;
-+	u64 i;
-+
-+	/* Only the last zone may have deferred pages */
-+	if (zone_end_pfn(zone) != pgdat_end_pfn(pgdat))
-+		return false;
-+
-+	spin_lock_irqsave(&deferred_zone_grow_lock, flags);
-+	/*
-+	 * Bail if we raced with another thread that disabled on demand
-+	 * initialization.
-+	 */
-+	if (!static_branch_unlikely(&deferred_pages)) {
-+		spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
-+		return false;
-+	}
-+
-+	first_deferred_pfn = pgdat->first_deferred_pfn;
-+	first_init_pfn = max(zone->zone_start_pfn, first_deferred_pfn);
-+
-+	if (first_init_pfn >= pgdat_end_pfn(pgdat)) {
-+		spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
-+		return false;
-+	}
-+
-+	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
-+		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
-+		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
-+
-+		while (spfn < epfn && nr_pages < nr_pages_needed) {
-+			t = ALIGN(spfn + PAGES_PER_SECTION, PAGES_PER_SECTION);
-+			first_deferred_pfn = min(t, epfn);
-+			nr_pages += deferred_init_pages(nid, zid, spfn,
-+							first_deferred_pfn);
-+			spfn = first_deferred_pfn;
-+		}
-+
-+		if (nr_pages >= nr_pages_needed)
-+			break;
-+	}
-+
-+	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
-+		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
-+		epfn = min_t(unsigned long, first_deferred_pfn, PFN_DOWN(epa));
-+		deferred_free_pages(nid, zid, spfn, epfn);
-+
-+		if (first_deferred_pfn == epfn)
-+			break;
-+	}
-+	pgdat->first_deferred_pfn = first_deferred_pfn;
-+	spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
-+
-+	return nr_pages >= nr_pages_needed;
-+}
-+
-+/*
-+ * deferred_grow_zone() is __init, but it is called from
-+ * get_page_from_freelist() during early boot until deferred_pages permanently
-+ * disables this call. This is why we have refdata wrapper to avoid warning,
-+ * and to ensure that the function body gets unloaded.
-+ */
-+static bool __ref
-+_deferred_grow_zone(struct zone *zone, unsigned int order)
-+{
-+	return deferred_grow_zone(zone, order);
-+}
-+
- #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
- void __init page_alloc_init_late(void)
-@@ -1613,6 +1676,14 @@ void __init page_alloc_init_late(void)
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
- 	int nid;
- 
-+	/*
-+	 * We are about to initialize the rest of deferred pages, permanently
-+	 * disable on-demand struct page initialization.
-+	 */
-+	spin_lock(&deferred_zone_grow_lock);
-+	static_branch_disable(&deferred_pages);
-+	spin_unlock(&deferred_zone_grow_lock);
-+
- 	/* There will be num_node_state(N_MEMORY) threads */
- 	atomic_set(&pgdat_init_n_undone, num_node_state(N_MEMORY));
- 	for_each_node_state(nid, N_MEMORY) {
-@@ -3199,6 +3270,16 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 				       ac_classzone_idx(ac), alloc_flags)) {
- 			int ret;
- 
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+			/*
-+			 * Watermark failed for this zone, but see if we can
-+			 * grow this zone if it contains deferred pages.
-+			 */
-+			if (static_branch_unlikely(&deferred_pages)) {
-+				if (_deferred_grow_zone(zone, order))
-+					goto try_this_zone;
-+			}
-+#endif
- 			/* Checked here to keep the fast path fast */
- 			BUILD_BUG_ON(ALLOC_NO_WATERMARKS < NR_WMARK);
- 			if (alloc_flags & ALLOC_NO_WATERMARKS)
-@@ -3240,6 +3321,14 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 				reserve_highatomic_pageblock(page, zone, order);
- 
- 			return page;
-+		} else {
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+			/* Try again if zone has deferred pages */
-+			if (static_branch_unlikely(&deferred_pages)) {
-+				if (_deferred_grow_zone(zone, order))
-+					goto try_this_zone;
-+			}
-+#endif
- 		}
- 	}
- 
-@@ -6247,7 +6336,15 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
- 
- 	alloc_node_mem_map(pgdat);
- 
--	reset_deferred_meminit(pgdat);
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+	/*
-+	 * We start only with one section of pages, more pages are added as
-+	 * needed until the rest of deferred pages are initialized.
-+	 */
-+	pgdat->static_init_pgcnt = min(PAGES_PER_SECTION,
-+				       pgdat->node_spanned_pages);
-+	pgdat->first_deferred_pfn = ULONG_MAX;
-+#endif
- 	free_area_init_core(pgdat);
- }
- 
--- 
-2.16.1
+Taken from Documentation/watchdog/watchdog-kernel-api.txt:
+	The watchdog_init_timeout function allows you to initialize the timeout field
+	using the module timeout parameter or by retrieving the timeout-sec property from
+	the device tree (if the module timeout parameter is invalid). Best practice is
+	to set the default timeout value as timeout value in the watchdog_device and
+	then use this function to set the user "preferred" timeout value.
+
+
+Best regards
+Marcus Folkesson
