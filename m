@@ -1,211 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeBIJ27 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:28:59 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44000 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751034AbeBIJ1n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:27:43 -0500
-X-Google-Smtp-Source: AH8x227v5vi+zZkZxrcD95Ydxn6H9rHnWy1FgtPgAwy7btWvJcdvHBXCYuToRVz1nkFY5V+Ay4gl8w==
-From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To: linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        javier@cnexlabs.com,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH V2 1/4] lightnvm: make 1.2 data structures explicit
-Date: Fri,  9 Feb 2018 10:27:16 +0100
-Message-Id: <20180209092719.10679-2-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180209092719.10679-1-mb@lightnvm.io>
-References: <20180209092719.10679-1-mb@lightnvm.io>
+        id S1752703AbeBIJ3e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:29:34 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46082 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751093AbeBIJ1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 04:27:37 -0500
+Date: Fri, 9 Feb 2018 10:27:34 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Stephane Eranian <eranian@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH] perf report: Add support to display group output for non
+ group events
+Message-ID: <20180209092734.GB20449@krava>
+References: <CABPqkBSkbq9NnufY1k2de-Fa-Qb0vhN_MGu6mhqNOV-p3CaVLQ@mail.gmail.com>
+ <20180202202849.GA8297@kernel.org>
+ <20180202204004.GB8297@kernel.org>
+ <CABPqkBQniVqi_7OuEmWQohWSsnp17BkDMRYgOE1RQYE00GpuVw@mail.gmail.com>
+ <20180205151720.GA29340@krava>
+ <CABPqkBRDVfoTEfR-4XLkYKKbPenpFfQ0QkibSBO1iTTAYQbzLA@mail.gmail.com>
+ <20180205211340.GD25353@kernel.org>
+ <CABPqkBQ272K=f7eYzk1MkgG04sy_szkMuyyTmyNEVSyBdYo-Og@mail.gmail.com>
+ <20180206093553.GA8065@krava>
+ <CABPqkBTXhL1U0HBbc2J0mdpGDiC2LG=Cm8MN+Pp_K=a_euDuUg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBTXhL1U0HBbc2J0mdpGDiC2LG=Cm8MN+Pp_K=a_euDuUg@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the 1.2 data structures explicit, so it will be easy to identify
-the 2.0 data structures. Also fix the order of which the nvme_nvm_*
-are declared, such that they follow the nvme_nvm_command order.
+On Wed, Feb 07, 2018 at 10:52:35AM -0800, Stephane Eranian wrote:
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+SNIP
+
+> >> Similar to what I get if I do instead:
+> >> $ perf record -e '{branches,branches,branches,branches}' my_test
+> >> $ perf report --group
+> >>
+> >> But here, I would have to ensure all events fits in a group to allow
+> >> the reporting
+> >> I want. So that would limit me to 4 events.
+> >>
+> >> I think perf report --group should work regardless of how the events
+> >> were grouped.
+> >> Is there already a way to work around this?
+> >
+> > no workaround.. please try attached patch, it seems
+> > to work for what you described
+> >
+> Works for me. That's great!
+> Thanks.
+> 
+> Tested-By: Stephane Eranian <eranian@google.com>
+
+thanks, full patch attached
+
+jirka
+
+
 ---
- drivers/nvme/host/lightnvm.c | 82 ++++++++++++++++++++++----------------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
+Add support to display group output for if non grouped events
+are detected and user forces --group option. Now for non-group
+events recorded like:
 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index dc0b1335c7c6..60db3f1b59da 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -51,6 +51,21 @@ struct nvme_nvm_ph_rw {
- 	__le64			resv;
- };
+  $ perf record -e 'cycles,instructions' ls
+
+you can still get group output by using --group option
+in report:
+
+  $ perf report --group --stdio
+  ...
+  #         Overhead  Command  Shared Object     Symbol
+  # ................  .......  ................  ......................
+  #
+      17.67%   0.00%  ls       libc-2.25.so      [.] _IO_do_write@@GLIB
+      15.59%  25.94%  ls       ls                [.] calculate_columns
+      15.41%  31.35%  ls       libc-2.25.so      [.] __strcoll_l
+  ...
+
+Requested-and-Tested-by: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/n/tip-m1ffikw8c3a55b3uaxrmk5w3@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/Documentation/perf-report.txt | 3 ++-
+ tools/perf/builtin-report.c              | 6 +++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+index 907e505b6309..a76b871f78a6 100644
+--- a/tools/perf/Documentation/perf-report.txt
++++ b/tools/perf/Documentation/perf-report.txt
+@@ -354,7 +354,8 @@ OPTIONS
+         Path to objdump binary.
  
-+struct nvme_nvm_erase_blk {
-+	__u8			opcode;
-+	__u8			flags;
-+	__u16			command_id;
-+	__le32			nsid;
-+	__u64			rsvd[2];
-+	__le64			prp1;
-+	__le64			prp2;
-+	__le64			spba;
-+	__le16			length;
-+	__le16			control;
-+	__le32			dsmgmt;
-+	__le64			resv;
-+};
-+
- struct nvme_nvm_identity {
- 	__u8			opcode;
- 	__u8			flags;
-@@ -89,33 +104,18 @@ struct nvme_nvm_setbbtbl {
- 	__u32			rsvd4[3];
- };
+ --group::
+-	Show event group information together.
++	Show event group information together. It forces group output also
++	if there are no groups defined in data file.
  
--struct nvme_nvm_erase_blk {
--	__u8			opcode;
--	__u8			flags;
--	__u16			command_id;
--	__le32			nsid;
--	__u64			rsvd[2];
--	__le64			prp1;
--	__le64			prp2;
--	__le64			spba;
--	__le16			length;
--	__le16			control;
--	__le32			dsmgmt;
--	__le64			resv;
--};
--
- struct nvme_nvm_command {
- 	union {
- 		struct nvme_common_command common;
--		struct nvme_nvm_identity identity;
- 		struct nvme_nvm_ph_rw ph_rw;
-+		struct nvme_nvm_erase_blk erase;
-+		struct nvme_nvm_identity identity;
- 		struct nvme_nvm_getbbtbl get_bb;
- 		struct nvme_nvm_setbbtbl set_bb;
--		struct nvme_nvm_erase_blk erase;
+ --demangle::
+ 	Demangle symbol names to human readable form. It's enabled by default,
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 8ef71669e7a0..1eedb1815c4c 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -938,6 +938,7 @@ int cmd_report(int argc, const char **argv)
+ 		"perf report [<options>]",
+ 		NULL
  	};
- };
++	bool group_set = false;
+ 	struct report report = {
+ 		.tool = {
+ 			.sample		 = process_sample_event,
+@@ -1057,7 +1058,7 @@ int cmd_report(int argc, const char **argv)
+ 		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
+ 	OPT_BOOLEAN(0, "show-total-period", &symbol_conf.show_total_period,
+ 		    "Show a column with the sum of periods"),
+-	OPT_BOOLEAN(0, "group", &symbol_conf.event_group,
++	OPT_BOOLEAN_SET(0, "group", &symbol_conf.event_group, &group_set,
+ 		    "Show event group information together"),
+ 	OPT_CALLBACK_NOOPT('b', "branch-stack", &branch_mode, "",
+ 		    "use branch records for per branch histogram filling",
+@@ -1174,6 +1175,9 @@ int cmd_report(int argc, const char **argv)
+ 	has_br_stack = perf_header__has_feat(&session->header,
+ 					     HEADER_BRANCH_STACK);
  
--struct nvme_nvm_id_group {
-+struct nvme_nvm_id12_grp {
- 	__u8			mtype;
- 	__u8			fmtype;
- 	__le16			res16;
-@@ -141,7 +141,7 @@ struct nvme_nvm_id_group {
- 	__u8			reserved[906];
- } __packed;
- 
--struct nvme_nvm_addr_format {
-+struct nvme_nvm_id12_addrf {
- 	__u8			ch_offset;
- 	__u8			ch_len;
- 	__u8			lun_offset;
-@@ -157,16 +157,16 @@ struct nvme_nvm_addr_format {
- 	__u8			res[4];
- } __packed;
- 
--struct nvme_nvm_id {
-+struct nvme_nvm_id12 {
- 	__u8			ver_id;
- 	__u8			vmnt;
- 	__u8			cgrps;
- 	__u8			res;
- 	__le32			cap;
- 	__le32			dom;
--	struct nvme_nvm_addr_format ppaf;
-+	struct nvme_nvm_id12_addrf ppaf;
- 	__u8			resv[228];
--	struct nvme_nvm_id_group group;
-+	struct nvme_nvm_id12_grp grp;
- 	__u8			resv2[2880];
- } __packed;
- 
-@@ -191,25 +191,25 @@ static inline void _nvme_nvm_check_size(void)
- {
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_identity) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_ph_rw) != 64);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_erase_blk) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_getbbtbl) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_setbbtbl) != 64);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_erase_blk) != 64);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_id_group) != 960);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_addr_format) != 16);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_id) != NVME_IDENTIFY_DATA_SIZE);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_grp) != 960);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_addrf) != 16);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12) != NVME_IDENTIFY_DATA_SIZE);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
- }
- 
--static int init_grps(struct nvm_id *nvm_id, struct nvme_nvm_id *nvme_nvm_id)
-+static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
- {
--	struct nvme_nvm_id_group *src;
-+	struct nvme_nvm_id12_grp *src;
- 	struct nvm_id_group *grp;
- 	int sec_per_pg, sec_per_pl, pg_per_blk;
- 
--	if (nvme_nvm_id->cgrps != 1)
-+	if (id12->cgrps != 1)
- 		return -EINVAL;
- 
--	src = &nvme_nvm_id->group;
-+	src = &id12->grp;
- 	grp = &nvm_id->grp;
- 
- 	grp->mtype = src->mtype;
-@@ -261,34 +261,34 @@ static int init_grps(struct nvm_id *nvm_id, struct nvme_nvm_id *nvme_nvm_id)
- static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
- {
- 	struct nvme_ns *ns = nvmdev->q->queuedata;
--	struct nvme_nvm_id *nvme_nvm_id;
-+	struct nvme_nvm_id12 *id;
- 	struct nvme_nvm_command c = {};
- 	int ret;
- 
- 	c.identity.opcode = nvme_nvm_admin_identity;
- 	c.identity.nsid = cpu_to_le32(ns->head->ns_id);
- 
--	nvme_nvm_id = kmalloc(sizeof(struct nvme_nvm_id), GFP_KERNEL);
--	if (!nvme_nvm_id)
-+	id = kmalloc(sizeof(struct nvme_nvm_id12), GFP_KERNEL);
-+	if (!id)
- 		return -ENOMEM;
- 
- 	ret = nvme_submit_sync_cmd(ns->ctrl->admin_q, (struct nvme_command *)&c,
--				nvme_nvm_id, sizeof(struct nvme_nvm_id));
-+				id, sizeof(struct nvme_nvm_id12));
- 	if (ret) {
- 		ret = -EIO;
- 		goto out;
- 	}
- 
--	nvm_id->ver_id = nvme_nvm_id->ver_id;
--	nvm_id->vmnt = nvme_nvm_id->vmnt;
--	nvm_id->cap = le32_to_cpu(nvme_nvm_id->cap);
--	nvm_id->dom = le32_to_cpu(nvme_nvm_id->dom);
--	memcpy(&nvm_id->ppaf, &nvme_nvm_id->ppaf,
-+	nvm_id->ver_id = id->ver_id;
-+	nvm_id->vmnt = id->vmnt;
-+	nvm_id->cap = le32_to_cpu(id->cap);
-+	nvm_id->dom = le32_to_cpu(id->dom);
-+	memcpy(&nvm_id->ppaf, &id->ppaf,
- 					sizeof(struct nvm_addr_format));
- 
--	ret = init_grps(nvm_id, nvme_nvm_id);
-+	ret = init_grp(nvm_id, id);
- out:
--	kfree(nvme_nvm_id);
-+	kfree(id);
- 	return ret;
- }
++	if (group_set && !session->evlist->nr_groups)
++		perf_evlist__set_leader(session->evlist);
++
+ 	if (itrace_synth_opts.last_branch)
+ 		has_br_stack = true;
  
 -- 
-2.11.0
+2.13.6
