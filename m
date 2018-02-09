@@ -1,51 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751231AbeBIINI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 03:13:08 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:51414 "EHLO
+        id S1751285AbeBIINd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 03:13:33 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51434 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751144AbeBIINH (ORCPT
+        with ESMTP id S1750939AbeBIINc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 03:13:07 -0500
-Date: Fri, 9 Feb 2018 09:12:44 +0100
+        Fri, 9 Feb 2018 03:13:32 -0500
+Date: Fri, 9 Feb 2018 09:13:22 +0100
 From: Peter Zijlstra <peterz@infradead.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         kbuild test robot <fengguang.wu@intel.com>,
         Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: [linus:master] BUILD REGRESSION
- a2e5790d841658485d642196dbb0927303d6c22f
-Message-ID: <20180209081244.GI25201@hirez.programming.kicks-ass.net>
-References: <CA+55aFzS7w2SgC1H0MKWecHyhnZPypqWNmwuWbf9X93SHareWg@mail.gmail.com>
- <20180207191451.GC25201@hirez.programming.kicks-ass.net>
- <20180207192816.GA19536@pd.tnic>
- <CA+55aFzSZzdVZXatze=xjGSwpOPO7kvbWnz7JiZ3sTx_2Pohjw@mail.gmail.com>
- <20180208091302.GD25201@hirez.programming.kicks-ass.net>
- <CA+55aFySLxYkUQyNf5YcEvitjm2O1whEp4-iKNASPaOpxG1j9w@mail.gmail.com>
- <20180208180357.GC25181@hirez.programming.kicks-ass.net>
- <CA+55aFx7=cw0myoidwzhEfKd_L2Q6u0=AdcH_ZBmXu2_nD=4Jw@mail.gmail.com>
- <20180208194406.GD25181@hirez.programming.kicks-ass.net>
- <20180208203146.GF577@pd.tnic>
+        linux-kernel@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>
+Subject: Re: [PATCH 0/2] objtool fixes on top of Peter's WARN UD2 patch
+Message-ID: <20180209081322.GJ25201@hirez.programming.kicks-ass.net>
+References: <20180208203146.GF577@pd.tnic>
+ <cover.1518130694.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180208203146.GF577@pd.tnic>
+In-Reply-To: <cover.1518130694.git.jpoimboe@redhat.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 09:31:46PM +0100, Borislav Petkov wrote:
-> On Thu, Feb 08, 2018 at 08:44:06PM +0100, Peter Zijlstra wrote:
+On Thu, Feb 08, 2018 at 05:09:24PM -0600, Josh Poimboeuf wrote:
+> Josh Poimboeuf (2):
+>   objtool: Fix seg fault in ignore_unreachable_insn()
+>   x86: Annotate WARN-related UD2 as reachable
 
-> > + * Since various instruction decoders/specs disagree on the encoding of
-> > + * UD0/UD1,
-> 	     ^
-> 
-> Does that comma mean the sentence continues somewhere?
-
-No that's what doing patches while baking cup-cakes with my oldest
-daughter gets me :-)
+Ah, thanks for saving me the trouble of digging these out of history. I
+did remember you did them back then, now I don't even have to go find
+them ;-)
