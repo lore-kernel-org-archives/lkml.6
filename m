@@ -1,65 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752013AbeBIOoa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:44:30 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60242 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbeBIOo1 (ORCPT
+        id S1751139AbeBIOtC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:49:02 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45877 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751004AbeBIOtA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:44:27 -0500
-Subject: Re: [Resend] Possible bug in __fragmentation_index()
-Mime-Version: 1.0 (Apple Message framework v1085)
-Content-Type: text/plain; charset=us-ascii
-From: Robert Harris <robert.m.harris@oracle.com>
-In-Reply-To: <20180202174721.f63gume3klxevkbj@suse.de>
-Date: Fri, 9 Feb 2018 14:43:50 +0000
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Kemi Wang <kemi.wang@intel.com>,
-        ying.huang@intel.com, David Rientjes <rientjes@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <AA7930B9-1E4D-400C-89EA-FC2FC6A7E1E4@oracle.com>
-References: <83AECC32-77A4-427D-9043-DE6FC48AD3FC@oracle.com> <20180202174721.f63gume3klxevkbj@suse.de>
-To: Mel Gorman <mgorman@suse.de>
-X-Mailer: Apple Mail (2.1085)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090188
+        Fri, 9 Feb 2018 09:49:00 -0500
+X-Google-Smtp-Source: AH8x224JNj/r9ZvzoAofNP7D+GMVt4XVP+jNdEqpgUORzw/Wa1y23fsjdeSybpsVTyQtaRarcEgacw==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: [PATCH v2 1/2] KVM: x86: Add dedicated vCPU hint KVM_HINTS_DEDICATED
+Date: Fri,  9 Feb 2018 06:47:52 -0800
+Message-Id: <1518187673-70832-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Wanpeng Li <wanpengli@tencent.com>
 
-On 2 Feb 2018, at 17:47, Mel Gorman wrote:
+Waiman Long mentioned that:
 
-> On Fri, Feb 02, 2018 at 02:16:39PM +0000, Robert Harris wrote:
->> I was planning to annotate the opaque calculation in
->> __fragmentation_index() but on closer inspection I think there may be a
->> bug.  I could use some feedback.
+ Generally speaking, unfair lock performs well for VMs with a small
+ number of vCPUs. Native qspinlock may perform better than pvqspinlock
+ if there is vCPU pinning and there is no vCPU over-commitment.
 
-A belated thank you for the reply.
+This patch adds a performance hint to allow hypervisor admin to choose
+the qspinlock to be used when a dedicated pCPU is available.
 
-> It's intentional but could be fixed to give a real bound of 0 to 1 instead
-> of half the range as it currently give. The sysctl_extfrag_threshold should
-> also be adjusted at that time. After that, the real work is determining
-> if it's safe to strike a balance between reclaim/compaction that avoids
-> unnecessary compaction while not being too aggressive about reclaim or
-> having kswapd enter a runaway loop with a reintroduction of the "kswapd
-> stuck at 100% CPU time" problems.
+PV_DEDICATED = 1, PV_UNHALT = anything: default is qspinlock
+PV_DEDICATED = 0, PV_UNHALT = 1: default is Hybrid PV queued/unfair lock
+PV_DEDICATED = 0, PV_UNHALT = 0: default is tas
 
-In my (incomplete) view, striking the balance is a case of determining the
-cost of memory regeneration through compaction versus reclaim and choosing
-the cheaper.  I'm reasonably confident that this could be achieved for
-compaction, which is why the calculation in __fragmentation_index() caught
-my eye in the first place, but reclaim/swapping is probably significantly
-harder to quantify.  Similarly, a cost function for allocation failure
-is also necessary but not obvious.
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Eduardo Habkost <ehabkost@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+v1 -> v2:
+ * update to KVM_HINTS_DEDICATED
 
-All of the above is just a nebulous plan for now;  in the meantime, I'll
-change __fragmentation_index() and the threshold as you suggest.
+ Documentation/virtual/kvm/cpuid.txt  | 6 ++++++
+ arch/x86/include/uapi/asm/kvm_para.h | 2 ++
+ arch/x86/kernel/kvm.c                | 6 ++++++
+ 3 files changed, 14 insertions(+)
 
-Robert  Harris
+diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
+index 87a7506..d54cc79 100644
+--- a/Documentation/virtual/kvm/cpuid.txt
++++ b/Documentation/virtual/kvm/cpuid.txt
+@@ -66,3 +66,9 @@ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
+                                    ||       || per-cpu warps are expected in
+                                    ||       || kvmclock.
+ ------------------------------------------------------------------------------
++KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit
++                                   ||       || to determine if they run on
++                                   ||       || dedicated vCPUs, allowing opti-
++                                   ||       || mizations such as usage of
++                                   ||       || qspinlocks.
++------------------------------------------------------------------------------
+diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
+index 6cfa9c8..d65b16b 100644
+--- a/arch/x86/include/uapi/asm/kvm_para.h
++++ b/arch/x86/include/uapi/asm/kvm_para.h
+@@ -28,6 +28,8 @@
+ #define KVM_FEATURE_PV_TLB_FLUSH	9
+ #define KVM_FEATURE_ASYNC_PF_VMEXIT	10
+ 
++#define KVM_HINTS_DEDICATED 0
++
+ /* The last 8 bits are used to indicate how to interpret the flags field
+  * in pvclock structure. If no bits are set, all flags are ignored.
+  */
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 971babe..7f4c92d 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -724,6 +724,12 @@ void __init kvm_spinlock_init(void)
+ {
+ 	if (!kvm_para_available())
+ 		return;
++
++	if (kvm_para_has_feature(KVM_HINTS_DEDICATED)) {
++		static_branch_disable(&virt_spin_lock_key);
++		return;
++	}
++
+ 	/* Does host kernel support KVM_FEATURE_PV_UNHALT? */
+ 	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
+ 		return;
+-- 
+2.7.4
