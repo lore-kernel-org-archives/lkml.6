@@ -1,76 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184010-2-13167895977087880011
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184009; b=QWZjtUsBIn5ZRs/kP296ldMDYQAwN13ZxQpqHG+Pmp6+zG2
-    /k+frI6ld+KG95ZDnipQfxYyi8Y+f0Jb0UBJCc3zet4l/EMxUFTA/oQWd7pxPYz/
-    gplzJ/TO4exhcNJ27eB+mtbPsAT8pSf1PmXxDta+OWCGllLvmXuRL7XcgvxU8hLb
-    zDHvqMktt27ES4ctXAC8kxsus6NoFuQQq4ux/iMvX4clwMoeN/g72v9L+PoLPK0a
-    7rMJgl43ftAK5eSeQzsuI3IKoz2En5MtCoUOiddP+c2fYUZLCD9CG1Haye8LQESG
-    FoJ4nslNiWpsTSUn/J1BV34W/86vy9zv0jxR5xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184009; bh=hG0QTpY6R5UGOzNDKlBX23jVuT
-    wbqE/ScgVfb8LEI/g=; b=VzFVYLk/QnxG7whHwIdVbSF2kh7C7bXyrDcLkm1eCd
-    l6TUH+rNwUjtBDF2/wApz5ZzxE0xAFCIXtqo1Jm74rp9WwkUqXWgyGCSJY4tScxA
-    5DeXsYnFmn9IlW+QOUfqTbDuvJ9wSKLEzDycR31PKNP6hWviLlPLTxrON4dX5dLT
-    VIwYlEGnc6rZwUK+tQ+Wq+cvvifYfcBSR6maugBEVTQnZtNtlC+2pQEMFY9Rljm2
-    ZIQg+fuHn+tAJkBgynjbjEnQ4RF7Yoxvp3ighBIlQhC74N9xP2P2VOaQ+VxnPbiJ
-    g/95hzFcZJEw3beGLz1QmlxwcmggRSB/dK50IuMRpduw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753869AbeBINqr (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:46:47 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53432 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753868AbeBINqr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:46:47 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224N+AypW+hGcYJr8Gj2kxm2JKGW9J05wtAJVFd5dhMG3lZNolSc//S0ROauHQEratQUdaE4
+ARC-Seal: i=1; a=rsa-sha256; t=1518184010; cv=none;
+        d=google.com; s=arc-20160816;
+        b=x9xu6AwXIfIOiLTEhGVj55oCzxI/XIVF1U2G36txQB0ZWb0MDM4EOuI7urjBO40OMl
+         F2Lvkhz1tzzsLWH1WgOfnRWNHVHmGqoxkxn33u7e6qdMh/ribYMjN7oi3RLI7N18KErW
+         nsNhso682+yjD3gy0u2LRX9StqCflAk8YmJ0syQcTUdkVy1vQrlUNWAItoSW9NNLPz59
+         ZIwVflIBLVr5tzko95Iuk4pzUo/8WaSNyv1HoK4PYgRicK1my6pXg1nN9QOoB0t+WHym
+         +y70TSMHth1lY2F7ysB0T8en3tsWgE9zdL2Uyq0iOktLVROy4d72Ra319F9EvKEavwaD
+         GobQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=vBNPFTMD9BgEoMbqGFVf6TJCISEvbx17VTxnkYG44Hg=;
+        b=zQMcBk4S5wIMEBu21tidlc22TlEF99ixahhdI9VRV7t1OgBhZxgcPrAcpHLVFwP/ml
+         ukOSPLf9ZhShhEDINKjRclx5bo5eqPbt63Rvvzkq1TphMivG3QNZoIHWYSTablLq67W9
+         WxHMKJOAD07c2Ya2A5YCgEokU8Pd9FcV67xSAFH0ghIcwXiGzCZUmw6VxP96KMnuGKyG
+         aSH0sdC9DKO0us4cGLYSyFiz3DFM4QBdaDMsxBPDvfObCXzuUuQ3dMTjt5H5LY0zucHN
+         Yild7e/8dCv70soaDY4qrasM0l/q2abDb0esnqq1nT8nO8rGDJU7lFZZnvC3fzM18nE5
+         zTBQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.15 21/23] media: tegra-cec: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Fri,  9 Feb 2018 14:40:19 +0100
-Message-Id: <20180209133939.352275273@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.15 22/23] gpio: uniphier: fix mismatch between license text and MODULE_LICENSE
+Date: Fri,  9 Feb 2018 14:40:20 +0100
+Message-Id: <20180209133939.403116567@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133938.366024920@linuxfoundation.org>
 References: <20180209133938.366024920@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1591931317533525410?=
+X-GMAIL-MSGID: =?utf-8?q?1591931317533525410?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,37 +48,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit 20772c1a6f0e03d4231e2b539863987fa0c94e89 upstream.
+commit 13f9d59cef91a027bb338fc79b564fafa7680cd8 upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+The comment block of this file indicates GPL-2.0 "only", while the
+MODULE_LICENSE is GPL-2.0 "or later", as include/linux/module.h
+describes as follows:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/tegra-cec/tegra_cec.o
-see include/linux/module.h for more information
+  "GPL"                           [GNU Public License v2 or later]
+  "GPL v2"                        [GNU Public License v2]
 
-This adds the license as "GPL v2", which matches the header of the file.
+I am the author of this driver, and my intention is GPL-2.0 "only".
 
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/tegra-cec/tegra_cec.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpio/gpio-uniphier.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/tegra-cec/tegra_cec.c
-+++ b/drivers/media/platform/tegra-cec/tegra_cec.c
-@@ -493,3 +493,8 @@ static struct platform_driver tegra_cec_
- };
+--- a/drivers/gpio/gpio-uniphier.c
++++ b/drivers/gpio/gpio-uniphier.c
+@@ -505,4 +505,4 @@ module_platform_driver(uniphier_gpio_dri
  
- module_platform_driver(tegra_cec_driver);
-+
-+MODULE_DESCRIPTION("Tegra HDMI CEC driver");
-+MODULE_AUTHOR("NVIDIA CORPORATION");
-+MODULE_AUTHOR("Cisco Systems, Inc. and/or its affiliates");
+ MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
+ MODULE_DESCRIPTION("UniPhier GPIO driver");
+-MODULE_LICENSE("GPL");
 +MODULE_LICENSE("GPL v2");
