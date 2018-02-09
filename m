@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752697AbeBIR5v (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:57:51 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50410 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752534AbeBIR5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:57:48 -0500
+        id S1752740AbeBIR55 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:57:57 -0500
+Received: from foss.arm.com ([217.140.101.70]:50444 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752720AbeBIR5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:57:55 -0500
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
         ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 10/22] arm64: capabilities: Allow features based on local CPU scope
-Date: Fri,  9 Feb 2018 17:54:49 +0000
-Message-Id: <20180209175513.17100-20-suzuki.poulose@arm.com>
+Subject: [PATCH v3 11/21] arm64: capabilities: Introduce weak features based on local CPU
+Date: Fri,  9 Feb 2018 17:54:52 +0000
+Message-Id: <20180209175513.17100-23-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180209175513.17100-1-suzuki.poulose@arm.com>
 References: <20180209175513.17100-1-suzuki.poulose@arm.com>
@@ -22,71 +22,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So far we have treated the feature capabilities as system wide
-and this doesn't help with features that could be detected on
-one or more CPUs (e.g, KPTI, Software prefetch). This patch
-splits the feature detection to two phases :
+Now that we have the flexibility of defining system features based
+on individual CPUs, introduce CPU feature type that can be detected
+on a local SCOPE and ignores the conflict on late CPUs. This is
+applicable for ARM64_HAS_NO_HW_PREFETCH, where it is fine for
+the system to have CPUs without hardware prefetch turning up
+later. We only suffer a performance penalty, nothing fatal.
 
- 1) Local CPU features are checked on all boot time active CPUs.
- 2) System wide features are checked only once after all CPUs are
-    active.
-
-Cc: Dave Martin <dave.martin@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/kernel/cpufeature.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ arch/arm64/include/asm/cpufeature.h | 8 ++++++++
+ arch/arm64/kernel/cpufeature.c      | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index 6e354a98bc24..49c4ae331ca7 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -230,6 +230,14 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+  */
+ #define ARM64_CPUCAP_SYSTEM_FEATURE	\
+ 	(ARM64_CPUCAP_SCOPE_SYSTEM | ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
++/*
++ * CPU feature detected at boot time based on feature of one or more CPUs.
++ * All possible conflicts for a late CPU are ignored.
++ */
++#define ARM64_CPUCAP_WEAK_LOCAL_CPU_FEATURE		\
++	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
++	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	|	\
++	 ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
+ 
+ struct arm64_cpu_capabilities {
+ 	const char *desc;
 diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index a6e124063e21..45bac0c4ae91 100644
+index 9b111d560b30..373173bc3ab3 100644
 --- a/arch/arm64/kernel/cpufeature.c
 +++ b/arch/arm64/kernel/cpufeature.c
-@@ -551,11 +551,13 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
- 	}
- 
- 	/*
--	 * Run the errata work around checks on the boot CPU, once we have
--	 * initialised the cpu feature infrastructure.
-+	 * Run the errata work around and local feature checks on the
-+	 * boot CPU, once we have initialised the cpu feature infrastructure.
- 	 */
- 	update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
- 				"enabling workaround for");
-+	update_cpu_capabilities(arm64_features, SCOPE_LOCAL_CPU,
-+				"detected feature:");
- }
- 
- static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
-@@ -1411,15 +1413,18 @@ void check_local_cpu_capabilities(void)
- 
- 	/*
- 	 * If we haven't finalised the system capabilities, this CPU gets
--	 * a chance to update the errata work arounds.
-+	 * a chance to update the errata work arounds and local features.
- 	 * Otherwise, this CPU should verify that it has all the system
- 	 * advertised capabilities.
- 	 */
--	if (!sys_caps_initialised)
-+	if (!sys_caps_initialised) {
- 		update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
- 					"enabling workaround for");
--	else
-+		update_cpu_capabilities(arm64_features, SCOPE_LOCAL_CPU,
-+					"detected feature:");
-+	} else {
- 		verify_local_cpu_capabilities();
-+	}
- }
- 
- DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
-@@ -1444,7 +1449,7 @@ void __init setup_cpu_features(void)
- 	int cls;
- 
- 	/* Set the CPU feature capabilies */
--	update_cpu_capabilities(arm64_features, SCOPE_ALL,
-+	update_cpu_capabilities(arm64_features, SCOPE_SYSTEM,
- 				"detected feature:");
- 	update_cpu_capabilities(arm64_errata, SCOPE_SYSTEM,
- 				"enabling workaround for");
+@@ -992,7 +992,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 	{
+ 		.desc = "Software prefetching using PRFM",
+ 		.capability = ARM64_HAS_NO_HW_PREFETCH,
+-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.type = ARM64_CPUCAP_WEAK_LOCAL_CPU_FEATURE,
+ 		.matches = has_no_hw_prefetch,
+ 	},
+ #ifdef CONFIG_ARM64_UAO
 -- 
 2.14.3
