@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753129AbeBIR7r (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:59:47 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50662 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752926AbeBIR6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:58:32 -0500
+        id S1753010AbeBISAS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 13:00:18 -0500
+Received: from foss.arm.com ([217.140.101.70]:50634 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752900AbeBIR62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:58:28 -0500
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
         ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 19/22] arm64: capabilities: Handle shared entries
-Date: Fri,  9 Feb 2018 17:55:08 +0000
-Message-Id: <20180209175513.17100-39-suzuki.poulose@arm.com>
+Subject: [PATCH v3 18/21] arm64: capabilities: Handle shared entries
+Date: Fri,  9 Feb 2018 17:55:06 +0000
+Message-Id: <20180209175513.17100-37-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180209175513.17100-1-suzuki.poulose@arm.com>
 References: <20180209175513.17100-1-suzuki.poulose@arm.com>
