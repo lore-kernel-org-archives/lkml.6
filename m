@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x227o7VuvSHLjC70YkjvJUSKKI5WTIH5T5L1EU7OZNE80mwTmWOPhtJU2bu61QSW9oNtR8175
+X-Google-Smtp-Source: AH8x224CWApOZOyIA7smLf8UI5pdM5twVE0tyxUeFqXtzIy7cS50kiDeg+BaWlGLms+ms4o0gd4K
 ARC-Seal: i=1; a=rsa-sha256; t=1518168356; cv=none;
         d=google.com; s=arc-20160816;
-        b=SKdDa1R0FrK2lKEfRGIyfKvQlUZ8B/sCmiNNiYvi+/LSVmPNqSj7MZfHrJLxdPDmkG
-         DUGxHFxrkyXd9R4gvYRhjIQQMQyQB3bHepxv4oJx9ULcwsa9BkoaTLKGGnwkaWLpoZE6
-         gDXW2FBqJGz/g1XexAo2eZmEQ2QMHh1MoxDqHfC4qOe9ClS41MQtkJt57kvtJ6mOtdhU
-         wbTAIsmrFE4nnJp3mVjW7HpImmz/W0ioi67d/WeG/7Xr439G7l7r+skpFw4Mc8OlYUe9
-         VAgiEVEE5K/LjgN7+o8Jx42dRXi5BQby9EvYLyVKwhsXDOimohACeeMDd1s4QF8VdXH0
-         C/PA==
+        b=tTF81zLnsQD3IbImBz1GvwkyPPgebP4DYarsIU7Xjx+dCHZ6dSJ9EHKq2dFekaAAnj
+         hiECYrCynVqQF3jJpqNkQ7oP1xNSUzjn4fXnzhm2MAaOLJcAT6i/0DeRKPA0ahdDWbLC
+         RVWm2cNwwncFjNxAAxC3obU0soyO93c4dK6NFUcFy1CRMqzAtibSdfNXoxPcj/ljnN6S
+         EzfLuUlsOGQZHQS2Thxm2/ANpkBWO1Wrb3cK4ydEg9WFzy0pjFktDyxv6f370KzE5rNe
+         ZqxND3Knm4qpRW4BhJNCsi1t8TctlQ/lnzXh4YBpNXd9MgmnqbRhJXb5uXl2KFncCiUW
+         UYbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=c+a2sINmdTrcI8vkYK/XU7EvC9UjG9GZQWNCAcJ90XU=;
-        b=KtkOAsjyTyoKqzZkfi5gFA7NSyniyvnBjfnVFAE+6eMw/JTbPM5Z7VZHQYssDT9AQo
-         F0gzn17eYcU3DSPKfg8vGCdsabdXXgVz+UcOPkJUqVpenLM74XL5ELcFTVk09lOKqGvd
-         WRF7CKH9F7UkyAt0HEfmONjKZd4tpDC+9va5ZGux/viT6MjgmL1AEg79laJnYmj4R5wO
-         ikjoykdtq2S2ZLlPP7bevqKCGCPA50XuPqsv8g9zPmTXeUG7qiDPI+NImNET7q2cByAx
-         Jx+TGuMfVaS2DaEFXP28BV5MFto8bXU1pDRtNQtuUJdXud5nsAOOqBXg7vfreIW/JGB+
-         cGzQ==
+        bh=NTVb4LONHnLz6w99SoQtjWWuv+4gRfgau5jr8PemZlw=;
+        b=jKt1yo3x5OA6jjztOD1WjXjLv4teu4oH4S7kXlQ5blJVzLSyu+BlTmKOwWpIYBRF/q
+         s7ruai2NBhfvYF65Txyg4ECqeZQH65P11IR9elUHt5LndjpQj6FUgvTHXC6TB+lf8ORB
+         pg97U1HrGD6FjM+Efdzp6A7RmpzNz+sp9qO3+bGDTqKB9ozOPYQG0rI0R+oc6WXkehQv
+         BECqOKhi5KkrmasLmTNUWhc71LTrIRt5lfoJW92eRNMq9+tpEifxpvYrD4XeyaxjgRgE
+         Fr51vMskx+4/sHF8TkDLe5kMpRMeNKftecz1DV8sn0FicW2I3IRQU6Jh2OHWvPNZr+mW
+         iK4A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=l0dR+8Nn;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Js8FkR9l;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=l0dR+8Nn;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Js8FkR9l;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,66 +57,59 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 06/31] x86/entry/32: Split off return-to-kernel path
-Date: Fri,  9 Feb 2018 10:25:15 +0100
-Message-Id: <1518168340-9392-7-git-send-email-joro@8bytes.org>
+Subject: [PATCH 03/31] x86/entry/32: Load task stack from x86_tss.sp1 in SYSENTER handler
+Date: Fri,  9 Feb 2018 10:25:12 +0100
+Message-Id: <1518168340-9392-4-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914902552804674?=
-X-GMAIL-MSGID: =?utf-8?q?1591914902552804674?=
+X-GMAIL-THRID: =?utf-8?q?1591914902347185347?=
+X-GMAIL-MSGID: =?utf-8?q?1591914902347185347?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Use a separate return path when we know we are returning to
-the kernel. This allows us to put the PTI cr3-switch and the
-switch to the entry-stack into the return-to-user path
-without further checking.
+We want x86_tss.sp0 point to the entry stack later to use
+it as a trampoline stack for other kernel entry points
+besides SYSENTER.
+
+So store the task stack pointer in x86_tss.sp1, which is
+otherwise unused by the hardware, as Linux doesn't make use
+of Ring 1.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/x86/kernel/asm-offsets_32.c | 2 +-
+ arch/x86/kernel/process_32.c     | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 00ae759..9bd7718 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -65,7 +65,7 @@
- # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
- #else
- # define preempt_stop(clobbers)
--# define resume_kernel		restore_all
-+# define resume_kernel		restore_all_kernel
- #endif
+diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
+index f452bfd..b97e48c 100644
+--- a/arch/x86/kernel/asm-offsets_32.c
++++ b/arch/x86/kernel/asm-offsets_32.c
+@@ -47,7 +47,7 @@ void foo(void)
+ 	BLANK();
  
- .macro TRACE_IRQS_IRET
-@@ -400,9 +400,9 @@ ENTRY(resume_kernel)
- 	DISABLE_INTERRUPTS(CLBR_ANY)
- .Lneed_resched:
- 	cmpl	$0, PER_CPU_VAR(__preempt_count)
--	jnz	restore_all
-+	jnz	restore_all_kernel
- 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
--	jz	restore_all
-+	jz	restore_all_kernel
- 	call	preempt_schedule_irq
- 	jmp	.Lneed_resched
- END(resume_kernel)
-@@ -602,6 +602,11 @@ restore_all:
- .Lirq_return:
- 	INTERRUPT_RETURN
+ 	/* Offset from the sysenter stack to tss.sp0 */
+-	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
++	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp1) -
+ 	       offsetofend(struct cpu_entry_area, entry_stack_page.stack));
  
-+restore_all_kernel:
-+	TRACE_IRQS_IRET
-+	RESTORE_REGS 4
-+	jmp	.Lirq_return
-+
- .section .fixup, "ax"
- ENTRY(iret_exc	)
- 	pushl	$0				# no error code
+ #ifdef CONFIG_CC_STACKPROTECTOR
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 5224c60..097d36a 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -292,6 +292,8 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	this_cpu_write(cpu_current_top_of_stack,
+ 		       (unsigned long)task_stack_page(next_p) +
+ 		       THREAD_SIZE);
++	/* SYSENTER reads the task-stack from tss.sp1 */
++	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
+ 
+ 	/*
+ 	 * Restore %gs if needed (which is common)
 -- 
 2.7.4
