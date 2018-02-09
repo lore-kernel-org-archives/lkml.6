@@ -1,72 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeBIOMf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:12:35 -0500
-Received: from smtp-out6.electric.net ([192.162.217.184]:56975 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752089AbeBIOMc (ORCPT
+        id S1752795AbeBIOQl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:16:41 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:38655 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752696AbeBIOQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:12:32 -0500
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Arnd Bergmann'" <arnd@arndb.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Dan Williams" <dan.j.williams@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: RE: [Xen-devel] [PATCH] [v2] xen: hypercall: fix out-of-bounds memcpy
-Thread-Topic: [Xen-devel] [PATCH] [v2] xen: hypercall: fix out-of-bounds
- memcpy
-Thread-Index: AQHToaW2hAmOQzi7s0y/ZNGjmF+sSaOcGtMw
-Date: Fri, 9 Feb 2018 14:13:14 +0000
-Message-ID: <42258ad55dac4191813d258e43a44e0e@AcuMS.aculab.com>
-References: <20180205150340.328921-1-arnd@arndb.de>
- <67d8f0f1-0846-876d-d36a-c8a9f9366243@citrix.com>
- <CAK8P3a36O-NbrKkt-DEEZE2A2JQ5Gu9GZ98j0BjoFET4kgTaWw@mail.gmail.com>
-In-Reply-To: <CAK8P3a36O-NbrKkt-DEEZE2A2JQ5Gu9GZ98j0BjoFET4kgTaWw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        Fri, 9 Feb 2018 09:16:28 -0500
+X-Google-Smtp-Source: AH8x224+gJzTyVEJ12hc+DKuayJn6KR8btPidGO0QrZuIrgm2BSih3Rl2efjEIOyi8Sm44G/wWdoDA==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: [PATCH v2] target-i386: add KVM_HINTS_DEDICATED performance hint
+Date: Fri,  9 Feb 2018 06:15:25 -0800
+Message-Id: <1518185725-69559-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w19ECfd8031278
 
-From: Arnd Bergmann
-> Sent: 09 February 2018 12:58
-...
-> However, aside from this driver, I wonder if we should be worried about
-> Spectre type 1 attacks on similar code, when gcc-8 turns a switch/case
-> statement into an array lookup behind our back, e.g. in an ioctl handler.
-> Has anybody got this on their radar?
+From: Wanpeng Li <wanpengli@tencent.com>
 
-The canonical code for a switch statement is to jump indirect on an array
-of code pointers.
-ioctl handlers probably use a series of compares because the values are
-sparse.
+Add KVM_HINTS_DEDICATED performance hint, guest checks this feature bit
+to determine if they run on dedicated vCPUs, allowing optimizations such 
+as usage of qspinlocks.  
 
-Also remember that gcc-8 will convert dense switch statements that just
-load a value into a data array lookup.
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Eduardo Habkost <ehabkost@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+v1 -> v2:
+ * add a new feature word
 
-I guess both those jump tables are potential attack vectors.
-Not quite sure how they might be used to leak info though.
+ target/i386/cpu.c | 14 ++++++++++++++
+ target/i386/cpu.h |  3 +++
+ target/i386/kvm.c |  4 ++++
+ 3 files changed, 21 insertions(+)
 
-	David
+diff --git a/target/i386/cpu.c b/target/i386/cpu.c
+index d70954b..e2974ad 100644
+--- a/target/i386/cpu.c
++++ b/target/i386/cpu.c
+@@ -358,6 +358,20 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
+         .cpuid_eax = KVM_CPUID_FEATURES, .cpuid_reg = R_EAX,
+         .tcg_features = TCG_KVM_FEATURES,
+     },
++    [FEAT_KVM_HINTS] = {
++        .feat_names = {
++            "hint-dedicated", NULL, NULL, NULL,
++            NULL, NULL, NULL, NULL,
++            NULL, NULL, NULL, NULL,
++            NULL, NULL, NULL, NULL,
++            NULL, NULL, NULL, NULL,
++            NULL, NULL, NULL, NULL,
++            NULL, NULL, NULL, NULL,
++            NULL, NULL, NULL, NULL,
++        },
++        .cpuid_eax = KVM_CPUID_FEATURES, .cpuid_reg = R_EDX,
++        .tcg_features = TCG_KVM_FEATURES,
++    },
+     [FEAT_HYPERV_EAX] = {
+         .feat_names = {
+             NULL /* hv_msr_vp_runtime_access */, NULL /* hv_msr_time_refcount_access */,
+diff --git a/target/i386/cpu.h b/target/i386/cpu.h
+index f91e37d..9f73692 100644
+--- a/target/i386/cpu.h
++++ b/target/i386/cpu.h
+@@ -475,6 +475,7 @@ typedef enum FeatureWord {
+     FEAT_8000_0008_EBX, /* CPUID[8000_0008].EBX */
+     FEAT_C000_0001_EDX, /* CPUID[C000_0001].EDX */
+     FEAT_KVM,           /* CPUID[4000_0001].EAX (KVM_CPUID_FEATURES) */
++    FEAT_KVM_HINTS,     /* CPUID[4000_0001].EDX */
+     FEAT_HYPERV_EAX,    /* CPUID[4000_0003].EAX */
+     FEAT_HYPERV_EBX,    /* CPUID[4000_0003].EBX */
+     FEAT_HYPERV_EDX,    /* CPUID[4000_0003].EDX */
+@@ -670,6 +671,8 @@ typedef uint32_t FeatureWordArray[FEATURE_WORDS];
+ #define CPUID_7_0_EDX_AVX512_4FMAPS (1U << 3) /* AVX512 Multiply Accumulation Single Precision */
+ #define CPUID_7_0_EDX_SPEC_CTRL     (1U << 26) /* Speculation Control */
+ 
++#define KVM_HINTS_DEDICATED (1U << 0)
++
+ #define CPUID_8000_0008_EBX_IBPB    (1U << 12) /* Indirect Branch Prediction Barrier */
+ 
+ #define CPUID_XSAVE_XSAVEOPT   (1U << 0)
+diff --git a/target/i386/kvm.c b/target/i386/kvm.c
+index ad4b159..44ee524 100644
+--- a/target/i386/kvm.c
++++ b/target/i386/kvm.c
+@@ -383,6 +383,9 @@ uint32_t kvm_arch_get_supported_cpuid(KVMState *s, uint32_t function,
+         if (!kvm_irqchip_in_kernel()) {
+             ret &= ~(1U << KVM_FEATURE_PV_UNHALT);
+         }
++    } else if (function == KVM_CPUID_FEATURES && reg == R_EDX) {
++        ret |= KVM_HINTS_DEDICATED;
++        found = 1;
+     }
+ 
+     /* fallback for older kernels */
+@@ -801,6 +804,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
+         c = &cpuid_data.entries[cpuid_i++];
+         c->function = KVM_CPUID_FEATURES | kvm_base;
+         c->eax = env->features[FEAT_KVM];
++        c->edx = env->features[FEAT_KVM_HINTS];
+     }
+ 
+     cpu_x86_cpuid(env, 0, 0, &limit, &unused, &unused, &unused);
+-- 
+2.7.4
