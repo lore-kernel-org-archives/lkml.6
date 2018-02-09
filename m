@@ -1,49 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeBIT22 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 14:28:28 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33144 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752687AbeBIT2Z (ORCPT
+        id S1752758AbeBIT3J (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 14:29:09 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41543 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752650AbeBIT2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 14:28:25 -0500
-X-Google-Smtp-Source: AH8x224dlr7TJU2m1YEL4+P4thwedqSGw/M5X0KX/aFjot2jsdj7GOXsoGSsEUo+MsuOjaZbYWXKlvTZlz4JHABIcd4=
-MIME-Version: 1.0
-In-Reply-To: <20180209180222.qsi7jcw7pj442rpo@linutronix.de>
-References: <20171226102940.26908-1-ard.biesheuvel@linaro.org> <20180209180222.qsi7jcw7pj442rpo@linutronix.de>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Fri, 9 Feb 2018 19:28:23 +0000
-Message-ID: <CAKv+Gu9o7k0jrrc0jHYUbcJ2k+pmo4N-PHYEZrr_vj=nx-3Z+g@mail.gmail.com>
-Subject: Re: [PATCH v4 00/20] crypto: arm64 - play nice with CONFIG_PREEMPT
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>, linux-rt-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 9 Feb 2018 14:28:17 -0500
+X-Google-Smtp-Source: AH8x226WmOYQ7ZtMsr5B6vEIJRRaGw6XQPNdWlW7vsG5T0p0R3hg+BervHK9qzdk2+CL7OpwWmeKlw==
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH 7/7] watchdog: coh901327: make use of timeout-secs provided in devicetree
+Date: Fri,  9 Feb 2018 20:27:24 +0100
+Message-Id: <20180209192724.1227-8-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180209192724.1227-1-marcus.folkesson@gmail.com>
+References: <marcus.folkesson@gmail.com>
+ <20180209192724.1227-1-marcus.folkesson@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w19JSkl2020083
 
-On 9 February 2018 at 18:02, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> On 2017-12-26 10:29:20 [+0000], Ard Biesheuvel wrote:
->> As reported by Sebastian, the way the arm64 NEON crypto code currently
->> keeps kernel mode NEON enabled across calls into skcipher_walk_xxx() is
-> …
->> So let's clean this up for arm64: update the NEON based skcipher drivers to
->> no longer keep the NEON enabled when calling into the skcipher walk API.
->
-> Thanks for working on this.
-> What is the status of this? Is this going to be merged?
->
+watchdog_init_timeout() will allways pick timeout_param since it
+defaults to a valid timeout.
 
-Without anybody acking or reviewing it, this is not going to be
-merged, so I kind of gave up.
+Following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt to make use of
+the parameter logic.
+
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+ drivers/watchdog/coh901327_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
+index 4410337f4f7f..437f865e5c6b 100644
+--- a/drivers/watchdog/coh901327_wdt.c
++++ b/drivers/watchdog/coh901327_wdt.c
+@@ -67,7 +67,7 @@
+ #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
+ 
+ /* Default timeout in seconds = 1 minute */
+-static unsigned int margin = 60;
++static unsigned int margin;
+ static int irq;
+ static void __iomem *virtbase;
+ static struct device *parent;
+-- 
+2.15.1
