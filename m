@@ -1,73 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752179AbeBIMIO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:08:14 -0500
-Received: from mout.gmx.net ([212.227.17.20]:42143 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751910AbeBIMH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:07:56 -0500
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: linux-kernel@vger.kernel.org
-Cc: Joel Stanley <joel@jms.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH v3 3/4] powerpc: wii.dts: Add ngpios property
-Date: Fri,  9 Feb 2018 13:07:30 +0100
-Message-Id: <20180209120732.17863-4-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180209120732.17863-1-j.neuschaefer@gmx.net>
-References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:ixqf/7HPx5HCiYsBS5gEttEt9wNgrCyAqpiYnEK40r0u9DVTR2g
- p1Cw5w4i8FhaYBLZ8cjkfIxJEPX3Edu/MBzOK9xmCzWP43N1+kZs6vApe/KAgoczlCZJgLB
- vHeI0X2LjrLPVIXgFtCBG4uB+fICh50/OQEIKrtFYcn6IHK6S2COIO/A5fhnaikCUdcjXkH
- D91ZlzeFYF95DbR45QsHQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:dE/fAj/pryA=:gExQYzFy4cbXK30JIs3s/9
- B8n3RaCJ+xo/JVKegQ2EJiqsYdxTyORceMz8hiiK72IUy8GQAwjdvw/UIrUWhTNBd4ZFdSxNv
- JqvzV0XXwmLslhYegMn4J00vKVZRLt7Nn6afqgHA8G0QLeC25o9baH+4VY2MCn4q03NWBIHFP
- Ywdkvlv9Jb135z5mD8tjjHNNZCiZ85OFXhi4IOT6frF1bfIZY1l2bw5jGQxFNq0H2B9p93t0O
- uL3DOsmtefJ7xltSJoYe+5czwxda86DE2MDMK89rEzN8Ko1037PdZawRxkGeF37yFKgajS3gi
- IO3Gxm0Q/tnSstI/B+gqyIFEqwqQfhhxFnVo5uMqLe+fT0VN8HGQx8smxfACkCe20OzPSlLD2
- E3aN3psrdYgvg6f0aOeRC/y8pur411b7FEfd4++wUYuYV5j8soPHwHOwVCI849wUKm5Ao5z/0
- wcV2Dp5qHvp1QSVJk116PfAFLk5zpfWETZrdsGGk9Nv8KlkI9ivAln0JVYXscUKiZBU60Cse0
- YwRArbcpZPhIBIvG2jOsGTavYuZPPGSgVVnx591Woh79rkQKL3hiQrANxRw9B6QdHrYI3Ew2D
- xvlHoRbGrhCJUFrMZSfO5G/gca+LIy4v//lAAUky9R6InKiKkWwFSGOq2XDAJaQzSDCA03/SB
- MextsJSK/5xxLPSovNy+ZtlbHx4imHI6QE5ZCUdRj7C12HFcDAUxGiH4s+FU+AgapktZRT8yO
- F56U33BokchS+Xrz6kk1ltz4k/fyQJ39AYoCoxCwN4kphLJnMwhTylFt9RkWflPXMkORu4vJu
- 6kUBMT9LVtxwKcL69FCNRAdfo1PM/WQAPojtbZfv2xGw0g/41I=
+        id S1751122AbeBIMKT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:10:19 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50688 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750945AbeBIMKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:10:18 -0500
+From: Baoquan He <bhe@redhat.com>
+To: linux-kernel@vger.kernel.org, ebiederm@xmission.com
+Cc: mingo@kernel.org, tglx@linutronix.de, x86@kernel.org,
+        douly.fnst@cn.fujitsu.com, joro@8bytes.org, uobergfe@redhat.com,
+        prarit@redhat.com, Baoquan He <bhe@redhat.com>
+Subject: [PATCH v3 0/5] x86/apic: Fix restoring boot irq mode in reboot and kexec/kdump
+Date: Fri,  9 Feb 2018 20:10:03 +0800
+Message-Id: <20180209121008.28980-1-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Hollywood GPIO controller supports 32 GPIOs, but on the Wii, only 24
-are used.
+A regression bug was introduced in below commit.
+commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
+It caused the action to fail which we try to restore boot irq mode
+in reboot and kexec/kdump. Details can be seen in patch 0002.
 
-v2, v3:
-- no change
----
- arch/powerpc/boot/dts/wii.dts | 1 +
- 1 file changed, 1 insertion(+)
+Warning can always be seen during kdump kernel boot on qemu/kvm
+platform. Our customer even saw casual kdump kernel hang once in
+~30 attempts during stress testing of kdump on KVM machine.
 
-diff --git a/arch/powerpc/boot/dts/wii.dts b/arch/powerpc/boot/dts/wii.dts
-index 40b324b6391e..7235e375919c 100644
---- a/arch/powerpc/boot/dts/wii.dts
-+++ b/arch/powerpc/boot/dts/wii.dts
-@@ -176,6 +176,7 @@
- 			compatible = "nintendo,hollywood-gpio";
- 			reg = <0x0d8000c0 0x40>;
- 			gpio-controller;
-+			ngpios = <24>;
- 
- 			/*
- 			 * This is commented out while a standard binding
+This is v3 post, patches are rearranged and changed according to
+Eric's suggestions.
+
+Baoquan He (5):
+  x86/apic: Split out restore_boot_irq_mode from disable_IO_APIC
+  x86/apic: Fix restoring boot irq mode in reboot and kexec/kdump
+  x86/apic: Remove useless disable_IO_APIC
+  x86/apic: Rename variable/function related to x86_io_apic_ops
+  x86/apic: Set up through-local-APIC on boot CPU if 'noapic' specified
+
+ arch/x86/include/asm/io_apic.h     |  9 +++++----
+ arch/x86/include/asm/x86_init.h    |  8 ++++----
+ arch/x86/kernel/apic/apic.c        |  2 +-
+ arch/x86/kernel/apic/io_apic.c     | 16 ++++------------
+ arch/x86/kernel/crash.c            |  3 ++-
+ arch/x86/kernel/machine_kexec_32.c |  7 +++----
+ arch/x86/kernel/machine_kexec_64.c |  7 +++----
+ arch/x86/kernel/reboot.c           |  3 ++-
+ arch/x86/kernel/x86_init.c         |  6 +++---
+ arch/x86/xen/apic.c                |  2 +-
+ drivers/iommu/irq_remapping.c      |  4 ++--
+ 11 files changed, 30 insertions(+), 37 deletions(-)
+
 -- 
-2.15.1
+2.13.6
