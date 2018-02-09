@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184526-2-2313215764553838218
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184511-2-1363632561525986403
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184526; b=fSimOE1RkWiwNMV32VUMZ5rbkQm8swOgggz0GXyfWs83ObP
-    /ya1LAWZP6jjBJgCcTYdIQiYeIzKGhpunTF6UMlAzFNb2mETmEmx1OmKczlAg8GE
-    uTjliddzGCLmU1KDqg/rNfTrJdU/0wNpKEKAHUvVyuWTctacK3gb2hFzO9My7mgq
-    FNDGH2vDHhZHncHXgioxFqx85mhL7v1SMkCqpgDRwCwFm9So9gO8q9NSCd152/pM
-    +KKN+H1VlPql/hOWbXS7Eh4TjO1i+a+GQAYtFTLEP/99nzAlqdEK8tWxW+9P1IvB
-    MbQNoypi/uXbe1lGQAXix+Hg/wnee3Czro5bHkA==
+    t=1518184511; b=qhtyFdyozLNjC1YJX1S+MFE9VUypH/RXvIa86VltjyD2S/q
+    MBL86AUTxGJvXrM1Kr4mltBmRo+vUARyQhk11Cl6AWyspO8Z/hNhzeFdCgvBqtJK
+    b+rUolg89MXW6+Lv0sKIEQgzxxFtM26/sdBcVJ2qgyaE5xHKw7PQ8IKaoKXTaV6d
+    peW/1UthHJJc44DwpuHZJf7HZwvoghPTe04QC15EkRpSAHFA9YkRzf+QuI3Bjj4b
+    4DSos+kK1qna89reS+EKETxaknvrTyO/4wQcOZ/Td00hYzoPDz48cJfvJp4UmXPc
+    B7ykBVCjqubg2fK5I4CYWVoqDpWs9/LzblrkRpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184526; bh=HoHqeQZSLgzXsFBBuKC3E6uVXs
-    /Twb/aNCjO1/iJ6Gc=; b=VW6IE16sbsyZfcyEl2L4fcaUGUoftrGKqJK8oOLi+B
-    cCYxL8C0cA6Om22GM3Cx+eru4bLnvy5ebnZlMT7TjcHmMfxLxGTpGNrmE6udc63O
-    xKq9aP0ZehBJ0yxKEZydrmEpiP3+yEIj+v5TYmEhnacetehZuGZK+mRmNTGN8DDz
-    lHjLH72gAvcA6Q1EnsnjUCzAf+eBbT95qLUBOGDLHQjbt/NWWKDngAarUyCwQjCf
-    JjAoTWf/rmemFpFoB4Ij0UwcsU/x0ts+kiJjSuiI/CfjrntAGh7bg4tDezqWti1i
-    fQUYwyXxvuL9f9vYzYXrL8pfM5PTI16lnYCnmmnK+Nyg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184511; bh=FoqucepkZXc6edLSAXduBiFLeT
+    BfGwLF6I++VpTWZAs=; b=NxSrYkd8tN7G9uEHvAIkokAS3OXm77fi9iFq4B915d
+    rFQ6FE3Nu3Xj+NlwhDydPiZR9bO/QetUyPuaeFYFIzUdOtFLNbzPPXi924ibx28A
+    r+dxnZaN3KcHQsFXBZHpf2g2Qx4LWjIpGNc9wMGRrMocTSe845KZ+1XXnRj0ClKY
+    MjGwvgFlNeNKmvREQJSM0iK8I2BKtmJgqJM+nKnVSUcNTqcmXP3fgWrCQiqi9BcY
+    J1XJqjZ/gxGb0q+ggRWaM1z9CDlCAD+gJiuHleebSzZ80octQPHo0gnwZlG1YBeA
+    0J3+EoJmWO47HmyuWDHJYKgIrtOvu2urRALySN4Siw1Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,27 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753471AbeBINzL (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:55:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51880 "EHLO
+        id S1753662AbeBINpg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:45:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51898 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753645AbeBINpc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:32 -0500
+        with ESMTP id S1753658AbeBINpf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:35 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-Subject: [PATCH 4.14 20/22] arch: define weak abort()
-Date: Fri,  9 Feb 2018 14:40:09 +0100
-Message-Id: <20180209133935.599639969@linuxfoundation.org>
+Subject: [PATCH 4.14 21/22] kernel/exit.c: export abort() to modules
+Date: Fri,  9 Feb 2018 14:40:10 +0100
+Message-Id: <20180209133935.673577380@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
 References: <20180209133934.024795822@linuxfoundation.org>
@@ -82,51 +84,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
 
-commit 7c2c11b208be09c156573fc0076b7b3646e05219 upstream.
+commit dc8635b78cd8669c37e230058d18c33af7451ab1 upstream.
 
-gcc toggle -fisolate-erroneous-paths-dereference (default at -O2
-onwards) isolates faulty code paths such as null pointer access, divide
-by zero etc.  If gcc port doesnt implement __builtin_trap, an abort() is
-generated which causes kernel link error.
+gcc -fisolate-erroneous-paths-dereference can generate calls to abort()
+from modular code too.
 
-In this case, gcc is generating abort due to 'divide by zero' in
-lib/mpi/mpih-div.c.
-
-Currently 'frv' and 'arc' are failing.  Previously other arch was also
-broken like m32r was fixed by commit d22e3d69ee1a ("m32r: fix build
-failure").
-
-Let's define this weak function which is common for all arch and fix the
-problem permanently.  We can even remove the arch specific 'abort' after
-this is done.
-
-Link: http://lkml.kernel.org/r/1513118956-8718-1-git-send-email-sudipm.mukherjee@gmail.com
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+[arnd@arndb.de: drop duplicate exports of abort()]
+  Link: http://lkml.kernel.org/r/20180102103311.706364-1-arnd@arndb.de
+Reported-by: Vineet Gupta <Vineet.Gupta1@synopsys.com>
 Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Jose Abreu <Jose.Abreu@synopsys.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/exit.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/kernel/traps.c       |    1 -
+ arch/m32r/kernel/traps.c      |    1 -
+ arch/unicore32/kernel/traps.c |    1 -
+ kernel/exit.c                 |    1 +
+ 4 files changed, 1 insertion(+), 3 deletions(-)
 
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -790,7 +790,6 @@ void abort(void)
+ 	/* if that doesn't kill us, halt */
+ 	panic("Oops failed to kill thread");
+ }
+-EXPORT_SYMBOL(abort);
+ 
+ void __init trap_init(void)
+ {
+--- a/arch/m32r/kernel/traps.c
++++ b/arch/m32r/kernel/traps.c
+@@ -122,7 +122,6 @@ void abort(void)
+ 	/* if that doesn't kill us, halt */
+ 	panic("Oops failed to kill thread");
+ }
+-EXPORT_SYMBOL(abort);
+ 
+ void __init trap_init(void)
+ {
+--- a/arch/unicore32/kernel/traps.c
++++ b/arch/unicore32/kernel/traps.c
+@@ -298,7 +298,6 @@ void abort(void)
+ 	/* if that doesn't kill us, halt */
+ 	panic("Oops failed to kill thread");
+ }
+-EXPORT_SYMBOL(abort);
+ 
+ void __init trap_init(void)
+ {
 --- a/kernel/exit.c
 +++ b/kernel/exit.c
-@@ -1755,3 +1755,11 @@ Efault:
- 	return -EFAULT;
+@@ -1763,3 +1763,4 @@ __weak void abort(void)
+ 	/* if that doesn't kill us, halt */
+ 	panic("Oops failed to kill thread");
  }
- #endif
-+
-+__weak void abort(void)
-+{
-+	BUG();
-+
-+	/* if that doesn't kill us, halt */
-+	panic("Oops failed to kill thread");
-+}
++EXPORT_SYMBOL(abort);
