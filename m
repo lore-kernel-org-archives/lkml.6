@@ -1,158 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751107AbeBIM7R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:59:17 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33129 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750973AbeBIM7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:59:16 -0500
-Subject: Re: [PATCH] f2fs: add fi->commit_lock to protect commit GCed pages
-To: Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
- <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
- <134848f9-2dd6-0efa-3ccf-3c29eeaf5534@huawei.com>
- <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
-From: Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
-Date: Fri, 9 Feb 2018 20:56:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1752058AbeBIM71 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:59:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46558 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750997AbeBIM7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:59:25 -0500
+Date: Fri, 9 Feb 2018 13:59:22 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 5/7] livepatch: Support separate list for replaced
+ patches.
+In-Reply-To: <20180206103424.10829-6-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1802091331310.30746@pobox.suse.cz>
+References: <20180206103424.10829-1-pmladek@suse.com> <20180206103424.10829-6-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As what I point in last mail, if the atomic file is not committed
-yet, gc_data_segment will register_inmem_page the GCed data pages.
-This will cause these data pages written twice, the first write
-happens in move_data_page->do_write_data_page, and the second
-write happens in later __commit_inmem_pages->do_write_data_page.
+On Tue, 6 Feb 2018, Petr Mladek wrote:
 
-On 2018/2/9 20:44, Chao Yu wrote:
-> On 2018/2/8 11:11, Yunlong Song wrote:
->> Then the GCed data pages are totally mixed with the inmem atomic pages,
+> From: Jason Baron <jbaron@akamai.com>
 > 
-> If we add dio_rwsem, GC flow is exclude with atomic write flow. There
-> will be not race case to mix GCed page into atomic pages.
+> We are going to add a feature called atomic replace. It will allow to
+> create a patch that would replace all already registered patches.
 > 
-> Or you mean:
+> The replaced patches will stay registered because they are typically
+> unregistered by some package uninstall scripts. But we will remove
+> these patches from @klp_patches list to keep the enabled patch
+> on the bottom of the stack. Otherwise, we would need to implement
+> rather complex logic for moving the patches on the stack. Also
+> it would complicate implementation of the atomic replace feature.
+> It is not worth it.
 > 
-> 					- gc_data_segment
-> 					 - move_data_page
-> 					  - f2fs_is_atomic_file
-> - f2fs_ioc_start_atomic_write
->   - set_inode_flag(inode, FI_ATOMIC_FILE);
-> 					  - f2fs_set_data_page_dirty
-> 					   - register_inmem_page
+> As a result, we will have patches that are registered but that
+> are not longer usable. Let's get prepared for this and use
+> a better descriptive name for klp_is_patch_registered() function.
 > 
-> In this case, GCed page can be mixed into database transaction, but could
-> it cause any problem except break rule of isolation for transaction.
+> Also create separate list for the replaced patches and allow to
+> unregister them. Alternative solution would be to add a flag
+> into struct klp_patch. Note that patch->kobj.state_initialized
+> is not safe because it can be cleared outside klp_mutex.
 > 
->> this will cause the atomic commit ops write the GCed data pages twice
->> (the first write happens in GC).
->>
->> How about using the early two patches to separate the inmem data pages
->> and GCed data pages, and use dio_rwsem instead of this patch to fix the
->> dnode page problem (dnode page commited but data page are not committed
->> for the GCed page)?
+> This patch does not change the existing behavior.
 > 
-> Could we fix the race case first, based on that fixing, and then find the
-> place that we can improve?
+> Signed-off-by: Jason Baron <jbaron@akamai.com>
+> [pmladek@suse.com: Split and renamed klp_is_patch_usable()]
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Jiri Kosina <jikos@kernel.org>
+> Cc: Miroslav Benes <mbenes@suse.cz>
+> ---
+>  kernel/livepatch/core.c | 30 ++++++++++++++++++++++++------
+>  1 file changed, 24 insertions(+), 6 deletions(-)
 > 
->>
->>
->> On 2018/2/7 20:16, Chao Yu wrote:
->>> On 2018/2/6 11:49, Yunlong Song wrote:
->>>> This patch adds fi->commit_lock to avoid the case that GCed node pages
->>>> are committed but GCed data pages are not committed. This can avoid the
->>>> db file run into inconsistent state when sudden-power-off happens if
->>>> data pages of atomic file is allowed to be GCed before.
->>>
->>> do_fsync:                GC:
->>> - mutex_lock(&fi->commit_lock);
->>>                      - lock_page()
->>>                       - mutex_lock(&fi->commit_lock);
->>>    - lock_page()
->>>
->>>
->>> Well, please consider lock dependency & code complexity, IMO, reuse
->>> fi->dio_rwsem[WRITE] will be enough as below:
->>>
->>> ---
->>>    fs/f2fs/file.c | 3 +++
->>>    fs/f2fs/gc.c   | 5 -----
->>>    2 files changed, 3 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 672a542e5464..1bdc11feb8d0 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>
->>>        inode_lock(inode);
->>>
->>> +    down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>> +
->>>        if (f2fs_is_volatile_file(inode))
->>>            goto err_out;
->>>
->>> @@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>            ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
->>>        }
->>>    err_out:
->>> +    up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>        inode_unlock(inode);
->>>        mnt_drop_write_file(filp);
->>>        return ret;
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index b9d93fd532a9..e49416283563 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>            goto out;
->>>
->>> -    if (f2fs_is_atomic_file(inode))
->>> -        goto out;
-> 
-> Seems that we need this check.
-> 
->>> -
->>>        if (f2fs_is_pinned_file(inode)) {
->>>            f2fs_pin_file_control(inode, true);
->>>            goto out;
->>> @@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>            goto out;
->>>
->>> -    if (f2fs_is_atomic_file(inode))
->>> -        goto out;
-> 
-> Ditto.
-> 
-> Thanks,
-> 
->>>        if (f2fs_is_pinned_file(inode)) {
->>>            if (gc_type == FG_GC)
->>>                f2fs_pin_file_control(inode, true);
->>>
->>
-> 
-> .
-> 
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index fccb603942f1..11632fe8716a 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -47,6 +47,13 @@ DEFINE_MUTEX(klp_mutex);
+>  
+>  static LIST_HEAD(klp_patches);
+>  
+> +/*
+> + * List of 'replaced' patches that have been replaced by a patch that has the
+> + * 'replace' bit set. When they are added to this list, they are disabled and
+> + * can not be re-enabled, but they can be unregistered().
+> + */
+> +LIST_HEAD(klp_replaced_patches);
 
--- 
-Thanks,
-Yunlong Song
+It should be static, I think. It is used only in kernel/livepatch/core.c. 
+And sparse complains about it.
+
+With that fixed
+
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+
+Miroslav
