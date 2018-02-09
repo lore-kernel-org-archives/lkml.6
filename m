@@ -1,96 +1,78 @@
-Return-Path: <luto@kernel.org>
-X-Google-Smtp-Source: AH8x224kHLvqiDu1IZXNo04Tq+sFZut+i/riuEJE/WbjdsnxPuexzEC7XZ8RlLpjb1WmhDPnDdg8
-ARC-Seal: i=1; a=rsa-sha256; t=1518198538; cv=none;
+Return-Path: <jroedel@suse.de>
+X-Google-Smtp-Source: AH8x225/QdgEN8bZjxixdHHL6teFF4spps9C53BLGCykJcaiCwtcYcW7yDsvHSX+Uo7xNqYEDoD2
+ARC-Seal: i=1; a=rsa-sha256; t=1518203359; cv=none;
         d=google.com; s=arc-20160816;
-        b=h9qPHVmI1lAvm3/M/q8Uug8Rhqh+pm/Sui5ZyiD3Y/s+qnHlxCucQcNJDvVYBywLXB
-         tBjDupORu1oBpGHByC9K600AOrhYMdA4huuv1nQgCcsVh/b+XKAnF3hYdZSRA3RuU/Ra
-         dGuHJ0l1Vclrr6+A47L97C+OPLeLvjCa0AW0ZIbRqw9+PcZlK3GsSTTjv6ZxpaPshFGM
-         o5fvluD/VGQ0A3dkRO4Y97JmL00W2t7QXAfW4QJ2dvl78lo1fGWPfVZHGNV89/kpsco3
-         SwkwG38j/NhdBtTo2bXA/xv0586S0sd1cWygRKX28OQITOz7xJ8Lr6j0fLcQeoXcvNT0
-         Zj2A==
+        b=m/91Bt+kLeZuGNYFMcc/jks5LwSH8zvT2g+q6V4yRerp0MjzSbGKJZgUzacunnhRWp
+         5bmHmWeoLsUm5o7wyvrojX3zz/YUiFNhWVufLUOsco9rf/wXx6zghKDi73D+80c6fc3w
+         A9DLFtwf1D1/e6s0dWEpTwem/MC7/skKSRA2XRxnNTn46d9CR2smsR872O3vaEQbJJpp
+         tRgchYBT3EABe80SlHbP78HxR+J9KuzP4kWXDAgAaUzkA8nsI4xTgViPmQq55iQta9nx
+         nqVUO9Wn9G3yOP/vb85JPk6QzEBebWBE6/AecvQN2/+CE6wJI87RyRgNptM5+wGaiDYd
+         Y+Mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=7CrjGlQm4rePqdkfzRtRSGReBaJXbwKvLm/0Pw366Ek=;
-        b=r+XPA00Ev60IhUq0jUiYeLTdMrEa+s3bEpBwbDDbE8z/wq1RIJvBITmpqc3iNIXp3+
-         Wtmd3JTi+loYlxLnVMUtBhDkEM79TCkwKzv6cERgBxLnFouGDw+Oi7zz7WZK8JJMfDPG
-         7rsdaT+LVVDjZtakx3tzNsDnEgiNH7oscCJBeW2lSAdx210OYgNczym3+QSdL4cm3KSM
-         CZ5VfusO6m9S5dS1u80QBfHbPvglE2FSpWa5CiGOG/Q8HoE/oVid+LFbwFtxt6wevgVa
-         HW1/LHLWTywxDiYCjGGRMKZ3grYjkj7zUzGko8TeUWWOzAjQUcd8tuGANrnGoxiPBKMn
-         /qrg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=tF/i6xNxrvaJJEuDdYOsyHFu+65WygS7BbnVtfWSQqI=;
+        b=DRlvJ/wfl+ZbJqtMAI2V8gib4LRt7dqpf3sDoxGT1pnGRqAku/6gIDU43im1bRmRsT
+         OrpdP6QIhoWT7bdmIarao3hmuAbIzLKbeFlnXbXyRjwhDskbMTWRx6oY1qjBDyV4z5H4
+         ERrrvLGzBNDx0BnPj6hN0Z6X+k4XSMi2XRULngk4IiXwc4q5p8fasSbU0qYdeF3FAluu
+         OzzREKtIXJyAQJGnQQrgMcsVc2DflzLoIxqQkjPdcnIJ2lP3m0bmxXJPKdgGZVIUnOei
+         KQ788Gd7NDJ8rZL4W8zeXmeGXNhMWKYdHZE5sT+t/0+CU0j07Eed2hi+6vqehVAN4n/L
+         oICw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
+       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5427121789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
+Date: Fri, 9 Feb 2018 20:09:15 +0100
+From: Joerg Roedel <jroedel@suse.de>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Linux-MM <linux-mm@kvack.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>,
+	"Liguori, Anthony" <aliguori@amazon.com>,
+	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 20/31] x86/mm/pae: Populate the user page-table with user
+ pgd's
+Message-ID: <20180209190915.tevittkx5d3ngnyr@suse.de>
+References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
+ <1518168340-9392-21-git-send-email-joro@8bytes.org>
+ <CALCETrUgk3s0uDZrHqy-HjudFXLeWN=oKz6EH9i-NCdWQEnAqw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1518168340-9392-21-git-send-email-joro@8bytes.org>
-References: <1518168340-9392-1-git-send-email-joro@8bytes.org> <1518168340-9392-21-git-send-email-joro@8bytes.org>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 9 Feb 2018 17:48:36 +0000
-X-Gmail-Original-Message-ID: <CALCETrUgk3s0uDZrHqy-HjudFXLeWN=oKz6EH9i-NCdWQEnAqw@mail.gmail.com>
-Message-ID: <CALCETrUgk3s0uDZrHqy-HjudFXLeWN=oKz6EH9i-NCdWQEnAqw@mail.gmail.com>
-Subject: Re: [PATCH 20/31] x86/mm/pae: Populate the user page-table with user pgd's
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
-	Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>, Joerg Roedel <jroedel@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrUgk3s0uDZrHqy-HjudFXLeWN=oKz6EH9i-NCdWQEnAqw@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914910930783866?=
-X-GMAIL-MSGID: =?utf-8?q?1591946550723940601?=
+X-GMAIL-MSGID: =?utf-8?q?1591951605682083964?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 9, 2018 at 9:25 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> From: Joerg Roedel <jroedel@suse.de>
->
-> When we populate a PGD entry, make sure we populate it in
-> the user page-table too.
->
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  arch/x86/include/asm/pgtable-3level.h | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/x86/include/asm/pgtable-3level.h b/arch/x86/include/asm/pgtable-3level.h
-> index bc4af54..1a0661b 100644
-> --- a/arch/x86/include/asm/pgtable-3level.h
-> +++ b/arch/x86/include/asm/pgtable-3level.h
-> @@ -98,6 +98,9 @@ static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
->
->  static inline void native_set_pud(pud_t *pudp, pud_t pud)
->  {
-> +#ifdef CONFIG_PAGE_TABLE_ISOLATION
-> +       pud.p4d.pgd = pti_set_user_pgd(&pudp->p4d.pgd, pud.p4d.pgd);
-> +#endif
->         set_64bit((unsigned long long *)(pudp), native_pud_val(pud));
->  }
->
-> @@ -194,6 +197,10 @@ static inline pud_t native_pudp_get_and_clear(pud_t *pudp)
->  {
->         union split_pud res, *orig = (union split_pud *)pudp;
->
-> +#ifdef CONFIG_PAGE_TABLE_ISOLATION
-> +       pti_set_user_pgd(&pudp->p4d.pgd, __pgd(0));
-> +#endif
-> +
->         /* xchg acts as a barrier before setting of the high bits */
->         res.pud_low = xchg(&orig->pud_low, 0);
->         res.pud_high = orig->pud_high;
+On Fri, Feb 09, 2018 at 05:48:36PM +0000, Andy Lutomirski wrote:
+> Can you rename the helper from pti_set_user_pgd() to
+> pti_set_user_top_level_entry() or similar?  The name was already a bit
+> absurd, but now it's just nuts.
 
-Can you rename the helper from pti_set_user_pgd() to
-pti_set_user_top_level_entry() or similar?  The name was already a bit
-absurd, but now it's just nuts.
+Sure, I can do that, just pti_set_user_top_level_entry() is a bit long.
+I try to find a shorter name.
+
+
+Thanks,
+
+	Joerg
