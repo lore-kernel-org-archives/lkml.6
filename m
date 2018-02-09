@@ -1,54 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224Q+7/RP5C9SG9TF2kBJfxrreGjpd+xEACiyMgU2DfC7+GT86hwvcsaRyOL7oo7qUF39X1r
-ARC-Seal: i=1; a=rsa-sha256; t=1518183751; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ypJeDPacdlBGAa1UJlAu1315Wau1204+MyhPgqviOTIgXgAuF7hpU8ogJGnUM8aTUj
-         yTCLI9aXtw2etlJleyk0D3c5g2MO6shd6IIluY10W2/7n7nCeXTQ0gf9Dm4oMUR+EYqm
-         nSP8CORzxROUkwJ6PsH7ENHU9LTUGE3mD7xQXJKXCuQ/annEJ/ZM1Rc8ffkmxCu/khzR
-         ZZrSTvxfTSebeTivABJI0fgG5AE9rpiZstdUxkrxZdpgAj7TS0j9ppGe2fzej6ENbiYR
-         ZRQbj/3rJFmozEk1Q20fHUkYHQJ5lDS6NaJViw5F2O26uC2E3P16ge+lVTBeBaEiWp6T
-         wN5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=5QIcJ6bVHVVn4Lbd9zv720CHSUelucDd/pUI+/+v5WY=;
-        b=SnfNPd9rM3m0DqmM6ue/BD27mEeUuy9+j0+LZjJQ5dmW3pdsHOw/X5VoFC+W+eky1t
-         v+0fwijxbshLxzvpcA1BDAgYZ0s2nqyjASpxtX1DXQ4yon74NvjfCHlhYuI5RoF4Q3n7
-         /Wvvk/OGzW0GM6hgoMSevVirwfUViRn7+8vGXTqmn7cRUCfsIMimZsLh8Xsc03Yp83yG
-         QZD2/jMnJX34ivKffBRaYD2nHDrvpL3MwwKaVSfTcvhaUmwuB1aoA7cR+TMH0eFhNivD
-         pd8WZNdb95kvoDg9xMtTDukbcbozOniB4laKX19q1tzgTPw3OcHI02TQgYkvZauC4GCN
-         EWTg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1420212-1518183707-5-5608283093431263732
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518183706; b=pMxgAPcyjFjJims+hP/1M9GmViNqXev/UtlV3uaszOqV+zd
+    +/ZxP9BHuBq6hrzHIxPr35RoHdG8G2IMGRw1LLqZaBtoIHNpGWzBUaThwVzOsf1y
+    S9H3+UgmPkt9Z5Dj8xO1NL9zYsbLdOOh8jPGc3sJSfcUOHCv/2npNYU+TOjm77aX
+    iW5wtg/K27FL7O2Ps5+oXfGuK9+oOVrUdjUr/Ox5Y7JTXWYOaI00BFjERwOF8Krz
+    s7aZh5Zfg+D0wUWX9hYUO/NoFRehwfX+rbP570/G774RmEn6zdPHo6HmW3BFZpYV
+    SBwxS/j8Uijdz4HPgXBRruF1AzUh0maN3ONKNJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518183706; bh=1bE8FKj2nsCFw/NFkDDlpleFBT
+    yEfT2zJonPwy7HAok=; b=Fmy2+gA3HiNHJ1pUX4s0ZXPi4ZaBI7j0UZ2YvHEUI4
+    U2gmn1i9oiA0yCvmxCu9kBUE9SRgCk6CJ3435C3jpQ6toy3LDQwdAceMpq1DfXrn
+    cQOa2THn32K7YGnSB4cEA/f1uCusX5VFq6KeX1C8K2CaFGXLWRgUeW1XQOaerk3M
+    y6Yd9Rhvfgpwiu5qXZLCCJV4nDRF/wLMv1bplrgA6itCzvE7hTqnhyaesfhyJofJ
+    K1QcMFF30ka1KvrsZn6dlMMEqFTO8EOw28uOcgBPBTGgEITu2rLiizbjBNsVTZiw
+    pW97gLXvUdfkfROyKPyAJQsI1W1WRLdAO8yOnthnzopA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752649AbeBINln (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:41:43 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49308 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752648AbeBINll (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:41 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Vince Weaver <vincent.weaver@maine.edu>,
-	=?UTF-8?q?Robert=20=C5=9Awi=C4=99cki?= <robert@swiecki.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Vince Weaver <vince@deater.net>,
-	Jiri Kosina <jkosina@suse.cz>,
-	Hugh Dickins <hughd@google.com>
-Subject: [PATCH 4.9 15/92] kaiser: fix intel_bts perf crashes
-Date: Fri,  9 Feb 2018 14:38:44 +0100
-Message-Id: <20180209133932.344776084@linuxfoundation.org>
+        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.9 32/92] media: soc_camera: soc_scale_crop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Fri,  9 Feb 2018 14:39:01 +0100
+Message-Id: <20180209133933.496449619@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591931045816084100?=
-X-GMAIL-MSGID: =?utf-8?q?1591931045816084100?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,127 +78,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hugh Dickins <hughd@google.com>
+From: Jesse Chan <jc@linux.com>
 
-Vince reported perf_fuzzer quickly locks up on 4.15-rc7 with PTI;
-Robert reported Bad RIP with KPTI and Intel BTS also on 4.15-rc7:
-honggfuzz -f /tmp/somedirectorywithatleastonefile \
-          --linux_perf_bts_edge -s -- /bin/true
-(honggfuzz from https://github.com/google/honggfuzz) crashed with
-BUG: unable to handle kernel paging request at ffff9d3215100000
-(then narrowed it down to
-perf record --per-thread -e intel_bts//u -- /bin/ls).
+commit 5331aec1bf9c9da557668174e0a4bfcee39f1121 upstream.
 
-The intel_bts driver does not use the 'normal' BTS buffer which is
-exposed through kaiser_add_mapping(), but instead uses the memory
-allocated for the perf AUX buffer.
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-This obviously comes apart when using PTI, because then the kernel
-mapping, which includes that AUX buffer memory, disappears while
-switched to user page tables.
+WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/soc_camera/soc_scale_crop.o
+see include/linux/module.h for more information
 
-Easily fixed in old-Kaiser backports, by applying kaiser_add_mapping()
-to those pages; perhaps not so easy for upstream, where 4.15-rc8 commit
-99a9dc98ba52 ("x86,perf: Disable intel_bts when PTI") disables for now.
+This adds the license as "GPL", which matches the header of the file.
 
-Slightly reorganized surrounding code in bts_buffer_setup_aux(),
-so it can better match bts_buffer_free_aux(): free_aux with an #ifdef
-to avoid the loop when PTI is off, but setup_aux needs to loop anyway
-(and kaiser_add_mapping() is cheap when PTI config is off or "pti=off").
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Reported-by: Robert Święcki <robert@swiecki.net>
-Analyzed-by: Peter Zijlstra <peterz@infradead.org>
-Analyzed-by: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vince Weaver <vince@deater.net>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/events/intel/bts.c |   44 +++++++++++++++++++++++++++++++++-----------
- 1 file changed, 33 insertions(+), 11 deletions(-)
 
---- a/arch/x86/events/intel/bts.c
-+++ b/arch/x86/events/intel/bts.c
-@@ -22,6 +22,7 @@
- #include <linux/debugfs.h>
- #include <linux/device.h>
- #include <linux/coredump.h>
-+#include <linux/kaiser.h>
- 
- #include <asm-generic/sizes.h>
- #include <asm/perf_event.h>
-@@ -77,6 +78,23 @@ static size_t buf_size(struct page *page
- 	return 1 << (PAGE_SHIFT + page_private(page));
+---
+ drivers/media/platform/soc_camera/soc_scale_crop.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/media/platform/soc_camera/soc_scale_crop.c
++++ b/drivers/media/platform/soc_camera/soc_scale_crop.c
+@@ -418,3 +418,7 @@ void soc_camera_calc_client_output(struc
+ 	mf->height = soc_camera_shift_scale(rect->height, shift, scale_v);
  }
- 
-+static void bts_buffer_free_aux(void *data)
-+{
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	struct bts_buffer *buf = data;
-+	int nbuf;
+ EXPORT_SYMBOL(soc_camera_calc_client_output);
 +
-+	for (nbuf = 0; nbuf < buf->nr_bufs; nbuf++) {
-+		struct page *page = buf->buf[nbuf].page;
-+		void *kaddr = page_address(page);
-+		size_t page_size = buf_size(page);
-+
-+		kaiser_remove_mapping((unsigned long)kaddr, page_size);
-+	}
-+#endif
-+	kfree(data);
-+}
-+
- static void *
- bts_buffer_setup_aux(int cpu, void **pages, int nr_pages, bool overwrite)
- {
-@@ -113,29 +131,33 @@ bts_buffer_setup_aux(int cpu, void **pag
- 	buf->real_size = size - size % BTS_RECORD_SIZE;
- 
- 	for (pg = 0, nbuf = 0, offset = 0, pad = 0; nbuf < buf->nr_bufs; nbuf++) {
--		unsigned int __nr_pages;
-+		void *kaddr = pages[pg];
-+		size_t page_size;
-+
-+		page = virt_to_page(kaddr);
-+		page_size = buf_size(page);
-+
-+		if (kaiser_add_mapping((unsigned long)kaddr,
-+					page_size, __PAGE_KERNEL) < 0) {
-+			buf->nr_bufs = nbuf;
-+			bts_buffer_free_aux(buf);
-+			return NULL;
-+		}
- 
--		page = virt_to_page(pages[pg]);
--		__nr_pages = PagePrivate(page) ? 1 << page_private(page) : 1;
- 		buf->buf[nbuf].page = page;
- 		buf->buf[nbuf].offset = offset;
- 		buf->buf[nbuf].displacement = (pad ? BTS_RECORD_SIZE - pad : 0);
--		buf->buf[nbuf].size = buf_size(page) - buf->buf[nbuf].displacement;
-+		buf->buf[nbuf].size = page_size - buf->buf[nbuf].displacement;
- 		pad = buf->buf[nbuf].size % BTS_RECORD_SIZE;
- 		buf->buf[nbuf].size -= pad;
- 
--		pg += __nr_pages;
--		offset += __nr_pages << PAGE_SHIFT;
-+		pg += page_size >> PAGE_SHIFT;
-+		offset += page_size;
- 	}
- 
- 	return buf;
- }
- 
--static void bts_buffer_free_aux(void *data)
--{
--	kfree(data);
--}
--
- static unsigned long bts_buffer_offset(struct bts_buffer *buf, unsigned int idx)
- {
- 	return buf->buf[idx].offset + buf->buf[idx].displacement;
++MODULE_DESCRIPTION("soc-camera scaling-cropping functions");
++MODULE_AUTHOR("Guennadi Liakhovetski <kernel@pengutronix.de>");
++MODULE_LICENSE("GPL");
