@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeBIR55 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:57:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:50444 "EHLO foss.arm.com"
+        id S1752764AbeBIR6B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:58:01 -0500
+Received: from foss.arm.com ([217.140.101.70]:50456 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752720AbeBIR5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:57:55 -0500
+        id S1752734AbeBIR55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:57:57 -0500
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: dave.martin@arm.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         jnair@caviumnetworks.com, ckadabi@codeaurora.org, robin.murphy@arm.com,
         ard.biesheuvel@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 11/21] arm64: capabilities: Introduce weak features based on local CPU
-Date: Fri,  9 Feb 2018 17:54:52 +0000
-Message-Id: <20180209175513.17100-23-suzuki.poulose@arm.com>
+Subject: [PATCH v3 12/22] arm64: capabilities: Introduce weak features based on local CPU
+Date: Fri,  9 Feb 2018 17:54:53 +0000
+Message-Id: <20180209175513.17100-24-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180209175513.17100-1-suzuki.poulose@arm.com>
 References: <20180209175513.17100-1-suzuki.poulose@arm.com>
