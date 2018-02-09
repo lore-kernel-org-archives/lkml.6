@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184254-2-628865797155322597
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184246-2-17353342523574998228
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184253; b=VWww3DHdEleLGoXpPKvxPPCu7IRZhUAfBRcuXfGRVKR5TWe
-    I2Ie6n1/3uhgzspesEmRWMJFV/xT7/db5MMiDkQhsPUe45e3M+6UuJY2qR0v3F/6
-    sB0wGa3tmhVgiS4Iu3GxHwbNX4+uDb+Ivt6BTgJpkAIt5NaKHQunMsKfqCQ+Q45u
-    kphouSeEj+lYY2WvTdpHVXK5kF3gsT84Y+1Om1EuNwnRvu6YjmuhByIiXsvtSejA
-    McCSQ6GkB/0tUkqyJghxjdBJHIarXqBai4Hn1uytz6K0An+TwcBCQuiNIIlcLlQ+
-    buKh80VLVVH3sxOd7Bkl1keuabJELZNrsMinPaA==
+    t=1518184246; b=mAQQauPbbx47fLQx5nJfJS/WcNOLt7YPs4jb7wTMGzXcVZg
+    xDNF91m5mOxtAMV13tDtPfvwS9SXh/2u9FSK51VLL4mldOitUnrDPdtU+zDECO2s
+    dt9tx9QHVhTXc/f5hzZUNb80YJodRrJfoGjRwifeGIN5mORL+hpSLnTk+nUEbwV0
+    5+Cpbuk7+NEgUakNs5Ri7xGomqWV954ljhpiPZGqHWIJkSxVXw1yylPNPIuxrfwg
+    PwG6Rod3FnyJlny/Rqg7TM3KHg0QHrjNnSjQ/LqT5BSlcW3OyXHqirI8KbBeeANn
+    c+lDfLlWETiSVAJF35QuX4/10Em/H0BdWODGL3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184253; bh=SIINBy/BLwf7ffeVoby9XVmYLE
-    Ai/jmAk7lHTpbW5ds=; b=SJRjhWe2iOGt8GY+dDS6QFcoJzfj4oLhox3HUPUcWu
-    AkMcYXCNgkyALbFWw2w5HrSY4gwt2MwOUDK3I5Ybb5xOEcCaigTjjSLbi8ulZJ4K
-    XDG2lxxPxG7GZ5BFSpWjqihm5NISO27NXkh6fHvzCzB/oBQotw7SvV8Bjsr0f6jC
-    8cVL8DjHoj4UY0WbC61Yr4bBkeaJ8DKWyOzI8EKm4i5qB0fjXsdR+kc90J/f4Vav
-    EeENVKRq7rSELEg9o9cFopXMvvPcEFcqzT6GbTj/9Mq4j9n+Nz2btPGDcUotuEJS
-    NSYUXPldV2OoKmvSX2+5iZyZ0FmM8Ybdr3p9ZY8BkfAw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184246; bh=oPudeEDLzGc6jJctn6y4X+cjPS
+    3ReDRekb892P5ZZWw=; b=wlAa8eqzOw/cL7/xomOrW0v1aAa30dB+aRC9hPyk2S
+    vS4xhc0ZEzEdpKiqWV1PQif23thsknVXDRLJ+xqQnvpSYu+kcQXRUhaS3NMtMKS3
+    SPLVM+z4cMZ3vLD7BmmpgtNfLlww75fMHiypsZe+4XczPwHB9X+1YL8N/l+pkLD+
+    0fxjQdRv0BVqZ82gYtTto/r9GUoRzrC+qzR2nCrx55MxxzuEQ/+sQPgwJPKZroiv
+    0k59Q+8YIDxgck2MZEpCgiil+aZV1dHvfALbwgguGVFX9vQwGZoujtlXzUFsAzln
+    7zOX1gonImecQWHF94l105J68CX0V3yMmhnb0uLyYemA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,24 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753783AbeBINq2 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:46:28 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52900 "EHLO
+        id S1752210AbeBINu2 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:50:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753453AbeBINq1 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:46:27 -0500
+        with ESMTP id S1753453AbeBINqd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:46:33 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 15/23] ipv6: Fix SO_REUSEPORT UDP socket with implicit sk_ipv6only
-Date: Fri,  9 Feb 2018 14:40:13 +0100
-Message-Id: <20180209133939.104334991@linuxfoundation.org>
+Subject: [PATCH 4.15 17/23] net_sched: get rid of rcu_barrier() in tcf_block_put_ext()
+Date: Fri,  9 Feb 2018 14:40:15 +0100
+Message-Id: <20180209133939.183041389@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133938.366024920@linuxfoundation.org>
 References: <20180209133938.366024920@linuxfoundation.org>
@@ -77,80 +81,124 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin KaFai Lau <kafai@fb.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
 
-[ Upstream commit 7ece54a60ee2ba7a386308cae73c790bd580589c ]
+[ Upstream commit efbf78973978b0d25af59bc26c8013a942af6e64 ]
 
-If a sk_v6_rcv_saddr is !IPV6_ADDR_ANY and !IPV6_ADDR_MAPPED, it
-implicitly implies it is an ipv6only socket.  However, in inet6_bind(),
-this addr_type checking and setting sk->sk_ipv6only to 1 are only done
-after sk->sk_prot->get_port(sk, snum) has been completed successfully.
+Both Eric and Paolo noticed the rcu_barrier() we use in
+tcf_block_put_ext() could be a performance bottleneck when
+we have a lot of tc classes.
 
-This inconsistency between sk_v6_rcv_saddr and sk_ipv6only confuses
-the 'get_port()'.
+Paolo provided the following to demonstrate the issue:
 
-In particular, when binding SO_REUSEPORT UDP sockets,
-udp_reuseport_add_sock(sk,...) is called.  udp_reuseport_add_sock()
-checks "ipv6_only_sock(sk2) == ipv6_only_sock(sk)" before adding sk to
-sk2->sk_reuseport_cb.  In this case, ipv6_only_sock(sk2) could be
-1 while ipv6_only_sock(sk) is still 0 here.  The end result is,
-reuseport_alloc(sk) is called instead of adding sk to the existing
-sk2->sk_reuseport_cb.
+tc qdisc add dev lo root htb
+for I in `seq 1 1000`; do
+        tc class add dev lo parent 1: classid 1:$I htb rate 100kbit
+        tc qdisc add dev lo parent 1:$I handle $((I + 1)): htb
+        for J in `seq 1 10`; do
+                tc filter add dev lo parent $((I + 1)): u32 match ip src 1.1.1.$J
+        done
+done
+time tc qdisc del dev root
 
-It can be reproduced by binding two SO_REUSEPORT UDP sockets on an
-IPv6 address (!ANY and !MAPPED).  Only one of the socket will
-receive packet.
+real    0m54.764s
+user    0m0.023s
+sys     0m0.000s
 
-The fix is to set the implicit sk_ipv6only before calling get_port().
-The original sk_ipv6only has to be saved such that it can be restored
-in case get_port() failed.  The situation is similar to the
-inet_reset_saddr(sk) after get_port() has failed.
+The rcu_barrier() there is to ensure we free the block after all chains
+are gone, that is, to queue tcf_block_put_final() at the tail of workqueue.
+We can achieve this ordering requirement by refcnt'ing tcf block instead,
+that is, the tcf block is freed only when the last chain in this block is
+gone. This also simplifies the code.
 
-Thanks to Calvin Owens <calvinowens@fb.com> who created an easy
-reproduction which leads to a fix.
+Paolo reported after this patch we get:
 
-Fixes: e32ea7e74727 ("soreuseport: fast reuseport UDP socket selection")
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
+real    0m0.017s
+user    0m0.000s
+sys     0m0.017s
+
+Tested-by: Paolo Abeni <pabeni@redhat.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jiri Pirko <jiri@mellanox.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/af_inet6.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ include/net/sch_generic.h |    1 -
+ net/sched/cls_api.c       |   30 +++++++++---------------------
+ 2 files changed, 9 insertions(+), 22 deletions(-)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -284,6 +284,7 @@ int inet6_bind(struct socket *sock, stru
- 	struct net *net = sock_net(sk);
- 	__be32 v4addr = 0;
- 	unsigned short snum;
-+	bool saved_ipv6only;
- 	int addr_type = 0;
- 	int err = 0;
+--- a/include/net/sch_generic.h
++++ b/include/net/sch_generic.h
+@@ -280,7 +280,6 @@ struct tcf_block {
+ 	struct net *net;
+ 	struct Qdisc *q;
+ 	struct list_head cb_list;
+-	struct work_struct work;
+ };
  
-@@ -389,19 +390,21 @@ int inet6_bind(struct socket *sock, stru
- 	if (!(addr_type & IPV6_ADDR_MULTICAST))
- 		np->saddr = addr->sin6_addr;
+ static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@ -217,8 +217,12 @@ static void tcf_chain_flush(struct tcf_c
  
-+	saved_ipv6only = sk->sk_ipv6only;
-+	if (addr_type != IPV6_ADDR_ANY && addr_type != IPV6_ADDR_MAPPED)
-+		sk->sk_ipv6only = 1;
+ static void tcf_chain_destroy(struct tcf_chain *chain)
+ {
++	struct tcf_block *block = chain->block;
 +
- 	/* Make sure we are allowed to bind here. */
- 	if ((snum || !inet->bind_address_no_port) &&
- 	    sk->sk_prot->get_port(sk, snum)) {
-+		sk->sk_ipv6only = saved_ipv6only;
- 		inet_reset_saddr(sk);
- 		err = -EADDRINUSE;
- 		goto out;
- 	}
+ 	list_del(&chain->list);
+ 	kfree(chain);
++	if (list_empty(&block->chain_list))
++		kfree(block);
+ }
  
--	if (addr_type != IPV6_ADDR_ANY) {
-+	if (addr_type != IPV6_ADDR_ANY)
- 		sk->sk_userlocks |= SOCK_BINDADDR_LOCK;
--		if (addr_type != IPV6_ADDR_MAPPED)
--			sk->sk_ipv6only = 1;
--	}
- 	if (snum)
- 		sk->sk_userlocks |= SOCK_BINDPORT_LOCK;
- 	inet->inet_sport = htons(inet->inet_num);
+ static void tcf_chain_hold(struct tcf_chain *chain)
+@@ -329,27 +333,13 @@ int tcf_block_get(struct tcf_block **p_b
+ }
+ EXPORT_SYMBOL(tcf_block_get);
+ 
+-static void tcf_block_put_final(struct work_struct *work)
+-{
+-	struct tcf_block *block = container_of(work, struct tcf_block, work);
+-	struct tcf_chain *chain, *tmp;
+-
+-	rtnl_lock();
+-
+-	/* At this point, all the chains should have refcnt == 1. */
+-	list_for_each_entry_safe(chain, tmp, &block->chain_list, list)
+-		tcf_chain_put(chain);
+-	rtnl_unlock();
+-	kfree(block);
+-}
+-
+ /* XXX: Standalone actions are not allowed to jump to any chain, and bound
+  * actions should be all removed after flushing.
+  */
+ void tcf_block_put_ext(struct tcf_block *block, struct Qdisc *q,
+ 		       struct tcf_block_ext_info *ei)
+ {
+-	struct tcf_chain *chain;
++	struct tcf_chain *chain, *tmp;
+ 
+ 	if (!block)
+ 		return;
+@@ -365,13 +355,11 @@ void tcf_block_put_ext(struct tcf_block
+ 
+ 	tcf_block_offload_unbind(block, q, ei);
+ 
+-	INIT_WORK(&block->work, tcf_block_put_final);
+-	/* Wait for existing RCU callbacks to cool down, make sure their works
+-	 * have been queued before this. We can not flush pending works here
+-	 * because we are holding the RTNL lock.
++	/* At this point, all the chains should have refcnt >= 1. Block will be
++	 * freed after all chains are gone.
+ 	 */
+-	rcu_barrier();
+-	tcf_queue_work(&block->work);
++	list_for_each_entry_safe(chain, tmp, &block->chain_list, list)
++		tcf_chain_put(chain);
+ }
+ EXPORT_SYMBOL(tcf_block_put_ext);
+ 
