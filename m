@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1472218-1518185446-2-14594725550482626456
+X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185438-2-17943150252428678760
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185446; b=Cb3rVpmEL8Lp7KwwgfEUHxSx/ns+kA4TLUL+eWzgaMKrcXz
-    9ZzUhwvRJvmA+gQyKkgjgHnkuEiJh6L9XWC93w2SyUAbYGercw7wjjf1yBXVMRh3
-    EKB5LOAD8IEvkUvQIsZ/YR+KljuZBpu2nRjiLvw6EBqN56tz8RJbjMVyUCZPjDWl
-    jWCAqq78uIbfOO7Wo0/O8968x6DDoXb8ksHiGq6Ket7er2OqdnZxHsOO3afndcll
-    5y4rSP3+0XSC/kI6X2YYfK7Hk6vFYHxhL4rqmfmIwcoa+Qae7rFfBRL4640psRmu
-    lyCd8xZ14G6d2ddIMTQfjsxGOJEHIZm328UZ//w==
+    t=1518185437; b=LhZG7hken9T7uWiqw/v2pmBNKfNNTmceOIrtmfc77JmyGxD
+    qHQNNGt/DULqcqCmLeMsPoAn0v4D6GjN1tkVGOLKjg/+hQzqSBLdaG7vWtWE7sdh
+    IMWIJGksR2DXVhvNTnsxLmSzKH13uh0UEOf1dig2vfWGIO5ONoIZBMQFV7EJ1Df1
+    1JcGJrJgC/BiOJDU/Foq1qPkLnVBLbuNHSPEGX/XqqZAGXqMtQ4ZmzFeOH9sxhYV
+    iYV8mNrRTyBP6ViP6bEkuFGAMY6CAmC994KCc3O38mZyN+lUnwIl+MxsxlWgw253
+    6t4kQnen6KpNHupq4JpGU0yXsRvuSVfZpXE5J9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185446; bh=gDo+2u00aPz85n0GI+Dh74D4j/
-    PW/MUA/5b8pYj0uw0=; b=PBg0BR/CLE2W+/1v1XsTZoAX9wJIPYjw74n9ayazMy
-    z04/vSZimLb8xS74lGzXYH7X+2aG/ipBSwFi6+bXAjoxKFZuxyNHx8g9P5MLCZHX
-    C/nF5tY0enoaQRXkl3h8wxS6UOP78XiyuZfVikSdddcA7JWbfUlgmDcKEVQ033xj
-    SD4YiOKDsL+qAdCQaLKLWUUVLBUcVgrweavJhJ/Bc6/FZ6+KnLJ7/pD/mKZk0/OT
-    f1vOb35i05i3Rrr8lLusU3B+5D8jHrS//LGvKLybbsypd7/zTZ6uo7FfPdjFHdR+
-    rP4Mh5rzRjJBiEHi4cKkiH5x3o/2PU65TnUCYvhrQvAw==
+    :list-id; s=arctest; t=1518185437; bh=vNjtYVvthOXemUI0e14bnhrQnF
+    6YnD5wRUPhGjWPnzU=; b=oG3viXSGprysJEIU+ACJKkD2pD3r3sQLlqKrTZgxXs
+    rVfBPTm/Cf9NYVdSqSm5HIE5vf0o+aatmV253NLtLWZZkoMwzINrnPsyrlb0czF6
+    YoKEZ7wXoVU6c1aMivRhSUSGfnbSd33kto3Xtp2XVZcvlJW068t58grFusPHqUoX
+    UiQLmLrEfhY7yvjkC/OCNdl0Xpr7DFxpp6YgarIqukcoLqUejhLwerTNs4EiWrkA
+    GiHlgtknn5Wd6C0GEnFL9NqUHDQ515broLF4zol2CPnuVYpzeYcLw5N9JUIEfOTf
+    XpAF9T/mfAocMpcl5Om8HtPLxuL775INkjnz5U2KTY3A==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,26 +47,25 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeBINmM (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:42:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49682 "EHLO
+        id S1752848AbeBINmP (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:42:15 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49722 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752781AbeBINmL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:11 -0500
+        with ESMTP id S1752781AbeBINmO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:42:14 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
         gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
         ashok.raj@intel.com, dave.hansen@intel.com, karahmed@amazon.de,
         arjan@linux.intel.com, torvalds@linux-foundation.org,
         peterz@infradead.org, bp@alien8.de, pbonzini@redhat.com,
         tim.c.chen@linux.intel.com, gregkh@linux-foundation.org
-Subject: [PATCH 4.9 41/92] x86/cpufeatures: Add AMD feature bits for Speculation Control
-Date: Fri,  9 Feb 2018 14:39:10 +0100
-Message-Id: <20180209133934.101797370@linuxfoundation.org>
+Subject: [PATCH 4.9 42/92] x86/msr: Add definitions for new speculation control MSRs
+Date: Fri,  9 Feb 2018 14:39:11 +0100
+Message-Id: <20180209133934.175269214@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -85,15 +84,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-(cherry picked from commit 5d10cbc91d9eb5537998b65608441b592eec65e7)
+(cherry picked from commit 1e340c60d0dd3ae07b5bedc16a0469c14b9f3410)
 
-AMD exposes the PRED_CMD/SPEC_CTRL MSRs slightly differently to Intel.
-See http://lkml.kernel.org/r/2b3e25cc-286d-8bd0-aeaf-9ac4aae39de8@amd.com
+Add MSR and bit definitions for SPEC_CTRL, PRED_CMD and ARCH_CAPABILITIES.
+
+See Intel's 336996-Speculative-Execution-Side-Channel-Mitigations.pdf
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: gnomes@lxorguk.ukuu.org.uk
 Cc: ak@linux.intel.com
 Cc: ashok.raj@intel.com
@@ -106,22 +105,38 @@ Cc: bp@alien8.de
 Cc: pbonzini@redhat.com
 Cc: tim.c.chen@linux.intel.com
 Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-4-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/1516896855-7642-5-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/msr-index.h |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -258,6 +258,9 @@
- /* AMD-defined CPU features, CPUID level 0x80000008 (ebx), word 13 */
- #define X86_FEATURE_CLZERO	(13*32+0) /* CLZERO instruction */
- #define X86_FEATURE_IRPERF	(13*32+1) /* Instructions Retired Count */
-+#define X86_FEATURE_AMD_PRED_CMD (13*32+12) /* Prediction Command MSR (AMD) */
-+#define X86_FEATURE_AMD_SPEC_CTRL (13*32+14) /* Speculation Control MSR only (AMD) */
-+#define X86_FEATURE_AMD_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors (AMD) */
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -37,6 +37,13 @@
+ #define EFER_FFXSR		(1<<_EFER_FFXSR)
  
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
- #define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
+ /* Intel MSRs. Some also available on other CPUs */
++#define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
++#define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
++#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++
++#define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
++#define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
++
+ #define MSR_IA32_PERFCTR0		0x000000c1
+ #define MSR_IA32_PERFCTR1		0x000000c2
+ #define MSR_FSB_FREQ			0x000000cd
+@@ -50,6 +57,11 @@
+ #define SNB_C3_AUTO_UNDEMOTE		(1UL << 28)
+ 
+ #define MSR_MTRRcap			0x000000fe
++
++#define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
++#define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
++#define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
++
+ #define MSR_IA32_BBL_CR_CTL		0x00000119
+ #define MSR_IA32_BBL_CR_CTL3		0x0000011e
+ 
