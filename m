@@ -1,187 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751093AbeBINiv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:38:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750924AbeBINiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:38:50 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E74A2173B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add fi->commit_lock to protect commit
- GCed pages
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org,
-        yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        heyunlei@huawei.com, miaoxie@huawei.com
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
- <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
- <134848f9-2dd6-0efa-3ccf-3c29eeaf5534@huawei.com>
- <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
- <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
- <d67aae9c-778a-50bd-9f73-f90c3efd9b73@kernel.org>
- <33b262b8-7701-a150-09e5-9ae1b4733835@huawei.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <0b3d2792-b3cf-3302-8313-404a25c86854@kernel.org>
-Date: Fri, 9 Feb 2018 21:38:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751343AbeBINjA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:39:00 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:39618 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751113AbeBINi6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 08:38:58 -0500
+X-Google-Smtp-Source: AH8x227HolabBQDwf8Uuzjxhlq7VYmAbrdRvPPw8NBT4s0tJotFr3s8YjrRTl5wAH1mHJzeQYmXtTaziRlyBScMBuNg=
 MIME-Version: 1.0
-In-Reply-To: <33b262b8-7701-a150-09e5-9ae1b4733835@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180209115340.32347-1-colin.king@canonical.com>
+References: <20180209115340.32347-1-colin.king@canonical.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 9 Feb 2018 15:38:56 +0200
+Message-ID: <CAHp75VdKxnjZHXAugA5mx9xaz30oxrdkTV7c2KsOFGahVHuqMg@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: GPD pocket fan: fix spelling mistake:
+ "Mill-celcius" -> "millicelsius"
+To: Colin King <colin.king@canonical.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/9 21:29, Yunlong Song wrote:
-> Back to the problem, if we skip out, then the f2fs_gc will go
-> into dead loop if the apps only atomic start but never atomic
+On Fri, Feb 9, 2018 at 1:53 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in MODULE_PARM_DESC text and remove
+> unnecessary hyphen
 
-That's another issue, which I have suggest to set a threshold time
-to release atomic/volatile pages by balance_fs_bg.
+Applied with a period added to my reviewing and testing queue, thanks!
 
-Thanks,
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/platform/x86/gpd-pocket-fan.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
+> index 2d645c505f81..3b923df15b9b 100644
+> --- a/drivers/platform/x86/gpd-pocket-fan.c
+> +++ b/drivers/platform/x86/gpd-pocket-fan.c
+> @@ -19,12 +19,12 @@
+>  static int temp_limits[3] = { 55000, 60000, 65000 };
+>  module_param_array(temp_limits, int, NULL, 0444);
+>  MODULE_PARM_DESC(temp_limits,
+> -                "Milli-celcius values above which the fan speed increases");
+> +                "Millicelsius values above which the fan speed increases");
+>
+>  static int hysteresis = 3000;
+>  module_param(hysteresis, int, 0444);
+>  MODULE_PARM_DESC(hysteresis,
+> -                "Hysteresis in milli-celcius before lowering the fan speed");
+> +                "Hysteresis in millicelsius before lowering the fan speed");
+>
+>  static int speed_on_ac = 2;
+>  module_param(speed_on_ac, int, 0444);
+> --
+> 2.15.1
+>
 
-> commit. The main aim of my two patches is to remove the skip
-> action to avoid the dead loop.
-> 
-> On 2018/2/9 21:26, Chao Yu wrote:
->> On 2018/2/9 20:56, Yunlong Song wrote:
->>> As what I point in last mail, if the atomic file is not committed
->>> yet, gc_data_segment will register_inmem_page the GCed data pages.
->>
->> We will skip GCing that page as below check:
->>
->> - move_data_{page,block}
->>   - f2fs_is_atomic_file()
->>     skip out;
->>
->> No?
->>
->> Thanks,
->>
->>> This will cause these data pages written twice, the first write
->>> happens in move_data_page->do_write_data_page, and the second
->>> write happens in later __commit_inmem_pages->do_write_data_page.
->>>
->>> On 2018/2/9 20:44, Chao Yu wrote:
->>>> On 2018/2/8 11:11, Yunlong Song wrote:
->>>>> Then the GCed data pages are totally mixed with the inmem atomic pages,
->>>>
->>>> If we add dio_rwsem, GC flow is exclude with atomic write flow. There
->>>> will be not race case to mix GCed page into atomic pages.
->>>>
->>>> Or you mean:
->>>>
->>>>                      - gc_data_segment
->>>>                       - move_data_page
->>>>                        - f2fs_is_atomic_file
->>>> - f2fs_ioc_start_atomic_write
->>>>    - set_inode_flag(inode, FI_ATOMIC_FILE);
->>>>                        - f2fs_set_data_page_dirty
->>>>                         - register_inmem_page
->>>>
->>>> In this case, GCed page can be mixed into database transaction, but could
->>>> it cause any problem except break rule of isolation for transaction.
->>>>
->>>>> this will cause the atomic commit ops write the GCed data pages twice
->>>>> (the first write happens in GC).
->>>>>
->>>>> How about using the early two patches to separate the inmem data pages
->>>>> and GCed data pages, and use dio_rwsem instead of this patch to fix the
->>>>> dnode page problem (dnode page commited but data page are not committed
->>>>> for the GCed page)?
->>>>
->>>> Could we fix the race case first, based on that fixing, and then find the
->>>> place that we can improve?
->>>>
->>>>>
->>>>>
->>>>> On 2018/2/7 20:16, Chao Yu wrote:
->>>>>> On 2018/2/6 11:49, Yunlong Song wrote:
->>>>>>> This patch adds fi->commit_lock to avoid the case that GCed node pages
->>>>>>> are committed but GCed data pages are not committed. This can avoid the
->>>>>>> db file run into inconsistent state when sudden-power-off happens if
->>>>>>> data pages of atomic file is allowed to be GCed before.
->>>>>>
->>>>>> do_fsync:                GC:
->>>>>> - mutex_lock(&fi->commit_lock);
->>>>>>                       - lock_page()
->>>>>>                        - mutex_lock(&fi->commit_lock);
->>>>>>     - lock_page()
->>>>>>
->>>>>>
->>>>>> Well, please consider lock dependency & code complexity, IMO, reuse
->>>>>> fi->dio_rwsem[WRITE] will be enough as below:
->>>>>>
->>>>>> ---
->>>>>>     fs/f2fs/file.c | 3 +++
->>>>>>     fs/f2fs/gc.c   | 5 -----
->>>>>>     2 files changed, 3 insertions(+), 5 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>>> index 672a542e5464..1bdc11feb8d0 100644
->>>>>> --- a/fs/f2fs/file.c
->>>>>> +++ b/fs/f2fs/file.c
->>>>>> @@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>>>>
->>>>>>         inode_lock(inode);
->>>>>>
->>>>>> +    down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>>>> +
->>>>>>         if (f2fs_is_volatile_file(inode))
->>>>>>             goto err_out;
->>>>>>
->>>>>> @@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>>>>             ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
->>>>>>         }
->>>>>>     err_out:
->>>>>> +    up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>>>>         inode_unlock(inode);
->>>>>>         mnt_drop_write_file(filp);
->>>>>>         return ret;
->>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>> index b9d93fd532a9..e49416283563 100644
->>>>>> --- a/fs/f2fs/gc.c
->>>>>> +++ b/fs/f2fs/gc.c
->>>>>> @@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>>>>         if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>             goto out;
->>>>>>
->>>>>> -    if (f2fs_is_atomic_file(inode))
->>>>>> -        goto out;
->>>>
->>>> Seems that we need this check.
->>>>
->>>>>> -
->>>>>>         if (f2fs_is_pinned_file(inode)) {
->>>>>>             f2fs_pin_file_control(inode, true);
->>>>>>             goto out;
->>>>>> @@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>>>>         if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>             goto out;
->>>>>>
->>>>>> -    if (f2fs_is_atomic_file(inode))
->>>>>> -        goto out;
->>>>
->>>> Ditto.
->>>>
->>>> Thanks,
->>>>
->>>>>>         if (f2fs_is_pinned_file(inode)) {
->>>>>>             if (gc_type == FG_GC)
->>>>>>                 f2fs_pin_file_control(inode, true);
->>>>>>
->>>>>
->>>>
->>>> .
->>>>
->>>
->>
->> .
->>
-> 
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
