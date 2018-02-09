@@ -1,151 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752598AbeBIHAm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 02:00:42 -0500
-Received: from gateway20.websitewelcome.com ([192.185.62.46]:11404 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751047AbeBIHAG (ORCPT
+        id S1752632AbeBIHBA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 02:01:00 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:31779 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750895AbeBIHAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 02:00:06 -0500
-Date: Fri, 9 Feb 2018 00:37:02 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] RDMA/nldev: Fix multiple potential NULL pointer dereferences
-Message-ID: <20180209063702.GA28685@embeddedgus>
+        Fri, 9 Feb 2018 02:00:03 -0500
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH 1/2] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+Date: Fri, 9 Feb 2018 15:00:25 +0800
+Message-ID: <20180209070026.193879-2-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180209070026.193879-1-yixun.lan@amlogic.com>
+References: <20180209070026.193879-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1ek2Ix-002htd-Va
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.4.238]:44932
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.235]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case the message header and payload cannot be stored, function
-nlmsg_put returns null.
+Add dt-bindings headers for the Meson-AXG's AO clock and
+reset controller.
 
-Fix this by adding multiple sanity checks and avoid a potential
-null dereference on _nlh_ when calling nlmsg_end.
-
-Addresses-Coverity-ID: 1454215 ("Dereference null return value")
-Addresses-Coverity-ID: 1454223 ("Dereference null return value")
-Addresses-Coverity-ID: 1454224 ("Dereference null return value")
-Addresses-Coverity-ID: 1464669 ("Dereference null return value")
-Addresses-Coverity-ID: 1464670 ("Dereference null return value")
-Addresses-Coverity-ID: 1464672 ("Dereference null return value")
-Fixes: e5c9469efcb1 ("RDMA/netlink: Add nldev device doit implementation")
-Fixes: c3f66f7b0052 ("RDMA/netlink: Implement nldev port doit callback")
-Fixes: 7d02f605f0dc ("RDMA/netlink: Add nldev port dumpit implementation")
-Fixes: b5fa635aab8f ("RDMA/nldev: Provide detailed QP information")
-Fixes: bf3c5a93c523 ("RDMA/nldev: Provide global resource utilization")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+CC: <devicetree@vger.kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/infiniband/core/nldev.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
+ include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
 
-diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
-index 5326a68..dc8f6eb 100644
---- a/drivers/infiniband/core/nldev.c
-+++ b/drivers/infiniband/core/nldev.c
-@@ -313,6 +313,11 @@ static int nldev_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	nlh = nlmsg_put(msg, NETLINK_CB(skb).portid, nlh->nlmsg_seq,
- 			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_GET),
- 			0, 0);
-+	if (!nlh) {
-+		err = -EMSGSIZE;
-+		goto err_free;
+diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
+new file mode 100644
+index 000000000000..78683abb4247
+--- /dev/null
++++ b/include/dt-bindings/clock/axg-aoclkc.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD) */
++/*
++ * Copyright (c) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
 +
-+	}
- 
- 	err = fill_dev_info(msg, device);
- 	if (err)
-@@ -344,6 +349,8 @@ static int _nldev_get_dumpit(struct ib_device *device,
- 	nlh = nlmsg_put(skb, NETLINK_CB(cb->skb).portid, cb->nlh->nlmsg_seq,
- 			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_GET),
- 			0, NLM_F_MULTI);
-+	if (!nlh)
-+		goto out;
- 
- 	if (fill_dev_info(skb, device)) {
- 		nlmsg_cancel(skb, nlh);
-@@ -354,7 +361,8 @@ static int _nldev_get_dumpit(struct ib_device *device,
- 
- 	idx++;
- 
--out:	cb->args[0] = idx;
-+out:
-+	cb->args[0] = idx;
- 	return skb->len;
- }
- 
-@@ -404,6 +412,10 @@ static int nldev_port_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	nlh = nlmsg_put(msg, NETLINK_CB(skb).portid, nlh->nlmsg_seq,
- 			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_GET),
- 			0, 0);
-+	if (!nlh) {
-+		err = -EMSGSIZE;
-+		goto err_free;
-+	}
- 
- 	err = fill_port_info(msg, device, port);
- 	if (err)
-@@ -464,6 +476,8 @@ static int nldev_port_get_dumpit(struct sk_buff *skb,
- 				RDMA_NL_GET_TYPE(RDMA_NL_NLDEV,
- 						 RDMA_NLDEV_CMD_PORT_GET),
- 				0, NLM_F_MULTI);
-+		if (!nlh)
-+			goto out;
- 
- 		if (fill_port_info(skb, device, p)) {
- 			nlmsg_cancel(skb, nlh);
-@@ -507,6 +521,10 @@ static int nldev_res_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	nlh = nlmsg_put(msg, NETLINK_CB(skb).portid, nlh->nlmsg_seq,
- 			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_RES_GET),
- 			0, 0);
-+	if (!nlh) {
-+		ret = -EMSGSIZE;
-+		goto err_free;
-+	}
- 
- 	ret = fill_res_info(msg, device);
- 	if (ret)
-@@ -537,6 +555,8 @@ static int _nldev_res_get_dumpit(struct ib_device *device,
- 	nlh = nlmsg_put(skb, NETLINK_CB(cb->skb).portid, cb->nlh->nlmsg_seq,
- 			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_RES_GET),
- 			0, NLM_F_MULTI);
-+	if (!nlh)
-+		goto out;
- 
- 	if (fill_res_info(skb, device)) {
- 		nlmsg_cancel(skb, nlh);
-@@ -603,6 +623,10 @@ static int nldev_res_get_qp_dumpit(struct sk_buff *skb,
- 	nlh = nlmsg_put(skb, NETLINK_CB(cb->skb).portid, cb->nlh->nlmsg_seq,
- 			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_RES_QP_GET),
- 			0, NLM_F_MULTI);
-+	if (!nlh) {
-+		ret = -EMSGSIZE;
-+		goto err_index;
-+	}
- 
- 	if (fill_nldev_handle(skb, device)) {
- 		ret = -EMSGSIZE;
++#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
++#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
++
++#define CLKID_AO_REMOTE		0
++#define CLKID_AO_I2C_MASTER	1
++#define CLKID_AO_I2C_SLAVE	2
++#define CLKID_AO_UART1		3
++#define CLKID_AO_UART2		4
++#define CLKID_AO_IR_BLASTER	5
++#define CLKID_AO_SAR_ADC	6
++#define CLKID_AO_CLK81		7
++#define CLKID_AO_SAR_ADC_SEL	8
++#define CLKID_AO_SAR_ADC_DIV	9
++#define CLKID_AO_SAR_ADC_CLK	10
++#define CLKID_AO_ALT_XTAL	11
++
++#endif
+diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
+new file mode 100644
+index 000000000000..307f58161bbb
+--- /dev/null
++++ b/include/dt-bindings/reset/axg-aoclkc.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD) */
++/*
++ * Copyright (c) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
++
++#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
++#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
++
++#define RESET_AO_REMOTE		0
++#define RESET_AO_I2C_MASTER	1
++#define RESET_AO_I2C_SLAVE	2
++#define RESET_AO_UART1		3
++#define RESET_AO_UART2		4
++#define RESET_AO_IR_BLASTER	5
++
++#endif
 -- 
-2.7.4
+2.15.1
