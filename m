@@ -1,35 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752580AbeBIDL4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Feb 2018 22:11:56 -0500
-Received: from ozlabs.org ([103.22.144.67]:54821 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752218AbeBIDLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Feb 2018 22:11:54 -0500
-Date: Fri, 9 Feb 2018 14:11:52 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Filipe Manana <fdmanana@suse.com>
-Subject: linux-next: Signed-off-by missing for commit in the btrfs-kdave
- tree
-Message-ID: <20180209141152.774f1205@canb.auug.org.au>
+        id S1752515AbeBIDOr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Feb 2018 22:14:47 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37540 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752285AbeBIDOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Feb 2018 22:14:46 -0500
+Date: Fri, 9 Feb 2018 05:14:42 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Wei Wang <wei.w.wang@intel.com>
+Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com, dgilbert@redhat.com
+Subject: Re: [PATCH v28 0/4] Virtio-balloon: support free page reporting
+Message-ID: <20180209051212-mutt-send-email-mst@kernel.org>
+References: <1518083420-11108-1-git-send-email-wei.w.wang@intel.com>
+ <20180208215048-mutt-send-email-mst@kernel.org>
+ <5A7D116B.9070502@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5A7D116B.9070502@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+On Fri, Feb 09, 2018 at 11:11:39AM +0800, Wei Wang wrote:
+> On 02/09/2018 03:55 AM, Michael S. Tsirkin wrote:
+> > On Thu, Feb 08, 2018 at 05:50:16PM +0800, Wei Wang wrote:
+> > 
+> > > Details:
+> > > Set up a Ping-Pong local live migration, where the guest ceaselessy
+> > > migrates between the source and destination. Linux compilation,
+> > > i.e. make bzImage -j4, is performed during the Ping-Pong migration. The
+> > > legacy case takes 5min14s to finish the compilation. With this
+> > > optimization patched, it takes 5min12s.
+> > How is migration time affected in this case?
+> 
+> 
+> When the linux compilation workload runs, the migration time (both the
+> legacy and this optimization case) varies as the compilation goes on. It
+> seems not easy to give a static speedup number, some times the migration
+> time is reduced to 33%, sometimes to 50%, it varies, and depends on how much
+> free memory the system has at that moment. For example, at the later stage
+> of the compilation, I can observe 5GB memory being used as page cache. But
+> overall, I can observe obvious improvement of the migration time.
+> 
+> 
+> Best,
+> Wei
 
-Commit
-
-  7f53a77da963 ("Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly")
-
-is missing a Signed-off-by from its committer.
+You can run multiple tests and give a best, worst and median numbers.
 
 -- 
-Cheers,
-Stephen Rothwell
+MST
