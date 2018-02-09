@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeBIMfw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 07:35:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:53260 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750918AbeBIMfv (ORCPT
+        id S1751117AbeBIMhM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:37:12 -0500
+Received: from bombadil.infradead.org ([65.50.211.133]:52833 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeBIMhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:35:51 -0500
-Date: Fri, 9 Feb 2018 13:35:39 +0100
+        Fri, 9 Feb 2018 07:37:11 -0500
+Date: Fri, 9 Feb 2018 13:37:04 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: Joel Fernandes <joelaf@google.com>
 Cc: Rohit Jain <rohit.k.jain@oracle.com>, Ingo Molnar <mingo@redhat.com>,
@@ -18,72 +18,34 @@ Cc: Rohit Jain <rohit.k.jain@oracle.com>, Ingo Molnar <mingo@redhat.com>,
         "Cc: EAS Dev" <eas-dev@lists.linaro.org>
 Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
  select_idle_sibling
-Message-ID: <20180209123539.GM25201@hirez.programming.kicks-ass.net>
+Message-ID: <20180209123704.GN25201@hirez.programming.kicks-ass.net>
 References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
  <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
+ <6967b972-129a-a7f0-06ab-c48dc9709726@oracle.com>
+ <CAJWu+orYPDy3H2TCtB_FZWrMx18F_ePnD=Gdfj=pKg4HVaLjTQ@mail.gmail.com>
+ <c78b1dab-95fb-ed88-30de-b4d489a5fc17@oracle.com>
+ <CAJWu+opnwHQm8p6LnFRpfmQ+rkPgeGUWkV_imemvMqzg2WGB_Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJWu+opnNgfVxhgHwLft_qcLMeikEAbNY0zci0WtgQiFkVVjhg@mail.gmail.com>
+In-Reply-To: <CAJWu+opnwHQm8p6LnFRpfmQ+rkPgeGUWkV_imemvMqzg2WGB_Q@mail.gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 07:39:15PM -0800, Joel Fernandes wrote:
+On Mon, Feb 05, 2018 at 10:50:41PM -0800, Joel Fernandes wrote:
 
-> > @@ -6081,7 +6086,7 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
-> >
-> >                 for_each_cpu(cpu, cpu_smt_mask(core)) {
-> >                         cpumask_clear_cpu(cpu, cpus);
-> > -                       if (!idle_cpu(cpu))
-> > +                       if (!idle_cpu(cpu) || !full_capacity(cpu))
-> >                                 idle = false;
-> >                 }
+> That's Ok with me. Just that I remember Peter messing with this path
+> and that it was expensive to scan too much for some systems. The other
+> thing is you're really doing to do a "fail safe" as you call it search
+> here with SIS_PROP set. Do you see a difference in perf when doing the
+> same approach as you took in select_idle_core?
 > 
-> There's some difference in logic between select_idle_core and
-> select_idle_cpu as far as the full_capacity stuff you're adding goes.
-> In select_idle_core, if all CPUs are !full_capacity, you're returning
-> -1. But in select_idle_cpu you're returning the best idle CPU that's
-> the most cap among the !full_capacity ones. Why there is this
-> different in logic? Did I miss something?
+> Peter, are you with the approach Rohit has adopted to pick best
+> capacity idle CPU in select_idle_cpu? I guess nr--; will bail out
+> early if we have SIS_PROP set, incase the scan cost gets too much but
+> then again we might end scanning too few CPUs.
 
-select_idle_core() wants to find a whole core that's idle, the way he
-changed it we'll not consider a core idle if one (or more) of the
-siblings have a heavy IRQ load.
-
-select_idle_cpu() just wants an idle (logical) CPU, and here it looks
-for 
-
-> >
-> > @@ -6102,7 +6107,8 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
-> >   */
-> >  static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int target)
-> >  {
-> > -       int cpu;
-> > +       int cpu, rcpu = -1;
-> > +       unsigned long max_cap = 0;
-> >
-> >         if (!static_branch_likely(&sched_smt_present))
-> >                 return -1;
-> > @@ -6110,11 +6116,13 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
-> >         for_each_cpu(cpu, cpu_smt_mask(target)) {
-> >                 if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
-> >                         continue;
-> > -               if (idle_cpu(cpu))
-> > -                       return cpu;
-> > +               if (idle_cpu(cpu) && (capacity_of(cpu) > max_cap)) {
-> > +                       max_cap = capacity_of(cpu);
-> > +                       rcpu = cpu;
-> 
-> At the SMT level, do you need to bother with choosing best capacity
-> among threads? If RT is eating into one of the SMT thread's underlying
-> capacity, it would eat into the other's. Wondering what's the benefit
-> of doing this here.
-
-Its about latency mostly I think; scheduling on the other sibling gets
-you to run faster -- the core will interleave the SMT threads and you
-don't get to suffer the interrupt load _as_bad_.
-
-If people really cared about their RT workload, they would not allow
-regular tasks on its siblings in any case.
+_IF_ you want to consider capacity, I don't think there's much else you
+can do. And yes, nr-- might have to save the day more often.
