@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185628-2-12801824241101902613
+X-Cyrus-Session-Id: sloti22d1t05-1465196-1518185588-2-18147134835206911300
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185627; b=isSOuJ1xNMrqg7bJgn2l8QKNQmhrrp7CdoTv8PCs77Qh2+c
-    UcqFHjNmoQ1xIxuDqq0hpCQZAwzyNewXkDpgGkyFouMdubWA/DddEYkUNJikk/2m
-    0D7WCwqFj1aqJ1yyAoNhcIZCBoI+fub5FlrghTgRp1RBF+0qstHNffU4L3LpluRR
-    Yc4vDDdVFsCRh7qTsslox8fBqgFLoQv9WAVd3NO6dbqLif9XoAIaWZmfjRmbXpM/
-    XxTD5gRus/ixATJZHbT4u28l3Uh54GWqRTaPni+EuemkvylK2bLRe0tDq8K7nc1t
-    4wNDDKlZ8a6Wrf6DQs+7wprMffDky7nmkOvPg7w==
+    t=1518185587; b=hQ1l/wG/CGDhAy1M6X9kk/b13yZTVhJzQID6Z2uE91Z0cS8
+    nEkgSbFqS/HKGtK+s3QydZZCd+FBvrqIxxeqoG+DnUoMyModJ9goWZfgXRWlfEUj
+    Ttp+05qvcUuLDOt2hJ5vNmfMYslll01HKHWC1JG0U0A9rKXI2X6nW3c9f/kliDRp
+    n30ayQ/X+BpLlWFv0JE2BMBhNyEd6WLVgO0qNbU8Ie2SL7F/2vgPyCSl+42bwYh0
+    GUkP5IAnJeg/VvYL8goBcITub8gxJ+YSEP4Gxtg2k5pZ8upLcADIHWLJc7mujhiy
+    wnJY7ldtiXkZHSz1n2BWUhTtfEG/HBw9d44B3tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185627; bh=NrExqCn6jJz38zituwFUoW59qY
-    4O0v38o6XeG1LgpVc=; b=nNQIvQqTLjadBMt0A/K5G0F9XU3lAV8OnTV3Rb4js8
-    KOYRQXboQ+E36v50qqzG2Z7Hnqxta5MJxOcaKv75S4dPMtw3BEc5e8TE5VEB0j3a
-    v0LZU7Cm+RhE7+onKFNBCTPXOrYrbq+84i6+Mw+vOgMyt746HW0apkHu3mekrKPT
-    PtxV4TFOl4DsLL6ueIBPeWLA5K0Xkln1rqHPXDiG6IURfyE3DvUGc6XxTkKQ0+3T
-    z6plrNVuOU9GSWUtr89tpdc+jX9e8SGNGGSzXHw0L1qYwqFPPJiNeeaIaT2up+aG
-    X+5+SRSirbnqhj6dEjkBA3LOr8HUeJW6+udYYA7g6QmA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185587; bh=UYATGTTR27JjU6D6V1WhRTZtD8
+    B4JyWoC67m8pYbRoU=; b=fgWg1N1oxTY6BVOBOlolPMBOBglQ8gfPo50uVknBU7
+    PiPXaVtyTIYXuODGXbBRQWARqphgVNINeR7uyYL2JtyyFbSl70evfLQb3rVmYQyB
+    E/uNkQJkeVgcmoVJxsyvoIHP2l2BUdpg1pl6BwQPdrr8YpLUxtdvDwexBgVttdFz
+    LS7G4LghPdHrrr6bjVbqKRGI2IEc1kgKBZigsFDu2MyXuEidvXQzFeqnh+at4CUK
+    U3YlhOHNH703jIjlSC4qMVTHWow3MUPLV22bAO6k1T5ylSqnaxX5qSE9hhMpDSlq
+    s9/BuyDtod4M3GaLb9rPs4RT41XUT9ggm89Qbm7yu31g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,35 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751038AbeBION3 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 09:13:29 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49362 "EHLO
+        id S1752726AbeBINlv (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:41:51 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49406 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752657AbeBINlo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:44 -0500
+        with ESMTP id S1752641AbeBINlt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:41:49 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 33/92] b43: Add missing MODULE_FIRMWARE()
-Date: Fri,  9 Feb 2018 14:39:02 +0100
-Message-Id: <20180209133933.556318090@linuxfoundation.org>
+        stable@vger.kernel.org, Jeff Law <law@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kees Cook <keescook@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Paul Turner <pjt@google.com>,
+        Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Subject: [PATCH 4.9 35/92] x86/retpoline: Remove the esp/rsp thunk
+Date: Fri,  9 Feb 2018 14:39:04 +0100
+Message-Id: <20180209133933.717506516@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -77,41 +92,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Waiman Long <longman@redhat.com>
 
-commit 3c89a72ad80c64bdbd5ff851ee9c328a191f7e01 upstream.
+(cherry picked from commit 1df37383a8aeabb9b418698f0bcdffea01f4b1b2)
 
-Some firmware entries were forgotten to be added via MODULE_FIRMWARE(), which
-may result in the non-functional state when the driver is loaded in initrd.
+It doesn't make sense to have an indirect call thunk with esp/rsp as
+retpoline code won't work correctly with the stack pointer register.
+Removing it will help compiler writers to catch error in case such
+a thunk call is emitted incorrectly.
 
-Link: http://bugzilla.opensuse.org/show_bug.cgi?id=1037344
-Fixes: 15be8e89cdd9 ("b43: add more bcma cores")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
+Suggested-by: Jeff Law <law@redhat.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/1516658974-27852-1-git-send-email-longman@redhat.com
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/broadcom/b43/main.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/include/asm/asm-prototypes.h |    1 -
+ arch/x86/lib/retpoline.S              |    1 -
+ 2 files changed, 2 deletions(-)
 
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -71,8 +71,18 @@ MODULE_FIRMWARE("b43/ucode11.fw");
- MODULE_FIRMWARE("b43/ucode13.fw");
- MODULE_FIRMWARE("b43/ucode14.fw");
- MODULE_FIRMWARE("b43/ucode15.fw");
-+MODULE_FIRMWARE("b43/ucode16_lp.fw");
- MODULE_FIRMWARE("b43/ucode16_mimo.fw");
-+MODULE_FIRMWARE("b43/ucode24_lcn.fw");
-+MODULE_FIRMWARE("b43/ucode25_lcn.fw");
-+MODULE_FIRMWARE("b43/ucode25_mimo.fw");
-+MODULE_FIRMWARE("b43/ucode26_mimo.fw");
-+MODULE_FIRMWARE("b43/ucode29_mimo.fw");
-+MODULE_FIRMWARE("b43/ucode33_lcn40.fw");
-+MODULE_FIRMWARE("b43/ucode30_mimo.fw");
- MODULE_FIRMWARE("b43/ucode5.fw");
-+MODULE_FIRMWARE("b43/ucode40.fw");
-+MODULE_FIRMWARE("b43/ucode42.fw");
- MODULE_FIRMWARE("b43/ucode9.fw");
- 
- static int modparam_bad_frames_preempt;
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -37,5 +37,4 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
+-INDIRECT_THUNK(sp)
+ #endif /* CONFIG_RETPOLINE */
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -36,7 +36,6 @@ GENERATE_THUNK(_ASM_DX)
+ GENERATE_THUNK(_ASM_SI)
+ GENERATE_THUNK(_ASM_DI)
+ GENERATE_THUNK(_ASM_BP)
+-GENERATE_THUNK(_ASM_SP)
+ #ifdef CONFIG_64BIT
+ GENERATE_THUNK(r8)
+ GENERATE_THUNK(r9)
