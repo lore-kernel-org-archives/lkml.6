@@ -1,110 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751756AbeBILLP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 06:11:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52990 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750970AbeBILLN (ORCPT
+        id S1751341AbeBILOp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 06:14:45 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:52308 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750863AbeBILOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 06:11:13 -0500
-Date: Fri, 9 Feb 2018 13:11:03 +0200
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH 1/2] zsmalloc: introduce zs_huge_object() function
-References: <20180207092919.19696-1-sergey.senozhatsky@gmail.com>
- <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
- <20180208163006.GB17354@rapoport-lnx>
- <20180209025520.GA3423@jagdpanzerIV>
- <20180209041046.GB23828@bombadil.infradead.org>
- <20180209053630.GC689@jagdpanzerIV>
+        Fri, 9 Feb 2018 06:14:43 -0500
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+ <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+Message-ID: <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
+Date: Fri, 9 Feb 2018 12:14:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209053630.GC689@jagdpanzerIV>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18020911-0016-0000-0000-000005211F71
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020911-0017-0000-0000-0000285DDC37
-Message-Id: <20180209111102.GB2044@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802090143
+In-Reply-To: <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 02:36:30PM +0900, Sergey Senozhatsky wrote:
-> On (02/08/18 20:10), Matthew Wilcox wrote:
-> [..]
-> > Examples::
-> > 
-> >   * Context: Any context.
-> >   * Context: Any context. Takes and releases the RCU lock.
-> >   * Context: Any context. Expects <lock> to be held by caller.
-> >   * Context: Process context. May sleep if @gfp flags permit.
-> >   * Context: Process context. Takes and releases <mutex>.
-> >   * Context: Softirq or process context. Takes and releases <lock>, BH-safe.
-> >   * Context: Interrupt context.
-> 
-> I assume that  <mutex>  spelling serves as a placeholder and should be
-> replaced with a lock name in a real comment. E.g.
-> 
-> 	Takes and releases audit_cmd_mutex.
-> 
-> or should it actually be
-> 
-> 	Takes and releases <audit_cmd_mutex>.
-> 
-> 
-> 
-> 
-> So below is zs_huge_object() documentation I came up with:
->
-> ---
-> 
-> +/**
-> + * zs_huge_object() - Test if a compressed object's size is too big for normal
-> + *                    zspool classes and it will be stored in a huge class.
+Hi Gerd and Stefan,
 
-Maybe "it should be stored ..."?
+can we reach agreement on whether vsock should be involved in this?
 
-> + * @sz: Size in bytes of the compressed object.
-> + *
-> + * The functions checks if the object's size falls into huge_class area.
-> + * We must take ZS_HANDLE_SIZE into account and test the actual size we
+Thanks,
 
-                ^ %ZS_HANDLE_SIZE
+Tomeu
 
-> + * are going to use up, because zs_malloc() unconditionally adds the
-
-I think 's/use up/use/' here
-
-> + * handle size before it performs size_class lookup.
-
-                                   ^ &size_class
-> + *
-> + * Context: Any context.
-> + *
-> + * Return:
-> + * * true  - The object's size is too big, it will be stored in a huge class.
-> + * * false - The object will be store in normal zspool classes.
-> + */
-> ---
+On 02/07/2018 10:49 AM, Tomeu Vizoso wrote:
+> On 02/06/2018 03:23 PM, Gerd Hoffmann wrote:
+>>    Hi,
+>>
+>>>> Hmm?  I'm assuming the wayland client (in the guest) talks to the
+>>>> wayland proxy, using the wayland protocol, like it would talk to a
+>>>> wayland display server.  Buffers must be passed from client to
+>>>> server/proxy somehow, probably using fd passing, so where is the
+>>>> problem?
+>>>>
+>>>> Or did I misunderstand the role of the proxy?
+>>>
+>>> Hi Gerd,
+>>>
+>>> it's starting to look to me that we're talking a bit past the other, so I
+>>> have pasted below a few words describing my current plan regarding the 
+>>> 3 key
+>>> scenarios that I'm addressing.
+>>
+>> You are describing the details, but I'm missing the big picture ...
+>>
+>> So, virtualization aside, how do buffers work in wayland?  As far I know
+>> it goes like this:
+>>
+>>    (a) software rendering: client allocates shared memory buffer, renders
+>>        into it, then passes a file handle for that shmem block together
+>>        with some meta data (size, format, ...) to the wayland server.
+>>
+>>    (b) gpu rendering: client opens a render node, allocates a buffer,
+>>        asks the cpu to renders into it, exports the buffer as dma-buf
+>>        (DRM_IOCTL_PRIME_HANDLE_TO_FD), passes this to the wayland server
+>>        (again including meta data of course).
+>>
+>> Is that correct?
 > 
-> looks OK?
+> Both are correct descriptions of typical behaviors. But it isn't spec'ed 
+> anywhere who has to do the buffer allocation.
 > 
-> 	-ss
+> In practical terms, the buffer allocation happens in either the 2D GUI 
+> toolkit (gtk+, for example), or the EGL implementation. Someone using 
+> this in a real product would most probably be interested in avoiding any 
+> extra copies and make sure that both allocate buffers via virtio-gpu, for 
+> example.
 > 
-
--- 
-Sincerely yours,
-Mike.
+> Depending on the use case, they could be also interested in supporting 
+> unmodified clients with an extra copy per buffer presentation.
+> 
+> That's to say that if we cannot come up with a zero-copy solution for 
+> unmodified clients, we should at least support zero-copy for cooperative 
+> clients.
+> 
+>> Now, with virtualization added to the mix it becomes a bit more
+>> complicated.  Client and server are unmodified.  The client talks to the
+>> guest proxy (wayland protocol).  The guest proxy talks to the host proxy
+>> (protocol to be defined). The host proxy talks to the server (wayland
+>> protocol).
+>>
+>> Buffers must be managed along the way, and we want avoid copying around
+>> the buffers.  The host proxy could be implemented directly in qemu, or
+>> as separate process which cooperates with qemu for buffer management.
+>>
+>> Fine so far?
+> 
+> Yep.
+> 
+>>> I really think that whatever we come up with needs to support 3D 
+>>> clients as
+>>> well.
+>>
+>> Lets start with 3d clients, I think these are easier.  They simply use
+>> virtio-gpu for 3d rendering as usual.  When they are done the rendered
+>> buffer already lives in a host drm buffer (because virgl runs the actual
+>> rendering on the host gpu).  So the client passes the dma-buf to the
+>> guest proxy, the guest proxy imports it to look up the resource-id,
+>> passes the resource-id to the host proxy, the host proxy looks up the
+>> drm buffer and exports it as dma-buf, then passes it to the server.
+>> Done, without any extra data copies.
+> 
+> Yep.
+> 
+>>> Creation of shareable buffer by guest
+>>> -------------------------------------------------
+>>>
+>>> 1. Client requests virtio driver to create a buffer suitable for sharing
+>>> with host (DRM_VIRTGPU_RESOURCE_CREATE)
+>>
+>> client or guest proxy?
+> 
+> As per the above, the GUI toolkit could have been modified so the client 
+> directly creates a shareable buffer, and renders directly to it without 
+> any extra copies.
+> 
+> If clients cannot be modified, then it's the guest proxy what has to 
+> create the shareable buffer and keep it in sync with the client's 
+> non-shareable buffer at the right times, by intercepting 
+> wl_surface.commit messages and copying buffer contents.
+> 
+>>> 4. QEMU maps that buffer to the guest's address space
+>>> (KVM_SET_USER_MEMORY_REGION), passes the guest PFN to the virtio driver
+>>
+>> That part is problematic.  The host can't simply allocate something in
+>> the physical address space, because most physical address space
+>> management is done by the guest.  All pci bars are mapped by the guest
+>> firmware for example (or by the guest OS in case of hotplug).
+> 
+> How can KVM_SET_USER_MEMORY_REGION ever be safely used then? I would have 
+> expected that callers of that ioctl have enough knowledge to be able to 
+> choose a physical address that won't conflict with the guest's kernel.
+> 
+> I see that the ivshmem device in QEMU registers the memory region in BAR 
+> 2 of a PCI device instead. Would that be better in your opinion?
+> 
+>>> 4. QEMU pops data+buffers from the virtqueue, looks up shmem FD for each
+>>> resource, sends data + FDs to the compositor with SCM_RIGHTS
+>>
+>> BTW: Is there a 1:1 relationship between buffers and shmem blocks?  Or
+>> does the wayland protocol allow for offsets in buffer meta data, so you
+>> can place multiple buffers in a single shmem block?
+> 
+> The latter: 
+> https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_shm_pool
+> 
+> Regards,
+> 
+> Tomeu
