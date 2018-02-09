@@ -1,123 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753089AbeBIWBx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 17:01:53 -0500
-Received: from bombadil.infradead.org ([65.50.211.133]:49789 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753071AbeBIWBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 17:01:52 -0500
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] x86: try to simplify NR_CPUS config
-Message-ID: <56d0376c-dc1f-334b-d392-a8c5cd85f4aa@infradead.org>
-Date: Fri, 9 Feb 2018 14:01:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1753029AbeBIWHo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 17:07:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750993AbeBIWHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 17:07:42 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB04C2173B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 9 Feb 2018 17:07:37 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 12/18] tracing: Add accessing direct address from
+ function based events
+Message-ID: <20180209170737.5921ea0f@gandalf.local.home>
+In-Reply-To: <20180209003436.GB28206@sejong>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231018.828677654@goodmis.org>
+        <20180209003436.GB28206@sejong>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Fri, 9 Feb 2018 09:34:36 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-Clean up and simplify the X86 NR_CPUS Kconfig symbol/option by
-introducing MIN_CONFIG_CPUS, MAX_CONFIG_CPUS, and DEF_CONFIG_CPUS.
-Then combine some default values when their conditionals can be
-reduced.
+> Couldn't we use the symbol name directly?  Maybe it needs a syntax to
+> indicate global variable.  Like this?
+> 
+>   # echo 'do_IRQ(int $total_forks)' > function_events
 
-Also move the X86_BIGSMP kconfig option inside an "if X86_32"/"endif"
-config block and drop its explicit "depends on X86_32".
 
-This is a rather literal interpretation of Linus's suggestion.
-It mostly moves the complexity to other kconfig symbols, although
-a little bit more reduction can be done, especially in
-RANGE_BEGIN_CPUS, at the sake of understandability, so I chose
-to leave it more understandable (at least to me).
+I decided to stick with "$".
 
-Suggested-by: Linus Torvalds <torvalds@linuxfoundation.org>
-Link: lkml.kernel.org/r/CA+55aFzOd3j6ZUSkEwTdk85qtt1JywOtm3ZAb-qAvt8_hJ6D4A@mail.gmail.com
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: x86@kernel.org
+-- Steve
+
+>From ed303534dac5b2d9af7b4db9f042d7941c997288 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Date: Fri, 9 Feb 2018 17:03:06 -0500
+Subject: [PATCH] tracing: Add direct kallsym access to function based events
+
+Instead of searching for the address via kallsyms to print the variable in a
+function based event, have "$<symbol>" be a way to tell the function based
+event to look up the symbol for you.
+
+Instead of:
+
+   # grep total_forks /proc/kallsyms
+ffffffff82354c18 B total_forks
+
+  # echo 'do_IRQ(int forks=0xffffffff82354c18)' > function_events
+
+One can do either:
+
+  # echo 'do_IRQ(int forks=$total_forks)' > function_events
+
+or simply
+
+  # echo 'do_IRQ(int $total_forks)' > function_events
+
+The latter will say "total_forks=" in the output where the formal says
+"forks=".
+
+Suggested-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/Kconfig |   48 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 15 deletions(-)
+ Documentation/trace/function-based-events.rst | 25 ++++++++++++++++++-
+ kernel/trace/trace_event_ftrace.c             | 35 ++++++++++++++++++++++++---
+ 2 files changed, 56 insertions(+), 4 deletions(-)
 
---- linux-next-20180209.orig/arch/x86/Kconfig
-+++ linux-next-20180209/arch/x86/Kconfig
-@@ -423,12 +423,6 @@ config X86_MPPARSE
- 	  For old smp systems that do not have proper acpi support. Newer systems
- 	  (esp with 64bit cpus) with acpi support, MADT and DSDT will override it
+diff --git a/Documentation/trace/function-based-events.rst b/Documentation/trace/function-based-events.rst
+index 606981b876a0..9a30aee338f4 100644
+--- a/Documentation/trace/function-based-events.rst
++++ b/Documentation/trace/function-based-events.rst
+@@ -112,13 +112,19 @@ as follows:
  
--config X86_BIGSMP
--	bool "Support for big SMP systems with more than 8 CPUs"
--	depends on X86_32 && SMP
--	---help---
--	  This option is needed for the systems that have more than 8 CPUs
--
- config GOLDFISH
-        def_bool y
-        depends on X86_GOLDFISH
-@@ -460,6 +454,12 @@ config INTEL_RDT
- 	  Say N if unsure.
+  INDIRECT := INDEX | OFFSET | INDIRECT INDIRECT | ''
  
- if X86_32
-+config X86_BIGSMP
-+	bool "Support for big SMP systems with more than 8 CPUs"
-+	depends on SMP
-+	---help---
-+	  This option is needed for the systems that have more than 8 CPUs
-+
- config X86_EXTENDED_PLATFORM
- 	bool "Support for extended (non-PC) x86 platforms"
- 	default y
-@@ -949,17 +949,35 @@ config MAXSMP
- 	  Enable maximum number of CPUS and NUMA Nodes for this architecture.
- 	  If unsure, say N.
+- ADDR := A hexidecimal address starting with '0x'
++ ADDR := <symbol> | <hexnumber>
  
-+config RANGE_BEGIN_CPUS
-+	int
-+	default 2 if SMP && X86_32
-+	default 2 if SMP && !MAXSMP && X86_64
-+	default 8192 if SMP && MAXSMP && X86_64
-+	default 1 if !SMP
-+	default 2
+  Where <name> is a unique string starting with an alphabetic character
+  and consists only of letters and numbers and underscores.
+ 
+  Where <number> is a number that can be read by kstrtol() (hex, decimal, etc).
+ 
++ Where <hexnumber> is an address starting with '0x'
 +
-+config RANGE_END_CPUS
-+	int
-+	default 8 if SMP && X86_32 && !X86_BIGSMP
-+	default 64 if SMP && X86_32 && X86_BIGSMP
-+	default 512 if SMP && !MAXSMP && !CPUMASK_OFFSTACK && X86_64
-+	default 8192 if SMP && !MAXSMP && CPUMASK_OFFSTACK && X86_64
-+	default 8192 if SMP && MAXSMP && X86_64
-+	default 1 if !SMP
++ Where <symbol> is a valid symbol name from kallsyms starting with "$".
++ For example: $total_forks
 +
-+config DEF_CONFIG_CPUS
-+	int
-+	default 1 if !SMP
-+	default 8192 if MAXSMP
-+	default 32 if SMP && X86_BIGSMP
-+	default 8 if SMP && X86_32
-+	default 64 if SMP
 +
- config NR_CPUS
- 	int "Maximum number of CPUs" if SMP && !MAXSMP
--	range 2 8 if SMP && X86_32 && !X86_BIGSMP
--	range 2 64 if SMP && X86_32 && X86_BIGSMP
--	range 2 512 if SMP && !MAXSMP && !CPUMASK_OFFSTACK && X86_64
--	range 2 8192 if SMP && !MAXSMP && CPUMASK_OFFSTACK && X86_64
--	default "1" if !SMP
--	default "8192" if MAXSMP
--	default "32" if SMP && X86_BIGSMP
--	default "8" if SMP && X86_32
--	default "64" if SMP
-+	range RANGE_BEGIN_CPUS RANGE_END_CPUS
-+	default DEF_CONFIG_CPUS
- 	---help---
- 	  This allows you to specify the maximum number of CPUs which this
- 	  kernel will support.  If CPUMASK_OFFSTACK is enabled, the maximum
+ 
+ Simple arguments
+ ================
+@@ -317,6 +323,23 @@ Is the same as
+     <idle>-0     [003] d..3   655.823498: ret_from_intr->do_IRQ(total_forks=1504, regs=tick_nohz_idle_enter+0x4c/0x50)
+     <idle>-0     [003] d..3   655.954096: ret_from_intr->do_IRQ(total_forks=1504, regs=cpuidle_enter_state+0xb1/0x330)
+ 
++You can also accomplish the same thing above using the kallsym name following
++a "$" symbol. That is:
++
++  # echo 'do_IRQ(int $total_forks)' > function_events
++
++is the same as the above command using the "0xffffffff82354c18" address.
++
++You can rename the variable by using "=":
++
++  # echo 'do_IRQ(int forks=$total_forks)' > function_events
++
++  # cat trace
++    <idle>-0     [003] d..3   698.226763: ret_from_intr->do_IRQ(forks=1475)
++    <idle>-0     [003] d..3   698.226810: ret_from_intr->do_IRQ(forks=1475)
++    <idle>-0     [003] d..3   698.227046: ret_from_intr->do_IRQ(forks=1475)
++    <idle>-0     [003] d..3   698.502222: ret_from_intr->do_IRQ(forks=1475)
++
+ 
+ Array types
+ ===========
+diff --git a/kernel/trace/trace_event_ftrace.c b/kernel/trace/trace_event_ftrace.c
+index 376c9324d65c..39abda19d5d2 100644
+--- a/kernel/trace/trace_event_ftrace.c
++++ b/kernel/trace/trace_event_ftrace.c
+@@ -92,6 +92,7 @@ static LIST_HEAD(func_events);
+ 	C(ARRAY_END),				\
+ 	C(REDIRECT_PLUS),			\
+ 	C(REDIRECT_BRACKET),			\
++	C(SYMBOL),				\
+ 	C(VAR),					\
+ 	C(COMMA),				\
+ 	C(NULL),				\
+@@ -281,6 +282,7 @@ static char *next_token(char **ptr, char *last)
+ 		    *str == '|' ||
+ 		    *str == '+' ||
+ 		    *str == '=' ||
++		    *str == '$' ||
+ 		    *str == ')')
+ 			break;
+ 	}
+@@ -393,6 +395,14 @@ static int add_arg_redirect(struct func_arg *arg, long index, long indirect)
+ 	return 0;
+ }
+ 
++static int get_symbol(const char *symbol, unsigned long *val)
++{
++	*val = kallsyms_lookup_name(symbol);
++	if (!*val)
++		return -1;
++	return 0;
++}
++
+ static enum func_states
+ process_event(struct func_event *fevent, const char *token, enum func_states state)
+ {
+@@ -469,6 +479,8 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 	case FUNC_STATE_ARRAY_END:
+ 		if (WARN_ON(!fevent->last_arg))
+ 			break;
++		if (token[0] == '$')
++			return FUNC_STATE_SYMBOL;
+ 		if (update_arg_name(fevent, token) < 0)
+ 			break;
+ 		if (strncmp(token, "0x", 2) == 0)
+@@ -542,6 +554,11 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 		fevent->last_arg->index += val;
+ 		return FUNC_STATE_VAR;
+ 
++	case FUNC_STATE_SYMBOL:
++		if (!isalpha(token[0]) && token[0] != '_')
++			break;
++		goto equal;
++
+ 	case FUNC_STATE_ADDR:
+ 		switch (token[0]) {
+ 		case ')':
+@@ -599,14 +616,26 @@ process_event(struct func_event *fevent, const char *token, enum func_states sta
+ 		break;
+ 
+ 	case FUNC_STATE_EQUAL:
++		if (token[0] == '$')
++			return FUNC_STATE_SYMBOL;
+ 		if (strncmp(token, "0x", 2) != 0)
+ 			break;
+  equal:
+ 		if (WARN_ON(!fevent->last_arg))
+ 			break;
+-		ret = kstrtoul(token, 0, &val);
+-		if (ret < 0)
+-			break;
++		if (isalpha(token[0]) || token[0] != '_') {
++			ret = get_symbol(token, &val);
++			if (ret < 0)
++				break;
++			if (!fevent->last_arg->name) {
++				if (update_arg_name(fevent, token) < 0)
++					break;
++			}
++		} else {
++			ret = kstrtoul(token, 0, &val);
++			if (ret < 0)
++				break;
++		}
+ 		update_arg = false;
+ 		fevent->last_arg->index = val;
+ 		fevent->last_arg->arg = -1;
+-- 
+2.13.6
