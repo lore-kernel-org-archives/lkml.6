@@ -1,70 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751091AbeBIIsv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 03:48:51 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36576 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750890AbeBIIsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 03:48:50 -0500
-X-Google-Smtp-Source: AH8x226jPwV2gr4bMBnd27APuJlsc3ei0XOJzfRk0+DwtlsDckh7L+dsZ51TeZG3JMvQ5BNPpGkcYYfU0UU+M+KGX38=
+        id S1751231AbeBIIvZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 03:51:25 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46648 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750933AbeBIIvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 03:51:24 -0500
+Date: Fri, 9 Feb 2018 16:51:16 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] printk: move dump stack related code to lib/dump_stack.c
+Message-ID: <20180209085116.GB5454@dhcp-128-65.nay.redhat.com>
+References: <20180209080624.GA2607@dhcp-128-65.nay.redhat.com>
+ <20180209081604.GE689@jagdpanzerIV>
+ <20180209082743.GA14845@dhcp-128-65.nay.redhat.com>
+ <20180209084235.GF689@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <20180209021031.20631-1-jaedon.shin@gmail.com>
-References: <20180209021031.20631-1-jaedon.shin@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Feb 2018 09:48:48 +0100
-X-Google-Sender-Auth: RoxBSjWB4i7i220GSR2RhDFTock
-Message-ID: <CAMuHMdXOtrnMrNkuexHdpX+asaG1ADwmb5JWwAYYrvvvn0P8ZQ@mail.gmail.com>
-Subject: Re: [PATCH] irqchip: Use %px to print pointer value
-To: Jaedon Shin <jaedon.shin@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209084235.GF689@jagdpanzerIV>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaedon,
+On 02/09/18 at 05:42pm, Sergey Senozhatsky wrote:
+> On (02/09/18 16:27), Dave Young wrote:
+> > > Seems that those functions are still defined in printk header.
+> > > Did you test !CONFIG_PRINTK build?
+> 
+> Apparently dump_stack(void) is also in printk.h
+> 
+> extern asmlinkage void dump_stack(void) __cold;
+> 
+> so it's "OK" to keep those functions in printk.h, I guess. I thought
+> that dump_stack() had its own header file...
 
-On Fri, Feb 9, 2018 at 3:10 AM, Jaedon Shin <jaedon.shin@gmail.com> wrote:
-> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-> pointers printed with %p are hashed. Use %px instead of %p to print
-> pointer value.
->
-> Signed-off-by: Jaedon Shin <jaedon.shin@gmail.com>
+It has not unfortunately..  The build failed because we have dummy
+functions in printk.h and redefined in lib/dump_stack.c.  I'm hesitating
+to add #ifdef CONFIG_PRINTK in lib/dump_stack.c.
 
-Thanks for your patch!
+> 
+> > !CONFIG_PRINTK will use the dummy functions in printk.h, I did not test
+> > the build, doing it now to double confirm..
+> 
+> Not sure. Please test.
+> 
+> 	-ss
 
-> --- a/drivers/irqchip/irq-bcm7038-l1.c
-> +++ b/drivers/irqchip/irq-bcm7038-l1.c
-> @@ -339,7 +339,7 @@ int __init bcm7038_l1_of_init(struct device_node *dn,
->                 goto out_unmap;
->         }
->
-> -       pr_info("registered BCM7038 L1 intc (mem: 0x%p, IRQs: %d)\n",
-> +       pr_info("registered BCM7038 L1 intc (mem: 0x%px, IRQs: %d)\n",
->                 intc->cpus[0]->map_base, IRQS_PER_WORD * intc->n_words);
-
-I believe the printing of this value should just be removed.
-Printing virtual addresses of mapped registers is usually not helpful, except
-for an attacker.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks
+Dave
