@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x2265P1hwWfSuvDPq5PA98H003ZXxZpis65DSQkMgoRlG8HA/bOvvihxMATCgjkkSpAP0dLnM
-ARC-Seal: i=1; a=rsa-sha256; t=1518168357; cv=none;
+X-Google-Smtp-Source: AH8x224EYUadZKz15nrBSuzLQFwX0VYge38jntSSnRaY7z9Nmy9/hHgo04Et7c/nrXY0c+ZK9ntK
+ARC-Seal: i=1; a=rsa-sha256; t=1518168358; cv=none;
         d=google.com; s=arc-20160816;
-        b=DCZH+ZXxW+IuJLwu7GYzOaTS7zsZMN/FBJOL2j8b94wBTuDnPXa24GhSGU+C3ls6sI
-         g65mUyyu+2yX/Gyeklklavbquk1zYOr+LonCKIeLGnUaUkvGvsBDtZmZ/te7k96qO6OO
-         GVjMwmL0A5TBkbZeEeSLOFUmhdApmHLNl6vzhhA5ZL+mgIaaJgAdSEJwgID48FtE3PON
-         u0Hsns2SZD5+0FfSYuE4FFTOzykgV33mjkMhCkErpO/WI2C7QxHzxkLqu7ebASLhmwXE
-         Wn13dLIhL8Rr0SWeE0lX/SwauueFWWt5K+m9b+x40OTQspuwYCQldTIefMT6IYVjvoQa
-         zBPA==
+        b=p1CIqhpVLGnhGV2xzGqFIgYFOqhL35Oy74Z7uPyeIE3IPZcZKLtX4DaNYXzGk086tq
+         uB7wtz4A9/RRBaVxABFlFiho3VNhKrOR3s8CvC1K5SfBdlzz0oQD1DLFebiVQGtN+6ye
+         o0Y3qaZ3HHvOGOhL5zbGggn8SIxTkzHuB42Ex0JQ8Y/MIMRhj+JHAB8dC6fbnNL59V4y
+         qIPICALrlEN/ROMG3COLQ4V9xySLlXL+LRyf9+fokrfKSs9CuTqQp6IWFMRXreOLUdYZ
+         XrR3/gb2QhM2sotMyxziP8HHVuWY+rXVGjgB7h809Y93ckUqhGCNSfVqDNQAnWbCGACu
+         1Cqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=F76G9LZEdC5OnWxDS3Frt1z2RkU1eRc9CKV10tuPZTE=;
-        b=wkC6wjmiYv9hdVZOa7fp+4iFOQoeM7o3cZr71+x41eMZT7xW4/1PLRJ+oLJZ1cdRdx
-         nYZgdjqr6INaKU6M1NbjZkQNOMaACQ/6fGYKXUnCfxjH6VMlhWVY8+aH+yZwT4oDIf3o
-         0jqjsTgN1XdYXaOfIEasze7U0drqtsGgoiZUG9nB5G7XfM5BnEksVXTgt3QpE3DlRbLC
-         4px25twkyeugSqAeTMJFTJRrGynhtcCM/oH4iu2ISRHlrTtnkTCti4CXMjlyhVUyESps
-         YrEjqxNH1ACPXd27pCWYRdFS9+cAIBLxQr1sYZvYB3OL+1+EUG/gJATFeTDRlwchEkCK
-         kuww==
+        bh=DrqeQNOm0g8Mc4vr7QAR9T+xeBlp8SjMqmZj74xwEDw=;
+        b=XqkAkveFydukdDL3ZPVZpGv7yy3d2aOfMgsQFfG5WoXKms6TTIkROSHxkFkXNy5ll9
+         mODxfhs/d6dc5S8lMUajQW1f48dpPaEWFy+BTuimYDMjOOXV3HmdRuErePvLKuBJl1/H
+         MoNIQ9FO68srPLjZ3LbhEjYCyO4KdtXXS7U/ulmqiBZsOO0+DrFNUGTC/E3KRtCakLa2
+         IEmBEmKmilyu2kt+SedtyiQGVW8HEgJjuQcAKbDEGxaXMlWcNwRQHbQGnDiPw5wP28RO
+         DiTXhXXTsAFJNaACQYR4VUjwe32IqJKKr9tmjMN2gqStQveIfrbhK0GG0uUkPm9Ee9lc
+         UhKw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=OIGrLMm8;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=CNLxIxPL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=OIGrLMm8;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=CNLxIxPL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,366 +57,207 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 08/31] x86/entry/32: Enter the kernel via trampoline stack
-Date: Fri,  9 Feb 2018 10:25:17 +0100
-Message-Id: <1518168340-9392-9-git-send-email-joro@8bytes.org>
+Subject: [PATCH 13/31] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
+Date: Fri,  9 Feb 2018 10:25:22 +0100
+Message-Id: <1518168340-9392-14-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914904447772612?=
-X-GMAIL-MSGID: =?utf-8?q?1591914904447772612?=
+X-GMAIL-THRID: =?utf-8?q?1591914904806211394?=
+X-GMAIL-MSGID: =?utf-8?q?1591914904806211394?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Use the entry-stack as a trampoline to enter the kernel. The
-entry-stack is already in the cpu_entry_area and will be
-mapped to userspace when PTI is enabled.
+It can happen that we enter the kernel from kernel-mode and
+on the entry-stack. The most common way this happens is when
+we get an exception while loading the user-space segment
+registers on the kernel-to-userspace exit path.
+
+The segment loading needs to be done after the entry-stack
+switch, because the stack-switch needs kernel %fs for
+per_cpu access.
+
+When this happens, we need to make sure that we leave the
+kernel with the entry-stack again, so that the interrupted
+code-path runs on the right stack when switching to the
+user-cr3.
+
+We do this by detecting this condition on kernel-entry by
+checking CS.RPL and %esp, and if it happens, we copy over
+the complete content of the entry stack to the task-stack.
+This needs to be done because once we enter the exception
+handlers we might be scheduled out or even migrated to a
+different CPU, so that we can't rely on the entry-stack
+contents. We also leave a marker in the stack-frame to
+detect this condition on the exit path.
+
+On the exit path the copy is reversed, we copy all of the
+remaining task-stack back to the entry-stack and switch
+to it.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S        | 135 +++++++++++++++++++++++++++++++--------
- arch/x86/include/asm/switch_to.h |   6 +-
- arch/x86/kernel/asm-offsets.c    |   1 +
- arch/x86/kernel/cpu/common.c     |   5 +-
- arch/x86/kernel/process.c        |   2 -
- arch/x86/kernel/process_32.c     |  10 +--
- 6 files changed, 120 insertions(+), 39 deletions(-)
+ arch/x86/entry/entry_32.S | 109 +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 108 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index b39c5e2..e714b53 100644
+index b5ef003..d94dab6 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -135,25 +135,36 @@
+@@ -358,6 +358,9 @@
+  * copied there. So allocate the stack-frame on the task-stack and
+  * switch to it before we do any copying.
+  */
++
++#define CS_FROM_ENTRY_STACK	(1 << 31)
++
+ .macro SWITCH_TO_KERNEL_STACK
  
- #endif /* CONFIG_X86_32_LAZY_GS */
+ 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+@@ -381,6 +384,10 @@
+ 	/* Load top of task-stack into %edi */
+ 	movl	TSS_entry_stack(%edi), %edi
  
--.macro SAVE_ALL pt_regs_ax=%eax
-+.macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0
++	/* Special case - entry from kernel mode via entry stack */
++	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
++	jz	.Lentry_from_kernel_\@
++
+ 	/* Bytes to copy */
+ 	movl	$PTREGS_SIZE, %ecx
+ 
+@@ -394,8 +401,8 @@
+ 	 */
+ 	addl	$(4 * 4), %ecx
+ 
+-.Lcopy_pt_regs_\@:
+ #endif
++.Lcopy_pt_regs_\@:
+ 
+ 	/* Allocate frame on task-stack */
+ 	subl	%ecx, %edi
+@@ -410,6 +417,56 @@
  	cld
-+	/* Push segment registers and %eax */
- 	PUSH_GS
- 	pushl	%fs
- 	pushl	%es
- 	pushl	%ds
- 	pushl	\pt_regs_ax
+ 	rep movsb
+ 
++	jmp .Lend_\@
 +
-+	/* Load kernel segments */
-+	movl	$(__USER_DS), %eax
-+	movl	%eax, %ds
-+	movl	%eax, %es
-+	movl	$(__KERNEL_PERCPU), %eax
-+	movl	%eax, %fs
-+	SET_KERNEL_GS %eax
++.Lentry_from_kernel_\@:
 +
-+	/* Push integer registers and complete PT_REGS */
- 	pushl	%ebp
- 	pushl	%edi
- 	pushl	%esi
- 	pushl	%edx
- 	pushl	%ecx
- 	pushl	%ebx
--	movl	$(__USER_DS), %edx
--	movl	%edx, %ds
--	movl	%edx, %es
--	movl	$(__KERNEL_PERCPU), %edx
--	movl	%edx, %fs
--	SET_KERNEL_GS %edx
++	/*
++	 * This handles the case when we enter the kernel from
++	 * kernel-mode and %esp points to the entry-stack. When this
++	 * happens we need to switch to the task-stack to run C code,
++	 * but switch back to the entry-stack again when we approach
++	 * iret and return to the interrupted code-path. This usually
++	 * happens when we hit an exception while restoring user-space
++	 * segment registers on the way back to user-space.
++	 *
++	 * When we switch to the task-stack here, we can't trust the
++	 * contents of the entry-stack anymore, as the exception handler
++	 * might be scheduled out or moved to another CPU. Therefore we
++	 * copy the complete entry-stack to the task-stack and set a
++	 * marker in the iret-frame (bit 31 of the CS dword) to detect
++	 * what we've done on the iret path.
++	 *
++	 * On the iret path we copy everything back and switch to the
++	 * entry-stack, so that the interrupted kernel code-path
++	 * continues on the same stack it was interrupted with.
++	 *
++	 * Be aware that an NMI can happen anytime in this code.
++	 *
++	 * %esi: Entry-Stack pointer (same as %esp)
++	 * %edi: Top of the task stack
++	 */
 +
-+	/* Switch to kernel stack if necessary */
-+.if \switch_stacks > 0
-+	SWITCH_TO_KERNEL_STACK
-+.endif
++	/* Calculate number of bytes on the entry stack in %ecx */
++	movl	%esi, %ecx
 +
++	/* %ecx to the top of entry-stack */
++	andl	$(MASK_entry_stack), %ecx
++	addl	$(SIZEOF_entry_stack), %ecx
++
++	/* Number of bytes on the entry stack to %ecx */
++	sub	%esi, %ecx
++
++	/* Mark stackframe as coming from entry stack */
++	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
++
++	/*
++	 * %esi and %edi are unchanged, %ecx contains the number of
++	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
++	 * the stack-frame on task-stack and copy everything over
++	 */
++	jmp .Lcopy_pt_regs_\@
++
+ .Lend_\@:
+ .endm
+ 
+@@ -467,6 +524,55 @@
  .endm
  
  /*
-@@ -261,6 +272,71 @@
- .Lend_\@:
- #endif /* CONFIG_X86_ESPFIX32 */
- .endm
-+
-+
-+/*
-+ * Called with pt_regs fully populated and kernel segments loaded,
-+ * so we can access PER_CPU and use the integer registers.
++ * This macro handles the case when we return to kernel-mode on the iret
++ * path and have to switch back to the entry stack.
 + *
-+ * We need to be very careful here with the %esp switch, because an NMI
-+ * can happen everywhere. If the NMI handler finds itself on the
-+ * entry-stack, it will overwrite the task-stack and everything we
-+ * copied there. So allocate the stack-frame on the task-stack and
-+ * switch to it before we do any copying.
++ * See the comments below the .Lentry_from_kernel_\@ label in the
++ * SWITCH_TO_KERNEL_STACK macro for more details.
 + */
-+.macro SWITCH_TO_KERNEL_STACK
-+
-+	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-+
-+	/* Are we on the entry stack? Bail out if not! */
-+	movl	PER_CPU_VAR(cpu_entry_area), %edi
-+	addl	$CPU_ENTRY_AREA_entry_stack, %edi
-+	cmpl	%esp, %edi
-+	jae	.Lend_\@
-+
-+	/* Load stack pointer into %esi and %edi */
-+	movl	%esp, %esi
-+	movl	%esi, %edi
-+
-+	/* Move %edi to the top of the entry stack */
-+	andl	$(MASK_entry_stack), %edi
-+	addl	$(SIZEOF_entry_stack), %edi
-+
-+	/* Load top of task-stack into %edi */
-+	movl	TSS_entry_stack(%edi), %edi
-+
-+	/* Bytes to copy */
-+	movl	$PTREGS_SIZE, %ecx
-+
-+#ifdef CONFIG_VM86
-+	testl	$X86_EFLAGS_VM, PT_EFLAGS(%esi)
-+	jz	.Lcopy_pt_regs_\@
++.macro PARANOID_EXIT_TO_KERNEL_MODE
 +
 +	/*
-+	 * Stack-frame contains 4 additional segment registers when
-+	 * coming from VM86 mode
++	 * Test if we entered the kernel with the entry-stack. Most
++	 * likely we did not, because this code only runs on the
++	 * return-to-kernel path.
 +	 */
-+	addl	$(4 * 4), %ecx
++	testl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
++	jz	.Lend_\@
 +
-+.Lcopy_pt_regs_\@:
-+#endif
++	/* Unlikely slow-path */
 +
-+	/* Allocate frame on task-stack */
++	/* Clear marker from stack-frame */
++	andl	$(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
++
++	/* Copy the remaining task-stack contents to entry-stack */
++	movl	%esp, %esi
++	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
++
++	/* Bytes on the task-stack to ecx */
++	movl	PER_CPU_VAR(cpu_current_top_of_stack), %ecx
++	subl	%esi, %ecx
++
++	/* Allocate stack-frame on entry-stack */
 +	subl	%ecx, %edi
 +
-+	/* Switch to task-stack */
-+	movl	%edi, %esp
-+
 +	/*
-+	 * We are now on the task-stack and can safely copy over the
-+	 * stack-frame
++	 * Save future stack-pointer, we must not switch until the
++	 * copy is done, otherwise the NMI handler could destroy the
++	 * contents of the task-stack we are about to copy.
 +	 */
++	movl	%edi, %ebx
++
++	/* Do the copy */
 +	cld
 +	rep movsb
 +
++	/* Safe to switch to entry-stack now */
++	movl	%ebx, %esp
++
 +.Lend_\@:
 +.endm
-+
- /*
++/*
   * %eax: prev task
   * %edx: next task
-@@ -454,6 +530,7 @@ ENTRY(xen_sysenter_target)
   */
- ENTRY(entry_SYSENTER_32)
- 	movl	TSS_entry_stack(%esp), %esp
-+
- .Lsysenter_past_esp:
- 	pushl	$__USER_DS		/* pt_regs->ss */
- 	pushl	%ebp			/* pt_regs->sp (stashed in bp) */
-@@ -462,7 +539,7 @@ ENTRY(entry_SYSENTER_32)
- 	pushl	$__USER_CS		/* pt_regs->cs */
- 	pushl	$0			/* pt_regs->ip = 0 (placeholder) */
- 	pushl	%eax			/* pt_regs->orig_ax */
--	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
-+	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest, stack already switched */
+@@ -837,6 +943,7 @@ restore_all:
  
- 	/*
- 	 * SYSENTER doesn't filter flags, so we need to clear NT, AC
-@@ -573,7 +650,8 @@ ENDPROC(entry_SYSENTER_32)
- ENTRY(entry_INT80_32)
- 	ASM_CLAC
- 	pushl	%eax			/* pt_regs->orig_ax */
--	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
-+
-+	SAVE_ALL pt_regs_ax=$-ENOSYS switch_stacks=1	/* save rest */
+ restore_all_kernel:
+ 	TRACE_IRQS_IRET
++	PARANOID_EXIT_TO_KERNEL_MODE
+ 	RESTORE_REGS 4
+ 	jmp	.Lirq_return
  
- 	/*
- 	 * User mode is traced as though IRQs are on, and the interrupt gate
-@@ -665,7 +743,8 @@ END(irq_entries_start)
- common_interrupt:
- 	ASM_CLAC
- 	addl	$-0x80, (%esp)			/* Adjust vector into the [-256, -1] range */
--	SAVE_ALL
-+
-+	SAVE_ALL switch_stacks=1
- 	ENCODE_FRAME_POINTER
- 	TRACE_IRQS_OFF
- 	movl	%esp, %eax
-@@ -673,16 +752,16 @@ common_interrupt:
- 	jmp	ret_from_intr
- ENDPROC(common_interrupt)
- 
--#define BUILD_INTERRUPT3(name, nr, fn)	\
--ENTRY(name)				\
--	ASM_CLAC;			\
--	pushl	$~(nr);			\
--	SAVE_ALL;			\
--	ENCODE_FRAME_POINTER;		\
--	TRACE_IRQS_OFF			\
--	movl	%esp, %eax;		\
--	call	fn;			\
--	jmp	ret_from_intr;		\
-+#define BUILD_INTERRUPT3(name, nr, fn)			\
-+ENTRY(name)						\
-+	ASM_CLAC;					\
-+	pushl	$~(nr);					\
-+	SAVE_ALL switch_stacks=1;			\
-+	ENCODE_FRAME_POINTER;				\
-+	TRACE_IRQS_OFF					\
-+	movl	%esp, %eax;				\
-+	call	fn;					\
-+	jmp	ret_from_intr;				\
- ENDPROC(name)
- 
- #define BUILD_INTERRUPT(name, nr)		\
-@@ -908,16 +987,20 @@ common_exception:
- 	pushl	%es
- 	pushl	%ds
- 	pushl	%eax
-+	movl	$(__USER_DS), %eax
-+	movl	%eax, %ds
-+	movl	%eax, %es
-+	movl	$(__KERNEL_PERCPU), %eax
-+	movl	%eax, %fs
- 	pushl	%ebp
- 	pushl	%edi
- 	pushl	%esi
- 	pushl	%edx
- 	pushl	%ecx
- 	pushl	%ebx
-+	SWITCH_TO_KERNEL_STACK
- 	ENCODE_FRAME_POINTER
- 	cld
--	movl	$(__KERNEL_PERCPU), %ecx
--	movl	%ecx, %fs
- 	UNWIND_ESPFIX_STACK
- 	GS_TO_REG %ecx
- 	movl	PT_GS(%esp), %edi		# get the function address
-@@ -925,9 +1008,6 @@ common_exception:
- 	movl	$-1, PT_ORIG_EAX(%esp)		# no syscall to restart
- 	REG_TO_PTGS %ecx
- 	SET_KERNEL_GS %ecx
--	movl	$(__USER_DS), %ecx
--	movl	%ecx, %ds
--	movl	%ecx, %es
- 	TRACE_IRQS_OFF
- 	movl	%esp, %eax			# pt_regs pointer
- 	CALL_NOSPEC %edi
-@@ -946,6 +1026,7 @@ ENTRY(debug)
- 	 */
- 	ASM_CLAC
- 	pushl	$-1				# mark this as an int
-+
- 	SAVE_ALL
- 	ENCODE_FRAME_POINTER
- 	xorl	%edx, %edx			# error code 0
-@@ -981,6 +1062,7 @@ END(debug)
-  */
- ENTRY(nmi)
- 	ASM_CLAC
-+
- #ifdef CONFIG_X86_ESPFIX32
- 	pushl	%eax
- 	movl	%ss, %eax
-@@ -1048,7 +1130,8 @@ END(nmi)
- ENTRY(int3)
- 	ASM_CLAC
- 	pushl	$-1				# mark this as an int
--	SAVE_ALL
-+
-+	SAVE_ALL switch_stacks=1
- 	ENCODE_FRAME_POINTER
- 	TRACE_IRQS_OFF
- 	xorl	%edx, %edx			# zero error code
-diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
-index eb5f799..20e5f7ab 100644
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -89,13 +89,9 @@ static inline void refresh_sysenter_cs(struct thread_struct *thread)
- /* This is used when switching tasks or entering/exiting vm86 mode. */
- static inline void update_sp0(struct task_struct *task)
- {
--	/* On x86_64, sp0 always points to the entry trampoline stack, which is constant: */
--#ifdef CONFIG_X86_32
--	load_sp0(task->thread.sp0);
--#else
-+	/* sp0 always points to the entry trampoline stack, which is constant: */
- 	if (static_cpu_has(X86_FEATURE_XENPV))
- 		load_sp0(task_top_of_stack(task));
--#endif
- }
- 
- #endif /* _ASM_X86_SWITCH_TO_H */
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index 232152c..86f06e8 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -103,6 +103,7 @@ void common(void) {
- 	OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampoline);
- 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
- 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
-+	DEFINE(MASK_entry_stack, (~(sizeof(struct entry_stack) - 1)));
- 
- 	/* Offset for sp0 and sp1 into the tss_struct */
- 	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index d63f4b57..a0ed348 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1709,11 +1709,12 @@ void cpu_init(void)
- 	enter_lazy_tlb(&init_mm, curr);
- 
- 	/*
--	 * Initialize the TSS.  Don't bother initializing sp0, as the initial
--	 * task never enters user mode.
-+	 * Initialize the TSS.  sp0 points to the entry trampoline stack
-+	 * regardless of what task is running.
- 	 */
- 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
- 	load_TR_desc();
-+	load_sp0((unsigned long)(cpu_entry_stack(cpu) + 1));
- 
- 	load_mm_ldt(&init_mm);
- 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index cb368c2..7fab4fa 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -57,14 +57,12 @@ __visible DEFINE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw) = {
- 		 */
- 		.sp0 = (1UL << (BITS_PER_LONG-1)) + 1,
- 
--#ifdef CONFIG_X86_64
- 		/*
- 		 * .sp1 is cpu_current_top_of_stack.  The init task never
- 		 * runs user code, but cpu_current_top_of_stack should still
- 		 * be well defined before the first context switch.
- 		 */
- 		.sp1 = TOP_OF_INIT_STACK,
--#endif
- 
- #ifdef CONFIG_X86_32
- 		.ss0 = __KERNEL_DS,
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 097d36a..3f3a8c6 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -289,10 +289,12 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	 */
- 	update_sp0(next_p);
- 	refresh_sysenter_cs(next);
--	this_cpu_write(cpu_current_top_of_stack,
--		       (unsigned long)task_stack_page(next_p) +
--		       THREAD_SIZE);
--	/* SYSENTER reads the task-stack from tss.sp1 */
-+	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
-+	/*
-+	 * TODO: Find a way to let cpu_current_top_of_stack point to
-+	 * cpu_tss_rw.x86_tss.sp1. Doing so now results in stack corruption with
-+	 * iret exceptions.
-+	 */
- 	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
- 
- 	/*
 -- 
 2.7.4
