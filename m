@@ -1,79 +1,63 @@
-Return-Path: <dvhart@infradead.org>
-X-Google-Smtp-Source: AH8x225sou2+/0xc/2+Khyl5rqI10e3nffqMMuSMbnbiEb0pcXX06W9rc/8fSYeUZLXs/S4E3ae2
-ARC-Seal: i=1; a=rsa-sha256; t=1518142961; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518183638; cv=none;
         d=google.com; s=arc-20160816;
-        b=c5HDxvnaPl/ibFdpN+MPebwE5NXysCxC/L9IRhxqfEWOFh+JE3+7phX/B2+Vxiu5/I
-         4UB41OGgi/18liOQJnq4qLcIoDK/5OGr4yqIUc6e5a69fjT32XPWpWaqmVuOWGKQQ3iR
-         Gw2TO8HvzuCiE/veC2ZsWRvDvDKhkfCU/rASgl34hbahs+7YvLP+ld4DD3C+jJcEVf6s
-         XD471dOKJ2ES44ymw7ngcmVuen16MFkVb53nvxqBPAXsUYcK+AvxEQqlpNYJqVbc1tWs
-         514r3WFqmJroPznyNWXCOEkr1XIxrM+uagPpp60jFzmHjO8lNL9Up8B3UHpc4fgLoUHR
-         3H5A==
+        b=Q+a3YOtKwiwD1Ib9WvMKXZpwFWO9puo/5U9+MxGMk0iqObTrDDD5TA1CuDVLm85Gzg
+         2AxRpoRTEPnu1RH+D/DsU/P159TxJQ1CpduXNpMyJ8GpKEB5YTAb1YQaC4hsh2aaSp13
+         n1L8yfxD3c8fM7ADYykvzCC02Wed+IocK42SbuAHwpKxnqZ22x0zSFZ22TpI+snbJDq8
+         Pf8iUVWc/hN63wFro24wSPEy6+qYjuWfHMpYC/JHLIE7WSrzhcv2IUHe2NO1OO+8VmHJ
+         AwzUO2CwpMR7lefkDsbRYIr0TujXKuUefKZfUu3WgzaXIq/kkvnpTD+NKPjuhk7m+JrC
+         QPcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=mTI2yZ3N/Ns9u5LUbjVd/soed7crJZSlm1xZsapnx8I=;
-        b=Jy7pcaAJveHLXf138XJ6ECPKCdgBFqsOn+UwwDDx7iaYd/uDDVc5/DW6ygxNek3sjO
-         xD1tx96Xx9JLHdpuPqRrhaq00jz7KujvXVd5VLdma0OGemDgReM9xRlYiJQn/HYJgDs8
-         Ax5OmCxCepsFDh9hcHEroekmmQ6uw1FZpTM7B4vmoCxXl43F9CmE7OM/WsLkHNPi5GY2
-         m/ZDbeuIsuUIlRYr9HJ3K3iaBDxhlLIRIMcxpCA3vZM0Sv41Xy8R1KeNRrfCtL66cPOz
-         EWiHgHlbbErA9haIN5hlv9LoWNg9NPrBqr/IooJ9egDA40y3EioDW2v33pJzqpJdw3LC
-         nJFw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=BgncKTKIehp+GgPDS51TegDT+1pH2/St7KOBWCkLMdY=;
+        b=cH0e658FjRy9Nu3WQ8CXv166m1rZqYq6Y8h25qojfKwPQkIl3vNCXXmBbnjFZyI6k5
+         KEMqAQv8mkHeRsCdXjdZ6JSc5sbq4V9knFtJ3OdBO7DJ/rCCKtKzrSpTsB1ew0uxO+EE
+         wy9Ml2p+vtpOQGxZAmFp844HBCfaxSXm17k8WzLUv5Y2JqeWgMovI32K1FaYyjcFDPHn
+         vIqVfJorQZvdAEKpJ5Ko90/1JJgs2ZDGbR73UNbJ5W0vwB8QyxVprWLy2RezzxtiQvWL
+         NTF9RpaeQX1rMWDhP9xnhcxLfVnxwg65aGgPsMNnJhAax8z7vd6V/n7RbQfBlCbqbSI0
+         JR2g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=ha4b/7H8;
-       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 65.50.211.133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cJRHXzUk;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=ha4b/7H8;
-       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 65.50.211.133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
-Date: Thu, 8 Feb 2018 18:22:39 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: andy.shevchenko@gmail.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	jiri@resnulli.us
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cJRHXzUk;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x224+EI76OS/tnHWxas972KUa8VyC6jGk03X+E8fUnwbfsR95fGENmRzX50fJMreloccUWNst76vqdsd27skx+ds=
+MIME-Version: 1.0
+In-Reply-To: <20180209022239.GB25898@fury>
+References: <1517561148-38587-1-git-send-email-vadimp@mellanox.com> <20180209022239.GB25898@fury>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 9 Feb 2018 15:40:38 +0200
+Message-ID: <CAHp75VdQgUjrkWDxTOd67qAn29gyQg2d6BoU5ODxS-bJ7SwPEw@mail.gmail.com>
 Subject: Re: [patch v1 0/4] mlx-platform: Add support for new Mellanox
  systems, code improvement, fixes for msn21xx system
-Message-ID: <20180209022239.GB25898@fury>
-References: <1517561148-38587-1-git-send-email-vadimp@mellanox.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517561148-38587-1-git-send-email-vadimp@mellanox.com>
-User-Agent: Mutt/1.8.0 (2017-02-23)
+To: Darren Hart <dvhart@infradead.org>
+Cc: Vadim Pasternak <vadimp@mellanox.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>, =?UTF-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591270875340200693?=
-X-GMAIL-MSGID: =?utf-8?q?1591888273660272028?=
+X-GMAIL-MSGID: =?utf-8?q?1591930927404991804?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 02, 2018 at 08:45:44AM +0000, Vadim Pasternak wrote:
-> The patchset:
-> - adds defines for bus numbers, used for system topology description;
-> - fixes definition for power cables for system family msn21xx;
-> - introduces support for new Mellanox systems;
-> 
-> Vadim Pasternak (4):
->   platform/x86: mlx-platform: Use defines for bus assignment
->   platform/x86: mlx-platform: Add define for the negative bus
->   platform/x86: mlx-platform: Fix power cable setting for systems from
->     msn21xx family
+On Fri, Feb 9, 2018 at 4:22 AM, Darren Hart <dvhart@infradead.org> wrote:
+> On Fri, Feb 02, 2018 at 08:45:44AM +0000, Vadim Pasternak wrote:
 
-I've queued 1,2,3 and will try to include these in one final PR to Linus during
-the Merge Window. (Andy, FYI)
+>>   platform/x86: mlx-platform: Use defines for bus assignment
+>>   platform/x86: mlx-platform: Add define for the negative bus
+>>   platform/x86: mlx-platform: Fix power cable setting for systems from
+>>     msn21xx family
+>
+> I've queued 1,2,3 and will try to include these in one final PR to Linus during
+> the Merge Window. (Andy, FYI)
 
->   platform/x86: mlx-platform: Add support for new Mellanox systems
-> 
-
-This one needs to be broken up into smaller patches.
-
->  drivers/platform/x86/mlx-platform.c | 345 ++++++++++++++++++++++++++++++++++--
->  1 file changed, 335 insertions(+), 10 deletions(-)
-> 
-> -- 
-> 2.1.4
-> 
-> 
+Noted.
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+With Best Regards,
+Andy Shevchenko
