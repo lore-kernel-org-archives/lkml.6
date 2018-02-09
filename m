@@ -1,85 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeBIRW0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 12:22:26 -0500
-Received: from mail-it0-f42.google.com ([209.85.214.42]:52000 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751070AbeBIRWU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:22:20 -0500
-X-Google-Smtp-Source: AH8x227FZkrbISatEelNFL7RSHnl3TrJnxjqg7XELNhfpgh98rl+wka1oGxMFAWmyOINLznWJWhnpDEjk69u2FMIy0M=
-MIME-Version: 1.0
-X-Originating-IP: [90.77.100.34]
-In-Reply-To: <a81cf234-f103-1787-6a4a-fc59bb50cb4d@redhat.com>
-References: <CALieaeczi5iZPgKVdHw1B3ouyWcd2U_cqPzEYqvT+8JW4Uwi3A@mail.gmail.com>
- <a81cf234-f103-1787-6a4a-fc59bb50cb4d@redhat.com>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Fri, 9 Feb 2018 18:22:19 +0100
-Message-ID: <CABxcv=mT2T-FJqR=WzfW-woN0Q4gusZ6H_83vkkGWc4Km-qQDQ@mail.gmail.com>
-Subject: Re: i2c: core: report OF style module alias for devices registered
- via OF
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Dmitry Mastykin <mastichi@gmail.com>,
+        id S1752116AbeBIR34 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 12:29:56 -0500
+Received: from mout.gmx.net ([212.227.15.15]:33669 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751047AbeBIR3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 12:29:54 -0500
+Message-ID: <1518197379.26824.31.camel@gmx.de>
+Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
+From: Mike Galbraith <efault@gmx.de>
+To: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Javier Martinez Canillas <javierm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
+        169364@studenti.unimore.it, holger@applied-asynchrony.com,
+        Serena Ziviani <ziviani.serena@gmail.com>
+Date: Fri, 09 Feb 2018 18:29:39 +0100
+In-Reply-To: <b5d4a3bc8946db0a696e8398b68adba0@natalenko.name>
+References: <20180207211920.6343-1-paolo.valente@linaro.org>
+         <17c57205-7cc0-5577-0322-dc35914e50e5@kernel.dk>
+         <34041F0A-F460-4736-9A6C-76D861EA0070@linaro.org>
+         <b5d4a3bc8946db0a696e8398b68adba0@natalenko.name>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:tyDji0ia5aSciIFCFR4UVYi47fHB4fi6hgKoHStZSj0DR21FGXx
+ bezqvlR3mSKfbXaRqdGYRgLgzrzt1R/DkOgw79mij/BonT1Z09LH0ZsfgMlNf4GaXlhFv5n
+ kRNncSsT6CLkJTnuxk41kMEvuZSTuJMXUewv0RSFzsXau9TqU11R1BqzshsKAC8JY1UB+kD
+ VTYnIRwbYD8ColDRCj8ig==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3Et7xHvFhdI=:bZmOmbFj874kAyPp1uQEUn
+ +sqq7liNNOCmyoxeuJg3ZzpnLqcOPyLAmw3BFPZJZrShcDxiKW78eAPvmGjZa6IdzsDe+KZUb
+ f+CK3Hap28lpkcOzOKi0k22lq9+4F65dtk51Q8yNGx2MaCK02UWQV6bwBDUZqksA+dib/4Ufv
+ bitSTrLF/SRMbkowq9umvU+5oIp44FRQyHPkRLdA5pq+cvFYSs+oTa3l+fqHSzB27S96B1uNp
+ FKwmbf/ieIN1oCzOsnwquVt0GF22bxpAYgGNlT/c73VI7Z2ME1KNJcNl88pIEvPbdu2lY9JiK
+ 9MqSc7++vVgdWweayk3v7PmdJNSKnjvZfI1yN8wlDhPR5GmZ/5DNYpKNTkr9m8CbIkgMqg9Tk
+ AEZGT8zmyl7rPvqnGkSyKJXqlVM9PvHx1YDD1F8Q+CEECq7poa0TWRNYB+t3np4vVqSbscDj9
+ JTHz+BRDtQAU0IrSSCwjIOixwyjhwQvXwqsqziKZGGcW94qQTiMPHCOTFVpW3RPqVCahA6loc
+ qFxjihoC+Wzdf9QHejd4e8y2E832I9x6MqD/7MqTfsIgdPAziwlLHM5OIuYAyqD5OfBZ7dL71
+ V1XnDO2ZfmLX+tkXhrXF6HcUY8QwUyJDc1LXH/u1J6fuQhwrUcWJjDNE+WJqjUTgckIESXQfW
+ yIVHO6HJEkMDq41tWec7fkr9CbPr16NVulHkiE7EnPQIaUShSvBt5cd5HbNTvY0BQX0m21OFl
+ JQM6DO4TbQw/Z3b2+EhlYpQNNi9+MGPGrI3eCY54hx7qX9dyfKUV+18A2boUZHlCFo3b6iEa4
+ jUDd3Mfj/RmtoHGgmS6mL8zVlbN+yFlaKuKoLa0CRIHnyFnvG0=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+On Fri, 2018-02-09 at 14:21 +0100, Oleksandr Natalenko wrote:
+> 
+> In addition to this I think it should be worth considering CC'ing Greg 
+> to pull this fix into 4.15 stable tree.
 
-On Tue, Jan 16, 2018 at 3:11 PM, Javier Martinez Canillas
-<javierm@redhat.com> wrote:
-> Hello Dmitry,
->
-> On 01/16/2018 02:55 PM, Dmitry Mastykin wrote:
->> On Sun, 3 Dec 2017 22:40:50 +0100, Javier Martinez Canillas
->> <javierm@redhat.com> wrote:
->>
->>> The buses should honor the firmware interface used to register the device,
->>> but the I2C core reports a MODALIAS of the form i2c:<device> even for I2C
->>> devices registered via OF.
->>>
->>> This means that user-space will never get an OF stype uevent MODALIAS even
->>> when the drivers modules contain aliases exported from both the I2C and OF
->>> device ID tables. For example, an Atmel maXTouch Touchscreen registered by
->>> a DT node with compatible "atmel,maxtouch" has the following module alias:
->>>
->>> $ cat /sys/class/i2c-adapter/i2c-8/8-004b/modalias
->>> i2c:maxtouch
->>>
->>> So udev won't be able to auto-load a module for an OF-only device driver.
->>> Many OF-only drivers duplicate the OF device ID table entries in an I2C ID
->>> table only has a workaround for how the I2C core reports the module alias.
->>>
->>> This patch changes the I2C core to report an OF related MODALIAS uevent if
->>> the device was registered via OF. So for the previous example, after this
->>> patch, the reported MODALIAS for the Atmel maXTouch will be the following:
->>>
->>> $ cat /sys/class/i2c-adapter/i2c-8/8-004b/modalias
->>> of:NtrackpadT<NULL>Catmel,maxtouch
->>>
->>> NOTE: This patch may break out-of-tree drivers that were relying on this
->>>       behavior, and only had an I2C device ID table even when the device
->>>       was registered via OF. There are no remaining drivers in mainline
->>>       that do this, but out-of-tree drivers have to be fixed and define
->>>       a proper OF device ID table to have module auto-loading working.
->>>
->>
->> Hello Javier,
->> thank you for your patch!
->>
->
-> Thanks a lot for testing!
->
-> Hopefully Wolfram will review/merge this soon, otherwise in the meantime drivers
-> are going to add I2C device ID tables just as a workaround or new drivers won't
-> include a OF device ID tables since these aren't really required today.
->
+This isn't one he can cherry-pick, some munging required, in which case
+he usually wants a properly tested backport.
 
-Another gentle ping for this.
-
-Best regards,
-Javier
+	-Mike
