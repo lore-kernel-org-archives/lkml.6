@@ -1,69 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752581AbeBIOWU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 09:22:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752305AbeBIOWF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:22:05 -0500
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH RFC tip/lkmm 06/10] EXP MAINTAINERS: Add the "LKMM" acronym
-Date: Fri,  9 Feb 2018 06:20:27 -0800
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180209141832.GA17505@linux.vnet.ibm.com>
-References: <20180209141832.GA17505@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18020914-2213-0000-0000-0000026A442C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008504; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000250; SDB=6.00987227; UDB=6.00501083; IPR=6.00766586;
- BA=6.00005821; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019457; XFM=3.00000015;
- UTC=2018-02-09 14:21:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18020914-2214-0000-0000-0000590E295C
-Message-Id: <1518186031-17997-6-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802090184
+        id S1752777AbeBIOWo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 09:22:44 -0500
+Received: from mga01.intel.com ([192.55.52.88]:11331 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752631AbeBIOWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 09:22:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,483,1511856000";
+   d="scan'208";a="16482101"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv9 4/4] x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G
+Date: Fri,  9 Feb 2018 17:22:28 +0300
+Message-Id: <20180209142228.21231-5-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180209142228.21231-1-kirill.shutemov@linux.intel.com>
+References: <20180209142228.21231-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds "(LKMM)" to the end of the MAINTAINERS file's entry
-for the Linux-kernel memory-consistency model.
+This patch addresses a shortcoming in current boot process on machines
+that supports 5-level paging.
 
-If people are OK with this, it should be squashed into 12a62a1d0703
-("MAINTAINERS: Add the Memory Consistency Model subsystem").
+If a bootloader enables 64-bit mode with 4-level paging, we might need to
+switch over to 5-level paging. The switching requires the disabling
+paging. It works fine if kernel itself is loaded below 4G.
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+But if the bootloader put the kernel above 4G (not sure if anybody does
+this), we would lose control as soon as paging is disabled, because the
+code becomes unreachable to the CPU.
+
+This patch implements a trampoline in lower memory to handle this
+situation.
+
+We only need the memory for a very short time, until the main kernel
+image sets up own page tables.
+
+We go through the trampoline even if we don't have to: if we're already
+in 5-level paging mode or if we don't need to switch to it. This way the
+trampoline gets tested on every boot.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/boot/compressed/head_64.S | 127 ++++++++++++++++++++++++++-----------
+ 1 file changed, 89 insertions(+), 38 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e6ad9b44e8fb..674b35c3f28e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8086,7 +8086,7 @@ M:	Kees Cook <keescook@chromium.org>
- S:	Maintained
- F:	drivers/misc/lkdtm*
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 74026c3da4c3..10682ada293e 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -307,13 +307,34 @@ ENTRY(startup_64)
  
--LINUX KERNEL MEMORY CONSISTENCY MODEL
-+LINUX KERNEL MEMORY CONSISTENCY MODEL (LKMM)
- M:	Alan Stern <stern@rowland.harvard.edu>
- M:	Andrea Parri <parri.andrea@gmail.com>
- M:	Will Deacon <will.deacon@arm.com>
+ 	/*
+ 	 * At this point we are in long mode with 4-level paging enabled,
+-	 * but we want to enable 5-level paging.
++	 * but we might want to enable 5-level paging or vice versa.
+ 	 *
+-	 * The problem is that we cannot do it directly. Setting LA57 in
+-	 * long mode would trigger #GP. So we need to switch off long mode
+-	 * first.
++	 * The problem is that we cannot do it directly. Setting or clearing
++	 * CR4.LA57 in long mode would trigger #GP. So we need to switch off
++	 * long mode and paging first.
++	 *
++	 * We also need a trampoline in lower memory to switch over from
++	 * 4- to 5-level paging for cases when the bootloader puts the kernel
++	 * above 4G, but didn't enable 5-level paging for us.
++	 *
++	 * The same trampoline can be used to switch from 5- to 4-level paging
++	 * mode, like when starting 4-level paging kernel via kexec() when
++	 * original kernel worked in 5-level paging mode.
++	 *
++	 * For the trampoline, we need the top page table to reside in lower
++	 * memory as we don't have a way to load 64-bit values into CR3 in
++	 * 32-bit mode.
++	 *
++	 * We go though the trampoline even if we don't have to: if we're
++	 * already in a desired paging mode. This way the trampoline code gets
++	 * tested on every boot.
+ 	 */
+ 
++	/* Make sure we have GDT with 32-bit code segment */
++	leaq	gdt(%rip), %rax
++	movl	%eax, gdt64+2(%rip)
++	lgdt	gdt64(%rip)
++
+ 	/*
+ 	 * paging_prepare() would set up the trampoline and check if we need to
+ 	 * enable 5-level paging.
+@@ -331,30 +352,20 @@ ENTRY(startup_64)
+ 	/* Save the trampoline address in RCX */
+ 	movq	%rax, %rcx
+ 
+-	/* Check if we need to enable 5-level paging */
+-	cmpq	$0, %rdx
+-	jz	lvl5
+-
+-	/* Clear additional page table */
+-	leaq	lvl5_pgtable(%rbx), %rdi
+-	xorq	%rax, %rax
+-	movq	$(PAGE_SIZE/8), %rcx
+-	rep	stosq
+-
+ 	/*
+-	 * Setup current CR3 as the first and only entry in a new top level
+-	 * page table.
++	 * Load the address of trampoline_return() into RDI.
++	 * It will be used by the trampoline to return to the main code.
+ 	 */
+-	movq	%cr3, %rdi
+-	leaq	0x7 (%rdi), %rax
+-	movq	%rax, lvl5_pgtable(%rbx)
++	leaq	trampoline_return(%rip), %rdi
+ 
+ 	/* Switch to compatibility mode (CS.L = 0 CS.D = 1) via far return */
+ 	pushq	$__KERNEL32_CS
+-	leaq	compatible_mode(%rip), %rax
++	leaq	TRAMPOLINE_32BIT_CODE_OFFSET(%rax), %rax
+ 	pushq	%rax
+ 	lretq
+-lvl5:
++trampoline_return:
++	/* Restore the stack, the 32-bit trampoline uses its own stack */
++	leaq	boot_stack_end(%rbx), %rsp
+ 
+ 	/*
+ 	 * cleanup_trampoline() would restore trampoline memory.
+@@ -503,45 +514,82 @@ relocated:
+ 	jmp	*%rax
+ 
+ 	.code32
++/*
++ * This is the 32-bit trampoline that will be copied over to low memory.
++ *
++ * RDI contains the return address (might be above 4G).
++ * ECX contains the base address of the trampoline memory.
++ * Non zero RDX on return means we need to enable 5-level paging.
++ */
+ ENTRY(trampoline_32bit_src)
+-compatible_mode:
+ 	/* Set up data and stack segments */
+ 	movl	$__KERNEL_DS, %eax
+ 	movl	%eax, %ds
+ 	movl	%eax, %ss
+ 
++	/* Setup new stack */
++	leal	TRAMPOLINE_32BIT_STACK_END(%ecx), %esp
++
+ 	/* Disable paging */
+ 	movl	%cr0, %eax
+ 	btrl	$X86_CR0_PG_BIT, %eax
+ 	movl	%eax, %cr0
+ 
+-	/* Point CR3 to 5-level paging */
+-	leal	lvl5_pgtable(%ebx), %eax
+-	movl	%eax, %cr3
++	/* Check what paging mode we want to be in after the trampoline */
++	cmpl	$0, %edx
++	jz	1f
+ 
+-	/* Enable PAE and LA57 mode */
++	/* We want 5-level paging: don't touch CR3 if it already points to 5-level page tables */
+ 	movl	%cr4, %eax
+-	orl	$(X86_CR4_PAE | X86_CR4_LA57), %eax
++	testl	$X86_CR4_LA57, %eax
++	jnz	3f
++	jmp	2f
++1:
++	/* We want 4-level paging: don't touch CR3 if it already points to 4-level page tables */
++	movl	%cr4, %eax
++	testl	$X86_CR4_LA57, %eax
++	jz	3f
++2:
++	/* Point CR3 to the trampoline's new top level page table */
++	leal	TRAMPOLINE_32BIT_PGTABLE_OFFSET(%ecx), %eax
++	movl	%eax, %cr3
++3:
++	/* Enable PAE and LA57 (if required) paging modes */
++	movl	$X86_CR4_PAE, %eax
++	cmpl	$0, %edx
++	jz	1f
++	orl	$X86_CR4_LA57, %eax
++1:
+ 	movl	%eax, %cr4
+ 
+-	/* Calculate address we are running at */
+-	call	1f
+-1:	popl	%edi
+-	subl	$1b, %edi
++	/* Calculate address of paging_enabled() once we are executing in the trampoline */
++	leal	paging_enabled - trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_OFFSET(%ecx), %eax
+ 
+-	/* Prepare stack for far return to Long Mode */
++	/* Prepare the stack for far return to Long Mode */
+ 	pushl	$__KERNEL_CS
+-	leal	lvl5(%edi), %eax
+-	push	%eax
++	pushl	%eax
+ 
+-	/* Enable paging back */
++	/* Enable paging again */
+ 	movl	$(X86_CR0_PG | X86_CR0_PE), %eax
+ 	movl	%eax, %cr0
+ 
+ 	lret
+ 
++	.code64
++paging_enabled:
++	/* Return from the trampoline */
++	jmp	*%rdi
++
++	/*
++         * The trampoline code has a size limit.
++         * Make sure we fail to compile if the trampoline code grows
++         * beyond TRAMPOLINE_32BIT_CODE_SIZE bytes.
++	 */
++	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
++
++	.code32
+ no_longmode:
+-	/* This isn't an x86-64 CPU so hang */
++	/* This isn't an x86-64 CPU, so hang intentionally, we cannot continue */
+ 1:
+ 	hlt
+ 	jmp     1b
+@@ -549,6 +597,11 @@ no_longmode:
+ #include "../../kernel/verify_cpu.S"
+ 
+ 	.data
++gdt64:
++	.word	gdt_end - gdt
++	.long	0
++	.word	0
++	.quad   0
+ gdt:
+ 	.word	gdt_end - gdt
+ 	.long	gdt
+@@ -602,8 +655,6 @@ trampoline_save:
+ 	.balign 4096
+ pgtable:
+ 	.fill BOOT_PGT_SIZE, 1, 0
+-lvl5_pgtable:
+-	.fill PAGE_SIZE, 1, 0
+ 
+ 	.global pgtable_trampoline
+ pgtable_trampoline:
 -- 
-2.5.2
+2.15.1
