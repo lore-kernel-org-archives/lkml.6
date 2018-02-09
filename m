@@ -1,100 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeBINWB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 08:22:01 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:44396 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750973AbeBINV7 (ORCPT
+        id S1751077AbeBINY3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 08:24:29 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39235 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeBINY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:21:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 89D222F0198
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Fri, 9 Feb 2018 08:24:26 -0500
+X-Google-Smtp-Source: AH8x226oM88Kf4j09y+qYSf1ICuowM1Ug8hdjwe28+EeuTVdcjuOH4IamvAJ8gjeQwK7ftsDKCQGuQ==
+Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
+ device
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
+References: <cover.1515639336.git.ryder.lee@mediatek.com>
+ <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
+ <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
+ <1517803655.1173.12.camel@mtkswgap22>
+ <0e0e703c-0ac9-06ad-91c5-abdf16de1ee9@gmail.com>
+ <1518069447.28878.4.camel@mtkswgap22>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <6fc674ba-a540-ef25-932d-afdc9d8e7fbe@gmail.com>
+Date: Fri, 9 Feb 2018 14:24:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <1518069447.28878.4.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Fri, 09 Feb 2018 14:21:57 +0100
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
-        169364@studenti.unimore.it, holger@applied-asynchrony.com,
-        efault@gmx.de, Serena Ziviani <ziviani.serena@gmail.com>
-Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
-In-Reply-To: <34041F0A-F460-4736-9A6C-76D861EA0070@linaro.org>
-References: <20180207211920.6343-1-paolo.valente@linaro.org>
- <17c57205-7cc0-5577-0322-dc35914e50e5@kernel.dk>
- <34041F0A-F460-4736-9A6C-76D861EA0070@linaro.org>
-Message-ID: <b5d4a3bc8946db0a696e8398b68adba0@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.3
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1518182517;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
-        bh=os5E+yhKocluj0TaYk1d0SPzPIXQBOsQjJs5BwY9NJg=;
-        b=Jhxz4IWFrJ8xq/fFtuXZuPo8FOSogoYYcF0sbB3nzTplEA8EgmnNFl67tBkdd3ABoeGh/Y
-        ulNbzHGBzwrA+w0Fxu3pe8VuuNW+9EJTKytMM5v8M7bT7/UF5N53jEAXxJI8CcaMO3NiRw
-        4vgFu/CgHBoCvsePXseFwN7ylYWER9s=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1518182517; a=rsa-sha256;
-        cv=none;
-        b=voQjf1ceHnkohSTQtslujnF4H7naRBMy6sZwbKYdkvo+FLdeGx8QCQXMwvzPdVAhK4iPOgVPdFcqj9mlAh3JoYVMPqjtEoxBGPScg5GL9/COdgKZxlBI6iDDvd8OfMjpLfge6h+0RiuMkvtUcLmrnHZDO3BiPpqOSYOWSRg6xyA=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
 
-08.02.2018 08:16, Paolo Valente wrote:
->> Il giorno 07 feb 2018, alle ore 23:18, Jens Axboe <axboe@kernel.dk> ha 
->> scritto:
->> 
->> On 2/7/18 2:19 PM, Paolo Valente wrote:
->>> Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq 
->>> via
->>> RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a 
->>> device
->>> be re-inserted into the active I/O scheduler for that device. As a
->>> consequence, I/O schedulers may get the same request inserted again,
->>> even several times, without a finish_request invoked on that request
->>> before each re-insertion.
->>> 
->>> This fact is the cause of the failure reported in [1]. For an I/O
->>> scheduler, every re-insertion of the same re-prepared request is
->>> equivalent to the insertion of a new request. For schedulers like
->>> mq-deadline or kyber, this fact causes no harm. In contrast, it
->>> confuses a stateful scheduler like BFQ, which keeps state for an I/O
->>> request, until the finish_request hook is invoked on the request. In
->>> particular, BFQ may get stuck, waiting forever for the number of
->>> request dispatches, of the same request, to be balanced by an equal
->>> number of request completions (while there will be one completion for
->>> that request). In this state, BFQ may refuse to serve I/O requests
->>> from other bfq_queues. The hang reported in [1] then follows.
->>> 
->>> However, the above re-prepared requests undergo a requeue, thus the
->>> requeue_request hook of the active elevator is invoked for these
->>> requests, if set. This commit then addresses the above issue by
->>> properly implementing the hook requeue_request in BFQ.
->> 
->> Thanks, applied.
->> 
+
+On 02/08/2018 06:57 AM, Ryder Lee wrote:
+> On Wed, 2018-02-07 at 16:18 +0100, Matthias Brugger wrote:
+>>
+>> On 02/05/2018 05:07 AM, Ryder Lee wrote:
+>>> On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
+>>>>
+>>>> On 01/31/2018 08:42 AM, Ryder Lee wrote:
+>>>>> As the new MFD parent is in place, switch probing method to adapt it.
+>>>>>
+>>>>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+>>>>> ---
+>>>>>  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
+>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+>>>>> index 13f752d..8c18536 100644
+>>>>> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
+>>>>> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+>>>>> @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+>>>>>  {
+>>>>>  	struct clk_onecell_data *clk_data;
+>>>>>  	struct device_node *node = pdev->dev.of_node;
+>>>>> +	struct device_node *pnode = pdev->dev.parent->of_node;
+>>>>>  	int r;
+>>>>>  
+>>>>>  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+>>>>>  
+>>>>> -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+>>>>> +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
+>>>>
+>>>> We will need a fallback here for older device tree bindings.
+>>>>
+>>>> Regards,
+>>>> Matthias
+>>>
+>>> Up to now, I didn't see both driver and bindings are used anywhere.
+>>> Should I still care about that?
+>>>
+>>
+>> Yes please, we have to ensure that newer kernel work with older bindings and
+>> vice-versa.
 > 
-> I Jens,
-> I forgot to add
-> Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-> in the patch.
-> 
-> Is it still possible to add it?
+> OKay. An unrelated question - is it possible to change the compatible
+> string (*-audsys-clk) without breaking backward compatible?
 > 
 
-In addition to this I think it should be worth considering CC'ing Greg 
-to pull this fix into 4.15 stable tree.
+You can't change the compatible string, but you can add a new one, if the DT
+maintainer are ok with that. Beware that you won't be able to re-use the old one
+in a different driver.
 
-Oleksandr
+Regards,
+Matthias
