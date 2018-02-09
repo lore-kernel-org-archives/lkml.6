@@ -1,130 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751144AbeBIHgz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 02:36:55 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:45913 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbeBIHgx (ORCPT
+        id S1751107AbeBIICi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 03:02:38 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39349 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbeBIICg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 02:36:53 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180209073650epoutp03e235858be0e44ca7126a4ceef9c14715~RmB_Y3gXX2617426174epoutp03Q
-X-AuditID: b6c32a45-3ebff70000001023-19-5a7d4f926234
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Message-id: <5A7D4F92.100@samsung.com>
-Date: Fri, 09 Feb 2018 16:36:50 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH 2/3] clk: exynos5433: Allow audio subsystem clock rate
- propagation
-In-reply-to: <3fcfad37-4c8f-7375-b2c2-5154607aa47a@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUgTcRjH+e3utiktz/Ptp0HaQYHW1nbpdlZmkcZQw0H9EavQQw8dutvY
-        zdLIGkVOlq0sK5mliyJM0MoiVMhAjbLMTMssTQNlSET2Rq6w6M4r6r/n5fO8fXmUCHFEHqe0
-        cE7WwTGlpDwUvdObqFefzq00a8c88fTN+usY3T49itGfaiYxeqTrgpyuf9oto1v73ijoZ48y
-        6d73bowODhxHN4cY58aOKYwj3hMy460rh43e2y3A+KV9uQkzsxuLWaaQdSSwXIGt0MIVpZHZ
-        O/K25qXotTq1LpU2kAkcY2XTyIwck3qbpVRYh0zYx5SWCSETw/Pk2k0bHbYyJ5tQbOOdaeRu
-        nY7S6LQGDUVRmuR1e9dTKQKSzxaPuYMyuzemvLv7B+IC8+EeoFRCPBme9Gd5QKiSwDsAvHa9
-        B5OceQCPBQNyDwhZhBY+vv6TuAFg1Y9hVEyo8HAYPDOJip0QPB72DZeIYQRPhLNfT6MSPyl0
-        bf6skPhV0DffhIg8iq+Eb1stYliOJ8F7s2OLs8LwFfBFcBqIdhS+C3Y2fVOIeCSeBRtdarEl
-        gg8DOD7nBmI8QmAmniSJeAieDgNXxEmhwspTcvhtZlAm7Z8B22YvY5IdAd89uK2Q7GUw0HIT
-        SAVuAN13GxHJqQNw8OXkn+p1MHDJI5MuWwqre38qJOlUsLqKkBAjrHnoRyV7C/T3H1FIx5+V
-        wb6qJnAKLPf9p5fvn16+//TyA6QFRLN23lrE8pRdp+EZK1/GFWkKbNZ2sPh/SZkdoH4wpwfg
-        SkAuUZ3ac9BMYMw+vsLaA6ASISNVQ9srzYSqkKk4wDpseY6yUpbvASmC3LVIXFSBTfhmzpmn
-        S07VJuv1lEFPC/8Vo6oyZZgJvIhxsiUsa2cdf+tkypA4F/BSjuaFg+hMLTrSjF2dHtqQHTNB
-        fL9H7Jyq9OcX2p/H1uREfRw4d7nJ2nv+8Ku6QI2WIlpm3xkMFeeiy6sbGtrDEsnxOVd4mLe+
-        Mr92yQd439XWcP8iV9fVx/Wr0wdHLXSDybc/4/HR2F+HCLuqs4t7mW82r16W27p6TWZgPYny
-        xYwuCXHwzG/VhDDVlQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t9jQd1J/rVRBo0tPBYbZ6xntdj0+Bqr
-        xceee6wWl3fNYbOYcX4fk8XaI3fZLS6ecrU4/Kad1eLHmW4WB06P9zda2T0u9/UyeWxeUu/R
-        t2UVo8fnTXIBrFFcNimpOZllqUX6dglcGTfafzAV9IlX7Nv3i7mB8btgFyMnh4SAicSfD7dY
-        uxi5OIQE1jFKvNrRwgaS4BUQlPgx+R5LFyMHB7OAvMSRS9kQprrElCm5IBVCAg8YJQ4v8Yeo
-        VpOY9X0+M0gJi4CqxIO1mSBhNgEtif0vboAN5BdQlLj64zEjSImoQIRE94lKEFNEwEtiXoMu
-        yH5mgUuMEqc37mMFiQsDldw5qwVx12QmiRebfjKBjOEUsJd4tuQT+wRGgVlIzpyFcOYshDMX
-        MDKvYpRMLSjOTc8tNiowykst1ytOzC0uzUvXS87P3cQIDPhth7X6dzA+XhJ/iFGAg1GJh/dF
-        XE2UEGtiWXFl7iFGCQ5mJRHeC761UUK8KYmVValF+fFFpTmpxYcYpTlYlMR5+fOPRQoJpCeW
-        pGanphakFsFkmTg4pRoYZ+/p+rV8/WMvlUL+hgvOKZqrOe+cvCS5ekrSksffpy6dfNh/oulz
-        g6pTPS9vGZYKcikrOH54r/JT71P+lGsfFrU6/jw4TSF2T79W9zrFyqWOxS+fZNvGTX7s5X33
-        8ubDU0trv2peEpM/VdQdpLNhpcWPhumXVa/8XzFTmkmn613rSievlQs3iymxFGckGmoxFxUn
-        AgArlXb1dAIAAA==
-X-CMS-MailID: 20180209073650epcas2p1d8f5693798e259fedd1816ba020e4646
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180205142308epcas2p376f8656f7e421f8474938de788cea8db
-X-RootMTR: 20180205142308epcas2p376f8656f7e421f8474938de788cea8db
-References: <20180205142230.9755-1-s.nawrocki@samsung.com>
-        <CGME20180205142308epcas2p376f8656f7e421f8474938de788cea8db@epcas2p3.samsung.com>
-        <20180205142230.9755-2-s.nawrocki@samsung.com>
-        <5A7929C1.8040706@samsung.com>
-        <3fcfad37-4c8f-7375-b2c2-5154607aa47a@samsung.com>
+        Fri, 9 Feb 2018 03:02:36 -0500
+X-Google-Smtp-Source: AH8x227D+3WsHa9bT6IlQdIHhExbCISXdqXmhQGA09JdoGMjZ2vh1Na+ICLrbskyothsaJvVcQWsFg==
+Subject: Re: [PATCH] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1518109302-8239-1-git-send-email-claudio@evidence.eu.com>
+ <20180209035143.GX28462@vireshk-i7>
+From: Claudio Scordino <claudio@evidence.eu.com>
+Message-ID: <197c26ba-c2a6-2de7-dffa-5b884079f746@evidence.eu.com>
+Date: Fri, 9 Feb 2018 09:02:34 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180209035143.GX28462@vireshk-i7>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sylwester,
+Hi Viresh,
 
-On 2018년 02월 08일 00:18, Sylwester Nawrocki wrote:
-> Hi Chanwoo,
-> 
-> On 02/06/2018 05:06 AM, Chanwoo Choi wrote:
->>>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
->>>  1 file changed, 11 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->>> index 74b70ddab4d6..d74361736e64 100644
->>> --- a/drivers/clk/samsung/clk-exynos5433.c
->>> +++ b/drivers/clk/samsung/clk-exynos5433.c
->>> @@ -246,14 +246,14 @@ static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
->>>  
->>>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
->>>  	/* MUX_SEL_TOP0 */
->>> -	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->>> -			4, 1),
->>> +	MUX_F(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->>> +	      4, 1, CLK_SET_RATE_PARENT, 0),
+Il 09/02/2018 04:51, Viresh Kumar ha scritto:
+> On 08-02-18, 18:01, Claudio Scordino wrote:
+>> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+>> we should not wait for the rate limit, otherwise we may miss some deadline.
 >>
->> If you add CLK_SET_RATE_PARENT to 'mout_aud_pll' and mout_aud_pll changes the rate,
->> fout_aud_pll's rate will be changed. But, fout_aud_pll is also the parent
->> of 'mout_aud_pll_user'. It might change the rate of children of mout_aud_pll_user.
->> mout_aud_pll_user would not want to change the parent's clock.
+>> Tests using rt-app on Exynos5422 have shown reductions of about 10% of deadline
+>> misses for tasks with low RT periods.
 >>
->>     fout_aud_pll                          2            2   196608009          0 0  
->>        mout_aud_pll_user                  1            1   196608009          0 0  
->>        mout_aud_pll                       0            0   196608009          0 0  
+>> The patch applies on top of the one recently proposed by Peter to drop the
+>> SCHED_CPUFREQ_* flags.
+>>
+>> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+>> CC: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
+>> CC: Patrick Bellasi <patrick.bellasi@arm.com>
+>> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>> CC: Morten Rasmussen <morten.rasmussen@arm.com>
+>> CC: Juri Lelli <juri.lelli@redhat.com>
+>> CC: Viresh Kumar <viresh.kumar@linaro.org>
+>> CC: Vincent Guittot <vincent.guittot@linaro.org>
+>> CC: Todd Kjos <tkjos@android.com>
+>> CC: Joel Fernandes <joelaf@google.com>
+>> CC: linux-pm@vger.kernel.org
+>> CC: linux-kernel@vger.kernel.org
+>> ---
+>>   kernel/sched/cpufreq_schedutil.c | 15 ++++++++++++---
+>>   1 file changed, 12 insertions(+), 3 deletions(-)
 > 
-> I'd say the range of changes is such that the consumers of the affected child 
-> clocks can cope and could adjust to the changed frequencies. Those consumer 
-> devices are all components/peripherals of the audio subsystem (LPASS) and, 
+> So the previous commit was surely incorrect as it relied on comparing
+> frequencies instead of dl-util, and freq requirements could have even
+> changed due to CFS.
 
-The mout_aud_pll_user has the child clock of serial_3.
-serial_3 was used for bluetooth on TM2. If you change the aud_pll
-with CLK_SET_RATE_PARENT, it might affect the bluetooth operation.
-The bluetooth is only used for transfering the data.
+You're right.
+The very original patch (not posted) added a specific SCHED_CPUFREQ flag to let the scheduling class ask for ignoring the rate limit.
+However, polluting the API with further flags is not such a good approach.
+The next patches didn't introduce such flag, but were incorrect.
 
-Actually, I'm not sure that this patch might affect bluetooth operation or not.
-
-> for example, in case of TM2 there is no issues at all with varying the AUD PLL
-> frequency depending on the HDMI audio sample rate. The other audio path uses
-> the audio CODEC's internal PLL as the root clock source. The AUD PLL frequency
-> will need to be adjusted somehow anyway, we could also get the PLL clock 
-> directly and set it's rate, instead of relying on that rate propagation 
-> algorithm.  I think we could also export a function from the exynos-lpass mfd 
-> driver for setting the PLL's rate directly, after listing the AUD PLL clock 
-> in the lpass DT node. That would be more flexible API, easier to adopt for 
-> various use cases/boards, now we have only TM2. I can't list the PLL clock 
-> in the sound node, that would not have passed the DT maintainters' review. 
 > 
+>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+>> index b0bd77d..d8dcba2 100644
+>> --- a/kernel/sched/cpufreq_schedutil.c
+>> +++ b/kernel/sched/cpufreq_schedutil.c
+>> @@ -74,7 +74,10 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+>>   
+>>   /************************ Governor internals ***********************/
+>>   
+>> -static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>> +static bool sugov_should_update_freq(struct sugov_policy *sg_policy,
+>> +				     u64 time,
+>> +				     struct sugov_cpu *sg_cpu_old,
+>> +				     struct sugov_cpu *sg_cpu_new)
+>>   {
+>>   	s64 delta_ns;
+>>   
+>> @@ -111,6 +114,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>>   		return true;
+>>   	}
+>>   
+>> +	/* Ignore rate limit when DL increased utilization. */
+>> +	if (sg_cpu_new->util_dl > sg_cpu_old->util_dl)
+>> +		return true;
+>> +
+> 
+> Changing the frequency has a penalty, specially in the ARM world (and
+> that's where you are testing your stuff). I am worried that we will
+> have (corner) cases where we will waste a lot of time changing the
+> frequencies. For example (I may be wrong here), what if 10 small DL
+> tasks are queued one after the other? The util will keep on changing
+> and so will the frequency ? There may be more similar cases ?
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+I forgot to say that I've not observed any relevant increase of the energy consumption (measured through a Baylibre Cape).
+However, the tests had a very small number of RT tasks.
+
+If I'm not wrong, at the hardware level we do have a physical rate limit (as we cannot trigger a frequency update when there is one already on-going).
+Don't know if this could somehow mitigate such effect.
+
+Anyway, I'll repeat the tests with a considerable amount of RT tasks to check if I can reproduce such "ramp up" situation.
+Depending on the energy results, we may have to choose between meeting more RT deadlines and consuming less energy.
+
+> 
+> Is it possible to (somehow) check here if the DL tasks will miss
+> deadline if we continue to run at current frequency? And only ignore
+> rate-limit if that is the case ?
+
+I need to think further about it.
+
+> 
+>>   	delta_ns = time - sg_policy->last_freq_update_time;
+>>   	return delta_ns >= sg_policy->freq_update_delay_ns;
+>>   }
+>> @@ -271,6 +278,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+>>   				unsigned int flags)
+>>   {
+>>   	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
+>> +	struct sugov_cpu sg_cpu_old = *sg_cpu;
+> 
+> Not really a big deal, but this structure is 80 bytes on ARM64, why
+> copy everything when what we need is just 8 bytes ?
+
+I didn't want to add deadline-specific code into the sugov_should_update_freq() signature as it should remain independent from the scheduling classes.
+In my opinion, the best approach would be to group util_cfs and util_dl in a struct within sugov_cpu and pass that struct to sugov_should_update_freq().
+
+Thanks for your comments.
+
+                Claudio
