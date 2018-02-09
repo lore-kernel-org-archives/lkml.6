@@ -1,95 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751424AbeBIMTG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        id S1752185AbeBIMTK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 07:19:10 -0500
+Received: from foss.arm.com ([217.140.101.70]:46500 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752054AbeBIMTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Feb 2018 07:19:06 -0500
-Received: from mail.fireflyinternet.com ([109.228.58.192]:62288 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751005AbeBIMTE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 07:19:04 -0500
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH 4/4] arm64: capabilities: Group handling of features and
+ errata workarounds
+To: dave.martin@arm.com
+Cc: mark.rutland@arm.com, will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jnair@caviumnetworks.com, ckadabi@codeaurora.org
+References: <20180208173229.GA5862@e103592.cambridge.arm.com>
+ <20180209121605.14091-1-suzuki.poulose@arm.com>
+ <20180209121605.14091-5-suzuki.poulose@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <038c374e-39db-e5d0-0205-7001c7ffc618@arm.com>
+Date: Fri, 9 Feb 2018 12:19:03 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Shreeya Patel <shreeya.patel23498@gmail.com>, daniel@ffwll.ch,
-        airlied@redhat.com, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, seanpaul@chromium.org
-From: Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <1518178256-17157-1-git-send-email-shreeya.patel23498@gmail.com>
-Cc: "Shreeya Patel" <shreeya.patel23498@gmail.com>
-References: <1518178256-17157-1-git-send-email-shreeya.patel23498@gmail.com>
-Message-ID: <151817873639.28809.8475696517820926336@mail.alporthouse.com>
-User-Agent: alot/0.3.6
-Subject: Re: [PATCH] gpu/drm/udl: Replace struct_mutex with driver private lock
-Date: Fri, 09 Feb 2018 12:18:56 +0000
+In-Reply-To: <20180209121605.14091-5-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Shreeya Patel (2018-02-09 12:10:56)
-> dev->struct_mutex is the Big DRM Lock and the only bit where
-> it’s mandatory is serializing GEM buffer object destruction.
-> Which unfortunately means drivers have to keep track of that
-> lock and either call unreference or unreference_locked
-> depending upon context. Core GEM doesn’t have a need for
-> struct_mutex any more since kernel 4.8.
+On 09/02/18 12:16, Suzuki K Poulose wrote:
+> Now that the features and errata workarounds have the same
+> rules and flow, group the handling of the tables.
 > 
-> For drivers that need struct_mutex it should be replaced by a driver
-> private lock.
-
-In that regard, dev->struct_mutex is already a driver private lock. The
-impetus is to reduce a big lock into lots of little locks where
-contention deems prudent.
-
-> Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+> Cc: Dave Martin <dave.martin@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 > ---
->  drivers/gpu/drm/udl/udl_dmabuf.c | 5 +++--
->  drivers/gpu/drm/udl/udl_drv.h    | 1 +
->  2 files changed, 4 insertions(+), 2 deletions(-)
+>   arch/arm64/kernel/cpufeature.c | 72 ++++++++++++++++++++++++------------------
+>   1 file changed, 41 insertions(+), 31 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/udl/udl_dmabuf.c b/drivers/gpu/drm/udl/udl_dmabuf.c
-> index 2867ed1..120d2d9 100644
-> --- a/drivers/gpu/drm/udl/udl_dmabuf.c
-> +++ b/drivers/gpu/drm/udl/udl_dmabuf.c
-> @@ -76,6 +76,7 @@ static struct sg_table *udl_map_dma_buf(struct dma_buf_attachment *attach,
->         struct udl_drm_dmabuf_attachment *udl_attach = attach->priv;
->         struct udl_gem_object *obj = to_udl_bo(attach->dmabuf->priv);
->         struct drm_device *dev = obj->base.dev;
-> +       struct udl_device *udl = dev->dev_private;
->         struct scatterlist *rd, *wr;
->         struct sg_table *sgt = NULL;
->         unsigned int i;
-> @@ -112,7 +113,7 @@ static struct sg_table *udl_map_dma_buf(struct dma_buf_attachment *attach,
->                 return ERR_PTR(-ENOMEM);
->         }
->  
-> -       mutex_lock(&dev->struct_mutex);
-> +       mutex_lock(&udl->urbs.plock);
->  
->         rd = obj->sg->sgl;
->         wr = sgt->sgl;
-> @@ -137,7 +138,7 @@ static struct sg_table *udl_map_dma_buf(struct dma_buf_attachment *attach,
->         attach->priv = udl_attach;
->  
->  err_unlock:
-> -       mutex_unlock(&dev->struct_mutex);
-> +       mutex_unlock(&udl->urbs.plock);
->         return sgt;
->  }
->  
-> diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
-> index 2a75ab8..24cca17 100644
-> --- a/drivers/gpu/drm/udl/udl_drv.h
-> +++ b/drivers/gpu/drm/udl/udl_drv.h
-> @@ -39,6 +39,7 @@ struct urb_node {
->  
->  struct urb_list {
->         struct list_head list;
-> +       struct mutex plock;
->         spinlock_t lock;
->         struct semaphore limit_sem;
->         int available;
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 45bac0c4ae91..e97ec8d5fd89 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -504,8 +504,7 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
+>   }
+>   
+>   extern const struct arm64_cpu_capabilities arm64_errata[];
+> -static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+> -				    u16 scope_mask, const char *info);
+> +static void update_cpu_capabilities(u16 scope_mask);
+>   
+>   void __init init_cpu_features(struct cpuinfo_arm64 *info)
+>   {
+> @@ -554,10 +553,7 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+>   	 * Run the errata work around and local feature checks on the
+>   	 * boot CPU, once we have initialised the cpu feature infrastructure.
+>   	 */
+> -	update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
+> -				"enabling workaround for");
+> -	update_cpu_capabilities(arm64_features, SCOPE_LOCAL_CPU,
+> -				"detected feature:");
+> +	update_cpu_capabilities(SCOPE_LOCAL_CPU);
+>   }
+>   
+>   static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
+> @@ -1225,7 +1221,7 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
+>   	return false;
+>   }
+>   
+> -static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+> +static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+>   				    u16 scope_mask, const char *info)
+>   {
+>   	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
+> @@ -1240,6 +1236,14 @@ static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+>   	}
+>   }
+>   
+> +static void update_cpu_capabilities(u16 scope_mask)
+> +{
+> +	__update_cpu_capabilities(arm64_features, scope_mask,
+> +				  "detected feature:");
+> +	__update_cpu_capabilities(arm64_errata, scope_mask,
+> +				  "enabling workaround for");
+> +}
+> +
+>   static int __enable_cpu_capability(void *arg)
+>   {
+>   	const struct arm64_cpu_capabilities *cap = arg;
+> @@ -1253,7 +1257,7 @@ static int __enable_cpu_capability(void *arg)
+>    * CPUs
+>    */
+>   static void __init
+> -enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mask)
+> +__enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mask)
+>   {
+>   	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
+>   	for (; caps->matches; caps++) {
+> @@ -1277,6 +1281,12 @@ enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_mas
+>   	}
+>   }
+>   
+> +static void __init enable_cpu_capabilities(u16 scope_mask)
+> +{
+> +	__enable_cpu_capabilities(arm64_features, scope_mask);
+> +	__enable_cpu_capabilities(arm64_errata, scope_mask);
+> +}
+> +
+>   /*
+>    * Run through the list of capabilities to check for conflicts.
+>    * If the system has already detected a capability, take necessary
+> @@ -1332,6 +1342,12 @@ static bool __verify_local_cpu_caps(const struct arm64_cpu_capabilities *caps_li
+>   	return true;
+>   }
+>   
+> +static bool verify_local_cpu_caps(u16 scope_mask)
+> +{
+> +	return __verify_local_cpu_caps(arm64_errata, scope_mask) &&
 
-This hasn't seen much testing as it lacks a mutex_init, and one would
-wish for a description of what it is guarding.
--Chris
+
+> +	       __verify_local_cpu_caps(arm64_errata, scope_mask);
+
+Err.. this is arm64_features. Fixed up locally.
+
+Suzuki
