@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x226+wqmePe42oESghZeQeq+nd/eE/rdqSVEaENjpetkPoAiqC/xxPpqzNoN9LTW8XN3XMBOA
-ARC-Seal: i=1; a=rsa-sha256; t=1518168359; cv=none;
+X-Google-Smtp-Source: AH8x225krW7F3jxD1B9qVYySS8jSbFuPeQBwXemJ4YdMaG2nKrCIhWsEeD1DZ7b/XatWa+1JpYRI
+ARC-Seal: i=1; a=rsa-sha256; t=1518168367; cv=none;
         d=google.com; s=arc-20160816;
-        b=o0lWrsS5YTxu3hWhI26c+T0FIzFHPFAteYt+rXtkFsXll1FP3j3COtc9n2269niD+3
-         tRpcuVE+CwgzPdFzGmL02MoEbwN/JyXYqPsi/DuyJ7MxZpyCLem6Q/DYooiVRvrQYOR4
-         nRWFhLwZEuoAeeZYYkfH7pbE91BTfOPI9cqQYJvkbRh2VoAx8Y841d8b1c9iBZy8grQs
-         SA/PoMeztNttQBAIGAYRVOGsfixL3ihOzB0GX2IRFJXCYaR0og3vb4A+/uKBLZOCbbkr
-         YxN349J/3F8YXGbkXUZL60X6xJMzixemaHotLfsK9zzmVe8q+Ng/NIus1INB3S0wzmUh
-         6hbQ==
+        b=aVVBO0bjLWL5Voi3tsI5LNIFpOkoG2OCNqPBCuu1LXQGxNRZj4l8POCl1Fe6K39y+t
+         EwjHG+B7CZA267rHSbCIMe0r5JpIKTyFqCzxAAxCGWlWPjwgLy3JerPD2YG0+SK2mfuU
+         8mNDhVTguq7l/DIW/KiPrvUl0Jeg6ryny4y5M8D2bxiPOIUjZlBoqid86hRf2pHcrgv9
+         U69hO9tHXUzhY7k/8h1b5tximpz81erw9AXQQnSVdf1NWHbjRrNJImFTTFC4l8o7T7l0
+         PBl19agccS1+vG7/PKRra8HHj12uiFgEw/nLa01C7YmnAdOFNmxUn/GVLcx4inACBZ7q
+         RJng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=cpca8R8tSPFGNg2CkYY+OWUT2oexdUqlX44dCw/JZc8=;
-        b=SK/8SIg00oyTgBriNRHuFsP9MCvoM0QnoW5Tsi2vIU4zdCugxlwYvlMOno9jyNonlo
-         7BTuNaf8m041g5jsDH5yIebutpwVx4oMsMnCzzb1yTXEu1ivOMOABaV+QzMsVJkZV5i+
-         98W3bV5RVxGIgyeaAyFT3x+fVhohrQcDVruhk47m1DqDr6lwbBDPiQIsgJNt4WAki01d
-         Y/vbdm/mXM/JmVYx5Mvhy6RERcnsHu5byJvr+8yzwpjZLuz45AE8GeRJ66BjSWnzPlwN
-         Eju1kdjoMH9S6Wxf495afqM2A13Z2w/mtEa3NDj0HW0Znr27NKg+Et16RqaZ6HLZOkKW
-         4lHA==
+        bh=RGA25vQ8gBPaSKGy/lT4lV6mDQVKRyvseZa9z9ApG6o=;
+        b=EslSzuRDAoSOLkJPPEOOQFmiXtXnOEgVq9uLBcugs2+DO81gDk/klutGvF3fL5myjT
+         kOhlrl9Jnj6gsBIGtKecXNuxn6BiDtZjT26ZlHZotA/N75h/xOROCtN0lUk9JPz7XZuA
+         dZsujmZpdW5M0A+f9mQUfuhfihIwRR6SPviANbOFn2HC8ja14kBQZHtjIL52NW62ZFQ9
+         1a4E4TICu5uOaYaOIpRtlC5S75ECNJvKiDOS9uTHVglmXuXv4cAiw/yujPROnb5z6F7e
+         uVBR9NkxR4c3R8bcvcKJ3ib9170YH5EUgtI1u3ncRxCzrJDbwptrpJ4ip129c1JfDtqA
+         yCrw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=UXfkV2yj;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=qw0MjPHr;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=UXfkV2yj;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=qw0MjPHr;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,138 +57,75 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 11/31] x86/entry/32: Add PTI cr3 switches to NMI handler code
-Date: Fri,  9 Feb 2018 10:25:20 +0100
-Message-Id: <1518168340-9392-12-git-send-email-joro@8bytes.org>
+Subject: [PATCH 28/31] x86/ldt: Define LDT_END_ADDR
+Date: Fri,  9 Feb 2018 10:25:37 +0100
+Message-Id: <1518168340-9392-29-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914905960340389?=
-X-GMAIL-MSGID: =?utf-8?q?1591914905960340389?=
+X-GMAIL-THRID: =?utf-8?q?1591914914585532932?=
+X-GMAIL-MSGID: =?utf-8?q?1591914914585532932?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The NMI handler is special, as it needs to leave with the
-same cr3 as it was entered with. We need to do this because
-we could enter the NMI handler from kernel code with
-user-cr3 already loaded.
+It marks the end of the address-space range reserved for the
+LDT. The LDT-code will use it when unmapping the LDT for
+user-space.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 52 +++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 46 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/pgtable_32_types.h | 2 ++
+ arch/x86/include/asm/pgtable_64_types.h | 2 ++
+ arch/x86/kernel/ldt.c                   | 2 +-
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index be1d814..9693485 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -77,6 +77,8 @@
- #endif
- .endm
+diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
+index eb2e97a..02bd445 100644
+--- a/arch/x86/include/asm/pgtable_32_types.h
++++ b/arch/x86/include/asm/pgtable_32_types.h
+@@ -51,6 +51,8 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+ #define LDT_BASE_ADDR		\
+ 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
  
-+#define PTI_SWITCH_MASK         (1 << PAGE_SHIFT)
++#define LDT_END_ADDR		(LDT_BASE_ADDR + PMD_SIZE)
 +
- /*
-  * User gs save/restore
-  *
-@@ -167,8 +169,30 @@
+ #define PKMAP_BASE		\
+ 	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
  
- .endm
- 
--.macro SAVE_ALL_NMI
-+.macro SAVE_ALL_NMI cr3_reg:req
- 	SAVE_ALL
-+
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We can enter with either user or kernel cr3, the code will
-+	 * store the old cr3 in \cr3_reg and switches to the kernel cr3
-+	 * if necessary.
-+	 */
-+	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-+
-+	movl	%cr3, \cr3_reg
-+	testl	$PTI_SWITCH_MASK, \cr3_reg
-+	jz	.Lend_\@	/* Already on kernel cr3 */
-+
-+	/* On user cr3 - write new kernel cr3 */
-+	andl	$(~PTI_SWITCH_MASK), \cr3_reg
-+	movl	\cr3_reg, %cr3
-+
-+	/* Restore user cr3 value */
-+	orl	$PTI_SWITCH_MASK, \cr3_reg
-+
-+.Lend_\@:
- .endm
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-@@ -227,13 +251,29 @@
- 	RESTORE_SKIP_SEGMENTS \pop
- .endm
- 
--.macro RESTORE_ALL_NMI pop=0
-+.macro RESTORE_ALL_NMI cr3_reg:req pop=0
- 	/*
- 	 * Restore segments - might cause exceptions when loading
- 	 * user-space segments
- 	 */
- 	RESTORE_SEGMENTS
- 
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We enter with kernel cr3 and switch the cr3 to the value
-+	 * stored on \cr3_reg, which is either a user or a kernel cr3.
-+	 */
-+	ALTERNATIVE "jmp .Lswitched_\@", "", X86_FEATURE_PTI
-+
-+	testl	$PTI_SWITCH_MASK, \cr3_reg
-+	jz	.Lswitched_\@
-+
-+	/* User cr3 in \cr3_reg - write it to hardware cr3 */
-+	movl	\cr3_reg, %cr3
-+
-+.Lswitched_\@:
-+
- 	/* Restore integer registers and unwind stack to iret frame */
- 	RESTORE_INT_REGS
- 	RESTORE_SKIP_SEGMENTS \pop
-@@ -1142,7 +1182,7 @@ ENTRY(nmi)
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index e57003a..15188baa 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -90,12 +90,14 @@ typedef struct { pteval_t pte; } pte_t;
+ # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
+ # define LDT_PGD_ENTRY		_AC(-112, UL)
+ # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+ #else
+ # define VMALLOC_SIZE_TB	_AC(32, UL)
+ # define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
+ # define LDT_PGD_ENTRY		_AC(-3, UL)
+ # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
  #endif
  
- 	pushl	%eax				# pt_regs->orig_ax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	xorl	%edx, %edx			# zero error code
- 	movl	%esp, %eax			# pt_regs pointer
-@@ -1170,7 +1210,7 @@ ENTRY(nmi)
+ #ifdef CONFIG_RANDOMIZE_MEMORY
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 26d713e..f3c2fbf 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -202,7 +202,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	struct mmu_gather tlb;
+ 	unsigned long start = LDT_BASE_ADDR;
+-	unsigned long end = start + (1UL << PGDIR_SHIFT);
++	unsigned long end = LDT_END_ADDR;
  
- .Lnmi_return:
- 	CHECK_AND_APPLY_ESPFIX
--	RESTORE_ALL_NMI pop=4
-+	RESTORE_ALL_NMI cr3_reg=%edi pop=4
- 	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
-@@ -1186,12 +1226,12 @@ ENTRY(nmi)
- 	pushl	16(%esp)
- 	.endr
- 	pushl	%eax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	FIXUP_ESPFIX_STACK			# %eax == %esp
- 	xorl	%edx, %edx			# zero error code
- 	call	do_nmi
--	RESTORE_ALL_NMI
-+	RESTORE_ALL_NMI cr3_reg=%edi
- 	lss	12+4(%esp), %esp		# back to espfix stack
- 	jmp	.Lirq_return
- #endif
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
 -- 
 2.7.4
