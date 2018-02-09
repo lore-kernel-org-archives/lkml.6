@@ -1,164 +1,75 @@
-Return-Path: <BATV+7f47cf07033c50c09b30+5283+infradead.org+dwmw2@twosheds.srs.infradead.org>
-X-Google-Smtp-Source: AH8x227Zmy4DN/S9p3zuM17HSOpXOQH70oXGvUlCQXqPqYazbXoUjdbylqtkHtuwA2JoKMF27enh
-ARC-Seal: i=1; a=rsa-sha256; t=1518186588; cv=none;
+Return-Path: <darren.kenny@oracle.com>
+X-Google-Smtp-Source: AH8x2279KMhaDrZBRbwZGTZAIbI/lEMzNiWaNoROC0hzvGdbl/IzcqNFXXU0MAUwyh/O/Xjf6utD
+ARC-Seal: i=1; a=rsa-sha256; t=1518187192; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZOdtQ5ggeJj+qQPYOGYV/6i4icygD6ko3+15zUw0frlfa/EYwApwTVZzzmuBkAZCBX
-         v819hfFynlMNdHbiDNV7Gt9E4fvcyyIPU3sGakGd6OF/aAYsY2BW53Im04pVojBa7oH/
-         YCTdN+HlgqVA0T2HWe5343hHDjaCcbMTKtXU25kE6gbqTajndKLJJHuaqXtOXq2ybo9d
-         lViEDELyHu6/2HSO/z6nznSMYCExuvFFZt5yJrj8/Bfca49laavaS9e3yVGXOI0VQHgy
-         +7kQbRL1ne65lXLGuh5SLGgMLOFOuMVJVJPXBsKnbdcxhtJjSw5be/NBWX7gkLRULBEl
-         ULeA==
+        b=eJpbBQrOkutRWbzc4bjqCL6c/vNi8v4FWkCm2zG28Jd/zl7oN05xfFUJdN/Xlel7tc
+         xNvzvZlIv2qd4opu0mAivNXftUHh+5o0TUCKvx7BT6mx03UOO2kkFHwjGrYOBy/wb5Ph
+         ML0cudCVJzFsGXdq2/SHGkOaQWC6F3RxEQMkJ9VxkoC5G3iY/s6NPtan9TNdXA3XYZYu
+         3iy15H8WiKq+6VpmQ9umaBb2ez7Y3mck/XZZ2mo7IIa+4vD4esppQJHDqjUk/XGv4l/i
+         boza1dcwQUT1Sjwgyn89/X3VpUwnLBHtgk9uQfF2ymHW9z597AIPMf1/8+1ZqOsH7f4+
+         p49A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:date:face:references:in-reply-to:cc:to:from:subject
-         :message-id:dkim-signature:arc-authentication-results;
-        bh=w5KYvVJw2TYK/USL20UMQnWGwzrEcJzqnmQCSEgAOyE=;
-        b=Zk/e/eOJ1SBmeEf8Eev9u/Tq6Hlo8FRIvc/nIjUuF9YvpzaLBeRtHh+kjHuPiew0MH
-         Nq/pd+Eu8CjrWkhELl14AtLSk7QhaJdzXpCP7l4rX1AHjbeYmD7mW55K0HKajYlLIZrW
-         qS0xmV4BOTZK2vhiWzKlSZv6jfgdfRfGBcai8acMqDkM11C3IzVDfeJdaBa8bSaTiCV9
-         /6x82XVa+6C70Tdk+rVb7LHBdNXgizKHKx+I80dJdQ9oTOO2+2fR7dWZXNb5feOmXSa8
-         lgS6z9hdaOBZ3iTYQAiOnwN2GtVmGGQGtoUkWJ35Aru0Z5B/7Q6V+1y1+Powbr1Da/kI
-         XScQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=mHkQgzIEI6bJE9idOMciw/p2GP2A/4UGmK3vKCCvhXw=;
+        b=OlOFWAuxcgjyGCzV/On6t8SCC0dALJ33kxjrtx5n6on+tnzUBRiHcb96KiRjeXUrxr
+         sRLugmNL7mJVQwsmfy7Sr+MN/e3v/M0c5D8Kfo3HkBn1SvIUjhTEdQUYvUfUogRMT7d5
+         Bf9tBl0YcTAPCwgwB59/GIW+nthNPCUf599ClKlGqdxBGQIrbBoacEPU2479EF+wRV5U
+         8aZXMGEj/yWA6wo8IrqY/yQyxkw8hPRI2d24UyF4+YV8am6yzwxgRAAm4S2b7VMGVfai
+         5xEqLgWiFehienexHJpdOKGe3yejvtt170y04CSfoatdh2ojG9oqhLyhbvvwA0CUVbUE
+         rZXg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=hEnvNXpn;
-       spf=pass (google.com: best guess record for domain of batv+7f47cf07033c50c09b30+5283+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+7f47cf07033c50c09b30+5283+infradead.org+dwmw2@twosheds.srs.infradead.org
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=MHMUPYlg;
+       spf=pass (google.com: domain of darren.kenny@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=darren.kenny@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=hEnvNXpn;
-       spf=pass (google.com: best guess record for domain of batv+7f47cf07033c50c09b30+5283+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+7f47cf07033c50c09b30+5283+infradead.org+dwmw2@twosheds.srs.infradead.org
-Message-ID: <1518186567.3677.245.camel@infradead.org>
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=MHMUPYlg;
+       spf=pass (google.com: domain of darren.kenny@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=darren.kenny@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Date: Fri, 9 Feb 2018 14:39:02 +0000
+From: Darren Kenny <darren.kenny@oracle.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Kyle Huey <me@kylehuey.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        Darren Kenny <darren.kenny@oracle.com>
 Subject: Re: [PATCH] x86/spectre_v2: Remove 0xc2 from spectre_bad_microcodes
-From: David Woodhouse <dwmw2@infradead.org>
-To: Darren Kenny <darren.kenny@oracle.com>, linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Kyle Huey
- <me@kylehuey.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter
- Zijlstra <peterz@infradead.org>, "Levin, Alexander (Sasha Levin)"
- <alexander.levin@verizon.com>
-In-Reply-To: <20180209141054.gfzioctavbpnjckl@starbug-vm.ie.oracle.com>
+Message-ID: <20180209143902.qews3torgbxjr25p@starbug-vm.ie.oracle.com>
 References: <20180209141054.gfzioctavbpnjckl@starbug-vm.ie.oracle.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-/96yn+EQEMzdoXYVagUz"
-Date: Fri, 09 Feb 2018 14:29:27 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+ <1518186567.3677.245.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1518186567.3677.245.camel@infradead.org>
+User-Agent: NeoMutt/20171215
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8799 signatures=668665
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=932
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802090187
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591932870470343348?=
-X-GMAIL-MSGID: =?utf-8?q?1591934020818473378?=
+X-GMAIL-MSGID: =?utf-8?q?1591934654003017933?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Fri, Feb 09, 2018 at 02:29:27PM +0000, David Woodhouse wrote:
+>On Fri, 2018-02-09 at 14:10 +0000, Darren Kenny wrote:
+>> According to the latest microcode update from Intel (on Feb 8, 2018) on
+>> Skylake we should be using the microcode revisions 0xC2***, so we need
+>> to remove that from the blacklist now.
+>
+>The doc also suggests that Gemini Lake 0x22 is also now known to be OK.
+>I'll do a full pass over it and bring the list completely up to date.
+>
+>Thanks.
 
---=-/96yn+EQEMzdoXYVagUz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+OK, let me know if you need me to do anything.
 
-On Fri, 2018-02-09 at 14:10 +0000, Darren Kenny wrote:
-> According to the latest microcode update from Intel (on Feb 8, 2018) on
-> Skylake we should be using the microcode revisions 0xC2***, so we need
-> to remove that from the blacklist now.
+Thanks,
 
-The doc also suggests that Gemini Lake 0x22 is also now known to be OK.
-I'll do a full pass over it and bring the list completely up to date.
-
-Thanks.
-
---=-/96yn+EQEMzdoXYVagUz
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMDkxNDI5MjdaMC8GCSqG
-SIb3DQEJBDEiBCDS7cZCj2KNReukPYO5w7ln5bdf+ggb7PF/ehZBt8pT5TCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBADsMMNPhYAmF
-56NdNFzfn2K0YCem0pldbCnNTPWQGUL0BLfghus/Bw5EentHmeLywQZmzc/Ofr79LQ+pyPBL1AFm
-AM9S3LF+I1ASpooIPvTQmSQkVzmUylm5MZyeM0hmpdDCYxCZoni7aNmG/FIhfhi1+YOUhonfbnQo
-PO5fQSSRIEpju/IbKw6Wg4CWvHssXgjfFqx8bCYDa+2aZP8fEx9ShdrfWrIZbgcErIeFN3m54ns9
-vgC5rj/BVnczP9Y0kjCh9FiDdIcJThKLYaN9kywvwewJS9cCgtyAidSAbjjGve0AanW+iTlgQrvH
-UoWikRsyu0gj+PRLNDV5piThkNIAAAAAAAA=
-
-
---=-/96yn+EQEMzdoXYVagUz--
+Darren.
