@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeBIKGX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 05:06:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47468 "EHLO mx2.suse.de"
+        id S1752171AbeBIKGb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 05:06:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47560 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751034AbeBIKGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 05:06:21 -0500
-Date: Fri, 9 Feb 2018 11:06:19 +0100 (CET)
+        id S1751034AbeBIKG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 05:06:29 -0500
+Date: Fri, 9 Feb 2018 11:06:27 +0100 (CET)
 From: Miroslav Benes <mbenes@suse.cz>
 To: Petr Mladek <pmladek@suse.com>
 cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -14,11 +14,11 @@ cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/7] livepatch: Use lists to manage patches, objects
- and functions
-In-Reply-To: <20180206103424.10829-2-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1802070932320.1099@pobox.suse.cz>
-References: <20180206103424.10829-1-pmladek@suse.com> <20180206103424.10829-2-pmladek@suse.com>
+Subject: Re: [PATCH v7 2/7] livepatch: Free only structures with initialized
+ kobject
+In-Reply-To: <20180206103424.10829-3-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1802070933070.1099@pobox.suse.cz>
+References: <20180206103424.10829-1-pmladek@suse.com> <20180206103424.10829-3-pmladek@suse.com>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -28,32 +28,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 6 Feb 2018, Petr Mladek wrote:
 
-> From: Jason Baron <jbaron@akamai.com>
+> We are going to add a feature called atomic replace. It will allow to
+> create a patch that would replace all already registered patches.
+> For this, we will need to dynamically create funcs and objects
+> for functions that are not longer patched.
+
+s/not longer/no longer/
+
+It applies to the other changelogs as well.
+ 
+> We will want to reuse the existing init() and free() functions. Up to now,
+> the free() functions checked a limit and were called only for structures
+> with initialized kobject. But we will want to call them also for structures
+> that were allocated but where the kobject was not initialized yet.
 > 
-> Currently klp_patch contains a pointer to a statically allocated array of
-> struct klp_object and struct klp_objects contains a pointer to a statically
-> allocated array of klp_func. In order to allow for the dynamic allocation
-> of objects and functions, link klp_patch, klp_object, and klp_func together
-> via linked lists. This allows us to more easily allocate new objects and
-> functions, while having the iterator be a simple linked list walk.
-> 
-> The static structures are added to the lists early. It allows to add
-> the dynamically allocated objects before klp_init_object() and
-> klp_init_func() calls. Therefore it reduces the further changes
-> to the code.
-> 
-> Also klp_init_*_list() functions are split because they will
-> be used when adding the dynamically allocated structures.
+> This patch removes the limit. It calls klp_free*() functions for all
+> structures. But only the ones with initialized kobject are freed.
+> The handling of un-initialized structures will be added later with
+> the support for dynamic structures.
 > 
 > This patch does not change the existing behavior.
 > 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Initialize lists before init calls]
 > Signed-off-by: Petr Mladek <pmladek@suse.com>
 > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 > Cc: Jessica Yu <jeyu@kernel.org>
 > Cc: Jiri Kosina <jikos@kernel.org>
 > Cc: Miroslav Benes <mbenes@suse.cz>
+> Cc: Jason Baron <jbaron@akamai.com>
+> ---
+>  kernel/livepatch/core.c | 42 ++++++++++++++++++++----------------------
+>  1 file changed, 20 insertions(+), 22 deletions(-)
+> 
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index 1d525f4a270a..ef7c3b5f561b 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -654,16 +654,17 @@ static struct kobj_type klp_ktype_func = {
+>  };
+>  
+>  /*
+> - * Free all functions' kobjects in the array up to some limit. When limit is
+> - * NULL, all kobjects are freed.
+> + * Free all funcs that have the kobject initialized. Otherwise,
+> + * nothing is needed.
+
+s/needed/done/ ?
+
+I'd remove the second sentence in that case.
+
+>   */
+> -static void klp_free_funcs_limited(struct klp_object *obj,
+> -				   struct klp_func *limit)
+> +static void klp_free_funcs(struct klp_object *obj)
+>  {
+>  	struct klp_func *func;
+>  
+> -	for (func = obj->funcs; func->old_name && func != limit; func++)
+> -		kobject_put(&func->kobj);
+> +	klp_for_each_func(obj, func) {
+> +		if (func->kobj.state_initialized)
+> +			kobject_put(&func->kobj);
+> +	}
+>  }
+>  
+>  /* Clean up when a patched object is unloaded */
+> @@ -678,23 +679,25 @@ static void klp_free_object_loaded(struct klp_object *obj)
+>  }
+>  
+>  /*
+> - * Free all objects' kobjects in the array up to some limit. When limit is
+> - * NULL, all kobjects are freed.
+> + * Free all funcs and objects that have the kobject initialized.
+> + * Otherwise, nothing is needed.
+
+Same here.
+
+>   */
+> -static void klp_free_objects_limited(struct klp_patch *patch,
+> -				     struct klp_object *limit)
+> +static void klp_free_objects(struct klp_patch *patch)
+>  {
+>  	struct klp_object *obj;
+>  
+> -	for (obj = patch->objs; obj->funcs && obj != limit; obj++) {
+> -		klp_free_funcs_limited(obj, NULL);
+> -		kobject_put(&obj->kobj);
+> +	klp_for_each_object(patch, obj) {
+> +		klp_free_funcs(obj);
+> +
+> +		if (obj->kobj.state_initialized)
+> +			kobject_put(&obj->kobj);
+>  	}
+>  }
+>  
+>  static void klp_free_patch(struct klp_patch *patch)
+>  {
+> -	klp_free_objects_limited(patch, NULL);
+> +	klp_free_objects(patch);
+> +
+>  	if (!list_empty(&patch->list))
+>  		list_del(&patch->list);
+>  }
+> @@ -791,21 +794,16 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
+>  	klp_for_each_func(obj, func) {
+>  		ret = klp_init_func(obj, func);
+>  		if (ret)
+> -			goto free;
+> +			return ret;
+>  	}
+>  
+>  	if (klp_is_object_loaded(obj)) {
+>  		ret = klp_init_object_loaded(patch, obj);
+>  		if (ret)
+> -			goto free;
+> +			return ret;
+>  	}
+>  
+>  	return 0;
+> -
+> -free:
+> -	klp_free_funcs_limited(obj, func);
+> -	kobject_put(&obj->kobj);
+> -	return ret;
+>  }
+
+I'm slightly worried about not keeping the error handling here but 
+offloading it to the caller, because we may forget to update it one day. 
+But yes, it keeps things simple and I can live with that.
+
+>  static int klp_init_patch(struct klp_patch *patch)
+> @@ -842,7 +840,7 @@ static int klp_init_patch(struct klp_patch *patch)
+>  	return 0;
+>  
+>  free:
+> -	klp_free_objects_limited(patch, obj);
+> +	klp_free_objects(patch);
+>  
+>  	mutex_unlock(&klp_mutex);
+
+With those nits fixed
 
 Acked-by: Miroslav Benes <mbenes@suse.cz>
 
