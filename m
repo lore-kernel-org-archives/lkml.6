@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1427278-1518184806-2-5444666540996751353
+X-Cyrus-Session-Id: sloti22d1t05-1420212-1518184803-2-18351313826164672288
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518184804; b=mDl6XZBcXewrE0g9yamrkLaN4Q0YfL2sBDqYIyv0vu8nM2I
-    hmoGNDfvGNCSefpK+HY5n1iWo+jbBrK3f54D98b71VjuB0lrYPw61bL5+HPKUW04
-    0SrF2tcgyQIwjOH8VZP6hXlkiCXi9KKXDaIipJ1J3cJuSDmJLBq6xwMA8ppDFFzm
-    UxdquP46aEiQwBXjDLbg2KD1axjpaCt6zF0RoeU09IYvLt4/hvSVbbPlUYE7FZ6Z
-    y44WhM9OJRJaTWvlt2FXV5ydRRjfuLLrQawQ0BG4Fu1IDBkAwwz7oPIiSkgcV2nb
-    bVz5RIJSnHT0UL/9AZinwB2lTcDYGRMl91SJzIA==
+    t=1518184802; b=ClTW88VOIS1SjLGzowC9Xrzif1KRg9l7oMFYnYuV1z1cQPS
+    TKVIPclAlqnXKnHtOg4qHUVikgJh2U3v1LjuwvFQX32icALloMDcuC9nyDwY2xo5
+    AQaGF/ypizzSMd4t1GvKn+T65kN/cLUXJ2KkBcgwcB7ydl+u3TpJQ0aKu/uQLQ6I
+    kDKLRXmtbEwMkXnbR1/NR2Q1x1AhEHKo8fZeZs6pYmY/MVJhpup02lXtp9AJSTwO
+    38fiDMUJdFANzPNHXlRfoRObty+S4IaMX8Nxh0jrx2JW4UJlguN3zuoJvFZu7ofW
+    D9RqHprkTBoH2f0Dotk3tCqD2MsAqUbZtLFR/Kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518184804; bh=w9Pu9EcGT+Fr4vWrsc10xw2rFi
-    7PZwDNNgBwk5O9JgE=; b=r4Y1eO6ER7SU5u7t/eeugUZXLr9uR5zue0CWL+iyJ6
-    8r8R3yW9YWQb1S4eMlAPBh/D1H0hNIe8hgceDhni/78Iybf2ohhr0vhSwb+spLtZ
-    JijLApOchR4Z8ePKJgGVkAXJMH0N8L2UXZ8dwrns9kafEJaSjQmOGp96d12/It/d
-    OzTT95foaSAAPXuhCzt3XYCIlFVb59KDPhKRU4lUwyLxQ8cgaj1uenB3PsaKplXV
-    VotaQKsRiOAQ7MCHwRaHD3prMl/SmxWIGz8ybc5oLkKet36SYBbhEYhdd/ncTAxo
-    1bmh7LIVSt5TCSGuL+3KyH62yBKBDLTu9k3jcOxLKNFw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518184802; bh=v9rzUzpjy0DEcO1lU6jhY1+82f
+    O0Bsp68eZX0UiYKDI=; b=a+W8/di3dc9P/YdJD/aNhGEZimwvTc9EmsZTqi0stl
+    VYksrdhyIWarzP/LhvnDqbnD3irHDfEk8mot5/IUjMfQVNZUrEYN2hTzuuJvRsOt
+    29tJEGOOGvd5czR+i888pP0KEo2ZzSCnUqlSBLpYEjqT/geadh9xk4DUdhM7L69k
+    8o/I19k6SRAqjJwxRR4qpNoVg+iyyp5hun8DfgUJ4aCByK6T2kWA6tuyCG52ZF0S
+    /m1vhvlKFw3vbO9LykaEVX3OoJp2PZ7ta45VCGtuofwoj40x6V8VmGyjkk9XDW7k
+    htCxf8BXEMTyyE9ZP0S9RhBbOtrDEKCeDdP2FausZ6FA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753420AbeBINoV (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:44:21 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51332 "EHLO
+        id S1752532AbeBIN7p (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 08:59:45 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51352 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752862AbeBINoS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:44:18 -0500
+        with ESMTP id S1752995AbeBINoV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:44:21 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
         Thomas Gleixner <tglx@linutronix.de>, ak@linux.intel.com,
-        dave.hansen@intel.com, karahmed@amazon.de, arjan@linux.intel.com,
-        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
-        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
-        gregkh@linux-foundation.org
-Subject: [PATCH 4.9 51/92] x86/retpoline: Simplify vmexit_fill_RSB()
-Date: Fri,  9 Feb 2018 14:39:20 +0100
-Message-Id: <20180209133934.870635066@linuxfoundation.org>
+        peterz@infradead.org, Tomohiro <misono.tomohiro@jp.fujitsu.com>,
+        dave.hansen@intel.com, bp@alien8.de, arjan@linux.intel.com,
+        dwmw@amazon.co.uk
+Subject: [PATCH 4.9 52/92] x86/spectre: Check CONFIG_RETPOLINE in command line parser
+Date: Fri,  9 Feb 2018 14:39:21 +0100
+Message-Id: <20180209133934.972811022@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -82,246 +80,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@alien8.de>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-(cherry picked from commit 1dde7415e99933bb7293d6b2843752cbdb43ec11)
+(cherry picked from commit 9471eee9186a46893726e22ebb54cade3f9bc043)
 
-Simplify it to call an asm-function instead of pasting 41 insn bytes at
-every call site. Also, add alignment to the macro as suggested here:
+The spectre_v2 option 'auto' does not check whether CONFIG_RETPOLINE is
+enabled. As a consequence it fails to emit the appropriate warning and sets
+feature flags which have no effect at all.
 
-  https://support.google.com/faqs/answer/7625886
+Add the missing IS_ENABLED() check.
 
-[dwmw2: Clean up comments, let it clobber %ebx and just tell the compiler]
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Fixes: da285121560e ("x86/spectre: Add boot time option to select Spectre v2 mitigation")
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: ak@linux.intel.com
-Cc: dave.hansen@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
 Cc: peterz@infradead.org
+Cc: Tomohiro <misono.tomohiro@jp.fujitsu.com>
+Cc: dave.hansen@intel.com
 Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1517070274-12128-3-git-send-email-dwmw@amazon.co.uk
+Cc: arjan@linux.intel.com
+Cc: dwmw@amazon.co.uk
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/f5892721-7528-3647-08fb-f8d10e65ad87@cn.fujitsu.com
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/entry/entry_32.S             |    3 -
- arch/x86/entry/entry_64.S             |    3 -
- arch/x86/include/asm/asm-prototypes.h |    3 +
- arch/x86/include/asm/nospec-branch.h  |   70 +++-------------------------------
- arch/x86/lib/Makefile                 |    1 
- arch/x86/lib/retpoline.S              |   56 +++++++++++++++++++++++++++
- 6 files changed, 71 insertions(+), 65 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -237,7 +237,8 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	/* Clobbers %ebx */
-+	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -212,10 +212,10 @@ static void __init spectre_v2_select_mit
+ 		return;
  
- 	/* restore callee-saved registers */
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -435,7 +435,8 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	/* Clobbers %rbx */
-+	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
- 
- 	/* restore callee-saved registers */
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -37,4 +37,7 @@ INDIRECT_THUNK(dx)
- INDIRECT_THUNK(si)
- INDIRECT_THUNK(di)
- INDIRECT_THUNK(bp)
-+asmlinkage void __fill_rsb(void);
-+asmlinkage void __clear_rsb(void);
-+
- #endif /* CONFIG_RETPOLINE */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -7,50 +7,6 @@
- #include <asm/alternative-asm.h>
- #include <asm/cpufeatures.h>
- 
--/*
-- * Fill the CPU return stack buffer.
-- *
-- * Each entry in the RSB, if used for a speculative 'ret', contains an
-- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-- *
-- * This is required in various cases for retpoline and IBRS-based
-- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-- * eliminate potentially bogus entries from the RSB, and sometimes
-- * purely to ensure that it doesn't get empty, which on some CPUs would
-- * allow predictions from other (unwanted!) sources to be used.
-- *
-- * We define a CPP macro such that it can be used from both .S files and
-- * inline assembly. It's possible to do a .macro and then include that
-- * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
-- */
+ 	case SPECTRE_V2_CMD_FORCE:
+-		/* FALLTRHU */
+ 	case SPECTRE_V2_CMD_AUTO:
+-		goto retpoline_auto;
 -
--#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
--#define RSB_FILL_LOOPS		16	/* To avoid underflow */
--
--/*
-- * Google experimented with loop-unrolling and this turned out to be
-- * the optimal version — two calls, each with their own speculation
-- * trap should their return address end up getting used, in a loop.
-- */
--#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
--	mov	$(nr/2), reg;			\
--771:						\
--	call	772f;				\
--773:	/* speculation trap */			\
--	pause;					\
--	lfence;					\
--	jmp	773b;				\
--772:						\
--	call	774f;				\
--775:	/* speculation trap */			\
--	pause;					\
--	lfence;					\
--	jmp	775b;				\
--774:						\
--	dec	reg;				\
--	jnz	771b;				\
--	add	$(BITS_PER_LONG/8) * nr, sp;
--
- #ifdef __ASSEMBLY__
- 
- /*
-@@ -121,17 +77,10 @@
- #endif
- .endm
- 
-- /*
--  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
--  * monstrosity above, manually.
--  */
--.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
-+/* This clobbers the BX register */
-+.macro FILL_RETURN_BUFFER nr:req ftr:req
- #ifdef CONFIG_RETPOLINE
--	ANNOTATE_NOSPEC_ALTERNATIVE
--	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
--		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
--		\ftr
--.Lskip_rsb_\@:
-+	ALTERNATIVE "", "call __clear_rsb", \ftr
- #endif
- .endm
- 
-@@ -206,15 +155,10 @@ extern char __indirect_thunk_end[];
- static inline void vmexit_fill_RSB(void)
- {
- #ifdef CONFIG_RETPOLINE
--	unsigned long loops;
--
--	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
--		      ALTERNATIVE("jmp 910f",
--				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
--				  X86_FEATURE_RETPOLINE)
--		      "910:"
--		      : "=r" (loops), ASM_CALL_CONSTRAINT
--		      : : "memory" );
-+	alternative_input("",
-+			  "call __fill_rsb",
-+			  X86_FEATURE_RETPOLINE,
-+			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
- #endif
- }
- 
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -26,6 +26,7 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) +=
- lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o
- lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
- lib-$(CONFIG_RETPOLINE) += retpoline.o
-+OBJECT_FILES_NON_STANDARD_retpoline.o :=y
- 
- obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
- 
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -7,6 +7,7 @@
- #include <asm/alternative-asm.h>
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
-+#include <asm/bitsperlong.h>
- 
- .macro THUNK reg
- 	.section .text.__x86.indirect_thunk
-@@ -46,3 +47,58 @@ GENERATE_THUNK(r13)
- GENERATE_THUNK(r14)
- GENERATE_THUNK(r15)
- #endif
-+
-+/*
-+ * Fill the CPU return stack buffer.
-+ *
-+ * Each entry in the RSB, if used for a speculative 'ret', contains an
-+ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-+ *
-+ * This is required in various cases for retpoline and IBRS-based
-+ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-+ * eliminate potentially bogus entries from the RSB, and sometimes
-+ * purely to ensure that it doesn't get empty, which on some CPUs would
-+ * allow predictions from other (unwanted!) sources to be used.
-+ *
-+ * Google experimented with loop-unrolling and this turned out to be
-+ * the optimal version - two calls, each with their own speculation
-+ * trap should their return address end up getting used, in a loop.
-+ */
-+.macro STUFF_RSB nr:req sp:req
-+	mov	$(\nr / 2), %_ASM_BX
-+	.align 16
-+771:
-+	call	772f
-+773:						/* speculation trap */
-+	pause
-+	lfence
-+	jmp	773b
-+	.align 16
-+772:
-+	call	774f
-+775:						/* speculation trap */
-+	pause
-+	lfence
-+	jmp	775b
-+	.align 16
-+774:
-+	dec	%_ASM_BX
-+	jnz	771b
-+	add	$((BITS_PER_LONG/8) * \nr), \sp
-+.endm
-+
-+#define RSB_FILL_LOOPS		16	/* To avoid underflow */
-+
-+ENTRY(__fill_rsb)
-+	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
-+	ret
-+END(__fill_rsb)
-+EXPORT_SYMBOL_GPL(__fill_rsb)
-+
-+#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
-+
-+ENTRY(__clear_rsb)
-+	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
-+	ret
-+END(__clear_rsb)
-+EXPORT_SYMBOL_GPL(__clear_rsb)
++		if (IS_ENABLED(CONFIG_RETPOLINE))
++			goto retpoline_auto;
++		break;
+ 	case SPECTRE_V2_CMD_RETPOLINE_AMD:
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+ 			goto retpoline_amd;
