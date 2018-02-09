@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1427278-1518185122-2-3283369772364198057
+X-Cyrus-Session-Id: sloti22d1t05-1427278-1518185109-2-15658992547317752886
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518185121; b=RjeDM+Ch6IkrdX+0mrrizUE3DSAX0hdexCOfIUSGXgGs6xQ
-    yM9kbLRCXfD4M7ION1Z/4150FKlz7eKru823zjtkjdVwOWTDf1d8qx+akbPBS37O
-    Q7Zs2z1BDEUvTticHxRu/jFbBY4Dt9Srd1LKmC855LKcaMDIwaMQX7pYKE3vQ/Xq
-    ttBB27cuNgxSA+7Yi0quke0EiNxT32eB56PJGUA3ZhnumZ+9jnN5W1mmZo7xuD5e
-    9fJCyWB9P3vU0UHVG0N+QtKcdiqBOJGzYCeo9fwnomvV0Wp17hdk0SgaIrEjc3So
-    w02+qOuCSnAytR2TfYfUuWI1nOk+mjpsBrh41jw==
+    t=1518185108; b=jLjWE9AXo5j+2PJd4blypCyBw6AAc36h5N2DU610lXp3iZ6
+    kCX1Vdo0kRkV/ZOUkGQ0SmeL+FwxVT8SeMvrpF57apI7ptU+ULiWrEoVQ0dsO0Vq
+    cQxSvTnHiv8EbXrwdw2T3vCVEuy3+hvpJcxJ3jZnh0CQBKQa3CCeHMhNDJxZWYCj
+    M/tmn0ReopsPBSIun7YYnVmOu3dl6LXvL7SfANLQJCmJJuDTsWZtImcLw8U16ynH
+    pjhrJ+SW86A1zmGxJ3zXoXX8d3txO5ls1YnV+7i2DuWbNbUX4nUnpHgHThpxbB6R
+    Lwm8FbpzsIl9DsKB83/bDbekATuQhQlvO02UbaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518185121; bh=MhbntvijZxII0ckWUsdh4iBqim
-    sKCzAO/rdC/7LTRYo=; b=q2RBBA8XDowGGmx0lY2PIinQBt6WeFnJVkhAhZe61u
-    inpY332fB7UqzGIOC00+AKJAzpoGBt6+ObI3IL8O9tVYl5I2MFi+JEm4xjm960HE
-    CjtAH1NSDu4gtlpU3IHmAc58yb2I8nwX3NC+/A2RormIJZXo9faOedKLKahBrWs9
-    UIuxPYK7UHJaJSVq8UChkOk7Ovm/NjStXgbi9IvIt+2xKCoTV7rtAkWpiIhuz29Q
-    TIbRzsO59QH9UB3OGWrQelEauJwA8FQaYPm1whS/NAMLsvSbXr02OT5fL40ABAKe
-    Dcb1+1tYjvGXM5be7b8RWXgqezGgHQeu+0ZXtiqRQADA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518185108; bh=xEDio291/96bwrpl0Rphg3cq5S
+    rmO7p9oI2ZntmpzS8=; b=XEBGsAHLNx4E24rVxCZZnu99frjYSMLUOcdq5mi56f
+    35xeSvI2kxuyquDURh6IylzHfdS4VVFqNlXkeYrbq0kRg7Qdaobly71e6OkgiIEc
+    HmMmCBJ9eeoqD68PGwbCJyXvKUIAqNcYOgRByFDe5nd2pW3UMIUGhcdkr5aMKxtm
+    Pofn87CGEs0xYlxUpIgUCQLawfQ+OXWD0wSQwAx5Spuecy4suxY3LJ3y2JcZ4Nly
+    L6AspeaxFKhUKBOVMWODfydcTIwOwZHI1O1QSY3LKCpXmpBdfObHRWInw21tEf5m
+    3aD8EjkW8VwkMqbyCIhWGmvqmXJG0umpjxEdumH0upmw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753176AbeBINnH (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:43:07 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50250 "EHLO
+        id S1752791AbeBIOEq (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Feb 2018 09:04:46 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50864 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752469AbeBINnF (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:43:05 -0500
+        with ESMTP id S1752261AbeBINne (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:43:34 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        kernel-hardening@lists.openwall.com,
-        Al Viro <viro@zeniv.linux.org.uk>, alan@linux.intel.com,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>, riel@redhat.com,
+        ak@linux.intel.com, peterz@infradead.org,
+        David Woodhouse <dwmw2@infradead.org>, jikos@kernel.org,
+        luto@amacapital.net, dave.hansen@intel.com,
+        torvalds@linux-foundation.org, keescook@google.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        tim.c.chen@linux.intel.com, pjt@google.com,
         David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.9 62/92] x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
-Date: Fri,  9 Feb 2018 14:39:31 +0100
-Message-Id: <20180209133935.742909119@linuxfoundation.org>
+Subject: [PATCH 4.9 48/92] x86/bugs: Drop one "mitigation" from dmesg
+Date: Fri,  9 Feb 2018 14:39:17 +0100
+Message-Id: <20180209133934.651466374@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180209133931.211869118@linuxfoundation.org>
 References: <20180209133931.211869118@linuxfoundation.org>
@@ -84,185 +84,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Borislav Petkov <bp@suse.de>
 
+(cherry picked from commit 55fa19d3e51f33d9cd4056d25836d93abf9438db)
 
-(cherry picked from commit 304ec1b050310548db33063e567123fae8fd0301)
+Make
 
-Quoting Linus:
+[    0.031118] Spectre V2 mitigation: Mitigation: Full generic retpoline
 
-    I do think that it would be a good idea to very expressly document
-    the fact that it's not that the user access itself is unsafe. I do
-    agree that things like "get_user()" want to be protected, but not
-    because of any direct bugs or problems with get_user() and friends,
-    but simply because get_user() is an excellent source of a pointer
-    that is obviously controlled from a potentially attacking user
-    space. So it's a prime candidate for then finding _subsequent_
-    accesses that can then be used to perturb the cache.
+into
 
-__uaccess_begin_nospec() covers __get_user() and copy_from_iter() where the
-limit check is far away from the user pointer de-reference. In those cases
-a barrier_nospec() prevents speculation with a potential pointer to
-privileged memory. uaccess_try_nospec covers get_user_try.
+[    0.031118] Spectre V2: Mitigation: Full generic retpoline
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+to reduce the mitigation mitigations strings.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: riel@redhat.com
+Cc: ak@linux.intel.com
+Cc: peterz@infradead.org
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: jikos@kernel.org
+Cc: luto@amacapital.net
+Cc: dave.hansen@intel.com
+Cc: torvalds@linux-foundation.org
+Cc: keescook@google.com
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: tim.c.chen@linux.intel.com
+Cc: pjt@google.com
+Link: https://lkml.kernel.org/r/20180126121139.31959-5-bp@alien8.de
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/uaccess.h    |    6 +++---
- arch/x86/include/asm/uaccess_32.h |   12 ++++++------
- arch/x86/include/asm/uaccess_64.h |   12 ++++++------
- arch/x86/lib/usercopy_32.c        |    4 ++--
- 4 files changed, 17 insertions(+), 17 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -437,7 +437,7 @@ do {									\
- ({									\
- 	int __gu_err;							\
- 	__inttype(*(ptr)) __gu_val;					\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
- 	__uaccess_end();						\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-@@ -547,7 +547,7 @@ struct __large_struct { unsigned long bu
-  *	get_user_ex(...);
-  * } get_user_catch(err)
-  */
--#define get_user_try		uaccess_try
-+#define get_user_try		uaccess_try_nospec
- #define get_user_catch(err)	uaccess_catch(err)
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -90,7 +90,7 @@ static const char *spectre_v2_strings[]
+ };
  
- #define get_user_ex(x, ptr)	do {					\
-@@ -582,7 +582,7 @@ extern void __cmpxchg_wrong_size(void)
- 	__typeof__(ptr) __uval = (uval);				\
- 	__typeof__(*(ptr)) __old = (old);				\
- 	__typeof__(*(ptr)) __new = (new);				\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	switch (size) {							\
- 	case 1:								\
- 	{								\
---- a/arch/x86/include/asm/uaccess_32.h
-+++ b/arch/x86/include/asm/uaccess_32.h
-@@ -102,17 +102,17 @@ __copy_from_user(void *to, const void __
+ #undef pr_fmt
+-#define pr_fmt(fmt)     "Spectre V2 mitigation: " fmt
++#define pr_fmt(fmt)     "Spectre V2 : " fmt
  
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
-@@ -130,17 +130,17 @@ static __always_inline unsigned long __c
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -59,31 +59,31 @@ int __copy_from_user_nocheck(void *dst,
- 		return copy_user_generic(dst, (__force void *)src, size);
- 	switch (size) {
- 	case 1:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u8 *)dst, (u8 __user *)src,
- 			      ret, "b", "b", "=q", 1);
- 		__uaccess_end();
- 		return ret;
- 	case 2:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u16 *)dst, (u16 __user *)src,
- 			      ret, "w", "w", "=r", 2);
- 		__uaccess_end();
- 		return ret;
- 	case 4:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u32 *)dst, (u32 __user *)src,
- 			      ret, "l", "k", "=r", 4);
- 		__uaccess_end();
- 		return ret;
- 	case 8:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			      ret, "q", "", "=r", 8);
- 		__uaccess_end();
- 		return ret;
- 	case 10:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 10);
- 		if (likely(!ret))
-@@ -93,7 +93,7 @@ int __copy_from_user_nocheck(void *dst,
- 		__uaccess_end();
- 		return ret;
- 	case 16:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 16);
- 		if (likely(!ret))
---- a/arch/x86/lib/usercopy_32.c
-+++ b/arch/x86/lib/usercopy_32.c
-@@ -570,7 +570,7 @@ do {									\
- unsigned long __copy_to_user_ll(void __user *to, const void *from,
- 				unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
-@@ -627,7 +627,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nocach
- unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && static_cpu_has(X86_FEATURE_XMM2))
- 		n = __copy_user_intel_nocache(to, from, n);
+ static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
+ static bool spectre_v2_bad_module;
