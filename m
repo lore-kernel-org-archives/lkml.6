@@ -1,39 +1,34 @@
-Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x226w9OPKiC3U/FkJgsQiBEWTPY5wlarJvmDl5R94aurRXJZeJNOSA+BGRthDO+hUynHTgTRe
-ARC-Seal: i=1; a=rsa-sha256; t=1518447090; cv=none;
+Return-Path: <pavel@ucw.cz>
+X-Google-Smtp-Source: AH8x224yOAkpF4+YhrzgRhN1c8LRpb+oYRXUrZzF/79v2ZYT/Z0DsMgg6+8fTihjExdpEhGsBara
+ARC-Seal: i=1; a=rsa-sha256; t=1518210558; cv=none;
         d=google.com; s=arc-20160816;
-        b=NDrLk/mthMniAnykOg7AUOKqKvxaqbblqDFZulsNYOeMVh8gtdh1umhk6WirYqgfTc
-         frdns120PrcWJYqIKJulYI2ZTZhBrJ5ZXA6VtG1iqS8XKPW2oymTALMIa05QLSPRa6A+
-         a2iOM1aaLx60k39s8c4Cuss3UUeEOgFidnL5DYEw48Uy5Ma9XvDtrYfsum4skSdigIHH
-         zYjRiorBZSPGXzclgpCbCfjRnSkXEDA2/j0QsmwKtT011J7ioR44IQg1FpSy3Af9qF/U
-         wFKs01Dpl2nAHIy33xThhwuO0Hfyk2SCZyXCiKZ4kZfHs2agPEAUUaDHH0zYybP4srqL
-         kbVQ==
+        b=O8Tm2TuKUSgH0yH9S28f6nvmEg9gCGEG3YWWtR4bs14gk8xFwbrXpwxWStviR254MO
+         1aOiwjJX1//dTGtUDatRrOtI0ZmqtXH/zoxTVHz1O6IMuzOsqDFe+8iv4Dw6iRvI2UV0
+         8GcnQA/MlBoKwLQZhs/mS+SBTytVmyrze5SYFgDxSNMAqSRX9IfcARi4jpV5PBUZLTHO
+         OziSC4zgE7iJ2WGoLdI1s1SPDVZKdX3b4OJLpyOCc/tR4gDoiEJv3JpEpZ+rtE8qBMNB
+         UY3EFiqR1rjkX9mh5KAcJ3Sfzjs88Plfji1CW2JV9nz/JV3Hs0/qaM8BjCw7HahnorWt
+         9tpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=RkA0cC2xwhDqGD2V24jJockc3BFx3kH29esjN8Pt+ew=;
-        b=0NNuEuHZNsaXggK5b4RhVzr1DuulzZXt2KzePP99FXLpYcxVvIZLuCRzMYYNtYZemE
-         dDb6VCXUkxn3mp0oZtFLRd0IFHLrUJbYhNpjwk2nYpD85+lSbSBMl5WjD0duNdryQq8l
-         fIk/hOiuO/lndENUih3K6AFrfRilzY0U6fUOK9WNdxCU9YNsNBJKubeq1hQiIHvirKQf
-         wgEHMfgFhmdicv7tEiH6BQnA6Ovq22LLjVc9FKT+ywLgwg9PfmNlA9lk3g2theVWssBU
-         Ct0+uePOY8bp5Rz5C/N72i6d3dVvEHpg86T+UMrn7on1FchZPdMflnI2ihKz+M9wJZdf
-         w0xA==
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=VkfdadkEGZs3WnISVAlFGkfnSB24HdgcHUlJm4PIOts=;
+        b=tsG9XlZjtlhrK0xvdYoYpPBTi+IpeWPypXR9FO8plTlDel8QcWANj4eHRHu1ww+g60
+         LrbIuu3NU9GfUD8ALMHHE9wIE1wAyKRr3Ji6+BWFQAqngCIkY2n6cezhMS+i51SxVoPV
+         kIpEm3cpIslFMFcsN/CGfkyfA4b2lPpdWJPYVGIY169QGNmIhpUpeJv/LZf+3kWOOGGb
+         OzeqRJgcxaP3Yn1MXuQp7sb7xmI0i4aZ5UQwGK4AoaIJl6WsWegJQwi6JX/VQ9PD4Wlu
+         5zSES5rIPUHmkf+jrVQiCIp1fXqEt/g4FXEnugir0mh30MT6EEjm/4WR3V58QfJ3TeB0
+         HvDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GIlu4cMk;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GIlu4cMk;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
-Date: Mon, 12 Feb 2018 15:51:25 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Joerg Roedel <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Date: Fri, 9 Feb 2018 22:09:18 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Linux-MM <linux-mm@kvack.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Dave Hansen <dave.hansen@intel.com>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -51,95 +46,69 @@ Cc: Joerg Roedel <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>,
 	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
 	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
 	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
+	Waiman Long <llong@redhat.com>, Joerg Roedel <jroedel@suse.de>
 Subject: Re: [PATCH 00/31 v2] PTI support for x86_32
-Message-ID: <20180212145125.GE16484@8bytes.org>
+Message-ID: <20180209210918.GA7333@amd>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
  <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
- <20180209191112.55zyjf4njum75brd@suse.de>
- <20180211191312.54apu5edk3olsfz3@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
 Content-Disposition: inline
-In-Reply-To: <20180211191312.54apu5edk3olsfz3@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914900490843452?=
-X-GMAIL-MSGID: =?utf-8?q?1592207175975342363?=
+X-GMAIL-MSGID: =?utf-8?q?1591959154814868003?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Ingo,
 
-On Sun, Feb 11, 2018 at 08:13:12PM +0100, Ingo Molnar wrote:
-> Could you please measure the PTI kernel vs. vanilla kernel?
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Okay, did that, here is the data. The test machine is a Xeon E5-1620v2,
-which is Ivy Bridge based (no PCIE) and has 4C/8T.
+On Fri 2018-02-09 17:47:43, Andy Lutomirski wrote:
+> On Fri, Feb 9, 2018 at 9:25 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> > Hi,
+> >
+> > here is the second version of my PTI implementation for
+> > x86_32, based on tip/x86-pti-for-linus. It took a lot longer
+> > than I had hoped, but there have been a number of obstacles
+> > on the way. It also isn't the small patch-set anymore that v1
+> > was, but compared to it this one actually works :)
+>=20
+> One thing worth noting is that performance of this whole series is
+> going to be abysmal due to the complete lack of 32-bit PCID.  Maybe
+> any kernel built with this option set that runs on a CPU that has
+>the
 
-I ran the 2 tests you suggested:
+What kind of slowdown are we talking about here?
 
-	* Test-1: perf stat --null --sync --repeat 10 perf bench sched messaging -g 20
+> PCID bit set in CPUID should print a big fat warning like "WARNING:
+> you are using 32-bit PTI on a 64-bit PCID-capable CPU.  Your
+> performance will increase dramatically if you switch to a 64-bit
+> kernel."
 
-	* Test-2: perf stat --null --sync --repeat 10 perf bench sched messaging -g 20 -t
+Hardware supports PCID even on 32-bit kernels, no?
 
-The tests ran on these kernels:
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-	* tip-32-pae: current top of tip/x86-tip-for-linus branch,
-	              compiled as a 32 bit kernel with PAE
-	              (commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-	* pti-32-pae: Same as above with my patches on-top, as on
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-		      git://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git pti-x32-v2
+iEYEARECAAYFAlp+Df0ACgkQMOfwapXb+vLUOQCgsuGLg/bps5hW4emf9c2c6MEJ
+DcAAn1C0vweSUfM1H+KV6WqM9hqO0T5s
+=CfYt
+-----END PGP SIGNATURE-----
 
-	              compiled as a 32 bit kernel with PAE
-		      (commit dbb0074f778b396a11e0c897fef9d0c4583e7ccb)
-
-	* pti-off-64: current top of tip/x86-tip-for-linus branch,
-		      compiled as a 64 bit kernel, booted with pti=off
-	              (commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
-
-	* pti-on-64: current top of tip/x86-tip-for-linus branch,
-		     compiled as a 64 bit kernel, booted with pti=on
-	             (commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
-
-Results are:
-	            | Test-1             | Test-2          
-	------------+--------------------+-----------------
-	tip-32-pae  | 0.28s (+-0.44%)    | 0.27s (+-2.15%) 
-	------------+--------------------+-----------------
-	pti-32-pae  | 0.44s (+-0.40%)    | 0.42s (+-0.48%) 
-	------------+--------------------+-----------------
-	pti-off-64  | 0.24s (+-0.40%)    | 0.25s (+-1.31%) 
-	------------+--------------------+-----------------
-	pti-on-64   | 0.30s (+-0.47%)    | 0.31s (+-0.95%)
-
-On 32 bit with PTI enabled the test needs 157% (non-threaded) and
-156% (threaded) of time compared to the non-PTI baseline.
-
-On 64 bit these numbers are 125% (non-threaded) and 124% (threaded).
-
-The pti-32-pae kernel still used 'rep movsb' in the entry code. I
-replaced that with 'rep movsl' and measured again, but overhead is still
-around 152%.
-
-I also measured cycles with 'perf record' to see where the additional
-time is spent. The report showed around 25% in entry_SYSENTER_32 for
-the pti-32-pae kernel. The same report on the tip-32-pae kernel shows
-around 2.5% for the same symbol.
-
-The entry_SYSENTER_32 path does no stack-copy on entry (it only
-push/pops 8 bytes for the cr3 switch), but one full pt_regs copy on
-exit. The exit-path was easy to optimize, I got it to the point where it
-only copied 8 bytes to the entry stack (flags and eax).  This way I got
-the 'perf report' numbers for entry_SYSENTER_32 down to around 20%, but
-the overall numbers for Test-1 and Test-2 are still at around 150% of
-the baseline.
-
-So it seems that most of the additional time is actually spent switching
-the cr3s.
-
-Regards,
-
-	Joerg
+--8t9RHnE3ZwKMSgU+--
