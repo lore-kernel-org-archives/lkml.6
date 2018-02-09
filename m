@@ -1,81 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBIPrx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 10:47:53 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35468 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeBIPrv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:47:51 -0500
-Date: Fri, 9 Feb 2018 15:47:46 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Cosmin Samoila <cosmin.samoila@nxp.com>
-Cc: dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "wakasugi.jb@om.asahi-kasei.co.jp" <wakasugi.jb@om.asahi-kasei.co.jp>,
-        "mihai.serban@gmail.com" <mihai.serban@gmail.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "mihai.serban@nxp.com" <mihai.serban@nxp.com>
-Subject: Re: [PATCH] ASoC: codecs: Add support for AK4458 DAC driver
-Message-ID: <20180209154746.GA10104@sirena.org.uk>
-References: <1517404809-25250-1-git-send-email-cosmin.samoila@nxp.com>
- <20180131170330.GB7763@sirena.org.uk>
- <1518171736.19973.7.camel@nxp.com>
+        id S1752185AbeBIPsE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 10:48:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751038AbeBIPsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 10:48:02 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2317E21789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 9 Feb 2018 10:47:58 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 17/18] tracing: Add indirect to indirect access for
+ function based events
+Message-ID: <20180209104758.093d31ad@gandalf.local.home>
+In-Reply-To: <20180209051301.GE28206@sejong>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231019.582037880@goodmis.org>
+        <20180209051301.GE28206@sejong>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
-Content-Disposition: inline
-In-Reply-To: <1518171736.19973.7.camel@nxp.com>
-X-Cookie: f u cn rd ths, itn tyg h myxbl cd.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 9 Feb 2018 14:13:01 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
---h31gzZEtNLTqOjlF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fri, Feb 02, 2018 at 06:05:15PM -0500, Steven Rostedt wrote:
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > Allow the function based events to retrieve not only the parameters offsets,
+> > but also get data from a pointer within a parameter structure. Something
+> > like:
+> > 
+> >  # echo 'ip_rcv(string skdev+16[0][0] | x8[6] skperm+16[0]+558)' > function_events
+> > 
+> >  # echo 1 > events/functions/ip_rcv/enable
+> >  # cat trace
+> >     <idle>-0     [003] ..s3   310.626391: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   310.626400: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   312.183775: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   312.184329: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   312.303895: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   312.304610: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   312.471980: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   312.472908: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> >     <idle>-0     [003] ..s3   313.135804: __netif_receive_skb_core->ip_rcv(skdev=em1, skperm=b4,b5,2f,ce,18,65)
+> > 
+> > That is, we retrieved the net_device of the sk_buff and displayed its name
+> > and perm_addr info.
+> > 
+> >   sk->dev->name, sk->dev->perm_addr
+> > 
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---  
+> 
+> [SNIP]
+> > +static unsigned long process_redirects(struct func_arg *arg, unsigned long val,
+> > +				       char *buf)
+> > +{
+> > +	struct func_arg_redirect *redirect;
+> > +	int ret;
+> > +
+> > +	if (arg->indirect) {
+> > +		ret = probe_kernel_read(buf, (void *)val, sizeof(long));
+> > +		if (ret)
+> > +			return 0;
+> > +		val = *(unsigned long *)buf;
+> > +	}
+> > +
+> > +	list_for_each_entry(redirect, &arg->redirects, list) {
+> > +		val += redirect->index;
+> > +		if (redirect->indirect) {
+> > +			val += (redirect->indirect ^ INDIRECT_FLAG);
+> > +			ret = probe_kernel_read(buf, (void *)val, sizeof(long));
+> > +			if (ret)
+> > +				return 0;
+> > +		}
+> > +	}
+> > +	return val;
+> > +}
+> > +
+> > +static long long __get_arg(struct func_arg *arg, unsigned long long val)
+> >  {
+> >  	char buf[8];
+> >  	int ret;
+> >  
+> >  	val += arg->index;
+> >  
+> > -	if (!arg->indirect)
+> > -		return val;
+> > +	if (arg->indirect)
+> > +		val += (arg->indirect ^ INDIRECT_FLAG);
+> >  
+> > -	val = val + (arg->indirect ^ INDIRECT_FLAG);
+> > +	if (!list_empty(&arg->redirects))
+> > +		val = process_redirects(arg, val, buf);
+> > +
+> > +	if (!val)
+> > +		return 0;
+> >  
+> >  	/* Arrays and strings do their own indirect reads */
+> > -	if (arg->array || arg->func_type == FUNC_TYPE_string)
+> > +	if (!arg->indirect || arg->array || arg->func_type == FUNC_TYPE_string)
+> >  		return val;  
+> 
+> It seems the indirect is processed twice with redirects.  Consider
+> "x64 foo[0]+4", the process_redirects() will call probe_kernel_read()
+> and then here again.
+> 
 
-On Fri, Feb 09, 2018 at 10:22:16AM +0000, Cosmin Samoila wrote:
 
-> > > +static const char * const ak4458_dac_select_texts[] = { "OFF",
-> > > "ON" };
-> > This looks like the users should be switch controls - what's the goal
-> > here?
+Good catch!
 
-> I think this is to allow users to switch off sound for all channels but
-> it seems silly to have 4 controls doing the same thing.
-> We now have two options:
-> - one control to switch off sound for all channels
-> - one controll per DAC
+It should have been:
 
-If they're mutes they shouldn't be in DAPM at all, just make them
-standard controls - they should stack up with the matching volume
-controls.
+		return process_redirects(arg, val, buf);
 
-> What do you mean by "users should be switch controls" ?
-> Should we use SND_SOC_DAPM_SWITCH instead of SND_SOC_DAPM_MUX?
+Thanks!
 
-They quite clearly aren't muxes so if they need to be in DAPM probably
-switches but it's not clear that they need to be in DAPM.
-
---h31gzZEtNLTqOjlF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp9wqIACgkQJNaLcl1U
-h9Dytwf7BvqgidVkfdFep3z7nEGdH+Z7pP7MHkL9WikBp0BQ1dNw2I2RYeRWdSeC
-I8Pg9HZnr25ofiC6VZhBZzxlk3EEFxHtWxscaqDe7atcj9RJWEjGFoJAQpBW+kwi
-BcDjUlq5Gr6wNvJ+mw58hRzI3r6rJ3Fz60k+AkeekeFxqBbvh8yOv/+fbKQ412re
-bEBk0WDYwSXyO7AoaFsYVAO5JJOkek0hhnkla9m/NjuViRP+IUnM069wmywxSp05
-KybSKljp+HO3Atg4fzZZ/i6W/XI9To/6ShS/GblUwVH+u5udaMgynplsAOtrOF33
-c2Kz91eTV/Z7CxYqp26xc8978Cm2Vg==
-=nfT0
------END PGP SIGNATURE-----
-
---h31gzZEtNLTqOjlF--
+-- Steve
