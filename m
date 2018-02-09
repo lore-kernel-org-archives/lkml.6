@@ -1,144 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeBIQtX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 11:49:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751253AbeBIQtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 11:49:21 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8393621789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=leon@kernel.org
-Date: Fri, 9 Feb 2018 18:49:18 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/nldev: Fix multiple potential NULL pointer
- dereferences
-Message-ID: <20180209164918.GP2197@mtr-leonro.local>
-References: <20180209063702.GA28685@embeddedgus>
- <20180209122549.GK2197@mtr-leonro.local>
- <20180209073649.Horde.OueGLKMtzpLyz4w36quXUca@gator4166.hostgator.com>
- <20180209143541.GN2197@mtr-leonro.local>
- <20180209095600.Horde.e7EqwCs_5bRLfE3Nnkfl3L3@gator4166.hostgator.com>
+        id S1751910AbeBIQ5B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 11:57:01 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39183 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751024AbeBIQ47 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 11:56:59 -0500
+X-Google-Smtp-Source: AH8x225lqKsXPdj0YpWL0bfpxKtQOmovd6JmvpFvvISRsq3s4N6FsznaPZAjHJ29M/Opt7/sZpK92Q==
+Subject: Re: [PATCH] rtlwifi: rtl8192cu: remove pointless memcpy
+To: Arnd Bergmann <arnd@arndb.de>, Ping-Ke Shih <pkshih@realtek.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180209132531.2755482-1-arnd@arndb.de>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <22ae9af4-70db-19d7-9b6d-2b0e3dc853d0@lwfinger.net>
+Date: Fri, 9 Feb 2018 10:56:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
-Content-Disposition: inline
-In-Reply-To: <20180209095600.Horde.e7EqwCs_5bRLfE3Nnkfl3L3@gator4166.hostgator.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180209132531.2755482-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/09/2018 07:24 AM, Arnd Bergmann wrote:
+> gcc-8 points out that source and destination of the memcpy() are
+> always the same pointer, so the effect of memcpy() is undefined
+> here (its arguments must not overlap):
+> 
+> drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c: In function '_rtl_rx_process':
+> drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c:430:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+> 
+> Most likely this is harmless, but it's easy to just remove the
+> line and get rid of the warning.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+> index ac4a82de40c7..9ab56827124e 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/trx.c
+> @@ -427,7 +427,6 @@ static void _rtl_rx_process(struct ieee80211_hw *hw, struct sk_buff *skb)
+>   		 (u32)hdr->addr1[0], (u32)hdr->addr1[1],
+>   		 (u32)hdr->addr1[2], (u32)hdr->addr1[3],
+>   		 (u32)hdr->addr1[4], (u32)hdr->addr1[5]);
+> -	memcpy(IEEE80211_SKB_RXCB(skb), rx_status, sizeof(*rx_status));
+>   	ieee80211_rx(hw, skb);
+>   }
 
---rMWmSaSbD7nr+du9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Argh. Once again I got tripped up on pointers. Yes, this patch is correct.
 
-On Fri, Feb 09, 2018 at 09:56:00AM -0600, Gustavo A. R. Silva wrote:
->
-> Quoting Leon Romanovsky <leon@kernel.org>:
->
-> > On Fri, Feb 09, 2018 at 07:36:49AM -0600, Gustavo A. R. Silva wrote:
-> > > Hi Leon,
-> > >
-> > > Quoting Leon Romanovsky <leon@kernel.org>:
-> > >
-> > > > On Fri, Feb 09, 2018 at 12:37:02AM -0600, Gustavo A. R. Silva wrote:
-> > > > > In case the message header and payload cannot be stored, function
-> > > > > nlmsg_put returns null.
-> > > > >
-> > > > > Fix this by adding multiple sanity checks and avoid a potential
-> > > > > null dereference on _nlh_ when calling nlmsg_end.
-> > > > >
-> > > > > Addresses-Coverity-ID: 1454215 ("Dereference null return value")
-> > > > > Addresses-Coverity-ID: 1454223 ("Dereference null return value")
-> > > > > Addresses-Coverity-ID: 1454224 ("Dereference null return value")
-> > > > > Addresses-Coverity-ID: 1464669 ("Dereference null return value")
-> > > > > Addresses-Coverity-ID: 1464670 ("Dereference null return value")
-> > > > > Addresses-Coverity-ID: 1464672 ("Dereference null return value")
-> > > > > Fixes: e5c9469efcb1 ("RDMA/netlink: Add nldev device doit
-> > > implementation")
-> > > > > Fixes: c3f66f7b0052 ("RDMA/netlink: Implement nldev port doit callback")
-> > > > > Fixes: 7d02f605f0dc ("RDMA/netlink: Add nldev port dumpit
-> > > implementation")
-> > > > > Fixes: b5fa635aab8f ("RDMA/nldev: Provide detailed QP information")
-> > > > > Fixes: bf3c5a93c523 ("RDMA/nldev: Provide global resource utilization")
-> > > > > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > > > > ---
-> > > > >  drivers/infiniband/core/nldev.c | 26 +++++++++++++++++++++++++-
-> > > > >  1 file changed, 25 insertions(+), 1 deletion(-)
-> > > > >
-> > > >
-> > > > It will be much better to fix the tool instead of fixing ghost case.
-> > > > This scenario is impossible for all those flows.
-> > > > We can receive the skv/msg in two ways:
-> > > >  * First by allocating new message with NLMSG_DEFAULT_SIZE, which has
-> > > > more room
-> > > >    than nlmsg_total_size(payload), payload is 0.
-> > > >  * Second by getting from netlink.c and it will be at least "struct
-> > > > nlmsghdr" too.
-> > > >
-> > > > Can you please add this info to the commit message?
-> > > >
-> > >
-> > > Actually, I was planing to send a new version of this patch. This time using
-> > > the unlikely macro for all the null checks on nlh.
-> > >
-> > > What do you think?
-> >
-> > It is not datapath, so "unlikely" is not needed. Let's assume that smart
-> > enough
-> > compiler will optimize such flow anyway, because nlmsg_put returns NULL
-> > in unlikely scenario, so this check will be unlikely automatically too.
-> >
->
-> I'm curious about why the return value of nlmsg_put is null checked 118 out
-> of 129 times (based on Coverity reports) in the last linux-next tree.
->
-> So based on what you mention, do you think all those checks are actually
-> unnecessary and, maybe they should be removed?
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-I honestly don't know about all cases, but if message is allocated with
-NLMSG_DEFAULT_SIZE and payload is 0, this check won't be needed.
+Sorry about the noise.
 
-So go ahead, add check if (!...) in all places, but be cautious with
-"potential null dereference" claims, it is not always true.
-
-Thanks
-
->
-> Thanks
-> --
-> Gustavo
->
->
->
->
->
->
-
---rMWmSaSbD7nr+du9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlp90Q0ACgkQ5GN7iDZy
-WKeNuhAAtgXlgYhyXlMTHnvoaUI3xeMVxqvrQbZLGm+vgectS8KPa9yHFiORETJK
-ksWaNEkxkqGWaX6AY0OdxIYWsQOyxmplx8Gv825uFkdOtrdq1OotSv11MLUY2s7S
-6ICnFUrTtXYPcPmHK4+/gPkIm9+jEflAQwCL3xVWd/KXlsUZUjVTzYqftaInJqQ2
-Hjeienm4cDFPH0Us26kQLdwv5c/wQEtI+Qwwb8em11u3MqGayEip8krDzjotfNq4
-wUMz96DvxontCKfjYDBwJo9cKjr4CyDkRbzQwfCuTMi6ubL58OSFqhpfDXV0go48
-nABShN3BWH/8GtXlxLPwPYQrmD8HJAWZVv221B+TqT11M8i1/NsL2qRlPEQo8/lg
-Dza1b6vI9dDBMD+Rof1fLAR2jlwve8O4fGVgxJr8WgKod2GwDHZWLTVF8NJVzqX/
-MdbJg/POVrar8lwhtdlMkrEKiGF45JuSCmkzlMNNVXgMdShfJG8chjL8mVtaLNVV
-oxyix1iC66+bQfOYU1qHJlk5Fy/blh+qww2IbOKRvacIWm38cEiCe0yscjv3wZdV
-divTiK7IM7DMZUTeBUYjb+xdfQmrlojPclcRvvSSaOcqT5wxWDACcwkVvqJdp6OB
-OSbAFwLTfMUx7sYqVGm142LlnBhty+pJLC2l4M0Pv3PSqI+Cn7E=
-=SB7n
------END PGP SIGNATURE-----
-
---rMWmSaSbD7nr+du9--
+Larry
