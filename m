@@ -1,90 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751070AbeBIJLY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 04:11:24 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41194 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750825AbeBIJLS (ORCPT
+        id S1751122AbeBIJNG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 04:13:06 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58698 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbeBIJND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:11:18 -0500
-X-Google-Smtp-Source: AH8x225ec5QR4QgtbTHHT6SqHmK0EwMyMaGB9w8ypibyeJHKV+Muf0yKfxg2K9ws7iQ6NaTaGKjkKQ==
-Date: Fri, 9 Feb 2018 10:11:10 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        stern@rowland.harvard.edu, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        boqun.feng@gmail.com, will.deacon@arm.com, npiggin@gmail.com,
-        dhowells@redhat.com, elena.reshetova@intel.com, mhocko@suse.com,
-        akiyks@gmail.com
-Subject: Re: [GIT PULL tools] Linux kernel memory model
-Message-ID: <20180209091110.GA14128@andrea>
-References: <20180125093440.GA875@linux.vnet.ibm.com>
- <20180208184106.GA17043@e110439-lin>
- <20180208200219.GE25181@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208200219.GE25181@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 9 Feb 2018 04:13:03 -0500
+X-Google-Smtp-Source: AH8x226VVjqGnKyN6AXq3F6jlKVIZJSkGE2tbRAfk0imHnKvcMQWqN+fjNn3XdPZQcVjfPQergzd8A==
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.9\))
+Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
+ __GFP_HIGHMEM implicitly")
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20180209040814.GA23828@bombadil.infradead.org>
+Date: Fri, 9 Feb 2018 17:12:56 +0800
+Cc: Michal Hocko <mhocko@suse.com>, Laura Abbott <labbott@redhat.com>,
+        linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <2DB8D5E5-0955-47CF-A142-09A5BA71DF70@canonical.com>
+References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
+ <20180208130649.GA15846@bombadil.infradead.org>
+ <20180208232004.GA21027@bombadil.infradead.org>
+ <20180209040814.GA23828@bombadil.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3445.6.9)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 09:02:19PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 08, 2018 at 06:41:06PM +0000, Patrick Bellasi wrote:
-> > Hi Paul,
-> > thanks to you and all the involved guys for this useful tool.
-> > 
-> > I give it a try today and found that by installing herd7 by just
-> > following the instruction in herdtools7/INSTALL.md, and precisely
-> > installing it via:
-> > 
-> >    opam install herdtools7
-> > 
-> > it seems to give you a tool which fails to run the basic example in
-> > your README with this error:
-> > 
-> >    File "./linux-kernel.def", line 44, characters 29-30: unexpected '-' (in macros)
-> > 
-> > As suggested by Will, by building instead herd7 HEAD (commit 44d69c2)
-> > everything works fine.
-> > 
-> > Maybe it's a know issue, in case just ignore me. :)
-> > 
-> > Otherwise, maybe it can be worth to add to the README a note on which
-> > minimum version of the herd7 tool is required.
-> > 
-> >  opma   version (not working)    : 7.47, Rev: exported
-> >  master version (working for me) : 7.47+7(dev), Rev: 44d69c2b1b5ca0f97bd138899d31532ee5e4e084
-> 
-> Urgh. So that's why it wouldn't work.
-> 
-> I remember Paul saying you needed the latest version, which is why I
-> rebuild from opam, but building top of git is a bit much.
+Hi Matthew,
 
-+1
+> On Feb 9, 2018, at 12:08 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> Alternatively, try this.  It passes in GFP_DMA32 from vmalloc_32,
+> regardless of whether ZONE_DMA32 exists or not.  If ZONE_DMA32 doesn't
+> exist, then we clear it in __vmalloc_area_node(), after using it to
+> determine that we shouldn't set __GFP_HIGHMEM.
 
-_Sadly_ enough, co-developers and I were aware of this issue,
-but it was only mildly reported here (c.f.,
+IIUC, I need to let drivers/media drivers start using vmalloc_32() with  
+your patch, right?
 
-  https://marc.info/?l=linux-kernel&m=151638196427685&w=2 ).
+Kai-Heng
 
-This bisects to that (crazy):
-
-  2d5fba7782d669c6a1cc577dbc3bf507780273bb
-  ("linux-kernel*: Make RCU identifiers match ASPLOS paper")
-
-  From repo.: https://github.com/aparri/memory-model
-
-which not only did break 7.47, but also made the bell uglier
-by mixing dashes and underscores in a very same block.
-
-As a solution to this issue, I can envisage a partial revert
-of that commit (just replace those dashes); Paul, Jade, Luc:
-any better solution?
-
-(Sorry for being late on IRC, glad this came out here,)
-
-  Andrea
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 673942094328..91e8a95123c4 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1669,10 +1669,11 @@ static void *__vmalloc_area_node(struct vm_struct  
+> *area, gfp_t gfp_mask,
+>  	struct page **pages;
+>  	unsigned int nr_pages, array_size, i;
+>  	const gfp_t nested_gfp = (gfp_mask & GFP_RECLAIM_MASK) | __GFP_ZERO;
+> -	const gfp_t alloc_mask = gfp_mask | __GFP_NOWARN;
+> -	const gfp_t highmem_mask = (gfp_mask & (GFP_DMA | GFP_DMA32)) ?
+> -					0 :
+> -					__GFP_HIGHMEM;
+> +	gfp_t alloc_mask = gfp_mask | __GFP_NOWARN;
+> +	if (!(alloc_mask & GFP_ZONEMASK))
+> +		alloc_mask |= __GFP_HIGHMEM;
+> +	if (!IS_ENABLED(CONFIG_ZONE_DMA32) && (alloc_mask & __GFP_DMA32))
+> +		alloc_mask &= ~__GFP_DMA32;
+>
+>  	nr_pages = get_vm_area_size(area) >> PAGE_SHIFT;
+>  	array_size = (nr_pages * sizeof(struct page *));
+> @@ -1680,7 +1681,7 @@ static void *__vmalloc_area_node(struct vm_struct  
+> *area, gfp_t gfp_mask,
+>  	area->nr_pages = nr_pages;
+>  	/* Please note that the recursion is strictly bounded. */
+>  	if (array_size > PAGE_SIZE) {
+> -		pages = __vmalloc_node(array_size, 1, nested_gfp|highmem_mask,
+> +		pages = __vmalloc_node(array_size, 1, nested_gfp|__GFP_HIGHMEM,
+>  				PAGE_KERNEL, node, area->caller);
+>  	} else {
+>  		pages = kmalloc_node(array_size, nested_gfp, node);
+> @@ -1696,9 +1697,9 @@ static void *__vmalloc_area_node(struct vm_struct  
+> *area, gfp_t gfp_mask,
+>  		struct page *page;
+>
+>  		if (node == NUMA_NO_NODE)
+> -			page = alloc_page(alloc_mask|highmem_mask);
+> +			page = alloc_page(alloc_mask);
+>  		else
+> -			page = alloc_pages_node(node, alloc_mask|highmem_mask, 0);
+> +			page = alloc_pages_node(node, alloc_mask, 0);
+>
+>  		if (unlikely(!page)) {
+>  			/* Successfully allocated i pages, free them in __vunmap() */
+> @@ -1706,7 +1707,7 @@ static void *__vmalloc_area_node(struct vm_struct  
+> *area, gfp_t gfp_mask,
+>  			goto fail;
+>  		}
+>  		area->pages[i] = page;
+> -		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
+> +		if (gfpflags_allow_blocking(gfp_mask))
+>  			cond_resched();
+>  	}
+>
+> @@ -1942,12 +1943,10 @@ void *vmalloc_exec(unsigned long size)
+>  			      NUMA_NO_NODE, __builtin_return_address(0));
+>  }
+>
+> -#if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+> -#define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
+> -#elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
+> +#if defined(CONFIG_64BIT) && !defined(CONFIG_ZONE_DMA32)
+>  #define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
+>  #else
+> -#define GFP_VMALLOC32 GFP_KERNEL
+> +#define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
+>  #endif
+>
+>  /**
