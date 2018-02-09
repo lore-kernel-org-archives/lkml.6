@@ -1,69 +1,73 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-138102-1518145869-2-13554267054641754518
+X-Cyrus-Session-Id: sloti22d1t05-138102-1518148247-2-11426718059032130708
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8', plain='us-ascii'
-X-Attached: signature.asc
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518145868; b=l2KSEo+4fyXLMIy9Zn/YrH4CWrqaXLPtGwQnkJNqjZdc8KI
-    PyzDZG4OnWJMC1K9NCmyDR6fCpTq1ljKd+NVldv2gyS9H89Pw5C7w4XKlGTUTt1A
-    FbqsmiPUHSe/DxGMl8yyHEfuEJ5O0YR+uXrmt7SP+NacIN6WZX4GFuCgnC1+D0O/
-    5exsfeBFuLhNR4pvpSeS7LMbsI+cPvMgAj+lr0ZnuWr72z4mjj92Tp1t3Hrd4U3s
-    uh0TCPcKW9h8EbWi1+s7F75AbaG0TW3rcJ0ll5JIp7Vne0WAUz1w1ObqallgxOMC
-    bwAko8tsAo2sjJrEM/mlIavSFQgH95DyBPDpeYA==
+    t=1518148246; b=QXkOzP6OQzM+zqRInzUONVWPY0uBJHzfHX1oMAiG5oe24A+
+    zmsiH0Ez3F8+pflkX9NLW9dGAxMhil4BeWS+jr97JladOz+75tbCl/62IwfnUzng
+    xHvngCBiz1yK91BxQIHet+eCzjmUwnwHP1jnqlafVVFTjhXteCXZNmMTiWa/0Ul8
+    FGlBMdGWofDF05+uWCpkQz0QzRuXKxyjssOgCu6GMuf/ovMmOWFRcTvjvLDJwISG
+    jlhnAxy5ZUBTnUds1LTqx2ajQo0+hWnFZ5fGnVynhRzzXQF7k9WzvogCdrQnjTxo
+    DgWOTRMMuo/e2Xz8UFpi4igeClOtTBWLSRgZKGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:subject:in-reply-to
-    :references:message-id:mime-version:list-id:list-unsubscribe
+    messagingengine.com; h=mime-version:subject:from:in-reply-to
+    :date:message-id:references:to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :sender; s=arctest; t=1518145868; bh=KGqQld579NIaVhWEL7tj/wuZCPs
-    lD5FUgCewYkVp/C4=; b=TQDacd9+XP0Nu4Nq17/G0IU917PM5e0jvYYxwBKOaMw
-    fEUl8fF0mA8/c7omXObfqXFBELixFbV73mnlsKfoMCJoMFI9JftQTqUCaqBxvgh1
-    ldKYUPI+oLkAJUPJnaxS3GdtZgnRjmCxuyZ7j7gVaUwllKX81f8luzeJqj8cTQ9J
-    Je8v4idoVihhYWFjbRdRCoV7ixfW2RFU62WVulVucpjeYKvNocdJ6k4saxcFG1o0
-    FifM6T73B4qWJ2TalysY/VCaaVvyeRVF023JMtCaBk6wxfvZQ3OeWNQf9fxJB1Pq
-    6tVIeEFtIrM76g7zd1BAvLV6Rv7bkQkmmyVIZ43p5oQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=arctest; t=1518148246; bh=H
+    PYEt9Hoo/Mijhoe4maeqE9+hF1O4LXP1QYCgsL7jyg=; b=fQ28wmDQr59xWs99A
+    03Ig6dyhjsqw0KLk3V8ATbCYadJ/cFPq1YzItaunNRuv1PRkOSsqsc3RPDxRbVkD
+    BwQfmR9IHMm9LDnAo3D91+VTXZLsYwupagcVQn8BklJntQrqZOXe01n27Yky3ju7
+    6tJ0QoEPLVx2ibvZ3KwYXA58g5dujafJz15de4Piz2E28siHUAJ4cyXH9TRQj+c7
+    fvsSRoUkyi91ARf+YaKwzByBR9cAlNvW2KLeHtO4kxbXNSucFdLLzC7IUxegGZ0G
+    intwnrhTa7YoDsHRUepVw0xK2lB/zWqoC/mCNzIw4MTFx9eHwOREL0AfpzxBTM7q
+    ErQNg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>
-Date: Fri, 09 Feb 2018 14:10:44 +1100
-Subject: Re: [PATCH 41/80] staging: lustre: lmv: separate master object with
- master stripe
-In-Reply-To: <09CE6CEC-52BC-4B29-B609-40DE68A64A33@intel.com>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,481,1511856000"; d="scan'208";a="17144684"
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [lustre-devel] [PATCH 41/80] staging: lustre: lmv: separate
+ master object with master stripe
+From: Oleg Drokin <oleg.drokin@intel.com>
+In-Reply-To: <87o9kylux7.fsf@notabene.neil.brown.name>
+Date: Thu, 8 Feb 2018 22:50:32 -0500
+Message-Id: <FC7E817D-BA15-4D0A-9976-F1343F9B022A@intel.com>
 References: <1471378773-24590-1-git-send-email-jsimmons@infradead.org>
  <1471378773-24590-42-git-send-email-jsimmons@infradead.org>
  <87r2pvkkl5.fsf@notabene.neil.brown.name>
  <09CE6CEC-52BC-4B29-B609-40DE68A64A33@intel.com>
-Message-ID: <87o9kylux7.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
+ <87o9kylux7.fsf@notabene.neil.brown.name>
+To: NeilBrown <neilb@suse.com>
+X-Mailer: Apple Mail (2.3273)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -75,194 +79,139 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ wang di <di.wang@intel.com>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- wang di <di.wang@intel.com>, Andreas Dilger <andreas.dilger@intel.com>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Content-Type: multipart/mixed; boundary="===============7630769096972579333=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---===============7630769096972579333==
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
-
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 08 2018, Oleg Drokin wrote:
-
->> On Feb 8, 2018, at 8:39 PM, NeilBrown <neilb@suse.com> wrote:
->>=20
->> On Tue, Aug 16 2016, James Simmons wrote:
->
-> my that=E2=80=99s an old patch
->
->>=20
-...
->>=20
->> Whoever converted it to "!strcmp()" inverted the condition.  This is a
->> perfect example of why I absolutely *loathe* the "!strcmp()" construct!!
->>=20
->> This causes many tests in the 'sanity' test suite to return
->> -ENOMEM (that had me puzzled for a while!!).
->
-> huh? I am not seeing anything of the sort and I was running sanity
-> all the time until a recent pause (but going to resume).
-
-That does surprised me - I reproduce it every time.
-I have two VMs running a SLE12-SP2 kernel with patches from
-lustre-release applied.  These are servers. They have 2 3G virtual disks
-each.
-I have two over VMs running current mainline.  These are clients.
-
-I guess your 'recent pause' included between v4.15-rc1 (8e55b6fd0660)
-and v4.15-rc6 (a93639090a27) - a full month when lustre wouldn't work at
-all :-(
-
-
->
->> This seems to suggest that no-one has been testing the mainline linux
->> lustre.
->> It also seems to suggest that there is a good chance that there
->> are other bugs that have crept in while no-one has really been caring.
->> Given that the sanity test suite doesn't complete for me, but just
->> hangs (in test_27z I think), that seems particularly likely.
->
-> Works for me, here=E2=80=99s a run from earlier today on 4.15.0:
-
-Well that's encouraging .. I haven't looked into this one yet - I'm not
-even sure where to start.
-
->
->> So my real question - to anyone interested in lustre for mainline linux
->> - is: can we actually trust this code at all?
->
-> Absolutely. Seems that you just stumbled upon a corner case that was not
-> being hit by people that do the testing, so you have something unique abo=
-ut
-> your setup, I guess.
->
->> I'm seriously tempted to suggest that we just
->>  rm -r drivers/staging/lustre
->>=20
->> drivers/staging is great for letting the community work on code that has
->> been "thrown over the wall" and is not openly developed elsewhere, but
->> that is not the case for lustre.  lustre has (or seems to have) an open
->> development process.  Having on-going development happen both there and
->> in drivers/staging seems a waste of resources.
->
-> It is a bit of a waste of resources, but there are some other things here.
-> E.g. we cannot have any APIs with no users in the kernel.
-> Also some people like to have in-kernel modules coming with their distros
-> (there were some users that used staging client on ubuntu as their
-> setup).
->
-> Instead the plan was to clean up the staging client into acceptable state,
-> move it out of staging, bring in all the missing features and then
-> drop the client (more or less) from the lustre-release.
-
-That sounds like a great plan.  Any idea why it didn't happen?
-It seems there is a lot of upstream work mixed in with the clean up, and
-I don't think that really helps anyone.
-
-Is it at all realistic that the client might be removed from
-lustre-release?  That might be a good goal to work towards.
-
->
->> Might it make sense to instead start cleaning up the code in
->> lustre-release so as to make it meet the upstream kernel standards.
->> Then when the time is right, the kernel code can be moved *out* of
->> lustre-release and *in* to linux.  Then development can continue in
->> Linux (just like it does with other Linux filesystems).
->
-> While we can be cleaning lustre in lustre-release, there are some things
-> we cannot do as easily, e.g. decoupling Lustre client from the server.
-> Also it would not attract any reviews from all the janitor or
-> (more importantly) Al Viro and other people with a sharp eyes.
->
->> An added bonus of this is that there is an obvious path to getting
->> server support in mainline Linux.  The current situation of client-only
->> support seems weird given how interdependent the two are.
->
-> Given the pushback Lustre client was given I have no hope Lustre server
-> will get into mainline in my lifetime.
-
-Even if it is horrible it would be nice to have it in staging... I guess
-the changes required to ext4 prohibit that... I don't suppose it can be
-made to work with mainline ext4 in a reduced-functionality-and-performance
-way??
-
-I think it would be a lot easier to motivate forward progress if there
-were a credible end goal of everything being in mainline.
-
->
->> What do others think?  Is there any chance that the current lustre in
->> Linux will ever be more than a poor second-cousin to the external
->> lustre-release.  If there isn't, should we just discard it now and move
->> on?
->
->
-> I think many useful cleanups and fixes came from the staging tree at
-> the very least.
-> The biggest problem with it all is that we are in staging tree so
-> we cannot bring it to parity much. And we are in staging tree because
-> there=E2=80=99s a whole bunch of =E2=80=9Ccleanups=E2=80=9D requested tha=
-t take a lot of effort
-> (in both implementing them and then in finding other ways of achieving
-> things that were done in old ways before).
-
-Do you have a list of requested cleanups?  I would find that to be
-useful.
-
-
-> I understand that beggars cannot be choosers and while there are people
-> that are grandfathered with their atrocities in current kernel tree,
-> we must adhere to the shining standards first before having our chance,
-> but the standards are not easy to adhere to in an established sizeable
-> codebase.
->
-> Realistically speaking I suspect if we drop Lustre from staging,
-> it=E2=80=99s unlikely there would remain any steam behind the cleanup eff=
-orts
-> at all.
-
-Thanks for your thoughts,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlp9ETQACgkQOeye3VZi
-gbm/6RAAuU07NkyPTPW9RPH6hvGMB8Nfq7Xyq4zsFJLlsGzzFK5basR7jV5e3s1r
-vRKx1+ee/j9L9BEzLhq6rJ3ZW685jEGltWzjOcS2bAaUST8FIW9zMJKflajD6PUL
-jkaQF4wwf2MSR7AuWX72A5kHDwbJP6mB7gSy1236SPthy2FkKCwUZOR6o5Wkij0P
-ectAZznRFUwjqxwvuu1whiz43g30+cGMuTy/6riHU84NxkUjvcCunQF0e30OBELU
-/Ehz4bNDDZxNBBgBoy37k4WHtEseTyg3KyY3eLADb0quM7T1qgtn7KUXE6pvRS0t
-sD2v2FSejw+fMS/WL3CX5d+D8AqfSBuZulIzbDEYzuyMBs92TYUv0YS1CpXGHILK
-DULk65UgCZz/b8NlYvtObAiKaE0FrQGbEQMkKrbsIL+++LNHwnExn8gusobmv0oS
-diO1liRcNPO67whTiO6ZWYlyvKUgFSTms+I+tERaOCK8KtIvxilnmpIvHvTubeuI
-p6u8jOH91wMPlm8qv/6n89TFOyigfmyARftx3G8BN0lP+5MFh+AuO0zE3EJx3Xq4
-rT3oAsVJ/5nGJBXbOuq2QdvBZ2nTbWyD9U4yxV4wsAHOveMiuod2ANiP4eIpsLBU
-bNWn/kYXpPtiLBRN6STYoTX058AGgcIZDkYNyCec4FRaWcNN4MU=
-=pHap
------END PGP SIGNATURE-----
---=-=-=--
-
---===============7630769096972579333==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============7630769096972579333==--
+Cj4gT24gRmViIDgsIDIwMTgsIGF0IDEwOjEwIFBNLCBOZWlsQnJvd24gPG5laWxiQHN1c2UuY29t
+PiB3cm90ZToKPiAKPiBPbiBUaHUsIEZlYiAwOCAyMDE4LCBPbGVnIERyb2tpbiB3cm90ZToKPiAK
+Pj4+IE9uIEZlYiA4LCAyMDE4LCBhdCA4OjM5IFBNLCBOZWlsQnJvd24gPG5laWxiQHN1c2UuY29t
+PiB3cm90ZToKPj4+IAo+Pj4gT24gVHVlLCBBdWcgMTYgMjAxNiwgSmFtZXMgU2ltbW9ucyB3cm90
+ZToKPj4gCj4+IG15IHRoYXTigJlzIGFuIG9sZCBwYXRjaAo+PiAKPj4+IAo+IC4uLgo+Pj4gCj4+
+PiBXaG9ldmVyIGNvbnZlcnRlZCBpdCB0byAiIXN0cmNtcCgpIiBpbnZlcnRlZCB0aGUgY29uZGl0
+aW9uLiAgVGhpcyBpcyBhCj4+PiBwZXJmZWN0IGV4YW1wbGUgb2Ygd2h5IEkgYWJzb2x1dGVseSAq
+bG9hdGhlKiB0aGUgIiFzdHJjbXAoKSIgY29uc3RydWN0ISEKPj4+IAo+Pj4gVGhpcyBjYXVzZXMg
+bWFueSB0ZXN0cyBpbiB0aGUgJ3Nhbml0eScgdGVzdCBzdWl0ZSB0byByZXR1cm4KPj4+IC1FTk9N
+RU0gKHRoYXQgaGFkIG1lIHB1enpsZWQgZm9yIGEgd2hpbGUhISkuCj4+IAo+PiBodWg/IEkgYW0g
+bm90IHNlZWluZyBhbnl0aGluZyBvZiB0aGUgc29ydCBhbmQgSSB3YXMgcnVubmluZyBzYW5pdHkK
+Pj4gYWxsIHRoZSB0aW1lIHVudGlsIGEgcmVjZW50IHBhdXNlIChidXQgZ29pbmcgdG8gcmVzdW1l
+KS4KPiAKPiBUaGF0IGRvZXMgc3VycHJpc2VkIG1lIC0gSSByZXByb2R1Y2UgaXQgZXZlcnkgdGlt
+ZS4KPiBJIGhhdmUgdHdvIFZNcyBydW5uaW5nIGEgU0xFMTItU1AyIGtlcm5lbCB3aXRoIHBhdGNo
+ZXMgZnJvbQo+IGx1c3RyZS1yZWxlYXNlIGFwcGxpZWQuICBUaGVzZSBhcmUgc2VydmVycy4gVGhl
+eSBoYXZlIDIgM0cgdmlydHVhbCBkaXNrcwo+IGVhY2guCj4gSSBoYXZlIHR3byBvdmVyIFZNcyBy
+dW5uaW5nIGN1cnJlbnQgbWFpbmxpbmUuICBUaGVzZSBhcmUgY2xpZW50cy4KPiAKPiBJIGd1ZXNz
+IHlvdXIgJ3JlY2VudCBwYXVzZScgaW5jbHVkZWQgYmV0d2VlbiB2NC4xNS1yYzEgKDhlNTViNmZk
+MDY2MCkKPiBhbmQgdjQuMTUtcmM2IChhOTM2MzkwOTBhMjcpIC0gYSBmdWxsIG1vbnRoIHdoZW4g
+bHVzdHJlIHdvdWxkbid0IHdvcmsgYXQKPiBhbGwgOi0oCgpNb3JlIHRoYW4gdGhhdCwgYnV0IEkg
+YW0gcHJldHR5IHN1cmUgSmFtZXMgU2ltbW9ucyBpcyBydW5uaW5nIHRlc3RzIGFsbCB0aGUgdGlt
+ZSB0b28KKGhlIGhhcyBhIGRpZmZlcmVudCBjb25maWcsIEkgb25seSBoYXZlIHRjcCkuCgo+Pj4g
+VGhpcyBzZWVtcyB0byBzdWdnZXN0IHRoYXQgbm8tb25lIGhhcyBiZWVuIHRlc3RpbmcgdGhlIG1h
+aW5saW5lIGxpbnV4Cj4+PiBsdXN0cmUuCj4+PiBJdCBhbHNvIHNlZW1zIHRvIHN1Z2dlc3QgdGhh
+dCB0aGVyZSBpcyBhIGdvb2QgY2hhbmNlIHRoYXQgdGhlcmUKPj4+IGFyZSBvdGhlciBidWdzIHRo
+YXQgaGF2ZSBjcmVwdCBpbiB3aGlsZSBuby1vbmUgaGFzIHJlYWxseSBiZWVuIGNhcmluZy4KPj4+
+IEdpdmVuIHRoYXQgdGhlIHNhbml0eSB0ZXN0IHN1aXRlIGRvZXNuJ3QgY29tcGxldGUgZm9yIG1l
+LCBidXQganVzdAo+Pj4gaGFuZ3MgKGluIHRlc3RfMjd6IEkgdGhpbmspLCB0aGF0IHNlZW1zIHBh
+cnRpY3VsYXJseSBsaWtlbHkuCj4+IAo+PiBXb3JrcyBmb3IgbWUsIGhlcmXigJlzIGEgcnVuIGZy
+b20gZWFybGllciB0b2RheSBvbiA0LjE1LjA6Cj4gCj4gV2VsbCB0aGF0J3MgZW5jb3VyYWdpbmcg
+Li4gSSBoYXZlbid0IGxvb2tlZCBpbnRvIHRoaXMgb25lIHlldCAtIEknbSBub3QKPiBldmVuIHN1
+cmUgd2hlcmUgdG8gc3RhcnQuCgpt4oCmIGRlYnVnIGxvZ3MgZm9yIGV4YW1wbGUgKGdyZWF0bHkg
+bmV1dGVyZWQgaW4gc3RhZ2luZyB0cmVlLCBidXQgc3RpbGwgdXNlZnVsKT8KdHJ5IGxjdGwgZGsg
+YW5kIHNlZSB3aGF04oCZcyBpbiB0aGVyZS4KCj4+IEluc3RlYWQgdGhlIHBsYW4gd2FzIHRvIGNs
+ZWFuIHVwIHRoZSBzdGFnaW5nIGNsaWVudCBpbnRvIGFjY2VwdGFibGUgc3RhdGUsCj4+IG1vdmUg
+aXQgb3V0IG9mIHN0YWdpbmcsIGJyaW5nIGluIGFsbCB0aGUgbWlzc2luZyBmZWF0dXJlcyBhbmQg
+dGhlbgo+PiBkcm9wIHRoZSBjbGllbnQgKG1vcmUgb3IgbGVzcykgZnJvbSB0aGUgbHVzdHJlLXJl
+bGVhc2UuCj4gCj4gVGhhdCBzb3VuZHMgbGlrZSBhIGdyZWF0IHBsYW4uICBBbnkgaWRlYSB3aHkg
+aXQgZGlkbid0IGhhcHBlbj8KCkJlY2F1c2UgbWVldGluZyBvcGVuLWVuZGVkIGRlbWFuZHMgaXMg
+aGFyZCBhbmQgY2VydGFpbiBkZW1hbmRzIHNvdW5kIGxpa2UK4oCcdGhyb3cgYXdheSB5b3VyIFgg
+YW5kIHJld3JpdGUgaXQgZnJvbSBzY3JhdGNoIiAoZS5nLiBldmVyeXRoaW5nIElCLXJlbGF0ZWQp
+LgoKQ2VydGFpbiB0aGluZ3MgdGhhdCBzb3VuZCB1c2VsZXNzIChsaWtlIHRoZSBkZWJ1ZyBzdWJz
+eXN0ZW0gaW4gTHVzdHJlKQppcyB2ZXJ5IHVzZWZ1bCB3aGVuIHlvdSBoYXZlIGEgMTBrIG5vZGVz
+IGluIGEgY2x1c3RlciBhbmQgbmVlZCB0byBzZWxlY3RpdmVseQpwdWxsIHN0dWZmIGZyb20gYSBy
+dW4gdG8gZGVidWcgYSBjb21wbGljYXRlZCBjcm9zcy1ub2RlIGludGVyYWN0aW9uLgpJIGFza2Vk
+IE5GUyBwZW9wbGUgaG93IGRvIHRoZXkgZG8gaXQgYW5kIHRoZXkgZG9u4oCZdCBoYXZlIGFueXRo
+aW5nIHRoYXQgc2NhbGVzCmFuZCB1c3VhbGx5IGludm9sdmVzIHJlZHVjaW5nIHRoZSBwcm9ibGVt
+IHRvIGEgbXVjaCBzbWFsbGVyIHNldCBvZiBub2RlcyBmaXJzdC4KCj4gSXQgc2VlbXMgdGhlcmUg
+aXMgYSBsb3Qgb2YgdXBzdHJlYW0gd29yayBtaXhlZCBpbiB3aXRoIHRoZSBjbGVhbiB1cCwgYW5k
+Cj4gSSBkb24ndCB0aGluayB0aGF0IHJlYWxseSBoZWxwcyBhbnlvbmUuCgpJIGRvbuKAmXQgdW5k
+ZXJzdGFuZCB3aGF0IHlvdSBtZWFuIGhlcmUuCgo+IElzIGl0IGF0IGFsbCByZWFsaXN0aWMgdGhh
+dCB0aGUgY2xpZW50IG1pZ2h0IGJlIHJlbW92ZWQgZnJvbQo+IGx1c3RyZS1yZWxlYXNlPyAgVGhh
+dCBtaWdodCBiZSBhIGdvb2QgZ29hbCB0byB3b3JrIHRvd2FyZHMuCgpBc3N1bWluZyB3ZSBjYW4g
+YnJpbmcgdGhlIHdob2xlIGZ1bmN0aW9uYWxpdHkgb3ZlciAtIHN1cmUuCgpPZiBjb3Vyc2UgdGhl
+cmXigJlkIHN0aWxsIGJlIHNvbWUgc2VwYXJhdGUgZGV2ZWxvcG1lbnQgcGxhY2UgYW5kIHdlIHdv
+dWxkCm5lZWQgdG8gY3JlYXRlIHBhdGNoZXMgKG5ldyBmZWF0dXJlcz8pIGZvciBsaWtlIFN1U0Ug
+YW5kIG90aGVyIGRpc3Ryb3MKYW5kIGZvciB0ZXN0aW5nIG9mIHNlcnZlciBmZWF0dXJlcywgSSBn
+dWVzcywgYnV0IHRoYXQgY291bGQganVzdCB0aGF0IC0KYSBzaWRlIGJyYW5jaCBzb21ld2hlcmUg
+SSBob3BlLgoKSXTigJlzIG5vdCB0aGF0IHdlIGFyZSBzdXBlciBnbGFkIHRvIGNoYXNlIGV2ZXJ5
+IGtlcm5lbCB2ZW5kb3JzIHB1dCBvdXQsCm9mIGNvdXJzZSBpdCB3b3VsZCBiZSBtdWNoIGVhc2ll
+ciBpZiB0aGUga2VybmVscyBhbHJlYWR5IGluY2x1ZGVkCmEgdmVyeSBmdW5jdGlvbmFsIEx1c3Ry
+ZSBjbGllbnQuCgo+Pj4gTWlnaHQgaXQgbWFrZSBzZW5zZSB0byBpbnN0ZWFkIHN0YXJ0IGNsZWFu
+aW5nIHVwIHRoZSBjb2RlIGluCj4+PiBsdXN0cmUtcmVsZWFzZSBzbyBhcyB0byBtYWtlIGl0IG1l
+ZXQgdGhlIHVwc3RyZWFtIGtlcm5lbCBzdGFuZGFyZHMuCj4+PiBUaGVuIHdoZW4gdGhlIHRpbWUg
+aXMgcmlnaHQsIHRoZSBrZXJuZWwgY29kZSBjYW4gYmUgbW92ZWQgKm91dCogb2YKPj4+IGx1c3Ry
+ZS1yZWxlYXNlIGFuZCAqaW4qIHRvIGxpbnV4LiAgVGhlbiBkZXZlbG9wbWVudCBjYW4gY29udGlu
+dWUgaW4KPj4+IExpbnV4IChqdXN0IGxpa2UgaXQgZG9lcyB3aXRoIG90aGVyIExpbnV4IGZpbGVz
+eXN0ZW1zKS4KPj4gCj4+IFdoaWxlIHdlIGNhbiBiZSBjbGVhbmluZyBsdXN0cmUgaW4gbHVzdHJl
+LXJlbGVhc2UsIHRoZXJlIGFyZSBzb21lIHRoaW5ncwo+PiB3ZSBjYW5ub3QgZG8gYXMgZWFzaWx5
+LCBlLmcuIGRlY291cGxpbmcgTHVzdHJlIGNsaWVudCBmcm9tIHRoZSBzZXJ2ZXIuCj4+IEFsc28g
+aXQgd291bGQgbm90IGF0dHJhY3QgYW55IHJldmlld3MgZnJvbSBhbGwgdGhlIGphbml0b3Igb3IK
+Pj4gKG1vcmUgaW1wb3J0YW50bHkpIEFsIFZpcm8gYW5kIG90aGVyIHBlb3BsZSB3aXRoIGEgc2hh
+cnAgZXllcy4KPj4gCj4+PiBBbiBhZGRlZCBib251cyBvZiB0aGlzIGlzIHRoYXQgdGhlcmUgaXMg
+YW4gb2J2aW91cyBwYXRoIHRvIGdldHRpbmcKPj4+IHNlcnZlciBzdXBwb3J0IGluIG1haW5saW5l
+IExpbnV4LiAgVGhlIGN1cnJlbnQgc2l0dWF0aW9uIG9mIGNsaWVudC1vbmx5Cj4+PiBzdXBwb3J0
+IHNlZW1zIHdlaXJkIGdpdmVuIGhvdyBpbnRlcmRlcGVuZGVudCB0aGUgdHdvIGFyZS4KPj4gCj4+
+IEdpdmVuIHRoZSBwdXNoYmFjayBMdXN0cmUgY2xpZW50IHdhcyBnaXZlbiBJIGhhdmUgbm8gaG9w
+ZSBMdXN0cmUgc2VydmVyCj4+IHdpbGwgZ2V0IGludG8gbWFpbmxpbmUgaW4gbXkgbGlmZXRpbWUu
+Cj4gCj4gRXZlbiBpZiBpdCBpcyBob3JyaWJsZSBpdCB3b3VsZCBiZSBuaWNlIHRvIGhhdmUgaXQg
+aW4gc3RhZ2luZy4uLiBJIGd1ZXNzCj4gdGhlIGNoYW5nZXMgcmVxdWlyZWQgdG8gZXh0NCBwcm9o
+aWJpdCB0aGF0Li4uIEkgZG9uJ3Qgc3VwcG9zZSBpdCBjYW4gYmUKPiBtYWRlIHRvIHdvcmsgd2l0
+aCBtYWlubGluZSBleHQ0IGluIGEgcmVkdWNlZC1mdW5jdGlvbmFsaXR5LWFuZC1wZXJmb3JtYW5j
+ZQo+IHdheT8/CgpXZSBzdXBwb3J0IHVucGF0Y2hlZCBaRlMgYXMgYSBzZXJ2ZXIgdG9vISA7KQoo
+YW5kIGlmIHNvbWVib2R5IGludmVzdHMgdGhlIHRpbWUgaW50byBpdCwgdGhlcmUgd2FzIHNvbWUg
+aGFsZi1iYWtlZCBidHJmcwpiYWNrZW5kIHRvbyBJIHRoaW5rKS4KVGhhdCBzYWlkIG5vYm9keSBo
+ZXJlIGJlbGlldmVzIGluIGFueSBzdWNjZXNzIG9mIHB1c2hpbmcgTHVzdHJlIHNlcnZlciBpbnRv
+Cm1haW5saW5lLgpJdCB3b3VsZCBqdXN0IGJlIGVhc2llciB0byBwdXNoIHRoZSB3aG9sZSBzZXJ2
+ZXIgaW50byB1c2Vyc3BhY2UgKEFuZCB0aGVyZQp3YXMgYSBwcm9qZWN0IGxpa2UgdGhpcyBpbiB0
+aGUgcGFzdCwgbm93IGFiYW5kb25lZCBiZWNhdXNlIGl0IHdhcyBtb3N0bHkKdGFyZ2V0aW5nIFNv
+bGFyaXMgYW55d2F5KS4KCj4gSSB0aGluayBpdCB3b3VsZCBiZSBhIGxvdCBlYXNpZXIgdG8gbW90
+aXZhdGUgZm9yd2FyZCBwcm9ncmVzcyBpZiB0aGVyZQo+IHdlcmUgYSBjcmVkaWJsZSBlbmQgZ29h
+bCBvZiBldmVyeXRoaW5nIGJlaW5nIGluIG1haW5saW5lLgo+IAo+PiAKPj4+IFdoYXQgZG8gb3Ro
+ZXJzIHRoaW5rPyAgSXMgdGhlcmUgYW55IGNoYW5jZSB0aGF0IHRoZSBjdXJyZW50IGx1c3RyZSBp
+bgo+Pj4gTGludXggd2lsbCBldmVyIGJlIG1vcmUgdGhhbiBhIHBvb3Igc2Vjb25kLWNvdXNpbiB0
+byB0aGUgZXh0ZXJuYWwKPj4+IGx1c3RyZS1yZWxlYXNlLiAgSWYgdGhlcmUgaXNuJ3QsIHNob3Vs
+ZCB3ZSBqdXN0IGRpc2NhcmQgaXQgbm93IGFuZCBtb3ZlCj4+PiBvbj8KPj4gCj4+IAo+PiBJIHRo
+aW5rIG1hbnkgdXNlZnVsIGNsZWFudXBzIGFuZCBmaXhlcyBjYW1lIGZyb20gdGhlIHN0YWdpbmcg
+dHJlZSBhdAo+PiB0aGUgdmVyeSBsZWFzdC4KPj4gVGhlIGJpZ2dlc3QgcHJvYmxlbSB3aXRoIGl0
+IGFsbCBpcyB0aGF0IHdlIGFyZSBpbiBzdGFnaW5nIHRyZWUgc28KPj4gd2UgY2Fubm90IGJyaW5n
+IGl0IHRvIHBhcml0eSBtdWNoLiBBbmQgd2UgYXJlIGluIHN0YWdpbmcgdHJlZSBiZWNhdXNlCj4+
+IHRoZXJl4oCZcyBhIHdob2xlIGJ1bmNoIG9mIOKAnGNsZWFudXBz4oCdIHJlcXVlc3RlZCB0aGF0
+IHRha2UgYSBsb3Qgb2YgZWZmb3J0Cj4+IChpbiBib3RoIGltcGxlbWVudGluZyB0aGVtIGFuZCB0
+aGVuIGluIGZpbmRpbmcgb3RoZXIgd2F5cyBvZiBhY2hpZXZpbmcKPj4gdGhpbmdzIHRoYXQgd2Vy
+ZSBkb25lIGluIG9sZCB3YXlzIGJlZm9yZSkuCj4gCj4gRG8geW91IGhhdmUgYSBsaXN0IG9mIHJl
+cXVlc3RlZCBjbGVhbnVwcz8gIEkgd291bGQgZmluZCB0aGF0IHRvIGJlCj4gdXNlZnVsLgoKQXMg
+R3JlZyB3b3VsZCB0ZWxsIHlvdSwg4oCcaWYgeW91IGRvbuKAmXQga25vdyB3aGF0IG5lZWRzIHRv
+IGJlIGRvbmUsCmxldOKAmXMganVzdCByZW1vdmUgdGhlIHdob2xlIHRoaW5nIGZyb20gc3RhZ2lu
+ZyBub3figJ0uCgpJIGFzc3VtZSB5b3Ugc2F3IGRyaXZlcnMvc3RhZ2luZy9sdXN0cmUvVE9ETyBh
+bHJlYWR5LCBpdOKAmXMgb25seSBwYXJ0aWFsbHkgZG9uZS4KCldlIGhhZCBhIGJ1bmNoIG9mIG90
+aGVyIHJlcXVlc3RzIGZyb20gdmFyaW91cyBwZW9wbGUgcmFuZ2luZyBmcm9tIHdob2xlc2FsZQpy
+ZW1vdmFsIG9mIHZhcmlvdXMgcGFydHMgdG8gbWFraW5nIHN1cmUgdGhlcmXigJlzIG5vIGNoZWNr
+cGF0Y2ggd2FybmluZ3MKKFR1cm5lZCBvdXQgcmF0aGVyIGhhcmQgdG8gZG8sIGV2ZW4gdGhvdWdo
+IHdlIGdyZWF0bHkgcGFyZWQgdGhlIG51bWJlcnMpLgoKSSBoYXZlIHNvbWUgcGF0Y2hlcyB0byBt
+YWtlIEx1c3RyZSBhIGxvdCBtb3JlIG1vbm9saXRoaWMgdG9vLgpQZW9wbGUgd2FudCB1cyB0byBy
+ZW1vdmUgb3VyIGluZGlyZWN0aW9ucyBoZWxsIHNvIHRoZSBjb2RlIGlzIG1vcmUgcmVhZGFibGUK
+KEkgaGF2ZSBzb21lIHBhdGNoZXMgdGhhdCBuZWVkIHRvIGJlIGZyZXNoZW5lZCB1cCBzb21lIHRo
+YXQgaGVscCBoZXJlIGEgYml0LApidXQgdGhlIHdvcmsgaXMgaHVnZS4pCgpPdGhlciByZXF1ZXN0
+cyBjb21lIG91dCBhcyBzb21lIG9mIHRoZSBwcmlvciBvbmVzIGdldCBjb21wbGV0ZWQgZHVlIHRv
+CuKAnHlvdSBuZWVkIG8gZmluaXNoIGN1cnJlbnQgbGV2ZWwgb2YgY2xlYW51cHMgc28gdGhhdCB3
+ZSBjYW4gc2VlIHdoYXQgb3RoZXIKY2xlYW51cHMgYXJlIG5lZWRlZCwgdGhlIGN1cnJlbnQgY29k
+ZSBpcyB0b28gYmFkIHRvIHNlZSBldmVyeXRoaW5n4oCdIHByZXR0eSBtdWNoLgoKQnllLAogICAg
+T2xlZwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZl
+bCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVy
+ZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2
+ZWwK
