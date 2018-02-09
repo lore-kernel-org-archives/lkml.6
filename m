@@ -1,94 +1,143 @@
-Return-Path: <kernel-hardening-return-11589-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x226ccS5avPlqx4AR2P3H4Y6UpwQPNR69NDLZzP4gKi87wbh+2KXW/BQfhPfyWr78xNjNzY9K
-ARC-Seal: i=1; a=rsa-sha256; t=1517845226; cv=none;
+Return-Path: <kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x2273pTPF8BAm8HiNuahfHiVR7oPdhfZxu8UpS7X5lLiHMggJzvhGx1yQuxlbhvFGyiJJUNGs
+ARC-Seal: i=1; a=rsa-sha256; t=1518175103; cv=none;
         d=google.com; s=arc-20160816;
-        b=XHfR7CJJ0aYY2H16GUo2VvgASKMyR8e5pBZksSpE0l19MDtWstI9FZDHbXZkxbvLUw
-         smA9KmWfotsB4cGNPGQTZn+iX6UkuA2DpgBG0IYFgkipMuXk23djP2umbbgkbhCRTt/p
-         S0rflONO60bF5FzHEqxZ7UlMX/eOvNOS9Uu1pp5fpO6PU5kiSTX4kPLl41zFEa6Wylja
-         EkMF4/hByru3ptRl/bb2Cu/nRjWZkFE4BZCcoyxFv4mtoXERB1JJWsgFTBVRspOWlkrd
-         lITjU5W3xYUdcVLbsaJaCAHSBkK2tN0T6Otxse4NsyvDj9ZEaQKEScPF3WaWLy2B6MQq
-         K8rg==
+        b=HMn/7MST/EuYn4Uk9gxVlKR4qKujSxXYwfesbxwzuQQgb+GuTo4/w1oHAj2yTGpNef
+         cRFEy6np5Hw/Y/yE6mwnykVEbfDdbbB3PTNYCxdKLVhpv2egiUQ2R2BhawpcaltwS9tv
+         AR/dzy6NPr38uIxdkWaX8JhaJd3rhdqN2Anl8O8MQKTMi1FB56F0pWQX8VxxxxNL9Tuz
+         UXyfB7QcG9FUaZqzWMHKYoNxokGgDVpsFOYxSffpBr5nMimLNxf+J8ZnaVq6HEpX2tAC
+         /j2axPubkz7jyVofdwX1bygihhTjZGhooQqVRLtlWT5vpza92yRJ/J1MJ1715lZyjCve
+         t21Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=IzN8ktAM/vEp+lB+VbU6GbAjZMh2oZm5qoY2RtDWm7o=;
-        b=ULMjzXn4tvPdLI1Xm84DlPXdNwsIPtc0tU7i8oy85jKbumX8PlrXNz3x7ivvsh3KeC
-         AkAGU0rPFHO7p5UaiDgTTP6h4UtCOTibQQj5SrKMHNKlqmfpVw9/aA3ey5y6ys3P5/WR
-         Zy7Oi3atUrDSEyYkUxP8/152bQ/N2aZu6IiO06jt8tpSAQ2N6UCs9HVcnAQDJ+sicyQn
-         9hc9GpvU0HhB3mLj0ok3dOeBimgVemCJmx1gmDZojsqz0Vx2cLtLywDiGvLcx12alAfw
-         ofJRuBnbQ489qkMF8i44TYmUEbmrKlbUNHBqBfSweGbboVUgwMG+cJq4rfJPICpI8N8V
-         T2Sg==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=PtKCdjezdS7D1o/3dQdqe06HUK6rSSKXb18otnQFOlM=;
+        b=nNF0A81GRdCphHCGXOgI+Gi/HZE3atWvJlBxG6GRLlFW+2dV/XaHbS8cezAVTwiCJR
+         +2QsDjrLUBJR/t7aPxga0UIuI4VXtsYMXcyeppYwxj7JoYykuAac39/ZQzk+Y5hB7ERa
+         9UID1WueHWMvPJ653L9I7stxcOidLrY79LMUeESa70LPuP00nFi7wYZPuZHenSwysGM8
+         RVDMwg3BYpmd0tkUHpgxaicsRmEYm2jS/bj6K1RjxIyO1pH3U/1qoJI4jLC5wHCix8Xx
+         PVZ+jRpdQ+R8sZDA+OfA2lfxHO51sbRq0vlA1kD0/EB4bHJEIfQeIuPozaL1KvSvi7Od
+         UWtg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11589-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11589-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11589-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11589-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Mon, 5 Feb 2018 09:40:04 -0600 (CST)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Igor Stoppa <igor.stoppa@huawei.com>
-cc: Matthew Wilcox <willy@infradead.org>,
-    Boris Lukashev <blukashev@sempervictus.com>, Jann Horn <jannh@google.com>,
-    jglisse@redhat.com, Kees Cook <keescook@chromium.org>,
-    Michal Hocko <mhocko@kernel.org>, Laura Abbott <labbott@redhat.com>,
-    Christoph Hellwig <hch@infradead.org>,
-    linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-    kernel list <linux-kernel@vger.kernel.org>,
-    Kernel Hardening <kernel-hardening@lists.openwall.com>
 Subject: Re: [kernel-hardening] [PATCH 4/6] Protectable Memory
-In-Reply-To: <f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
-Message-ID: <alpine.DEB.2.20.1802050935300.10705@nuc-kabylake>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com> <20180124175631.22925-5-igor.stoppa@huawei.com> <CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com> <20180126053542.GA30189@bombadil.infradead.org> <alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
+To: Christopher Lameter <cl@linux.com>
+CC: Matthew Wilcox <willy@infradead.org>, Boris Lukashev
+	<blukashev@sempervictus.com>, Jann Horn <jannh@google.com>,
+	<jglisse@redhat.com>, Kees Cook <keescook@chromium.org>, Michal Hocko
+	<mhocko@kernel.org>, Laura Abbott <labbott@redhat.com>, Christoph Hellwig
+	<hch@infradead.org>, <linux-security-module@vger.kernel.org>,
+	<linux-mm@kvack.org>, kernel list <linux-kernel@vger.kernel.org>, "Kernel
+ Hardening" <kernel-hardening@lists.openwall.com>
+References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+ <20180124175631.22925-5-igor.stoppa@huawei.com>
+ <CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
+ <20180126053542.GA30189@bombadil.infradead.org>
+ <alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
  <f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+ <alpine.DEB.2.20.1802050935300.10705@nuc-kabylake>
+From: Igor Stoppa <igor.stoppa@huawei.com>
+Message-ID: <4e113814-7d24-b48c-993f-46d5aee1755d@huawei.com>
+Date: Fri, 9 Feb 2018 13:17:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfOuDenMWjvRTdB3OucW8B35Hwl+YpqUNNKozVBgi8IOqxnfGik3gQ0feLbH3YoTTPc60hubgIWujyEa+Pxa6piPEFNMlsAGjgKjHl8Bu5j5XHl9CkYqX
- 1SRuxXs5U3rNXqJlAzD8xd6HnQfCqRKGI1AGHjeif+xTIcp20zMxwn1Js47PInZBsK38vq/TIxN+T5FG88kW8Q7Ux0LvAFqWVS1QYRdTG3+hS+HJW43AVp4h
- buarqIXfoC4AB8kqvFH0gecNh2yiLiPFFAA418eI7reHTasf2O361A07cymjS1sBRXWP2xCV+MFItFPbP67cEvf1dJteNVOWmqL3naHcfSIvNIIXtBkWOf9k
- gkSj0gXI1BpHBI8uDE1YKR1Ktam2cAL792Z7ObCCdBlPNqdjDnZZHIL5tVplPhRtC1CHIBxbBzbo1E6QxDYF+Gdr8QBxNAaOewid7+RkqrA3HJW5k3oPjePL
- +xScujzgyY3pir1ZB8/pyC9ZsCHRqfxIJJHJeay6ILhprZ3diWmFYRZiSfOvmxbnO86Brb7o+1gKqRo0jnGt9o3Cz+Acrs5v1zw0CA0p4aNw/+P6BAQjLwv7
- mPg=
+In-Reply-To: <alpine.DEB.2.20.1802050935300.10705@nuc-kabylake>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.122.225.51]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1590497635371449856?=
-X-GMAIL-MSGID: =?utf-8?q?1591576076579816152?=
+X-GMAIL-MSGID: =?utf-8?q?1591921977447513555?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, 3 Feb 2018, Igor Stoppa wrote:
 
-> > We could even do this in a more thorough way. Can we use a ring 1 / 2
-> > distinction to create a hardened OS core that policies the rest of
-> > the ever expanding kernel with all its modules and this and that feature?
->
-> What would be the differentiating criteria? Furthermore, what are the
-> chances
-> of invalidating the entire concept, because there is already an
-> hypervisor using
-> the higher level features?
-> That is what you are proposing, if I understand correctly.
 
-Were there not 4 rings as well as methods by the processor vendors to
-virtualize them as well?
+On 05/02/18 17:40, Christopher Lameter wrote:
+> On Sat, 3 Feb 2018, Igor Stoppa wrote:
+> 
+>>> We could even do this in a more thorough way. Can we use a ring 1 / 2
+>>> distinction to create a hardened OS core that policies the rest of
+>>> the ever expanding kernel with all its modules and this and that feature?
+>>
+>> What would be the differentiating criteria? Furthermore, what are the
+>> chances
+>> of invalidating the entire concept, because there is already an
+>> hypervisor using
+>> the higher level features?
+>> That is what you are proposing, if I understand correctly.
+> 
+> Were there not 4 rings as well as methods by the processor vendors to
+> virtualize them as well?
 
-> > I think that will long term be a better approach and allow more than the
-> > current hardening approaches can get you. It seems that we are willing to
-> > tolerate significant performance regressions now. So lets use the
-> > protection mechanisms that the hardware offers.
->
-> I would rather *not* propose significant performance regression :-P
+I think you are talking x86, mostly.
+On ARM there are ELx and they are often (typically?) already used.
+For x86 I cannot comment.
 
-But we already have implemented significant kernel hardening which causes
-performance regressions. Using hardware capabilities allows the processor
-vendor to further optimize these mechanisms whereas the software
-preventative measures are eating up more and more performance as the pile
-them on. Plus these are methods that can be worked around. Restrictions
-implemented in a higher ring can be enforced and are much better than
-just "hardening" (which is making life difficult for the hackers and
-throwing away performannce for the average user).
+>>> I think that will long term be a better approach and allow more than the
+>>> current hardening approaches can get you. It seems that we are willing to
+>>> tolerate significant performance regressions now. So lets use the
+>>> protection mechanisms that the hardware offers.
+>>
+>> I would rather *not* propose significant performance regression :-P
+> 
+> But we already have implemented significant kernel hardening which causes
+> performance regressions. Using hardware capabilities allows the processor
+> vendor to further optimize these mechanisms whereas the software
+> preventative measures are eating up more and more performance as the pile
+> them on. Plus these are methods that can be worked around. Restrictions
+> implemented in a higher ring can be enforced and are much better than
+> just "hardening" (which is making life difficult for the hackers and
+> throwing away performannce for the average user).
+
+What you are proposing requires major restructuring of the memory
+management - at the very least - provided that it doesn't cause the
+conflicts I mentioned above.
+
+Even after you do that, the system will still be working with memory
+pages, there will be still a need to segregate data within certain
+pages, or pay the penalty of handling exceptions, when data with
+different permissions coexist within the same page.
+
+The way the pmalloc API is designed is meant to facilitate the
+segregation and to actually improve performance, by grouping types of
+data with same scope and permission.
+
+WRT the implementation, there is a minimal exposure to the memory
+provider, both for allocation and release.
+
+Same goes for the protection mechanism.
+It's a single call to the function which makes pages read only.
+It would be trivial to swap it out with a call to whatever framework you
+want to come up with, for implementing ring/EL based protection.
+
+>From this perspective, you can easily provide patches that implement
+what you are proposing, against pmalloc, if you really think that it's
+the way to go.
+
+I'll be happy to use them, if they provide improved performance and same
+or better protection.
+
+The way I designed pmalloc was really to be able to switch to some
+alternate memory provider and/or protection mechanism, should a better
+one arise.
+
+But it can be done in a separate step, I think, since you are not
+proposing to just change pmalloc, you are proposing to re-design how the
+overall kernel memory hardening works (including executable pages, const
+data, __ro_after_init, etc.)
+
+--
+igor
