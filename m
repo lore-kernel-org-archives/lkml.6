@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x227tGEKEBnkdue84WNV4mkY+IrfI0vcGCZxz6+z3HYD0/AtRnw5/6JHqNtrVDnKoP3GWNFZD
-ARC-Seal: i=1; a=rsa-sha256; t=1518168357; cv=none;
+X-Google-Smtp-Source: AH8x227o7VuvSHLjC70YkjvJUSKKI5WTIH5T5L1EU7OZNE80mwTmWOPhtJU2bu61QSW9oNtR8175
+ARC-Seal: i=1; a=rsa-sha256; t=1518168356; cv=none;
         d=google.com; s=arc-20160816;
-        b=mEKksbbYQQNxCJUdj+qVqDttsB90YiUf3UUTCLiG/+HqrC9lgJWpwZhZyYu45Fh8Be
-         lN9FwfRpKIi/lFo8S3K3d7q50DaPo0AbHx3VmsSNsS6eUdj+rkvvOOk/+QpnNV0Hye/0
-         TqRVvYKibPfdY+XBYzF28JnUT8aLsBp4AhxfGVXBrAamJx5rJRcjqeh79iFHLHQwJSRp
-         6Qi0UB+CjWN+hyTRsj2FqwWZrKJRlYtPqWyJUvlPStxqsQDxUtRssCKotfvRAejjLVDy
-         TZR+jB9I+IyjqWQIyGoa0xZ74sFHNB2e+1YRBzy/B/Zqjqq4obfG7ulRKLwL4GPhrYgV
-         cBYw==
+        b=SKdDa1R0FrK2lKEfRGIyfKvQlUZ8B/sCmiNNiYvi+/LSVmPNqSj7MZfHrJLxdPDmkG
+         DUGxHFxrkyXd9R4gvYRhjIQQMQyQB3bHepxv4oJx9ULcwsa9BkoaTLKGGnwkaWLpoZE6
+         gDXW2FBqJGz/g1XexAo2eZmEQ2QMHh1MoxDqHfC4qOe9ClS41MQtkJt57kvtJ6mOtdhU
+         wbTAIsmrFE4nnJp3mVjW7HpImmz/W0ioi67d/WeG/7Xr439G7l7r+skpFw4Mc8OlYUe9
+         VAgiEVEE5K/LjgN7+o8Jx42dRXi5BQby9EvYLyVKwhsXDOimohACeeMDd1s4QF8VdXH0
+         C/PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=lFVEWZD8iyFBLPwCnkcx5rWQZtK2TQ+3za/aoOilQ44=;
-        b=prmKQ0QhZBkygoOP1Zq0M3ExE9yfIIAE6luyjd35Jtew8XqtVDmlK1DVYBISDQJ8AG
-         s9Ve2z8exLcv1g0JCeNTGjKu3aKof+cPBsfPuPLCoedi0ofARJXNAOdbAIFtqgU/o/KH
-         5e6HHVhJWgaOEzqxq+yGwWQ3uMnkxjnXCLEgZ11zH8QY9yDY+tLs50OmxwfhxMxRvISk
-         oSS85DmDr0wceuPjcgIKikzOm3seVs/2YBEyoBNyknm8w4KRjhVFt2CC9iQm4RUuZiGn
-         Qnw6ZeBFaSwFDrgWRh5qiYAEPp8ZRLr7HHy6dOHbRFG6Fkt0LZLdcS4fz6hYPDHdkbQN
-         Jo7A==
+        bh=c+a2sINmdTrcI8vkYK/XU7EvC9UjG9GZQWNCAcJ90XU=;
+        b=KtkOAsjyTyoKqzZkfi5gFA7NSyniyvnBjfnVFAE+6eMw/JTbPM5Z7VZHQYssDT9AQo
+         F0gzn17eYcU3DSPKfg8vGCdsabdXXgVz+UcOPkJUqVpenLM74XL5ELcFTVk09lOKqGvd
+         WRF7CKH9F7UkyAt0HEfmONjKZd4tpDC+9va5ZGux/viT6MjgmL1AEg79laJnYmj4R5wO
+         ikjoykdtq2S2ZLlPP7bevqKCGCPA50XuPqsv8g9zPmTXeUG7qiDPI+NImNET7q2cByAx
+         Jx+TGuMfVaS2DaEFXP28BV5MFto8bXU1pDRtNQtuUJdXud5nsAOOqBXg7vfreIW/JGB+
+         cGzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Zk9J6ua8;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=l0dR+8Nn;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Zk9J6ua8;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=l0dR+8Nn;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,148 +57,66 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 04/31] x86/entry/32: Put ESPFIX code into a macro
-Date: Fri,  9 Feb 2018 10:25:13 +0100
-Message-Id: <1518168340-9392-5-git-send-email-joro@8bytes.org>
+Subject: [PATCH 06/31] x86/entry/32: Split off return-to-kernel path
+Date: Fri,  9 Feb 2018 10:25:15 +0100
+Message-Id: <1518168340-9392-7-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914903392005228?=
-X-GMAIL-MSGID: =?utf-8?q?1591914903392005228?=
+X-GMAIL-THRID: =?utf-8?q?1591914902552804674?=
+X-GMAIL-MSGID: =?utf-8?q?1591914902552804674?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This makes it easier to split up the shared iret code path.
+Use a separate return path when we know we are returning to
+the kernel. This allows us to put the PTI cr3-switch and the
+switch to the entry-stack into the return-to-user path
+without further checking.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 97 ++++++++++++++++++++++++-----------------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+ arch/x86/entry/entry_32.S | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index e659776..0289bde 100644
+index 00ae759..9bd7718 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -221,6 +221,54 @@
- 	POP_GS_EX
- .endm
+@@ -65,7 +65,7 @@
+ # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
+ #else
+ # define preempt_stop(clobbers)
+-# define resume_kernel		restore_all
++# define resume_kernel		restore_all_kernel
+ #endif
  
-+.macro CHECK_AND_APPLY_ESPFIX
-+#ifdef CONFIG_X86_ESPFIX32
-+#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
-+
-+	ALTERNATIVE	"jmp .Lend_\@", "", X86_BUG_ESPFIX
-+
-+	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
-+	/*
-+	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
-+	 * are returning to the kernel.
-+	 * See comments in process.c:copy_thread() for details.
-+	 */
-+	movb	PT_OLDSS(%esp), %ah
-+	movb	PT_CS(%esp), %al
-+	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
-+	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
-+	jne	.Lend_\@	# returning to user-space with LDT SS
-+
-+	/*
-+	 * Setup and switch to ESPFIX stack
-+	 *
-+	 * We're returning to userspace with a 16 bit stack. The CPU will not
-+	 * restore the high word of ESP for us on executing iret... This is an
-+	 * "official" bug of all the x86-compatible CPUs, which we can work
-+	 * around to make dosemu and wine happy. We do this by preloading the
-+	 * high word of ESP with the high word of the userspace ESP while
-+	 * compensating for the offset by changing to the ESPFIX segment with
-+	 * a base address that matches for the difference.
-+	 */
-+	mov	%esp, %edx			/* load kernel esp */
-+	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
-+	mov	%dx, %ax			/* eax: new kernel esp */
-+	sub	%eax, %edx			/* offset (low word is 0) */
-+	shr	$16, %edx
-+	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
-+	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
-+	pushl	$__ESPFIX_SS
-+	pushl	%eax				/* new kernel esp */
-+	/*
-+	 * Disable interrupts, but do not irqtrace this section: we
-+	 * will soon execute iret and the tracer was already set to
-+	 * the irqstate after the IRET:
-+	 */
-+	DISABLE_INTERRUPTS(CLBR_ANY)
-+	lss	(%esp), %esp			/* switch to espfix segment */
-+.Lend_\@:
-+#endif /* CONFIG_X86_ESPFIX32 */
-+.endm
- /*
-  * %eax: prev task
-  * %edx: next task
-@@ -548,21 +596,7 @@ ENTRY(entry_INT80_32)
- restore_all:
- 	TRACE_IRQS_IRET
- .Lrestore_all_notrace:
--#ifdef CONFIG_X86_ESPFIX32
--	ALTERNATIVE	"jmp .Lrestore_nocheck", "", X86_BUG_ESPFIX
--
--	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
--	/*
--	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
--	 * are returning to the kernel.
--	 * See comments in process.c:copy_thread() for details.
--	 */
--	movb	PT_OLDSS(%esp), %ah
--	movb	PT_CS(%esp), %al
--	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
--	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
--	je .Lldt_ss				# returning to user-space with LDT SS
--#endif
-+	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
- 	RESTORE_REGS 4				# skip orig_eax/error_code
+ .macro TRACE_IRQS_IRET
+@@ -400,9 +400,9 @@ ENTRY(resume_kernel)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ .Lneed_resched:
+ 	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	restore_all
++	jnz	restore_all_kernel
+ 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+-	jz	restore_all
++	jz	restore_all_kernel
+ 	call	preempt_schedule_irq
+ 	jmp	.Lneed_resched
+ END(resume_kernel)
+@@ -602,6 +602,11 @@ restore_all:
  .Lirq_return:
-@@ -575,39 +609,6 @@ ENTRY(iret_exc	)
- 	jmp	common_exception
- .previous
- 	_ASM_EXTABLE(.Lirq_return, iret_exc)
--
--#ifdef CONFIG_X86_ESPFIX32
--.Lldt_ss:
--/*
-- * Setup and switch to ESPFIX stack
-- *
-- * We're returning to userspace with a 16 bit stack. The CPU will not
-- * restore the high word of ESP for us on executing iret... This is an
-- * "official" bug of all the x86-compatible CPUs, which we can work
-- * around to make dosemu and wine happy. We do this by preloading the
-- * high word of ESP with the high word of the userspace ESP while
-- * compensating for the offset by changing to the ESPFIX segment with
-- * a base address that matches for the difference.
-- */
--#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
--	mov	%esp, %edx			/* load kernel esp */
--	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
--	mov	%dx, %ax			/* eax: new kernel esp */
--	sub	%eax, %edx			/* offset (low word is 0) */
--	shr	$16, %edx
--	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
--	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
--	pushl	$__ESPFIX_SS
--	pushl	%eax				/* new kernel esp */
--	/*
--	 * Disable interrupts, but do not irqtrace this section: we
--	 * will soon execute iret and the tracer was already set to
--	 * the irqstate after the IRET:
--	 */
--	DISABLE_INTERRUPTS(CLBR_ANY)
--	lss	(%esp), %esp			/* switch to espfix segment */
--	jmp	.Lrestore_nocheck
--#endif
- ENDPROC(entry_INT80_32)
+ 	INTERRUPT_RETURN
  
- .macro FIXUP_ESPFIX_STACK
++restore_all_kernel:
++	TRACE_IRQS_IRET
++	RESTORE_REGS 4
++	jmp	.Lirq_return
++
+ .section .fixup, "ax"
+ ENTRY(iret_exc	)
+ 	pushl	$0				# no error code
 -- 
 2.7.4
