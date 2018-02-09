@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AH8x225krW7F3jxD1B9qVYySS8jSbFuPeQBwXemJ4YdMaG2nKrCIhWsEeD1DZ7b/XatWa+1JpYRI
+X-Google-Smtp-Source: AH8x226PJ0rZ4Vk3biLgGE3LhzlP8xCKMNHBxhzX9fb6rqCWxRBp09iFJ9X5lnzadJiGEG7Cojum
 ARC-Seal: i=1; a=rsa-sha256; t=1518168367; cv=none;
         d=google.com; s=arc-20160816;
-        b=aVVBO0bjLWL5Voi3tsI5LNIFpOkoG2OCNqPBCuu1LXQGxNRZj4l8POCl1Fe6K39y+t
-         EwjHG+B7CZA267rHSbCIMe0r5JpIKTyFqCzxAAxCGWlWPjwgLy3JerPD2YG0+SK2mfuU
-         8mNDhVTguq7l/DIW/KiPrvUl0Jeg6ryny4y5M8D2bxiPOIUjZlBoqid86hRf2pHcrgv9
-         U69hO9tHXUzhY7k/8h1b5tximpz81erw9AXQQnSVdf1NWHbjRrNJImFTTFC4l8o7T7l0
-         PBl19agccS1+vG7/PKRra8HHj12uiFgEw/nLa01C7YmnAdOFNmxUn/GVLcx4inACBZ7q
-         RJng==
+        b=rwOBbjXXXx8fuw/6rCIbQLHnb6olfxX4DlXzpx3eXDlOVTuc36DMglio0SFjPmE0r5
+         zPUaaooD56SDFIWRcg0uF6+0yHXuxEcnyX7gTQGvImJeQQrheaqi+pl+5gJs/XE0BjiL
+         1QfDP/tzO9reJ5nbbBsmqIhWFCryo1uSYn8lEI25D5rbvGWUKyxtdabBY1n0UwSudCIT
+         mICR5rHrO7sqT/aQI9xRKnVbgPpOjBVSnrlt17RqueB+vlPD+meiEp1p4eqx5oFWfksa
+         voFO0euTBc4MnHEkgjdMnqXYRQuEV91iXSL5Ai/qYJUuLbkUWgTkPbkwcauKr85IMdza
+         W08A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=RGA25vQ8gBPaSKGy/lT4lV6mDQVKRyvseZa9z9ApG6o=;
-        b=EslSzuRDAoSOLkJPPEOOQFmiXtXnOEgVq9uLBcugs2+DO81gDk/klutGvF3fL5myjT
-         kOhlrl9Jnj6gsBIGtKecXNuxn6BiDtZjT26ZlHZotA/N75h/xOROCtN0lUk9JPz7XZuA
-         dZsujmZpdW5M0A+f9mQUfuhfihIwRR6SPviANbOFn2HC8ja14kBQZHtjIL52NW62ZFQ9
-         1a4E4TICu5uOaYaOIpRtlC5S75ECNJvKiDOS9uTHVglmXuXv4cAiw/yujPROnb5z6F7e
-         uVBR9NkxR4c3R8bcvcKJ3ib9170YH5EUgtI1u3ncRxCzrJDbwptrpJ4ip129c1JfDtqA
-         yCrw==
+        bh=N4WE/Zg3/azljJ9vk+e7rysEuRey95VTb4WIU/mTR/Y=;
+        b=MCGXRhqr7gL0u4daLnLINgXZh+UGAsIaknFAFFNpXuXLxgLI8q1iyt3+7cJYfGE1JF
+         BvNRc4NWqlksaIQKboHsqDFls6T5zWBAQzA2APEKk6epIfTaEbk0WP92IfTZCFrNMvbq
+         NXiqw+v6X5fjUeYNWGetFzUm/jflGUGHDJcgVwfHuzXS+ObgddZOIwPqfp+1kZ2jN9P2
+         Tc3RKToUECHByCsdi6EELErYPMosEjcGR00TRr+vbwb896UdhODUBMPtv04rN296bLby
+         75ePOo7yQfc3m+UEgUucDzHUNqBFvbCDggZtnLGZuEeynNodkGQz02QTXDSIe6G+PWBt
+         BCag==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=qw0MjPHr;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KaU25J3C;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=qw0MjPHr;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KaU25J3C;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,75 +57,85 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 28/31] x86/ldt: Define LDT_END_ADDR
-Date: Fri,  9 Feb 2018 10:25:37 +0100
-Message-Id: <1518168340-9392-29-git-send-email-joro@8bytes.org>
+Subject: [PATCH 27/31] x86/ldt: Reserve address-space range on 32 bit for the LDT
+Date: Fri,  9 Feb 2018 10:25:36 +0100
+Message-Id: <1518168340-9392-28-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914914585532932?=
-X-GMAIL-MSGID: =?utf-8?q?1591914914585532932?=
+X-GMAIL-THRID: =?utf-8?q?1591914914052328004?=
+X-GMAIL-MSGID: =?utf-8?q?1591914914052328004?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-It marks the end of the address-space range reserved for the
-LDT. The LDT-code will use it when unmapping the LDT for
-user-space.
+Reserve 2MB/4MB of address-space for mapping the LDT to
+user-space on 32 bit PTI kernels.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_32_types.h | 2 ++
- arch/x86/include/asm/pgtable_64_types.h | 2 ++
- arch/x86/kernel/ldt.c                   | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/pgtable_32_types.h | 7 +++++--
+ arch/x86/mm/dump_pagetables.c           | 9 +++++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
-index eb2e97a..02bd445 100644
+index 0777e18..eb2e97a 100644
 --- a/arch/x86/include/asm/pgtable_32_types.h
 +++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -51,6 +51,8 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
- #define LDT_BASE_ADDR		\
+@@ -48,13 +48,16 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+ 	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
+ 	 & PMD_MASK)
+ 
+-#define PKMAP_BASE		\
++#define LDT_BASE_ADDR		\
  	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
  
-+#define LDT_END_ADDR		(LDT_BASE_ADDR + PMD_SIZE)
++#define PKMAP_BASE		\
++	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
 +
- #define PKMAP_BASE		\
- 	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
- 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index e57003a..15188baa 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -90,12 +90,14 @@ typedef struct { pteval_t pte; } pte_t;
- # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
- # define LDT_PGD_ENTRY		_AC(-112, UL)
- # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
-+#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+ #ifdef CONFIG_HIGHMEM
+ # define VMALLOC_END	(PKMAP_BASE - 2 * PAGE_SIZE)
  #else
- # define VMALLOC_SIZE_TB	_AC(32, UL)
- # define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
- # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
- # define LDT_PGD_ENTRY		_AC(-3, UL)
- # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
-+#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+-# define VMALLOC_END	(CPU_ENTRY_AREA_BASE - 2 * PAGE_SIZE)
++# define VMALLOC_END	(LDT_BASE_ADDR - 2 * PAGE_SIZE)
  #endif
  
- #ifdef CONFIG_RANDOMIZE_MEMORY
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index 26d713e..f3c2fbf 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -202,7 +202,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- 	struct mmu_gather tlb;
- 	unsigned long start = LDT_BASE_ADDR;
--	unsigned long end = start + (1UL << PGDIR_SHIFT);
-+	unsigned long end = LDT_END_ADDR;
- 
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return;
+ #define MODULES_VADDR	VMALLOC_START
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 2151ebb..fdefdf0 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -117,6 +117,9 @@ enum address_markers_idx {
+ #ifdef CONFIG_HIGHMEM
+ 	PKMAP_BASE_NR,
+ #endif
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++	LDT_NR,
++#endif
+ 	CPU_ENTRY_AREA_NR,
+ 	FIXADDR_START_NR,
+ 	END_OF_SPACE_NR,
+@@ -130,6 +133,9 @@ static struct addr_marker address_markers[] = {
+ #ifdef CONFIG_HIGHMEM
+ 	[PKMAP_BASE_NR]		= { 0UL,		"Persistent kmap() Area" },
+ #endif
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++	[LDT_NR]		= { 0UL,		"LDT remap" },
++#endif
+ 	[CPU_ENTRY_AREA_NR]	= { 0UL,		"CPU entry area" },
+ 	[FIXADDR_START_NR]	= { 0UL,		"Fixmap area" },
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+@@ -579,6 +585,9 @@ static int __init pt_dump_init(void)
+ # endif
+ 	address_markers[FIXADDR_START_NR].start_address = FIXADDR_START;
+ 	address_markers[CPU_ENTRY_AREA_NR].start_address = CPU_ENTRY_AREA_BASE;
++# ifdef CONFIG_MODIFY_LDT_SYSCALL
++	address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
++# endif
+ #endif
+ 	return 0;
+ }
 -- 
 2.7.4
