@@ -1,73 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751047AbeBJDOw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 22:14:52 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52278 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeBJDOv (ORCPT
+        id S1751145AbeBJDTa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 22:19:30 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35893 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750835AbeBJDT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 22:14:51 -0500
-Subject: Re: [PATCH V2 0/6]nvme-pci: fixes on nvme_timeout and
- nvme_dev_disable
-To: Keith Busch <keith.busch@intel.com>
-Cc: axboe@fb.com, hch@lst.de, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, Sagi Grimberg <sagi@grimberg.me>
-References: <1517822415-11710-1-git-send-email-jianchao.w.wang@oracle.com>
- <073ce416-fd26-b41a-187d-1db9210c48b0@grimberg.me>
- <20180208175606.GD5039@localhost.localdomain>
- <db5fe34b-3ffb-a658-d4d6-a1c619b2d590@oracle.com>
- <20180209171231.GB6970@localhost.localdomain>
- <de6fd2ac-fc69-1b3b-c206-7abfce24ac70@oracle.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <1aa130e6-a1ff-bd17-a141-1a52f596dd8b@oracle.com>
-Date: Sat, 10 Feb 2018 10:59:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 9 Feb 2018 22:19:28 -0500
+X-Google-Smtp-Source: AH8x2277jki9VrjJTEmRFqUSruW/9IZ2D+lmh8SEprGc0rTt2SEHwxQphgIqtvFQ3IKmeNrKfY1qoA==
+Date: Fri, 9 Feb 2018 19:19:25 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+bacbe5d8791f30c9cee5@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        James Morse <james.morse@arm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Ingo Molnar <mingo@kernel.org>, syzkaller-bugs@googlegroups.com
+Subject: Re: possible deadlock in get_user_pages_unlocked
+Message-ID: <20180210031925.GA1041@zzz.localdomain>
+References: <001a113f6344393d89056430347d@google.com>
+ <20180202045020.GF30522@ZenIV.linux.org.uk>
+ <20180202053502.GB949@zzz.localdomain>
+ <20180202054626.GG30522@ZenIV.linux.org.uk>
+ <20180202062037.GH30522@ZenIV.linux.org.uk>
+ <CACT4Y+bDU00aQpJOUK8eB+Kv4HycNwKA=kShUe9kSd0FUqO+FQ@mail.gmail.com>
+ <20180210013640.GN30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <de6fd2ac-fc69-1b3b-c206-7abfce24ac70@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=962
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802100039
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180210013640.GN30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keith
+Hi Al,
 
-On 02/10/2018 10:32 AM, jianchao.wang wrote:
-> Hi Keith
+On Sat, Feb 10, 2018 at 01:36:40AM +0000, Al Viro wrote:
+> On Fri, Feb 02, 2018 at 09:57:27AM +0100, Dmitry Vyukov wrote:
 > 
-> Thanks for your kindly response here.
-> That's really appreciated.
+> > syzbot tests for up to 5 minutes. However, if there is a race involved
+> > then you may need more time because the crash is probabilistic.
+> > But from what I see most of the time, if one can't reproduce it
+> > easily, it's usually due to some differences in setup that just don't
+> > allow the crash to happen at all.
+> > FWIW syzbot re-runs each reproducer on a freshly booted dedicated VM
+> > and what it provided is the kernel output it got during run of the
+> > provided program. So we have reasonably high assurance that this
+> > reproducer worked in at least one setup.
 > 
-> On 02/10/2018 01:12 AM, Keith Busch wrote:
->> On Fri, Feb 09, 2018 at 09:50:58AM +0800, jianchao.wang wrote:
->>>
->>> if we set NVME_REQ_CANCELLED and return BLK_EH_HANDLED as the RESETTING case,
->>> nvme_reset_work will hang forever, because no one could complete the entered requests.
->>
->> Except it's no longer in the "RESETTING" case since you added the
->> "CONNECTING" state, so that's already broken for other reasons...
->>
+> Could you guys check if the following fixes the reproducer?
 > 
-> Yes, but as your patch, we have to fail the IOs and even kill the controller.
-> In fact, up to nvme_wait_freeze in nvme_reset_work, the RECONNECTING state has been completed.
-> We even could say it is in LIVE state. Maybe we should recover the controller again instead
-> of fail the IOs and kill the controller.
-> 
-> On the other hand, can you share with me why we cannot use blk_set_preempt_only to replace
-> blk_freeze_queue ? we just want to gate the new bios out of generic_make_request and we 
-> needn't use the preempt requests.
-> 
-> Looking forward your advice and directive.
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 61015793f952..058a9a8e4e2e 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -861,6 +861,9 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+>  		BUG_ON(*locked != 1);
+>  	}
+>  
+> +	if (flags & FOLL_NOWAIT)
+> +		locked = NULL;
+> +
+>  	if (pages)
+>  		flags |= FOLL_GET;
+>  
 
-Avoid wait_freeze in nvme_reset_work should be a better way to fix this defect.
+Yes that fixes the reproducer for me.
 
-> 
-> Thanks
-> Jianchao
+- Eric
