@@ -1,100 +1,208 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518209216; cv=none;
+Return-Path: <ulfalizer@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518241738; cv=none;
         d=google.com; s=arc-20160816;
-        b=gAdT+B4LmD0Dt+frAefMYYXtZ7ExVsJ2Mv9+smALxhhTGDll1cNlrIbGbmcoNA8Lx7
-         AGjUsIs5iRUtrffiv4JYF2o4VuKYHGEMiY0xzGfEjTsRoUCWKJR7FnCMe5vmQeTtOFFx
-         AcMgD6r74HcyijGFXAOuU5IMKNnVUlu9X+IJ3PBMs/nMyIUVr+2Ew9UKy7bhcfrmkbNi
-         zXyeNu81pBC1LoX5ezMJtwxwU02F+3PBB3xKnYM1J7lk8TjVStL2/Rtv+PyjipxJfGbl
-         6UOF+IDyhN9uQ5pQYMfrmruNaiUMoVVyBqB8et+SonYoc38hUACXqrLew5ypFIL/7Qb0
-         pfFA==
+        b=gANetqnqVkNPD+oNMZt/wQLqKjbeBFASg0QDI7beC2wn/ZWLpNIrihT77wmomZNooY
+         BW3PmxMdlPGjLy1yc1mngxqidJ+PX/e6zPIc8GNboOHqzsaQWro0iSBq4puF/v4Ui5hF
+         LZww2+0a+W96nuaY9rE0xKnupXje8MHEdnNPbTPEFXvoccpfB/YtbTjer7J+S1MJxl5c
+         TUFMAwuJhG41z82M0rYLRCR6eqbZAgr8TCWWb098AL8CL7wjP+MbHfyUCZegJXXtiVUc
+         g0bUQiVTIxBMjlXuCxINez0Ewu1R52SSzA/XbDv2jw94cftg7EUjXy/7af7L42k+exis
+         hULw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=6PC8hQ9mCf8ZdabxOnS9ErVkr7oe8MONPGfLcC6GHKw=;
-        b=wLW9sbT+DxdWDuXNDlSn18Em6Sxpth8pfLIA5CpRuvrSXAWbxPxWYOXzotO/cQn86o
-         0VvsOZG0xMi5kbk+EkzLcwaOR1T+CyY3PPeEKO8cSCH/0cASExDSkc7AuBo39jtVTuRx
-         whjJPGpfzEXLkelItBZabJSw+DXti11ENfo+wRvA9QudGXrAsB4J1qU/EQR/Q787x0AE
-         Fr0wDHyCxnO4wuEUF21wfRv3WZF/wbfoPq4TsUJDyKkP8t+MssjBdC9ane626QhePrFI
-         Vw8oWX24oEoPEsdra56K0qNvyp5udCabBSFBsKK5izOSjBvpQI8rnkjxmbmXfo6mwpdp
-         kSBw==
+        bh=RCMND6tlLyBJDTdXR83cUWZHkko2J8pyL5YEmM9OzsY=;
+        b=ywFgcV+Wzh2gOKW/h4cmIM06vN/W31CBaBV6XP6n9RSDeRG/zwii/PZzaA49gXzPVd
+         yhmRICJJKPOlOY3IEagw9gM8l/HQsMCtS+HlcM8c1GBR6BVaypBo+8mYQ/lv4OYhh8Ln
+         n50np6RFnvfNdaqb0EG8NXt2CXDEk4SRxkkjQJUDDGvFmOvTD51HXBNtQElTRNfQsIxS
+         NXcetWyqHxn0KD8jZjCJPh1QlJOaS1hdPksD8rgclQdJ0wx32YK6xEcZZQBhMeroCMYs
+         /wtWRFWM2dTJTs7UbwadcpxY6VIjP4lNJTxSiDOUyLmo5SNt+lPgoUkYUiDmWnTAXUF5
+         kdlw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=pAValYke;
-       dkim=pass header.i=@chromium.org header.s=google header.b=K5SR4Kf3;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DcfcARy2;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=pAValYke;
-       dkim=pass header.i=@chromium.org header.s=google header.b=K5SR4Kf3;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AH8x226ex87mhLlakQ/VzuPuXoR59JfSdTYF3Qrp3JrCG3ygLeYjQjht7950baiYqVV5REB9sokPp6yji8BHh+8VGNo=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <20180209124607.akjhncb5sempjqcn@huvuddator>
-References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
- <1518106752-29228-5-git-send-email-yamada.masahiro@socionext.com>
- <20180209053038.pscoijvowmyudyzf@huvuddator> <CAK7LNATRxYCx9sE1haw815votyA5K8GQrMPPh0Q+n3kYa=JsgA@mail.gmail.com>
- <20180209124607.akjhncb5sempjqcn@huvuddator>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 9 Feb 2018 12:46:54 -0800
-X-Google-Sender-Auth: RQ7LYjlC-VkLo3ue1pgqQ6eDWnI
-Message-ID: <CAGXu5j+hv6G3m+fgr7ibXAnoE-2GsxtXoqr0pd5AaaNdFVQxYg@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Ulf Magnusson <ulfalizer@gmail.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DcfcARy2;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x225PjfipzcGB7V+XltKTNl/9RK40a9BAO96vwiMrBEHpx3VSkYmTH0e1usK+r/BFgaHALjI22g==
+Date: Sat, 10 Feb 2018 06:48:43 +0100
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: Kees Cook <keescook@chromium.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
-	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@suse.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Michal Marek <michal.lkml@markovi.net>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-s390 <linux-s390@vger.kernel.org>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
+Message-ID: <20180210054843.z3g7wvcmlccvww3h@huvuddator>
+References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
+ <1518106752-29228-5-git-send-email-yamada.masahiro@socionext.com>
+ <20180209053038.pscoijvowmyudyzf@huvuddator>
+ <CAK7LNATRxYCx9sE1haw815votyA5K8GQrMPPh0Q+n3kYa=JsgA@mail.gmail.com>
+ <20180209124607.akjhncb5sempjqcn@huvuddator>
+ <CAGXu5j+hv6G3m+fgr7ibXAnoE-2GsxtXoqr0pd5AaaNdFVQxYg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+hv6G3m+fgr7ibXAnoE-2GsxtXoqr0pd5AaaNdFVQxYg@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1591957747410879739?=
+X-GMAIL-MSGID: =?utf-8?q?1591991849758814396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 9, 2018 at 4:46 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> One thing that makes Kconfig confusing (though it works well enough in
-> practice) is that .config files both record user selections (the saved
-> configuration) and serve as a configuration output format for make.
->
-> It becomes easier to think about .config files once you realize that
-> assignments to promptless symbols never have an effect on Kconfig
-> itself: They're just configuration output, intermixed with the saved
-> user selections.
->
-> Assume 'option env' symbols got written out for example:
->
->         - For a non-user-assignable symbol, the entry in the .config
->           file is just configuration output and ignored by Kconfig,
->           which will fetch the value from the environment instead.
->
->         - For an assignable 'option env' symbol, the entry in the
->           .config file is a saved user selection (as well as
->           configuration output), and will be respected by Kconfig.
+On Fri, Feb 09, 2018 at 12:46:54PM -0800, Kees Cook wrote:
+> On Fri, Feb 9, 2018 at 4:46 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> > One thing that makes Kconfig confusing (though it works well enough in
+> > practice) is that .config files both record user selections (the saved
+> > configuration) and serve as a configuration output format for make.
+> >
+> > It becomes easier to think about .config files once you realize that
+> > assignments to promptless symbols never have an effect on Kconfig
+> > itself: They're just configuration output, intermixed with the saved
+> > user selections.
+> >
+> > Assume 'option env' symbols got written out for example:
+> >
+> >         - For a non-user-assignable symbol, the entry in the .config
+> >           file is just configuration output and ignored by Kconfig,
+> >           which will fetch the value from the environment instead.
+> >
+> >         - For an assignable 'option env' symbol, the entry in the
+> >           .config file is a saved user selection (as well as
+> >           configuration output), and will be respected by Kconfig.
+> 
+> In the stack-protector case, this becomes quite important, since the
+> goal is to record the user's selection regardless of compiler
+> capability. For example, if someone selects _REGULAR, it shouldn't
+> "upgrade" to _STRONG. (Similarly for _NONE.) Having _AUTO provides a
+> way to pick "best possible for this compiler", though. If a user had
+> previously selected _STRONG but they're doing builds with an older
+> compiler (or a misconfigured newer compiler) without support, the goal
+> is to _fail_ to build, not silently select _REGULAR.
+> 
+> So, in this case, what's gained is the logic for _AUTO, and the logic
+> to not show, say, _STRONG when it's not available in the compiler. But
+> we must still fail to build if _STRONG was in the .config. It can't
+> silently rewrite it to _REGULAR because the compiler support for
+> _STRONG regressed.
+> 
+> -Kees
+> 
+> -- 
+> Kees Cook
+> Pixel Security
 
-In the stack-protector case, this becomes quite important, since the
-goal is to record the user's selection regardless of compiler
-capability. For example, if someone selects _REGULAR, it shouldn't
-"upgrade" to _STRONG. (Similarly for _NONE.) Having _AUTO provides a
-way to pick "best possible for this compiler", though. If a user had
-previously selected _STRONG but they're doing builds with an older
-compiler (or a misconfigured newer compiler) without support, the goal
-is to _fail_ to build, not silently select _REGULAR.
+Provided that would be the desired behavior:
 
-So, in this case, what's gained is the logic for _AUTO, and the logic
-to not show, say, _STRONG when it's not available in the compiler. But
-we must still fail to build if _STRONG was in the .config. It can't
-silently rewrite it to _REGULAR because the compiler support for
-_STRONG regressed.
+What about changing the meaning of the choice symbols from e.g. "select
+-fstack-protector-strong" to "want -fstack-protector-strong"? Then the
+user preference would always be remembered, regardless of what's
+available.
 
--Kees
+Here's a proof-of-concept. I realized that the fancy new 'imply' keyword
+fits pretty well here, since it works like a dependency-respecting
+select.
 
--- 
-Kees Cook
-Pixel Security
+	config CC_HAS_STACKPROTECTOR_STRONG
+		bool
+		option shell="$CC -Werror -fstack-protector-strong -c -x c /dev/null"
+	
+	config CC_HAS_STACKPROTECTOR
+		bool
+		option shell="$CC -Werror -fstack-protector -c -x c /dev/null"
+
+	
+	choice
+		prompt "Stack Protector buffer overflow detection"
+		default WANT_CC_STACKPROTECTOR_STRONG
+	
+	config WANT_CC_STACKPROTECTOR_STRONG
+		bool "Strong"
+		imply CC_STACKPROTECTOR_STRONG
+	
+	config WANT_CC_STACKPROTECTOR_REGULAR
+		bool "Regular"
+		imply CC_STACKPROTECTOR_REGULAR
+	
+	config WANT_CC_STACKPROTECTOR_NONE
+		bool "None"
+		imply CC_STACKPROTECTOR_NONE
+	
+	endchoice
+	
+	
+	config CC_STACKPROTECTOR_STRONG
+		bool
+		depends on CC_HAS_STACKPROTECTOR_STRONG
+	
+	config CC_STACKPROTECTOR_REGULAR
+		bool
+		depends on CC_HAS_STACKPROTECTOR_REGULAR
+	
+	config CC_STACKPROTECTOR_NONE
+		bool
+
+This version has the drawback of always showing all the options, even if
+some they wouldn't be available. Kconfig comments could be added to warn
+if an option isn't available at least:
+
+	comment "Warning: Your compiler does not support -fstack-protector-strong"
+		depends on !CC_HAS_STACKPROTECTOR_STRONG
+
+	config WANT_CC_STACKPROTECTOR_STRONG
+		...
+
+
+	comment "Warning: Your compiler does not support -fstack-protector"
+		depends on !CC_HAS_STACKPROTECTOR_REGULAR
+
+	config WANT_CC_STACKPROTECTOR_REGULAR
+		...
+
+This final comment might be nice to have too:
+
+	comment "Warning: Selected stack protector not available"
+		depends on !(CC_STACKPROTECTOR_STRONG ||
+			     CC_STACKPROTECTOR_REGULAR ||
+			     CC_STACKPROTECTOR_NONE)
+
+Should probably introduce a clear warning that tells the user what they
+need to change in Kconfig if they build with a broken selection too.
+
+
+CC_STACKPROTECTOR_AUTO could be added to the choice in a slightly kludgy
+way too. Maybe there's something neater.
+
+	config CC_STACKPROTECTOR_AUTO
+		bool "Automatic"
+		imply CC_STACKPROTECTOR_STRONG
+		imply CC_STACKPROTECTOR_REGULAR if !CC_HAS_STACKPROTECTOR_STRONG
+		imply CC_STACKPROTECTOR_NONE    if !CC_HAS_STACKPROTECTOR_STRONG && \
+						   !CC_HAS_STACKPROTECTOR_REGULAR
+
+
+Another drawback of this approach is that it breaks existing .config
+files (the CC_STACKPROTECTOR_* settings are ignored, since they just
+look like "configuration output" to Kconfig now). If that'd be a
+problem, the old names could be used instead of
+WANT_CC_STACKPROTECTOR_STRONG, etc., and new names introduced instead,
+though it'd look a bit cryptic.
+
+Ideas?
+
+Cheers,
+Ulf
