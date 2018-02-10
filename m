@@ -1,78 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751092AbeBJHIo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 02:08:44 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55058 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751019AbeBJHIk (ORCPT
+        id S1751003AbeBJHdk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 02:33:40 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44858 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750756AbeBJHdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 02:08:40 -0500
-X-Google-Smtp-Source: AH8x226+I+X8WoJ/8BYkeAVvwWe8AaSPNRodm/J/fg6rAD4BGbP9Hrgr797Fu+nm5Yh2fK1KFnBMULnwhApVeFfaWgs=
+        Sat, 10 Feb 2018 02:33:39 -0500
+X-Google-Smtp-Source: AH8x225xzE+0INTQVw8pX/3R1X/DefgMoBdFEkFjqtkrlneYZZ4byQ7jOkHAJiO7ncPi17aOpxkNfA==
+Date: Sat, 10 Feb 2018 16:33:33 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2] printk: Relocate wake_klogd check close to the end of
+ console_unlock()
+Message-ID: <20180210073333.GC485@tigerII.localdomain>
+References: <20180208130402.15157-1-pmladek@suse.com>
+ <20180208145307.GA485@tigerII.localdomain>
+ <20180208164820.qsotvvywds6z6le4@pathway.suse.cz>
+ <20180209032830.GA689@jagdpanzerIV>
+ <20180209103911.mljxpgkw6njyoibe@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180210013806.28496-6-marcel@ziswiler.com>
-References: <20180210013806.28496-1-marcel@ziswiler.com> <20180210013806.28496-6-marcel@ziswiler.com>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Sat, 10 Feb 2018 08:07:58 +0100
-Message-ID: <CAOFm3uH+aasUA9MrV+uXvHUT=fzS63PvC2fDfNo3q687dUQ_dw@mail.gmail.com>
-Subject: Re: [PATCH 5/6] ARM: dts: tegra: apalis-tk1: copyright period,
- spurious newlines
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209103911.mljxpgkw6njyoibe@pathway.suse.cz>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marcel,
+Hello,
 
-On Sat, Feb 10, 2018 at 2:38 AM, Marcel Ziswiler <marcel@ziswiler.com> wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->
-> Update the copyright period and get rid of some spurious newlines.
->
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->
-> ---
->
->  arch/arm/boot/dts/tegra124-apalis-eval.dts |  6 ++----
->  arch/arm/boot/dts/tegra124-apalis.dtsi     | 11 +----------
->  2 files changed, 3 insertions(+), 14 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-> index f1010cefb993..a6ad759dddb4 100644
-> --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-> +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright 2016 Toradex AG
-> + * Copyright 2016-2018 Toradex AG
->   *
->   * This file is dual-licensed: you can use it either under the terms
->   * of the GPL or the X11 license, at your option. Note that this dual
+On (02/09/18 11:39), Petr Mladek wrote:
+> On Fri 2018-02-09 12:28:30, Sergey Senozhatsky wrote:
+> > On (02/08/18 17:48), Petr Mladek wrote:
+> > By postponing klogd wakeup we don't really address logbuf_lock
+> > contention. We have no guarantees that no new printk will come
+> > while klogd is active. Besides, consoles don't really delay
+> > klogd - I tend to ignore the impact of msg_print_text(), it should
+> > be fast. We call console drivers outside of logbuf_lock scope, so
+> > everything should fine (tm).
+> 
+> First, I am all for waking klogd earlier.
+> 
+> Second, sigh, I do not have much experience with kernel performace issues.
+> It is very likely that we really do not need to mind about it.
 
-Since you are fixing copyrights, would you consider also fixing the
-license to use a proper SPDX Id instead?
+I really don't think we need to bother.
+klogd loggers are as important as consoles, we need to run them anyway.
 
-It would be super gentle of you!
+> > Basically,
+> > - if consoles are suspended, we also "suspend" user space klogd.
+> >   Does it really make sense?
+> > 
+> > - if console_lock is acquired by a preemptible task and that task
+> >   is getting scheduled out for a long time (OOM, etc) then we postpone
+> >   user space logging for unknown period of time. First the console_lock
+> >   will have to flush pending messages and only afterwards it will wakeup
+> >   klogd. Does it really make sense?
+> > 
+> > - If current console_lock owner jumps to retry (new pending messages
+> >   were appended to the logbuf) label, user space klogd wakeup is getting
+> >   postponed even further.
+> > 
+> > So, the final question is - since there in only one legitimate way
+> > (modulo user space writes to kmsg) to append new messages to the
+> > logbuf, shall we put klogd wakeup there? IOW, to vprintk_emit().
+> 
+> Good points! In fact, if we wakeup klogd before calling consoles,
+> we would need to do it for every new message. Otherwise, klogd
+> processes might miss new messages that are added in parallel
+> when console_lock is taken.
+[..]
+> Then klogd might start sleeping while new messages are still comming
 
-And you will get extra good karma point if you feel like doing the
-same for every Toradex-copyrighted files ;)
+Loggers sleep when `user->seq == log_next_seq' or when
+`syslog_seq == log_next_seq'. We need to just wakeup them.
+Once woken up they will check the condition again, if there
+are no new messages, they will schedule.
 
-The (still new and fresh) license documentation contributed by tglx
---the only real-time docu-mentalist-- is in:
-Documentation/process/license-rules.rst
+> Now, your proposed solution looked fine. Just note that we do not need
+> seen_seq. vprintk_emit() knows when log_next_seq is increased.
+> It would always wake klogd in this case.
 
-Thanks!
--- 
-Cordially
-Philippe Ombredanne
+Probably can wake_up_klogd() unconditionally.
+
+> Anyway, I think about slightly different way that would prevent
+> scheduling klogd intead of the vprintk_emit() caller. The trick
+> is to do the wakeup with preemtion disabled. I mean something like:
+[..]
+> @@ -1899,9 +1899,13 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  		 */
+>  		preempt_disable();
+>  		/*
+> +		 * Wake klogd with disabled preemtion so that they can run
+> +		 * in parallel but they could not delay console_handling.
+> +		 */
+> +		wake_up_klogd();
+> +		/*
+>  		 * Try to acquire and then immediately release the console
+> -		 * semaphore.  The release will print out buffers and wake up
+> -		 * /dev/kmsg and syslog() users.
+> +		 * semaphore.  The release will print out buffers.
+>  		 */
+>  		if (console_trylock_spinning())
+>  			console_unlock();
+[..]
+
+It doesn't wakeup loggers for printk_deferred() output this way.
+I want to wakeup them for every new logbuf message.
+
+If logger preempts current printk() that it's for 1 message only.
+printk() will return back and finish printing. If there will be another
+printk()-s from other CPUs, then one of those CPUs will print messages
+to the consoles - CPU that woke up logger had not acquired console_sem
+before it was preempted by logger.
+
+	-ss
