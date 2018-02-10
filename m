@@ -1,95 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeBJDuK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 22:50:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44216 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750942AbeBJDtf (ORCPT
+        id S1751030AbeBJENM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 23:13:12 -0500
+Received: from omr-m017e.mx.aol.com ([204.29.186.19]:43327 "EHLO
+        omr-m017e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeBJENK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 22:49:35 -0500
-From: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, mikey@neuling.org,
-        hbabu@us.ibm.com, linuxppc-dev@ozlabs.org,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/4] powerpc/vas: Fix cleanup when VAS is not configured
-Date: Fri,  9 Feb 2018 19:49:25 -0800
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518234567-24869-1-git-send-email-sukadev@linux.vnet.ibm.com>
-References: <1518234567-24869-1-git-send-email-sukadev@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18021003-0040-0000-0000-000003F1910B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008507; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000251; SDB=6.00987497; UDB=6.00501244; IPR=6.00766854;
- BA=6.00005821; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019472; XFM=3.00000015;
- UTC=2018-02-10 03:49:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021003-0041-0000-0000-000007E706E3
-Message-Id: <1518234567-24869-2-git-send-email-sukadev@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-10_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802100047
+        Fri, 9 Feb 2018 23:13:10 -0500
+From: Gao Xiang <hsiangkao@aol.com>
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        heyunlei@huawei.com, Gao Xiang <hsiangkao@aol.com>
+Subject: [PATCH RFC v5] f2fs: flush cp pack except cp pack 2 page at first
+Date: Sat, 10 Feb 2018 12:12:51 +0800
+Message-Id: <20180210041251.1208-1-hsiangkao@aol.com>
+X-Mailer: git-send-email 2.14.2.windows.2
+x-aol-global-disposition: G
+x-aol-sid: 3039ac1b150d5a7e714f7af3
+X-AOL-IP: 112.64.61.200
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When VAS is not configured in the system, make sure to remove
-the VAS debugfs directory and unregister the platform driver.
+Previously, we attempt to flush the whole cp pack in a single bio,
+however, when suddenly powering off at this time, we could get into
+an extreme scenario that cp pack 1 page and cp pack 2 page are updated
+and latest, but payload or current summaries are still partially
+outdated. (see reliable write in the UFS specification)
 
-Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+This patch submits the whole cp pack except cp pack 2 page at first,
+and then writes the cp pack 2 page with an extra independent
+bio with pre-io barrier.
+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 ---
- arch/powerpc/platforms/powernv/vas-debug.c | 5 +++++
- arch/powerpc/platforms/powernv/vas.c       | 5 ++++-
- arch/powerpc/platforms/powernv/vas.h       | 1 +
- 3 files changed, 10 insertions(+), 1 deletion(-)
+Change log from v4:
+  - remove redundant "filemap_fdatawait_range"
+      - filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
+      - filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
+  - move f2fs_flush_device_cache to a more suitable position
+  - wait_on_all_pages_writeback after commit_checkpoint
+      - since we remove lots of redundant code, I think it's acceptable
+      - and it will ensure one checkpoint safety.
+Change log from v3:
+  - further review comments are applied from Jaegeuk and Chao
+  - Tested on this patch (without multiple-device): mount, boot Android with f2fs userdata and make fragment
+  - If any problem with this patch or I miss something, please kindly share your comments, thanks :)
+Change log from v2:
+  - Apply the review comments from Chao
+Change log from v1:
+  - Apply the review comments from Chao
+  - time data from "finish block_ops" to " finish checkpoint" (tested on ARM64 with TOSHIBA 128GB UFS):
+     Before patch: 0.002273  0.001973  0.002789  0.005159  0.002050
+     After patch: 0.002502  0.001624  0.002487  0.003049  0.002696
 
-diff --git a/arch/powerpc/platforms/powernv/vas-debug.c b/arch/powerpc/platforms/powernv/vas-debug.c
-index b4de4c6..e6e4067 100644
---- a/arch/powerpc/platforms/powernv/vas-debug.c
-+++ b/arch/powerpc/platforms/powernv/vas-debug.c
-@@ -207,3 +207,8 @@ void vas_init_dbgdir(void)
- 	if (IS_ERR(vas_debugfs))
- 		vas_debugfs = NULL;
+ fs/f2fs/checkpoint.c | 69 ++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 46 insertions(+), 23 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 512dca8..4e352cf 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1162,6 +1162,39 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	spin_unlock_irqrestore(&sbi->cp_lock, flags);
  }
-+
-+void vas_cleanup_dbgdir(void)
+ 
++static void commit_checkpoint(struct f2fs_sb_info *sbi,
++	void *src, block_t blk_addr)
 +{
-+	debugfs_remove_recursive(vas_debugfs);
++	struct writeback_control wbc = {
++		.for_reclaim = 0,
++	};
++
++	/*
++	 * pagevec_lookup_tag and lock_page again will take
++	 * some extra time. Therefore, update_meta_pages and
++	 * sync_meta_pages are combined in this function.
++	 */
++	struct page *page = grab_meta_page(sbi, blk_addr);
++	int err;
++
++	memcpy(page_address(page), src, PAGE_SIZE);
++	set_page_dirty(page);
++
++	f2fs_wait_on_page_writeback(page, META, true);
++	f2fs_bug_on(sbi, PageWriteback(page));
++	if (unlikely(!clear_page_dirty_for_io(page)))
++		f2fs_bug_on(sbi, 1);
++
++	/* writeout cp pack 2 page */
++	err = __f2fs_write_meta_page(page, &wbc, FS_CP_META_IO);
++	f2fs_bug_on(sbi, err);
++
++	f2fs_put_page(page, 0);
++
++	/* submit checkpoint (with barrier if NOBARRIER is not set) */
++	f2fs_submit_merged_write(sbi, META_FLUSH);
 +}
-diff --git a/arch/powerpc/platforms/powernv/vas.c b/arch/powerpc/platforms/powernv/vas.c
-index aebbe95..f83e27d8 100644
---- a/arch/powerpc/platforms/powernv/vas.c
-+++ b/arch/powerpc/platforms/powernv/vas.c
-@@ -169,8 +169,11 @@ static int __init vas_init(void)
- 		found++;
++
+ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+@@ -1264,16 +1297,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		}
  	}
  
--	if (!found)
-+	if (!found) {
-+		platform_driver_unregister(&vas_driver);
-+		vas_cleanup_dbgdir();
- 		return -ENODEV;
-+	}
+-	/* need to wait for end_io results */
+-	wait_on_all_pages_writeback(sbi);
+-	if (unlikely(f2fs_cp_error(sbi)))
+-		return -EIO;
+-
+-	/* flush all device cache */
+-	err = f2fs_flush_device_cache(sbi);
+-	if (err)
+-		return err;
+-
+ 	/* write out checkpoint buffer at block 0 */
+ 	update_meta_page(sbi, ckpt, start_blk++);
  
- 	pr_devel("Found %d instances\n", found);
+@@ -1301,26 +1324,26 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		start_blk += NR_CURSEG_NODE_TYPE;
+ 	}
  
-diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
-index ae0100f..2645613 100644
---- a/arch/powerpc/platforms/powernv/vas.h
-+++ b/arch/powerpc/platforms/powernv/vas.h
-@@ -406,6 +406,7 @@ extern struct mutex vas_mutex;
+-	/* writeout checkpoint block */
+-	update_meta_page(sbi, ckpt, start_blk);
++	/* update user_block_counts */
++	sbi->last_valid_block_count = sbi->total_valid_block_count;
++	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
  
- extern struct vas_instance *find_vas_instance(int vasid);
- extern void vas_init_dbgdir(void);
-+extern void vas_cleanup_dbgdir(void);
- extern void vas_instance_init_dbgdir(struct vas_instance *vinst);
- extern void vas_window_init_dbgdir(struct vas_window *win);
- extern void vas_window_free_dbgdir(struct vas_window *win);
+-	/* wait for previous submitted node/meta pages writeback */
++	/* Here, we have one bio having CP pack except cp pack 2 page */
++	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
++
++	/* wait for previous submitted meta pages writeback */
+ 	wait_on_all_pages_writeback(sbi);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		return -EIO;
+ 
+-	filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
+-	filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
+-
+-	/* update user_block_counts */
+-	sbi->last_valid_block_count = sbi->total_valid_block_count;
+-	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+-
+-	/* Here, we only have one bio having CP pack */
+-	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
++	/* flush all device cache */
++	err = f2fs_flush_device_cache(sbi);
++	if (err)
++		return err;
+ 
+-	/* wait for previous submitted meta pages writeback */
++	/* barrier and flush checkpoint cp pack 2 page if it can */
++	commit_checkpoint(sbi, ckpt, start_blk);
+ 	wait_on_all_pages_writeback(sbi);
+ 
+ 	release_ino_entry(sbi, false);
 -- 
 2.7.4
