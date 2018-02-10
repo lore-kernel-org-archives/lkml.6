@@ -1,54 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751512AbeBJQQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 11:16:56 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:51732 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751157AbeBJQQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 11:16:54 -0500
-From: Heiko Stuebner <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Brian Norris <briannorris@chromium.org>, groeck@chromium.org,
-        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: add cdn-dp node for rk3399.
-Date: Sat, 10 Feb 2018 17:16:45 +0100
-Message-ID: <6229682.fDmaELEjz4@phil>
-In-Reply-To: <20180207163150.16332-2-enric.balletbo@collabora.com>
-References: <20180207163150.16332-1-enric.balletbo@collabora.com> <20180207163150.16332-2-enric.balletbo@collabora.com>
+        id S1751050AbeBJQYM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 11:24:12 -0500
+Received: from mail-ot0-f169.google.com ([74.125.82.169]:34949 "EHLO
+        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeBJQYL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 11:24:11 -0500
+X-Google-Smtp-Source: AH8x2255mSeCz778zVXmq9QlaajNAM97oaV17vDui+stXCqiWZRysYj5otu+hkeXfpEgHKQnEXeFrH16Ht+ZDHa7Puw=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180107134905.15624-1-stefan@agner.ch>
+References: <20180107134905.15624-1-stefan@agner.ch>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 10 Feb 2018 14:24:09 -0200
+Message-ID: <CAOMZO5Bmokay7E6mf8j53HXppT74LOMu_nCd=TwBzha1XH0k-w@mail.gmail.com>
+Subject: Re: [PATCH] soc: imx: gpc: de-register power domains only if initialized
+To: Stefan Agner <stefan@agner.ch>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On Sun, Jan 7, 2018 at 11:49 AM, Stefan Agner <stefan@agner.ch> wrote:
+> If power domain information are missing in the device tree, no
+> power domains get initialized. However, imx_gpc_remove tries to
+> remove power domains always in the old DT binding case. Only
+> remove power domains when imx_gpc_probe initialized them in
+> first place.
+>
+> Fixes: 721cabf6c660 ("soc: imx: move PGC handling to a new GPC driver")
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Am Mittwoch, 7. Februar 2018, 17:31:49 CET schrieb Enric Balletbo i Serra:
-> From: Chris Zhong <zyw@rock-chips.com>
-> 
-> Add a node for the cdn DP controller which is embedded in the rk3399
-> SoC.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 50 ++++++++++++++++++++++++++++++++
-
-It looks like there is no binding document at all for cdn-dp? At least
-I couldn't find one and the original series also didn't seem to include one.
-
-And while I don't see anything problematic right with the used properties
-right now, I'd think we should really have a binding and give dt-maintainers
-a chance to complain, before adding devicetree nodes based on it.
-
-I'd guess a mostly usable binding doc should already sit in the chromeos
-tree, which you could base a v2 of this series on?
-
-
-Thanks
-Heiko
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
