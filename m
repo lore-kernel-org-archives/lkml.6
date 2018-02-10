@@ -1,265 +1,209 @@
-Return-Path: <chandlerc@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518603487; cv=none;
-        d=google.com; s=arc-20160816;
-        b=RSajUKhpMkUOnGAfhPhXpzzYdZhtfBBF7CiJFVo3PwMoFyktoCRcWnm+ipTHmzMVJj
-         Tre2lgNZdKXCBoH2KqoE0U22/tTK1o5T/UT6xspEKOzRk7lr2XNkwJnfncqv0eVXwT46
-         yClBQANd9jUuJlV1ZrYds4Adg6T0UQHJpJvpvM39rp8yrV/K86x0vHZVKMU2tSHVDIr6
-         Bb55jzZq9gRBC0HtRZywW+jDtsJV25M497jSr/2WISdUS/h6NzktOpwYxS8XyDdNHmIM
-         1EmRqRHt8SsQB7ffAN4vCn2Ax1adRSesfrZoYdCILUMA5qAGk0XQfwz44dwken9ie6h4
-         Jv0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=ZkKJcUXZ4RihIhXmdbkGXooNwaD4htNoLko7F+AFCR0=;
-        b=LEZ8rg5oBwr+DLuU8g6puyTgclO9ON2h9ZlER580qwPUAOuMlvuiA8WUeQNGMtBaxg
-         bQ2J4fpHbT8bt1okuFQl+2uTlebdJEBZjbf8Eg3GeXbbBm34Wt4Yil7sc+ZpTJ2wKONC
-         F+OkKPRNsTg6AYgNFf1bhPl7DGuwY9hL4pkrz63OkDR5bIGfDJgBCrSkTFxk36KrhDMf
-         c61ywfDqjTGV3f1I6JDAVy3jAlKZlOgZnfshlmzfe9548BqOEOxfhAnw2lbwRsS/GUVM
-         TXmhGaxBoUOU9Y7lA2GUUkxYDg+RvpS8cxrZWul+dYmCBESNu/D7NDjuHPiq5wx0KgUD
-         oMAg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Xq200BSA;
-       spf=pass (google.com: domain of chandlerc@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chandlerc@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Xq200BSA;
-       spf=pass (google.com: domain of chandlerc@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chandlerc@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AH8x2247B1P9WIcAcfNU7sPVl1HKTVk1kYK6Xn6BtfEAH4JJDr/Y8qMuGqdtjHjM78j4Fo4ab5n0i/KqFEy5poX3dRs=
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-627691-1518297665-2-4962795155448489002
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518297665; b=Mnp6hGXzOZRaKaj0i+TGziYcb1TXZramxPeBFAjlX8jUiCQ
+    WiuCUhNeP3UxeobtYRfOXOvrDyESDyXW+c9OF1KWEH02OAoT1fpj/mKY06jSoCtA
+    JfbS38JO0iFbI80+LJkJSRf9yxZqnVaMzHXqPQdWfYOk4cqi008MPVMBcVA9IZWI
+    pf/SCEb3Ezt8IF1Owsj66QevwNE/l0o8F6RUa4KV28mF80qXHOwFJjkqCQjJihaA
+    eFy+6jOjYbp30Iqzk2XR76lVLfKCVQ4rcUvEqtA9TuccFmGNH2qB8WwCan+//T+d
+    Uf8FV8Zmyqkknqg2t5gfuuN2mRG+t9ipnaw26CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:reply-to:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518297665; bh=a
+    jRBh1/tvwuRuAO1GLkzVvZoNUpkdbAq5rpuZAE2lKY=; b=Tp95kT2OVjeqApFfw
+    cCLJ/KYXRp9BijODDGp+qscKInzFkdraUQqTmPqeVLP4XZZyj5KStD8Re6nAr6HW
+    6v7jeKNv5VW29xLxWvyH9ukXWrG1m+8NIJ0/CV59EEtMycFA4LlQ+40ai96wx0b+
+    ENuhHl2XAleRsm+S79+4RI1WKcVGpFCG/6/R5cER1SOdjmaC2JwoqmzEJoDuQCw+
+    xv2KywkAHkVXXL8u1/Br03Wc64+dxP5upifIYPk9ZrWqJMykEJ6AIRwDFSeZxSUt
+    D+42NqOHTcNBE3MLV3l5conzdkweloKFErbnl8N+EA/Fg0aOK7+q/a/lcUQYMQkc
+    9MXbw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=outlook.com header.i=@outlook.com header.b=eHVd+7Bx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=outlook.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=outlook.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=outlook.com header.i=@outlook.com header.b=eHVd+7Bx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=outlook.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=outlook.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Michael Kelley <mhkelley@outlook.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+ "olaf@aepfle.de" <olaf@aepfle.de>, "apw@canonical.com" <apw@canonical.com>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>, "jasowang@redhat.com"
+ <jasowang@redhat.com>, "leann.ogasawara@canonical.com"
+ <leann.ogasawara@canonical.com>, "marcelo.cerri@canonical.com"
+ <marcelo.cerri@canonical.com>, "sthemmin@microsoft.com"
+ <sthemmin@microsoft.com>, "kys@microsoft.com" <kys@microsoft.com>
+Subject: [PATCH char-misc 1/1] Drivers: hv: vmbus: Fix ring buffer signaling
+Thread-Topic: [PATCH char-misc 1/1] Drivers: hv: vmbus: Fix ring buffer
+ signaling
+Thread-Index: AQHTorCNaQB4t9RCq0qElSZLQrwNpQ==
+Date: Sat, 10 Feb 2018 20:48:49 +0000
+Message-ID: <SN6PR1901MB204572CAD3159EB07D6F1043CBF10@SN6PR1901MB2045.namprd19.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 1.8.3.1
+x-incomingtopheadermarker: OriginalChecksum:A490342225F4EEDF2446CE04791427218BDACDE1AC1DD6C8235CE1BCE91B59E2;
+ UpperCasedChecksum:3C6704DC42144017929F4869C8417FF2599B723CFDC5AC48F69D898D2C65798C;
+ SizeAsReceived:7687; Count:47
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [rtKw4uiBWu9kcGDutNkfpl6ofk5JVSd3PdMcK2qU6wo=]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1; CY1NAM02HT135;
+ 6:7nuheFl0QpbpFCC1mH1S/m6KnOamXi1ITAa8Z79EBO+FjPq8aXy4EJZl8I3pHa9JWNu0iKrN1pF4j/VDWNapjLXvj1ywzzoRfKzf1KfeJFqEBdEXCswqHhf1z5MCkQr4s3nQsaiRW51SSlXV00k23yqO2MRCVgmup1g9ePBXJym/jawMSbIPRf7dH0lVhmxZCJZTjx2krfdF/eXAyqm3L9JPYnhC0f8wJc8SZjQjluG7ad2mLz9CyCe9dHmA19t0RMRMfX0IAp0PwtEBuqQuL3vlUDwAQyIJUekwfOTnBDG7ILzpvvWciCmpZ7ymxfE+QT1EFAVCkqLP9jRmwKkewfvuk5YjgxdGEhdcEspAiyA=;
+ 5:RHXp4Vks3/f+7BtpXupBV0p0YQPRIbLHG2U40a5WtrupYbj7ozeu3OM/CStE7Yt1eZYUCwjaw1bCFb17o1xfYXlH2BKSZ5y9kgIODqyO2tWTcROHqpFTiR5B/hnwFlIQolUasn/z5qNSCPW/omD5aqS/FGPYW3TggYyHMTGryJU=;
+ 24:r6VQMDapI3R4xrh6wvLEnWnEylCAHEyNjrQmNC0PecA5VyFIn493xdAagrvI+yb6t2BbXfjJKe3fF9bRh3ULYFaCOszgW8xX9Y/CXcGCA+U=;
+ 7:vylzSDpgcOkmkmbOgzmqVV7dSYQKWY4hs4YHaBANowf/2c2D6o+qZgVa08fQEKoAqdC5O08KYLaiMmNWQh5n4zyi/ExgBv1uyBzmMvznE+JNtrEOE+aqEh5A4nroBYsa+LJnygXF047oUGKvLZF3mFYy7tdGi6G2iZ5Ga+oJn2EDqFdVYTte9xhPBDaJ/ZwsYwYoJ3JoLU9b/E4iDWFUpbBAG6oWZl1oyChii3BBI4+821aNVcvsElj9uz7lstnE
+x-incomingheadercount: 47
+x-eopattributedmessage: 0
+x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
+ RULEID:(7020095)(201702061074)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1601125374)(1603101448)(1701031045);
+ SRVR:CY1NAM02HT135;
+x-ms-traffictypediagnostic: CY1NAM02HT135:
+x-ms-office365-filtering-correlation-id: cfb01ca7-e59a-4cac-0119-08d570c7afd8
+x-exchange-antispam-report-cfa-test: BCL:0; PCL:0; RULEID:(444000031);
+ SRVR:CY1NAM02HT135; BCL:0; PCL:0; RULEID:; SRVR:CY1NAM02HT135;
+x-forefront-prvs: 057906460E
+x-forefront-antispam-report: SFV:NSPM; SFS:(7070007)(98901004); DIR:OUT;
+ SFP:1901; SCL:1; SRVR:CY1NAM02HT135;
+ H:SN6PR1901MB2045.namprd19.prod.outlook.com; FPR:; SPF:None; LANG:;
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 MIME-Version: 1.0
-References: <CAGXu5j+7=61aY_Q4Zd4kRgovb07MYg9uej8B2KmdvZE3zPsbRw@mail.gmail.com>
- <A3D6595E4CE1DA4A80538CC077C51A2B84771848@hasmsx107.ger.corp.intel.com>
- <CAGCO0Kj01tAXdzRrL_p+LrTLK6-k-1-BFPm97jQMuJSPH7PTJQ@mail.gmail.com>
- <20180214095308.GA16956@kroah.com> <A3D6595E4CE1DA4A80538CC077C51A2B84771946@hasmsx107.ger.corp.intel.com>
-In-Reply-To: <A3D6595E4CE1DA4A80538CC077C51A2B84771946@hasmsx107.ger.corp.intel.com>
-From: Chandler Carruth <chandlerc@google.com>
-Date: Wed, 14 Feb 2018 10:17:53 +0000
-Message-ID: <CAGCO0Ki4FDQDqSdDiQtsNf3b3haV5kE59MS5aN29yi3yPAqYfQ@mail.gmail.com>
-Subject: Re: clang asm-goto support (Was Re: [PATCH v2] x86/retpoline: Add
- clang support)
-To: "Yatsina, Marina" <marina.yatsina@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>, Kees Cook <keescook@google.com>,
-	David Woodhouse <dwmw2@infradead.org>, "Kreitzer, David L" <david.l.kreitzer@intel.com>,
-	"Grischenko, Andrei L" <andrei.l.grischenko@intel.com>, "rnk@google.com" <rnk@google.com>,
-	"ehsan@mozilla.com" <ehsan@mozilla.com>, "Tayree, Coby" <coby.tayree@intel.com>,
-	Matthias Braun <matze@braunis.de>, Dean Michael Berris <dean.berris@gmail.com>,
-	James Y Knight <jyknight@google.com>, Guenter Roeck <linux@roeck-us.net>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-	Rik van Riel <riel@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Tom Lendacky <thomas.lendacky@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Jiri Kosina <jikos@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
-	"Hansen, Dave" <dave.hansen@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-	Paul Turner <pjt@google.com>, Stephen Hines <srhines@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: multipart/alternative; boundary="001a114d78445cc9d30565296db5"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfb01ca7-e59a-4cac-0119-08d570c7afd8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2018 20:48:49.7983 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1NAM02HT135
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Reply-To: "mikelley@microsoft.com" <mikelley@microsoft.com>
+Cc: "mikelley@microsoft.com" <mikelley@microsoft.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592334105121442328?=
-X-GMAIL-MSGID: =?utf-8?q?1592371170282648396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---001a114d78445cc9d30565296db5
-Content-Type: text/plain; charset="UTF-8"
+Fix bugs in signaling the Hyper-V host when freeing space in the
+host->guest ring buffer:
 
-On Wed, Feb 14, 2018 at 2:11 AM Yatsina, Marina <marina.yatsina@intel.com>
-wrote:
+1. The interrupt_mask must not be used to determine whether to signal
+   on the host->guest ring buffer
+2. The ring buffer write_index must be read (via hv_get_bytes_to_write)
+   *after* pending_send_sz is read in order to avoid a race condition
+3. Comparisons with pending_send_sz must treat the "equals" case as
+   not-enough-space
+4. Don't signal if the pending_send_sz feature is not present. Older
+   versions of Hyper-V that don't implement this feature will poll.
 
-> I believe we do have the infrastructure in llvm to implement a working
-> patch.
-> The "asm goto" was introduced as a solution to a problem (optimizing
-> tracepoints/ nop patching).
-> When we started the discussion in llvm about adding this feature,
-> questions arose if we can design a better solution for this problem than
-> "asm goto".
->
-> You can find a more about the discussion in the llvm community here:
-> http://lists.llvm.org/pipermail/llvm-dev/2017-April/111748.html
->
-> * This is the middle of the thread, and there are more messages later on.
->
+Fixes: 03bad714a161 ("vmbus: more host signalling avoidance")
+Signed-off-by: Michael Kelley <mhkelley@outlook.com>
+---
+ drivers/hv/ring_buffer.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-FWIW, there is very strong interest in the LLVM community in working on a
-feature along the lines of what John McCall suggested (as a significant
-improvement to my initial idea) later in the thread:
-http://lists.llvm.org/pipermail/llvm-dev/2017-April/111755.html
+diff --git a/drivers/hv/ring_buffer.c b/drivers/hv/ring_buffer.c
+index 50e0714..b64be18 100644
+--- a/drivers/hv/ring_buffer.c
++++ b/drivers/hv/ring_buffer.c
+@@ -423,7 +423,11 @@ struct vmpacket_descriptor *
+ void hv_pkt_iter_close(struct vmbus_channel *channel)
+ {
+ 	struct hv_ring_buffer_info *rbi = &channel->inbound;
+-	u32 orig_write_sz = hv_get_bytes_to_write(rbi);
++	u32 curr_write_sz;
++	u32 delta = rbi->ring_buffer->read_index < rbi->priv_read_index ?
++			(rbi->priv_read_index - rbi->ring_buffer->read_index) :
++			(rbi->ring_datasize - rbi->ring_buffer->read_index +
++			rbi->priv_read_index);
+ 
+ 	/*
+ 	 * Make sure all reads are done before we update the read index since
+@@ -446,27 +450,31 @@ void hv_pkt_iter_close(struct vmbus_channel *channel)
+ 	 */
+ 	virt_mb();
+ 
+-	/* If host has disabled notifications then skip */
+-	if (rbi->ring_buffer->interrupt_mask)
+-		return;
+-
+ 	if (rbi->ring_buffer->feature_bits.feat_pending_send_sz) {
+ 		u32 pending_sz = READ_ONCE(rbi->ring_buffer->pending_send_sz);
+ 
+ 		/*
++		 * Ensure the read of write_index in hv_get_bytes_to_write()
++		 * happens after the read of pending_send_sz.
++		 */
++		virt_rmb();
++		curr_write_sz = hv_get_bytes_to_write(rbi);
++
++		/*
+ 		 * If there was space before we began iteration,
+ 		 * then host was not blocked. Also handles case where
+ 		 * pending_sz is zero then host has nothing pending
+ 		 * and does not need to be signaled.
+ 		 */
+-		if (orig_write_sz > pending_sz)
++		if (curr_write_sz - delta > pending_sz)
+ 			return;
+ 
+ 		/* If pending write will not fit, don't give false hope. */
+-		if (hv_get_bytes_to_write(rbi) < pending_sz)
++		if (curr_write_sz <= pending_sz)
+ 			return;
++
++		vmbus_setevent(channel);
+ 	}
+ 
+-	vmbus_setevent(channel);
+ }
+ EXPORT_SYMBOL_GPL(hv_pkt_iter_close);
+-- 
+1.8.3.1
 
-If this feature as-is or with additions / suggestions / improvements would
-address the kernel's needs, we're all over it.
-
-I think the concerns are already in that thread...
-
-But as I said in my original email, if a different approach is needed I'm
-happy to try and get folks to understand what would be needed and where a
-reasonable compromise is...
-
-
->
-> Thanks,
-> Marina
->
-> -----Original Message-----
-> From: Greg Kroah-Hartman [mailto:gregkh@linux-foundation.org]
-> Sent: Wednesday, February 14, 2018 11:53
-> To: Chandler Carruth <chandlerc@google.com>
-> Cc: Yatsina, Marina <marina.yatsina@intel.com>; Kees Cook <
-> keescook@google.com>; David Woodhouse <dwmw2@infradead.org>; Kreitzer,
-> David L <david.l.kreitzer@intel.com>; Grischenko, Andrei L <
-> andrei.l.grischenko@intel.com>; rnk@google.com; LLVM Developers <
-> llvm-dev@lists.llvm.org>; ehsan@mozilla.com; Tayree, Coby <
-> coby.tayree@intel.com>; Matthias Braun <matze@braunis.de>; Dean Michael
-> Berris <dean.berris@gmail.com>; James Y Knight <jyknight@google.com>;
-> Guenter Roeck <linux@roeck-us.net>; X86 ML <x86@kernel.org>; LKML <
-> linux-kernel@vger.kernel.org>; Alan Cox <gnomes@lxorguk.ukuu.org.uk>; Rik
-> van Riel <riel@redhat.com>; Andi Kleen <ak@linux.intel.com>; Josh
-> Poimboeuf <jpoimboe@redhat.com>; Tom Lendacky <thomas.lendacky@amd.com>;
-> Peter Zijlstra <peterz@infradead.org>; Linus Torvalds <
-> torvalds@linux-foundation.org>; Jiri Kosina <jikos@kernel.org>; Andy
-> Lutomirski <luto@amacapital.net>; Hansen, Dave <dave.hansen@intel.com>;
-> Tim Chen <tim.c.chen@linux.intel.com>; Paul Turner <pjt@google.com>;
-> Stephen Hines <srhines@google.com>; Nick Desaulniers <
-> ndesaulniers@google.com>
-> Subject: Re: clang asm-goto support (Was Re: [PATCH v2] x86/retpoline: Add
-> clang support)
->
-> On Wed, Feb 14, 2018 at 08:41:43AM +0000, Chandler Carruth wrote:
-> > Marina, Kees:
-> >
-> > I think the combination of LKML and the LLVM developer's list is
-> > probably too large a set of folks to have a (somewhat) lengthy
-> > exploration of options and how to go about this and find a good path
-> forward.
->
-> Why is there any need to discuss "options" here?  What is preventing the
-> implementation of "asm goto" in llvm?  Is it the lack of a working patch,
-> or something else?
->
-> thanks,
->
-> greg k-h
-> ---------------------------------------------------------------------
-> Intel Israel (74) Limited
->
-> This e-mail and any attachments may contain confidential material for
-> the sole use of the intended recipient(s). Any review or distribution
-> by others is strictly prohibited. If you are not the intended
-> recipient, please contact the sender and delete all copies.
->
->
-
---001a114d78445cc9d30565296db5
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div class=3D"gmail_quote"><div dir=3D"ltr">On Wed, Feb 14=
-, 2018 at 2:11 AM Yatsina, Marina &lt;<a href=3D"mailto:marina.yatsina@inte=
-l.com">marina.yatsina@intel.com</a>&gt; wrote:<br></div><blockquote class=
-=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
-ing-left:1ex">I believe we do have the infrastructure in llvm to implement =
-a working patch.<br>
-The &quot;asm goto&quot; was introduced as a solution to a problem (optimiz=
-ing tracepoints/ nop patching).<br>
-When we started the discussion in llvm about adding this feature, questions=
- arose if we can design a better solution for this problem than &quot;asm g=
-oto&quot;.<br>
-<br>
-You can find a more about the discussion in the llvm community here:<br>
-<a href=3D"http://lists.llvm.org/pipermail/llvm-dev/2017-April/111748.html"=
- rel=3D"noreferrer" target=3D"_blank">http://lists.llvm.org/pipermail/llvm-=
-dev/2017-April/111748.html</a><br>
-<br>
-* This is the middle of the thread, and there are more messages later on.<b=
-r></blockquote><div><br></div><div>FWIW, there is very strong interest in t=
-he LLVM community in working on a feature along the lines of what John McCa=
-ll suggested (as a significant improvement to my initial idea) later in the=
- thread:</div><div><a href=3D"http://lists.llvm.org/pipermail/llvm-dev/2017=
--April/111755.html">http://lists.llvm.org/pipermail/llvm-dev/2017-April/111=
-755.html</a>=C2=A0<br></div><div><br></div><div>If this feature as-is or wi=
-th additions / suggestions / improvements would address the kernel&#39;s ne=
-eds, we&#39;re all over it.</div><div><br></div><div>I think the concerns a=
-re already in that thread...</div><div><br></div><div>But as I said in my o=
-riginal email, if a different approach is needed I&#39;m happy to try and g=
-et folks to understand what would be needed and where a reasonable compromi=
-se is...</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"m=
-argin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-<br>
-Thanks,<br>
-Marina<br>
-<br>
------Original Message-----<br>
-From: Greg Kroah-Hartman [mailto:<a href=3D"mailto:gregkh@linux-foundation.=
-org" target=3D"_blank">gregkh@linux-foundation.org</a>]<br>
-Sent: Wednesday, February 14, 2018 11:53<br>
-To: Chandler Carruth &lt;<a href=3D"mailto:chandlerc@google.com" target=3D"=
-_blank">chandlerc@google.com</a>&gt;<br>
-Cc: Yatsina, Marina &lt;<a href=3D"mailto:marina.yatsina@intel.com" target=
-=3D"_blank">marina.yatsina@intel.com</a>&gt;; Kees Cook &lt;<a href=3D"mail=
-to:keescook@google.com" target=3D"_blank">keescook@google.com</a>&gt;; Davi=
-d Woodhouse &lt;<a href=3D"mailto:dwmw2@infradead.org" target=3D"_blank">dw=
-mw2@infradead.org</a>&gt;; Kreitzer, David L &lt;<a href=3D"mailto:david.l.=
-kreitzer@intel.com" target=3D"_blank">david.l.kreitzer@intel.com</a>&gt;; G=
-rischenko, Andrei L &lt;<a href=3D"mailto:andrei.l.grischenko@intel.com" ta=
-rget=3D"_blank">andrei.l.grischenko@intel.com</a>&gt;; <a href=3D"mailto:rn=
-k@google.com" target=3D"_blank">rnk@google.com</a>; LLVM Developers &lt;<a =
-href=3D"mailto:llvm-dev@lists.llvm.org" target=3D"_blank">llvm-dev@lists.ll=
-vm.org</a>&gt;; <a href=3D"mailto:ehsan@mozilla.com" target=3D"_blank">ehsa=
-n@mozilla.com</a>; Tayree, Coby &lt;<a href=3D"mailto:coby.tayree@intel.com=
-" target=3D"_blank">coby.tayree@intel.com</a>&gt;; Matthias Braun &lt;<a hr=
-ef=3D"mailto:matze@braunis.de" target=3D"_blank">matze@braunis.de</a>&gt;; =
-Dean Michael Berris &lt;<a href=3D"mailto:dean.berris@gmail.com" target=3D"=
-_blank">dean.berris@gmail.com</a>&gt;; James Y Knight &lt;<a href=3D"mailto=
-:jyknight@google.com" target=3D"_blank">jyknight@google.com</a>&gt;; Guente=
-r Roeck &lt;<a href=3D"mailto:linux@roeck-us.net" target=3D"_blank">linux@r=
-oeck-us.net</a>&gt;; X86 ML &lt;<a href=3D"mailto:x86@kernel.org" target=3D=
-"_blank">x86@kernel.org</a>&gt;; LKML &lt;<a href=3D"mailto:linux-kernel@vg=
-er.kernel.org" target=3D"_blank">linux-kernel@vger.kernel.org</a>&gt;; Alan=
- Cox &lt;<a href=3D"mailto:gnomes@lxorguk.ukuu.org.uk" target=3D"_blank">gn=
-omes@lxorguk.ukuu.org.uk</a>&gt;; Rik van Riel &lt;<a href=3D"mailto:riel@r=
-edhat.com" target=3D"_blank">riel@redhat.com</a>&gt;; Andi Kleen &lt;<a hre=
-f=3D"mailto:ak@linux.intel.com" target=3D"_blank">ak@linux.intel.com</a>&gt=
-;; Josh Poimboeuf &lt;<a href=3D"mailto:jpoimboe@redhat.com" target=3D"_bla=
-nk">jpoimboe@redhat.com</a>&gt;; Tom Lendacky &lt;<a href=3D"mailto:thomas.=
-lendacky@amd.com" target=3D"_blank">thomas.lendacky@amd.com</a>&gt;; Peter =
-Zijlstra &lt;<a href=3D"mailto:peterz@infradead.org" target=3D"_blank">pete=
-rz@infradead.org</a>&gt;; Linus Torvalds &lt;<a href=3D"mailto:torvalds@lin=
-ux-foundation.org" target=3D"_blank">torvalds@linux-foundation.org</a>&gt;;=
- Jiri Kosina &lt;<a href=3D"mailto:jikos@kernel.org" target=3D"_blank">jiko=
-s@kernel.org</a>&gt;; Andy Lutomirski &lt;<a href=3D"mailto:luto@amacapital=
-.net" target=3D"_blank">luto@amacapital.net</a>&gt;; Hansen, Dave &lt;<a hr=
-ef=3D"mailto:dave.hansen@intel.com" target=3D"_blank">dave.hansen@intel.com=
-</a>&gt;; Tim Chen &lt;<a href=3D"mailto:tim.c.chen@linux.intel.com" target=
-=3D"_blank">tim.c.chen@linux.intel.com</a>&gt;; Paul Turner &lt;<a href=3D"=
-mailto:pjt@google.com" target=3D"_blank">pjt@google.com</a>&gt;; Stephen Hi=
-nes &lt;<a href=3D"mailto:srhines@google.com" target=3D"_blank">srhines@goo=
-gle.com</a>&gt;; Nick Desaulniers &lt;<a href=3D"mailto:ndesaulniers@google=
-.com" target=3D"_blank">ndesaulniers@google.com</a>&gt;<br>
-Subject: Re: clang asm-goto support (Was Re: [PATCH v2] x86/retpoline: Add =
-clang support)<br>
-<br>
-On Wed, Feb 14, 2018 at 08:41:43AM +0000, Chandler Carruth wrote:<br>
-&gt; Marina, Kees:<br>
-&gt;<br>
-&gt; I think the combination of LKML and the LLVM developer&#39;s list is<b=
-r>
-&gt; probably too large a set of folks to have a (somewhat) lengthy<br>
-&gt; exploration of options and how to go about this and find a good path f=
-orward.<br>
-<br>
-Why is there any need to discuss &quot;options&quot; here?=C2=A0 What is pr=
-eventing the implementation of &quot;asm goto&quot; in llvm?=C2=A0 Is it th=
-e lack of a working patch, or something else?<br>
-<br>
-thanks,<br>
-<br>
-greg k-h<br>
----------------------------------------------------------------------<br>
-Intel Israel (74) Limited<br>
-<br>
-This e-mail and any attachments may contain confidential material for<br>
-the sole use of the intended recipient(s). Any review or distribution<br>
-by others is strictly prohibited. If you are not the intended<br>
-recipient, please contact the sender and delete all copies.<br>
-<br>
-</blockquote></div></div>
-
---001a114d78445cc9d30565296db5--
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
