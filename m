@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeBJJTo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 04:19:44 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43783 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbeBJJTj (ORCPT
+        id S1752218AbeBJJTt (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 04:19:49 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42447 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751859AbeBJJTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 04:19:39 -0500
-X-Google-Smtp-Source: AH8x224RWx+vYbVby3K45khiWAgqcCF/6fv9UhqQvPB50vRjSOaNLZiefOAisN0e+7aVHgKIU1SJDg==
+        Sat, 10 Feb 2018 04:19:45 -0500
+X-Google-Smtp-Source: AH8x225LeylKOALqTMQDp1KUuubMd6T0ru/ja6itstECwEl+DTOvxKm40Y7gsFcAtPV1AsCUJPSAlw==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -25,9 +25,9 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v2 5/7] watchdog: mtk: allow setting timeout in devicetree
-Date: Sat, 10 Feb 2018 10:19:09 +0100
-Message-Id: <20180210091911.3644-5-marcus.folkesson@gmail.com>
+Subject: [PATCH v2 7/7] watchdog: coh901327: make use of timeout-secs provided in devicetree
+Date: Sat, 10 Feb 2018 10:19:11 +0100
+Message-Id: <20180210091911.3644-7-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180210091911.3644-1-marcus.folkesson@gmail.com>
 References: <20180210091911.3644-1-marcus.folkesson@gmail.com>
@@ -38,47 +38,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 watchdog_init_timeout() will allways pick timeout_param since it
 defaults to a valid timeout.
 
-By following best practice described in
-Documentation/watchdog/watchdog-kernel-api.txt, it also
-let us to set timout-sec property in devicetree.
+Following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt to make use of
+the parameter logic.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
- Documentation/devicetree/bindings/watchdog/mtk-wdt.txt | 4 ++++
- drivers/watchdog/mtk_wdt.c                             | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-index 5b38a30e608c..859dee167b91 100644
---- a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-@@ -11,9 +11,13 @@ Required properties:
+v2:
+	- Set .timeout in coh901327_wdt structure declaration.
+	- Set .min_timeout to 1 instead of 0. I could not find a datasheet
+	  for coh901327, so I'm not sure if 0 is valid. However, 0 seems
+		  wrong to me and most driver has 1 as min value. If it should
+		  be 0, please let me know and I have to set another initial
+		  value for margin.
+
+ drivers/watchdog/coh901327_wdt.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
+index 4410337f4f7f..5d8eb9a30879 100644
+--- a/drivers/watchdog/coh901327_wdt.c
++++ b/drivers/watchdog/coh901327_wdt.c
+@@ -67,7 +67,9 @@
+ #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
  
- - reg : Specifies base physical address and size of the registers.
- 
-+Optional properties:
-+- timeout-sec: contains the watchdog timeout in seconds.
+ /* Default timeout in seconds = 1 minute */
+-static unsigned int margin = 60;
++#define U300_WDOG_DEFAULT_TIMEOUT					60
 +
- Example:
- 
- wdt: watchdog@10000000 {
- 	compatible = "mediatek,mt6589-wdt";
- 	reg = <0x10000000 0x18>;
-+	timeout-sec = <10>;
++static unsigned int margin;
+ static int irq;
+ static void __iomem *virtbase;
+ static struct device *parent;
+@@ -235,8 +237,9 @@ static struct watchdog_device coh901327_wdt = {
+ 	 * timeout register is max
+ 	 * 0x7FFF = 327670ms ~= 327s.
+ 	 */
+-	.min_timeout = 0,
++	.min_timeout = 1,
+ 	.max_timeout = 327,
++	.timeout = U300_WDOG_DEFAULT_TIMEOUT,
  };
-diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-index 7ed417a765c7..fcdc10ec28a3 100644
---- a/drivers/watchdog/mtk_wdt.c
-+++ b/drivers/watchdog/mtk_wdt.c
-@@ -57,7 +57,7 @@
- #define DRV_VERSION		"1.0"
  
- static bool nowayout = WATCHDOG_NOWAYOUT;
--static unsigned int timeout = WDT_MAX_TIMEOUT;
-+static unsigned int timeout;
+ static int __exit coh901327_remove(struct platform_device *pdev)
+@@ -315,9 +318,7 @@ static int __init coh901327_probe(struct platform_device *pdev)
+ 		goto out_no_irq;
+ 	}
  
- struct mtk_wdt_dev {
- 	struct watchdog_device wdt_dev;
+-	ret = watchdog_init_timeout(&coh901327_wdt, margin, dev);
+-	if (ret < 0)
+-		coh901327_wdt.timeout = 60;
++	watchdog_init_timeout(&coh901327_wdt, margin, dev);
+ 
+ 	coh901327_wdt.parent = dev;
+ 	ret = watchdog_register_device(&coh901327_wdt);
 -- 
 2.15.1
