@@ -1,71 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeBJOyE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 09:54:04 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41164 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751010AbeBJOyC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 09:54:02 -0500
-X-Google-Smtp-Source: AH8x224asLFbcyLPtOaZdeThDSXdqa2KH40DMLWTCNms7LMaidD4kTsEXtQrQrJlon1Vu8++AroovdLZvFA2qE2KdGU=
+        id S1751077AbeBJO53 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 09:57:29 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:6831 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750835AbeBJO52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 09:57:28 -0500
+Subject: Re: [PATCH v4 1/5] powerpc/mm/slice: Remove intermediate bitmap copy
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
+        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <01e8f783db8f4d4d41df91e0400a8634272b326f.1518226173.git.christophe.leroy@c-s.fr>
+ <20180211004309.2eda56a3@roar.ozlabs.ibm.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <501bab56-c389-87c6-8d90-24b5b9fd5e67@c-s.fr>
+Date: Sat, 10 Feb 2018 15:57:25 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Sat, 10 Feb 2018 15:53:20 +0100
-Message-ID: <CAOFm3uGhfmz0A3UuPaP=T-Hf5=kFK_rNJUGge9QVy_Sz8Rpk1w@mail.gmail.com>
-Subject: Re: [PATCH] watchdog: coh901327: make license text and module licence match
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-watchdog@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180211004309.2eda56a3@roar.ozlabs.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 10:27 AM, Marcus Folkesson
-<marcus.folkesson@gmail.com> wrote:
-> Licence text is specifying "GPLv2" but the MODULE_LICENSE is set to "GPLv2
-> or later".
->
-> See include/linux/module.h:
-> "GPL"                           [GNU Public License v2 or later]
-> "GPL v2"                        [GNU Public License v2]
->
-> When on it, add SPDX identifier tag.
->
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  drivers/watchdog/coh901327_wdt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
-> index 5d8eb9a30879..7b71e0a3e6cc 100644
-> --- a/drivers/watchdog/coh901327_wdt.c
-> +++ b/drivers/watchdog/coh901327_wdt.c
-> @@ -1,8 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * coh901327_wdt.c
->   *
->   * Copyright (C) 2008-2009 ST-Ericsson AB
-> - * License terms: GNU General Public License (GPL) version 2
->   * Watchdog driver for the ST-Ericsson AB COH 901 327 IP core
->   * Author: Linus Walleij <linus.walleij@stericsson.com>
->   */
-> @@ -420,5 +420,5 @@ MODULE_DESCRIPTION("COH 901 327 Watchdog");
->  module_param(margin, uint, 0);
->  MODULE_PARM_DESC(margin, "Watchdog margin in seconds (default 60s)");
->
-> -MODULE_LICENSE("GPL");
-> +MODULE_LICENSE("GPL v2");
->  MODULE_ALIAS("platform:coh901327-watchdog");
 
-Thank you!
 
-Reviewed-by: Philippe Ombredanne <pombredanne@nexb.com>
+Le 10/02/2018 à 15:43, Nicholas Piggin a écrit :
+> On Sat, 10 Feb 2018 13:54:25 +0100 (CET)
+> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+> 
+>> bitmap_or() and bitmap_andnot() can work properly with dst identical
+>> to src1 or src2. There is no need of an intermediate result bitmap
+>> that is copied back to dst in a second step.
+> 
+> Everyone seems to be working on the slice code all of a sudden. I
+> had the same change in my series I just posted, but I didn't notice
+> this one of yours earlier, and it's better split out, so this is
+> fine by me.
 
--- 
-Cordially
-Philippe Ombredanne
+Thanks,
+
+I had a quick look at your serie, it looks promising.
+
+The main purpose of mine is to allow the use of slies on the 8xx in 
+order to fix a hugepage related bug.
+
+Your serie is performance oriented and seems nice, indeed I should have 
+noticed that it was passing huge structures instead of pointers to 
+subfunctions. I will look at your serie more in details next week.
+
+Christophe
+
+
+> 
+> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+> 
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+>> ---
+>>   v2: New in v2
+>>   v3: patch moved up front of the serie to avoid ephemeral slice_bitmap_copy() function in following patch
+>>   v4: No change
+>>
+>>   arch/powerpc/mm/slice.c | 12 ++++--------
+>>   1 file changed, 4 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
+>> index 23ec2c5e3b78..98b53d48968f 100644
+>> --- a/arch/powerpc/mm/slice.c
+>> +++ b/arch/powerpc/mm/slice.c
+>> @@ -388,21 +388,17 @@ static unsigned long slice_find_area(struct mm_struct *mm, unsigned long len,
+>>   
+>>   static inline void slice_or_mask(struct slice_mask *dst, struct slice_mask *src)
+>>   {
+>> -	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
+>> -
+>>   	dst->low_slices |= src->low_slices;
+>> -	bitmap_or(result, dst->high_slices, src->high_slices, SLICE_NUM_HIGH);
+>> -	bitmap_copy(dst->high_slices, result, SLICE_NUM_HIGH);
+>> +	bitmap_or(dst->high_slices, dst->high_slices, src->high_slices,
+>> +		  SLICE_NUM_HIGH);
+>>   }
+>>   
+>>   static inline void slice_andnot_mask(struct slice_mask *dst, struct slice_mask *src)
+>>   {
+>> -	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
+>> -
+>>   	dst->low_slices &= ~src->low_slices;
+>>   
+>> -	bitmap_andnot(result, dst->high_slices, src->high_slices, SLICE_NUM_HIGH);
+>> -	bitmap_copy(dst->high_slices, result, SLICE_NUM_HIGH);
+>> +	bitmap_andnot(dst->high_slices, dst->high_slices, src->high_slices,
+>> +		      SLICE_NUM_HIGH);
+>>   }
+>>   
+>>   #ifdef CONFIG_PPC_64K_PAGES
