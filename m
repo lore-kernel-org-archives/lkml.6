@@ -1,69 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753338AbeBJAGS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 19:06:18 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54091 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753196AbeBJAGQ (ORCPT
+        id S1753359AbeBJAGx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 19:06:53 -0500
+Received: from regular1.263xmail.com ([211.150.99.137]:48632 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753196AbeBJAGv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 19:06:16 -0500
-X-Google-Smtp-Source: AH8x226KN2F1ALaitbUNVXg+IMDDjQ3cceqduB1Kvthc0CATRhnD66S/XxxqdkGvTm+YVy+lVwEcEjRI06dNrUL5vIY=
+        Fri, 9 Feb 2018 19:06:51 -0500
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: briannorris@chromium.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <646148455871b15348c0565b729917d1>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Message-ID: <5A7E378F.4060100@rock-chips.com>
+Date: Sat, 10 Feb 2018 08:06:39 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
 MIME-Version: 1.0
-In-Reply-To: <20180209231233.107711-1-mka@chromium.org>
-References: <20180209231233.107711-1-mka@chromium.org>
-From: Guenter Roeck <groeck@google.com>
-Date: Fri, 9 Feb 2018 16:06:15 -0800
-Message-ID: <CABXOdTfpCuiCRprv4YR7LU0863fsGd3_xyqHK_t3p9rbfkj12Q@mail.gmail.com>
-Subject: Re: [PATCH] amdgpu/dc: Remove unnecessary initialization in dc_link_handle_hpd_rx_irq()
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Tony Cheng <Tony.Cheng@amd.com>, Wenjing Liu <Wenjing.Liu@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Justin TerAvest <teravest@chromium.org>,
-        Craig Bergstrom <craigb@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Brian Norris <briannorris@chromium.org>
+CC: linux-kernel@vger.kernel.org, briannorris@google.com, dtor@google.com,
+        dianders@google.com, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/3] Input: gpio-keys - allow setting wakeup interrupt
+ trigger type in DT
+References: <20180209115510.11868-1-jeffy.chen@rock-chips.com> <20180209115510.11868-3-jeffy.chen@rock-chips.com> <20180209234246.GA252335@ban.mtv.corp.google.com>
+In-Reply-To: <20180209234246.GA252335@ban.mtv.corp.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 9, 2018 at 3:12 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> The initialization of 'result' is unnecessary, the variable is assigned
-> unconditionally a few lines below. Removing the initialization also fixes
-> the following warning when building with clang:
->
-> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c:1931:26:
->   error: implicit conversion from enumeration type 'enum ddc_result'
->   to different enumeration type 'enum dc_status' [-Werror,-Wenum-conversion]
->     enum dc_status result = DDC_RESULT_UNKNOWN;
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Hi Brian,
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Thanks for your reply.
 
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 02/10/2018 07:42 AM, Brian Norris wrote:
+> Hi Jeffy,
 >
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> index 4ee4c03a6724..8e3a8c1395a3 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> @@ -1926,7 +1926,7 @@ bool dc_link_handle_hpd_rx_irq(struct dc_link *link, union hpd_irq_data *out_hpd
->  {
->         union hpd_irq_data hpd_irq_dpcd_data = {{{{0}}}};
->         union device_service_irq device_service_clear = { { 0 } };
-> -       enum dc_status result = DDC_RESULT_UNKNOWN;
-> +       enum dc_status result;
->         bool status = false;
->         /* For use cases related to down stream connection status change,
->          * PSR and device auto test, refer to function handle_sst_hpd_irq
-> --
-> 2.16.0.rc1.238.g530d649a79-goog
+> On Fri, Feb 09, 2018 at 07:55:09PM +0800, Jeffy Chen wrote:
+>> Allow specifying a different interrupt trigger type for wakeup when
+>> using the gpio-keys input device as a wakeup source.
+>>
+>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>> ---
+>>
+>>   Documentation/devicetree/bindings/input/gpio-keys.txt | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
+>> index a94940481e55..61926cef708f 100644
+>> --- a/Documentation/devicetree/bindings/input/gpio-keys.txt
+>> +++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
+>> @@ -26,6 +26,15 @@ Optional subnode-properties:
+>>   	  If not specified defaults to 5.
+>>   	- wakeup-source: Boolean, button can wake-up the system.
+>>   			 (Legacy property supported: "gpio-key,wakeup")
+>> +	- wakeup-trigger-type: Specifies the interrupt trigger type for wakeup.
+>> +		 The value is defined in <dt-bindings/interrupt-controller/irq.h>
+>
+> Do you really want to codify interrupt triggers here? It seems like most
+> of the information about edge vs. level is already codified elsewhere,
+> so this becomes a little redundant. And in fact, some bindings may be
+> specifying a "gpio", not technically an interrupt (at least not
+> directly), so it feels weird to apply IRQ_* flags to them right here.
+> Anyway, I think he only piece you really want to describe here is, do we
+> wake on "event asserted", "event deasserted", or both. (The "none" case
+> would just mean you shouldn't have the "wakeup-source" property.)
+>
+> So maybe:
+>
+> 	wakeup-trigger-type: Specifies whether the key should wake the
+> 	system when asserted, when deasserted, or both. This property is
+> 	only valid for keys that wake up the system (e.g., when the
+> 	"wakeup-source" property is also provided). Supported values
+> 	are:
+> 	  1: asserted
+> 	  2: deasserted
+> 	  3: both asserted and deasserted
+>
+> ? We could still make macros out of those, if we want
+> (input/linux-event-codes.h?). And then leave it up to the driver to
+> determine how to translate that into the appropriate edge or level
+> triggers.
+make sense, will do it in the next version.
+>
+> Brian
+>
+>> +		 Only the following flags are supported:
+>> +			IRQ_TYPE_NONE
+>> +			IRQ_TYPE_EDGE_RISING
+>> +			IRQ_TYPE_EDGE_FALLING
+>> +			IRQ_TYPE_EDGE_BOTH
+>> +			IRQ_TYPE_LEVEL_HIGH
+>> +			IRQ_TYPE_LEVEL_LOW
+>>   	- linux,can-disable: Boolean, indicates that button is connected
+>>   	  to dedicated (not shared) interrupt which can be disabled to
+>>   	  suppress events from the button.
+>> --
+>> 2.11.0
+>>
+>>
+>
+>
 >
