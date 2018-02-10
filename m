@@ -1,85 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753355AbeBJAXU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 19:23:20 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:48915 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753300AbeBJAXT (ORCPT
+        id S1753350AbeBJAbn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 19:31:43 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:47786 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753300AbeBJAbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 19:23:19 -0500
-X-IronPort-AV: E=Sophos;i="5.46,486,1511827200";
-   d="scan'208";a="594229654"
-Subject: Re: [PATCH 3/3] X86/nVMX: Update the MSR_BITMAP field with the L02
- MSR BITMAP
-To: Jim Mattson <jmattson@google.com>
-CC: KarimAllah Ahmed <karahmed@amazon.de>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1518130410-6583-1-git-send-email-karahmed@amazon.de>
- <1518130410-6583-3-git-send-email-karahmed@amazon.de>
- <CALMp9eThOMGTru3hnuupJ_m4jPA7Hf=5=8ZJ4ygmC50vsDmngw@mail.gmail.com>
- <8d50836c-4eee-15ef-da20-212559105594@amazon.com>
- <CALMp9eSTWpRnXbxHA83UrMpwBsUMPJqNKe84DiGFPrwUgrYBVQ@mail.gmail.com>
-From: KarimAllah Ahmed <karahmed@amazon.com>
-Message-ID: <bd9abcc7-0540-16ec-6b77-785450a98a7a@amazon.com>
-Date: Sat, 10 Feb 2018 01:22:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 9 Feb 2018 19:31:41 -0500
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eSTWpRnXbxHA83UrMpwBsUMPJqNKe84DiGFPrwUgrYBVQ@mail.gmail.com>
-Content-Language: en-US
-X-Originating-IP: [10.43.160.27]
-X-ClientProxiedBy: EX13D17UWC001.ant.amazon.com (10.43.162.188) To
- EX13D01EUB003.ant.amazon.com (10.43.166.248)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Message-ID: <806c274d-5d9a-432a-bf04-f154be89cb7f@default>
+Date: Fri, 9 Feb 2018 16:31:22 -0800 (PST)
+From: Liran Alon <liran.alon@oracle.com>
+To: <chao.gao@intel.com>
+Cc: <mingo@redhat.com>, <x86@kernel.org>, <tglx@linutronix.de>,
+        <rkrcmar@redhat.com>, <pbonzini@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <hpa@zytor.com>, <kvm@vger.kernel.org>
+Subject: Re: [PATCH v2] x86/kvm/vmx: Don't halt vcpu when L1 is injecting
+ events to L2
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802100003
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1A0NPxn027383
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1A0VrSS028207
 
-On 02/10/2018 12:57 AM, Jim Mattson wrote:
-> On Fri, Feb 9, 2018 at 3:41 PM, KarimAllah Ahmed <karahmed@amazon.com> wrote:
-> 
->> I assume you are referring to this:
->>
->> https://patchwork.kernel.org/patch/10194819/
->>
->> .. which is now:
->>
->> commit 904e14fb7cb9 ("KVM: VMX: make MSR bitmaps per-VCPU")
->>
->> right?
->>
->> If this is the case, then I do not see where the MSR_BITMAP is being
->> updated here. In fact, would not this be the commit that actually broke
->> it?
-> 
-> I'm referring to
-> <1517938181-15317-6-git-send-email-dwmw@amazon.co.uk>, which has:
-> 
-> @@ -10043,6 +9954,9 @@ static void prepare_vmcs02(struct kvm_vcpu
-> *vcpu, struct vmcs12 *vmcs12)
->          if (kvm_has_tsc_control)
->                  decache_tsc_multiplier(vmx);
-> 
-> +       if (cpu_has_vmx_msr_bitmap())
-> +               vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
-> +
->          if (enable_vpid) {
->                  /*
->                   * There is no direct mapping between vpid02 and vpid12, the
-> 
 
-Ooops, My bad! I must have ingested and old version of this commit that
-did not have this hunk! Now actually looking at the upstream commit and
-the backports from David, it is indeed there.
+----- chao.gao@intel.com wrote:
 
-Sorry for the noise, please ignore this patch :)
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+> Although L2 is in halt state, it will be in the active state after
+> VM entry if the VM entry is vectoring according to SDM 26.6.2
+> Activity
+> State. Halting the vcpu here means the event won't be injected to L2
+> and this decision isn't reported to L1. Thus L0 drops an event that
+> should be injected to L2.
+> 
+> Cc: Liran Alon <liran.alon@oracle.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+> Changes in v2:
+>  - Remove VID stuff. Only handle event injection in this patch.
+> ---
+>  arch/x86/kvm/vmx.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index bb5b488..42f39d9 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -10985,7 +10985,12 @@ static int nested_vmx_run(struct kvm_vcpu
+> *vcpu, bool launch)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT)
+> +	/*
+> +	 * If we're entering a halted L2 vcpu and the L2 vcpu won't be
+> woken
+> +	 * by event injection, halt vcpu for optimization.
+
+I would remove the "for optimization." from the comment.
+
+> +	 */
+> +	if ((vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT) &&
+> +	    !(vmcs12->vm_entry_intr_info_field &
+> VECTORING_INFO_VALID_MASK))
+
+VECTORING_INFO_VALID_MASK is used in KVM code against vmcs12->idt_vectoring_info_field.
+I think you should use INTR_INFO_VALID_MASK to be consistent with rest of code.
+
+>  		return kvm_vcpu_halt(vcpu);
+>  
+>  	vmx->nested.nested_run_pending = 1;
+> -- 
+> 1.9.1
+
+In addition, commit title should be written in format of:
+"KVM: VMX: Don't halt vcpu when L1 is injecting events to L2"
+(Makes it easier to grep in git log).
+
+Other than that, seems good to me. :)
+
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+
+Thanks,
+-Liran
