@@ -1,58 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeBJSJ0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 13:09:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39182 "EHLO mail.kernel.org"
+        id S1751781AbeBJSOP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 13:14:15 -0500
+Received: from shell.v3.sk ([92.60.52.57]:59765 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750880AbeBJSJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 13:09:25 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95B682173B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Sat, 10 Feb 2018 12:09:20 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Michael Ellerman <mpe@ellerman.id.au>, Rob Herring <robh@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alistair Popple <alistair@popple.id.au>, linuxppc-dev@lists.ozlabs.org
-Subject: [GIT PULL] PCI fixes for v4.16
-Message-ID: <20180210180920.GF206223@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1751057AbeBJSOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 13:14:14 -0500
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Lubomir Rintel <lkundrak@v3.sk>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH] drm/edid: drop the dcc probe before drm_do_get_edid
+Date: Sat, 10 Feb 2018 19:03:55 +0100
+Message-Id: <20180210180355.2284-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
+Now that drm_do_get_edid() handles override and firmware EDIDs it makes
+no sense to conditionalize it with a DCC probe. On the contrary -- the
+overrides are useful specifically when DCC is not functioning.
 
-  - fix POWER9/powernv INTx regression from the merge window (Alexey
-    Kardashevskiy)
+drm_do_get_edid() already bails out when DCC fails, there's no need for
+an extra check. It seems entirely safe to just drop this.
 
+Working around the issue by forcing the connector on is not a good
+solution because that way the desktop shell can't tell when a monitor is
+plugged in or removed.
 
-The following changes since commit ab8c609356fbe8dbcd44df11e884ce8cddf3739e:
+Cc: Jani Nikula <jani.nikula@intel.com>
+Fixes: 53fd40a ("drm: handle override and firmware EDID at drm_do_get_edid() level")
+---
+ drivers/gpu/drm/drm_edid.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-  Merge branch 'pci/spdx' into next (2018-02-01 11:40:07 -0600)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.16-fixes-1
-
-for you to fetch changes up to c591c2e36ccc9a08f265841d2fd68e35327ab3c4:
-
-  powerpc/pci: Fix broken INTx configuration via OF (2018-02-10 11:49:56 -0600)
-
-----------------------------------------------------------------
-pci-v4.16-fixes-1
-
-----------------------------------------------------------------
-Alexey Kardashevskiy (1):
-      powerpc/pci: Fix broken INTx configuration via OF
-
- arch/powerpc/kernel/pci-common.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index cb487148359a..72169d84256d 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -1642,21 +1642,6 @@ struct edid *drm_do_get_edid(struct drm_connector *connector,
+ }
+ EXPORT_SYMBOL_GPL(drm_do_get_edid);
+ 
+-/**
+- * drm_probe_ddc() - probe DDC presence
+- * @adapter: I2C adapter to probe
+- *
+- * Return: True on success, false on failure.
+- */
+-bool
+-drm_probe_ddc(struct i2c_adapter *adapter)
+-{
+-	unsigned char out;
+-
+-	return (drm_do_probe_ddc_edid(adapter, &out, 0, 1) == 0);
+-}
+-EXPORT_SYMBOL(drm_probe_ddc);
+-
+ /**
+  * drm_get_edid - get EDID data, if available
+  * @connector: connector we're probing
+@@ -1675,9 +1660,6 @@ struct edid *drm_get_edid(struct drm_connector *connector,
+ 	if (connector->force == DRM_FORCE_OFF)
+ 		return NULL;
+ 
+-	if (connector->force == DRM_FORCE_UNSPECIFIED && !drm_probe_ddc(adapter))
+-		return NULL;
+-
+ 	edid = drm_do_get_edid(connector, drm_do_probe_ddc_edid, adapter);
+ 	if (edid)
+ 		drm_get_displayid(connector, edid);
+-- 
+2.14.3
