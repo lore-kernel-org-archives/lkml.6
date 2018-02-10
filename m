@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeBJCmD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 21:42:03 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:44928 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751145AbeBJCmA (ORCPT
+        id S1752208AbeBJCm2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 21:42:28 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:37974 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752058AbeBJCmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 21:42:00 -0500
-X-Google-Smtp-Source: AH8x225/nLKAL4kqo3WOBYA1RPydpCKOg1hwlN3tPuvfPHyJU2/CgNSstIePG4o93jX9R3QQlBTqRA==
+        Fri, 9 Feb 2018 21:42:23 -0500
+X-Google-Smtp-Source: AH8x2240zXoD1Ftk747NTpGx/D/JS29uqqvGQjk4S/AqLLExlzCnLoXFeQuyCqNopzTzuaujhW7QBw==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com
@@ -18,9 +18,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         viresh.kumar@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 01/11] dt-bindings: clock: Add Actions S900 clock bindings
-Date: Sat, 10 Feb 2018 08:11:10 +0530
-Message-Id: <20180210024120.27503-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 04/11] clk: actions: Add common clock driver support
+Date: Sat, 10 Feb 2018 08:11:13 +0530
+Message-Id: <20180210024120.27503-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
 References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
@@ -28,214 +28,201 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Actions Semi S900 clock bindings.
+Add support for Actions Semi common clock driver with generic structures
+and interface functions.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 +++++++
- include/dt-bindings/clock/actions,s900-cmu.h       | 139 +++++++++++++++++++++
- 2 files changed, 186 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
- create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
+ drivers/clk/Kconfig              |  1 +
+ drivers/clk/Makefile             |  1 +
+ drivers/clk/actions/Kconfig      |  4 ++
+ drivers/clk/actions/Makefile     |  3 ++
+ drivers/clk/actions/owl-common.c | 84 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-common.h | 40 +++++++++++++++++++
+ 6 files changed, 133 insertions(+)
+ create mode 100644 drivers/clk/actions/Kconfig
+ create mode 100644 drivers/clk/actions/Makefile
+ create mode 100644 drivers/clk/actions/owl-common.c
+ create mode 100644 drivers/clk/actions/owl-common.h
 
-diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc6e6c0..6313a4f4327a 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -238,6 +238,7 @@ config COMMON_CLK_VC5
+ 	  This driver supports the IDT VersaClock 5 and VersaClock 6
+ 	  programmable clock generators.
+ 
++source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 71ec41e6364f..554b67e4d0c6 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -56,6 +56,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
+ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
+ 
+ # please keep this section sorted lexicographically by directory path name
++obj-$(CONFIG_ARCH_ACTIONS)		+= actions/
+ obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
+ obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
+ obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
 new file mode 100644
-index 000000000000..93e4fb827cd6
+index 000000000000..13a3e5083d43
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-@@ -0,0 +1,47 @@
-+* Actions S900 Clock Management Unit (CMU)
-+
-+The Actions S900 clock management unit generates and supplies clock to various
-+controllers within the SoC. The clock binding described here is applicable to
-+S900 SoC.
-+
-+Required Properties:
-+
-+- compatible: should be "actions,s900-cmu"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- clocks: Reference to the parent clocks ("hosc", "losc")
-+- #clock-cells: should be 1.
-+
-+Each clock is assigned an identifier, and client nodes can use this identifier
-+to specify the clock which they consume.
-+
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/actions,s900-cmu.h header and can be used in device
-+tree sources.
-+
-+External clocks:
-+
-+The hosc clock used as input for the plls is generated outside the SoC. It is
-+expected that it is defined using standard clock bindings as "hosc".
-+
-+Actions S900 CMU also requires one more clock:
-+ - "losc" - internal low frequency oscillator
-+
-+Example: Clock Management Unit node:
-+
-+        cmu: clock-controller@e0160000 {
-+                compatible = "actions,s900-cmu";
-+                reg = <0x0 0xe0160000 0x0 0x1000>;
-+                clocks = <&hosc>, <&losc>;
-+                #clock-cells = <1>;
-+        };
-+
-+Example: UART controller node that consumes clock generated by the clock
-+management unit:
-+
-+        uart: serial@e012a000 {
-+                compatible = "actions,s900-uart", "actions,owl-uart";
-+                reg = <0x0 0xe012a000 0x0 0x2000>;
-+                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+                clocks = <&cmu CLK_UART5>;
-+        };
-diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
++++ b/drivers/clk/actions/Kconfig
+@@ -0,0 +1,4 @@
++config CLK_ACTIONS
++	bool "Clock driver for Actions Semi SoCs"
++	depends on ARCH_ACTIONS || COMPILE_TEST
++	default ARCH_ACTIONS
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
 new file mode 100644
-index 000000000000..2fa94e19922b
+index 000000000000..64a50fc2d335
 --- /dev/null
-+++ b/include/dt-bindings/clock/actions,s900-cmu.h
-@@ -0,0 +1,139 @@
-+/*
-+ * Device Tree binding constants for Actions S900 Clock Management Unit
-+ *
-+ * Copyright (c) 2014 Actions Semi Inc.
-+ * Copyright (c) 2017 Linaro Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ */
++++ b/drivers/clk/actions/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
 +
-+#ifndef __DT_BINDINGS_CLOCK_S900_CMU_H
-+#define __DT_BINDINGS_CLOCK_S900_CMU_H
++clk-owl-y			+= owl-common.o
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+new file mode 100644
+index 000000000000..a7cb698fdc86
+--- /dev/null
++++ b/drivers/clk/actions/owl-common.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL common clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#define CLK_NONE			0
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
 +
-+/* fixed rate clocks */
-+#define CLK_LOSC			1
-+#define CLK_HOSC			2
++#include "owl-common.h"
 +
-+/* pll clocks */
-+#define CLK_CORE_PLL			3
-+#define CLK_DEV_PLL			4
-+#define CLK_DDR_PLL			5
-+#define CLK_NAND_PLL			6
-+#define CLK_DISPLAY_PLL			7
-+#define CLK_DSI_PLL			8
-+#define CLK_ASSIST_PLL			9
-+#define CLK_AUDIO_PLL			10
++static const struct regmap_config owl_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0xffff,
++	.fast_io	= true,
++};
 +
-+/* system clock */
-+#define CLK_CPU				15
-+#define CLK_DEV				16
-+#define CLK_NOC				17
-+#define CLK_NOC_MUX			18
-+#define CLK_NOC_DIV			19
-+#define CLK_AHB				20
-+#define CLK_APB				21
-+#define CLK_DMAC			22
++static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
++			 struct regmap *regmap)
++{
++	int i;
++	struct owl_clk_common *clks;
 +
-+/* peripheral device clock */
-+#define CLK_GPIO			23
++	for (i = 0; i < desc->num_clks; i++) {
++		clks = desc->clks[i];
++		if (!clks)
++			continue;
 +
-+#define CLK_BISP			24
-+#define CLK_CSI0			25
-+#define CLK_CSI1			26
++		clks->regmap = regmap;
++	}
++}
 +
-+#define CLK_DE0				27
-+#define CLK_DE1				28
-+#define CLK_DE2				29
-+#define CLK_DE3				30
-+#define CLK_DSI				32
++int owl_clk_regmap_init(struct platform_device *pdev,
++			 const struct owl_clk_desc *desc)
++{
++	void __iomem *base;
++	struct device_node *node = pdev->dev.of_node;
++	struct regmap *regmap;
 +
-+#define CLK_GPU				33
-+#define CLK_GPU_CORE			34
-+#define CLK_GPU_MEM			35
-+#define CLK_GPU_SYS			36
++	base = of_iomap(node, 0);
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
++	if (IS_ERR_OR_NULL(regmap)) {
++		pr_err("failed to init regmap\n");
++		return PTR_ERR(regmap);
++	}
 +
-+#define CLK_HDE				37
-+#define CLK_I2C0			38
-+#define CLK_I2C1			39
-+#define CLK_I2C2			40
-+#define CLK_I2C3			41
-+#define CLK_I2C4			42
-+#define CLK_I2C5			43
-+#define CLK_I2SRX			44
-+#define CLK_I2STX			45
-+#define CLK_IMX				46
-+#define CLK_LCD				47
-+#define CLK_NAND0			48
-+#define CLK_NAND1			49
-+#define CLK_PWM0			50
-+#define CLK_PWM1			51
-+#define CLK_PWM2			52
-+#define CLK_PWM3			53
-+#define CLK_PWM4			54
-+#define CLK_PWM5			55
-+#define CLK_SD0				56
-+#define CLK_SD1				57
-+#define CLK_SD2				58
-+#define CLK_SD3				59
-+#define CLK_SENSOR			60
-+#define CLK_SPEED_SENSOR		61
-+#define CLK_SPI0			62
-+#define CLK_SPI1			63
-+#define CLK_SPI2			64
-+#define CLK_SPI3			65
-+#define CLK_THERMAL_SENSOR		66
-+#define CLK_UART0			67
-+#define CLK_UART1			68
-+#define CLK_UART2			69
-+#define CLK_UART3			70
-+#define CLK_UART4			71
-+#define CLK_UART5			72
-+#define CLK_UART6			73
-+#define CLK_VCE				74
-+#define CLK_VDE				75
++	owl_clk_set_regmap(desc, regmap);
 +
-+#define CLK_USB3_480MPLL0		76
-+#define CLK_USB3_480MPHY0		77
-+#define CLK_USB3_5GPHY			78
-+#define CLK_USB3_CCE			79
-+#define CLK_USB3_MAC			80
++	return 0;
++}
 +
-+#define CLK_TIMER			83
++int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
++{
++	int i, ret;
++	struct clk_hw *hw;
 +
-+#define CLK_HDMI_AUDIO			84
++	for (i = 0; i < hw_clks->num; i++) {
 +
-+#define CLK_24M				85
++		hw = hw_clks->hws[i];
 +
-+#define CLK_EDP				86
++		if (!hw)
++			continue;
 +
-+#define CLK_24M_EDP			87
-+#define CLK_EDP_PLL			88
-+#define CLK_EDP_LINK			89
++		ret = devm_clk_hw_register(dev, hw);
++		if (ret) {
++			dev_err(dev, "Couldn't register clock %d - %s\n",
++				i, hw->init->name);
++			return ret;
++		}
++	}
 +
-+#define CLK_USB2H0_PLLEN		90
-+#define CLK_USB2H0_PHY			91
-+#define CLK_USB2H0_CCE			92
-+#define CLK_USB2H1_PLLEN		93
-+#define CLK_USB2H1_PHY			94
-+#define CLK_USB2H1_CCE			95
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_clks);
++	if (ret)
++		dev_err(dev, "Failed to add clock provider\n");
 +
-+#define CLK_DDR0			96
-+#define CLK_DDR1			97
-+#define CLK_DMM				98
++	return ret;
++}
+diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
+new file mode 100644
+index 000000000000..e7ea23a6c8f1
+--- /dev/null
++++ b/drivers/clk/actions/owl-common.h
+@@ -0,0 +1,40 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL common clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#define CLK_ETH_MAC			99
-+#define CLK_RMII_REF			100
++#ifndef _OWL_COMMON_H_
++#define _OWL_COMMON_H_
 +
-+#define CLK_NR_CLKS			(CLK_RMII_REF + 1)
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
 +
-+#endif /* __DT_BINDINGS_CLOCK_S900_CMU_H */
++struct device_node;
++
++struct owl_clk_common {
++	struct regmap			*regmap;
++	struct clk_hw			hw;
++};
++
++struct owl_clk_desc {
++	struct owl_clk_common		**clks;
++	unsigned long			num_clks;
++	struct clk_hw_onecell_data	*hw_clks;
++};
++
++static inline struct owl_clk_common *
++	hw_to_owl_clk_common(const struct clk_hw *hw)
++{
++	return container_of(hw, struct owl_clk_common, hw);
++}
++
++int owl_clk_regmap_init(struct platform_device *pdev,
++			 const struct owl_clk_desc *desc);
++int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
++
++#endif /* _OWL_COMMON_H_ */
 -- 
 2.14.1
