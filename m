@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751248AbeBJKRv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 05:17:51 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:44232 "EHLO mail.ispras.ru"
+        id S1751570AbeBJKWM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 05:22:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeBJKRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 05:17:49 -0500
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH v2] watchdog: asm9260_wdt: fix error handling in asm9260_wdt_probe()
-Date: Sat, 10 Feb 2018 13:17:27 +0300
-Message-Id: <1518257847-28796-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20180209223209.GA19627@roeck-us.net>
+        id S1751077AbeBJKWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 05:22:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7198921726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Sat, 10 Feb 2018 11:22:05 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH 3/6] sched/isolation: Isolate workqueues when
+ "nohz_full=" is set
+Message-ID: <20180210102203.GA14047@lerouge>
+References: <1518112779-30196-1-git-send-email-frederic@kernel.org>
+ <1518112779-30196-4-git-send-email-frederic@kernel.org>
+ <20180209065544.6ywka67hwerdrtvt@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209065544.6ywka67hwerdrtvt@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If devm_reset_control_get_exclusive() fails, asm9260_wdt_probe()
-returns immediately. But clks has been already enabled at that point,
-so it is required to disable them or to move the code around.
+On Fri, Feb 09, 2018 at 07:55:44AM +0100, Ingo Molnar wrote:
+> 
+> * Frederic Weisbecker <frederic@kernel.org> wrote:
+> 
+> > -	flags = HK_FLAG_TICK | HK_FLAG_TIMER | HK_FLAG_RCU | HK_FLAG_MISC;
+> > +	flags = HK_FLAG_TICK | HK_FLAG_WQ | HK_FLAG_TIMER |
+> > +		HK_FLAG_RCU | HK_FLAG_MISC;
+> 
+> > -	cpumask_copy(wq_unbound_cpumask, housekeeping_cpumask(HK_FLAG_DOMAIN));
+> > +	cpumask_copy(wq_unbound_cpumask,
+> > +		     housekeeping_cpumask(HK_FLAG_DOMAIN | HK_FLAG_WQ));
+> 
+> LGTM, but _please_ don't do these ugly line-breaks, just keep it slightly over 
+> col80.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Works for me, I'll fix.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
----
-v2: Move the code around instead of disabling clks as Guenter Roeck suggested.
-
- drivers/watchdog/asm9260_wdt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/watchdog/asm9260_wdt.c b/drivers/watchdog/asm9260_wdt.c
-index 7dd0da644a7f..2cf56b459d84 100644
---- a/drivers/watchdog/asm9260_wdt.c
-+++ b/drivers/watchdog/asm9260_wdt.c
-@@ -292,14 +292,14 @@ static int asm9260_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->iobase))
- 		return PTR_ERR(priv->iobase);
- 
--	ret = asm9260_wdt_get_dt_clks(priv);
--	if (ret)
--		return ret;
--
- 	priv->rst = devm_reset_control_get_exclusive(&pdev->dev, "wdt_rst");
- 	if (IS_ERR(priv->rst))
- 		return PTR_ERR(priv->rst);
- 
-+	ret = asm9260_wdt_get_dt_clks(priv);
-+	if (ret)
-+		return ret;
-+
- 	wdd = &priv->wdd;
- 	wdd->info = &asm9260_wdt_ident;
- 	wdd->ops = &asm9260_wdt_ops;
--- 
-2.7.4
+Thanks.
