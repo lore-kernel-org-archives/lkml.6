@@ -1,93 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751851AbeBJSbA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 13:31:00 -0500
-Received: from mout.web.de ([212.227.15.14]:54683 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750835AbeBJSa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 13:30:57 -0500
-Subject: =?UTF-8?Q?Re:_Software_evolution_around_=e2=80=9ccheckpatch.pl?=
- =?UTF-8?B?4oCdPw==?=
-To: Joe Perches <joe@perches.com>,
-        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
- <20180204112346.0977e938@archlinux>
- <9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
- <87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
- <f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
- <20180210145336.233c721d@archlinux> <1518274783.6579.2.camel@perches.com>
- <20180210155734.708d01b6@archlinux> <1518284577.16865.8.camel@perches.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <a988eca2-36d4-19bd-e92c-1a92e497e0da@users.sourceforge.net>
-Date: Sat, 10 Feb 2018 19:30:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752100AbeBJSb4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 13:31:56 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42138 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751756AbeBJSbz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 13:31:55 -0500
+X-Google-Smtp-Source: AH8x225ZxS/GkVUnR+yID4vkGcXYQ/Xyf8piP6d6M5vdO9NUN/uqBC6ANUf0NRTPMRY/MWFuOVlKQNSphG0QGsHF/BY=
 MIME-Version: 1.0
-In-Reply-To: <1518284577.16865.8.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:ukKuZ6dpicrWlKvzP+w4SDpgbaribzlPhRKe3WxztY4YduvmXGv
- PKEg1LEQFL/vtME+Fpi2+SYn2m7yDWKPUJztHTfvjJ2wzXPHy3EHq8xNOORPBlcEzY6NrtR
- nn3cB7MV1ZRl0CaBLS0MlU4dIFN1JuOwQviUFaqbPEnB+ZcTb+0Iz/z2WnaVpzM8n1UXQbq
- NYEK5sV6eCQ+5OwUmqvnw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:PdTvA8ZM3uc=:8Hyn8oMvXIkAtBP7Cty3RD
- ISwppgBOYOSjsKqpg1ROtypHhPehYS9sCpaW3zWKqor+kKOcCtB5hSBZ1Es4SjAlYMihkDiE+
- I1+jlovwYRZnpBJZgsBqGW6jMe3RzaWsUsgt8c9K5MyrDFjXlTKDdBTYdcQRZPnTa/C/mqBs9
- QJKI9Mr7N9goBRoZyKNWnVQDaCn8PkCL8vN8RDMwjzkzkYLsG2hPYYhqZT231CseJO9pABsFR
- Lbs1okqQ9FSBiRXk6O2E8TjK1SzaEj+DUYwE7pGoSDKS4SGYXs3MldU7h4yRfxSHaQX1KXxP4
- o42reNpuoXXZpYncmQC988gAfQEyLACDF/FyJThzLYZallFFLoJLOr0BZGjUyIgA8yYCTeKR7
- D/8z9WtQoFh1o7g1MI3l1t+fJXolgKAEj5hNbWdPpkVYXgg4qKG/ZgT/Hb99oo6Nyyv9futQw
- htdjvGOyyw9/htvjUKPYrMFXGdeYHGLQRSO0EGN1h5kDfYmwzBRqtODcs6/8yS7bCepZmEACW
- TNcVUryurnP+/+qs5TAFyHiIZPKJSPZuEAiBVXPgN3jUQdLx1Ev5NvuPE+/wFVGFA5kjKCyM/
- oib03AqWAYYBThOq16jM70k7SJwS7LLTiDnpiEA2RBjRx33YQPxQ3x12cjJF8aZPW+rZ+oAy5
- Z5YBa6iXbzzV+pzBYOD8AzqV7YZIol+jQx2kv4HpylJtRavKEt0Xf9yIDtJDhcJrUb37pH4xu
- MEMbJwd2+Vs7PbQiWc3z3/II88OIW9HKKxgOxUTcPUzqqZqMapikZ9HfJpfvNTOQrizX2cJKV
- 3UoPvKBe9bX2a9FwPWDS1UQiUwJgyIZC90ctG1qBDKbugUTvtg=
+In-Reply-To: <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
+References: <20180209235012.4993-1-rabel@robertabel.eu> <20180209235012.4993-2-rabel@robertabel.eu>
+ <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 10 Feb 2018 19:31:54 +0100
+X-Google-Sender-Auth: q7ZAMCunlZjKvse2NWbQhaL3WBw
+Message-ID: <CAMuHMdXmqANSaciMtPad4Q6k-i9LXGO1O8Q36bEB0r+vhp9fCA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
+ graphics command
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Willy Tarreau <w@1wt.eu>, linux-kernel <linux-kernel@vger.kernel.org>,
+        Robert Abel <rabel@robertabel.eu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> So I think checkpatch is striking the right balance here in
->> how it warns.  Obviously if it could assess the text
->> and come to an informed decision that would be great but
->> we are some way from that ;)
-> 
-> The 'informed' bit is difficult as it is mostly a political problem.
+On Sat, Feb 10, 2018 at 9:58 AM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Sat, Feb 10, 2018 at 12:50 AM, Robert Abel <rabel@robertabel.eu> wrote:
+>> The graphics command expects 16 hexadecimal literals, but would allow characters in range [0-9a-zA-Z] instead of [0-9a-fA-F].
+>>
+>> Signed-off-by: Robert Abel <rabel@robertabel.eu>
 
-I find such a view very interesting.
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
+>> --- a/drivers/auxdisplay/charlcd.c
+>> +++ b/drivers/auxdisplay/charlcd.c
+>> @@ -441,9 +441,9 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
+>>                         shift ^= 4;
+>>                         if (*esc >= '0' && *esc <= '9') {
+>>                                 value |= (*esc - '0') << shift;
+>> -                       } else if (*esc >= 'A' && *esc <= 'Z') {
+>> +                       } else if (*esc >= 'A' && *esc <= 'F') {
+>>                                 value |= (*esc - 'A' + 10) << shift;
+>> -                       } else if (*esc >= 'a' && *esc <= 'z') {
+>> +                       } else if (*esc >= 'a' && *esc <= 'f') {
+>
+> Willy, Geert: this seems obvious, but do you know if the broader range
+> was intended for some reason? In that case, adding a comment to the
+> code would be good. I found some related docs at
+> Documentation/misc-devices/lcd-panel-cgram.txt by Willy (which, by the
+> way, maybe now we should move them to Documentations/auxdisplay); but
+> the paragraph does indeed say they have to be hex:
+>
+> '''
+> Some LCDs allow you to define up to 8 characters, mapped to ASCII
+> characters 0 to 7. The escape code to define a new character is
+> '\e[LG' followed by one digit from 0 to 7, representing the character
+> number, and up to 8 couples of hex digits terminated by a semi-colon
+> (';').
+> '''
 
-> I just wish Markus would improve his consistently terrible commit messages
+Hadn't noticed this before. Probably a stupid thinko, as Willy said.
 
-I tried to achieve another clarification a few times.
+The redefinition feature definitely works with hex characters.
+I've used it in the past, cfr. the picture on my Google+ profile ;-)
+https://plus.google.com/u/0/+GeertUytterhoeven
 
+Gr{oetje,eeting}s,
 
-> that just restate the action being done and detail
-> _why_ a particular thing _should_ be done.
+                        Geert
 
-Unfortunately, it seems that no other contributors picked
-corresponding opportunities up so far.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You indicated also special software development challenges in your commit
-“checkpatch: attempt to find unnecessary 'out of memory' messages”.
-
-https://lkml.org/lkml/2014/6/10/382
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ebfdc40969f24fc0cdd1349835d36e8ebae05374
-
-
-> His acceptance rate would improve as many of these back and forth
-> replies for what trivialities he posts as patches would be minimized.
-
-My selection of change possibilities leads to mixed integration results.
-
-I stumbled on variations for general change resistance.
-
-Regards,
-Markus
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
