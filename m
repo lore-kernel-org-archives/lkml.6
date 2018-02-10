@@ -1,45 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753436AbeBIX7S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 18:59:18 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:34294 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753237AbeBIX7P (ORCPT
+        id S1753323AbeBJAEm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 19:04:42 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45332 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753221AbeBJAEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 18:59:15 -0500
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: pmcraid: remove redundant initializations of pointer 'ioadl'
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180206143410.32210-1-colin.king@canonical.com>
-Date: Fri, 09 Feb 2018 18:52:51 -0500
-In-Reply-To: <20180206143410.32210-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 6 Feb 2018 14:34:10 +0000")
-Message-ID: <yq1lgg1u3e4.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 9 Feb 2018 19:04:39 -0500
+X-Google-Smtp-Source: AH8x225BO3kXcdjDdtKmSXOnsE+gIHYeOMtrjmPFGsd6NIO4i2L8IzucJHHWh0Lmgy1Rv+79rKkqsQ==
+Date: Fri, 9 Feb 2018 16:04:36 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 6/7] watchdog: meson: allow setting timeout in devicetree
+Message-ID: <20180210000436.GA23513@roeck-us.net>
+References: <marcus.folkesson@gmail.com>
+ <20180209192724.1227-1-marcus.folkesson@gmail.com>
+ <20180209192724.1227-7-marcus.folkesson@gmail.com>
+ <20180209224849.GH19627@roeck-us.net>
+ <20180209231910.GA2251@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=612
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802090302
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209231910.GA2251@piout.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Feb 10, 2018 at 12:19:10AM +0100, Alexandre Belloni wrote:
+> Hi Guenter,
+> 
+> On 09/02/2018 at 14:48:49 -0800, Guenter Roeck wrote:
+> > On Fri, Feb 09, 2018 at 08:27:23PM +0100, Marcus Folkesson wrote:
+> > > watchdog_init_timeout() will allways pick timeout_param since it
+> > > defaults to a valid timeout.
+> > > 
+> > > By following best practice described in
+> > > Documentation/watchdog/watchdog-kernel-api.txt, it also
+> > > let us to set timout-sec property in devicetree.
+> > > 
+> > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > 
+> > Reviewed-by: Guenetr Roeck <linux@roeck-us.net>
+>                   ^
+> A small typo in your name
+> 
 
-Colin,
+Mr. Fat Fingers At Work :-)
 
-> There are several occurrances where pointer ioadl is initialized with a
-> value that is never read and where it is re-assigned a new value later
-> on, hence the initialization is redundant and can be removed.
-
-Applied to 4.17/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Guenter
