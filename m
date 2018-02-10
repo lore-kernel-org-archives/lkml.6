@@ -1,118 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751034AbeBJIMG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 03:12:06 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.219]:33806 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeBJIMF (ORCPT
+        id S1751040AbeBJIXp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 03:23:45 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36332 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750761AbeBJIXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 03:12:05 -0500
-X-RZG-AUTH: :L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr6KxrfO5Oh7R7b2dxjrozzHJUMdkjROCea4BHJCx3qJoGUBmNtRKw
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v1] PCI: Make PCI_SCAN_ALL_PCIE_DEVS work for Root as well as Downstream Ports
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-X-Mailer: iPhone Mail (15C202)
-In-Reply-To: <20171202191827.GB18780@bhelgaas-glaptop.roam.corp.google.com>
-Date: Sat, 10 Feb 2018 09:05:40 +0100
-Cc: linux-pci@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Message-Id: <33CA1586-051C-47F4-83CD-4A406FAE85F7@xenosoft.de>
-References: <20171202002710.17686.21340.stgit@bhelgaas-glaptop.roam.corp.google.com> <20171202191827.GB18780@bhelgaas-glaptop.roam.corp.google.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
+        Sat, 10 Feb 2018 03:23:44 -0500
+X-Google-Smtp-Source: AH8x227C86YUszVTUWe4waFJkPxIzO/qu19JV9HhkYuKjwnqTxPVrZpk++HSfZRcoz0Y8MzAuKUFrw==
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: [PATCHv2 1/2] zsmalloc: introduce zs_huge_object() function
+Date: Sat, 10 Feb 2018 17:23:21 +0900
+Message-Id: <20180210082321.17798-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
+References: <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1A8CEG6022466
 
-Hi All,
+Not every object can be share its zspage with other objects, e.g.
+when the object is as big as zspage or nearly as big a zspage.
+For such objects zsmalloc has a so called huge class - every object
+which belongs to huge class consumes the entire zspage (which
+consists of a physical page). On x86_64, PAGE_SHIFT 12 box, the
+first non-huge class size is 3264, so starting down from size 3264,
+objects can share page(-s) and thus minimize memory wastage.
 
-The AmigaOne X1000 doesn’t boot anymore since the PCI updates. I have seen, that the PCI updates are different to the updates below. The code below works but the latest not. Is there a problem with the latest PCI updates currently?
+ZRAM, however, has its own statically defined watermark for huge
+objects - "3 * PAGE_SIZE / 4 = 3072", and forcibly stores every
+object larger than this watermark (3072) as a PAGE_SIZE object,
+in other words, to a huge class, while zsmalloc can keep some of
+those objects in non-huge classes. This results in increased
+memory consumption.
 
-Thanks,
-Christian
+zsmalloc knows better if the object is huge or not. Introduce
+zs_huge_object() function which tells if the given object can be
+stored in one of non-huge classes or not. This will let us to drop
+ZRAM's huge object watermark and fully rely on zsmalloc when we
+decide if the object is huge.
 
-Sent from my iPhone
-
-On 2. Dec 2017, at 20:18, Bjorn Helgaas <helgaas@kernel.org> wrote:
-
-On Fri, Dec 01, 2017 at 06:27:10PM -0600, Bjorn Helgaas wrote:
-From: Bjorn Helgaas <bhelgaas@google.com>
-
-PCIe Downstream Ports normally have only a Device 0 below them.  To
-optimize enumeration, we don't scan for other devices *unless* the
-PCI_SCAN_ALL_PCIE_DEVS flag is set by set by quirks or the
-"pci=pcie_scan_all" kernel parameter.
-
-Previously PCI_SCAN_ALL_PCIE_DEVS only affected scanning below Switch
-Downstream Ports, not Root Ports.
-
-But the "Nemo" system, also known as the AmigaOne X1000, has a PA Semi Root
-Port whose link leads to an AMD/ATI SB600 South Bridge.  The Root Port is a
-PCIe device, of course, but the SB600 contains only conventional PCI
-devices with no visible PCIe port.
-
-Simplify and restructure only_one_child() so that we scan for all possible
-devices below Root Ports as well as Switch Downstream Ports when
-PCI_SCAN_ALL_PCIE_DEVS is set.
-
-This is enough to make Nemo work with "pci=pcie_scan_all".  We would also
-like to add a quirk to set PCI_SCAN_ALL_PCIE_DEVS automatically on Nemo so
-users wouldn't have to use the "pci=pcie_scan_all" parameter, but we don't
-have that yet.
-
-Link: https://lkml.kernel.org/r/CAErSpo55Q8Q=5p6_+uu7ahnw+53ibVDNRXxrzRV9QnUr_9EUfw@mail.gmail.com
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=198057
-Reported-and-Tested-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-
-Applied to pci/enumeration for v4.16.
-
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 ---
-drivers/pci/probe.c |   25 +++++++++++++++----------
-1 file changed, 15 insertions(+), 10 deletions(-)
+ include/linux/zsmalloc.h |  2 ++
+ mm/zsmalloc.c            | 26 ++++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 14e0ea1ff38b..303c0cb0550c 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2215,22 +2215,27 @@ static unsigned next_fn(struct pci_bus *bus, struct pci_dev *dev, unsigned fn)
-
-static int only_one_child(struct pci_bus *bus)
-{
--    struct pci_dev *parent = bus->self;
-+    struct pci_dev *bridge = bus->self;
-
--    if (!parent || !pci_is_pcie(parent))
-+    /*
-+     * Systems with unusual topologies set PCI_SCAN_ALL_PCIE_DEVS so
-+     * we scan for all possible devices, not just Device 0.
-+     */
-+    if (pci_has_flag(PCI_SCAN_ALL_PCIE_DEVS))
-       return 0;
--    if (pci_pcie_type(parent) == PCI_EXP_TYPE_ROOT_PORT)
--        return 1;
-
-   /*
--     * PCIe downstream ports are bridges that normally lead to only a
--     * device 0, but if PCI_SCAN_ALL_PCIE_DEVS is set, scan all
--     * possible devices, not just device 0.  See PCIe spec r3.0,
--     * sec 7.3.1.
-+     * A PCIe Downstream Port normally leads to a Link with only Device
-+     * 0 on it (PCIe spec r3.1, sec 7.3.1).  As an optimization, scan
-+     * only for Device 0 in that situation.
-+     *
-+     * Checking has_secondary_link is a hack to identify Downstream
-+     * Ports because sometimes Switches are configured such that the
-+     * PCIe Port Type labels are backwards.
-    */
--    if (parent->has_secondary_link &&
--        !pci_has_flag(PCI_SCAN_ALL_PCIE_DEVS))
-+    if (bridge && pci_is_pcie(bridge) && bridge->has_secondary_link)
-       return 1;
+diff --git a/include/linux/zsmalloc.h b/include/linux/zsmalloc.h
+index 57a8e98f2708..9a1baf673cc1 100644
+--- a/include/linux/zsmalloc.h
++++ b/include/linux/zsmalloc.h
+@@ -47,6 +47,8 @@ void zs_destroy_pool(struct zs_pool *pool);
+ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t flags);
+ void zs_free(struct zs_pool *pool, unsigned long obj);
+ 
++bool zs_huge_object(size_t sz);
 +
-   return 0;
-}
+ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+ 			enum zs_mapmode mm);
+ void zs_unmap_object(struct zs_pool *pool, unsigned long handle);
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index c3013505c305..922180183ca3 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -192,6 +192,7 @@ static struct vfsmount *zsmalloc_mnt;
+  * (see: fix_fullness_group())
+  */
+ static const int fullness_threshold_frac = 4;
++static size_t zs_huge_class_size;
+ 
+ struct size_class {
+ 	spinlock_t lock;
+@@ -1417,6 +1418,28 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
+ }
+ EXPORT_SYMBOL_GPL(zs_unmap_object);
+ 
++/**
++ * zs_huge_object() - Test if a compressed object's size is too big for normal
++ *                    zspool classes and it shall be stored in a huge class.
++ * @sz: Size of the compressed object (in bytes).
++ *
++ * The function checks if the object's size falls into huge_class
++ * area. We must take handle size into account and test the actual
++ * size we are going to use, because zs_malloc() unconditionally
++ * adds %ZS_HANDLE_SIZE before it performs %size_class lookup.
++ *
++ * Context: Any context.
++ *
++ * Return:
++ * * true  - The object's size is too big, it will be stored in a huge class.
++ * * false - The object will be store in normal zspool classes.
++ */
++bool zs_huge_object(size_t sz)
++{
++	return sz + ZS_HANDLE_SIZE >= zs_huge_class_size;
++}
++EXPORT_SYMBOL_GPL(zs_huge_object);
++
+ static unsigned long obj_malloc(struct size_class *class,
+ 				struct zspage *zspage, unsigned long handle)
+ {
+@@ -2404,6 +2427,9 @@ struct zs_pool *zs_create_pool(const char *name)
+ 			INIT_LIST_HEAD(&class->fullness_list[fullness]);
+ 
+ 		prev_class = class;
++		if (pages_per_zspage == 1 && objs_per_zspage == 1
++				&& !zs_huge_class_size)
++			zs_huge_class_size = size;
+ 	}
+ 
+ 	/* debug only, don't abort if it fails */
+-- 
+2.16.1
