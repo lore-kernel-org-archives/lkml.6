@@ -1,76 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeBJPwi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 10:52:38 -0500
-Received: from mout.gmx.net ([212.227.17.22]:46447 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751057AbeBJPwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 10:52:37 -0500
-To: linux-kernel@vger.kernel.org
-From: "Enrico Weigelt, metux IT consult" <metux@gmx.de>
-Subject: RFC: build config via DT names
-Message-ID: <63f25fea-f163-f9cc-b5b2-f6f291d7f8d2@gmx.de>
-Date: Sat, 10 Feb 2018 16:52:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1751193AbeBJP5j convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 10:57:39 -0500
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:40502 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751050AbeBJP5i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 10:57:38 -0500
+Date: Sat, 10 Feb 2018 15:57:34 +0000
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To: Joe Perches <joe@perches.com>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: Software evolution around =?UTF-8?B?4oCcY2hlY2twYXRjaC5wbA==?=
+ =?UTF-8?B?4oCdPw==?=
+Message-ID: <20180210155734.708d01b6@archlinux>
+In-Reply-To: <1518274783.6579.2.camel@perches.com>
+References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+        <20180204112346.0977e938@archlinux>
+        <9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
+        <87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
+        <f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
+        <20180210145336.233c721d@archlinux>
+        <1518274783.6579.2.camel@perches.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:8w19Jnvj63bApZPEWE9jrNcsOkwVo0WdXTa5FQj8o2O8vsBCTJ/
- 9BtFlE8ZDTSQOBEFtM2D1z55XlZESwo0CkzY3CnqjoFlz8QGqR5FiVhvsSE60HCWDgeKHjY
- cHk5+oIuDNNi2tTlL4w2Y38vmTxv9v30RciJoYP8SMq/1zKBfTzPIdt1xgb9e5sicbz+DBg
- /gZtqXVN6fXtJh038Nvqg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7+XLaibq2RA=:NY6efBkSPp3MY4VMkruSm+
- CKv4k7auMQGlVNanMGc5mvVx9yewNAizWVEXNx1e2p7ZZ5zdIm3RmP2McdOhbo9RzU2czgv0r
- bGYPBw100GMWivo+PNEkIN/vIY0gald9MibEuHFIW9qA2IMDewWoXWFIbTXzzaDA62+fupvLZ
- 7I5zI0/iEp4rCXckDQIgSFN2fLd8l0FeGq8flOyTBiwuWchtbS9J47WQGHA1Zcx8U9zikwjGr
- I0S+szxfsz3dZ0hfjVpOAQcKr3d0oQXFuetV9pZq1hLk0MpmWMdU2WpzoKDvGPlCM89NpHc2W
- dYEZrDISbQ8HyoD3goChPdTTVgyQIG9b55XdjBPyk06JpTdVeqJ9JOieODD+vaRup+xcMFwuR
- GE0NQxu/Hr5n6KgXPiNDwp7jlO172P64sxqjB7NJVrlraoCvS+yvMqR5uUjL5ui1mo7k5V9+c
- x/ncpM69RscPRH/DuOrjdJ4WcDHI3Yr7qQBCbIeSXPmSK6jgRDoXFi4SwO7hgt/il7QJKMuy7
- PjIHhqr1zg85fnJ3VTN0d7keZSm/dXUASmIOqvAhOQqEBidLN89o3UoOnKIHYRcgGCUnJV4Z6
- gc0rW39O0N0CvegqMBpIBvzrUqcJDi2bp97xNVuf3RWscMLWfFsgkMmPUhcQzZvALQOphBOX3
- 0bmcysfuGJXrhZttCLu2Sz8FYFM+qMWp1zCbP51HFiMOz5it/HWh5iU2o2kbsQ8sXK9CfwpzU
- 2qz5hnfK1wFxc/xGQmHZfHDa3LvkAZ5wHqIj1ORek695cSmpHQ9NzWZ7gQefMEysmRdtRAVtu
- PpYA+K7p79adYg2p97UV+LPPwQvFroi+2+/+i0dAxl8U4TpGE8=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi folks,
+On Sat, 10 Feb 2018 06:59:43 -0800
+Joe Perches <joe@perches.com> wrote:
 
-I've regularily have the task of configuring a kernel for a given DT.
-To make this a little bit easier, I'd like to do this automatically.
+> On Sat, 2018-02-10 at 14:53 +0000, Jonathan Cameron wrote:
+> > While it would be great to improve checkpatches false
+> > positive rate, it's very nature as a string matcher makes
+> > this hard.  
+> 
+> true.
+> 
+> what are the false positives you see?
+> 
+This particular case is only 'sort of' a false positive
+in the warning that a message printed on a memory allocation
+failure 'may' not add any information over the generic case.
 
-The tuff task here is getting a mapping between dt compatible strings
-and corresponding CONFIG_* flags. Automatically extracting it from the
-source code seems pretty tricky, especially w/ corner cases (eg. some
-drivers support groups of devices, depending on config options) - IMHO
-it will need some code changes anyways.
+Very hard to judge on whether it is useful to know more than
+an allocation failed somewhere or not.
 
-Therefore I propose a simple approach using the existing Kconfig system:
+Message makes this clear:
+>“WARNING: Possible unnecessary 'out of memory' message”
+>(from the script “checkpatch.pl”)  
 
-Add an extra (toplevel) menu and config flag naming scheme which
-directly map DT compatible strings to config flags. For example:
+We also have the balance between any changes to existing code
+adding 'some' maintenance overhead vs changing this stuff
+in a new driver - which is what checkpatch is really intended
+for.
 
- > fsl,mpc5200-gpio <=> CONFIG_DTDEV_FSL_MPC5200_GPIO
+So I think checkpatch is striking the right balance here in
+how it warns.  Obviously if it could assess the text
+and come to an informed decision that would be great but
+we are some way from that ;)
 
- > config CONFIG_DTDEV_FSL_MPC5200_GPIO
- >    tristate "fsl,mpc5200-gpio"
- >    select GPIO_MPC5200
-
-Note that these flags are separate from the actual drivers - they just
-enable them automatically. Of course they'll have to be maintained by
-the driver maintainers.
-
-
-What do you think about this idea ?
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Jonathan
