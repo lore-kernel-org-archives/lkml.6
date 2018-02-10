@@ -1,128 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751031AbeBJIC5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 03:02:57 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39845 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeBJICz (ORCPT
+        id S1751034AbeBJIMG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 03:12:06 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.219]:33806 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750761AbeBJIMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 03:02:55 -0500
-X-Google-Smtp-Source: AH8x2279wAr4PQAdrwuBgLPlJ0mNob1ayt3Onb0W9a8i157laySpVO4J1hjNwm9S8gh42cB8WMrhWP7Yorxaw0dxnpA=
-MIME-Version: 1.0
-In-Reply-To: <CAOFm3uFU9KPZqvRucm8U0ruy6ZZ6AoN55ELCdzp6+sqA6i_SaQ@mail.gmail.com>
-References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
- <20180210024120.27503-2-manivannan.sadhasivam@linaro.org> <CAOFm3uFU9KPZqvRucm8U0ruy6ZZ6AoN55ELCdzp6+sqA6i_SaQ@mail.gmail.com>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Sat, 10 Feb 2018 13:32:54 +0530
-Message-ID: <CAOZjjhk5LZ+OT4=tyfDTCGNe8gjXfoPc3z=S1d9bB+rqSBk1qA@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] dt-bindings: clock: Add Actions S900 clock bindings
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 10 Feb 2018 03:12:05 -0500
+X-RZG-AUTH: :L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr6KxrfO5Oh7R7b2dxjrozzHJUMdkjROCea4BHJCx3qJoGUBmNtRKw
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v1] PCI: Make PCI_SCAN_ALL_PCIE_DEVS work for Root as well as Downstream Ports
+From: Christian Zigotzky <chzigotzky@xenosoft.de>
+X-Mailer: iPhone Mail (15C202)
+In-Reply-To: <20171202191827.GB18780@bhelgaas-glaptop.roam.corp.google.com>
+Date: Sat, 10 Feb 2018 09:05:40 +0100
+Cc: linux-pci@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Message-Id: <33CA1586-051C-47F4-83CD-4A406FAE85F7@xenosoft.de>
+References: <20171202002710.17686.21340.stgit@bhelgaas-glaptop.roam.corp.google.com> <20171202191827.GB18780@bhelgaas-glaptop.roam.corp.google.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1A8CEG6022466
 
-Hi Philippe,
+Hi All,
 
-On 10 February 2018 at 13:06, Philippe Ombredanne <pombredanne@nexb.com> wrote:
-> Dear Manivannan,
->
-> On Sat, Feb 10, 2018 at 3:41 AM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
->> Add Actions Semi S900 clock bindings.
->>
->> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> <snip>
->
->> diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
->> new file mode 100644
->> index 000000000000..2fa94e19922b
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/actions,s900-cmu.h
->> @@ -0,0 +1,139 @@
->> +/*
->> + * Device Tree binding constants for Actions S900 Clock Management Unit
->> + *
->> + * Copyright (c) 2014 Actions Semi Inc.
->> + * Copyright (c) 2017 Linaro Ltd.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
->> + * GNU General Public License for more details.
->> + */
->
-> Would you consider using the new SPDX license ids rather that this
-> time-tested but rather boring legalese?
->
+The AmigaOne X1000 doesn’t boot anymore since the PCI updates. I have seen, that the PCI updates are different to the updates below. The code below works but the latest not. Is there a problem with the latest PCI updates currently?
 
-Very sorry! I converted all the driver code to SPDX license tag but since
-this file was already Acked, I forgot to do so.
+Thanks,
+Christian
 
-Will clean it up.
+Sent from my iPhone
 
-> The (still new and fresh) license documentation contributed by tglx
-> --the only maintainer that I know that understands both the innards of
-> Spectre and Meltdown and the beauty of reStructuredText -- is in:
-> Documentation/process/license-rules.rst
->
-> Practically this means replacing the above by a simple single line and
-> getting rid of a whopping 8 comment lines!
->
-> SPDX-License-Identifier: GPL-2.0+
->
-> You get to save a few tree as a bonus if you also do the same for all
-> Linaro-copyrighted files. Yes this is saving trees because I will use
-> less paper each time I print a listing of the kernel source code.
-> Which is something that I rarely if ever do: but somebody must do it
-> somewhere for sure.
->
+On 2. Dec 2017, at 20:18, Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-This is something I will consider doing it in a separate patchset.
+On Fri, Dec 01, 2017 at 06:27:10PM -0600, Bjorn Helgaas wrote:
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-> If I do the math: we have ~60K files in the kernel, and say we can
-> remove roughly 5 lines of legalese per file on average. Each printed
-> source code page is roughly 60 lines : this will mean a saving of
-> about 6000 paper sheets saved on each printout! A letter-size paper
-> ream is 500 pages, about 2.5 Kg and costs about ~$8.  You can extract
-> about 10K to 20k sheets of paper per tree [1].
-> Therefore my Fermi estimate is that using shorter legalese in the
-> kernel will eventually save roughly ONE FULL smaller tree (6K pages)
-> each time someone prints the kernel code: incredible, right?
->
-> Thank  you for helping make the kernel a mostly legalese-free codebase
-> and saving trees at the same time!
->
+PCIe Downstream Ports normally have only a Device 0 below them.  To
+optimize enumeration, we don't scan for other devices *unless* the
+PCI_SCAN_ALL_PCIE_DEVS flag is set by set by quirks or the
+"pci=pcie_scan_all" kernel parameter.
 
-Thanks for the finding!
+Previously PCI_SCAN_ALL_PCIE_DEVS only affected scanning below Switch
+Downstream Ports, not Root Ports.
 
-Regards,
-Mani
+But the "Nemo" system, also known as the AmigaOne X1000, has a PA Semi Root
+Port whose link leads to an AMD/ATI SB600 South Bridge.  The Root Port is a
+PCIe device, of course, but the SB600 contains only conventional PCI
+devices with no visible PCIe port.
 
-> [1] https://www.sierraclub.org/sierra/2014-4-july-august/green-life/how-much-paper-does-one-tree-produce
-> --
-> Cordially
-> Philippe Ombredanne
+Simplify and restructure only_one_child() so that we scan for all possible
+devices below Root Ports as well as Switch Downstream Ports when
+PCI_SCAN_ALL_PCIE_DEVS is set.
+
+This is enough to make Nemo work with "pci=pcie_scan_all".  We would also
+like to add a quirk to set PCI_SCAN_ALL_PCIE_DEVS automatically on Nemo so
+users wouldn't have to use the "pci=pcie_scan_all" parameter, but we don't
+have that yet.
+
+Link: https://lkml.kernel.org/r/CAErSpo55Q8Q=5p6_+uu7ahnw+53ibVDNRXxrzRV9QnUr_9EUfw@mail.gmail.com
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198057
+Reported-and-Tested-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Applied to pci/enumeration for v4.16.
+
+---
+drivers/pci/probe.c |   25 +++++++++++++++----------
+1 file changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 14e0ea1ff38b..303c0cb0550c 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2215,22 +2215,27 @@ static unsigned next_fn(struct pci_bus *bus, struct pci_dev *dev, unsigned fn)
+
+static int only_one_child(struct pci_bus *bus)
+{
+-    struct pci_dev *parent = bus->self;
++    struct pci_dev *bridge = bus->self;
+
+-    if (!parent || !pci_is_pcie(parent))
++    /*
++     * Systems with unusual topologies set PCI_SCAN_ALL_PCIE_DEVS so
++     * we scan for all possible devices, not just Device 0.
++     */
++    if (pci_has_flag(PCI_SCAN_ALL_PCIE_DEVS))
+       return 0;
+-    if (pci_pcie_type(parent) == PCI_EXP_TYPE_ROOT_PORT)
+-        return 1;
+
+   /*
+-     * PCIe downstream ports are bridges that normally lead to only a
+-     * device 0, but if PCI_SCAN_ALL_PCIE_DEVS is set, scan all
+-     * possible devices, not just device 0.  See PCIe spec r3.0,
+-     * sec 7.3.1.
++     * A PCIe Downstream Port normally leads to a Link with only Device
++     * 0 on it (PCIe spec r3.1, sec 7.3.1).  As an optimization, scan
++     * only for Device 0 in that situation.
++     *
++     * Checking has_secondary_link is a hack to identify Downstream
++     * Ports because sometimes Switches are configured such that the
++     * PCIe Port Type labels are backwards.
+    */
+-    if (parent->has_secondary_link &&
+-        !pci_has_flag(PCI_SCAN_ALL_PCIE_DEVS))
++    if (bridge && pci_is_pcie(bridge) && bridge->has_secondary_link)
+       return 1;
++
+   return 0;
+}
