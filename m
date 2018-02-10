@@ -1,186 +1,101 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2270Egya6vxkvKeyr64oXz7T9a16nSZjJMz3MCqM0WocE1JsR4aVHeqADNk/5YuKptbbdPim
-ARC-Seal: i=1; a=rsa-sha256; t=1518183967; cv=none;
-        d=google.com; s=arc-20160816;
-        b=WaMJ45FX3jtOrQBvV7f/znA7fcv1zJXxuaXA9JDQhHkTQHfzju5yWyKKAN2lCia4ZE
-         YTK8cXufNVR0ENNLtXqheljKeM6jX6pDRM78Va32+RTGX2pU5FDDgf7xwWaZnCJgYss2
-         F/jCetMSc+J0bOs2p9n0tOwyuLkW+vfIOJP7uVC3aSqmuNolteRT9Mlb6bbRt+ypTzws
-         k/kLTBYKAVjcxTeGMMa+M66LnrJgwPFkXVj01MTqyzWaKASMDEljWgmd3ipuRURIUrej
-         fYQY0j/fH3rjFomAZJla8slU0iXye48dOfHmVA14ak513My1oeqNZyh4SOXRVvD0Ku6B
-         IyMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=dAUTm7jCE4v+tHrvCenWqNHMjuDdhrWvdhuxBszI6xY=;
-        b=ZZuX7cj9TJmVWLKYL2WfgLWVoQSxE0/pZFS4QxVKXRyEEZi8/+5Pg3CK+D2wKpHShs
-         mo5VnnHbTveQPabl+B0S6aYIbtex9IMpYOzlAQ05/k2NUBn2Cxcupe/dNDCP9YMTNntL
-         Xz4gIO8gS0mtlTptxZMUgifF07/iu0e9ukcQl3lsTRYn2e7PMB72N2cr9yIl4A24Kl+Y
-         XUbWP9oocD684pUTZLDPN8wUpPH1EMDCxIXANxfPJSmV5P+m02IEwOfB7FxeHCt/3Pa7
-         y9N671W+UsKHWR8On3S8+LbMWe2KSkZsYH6N35hlyxCJeOm3iMcOsab1BXEn4WFkiNOP
-         dWTw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuahkh@osg.samsung.com,
-	patches@kernelci.org,
-	ben.hutchings@codethink.co.uk,
-	lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org
-Subject: [PATCH 4.14 00/22] 4.14.19-stable review
-Date: Fri,  9 Feb 2018 14:39:49 +0100
-Message-Id: <20180209133934.024795822@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.1
-User-Agent: quilt/0.65
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.19-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.19-rc1
-X-KernelTest-Deadline: 2018-02-11T13:39+00:00
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-91218-1518277681-2-10463232720637046974
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518277681; b=ONcnXKZ8d4XgtxLVJqsTmXevb/QGJT/gl/YZsD352fl+GZV
+    x7flWP/hffiy4jVYJxqHGI2JIqJS/XXZcgUtwXLwy6d6xYapT3APdyceRDqm67G2
+    gwIYPrZ4LUynbYdLvPBLHO2TAxxPnIPzgJhipHKPZOYWFJSvkuyH/AzDnhDSJXZg
+    tcwam0b1JQX2ERxLhF4+/DKc4+EInXR5OEzCGm8ljavkwSRiyIsu0520C7g+8MFx
+    bksGTnVfq+e5D76aLY/kqQXGwXkLxJaMGZYeRVckJvIJW9FsOGors5fk/yVF1CcJ
+    M9i7z6WSKtqnQhv8eb0uJoV3DOYpdWLSZU3uyCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1518277681; bh=8c5KQg50FM2mKxXbq683jUdQDDvpBi88iUE0RPf85EM=; b=w
+    dh1hqduPmwE2QVIDkM6lgvlZa9Fz2KTLHrPVBrE7wNEc8s7eP+V02I7uXfd4a/OL
+    gtB8DSnOW4MzkiIjtOwJlXCGvrr/mR/1nQXrP6xKbXr9VoAgkKwhAIl5EKmCVmVE
+    7MAfI7piRSv/tf+IACqA3fni5mh/AJnLuYl4Y0O4aj6kwRJWx/k1N4gaK3SQYiiS
+    kZ01nubFSc2spQOHGWFxYe0sh1jV4FayDqacpSlfe26jRTT5CVVE2PHW2ptHYx+6
+    o0e6KXaeyEImoAvSkXeGIgeJATU2F0pxjF+lxMFcuUB/wQUn87i852vY1nxQsZG3
+    iIu3DwGlk8zkhX5sufnaA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lb02uBlW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HbezJoJ6;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lb02uBlW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HbezJoJ6;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751040AbeBJPr6 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 10:47:58 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38272 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbeBJPr5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 10:47:57 -0500
+X-Google-Smtp-Source: AH8x224fPPq2PWN9+GCZwPCj97TVszhP75YYdYL1v9FaiqUUULtxyztWY8y47INyuKYxycSzHhNrbQ==
+Subject: Re: [PATCH 4.14 00/22] 4.14.19-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180209133934.024795822@linuxfoundation.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <21cefb90-d53e-0a8e-895c-adc42ef9a2ee@roeck-us.net>
+Date: Sat, 10 Feb 2018 07:47:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1591931271366574701?=
-X-GMAIL-MSGID: =?utf-8?q?1591931271366574701?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.14.19 release.
-There are 22 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On 02/09/2018 05:39 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.19 release.
+> There are 22 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun Feb 11 13:39:12 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Responses should be made by Sun Feb 11 13:39:12 UTC 2018.
-Anything received after that time might be too late.
+Build results:
+	total: 145 pass: 145 fail: 0
+Qemu test results:
+	total: 126 pass: 126 fail: 0
 
-The whole patch series can be found in one patch at:
-	kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.19-rc1.gz
-or in the git tree and branch at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
+Details are available at http://kerneltests.org/builders.
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.19-rc1
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    scsi: storvsc: missing error code in storvsc_probe()
-
-Andrew Morton <akpm@linux-foundation.org>
-    kernel/exit.c: export abort() to modules
-
-Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-    arch: define weak abort()
-
-Robert Baronescu <robert.baronescu@nxp.com>
-    crypto: tcrypt - fix S/G table for test_aead_speed()
-
-Jesse Chan <jc@linux.com>
-    media: soc_camera: soc_scale_crop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-
-Jesse Chan <jc@linux.com>
-    media: mtk-vcodec: add missing MODULE_LICENSE/DESCRIPTION
-
-Eric Dumazet <edumazet@google.com>
-    soreuseport: fix mem leak in reuseport_add_sock()
-
-Martin KaFai Lau <kafai@fb.com>
-    ipv6: Fix SO_REUSEPORT UDP socket with implicit sk_ipv6only
-
-Neal Cardwell <ncardwell@google.com>
-    tcp_bbr: fix pacing_gain to always be unity when using lt_bw
-
-Jiri Pirko <jiri@mellanox.com>
-    rocker: fix possible null pointer dereference in rocker_router_fib_event_work
-
-David Ahern <dsahern@gmail.com>
-    net: ipv6: send unsolicited NA after DAD
-
-Roman Gushchin <guro@fb.com>
-    Revert "defer call to mem_cgroup_sk_alloc()"
-
-Jason Wang <jasowang@redhat.com>
-    vhost_net: stop device during reset owner
-
-Li RongQing <lirongqing@baidu.com>
-    tcp: release sk_frag.page in tcp_disconnect
-
-Chunhao Lin <hau@realtek.com>
-    r8169: fix RTL8168EP take too long to complete driver initialization.
-
-Kristian Evensen <kristian.evensen@gmail.com>
-    qmi_wwan: Add support for Quectel EP06
-
-Junxiao Bi <junxiao.bi@oracle.com>
-    qlcnic: fix deadlock bug
-
-Eric Dumazet <edumazet@google.com>
-    net: igmp: add a missing rcu locking section
-
-Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-    ip6mr: fix stale iterator
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    kbuild: rpm-pkg: keep spec file until make mrproper
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    .gitignore: move *.dtb and *.dtb.S patterns to the top-level .gitignore
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    .gitignore: sort normal pattern rules alphabetically
-
-
--------------
-
-Diffstat:
-
- .gitignore                                         | 49 ++++++++++++----------
- Makefile                                           |  4 +-
- arch/arc/boot/.gitignore                           |  1 -
- arch/arm/boot/.gitignore                           |  1 -
- arch/arm/kernel/traps.c                            |  1 -
- arch/arm64/boot/dts/.gitignore                     |  1 -
- arch/m32r/kernel/traps.c                           |  1 -
- arch/metag/boot/.gitignore                         |  1 -
- arch/microblaze/boot/.gitignore                    |  1 -
- arch/mips/boot/.gitignore                          |  1 -
- arch/nios2/boot/.gitignore                         |  1 -
- arch/powerpc/boot/.gitignore                       |  1 -
- arch/unicore32/kernel/traps.c                      |  1 -
- arch/xtensa/boot/.gitignore                        |  1 -
- crypto/tcrypt.c                                    |  6 ++-
- .../media/platform/mtk-vcodec/mtk_vcodec_util.c    |  3 ++
- drivers/media/platform/soc_camera/soc_scale_crop.c |  4 ++
- .../net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c    | 18 ++++----
- drivers/net/ethernet/realtek/r8169.c               |  4 +-
- drivers/net/ethernet/rocker/rocker_main.c          | 18 ++++----
- drivers/net/usb/qmi_wwan.c                         |  1 +
- drivers/of/unittest-data/.gitignore                |  2 -
- drivers/scsi/storvsc_drv.c                         |  4 +-
- drivers/vhost/net.c                                |  1 +
- kernel/exit.c                                      |  9 ++++
- mm/memcontrol.c                                    | 14 +++++++
- net/core/sock.c                                    |  5 +--
- net/core/sock_reuseport.c                          | 35 +++++++++-------
- net/ipv4/igmp.c                                    |  4 ++
- net/ipv4/inet_connection_sock.c                    |  1 -
- net/ipv4/tcp.c                                     |  6 +++
- net/ipv4/tcp_bbr.c                                 |  6 +--
- net/ipv6/addrconf.c                                | 30 +++++++++++--
- net/ipv6/af_inet6.c                                | 11 +++--
- net/ipv6/ip6mr.c                                   |  1 +
- net/ipv6/ndisc.c                                   |  5 +++
- scripts/package/Makefile                           |  4 +-
- 37 files changed, 164 insertions(+), 93 deletions(-)
+Guenter
