@@ -1,175 +1,284 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2398327-1518472250-2-12189863037575232653
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518472249; b=EsSSYr7g5AuxiJHhOpQ6D0fSQUyINy5VLQwgjcqswIqggK3
-    nhpD+ta55/0B97xosPHtvJTxZs/5lzfI1yAg2S/6Ijdzjx0I5Gc3GiZMQrkKvKYg
-    YaAvZ0mJ0838LOkR3j/TdV7onjZU5Vr2PUxKMA6/L1l+ZQw2v+YK3fqTo8CDj03O
-    m7rIb2g5PsWvRyJyY/pn1hACy+kYTDrbd03vBQc/b9gcY2KI4NTso4VyWqeC0Y7X
-    cMSRrzBPDXymkQFZcmdcc6eo3uXLScN0sU71tC81a+rtY1xAFe8DCqq3rvS2unvR
-    f3p8WcldmQ73ost6wy1dVVVArrbz/kPRXA2MW4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:content-transfer-encoding
-    :content-type:message-id:date:from:to:cc:subject:in-reply-to
-    :references:sender:list-id; s=arctest; t=1518472249; bh=DJRig3i+
-    oxv6pKjrlrsmqXdtAxRS8WzbDV4MdrnI298=; b=qp6K9HYixcJ0iPqlD3Ek1+10
-    Z5uzqPbOcWrLhe8RuPBcnzCAZVnGh3vyggCbf62BfABOhjpLm1sNYwKjbB0QWGIb
-    5ifPDLPcKWXvF4/21rIueXrwIsvoIToB3TEegre9FqM/8rph5lfBbrGaB7cD9Sw6
-    f5GVAIwIDDd4HFCWxPuIfo/cUM5DnTz6vra/BiPjPLMbPpukZ7jpj5ophlehOuvJ
-    e4gM6xpL+CPR/r1n+xH0N7afwKjQU+7oxK3Y/UaTH6sd2GARqbQt5xD6vMcWxsbw
-    yhHPyiN6fBMiHOg0u4lY9Pqrl44ZHgZIESDKYE3qzDyINcf5hbaMppvlevTMJQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=HTFzAJlp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=HTFzAJlp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeBLVuq (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Feb 2018 16:50:46 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:63131 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932109AbeBLVup (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 12 Feb 2018 16:50:45 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180212215043epoutp02534f310bd29c3671bb042cbe1b3f2251~SsnXsttQA1288312883epoutp02g
-X-AuditID: b6c32a48-9adff70000000ff0-24-5a820c32d01a
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A820C33.5000209@samsung.com>
-Date: Tue, 13 Feb 2018 06:50:43 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Hans de Goede <hdegoede@redhat.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] extcon: int3496: process id-pin first so that we
- start with the right status
-In-reply-to: <20180212194630.7216-3-hdegoede@redhat.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIKsWRmVeSWpSXmKPExsWy7bCmha4RT1OUwYslWhZvjk9nsri8aw6b
-        xe3GFWwWCzY+YnRg8Xi/7yqbR9+WVYwenzfJBTBHpdpkpCampBYppOYl56dk5qXbKnkHxzvH
-        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
-        RRsaGukZGpjrGRkZ6ZkYx1oZmQKVJKRmXDx7lq1gvkDF8eN7mBsYJ/B2MXJwSAiYSLzcH9vF
-        yMUhJLCDUWLetZnMEM53Ron2vq0sXYycYEXvVp5nB7GFBHYzSuy6zwRi8woISvyYfI8FZBCz
-        gLzEkUvZIGFmAU2JrbvXs0PMuccoceNtJytEvZbEkpmrGEFsFgFViW3Pu8HibEDx/S9usIHY
-        /AKKEld/PAarERWIkNg5/xvYXhGBIIkb31ewQuyykGjfbwoSFhbIkri0ZBbYOZxA4QcXGlhB
-        9koILGGTODn9MCvE/S4SHw48hPpFWOLV8S3sELa0xLNVGxkhGtqBHt47jxnCmcIoce76PSaI
-        KmOJZwu7mCBe45PoOPyXHRJ0vBIdbUIQJR4Sa3a3Qy1zlNj/ZyoTxPc7GSUOfVvMNoFRbhZS
-        gM1CBNgspABbwMi8ilEstaA4Nz212KjARK84Mbe4NC9dLzk/dxMjOHlpeexgPHDO5xCjAAej
-        Eg9vx+zGKCHWxLLiytxDjBIczEoivH+agUK8KYmVValF+fFFpTmpxYcYTYHhPZFZSjQ5H5hY
-        80riDU0sDUzMzIzMzSyA6Uucty3AJUpIID2xJDU7NbUgtQimj4mDU6qBsfX4gTkOCtNFHL/M
-        bTa/X1n7ROydsN9hvc79h7xv2vY/iZi2wPzdB6l1y2fcyZ5+x/BL/6dIe7Y/5W9qQ9yzTh9W
-        71jmvF2JjWWliXFxoprmxGrJb+cCG8017W+Jmus/WcLRm+JXJXSd9VJMjbnHLfulkZmi1u+f
-        PvXN4fGwuXKEfbffsyvrlViKMxINtZiLihMBxa4isHQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsVy+t9jAV1DnqYog7MdahZvjk9nsri8aw6b
-        xe3GFWwWCzY+YnRg8Xi/7yqbR9+WVYwenzfJBTBHcdmkpOZklqUW6dslcGVcPHuWrWC+QMXx
-        43uYGxgn8HYxcnJICJhIvFt5nr2LkYtDSGAno8TyPadZQRK8AoISPybfY+li5OBgFpCXOHIp
-        GyTMLKAuMWneImaI+geMEu/u3GGEqNeSWDJzFZjNIqAqse15N9gcNqD4/hc32EBsfgFFias/
-        HjOCzBQViJDoPlEJEhYRCJD4eaqfHWKVhUT7flOQsLBAlsSlJbOY4E57O+USM0iCE6jmwYUG
-        1gmMArOQXDoL4dJZSC5dwMi8ilEytaA4Nz232KjAKC+1XK84Mbe4NC9dLzk/dxMjMGy3Hdbq
-        38H4eEn8IUYBDkYlHt6O2Y1RQqyJZcWVuYcYJTiYlUR4/zQDhXhTEiurUovy44tKc1KLDzFK
-        c7AoifPy5x+LFBJITyxJzU5NLUgtgskycXBKNTC6qEkl3KtZaZx69cWxjbPF7/3bfq0lWYar
-        acrGfUWZi0ONPwkrTv6yLW+3wgPD3ZWfkn2y75/f1aRZ5qxsNfXwT+GSCYpfXVoY61fOYvL4
-        NcPrwfYaJ6ZiOc4z54qlL8526mC+Em+4kM/tzRv/G/zql2Oq7SIEsq4vO9B78fC797W2saaW
-        Ny4qsRRnJBpqMRcVJwIA9sYdulcCAAA=
-X-CMS-MailID: 20180212215041epcas2p25bf787274bd464ce2c3444af8ced2ed2
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180212194708epcas2p325a2042527bfd037d4e56a0d4812c37a
-X-RootMTR: 20180212194708epcas2p325a2042527bfd037d4e56a0d4812c37a
-References: <20180212194630.7216-1-hdegoede@redhat.com>
-        <CGME20180212194708epcas2p325a2042527bfd037d4e56a0d4812c37a@epcas2p3.samsung.com>
-        <20180212194630.7216-3-hdegoede@redhat.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <alexey.skidanov@intel.com>
+X-Google-Smtp-Source: AH8x224LlVzurMlXbXc+qwnX/ZC9IJ3/Pm9Be8q8wKlfrdXLmFU4vqyNtHmVug0N4jYir7gFcEzK
+ARC-Seal: i=1; a=rsa-sha256; t=1518258045; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Uanv6NTK5Vlxz4kdHfZZeBMQSfSZrk8PeKZgTkcBs0XeZdNPUSIVkJVGGCwYwclCsY
+         f/Azx+asmhqZausIzMbawWFsijBuxlW9G/cM4Np7X+NTJ6njTsnzKy9PfLvBKXWAVxL8
+         I5bLIhI8jY8q/KBxH3TOTD0uZzkJTfazoXitdIjTLh4MuuGmULRmw3WQ71T4UT0FL8K5
+         iC9SrqwWg9diZG69Kn6XEcAIgIlwm/oV1Novbrc9UTf42z+r4+dwUmB2qt862Fjw1WHK
+         k499iMgdHhUedy04WGbiO0cYqpu69jqF52CN4ZZDCY6IMYMK5rRnkYXVlTokJjv0CvDl
+         qYUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=sTgaX77jICNSkyNtsMqADfVgms2D1YUo1s7z/ad/+o8=;
+        b=Ogl4H/4qrnJhD2Jdk6ScuHi0tILVegV6UCPFc/FpwZrym0XDB4yZFbnpHefOvfx5im
+         1vBUz1pHHY9AVzYpvXkXofXFPEjMXleFQ2OvaSXgGuHskrvo15DbOsbxW8TKdTyHE6SH
+         dDk1i8oB6HIZL36D4VFxwNyxOPpXXZEEI7vpsm+SlG71N4D4qr327JTKz4MG4MDIBqJ2
+         gN3nxZ/0kR2yagGXyI/pQnEl8P0ItDKVhxrNAob4tySBDCEO3KuQh/Qk1N/Iie+ElmpH
+         2+xoZrQj0uEj8Rt/nvz7kI+d2jxZlIJx9mFeNFBc5jO5Li6IZmaLdFDDLr5ryuOW3Dqn
+         NhHA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of alexey.skidanov@intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=alexey.skidanov@intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of alexey.skidanov@intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=alexey.skidanov@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,488,1511856000";
+   d="scan'208";a="33632201"
+From: Alexey Skidanov <alexey.skidanov@intel.com>
+To: labbott@redhat.com,
+	sumit.semwal@linaro.org,
+	gregkh@linuxfoundation.org,
+	arve@android.com,
+	tkjos@android.com,
+	maco@android.com,
+	devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org,
+	Alexey Skidanov <alexey.skidanov@intel.com>
+Subject: [PATCH] staging: android: ion: Add requested allocation alignment
+Date: Sat, 10 Feb 2018 12:17:43 +0200
+Message-Id: <1518257863-6903-1-git-send-email-alexey.skidanov@intel.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592008948531833227?=
+X-GMAIL-MSGID: =?utf-8?q?1592008948531833227?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018년 02월 13일 04:46, Hans de Goede wrote:
-> Some other drivers may be waiting for our extcon to show-up (exiting their
-> probe methods with -EPROBE_DEFER until we show up).
-> 
-> These drivers will typically get the cable state directly after getting
-> the extcon, this commit changes the int3496 code to process the id-pin
-> before registering the extcon, so that other drivers see the correct state
-> right away.
-> 
-> Fixes: 2f556bdb9f2e ("extcon: int3496: Add Intel INT3496 ACPI ... driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v2:
-> -Add Fixes tag
-> 
-> Changes in v3:
-> -Fix oops on probe by scheduling the work too early
-> ---
->  drivers/extcon/extcon-intel-int3496.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-intel-int3496.c b/drivers/extcon/extcon-intel-int3496.c
-> index c8691b5a9cb0..673bb26a9a2a 100644
-> --- a/drivers/extcon/extcon-intel-int3496.c
-> +++ b/drivers/extcon/extcon-intel-int3496.c
-> @@ -131,11 +131,15 @@ static int int3496_probe(struct platform_device *pdev)
->  	if (IS_ERR(data->gpio_usb_mux))
->  		dev_info(dev, "can't request USB MUX GPIO\n");
->  
-> -	/* register extcon device */
->  	data->edev = devm_extcon_dev_allocate(dev, int3496_cable);
->  	if (IS_ERR(data->edev))
->  		return -ENOMEM;
->  
-> +	/* process id-pin first so that we start with the right status */
-> +	queue_delayed_work(system_wq, &data->work, 0);
-> +	flush_delayed_work(&data->work);
-> +
-> +	/* register extcon device */
->  	ret = devm_extcon_dev_register(dev, data->edev);
->  	if (ret < 0) {
->  		dev_err(dev, "can't register extcon device: %d\n", ret);
-> @@ -153,9 +157,6 @@ static int int3496_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	/* queue initial processing of id-pin */
-> -	queue_delayed_work(system_wq, &data->work, 0);
-> -
->  	platform_set_drvdata(pdev, data);
->  
->  	return 0;
-> 
+Current ion defined allocation ioctl doesn't allow to specify the requested
+allocation alignment. CMA heap allocates buffers aligned on buffer size
+page order.
 
-Applied it.
+Sometimes, the alignment requirement is less restrictive. In such cases,
+providing specific alignment may reduce the external memory fragmentation
+and in some cases it may avoid the allocation request failure.
 
+To fix this, we add an alignment parameter to the allocation ioctl.
+
+Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
+---
+ drivers/staging/android/ion/ion-ioctl.c         |  3 ++-
+ drivers/staging/android/ion/ion.c               | 14 +++++++++-----
+ drivers/staging/android/ion/ion.h               |  9 ++++++---
+ drivers/staging/android/ion/ion_carveout_heap.c |  3 ++-
+ drivers/staging/android/ion/ion_chunk_heap.c    |  3 ++-
+ drivers/staging/android/ion/ion_cma_heap.c      | 18 ++++++++++++------
+ drivers/staging/android/ion/ion_system_heap.c   |  6 ++++--
+ drivers/staging/android/uapi/ion.h              |  7 +++----
+ 8 files changed, 40 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/staging/android/ion/ion-ioctl.c b/drivers/staging/android/ion/ion-ioctl.c
+index c789893..9fe022b 100644
+--- a/drivers/staging/android/ion/ion-ioctl.c
++++ b/drivers/staging/android/ion/ion-ioctl.c
+@@ -83,7 +83,8 @@ long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 
+ 		fd = ion_alloc(data.allocation.len,
+ 			       data.allocation.heap_id_mask,
+-			       data.allocation.flags);
++			       data.allocation.flags,
++			       data.allocation.align);
+ 		if (fd < 0)
+ 			return fd;
+ 
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index f480885..35ddc7a 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -78,7 +78,8 @@ static void ion_buffer_add(struct ion_device *dev,
+ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
+ 					    struct ion_device *dev,
+ 					    unsigned long len,
+-					    unsigned long flags)
++					    unsigned long flags,
++					    unsigned int align)
+ {
+ 	struct ion_buffer *buffer;
+ 	int ret;
+@@ -90,14 +91,14 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
+ 	buffer->heap = heap;
+ 	buffer->flags = flags;
+ 
+-	ret = heap->ops->allocate(heap, buffer, len, flags);
++	ret = heap->ops->allocate(heap, buffer, len, flags, align);
+ 
+ 	if (ret) {
+ 		if (!(heap->flags & ION_HEAP_FLAG_DEFER_FREE))
+ 			goto err2;
+ 
+ 		ion_heap_freelist_drain(heap, 0);
+-		ret = heap->ops->allocate(heap, buffer, len, flags);
++		ret = heap->ops->allocate(heap, buffer, len, flags, align);
+ 		if (ret)
+ 			goto err2;
+ 	}
+@@ -390,7 +391,10 @@ static const struct dma_buf_ops dma_buf_ops = {
+ 	.unmap = ion_dma_buf_kunmap,
+ };
+ 
+-int ion_alloc(size_t len, unsigned int heap_id_mask, unsigned int flags)
++int ion_alloc(size_t len,
++	      unsigned int heap_id_mask,
++	      unsigned int flags,
++	      unsigned int align)
+ {
+ 	struct ion_device *dev = internal_dev;
+ 	struct ion_buffer *buffer = NULL;
+@@ -417,7 +421,7 @@ int ion_alloc(size_t len, unsigned int heap_id_mask, unsigned int flags)
+ 		/* if the caller didn't specify this heap id */
+ 		if (!((1 << heap->id) & heap_id_mask))
+ 			continue;
+-		buffer = ion_buffer_create(heap, dev, len, flags);
++		buffer = ion_buffer_create(heap, dev, len, flags, align);
+ 		if (!IS_ERR(buffer))
+ 			break;
+ 	}
+diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
+index f5f9cd6..0c161d2 100644
+--- a/drivers/staging/android/ion/ion.h
++++ b/drivers/staging/android/ion/ion.h
+@@ -123,8 +123,10 @@ struct ion_device {
+  */
+ struct ion_heap_ops {
+ 	int (*allocate)(struct ion_heap *heap,
+-			struct ion_buffer *buffer, unsigned long len,
+-			unsigned long flags);
++			struct ion_buffer *buffer,
++			unsigned long len,
++			unsigned long flags,
++			unsigned int align);
+ 	void (*free)(struct ion_buffer *buffer);
+ 	void * (*map_kernel)(struct ion_heap *heap, struct ion_buffer *buffer);
+ 	void (*unmap_kernel)(struct ion_heap *heap, struct ion_buffer *buffer);
+@@ -228,7 +230,8 @@ int ion_heap_pages_zero(struct page *page, size_t size, pgprot_t pgprot);
+ 
+ int ion_alloc(size_t len,
+ 	      unsigned int heap_id_mask,
+-	      unsigned int flags);
++	      unsigned int flags,
++	      unsigned int align);
+ 
+ /**
+  * ion_heap_init_shrinker
+diff --git a/drivers/staging/android/ion/ion_carveout_heap.c b/drivers/staging/android/ion/ion_carveout_heap.c
+index fee7650..deae9dd 100644
+--- a/drivers/staging/android/ion/ion_carveout_heap.c
++++ b/drivers/staging/android/ion/ion_carveout_heap.c
+@@ -59,7 +59,8 @@ static void ion_carveout_free(struct ion_heap *heap, phys_addr_t addr,
+ static int ion_carveout_heap_allocate(struct ion_heap *heap,
+ 				      struct ion_buffer *buffer,
+ 				      unsigned long size,
+-				      unsigned long flags)
++				      unsigned long flags,
++				      unsigned int align)
+ {
+ 	struct sg_table *table;
+ 	phys_addr_t paddr;
+diff --git a/drivers/staging/android/ion/ion_chunk_heap.c b/drivers/staging/android/ion/ion_chunk_heap.c
+index 102c093..15f9518 100644
+--- a/drivers/staging/android/ion/ion_chunk_heap.c
++++ b/drivers/staging/android/ion/ion_chunk_heap.c
+@@ -35,7 +35,8 @@ struct ion_chunk_heap {
+ static int ion_chunk_heap_allocate(struct ion_heap *heap,
+ 				   struct ion_buffer *buffer,
+ 				   unsigned long size,
+-				   unsigned long flags)
++				   unsigned long flags,
++				   unsigned int align)
+ {
+ 	struct ion_chunk_heap *chunk_heap =
+ 		container_of(heap, struct ion_chunk_heap, heap);
+diff --git a/drivers/staging/android/ion/ion_cma_heap.c b/drivers/staging/android/ion/ion_cma_heap.c
+index 86196ff..f3f8deb 100644
+--- a/drivers/staging/android/ion/ion_cma_heap.c
++++ b/drivers/staging/android/ion/ion_cma_heap.c
+@@ -32,25 +32,31 @@ struct ion_cma_heap {
+ #define to_cma_heap(x) container_of(x, struct ion_cma_heap, heap)
+ 
+ /* ION CMA heap operations functions */
+-static int ion_cma_allocate(struct ion_heap *heap, struct ion_buffer *buffer,
++static int ion_cma_allocate(struct ion_heap *heap,
++			    struct ion_buffer *buffer,
+ 			    unsigned long len,
+-			    unsigned long flags)
++			    unsigned long flags,
++			    unsigned int align)
+ {
+ 	struct ion_cma_heap *cma_heap = to_cma_heap(heap);
+ 	struct sg_table *table;
+ 	struct page *pages;
+ 	unsigned long size = PAGE_ALIGN(len);
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+-	unsigned long align = get_order(size);
++	int order = get_order(align);
+ 	int ret;
+ 
+-	if (align > CONFIG_CMA_ALIGNMENT)
+-		align = CONFIG_CMA_ALIGNMENT;
++	/* CMA allocation alignment is in PAGE_SIZE order */
++	if (order > CONFIG_CMA_ALIGNMENT)
++		order = CONFIG_CMA_ALIGNMENT;
+ 
+-	pages = cma_alloc(cma_heap->cma, nr_pages, align, GFP_KERNEL);
++	pages = cma_alloc(cma_heap->cma, nr_pages, order, GFP_KERNEL);
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
++	pr_debug("Allocated block of %lu pages starting at 0x%lX",
++		 nr_pages, page_to_pfn(pages));
++
+ 	table = kmalloc(sizeof(*table), GFP_KERNEL);
+ 	if (!table)
+ 		goto err;
+diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
+index 4dc5d7a..b5a1720 100644
+--- a/drivers/staging/android/ion/ion_system_heap.c
++++ b/drivers/staging/android/ion/ion_system_heap.c
+@@ -125,7 +125,8 @@ static struct page *alloc_largest_available(struct ion_system_heap *heap,
+ static int ion_system_heap_allocate(struct ion_heap *heap,
+ 				    struct ion_buffer *buffer,
+ 				    unsigned long size,
+-				    unsigned long flags)
++				    unsigned long flags,
++				    unsigned int align)
+ {
+ 	struct ion_system_heap *sys_heap = container_of(heap,
+ 							struct ion_system_heap,
+@@ -363,7 +364,8 @@ device_initcall(ion_system_heap_create);
+ static int ion_system_contig_heap_allocate(struct ion_heap *heap,
+ 					   struct ion_buffer *buffer,
+ 					   unsigned long len,
+-					   unsigned long flags)
++					   unsigned long flags,
++					   unsigned int align)
+ {
+ 	int order = get_order(len);
+ 	struct page *page;
+diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
+index 9e21451..b093edd 100644
+--- a/drivers/staging/android/uapi/ion.h
++++ b/drivers/staging/android/uapi/ion.h
+@@ -70,9 +70,8 @@ enum ion_heap_type {
+  * @len:		size of the allocation
+  * @heap_id_mask:	mask of heap ids to allocate from
+  * @flags:		flags passed to heap
+- * @handle:		pointer that will be populated with a cookie to use to
+- *			refer to this allocation
+- *
++ * @fd:		file descriptor associated with newly allocated buffer
++ * @align:	allocation alignment
+  * Provided by userspace as an argument to the ioctl
+  */
+ struct ion_allocation_data {
+@@ -80,7 +79,7 @@ struct ion_allocation_data {
+ 	__u32 heap_id_mask;
+ 	__u32 flags;
+ 	__u32 fd;
+-	__u32 unused;
++	__u32 align;
+ };
+ 
+ #define MAX_HEAP_NAME			32
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.7.4
