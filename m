@@ -1,74 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751052AbeBJCdn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 21:33:43 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:52134 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeBJCdm (ORCPT
+        id S1751102AbeBJCly (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 21:41:54 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44787 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751003AbeBJClw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 21:33:42 -0500
-Subject: Re: [PATCH V2 0/6]nvme-pci: fixes on nvme_timeout and
- nvme_dev_disable
-To: Keith Busch <keith.busch@intel.com>
-Cc: axboe@fb.com, linux-kernel@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
-        hch@lst.de
-References: <1517822415-11710-1-git-send-email-jianchao.w.wang@oracle.com>
- <073ce416-fd26-b41a-187d-1db9210c48b0@grimberg.me>
- <20180208175606.GD5039@localhost.localdomain>
- <db5fe34b-3ffb-a658-d4d6-a1c619b2d590@oracle.com>
- <20180209171231.GB6970@localhost.localdomain>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <de6fd2ac-fc69-1b3b-c206-7abfce24ac70@oracle.com>
-Date: Sat, 10 Feb 2018 10:32:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180209171231.GB6970@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8800 signatures=668666
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802100029
+        Fri, 9 Feb 2018 21:41:52 -0500
+X-Google-Smtp-Source: AH8x225TpN/ZGFDLyyB+ynDG87S2BdoCs54pWDpIMh/a1phx1oqccnq25dnXSN9moryqRiEybXcN4Q==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        viresh.kumar@linaro.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 00/11] Add clock driver for Actions S900 SoC
+Date: Sat, 10 Feb 2018 08:11:09 +0530
+Message-Id: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keith
+This patchset adds clock support for Actions Semi OWL series
+S900 SoC with relevant clock bindings and device tree data.
 
-Thanks for your kindly response here.
-That's really appreciated.
+Driver has been validated on Bubblegum-96 board.
 
-On 02/10/2018 01:12 AM, Keith Busch wrote:
-> On Fri, Feb 09, 2018 at 09:50:58AM +0800, jianchao.wang wrote:
->>
->> if we set NVME_REQ_CANCELLED and return BLK_EH_HANDLED as the RESETTING case,
->> nvme_reset_work will hang forever, because no one could complete the entered requests.
-> 
-> Except it's no longer in the "RESETTING" case since you added the
-> "CONNECTING" state, so that's already broken for other reasons...
-> 
+Thanks,
+Mani
 
-Yes, but as your patch, we have to fail the IOs and even kill the controller.
-In fact, up to nvme_wait_freeze in nvme_reset_work, the RECONNECTING state has been completed.
-We even could say it is in LIVE state. Maybe we should recover the controller again instead
-of fail the IOs and kill the controller.
+Changes in V3:
 
-On the other hand, can you share with me why we cannot use blk_set_preempt_only to replace
-blk_freeze_queue ? we just want to gate the new bios out of generic_make_request and we 
-needn't use the preempt requests.
+* Completely refactored the clock driver based on sunxi-ng
+  clock structure
+* Removed all owl_ prefixed functions for registering the
+  clock driver and used the registration functions directly
+* Moved to SPDX based license tag
+* Removed module dependencies from the driver
+* Made I2C clocks as simple gate clocks due to the lack of
+  information about factor rates
+* Added Ack from Rob for DT bindings
+* Sourced CMU clock for UART5
 
-Looking forward your advice and directive.
+Changes in V2: (https://lkml.org/lkml/2017/11/6/840)
 
-Thanks
-Jianchao
+* Changed the directory structure to actions/ and used owl- prefix
+  for sources.
+* Fixed MAINTAINERS and added Andreas as Designated Reviewer (R:).
+* Introduced new Kconfig for S900 code part (CONFIG_CLK_OWL_S900).
+* Changed the license from GPLv2 to GPLv2+.
+* Moved fixed clock sources to DT
+* Changed clock-controller node name to cmu in DT
+* Added clocks property to cmu node in DT
+* Changed compatible property value to "actions,s900-cmu"
+* Fixed example UART controller node in documentation
+* Fixed tab vs space issue
 
+Changes in V1: (https://lkml.org/lkml/2017/10/31/808)
 
-> _______________________________________________
-> Linux-nvme mailing list
-> Linux-nvme@lists.infradead.org
-> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=UqKQMB3A2ppfm2sN7PyisX0xTtXKsHlTBwjsS18qVx8&s=A2VMSm9IjQQXxM7foB6VUiRHLs-nIREF2_kMstwxlgw&e=
-> 
+* Addressed last year's review comments from Stephen
+- https://patchwork.kernel.org/patch/9254471/
+
+Manivannan Sadhasivam (11):
+  dt-bindings: clock: Add Actions S900 clock bindings
+  arm64: dts: actions: Add S900 clock management unit nodes
+  arm64: dts: actions: Source CMU clock for UART5
+  clk: actions: Add common clock driver support
+  clk: actions: Add gate clock support
+  clk: actions: Add mux clock support
+  clk: actions: Add divider clock support
+  clk: actions: Add factor clock support
+  clk: actions: Add composite clock support
+  clk: actions: Add pll clock support
+  clk: actions: Add S900 SoC clock support
+
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |   8 +-
+ arch/arm64/boot/dts/actions/s900.dtsi              |  20 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/actions/Kconfig                        |  14 +
+ drivers/clk/actions/Makefile                       |  12 +
+ drivers/clk/actions/owl-common.c                   |  84 +++
+ drivers/clk/actions/owl-common.h                   |  40 ++
+ drivers/clk/actions/owl-composite.c                | 155 +++++
+ drivers/clk/actions/owl-composite.h                | 101 ++++
+ drivers/clk/actions/owl-divider.c                  |  94 +++
+ drivers/clk/actions/owl-divider.h                  |  75 +++
+ drivers/clk/actions/owl-factor.c                   | 222 +++++++
+ drivers/clk/actions/owl-factor.h                   |  83 +++
+ drivers/clk/actions/owl-gate.c                     |  77 +++
+ drivers/clk/actions/owl-gate.h                     |  73 +++
+ drivers/clk/actions/owl-mux.c                      |  60 ++
+ drivers/clk/actions/owl-mux.h                      |  61 ++
+ drivers/clk/actions/owl-pll.c                      | 194 ++++++
+ drivers/clk/actions/owl-pll.h                      |  92 +++
+ drivers/clk/actions/owl-s900.c                     | 666 +++++++++++++++++++++
+ drivers/clk/actions/owl-s900.h                     |  61 ++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 139 +++++
+ 24 files changed, 2373 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 drivers/clk/actions/Kconfig
+ create mode 100644 drivers/clk/actions/Makefile
+ create mode 100644 drivers/clk/actions/owl-common.c
+ create mode 100644 drivers/clk/actions/owl-common.h
+ create mode 100644 drivers/clk/actions/owl-composite.c
+ create mode 100644 drivers/clk/actions/owl-composite.h
+ create mode 100644 drivers/clk/actions/owl-divider.c
+ create mode 100644 drivers/clk/actions/owl-divider.h
+ create mode 100644 drivers/clk/actions/owl-factor.c
+ create mode 100644 drivers/clk/actions/owl-factor.h
+ create mode 100644 drivers/clk/actions/owl-gate.c
+ create mode 100644 drivers/clk/actions/owl-gate.h
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
+ create mode 100644 drivers/clk/actions/owl-s900.c
+ create mode 100644 drivers/clk/actions/owl-s900.h
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
+
+-- 
+2.14.1
