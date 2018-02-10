@@ -1,172 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751091AbeBJBln (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 20:41:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750961AbeBJBll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 20:41:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 599C62172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Fri, 9 Feb 2018 17:41:40 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Message-ID: <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+        id S1752159AbeBJBmD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 20:42:03 -0500
+Received: from us-smtp-delivery-194.mimecast.com ([216.205.24.194]:22768 "EHLO
+        us-smtp-delivery-194.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751317AbeBJBl7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 20:41:59 -0500
+From: Trond Myklebust <trondmy@primarydata.com>
+To: "thiago.becker@gmail.com" <thiago.becker@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+CC: "bfields@fieldses.org" <bfields@fieldses.org>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "jlayton@kernel.org" <jlayton@kernel.org>
+Subject: Re: [PATCH] sunrpc: Add task's xid to 'not responding' messages on
+ call_timeout
+Thread-Topic: [PATCH] sunrpc: Add task's xid to 'not responding' messages on
+ call_timeout
+Thread-Index: AQHTogt7Yp0+W1/3xkaHrbuszyHK96Oc3I8A
+Date: Sat, 10 Feb 2018 01:41:55 +0000
+Message-ID: <1518226912.22856.3.camel@primarydata.com>
+References: <20180210010628.19792-1-thiago.becker@gmail.com>
+In-Reply-To: <20180210010628.19792-1-thiago.becker@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [50.36.175.81]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR11MB1866;7:A60BCudFXQiSucuCHe1qK3x5Gorn+KQs+sWwW1TpXNh8wX5KZVDX+hQ4jfp3M9lz5+gY1G90e9KKAwpjWqJJ1N6QoOY+02uCwe2qT72Ow6lJEyfhQcZpOXlHhmWA+0C9AOTJ8hNuBlGeY0BLmqj0RsAAB7TLuWq10XSy83PtKY7Wyk0avOU0icdvwSxA3Hdrr4igO9jFm1c287C0sa+DT8w6dZDS15cO4Oi6ol57iAWcNxT6t1+KEdBeJ6A3+SPV;20:SjZ22DTCFbb9js91zAmbWxXM/3gQ9M+D7CRtYZDCM7Rfvank62sXhn6rlxkHM0J//1nPRzn7Xit7kz4Xm4sfRdac6rV/Y34ou/qCMC6kZl7BLInTPupSGNWSPlSrBI3n8DcAq/LFQ/orUcICHD2yZKzU0AWEuyztYZCOPw4Tcms=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: 1b35bf6d-6d02-4f96-260a-08d570277797
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM5PR11MB1866;
+x-ms-traffictypediagnostic: DM5PR11MB1866:
+x-microsoft-antispam-prvs: <DM5PR11MB18668132E4B9FF8441F01917BEF10@DM5PR11MB1866.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(158342451672863)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231101)(2400082)(944501161)(6041288)(2016111802025)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:DM5PR11MB1866;BCL:0;PCL:0;RULEID:;SRVR:DM5PR11MB1866;
+x-forefront-prvs: 057906460E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(376002)(346002)(39830400003)(377424004)(199004)(189003)(2950100002)(305945005)(86362001)(186003)(26005)(77096007)(66066001)(97736004)(68736007)(6246003)(106356001)(3846002)(6116002)(2501003)(2201001)(76176011)(6506007)(15650500001)(7736002)(102836004)(59450400001)(14454004)(5660300001)(103116003)(229853002)(4326008)(478600001)(3660700001)(316002)(8676002)(54906003)(110136005)(25786009)(6486002)(81156014)(3280700002)(8936002)(2906002)(39060400002)(81166006)(6512007)(99286004)(6436002)(105586002)(36756003)(2900100001)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR11MB1866;H:DM5PR11MB0075.namprd11.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: So5B6+9brR02sygncNZgKQzCgEC1lPaM19AnZtllBttG/AEIadFAaZeQapX9A9uTdT7M1rQ5bOJjYq8ApKdsbw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-ID: <A03138769803AC41BEDC5211D4702DFF@namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+X-OriginatorOrg: primarydata.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b35bf6d-6d02-4f96-260a-08d570277797
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2018 01:41:55.3816
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 03193ed6-8726-4bb3-a832-18ab0d28adb7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1866
+X-MC-Unique: uN8hzAwPP5KlWoy6H2jp-Q-1
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1A1g97n007597
 
-On 02/01, Chao Yu wrote:
+On Fri, 2018-02-09 at 23:06 -0200, Thiago Rafael Becker wrote:
+> When investigating reasons for nfs failures, packet dumps arei
+> eventually used.
+> Finding the rpc that generated the failure is done by comparing all
+> sent
+> rpc calls and all received rpc replies for those which are
+> unanswered,
+> which is prone to errors like
+> - Slow server responses
+> - Incomplete and uncaptured packets in the packet dump
+> - The heuristics used to inspect packets failing to interpret one
 > 
+> This patch adds the xid of rpc_tasks to the 'not responding' messages
+> in call_timeout to make these analysis more precise.
 > 
-> On 2018/2/1 6:15, Jaegeuk Kim wrote:
-> > On 01/31, Chao Yu wrote:
-> >> On 2018/1/31 10:02, Jaegeuk Kim wrote:
-> >>> What if we want to add more entries in addition to node_checksum? Do we have
-> >>> to add a new feature flag at every time? How about adding a layout value instead
-> >>
-> >> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
-> >> every time, otherwise, w/ extra_nsize only, in current image, we can know a
-> >> valid range of extended area in node block, but we don't know which
-> >> fields/features are valid/enabled or not.
-> >>
-> >> One more thing is that if we can add one feature flag for each field, we got one
-> >> more chance to disable it dynamically.
-> >>
-> >>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
-> >>>
-> >>>
-> >>> What does 1017 mean? We need to make this structure more flexibly for new
-> >>
-> >> Yes, using raw 1017 is not appropriate here.
-> >>
-> >>> entries. Like this?
-> >>> 		union {
-> >>> 			struct node_v1;
-> >>> 			struct node_v2;
-> >>> 			struct node_v3;
-> >>> 			...
-> >>> 			struct direct_node dn;
-> >>> 			struct indirect_node in;
-> >>> 		};
-> >>> 	};
-> >>>
-> >>> 	struct node_v1 {
-> >>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> >>> 		__le32 node_checksum;
-> >>> 	}
-> >>>
-> >>> 	struct node_v2 {
-> >>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
-> >>
-> >> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
-> >> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
-> >>
-> >> Or we can define V2_NSIZE as 8, but if there comes more and more extended
-> >> fields, node version count can be a large number, it results in complicated
-> >> version recognization and handling.
-> >>
-> >> One more question is how can we control which fields are valid or not in
-> >> comp[Vx_NSIZE]?
-> >>
-> >>
-> >> Anyway, what I'm thinking is maybe we can restructure layout of node block like
-> >> the one used by f2fs_inode:
-> >>
-> >> struct f2fs_node {
-> >> 	union {
-> >> 		struct f2fs_inode i;
-> >> 		union {
-> >> 			struct {
-> >> 				__le32 node_checksum;
-> >> 				__le32 feature_field_1;
-> >> 				__le32 feature_field_2;
-> >> 				....
-> >> 				__le32 addr[];
-> >> 				
-> >> 			};
-> >> 			struct direct_node dn;
-> >> 			struct indirect_node in;
-> >> 		};
-> >> 	};
-> >> 	struct node_footer footer;
-> >> } __packed;
-> >>
-> >> Moving all extended fields to the head of f2fs_node, so we don't have to use
-> >> macro to indicate actual size of addr.
-> > 
-> > Thinking what'd be the best way. My concern is, once getting more entries, we
+> Signed-off-by: Thiago Rafael Becker <thiago.becker@gmail.com>
+> ---
+>  net/sunrpc/clnt.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> OK, I think we need more discussion.. ;)
-> 
-> > can't set each of features individually. Like the second entry should have
-> 
-> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
-> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
-> example:
-> 
-> #define F2FS_NODE_CHECKSUM	0x0001
-> #define F2FS_NODE_FIELD1	0x0002
-> #define F2FS_NODE_FIELD2	0x0004
-> 
-> 	union {
-> 		struct {
-> 			__le32 node_checksum;
-> 			__le32 field_1;
-> 			__le32 field_2;
-> 			....
-> 			__le32 addr[];
-> 		};
-> 		struct direct_node dn;
-> 		struct indirect_node in;
-> 	};
-> 
-> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
-> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
-> 
-> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
-> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+> diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+> index e2a4184f3c5d..83c8aca951f4 100644
+> --- a/net/sunrpc/clnt.c
+> +++ b/net/sunrpc/clnt.c
+> @@ -2214,9 +2214,10 @@ call_timeout(struct rpc_task *task)
+>  	}
+>  	if (RPC_IS_SOFT(task)) {
+>  		if (clnt->cl_chatty) {
+> -			printk(KERN_NOTICE "%s: server %s not
+> responding, timed out\n",
+> +			printk(KERN_NOTICE "%s: server %s not
+> responding, timed out (xid: %x)\n",
+>  				clnt->cl_program->name,
+> -				task->tk_xprt->servername);
+> +				task->tk_xprt->servername,
+> +				be32_to_cpu(task->tk_rqstp-
+> >rq_xid));
+>  		}
+>  		if (task->tk_flags & RPC_TASK_TIMEOUT)
+>  			rpc_exit(task, -ETIMEDOUT);
+> @@ -2228,9 +2229,10 @@ call_timeout(struct rpc_task *task)
+>  	if (!(task->tk_flags & RPC_CALL_MAJORSEEN)) {
+>  		task->tk_flags |= RPC_CALL_MAJORSEEN;
+>  		if (clnt->cl_chatty) {
+> -			printk(KERN_NOTICE "%s: server %s not
+> responding, still trying\n",
+> +			printk(KERN_NOTICE "%s: server %s not
+> responding, still trying (xid: %x)\n",
+>  			clnt->cl_program->name,
+> -			task->tk_xprt->servername);
+> +			task->tk_xprt->servername,
+> +			be32_to_cpu(task->tk_rqstp->rq_xid));
+>  		}
+>  	}
+>  	rpc_force_rebind(clnt);
 
-So, that's why I thought we may need a sort of each formats.
+NACK. We should not be logging internal information such as XIDs as
+KERN_NOTICE messages. If you want this information, you can extract it
+yourself; there are already plenty of ways to do so as a privileged
+user.
 
-> 
-> Any thoughts?
-> 
-> Thanks,
-> 
-> > enabled node_checksum, which we may not want to do.
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>> 		__le32 comp[V2_NSIZE];
-> >>> 	}
-> >>> 	...
-> >>>
-> >>>> +			};
-> >>>> +			struct direct_node dn;
-> >>>> +			struct indirect_node in;
-> >>>> +		};
-> >>>>  	};
-> >>>>  	struct node_footer footer;
-> >>>>  } __packed;
-> >>>> -- 
-> >>>> 2.15.0.55.gc2ece9dc4de6
-> >>>
-> >>> .
-> >>>
+-- 
+Trond Myklebust
+Linux NFS client maintainer, PrimaryData
+trond.myklebust@primarydata.com
