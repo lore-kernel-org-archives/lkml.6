@@ -1,119 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751040AbeBJIXp (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 03:23:45 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36332 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeBJIXo (ORCPT
+        id S1751049AbeBJI3e (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 03:29:34 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:36312 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeBJI3c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 03:23:44 -0500
-X-Google-Smtp-Source: AH8x227C86YUszVTUWe4waFJkPxIzO/qu19JV9HhkYuKjwnqTxPVrZpk++HSfZRcoz0Y8MzAuKUFrw==
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: [PATCHv2 1/2] zsmalloc: introduce zs_huge_object() function
-Date: Sat, 10 Feb 2018 17:23:21 +0900
-Message-Id: <20180210082321.17798-1-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
-References: <20180207092919.19696-2-sergey.senozhatsky@gmail.com>
+        Sat, 10 Feb 2018 03:29:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 93AEB2F0586
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Ivan Kozik <ivan@ludios.org>,
+        169364@studenti.unimore.it, holger@applied-asynchrony.com,
+        Serena Ziviani <ziviani.serena@gmail.com>
+Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
+Date: Sat, 10 Feb 2018 09:29:29 +0100
+Message-ID: <6394471.U0O273vb9H@natalenko.name>
+In-Reply-To: <1518197379.26824.31.camel@gmx.de>
+References: <20180207211920.6343-1-paolo.valente@linaro.org> <b5d4a3bc8946db0a696e8398b68adba0@natalenko.name> <1518197379.26824.31.camel@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1518251370;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
+        bh=RNdKgTt6AOokXZ/f/IS+/NaRzy7RXDO8/2yWd5Q+LWs=;
+        b=RSW5LYsr+nQlWv4UFqfvkgxh5EvM1VAmhQp4OSVJDbFrMgRZHQytozUfPCOgolNHfAi3fH
+        j9VtzEg6VHbiwuzLFpNrkuA8orP4oyL4e3cXkgWcwixxPbty/2sc59Fe1fr/rS0tor0B3W
+        zp1UFm4lHl36P8xKRAJ/5gwJckd3PJM=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1518251370; a=rsa-sha256;
+        cv=none;
+        b=Yv/vbewZunKfLOFOmwEWpfzKhGudsfI7Nl98k7IZBlbmRcQtUVdip40XUpV6DRSkgWCZ4ZUaifVRrJzVaEbeaEp/aiwm7JZELIWFUQN/831wIX7daz1Pk2gW0iLDgY+pFgkfvmxoPbzhOfKD57DtR+Umovt50pkd6+u0aDXZRjo=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1A8TcJL027737
 
-Not every object can be share its zspage with other objects, e.g.
-when the object is as big as zspage or nearly as big a zspage.
-For such objects zsmalloc has a so called huge class - every object
-which belongs to huge class consumes the entire zspage (which
-consists of a physical page). On x86_64, PAGE_SHIFT 12 box, the
-first non-huge class size is 3264, so starting down from size 3264,
-objects can share page(-s) and thus minimize memory wastage.
+Hi.
 
-ZRAM, however, has its own statically defined watermark for huge
-objects - "3 * PAGE_SIZE / 4 = 3072", and forcibly stores every
-object larger than this watermark (3072) as a PAGE_SIZE object,
-in other words, to a huge class, while zsmalloc can keep some of
-those objects in non-huge classes. This results in increased
-memory consumption.
+On pátek 9. února 2018 18:29:39 CET Mike Galbraith wrote:
+> On Fri, 2018-02-09 at 14:21 +0100, Oleksandr Natalenko wrote:
+> > In addition to this I think it should be worth considering CC'ing Greg
+> > to pull this fix into 4.15 stable tree.
+> 
+> This isn't one he can cherry-pick, some munging required, in which case
+> he usually wants a properly tested backport.
+> 
+> 	-Mike
 
-zsmalloc knows better if the object is huge or not. Introduce
-zs_huge_object() function which tells if the given object can be
-stored in one of non-huge classes or not. This will let us to drop
-ZRAM's huge object watermark and fully rely on zsmalloc when we
-decide if the object is huge.
+Maybe, this could be a good opportunity to push all the pending BFQ patches 
+into the stable 4.15 branch? Because IIUC currently BFQ in 4.15 is just 
+unusable.
 
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Paolo?
+
 ---
- include/linux/zsmalloc.h |  2 ++
- mm/zsmalloc.c            | 26 ++++++++++++++++++++++++++
- 2 files changed, 28 insertions(+)
 
-diff --git a/include/linux/zsmalloc.h b/include/linux/zsmalloc.h
-index 57a8e98f2708..9a1baf673cc1 100644
---- a/include/linux/zsmalloc.h
-+++ b/include/linux/zsmalloc.h
-@@ -47,6 +47,8 @@ void zs_destroy_pool(struct zs_pool *pool);
- unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t flags);
- void zs_free(struct zs_pool *pool, unsigned long obj);
- 
-+bool zs_huge_object(size_t sz);
-+
- void *zs_map_object(struct zs_pool *pool, unsigned long handle,
- 			enum zs_mapmode mm);
- void zs_unmap_object(struct zs_pool *pool, unsigned long handle);
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index c3013505c305..922180183ca3 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -192,6 +192,7 @@ static struct vfsmount *zsmalloc_mnt;
-  * (see: fix_fullness_group())
-  */
- static const int fullness_threshold_frac = 4;
-+static size_t zs_huge_class_size;
- 
- struct size_class {
- 	spinlock_t lock;
-@@ -1417,6 +1418,28 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
- }
- EXPORT_SYMBOL_GPL(zs_unmap_object);
- 
-+/**
-+ * zs_huge_object() - Test if a compressed object's size is too big for normal
-+ *                    zspool classes and it shall be stored in a huge class.
-+ * @sz: Size of the compressed object (in bytes).
-+ *
-+ * The function checks if the object's size falls into huge_class
-+ * area. We must take handle size into account and test the actual
-+ * size we are going to use, because zs_malloc() unconditionally
-+ * adds %ZS_HANDLE_SIZE before it performs %size_class lookup.
-+ *
-+ * Context: Any context.
-+ *
-+ * Return:
-+ * * true  - The object's size is too big, it will be stored in a huge class.
-+ * * false - The object will be store in normal zspool classes.
-+ */
-+bool zs_huge_object(size_t sz)
-+{
-+	return sz + ZS_HANDLE_SIZE >= zs_huge_class_size;
-+}
-+EXPORT_SYMBOL_GPL(zs_huge_object);
-+
- static unsigned long obj_malloc(struct size_class *class,
- 				struct zspage *zspage, unsigned long handle)
- {
-@@ -2404,6 +2427,9 @@ struct zs_pool *zs_create_pool(const char *name)
- 			INIT_LIST_HEAD(&class->fullness_list[fullness]);
- 
- 		prev_class = class;
-+		if (pages_per_zspage == 1 && objs_per_zspage == 1
-+				&& !zs_huge_class_size)
-+			zs_huge_class_size = size;
- 	}
- 
- 	/* debug only, don't abort if it fails */
--- 
-2.16.1
+block, bfq: add requeue-request hook
+bfq-iosched: don't call bfqg_and_blkg_put for !CONFIG_BFQ_GROUP_IOSCHED
+block, bfq: release oom-queue ref to root group on exit
+block, bfq: put async queues for root bfq groups too
+block, bfq: limit sectors served with interactive weight raising
+block, bfq: limit tags for writes and async I/O
+block, bfq: increase threshold to deem I/O as random
+block, bfq: remove superfluous check in queue-merging setup
+block, bfq: let a queue be merged only shortly after starting I/O
+block, bfq: check low_latency flag in bfq_bfqq_save_state()
+block, bfq: add missing rq_pos_tree update on rq removal
+block, bfq: fix occurrences of request finish method's old name
+block, bfq: consider also past I/O in soft real-time detection
+block, bfq: remove batches of confusing ifdefs
