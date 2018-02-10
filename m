@@ -1,97 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeBJJTt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 04:19:49 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:42447 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbeBJJTp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 04:19:45 -0500
-X-Google-Smtp-Source: AH8x225LeylKOALqTMQDp1KUuubMd6T0ru/ja6itstECwEl+DTOvxKm40Y7gsFcAtPV1AsCUJPSAlw==
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v2 7/7] watchdog: coh901327: make use of timeout-secs provided in devicetree
-Date: Sat, 10 Feb 2018 10:19:11 +0100
-Message-Id: <20180210091911.3644-7-marcus.folkesson@gmail.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180210091911.3644-1-marcus.folkesson@gmail.com>
-References: <20180210091911.3644-1-marcus.folkesson@gmail.com>
+        id S1752284AbeBJJUJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 04:20:09 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:40480 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750884AbeBJJUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 04:20:08 -0500
+Date: Sat, 10 Feb 2018 10:20:03 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Robert Abel <rabel@robertabel.eu>
+Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
+ graphics command
+Message-ID: <20180210092003.GA20377@1wt.eu>
+References: <20180209235012.4993-1-rabel@robertabel.eu>
+ <20180209235012.4993-2-rabel@robertabel.eu>
+ <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-watchdog_init_timeout() will allways pick timeout_param since it
-defaults to a valid timeout.
+Hi Miguel,
 
-Following best practice described in
-Documentation/watchdog/watchdog-kernel-api.txt to make use of
-the parameter logic.
+On Sat, Feb 10, 2018 at 09:58:44AM +0100, Miguel Ojeda wrote:
+> On Sat, Feb 10, 2018 at 12:50 AM, Robert Abel <rabel@robertabel.eu> wrote:
+> > The graphics command expects 16 hexadecimal literals, but would allow characters in range [0-9a-zA-Z] instead of [0-9a-fA-F].
+> >
+> > Signed-off-by: Robert Abel <rabel@robertabel.eu>
+> > ---
+> >  drivers/auxdisplay/charlcd.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+> > index 642afd88870b..324d02f9f1c5 100644
+> > --- a/drivers/auxdisplay/charlcd.c
+> > +++ b/drivers/auxdisplay/charlcd.c
+> > @@ -441,9 +441,9 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
+> >                         shift ^= 4;
+> >                         if (*esc >= '0' && *esc <= '9') {
+> >                                 value |= (*esc - '0') << shift;
+> > -                       } else if (*esc >= 'A' && *esc <= 'Z') {
+> > +                       } else if (*esc >= 'A' && *esc <= 'F') {
+> >                                 value |= (*esc - 'A' + 10) << shift;
+> > -                       } else if (*esc >= 'a' && *esc <= 'z') {
+> > +                       } else if (*esc >= 'a' && *esc <= 'f') {
+> 
+> Willy, Geert: this seems obvious, but do you know if the broader range
+> was intended for some reason?
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
+No, I think it was simply a brain fart from me 14 years ago, as I can
+find it as well in the original 0.9.0 patch for kernel 2.4!
 
-v2:
-	- Set .timeout in coh901327_wdt structure declaration.
-	- Set .min_timeout to 1 instead of 0. I could not find a datasheet
-	  for coh901327, so I'm not sure if 0 is valid. However, 0 seems
-		  wrong to me and most driver has 1 as min value. If it should
-		  be 0, please let me know and I have to set another initial
-		  value for margin.
+Ack from me on this patch.
 
- drivers/watchdog/coh901327_wdt.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
-index 4410337f4f7f..5d8eb9a30879 100644
---- a/drivers/watchdog/coh901327_wdt.c
-+++ b/drivers/watchdog/coh901327_wdt.c
-@@ -67,7 +67,9 @@
- #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
- 
- /* Default timeout in seconds = 1 minute */
--static unsigned int margin = 60;
-+#define U300_WDOG_DEFAULT_TIMEOUT					60
-+
-+static unsigned int margin;
- static int irq;
- static void __iomem *virtbase;
- static struct device *parent;
-@@ -235,8 +237,9 @@ static struct watchdog_device coh901327_wdt = {
- 	 * timeout register is max
- 	 * 0x7FFF = 327670ms ~= 327s.
- 	 */
--	.min_timeout = 0,
-+	.min_timeout = 1,
- 	.max_timeout = 327,
-+	.timeout = U300_WDOG_DEFAULT_TIMEOUT,
- };
- 
- static int __exit coh901327_remove(struct platform_device *pdev)
-@@ -315,9 +318,7 @@ static int __init coh901327_probe(struct platform_device *pdev)
- 		goto out_no_irq;
- 	}
- 
--	ret = watchdog_init_timeout(&coh901327_wdt, margin, dev);
--	if (ret < 0)
--		coh901327_wdt.timeout = 60;
-+	watchdog_init_timeout(&coh901327_wdt, margin, dev);
- 
- 	coh901327_wdt.parent = dev;
- 	ret = watchdog_register_device(&coh901327_wdt);
--- 
-2.15.1
+Willy
