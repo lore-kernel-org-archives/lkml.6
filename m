@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeBJJUx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 04:20:53 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44650 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeBJJTe (ORCPT
+        id S1751280AbeBJJTb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 04:19:31 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45262 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbeBJJT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 04:19:34 -0500
-X-Google-Smtp-Source: AH8x226MRmI3n+PzGpr6LNKDv2FyGCRf0ljL/BSFYo3iKXAzdtmd4mgCqikOikbRe7MRluAyEbyHGg==
+        Sat, 10 Feb 2018 04:19:28 -0500
+X-Google-Smtp-Source: AH8x226suoG4b+ry9OOgjn0iPfdt/758YTnr0J1YZNJoGwv4pVvv3mVqAHloGFolbuodKq6O3WcU8w==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -25,12 +25,10 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v2 3/7] watchdog: sirfsoc: allow setting timeout in devicetree
-Date: Sat, 10 Feb 2018 10:19:07 +0100
-Message-Id: <20180210091911.3644-3-marcus.folkesson@gmail.com>
+Subject: [PATCH v2 1/7] watchdog: sama5d4: make use of timeout-secs provided in devicetree
+Date: Sat, 10 Feb 2018 10:19:05 +0100
+Message-Id: <20180210091911.3644-1-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180210091911.3644-1-marcus.folkesson@gmail.com>
-References: <20180210091911.3644-1-marcus.folkesson@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -38,48 +36,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 watchdog_init_timeout() will allways pick timeout_param since it
 defaults to a valid timeout.
 
-By following best practice described in
-Documentation/watchdog/watchdog-kernel-api.txt, it also
-let us to set timout-sec property in devicetree.
+Following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt to make use of
+the parameter logic.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
- Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt | 4 ++++
- drivers/watchdog/sirfsoc_wdt.c                             | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/watchdog/sama5d4_wdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt b/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt
-index 9cbc76c89b2b..0dce5e3100b4 100644
---- a/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt
-@@ -5,10 +5,14 @@ Required properties:
- - reg: Address range of tick timer/WDT register set
- - interrupts: interrupt number to the cpu
- 
-+Optional properties:
-+- timeout-sec : Contains the watchdog timeout in seconds
-+
- Example:
- 
- timer@b0020000 {
- 	compatible = "sirf,prima2-tick";
- 	reg = <0xb0020000 0x1000>;
- 	interrupts = <0>;
-+	timeout-sec = <30>;
+diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
+index 0ae947c3d7bc..e6c679383734 100644
+--- a/drivers/watchdog/sama5d4_wdt.c
++++ b/drivers/watchdog/sama5d4_wdt.c
+@@ -33,7 +33,7 @@ struct sama5d4_wdt {
+ 	unsigned long		last_ping;
  };
-diff --git a/drivers/watchdog/sirfsoc_wdt.c b/drivers/watchdog/sirfsoc_wdt.c
-index 4eea351e09b0..ac0c9d2c4aee 100644
---- a/drivers/watchdog/sirfsoc_wdt.c
-+++ b/drivers/watchdog/sirfsoc_wdt.c
-@@ -29,7 +29,7 @@
- #define SIRFSOC_WDT_MAX_TIMEOUT		(10 * 60)	/* 10 mins */
- #define SIRFSOC_WDT_DEFAULT_TIMEOUT	30		/* 30 secs */
  
--static unsigned int timeout = SIRFSOC_WDT_DEFAULT_TIMEOUT;
-+static unsigned int timeout;
+-static int wdt_timeout = WDT_DEFAULT_TIMEOUT;
++static int wdt_timeout;
  static bool nowayout = WATCHDOG_NOWAYOUT;
  
- module_param(timeout, uint, 0);
+ module_param(wdt_timeout, int, 0);
+@@ -212,7 +212,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	wdd = &wdt->wdd;
+-	wdd->timeout = wdt_timeout;
++	wdd->timeout = WDT_DEFAULT_TIMEOUT;
+ 	wdd->info = &sama5d4_wdt_info;
+ 	wdd->ops = &sama5d4_wdt_ops;
+ 	wdd->min_timeout = MIN_WDT_TIMEOUT;
 -- 
 2.15.1
