@@ -1,73 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeBJBnq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 20:43:46 -0500
-Received: from mout.perfora.net ([74.208.4.196]:50729 "EHLO mout.perfora.net"
+        id S1752521AbeBJBnx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 20:43:53 -0500
+Received: from mout.perfora.net ([74.208.4.194]:32773 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751003AbeBJBno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 20:43:44 -0500
+        id S1751003AbeBJBnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 20:43:47 -0500
 From: Marcel Ziswiler <marcel@ziswiler.com>
 To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+Cc: Marcel Ziswiler <marcel@ziswiler.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/6] ARM: dts: tegra: apalis-tk1: add missing as3722 gpio0 configuration
-Date: Sat, 10 Feb 2018 02:38:03 +0100
-Message-Id: <20180210013806.28496-4-marcel@ziswiler.com>
+Subject: [PATCH 0/6] ARM: dts: tegra: apalis-tk1: updates incl. v1.2 hardware support
+Date: Sat, 10 Feb 2018 02:38:00 +0100
+Message-Id: <20180210013806.28496-1-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180210013806.28496-1-marcel@ziswiler.com>
-References: <20180210013806.28496-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K0:FQCRpJ63UOZD+pIhM5iivJMBISPsYCSlvsCAUg6w3LJ0QIJ5MI4
- DvPkps0wdZSfYb++bFFW1+VraQ7A/yXO4flr0x2UP9DNVZz7GgDfHAROFHGx7pEJIF5UkFi
- tPGyIVruzF3fcDX4bwtFfw7Z3+0cjH0DhAPE89QFoSA/1/LH9tr9AXZdpffyXDHKLyZlRHZ
- hiHnpBGBHvd7hgc+Fh3Ig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:HV/fQQ2UpjE=:p9qluWJruJhCSlBy5XRLED
- FayxGtJIvgpes4SgiDdyQyzEL3KMbdBfT7dI7U1GRAg2AQrCiIj2+0B6fVOojJXVyW4GQRyBb
- AF1bPPiwQ1EU2cqXt+BzGhhzpJ6D7IA/TmgEQimRVlOdzj2CZdHgHXBQmppdrYnpS829a+OjG
- qNahu6fj9Fq8Uacl3ggIIKRLsk6sjb8vKLqjOSXxoNX1pRtTLlxfv377/2e2qgrvEZco/8gSb
- yn1Xy/UZMVE8cPN0UhIUgW/fUozgKPjYHkxyDpv0FpiJ6Ik1fe+DASwgH762S61O8iQ12tk1v
- QK44KVh740WsEeETs1wcNOlYMAoHzKX6RhrsSyKeiByYJkua5HNeeP3C8u/oD+oNVrDmqBysb
- FA3MkIF0+jcd/i8MY/P2+UaLpk/UUnZUOeVnQouMScFDig/4bchkW4DKHDtWi0TxNugjTPUQA
- clfibgEdgwtuXW4RDDZ5XXd15L/1G34yhccaAbU+gnKYHz1NITuG0tIfzTceLfiFZETFxEQq3
- 5vdx0l2IaZbW5J1TQKmBh6f70AProjaOm9ewwEi6IzO0WuGlTj3Bl0O+yn0OAjX5+7kI7Roaa
- c6W47n6KVE6GyJ2mmItJF1BYvvV0pon66OaZPPIXJE/2xhcJvNmkumsz4PIn6gICNvDxBqV0n
- 22KRrFVIA3iSlCpG/lb4gCt5Xwi/14xYq8kUn/+CduhiPOzFTdCvD8yM2zLhNJNqbR3gGsLV+
- o1ir4/eVMjqBro6AniywrsQfEZRDNClxvgtCzQ==
+X-Provags-ID: V03:K0:aedpp3MPnZWbP62PgYymoiLRle8d2KGU75K9oqgrP1miNh1ZuUS
+ 4EekXuqbC5g9wmn0hjfZXYQFBM10Kr1Mcogd5PywvbtMggQ7/ZD71WzWjfzWmUSZ6b7JBYO
+ l4Wi/NCoBbVGNA4Yb8EtZwOcqciOTQwc/LmO3fhHZaLmw3PWCIvzqO5YCwChW5BHnSYUAor
+ FOTRrLEG0SvjClUEC0/gQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Cqvbbp9z+a8=:e5zrrckz6At79+3E+s/SPF
+ lTa0V2D7hmUH5ocTTmbSAwuOqEhzt+YGO89aKzn1xhg4PQEUWX3SnVvmoxl/obHv/QEZ7YB05
+ IEh7Cj+Uc3iwRwXqxjbJQHzm6jxlyOGwovQAry4uzLZTbGCgel/BB3RADTc0cEFpv7OdPpbtm
+ k/U69DwBbX9jrM+XYP845CMkQ6WXWjQvm1dRTMLM3AzgKcQJfglDDdCkZJ9+MatO25a+ThzQ4
+ 7cImaLmvzDJt7yibLPmrVvxLwx/bTvvH/Am9TIPvO9yqHeP/sAEFsZgQeqn1toX4wzf++Q7Ni
+ p8zU+SSt7PcUS09ZwYbXeLobDMRWhD3lfTH9zYnxInWM40zoTmZ5uooV/8mTX6XKxttl0ly8m
+ IGi2x3rwQJS/TBbchFSrZmHXb8TtrgosBeuB0KC/LjB4nMLNudLXU+Y/S0M/VsNJX7IfyuZwA
+ n/ooahRv5mZiDT0FIj+9GIZGZZXnP7SFVrQ0CCDUp103QGpwDVpk8yCcRFWDmKrkBSDoUJWXA
+ rsX7VPN29HZwdsGMNqogXVm+vFTI6dTGdOrf9m3yMPaGPHiRJvkzfgPU1jjmfzes1UCEwnhg9
+ lAh/TtAeXFqP95THJdMhILnw+13s2yKdYDT25VwBgtZZ92DLvd56w5311P1NJcy1mTObc9Gbs
+ wk4q8hPpLMxwkQ9vmkhYelXeTskr/hRl26pIO+t3OBek3/8vXqKqQSFZWtD7R9JJGvRgYxWDl
+ sBtClHO5XKLnHalAQys5EXKrVQ4E7WmfARazFg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-As the AS3722 GPIO0 is also a not connected on our Apalis TK1 module
-explicitly configure it to high-impedance as well.
+This series sets critical trips, activates PWM pin muxing for PWM3,
+adds a missing AS3722 GPIO0 configuration, adds a hog group for
+Ethernet, PCIe, reset GPIOs, updates the copyright period, removes
+spurious newlines and adds support for the V1.2 hardware revision of
+the Toradex Apalis TK1 system on module.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
----
+Marcel Ziswiler (6):
+  arm: tegra: apalis-tk1: set critical trips
+  ARM: dts: tegra: apalis-tk1: activate pwm pin muxing for pwm3
+  ARM: dts: tegra: apalis-tk1: add missing as3722 gpio0 configuration
+  ARM: dts: tegra: apalis-tk1: hog group for ethernet, pcie, reset gpios
+  ARM: dts: tegra: apalis-tk1: copyright period, spurious newlines
+  ARM: dts: tegra: apalis-tk1: support v1.2 hardware revision
 
- arch/arm/boot/dts/tegra124-apalis.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/Makefile                      |    1 +
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      |   16 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  250 +++
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 2052 +++++++++++++++++++++++
+ arch/arm/boot/dts/tegra124-apalis.dtsi          |   70 +-
+ 5 files changed, 2344 insertions(+), 45 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+ create mode 100644 arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 7fbaaf221029..44c31176ce90 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1620,9 +1620,9 @@
- 					bias-pull-up;
- 				};
- 
--				gpio1_3_4_5_6 {
--					pins = "gpio1", "gpio3", "gpio4",
--					       "gpio5", "gpio6";
-+				gpio0_1_3_4_5_6 {
-+					pins = "gpio0", "gpio1", "gpio3",
-+					       "gpio4", "gpio5", "gpio6";
- 					bias-high-impedance;
- 				};
- 			};
 -- 
 2.14.3
