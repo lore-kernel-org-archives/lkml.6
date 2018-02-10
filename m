@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeBJBmi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 20:42:38 -0500
-Received: from mout.perfora.net ([74.208.4.194]:40103 "EHLO mout.perfora.net"
+        id S1752274AbeBJBmp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 20:42:45 -0500
+Received: from mout.perfora.net ([74.208.4.197]:39117 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752374AbeBJBmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 20:42:36 -0500
+        id S1751859AbeBJBmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 20:42:39 -0500
 From: Marcel Ziswiler <marcel@ziswiler.com>
 To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
@@ -14,88 +14,187 @@ Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/3] ARM: dts: tegra: apalis/colibri: use correct compatible for rtc
-Date: Sat, 10 Feb 2018 02:36:37 +0100
-Message-Id: <20180210013638.28164-3-marcel@ziswiler.com>
+Subject: [PATCH 1/3] apalis_t30/tk1, colibri_t20/t30: fix i2c bus frequencies
+Date: Sat, 10 Feb 2018 02:36:36 +0100
+Message-Id: <20180210013638.28164-2-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180210013638.28164-1-marcel@ziswiler.com>
 References: <20180210013638.28164-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K0:h2++kxmopnOrzGqjyWkZYRLb0SOn3lkIkU5GNhSYHvuGbPxVvHX
- YlYOt5nvnnPvgXmYmtpje3imA7FbZlxLV9LSC5YeBgzjlfvQ4ZYaaOYbruWde2ilOpPehYd
- 80Yx5WO4VICpDg/MJTAO6yLZFW39tg9KC/7ejZJPqhx7qXl4ap0Jpyzj1Ic6EZ0z6JZZcql
- LYpyxs88unsmoDTKhPL3Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:BLPzFrOQtz8=:jVUFsaqOxTNV2V19uEZDGO
- W4tQNRhMqDevvmkV5ru1sXgJvCunkFGFTxnfcH5xixLshIw2ZoT90LAiG3ALftJN4KdbKuPP5
- n3Cj1NZik4Y2UY5kRAMYUc+cFPVdN7pkXzw90Lix5S6/tRHGvxMy6Tv9V/0iouXIUhQrhlNPA
- yKX1stKsQSs3dIx6cryY9Rf5k0/mHmF23J2QXdW/GZ8HsOgNzCBXWqOcII0vVcW4AYWAPin5p
- QHJxpXJwic4r3uhCbu06jCj4SRjQ8bES8AsmfwKweIxf8ui1rUofSMx6b2v3L/+vgRzGVsS51
- fB5e1dSoVy7U/oTtq7iRUmyWYeX5LZ9qJXxoEL/zdhHQI2sM98MrEM7VvW4cKe8kazO3E8iis
- z47zjDFecIPlCZh9G9/dK7s3oI2QWLmAz7O7QChA46YsMxFVgCX361/54QXRIIIhmOZmK50ih
- 8LNYBHQZkYnUkeKQAoyRnFHt15jfiYp3ij+vhCADJKbKJ4g29Oa3xXzF0hxioWOlpmnm+rC6+
- xO+5bfNf842o4zGfOV1GC56hCgtUUOTJMRI5IfJi6BbL5vF65DtRv7XA63nUUNEx7IisxyFAe
- LrJIjxdU4ZbZJwvV2QVXAGCC64Ed1S0NNHhHlSBLfBPG9zZtyqBi5woGUO0axzaQEn3n1h6XW
- YSXPC4xA2sAFZFcci4L4/TPp4sIUEfBI7j+1MzUJZmk30aZW9X9Yxto1kVvUX3Hk5sjlCzrI7
- GEvb7cikEdTC5xn0kpukj2a3fsC7dRqLIMul7Q==
+X-Provags-ID: V03:K0:bGwqYmaKXCUw3VsNqeg6aR98RaLL3pz05Cp5vSA/MdvB4JK/Y5R
+ IaaYVvM4NYSHUhs9I6xRGGRJgQp031kUPGINb126+3OWz2PP+IXa7bRC4xhtY8kNB24icjb
+ 2bSZ9cT2oRT8hASl/QPQS7Hs0V7r00cecQlJKQbBB1FUQDHArTCQZEQJN7WatGvy2G6oQtu
+ /7fuBw3TboRneDMGj0Xvw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:owWtZF+cB6k=:5x4Mj0KBIZd06NyoAubYPr
+ BDAsV1bIQKV9e2ajVboPB1twa7yZSn5zqVk2FpJDo9Ta9KzaXMehEKc+b8RrSPkJMtPaGUvDh
+ fVSnFsSFIMlsPW3rSNXWu8SZPMKohSa7VgxyXJLPzsAjVa8PVRpWQc+QPdYiFNZh/yP1utrlO
+ RbcpiDqIwFH60JriHK5pa8TsEFh1G0J+2AZTtnvkRHeLGIJEJZvpmYhZL3FGxhDcPvCfTzbED
+ p32CM4SfyiXVTkQt6Bga47KFl8XjrFSARxdk3MxaMbnnwEzFBaYEvSk3InhY49WJrFjRqkKa7
+ VCMyozPiN+VlHQkwoHS5daxGw7EqReKrjzXHMdW+FYO6mVGmZeX3F/xuuolLmu5T7NfJHQWUP
+ R1RFwWcvD3jpTuj3a1KkqvvwVAaIZefrC0dBFs0CJwQ5f1CSqxrSKUBPfdRQHg796aVf29+qp
+ dus7qFgQPAtxDQdqHAdeuTyN2osD5RtZ+EXoMRG2hi9hRzlWPdWLvSkns/DEGH7MdRGKszGp+
+ mf0mUStTRWuFWeVCfVoMfSr92xQCD/RsKTFjbYM4pu6jiqflj6xrNipG3NynEZb66B+zA6Fsb
+ gZtqF6De7fqRgCTRaALhY9i9+akTz6HURwf/yYe8/omaXShGvDKS2Chb57FmF32x20ol9VZ8k
+ /3EkPy0jLqTEGcOSQdMhpso/D97WTMsXg58v0EEEqJul/01SmzvZDgsZi5ylvUGyEXCUZNmVA
+ elQjFTafM4hxOvrztQEbBYJbSo+ueLgG76IzWw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-All Toradex Carrier Boards use a st,m41t0 compatible RTC. Compared to a
-st,m41t00 this RTC has also an oscillator fail bit which allows to
-detect when the RTC lost track of time.
+Use a faster speed of 400 kbit/s for regular I2C busses.
 
-Similar to commit c53bec16b150 ("ARM: dts: colibri/apalis: use correct
-compatible for RTC") covering our NXP i.MX and Vybrid based modules.
+Use a slower speed of 10 kbit/s for DDC/EDID to improve reliability.
+
+Use a slower speed of 100 kbit/s for power I2C to be within specs of
+the LM95245 temperature sensor.
+
+While at it further annotate I2C pin usage.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts    | 2 +-
- arch/arm/boot/dts/tegra30-apalis-eval.dts     | 2 +-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-eval.dts    |  5 ++---
+ arch/arm/boot/dts/tegra124-apalis.dtsi        |  2 +-
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi    | 16 +++++++++++-----
+ arch/arm/boot/dts/tegra30-apalis-eval.dts     |  2 +-
+ arch/arm/boot/dts/tegra30-apalis.dtsi         |  2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |  2 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi        |  2 +-
+ 7 files changed, 18 insertions(+), 13 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index 66b6c45ee865..af6c566e8ac4 100644
+index ecffcd115fa7..66b6c45ee865 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -114,7 +114,7 @@
+@@ -105,7 +105,7 @@
+ 	 */
+ 	i2c@7000c000 {
+ 		status = "okay";
+-		clock-frequency = <100000>;
++		clock-frequency = <400000>;
  
- 		/* M41T0M6 real time clock on carrier board */
- 		rtc@68 {
--			compatible = "st,m41t00";
-+			compatible = "st,m41t0";
- 			reg = <0x68>;
- 		};
+ 		pcie-switch@58 {
+ 			compatible = "plx,pex8605";
+@@ -124,7 +124,6 @@
+ 	 */
+ 	hdmi_ddc: i2c@7000c400 {
+ 		status = "okay";
+-		clock-frequency = <100000>;
  	};
+ 
+ 	/*
+@@ -133,7 +132,7 @@
+ 	 */
+ 	i2c@7000c500 {
+ 		status = "okay";
+-		clock-frequency = <100000>;
++		clock-frequency = <400000>;
+ 	};
+ 
+ 	/* I2C4 (DDC): unused */
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 5d9b18ef5af6..7aef8928e115 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -1579,7 +1579,7 @@
+ 	};
+ 
+ 	hdmi_ddc: i2c@7000c400 {
+-		clock-frequency = <100000>;
++		clock-frequency = <10000>;
+ 	};
+ 
+ 	/* PWR_I2C: power I2C to audio codec, PMIC and temperature sensor */
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 813ae34edd6a..5c202b3e3bb1 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -213,21 +213,27 @@
+ 			GPIO_ACTIVE_HIGH>;
+ 	};
+ 
++	/*
++	 * GEN1_I2C: I2C_SDA/SCL on SODIMM pin 194/196 (e.g. RTC on carrier
++	 * board)
++	 */
+ 	i2c@7000c000 {
+ 		clock-frequency = <400000>;
+ 	};
+ 
++	/* DDC_SCL/SDA on X3 pin 15/16 (e.g. display EDID) */
+ 	i2c_ddc: i2c@7000c400 {
+-		clock-frequency = <100000>;
++		clock-frequency = <10000>;
+ 	};
+ 
+-	i2c@7000c500 {
+-		clock-frequency = <400000>;
+-	};
++	/* GEN2_I2C: unused */
+ 
++	/* CAM/GEN3_I2C: used as EXT_IO1/2 GPIOs on SODIMM pin 133/127 */
++
++	/* PWR_I2C: power I2C to PMIC and temperature sensor (On-module) */
+ 	i2c@7000d000 {
+ 		status = "okay";
+-		clock-frequency = <400000>;
++		clock-frequency = <100000>;
+ 
+ 		pmic: tps6586x@34 {
+ 			compatible = "ti,tps6586x";
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index fdca527a2248..0dc85a20bd45 100644
+index 07b945b0391a..fdca527a2248 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -88,7 +88,7 @@
+@@ -79,7 +79,7 @@
+ 	 */
+ 	i2c@7000c000 {
+ 		status = "okay";
+-		clock-frequency = <100000>;
++		clock-frequency = <400000>;
  
- 		/* M41T0M6 real time clock on carrier board */
- 		rtc@68 {
--			compatible = "st,m41t00";
-+			compatible = "st,m41t0";
- 			reg = <0x68>;
- 		};
+ 		pcie-switch@58 {
+ 			compatible = "plx,pex8605";
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index bfb7913c0657..676a4c4b1512 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -437,7 +437,7 @@
  	};
+ 
+ 	hdmiddc: i2c@7000c700 {
+-		clock-frequency = <100000>;
++		clock-frequency = <10000>;
+ 	};
+ 
+ 	/*
 diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 8c62833197e5..16e1f387aa6d 100644
+index b307feb7c330..8c62833197e5 100644
 --- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
 +++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -60,7 +60,7 @@
+@@ -56,7 +56,7 @@
+ 	 */
+ 	i2c@7000c000 {
+ 		status = "okay";
+-		clock-frequency = <100000>;
++		clock-frequency = <400000>;
  
  		/* M41T0M6 real time clock on carrier board */
  		rtc@68 {
--			compatible = "st,m41t00";
-+			compatible = "st,m41t0";
- 			reg = <0x68>;
- 		};
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 139bfa028b04..1f77273521bf 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -215,7 +215,7 @@
  	};
+ 
+ 	hdmiddc: i2c@7000c700 {
+-		clock-frequency = <100000>;
++		clock-frequency = <10000>;
+ 	};
+ 
+ 	/*
 -- 
 2.14.3
