@@ -1,168 +1,73 @@
-Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AH8x2269HAQ95osY0uzdq1RyFqkbuqqGipgIFSWRrBFJg7sOlGEA6huxUn22Kn0DXlXRAV+sR6VZ
-ARC-Seal: i=1; a=rsa-sha256; t=1518439975; cv=none;
+Return-Path: <sergeev917@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518265655; cv=none;
         d=google.com; s=arc-20160816;
-        b=zhr2oN+lluaNchzUKqK6Q9vs7dAenOh02gN4vx4aW4No9+i6Se0tIPR67c/aAfdk3D
-         6ses5defBsA0/JFdsZfWNL8g/EFk+MR4oyMo83DOnFP4AyfC1arn6XV7QrGCxfpRfIpB
-         oKl9NAFlLP5gvAkSMs/By7CcPtYT99/NCHoX+79VOTv29iK6ykhI16Y+NPUT0+D+1/38
-         fdGwqybCRh2MBXR+EfZ/lt+AUO7H9vd1mphQhRNR5f5rusTZsg76lS/mOtBky/OLZf4A
-         J86W6hurCgDS306gSYEOvbZeeKW+XkXVJC8m+lqjqyPTsqjMJuOnm+Xh6X7S1FMgnzxD
-         qlgg==
+        b=Ib+xGafs39eMJQ4Fy4WaC7zdC/s7mEFkAne4X9ne1jwVrxTHtg1yPS5FWR4deqGpDk
+         14dJTyL0JCSYAj6XM3asCHIzSMhiqjHSdMzM9cUprjzCc7L6EZ6fH2LjByR418ya4V/x
+         F61FlKExdAnS9oivizlvRjNBLUwVyFqyfc5YiH7XuB9Nc2sUGjZabzjQG/gEj/le/p3k
+         gWLIqtKkT0vVLLH1TmT/9kDBsuKDiMtumur3MpBXZaCQifSyDVCVFokG/6PAkCs8V9Wi
+         F6RUNHJdvbHREXu4p5LoUu1ohAI3Ri2LDMqyb8H44olA5tfvkuClpfCLovuf30TbXBYi
+         SQPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:references:subject:cc:to:from:date
-         :user-agent:message-id:dkim-signature:arc-authentication-results;
-        bh=NTa+a6PKsFuxcFpzaD86Xa0gJ0h2GJ3/9OLLLWzj0AE=;
-        b=tSuYz0jul/F47Wrp/40oKveDyWiSeNq2V1V6MrR9EcDusAMImafJQe0BZJV5AMAIxg
-         u+DPjaAQUAhAM2uCnZgsT+4c1eS6X1TZ8Ag4MQSka3YyITrFEeMO1rPYGL4gDcmNFxGO
-         wc+4DT/1FUt2IlVRpQFNnfHEknDsZS5V4VFNkGXuEG+IO8w+mXxmAzAA2+Kkkf3o3U/T
-         KfHC7+wnK8kFct+QaESTg/JNaXyYdlyKeFZ9pCVYdfkJFNO8+/64aqkY6FIGnaqxePmQ
-         rCkrgMG9mnw+DtjKDFU4fif1ssc6hdF2L3nuTkQxfcWCMd4eQVW6sWVc63f8/MIQPT0r
-         OvJw==
+        h=user-agent:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=r4cxxptrvNKvAuJ9f9TpsWXYh5RLulrCZ6WImo4VXPc=;
+        b=0qgAQ6NPfL7h460rYcZfwsmATOT0+0syRr+9c8uR9AYqbOFQAYgVc7NCKiZlrYqxGY
+         Hszt4p10pZ/eOEJf52D6WiwMwAd97x0g78gdb9ifHOw3ZipnY5+7iyKAzqkJR/WN40mh
+         AWci/Gc9mVjddVDC87yKT4uRPrC/IemSp8eTW1ltejTK20vhblIDJDIwl8N9S2CZF258
+         IQKjeVk0DTIU0R/Is1245vexxb1tWz2EeG6Rt8flFzCyCRsP3BzSiNtzUSOFSSLLPW5l
+         f0LnrvQ/onjtN5HloQLFugHKO2LrAANpKbPxKs0h+bdJ0seh1y7UzAwlx0oajWSfB6Uh
+         rWXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=tSUx4EyT;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZOEwB1OX;
+       spf=pass (google.com: domain of sergeev917@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sergeev917@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=tSUx4EyT;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Message-Id: <20180212125033.295653095@infradead.org>
-User-Agent: quilt/0.63-1
-Date: Mon, 12 Feb 2018 13:48:56 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Woodhouse <dwmw2@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@intel.com>,
- Ashok Raj <ashok.raj@intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>,
- Andy Lutomirski <luto@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Andrea Arcangeli <aarcange@redhat.com>,
- Andi Kleen <ak@linux.intel.com>,
- Arjan Van De Ven <arjan.van.de.ven@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Jun Nakajima <jun.nakajima@intel.com>,
- Asit Mallick <asit.k.mallick@intel.com>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v2 1/8] objtool: Use existing global variables for options
-References: <20180212124855.882405399@infradead.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZOEwB1OX;
+       spf=pass (google.com: domain of sergeev917@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sergeev917@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x2242pHQMezw1q1BCgRFZphsrq2/Wld9pxbYPdVlrAycESa2mczShe31B+dP9KBD4oHy1jO9O6w==
+Date: Sat, 10 Feb 2018 15:31:23 +0300
+From: Alexander Sergeyev <sergeev917@gmail.com>
+To: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	Kyle Huey <me@kylehuey.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: update spectre v2 microcodes blacklist
+Message-ID: <20180210123123.GA19396@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-objtool-unclutter.patch
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: mtt
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592199715737846143?=
-X-GMAIL-MSGID: =?utf-8?q?1592199715737846143?=
+X-GMAIL-THRID: =?utf-8?q?1592016927852230730?=
+X-GMAIL-MSGID: =?utf-8?q?1592016927852230730?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use the existing global variables instead of passing them around and
-creating duplicate global variables.
+Hello,
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- tools/objtool/builtin-check.c |    2 +-
- tools/objtool/builtin-orc.c   |    6 +-----
- tools/objtool/builtin.h       |    5 +++++
- tools/objtool/check.c         |    5 ++---
- tools/objtool/check.h         |    2 +-
- 5 files changed, 10 insertions(+), 10 deletions(-)
+Intel released an updated microcode revision guidance [1] (8 Feb). The link is 
+available in press-release [2], but it's quite easy to miss.
 
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -53,5 +53,5 @@ int cmd_check(int argc, const char **arg
- 
- 	objname = argv[0];
- 
--	return check(objname, no_fp, no_unreachable, false);
-+	return check(objname, false);
- }
---- a/tools/objtool/builtin-orc.c
-+++ b/tools/objtool/builtin-orc.c
-@@ -25,7 +25,6 @@
-  */
- 
- #include <string.h>
--#include <subcmd/parse-options.h>
- #include "builtin.h"
- #include "check.h"
- 
-@@ -36,9 +35,6 @@ static const char *orc_usage[] = {
- 	NULL,
- };
- 
--extern const struct option check_options[];
--extern bool no_fp, no_unreachable;
--
- int cmd_orc(int argc, const char **argv)
- {
- 	const char *objname;
-@@ -54,7 +50,7 @@ int cmd_orc(int argc, const char **argv)
- 
- 		objname = argv[0];
- 
--		return check(objname, no_fp, no_unreachable, true);
-+		return check(objname, true);
- 	}
- 
- 	if (!strcmp(argv[0], "dump")) {
---- a/tools/objtool/builtin.h
-+++ b/tools/objtool/builtin.h
-@@ -17,6 +17,11 @@
- #ifndef _BUILTIN_H
- #define _BUILTIN_H
- 
-+#include <subcmd/parse-options.h>
-+
-+extern const struct option check_options[];
-+extern bool no_fp, no_unreachable;
-+
- extern int cmd_check(int argc, const char **argv);
- extern int cmd_orc(int argc, const char **argv);
- 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -18,6 +18,7 @@
- #include <string.h>
- #include <stdlib.h>
- 
-+#include "builtin.h"
- #include "check.h"
- #include "elf.h"
- #include "special.h"
-@@ -33,7 +34,6 @@ struct alternative {
- };
- 
- const char *objname;
--static bool no_fp;
- struct cfi_state initial_func_cfi;
- 
- struct instruction *find_insn(struct objtool_file *file,
-@@ -1978,13 +1978,12 @@ static void cleanup(struct objtool_file
- 	elf_close(file->elf);
- }
- 
--int check(const char *_objname, bool _no_fp, bool no_unreachable, bool orc)
-+int check(const char *_objname, bool orc)
- {
- 	struct objtool_file file;
- 	int ret, warnings = 0;
- 
- 	objname = _objname;
--	no_fp = _no_fp;
- 
- 	file.elf = elf_open(objname, orc ? O_RDWR : O_RDONLY);
- 	if (!file.elf)
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -62,7 +62,7 @@ struct objtool_file {
- 	bool ignore_unreachables, c_file, hints;
- };
- 
--int check(const char *objname, bool no_fp, bool no_unreachable, bool orc);
-+int check(const char *objname, bool orc);
- 
- struct instruction *find_insn(struct objtool_file *file,
- 			      struct section *sec, unsigned long offset);
+Some microcode revisions that were blacklisted before are now tested and 
+pronounced production-ready:
+
+> Lines with “***” were previously recommended to discontinue use. 
+> Subsequent testing by Intel has determined that these were unaffected 
+> by the stability issues and have been re-released without 
+> modification.
+
+I didn't fully match the updated revision guidance and spectre_bad_microcodes[] 
+in arch/x86/kernel/cpu/intel.c, but at least microcode 0xc2 for intel skylakes 
+should not be blacklisted anymore.
+
+The update is also revelant to a recent blacklist backport to 4.9-stable:
+https://patchwork.kernel.org/patch/10209021/
+
+[1] https://newsroom.intel.com/wp-content/uploads/sites/11/2018/02/microcode-update-guidance.pdf
+[2] https://newsroom.intel.com/news/security-issue-update-progress-continues-firmware-updates/
