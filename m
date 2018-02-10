@@ -1,98 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeBJTru (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 14:47:50 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36172 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751952AbeBJTrt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 14:47:49 -0500
-X-Google-Smtp-Source: AH8x225u3wmI68pL7ie38FjPaPTYZJpVb7+YFUqswWCquMWmPqGoxtLcm0sDh+tfpEjo+EUckVm6bks7WTtiLRwlHXE=
+        id S1752185AbeBJTz6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 14:55:58 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:52822 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751182AbeBJTz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 14:55:56 -0500
+From: Heiko Stuebner <heiko@sntech.de>
+To: wlf <wulf@rock-chips.com>
+Cc: Rob Herring <robh@kernel.org>, Brian Norris <briannorris@chromium.org>,
+        Enric Balletbo Serra <eballetbo@gmail.com>,
+        William Wu <william.wu@rock-chips.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Frank Wang <frank.wang@rock-chips.com>, huangtao@rock-chips.com,
+        Doug Anderson <dianders@google.com>, Guenter Roeck <groeck@google.com>,
+        daniel.meng@rock-chips.com, John.Youn@synopsys.com,
+        lin.huang@rock-chips.com,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH 1/3] dt-bindings: phy: phy-rockchip-typec: add usb3 otg reset
+Date: Sat, 10 Feb 2018 20:55:45 +0100
+Message-ID: <1907466.pgqOKPpIkg@phil>
+In-Reply-To: <d05fb977-cd6c-4875-25be-9212e75b7e39@rock-chips.com>
+References: <1515751704-13213-1-git-send-email-william.wu@rock-chips.com> <20180119214916.fegrzgcmbbdiesyz@rob-hp-laptop> <d05fb977-cd6c-4875-25be-9212e75b7e39@rock-chips.com>
 MIME-Version: 1.0
-From: Darren Hart <dvhart@gmail.com>
-Date: Sat, 10 Feb 2018 11:47:47 -0800
-Message-ID: <CAJuF2pwa1kt1egYTdrrrv9VOS3j1oco6bfcRrezCdQ9t0Fo5zg@mail.gmail.com>
-Subject: [GIT PULL] platform-drivers-x86 for 4.16-3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
+Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Wulf,
 
-This series can wait for the RC cycle if you prefer. It's ready now
-and it simplifies branch management a bit on our end to merge it now. It
-is isolated to the Mellanox hotplug and platform drivers, and is mostly
-data for new system types with a correction and an uninitialized
-variable fix.
+Am Montag, 22. Januar 2018, 12:33:05 CET schrieb wlf:
+> 在 2018年01月20日 05:49, Rob Herring 写道:
+> > On Thu, Jan 18, 2018 at 09:47:50AM -0800, Brian Norris wrote:
+> >> On Thu, Jan 18, 2018 at 06:20:09PM +0100, Enric Balletbo Serra wrote:
+> >>> As Brian said commit 06c47e6286d5 'usb: dwc3: of-simple: Add support
+> >>> to get resets for the device' introduced the support to get the resets
+> >>> from dwc3-of-simple and the queued commit 'b7e63d95c14d arm64: dts:
+> >>> rockchip: add reset property for dwc3 controllers on rk3399' started
+> >>> using it. Without the latest I get errors like this doing bind/unbind
+> >>> tests.
+> >>>
+> >>>     dwc3: probe of fe900000.dwc3 failed with error -110
+> >>>
+> >>> I just tested these series on top of mainline, I reverted my patch
+> >>> because otherwise two drivers are requesting the same reset and fails,
+> >>> and I did some of the bind/unbind test. They just worked fine, and
+> >>> seems that this is right way, so this makes me think some questions.
+> >> Actually, this was intended to coexist with DWC3 optionally controlling
+> >> the same reset. It was written before the reset framework was rewritten
+> >> to have shared and exclusive resets. Should this be rewritten to use
+> >> shared resets? We'd have to modify both dwc3 core and the PHY driver.
+> > Seems like abuse of DT to me. If you need to control the controller's
+> > reset from the phy driver, then get the reset out of the controller
+> > node. The phy node should describe the connections to the phy.
+> I try to get the reset out of the controller, but I don't find a good
+> way to get the reset ofthe controller associated with the given phy
+> device node.  Is there an API like theof_usb_get_dr_mode_by_phy() to
+> get 'dr_mode' of the controller?
 
-Note: My usual mail and git services are down... right before sending this.
-I'm sending you the email from gmail, and I fortunately mirrored the
-signed tag to github. I've updated the Pull Request below to list both the
-usual infradead URL as well as the github backup URL. Apologies if this
-breaks some part of the process.
+I guess the easiest way would be taking the of_usb_get_dr_mode_by_phy()
+function move the part above the "finish" label into a separate function
+like of_usb_get_node_by_phy (or possibly move that to an even more general
+place as it is not usb-related at all) and use that function in
+of_usb_get_dr_mode_by_phy() and also use it to get the reset you want via
+something like:
 
-Thanks,
+node = of_usb_get_node_by_phy(...);
+rst = of_reset_control_get(node, ...);
 
-Darren Hart
-VMware Open Source Technology Center
+> And we're trying to find another method to fix the RK3399 tcphy power
+> on fail issue.If we get another proper method, we may not need these
+> phy patch series.
 
-The following changes since commit 9a7c551ba7aae3648473179f234e960cfd46eaf4:
+Did you find any different solution for that yet?
 
-  platform/x86: samsung-laptop: Re-use DEFINE_SHOW_ATTRIBUTE() macro
-(2018-02-07 12:50:23 +0200)
-
-are available in the git repository at:
-
-  git://git.infradead.org/linux-platform-drivers-x86.git
-tags/platform-drivers-x86-v4.16-3
-  Alternatively:
-  https://github.com/dvhart/linux-pdx86.git tags/platform-drivers-x86-v4.16-3
-
-for you to fetch changes up to 1bd42d94ccab4eab5dc9dc9d303a687a61cde9bd:
-
-  platform/x86: mlx-platform: Add support for new 200G IB and Ethernet
-systems (2018-02-09 17:23:20 -0800)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v4.16-3
-
-Mellanox fixes and new system type support.
-
-The following is an automated git shortlog grouped by driver:
-
-mlx-platform:
- -  Add support for new 200G IB and Ethernet systems
- -  Add support for new msn201x system type
- -  Add support for new msn274x system type
- -  Fix power cable setting for msn21xx family
- -  Add define for the negative bus
- -  Use defines for bus assignment
-
-platform/mellanox:
- -  mlxreg-hotplug: Fix uninitialized variable
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      platform/mellanox: mlxreg-hotplug: Fix uninitialized variable
-
-Vadim Pasternak (6):
-      platform/x86: mlx-platform: Use defines for bus assignment
-      platform/x86: mlx-platform: Add define for the negative bus
-      platform/x86: mlx-platform: Fix power cable setting for msn21xx family
-      platform/x86: mlx-platform: Add support for new msn274x system type
-      platform/x86: mlx-platform: Add support for new msn201x system type
-      platform/x86: mlx-platform: Add support for new 200G IB and
-Ethernet systems
-
- drivers/platform/mellanox/mlxreg-hotplug.c |   2 +-
- drivers/platform/x86/mlx-platform.c        | 372 ++++++++++++++++++++++++++++-
- 2 files changed, 363 insertions(+), 11 deletions(-)
-
--- 
-Darren Hart
-dvhart@gmail.com
+Heiko
