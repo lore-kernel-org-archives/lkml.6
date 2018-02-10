@@ -1,116 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751102AbeBJIyT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 03:54:19 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37345 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeBJIyR (ORCPT
+        id S1751878AbeBJI6r (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 03:58:47 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:39809 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeBJI6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 03:54:17 -0500
-X-Google-Smtp-Source: AH8x227lW9YzWvM4MVe2CFant5gQ0CWz5okGBjQ/JjxM1ztha7WbXzUgX7pGvu6XVNTfwlNmhIrP5A==
-Date: Sat, 10 Feb 2018 09:54:06 +0100
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 7/7] watchdog: coh901327: make use of timeout-secs
- provided in devicetree
-Message-ID: <20180210085406.GA744@gmail.com>
-References: <marcus.folkesson@gmail.com>
- <20180209192724.1227-1-marcus.folkesson@gmail.com>
- <20180209192724.1227-8-marcus.folkesson@gmail.com>
- <20180209225200.GI19627@roeck-us.net>
+        Sat, 10 Feb 2018 03:58:46 -0500
+X-Google-Smtp-Source: AH8x224itGg4ToSrg7smTCDO6HHUuz8NA7VnwEOwJv+G9m1I1255MTrT8Ywug6Pj4rXPKKuN/h9opMrljp3mBX3Cge8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Content-Disposition: inline
-In-Reply-To: <20180209225200.GI19627@roeck-us.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180209235012.4993-2-rabel@robertabel.eu>
+References: <20180209235012.4993-1-rabel@robertabel.eu> <20180209235012.4993-2-rabel@robertabel.eu>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 10 Feb 2018 09:58:44 +0100
+Message-ID: <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
+ graphics command
+To: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Robert Abel <rabel@robertabel.eu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Feb 10, 2018 at 12:50 AM, Robert Abel <rabel@robertabel.eu> wrote:
+> The graphics command expects 16 hexadecimal literals, but would allow characters in range [0-9a-zA-Z] instead of [0-9a-fA-F].
+>
+> Signed-off-by: Robert Abel <rabel@robertabel.eu>
+> ---
+>  drivers/auxdisplay/charlcd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+> index 642afd88870b..324d02f9f1c5 100644
+> --- a/drivers/auxdisplay/charlcd.c
+> +++ b/drivers/auxdisplay/charlcd.c
+> @@ -441,9 +441,9 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
+>                         shift ^= 4;
+>                         if (*esc >= '0' && *esc <= '9') {
+>                                 value |= (*esc - '0') << shift;
+> -                       } else if (*esc >= 'A' && *esc <= 'Z') {
+> +                       } else if (*esc >= 'A' && *esc <= 'F') {
+>                                 value |= (*esc - 'A' + 10) << shift;
+> -                       } else if (*esc >= 'a' && *esc <= 'z') {
+> +                       } else if (*esc >= 'a' && *esc <= 'f') {
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Willy, Geert: this seems obvious, but do you know if the broader range
+was intended for some reason? In that case, adding a comment to the
+code would be good. I found some related docs at
+Documentation/misc-devices/lcd-panel-cgram.txt by Willy (which, by the
+way, maybe now we should move them to Documentations/auxdisplay); but
+the paragraph does indeed say they have to be hex:
 
-Hi,
+'''
+Some LCDs allow you to define up to 8 characters, mapped to ASCII
+characters 0 to 7. The escape code to define a new character is
+'\e[LG' followed by one digit from 0 to 7, representing the character
+number, and up to 8 couples of hex digits terminated by a semi-colon
+(';').
+'''
 
-On Fri, Feb 09, 2018 at 02:52:00PM -0800, Guenter Roeck wrote:
-> On Fri, Feb 09, 2018 at 08:27:24PM +0100, Marcus Folkesson wrote:
-> > watchdog_init_timeout() will allways pick timeout_param since it
-> > defaults to a valid timeout.
-> >=20
-> > Following best practice described in
-> > Documentation/watchdog/watchdog-kernel-api.txt to make use of
-> > the parameter logic.
-> >=20
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> >  drivers/watchdog/coh901327_wdt.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901=
-327_wdt.c
-> > index 4410337f4f7f..437f865e5c6b 100644
-> > --- a/drivers/watchdog/coh901327_wdt.c
-> > +++ b/drivers/watchdog/coh901327_wdt.c
-> > @@ -67,7 +67,7 @@
-> >  #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
-> > =20
-> >  /* Default timeout in seconds =3D 1 minute */
-> > -static unsigned int margin =3D 60;
-> > +static unsigned int margin;
-> >  static int irq;
-> >  static void __iomem *virtbase;
-> >  static struct device *parent;
->=20
-> I would suggest to initialize .timeout in 'static struct watchdog_device
-> coh901327_wdt', and drop the error check when calling watchdog_init_timeo=
-ut().
-
-Will do, thank you.
-
->=20
-> Guenter
-
-
-Best regards
-Marcus Folkesson
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlp+sykACgkQiIBOb1ld
-UjJ+FBAA21rpPiBqvFc1Z82UBlfZjBSHVKaLyn1u3pX/Bbkk5Nkfmll+33Y0Yvwb
-AarNoMnan6d2pLBzcS6OtDw1iENGrob63f+uZ6XpTsHXZGkNOirpTJJPI6gnYQw6
-qxeOCaegsLN34aKw7tyICEboIxFqjAwBcSsKdBY100K7mkOfI8mggJKttgfl0FIO
-lxwv0dzdklyxN5SnFJxefshzIwycqqPseJ7YoeFJX62EWadXZZ0PTbuMXc7d39bM
-ji/uU9Y+tAlZOHQ0+aMU9x3WlGjQWkYbMBy5M0hXeEZwhR6sK3CxgpS6MPaoj7Bh
-RGjj1/TAs/VHHGwoXUa8u0jV5ZobXwWbfHT5ScB9bwTodBFUTKyTBZ0SdI1wakMd
-EvAIlgHp0LwzDKqYhEKGhTIbCfSy2/1GOrA264b2ABit7C6sN/OVN80rdECUKRA/
-3qCCLj9N7RqfW0QwHaaMpMhB+kzEm5pY6eGHy+LgO+sTSvroSKvUZ0/8y9LXHuoL
-kqb7Vt1MgBjlX1u2oN+/svvgR2jBsf2s/8yZ1IuwhwaO59qFyPxgd31VBEiEUUUN
-CdXxYF2Zs2FlqyX7WtedKt0JAv8ELV1dSurTS+4QkeLkUkefUFJyydMFXTWH44KV
-2hV+Q6WcaK43LElvAYkHbwgoX5C2E8J3WGR5aV/X59SMWMFsWNw=
-=McuB
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+>                                 value |= (*esc - 'a' + 10) << shift;
+>                         } else {
+>                                 esc++;
+> --
+> 2.11.0
+>
