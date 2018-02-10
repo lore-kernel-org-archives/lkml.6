@@ -1,71 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753420AbeBJBHI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 20:07:08 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42693 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753142AbeBJBHG (ORCPT
+        id S1753322AbeBJBTB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 20:19:01 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40080 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752521AbeBJBTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 20:07:06 -0500
-X-Google-Smtp-Source: AH8x224Ya5+wK8iQRNjQ0e5l7LxoWT3Z+oDuy98jS73YABWwtP4t/n9ymjT469pCacLGfd1Pe2rCmA==
-From: Thiago Rafael Becker <thiago.becker@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Cc: trond.myklebust@primarydata.com, anna.schumaker@netapp.com,
-        bfields@fieldses.org, jlayton@kernel.org, davem@davemloft.net,
-        Thiago Rafael Becker <thiago.becker@gmail.com>
-Subject: [PATCH] sunrpc: Add task's xid to 'not responding' messages on call_timeout
-Date: Fri,  9 Feb 2018 23:06:28 -0200
-Message-Id: <20180210010628.19792-1-thiago.becker@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        Fri, 9 Feb 2018 20:19:00 -0500
+Date: Sat, 10 Feb 2018 01:18:59 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [git pull] a couple of fixes
+Message-ID: <20180210011859.GL30522@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When investigating reasons for nfs failures, packet dumps arei eventually used.
-Finding the rpc that generated the failure is done by comparing all sent
-rpc calls and all received rpc replies for those which are unanswered,
-which is prone to errors like
-- Slow server responses
-- Incomplete and uncaptured packets in the packet dump
-- The heuristics used to inspect packets failing to interpret one
 
-This patch adds the xid of rpc_tasks to the 'not responding' messages
-in call_timeout to make these analysis more precise.
+The following changes since commit ce4bb04cae8924792ed92f4af2793b77fc986f0e:
 
-Signed-off-by: Thiago Rafael Becker <thiago.becker@gmail.com>
----
- net/sunrpc/clnt.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+  Fix a leak in socket(2) when we fail to allocate a file descriptor. (2018-01-10 18:47:05 -0500)
 
-diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
-index e2a4184f3c5d..83c8aca951f4 100644
---- a/net/sunrpc/clnt.c
-+++ b/net/sunrpc/clnt.c
-@@ -2214,9 +2214,10 @@ call_timeout(struct rpc_task *task)
- 	}
- 	if (RPC_IS_SOFT(task)) {
- 		if (clnt->cl_chatty) {
--			printk(KERN_NOTICE "%s: server %s not responding, timed out\n",
-+			printk(KERN_NOTICE "%s: server %s not responding, timed out (xid: %x)\n",
- 				clnt->cl_program->name,
--				task->tk_xprt->servername);
-+				task->tk_xprt->servername,
-+				be32_to_cpu(task->tk_rqstp->rq_xid));
- 		}
- 		if (task->tk_flags & RPC_TASK_TIMEOUT)
- 			rpc_exit(task, -ETIMEDOUT);
-@@ -2228,9 +2229,10 @@ call_timeout(struct rpc_task *task)
- 	if (!(task->tk_flags & RPC_CALL_MAJORSEEN)) {
- 		task->tk_flags |= RPC_CALL_MAJORSEEN;
- 		if (clnt->cl_chatty) {
--			printk(KERN_NOTICE "%s: server %s not responding, still trying\n",
-+			printk(KERN_NOTICE "%s: server %s not responding, still trying (xid: %x)\n",
- 			clnt->cl_program->name,
--			task->tk_xprt->servername);
-+			task->tk_xprt->servername,
-+			be32_to_cpu(task->tk_rqstp->rq_xid));
- 		}
- 	}
- 	rpc_force_rebind(clnt);
--- 
-2.14.3
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-linus
+
+for you to fetch changes up to cf5eebae2cd28d37581507668605f4d23cd7218d:
+
+  seq_file: fix incomplete reset on read from zero offset (2018-01-20 02:31:15 -0500)
+
+----------------------------------------------------------------
+Ivan Vecera (1):
+      kernfs: fix regression in kernfs_fop_write caused by wrong type
+
+Miklos Szeredi (1):
+      seq_file: fix incomplete reset on read from zero offset
+
+ fs/kernfs/file.c | 2 +-
+ fs/seq_file.c    | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
