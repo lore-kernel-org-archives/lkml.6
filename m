@@ -1,89 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751313AbeBJIkN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 03:40:13 -0500
-Received: from mout.web.de ([212.227.15.4]:60253 "EHLO mout.web.de"
+        id S1751700AbeBJIlQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 03:41:16 -0500
+Received: from mout.perfora.net ([74.208.4.194]:58641 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750835AbeBJIkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 03:40:11 -0500
-Subject: Re: Adjustments for a lot of function implementations
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>,
-        Muralidharan Karicheri <mkaricheri@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
- <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
- <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
- <alpine.DEB.2.20.1710301745530.2160@hadrien>
- <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
- <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
- <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
- <f082b1ae-1be4-440a-6a81-68446c67243e@users.sourceforge.net>
- <ca67319a-622b-e35e-dfb5-045dd04b4deb@xs4all.nl>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <26a090fe-fb39-8f68-aa4e-ce4f9f6b0781@users.sourceforge.net>
-Date: Sat, 10 Feb 2018 09:39:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1750835AbeBJIlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 03:41:14 -0500
+Date: Sat, 10 Feb 2018 09:40:30 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAOFm3uH+aasUA9MrV+uXvHUT=fzS63PvC2fDfNo3q687dUQ_dw@mail.gmail.com>
+References: <20180210013806.28496-1-marcel@ziswiler.com> <20180210013806.28496-6-marcel@ziswiler.com> <CAOFm3uH+aasUA9MrV+uXvHUT=fzS63PvC2fDfNo3q687dUQ_dw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ca67319a-622b-e35e-dfb5-045dd04b4deb@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:pHDC6JxiOfZxDLxD721iaYqKjVX+hWThmuJeyNtj/0EZ2Hh9AmG
- pRq9kaVgBBm4PkXYFPs52G+n76WmVfjTxDvhIgiFDxgXYjNcsMFwvvOWXQdaP3QZ3bYsUUR
- 3qdKr0HTSJwTwrCryeeIxrlJs0n4j3TjkB6v2C4Ywd0FPZosratH4/wvlgH1m8DqIWAWxr9
- n4cWW1euyh3Gt0JxCWHIQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mwePOT4Pi8Q=:HUm/5P7AquErM9FzERi2sd
- JjQohdIa1e1mwb+LBEmR0QN8tdGjT9Y8EOzgQ3xEuO/os9H0rirRXSS7uTkVxBLnMdv16Xx1v
- QRjfacv7jMlsH4SNWQRYXLy/TJ7uL4lwHjnJcpIw0J51ufOa6/PTqt/Qg9cjbhtClg+b267fc
- c/kMSySQGqAQVMoa9C6uEupYF9yX07kPaaKWlgHGDCIU0nfg1BHc5qGQ2X8j71QkK6CWQgqQG
- jGDrBllurxjxzojHPQ9o9Rh+Rc/Auz92+E/Xa5QJ6MSfq6cnzpFd9EcLqRWBIDENBD89xcaC8
- k2o/XwZOlQtucOQOhNzCgd4XLfD0gUxqIAyK/6oLZwYK0pfoFZ0MxAyvYiCeWSrWn0Ni1JOCC
- Di7+x/apwXkPKjTeHR9Qtf1r6XxIKKWVEutIdwyuUxUdek5v6l+3xNiezPHyw/GSf39jL2exH
- gXwJtaLaPUd8UabVQMZ93tjtXL7BGOSbqaRnPd71vWgpKvViBBUVdm72n5QJYyhyb6fOhIjY+
- Djyuays462/t41sYBEcRdErm0ePRim8byzSUPNAEy2GHbK1fnX4amZE+xMP+O7ybHDa9a+J0U
- Q15eQ9k93QBZ4g0K7dvK5TF5JgJsBF0S0jc/tk7ZeLefWQPQ4ynwFou20MPth9sdxXjA7F50Z
- RBvqnzsvDxAo66WFeSAXB1q15sN37IL1IC7pujYF8W1WPptzLSy8SPpjIJtckQD77s+eLLdSa
- ZaseApKXzXw1iV2nBlmhsYsxA0nD4BPXw28hzvIGUfcT3DABAliTDdhogyDEEA4ik30GlV43D
- gwRg25aVMuCKvMCFlG8MzaEGPkG3tsGSwR9mL+sZhFv3QD14RY=
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH 5/6] ARM: dts: tegra: apalis-tk1: copyright period, spurious newlines
+To: Philippe Ombredanne <pombredanne@nexb.com>
+CC: linux-tegra@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Message-ID: <C651C677-D157-41A3-B206-CB02B986AD19@ziswiler.com>
+X-Provags-ID: V03:K0:BXDDARWpRreieOTVBnUN7yfxrzvlHOiTgWJarTh//vDWp+KmG3Y
+ vQMvCBwIy6sdeKH1y8Z6SOt7v/AvYSbEdnx7sjvFTUlV9vte2BzbKJBuNB7fwcQCT7gdjBl
+ I8YAV1gh6C6l8sLzPoekPMj4h3bIP0uqRsdaeX8U2vA2eXxGYbx1Prp+PzSu7RgQsRKT2++
+ +7beb5kh4vUBycS2xk6Lg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ea5PjzZ0NK4=:pKCgk5BPbKFbtifFSnI3rF
+ vfGRVNLaTyf9xQCuc2ubq1Mh9pSIAdTW/uCVdud3K7HHNEPGlnSTwFqYlwmsB38yoV5ziCyzj
+ R7WLlTJx83oMba2l/LyAmETZ5O16eWpG5O5bKTGpBj32K3tuui9E+SncJPfgtv5B/9Ch87GlB
+ kO3rSsVBzHkW2psZEu1oonrOv1GJDKlwtgWg5Zz1WECzmiTh8deRS46Fskebj7iAxfsLvyH/E
+ Yc4C2qKel8EN7qD6DaO6TrzXTMN29qUe4fj9eimb14VVlPf4ELB4DgFDwzIQ57sEH7trsVtlz
+ BU1/K7Bwlas22zlJ7vxjVGNNixp0UyI2Jm4luFEOpQP48DcYIcPKVTBtNoHyvoIuRhjMwDndE
+ vUJca8vWVHgfbUwnSJxKYmN8o5Kj7Oj0xd2fDxooSEcFoUbzWCzuddd9LE6nr/L/6l78ysvEv
+ BSHJiN0OG74GE3vwrRykOZuryM0ZvegU2CRf0PuMmgYwq6W+8mnX6txpVdyBiSIcwXMyYjaY6
+ dS6MJULfMMUCO77nEy6UkS10PuNPtC/txa2sWS9qtbnbI+2xIT2wwD9a7ply+tE9D4AHd1m+e
+ jwbjJEobBHwnH6+xfyM/15xIiRMdPa1sLeUs66FxT5vmeEovHribB8Yob21f90SeZqxnSnDsP
+ 83Ux2Uq+lZOvOTveRH2sQ2KXu63kR3Zx+LGEfT8I5hhJbkK5ruai78pF/GPM3Mci6siph9OIx
+ rjWTSQZbxN+rvXb1+n3ZmtVnCXnuq/uoDorECA73H+qKbTYGBgL/HbfG0Z0=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> Do any contributors get into the mood to take another look at software updates
->> from my selection of change possibilities in a more constructive way?
+
+
+On February 10, 2018 8:07:58 AM GMT+01:00, Philippe Ombredanne <pombredanne@nexb.com> wrote:
+>Marcel,
+>
+>On Sat, Feb 10, 2018 at 2:38 AM, Marcel Ziswiler <marcel@ziswiler.com>
+>wrote:
+>> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >>
->> Do you need any additional development resources?
-> 
-> One last time: either post per-driver patches with all the cleanups for a driver
-> in a single patch,
+>> Update the copyright period and get rid of some spurious newlines.
+>>
+>> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>>
+>> ---
+>>
+>>  arch/arm/boot/dts/tegra124-apalis-eval.dts |  6 ++----
+>>  arch/arm/boot/dts/tegra124-apalis.dtsi     | 11 +----------
+>>  2 files changed, 3 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts
+>b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+>> index f1010cefb993..a6ad759dddb4 100644
+>> --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
+>> +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+>> @@ -1,5 +1,5 @@
+>>  /*
+>> - * Copyright 2016 Toradex AG
+>> + * Copyright 2016-2018 Toradex AG
+>>   *
+>>   * This file is dual-licensed: you can use it either under the terms
+>>   * of the GPL or the X11 license, at your option. Note that this
+>dual
+>
+>Since you are fixing copyrights, would you consider also fixing the
+>license to use a proper SPDX Id instead?
+>
+>It would be super gentle of you!
+>
+>And you will get extra good karma point if you feel like doing the
+>same for every Toradex-copyrighted files ;)
+>
+>The (still new and fresh) license documentation contributed by tglx
+>--the only real-time docu-mentalist-- is in:
+>Documentation/process/license-rules.rst
+>
+>Thanks!
 
-I find such a change combination unsafe.
+Yes, I'm already in the process of preparing a separate patch set fixing this across all Toradex files. However I'm running this through our legal as well first to make absolutely sure it's all proper.
 
-
-> or a per-directory patch (drivers/media/pci, usb, etc) doing the same cleanup
-> for all drivers in that directory.
-
-Would you dare to apply any (of my) scripts for the semantic patch language
-directly on the whole directory for multi-media software?
-
-
-> I prefer the first approach, but it's up to you.
-
-Can you handle bigger patches really better than similar patch series?
-
-
-> We don't have the time to wade through dozens of one-liner cleanup patches.
-
-Are there any further possibilities to consider around consequences
-from a general change resistance?
-
-Will any development (or management) tools like “quilt fold” make the regrouping
-of possible update steps more convenient and safer? 
-
-Regards,
-Markus
+Thanks!
