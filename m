@@ -1,72 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751280AbeBJJTb (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 04:19:31 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45262 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeBJJT2 (ORCPT
+        id S1751029AbeBJJ1T (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 04:27:19 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44338 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750857AbeBJJ1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 04:19:28 -0500
-X-Google-Smtp-Source: AH8x226suoG4b+ry9OOgjn0iPfdt/758YTnr0J1YZNJoGwv4pVvv3mVqAHloGFolbuodKq6O3WcU8w==
+        Sat, 10 Feb 2018 04:27:17 -0500
+X-Google-Smtp-Source: AH8x227OrzQEkTYEKtczsn4E+RrdkaJqhcu2JJb9OwS/6165EdL9fwGHL1tyGI6BrYaM31rydGV+/w==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v2 1/7] watchdog: sama5d4: make use of timeout-secs provided in devicetree
-Date: Sat, 10 Feb 2018 10:19:05 +0100
-Message-Id: <20180210091911.3644-1-marcus.folkesson@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
+Cc: Marcus Folkesson <marcus.folkesson@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] watchdog: coh901327: make license text and module licence match
+Date: Sat, 10 Feb 2018 10:27:01 +0100
+Message-Id: <20180210092702.4393-1-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-watchdog_init_timeout() will allways pick timeout_param since it
-defaults to a valid timeout.
+Licence text is specifying "GPLv2" but the MODULE_LICENSE is set to "GPLv2
+or later".
 
-Following best practice described in
-Documentation/watchdog/watchdog-kernel-api.txt to make use of
-the parameter logic.
+See include/linux/module.h:
+"GPL"				[GNU Public License v2 or later]
+"GPL v2"			[GNU Public License v2]
+
+When on it, add SPDX identifier tag.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/watchdog/sama5d4_wdt.c | 4 ++--
+ drivers/watchdog/coh901327_wdt.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-index 0ae947c3d7bc..e6c679383734 100644
---- a/drivers/watchdog/sama5d4_wdt.c
-+++ b/drivers/watchdog/sama5d4_wdt.c
-@@ -33,7 +33,7 @@ struct sama5d4_wdt {
- 	unsigned long		last_ping;
- };
+diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
+index 5d8eb9a30879..7b71e0a3e6cc 100644
+--- a/drivers/watchdog/coh901327_wdt.c
++++ b/drivers/watchdog/coh901327_wdt.c
+@@ -1,8 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * coh901327_wdt.c
+  *
+  * Copyright (C) 2008-2009 ST-Ericsson AB
+- * License terms: GNU General Public License (GPL) version 2
+  * Watchdog driver for the ST-Ericsson AB COH 901 327 IP core
+  * Author: Linus Walleij <linus.walleij@stericsson.com>
+  */
+@@ -420,5 +420,5 @@ MODULE_DESCRIPTION("COH 901 327 Watchdog");
+ module_param(margin, uint, 0);
+ MODULE_PARM_DESC(margin, "Watchdog margin in seconds (default 60s)");
  
--static int wdt_timeout = WDT_DEFAULT_TIMEOUT;
-+static int wdt_timeout;
- static bool nowayout = WATCHDOG_NOWAYOUT;
- 
- module_param(wdt_timeout, int, 0);
-@@ -212,7 +212,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	wdd = &wdt->wdd;
--	wdd->timeout = wdt_timeout;
-+	wdd->timeout = WDT_DEFAULT_TIMEOUT;
- 	wdd->info = &sama5d4_wdt_info;
- 	wdd->ops = &sama5d4_wdt_ops;
- 	wdd->min_timeout = MIN_WDT_TIMEOUT;
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:coh901327-watchdog");
 -- 
 2.15.1
