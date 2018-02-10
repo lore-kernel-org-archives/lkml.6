@@ -1,77 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752555AbeBJVIi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 16:08:38 -0500
-Received: from mout.web.de ([212.227.15.14]:44563 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752498AbeBJVIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 16:08:36 -0500
-Subject: [PATCH 2/2] gpio: omap: Improve a size determination in
- omap_gpio_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
-Message-ID: <422a4c63-5ffc-2b40-4d9a-cf947d4af2fd@users.sourceforge.net>
-Date: Sat, 10 Feb 2018 22:08:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752497AbeBJVLQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 16:11:16 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52099 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751145AbeBJVLP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 16:11:15 -0500
+X-Google-Smtp-Source: AH8x2267buohl6t4jYkoxACCZ3wWp83wgJbRdESo8jUCWRMNgnHo4yu5IMqA17FtANxiN+SZPXkMVQ==
+Date: Sun, 11 Feb 2018 00:11:10 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, keescook@chromium.org
+Subject: [PATCH] kstrtox: make kstrtobool_from_user() very strict
+Message-ID: <20180210211110.GA24324@avx2>
 MIME-Version: 1.0
-In-Reply-To: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:ax4hthMaPQTzzjdJou8ZCtM1v1qqVKmYBRdn7poY8ecLVn4oXwE
- RzJDt3eGB0/TbHZpYlC6ICoo2V1pwJfQqvOBCHOOF88jpnSYuqA3GW8p0h0w6EIDPj+2cR5
- qO3oDJGT91ahF3kf/mC5kGzrZmBs1pC34I4qxgl92VPqUZTt+nTKcF2smJO4nQ8jFTBNIzf
- ZpvS8zP5ctY3WQK6rip5A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:isfcWtWLal4=:mJcD+M+uo9B21pe0i3empd
- yu4Di+vgnxwDrc8fiy0rpkRkQsmiYl1PU6xOs5FZE5BIy7yxtXfoaSzsNaQlNuaLlS4WhBjxg
- elJgx9WP/+7/AnPnF4qAX710l1/n2Qv2yrpAWxo48W2Ug1z0iyvU2iscKOqQfserMPw8OJ0pb
- q6ASarIjK7uB7nM8LccrcQrCl7EEMOi6zee7t6a/pSkqljJ1XEpGF5pVtNPoD84jmCmOCZHZ0
- 8ZpKkhDKBsh4dN5rVMrSFBgGzh0fh3KRZIHAopkPIKmo3qwhiBD6c3Y3bs3eQgk91NGyHQZq7
- d7NWZLG9RxBd+yxtm4Qp5CSMkW+lecmPBs2DLItSvQGX/5D0fvBbnAMudKaydP7B1GJGrst4Y
- J4hmfO5IhCMMMYvI53gpr9W2HYeAZQnvTeCsbyhC7tH8vl+Et9urhV0rZKThivK3lk3Ssqfe0
- LG9JutDa5RHQf+3w58ykGsk+2fsaNViDdFOI3M/x6vy0jYToEQIROU7CgTwDQVd7RLnAY1OBJ
- IzXk3+8Ju7TVlqULSKdNMQdf/xlFrcuU1IP6ljUsiI71fcE8JYA3ArBaYGh6TT/QhbqAgE6c4
- 8zfWw+HKSeo8vLI2mlBAWJQhgYMbJtLOWVD5CI7O2QtziJ48CNc0cEYB/tQxeDsuY5cyHXDc3
- w/BWQDdDj9H/WfKM+JSJVTKhFlOZybVjb1lO25pqllKjd9MDu/eeMgYe0wuT8NotTXZWrr1AW
- h5ut5sBr9tX+jWV6QkkttwC0pj3mw1ZLn+CowtPNQx+EJi3StVLLuwD2tUyZZhCSD4SH7DscW
- 7CQDSve+bG1DY2TSa8tr+KlA4AP+QKeDny5ezEuoZOFJjgc/jY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Feb 2018 21:49:22 +0100
+Once upon a time module parameter parsing code accepted
+0, 1, y, n, Y and N for boolean values. Gratituous but contained
+to module code and thus tolerable.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Commit ef951599074ba4fad2d0efa0a977129b41e6d203
+("lib: move strtobool() to kstrtobool()") promoted that ugly wart
+to kstrtobool() and, more importantly, kstrtobool_from_user().
 
-This issue was detected by using the Coccinelle software.
+Later set of accepted values was expanded to "on" and "of".
+Now there are 6+8=14(!) valid strings for a boolean.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This patch reduces set of accepted values to "0" and "1"
+(with optional newline) in spirit with other kstrto*() functions.
+
+I'm starting with kstrtobool_from_user() as it is explicitly designed
+to be used for interacting with userspace. Currently there are 9 users
+all debug code, so there is hope.
+
+Please send before 4.16 so no real users start to depend on verbose behaviour.
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- drivers/gpio/gpio-omap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 4db6f13fa133..35971a341c40 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1157,7 +1157,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	if (!pdata)
- 		return -EINVAL;
+ lib/kstrtox.c |   32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
+
+--- a/lib/kstrtox.c
++++ b/lib/kstrtox.c
+@@ -368,19 +368,41 @@ int kstrtobool(const char *s, bool *res)
+ EXPORT_SYMBOL(kstrtobool);
  
--	bank = devm_kzalloc(dev, sizeof(struct gpio_bank), GFP_KERNEL);
-+	bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
- 	if (!bank)
- 		return -ENOMEM;
+ /*
+- * Since "base" would be a nonsense argument, this open-codes the
+- * _from_user helper instead of using the helper macro below.
++ * Convert string to boolean:
++ *	  0 => false
++ *	  1 => true
++ *	0\n => false
++ *	1\n => true
++ *
++ * Return 0 on success or -E otherwise.
+  */
+ int kstrtobool_from_user(const char __user *s, size_t count, bool *res)
+ {
+-	/* Longest string needed to differentiate, newline, terminator */
+-	char buf[4];
++	/* 0|1, newline, terminator */
++	char buf[3], *p;
++	bool val;
  
--- 
-2.16.1
+ 	count = min(count, sizeof(buf) - 1);
+ 	if (copy_from_user(buf, s, count))
+ 		return -EFAULT;
+ 	buf[count] = '\0';
+-	return kstrtobool(buf, res);
++
++	p = buf;
++	if (*p == '0')
++		val = false;
++	else if (*p == '1')
++		val = true;
++	else
++		return -EINVAL;
++	p++;
++
++	if (*p == '\n')
++		p++;
++	if (*p)
++		return -EINVAL;
++
++	*res = val;
++	return 0;
+ }
+ EXPORT_SYMBOL(kstrtobool_from_user);
+ 
