@@ -1,65 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752362AbeBJBjz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 20:39:55 -0500
-Received: from mout.perfora.net ([74.208.4.194]:41365 "EHLO mout.perfora.net"
+        id S1751091AbeBJBln (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 20:41:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752210AbeBJBji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 20:39:38 -0500
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Marcel Ziswiler <marcel@ziswiler.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/4] dt/bindings & ARM: dts: tegra: updates
-Date: Sat, 10 Feb 2018 02:33:21 +0100
-Message-Id: <20180210013326.27771-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.3
-X-Provags-ID: V03:K0:khjxWRuVuLRBpKo8x5VZdXb8Mzt+k0XHKr0GVmhX8Wvncur4K1V
- 8FYPErRAqcbv/PB60v4rf9TPuF/Agaz/T7252XUT0YKeNmRxQCIDd1Tvz8yuQQw/hNM14eA
- WK/t6a+45BndCC5h8J0jlXF1UKSJjw4BAradEHultuFx1AXWf/NWnWdNAXjVybcqOxTvz7O
- lT9i2pQbIftSXAVL6Db5w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:g4wivd9dxJI=:/x99wjJetd9Ea1GdvJ701Y
- kzu8uiH6WjR7uSjj1flgqJSxPo3kKNjOKNq/O79txmE58NDVMAqZT+VmEIJ84M4xv9W2nqhiq
- EYRaon9SQYSdyolXLKwhpuTcyfObWRXgzKr76k/+bjcwFh63ckBe/v0iJLbTeklf+1Wz/ufFV
- 4QFnPefNNNKo0k1vPuol/5TKmYBEWulGPru2flv6Wu98YK5JM5ZduuRJh8BsXkenYPQgI1IUr
- m3JOvKmbxce57ZPYSauaX+uUtcw1BArVojJKOb2AKZStby3vmBor1TOkn+hYDD7/wwjkM7Q5l
- a/LpyFwQlMU8UIoW6QRFZxUTj3eltq3ReBN9+lS99x1Tq7E0XUt5o8+ummAEZENRLm9G+BI3K
- u6yucB6G/Js67IT2O4dwyRxmMLfj7dedH2jhqh0s6n9jaXuXZsduGhsxnz73XwnH4Avww7lTi
- XnH9Qma6QeBLrl1Kw1FNNON25nh6jDwn8qegdiX2yHGxRAWmY643kqXxRl+N1Mmu/cATPz6t2
- TbqTVDiQSK3Mww1jJXg5HiA9ApGgQlsF77GhmJTJdNrD/knkgBIEp3b4wy1j7fagHMoWn0vfy
- D7xiPW7gxrjeujtRGUbamPFdXswOrv99N4O1efthQ/9QCBsZbQCk2mnvqbkYgXq+EKNMkhaTK
- 76H9w8rW/zgTNS3fayUKv7BP2ZVlUgxQu2bjCYk7HLovo6V84wa8s62MXX3K/GCbofEnLnOwF
- 792FKYng1uam6dv4LY1jLs/egsSOQjnkiCys8A==
+        id S1750961AbeBJBll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 20:41:41 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 599C62172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Fri, 9 Feb 2018 17:41:40 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Message-ID: <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/01, Chao Yu wrote:
+> 
+> 
+> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+> > On 01/31, Chao Yu wrote:
+> >> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+> >>> What if we want to add more entries in addition to node_checksum? Do we have
+> >>> to add a new feature flag at every time? How about adding a layout value instead
+> >>
+> >> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+> >> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+> >> valid range of extended area in node block, but we don't know which
+> >> fields/features are valid/enabled or not.
+> >>
+> >> One more thing is that if we can add one feature flag for each field, we got one
+> >> more chance to disable it dynamically.
+> >>
+> >>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+> >>>
+> >>>
+> >>> What does 1017 mean? We need to make this structure more flexibly for new
+> >>
+> >> Yes, using raw 1017 is not appropriate here.
+> >>
+> >>> entries. Like this?
+> >>> 		union {
+> >>> 			struct node_v1;
+> >>> 			struct node_v2;
+> >>> 			struct node_v3;
+> >>> 			...
+> >>> 			struct direct_node dn;
+> >>> 			struct indirect_node in;
+> >>> 		};
+> >>> 	};
+> >>>
+> >>> 	struct node_v1 {
+> >>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >>> 		__le32 node_checksum;
+> >>> 	}
+> >>>
+> >>> 	struct node_v2 {
+> >>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+> >>
+> >> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+> >> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+> >>
+> >> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+> >> fields, node version count can be a large number, it results in complicated
+> >> version recognization and handling.
+> >>
+> >> One more question is how can we control which fields are valid or not in
+> >> comp[Vx_NSIZE]?
+> >>
+> >>
+> >> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+> >> the one used by f2fs_inode:
+> >>
+> >> struct f2fs_node {
+> >> 	union {
+> >> 		struct f2fs_inode i;
+> >> 		union {
+> >> 			struct {
+> >> 				__le32 node_checksum;
+> >> 				__le32 feature_field_1;
+> >> 				__le32 feature_field_2;
+> >> 				....
+> >> 				__le32 addr[];
+> >> 				
+> >> 			};
+> >> 			struct direct_node dn;
+> >> 			struct indirect_node in;
+> >> 		};
+> >> 	};
+> >> 	struct node_footer footer;
+> >> } __packed;
+> >>
+> >> Moving all extended fields to the head of f2fs_node, so we don't have to use
+> >> macro to indicate actual size of addr.
+> > 
+> > Thinking what'd be the best way. My concern is, once getting more entries, we
+> 
+> OK, I think we need more discussion.. ;)
+> 
+> > can't set each of features individually. Like the second entry should have
+> 
+> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+> example:
+> 
+> #define F2FS_NODE_CHECKSUM	0x0001
+> #define F2FS_NODE_FIELD1	0x0002
+> #define F2FS_NODE_FIELD2	0x0004
+> 
+> 	union {
+> 		struct {
+> 			__le32 node_checksum;
+> 			__le32 field_1;
+> 			__le32 field_2;
+> 			....
+> 			__le32 addr[];
+> 		};
+> 		struct direct_node dn;
+> 		struct indirect_node in;
+> 	};
+> 
+> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+> 
+> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
 
-This series fixes the Tegra GMI controller DT/bindings example, a few
-IRQ type definitions, removes some invalid uses of rsvd1 pin muxes on
-Beaver and removes a duplicate pcie-1 node on Venice2.
+So, that's why I thought we may need a sort of each formats.
 
-
-Marcel Ziswiler (4):
-  dt/bindings: fix binding examples for tegra gmi controller
-  ARM: dts: tegra: use proper irq type definitions
-  ARM: dts: tegra: beaver: remove invalid uses of rsvd1
-  ARM: dts: tegra: venice2: remove duplicate pcie-1 node
-
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt |  6 ++--
- arch/arm/boot/dts/tegra114-dalmore.dts             |  2 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  2 +-
- arch/arm/boot/dts/tegra124-venice2.dts             |  9 ++----
- arch/arm/boot/dts/tegra30-apalis.dtsi              |  4 +--
- arch/arm/boot/dts/tegra30-beaver.dts               | 32 +++++++++++-----------
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts      |  2 +-
- 7 files changed, 25 insertions(+), 32 deletions(-)
-
--- 
-2.14.3
+> 
+> Any thoughts?
+> 
+> Thanks,
+> 
+> > enabled node_checksum, which we may not want to do.
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>> 		__le32 comp[V2_NSIZE];
+> >>> 	}
+> >>> 	...
+> >>>
+> >>>> +			};
+> >>>> +			struct direct_node dn;
+> >>>> +			struct indirect_node in;
+> >>>> +		};
+> >>>>  	};
+> >>>>  	struct node_footer footer;
+> >>>>  } __packed;
+> >>>> -- 
+> >>>> 2.15.0.55.gc2ece9dc4de6
+> >>>
+> >>> .
+> >>>
