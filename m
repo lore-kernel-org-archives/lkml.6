@@ -1,58 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeBJTcH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 14:32:07 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33227 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751622AbeBJTcG (ORCPT
+        id S1752210AbeBJTru (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 14:47:50 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36172 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbeBJTrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 14:32:06 -0500
-X-Google-Smtp-Source: AH8x225SnnY+efgmAOyiRma6SX6cObTNYe3k9VgXB5ghD114A+mujV8qpHY8RuU1czvvdKj/sBhX9Q==
-Date: Sat, 10 Feb 2018 11:32:01 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH V4 1/2] ptr_ring: fail early if queue occupies more than
- KMALLOC_MAX_SIZE
-Message-ID: <20180210193201.GB23737@zzz.localdomain>
-References: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
+        Sat, 10 Feb 2018 14:47:49 -0500
+X-Google-Smtp-Source: AH8x225u3wmI68pL7ie38FjPaPTYZJpVb7+YFUqswWCquMWmPqGoxtLcm0sDh+tfpEjo+EUckVm6bks7WTtiLRwlHXE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+From: Darren Hart <dvhart@gmail.com>
+Date: Sat, 10 Feb 2018 11:47:47 -0800
+Message-ID: <CAJuF2pwa1kt1egYTdrrrv9VOS3j1oco6bfcRrezCdQ9t0Fo5zg@mail.gmail.com>
+Subject: [GIT PULL] platform-drivers-x86 for 4.16-3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
+Hi Linus,
 
-On Fri, Feb 09, 2018 at 05:45:49PM +0800, Jason Wang wrote:
-> To avoid slab to warn about exceeded size, fail early if queue
-> occupies more than KMALLOC_MAX_SIZE.
-> 
-> Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
-> Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  include/linux/ptr_ring.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-> index 1883d61..6051a5f 100644
-> --- a/include/linux/ptr_ring.h
-> +++ b/include/linux/ptr_ring.h
-> @@ -466,6 +466,8 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
->  
->  static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
->  {
-> +	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
-> +		return NULL;
+This series can wait for the RC cycle if you prefer. It's ready now
+and it simplifies branch management a bit on our end to merge it now. It
+is isolated to the Mellanox hotplug and platform drivers, and is mostly
+data for new system types with a correction and an uninitialized
+variable fix.
 
-Are you sure that size can't be over 0x40000000?  The proper way to write this
-(safe from integer overflow) would be:
+Note: My usual mail and git services are down... right before sending this.
+I'm sending you the email from gmail, and I fortunately mirrored the
+signed tag to github. I've updated the Pull Request below to list both the
+usual infradead URL as well as the github backup URL. Apologies if this
+breaks some part of the process.
 
-	if (size > KMALLOC_MAX_SIZE / sizeof(void *))
-		return NULL;
+Thanks,
 
-- Eric
+Darren Hart
+VMware Open Source Technology Center
+
+The following changes since commit 9a7c551ba7aae3648473179f234e960cfd46eaf4:
+
+  platform/x86: samsung-laptop: Re-use DEFINE_SHOW_ATTRIBUTE() macro
+(2018-02-07 12:50:23 +0200)
+
+are available in the git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git
+tags/platform-drivers-x86-v4.16-3
+  Alternatively:
+  https://github.com/dvhart/linux-pdx86.git tags/platform-drivers-x86-v4.16-3
+
+for you to fetch changes up to 1bd42d94ccab4eab5dc9dc9d303a687a61cde9bd:
+
+  platform/x86: mlx-platform: Add support for new 200G IB and Ethernet
+systems (2018-02-09 17:23:20 -0800)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v4.16-3
+
+Mellanox fixes and new system type support.
+
+The following is an automated git shortlog grouped by driver:
+
+mlx-platform:
+ -  Add support for new 200G IB and Ethernet systems
+ -  Add support for new msn201x system type
+ -  Add support for new msn274x system type
+ -  Fix power cable setting for msn21xx family
+ -  Add define for the negative bus
+ -  Use defines for bus assignment
+
+platform/mellanox:
+ -  mlxreg-hotplug: Fix uninitialized variable
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      platform/mellanox: mlxreg-hotplug: Fix uninitialized variable
+
+Vadim Pasternak (6):
+      platform/x86: mlx-platform: Use defines for bus assignment
+      platform/x86: mlx-platform: Add define for the negative bus
+      platform/x86: mlx-platform: Fix power cable setting for msn21xx family
+      platform/x86: mlx-platform: Add support for new msn274x system type
+      platform/x86: mlx-platform: Add support for new msn201x system type
+      platform/x86: mlx-platform: Add support for new 200G IB and
+Ethernet systems
+
+ drivers/platform/mellanox/mlxreg-hotplug.c |   2 +-
+ drivers/platform/x86/mlx-platform.c        | 372 ++++++++++++++++++++++++++++-
+ 2 files changed, 363 insertions(+), 11 deletions(-)
+
+-- 
+Darren Hart
+dvhart@gmail.com
