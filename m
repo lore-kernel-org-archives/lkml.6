@@ -1,94 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751077AbeBJBjD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 20:39:03 -0500
-Received: from mout.perfora.net ([74.208.4.196]:59981 "EHLO mout.perfora.net"
+        id S1751313AbeBJBjY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 20:39:24 -0500
+Received: from mout.perfora.net ([74.208.4.197]:34355 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750961AbeBJBjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 20:39:00 -0500
+        id S1751343AbeBJBjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 20:39:22 -0500
 From: Marcel Ziswiler <marcel@ziswiler.com>
 To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 1/4] dt/bindings: fix binding examples for tegra gmi controller
-Date: Sat, 10 Feb 2018 02:33:22 +0100
-Message-Id: <20180210013326.27771-2-marcel@ziswiler.com>
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/4] ARM: dts: tegra: use proper irq type definitions
+Date: Sat, 10 Feb 2018 02:33:23 +0100
+Message-Id: <20180210013326.27771-3-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180210013326.27771-1-marcel@ziswiler.com>
 References: <20180210013326.27771-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K0:lQAYfwbY7FHynhNAVCm7+CxINUkOkX/EB3O56fbDYCFEu3lx6ku
- rIDfNmw3BYXf2h2k+nBlOP46Bcx8vxm9Cca/OtWnWlm3X3R6B23FSIU/3sA6D7kcvseddzr
- 49sFL+hWUZXKxWD9uqgT364r7knwGq7Qwad49+fXvNY6GQg5Myk1ybHO317ZQ3Lj6f1fgPV
- RO0eiS9D+dU69XpBMdSCg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:UUywKqT77zU=:uvyZADAuMNzlxS51BLaogh
- 19FCWD5eHd3mlUyi7/K4mjigXS/RCqkwmYJvGcWKdaYnbrS/eLijuaOALNKeEtj6lKj4GtHnD
- CE8whZYNnicEdnQF8qMIBFUjGwUvnuELPXs71qWc248DVizSVlPdyVMErOGK8ym9NQA3xHT6X
- JFOnGdXnCySVC/u79UU9Zp9TMxxUwOXDq2Jmb4aS2iTw3ByIdmWofu2BIkcNdyhcOO/XAkDHJ
- 2WUnZcnO8XMxySUO4oorBadWXv+YSfJ0KahghIwt/vuG4h9SYjuhpGY7gqU5UzPzlW0jsE6IT
- Iu8a1rQW5CZJ+V6D6IUIwmI8PhPOu2mVwVDlEef8xBC5qB5dzOyntOQ1U2KpKF4kVwjzIoHTc
- ksv42+2b/33awNOsZMbdnEqVvhxhcUtCxoLE5FbbRUpUKYieJkgy5YjQ3n5/JV4NBT0WDDs1s
- HUtYlgb9pWTXF4T6OfErerFJ3ZBnEk2rYr1WaiYlj4DLROqCow+lkKMEAR3sbdHc8/DFBMrby
- usK6W5RT9CAR88OcbD/yNIHq0DazFrDQD/lnBQ0oIroAT+18cVM6dKppY6tUra2O2qn8wAuk4
- ytpNndLcnY8zbD0iKPxafgRLNmWQHjcRpeyd+/rzA2maJvkeqdvd+QxtMaim0YELoTKsdmh4N
- 9lCUhDt7rdz/5Ca6e9pfcLnYKxFu3s9FA5bAWuha/6g1P8bsxYHELTGSkUBsOy2y8/i3F0Nhl
- ILAML1a0EmU1FlMUc5DWYuiBwkfzVBEwOvsC9w==
+X-Provags-ID: V03:K0:TweU5n4bZEUqKWyWQf5zO8B3GPXYz5/PABh0rpIKz0mEOVEEfuB
+ pe5mzxB/jH5CxhEQs3TQsJlJpO7QS7oBVEowQNzNxvFb96VghOv/msHFEpiI9me9i7XKykG
+ UD5RO3aqLpsWKrHcJoGYiK/FN9rCYQo5eC1zzDv5i10uEcYo3CLY2EI0xFWxFhdcVzoikQ+
+ xk1y0WMx7A2wvF2FGMzXg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:M/4vwavD2HI=:WyNaSJPF9koC1ZQiYPaixO
+ Qs9UGNDaFiHtFs/SXNj90QdvI+oFJcF4LY/0xeEN8aTeoP8hu5iUtvKB0y0B5hH+WZ14ZBwZ4
+ glV/FvnnGAyQCGrYRhlV8UBsOWLne/R4IISl7YbNurBiQbBvYcvTEdIMD10jLwdqzCrK1LtQ4
+ HtJ7GnzeIegbf1IDZlLklBqpssdZQmHx6hqx1llCQt5iC+q2iIj42VEQqas5yNhumWfXXNKZF
+ UY1Qn9Mqj52dmudddWwO0eWZChFafkt9up7e+33luOzBo2wkaQnQzLCyGIjeXAt8FkjywuG0k
+ R4i75Sqv2Q0fzBphYTgEwHe7p2641klB6KfMj+YQr4qe9ebN6qq1wzDz4WJDAI2LxtIGjUSa3
+ jQFrBpJOfzkVcZCi6q3CzDCBzHkV/gP+KedQbWeTcoC5UvZMac1r82VKf7/8azLk/8z0QD/8Z
+ zlcHEB3suZMa4HNmOBNgzdWA3kTLbxekSnhTA4IsAS/ZGewMiSP85GmUd9mlC3AlMLF3brvs9
+ Dv4DEt5ZZ/P68IqvUnqui+OIb8y/U/1/fXiPVUW+uoGSCM9dBsngA4A1cJ3l28uAAa5tRI+ea
+ Svne59RtEAlQJHntEPI9Sgq5s5NmUjQ7OZd5Bf4Gy2WHsVZ0FV8+dQJuE3cddZyQLHKbfj3U3
+ yvT0xtVwusa4OX0oWM5ub7MoeBYKCV8BqqZ1AwW3GeFmKs86cVWj4FJT9JqN3uSdinj+3CleU
+ iXjFG8QAWVgo1GDXRNK9YqkT0iW/p1lx8f5+5g==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Fix devicetree binding examples for the Generic Memory Interface (GMI)
-bus driver found on Tegra SOCs.
+This switches a few interrupt definitions that were using either
+GPIO_ACTIVE_HIGH or GPIO_ACTIVE_LOW as IRQ type, which is invalid.
 
-While at it also remove double new lines as a left over from Rob's
-commit 4da722ca19f3 ("dt-bindings: Remove "status" from examples").
+This is mostly a cosmetic change, that doesn't affect any driver.
+
+Analogous to Paul's commit 38333641b6dd ("ARM: tegra: nyan: Use proper
+IRQ type definitions").
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
 
- Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts        | 2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     | 2 +-
+ arch/arm/boot/dts/tegra124-venice2.dts        | 4 ++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi         | 4 ++--
+ arch/arm/boot/dts/tegra30-beaver.dts          | 2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-index 3e21eb822811..c1e70621799b 100644
---- a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-+++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-@@ -73,7 +73,7 @@ Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
- controllers with a simple-bus node since they are all connected to the same
- chip-select (CS4), in this example external address decoding is provided:
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index acd6cf51b15b..eafff16765b4 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -780,7 +780,7 @@
+ 			compatible = "realtek,rt5640";
+ 			reg = <0x1c>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 3) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_FALLING>;
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index d112f85e66ed..6dbcf84dafbc 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1418,7 +1418,7 @@
+ 			compatible = "realtek,rt5639";
+ 			reg = <0x1c>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 32d9079f025b..c0469ea149d2 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -613,7 +613,7 @@
+ 			compatible = "maxim,max98090";
+ 			reg = <0x10>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
+ 		};
+ 	};
  
--gmi@70090000 {
-+gmi@70009000 {
- 	compatible = "nvidia,tegra20-gmi";
- 	reg = <0x70009000 0x1000>;
- 	#address-cells = <2>;
-@@ -84,7 +84,6 @@ gmi@70090000 {
- 	reset-names = "gmi";
- 	ranges = <4 0 0xd0000000 0xfffffff>;
- 
--
- 	bus@4,0 {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -109,7 +108,7 @@ gmi@70090000 {
- Example with one SJA1000 CAN controller connected to the GMI bus
- on CS4:
- 
--gmi@70090000 {
-+gmi@70009000 {
- 	compatible = "nvidia,tegra20-gmi";
- 	reg = <0x70009000 0x1000>;
- 	#address-cells = <2>;
-@@ -120,7 +119,6 @@ gmi@70090000 {
- 	reset-names = "gmi";
- 	ranges = <4 0 0xd0000000 0xfffffff>;
- 
--
- 	can@4,0 {
- 		reg = <4 0 0x100>;
- 		nvidia,snor-mux-mode;
+@@ -859,7 +859,7 @@
+ 					reg = <0x9>;
+ 					interrupt-parent = <&gpio>;
+ 					interrupts = <TEGRA_GPIO(J, 0)
+-							GPIO_ACTIVE_HIGH>;
++							IRQ_TYPE_EDGE_BOTH>;
+ 					ti,ac-detect-gpios = <&gpio
+ 							TEGRA_GPIO(J, 0)
+ 							GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index faa8cd2914e8..bfb7913c0657 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -657,7 +657,7 @@
+ 			reg = <1>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 3) GPIO_ACTIVE_LOW>;
++			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_RISING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 	};
+@@ -672,7 +672,7 @@
+ 			reg = <0>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
++			interrupts = <TEGRA_GPIO(W, 2) IRQ_TYPE_EDGE_RISING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 5331a8f7dcf8..36b85a0ab0eb 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1762,7 +1762,7 @@
+ 			compatible = "realtek,rt5640";
+ 			reg = <0x1c>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(X, 3) GPIO_ACTIVE_HIGH>;
++			interrupts = <TEGRA_GPIO(X, 3) IRQ_TYPE_EDGE_FALLING>;
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(X, 2) GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+index 3c5fb2430212..b307feb7c330 100644
+--- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+@@ -79,7 +79,7 @@
+ 			reg = <0>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++			interrupts = <TEGRA_GPIO(S, 0) IRQ_TYPE_EDGE_RISING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 		spidev0: spi@1 {
 -- 
 2.14.3
