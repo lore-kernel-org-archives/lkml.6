@@ -1,59 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeBJJnv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 04:43:51 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34741 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeBJJnu (ORCPT
+        id S1751122AbeBJJ5S (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 04:57:18 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54940 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbeBJJ5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 04:43:50 -0500
-X-Google-Smtp-Source: AH8x224EeVeNEEMU9dgc8yW+wAdTv4aNwxU7WyZkrETnm8BHuMQ5JST92hdyZk6keea7bG+E3mRNgmo3etws/8izB6E=
-MIME-Version: 1.0
-In-Reply-To: <20180209235012.4993-4-rabel@robertabel.eu>
-References: <20180209235012.4993-1-rabel@robertabel.eu> <20180209235012.4993-2-rabel@robertabel.eu>
- <20180209235012.4993-3-rabel@robertabel.eu> <20180209235012.4993-4-rabel@robertabel.eu>
+        Sat, 10 Feb 2018 04:57:16 -0500
+X-Google-Smtp-Source: AH8x2263M+7fCulWq1dJs+7QoGoXVK0mGl5m59xsxGSfdg8k+Ew7kCKJMZWvMQY6137ykXqT/ac0BA==
+Date: Sat, 10 Feb 2018 10:56:51 +0100
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 10 Feb 2018 10:43:49 +0100
-Message-ID: <CANiq72mdqK0uf_7drJ=g3W=_M8JhM4TbOS2kuwPbc=T9+Bzs-w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] auxdisplay: charlcd: replace octal literal with
- form-feed escape sequence
-To: Robert Abel <rabel@robertabel.eu>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] MAINTAINERS: auxdisplay: remove obsolete webpages
+Message-ID: <20180210095651.y7kvf3oqp6pzvh33@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 12:50 AM, Robert Abel <rabel@robertabel.eu> wrote:
-> There is no need to resort to octal escape sequence for the form feed character when an established escape sequence exists.
->
-> Signed-off-by: Robert Abel <rabel@robertabel.eu>
-> ---
->  drivers/auxdisplay/charlcd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
-> index 92549c8344a4..a3486db03d81 100644
-> --- a/drivers/auxdisplay/charlcd.c
-> +++ b/drivers/auxdisplay/charlcd.c
-> @@ -555,7 +555,7 @@ static void charlcd_write_char(struct charlcd *lcd, char c)
->                         /* back one char again */
->                         lcd->ops->write_cmd(lcd, LCD_CMD_SHIFT);
->                         break;
-> -               case '\014':
-> +               case '\f':
-
-Normally I wouldn't bother with this kind of change, but since the
-other switch cases all use escape sequences, this improves
-consistency, so agreed.
-
-Trivial. Compile-tested.
-
+Cc: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+---
+ MAINTAINERS | 8 --------
+ 1 file changed, 8 deletions(-)
 
->                         /* quickly clear the display */
->                         charlcd_clear_fast(lcd);
->                         break;
-> --
-> 2.11.0
->
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e6c26cb47d02..01e302f7967e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2484,8 +2484,6 @@ F:	kernel/audit*
+ 
+ AUXILIARY DISPLAY DRIVERS
+ M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+-W:	http://miguelojeda.es/auxdisplay.htm
+-W:	http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+ S:	Maintained
+ F:	drivers/auxdisplay/
+ F:	include/linux/cfag12864b.h
+@@ -3373,16 +3371,12 @@ F:	include/linux/usb/wusb*
+ 
+ CFAG12864B LCD DRIVER
+ M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+-W:	http://miguelojeda.es/auxdisplay.htm
+-W:	http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+ S:	Maintained
+ F:	drivers/auxdisplay/cfag12864b.c
+ F:	include/linux/cfag12864b.h
+ 
+ CFAG12864BFB LCD FRAMEBUFFER DRIVER
+ M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+-W:	http://miguelojeda.es/auxdisplay.htm
+-W:	http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+ S:	Maintained
+ F:	drivers/auxdisplay/cfag12864bfb.c
+ F:	include/linux/cfag12864b.h
+@@ -7866,8 +7860,6 @@ F:	kernel/kprobes.c
+ 
+ KS0108 LCD CONTROLLER DRIVER
+ M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+-W:	http://miguelojeda.es/auxdisplay.htm
+-W:	http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+ S:	Maintained
+ F:	Documentation/auxdisplay/ks0108
+ F:	drivers/auxdisplay/ks0108.c
+-- 
+2.14.1
