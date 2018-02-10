@@ -1,66 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753323AbeBJAEm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 19:04:42 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45332 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753221AbeBJAEj (ORCPT
+        id S1753338AbeBJAGS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 19:06:18 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54091 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753196AbeBJAGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 19:04:39 -0500
-X-Google-Smtp-Source: AH8x225BO3kXcdjDdtKmSXOnsE+gIHYeOMtrjmPFGsd6NIO4i2L8IzucJHHWh0Lmgy1Rv+79rKkqsQ==
-Date: Fri, 9 Feb 2018 16:04:36 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 6/7] watchdog: meson: allow setting timeout in devicetree
-Message-ID: <20180210000436.GA23513@roeck-us.net>
-References: <marcus.folkesson@gmail.com>
- <20180209192724.1227-1-marcus.folkesson@gmail.com>
- <20180209192724.1227-7-marcus.folkesson@gmail.com>
- <20180209224849.GH19627@roeck-us.net>
- <20180209231910.GA2251@piout.net>
+        Fri, 9 Feb 2018 19:06:16 -0500
+X-Google-Smtp-Source: AH8x226KN2F1ALaitbUNVXg+IMDDjQ3cceqduB1Kvthc0CATRhnD66S/XxxqdkGvTm+YVy+lVwEcEjRI06dNrUL5vIY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209231910.GA2251@piout.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180209231233.107711-1-mka@chromium.org>
+References: <20180209231233.107711-1-mka@chromium.org>
+From: Guenter Roeck <groeck@google.com>
+Date: Fri, 9 Feb 2018 16:06:15 -0800
+Message-ID: <CABXOdTfpCuiCRprv4YR7LU0863fsGd3_xyqHK_t3p9rbfkj12Q@mail.gmail.com>
+Subject: Re: [PATCH] amdgpu/dc: Remove unnecessary initialization in dc_link_handle_hpd_rx_irq()
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>, Wenjing Liu <Wenjing.Liu@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        Craig Bergstrom <craigb@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 12:19:10AM +0100, Alexandre Belloni wrote:
-> Hi Guenter,
-> 
-> On 09/02/2018 at 14:48:49 -0800, Guenter Roeck wrote:
-> > On Fri, Feb 09, 2018 at 08:27:23PM +0100, Marcus Folkesson wrote:
-> > > watchdog_init_timeout() will allways pick timeout_param since it
-> > > defaults to a valid timeout.
-> > > 
-> > > By following best practice described in
-> > > Documentation/watchdog/watchdog-kernel-api.txt, it also
-> > > let us to set timout-sec property in devicetree.
-> > > 
-> > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > 
-> > Reviewed-by: Guenetr Roeck <linux@roeck-us.net>
->                   ^
-> A small typo in your name
-> 
+On Fri, Feb 9, 2018 at 3:12 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> The initialization of 'result' is unnecessary, the variable is assigned
+> unconditionally a few lines below. Removing the initialization also fixes
+> the following warning when building with clang:
+>
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c:1931:26:
+>   error: implicit conversion from enumeration type 'enum ddc_result'
+>   to different enumeration type 'enum dc_status' [-Werror,-Wenum-conversion]
+>     enum dc_status result = DDC_RESULT_UNKNOWN;
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-Mr. Fat Fingers At Work :-)
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-Guenter
+> ---
+>  drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+> index 4ee4c03a6724..8e3a8c1395a3 100644
+> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+> @@ -1926,7 +1926,7 @@ bool dc_link_handle_hpd_rx_irq(struct dc_link *link, union hpd_irq_data *out_hpd
+>  {
+>         union hpd_irq_data hpd_irq_dpcd_data = {{{{0}}}};
+>         union device_service_irq device_service_clear = { { 0 } };
+> -       enum dc_status result = DDC_RESULT_UNKNOWN;
+> +       enum dc_status result;
+>         bool status = false;
+>         /* For use cases related to down stream connection status change,
+>          * PSR and device auto test, refer to function handle_sst_hpd_irq
+> --
+> 2.16.0.rc1.238.g530d649a79-goog
+>
