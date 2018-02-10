@@ -1,75 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeBJDTa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 22:19:30 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35893 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750835AbeBJDT2 (ORCPT
+        id S1751038AbeBJDtg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 22:49:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750832AbeBJDte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 22:19:28 -0500
-X-Google-Smtp-Source: AH8x2277jki9VrjJTEmRFqUSruW/9IZ2D+lmh8SEprGc0rTt2SEHwxQphgIqtvFQ3IKmeNrKfY1qoA==
-Date: Fri, 9 Feb 2018 19:19:25 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+bacbe5d8791f30c9cee5@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        James Morse <james.morse@arm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Ingo Molnar <mingo@kernel.org>, syzkaller-bugs@googlegroups.com
-Subject: Re: possible deadlock in get_user_pages_unlocked
-Message-ID: <20180210031925.GA1041@zzz.localdomain>
-References: <001a113f6344393d89056430347d@google.com>
- <20180202045020.GF30522@ZenIV.linux.org.uk>
- <20180202053502.GB949@zzz.localdomain>
- <20180202054626.GG30522@ZenIV.linux.org.uk>
- <20180202062037.GH30522@ZenIV.linux.org.uk>
- <CACT4Y+bDU00aQpJOUK8eB+Kv4HycNwKA=kShUe9kSd0FUqO+FQ@mail.gmail.com>
- <20180210013640.GN30522@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180210013640.GN30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Fri, 9 Feb 2018 22:49:34 -0500
+From: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, mikey@neuling.org,
+        hbabu@us.ibm.com, linuxppc-dev@ozlabs.org,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND 1/4] powerpc/vas: Fix order of cleanup in debugfs dir
+Date: Fri,  9 Feb 2018 19:49:24 -0800
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18021003-0056-0000-0000-000004188E93
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008507; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000251; SDB=6.00987497; UDB=6.00501244; IPR=6.00766855;
+ BA=6.00005821; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00019472; XFM=3.00000015;
+ UTC=2018-02-10 03:49:31
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021003-0057-0000-0000-000008500112
+Message-Id: <1518234567-24869-1-git-send-email-sukadev@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-10_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802100047
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Al,
+Fix the order of cleanup to ensure we free the name buffer in case
+of an error creating 'hvwc' or 'info' files.
 
-On Sat, Feb 10, 2018 at 01:36:40AM +0000, Al Viro wrote:
-> On Fri, Feb 02, 2018 at 09:57:27AM +0100, Dmitry Vyukov wrote:
-> 
-> > syzbot tests for up to 5 minutes. However, if there is a race involved
-> > then you may need more time because the crash is probabilistic.
-> > But from what I see most of the time, if one can't reproduce it
-> > easily, it's usually due to some differences in setup that just don't
-> > allow the crash to happen at all.
-> > FWIW syzbot re-runs each reproducer on a freshly booted dedicated VM
-> > and what it provided is the kernel output it got during run of the
-> > provided program. So we have reasonably high assurance that this
-> > reproducer worked in at least one setup.
-> 
-> Could you guys check if the following fixes the reproducer?
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 61015793f952..058a9a8e4e2e 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -861,6 +861,9 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
->  		BUG_ON(*locked != 1);
->  	}
->  
-> +	if (flags & FOLL_NOWAIT)
-> +		locked = NULL;
-> +
->  	if (pages)
->  		flags |= FOLL_GET;
->  
+Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+---
+ arch/powerpc/platforms/powernv/vas-debug.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Yes that fixes the reproducer for me.
-
-- Eric
+diff --git a/arch/powerpc/platforms/powernv/vas-debug.c b/arch/powerpc/platforms/powernv/vas-debug.c
+index ca22f1e..b4de4c6 100644
+--- a/arch/powerpc/platforms/powernv/vas-debug.c
++++ b/arch/powerpc/platforms/powernv/vas-debug.c
+@@ -166,13 +166,13 @@ void vas_window_init_dbgdir(struct vas_window *window)
+ 
+ 	return;
+ 
+-free_name:
+-	kfree(window->dbgname);
+-	window->dbgname = NULL;
+-
+ remove_dir:
+ 	debugfs_remove_recursive(window->dbgdir);
+ 	window->dbgdir = NULL;
++
++free_name:
++	kfree(window->dbgname);
++	window->dbgname = NULL;
+ }
+ 
+ void vas_instance_init_dbgdir(struct vas_instance *vinst)
+-- 
+2.7.4
