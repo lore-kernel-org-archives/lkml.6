@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeBJCmf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 21:42:35 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34985 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752220AbeBJCmb (ORCPT
+        id S1752178AbeBJCmT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 21:42:19 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:39487 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751550AbeBJCmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 21:42:31 -0500
-X-Google-Smtp-Source: AH8x224b6Zu4CMzzQTT5FaKt3DNrQOb+u1Q/kQAC4npq9o4aOB63uF+Y+NShXOsrNZTcg/t+ePwz9Q==
+        Fri, 9 Feb 2018 21:42:16 -0500
+X-Google-Smtp-Source: AH8x227wDxEJQgC3vLIxVc1E4ctKLV+qAhz07fUIQnWM7t9mIen7/keAEm+jcEe3K8wFCZk5nCdx3Q==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com
@@ -18,9 +18,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         viresh.kumar@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 05/11] clk: actions: Add gate clock support
-Date: Sat, 10 Feb 2018 08:11:14 +0530
-Message-Id: <20180210024120.27503-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 03/11] arm64: dts: actions: Source CMU clock for UART5
+Date: Sat, 10 Feb 2018 08:11:12 +0530
+Message-Id: <20180210024120.27503-4-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
 References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
@@ -28,188 +28,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Actions Semi gate clock together with helper
-functions to be used in composite clock.
+Remove fixed clock and source CMU (Clock Management Unit) clock for
+UART5 driver in Actions Semi S900 SoC.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/actions/Makefile   |  1 +
- drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 64a50fc2d335..1f0917872c9d 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+index 21ca80f9941c..ff043c961d75 100644
+--- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
++++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+@@ -24,12 +24,6 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 	};
+-
+-	uart5_clk: uart5-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <921600>;
+-		#clock-cells = <0>;
+-	};
+ };
  
- clk-owl-y			+= owl-common.o
-+clk-owl-y			+= owl-gate.o
-diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
-new file mode 100644
-index 000000000000..25dd94ac0f35
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-gate.h"
-+
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable)
-+{
-+	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	u32 reg;
-+
-+	set ^= enable;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (set)
-+		reg |= BIT(gate_hw->bit_idx);
-+	else
-+		reg &= ~BIT(gate_hw->bit_idx);
-+
-+	regmap_write(common->regmap, gate_hw->reg, reg);
-+}
-+
-+static void owl_gate_disable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, false);
-+}
-+
-+static int owl_gate_enable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, true);
-+
-+	return 0;
-+}
-+
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= BIT(gate_hw->bit_idx);
-+
-+	return !!(reg & BIT(gate_hw->bit_idx));
-+}
-+
-+static int owl_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	return clk_is_enabled(common, &gate->gate_hw);
-+}
-+
-+const struct clk_ops owl_gate_ops = {
-+	.disable	= owl_gate_disable,
-+	.enable		= owl_gate_enable,
-+	.is_enabled	= owl_gate_is_enabled,
-+};
-diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
-new file mode 100644
-index 000000000000..4fc609647ae4
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.h
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_GATE_H_
-+#define _OWL_GATE_H_
-+
-+#include "owl-common.h"
-+
-+struct owl_gate_hw {
-+	u32			reg;
-+	u8			bit_idx;
-+	u8			gate_flags;
-+};
-+
-+struct owl_gate {
-+	struct owl_gate_hw	gate_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
-+	{						\
-+		.reg		= _reg,			\
-+		.bit_idx	= _bit_idx,		\
-+		.gate_flags	= _gate_flags,		\
-+	}
-+
-+#define OWL_GATE(_struct, _name, _parent, _reg,				\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		}							\
-+	}								\
-+
-+#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		},							\
-+	}								\
-+
-+static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_gate, common);
-+}
-+
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable);
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw);
-+
-+extern const struct clk_ops owl_gate_ops;
-+
-+#endif /* _OWL_GATE_H_ */
+ &timer {
+@@ -38,5 +32,5 @@
+ 
+ &uart5 {
+ 	status = "okay";
+-	clocks = <&uart5_clk>;
++	clocks = <&cmu CLK_UART5>;
+ };
 -- 
 2.14.1
