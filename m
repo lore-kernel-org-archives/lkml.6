@@ -1,95 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751998AbeBJTNJ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 14:13:09 -0500
-Received: from mail-pg0-f41.google.com ([74.125.83.41]:39250 "EHLO
-        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751116AbeBJTNH (ORCPT
+        id S1752190AbeBJTYB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 14:24:01 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53930 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751116AbeBJTX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 14:13:07 -0500
-X-Google-Smtp-Source: AH8x227EedRsE+oZrAKrI7/zqGmeREmclDOOmOtjD+/wmQD5DStZXQlhXrYF5evWGPVW157iEl27UQ==
-Date: Sat, 10 Feb 2018 11:13:02 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
-        Doug Gilbert <dgilbert@interlog.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Subject: Re: scsi: sg: assorted memory corruptions
-Message-ID: <20180210191302.GA23737@zzz.localdomain>
-References: <CACT4Y+b0pizvOAxtWQ-TGCRAYvHXdv79BAEaXh50W6vF8gBvkQ@mail.gmail.com>
- <1516638634.2545.0.camel@wdc.com>
- <097921fa-52c5-8b2b-f564-4b24d9720478@interlog.com>
- <CACT4Y+aEx0ie3qjx6afCYV2vN7gYii0uupKWPXaNTnWUmhdHQw@mail.gmail.com>
- <c0a7ec39-e357-9db6-cf12-ff9c46259f26@interlog.com>
- <CACT4Y+bObXrFiB0Qn+nfkD8DZRiVck1GJ5U9UeQz+-y85gh70Q@mail.gmail.com>
- <1517501859.3417.67.camel@codethink.co.uk>
- <CACT4Y+ZEJ9_no0uQSXO66iyyUeJLn_zbPBEey62YkuzOEUMP2w@mail.gmail.com>
- <20180204090710.GA607@zzz.localdomain>
- <CACT4Y+av=1SmyN8m+F26Xs3DLmd7zLgTB6OWX0MC3gVkiqRpNg@mail.gmail.com>
+        Sat, 10 Feb 2018 14:23:58 -0500
+Date: Sat, 10 Feb 2018 19:23:56 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: [git pull] poll annotations - second round
+Message-ID: <20180210192356.GP30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+av=1SmyN8m+F26Xs3DLmd7zLgTB6OWX0MC3gVkiqRpNg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 04, 2018 at 12:10:58PM +0100, Dmitry Vyukov wrote:
-> >
-> > To get memory corruption it's actually sufficient just to submit "1-byte" reads;
-> > there's no need for the SG_NEXT_CMD_LEN ioctl or anything:
-> >
-> >         #include <fcntl.h>
-> >         #include <unistd.h>
-> >
-> >         int main()
-> >         {
-> >                 int fd = open("/dev/sg0", O_RDWR);
-> >                 char buf[43] = { [36] = 0x08 /* READ_6 */ };
-> >
-> >                 for (;;)
-> >                         write(fd, buf, sizeof(buf));
-> >         }
-> >
-> > (where /dev/sg0 is the default QEMU disk type, "82371SB PIIX3 IDE")
-> >
-> > The SCSI command descriptor block is the 6 bytes at indices 36-41, so index 42
-> > is the only data byte.
-> >
-> > Also this is a different bug from the crash in ata_bmdma_fill_sg() which is
-> > fixed by "libata: fix length validation of ATAPI-relayed SCSI commands".
-> >
-> > I'm guessing the driver is DMA'ing to somewhere it shouldn't be...
-> 
-> It would be good to add KASAN checks to the DMA code that issues
-> transfers. This is another case where a silent memory corruption
-> causes dozens of assorted crashes all over the kernel. If we add
-> checks, KASAN would pinpoint the exact stack that issues the bad
-> command. This may be the simplest way to debug this bug as well. I've
-> filed https://bugzilla.kernel.org/show_bug.cgi?id=198661 for this.
+	Preparations to solving the problems you've mentioned in the original poll
+series.  After this series, run
 
-It seems the problem is related to the fact that in the PRD (Physical Region
-Descriptor) list for the DMA transfer for "BMDMA" ATA disks, the disk (emulated
-in QEMU here: https://github.com/qemu/qemu/blob/master/hw/ide/pci.c#L89) ignores
-the low bit in the lengths, causing a length of 1 (byte) to be interpreted as 0.
-But, at the same time there is also a special case where a length of 0 is
-interpreted as 65536 bytes.
+for V in IN OUT PRI ERR RDNORM RDBAND WRNORM WRBAND HUP RDHUP NVAL MSG; do
+    L=`git grep -l -w POLL$V | grep -v '^t' | grep -v /um/ | grep -v '^sa' | grep -v '/poll.h$'|grep -v '^D'`
+    for f in $L; do sed -i "-es/^\([^\"]*\)\(\<POLL$V\>\)/\\1E\\2/" $f; done
+done
 
-So the disk will DMA up to 65536 bytes into a 1-byte buffer, causing massive
-memory corruption.
+(ideally - just before -rc1) for bulk search-and-replace.  Then cherry-pick
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git#work.poll on top
+of that and we should be done with that stuff - {de,}mangle_poll() unified,
+no more separate kernel-side POLL... definitions.
 
-I'm not sure what the best fix is, but probably it needs to be required that the
-lengths in the sglist have the alignment needed for the disk.
+Basically, that's what you suggested wrt KPOLL..., except that we can use
+EPOLL... instead - they already are arch-independent (and equal to what is
+currently kernel-side POLL...).  After the preparations (in this series)
+switch to returning EPOLL... from ->poll() instances is completely mechanical
+and kernel-side POLL... can go away.  The last step (killing kernel-side
+POLL... and unifying {de,}mangle_poll() has to be done after the
+search-and-replace job, since we need userland-side POLL... for unified
+{de,}mangle_poll(), thus the cherry-pick at the last step.
 
-KASAN would not have helped here unfortunately.  Even if there were KASAN checks
-when mapping the sglist for DMA or when filling in the PRD list, the kernel
-would not have known that the disk would actually interpret "1" as "65536".
+After that we get
+	* POLL{IN,OUT,...} *not* in __poll_t, so any stray instances of ->poll()
+still using those will be caught by sparse.
+	* eventpoll.c and select.c warning-free wrt __poll_t
+	* no more kernel-side definitions of POLL... - userland ones are
+visible through the entire kernel (and used pretty much only for mangle/demangle)
+	* same behavior as after the first series (i.e. sparc et.al. epoll(2)
+working correctly).
 
-- Eric
+The following changes since commit b2fe5fa68642860e7de76167c3111623aa0d5de1:
+
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next (2018-01-31 14:31:10 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.poll2
+
+for you to fetch changes up to d85e2aa2e34dac793e70b900d865f48c69ecbc27:
+
+  annotate ep_scan_ready_list() (2018-02-01 16:30:06 -0500)
+
+----------------------------------------------------------------
+Al Viro (7):
+      smc: missing poll annotations
+      xen: fix poll misannotation
+      use linux/poll.h instead of asm/poll.h
+      add EPOLLNVAL, annotate EPOLL... and event_poll->event
+      preparation to switching ->poll() to returning EPOLL...
+      ep_send_events_proc(): return result via esed->res
+      annotate ep_scan_ready_list()
+
+ drivers/xen/pvcalls-front.h    |  2 +-
+ fs/coda/psdev.c                |  2 +-
+ fs/debugfs/file.c              |  2 +-
+ fs/eventpoll.c                 | 41 +++++++++++++++++++++++------------------
+ fs/fcntl.c                     |  2 +-
+ include/linux/poll.h           |  3 ++-
+ include/uapi/linux/eventpoll.h | 33 +++++++++++++++++----------------
+ net/smc/af_smc.c               |  2 +-
+ 8 files changed, 47 insertions(+), 40 deletions(-)
