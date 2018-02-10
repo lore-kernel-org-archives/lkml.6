@@ -1,122 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751003AbeBJHdk (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 02:33:40 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44858 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbeBJHdj (ORCPT
+        id S1751087AbeBJHhF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 02:37:05 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37850 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750835AbeBJHhD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 02:33:39 -0500
-X-Google-Smtp-Source: AH8x225xzE+0INTQVw8pX/3R1X/DefgMoBdFEkFjqtkrlneYZZ4byQ7jOkHAJiO7ncPi17aOpxkNfA==
-Date: Sat, 10 Feb 2018 16:33:33 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2] printk: Relocate wake_klogd check close to the end of
- console_unlock()
-Message-ID: <20180210073333.GC485@tigerII.localdomain>
-References: <20180208130402.15157-1-pmladek@suse.com>
- <20180208145307.GA485@tigerII.localdomain>
- <20180208164820.qsotvvywds6z6le4@pathway.suse.cz>
- <20180209032830.GA689@jagdpanzerIV>
- <20180209103911.mljxpgkw6njyoibe@pathway.suse.cz>
+        Sat, 10 Feb 2018 02:37:03 -0500
+X-Google-Smtp-Source: AH8x226OOyZxUCJlt+mhRbtiWCpMOYdPPc8uWXWknE3uclHY+vlQEK9tOjP16LEFaoy4f7himtbsJvH0P3Ahn7kkJqM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209103911.mljxpgkw6njyoibe@pathway.suse.cz>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180210024120.27503-2-manivannan.sadhasivam@linaro.org>
+References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org> <20180210024120.27503-2-manivannan.sadhasivam@linaro.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Sat, 10 Feb 2018 08:36:21 +0100
+Message-ID: <CAOFm3uFU9KPZqvRucm8U0ruy6ZZ6AoN55ELCdzp6+sqA6i_SaQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] dt-bindings: clock: Add Actions S900 clock bindings
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Dear Manivannan,
 
-On (02/09/18 11:39), Petr Mladek wrote:
-> On Fri 2018-02-09 12:28:30, Sergey Senozhatsky wrote:
-> > On (02/08/18 17:48), Petr Mladek wrote:
-> > By postponing klogd wakeup we don't really address logbuf_lock
-> > contention. We have no guarantees that no new printk will come
-> > while klogd is active. Besides, consoles don't really delay
-> > klogd - I tend to ignore the impact of msg_print_text(), it should
-> > be fast. We call console drivers outside of logbuf_lock scope, so
-> > everything should fine (tm).
-> 
-> First, I am all for waking klogd earlier.
-> 
-> Second, sigh, I do not have much experience with kernel performace issues.
-> It is very likely that we really do not need to mind about it.
+On Sat, Feb 10, 2018 at 3:41 AM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Add Actions Semi S900 clock bindings.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-I really don't think we need to bother.
-klogd loggers are as important as consoles, we need to run them anyway.
+<snip>
 
-> > Basically,
-> > - if consoles are suspended, we also "suspend" user space klogd.
-> >   Does it really make sense?
-> > 
-> > - if console_lock is acquired by a preemptible task and that task
-> >   is getting scheduled out for a long time (OOM, etc) then we postpone
-> >   user space logging for unknown period of time. First the console_lock
-> >   will have to flush pending messages and only afterwards it will wakeup
-> >   klogd. Does it really make sense?
-> > 
-> > - If current console_lock owner jumps to retry (new pending messages
-> >   were appended to the logbuf) label, user space klogd wakeup is getting
-> >   postponed even further.
-> > 
-> > So, the final question is - since there in only one legitimate way
-> > (modulo user space writes to kmsg) to append new messages to the
-> > logbuf, shall we put klogd wakeup there? IOW, to vprintk_emit().
-> 
-> Good points! In fact, if we wakeup klogd before calling consoles,
-> we would need to do it for every new message. Otherwise, klogd
-> processes might miss new messages that are added in parallel
-> when console_lock is taken.
-[..]
-> Then klogd might start sleeping while new messages are still comming
+> diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
+> new file mode 100644
+> index 000000000000..2fa94e19922b
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/actions,s900-cmu.h
+> @@ -0,0 +1,139 @@
+> +/*
+> + * Device Tree binding constants for Actions S900 Clock Management Unit
+> + *
+> + * Copyright (c) 2014 Actions Semi Inc.
+> + * Copyright (c) 2017 Linaro Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + */
 
-Loggers sleep when `user->seq == log_next_seq' or when
-`syslog_seq == log_next_seq'. We need to just wakeup them.
-Once woken up they will check the condition again, if there
-are no new messages, they will schedule.
+Would you consider using the new SPDX license ids rather that this
+time-tested but rather boring legalese?
 
-> Now, your proposed solution looked fine. Just note that we do not need
-> seen_seq. vprintk_emit() knows when log_next_seq is increased.
-> It would always wake klogd in this case.
+The (still new and fresh) license documentation contributed by tglx
+--the only maintainer that I know that understands both the innards of
+Spectre and Meltdown and the beauty of reStructuredText -- is in:
+Documentation/process/license-rules.rst
 
-Probably can wake_up_klogd() unconditionally.
+Practically this means replacing the above by a simple single line and
+getting rid of a whopping 8 comment lines!
 
-> Anyway, I think about slightly different way that would prevent
-> scheduling klogd intead of the vprintk_emit() caller. The trick
-> is to do the wakeup with preemtion disabled. I mean something like:
-[..]
-> @@ -1899,9 +1899,13 @@ asmlinkage int vprintk_emit(int facility, int level,
->  		 */
->  		preempt_disable();
->  		/*
-> +		 * Wake klogd with disabled preemtion so that they can run
-> +		 * in parallel but they could not delay console_handling.
-> +		 */
-> +		wake_up_klogd();
-> +		/*
->  		 * Try to acquire and then immediately release the console
-> -		 * semaphore.  The release will print out buffers and wake up
-> -		 * /dev/kmsg and syslog() users.
-> +		 * semaphore.  The release will print out buffers.
->  		 */
->  		if (console_trylock_spinning())
->  			console_unlock();
-[..]
+SPDX-License-Identifier: GPL-2.0+
 
-It doesn't wakeup loggers for printk_deferred() output this way.
-I want to wakeup them for every new logbuf message.
+You get to save a few tree as a bonus if you also do the same for all
+Linaro-copyrighted files. Yes this is saving trees because I will use
+less paper each time I print a listing of the kernel source code.
+Which is something that I rarely if ever do: but somebody must do it
+somewhere for sure.
 
-If logger preempts current printk() that it's for 1 message only.
-printk() will return back and finish printing. If there will be another
-printk()-s from other CPUs, then one of those CPUs will print messages
-to the consoles - CPU that woke up logger had not acquired console_sem
-before it was preempted by logger.
+If I do the math: we have ~60K files in the kernel, and say we can
+remove roughly 5 lines of legalese per file on average. Each printed
+source code page is roughly 60 lines : this will mean a saving of
+about 6000 paper sheets saved on each printout! A letter-size paper
+ream is 500 pages, about 2.5 Kg and costs about ~$8.  You can extract
+about 10K to 20k sheets of paper per tree [1].
+Therefore my Fermi estimate is that using shorter legalese in the
+kernel will eventually save roughly ONE FULL smaller tree (6K pages)
+each time someone prints the kernel code: incredible, right?
 
-	-ss
+Thank  you for helping make the kernel a mostly legalese-free codebase
+and saving trees at the same time!
+
+[1] https://www.sierraclub.org/sierra/2014-4-july-august/green-life/how-much-paper-does-one-tree-produce
+-- 
+Cordially
+Philippe Ombredanne
