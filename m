@@ -1,69 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeBJJnW (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 04:43:22 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:46210 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeBJJnV (ORCPT
+        id S1751652AbeBJJnv (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 04:43:51 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34741 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751024AbeBJJnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 04:43:21 -0500
+        Sat, 10 Feb 2018 04:43:50 -0500
+X-Google-Smtp-Source: AH8x224EeVeNEEMU9dgc8yW+wAdTv4aNwxU7WyZkrETnm8BHuMQ5JST92hdyZk6keea7bG+E3mRNgmo3etws/8izB6E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Sat, 10 Feb 2018 10:43:19 +0100
-From: Stefan Agner <stefan@agner.ch>
-To: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Subject: Re: [PATCH v4 3/3] mtd: nand: vf610: check mtd_device_register()
- return code
-In-Reply-To: <1518215316-21504-4-git-send-email-khoroshilov@ispras.ru>
-References: <1518215316-21504-1-git-send-email-khoroshilov@ispras.ru>
- <1518215316-21504-4-git-send-email-khoroshilov@ispras.ru>
-Message-ID: <8a096fc8dd3afbf9068a0b7856fc8a69@agner.ch>
-User-Agent: Roundcube Webmail/1.3.3
+In-Reply-To: <20180209235012.4993-4-rabel@robertabel.eu>
+References: <20180209235012.4993-1-rabel@robertabel.eu> <20180209235012.4993-2-rabel@robertabel.eu>
+ <20180209235012.4993-3-rabel@robertabel.eu> <20180209235012.4993-4-rabel@robertabel.eu>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 10 Feb 2018 10:43:49 +0100
+Message-ID: <CANiq72mdqK0uf_7drJ=g3W=_M8JhM4TbOS2kuwPbc=T9+Bzs-w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] auxdisplay: charlcd: replace octal literal with
+ form-feed escape sequence
+To: Robert Abel <rabel@robertabel.eu>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.02.2018 23:28, Alexey Khoroshilov wrote:
-> vf610_nfc_probe() misses error handling of mtd_device_register().
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-
-Looks good to me, and seems to work fine, thanks for fixing this!
-
-For the complete patchset:
-
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-
---
-Stefan
-
-
+On Sat, Feb 10, 2018 at 12:50 AM, Robert Abel <rabel@robertabel.eu> wrote:
+> There is no need to resort to octal escape sequence for the form feed character when an established escape sequence exists.
+>
+> Signed-off-by: Robert Abel <rabel@robertabel.eu>
 > ---
->  drivers/mtd/nand/vf610_nfc.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/vf610_nfc.c b/drivers/mtd/nand/vf610_nfc.c
-> index 9cc5992e88c8..64fed3d9e3d4 100644
-> --- a/drivers/mtd/nand/vf610_nfc.c
-> +++ b/drivers/mtd/nand/vf610_nfc.c
-> @@ -782,8 +782,13 @@ static int vf610_nfc_probe(struct platform_device *pdev)
->  	platform_set_drvdata(pdev, mtd);
->  
->  	/* Register device in MTD */
-> -	return mtd_device_register(mtd, NULL, 0);
-> +	err = mtd_device_register(mtd, NULL, 0);
-> +	if (err)
-> +		goto err_cleanup_nand;
-> +	return 0;
->  
-> +err_cleanup_nand:
-> +	nand_cleanup(chip);
->  err_disable_clk:
->  	clk_disable_unprepare(nfc->clk);
->  	return err;
+>  drivers/auxdisplay/charlcd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
+> index 92549c8344a4..a3486db03d81 100644
+> --- a/drivers/auxdisplay/charlcd.c
+> +++ b/drivers/auxdisplay/charlcd.c
+> @@ -555,7 +555,7 @@ static void charlcd_write_char(struct charlcd *lcd, char c)
+>                         /* back one char again */
+>                         lcd->ops->write_cmd(lcd, LCD_CMD_SHIFT);
+>                         break;
+> -               case '\014':
+> +               case '\f':
+
+Normally I wouldn't bother with this kind of change, but since the
+other switch cases all use escape sequences, this improves
+consistency, so agreed.
+
+Trivial. Compile-tested.
+
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+
+>                         /* quickly clear the display */
+>                         charlcd_clear_fast(lcd);
+>                         break;
+> --
+> 2.11.0
+>
