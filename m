@@ -1,144 +1,97 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2654392-1519381280-2-14418417933901603980
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES ensvro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519381279; b=KAXxLN8kux+0zVCVd+Y9Sn0wiHp+zZoHd7QreHJIuvzmxSc
-    aq4n28xSgKzpW9BehkhwEhgpnSxJu/IjaWOFUXjEKa1onuuZHi1pZmFOtgLzI+SG
-    6tiDlW2BpbSOiEnB7IUyWaGk4HqPAHAHiXmc+uXmDwxA9SBEl7wCEttIwk/l2vsT
-    6InUitRVBhsq6gehGfpSlhCnEPGIHGJTxkjXJrdSRGr5bv/XrEh17Jk81zE3VJM7
-    qzyNhEO6FnSHZPQbln3V/Nau0IX/NJRBTrr17tFBzApgG6ddknA9+3tJI+w2fkk5
-    hu5MaQ9gbAmPAwchQFK+lqP2FmCLHn7ENUcP7Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519381279; bh=QcZMIZehtzdncqnY7bsmB7kr/p
-    U+mYMawR9fTuZR5Xk=; b=j9Qy/0hjbHzWj/d3ExHgiDz4kxXMydi9S21+bFDPPX
-    Qbcthke+MCWyl4DPfjmmbDH/urJwhX/f+qTXRMdra0OC1Mi386G8FrwA93aHkpYX
-    SGx3VpJc252+YL++Bpc/v2EYMN2+GNnjF5MZEiIwCMrZF4gASpLTeoCp5HfP4Ufm
-    pLCUJv/6jeGCejvr/OTwUS5KBWuRl04bIJUijIbxg3c4h+GzMSlM8i/Nl90D5iMA
-    DQ6TPzdkaL3EYIb8UwKBijr6vw1Fa/AQm2euCyWgBqvqXDNOLLdNZSYlAIq1yE/l
-    kEXRvlI9d/2kUcomOffH63+ybLVH1mSmkVRUt9mZocJg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751540AbeBWKUl (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 05:20:41 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:59743 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751430AbeBWKQy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 05:16:54 -0500
-X-UUID: 45d2a05a60c9416f8f15ce30672286be-20180223
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
-        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v1 06/19] arm: dts: mt7623: fix USB initialization fails on bananapi-r2
-Date: Fri, 23 Feb 2018 18:16:26 +0800
-Message-ID: <bcb9dbeb1389e71f4eaba0c2def1c991703e10c4.1519378872.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1519378871.git.sean.wang@mediatek.com>
-References: <cover.1519378871.git.sean.wang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <jeffy.chen@rock-chips.com>
+X-Google-Smtp-Source: AH8x224kuwkFeFXSVI5MHX7yZSv1m2S63kOj2iDo07r3R1jHB0SnQsEkG3lTskZ17w0xKMSmQEew
+ARC-Seal: i=1; a=rsa-sha256; t=1518260993; cv=none;
+        d=google.com; s=arc-20160816;
+        b=aZWUcu1KjmKsAg3TrRbfIfZqK8APUeR680ge1+UfLLlpRgq+4Suid9grqWyOfE8gqk
+         OrE8GeRAO2kfrtriAuA5I79NuzHqPtrt5/aQGiQbQwWeZaZpEx0Uh3kbMfxRaoPsXdji
+         /v93aU36FtpfXFhE40A++5MoL+wGAYOcTHltsqIGcbcXsBiZn1K4QExDTF/eB3lkMx2f
+         uBccFcowWBpNm/Nn2FFreiDagpArF0aijQsADbUnolgukAMiX3LJOyew2XAzj2ZbHN+N
+         GbcfcNHbN5Hx9S5fqwQJhgHQZd21kt3I+1lJC3kuP72GEASEA/kHP56SNJQWtCAdO/Za
+         Q2YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=o1+F/Wqs9uV+f23DvmEe91ZFq1mK/3juLpkB1n8sPyQ=;
+        b=hApu5H2vQ4C7ubje93MckExBWf+63jPGPwo/+VreY6X6eKjnscyYg619XGVtDH0A3i
+         oVdSz57n94dIWb/sWYM3dlKOeayLNJYlB0bkM0cLCntvtgpws4w0024zpnGPA9zAoHDt
+         3Fw/aBOQkfGyT79ZffI+viw5MMGyhSASy54LXQOMfDAd65BtRqp/Cj0leAhAfk5FBvtF
+         Gg38NxHI7mq5vmtWT3SP8+WhFh38OzCJA9h+v2/h7ZTkfmrohMUiKkBrOGEShNq+1Swh
+         VX5sWUN6/6SaZxiSaniLajg4TSgfTd/nEeb1f+Z6GCeBZPBjOl8p9mfcXQE/FAJH4HqD
+         Pemg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.13 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.13 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <9781965f6bd348c5e5765e562243b24f>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: briannorris@google.com,
+	dtor@google.com,
+	dianders@google.com,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Joseph Lo <josephl@nvidia.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Brian Norris <briannorris@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	linux-rockchip@lists.infradead.org,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-input@vger.kernel.org,
+	Will Deacon <will.deacon@arm.com>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	devicetree@vger.kernel.org,
+	stephen lu <lumotuwe@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 0/3] gpio-keys: Add support for specifying wakeup event action
+Date: Sat, 10 Feb 2018 19:09:04 +0800
+Message-Id: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592012039137400382?=
+X-GMAIL-MSGID: =?utf-8?q?1592012039137400382?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-Fix that USB initialization fails as below runtime log is present during
-booting on bananapi-r2 board by adding missing regulators the USB device
-requires. Current regulators USB device uses are being updated with the
-correct ones to reflect real configurations which are all from fixed
-regulators rather than MT6323 one's output.
+On chromebook kevin, we are using gpio-keys for pen insert event. But
+we only want it to wakeup the system when ejecting the pen.
 
-[    6.473958] xhci-mtk 1a1c0000.usb: fail to get vbus
-[    6.479313] xhci-mtk 1a240000.usb: fail to get vbus
+So we may need to change the interrupt trigger type during suspending.
 
-Cc: stable@vger.kernel.org
-Fixes: f4ff257cd160 ("arm: dts: mt7623: add support for Bananapi R2 (BPI-R2) board")
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+Changes in v2:
+Specify wakeup event action instead of irq trigger type as Brian
+suggested.
 
-diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-index ec11e14..f660d15 100644
---- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-+++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-@@ -39,6 +39,24 @@
- 		};
- 	};
- 
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_5v: regulator-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	gpio_keys {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default";
-@@ -502,12 +520,14 @@
- };
- 
- &usb1 {
--	vusb33-supply = <&mt6323_vusb_reg>;
-+	vusb33-supply = <&reg_3p3v>;
-+	vbus-supply = <&reg_5v>;
- 	status = "okay";
- };
- 
- &usb2 {
--	vusb33-supply = <&mt6323_vusb_reg>;
-+	vusb33-supply = <&reg_3p3v>;
-+	vbus-supply = <&reg_5v>;
- 	status = "okay";
- };
- 
+Jeffy Chen (3):
+  Input: gpio-keys - add support for wakeup event action
+  Input: gpio-keys - allow setting wakeup event action in DT
+  arm64: dts: rockchip: Avoid wakeup when inserting the pen
+
+ .../devicetree/bindings/input/gpio-keys.txt        |  8 +++++++
+ arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts  |  2 ++
+ drivers/input/keyboard/gpio_keys.c                 | 27 ++++++++++++++++++++++
+ include/linux/gpio_keys.h                          |  2 ++
+ include/uapi/linux/input-event-codes.h             |  9 ++++++++
+ 5 files changed, 48 insertions(+)
+
 -- 
-2.7.4
+2.11.0
