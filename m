@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeBJCmT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 21:42:19 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:39487 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbeBJCmQ (ORCPT
+        id S1752359AbeBJCmm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 21:42:42 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38414 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752305AbeBJCmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 21:42:16 -0500
-X-Google-Smtp-Source: AH8x227wDxEJQgC3vLIxVc1E4ctKLV+qAhz07fUIQnWM7t9mIen7/keAEm+jcEe3K8wFCZk5nCdx3Q==
+        Fri, 9 Feb 2018 21:42:39 -0500
+X-Google-Smtp-Source: AH8x227ciWdovvYmNyAFPdoLRU/oQKOCF28l0W+6mbCVU9cAiYe2NsBMdWsxA2lHzX4Kpu49pN5gGA==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com
@@ -18,9 +18,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         viresh.kumar@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 03/11] arm64: dts: actions: Source CMU clock for UART5
-Date: Sat, 10 Feb 2018 08:11:12 +0530
-Message-Id: <20180210024120.27503-4-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 06/11] clk: actions: Add mux clock support
+Date: Sat, 10 Feb 2018 08:11:15 +0530
+Message-Id: <20180210024120.27503-7-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
 References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
@@ -28,37 +28,159 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove fixed clock and source CMU (Clock Management Unit) clock for
-UART5 driver in Actions Semi S900 SoC.
+Add support for Actions Semi mux clock together with helper
+functions to be used in composite clock.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/clk/actions/Makefile  |  1 +
+ drivers/clk/actions/owl-mux.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-mux.h | 61 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
 
-diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-index 21ca80f9941c..ff043c961d75 100644
---- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-+++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-@@ -24,12 +24,6 @@
- 		device_type = "memory";
- 		reg = <0x0 0x0 0x0 0x80000000>;
- 	};
--
--	uart5_clk: uart5-clk {
--		compatible = "fixed-clock";
--		clock-frequency = <921600>;
--		#clock-cells = <0>;
--	};
- };
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 1f0917872c9d..2d4aa8f35d90 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -2,3 +2,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
  
- &timer {
-@@ -38,5 +32,5 @@
- 
- &uart5 {
- 	status = "okay";
--	clocks = <&uart5_clk>;
-+	clocks = <&cmu CLK_UART5>;
- };
+ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
++clk-owl-y			+= owl-mux.o
+diff --git a/drivers/clk/actions/owl-mux.c b/drivers/clk/actions/owl-mux.c
+new file mode 100644
+index 000000000000..f9c6cf2540e4
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-mux.h"
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw)
++{
++	u32 reg;
++	u8 parent;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	parent = reg >> mux_hw->shift;
++	parent &= BIT(mux_hw->width) - 1;
++
++	return parent;
++}
++
++static u8 owl_mux_get_parent(struct clk_hw *hw)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_get_parent(&mux->common, &mux->mux_hw);
++}
++
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	reg &= ~GENMASK(mux_hw->width + mux_hw->shift - 1, mux_hw->shift);
++	regmap_write(common->regmap, mux_hw->reg,
++			reg | (index << mux_hw->shift));
++
++	return 0;
++}
++
++static int owl_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_set_parent(&mux->common, &mux->mux_hw, index);
++}
++
++const struct clk_ops owl_mux_ops = {
++	.get_parent = owl_mux_get_parent,
++	.set_parent = owl_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
+diff --git a/drivers/clk/actions/owl-mux.h b/drivers/clk/actions/owl-mux.h
+new file mode 100644
+index 000000000000..834284c8c3ae
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.h
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_MUX_H_
++#define _OWL_MUX_H_
++
++#include "owl-common.h"
++
++struct owl_mux_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++};
++
++struct owl_mux {
++	struct owl_mux_hw	mux_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_MUX_HW(_reg, _shift, _width)		\
++	{						\
++		.reg	= _reg,				\
++		.shift	= _shift,			\
++		.width	= _width,			\
++	}
++
++#define OWL_MUX(_struct, _name, _parents, _reg,				\
++		_shift, _width, _flags)					\
++	struct owl_mux _struct = {					\
++		.mux_hw	= OWL_MUX_HW(_reg, _shift, _width),		\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parents,	\
++						       &owl_mux_ops,	\
++						       _flags),		\
++		},							\
++	}
++
++static inline struct owl_mux *hw_to_owl_mux(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_mux, common);
++}
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw);
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index);
++
++extern const struct clk_ops owl_mux_ops;
++
++#endif /* _OWL_MUX_H_ */
 -- 
 2.14.1
