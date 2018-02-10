@@ -1,206 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751040AbeBJCwf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 21:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750832AbeBJCwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 21:52:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18FC521789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
- <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
-Date: Sat, 10 Feb 2018 10:52:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751092AbeBJDDo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 22:03:44 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:55303 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeBJDDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 22:03:42 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w1A33dAT007863
+X-Nifty-SrcIP: [209.85.213.42]
+X-Google-Smtp-Source: AH8x227mG6HTpZAdUTTopDVJQYN3peIDeCfUuTW4Yae860rH589IspwmPwGxWdyx36bMyGdjnwez2ctiNuzC7vQ7QEs=
 MIME-Version: 1.0
-In-Reply-To: <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 10 Feb 2018 12:02:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARpX7HWB0Wj-_rMXFogFtUamWTWEr3ypb6v-s99pr5UNw@mail.gmail.com>
+Message-ID: <CAK7LNARpX7HWB0Wj-_rMXFogFtUamWTWEr3ypb6v-s99pr5UNw@mail.gmail.com>
+Subject: [GIT PULL] Kbuild updates for v4.16 (2nd round)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>, masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/10 9:41, Jaegeuk Kim wrote:
-> On 02/01, Chao Yu wrote:
->>
->>
->> On 2018/2/1 6:15, Jaegeuk Kim wrote:
->>> On 01/31, Chao Yu wrote:
->>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
->>>>> What if we want to add more entries in addition to node_checksum? Do we have
->>>>> to add a new feature flag at every time? How about adding a layout value instead
->>>>
->>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
->>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
->>>> valid range of extended area in node block, but we don't know which
->>>> fields/features are valid/enabled or not.
->>>>
->>>> One more thing is that if we can add one feature flag for each field, we got one
->>>> more chance to disable it dynamically.
->>>>
->>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
->>>>>
->>>>>
->>>>> What does 1017 mean? We need to make this structure more flexibly for new
->>>>
->>>> Yes, using raw 1017 is not appropriate here.
->>>>
->>>>> entries. Like this?
->>>>> 		union {
->>>>> 			struct node_v1;
->>>>> 			struct node_v2;
->>>>> 			struct node_v3;
->>>>> 			...
->>>>> 			struct direct_node dn;
->>>>> 			struct indirect_node in;
->>>>> 		};
->>>>> 	};
->>>>>
->>>>> 	struct node_v1 {
->>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
->>>>> 		__le32 node_checksum;
->>>>> 	}
->>>>>
->>>>> 	struct node_v2 {
->>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
->>>>
->>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
->>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
->>>>
->>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
->>>> fields, node version count can be a large number, it results in complicated
->>>> version recognization and handling.
->>>>
->>>> One more question is how can we control which fields are valid or not in
->>>> comp[Vx_NSIZE]?
->>>>
->>>>
->>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
->>>> the one used by f2fs_inode:
->>>>
->>>> struct f2fs_node {
->>>> 	union {
->>>> 		struct f2fs_inode i;
->>>> 		union {
->>>> 			struct {
->>>> 				__le32 node_checksum;
->>>> 				__le32 feature_field_1;
->>>> 				__le32 feature_field_2;
->>>> 				....
->>>> 				__le32 addr[];
->>>> 				
->>>> 			};
->>>> 			struct direct_node dn;
->>>> 			struct indirect_node in;
->>>> 		};
->>>> 	};
->>>> 	struct node_footer footer;
->>>> } __packed;
->>>>
->>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
->>>> macro to indicate actual size of addr.
->>>
->>> Thinking what'd be the best way. My concern is, once getting more entries, we
->>
->> OK, I think we need more discussion.. ;)
->>
->>> can't set each of features individually. Like the second entry should have
->>
->> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
->> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
->> example:
->>
->> #define F2FS_NODE_CHECKSUM	0x0001
->> #define F2FS_NODE_FIELD1	0x0002
->> #define F2FS_NODE_FIELD2	0x0004
->>
->> 	union {
->> 		struct {
->> 			__le32 node_checksum;
->> 			__le32 field_1;
->> 			__le32 field_2;
->> 			....
->> 			__le32 addr[];
->> 		};
->> 		struct direct_node dn;
->> 		struct indirect_node in;
->> 	};
->>
->> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
->> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
->>
->> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
->> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
-> 
-> So, that's why I thought we may need a sort of each formats.
+Hi Linus,
 
-Hmm.. if we have two new added fields, there are (2 << 2) combinations
-of all formats, as:
+Here are a little more Kbuild updates (including Kconfig changes).
+Please pull!
 
-struct original {
-	__le32 data[DEF_ADDRS_PER_BLOCK];
-}
 
-struct node_v1 {
-	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-	__le32 field_1;
-}
+The following changes since commit 4bf772b14675411a69b3c807f73006de0fe4b649:
 
-struct node_v2 {
-	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
-	__le32 field_2;
-}
+  Merge tag 'drm-for-v4.16' of
+git://people.freedesktop.org/~airlied/linux (2018-02-01 17:48:47
+-0800)
 
-struct node_v2 {
-	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
-	__le32 field_1;
-	__le32 field_2;
-}
+are available in the git repository at:
 
-If we add more new fields, the node version will increase sharply due
-to there is (n << 2) combination with n fields. Right? Any thoughts to
-reduce maintaining overhead on those node versions structures?
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-v4.16-2
 
-Thanks,
+for you to fetch changes up to 523ca58b7db2e30e3c185a7927dd80a30c1bc743:
 
-> 
->>
->> Any thoughts?
->>
->> Thanks,
->>
->>> enabled node_checksum, which we may not want to do.
->>>
->>>>
->>>> Thanks,
->>>>
->>>>> 		__le32 comp[V2_NSIZE];
->>>>> 	}
->>>>> 	...
->>>>>
->>>>>> +			};
->>>>>> +			struct direct_node dn;
->>>>>> +			struct indirect_node in;
->>>>>> +		};
->>>>>>  	};
->>>>>>  	struct node_footer footer;
->>>>>>  } __packed;
->>>>>> -- 
->>>>>> 2.15.0.55.gc2ece9dc4de6
->>>>>
->>>>> .
->>>>>
+  kconfig: remove const qualifier from sym_expand_string_value()
+(2018-02-10 11:31:49 +0900)
+
+----------------------------------------------------------------
+Kbuild updates for v4.16 (2nd)
+
+Makefile changes:
+- enable unused-variable warning that was wrongly disabled for clang
+
+Kconfig changes:
+- warn blank 'help' and fix existing instances
+- fix 'choice' behavior to not write out invisible symbols
+- fix misc weirdness
+
+Coccinell changes:
+- fix false positive of free after managed memory alloc detection
+- improve performance of NULL dereference detection
+
+----------------------------------------------------------------
+Julia Lawall (2):
+      coccinelle: devm_free: reduce false positives
+      coccinelle: deref_null: avoid useless computation
+
+Masahiro Yamada (8):
+      kconfig: do not write choice values when their dependency becomes n
+      kconfig: show '?' prompt even if no help text is available
+      kconfig: remove 'config*' pattern from .gitignnore
+      kconfig: remove check_stdin()
+      kconfig: echo stdin to stdout if either is redirected
+      kconfig: send error messages to stderr
+      kconfig: add xrealloc() helper
+      kconfig: remove const qualifier from sym_expand_string_value()
+
+Sodagudi Prasad (1):
+      kbuild: clang: disable unused variable warnings only when constant
+
+Ulf Magnusson (10):
+      video: fbdev: kconfig: Remove blank help text
+      mmc: kconfig: Remove blank help text
+      Staging: rtl8192u: kconfig: Remove blank help text
+      Staging: rtl8192e: kconfig: Remove blank help text
+      lib/Kconfig.debug: Remove blank help text
+      MIPS: BCM63XX: kconfig: Remove blank help text
+      MIPS: kconfig: Remove blank help text
+      arm: vt8500: kconfig: Remove blank help text
+      nios2: kconfig: Remove blank help text
+      kconfig: Warn if help text is blank
+
+ Makefile                                  |  3 +-
+ arch/arm/mach-vt8500/Kconfig              |  1 -
+ arch/mips/Kconfig                         |  1 -
+ arch/mips/bcm63xx/boards/Kconfig          |  1 -
+ arch/nios2/Kconfig                        |  1 -
+ drivers/mmc/host/Kconfig                  |  1 -
+ drivers/staging/rtl8192e/rtl8192e/Kconfig |  1 -
+ drivers/staging/rtl8192u/Kconfig          |  1 -
+ drivers/video/fbdev/Kconfig               |  1 -
+ lib/Kconfig.debug                         |  1 -
+ scripts/coccinelle/free/devm_free.cocci   | 55
++++++++++++++++++++++++++++++++++-
+ scripts/coccinelle/null/deref_null.cocci  |  6 ++--
+ scripts/kconfig/.gitignore                |  1 -
+ scripts/kconfig/conf.c                    | 40 ++++++++-----------------
+ scripts/kconfig/confdata.c                |  2 +-
+ scripts/kconfig/expr.c                    |  4 +--
+ scripts/kconfig/lkc.h                     |  1 +
+ scripts/kconfig/lkc_proto.h               |  2 +-
+ scripts/kconfig/nconf.gui.c               |  3 +-
+ scripts/kconfig/symbol.c                  | 22 +++++++-------
+ scripts/kconfig/util.c                    | 15 ++++++++--
+ scripts/kconfig/zconf.l                   | 29 ++++++++++--------
+ scripts/kconfig/zconf.y                   |  6 ++++
+ 23 files changed, 121 insertions(+), 77 deletions(-)
+
+
+-- 
+Best Regards
+Masahiro Yamada
