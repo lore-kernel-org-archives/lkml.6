@@ -1,103 +1,119 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226W6i9U5eIjix5ZBXRtOnDat+kzW1u3eh3uq3o9aK+GZaG1XAlcogiLgcAw1jseWELEsZAU
-ARC-Seal: i=1; a=rsa-sha256; t=1518709134; cv=none;
-        d=google.com; s=arc-20160816;
-        b=e2GzfE3DhILrZY/Jqn5IqmT3vESOTU2UuNpF/vSm/XYnB9yVK9GMNneTFUrB8eBF0N
-         7ekPdVWRyz4WFWtkfTaCU4SbwMZCLx92K8nfxStW0YUqniZLkVmAPmLt5vIKLraU5wJZ
-         8Lp7jOKamKY/e9DL0u0gwQGa3griiG5pbr0mH8L8dMDuV3JByAAGIxsHNJ5tMo85R8AT
-         x81cVo+Z7khnVBDsLWWTr4z0mUWorlexSnfwl6Me9NQVLZ0y4h8dBqgMlsgf8eASwoGw
-         8rQXVyDmrYVl2QJoYEPki0W5uqqA04Ov427aI/rlpO0FhY4FR9OUonS0aur7wr8G1y15
-         GnGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=6LTI8ohLR1/Ey5d8D6pR53s9k3J7pnfbOKCkdvjCbEs=;
-        b=NmlxSvBfK9Hele/Xyy2lKDMTrdGAeTtLOo1pdaL3UPO5PjH+cBhJ1K6DCoZPTpIgzd
-         yhiygtMyJUcI6/5UH4ZGVSCWXJSUlw06k7hEFcp3mKqCTxzldQbsMMq+XWIemtjWSJha
-         jGmu6Gg2KgVOviwQ6JpprmRH2xYnfJaZYv6EZGu15uGJMW97DPTzcIzDlnlr7/gN4NZO
-         Y8slhnGyxAJiogtlQb4m5vtzLAmqjR9HI67rgg9Ch4YoWSfWbNNJsPcOTJMDLn/vO88F
-         y8rXFYmciTZwU0DAjhdamAFFVJMw7bxgreQeu6uEjrozEVTFEccOexZIbpfWz4bKiZYu
-         xqHA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Matt Redfearn <matt.redfearn@mips.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@mips.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.15 001/202] watchdog: indydog: Add dependency on SGI_HAS_INDYDOG
-Date: Thu, 15 Feb 2018 16:15:01 +0100
-Message-Id: <20180215151712.836771613@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
-References: <20180215151712.768794354@linuxfoundation.org>
-User-Agent: quilt/0.65
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3162764-1518243432-2-16441404619682171279
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518243432; b=hLU5jkZtDCjRGpBUnyz38GkAgUN4QVHCFBP619KEJS/8IIW
+    cC9r7TfXZmW0KKwP1gwjjIN6sREe2MWnZCGEiuuiwvdXsLRhrAPBK7PCmtphE1uJ
+    gKtxw+zW9XkJTZPZnEGcdWxPtG53Ms0oak1Y+G5r702imm9Fr2AdhpRJWRzZiKbQ
+    2iG6R5Z423vzttPFsXNFjT34KHMVQN6OcEdc0jeXcH7kbs4gaoKaqLasI1Gk9Zjy
+    pge2ObDTeCNbok/NVoZtqWtDp3T+XP03kVKpNQprvQYgziXbJuEoQfcwIZqtLQxT
+    pXvKMvYWrfhYXPpiccMK/3Eej1zTDMyxu0Zd07A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518243432; bh=w
+    DKGVGBn3DC818OykzakD8uYxZuJV2wiRnYI2yjz33o=; b=PiafbTmpAbQZMgL3G
+    Ebm3Avhpmivci+yNBG+rno+K3tb3b7/w/+3BcydAlC7AQTgpMe9QtLnSArph+wxz
+    J4vupRHdL1QbEYZm6PntAvW95R4OTRnINluAUwxwjAwPMUTV+aYARpz3JaUWp7k2
+    reHKGUCcVYkWehrK+1Q20WvYXdU1ApOD2Jfmp3p7tPf1d57VLbnTD99cNCOaf/WV
+    n3cvk1+zpwZ2zW8ym44sICzV/r+T9qKwTkHWPy4o+512DD1SVJ7YV2FE6PzLfJNJ
+    6KbDc09PKvkXvCdVp3lP59J5mliWJd70ymz4g7nVAQb2nxhetMukO0jq8V1nrJl7
+    SLjGg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=I97EcRjo x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=asM+dsIB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=I97EcRjo x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=asM+dsIB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CEA0609EF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ spf=none smtp.mailfrom=lmark@codeaurora.org
+Date: Fri, 9 Feb 2018 22:16:56 -0800 (PST)
+From: Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To: Laura Abbott <labbott@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>
+Subject: [PATCH] staging: android: ion: Initialize dma_address of new sg list
+Message-ID: <alpine.DEB.2.02.1802092203150.2846@lmark-linux.qualcomm.com>
+User-Agent: Alpine 2.02 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481380463922372?=
-X-GMAIL-MSGID: =?utf-8?q?1592481950270563395?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
+Fix the dup_sg_table function to initialize the dma_address of the new
+sg list entries instead of the source dma_address entries.
 
-------------------
-
-From: Matt Redfearn <matt.redfearn@mips.com>
-
-commit 24f8d233074badd4c18e4dafd2fb97d65838afed upstream.
-
-Commit da2a68b3eb47 ("watchdog: Enable COMPILE_TEST where possible")
-enabled building the Indy watchdog driver when COMPILE_TEST is enabled.
-However, the driver makes reference to symbols that are only defined for
-certain platforms are selected in the config. These platforms select
-SGI_HAS_INDYDOG. Without this, link time errors result, for example
-when building a MIPS allyesconfig.
-
-drivers/watchdog/indydog.o: In function `indydog_write':
-indydog.c:(.text+0x18): undefined reference to `sgimc'
-indydog.c:(.text+0x1c): undefined reference to `sgimc'
-drivers/watchdog/indydog.o: In function `indydog_start':
-indydog.c:(.text+0x54): undefined reference to `sgimc'
-indydog.c:(.text+0x58): undefined reference to `sgimc'
-drivers/watchdog/indydog.o: In function `indydog_stop':
-indydog.c:(.text+0xa4): undefined reference to `sgimc'
-drivers/watchdog/indydog.o:indydog.c:(.text+0xa8): more undefined
-references to `sgimc' follow
-make: *** [Makefile:1005: vmlinux] Error 1
-
-Fix this by ensuring that CONFIG_INDIDOG can only be selected when the
-necessary dependent platform symbols are built in.
-
-Fixes: da2a68b3eb47 ("watchdog: Enable COMPILE_TEST where possible")
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-Suggested-by: James Hogan <james.hogan@mips.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 17fd283f3870 ("staging: android: ion: Duplicate sg_table")
+Signed-off-by: Liam Mark <lmark@codeaurora.org>
 ---
- drivers/watchdog/Kconfig |    2 +-
+ drivers/staging/android/ion/ion.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -1451,7 +1451,7 @@ config RC32434_WDT
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index f480885e346b..3ace3a0d9210 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -197,7 +197,7 @@ static struct sg_table *dup_sg_table(struct sg_table *table)
+ 	new_sg = new_table->sgl;
+ 	for_each_sg(table->sgl, sg, table->nents, i) {
+ 		memcpy(new_sg, sg, sizeof(*sg));
+-		sg->dma_address = 0;
++		new_sg->dma_address = 0;
+ 		new_sg = sg_next(new_sg);
+ 	}
  
- config INDYDOG
- 	tristate "Indy/I2 Hardware Watchdog"
--	depends on SGI_HAS_INDYDOG || (MIPS && COMPILE_TEST)
-+	depends on SGI_HAS_INDYDOG
- 	help
- 	  Hardware driver for the Indy's/I2's watchdog. This is a
- 	  watchdog timer that will reboot the machine after a 60 second
+-- 
+1.8.5.2
+
+
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
