@@ -1,102 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeBJLKX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 06:10:23 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:4613 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751041AbeBJLKJ (ORCPT
+        id S1752167AbeBJLKy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 06:10:54 -0500
+Received: from regular1.263xmail.com ([211.150.99.131]:33230 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeBJLKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 06:10:09 -0500
-X-UUID: 06b3e4914d9842828f0bf09ac6ff9cec-20180210
-Message-ID: <1518261002.9025.36.camel@mtkswgap22>
-Subject: Re: [PATCH v2 5/7] watchdog: mtk: allow setting timeout in
- devicetree
-From: Sean Wang <sean.wang@mediatek.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-CC: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        "Vladimir Zapolskiy" <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        <devicetree@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date: Sat, 10 Feb 2018 19:10:02 +0800
-In-Reply-To: <20180210091911.3644-5-marcus.folkesson@gmail.com>
-References: <20180210091911.3644-1-marcus.folkesson@gmail.com>
-         <20180210091911.3644-5-marcus.folkesson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
+        Sat, 10 Feb 2018 06:10:52 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <6ce516f6756b90aef038eb45eb3eb607>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: briannorris@google.com, dtor@google.com, dianders@google.com,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 2/3] Input: gpio-keys - allow setting wakeup event action in DT
+Date: Sat, 10 Feb 2018 19:09:06 +0800
+Message-Id: <20180210110907.5504-3-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
+References: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Allow specifying event actions to trigger wakeup when using the
+gpio-keys input device as a wakeup source.
 
-Hi, Marcus
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
-The changes you made for dt-bindings and driver should be put into
-separate patches.
+Changes in v2:
+Specify wakeup event action instead of irq trigger type as Brian
+suggested.
 
-And the property timeout-sec seems to be generic enough to all devices,
-so why not add a common document to describe it and allow those devices
-to refer to, like other dt-bindings for other kinds of devices usually
-did.
+ Documentation/devicetree/bindings/input/gpio-keys.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-	Sean
-
-On Sat, 2018-02-10 at 10:19 +0100, Marcus Folkesson wrote:
-> watchdog_init_timeout() will allways pick timeout_param since it
-> defaults to a valid timeout.
-> 
-> By following best practice described in
-> Documentation/watchdog/watchdog-kernel-api.txt, it also
-> let us to set timout-sec property in devicetree.
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  Documentation/devicetree/bindings/watchdog/mtk-wdt.txt | 4 ++++
->  drivers/watchdog/mtk_wdt.c                             | 2 +-
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-> index 5b38a30e608c..859dee167b91 100644
-> --- a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-> @@ -11,9 +11,13 @@ Required properties:
->  
->  - reg : Specifies base physical address and size of the registers.
->  
-> +Optional properties:
-> +- timeout-sec: contains the watchdog timeout in seconds.
-> +
->  Example:
->  
->  wdt: watchdog@10000000 {
->  	compatible = "mediatek,mt6589-wdt";
->  	reg = <0x10000000 0x18>;
-> +	timeout-sec = <10>;
->  };
-> diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-> index 7ed417a765c7..fcdc10ec28a3 100644
-> --- a/drivers/watchdog/mtk_wdt.c
-> +++ b/drivers/watchdog/mtk_wdt.c
-> @@ -57,7 +57,7 @@
->  #define DRV_VERSION		"1.0"
->  
->  static bool nowayout = WATCHDOG_NOWAYOUT;
-> -static unsigned int timeout = WDT_MAX_TIMEOUT;
-> +static unsigned int timeout;
->  
->  struct mtk_wdt_dev {
->  	struct watchdog_device wdt_dev;
+diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
+index a94940481e55..996ce84352cb 100644
+--- a/Documentation/devicetree/bindings/input/gpio-keys.txt
++++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
+@@ -26,6 +26,14 @@ Optional subnode-properties:
+ 	  If not specified defaults to 5.
+ 	- wakeup-source: Boolean, button can wake-up the system.
+ 			 (Legacy property supported: "gpio-key,wakeup")
++	- wakeup-event-action: Specifies whether the key should wake the
++	  system when asserted, when deasserted, or both. This property is
++	  only valid for keys that wake up the system (e.g., when the
++	  "wakeup-source" property is also provided).
++	  Supported values are defined in linux-event-codes.h:
++		EV_ACT_ASSERTED		- asserted
++		EV_ACT_DEASSERTED	- deasserted
++		EV_ACT_ANY		- both asserted and deasserted
+ 	- linux,can-disable: Boolean, indicates that button is connected
+ 	  to dedicated (not shared) interrupt which can be disabled to
+ 	  suppress events from the button.
+-- 
+2.11.0
