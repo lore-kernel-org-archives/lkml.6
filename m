@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752534AbeBJBoF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Feb 2018 20:44:05 -0500
-Received: from mout.perfora.net ([74.208.4.197]:37797 "EHLO mout.perfora.net"
+        id S1752488AbeBJBnv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Feb 2018 20:43:51 -0500
+Received: from mout.perfora.net ([74.208.4.197]:50701 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbeBJBoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Feb 2018 20:44:03 -0500
+        id S1751053AbeBJBnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Feb 2018 20:43:46 -0500
 From: Marcel Ziswiler <marcel@ziswiler.com>
 To: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
 Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
@@ -14,91 +14,69 @@ Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/6] ARM: dts: tegra: apalis-tk1: hog group for ethernet, pcie, reset gpios
-Date: Sat, 10 Feb 2018 02:38:04 +0100
-Message-Id: <20180210013806.28496-5-marcel@ziswiler.com>
+Subject: [PATCH 2/6] ARM: dts: tegra: apalis-tk1: activate pwm pin muxing for pwm3
+Date: Sat, 10 Feb 2018 02:38:02 +0100
+Message-Id: <20180210013806.28496-3-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180210013806.28496-1-marcel@ziswiler.com>
 References: <20180210013806.28496-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K0:M3fmOvleO9n6WsFexiZLkA2W5ROjyWQlO+xNbgadPe6J7NQNF6C
- ngsQ7WXlMjlHjpM55ZQGY0xVlSxDFltb5ZaSYt43h8EsfwOIuPnsPyI+/7ypBaOTFkT5tb/
- R7HBJIEmN+3EoH4lPwaTWOeH71X6AIFQAklqK1osOu0VqVJdI6rn7dAGpDayiugHksVJ1wH
- /vAph89vAtXPaed337Q5g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:1vWfnneh4Lg=:j0CLIPZtbBrrURrtBi4lEM
- ePXWQlRp3Rw3d8S8IxZrno68B4zRelg/GojWL/tk/L+7ENoMBjv7cXp+BjKl934ei5jvEldfv
- qWbN91CcdndZ/jZNTC2g4AiU+151o8Qjx9IGBaRUR6ufR7VFepBicLAp67/nNSWkQE8hORMB/
- S3Lw5qRKqkDB2Lyzgg8kAAPr+BFzU7b/UbWegkoiWuYqVaWL2rvz46S7Ikrq6lKEx9oeGatYP
- yJVrBo6YhSUeKzvdIP5rP8oNH9ooHs4xXs5ZvR2RCCkU5LyryuR2PjzjT4r3jKS403BN2WtRr
- /GzPFpZLXXwhIDrICtfQbgbP5X5fnSFmFmTY5MWMIVHKLTdiW0/NE/0i4McsYQPciIcViXdlw
- KkHo5CVzD8HkJjiN9MvAhCL6jgylPESuqZgI+Tm4DDsCdpvcv3TR+aayO1fmVHeDWfA3MS5ft
- U0qvlFc6kz8bJONe58v7JGn7UWaMjfb+8/Mo6QnHs0fWlQcACURkAh8jY/CwYC0EwxPkxN0pJ
- K8vhDI0NtEN0N7GvSsnnINEeslC94HUkMdca6oPGXbLkeS9XNI8T3e6FRxE8ZcpjzTNrMo/xO
- 0cJhMKR+I7ab6aH20wIRQL3JG1c4WLK4DZmZ7AUOwz5leTOhJwyfq/iELGpC0+8egpQd+5DDf
- /QG87ACKzOhoevBI0pgT4Zbva+G+pfzFv/s6iYhhcvTM/TjbfUWJdjUqOr/uFn/Hbx7mCvED6
- S7yY0xg/iYhhSf+N7WE5vifJHn9KVMMw7iQ1IA==
+X-Provags-ID: V03:K0:xdLOrEuIzP2AmnCHfynM9E/x2E80LwZaQybJ1rHqjzNTQKOKRDY
+ pwXEdxGdQTlGya2bjbRg980o4bLJ///ixuTY9tUjJZr5OSNLzuwfKth+/nFvCIGLwn76gd4
+ f91jGLN+Ghx6N961IxKJscZviioqvpxzffKKq+Huis/TMFCMGDnPETEm3Nmtv67aSCUpDWf
+ IitW7kuFYqu7mb8ngP8+Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:z2RndCEv/1s=:7l04btBKAwH55x/cY9KWvB
+ kCp2SJl0TcwDS9SiaasxnTw+0cBTM0KbdqPX1uhSIDgZUvAIalNQqKZ3ZlZ+5KOB5kfg8e5VC
+ torFwbtcNHhZ0yxdnl5trP7iJENVmbOoRirYiGfDtMXaggnAARMAGRjx91JJL80pz2Ij14H8P
+ cPz3eA35t5u9Fm8tJYi10MWGVni81nEMLxqKZDcjLhDoRO8zgEoKN+V6+DxY0Iy41ljOYTC7L
+ LLoyCO6JGcIo1I2iTQSzYEM7tNtpt66TfPkgLrz5tIrSTWs4bqXfMZK0A2b5ziohLMNmz+UTC
+ OhcaPOFqR1QA6m7fiH5TImkR4un0Hh8gHg6YDP6k/yGQ70GnvcLyW76ZUh///RebGcHvTwLri
+ QSUfpJSg/89VKHIA9dcezua7T3aXIDEfdkEZQfm938+ISgIkxFhsgSvpg850IfkAtNTtnzZKG
+ KcoalJ5hV5iHXzYVMLu0ePIH/MqW1d9LTh8l8h0/9qoKXk7D1ipA4yx3if+0RLA0zy5tqBrnG
+ hWLa3bFoB9eqW9JIrLqdaZmJql9bIfWL0moj0vKjVtalmjw1XyylswMBuVXXOTgs9bM4qQ71m
+ HS+h6Ta1RadHuFmoOLSgCKqyeFyihhd4+E6mY9CX53T+cYUFrqMY9+9+6Y7VvtS+sV5bRkoEc
+ ALzvSm7pmoAH/JpTxmkYjaUqHElI8CQ1GKoEG4/hDIi7k82bh9Ugdg78bc8jG8Gv3OYPgB+xE
+ wi3avXem1TpJm1b2MelcTmA3hiELcXocTOid/g==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-The Apalis TK1 module uses some dedicated GPIOs as I210 gigabit Ethernet
-controller reset and to control RESET_MOCI aka reset module output
-carrier input on MXM3 pin 26. The Apalis Evaluation Board furthermore
-uses Apalis GPIO7 on MXM3 pin 15 as reset signal for its PLX PEX 8605
-PCIe Switch.
+Activate PWM pin muxing for Apalis PWM3. Note that the same PWM3 is
+already active on pu6 being Apalis BKL1_PWM as well. Therefore exporting
+that one for raw sysfs access will fail and one has to revert to using
+the pwm backlight.
+
+Downstream commit 668ddb921800 ("apalis-tk1: activate pwm pin muxing for
+pwm3").
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts | 10 ++++++++++
- arch/arm/boot/dts/tegra124-apalis.dtsi     | 18 ++++++++++++++++++
- 2 files changed, 28 insertions(+)
+ arch/arm/boot/dts/tegra124-apalis.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index af6c566e8ac4..f1010cefb993 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -275,3 +275,13 @@
- 		vin-supply = <&reg_5v0>;
- 	};
- };
-+
-+&gpio {
-+	/* Apalis GPIO7 MXM3 pin 15 PLX PEX 8605 PCIe Switch Reset */
-+	pex_perst_n {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(DD, 1) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "PEX_PERST_N";
-+	};
-+};
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 44c31176ce90..b7648ce4565d 100644
+index be45b6753916..7fbaaf221029 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -2070,3 +2070,21 @@
- 		};
- 	};
- };
-+
-+&gpio {
-+	/* I210 Gigabit Ethernet Controller Reset */
-+	lan_reset_n {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(S, 2) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "LAN_RESET_N";
-+	};
-+
-+	/* Control MXM3 pin 26 Reset Module Output Carrier Input */
-+	reset_moci_ctrl {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(U, 4) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "RESET_MOCI_CTRL";
-+	};
-+};
+@@ -453,12 +453,12 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+ 			};
+-			/* PWM3 active on pu6 being Apalis BKL1_PWM */
++			/* PWM3 active on pu6 being Apalis BKL1_PWM as well */
+ 			ph3 {
+ 				nvidia,pins = "ph3";
+-				nvidia,function = "gmi";
+-				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+-				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,function = "pwm3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+ 			};
+ 
 -- 
 2.14.3
