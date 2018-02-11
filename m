@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324862-2-1698551727427863020
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324843-2-12622819694714418013
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324862; b=ogv4vFZY+A5+lnjumOC7Z/kQ2YZgPmZ5lQrdBLjqf06PHVA
-    RLKLwK7VAESYvTCPVs3fdVEels52Zh3HeBAaBo1aPY5t9L646pby8GVbww9+hkTt
-    8as88IldP2JVInmsT7VUKMfbl2PFZ9cRW/+9NlY1n70SM4R8rwGyw1Jny4hJylO8
-    RY6A6kkwiOvTCdhrQWR0W9sBtsY6px49pkmizhbMIK/2rxzn8vyh1mD/99oFx84I
-    9SmYldzw0CJBYlM4AgKAylfjsllib9o9jfcxmGOJhfjZlERGb84egzrbC9NyZ7us
-    AItTY6Wu5XRhC01bzHhhbdqzQOO5FqOplQjXAdg==
+    t=1518324842; b=jnEPJvi/VvFOoi4TeXEI/Ya7U8FE2uTtPpIrvdEwdmtso7E
+    Z61QXdAEvfFKiMTPfmUb/BUs7x2ztq/apEXukhtucBZRQTjyGCu7CoxMxNlpiAVE
+    Po18GkzWrD+6t3rjjx+I0BTpP4EDv7WRGDzZC1YBl9J06036n3T6c9h55YEFiZBi
+    AygXpXE7HPi7iomNhuCsYk7G997bg9d57zXPpTI148xN7mWsHqdEYFyUcrREs40g
+    3SmN50KMzGUxzAuGje2LaaDwN9F/7UUic778OQrUEA0yQYzfMMjn1STjdIfB/ADR
+    dcnCluTp2hotd9TAxREU4VItt0kq5t8fYIadP1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324862; bh=ULlfCyK1mVNY59J9TrI
-    nhfFOUCBRinlBq/MPjC+ohR4=; b=GRXWFkRWG1Rt2a0V4SLTy2e0dk4Kg3q+nWi
-    pYS5KKeqon/I8BVRAbgv6eWNdV0qcOWmHhoy3AUhdz+1V22JfaPfCsOJNk0C1PbQ
-    pi3FaVbknTv2W+GFj4DdPlWmcMT8ES1+B/hdBPUXnRsl/QRWdFTSBsrNw+TN2spv
-    gEkd7Y5N1z7UNRqpb5z7p+hRNd3BM01SCRwP/q0WElrqHSXqlScCnXXYFnXKQsjV
-    qOgOcONw3NVRWBNYk2is1ceD/qYtKilLhYRhWEMAXVo00kCsPvpac4TrIOYquEY2
-    TiKQvHP83qm2Yz3tV5meOYDNmjf/vv7FeBqnAxlUA2HjTEvlKUQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324842; bh=N6UcuqPHOCi8sSkFmgR
+    i7u5A9KnwYspKS1L3/4RuBIg=; b=OCprnPiThxUree8wUa9DF0xKWn4z9KxQYsI
+    KYEgtC8pD32RqwiKLQaqdq2qU9vk8DPDaM/c8o/P8JqBwC9OXWlEfON5lF1uQf9P
+    Qu6HL7xMws+t6oXg19WnwSLQdi+DS1vh2ZFS2iub6rKc0JGENSkHSDzkCj3HF39B
+    wIOCq5AsoKPwbr2n5lhevEKhL4JsODc4CgkwvVgZXrEKBeYW+pXy9leRgLBbk1p5
+    09afhUQ/jIZdX9rAMiXhuC9f5z+vptD/FqNwDzQ+vTDWN6NoktcRHnh+x7nj5Jui
+    vNcj5IhA2FZoYnOJNajiY+DtqQL/BHL07FEJbnDwZTpPCSe0ylA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753656AbeBKEyT (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:54:19 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41726 "EHLO
+        id S1752826AbeBKEvh (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:51:37 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41765 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752804AbeBKEd5 (ORCPT
+        by vger.kernel.org with ESMTP id S1752824AbeBKEd5 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:57 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,12 +60,15 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Mauro Carvalho Chehab" <m.chehab@samsung.com>
+        "Andrew Bowers" <andrewx.bowers@intel.com>,
+        "Brian King" <brking@linux.vnet.ibm.com>,
+        "Jesse Brandeburg" <jesse.brandeburg@intel.com>,
+        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.530009470@decadent.org.uk>
+Message-ID: <lsq.1518323471.776089863@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 127/136] [media] cx231xx: Fix the max number of
- interfaces
+Subject: [PATCH 3.16 110/136] ixgbevf: Use smp_rmb rather than
+ read_barrier_depends
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,27 +83,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <m.chehab@samsung.com>
+From: Brian King <brking@linux.vnet.ibm.com>
 
-commit 139d28826b8e2bc7a9232fde0d2f14812914f501 upstream.
+commit ae0c585d93dfaf923d2c7eb44b2c3ab92854ea9b upstream.
 
-The max number of interfaces was read from the wrong descriptor.
+The original issue being fixed in this patch was seen with the ixgbe
+driver, but the same issue exists with ixgbevf as well, as the code is
+very similar. read_barrier_depends is not sufficient to ensure
+loads following it are not speculatively loaded out of order
+by the CPU, which can result in stale data being loaded, causing
+potential system crashes.
 
-Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
+Acked-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/usb/cx231xx/cx231xx-cards.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -1185,8 +1185,7 @@ static int cx231xx_usb_probe(struct usb_
- 	dev->vbi_or_sliced_cc_mode = 0;
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -249,7 +249,7 @@ static bool ixgbevf_clean_tx_irq(struct
+ 			break;
  
- 	/* get maximum no.of IAD interfaces */
--	assoc_desc = udev->actconfig->intf_assoc[0];
--	dev->max_iad_interface_count = assoc_desc->bInterfaceCount;
-+	dev->max_iad_interface_count = udev->config->desc.bNumInterfaces;
+ 		/* prevent any other reads prior to eop_desc */
+-		read_barrier_depends();
++		smp_rmb();
  
- 	/* init CIR module TBD */
- 
+ 		/* if DD is not set pending work has not been completed */
+ 		if (!(eop_desc->wb.status & cpu_to_le32(IXGBE_TXD_STAT_DD)))
