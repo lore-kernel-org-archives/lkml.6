@@ -1,67 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753033AbeBKKzJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 05:55:09 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37033 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752288AbeBKKzH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 05:55:07 -0500
-X-Google-Smtp-Source: AH8x227J6jckeDsaXteayLZ+EJCK2NTnt81yIPWwu/oHlVyWIGk44caQGNbWa/Kf3NxOzGya3Tvr+A==
-Date: Sun, 11 Feb 2018 11:55:02 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Woodhouse, David" <dwmw@amazon.co.uk>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "Raslan, KarimAllah" <karahmed@amazon.de>,
-        "arjan.van.de.ven@intel.com" <arjan.van.de.ven@intel.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "Sironi, Filippo" <sironi@amazon.de>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Subject: Re: [PATCH v2 5/6] KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we
- have a valid L02 MSR bitmap
-Message-ID: <20180211105502.tnovwfxczkkbm26l@gmail.com>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
- <1518305967-31356-6-git-send-email-dwmw@amazon.co.uk>
- <20180211101924.vztfslwqoh7km6q2@gmail.com>
- <1518345844.3677.365.camel@amazon.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1518345844.3677.365.camel@amazon.co.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1753081AbeBKK46 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 05:56:58 -0500
+Received: from shell.v3.sk ([92.60.52.57]:35513 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752812AbeBKK45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 05:56:57 -0500
+Message-ID: <1518346607.8520.1.camel@v3.sk>
+Subject: Re: [PATCH] drm/edid: drop the dcc probe before drm_do_get_edid
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Jani Nikula <jani.nikula@intel.com>
+Date: Sun, 11 Feb 2018 11:56:47 +0100
+In-Reply-To: <20180210180355.2284-1-lkundrak@v3.sk>
+References: <20180210180355.2284-1-lkundrak@v3.sk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Woodhouse, David <dwmw@amazon.co.uk> wrote:
-
-> On Sun, 2018-02-11 at 11:19 +0100, Ingo Molnar wrote:
-> > Note, I fixed the changelog to refer to the correct upstream SHA1,
-> > which is:
-> > 
-> >   d28b387fb74d: KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
+On Sat, 2018-02-10 at 19:03 +0100, Lubomir Rintel wrote:
+> Now that drm_do_get_edid() handles override and firmware EDIDs it makes
+> no sense to conditionalize it with a DCC probe. On the contrary -- the
+> overrides are useful specifically when DCC is not functioning.
 > 
-> Thanks for catching that.
+> drm_do_get_edid() already bails out when DCC fails, there's no need for
+> an extra check. It seems entirely safe to just drop this.
 > 
-> Wouldn't it be nice if 'git rebase --interactive tip/x86/pti' had done
-> that *for* me? :)
+> Working around the issue by forcing the connector on is not a good
+> solution because that way the desktop shell can't tell when a monitor is
+> plugged in or removed.
+> 
+> Cc: Jani Nikula <jani.nikula@intel.com>
+> Fixes: 53fd40a ("drm: handle override and firmware EDID at drm_do_get_edid() level")
 
-Yeah, but given that the commit title changed as well:
+Please disregard this, should have given it more thought. Sorry.
 
-   086e7d4118cc ("KVM: VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
-   d28b387fb74d ("KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
+It removes a symbol other modules use, and typoes DDC/DCC in the commit
+message. Moreover it doesn't actually seem to solve my problem -- will
+try to follow up with a better fix.
 
-I'd rather not have tooling guess about such things.
-
-Thanks,
-
-	Ingo
+Lubo
