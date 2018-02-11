@@ -1,375 +1,111 @@
-Return-Path: <jsimmons@ccs.ornl.gov>
-X-Google-Smtp-Source: AH8x225fQLSyablLiI0JQKH4SZZxbDy+eQ7QEXFR/OdwonDqd82RHK19bVmiHQuRF+0/1oinhnLV
-ARC-Seal: i=1; a=rsa-sha256; t=1518390015; cv=none;
-        d=google.com; s=arc-20160816;
-        b=kqn7EzkNWfJmxHKlpWMv7FYxRRcouBpN8m2gXS1rC9kqxHCRTTT7vq5ABjeetnG8/j
-         dyS/b9+lsS0Jq8Nli3Fu/FmoQSfBVCX1JWzk4XRevNVlzwe2y5jmKujzYqYE0ILTy1yt
-         TEHqfRsM8K6J7+Aq8qyaGq9F5mcJsrcQTwQhEz3XGD0GjvKr/8LkL5fLc35FJ40+oWdG
-         hh0LuHW5SNanBpvIj4cWf7ce7E5mInyUViwU6rh1UP7cblIdA8/UWUp/yYNEI0AvPvXl
-         2iQD5Xno+cRHQIds/ftMlnRCbP0l8SmI/m4+JS/06aACgjn1QUbo6UWt+7t5TS0vzG3Y
-         bjDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=Vg/K0jVu/Q0xg4uDbkd/waoqRho/ZIT9+j7dKWDjCo0=;
-        b=Ma3RLTtjFyXmqQ8MhPM8BCUi7kbb8j0z1K6nuEge4ZGzUDfam5Av+Ub60snMkC+Xyh
-         1w4cwBDPl2vE9rWqH5zeR8fCrGEGa6Fj9FNKmwUguAikQdwTFHxMaaRXmWHFgjM3Ayi2
-         95KLogA0+HKe0V5sQxyNdcE49Bs6C3mbJxwLbZrrkGNhLE36PoU9BucLOmcv2ee480ax
-         KfK7CvL2Ik78tqbNKRQmY7eSDLJGsDjGCfzHE5q/OHwRz6ghgrYB6phhxiJLlQbOco6D
-         xJlkr6Ik5ns49xaSXiQ6Gvy58PXzHF4m6dSlhN4wSGbOGOZV+MnmU0Csgmmxzq1SAXBA
-         5jvQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jsimmons@ccs.ornl.gov designates 160.91.203.40 as permitted sender) smtp.mailfrom=jsimmons@ccs.ornl.gov
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jsimmons@ccs.ornl.gov designates 160.91.203.40 as permitted sender) smtp.mailfrom=jsimmons@ccs.ornl.gov
-From: James Simmons <jsimmons@infradead.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devel@driverdev.osuosl.org,
-	Andreas Dilger <andreas.dilger@intel.com>,
-	Oleg Drokin <oleg.drokin@intel.com>,
-	NeilBrown <neilb@suse.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3946819-1518390976-2-1951296245991056686
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518390975; b=fxLwOSRG564UNX3J6P9Hgtq+/08w5lxDkWwVobDln8eg1ld
+    hZXZDAGkFcsgeHeI2BUy+WAcQopfaM9yUDA0n/zHr0pUUete01qwtWbN29mLdWgg
+    F866h7NVEQDS2IN1RvgbuNMh6qnXiKrfmnesAKifku9i6shbtUKpMRPNzW+KXst1
+    BGx/Q4x2Rk4sbLXwx+QiFsiwoBA2zmkNhrm7qJzT+sZaH5+nL0Mg0XOxN8Wot+LJ
+    MsbP5Rm4ewokczz6ssK/zIBqcHjp0LiMJSZ+4a6ZehtP0TVUksL6RB1Pa7E9eJqI
+    +uVgvWH0g8hR9fVGyT2unElMq288lLa8N2NLnzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:subject:from:to:date
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518390975; bh=0
+    qYQaPMBPegk/aJ9WMXCaaz2nHIrld4YTlAakHn6NWw=; b=S2eqtzoxJK8dXxOsc
+    5pIYdzAna6uOsin7t3ZQSUwcv74VTTpMFKJKTKg03W7E7FhCV7z/3TLO7+n4LOc+
+    dBXoNl2VmQyp5Ro6hiBNSvubTpbVsD4nXPTelf6LjJ9veYLV62T4qBoI1Knp+qUp
+    vsnYa+wnNN5SLXs8Az0/BAW00YlCmZQwYGIqKVNuQ2tcnMp/j1VZ7FQ6IhRu2ec9
+    Rk2vkOpt4AoenARiqOVAsDvaUfQGdg5JTelM3X0cCK0d9qNF6iUkF1H7FGkS3Uq/
+    ch/iXw5lI+lL7rrETq0HTCvys3A1+4yaEQ44ZijHhZizuiONrIeCw/YWGS1GZUMz
+    yjQsA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Remote-Spam-Summary: 2, 0, 0, , d41d8cd98f00b204, joe@perches.com, :::::::::::::::,
+ RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:2895:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3874:4250:4321:5007:9010:9012:10004:10400:10848:11232:11658:11914:12048:12664:12740:12760:12895:13069:13311:13357:13439:14659:21080:21611:21627:30012:30051:30054:30060:30070:30091,
+ 0, RBL:none, CacheIP:none, Bayesian:0.5, 0.5, 0.5, Netcheck:none,
+ DomainCache:0, MSF:not bulk, SPF:, MSBL:0, DNSBL:none, Custom_rules:0:0:0,
+ LFtime:1, LUA_SUMMARY:none
+X-HE-Tag: angle90_8c2185b649307
+X-Filterd-Recvd-Size: 1662
+Message-ID: <1518390961.4139.1.camel@perches.com>
+Subject: Re: [PATCH] staging: lustre: update the TODO list
+From: Joe Perches <joe@perches.com>
+To: James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, Andreas Dilger
+ <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, NeilBrown
+ <neilb@suse.com>
+Date: Sun, 11 Feb 2018 15:16:01 -0800
+In-Reply-To: <1518390008-17876-1-git-send-email-jsimmons@infradead.org>
+References: <1518390008-17876-1-git-send-email-jsimmons@infradead.org>
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Lustre Development List <lustre-devel@lists.lustre.org>,
-	James Simmons <jsimmons@infradead.org>
-Subject: [PATCH] staging: lustre: update the TODO list
-Date: Sun, 11 Feb 2018 18:00:08 -0500
-Message-Id: <1518390008-17876-1-git-send-email-jsimmons@infradead.org>
-X-Mailer: git-send-email 1.8.3.1
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592147327940644223?=
-X-GMAIL-MSGID: =?utf-8?q?1592147327940644223?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-As more people become involved with the progression of the lustre
-client it needs to more clear what needs to be done to leave
-staging. Update the TODO list with the various bugs and changes
-to accomplish this. Some are simple bugs and others are far more
-complex task that will change many lines of code. Some even cover
-updating the user land utilities to meet the kernel requirements.
-Several bugs have already been addressed and just need to be
-pushed to the staging tree.
+On Sun, 2018-02-11 at 18:00 -0500, James Simmons wrote:
+> As more people become involved with the progression of the lustre
+> client it needs to more clear what needs to be done to leave
+> staging. Update the TODO list with the various bugs and changes
+> to accomplish this. Some are simple bugs and others are far more
+> complex task that will change many lines of code. Some even cover
+> updating the user land utilities to meet the kernel requirements.
+> Several bugs have already been addressed and just need to be
+> pushed to the staging tree.
 
-Signed-off-by: James Simmons <jsimmons@infradead.org>
----
- drivers/staging/lustre/TODO | 310 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 300 insertions(+), 10 deletions(-)
+Nice list.
 
-diff --git a/drivers/staging/lustre/TODO b/drivers/staging/lustre/TODO
-index f194417..94446487 100644
---- a/drivers/staging/lustre/TODO
-+++ b/drivers/staging/lustre/TODO
-@@ -1,12 +1,302 @@
--* Possible remaining coding style fix.
--* Remove deadcode.
--* Separate client/server functionality. Functions only used by server can be
--  removed from client.
--* Clean up libcfs layer. Ideally we can remove include/linux/libcfs entirely.
--* Clean up CLIO layer. Lustre client readahead/writeback control needs to better
--  suit kernel providings.
--* Add documents in Documentation.
--* Other minor misc cleanups...
-+Currently all the work directed toward the lustre upstream client is tracked
-+at the following link:
-+
-+https://jira.hpdd.intel.com/browse/LU-9679
-+
-+Under this ticket you will see the following work items that need to be
-+addressed:
-+
-+******************************************************************************
-+* libcfs cleanup
-+*
-+* https://jira.hpdd.intel.com/browse/LU-9859
-+*
-+* Track all the cleanups and simplification of the libcfs module. Remove
-+* functions the kernel provides. Possible intergrate some of the functionality
-+* into the kernel proper.
-+*
-+******************************************************************************
-+
-+https://jira.hpdd.intel.com/browse/LU-100086
-+
-+LNET_MINOR conflicts with USERIO_MINOR
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8130
-+
-+Fix and simplify libcfs hash handling
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8703
-+
-+The current way we handle SMP is wrong. Platforms like ARM and KNL can have
-+core and NUMA setups with things like NUMA nodes with no cores. We need to
-+handle such cases. This work also greatly simplified the lustre SMP code.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9019
-+
-+Replace libcfs time API with standard kernel APIs. Also migrate away from
-+jiffies. We found jiffies can vary on nodes which can lead to corner cases
-+that can break the file system due to nodes having inconsistent behavior.
-+So move to time64_t and ktime_t as much as possible.
-+
-+******************************************************************************
-+* Proper IB support for ko2iblnd
-+******************************************************************************
-+https://jira.hpdd.intel.com/browse/LU-9179
-+
-+Poor performance for the ko2iblnd driver. This is related to many of the
-+patches below that are missing from the linux client.
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9886
-+
-+Crash in upstream kiblnd_handle_early_rxs()
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10394 / LU-10526 / LU-10089
-+
-+Default to default to using MEM_REG
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10459
-+
-+throttle tx based on queue depth
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9943
-+
-+correct WR fast reg accounting
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10291
-+
-+remove concurrent_sends tunable
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10213
-+
-+calculate qp max_send_wrs properly
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9810
-+
-+use less CQ entries for each connection
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10129 / LU-9180
-+
-+rework map_on_demand behavior
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10129
-+
-+query device capabilities
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10015
-+
-+fix race at kiblnd_connect_peer
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9983
-+
-+allow for discontiguous fragments
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9500
-+
-+Don't Page Align remote_addr with FastReg
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9448
-+
-+handle empty CPTs
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9507
-+
-+Don't Assert On Reconnect with MultiQP
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9472
-+
-+Fix FastReg map/unmap for MLX5
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9425
-+
-+Turn on 2 sges by default
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8943
-+
-+Enable Multiple OPA Endpoints between Nodes
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-5718
-+
-+multiple sges for work request
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9094
-+
-+kill timedout txs from ibp_tx_queue
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9094
-+
-+reconnect peer for REJ_INVALID_SERVICE_ID
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8752
-+
-+Stop MLX5 triggering a dump_cqe
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8874
-+
-+Move ko2iblnd to latest RDMA changes
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8875 / LU-8874
-+
-+Change to new RDMA done callback mechanism
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9164 / LU-8874
-+
-+Incorporate RDMA map/unamp API's into ko2iblnd
-+
-+******************************************************************************
-+* sysfs/debugfs fixes
-+*
-+* https://jira.hpdd.intel.com/browse/LU-8066
-+*
-+* The original migration to sysfs was done in haste without properly working
-+* utilities to test the changes. This covers the work to restore the proper
-+* behavior. Huge project to make this right.
-+*
-+******************************************************************************
-+
-+https://jira.hpdd.intel.com/browse/LU-9431
-+
-+The function class_process_proc_param was used for our mass updates of proc
-+tunables. It didn't work with sysfs and it was just ugly so it was removed.
-+In the process the ability to mass update thousands of clients was lost. This
-+work restores this in a sane way.
-+
-+------------------------------------------------------------------------------
-+https://jira.hpdd.intel.com/browse/LU-9091
-+
-+One the major request of users is the ability to pass in parameters into a
-+sysfs file in various different units. For example we can set max_pages_per_rpc
-+but this can vary on platforms due to different platform sizes. So you can
-+set this like max_pages_per_rpc=16MiB. The original code to handle this written
-+before the string helpers were created so the code doesn't follow that format
-+but it would be easy to move to. Currently the string helpers does the reverse
-+of what we need, changing bytes to string. We need to change a string to bytes.
-+
-+******************************************************************************
-+* Proper user land to kernel space interface for Lustre
-+*
-+* https://jira.hpdd.intel.com/browse/LU-9680
-+*
-+******************************************************************************
-+
-+https://jira.hpdd.intel.com/browse/LU-8915
-+
-+Don't use linux list structure as user land arguments for lnet selftest.
-+This code is pretty poor quality and really needs to be reworked.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8834
-+
-+The lustre ioctl LL_IOC_FUTIMES_3 is very generic. Need to either work with
-+other file systems with similar functionality and make a common syscall
-+interface or rework our server code to automagically do it for us.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-6202
-+
-+Cleanup up ioctl handling. We have many obsolete ioctls. Also the way we do
-+ioctls can be changed over to netlink. This also has the benefit of working
-+better with HPC systems that do IO forwarding. Such systems don't like ioctls
-+very well.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9667
-+
-+More cleanups by making our utilities use sysfs instead of ioctls for LNet.
-+Also it has been requested to move the remaining ioctls to the netlink API.
-+
-+******************************************************************************
-+* Misc
-+******************************************************************************
-+
-+------------------------------------------------------------------------------
-+https://jira.hpdd.intel.com/browse/LU-9855
-+
-+Clean up obdclass preprocessor code. One of the major eye sores is the various
-+pointer redirections and macros used by the obdclass. This makes the code very
-+difficult to understand. It was requested by the Al Viro to clean this up before
-+we leave staging.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9633
-+
-+Migrate to sphinx kernel-doc style comments. Add documents in Documentation.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-6142
-+
-+Possible remaining coding style fix. Remove deadcode. Enforce kernel code
-+style. Other minor misc cleanups...
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8837
-+
-+Separate client/server functionality. Functions only used by server can be
-+removed from client. Most of this has been done but we need a inspect of the
-+code to make sure.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-8964
-+
-+Lustre client readahead/writeback control needs to better suit kernel providings.
-+Currently its being explored. We could end up replacing the CLIO read ahead
-+abstract with the kernel proper version.
-+
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9862
-+
-+Patch that landed for LU-7890 leads to static checker errors
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-9868
-+
-+dcache/namei fixes for lustre
-+------------------------------------------------------------------------------
-+
-+https://jira.hpdd.intel.com/browse/LU-10467
-+
-+use standard linux wait_events macros work by Neil Brown
-+
-+------------------------------------------------------------------------------
- 
- Please send any patches to Greg Kroah-Hartman <greg@kroah.com>, Andreas Dilger
--<andreas.dilger@intel.com>, and Oleg Drokin <oleg.drokin@intel.com>.
-+<andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org> and
-+Oleg Drokin <oleg.drokin@intel.com>.
--- 
-1.8.3.1
+Are or should those entries that have been addressed
+also in this new list?
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
