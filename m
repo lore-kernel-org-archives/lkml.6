@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326431-2-7392000725235921479
+X-Cyrus-Session-Id: sloti22d1t05-1524142-1518326413-2-14977419153237982569
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326430; b=GVCGP3bINCDtrVTCC/V6ezVMioqQK20XnMYeRCAvdfl6ulz
-    f2tspKwibsJVS0odYNFs9yFqfQ/YJ/Sj7XaLTm5oO5j5/dAI7aKF0caNvS4ehf2f
-    CU3IN9ZRQA+vS2SEbdey4V3r+jh0iBDtsQs2mpczLZzdf44/kTpDh9IijNU3T9G6
-    AkS3ggBzCTtk01zDksCtDBeqtxmIOvJEsHmT0rICQml4YSRD4+7mPacFwh5HmegA
-    b4Evu+SFSmKd8QbeGi+Rtbl2gdwWULaeQN8DMejcCHwvmGd8346Jza5nxneoJzRH
-    ZCzsJUw6jje0Ngsk68rSlKvMY5vdOKwMLiV3/vQ==
+    t=1518326412; b=R6+DXdiBPuyS3/N0oFbSdVpEjg0db65qFaT1Qaz+lAPT43K
+    B1vJ7+cx1yVFp3B9Cue5gONrEJ3lPbzn2djfDiKllKT+g4BOSKstYtPQbV+VdGBd
+    cNxQfMK2CQbWLgcGAu8HtIwZLkvSEHHyqO4ZRqZQ73BXNw9a3+NDU85+aib5RLWc
+    e0z24IsGBdmrccwShR3Q9fTtjPXed6uEbQiJSxmbyvaPXlZQoUhSWLEzfwjnQs0l
+    2A0LGMMBhC3pda08e2Pt/b8TEa9QQp9ZBVKwKCHATf//HHvmn4BmstiiCAy44ZBL
+    xL37G/DtFwF1DFz1xWJv8PIY1/dey2HKiHdjaTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326430; bh=foRbi3tUegrHLEk723T
-    Iw5tsOACMOS9hn0C6+MHgLwY=; b=eetSLHr6ggEWBpG/dNA3KLdnC5FhWLT1bOt
-    HDiL2XS77+frvyFuOjkIgZWk5xpnWjKelXui074AndwJoInrrh+kHGuRg9U4W4A5
-    WSGrrEyiMdIYop7ifmDl2mL6WE/E2RAZEkMGogJ6PUO+UAUrULmu5gLHyicns7xO
-    jyOGdus8yELLH/g6pSdTfh8BaGFFqqxj/KYHJUJLyyQhiZoahAoRrViAneOUuv/A
-    AqWHS5Fbb4GOhVKg6wGKbPRakCGDjvh3ew6bFg8fbuU5qV6Z/WGPyFRiVZkvkjx7
-    RTENfviLvI7fu539WFHwpGYJsnXoMoP1eXmhMen/JYoVfWUN/FA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518326412; bh=dAFbsKiM/eqkQzUXyKI
+    ya3WMwAIlpDzeksPxaHHoM5Q=; b=U4eqFcccWCm4nTzBy7gSgHMla8XrRSk0rpL
+    qL17AiriIgspGGBMiLEAdtU2SleW6w+RWtya2osjA+okCuTp50f6MAR7D+yd8gXd
+    guPndIhJM2ealW1TMYMWw+qWExYM6VWadqUeSdxCIq/9m9g/9xV7xMNrrSeU/h96
+    PfO8+fNq4H+UC9JkTTH5RFnhNcPH+vzZfe5Ef72OlMIs8zm3v6RlB/pujDU3q5Wi
+    HCxgz/DlEacuXDBbLxr8qONz/dNPrAccWIjAA2r3kngSwX+F5OHv7b6OvjQOpTEE
+    pirebp3RJwg0ekt6xffrfII725+8/LZbdv7qX0Jy8/nF4vqOC/w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,25 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754038AbeBKFUR (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:20:17 -0500
+        id S1753763AbeBKFUB (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:20:01 -0500
 Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42726 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932189AbeBKFSP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:15 -0500
+        by vger.kernel.org with ESMTP id S1753314AbeBKFSR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:17 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Guillaume Nault" <g.nault@alphalink.fr>
+CC: akpm@linux-foundation.org, "Jaegeuk Kim" <jaegeuk@kernel.org>,
+        "Chao Yu" <yuchao0@huawei.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.550197276@decadent.org.uk>
+Message-ID: <lsq.1518323471.166462567@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 036/136] l2tp: initialise PPP sessions before
- registering them
+Subject: [PATCH 3.16 030/136] f2fs: expose some sectors to user in inline
+ data or dentry case
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,188 +80,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guillaume Nault <g.nault@alphalink.fr>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit f98be6c6359e7e4a61aaefb9964c1db31cb9ec0c upstream.
+commit 5b4267d195dd887c4412e34b5a7365baa741b679 upstream.
 
-pppol2tp_connect() initialises L2TP sessions after they've been exposed
-to the rest of the system by l2tp_session_register(). This puts
-sessions into transient states that are the source of several races, in
-particular with session's deletion path.
+If there's some data written through inline data or dentry, we need to shouw
+st_blocks. This fixes reporting zero blocks even though there is small written
+data.
 
-This patch centralises the initialisation code into
-pppol2tp_session_init(), which is called before the registration phase.
-The only field that can't be set before session registration is the
-pppol2tp socket pointer, which has already been converted to RCU. So
-pppol2tp_connect() should now be race-free.
-
-The session's .session_close() callback is now set before registration.
-Therefore, it's always called when l2tp_core deletes the session, even
-if it was created by pppol2tp_session_create() and hasn't been plugged
-to a pppol2tp socket yet. That'd prevent session free because the extra
-reference taken by pppol2tp_session_close() wouldn't be dropped by the
-socket's ->sk_destruct() callback (pppol2tp_session_destruct()).
-We could set .session_close() only while connecting a session to its
-pppol2tp socket, or teach pppol2tp_session_close() to avoid grabbing a
-reference when the session isn't connected, but that'd require adding
-some form of synchronisation to be race free.
-
-Instead of that, we can just let the pppol2tp socket hold a reference
-on the session as soon as it starts depending on it (that is, in
-pppol2tp_connect()). Then we don't need to utilise
-pppol2tp_session_close() to hold a reference at the last moment to
-prevent l2tp_core from dropping it.
-
-When releasing the socket, pppol2tp_release() now deletes the session
-using the standard l2tp_session_delete() function, instead of merely
-removing it from hash tables. l2tp_session_delete() drops the reference
-the sessions holds on itself, but also makes sure it doesn't remove a
-session twice. So it can safely be called, even if l2tp_core already
-tried, or is concurrently trying, to remove the session.
-Finally, pppol2tp_session_destruct() drops the reference held by the
-socket.
-
-Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
-Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+[Jaegeuk Kim: avoid link file for quotacheck]
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[bwh: Backported to 3.16:
+ - Inline dentries are not supported
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/l2tp/l2tp_ppp.c | 69 +++++++++++++++++++++++++++++------------------------
- 1 file changed, 38 insertions(+), 31 deletions(-)
-
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -468,9 +468,6 @@ static void pppol2tp_session_close(struc
- 			inet_shutdown(sk->sk_socket, SEND_SHUTDOWN);
- 		sock_put(sk);
- 	}
--
--	/* Don't let the session go away before our socket does */
--	l2tp_session_inc_refcount(session);
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -460,6 +460,11 @@ int f2fs_getattr(struct vfsmount *mnt,
+ 	struct inode *inode = dentry->d_inode;
+ 	generic_fillattr(inode, stat);
+ 	stat->blocks <<= 3;
++
++	/* we need to show initial sectors used for inline_data/dentries */
++	if (S_ISREG(inode->i_mode) && f2fs_has_inline_data(inode))
++		stat->blocks += (stat->size + 511) >> 9;
++
+ 	return 0;
  }
  
- /* Really kill the session socket. (Called from sock_put() if
-@@ -526,8 +523,7 @@ static int pppol2tp_release(struct socke
- 	if (session != NULL) {
- 		struct pppol2tp_session *ps;
- 
--		__l2tp_session_unhash(session);
--		l2tp_session_queue_purge(session);
-+		l2tp_session_delete(session);
- 
- 		ps = l2tp_session_priv(session);
- 		mutex_lock(&ps->sk_lock);
-@@ -619,6 +615,35 @@ static void pppol2tp_show(struct seq_fil
- }
- #endif
- 
-+static void pppol2tp_session_init(struct l2tp_session *session)
-+{
-+	struct pppol2tp_session *ps;
-+	struct dst_entry *dst;
-+
-+	session->recv_skb = pppol2tp_recv;
-+	session->session_close = pppol2tp_session_close;
-+#if IS_ENABLED(CONFIG_L2TP_DEBUGFS)
-+	session->show = pppol2tp_show;
-+#endif
-+
-+	ps = l2tp_session_priv(session);
-+	mutex_init(&ps->sk_lock);
-+	ps->tunnel_sock = session->tunnel->sock;
-+	ps->owner = current->pid;
-+
-+	/* If PMTU discovery was enabled, use the MTU that was discovered */
-+	dst = sk_dst_get(session->tunnel->sock);
-+	if (dst) {
-+		u32 pmtu = dst_mtu(dst);
-+
-+		if (pmtu) {
-+			session->mtu = pmtu - PPPOL2TP_HEADER_OVERHEAD;
-+			session->mru = pmtu - PPPOL2TP_HEADER_OVERHEAD;
-+		}
-+		dst_release(dst);
-+	}
-+}
-+
- /* connect() handler. Attach a PPPoX socket to a tunnel UDP socket
-  */
- static int pppol2tp_connect(struct socket *sock, struct sockaddr *uservaddr,
-@@ -630,7 +655,6 @@ static int pppol2tp_connect(struct socke
- 	struct l2tp_session *session = NULL;
- 	struct l2tp_tunnel *tunnel;
- 	struct pppol2tp_session *ps;
--	struct dst_entry *dst;
- 	struct l2tp_session_cfg cfg = { 0, };
- 	int error = 0;
- 	u32 tunnel_id, peer_tunnel_id;
-@@ -775,8 +799,8 @@ static int pppol2tp_connect(struct socke
- 			goto end;
- 		}
- 
-+		pppol2tp_session_init(session);
- 		ps = l2tp_session_priv(session);
--		mutex_init(&ps->sk_lock);
- 		l2tp_session_inc_refcount(session);
- 
- 		mutex_lock(&ps->sk_lock);
-@@ -789,26 +813,6 @@ static int pppol2tp_connect(struct socke
- 		drop_refcnt = true;
- 	}
- 
--	ps->owner	     = current->pid;
--	ps->tunnel_sock = tunnel->sock;
--
--	session->recv_skb	= pppol2tp_recv;
--	session->session_close	= pppol2tp_session_close;
--#if defined(CONFIG_L2TP_DEBUGFS) || defined(CONFIG_L2TP_DEBUGFS_MODULE)
--	session->show		= pppol2tp_show;
--#endif
--
--	/* If PMTU discovery was enabled, use the MTU that was discovered */
--	dst = sk_dst_get(tunnel->sock);
--	if (dst != NULL) {
--		u32 pmtu = dst_mtu(dst);
--
--		if (pmtu != 0)
--			session->mtu = session->mru = pmtu -
--				PPPOL2TP_HEADER_OVERHEAD;
--		dst_release(dst);
--	}
--
- 	/* Special case: if source & dest session_id == 0x0000, this
- 	 * socket is being created to manage the tunnel. Just set up
- 	 * the internal context for use by ioctl() and sockopt()
-@@ -842,6 +846,12 @@ out_no_ppp:
- 	rcu_assign_pointer(ps->sk, sk);
- 	mutex_unlock(&ps->sk_lock);
- 
-+	/* Keep the reference we've grabbed on the session: sk doesn't expect
-+	 * the session to disappear. pppol2tp_session_destruct() is responsible
-+	 * for dropping it.
-+	 */
-+	drop_refcnt = false;
-+
- 	sk->sk_state = PPPOX_CONNECTED;
- 	l2tp_info(session, PPPOL2TP_MSG_CONTROL, "%s: created\n",
- 		  session->name);
-@@ -865,7 +875,6 @@ static int pppol2tp_session_create(struc
- {
- 	int error;
- 	struct l2tp_session *session;
--	struct pppol2tp_session *ps;
- 
- 	/* Error if tunnel socket is not prepped */
- 	if (!tunnel->sock) {
-@@ -888,9 +897,7 @@ static int pppol2tp_session_create(struc
- 		goto err;
- 	}
- 
--	ps = l2tp_session_priv(session);
--	mutex_init(&ps->sk_lock);
--	ps->tunnel_sock = tunnel->sock;
-+	pppol2tp_session_init(session);
- 
- 	error = l2tp_session_register(session, tunnel);
- 	if (error < 0)
