@@ -1,32 +1,37 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518293293; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518322412; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZuzwuS+e2tf9YGyFk9paooxsZuedd88gGHq9dICdFQga6njqMaCuuyFitLl06+pr9D
-         HgTQ876SwOXdqTRNO6j4uNTbbyHsKAELxVmf0fUuv7b3KJrVon0EM33nTTIpp6fJEQCa
-         D057J8sc086ocyYhBGjpLtW47NfRYQRu2lhbTocjjRiXtHqtkOQgSg80qnRSwcV14kZw
-         zWy2IrmGzCsPcdMMSULvyA5xMpBl69as3MQPdVgvPbiWMmG+fIViYWvW9QfpeNq+y/92
-         X5Ok7kbhTu+HpEyvRYekPT8ohkSfSAZKPYiLzxFVxAs3ORPSIjIGRLTOB0JZ2dGSoiwU
-         2lQA==
+        b=sD3Jrs5YeWyTXTvp7S1sy6C1SxnJhGAzxmzKUwKP8xAihN64BucHx2sDKIsQ7fXSdt
+         EuJDYHymWFrFfI1qF1MSpZ6B7S2rHG+m7m7TQV21dZyq/QXrFn2TcTYngC6JN54LBuy4
+         /qedeSVFiFa/klrUH/6kf47u8yOQvj93rrbrqCtq80yAOV2P17jwoE+2OZEg8/G+BLOe
+         QtEJqpGV1d80s251b7BJD7zt07+ychjIs7U/KEXgA3flFPCugPglDADj4JuVnbYitr3T
+         WG64sXtTAktFqdrq6CUxaCiisl/7cH/FBQkhWpEfUhpnRUb7FOxCDzScFj3Jgrt4bDfV
+         CjxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=YpJBaE4XCpEcxG4IqIArvaFC2coN6x57v9taZZvm7bI=;
-        b=XJADIoPFHuRwJUQgF2gYBb5l8nlR36GGVUhMvIw+DY9CxTtA7GgeOzqrzwbORHUp+k
-         d2xuCz4MQTZLrKpnJCwq7uBLTc9afEr+TA68TkFpUFlGhEGtd31Qlt3kLUZY5kgTRHRm
-         2/ViZS1bwcMvxWHQV6uKbqcsYkY3K63xsqTZQ7f/K3C365zspDhEFJUmKqyJbFzrdN5o
-         buaPuHL/3eVJ6neMAHIQsTo3QOsXXIxMpEQ2iu508zmKajhpuMKDV4DH0lFmps0/hRvS
-         T26xuoaXOqG7peA29g7AhuIiKYdkHiWWMyZRD6kHw06Zwgjq+V/q5wtDn0B7bEazPvi+
-         /OhA==
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=tt2fl4STXrycFCTz1f54CtueFBYWfmGnIXA5RhQDmdw=;
+        b=mbbJpiyHGzZGtc6WVKL6Otc+QJqPAX2XZYtlVWZb/LNQzvamIk6vGzguL0ZPqzKpfs
+         ZlUnajFgO4IgkCi0C61FFUU3MoaCXKEiaoCe8ZtP8h/ZD/EOPqpO4rS63satZG7vzLrI
+         3uo9eVB7qZsLIkeOSqd6rXisntxlNW9F1XEvEqum23LQq7F47QPEHcu5mNifFF/tTq6Y
+         fi8BhpMWauqf7aIKi72LprTFWIvCCIXFA1fG9cYD0/DOYnt1hhwd+jN0WY/UVfVf4Mx7
+         yQNHOpXnkBPwDZMfcoWO+yTGZXxJDpL89cPPMvR8FpEJvxYRUghd4hg7Gr+oBTkKL22+
+         VRbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=qW1n55zv;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=wTzxREYT;
+       dkim=pass header.i=@chromium.org header.s=google header.b=hRKQ4jW4;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=qW1n55zv;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AH8x225qhs5kuE8etsAgN0ciyi2aeyZUrgtwdOebt/PdjMzprWl9n9lrSqlg8wdx7cYYE0Ar1GFfZn82XiUeXEfPr4s=
+       dkim=pass header.i=@google.com header.s=20161025 header.b=wTzxREYT;
+       dkim=pass header.i=@chromium.org header.s=google header.b=hRKQ4jW4;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x226YvJQuWnAyVnx+vYRnLriIRjUE3qKPj18ztcMjJh3u+XIMX0W0Q69wK4ODOLzYN9wR/mJ/mcQdcwq1D5O7OGs=
 MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
+Sender: keescook@google.com
+In-Reply-To: <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
 References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
  <1518106752-29228-5-git-send-email-yamada.masahiro@socionext.com>
  <20180209053038.pscoijvowmyudyzf@huvuddator> <CAK7LNATRxYCx9sE1haw815votyA5K8GQrMPPh0Q+n3kYa=JsgA@mail.gmail.com>
@@ -34,12 +39,13 @@ References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
  <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 10 Feb 2018 12:08:12 -0800
-X-Google-Sender-Auth: QYm0GOsb1wrUNAhwVD2-oTFmqUg
-Message-ID: <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
+ <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Sat, 10 Feb 2018 20:13:31 -0800
+X-Google-Sender-Auth: 8dt-4L-uGjdi2deRluHP5gyPg08
+Message-ID: <CAGXu5jLo0iuMsH89vj3nr8sv+1YvXfXgoPeBdxHwZm5i=DWoOA@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
@@ -51,34 +57,52 @@ Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socion
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592045908286757019?=
+X-GMAIL-MSGID: =?utf-8?q?1592076441844496733?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Feb 10, 2018 at 11:23 AM, Kees Cook <keescook@chromium.org> wrote:
+On Sat, Feb 10, 2018 at 12:08 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Sat, Feb 10, 2018 at 11:23 AM, Kees Cook <keescook@chromium.org> wrote:
+>>
+>> So, if this could do something like this:
+>>
+>>         config CC_HAS_STACKPROTECTOR_STRONG
+>>                 bool
+>>                 option
+>> shell="scripts/gcc-${ARCH}_${BITS}-has-stack-protector.sh $CC
+>> $KBUILD_CPPFLAGS"
 >
-> So, if this could do something like this:
+> Guys, this is not that important.
 >
->         config CC_HAS_STACKPROTECTOR_STRONG
->                 bool
->                 option
-> shell="scripts/gcc-${ARCH}_${BITS}-has-stack-protector.sh $CC
-> $KBUILD_CPPFLAGS"
+> Don't make some stupid script for stackprotector. If the user doesn't
+> have a gcc that supports -fstackprotector-*, then don't show the
+> options. It matters NOT ONE WHIT whether that then means that
+> stackprotector will be off by default later.
 
-Guys, this is not that important.
+What? Maybe you're misunderstanding the script? This script already exists:
 
-Don't make some stupid script for stackprotector. If the user doesn't
-have a gcc that supports -fstackprotector-*, then don't show the
-options. It matters NOT ONE WHIT whether that then means that
-stackprotector will be off by default later.
+$ ls scripts/gcc-x86_*
+scripts/gcc-x86_32-has-stack-protector.sh
+scripts/gcc-x86_64-has-stack-protector.sh
 
-Seriously. This is classic "Kees thinks that _his_ code is so
-important that everybody should get the value _he_ cares about".
+It's been there since the very beginning when Arjan added it to
+validate that the compiler actually produces a stack protector when
+you give it -fstack-protector. Older gccs broke this entirely, more
+recent misconfigurations (as seen with some of Arnd's local gcc
+builds) did similar, and there have been regressions in some versions
+where gcc's x86 support flipped to the global canary instead of the
+%gs-offset canary.
 
-That's bullshit. Kees, get over yourself. It's a very common thing to
-see, but it's WRONG. The fact that _you_ care about this doesn't mean
-that everybody else should too.
+> Seriously. This is classic "Kees thinks that _his_ code is so
+> important that everybody should get the value _he_ cares about".
 
-The whole point was to simplify Kconfig, not to make it even worse.
+I care about the kernel build informing people about what's gone wrong
+as early as possible instead of producing an unbootable image that
+takes forever to debug.
 
-                       Linus
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
