@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325242-2-16595899525092095475
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325231-2-10280509748916461971
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325242; b=rs1EWGVAQZM8lNkLglaYwLaLaxXzIjKl0WZctG5H/pu3x6O
-    uKr+zWf0gODrJuy8FPt1AMElrg/XR7exxBnQgU0yuX5vGIw7vBNRfRRTnT+dXB4E
-    XOv4HIEyJWAa0gbiCSICnT2eBdp+vrRGcJ+GxmSZvktmRSYHawPOo8YZb70aWpwf
-    4t2DL/1FhoM408bIkIrVOuY5BMT3OVdxLgPl5z1RTNYakbibI/4T1koV7P11ajud
-    XM++gt6IU18ulEsLp4xHjt9DgcRnIdmpG9NL68kZ9BPlB+wosHzQlW8tx/XcClW3
-    BVyr2EvckkZFdRv1AkLIKD0ogWvh440O4reXPsg==
+    t=1518325230; b=CmDSTQWMLyCQ2aUg08/du4IztUIiIaY+C3d8THCWegCJ6BC
+    HSouL8PiaUMrhvm8I/J92urg0K+rbM+m+yhqTAj2ribTZosbYKfB36CG1VbqqyeF
+    BYenqvSVm1u/qag+m/gFAQfoUW0UU8qD3EiIG9dvV8UjW0kGy+Qstr+78g+gLFyK
+    WinO4WRCXA7NO6wtXfnfk0LJ/kH49uZAIX+VLb5D2rjmLG1SRsunZgv4iskDXJJa
+    xzUDHTnB3slJguhqUNnYTeEWBp3cE/VB3XHb8VgizhbdfPdhz2VvkrFj8HZGvyo+
+    g3zrJd+Fqt5BrT7MhGbp5YO+TDaHphe7zgFK4GQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325242; bh=QJT8W1KTHA5dx/Ets+3
-    vsp+WviDaXkVvm3ZddveDP20=; b=hFiF4P2e169/gEnMHWWkQ9ECqa6WX8xKH+/
-    1xPsp9/oFTaRKFd0gLsJYg5dgh6CAylOrJru2MJlxIIx8ak4zazlLCJi9cDv7TtQ
-    yxdSv6udJU3TVUOcTIoN4ShG+yXJiCQHZnYIMtrExuw6SYzOLsurx/tBOPfsPJ/V
-    LYEuqzYvvKq58XuPhXPGhj/rKyxt6U94V7IzIcDYhXVw20U7CB6IPF9b1hB34Jzs
-    7CEdO6edAYbI0GLuzbMM5HqrqVBMxpjMWbVnkCFGwKL2MIQepClpJmCr3KNvkv/a
-    qQmk/t6g6VsDzSnjY1cXSnyBVBDO/pbbKqC2O8BFTok+qO5xM6Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325230; bh=bUkkSMNVy68vRVSG092
+    5cycVuKH2KrSHsXOtMgTUZTo=; b=gEVrTZLgpLIBO7CzqGnVfIJCsNnEs7bj2cb
+    +zu6RuIKhgLo/Mbq+B4t7/1fvMnqTEZImotySazPr9FjOoF9ei0Vl1Cnrgn+NckV
+    myr+bpJiDjAxZ2bOCvd3jVrL/IgEiixU9LibOUVaggUJq1mvy5YTNYd+NkYeQIez
+    iue602BSuOodpETKZSnxzZp2+DIF3BF1TntV5sKhDRI3Ve68qlaDE3gmmFlKHLBv
+    e6x63J90Pc5UWx6RgukuuVGSKwKW/hkJ/s1Gq4cr3ga4mmHfMFnmFwfaEtwN61+l
+    1PvDNz0x/mle6EnA5sZZqDrCQF/Qn+Pw//Y3vPrRAbJWGT9rp+w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753815AbeBKE6w (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:58:52 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41669 "EHLO
+        id S1752790AbeBKE6y (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:58:54 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41659 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752777AbeBKEd4 (ORCPT
+        by vger.kernel.org with ESMTP id S1752774AbeBKEd4 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:56 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,12 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Alexandre Belloni" <alexandre.belloni@free-electrons.com>
+CC: akpm@linux-foundation.org, "Weilong Chen" <chenweilong@huawei.com>,
+        "Corey Minyard" <cminyard@mvista.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.600461425@decadent.org.uk>
+Message-ID: <lsq.1518323471.183683521@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 007/136] rtc: set the alarm to the next expiring timer
+Subject: [PATCH 3.16 004/136] ipmi: fix unsigned long underflow
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,31 +79,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 74717b28cb32e1ad3c1042cafd76b264c8c0f68d upstream.
+commit 392a17b10ec4320d3c0e96e2a23ebaad1123b989 upstream.
 
-If there is any non expired timer in the queue, the RTC alarm is never set.
-This is an issue when adding a timer that expires before the next non
-expired timer.
+When I set the timeout to a specific value such as 500ms, the timeout
+event will not happen in time due to the overflow in function
+check_msg_timeout:
+...
+	ent->timeout -= timeout_period;
+	if (ent->timeout > 0)
+		return;
+...
 
-Ensure the RTC alarm is set in that case.
+The type of timeout_period is long, but ent->timeout is unsigned long.
+This patch makes the type consistent.
 
-Fixes: 2b2f5ff00f63 ("rtc: interface: ignore expired timers when enqueuing new timers")
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Reported-by: Weilong Chen <chenweilong@huawei.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Tested-by: Weilong Chen <chenweilong@huawei.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/rtc/interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_msghandler.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -794,7 +794,7 @@ static int rtc_timer_enqueue(struct rtc_
- 	}
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -4007,7 +4007,8 @@ smi_from_recv_msg(ipmi_smi_t intf, struc
+ }
  
- 	timerqueue_add(&rtc->timerqueue, &timer->node);
--	if (!next) {
-+	if (!next || ktime_before(timer->node.expires, next->expires)) {
- 		struct rtc_wkalrm alarm;
- 		int err;
- 		alarm.time = rtc_ktime_to_tm(timer->node.expires);
+ static void check_msg_timeout(ipmi_smi_t intf, struct seq_table *ent,
+-			      struct list_head *timeouts, long timeout_period,
++			      struct list_head *timeouts,
++			      unsigned long timeout_period,
+ 			      int slot, unsigned long *flags,
+ 			      unsigned int *waiting_msgs)
+ {
+@@ -4020,8 +4021,8 @@ static void check_msg_timeout(ipmi_smi_t
+ 	if (!ent->inuse)
+ 		return;
+ 
+-	ent->timeout -= timeout_period;
+-	if (ent->timeout > 0) {
++	if (timeout_period < ent->timeout) {
++		ent->timeout -= timeout_period;
+ 		(*waiting_msgs)++;
+ 		return;
+ 	}
+@@ -4088,7 +4089,8 @@ static void check_msg_timeout(ipmi_smi_t
+ 	}
+ }
+ 
+-static unsigned int ipmi_timeout_handler(ipmi_smi_t intf, long timeout_period)
++static unsigned int ipmi_timeout_handler(ipmi_smi_t intf,
++					 unsigned long timeout_period)
+ {
+ 	struct list_head     timeouts;
+ 	struct ipmi_recv_msg *msg, *msg2;
