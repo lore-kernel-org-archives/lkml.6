@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932217AbeBKUKT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:10:19 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33455 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753726AbeBKUJd (ORCPT
+        id S932230AbeBKUKw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:10:52 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44286 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753727AbeBKUJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 15:09:33 -0500
-X-Google-Smtp-Source: AH8x2254g0X9teEGrFSMJgkw2OwPx/SCjdgRN6+lXkdiEcDKclhDYxVU+xgxbLhaQp6/J1AoElZkVQ==
+        Sun, 11 Feb 2018 15:09:23 -0500
+X-Google-Smtp-Source: AH8x227IOn/cqxygiOSPRjPRHQWXrkRKRTzJ/OLrZSvdBmwonAEyY8LEz0sWoELLwH9bONbuE6Co4A==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -25,9 +25,9 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v3 6/7] watchdog: meson: allow setting timeout in devicetree
-Date: Sun, 11 Feb 2018 21:08:46 +0100
-Message-Id: <20180211200847.25000-6-marcus.folkesson@gmail.com>
+Subject: [PATCH v3 3/7] watchdog: sirfsoc: allow setting timeout in devicetree
+Date: Sun, 11 Feb 2018 21:08:43 +0100
+Message-Id: <20180211200847.25000-3-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180211200847.25000-1-marcus.folkesson@gmail.com>
 References: <20180211200847.25000-1-marcus.folkesson@gmail.com>
@@ -45,40 +45,41 @@ let us to set timout-sec property in devicetree.
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
- Documentation/devicetree/bindings/watchdog/meson-wdt.txt | 4 ++++
- drivers/watchdog/meson_wdt.c                             | 2 +-
+ Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt | 4 ++++
+ drivers/watchdog/sirfsoc_wdt.c                             | 2 +-
  2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/meson-wdt.txt b/Documentation/devicetree/bindings/watchdog/meson-wdt.txt
-index 8a6d84cb36c9..7588cc3971bf 100644
---- a/Documentation/devicetree/bindings/watchdog/meson-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/meson-wdt.txt
-@@ -9,9 +9,13 @@ Required properties:
- 	"amlogic,meson8m2-wdt" and "amlogic,meson8b-wdt" on Meson8m2 SoCs
- - reg : Specifies base physical address and size of the registers.
+diff --git a/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt b/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt
+index 9cbc76c89b2b..0dce5e3100b4 100644
+--- a/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/sirfsoc_wdt.txt
+@@ -5,10 +5,14 @@ Required properties:
+ - reg: Address range of tick timer/WDT register set
+ - interrupts: interrupt number to the cpu
  
 +Optional properties:
-+- timeout-sec: contains the watchdog timeout in seconds.
++- timeout-sec : Contains the watchdog timeout in seconds
 +
  Example:
  
- wdt: watchdog@c1109900 {
- 	compatible = "amlogic,meson6-wdt";
- 	reg = <0xc1109900 0x8>;
-+	timeout-sec = <10>;
+ timer@b0020000 {
+ 	compatible = "sirf,prima2-tick";
+ 	reg = <0xb0020000 0x1000>;
+ 	interrupts = <0>;
++	timeout-sec = <30>;
  };
-diff --git a/drivers/watchdog/meson_wdt.c b/drivers/watchdog/meson_wdt.c
-index 304274c67735..cd0275a6cdac 100644
---- a/drivers/watchdog/meson_wdt.c
-+++ b/drivers/watchdog/meson_wdt.c
-@@ -36,7 +36,7 @@
- #define MESON_SEC_TO_TC(s, c)	((s) * (c))
+diff --git a/drivers/watchdog/sirfsoc_wdt.c b/drivers/watchdog/sirfsoc_wdt.c
+index 4eea351e09b0..ac0c9d2c4aee 100644
+--- a/drivers/watchdog/sirfsoc_wdt.c
++++ b/drivers/watchdog/sirfsoc_wdt.c
+@@ -29,7 +29,7 @@
+ #define SIRFSOC_WDT_MAX_TIMEOUT		(10 * 60)	/* 10 mins */
+ #define SIRFSOC_WDT_DEFAULT_TIMEOUT	30		/* 30 secs */
  
- static bool nowayout = WATCHDOG_NOWAYOUT;
--static unsigned int timeout = MESON_WDT_TIMEOUT;
+-static unsigned int timeout = SIRFSOC_WDT_DEFAULT_TIMEOUT;
 +static unsigned int timeout;
+ static bool nowayout = WATCHDOG_NOWAYOUT;
  
- struct meson_wdt_data {
- 	unsigned int enable;
+ module_param(timeout, uint, 0);
 -- 
 2.15.1
