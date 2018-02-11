@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932186AbeBKUJl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:09:41 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39286 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932166AbeBKUJf (ORCPT
+        id S932217AbeBKUKT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:10:19 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33455 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753726AbeBKUJd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 15:09:35 -0500
-X-Google-Smtp-Source: AH8x226J4oBmTX1xI2FngD5z6pUm6lLXOiwQP+XdAodcCF+eQ6kjRX1FvP/3AkfBcSImCv5EiLZbEQ==
+        Sun, 11 Feb 2018 15:09:33 -0500
+X-Google-Smtp-Source: AH8x2254g0X9teEGrFSMJgkw2OwPx/SCjdgRN6+lXkdiEcDKclhDYxVU+xgxbLhaQp6/J1AoElZkVQ==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -25,9 +25,9 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v3 7/7] watchdog: coh901327: make use of timeout-secs provided in devicetree
-Date: Sun, 11 Feb 2018 21:08:47 +0100
-Message-Id: <20180211200847.25000-7-marcus.folkesson@gmail.com>
+Subject: [PATCH v3 6/7] watchdog: meson: allow setting timeout in devicetree
+Date: Sun, 11 Feb 2018 21:08:46 +0100
+Message-Id: <20180211200847.25000-6-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180211200847.25000-1-marcus.folkesson@gmail.com>
 References: <20180211200847.25000-1-marcus.folkesson@gmail.com>
@@ -38,74 +38,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 watchdog_init_timeout() will allways pick timeout_param since it
 defaults to a valid timeout.
 
-Following best practice described in
-Documentation/watchdog/watchdog-kernel-api.txt to make use of
-the parameter logic.
+By following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt, it also
+let us to set timout-sec property in devicetree.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
+ Documentation/devicetree/bindings/watchdog/meson-wdt.txt | 4 ++++
+ drivers/watchdog/meson_wdt.c                             | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Notes:
-    v3:
-    	- Reformat and use coh901327_wdt.timeout instead of margin when print out
-    	  timout in probe function.
-    
-    v2:
-    	- Set .timeout in coh901327_wdt structure declaration.
-    	- Set .min_timeout to 1 instead of 0. I could not find a datasheet
-    	  for coh901327, so I'm not sure if 0 is valid. However, 0 seems
-    	  wrong to me and most driver has 1 as min value. If it should
-    	  be 0, please let me know and I have to set another initial
-    	  value for margin.
-
- drivers/watchdog/coh901327_wdt.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
-index 4410337f4f7f..500af8a7ec5a 100644
---- a/drivers/watchdog/coh901327_wdt.c
-+++ b/drivers/watchdog/coh901327_wdt.c
-@@ -67,7 +67,9 @@
- #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
+diff --git a/Documentation/devicetree/bindings/watchdog/meson-wdt.txt b/Documentation/devicetree/bindings/watchdog/meson-wdt.txt
+index 8a6d84cb36c9..7588cc3971bf 100644
+--- a/Documentation/devicetree/bindings/watchdog/meson-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/meson-wdt.txt
+@@ -9,9 +9,13 @@ Required properties:
+ 	"amlogic,meson8m2-wdt" and "amlogic,meson8b-wdt" on Meson8m2 SoCs
+ - reg : Specifies base physical address and size of the registers.
  
- /* Default timeout in seconds = 1 minute */
--static unsigned int margin = 60;
-+#define U300_WDOG_DEFAULT_TIMEOUT					60
++Optional properties:
++- timeout-sec: contains the watchdog timeout in seconds.
 +
-+static unsigned int margin;
- static int irq;
- static void __iomem *virtbase;
- static struct device *parent;
-@@ -235,8 +237,9 @@ static struct watchdog_device coh901327_wdt = {
- 	 * timeout register is max
- 	 * 0x7FFF = 327670ms ~= 327s.
- 	 */
--	.min_timeout = 0,
-+	.min_timeout = 1,
- 	.max_timeout = 327,
-+	.timeout = U300_WDOG_DEFAULT_TIMEOUT,
+ Example:
+ 
+ wdt: watchdog@c1109900 {
+ 	compatible = "amlogic,meson6-wdt";
+ 	reg = <0xc1109900 0x8>;
++	timeout-sec = <10>;
  };
+diff --git a/drivers/watchdog/meson_wdt.c b/drivers/watchdog/meson_wdt.c
+index 304274c67735..cd0275a6cdac 100644
+--- a/drivers/watchdog/meson_wdt.c
++++ b/drivers/watchdog/meson_wdt.c
+@@ -36,7 +36,7 @@
+ #define MESON_SEC_TO_TC(s, c)	((s) * (c))
  
- static int __exit coh901327_remove(struct platform_device *pdev)
-@@ -315,16 +318,15 @@ static int __init coh901327_probe(struct platform_device *pdev)
- 		goto out_no_irq;
- 	}
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+-static unsigned int timeout = MESON_WDT_TIMEOUT;
++static unsigned int timeout;
  
--	ret = watchdog_init_timeout(&coh901327_wdt, margin, dev);
--	if (ret < 0)
--		coh901327_wdt.timeout = 60;
-+	watchdog_init_timeout(&coh901327_wdt, margin, dev);
- 
- 	coh901327_wdt.parent = dev;
- 	ret = watchdog_register_device(&coh901327_wdt);
- 	if (ret)
- 		goto out_no_wdog;
- 
--	dev_info(dev, "initialized. timer margin=%d sec\n", margin);
-+	dev_info(dev, "initialized. (timeout=%d sec)\n",
-+			coh901327_wdt.timeout);
- 	return 0;
- 
- out_no_wdog:
+ struct meson_wdt_data {
+ 	unsigned int enable;
 -- 
 2.15.1
