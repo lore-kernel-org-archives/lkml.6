@@ -1,52 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753744AbeBKUjC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:39:02 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45597 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753667AbeBKUjA (ORCPT
+        id S1753749AbeBKU63 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:58:29 -0500
+Received: from omr-a011e.mx.aol.com ([204.29.186.59]:47364 "EHLO
+        omr-a011e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753689AbeBKU62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 15:39:00 -0500
-X-Google-Smtp-Source: AH8x226A7YvVKJzLiSZ3xQM/sSkujmwhEtQqtpWsL9HiJhQqJvbi9km6BEFvjigyOal8XLDOCKXLZg==
-From: Sangwon Hong <qpakzk@gmail.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Taeung Song <treeze.taeung@gmail.com>, Sangwon Hong <qpakzk@gmail.com>
-Subject: [PATCH 2/2] perf mem: Document a missing option
-Date: Mon, 12 Feb 2018 05:38:37 +0900
-Message-Id: <1518381517-30766-2-git-send-email-qpakzk@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
-References: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
+        Sun, 11 Feb 2018 15:58:28 -0500
+From: Martin Vuille <jpmv27@aim.com>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf unwind: Report error from dwfl_attach_state
+Date: Sun, 11 Feb 2018 15:58:22 -0500
+Message-Id: <20180211205822.17080-1-jpmv27@aim.com>
+X-Mailer: git-send-email 2.13.6
+x-aol-global-disposition: G
+x-aol-sid: 3039ac1adfce5a80ae7256d7
+X-AOL-IP: 99.246.128.134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the missing --force option on the man page.
+In verbose level 2, errors returned by libdw are reported in most cases,
+but not when calling dwfl_attach_state.
 
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
-Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
+Since elfutils v 0.160 (2014), dwfl_attach_state sets the error code to
+report failure cause. On failure, log the reported error.
 ---
- tools/perf/Documentation/perf-mem.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/perf/util/unwind-libdw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
-index 4be08a1..b021141 100644
---- a/tools/perf/Documentation/perf-mem.txt
-+++ b/tools/perf/Documentation/perf-mem.txt
-@@ -28,6 +28,10 @@ OPTIONS
- <command>...::
- 	Any command you can specify in a shell.
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index 1e9c974faf67..967323c958fd 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -236,7 +236,8 @@ int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
+ 	if (err)
+ 		goto out;
  
-+-f::
-+--force::
-+	Don't do ownership validation
-+
- -t::
- --type=::
- 	Select the memory operation type: load or store (default: load,store)
+-	if (!dwfl_attach_state(ui->dwfl, EM_NONE, thread->tid, &callbacks, ui))
++	err = !dwfl_attach_state(ui->dwfl, EM_NONE, thread->tid, &callbacks, ui);
++	if (err)
+ 		goto out;
+ 
+ 	err = dwfl_getthread_frames(ui->dwfl, thread->tid, frame_callback, ui);
 -- 
-2.7.4
+2.13.6
