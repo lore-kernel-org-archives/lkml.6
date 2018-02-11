@@ -1,155 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932074AbeBKQRh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 11:17:37 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:54928 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751077AbeBKQRf (ORCPT
+        id S1753536AbeBKQkV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 11:40:21 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35875 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751077AbeBKQkT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 11:17:35 -0500
+        Sun, 11 Feb 2018 11:40:19 -0500
+X-Google-Smtp-Source: AH8x224JwD4tfcugYO9LfP24q7O4oMwlYgsch3Qy0V9oLjXAxeh1T3cgBbmJ+F2TZLfezkz67Y52OfmKQPLp6bHlo+Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Sun, 11 Feb 2018 17:17:32 +0100
-From: Stefan Agner <stefan@agner.ch>
-To: Anson Huang <anson.huang@nxp.com>
-Cc: Fabio Estevam <festevam@gmail.com>, rjw@rjwysocki.net,
-        viresh kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>, max.oss.09@gmail.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Octavian Purdila <octavian.purdila@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH] cpufreq: imx6q: support frequencies >528MHz for
- i.MX6UL/ULL
-In-Reply-To: <AM3PR04MB1315240E4A77431A58AC8501F5F00@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <20180118235836.17393-1-stefan@agner.ch>
- <CAOMZO5CBTTi2QMfM0yDVEMTYm06pGyasUcaLWD8wDHiVi9oshg@mail.gmail.com>
- <AM3PR04MB1315240E4A77431A58AC8501F5F00@AM3PR04MB1315.eurprd04.prod.outlook.com>
-Message-ID: <79baed40abbcc72920fd133bc43e378a@agner.ch>
-User-Agent: Roundcube Webmail/1.3.3
+In-Reply-To: <20180210141405.syaeuuktkebsp5jy@huvuddator>
+References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-17-ulfalizer@gmail.com>
+ <CANiq72kaCDcUHFuJ0P4CA-0KGgg+a8T+66p0aPwatAjfvDB8bA@mail.gmail.com> <20180210141405.syaeuuktkebsp5jy@huvuddator>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 11 Feb 2018 17:40:18 +0100
+Message-ID: <CANiq72mDZQFGsTXZM+ULd-5BLbA6xOjvKPoiCKuvF_hyhBmCrA@mail.gmail.com>
+Subject: Re: [PATCH v2] auxdisplay: img-ascii-lcd: kconfig: Remove MIPS_SEAD3 reference
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
+        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, Tony Lindgren <tony@atomide.com>,
+        npiggin@gmail.com, yamada.masahiro@socionext.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.02.2018 02:42, Anson Huang wrote:
-> Anson Huang
-> Best Regards!
-> 
-> 
->> -----Original Message-----
->> From: Fabio Estevam [mailto:festevam@gmail.com]
->> Sent: Sunday, February 11, 2018 12:26 AM
->> To: Stefan Agner <stefan@agner.ch>; Anson Huang <anson.huang@nxp.com>
->> Cc: rjw@rjwysocki.net; viresh kumar <viresh.kumar@linaro.org>;
->> linux-pm@vger.kernel.org; Marcel Ziswiler <marcel.ziswiler@toradex.com>;
->> max.oss.09@gmail.com; linux-kernel <linux-kernel@vger.kernel.org>; Octavian
->> Purdila <octavian.purdila@nxp.com>; Fabio Estevam
->> <fabio.estevam@nxp.com>; Shawn Guo <shawnguo@kernel.org>; moderated
->> list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
->> <linux-arm-kernel@lists.infradead.org>; dl-linux-imx <linux-imx@nxp.com>
->> Subject: Re: [PATCH] cpufreq: imx6q: support frequencies >528MHz for
->> i.MX6UL/ULL
->>
->> Hi Anson,
->>
->> On Thu, Jan 18, 2018 at 9:58 PM, Stefan Agner <stefan@agner.ch> wrote:
->> > Depending on SKU i.MX6UL/i.MX6ULL support frequencies up to 900MHz.
->> > Use PLL1 sys clock for all operating points higher than 528MHz.
->> >
->> > Note: For higher operating points VDD_SOC_IN needs to be 125mV higher
->> > than the ARM set-point (see datasheet). Specifically, the i.MX6UL/ULL
->> > EVK boards have an external DC regulator which needs adjustment. The
->> > regulator adjustment is not covered with this change.
->> >
->> > Signed-off-by: Stefan Agner <stefan@agner.ch>
->> > ---
->> >  drivers/cpufreq/imx6q-cpufreq.c | 14 ++++++++------
->> >  1 file changed, 8 insertions(+), 6 deletions(-)
->> >
->> > diff --git a/drivers/cpufreq/imx6q-cpufreq.c
->> > b/drivers/cpufreq/imx6q-cpufreq.c index 628fe899cb48..840f6386c780
->> > 100644
->> > --- a/drivers/cpufreq/imx6q-cpufreq.c
->> > +++ b/drivers/cpufreq/imx6q-cpufreq.c
->> > @@ -114,12 +114,14 @@ static int imx6q_set_target(struct cpufreq_policy
->> *policy, unsigned int index)
->> >                  */
->> >                 clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
->> >                 clk_set_parent(pll1_sw_clk, pll1_sys_clk);
->> > -               if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
->> > -                       clk_set_parent(secondary_sel_clk, pll2_bus_clk);
->> > -               else
->> > -                       clk_set_parent(secondary_sel_clk,
->> pll2_pfd2_396m_clk);
->> > -               clk_set_parent(step_clk, secondary_sel_clk);
->> > -               clk_set_parent(pll1_sw_clk, step_clk);
->> > +               if (freq_hz <= clk_get_rate(pll2_bus_clk)) {
->> > +                       if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
->> > +                               clk_set_parent(secondary_sel_clk,
->> pll2_bus_clk);
->> > +                       else
->> > +                               clk_set_parent(secondary_sel_clk,
->> pll2_pfd2_396m_clk);
->> > +                       clk_set_parent(step_clk, secondary_sel_clk);
->> > +                       clk_set_parent(pll1_sw_clk, step_clk);
->> > +               }
-> 
-> For cpufreq > 528MHz, ARM PLL needs to be set_rate, I did NOT see
-> where sets ARM PLL rate?
+On Sat, Feb 10, 2018 at 3:14 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> Commit 3f5f0a4475e1 ("MIPS: generic: Convert SEAD-3 to a generic board")
+> removed the MIPS_SEAD3 symbol and moved the setting of IMG_ASCII_LCD to
+> the board-sead-3.config defconfig file, but IMG_ASCII_LCD still
+> references the removed MIPS_SEAD3 symbol.
+>
+> Remove the reference.
+>
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> script.
+>
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+> Changes in v2:
+>
+>  - The wrong commit was referenced in the commit message.
+>
+>  - Mention that IMG_ASCII_LCD is now set via the board-sead-3.config defconfig
+>    file.
+>
+>  - Clarify that Kconfig is involved. The previous commit title was
+>    "auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 reference".
+>
 
-This is done unconditionally after the if statement:
+Thanks for the new version!
 
-	if (of_machine_is_compatible("fsl,imx6ul") ||
-	    of_machine_is_compatible("fsl,imx6ull")) {
-		/*
-		 * When changing pll1_sw_clk's parent to pll1_sys_clk,
-		 * CPU may run at higher than 528MHz, this will lead to
-		 * the system unstable if the voltage is lower than the
-		 * voltage of 528MHz, so lower the CPU frequency to one
-		 * half before changing CPU frequency.
-		 */
-		clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
-		clk_set_parent(pll1_sw_clk, pll1_sys_clk);
-		if (freq_hz <= clk_get_rate(pll2_bus_clk)) {
-			if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
-				clk_set_parent(secondary_sel_clk, pll2_bus_clk);
-			else
-				clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
-			clk_set_parent(step_clk, secondary_sel_clk);
-			clk_set_parent(pll1_sw_clk, step_clk);
-		}
-	} else {
-		clk_set_parent(step_clk, pll2_pfd2_396m_clk);
-		clk_set_parent(pll1_sw_clk, step_clk);
-		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk)) {
-			clk_set_rate(pll1_sys_clk, new_freq * 1000);
-			clk_set_parent(pll1_sw_clk, pll1_sys_clk);
-		} else {
-			/* pll1_sys needs to be enabled for divider rate change to work. */
-			pll1_sys_temp_enabled = true;
-			clk_prepare_enable(pll1_sys_clk);
-		}
-	}
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-	/* Ensure the arm clock divider is what we expect */
-	ret = clk_set_rate(arm_clk, new_freq * 1000);
-
-
---
-Stefan
-
-
-
-> 
-> Anson.
-> 
->> >         } else {
->> >                 clk_set_parent(step_clk, pll2_pfd2_396m_clk);
->> >                 clk_set_parent(pll1_sw_clk, step_clk);
->>
->> Could you please help reviewing this patch?
->>
->> Thanks
+>
+>  drivers/auxdisplay/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+> index 2c2ed9cf8796..3cba78d36eec 100644
+> --- a/drivers/auxdisplay/Kconfig
+> +++ b/drivers/auxdisplay/Kconfig
+> @@ -137,7 +137,7 @@ config CFAG12864B_RATE
+>  config IMG_ASCII_LCD
+>         tristate "Imagination Technologies ASCII LCD Display"
+>         depends on HAS_IOMEM
+> -       default y if MIPS_MALTA || MIPS_SEAD3
+> +       default y if MIPS_MALTA
+>         select SYSCON
+>         help
+>           Enable this to support the simple ASCII LCD displays found on
+> --
+> 2.14.1
+>
