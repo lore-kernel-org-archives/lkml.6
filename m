@@ -1,62 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753483AbeBKP2x (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 10:28:53 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58146 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751077AbeBKP2w (ORCPT
+        id S1753486AbeBKPcO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 10:32:14 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36556 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751077AbeBKPcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 10:28:52 -0500
-Subject: Re: [PATCH 2/2] xen: xenbus: WARN_ON XS_TRANSACTION_{START,END}
- misuse
-To: Simon Gaiser <simon@invisiblethingslab.com>,
-        xen-devel@lists.xenproject.org
-Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
-References: <20180207222236.7434-1-simon@invisiblethingslab.com>
- <20180207222236.7434-2-simon@invisiblethingslab.com>
- <8a0fd059-7acf-3279-10f9-649c19522e2a@oracle.com>
- <66103cca-321e-6950-2083-6f5d068e12e6@invisiblethingslab.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <0bf1782a-b7c4-1775-c2cb-6e68fe62a199@oracle.com>
-Date: Sun, 11 Feb 2018 10:28:38 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 11 Feb 2018 10:32:12 -0500
+X-Google-Smtp-Source: AH8x225vSixjf58oT9qh/XLcGv7fOHcnCaDsNwWLNQntQG3LRh/8/sWPgUyWcA8obgvdoeHKw8iWAXzmWdTpt4rUWzs=
 MIME-Version: 1.0
-In-Reply-To: <66103cca-321e-6950-2083-6f5d068e12e6@invisiblethingslab.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=879
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802110205
+In-Reply-To: <20180211151433.xvza2mugfybyocoi@node.shutemov.name>
+References: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
+ <151835937752.185602.5640977700089242532.stgit@buzz> <20180211151433.xvza2mugfybyocoi@node.shutemov.name>
+From: Konstantin Khlebnikov <koct9i@gmail.com>
+Date: Sun, 11 Feb 2018 18:32:10 +0300
+Message-ID: <CALYGNiMjuW4BM2tSUOUmJUu7kX0HEL1EN-YFi=cvtstQi3YeHQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/huge_memory.c: reorder operations in __split_huge_page_tail()
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Feb 11, 2018 at 6:14 PM, Kirill A. Shutemov
+<kirill@shutemov.name> wrote:
+> On Sun, Feb 11, 2018 at 05:29:37PM +0300, Konstantin Khlebnikov wrote:
+>> And replace page_ref_inc()/page_ref_add() with page_ref_unfreeze() which
+>> is made especially for that and has semantic of smp_store_release().
+>
+> Nak on this part.
+>
+> page_ref_unfreeze() uses atomic_set() which neglects the situation in the
+> comment you're removing.
 
+Why? look into x86 smp_store_release
+for PPro it use same sequence smp_wb + WRITE_ONCE
+As I see spin_unlock uses exactly this macro.
 
-On 02/10/2018 08:27 PM, Simon Gaiser wrote:
-> Boris Ostrovsky:
->> On 02/07/2018 05:22 PM, Simon Gaiser wrote:
->>> +    users_old = xs_state_users;
->>>        xs_state_users--;
->>>        if ((req->type == XS_TRANSACTION_START && req->msg.type == XS_ERROR) ||
->>>            req->type == XS_TRANSACTION_END)
->>>            xs_state_users--;
->>> +    if (WARN_ON(xs_state_users > users_old))
->>
->>
->> WARN_ON_ONCE()?
-> 
-> Since we "fix" the wrong decrement by clamping at zero it should not
-> happen immediately again. But if you prefer _ONCE I can change it.
-> 
+Anyway if page_ref_unfreeze cannot handle races with
+get_page_unless_zero() then it completely useless,
 
-
-If this error can happen once then someone at least theoretically can 
-construct a case when it is repeated. So let's switch to _ONCE() variant.
-
-Thanks.
--boris
+>
+> You need at least explain why it's safe now.
+>
+> I would rather leave page_ref_inc()/page_ref_add() + explcit
+> smp_mb__before_atomic().
+>
+> --
+>  Kirill A. Shutemov
+>
+> --
+> To unsubscribe, send a message with 'unsubscribe linux-mm' in
+> the body to majordomo@kvack.org.  For more info on Linux MM,
+> see: http://www.linux-mm.org/ .
+> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
