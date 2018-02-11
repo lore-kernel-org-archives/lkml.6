@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753712AbeBKUJT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:09:19 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42784 "EHLO
+        id S1753761AbeBKUJZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:09:25 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37671 "EHLO
         mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752823AbeBKUJR (ORCPT
+        with ESMTP id S1753698AbeBKUJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 15:09:17 -0500
-X-Google-Smtp-Source: AH8x225tU7coRKi570LCSC3pM95egYNYCLXU35Jq3dtHzLWg93qZzSjrbanm5yyoJOgwwZejWzZ/Cw==
+        Sun, 11 Feb 2018 15:09:19 -0500
+X-Google-Smtp-Source: AH8x2253GLP9FEozWkGj4+0Ew0ACAFo22wmx6hZ/eFgq6JoX1DhtL/eKOBC8tBwgg9n5+jQt6PggAg==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -25,10 +25,12 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v3 1/7] watchdog: sama5d4: make use of timeout-secs provided in devicetree
-Date: Sun, 11 Feb 2018 21:08:41 +0100
-Message-Id: <20180211200847.25000-1-marcus.folkesson@gmail.com>
+Subject: [PATCH v3 2/7] watchdog: sunxi: allow setting timeout in devicetree
+Date: Sun, 11 Feb 2018 21:08:42 +0100
+Message-Id: <20180211200847.25000-2-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180211200847.25000-1-marcus.folkesson@gmail.com>
+References: <20180211200847.25000-1-marcus.folkesson@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -36,51 +38,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 watchdog_init_timeout() will allways pick timeout_param since it
 defaults to a valid timeout.
 
-Following best practice described in
-Documentation/watchdog/watchdog-kernel-api.txt to make use of
-the parameter logic.
+By following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt, it also
+let us to set timout-sec property in devicetree.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
+ Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt | 4 ++++
+ drivers/watchdog/sunxi_wdt.c                             | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Notes:
-    v3:
-    	- Use wdd->timeout instead of wdt_timeout when print out
-    	  timout in probe function.
-
- drivers/watchdog/sama5d4_wdt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-index 0ae947c3d7bc..255169916dbb 100644
---- a/drivers/watchdog/sama5d4_wdt.c
-+++ b/drivers/watchdog/sama5d4_wdt.c
-@@ -33,7 +33,7 @@ struct sama5d4_wdt {
- 	unsigned long		last_ping;
+diff --git a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
+index 62dd5baad70e..49900e72f6b1 100644
+--- a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
+@@ -6,9 +6,13 @@ Required properties:
+                "allwinner,sun6i-a31-wdt"
+ - reg : Specifies base physical address and size of the registers.
+ 
++Optional properties:
++- timeout-sec : Contains the watchdog timeout in seconds
++
+ Example:
+ 
+ wdt: watchdog@1c20c90 {
+ 	compatible = "allwinner,sun4i-a10-wdt";
+ 	reg = <0x01c20c90 0x10>;
++	timeout-sec = <10>;
  };
+diff --git a/drivers/watchdog/sunxi_wdt.c b/drivers/watchdog/sunxi_wdt.c
+index 9728fa32c357..55f166bec0ca 100644
+--- a/drivers/watchdog/sunxi_wdt.c
++++ b/drivers/watchdog/sunxi_wdt.c
+@@ -39,7 +39,7 @@
+ #define DRV_VERSION		"1.0"
  
--static int wdt_timeout = WDT_DEFAULT_TIMEOUT;
-+static int wdt_timeout;
  static bool nowayout = WATCHDOG_NOWAYOUT;
+-static unsigned int timeout = WDT_MAX_TIMEOUT;
++static unsigned int timeout;
  
- module_param(wdt_timeout, int, 0);
-@@ -212,7 +212,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	wdd = &wdt->wdd;
--	wdd->timeout = wdt_timeout;
-+	wdd->timeout = WDT_DEFAULT_TIMEOUT;
- 	wdd->info = &sama5d4_wdt_info;
- 	wdd->ops = &sama5d4_wdt_ops;
- 	wdd->min_timeout = MIN_WDT_TIMEOUT;
-@@ -273,7 +273,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, wdt);
- 
- 	dev_info(&pdev->dev, "initialized (timeout = %d sec, nowayout = %d)\n",
--		 wdt_timeout, nowayout);
-+		 wdd->timeout, nowayout);
- 
- 	return 0;
- }
+ /*
+  * This structure stores the register offsets for different variants
 -- 
 2.15.1
