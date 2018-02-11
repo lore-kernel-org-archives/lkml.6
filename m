@@ -1,39 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932201AbeBKUJm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:09:42 -0500
-Received: from casper.infradead.org ([85.118.1.10]:40556 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932158AbeBKUJf (ORCPT
+        id S932186AbeBKUJl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:09:41 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39286 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932166AbeBKUJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Feb 2018 15:09:35 -0500
-Date: Sun, 11 Feb 2018 12:09:28 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH v2] mm/huge_memory.c: reorder operations in
- __split_huge_page_tail()
-Message-ID: <20180211200928.GA4680@bombadil.infradead.org>
-References: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
- <151835937752.185602.5640977700089242532.stgit@buzz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151835937752.185602.5640977700089242532.stgit@buzz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Google-Smtp-Source: AH8x226J4oBmTX1xI2FngD5z6pUm6lLXOiwQP+XdAodcCF+eQ6kjRX1FvP/3AkfBcSImCv5EiLZbEQ==
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v3 7/7] watchdog: coh901327: make use of timeout-secs provided in devicetree
+Date: Sun, 11 Feb 2018 21:08:47 +0100
+Message-Id: <20180211200847.25000-7-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180211200847.25000-1-marcus.folkesson@gmail.com>
+References: <20180211200847.25000-1-marcus.folkesson@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 05:29:37PM +0300, Konstantin Khlebnikov wrote:
-> +	/*
-> +	 * Finally unfreeze refcount. Additional pin to radix tree.
-> +	 */
-> +	page_ref_unfreeze(page_tail, 1 + (!PageAnon(head) ||
-> +					  PageSwapCache(head)));
+watchdog_init_timeout() will allways pick timeout_param since it
+defaults to a valid timeout.
 
-Please say "Additional pin from page cache", not "radix tree".
+Following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt to make use of
+the parameter logic.
+
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+
+Notes:
+    v3:
+    	- Reformat and use coh901327_wdt.timeout instead of margin when print out
+    	  timout in probe function.
+    
+    v2:
+    	- Set .timeout in coh901327_wdt structure declaration.
+    	- Set .min_timeout to 1 instead of 0. I could not find a datasheet
+    	  for coh901327, so I'm not sure if 0 is valid. However, 0 seems
+    	  wrong to me and most driver has 1 as min value. If it should
+    	  be 0, please let me know and I have to set another initial
+    	  value for margin.
+
+ drivers/watchdog/coh901327_wdt.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
+index 4410337f4f7f..500af8a7ec5a 100644
+--- a/drivers/watchdog/coh901327_wdt.c
++++ b/drivers/watchdog/coh901327_wdt.c
+@@ -67,7 +67,9 @@
+ #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
+ 
+ /* Default timeout in seconds = 1 minute */
+-static unsigned int margin = 60;
++#define U300_WDOG_DEFAULT_TIMEOUT					60
++
++static unsigned int margin;
+ static int irq;
+ static void __iomem *virtbase;
+ static struct device *parent;
+@@ -235,8 +237,9 @@ static struct watchdog_device coh901327_wdt = {
+ 	 * timeout register is max
+ 	 * 0x7FFF = 327670ms ~= 327s.
+ 	 */
+-	.min_timeout = 0,
++	.min_timeout = 1,
+ 	.max_timeout = 327,
++	.timeout = U300_WDOG_DEFAULT_TIMEOUT,
+ };
+ 
+ static int __exit coh901327_remove(struct platform_device *pdev)
+@@ -315,16 +318,15 @@ static int __init coh901327_probe(struct platform_device *pdev)
+ 		goto out_no_irq;
+ 	}
+ 
+-	ret = watchdog_init_timeout(&coh901327_wdt, margin, dev);
+-	if (ret < 0)
+-		coh901327_wdt.timeout = 60;
++	watchdog_init_timeout(&coh901327_wdt, margin, dev);
+ 
+ 	coh901327_wdt.parent = dev;
+ 	ret = watchdog_register_device(&coh901327_wdt);
+ 	if (ret)
+ 		goto out_no_wdog;
+ 
+-	dev_info(dev, "initialized. timer margin=%d sec\n", margin);
++	dev_info(dev, "initialized. (timeout=%d sec)\n",
++			coh901327_wdt.timeout);
+ 	return 0;
+ 
+ out_no_wdog:
+-- 
+2.15.1
