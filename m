@@ -1,37 +1,32 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518383996; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518385804; cv=none;
         d=google.com; s=arc-20160816;
-        b=wMySduu0EDM17d655K/ir3CJ1pKamuvMvtYGQyrjGvmnHEYy9mUFlvmA59lRlm9xHg
-         Md5LIgmfbBzheE9HaXp1qPeqOKsQprUvHq6LDUuyWtsi7WkTAExmQewd945Ly97pgzFy
-         /KY/S04A2qDsKGP/thUlnt2toWYTKHv70zd5fNeu9f5AalsSwFzY3KdCQFs8Fz4WHwcx
-         zcsCpwI5jWHsGxhVX8/axg/t/iNuCg8uApwZkbzYZiI2ElWvrO4oZnkp7I/S01AWpax1
-         WWlRoK2Y1hzVDQ764N4YTvpcKtG2ED/CP76sAylzapa9lnxF+yrgTqFQMWuWHe/Eiuiy
-         IrIg==
+        b=geGUhITfsq9GYSKepLRVQ3md2bNdzD7FbCjtYnoHUCrBGSo5qSAG89FNNwz3DJ+5XE
+         Ez96NtudB67rELcFgtjEh1iRb0P0dw1iWg8WVxVpBeiRmePiN+anm+W1pUB6VsE0t3SE
+         az1aF10i1JSnNHJ4xGrs+E9o1bSIStbPIPf64jeWPHiPK7hqa0w7JV58T6+j3zxy3SYQ
+         3yV8YTVSpn4XguVYkxAXipkdLZUtibuDxfr2zq8YVic07yLg6//8Eyfv6Nm9WHAzEu/x
+         8eoqDKvvXkm+qtittTKnAhqJ/TKx3M+9/evKnY0RoLJhnPrKS5Ubj5Y+dHsfHUjbaMbh
+         kmcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=E4upVd9LOZb4cnqKo7RdEVCrn20gYwmowIX6bhjZVm0=;
-        b=v9kGLaU+D2IfQ82FzeryuBlFQP5kqkBPmHldfS4FLsEQHJ3XaguYXCYtD3HbAuO42E
-         vByhP7pnGHmK84Uz9u8LeqxueeT5qQA8KmJ+UtO6mDlB2aO9MCNOZCT1Ggv7Co41T/ld
-         AKy/U/bmBOGm1StJ8Sdc3t+atcOqwCVPjOMVd5A6ObzzV+Ru6SnwV0CtUzgFD9E2IN2j
-         getUDIi3xAF8tG8YtAj+Str3yqzGaxJk8lwv68WKxpKsXJGTXC3iZoVp6otqFndfVMan
-         Z5tpUb/V9pg5H6dZHhYJkkNP3lc17YcdrKi3j7XEnOkt+i85/NYqRLn4leZqOSrdWeld
-         w9ZQ==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=zGHscw8jGZXlo3uLjdWyjODH26i7rwQF5E4muJS7OLM=;
+        b=xu7TtiI6FnyBKYNQx92XFxNH3mwFdZ3Q8VH/a6+14EPLhd8bWVPSBUruYxePmVhW/C
+         +jhzO9ss8cvs75e/Nmrywr1gobh2ZS2xFr4zlhqRILEvZb21xHAl5EQ/gNRXR7WibMwr
+         s6aMaHuIPdUf838nIYTGekvm8LIO5Sy2vmJstAGMnVkgodVSqZMNoqTODlVhSD/hJzZ9
+         VHgWVy8QSsONWu51yYZDrhFA5ZgnplagWy/ZAgDPpPX04tkf3C5V/snxkgkDKsJ7NR+5
+         qC2Wea/Uamx8IxIR/ojfN6F+EzQTlKwoAdwsg83LAXEa0+e+/7d1S6PSUaEA/P1Uh5Cq
+         5x1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=pxKxL7yM;
-       dkim=pass header.i=@chromium.org header.s=google header.b=WNHICy79;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XC4YOpNR;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=pxKxL7yM;
-       dkim=pass header.i=@chromium.org header.s=google header.b=WNHICy79;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AH8x2262oaLb7zT/BTqmG+FX/FDfWTPqkKuRcrTfHpUaIaCoeE7o7r+LYyugh1HG5G3XmnOI4WDxhLJv2c4Fe5THuI0=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XC4YOpNR;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x227vbJTKdKCKlTyxEGNe63Y26UCT4ZWG7I6+BwM689/5lYW9Up6VDSlEL6AWjHKjBoCGJC50YlZg/BGoPCiHoXs=
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CAGXu5jLjGxbPQ_mNjV06f66a2xevmGp5w3f7X+nhYO4GYHa_zw@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -43,14 +38,15 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFz3gUKQMr-X-b=ytLPX0AjGUaXNtLSUQ0_xZwZuDU33RQ@mail.gmail.com>
  <CAGXu5jLV-i5OAbXMQiJC-idXB+XrxMCC+RigQ+4R6eZWqn4rgg@mail.gmail.com>
  <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
- <CA+55aFy4WNC=pmga19CHhrX9QwOJsu1bUvGL0oNxq5EeMW94eg@mail.gmail.com> <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Sun, 11 Feb 2018 13:19:54 -0800
-X-Google-Sender-Auth: -s67sCmW7Lbvwwe0SMG07mVIKLA
-Message-ID: <CAGXu5jLjGxbPQ_mNjV06f66a2xevmGp5w3f7X+nhYO4GYHa_zw@mail.gmail.com>
+ <CA+55aFy4WNC=pmga19CHhrX9QwOJsu1bUvGL0oNxq5EeMW94eg@mail.gmail.com>
+ <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com> <CAGXu5jLjGxbPQ_mNjV06f66a2xevmGp5w3f7X+nhYO4GYHa_zw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 11 Feb 2018 13:50:02 -0800
+X-Google-Sender-Auth: 0bAWNSeUhfJInfOSeA7oqJXu4P4
+Message-ID: <CA+55aFznXZ+DXYDVcgUV+yAZPnWagVODhM_-xW=FPhTvZ8G61w@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+To: Kees Cook <keescook@chromium.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
 	Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
@@ -64,78 +60,30 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ulf Magnusson <ulfalizer@gma
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592141017433490725?=
+X-GMAIL-MSGID: =?utf-8?q?1592142913251369355?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 11, 2018 at 1:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Sun, Feb 11, 2018 at 9:06 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> On Sun, Feb 11, 2018 at 11:53 AM, Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->>>
->>> Well, it's still not a very *big* bump. With modern distros being at
->>> 7.3, and people testing pre-releases of gcc-8, something like gcc-4.5
->>> is still pretty darn ancient.
+On Sun, Feb 11, 2018 at 1:19 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Sun, Feb 11, 2018 at 1:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 >>
->> ... it's worth noting that our _documentation_ may claim that gcc-3.2
->> is the minimum supported version, but Arnd pointed out that a few
->> months ago that apparently nothing older than 4.1 has actually worked
->> for a longish while, and gcc-4.3 was needed on several architectures.
->>
->> So the _real_ jump in required gcc version would be from 4.1 (4.3 in
->> many cases) to 4.5, not from our documented "3.2 minimum".
->>
->> Arnd claimed that some architectures needed even newer-than-4.3, but I
->> assume that's limited to things like RISC-V that simply don't have old
->> gcc support at all.
+>> In my tests last year, I identified gcc-4.6 as a nice minimum level, IIRC
+>> gcc-4.5 was unable to build some of the newer ARM targets.
 >
-> Right. Also architecture specific features may need something more recent,
-> and in some cases like the 'initializer for anonymous union needs extra
-> curly braces', a trivial change would make it work, but a lot of architectures
-> have obviously never been built with toolchains old enough to actually
-> run into those cases.
->
-> Geert is the only person I know that actively uses gcc-4.1, and he actually
-> sent some patches that seem to get additional architectures to build on
-> that version, when they were previously on gcc-4.3+.
->
-> gcc-4.3 in turn is used by default on SLES11, which is still in support,
-> and I've even worked with someone who used that compiler to build
-> new kernels, since that was what happened to be installed on his
-> shared build server. In this case, having gcc-4.3 actively refused to
-> force him to use a new compiler would have saved us some
-> debugging trouble.
->
-> In my tests last year, I identified gcc-4.6 as a nice minimum level, IIRC
-> gcc-4.5 was unable to build some of the newer ARM targets.
+> But yes, if Linus wants 4.5 over 4.3, I would agree with Arnd: let's
+> take it to 4.6 instead.
 
-For reference, the original discussion started here:
-https://lkml.org/lkml/2016/12/16/174
+So it sounds like Arnd knows what the distros have.
 
-I thread-necromancied it here:
-https://lkml.org/lkml/2017/4/16/276
+Because I think that would actually be the best way to try to
+determine where we want to go, because it's what is going to determine
+what is most problematic for _users_.
 
-Modern analysis of compilers vs versions here:
-https://lkml.org/lkml/2017/4/24/481
+If no distro is on 4.5, then there's no reason to pick that. The
+reason I mentioned 4.5 is because that's the "asm goto" point, afaik,
+and that is likely to be a requirement in the near future.
 
-and seeming conclusion was here:
-https://lkml.org/lkml/2017/4/25/66
+If SLES11 is 4.3, that's obviously a concern. Although Arnd seemed to
+imply that that had already caused problems, so...
 
-Quoted:
->> - To keep it simple, we update the README.rst to say that a minimum
->>   gcc-4.3 is required, while recommending gcc-4.9 for all architectures
->> - Support for gcc-4.0 and earlier gets removed from linux/compiler.h,
->>   and instead we add a summary of what I found, explaining that
->>   gcc-4.1 has active users on a few architectures.
->> - We make the Makefile show a warning once during compilation for
->>   gcc earlier than 4.3.
-
-But yes, if Linus wants 4.5 over 4.3, I would agree with Arnd: let's
-take it to 4.6 instead.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+            Linus
