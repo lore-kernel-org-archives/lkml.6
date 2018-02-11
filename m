@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324544-2-17938656164195780947
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324476-2-7831207457478860315
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324544; b=jCxlLqYtCM/RoVxlh/PJ1a3xfM6PsvhAb5eYYdLWLv5J9lw
-    idRResNCAT2VzPyjDOqXg46ms825s+owA+A6wFOmoXUpvLDKeh9RR683zUmT+yip
-    rUgSfD4NeFTwhB0mhXzLhOM22VWI7LuO591drSPUKP8EOTN3Yu3jKnUmG1nc2PMF
-    nZiusizIjFI7iaJjVk1353oWDpwcpEhvOBaTTbjj8Tv29ghUhLVLlSBL1UOD/Q0i
-    wZnvsCM/IXpteyPt/dvu4+CNeHmJCeBF+Y3XpJnscNPGxDWMlTx8/56ttHRUYWAo
-    g29KLONAT8nt4+4FzRmu3vOX2pC8O45u9gbwWzQ==
+    t=1518324475; b=Ka1XtMVuVz+tlqmeBfP4i5D95dfd/wFx2w01sY6S1wDk78o
+    XHBIbvyLmzRpWfNr4wRWeF57UFdD2mkf/h9iXxEc9HONUZvD6yUe7YE3uxE3zcS9
+    Mlt1tVmxnG9sPs744JxZDwwCYxOoUGwOzKkTP0GLzW4qKSljE97v31ljfiHk/7CN
+    PdnMZcI01bwDzzRSW4He5OVj4YSSKoB+dGq8AsUofNeYaMtT8CoIffL3Wi4zK8NO
+    hcDNR1OvZKcavc+krhnu5p7EaWB00z8p09dVnQR6sgskIucT4m5vO1qR8U+wXSaK
+    eg4ZLPVpbmBFHN2ZVLXYpOnGgy18pb4sS0Q+g8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324544; bh=FOBQyTlAlt+Z/0++2Xf
-    4+CpcQMdGlpNzpxU8WM7srYM=; b=MMgh9/ZPeA+ZHoozbXTTxbMQ1Wm0OAJ98K4
-    wF3VWlyjE+1thpbpFplRCjPIEqEKJW0APPPkw6hB5KHPSOnEcM4hiAgLlO0+U+hK
-    P83LH28XhRo92Nzlp6ZdG43MAPcQPHDz7YeoeEwVR6ZlqzX3UsCqQ7qtFmu0iOov
-    bpTjXeekeLRIl2z9U8KFUhXr/nZzfbrOWyCw9rm2rT8drzVtoKlBT5TuXHc6Lt9X
-    QzJQOmvkU1F/rPVbpT+f62AZLZ8kJ4byknxkE0v3K6PeexGmdVWKBO577fiDW+UG
-    h5G7AAB7obu2+H4OySBeZa2Z08Y9hHUKyfFvI2CY3rJnfzCF68g==
+    :sender:list-id; s=arctest; t=1518324475; bh=0ZIH2tzpwhwRS9YIvH0
+    YCmMDnmFoHhnBmW3Uf3lEeMU=; b=TOTy7OhPfmQ9lQ4W1yM6EilydpLOEa6pZzd
+    HvNp7oVo89InSSbWPObdGJNp+wXihtgg5FqBMPGZY47oHLbnWLHN0T73S6TztvXX
+    P5AT7pBeRqa9/riWUscaWgSUioXdOipUf3EavZ2a/Qfc6QxCtPd6z9s6pLW5ldav
+    kg50MAfD2TQl2BQrqwqXN4y43ADynMOYROHOChSzwyXO9kISXgX9gDOMmoyw3QsE
+    MrW8ikTBk0bbK/GwQHNE+fEk0EIhTGN750pWFfR8UGUYIt1mb7vAD0m4sUDP3kn5
+    ULRPRMgt8p0ZG67Igs48tlkUwmhZ9eHnP+x9YXTcTCwl3MJ8znQ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753479AbeBKErw (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:47:52 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41811 "EHLO
+        id S1753450AbeBKEru (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:47:50 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41815 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752836AbeBKEd6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752839AbeBKEd6 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:58 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,16 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Hannes Frederic Sowa" <hannes@stressinduktion.org>,
-        "Jianlin Shi" <jishi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Xin Long" <lucien.xin@gmail.com>
+CC: akpm@linux-foundation.org, "Joshua Watt" <JPEWhacker@gmail.com>,
+        "Joshua Watt" <jpewhacker@gmail.com>,
+        "Anna Schumaker" <Anna.Schumaker@Netapp.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.458088158@decadent.org.uk>
+Message-ID: <lsq.1518323471.194051607@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 098/136] route: update fnhe_expires for redirect when
- the fnhe exists
+Subject: [PATCH 3.16 093/136] NFS: Fix typo in nomigration mount option
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,46 +80,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Joshua Watt <jpewhacker@gmail.com>
 
-commit e39d5246111399dbc6e11cd39fd8580191b86c47 upstream.
+commit f02fee227e5f21981152850744a6084ff3fa94ee upstream.
 
-Now when creating fnhe for redirect, it sets fnhe_expires for this
-new route cache. But when updating the exist one, it doesn't do it.
-It will cause this fnhe never to be expired.
+The option was incorrectly masking off all other options.
 
-Paolo already noticed it before, in Jianlin's test case, it became
-even worse:
-
-When ip route flush cache, the old fnhe is not to be removed, but
-only clean it's members. When redirect comes again, this fnhe will
-be found and updated, but never be expired due to fnhe_expires not
-being set.
-
-So fix it by simply updating fnhe_expires even it's for redirect.
-
-Fixes: aee06da6726d ("ipv4: use seqlock for nh_exceptions")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Acked-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Joshua Watt <JPEWhacker@gmail.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/route.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/nfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -650,10 +650,9 @@ static void update_or_create_fnhe(struct
- 	if (fnhe) {
- 		if (gw)
- 			fnhe->fnhe_gw = gw;
--		if (pmtu) {
-+		if (pmtu)
- 			fnhe->fnhe_pmtu = pmtu;
--			fnhe->fnhe_expires = max(1UL, expires);
--		}
-+		fnhe->fnhe_expires = max(1UL, expires);
- 		/* Update all cached dsts too */
- 		rt = rcu_dereference(fnhe->fnhe_rth_input);
- 		if (rt)
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1319,7 +1319,7 @@ static int nfs_parse_mount_options(char
+ 			mnt->options |= NFS_OPTION_MIGRATION;
+ 			break;
+ 		case Opt_nomigration:
+-			mnt->options &= NFS_OPTION_MIGRATION;
++			mnt->options &= ~NFS_OPTION_MIGRATION;
+ 			break;
+ 
+ 		/*
