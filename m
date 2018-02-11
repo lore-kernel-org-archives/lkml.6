@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324654-2-431163829662976922
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324646-3-2291458907528821210
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324653; b=kzBimB4DbT8QUk0IPPsIFXlTfbZwDXagkLcrdurJXYMp0oO
-    C+iTHxYVoQ+iNlOnXdb8L14hRMN5rt4XPywTHGc0Sp9hsuPns6STUITm8BvpKgaK
-    AlFS68D4SY130wd0H3PGKJcL/p3sB12DwOQg17ES3lEOGarhvPisMecf23Qffh03
-    Iheh5gZXai1nNk7077FHlvl8c0yQrYWQAchZbRkGTaPnk8umuUjjhH34PUM7rDPM
-    amT3VQpvIB2I4jJxccVU7F3MXMY6yblvT4oWVLVPVNYnXQtsLCAhPRO6IHRGXbJg
-    CgsIpwYySYvdIsbiX30QPqtojagrLGncc8OgATA==
+    t=1518324645; b=Mng83aAe0ybbnE9cLvgij0/HH4CrkrXJnzCKNEkNLWmaDzm
+    zGUXO8j0D8dEyYR9pPk3vWuXuA4GfbckwNWAtult1Bpwv3sO7Sk+u2adThli/yGr
+    xBRviGkGKvp6GDYNrqeFYQzgxF47eGxOGZn11ePva2LZYAUIJbNmzZui+DxaoPc2
+    G/jOUTU2k06Ny72q2lRoii+On9RWTg7F6r8vTNzlUnBAuTRAqL13jADvzJSBhz+n
+    OlsO68n+49yBjjPp7IPV04TCiinAnS6N6YBk564B/bLLMEN2TKLgkkbBhy3r8oLH
+    HRZmsz/3j4JxkOgbJ/CFR/6uxcZtcxtEraB6XAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324653; bh=21+H5VLSddFNx2MqCaB
-    u1SoyuRoz/XACkermhAk2Cz0=; b=hNiyDczJhSG5lxJYRB80+5x1AXuiDH+MftV
-    g4ycUlbdJEjLGFl8ZmOZB36IzgVGMopGXUvq+iPylasL5jwQ6QU7NpP2O6sPsxpw
-    2Da92fKp3ZLUTobudHUx17AHRN3kUcAYxDJOMO6lDVPqXbvN4AqmQFgbZ4GOVQP/
-    d4FSknvlYqqSL4UamWTuSJHcQiMSLqMdCsifctSecQ3xFE5U0mAU/WEFre6Kzybu
-    xtlPW0uxp098BQgyMVRyek2N5vdfu6P2HFrg0S3hDiIv9F02ZUjMPbp3N4eIr2p+
-    CtDDCrTm8t8CfFJtCIfJwq1YIM9APVKrrzHdFA0s0L6HD+7IhFg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324645; bh=nD4jn2Fqb2z0cQCEbxG
+    LKN/F4ucXtpnHNDChjmn3BvI=; b=PKcrDNc79YdJln6VZSKEpLu51W7kTXUoqOm
+    y1DD8TX2lyYOhAZwBgLZj/sjuwyRkeZsFGgKuKgeBwxwoHiu3DFDEJ6mPuo81K6H
+    LsN//+kZR7aJxs7zMgxsM8pbzkrfcnGg4OMT1sVhZnFoRwbsPBWVA8mCp/kbmWJi
+    F3uxI0+gzNKVnW15fUgRk474iYhh/1ATUe9YIfcSVEfXJ0yKrcqBK4E6cOyEE9pf
+    A0snMqaxdciekEhbQbH7pOTeslX5XqFV+1cCsdmBrgbcR8nK+Ibe64bhkrwYmbUx
+    elgH/ZPD81upZ7wkUHGVycRz6aV2ouJKkDRVGG3W9JUii9g6vhQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753037AbeBKEtm (ORCPT <rfc822;greg@kroah.com>);
+        id S1753122AbeBKEtm (ORCPT <rfc822;greg@kroah.com>);
         Sat, 10 Feb 2018 23:49:42 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41806 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41807 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752835AbeBKEd6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752833AbeBKEd6 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:58 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "Takashi Iwai" <tiwai@suse.de>
+CC: akpm@linux-foundation.org,
+        "Johannes Berg" <johannes.berg@intel.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.140199901@decadent.org.uk>
+Message-ID: <lsq.1518323471.830922146@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 103/136] ALSA: timer: Remove kernel warning at compat
- ioctl error paths
+Subject: [PATCH 3.16 100/136] nl80211: don't expose wdev->ssid for most
+ interfaces
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,51 +80,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 3d4e8303f2c747c8540a0a0126d0151514f6468b upstream.
+commit 44905265bc155e0237c76c25bf5ddf740d85a8f2 upstream.
 
-Some timer compat ioctls have NULL checks of timer instance with
-snd_BUG_ON() that bring up WARN_ON() when the debug option is set.
-Actually the condition can be met in the normal situation and it's
-confusing and bad to spew kernel warnings with stack trace there.
-Let's remove snd_BUG_ON() invocation and replace with the simple
-checks.  Also, correct the error code to EBADFD to follow the native
-ioctl error handling.
+For mesh, this is simply wrong - there's no SSID, only the
+mesh ID, so don't expose it at all.
+For (P2P) client, it's wrong, because it exposes an internal
+value that's only used when certain APIs are used.
+For AP, it's actually the only correct case, so leave that.
+All other interface types shouldn't be setting this anyway,
+so there it won't change anything.
 
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: b84e7a05f619 ("nl80211: send the NL80211_ATTR_SSID in nl80211_send_iface()")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/timer_compat.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ net/wireless/nl80211.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
---- a/sound/core/timer_compat.c
-+++ b/sound/core/timer_compat.c
-@@ -40,11 +40,11 @@ static int snd_timer_user_info_compat(st
- 	struct snd_timer *t;
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -2341,10 +2341,32 @@ static int nl80211_send_iface(struct sk_
+ 		}
+ 	}
  
- 	tu = file->private_data;
--	if (snd_BUG_ON(!tu->timeri))
--		return -ENXIO;
-+	if (!tu->timeri)
-+		return -EBADFD;
- 	t = tu->timeri->timer;
--	if (snd_BUG_ON(!t))
--		return -ENXIO;
-+	if (!t)
-+		return -EBADFD;
- 	memset(&info, 0, sizeof(info));
- 	info.card = t->card ? t->card->number : -1;
- 	if (t->hw.flags & SNDRV_TIMER_HW_SLAVE)
-@@ -73,8 +73,8 @@ static int snd_timer_user_status_compat(
- 	struct snd_timer_status32 status;
- 	
- 	tu = file->private_data;
--	if (snd_BUG_ON(!tu->timeri))
--		return -ENXIO;
-+	if (!tu->timeri)
-+		return -EBADFD;
- 	memset(&status, 0, sizeof(status));
- 	status.tstamp.tv_sec = tu->tstamp.tv_sec;
- 	status.tstamp.tv_nsec = tu->tstamp.tv_nsec;
+-	if (wdev->ssid_len) {
+-		if (nla_put(msg, NL80211_ATTR_SSID, wdev->ssid_len, wdev->ssid))
++	wdev_lock(wdev);
++	switch (wdev->iftype) {
++	case NL80211_IFTYPE_AP:
++		if (wdev->ssid_len &&
++		    nla_put(msg, NL80211_ATTR_SSID, wdev->ssid_len, wdev->ssid))
+ 			goto nla_put_failure;
++		break;
++	case NL80211_IFTYPE_STATION:
++	case NL80211_IFTYPE_P2P_CLIENT:
++	case NL80211_IFTYPE_ADHOC: {
++		const u8 *ssid_ie;
++		if (!wdev->current_bss)
++			break;
++		ssid_ie = ieee80211_bss_get_ie(&wdev->current_bss->pub,
++					       WLAN_EID_SSID);
++		if (!ssid_ie)
++			break;
++		if (nla_put(msg, NL80211_ATTR_SSID, ssid_ie[1], ssid_ie + 2))
++			goto nla_put_failure;
++		break;
++		}
++	default:
++		/* nothing */
++		break;
+ 	}
++	wdev_unlock(wdev);
+ 
+ 	return genlmsg_end(msg, hdr);
+ 
