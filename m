@@ -1,92 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751381AbeBKBw4 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 20:52:56 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:40158 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751050AbeBKBwy (ORCPT
+        id S1752055AbeBKBxm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 20:53:42 -0500
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36156 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeBKBxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 20:52:54 -0500
-X-Google-Smtp-Source: AH8x225rfPmy0TWyHK0ksYBCp5KrXXVXlgKmpWhJJ+ChBgNDoCKby7AtH8GMF8va6PFZJwzuUzd3nA==
-Subject: Re: [PATCH v2 5/7] watchdog: mtk: allow setting timeout in devicetree
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180210091911.3644-1-marcus.folkesson@gmail.com>
- <20180210091911.3644-5-marcus.folkesson@gmail.com>
- <1518261002.9025.36.camel@mtkswgap22> <20180210124328.GB744@gmail.com>
- <20180210201207.GC744@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <5449674d-2812-c9b5-9c06-af2fbfa72737@roeck-us.net>
-Date: Sat, 10 Feb 2018 17:52:49 -0800
+        Sat, 10 Feb 2018 20:53:41 -0500
+X-Google-Smtp-Source: AH8x225fLFYq+dPO0flc7IV4kKOyT7v97cUnTSSZoOEmWdMm2e1hXkiFAux3rz2+h/jpTrDDwCY8Ww==
+To: linux-kernel@vger.kernel.org
+From: Rob Landley <rob@landley.net>
+Subject: tmpfs and brickability (size=50% default considered naieve).
+Message-ID: <89293703-6e19-f6b6-a0d4-dc3ca90785ed@landley.net>
+Date: Sat, 10 Feb 2018 19:53:38 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180210201207.GC744@gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/10/2018 12:12 PM, Marcus Folkesson wrote:
-> Hello Sean,
-> 
-> On Sat, Feb 10, 2018 at 01:43:28PM +0100, Marcus Folkesson wrote:
->> Hello Sean,
->>
->> On Sat, Feb 10, 2018 at 07:10:02PM +0800, Sean Wang wrote:
->>>
->>> Hi, Marcus
->>>
->>> The changes you made for dt-bindings and driver should be put into
->>> separate patches.
->>
->> I actually thought about it but chose to have it in the same patch because I
->> did not see any direct advantage to separating them.
->>
->> But I can do that.
->> I will come up with a v3 with this change if no one thinks differently.
->>
-> 
-> When looking at the git log, I'm not that convinced it should be
-> separate patches.
-> 
-> For example, I found a4f741e3e157c3a5c8aea5f2ea62b692fbf17338 that is
-> doing the exact same thing as this patch.
-> 
-> There is plenty of patches that mixes the code change and dt bindings
-> updates.
-> Could it not be useful to overview both the implementation and
-> dt-mapping change in one view?
-> 
-> If you or anyone else still think it should be separated, please let me know and I will
-> come up with a v3.
-> 
+If you have two default tmpfs instances on your box (hi buildroot!) and
+they're world writeable and a normal user goes "cat /dev/zero >
+/run/fillit; cat /dev/zero > /tmp/fillit" the system then goes "sh:
+can't fork" trying to call rm on those files, because they each default
+to 50% of total system memory, no matter how many instances there are.
+It only stops writing when memory allocation fails in the kernel.
 
-If we were talking about something new, specifically new and unapproved DT bindings,
-it should be separate patches. However, that is not the case here. The DT bindings
-are well established. Sure, we could be pedantic and request a split into two
-patches. However, the only benefit of that would be more work for the maintainers,
-ie Wim and myself (including me having to send this e-mail). I don't really see
-the point of that.
+I'm not quite sure how to fix that. I want to say "change the default to
+be 50% of what's _left_" (and if you size= manually you get to keep the
+pieces) but define "what's left"? Other things are using some memory
+already, the 50% _was_ the amount it's safe for tmpfs to use. (Once upon
+a time the logic was that 50% of memory can go to disk cache. I think
+that's gotten a bit more complicated since then? No idea what the
+current rules are.)
 
-I have already sent my Reviewed-by:, and I don't intend to withdraw it.
+This is related to the guy who wanted initramfs to be ramfs instead of
+tmpfs because he had a cpio.gz that extracted to >50% of system memory
+so it extracted fine with ramfs but hit the limit and failed with tmpfs.
+That sounds like a tmpfs rootfs (I.E. initmpfs) should start with a
+limit of 90% and then scale it _down_ to 50% after extracting the cpio.
+(I wonder what happens if you -o remount the size= limit to smaller than
+the filesystem currently holds? Hmmm...)
 
-Thanks,
-Guenter
+Rob
+
+P.S. Yes I need to pipe rootflags= through so you can specify the size
+on the command line. I've got 3 or 4 initramfs/tmpfs plates spinning and
+haven't had a chance to work on them all merge window. I'll try to get
+some patches ready by next weekend, if they miss the release they miss
+the release...
