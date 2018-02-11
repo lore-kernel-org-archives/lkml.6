@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324436-2-16303530461281656805
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324426-2-374780316531690611
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324435; b=bpp1D/nTE0FSvFpflkMnBE9Ynwn/VKzkbYmCRlohVuVK5YD
-    MUJPKIH+0XDRf0ZJj0FqEhyj+WTWIWjCD8As65OunhQGEKafK+ivCPmRkT6z1Hlm
-    z7vE6nF9fC/Pa39/A+Dy5jM+TZI0YYTX1GP0I/y54hTkh9iSgryIo6mVDuSLUtHG
-    tm7bL9yHkzamrqluyz5HC0q2dlrc2VyNleDLNoxAd2dunyZahhTEsUBa6mtvAXYh
-    XcQUSB16h4CxxUU3M1ySJupoxF3kFh6KufX7ohCkm14zpJxFY1BuGAsP415jj0P5
-    +9YhdbSNPwRX0PEgnw5ncySAUSegj/c8kyOi1uw==
+    t=1518324425; b=MYO6APSvhRNyeZY/UDOOhRsN7gr70IYTF2C7T4xl2octdVQ
+    7FG/KfrB48dXHGeeoOPTSWucGL9VPRgaR7PDg7ch2KPIVvs0W3vEHpxZL2s3DeOe
+    eMWbe5btI575KLpVq28rqkK//ykJxGwshOg8qwjxjkNgUSAAy2Ti4yjpgjaYLVwz
+    pHKpA4QAdsu+j9AeWzkQdKKWHhr6pplLZB51L9n534kTmDRwyLxWlN0HxA3H6s6v
+    EhW2WZ+NeV5fO00/v+pyaj6VmChOo6nVwSIV8cBEyPqfIPcGev21HAPIhbNEIchI
+    PMPTfkrxIxcJjU2HFfvXEnZzH0VgE68qacQmxeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324435; bh=XskA4XTBBsXM+cFh+8D
-    z/n08torXCfJjiRYkeOxXrcQ=; b=YVgh91Vh/c3/blvEftSKqFoX2kN3VUJph+s
-    fvHlwhtoDbIA0vt+aiomx3bvKqiet/bBGS+xyW8h2YlOqj0YrqZJVG76d2xYK+aP
-    9pnFRkKyJaxfUVwXZXFTJ62MQqpqcaLz9SSFhlOENWRqM0owegohvbL79NuyUc0l
-    L/e4DM8Wpc/STM1ssJRnC1UvbSUpK60uTuB4sqQv8vce4rYuJN8159wa6qC/mr4u
-    TaYDOLvNz8uZ9UK0/cFkQ+hvy+poU5rHYylzeJpYQF5IKA0PBn7GEXarYjX95p+M
-    mOp3OxJvYv2w8N/zpwg6V+VQTHw7dVbKa+NIHBPPEvzcPOWxypQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324425; bh=N7IDqcmr5QT30VatQmi
+    vXet/0Urb3ZvN5XtNRG6GbJY=; b=TdLKvFaaJAhs22E3KxiRQwhogEpSZn34+Fk
+    nAhbQnXMXOhf1ANWxwMg7QVtb2h9wdH4hcBDZFuNBlQtwultZToEoUs160PWfq5o
+    ukTxPg/CaCV+Yl5u79CBGjMi/9aMbP1qdVSq3EfCD6r/3+S1LrJdZ2xlPUFfmPyJ
+    3FOdc69x93xAvDQjTyu8D/pE0WfgID37AAhTo9QihEm12snWF7McBr0+fSKk7rH+
+    MoFzlqUgxgFDVCOd31MS7UmBi0l8892Lum5i5WklhZr9GjIQSx13QJ/PTeRoqvVs
+    kkzqy0nMyXQ3/mbTbYrKse5FJSPbz91ZvrQCk9rO/TdBlqQBUhg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753041AbeBKEpO (ORCPT <rfc822;greg@kroah.com>);
+        id S1753085AbeBKEpO (ORCPT <rfc822;greg@kroah.com>);
         Sat, 10 Feb 2018 23:45:14 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41864 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41848 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752856AbeBKEd7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:59 -0500
+        by vger.kernel.org with ESMTP id S1752854AbeBKEd6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:58 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "John David Anglin" <dave.anglin@bell.net>,
-        "Helge Deller" <deller@gmx.de>
+CC: akpm@linux-foundation.org, "Neil Dick" <neil@cog.systems>,
+        "Russell King" <rmk+kernel@armlinux.org.uk>,
+        "Philip Derrin" <philip@cog.systems>,
+        "Kees Cook" <keescook@chromium.org>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.229576546@decadent.org.uk>
+Message-ID: <lsq.1518323471.993322817@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 090/136] parisc: Fix validity check of pointer size
- argument in new CAS implementation
+Subject: [PATCH 3.16 102/136] ARM: 8721/1: mm: dump: check hardware RO bit
+ for LPAE
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,51 +82,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John David Anglin <dave.anglin@bell.net>
+From: Philip Derrin <philip@cog.systems>
 
-commit 05f016d2ca7a4fab99d5d5472168506ddf95e74f upstream.
+commit 3b0c0c922ff4be275a8beb87ce5657d16f355b54 upstream.
 
-As noted by Christoph Biedl, passing a pointer size of 4 in the new CAS
-implementation causes a kernel crash.  The attached patch corrects the
-off by one error in the argument validity check.
+When CONFIG_ARM_LPAE is set, the PMD dump relies on the software
+read-only bit to determine whether a page is writable. This
+concealed a bug which left the kernel text section writable
+(AP2=0) while marked read-only in the software bit.
 
-In reviewing the code, I noticed that we only perform word operations
-with the pointer size argument.  The subi instruction intentionally uses
-a word condition on 64-bit kernels.  Nullification was used instead of a
-cmpib instruction as the branch should never be taken.  The shlw
-pseudo-operation generates a depw,z instruction and it clears the target
-before doing a shift left word deposit.  Thus, we don't need to clip the
-upper 32 bits of this argument on 64-bit kernels.
+In a kernel with the AP2 bug, the dump looks like this:
 
-Tested with a gcc testsuite run with a 64-bit kernel.  The gcc atomic
-code in libgcc is the only direct user of the new CAS implementation
-that I am aware of.
+    ---[ Kernel Mapping ]---
+    0xc0000000-0xc0200000           2M RW NX SHD
+    0xc0200000-0xc0600000           4M ro x  SHD
+    0xc0600000-0xc0800000           2M ro NX SHD
+    0xc0800000-0xc4800000          64M RW NX SHD
 
-Signed-off-by: John David Anglin <dave.anglin@bell.net>
-Signed-off-by: Helge Deller <deller@gmx.de>
+The fix is to check that the software and hardware bits are both
+set before displaying "ro". The dump then shows the true perms:
+
+    ---[ Kernel Mapping ]---
+    0xc0000000-0xc0200000           2M RW NX SHD
+    0xc0200000-0xc0600000           4M RW x  SHD
+    0xc0600000-0xc0800000           2M RW NX SHD
+    0xc0800000-0xc4800000          64M RW NX SHD
+
+Fixes: ded947798469 ("ARM: 8109/1: mm: Modify pte_write and pmd_write logic for LPAE")
+Signed-off-by: Philip Derrin <philip@cog.systems>
+Tested-by: Neil Dick <neil@cog.systems>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/parisc/kernel/syscall.S | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/mm/dump.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/parisc/kernel/syscall.S
-+++ b/arch/parisc/kernel/syscall.S
-@@ -690,15 +690,15 @@ cas_action:
- 	/* ELF32 Process entry path */
- lws_compare_and_swap_2:
- #ifdef CONFIG_64BIT
--	/* Clip the input registers */
-+	/* Clip the input registers. We don't need to clip %r23 as we
-+	   only use it for word operations */
- 	depdi	0, 31, 32, %r26
- 	depdi	0, 31, 32, %r25
- 	depdi	0, 31, 32, %r24
--	depdi	0, 31, 32, %r23
- #endif
- 
- 	/* Check the validity of the size pointer */
--	subi,>>= 4, %r23, %r0
-+	subi,>>= 3, %r23, %r0
- 	b,n	lws_exit_nosys
- 
- 	/* Jump to the functions which will load the old and new values into
+--- a/arch/arm/mm/dump.c
++++ b/arch/arm/mm/dump.c
+@@ -126,8 +126,8 @@ static const struct prot_bits section_bi
+ 		.val	= PMD_SECT_USER,
+ 		.set	= "USR",
+ 	}, {
+-		.mask	= L_PMD_SECT_RDONLY,
+-		.val	= L_PMD_SECT_RDONLY,
++		.mask	= L_PMD_SECT_RDONLY | PMD_SECT_AP2,
++		.val	= L_PMD_SECT_RDONLY | PMD_SECT_AP2,
+ 		.set	= "ro",
+ 		.clear	= "RW",
+ #elif __LINUX_ARM_ARCH__ >= 6
