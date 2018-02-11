@@ -1,117 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932390AbeBLBMC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 20:12:02 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38030 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932266AbeBLBMA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 20:12:00 -0500
-X-Google-Smtp-Source: AH8x225HVbQbUM5hoPBvcxdXfJWK7rZr/XvTKVFBfqGJDLk4WL7MB+3cpid4dTNOU0vji/2sBguRNw==
-Date: Sun, 11 Feb 2018 17:11:58 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Barry Song <baohua@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [v3, 7/7] watchdog: coh901327: make use of timeout-secs provided
- in devicetree
-Message-ID: <20180212011158.GA4778@roeck-us.net>
-References: <20180211200847.25000-7-marcus.folkesson@gmail.com>
+        id S932408AbeBLBPx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 20:15:53 -0500
+Received: from [198.137.202.136] ([198.137.202.136]:45075 "EHLO mail.zytor.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S932311AbeBLBPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 20:15:51 -0500
+Date: Sun, 11 Feb 2018 11:19:10 -0800
+From: tip-bot for David Woodhouse <tipbot@zytor.com>
+Message-ID: <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
+        torvalds@linux-foundation.org, peterz@infradead.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        dwmw@amazon.co.uk, peterz@infradead.org
+In-Reply-To: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/speculation: Use IBRS if available before calling
+ into firmware
+Git-Commit-ID: 670c3e8da87fa4046a55077b1409cf250865a203
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180211200847.25000-7-marcus.folkesson@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 09:08:47PM +0100, Marcus Folkesson wrote:
-> watchdog_init_timeout() will allways pick timeout_param since it
-> defaults to a valid timeout.
-> 
-> Following best practice described in
-> Documentation/watchdog/watchdog-kernel-api.txt to make use of
-> the parameter logic.
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Commit-ID:  670c3e8da87fa4046a55077b1409cf250865a203
+Gitweb:     https://git.kernel.org/tip/670c3e8da87fa4046a55077b1409cf250865a203
+Author:     David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate: Sun, 11 Feb 2018 15:19:19 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sun, 11 Feb 2018 19:44:46 +0100
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+x86/speculation: Use IBRS if available before calling into firmware
 
-> ---
-> 
-> Notes:
->     v3:
->     	- Reformat and use coh901327_wdt.timeout instead of margin when print out
->     	  timout in probe function.
->     
->     v2:
->     	- Set .timeout in coh901327_wdt structure declaration.
->     	- Set .min_timeout to 1 instead of 0. I could not find a datasheet
->     	  for coh901327, so I'm not sure if 0 is valid. However, 0 seems
->     	  wrong to me and most driver has 1 as min value. If it should
->     	  be 0, please let me know and I have to set another initial
->     	  value for margin.
-> 
->  drivers/watchdog/coh901327_wdt.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
-> index 4410337f4f7f..500af8a7ec5a 100644
-> --- a/drivers/watchdog/coh901327_wdt.c
-> +++ b/drivers/watchdog/coh901327_wdt.c
-> @@ -67,7 +67,9 @@
->  #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
->  
->  /* Default timeout in seconds = 1 minute */
-> -static unsigned int margin = 60;
-> +#define U300_WDOG_DEFAULT_TIMEOUT					60
-> +
-> +static unsigned int margin;
->  static int irq;
->  static void __iomem *virtbase;
->  static struct device *parent;
-> @@ -235,8 +237,9 @@ static struct watchdog_device coh901327_wdt = {
->  	 * timeout register is max
->  	 * 0x7FFF = 327670ms ~= 327s.
->  	 */
-> -	.min_timeout = 0,
-> +	.min_timeout = 1,
->  	.max_timeout = 327,
-> +	.timeout = U300_WDOG_DEFAULT_TIMEOUT,
->  };
->  
->  static int __exit coh901327_remove(struct platform_device *pdev)
-> @@ -315,16 +318,15 @@ static int __init coh901327_probe(struct platform_device *pdev)
->  		goto out_no_irq;
->  	}
->  
-> -	ret = watchdog_init_timeout(&coh901327_wdt, margin, dev);
-> -	if (ret < 0)
-> -		coh901327_wdt.timeout = 60;
-> +	watchdog_init_timeout(&coh901327_wdt, margin, dev);
->  
->  	coh901327_wdt.parent = dev;
->  	ret = watchdog_register_device(&coh901327_wdt);
->  	if (ret)
->  		goto out_no_wdog;
->  
-> -	dev_info(dev, "initialized. timer margin=%d sec\n", margin);
-> +	dev_info(dev, "initialized. (timeout=%d sec)\n",
-> +			coh901327_wdt.timeout);
->  	return 0;
->  
->  out_no_wdog:
+Retpoline means the kernel is safe because it has no indirect branches.
+But firmware isn't, so use IBRS for firmware calls if it's available.
+
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1518362359-1005-1-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/apm.h           |  6 ++++++
+ arch/x86/include/asm/cpufeatures.h   |  1 +
+ arch/x86/include/asm/efi.h           | 17 +++++++++++++++--
+ arch/x86/include/asm/nospec-branch.h | 37 +++++++++++++++++++++++++++---------
+ arch/x86/kernel/cpu/bugs.c           | 12 +++++++++++-
+ drivers/watchdog/hpwdt.c             |  3 +++
+ 6 files changed, 64 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/include/asm/apm.h b/arch/x86/include/asm/apm.h
+index 4d4015d..c356098 100644
+--- a/arch/x86/include/asm/apm.h
++++ b/arch/x86/include/asm/apm.h
+@@ -7,6 +7,8 @@
+ #ifndef _ASM_X86_MACH_DEFAULT_APM_H
+ #define _ASM_X86_MACH_DEFAULT_APM_H
+ 
++#include <asm/nospec-branch.h>
++
+ #ifdef APM_ZERO_SEGS
+ #	define APM_DO_ZERO_SEGS \
+ 		"pushl %%ds\n\t" \
+@@ -32,6 +34,7 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
++	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -44,6 +47,7 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
+ 		  "=S" (*esi)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
++	firmware_restrict_branch_speculation_end();
+ }
+ 
+ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+@@ -56,6 +60,7 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
++	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -68,6 +73,7 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+ 		  "=S" (si)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
++	firmware_restrict_branch_speculation_end();
+ 	return error;
+ }
+ 
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 73b5fff..66c1434 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -211,6 +211,7 @@
+ #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
+ 
+ #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
++#define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index 85f6ccb..a399c1e 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -6,6 +6,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/processor-flags.h>
+ #include <asm/tlb.h>
++#include <asm/nospec-branch.h>
+ 
+ /*
+  * We map the EFI regions needed for runtime services non-contiguously,
+@@ -36,8 +37,18 @@
+ 
+ extern asmlinkage unsigned long efi_call_phys(void *, ...);
+ 
+-#define arch_efi_call_virt_setup()	kernel_fpu_begin()
+-#define arch_efi_call_virt_teardown()	kernel_fpu_end()
++#define arch_efi_call_virt_setup()					\
++({									\
++	kernel_fpu_begin();						\
++	firmware_restrict_branch_speculation_start();			\
++})
++
++#define arch_efi_call_virt_teardown()					\
++({									\
++	firmware_restrict_branch_speculation_end();			\
++	kernel_fpu_end();						\
++})
++
+ 
+ /*
+  * Wrap all the virtual calls in a way that forces the parameters on the stack.
+@@ -73,6 +84,7 @@ struct efi_scratch {
+ 	efi_sync_low_kernel_mappings();					\
+ 	preempt_disable();						\
+ 	__kernel_fpu_begin();						\
++	firmware_restrict_branch_speculation_start();			\
+ 									\
+ 	if (efi_scratch.use_pgd) {					\
+ 		efi_scratch.prev_cr3 = __read_cr3();			\
+@@ -91,6 +103,7 @@ struct efi_scratch {
+ 		__flush_tlb_all();					\
+ 	}								\
+ 									\
++	firmware_restrict_branch_speculation_end();			\
+ 	__kernel_fpu_end();						\
+ 	preempt_enable();						\
+ })
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 300cc15..788c4da 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -162,17 +162,36 @@ static inline void vmexit_fill_RSB(void)
+ #endif
+ }
+ 
++#define alternative_msr_write(_msr, _val, _feature)		\
++	asm volatile(ALTERNATIVE("",				\
++				 "movl %[msr], %%ecx\n\t"	\
++				 "movl %[val], %%eax\n\t"	\
++				 "movl $0, %%edx\n\t"		\
++				 "wrmsr",			\
++				 _feature)			\
++		     : : [msr] "i" (_msr), [val] "i" (_val)	\
++		     : "eax", "ecx", "edx", "memory")
++
+ static inline void indirect_branch_prediction_barrier(void)
+ {
+-	asm volatile(ALTERNATIVE("",
+-				 "movl %[msr], %%ecx\n\t"
+-				 "movl %[val], %%eax\n\t"
+-				 "movl $0, %%edx\n\t"
+-				 "wrmsr",
+-				 X86_FEATURE_USE_IBPB)
+-		     : : [msr] "i" (MSR_IA32_PRED_CMD),
+-			 [val] "i" (PRED_CMD_IBPB)
+-		     : "eax", "ecx", "edx", "memory");
++	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
++			      X86_FEATURE_USE_IBPB);
++}
++
++/*
++ * With retpoline, we must use IBRS to restrict branch prediction
++ * before calling into firmware.
++ */
++static inline void firmware_restrict_branch_speculation_start(void)
++{
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
++			      X86_FEATURE_USE_IBRS_FW);
++}
++
++static inline void firmware_restrict_branch_speculation_end(void)
++{
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
++			      X86_FEATURE_USE_IBRS_FW);
+ }
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 61152aa..6f6d763 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -303,6 +303,15 @@ retpoline_auto:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+ 		pr_info("Enabling Indirect Branch Prediction Barrier\n");
+ 	}
++
++	/*
++	 * Retpoline means the kernel is safe because it has no indirect
++	 * branches. But firmware isn't, so use IBRS to protect that.
++	 */
++	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
++		pr_info("Enabling Restricted Speculation for firmware calls\n");
++	}
+ }
+ 
+ #undef pr_fmt
+@@ -332,8 +341,9 @@ ssize_t cpu_show_spectre_v2(struct device *dev,
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+ 		return sprintf(buf, "Not affected\n");
+ 
+-	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+ 		       spectre_v2_module_string());
+ }
+ #endif
+diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+index 67fbe35..bab3721 100644
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -38,6 +38,7 @@
+ #endif /* CONFIG_HPWDT_NMI_DECODING */
+ #include <asm/nmi.h>
+ #include <asm/frame.h>
++#include <asm/nospec-branch.h>
+ 
+ #define HPWDT_VERSION			"1.4.0"
+ #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
+@@ -486,11 +487,13 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+ 	if (!hpwdt_nmi_decoding)
+ 		return NMI_DONE;
+ 
++	firmware_restrict_branch_speculation_start();
+ 	spin_lock_irqsave(&rom_lock, rom_pl);
+ 	if (!die_nmi_called && !is_icru && !is_uefi)
+ 		asminline_call(&cmn_regs, cru_rom_addr);
+ 	die_nmi_called = 1;
+ 	spin_unlock_irqrestore(&rom_lock, rom_pl);
++	firmware_restrict_branch_speculation_end();
+ 
+ 	if (allow_kdump)
+ 		hpwdt_stop();
