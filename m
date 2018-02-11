@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932171AbeBKVHm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 16:07:42 -0500
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:33584 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753665AbeBKVHi (ORCPT
+        id S932240AbeBKVHs (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 16:07:48 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46537 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932198AbeBKVHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 16:07:38 -0500
-X-Google-Smtp-Source: AH8x226WbvGHO4LdcSko8cMIgcxz58EIE6264seQWE0xWVTW1bGq2f1fpV1rSgANuMiq4qjFQD7J4Q==
+        Sun, 11 Feb 2018 16:07:43 -0500
+X-Google-Smtp-Source: AH8x2262menVwOrxgK4ZBFjltOf6mryUFC2lUJ0CC8v32gihu581KjvYoqfX03yvfrC7bZ/kIjUyOQ==
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
 To: Jonathan Woithe <jwoithe@just42.net>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] fujitsu-laptop: Miscellaneous cleanups
-Date: Sun, 11 Feb 2018 22:07:20 +0100
-Message-Id: <20180211210727.12130-1-kernel@kempniu.pl>
+Subject: [PATCH 5/7] platform/x86: fujitsu-laptop: Do not include linux/slab.h
+Date: Sun, 11 Feb 2018 22:07:25 +0100
+Message-Id: <20180211210727.12130-6-kernel@kempniu.pl>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180211210727.12130-1-kernel@kempniu.pl>
+References: <20180211210727.12130-1-kernel@kempniu.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -24,27 +26,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the second of the two patch series I started preparing back in
-June 2017 [1].  It took me this long to post it purely due to permanent
-spare time shortage, not because the changes are complicated. 
+Do not include linux/slab.h as all module code now uses managed memory
+allocations and thus neither k*alloc() nor kfree() is used.
 
-The patch series contains miscellaneous cleanups which I think are worth
-getting done before splitting fujitsu-laptop into two separate modules.
-I am not 100% sure that all the changes in the last patch in this series
-actually help, so please speak your mind.
+Signed-off-by: Michał Kępień <kernel@kempniu.pl>
+---
+ drivers/platform/x86/fujitsu-laptop.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-This patch series was tested on a Lifebook S7020.  AFAICT it does not
-conflict with the recent draft patch from Jan-Marek Glogowski and may
-thus be applied independently.
-
-Finally, please forgive me if it takes me weeks or months to address
-review comments.  It is also perfectly fine for reviews to take weeks or
-months ;)
-
-[1] https://www.spinics.net/lists/kernel/msg2534759.html
-
- drivers/platform/x86/fujitsu-laptop.c | 179 +++++++++++++++++-----------------
- 1 file changed, 90 insertions(+), 89 deletions(-)
-
+diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+index 7888b779d6c5..17779b8b7f30 100644
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -61,7 +61,6 @@
+ #include <linux/kfifo.h>
+ #include <linux/leds.h>
+ #include <linux/platform_device.h>
+-#include <linux/slab.h>
+ #include <acpi/video.h>
+ 
+ #define FUJITSU_DRIVER_VERSION "0.6.0"
 -- 
 2.16.1
