@@ -1,35 +1,35 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324039-2-12600805097428689705
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324029-2-1438859901919312958
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324038; b=sbf3U4dTc3CIb4Dh4RWtdfN9kVnNOXBSBfwM01TkSxwlJSH
-    rhoWX68T14/kVsfFIva4a5mxYgkJWM/kN4acFS1Qmz7fVAdzgvdgEhPTUY1twlkc
-    9Jq7GmSizbajgrUdmuHqd2m9dPiVo1nkZnF0AtXNEstKVITuh0YbkXVkpzTYW4Ms
-    WswN4/f1i6KK0OCsfCo/cn3KoEwFBbjr1kmfSH9wjJegrDmLrzepK45K57KD3ZrH
-    XaZ7PK60h99bBieiUAeCCSaiMCnnl/kK8QWhktjd5xKY6fvhO4zVp5UT22yN0/p7
-    iAssZArCWf5+Z4ykr3IJN5QcTFKH+DO9sDozCew==
+    t=1518324029; b=UxW9/fzku4YdTo+FrtQWsfwi5CJa8ENEKYrfCGo1JTrWJ01
+    D+pMqb2FwwuI7SvfHf6vijdVLs/rywU2fYgBzE5P1/7L0gdLIVbROZVr1CEz5qX0
+    u8xoiaR3nx30Bo5fqPfUpLokc6kbRkLJjbltgwv4loFTrnn7TAMQn+MTTUlEXkx4
+    Fciyj0xzmlgvhudaY6tewCV9LefYs13Cm8wH4RVuwAQ9ZkyhZlvhnP4OGqVRQi5+
+    StmFzfEV0p+dW3XfoQ7CG3gSL8qsFaLwhNEAzrMKq2h8l9n7gtjgIiGr/fQMoch1
+    CELLHIQ8LJQazMtIoavdLr3Ms4xrrSs27awkGeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324038; bh=GgrLiRahRNgfUYg0gaU
-    79ZZYuj/ZqWtxg3fmFVuhFSA=; b=gnxXsoq64LeEAEmjigno1AxVmhj1xrbjJuj
-    SZyTBWJIYrfDUqNZhIe/YNc/FCXjlimf0E2aAIaTySfcnL0CTk7XYxb5/4m1bO4g
-    y3r+ajNJuQVDNct3CvQP4S95Z7bS7QtswAAsyWBCzRVxosZd35qt3tqew2Y+AWIK
-    EF/KkcezT29t1mZ/GM/iHKv5vHRip3zvzT4sf9EvYzNKYgS7g6hAm8aOmS+m/uur
-    Nxzm4DjtB7+nVfM442pv9KFrYaFVrQKy0m77X1UCPQtOZgfPbd0Lzuxv+2CjFDa1
-    RJyNG1OalVf6ZaQpZE3TtGfMtrc+B1sAhxdmGEpHCIReRHAzHDg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324029; bh=hlUkjsa84gDpw7YowaF
+    ETRkghX3xVs9OCIvEyglTwFQ=; b=lSzKMb/0xPGbVYZqHyqjEajTBunI7uJEayF
+    VbLPWVAyVfKYniV+Bkoz0f4/a5erMvmGrAfBSfcNnW2hGc0P6KSbySlUwJH6S8x7
+    u/O7Z3+g/SsRY3PVbW4qbDr7jLy6ypK3E/arQCxkYntrsKeRRKT5pNGx08AsdNWZ
+    n5HgGDXhWMkAXF6MDofHHeIXSzTRw5lHn6AU6rTjNRR/6K1kXhJdYiRcVEicWjQA
+    tuMIr1m0OrEwp3IcCqrNCRQpq60OfA2KO4mjzsV7pYBGvcVYjkj01paQAK6EiZGt
+    Q83Q5+5l+7dINUtwCxxg9uxb/nmbFGSdBnSm6M2A4bphOXbGa7g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753245AbeBKEi5 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:38:57 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41698 "EHLO
+        id S1753320AbeBKEi6 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:38:58 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41673 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752956AbeBKEeJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:09 -0500
+        by vger.kernel.org with ESMTP id S1752949AbeBKEeI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:08 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,13 +60,16 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "=?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?=" <mirq-linux@rere.qmqm.pl>,
-        "Thierry Reding" <treding@nvidia.com>,
-        "Peter De Schrijver" <pdeschrijver@nvidia.com>
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Mark Salyzyn" <salyzyn@android.com>,
+        "Will Deacon" <will.deacon@arm.com>,
+        "Andrew Pinski" <apinski@cavium.com>,
+        "Mark Rutland" <mark.rutland@arm.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.972888328@decadent.org.uk>
+Message-ID: <lsq.1518323471.111126904@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 047/136] clk: tegra: Fix cclk_lp divisor register
+Subject: [PATCH 3.16 041/136] arm64: vdso: fix clock_getres for
+ 4GiB-aligned res
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,30 +84,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 54eff2264d3e9fd7e3987de1d7eba1d3581c631e upstream.
+commit c80ed088a519da53f27b798a69748eaabc66aadf upstream.
 
-According to comments in code and common sense, cclk_lp uses its
-own divisor, not cclk_g's.
+The vdso tries to check for a NULL res pointer in __kernel_clock_getres,
+but only checks the lower 32 bits as is uses CBZ on the W register the
+res pointer is held in.
 
-Fixes: b08e8c0ecc42 ("clk: tegra: add clock support for Tegra30")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Thus, if the res pointer happened to be aligned to a 4GiB boundary, we'd
+spuriously skip storing the timespec to it, while returning a zero error code
+to the caller.
+
+Prevent this by checking the whole pointer, using CBZ on the X register
+the res pointer is held in.
+
+Fixes: 9031fefde6f2ac1d ("arm64: VDSO support")
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Reported-by: Andrew Pinski <apinski@cavium.com>
+Reported-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/clk/tegra/clk-tegra30.c | 2 +-
+ arch/arm64/kernel/vdso/gettimeofday.S | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1060,7 +1060,7 @@ static void __init tegra30_super_clk_ini
- 	 * U71 divider of cclk_lp.
- 	 */
- 	clk = tegra_clk_register_divider("pll_p_out3_cclklp", "pll_p_out3",
--				clk_base + SUPER_CCLKG_DIVIDER, 0,
-+				clk_base + SUPER_CCLKLP_DIVIDER, 0,
- 				TEGRA_DIVIDER_INT, 16, 8, 1, NULL);
- 	clk_register_clkdev(clk, "pll_p_out3_cclklp", NULL);
+--- a/arch/arm64/kernel/vdso/gettimeofday.S
++++ b/arch/arm64/kernel/vdso/gettimeofday.S
+@@ -186,7 +186,7 @@ ENTRY(__kernel_clock_getres)
+ 	b.ne	4f
+ 	ldr	x2, 6f
+ 2:
+-	cbz	w1, 3f
++	cbz	x1, 3f
+ 	stp	xzr, x2, [x1]
  
+ 3:	/* res == NULL. */
