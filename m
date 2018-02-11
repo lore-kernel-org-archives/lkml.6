@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932145AbeBKUJ3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:09:29 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33444 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753760AbeBKUJ0 (ORCPT
+        id S932094AbeBKUJf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:09:35 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45151 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932085AbeBKUJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 15:09:26 -0500
-X-Google-Smtp-Source: AH8x227pqvDSUDHiUUacslrjG2iNRhUfQ1RcmiTQigcWdZk6Ws2UTCGHCtNNajPxWRMdTVC6drTb3g==
+        Sun, 11 Feb 2018 15:09:29 -0500
+X-Google-Smtp-Source: AH8x2276wwAj9oIemnSI6ovFprl/2GN3JBMKsvyO39cov8cHUWXY9cgQXjLxx50FiuTgwtFgr1CIhQ==
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -25,9 +25,9 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v3 4/7] watchdog: pnx4008: make use of timeout-secs provided in devicetree
-Date: Sun, 11 Feb 2018 21:08:44 +0100
-Message-Id: <20180211200847.25000-4-marcus.folkesson@gmail.com>
+Subject: [PATCH v3 5/7] watchdog: mtk: allow setting timeout in devicetree
+Date: Sun, 11 Feb 2018 21:08:45 +0100
+Message-Id: <20180211200847.25000-5-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180211200847.25000-1-marcus.folkesson@gmail.com>
 References: <20180211200847.25000-1-marcus.folkesson@gmail.com>
@@ -38,28 +38,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 watchdog_init_timeout() will allways pick timeout_param since it
 defaults to a valid timeout.
 
-Following best practice described in
-Documentation/watchdog/watchdog-kernel-api.txt to make use of
-the parameter logic.
+By following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt, it also
+let us to set timout-sec property in devicetree.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/watchdog/pnx4008_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/watchdog/mtk-wdt.txt | 4 ++++
+ drivers/watchdog/mtk_wdt.c                             | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/pnx4008_wdt.c b/drivers/watchdog/pnx4008_wdt.c
-index 0529aed158a4..8e261799c84e 100644
---- a/drivers/watchdog/pnx4008_wdt.c
-+++ b/drivers/watchdog/pnx4008_wdt.c
-@@ -78,7 +78,7 @@
- #define WDOG_COUNTER_RATE 13000000	/*the counter clock is 13 MHz fixed */
+diff --git a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
+index 5b38a30e608c..859dee167b91 100644
+--- a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
+@@ -11,9 +11,13 @@ Required properties:
+ 
+ - reg : Specifies base physical address and size of the registers.
+ 
++Optional properties:
++- timeout-sec: contains the watchdog timeout in seconds.
++
+ Example:
+ 
+ wdt: watchdog@10000000 {
+ 	compatible = "mediatek,mt6589-wdt";
+ 	reg = <0x10000000 0x18>;
++	timeout-sec = <10>;
+ };
+diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
+index 7ed417a765c7..fcdc10ec28a3 100644
+--- a/drivers/watchdog/mtk_wdt.c
++++ b/drivers/watchdog/mtk_wdt.c
+@@ -57,7 +57,7 @@
+ #define DRV_VERSION		"1.0"
  
  static bool nowayout = WATCHDOG_NOWAYOUT;
--static unsigned int heartbeat = DEFAULT_HEARTBEAT;
-+static unsigned int heartbeat;
+-static unsigned int timeout = WDT_MAX_TIMEOUT;
++static unsigned int timeout;
  
- static DEFINE_SPINLOCK(io_lock);
- static void __iomem	*wdt_base;
+ struct mtk_wdt_dev {
+ 	struct watchdog_device wdt_dev;
 -- 
 2.15.1
