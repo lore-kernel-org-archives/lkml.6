@@ -1,61 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752694AbeBKI4x (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 03:56:53 -0500
-Received: from mail-ot0-f177.google.com ([74.125.82.177]:40291 "EHLO
-        mail-ot0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752085AbeBKI4v (ORCPT
+        id S1752699AbeBKJQE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 04:16:04 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37162 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752273AbeBKJQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 03:56:51 -0500
-X-Google-Smtp-Source: AH8x226K4bdKzUrto8wYuW8oQA5YyFA3s5kUZL99DjyRK330y5dui7Yhqr5aIloWj0De4DQBCYuHMiAtHB9yOYp4Xng=
-MIME-Version: 1.0
-In-Reply-To: <63c3626c-e64d-aa56-3935-be046d731232@gmail.com>
-References: <1517984706-47244-1-git-send-email-wanpengli@tencent.com>
- <233cfca3-971e-c3c2-f0fe-b50dd69d2546@redhat.com> <d21822e2-2982-7182-1d9a-be3e5b7e1553@gmail.com>
- <5664ca7f-f391-0301-3a0d-666b73f17b15@redhat.com> <9034fe13-26c4-ee72-5b94-19aa8fc11efc@gmail.com>
- <0aedd0e5-f5eb-54d8-6f77-e7a12c65fed5@redhat.com> <63c3626c-e64d-aa56-3935-be046d731232@gmail.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Sun, 11 Feb 2018 16:56:50 +0800
-Message-ID: <CANRm+CxQ29LpqPbzxUjJhM1-Yir0bMTnp=y_Ds2_+63zOSz0qQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: X86: Fix SMRAM accessing even if VM is shutdown
-To: Xiao Guangrong <guangrong.xiao@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 11 Feb 2018 04:16:03 -0500
+X-Google-Smtp-Source: AH8x226a2YqS6Jpn8HpTpByW6odZSjun+T/hMrwO59qEBEEkekxjV303gKqU39pqdDOL8aOFyamBmw==
+From: Max Filippov <jcmvbkbc@gmail.com>
+To: linux-xtensa@linux-xtensa.org
+Cc: Chris Zankel <chris@zankel.net>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH] xtensa: fix build with KASAN
+Date: Sun, 11 Feb 2018 01:15:46 -0800
+Message-Id: <1518340546-6690-1-git-send-email-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-11 11:20 GMT+08:00 Xiao Guangrong <guangrong.xiao@gmail.com>:
->
->
-> On 02/09/2018 08:42 PM, Paolo Bonzini wrote:
->>
->> On 09/02/2018 04:22, Xiao Guangrong wrote:
->>>>
->>>>
->>>
->>> That is a good question... :)
->>>
->>> This case (with KVM_MEMSLOT_INVALID is set) can be easily constructed,
->>> userspace should avoid this case by itself (avoiding vCPU accessing the
->>> memslot which is being updated). If it happens, it's a operation issue
->>> rather than INTERNAL ERROR.
->>>
->>> Maybe treat it as MMIO accessing and return to userspace with MMIO_EXIT
->>> is a better solution...
->>
->>
->> Yeah, that's what emulation would do (except if it's an instruction
->> fetch, which will cause emulation to fail).  I think it's a bug in the
->> non-EPT #PF case that we return with -EFAULT.
->
->
-> Wanpeng, could you please do it? :)
+The commit 917538e212a2 ("kasan: clean up KASAN_SHADOW_SCALE_SHIFT
+usage") removed KASAN_SHADOW_SCALE_SHIFT definition from
+include/linux/kasan.h and added it to architecture-specific headers,
+except for xtensa. This broke the xtensa build with KASAN enabled.
+Define KASAN_SHADOW_SCALE_SHIFT in arch/xtensa/include/asm/kasan.h
 
-Thanks for the discussion, I will have a try. :)
+Reported by: kbuild test robot <fengguang.wu@intel.com>
+Fixes: 917538e212a2 ("kasan: clean up KASAN_SHADOW_SCALE_SHIFT usage")
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+---
+ arch/xtensa/include/asm/kasan.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regards,
-Wanpeng Li
+diff --git a/arch/xtensa/include/asm/kasan.h b/arch/xtensa/include/asm/kasan.h
+index 54be80876e57..216b6f32c375 100644
+--- a/arch/xtensa/include/asm/kasan.h
++++ b/arch/xtensa/include/asm/kasan.h
+@@ -10,6 +10,8 @@
+ #include <linux/sizes.h>
+ #include <asm/kmem_layout.h>
+ 
++#define KASAN_SHADOW_SCALE_SHIFT 3
++
+ /* Start of area covered by KASAN */
+ #define KASAN_START_VADDR __XTENSA_UL_CONST(0x90000000)
+ /* Start of the shadow map */
+-- 
+2.1.4
