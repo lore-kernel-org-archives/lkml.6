@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x224bW7/D5+binUUbT5V77gRr4FVhJ1SOVk1hOHCTWzJTdf3GWjldZy+5M89/tdZUVBBmA2J7
-ARC-Seal: i=1; a=rsa-sha256; t=1518323622; cv=none;
+X-Google-Smtp-Source: AH8x225ecvHwucy8vfkqhM8V2VYt+RguNWBhZPwCyuQSVwBO+JvvDNZI83qhSxEulqNtmiVxVBQA
+ARC-Seal: i=1; a=rsa-sha256; t=1518323621; cv=none;
         d=google.com; s=arc-20160816;
-        b=su+Cq/My75KbDURhYYXme+PcQ+Nk9Kd8m8EfH06A5tgkx/WGfxuiLLqzna9NE9n3Et
-         Wl8uBky4S6CXGejTo11E1qcys34oND4rbgIEmj2VGYHI9r2E0x2eUs9AO2ZvuWY6LNG4
-         tavuxaklNraAYRV9+pJ5avJ/7xPvtZaivAmY4ucFQAfmGJ6NtJun+ZByzZ0TyoZnLDHg
-         fDVCJ+WMaa52Q1S8u+5Hdoc6a+EzDbhuT3pQldBSzrjWDN/m/YHZh/DAZDBQrgy7LR5y
-         L5ieFU+uJi2VU4dLjowqPn3PHTsSTUgGaDOEU+xO78A/YAnpQ+1j7HSwPow+J/5neyoH
-         6brw==
+        b=FWUybcGSjNLd/L5T5wslCH5qtSzUUkiZzcqm/3Vw1LZ6r6vveP7rbjvZpFEcJ88oyl
+         GrOMaW6uv8/PuGmuHK5bhotzLtjLQUvxqcB6JJ7KBAT7xBbq5Go0u9djqJhOFh3BW20O
+         0mj4XzznsnhuGCg3yPsjeApe8w0H9+z3lpx5M51rKQTCGNi4+90efHY3zP6TB+YGBeiM
+         fGE3vATsSM+DOSvFF59wkVb4hZ+GGfqJMmM9vaQvSNi4WUwBIVLllRkMlrb0AhdQU9LZ
+         hbKyxTTnu5bbX6RMekXgm5J9VxdNxKECVG/s0ppSFzppGD1qXOsaxaNPUnNzt1PiVlPL
+         uA+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=PYYdXhr7+ju1Z8tP74DwCtpkWj1WtxVC4xT8V9hq5Ag=;
-        b=sL+NoSf39HrMnZsDw7a1VWxO3iQw8Qh5L6HBqh3xzzV1QI2LgPUAOcpXUTvbvc5Ezu
-         o6Eo6TrpB81gYeFNDthDWnnN4xrE5MgvpB4PuNYVkiQYcW4YT25uIKp6OybiA104zLO+
-         03t9OpWxosLxnYpbX/jeNjmbpPLzMzuHAFtY7k+XT53No059soMgYfSGsh3SN7KPfdy5
-         yciMIUdHmuOPHU2scyVJYNWfhb8DEF+B3ydqX4qODDMpuyGJz5X6ow7WDZc533xvGM+I
-         4rQyNgZ2YXCVIsBQ7dsDC6sDQtFuSiVKCBabU0ivHWw+CsSq5Xu2P8NH0aoazcemO1Ux
-         mWxw==
+        bh=jNEuAdImRNXMINPc8UWXj1UhsmqtxGHzdq6asQyUDK0=;
+        b=gB9mTHcqmg15+G63ccVZ7cIfjuiUbX1T+LkpKfEzfUjc+JBoP3m0eLil2Vf0+MyeuJ
+         /2eBGOO+y9Jn4bmLOiqutlnM/0vZhOLPKfdjUFqubYVZZyyAz5SpReYHvQ2MVhleoh7x
+         m5PikOsZqoHGkFKUUOBvy3R2tAQiitw5LCWilBZhPyd5FFFOxsZAmbZyeau+FXOJ79gJ
+         WEvbCcV/PTcCQojgrda7KYsZuJGKRJHypmF4lLAGpb4YpDVOwCm3Jg//Qm8g3b8kbXV+
+         pqSYxgbovUizUYUtakZEQxVKKS4qstPp+SAE2NEDsX44AVH0Dr1Z6LPQFCp9sTbp8zY7
+         JoOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,21 +30,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Takashi Iwai" <tiwai@suse.de>,
- "Luo Quan" <a4651386@163.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Kees Cook" <keescook@chromium.org>
+ "Secunia Research" <vuln@secunia.com>,
+ "Shuah Khan" <shuahkh@osg.samsung.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.135220295@decadent.org.uk>
+Message-ID: <lsq.1518322806.440200643@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 69/79] ALSA: seq: Make ioctls race-free
+Subject: [PATCH 3.2 74/79] usbip: fix stub_rx: harden CMD_SUBMIT path to
+ handle malicious input
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077710316431011?=
-X-GMAIL-MSGID: =?utf-8?q?1592077710316431011?=
+X-GMAIL-THRID: =?utf-8?q?1592077709661989304?=
+X-GMAIL-MSGID: =?utf-8?q?1592077709661989304?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,73 +52,107 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit b3defb791b26ea0683a93a4f49c77ec45ec96f10 upstream.
+commit c6688ef9f29762e65bce325ef4acd6c675806366 upstream.
 
-The ALSA sequencer ioctls have no protection against racy calls while
-the concurrent operations may lead to interfere with each other.  As
-reported recently, for example, the concurrent calls of setting client
-pool with a combination of write calls may lead to either the
-unkillable dead-lock or UAF.
+Harden CMD_SUBMIT path to handle malicious input that could trigger
+large memory allocations. Add checks to validate transfer_buffer_length
+and number_of_packets to protect against bad input requesting for
+unbounded memory allocations. Validate early in get_pipe() and return
+failure.
 
-As a slightly big hammer solution, this patch introduces the mutex to
-make each ioctl exclusive.  Although this may reduce performance via
-parallel ioctl calls, usually it's not demanded for sequencer usages,
-hence it should be negligible.
-
-Reported-by: Luo Quan <a4651386@163.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-[bwh: Backported to 3.2: ioctl dispatch is done from snd_seq_do_ioctl();
- take the mutex and add ret variable there.]
+Reported-by: Secunia Research <vuln@secunia.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.2:
+ - Device for logging purposes is &sdev->interface->dev
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/seq/seq_clientmgr.c |   10 ++++++++--
- sound/core/seq/seq_clientmgr.h |    1 +
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/staging/usbip/stub_rx.c | 35 +++++++++++++++++++++++++++++++----
+ 1 file changed, 31 insertions(+), 4 deletions(-)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -236,6 +236,7 @@ static struct snd_seq_client *seq_create
- 	rwlock_init(&client->ports_lock);
- 	mutex_init(&client->ports_mutex);
- 	INIT_LIST_HEAD(&client->ports_list_head);
-+	mutex_init(&client->ioctl_mutex);
+--- a/drivers/staging/usbip/stub_rx.c
++++ b/drivers/staging/usbip/stub_rx.c
+@@ -350,11 +350,13 @@ static struct stub_priv *stub_priv_alloc
+ 	return priv;
+ }
  
- 	/* find free slot in the client table */
- 	spin_lock_irqsave(&clients_lock, flags);
-@@ -2188,6 +2189,7 @@ static int snd_seq_do_ioctl(struct snd_s
- 			    void __user *arg)
+-static int get_pipe(struct stub_device *sdev, int epnum, int dir)
++static int get_pipe(struct stub_device *sdev, struct usbip_header *pdu)
  {
- 	struct seq_ioctl_table *p;
-+	int ret;
+ 	struct usb_device *udev = sdev->udev;
+ 	struct usb_host_endpoint *ep;
+ 	struct usb_endpoint_descriptor *epd = NULL;
++	int epnum = pdu->base.ep;
++	int dir = pdu->base.direction;
  
- 	switch (cmd) {
- 	case SNDRV_SEQ_IOCTL_PVERSION:
-@@ -2201,8 +2203,12 @@ static int snd_seq_do_ioctl(struct snd_s
- 	if (! arg)
- 		return -EFAULT;
- 	for (p = ioctl_tables; p->cmd; p++) {
--		if (p->cmd == cmd)
--			return p->func(client, arg);
-+		if (p->cmd == cmd) {
-+			mutex_lock(&client->ioctl_mutex);
-+			ret = p->func(client, arg);
-+			mutex_unlock(&client->ioctl_mutex);
-+			return ret;
-+		}
+ 	if (epnum < 0 || epnum > 15)
+ 		goto err_ret;
+@@ -367,6 +369,15 @@ static int get_pipe(struct stub_device *
+ 		goto err_ret;
+ 
+ 	epd = &ep->desc;
++
++	/* validate transfer_buffer_length */
++	if (pdu->u.cmd_submit.transfer_buffer_length > INT_MAX) {
++		dev_err(&sdev->interface->dev,
++			"CMD_SUBMIT: -EMSGSIZE transfer_buffer_length %d\n",
++			pdu->u.cmd_submit.transfer_buffer_length);
++		return -1;
++	}
++
+ 	if (usb_endpoint_xfer_control(epd)) {
+ 		if (dir == USBIP_DIR_OUT)
+ 			return usb_sndctrlpipe(udev, epnum);
+@@ -389,6 +400,21 @@ static int get_pipe(struct stub_device *
  	}
- 	snd_printd("seq unknown ioctl() 0x%x (type='%c', number=0x%02x)\n",
- 		   cmd, _IOC_TYPE(cmd), _IOC_NR(cmd));
---- a/sound/core/seq/seq_clientmgr.h
-+++ b/sound/core/seq/seq_clientmgr.h
-@@ -59,6 +59,7 @@ struct snd_seq_client {
- 	struct list_head ports_list_head;
- 	rwlock_t ports_lock;
- 	struct mutex ports_mutex;
-+	struct mutex ioctl_mutex;
- 	int convert32;		/* convert 32->64bit */
  
- 	/* output pool */
+ 	if (usb_endpoint_xfer_isoc(epd)) {
++		/* validate packet size and number of packets */
++		unsigned int maxp, packets, bytes;
++
++		maxp = usb_endpoint_maxp(epd);
++		maxp *= usb_endpoint_maxp_mult(epd);
++		bytes = pdu->u.cmd_submit.transfer_buffer_length;
++		packets = DIV_ROUND_UP(bytes, maxp);
++
++		if (pdu->u.cmd_submit.number_of_packets < 0 ||
++		    pdu->u.cmd_submit.number_of_packets > packets) {
++			dev_err(&sdev->interface->dev,
++				"CMD_SUBMIT: isoc invalid num packets %d\n",
++				pdu->u.cmd_submit.number_of_packets);
++			return -1;
++		}
+ 		if (dir == USBIP_DIR_OUT)
+ 			return usb_sndisocpipe(udev, epnum);
+ 		else
+@@ -397,7 +423,7 @@ static int get_pipe(struct stub_device *
+ 
+ err_ret:
+ 	/* NOT REACHED */
+-	dev_err(&sdev->interface->dev, "get pipe() invalid epnum %d\n", epnum);
++	dev_err(&sdev->interface->dev, "CMD_SUBMIT: invalid epnum %d\n", epnum);
+ 	return -1;
+ }
+ 
+@@ -462,7 +488,7 @@ static void stub_recv_cmd_submit(struct
+ 	struct stub_priv *priv;
+ 	struct usbip_device *ud = &sdev->ud;
+ 	struct usb_device *udev = sdev->udev;
+-	int pipe = get_pipe(sdev, pdu->base.ep, pdu->base.direction);
++	int pipe = get_pipe(sdev, pdu);
+ 
+ 	if (pipe == -1)
+ 		return;
+@@ -485,7 +511,8 @@ static void stub_recv_cmd_submit(struct
+ 	}
+ 
+ 	/* set priv->urb->transfer_buffer */
+-	if (pdu->u.cmd_submit.transfer_buffer_length > 0) {
++	if (pdu->u.cmd_submit.transfer_buffer_length > 0 &&
++	    pdu->u.cmd_submit.transfer_buffer_length <= INT_MAX) {
+ 		priv->urb->transfer_buffer =
+ 			kzalloc(pdu->u.cmd_submit.transfer_buffer_length,
+ 				GFP_KERNEL);
