@@ -1,51 +1,51 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x2247FE3DXxyFdawLURF8LWv1S+ZhtLg6dEqh69IZKmshtdO3Mwi19ZQf5Y+5ey193ho1eSVu
-ARC-Seal: i=1; a=rsa-sha256; t=1518513315; cv=none;
+X-Google-Smtp-Source: AH8x227sHi8uAQJH2mAbdGOLhwoQMSTGnUi/Xzi4BP8ll0HYtrdcassnBYDSrk2x4VkpmTXexEfL
+ARC-Seal: i=1; a=rsa-sha256; t=1518402441; cv=none;
         d=google.com; s=arc-20160816;
-        b=SL1GEL3L4vSR+CZq/ZoWyl88BXA9mRE50FTPdeR5qq7Z4n59kEyOu4YWSg/1vMtKZ3
-         4SWQKNTs74jWEhGDpXDTbZ36DL3tEAsyuB3icv99TFnmh5tgmrFmODKwo3IfiuyerObT
-         /zNzU+5N8KezzB/hEiAtST/Uj1r//EKvEKh1nNhz7/f/fVJJLS9GoqzGeD6SM0cpO6fA
-         LWI0I+FYDiFdxdBX/RwCpG9UXOyatJYDca3pZg7ckuKDFrU0OCBgTgmZ/37oAMRve4ih
-         nU6NkgpD3m1MBNXt52538bknNVuuEc80lv0VfGqRjKeMVj9ReUh4gPaTbPyycgZW3W2H
-         TRDQ==
+        b=RtXj6nWz/qY3V6XxoFvGsYEka6G6YPze1oh1A8wC0+eiLNFyKoBJjFcFA0YngA3UBD
+         AY/el/t4D45VSxq+KbQmJRcsgcFEMXbV7uy+cYqHRgdmNmOXmb/lXBDt09lFOkqVRJ0c
+         q/39DLThbm5sanVN8RXRwMDQE2v8Bs7kmGUs7rYW+SCH80SAxIVlwo8qsg62X+aNmHL2
+         Nu/hgrpi+UfUjWTfc++kqp4EoIze+GdrpOXaZNB9mMpsdfJ9CE6AeVKTPLJctoQRpFua
+         yRFho9VvkW0mZv19OGQzk5uFdC+7EINPll23OK3gvFxWc9R5f3yllP5q/sVM4sd/0vEf
+         Mplg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=l3eUXxql30gFL4VZIBJVI5DW+FSLKxcfgHeTnFRKVeg=;
-        b=LfcGmsld4T6d7gJADbQvyMgUM6GBVy8KborW6WpX42QLbhrjxd/zsM91Hw3dQhnZTu
-         ciTtr1jX9wV699dvKgimUK1ceXTzj5SQ/uEAzozi0gGfqgJsgXMOsDfbQCg6kGvBvMi4
-         Dg3AsAWm3c0WtFAEeF0QhJqUSas7Z25DHY5Pl8+z8IODeK61su8qEMyyCTmBKO1rAzqP
-         kj9nZAZd4FvUI3497zmsC3V9bh/i2f4r2sltDJKj5xTyXdza/lKACcL0BtYG9dNAYJJj
-         U5PjxB+wjYbGuLlC2K6tGrI5DIpuU0BoBnJPrmCipeVqe/1gqK5xaPkoZTP0cRaUaN3o
-         hMzw==
+        bh=78jj7+oHJHUpfu0vZEih/RnVpBK2/IUMQS0K4hXfO2k=;
+        b=N79291oCtfgJLOeDohEtROugckkbcaZHgB8cMZ4O3CGocmW2Mtxzn5mfV6+3EBM2W/
+         CZ388QAbBYQajSB5ynY831Q33ePL+aSJlNQt0cI3FwWblAlpJtOwk8QzjSbwgJouojnZ
+         w3fZY2vra7nH3citf8AQ0kjfBB5msJmAen04KlUsLHwQ2uImEwtMklFPy3FijExEL7Ml
+         /LPEa7E39FQAforrrd9hl4aQRGNZ+la8ziJQP0RZB9FaILJOEdu9VyojiqXo9+39wWUL
+         OdXLUzJ3plYukGjUa1nx9Ny39V1APZidrBVRttGkENNSMQV0aYPbsIpjl2INfI4wjF0K
+         kE9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Tue, 13 Feb 2018 00:58:49 -0800
+Date: Sun, 11 Feb 2018 04:09:54 -0800
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for David Woodhouse <tipbot@zytor.com>
-Message-ID: <tip-928a4c39484281f8ca366f53a1db79330d058401@git.kernel.org>
-Cc: bp@alien8.de, dwmw@amazon.co.uk, dave.hansen@linux.intel.com,
-        arjan@linux.intel.com, sironi@amazon.de, torvalds@linux-foundation.org,
-        dan.j.williams@intel.com, peterz@infradead.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, gregkh@linuxfoundation.org, luto@kernel.org,
-        jpoimboe@redhat.com, dwmw2@infradead.org
-Reply-To: bp@alien8.de, dwmw@amazon.co.uk, dave.hansen@linux.intel.com,
-        arjan@linux.intel.com, sironi@amazon.de, torvalds@linux-foundation.org,
-        dan.j.williams@intel.com, peterz@infradead.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, gregkh@linuxfoundation.org, luto@kernel.org,
-        jpoimboe@redhat.com, dwmw2@infradead.org
+Message-ID: <tip-33f1e899478efb7c77b2b833e7edee1203a24a48@git.kernel.org>
+Cc: gregkh@linuxfoundation.org, dwmw@amazon.co.uk, hpa@zytor.com,
+        peterz@infradead.org, luto@kernel.org, arjan@linux.intel.com,
+        dwmw2@infradead.org, sironi@amazon.de, jpoimboe@redhat.com,
+        torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        dan.j.williams@intel.com, bp@alien8.de
+Reply-To: torvalds@linux-foundation.org, jpoimboe@redhat.com,
+        dave.hansen@linux.intel.com, tglx@linutronix.de,
+        dan.j.williams@intel.com, bp@alien8.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com,
+        dwmw@amazon.co.uk, gregkh@linuxfoundation.org, sironi@amazon.de,
+        luto@kernel.org, arjan@linux.intel.com, dwmw2@infradead.org
 In-Reply-To: <1518305967-31356-4-git-send-email-dwmw@amazon.co.uk>
 References: <1518305967-31356-4-git-send-email-dwmw@amazon.co.uk>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] KVM/x86: Reduce retpoline performance impact in
  slot_handle_level_range(), by always inlining iterator helper methods
-Git-Commit-ID: 928a4c39484281f8ca366f53a1db79330d058401
+Git-Commit-ID: 33f1e899478efb7c77b2b833e7edee1203a24a48
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,16 +56,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592160357806412136?=
-X-GMAIL-MSGID: =?utf-8?q?1592276617998546461?=
+X-GMAIL-MSGID: =?utf-8?q?1592160357806412136?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  928a4c39484281f8ca366f53a1db79330d058401
-Gitweb:     https://git.kernel.org/tip/928a4c39484281f8ca366f53a1db79330d058401
+Commit-ID:  33f1e899478efb7c77b2b833e7edee1203a24a48
+Gitweb:     https://git.kernel.org/tip/33f1e899478efb7c77b2b833e7edee1203a24a48
 Author:     David Woodhouse <dwmw@amazon.co.uk>
 AuthorDate: Sat, 10 Feb 2018 23:39:24 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 08:59:45 +0100
+CommitDate: Sun, 11 Feb 2018 11:24:15 +0100
 
 KVM/x86: Reduce retpoline performance impact in slot_handle_level_range(), by always inlining iterator helper methods
 
@@ -85,7 +85,6 @@ Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Tested-by: Filippo Sironi <sironi@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Reviewed-by: Filippo Sironi <sironi@amazon.de>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -101,6 +100,7 @@ Cc: dave.hansen@intel.com
 Cc: jmattson@google.com
 Cc: karahmed@amazon.de
 Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
 Cc: rkrcmar@redhat.com
 Link: http://lkml.kernel.org/r/1518305967-31356-4-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
