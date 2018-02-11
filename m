@@ -1,91 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753338AbeBKLvy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 06:51:54 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38302 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753230AbeBKLvx (ORCPT
+        id S1753303AbeBKL4f (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 06:56:35 -0500
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:38973 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753045AbeBKL4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 06:51:53 -0500
-X-Google-Smtp-Source: AH8x227/4jaxgrhqGe5RoWYyLbhcT+XA4qbdp0tWDldSyecqQXRM6VNrN0Nd/ARrKcK/Bl1ERP4ddg==
-Date: Sun, 11 Feb 2018 12:51:48 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>, linux-kernel@vger.kernel.org,
-        stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v2] tools/memory-model: Make compat with herd7 7.47 ("-"
- -> "_")
-Message-ID: <20180211115148.iylaqk3f53f2vgf4@gmail.com>
-References: <20180209141832.GA17505@linux.vnet.ibm.com>
- <df87e89b-7fbe-37a7-42cb-62df74591df4@gmail.com>
- <a788e08d-eccb-0aec-6aa5-944e5321e5c6@gmail.com>
- <20180210010703.GE3617@linux.vnet.ibm.com>
+        Sun, 11 Feb 2018 06:56:33 -0500
+X-Google-Smtp-Source: AH8x22710yFi3r9ID8s+Tjb6Dxpw/ZgPFrQWvMT6F0btaJRPjI3UFjQKUyk0gmT8+qa704oaa8IqUtJgJKyQzekrYaw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180210010703.GE3617@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CALMp9eR0gaYuYbxKs6oWFJj+ciCtHtU+pnF4pLHmbdf2wnUuPw@mail.gmail.com>
+References: <1517828686-29070-1-git-send-email-wanpengli@tencent.com>
+ <CALMp9eQNB+2KLAR2Tv+By2oTthRLvAQMmJiEs61kFNrZDct3_g@mail.gmail.com>
+ <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
+ <CANRm+Cx_KVftOfeGWjqn_1P=j8R-NsNcH7w+pA9gCouM_4FDRw@mail.gmail.com>
+ <CALMp9eRHzmU3Kfr0cxhy2Hrr-RybnjrsKHByoV27TdYffuuC3w@mail.gmail.com>
+ <CANRm+CyqV6s6etBAveNTG2WjfMZrfuuN+HpF9Ub1ex=JjyA1yw@mail.gmail.com>
+ <CALMp9eQ+wJyxQfru1j8i6CmBzvsYEPrK2wx94JFZ0M3rWSV0+g@mail.gmail.com>
+ <CANRm+Cx9vBGNgk0Gfc=tNVR49hxwexD7U-NmtBadXy0AadA1fg@mail.gmail.com> <CALMp9eR0gaYuYbxKs6oWFJj+ciCtHtU+pnF4pLHmbdf2wnUuPw@mail.gmail.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Sun, 11 Feb 2018 19:56:32 +0800
+Message-ID: <CANRm+CwsT_sL0kbO9ZKW4HJdmRw9sSKpwZAoOjpWBeWXZ-Q7-g@mail.gmail.com>
+Subject: Re: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
+To: Jim Mattson <jmattson@google.com>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-02-08 23:29 GMT+08:00 Jim Mattson <jmattson@google.com>:
+> Consider the following scenario:
+>
+> L1 has never successfully executed VMLAUNCH. It has written 0 to
+> vmcs12's host CR3 field using VMWRITE, but the current host CR3 value
 
-* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+Writes 0 to cr3 can't be detected during vmentry checks by hardware.
 
-> On Sat, Feb 10, 2018 at 08:46:25AM +0900, Akira Yokosawa wrote:
-> > >From 7c1f497a9a51e8db1a94c8a7ef0b74b235aaab88 Mon Sep 17 00:00:00 2001
-> > From: Akira Yokosawa <akiyks@gmail.com>
-> > Date: Fri, 9 Feb 2018 04:51:05 -0800
-> > Subject: [PATCH v2] tools/memory-model: Make compat with herd7 7.47 ("-" -> "_")
-> > 
-> > As of herd7 7.47, these '-'s are not permitted and end up in
-> > errors such as:
-> > 
-> >     File "./linux-kernel.def", line 44, characters 29-30:
-> >     unexpected '-' (in macros)
-> > 
-> > Partial revert of commit 2d5fba7782d6 ("linux-kernel*: Make RCU
-> > identifiers match ASPLOS paper") in the repository at
-> > https://github.com/aparri/memory-model can restore the compatibility
-> > with herd7 7.47.
-> > 
-> > Reported-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> > Suggested-by: Andrea Parri <parri.andrea@gmail.com>
-> > Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
-> > ---
-> > Paul,
-> > 
-> > FWIW, this is a squashed version relative to patch 07/10 in the RFC series.
-> 
-> Thank you, Akira!
-> 
-> I am going to hold off on this for a bit to see if we can instead get
-> a new release of herd7, but if we can't. this might well be a very good
-> way to go.
-
-I'm wondering:
-
-> >  // RCU
-> > -rcu_read_lock() { __fence{rcu-lock}; }
-> > -rcu_read_unlock() { __fence{rcu-unlock};}
-> > -synchronize_rcu() { __fence{sync-rcu}; }
-> > -synchronize_rcu_expedited() { __fence{sync-rcu}; }
-> > +rcu_read_lock() { __fence{rcu_lock}; }
-> > +rcu_read_unlock() { __fence{rcu_unlock};}
-> > +synchronize_rcu() { __fence{sync_rcu}; }
-> > +synchronize_rcu_expedited() { __fence{sync_rcu}; }
-
-What's the point of using '-' instead of '_'? In a program language syntax 
-environment it's easy to confuse it with a '-' operator, and it also looks 
-slightly sloppy and inconsistent if we sometimes have '_' and sometimes '-'.
-
-If it used on purpose, to separate namespaces from kernel internal API names,
-then that's rather obscure IMHO and then I'd rather suggest proper prefixes 
-instead.
-
-Thanks,
-
-	Ingo
+> is actually 3e7000. It has written some illegal control field that the
+> L0 KVM doesn't check itself, but defers to the hardware checks on
+> vmcs02 instead. So, when L1 tries to execute VMLAUNCH, L0 follows this
+> path for "VM-entry to vmcs02 failed due to invalid control field(s)."
+> Your change would set CR3 to 0, which is incorrect. CR3 should
+> actually be set to 3e7000. Now, if L0 is sane and using EPT, then it
+> can find the correct L1 CR3 value in vmcs01's Guest CR3 field, but if
+> for some reason L0 is using shadow paging to execute L1, that won't
+> work. Similarly, the correct L1 CR4 value should be in vmcs01's CR4
+> read shadow field.
+>
+> You can't just assume that L1 has written values to the vmcs12 host
+> fields that actually match the current host values. There is nothing
+> in the architecture that would require this behavior.
+>
+> On Wed, Feb 7, 2018 at 10:22 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
+>> 2018-02-08 0:57 GMT+08:00 Jim Mattson <jmattson@google.com>:
+>>> vmcs12->host_cr[34] does not contain the up-to-date values when L1 is
+>>> running. L1 can vmwrite any values there. We know at this point that
+>>
+>> It will incur a vmexit to emulate L1 vmwrites vmcs12->host_cr[34] even
+>> if vmcs shadow is enabled since host_cr[34] is not shadowed in the
+>> bitmap, why it is not up-to-date when L1 is running?
+>>
+>> Regards,
+>> Wanpeng Li
+>>
+>>> they are legal (because we checked them), but that's about it. If the
+>>> VMLAUNCH/VMRESUME of vmcs12 fails for "invalid control field," there
+>>> is no VM-exit from L2 to L1, and these fields are not loaded. Instead,
+>>> execution just falls through to the next instruction with VMFailValid
+>>> semantics.
+>>>
+>>> On Wed, Feb 7, 2018 at 12:31 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+>>>> 2018-02-07 0:58 GMT+08:00 Jim Mattson <jmattson@google.com>:
+>>>>> On Mon, Feb 5, 2018 at 4:57 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
+>>>>>
+>>>>>> This is effective one, what I restore in this patch is
+>>>>>> achitectural/guest visible.
+>>>>>
+>>>>> This patch doesn't "restore" the guest visible CR4 to its value at the
+>>>>> time of VMLAUNCH/VMRESUME. It loads a new CR4 value from the vmcs12.
+>>>>> That behavior is incorrect.
+>>>>
+>>>> You have another pointing out about this.
+>>>> https://lkml.org/lkml/2018/2/5/518 vmcs12->host_cr3/host_cr4 has the
+>>>> up-to-date value when L1 is running, it is still up-to-date after
+>>>> vmexit due to L1 executes VMLAUNCH/VMRESUME, I think the value stays
+>>>> the same before L0 emulates the VMLAUNCH/VMRESUME, according to below
+>>>> comments, why vmcs12->host_cr3/cr4 is not the value which we should
+>>>> restore?
+>>>>
+>>>> * After an early L2 VM-entry failure, we're now back
+>>>> * in L1 which thinks it just finished a VMLAUNCH or
+>>>> * VMRESUME instruction
+>>>>
+>>>> Regards,
+>>>> Wanpeng Li
