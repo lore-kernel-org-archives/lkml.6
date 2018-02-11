@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518325260-2-13554576768899484454
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325253-2-15947679936219747540
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES da,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325260; b=PaAfpytC9S58DucejAf176EVvEHluEwaOAvmE420f05Gimf
-    Qt2iZt3ecJaLKAB1Ep80BbHz0EDpjxGfNHDM6SAyaBzA2PqArJLZTJLlEm0GQSdW
-    cp9SyTtooH8O5FkKM1bq+7EkaRuP3ONy7m+xAflOzMz2B3VDJCLuXgC719nscA1F
-    m1K1jCVF6pPyjBAFWeto+31iclOmjtDPeiGjm/FA3JRYlXAgOfdW0DUbPsZTi8Zt
-    6ZJHGf5EfoRSe4N82bOzE/jo/FcygkmWQwrRdTlZEiOTJqQ3QYkfwcLSLZh5xIpi
-    x92vPeAlLl/pfvJeCNgcV1P0gxs9keTzNi5zeKQ==
+    t=1518325253; b=DLxCeGKaOPrrl+hGvetdKgwP6IOCosSQ1QPxrtK1hIid4Dc
+    LJioUHbxuWE+crlvig109/7FgMXv8tHynWKuWM81hL/l7+GBMcRlL0hlM+upLQU5
+    N2du15NcV5C4DzjJh7S+V58PfWnKii9XGYk+nhEWjRo1EJdaMw0gY8E2rMs6kWTn
+    GVBwfN2oJZr1icrAhL69lfYU6wh3I/CbQSM9LdjLQdcMFgdk+VFr8MyKeNWlYHuP
+    bUPgPdVUcsXBa5b5kWyZkCpW7c0PXA4JPxApvWniT5WE2i2KW65l/OAw9L95pKwI
+    ArzGHigqULhmpLtCX2l/bU3OsTdQ9hNbcsZt9vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325260; bh=N2hWsmaWt5i2XUKjeak
-    +V4kJciNxI37NRxQGgBCu9WQ=; b=ejbHd7Ys1r43zxbG8OBpnIZ0VLTV78s9Ps0
-    AmXWV8p98RcvKovm3nS32AO85Yppag5U+bDkOe/cSkU8/IgjeLGxpwculY1uY+sg
-    NSv3tt7Kbep8T10TmDIyxiGmujAcuHJFEplnQ6TNACVGs+K3nYVZXbZlCWFuHn+j
-    MmzBofzH034I10afT6yeIG4dTRdR+G7348w3oLF0VHw6xYBXeGS2nObvpY5+uoyL
-    IB3ad6aDuNJckmimmdTGufZVEQNjJA7fxZpO/2UqXYdx4WJLoqyAAq9RYIm7qdoD
-    /77TNndIwwBqT6BWf7GG2hMh0yil/L1rUz71AY61l9z1G+qp4zw==
+    :sender:list-id; s=arctest; t=1518325253; bh=N0oWIh4RwVjyJDz31tg
+    6Oi6x20BSUcn8+eTfguRHb48=; b=jgSSPh5ptLRCheBoUfXYGNVkroBzzXbHAjI
+    CI1VUmLvm6xDqRuvQBQPj64Fbr1gU7OO+klbhS/ycgiXKMoKiVTWSh75RplFphfj
+    JFqs0su2ist8VQsQDwejfPw5Pnk7SfgpwQjFjOMy0sFN9vdEHbtc9qxFK/7kMPX2
+    0LJLd+RJ+IoKo+1/LQckRhSNOCvGlmV1cSemw2zEdsmPSe1l/PZU+5Hrx+/AcIG3
+    D5nKnEtZ8KJd6m9AzKmZe+Rc5l1ebKJIcib670EDO5xO7DAQJPMpERVWBLg/XjLm
+    Eqeqw1EascAmNW1sDrvHIbwkvAVO4tqO/5n/Qe54LygRPyFOM0A==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752780AbeBKE6s (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:58:48 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41687 "EHLO
+        id S1753789AbeBKE6t (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:58:49 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41684 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752790AbeBKEd4 (ORCPT
+        by vger.kernel.org with ESMTP id S1752786AbeBKEd4 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:56 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Juerg Haefliger" <juerg.haefliger@canonical.com>
+CC: akpm@linux-foundation.org, "Sean Young" <sean@mess.org>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.292484135@decadent.org.uk>
+Message-ID: <lsq.1518323471.540959696@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 132/136] Revert "x86: kvmclock: Disable use from
- vDSO if KPTI is enabled"
+Subject: [PATCH 3.16 018/136] media: rc: check for integer overflow
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,46 +79,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Juerg Haefliger <juerg.haefliger@canonical.com>
+From: Sean Young <sean@mess.org>
 
-This reverts commit abe3029e4febfa18e4a9562a792465182b3992a0.
+commit 3e45067f94bbd61dec0619b1c32744eb0de480c8 upstream.
 
-Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
+The ioctl LIRC_SET_REC_TIMEOUT would set a timeout of 704ns if called
+with a timeout of 4294968us.
+
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/kvmclock.c | 5 -----
- arch/x86/mm/kaiser.c       | 2 +-
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ drivers/media/rc/ir-lirc-codec.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -24,7 +24,6 @@
- #include <linux/percpu.h>
- #include <linux/hardirq.h>
- #include <linux/memblock.h>
--#include <linux/kaiser.h>
+--- a/drivers/media/rc/ir-lirc-codec.c
++++ b/drivers/media/rc/ir-lirc-codec.c
+@@ -289,11 +289,14 @@ static long ir_lirc_ioctl(struct file *f
+ 		if (!dev->max_timeout)
+ 			return -ENOSYS;
  
- #include <asm/x86_init.h>
- #include <asm/reboot.h>
-@@ -287,10 +286,6 @@ int __init kvm_setup_vsyscall_timeinfo(v
- 	if (!hv_clock)
- 		return 0;
++		/* Check for multiply overflow */
++		if (val > U32_MAX / 1000)
++			return -EINVAL;
++
+ 		tmp = val * 1000;
  
--	/* FIXME: Need to add pvclock pages to user-space page tables */
--	if (kaiser_enabled)
--		return 0;
--
- 	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-		if (tmp < dev->min_timeout ||
+-		    tmp > dev->max_timeout)
+-				return -EINVAL;
++		if (tmp < dev->min_timeout || tmp > dev->max_timeout)
++			return -EINVAL;
  
- 	preempt_disable();
---- a/arch/x86/mm/kaiser.c
-+++ b/arch/x86/mm/kaiser.c
-@@ -322,7 +322,7 @@ silent_disable:
-  */
- void __init kaiser_init(void)
- {
--	int cpu, idx;
-+	int cpu;
- 
- 	if (!kaiser_enabled)
- 		return;
+ 		dev->timeout = tmp;
+ 		break;
