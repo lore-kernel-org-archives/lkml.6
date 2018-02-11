@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518323926-2-12868227178871486095
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518323915-2-9431997188557734126
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518323926; b=evIi4LttjFbBvx8A6N/LN+HRtGm+HjE7ddPVStP9NKDL1+5
-    k1A49dkqnQxS5wnQAvWzi4ihhj515l0GG4YUqBj1hIPs6ZFjJnCyeQWZupUGmUxt
-    WcLrrC4kEx6hpoAbGrbDTkYIUfhALZWL981X5tHtpM9MrAev/i9Foc1jVBPIHFUM
-    u0vOixynxGQSABy8nj4ZYAygJoOGEmtMUYVSVnqcDdWnR3mpj7p6LyO2Abxl8Vsn
-    4OOXMwT89txygEgE2k8VDsPk79fmsaYnUAVYCTyaRoj4RcqfKkoqrdV8HcO4/Y/h
-    xuSuAUMU/aH6FvvAMJaOArISW3wGsqygoPFJTIQ==
+    t=1518323914; b=fJehHTpCzUbsjVut+A1jMXN4FIFkkLgg2T2zjgGKxUIv7ei
+    mGlsFL+c01jJG9EbHKqqPVxD0bLAqT1coRHSxzb14WnzGund8CBn++b2tCH/HvgU
+    UfjbqZzYL0MdnEY5Y+TODkzrt0bMSHYa39KknQbKaz5KhmpX6Z0P/XntbXaDhzyQ
+    SYi4B5Y0gg2prb1r+w27n2BavPiUb06ps/jse5Ut4laFkef92bS+I6eE6TZ+yuoR
+    wJVOraa41inW5n9o/BlFj/gf3JbH46AGWtAKwm5LeU1oGaMGYp6/H423BOww2VfW
+    eIMRuJLmr9FaM7ec9Y39cSJCQErNmnYGwLr4pRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518323926; bh=yXsAdB8RSdcXpgP+Npe
-    c5oi4qZuA+9p7b8wbBIBfXFI=; b=rbqJ1YCExKnbDHZSrl0JGnezYWcQfJ/IhDw
-    Qsvg9lDvBl3mCZodrJfkn/ioPrlJaTpIHOABAv8Tojbj/5w83AHTalDKHi5gWEvX
-    F+KUPSkQ/7bSA9wPQz5RajPkdAryn0aH5T5Cis1RY0lSq+CuwZx32ZMPRFuUOq6X
-    0ix+NCyXHon8R1loDjsA5FX8QEMjddA5zqkkrn3xfJbKZyFfDFj37R1dROAteEQf
-    gwklKP0RJ8W/zjjzYANcqf+ts2y/H4t3WLI0umdLx4GZ+jHfeC0TvqvVO+j+BYxN
-    hj0jj1cX9kzVyPXQR8E+OY3WCleTxwUNVNj9/nhgcB/4lVb3Srw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518323914; bh=wF0dcNo0P+fCmCZR6Lg
+    sdkHRePz+Xv0JRflWSHXw+hM=; b=ErJEB9Aj78GL9cxygIsueZiNm2rcxS5mnLy
+    jhPkVrLBXZSTW3DZNL42o/PJjEjQOjBZR1eB9BbVkhB4rp9t3qvpq8OYIb1OnKDD
+    KFXJ6QrALSVtSgFj4VvUSsufvcDgeGlc8QVPG13DkNRDFN3NrWMZ5tDJXBRnU1/M
+    eoqv0fuHKDlb8YyAu3ZlQx5fDZ0LQ44Nzx8jXSjp6NCt29dJ+skADwG32wZRHH3j
+    Pt8KfSEu3AddlgEZP4ljpiO9Q4hSpGd+Zcgc/1imF4j52txP/uchHH1N1TU8GUn/
+    BZGmLSgnjujAJHk+Dj0zgwgYLzH7iXSU4kf9tRZOcyfO85KtUYQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753163AbeBKEi0 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:38:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41730 "EHLO
+        id S1753137AbeBKEiZ (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:38:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41736 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752967AbeBKEeL (ORCPT
+        by vger.kernel.org with ESMTP id S1752969AbeBKEeL (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:11 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,14 +60,12 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Markus Elfring" <elfring@users.sourceforge.net>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>
+        "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+        "Brent Taylor" <motobud@gmail.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.830968840@decadent.org.uk>
+Message-ID: <lsq.1518323471.383456241@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 042/136] media: omap_vout: Fix a possible null
- pointer dereference in omap_vout_open()
+Subject: [PATCH 3.16 043/136] mtd: nand: Fix writing mtdoops to nand flash.
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,36 +80,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+From: Brent Taylor <motobud@gmail.com>
 
-commit bfba2b3e21b9426c0f9aca00f3cad8631b2da170 upstream.
+commit 30863e38ebeb500a31cecee8096fb5002677dd9b upstream.
 
-Move a debug message so that a null pointer access can not happen
-for the variable "vout" in this function.
+When mtdoops calls mtd_panic_write(), it eventually calls
+panic_nand_write() in nand_base.c. In order to properly wait for the
+nand chip to be ready in panic_nand_wait(), the chip must first be
+selected.
 
-Fixes: 5c7ab6348e7b3fcca2b8ee548306c774472971e2 ("V4L/DVB: V4L2: Add support for OMAP2/3 V4L2 display driver on top of DSS2")
+When using the atmel nand flash controller, a panic would occur due to
+a NULL pointer exception.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: 2af7c6539931 ("mtd: Add panic_write for NAND flashes")
+Signed-off-by: Brent Taylor <motobud@gmail.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/platform/omap/omap_vout.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/nand_base.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/media/platform/omap/omap_vout.c
-+++ b/drivers/media/platform/omap/omap_vout.c
-@@ -1017,11 +1017,12 @@ static int omap_vout_open(struct file *f
- 	struct omap_vout_device *vout = NULL;
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -2466,15 +2466,18 @@ static int panic_nand_write(struct mtd_i
+ 			    size_t *retlen, const uint8_t *buf)
+ {
+ 	struct nand_chip *chip = mtd->priv;
++	int chipnr = (int)(to >> chip->chip_shift);
+ 	struct mtd_oob_ops ops;
+ 	int ret;
  
- 	vout = video_drvdata(file);
--	v4l2_dbg(1, debug, &vout->vid_dev->v4l2_dev, "Entering %s\n", __func__);
+-	/* Wait for the device to get ready */
+-	panic_nand_wait(mtd, chip, 400);
+-
+ 	/* Grab the device */
+ 	panic_nand_get_device(chip, mtd, FL_WRITING);
  
- 	if (vout == NULL)
- 		return -ENODEV;
- 
-+	v4l2_dbg(1, debug, &vout->vid_dev->v4l2_dev, "Entering %s\n", __func__);
++	chip->select_chip(mtd, chipnr);
 +
- 	/* for now, we only support single open */
- 	if (vout->opened)
- 		return -EBUSY;
++	/* Wait for the device to get ready */
++	panic_nand_wait(mtd, chip, 400);
++
+ 	ops.len = len;
+ 	ops.datbuf = (uint8_t *)buf;
+ 	ops.oobbuf = NULL;
