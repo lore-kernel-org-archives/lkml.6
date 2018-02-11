@@ -1,123 +1,122 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-294332-1519309484-2-9559481770346485871
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519309483; b=H4PsAogtJNCizArFhS++UtH98HlyimO6lIQKzo6d0aZZDca
-    1zZEvSOgtAoyJ0MMJZU5UYj86/m1W6IOH7KPFxSAphdxVBtZ/Puda9GzF+iiE3LD
-    nAMlNcchjidNUt8Kf3OIrqy/NrCQCaL1uO1Tqdnr1/6XyUlOcecpvbuMuxEQ1oS3
-    J/cuyUjK7ONuGpD5ARbSzjS6x+5DF5Q+jkXIXj/5CpD02lZEWvQNIrnajVixCJhg
-    jJhVzoY1rX2MRwNfG05dtjoN8I5FARPLyMY6eXmdkI6bTo8OESr3bQU1nuXuDYQA
-    dFg2/LU5WwfHoeRJArSXwT+BbDCOTgM0h3ecRUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519309483; bh=Wh8QljMeAjFdEXTPy7ohXGq00a0zQ29xSWkC2pVDqaI=; b=I
-    NJHSkrh5ekAeI/AMfba4qHAIB34V8RS1XfeqP4S9gizzlgNX6XpFnJWtkP5g7DjO
-    Fgm3VP5c52rbuWn5idBBkh1cYOgR/JjnoBW8D2HoOWuB1bbyOwij8tLz2up+2O4O
-    bJsZ3G+4LWbR/F2TkUH+pd3cs1yMQ8S6L9PCyPMLBipoFfvRBdL00E8hFtorOcSM
-    VvU21YZlkyupRew5jH889mhqNWasatlx9dBthe+fq6MhHq96zmUFtPR9LjkM9ID9
-    vIcBnO+IgEFNi8AQo7a+oXDDbGY7YV29aPus6lxwm8DFtOJ70bci9lZWfNqmzewm
-    OT0LQmc3OQr8WaOz8jzJA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=EM0jsAKB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JycEOcyR;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=EM0jsAKB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JycEOcyR;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932819AbeBVOX1 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Feb 2018 09:23:27 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36383 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932726AbeBVOXW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 22 Feb 2018 09:23:22 -0500
-X-Google-Smtp-Source: AH8x225D3UhVZ9RGWWA8P1JmpwKebbY1TXCTNAkqJ4uOQoZhdBxgedMVVSBlVicI607hPNnTzWPJ6A==
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lukas Auer <lukas.auer@aisec.fraunhofer.de>,
-        stable@vger.kernel.org
-Subject: [PATCH v4 1/4] crypto: caam - Fix null dereference at error path
-Date: Thu, 22 Feb 2018 14:22:47 +0000
-Message-Id: <20180222142250.31348-2-rui.silva@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180222142250.31348-1-rui.silva@linaro.org>
-References: <20180222142250.31348-1-rui.silva@linaro.org>
+Return-Path: <kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x226JgW5/kRfRtSw1q8iGC2qDejSq6oPZQW90cz9uwiBjYXEo9FCye1qhk33I5g6O2YQS03Ae
+ARC-Seal: i=1; a=rsa-sha256; t=1518319211; cv=none;
+        d=google.com; s=arc-20160816;
+        b=AUa9KvgjBWEdooyz3FjEwH9FVcPXQPZvTa+H8RtoJSRRIeinrQUhT36Y4Peq1goTMr
+         BlM9U66SaW3JvRTFH/O5w1jkOIJY5wz2voxeVoXAIE+gQefXHyonAS4kZ23gBU7BvtC8
+         w7+cVX7MPtQY9Q+Ee6JuqUkbsh6xqIqAIjHTws+BMnm4X/BglLL1FjUv7yp7e2bb1ZI7
+         Em2e/xBIgNAPguFXjKD9tgJ8BMhBLzbaIbAJahsKMUzIaw1St9Ytv2ZNoJD5Oo135V6O
+         4h3k6G6/HNGQO3COSj+FEPjbcr8wXxI5ZXb1Qnlm42z23IT/kHEYAN+YvEJFjwJOw8Mb
+         MjFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=7zMj44DR+KVPrh4isZiUKaD/8f3BK/d2CKcmY2YwjNU=;
+        b=Oxw0akVuE5cSqAz1OmpwcW+1uMjPBIXQicCYUVaQWrcQjG/cTYuLRizi4e4m2ev5zt
+         Da4L2yCOUUMKJ7AOx75Pkj1RMQCTRALq3tD8zyv10cpGkPoQW+/S7OmetcAwoByL9y13
+         Ztmlu7zvZMUyJ11Pqo7j/aY+AKVmNwuQ5LOhW3eyWGO6mcw27tzmpgXcJii9fVoybJC4
+         2+9O4sJzeCfw2JqbCM7wA7TrENVX2Tcvko1DKulzuNS9TqV4mwfdASh/b5txrk6uE0FQ
+         vLM/w+ketIowjzkMj8v3ffDjou4mKEG+QjZ/kwLl0E6pKmvui/bC1JfeyqOxlaGNKtdD
+         Bo3A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Igor Stoppa <igor.stoppa@huawei.com>
+To: <willy@infradead.org>, <rdunlap@infradead.org>, <corbet@lwn.net>,
+	<keescook@chromium.org>, <mhocko@kernel.org>, <labbott@redhat.com>,
+	<jglisse@redhat.com>, <hch@infradead.org>
+CC: <cl@linux.com>, <linux-security-module@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [RFC PATCH v15 0/6] mm: security: ro protection for dynamic data
+Date: Sun, 11 Feb 2018 05:19:14 +0200
+Message-ID: <20180211031920.3424-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.122.225.51]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592073085229547021?=
+X-GMAIL-MSGID: =?utf-8?q?1592073085229547021?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-caam_remove already removes the debugfs entry, so we need to remove the one
-immediately before calling caam_remove.
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-This fix a NULL dereference at error paths is caam_probe fail.
+The memory is managed in pools: when a memory pool is turned into R/O,
+all the memory that is part of it, will become R/O.
 
-Fixes: 67c2315def06 ("crypto: caam - add Queue Interface (QI) backend support")
+A R/O pool can be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
-Tested-by: Ryan Harkin <ryan.harkin@linaro.org>
-Cc: "Horia Geantă" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
-Cc: <stable@vger.kernel.org> # 4.12+
-Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
----
- drivers/crypto/caam/ctrl.c | 3 ---
- 1 file changed, 3 deletions(-)
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
 
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index e843cf410373..361e750f9cba 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -815,9 +815,6 @@ static int caam_probe(struct platform_device *pdev)
- 	return 0;
- 
- caam_remove:
--#ifdef CONFIG_DEBUG_FS
--	debugfs_remove_recursive(ctrlpriv->dfs_root);
--#endif
- 	caam_remove(pdev);
- 	return ret;
- 
+However the data might need to be released, for example as part of module
+unloading.
+To do this, the memory must first be freed, then the pool can be destroyed.
+
+An example is provided, in the form of self-testing.
+
+Changes since v14:
+[http://www.openwall.com/lists/kernel-hardening/2018/02/04/2]
+
+- fix various warnings from sparse
+- multiline comments
+- fix naming of headers guards
+- fix compilation of individual patches, for bisect
+- split genalloc documentation about bitmap for allocation
+- fix headers to match kerneldoc format for "Return:" field
+- fix variable naming according to coding guidelines
+- fix wrong default value for pmalloc Kconfig option
+- refreshed integration of pmalloc with hardened usercopy
+- removed unnecessary include that was causing compilation failures
+- changed license of pmalloc documentation from GPL 2.0 to CC-BY-SA-4.0
+
+Igor Stoppa (6):
+  genalloc: track beginning of allocations
+  genalloc: selftest
+  struct page: add field for vm_struct
+  Protectable Memory
+  Pmalloc: self-test
+  Documentation for Pmalloc
+
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 114 ++++++++
+ include/linux/genalloc-selftest.h  |  26 ++
+ include/linux/genalloc.h           |   7 +-
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 222 +++++++++++++++
+ include/linux/vmalloc.h            |   1 +
+ init/main.c                        |   2 +
+ lib/Kconfig                        |  15 +
+ lib/Makefile                       |   1 +
+ lib/genalloc-selftest.c            | 400 ++++++++++++++++++++++++++
+ lib/genalloc.c                     | 554 +++++++++++++++++++++++++++----------
+ mm/Kconfig                         |  15 +
+ mm/Makefile                        |   2 +
+ mm/pmalloc-selftest.c              |  63 +++++
+ mm/pmalloc-selftest.h              |  24 ++
+ mm/pmalloc.c                       | 499 +++++++++++++++++++++++++++++++++
+ mm/usercopy.c                      |  33 +++
+ mm/vmalloc.c                       |  18 +-
+ 19 files changed, 1852 insertions(+), 146 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/genalloc-selftest.h
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 lib/genalloc-selftest.c
+ create mode 100644 mm/pmalloc-selftest.c
+ create mode 100644 mm/pmalloc-selftest.h
+ create mode 100644 mm/pmalloc.c
+
 -- 
-2.16.2
+2.14.1
