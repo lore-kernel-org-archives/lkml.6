@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518323898-2-11705836542944422914
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518323863-2-2148869159430683175
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518323897; b=HX12xv6Mpa/2akoXhQBp23xUL7M9muEoqnrloAVhuHGt0j5
-    oTKCOV5zQLICbz0ZBJbMm4ZWvJ4nBZGyxi3+TvPntIIjWCKnL9lB2pb1lP42LBOJ
-    wymuQ/Tg1nM/Gv/MKhpuWiMudPYAcZ4zBJwUsP5MO4D7cDfAo8B6j0WdqI4l8wLg
-    /1ZGtL7ruGjMsNPuj2SxBOIXRMtcjxbJOG0EI+0XgwqIjY0G5k6hcw7lgtZAQiSm
-    mAZdntmS+AF0tRY3/JaGPMf3aUQoSw3UFYrcnMWbr2rwwgmfcB7dQzA2Jp/g3YKI
-    RI9ca9lusRQfIt6IQR2i4Ml/OU2kw08iIk/dFww==
+    t=1518323863; b=VDyXiCxQWuC7KkWsKjVtFP56hnWDIlt9XKcec9WfHBhr74b
+    RY9boo9XhoygJTZNDwrJWCDBxAlCN8zFyzB5F8cE1o7avO5u9ZhsgcKExwddFM9D
+    mnHpYGeWcvqa+lIKENzUV7DRpNkNesv7iEVQviO6kwbdxXSSQHdc6xx2ac3FyOL2
+    UaURJdOKO6agsF17tUbogHa3voJTeOG533uZya+3FnQ+aMQPPv7F8nNQFq7mOb33
+    AkvF5ElR2CnaeSvQLmaPtT0lCzuzOdNWNorhrcPDs43WMA4n1mb+vF3omDnzVSlS
+    +1/FyeQrsDHHl2hwwiRdWX/nvgfaWVxc1Mzgpzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518323897; bh=tA05e4SYEVLN8dqFqBN
-    5CG8E13Jt0/8OuJcAUonXFds=; b=HbolfJ5BDwN2m0Y4qzeDnb5Cfi9yVqrU58S
-    f4OQxodoL0Mi9E7KF+aJ1GygVPGGAjIkCv9Ize6nhCyfZ2nIQw6W6ts0hBAa+Duf
-    8N9NeQwULzgXc7s7s9MHKcgy8/lwjFwLAKSlDPJNxf1jArtlNwRyabCVWaFhrNVF
-    A/yAxiNeWFagd6+1HvdZ/qAjTIqJQcIRX9iFYzBJ3JnchS6IYyV/dL+U0uj4n+sb
-    fLj7WtxvUsxJAqC4DUXBq+O7kzz5tb6DGm7plilLTPsziQtiH5zoahcqhlIybovV
-    B9THKNSmNgsUbmMSawhoj/NsGa8NJQIVZNhP4KtKw0d8tEdPOyQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518323863; bh=m5cDEkNbIwaRdxJn2yr
+    5Zz2ke7jBXlECgb3Iu8/t548=; b=uBDDI048ebwcUVy06QyQOz8RN3A9PjcqNb0
+    Qxo0jMM/rSTcdk5kDeMqIsDfwANdYqIjduNP3JJffUP1lkqokI8fkZJ29sHcKWHy
+    V5UBJDlaIaJaE4H7q3flKmqVE1Z6tMZTZHrwRgPDbFihVkboLR8UiSyeSDNYGvo4
+    Cuk25cIn7/+ywQyTz9vshhSp4e33SM3Z8hyyPEOOHPg3qQukwpkLBbDTYa4Oq7BM
+    DBML+8JfWITCTkMtZYBy8Tq7/h7fUiKOCHCdf/xE+U7d109PqhXmONlL5f+8INXW
+    I6wamwLN8C9cwzmxqMNukXAsp0sGVkS2gZddgEkwiRnXR6iX+hw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752901AbeBKEho (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:37:44 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41737 "EHLO
+        id S1753205AbeBKEfA (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:35:00 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41781 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752972AbeBKEeL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:11 -0500
+        by vger.kernel.org with ESMTP id S1753008AbeBKEeO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:14 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,12 +60,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "William A. Kennington III" <wak@google.com>,
-        "Michael Ellerman" <mpe@ellerman.id.au>
+        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
+        "Vasily Gorbik" <gor@linux.vnet.ibm.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.19123212@decadent.org.uk>
+Message-ID: <lsq.1518323471.722374926@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 057/136] powerpc/opal: Fix EBUSY bug in acquiring tokens
+Subject: [PATCH 3.16 082/136] s390/disassembler: increase show_code buffer
+ size
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,54 +81,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "William A. Kennington III" <wak@google.com>
+From: Vasily Gorbik <gor@linux.vnet.ibm.com>
 
-commit 71e24d7731a2903b1ae2bba2b2971c654d9c2aa6 upstream.
+commit b192571d1ae375e0bbe0aa3ccfa1a3c3704454b9 upstream.
 
-The current code checks the completion map to look for the first token
-that is complete. In some cases, a completion can come in but the
-token can still be on lease to the caller processing the completion.
-If this completed but unreleased token is the first token found in the
-bitmap by another tasks trying to acquire a token, then the
-__test_and_set_bit call will fail since the token will still be on
-lease. The acquisition will then fail with an EBUSY.
+Current buffer size of 64 is too small. objdump shows that there are
+instructions which would require up to 75 bytes buffer (with current
+formating). 128 bytes "ought to be enough for anybody".
 
-This patch reorganizes the acquisition code to look at the
-opal_async_token_map for an unleased token. If the token has no lease
-it must have no outstanding completions so we should never see an
-EBUSY, unless we have leased out too many tokens. Since
-opal_async_get_token_inrerruptible is protected by a semaphore, we
-will practically never see EBUSY anymore.
+Also replaces 8 spaces with a single tab to reduce the memory footprint.
 
-Fixes: 8d7248232208 ("powerpc/powernv: Infrastructure to support OPAL async completion")
-Signed-off-by: William A. Kennington III <wak@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes the following KASAN finding:
+
+BUG: KASAN: stack-out-of-bounds in number+0x3fe/0x538
+Write of size 1 at addr 000000005a4a75a0 by task bash/1282
+
+CPU: 1 PID: 1282 Comm: bash Not tainted 4.14.0+ #215
+Hardware name: IBM 2964 N96 702 (z/VM 6.4.0)
+Call Trace:
+([<000000000011eeb6>] show_stack+0x56/0x88)
+ [<0000000000e1ce1a>] dump_stack+0x15a/0x1b0
+ [<00000000004e2994>] print_address_description+0xf4/0x288
+ [<00000000004e2cf2>] kasan_report+0x13a/0x230
+ [<0000000000e38ae6>] number+0x3fe/0x538
+ [<0000000000e3dfe4>] vsnprintf+0x194/0x948
+ [<0000000000e3ea42>] sprintf+0xa2/0xb8
+ [<00000000001198dc>] print_insn+0x374/0x500
+ [<0000000000119346>] show_code+0x4ee/0x538
+ [<000000000011f234>] show_registers+0x34c/0x388
+ [<000000000011f2ae>] show_regs+0x3e/0xa8
+ [<000000000011f502>] die+0x1ea/0x2e8
+ [<0000000000138f0e>] do_no_context+0x106/0x168
+ [<0000000000139a1a>] do_protection_exception+0x4da/0x7d0
+ [<0000000000e55914>] pgm_check_handler+0x16c/0x1c0
+ [<000000000090639e>] sysrq_handle_crash+0x46/0x58
+([<0000000000000007>] 0x7)
+ [<00000000009073fa>] __handle_sysrq+0x102/0x218
+ [<0000000000907c06>] write_sysrq_trigger+0xd6/0x100
+ [<000000000061d67a>] proc_reg_write+0xb2/0x128
+ [<0000000000520be6>] __vfs_write+0xee/0x368
+ [<0000000000521222>] vfs_write+0x21a/0x278
+ [<000000000052156a>] SyS_write+0xda/0x178
+ [<0000000000e555cc>] system_call+0xc4/0x270
+
+The buggy address belongs to the page:
+page:000003d1016929c0 count:0 mapcount:0 mapping:          (null) index:0x0
+flags: 0x0()
+raw: 0000000000000000 0000000000000000 0000000000000000 ffffffff00000000
+raw: 0000000000000100 0000000000000200 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ 000000005a4a7480: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
+ 000000005a4a7500: 00 00 00 00 00 00 00 00 f2 f2 f2 f2 00 00 00 00
+>000000005a4a7580: 00 00 00 00 f3 f3 f3 f3 00 00 00 00 00 00 00 00
+                               ^
+ 000000005a4a7600: 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1 f8 f8
+ 000000005a4a7680: f2 f2 f2 f2 f2 f2 f8 f8 f2 f2 f3 f3 f3 f3 00 00
+==================================================================
+
+Signed-off-by: Vasily Gorbik <gor@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/platforms/powernv/opal-async.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/s390/kernel/dis.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/opal-async.c
-+++ b/arch/powerpc/platforms/powernv/opal-async.c
-@@ -38,18 +38,18 @@ int __opal_async_get_token(void)
- 	int token;
- 
- 	spin_lock_irqsave(&opal_async_comp_lock, flags);
--	token = find_first_bit(opal_async_complete_map, opal_max_async_tokens);
-+	token = find_first_zero_bit(opal_async_token_map, opal_max_async_tokens);
- 	if (token >= opal_max_async_tokens) {
- 		token = -EBUSY;
- 		goto out;
+--- a/arch/s390/kernel/dis.c
++++ b/arch/s390/kernel/dis.c
+@@ -1765,7 +1765,7 @@ void show_code(struct pt_regs *regs)
+ {
+ 	char *mode = user_mode(regs) ? "User" : "Krnl";
+ 	unsigned char code[64];
+-	char buffer[64], *ptr;
++	char buffer[128], *ptr;
+ 	mm_segment_t old_fs;
+ 	unsigned long addr;
+ 	int start, end, opsize, hops, i;
+@@ -1828,7 +1828,7 @@ void show_code(struct pt_regs *regs)
+ 		start += opsize;
+ 		printk(buffer);
+ 		ptr = buffer;
+-		ptr += sprintf(ptr, "\n          ");
++		ptr += sprintf(ptr, "\n\t  ");
+ 		hops++;
  	}
- 
--	if (__test_and_set_bit(token, opal_async_token_map)) {
-+	if (!__test_and_clear_bit(token, opal_async_complete_map)) {
- 		token = -EBUSY;
- 		goto out;
- 	}
- 
--	__clear_bit(token, opal_async_complete_map);
-+	__set_bit(token, opal_async_token_map);
- 
- out:
- 	spin_unlock_irqrestore(&opal_async_comp_lock, flags);
+ 	printk("\n");
