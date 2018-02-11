@@ -1,66 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeBKQy0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 11:54:26 -0500
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:39834 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752496AbeBKQyY (ORCPT
+        id S1753559AbeBKReC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 12:34:02 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33818 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752286AbeBKReA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 11:54:24 -0500
-X-Google-Smtp-Source: AH8x225cWtwpUs87xO4Gk0eYTQiQxIynJK14ss7+3ZIY0hQulAO1g36Uu3wooQBXNHr8jDZGGKw0swhhh61fZi7j9GU=
+        Sun, 11 Feb 2018 12:34:00 -0500
+X-Google-Smtp-Source: AH8x227A7IcWleGp4GU2nic7FW8OFw4GQpyPzHKFfSB7uVKfRpbxUas94Ehk+IT+W5Rtyp9R9zwfHQ==
+Date: Sun, 11 Feb 2018 09:33:56 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [v2, 7/7] watchdog: coh901327: make use of timeout-secs provided
+ in devicetree
+Message-ID: <20180211173356.GA18292@roeck-us.net>
+References: <20180210091911.3644-7-marcus.folkesson@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUsyxpHnq_POujjwEVXhJjE5GRLN9GypV+63g1OFmfq=_ZA@mail.gmail.com>
-References: <CA+7wUsyxpHnq_POujjwEVXhJjE5GRLN9GypV+63g1OFmfq=_ZA@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 11 Feb 2018 08:54:02 -0800
-Message-ID: <CAADnVQJnobUCg4ZEkHUgAAMXiw5w1K1DLqo09005mPPgOuLD+g@mail.gmail.com>
-Subject: Re: [kmemleak] unreferenced object 0xcd9c1a80 (size 192):
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        LKML <linux-kernel@vger.kernel.org>, Yonghong Song <yhs@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180210091911.3644-7-marcus.folkesson@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 7:24 AM, Mathieu Malaterre <malat@debian.org> wrote:
-> Alexei,
->
-> Could you please comment on why I am seeing those memleaks being
-> reported on my ppc32 system ? Should they be marked as false positive
-> ?
->
-> System is Mac Mini G4, git/master (4.15.0+), ppc.
->
-> Thanks for your time
->
-> $ dmesg
-> ...
-> [ 1281.504173] kmemleak: 36 new suspected memory leaks (see
-> /sys/kernel/debug/kmemleak)
->
-> Where:
->
-> # cat /sys/kernel/debug/kmemleak
-> unreferenced object 0xdee25000 (size 192):
->   comm "systemd", pid 1, jiffies 4294894348 (age 1438.580s)
->   hex dump (first 32 bytes):
->     c0 56 2f 88 00 00 00 00 00 00 00 0b 00 00 00 0c  .V/.............
->     00 00 00 08 00 00 00 01 00 00 00 01 00 00 00 01  ................
->   backtrace:
->     [<6c69baf5>] trie_alloc+0xb0/0x150
->     [<fa093284>] SyS_bpf+0x288/0x1458
->     [<82182f53>] ret_from_syscall+0x0/0x38
-> unreferenced object 0xdee25900 (size 192):
->   comm "systemd", pid 1, jiffies 4294894540 (age 1437.812s)
->   hex dump (first 32 bytes):
->     c0 56 2f 88 00 00 00 00 00 00 00 0b 00 00 00 08  .V/.............
->     00 00 00 08 00 00 00 01 00 00 00 01 00 00 00 01  ................
->   backtrace:
->     [<6c69baf5>] trie_alloc+0xb0/0x150
->     [<fa093284>] SyS_bpf+0x288/0x1458
->     [<82182f53>] ret_from_syscall+0x0/0x38
+On Sat, Feb 10, 2018 at 10:19:11AM +0100, Marcus Folkesson wrote:
+> watchdog_init_timeout() will allways pick timeout_param since it
+> defaults to a valid timeout.
+> 
+> Following best practice described in
+> Documentation/watchdog/watchdog-kernel-api.txt to make use of
+> the parameter logic.
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
+> 
+> v2:
+> 	- Set .timeout in coh901327_wdt structure declaration.
+> 	- Set .min_timeout to 1 instead of 0. I could not find a datasheet
+> 	  for coh901327, so I'm not sure if 0 is valid. However, 0 seems
+> 		  wrong to me and most driver has 1 as min value. If it should
+> 		  be 0, please let me know and I have to set another initial
+> 		  value for margin.
 
-hmm. looks real. Is there a reproducer?
-Yonghong, lpm map not cleaning after itself?
+Makes sense to me.
+
+> 
+>  drivers/watchdog/coh901327_wdt.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/watchdog/coh901327_wdt.c b/drivers/watchdog/coh901327_wdt.c
+> index 4410337f4f7f..5d8eb9a30879 100644
+> --- a/drivers/watchdog/coh901327_wdt.c
+> +++ b/drivers/watchdog/coh901327_wdt.c
+> @@ -67,7 +67,9 @@
+>  #define U300_WDOG_IFR_WILL_BARK_IRQ_FORCE_ENABLE			0x0001U
+>  
+>  /* Default timeout in seconds = 1 minute */
+> -static unsigned int margin = 60;
+> +#define U300_WDOG_DEFAULT_TIMEOUT					60
+> +
+> +static unsigned int margin;
+
+I just realized that 'margin' instead of the actual timeout is used
+at the end of the probe function to display the selected timeout.
+This will have to change as well (and I'll have to go back to the
+other patches to make sure that this doesn't happen there as well).
+
+Guenter
+
+>  static int irq;
+>  static void __iomem *virtbase;
+>  static struct device *parent;
+> @@ -235,8 +237,9 @@ static struct watchdog_device coh901327_wdt = {
+>  	 * timeout register is max
+>  	 * 0x7FFF = 327670ms ~= 327s.
+>  	 */
+> -	.min_timeout = 0,
+> +	.min_timeout = 1,
+>  	.max_timeout = 327,
+> +	.timeout = U300_WDOG_DEFAULT_TIMEOUT,
+>  };
+>  
+>  static int __exit coh901327_remove(struct platform_device *pdev)
+> @@ -315,9 +318,7 @@ static int __init coh901327_probe(struct platform_device *pdev)
+>  		goto out_no_irq;
+>  	}
+>  
+> -	ret = watchdog_init_timeout(&coh901327_wdt, margin, dev);
+> -	if (ret < 0)
+> -		coh901327_wdt.timeout = 60;
+> +	watchdog_init_timeout(&coh901327_wdt, margin, dev);
+>  
+>  	coh901327_wdt.parent = dev;
+>  	ret = watchdog_register_device(&coh901327_wdt);
