@@ -1,58 +1,28 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431546-1518323662-3-16839670453827975326
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518323662; b=VhUK0W7uScMgF9ZcP6BzSFcSxXitVeKOBzd4CeIRjH+X8ca
-    Favbp9IXlWVM27bFKdrrP1cgnylyxFn4zRqu1ce3E7555rJvZlF2728GtnPEPfOn
-    DJj/JpiZy7ctBfeD+C/Blmv7HahP8CPQsQEh1RlVrglgpcoxuUDREC0lzoLrMBDs
-    6lVHNl3w2OUKm8RWnbJI5oR63Asq1+cLFsPaxU07xySajB/iRnWW71HKb58+g2N7
-    VMt88fpBakyfeSUuUUdXPDgCgln2M8ObgGddMyhPENK5dOzZt1UGNUFhpAXhv0mi
-    Q6MnvZOniA/eOzvAmDXpvGcIpi+DHaQueszNj5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:content-transfer-encoding
-    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518323662; bh=G+Jql89xNjY+T0Z17rY
-    uf5fxmDFM1tZZqMvZ785kIYg=; b=r9gsxWWf110AeR3zMH2eK957AJ5MHNayquW
-    52TCFEDmwTItfp6ZgIEV6waMTEdc+FwaGQ9b8wObJFvt1ox41nQzC2sYA/lDe9Q+
-    7jO3CY8uvHz+9VeOffRQgCaxZbgDuBFJa0zXP5007o6snFAadETlPE1WYsAWLj9u
-    W3jfi/HMJq0NywWdlzy1F/NGuCUVsRFjYtKAbi/QjFCaSJxnswz0Etlhqv8RJg8W
-    T+fseyE/3dV86MdjYcWk8JA+2FNXVM8okfJyrpc3dHJZx+yrDb1QWLXNtnGq6Bpy
-    pGzDUABZWjYItv12SFi/v9CPaeZdqkuCPL/wyWCHeJHSjx90O1w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753024AbeBKEeS (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:34:18 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41664 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752924AbeBKEeG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:06 -0500
+Return-Path: <ben@decadent.org.uk>
+X-Google-Smtp-Source: AH8x224fJgJzKSOB95apRPePFRIZEDP/kxJpZFyjKHC60mtLyArRpHXUuYmoR2gvayd7u1L4XbyP
+ARC-Seal: i=1; a=rsa-sha256; t=1518323646; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GHGvGlCVzI/q6gP7FdQmqSQtQ46D5Pi7qX8uKOxsC2kk8k6wa+hjC2Q8OMX6XMSNmr
+         zbe74/6RWW/jCZ/MdvISZJrqxZzEiWoqaD9b4zo6hRtZnmhrwVIzDHU9OYOkQw8GnSuy
+         5N5Qj9ZfQmW/f1G8ku2OExA69eWOG6ygTSeu0vIFEaKWGreFL9Ry7bBAHsdRwTBselen
+         5Y0RlrBxzdhL01PBEDRSFtUpRH+w5n6g/2lbJ9zdx5liZ6+4TLcP7hd7vz+Yyt0A3vlq
+         T1HznEoVr2D3sHEn2a0vbJ7ptPxUn4DYPKKxTaVXgqIB4tCh5c5bKAI2TbftoA+IdnWA
+         vGAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
+         :content-transfer-encoding:content-disposition
+         :arc-authentication-results;
+        bh=NJLzYC9yaYnxSYQ62gTzM0qCi0Rk4fOSvC6etAKcZDQ=;
+        b=NSSGs95O103KqazADMhHH8YXeEpBp/+70mhK8N2OdwIZA8zGIBqAHPYaVlIPa6FUsV
+         6n94awi7/dC8FhWTai1yXE27FVYr41AxPyGfiFwRBRek7/6EVS8eTt315YWvmyPR/FBu
+         Kbp4OvT/z4zcAPXkuwH1DzjSMGMCjy3nD4qTyyJSYnEd9K5M+X9RqDqxXaNyROkd3ioa
+         ycyHXxA42MHYKwHl6hvA1ylf21wwQwNlhCypGtY74B3G9+c4FgNrHq8B3M8kbMG1T0Kq
+         EGG5oru+UYikjckTyObfeuWIi2lWdCkTj2O0xXUwlEhcF43ihVCyXECzDvEsELW7BFI0
+         lvzQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,19 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Johan Hovold" <johan@kernel.org>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.930109718@decadent.org.uk>
+Message-ID: <lsq.1518323471.485248163@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 023/136] scsi: bfa: integer overflow in debugfs
+Subject: [PATCH 3.16 021/136] USB: serial: metro-usb: stop I/O after
+ failed open
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592077735628688366?=
+X-GMAIL-MSGID: =?utf-8?q?1592077735628688366?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,44 +51,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 3e351275655d3c84dc28abf170def9786db5176d upstream.
+commit 2339536d229df25c71c0900fc619289229bfecf6 upstream.
 
-We could allocate less memory than intended because we do:
+Make sure to kill the interrupt-in URB after a failed open request.
+Apart from saving power (and avoiding stale input after a later
+successful open), this also prevents a NULL-deref in the completion
+handler if the port is manually unbound.
 
-	bfad->regdata = kzalloc(len << 2, GFP_KERNEL);
-
-The shift can overflow leading to a crash.  This is debugfs code so the
-impact is very small.  I fixed the network version of this in March with
-commit 13e2d5187f6b ("bna: integer overflow bug in debugfs").
-
-Fixes: ab2a9ba189e8 ("[SCSI] bfa: add debugfs support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 704577861d5e ("USB: serial: metro-usb: get data from device in Uni-Directional mode.")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/scsi/bfa/bfad_debugfs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/serial/metro-usb.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/bfa/bfad_debugfs.c
-+++ b/drivers/scsi/bfa/bfad_debugfs.c
-@@ -254,7 +254,8 @@ bfad_debugfs_write_regrd(struct file *fi
- 	struct bfad_s *bfad = port->bfad;
- 	struct bfa_s *bfa = &bfad->bfa;
- 	struct bfa_ioc_s *ioc = &bfa->ioc;
--	int addr, len, rc, i;
-+	int addr, rc, i;
-+	u32 len;
- 	u32 *regbuf;
- 	void __iomem *rb, *reg_addr;
- 	unsigned long flags;
-@@ -274,7 +275,7 @@ bfad_debugfs_write_regrd(struct file *fi
+--- a/drivers/usb/serial/metro-usb.c
++++ b/drivers/usb/serial/metro-usb.c
+@@ -217,7 +217,7 @@ static int metrousb_open(struct tty_stru
+ 		dev_err(&port->dev,
+ 			"%s - failed submitting interrupt in urb, error code=%d\n",
+ 			__func__, result);
+-		goto exit;
++		return result;
  	}
  
- 	rc = sscanf(kern_buf, "%x:%x", &addr, &len);
--	if (rc < 2) {
-+	if (rc < 2 || len > (UINT_MAX >> 2)) {
- 		printk(KERN_INFO
- 			"bfad[%d]: %s failed to read user buf\n",
- 			bfad->inst_no, __func__);
+ 	/* Send activate cmd to device */
+@@ -226,11 +226,16 @@ static int metrousb_open(struct tty_stru
+ 		dev_err(&port->dev,
+ 			"%s - failed to configure device, error code=%d\n",
+ 			__func__, result);
+-		goto exit;
++		goto err_kill_urb;
+ 	}
+ 
+ 	dev_dbg(&port->dev, "%s - port open\n", __func__);
+-exit:
++
++	return 0;
++
++err_kill_urb:
++	usb_kill_urb(port->interrupt_in_urb);
++
+ 	return result;
+ }
+ 
