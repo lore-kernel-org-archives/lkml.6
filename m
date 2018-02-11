@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326057-2-18307823602241721292
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326044-2-11917175494373673356
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326056; b=Tq5JDMXC0ZV4Jqxb0p2+OWXTs9sBspCQj3BnRdOyRK3klUX
-    qI7y+vqy096tBTeFLqDvRUfr559p6Gr15ZHH63CyzrBovonZk1em2c5yMbeRVKLm
-    tgSOQk1FmqPJnM4rUaOsPcqaGeqgdvFfvKUu6E9y5XjoyaJmnFCS8KTKhtOwDO5I
-    f19R1mJkwE3Xbzrxb6IqCXgNT7jj+7KQc6XnQfgLx8MjjuiW9WTjiAo7Pz2C06lm
-    tHEcBQfgun15bwJIBPAk3qz+2+mAK7gYDVrQVkRZUE3E1sit6AEqPAA4s1htRfkc
-    j15uU/MPmA5BlmW+LqgyiJBRKnqAL6loK2WAQ5w==
+    t=1518326043; b=f3m+ayHLXB3IGXO0uVp0Ey8Gls57IYIaVaUEI5iDTHulIt5
+    zyylXP2k0udTgwcSFBPsGnxNDwjqNNtxg7GwrwZVbnqaK+GswcbsCXY9Ti2e7R6x
+    tudcrYQvtqwNyb1ew7jMAOYKqWPkl1Z7wiuU4AQcIkf2TN23iutSdFdYz5rKxONI
+    AZ2fplrv2P3AhK8PMrfF92ZHHIZonUDxYUDLctENQuctBDiR/I7IsYII8q1K8MEK
+    fJLFAAkJanSWnExIV5i7iq8IJsj16ynn2c8jpV3xShSwt1kJWiCsbxq86Hticd4j
+    2343CySqw2Moys4iTA0O/dcnZcrwkWLwrHJBFRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326056; bh=9Eo+tRbBG9D/RuIhUUC
-    PF4yibKWZ+nW7fbLI0tnqluE=; b=k6ThOilSLEFUomYG/iqN+Vm6Whey40681qs
-    0w4+XWGeqFtyS+00EfAJ3l8xcRu4uBio/pZ6111IVDd3txf+DAiXlF67LnJdgUNV
-    Lg1bCGtqtBPC7wDd+iHlClnuAsUhJ+AF1VVKNlxqEx2Aj0FlRhZI2nvCUh+zshqU
-    0fJjftemY1YSYwrihjZakfpRurpeKwqx3gzD35WxKXZR6IPiqW8X4FS+r8SQ5Gf9
-    DSOwn2wjdXt+1RtXkYF2aotIW2EodKjqyFffY/LPW19O0FALOPRx1hlsibTvm2t7
-    /aJc5DVfV9FnRU2sxVrgDy+DkDzYUu98ciFv6FB4qfsj34w45xw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518326043; bh=IOYUKknV4qoEEdbitFH
+    NwXufHch8IEjWKcEnQlkOG+0=; b=bjiOmwc2UBn0smzuYwYupzJ2zZpe3zgmvIS
+    FYg6wGr3dVfRllAZhWennZw9aQBPz+bIlGY2qk58JRxNOidtLIBiw4QXMhEswdUv
+    xTomqVXex3Q6aLCljPuuZPGVjdP3jMoHtaKL6mMtqGkEo6jydjXusalu9bCFpZ78
+    VjZtqBKGkyZ6CV1BnCgEMC5xxhcMLl0jg2miap4ZcVAckM724w8QBheXQ4WY2BB/
+    AD07yxqUqtUAxWPVN5hRpoRvSeFi4+TBmYEFdSNW/X243kTz5fRVI8ChZT4afSae
+    twCHFDGjbKbEmxRBq926oVRlh2ix43LkA4A32217iHHkmtmd2aw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753408AbeBKFMY (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:12:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41423 "EHLO
+        id S1752602AbeBKFMZ (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:12:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41421 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752639AbeBKEdl (ORCPT
+        by vger.kernel.org with ESMTP id S1752638AbeBKEdl (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:41 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,14 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Alexander Potapenko" <glider@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
+CC: akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>,
+        "Eric Biggers" <ebiggers@google.com>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.501018586@decadent.org.uk>
+Message-ID: <lsq.1518322806.575409571@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 43/79] net/sctp: Always set scope_id in
- sctp_inet6_skb_msgname
+Subject: [PATCH 3.2 45/79] dm bufio: fix integer overflow when limiting
+ maximum cache size
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,50 +80,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 7c8a61d9ee1df0fb4747879fa67a99614eb62fec upstream.
+commit 74d4108d9e681dbbe4a2940ed8fdff1f6868184c upstream.
 
-Alexandar Potapenko while testing the kernel with KMSAN and syzkaller
-discovered that in some configurations sctp would leak 4 bytes of
-kernel stack.
+The default max_cache_size_bytes for dm-bufio is meant to be the lesser
+of 25% of the size of the vmalloc area and 2% of the size of lowmem.
+However, on 32-bit systems the intermediate result in the expression
 
-Working with his reproducer I discovered that those 4 bytes that
-are leaked is the scope id of an ipv6 address returned by recvmsg.
+    (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100
 
-With a little code inspection and a shrewd guess I discovered that
-sctp_inet6_skb_msgname only initializes the scope_id field for link
-local ipv6 addresses to the interface index the link local address
-pertains to instead of initializing the scope_id field for all ipv6
-addresses.
+overflows, causing the wrong result to be computed.  For example, on a
+32-bit system where the vmalloc area is 520093696 bytes, the result is
+1174405 rather than the expected 130023424, which makes the maximum
+cache size much too small (far less than 2% of lowmem).  This causes
+severe performance problems for dm-verity users on affected systems.
 
-That is almost reasonable as scope_id's are meaniningful only for link
-local addresses.  Set the scope_id in all other cases to 0 which is
-not a valid interface index to make it clear there is nothing useful
-in the scope_id field.
+Fix this by using mult_frac() to correctly multiply by a percentage.  Do
+this for all places in dm-bufio that multiply by a percentage.  Also
+replace (VMALLOC_END - VMALLOC_START) with VMALLOC_TOTAL, which contrary
+to the comment is now defined in include/linux/vmalloc.h.
 
-There should be no danger of breaking userspace as the stack leak
-guaranteed that previously meaningless random data was being returned.
-
-Fixes: 372f525b495c ("SCTP:  Resync with LKSCTP tree.")
-History-tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
-Reported-by: Alexander Potapenko <glider@google.com>
-Tested-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.2: 
- - Adjust context
- - Add braces]
+Depends-on: 9993bc635 ("sched/x86: Fix overflow in cyc2ns_offset")
+Fixes: 95d402f057f2 ("dm: add bufio")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+[bwh: Backported to 3.2: keep open-coded VMALLOC_TOTAL]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -781,6 +781,8 @@ static void sctp_inet6_skb_msgname(struc
- 		if (ipv6_addr_type(&addr->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) {
- 			struct sctp_ulpevent *ev = sctp_skb2event(skb);
- 			addr->v6.sin6_scope_id = ev->iif;
-+		} else {
-+			addr->v6.sin6_scope_id = 0;
- 		}
- 	}
+ drivers/md/dm-bufio.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -839,7 +839,8 @@ static void __get_memory_limit(struct dm
+ 		buffers = DM_BUFIO_MIN_BUFFERS;
  
+ 	*limit_buffers = buffers;
+-	*threshold_buffers = buffers * DM_BUFIO_WRITEBACK_PERCENT / 100;
++	*threshold_buffers = mult_frac(buffers,
++				       DM_BUFIO_WRITEBACK_PERCENT, 100);
+ }
+ 
+ /*
+@@ -1620,19 +1621,15 @@ static int __init dm_bufio_init(void)
+ 	memset(&dm_bufio_caches, 0, sizeof dm_bufio_caches);
+ 	memset(&dm_bufio_cache_names, 0, sizeof dm_bufio_cache_names);
+ 
+-	mem = (__u64)((totalram_pages - totalhigh_pages) *
+-		      DM_BUFIO_MEMORY_PERCENT / 100) << PAGE_SHIFT;
++	mem = (__u64)mult_frac(totalram_pages - totalhigh_pages,
++			       DM_BUFIO_MEMORY_PERCENT, 100) << PAGE_SHIFT;
+ 
+ 	if (mem > ULONG_MAX)
+ 		mem = ULONG_MAX;
+ 
+ #ifdef CONFIG_MMU
+-	/*
+-	 * Get the size of vmalloc space the same way as VMALLOC_TOTAL
+-	 * in fs/proc/internal.h
+-	 */
+-	if (mem > (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100)
+-		mem = (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100;
++	if (mem > mult_frac(VMALLOC_END - VMALLOC_START, DM_BUFIO_VMALLOC_PERCENT, 100))
++		mem = mult_frac(VMALLOC_END - VMALLOC_START, DM_BUFIO_VMALLOC_PERCENT, 100);
+ #endif
+ 
+ 	dm_bufio_default_cache_size = mem;
