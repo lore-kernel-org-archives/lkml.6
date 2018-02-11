@@ -1,67 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeBKCqk (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 21:46:40 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58076 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751087AbeBKCqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 21:46:38 -0500
-Subject: Re: [PATCH V4 1/2] ptr_ring: fail early if queue occupies more than
- KMALLOC_MAX_SIZE
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: mst@redhat.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
- <20180210193201.GB23737@zzz.localdomain>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <322ed04e-2bc2-0453-cd10-8d7784a8eb38@redhat.com>
-Date: Sun, 11 Feb 2018 10:46:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1752432AbeBKCsX (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 21:48:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751622AbeBKCsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 21:48:22 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F0A821723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH] PCI/portdrv: Remove "pcie_hp=nomsi" kernel parameter
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
+        MUNEDA Takahiro <muneda.takahiro@jp.fujitsu.com>,
+        Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
+Date: Sat, 10 Feb 2018 20:48:15 -0600
+Message-ID: <20180211024815.73781.92853.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180210193201.GB23737@zzz.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bjorn Helgaas <bhelgaas@google.com>
 
+7570a333d8b0 ("PCI: Add pcie_hp=nomsi to disable MSI/MSI-X for pciehp
+driver") added the "pcie_hp=nomsi" kernel parameter to work around this
+error on shutdown:
 
-On 2018年02月11日 03:32, Eric Biggers wrote:
-> Hi Jason,
->
-> On Fri, Feb 09, 2018 at 05:45:49PM +0800, Jason Wang wrote:
->> To avoid slab to warn about exceeded size, fail early if queue
->> occupies more than KMALLOC_MAX_SIZE.
->>
->> Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
->> Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   include/linux/ptr_ring.h | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
->> index 1883d61..6051a5f 100644
->> --- a/include/linux/ptr_ring.h
->> +++ b/include/linux/ptr_ring.h
->> @@ -466,6 +466,8 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
->>   
->>   static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
->>   {
->> +	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
->> +		return NULL;
-> Are you sure that size can't be over 0x40000000?  The proper way to write this
-> (safe from integer overflow) would be:
->
-> 	if (size > KMALLOC_MAX_SIZE / sizeof(void *))
-> 		return NULL;
->
-> - Eric
+  irq 16: nobody cared (try booting with the "irqpoll" option)
+  Pid: 1081, comm: reboot Not tainted 3.2.0 #1
+  ...
+  Disabling IRQ #16
 
-Good catch.
+This happened on an unspecified system (possibly involving the Integrated
+Device Technology, Inc. Device 807f bridge).  There is no automated way to
+set this parameter, so it's not very useful for distributions or end users.
 
-Will post a fix.
+I suspect the root cause of the underlying "irq 16: nobody cared" issue was
+fixed by Prarit Bhargava <prarit@redhat.com> with fda78d7a0ead ("PCI/MSI:
+Stop disabling MSI/MSI-X in pci_device_shutdown()") and we probably don't
+need "pcie_hp=nomsi" any more.
 
-Thanks
+Revert 7570a333d8b0 to remove the "pcie_hp=nomsi" parameter.
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: MUNEDA Takahiro <muneda.takahiro@jp.fujitsu.com>
+CC: Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
+CC: Prarit Bhargava <prarit@redhat.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |    4 ----
+ drivers/pci/pcie/portdrv.h                      |   12 ------------
+ drivers/pci/pcie/portdrv_core.c                 |   20 +++-----------------
+ 3 files changed, 3 insertions(+), 33 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 78cdf6a637fc..ed0d26d26c26 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3101,10 +3101,6 @@
+ 		force	Enable ASPM even on devices that claim not to support it.
+ 			WARNING: Forcing ASPM on may cause system lockups.
+ 
+-	pcie_hp=	[PCIE] PCI Express Hotplug driver options:
+-		nomsi	Do not use MSI for PCI Express Native Hotplug (this
+-			makes all PCIe ports use INTx for hotplug services).
+-
+ 	pcie_ports=	[PCIE] PCIe ports handling:
+ 		auto	Ask the BIOS whether or not to use native PCIe services
+ 			associated with PCIe ports (PME, hot-plug, AER).  Use
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index a854bc569117..b00764bc684d 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -36,18 +36,6 @@ struct pci_dev;
+ 
+ void pcie_clear_root_pme_status(struct pci_dev *dev);
+ 
+-#ifdef CONFIG_HOTPLUG_PCI_PCIE
+-extern bool pciehp_msi_disabled;
+-
+-static inline bool pciehp_no_msi(void)
+-{
+-	return pciehp_msi_disabled;
+-}
+-
+-#else  /* !CONFIG_HOTPLUG_PCI_PCIE */
+-static inline bool pciehp_no_msi(void) { return false; }
+-#endif /* !CONFIG_HOTPLUG_PCI_PCIE */
+-
+ #ifdef CONFIG_PCIE_PME
+ extern bool pcie_pme_msi_disabled;
+ 
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index ef3bad4ad010..219f0f47f6fb 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -21,17 +21,6 @@
+ #include "../pci.h"
+ #include "portdrv.h"
+ 
+-bool pciehp_msi_disabled;
+-
+-static int __init pciehp_setup(char *str)
+-{
+-	if (!strncmp(str, "nomsi", 5))
+-		pciehp_msi_disabled = true;
+-
+-	return 1;
+-}
+-__setup("pcie_hp=", pciehp_setup);
+-
+ /**
+  * release_pcie_device - free PCI Express port service device structure
+  * @dev: Port service device to release
+@@ -169,16 +158,13 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
+ 		irqs[i] = -1;
+ 
+ 	/*
+-	 * If we support PME or hotplug, but we can't use MSI/MSI-X for
+-	 * them, we have to fall back to INTx or other interrupts, e.g., a
+-	 * system shared interrupt.
++	 * If we support PME but can't use MSI/MSI-X for it, we have to
++	 * fall back to INTx or other interrupts, e.g., a system shared
++	 * interrupt.
+ 	 */
+ 	if ((mask & PCIE_PORT_SERVICE_PME) && pcie_pme_no_msi())
+ 		goto legacy_irq;
+ 
+-	if ((mask & PCIE_PORT_SERVICE_HP) && pciehp_no_msi())
+-		goto legacy_irq;
+-
+ 	/* Try to use MSI-X or MSI if supported */
+ 	if (pcie_port_enable_irq_vec(dev, irqs, mask) == 0)
+ 		return 0;
