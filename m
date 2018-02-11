@@ -1,55 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752055AbeBKBxm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 20:53:42 -0500
-Received: from mail-it0-f46.google.com ([209.85.214.46]:36156 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbeBKBxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 20:53:41 -0500
-X-Google-Smtp-Source: AH8x225fLFYq+dPO0flc7IV4kKOyT7v97cUnTSSZoOEmWdMm2e1hXkiFAux3rz2+h/jpTrDDwCY8Ww==
-To: linux-kernel@vger.kernel.org
-From: Rob Landley <rob@landley.net>
-Subject: tmpfs and brickability (size=50% default considered naieve).
-Message-ID: <89293703-6e19-f6b6-a0d4-dc3ca90785ed@landley.net>
-Date: Sat, 10 Feb 2018 19:53:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752167AbeBKCE3 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 21:04:29 -0500
+Received: from mga12.intel.com ([192.55.52.136]:46437 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751149AbeBKCE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 21:04:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,493,1511856000";
+   d="scan'208";a="203061041"
+From: Chao Gao <chao.gao@intel.com>
+To: kvm@vger.kernel.org
+Cc: Chao Gao <chao.gao@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v3] KVM: VMX: Don't halt vcpu when L1 is injecting events to L2
+Date: Sun, 11 Feb 2018 10:06:30 +0800
+Message-Id: <1518314790-31774-1-git-send-email-chao.gao@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If you have two default tmpfs instances on your box (hi buildroot!) and
-they're world writeable and a normal user goes "cat /dev/zero >
-/run/fillit; cat /dev/zero > /tmp/fillit" the system then goes "sh:
-can't fork" trying to call rm on those files, because they each default
-to 50% of total system memory, no matter how many instances there are.
-It only stops writing when memory allocation fails in the kernel.
+Although L2 is in halt state, it will be in the active state after
+VM entry if the VM entry is vectoring according to SDM 26.6.2 Activity
+State. Halting the vcpu here means the event won't be injected to L2
+and this decision isn't reported to L1. Thus L0 drops an event that
+should be injected to L2.
 
-I'm not quite sure how to fix that. I want to say "change the default to
-be 50% of what's _left_" (and if you size= manually you get to keep the
-pieces) but define "what's left"? Other things are using some memory
-already, the 50% _was_ the amount it's safe for tmpfs to use. (Once upon
-a time the logic was that 50% of memory can go to disk cache. I think
-that's gotten a bit more complicated since then? No idea what the
-current rules are.)
+Cc: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Chao Gao <chao.gao@intel.com>
+---
+changes in v3:
+ - s/VECTORING_INFO_VALID_MASK/INTR_INFO_VALID_MASK
+ - Changes of subject, comments.
 
-This is related to the guy who wanted initramfs to be ramfs instead of
-tmpfs because he had a cpio.gz that extracted to >50% of system memory
-so it extracted fine with ramfs but hit the limit and failed with tmpfs.
-That sounds like a tmpfs rootfs (I.E. initmpfs) should start with a
-limit of 90% and then scale it _down_ to 50% after extracting the cpio.
-(I wonder what happens if you -o remount the size= limit to smaller than
-the filesystem currently holds? Hmmm...)
+Changes in v2:
+ - Remove VID stuff. Only handle event injection in this patch.
 
-Rob
+Signed-off-by: Chao Gao <chao.gao@intel.com>
+---
+ arch/x86/kvm/vmx.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-P.S. Yes I need to pipe rootflags= through so you can specify the size
-on the command line. I've got 3 or 4 initramfs/tmpfs plates spinning and
-haven't had a chance to work on them all merge window. I'll try to get
-some patches ready by next weekend, if they miss the release they miss
-the release...
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index bb5b488..cf7c2fc 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10985,7 +10985,12 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT)
++	/*
++	 * If we're entering a halted L2 vcpu and the L2 vcpu won't be woken
++	 * by event injection, halt vcpu.
++	 */
++	if ((vmcs12->guest_activity_state == GUEST_ACTIVITY_HLT) &&
++	    !(vmcs12->vm_entry_intr_info_field & INTR_INFO_VALID_MASK))
+ 		return kvm_vcpu_halt(vcpu);
+ 
+ 	vmx->nested.nested_run_pending = 1;
+-- 
+1.9.1
