@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326748-2-17263974633693659140
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326738-2-15187990256620283038
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326747; b=cHsdRE4JKq+fhU3C5hjvoKhTGJdGIfsnabLamRiq+VoGSBy
-    S8UQOt/klPzoT6TVoQtZTwDNoOfPdSzWOE6rYUZpezaGzIxzoOYUTN2vnemopZ0i
-    /nJ25dY75mw3V6mfWW1tTt/E9F0hdJrqxavsvEvN5wjjrUSBhqeFtPj0dE/KYBM8
-    /SJBpynHuxwt8OjauI7NmywsjtqbnR5iHEHioo6IMn9+36WHLRSqmoVKvDR1VCN5
-    L2gJrKUzsiz+NdKOJm9FhZ9JmriiUWgFN1QEAB7GuSRY7geip6h9OURYZkxsrP0x
-    PGtyZSVc4qgcbTtcRspjHpw9d7ZlgcgHTWhzX0g==
+    t=1518326738; b=Kuy0GMuzaTk8FtDOB6Lb7SArY9rzbXXrN268D+mt25n8DDT
+    0NpgaCAyj0zVq/kZe0T4zGzYB7Ll2eO6LooB/PB6Vkh4WWkbfl6FSxsflfuo5KsW
+    r6dRpEAVBhVe74wy4ErjV9Dixhzbdpc9tTndwTKFFHloZ6Nvh2lzptrTz9nos178
+    DTVACcKIUNrEvDnzE1yjezwLlSc3W5nceCy6C6jj5L2EzxkDPnMwNzx8ddMVUe7E
+    pR7Fh29s/L5Qznx+S1wRt8EAZOEJoBJF7UcizaVntkBe7xGV8FhUnvqd3uHahUkG
+    nFbqfQQC2Q/bPJGU1YVWgTjUrYkHLBzRZX+W3ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326747; bh=MfAXqVHUTPX1tYagpMu
-    9s0XOJfCUwOtDgBrfa27jHOQ=; b=qostTm5BeqYy7F1IZl9TR+KR4AVALFJPZvz
-    LcRhPphmozna6qpJshiiY3m3nwlrFRK4cYJ2UClXPfhr/RO6EyZSTBiVkDxhT59r
-    YBPCzgtbV8Ouo26YTIvix8xqb0pqAWDSIXWiX+6/5d6jJgGWAIXiNlISok2EjnsP
-    6Q43OCKwakAptd/NXy4UrcPNTeOJdqD7xxTwhrWqr9W2adDq29+7zbYox6SG+WAm
-    AZrJVzK29dUGxiQ5aKsBYZceYm4K1jqLa2UFTfv4l9y4dChL9iLYdvx3EOI18yMY
-    HQM0LHzNwG4PWCR2ZFNwfqMWXqd3ulwbB8f+vnzSKFd/7tXLFYQ==
+    :sender:list-id; s=arctest; t=1518326738; bh=9DLcXuT16yH2EIQWPqm
+    Mmet6f7slr4cNkbI5KJjT4tc=; b=QsxLDhWN9Rr6LGB09F4NUtFSRbWlC/FjxeK
+    1oQ2ipXHYfyc5WG1xuAeMiwAQ0+SPUMEv0zw1G35u0BNs6MxzgYd7BTCHnWLQW5C
+    fkHNnSkayhWX62IvXtWNuPz1b7N40uohAhg4VD3h4ews2dwVWZ+JMg4NZGNcBLZH
+    omM/mUb2hXbT38DNZ++Ia0+x3Chi8iC0pH8ee/yNRDljsVcw2BAuxOskmhQpxVQb
+    q2KSWuos/cdkn3736Lwy8yH+GfFUu1ibLLvBAQmuWwnfGUqB2V4EAFBnB5r8/ky8
+    rmAEnIgq+4uUTczBsQkIIBm40LqvgNX0b6vP+z9zEaPACf12aqQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754054AbeBKFYE (ORCPT <rfc822;greg@kroah.com>);
+        id S1754115AbeBKFYE (ORCPT <rfc822;greg@kroah.com>);
         Sun, 11 Feb 2018 00:24:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41326 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41315 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752480AbeBKEdk (ORCPT
+        by vger.kernel.org with ESMTP id S1752442AbeBKEdk (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:40 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Ladi Prosek" <lprosek@redhat.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>
+CC: akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.421888798@decadent.org.uk>
+Message-ID: <lsq.1518322806.286657411@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 08/79] KVM: nVMX: set IDTR and GDTR limits when
- loading L1 host state
+Subject: [PATCH 3.2 01/79] Input: adxl34x - do not treat FIFO_MODE() as
+ boolean
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,30 +80,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ladi Prosek <lprosek@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 21f2d551183847bc7fbe8d866151d00cdad18752 upstream.
+commit 1dbc080c9ef6bcfba652ef0d6ae919b8c7c85a1d upstream.
 
-Intel SDM 27.5.2 Loading Host Segment and Descriptor-Table Registers:
+FIFO_MODE() is a macro expression with a '<<' operator, which gcc points
+out could be misread as a '<':
 
-"The GDTR and IDTR limits are each set to FFFFH."
+drivers/input/misc/adxl34x.c: In function 'adxl34x_probe':
+drivers/input/misc/adxl34x.c:799:36: error: '<<' in boolean context, did you mean '<' ? [-Werror=int-in-bool-context]
 
-Signed-off-by: Ladi Prosek <lprosek@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[bwh: Backported to 3.2: adjust context]
+While utility of this warning is being disputed (Chief Penguin: "This
+warning is clearly pure garbage.") FIFO_MODE() extracts range of values,
+with 0 being FIFO_BYPASS, and not something that is logically boolean.
+
+This converts the test to an explicit comparison with FIFO_BYPASS,
+making it clearer to gcc and the reader what is intended.
+
+Fixes: e27c729219ad ("Input: add driver for ADXL345/346 Digital Accelerometers")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/vmx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/input/misc/adxl34x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -7076,6 +7076,8 @@ void load_vmcs12_host_state(struct kvm_v
- 	vmcs_writel(GUEST_SYSENTER_EIP, vmcs12->host_ia32_sysenter_eip);
- 	vmcs_writel(GUEST_IDTR_BASE, vmcs12->host_idtr_base);
- 	vmcs_writel(GUEST_GDTR_BASE, vmcs12->host_gdtr_base);
-+	vmcs_write32(GUEST_IDTR_LIMIT, 0xFFFF);
-+	vmcs_write32(GUEST_GDTR_LIMIT, 0xFFFF);
- 	vmcs_writel(GUEST_TR_BASE, vmcs12->host_tr_base);
- 	vmcs_writel(GUEST_GS_BASE, vmcs12->host_gs_base);
- 	vmcs_writel(GUEST_FS_BASE, vmcs12->host_fs_base);
+--- a/drivers/input/misc/adxl34x.c
++++ b/drivers/input/misc/adxl34x.c
+@@ -797,7 +797,7 @@ struct adxl34x *adxl34x_probe(struct dev
+ 
+ 	if (pdata->watermark) {
+ 		ac->int_mask |= WATERMARK;
+-		if (!FIFO_MODE(pdata->fifo_mode))
++		if (FIFO_MODE(pdata->fifo_mode) == FIFO_BYPASS)
+ 			ac->pdata.fifo_mode |= FIFO_STREAM;
+ 	} else {
+ 		ac->int_mask |= DATA_READY;
