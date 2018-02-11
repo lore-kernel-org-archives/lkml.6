@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1524142-1518326043-2-3253451247373433393
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326043-2-3264863811027786052
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326043; b=ahkUv7YldMrXGX/Fupcd56aBX0PgtanfpbFhM4rY1133QxQ
-    QKSASsMsZC0QX0tEWnfUDELI1KhUSn4tZ00SjB1A7g+nsvcKxmiiDNhGZ+0JxKtN
-    7BiATO1iyZRkvfgrQG7aMaAZKddCLiBcQ7Ir5/y3iK0i2/1xK2C/osY9rDgN5Jed
-    PUyALfBPitbb00dj4lyhfotQghwg7aHa62n7qNgAXStBbTZCb7AykjZ8e5lVPWrr
-    CUmXld0LuE65XNcaM+AyIXFsh5LMVzoSRtlPRTZg4/nlF7uvKyyHCtOszRw93+kb
-    PqJRkCoCetdgziDpV9BMXv22Nm9Q60SbK9h9Euw==
+    t=1518326042; b=Zq3iSMYSAnBexFKGfYa/s5T6vHeneXwbJCoI6BOHyFhdIxi
+    hlcoyXEB7ZuVOiPBFz2mJaUJb60UDFJWSjoI0MfpXCmnDmopEIEqbD9+364XFBka
+    R5K9tuzDYq9KXjbXSIa6Xs6T6T9TnkrgJRLDQHBQwZX6oSRLrvR8gpnVyoefCF86
+    wxDM7lJYNoa7mjrJ+Bipwu86fMY0rxjf3h0+SVn+3OLh91Wbyub8N4eA8Necf3rM
+    zaCN9isPi13xZ7Jb7todgi8ptjZRniCHLfD8XkAgUI87/I8Y8YiAKXyx412vzGn1
+    JuUiK2+q3Wp1Ou6VpVYcMt8DAUKRgoAuEH+wA8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326043; bh=cH7maObCjXLl6LJXthF
-    /TofwFb+axSCTPTa/wWMKPVc=; b=CiPqMMIbWVFfu9W+fTcHDi+AFmdpRz/eDuf
-    sEqz2XEtuw1Ffx5HRVTzjZqrsPoiH9FMtC65cx4Z64gkKg4DCcB3xiyl8SClBMq7
-    BbmCfAAodfbBysLWXFQpvO4tG4rSiA4saGmmOgt9SnEdJaNIYlnLhtZjfb7Sl6YU
-    VOmtlk4+ibFryWn7DUJySnT4UDaZnxuP4MyZtjgol6snJHige5NA/O0IG1OA0GrL
-    wgJj5VA1MvUXzpTy9TMytTmgc5AvNzjM1Nnv5csoAyk7q3lMkA3omEv8GTX7Gruv
-    2xupatxPJnrlXAQ9YUJV8o25ipeaJGbrEGuR3in6W6nIK4JVq5w==
+    :sender:list-id; s=arctest; t=1518326042; bh=y0mZqfPUiAZ+upshjlp
+    NiQr3t3cARq973qsUUedzfFI=; b=g60XhMyuVFBJjfYlnUGJBRSEFeQ/TJF2slD
+    mjKBj/xp3SldvWDgALn2uaW5TA0pyyhFOK9/FmFshM1Gy1JMv+OQx088l6IN6yl8
+    H9XH3qV1t4Zan85rei1k1F6gQddPYFSlU8ep6igVvBY0/nJlc1DxgK3+etDe4L6I
+    X5ofK+MVjCx3JJ3MzCe5PvtOaQXt4oS+4C78kli0+/VmZzt1KH/xESChtl2HomGl
+    6Pg7+8WeOeyhN2ZpUisBS3rtVFArgehIdpGcZDcO4rvGRmBRcIRtbH/ekmqoNnEo
+    zvHsI7FtBG1szcQpGMgsvCKfFH1f+fcZw1lo7esDk/E8q6C6BZw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753662AbeBKFMY (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:12:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41415 "EHLO
+        id S1753672AbeBKFMZ (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:12:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41404 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752632AbeBKEdl (ORCPT
+        by vger.kernel.org with ESMTP id S1752623AbeBKEdl (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:41 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,12 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>
+CC: akpm@linux-foundation.org, "NeilBrown" <neilb@suse.com>,
+        "Ian Kent" <raven@themaw.net>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.269953005@decadent.org.uk>
+Message-ID: <lsq.1518322806.393313279@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 44/79] dm: discard support requires all targets in a
- table support discards
+Subject: [PATCH 3.2 51/79] autofs: don't fail mount for transient error
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,89 +80,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: NeilBrown <neilb@suse.com>
 
-commit 8a74d29d541cd86569139c6f3f44b2d210458071 upstream.
+commit ecc0c469f27765ed1e2b967be0aa17cee1a60b76 upstream.
 
-A DM device with a mix of discard capabilities (due to some underlying
-devices not having discard support) _should_ just return -EOPNOTSUPP for
-the region of the device that doesn't support discards (even if only by
-way of the underlying driver formally not supporting discards).  BUT,
-that does ask the underlying driver to handle something that it never
-advertised support for.  In doing so we're exposing users to the
-potential for a underlying disk driver hanging if/when a discard is
-issued a the device that is incapable and never claimed to support
-discards.
+Currently if the autofs kernel module gets an error when writing to the
+pipe which links to the daemon, then it marks the whole moutpoint as
+catatonic, and it will stop working.
 
-Fix this by requiring that each DM target in a DM table provide discard
-support as a prereq for a DM device to advertise support for discards.
+It is possible that the error is transient.  This can happen if the
+daemon is slow and more than 16 requests queue up.  If a subsequent
+process tries to queue a request, and is then signalled, the write to
+the pipe will return -ERESTARTSYS and autofs will take that as total
+failure.
 
-This may cause some configurations that were happily supporting discards
-(even in the face of a mix of discard support) to stop supporting
-discards -- but the risk of users hitting driver hangs, and forced
-reboots, outweighs supporting those fringe mixed discard
-configurations.
+So change the code to assess -ERESTARTSYS and -ENOMEM as transient
+failures which only abort the current request, not the whole mountpoint.
 
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-[bwh: Backported to 3.2: adjust context]
+It isn't a crash or a data corruption, but having autofs mountpoints
+suddenly stop working is rather inconvenient.
+
+Ian said:
+
+: And given the problems with a half dozen (or so) user space applications
+: consuming large amounts of CPU under heavy mount and umount activity this
+: could happen more easily than we expect.
+
+Link: http://lkml.kernel.org/r/87y3norvgp.fsf@notabene.neil.brown.name
+Signed-off-by: NeilBrown <neilb@suse.com>
+Acked-by: Ian Kent <raven@themaw.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.2: autofs4_write() doesn't take an autofs_sb_info
+ pointer]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/dm-table.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+ fs/autofs4/waitq.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1584,12 +1584,12 @@ struct mapped_device *dm_table_get_md(st
- }
- EXPORT_SYMBOL(dm_table_get_md);
- 
--static int device_discard_capable(struct dm_target *ti, struct dm_dev *dev,
--				  sector_t start, sector_t len, void *data)
-+static int device_not_discard_capable(struct dm_target *ti, struct dm_dev *dev,
-+				      sector_t start, sector_t len, void *data)
- {
- 	struct request_queue *q = bdev_get_queue(dev->bdev);
- 
--	return q && blk_queue_discard(q);
-+	return q && !blk_queue_discard(q);
- }
- 
- bool dm_table_supports_discards(struct dm_table *t)
-@@ -1597,26 +1597,22 @@ bool dm_table_supports_discards(struct d
- 	struct dm_target *ti;
- 	unsigned i = 0;
- 
--	/*
--	 * Unless any target used by the table set discards_supported,
--	 * require at least one underlying device to support discards.
--	 * t->devices includes internal dm devices such as mirror logs
--	 * so we need to use iterate_devices here, which targets
--	 * supporting discard selectively must provide.
--	 */
- 	while (i < dm_table_get_num_targets(t)) {
- 		ti = dm_table_get_target(t, i++);
- 
- 		if (!ti->num_discard_requests)
--			continue;
-+			return false;
- 
--		if (ti->discards_supported)
--			return 1;
--
--		if (ti->type->iterate_devices &&
--		    ti->type->iterate_devices(ti, device_discard_capable, NULL))
--			return 1;
-+		/*
-+		 * Either the target provides discard support (as implied by setting
-+		 * 'discards_supported') or it relies on _all_ data devices having
-+		 * discard support.
-+		 */
-+		if (!ti->discards_supported &&
-+		    (!ti->type->iterate_devices ||
-+		     ti->type->iterate_devices(ti, device_not_discard_capable, NULL)))
-+			return false;
+--- a/fs/autofs4/waitq.c
++++ b/fs/autofs4/waitq.c
+@@ -88,7 +88,8 @@ static int autofs4_write(struct file *fi
+ 		spin_unlock_irqrestore(&current->sighand->siglock, flags);
  	}
  
--	return 0;
-+	return true;
+-	return (bytes > 0);
++	/* if 'wr' returned 0 (impossible) we assume -EIO (safe) */
++	return bytes == 0 ? 0 : wr < 0 ? wr : -EIO;
  }
+ 	
+ static void autofs4_notify_daemon(struct autofs_sb_info *sbi,
+@@ -102,6 +103,7 @@ static void autofs4_notify_daemon(struct
+ 	} pkt;
+ 	struct file *pipe = NULL;
+ 	size_t pktsz;
++	int ret;
+ 
+ 	DPRINTK("wait id = 0x%08lx, name = %.*s, type=%d",
+ 		(unsigned long) wq->wait_queue_token, wq->name.len, wq->name.name, type);
+@@ -180,7 +182,18 @@ static void autofs4_notify_daemon(struct
+ 	mutex_unlock(&sbi->wq_mutex);
+ 
+ 	if (autofs4_write(pipe, &pkt, pktsz))
++	switch (ret = autofs4_write(pipe, &pkt, pktsz)) {
++	case 0:
++		break;
++	case -ENOMEM:
++	case -ERESTARTSYS:
++		/* Just fail this one */
++		autofs4_wait_release(sbi, wq->wait_queue_token, ret);
++		break;
++	default:
+ 		autofs4_catatonic_mode(sbi);
++		break;
++	}
+ 	fput(pipe);
+ }
+ 
