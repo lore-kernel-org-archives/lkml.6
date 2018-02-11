@@ -1,78 +1,112 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518380064; cv=none;
+Return-Path: <mingo.kernel.org@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518376396; cv=none;
         d=google.com; s=arc-20160816;
-        b=RPiEL1UrASl+WRC5pojamBkPz34pZTRozSn1IHveWuqIpOxdWCC1h8WE8nYlOhJKon
-         pZzd7CXm/e18cPwdy2AnTiRKMpjwaMjRYnbPB72wWNw3ybnnmLkfgtS0+OJVx/QmhkHq
-         /3BLW2T3WJBj6qgsH++/m6PzP73gBbUJurwf6L+AOOoKiJJoPsSndn2we5ZIql1rvul5
-         j6fcO6l+Crt24zS7kifjUNv8rahi3XgVdwwLG+fr7FDSelbVOi60fHC9NCjdSyvGgpdy
-         zz/v170EtkzuZTHEMZR5KS94mvUHG/6NivtcsiloMlt9opgG4tg6NY8/3DbqgeeBBNq5
-         oRTw==
+        b=DNr+MdTgToW/NshnfI0MZ4oSn0VCvViYS7eAPWudMwF/u8+uwc3o4oQ7sFQM/xxlBN
+         FqXNR2JYEhtBVNDW8dFcMAYdnt1WCKWyXoxsD5uGJVeks/WrnoPN67UVjAOaStpa1Eke
+         /a5eqlZsfSwl+JREkeEnRkDjJV7R+10dhNE5x7o80dXaR52lCwRNVDmzVWi8tvOJxfYq
+         /gD7RMU96Qf9CqxsxtpxEdfoMtu2vbTgHa+r+DA5FR8HXz7kAs+CyDKFVJerW8m92Cy+
+         Mr+Qz22B9ILQQsTsXmqno/t7i2ifAnmOMjgc37WY4VjfpYkNOsLxVUKVi+H0TXCpFQPs
+         u7Dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=FTuV1a7JoeCk9MdOTeLV5r0TQ5UzGbmpMlVkT0eI2OA=;
-        b=QZb6eUitnUAS3zn/0F/Ju7Y8DSYiUKC6op25SC+Xy2wzI2uhn8/2h1VJ2mV3LzQJTu
-         97U/DlEljxTi4RLDlmsP5JPq+GJVVV/3T27nYqi0Jlt3okUxzexd6xNAtw791Fa1ZSBs
-         1dw5AVpv3CnoYuIKJ/hAKqZUKIUW7ZKv6WHhoR+uY0aYFX/cl2FEEu//aajC1HhGsjcf
-         goe0PhMhAFlkIlsxIr/JoF+8J4c6OYX8N2lOCB0kuyVGEtZsliObimLbGu8HNsJ5Udwx
-         IDtQCCR5KmnfMNi/vB7S1bY6tJAuYfwfgL6k+gVQL6Wk277mqlbFwDR2cL4GJjNx6Ubq
-         a1fw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:sender:dkim-signature
+         :arc-authentication-results;
+        bh=Sb7D/e+myKUPxA0fmAFwq4qF2XlDjLhyP8QV6vk16WM=;
+        b=D/bpdDzhp6W7/L52lBEh0ixXmrhBkiW2n9I0D8Cmea7m2AQgh95UDzXKj8pi9Sctym
+         Cjev1FRTVzUc9LKygluGjr1v17ltFELjOH1UH8Z10Z3NN08DGXOsLLzTBdPY8hBMEn4k
+         VWbbZFYZCd+N5czybUVMnJMKzCPmwyqeEgPY5Z7WFjOFjYChV9LW1Xiur5smpgGqoJyv
+         v3aiRvlvHlB0gxUS8vtavsckGhM88ZZ6gPakR86SA1aLOPX+qPgTn3FKu0dO+UZV/pvs
+         9UpOD1YCjf6BwKxoTaECp+fH4lJ8ohFSUP97Aoc0CuljUaNNtk8xuJzddKVcGLUzSefX
+         jFTg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JS/GwV1E;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=X+YZdKyL;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JS/GwV1E;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AH8x225dZHOzIDis9nLhC68v83T3TewdpWZhmB8XRYbdNIFTuVj8DjGeNiVGHomd2f4rLnVfwKTZcoZTNoRLCKu0Qb0=
-MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <0C6EFF56-F135-480C-867C-B117F114A99F@amacapital.net>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=X+YZdKyL;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+X-Google-Smtp-Source: AH8x226h8BGJdx/8XTLuQwe3M1h/2q5taCVoHe694JHBhAyV7TQpIv8KJnaP+lGgeIf1rsqFYTmfuw==
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Sun, 11 Feb 2018 20:13:12 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Joerg Roedel <jroedel@suse.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>,
+	"Liguori, Anthony" <aliguori@amazon.com>,
+	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 00/31 v2] PTI support for x86_32
+Message-ID: <20180211191312.54apu5edk3olsfz3@gmail.com>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
  <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
- <20180209191112.55zyjf4njum75brd@suse.de> <20180210091543.ynypx4y3koz44g7y@angband.pl>
- <CA+55aFwdLZjDcfhj4Ps=dUfd7ifkoYxW0FoH_JKjhXJYzxUSZQ@mail.gmail.com>
- <20180211105909.53bv5q363u7jgrsc@angband.pl> <6FB16384-7597-474E-91A1-1AF09201CEAC@gmail.com>
- <0C6EFF56-F135-480C-867C-B117F114A99F@amacapital.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 11 Feb 2018 12:14:23 -0800
-X-Google-Sender-Auth: Fkv9y54CeqHo1OlVSkZxEUXZEFg
-Message-ID: <CA+55aFxU4ui1tbV56x7wjzn8+OyMpNe53qoE0H-xHZiFBMFDsg@mail.gmail.com>
-Subject: Re: [PATCH 00/31 v2] PTI support for x86_32
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Mark D Rustad <mrustad@gmail.com>, Adam Borowski <kilobyte@angband.pl>,
-	Joerg Roedel <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>, Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
-	Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+ <20180209191112.55zyjf4njum75brd@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209191112.55zyjf4njum75brd@suse.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914900490843452?=
-X-GMAIL-MSGID: =?utf-8?q?1592136893925553022?=
+X-GMAIL-MSGID: =?utf-8?q?1592133048313998878?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 11, 2018 at 11:42 AM, Andy Lutomirski <luto@amacapital.net> wrote:
->
-> At the risk of suggesting heresy, should we consider removing x86_32 support at some point?
 
-Maybe in five or ten years. Not in the near future, I'm afraid.
+* Joerg Roedel <jroedel@suse.de> wrote:
 
-We removed support for the 80386 back at the end of 2012. At that
-point it just became too painful to support at all.
+> Hi Andy,
+> 
+> On Fri, Feb 09, 2018 at 05:47:43PM +0000, Andy Lutomirski wrote:
+> > One thing worth noting is that performance of this whole series is
+> > going to be abysmal due to the complete lack of 32-bit PCID.  Maybe
+> > any kernel built with this option set that runs on a CPU that has the
+> > PCID bit set in CPUID should print a big fat warning like "WARNING:
+> > you are using 32-bit PTI on a 64-bit PCID-capable CPU.  Your
+> > performance will increase dramatically if you switch to a 64-bit
+> > kernel."
+> 
+> Thanks for your review. I can add this warning, but I just hope that not
+> a lot of people will actually see it :)
 
-In contrast, we could continue supporting 32-bit for a long time. Even
-if it might be in some degraded form (ie no PTI at all, or only a slow
-one).
+Could you please measure the PTI kernel vs. vanilla kernel?
 
-It's not really a lot of pain for people who don't care.
+Nothing complex, just perf's built-in scheduler and syscall benchmark should be 
+enough:
 
-                Linus
+   perf stat --null --sync --repeat 10 perf bench sched messaging -g 20
+
+this should give us a pretty good worst-case overhead figure for process 
+workloads.
+
+Add '-t' to test threaded workloads as well:
+
+   perf stat --null --sync --repeat 10 perf bench sched messaging -g 20 -t
+
+The 10 runs used should be enough to reach good stability in practice:
+
+ Performance counter stats for 'perf bench sched messaging -g 20 -t' (10 runs):
+
+       0.380742219 seconds time elapsed                                          ( +-  0.73% )
+
+Maybe do the same on the 64-bit kernel as well, so that we have 4 good data points 
+on the same hardware?
+
+Thanks,
+
+	Ingo
