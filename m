@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324182-2-11950185012516340246
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324176-2-15752777037856874062
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324181; b=a9WdRHoLFn7AZBHE2P4LzK8GqWzYeCt6zw52yrBjBgSFY8X
-    vInqo7lBlofW6pnADBUhBhZhy+hCQrWHDcKNtdniQOFOSuM0OivLL6tjh5/1K2qD
-    iBqJ+cmlKF0GMe3/VDIHW7X6kPaIBrK/bHVQF+j1pI8yGTTNqSAK/JOB8UIl7+LA
-    +fSLLielC/Z9IWoffyJLzVQUElm6uU4cP8AApTO/+WbMQkcrG5GxVZjAgIZqEn+Q
-    vBsjWqfsKrQ41oklWR8awT9xYrCvQvRFme7XXAvIxR4yhgBGGmpj8eB15Xs+JFS7
-    cKpStcyA1Nniy6fNA6LLLx2TwVX1OrvxmmQjfxQ==
+    t=1518324175; b=JniWxLCC+LkWalWlLSL2mffke/H+unow1N1xAt5quRRXFWw
+    ttBcjswR//mwkoRsmnLdIUtL0zvnBhQivIhCOovkGh7dIg1XlYDdsALxLE1X3oSY
+    ZeXcP3UgoLPAyy/5q3+Fo4RoRS8NdbvZKChIpwlNdagH1SGXztkDegJ/AX3gN5hy
+    3hTL6nv7pfe4NzGIn6rqXBosH12t13h9/P5A2ydW/eXnOImiKkaVcjOKpYIWqYA0
+    HVjv19Va3FmoI76yn/8/ZZElCmbj8MvH3DH7nHCWrM7DT5J/3dOAIqDunPFq1zhX
+    4gtre/8WoWWpuGIBevm1iXrfOx+iVSYbgmeJHQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324181; bh=yYzCj7M6EeCEs4xkRJs
-    FZwZ6rxS8/SMnU21O/SPtzMg=; b=inb2o/cGZguu99fnUIei7x2M54/3QiFx9KE
-    VlD4H6ZKJItP6+nmRKyUz+AGgVFO721boJpjWk7RnUoRnxJVI/siYgRStXtm8/7d
-    hfmHOdO24hkJ3p0sSOiRF1TNFQS+mC0pJgRUnf7eF843ZPzI+s0kPIitWW2PYZ8b
-    nuwxtIOExcHLp/Y0ChHqKX/HIwLW+Z4ZN3b5bkWtA895vcUFYQL6dAsbOVIEzGHU
-    k9KUfYusE6mPbol8aEJ3c/TTVJhZSAqAZbnn+LBkHpucifG8TlwfaJtnmMuFXoA0
-    0FfQ6vzEgaZCfHLRuzvCaJMx7i91xF2DNfPYx5sZ/nNY7oCED7g==
+    :sender:list-id; s=arctest; t=1518324175; bh=wWAd8A7d4HOhp2IiAJ1
+    Dtjd+Kvg86lxbDYUAglh0XbM=; b=lpatDoY+2Hardqt6ZnNW2LP5QETTd2dsNCk
+    nY3bvrt9XZDNdtxWCrA96kBKKptoKtzLWEb8/oO/hcQtAwfhjH6fqMJ14wqV68ry
+    f82XQmlQruMXiwY15lfdR4/HwIjZB2skVW6BtR1fL+V71p6eFtANLiDdlHRUDr8U
+    MhJjd+WHD5RNxEv9PZZvmYzatPIvi5b+m4N2jYCaj1BEgkWVBJ56p/lcA9P98/ql
+    /NEgXEx8WMpJLoZniLX3Gg0dlvul+DNMimnsU9WdFbmW9bWJPd7qjf07OpkFaRC1
+    ktviGlamaHrtGTWbDFZVWd5gJBr3IZNM61PvLQeP3nGKPuQYQ8w==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753030AbeBKEkx (ORCPT <rfc822;greg@kroah.com>);
+        id S1753065AbeBKEkx (ORCPT <rfc822;greg@kroah.com>);
         Sat, 10 Feb 2018 23:40:53 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41682 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41675 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752938AbeBKEeH (ORCPT
+        by vger.kernel.org with ESMTP id S1752943AbeBKEeH (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:07 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,12 +60,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Alex Deucher" <alexander.deucher@amd.com>,
-        "=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>
+        "Horia =?UTF-8?Q?Geant=C4=83?=" <horia.geanta@nxp.com>,
+        "Radu Alexe" <radu.alexe@nxp.com>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.966584375@decadent.org.uk>
+Message-ID: <lsq.1518323471.765378345@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 045/136] drm/ttm: once more fix ttm_buffer_object_transfer
+Subject: [PATCH 3.16 049/136] crypto: caam - fix incorrect define
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,31 +81,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian König <christian.koenig@amd.com>
+From: Radu Alexe <radu.alexe@nxp.com>
 
-commit 4d98e5ee6084f6d7bc578c5d5f86de7156aaa4cb upstream.
+commit cc2f8ab5334a736fa0e775cfccf06c1e268667f0 upstream.
 
-When the mutex is locked just in the moment we copy it we end up with a
-warning that we release a locked mutex.
-
-Fix this by properly reinitializing the mutex.
-
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-[bwh: Backported to 3.16: adjust context]
+Fixes: 3ebfa92f49a6 ("crypto: caam - Add new macros for building extended SEC descriptors (> 64 words)")
+Signed-off-by: Radu Alexe <radu.alexe@nxp.com>
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/ttm/ttm_bo_util.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/caam/desc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/ttm/ttm_bo_util.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
-@@ -463,6 +463,7 @@ static int ttm_buffer_object_transfer(st
- 	INIT_LIST_HEAD(&fbo->lru);
- 	INIT_LIST_HEAD(&fbo->swap);
- 	INIT_LIST_HEAD(&fbo->io_reserve_lru);
-+	mutex_init(&fbo->wu_mutex);
- 	drm_vma_node_reset(&fbo->vma_node);
- 	atomic_set(&fbo->cpu_writers, 0);
- 
+--- a/drivers/crypto/caam/desc.h
++++ b/drivers/crypto/caam/desc.h
+@@ -1434,7 +1434,7 @@ struct sec4_sg_entry {
+ #define MATH_SRC1_REG2		(0x02 << MATH_SRC1_SHIFT)
+ #define MATH_SRC1_REG3		(0x03 << MATH_SRC1_SHIFT)
+ #define MATH_SRC1_IMM		(0x04 << MATH_SRC1_SHIFT)
+-#define MATH_SRC1_DPOVRD	(0x07 << MATH_SRC0_SHIFT)
++#define MATH_SRC1_DPOVRD	(0x07 << MATH_SRC1_SHIFT)
+ #define MATH_SRC1_INFIFO	(0x0a << MATH_SRC1_SHIFT)
+ #define MATH_SRC1_OUTFIFO	(0x0b << MATH_SRC1_SHIFT)
+ #define MATH_SRC1_ONE		(0x0c << MATH_SRC1_SHIFT)
