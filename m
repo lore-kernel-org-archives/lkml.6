@@ -1,54 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752836AbeBKKTb (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 05:19:31 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36521 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752288AbeBKKT3 (ORCPT
+        id S1752921AbeBKKV0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 05:21:26 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:45405 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752288AbeBKKVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 05:19:29 -0500
-X-Google-Smtp-Source: AH8x224z4Ln+w4iGquHUHBz/MstgqzGwHMUiplZsxGKfYT1+yVgBSe4MYx95dbX6nqtJh4iq/Kx8cA==
-Date: Sun, 11 Feb 2018 11:19:24 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: David Woodhouse <dwmw@amazon.co.uk>
-Cc: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com
-Subject: Re: [PATCH v2 5/6] KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we
- have a valid L02 MSR bitmap
-Message-ID: <20180211101924.vztfslwqoh7km6q2@gmail.com>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
- <1518305967-31356-6-git-send-email-dwmw@amazon.co.uk>
+        Sun, 11 Feb 2018 05:21:25 -0500
+X-Google-Smtp-Source: AH8x2267lIemoEcc+bG56Um7M/Fm4TBvN4ebo+gPlD/OnmMKwnmKb83+cA5jpdMyGD4OvnlhSbtsv40sF1OoD/gxtMo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518305967-31356-6-git-send-email-dwmw@amazon.co.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1518340546-6690-1-git-send-email-jcmvbkbc@gmail.com>
+References: <1518340546-6690-1-git-send-email-jcmvbkbc@gmail.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Sun, 11 Feb 2018 11:21:24 +0100
+Message-ID: <CAAeHK+w+nxJoOfivzvY4TB5xmgYCADbd_+K03U44xrwcTtXzcg@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: fix build with KASAN
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-xtensa@linux-xtensa.org, Chris Zankel <chris@zankel.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Feb 11, 2018 at 10:15 AM, Max Filippov <jcmvbkbc@gmail.com> wrote:
+> The commit 917538e212a2 ("kasan: clean up KASAN_SHADOW_SCALE_SHIFT
+> usage") removed KASAN_SHADOW_SCALE_SHIFT definition from
+> include/linux/kasan.h and added it to architecture-specific headers,
+> except for xtensa. This broke the xtensa build with KASAN enabled.
+> Define KASAN_SHADOW_SCALE_SHIFT in arch/xtensa/include/asm/kasan.h
+>
+> Reported by: kbuild test robot <fengguang.wu@intel.com>
+> Fixes: 917538e212a2 ("kasan: clean up KASAN_SHADOW_SCALE_SHIFT usage")
+> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+> ---
+>  arch/xtensa/include/asm/kasan.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/xtensa/include/asm/kasan.h b/arch/xtensa/include/asm/kasan.h
+> index 54be80876e57..216b6f32c375 100644
+> --- a/arch/xtensa/include/asm/kasan.h
+> +++ b/arch/xtensa/include/asm/kasan.h
+> @@ -10,6 +10,8 @@
+>  #include <linux/sizes.h>
+>  #include <asm/kmem_layout.h>
+>
+> +#define KASAN_SHADOW_SCALE_SHIFT 3
+> +
+>  /* Start of area covered by KASAN */
+>  #define KASAN_START_VADDR __XTENSA_UL_CONST(0x90000000)
+>  /* Start of the shadow map */
+> --
+> 2.1.4
+>
 
-* David Woodhouse <dwmw@amazon.co.uk> wrote:
+Thanks!
 
-> From: KarimAllah Ahmed <karahmed@amazon.de>
-> 
-> We either clear the CPU_BASED_USE_MSR_BITMAPS and end up intercepting all
-> MSR accesses or create a valid L02 MSR bitmap and use that. This decision
-> has to be made every time we evaluate whether we are going to generate the
-> L02 MSR bitmap.
-> 
-> Before commit 086e7d4118cc ("KVM: VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
-> this was probably OK since the decision was always identical. This is no
-> longer the case now since the MSR bitmap might actually change once we
-> decide to not intercept SPEC_CTRL and PRED_CMD.
-
-Note, I fixed the changelog to refer to the correct upstream SHA1, which is:
-
-  d28b387fb74d: KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
-
-Thanks,
-
-	Ingo
+Acked-by: Andrey Konovalov <andreyknvl@google.com>
