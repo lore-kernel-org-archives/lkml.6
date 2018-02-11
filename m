@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431546-1518323705-2-15396244825850246018
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518323701-5-15232300472668084935
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518323705; b=OF2t7nauWs6Z9TfNsUviu23pdO1CUmFOHoZhNIbEXYAt890
-    vlGTXG1hKTdX/sjTZwlVXuz8SSKSulfT7KWzlVhX6BHT9Ilqu02LriCOqLngIrFt
-    qbnywpBYPUQgSxm//xOxY4JFRQgEzXWFDrNBzHa5xhAsak8kA2hJuFNeK0TK8djg
-    C25Jec6N7aOJL6LwBmvyCCnCAnKa2FZEnvAq8ETAMJ85tEYCrQO41gL/NAhX1YuS
-    XC5o46qj7TlbWsP+JpQTqqtCp+bdzXeQhhOLjaoDXYvtlHzEouAosozkUIPJ+j1t
-    +4xZTl6BJjs0q2iBoxgWvOZKH9Fayv1eMtRKvZQ==
+    t=1518323701; b=Ojz4iMrTnMZBImrdq2gyIXbhEl3+mZwzt4SQ/VudTi43ySR
+    DeXtBXANGZVp4J5BgdUlI6cPP3g1mog0JhUGiI30WrPswh4FXd/1hBwXjNh0ZTwP
+    jNaTtg/U+0uHMJ0FeUFkJ5ZkY5Cf28uYv9EhvIfuCIH8HIlc44rcg1kjvqzvZc8A
+    LRhpUxkudGA3oU5hw8OQDudX7Kv9Uzz0hTlz+iwyV6ztqlQAFRNk3b9YeYXD4vWg
+    VubreG9U/LKGBAq6tWAdWbNBDZwMsoPhuz1b3dQrmTHtbwz2LBX36ztxUcBfJZI+
+    0BRiThHH9eFhQzp0OrvOJn356YSSWdpE2dwGfjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518323705; bh=MA/nS8Tp9B0IwgyFXcY
-    vsRvKi2kXlJ23cahD4ZIrm8I=; b=not50u0o3HtvtzZx8tlBA7PkXGMn2ic5bLD
-    o1Fv5uJ64LVEDPbTw8mgyXzrEZfy49taQu5b8yuvyoYrUzdRw5zMmsf6k5DGzMTd
-    RctJufJ8zz8bXoMw+v6Rv4PnNG73lzJh3UoKSVB3Y1HxR1/CkCUyLX3qFJUbAjI7
-    Q4Z76dAmZGXUDOyRRfqfSfAbbW+ZSZDbS4078WZnirGbscTI0nY/6g+SpfLdMlFU
-    /1esdl5h5uChIDRs8mXEasK32qlOXl9rDOa/R90/3Uz4NlJridZbI88mUDTI8xsE
-    k9vdyJS00y/viC3YCQLq51sNEbQjvfSR5m2O0nB/+Y/Nx+L1ZXA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518323701; bh=cEvm2oTeQKiQSSdzxOP
+    f2gspvORmqbafdbxaLCu4xuo=; b=oJhMu1dnAIlHaZReGThKSDUzz3hMueoy1tf
+    vEa7W+OTtzPhZNHhpZeGkw3QhThZCUOzlP+WB5i1pG00m4UUKnNaguEoEh3R4xH1
+    l+vAiVW7AQcme5gekbGOiu8LLIjW2xbhQKJeRw4Hu61NbXv1Pcau+1tnjA2fi7le
+    swGTub8ag5zWwSr+/MczOWjUGYs9JSkWH7P6gLxhR9GDpVsRjemOQexGu68y8Bi9
+    YjyATwoE/dfP/0pGndY69rQRqG/K78GA2/4SzJ78uZhGtUtZ62duE7xRBcEu8Hkx
+    Fk7UWZqT+knnU/xgZv3vQ4EhdpJXV5DpBmz5mhgObj+AxUTp1GQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752913AbeBKEfA (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:35:00 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41775 "EHLO
+        id S1753193AbeBKEe7 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:34:59 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41789 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753007AbeBKEeO (ORCPT
+        by vger.kernel.org with ESMTP id S1753009AbeBKEeO (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:14 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,16 +59,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Marcelo Ricardo Leitner" <marcelo.leitner@gmail.com>,
-        "Xin Long" <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Alexander Potapenko" <glider@google.com>
+CC: akpm@linux-foundation.org, "Christoph Hellwig" <hch@infradead.org>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Waiman Long" <longman@redhat.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.376040765@decadent.org.uk>
+Message-ID: <lsq.1518323471.542842782@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 084/136] sctp: fully initialize the IPv6 address in
- sctp_v6_to_addr()
+Subject: [PATCH 3.16 075/136] blktrace: Fix potential deadlock between
+ delete & sysfs ops
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,111 +82,143 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Potapenko <glider@google.com>
+From: Waiman Long <longman@redhat.com>
 
-commit 15339e441ec46fbc3bf3486bb1ae4845b0f1bb8d upstream.
+commit 5acb3cc2c2e9d3020a4fee43763c6463767f1572 upstream.
 
-KMSAN reported use of uninitialized sctp_addr->v4.sin_addr.s_addr and
-sctp_addr->v6.sin6_scope_id in sctp_v6_cmp_addr() (see below).
-Make sure all fields of an IPv6 address are initialized, which
-guarantees that the IPv4 fields are also initialized.
+The lockdep code had reported the following unsafe locking scenario:
 
-==================================================================
- BUG: KMSAN: use of uninitialized memory in sctp_v6_cmp_addr+0x8d4/0x9f0
- net/sctp/ipv6.c:517
- CPU: 2 PID: 31056 Comm: syz-executor1 Not tainted 4.11.0-rc5+ #2944
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs
- 01/01/2011
- Call Trace:
-  dump_stack+0x172/0x1c0 lib/dump_stack.c:42
-  is_logbuf_locked mm/kmsan/kmsan.c:59 [inline]
-  kmsan_report+0x12a/0x180 mm/kmsan/kmsan.c:938
-  native_save_fl arch/x86/include/asm/irqflags.h:18 [inline]
-  arch_local_save_flags arch/x86/include/asm/irqflags.h:72 [inline]
-  arch_local_irq_save arch/x86/include/asm/irqflags.h:113 [inline]
-  __msan_warning_32+0x61/0xb0 mm/kmsan/kmsan_instr.c:467
-  sctp_v6_cmp_addr+0x8d4/0x9f0 net/sctp/ipv6.c:517
-  sctp_v6_get_dst+0x8c7/0x1630 net/sctp/ipv6.c:290
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-  sctp_assoc_add_peer+0x66d/0x16f0 net/sctp/associola.c:651
-  sctp_sendmsg+0x35a5/0x4f90 net/sctp/socket.c:1871
-  inet_sendmsg+0x498/0x670 net/ipv4/af_inet.c:762
-  sock_sendmsg_nosec net/socket.c:633 [inline]
-  sock_sendmsg net/socket.c:643 [inline]
-  SYSC_sendto+0x608/0x710 net/socket.c:1696
-  SyS_sendto+0x8a/0xb0 net/socket.c:1664
-  entry_SYSCALL_64_fastpath+0x13/0x94
- RIP: 0033:0x44b479
- RSP: 002b:00007f6213f21c08 EFLAGS: 00000286 ORIG_RAX: 000000000000002c
- RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 000000000044b479
- RDX: 0000000000000041 RSI: 0000000020edd000 RDI: 0000000000000006
- RBP: 00000000007080a8 R08: 0000000020b85fe4 R09: 000000000000001c
- R10: 0000000000040005 R11: 0000000000000286 R12: 00000000ffffffff
- R13: 0000000000003760 R14: 00000000006e5820 R15: 0000000000ff8000
- origin description: ----dst_saddr@sctp_v6_get_dst
- local variable created at:
-  sk_fullsock include/net/sock.h:2321 [inline]
-  inet6_sk include/linux/ipv6.h:309 [inline]
-  sctp_v6_get_dst+0x91/0x1630 net/sctp/ipv6.c:241
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-==================================================================
- BUG: KMSAN: use of uninitialized memory in sctp_v6_cmp_addr+0x8d4/0x9f0
- net/sctp/ipv6.c:517
- CPU: 2 PID: 31056 Comm: syz-executor1 Not tainted 4.11.0-rc5+ #2944
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs
- 01/01/2011
- Call Trace:
-  dump_stack+0x172/0x1c0 lib/dump_stack.c:42
-  is_logbuf_locked mm/kmsan/kmsan.c:59 [inline]
-  kmsan_report+0x12a/0x180 mm/kmsan/kmsan.c:938
-  native_save_fl arch/x86/include/asm/irqflags.h:18 [inline]
-  arch_local_save_flags arch/x86/include/asm/irqflags.h:72 [inline]
-  arch_local_irq_save arch/x86/include/asm/irqflags.h:113 [inline]
-  __msan_warning_32+0x61/0xb0 mm/kmsan/kmsan_instr.c:467
-  sctp_v6_cmp_addr+0x8d4/0x9f0 net/sctp/ipv6.c:517
-  sctp_v6_get_dst+0x8c7/0x1630 net/sctp/ipv6.c:290
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-  sctp_assoc_add_peer+0x66d/0x16f0 net/sctp/associola.c:651
-  sctp_sendmsg+0x35a5/0x4f90 net/sctp/socket.c:1871
-  inet_sendmsg+0x498/0x670 net/ipv4/af_inet.c:762
-  sock_sendmsg_nosec net/socket.c:633 [inline]
-  sock_sendmsg net/socket.c:643 [inline]
-  SYSC_sendto+0x608/0x710 net/socket.c:1696
-  SyS_sendto+0x8a/0xb0 net/socket.c:1664
-  entry_SYSCALL_64_fastpath+0x13/0x94
- RIP: 0033:0x44b479
- RSP: 002b:00007f6213f21c08 EFLAGS: 00000286 ORIG_RAX: 000000000000002c
- RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 000000000044b479
- RDX: 0000000000000041 RSI: 0000000020edd000 RDI: 0000000000000006
- RBP: 00000000007080a8 R08: 0000000020b85fe4 R09: 000000000000001c
- R10: 0000000000040005 R11: 0000000000000286 R12: 00000000ffffffff
- R13: 0000000000003760 R14: 00000000006e5820 R15: 0000000000ff8000
- origin description: ----dst_saddr@sctp_v6_get_dst
- local variable created at:
-  sk_fullsock include/net/sock.h:2321 [inline]
-  inet6_sk include/linux/ipv6.h:309 [inline]
-  sctp_v6_get_dst+0x91/0x1630 net/sctp/ipv6.c:241
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-==================================================================
+       CPU0                    CPU1
+       ----                    ----
+  lock(s_active#228);
+                               lock(&bdev->bd_mutex/1);
+                               lock(s_active#228);
+  lock(&bdev->bd_mutex);
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ *** DEADLOCK ***
+
+The deadlock may happen when one task (CPU1) is trying to delete a
+partition in a block device and another task (CPU0) is accessing
+tracing sysfs file (e.g. /sys/block/dm-1/trace/act_mask) in that
+partition.
+
+The s_active isn't an actual lock. It is a reference count (kn->count)
+on the sysfs (kernfs) file. Removal of a sysfs file, however, require
+a wait until all the references are gone. The reference count is
+treated like a rwsem using lockdep instrumentation code.
+
+The fact that a thread is in the sysfs callback method or in the
+ioctl call means there is a reference to the opended sysfs or device
+file. That should prevent the underlying block structure from being
+removed.
+
+Instead of using bd_mutex in the block_device structure, a new
+blk_trace_mutex is now added to the request_queue structure to protect
+access to the blk_trace structure.
+
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+Fix typo in patch subject line, and prune a comment detailing how
+the code used to work.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/sctp/ipv6.c | 2 ++
- 1 file changed, 2 insertions(+)
+ block/blk-core.c        |  3 +++
+ include/linux/blkdev.h  |  1 +
+ kernel/trace/blktrace.c | 18 ++++++++++++------
+ 3 files changed, 16 insertions(+), 6 deletions(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -491,7 +491,9 @@ static void sctp_v6_to_addr(union sctp_a
- {
- 	addr->sa.sa_family = AF_INET6;
- 	addr->v6.sin6_port = port;
-+	addr->v6.sin6_flowinfo = 0;
- 	addr->v6.sin6_addr = *saddr;
-+	addr->v6.sin6_scope_id = 0;
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -611,6 +611,9 @@ struct request_queue *blk_alloc_queue_no
+ 
+ 	kobject_init(&q->kobj, &blk_queue_ktype);
+ 
++#ifdef CONFIG_BLK_DEV_IO_TRACE
++	mutex_init(&q->blk_trace_mutex);
++#endif
+ 	mutex_init(&q->sysfs_lock);
+ 	spin_lock_init(&q->__queue_lock);
+ 
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -448,6 +448,7 @@ struct request_queue {
+ 	int			node;
+ #ifdef CONFIG_BLK_DEV_IO_TRACE
+ 	struct blk_trace	*blk_trace;
++	struct mutex		blk_trace_mutex;
+ #endif
+ 	/*
+ 	 * for flush operations
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -634,6 +634,12 @@ int blk_trace_startstop(struct request_q
+ }
+ EXPORT_SYMBOL_GPL(blk_trace_startstop);
+ 
++/*
++ * When reading or writing the blktrace sysfs files, the references to the
++ * opened sysfs or device files should prevent the underlying block device
++ * from being removed. So no further delete protection is really needed.
++ */
++
+ /**
+  * blk_trace_ioctl: - handle the ioctls associated with tracing
+  * @bdev:	the block device
+@@ -651,7 +657,7 @@ int blk_trace_ioctl(struct block_device
+ 	if (!q)
+ 		return -ENXIO;
+ 
+-	mutex_lock(&bdev->bd_mutex);
++	mutex_lock(&q->blk_trace_mutex);
+ 
+ 	switch (cmd) {
+ 	case BLKTRACESETUP:
+@@ -677,7 +683,7 @@ int blk_trace_ioctl(struct block_device
+ 		break;
+ 	}
+ 
+-	mutex_unlock(&bdev->bd_mutex);
++	mutex_unlock(&q->blk_trace_mutex);
+ 	return ret;
  }
  
- /* Compare addresses exactly.
+@@ -1670,7 +1676,7 @@ static ssize_t sysfs_blk_trace_attr_show
+ 	if (q == NULL)
+ 		goto out_bdput;
+ 
+-	mutex_lock(&bdev->bd_mutex);
++	mutex_lock(&q->blk_trace_mutex);
+ 
+ 	if (attr == &dev_attr_enable) {
+ 		ret = sprintf(buf, "%u\n", !!q->blk_trace);
+@@ -1689,7 +1695,7 @@ static ssize_t sysfs_blk_trace_attr_show
+ 		ret = sprintf(buf, "%llu\n", q->blk_trace->end_lba);
+ 
+ out_unlock_bdev:
+-	mutex_unlock(&bdev->bd_mutex);
++	mutex_unlock(&q->blk_trace_mutex);
+ out_bdput:
+ 	bdput(bdev);
+ out:
+@@ -1731,7 +1737,7 @@ static ssize_t sysfs_blk_trace_attr_stor
+ 	if (q == NULL)
+ 		goto out_bdput;
+ 
+-	mutex_lock(&bdev->bd_mutex);
++	mutex_lock(&q->blk_trace_mutex);
+ 
+ 	if (attr == &dev_attr_enable) {
+ 		if (value)
+@@ -1757,7 +1763,7 @@ static ssize_t sysfs_blk_trace_attr_stor
+ 	}
+ 
+ out_unlock_bdev:
+-	mutex_unlock(&bdev->bd_mutex);
++	mutex_unlock(&q->blk_trace_mutex);
+ out_bdput:
+ 	bdput(bdev);
+ out:
