@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753258AbeBKKu4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 05:50:56 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:39488 "EHLO
+        id S1753229AbeBKKuy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 05:50:54 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:39500 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752811AbeBKKur (ORCPT
+        with ESMTP id S1753011AbeBKKur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Feb 2018 05:50:47 -0500
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, x86@kernel.org
 Cc: dan.j.williams@intel.com, tglx@linutronix.de, ak@linux.intel.com,
         torvalds@linux-foundation.org, luto@kernel.org
-Subject: [PATCH v3 5/7] x86/entry: use PUSH_AND_CLEAN_REGS in more cases
-Date: Sun, 11 Feb 2018 11:49:46 +0100
-Message-Id: <20180211104949.12992-6-linux@dominikbrodowski.net>
+Subject: [PATCH v3 2/7] x86/entry: merge POP_C_REGS and POP_EXTRA_REGS
+Date: Sun, 11 Feb 2018 11:49:43 +0100
+Message-Id: <20180211104949.12992-3-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180211104949.12992-1-linux@dominikbrodowski.net>
 References: <20180211104949.12992-1-linux@dominikbrodowski.net>
@@ -21,126 +21,113 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-entry_SYSCALL_64_after_hwframe and nmi can be converted to use
-PUSH_AND_CLEAN_REGS instead of opencoded variants thereof. Due to
-the interleaving, the additional XOR-based clearing of r8 and r9
-in entry_SYSCALL_64_after_hwframe should not have any noticeable
-negative implications.
+The two special, opencoded cases for POP_C_REGS can be handled by ASM
+macros.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/entry/calling.h  |  6 ++---
- arch/x86/entry/entry_64.S | 65 +++--------------------------------------------
- 2 files changed, 6 insertions(+), 65 deletions(-)
+ arch/x86/entry/calling.h  | 15 +++++++++++----
+ arch/x86/entry/entry_64.S | 26 ++++----------------------
+ 2 files changed, 15 insertions(+), 26 deletions(-)
 
 diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 57b1b87a04f0..d6a97e2945ee 100644
+index 8907a6593b42..3bda31736a7b 100644
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -137,7 +137,7 @@ For 32-bit we have the following conventions - kernel is built with
- 	UNWIND_HINT_REGS offset=\offset
+@@ -139,25 +139,32 @@ For 32-bit we have the following conventions - kernel is built with
+ 	xorq %r15, %r15
  	.endm
  
--	.macro PUSH_AND_CLEAR_REGS
-+	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
- 	/*
- 	 * Push registers and sanitize registers of values that a
- 	 * speculation attack might otherwise want to exploit. The
-@@ -147,9 +147,9 @@ For 32-bit we have the following conventions - kernel is built with
- 	 */
- 	pushq   %rdi		/* pt_regs->di */
- 	pushq   %rsi		/* pt_regs->si */
--	pushq   %rdx		/* pt_regs->dx */
-+	pushq	\rdx		/* pt_regs->dx */
- 	pushq   %rcx		/* pt_regs->cx */
--	pushq   %rax		/* pt_regs->ax */
-+	pushq   \rax		/* pt_regs->ax */
- 	pushq   %r8		/* pt_regs->r8 */
- 	xorq    %r8, %r8	/* nospec   r8 */
- 	pushq   %r9		/* pt_regs->r9 */
+-	.macro POP_EXTRA_REGS
++	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+ 	popq %r13
+ 	popq %r12
+ 	popq %rbp
+ 	popq %rbx
+-	.endm
+-
+-	.macro POP_C_REGS
++	.if \skip_r11rcx
++	popq %rsi
++	.else
+ 	popq %r11
++	.endif
+ 	popq %r10
+ 	popq %r9
+ 	popq %r8
+ 	popq %rax
++	.if \skip_r11rcx
++	popq %rsi
++	.else
+ 	popq %rcx
++	.endif
+ 	popq %rdx
+ 	popq %rsi
++	.if \pop_rdi
+ 	popq %rdi
++	.endif
+ 	.endm
+ 
+ 	.macro icebp
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 9dd3fbfdc75d..9c4fe360db42 100644
+index 91e8d84c2496..286b24b650da 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -227,35 +227,8 @@ ENTRY(entry_SYSCALL_64)
- 	pushq	%rcx				/* pt_regs->ip */
- GLOBAL(entry_SYSCALL_64_after_hwframe)
- 	pushq	%rax				/* pt_regs->orig_ax */
--	pushq	%rdi				/* pt_regs->di */
--	pushq	%rsi				/* pt_regs->si */
--	pushq	%rdx				/* pt_regs->dx */
--	pushq	%rcx				/* pt_regs->cx */
--	pushq	$-ENOSYS			/* pt_regs->ax */
--	pushq	%r8				/* pt_regs->r8 */
--	pushq	%r9				/* pt_regs->r9 */
--	pushq	%r10				/* pt_regs->r10 */
--	/*
--	 * Clear extra registers that a speculation attack might
--	 * otherwise want to exploit. Interleave XOR with PUSH
--	 * for better uop scheduling:
--	 */
--	xorq	%r10, %r10			/* nospec   r10 */
--	pushq	%r11				/* pt_regs->r11 */
--	xorq	%r11, %r11			/* nospec   r11 */
--	pushq	%rbx				/* pt_regs->rbx */
--	xorl	%ebx, %ebx			/* nospec   rbx */
--	pushq	%rbp				/* pt_regs->rbp */
--	xorl	%ebp, %ebp			/* nospec   rbp */
--	pushq	%r12				/* pt_regs->r12 */
--	xorq	%r12, %r12			/* nospec   r12 */
--	pushq	%r13				/* pt_regs->r13 */
--	xorq	%r13, %r13			/* nospec   r13 */
--	pushq	%r14				/* pt_regs->r14 */
--	xorq	%r14, %r14			/* nospec   r14 */
--	pushq	%r15				/* pt_regs->r15 */
--	xorq	%r15, %r15			/* nospec   r15 */
--	UNWIND_HINT_REGS
-+
-+	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
- 
- 	TRACE_IRQS_OFF
- 
-@@ -1388,39 +1361,7 @@ ENTRY(nmi)
- 	pushq	1*8(%rdx)	/* pt_regs->rip */
- 	UNWIND_HINT_IRET_REGS
- 	pushq   $-1		/* pt_regs->orig_ax */
--	pushq   %rdi		/* pt_regs->di */
--	pushq   %rsi		/* pt_regs->si */
--	pushq   (%rdx)		/* pt_regs->dx */
--	pushq   %rcx		/* pt_regs->cx */
--	pushq   %rax		/* pt_regs->ax */
--	/*
--	 * Sanitize registers of values that a speculation attack
--	 * might otherwise want to exploit. The lower registers are
--	 * likely clobbered well before they could be put to use in
--	 * a speculative execution gadget. Interleave XOR with PUSH
--	 * for better uop scheduling:
--	 */
--	pushq   %r8		/* pt_regs->r8 */
--	xorq    %r8, %r8	/* nospec   r8 */
--	pushq   %r9		/* pt_regs->r9 */
--	xorq    %r9, %r9	/* nospec   r9 */
--	pushq   %r10		/* pt_regs->r10 */
--	xorq    %r10, %r10	/* nospec   r10 */
--	pushq   %r11		/* pt_regs->r11 */
--	xorq    %r11, %r11	/* nospec   r11*/
--	pushq	%rbx		/* pt_regs->rbx */
--	xorl    %ebx, %ebx	/* nospec   rbx*/
--	pushq	%rbp		/* pt_regs->rbp */
--	xorl    %ebp, %ebp	/* nospec   rbp*/
--	pushq	%r12		/* pt_regs->r12 */
--	xorq    %r12, %r12	/* nospec   r12*/
--	pushq	%r13		/* pt_regs->r13 */
--	xorq    %r13, %r13	/* nospec   r13*/
--	pushq	%r14		/* pt_regs->r14 */
--	xorq    %r14, %r14	/* nospec   r14*/
--	pushq	%r15		/* pt_regs->r15 */
--	xorq    %r15, %r15	/* nospec   r15*/
--	UNWIND_HINT_REGS
-+	PUSH_AND_CLEAR_REGS rdx=(%rdx)
- 	ENCODE_FRAME_POINTER
+@@ -334,15 +334,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+ syscall_return_via_sysret:
+ 	/* rcx and r11 are already restored (see code above) */
+ 	UNWIND_HINT_EMPTY
+-	POP_EXTRA_REGS
+-	popq	%rsi	/* skip r11 */
+-	popq	%r10
+-	popq	%r9
+-	popq	%r8
+-	popq	%rax
+-	popq	%rsi	/* skip rcx */
+-	popq	%rdx
+-	popq	%rsi
++	POP_REGS pop_rdi=0 skip_r11rcx=1
  
  	/*
+ 	 * Now all regs are restored except RSP and RDI.
+@@ -635,15 +627,7 @@ GLOBAL(swapgs_restore_regs_and_return_to_usermode)
+ 	ud2
+ 1:
+ #endif
+-	POP_EXTRA_REGS
+-	popq	%r11
+-	popq	%r10
+-	popq	%r9
+-	popq	%r8
+-	popq	%rax
+-	popq	%rcx
+-	popq	%rdx
+-	popq	%rsi
++	POP_REGS pop_rdi=0
+ 
+ 	/*
+ 	 * The stack is now user RDI, orig_ax, RIP, CS, EFLAGS, RSP, SS.
+@@ -701,8 +685,7 @@ GLOBAL(restore_regs_and_return_to_kernel)
+ 	ud2
+ 1:
+ #endif
+-	POP_EXTRA_REGS
+-	POP_C_REGS
++	POP_REGS
+ 	addq	$8, %rsp	/* skip regs->orig_ax */
+ 	INTERRUPT_RETURN
+ 
+@@ -1661,8 +1644,7 @@ end_repeat_nmi:
+ nmi_swapgs:
+ 	SWAPGS_UNSAFE_STACK
+ nmi_restore:
+-	POP_EXTRA_REGS
+-	POP_C_REGS
++	POP_REGS
+ 
+ 	/*
+ 	 * Skip orig_ax and the "outermost" frame to point RSP at the "iret"
 -- 
 2.16.1
