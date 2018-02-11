@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326738-2-15187990256620283038
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326731-2-3051988947802659845
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326738; b=Kuy0GMuzaTk8FtDOB6Lb7SArY9rzbXXrN268D+mt25n8DDT
-    0NpgaCAyj0zVq/kZe0T4zGzYB7Ll2eO6LooB/PB6Vkh4WWkbfl6FSxsflfuo5KsW
-    r6dRpEAVBhVe74wy4ErjV9Dixhzbdpc9tTndwTKFFHloZ6Nvh2lzptrTz9nos178
-    DTVACcKIUNrEvDnzE1yjezwLlSc3W5nceCy6C6jj5L2EzxkDPnMwNzx8ddMVUe7E
-    pR7Fh29s/L5Qznx+S1wRt8EAZOEJoBJF7UcizaVntkBe7xGV8FhUnvqd3uHahUkG
-    nFbqfQQC2Q/bPJGU1YVWgTjUrYkHLBzRZX+W3ew==
+    t=1518326731; b=rnOaEnM/GdMxbNGyrOhfHT6AX+ChL08/w8cGbcD7XCneYRF
+    WLxu9TGwi89FSqDbbB6bVq8BRL3xupDJI01eLI9/x334/juVFgaltfcjK6a9BoNg
+    nKK5qiA0K5Ws3gTb2BBfkJt4zKtBeo614uNbDDpWrnfqQLvb2TcCRGU5SHJy54/f
+    KB3ljfKmNbWQA57aTCXiG9xxuR9YyXgCFNSQDh8aC3QsyqCsXPUlKpbhBXj7AMTg
+    zW44KIJe3KVp1/NOqE50K8+xOGfdYbL6OIi+DxW22HLrJW3IY6Xc0Uwl8fu5iHsp
+    MKP/fXTFF5fx28mvbRDXRHYxTB0+BBCAriHYmHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326738; bh=9DLcXuT16yH2EIQWPqm
-    Mmet6f7slr4cNkbI5KJjT4tc=; b=QsxLDhWN9Rr6LGB09F4NUtFSRbWlC/FjxeK
-    1oQ2ipXHYfyc5WG1xuAeMiwAQ0+SPUMEv0zw1G35u0BNs6MxzgYd7BTCHnWLQW5C
-    fkHNnSkayhWX62IvXtWNuPz1b7N40uohAhg4VD3h4ews2dwVWZ+JMg4NZGNcBLZH
-    omM/mUb2hXbT38DNZ++Ia0+x3Chi8iC0pH8ee/yNRDljsVcw2BAuxOskmhQpxVQb
-    q2KSWuos/cdkn3736Lwy8yH+GfFUu1ibLLvBAQmuWwnfGUqB2V4EAFBnB5r8/ky8
-    rmAEnIgq+4uUTczBsQkIIBm40LqvgNX0b6vP+z9zEaPACf12aqQ==
+    :sender:list-id; s=arctest; t=1518326731; bh=/iyqHlqqvLdOXKMEj6C
+    C33yyRE9EInCDg5fTG6ECJuk=; b=oAtZCH9h56pUElFQsgJFwkeGLHG5L224BCt
+    J81gKzJaKVI9N1nTCp2IfN6I/C+5isDYRs/chQ4t7QRZHmZKGIqb3lVzKasQevZc
+    QPkQuPjUj2VPOdVvZgl64O1OZnyYMnFnc3z+l/Kz70hrzAtnAdS3AEeRvJ9LPknl
+    /vJaAyH+xjVKK0wZ5BAqBjJXej9I30GyyECiZCVQ8MNY51x/1S5U3EUOqqHgtkn3
+    sO9A9ivlxkOL/9Ot5PFeolCE7ZqPcRNgE42pEYeXrc/YE8zbXJdc4+UdwcgP9P1S
+    HCStHmOqvkTkR7aDxSlC5VR5TXvGrt4nnm2x45CxENGDTEMHSBg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754115AbeBKFYE (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:24:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41315 "EHLO
+        id S1752484AbeBKFYG (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:24:06 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41319 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752442AbeBKEdk (ORCPT
+        by vger.kernel.org with ESMTP id S1752449AbeBKEdk (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:40 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
-        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
+CC: akpm@linux-foundation.org,
+        "Colin Ian King" <colin.king@canonical.com>,
+        "Alexandre Belloni" <alexandre.belloni@free-electrons.com>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.286657411@decadent.org.uk>
+Message-ID: <lsq.1518322806.113202@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 01/79] Input: adxl34x - do not treat FIFO_MODE() as
- boolean
+Subject: [PATCH 3.2 02/79] rtc: interface: ignore expired timers when
+ enqueuing new timers
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,39 +81,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 1dbc080c9ef6bcfba652ef0d6ae919b8c7c85a1d upstream.
+commit 2b2f5ff00f63847d95adad6289bd8b05f5983dd5 upstream.
 
-FIFO_MODE() is a macro expression with a '<<' operator, which gcc points
-out could be misread as a '<':
+This patch fixes a RTC wakealarm issue, namely, the event fires during
+hibernate and is not cleared from the list, causing hwclock to block.
 
-drivers/input/misc/adxl34x.c: In function 'adxl34x_probe':
-drivers/input/misc/adxl34x.c:799:36: error: '<<' in boolean context, did you mean '<' ? [-Werror=int-in-bool-context]
+The current enqueuing does not trigger an alarm if any expired timers
+already exist on the timerqueue. This can occur when a RTC wake alarm
+is used to wake a machine out of hibernate and the resumed state has
+old expired timers that have not been removed from the timer queue.
+This fix skips over any expired timers and triggers an alarm if there
+are no pending timers on the timerqueue. Note that the skipped expired
+timer will get reaped later on, so there is no need to clean it up
+immediately.
 
-While utility of this warning is being disputed (Chief Penguin: "This
-warning is clearly pure garbage.") FIFO_MODE() extracts range of values,
-with 0 being FIFO_BYPASS, and not something that is logically boolean.
+The issue can be reproduced by putting a machine into hibernate and
+waking it with the RTC wakealarm.  Running the example RTC test program
+from tools/testing/selftests/timers/rtctest.c after the hibernate will
+block indefinitely.  With the fix, it no longer blocks after the
+hibernate resume.
 
-This converts the test to an explicit comparison with FIFO_BYPASS,
-making it clearer to gcc and the reader what is intended.
+BugLink: http://bugs.launchpad.net/bugs/1333569
 
-Fixes: e27c729219ad ("Input: add driver for ADXL345/346 Digital Accelerometers")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/input/misc/adxl34x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/interface.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/drivers/input/misc/adxl34x.c
-+++ b/drivers/input/misc/adxl34x.c
-@@ -797,7 +797,7 @@ struct adxl34x *adxl34x_probe(struct dev
- 
- 	if (pdata->watermark) {
- 		ac->int_mask |= WATERMARK;
--		if (!FIFO_MODE(pdata->fifo_mode))
-+		if (FIFO_MODE(pdata->fifo_mode) == FIFO_BYPASS)
- 			ac->pdata.fifo_mode |= FIFO_STREAM;
- 	} else {
- 		ac->int_mask |= DATA_READY;
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -749,9 +749,23 @@ EXPORT_SYMBOL_GPL(rtc_irq_set_freq);
+  */
+ static int rtc_timer_enqueue(struct rtc_device *rtc, struct rtc_timer *timer)
+ {
++	struct timerqueue_node *next = timerqueue_getnext(&rtc->timerqueue);
++	struct rtc_time tm;
++	ktime_t now;
++
+ 	timer->enabled = 1;
++	__rtc_read_time(rtc, &tm);
++	now = rtc_tm_to_ktime(tm);
++
++	/* Skip over expired timers */
++	while (next) {
++		if (next->expires.tv64 >= now.tv64)
++			break;
++		next = timerqueue_iterate_next(next);
++	}
++
+ 	timerqueue_add(&rtc->timerqueue, &timer->node);
+-	if (&timer->node == timerqueue_getnext(&rtc->timerqueue)) {
++	if (!next) {
+ 		struct rtc_wkalrm alarm;
+ 		int err;
+ 		alarm.time = rtc_ktime_to_tm(timer->node.expires);
