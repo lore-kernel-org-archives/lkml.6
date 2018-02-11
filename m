@@ -1,81 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753281AbeBKLlt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 06:41:49 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45493 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752460AbeBKLls (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 06:41:48 -0500
-X-Google-Smtp-Source: AH8x226D5FpI9qZeBFaIST+UHmCGtkla2V5PpLTlCZdZVnk87uOgQtHIP7/oNpC/SNf/I7lZw/Gmb0vS0x/c5nF1afc=
+        id S1753291AbeBKLon (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 06:44:43 -0500
+Received: from smtp51.i.mail.ru ([94.100.177.111]:41470 "EHLO smtp51.i.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753040AbeBKLom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 06:44:42 -0500
+Subject: Re: [PATCH 0/3] Fix broken bananapi m2 devicetree/regulators
+To: Philipp Rossak <embed3d@gmail.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux@armlinux.org.uk,
+        maxime.ripard@free-electrons.com, wens@csie.org
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180209175236.21215-1-embed3d@gmail.com>
+ <160b60e2-6e50-0d63-e6ac-b67e10317e12@orpaltech.com>
+ <d3fcc9d2-f2e6-189c-529f-890f2afdd837@gmail.com>
+ <40887d4b-0fb0-239e-e5a9-1a87f82946c2@orpaltech.com>
+ <da8909da-4eea-0fdf-e104-4442f7986455@gmail.com>
+ <45fb86c9-2218-d00d-1952-6b79f9101049@orpaltech.com>
+ <1518348631.1342.1.camel@gmail.com>
+From: Sergey Suloev <ssuloev@orpaltech.com>
+Message-ID: <d90584ac-ae76-39fc-c0e1-ba2ff2151c30@orpaltech.com>
+Date: Sun, 11 Feb 2018 14:44:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMz4kuK9GAR8Ao7RbN5+QUo2-v-bDXaCbtGrzE7Qx_TY=xfTng@mail.gmail.com>
-References: <6fff71482ed7bb63afa46c024638c0a72810ce29.1517913264.git.baolin.wang@linaro.org>
- <CAAfSe-uQqVPB5B0OYij-bx6Q7AnGnONNqYtwWkU_b2rSJfCpfw@mail.gmail.com> <CAMz4kuK9GAR8Ao7RbN5+QUo2-v-bDXaCbtGrzE7Qx_TY=xfTng@mail.gmail.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Sun, 11 Feb 2018 19:41:06 +0800
-Message-ID: <CAAfSe-v_i=EnrvKWKmWsi4wSx=EiHK_0Q7KfouaQ8o5iYo+yrA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: Enable SPRD_TIMER
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        =?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?=
-        <orson.zhai@spreadtrum.com>,
-        nianfu.bai@spreadtrum.com, geng.ren@spreadtrum.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1518348631.1342.1.camel@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Authentication-Results: smtp51.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A59F7514FD3C751B986C600B79667E5995FE4E38303E5E34DC725E5C173C3A84C3A0CC8883A33FD9CDAB01CE898341E080BA6625F88748EAEFC4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F93F060FBA3C93C613B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917380A97D0287DA16287FA12874308B985069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolin,
-
-On 7 February 2018 at 11:12, Baolin Wang <baolin.wang@linaro.org> wrote:
-> On 7 February 2018 at 10:31, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->> Hi Baolin,
+On 02/11/2018 02:30 PM, Philipp Rossak wrote:
+> Am Sonntag, den 11.02.2018, 10:55 +0300 schrieb Sergey Suloev:
+>> On 02/11/2018 01:07 AM, Philipp Rossak wrote:
+>>>
+>>> On 10.02.2018 22:08, Sergey Suloev wrote:
+>>>> On 02/11/2018 12:01 AM, Philipp Rossak wrote:
+>>>>> Hey Sergey,
+>>>>>
+>>>>> Thanks for mentioning, but I think the problem has nothing to
+>>>>> do
+>>>>> with those patches. I tested them with the v4.15.0 Kernel since
+>>>>> this
+>>>>> is the last stable release and we are right now in the merging
+>>>>> window.
+>>>>>
+>>>>> I tested the latest mainline, without those patches and the
+>>>>> kernel
+>>>>> is not booting (I can't see any uart output).
+>>>>>
+>>>>> Thanks,
+>>>>> Philipp
+>>>>>
+>>>>> On 10.02.2018 14:56, Sergey Suloev wrote:
+>>>>>> On 02/09/2018 08:52 PM, Philipp Rossak wrote:
+>>>>>>> This patchseries fixes the bananapi m1 devicetree, to be
+>>>>>>> able to
+>>>>>>> boot again.
+>>>>>>> The first two patches update/improve the devicetree and the
+>>>>>>> last
+>>>>>>> patch adds
+>>>>>>> all missing regulators.
+>>>>>>>
+>>>>>>> Regards,
+>>>>>>> Philipp
+>>>>>>>
+>>>>>>> Philipp Rossak (3):
+>>>>>>>     arm: dts: sun6i: a31s: bpi-m2: update mmc supply nodes
+>>>>>>>     arm: dts: sun6i: a31s: bpi-m2: improve pmic properties
+>>>>>>>     arm: dts: sun6i: a31s: fix: bpi-m2: add missing
+>>>>>>> regulators
+>>>>>>>
+>>>>>>>    arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 70
+>>>>>>> +++++++++++++++++++++++-
+>>>>>>>    1 file changed, 67 insertions(+), 3 deletions(-)
+>>>>>>>
+>>>>>> patches are not working
+>>>>>>
+>>>>>> Thanks
+>>>>>>
+>>>> same problem, but after applying the patches my device is till
+>>>> hanging.
+>>>>
+>>>>
+>>> Can you please share a bootlog? Here is mine [1]. As you can see
+>>> I'm
+>>> able to boot.
+>>> I build it with this branch [2]. For testing you should replace
+>>> the
+>>> dtb and the uImage/zImage
+>>>
+>>> Philipp
+>>>
+>>>
+>>> [1]: https://pastebin.com/mVjv3LDf
+>>> [2]:
+>>> https://github.com/embed-3d/linux/tree/testing/bpi-m2-regulator-tes
+>>> t-2
+>> My dmesg is very similar to yours unless it hangs on the last line
+>> [1].
+>> For this test I used kernel from tag v4.15 with no additional
+>> patching.
 >>
->> On 6 February 2018 at 18:36, Baolin Wang <baolin.wang@linaro.org> wrote:
->>> Enable Spreadtrum timer driver for Spreadtrum plaform, which will be used
->>> as tick broadcast device.
->>>
->>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->>> ---
->>>  arch/arm64/Kconfig.platforms |    1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->>> index fbedbd8..3e0bbb0 100644
->>> --- a/arch/arm64/Kconfig.platforms
->>> +++ b/arch/arm64/Kconfig.platforms
->>> @@ -224,6 +224,7 @@ config ARCH_TEGRA
->>>
->>>  config ARCH_SPRD
->>>         bool "Spreadtrum SoC platform"
->>> +       select SPRD_TIMER
+>> [1] https://pastebin.com/3a6bk5Dk
 >>
->> Do we have to select SPRD_TIMER here? SC9836, SC9860 have been working
->> with a minimum system without SPRD TIMER.
+>>
+> For me it looks like you have a different kernel and also an different
+> dtb that you patch! And you are applying also a fixup script.
+> These patches should be applied on top of linux mainline.
 >
-> Yes, we need register this timer as the tick broadcast device,
-> otherwise we will use one hrtimer to be registered the broadcast
-> device, which will affect the No-Hz of CPU attaching the
-> broadcast-hrtimer.
-
-Again, Spreadtrum's two boards - SC9836/SC9860 - can run into console
-without SPRD_TIMER, we can also debug some kernel origianl feature or
-some basic drivers on these two boards, such as CoreSight, clock
-driver, etc.
-
-In my opinion we should keep the kernel as simple as possible, the
-above information can go to the 'help' graph of SPRD_TIMER in its
-Kconfig.
-
-Thanks,
-Chunyan
-
+> fixup script:
+> Applying kernel provided DT fixup script (sun6i-a31s-fixup.scr)
 >
-> --
-> Baolin.wang
-> Best Regards
+>
+> Linux versions:
+> 4.15.0-00003-g1bbe5edde691   vs   4.15.0-sunxi-dirty
+>
+> In addition to that you are also booting into fb/hdmi.
+>
+> If you use my branch (uImage and dtb) and replace the current boot.cmd
+> with this (to get the boot.scr you need to use mkimage) it should work:
+>
+> setenv bootargs console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait
+> panic=10
+> load mmc 0:1 0x43000000 ${fdtfile} || load mmc 0:1 0x43000000
+> boot/${fdtfile}
+> load mmc 0:1 0x42000000 uImage || load mmc 0:1 0x42000000 boot/uImage
+> bootm 0x42000000 - 0x43000000
+>
+ok, I confirm that your patches are not related to the issue. It is the 
+problem with sun4i drm / hdmi which is not working on bpi m2.
+
+Thanks
