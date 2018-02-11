@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932232AbeBKVJ3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 16:09:29 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38141 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932179AbeBKVHm (ORCPT
+        id S932247AbeBKVJr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 16:09:47 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37453 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932133AbeBKVHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 16:07:42 -0500
-X-Google-Smtp-Source: AH8x227fltWVUTgbTL2nrouQvtsR/0YasNeHbYy9GBAc8C1FUMGQFflxGJ1S2Z5dLB9XR8+z0J9plQ==
+        Sun, 11 Feb 2018 16:07:40 -0500
+X-Google-Smtp-Source: AH8x2264s+eZxJZyeiin7tCcHyKTCKEYj+7sDFxdP+tc8kMD0qxNguMyiwX9Wqv85wiu94bJ/qwIEw==
 From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
 To: Jonathan Woithe <jwoithe@just42.net>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] platform/x86: fujitsu-laptop: Simplify error paths
-Date: Sun, 11 Feb 2018 22:07:23 +0100
-Message-Id: <20180211210727.12130-4-kernel@kempniu.pl>
+Subject: [PATCH 2/7] platform/x86: fujitsu-laptop: Defer input device registration
+Date: Sun, 11 Feb 2018 22:07:22 +0100
+Message-Id: <20180211210727.12130-3-kernel@kempniu.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180211210727.12130-1-kernel@kempniu.pl>
 References: <20180211210727.12130-1-kernel@kempniu.pl>
@@ -26,59 +26,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the last few lines of acpi_fujitsu_bl_add() with a simple return
-in order to improve code readability without changing the logic.
-
-As acpi_fujitsu_laptop_add() uses a managed memory allocation for
-device-specific data, it is fine to just return immediately upon kfifo
-allocation failure.  Do that instead of jumping to the end of the
-function to improve code readability.  Running out of memory while
-allocating the kfifo does not seem probable enough to warrant logging an
-error message, so do not do it.
+Only register input devices after the device-specific data structures
+they access are fully initialized.
 
 Signed-off-by: Michał Kępień <kernel@kempniu.pl>
 ---
- drivers/platform/x86/fujitsu-laptop.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/platform/x86/fujitsu-laptop.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
-index 7f30a427a16c..94ff7f86fa8f 100644
+index b5f782807bfa..7f30a427a16c 100644
 --- a/drivers/platform/x86/fujitsu-laptop.c
 +++ b/drivers/platform/x86/fujitsu-laptop.c
-@@ -410,11 +410,7 @@ static int acpi_fujitsu_bl_add(struct acpi_device *device)
- 	if (ret)
- 		return ret;
+@@ -399,10 +399,6 @@ static int acpi_fujitsu_bl_add(struct acpi_device *device)
+ 	strcpy(acpi_device_class(device), ACPI_FUJITSU_CLASS);
+ 	device->driver_data = priv;
  
--	ret = fujitsu_backlight_register(device);
+-	ret = acpi_fujitsu_bl_input_setup(device);
 -	if (ret)
 -		return ret;
 -
--	return 0;
-+	return fujitsu_backlight_register(device);
- }
- 
- /* Brightness notify */
-@@ -790,10 +786,8 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
- 	spin_lock_init(&priv->fifo_lock);
- 	ret = kfifo_alloc(&priv->fifo, RINGBUFFERSIZE * sizeof(int),
- 			  GFP_KERNEL);
--	if (ret) {
--		pr_err("kfifo_alloc failed\n");
--		goto err_stop;
--	}
-+	if (ret)
-+		return ret;
- 
  	pr_info("ACPI: %s [%s]\n",
  		acpi_device_name(device), acpi_device_bid(device));
-@@ -845,7 +839,7 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
  
- err_free_fifo:
- 	kfifo_free(&priv->fifo);
--err_stop:
+@@ -410,6 +406,10 @@ static int acpi_fujitsu_bl_add(struct acpi_device *device)
+ 		priv->max_brightness = FUJITSU_LCD_N_LEVELS;
+ 	get_lcd_level(device);
+ 
++	ret = acpi_fujitsu_bl_input_setup(device);
++	if (ret)
++		return ret;
 +
- 	return ret;
- }
+ 	ret = fujitsu_backlight_register(device);
+ 	if (ret)
+ 		return ret;
+@@ -795,10 +795,6 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
+ 		goto err_stop;
+ 	}
  
+-	ret = acpi_fujitsu_laptop_input_setup(device);
+-	if (ret)
+-		goto err_free_fifo;
+-
+ 	pr_info("ACPI: %s [%s]\n",
+ 		acpi_device_name(device), acpi_device_bid(device));
+ 
+@@ -833,6 +829,10 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
+ 			fujitsu_bl->bl_device->props.power = FB_BLANK_UNBLANK;
+ 	}
+ 
++	ret = acpi_fujitsu_laptop_input_setup(device);
++	if (ret)
++		goto err_free_fifo;
++
+ 	ret = acpi_fujitsu_laptop_leds_register(device);
+ 	if (ret)
+ 		goto err_free_fifo;
 -- 
 2.16.1
