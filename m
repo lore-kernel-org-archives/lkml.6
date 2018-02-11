@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753283AbeBKJlt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 04:41:49 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33572 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752805AbeBKJjN (ORCPT
+        id S1752834AbeBKJo4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 04:44:56 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:59466 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752273AbeBKJoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 04:39:13 -0500
+        Sun, 11 Feb 2018 04:44:55 -0500
 From: Jianchao Wang <jianchao.w.wang@oracle.com>
 To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
 Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 0/6]nvme-pci: fixes on nvme_timeout and nvme_dev_disable
-Date: Sun, 11 Feb 2018 17:38:31 +0800
-Message-Id: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH 5/9] nvme-pci: suspend queues based on online_queues
+Date: Sun, 11 Feb 2018 17:38:36 +0800
+Message-Id: <1518341920-1060-6-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8801 signatures=668668
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
@@ -23,79 +25,129 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph, Keith and Sagi
+nvme cq irq is freed based on queue_count. When the sq/cq creation
+fails, irq will not be setup. free_irq will warn 'Try to free
+already-free irq'.
 
-Please consider and comment on the following patchset.
-That's really appreciated.
+To fix it, we only increase online_queues when adminq/sq/cq are
+created and associated irq is setup. Then suspend queues based
+on online_queues.
 
-There is a complicated relationship between nvme_timeout and nvme_dev_disable.
- - nvme_timeout has to invoke nvme_dev_disable to stop the
-   controller doing DMA access before free the request.
- - nvme_dev_disable has to depend on nvme_timeout to complete
-   adminq requests to set HMB or delete sq/cq when the controller
-   has no response.
- - nvme_dev_disable will race with nvme_timeout when cancels the
-   outstanding requests.
-We have found some issues introduced by them, please refer the following link
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/nvme/host/pci.c | 41 ++++++++++++++++++++++++++---------------
+ 1 file changed, 26 insertions(+), 15 deletions(-)
 
-http://lists.infradead.org/pipermail/linux-nvme/2018-January/015053.html 
-http://lists.infradead.org/pipermail/linux-nvme/2018-January/015276.html
-http://lists.infradead.org/pipermail/linux-nvme/2018-January/015328.html
-Even we cannot ensure there is no other issue.
-
-The best way to fix them is to break up the relationship between them.
-With this patch, we could avoid nvme_dev_disable to be invoked
-by nvme_timeout and eliminate the race between nvme_timeout and
-nvme_dev_disable on outstanding requests.
-
-Change V2->V3:
- - Keep queue frozen for reset case. If IO requests timeout during in RECONNECTING
-   state, fail them and kill the controller. Really appreciate Keith's directive and advice.
- - Add 3 patches to fix some bug about namespaces_mutex and change it to rwsem. It could fix
-   the deadlock risk introduced by namespace_mutex following.
- - other misc changes.
-
-Changes V1->V2:
- - free and disable pci things in nvme_pci_disable_ctrl_directly
- - change comment and add reviewed-by in 1st patch
- - resort patches
- - other misc changes
-
-There are 9 patches:
-
-1st ~ 3th patches is to change the namespaces_mutex to rw_semphore lock.
-4th, 6th, 7th is to do some preparations for the 8th patch.
-5th fixes a bug found when test.
-8th is to avoid nvme_dev_disable to be invoked by nvme_timeout, and implement
-the synchronization between them. More details, please refer to the comment of
-this patch.
-9th fixes a bug after 8th patch is introduced. It let nvme_delete_io_queues can
-only be wakeup by completion path.
-
-This patchset was tested under debug patch for some days.
-And some bugfix have been done.
-The patches are available in following it branch:
-https://github.com/jianchwa/linux-blcok.git nvme_fixes_V3_plus_rwsem
-
-Jianchao Wang (9)
-0001-nvme-fix-the-dangerous-reference-of-namespaces-list.patch
-0002-nvme-fix-the-deadlock-in-nvme_update_formats.patch
-0003-nvme-change-namespaces_mutext-to-namespaces_rwsem.patch
-0004-nvme-pci-quiesce-IO-queues-prior-to-disabling-device.patch
-0005-nvme-pci-suspend-queues-based-on-online_queues.patch
-0006-nvme-pci-drain-the-entered-requests-after-ctrl-is-sh.patch
-0007-blk-mq-make-blk_mq_rq_update_aborted_gstate-a-extern.patch
-0008-nvme-pci-break-up-nvme_timeout-and-nvme_dev_disable.patch
-0009-nvme-pci-discard-wait-timeout-when-delete-cq-sq.patch
-
-diff stat following:
-block/blk-mq.c                |   3 +-
-drivers/nvme/host/core.c      |  88 +++++++++------
-drivers/nvme/host/multipath.c |   4 +-
-drivers/nvme/host/nvme.h      |   2 +-
-drivers/nvme/host/pci.c       | 255 +++++++++++++++++++++++++++++++-----------
-include/linux/blk-mq.h        |   1 +
-6 files changed, 252 insertions(+), 101 deletions(-)
-
-Thanks
-Jianchao
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 00cffed..c5c1365 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1315,9 +1315,6 @@ static int nvme_suspend_queue(struct nvme_queue *nvmeq)
+ 	nvmeq->cq_vector = -1;
+ 	spin_unlock_irq(&nvmeq->q_lock);
+ 
+-	if (!nvmeq->qid && nvmeq->dev->ctrl.admin_q)
+-		blk_mq_quiesce_queue(nvmeq->dev->ctrl.admin_q);
+-
+ 	pci_free_irq(to_pci_dev(nvmeq->dev->dev), vector, nvmeq);
+ 
+ 	return 0;
+@@ -1461,13 +1458,14 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 	nvme_init_queue(nvmeq, qid);
+ 	result = queue_request_irq(nvmeq);
+ 	if (result < 0)
+-		goto release_sq;
++		goto offline;
+ 
+ 	return result;
+ 
+- release_sq:
++offline:
++	dev->online_queues--;
+ 	adapter_delete_sq(dev, qid);
+- release_cq:
++release_cq:
+ 	adapter_delete_cq(dev, qid);
+ 	return result;
+ }
+@@ -1607,6 +1605,7 @@ static int nvme_pci_configure_admin_queue(struct nvme_dev *dev)
+ 	result = queue_request_irq(nvmeq);
+ 	if (result) {
+ 		nvmeq->cq_vector = -1;
++		dev->online_queues--;
+ 		return result;
+ 	}
+ 
+@@ -1954,6 +1953,7 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	result = queue_request_irq(adminq);
+ 	if (result) {
+ 		adminq->cq_vector = -1;
++		dev->online_queues--;
+ 		return result;
+ 	}
+ 	return nvme_create_io_queues(dev);
+@@ -2167,6 +2167,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 	int i;
+ 	bool dead = true;
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
++	int onlines;
+ 
+ 	mutex_lock(&dev->shutdown_lock);
+ 	if (pci_is_enabled(pdev)) {
+@@ -2175,8 +2176,11 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 		if (dev->ctrl.state == NVME_CTRL_LIVE ||
+ 		    dev->ctrl.state == NVME_CTRL_RESETTING)
+ 			nvme_start_freeze(&dev->ctrl);
+-		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
+-			pdev->error_state  != pci_channel_io_normal);
++
++		dead = !!((csts & NVME_CSTS_CFS) ||
++				!(csts & NVME_CSTS_RDY) ||
++				(pdev->error_state  != pci_channel_io_normal) ||
++				(dev->online_queues == 0));
+ 	}
+ 
+ 	/*
+@@ -2201,9 +2205,14 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 		nvme_disable_io_queues(dev);
+ 		nvme_disable_admin_queue(dev, shutdown);
+ 	}
+-	for (i = dev->ctrl.queue_count - 1; i >= 0; i--)
++
++	onlines = dev->online_queues;
++	for (i = onlines - 1; i >= 0; i--)
+ 		nvme_suspend_queue(&dev->queues[i]);
+ 
++	if (dev->ctrl.admin_q)
++		blk_mq_quiesce_queue(dev->ctrl.admin_q);
++
+ 	nvme_pci_disable(dev);
+ 
+ 	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
+@@ -2339,16 +2348,18 @@ static void nvme_reset_work(struct work_struct *work)
+ 	if (result)
+ 		goto out;
+ 
+-	/*
+-	 * Keep the controller around but remove all namespaces if we don't have
+-	 * any working I/O queue.
+-	 */
+-	if (dev->online_queues < 2) {
++
++	/* In case of online_queues is zero, it has gone to out */
++	if (dev->online_queues == 1) {
++		/*
++		 * Keep the controller around but remove all namespaces if we
++		 * don't have any working I/O queue.
++		 */
+ 		dev_warn(dev->ctrl.device, "IO queues not created\n");
+ 		nvme_kill_queues(&dev->ctrl);
+ 		nvme_remove_namespaces(&dev->ctrl);
+ 		new_state = NVME_CTRL_ADMIN_ONLY;
+-	} else {
++	} else if (dev->online_queues > 1) {
+ 		nvme_start_queues(&dev->ctrl);
+ 		nvme_wait_freeze(&dev->ctrl);
+ 		/* hit this only when allocate tagset fails */
+-- 
+2.7.4
