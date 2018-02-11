@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518325071-2-10308569403335529608
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518325061-2-18198898170520177469
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325070; b=YA3/bRH8SFHovtBDTllWGgf9/YG4Od/HZB4eUX/t6ciwjnF
-    hHapEDFxJh8kA0SIE7xgQJ928DU4+nt7EYq9eupiQcMeF2xmX/e+ue6dl0H/sSEl
-    FW0ZxijOejaDTCi2a8n5DnpZtBlsU8k/7Xb3eyLwV7ttVpQB4Sb3mLDfunJrOW6w
-    wJpMgLe3fRz4V1YwY4vqzpuboRPKTmWaqxGS2NyrlZH+nqxJn9TW0F7meXqZJicS
-    z5GbBiLoSlXwDKsVFsgBwT0Bb6mrn8uLy1TyuMP71K5aJw7gXrzR5049jjr2ndj1
-    KRyxBLio+fBO9xdWeWz+OkXVij8jzDOKGDMP2QA==
+    t=1518325060; b=qPtHRamxRIlLLcdMck8y8pSWg4XcQpgnaHmLzezQWHig5e2
+    MkNQjmSJk5VdJuGGGbJp/YvHjwJn6XknnKl5qYkm11zSewDOvlXqfF/aYMvenolM
+    spMH9u3fEGkJgJ6JMglOHOKQuv9DILDqHhFm3FSap9eT9S14vep/SgZw4MZI3yOJ
+    XrNOsHNi6GO9Gl7A9pmgFVKHcpheibX+wrxhLOJvW4nK6NhMud87rvl76nuBX3S+
+    g6+QPfxCus+ztQoaPid0AzzlomBMFuOgyaS+dcp0YaIb/cqyoEeKsLYypm421Oom
+    7w5lokTUMSjoZDD3hFfkhOnPBy7Mk5eoPWtL5Zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325070; bh=+OiZuIwI9mQCdk3uOxA
-    63MexV7d1ahWSc7uhx9Lone8=; b=E1BXk7SwKcKeh9w6tpkrh4BB3tdWJ4UCZ4L
-    NJ6nRYUDvY5TR95zdVA1YV302OW2gBFkCaERf0wnkCDRnPV5Qt5O0/i0l3BeRZPU
-    kqYyrP/WwnP/W5e043AoQ+wpsi9Tdgz/rfA6q/hnGI5segH2fG/yz4OTacrRNRkx
-    dwzZI/wh0UOaouT2JMFZZIdM4nOxQl4qdl/7BtvkhjxO+gw3iFsj4F1PzirUMJLP
-    OjI9TyvEDiwyjeA5eb2XLI9IGGsU+qHvIfwvtAFRcviq+yNXaNl6BiucfHczV52m
-    +4PUQI0OkR96Fg5jIV4OFTzg0GwcvoXOgLOhXNk0RPEQ3mZeT/Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325060; bh=whkElfWWg9Xy9YLz6vk
+    FPgtxnf7mkepFvj8cpoa0whU=; b=S1O0x5qqbPzJ3XAde5FwUhLzFEXkX5luPR5
+    Qx31/zUh78rITbNKnhw6RhofqhrhL4TPwHhE9KcvJe+WxnjMunArNZEwwR9JTBRp
+    abA+oMP3DqkWzZc4HeYKfVT/CMsVUh9ht50W9TWDi94A6kdbRWNxoi3BQPKoqqV6
+    rsTc0U+gOkJaDwir+juk3z3nVLrUIPMUics4lHXCPVa6HaEDWvFJxx/dvuecl2Bu
+    H5txCz+fknOchXM2nlLdkgGa9g8h3n/ujE/z6vML2xVNJxzMLblzanT9ZaBReOEl
+    NJGkFgaibVz62+JLbUXxorn7Lc+3GtJvWCMjrXHAFnwKBaJPUbg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753580AbeBKEz6 (ORCPT <rfc822;greg@kroah.com>);
+        id S1753614AbeBKEz6 (ORCPT <rfc822;greg@kroah.com>);
         Sat, 10 Feb 2018 23:55:58 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41709 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41707 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752796AbeBKEd5 (ORCPT
+        by vger.kernel.org with ESMTP id S1752795AbeBKEd5 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:57 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,22 +59,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Brian Gerst" <brgerst@gmail.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Denys Vlasenko" <dvlasenk@redhat.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Andy Lutomirski" <luto@kernel.org>, linux-mm@kvack.org,
-        "Andy Lutomirski" <luto@amacapital.net>,
+CC: akpm@linux-foundation.org, "Marcelo Tosatti" <mtosatti@redhat.com>,
         "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Borislav Petkov" <bp@alien8.de>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
+        "Peter Zijlstra" <peterz@infradead.org>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.705119318@decadent.org.uk>
+Message-ID: <lsq.1518323471.978484144@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 131/136] x86/vdso: Get pvclock data from the vvar VMA
- instead of the fixmap
+Subject: [PATCH 3.16 129/136] x86: pvclock: Really remove the sched
+ notifier for cross-cpu migrations
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -89,189 +81,225 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit dac16fba6fc590fa7239676b35ed75dae4c4cd2b upstream.
+commit 73459e2a1ada09a68c02cc5b73f3116fc8194b3d upstream.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/9d37826fdc7e2d2809efe31d5345f97186859284.1449702533.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust filenames]
+This reverts commits 0a4e6be9ca17c54817cf814b4b5aa60478c6df27
+and 80f7fdb1c7f0f9266421f823964fd1962681f6ce.
+
+The task migration notifier was originally introduced in order to support
+the pvclock vsyscall with non-synchronized TSC, but KVM only supports it
+with synchronized TSC.  Hence, on KVM the race condition is only needed
+due to a bad implementation on the host side, and even then it's so rare
+that it's mostly theoretical.
+
+As far as KVM is concerned it's possible to fix the host, avoiding the
+additional complexity in the vDSO and the (re)introduction of the task
+migration notifier.
+
+Xen, on the other hand, hasn't yet implemented vsyscall support at
+all, so we do not care about its plans for non-synchronized TSC.
+
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Marcelo Tosatti <mtosatti@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/vdso/vclock_gettime.c  | 20 ++++++++------------
- arch/x86/vdso/vdso-layout.lds.S |  3 ++-
- arch/x86/vdso/vdso2c.c          |  3 +++
- arch/x86/vdso/vma.c             | 13 +++++++++++++
- arch/x86/include/asm/pvclock.h  |  9 +++++++++
- arch/x86/include/asm/vdso.h     |  1 +
- arch/x86/kernel/kvmclock.c      |  5 +++++
- 7 files changed, 41 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/pvclock.h |  1 -
+ arch/x86/kernel/pvclock.c      | 44 ------------------------------------------
+ arch/x86/vdso/vclock_gettime.c | 34 ++++++++++++++------------------
+ include/linux/sched.h          |  8 --------
+ kernel/sched/core.c            | 15 --------------
+ 5 files changed, 15 insertions(+), 87 deletions(-)
 
---- a/arch/x86/vdso/vclock_gettime.c
-+++ b/arch/x86/vdso/vclock_gettime.c
-@@ -36,6 +36,11 @@ static notrace cycle_t vread_hpet(void)
- }
- #endif
- 
-+#ifdef CONFIG_PARAVIRT_CLOCK
-+extern u8 pvclock_page
-+	__attribute__((visibility("hidden")));
-+#endif
-+
- #ifndef BUILD_VDSO32
- 
- #include <linux/kernel.h>
-@@ -62,23 +67,14 @@ notrace static long vdso_fallback_gtod(s
- 
- #ifdef CONFIG_PARAVIRT_CLOCK
- 
--static notrace const struct pvclock_vsyscall_time_info *get_pvti(int cpu)
-+static notrace const struct pvclock_vsyscall_time_info *get_pvti0(void)
- {
--	const struct pvclock_vsyscall_time_info *pvti_base;
--	int idx = cpu / (PAGE_SIZE/PVTI_SIZE);
--	int offset = cpu % (PAGE_SIZE/PVTI_SIZE);
--
--	BUG_ON(PVCLOCK_FIXMAP_BEGIN + idx > PVCLOCK_FIXMAP_END);
--
--	pvti_base = (struct pvclock_vsyscall_time_info *)
--		    __fix_to_virt(PVCLOCK_FIXMAP_BEGIN+idx);
--
--	return &pvti_base[offset];
-+	return (const struct pvclock_vsyscall_time_info *)&pvclock_page;
- }
- 
- static notrace cycle_t vread_pvclock(int *mode)
- {
--	const struct pvclock_vcpu_time_info *pvti = &get_pvti(0)->pvti;
-+	const struct pvclock_vcpu_time_info *pvti = &get_pvti0()->pvti;
- 	cycle_t ret;
- 	u64 tsc, pvti_tsc;
- 	u64 last, delta, pvti_system_time;
---- a/arch/x86/vdso/vdso-layout.lds.S
-+++ b/arch/x86/vdso/vdso-layout.lds.S
-@@ -25,7 +25,7 @@ SECTIONS
- 	 * segment.
- 	 */
- 
--	vvar_start = . - 2 * PAGE_SIZE;
-+	vvar_start = . - 3 * PAGE_SIZE;
- 	vvar_page = vvar_start;
- 
- 	/* Place all vvars at the offsets in asm/vvar.h. */
-@@ -36,6 +36,7 @@ SECTIONS
- #undef EMIT_VVAR
- 
- 	hpet_page = vvar_start + PAGE_SIZE;
-+	pvclock_page = vvar_start + 2 * PAGE_SIZE;
- 
- 	. = SIZEOF_HEADERS;
- 
---- a/arch/x86/vdso/vdso2c.c
-+++ b/arch/x86/vdso/vdso2c.c
-@@ -23,6 +23,7 @@ enum {
- 	sym_vvar_start,
- 	sym_vvar_page,
- 	sym_hpet_page,
-+	sym_pvclock_page,
- 	sym_VDSO_FAKE_SECTION_TABLE_START,
- 	sym_VDSO_FAKE_SECTION_TABLE_END,
- };
-@@ -30,6 +31,7 @@ enum {
- const int special_pages[] = {
- 	sym_vvar_page,
- 	sym_hpet_page,
-+	sym_pvclock_page,
- };
- 
- struct vdso_sym {
-@@ -41,6 +43,7 @@ struct vdso_sym required_syms[] = {
- 	[sym_vvar_start] = {"vvar_start", true},
- 	[sym_vvar_page] = {"vvar_page", true},
- 	[sym_hpet_page] = {"hpet_page", true},
-+	[sym_pvclock_page] = {"pvclock_page", true},
- 	[sym_VDSO_FAKE_SECTION_TABLE_START] = {
- 		"VDSO_FAKE_SECTION_TABLE_START", false
- 	},
---- a/arch/x86/vdso/vma.c
-+++ b/arch/x86/vdso/vma.c
-@@ -113,6 +113,7 @@ static int map_vdso(const struct vdso_im
- 		.name = "[vvar]",
- 		.pages = no_pages,
- 	};
-+	struct pvclock_vsyscall_time_info *pvti;
- 
- 	if (calculate_addr) {
- 		addr = vdso_addr(current->mm->start_stack,
-@@ -182,6 +183,18 @@ static int map_vdso(const struct vdso_im
- 	}
- #endif
- 
-+	pvti = pvclock_pvti_cpu0_va();
-+	if (pvti && image->sym_pvclock_page) {
-+		ret = remap_pfn_range(vma,
-+				      text_start + image->sym_pvclock_page,
-+				      __pa(pvti) >> PAGE_SHIFT,
-+				      PAGE_SIZE,
-+				      PAGE_READONLY);
-+
-+		if (ret)
-+			goto up_fail;
-+	}
-+
- up_fail:
- 	if (ret)
- 		current->mm->context.vdso = NULL;
 --- a/arch/x86/include/asm/pvclock.h
 +++ b/arch/x86/include/asm/pvclock.h
-@@ -4,6 +4,15 @@
- #include <linux/clocksource.h>
- #include <asm/pvclock-abi.h>
+@@ -95,7 +95,6 @@ unsigned __pvclock_read_cycles(const str
  
-+#ifdef CONFIG_PARAVIRT_CLOCK
-+extern struct pvclock_vsyscall_time_info *pvclock_pvti_cpu0_va(void);
-+#else
-+static inline struct pvclock_vsyscall_time_info *pvclock_pvti_cpu0_va(void)
-+{
-+	return NULL;
-+}
-+#endif
-+
- /* some helper functions for xen and kvm pv clock sources */
- cycle_t pvclock_clocksource_read(struct pvclock_vcpu_time_info *src);
- u8 pvclock_read_flags(struct pvclock_vcpu_time_info *src);
---- a/arch/x86/include/asm/vdso.h
-+++ b/arch/x86/include/asm/vdso.h
-@@ -22,6 +22,7 @@ struct vdso_image {
+ struct pvclock_vsyscall_time_info {
+ 	struct pvclock_vcpu_time_info pvti;
+-	u32 migrate_count;
+ } __attribute__((__aligned__(SMP_CACHE_BYTES)));
  
- 	long sym_vvar_page;
- 	long sym_hpet_page;
-+	long sym_pvclock_page;
- 	long sym_VDSO32_NOTE_MASK;
- 	long sym___kernel_sigreturn;
- 	long sym___kernel_rt_sigreturn;
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -44,6 +44,11 @@ early_param("no-kvmclock", parse_no_kvmc
- static struct pvclock_vsyscall_time_info *hv_clock;
- static struct pvclock_wall_clock wall_clock;
+ #define PVTI_SIZE sizeof(struct pvclock_vsyscall_time_info)
+--- a/arch/x86/kernel/pvclock.c
++++ b/arch/x86/kernel/pvclock.c
+@@ -141,46 +141,7 @@ void pvclock_read_wallclock(struct pvclo
+ 	set_normalized_timespec(ts, now.tv_sec, now.tv_nsec);
+ }
  
-+struct pvclock_vsyscall_time_info *pvclock_pvti_cpu0_va(void)
-+{
-+	return hv_clock;
-+}
-+
+-static struct pvclock_vsyscall_time_info *pvclock_vdso_info;
+-
+-static struct pvclock_vsyscall_time_info *
+-pvclock_get_vsyscall_user_time_info(int cpu)
+-{
+-	if (!pvclock_vdso_info) {
+-		BUG();
+-		return NULL;
+-	}
+-
+-	return &pvclock_vdso_info[cpu];
+-}
+-
+-struct pvclock_vcpu_time_info *pvclock_get_vsyscall_time_info(int cpu)
+-{
+-	return &pvclock_get_vsyscall_user_time_info(cpu)->pvti;
+-}
+-
+ #ifdef CONFIG_X86_64
+-static int pvclock_task_migrate(struct notifier_block *nb, unsigned long l,
+-			        void *v)
+-{
+-	struct task_migration_notifier *mn = v;
+-	struct pvclock_vsyscall_time_info *pvti;
+-
+-	pvti = pvclock_get_vsyscall_user_time_info(mn->from_cpu);
+-
+-	/* this is NULL when pvclock vsyscall is not initialized */
+-	if (unlikely(pvti == NULL))
+-		return NOTIFY_DONE;
+-
+-	pvti->migrate_count++;
+-
+-	return NOTIFY_DONE;
+-}
+-
+-static struct notifier_block pvclock_migrate = {
+-	.notifier_call = pvclock_task_migrate,
+-};
+-
  /*
-  * The wallclock is the time of day when we booted. Since then, some time may
-  * have elapsed since the hypervisor wrote the data. So we try to account for
+  * Initialize the generic pvclock vsyscall state.  This will allocate
+  * a/some page(s) for the per-vcpu pvclock information, set up a
+@@ -194,17 +155,12 @@ int __init pvclock_init_vsyscall(struct
+ 
+ 	WARN_ON (size != PVCLOCK_VSYSCALL_NR_PAGES*PAGE_SIZE);
+ 
+-	pvclock_vdso_info = i;
+-
+ 	for (idx = 0; idx <= (PVCLOCK_FIXMAP_END-PVCLOCK_FIXMAP_BEGIN); idx++) {
+ 		__set_fixmap(PVCLOCK_FIXMAP_BEGIN + idx,
+ 			     __pa(i) + (idx*PAGE_SIZE),
+ 			     PAGE_KERNEL_VVAR);
+ 	}
+ 
+-
+-	register_task_migration_notifier(&pvclock_migrate);
+-
+ 	return 0;
+ }
+ #endif
+--- a/arch/x86/vdso/vclock_gettime.c
++++ b/arch/x86/vdso/vclock_gettime.c
+@@ -82,15 +82,18 @@ static notrace cycle_t vread_pvclock(int
+ 	cycle_t ret;
+ 	u64 last;
+ 	u32 version;
+-	u32 migrate_count;
+ 	u8 flags;
+ 	unsigned cpu, cpu1;
+ 
+ 
+ 	/*
+-	 * When looping to get a consistent (time-info, tsc) pair, we
+-	 * also need to deal with the possibility we can switch vcpus,
+-	 * so make sure we always re-fetch time-info for the current vcpu.
++	 * Note: hypervisor must guarantee that:
++	 * 1. cpu ID number maps 1:1 to per-CPU pvclock time info.
++	 * 2. that per-CPU pvclock time info is updated if the
++	 *    underlying CPU changes.
++	 * 3. that version is increased whenever underlying CPU
++	 *    changes.
++	 *
+ 	 */
+ 	do {
+ 		cpu = __getcpu() & VGETCPU_CPU_MASK;
+@@ -99,27 +102,20 @@ static notrace cycle_t vread_pvclock(int
+ 		 * __getcpu() calls (Gleb).
+ 		 */
+ 
+-		/* Make sure migrate_count will change if we leave the VCPU. */
+-		do {
+-			pvti = get_pvti(cpu);
+-			migrate_count = pvti->migrate_count;
+-
+-			cpu1 = cpu;
+-			cpu = __getcpu() & VGETCPU_CPU_MASK;
+-		} while (unlikely(cpu != cpu1));
++		pvti = get_pvti(cpu);
+ 
+ 		version = __pvclock_read_cycles(&pvti->pvti, &ret, &flags);
+ 
+ 		/*
+ 		 * Test we're still on the cpu as well as the version.
+-		 * - We must read TSC of pvti's VCPU.
+-		 * - KVM doesn't follow the versioning protocol, so data could
+-		 *   change before version if we left the VCPU.
++		 * We could have been migrated just after the first
++		 * vgetcpu but before fetching the version, so we
++		 * wouldn't notice a version change.
+ 		 */
+-		smp_rmb();
+-	} while (unlikely((pvti->pvti.version & 1) ||
+-			  pvti->pvti.version != version ||
+-			  pvti->migrate_count != migrate_count));
++		cpu1 = __getcpu() & VGETCPU_CPU_MASK;
++	} while (unlikely(cpu != cpu1 ||
++			  (pvti->pvti.version & 1) ||
++			  pvti->pvti.version != version));
+ 
+ 	if (unlikely(!(flags & PVCLOCK_TSC_STABLE_BIT)))
+ 		*mode = VCLOCK_NONE;
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -174,14 +174,6 @@ extern unsigned long this_cpu_load(void)
+ extern void calc_global_load(unsigned long ticks);
+ extern void update_cpu_load_nohz(void);
+ 
+-/* Notifier for when a task gets migrated to a new CPU */
+-struct task_migration_notifier {
+-	struct task_struct *task;
+-	int from_cpu;
+-	int to_cpu;
+-};
+-extern void register_task_migration_notifier(struct notifier_block *n);
+-
+ extern unsigned long get_parent_ip(unsigned long addr);
+ 
+ extern void dump_cpu_task(int cpu);
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1041,13 +1041,6 @@ void check_preempt_curr(struct rq *rq, s
+ 		rq->skip_clock_update = 1;
+ }
+ 
+-static ATOMIC_NOTIFIER_HEAD(task_migration_notifier);
+-
+-void register_task_migration_notifier(struct notifier_block *n)
+-{
+-	atomic_notifier_chain_register(&task_migration_notifier, n);
+-}
+-
+ #ifdef CONFIG_SMP
+ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+ {
+@@ -1078,18 +1071,10 @@ void set_task_cpu(struct task_struct *p,
+ 	trace_sched_migrate_task(p, new_cpu);
+ 
+ 	if (task_cpu(p) != new_cpu) {
+-		struct task_migration_notifier tmn;
+-
+ 		if (p->sched_class->migrate_task_rq)
+ 			p->sched_class->migrate_task_rq(p, new_cpu);
+ 		p->se.nr_migrations++;
+ 		perf_sw_event_sched(PERF_COUNT_SW_CPU_MIGRATIONS, 1, 0);
+-
+-		tmn.task = p;
+-		tmn.from_cpu = task_cpu(p);
+-		tmn.to_cpu = new_cpu;
+-
+-		atomic_notifier_call_chain(&task_migration_notifier, 0, &tmn);
+ 	}
+ 
+ 	__set_task_cpu(p, new_cpu);
