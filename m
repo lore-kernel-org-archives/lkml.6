@@ -1,59 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932190AbeBKUcc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:32:32 -0500
-Received: from omr-m016e.mx.aol.com ([204.29.186.16]:37059 "EHLO
-        omr-m016e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932160AbeBKUc2 (ORCPT
+        id S932141AbeBKUiy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:38:54 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40835 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753511AbeBKUix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 15:32:28 -0500
-From: Martin Vuille <jpmv27@aim.com>
-To: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/1] perf annotate: Don't prepend symfs path to vmlinux path
-Date: Sun, 11 Feb 2018 15:32:10 -0500
-Message-Id: <20180211203210.12738-2-jpmv27@aim.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180211203210.12738-1-jpmv27@aim.com>
-References: <20180211203210.12738-1-jpmv27@aim.com>
-x-aol-global-disposition: G
-x-aol-sid: 3039ac1d1bce5a80a85a6571
-X-AOL-IP: 99.246.128.134
+        Sun, 11 Feb 2018 15:38:53 -0500
+X-Google-Smtp-Source: AH8x226/WIaxD5Xf/BCJ/hidgacGY6g3UI1luA/jlDyVUIuXYguYDES38Na3YKHpWbyAwspL9FYoTg==
+From: Sangwon Hong <qpakzk@gmail.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Taeung Song <treeze.taeung@gmail.com>, Sangwon Hong <qpakzk@gmail.com>
+Subject: [PATCH 1/2] perf kmem: Document a missing option & an argument
+Date: Mon, 12 Feb 2018 05:38:36 +0900
+Message-Id: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When selecting the filename to pass to objdump for disassembly, if there is
-no entry for vmlinux in the build-id cache then the fallback code prepends
-symfs path to vmlinux path. If the vmlinux option was specified, this is
-unnecessary and, as a result, vmlinux is not found.
+First, perf kmem has --force option, but didn't document it on the man
+page. So add missing --force option.
 
-Don't prepend symfs path if DSO is [kernel.kallsyms]
+Second, --time option has to get a value, but didn't specify it on the
+man page. So describe --time option's argument.
 
-Signed-off-by: Martin Vuille <jpmv27@aim.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
 ---
- tools/perf/util/annotate.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ tools/perf/Documentation/perf-kmem.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 425b7f0760ec..0b78cc4fb155 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1412,7 +1412,14 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
- 		 * cache, or is just a kallsyms file, well, lets hope that this
- 		 * DSO is the same as when 'perf record' ran.
- 		 */
--		__symbol__join_symfs(filename, filename_size, dso->long_name);
-+		if (!strstr(dso->short_name, DSO__NAME_KALLSYMS))
-+		{
-+			__symbol__join_symfs(filename, filename_size, dso->long_name);
-+		}
-+		else
-+		{
-+			scnprintf(filename, filename_size, "%s", dso->long_name);
-+		}
- 	}
+diff --git a/tools/perf/Documentation/perf-kmem.txt b/tools/perf/Documentation/perf-kmem.txt
+index 479fc32..c4aa843 100644
+--- a/tools/perf/Documentation/perf-kmem.txt
++++ b/tools/perf/Documentation/perf-kmem.txt
+@@ -25,6 +25,9 @@ OPTIONS
+ --input=<file>::
+ 	Select the input file (default: perf.data unless stdin is a fifo)
  
- 	free(build_id_path);
++-f::
++--force::
++	Don't do ownership validation
+ -v::
+ --verbose::
+         Be more verbose. (show symbol address, etc)
+@@ -61,7 +64,7 @@ OPTIONS
+ 	default, but this option shows live (currently allocated) pages
+ 	instead.  (This option works with --page option only)
+ 
+---time::
++--time=<start>,<stop>::
+ 	Only analyze samples within given time window: <start>,<stop>. Times
+ 	have the format seconds.microseconds. If start is not given (i.e., time
+ 	string is ',x.y') then analysis starts at the beginning of the file. If
 -- 
-2.13.6
+2.7.4
