@@ -1,98 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753303AbeBKL4f (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 06:56:35 -0500
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:38973 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753045AbeBKL4d (ORCPT
+        id S1753298AbeBKMFX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 07:05:23 -0500
+Received: from casper.infradead.org ([85.118.1.10]:34550 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752691AbeBKMFV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 06:56:33 -0500
-X-Google-Smtp-Source: AH8x22710yFi3r9ID8s+Tjb6Dxpw/ZgPFrQWvMT6F0btaJRPjI3UFjQKUyk0gmT8+qa704oaa8IqUtJgJKyQzekrYaw=
+        Sun, 11 Feb 2018 07:05:21 -0500
+Date: Sun, 11 Feb 2018 04:05:15 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch@vger.kernel.org, James.Bottomley@HansenPartnership.com,
+        davem@redhat.com
+Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
+ __GFP_HIGHMEM implicitly")
+Message-ID: <20180211120515.GB4551@bombadil.infradead.org>
+References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
+ <20180208130649.GA15846@bombadil.infradead.org>
+ <20180208232004.GA21027@bombadil.infradead.org>
+ <20180211092652.GV21609@dhcp22.suse.cz>
+ <20180211112808.GA4551@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eR0gaYuYbxKs6oWFJj+ciCtHtU+pnF4pLHmbdf2wnUuPw@mail.gmail.com>
-References: <1517828686-29070-1-git-send-email-wanpengli@tencent.com>
- <CALMp9eQNB+2KLAR2Tv+By2oTthRLvAQMmJiEs61kFNrZDct3_g@mail.gmail.com>
- <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
- <CANRm+Cx_KVftOfeGWjqn_1P=j8R-NsNcH7w+pA9gCouM_4FDRw@mail.gmail.com>
- <CALMp9eRHzmU3Kfr0cxhy2Hrr-RybnjrsKHByoV27TdYffuuC3w@mail.gmail.com>
- <CANRm+CyqV6s6etBAveNTG2WjfMZrfuuN+HpF9Ub1ex=JjyA1yw@mail.gmail.com>
- <CALMp9eQ+wJyxQfru1j8i6CmBzvsYEPrK2wx94JFZ0M3rWSV0+g@mail.gmail.com>
- <CANRm+Cx9vBGNgk0Gfc=tNVR49hxwexD7U-NmtBadXy0AadA1fg@mail.gmail.com> <CALMp9eR0gaYuYbxKs6oWFJj+ciCtHtU+pnF4pLHmbdf2wnUuPw@mail.gmail.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Sun, 11 Feb 2018 19:56:32 +0800
-Message-ID: <CANRm+CwsT_sL0kbO9ZKW4HJdmRw9sSKpwZAoOjpWBeWXZ-Q7-g@mail.gmail.com>
-Subject: Re: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
-To: Jim Mattson <jmattson@google.com>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180211112808.GA4551@bombadil.infradead.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-08 23:29 GMT+08:00 Jim Mattson <jmattson@google.com>:
-> Consider the following scenario:
->
-> L1 has never successfully executed VMLAUNCH. It has written 0 to
-> vmcs12's host CR3 field using VMWRITE, but the current host CR3 value
+On Sun, Feb 11, 2018 at 03:28:08AM -0800, Matthew Wilcox wrote:
+> Now, longer-term, perhaps we should do the following:
+> 
+> #ifdef CONFIG_ZONE_DMA32
+> #define OPT_ZONE_DMA32	ZONE_DMA32
+> #elif defined(CONFIG_64BIT)
+> #define OPT_ZONE_DMA	OPT_ZONE_DMA
+> #else
+> #define OPT_ZONE_DMA32 ZONE_NORMAL
+> #endif
+> 
+> Then we wouldn't need the ifdef here and could always use GFP_DMA32
+> | GFP_KERNEL.  Would need to audit current users and make sure they
+> wouldn't be broken by such a change.
 
-Writes 0 to cr3 can't be detected during vmentry checks by hardware.
+Argh, I forgot to say the most important thing.  (For those newly invited
+to the party, we're talking about drivers/media, in particular
+drivers/media/common/saa7146/saa7146_core.c, functions
+saa7146_vmalloc_build_pgtable and vmalloc_to_sg)
 
-> is actually 3e7000. It has written some illegal control field that the
-> L0 KVM doesn't check itself, but defers to the hardware checks on
-> vmcs02 instead. So, when L1 tries to execute VMLAUNCH, L0 follows this
-> path for "VM-entry to vmcs02 failed due to invalid control field(s)."
-> Your change would set CR3 to 0, which is incorrect. CR3 should
-> actually be set to 3e7000. Now, if L0 is sane and using EPT, then it
-> can find the correct L1 CR3 value in vmcs01's Guest CR3 field, but if
-> for some reason L0 is using shadow paging to execute L1, that won't
-> work. Similarly, the correct L1 CR4 value should be in vmcs01's CR4
-> read shadow field.
->
-> You can't just assume that L1 has written values to the vmcs12 host
-> fields that actually match the current host values. There is nothing
-> in the architecture that would require this behavior.
->
-> On Wed, Feb 7, 2018 at 10:22 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
->> 2018-02-08 0:57 GMT+08:00 Jim Mattson <jmattson@google.com>:
->>> vmcs12->host_cr[34] does not contain the up-to-date values when L1 is
->>> running. L1 can vmwrite any values there. We know at this point that
->>
->> It will incur a vmexit to emulate L1 vmwrites vmcs12->host_cr[34] even
->> if vmcs shadow is enabled since host_cr[34] is not shadowed in the
->> bitmap, why it is not up-to-date when L1 is running?
->>
->> Regards,
->> Wanpeng Li
->>
->>> they are legal (because we checked them), but that's about it. If the
->>> VMLAUNCH/VMRESUME of vmcs12 fails for "invalid control field," there
->>> is no VM-exit from L2 to L1, and these fields are not loaded. Instead,
->>> execution just falls through to the next instruction with VMFailValid
->>> semantics.
->>>
->>> On Wed, Feb 7, 2018 at 12:31 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
->>>> 2018-02-07 0:58 GMT+08:00 Jim Mattson <jmattson@google.com>:
->>>>> On Mon, Feb 5, 2018 at 4:57 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
->>>>>
->>>>>> This is effective one, what I restore in this patch is
->>>>>> achitectural/guest visible.
->>>>>
->>>>> This patch doesn't "restore" the guest visible CR4 to its value at the
->>>>> time of VMLAUNCH/VMRESUME. It loads a new CR4 value from the vmcs12.
->>>>> That behavior is incorrect.
->>>>
->>>> You have another pointing out about this.
->>>> https://lkml.org/lkml/2018/2/5/518 vmcs12->host_cr3/host_cr4 has the
->>>> up-to-date value when L1 is running, it is still up-to-date after
->>>> vmexit due to L1 executes VMLAUNCH/VMRESUME, I think the value stays
->>>> the same before L0 emulates the VMLAUNCH/VMRESUME, according to below
->>>> comments, why vmcs12->host_cr3/cr4 is not the value which we should
->>>> restore?
->>>>
->>>> * After an early L2 VM-entry failure, we're now back
->>>> * in L1 which thinks it just finished a VMLAUNCH or
->>>> * VMRESUME instruction
->>>>
->>>> Regards,
->>>> Wanpeng Li
+I think we're missing a function in our DMA API.  These drivers don't
+actually need physical memory below the 4GB mark.  They need DMA addresses
+which are below the 4GB mark.  For machines with IOMMUs, this can mean
+no restrictions on physical memory.  If we don't have an IOMMU, then a
+bounce buffer could be used (but would be slow) -- like the swiotlb.
+So we should endeavour to allocate memory below the 4GB boundary on
+systems with no IOMMU, but can allocate memory anywhere on systems with
+an IOMMU.
+
+For consistent / coherent memory, we have an allocation function.
+But we don't have an allocation function for streaming memory, which is
+what these drivers want.  They also flush the DMA memory and then access
+the memory through a different virtual mapping, which I'm not sure is
+going to work well on virtually-indexed caches like SPARC and PA-RISC
+(maybe not MIPS either?)
+
+I think we want something like
+
+struct scatterlist *dma_alloc_sg(struct device *dev, int *nents);
+void dma_free_sg(struct device *dev, struct scatterlist *sg, int nents);
+
+That lets individual architectures decide where to allocate, and handle
+the tradeoff between allocating below 4GB and using bounce buffers.
+
+I don't have a good answer to synchronising between device-view of
+memory and CPU-view-through-vmalloc though.  They're already calling
+dma_sync_*_for_cpu(); do they need to also call a new vflush(void *p,
+unsigned long len) function which can be a no-op on x86 and flushes the
+range on SPARC/PA-RISC/... ?
