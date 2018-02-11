@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x227Bs6QFR2cOEHHxNa2LOOd5FMyY9x+KHenTg3H2k2hFr4He/jJRNMHUvwigEFZGCACwRMBo
+X-Google-Smtp-Source: AH8x227MFUvQfxF1UOfNk4fIsyTx0uMufc+3XJzWH5ByHXKs0npqjbOrfovM80DbHBKyrTiBvebr
 ARC-Seal: i=1; a=rsa-sha256; t=1518323621; cv=none;
         d=google.com; s=arc-20160816;
-        b=JQGwhJxpwoYxtQwuJvAgDoDISdUiGr8miHL7bWvUpFs3+0foDnMQYNKGqwL8ALCKAx
-         uEqTj4r7DcxZOd+oMZPYU9O9pXLGebQ5b9dvl11ggkIKsSWn+f7V5lU3o1cNqeuSWuKw
-         xtlxznFn+Wn3wWlMBMWFNDF13ToklatWASaTz8TeUgeuOGtC5uP52rjJf9VikS3L8EWF
-         b5I4LGyIQkf1hbgbbh1iyMsfglSKQcax0WZVNt7gP0hpD6/leFxrt8Uz9+3nLmzbsUnh
-         PA3O9LSn5ldppdKpi2iM4SvKFcwdR5USY9ivykzfz0GrdZXNz0BEQJDbiovfrARf+d2o
-         Kgcg==
+        b=Oan9aiBxn0ntBY24FP/5exDpupp30oIQ8l+gVhQdki/nleqbjzOFLU/QEgcclF4EQ6
+         RgD3As6fYy2HoKPxl7Yvk1vaJNk7rTrLowwuSRWcJ9nHmMdnCrAmtyBgYoiTtmjvV5X2
+         JWhgK/79b8aZ8xulfKPBMMozN6Nw06WMaCpgV+hug4gODNXJufx1g2iI88hQoZu/9E/m
+         r01CD6DoYrcJdNFsGZC8RZxMzpbSVD9f36pUGfkHirtgmovvCJ6B4k0JC8+aKhpWsqSc
+         XOIubvIwjK3fTIph1m/tnCNI8DWf9LzsbcyMqetYcL6y0brrr0c34ucxADhr15/iGqAl
+         a26Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=/wEeb5Pje8iz/njZ3syyAucI9imh6LzMcld1BSjd7+s=;
-        b=cGM/Xicnx7PupjgKRs0zruzpQrMIT1coR0F5Do7kv030sM6J4eIKaXNf+NVd82z14b
-         wHvPsqMdGQut2gR8EE9J9q/lER9wY6qeyQWfVxlsPYcfSDXNfrS8LfwOHXD5zeM2iGgj
-         F30AL3re3Ht6d0VXCJdKLD/G+NWP9TIC6nDVxiuDznZB3bQo4E59sqoaZQhG1azVyxw3
-         N2xXMev4ZhE1YAzNtEHQy6gQ3DV+AuRK6goQoGONpGH7zVChtvsiJp3PT0sH7DjXJWTn
-         N4gNUxsoDXL+FtJbc6wwCv+ycfgSFlvMybPryeKF+HZUHEJph4qaiCNwK0kcgjFqwFhw
-         LeLQ==
+        bh=ESc50BGBtr1c/t0z4vRGV0Q3OppW1+TQiU8GaotPTMI=;
+        b=iCCTnYuBDcVmHnFvLro+xO0Lmo/8QJBxvMOaQNogPljjoFICOwySX3KJgrn1k2bood
+         HwBWIYgnN/VUwN4IVcJeEt/1nTUbePr7fjOSbjbls4bWZU6r1HBmA2r3hEEQ69ij5qF7
+         2bgUkSk5K+cSV42ITKNgC6wafaW+7vkqbG/EsvTh2Z3Chx2CrA7x5VZRKxg9lu2lmmOk
+         WCB4vLjI8DDyKxQj6c8ncN5eLrcnIyHDadhm7biw5InuSaFU4Gm3PdMPUIKo3NiBr/Wa
+         Y0fWC/kjw38cMOb046g6eQzR9xMVNWgtJAsQC2MPl088NRnHEjsGWEXgk8/XcxpqNdkt
+         oumw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,21 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Lepton Wu" <ytht.net@gmail.com>,
- "Guenter Roeck" <groeck@chromium.org>,
- "Juerg Haefliger" <juerg.haefliger@canonical.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Johan Hovold" <johan@kernel.org>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.533577990@decadent.org.uk>
+Message-ID: <lsq.1518322806.398736932@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 79/79] kaiser: Set _PAGE_NX only if supported
+Subject: [PATCH 3.2 05/79] USB: serial: garmin_gps: fix I/O after failed
+ probe and remove
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077709129408782?=
-X-GMAIL-MSGID: =?utf-8?q?1592077709129408782?=
+X-GMAIL-THRID: =?utf-8?q?1592077709106859121?=
+X-GMAIL-MSGID: =?utf-8?q?1592077709106859121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,32 +51,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lepton Wu <ytht.net@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-This finally resolve crash if loaded under qemu + haxm. Haitao Shan pointed
-out that the reason of that crash is that NX bit get set for page tables.
-It seems we missed checking if _PAGE_NX is supported in kaiser_add_user_map
+commit 19a565d9af6e0d828bd0d521d3bafd5017f4ce52 upstream.
 
-Link: https://www.spinics.net/lists/kernel/msg2689835.html
+Make sure to stop any submitted interrupt and bulk-out URBs before
+returning after failed probe and when the port is being unbound to avoid
+later NULL-pointer dereferences in the completion callbacks.
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Signed-off-by: Lepton Wu <ytht.net@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(backported from Greg K-H's 4.4 stable-queue)
-Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
+Also fix up the related and broken I/O cancellation on failed open and
+on close. (Note that port->write_urb was never submitted.)
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/mm/kaiser.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/serial/garmin_gps.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/arch/x86/mm/kaiser.c
-+++ b/arch/x86/mm/kaiser.c
-@@ -189,6 +189,8 @@ static int kaiser_add_user_map(const voi
- 	 * requires that not to be #defined to 0): so mask it off here.
- 	 */
- 	flags &= ~_PAGE_GLOBAL;
-+	if (!(__supported_pte_mask & _PAGE_NX))
-+		flags &= ~_PAGE_NX;
+--- a/drivers/usb/serial/garmin_gps.c
++++ b/drivers/usb/serial/garmin_gps.c
+@@ -142,6 +142,7 @@ struct garmin_data {
+ 	__u8   privpkt[4*6];
+ 	spinlock_t lock;
+ 	struct list_head pktlist;
++	struct usb_anchor write_urbs;
+ };
  
- 	if (flags & _PAGE_USER)
- 		BUG_ON(address < FIXADDR_START || end_addr >= FIXADDR_TOP);
+ 
+@@ -923,7 +924,7 @@ static int garmin_init_session(struct us
+ 					sizeof(GARMIN_START_SESSION_REQ), 0);
+ 
+ 			if (status < 0)
+-				break;
++				goto err_kill_urbs;
+ 		}
+ 
+ 		if (status > 0)
+@@ -931,6 +932,12 @@ static int garmin_init_session(struct us
+ 	}
+ 
+ 	return status;
++
++err_kill_urbs:
++	usb_kill_anchored_urbs(&garmin_data_p->write_urbs);
++	usb_kill_urb(port->interrupt_in_urb);
++
++	return status;
+ }
+ 
+ 
+@@ -950,7 +957,6 @@ static int garmin_open(struct tty_struct
+ 	spin_unlock_irqrestore(&garmin_data_p->lock, flags);
+ 
+ 	/* shutdown any bulk reads that might be going on */
+-	usb_kill_urb(port->write_urb);
+ 	usb_kill_urb(port->read_urb);
+ 
+ 	if (garmin_data_p->state == STATE_RESET)
+@@ -977,7 +983,7 @@ static void garmin_close(struct usb_seri
+ 
+ 	/* shutdown our urbs */
+ 	usb_kill_urb(port->read_urb);
+-	usb_kill_urb(port->write_urb);
++	usb_kill_anchored_urbs(&garmin_data_p->write_urbs);
+ 
+ 	/* keep reset state so we know that we must start a new session */
+ 	if (garmin_data_p->state != STATE_RESET)
+@@ -1069,12 +1075,14 @@ static int garmin_write_bulk(struct usb_
+ 	}
+ 
+ 	/* send it down the pipe */
++	usb_anchor_urb(urb, &garmin_data_p->write_urbs);
+ 	status = usb_submit_urb(urb, GFP_ATOMIC);
+ 	if (status) {
+ 		dev_err(&port->dev,
+ 		   "%s - usb_submit_urb(write bulk) failed with status = %d\n",
+ 				__func__, status);
+ 		count = status;
++		usb_unanchor_urb(urb);
+ 		kfree(buffer);
+ 	}
+ 
+@@ -1464,6 +1472,7 @@ static int garmin_attach(struct usb_seri
+ 	garmin_data_p->state = 0;
+ 	garmin_data_p->flags = 0;
+ 	garmin_data_p->count = 0;
++	init_usb_anchor(&garmin_data_p->write_urbs);
+ 	usb_set_serial_port_data(port, garmin_data_p);
+ 
+ 	status = garmin_init_session(port);
+@@ -1479,6 +1488,7 @@ static void garmin_disconnect(struct usb
+ 
+ 	dbg("%s", __func__);
+ 
++	usb_kill_anchored_urbs(&garmin_data_p->write_urbs);
+ 	usb_kill_urb(port->interrupt_in_urb);
+ 	del_timer_sync(&garmin_data_p->timer);
+ }
