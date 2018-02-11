@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1524142-1518326556-2-3994787495305860327
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326540-2-18387943730691673616
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326555; b=ds0gELtpgtG1BP1ImbfSf0Y/iXDSz5EkjAQ461LggykM4cI
-    hal7n/I3JZt2THQse2shG+Zk1Da8ngQ3buY60HH5zJXr6Z0L1yLVVBhbolTIFLPD
-    TCEjSifPTYkdTq0g9meaHbUN6wxy+09GkCHpohDcbEmJ/rLzQQELQ29RyqUFeBMU
-    B/ADqZN1IrvigxwWGoOIho7VIlRl/U3OLm7jDuyzpCR2C5McOvL6LiKFgbcJ/IVV
-    k8A+tn8dMn7hE8X5X+FC8dCEAmbj77hCMvxGElpHt3hwy/DwAK5x7RCSmcDP/EPd
-    QExGuvc32dssRVZhsnik3LfB86dW9xvHZwc5/Zg==
+    t=1518326540; b=JPROcf1MQ2Ehzq1cK5vp+qXpW0nSnZAUizj2rLu4EGxx0mW
+    8SvT+l8Hv7ffuAYRcEkaKZkOtfUgFkMrL56SUqU8n0bBh1I+PYBqGXdtDTEwlCWB
+    IrkxFuKP7aZGhBHJEn5smAVhsbuwc5fz4+quhSO6KJQG2CsC+RHV5AUG7UzeAbJe
+    c1ewJ6PkPO+sxU+CuIyJoKvr2lkBa6B3mLhzXzXKtfmX5x32hcO0RcZ8LwXlfAA/
+    8q5q2yIRQ0G1jVi/GTlJjAEQoHHvl1q5uny+hFLmt4gHEesnIKfaTn8EWJY5xLcX
+    skSjWfY1Q9gipzdv86UaVUmLtD2uE6fZfVkh4hQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326555; bh=vwG+TJm8w9WfJkau3MF
-    K2iAlgi5BL5z9TTaoUaDclzw=; b=TOmPYxznps+pFCZN5QcTAimeqS/CNpUhsPw
-    lyqIOqOlQJxMmrNxyzEgXugh1XkaHnpTpWIgZsajtdzwGScWyi6o8bF51kb84In7
-    Y0n41LhlUUdzXP+FieCsx9eAMyz5dDDbpa56FI3w0SVCjfQEJv3zlfYmjdqEu2XE
-    i3TMlQmEm+7QdbOcum1qBMzlB5hSuMQMHmvvBQdd6TeDgEbFie8pYBXPowqQZIV9
-    UW9VTLhH+c3Fby4pI8QspUojBWEi3SSHW+qB+05tlyspHqF8ULCPurfO2ddJKDti
-    3ydUQSk7plbzfCQFESBukIg1InFPdXopZVrCYSeEEfSic7B9Low==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518326540; bh=xzFmbog7H8F6cwb+6BW
+    wMuONJprVIvRxnfNWoZeixCM=; b=XmszGg4fDq2bctSinIM2f+b/KqzicC+mKLM
+    pvIacg182fpMYj626dgSdFJ0Hh2c9pUi5gWkGP0Muk+OsMwzg/MP0NObvUWDyYcq
+    LMH9PsDMwJspsbum5HQhcUcWTvlNgixxswUgJlHlSgCrG0PKUqv/au8c6CZQOYG1
+    GdmLwZfOBMJTxRDN56Y4IAL3pomZLUN0lvyBsA5ShcnqpaqOHMHTpfO9n4xWxUrW
+    YEzp3CUQ87mTy0rJtTNvxZ4zDcx56bJNPAlYSFOxYaMDbfeg7jyQcsvdRLu+D0+c
+    AAR08S4KVVqeuC8wF0qQNHwv/K8QUitKSb3ltDmEL2ubHQCFPVg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeBKFWT (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:22:19 -0500
+        id S1753371AbeBKFSC (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:18:02 -0500
 Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42726 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752619AbeBKFSB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:01 -0500
+        by vger.kernel.org with ESMTP id S1752547AbeBKFSA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:00 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mimi Zohar" <zohar@linux.vnet.ibm.com>,
-        "Boshi Wang" <wangboshi@huawei.com>
+CC: akpm@linux-foundation.org, "Nicolas Pitre" <nico@linaro.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Arnd Bergmann" <arnd@arndb.de>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.653661116@decadent.org.uk>
+Message-ID: <lsq.1518323471.431576021@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 067/136] ima: fix hash algorithm initialization
+Subject: [PATCH 3.16 020/136] elf_fdpic: fix unused variable warning
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,42 +80,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Boshi Wang <wangboshi@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit ebe7c0a7be92bbd34c6ff5b55810546a0ee05bee upstream.
+commit 11e3e8d6d9274bf630859b4c47bc4e4d76f289db upstream.
 
-The hash_setup function always sets the hash_setup_done flag, even
-when the hash algorithm is invalid.  This prevents the default hash
-algorithm defined as CONFIG_IMA_DEFAULT_HASH from being used.
+The elf_fdpic code shows a harmless warning when built with MMU disabled,
+I ran into this now that fdpic is available on ARM randconfig builds
+since commit 50b2b2e691cd ("ARM: add ELF_FDPIC support").
 
-This patch sets hash_setup_done flag only for valid hash algorithms.
+fs/binfmt_elf_fdpic.c: In function 'elf_fdpic_dump_segments':
+fs/binfmt_elf_fdpic.c:1501:17: error: unused variable 'addr' [-Werror=unused-variable]
 
-Fixes: e7a2ad7eb6f4 "ima: enable support for larger default filedata hash
-	algorithms"
-Signed-off-by: Boshi Wang <wangboshi@huawei.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+This adds another #ifdef around the variable declaration to shut up
+the warning.
+
+Fixes: e6c1baa9b562 ("convert the rest of binfmt_elf_fdpic to dump_emit()")
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- security/integrity/ima/ima_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/binfmt_elf_fdpic.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -52,6 +52,8 @@ static int __init hash_setup(char *str)
- 			ima_hash_algo = HASH_ALGO_SHA1;
- 		else if (strncmp(str, "md5", 3) == 0)
- 			ima_hash_algo = HASH_ALGO_MD5;
-+		else
-+			return 1;
- 		goto out;
- 	}
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -1487,7 +1487,9 @@ static bool elf_fdpic_dump_segments(stru
+ 	struct vm_area_struct *vma;
  
-@@ -61,6 +63,8 @@ static int __init hash_setup(char *str)
- 			break;
- 		}
- 	}
-+	if (i == HASH_ALGO__LAST)
-+		return 1;
- out:
- 	hash_setup_done = 1;
- 	return 1;
+ 	for (vma = current->mm->mmap; vma; vma = vma->vm_next) {
++#ifdef CONFIG_MMU
+ 		unsigned long addr;
++#endif
+ 
+ 		if (!maydump(vma, cprm->mm_flags))
+ 			continue;
