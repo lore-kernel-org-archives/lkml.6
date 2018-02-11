@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1524142-1518325755-2-10288885426465646797
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325754-2-16494320932786206321
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325754; b=D8x7+aKn3XfqTdnBNsBvCY0FzPsg+1fH8yAFTAxEXAEy0Cf
-    JkvUNc/74o1CkbJDF5RNBjUXCvESB0vlutGaZ/NE0T0GMxXDi36OsWHmKzh6StWG
-    NsH7mZfSS+4SmRNGwohxe2t8e4UjqwoyCleuuY1wubeeJLdkXLraMJbqxK75TpJF
-    hReF1QTyg4AGPFVgneBU/qj3kNTDLmCu7+XVAiDTPSMNp4Qeu6UdII3k21byGTkd
-    tp5ABpgCn2jPniPA0IamFv0/vDwxZ9CaXE9s8wLHw2HyZnUxqFHjjqu9ai9QcHWZ
-    ODT+fDS9dm1nNF+1yetAsQ513J4VvDgJx12MAWA==
+    t=1518325754; b=eGNSwdHmFk1lX+NJaXVbM1ZgRq8AB+1QqxPS6m/jQzY47ax
+    JJLQK3jJDK0WqMBYK9r8m1ZnJH+G/UcDWxBjtfn1fAVLRH3iuIqHaYi3BAz9Nj/5
+    NOBtfdwov8WxQlWwM+6b3SYqhhNnJw5LceS3V7rW2a2IvD5X3279GAijg7/2+n1R
+    N8bl7EO8HM66Vs++ybSbizVrfsrjBOAWqKNHbIYVQhW/4UItKe8mzaIR3Riq1KR8
+    mRLUBlW85JAxybXHj727WMkvfGOMd97/NMncxfOm9Ayc8NlWvxjJFsLE3KLQeH+u
+    jILxpfNComSnkyfRnBBFOVO6b5dhmsrQvwKVU1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325754; bh=SGtdVcGJmNR8gZtD5V1
-    HMAc1rOHctHfovzasL/4Sljw=; b=Vo0sddVXzTXHOxdhn286t0wCD/HDghG+VCe
-    wDhn5QpCQXqtzXT1wmpk0gPgnNvU318MpQe4/isF4Lnion+3oPkkmHfsgK9Ywy+S
-    AD0OFNb/tcE0Y6tZgo1knPp/FaxaXL0wQc4WUWNzLbsOgjo3eNZUgUoClDFELHIg
-    6MKODEOqxh/BKcGoOvC/whDKRBKRgF9Kcx6QdO7DNjTIwnAeEe1UaJNTmjulDRfc
-    gVqaiEst0093wB67tbSbeI/5g5bYvTEKWNBzVzdeVmAMib0B+UjtCDYzFVZ2YxMp
-    KwI08VYXBXOE1+hDPCOLrLXQNIXNhUc5y2JnWQx/lwshGUbIY8A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325754; bh=eqlMCkyiY3xP9m48/TZ
+    GEB2Zuxm/lH9JKHfUHEURiJA=; b=jLY4ODMfuuoPLVelSnbLI/PbxOC6f6sCbb2
+    G/u7PV+8103K4ji4viOqni2DQyPVh0jlewwv2bxRdbkncw4j9hOMYsSKZUs2g8oz
+    0qmw7s16MkZys8f/1kYtKMhhgbueykI/p888WSYfEXqxeoLULed7L/b/wWeSHiUY
+    2TJhj15EXYAgQTzU7NYip/79VWFEEUTmGTSUbI/+ecfxCQvSk9snwc1hzk6wAbMw
+    YafKnX0VsI7i8fltEG+uNEmiKZA1Qfe/rC6i2Il2TS+FMJ65lZDT0XpM7+WG+KCH
+    +vElOd8cOUiBTXpEBtBrwRB8+ZSEsriaDCXbGMyxacDjI5V+SQQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752664AbeBKFH3 (ORCPT <rfc822;greg@kroah.com>);
+        id S1753520AbeBKFH3 (ORCPT <rfc822;greg@kroah.com>);
         Sun, 11 Feb 2018 00:07:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41466 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41475 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752660AbeBKEdm (ORCPT
+        by vger.kernel.org with ESMTP id S1752665AbeBKEdm (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:42 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Chuck Lever" <chuck.lever@oracle.com>,
-        "Pradeep Thomas" <pradeepthomas@gmail.com>,
-        "Anna Schumaker" <Anna.Schumaker@Netapp.com>
+CC: akpm@linux-foundation.org,
+        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
+        "Ladislav Michl" <ladis@linux-mips.org>,
+        "Bernie Thompson" <bernie@plugable.com>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.114426859@decadent.org.uk>
+Message-ID: <lsq.1518322806.737043180@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 48/79] nfs: Fix ugly referral attributes
+Subject: [PATCH 3.2 32/79] video: udlfb: Fix read EDID timeout
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,83 +81,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Ladislav Michl <ladis@linux-mips.org>
 
-commit c05cefcc72416a37eba5a2b35f0704ed758a9145 upstream.
+commit c98769475575c8a585f5b3952f4b5f90266f699b upstream.
 
-Before traversing a referral and performing a mount, the mounted-on
-directory looks strange:
+While usb_control_msg function expects timeout in miliseconds, a value
+of HZ is used. Replace it with USB_CTRL_GET_TIMEOUT and also fix error
+message which looks like:
+udlfb: Read EDID byte 78 failed err ffffff92
+as error is either negative errno or number of bytes transferred use %d
+format specifier.
 
-dr-xr-xr-x. 2 4294967294 4294967294 0 Dec 31  1969 dir.0
+Returned EDID is in second byte, so return error when less than two bytes
+are received.
 
-nfs4_get_referral is wiping out any cached attributes with what was
-returned via GETATTR(fs_locations), but the bit mask for that
-operation does not request any file attributes.
-
-Retrieve owner and timestamp information so that the memcpy in
-nfs4_get_referral fills in more attributes.
-
-Changes since v1:
-- Don't request attributes that the client unconditionally replaces
-- Request only MOUNTED_ON_FILEID or FILEID attribute, not both
-- encode_fs_locations() doesn't use the third bitmask word
-
-Fixes: 6b97fd3da1ea ("NFSv4: Follow a referral")
-Suggested-by: Pradeep Thomas <pradeepthomas@gmail.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-[bwh: Backported to 3.2: adjust context]
+Fixes: 18dffdf8913a ("staging: udlfb: enhance EDID and mode handling support")
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+Cc: Bernie Thompson <bernie@plugable.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+[bwh: Backported to 3.2: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/nfs/nfs4proc.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/video/udlfb.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -151,15 +151,12 @@ const u32 nfs4_fsinfo_bitmap[3] = { FATT
- };
+--- a/drivers/video/udlfb.c
++++ b/drivers/video/udlfb.c
+@@ -765,11 +765,11 @@ static int dlfb_get_edid(struct dlfb_dat
  
- const u32 nfs4_fs_locations_bitmap[2] = {
--	FATTR4_WORD0_TYPE
--	| FATTR4_WORD0_CHANGE
-+	FATTR4_WORD0_CHANGE
- 	| FATTR4_WORD0_SIZE
- 	| FATTR4_WORD0_FSID
- 	| FATTR4_WORD0_FILEID
- 	| FATTR4_WORD0_FS_LOCATIONS,
--	FATTR4_WORD1_MODE
--	| FATTR4_WORD1_NUMLINKS
--	| FATTR4_WORD1_OWNER
-+	FATTR4_WORD1_OWNER
- 	| FATTR4_WORD1_OWNER_GROUP
- 	| FATTR4_WORD1_RAWDEV
- 	| FATTR4_WORD1_SPACE_USED
-@@ -4805,9 +4802,7 @@ int nfs4_proc_fs_locations(struct inode
- 		struct nfs4_fs_locations *fs_locations, struct page *page)
- {
- 	struct nfs_server *server = NFS_SERVER(dir);
--	u32 bitmask[2] = {
--		[0] = FATTR4_WORD0_FSID | FATTR4_WORD0_FS_LOCATIONS,
--	};
-+	u32 bitmask[2];
- 	struct nfs4_fs_locations_arg args = {
- 		.dir_fh = NFS_FH(dir),
- 		.name = name,
-@@ -4826,12 +4821,15 @@ int nfs4_proc_fs_locations(struct inode
- 
- 	dprintk("%s: start\n", __func__);
- 
-+	bitmask[0] = nfs4_fattr_bitmap[0] | FATTR4_WORD0_FS_LOCATIONS;
-+	bitmask[1] = nfs4_fattr_bitmap[1];
-+
- 	/* Ask for the fileid of the absent filesystem if mounted_on_fileid
- 	 * is not supported */
- 	if (NFS_SERVER(dir)->attr_bitmask[1] & FATTR4_WORD1_MOUNTED_ON_FILEID)
--		bitmask[1] |= FATTR4_WORD1_MOUNTED_ON_FILEID;
-+		bitmask[0] &= ~FATTR4_WORD0_FILEID;
- 	else
--		bitmask[0] |= FATTR4_WORD0_FILEID;
-+		bitmask[1] &= ~FATTR4_WORD1_MOUNTED_ON_FILEID;
- 
- 	nfs_fattr_init(&fs_locations->fattr);
- 	fs_locations->server = server;
+ 	for (i = 0; i < len; i++) {
+ 		ret = usb_control_msg(dev->udev,
+-				    usb_rcvctrlpipe(dev->udev, 0), (0x02),
+-				    (0x80 | (0x02 << 5)), i << 8, 0xA1, rbuf, 2,
+-				    HZ);
+-		if (ret < 1) {
+-			pr_err("Read EDID byte %d failed err %x\n", i, ret);
++				      usb_rcvctrlpipe(dev->udev, 0), 0x02,
++				      (0x80 | (0x02 << 5)), i << 8, 0xA1,
++				      rbuf, 2, USB_CTRL_GET_TIMEOUT);
++		if (ret < 2) {
++			pr_err("Read EDID byte %d failed: %d\n", i, ret);
+ 			i--;
+ 			break;
+ 		}
