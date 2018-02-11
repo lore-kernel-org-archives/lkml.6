@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x226JgW5/kRfRtSw1q8iGC2qDejSq6oPZQW90cz9uwiBjYXEo9FCye1qhk33I5g6O2YQS03Ae
-ARC-Seal: i=1; a=rsa-sha256; t=1518319211; cv=none;
+Return-Path: <kernel-hardening-return-11699-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x225RC4ri0vQAzdd7ktE0B366tl+OuB8x3i/bd9RQaUgwsc+INcTF8ivCfPmGaynfLbUAynWl
+ARC-Seal: i=1; a=rsa-sha256; t=1518319305; cv=none;
         d=google.com; s=arc-20160816;
-        b=AUa9KvgjBWEdooyz3FjEwH9FVcPXQPZvTa+H8RtoJSRRIeinrQUhT36Y4Peq1goTMr
-         BlM9U66SaW3JvRTFH/O5w1jkOIJY5wz2voxeVoXAIE+gQefXHyonAS4kZ23gBU7BvtC8
-         w7+cVX7MPtQY9Q+Ee6JuqUkbsh6xqIqAIjHTws+BMnm4X/BglLL1FjUv7yp7e2bb1ZI7
-         Em2e/xBIgNAPguFXjKD9tgJ8BMhBLzbaIbAJahsKMUzIaw1St9Ytv2ZNoJD5Oo135V6O
-         4h3k6G6/HNGQO3COSj+FEPjbcr8wXxI5ZXb1Qnlm42z23IT/kHEYAN+YvEJFjwJOw8Mb
-         MjFA==
+        b=EFnOxLZGPjSsmdhZB9eawm8swLcKu9aN8SNqHPjPIi2DgjopB/Y9VhYejp/JcKfQhT
+         X6HZtuowofYJVIsmDl8nJO+/30bZ1pFWT9v/blaEv5BW3yrcxzS6ByyZ+ZwRo+f/7oNq
+         3Hmq2hK5jmfFBnfRnSs+gnuhNP6WsfvtdUqoXXz+Twce7gQ35ADlz4GrjRwDxlqfNegF
+         m8jn4rF3EJ2nGemyo6XbJRAXEs7eWEuWv5qkOWNhbtexz6C2u0XQh7appNAyHDVEdEWt
+         oVyxaf3iWu4bo96l24Ouk0G9DcE3EmvCCIJl1fcTWFE3oQwqLBUZziIfn8KnX83RfjK1
+         sHyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=7zMj44DR+KVPrh4isZiUKaD/8f3BK/d2CKcmY2YwjNU=;
-        b=Oxw0akVuE5cSqAz1OmpwcW+1uMjPBIXQicCYUVaQWrcQjG/cTYuLRizi4e4m2ev5zt
-         Da4L2yCOUUMKJ7AOx75Pkj1RMQCTRALq3tD8zyv10cpGkPoQW+/S7OmetcAwoByL9y13
-         Ztmlu7zvZMUyJ11Pqo7j/aY+AKVmNwuQ5LOhW3eyWGO6mcw27tzmpgXcJii9fVoybJC4
-         2+9O4sJzeCfw2JqbCM7wA7TrENVX2Tcvko1DKulzuNS9TqV4mwfdASh/b5txrk6uE0FQ
-         vLM/w+ketIowjzkMj8v3ffDjou4mKEG+QjZ/kwLl0E6pKmvui/bC1JfeyqOxlaGNKtdD
-         Bo3A==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=MQdgs6ujP7LWDZGNv/WHuQlAySLcoOwNL8AuKWrbq/c=;
+        b=ZfEgnRuNDjOVVgjr+Wnnd/zEJiU8XQLXxg4aXrexQznVO2JVRcbNgG8uEOszNb91IO
+         pFXHG/orNytgbSW90HRlTr14JC8FKWmQmB6cuzy10k1ftT21gXZhBLlvSKCYykHwbIei
+         WJFsBzd9nLf7qxlWJtqBdg9Rr0+xm1a5/n0IV3uiCnVyvIkvFSvf7HrWf2LtAj6b7QPH
+         XVRIb9DmPXBvRpYEhdB1Fo/2sZjSPIT/l5nYmSnmyUp0HvruqD8QXxCejjAkK8NwcJck
+         5ez/7vzNC/lqMOxEqEKuegg+r3g7qKsyevHgIROunKZafACvbweyUJvfaIePk6zHYx4n
+         NYNg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11699-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11699-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11696-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11699-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11699-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -35,88 +35,101 @@ To: <willy@infradead.org>, <rdunlap@infradead.org>, <corbet@lwn.net>,
 CC: <cl@linux.com>, <linux-security-module@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
 	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [RFC PATCH v15 0/6] mm: security: ro protection for dynamic data
-Date: Sun, 11 Feb 2018 05:19:14 +0200
-Message-ID: <20180211031920.3424-1-igor.stoppa@huawei.com>
+Subject: [PATCH 3/6] struct page: add field for vm_struct
+Date: Sun, 11 Feb 2018 05:19:17 +0200
+Message-ID: <20180211031920.3424-4-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180211031920.3424-1-igor.stoppa@huawei.com>
+References: <20180211031920.3424-1-igor.stoppa@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592073085229547021?=
-X-GMAIL-MSGID: =?utf-8?q?1592073085229547021?=
+X-GMAIL-THRID: =?utf-8?q?1592073184128407406?=
+X-GMAIL-MSGID: =?utf-8?q?1592073184128407406?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch-set introduces the possibility of protecting memory that has
-been allocated dynamically.
+When a page is used for virtual memory, it is often necessary to obtian
+a handler to the corresponding vm_struct, which refers to the virtually
+continuous area generated when invoking vmalloc.
 
-The memory is managed in pools: when a memory pool is turned into R/O,
-all the memory that is part of it, will become R/O.
+The struct page has a "mapping" field, which can be re-used, to store a
+pointer to the parent area. This will avoid more expensive searches.
 
-A R/O pool can be destroyed, to recover its memory, but it cannot be
-turned back into R/W mode.
+As example, the function find_vm_area is reimplemented, to take advantage
+of the newly introduced field.
 
-This is intentional. This feature is meant for data that doesn't need
-further modifications after initialization.
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ include/linux/mm_types.h |  1 +
+ mm/vmalloc.c             | 18 +++++++++++++-----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-However the data might need to be released, for example as part of module
-unloading.
-To do this, the memory must first be freed, then the pool can be destroyed.
-
-An example is provided, in the form of self-testing.
-
-Changes since v14:
-[http://www.openwall.com/lists/kernel-hardening/2018/02/04/2]
-
-- fix various warnings from sparse
-- multiline comments
-- fix naming of headers guards
-- fix compilation of individual patches, for bisect
-- split genalloc documentation about bitmap for allocation
-- fix headers to match kerneldoc format for "Return:" field
-- fix variable naming according to coding guidelines
-- fix wrong default value for pmalloc Kconfig option
-- refreshed integration of pmalloc with hardened usercopy
-- removed unnecessary include that was causing compilation failures
-- changed license of pmalloc documentation from GPL 2.0 to CC-BY-SA-4.0
-
-Igor Stoppa (6):
-  genalloc: track beginning of allocations
-  genalloc: selftest
-  struct page: add field for vm_struct
-  Protectable Memory
-  Pmalloc: self-test
-  Documentation for Pmalloc
-
- Documentation/core-api/index.rst   |   1 +
- Documentation/core-api/pmalloc.rst | 114 ++++++++
- include/linux/genalloc-selftest.h  |  26 ++
- include/linux/genalloc.h           |   7 +-
- include/linux/mm_types.h           |   1 +
- include/linux/pmalloc.h            | 222 +++++++++++++++
- include/linux/vmalloc.h            |   1 +
- init/main.c                        |   2 +
- lib/Kconfig                        |  15 +
- lib/Makefile                       |   1 +
- lib/genalloc-selftest.c            | 400 ++++++++++++++++++++++++++
- lib/genalloc.c                     | 554 +++++++++++++++++++++++++++----------
- mm/Kconfig                         |  15 +
- mm/Makefile                        |   2 +
- mm/pmalloc-selftest.c              |  63 +++++
- mm/pmalloc-selftest.h              |  24 ++
- mm/pmalloc.c                       | 499 +++++++++++++++++++++++++++++++++
- mm/usercopy.c                      |  33 +++
- mm/vmalloc.c                       |  18 +-
- 19 files changed, 1852 insertions(+), 146 deletions(-)
- create mode 100644 Documentation/core-api/pmalloc.rst
- create mode 100644 include/linux/genalloc-selftest.h
- create mode 100644 include/linux/pmalloc.h
- create mode 100644 lib/genalloc-selftest.c
- create mode 100644 mm/pmalloc-selftest.c
- create mode 100644 mm/pmalloc-selftest.h
- create mode 100644 mm/pmalloc.c
-
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index fd1af6b9591d..c3a4825e10c0 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -84,6 +84,7 @@ struct page {
+ 		void *s_mem;			/* slab first object */
+ 		atomic_t compound_mapcount;	/* first tail page */
+ 		/* page_deferred_list().next	 -- second tail page */
++		struct vm_struct *area;
+ 	};
+ 
+ 	/* Second double word */
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 673942094328..9404ffd0ee98 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1466,13 +1466,16 @@ struct vm_struct *get_vm_area_caller(unsigned long size, unsigned long flags,
+  */
+ struct vm_struct *find_vm_area(const void *addr)
+ {
+-	struct vmap_area *va;
++	struct page *page;
+ 
+-	va = find_vmap_area((unsigned long)addr);
+-	if (va && va->flags & VM_VM_AREA)
+-		return va->vm;
++	if (unlikely(!is_vmalloc_addr(addr)))
++		return NULL;
+ 
+-	return NULL;
++	page = vmalloc_to_page(addr);
++	if (unlikely(!page))
++		return NULL;
++
++	return page->area;
+ }
+ 
+ /**
+@@ -1536,6 +1539,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			struct page *page = area->pages[i];
+ 
+ 			BUG_ON(!page);
++			page->area = NULL;
+ 			__free_pages(page, 0);
+ 		}
+ 
+@@ -1744,6 +1748,7 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 			const void *caller)
+ {
+ 	struct vm_struct *area;
++	unsigned int i;
+ 	void *addr;
+ 	unsigned long real_size = size;
+ 
+@@ -1769,6 +1774,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 
+ 	kmemleak_vmalloc(area, size, gfp_mask);
+ 
++	for (i = 0; i < area->nr_pages; i++)
++		area->pages[i]->area = area;
++
+ 	return addr;
+ 
+ fail:
 -- 
 2.14.1
