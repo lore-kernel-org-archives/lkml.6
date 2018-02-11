@@ -1,115 +1,128 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-79580-1518402488-2-1509244300571040655
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518402488; b=YQZTPzmqBMHZPMLXyh3wjpQSMSuUplA25mz5zd234C1hADe
-    r/9itPNA0QKDlnbO4nJBH6BKjj3g38/mC3WnfGkkXfUCZgqc57+OPntmzspdy+f6
-    fk7HX/lXZEWfc/efQ0Jq5UN3XCWQEp2Hc7rkw88yn+/ildZDWXlkFiJjC+o1KnW5
-    Br0PlHplQs+B6frenTJRvQpYWNeI/yiWrShWyUemduKedyYJ3q203UW3tL+PY7B/
-    zs7mXKHSY7vQNB5iluumljzMr3ulo3JCpbTn6NpC+YRnIu4uKPua2d/cUmeLh77I
-    rK7YB00029hraPE1QK5795E/AwxLoRjh6MMboUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1518402488; bh=DmXNpxSi+tncN3EXIjFNPHuxbi
-    /zmE2u4A/UA1/RwAs=; b=uX5CGToW6FYhFsBWNE5bAA3Hi5ydLIdtJdZOtX6tbp
-    TXh9NDMlp4qZaArxdwsMks5U4Cn3BwUf/2RTjqR7V6yzIrRjGGGyg+i2RwNYg7TJ
-    Ja030647W4wAFvGfvUe5z2qqsr/kuAHpc1Kt3P19eBHzf3UqLD95mbusYoY2Uz6x
-    W1BxskXWZ1zGNnB0yrKPQXnBJewsMy3JryA1xAjbuuGpWgTT6vfnF6JkqX+NDex5
-    I9/NEuR9PyJiedKZ/TGrZcWgbWjiMVOY83AjfL79AU7PX83C/T2bPUWea+g8XBtR
-    Q+NqOSEB42fRMPHOv2Pko3AvVGJ0PjA9ee0GojW4hZ7A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=taDtz+Au x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kgLs/eo1;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=taDtz+Au x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kgLs/eo1;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932261AbeBLC2H (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 21:28:07 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42124 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932243AbeBLC2G (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 21:28:06 -0500
-X-Google-Smtp-Source: AH8x225dXI9AfVVx4RCM4hg5R4ykg+wXLK8Q7jN1CDc9KlisTpff/Yxho5FXZI9JHWXsOJk803Ekmw==
-Date: Mon, 12 Feb 2018 11:28:00 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Huang Ying <huang.ying.caritas@gmail.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        Seth Jennings <sjenning@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Shaohua Li <shli@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Shakeel Butt <shakeelb@google.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Minchan Kim <minchan@kernel.org>
-Subject: Re: [PATCH -mm -v3] mm, swap, frontswap: Fix THP swap if frontswap
- enabled
-Message-ID: <20180212022800.GA458@jagdpanzerIV>
-References: <20180209084947.22749-1-ying.huang@intel.com>
- <20180209130339.e91c8709e9c46e5b3f941a29@linux-foundation.org>
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x225WI7Bnuu5cpXxV00ez6YEoj4g6JutrrpQClU1VdsUoLY2Zt+KPvusv4GvJt5l/14Ih3o6T
+ARC-Seal: i=1; a=rsa-sha256; t=1518401216; cv=none;
+        d=google.com; s=arc-20160816;
+        b=wANCO2zOIfwmXzXFGdPv6BK6XTqfOlwQbtdc5/xTVZ2lVvyd7RrbFOHDPX2b0D+pQ6
+         eOyloqwq5+XtdlpoTR9hggCj3d7MyKxb5Z8UyQyYBIogU5cPgdQzTktrJnguzm+G4saU
+         XnMEUTsO8i2H9SUijSmK+jfYFMJUJoX0O5J/AVqILNTQ+1ksbMIqswFCV2bn86J13dGy
+         b1HIu0YrasnVL77f0I2aUCfp75ka75dBmKnpnioi8pfC2dNqPvmj8mZXi18yhZ0KxuUg
+         hapoGixGPEX+oJ6iJJ0S1Js8XX+1ELRH+4KTzGvrTXRJWTEKnfsPoopYeon+PLbP5NpV
+         N2zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=UtgFQr7rXxTZv+M6e6M66Pgsq58qLUiPi5yGqXWyulg=;
+        b=SFHqUk2LgnvYSHDf7D9vKsDG6ySBXgaopYHnGLeOt+hN0osGhfumKF6LP5O3Sugt0/
+         mTEbBqCeoTLJmiIa5mnzU4GBXpivj0KFD+gXKsm5gXN+sKAetuYIh7ltO89wmX0uzIG6
+         BDBfcgt6cxCeLez6XcYqLBq73pTm4PYzcDGpkFVj+fxGzlSPKRBidoAt3vhJnE95Unx2
+         lBG7NVPYSPAz5PdKkmUcemnZ8mn9P8xf4NPI9DNFqyhyKK06FBPp+y13FWMK4mP56qOG
+         NE0nZwXgFMYerTzb8zsTjNjA9HECEbwerb1ZVK9LxRJPHdopeYo6S1khT4vS/KwfHviK
+         5nrA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Sun, 11 Feb 2018 04:08:57 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for David Woodhouse <tipbot@zytor.com>
+Message-ID: <tip-1751342095f0d2b36fa8114d8e12c5688c455ac4@git.kernel.org>
+Cc: peterz@infradead.org, jpoimboe@redhat.com, gregkh@linuxfoundation.org,
+        bp@alien8.de, dan.j.williams@intel.com, hpa@zytor.com,
+        dave.hansen@linux.intel.com, dwmw2@infradead.org,
+        arjan@linux.intel.com, mingo@kernel.org, torvalds@linux-foundation.org,
+        dwmw@amazon.co.uk, luto@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, torvalds@linux-foundation.org, dwmw@amazon.co.uk,
+        tglx@linutronix.de, luto@kernel.org, linux-kernel@vger.kernel.org,
+        bp@alien8.de, gregkh@linuxfoundation.org, jpoimboe@redhat.com,
+        peterz@infradead.org, dan.j.williams@intel.com, hpa@zytor.com,
+        dave.hansen@linux.intel.com, dwmw2@infradead.org,
+        arjan@linux.intel.com
+In-Reply-To: <1518305967-31356-2-git-send-email-dwmw@amazon.co.uk>
+References: <1518305967-31356-2-git-send-email-dwmw@amazon.co.uk>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/speculation: Update Speculation Control microcode
+ blacklist
+Git-Commit-ID: 1751342095f0d2b36fa8114d8e12c5688c455ac4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180209130339.e91c8709e9c46e5b3f941a29@linux-foundation.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592159073916026557?=
+X-GMAIL-MSGID: =?utf-8?q?1592159073916026557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+Commit-ID:  1751342095f0d2b36fa8114d8e12c5688c455ac4
+Gitweb:     https://git.kernel.org/tip/1751342095f0d2b36fa8114d8e12c5688c455ac4
+Author:     David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate: Sat, 10 Feb 2018 23:39:22 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sun, 11 Feb 2018 11:24:15 +0100
 
-On (02/09/18 13:03), Andrew Morton wrote:
-[..]
-> > Frontswap has multiple backends, to make it easy for one backend to
-> > enable THP support, the THP checking is put in backend frontswap store
-> > functions instead of the general interfaces.
-> > 
-> > Fixes: bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped out")
-> > Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> 
-> I don't think Sergey has tested this version and I suspect this is a
-> holdover from the earlier patch, so I'll remove this line.
+x86/speculation: Update Speculation Control microcode blacklist
 
-Just tested it (v3) with FRONTSWAP enabled (didn't test XEN tmem).
-Works fine.
+Intel have retroactively blessed the 0xc2 microcode on Skylake mobile
+and desktop parts, and the Gemini Lake 0x22 microcode is apparently fine
+too. We blacklisted the latter purely because it was present with all
+the other problematic ones in the 2018-01-08 release, but now it's
+explicitly listed as OK.
 
-FWIW
-Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com> # frontswap
+We still list 0x84 for the various Kaby Lake / Coffee Lake parts, as
+that appeared in one version of the blacklist and then reverted to
+0x80 again. We can change it if 0x84 is actually announced to be safe.
 
-	-ss
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: arjan.van.de.ven@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Cc: sironi@amazon.de
+Link: http://lkml.kernel.org/r/1518305967-31356-2-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/intel.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 319bf98..f73b814 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -123,8 +123,6 @@ static const struct sku_microcode spectre_bad_microcodes[] = {
+ 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
+-	{ INTEL_FAM6_SKYLAKE_MOBILE,	0x03,	0xc2 },
+-	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
+ 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
+ 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
+ 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+@@ -136,8 +134,6 @@ static const struct sku_microcode spectre_bad_microcodes[] = {
+ 	{ INTEL_FAM6_HASWELL_X,		0x02,	0x3b },
+ 	{ INTEL_FAM6_HASWELL_X,		0x04,	0x10 },
+ 	{ INTEL_FAM6_IVYBRIDGE_X,	0x04,	0x42a },
+-	/* Updated in the 20180108 release; blacklist until we know otherwise */
+-	{ INTEL_FAM6_ATOM_GEMINI_LAKE,	0x01,	0x22 },
+ 	/* Observed in the wild */
+ 	{ INTEL_FAM6_SANDYBRIDGE_X,	0x06,	0x61b },
+ 	{ INTEL_FAM6_SANDYBRIDGE_X,	0x07,	0x712 },
