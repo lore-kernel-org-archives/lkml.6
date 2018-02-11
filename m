@@ -1,76 +1,196 @@
-Return-Path: <kernel-hardening-return-11722-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x226eeBe8ERnmU2xGOuHbOLEt81zYIuHlKWx1WhLQ6u+/CyB76up/OLMS6kPjzo6chCzSs0cs
-ARC-Seal: i=1; a=rsa-sha256; t=1518450146; cv=none;
+Return-Path: <kernel-hardening-return-11702-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x225Woa/w/ftak5k/0EGVbRYmG5+XgFAWmZK3eBuBfX8EukEX0A4QfUTJP/eP2g7Y/P+LZuHy
+ARC-Seal: i=1; a=rsa-sha256; t=1518319406; cv=none;
         d=google.com; s=arc-20160816;
-        b=fN990rKwUlIrSn9xetcpcctd9oCPo0q2afuidjf19EtyTApwfZu+KWN00U1uhwBme+
-         HCD5j1JeQCxwXL2Z8gar+cUO+Gug2KIb1K0Pv+yGXxoTrqCrei20stBuyaZyH3tbjrfo
-         rgXKqxPkGv1pcYv5epDw0/x2cNzE0AOLCGsKv2JnBjb0s++Aa8eKispvhZBx3aQG3E+E
-         tDRR2Ua2qz703AEXRgxPb3n6s87Q7K0gvtxUaMVeNJwmARkwGXA8XI0z5xVcEHk8VvdI
-         kKmMMDH4ThN2nKYzVCAmTsF6oCFMwXND9AIPhSehtaZjFCwk0CKxmBomootDSdxhb3Vz
-         OvAA==
+        b=QYcSXPR5I5UzOM1fWLTffPFBdAid1SwBt21rqkd9xO4oEaoYEDsKPSEZ+ArrAOD5wJ
+         a7pg27BBZNYLSEKhjsqSWbPR2ngkx2uRGkMaKrJ60iYPC69rG064OPV+VQNxFBn1NvW+
+         OWeWG1fkTL5MFcGgvcevZW9FfyLg2ayx1I22OluixTBjeay6tSSHSyKPLNgGIWyDKJ5m
+         RkV3iIRu9U7V4FIZgONzyU7J8cSz2TILHHEgCTMScJDkiJ3t/ZD8IDgCgCbFP2mx85/A
+         MmzItktGlhEzHmHKMsGp2bWDJmtOtkuxQJAQmqSSt3kKgEdIeAosSg7X7xBHrUJzhVnf
+         J2/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=pgH4+ScrBSqt7vgO59eNkLLgFtUJzt9iIoWjw1Xrgzo=;
-        b=w7Rlx+uwDv54AryozDrH83yr2PwH4rocV6Mcl0q+AMBiVA1CAZUgLehXEDJ0DVtdtY
-         E2PMp8EqzVNyJD0PvBuQGQCJ2fUH90IELw3BgIrVdiafhSQaa6J6yFoiOrM7EMiYFqR5
-         WvxPLtT00zonlrWk0+nRpn9j4/IWiqikfCw8plx3CaIu6STt+bqjGKwgSpT+4ceCatpU
-         6KiIHixD1VjcZrmgoQtQLLCfB8m2Kvln2TX8FZx16KTYv+H1scSvWpZZpibu4xLdXIHy
-         2+EExv674DNk7edDfzVtPK01tl0kumUPETglTajKfOK8PILFOUImWbaY3nM51H5jRGOa
-         Af9A==
+        bh=2d2Vll561PLdI5y4Zynz9ROCa7KwNrNo2cb8v322h1U=;
+        b=0xo4/pjL8w5d2cTefvaveHp87e0vRcQP/n6IPfaa6MTLAaXJIx+WGTclTNfs/SkgX4
+         /GPcn32K9blyr+Qbgs8aLnX9/R28mI4lJrA9meGWz/lHgbqMIGc8S8L5Z2EsCPkZTpM9
+         q3fEJBni8HNR5KN657BViMO2mZj/DZVOd86YfthLaXUfbzBCCa3AgU5p6U/6d4TUMySe
+         lnr9/zsELmwwTlut521WXnWvTjMJwj9PTa8svMPzQxG22uRU0r1T3HXvuDskfO6KouWW
+         9oFtK9OL5eBveRxhxdV3F99AuU4iUQXRXiW8AE1fa+jm7u6xHo3EsVBi7oPvnLca9f4q
+         Xgqg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11722-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11722-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11702-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11702-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11722-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11722-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11702-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11702-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH 4/6] Protectable Memory
-To: Mike Rapoport <rppt@linux.vnet.ibm.com>
-CC: <willy@infradead.org>, <rdunlap@infradead.org>, <corbet@lwn.net>,
-	<keescook@chromium.org>, <mhocko@kernel.org>, <labbott@redhat.com>,
-	<jglisse@redhat.com>, <hch@infradead.org>, <cl@linux.com>,
-	<linux-security-module@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-hardening@lists.openwall.com>
-References: <20180211031920.3424-1-igor.stoppa@huawei.com>
- <20180211031920.3424-5-igor.stoppa@huawei.com>
- <20180211123743.GC13931@rapoport-lnx>
- <e7ea02b4-3d43-9543-3d14-61c27e155042@huawei.com>
- <20180212114310.GD20737@rapoport-lnx> <20180212125347.GE20737@rapoport-lnx>
- <68edadf0-2b23-eaeb-17de-884032f0b906@huawei.com>
- <20180212153156.GF20737@rapoport-lnx>
 From: Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <f5c08b12-a274-f2db-5cf2-8b774489c425@huawei.com>
-Date: Mon, 12 Feb 2018 17:41:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+To: <willy@infradead.org>, <rdunlap@infradead.org>, <corbet@lwn.net>,
+	<keescook@chromium.org>, <mhocko@kernel.org>, <labbott@redhat.com>,
+	<jglisse@redhat.com>, <hch@infradead.org>
+CC: <cl@linux.com>, <linux-security-module@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [PATCH 6/6] Documentation for Pmalloc
+Date: Sun, 11 Feb 2018 05:19:20 +0200
+Message-ID: <20180211031920.3424-7-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180211031920.3424-1-igor.stoppa@huawei.com>
+References: <20180211031920.3424-1-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180212153156.GF20737@rapoport-lnx>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590497635371449856?=
-X-GMAIL-MSGID: =?utf-8?q?1592210381296233726?=
+X-GMAIL-THRID: =?utf-8?q?1592073290087141082?=
+X-GMAIL-MSGID: =?utf-8?q?1592073290087141082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 12/02/18 17:31, Mike Rapoport wrote:
+Detailed documentation about the protectable memory allocator.
 
-[...]
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 114 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 115 insertions(+)
+ create mode 100644 Documentation/core-api/pmalloc.rst
 
-> Seems that kernel-doc does not consider () as a valid match for the
-> identifier :)
->  
-> Can you please check with the below patch?
-
-yes, it works now, than you!
-
---
-igor
+diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+index c670a8031786..8f5de42d6571 100644
+--- a/Documentation/core-api/index.rst
++++ b/Documentation/core-api/index.rst
+@@ -25,6 +25,7 @@ Core utilities
+    genalloc
+    errseq
+    printk-formats
++   pmalloc
+ 
+ Interfaces for kernel debugging
+ ===============================
+diff --git a/Documentation/core-api/pmalloc.rst b/Documentation/core-api/pmalloc.rst
+new file mode 100644
+index 000000000000..1afc13b6a74d
+--- /dev/null
++++ b/Documentation/core-api/pmalloc.rst
+@@ -0,0 +1,114 @@
++SPDX-License-Identifier: CC-BY-SA-4.0
++
++Protectable memory allocator
++============================
++
++Purpose
++-------
++
++The pmalloc library is meant to provide R/O status to data that, for some
++reason, could neither be declared as constant, nor could it take advantage
++of the qualifier __ro_after_init, but is write-once and read-only in spirit.
++It protects data from both accidental and malicious overwrites.
++
++Example: A policy that is loaded from userspace.
++
++
++Concept
++-------
++
++pmalloc builds on top of genalloc, using the same concept of memory pools.
++
++The value added by pmalloc is that now the memory contained in a pool can
++become R/O, for the rest of the life of the pool.
++
++Different kernel drivers and threads can use different pools, for finer
++control of what becomes R/O and when. And for improved lockless concurrency.
++
++
++Caveats
++-------
++
++- Memory freed while a pool is not yet protected will be reused.
++
++- Once a pool is protected, it's not possible to allocate any more memory
++  from it.
++
++- Memory "freed" from a protected pool indicates that such memory is not
++  in use anymore by the requester; however, it will not become available
++  for further use, until the pool is destroyed.
++
++- Before destroying a pool, all the memory allocated from it must be
++  released.
++
++- pmalloc does not provide locking support with respect to allocating vs
++  protecting an individual pool, for performance reasons.
++  It is recommended not to share the same pool between unrelated functions.
++  Should sharing be a necessity, the user of the shared pool is expected
++  to implement locking for that pool.
++
++- pmalloc uses genalloc to optimize the use of the space it allocates
++  through vmalloc. Some more TLB entries will be used, however less than
++  in the case of using vmalloc directly. The exact number depends on the
++  size of each allocation request and possible slack.
++
++- Considering that not much data is supposed to be dynamically allocated
++  and then marked as read-only, it shouldn't be an issue that the address
++  range for pmalloc is limited, on 32-bit systems.
++
++- Regarding SMP systems, the allocations are expected to happen mostly
++  during an initial transient, after which there should be no more need to
++  perform cross-processor synchronizations of page tables.
++
++- To facilitate the conversion of existing code to pmalloc pools, several
++  helper functions are provided, mirroring their kmalloc counterparts.
++
++
++Use
++---
++
++The typical sequence, when using pmalloc, is:
++
++1. create a pool
++
++.. kernel-doc:: include/linux/pmalloc.h
++   :functions: pmalloc_create_pool
++
++2. [optional] pre-allocate some memory in the pool
++
++.. kernel-doc:: include/linux/pmalloc.h
++   :functions: pmalloc_prealloc
++
++3. issue one or more allocation requests to the pool with locking as needed
++
++.. kernel-doc:: include/linux/pmalloc.h
++   :functions: pmalloc
++
++.. kernel-doc:: include/linux/pmalloc.h
++   :functions: pzalloc
++
++4. initialize the memory obtained with desired values
++
++5. [optional] iterate over points 3 & 4 as needed
++
++6. write-protect the pool
++
++.. kernel-doc:: include/linux/pmalloc.h
++   :functions: pmalloc_protect_pool
++
++7. use in read-only mode the handles obtained through the allocations
++
++8. [optional] release all the memory allocated
++
++.. kernel-doc:: include/linux/pmalloc.h
++   :functions: pfree
++
++9. [optional, but depends on point 8] destroy the pool
++
++.. kernel-doc:: include/linux/pmalloc.h
++   :functions: pmalloc_destroy_pool
++
++API
++---
++
++.. kernel-doc:: include/linux/pmalloc.h
+-- 
+2.14.1
