@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518325115-2-15544074209782126358
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518325084-2-7376946650401192295
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325114; b=nELOkCQKx393Ht8up9CnXNmC2pmig7NNfQZSwlYtksv++5Q
-    q7xUfYJCAjyu6pRLfZu8XXwHip2hVV2BRct8nxt8+sHqeRrmvPW8VFwhnJbnCdUc
-    oomiOc6EtU9W1oMlbSVw1YwxRBgW7+0imkkGDTSAXxF0PYnxUUA/cNJUNRyxD24J
-    yxW4FVyMe0PmzHPhXLeU1nODlWDMyWvIegts2S69H5l1oTeBuWDcyUrEPMXyKCrN
-    hlh5NrF8kJk1TugAsfWOh52mF6MJFV1DKCe0Q5S9hOexAcjhTEGpsK9fXJohl5DC
-    1HG77DrwIVkDzsVVnpg0nBp6w+13foejGqhmLHw==
+    t=1518325083; b=qaTb45INhyJ/RQaQEE1BWEGrCQP11fWSXmFXYeXAGMylE5X
+    AN0h+J247VxlU8qq/3aOyclPFU7nnD8DJmeFx/xwgcJMQVDcB15bBUowV3nBt/EC
+    TQb6CGp4uVt7cHTzcoz2CZavXKo35mANuai2xo6C9SPNsF07M4bgsvtadG6xVlWH
+    Yvqf7/6wGlPN4gXDpRIU6Jl799u+W4V3GncS/4hE8Wd9cR+DKDOuEdzmAi3EuN5K
+    CZOxvYZauA9Li2/xU2Uww8wpLPKRiDdB3Zti5EG/3wnLoClPT5PO3QTroDR/PeLm
+    3QlhLC3e7K6khBlSy3rUADf8tHl0EMPiZq+L1Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325114; bh=k6YdINCHCTm1o+HNO3p
-    ap+/9nmzjeM0i5lsZi9hJYcs=; b=Wt3M5S+XXFtZwQZWbOZJXugw9odkWE7pWig
-    hnPHSWRuNBRnnwAAcZwAw13nDg1Z5yrC5oKK5ziNtCs+ggTwlN1wsx4nDU3KLIwS
-    Mvih57eludmygKDIiTrALgn0Q2SQhPtshpp4cBpO1X19Asfwi+y3aOJpKfvOn0f7
-    GsEbUuevmCob3prAqMLXbWZS+wZhUK9Ye/Ho9fv0L40/MaWQkGY0IaQyHuqCtCof
-    +JNYHZVViJd5P9kQZrrJrw54kchBtOJLGl9KZe6fEX6/6C/EyC4n8Ed5BbX3rHYl
-    wm9CAwdcl9BiDAwvOhANJcDr8k699lfdEpKHjnunCV6ynWVfuRw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325083; bh=z9qQLk7jOs9Riu1rl7t
+    VoycTvrJjRewTXKWPt0qVocs=; b=O9jshIDxO54uT2oO9yxgTV1fLcneKUfPefY
+    H8v6lG9zVLVMzxsR9O5AC7RV5UQiW2aqf2s/9IVNLp3471Jk2gZPlvdqDlWTgidr
+    kp2+B5MEna3KHGWvdDKL5pWHCR5DB4HVofdhGuHy/TbSrBIF4YpeMRExN3yjhZ0L
+    tq9he0ohvdsG0hyUHs0H9CzbsWT7zDezTOHL5qxKzaqEObDYx/gNgkr0VvDDsWaj
+    AS6vz6otrt5gx36CA6hMWb0k3PnZbNln+EPK5hnAKBCVNCPwsFcz71XAo3svxVMM
+    jplc+/UKU2b+V68sSfHCSH4XZoC1k+A9AZNNmPtEDcinYf1So0A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,25 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752792AbeBKE6F (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:58:05 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41672 "EHLO
+        id S1753295AbeBKEz4 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:55:56 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41717 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752781AbeBKEd4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:56 -0500
+        by vger.kernel.org with ESMTP id S1752798AbeBKEd5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:57 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Christian Lamparter" <chunkeey@googlemail.com>,
-        "Kalle Valo" <kvalo@codeaurora.org>,
-        "Andrey Konovalov" <andreyknvl@google.com>
+CC: akpm@linux-foundation.org, "Andy Lutomirski" <luto@amacapital.net>,
+        "H. Peter Anvin" <hpa@linux.intel.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.998044846@decadent.org.uk>
+Message-ID: <lsq.1518323471.57179372@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 015/136] p54: don't unregister leds when they are not
- initialized
+Subject: [PATCH 3.16 128/136] x86, vdso: Move the vvar area before the
+ vdso text
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,78 +80,285 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Konovalov <andreyknvl@google.com>
+From: Andy Lutomirski <luto@amacapital.net>
 
-commit fc09785de0a364427a5df63d703bae9a306ed116 upstream.
+commit e6577a7ce99a506b587bcd1d2cd803cb45119557 upstream.
 
-ieee80211_register_hw() in p54_register_common() may fail and leds won't
-get initialized. Currently p54_unregister_common() doesn't check that and
-always calls p54_unregister_leds(). The fix is to check priv->registered
-flag before calling p54_unregister_leds().
+Putting the vvar area after the vdso text is rather complicated: it
+only works of the total length of the vdso text mapping is known at
+vdso link time, and the linker doesn't allow symbol addresses to
+depend on the sizes of non-allocatable data after the PT_LOAD
+segment.
 
-Found by syzkaller.
+Moving the vvar area before the vdso text will allow is to safely
+map non-allocatable data after the vdso text, which is a nice
+simplification.
 
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 1 PID: 1404 Comm: kworker/1:1 Not tainted
-4.14.0-rc1-42251-gebb2c2437d80-dirty #205
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- __dump_stack lib/dump_stack.c:16
- dump_stack+0x292/0x395 lib/dump_stack.c:52
- register_lock_class+0x6c4/0x1a00 kernel/locking/lockdep.c:769
- __lock_acquire+0x27e/0x4550 kernel/locking/lockdep.c:3385
- lock_acquire+0x259/0x620 kernel/locking/lockdep.c:4002
- flush_work+0xf0/0x8c0 kernel/workqueue.c:2886
- __cancel_work_timer+0x51d/0x870 kernel/workqueue.c:2961
- cancel_delayed_work_sync+0x1f/0x30 kernel/workqueue.c:3081
- p54_unregister_leds+0x6c/0xc0 drivers/net/wireless/intersil/p54/led.c:160
- p54_unregister_common+0x3d/0xb0 drivers/net/wireless/intersil/p54/main.c:856
- p54u_disconnect+0x86/0x120 drivers/net/wireless/intersil/p54/p54usb.c:1073
- usb_unbind_interface+0x21c/0xa90 drivers/usb/core/driver.c:423
- __device_release_driver drivers/base/dd.c:861
- device_release_driver_internal+0x4f4/0x5c0 drivers/base/dd.c:893
- device_release_driver+0x1e/0x30 drivers/base/dd.c:918
- bus_remove_device+0x2f4/0x4b0 drivers/base/bus.c:565
- device_del+0x5c4/0xab0 drivers/base/core.c:1985
- usb_disable_device+0x1e9/0x680 drivers/usb/core/message.c:1170
- usb_disconnect+0x260/0x7a0 drivers/usb/core/hub.c:2124
- hub_port_connect drivers/usb/core/hub.c:4754
- hub_port_connect_change drivers/usb/core/hub.c:5009
- port_event drivers/usb/core/hub.c:5115
- hub_event+0x1318/0x3740 drivers/usb/core/hub.c:5195
- process_one_work+0xc7f/0x1db0 kernel/workqueue.c:2119
- process_scheduled_works kernel/workqueue.c:2179
- worker_thread+0xb2b/0x1850 kernel/workqueue.c:2255
- kthread+0x3a1/0x470 kernel/kthread.c:231
- ret_from_fork+0x2a/0x40 arch/x86/entry/entry_64.S:431
-
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Acked-by: Christian Lamparter <chunkeey@googlemail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Andy Lutomirski <luto@amacapital.net>
+Link: http://lkml.kernel.org/r/156c78c0d93144ff1055a66493783b9e56813983.1405040914.git.luto@amacapital.net
+Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/p54/main.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/vdso.h     | 18 ++++++++---------
+ arch/x86/vdso/vdso-layout.lds.S | 44 ++++++++++++++++++-----------------------
+ arch/x86/vdso/vdso2c.c          | 12 ++++++-----
+ arch/x86/vdso/vdso2c.h          | 25 ++++++++++++++---------
+ arch/x86/vdso/vma.c             | 20 ++++++++++---------
+ 5 files changed, 62 insertions(+), 57 deletions(-)
 
---- a/drivers/net/wireless/p54/main.c
-+++ b/drivers/net/wireless/p54/main.c
-@@ -851,12 +851,11 @@ void p54_unregister_common(struct ieee80
- {
- 	struct p54_common *priv = dev->priv;
+--- a/arch/x86/include/asm/vdso.h
++++ b/arch/x86/include/asm/vdso.h
+@@ -18,15 +18,15 @@ struct vdso_image {
  
--#ifdef CONFIG_P54_LEDS
--	p54_unregister_leds(priv);
--#endif /* CONFIG_P54_LEDS */
+ 	unsigned long alt, alt_len;
+ 
+-	unsigned long sym_end_mapping;  /* Total size of the mapping */
++	long sym_vvar_start;  /* Negative offset to the vvar area */
+ 
+-	unsigned long sym_vvar_page;
+-	unsigned long sym_hpet_page;
+-	unsigned long sym_VDSO32_NOTE_MASK;
+-	unsigned long sym___kernel_sigreturn;
+-	unsigned long sym___kernel_rt_sigreturn;
+-	unsigned long sym___kernel_vsyscall;
+-	unsigned long sym_VDSO32_SYSENTER_RETURN;
++	long sym_vvar_page;
++	long sym_hpet_page;
++	long sym_VDSO32_NOTE_MASK;
++	long sym___kernel_sigreturn;
++	long sym___kernel_rt_sigreturn;
++	long sym___kernel_vsyscall;
++	long sym_VDSO32_SYSENTER_RETURN;
+ };
+ 
+ #ifdef CONFIG_X86_64
+--- a/arch/x86/vdso/vdso-layout.lds.S
++++ b/arch/x86/vdso/vdso-layout.lds.S
+@@ -18,6 +18,25 @@
+ 
+ SECTIONS
+ {
++	/*
++	 * User/kernel shared data is before the vDSO.  This may be a little
++	 * uglier than putting it after the vDSO, but it avoids issues with
++	 * non-allocatable things that dangle past the end of the PT_LOAD
++	 * segment.
++	 */
++
++	vvar_start = . - 2 * PAGE_SIZE;
++	vvar_page = vvar_start;
++
++	/* Place all vvars at the offsets in asm/vvar.h. */
++#define EMIT_VVAR(name, offset) vvar_ ## name = vvar_page + offset;
++#define __VVAR_KERNEL_LDS
++#include <asm/vvar.h>
++#undef __VVAR_KERNEL_LDS
++#undef EMIT_VVAR
++
++	hpet_page = vvar_start + PAGE_SIZE;
++
+ 	. = SIZEOF_HEADERS;
+ 
+ 	.hash		: { *(.hash) }			:text
+@@ -74,31 +93,6 @@ SECTIONS
+ 	.altinstructions	: { *(.altinstructions) }	:text
+ 	.altinstr_replacement	: { *(.altinstr_replacement) }	:text
+ 
+-	/*
+-	 * The remainder of the vDSO consists of special pages that are
+-	 * shared between the kernel and userspace.  It needs to be at the
+-	 * end so that it doesn't overlap the mapping of the actual
+-	 * vDSO image.
+-	 */
 -
- 	if (priv->registered) {
- 		priv->registered = false;
-+#ifdef CONFIG_P54_LEDS
-+		p54_unregister_leds(priv);
-+#endif /* CONFIG_P54_LEDS */
- 		ieee80211_unregister_hw(dev);
+-	. = ALIGN(PAGE_SIZE);
+-	vvar_page = .;
+-
+-	/* Place all vvars at the offsets in asm/vvar.h. */
+-#define EMIT_VVAR(name, offset) vvar_ ## name = vvar_page + offset;
+-#define __VVAR_KERNEL_LDS
+-#include <asm/vvar.h>
+-#undef __VVAR_KERNEL_LDS
+-#undef EMIT_VVAR
+-
+-	. = vvar_page + PAGE_SIZE;
+-
+-	hpet_page = .;
+-	. = . + PAGE_SIZE;
+-
+-	. = ALIGN(PAGE_SIZE);
+-	end_mapping = .;
+-
+ 	/DISCARD/ : {
+ 		*(.discard)
+ 		*(.discard.*)
+--- a/arch/x86/vdso/vdso2c.c
++++ b/arch/x86/vdso/vdso2c.c
+@@ -20,9 +20,9 @@ const char *outfilename;
+ 
+ /* Symbols that we need in vdso2c. */
+ enum {
++	sym_vvar_start,
+ 	sym_vvar_page,
+ 	sym_hpet_page,
+-	sym_end_mapping,
+ 	sym_VDSO_FAKE_SECTION_TABLE_START,
+ 	sym_VDSO_FAKE_SECTION_TABLE_END,
+ };
+@@ -38,9 +38,9 @@ struct vdso_sym {
+ };
+ 
+ struct vdso_sym required_syms[] = {
++	[sym_vvar_start] = {"vvar_start", true},
+ 	[sym_vvar_page] = {"vvar_page", true},
+ 	[sym_hpet_page] = {"hpet_page", true},
+-	[sym_end_mapping] = {"end_mapping", true},
+ 	[sym_VDSO_FAKE_SECTION_TABLE_START] = {
+ 		"VDSO_FAKE_SECTION_TABLE_START", false
+ 	},
+@@ -96,9 +96,11 @@ extern void bad_put_le(void);
+ 
+ #define NSYMS (sizeof(required_syms) / sizeof(required_syms[0]))
+ 
+-#define BITSFUNC3(name, bits) name##bits
+-#define BITSFUNC2(name, bits) BITSFUNC3(name, bits)
+-#define BITSFUNC(name) BITSFUNC2(name, ELF_BITS)
++#define BITSFUNC3(name, bits, suffix) name##bits##suffix
++#define BITSFUNC2(name, bits, suffix) BITSFUNC3(name, bits, suffix)
++#define BITSFUNC(name) BITSFUNC2(name, ELF_BITS, )
++
++#define INT_BITS BITSFUNC2(int, ELF_BITS, _t)
+ 
+ #define ELF_BITS_XFORM2(bits, x) Elf##bits##_##x
+ #define ELF_BITS_XFORM(bits, x) ELF_BITS_XFORM2(bits, x)
+--- a/arch/x86/vdso/vdso2c.h
++++ b/arch/x86/vdso/vdso2c.h
+@@ -132,7 +132,7 @@ static void BITSFUNC(go)(void *addr, siz
+ 		*alt_sec = NULL;
+ 	ELF(Dyn) *dyn = 0, *dyn_end = 0;
+ 	const char *secstrings;
+-	uint64_t syms[NSYMS] = {};
++	INT_BITS syms[NSYMS] = {};
+ 
+ 	struct BITSFUNC(fake_sections) fake_sections = {};
+ 
+@@ -209,6 +209,13 @@ static void BITSFUNC(go)(void *addr, siz
+ 					fail("duplicate symbol %s\n",
+ 					     required_syms[k].name);
+ 				}
++
++				/*
++				 * Careful: we use negative addresses, but
++				 * st_value is unsigned, so we rely
++				 * on syms[k] being a signed type of the
++				 * correct width.
++				 */
+ 				syms[k] = GET_LE(&sym->st_value);
+ 			}
+ 		}
+@@ -263,15 +270,15 @@ static void BITSFUNC(go)(void *addr, siz
+ 		if (syms[i] % 4096)
+ 			fail("%s must be a multiple of 4096\n",
+ 			     required_syms[i].name);
+-		if (syms[i] < data_size)
+-			fail("%s must be after the text mapping\n",
++		if (syms[sym_vvar_start] > syms[i] + 4096)
++			fail("%s underruns begin_vvar\n",
+ 			     required_syms[i].name);
+-		if (syms[sym_end_mapping] < syms[i] + 4096)
+-			fail("%s overruns end_mapping\n",
++		if (syms[i] + 4096 > 0)
++			fail("%s is on the wrong side of the vdso text\n",
+ 			     required_syms[i].name);
+ 	}
+-	if (syms[sym_end_mapping] % 4096)
+-		fail("end_mapping must be a multiple of 4096\n");
++	if (syms[sym_vvar_start] % 4096)
++		fail("vvar_begin must be a multiple of 4096\n");
+ 
+ 	if (!name) {
+ 		fwrite(addr, load_size, 1, outfile);
+@@ -311,8 +318,8 @@ static void BITSFUNC(go)(void *addr, siz
+ 	}
+ 	for (i = 0; i < NSYMS; i++) {
+ 		if (required_syms[i].export && syms[i])
+-			fprintf(outfile, "\t.sym_%s = 0x%" PRIx64 ",\n",
+-				required_syms[i].name, syms[i]);
++			fprintf(outfile, "\t.sym_%s = %" PRIi64 ",\n",
++				required_syms[i].name, (int64_t)syms[i]);
+ 	}
+ 	fprintf(outfile, "};\n");
+ }
+--- a/arch/x86/vdso/vma.c
++++ b/arch/x86/vdso/vma.c
+@@ -106,7 +106,7 @@ static int map_vdso(const struct vdso_im
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+-	unsigned long addr;
++	unsigned long addr, text_start;
+ 	int ret = 0;
+ 	static struct page *no_pages[] = {NULL};
+ 	static struct vm_special_mapping vvar_mapping = {
+@@ -116,26 +116,28 @@ static int map_vdso(const struct vdso_im
+ 
+ 	if (calculate_addr) {
+ 		addr = vdso_addr(current->mm->start_stack,
+-				 image->sym_end_mapping);
++				 image->size - image->sym_vvar_start);
+ 	} else {
+ 		addr = 0;
  	}
  
+ 	down_write(&mm->mmap_sem);
+ 
+-	addr = get_unmapped_area(NULL, addr, image->sym_end_mapping, 0, 0);
++	addr = get_unmapped_area(NULL, addr,
++				 image->size - image->sym_vvar_start, 0, 0);
+ 	if (IS_ERR_VALUE(addr)) {
+ 		ret = addr;
+ 		goto up_fail;
+ 	}
+ 
+-	current->mm->context.vdso = (void __user *)addr;
++	text_start = addr - image->sym_vvar_start;
++	current->mm->context.vdso = (void __user *)text_start;
+ 
+ 	/*
+ 	 * MAYWRITE to allow gdb to COW and set breakpoints
+ 	 */
+ 	vma = _install_special_mapping(mm,
+-				       addr,
++				       text_start,
+ 				       image->size,
+ 				       VM_READ|VM_EXEC|
+ 				       VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+@@ -147,8 +149,8 @@ static int map_vdso(const struct vdso_im
+ 	}
+ 
+ 	vma = _install_special_mapping(mm,
+-				       addr + image->size,
+-				       image->sym_end_mapping - image->size,
++				       addr,
++				       -image->sym_vvar_start,
+ 				       VM_READ,
+ 				       &vvar_mapping);
+ 
+@@ -159,7 +161,7 @@ static int map_vdso(const struct vdso_im
+ 
+ 	if (image->sym_vvar_page)
+ 		ret = remap_pfn_range(vma,
+-				      addr + image->sym_vvar_page,
++				      text_start + image->sym_vvar_page,
+ 				      __pa_symbol(&__vvar_page) >> PAGE_SHIFT,
+ 				      PAGE_SIZE,
+ 				      PAGE_READONLY);
+@@ -170,7 +172,7 @@ static int map_vdso(const struct vdso_im
+ #ifdef CONFIG_HPET_TIMER
+ 	if (hpet_address && image->sym_hpet_page) {
+ 		ret = io_remap_pfn_range(vma,
+-			addr + image->sym_hpet_page,
++			text_start + image->sym_hpet_page,
+ 			hpet_address >> PAGE_SHIFT,
+ 			PAGE_SIZE,
+ 			pgprot_noncached(PAGE_READONLY));
