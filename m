@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324172-2-7870690982257129273
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324168-2-17865186330022417127
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324171; b=l7jKQ7+DfG6LhB/lKjk6QBGqgY9WaaG9Dhc9x/pmktA2P1k
-    YPTJpDXOycG+g4Pf5hbjhyQEiQwVDuplxkd8otBNbXiOKQEf/SKXFH4IsK+a1Wyk
-    q/Fauigp+ATQ6gaviGA2tVWcF1sruoUw0ybJ8ozA4oCkXagkAyywAk/9rLp+5/1R
-    BlI7NP0tzeM3vHHMqjl+qarJ5G3L+6OuGBM82GXooa25cEPH+yuW10Vj6dizrFRg
-    Aq7GK7Buqv3fJGOI+luRgJch6q/t/DKtic6GihXFMdumW5WBJqEVIFEjQSvmxOcp
-    4jHBETnOKndFHgNzjv4Q7rASz2qaPuK49Iey84Q==
+    t=1518324167; b=FoD7vp0JWfI2FsTL0hbryBSrhXD9hK7c/cXQGreOlmXxL+/
+    A4xsaeGi+fvhuptcGb+ptTL5LM6Y2S0083C3HUvq5GcihkEVPLvNSAvghvAbDGaz
+    OGJ/BgMiP88FxRoYlX+C0s/7WyiipqgVu8kb21Ee9nIa1UKTVIdaRH6UyErsgXEU
+    3zI8Loo4an7dtxgSVUv1PkDZzeSkobwYHQMV83zyHi3SrFzlwoHtFIFnF1Mf2gkN
+    pmvU+HyCA97pz3P/t4ck2l5VFHWy8+1gH88dekqddfLvPVjKJs8u+cvUZm/3ow+P
+    LYyUVLTlflHsLqHQDh7VxDiOqL39Fy5yIe+ipVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324171; bh=F6gJTbuC0B9cAbLne0v
-    OBxWFr/CMbbrjSrnOIWidD00=; b=clKzHBJlmfbUwocyI4dLmv9yWrrg4VRiPnO
-    nHqyyCyQxK9qYUVdIn8BazHDMrO015sIbbi1DQJgWlUjt0N1zrZHW//3Q99YiXFm
-    iZcesSenQWX/OPRifWbXbZm7Tcv0ziaa11gyAkUCqFTSWdmgPICXiPiX1v9v5ZEJ
-    JDwge4uhx7AmvoAdMkyM6DLN6+Z8sj7wPPIZi7nSikVAtAozRJIQiqeITJ+D42IC
-    EyyYMlPjBbvyeM37TuF7QjV3teqHHFST3le87mubz4flKNQIi8cUCZdoCO4rNU95
-    8L1CpQ4X5fotc3e8QU1EtvLc7w750tblcpMSVwCdX7w+5bScMkw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324167; bh=ewfUGqbHfPnZn2Cw4yR
+    66W9+dNkDgIFtnLQsXsVv7Ss=; b=oqq1tSglTVV+WXUwF3G45VJLYGM33lLXBuA
+    ZCKl4x+IaCfWdI7tBYIE9aDadRrsTMGSjDtJHuV/7R0IKdwJ+KABtRdfZyBkev92
+    wRkYNCEwH1el4Da3UPdY95H7sI7ZnBCSqeZSsi8u4Ls0T0TiTwrBRyTNZlfKxWXR
+    s6oakquNWZZWpxaHaU2ll5m2Ru5xQWC+d1udyDEGxQDKoOf6gr7ynbavk143hZc+
+    IBSjGolcoQGqOCYblqovMVmaWPF+RSvKqQwh+7jCt6ra2l0x2WV3gTXvKBIv5Ss3
+    G7XOREob7vzeWL6etTI4DOM8UDQdnjj4iqkTtHHOZ94iEc5SJUg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeBKEky (ORCPT <rfc822;greg@kroah.com>);
+        id S1753075AbeBKEky (ORCPT <rfc822;greg@kroah.com>);
         Sat, 10 Feb 2018 23:40:54 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41687 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41684 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752931AbeBKEeH (ORCPT
+        by vger.kernel.org with ESMTP id S1752930AbeBKEeH (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:07 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,13 +60,12 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Colin Ian King" <colin.king@canonical.com>,
-        "David Sterba" <dsterba@suse.com>
+        "Alex Deucher" <alexander.deucher@amd.com>,
+        "Roman Kapl" <rka@sysgo.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.111048275@decadent.org.uk>
+Message-ID: <lsq.1518323471.319592976@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 037/136] btrfs: avoid null pointer dereference on
- fs_info when calling btrfs_crit
+Subject: [PATCH 3.16 046/136] drm/radeon: fix atombios on big endian
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,44 +80,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Roman Kapl <rka@sysgo.com>
 
-commit 3993b112dac968612b0b213ed59cb30f50b0015b upstream.
+commit 4f626a4ac8f57ddabf06d03870adab91e463217f upstream.
 
-There are checks on fs_info in __btrfs_panic to avoid dereferencing a
-null fs_info, however, there is a call to btrfs_crit that may also
-dereference a null fs_info. Fix this by adding a check to see if fs_info
-is null and only print the s_id if fs_info is non-null.
+The function for byteswapping the data send to/from atombios was buggy for
+num_bytes not divisible by four. The function must be aware of the fact
+that after byte-swapping the u32 units, valid bytes might end up after the
+num_bytes boundary.
 
-Detected by CoverityScan CID#401973 ("Dereference after null check")
+This patch was tested on kernel 3.12 and allowed us to sucesfully use
+DisplayPort on and Radeon SI card. Namely it fixed the link training and
+EDID readout.
 
-Fixes: efe120a067c8 ("Btrfs: convert printk to btrfs_ and fix BTRFS prefix")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16: adjust context]
+The function is patched both in radeon and amd drivers, since the functions
+and the fixes are identical.
+
+Signed-off-by: Roman Kapl <rka@sysgo.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+[bwh: Backported to 3.16: drop changes in amdgpu]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -185,7 +185,6 @@ static const char * const logtypes[] = {
+--- a/drivers/gpu/drm/radeon/atombios_dp.c
++++ b/drivers/gpu/drm/radeon/atombios_dp.c
+@@ -45,34 +45,32 @@ static char *pre_emph_names[] = {
  
- void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
+ /***** radeon AUX functions *****/
+ 
+-/* Atom needs data in little endian format
+- * so swap as appropriate when copying data to
+- * or from atom. Note that atom operates on
+- * dw units.
++/* Atom needs data in little endian format so swap as appropriate when copying
++ * data to or from atom. Note that atom operates on dw units.
++ *
++ * Use to_le=true when sending data to atom and provide at least
++ * ALIGN(num_bytes,4) bytes in the dst buffer.
++ *
++ * Use to_le=false when receiving data from atom and provide ALIGN(num_bytes,4)
++ * byes in the src buffer.
+  */
+ void radeon_atom_copy_swap(u8 *dst, u8 *src, u8 num_bytes, bool to_le)
  {
--	struct super_block *sb = fs_info->sb;
- 	char lvl[4];
- 	struct va_format vaf;
- 	va_list args;
-@@ -207,7 +206,8 @@ void btrfs_printk(const struct btrfs_fs_
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
+ #ifdef __BIG_ENDIAN
+-	u8 src_tmp[20], dst_tmp[20]; /* used for byteswapping */
+-	u32 *dst32, *src32;
++	u32 src_tmp[5], dst_tmp[5];
+ 	int i;
++	u8 align_num_bytes = ALIGN(num_bytes, 4);
  
--	printk("%sBTRFS %s (device %s): %pV\n", lvl, type, sb->s_id, &vaf);
-+	printk("%sBTRFS %s (device %s): %pV\n", lvl, type,
-+		fs_info ? fs_info->sb->s_id : "<unknown>", &vaf);
- 
- 	va_end(args);
- }
+-	memcpy(src_tmp, src, num_bytes);
+-	src32 = (u32 *)src_tmp;
+-	dst32 = (u32 *)dst_tmp;
+ 	if (to_le) {
+-		for (i = 0; i < ((num_bytes + 3) / 4); i++)
+-			dst32[i] = cpu_to_le32(src32[i]);
+-		memcpy(dst, dst_tmp, num_bytes);
++		memcpy(src_tmp, src, num_bytes);
++		for (i = 0; i < align_num_bytes / 4; i++)
++			dst_tmp[i] = cpu_to_le32(src_tmp[i]);
++		memcpy(dst, dst_tmp, align_num_bytes);
+ 	} else {
+-		u8 dws = num_bytes & ~3;
+-		for (i = 0; i < ((num_bytes + 3) / 4); i++)
+-			dst32[i] = le32_to_cpu(src32[i]);
+-		memcpy(dst, dst_tmp, dws);
+-		if (num_bytes % 4) {
+-			for (i = 0; i < (num_bytes % 4); i++)
+-				dst[dws+i] = dst_tmp[dws+i];
+-		}
++		memcpy(src_tmp, src, align_num_bytes);
++		for (i = 0; i < align_num_bytes / 4; i++)
++			dst_tmp[i] = le32_to_cpu(src_tmp[i]);
++		memcpy(dst, dst_tmp, num_bytes);
+ 	}
+ #else
+ 	memcpy(dst, src, num_bytes);
