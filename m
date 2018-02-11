@@ -1,62 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932141AbeBKUiy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 15:38:54 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40835 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753511AbeBKUix (ORCPT
+        id S1753744AbeBKUjC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:39:02 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45597 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753667AbeBKUjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 15:38:53 -0500
-X-Google-Smtp-Source: AH8x226/WIaxD5Xf/BCJ/hidgacGY6g3UI1luA/jlDyVUIuXYguYDES38Na3YKHpWbyAwspL9FYoTg==
+        Sun, 11 Feb 2018 15:39:00 -0500
+X-Google-Smtp-Source: AH8x226A7YvVKJzLiSZ3xQM/sSkujmwhEtQqtpWsL9HiJhQqJvbi9km6BEFvjigyOal8XLDOCKXLZg==
 From: Sangwon Hong <qpakzk@gmail.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Taeung Song <treeze.taeung@gmail.com>, Sangwon Hong <qpakzk@gmail.com>
-Subject: [PATCH 1/2] perf kmem: Document a missing option & an argument
-Date: Mon, 12 Feb 2018 05:38:36 +0900
-Message-Id: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
+Subject: [PATCH 2/2] perf mem: Document a missing option
+Date: Mon, 12 Feb 2018 05:38:37 +0900
+Message-Id: <1518381517-30766-2-git-send-email-qpakzk@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
+References: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First, perf kmem has --force option, but didn't document it on the man
-page. So add missing --force option.
-
-Second, --time option has to get a value, but didn't specify it on the
-man page. So describe --time option's argument.
+Add the missing --force option on the man page.
 
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Taeung Song <treeze.taeung@gmail.com>
 Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
 ---
- tools/perf/Documentation/perf-kmem.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/Documentation/perf-mem.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-kmem.txt b/tools/perf/Documentation/perf-kmem.txt
-index 479fc32..c4aa843 100644
---- a/tools/perf/Documentation/perf-kmem.txt
-+++ b/tools/perf/Documentation/perf-kmem.txt
-@@ -25,6 +25,9 @@ OPTIONS
- --input=<file>::
- 	Select the input file (default: perf.data unless stdin is a fifo)
+diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
+index 4be08a1..b021141 100644
+--- a/tools/perf/Documentation/perf-mem.txt
++++ b/tools/perf/Documentation/perf-mem.txt
+@@ -28,6 +28,10 @@ OPTIONS
+ <command>...::
+ 	Any command you can specify in a shell.
  
 +-f::
 +--force::
 +	Don't do ownership validation
- -v::
- --verbose::
-         Be more verbose. (show symbol address, etc)
-@@ -61,7 +64,7 @@ OPTIONS
- 	default, but this option shows live (currently allocated) pages
- 	instead.  (This option works with --page option only)
- 
----time::
-+--time=<start>,<stop>::
- 	Only analyze samples within given time window: <start>,<stop>. Times
- 	have the format seconds.microseconds. If start is not given (i.e., time
- 	string is ',x.y') then analysis starts at the beginning of the file. If
++
+ -t::
+ --type=::
+ 	Select the memory operation type: load or store (default: load,store)
 -- 
 2.7.4
