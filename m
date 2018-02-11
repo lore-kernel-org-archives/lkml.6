@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932439AbeBLBa5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 20:30:57 -0500
-Received: from [198.137.202.136] ([198.137.202.136]:59509 "EHLO
+        id S932451AbeBLBdT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 20:33:19 -0500
+Received: from [198.137.202.136] ([198.137.202.136]:34505 "EHLO
         terminus.zytor.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1753745AbeBLBaz (ORCPT
+        with ESMTP id S932335AbeBLBdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 20:30:55 -0500
-Date: Sun, 11 Feb 2018 04:15:14 -0800
-From: tip-bot for Juri Lelli <tipbot@zytor.com>
-Message-ID: <tip-79e902382637a2f421b7f295dcf9934d80d84d7d@git.kernel.org>
-Cc: paulmck@linux.vnet.ibm.com, juri.lelli@redhat.com, dave@stgolabs.net,
-        hpa@zytor.com, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, corbet@lwn.net, peterz@infradead.org,
-        mingo@kernel.org
-Reply-To: mingo@kernel.org, corbet@lwn.net, tglx@linutronix.de,
-        peterz@infradead.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        juri.lelli@redhat.com, paulmck@linux.vnet.ibm.com, dave@stgolabs.net,
-        hpa@zytor.com
-In-Reply-To: <20180209160114.19980-1-juri.lelli@redhat.com>
-References: <20180209160114.19980-1-juri.lelli@redhat.com>
+        Sun, 11 Feb 2018 20:33:18 -0500
+Date: Sun, 11 Feb 2018 04:13:55 -0800
+From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
+Message-ID: <tip-484790d9ab02704c569d8c7205c630c08eee7822@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        hpa@zytor.com, linux@dominikbrodowski.net, luto@kernel.org,
+        dsafonov@virtuozzo.com, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org
+Reply-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, linux@dominikbrodowski.net, luto@kernel.org,
+        dsafonov@virtuozzo.com, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org
+In-Reply-To: <20180211111013.16888-4-linux@dominikbrodowski.net>
+References: <20180211111013.16888-4-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] Documentation/locking/mutex-design: Update to
- reflect latest changes
-Git-Commit-ID: 79e902382637a2f421b7f295dcf9934d80d84d7d
+Subject: [tip:x86/urgent] selftests/x86: Do not rely on "int $0x80" in
+ test_mremap_vdso.c
+Git-Commit-ID: 484790d9ab02704c569d8c7205c630c08eee7822
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,105 +36,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  79e902382637a2f421b7f295dcf9934d80d84d7d
-Gitweb:     https://git.kernel.org/tip/79e902382637a2f421b7f295dcf9934d80d84d7d
-Author:     Juri Lelli <juri.lelli@redhat.com>
-AuthorDate: Fri, 9 Feb 2018 17:01:14 +0100
+Commit-ID:  484790d9ab02704c569d8c7205c630c08eee7822
+Gitweb:     https://git.kernel.org/tip/484790d9ab02704c569d8c7205c630c08eee7822
+Author:     Dominik Brodowski <linux@dominikbrodowski.net>
+AuthorDate: Sun, 11 Feb 2018 12:10:11 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sun, 11 Feb 2018 12:28:58 +0100
+CommitDate: Sun, 11 Feb 2018 12:24:47 +0100
 
-Documentation/locking/mutex-design: Update to reflect latest changes
+selftests/x86: Do not rely on "int $0x80" in test_mremap_vdso.c
 
-Commit 3ca0ff571b09 ("locking/mutex: Rework mutex::owner") reworked the
-basic mutex implementation to deal with several problems. Documentation
-was however left unchanged and became stale.
+On 64-bit builds, we should not rely on "int $0x80" working (it only does if
+CONFIG_IA32_EMULATION=y is enabled).
 
-Update mutex-design.txt to reflect changes introduced by the above commit.
+Without this patch, the move test may succeed, but the "int $0x80" causes
+a segfault, resulting in a false negative output of this self-test.
 
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-doc@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180209160114.19980-1-juri.lelli@redhat.com
-[ Small readability tweaks to the text. ]
+Cc: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org
+Link: http://lkml.kernel.org/r/20180211111013.16888-4-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/locking/mutex-design.txt | 49 ++++++++++++----------------------
- 1 file changed, 17 insertions(+), 32 deletions(-)
+ tools/testing/selftests/x86/test_mremap_vdso.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/locking/mutex-design.txt b/Documentation/locking/mutex-design.txt
-index 60c482d..818aca1 100644
---- a/Documentation/locking/mutex-design.txt
-+++ b/Documentation/locking/mutex-design.txt
-@@ -21,37 +21,23 @@ Implementation
- --------------
+diff --git a/tools/testing/selftests/x86/test_mremap_vdso.c b/tools/testing/selftests/x86/test_mremap_vdso.c
+index bf0d687..64f11c8 100644
+--- a/tools/testing/selftests/x86/test_mremap_vdso.c
++++ b/tools/testing/selftests/x86/test_mremap_vdso.c
+@@ -90,8 +90,12 @@ int main(int argc, char **argv, char **envp)
+ 			vdso_size += PAGE_SIZE;
+ 		}
  
- Mutexes are represented by 'struct mutex', defined in include/linux/mutex.h
--and implemented in kernel/locking/mutex.c. These locks use a three
--state atomic counter (->count) to represent the different possible
--transitions that can occur during the lifetime of a lock:
--
--	  1: unlocked
--	  0: locked, no waiters
--   negative: locked, with potential waiters
--
--In its most basic form it also includes a wait-queue and a spinlock
--that serializes access to it. CONFIG_SMP systems can also include
--a pointer to the lock task owner (->owner) as well as a spinner MCS
--lock (->osq), both described below in (ii).
-+and implemented in kernel/locking/mutex.c. These locks use an atomic variable
-+(->owner) to keep track of the lock state during its lifetime.  Field owner
-+actually contains 'struct task_struct *' to the current lock owner and it is
-+therefore NULL if not currently owned. Since task_struct pointers are aligned
-+at at least L1_CACHE_BYTES, low bits (3) are used to store extra state (e.g.,
-+if waiter list is non-empty).  In its most basic form it also includes a
-+wait-queue and a spinlock that serializes access to it. Furthermore,
-+CONFIG_MUTEX_SPIN_ON_OWNER=y systems use a spinner MCS lock (->osq), described
-+below in (ii).
++#ifdef __i386__
+ 		/* Glibc is likely to explode now - exit with raw syscall */
+ 		asm volatile ("int $0x80" : : "a" (__NR_exit), "b" (!!ret));
++#else /* __x86_64__ */
++		syscall(SYS_exit, ret);
++#endif
+ 	} else {
+ 		int status;
  
- When acquiring a mutex, there are three possible paths that can be
- taken, depending on the state of the lock:
- 
--(i) fastpath: tries to atomically acquire the lock by decrementing the
--    counter. If it was already taken by another task it goes to the next
--    possible path. This logic is architecture specific. On x86-64, the
--    locking fastpath is 2 instructions:
--
--    0000000000000e10 <mutex_lock>:
--    e21:   f0 ff 0b                lock decl (%rbx)
--    e24:   79 08                   jns    e2e <mutex_lock+0x1e>
--
--   the unlocking fastpath is equally tight:
--
--    0000000000000bc0 <mutex_unlock>:
--    bc8:   f0 ff 07                lock incl (%rdi)
--    bcb:   7f 0a                   jg     bd7 <mutex_unlock+0x17>
--
-+(i) fastpath: tries to atomically acquire the lock by cmpxchg()ing the owner with
-+    the current task. This only works in the uncontended case (cmpxchg() checks
-+    against 0UL, so all 3 state bits above have to be 0). If the lock is
-+    contended it goes to the next possible path.
- 
- (ii) midpath: aka optimistic spinning, tries to spin for acquisition
-      while the lock owner is running and there are no other tasks ready
-@@ -143,11 +129,10 @@ Test if the mutex is taken:
- Disadvantages
- -------------
- 
--Unlike its original design and purpose, 'struct mutex' is larger than
--most locks in the kernel. E.g: on x86-64 it is 40 bytes, almost twice
--as large as 'struct semaphore' (24 bytes) and tied, along with rwsems,
--for the largest lock in the kernel. Larger structure sizes mean more
--CPU cache and memory footprint.
-+Unlike its original design and purpose, 'struct mutex' is among the largest
-+locks in the kernel. E.g: on x86-64 it is 32 bytes, where 'struct semaphore'
-+is 24 bytes and rw_semaphore is 40 bytes. Larger structure sizes mean more CPU
-+cache and memory footprint.
- 
- When to use mutexes
- -------------------
