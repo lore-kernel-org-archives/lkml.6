@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932476AbeBLCKW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 21:10:22 -0500
-Received: from [198.137.202.136] ([198.137.202.136]:56335 "EHLO mail.zytor.com"
+        id S932488AbeBLCNy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 21:13:54 -0500
+Received: from [198.137.202.136] ([198.137.202.136]:56007 "EHLO mail.zytor.com"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S932237AbeBLCKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 21:10:21 -0500
-Date: Sun, 11 Feb 2018 04:14:45 -0800
-From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-29469471c10759d81b699aa0b9f02d9a71071be5@git.kernel.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        dsafonov@virtuozzo.com, linux@dominikbrodowski.net, luto@kernel.org,
-        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
-        torvalds@linux-foundation.org
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        dsafonov@virtuozzo.com, linux@dominikbrodowski.net, luto@kernel.org,
-        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
-        torvalds@linux-foundation.org
-In-Reply-To: <20180211111013.16888-6-linux@dominikbrodowski.net>
-References: <20180211111013.16888-6-linux@dominikbrodowski.net>
+        id S932237AbeBLCNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 21:13:52 -0500
+Date: Sun, 11 Feb 2018 04:19:38 -0800
+From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+Cc: bp@suse.de, luto@amacapital.net, gorcunov@openvz.org,
+        peterz@infradead.org, kirill.shutemov@linux.intel.com,
+        mingo@kernel.org, hpa@zytor.com, willy@infradead.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org, hpa@zytor.com,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com,
+        peterz@infradead.org, gorcunov@openvz.org, luto@amacapital.net,
+        bp@suse.de
+In-Reply-To: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] selftests/x86: Disable tests requiring 32-bit
- support on pure 64-bit systems
-Git-Commit-ID: 29469471c10759d81b699aa0b9f02d9a71071be5
+Subject: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Git-Commit-ID: b91993a87aff6dafd60a9c8ce80ebc425161a815
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,79 +36,264 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  29469471c10759d81b699aa0b9f02d9a71071be5
-Gitweb:     https://git.kernel.org/tip/29469471c10759d81b699aa0b9f02d9a71071be5
-Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Sun, 11 Feb 2018 12:10:13 +0100
+Commit-ID:  b91993a87aff6dafd60a9c8ce80ebc425161a815
+Gitweb:     https://git.kernel.org/tip/b91993a87aff6dafd60a9c8ce80ebc425161a815
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Fri, 9 Feb 2018 17:22:27 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sun, 11 Feb 2018 12:24:47 +0100
+CommitDate: Sun, 11 Feb 2018 12:36:19 +0100
 
-selftests/x86: Disable tests requiring 32-bit support on pure 64-bit systems
+x86/boot/compressed/64: Prepare trampoline memory
 
-The ldt_gdt and ptrace_syscall selftests, even in their 64-bit variant, use
-hard-coded 32-bit syscall numbers and call "int $0x80".
+If a bootloader enables 64-bit mode with 4-level paging, we might need to
+switch over to 5-level paging. The switching requires the disabling of
+paging, which works fine if kernel itself is loaded below 4G.
 
-This will fail on 64-bit systems with CONFIG_IA32_EMULATION=y disabled.
+But if the bootloader puts the kernel above 4G (not sure if anybody does
+this), we would lose control as soon as paging is disabled, because the
+code becomes unreachable to the CPU.
 
-Therefore, do not build these tests if we cannot build 32-bit binaries
-(which should be a good approximation for CONFIG_IA32_EMULATION=y being enabled).
+To handle the situation, we need a trampoline in lower memory that would
+take care of switching on 5-level paging.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
+Apart from the trampoline code itself, we also need a place to store
+top-level page table in lower memory as we don't have a way to load
+64-bit values into CR3 in 32-bit mode. We only really need 8 bytes there
+as we only use the very first entry of the page table. But we allocate a
+whole page anyway.
+
+We cannot have the code in the same page as the page table because there's
+a risk that a CPU would read the page table speculatively and get confused
+by seeing garbage. It's never a good idea to have junk in PTE entries
+visible to the CPU.
+
+We also need a small stack in the trampoline to re-enable long mode via
+long return. But stack and code can share the page just fine.
+
+The same trampoline can be used to switch from 5- to 4-level paging
+mode, like when starting 4-level paging kernel via kexec() when original
+kernel worked in 5-level paging mode.
+
+This patch changes paging_prepare() to find a right spot in lower memory
+for the trampoline. Then it copies the trampoline code there and sets up
+the new top-level page table for 5-level paging.
+
+We also add cleanup_trampoline() that restores the trampoline memory
+back once we've done.
+
+At this point we do all the preparation, but don't use trampoline yet.
+It will be done in the following patch.
+
+The trampoline will be used even on 4-level paging machines. This way we
+will get better test coverage and the keep the trampoline code in shape.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Cyrill Gorcunov <gorcunov@openvz.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-6-linux@dominikbrodowski.net
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180209142228.21231-4-kirill.shutemov@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/Makefile | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/x86/boot/compressed/head_64.S    | 24 ++++++++++-
+ arch/x86/boot/compressed/pgtable.h    | 18 ++++++++
+ arch/x86/boot/compressed/pgtable_64.c | 79 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 120 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index 371ae71..d744991 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -5,16 +5,26 @@ include ../lib.mk
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index d598d65..af9ffbd 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -33,6 +33,7 @@
+ #include <asm/processor-flags.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/bootparam.h>
++#include "pgtable.h"
  
- .PHONY: all all_32 all_64 warn_32bit_failure clean
+ /*
+  * Locally defined symbols should be marked hidden:
+@@ -355,6 +356,17 @@ ENTRY(startup_64)
+ 	lretq
+ lvl5:
  
--TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall test_mremap_vdso \
--			check_initial_reg_state sigreturn ldt_gdt iopl mpx-mini-test ioperm \
-+UNAME_M := $(shell uname -m)
-+CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
-+CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
++	/*
++	 * cleanup_trampoline() would restore trampoline memory.
++	 *
++	 * RSI holds real mode data and needs to be preserved across
++	 * this function call.
++	 */
++	pushq	%rsi
++	movq	%rcx, %rdi
++	call	cleanup_trampoline
++	popq	%rsi
 +
-+TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
-+			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
- 			protection_keys test_vdso test_vsyscall
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
- TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
-+# Some selftests require 32bit support enabled also on 64bit systems
-+TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
+ 	/* Zero EFLAGS */
+ 	pushq	$0
+ 	popfq
+@@ -491,8 +503,9 @@ relocated:
+ 	jmp	*%rax
  
--TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
-+TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY) $(TARGETS_C_32BIT_NEEDED)
- TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
-+ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),11)
-+TARGETS_C_64BIT_ALL += $(TARGETS_C_32BIT_NEEDED)
-+endif
+ 	.code32
++ENTRY(trampoline_32bit_src)
+ compatible_mode:
+-	/* Setup data and stack segments */
++	/* Set up data and stack segments */
+ 	movl	$__KERNEL_DS, %eax
+ 	movl	%eax, %ds
+ 	movl	%eax, %ss
+@@ -577,6 +590,11 @@ boot_stack:
+ 	.fill BOOT_STACK_SIZE, 1, 0
+ boot_stack_end:
+ 
++/* Space to preserve trampoline memory */
++	.global trampoline_save
++trampoline_save:
++	.fill TRAMPOLINE_32BIT_SIZE, 1, 0
 +
- BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
- BINARIES_64 := $(TARGETS_C_64BIT_ALL:%=%_64)
+ /*
+  * Space for page tables (not in .bss so not zeroed)
+  */
+@@ -586,3 +604,7 @@ pgtable:
+ 	.fill BOOT_PGT_SIZE, 1, 0
+ lvl5_pgtable:
+ 	.fill PAGE_SIZE, 1, 0
++
++	.global pgtable_trampoline
++pgtable_trampoline:
++	.fill 4096, 1, 0
+diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
+new file mode 100644
+index 0000000..6e0db22
+--- /dev/null
++++ b/arch/x86/boot/compressed/pgtable.h
+@@ -0,0 +1,18 @@
++#ifndef BOOT_COMPRESSED_PAGETABLE_H
++#define BOOT_COMPRESSED_PAGETABLE_H
++
++#define TRAMPOLINE_32BIT_SIZE		(2 * PAGE_SIZE)
++
++#define TRAMPOLINE_32BIT_PGTABLE_OFFSET	0
++
++#define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
++#define TRAMPOLINE_32BIT_CODE_SIZE	0x60
++
++#define TRAMPOLINE_32BIT_STACK_END	TRAMPOLINE_32BIT_SIZE
++
++#ifndef __ASSEMBLER__
++
++extern void (*trampoline_32bit_src)(void *return_ptr);
++
++#endif /* __ASSEMBLER__ */
++#endif /* BOOT_COMPRESSED_PAGETABLE_H */
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 3f1697f..dad5da7 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -1,4 +1,6 @@
+ #include <asm/processor.h>
++#include "pgtable.h"
++#include "../string.h"
  
-@@ -23,10 +33,6 @@ BINARIES_64 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_64))
+ /*
+  * __force_order is used by special_insns.h asm code to force instruction
+@@ -9,19 +11,96 @@
+  */
+ unsigned long __force_order;
  
- CFLAGS := -O2 -g -std=gnu99 -pthread -Wall -no-pie
++#define BIOS_START_MIN		0x20000U	/* 128K, less than this is insane */
++#define BIOS_START_MAX		0x9f000U	/* 640K, absolute maximum */
++
+ struct paging_config {
+ 	unsigned long trampoline_start;
+ 	unsigned long l5_required;
+ };
  
--UNAME_M := $(shell uname -m)
--CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
--CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
--
- define gen-target-rule-32
- $(1) $(1)_32: $(OUTPUT)/$(1)_32
- .PHONY: $(1) $(1)_32
++extern void *trampoline_save;
++extern void *pgtable_trampoline;
++
+ struct paging_config paging_prepare(void)
+ {
+ 	struct paging_config paging_config = {};
++	unsigned long bios_start, ebda_start, *trampoline;
+ 
+ 	/* Check if LA57 is desired and supported */
+ 	if (IS_ENABLED(CONFIG_X86_5LEVEL) && native_cpuid_eax(0) >= 7 &&
+ 			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
+ 		paging_config.l5_required = 1;
+ 
++	/*
++	 * Find a suitable spot for the trampoline.
++	 * This code is based on reserve_bios_regions().
++	 */
++
++	ebda_start = *(unsigned short *)0x40e << 4;
++	bios_start = *(unsigned short *)0x413 << 10;
++
++	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
++		bios_start = BIOS_START_MAX;
++
++	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
++		bios_start = ebda_start;
++
++	/* Place the trampoline just below the end of low memory, aligned to 4k */
++	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
++	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
++
++	trampoline = (unsigned long *)paging_config.trampoline_start;
++
++	/* Preserve trampoline memory */
++	memcpy(trampoline_save, trampoline, TRAMPOLINE_32BIT_SIZE);
++
++	/* Clear trampoline memory first */
++	memset(trampoline, 0, TRAMPOLINE_32BIT_SIZE);
++
++	/* Copy trampoline code in place */
++	memcpy(trampoline + TRAMPOLINE_32BIT_CODE_OFFSET / sizeof(unsigned long),
++			&trampoline_32bit_src, TRAMPOLINE_32BIT_CODE_SIZE);
++
++	/*
++	 * Set up a new page table that will be used for switching from 4-
++	 * to 5-level paging or vice versa. In other cases trampoline
++	 * wouldn't touch CR3.
++	 *
++	 * For 4- to 5-level paging transition, set up current CR3 as the
++	 * first and the only entry in a new top-level page table.
++	 *
++	 * For 5- to 4-level paging transition, copy page table pointed by
++	 * first entry in the current top-level page table as our new
++	 * top-level page table. We just cannot point to the page table
++	 * from trampoline as it may be above 4G.
++	 */
++	if (paging_config.l5_required) {
++		trampoline[TRAMPOLINE_32BIT_PGTABLE_OFFSET] = __native_read_cr3() + _PAGE_TABLE_NOENC;
++	} else if (native_read_cr4() & X86_CR4_LA57) {
++		unsigned long src;
++
++		src = *(unsigned long *)__native_read_cr3() & PAGE_MASK;
++		memcpy(trampoline + TRAMPOLINE_32BIT_PGTABLE_OFFSET / sizeof(unsigned long),
++		       (void *)src, PAGE_SIZE);
++	}
++
+ 	return paging_config;
+ }
++
++void cleanup_trampoline(void *trampoline)
++{
++	void *cr3 = (void *)__native_read_cr3();
++
++	/*
++	 * Move the top level page table out of trampoline memory,
++	 * if it's there.
++	 */
++	if (cr3 == trampoline + TRAMPOLINE_32BIT_PGTABLE_OFFSET) {
++		memcpy(pgtable_trampoline, trampoline + TRAMPOLINE_32BIT_PGTABLE_OFFSET, PAGE_SIZE);
++		native_write_cr3((unsigned long)pgtable_trampoline);
++	}
++
++	/* Restore trampoline memory */
++	memcpy(trampoline, trampoline_save, TRAMPOLINE_32BIT_SIZE);
++}
