@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326214-2-9398907032390108680
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326201-2-7526000084752503710
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326213; b=UibSTthIn8DdNbDTot+dmfdKVelqXu50k48JVYCJumxXqhG
-    zlSqveVCUC4LRuMu1g7rqZOheUQC8mhcjQcRw47sJhFRFmQCM0nQk8UKLuWN0VYa
-    nRzP7X8d6aGMYq/3nW4xScCayGrtpVRszz1mwv3GfF7PSNYRX8rKEEUNXHjeID8B
-    +GvNjEPQ2QayUU5NLzFGxND+AmEhwoLVp1tA4jq68FMu8tUmqsvplsxtdDsRWOld
-    eFVz5tBKVEB6ExCzz8aLDKOQNquUZknFndvZuHzMBF9fgjCIkQzfce2QuF7gAOgu
-    mshrFJaiv2BZYGwNyE16ZE4zEt7jPg/oVDjMSyA==
+    t=1518326200; b=VI1OKBlSlHjJpAG6xiCtk0v018lgjSindrVxa4ic7YbJdu4
+    PwY2FIe+hESfAKMUi7MBsZnM2KZO35jgnRSamFtX7pkj94VNODiiaSB/supfoLK4
+    +rWcrIEKyOyUVujsq8l83FCX0sm+nD3n8qP5Y0n0p76S7VvkVtcDsJfkeef+XdV4
+    EWrSvfTdcZlSW1ltE1tQnQhiFLY1zk+1ahNF7v2C1GXwmbOEt2+00/Gv9o7/KIVH
+    p6m94tv81BjWpBkm4tjN9xaYmdT3mzy/UgyxfmBb3TWzfDH/QOMBMMkw0BaTDXca
+    nAWCwtnKCbuakIVys8IqW6nEDCgdk2LK0WHc6TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326213; bh=23IuacyE36IKhSjZ6bl
-    bAIF4COFxBgZLsP4HVh3rmrI=; b=HU8ZEdbxO3zC64rD8K76yF3M96HVU82pis6
-    8vi9aPrBKww7Oi4oZ2aJ8f8/NyyDsVEhL30dfDE2xs3EILyVisqTIn6yikYaQ33U
-    Pwf0TROU27QJeK+v/gjeAuQZwDBHBvJ0VOGnIuBfz+7X6iRjveJNuIihQVU+Ctwb
-    cv0EZx1sUMH9fzMsw+BK/3rm8+kJGqXhcaa7Px4wlNOnePb76nbGVvBKG3xPV9Wz
-    weaDSIg1klC/DgQmfn+0OcyCZQpaq0+Yrg5b9BKlh86tNDIvS0yxdNMhKofhzESZ
-    rAUnigU62GhkZT3hVClum3O6pmv6N7jNrb1dzMhbP/vBjYm0sFw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518326200; bh=IcfEo9A+Id0ao3yyOT5
+    gOjg6V3t4L0f/5S2SmOyIgOQ=; b=W8YWzq5PR6RQiWmpAH4boNQfVesxB83HTa/
+    FqKcxjJ+Wio/XBcTpUYJmFvR2eM6VUa2qQpxpDvsiO0qHGDF3nB2tlH6pjhO63RV
+    uU36yGnjMQcUHBDHTA2G9s+i+ln5lGBg4zA8Y1pRyVZLI1o/t2R3HUhGOnkPpolA
+    O/bGdQEQ6WVaUWw6Sx/tJDn72JyHmIQ80+P8f7oaY5ZxZgskyEE/Ea1gnwHc+0Of
+    Hnuuq3UEvF3/bQaikNCIOJt4JVbTzp0VYz5pCz0IvVDsEo2xRysXxT4kM1dNAasz
+    QWDx5jTcKUp7dP/VzMofZ5xV4rJY1wGmy0zLTzJNdWALopwsVOQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,24 +47,25 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeBKEdl (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:33:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41322 "EHLO
+        id S1753765AbeBKFOS (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:14:18 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41384 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752436AbeBKEdk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:40 -0500
+        by vger.kernel.org with ESMTP id S1752616AbeBKEdl (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:41 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Sean Young" <sean@mess.org>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
+CC: akpm@linux-foundation.org, "Phil Oester" <kernel@linuxace.com>,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>,
+        "Florian Westphal" <fw@strlen.de>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.549326819@decadent.org.uk>
+Message-ID: <lsq.1518322806.259131783@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 07/79] media: rc: check for integer overflow
+Subject: [PATCH 3.2 62/79] netfilter: xt_TCPOPTSTRIP: don't use tcp_hdr()
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,38 +80,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sean Young <sean@mess.org>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 3e45067f94bbd61dec0619b1c32744eb0de480c8 upstream.
+commit ed82c437320c48a4032492f4a55a7e2c934158b6 upstream.
 
-The ioctl LIRC_SET_REC_TIMEOUT would set a timeout of 704ns if called
-with a timeout of 4294968us.
+In (bc6bcb5 netfilter: xt_TCPOPTSTRIP: fix possible mangling beyond
+packet boundary), the use of tcp_hdr was introduced. However, we
+cannot assume that skb->transport_header is set for non-local packets.
 
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-[bwh: Backported to 3.2: open-code U32_MAX]
+Cc: Florian Westphal <fw@strlen.de>
+Reported-by: Phil Oester <kernel@linuxace.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/rc/ir-lirc-codec.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/netfilter/xt_TCPOPTSTRIP.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/media/rc/ir-lirc-codec.c
-+++ b/drivers/media/rc/ir-lirc-codec.c
-@@ -255,11 +255,14 @@ static long ir_lirc_ioctl(struct file *f
- 		if (!dev->max_timeout)
- 			return -ENOSYS;
+--- a/net/netfilter/xt_TCPOPTSTRIP.c
++++ b/net/netfilter/xt_TCPOPTSTRIP.c
+@@ -48,11 +48,13 @@ tcpoptstrip_mangle_packet(struct sk_buff
+ 		return NF_DROP;
  
-+		/* Check for multiply overflow */
-+		if (val > (u32)(-1) / 1000)
-+			return -EINVAL;
+ 	len = skb->len - tcphoff;
+-	if (len < (int)sizeof(struct tcphdr) ||
+-	    tcp_hdr(skb)->doff * 4 > len)
++	if (len < (int)sizeof(struct tcphdr))
+ 		return NF_DROP;
+ 
+ 	tcph = (struct tcphdr *)(skb_network_header(skb) + tcphoff);
++	if (tcph->doff * 4 > len)
++		return NF_DROP;
 +
- 		tmp = val * 1000;
+ 	opt  = (u_int8_t *)tcph;
  
--		if (tmp < dev->min_timeout ||
--		    tmp > dev->max_timeout)
--				return -EINVAL;
-+		if (tmp < dev->min_timeout || tmp > dev->max_timeout)
-+			return -EINVAL;
- 
- 		dev->timeout = tmp;
- 		break;
+ 	/*
