@@ -1,32 +1,32 @@
 Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518378793; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1518379596; cv=none;
         d=google.com; s=arc-20160816;
-        b=flPGdEKG6fEEQYPTIYpUyHHOQBu55imI31rtt0e2tACxo33ypfXTUb73wqV9mkQQBj
-         mumD6DN5lEwquCt0L7vgwcKn5ViDKut98sbJi6tF/Aoll4CNxCO/ws5m3nA+oFFOB7rI
-         QpKTcSb/AyC9QBJPOc0zFAROaknKivcNjgwM5yxrMcvyk16776i36u1fhJXnY8uNqLAJ
-         T29Z83gTZmLBfOIRv6KwMXw3oO0A9uulGZK1vscrAeEF7YKA++2hUGFJAwbFQYj9hZdk
-         GfrM01skGEwEzHTU9+UbGP9BOkPsQ9W30Mj2ecrb8x7NIbN7FlPOW+jcC62551Wjm8pF
-         2zyQ==
+        b=vs1pnmxisV9kOsK+5bw7E4g/immjNZic2WQ+BjCaJG55G+c9JPGxMQ0Yh9l8YGvE0U
+         +DE/e6iVA+92zTukisO5M6MA15S/jvpQg2A5IEGlQKL6/x5pD6Z8oQ3fzROirG7Qa2Ew
+         DPcDmtN/ZfwgfUg609FqwVcRGyI85yoCUz+KhX4b99CcKu+uRiqCMRwLYx/vdifYcatx
+         8mWZT4d2NMrZkERBXt6bPrSpmyq+WjH/KTX52jce2LFOeXjvLp98HnBsj+KXvo6pFLch
+         Pqpl8n/3mWeeo/g03heJVc/HaZT6qjS0m+vsGJZ3ly+O/ZH7FTd8Okf73dvdShwmbhU4
+         XZcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=qgDjNPL/BGmRBIOYPJ0ngSj0+w6w9GpeO5ZvT2Pzkdk=;
-        b=hEpUK0yTAToaTp1F3LMbDtYDupov9Ek/1t2ZGLbTXDzNjtUA5RQjfRKOmemXDbsMC5
-         QwzakrfUQ3nzoIr5Hw07VH9K+e9e9fDZjP6GZst9gtjX+5yhv/4xkHjbfFMM6e/pSod4
-         ZvQeMg9T/Dh+1zU3bH5BNX34OEhMGlZerEdoBRwTl6+I+E298+GIjCoB057QogTzZJAF
-         F5+qgfoBApulab1ZTS5Y83VghRCQ2Ko+vE4gd0Mx1hoA4EM7bQNvQ8OaAaRukV0gyYCu
-         T8As2dmRfhmlDKVoJA5PXCZDVXUobd2jsNwD6t1brErh9zpAKxyG7Gfq89xbl/SumsOD
-         GzdQ==
+        bh=bjnNUtgmogEwvKbKzKz6hu09uMC7QugunLR8KNEzjPI=;
+        b=n+a6to8ZPJE40bPxJkFwlyFFThcPxpyrfkZ+nscZgrczypaNyCfwptAgH1SrQepsff
+         tF/lnDFumMXAs4tmrPWFWCwVLcWU1x+IS8/G8BJ6/dh5sxN3Kj3bRFWH7vRAOihpHA2j
+         lK/OxIqsNKdOAIekOsGpABVIzWL5SOYnRWaGNAegoft15lLomSRdyHpR4fhIIYtmG7Me
+         K/RmyhMpe29kitUOsYToTutuuRV5quCg1wzM6QbXS+iCcKO+3LIx9dX1sKDY1VKXISsB
+         rXGWusbFHTtc+nzIGzhCb1M5/m2675Zp7q70V4KBnaVZirrLN25ouo7bZslu0upYhqjJ
+         g8gQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PQaEtuav;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FHffdu3l;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PQaEtuav;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FHffdu3l;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AH8x225xTLXmCqQ13d7s7FVcmZLRXL6MhiSQX2QKM2WjGucqMI1nrV8/l+I6CHW1TMhBnesCszI5yGssURWnHnwVnj0=
+X-Google-Smtp-Source: AH8x225cyOUAawQ1tNQcRERlyiZecz+0LuoBUNEGWnV2/xZ9GLxPSeeuaoLrKbzaaPo1rqVF8RYij1oYRdgO89xmVlk=
 MIME-Version: 1.0
 Sender: linus971@gmail.com
-In-Reply-To: <CAGXu5jLV-i5OAbXMQiJC-idXB+XrxMCC+RigQ+4R6eZWqn4rgg@mail.gmail.com>
+In-Reply-To: <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -35,11 +35,12 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
  <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
  <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
- <CA+55aFz3gUKQMr-X-b=ytLPX0AjGUaXNtLSUQ0_xZwZuDU33RQ@mail.gmail.com> <CAGXu5jLV-i5OAbXMQiJC-idXB+XrxMCC+RigQ+4R6eZWqn4rgg@mail.gmail.com>
+ <CA+55aFz3gUKQMr-X-b=ytLPX0AjGUaXNtLSUQ0_xZwZuDU33RQ@mail.gmail.com>
+ <CAGXu5jLV-i5OAbXMQiJC-idXB+XrxMCC+RigQ+4R6eZWqn4rgg@mail.gmail.com> <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 11 Feb 2018 11:53:12 -0800
-X-Google-Sender-Auth: M7SaFCzvzKuqdlBmM7ySHqWIBe4
-Message-ID: <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
+Date: Sun, 11 Feb 2018 12:06:35 -0800
+X-Google-Sender-Auth: sVdYEL1r6a92Z511__A46eLyvzg
+Message-ID: <CA+55aFy4WNC=pmga19CHhrX9QwOJsu1bUvGL0oNxq5EeMW94eg@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
 To: Kees Cook <keescook@chromium.org>
 Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
@@ -55,41 +56,34 @@ Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socion
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592135562247609645?=
+X-GMAIL-MSGID: =?utf-8?q?1592136403665429004?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 11, 2018 at 11:39 AM, Kees Cook <keescook@chromium.org> wrote:
->>
->>  (a) make gcc 4.5 be the minimum required version
+On Sun, Feb 11, 2018 at 11:53 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> I love bumping minimum for so many reason more than just stack protector. :)
+> Well, it's still not a very *big* bump. With modern distros being at
+> 7.3, and people testing pre-releases of gcc-8, something like gcc-4.5
+> is still pretty darn ancient.
 
-Well, it's still not a very *big* bump. With modern distros being at
-7.3, and people testing pre-releases of gcc-8, something like gcc-4.5
-is still pretty darn ancient.
+... it's worth noting that our _documentation_ may claim that gcc-3.2
+is the minimum supported version, but Arnd pointed out that a few
+months ago that apparently nothing older than 4.1 has actually worked
+for a longish while, and gcc-4.3 was needed on several architectures.
 
-But it would be good to be able to rely on asm goto rather than have
-completely different logic for "have to do it by hand". And I do
-wonder how many of our "let's test if gcc supports this option" are
-completely out-dated.
+So the _real_ jump in required gcc version would be from 4.1 (4.3 in
+many cases) to 4.5, not from our documented "3.2 minimum".
 
-And in <linux/compiler-gcc.h> we still have tests for truly ancient garbage.
+Arnd claimed that some architectures needed even newer-than-4.3, but I
+assume that's limited to things like RISC-V that simply don't have old
+gcc support at all.
 
-> This made akpm and Arnd very very grumpy as it regressed their builds.
-> That's why I had to deal with the condition very carefully for _AUTO.
+That was from a discussion about bug report that only happened with
+gcc-4.4, and was because gcc-4.4 did insane things, so we were talking
+about how it wasn't necessarily worth supporting.
 
-Well, Arnd build new cross-tools last week, probably because you
-really need new tools for other reasons anyway (ie all the spectre
-mitigation). So I think Arnd is set.
+So we really have had a lot of unrelated reasons why just saying
+"gcc-4.5 or newer"  would be a good thing.
 
-And akpm being on some ancient stone age system has been an issue
-before. The only way to fix it is to break it.
-
-What I would worry about primarily is not one of the odd developers
-who can upgrade, but random people in the wild. I don't want to lose
-the occasional odd tester that does things nobody else does.
-
-But with gcc-4.5 being 7+ years old, I can't imagine it's a huge issue.
-
-              Linus
+            Linus
