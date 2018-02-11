@@ -1,50 +1,78 @@
-Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x225c0N6Axspb358y44YX2E3FzJG1m019C6Gx/mhc1dMtVsaSvejwAbuzJ66OevXwyFljDHhj
-ARC-Seal: i=1; a=rsa-sha256; t=1518323640; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HXaTlnml6/1048+F77/TQ3YLAK/wmwH4xcnrTlMh6rL2AXK1SzRYjUutnFxU3Dhck4
-         Te7dCAw4alxfzXUz61skYr9wWKtj/VoRKoQSXIr+vi7Ny7SR+a3cwLDau/vswvC6FGML
-         ufMXz6YIEnin3sIVeIuQ5tH7+tgNArofnJawG3arIQQJ9TZTb3dnnnLeBvJwLDEqO7l0
-         3g39wjXBxkwtbKYzrd4fFGri/4J2wMGCFnT8JG+D6CTtRo3WQwWor55RkHAkteghVtKV
-         vkjgzQhU3khpwQOtS8QNJohEhEMudhDLqNjFGaIrSedGE8lVr4qG7gFSZhEJzfyAStgb
-         0gJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
-         :content-transfer-encoding:content-disposition
-         :arc-authentication-results;
-        bh=rMy33fHqp9sKqi8USjRU+KVA4CHkHEng9jR89rIobiY=;
-        b=AKo78qwEliy/tPNAoVeMcKGUhiTtNgTE5/HsXicFlajXav1NyRWCEunDiovfGwE26E
-         610bD9nMYnCfSK/pF+jOX6f4DKvVauYQompAz51JnMFpyYZIlFwyLQYS6o8jwYIUxpsl
-         1pbsTxAWXQ4IxnxmkAoZA0QJn1083hxdPWJCpRl7wk8cwUQvSHhjerW85bdGEljsV3LM
-         dKsjjo8qJiVGU34Kg5rEPunKR9ff/JwXnzgbqMV+phLVUDc10v049BntB7BkKX0rNru6
-         CIE1wPRKOrcPnY8goa4ZrvQgylrw0y7mLu5NcIarhQRyDoavAcAX4/fbMFqUUH+BGNK2
-         NaDw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518323706-2-12490107985416521930
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518323705; b=whCOnqeoTLnvCnWxx7G7aqdhZTHNZsuFPJ8nAFkTHNA02eg
+    unepN4Ff8lY0FSh9VAinvThjKMizgabQYobYA10t/B5iA2hl0RITltfefuWbNzHG
+    LAuznKnvFwRdevZpaSSDnSFLYq+ztzDzd09O1vIJZDndyfba6XcWYgKOTsA9NPUt
+    juX4cNK+HxE3PqCP5KEloGy8pM9DX3osB3TlhlSGpSZExtloau+ImED59S2W0oA1
+    1WcDLWdDs+uX5AaQIab/q32yvNJTTvA8xqwPIifP0X/QcSqCp98pOL/YQkSk8WG4
+    PzM4f3AUOwO1/tCYJD47z1w4j5U1pkbHdEniZjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=content-type:content-transfer-encoding
+    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
+    :sender:list-id; s=arctest; t=1518323705; bh=LPD/XltgAsfkFr+22u2
+    MBMNJv7XFkTAmNxnfweOkh48=; b=hAkGntuyzEsq7URX3CYWd3+3/aBCjzFxhK7
+    /3Gtz5sgCju20Xr0BAybfrtxguqwRq4mY0k+DFNTImwTqYpJJzRKgYSXAUU0Vk4z
+    cbuOIYkqtxn//bKkBwao822hajKnCJfztIugUiu2Ct6ELR5Tw02KCSSrynnhbJPw
+    0UM74cF8GHw9iTSDJB/7v8tuHnPM3zi3k3m4cFBoCOEko5tIO5Z6I675F5zP/Fm2
+    0MudqagkYEOKrdpZnxZPHASgtXwLWUT8hMofT8SG8++62yDsMJm8iGM0viYCeYP+
+    p9ghPV8hCrgwSJ/TtyW1PuRk8ZhdQCggv1fPjBMuXvouBAhZ0jg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753233AbeBKEfC (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:35:02 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41760 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753002AbeBKEeO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:14 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
- "Shuah Khan" <shuahkh@osg.samsung.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Secunia Research" <vuln@secunia.com>
+CC: akpm@linux-foundation.org, "Jaegeuk Kim" <jaegeuk@kernel.org>,
+        "Dongho Sim" <dh.sim@samsung.com>, "Chao Yu" <chao2.yu@samsung.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.135602807@decadent.org.uk>
+Message-ID: <lsq.1518323471.546669999@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 124/136] usbip: fix stub_rx: harden CMD_SUBMIT path
- to handle malicious input
+Subject: [PATCH 3.16 054/136] f2fs: remove redundant lines in
+ allocate_data_block
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077709661989304?=
-X-GMAIL-MSGID: =?utf-8?q?1592077729220791195?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,105 +80,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Dongho Sim <dh.sim@samsung.com>
 
-commit c6688ef9f29762e65bce325ef4acd6c675806366 upstream.
+commit 33be828ada7274ebcade2001f16e5b4e33a4636e upstream.
 
-Harden CMD_SUBMIT path to handle malicious input that could trigger
-large memory allocations. Add checks to validate transfer_buffer_length
-and number_of_packets to protect against bad input requesting for
-unbounded memory allocations. Validate early in get_pipe() and return
-failure.
+There are redundant lines in allocate_data_block.
 
-Reported-by: Secunia Research <vuln@secunia.com>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename]
+In this function, we call refresh_sit_entry with old seg and old curseg.
+After that, we call locate_dirty_segment with old curseg.
+
+But, the new address is always allocated from old curseg and
+we call locate_dirty_segment with old curseg in refresh_sit_entry.
+So, we do not need to call locate_dirty_segment with old curseg again.
+
+We've discussed like below:
+
+Jaegeuk said:
+ "When considering SSR, we need to take care of the following scenario.
+  - old segno : X
+  - new address : Z
+  - old curseg : Y
+  This means, a new block is supposed to be written to Z from X.
+  And Z is newly allocated in the same path from Y.
+
+  In that case, we should trigger locate_dirty_segment for Y, since
+  it was a current_segment and can be dirty owing to SSR.
+  But that was not included in the dirty list."
+
+Changman said:
+ "We already choosed old curseg(Y) and then we allocate new address(Z) from old
+  curseg(Y). After that we call refresh_sit_entry(old address, new address).
+  In the funcation, we call locate_dirty_segment with old seg and old curseg.
+  So calling locate_dirty_segment after refresh_sit_entry again is redundant."
+
+Jaegeuk said:
+ "Right. The new address is always allocated from old_curseg."
+
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Dongho Sim <dh.sim@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/stub_rx.c | 35 +++++++++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
+ fs/f2fs/segment.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/staging/usbip/stub_rx.c
-+++ b/drivers/staging/usbip/stub_rx.c
-@@ -336,11 +336,13 @@ static struct stub_priv *stub_priv_alloc
- 	return priv;
- }
- 
--static int get_pipe(struct stub_device *sdev, int epnum, int dir)
-+static int get_pipe(struct stub_device *sdev, struct usbip_header *pdu)
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -969,14 +969,12 @@ void allocate_data_block(struct f2fs_sb_
  {
- 	struct usb_device *udev = sdev->udev;
- 	struct usb_host_endpoint *ep;
- 	struct usb_endpoint_descriptor *epd = NULL;
-+	int epnum = pdu->base.ep;
-+	int dir = pdu->base.direction;
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct curseg_info *curseg;
+-	unsigned int old_cursegno;
  
- 	if (epnum < 0 || epnum > 15)
- 		goto err_ret;
-@@ -353,6 +355,15 @@ static int get_pipe(struct stub_device *
- 		goto err_ret;
+ 	curseg = CURSEG_I(sbi, type);
  
- 	epd = &ep->desc;
-+
-+	/* validate transfer_buffer_length */
-+	if (pdu->u.cmd_submit.transfer_buffer_length > INT_MAX) {
-+		dev_err(&sdev->udev->dev,
-+			"CMD_SUBMIT: -EMSGSIZE transfer_buffer_length %d\n",
-+			pdu->u.cmd_submit.transfer_buffer_length);
-+		return -1;
-+	}
-+
- 	if (usb_endpoint_xfer_control(epd)) {
- 		if (dir == USBIP_DIR_OUT)
- 			return usb_sndctrlpipe(udev, epnum);
-@@ -375,6 +386,21 @@ static int get_pipe(struct stub_device *
- 	}
+ 	mutex_lock(&curseg->curseg_mutex);
  
- 	if (usb_endpoint_xfer_isoc(epd)) {
-+		/* validate packet size and number of packets */
-+		unsigned int maxp, packets, bytes;
-+
-+		maxp = usb_endpoint_maxp(epd);
-+		maxp *= usb_endpoint_maxp_mult(epd);
-+		bytes = pdu->u.cmd_submit.transfer_buffer_length;
-+		packets = DIV_ROUND_UP(bytes, maxp);
-+
-+		if (pdu->u.cmd_submit.number_of_packets < 0 ||
-+		    pdu->u.cmd_submit.number_of_packets > packets) {
-+			dev_err(&sdev->udev->dev,
-+				"CMD_SUBMIT: isoc invalid num packets %d\n",
-+				pdu->u.cmd_submit.number_of_packets);
-+			return -1;
-+		}
- 		if (dir == USBIP_DIR_OUT)
- 			return usb_sndisocpipe(udev, epnum);
- 		else
-@@ -383,7 +409,7 @@ static int get_pipe(struct stub_device *
+ 	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+-	old_cursegno = curseg->segno;
  
- err_ret:
- 	/* NOT REACHED */
--	dev_err(&sdev->udev->dev, "get pipe() invalid epnum %d\n", epnum);
-+	dev_err(&sdev->udev->dev, "CMD_SUBMIT: invalid epnum %d\n", epnum);
- 	return -1;
- }
+ 	/*
+ 	 * __add_sum_entry should be resided under the curseg_mutex
+@@ -997,7 +995,6 @@ void allocate_data_block(struct f2fs_sb_
+ 	 * since SSR needs latest valid block information.
+ 	 */
+ 	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
+-	locate_dirty_segment(sbi, old_cursegno);
  
-@@ -448,7 +474,7 @@ static void stub_recv_cmd_submit(struct
- 	struct stub_priv *priv;
- 	struct usbip_device *ud = &sdev->ud;
- 	struct usb_device *udev = sdev->udev;
--	int pipe = get_pipe(sdev, pdu->base.ep, pdu->base.direction);
-+	int pipe = get_pipe(sdev, pdu);
+ 	mutex_unlock(&sit_i->sentry_lock);
  
- 	if (pipe == -1)
- 		return;
-@@ -471,7 +497,8 @@ static void stub_recv_cmd_submit(struct
- 	}
- 
- 	/* allocate urb transfer buffer, if needed */
--	if (pdu->u.cmd_submit.transfer_buffer_length > 0) {
-+	if (pdu->u.cmd_submit.transfer_buffer_length > 0 &&
-+	    pdu->u.cmd_submit.transfer_buffer_length <= INT_MAX) {
- 		priv->urb->transfer_buffer =
- 			kzalloc(pdu->u.cmd_submit.transfer_buffer_length,
- 				GFP_KERNEL);
