@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326390-2-639958596273430557
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326373-2-1442593909342408498
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326389; b=EhipQ7FsSZLMLn5U06ME49YWWncoJBmZRSiM5mpplYe/zN4
-    2OQ7TH/d8vWx8cZMVY9e3l1MIJCKRVm2UQgLMDPxVgc3Wxyaf479xsUWyArbHCYK
-    6cQm1fhrUzHD3z3AKznZepaXNCf9kNzPk1HOtbXRlEVyGaL3M1vUkMCI3lIl3/my
-    wxP40FtntQLxRqdzoA87mD/aqNOh6Vn7gS71+5yRT0TrevcXssfYTik0e6eszHQ2
-    1bsN4sh3/GDl/XWWJfak6lz2hmgwfVlRvHzpEI9TkRGwFrtARaseLYrGN31uULtl
-    HUj41pyZNEiVoO6Ri+3AxvD8RkuSzqGs+rdz7ag==
+    t=1518326373; b=rRp6ZZZGLQT9rEIAk/aOWC93sOdJdX1I+WG87m9/F7pjsYI
+    AUfI6bvjwZrVvc5RhxpwsZjBTptwGRtALpBe3SZoTHdbMCWQakAPCrKgtarY44e2
+    DCxN1OOUIu3eLEBb/W/HbxPXzDoXuOwnquW1DFE9EaGl0Xvil2mdew17rZyac02q
+    i5PSvFZGSDA79Tz+LOlup2ZuWUP1vCv8gXmf1gqAd4kN/iVuaIgVV3Psu1A+Unwl
+    gDmjpPAfCcxHyVU2x1RLHLf0peVnwFoHIxgQvHjvjOIs+0QqFAch74euE2yGv78P
+    i/KeFm779dAo/6nVS+LB6W9W7VESyRtfbqsSbVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326389; bh=rXF2ngcqtijKihugpCg
-    qvumQ7PaNwIlzGvaRtPOxLf0=; b=WgpB+gcUy9pSICtSDMyJ8K9hB53QfigGGTC
-    P21yOg1it6bdUU4Fdpt+/FwvcPbb/nlj+1WFAoXjQBJN1ILxfW79yTB89Mr3CQoF
-    0qenjq0UMwuhwkLEqpWOF0pVsQEo+FDxDo9cOq1Q8H4pHd349mTEdxfh2LH/haC9
-    Vl7fH9eurW6Bn6WToE8uqm3/hlS893d18UJZja7riM4Dol3Ssz8k6xL9JfZNqc1w
-    rC4T1k/ZV/HtAObTPzqU+SMXB/QdjV94Br8PVmkrvGOUISjGGmBVBv2Rcf/1kN/f
-    ZXaBJ2lDBp4q4clIZqy/KisBWGpYzoRgssUfrdaakIIN738JQAQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518326373; bh=17GuyvbNu6zJVyc56Cf
+    fv2lCV8PAAJqPi2WkwHs2NO4=; b=l+WerhQNRxvW/sOL8paoTUK6IBFmWZ1e7lh
+    IxzD6fhSZOsV08oyTdSXL2JwuQfOvOV9CAyDrwYkWn/DVFwAcV6Q+9DQt/wL0YzM
+    AROiIAPcggmJ/TbVpE/cGTUvJZfLhsVEXUvG3vrpOHkl54HT7ZNShAjXRmKawR3b
+    AoEVoZIzrZMw/2VKLtX2/BKVMMfOFyo01dYop28sGM9x0B6o5sa0FRi8UNw4sqPK
+    /ysvjKTpso+G7lFy2EgGcGNke9VJS53Au77nDbcOOmqgHpQYf/xlMi4xIpbZQXtd
+    +QSgzcw/PkawR7q8zNkBn3gAIYY4eQQtBXI/cAIVU+ffsl07gMQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,25 +47,25 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752580AbeBKFTe (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:19:34 -0500
+        id S1753071AbeBKFTO (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:19:14 -0500
 Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42726 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753300AbeBKFSW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:22 -0500
+        by vger.kernel.org with ESMTP id S1753528AbeBKFS2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:28 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Latchesar Ionkov" <lucho@ionkov.net>,
-        "Tuomas Tynkkynen" <tuomas@tuxera.com>
+CC: akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Shriya" <shriyak@linux.vnet.ibm.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.16699497@decadent.org.uk>
+Message-ID: <lsq.1518323471.366642386@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 027/136] fs/9p: Compare qid.path in v9fs_test_inode
+Subject: [PATCH 3.16 059/136] powerpc/powernv/cpufreq: Fix the frequency
+ read by /proc/cpuinfo
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,48 +80,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tuomas Tynkkynen <tuomas@tuxera.com>
+From: Shriya <shriyak@linux.vnet.ibm.com>
 
-commit 8ee031631546cf2f7859cc69593bd60bbdd70b46 upstream.
+commit cd77b5ce208c153260ed7882d8910f2395bfaabd upstream.
 
-Commit fd2421f54423 ("fs/9p: When doing inode lookup compare qid details
-and inode mode bits.") transformed v9fs_qid_iget() to use iget5_locked()
-instead of iget_locked(). However, the test() callback is not checking
-fid.path at all, which means that a lookup in the inode cache can now
-accidentally locate a completely wrong inode from the same inode hash
-bucket if the other fields (qid.type and qid.version) match.
+The call to /proc/cpuinfo in turn calls cpufreq_quick_get() which
+returns the last frequency requested by the kernel, but may not
+reflect the actual frequency the processor is running at. This patch
+makes a call to cpufreq_get() instead which returns the current
+frequency reported by the hardware.
 
-Fixes: fd2421f54423 ("fs/9p: When doing inode lookup compare qid details and inode mode bits.")
-Reviewed-by: Latchesar Ionkov <lucho@ionkov.net>
-Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: fb5153d05a7d ("powerpc: powernv: Implement ppc_md.get_proc_freq()")
+Signed-off-by: Shriya <shriyak@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/9p/vfs_inode.c      | 3 +++
- fs/9p/vfs_inode_dotl.c | 3 +++
- 2 files changed, 6 insertions(+)
+ arch/powerpc/platforms/powernv/setup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -483,6 +483,9 @@ static int v9fs_test_inode(struct inode
+--- a/arch/powerpc/platforms/powernv/setup.c
++++ b/arch/powerpc/platforms/powernv/setup.c
+@@ -309,7 +309,7 @@ unsigned long pnv_get_proc_freq(unsigned
+ {
+ 	unsigned long ret_freq;
  
- 	if (v9inode->qid.type != st->qid.type)
- 		return 0;
-+
-+	if (v9inode->qid.path != st->qid.path)
-+		return 0;
- 	return 1;
- }
+-	ret_freq = cpufreq_quick_get(cpu) * 1000ul;
++	ret_freq = cpufreq_get(cpu) * 1000ul;
  
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -87,6 +87,9 @@ static int v9fs_test_inode_dotl(struct i
- 
- 	if (v9inode->qid.type != st->qid.type)
- 		return 0;
-+
-+	if (v9inode->qid.path != st->qid.path)
-+		return 0;
- 	return 1;
- }
- 
+ 	/*
+ 	 * If the backend cpufreq driver does not exist,
