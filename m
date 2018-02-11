@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752799AbeBKKJB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 05:09:01 -0500
-Received: from anholt.net ([50.246.234.109]:32798 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752288AbeBKKJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 05:09:00 -0500
-From: Eric Anholt <eric@anholt.net>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: Print the pid when debug logging an ioctl error.
-In-Reply-To: <20180131080728.GV25930@phenom.ffwll.local>
-References: <20180130215643.11016-1-eric@anholt.net> <20180131080728.GV25930@phenom.ffwll.local>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Sun, 11 Feb 2018 10:07:00 +0000
-Message-ID: <87d11bsuuz.fsf@anholt.net>
+        id S1752836AbeBKKTb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 05:19:31 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36521 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752288AbeBKKT3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 05:19:29 -0500
+X-Google-Smtp-Source: AH8x224z4Ln+w4iGquHUHBz/MstgqzGwHMUiplZsxGKfYT1+yVgBSe4MYx95dbX6nqtJh4iq/Kx8cA==
+Date: Sun, 11 Feb 2018 11:19:24 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Woodhouse <dwmw@amazon.co.uk>
+Cc: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com
+Subject: Re: [PATCH v2 5/6] KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we
+ have a valid L02 MSR bitmap
+Message-ID: <20180211101924.vztfslwqoh7km6q2@gmail.com>
+References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+ <1518305967-31356-6-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518305967-31356-6-git-send-email-dwmw@amazon.co.uk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
 
-Daniel Vetter <daniel@ffwll.ch> writes:
+* David Woodhouse <dwmw@amazon.co.uk> wrote:
 
-> On Tue, Jan 30, 2018 at 01:56:43PM -0800, Eric Anholt wrote:
->> When we debug print what ioctl we're calling into, we include the pid.
->> If you have multiple processes rendering simulataneously, the error
->> return also needs the pid so you can see which of the ioctl calls was
->> the one to fail.
->>=20
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> From: KarimAllah Ahmed <karahmed@amazon.de>
+> 
+> We either clear the CPU_BASED_USE_MSR_BITMAPS and end up intercepting all
+> MSR accesses or create a valid L02 MSR bitmap and use that. This decision
+> has to be made every time we evaluate whether we are going to generate the
+> L02 MSR bitmap.
+> 
+> Before commit 086e7d4118cc ("KVM: VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
+> this was probably OK since the decision was always identical. This is no
+> longer the case now since the MSR bitmap might actually change once we
+> decide to not intercept SPEC_CTRL and PRED_CMD.
 
-Pushed.  Thanks!
+Note, I fixed the changelog to refer to the correct upstream SHA1, which is:
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+  d28b387fb74d: KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqAFcQACgkQtdYpNtH8
-nuijLhAAmHi1fNv5rbat15UnIcRUgqo0ZwafHlOxoFOd89z8lK1oH3CZieRxjigO
-o/kszrnK4hlD9jLfJT/tN084On/+/87oRmYRtX7hjaw3EJhIlkzCHM2PZJOphGNK
-U5VcWArEqKK+Lu5d18BAJm3vW8gyIipAqJU2/FPe8wwpuJTvzjqbKpCrO8IPKuGS
-Pf4WRRGI1mmYSr+uz4exzIEUN+sDn8Ub0u408b8SZuxr51ooYVNWJhd3XmyaoXtI
-NNzejxMES+JopthotsRvos6hIX9ZCpUcLurx0oB0GXDGuex65YkUf4/H2QFVGIk8
-f1MTi6S9L4JlKcF1n7xDSKR0sfdHFtGGal/ODGn+BOQDL0ZE8QtCjDGbfmmLf990
-hTISud384Y+x0FZTB9jnfiRIv9ROvdlE2hLHv6ygC/raN/wtyHbY3Znbi3NosvfY
-tU0oBNdt3gJ5Zx6uxeu8t2HV7MnGfF4G7nWWGbHhZPNQ4dDonVZ7Gu0FcLI05l6b
-A1QNV++NFTzQ/Bf0rXjanUdpxQX3v9olezM/aHTnWZK+DHbnBVmnA8hHwuYSA7Mj
-+XcXlsCMUHp8+3bGOH7AzTF+rQHQ+RYbC9EHxu3j+a6hHttCn1sckAi/03OZgtAu
-VfYpBeokKkpqsdKxuo3jigEGGOp+oZLqiSEYiE9tROP8d34q2YA=
-=ceub
------END PGP SIGNATURE-----
---=-=-=--
+	Ingo
