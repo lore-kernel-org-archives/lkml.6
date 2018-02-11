@@ -1,60 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753478AbeBKPZI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 10:25:08 -0500
-Received: from mail-vk0-f50.google.com ([209.85.213.50]:43395 "EHLO
-        mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751077AbeBKPZH (ORCPT
+        id S1753483AbeBKP2x (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 10:28:53 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:58146 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751077AbeBKP2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 10:25:07 -0500
-X-Google-Smtp-Source: AH8x2250i2oil1rdJQvAjMWyqzWUlKtQPzQ0S0PrDA9JAwFLw6pTCfPeI82Jdo+HOHAVZ8EBqQop2SxsHxCnxKD/eDM=
+        Sun, 11 Feb 2018 10:28:52 -0500
+Subject: Re: [PATCH 2/2] xen: xenbus: WARN_ON XS_TRANSACTION_{START,END}
+ misuse
+To: Simon Gaiser <simon@invisiblethingslab.com>,
+        xen-devel@lists.xenproject.org
+Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+References: <20180207222236.7434-1-simon@invisiblethingslab.com>
+ <20180207222236.7434-2-simon@invisiblethingslab.com>
+ <8a0fd059-7acf-3279-10f9-649c19522e2a@oracle.com>
+ <66103cca-321e-6950-2083-6f5d068e12e6@invisiblethingslab.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <0bf1782a-b7c4-1775-c2cb-6e68fe62a199@oracle.com>
+Date: Sun, 11 Feb 2018 10:28:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-From: Mathieu Malaterre <malat@debian.org>
-Date: Sun, 11 Feb 2018 16:24:46 +0100
-X-Google-Sender-Auth: OEVZeM2fNAZ7Pwb9i0adXiHyUNk
-Message-ID: <CA+7wUsyxpHnq_POujjwEVXhJjE5GRLN9GypV+63g1OFmfq=_ZA@mail.gmail.com>
-Subject: [kmemleak] unreferenced object 0xcd9c1a80 (size 192):
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <66103cca-321e-6950-2083-6f5d068e12e6@invisiblethingslab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=879
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802110205
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexei,
 
-Could you please comment on why I am seeing those memleaks being
-reported on my ppc32 system ? Should they be marked as false positive
-?
 
-System is Mac Mini G4, git/master (4.15.0+), ppc.
+On 02/10/2018 08:27 PM, Simon Gaiser wrote:
+> Boris Ostrovsky:
+>> On 02/07/2018 05:22 PM, Simon Gaiser wrote:
+>>> +    users_old = xs_state_users;
+>>>        xs_state_users--;
+>>>        if ((req->type == XS_TRANSACTION_START && req->msg.type == XS_ERROR) ||
+>>>            req->type == XS_TRANSACTION_END)
+>>>            xs_state_users--;
+>>> +    if (WARN_ON(xs_state_users > users_old))
+>>
+>>
+>> WARN_ON_ONCE()?
+> 
+> Since we "fix" the wrong decrement by clamping at zero it should not
+> happen immediately again. But if you prefer _ONCE I can change it.
+> 
 
-Thanks for your time
 
-$ dmesg
-...
-[ 1281.504173] kmemleak: 36 new suspected memory leaks (see
-/sys/kernel/debug/kmemleak)
+If this error can happen once then someone at least theoretically can 
+construct a case when it is repeated. So let's switch to _ONCE() variant.
 
-Where:
-
-# cat /sys/kernel/debug/kmemleak
-unreferenced object 0xdee25000 (size 192):
-  comm "systemd", pid 1, jiffies 4294894348 (age 1438.580s)
-  hex dump (first 32 bytes):
-    c0 56 2f 88 00 00 00 00 00 00 00 0b 00 00 00 0c  .V/.............
-    00 00 00 08 00 00 00 01 00 00 00 01 00 00 00 01  ................
-  backtrace:
-    [<6c69baf5>] trie_alloc+0xb0/0x150
-    [<fa093284>] SyS_bpf+0x288/0x1458
-    [<82182f53>] ret_from_syscall+0x0/0x38
-unreferenced object 0xdee25900 (size 192):
-  comm "systemd", pid 1, jiffies 4294894540 (age 1437.812s)
-  hex dump (first 32 bytes):
-    c0 56 2f 88 00 00 00 00 00 00 00 0b 00 00 00 08  .V/.............
-    00 00 00 08 00 00 00 01 00 00 00 01 00 00 00 01  ................
-  backtrace:
-    [<6c69baf5>] trie_alloc+0xb0/0x150
-    [<fa093284>] SyS_bpf+0x288/0x1458
-    [<82182f53>] ret_from_syscall+0x0/0x38
-...
+Thanks.
+-boris
