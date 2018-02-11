@@ -1,47 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752110AbeBKCnO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 21:43:14 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:54409 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751050AbeBKCnN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 21:43:13 -0500
-X-Google-Smtp-Source: AH8x224gBvoqUsN2EJtRjhE9lz36vdYYsYJpaBfH46kJwmSyV7Z3eS52Wqlj8JYITuFKifxOVApV0g==
-Message-ID: <1518316987.5562.7.camel@gmail.com>
-Subject: [BUG]: A83T - AC100 gets the wrong number of parents
-From: Philipp Rossak <embed3d@gmail.com>
-To: linux-sunxi@googlegroups.com, maxime.ripard@free-electrons.com,
-        wens@csie.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org
-Date: Sun, 11 Feb 2018 03:43:07 +0100
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752203AbeBKCqB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 21:46:01 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37006 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751050AbeBKCqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 21:46:00 -0500
+Subject: Re: [PATCH V4 2/2] ptr_ring: try vmalloc() when kmalloc() fails
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <1518169550-5987-1-git-send-email-jasowang@redhat.com>
+ <1518169550-5987-2-git-send-email-jasowang@redhat.com>
+ <20180209173914-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <9c9bcbf9-02df-20ee-55ea-7234558ceded@redhat.com>
+Date: Sun, 11 Feb 2018 10:45:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180209173914-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
-
-When I boot my A83T I get the following bootlog [1].
-
-After some debugging, I found out that the function call:
-clk_hw_get_num_parents() returns 2. After a look in the devicetree I
-found out that this value should be 1, since we only have one parent
-clock [3].
-Setting the variable num_parents to 1 fixes the problem, but this is no
-soultion.
-
-Regards,
-Philipp
 
 
+On 2018年02月09日 23:53, Michael S. Tsirkin wrote:
+> On Fri, Feb 09, 2018 at 05:45:50PM +0800, Jason Wang wrote:
+>> This patch switch to use kvmalloc_array() for using a vmalloc()
+>> fallback to help in case kmalloc() fails.
+> Above isn't really saying anything about the motivation, it
+> just explains what kvmalloc_array does.
+>
+> How about:
+>
+> Switch ptr_ring from kmalloc to kvmalloc. This way it can support larger
+> ring sizes.
+>
+>> Reported-by:syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
+>> Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
+> I don't see this as a bugfix - it's more of an enhancement.
+>
+> Do we need this in net or can we defer this to net-next?
 
-[1]: https://pastebin.com/5c7hxjsS
-[2]: http://lxr.bootlin.com/linux/v4.15/source/drivers/rtc/rtc-ac100.c#
-L180
-[3]: http://lxr.bootlin.com/linux/v4.15/source/arch/arm/boot/dts/sun8i-
-a83t-bananapi-m3.dts#L159
+Consider they are users of tx_queue_len of more than 1000000 from google 
+searching. We'd better have this in -net.
+
+Thanks
+
+>
+> I'm not sure myself. For now
+>
+> Acked-by: Michael S. Tsirkin<mst@redhat.com>
+>
