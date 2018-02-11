@@ -1,58 +1,28 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431546-1518323629-2-14153517198352843717
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518323629; b=s7EmCYmJAXrAsMWZod2LnAjPioTFIw9z4b/54njzclH+bdm
-    9oJzFRLc77BkLhpYybajl0HBvWxr/XVVVWBImEeOpbfezMB7X3o8GkGIAnBgaonO
-    O/FHL9PUJgI1gPyVU/GwBtdzFsW1wcJQVUKbJII6MA53S9cXMnCTdh5sbM8Gv7kJ
-    157fwhn2M/nRkIZtD8Vh/WENf4i/IvSU0XfREYkEzv941QCpCYTom+sod0KW3SQ5
-    AJdbtDCChkDJHjxlVFO8CuRI+uGFxeKT3H1PuAvfTqbjayCXJjDPPL6UhkN+d3u/
-    GiRWW6Af9V57olyxu71s/Ncq/v5caSR+ThXt4SQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:content-transfer-encoding
-    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518323629; bh=oX4Vc7W/kYIjjJ3er91
-    MHn4/+9Iw25zj+dc2raWRqFQ=; b=h4TwLCs6fRlEyeLhZrVHWsd80juZLv495EU
-    owxBTgg9GbGCQkE+MRKXVedvxBNiwjxuoAXP8R2MWWAqwhdruKrVAlHdx/W1MaTP
-    HYgpqHnnXxH5Zz8KAb8yVaEcoFZDzDeOJFvq1VEAFWL5m56rAoh2yFuCu7uT7/0N
-    1BfK0pZWhGq3Phb0ZOkgLhcfVlyDnOGRFZ3IV1Bfiy0KdGuhyS6wZWXmqzcaqYv6
-    ZtRVExmxs0GoC+pAiF5JcYiCQ00ZD7+6EpxXhE57xaNR7ydLFISjvStyDHK0ZJuU
-    DZxQhgDfTssyo5bJ/2iRjLgsKAJDuqqt3Q/NcPnimYXFPxATiPg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeBKEdn (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:33:43 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41324 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752465AbeBKEdk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:40 -0500
+Return-Path: <ben@decadent.org.uk>
+X-Google-Smtp-Source: AH8x227/WDtozSVGJ3uQAX9R4gbOq0HryIwCWCL5HdJqg571IxatlF9J+xFOeHc+PjQI99qgbDkG
+ARC-Seal: i=1; a=rsa-sha256; t=1518323626; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FqR8tFDB0Ysuf/5+ZCivHw15a3RubNHG+pLZiy5bzEgMYoLx4OynkclvZ/LnD0yHUC
+         +z6N/1tMNJrXTdKtmqbzKse25slsUfwf7mVouonMjduCKf2HTBXrqoMxmpiiuO50oIXW
+         LGNbMGXARy91VaIdBtLwuV++FfRz5nepZCS+Iym9efr5wAJ6tqcEB/slfQsw0wmubFXF
+         AiVqJPGnsXCu4m2XmzxOpX7wbBcIaV5Kc646H+Xf4D/DZVsqgPM/K9IKj5E32gwTJQWB
+         J8v0nFbJkTqVXTtF+0vD+whPmYVnqPxM8Pltbi9xngoelrA4T8NdThrMshWZIRRa6+95
+         7STQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
+         :content-transfer-encoding:content-disposition
+         :arc-authentication-results;
+        bh=UmCursKY8JWrpBiVGa/F3Dr9dj2SPWPo8r3P5hl/PqY=;
+        b=o69Tun/eOKdyFm2vqTwRCMsbokFlkdbKsAnS/DJdNL8B1TzF44gVTHPzIAqQIe1y02
+         SSyioCRmhNpKTEQ9I/KgkV11PZzCZbI8KYhTifVYK4vYcV+QLYIlTM7lwaE5g7EK0EmK
+         fEzYcw3igFxcWEsxjhQaS2JkF89Z4fFnPBGucM+hLuqnvgNWmv/dS7MrsSWDWRNbr97O
+         fHH+sWBxKCZ5d/Bh0qfaHa2OEqRMtbsF/e1MS6UFWm3xMTOkzMNPVlT6ElYnnUQFfX/U
+         WaNngIDI6/WkT6To0QmNWpvIrRyDwKggRcWt/4pwH9ctyKikzoJ0dGejHoE1qswYHu1r
+         XTMA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,19 +30,25 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "kbuild test robot" <fengguang.wu@intel.com>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.863275890@decadent.org.uk>
+Message-ID: <lsq.1518322806.89839826@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 09/79] scsi: bfa: integer overflow in debugfs
+Subject: [PATCH 3.2 60/79] x86/decoder: Add new TEST instruction pattern
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592077714785292297?=
+X-GMAIL-MSGID: =?utf-8?q?1592077714785292297?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,44 +56,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 3e351275655d3c84dc28abf170def9786db5176d upstream.
+commit 12a78d43de767eaf8fb272facb7a7b6f2dc6a9df upstream.
 
-We could allocate less memory than intended because we do:
+The kbuild test robot reported this build warning:
 
-	bfad->regdata = kzalloc(len << 2, GFP_KERNEL);
+  Warning: arch/x86/tools/test_get_len found difference at <jump_table>:ffffffff8103dd2c
 
-The shift can overflow leading to a crash.  This is debugfs code so the
-impact is very small.  I fixed the network version of this in March with
-commit 13e2d5187f6b ("bna: integer overflow bug in debugfs").
+  Warning: ffffffff8103dd82: f6 09 d8 testb $0xd8,(%rcx)
+  Warning: objdump says 3 bytes, but insn_get_length() says 2
+  Warning: decoded and checked 1569014 instructions with 1 warnings
 
-Fixes: ab2a9ba189e8 ("[SCSI] bfa: add debugfs support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This sequence seems to be a new instruction not in the opcode map in the Intel SDM.
+
+The instruction sequence is "F6 09 d8", means Group3(F6), MOD(00)REG(001)RM(001), and 0xd8.
+Intel SDM vol2 A.4 Table A-6 said the table index in the group is "Encoding of Bits 5,4,3 of
+the ModR/M Byte (bits 2,1,0 in parenthesis)"
+
+In that table, opcodes listed by the index REG bits as:
+
+  000         001       010 011  100        101        110         111
+ TEST Ib/Iz,(undefined),NOT,NEG,MUL AL/rAX,IMUL AL/rAX,DIV AL/rAX,IDIV AL/rAX
+
+So, it seems TEST Ib is assigned to 001.
+
+Add the new pattern.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/scsi/bfa/bfad_debugfs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/lib/x86-opcode-map.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/bfa/bfad_debugfs.c
-+++ b/drivers/scsi/bfa/bfad_debugfs.c
-@@ -276,7 +276,8 @@ bfad_debugfs_write_regrd(struct file *fi
- 	struct bfad_s *bfad = port->bfad;
- 	struct bfa_s *bfa = &bfad->bfa;
- 	struct bfa_ioc_s *ioc = &bfa->ioc;
--	int addr, len, rc, i;
-+	int addr, rc, i;
-+	u32 len;
- 	u32 *regbuf;
- 	void __iomem *rb, *reg_addr;
- 	unsigned long flags;
-@@ -296,7 +297,7 @@ bfad_debugfs_write_regrd(struct file *fi
- 	}
+--- a/arch/x86/lib/x86-opcode-map.txt
++++ b/arch/x86/lib/x86-opcode-map.txt
+@@ -759,7 +759,7 @@ EndTable
  
- 	rc = sscanf(kern_buf, "%x:%x", &addr, &len);
--	if (rc < 2) {
-+	if (rc < 2 || len > (UINT_MAX >> 2)) {
- 		printk(KERN_INFO
- 			"bfad[%d]: %s failed to read user buf\n",
- 			bfad->inst_no, __func__);
+ GrpTable: Grp3_1
+ 0: TEST Eb,Ib
+-1:
++1: TEST Eb,Ib
+ 2: NOT Eb
+ 3: NEG Eb
+ 4: MUL AL,Eb
