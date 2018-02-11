@@ -1,32 +1,32 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518432268; cv=none;
+Return-Path: <geert.uytterhoeven@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518388171; cv=none;
         d=google.com; s=arc-20160816;
-        b=VPAZIi3MGVr1EFhCX+KsB33kClo6G2mRjclUgjZrbpPMLlE1MJA2IsiKItc+oZaZ7k
-         1ffW+rRCKxwQyAzPdpEb3u2UbQNpMpUhYDTERoXLtPz6ZOoeM3LNMVUYHDxKywnjlhr7
-         ebUx2A1sl03ywVu5+2oIrlUmHXekKtm92Ji4cyMD2tT6E+zpPBdrLGdDDNNKFYZv5eGO
-         NrUFUkeg21fd+kjezUbPB0OiRjPQHSl/p/RYDNCQRUt9SaQzLeO4gVULpwUcDgdpteAy
-         ZsYzm+5pMc91LRww5amXWnlZpoCseDN6jCuTO4WybE+sTBJuXAeUycFGyeA10pX8lNGx
-         EEeA==
+        b=eX2kheXMgsJncs1mRNNf7CcUq5uAq3/fD4/CCrWK6vRF1fm7j03MawZCSOhN/kD2bA
+         f7+KJi9/ic5r9CCAp6aoBAwD0cqO1q4rWXoUsS/atZMAXxLNp3b1PvL58ee4UfIFCb/a
+         Dw2FsyF6ZIrjSpTs3CVeE4rSf0FPbxjH9LuvJb2uCw9IewME26xJow9yHXqfOwFyr+VQ
+         SCmwBaOXus72kaf5eiikgpnKoeORZYwtOMiMyKzmfSqWVIV1JSg08zECNqlrqJ5lJMZ+
+         e9MtPCDGZboUo4QGR6M3TVFsB0wpzn0JIiOHFiGZ5b7PM3aTPnkAOKtr8YbW2leZtgy3
+         QWYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=RkTEunNFoBtHc3BXy1WEzoWTrtv16ZsntJ+KtZ/gPNc=;
-        b=ebNUhHh7hCS2A4qIUumCmKZ7fGXlegOuumerHL6uJTMEzuFEQ3Bby+XiNRRI6b9xPc
-         Bh4fpYNjWYCfLDittyoAmbUo92jP/Awqel9XrCoNcDd7bmT0Hgl/5lGJ3BWrtyVrhmlj
-         JB5Ca3FLZs/SUZ6qXlnPWSBXBagyb9lWfwURSrlXZgHy5Veu4VQZjiXTH4LOhQTMjnYB
-         MberkC2wHAFa13ksi7q3mJyJ6sBflGnICNYqY5qCs+yCNn09Z0CCWCalxvw+fRI6VRYI
-         yXmbebMx1jPaRoD+Qi31aeTcG6P0NH8gPXl9IjP0q15CVB65vx95zN4d77HbFbiRZuyN
-         c58w==
+        bh=3pVo0AZgxQRSwx8Wf2D0zZeaHbrnwkSWVeuL5goHXpM=;
+        b=G1ay2qiC8hKQyArOePw/mi8KTCv3bGpPbECceQ2NSHI28kpNwlGzvwZ4IzUYJYjzOu
+         1IFzPYaoIGXGB8eUkNQnXAux+lwAmQiD+nqkelk10XaYZnZxxw2+USXBhQGJSUDsuVuX
+         dyAUa4d8ZQnsviJA+uxBAYymj8RVvGjvB47yJjZhNnL8kpVqGw56l39oEETSgbIGlZBn
+         OsVsdIxOz9y0++hiDBVGCp5mVq05ZXKI+I75t3I5wyUXkLhGb0YmC5oH3DpdhYNtd/7n
+         vK38lmhoa3zbuJnZ4C4i8XB/poLSViHPZUxtUbXxIxtQdV2TfT4i7wN4Ef4FUI5rFM63
+         SU0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rJw2Hv/W;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=icTpDol7;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rJw2Hv/W;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AH8x225Yltn0Yo3aT9qQOrXgn3OznHzTeMzjwYZ4FVvzD2/ZURHefVyn2QNvj3Fs/MqKc6wBcoEozR+HltOrFspqrd4=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=icTpDol7;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+X-Google-Smtp-Source: AH8x226m3X7pPrwa1pHVoCrVKcqdNhzso3JdMertO6BqWCounKUoiLdBmB0tuFPIF4H7m5apTietTLfkU4+nbqD4mXA=
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <CA+55aFznXZ+DXYDVcgUV+yAZPnWagVODhM_-xW=FPhTvZ8G61w@mail.gmail.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -38,17 +38,15 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFz3gUKQMr-X-b=ytLPX0AjGUaXNtLSUQ0_xZwZuDU33RQ@mail.gmail.com>
  <CAGXu5jLV-i5OAbXMQiJC-idXB+XrxMCC+RigQ+4R6eZWqn4rgg@mail.gmail.com>
  <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
- <CA+55aFy4WNC=pmga19CHhrX9QwOJsu1bUvGL0oNxq5EeMW94eg@mail.gmail.com>
- <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com>
- <CAGXu5jLjGxbPQ_mNjV06f66a2xevmGp5w3f7X+nhYO4GYHa_zw@mail.gmail.com> <CA+55aFznXZ+DXYDVcgUV+yAZPnWagVODhM_-xW=FPhTvZ8G61w@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 12 Feb 2018 11:44:26 +0100
-X-Google-Sender-Auth: ENepQ3LwGLqIbJnY3Fv0iROVwkc
-Message-ID: <CAK8P3a3-63He=LPtqyskQn_J-8VKUTpoFXLPjUU7Vjoj1MYfLA@mail.gmail.com>
+ <CA+55aFy4WNC=pmga19CHhrX9QwOJsu1bUvGL0oNxq5EeMW94eg@mail.gmail.com> <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 11 Feb 2018 23:29:29 +0100
+X-Google-Sender-Auth: 3SRh_tmD1318LEnlKf2Rvwp0hiQ
+Message-ID: <CAMuHMdWoXH3+bifmHAQb8KYz5Tsfz=zxRqAsVmfsexbucX6w0g@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>,
+	Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
 	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
@@ -56,70 +54,56 @@ Cc: Kees Cook <keescook@chromium.org>, Ulf Magnusson <ulfalizer@gmail.com>,
 	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
 	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
+	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592191633651721943?=
+X-GMAIL-MSGID: =?utf-8?q?1592145395355491671?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 11, 2018 at 10:50 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sun, Feb 11, 2018 at 1:19 PM, Kees Cook <keescook@chromium.org> wrote:
->> On Sun, Feb 11, 2018 at 1:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Sun, Feb 11, 2018 at 10:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Sun, Feb 11, 2018 at 9:06 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> On Sun, Feb 11, 2018 at 11:53 AM, Linus Torvalds
+>> <torvalds@linux-foundation.org> wrote:
 >>>
->>> In my tests last year, I identified gcc-4.6 as a nice minimum level, IIRC
->>> gcc-4.5 was unable to build some of the newer ARM targets.
+>>> Well, it's still not a very *big* bump. With modern distros being at
+>>> 7.3, and people testing pre-releases of gcc-8, something like gcc-4.5
+>>> is still pretty darn ancient.
 >>
->> But yes, if Linus wants 4.5 over 4.3, I would agree with Arnd: let's
->> take it to 4.6 instead.
+>> ... it's worth noting that our _documentation_ may claim that gcc-3.2
+>> is the minimum supported version, but Arnd pointed out that a few
+>> months ago that apparently nothing older than 4.1 has actually worked
+>> for a longish while, and gcc-4.3 was needed on several architectures.
+>>
+>> So the _real_ jump in required gcc version would be from 4.1 (4.3 in
+>> many cases) to 4.5, not from our documented "3.2 minimum".
+>>
+>> Arnd claimed that some architectures needed even newer-than-4.3, but I
+>> assume that's limited to things like RISC-V that simply don't have old
+>> gcc support at all.
 >
-> So it sounds like Arnd knows what the distros have.
-...
-> If no distro is on 4.5, then there's no reason to pick that. The
-> reason I mentioned 4.5 is because that's the "asm goto" point, afaik,
-> and that is likely to be a requirement in the near future.
+> Right. Also architecture specific features may need something more recent,
+> and in some cases like the 'initializer for anonymous union needs extra
+> curly braces', a trivial change would make it work, but a lot of architectures
+> have obviously never been built with toolchains old enough to actually
+> run into those cases.
+>
+> Geert is the only person I know that actively uses gcc-4.1, and he actually
+> sent some patches that seem to get additional architectures to build on
+> that version, when they were previously on gcc-4.3+.
 
-Looking at old distros with long support cycles:
+And as long as gcc-4.1 helps me finding real bugs (which it did for the
+current merge window), I plan to keep on using it.
 
-Red Hat have either gcc-4.1 (EL5, extended support ends 2020) or
-gcc-4.4 (EL6, regular support ends 2020, extended support ends 2024):
-https://access.redhat.com/solutions/19458
-EL7 uses gcc-4.8 and will be supported until 2024 (no extended support
-planned)
+Gr{oetje,eeting}s,
 
-SUSE have gcc-4.3 (SLES11, extended support ends 2022) or gcc-4.8
-(SLES12, support ends 2024, extended support ends 2027):
-https://www.suse.com/lifecycle/
+                        Geert
 
-Debian Jessie (oldstable) comes with gcc-4.8 and is supported until June 2018,
-extended support until 2020
-Debian  Wheezy (oldoldstable) uses gcc-4.6 or 4.7 depending on the
-architecture, extended support ends May 2018.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Ubuntu 14.04 is supported until 2019 and uses gcc-4.8
-
-The latest Android SDK provides (known broken) versions of gcc-4.8 and
-gcc-4.9 as well as clang.
-
-OpenWRT 14.07 Barrier Breaker uses gcc-4.8, 12.07 Attitude
-Adjustment 12.09 used gcc-4.6, but it's very unlikely that anyone
-cares about building new kernels with either.
-
-Most embedded distros just build everything from source and are
-used to adapting to new requirements.
-
->From that list above, it sounds like going all the way to gcc-4.8 would
-be a better candidate than 4.5 or 4.6, if we decide that 4.3 and 4.4 are
-both no longer desirable to support.
-
-> If SLES11 is 4.3, that's obviously a concern. Although Arnd seemed to
-> imply that that had already caused problems, so...
-
-The problems are mainly an excessive amount of false-positive
-warnings, which makes it tricky to new warnings when you make
-a mistake.
-
-          Arnd
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
