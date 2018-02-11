@@ -1,187 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeBKDJr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 22:09:47 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60798 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751149AbeBKDJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 22:09:46 -0500
-Date: Sun, 11 Feb 2018 11:09:36 +0800
-From: Peter Xu <peterx@redhat.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org
-Subject: Re: [Qemu-devel] [RFC PATCH] vfio/pci: Add ioeventfd support
-Message-ID: <20180211030936.GH2783@xz-mi>
-References: <20180207000731.32764.95992.stgit@gimli.home>
- <20180209070511.GD2783@xz-mi>
- <20180209144541.059554bf@w520.home>
+        id S1752281AbeBKDPB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 22:15:01 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:54940 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752170AbeBKDPA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 22:15:00 -0500
+Subject: Re: [PATCH V2 0/6]nvme-pci: fixes on nvme_timeout and
+ nvme_dev_disable
+To: Keith Busch <keith.busch@intel.com>
+Cc: axboe@fb.com, hch@lst.de, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, Sagi Grimberg <sagi@grimberg.me>
+References: <1517822415-11710-1-git-send-email-jianchao.w.wang@oracle.com>
+ <073ce416-fd26-b41a-187d-1db9210c48b0@grimberg.me>
+ <20180208175606.GD5039@localhost.localdomain>
+ <db5fe34b-3ffb-a658-d4d6-a1c619b2d590@oracle.com>
+ <20180209171231.GB6970@localhost.localdomain>
+ <de6fd2ac-fc69-1b3b-c206-7abfce24ac70@oracle.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <1872576f-8b5c-0f7f-3d7a-c769543ace87@oracle.com>
+Date: Sun, 11 Feb 2018 11:06:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <de6fd2ac-fc69-1b3b-c206-7abfce24ac70@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180209144541.059554bf@w520.home>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8801 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802110041
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 02:45:41PM -0700, Alex Williamson wrote:
-> On Fri, 9 Feb 2018 15:05:11 +0800
-> Peter Xu <peterx@redhat.com> wrote:
+
+
+On 02/10/2018 10:32 AM, jianchao.wang wrote:
+> Hi Keith
 > 
-> > On Tue, Feb 06, 2018 at 05:08:14PM -0700, Alex Williamson wrote:
-> > 
-> > [...]
-> > 
-> > > +long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
-> > > +			uint64_t data, int count, int fd)
-> > > +{
-> > > +	struct pci_dev *pdev = vdev->pdev;
-> > > +	loff_t pos = offset & VFIO_PCI_OFFSET_MASK;
-> > > +	int ret, bar = VFIO_PCI_OFFSET_TO_INDEX(offset);
-> > > +	struct vfio_pci_ioeventfd *ioeventfd;
-> > > +	int (*handler)(void *, void *);
-> > > +	unsigned long val;
-> > > +
-> > > +	/* Only support ioeventfds into BARs */
-> > > +	if (bar > VFIO_PCI_BAR5_REGION_INDEX)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (pos + count > pci_resource_len(pdev, bar))
-> > > +		return -EINVAL;
-> > > +
-> > > +	/* Disallow ioeventfds working around MSI-X table writes */
-> > > +	if (bar == vdev->msix_bar &&
-> > > +	    !(pos + count <= vdev->msix_offset ||
-> > > +	      pos >= vdev->msix_offset + vdev->msix_size))
-> > > +		return -EINVAL;
-> > > +
-> > > +	switch (count) {
-> > > +	case 1:
-> > > +		handler = &vfio_pci_ioeventfd_handler8;
-> > > +		val = data;
-> > > +		break;
-> > > +	case 2:
-> > > +		handler = &vfio_pci_ioeventfd_handler16;
-> > > +		val = le16_to_cpu(data);
-> > > +		break;
-> > > +	case 4:
-> > > +		handler = &vfio_pci_ioeventfd_handler32;
-> > > +		val = le32_to_cpu(data);
-> > > +		break;
-> > > +#ifdef iowrite64
-> > > +	case 8:
-> > > +		handler = &vfio_pci_ioeventfd_handler64;
-> > > +		val = le64_to_cpu(data);
-> > > +		break;
-> > > +#endif
-> > > +	default:
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	ret = vfio_pci_setup_barmap(vdev, bar);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	mutex_lock(&vdev->ioeventfds_lock);
-> > > +
-> > > +	list_for_each_entry(ioeventfd, &vdev->ioeventfds_list, next) {
-> > > +		if (ioeventfd->pos == pos && ioeventfd->bar == bar &&
-> > > +		    ioeventfd->data == data && ioeventfd->count == count) {
-> > > +			if (fd == -1) {
-> > > +				vfio_virqfd_disable(&ioeventfd->virqfd);
-> > > +				list_del(&ioeventfd->next);
-> > > +				kfree(ioeventfd);
-> > > +				ret = 0;
-> > > +			} else
-> > > +				ret = -EEXIST;
-> > > +
-> > > +			goto out_unlock;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	if (fd < 0) {
-> > > +		ret = -ENODEV;
-> > > +		goto out_unlock;
-> > > +	}
-> > > +
-> > > +	ioeventfd = kzalloc(sizeof(*ioeventfd), GFP_KERNEL);
-> > > +	if (!ioeventfd) {
-> > > +		ret = -ENOMEM;
-> > > +		goto out_unlock;
-> > > +	}
-> > > +
-> > > +	ioeventfd->pos = pos;
-> > > +	ioeventfd->bar = bar;
-> > > +	ioeventfd->data = data;
-> > > +	ioeventfd->count = count;
-> > > +
-> > > +	ret = vfio_virqfd_enable(vdev->barmap[ioeventfd->bar] + ioeventfd->pos,
-> > > +				 handler, NULL, (void *)val,
-> > > +				 &ioeventfd->virqfd, fd);
-> > > +	if (ret) {
-> > > +		kfree(ioeventfd);
-> > > +		goto out_unlock;
-> > > +	}
-> > > +
-> > > +	list_add(&ioeventfd->next, &vdev->ioeventfds_list);  
-> > 
-> > Is there a limit on how many ioeventfds that can be created?
-> > 
-> > IIUC we'll create this eventfd "automatically" if a MMIO addr/data
-> > triggered continuously for N=10 times, then would it be safer we have
-> > a limitation on maximum eventfds?  Or not sure whether a malicious
-> > guest can consume the host memory by sending:
-> > 
-> > - addr1/data1, 10 times
-> > - addr2/data2, 10 times
-> > - ...
-> > 
-> > To create unlimited ioeventfds?  Thanks,
+> Thanks for your kindly response here.
+> That's really appreciated.
 > 
-> Good question, it is somewhat exploitable in the guest the way it's
-> written, however a user process does have an open file limit and each
-> eventfd consumes a file handle, so unless someone is running QEMU with
-> unlimited file handles, there is a built-in limit.  Two problems remain
-> though:
+> On 02/10/2018 01:12 AM, Keith Busch wrote:
+>> On Fri, Feb 09, 2018 at 09:50:58AM +0800, jianchao.wang wrote:
+>>>
+>>> if we set NVME_REQ_CANCELLED and return BLK_EH_HANDLED as the RESETTING case,
+>>> nvme_reset_work will hang forever, because no one could complete the entered requests.
+>>
+>> Except it's no longer in the "RESETTING" case since you added the
+>> "CONNECTING" state, so that's already broken for other reasons...
+>>
 > 
-> First, is it still a bad idea that a user within a guest can target
-> this device page to consume all of the QEMU process' open file handles,
-> even if ultimately they're only harming themselves?  What would a
-> reasonable cap of file descriptors for this purpose be?  How would we
-> know which are actively used and which could be expired?  Currently
-> only 2 are registered, the MSI-ACK address and some unknown secondary
-> one that's low frequency, but enough to trigger the algorithm here (and
-> doesn't seem harmful to let it get enabled).  We could therefore
-> arbitrarily pick 5 as an upper limit here, maybe with a warning if the
-> code hits that limit.
+> Yes, but as your patch, we have to fail the IOs and even kill the controller.
+> In fact, up to nvme_wait_freeze in nvme_reset_work, the RECONNECTING state has been completed.
+> We even could say it is in LIVE state. Maybe we should recover the controller again instead
+> of fail the IOs and kill the controller.
 > 
-> Second, is there still an exploit in the proposed vfio interface that a
-> user could re-use a single file descriptor for multiple vfio
-> ioeventfds.  I don't know.  I thought about looking to see whether a
-> file descriptor is re-used, but then I wondered if that might actually
-> be kind of a neat and potentially useful interface that a single
-> eventfd could trigger multiple device writes.
+> On the other hand, can you share with me why we cannot use blk_set_preempt_only to replace
+> blk_freeze_queue ? we just want to gate the new bios out of generic_make_request and we 
+> needn't use the preempt requests.
 
-Do you know any of possible scenario for this?  Since that sounds like
-an interesting idea.
+Looks like blk_freeze_queue in blk_mq_update_nr_hw_queues cannot be worked around.
+Still face IOs in nvme_reset_work. T_T
 
-> It looks like KVM
-> arbitrarily sets a limit of 1000 iobus devices, where each ioeventfd
-> would be such a device.  Perhaps we take the same approach and pick an
-> arbitrary high upper limit per vfio device.  What's your opinion?
-
-I did a "ulimit -n" and I got 1024 as default.  So even if someone
-granted the QEMU process with more/unlimited file handles, we'll still
-have a hard limit of ~1000 vfio-ioeventfds, which sounds safe.
-
-But I agree that we can still have a even smaller limit for vfio,
-especially we know explicitly on how many we may need in most cases.
-I'll follow your choice of number because I totally have no good idea
-on that.  While if we are going to have a limitation, I'm thinking
-whether it'll be good we have a WARN_ONCE when that limit is reached.
-
-Thanks,
-
--- 
-Peter Xu
+> 
+> Looking forward your advice and directive.
+> 
+> Thanks
+> Jianchao
+> 
+> 
+>> _______________________________________________
+>> Linux-nvme mailing list
+>> Linux-nvme@lists.infradead.org
+>> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=UqKQMB3A2ppfm2sN7PyisX0xTtXKsHlTBwjsS18qVx8&s=A2VMSm9IjQQXxM7foB6VUiRHLs-nIREF2_kMstwxlgw&e=
+>>
+> 
+> _______________________________________________
+> Linux-nvme mailing list
+> Linux-nvme@lists.infradead.org
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=cstI6JeNHGVX4OV1UdHdoemUr75aCUAjUrPe23Dhv8U&s=MYTmBPYS5tW4vC23iMEKINprtCxnRHe5AXrbST91XpY&e=
+> 
