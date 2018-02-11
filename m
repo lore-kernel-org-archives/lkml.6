@@ -1,223 +1,91 @@
-Return-Path: <ulfalizer@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518436172; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518368071; cv=none;
         d=google.com; s=arc-20160816;
-        b=O3FBN7b417RcTotTRbHTLU0BSPG9khEiHPjs3KEQHCQea7uoU0NGCFF7buU6fdMnkd
-         mqxyNWjkZD6aa9Sj7MzsrRvEFgqzd2VCwH0dzc4/pmsW/Q6aXiSLL24NDmlsp4vv8x3h
-         VAs5kpjLVqtf+rKFAVEeFirHJNz+OWZ4K81ZAKwVssw1Icdtn9j8JbbaNvisu7n+xOE+
-         jcptiAUWVkVkPBW+dHpOMLn8s4p/ErQrBdcBzGLajwydfNsBz+tvGB3VrONAUkRbCBk7
-         BHtRTM0sFnekbZvtoORxHWOft3DcL/KQEGjWOa9EpMjgDPHlaw+fG1FN9l56bJ0dUHx2
-         rw8g==
+        b=szOBunr6DKwmej21ePqoirowt//17gItVzIYf1PXFdkeP9KTgmhr4G5DBQHTju1lH9
+         Vv52tVF3k6Xzi7W26hg9Dheu8n/5CsgDaSNCG3orVFMyQg939vHpm5y1ZakwLGnOFlNM
+         y4eNkl+uJNTkyW9MT4oteLaob68zYwYhvwr+UXaoi6kH1r/2g6zM8xN0AeCZAHTqE2u8
+         Sv7n2uOzRzJZgfszDS8sT3/TWW+8ZodoPhH9lriP0hvRUtGFQllKEqLfRcNqavJo4YHL
+         CDocWTzMpBy3e4auB7ztiBh553lV2R3FUn23nbLApQ18w9+x7Mv4YFy7xZSfG9xsWJtH
+         2pxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=dupYp+b0w5G0T2Q5nf0UvzqHwnq+fp4ddHjFEX7bZ3o=;
-        b=vWcchipHoQUm/VoLcAeEZZliYCNg9dJAr7Tzgc99+zcr11ZGMwinJFBUyogYeqYmBk
-         UjhiTIWZxV9IndL5fwWiRCS5qI49Y8hYSDgy3L5S716FJPc4p4rX1BPtGIkzJpsOhd+8
-         isifrA9MKyIMWIA699SxFQgXn1WeheN1DzVx4wgCBxvSOEciyA1WINwv6htpqPovltkj
-         e9banLBdt0zC/UuTXBqqmytYFw3bGWDTTcIkWlWDjrM1vDQw91tO+mXVhYJ+VAvNLiDX
-         FOG9KK7zviEUklMolKgJLH6MZjtDaiO8cvh6Y+vQI8jo1TELYx3luzZ7e22WSan1bAty
-         yVjw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=L5/lIblhSt4e/vq8V6l5cy+0+IASedlDPzll0b1sDHk=;
+        b=FoObLb6Q5b7a0wzvchI0UFSAqNIeJIhLpoZ+XM2+Qzg7wXkPU9qjyiZAs+m9LhwbgI
+         S941GThPhOPxoSaGfi1w9nAarkCNoWBRsgr+VzEsmSzyqedMqKZW3MKWyj6Tg7sxEopf
+         ZtA9GlkoBpaoxJUzNNtMWuYG73DNunIX7WP9bwJNwYnBem+NcZ/Qjse0UV1zKY3VYvtl
+         yQg+x9dFYtq5EKq+cu3w+zhnkU2tlltmTPtGmpWU2l4iJYybP0G/YaS5qIyeRqqPKxVH
+         ssLdYFJnY1X6oDYzyTREI2EoRRq/b2Ug+imfC/xfwBrAdl87K8cwjguHsxGEbpU2j4mG
+         v/aQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=LZSUwpDt;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=CT0/tBFF;
+       dkim=pass header.i=@chromium.org header.s=google header.b=czmURFT1;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=LZSUwpDt;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x226XZ2IBoO2NLlRXJO5T0k4DLAslY7ZbgAZqu2azvPpre1OuU/kj+KIcBA4sf4HoMp9EImrjBhw+2aS0Vb+ATCw=
+       dkim=pass header.i=@google.com header.s=20161025 header.b=CT0/tBFF;
+       dkim=pass header.i=@chromium.org header.s=google header.b=czmURFT1;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x224xjpTRQUuhnmR0Wy9X0f5QUEdIa9NfIvzFgFeSCYysnpbAYjBCQZwzVmqKhXG4cuLG6fdUXvvr/GhwdHurH/U=
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KQ+ybTQF4U9eHqhi-Hg8ML1Z72DsXij2sM58S5HHg6C-Q@mail.gmail.com>
-References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
+Sender: keescook@google.com
+In-Reply-To: <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
+References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
+ <1518106752-29228-5-git-send-email-yamada.masahiro@socionext.com>
+ <20180209053038.pscoijvowmyudyzf@huvuddator> <CAK7LNATRxYCx9sE1haw815votyA5K8GQrMPPh0Q+n3kYa=JsgA@mail.gmail.com>
+ <20180209124607.akjhncb5sempjqcn@huvuddator> <CAGXu5j+hv6G3m+fgr7ibXAnoE-2GsxtXoqr0pd5AaaNdFVQxYg@mail.gmail.com>
+ <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
  <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
  <CAGXu5jLo0iuMsH89vj3nr8sv+1YvXfXgoPeBdxHwZm5i=DWoOA@mail.gmail.com>
- <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
- <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
- <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAK7LNARdm7UESEEh-2qEP9R8jWSwzZ4d2x=pZZPuj6EVAsXnAA@mail.gmail.com>
- <CAFkk2KQ+ybTQF4U9eHqhi-Hg8ML1Z72DsXij2sM58S5HHg6C-Q@mail.gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Mon, 12 Feb 2018 12:49:31 +0100
-Message-ID: <CAFkk2KRM44RXkr3tr36RmjvdWHqiRmgZQRP3r+E0iTJAg6T5SQ@mail.gmail.com>
+ <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com> <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Sun, 11 Feb 2018 08:54:29 -0800
+X-Google-Sender-Auth: ErJn72A6nhwoI-pDu82phzuUvbM
+Message-ID: <CAGXu5jJXn0YgPz9fzrHrWOhQCB_+iN2TJ4AQXjozxh32pBowhQ@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
 	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
 	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
 	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
 	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592195728138884734?=
+X-GMAIL-MSGID: =?utf-8?q?1592124319031107439?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 12:44 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> On Mon, Feb 12, 2018 at 11:44 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-02-11 19:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->>> Looks to me like there's a few unrelated issues here:
->>>
->>>
->>> 1. The stack protector support test scripts
->>>
->>> Worthwhile IMO if they (*in practice*) prevent hard-to-debug build errors or a
->>> subtly broken kernel from being built.
->>>
->>> A few questions:
->>>
->>>     - How do things fail with a broken stack protector implementation?
->>>
->>>     - How common are those broken compilers?
->>>
->>>     - Do you really need to pass $(KBUILD_CPPFLAGS) when testing for breakage,
->>>       or would a simpler static test work in practice?
->>>
->>>       I don't know how messy it would be to get $(KBUILD_CPPFLAGS) into
->>>       Kconfig, but should make sure it's actually needed in any case.
->>>
->>>       The scripts are already split up as
->>>
->>>           scripts/gcc-$(SRCARCH)_$(BITS)-has-stack-protector.sh
->>>
->>>       by the way, though only gcc-x86_32-has-stack-protector.sh and
->>>       gcc-x86_64-has-stack-protector.sh exist.
->>>
->>>     - How old do you need to go with GCC for -fno-stack-protector to give an
->>>       error (i.e., for not even the option to be recognized)? Is it still
->>>       warranted to test for it?
->>>
->>> Adding some CCs who worked on the stack protector test scripts.
->>>
->>> And yeah, I was assuming that needing support scripts would be rare, and that
->>> you'd usually just check whether gcc accepts the flag.
->>>
->>> When you Google "gcc broken stack protector", the top hits about are about the
->>> scripts/gcc-x86_64-has-stack-protector.sh script in the kernel throwing a false
->>> positive by the way (fixed in 82031ea29e45 ("scripts/has-stack-protector: add
->>> -fno-PIE")).
->>>
->>>
->>> 2. Whether to hide the Kconfig stack protector alternatives or always show them
->>>
->>> Or equivalently, whether to automatically fall back on other stack protector
->>> alternatives (including no stack protector) if the one specified in the .config
->>> isn't available.
->>>
->>> I'll let you battle this one out. In any case, as a user, I'd want a
->>> super-clear message telling me what to change if the build breaks because of
->>> missing stack protector support.
->>>
->>>
->>> 3. Whether to implement CC_STACKPROTECTOR_AUTO in Kconfig or the Makefiles
->>>
->>> I'd just go with whatever is simplest here. I don't find the Kconfig version
->>> too bad, but I'm already very familiar with Kconfig, so it's harder for me to
->>> tell how it looks to other people.
->>>
->>> I'd add some comments to explain the idea in the final version.
->>>
->>> @Kees:
->>> I was assuming that the Makefiles would error out with a message if none of the
->>> CC_STACKPROTECTOR_* variables are set, in addition to the Kconfig warning.
->>>
->>> You could offload part of that check to Kconfig with something like
->>>
->>>         config CHOSEN_CC_STACKPROTECTOR_AVAILABLE
->>>                 def_bool CC_STACKPROTECTOR_STRONG || \
->>>                          CC_STACKPROTECTOR_REGULAR || \
->>>                          CC_STACKPROTECTOR_NONE
->>>
->>> CHOSEN_STACKPROTECTOR_AVAILABLE could then be checked in the Makefile.
->>> It has the advantage of making the constraint clear in the Kconfig file
->>> at least.
->>>
->>> You could add some kind of assert feature to Kconfig too, but IMO it's not
->>> warranted purely for one-offs like this at least.
->>>
->>> That's details though. I'd want to explain it with a comment in any case if we
->>> go with something like this, since it's slightly kludgy and subtle
->>> (CC_STACKPROTECTOR_{STRONG,REGULAR,NONE} form a kind of choice, only you can't
->>> express it like that directly, since it's derived from other symbols).
->>>
->>>
->>> Here's an overview of the current Kconfig layout by the way, assuming
->>> the old no-fallback behavior and CC_STACKPROTECTOR_AUTO being
->>> implemented in Kconfig:
->>>
->>>         # Feature tests
->>>         CC_HAS_STACKPROTECTOR_STRONG
->>>         CC_HAS_STACKPROTECTOR_REGULAR
->>>         CC_HAS_STACKPROTECTOR_NONE
->>>
->>>         # User request
->>>         WANT_CC_STACKPROTECTOR_AUTO
->>>         WANT_CC_STACKPROTECTOR_STRONG
->>>         WANT_CC_STACKPROTECTOR_REGULAR
->>>         WANT_CC_STACKPROTECTOR_NONE
->>>
->>>         # The actual "output" to the Makefiles
->>>         CC_STACKPROTECTOR_STRONG
->>>         CC_STACKPROTECTOR_REGULAR
->>>         CC_STACKPROTECTOR_NONE
->>>
->>>         # Some possible output "nicities"
->>>         CHOSEN_CC_STACKPROTECTOR_AVAILABLE
->>>         CC_OPT_STACKPROTECTOR
->>>
->>> Does anyone have objections to the naming or other things? I saw some
->>> references to "Santa's wish list" in messages of commits that dealt with other
->>> variables named WANT_*, though I didn't look into those cases. ;)
->>>
+On Sat, Feb 10, 2018 at 11:28 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Sat, Feb 10, 2018 at 8:46 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 >>
+>> Argh. I wanted to get rid of all that entirely, and simplify this all.
+>> The mentioned script (and bugzilla) was from 2006, I assumed this was
+>> all historical.
 >>
->>
->> I think Linus's comment was dismissed here.
->>
->>
->> Linus said:
->>
->>> But yes, I also reacted to your earlier " It can't silently rewrite it
->>> to _REGULAR because the compiler support for _STRONG regressed."
->>> Because it damn well can. If the compiler doesn't support
->>> -fstack-protector-strong, we can just fall back on -fstack-protector.
->>> Silently. No extra crazy complex logic for that either.
->>
->>
->> If I understood his comment correctly,
->> we do not need either WANT_* or _AUTO.
->>
->>
->>
->>
->> Kees' comment:
->>
->>> In the stack-protector case, this becomes quite important, since the
->>> goal is to record the user's selection regardless of compiler
->>> capability. For example, if someone selects _REGULAR, it shouldn't
->>> "upgrade" to _STRONG. (Similarly for _NONE.)
->>
->> No.  Kconfig will not do this silently.
->
-> (Playing devil's advocate...)
->
-> If the user selected _STRONG and it becomes unavailable later, it
-> seems to silently fall back on other options, even for oldnoconfig
-> (which just checks if there are any new symbols in the choice).
->
-> It would be possible to also check if the old user selection still
-> applies btw. I do that in Kconfiglib. It's arguable whether that
-> matches the intent of oldnoconfig.
+>> But if it has broken again since, I guess we need to have a silly script. Grr.
+> [...]
+> Oh well. It looks like we really have to have those nasty exceptions
+> from the normal rules.
 
-*oldconfig
+Yeah, I was really disappointed to discover the broken gcc case Arnd
+had while I was testing the new ..._AUTO option. I thought I was going
+to be able to throw away a whole bunch of the complexity too. :( And
+this was on top of the recent discussion about raising the minimum gcc
+level to a place where there wasn't any need for the "old broken gcc"
+stack-protectors checks. But, no, that would have been too easy. :(
 
-These things are so closely named. :P
+-Kees
 
-Cheers,
-Ulf
+-- 
+Kees Cook
+Pixel Security
