@@ -1,69 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932223AbeBKWDY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 17:03:24 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42716 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932197AbeBKWDW (ORCPT
+        id S932209AbeBKWPH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 17:15:07 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55916 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932127AbeBKWPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 17:03:22 -0500
-X-Google-Smtp-Source: AH8x225Stc9AibnLaX8jx1jw5l1mv4FJxvKYgYHY7k31hTD5DCIw0nYXt15Ew0ajElngN6uztFSI8w==
-Date: Sun, 11 Feb 2018 23:03:17 +0100
-From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-To: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Steven Honeyman <stevenhoneyman@gmail.com>, Valdis.Kletnieks@vt.edu,
-        Jochen Eisinger <jochen@penguin-breeder.org>,
-        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>, Mario_Limonciello@dell.com,
-        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
- Dell machines
-Message-ID: <20180211220317.GA833@kmp-mobile.hq.kempniu.pl>
-References: <20180127133209.28995-1-pali.rohar@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Sun, 11 Feb 2018 17:15:05 -0500
+X-Google-Smtp-Source: AH8x227M1JGi3OH75sHkxDlMuSPpuPaedRuV2SpvhwOoMLpJDmbKVwoPOPgbNVjGTsXZwLZSLiB7oQ==
+Message-ID: <1518387302.1342.3.camel@gmail.com>
+Subject: Re: [PATCH 1/3] arm: dts: sun6i: a31s: bpi-m2: update mmc supply
+ nodes
+From: Philipp Rossak <embed3d@gmail.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        maxime.ripard@free-electrons.com, wens@csie.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Date: Sun, 11 Feb 2018 23:15:02 +0100
+In-Reply-To: <20180209175236.21215-2-embed3d@gmail.com>
+References: <20180209175236.21215-1-embed3d@gmail.com>
+         <20180209175236.21215-2-embed3d@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180127133209.28995-1-pali.rohar@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Dell platform team told us that some (DMI whitelisted) Dell Latitude
-> machines have ST microelectronics accelerometer at i2c address 0x29.
+Am Freitag, den 09.02.2018, 18:52 +0100 schrieb Philipp Rossak:
+> This patch updates the vmmc-supply properties on the mmc0 and mmc2
+> node to use the allready existent regulators.
+> We can now remove the sunxi-common-regulators.dtsi include since we
+> don't need it anymore.
 > 
-> Presence of that ST microelectronics accelerometer is verified by existence
-> of SMO88xx ACPI device which represent that accelerometer. Unfortunately
-> ACPI device does not specify i2c address.
-> 
-> This patch registers lis3lv02d device for selected Dell Latitude machines
-> at i2c address 0x29 after detection. And for Dell Vostro V131 machine at
-> i2c address 0x1d which was manually detected.
-> 
-> Finally commit a7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to
-> conflict with PCI BAR") allowed to use i2c-i801 driver on Dell machines so
-> lis3lv02d correctly initialize accelerometer.
-> 
-> Tested on Dell Latitude E6440.
-> 
-> Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 > ---
-> Changes since v1:
->  * Added Dell Vostro V131 based on Michał Kępień testing
+>  arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> index 51e6f1d21c32..a8d86211c8f3 100644
+> --- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> +++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> @@ -42,7 +42,6 @@
+>  
+>  /dts-v1/;
+>  #include "sun6i-a31s.dtsi"
+> -#include "sunxi-common-regulators.dtsi"
+>  #include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+> @@ -118,7 +117,7 @@
+>  &mmc0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_bpi_m2>;
+> -	vmmc-supply = <&reg_vcc3v0>;
+> +	vmmc-supply = <&reg_dcdc1>;
+>  	bus-width = <4>;
+>  	cd-gpios = <&pio 0 4 GPIO_ACTIVE_HIGH>; /* PA4 */
+>  	cd-inverted;
+> @@ -132,7 +131,7 @@
+>  &mmc2 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc2_pins_a>;
+> -	vmmc-supply = <&reg_vcc3v0>;
+> +	vmmc-supply = <&reg_dcdc1>;
+			^^
+		this here is wrong! this should be &reg_aldo1
+>  	mmc-pwrseq = <&mmc2_pwrseq>;
+>  	bus-width = <4>;
+>  	non-removable;
 
-I tested this patch on a Vostro V131 and it seems to work as expected:
-"lis3lv02d: 8 bits sensor found" is logged during boot, an input device
-gets registered and its axis values seem to be consistent with laptop's
-movements.
-
-Tested-by: Michał Kępień <kernel@kempniu.pl>
-
-I did not review the contents of the patch this time, sorry.
-
--- 
-Best regards,
-Michał Kępień
+Philipp
