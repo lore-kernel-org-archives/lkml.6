@@ -1,32 +1,37 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518388171; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518383514; cv=none;
         d=google.com; s=arc-20160816;
-        b=eX2kheXMgsJncs1mRNNf7CcUq5uAq3/fD4/CCrWK6vRF1fm7j03MawZCSOhN/kD2bA
-         f7+KJi9/ic5r9CCAp6aoBAwD0cqO1q4rWXoUsS/atZMAXxLNp3b1PvL58ee4UfIFCb/a
-         Dw2FsyF6ZIrjSpTs3CVeE4rSf0FPbxjH9LuvJb2uCw9IewME26xJow9yHXqfOwFyr+VQ
-         SCmwBaOXus72kaf5eiikgpnKoeORZYwtOMiMyKzmfSqWVIV1JSg08zECNqlrqJ5lJMZ+
-         e9MtPCDGZboUo4QGR6M3TVFsB0wpzn0JIiOHFiGZ5b7PM3aTPnkAOKtr8YbW2leZtgy3
-         QWYQ==
+        b=sFiQxuHvFSVn94gRoGI60/ABFfA9rMeO9PPIoqSH0246R8C1g44WiA/WgBtm3ylaHH
+         XJPQFaaJ+C/lcLco70XxGeJbhvha9PStdPMJdes8fq+gpW81dWfdzFqiY7BVa7VCPp+K
+         LeOvn8XR0W1n3ztRDEny0tyB7NeO4KjeRZrJc0KTQeSGpiJ+j+1m1TswjORIpYKbOigB
+         r8b/jnIf+jptdknJe/RYq/kH8PSnZoCN2dlmoCEFHTCPBYIt1WLqAtOxWqAv8oBUjJTN
+         7nwJ+EKhjUtYOyujaSc2dt4srCVy/NMSDOZXW2qXmC3thrMO495+nHWRUTdUXHgWsx8n
+         BoNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=3pVo0AZgxQRSwx8Wf2D0zZeaHbrnwkSWVeuL5goHXpM=;
-        b=G1ay2qiC8hKQyArOePw/mi8KTCv3bGpPbECceQ2NSHI28kpNwlGzvwZ4IzUYJYjzOu
-         1IFzPYaoIGXGB8eUkNQnXAux+lwAmQiD+nqkelk10XaYZnZxxw2+USXBhQGJSUDsuVuX
-         dyAUa4d8ZQnsviJA+uxBAYymj8RVvGjvB47yJjZhNnL8kpVqGw56l39oEETSgbIGlZBn
-         OsVsdIxOz9y0++hiDBVGCp5mVq05ZXKI+I75t3I5wyUXkLhGb0YmC5oH3DpdhYNtd/7n
-         vK38lmhoa3zbuJnZ4C4i8XB/poLSViHPZUxtUbXxIxtQdV2TfT4i7wN4Ef4FUI5rFM63
-         SU0Q==
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=syZl7vEo+d4yLYQQGlo/Evx4ObbiaSTOvzb+EA7KlV8=;
+        b=ytL7wt3grlyB8m3Cn/J2ZliX2RCZee2t/dXZ8ytCX7CT3xZdlWwyKmbDHA9as0Ke3n
+         7bbHL7aQ00H71Fn2n+eybc1Eqrgmq/JlbqGbyMEndqjBohYv3cAINQiPZAMQnp/YPHMn
+         a6O7VnKFybH0Z0Hg00bp3FrRRuge0QmcmePH5svtSQMImBr2r4QzBWpKoFkYSy4lh1Z6
+         DQBf4MYohY7wOMtLitRpEDOkaBirggx9EH1QtHFhUNFPyk/gZwqDFWPbKpypgD4BGj6c
+         LtUopbxJt3AZ1ARw1nfjfJR3meXs2i/E/7UF3jEX4lOBHCZ4EVagYxdE0De7N+Wz8/Uf
+         MWwA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=icTpDol7;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=J8dL6Z8r;
+       dkim=pass header.i=@chromium.org header.s=google header.b=M5mXhUkG;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=icTpDol7;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
-X-Google-Smtp-Source: AH8x226m3X7pPrwa1pHVoCrVKcqdNhzso3JdMertO6BqWCounKUoiLdBmB0tuFPIF4H7m5apTietTLfkU4+nbqD4mXA=
+       dkim=pass header.i=@google.com header.s=20161025 header.b=J8dL6Z8r;
+       dkim=pass header.i=@chromium.org header.s=google header.b=M5mXhUkG;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x224frd8IWNszKYSDXd19OQI21VKompmHTGYz1V/OyEoU9Iz0Mndmpft9BXxl51owhztuIkR5zlPMFpWSFiqOVOM=
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com>
+Sender: keescook@google.com
+In-Reply-To: <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -36,17 +41,14 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
  <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
  <CA+55aFz3gUKQMr-X-b=ytLPX0AjGUaXNtLSUQ0_xZwZuDU33RQ@mail.gmail.com>
- <CAGXu5jLV-i5OAbXMQiJC-idXB+XrxMCC+RigQ+4R6eZWqn4rgg@mail.gmail.com>
- <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
- <CA+55aFy4WNC=pmga19CHhrX9QwOJsu1bUvGL0oNxq5EeMW94eg@mail.gmail.com> <CAK8P3a3DHkpbRxUTP77OoeAqRHDz-tL-qYxLfq61Wv8NUPmyjA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 11 Feb 2018 23:29:29 +0100
-X-Google-Sender-Auth: 3SRh_tmD1318LEnlKf2Rvwp0hiQ
-Message-ID: <CAMuHMdWoXH3+bifmHAQb8KYz5Tsfz=zxRqAsVmfsexbucX6w0g@mail.gmail.com>
+ <CAGXu5jLV-i5OAbXMQiJC-idXB+XrxMCC+RigQ+4R6eZWqn4rgg@mail.gmail.com> <CA+55aFwWQ4nL2Asmzn0NSsw=w-tX5hAM9bFiOZhxehnhWH+wkw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Sun, 11 Feb 2018 13:11:53 -0800
+X-Google-Sender-Auth: 4JkaYv59av3v80iISx2N5708Pdc
+Message-ID: <CAGXu5jK7sCK=x8=jVXXYadATf6k7L7ijNS-4oMSRqKtzov_jag@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
 	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
@@ -54,56 +56,50 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium
 	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
 	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592145395355491671?=
+X-GMAIL-MSGID: =?utf-8?q?1592140511792644163?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 11, 2018 at 10:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Sun, Feb 11, 2018 at 9:06 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> On Sun, Feb 11, 2018 at 11:53 AM, Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->>>
->>> Well, it's still not a very *big* bump. With modern distros being at
->>> 7.3, and people testing pre-releases of gcc-8, something like gcc-4.5
->>> is still pretty darn ancient.
->>
->> ... it's worth noting that our _documentation_ may claim that gcc-3.2
->> is the minimum supported version, but Arnd pointed out that a few
->> months ago that apparently nothing older than 4.1 has actually worked
->> for a longish while, and gcc-4.3 was needed on several architectures.
->>
->> So the _real_ jump in required gcc version would be from 4.1 (4.3 in
->> many cases) to 4.5, not from our documented "3.2 minimum".
->>
->> Arnd claimed that some architectures needed even newer-than-4.3, but I
->> assume that's limited to things like RISC-V that simply don't have old
->> gcc support at all.
+On Sun, Feb 11, 2018 at 11:53 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Sun, Feb 11, 2018 at 11:39 AM, Kees Cook <keescook@chromium.org> wrote:
+>> This made akpm and Arnd very very grumpy as it regressed their builds.
+>> That's why I had to deal with the condition very carefully for _AUTO.
 >
-> Right. Also architecture specific features may need something more recent,
-> and in some cases like the 'initializer for anonymous union needs extra
-> curly braces', a trivial change would make it work, but a lot of architectures
-> have obviously never been built with toolchains old enough to actually
-> run into those cases.
+> Well, Arnd build new cross-tools last week, probably because you
+> really need new tools for other reasons anyway (ie all the spectre
+> mitigation). So I think Arnd is set.
 >
-> Geert is the only person I know that actively uses gcc-4.1, and he actually
-> sent some patches that seem to get additional architectures to build on
-> that version, when they were previously on gcc-4.3+.
+> And akpm being on some ancient stone age system has been an issue
+> before. The only way to fix it is to break it.
 
-And as long as gcc-4.1 helps me finding real bugs (which it did for the
-current merge window), I plan to keep on using it.
+I don't seem to be the one that can declare such things, which is why
+I pulled _AUTO out of -mm before the 4.15 merge window. It was
+breaking akpm and Arnd, which seemed like a serious problem,
+especially since you've yelled about how it's very bad to break
+builds, etc.
 
-Gr{oetje,eeting}s,
+> What I would worry about primarily is not one of the odd developers
+> who can upgrade, but random people in the wild. I don't want to lose
+> the occasional odd tester that does things nobody else does.
+>
+> But with gcc-4.5 being 7+ years old, I can't imagine it's a huge issue.
 
-                        Geert
+You have no objection from me at all on this. I have been yelled at
+repeatedly (unjustly in this thread even) for "forcing options" on
+people. I worked very hard to NOT break people with this, so it didn't
+seem like a good plan to knowingly break builds. (And the other
+options, _REGULAR and _STRONG, _do_ actually break the build if you
+have a broken compiler. But for _AUTO, that seemed like a very bad
+idea. I could only imagine the flames.)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-Kees
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Kees Cook
+Pixel Security
