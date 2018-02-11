@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753449AbeBKKwS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 05:52:18 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:39486 "EHLO
+        id S1753411AbeBKKwR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 05:52:17 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:39588 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752859AbeBKKur (ORCPT
+        with ESMTP id S1753030AbeBKKut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 05:50:47 -0500
+        Sun, 11 Feb 2018 05:50:49 -0500
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, x86@kernel.org
 Cc: dan.j.williams@intel.com, tglx@linutronix.de, ak@linux.intel.com,
         torvalds@linux-foundation.org, luto@kernel.org
-Subject: [PATCH v3 8/7] TESTING_ONLY x86/entry: reduce static footprint of idtentry
-Date: Sun, 11 Feb 2018 11:49:49 +0100
-Message-Id: <20180211104949.12992-9-linux@dominikbrodowski.net>
+Subject: [PATCH v3 3/7] x86/entry: interleave XOR register clearing with PUSH instructions
+Date: Sun, 11 Feb 2018 11:49:44 +0100
+Message-Id: <20180211104949.12992-4-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180211104949.12992-1-linux@dominikbrodowski.net>
 References: <20180211104949.12992-1-linux@dominikbrodowski.net>
@@ -21,129 +21,171 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Play a little trick in the generic PUSH_AND_CLEAR_REGS macro
-to insert the GP registers "above" the original return address.
-This allows us to (re-)insert the macro in error_entry() and
-paranoid_entry() and to remove it from the idtentry macro. This
-reduces the static footprint significantly.
+Same as is done for syscalls, interleave XOR with PUSH instructions
+for exceptions/interrupts, in order to minimize the cost of the
+additional instructions required for register clearing.
 
-NOTE: It still needs to be evaluated whether the reduced static
-footprint at the cost of code readability is really needed here.
-
-Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/entry/calling.h  | 11 ++++++++++-
- arch/x86/entry/entry_64.S | 21 ++++++++++-----------
- 2 files changed, 20 insertions(+), 12 deletions(-)
+ arch/x86/entry/calling.h  | 40 +++++++++++++++++++---------------------
+ arch/x86/entry/entry_64.S | 30 +++++++++++++++++++++---------
+ 2 files changed, 40 insertions(+), 30 deletions(-)
 
 diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 6985440c68fa..2d4523ba04a8 100644
+index 3bda31736a7b..a05cbb81268d 100644
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -97,7 +97,7 @@ For 32-bit we have the following conventions - kernel is built with
+@@ -101,44 +101,42 @@ For 32-bit we have the following conventions - kernel is built with
+ 	addq	$-(15*8), %rsp
+ 	.endm
  
- #define SIZEOF_PTREGS	21*8
+-	.macro SAVE_REGS offset=0
++	.macro SAVE_AND_CLEAR_REGS offset=0
++	/*
++	 * Save registers and sanitize registers of values that a
++	 * speculation attack might otherwise want to exploit. The
++	 * lower registers are likely clobbered well before they
++	 * could be put to use in a speculative execution gadget.
++	 * Interleave XOR with PUSH for better uop scheduling:
++	 */
+ 	movq %rdi, 14*8+\offset(%rsp)
+ 	movq %rsi, 13*8+\offset(%rsp)
+ 	movq %rdx, 12*8+\offset(%rsp)
+ 	movq %rcx, 11*8+\offset(%rsp)
+ 	movq %rax, 10*8+\offset(%rsp)
+ 	movq %r8,  9*8+\offset(%rsp)
++	xorq %r8, %r8				/* nospec r8 */
+ 	movq %r9,  8*8+\offset(%rsp)
++	xorq %r9, %r9				/* nospec r9 */
+ 	movq %r10, 7*8+\offset(%rsp)
++	xorq %r10, %r10				/* nospec r10 */
+ 	movq %r11, 6*8+\offset(%rsp)
++	xorq %r11, %r11				/* nospec r11 */
+ 	movq %rbx, 5*8+\offset(%rsp)
++	xorl %ebx, %ebx				/* nospec rbx */
+ 	movq %rbp, 4*8+\offset(%rsp)
++	xorl %ebp, %ebp				/* nospec rbp */
+ 	movq %r12, 3*8+\offset(%rsp)
++	xorq %r12, %r12				/* nospec r12 */
+ 	movq %r13, 2*8+\offset(%rsp)
++	xorq %r13, %r13				/* nospec r13 */
+ 	movq %r14, 1*8+\offset(%rsp)
++	xorq %r14, %r14				/* nospec r14 */
+ 	movq %r15, 0*8+\offset(%rsp)
++	xorq %r15, %r15				/* nospec r15 */
+ 	UNWIND_HINT_REGS offset=\offset
+ 	.endm
  
--.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
-+.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax save_ret=0
- 	/*
- 	 * Push registers and sanitize registers of values that a
- 	 * speculation attack might otherwise want to exploit. The
-@@ -105,8 +105,14 @@ For 32-bit we have the following conventions - kernel is built with
- 	 * could be put to use in a speculative execution gadget.
- 	 * Interleave XOR with PUSH for better uop scheduling:
- 	 */
-+	.if \save_ret
-+	pushq	%rsi		/* pt_regs->si */
-+	movq	8(%rsp), %rsi	/* temporarily store ret address in %rsi */
-+	movq	%rdi, 8(%rsp)	/* pt_regs->di (overwriting original ret) */
-+	.else
- 	pushq   %rdi		/* pt_regs->di */
- 	pushq   %rsi		/* pt_regs->si */
-+	.endif
- 	pushq	\rdx		/* pt_regs->dx */
- 	pushq   %rcx		/* pt_regs->cx */
- 	pushq   \rax		/* pt_regs->ax */
-@@ -131,6 +137,9 @@ For 32-bit we have the following conventions - kernel is built with
- 	pushq	%r15		/* pt_regs->r15 */
- 	xorq    %r15, %r15	/* nospec   r15*/
- 	UNWIND_HINT_REGS
-+	.if \save_ret
-+	pushq	%rsi		/* return address on top of stack */
-+	.endif
- .endm
- 
- .macro POP_REGS pop_rdi=1 skip_r11rcx=0
+-	/*
+-	 * Sanitize registers of values that a speculation attack
+-	 * might otherwise want to exploit. The lower registers are
+-	 * likely clobbered well before they could be put to use in
+-	 * a speculative execution gadget:
+-	 */
+-	.macro CLEAR_REGS_NOSPEC
+-	xorl %ebp, %ebp
+-	xorl %ebx, %ebx
+-	xorq %r8, %r8
+-	xorq %r9, %r9
+-	xorq %r10, %r10
+-	xorq %r11, %r11
+-	xorq %r12, %r12
+-	xorq %r13, %r13
+-	xorq %r14, %r14
+-	xorq %r15, %r15
+-	.endm
+-
+ 	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+@@ -177,7 +175,7 @@ For 32-bit we have the following conventions - kernel is built with
+  * is just setting the LSB, which makes it an invalid stack address and is also
+  * a signal to the unwinder that it's a pt_regs pointer in disguise.
+  *
+- * NOTE: This macro must be used *after* SAVE_REGS because it corrupts
++ * NOTE: This macro must be used *after* SAVE_AND_CLEAR_REGS because it corrupts
+  * the original rbp.
+  */
+ .macro ENCODE_FRAME_POINTER ptregs_offset=0
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index b868433d7e68..a2e41177e390 100644
+index 286b24b650da..1194814ee12b 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -871,12 +871,8 @@ ENTRY(\sym)
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
- 	.endif
+@@ -565,8 +565,7 @@ END(irq_entries_start)
+ 1:
  
--	/* Save all registers in pt_regs */
--	PUSH_AND_CLEAR_REGS
--	ENCODE_FRAME_POINTER
--
- 	.if \paranoid < 2
--	testb	$3, CS(%rsp)			/* If coming from userspace, switch stacks */
-+	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
- 	jnz	.Lfrom_usermode_switch_stack_\@
- 	.endif
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
  
-@@ -1123,12 +1119,15 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
- #endif
- 
- /*
-- * Switch gs if needed.
-+ * Save all registers in pt_regs, and switch gs if needed.
-  * Use slow, but surefire "are we in kernel?" check.
-  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
-  */
+ 	testb	$3, CS(%rsp)
+@@ -1114,8 +1113,7 @@ ENTRY(xen_failsafe_callback)
+ 	UNWIND_HINT_IRET_REGS
+ 	pushq	$-1 /* orig_ax = -1 => not a system call */
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
+@@ -1159,8 +1157,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
  ENTRY(paranoid_entry)
-+	UNWIND_HINT_FUNC
+ 	UNWIND_HINT_FUNC
  	cld
-+	PUSH_AND_CLEAR_REGS save_ret=1
-+	ENCODE_FRAME_POINTER 8
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
  	movl	$1, %ebx
  	movl	$MSR_GS_BASE, %ecx
- 	rdmsr
-@@ -1141,7 +1140,7 @@ ENTRY(paranoid_entry)
- 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
- 
- 	ret
--ENDPROC(paranoid_entry)
-+END(paranoid_entry)
- 
- /*
-  * "Paranoid" exit path from exception stack.  This is invoked
-@@ -1172,12 +1171,14 @@ ENTRY(paranoid_exit)
- END(paranoid_exit)
- 
- /*
-- * Switch gs if needed.
-+ * Save all registers in pt_regs, and switch gs if needed.
-  * Return: EBX=0: came from user mode; EBX=1: otherwise
-  */
+@@ -1211,8 +1208,7 @@ END(paranoid_exit)
  ENTRY(error_entry)
--	UNWIND_HINT_REGS offset=8
-+	UNWIND_HINT_FUNC
+ 	UNWIND_HINT_FUNC
  	cld
-+	PUSH_AND_CLEAR_REGS save_ret=1
-+	ENCODE_FRAME_POINTER 8
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
  	testb	$3, CS+8(%rsp)
  	jz	.Lerror_kernelspace
- 
-@@ -1568,8 +1569,6 @@ end_repeat_nmi:
- 	 * frame to point back to repeat_nmi.
- 	 */
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
--	PUSH_AND_CLEAR_REGS
--	ENCODE_FRAME_POINTER
+@@ -1399,18 +1395,34 @@ ENTRY(nmi)
+ 	pushq   (%rdx)		/* pt_regs->dx */
+ 	pushq   %rcx		/* pt_regs->cx */
+ 	pushq   %rax		/* pt_regs->ax */
++	/*
++	 * Sanitize registers of values that a speculation attack
++	 * might otherwise want to exploit. The lower registers are
++	 * likely clobbered well before they could be put to use in
++	 * a speculative execution gadget. Interleave XOR with PUSH
++	 * for better uop scheduling:
++	 */
+ 	pushq   %r8		/* pt_regs->r8 */
++	xorq    %r8, %r8	/* nospec   r8 */
+ 	pushq   %r9		/* pt_regs->r9 */
++	xorq    %r9, %r9	/* nospec   r9 */
+ 	pushq   %r10		/* pt_regs->r10 */
++	xorq    %r10, %r10	/* nospec   r10 */
+ 	pushq   %r11		/* pt_regs->r11 */
++	xorq    %r11, %r11	/* nospec   r11*/
+ 	pushq	%rbx		/* pt_regs->rbx */
++	xorl    %ebx, %ebx	/* nospec   rbx*/
+ 	pushq	%rbp		/* pt_regs->rbp */
++	xorl    %ebp, %ebp	/* nospec   rbp*/
+ 	pushq	%r12		/* pt_regs->r12 */
++	xorq    %r12, %r12	/* nospec   r12*/
+ 	pushq	%r13		/* pt_regs->r13 */
++	xorq    %r13, %r13	/* nospec   r13*/
+ 	pushq	%r14		/* pt_regs->r14 */
++	xorq    %r14, %r14	/* nospec   r14*/
+ 	pushq	%r15		/* pt_regs->r15 */
++	xorq    %r15, %r15	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
+-	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
  
  	/*
- 	 * Use paranoid_entry to handle SWAPGS, but no need to use paranoid_exit
 -- 
 2.16.1
