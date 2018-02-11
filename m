@@ -1,86 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753448AbeBKOHg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 09:07:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39616 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753243AbeBKOHe (ORCPT
+        id S1753452AbeBKO3o (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 09:29:44 -0500
+Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:40961 "EHLO
+        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751077AbeBKO3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 09:07:34 -0500
-Subject: Re: [GIT PULL] Integrity: IMA FUSE fixes
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 11 Feb 2018 09:07:26 -0500
-In-Reply-To: <alpine.LRH.2.21.1802112339270.20189@namei.org>
-References: <alpine.LRH.2.21.1802101718330.4382@namei.org>
-         <CA+55aFzX+=WRaVi51gaqCdnrxwXC3kqxk8LZyXQY=yn5XigE4Q@mail.gmail.com>
-         <1518324116.5491.132.camel@linux.vnet.ibm.com>
-         <alpine.LRH.2.21.1802112339270.20189@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18021114-0012-0000-0000-000005AD93F6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021114-0013-0000-0000-0000192954FC
-Message-Id: <1518358046.5491.187.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-11_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802110186
+        Sun, 11 Feb 2018 09:29:43 -0500
+Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH v2] mm/huge_memory.c: reorder operations in
+ __split_huge_page_tail()
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+Date: Sun, 11 Feb 2018 17:29:37 +0300
+Message-ID: <151835937752.185602.5640977700089242532.stgit@buzz>
+In-Reply-To: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
+References: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-02-12 at 00:19 +1100, James Morris wrote:
-> On Sat, 10 Feb 2018, Mimi Zohar wrote:
-> > Custom policy rules could be defined to disable measurement,
-> > appraisal, and audit for files on fuse.  However, I don't think we
-> > want to automatically disable measurement, even meaningless
-> > measurements.  Some indication needs to be included for remote
-> > attestation, security analytics, or forensics.  For systems with
-> > policies that require file signatures even on fuse, the safest thing
-> > would seem to be to fail the signature verification.
-> 
-> I don't understand this -- if a file passes signature verification, it 
-> passes.  If it was modified and still passes, the problem is elsewhere.
-> 
-> I don't think the FUSE measurements are inherently useless, or more 
-> useless than any others, at least.  You can misconfigure all kinds of 
-> things on a system which would undermine IMA, and I would count allowing 
-> unprivileged use of FUSE with critical files as such.
+THP split makes non-atomic change of tail page flags. This is almost ok
+because tail pages are locked and isolated but this breaks recent changes
+in page locking: non-atomic operation could clear bit PG_waiters.
 
-The problem is that fuse can provide whatever it wants, whenever it
-wants.  It could provide different pages for the initial file hash
-calculation and then for usage.
+As a result concurrent sequence get_page_unless_zero() -> lock_page()
+might block forever. Especially if this page was truncated later.
 
-If the file is first read into a buffer, like for the kernel_read_file_xxx() hooks, then the file data would be the same for the file calculation and usage, but for most of the IMA hooks, the file isn't first read into a buffer.
+Fix is trivial: clone flags before unfreezing page reference counter.
 
-> The point of the patches, IIUC, was that FUSE had no useful way to notify 
-> IMA that a file had changed, so, always measure.  IMA assumes that changes 
-> to a running system are made under the control of a correctly enforced 
-> security policy.  If you're using FUSE and IMA, then you should understand 
-> the security implications of that.  Or am I missing something?
+This race exists since commit 62906027091f ("mm: add PageWaiters indicating
+tasks are waiting for a page bit") while unsave unfreeze itself was added
+in commit 8df651c7059e ("thp: cleanup split_huge_page()").
 
-That's all true, but I think the intent of these patches was to detect
-malicious file change, where the fuse filesystem itself is malicious.
+clear_compound_head() also must be called before unfreezing page reference
+because successful get_page_unless_zero() must stabilize compound_head().
 
->From the patch description:    
-    It is useful in FUSE because the userspace FUSE process can change the
-    underlying files at any time without notifying the kernel. FUSE can be
-    mounted by unprivileged users either today with fusermount installed
-    with setuid, or soon with the upcoming patches to allow FUSE mounts in
-    a non-init user namespace. That makes the issue more visible than for
-    network filesystems where unprivileged users cannot mount.
+And replace page_ref_inc()/page_ref_add() with page_ref_unfreeze() which
+is made especially for that and has semantic of smp_store_release().
 
-For the example test provided, re-measuring the file works properly. I
-had missed that if the fuse filesystem could provide different files,
-at least in theory, it could also be able to provide different pages.
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ mm/huge_memory.c |   34 +++++++++++++---------------------
+ 1 file changed, 13 insertions(+), 21 deletions(-)
 
-Mimi
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 87ab9b8f56b5..fa577aa7ecd8 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2355,26 +2355,11 @@ static void __split_huge_page_tail(struct page *head, int tail,
+ 	struct page *page_tail = head + tail;
+ 
+ 	VM_BUG_ON_PAGE(atomic_read(&page_tail->_mapcount) != -1, page_tail);
+-	VM_BUG_ON_PAGE(page_ref_count(page_tail) != 0, page_tail);
+ 
+ 	/*
+-	 * tail_page->_refcount is zero and not changing from under us. But
+-	 * get_page_unless_zero() may be running from under us on the
+-	 * tail_page. If we used atomic_set() below instead of atomic_inc() or
+-	 * atomic_add(), we would then run atomic_set() concurrently with
+-	 * get_page_unless_zero(), and atomic_set() is implemented in C not
+-	 * using locked ops. spin_unlock on x86 sometime uses locked ops
+-	 * because of PPro errata 66, 92, so unless somebody can guarantee
+-	 * atomic_set() here would be safe on all archs (and not only on x86),
+-	 * it's safer to use atomic_inc()/atomic_add().
++	 * Clone page flags before unfreezing refcount.
++	 * lock_page() after speculative get wants to set PG_waiters.
+ 	 */
+-	if (PageAnon(head) && !PageSwapCache(head)) {
+-		page_ref_inc(page_tail);
+-	} else {
+-		/* Additional pin to radix tree */
+-		page_ref_add(page_tail, 2);
+-	}
+-
+ 	page_tail->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
+ 	page_tail->flags |= (head->flags &
+ 			((1L << PG_referenced) |
+@@ -2387,14 +2372,21 @@ static void __split_huge_page_tail(struct page *head, int tail,
+ 			 (1L << PG_unevictable) |
+ 			 (1L << PG_dirty)));
+ 
+-	/*
+-	 * After clearing PageTail the gup refcount can be released.
+-	 * Page flags also must be visible before we make the page non-compound.
+-	 */
++	/* Page flags must be visible before we make the page non-compound. */
+ 	smp_wmb();
+ 
++	/*
++	 * Clear PageTail before unfreezing page refcount:
++	 * speculative refcount must stabilize compound_head().
++	 */
+ 	clear_compound_head(page_tail);
+ 
++	/*
++	 * Finally unfreeze refcount. Additional pin to radix tree.
++	 */
++	page_ref_unfreeze(page_tail, 1 + (!PageAnon(head) ||
++					  PageSwapCache(head)));
++
+ 	if (page_is_young(head))
+ 		set_page_young(page_tail);
+ 	if (page_is_idle(head))
