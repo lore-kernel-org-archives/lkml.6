@@ -1,141 +1,117 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AH8x2251HldgeE12qRrP4QkIC2GuiTE3X4q0aGNjFfKx61m5bjxAEXOBRXtkuaCDxWNr4gbplNFp
-ARC-Seal: i=1; a=rsa-sha256; t=1518605023; cv=none;
+Return-Path: <gnomes@lxorguk.ukuu.org.uk>
+X-Google-Smtp-Source: AH8x2253r6X8in9eYUKYigmLZTewneALRPaqB80PBhN25pjR8hSTvOezRnVBMb1ROEBghnm9LhZy
+ARC-Seal: i=1; a=rsa-sha256; t=1518391616; cv=none;
         d=google.com; s=arc-20160816;
-        b=0Iib1yVqK3rj+Kp9q1Bi4kOEMukqSYVzJW/7XTlyA/VWIjBwOyBtSvkdG+YhPY9yY8
-         Zi8pXlG73PS/0iwdqeWc4wY0C5F5rB1eSKcvXXbLA31sLfGgVP1KLmhnWJTs3DiVdaGD
-         aNoOtj+27u6ygJ/1R9xy58OXrKpMT/iF56BpT6/Pz6/2QUcreLwhQaB0NkQXameohkk7
-         U6gGOVPBoWCwjXlzlWWGVY4bA9ZDckZ/InLQYL9MH86syjmGN/xU4JzF49x4ScvW+HP8
-         G0Mcfh+J9DQLYsD/jpXDaJKTZ3jMboILEjxC+ImF3XNYxFDopaNUxmk08/3O9Fn+sAbC
-         mZNQ==
+        b=w0PNVMgaevZFZYSu0+pf1i3SD119kCJdaQSKFTpFifbz/PkTk7BbMg/wS1mpamxjbk
+         Nn6bYQxh6uMjo7CuAnVBblnfC317Sjafra9JpwTFJ3Zf8vlNPdyXiqcUp1MBe07cujo1
+         XmlpUUdbv6QyCbH2SfMkwQ4ABqsirGJWnsi8eD3O59aI01LYcN2+daE/IHS09G6Djyzd
+         FQ6+y255HeSYmTERhmYlDnv1/Mh2jZ6qkAcigUEeo8jGuuK7nNbxTipibGFjRO7qRrvW
+         7mv6LD/HaA7ma1FH4nd1QoOkOJR8FfDO/4ePHwn3Pswk+0XaTiTEWtlSQtyJulq+olM9
+         O13w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=wgNfUhtyxJwR6OOyA1l6i/hrqjnsQY8hlmZdgkU/MFk=;
-        b=M+AF+9bzegOZpu9rM4ErsQRxSHD1I72dxRx/X6+p4mf1wxgWZAaUYam6nhEEZcoUbh
-         +gEsLOTuOS6spSpbllsg10FGCAIClgZ+WYvrPlipvaM1cDuV/a30EFSNkuFrXlJsfKTe
-         gvmu1DLKVU6jnqLLqAyjzQ/m3+TqVRMUgyuf4Cf5pdkG8BlYrw8FXymPVmVc3TsC0Gho
-         ARrGrNM3gGWMq86cfIb40h+Gxh7CM53QsId6s8Sr2MZlBCQ1IY7IIddZwD/YluS65KnC
-         fRdnud49vjgOdZnRSEm138X/h+J+k9imxk1sDeg4rk6lvevz51fFv81+9sZzFEiKM2hB
-         Uc+g==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=m7oy4X60h1XNzDkQVKfCMtKwSz4HUz8uYIJpwLXNMiA=;
+        b=PHLfWgIP7c70nYa8sB+PJgsWWzf28LtwWxlkWNf7cbmCnao9urkPo2rU2n6hKcfYCh
+         9SB8LVQGjmcEKDsqas1fGzs8PK3gj5tEskiVRMQTAgZLdYD2TRwKRYufh3nwDwU8OCvW
+         l4qSVUXTgRsF2Rtpz/z52gAigxAfjjqjB4vWZ+npTDH5SwR3/DC+IS2Dkt5x4DPkgi+2
+         I0qAax6NtTwPWaXRNp4id/fZauiE72s+De/CvZNexBy6hJpelKoeqylHLenKXz9E+teG
+         tQ106qm9A4P1ogdLnqqNr5eYvhyfYjlKDCBp1Y+d/7D/M1Y95GpyLvEr4RBAI0nlxJfW
+         C9ZA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Wed, 14 Feb 2018 11:43:42 +0100
-From: Pavel Machek <pavel@ucw.cz>
+       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
+Date: Sun, 11 Feb 2018 23:25:56 +0000
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 To: Andy Lutomirski <luto@amacapital.net>
 Cc: Mark D Rustad <mrustad@gmail.com>, Adam Borowski <kilobyte@angband.pl>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Joerg Roedel <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>, Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joerg Roedel
+ <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>,
+        Joerg Roedel
+ <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar
+ <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        X86 ML
+ <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM
+ <linux-mm@kvack.org>, Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf
+ <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra
+ <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+        Jiri Kosina
+ <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian
+ Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys
+ Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg
+ KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss
+ <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>, Kees Cook
+ <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long
+ <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 00/31 v2] PTI support for x86_32
-Message-ID: <20180214104342.GA12209@amd>
-References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
- <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
- <20180209191112.55zyjf4njum75brd@suse.de>
- <20180210091543.ynypx4y3koz44g7y@angband.pl>
- <CA+55aFwdLZjDcfhj4Ps=dUfd7ifkoYxW0FoH_JKjhXJYzxUSZQ@mail.gmail.com>
- <20180211105909.53bv5q363u7jgrsc@angband.pl>
- <6FB16384-7597-474E-91A1-1AF09201CEAC@gmail.com>
- <0C6EFF56-F135-480C-867C-B117F114A99F@amacapital.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-Content-Disposition: inline
+Message-ID: <20180211232556.1fdde355@alans-desktop>
 In-Reply-To: <0C6EFF56-F135-480C-867C-B117F114A99F@amacapital.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
+	<CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
+	<20180209191112.55zyjf4njum75brd@suse.de>
+	<20180210091543.ynypx4y3koz44g7y@angband.pl>
+	<CA+55aFwdLZjDcfhj4Ps=dUfd7ifkoYxW0FoH_JKjhXJYzxUSZQ@mail.gmail.com>
+	<20180211105909.53bv5q363u7jgrsc@angband.pl>
+	<6FB16384-7597-474E-91A1-1AF09201CEAC@gmail.com>
+	<0C6EFF56-F135-480C-867C-B117F114A99F@amacapital.net>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914900490843452?=
-X-GMAIL-MSGID: =?utf-8?q?1592372781010625396?=
+X-GMAIL-MSGID: =?utf-8?q?1592149007473309773?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Sun, 11 Feb 2018 11:42:47 -0800
+Andy Lutomirski <luto@amacapital.net> wrote:
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun 2018-02-11 11:42:47, Andy Lutomirski wrote:
->=20
->=20
 > On Feb 11, 2018, at 9:40 AM, Mark D Rustad <mrustad@gmail.com> wrote:
->=20
+> 
 > >> On Feb 11, 2018, at 2:59 AM, Adam Borowski <kilobyte@angband.pl> wrote:
-> >>=20
+> >>   
 > >>> Does Debian make it easy to upgrade to a 64-bit kernel if you have a
-> >>> 32-bit install?
-> >>=20
-> >> Quite easy, yeah.  Crossgrading userspace is not for the faint of the =
-heart,
-> >> but changing just the kernel is fine.
-> >=20
-> > ISTR that iscsi doesn't work when running a 64-bit kernel with a 32-bit=
- userspace. I remember someone offered kernel patches to fix it, but I thin=
-k they were rejected. I haven't messed with that stuff in many years, so pe=
-rhaps the userspace side now has accommodation for it. It might be somethin=
-g to check on.
-> >=20
->=20
-> At the risk of suggesting heresy, should we consider removing x86_32 supp=
-ort at some point?
+> >>> 32-bit install?  
+> >> 
+> >> Quite easy, yeah.  Crossgrading userspace is not for the faint of the heart,
+> >> but changing just the kernel is fine.  
+> > 
+> > ISTR that iscsi doesn't work when running a 64-bit kernel with a 32-bit userspace. I remember someone offered kernel patches to fix it, but I think they were rejected. I haven't messed with that stuff in many years, so perhaps the userspace side now has accommodation for it. It might be something to check on.
+> >   
+> 
+> At the risk of suggesting heresy, should we consider removing x86_32 support at some point?
 
-We have just found out that majority of 64-bit machines are broken in
-rather fundamental ways (Spectre) and Intel does not even look
-interested in fixing that (because it would make them look bad on
-benchmarks).
+Probably - although it's still relevant for Quark. I can't think of any
+other in-production 32bit only processor at this point. Big core Intel
+went 64bit 2006 or so, atoms mostly 2008 or so (with some stragglers that
+are 32 or 64 bit depending if it's enabled) until 2011 (Cedartrail)
 
-Even when the Spectre bug is mitigated... this looks like can of worms
-that can not be closed.
+If someone stuck a fork in it just after the next long term kernel
+release then by the time that expired it would probably be historical
+interest only.
 
-OTOH -- we do know that there are non-broken machines out there,
-unfortunately they are mostly 32-bit :-). Removing support for
-majority of working machines may not be good idea...
+Does it not depend if there is someone crazy enough to maintain it
+however - 68000 is doing fine 8)
 
-[And I really hope future CPUs get at least option to treat cache miss
-as a side-effect -- thus disalowed during speculation -- and probably
-option to turn off speculation altogether. AFAICT, it should "only"
-result in 50% slowdown -- or that was result in some riscv
-presentation.]
-
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqEEt4ACgkQMOfwapXb+vKwvQCeIXEkHk0gIuij6jJeJ8L9JpaQ
-OVUAn2Jr3gvFOK5Qz+8M3nnE2T54bLHV
-=30Yq
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
+Alan
