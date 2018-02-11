@@ -1,100 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932153AbeBKTnL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 14:43:11 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38992 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753584AbeBKTnJ (ORCPT
+        id S1753712AbeBKUJT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 15:09:19 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42784 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752823AbeBKUJR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 14:43:09 -0500
-X-Google-Smtp-Source: AH8x226128nSEIyFuFc+0fApuNmIi4p5720iH+Yo93Bj8HvQbouaQ+v0lZkkS319l1Kk8WAfFMfEAg==
-Date: Sun, 11 Feb 2018 20:43:05 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        karahmed@amazon.de, sironi@amazon.de, kvm@vger.kernel.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com
-Subject: Re: [PATCH] x86/speculation: Clean up various Spectre related details
-Message-ID: <20180211194305.zg7tq3x3cxjuphyo@gmail.com>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
- <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <20180211185057.rest4bf2ydx7slrk@gmail.com>
- <1518377119.6606.2.camel@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1518377119.6606.2.camel@infradead.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Sun, 11 Feb 2018 15:09:17 -0500
+X-Google-Smtp-Source: AH8x225tU7coRKi570LCSC3pM95egYNYCLXU35Jq3dtHzLWg93qZzSjrbanm5yyoJOgwwZejWzZ/Cw==
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v3 1/7] watchdog: sama5d4: make use of timeout-secs provided in devicetree
+Date: Sun, 11 Feb 2018 21:08:41 +0100
+Message-Id: <20180211200847.25000-1-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+watchdog_init_timeout() will allways pick timeout_param since it
+defaults to a valid timeout.
 
-* David Woodhouse <dwmw2@infradead.org> wrote:
+Following best practice described in
+Documentation/watchdog/watchdog-kernel-api.txt to make use of
+the parameter logic.
 
-> 
-> 
-> On Sun, 2018-02-11 at 19:50 +0100, Ingo Molnar wrote:
-> > 
-> > From 82c2b2f29691143a05181333f387e786646aa28b Mon Sep 17 00:00:00 2001
-> > From: Ingo Molnar <mingo@kernel.org>
-> > Date: Sat, 10 Feb 2018 11:51:57 +0100
-> > Subject: [PATCH] x86/speculation: Clean up various Spectre related details
-> > 
-> > Harmonize all the Spectre messages so that a:
-> > 
-> >     dmesg | grep -i spectre
-> > 
-> > ... gives us most Spectre related kernel boot messages.
-> > 
-> > Also fix a few other details:
-> > 
-> >  - clarify a comment about firmware speculation control
-> > 
-> >  - s/KPTI/PTI
-> > 
-> >  - remove various line-breaks that made the code uglier
-> > 
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > Cc: Arjan van de Ven <arjan@linux.intel.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: David Woodhouse <dwmw2@infradead.org>
-> > Cc: David Woodhouse <dwmw@amazon.co.uk>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> 
-> 
-> 
-> Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
 
-Thanks, added.
+Notes:
+    v3:
+    	- Use wdd->timeout instead of wdt_timeout when print out
+    	  timout in probe function.
 
-> with a couple of comments:
-> 
-> 
-> -        * If neither SMEP or KPTI are available, there is a risk of
-> +        * If neither SMEP or PTI are available, there is a risk of
-> 
-> Make that 'neither SMEP nor PTI' while you're at it though please;
-> that's bugged me a couple of times in passing.
+ drivers/watchdog/sama5d4_wdt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Ok, fixed that too.
-
-> 
-> And should these say 'Spectre v2' not just 'Spectre'?
-
-Yeah, you are probably right, but I didn't want to make the messages too specific 
-- do we really know that this is the end of Spectre-style speculation holes?
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
+index 0ae947c3d7bc..255169916dbb 100644
+--- a/drivers/watchdog/sama5d4_wdt.c
++++ b/drivers/watchdog/sama5d4_wdt.c
+@@ -33,7 +33,7 @@ struct sama5d4_wdt {
+ 	unsigned long		last_ping;
+ };
+ 
+-static int wdt_timeout = WDT_DEFAULT_TIMEOUT;
++static int wdt_timeout;
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+ 
+ module_param(wdt_timeout, int, 0);
+@@ -212,7 +212,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	wdd = &wdt->wdd;
+-	wdd->timeout = wdt_timeout;
++	wdd->timeout = WDT_DEFAULT_TIMEOUT;
+ 	wdd->info = &sama5d4_wdt_info;
+ 	wdd->ops = &sama5d4_wdt_ops;
+ 	wdd->min_timeout = MIN_WDT_TIMEOUT;
+@@ -273,7 +273,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, wdt);
+ 
+ 	dev_info(&pdev->dev, "initialized (timeout = %d sec, nowayout = %d)\n",
+-		 wdt_timeout, nowayout);
++		 wdd->timeout, nowayout);
+ 
+ 	return 0;
+ }
+-- 
+2.15.1
