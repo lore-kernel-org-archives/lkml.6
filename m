@@ -1,51 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753071AbeBKLHz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 06:07:55 -0500
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:34207 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752288AbeBKLHy (ORCPT
+        id S1753137AbeBKLOd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 06:14:33 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:34708 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753024AbeBKLOc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 06:07:54 -0500
-X-Google-Smtp-Source: AH8x224Kzl3oKsybvCeKCWnrPvDGWtWwAlLmU+jVlXaf0bDtcC0wVKoaBsWywG7Yj4dLJtaV+qcheA==
-Date: Sun, 11 Feb 2018 14:07:51 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH] mm/huge_memory.c: split should clone page flags before
- unfreezing pageref
-Message-ID: <20180211110751.tsseper2356aptbe@node.shutemov.name>
-References: <151834531706.176342.14968581451762734122.stgit@buzz>
+        Sun, 11 Feb 2018 06:14:32 -0500
+X-Google-Smtp-Source: AH8x225GbVRRMCm3o+4XvLTw+SO8pKcCwQqCOIt5SHa8BhCBpatXej5K7l/E8TrfAiYt3pvzEg+fZg==
+Subject: Re: [PATCH 1/9] nvme: fix the dangerous reference of namespaces list
+To: Jianchao Wang <jianchao.w.wang@oracle.com>, keith.busch@intel.com,
+        axboe@fb.com, hch@lst.de
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1518341920-1060-2-git-send-email-jianchao.w.wang@oracle.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <994088a8-616a-8eea-49f1-4a8f64932351@grimberg.me>
+Date: Sun, 11 Feb 2018 13:14:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151834531706.176342.14968581451762734122.stgit@buzz>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1518341920-1060-2-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 01:35:17PM +0300, Konstantin Khlebnikov wrote:
-> THP split makes non-atomic change of tail page flags. This is almost ok
-> because tail pages are locked and isolated but this breaks recent changes
-> in page locking: non-atomic operation could clear bit PG_waiters.
-> 
-> As a result concurrent sequence get_page_unless_zero() -> lock_page()
-> might block forever. Especially if this page was truncated later.
-> 
-> Fix is trivial: clone flags before unfreezing page reference counter.
-> 
-> This race exists since commit 62906027091f ("mm: add PageWaiters indicating
-> tasks are waiting for a page bit") while unsave unfreeze itself was added
-> in commit 8df651c7059e ("thp: cleanup split_huge_page()").
-
-Hm. Don't we have to have barrier between setting flags and updating
-the refcounter in this case? Atomics don't generally have this semantics,
-so you can see new refcount before new flags even after the change.
-
--- 
- Kirill A. Shutemov
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
