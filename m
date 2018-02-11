@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324470-2-12031026592832494123
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324461-2-18151799753241020390
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324469; b=A6KpKCxDZlhLz/j/BTRxJbGKmk7U5whcMVi8dyMF6JbNbTc
-    bI8jAOoRicLQOwm50yXu8KyH7ZgYIZea6+i6G+40G3lDfQHs8LGoPatvcQ/WzMbl
-    /36LRwTYFwnt9q2iAx0TnNbPMAaoHODSHoA9WsYxJKQI/8DIgLMP+iyOu1WGkC/l
-    vpVv9RuK5wACOE+qEejZMXVROz+xNrl7A2z1oO7WMVD/kjPXO9WzCltdbWi4xalT
-    wBQpcZfd39/gVkKEO0+f1quRgaLFr+sSzPq4ZzEp1gp1LNcDSvN3pEz8tzE4gTN1
-    ipEpGOigLoIvMZa0NoeC5OCv/14GzfCjB32Btjw==
+    t=1518324461; b=atwZ4R/ChjrsA7ZWkzPxrjSUE+HVtk6FDv+ZS3W9rP7UEFa
+    DrUkxRh2g8b9GqzLJwMjxV6jP+r/v3796okraLRlyBvC+2wuo7zQfCcBOid4aXAo
+    lXutGvTcHlzkikDIKTtgOKEzngsKME7Fks7KurwTL0Or9GNxuteAYLhs0A3EGqwc
+    iSBNdWCQDijtKN/tX4NJLaolKN1oUPWRfNzEBOIWV1f9Miisk4kJ4GT/12WQhunL
+    k9BhnqMj0n/P+kR7u8H20zkvJeF4itn7Oe8yWMNhkAJJJDBhLsyLMRrHKM/LDsQu
+    UtTSrWQcNu6ieMjRCqNSllrfBzdHcbqj2TdFm6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324469; bh=oiU8XmsU9REKio4ioaw
-    txa8rw9c2piHCvmIh1Pdv5FU=; b=FdkBxMMlzdxdh49TA8O8IKKJ5HHxwGOvYcL
-    4WelJ7s4gh6cWRWPkF1Rlqo/GXS4XudNgmcGM1GADb8D7jJDwsm/MBFKKj+VX2FM
-    7aQ6hyEVFcieWymMr+YhgwcsP0pSAAlgRvXQUDSuTBOHxfBU0buMbsq1CHpzfEPi
-    psoMul82XV123AAbayRSBIvRQRV8F254XA6Mzzd6ULZwvMVEwv74/BG6O5LazE3I
-    feh6pstGP5trOZ6QsuJvNgsbONBkJmx5h7AbIsMyMQFWfILDR/LJVkjLrJsT/f3W
-    naw6utUH5+CJJhMU2pg7awiISVGdyyYPhfqm2/eCqHsMuGhB8uQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324461; bh=Z2hgdlhgVJFB+3esPc8
+    7kb2g+aS1skHDK/PizlAhn9U=; b=ic5Q9Ow3E2U79JHV68NLS/DzI1/PKFhktX6
+    yVCC6+hAoti0npQxfOM1z+ZGUcGF49x0amDKCJktovPQWZnWtXFOoQ2Axm1EsiKW
+    8VS2ibbzX/IA3tJn9DW6WST6vrTsoQ4dakZl6Fz/8GhBv7SX9NKOZkSRIFnDYu3Q
+    pOLK7PFLWiHYNGGofVWuz9BrYr6p/N6Kjx+vINDMMqSxnQf1+VUKeEFJ4302g8XO
+    C0Jaz1EHTwQhNB/SylE1E+dk8JgiBL0uKlBMlECEbyS7Yn8EathU6ErGYfuCTFOi
+    d0G/7+sSmw47H1SwE9yKLgpbrwXEOnR1NgxoCvg/OT1tAsCjw8g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753332AbeBKErU (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:47:20 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41843 "EHLO
+        id S1753363AbeBKErV (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:47:21 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41836 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752852AbeBKEd6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752849AbeBKEd6 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:58 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>,
-        "Eric Biggers" <ebiggers@google.com>
+CC: akpm@linux-foundation.org, "Dave Jones" <davej@codemonkey.org.uk>,
+        "Anna Schumaker" <Anna.Schumaker@Netapp.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.798067463@decadent.org.uk>
+Message-ID: <lsq.1518323471.483168562@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 087/136] dm bufio: fix integer overflow when limiting
- maximum cache size
+Subject: [PATCH 3.16 091/136] NFS: Avoid RCU usage in tracepoints
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,69 +79,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Anna Schumaker <Anna.Schumaker@Netapp.com>
 
-commit 74d4108d9e681dbbe4a2940ed8fdff1f6868184c upstream.
+commit 3944369db701f075092357b511fd9f5755771585 upstream.
 
-The default max_cache_size_bytes for dm-bufio is meant to be the lesser
-of 25% of the size of the vmalloc area and 2% of the size of lowmem.
-However, on 32-bit systems the intermediate result in the expression
+There isn't an obvious way to acquire and release the RCU lock during a
+tracepoint, so we can't use the rpc_peeraddr2str() function here.
+Instead, rely on the client's cl_hostname, which should have similar
+enough information without needing an rcu_dereference().
 
-    (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100
-
-overflows, causing the wrong result to be computed.  For example, on a
-32-bit system where the vmalloc area is 520093696 bytes, the result is
-1174405 rather than the expected 130023424, which makes the maximum
-cache size much too small (far less than 2% of lowmem).  This causes
-severe performance problems for dm-verity users on affected systems.
-
-Fix this by using mult_frac() to correctly multiply by a percentage.  Do
-this for all places in dm-bufio that multiply by a percentage.  Also
-replace (VMALLOC_END - VMALLOC_START) with VMALLOC_TOTAL, which contrary
-to the comment is now defined in include/linux/vmalloc.h.
-
-Depends-on: 9993bc635 ("sched/x86: Fix overflow in cyc2ns_offset")
-Fixes: 95d402f057f2 ("dm: add bufio")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Reported-by: Dave Jones <davej@codemonkey.org.uk>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+[bwh: Backported to 3.16: Drop changes in
+ nfs4_inode{,_stateid}_callback_event()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/dm-bufio.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ fs/nfs/nfs4trace.h | 24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -888,7 +888,8 @@ static void __get_memory_limit(struct dm
- 		buffers = c->minimum_buffers;
+--- a/fs/nfs/nfs4trace.h
++++ b/fs/nfs/nfs4trace.h
+@@ -201,17 +201,13 @@ DECLARE_EVENT_CLASS(nfs4_clientid_event,
+ 		TP_ARGS(clp, error),
  
- 	*limit_buffers = buffers;
--	*threshold_buffers = buffers * DM_BUFIO_WRITEBACK_PERCENT / 100;
-+	*threshold_buffers = mult_frac(buffers,
-+				       DM_BUFIO_WRITEBACK_PERCENT, 100);
- }
+ 		TP_STRUCT__entry(
+-			__string(dstaddr,
+-				rpc_peeraddr2str(clp->cl_rpcclient,
+-					RPC_DISPLAY_ADDR))
++			__string(dstaddr, clp->cl_hostname)
+ 			__field(int, error)
+ 		),
  
- /*
-@@ -1778,19 +1779,15 @@ static int __init dm_bufio_init(void)
- 	memset(&dm_bufio_caches, 0, sizeof dm_bufio_caches);
- 	memset(&dm_bufio_cache_names, 0, sizeof dm_bufio_cache_names);
+ 		TP_fast_assign(
+ 			__entry->error = error;
+-			__assign_str(dstaddr,
+-				rpc_peeraddr2str(clp->cl_rpcclient,
+-						RPC_DISPLAY_ADDR));
++			__assign_str(dstaddr, clp->cl_hostname);
+ 		),
  
--	mem = (__u64)((totalram_pages - totalhigh_pages) *
--		      DM_BUFIO_MEMORY_PERCENT / 100) << PAGE_SHIFT;
-+	mem = (__u64)mult_frac(totalram_pages - totalhigh_pages,
-+			       DM_BUFIO_MEMORY_PERCENT, 100) << PAGE_SHIFT;
- 
- 	if (mem > ULONG_MAX)
- 		mem = ULONG_MAX;
- 
- #ifdef CONFIG_MMU
--	/*
--	 * Get the size of vmalloc space the same way as VMALLOC_TOTAL
--	 * in fs/proc/internal.h
--	 */
--	if (mem > (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100)
--		mem = (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100;
-+	if (mem > mult_frac(VMALLOC_TOTAL, DM_BUFIO_VMALLOC_PERCENT, 100))
-+		mem = mult_frac(VMALLOC_TOTAL, DM_BUFIO_VMALLOC_PERCENT, 100);
- #endif
- 
- 	dm_bufio_default_cache_size = mem;
+ 		TP_printk(
