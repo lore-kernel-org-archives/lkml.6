@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518323906-2-7795432501301739294
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518323898-2-11705836542944422914
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518323905; b=ZtOGD5/VRFE4Ic6L9Ep0t1NeN5wWa0VvelKywsSoIcgSeOR
-    vqNkM2mzWW8RiWP9AOYLHZMr6FdOTp2zagvzpH4n3WO2d+Ai0ANS1uKlnOj1M/UY
-    Q9oj3wTH3MxnNgTT/MHJ47Ct0rHSX9CeohNySYxn1KBl67tug+F7K7OvpT11vP97
-    QmNH7NEnVQ5jT9HKvN7GGQDobOALlPz4vZPj86Y1s1jG2sy9gRMyA1HjOAEn07Ze
-    0hVtpjQnPYswfm8J/gKrg+MH9J53y7C4+Z5rob7Z+HbvOOL8jOUMjQRN7aHQcm8n
-    DRU0gx3OSM+BXez9zHXuUPdjs6YQWHH/gAyp2dA==
+    t=1518323897; b=HX12xv6Mpa/2akoXhQBp23xUL7M9muEoqnrloAVhuHGt0j5
+    oTKCOV5zQLICbz0ZBJbMm4ZWvJ4nBZGyxi3+TvPntIIjWCKnL9lB2pb1lP42LBOJ
+    wymuQ/Tg1nM/Gv/MKhpuWiMudPYAcZ4zBJwUsP5MO4D7cDfAo8B6j0WdqI4l8wLg
+    /1ZGtL7ruGjMsNPuj2SxBOIXRMtcjxbJOG0EI+0XgwqIjY0G5k6hcw7lgtZAQiSm
+    mAZdntmS+AF0tRY3/JaGPMf3aUQoSw3UFYrcnMWbr2rwwgmfcB7dQzA2Jp/g3YKI
+    RI9ca9lusRQfIt6IQR2i4Ml/OU2kw08iIk/dFww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518323905; bh=bzW05FshcNxgsl347en
-    GLz6Zu6fIyfpy/YXkgJjaawg=; b=N6Jqum1ePQlDxHlpPkPLiDWruvdCKStR+kp
-    suowJrAV+28vfyyYgaoXyWlU3+pDOjSJd88Co3Ay96UPuSmYJ07/Mv26w7JraXS3
-    7EvLfVrWMPnRC8+F88ZN2q5qj1/qMCLfcVur6vey4RlswF1onMc1t9i25T/nHtkI
-    jCF1wDTd0rh2wfs0c4Y5Z1yGgAlu5uTf57OX05G5vwD9no/v5GgqZMOo9UngTzHt
-    4LB8cK1obLWLHIPVberG0eAKOHSnCG2JeO8A8Au/PvBSo+U7dxLeSV62AzeR4kFX
-    a+iqP2H3HMltuRIjMLDRcvNlojIl1EBj5RrVSwayo6zmwVikcjg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518323897; bh=tA05e4SYEVLN8dqFqBN
+    5CG8E13Jt0/8OuJcAUonXFds=; b=HbolfJ5BDwN2m0Y4qzeDnb5Cfi9yVqrU58S
+    f4OQxodoL0Mi9E7KF+aJ1GygVPGGAjIkCv9Ize6nhCyfZ2nIQw6W6ts0hBAa+Duf
+    8N9NeQwULzgXc7s7s9MHKcgy8/lwjFwLAKSlDPJNxf1jArtlNwRyabCVWaFhrNVF
+    A/yAxiNeWFagd6+1HvdZ/qAjTIqJQcIRX9iFYzBJ3JnchS6IYyV/dL+U0uj4n+sb
+    fLj7WtxvUsxJAqC4DUXBq+O7kzz5tb6DGm7plilLTPsziQtiH5zoahcqhlIybovV
+    B9THKNSmNgsUbmMSawhoj/NsGa8NJQIVZNhP4KtKw0d8tEdPOyQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752741AbeBKEhn (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:37:43 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41741 "EHLO
+        id S1752901AbeBKEho (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:37:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41737 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752977AbeBKEeL (ORCPT
+        by vger.kernel.org with ESMTP id S1752972AbeBKEeL (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:34:11 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,14 +60,12 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "Markus Elfring" <elfring@users.sourceforge.net>,
-        "Andy Shevchenko" <andy.shevchenko@gmail.com>
+        "William A. Kennington III" <wak@google.com>,
+        "Michael Ellerman" <mpe@ellerman.id.au>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.300391949@decadent.org.uk>
+Message-ID: <lsq.1518323471.19123212@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 051/136] platform/x86: sony-laptop: Fix error
- handling in sony_nc_setup_rfkill()
+Subject: [PATCH 3.16 057/136] powerpc/opal: Fix EBUSY bug in acquiring tokens
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,52 +80,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+From: "William A. Kennington III" <wak@google.com>
 
-commit f6c8a317ab208aee223776327c06f23342492d54 upstream.
+commit 71e24d7731a2903b1ae2bba2b2971c654d9c2aa6 upstream.
 
-Source code review for a specific software refactoring showed the need
-for another correction because the error code "-1" was returned so far
-if a call of the function "sony_call_snc_handle" failed here.
-Thus assign the return value from these two function calls also to
-the variable "err" and provide it in case of a failure.
+The current code checks the completion map to look for the first token
+that is complete. In some cases, a completion can come in but the
+token can still be on lease to the caller processing the completion.
+If this completed but unreleased token is the first token found in the
+bitmap by another tasks trying to acquire a token, then the
+__test_and_set_bit call will fail since the token will still be on
+lease. The acquisition will then fail with an EBUSY.
 
-Fixes: d6f15ed876b83a1a0eba1d0473eef58acc95444a ("sony-laptop: use soft rfkill status stored in hw")
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Link: https://lkml.org/lkml/2017/10/31/463
-Link: https://lkml.kernel.org/r/<CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This patch reorganizes the acquisition code to look at the
+opal_async_token_map for an unleased token. If the token has no lease
+it must have no outstanding completions so we should never see an
+EBUSY, unless we have leased out too many tokens. Since
+opal_async_get_token_inrerruptible is protected by a semaphore, we
+will practically never see EBUSY anymore.
+
+Fixes: 8d7248232208 ("powerpc/powernv: Infrastructure to support OPAL async completion")
+Signed-off-by: William A. Kennington III <wak@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/platform/x86/sony-laptop.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/powerpc/platforms/powernv/opal-async.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/platform/x86/sony-laptop.c
-+++ b/drivers/platform/x86/sony-laptop.c
-@@ -1654,17 +1654,19 @@ static int sony_nc_setup_rfkill(struct a
- 	if (!rfk)
- 		return -ENOMEM;
+--- a/arch/powerpc/platforms/powernv/opal-async.c
++++ b/arch/powerpc/platforms/powernv/opal-async.c
+@@ -38,18 +38,18 @@ int __opal_async_get_token(void)
+ 	int token;
  
--	if (sony_call_snc_handle(sony_rfkill_handle, 0x200, &result) < 0) {
-+	err = sony_call_snc_handle(sony_rfkill_handle, 0x200, &result);
-+	if (err < 0) {
- 		rfkill_destroy(rfk);
--		return -1;
-+		return err;
+ 	spin_lock_irqsave(&opal_async_comp_lock, flags);
+-	token = find_first_bit(opal_async_complete_map, opal_max_async_tokens);
++	token = find_first_zero_bit(opal_async_token_map, opal_max_async_tokens);
+ 	if (token >= opal_max_async_tokens) {
+ 		token = -EBUSY;
+ 		goto out;
  	}
- 	hwblock = !(result & 0x1);
  
--	if (sony_call_snc_handle(sony_rfkill_handle,
--				sony_rfkill_address[nc_type],
--				&result) < 0) {
-+	err = sony_call_snc_handle(sony_rfkill_handle,
-+				   sony_rfkill_address[nc_type],
-+				   &result);
-+	if (err < 0) {
- 		rfkill_destroy(rfk);
--		return -1;
-+		return err;
+-	if (__test_and_set_bit(token, opal_async_token_map)) {
++	if (!__test_and_clear_bit(token, opal_async_complete_map)) {
+ 		token = -EBUSY;
+ 		goto out;
  	}
- 	swblock = !(result & 0x2);
  
+-	__clear_bit(token, opal_async_complete_map);
++	__set_bit(token, opal_async_token_map);
+ 
+ out:
+ 	spin_unlock_irqrestore(&opal_async_comp_lock, flags);
