@@ -1,71 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753722AbeBKSvo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 13:51:44 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:58414 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753602AbeBKSvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 13:51:42 -0500
-Date: Sun, 11 Feb 2018 18:51:34 +0000
-From: Sergei Trofimovich <slyfox@gentoo.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stanton_arch@mail.com
-Subject: Re: [PATCH] ia64: fix ptrace(PTRACE_GETREGS) (unbreaks strace, gdb)
-Message-ID: <20180211185134.76ccfd45@sf>
-In-Reply-To: <20180202230220.13b74e8c@sf>
-References: <20180202221224.16597-1-slyfox@gentoo.org>
-        <20180202222231.23favlxecnxcencr@agluck-desk>
-        <20180202230220.13b74e8c@sf>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753655AbeBKS6f (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 13:58:35 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:32804 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753600AbeBKS6d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 13:58:33 -0500
+X-Google-Smtp-Source: AH8x225TfBBL9SZv9IKC/ddW/ytCa+tAwvHaVjv1b71IET+LtLp26119ZPfgXtXdDsV/qj9kJilDzxtzEBLJw3lF0AE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <cover.1518338788.git.lukas@wunner.de>
+References: <cover.1518338788.git.lukas@wunner.de>
+From: Mike Lothian <mike@fireburn.co.uk>
+Date: Sun, 11 Feb 2018 18:58:11 +0000
+Message-ID: <CAHbf0-Fhi9j5H7VTxF84SENQph+UQE2zRbi2Q-u_DAMh6x+eSg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        Ismo Toijala <ismo.toijala@gmail.com>, nouveau@lists.freedesktop.org,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        Hans de Goede <hdegoede@redhat.com>, Peter Wu <peter@lekensteyn.nl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Feb 2018 23:02:20 +0000
-Sergei Trofimovich <slyfox@gentoo.org> wrote:
+On 11 February 2018 at 09:38, Lukas Wunner <lukas@wunner.de> wrote:
+> Fix a deadlock on hybrid graphics laptops that's been present since 2013:
+>
+> DRM drivers poll connectors in 10 sec intervals.  The poll worker is
+> stopped on ->runtime_suspend with cancel_delayed_work_sync().  However
+> the poll worker invokes the DRM drivers' ->detect callbacks, which call
+> pm_runtime_get_sync().  If the poll worker starts after runtime suspend
+> has begun, pm_runtime_get_sync() will wait for runtime suspend to finish
+> with the intention of runtime resuming the device afterwards.  The result
+> is a circular wait between poll worker and autosuspend worker.
+>
+> I'm seeing this deadlock so often it's not funny anymore. I've also found
+> 3 nouveau bugzillas about it and 1 radeon bugzilla. (See patch [3/5] and
+> [4/5].)
+>
+> One theoretical solution would be to add a flag to the ->detect callback
+> to tell it that it's running in the poll worker's context.  In that case
+> it doesn't need to call pm_runtime_get_sync() because the poll worker is
+> only enabled while runtime active and we know that ->runtime_suspend
+> waits for it to finish.  But this approach would require touching every
+> single DRM driver's ->detect hook.  Moreover the ->detect hook is called
+> from numerous other places, both in the DRM library as well as in each
+> driver, making it necessary to trace every possible call chain and check
+> if it's coming from the poll worker or not.  I've tried to do that for
+> nouveau (see the call sites listed in the commit message of patch [3/5])
+> and concluded that this approach is a nightmare to implement.
+>
+> Another reason for the infeasibility of this approach is that ->detect
+> is called from within the DRM library without driver involvement, e.g.
+> via DRM's sysfs interface.  In those cases, pm_runtime_get_sync() would
+> have to be called by the DRM library, but the DRM library is supposed to
+> stay generic, wheras runtime PM is driver-specific.
+>
+> So instead, I've come up with this much simpler solution which gleans
+> from the current task's flags if it's a workqueue worker, retrieves the
+> work_struct and checks if it's the poll worker.  All that's needed is
+> one small helper in the workqueue code and another small helper in the
+> DRM library.  This solution lends itself nicely to stable-backporting.
+>
+> The patches for radeon and amdgpu are compile-tested only, I only have a
+> MacBook Pro with an Nvidia GK107 to test.  To test the patches, add an
+> "msleep(12*1000);" at the top of the driver's ->runtime_suspend hook.
+> This ensures that the poll worker runs after ->runtime_suspend has begun.
+> Wait 12 sec after the GPU has begun runtime suspend, then check
+> /sys/bus/pci/devices/0000:01:00.0/power/runtime_status.  Without this
+> series, the status will be stuck at "suspending" and you'll get hung task
+> errors in dmesg after a few minutes.
+>
+> i915, malidp and msm "solved" this issue by not stopping the poll worker
+> on runtime suspend.  But this results in the GPU bouncing back and forth
+> between D0 and D3 continuously.  That's a total no-go for GPUs which
+> runtime suspend to D3cold since every suspend/resume cycle costs a
+> significant amount of time and energy.  (i915 and malidp do not seem
+> to acquire a runtime PM ref in the ->detect callbacks, which seems
+> questionable.  msm however does and would also deadlock if it disabled
+> the poll worker on runtime suspend.  cc += Archit, Liviu, intel-gfx)
+>
+> Please review.  Thanks,
+>
+> Lukas
+>
+> Lukas Wunner (5):
+>   workqueue: Allow retrieval of current task's work struct
+>   drm: Allow determining if current task is output poll worker
+>   drm/nouveau: Fix deadlock on runtime suspend
+>   drm/radeon: Fix deadlock on runtime suspend
+>   drm/amdgpu: Fix deadlock on runtime suspend
+>
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c | 58 +++++++++++++-------
+>  drivers/gpu/drm/drm_probe_helper.c             | 14 +++++
+>  drivers/gpu/drm/nouveau/nouveau_connector.c    | 18 +++++--
+>  drivers/gpu/drm/radeon/radeon_connectors.c     | 74 +++++++++++++++++---------
+>  include/drm/drm_crtc_helper.h                  |  1 +
+>  include/linux/workqueue.h                      |  1 +
+>  kernel/workqueue.c                             | 16 ++++++
+>  7 files changed, 132 insertions(+), 50 deletions(-)
+>
+> --
+> 2.15.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-> On Fri, 2 Feb 2018 14:22:32 -0800
-> "Luck, Tony" <tony.luck@intel.com> wrote:
-> 
-> > On Fri, Feb 02, 2018 at 10:12:24PM +0000, Sergei Trofimovich wrote:  
-> > > The strace breakage looks like that:
-> > > ./strace: get_regs: get_regs_error: Input/output error
-> > > 
-> > > It happens because ia64 needs to load unwind tables
-> > > to read certain registers. Unwind tables fail to load
-> > > due to GCC quirk on the following code:
-> > > 
-> > >     extern char __end_unwind[];
-> > >     const struct unw_table_entry *end = (struct unw_table_entry *)table_end;
-> > >     table->end = segment_base + end[-1].end_offset;
-> > > 
-> > > GCC does not generate correct code for this single memory
-> > > reference after constant propagation (see https://gcc.gnu.org/PR84184).    
-> > 
-> > I'm not seeing this ... probably because I build with
-> > a pre-historic 4.3.4 version of gcc.
-> > 
-> > Do you know which version(s) are affected? I'm not looking
-> > for an exhaustive list, just the one on which you found this
-> > would be good.
-> > 
-> > -Tony  
-> 
-> Original bug https://bugs.gentoo.org/518130 claims regression appeared
-> around gcc-4.5. Locally am seeing the problem with gcc-6.4.0, gcc-7.2.0 and
-> gcc-8 (HEAD).
 
-Another report on the positive patch effect:
+I wasn't quite sure where to add that msleep. I've tested the patches
+as is on top of agd5f's wip branch without ill effects
 
-rx2600 boots successfully with this patch (did not without, my guess is due to
-early access fault at bad address): https://bugs.gentoo.org/579278#c13
+I've had a radeon and now a amdgpu PRIME setup and don't believe I've
+ever seen this issue
 
-Tested-by: stanton_arch@mail.com
+If you could pop a patch together for the msleep I'll give it a test on amdgpu
 
--- 
+Cheers
 
-  Sergei
+Mike
