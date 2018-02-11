@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325253-2-15947679936219747540
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325242-2-16595899525092095475
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325253; b=DLxCeGKaOPrrl+hGvetdKgwP6IOCosSQ1QPxrtK1hIid4Dc
-    LJioUHbxuWE+crlvig109/7FgMXv8tHynWKuWM81hL/l7+GBMcRlL0hlM+upLQU5
-    N2du15NcV5C4DzjJh7S+V58PfWnKii9XGYk+nhEWjRo1EJdaMw0gY8E2rMs6kWTn
-    GVBwfN2oJZr1icrAhL69lfYU6wh3I/CbQSM9LdjLQdcMFgdk+VFr8MyKeNWlYHuP
-    bUPgPdVUcsXBa5b5kWyZkCpW7c0PXA4JPxApvWniT5WE2i2KW65l/OAw9L95pKwI
-    ArzGHigqULhmpLtCX2l/bU3OsTdQ9hNbcsZt9vg==
+    t=1518325242; b=rs1EWGVAQZM8lNkLglaYwLaLaxXzIjKl0WZctG5H/pu3x6O
+    uKr+zWf0gODrJuy8FPt1AMElrg/XR7exxBnQgU0yuX5vGIw7vBNRfRRTnT+dXB4E
+    XOv4HIEyJWAa0gbiCSICnT2eBdp+vrRGcJ+GxmSZvktmRSYHawPOo8YZb70aWpwf
+    4t2DL/1FhoM408bIkIrVOuY5BMT3OVdxLgPl5z1RTNYakbibI/4T1koV7P11ajud
+    XM++gt6IU18ulEsLp4xHjt9DgcRnIdmpG9NL68kZ9BPlB+wosHzQlW8tx/XcClW3
+    BVyr2EvckkZFdRv1AkLIKD0ogWvh440O4reXPsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325253; bh=N0oWIh4RwVjyJDz31tg
-    6Oi6x20BSUcn8+eTfguRHb48=; b=jgSSPh5ptLRCheBoUfXYGNVkroBzzXbHAjI
-    CI1VUmLvm6xDqRuvQBQPj64Fbr1gU7OO+klbhS/ycgiXKMoKiVTWSh75RplFphfj
-    JFqs0su2ist8VQsQDwejfPw5Pnk7SfgpwQjFjOMy0sFN9vdEHbtc9qxFK/7kMPX2
-    0LJLd+RJ+IoKo+1/LQckRhSNOCvGlmV1cSemw2zEdsmPSe1l/PZU+5Hrx+/AcIG3
-    D5nKnEtZ8KJd6m9AzKmZe+Rc5l1ebKJIcib670EDO5xO7DAQJPMpERVWBLg/XjLm
-    Eqeqw1EascAmNW1sDrvHIbwkvAVO4tqO/5n/Qe54LygRPyFOM0A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325242; bh=QJT8W1KTHA5dx/Ets+3
+    vsp+WviDaXkVvm3ZddveDP20=; b=hFiF4P2e169/gEnMHWWkQ9ECqa6WX8xKH+/
+    1xPsp9/oFTaRKFd0gLsJYg5dgh6CAylOrJru2MJlxIIx8ak4zazlLCJi9cDv7TtQ
+    yxdSv6udJU3TVUOcTIoN4ShG+yXJiCQHZnYIMtrExuw6SYzOLsurx/tBOPfsPJ/V
+    LYEuqzYvvKq58XuPhXPGhj/rKyxt6U94V7IzIcDYhXVw20U7CB6IPF9b1hB34Jzs
+    7CEdO6edAYbI0GLuzbMM5HqrqVBMxpjMWbVnkCFGwKL2MIQepClpJmCr3KNvkv/a
+    qQmk/t6g6VsDzSnjY1cXSnyBVBDO/pbbKqC2O8BFTok+qO5xM6Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753789AbeBKE6t (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:58:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41684 "EHLO
+        id S1753815AbeBKE6w (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:58:52 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41669 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752786AbeBKEd4 (ORCPT
+        by vger.kernel.org with ESMTP id S1752777AbeBKEd4 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:56 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,12 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Sean Young" <sean@mess.org>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
+CC: akpm@linux-foundation.org,
+        "Alexandre Belloni" <alexandre.belloni@free-electrons.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.540959696@decadent.org.uk>
+Message-ID: <lsq.1518323471.600461425@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 018/136] media: rc: check for integer overflow
+Subject: [PATCH 3.16 007/136] rtc: set the alarm to the next expiring timer
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -79,37 +79,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sean Young <sean@mess.org>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-commit 3e45067f94bbd61dec0619b1c32744eb0de480c8 upstream.
+commit 74717b28cb32e1ad3c1042cafd76b264c8c0f68d upstream.
 
-The ioctl LIRC_SET_REC_TIMEOUT would set a timeout of 704ns if called
-with a timeout of 4294968us.
+If there is any non expired timer in the queue, the RTC alarm is never set.
+This is an issue when adding a timer that expires before the next non
+expired timer.
 
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Ensure the RTC alarm is set in that case.
+
+Fixes: 2b2f5ff00f63 ("rtc: interface: ignore expired timers when enqueuing new timers")
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/rc/ir-lirc-codec.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/rtc/interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/rc/ir-lirc-codec.c
-+++ b/drivers/media/rc/ir-lirc-codec.c
-@@ -289,11 +289,14 @@ static long ir_lirc_ioctl(struct file *f
- 		if (!dev->max_timeout)
- 			return -ENOSYS;
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -794,7 +794,7 @@ static int rtc_timer_enqueue(struct rtc_
+ 	}
  
-+		/* Check for multiply overflow */
-+		if (val > U32_MAX / 1000)
-+			return -EINVAL;
-+
- 		tmp = val * 1000;
- 
--		if (tmp < dev->min_timeout ||
--		    tmp > dev->max_timeout)
--				return -EINVAL;
-+		if (tmp < dev->min_timeout || tmp > dev->max_timeout)
-+			return -EINVAL;
- 
- 		dev->timeout = tmp;
- 		break;
+ 	timerqueue_add(&rtc->timerqueue, &timer->node);
+-	if (!next) {
++	if (!next || ktime_before(timer->node.expires, next->expires)) {
+ 		struct rtc_wkalrm alarm;
+ 		int err;
+ 		alarm.time = rtc_ktime_to_tm(timer->node.expires);
