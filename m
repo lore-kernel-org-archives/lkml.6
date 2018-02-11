@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325541-2-12645437801937062623
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325513-2-10172085611408939664
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325540; b=h19JB6PXrUO6AaaeHL1i6f6hlA1gp8YjaWd0bArljZALLrQ
-    0VpIFC1+Lkrp8OMw1X6BzQ+dQ2SfqY7dfKXD/MUO2Ab7Dd+KTQUlNAsYu8dCMghP
-    VNchqcopXbo4CsCRvYPT18WeXietAqtpzoA08L14rpdIrlxciiaBqzbIRJQUKJVp
-    CNd40AU5HnVz3yERKz5dddL89S3vkn6CtWjAGOfAiJq+Eo2IpSNcbzZputxVFq/a
-    g9zHIEMRuF1Ufsfw1jIEVdhCW8DS4Bd0Qkgh0UrjMR2zkbUpXYCLQ99+46h5lusN
-    zC0g3y6+S9HgNKhUdWbkvFPh/LzWhumWD56HdYQ==
+    t=1518325512; b=fz1fnB/LbM8ntFVRqumv028Hq6vidRWDrShFetFOFVEfowv
+    GOQ7PV67/qSFRpS7lp3PgUXky/wh6Cn7TsfLfzPfO6I0LajYvF3ydBUv09f3gbf7
+    06fqpW6ieuSIzzizYKywIna7OMY0bK2wwZwUH5CPFjSxbkwuGYW81Rhzi9Hduw4d
+    bm1m2v1NN8OyPves6Su6mchAptSEUcABR/mJLnPI2kuamZD7j/wRCIDQz+mAuWHs
+    WSvYYa84A4TA4OFkZaeyp/PMuwfNxvm6vn/adpcVgFvtPEo/DW/v9GGHD36NWZYF
+    R88nQnibEnZmAMY2M3tMRJ5o7o9MKefzIay2EMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325540; bh=G3gJItvIsBy0Wqv5zp9
-    byJggE0/dNpKKEtI9triE0NA=; b=W95VF+4y8fJ9hHTT8C4zesn2+T1PobJeoC7
-    Ysd9Su37kH33FT2rTXNByuM/XiYRPz6IuPrFFPwA+bfPFvKswPcj2+UaX4v9K1PD
-    YrSG19vQoHH4/2ycFz5SvagZqdmpU1FoNp7LzlA5LMKGkj5hzwUb+IdkyapEaT/E
-    CEY0i4gYXR/nLcztCkmtLqKTYxAATVwz8fv7PrZLC9uTBJwVIXokTq2usZt1WH9G
-    Gcb/6iT2gljZhxYOqpDgO6puKiljLLBIjtE/zzC5uVeCWJUv4joIazFtXrGY+pZB
-    NcyltrrdN9mMDtUpB0bZz7dpvp5hGZE/3fakqsZPZ+UqcYFfOig==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325512; bh=hxzA2n/bc91hHz4ZFaa
+    XgHjPiIUWsxlwyYjVboeT3X8=; b=fQmQRmx9Bg2vS93p/gUM16adjMAeVwptDru
+    2UyEDjhcdTY29r2ruv9ySwGCitVd1O3Y0wp6lzoE8DTYqbslFPjhhnGGjROKWgx5
+    u0Ywi3bX3IRvITdj6aIA9dnyZfyPyPB6FTxB7aVj/v4LsIxCR2SBeexvplZ0+Dxm
+    YbpGBZY/Kv9FCremV6gsewzUXBH8f7lcdcDTvR9MZ3ZMr3FgvfR51HTr6SvyvVuO
+    TqsQH0NwK/vdvm+3CsIpMqIDfamGR/jWC3K0QiJT0kHvj2kIusAIAXHpD98vDXkP
+    6c8fyYYJE7X/U7zBqKxsLRKJfqp5ObLlzAm5FaDbjhskJyc1oCQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753150AbeBKFFK (ORCPT <rfc822;greg@kroah.com>);
+        id S1753660AbeBKFFK (ORCPT <rfc822;greg@kroah.com>);
         Sun, 11 Feb 2018 00:05:10 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41540 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41535 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752701AbeBKEdn (ORCPT
+        by vger.kernel.org with ESMTP id S1752696AbeBKEdn (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:43 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -60,14 +60,14 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Markus Elfring" <elfring@users.sourceforge.net>
+        "Andreas Rohner" <andreas.rohner@gmx.net>,
+        "Ryusuke Konishi" <konishi.ryusuke@lab.ntt.co.jp>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.645547234@decadent.org.uk>
+Message-ID: <lsq.1518322806.998583910@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 22/79] media: omap_vout: Fix a possible null pointer
- dereference in omap_vout_open()
+Subject: [PATCH 3.2 53/79] nilfs2: fix race condition that causes file
+ system corruption
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,37 +82,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+From: Andreas Rohner <andreas.rohner@gmx.net>
 
-commit bfba2b3e21b9426c0f9aca00f3cad8631b2da170 upstream.
+commit 31ccb1f7ba3cfe29631587d451cf5bb8ab593550 upstream.
 
-Move a debug message so that a null pointer access can not happen
-for the variable "vout" in this function.
+There is a race condition between nilfs_dirty_inode() and
+nilfs_set_file_dirty().
 
-Fixes: 5c7ab6348e7b3fcca2b8ee548306c774472971e2 ("V4L/DVB: V4L2: Add support for OMAP2/3 V4L2 display driver on top of DSS2")
+When a file is opened, nilfs_dirty_inode() is called to update the
+access timestamp in the inode.  It calls __nilfs_mark_inode_dirty() in a
+separate transaction.  __nilfs_mark_inode_dirty() caches the ifile
+buffer_head in the i_bh field of the inode info structure and marks it
+as dirty.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-[bwh: Backported to 3.2: adjust filename]
+After some data was written to the file in another transaction, the
+function nilfs_set_file_dirty() is called, which adds the inode to the
+ns_dirty_files list.
+
+Then the segment construction calls nilfs_segctor_collect_dirty_files(),
+which goes through the ns_dirty_files list and checks the i_bh field.
+If there is a cached buffer_head in i_bh it is not marked as dirty
+again.
+
+Since nilfs_dirty_inode() and nilfs_set_file_dirty() use separate
+transactions, it is possible that a segment construction that writes out
+the ifile occurs in-between the two.  If this happens the inode is not
+on the ns_dirty_files list, but its ifile block is still marked as dirty
+and written out.
+
+In the next segment construction, the data for the file is written out
+and nilfs_bmap_propagate() updates the b-tree.  Eventually the bmap root
+is written into the i_bh block, which is not dirty, because it was
+written out in another segment construction.
+
+As a result the bmap update can be lost, which leads to file system
+corruption.  Either the virtual block address points to an unallocated
+DAT block, or the DAT entry will be reused for something different.
+
+The error can remain undetected for a long time.  A typical error
+message would be one of the "bad btree" errors or a warning that a DAT
+entry could not be found.
+
+This bug can be reproduced reliably by a simple benchmark that creates
+and overwrites millions of 4k files.
+
+Link: http://lkml.kernel.org/r/1509367935-3086-2-git-send-email-konishi.ryusuke@lab.ntt.co.jp
+Signed-off-by: Andreas Rohner <andreas.rohner@gmx.net>
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Tested-by: Andreas Rohner <andreas.rohner@gmx.net>
+Tested-by: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/video/omap/omap_vout.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/nilfs2/segment.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/media/video/omap/omap_vout.c
-+++ b/drivers/media/video/omap/omap_vout.c
-@@ -1003,11 +1003,12 @@ static int omap_vout_open(struct file *f
- 	struct omap_vout_device *vout = NULL;
+--- a/fs/nilfs2/segment.c
++++ b/fs/nilfs2/segment.c
+@@ -1880,8 +1880,6 @@ static int nilfs_segctor_collect_dirty_f
+ 					      "failed to get inode block.\n");
+ 				return err;
+ 			}
+-			mark_buffer_dirty(ibh);
+-			nilfs_mdt_mark_dirty(ifile);
+ 			spin_lock(&nilfs->ns_inode_lock);
+ 			if (likely(!ii->i_bh))
+ 				ii->i_bh = ibh;
+@@ -1890,6 +1888,10 @@ static int nilfs_segctor_collect_dirty_f
+ 			goto retry;
+ 		}
  
- 	vout = video_drvdata(file);
--	v4l2_dbg(1, debug, &vout->vid_dev->v4l2_dev, "Entering %s\n", __func__);
- 
- 	if (vout == NULL)
- 		return -ENODEV;
- 
-+	v4l2_dbg(1, debug, &vout->vid_dev->v4l2_dev, "Entering %s\n", __func__);
++		// Always redirty the buffer to avoid race condition
++		mark_buffer_dirty(ii->i_bh);
++		nilfs_mdt_mark_dirty(ifile);
 +
- 	/* for now, we only support single open */
- 	if (vout->opened)
- 		return -EBUSY;
+ 		clear_bit(NILFS_I_QUEUED, &ii->i_state);
+ 		set_bit(NILFS_I_BUSY, &ii->i_state);
+ 		list_move_tail(&ii->i_dirty, &sci->sc_dirty_files);
