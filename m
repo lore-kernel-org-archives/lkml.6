@@ -1,91 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753865AbeBKFZt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 00:25:49 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41406 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752784AbeBKFZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 00:25:45 -0500
-Date: Sun, 11 Feb 2018 13:25:39 +0800
-From: Peter Xu <peterx@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH] KVM: lapic: stop advertising DIRECTED_EOI when in-kernel
- IOAPIC is in use
-Message-ID: <20180211052539.GA31261@xz-mi>
-References: <20180209130133.28387-1-vkuznets@redhat.com>
+        id S1752667AbeBKFqp (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 00:46:45 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44156 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750787AbeBKFqn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 00:46:43 -0500
+X-Google-Smtp-Source: AH8x226kMR7lsx0t/BTgOzgPcucOXwxDXyhH0we6C37xtihYUX9CLZt3uv+3NlMMA57tlajovGncJkI5oofU3TIqfEQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180209130133.28387-1-vkuznets@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180211010201.GA14719@bombadil.infradead.org>
+References: <CAErzpmu5o+tLJyY9GqkFEOn=KSs0q9pevCBWcvzpxDyV9RiC_Q@mail.gmail.com>
+ <1518285863.16865.17.camel@perches.com> <20180211010201.GA14719@bombadil.infradead.org>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Sun, 11 Feb 2018 13:46:22 +0800
+Message-ID: <CAErzpmtU+HOasX1PEpFyV6-aJgjn4KsH8mOa6ekySCEXCc_1ug@mail.gmail.com>
+Subject: Re: [PATCH] seq_file: remove redundant assignment of index to m->index
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Joe Perches <joe@perches.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 02:01:33PM +0100, Vitaly Kuznetsov wrote:
-> Devices which use level-triggered interrupts under Windows 2016 with
-> Hyper-V role enabled don't work: Windows disables EOI broadcast in SPIV
-> unconditionally. Our in-kernel IOAPIC implementation emulates an old IOAPIC
-> version which has no EOI register so EOI never happens.
-> 
-> The issue was discovered and discussed a while ago:
-> https://www.spinics.net/lists/kvm/msg148098.html
-> 
-> While this is a guest OS bug (it should check that IOAPIC has the required
-> capabilities before disabling EOI broadcast) we can workaround it in KVM:
-> advertising DIRECTED_EOI with in-kernel IOAPIC makes little sense anyway.
-> 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> - Radim's suggestion was to disable DIRECTED_EOI unconditionally but I'm not
->   that radical :-) In theory, we may have multiple IOAPICs in userspace in
->   future and DIRECTED_EOI can be leveraged.
-
-I sort of agree on this, especially considering that we already have
-IOAPIC version 0x20 support in QEMU already.
-
-> ---
->  arch/x86/kvm/lapic.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 924ac8ce9d50..5339287fee63 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -321,8 +321,16 @@ void kvm_apic_set_version(struct kvm_vcpu *vcpu)
->  	if (!lapic_in_kernel(vcpu))
->  		return;
->  
-> +	/*
-> +	 * KVM emulates 82093AA datasheet (with in-kernel IOAPIC implementation)
-> +	 * which doesn't have EOI register; Some buggy OSes (e.g. Windows with
-> +	 * Hyper-V role) disable EOI broadcast in lapic not checking for IOAPIC
-> +	 * version first and level-triggered interrupts never get EOIed in
-> +	 * IOAPIC.
-> +	 */
->  	feat = kvm_find_cpuid_entry(apic->vcpu, 0x1, 0);
-> -	if (feat && (feat->ecx & (1 << (X86_FEATURE_X2APIC & 31))))
-> +	if (feat && (feat->ecx & (1 << (X86_FEATURE_X2APIC & 31))) &&
-> +	    !ioapic_in_kernel(vcpu->kvm))
->  		v |= APIC_LVR_DIRECTED_EOI;
->  	kvm_lapic_set_reg(apic, APIC_LVR, v);
->  }
-> -- 
-> 2.14.3
-> 
-
-Does this mean that we can avoid the migration problem that Radim
-raised in previous discussion?  Basically the OSs should only probe
-this version once for each boot, if so I think it should be fine.  But
-since you didn't mention that in either commit message and comment, I
-would like to ask and confirm.
-
-For the change itself, it looks sane to me.
-
-Thanks,
-
--- 
-Peter Xu
+On Sun, Feb 11, 2018 at 9:02 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Sat, Feb 10, 2018 at 10:04:23AM -0800, Joe Perches wrote:
+>> > @@ -120,14 +120,12 @@ static int traverse(struct seq_file *m, loff_t offset)
+>> >          if (pos + m->count > offset) {
+>> >              m->from = offset - pos;
+>> >              m->count -= m->from;
+>> > -            m->index = index;
+>> >              break;
+>> >          }
+>> >          pos += m->count;
+>> >          m->count = 0;
+>> >          if (pos == offset) {
+>> >              index++;
+>> > -            m->index = index;
+>> >              break;
+>> >          }
+>> >          p = m->op->next(m, p, &index);
+>>
+>> Of course this looks correct, but how
+>> are you _absolutely sure_ about this?
+>>
+>> Perhaps the m->op->stop(m, p) call below
+>> the break, which takes m as an argument,
+>> needs an updated m->index.
+>
+> Not only that, but ->next might also look at m->index.
+I think there is no chance to call op->next, because the loop will
+break immediately
+after the assignment.
