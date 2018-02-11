@@ -1,33 +1,33 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x226g79r3QOU2qIg/ayH9sotfWJtpBDpQV29hxoRADtBYfZxugnOc83Hv+6/Ww3If/jA1rlx2
-ARC-Seal: i=1; a=rsa-sha256; t=1518512443; cv=none;
+Return-Path: <ulfalizer@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518380971; cv=none;
         d=google.com; s=arc-20160816;
-        b=s7kvS9K3F3WDvVDdKwH1P0oqd5B+diIAX4CfXy6Km2WE9vhHrWWa1W1vNY53fqR2aC
-         WUI3oN9illSkeJ/N9UCcFeYl/FuqnQI7PCUTsr1AdRHT9uKFFAPgvyehQdjgp4cOncvS
-         gasj6bxUm9v651/gzOOAHKAQbhiz+2OPXHAUjCrHsYPDlWVDIszbrXuGVwiQAXS914oS
-         gZa2yC89NXTXYLVHFgfm+fZphJlFTu5hj4duwBTq5HzpR66FtN3xOjIa8kkEsrDMLchS
-         sXbtRF8w423acxX/HrYDpqjf3OZVSvb7RHIv4axYzfsrYqiDUTfRc8eWZOgGOMwb9GtR
-         llYA==
+        b=kFKgJE+G4157eXr0jpJw3dvbUWrshfJHlrVwkCdwHumZAGjLc49tXc4aTFiTUP/Wac
+         b27Qu57DPSgEeH4PvpEu+ZbLmEcjGLme8GqH4lyrzyr6ameDYpG40T+qlt/bOgdMn2r/
+         1cis/InwsQoMI8rWSjngaTWArEnaSlsa1WFcWF6nTzxNFdhml+qZRDIjB4Z+nSmEe8YE
+         p0l1AkBK3lZ4huN2X7dyN8PISjN/VSByAjg4rLC0jRPqKjU4tk8gTZiNBFTwIr1wsnBs
+         7YVyLpyNEeMDzTlWyIw7c3kQ+IWMNRDZ/SHk1k3C696WTMWN/vchFk8Acu/7gCaRNJ06
+         09FA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=OoHN3L+EgMi3QdRVCikhsLANjFHuDxATT8s2PGOuNn0=;
-        b=cWfMl6PC6B8hnIQ1a5MerUGiNDNZHlUUHI6+K84Ji/6NRK15IuCIrPOu55C2g+1ffr
-         Ef7fquaLK6l5qmxlpBAdYLvoFBZzk+HEjH3XgPGzpQD14zMDDiLIz7yAEPbJg4NOjGJn
-         y9fnIXEWD+nVEcEbuT2s5fXzwbDhJensEeyhDO01tSP5twSWlWa1BMUEwYxxcGBR1WmP
-         0IWe0jKYtkOQKbY/KEiJjy59Nf356Ty1i8JlCRrMpgZqDJNxsKYmc6fu+gjGf7Uy6F5q
-         idA7pHHI+KVdwVqazYxAP9ikeAZ+2p3gQoAL5LI3XYOz99U8nTx6udmS+fHfncJIS2B6
-         tWBA==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=EcFijaD0SdA/ClaA3jnsHR83Fe8PJ8ZabXgBth2dFU4=;
+        b=O1z8ONSglE8NiGHiJwm57v72ph9vIyve+RSpno5fUHrawUsHoBQDiFyOKWUwSfI0/T
+         79WmQY36Ti5qqoG3A8roKUf6BwgK3hIqYg0wNitf26wBfy2jHZ9HlasOF+8zBrDwbxYR
+         73YCvzHTVnv+6qTUXYddB4JK8Bo4ISm2dPItmcScZNL1yk3aP5JiM4NDsgkeiVFjkrqP
+         sdZeclcvc6Ko/3zpjYEBb6YuF7Jvvtppni/J36VE32mmI6p1lCZUOsv+XrkA0bSXp3nu
+         tnucXRoMS8dFBLf+syEDQr49Pu9GJRnBEv4uxRKjYxQ6lGEzHOj0dfNUkuIIwOl30012
+         +0Zw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QH7LZWwI;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IpWLnbGj;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QH7LZWwI;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w1D906tR012229
-X-Nifty-SrcIP: [209.85.213.51]
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IpWLnbGj;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x226RPvTilnsJjQ+tibdkvNcG1/1rWlRAcqnnNkWutb8ETDG7Ek9eA/GXwe8bLGLO11kUOshIUL9zd2tBP6zDwds=
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1SiejhK+eSx_mYqJratytU+_6FSjjatZE9n171GiA0mg@mail.gmail.com>
+In-Reply-To: <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -36,97 +36,67 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
  <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
  <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
- <CAK7LNAQpS6dYBnt_PjL5zrX1=eccSg80khu=WYCjnHNvDiKa3w@mail.gmail.com>
- <CAGXu5j+7kv=jrg2u7jaxFEXwHoyzDXP_jyKHYA682_BrYuHwQQ@mail.gmail.com>
- <49c196ec-891d-2030-bd6c-7222feb22059@infradead.org> <CAK7LNAREEJ_k9x2QXaT73nBg934pb9YvO9DfzhhU7+_fpDdH8g@mail.gmail.com>
- <b17cc8ff-1bf1-1026-d028-f9552701403d@infradead.org> <CAK8P3a1SiejhK+eSx_mYqJratytU+_6FSjjatZE9n171GiA0mg@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 13 Feb 2018 17:59:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARXz-SYZrnyWedh6nxLYS-T18RdEPFsmBxHUW_4jQERPA@mail.gmail.com>
-Message-ID: <CAK7LNARXz-SYZrnyWedh6nxLYS-T18RdEPFsmBxHUW_4jQERPA@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Sun, 11 Feb 2018 21:29:30 +0100
+Message-ID: <CAFkk2KSk_OpwagN_Ru0fHPyALK5HwtxHOcMhT8OHqeOH3hOP+w@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Kees Cook <keescook@chromium.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
+	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592275703402855740?=
+X-GMAIL-MSGID: =?utf-8?q?1592137845453518224?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-13 17:35 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> On Tue, Feb 13, 2018 at 2:53 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 02/12/2018 05:41 PM, Masahiro Yamada wrote:
->>> 2018-02-13 8:48 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->>>> On 02/12/2018 07:24 AM, Kees Cook wrote:
->>>>> On Mon, Feb 12, 2018 at 6:39 AM, Masahiro Yamada
->>>>> <yamada.masahiro@socionext.com> wrote:
->>>>
->>>>>>> (And in thinking about this, does Kconfig know the true $CC in use?
->>>>>>> i.e. the configured cross compiler, etc?)
->>>>>>
->>>>>> I was thinking of removing CONFIG_CROSS_COMPILE.
->>>>>>
->>>>>> A user can dynamically change CROSS_COMPILE from
->>>>>> "make menuconfig".
->>>>>
->>>>> Most builds I've seen implement cross compilers as an environment
->>>>> variable during all "make" invocations.
->>>>
->>>> I agree. I think you would break a bunch of build bots if you remove that.
->>>
->>>
->>> For clarification, I suggested to remove CONFIG_CROSS_COMPILE.
->>>
->>> The following code:
->>> https://github.com/torvalds/linux/blob/v4.16-rc1/Makefile#L315
->>> https://github.com/torvalds/linux/blob/v4.16-rc1/init/Kconfig#L58
->>>
->>> I hope build bots are not using this.
->>>
->>>
->>> Passing CROSS_COMPILE via the command line, environment
->>> is still supported.
->>
->> OK, I misunderstood.  That one can go away IMO.
+On Sun, Feb 11, 2018 at 6:56 PM, Kees Cook <keescook@chromium.org> wrote:
+> Another case I mentioned before that I just want to make sure we don't
+> reintroduce the problem of getting "stuck" with a bad .config file.
+> While adding _STRONG support, I discovered the two-phase Kconfig
+> resolution that happens during the build. If you selected _STRONG with
+> a strong-capable compiler, everything was fine. If you then tried to
+> build with an older compiler, you'd get stuck since _STRONG wasn't
+> support (as detected during the first Kconfig phase) so the
+> generated/autoconf.h would never get updated with the newly selected
+> _REGULAR). I moved the Makefile analysis of available stack-protector
+> options into the second phase (i.e. after all the Kconfig runs), and
+> that worked to both unstick such configs and provide a clear message
+> early in the build about what wasn't available.
 >
-> Removing it will break the workflow for some people in a minor way
-> though. Could we have the top-level Makefile try to detect the
-> CROSS_COMPILE? Instead of just using CC=gcc as the default,
-> we could check for ${ARCH}!=`uname -m` and then see if $PATH
-> contains a ${ARCH}-linux-gcc, ${ARCH}-elf-gcc or ${ARCH}-gcc.
->
-> it will need slightly more complexity to deal with architectures
-> that have different identifiers in linux and gcc, but I think it would
-> be a nice feature anyway.
->
->      Arnd
+> If all this detection is getting moved up into Kconfig, I'm worried
+> we'll end up in this state again. If the answer is "you have to delete
+> autoconf.h if you change compilers", then that's fine, but it sure
+> seems unfriendly. :)
 
-Some architectures such as m68k, mips, etc.
-do this in their arch/*/Makefile
-by using $(call cc-cross-prefix, ...)
+Did you mean include/config/auto.conf? That's the one that gets
+included by the Makefiles.
 
-But, currently we do not do this globally.
+If the feature detection is moved into Kconfig, you should only need
+to rerun the configuration (make menuconfig/oldconfig/olddefconfig) if
+you change the compiler. That will update .config while taking the new
+features into account, and then the second phase during 'make' will
+update include/config/auto.conf from .config.
 
-It would be possible to do it, but it does not mean
-backward-compatible with CONFIG_CROSS_COMPILE.
+That second Kconfig phase generates include/generated/autoconf.h and
+include/config/. The include/config/ directory implements dependencies
+between source files and Kconfig symbols by turning the symbols into
+(empty) files. When building (during the "second phase"), Kconfig
+compares .config with include/config/auto.conf to see what changed,
+and signals the changes to 'make' by touch'ing the files corresponding
+to the changed symbols. The idea is to avoid having to do a full
+rebuild whenever the configuration is changed.
 
+Check out scripts/basic/fixdep.c as well if you want to understand how it works.
 
--- 
-Best Regards
-Masahiro Yamada
+Cheers,
+Ulf
