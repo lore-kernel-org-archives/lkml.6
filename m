@@ -1,68 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753041AbeBKJj2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 04:39:28 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60368 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752811AbeBKJjO (ORCPT
+        id S1752972AbeBKJj1 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 04:39:27 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:33674 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752880AbeBKJjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 04:39:14 -0500
+        Sun, 11 Feb 2018 04:39:25 -0500
 From: Jianchao Wang <jianchao.w.wang@oracle.com>
 To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
 Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] nvme: fix the deadlock in nvme_update_formats
-Date: Sun, 11 Feb 2018 17:38:33 +0800
-Message-Id: <1518341920-1060-3-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH 9/9] nvme-pci: discard wait timeout when delete cq/sq
+Date: Sun, 11 Feb 2018 17:38:40 +0800
+Message-Id: <1518341920-1060-10-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
 References: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8801 signatures=668668
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=709
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802110127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nvme_update_formats will invoke nvme_ns_remove under namespaces_mutext.
-The will cause deadlock because nvme_ns_remove will also require
-the namespaces_mutext. Fix it by getting the ns entries which should
-be removed under namespaces_mutext and invoke nvme_ns_remove out of
-namespaces_mutext.
+Currently, nvme_disable_io_queues could be wakeup by both request
+completion and wait timeout path. This is unnecessary and could
+introduce race between nvme_dev_disable and request timeout path.
+When delete cq/sq command expires, the nvme_disable_io_queues will
+also be wakeup and return to nvme_dev_disable, then handle the
+outstanding requests. This will race with the request timeout path.
+
+To fix it, just use wait_for_completion instead of the timeout one.
+The request timeout path will wakeup it.
 
 Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- drivers/nvme/host/core.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/nvme/host/pci.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index bc05bc4..7425124 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1117,14 +1117,20 @@ static u32 nvme_passthru_start(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 
- static void nvme_update_formats(struct nvme_ctrl *ctrl)
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index a0ff18e..28f077b 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2058,7 +2058,6 @@ static int nvme_delete_queue(struct nvme_queue *nvmeq, u8 opcode)
+ static void nvme_disable_io_queues(struct nvme_dev *dev)
  {
--	struct nvme_ns *ns;
-+	struct nvme_ns *ns, *next;
-+	LIST_HEAD(rm_list);
+ 	int pass, queues = dev->online_queues - 1;
+-	unsigned long timeout;
+ 	u8 opcode = nvme_admin_delete_sq;
  
- 	mutex_lock(&ctrl->namespaces_mutex);
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
--		if (ns->disk && nvme_revalidate_disk(ns->disk))
--			nvme_ns_remove(ns);
-+		if (ns->disk && nvme_revalidate_disk(ns->disk)) {
-+			list_del_init(&ns->list);
-+			list_add_tail(&ns->list, &rm_list);
-+		}
- 	}
- 	mutex_unlock(&ctrl->namespaces_mutex);
-+
-+	list_for_each_entry_safe(ns, next, &rm_list, list)
-+		nvme_ns_remove(ns);
- }
+ 	for (pass = 0; pass < 2; pass++) {
+@@ -2066,15 +2065,12 @@ static void nvme_disable_io_queues(struct nvme_dev *dev)
  
- static void nvme_passthru_end(struct nvme_ctrl *ctrl, u32 effects)
+ 		reinit_completion(&dev->ioq_wait);
+  retry:
+-		timeout = ADMIN_TIMEOUT;
+ 		for (; i > 0; i--, sent++)
+ 			if (nvme_delete_queue(&dev->queues[i], opcode))
+ 				break;
+ 
+ 		while (sent--) {
+-			timeout = wait_for_completion_io_timeout(&dev->ioq_wait, timeout);
+-			if (timeout == 0)
+-				return;
++			wait_for_completion(&dev->ioq_wait);
+ 			if (i)
+ 				goto retry;
+ 		}
 -- 
 2.7.4
