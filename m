@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x227IIqUL2F/vS59ZKjSu5e7Ac2C0gpfKjnBe6un5b1QJdaIvTfQIqQdNqlsr80sM49B6vOx9
+X-Google-Smtp-Source: AH8x224bW7/D5+binUUbT5V77gRr4FVhJ1SOVk1hOHCTWzJTdf3GWjldZy+5M89/tdZUVBBmA2J7
 ARC-Seal: i=1; a=rsa-sha256; t=1518323622; cv=none;
         d=google.com; s=arc-20160816;
-        b=TWMUf1EiZKZcy/MJ/AigCr3RYO3p+sIX3b5qQEbz5tup/bSa8eIT+2chOQ12XFyBJA
-         r+1LzRoANwZGNR8p6lXYPd0VBQ09E0977dDgvOnuIPLLA3L0iMdz91p3DNgQYN29AlL9
-         IWu5ZnCOeC7L0REHw4WgMpj7tNGUWG8lSgF3IvOE3dWe+gzHkwEPq93tIwDn7bt4xXv9
-         3pWj1kaiqr4NYW0WdETrmPPlqsfGHkhS4GSnDDTcmq/pUIb/zwTUb3CuOvjCnz2vtnL1
-         zvmMzs8+juje9H4n1oNop1fS3t7Bksr6DTLwKGUYRIRFekW91z9EDk7GnLxfafnI+FVv
-         7vbg==
+        b=su+Cq/My75KbDURhYYXme+PcQ+Nk9Kd8m8EfH06A5tgkx/WGfxuiLLqzna9NE9n3Et
+         Wl8uBky4S6CXGejTo11E1qcys34oND4rbgIEmj2VGYHI9r2E0x2eUs9AO2ZvuWY6LNG4
+         tavuxaklNraAYRV9+pJ5avJ/7xPvtZaivAmY4ucFQAfmGJ6NtJun+ZByzZ0TyoZnLDHg
+         fDVCJ+WMaa52Q1S8u+5Hdoc6a+EzDbhuT3pQldBSzrjWDN/m/YHZh/DAZDBQrgy7LR5y
+         L5ieFU+uJi2VU4dLjowqPn3PHTsSTUgGaDOEU+xO78A/YAnpQ+1j7HSwPow+J/5neyoH
+         6brw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=eHVDf1Jsccrrlr7KujAOZwJyP+3R5znqraePdRp55yA=;
-        b=uPLvBk1E0PegTowwOSFivSaD02RYqZLkrJRZddJ4/bO/M8l0U7UMsQpYIj7p8FqqMb
-         SXSPcTt8681DzDCpaus0YgkT4BteKqqWnDnOYGi3pitg5XtQBwsvpGDbVPI+akHo9Ce9
-         dt113Q7k9kMisaJo92rUTRt3N0ROJoJhJv8zn7ZTzKgRY6ygYh5w8CiNbkmhDaYf82sC
-         0llqkmITJi5GOep5Fi1aKJOYuSqylG9O/8Ud5hnqOw5A3SWrpcoOd8eZS8300kueVDLs
-         6ooHPSzGgLgT9k/agv7IJBsqQQOw3vrLCLuLvgTGt/mfk/fbp0JTJ4eQwqU7aIb/nTzc
-         DVUw==
+        bh=PYYdXhr7+ju1Z8tP74DwCtpkWj1WtxVC4xT8V9hq5Ag=;
+        b=sL+NoSf39HrMnZsDw7a1VWxO3iQw8Qh5L6HBqh3xzzV1QI2LgPUAOcpXUTvbvc5Ezu
+         o6Eo6TrpB81gYeFNDthDWnnN4xrE5MgvpB4PuNYVkiQYcW4YT25uIKp6OybiA104zLO+
+         03t9OpWxosLxnYpbX/jeNjmbpPLzMzuHAFtY7k+XT53No059soMgYfSGsh3SN7KPfdy5
+         yciMIUdHmuOPHU2scyVJYNWfhb8DEF+B3ydqX4qODDMpuyGJz5X6ow7WDZc533xvGM+I
+         4rQyNgZ2YXCVIsBQ7dsDC6sDQtFuSiVKCBabU0ivHWw+CsSq5Xu2P8NH0aoazcemO1Ux
+         mWxw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,19 +30,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Bart Westgeest" <bart@elbrys.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+ "Takashi Iwai" <tiwai@suse.de>,
+ "Luo Quan" <a4651386@163.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Kees Cook" <keescook@chromium.org>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.620833136@decadent.org.uk>
+Message-ID: <lsq.1518322806.135220295@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 70/79] staging: usbip: removed #if 0'd out code
+Subject: [PATCH 3.2 69/79] ALSA: seq: Make ioctls race-free
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077710405660120?=
-X-GMAIL-MSGID: =?utf-8?q?1592077710405660120?=
+X-GMAIL-THRID: =?utf-8?q?1592077710316431011?=
+X-GMAIL-MSGID: =?utf-8?q?1592077710316431011?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,95 +52,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Westgeest <bart@elbrys.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 34c09578179f5838e5958c45e8aed4edc9c6c3b8 upstream.
+commit b3defb791b26ea0683a93a4f49c77ec45ec96f10 upstream.
 
-Signed-off-by: Bart Westgeest <bart@elbrys.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The ALSA sequencer ioctls have no protection against racy calls while
+the concurrent operations may lead to interfere with each other.  As
+reported recently, for example, the concurrent calls of setting client
+pool with a combination of write calls may lead to either the
+unkillable dead-lock or UAF.
+
+As a slightly big hammer solution, this patch introduces the mutex to
+make each ioctl exclusive.  Although this may reduce performance via
+parallel ioctl calls, usually it's not demanded for sequencer usages,
+hence it should be negligible.
+
+Reported-by: Luo Quan <a4651386@163.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[bwh: Backported to 3.2: ioctl dispatch is done from snd_seq_do_ioctl();
+ take the mutex and add ret variable there.]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/stub_rx.c  |  9 ---------
- drivers/staging/usbip/vhci_hcd.c | 39 ---------------------------------------
- 2 files changed, 48 deletions(-)
+ sound/core/seq/seq_clientmgr.c |   10 ++++++++--
+ sound/core/seq/seq_clientmgr.h |    1 +
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/usbip/stub_rx.c
-+++ b/drivers/staging/usbip/stub_rx.c
-@@ -367,15 +367,6 @@ static int get_pipe(struct stub_device *
- 	}
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -236,6 +236,7 @@ static struct snd_seq_client *seq_create
+ 	rwlock_init(&client->ports_lock);
+ 	mutex_init(&client->ports_mutex);
+ 	INIT_LIST_HEAD(&client->ports_list_head);
++	mutex_init(&client->ioctl_mutex);
  
- 	epd = &ep->desc;
--#if 0
--	/* epnum 0 is always control */
--	if (epnum == 0) {
--		if (dir == USBIP_DIR_OUT)
--			return usb_sndctrlpipe(udev, 0);
--		else
--			return usb_rcvctrlpipe(udev, 0);
--	}
--#endif
- 	if (usb_endpoint_xfer_control(epd)) {
- 		if (dir == USBIP_DIR_OUT)
- 			return usb_sndctrlpipe(udev, epnum);
---- a/drivers/staging/usbip/vhci_hcd.c
-+++ b/drivers/staging/usbip/vhci_hcd.c
-@@ -391,29 +391,6 @@ static int vhci_hub_control(struct usb_h
- 				dum->port_status[rhport] |=
- 					USB_PORT_STAT_ENABLE;
- 			}
--#if 0
--			if (dum->driver) {
--				dum->port_status[rhport] |=
--					USB_PORT_STAT_ENABLE;
--				/* give it the best speed we agree on */
--				dum->gadget.speed = dum->driver->speed;
--				dum->gadget.ep0->maxpacket = 64;
--				switch (dum->gadget.speed) {
--				case USB_SPEED_HIGH:
--					dum->port_status[rhport] |=
--						USB_PORT_STAT_HIGH_SPEED;
--					break;
--				case USB_SPEED_LOW:
--					dum->gadget.ep0->maxpacket = 8;
--					dum->port_status[rhport] |=
--						USB_PORT_STAT_LOW_SPEED;
--					break;
--				default:
--					dum->gadget.speed = USB_SPEED_FULL;
--					break;
--				}
--			}
--#endif
- 		}
- 		((u16 *) buf)[0] = cpu_to_le16(dum->port_status[rhport]);
- 		((u16 *) buf)[1] = cpu_to_le16(dum->port_status[rhport] >> 16);
-@@ -430,15 +407,6 @@ static int vhci_hub_control(struct usb_h
- 		case USB_PORT_FEAT_SUSPEND:
- 			usbip_dbg_vhci_rh(" SetPortFeature: "
- 					  "USB_PORT_FEAT_SUSPEND\n");
--#if 0
--			dum->port_status[rhport] |=
--				(1 << USB_PORT_FEAT_SUSPEND);
--			if (dum->driver->suspend) {
--				spin_unlock(&dum->lock);
--				dum->driver->suspend(&dum->gadget);
--				spin_lock(&dum->lock);
--			}
--#endif
- 			break;
- 		case USB_PORT_FEAT_RESET:
- 			usbip_dbg_vhci_rh(" SetPortFeature: "
-@@ -449,13 +417,6 @@ static int vhci_hub_control(struct usb_h
- 					~(USB_PORT_STAT_ENABLE |
- 					  USB_PORT_STAT_LOW_SPEED |
- 					  USB_PORT_STAT_HIGH_SPEED);
--#if 0
--				if (dum->driver) {
--					dev_dbg(hardware, "disconnect\n");
--					stop_activity(dum, dum->driver);
--				}
--#endif
--
- 				/* FIXME test that code path! */
- 			}
- 			/* 50msec reset signaling */
+ 	/* find free slot in the client table */
+ 	spin_lock_irqsave(&clients_lock, flags);
+@@ -2188,6 +2189,7 @@ static int snd_seq_do_ioctl(struct snd_s
+ 			    void __user *arg)
+ {
+ 	struct seq_ioctl_table *p;
++	int ret;
+ 
+ 	switch (cmd) {
+ 	case SNDRV_SEQ_IOCTL_PVERSION:
+@@ -2201,8 +2203,12 @@ static int snd_seq_do_ioctl(struct snd_s
+ 	if (! arg)
+ 		return -EFAULT;
+ 	for (p = ioctl_tables; p->cmd; p++) {
+-		if (p->cmd == cmd)
+-			return p->func(client, arg);
++		if (p->cmd == cmd) {
++			mutex_lock(&client->ioctl_mutex);
++			ret = p->func(client, arg);
++			mutex_unlock(&client->ioctl_mutex);
++			return ret;
++		}
+ 	}
+ 	snd_printd("seq unknown ioctl() 0x%x (type='%c', number=0x%02x)\n",
+ 		   cmd, _IOC_TYPE(cmd), _IOC_NR(cmd));
+--- a/sound/core/seq/seq_clientmgr.h
++++ b/sound/core/seq/seq_clientmgr.h
+@@ -59,6 +59,7 @@ struct snd_seq_client {
+ 	struct list_head ports_list_head;
+ 	rwlock_t ports_lock;
+ 	struct mutex ports_mutex;
++	struct mutex ioctl_mutex;
+ 	int convert32;		/* convert 32->64bit */
+ 
+ 	/* output pool */
