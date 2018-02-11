@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x225N3VCnT2IsnxtEAvC1G1p7lPd0/m5+Mlo7i9mK0/bMOXtoiDL4noOdpMp+om82Cs6O8ZTo
-ARC-Seal: i=1; a=rsa-sha256; t=1518323626; cv=none;
+X-Google-Smtp-Source: AH8x226ixUcIU0XqlwnqJfM9oedfLH8GwSyZKoXzHWTs45frTvZzlLUI/EVpPqnlqw/FMx48NJx/
+ARC-Seal: i=1; a=rsa-sha256; t=1518323624; cv=none;
         d=google.com; s=arc-20160816;
-        b=Kx0dSPOecuFHAoDeTpsuwWrQvegm/OSTjn2mRMDIopJ21aq66dmyYbbqU0wsaEHeyc
-         loL3tGQ1xJXwIyNinYGRDbLHt9A7rHUrc+XKUgYNpniBEiK3NGYXmw1ciyZJbzHiP8Mf
-         z/+3faD/nJfAJv11+CFqleQPrRw5BDvozep1vsnzF/xdUc7a6ivnSTAxSuHe9mBGeX7R
-         3VFKpbFRQL/vVP6K9uDNUvdtp4CXXZvePAxA5nAoXOw1QZArZ5f8vJ9G8joKFb8b7K5A
-         lu88zKgjzvG5r0V4q2ABUeuULkycc5iHcWKoOfrxwiwNVt0lPhO2yrghPcfUdIMBGk25
-         S9HA==
+        b=JoB7Repw/S4M4eSkQ0OSXCtbhYDWtHLXPGJLH124C4/7FWJmyiSpkKPbSTl5NXS7hf
+         wxlgMSPiJ7tYdeyVh/O6bknMVjG5aX+hnnYMIrgffu/Y8L69ytdA5xqx/4shdF5FR8CL
+         Elh+HODG24WOK+6Hti+QgKPyceTDapmoX14xb2bzEB9Z2C270DwougaEQ88tk9K62MCk
+         PZq1alde1IixWXOJjf+xy/W7fWpHhKTSg7BwZtqiBfZBaswUGktT+MQjmRS0h3HfpGfQ
+         8qLRm4pXIro6rFh3n4vzIASjST2MHQ4WfefPLGGdHUgJ063G8IlAmSr7BHI1SsyFLQRy
+         an4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=DT6ooxkMTwKbWX/4TkBweaVGV6QdgRh1PjrMNyombc4=;
-        b=YgJyOPCEFModMFfIuXk3eC/oWRTPY8LoZ0+dk+MMjnvmf7H5pxAqD+JQ8q8LqTmoX/
-         Wvqrqz4NRz+zW/vh6lnSA31c8Ks0d79xcfvUtVpAReN/9KVjBxJzTack2O3H3CGBedpl
-         /JODMEzmIsS2gXvmNjxigp8ouja9a4TQ1yITL0aRr6k8P+T3vaIzI/7/FLuNhsy/CUhy
-         HVfXhqnLA6208+RH2PMoT4gLW9iyFTW9NKgQs+Fijwwez+1XJ1QpNyvc1d3HCht1nf4R
-         Krn2DxTYe7qftMGPw5liZa6WhYNxHeIjicv4JoFnaGZuKp2zMQ114s9bcO8MsGSYVPxz
-         vwfg==
+        bh=BcMvjtfxidHho9ikrOlsXR4gg4QouDoo0serhxfGnhE=;
+        b=lUbqzs1B079BhBNs4G0siQIfrDffhEG6ND7MffbBDPnFCWbLqrd8VNeywujrAE0Xv2
+         NmoqdPwqkka9FXTqovHlqX0lBlMeIb2qLTb8gCYBE2fvgd0OGha6nDFqMlZbTiThg1/X
+         nYFGU+ooW33OHq3umbEiWWJ6ZubM/GP5zBNnTyNLteJhp4USGYoXQ+W/iFv6Dzp2DpMX
+         nY83Y0DtsPbJTnU+GrXtWxa7ua/Zl9WGHI2ilBZUl1lOIs65wLZjDKlehUz/0qJISqG9
+         18fY++oFOkM7zbLM57hVrh3wbjZVMkFnIE+9GliNO2wZJDG8JEbz4SgTQwUP8RGh7kwt
+         pQ3g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,21 +30,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Alan Stern" <stern@rowland.harvard.edu>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Minas Harutyunyan" <Minas.Harutyunyan@synopsys.com>
+ "Shuah Khan" <shuahkh@osg.samsung.com>,
+ "Secunia Research" <vuln@secunia.com>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.643433046@decadent.org.uk>
+Message-ID: <lsq.1518322806.536756096@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 31/79] USB: usbfs: compute urb->actual_length for
- isochronous
+Subject: [PATCH 3.2 75/79] usbip: prevent vhci_hcd driver from leaking a
+ socket pointer address
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077714820363844?=
-X-GMAIL-MSGID: =?utf-8?q?1592077714820363844?=
+X-GMAIL-THRID: =?utf-8?q?1592077713034495995?=
+X-GMAIL-MSGID: =?utf-8?q?1592077713034495995?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,67 +52,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 2ef47001b3ee3ded579b7532ebdcf8680e4d8c54 upstream.
+commit 2f2d0088eb93db5c649d2a5e34a3800a8a935fc5 upstream.
 
-The USB kerneldoc says that the actual_length field "is read in
-non-iso completion functions", but the usbfs driver uses it for all
-URB types in processcompl().  Since not all of the host controller
-drivers set actual_length for isochronous URBs, programs using usbfs
-with some host controllers don't work properly.  For example, Minas
-reports that a USB camera controlled by libusb doesn't work properly
-with a dwc2 controller.
+When a client has a USB device attached over IP, the vhci_hcd driver is
+locally leaking a socket pointer address via the
 
-It doesn't seem worthwhile to change the HCDs and the documentation,
-since the in-kernel USB class drivers evidently don't rely on
-actual_length for isochronous transfers.  The easiest solution is for
-usbfs to calculate the actual_length value for itself, by adding up
-the lengths of the individual packets in an isochronous transfer.
+/sys/devices/platform/vhci_hcd/status file (world-readable) and in debug
+output when "usbip --debug port" is run.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-Reported-and-tested-by: wlf <wulf@rock-chips.com>
+Fix it to not leak. The socket pointer address is not used at the moment
+and it was made visible as a convenient way to find IP address from socket
+pointer address by looking up /proc/net/{tcp,tcp6}.
+
+As this opens a security hole, the fix replaces socket pointer address with
+sockfd.
+
+Reported-by: Secunia Research <vuln@secunia.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.2:
+ - usbip port status does not include hub type
+ - Adjust filenames, context, indentation]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/devio.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/staging/usbip/usbip_common.h                 |  1 +
+ drivers/staging/usbip/vhci_sysfs.c                   | 25 ++++++++++++++++---------
+ drivers/staging/usbip/userspace/libsrc/vhci_driver.c |  8 ++++----
+ 3 files changed, 21 insertions(+), 13 deletions(-)
 
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1402,6 +1402,18 @@ static int proc_unlinkurb(struct dev_sta
- 	return 0;
- }
+--- a/drivers/staging/usbip/usbip_common.h
++++ b/drivers/staging/usbip/usbip_common.h
+@@ -276,6 +276,7 @@ struct usbip_device {
+ 	/* lock for status */
+ 	spinlock_t lock;
  
-+static void compute_isochronous_actual_length(struct urb *urb)
-+{
-+	unsigned int i;
-+
-+	if (urb->number_of_packets > 0) {
-+		urb->actual_length = 0;
-+		for (i = 0; i < urb->number_of_packets; i++)
-+			urb->actual_length +=
-+					urb->iso_frame_desc[i].actual_length;
-+	}
-+}
-+
- static int processcompl(struct async *as, void __user * __user *arg)
- {
- 	struct urb *urb = as->urb;
-@@ -1409,6 +1421,7 @@ static int processcompl(struct async *as
- 	void __user *addr = as->userurb;
- 	unsigned int i;
++	int sockfd;
+ 	struct socket *tcp_socket;
  
-+	compute_isochronous_actual_length(urb);
- 	if (as->userbuffer && urb->actual_length) {
- 		if (urb->number_of_packets > 0)		/* Isochronous */
- 			i = urb->transfer_buffer_length;
-@@ -1581,6 +1594,7 @@ static int processcompl_compat(struct as
- 	void __user *addr = as->userurb;
- 	unsigned int i;
+ 	struct task_struct *tcp_rx;
+--- a/drivers/staging/usbip/vhci_sysfs.c
++++ b/drivers/staging/usbip/vhci_sysfs.c
+@@ -38,13 +38,18 @@ static ssize_t show_status(struct device
  
-+	compute_isochronous_actual_length(urb);
- 	if (as->userbuffer && urb->actual_length) {
- 		if (urb->number_of_packets > 0)		/* Isochronous */
- 			i = urb->transfer_buffer_length;
+ 	/*
+ 	 * output example:
+-	 * prt sta spd dev socket           local_busid
+-	 * 000 004 000 000         c5a7bb80 1-2.3
+-	 * 001 004 000 000         d8cee980 2-3.4
++	 * prt sta spd dev sockfd    local_busid
++	 * 000 004 000 000 3         1-2.3
++	 * 001 004 000 000 4         2-3.4
++	 *
++	 * Output includes socket fd instead of socket pointer address to avoid
++	 * leaking kernel memory address in:
++	 *	/sys/devices/platform/vhci_hcd.0/status and in debug output.
++	 * The socket pointer address is not used at the moment and it was made
++	 * visible as a convenient way to find IP address from socket pointer
++	 * address by looking up /proc/net/{tcp,tcp6}. As this opens a security
++	 * hole, the change is made to use sockfd instead.
+ 	 *
+-	 * IP address can be retrieved from a socket pointer address by looking
+-	 * up /proc/net/{tcp,tcp6}. Also, a userland program may remember a
+-	 * port number and its peer IP address.
+ 	 */
+ 	out += sprintf(out, "prt sta spd bus dev socket           "
+ 		       "local_busid\n");
+@@ -58,7 +63,7 @@ static ssize_t show_status(struct device
+ 		if (vdev->ud.status == VDEV_ST_USED) {
+ 			out += sprintf(out, "%03u %08x ",
+ 				       vdev->speed, vdev->devid);
+-			out += sprintf(out, "%16p ", vdev->ud.tcp_socket);
++			out += sprintf(out, "%u", vdev->ud.sockfd);
+ 			out += sprintf(out, "%s", dev_name(&vdev->udev->dev));
+ 
+ 		} else {
+@@ -215,6 +220,7 @@ static ssize_t store_attach(struct devic
+ 
+ 	vdev->devid         = devid;
+ 	vdev->speed         = speed;
++	vdev->ud.sockfd     = sockfd;
+ 	vdev->ud.tcp_socket = socket;
+ 	vdev->ud.status     = VDEV_ST_NOTASSIGNED;
+ 
+--- a/drivers/staging/usbip/userspace/libsrc/vhci_driver.c
++++ b/drivers/staging/usbip/userspace/libsrc/vhci_driver.c
+@@ -63,12 +63,12 @@ static int parse_status(char *value)
+ 
+ 	while (*c != '\0') {
+ 		int port, status, speed, devid;
+-		unsigned long socket;
++		int sockfd;
+ 		char lbusid[SYSFS_BUS_ID_SIZE];
+ 
+-		ret = sscanf(c, "%d %d %d %x %lx %31s\n",
++		ret = sscanf(c, "%d %d %d %x %u %31s\n",
+ 				&port, &status, &speed,
+-				&devid, &socket, lbusid);
++				&devid, &sockfd, lbusid);
+ 
+ 		if (ret < 5) {
+ 			dbg("sscanf failed: %d", ret);
+@@ -77,7 +77,7 @@ static int parse_status(char *value)
+ 
+ 		dbg("port %d status %d speed %d devid %x",
+ 				port, status, speed, devid);
+-		dbg("socket %lx lbusid %s", socket, lbusid);
++		dbg("sockfd %u lbusid %s", sockfd, lbusid);
+ 
+ 
+ 		/* if a device is connected, look at it */
