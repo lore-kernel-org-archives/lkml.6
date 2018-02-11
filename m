@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1524142-1518325735-2-1454644671039572450
+X-Cyrus-Session-Id: sloti22d1t05-1524142-1518325645-2-7680782337628916145
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325734; b=CYesewUIHmF2OWoUqTXMp2oX++EhJ7dKSUEi7Ghtdvs2+7U
-    qMOAjsWICBQuT41b1R+K7oueZesGE4+vNFndJbUS64mlNTCNnuu4WzQOtT7M1rK7
-    QIEKrnodh+8u8ze5ydIlKgRE5YZ5BM7gCUOc+3WCYyUyI8Fy+eR2GOKJsxOts6hT
-    drVdnb30feAPJMCi6d0u6dhy8oIC/oPbpK2foEhFE/xOjDCUHT37ijs0dVJ9JotF
-    SvCF+y8ulWMozqZoHTtRYm63jTsYXIGU0WzOndmKefqbMI37EKpXcUgj7RG6kHXO
-    BpIRCJXAyJ3082fPguTNtCXO9u9k4cKsI8+c6uw==
+    t=1518325643; b=ROpgW/9Efug7KE1h6awEnmgwkxaKgul4vis01sDBpb8gTjM
+    kYOikdkuoUOIzxrppYh1OpKIduVMx5oqH1hv8FUr4EEDXmQACKuMgt8G/B2rkypT
+    5nk7PZHsHW8xHKYnlXIyreRKk4koyAJspVvJTCir7Js7Xm8Qe8mJq5nbkoUpLGJR
+    e+Tp9EcM/oThneLvw8dePxuti9gl2mSS5Ji92l6odnCizQ0I+eef0jxQlaB3BuMh
+    yTvBk7aowymX6+9tdJNqv1DIl+q+hYEl06PWuHdskMHGEIRme+XmWEscx25aVQKp
+    vZuyNdJk+ctIWFpA54+S0ux62ts3EiHk2Nk43Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325734; bh=PJZbxEB4fmnccTkyBCd
-    BRb0Nj+cc92VlfuFoYJwqgKU=; b=mnHtLMxplXMqVVn7ZLszoeY7rrMllICEVNw
-    F3rR+ya4fiPGJQmQA471MGoZuk+UZMuAOFpmZ5zSysiHYSkQDyZre4GNR8m0sXlG
-    yP4KbNTaSD1KGOwcxB4XYFpNrK9mSZdbKGpNGAbMKycoNIwK0QjU09uQVDKmTOdp
-    u8lYSK7YVXuqoY8h9aYE2i7liN4+Gqiuw8rYO5K1nbDAdVwcOIxsensJDIVVJxpW
-    8cs6lIX1xxnzY7W/l4jqP/YUd4qOai/b7sNIasc2zkWZWS6upacuEBXFnVf9IWms
-    n1+QLzXwu5a2o51CDUkumOVpEUiB+go/lSxbI6tFctKqT9H0pmg==
+    :sender:list-id; s=arctest; t=1518325643; bh=oDQib4lUz3cVqGgGDV8
+    a9+uRAkEzzJW4jrxXfnHl6U8=; b=wh7RjrcWGMLCW/q4CaQL+Tna7MUjHvEOxbu
+    3pRrnX59tJVzBd/rBhPMYKfGrbjeWW2djkEE8C28qvrR/slrLz8V/+bEr39SLcIg
+    vp/+/+sAyEjnpQFasSeJoXTW3Z3Ai7oJTIHTrZtmhs5gHFiFzRpaKOqqHs7AHX68
+    fwr/LSvClGH4VyZF9iPesXWRUt2eGasyDkMZwrzVb1P3LYBtiJl2+8lYQaMnSBZ4
+    H+QqBAdPNoPUDrWs7jAsrobgHh950LGgTUZz5EUImR1qZ28u+27DkFRV0oArqzGK
+    kP8tXLNb8bPkyQEyLAQNvcCtwkWcNZAU2Vy4AuEkF06MFthB6gA==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,25 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753727AbeBKFHd (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:07:33 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41419 "EHLO
+        id S1752728AbeBKFFj (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:05:39 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41497 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752635AbeBKEdm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:42 -0500
+        by vger.kernel.org with ESMTP id S1752682AbeBKEdn (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:43 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Xin Long" <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Marcelo Ricardo Leitner" <marcelo.leitner@gmail.com>,
-        "Alexander Potapenko" <glider@google.com>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Guillaume Nault" <g.nault@alphalink.fr>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.241527982@decadent.org.uk>
+Message-ID: <lsq.1518322806.500694319@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 42/79] sctp: fully initialize the IPv6 address in
- sctp_v6_to_addr()
+Subject: [PATCH 3.2 20/79] l2tp: protect sock pointer of struct
+ pppol2tp_session with RCU
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,112 +80,383 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Potapenko <glider@google.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
-commit 15339e441ec46fbc3bf3486bb1ae4845b0f1bb8d upstream.
+commit ee40fb2e1eb5bc0ddd3f2f83c6e39a454ef5a741 upstream.
 
-KMSAN reported use of uninitialized sctp_addr->v4.sin_addr.s_addr and
-sctp_addr->v6.sin6_scope_id in sctp_v6_cmp_addr() (see below).
-Make sure all fields of an IPv6 address are initialized, which
-guarantees that the IPv4 fields are also initialized.
+pppol2tp_session_create() registers sessions that can't have their
+corresponding socket initialised. This socket has to be created by
+userspace, then connected to the session by pppol2tp_connect().
+Therefore, we need to protect the pppol2tp socket pointer of L2TP
+sessions, so that it can safely be updated when userspace is connecting
+or closing the socket. This will eventually allow pppol2tp_connect()
+to avoid generating transient states while initialising its parts of the
+session.
 
-==================================================================
- BUG: KMSAN: use of uninitialized memory in sctp_v6_cmp_addr+0x8d4/0x9f0
- net/sctp/ipv6.c:517
- CPU: 2 PID: 31056 Comm: syz-executor1 Not tainted 4.11.0-rc5+ #2944
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs
- 01/01/2011
- Call Trace:
-  dump_stack+0x172/0x1c0 lib/dump_stack.c:42
-  is_logbuf_locked mm/kmsan/kmsan.c:59 [inline]
-  kmsan_report+0x12a/0x180 mm/kmsan/kmsan.c:938
-  native_save_fl arch/x86/include/asm/irqflags.h:18 [inline]
-  arch_local_save_flags arch/x86/include/asm/irqflags.h:72 [inline]
-  arch_local_irq_save arch/x86/include/asm/irqflags.h:113 [inline]
-  __msan_warning_32+0x61/0xb0 mm/kmsan/kmsan_instr.c:467
-  sctp_v6_cmp_addr+0x8d4/0x9f0 net/sctp/ipv6.c:517
-  sctp_v6_get_dst+0x8c7/0x1630 net/sctp/ipv6.c:290
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-  sctp_assoc_add_peer+0x66d/0x16f0 net/sctp/associola.c:651
-  sctp_sendmsg+0x35a5/0x4f90 net/sctp/socket.c:1871
-  inet_sendmsg+0x498/0x670 net/ipv4/af_inet.c:762
-  sock_sendmsg_nosec net/socket.c:633 [inline]
-  sock_sendmsg net/socket.c:643 [inline]
-  SYSC_sendto+0x608/0x710 net/socket.c:1696
-  SyS_sendto+0x8a/0xb0 net/socket.c:1664
-  entry_SYSCALL_64_fastpath+0x13/0x94
- RIP: 0033:0x44b479
- RSP: 002b:00007f6213f21c08 EFLAGS: 00000286 ORIG_RAX: 000000000000002c
- RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 000000000044b479
- RDX: 0000000000000041 RSI: 0000000020edd000 RDI: 0000000000000006
- RBP: 00000000007080a8 R08: 0000000020b85fe4 R09: 000000000000001c
- R10: 0000000000040005 R11: 0000000000000286 R12: 00000000ffffffff
- R13: 0000000000003760 R14: 00000000006e5820 R15: 0000000000ff8000
- origin description: ----dst_saddr@sctp_v6_get_dst
- local variable created at:
-  sk_fullsock include/net/sock.h:2321 [inline]
-  inet6_sk include/linux/ipv6.h:309 [inline]
-  sctp_v6_get_dst+0x91/0x1630 net/sctp/ipv6.c:241
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-==================================================================
- BUG: KMSAN: use of uninitialized memory in sctp_v6_cmp_addr+0x8d4/0x9f0
- net/sctp/ipv6.c:517
- CPU: 2 PID: 31056 Comm: syz-executor1 Not tainted 4.11.0-rc5+ #2944
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs
- 01/01/2011
- Call Trace:
-  dump_stack+0x172/0x1c0 lib/dump_stack.c:42
-  is_logbuf_locked mm/kmsan/kmsan.c:59 [inline]
-  kmsan_report+0x12a/0x180 mm/kmsan/kmsan.c:938
-  native_save_fl arch/x86/include/asm/irqflags.h:18 [inline]
-  arch_local_save_flags arch/x86/include/asm/irqflags.h:72 [inline]
-  arch_local_irq_save arch/x86/include/asm/irqflags.h:113 [inline]
-  __msan_warning_32+0x61/0xb0 mm/kmsan/kmsan_instr.c:467
-  sctp_v6_cmp_addr+0x8d4/0x9f0 net/sctp/ipv6.c:517
-  sctp_v6_get_dst+0x8c7/0x1630 net/sctp/ipv6.c:290
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-  sctp_assoc_add_peer+0x66d/0x16f0 net/sctp/associola.c:651
-  sctp_sendmsg+0x35a5/0x4f90 net/sctp/socket.c:1871
-  inet_sendmsg+0x498/0x670 net/ipv4/af_inet.c:762
-  sock_sendmsg_nosec net/socket.c:633 [inline]
-  sock_sendmsg net/socket.c:643 [inline]
-  SYSC_sendto+0x608/0x710 net/socket.c:1696
-  SyS_sendto+0x8a/0xb0 net/socket.c:1664
-  entry_SYSCALL_64_fastpath+0x13/0x94
- RIP: 0033:0x44b479
- RSP: 002b:00007f6213f21c08 EFLAGS: 00000286 ORIG_RAX: 000000000000002c
- RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 000000000044b479
- RDX: 0000000000000041 RSI: 0000000020edd000 RDI: 0000000000000006
- RBP: 00000000007080a8 R08: 0000000020b85fe4 R09: 000000000000001c
- R10: 0000000000040005 R11: 0000000000000286 R12: 00000000ffffffff
- R13: 0000000000003760 R14: 00000000006e5820 R15: 0000000000ff8000
- origin description: ----dst_saddr@sctp_v6_get_dst
- local variable created at:
-  sk_fullsock include/net/sock.h:2321 [inline]
-  inet6_sk include/linux/ipv6.h:309 [inline]
-  sctp_v6_get_dst+0x91/0x1630 net/sctp/ipv6.c:241
-  sctp_transport_route+0x101/0x570 net/sctp/transport.c:292
-==================================================================
+To this end, this patch protects the pppol2tp socket pointer using RCU.
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+The pppol2tp socket pointer is still set in pppol2tp_connect(), but
+only once we know the function isn't going to fail. It's eventually
+reset by pppol2tp_release(), which now has to wait for a grace period
+to elapse before it can drop the last reference on the socket. This
+ensures that pppol2tp_session_get_sock() can safely grab a reference
+on the socket, even after ps->sk is reset to NULL but before this
+operation actually gets visible from pppol2tp_session_get_sock().
+
+The rest is standard RCU conversion: pppol2tp_recv(), which already
+runs in atomic context, is simply enclosed by rcu_read_lock() and
+rcu_read_unlock(), while other functions are converted to use
+pppol2tp_session_get_sock() followed by sock_put().
+pppol2tp_session_setsockopt() is a special case. It used to retrieve
+the pppol2tp socket from the L2TP session, which itself was retrieved
+from the pppol2tp socket. Therefore we can just avoid dereferencing
+ps->sk and directly use the original socket pointer instead.
+
+With all users of ps->sk now handling NULL and concurrent updates, the
+L2TP ->ref() and ->deref() callbacks aren't needed anymore. Therefore,
+rather than converting pppol2tp_session_sock_hold() and
+pppol2tp_session_sock_put(), we can just drop them.
+
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 [bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/sctp/ipv6.c | 2 ++
- 1 file changed, 2 insertions(+)
-
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -487,7 +487,9 @@ static void sctp_v6_to_addr(union sctp_a
- {
- 	addr->sa.sa_family = AF_INET6;
- 	addr->v6.sin6_port = port;
-+	addr->v6.sin6_flowinfo = 0;
- 	ipv6_addr_copy(&addr->v6.sin6_addr, saddr);
-+	addr->v6.sin6_scope_id = 0;
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -126,8 +126,11 @@
+ struct pppol2tp_session {
+ 	int			owner;		/* pid that opened the socket */
+ 
+-	struct sock		*sock;		/* Pointer to the session
++	struct mutex		sk_lock;	/* Protects .sk */
++	struct sock __rcu	*sk;		/* Pointer to the session
+ 						 * PPPoX socket */
++	struct sock		*__sk;		/* Copy of .sk, for cleanup */
++	struct rcu_head		rcu;		/* For asynchronous release */
+ 	struct sock		*tunnel_sock;	/* Pointer to the tunnel UDP
+ 						 * socket */
+ 	int			flags;		/* accessed by PPPIOCGFLAGS.
+@@ -142,6 +145,24 @@ static const struct ppp_channel_ops pppo
+ 
+ static const struct proto_ops pppol2tp_ops;
+ 
++/* Retrieves the pppol2tp socket associated to a session.
++ * A reference is held on the returned socket, so this function must be paired
++ * with sock_put().
++ */
++static struct sock *pppol2tp_session_get_sock(struct l2tp_session *session)
++{
++	struct pppol2tp_session *ps = l2tp_session_priv(session);
++	struct sock *sk;
++
++	rcu_read_lock();
++	sk = rcu_dereference(ps->sk);
++	if (sk)
++		sock_hold(sk);
++	rcu_read_unlock();
++
++	return sk;
++}
++
+ /* Helpers to obtain tunnel/session contexts from sockets.
+  */
+ static inline struct l2tp_session *pppol2tp_sock_to_session(struct sock *sk)
+@@ -229,7 +250,8 @@ static void pppol2tp_recv(struct l2tp_se
+ 	/* If the socket is bound, send it in to PPP's input queue. Otherwise
+ 	 * queue it on the session socket.
+ 	 */
+-	sk = ps->sock;
++	rcu_read_lock();
++	sk = rcu_dereference(ps->sk);
+ 	if (sk == NULL)
+ 		goto no_sock;
+ 
+@@ -265,31 +287,17 @@ static void pppol2tp_recv(struct l2tp_se
+ 		session->stats.rx_errors++;
+ 		kfree_skb(skb);
+ 	}
++	rcu_read_unlock();
+ 
+ 	return;
+ 
+ no_sock:
++	rcu_read_unlock();
+ 	PRINTK(session->debug, PPPOL2TP_MSG_DATA, KERN_INFO,
+ 	       "%s: no socket\n", session->name);
+ 	kfree_skb(skb);
  }
  
- /* Compare addresses exactly.
+-static void pppol2tp_session_sock_hold(struct l2tp_session *session)
+-{
+-	struct pppol2tp_session *ps = l2tp_session_priv(session);
+-
+-	if (ps->sock)
+-		sock_hold(ps->sock);
+-}
+-
+-static void pppol2tp_session_sock_put(struct l2tp_session *session)
+-{
+-	struct pppol2tp_session *ps = l2tp_session_priv(session);
+-
+-	if (ps->sock)
+-		sock_put(ps->sock);
+-}
+-
+ /************************************************************************
+  * Transmit handling
+  ***********************************************************************/
+@@ -459,15 +467,17 @@ abort:
+  */
+ static void pppol2tp_session_close(struct l2tp_session *session)
+ {
+-	struct pppol2tp_session *ps = l2tp_session_priv(session);
+-	struct sock *sk = ps->sock;
+-	struct socket *sock = sk->sk_socket;
++	struct sock *sk;
+ 
+ 	BUG_ON(session->magic != L2TP_SESSION_MAGIC);
+ 
+ 
+-	if (sock)
+-		inet_shutdown(sock, 2);
++	sk = pppol2tp_session_get_sock(session);
++	if (sk) {
++		if (sk->sk_socket)
++			inet_shutdown(sk->sk_socket, SEND_SHUTDOWN);
++		sock_put(sk);
++	}
+ 
+ 	/* Don't let the session go away before our socket does */
+ 	l2tp_session_inc_refcount(session);
+@@ -495,6 +505,14 @@ out:
+ 	return;
+ }
+ 
++static void pppol2tp_put_sk(struct rcu_head *head)
++{
++	struct pppol2tp_session *ps;
++
++	ps = container_of(head, typeof(*ps), rcu);
++	sock_put(ps->__sk);
++}
++
+ /* Called when the PPPoX socket (session) is closed.
+  */
+ static int pppol2tp_release(struct socket *sock)
+@@ -520,10 +538,23 @@ static int pppol2tp_release(struct socke
+ 
+ 	session = pppol2tp_sock_to_session(sk);
+ 
+-	/* Purge any queued data */
+ 	if (session != NULL) {
++		struct pppol2tp_session *ps;
++
+ 		l2tp_session_queue_purge(session);
+-		sock_put(sk);
++
++		ps = l2tp_session_priv(session);
++		mutex_lock(&ps->sk_lock);
++		ps->__sk = rcu_dereference_protected(ps->sk,
++						     lockdep_is_held(&ps->sk_lock));
++		RCU_INIT_POINTER(ps->sk, NULL);
++		mutex_unlock(&ps->sk_lock);
++		call_rcu(&ps->rcu, pppol2tp_put_sk);
++
++		/* Rely on the sock_put() call at the end of the function for
++		 * dropping the reference held by pppol2tp_sock_to_session().
++		 * The last reference will be dropped by pppol2tp_put_sk().
++		 */
+ 	}
+ 	skb_queue_purge(&sk->sk_receive_queue);
+ 	skb_queue_purge(&sk->sk_write_queue);
+@@ -593,12 +624,14 @@ out:
+ static void pppol2tp_show(struct seq_file *m, void *arg)
+ {
+ 	struct l2tp_session *session = arg;
+-	struct pppol2tp_session *ps = l2tp_session_priv(session);
++	struct sock *sk;
++
++	sk = pppol2tp_session_get_sock(session);
++	if (sk) {
++		struct pppox_sock *po = pppox_sk(sk);
+ 
+-	if (ps) {
+-		struct pppox_sock *po = pppox_sk(ps->sock);
+-		if (po)
+-			seq_printf(m, "   interface %s\n", ppp_dev_name(&po->chan));
++		seq_printf(m, "   interface %s\n", ppp_dev_name(&po->chan));
++		sock_put(sk);
+ 	}
+ }
+ #endif
+@@ -712,13 +745,17 @@ static int pppol2tp_connect(struct socke
+ 		/* Using a pre-existing session is fine as long as it hasn't
+ 		 * been connected yet.
+ 		 */
+-		if (ps->sock) {
++		mutex_lock(&ps->sk_lock);
++		if (rcu_dereference_protected(ps->sk,
++					      lockdep_is_held(&ps->sk_lock))) {
++			mutex_unlock(&ps->sk_lock);
+ 			error = -EEXIST;
+ 			goto end;
+ 		}
+ 
+ 		/* consistency checks */
+ 		if (ps->tunnel_sock != tunnel->sock) {
++			mutex_unlock(&ps->sk_lock);
+ 			error = -EEXIST;
+ 			goto end;
+ 		}
+@@ -735,19 +772,21 @@ static int pppol2tp_connect(struct socke
+ 			goto end;
+ 		}
+ 
++		ps = l2tp_session_priv(session);
++		mutex_init(&ps->sk_lock);
+ 		l2tp_session_inc_refcount(session);
++
++		mutex_lock(&ps->sk_lock);
+ 		error = l2tp_session_register(session, tunnel);
+ 		if (error < 0) {
++			mutex_unlock(&ps->sk_lock);
+ 			kfree(session);
+ 			goto end;
+ 		}
+ 		drop_refcnt = true;
+ 	}
+ 
+-	/* Associate session with its PPPoL2TP socket */
+-	ps = l2tp_session_priv(session);
+ 	ps->owner	     = current->pid;
+-	ps->sock	     = sk;
+ 	ps->tunnel_sock = tunnel->sock;
+ 
+ 	session->recv_skb	= pppol2tp_recv;
+@@ -756,12 +795,6 @@ static int pppol2tp_connect(struct socke
+ 	session->show		= pppol2tp_show;
+ #endif
+ 
+-	/* We need to know each time a skb is dropped from the reorder
+-	 * queue.
+-	 */
+-	session->ref = pppol2tp_session_sock_hold;
+-	session->deref = pppol2tp_session_sock_put;
+-
+ 	/* If PMTU discovery was enabled, use the MTU that was discovered */
+ 	dst = sk_dst_get(tunnel->sock);
+ 	if (dst != NULL) {
+@@ -795,12 +828,17 @@ static int pppol2tp_connect(struct socke
+ 	po->chan.mtu	 = session->mtu;
+ 
+ 	error = ppp_register_net_channel(sock_net(sk), &po->chan);
+-	if (error)
++	if (error) {
++		mutex_unlock(&ps->sk_lock);
+ 		goto end;
++	}
+ 
+ out_no_ppp:
+ 	/* This is how we get the session context from the socket. */
+ 	sk->sk_user_data = session;
++	rcu_assign_pointer(ps->sk, sk);
++	mutex_unlock(&ps->sk_lock);
++
+ 	sk->sk_state = PPPOX_CONNECTED;
+ 	PRINTK(session->debug, PPPOL2TP_MSG_CONTROL, KERN_INFO,
+ 	       "%s: created\n", session->name);
+@@ -848,6 +886,7 @@ static int pppol2tp_session_create(struc
+ 	}
+ 
+ 	ps = l2tp_session_priv(session);
++	mutex_init(&ps->sk_lock);
+ 	ps->tunnel_sock = tunnel->sock;
+ 
+ 	error = l2tp_session_register(session, tunnel);
+@@ -979,12 +1018,10 @@ static int pppol2tp_session_ioctl(struct
+ 	       "%s: pppol2tp_session_ioctl(cmd=%#x, arg=%#lx)\n",
+ 	       session->name, cmd, arg);
+ 
+-	sk = ps->sock;
++	sk = pppol2tp_session_get_sock(session);
+ 	if (!sk)
+ 		return -EBADR;
+ 
+-	sock_hold(sk);
+-
+ 	switch (cmd) {
+ 	case SIOCGIFMTU:
+ 		err = -ENXIO;
+@@ -1260,7 +1297,6 @@ static int pppol2tp_session_setsockopt(s
+ 				       int optname, int val)
+ {
+ 	int err = 0;
+-	struct pppol2tp_session *ps = l2tp_session_priv(session);
+ 
+ 	switch (optname) {
+ 	case PPPOL2TP_SO_RECVSEQ:
+@@ -1280,8 +1316,8 @@ static int pppol2tp_session_setsockopt(s
+ 		}
+ 		session->send_seq = val ? -1 : 0;
+ 		{
+-			struct sock *ssk      = ps->sock;
+-			struct pppox_sock *po = pppox_sk(ssk);
++			struct pppox_sock *po = pppox_sk(sk);
++
+ 			po->chan.hdrlen = val ? PPPOL2TP_L2TP_HDR_SIZE_SEQ :
+ 				PPPOL2TP_L2TP_HDR_SIZE_NOSEQ;
+ 		}
+@@ -1616,8 +1652,9 @@ static void pppol2tp_seq_session_show(st
+ {
+ 	struct l2tp_session *session = v;
+ 	struct l2tp_tunnel *tunnel = session->tunnel;
+-	struct pppol2tp_session *ps = l2tp_session_priv(session);
+-	struct pppox_sock *po = pppox_sk(ps->sock);
++	unsigned char state;
++	char user_data_ok;
++	struct sock *sk;
+ 	u32 ip = 0;
+ 	u16 port = 0;
+ 
+@@ -1627,6 +1664,15 @@ static void pppol2tp_seq_session_show(st
+ 		port = ntohs(inet->inet_sport);
+ 	}
+ 
++	sk = pppol2tp_session_get_sock(session);
++	if (sk) {
++		state = sk->sk_state;
++		user_data_ok = (session == sk->sk_user_data) ? 'Y' : 'N';
++	} else {
++		state = 0;
++		user_data_ok = 'N';
++	}
++
+ 	seq_printf(m, "  SESSION '%s' %08X/%d %04X/%04X -> "
+ 		   "%04X/%04X %d %c\n",
+ 		   session->name, ip, port,
+@@ -1634,9 +1680,7 @@ static void pppol2tp_seq_session_show(st
+ 		   session->session_id,
+ 		   tunnel->peer_tunnel_id,
+ 		   session->peer_session_id,
+-		   ps->sock->sk_state,
+-		   (session == ps->sock->sk_user_data) ?
+-		   'Y' : 'N');
++		   state, user_data_ok);
+ 	seq_printf(m, "   %d/%d/%c/%c/%s %08x %u\n",
+ 		   session->mtu, session->mru,
+ 		   session->recv_seq ? 'R' : '-',
+@@ -1653,8 +1697,12 @@ static void pppol2tp_seq_session_show(st
+ 		   (unsigned long long)session->stats.rx_bytes,
+ 		   (unsigned long long)session->stats.rx_errors);
+ 
+-	if (po)
++	if (sk) {
++		struct pppox_sock *po = pppox_sk(sk);
++
+ 		seq_printf(m, "   interface %s\n", ppp_dev_name(&po->chan));
++		sock_put(sk);
++	}
+ }
+ 
+ static int pppol2tp_seq_show(struct seq_file *m, void *v)
