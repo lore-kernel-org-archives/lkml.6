@@ -1,92 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753077AbeBKKgs (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 05:36:48 -0500
-Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:56903 "EHLO
-        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752790AbeBKKgr (ORCPT
+        id S1752877AbeBKKls (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 05:41:48 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:52673 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752288AbeBKKlq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 05:36:47 -0500
-Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH] proc/kpageflags: add KPF_WAITERS
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Date: Sun, 11 Feb 2018 13:36:41 +0300
-Message-ID: <151834540184.176427.12174649162560874101.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Sun, 11 Feb 2018 05:41:46 -0500
+X-Google-Smtp-Source: AH8x2271yQjAwTKah/P5P3dg5mL25FCK+yvgyGdp4JHAm8zTY4zdMWN96e2c5rtezNRVmiIHinjy7A==
+Date: Sun, 11 Feb 2018 11:41:41 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Woodhouse <dwmw@amazon.co.uk>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com
+Subject: Re: [PATCH v2 0/6] Spectre v2 updates
+Message-ID: <20180211104141.boxyofjfknxmggsj@gmail.com>
+References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KPF_WAITERS indicates tasks are waiting for a page lock or writeback.
-This might be false-positive, in this case next unlock will clear it.
-This looks like worth information not only for kernel hacking.
 
-In tool page-types in non-raw mode treat KPF_WAITERS without
-KPF_LOCKED and KPF_WRITEBACK as false-positive and hide it.
+Paolo, Radim,
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- fs/proc/page.c                         |    1 +
- include/uapi/linux/kernel-page-flags.h |    1 +
- tools/vm/page-types.c                  |    7 +++++++
- 3 files changed, 9 insertions(+)
+* David Woodhouse <dwmw@amazon.co.uk> wrote:
 
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 1491918a33c3..b9312e1124af 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -159,6 +159,7 @@ u64 stable_page_flags(struct page *page)
- 		u |= 1 << KPF_IDLE;
- 
- 	u |= kpf_copy_bit(k, KPF_LOCKED,	PG_locked);
-+	u |= kpf_copy_bit(k, KPF_WAITERS,	PG_waiters);
- 
- 	u |= kpf_copy_bit(k, KPF_SLAB,		PG_slab);
- 	if (PageTail(page) && PageSlab(compound_head(page)))
-diff --git a/include/uapi/linux/kernel-page-flags.h b/include/uapi/linux/kernel-page-flags.h
-index fa139841ec18..1118a028f2b3 100644
---- a/include/uapi/linux/kernel-page-flags.h
-+++ b/include/uapi/linux/kernel-page-flags.h
-@@ -35,6 +35,7 @@
- #define KPF_BALLOON		23
- #define KPF_ZERO_PAGE		24
- #define KPF_IDLE		25
-+#define KPF_WAITERS		26
- 
- 
- #endif /* _UAPILINUX_KERNEL_PAGE_FLAGS_H */
-diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
-index a8783f48f77f..76d880b768b5 100644
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -107,6 +107,7 @@
- 
- static const char * const page_flag_names[] = {
- 	[KPF_LOCKED]		= "L:locked",
-+	[KPF_WAITERS]		= "Q:waiters",
- 	[KPF_ERROR]		= "E:error",
- 	[KPF_REFERENCED]	= "R:referenced",
- 	[KPF_UPTODATE]		= "U:uptodate",
-@@ -498,6 +499,12 @@ static uint64_t well_known_flags(uint64_t flags)
- 	if ((flags & BITS_COMPOUND) && !(flags & BIT(HUGE)))
- 		flags &= ~BITS_COMPOUND;
- 
-+	/* Treat WAITERS without LOCKED or WRITEBACK as false-postive */
-+	if ((flags & (BIT(WAITERS) |
-+		      BIT(LOCKED) |
-+		      BIT(WRITEBACK))) == BIT(WAITERS))
-+		flags &= ~BIT(WAITERS);
-+
- 	return flags;
- }
- 
+> David Woodhouse (4):
+>   KVM: x86: Reduce retpoline performance impact in slot_handle_level_range()
+> KarimAllah Ahmed (2):
+>   X86/nVMX: Properly set spec_ctrl and pred_cmd before merging MSRs
+>   KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we have a valid L02 MSR bitmap
+
+Similarly to the previous Spectre patches I've applied these three KVM patches to 
+tip:x86/pti too, to keep them all in a single backportable group of commits. They 
+all look correct to me and solve real problems, and there's no conflict with 
+current upstream KVM code.
+
+Let me know if that's OK to you or if you'd like to see any changes to them.
+
+Thanks,
+
+	Ingo
