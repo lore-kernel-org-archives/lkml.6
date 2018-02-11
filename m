@@ -1,113 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753199AbeBKLAT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 06:00:19 -0500
-Received: from mga09.intel.com ([134.134.136.24]:28766 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752922AbeBKLAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 06:00:18 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,495,1511856000";
-   d="scan'208";a="19045986"
-Date: Sun, 11 Feb 2018 18:51:36 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: changbin.du@intel.com
-Cc: rostedt@goodmis.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] tracing/fgraph: Missed irq return mark for leaf entry
-Message-ID: <20180211105135.6imp6wpawftfqd3f@intel.com>
-References: <1517413729-20411-1-git-send-email-changbin.du@intel.com>
+        id S1753071AbeBKLHz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 06:07:55 -0500
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:34207 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752288AbeBKLHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 06:07:54 -0500
+X-Google-Smtp-Source: AH8x224Kzl3oKsybvCeKCWnrPvDGWtWwAlLmU+jVlXaf0bDtcC0wVKoaBsWywG7Yj4dLJtaV+qcheA==
+Date: Sun, 11 Feb 2018 14:07:51 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH] mm/huge_memory.c: split should clone page flags before
+ unfreezing pageref
+Message-ID: <20180211110751.tsseper2356aptbe@node.shutemov.name>
+References: <151834531706.176342.14968581451762734122.stgit@buzz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517413729-20411-1-git-send-email-changbin.du@intel.com>
-User-Agent: NeoMutt/20171027-42-ad8712
+In-Reply-To: <151834531706.176342.14968581451762734122.stgit@buzz>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rostedt,
-What abount this fix? Thanks!
+On Sun, Feb 11, 2018 at 01:35:17PM +0300, Konstantin Khlebnikov wrote:
+> THP split makes non-atomic change of tail page flags. This is almost ok
+> because tail pages are locked and isolated but this breaks recent changes
+> in page locking: non-atomic operation could clear bit PG_waiters.
+> 
+> As a result concurrent sequence get_page_unless_zero() -> lock_page()
+> might block forever. Especially if this page was truncated later.
+> 
+> Fix is trivial: clone flags before unfreezing page reference counter.
+> 
+> This race exists since commit 62906027091f ("mm: add PageWaiters indicating
+> tasks are waiting for a page bit") while unsave unfreeze itself was added
+> in commit 8df651c7059e ("thp: cleanup split_huge_page()").
 
-On Wed, Jan 31, 2018 at 11:48:49PM +0800, changbin.du@intel.com wrote:
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> The fgraph forget to print irq return mark for leaf entry. Then we can see
-> unbalanced irq mark in the trace. This patch fix this.
-> 
-> Before:
->  1)               |  SyS_write() {
->  1)               |    __fdget_pos() {
->  1)   0.061 us    |      __fget_light();
->  1)   0.289 us    |    }
->  1)               |    vfs_write() {
->  1)   0.049 us    |      rw_verify_area();
->  1) + 15.424 us   |      __vfs_write();
->  1)   ==========> |
->  1)   6.003 us    |      smp_apic_timer_interrupt();
->  1)   0.055 us    |      __fsnotify_parent();
->  1)   0.073 us    |      fsnotify();
->  1) + 23.665 us   |    }
->  1) + 24.501 us   |  }
-> 
-> After:
->  0)               |  SyS_write() {
->  0)               |    __fdget_pos() {
->  0)   0.052 us    |      __fget_light();
->  0)   0.328 us    |    }
->  0)               |    vfs_write() {
->  0)   0.057 us    |      rw_verify_area();
->  0)               |      __vfs_write() {
->  0)   ==========> |
->  0)   8.548 us    |      smp_apic_timer_interrupt();
->  0)   <========== |
->  0) + 36.507 us   |      } /* __vfs_write */
->  0)   0.049 us    |      __fsnotify_parent();
->  0)   0.066 us    |      fsnotify();
->  0) + 50.064 us   |    }
->  0) + 50.952 us   |  }
-> 
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> ---
->  kernel/trace/trace_functions_graph.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-> index 23c0b0c..169b3c4 100644
-> --- a/kernel/trace/trace_functions_graph.c
-> +++ b/kernel/trace/trace_functions_graph.c
-> @@ -831,6 +831,7 @@ print_graph_entry_leaf(struct trace_iterator *iter,
->  	struct ftrace_graph_ret *graph_ret;
->  	struct ftrace_graph_ent *call;
->  	unsigned long long duration;
-> +	int cpu = iter->cpu;
->  	int i;
->  
->  	graph_ret = &ret_entry->ret;
-> @@ -839,7 +840,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
->  
->  	if (data) {
->  		struct fgraph_cpu_data *cpu_data;
-> -		int cpu = iter->cpu;
->  
->  		cpu_data = per_cpu_ptr(data->cpu_data, cpu);
->  
-> @@ -869,6 +869,9 @@ print_graph_entry_leaf(struct trace_iterator *iter,
->  
->  	trace_seq_printf(s, "%ps();\n", (void *)call->func);
->  
-> +	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
-> +			cpu, iter->ent->pid, flags);
-> +
->  	return trace_handle_return(s);
->  }
->  
-> -- 
-> 2.7.4
-> 
+Hm. Don't we have to have barrier between setting flags and updating
+the refcounter in this case? Atomics don't generally have this semantics,
+so you can see new refcount before new flags even after the change.
 
 -- 
-Thanks,
-Changbin Du
+ Kirill A. Shutemov
