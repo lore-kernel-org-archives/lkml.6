@@ -1,33 +1,33 @@
 Return-Path: <ulfalizer@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518384909; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1518384125; cv=none;
         d=google.com; s=arc-20160816;
-        b=e+sjO7fgB2BJoHpvQpq+XX1YgLjK5S1DLoJdgxfPJ5E4C1fOyMd9v6oKvtE2LxPyzp
-         /UTnnVf7bDqNst7JjzxwEB4fidG35njO5LmcOzDfP8Soz9GRGShRqJbrPfWjhFfox8BS
-         3VpyYeL7p2ZfjxlU3ZwgOA0kJhTpdGsoIg4Re24gXILsO7h2Q5sXuQd5OLWA4BkMZJX0
-         m6tiMYaqIbEk6Z0nSTtgvZI5VAXoBa4HWdfiRcPlubIURYGxR6hX+evo9Wwhz4PQMz3e
-         yuLuUr+9mNaRZ2tG47IN8SLz5je8qz0maxmiyLJ4lyEqjnu8BOqgEy0iONu/47bgCV4S
-         UV9w==
+        b=wHPEwnhuNVONp5db3pT3cYEKVAPNXOjXACoFERqj8X0qf5GFynmUBHrfYlo9ODsPxk
+         imWkJRMu6HrtlEd4ofd3BA50Td22RzOkOdlekPh2Z8UJHNty4ODuM/CyI4Y7o+pwIDfx
+         sujsjt8DVuIFmi8XLc+3IBthUlVQcoKGqSKhhMskxNTXaaeDTh60Zx7Si/H1BphWQO8r
+         8AOUvAHcYcID5wWbM6ZBPjznEDoiSXLI/660oa/CULY04SZViPf1m/J7/UqsLB03B2rM
+         9wCM3jXgAF0Y0qaPOv+jBKMuyreqp6ya/JsrSG6kKskeUxKkGA5OFjeeowu7JQcbEOU8
+         pDHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=9Xil5mkrbBlRwwFZpQFq39sMtgl4Sq+t3KGoIatlZmM=;
-        b=cSwGmGQd6FLReoXfkN0NwRIGEagjUEzP3vKCO2VBAi9epHQ5jzk+e8ACWB3u7sW8hx
-         6JN07o0T/oI9SQpntG3cSZJBxsrH97fo1OSzdNLDiF1gngyjkq3VDaahizX6GiY0v+45
-         f/s/iWhP1FnE1c9iaaYhW0irE30H5hzq2/UKD33GVBOoT+BHgA2DrsVdjsaPDNXZbqjq
-         AsBlDJvzO/ZWQ3QGwwH3AGVUqE5U1xz5s0Saua/dIVj25r6KSjtTsQszWSTQjlyJngd7
-         RD4P7NJz+Lw2FfLXmExllGeGHVVNzVYNkVS/s8pp2Uo8jxq0rhg/Qbtmox4ljY863uIb
-         8fLg==
+        bh=1vyb5DlEF7a3OaSuw5gBD93M0Wa9TQ0rNw1txN91hsw=;
+        b=lZ9ZE17gddRixoaDkNvJPhJEwF2uzv/JnfENE2cxWYK2OFgTiesvavTxm8TXZv1Zb8
+         QyTLInBOZ02dCQJWWQEAhP0tpEmbTP9LzGz27Rkr5rcOuslvsZKr+im0JCHwjuHAlN0V
+         lTxpVrrFeyzdbK1W72WHfzOMDub/q4ZyAUASmbK2GPUPxzqlmkhFB2zqLG4XavyCPFTD
+         UMc7Z3Ck3OSxjQRRQY9spHtn87Y4guHRyp2rX/O9KG2y1OZ3yiQIJqnQediLFVMgXbGX
+         9lf7iSXgFlfU7z3IJXcXYbUkKh2CNoQZerQ6J0Oun+k442rB5JQh+wEvlQGfRy+sNC4z
+         qt5A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZPsjN1L/;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=by2EBk94;
        spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZPsjN1L/;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=by2EBk94;
        spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227j/7tgit/uSBl3q6ufForsbok7rLbyPUhwLiGkOlNMw/yw6rY8RRsN3w8E5oBmlJi0k25nSYKVyv/USRyw+5Q=
+X-Google-Smtp-Source: AH8x2275Z+hnE3/cyJWVqJwmDKYj/7cjehTU/33knMgmZrsPHGAEIpGPaQHlKGP9ISu3VQGsugBck/p50ThmICDENZM=
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLnho=kMVwZgV0rEs=brt2OZZrxEcYCK=8kt5kLbraZwQ@mail.gmail.com>
+In-Reply-To: <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -36,10 +36,9 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
  <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
  <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
- <CAFkk2KRAjA80Y74Nahf2Nk_5yOucoa1y2Xp54F2k-Hv0xgTAFg@mail.gmail.com> <CAGXu5jLnho=kMVwZgV0rEs=brt2OZZrxEcYCK=8kt5kLbraZwQ@mail.gmail.com>
 From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Sun, 11 Feb 2018 22:35:08 +0100
-Message-ID: <CAFkk2KS=MyebbfyrbYETQHaWMNU5rrYbB0khxy+VXrvc5Tshtw@mail.gmail.com>
+Date: Sun, 11 Feb 2018 22:22:04 +0100
+Message-ID: <CAFkk2KQBCUT84rH22-+e6=hstQcdcpKQ7SM8=0SshrQ++vbMKg@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
 To: Kees Cook <keescook@chromium.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -56,49 +55,55 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592141974498996381?=
+X-GMAIL-MSGID: =?utf-8?q?1592141152984091069?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 11, 2018 at 10:05 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Sun, Feb 11, 2018 at 10:34 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->> On Sun, Feb 11, 2018 at 6:56 PM, Kees Cook <keescook@chromium.org> wrote:
->>> Old? That's not the case. The check for -fno-stack-protector will
->>> likely be needed forever, as some distro compilers enable
->>> stack-protector by default. So when someone wants to explicitly build
->>> without stack-protector (or if the compiler's stack-protector is
->>> detected as broken), we must force it off for the kernel build.
+On Sun, Feb 11, 2018 at 6:56 PM, Kees Cook <keescook@chromium.org> wrote:
+>> 3. Whether to implement CC_STACKPROTECTOR_AUTO in Kconfig or the Makefiles
 >>
->> What I meant is whether it makes sense to test if the
->> -fno-stack-protector option is supported. Can we reasonably assume
->> that passing -fno-stack-protector to the compiler won't cause an
->> error?
->
-> That isn't something I've tested; but I can check if it's useful.
-
-If it gets rid of a pointless test and symbol, I think it's useful, so
-that would be nice. :)
-
->> Is it possible to build GCC with no "no stack protector" support? Do
->> we need to support any compilers that would choke on the
->> -fno-stack-protector flag itself?
+>> I'd just go with whatever is simplest here. I don't find the Kconfig version
+>> too bad, but I'm already very familiar with Kconfig, so it's harder for me to
+>> tell how it looks to other people.
 >>
->> If we can reasonably assume that passing -fno-stack-protector is safe,
->> then CC_HAS_STACKPROTECTOR_NONE isn't needed.
+>> I'd add some comments to explain the idea in the final version.
+>>
+>> @Kees:
+>> I was assuming that the Makefiles would error out with a message if none of the
+>> CC_STACKPROTECTOR_* variables are set, in addition to the Kconfig warning.
 >
-> Well, there are two situations:
->
-> - does the user want to build _without_ stack protector? (which is
-> something some people want to do, no matter what I think of it)
->
-> - did _AUTO discover that stack protector output is broken?
->
-> In both cases, we need to pass -fno-stack-protector in case the distro
-> compiler was built with stack protector enabled by default.
+> That doesn't happy either before nor after _AUTO. The default value
+> before was _NONE, and the default value after is _AUTO, which will use
+> whatever is available.
 
-Yup, that's already the way it would work. Currently, there's also a
-test for whether the compiler supports -fno-stack-protector. It's that
-one that I suspect we might be able to get rid of.
+I was thinking in the case where you explicitly select one of
+CC_STACKPROTECTOR_{STRONG,REGULAR} and it isn't available. With the
+new WANT_* version, that will cause none of
+CC_STACKPROTECTOR_{STRONG,REGULAR,NONE} to be set, and in that case
+you'd error out to match the old behavior (if I understand it
+correctly).
+
+CHOSEN_CC_STACKPROTECTOR_AVAILABLE would just be a helper symbol to
+detect that case. It's not like it's a huge deal to detect it on the
+Makefile end either, but turns it pretty nice and readable, IMO, with
+more of the logic in a single location.
+
+>>         # User request
+>>         WANT_CC_STACKPROTECTOR_AUTO
+>>         WANT_CC_STACKPROTECTOR_STRONG
+>>         WANT_CC_STACKPROTECTOR_REGULAR
+>>         WANT_CC_STACKPROTECTOR_NONE
+>>
+>>         # The actual "output" to the Makefiles
+>>         CC_STACKPROTECTOR_STRONG
+>>         CC_STACKPROTECTOR_REGULAR
+>>         CC_STACKPROTECTOR_NONE
+>
+> This should be fine too (though by this point, I think Kconfig would
+> already know the specific option, so it could just pass it with a
+> single output (CC_OPT_STACKPROTECTOR below?)
+
+Ah, yeah, that'd be simpler if all that's needed is the compiler flag.
 
 Cheers,
-Ulf "should merge replies"
+Ulf
