@@ -1,71 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752637AbeBKDaa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 22:30:30 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33797 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752493AbeBKD3z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 22:29:55 -0500
-X-Google-Smtp-Source: AH8x227OY4gaK9SkQAVgaUusf3w53NVuCVNfGeMEEFHqHuZ5xOdTYvFJmvkG50UKLAWhc+oWZurTDg==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-Subject: [PATCH v3 2/3] KVM: X86: Choose qspinlock when dedicated vCPUs available
-Date: Sun, 11 Feb 2018 11:29:45 +0800
-Message-Id: <1518319786-1466-3-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518319786-1466-1-git-send-email-wanpengli@tencent.com>
-References: <1518319786-1466-1-git-send-email-wanpengli@tencent.com>
+        id S1752392AbeBKDfK (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 22:35:10 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52184 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751921AbeBKDfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Feb 2018 22:35:09 -0500
+Subject: Re: [PATCH] f2fs: set_code_data in move_data_block
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1518093217-123705-1-git-send-email-yunlong.song@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Message-ID: <a55bc2f7-fc46-4f4a-cb30-d6eb61b30785@huawei.com>
+Date: Sun, 11 Feb 2018 11:34:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518093217-123705-1-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.111.220.140]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Ping...
 
-Waiman Long mentioned that:
+move_data_block misses set_cold_data, then the F2FS_WB_CP_DATA will
+lack these data pages in move_data_block, and write_checkpoint can
+not make sure this pages committed to the flash.
 
- Generally speaking, unfair lock performs well for VMs with a small
- number of vCPUs. Native qspinlock may perform better than pvqspinlock
- if there is vCPU pinning and there is no vCPU over-commitment.
+On 2018/2/8 20:33, Yunlong Song wrote:
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>   fs/f2fs/gc.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index b9d93fd..2095630 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -692,6 +692,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>   	fio.op = REQ_OP_WRITE;
+>   	fio.op_flags = REQ_SYNC;
+>   	fio.new_blkaddr = newaddr;
+> +	set_cold_data(fio.page);
+>   	err = f2fs_submit_page_write(&fio);
+>   	if (err) {
+>   		if (PageWriteback(fio.encrypted_page))
+> 
 
-This patch uses a KVM_HINTS_DEDICATED performance hint to allow 
-hypervisor admin to choose the qspinlock to be used when a dedicated 
-vCPU is available.
-
-PV_DEDICATED = 1, PV_UNHALT = anything: default is qspinlock
-PV_DEDICATED = 0, PV_UNHALT = 1: default is Hybrid PV queued/unfair lock
-PV_DEDICATED = 0, PV_UNHALT = 0: default is tas
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Eduardo Habkost <ehabkost@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kernel/kvm.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 77a0723..c5566d9 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -733,6 +733,11 @@ void __init kvm_spinlock_init(void)
- 	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
- 		return;
- 
-+	if (kvm_hint_has_feature(KVM_HINTS_DEDICATED)) {
-+		static_branch_disable(&virt_spin_lock_key);
-+		return;
-+	}
-+
- 	__pv_init_lock_hash();
- 	pv_lock_ops.queued_spin_lock_slowpath = __pv_queued_spin_lock_slowpath;
- 	pv_lock_ops.queued_spin_unlock = PV_CALLEE_SAVE(__pv_queued_spin_unlock);
 -- 
-2.7.4
+Thanks,
+Yunlong Song
