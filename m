@@ -1,29 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932451AbeBLBdT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 20:33:19 -0500
-Received: from [198.137.202.136] ([198.137.202.136]:34505 "EHLO
-        terminus.zytor.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S932335AbeBLBdS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 20:33:18 -0500
-Date: Sun, 11 Feb 2018 04:13:55 -0800
-From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-484790d9ab02704c569d8c7205c630c08eee7822@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux@dominikbrodowski.net, luto@kernel.org,
-        dsafonov@virtuozzo.com, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, linux@dominikbrodowski.net, luto@kernel.org,
-        dsafonov@virtuozzo.com, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org
-In-Reply-To: <20180211111013.16888-4-linux@dominikbrodowski.net>
-References: <20180211111013.16888-4-linux@dominikbrodowski.net>
+        id S932457AbeBLBiF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 20:38:05 -0500
+Received: from [198.137.202.136] ([198.137.202.136]:43981 "EHLO mail.zytor.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S932314AbeBLBiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 20:38:03 -0500
+Date: Sun, 11 Feb 2018 04:08:29 -0800
+From: tip-bot for Mathieu Desnoyers <tipbot@zytor.com>
+Message-ID: <tip-6a546c7e69ff0b69581377cc70d7e8a601b98fce@git.kernel.org>
+Cc: parri.andrea@gmail.com, peterz@infradead.org, mingo@kernel.org,
+        mathieu.desnoyers@efficios.com, benh@kernel.crashing.org,
+        tglx@linutronix.de, davejwatson@fb.com, sehr@google.com,
+        ghackmann@google.com, linux-kernel@vger.kernel.org,
+        boqun.feng@gmail.com, ahh@google.com, paulmck@linux.vnet.ibm.com,
+        maged.michael@gmail.com, avi@scylladb.com,
+        torvalds@linux-foundation.org, linux@armlinux.org.uk, hpa@zytor.com,
+        luto@kernel.org, paulus@samba.org, will.deacon@arm.com,
+        mpe@ellerman.id.au
+Reply-To: ahh@google.com, boqun.feng@gmail.com, linux-kernel@vger.kernel.org,
+        sehr@google.com, davejwatson@fb.com, ghackmann@google.com,
+        maged.michael@gmail.com, paulmck@linux.vnet.ibm.com, mingo@kernel.org,
+        parri.andrea@gmail.com, peterz@infradead.org,
+        mathieu.desnoyers@efficios.com, benh@kernel.crashing.org,
+        tglx@linutronix.de, hpa@zytor.com, luto@kernel.org, mpe@ellerman.id.au,
+        will.deacon@arm.com, paulus@samba.org, avi@scylladb.com,
+        torvalds@linux-foundation.org, linux@armlinux.org.uk
+In-Reply-To: <1518208256-22034-1-git-send-email-mathieu.desnoyers@efficios.com>
+References: <1518208256-22034-1-git-send-email-mathieu.desnoyers@efficios.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] selftests/x86: Do not rely on "int $0x80" in
- test_mremap_vdso.c
-Git-Commit-ID: 484790d9ab02704c569d8c7205c630c08eee7822
+Subject: [tip:sched/urgent] membarrier-sync-core: Document architecture
+ support
+Git-Commit-ID: 6a546c7e69ff0b69581377cc70d7e8a601b98fce
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,49 +44,112 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  484790d9ab02704c569d8c7205c630c08eee7822
-Gitweb:     https://git.kernel.org/tip/484790d9ab02704c569d8c7205c630c08eee7822
-Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Sun, 11 Feb 2018 12:10:11 +0100
+Commit-ID:  6a546c7e69ff0b69581377cc70d7e8a601b98fce
+Gitweb:     https://git.kernel.org/tip/6a546c7e69ff0b69581377cc70d7e8a601b98fce
+Author:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+AuthorDate: Fri, 9 Feb 2018 15:30:56 -0500
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sun, 11 Feb 2018 12:24:47 +0100
+CommitDate: Sat, 10 Feb 2018 12:45:10 +0100
 
-selftests/x86: Do not rely on "int $0x80" in test_mremap_vdso.c
+membarrier-sync-core: Document architecture support
 
-On 64-bit builds, we should not rely on "int $0x80" working (it only does if
-CONFIG_IA32_EMULATION=y is enabled).
+Ensure we gather architecture requirements about each architecture
+supporting the "sync_core" membarrier command in a single file under
+Documentation/features.
 
-Without this patch, the move test may succeed, but the "int $0x80" causes
-a segfault, resulting in a false negative output of this self-test.
-
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Andrea Parri <parri.andrea@gmail.com>
+Cc: Andrew Hunter <ahh@google.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
+Cc: Avi Kivity <avi@scylladb.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: David Sehr <sehr@google.com>
+Cc: Greg Hackmann <ghackmann@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Maged Michael <maged.michael@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Russell King <linux@armlinux.org.uk>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-4-linux@dominikbrodowski.net
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-api@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Link: http://lkml.kernel.org/r/1518208256-22034-1-git-send-email-mathieu.desnoyers@efficios.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/test_mremap_vdso.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../sched/membarrier-sync-core/arch-support.txt    | 62 ++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/tools/testing/selftests/x86/test_mremap_vdso.c b/tools/testing/selftests/x86/test_mremap_vdso.c
-index bf0d687..64f11c8 100644
---- a/tools/testing/selftests/x86/test_mremap_vdso.c
-+++ b/tools/testing/selftests/x86/test_mremap_vdso.c
-@@ -90,8 +90,12 @@ int main(int argc, char **argv, char **envp)
- 			vdso_size += PAGE_SIZE;
- 		}
- 
-+#ifdef __i386__
- 		/* Glibc is likely to explode now - exit with raw syscall */
- 		asm volatile ("int $0x80" : : "a" (__NR_exit), "b" (!!ret));
-+#else /* __x86_64__ */
-+		syscall(SYS_exit, ret);
-+#endif
- 	} else {
- 		int status;
- 
+diff --git a/Documentation/features/sched/membarrier-sync-core/arch-support.txt b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
+new file mode 100644
+index 0000000..2c815a7
+--- /dev/null
++++ b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
+@@ -0,0 +1,62 @@
++#
++# Feature name:          membarrier-sync-core
++#         Kconfig:       ARCH_HAS_MEMBARRIER_SYNC_CORE
++#         description:   arch supports core serializing membarrier
++#
++# Architecture requirements
++#
++# * arm64
++#
++# Rely on eret context synchronization when returning from IPI handler, and
++# when returning to user-space.
++#
++# * x86
++#
++# x86-32 uses IRET as return from interrupt, which takes care of the IPI.
++# However, it uses both IRET and SYSEXIT to go back to user-space. The IRET
++# instruction is core serializing, but not SYSEXIT.
++#
++# x86-64 uses IRET as return from interrupt, which takes care of the IPI.
++# However, it can return to user-space through either SYSRETL (compat code),
++# SYSRETQ, or IRET.
++#
++# Given that neither SYSRET{L,Q}, nor SYSEXIT, are core serializing, we rely
++# instead on write_cr3() performed by switch_mm() to provide core serialization
++# after changing the current mm, and deal with the special case of kthread ->
++# uthread (temporarily keeping current mm into active_mm) by issuing a
++# sync_core_before_usermode() in that specific case.
++#
++    -----------------------
++    |         arch |status|
++    -----------------------
++    |       alpha: | TODO |
++    |         arc: | TODO |
++    |         arm: | TODO |
++    |       arm64: |  ok  |
++    |    blackfin: | TODO |
++    |         c6x: | TODO |
++    |        cris: | TODO |
++    |         frv: | TODO |
++    |       h8300: | TODO |
++    |     hexagon: | TODO |
++    |        ia64: | TODO |
++    |        m32r: | TODO |
++    |        m68k: | TODO |
++    |       metag: | TODO |
++    |  microblaze: | TODO |
++    |        mips: | TODO |
++    |     mn10300: | TODO |
++    |       nios2: | TODO |
++    |    openrisc: | TODO |
++    |      parisc: | TODO |
++    |     powerpc: | TODO |
++    |        s390: | TODO |
++    |       score: | TODO |
++    |          sh: | TODO |
++    |       sparc: | TODO |
++    |        tile: | TODO |
++    |          um: | TODO |
++    |   unicore32: | TODO |
++    |         x86: |  ok  |
++    |      xtensa: | TODO |
++    -----------------------
