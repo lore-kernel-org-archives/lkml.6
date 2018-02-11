@@ -1,37 +1,32 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518322412; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518324364; cv=none;
         d=google.com; s=arc-20160816;
-        b=sD3Jrs5YeWyTXTvp7S1sy6C1SxnJhGAzxmzKUwKP8xAihN64BucHx2sDKIsQ7fXSdt
-         EuJDYHymWFrFfI1qF1MSpZ6B7S2rHG+m7m7TQV21dZyq/QXrFn2TcTYngC6JN54LBuy4
-         /qedeSVFiFa/klrUH/6kf47u8yOQvj93rrbrqCtq80yAOV2P17jwoE+2OZEg8/G+BLOe
-         QtEJqpGV1d80s251b7BJD7zt07+ychjIs7U/KEXgA3flFPCugPglDADj4JuVnbYitr3T
-         WG64sXtTAktFqdrq6CUxaCiisl/7cH/FBQkhWpEfUhpnRUb7FOxCDzScFj3Jgrt4bDfV
-         CjxQ==
+        b=0w3n+bSmxL1oE9CUMWnkbJXAI7w8S06kgwKjbhXK0BZBKnDbLM2WNQbKgeFgwpCkXJ
+         7o9agNJUrUxyWh5sjm710wkfbiuknmNwm/1JABc/OeeIR0EdziZOwiGLjjWS1KBq7dfw
+         K/08JDuq4Dv9Rc9FRyiBDT7SnyR/xhVkVPkoADENghn83VFvfZabC/OdmInv6frFOQGQ
+         wZ3XL1o2WiHmO/RvzCivubdT8LyzjoPrLIhibhhaZ5DG9t1GAXJj+Yrb+wr5p3vH4LyM
+         mvIXEgit3LA/HHOrejBh55WrmiuRFEQJlLcJjQrMFcp9VrcgztQ77Jb7lz1eB+xawn9O
+         UYkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=tt2fl4STXrycFCTz1f54CtueFBYWfmGnIXA5RhQDmdw=;
-        b=mbbJpiyHGzZGtc6WVKL6Otc+QJqPAX2XZYtlVWZb/LNQzvamIk6vGzguL0ZPqzKpfs
-         ZlUnajFgO4IgkCi0C61FFUU3MoaCXKEiaoCe8ZtP8h/ZD/EOPqpO4rS63satZG7vzLrI
-         3uo9eVB7qZsLIkeOSqd6rXisntxlNW9F1XEvEqum23LQq7F47QPEHcu5mNifFF/tTq6Y
-         fi8BhpMWauqf7aIKi72LprTFWIvCCIXFA1fG9cYD0/DOYnt1hhwd+jN0WY/UVfVf4Mx7
-         yQNHOpXnkBPwDZMfcoWO+yTGZXxJDpL89cPPMvR8FpEJvxYRUghd4hg7Gr+oBTkKL22+
-         VRbQ==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=Y+spHF5SXvmuLp5VqWOH3i3Da5A3GnZ1eenTF71ZLq8=;
+        b=b1E4c3Zt1PzfqDYF5SxVjzxvgT9wCWLEXqCaGVa2eeltU6krEEoTybBygUJlpc/W+5
+         DWQqVZ+QbNj2YcXLE1fslZVd2w3mYy1cIUU5225oejIcLUGJ7fhvR97E4Eeahx6V+FbJ
+         KCghYU7ZbYcDi9yQBJyIdf67jkc9o5I7jIaYiJmWgEDSM2j6AhakKHQ5U03bfsAr8HPQ
+         AwJQSr17TgvTgsC60fpetHQwsZb1rvVa9Tuog9akd8yQa8miGjjTKBVdJR+PV0YE1CnH
+         9OvG19gYka9ya+wTkMwpk6u5I1dLiETbwUvc5JAeeFDZt9EA/AD+WiSZ5jW9oxeA6/g8
+         YQyg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=wTzxREYT;
-       dkim=pass header.i=@chromium.org header.s=google header.b=hRKQ4jW4;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tHHuo0IT;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=wTzxREYT;
-       dkim=pass header.i=@chromium.org header.s=google header.b=hRKQ4jW4;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AH8x226YvJQuWnAyVnx+vYRnLriIRjUE3qKPj18ztcMjJh3u+XIMX0W0Q69wK4ODOLzYN9wR/mJ/mcQdcwq1D5O7OGs=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tHHuo0IT;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x227XLU2cuVEbq7w6rD+LLlmcGCRTfWi728d61tXeQ453AxQv2Ynt9NLqnOnvFkhOdJmGkAwp/CBwPoC4FQ6R6LA=
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CAGXu5jLo0iuMsH89vj3nr8sv+1YvXfXgoPeBdxHwZm5i=DWoOA@mail.gmail.com>
 References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
  <1518106752-29228-5-git-send-email-yamada.masahiro@socionext.com>
  <20180209053038.pscoijvowmyudyzf@huvuddator> <CAK7LNATRxYCx9sE1haw815votyA5K8GQrMPPh0Q+n3kYa=JsgA@mail.gmail.com>
@@ -39,13 +34,13 @@ References: <1518106752-29228-1-git-send-email-yamada.masahiro@socionext.com>
  <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
- <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Sat, 10 Feb 2018 20:13:31 -0800
-X-Google-Sender-Auth: 8dt-4L-uGjdi2deRluHP5gyPg08
-Message-ID: <CAGXu5jLo0iuMsH89vj3nr8sv+1YvXfXgoPeBdxHwZm5i=DWoOA@mail.gmail.com>
+ <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com> <CAGXu5jLo0iuMsH89vj3nr8sv+1YvXfXgoPeBdxHwZm5i=DWoOA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 10 Feb 2018 20:46:02 -0800
+X-Google-Sender-Auth: JNCr5wLaef5j0kJeDVmnrtvEEPA
+Message-ID: <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Kees Cook <keescook@chromium.org>
 Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
@@ -57,52 +52,30 @@ Cc: Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socion
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592076441844496733?=
+X-GMAIL-MSGID: =?utf-8?q?1592078488402797363?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Feb 10, 2018 at 12:08 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sat, Feb 10, 2018 at 11:23 AM, Kees Cook <keescook@chromium.org> wrote:
->>
->> So, if this could do something like this:
->>
->>         config CC_HAS_STACKPROTECTOR_STRONG
->>                 bool
->>                 option
->> shell="scripts/gcc-${ARCH}_${BITS}-has-stack-protector.sh $CC
->> $KBUILD_CPPFLAGS"
+On Sat, Feb 10, 2018 at 8:13 PM, Kees Cook <keescook@chromium.org> wrote:
 >
-> Guys, this is not that important.
->
-> Don't make some stupid script for stackprotector. If the user doesn't
-> have a gcc that supports -fstackprotector-*, then don't show the
-> options. It matters NOT ONE WHIT whether that then means that
-> stackprotector will be off by default later.
+> It's been there since the very beginning when Arjan added it to
+> validate that the compiler actually produces a stack protector when
+> you give it -fstack-protector. Older gccs broke this entirely, more
+> recent misconfigurations (as seen with some of Arnd's local gcc
+> builds) did similar, and there have been regressions in some versions
+> where gcc's x86 support flipped to the global canary instead of the
+> %gs-offset canary.
 
-What? Maybe you're misunderstanding the script? This script already exists:
+Argh. I wanted to get rid of all that entirely, and simplify this all.
+The mentioned script (and bugzilla) was from 2006, I assumed this was
+all historical.
 
-$ ls scripts/gcc-x86_*
-scripts/gcc-x86_32-has-stack-protector.sh
-scripts/gcc-x86_64-has-stack-protector.sh
+But if it has broken again since, I guess we need to have a silly script. Grr.
 
-It's been there since the very beginning when Arjan added it to
-validate that the compiler actually produces a stack protector when
-you give it -fstack-protector. Older gccs broke this entirely, more
-recent misconfigurations (as seen with some of Arnd's local gcc
-builds) did similar, and there have been regressions in some versions
-where gcc's x86 support flipped to the global canary instead of the
-%gs-offset canary.
+But yes, I also reacted to your earlier " It can't silently rewrite it
+to _REGULAR because the compiler support for _STRONG regressed."
+Because it damn well can. If the compiler doesn't support
+-fstack-protector-strong, we can just fall back on -fstack-protector.
+Silently. No extra crazy complex logic for that either.
 
-> Seriously. This is classic "Kees thinks that _his_ code is so
-> important that everybody should get the value _he_ cares about".
-
-I care about the kernel build informing people about what's gone wrong
-as early as possible instead of producing an unbootable image that
-takes forever to debug.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+                 Linus
