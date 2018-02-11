@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326044-2-11917175494373673356
+X-Cyrus-Session-Id: sloti22d1t05-1524142-1518326043-2-3253451247373433393
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326043; b=f3m+ayHLXB3IGXO0uVp0Ey8Gls57IYIaVaUEI5iDTHulIt5
-    zyylXP2k0udTgwcSFBPsGnxNDwjqNNtxg7GwrwZVbnqaK+GswcbsCXY9Ti2e7R6x
-    tudcrYQvtqwNyb1ew7jMAOYKqWPkl1Z7wiuU4AQcIkf2TN23iutSdFdYz5rKxONI
-    AZ2fplrv2P3AhK8PMrfF92ZHHIZonUDxYUDLctENQuctBDiR/I7IsYII8q1K8MEK
-    fJLFAAkJanSWnExIV5i7iq8IJsj16ynn2c8jpV3xShSwt1kJWiCsbxq86Hticd4j
-    2343CySqw2Moys4iTA0O/dcnZcrwkWLwrHJBFRg==
+    t=1518326043; b=ahkUv7YldMrXGX/Fupcd56aBX0PgtanfpbFhM4rY1133QxQ
+    QKSASsMsZC0QX0tEWnfUDELI1KhUSn4tZ00SjB1A7g+nsvcKxmiiDNhGZ+0JxKtN
+    7BiATO1iyZRkvfgrQG7aMaAZKddCLiBcQ7Ir5/y3iK0i2/1xK2C/osY9rDgN5Jed
+    PUyALfBPitbb00dj4lyhfotQghwg7aHa62n7qNgAXStBbTZCb7AykjZ8e5lVPWrr
+    CUmXld0LuE65XNcaM+AyIXFsh5LMVzoSRtlPRTZg4/nlF7uvKyyHCtOszRw93+kb
+    PqJRkCoCetdgziDpV9BMXv22Nm9Q60SbK9h9Euw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326043; bh=IOYUKknV4qoEEdbitFH
-    NwXufHch8IEjWKcEnQlkOG+0=; b=bjiOmwc2UBn0smzuYwYupzJ2zZpe3zgmvIS
-    FYg6wGr3dVfRllAZhWennZw9aQBPz+bIlGY2qk58JRxNOidtLIBiw4QXMhEswdUv
-    xTomqVXex3Q6aLCljPuuZPGVjdP3jMoHtaKL6mMtqGkEo6jydjXusalu9bCFpZ78
-    VjZtqBKGkyZ6CV1BnCgEMC5xxhcMLl0jg2miap4ZcVAckM724w8QBheXQ4WY2BB/
-    AD07yxqUqtUAxWPVN5hRpoRvSeFi4+TBmYEFdSNW/X243kTz5fRVI8ChZT4afSae
-    twCHFDGjbKbEmxRBq926oVRlh2ix43LkA4A32217iHHkmtmd2aw==
+    :sender:list-id; s=arctest; t=1518326043; bh=cH7maObCjXLl6LJXthF
+    /TofwFb+axSCTPTa/wWMKPVc=; b=CiPqMMIbWVFfu9W+fTcHDi+AFmdpRz/eDuf
+    sEqz2XEtuw1Ffx5HRVTzjZqrsPoiH9FMtC65cx4Z64gkKg4DCcB3xiyl8SClBMq7
+    BbmCfAAodfbBysLWXFQpvO4tG4rSiA4saGmmOgt9SnEdJaNIYlnLhtZjfb7Sl6YU
+    VOmtlk4+ibFryWn7DUJySnT4UDaZnxuP4MyZtjgol6snJHige5NA/O0IG1OA0GrL
+    wgJj5VA1MvUXzpTy9TMytTmgc5AvNzjM1Nnv5csoAyk7q3lMkA3omEv8GTX7Gruv
+    2xupatxPJnrlXAQ9YUJV8o25ipeaJGbrEGuR3in6W6nIK4JVq5w==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752602AbeBKFMZ (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:12:25 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41421 "EHLO
+        id S1753662AbeBKFMY (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:12:24 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41415 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752638AbeBKEdl (ORCPT
+        by vger.kernel.org with ESMTP id S1752632AbeBKEdl (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:41 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>,
-        "Eric Biggers" <ebiggers@google.com>
+CC: akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.575409571@decadent.org.uk>
+Message-ID: <lsq.1518322806.269953005@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 45/79] dm bufio: fix integer overflow when limiting
- maximum cache size
+Subject: [PATCH 3.2 44/79] dm: discard support requires all targets in a
+ table support discards
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,70 +79,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 74d4108d9e681dbbe4a2940ed8fdff1f6868184c upstream.
+commit 8a74d29d541cd86569139c6f3f44b2d210458071 upstream.
 
-The default max_cache_size_bytes for dm-bufio is meant to be the lesser
-of 25% of the size of the vmalloc area and 2% of the size of lowmem.
-However, on 32-bit systems the intermediate result in the expression
+A DM device with a mix of discard capabilities (due to some underlying
+devices not having discard support) _should_ just return -EOPNOTSUPP for
+the region of the device that doesn't support discards (even if only by
+way of the underlying driver formally not supporting discards).  BUT,
+that does ask the underlying driver to handle something that it never
+advertised support for.  In doing so we're exposing users to the
+potential for a underlying disk driver hanging if/when a discard is
+issued a the device that is incapable and never claimed to support
+discards.
 
-    (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100
+Fix this by requiring that each DM target in a DM table provide discard
+support as a prereq for a DM device to advertise support for discards.
 
-overflows, causing the wrong result to be computed.  For example, on a
-32-bit system where the vmalloc area is 520093696 bytes, the result is
-1174405 rather than the expected 130023424, which makes the maximum
-cache size much too small (far less than 2% of lowmem).  This causes
-severe performance problems for dm-verity users on affected systems.
+This may cause some configurations that were happily supporting discards
+(even in the face of a mix of discard support) to stop supporting
+discards -- but the risk of users hitting driver hangs, and forced
+reboots, outweighs supporting those fringe mixed discard
+configurations.
 
-Fix this by using mult_frac() to correctly multiply by a percentage.  Do
-this for all places in dm-bufio that multiply by a percentage.  Also
-replace (VMALLOC_END - VMALLOC_START) with VMALLOC_TOTAL, which contrary
-to the comment is now defined in include/linux/vmalloc.h.
-
-Depends-on: 9993bc635 ("sched/x86: Fix overflow in cyc2ns_offset")
-Fixes: 95d402f057f2 ("dm: add bufio")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-[bwh: Backported to 3.2: keep open-coded VMALLOC_TOTAL]
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/dm-bufio.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ drivers/md/dm-table.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -839,7 +839,8 @@ static void __get_memory_limit(struct dm
- 		buffers = DM_BUFIO_MIN_BUFFERS;
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1584,12 +1584,12 @@ struct mapped_device *dm_table_get_md(st
+ }
+ EXPORT_SYMBOL(dm_table_get_md);
  
- 	*limit_buffers = buffers;
--	*threshold_buffers = buffers * DM_BUFIO_WRITEBACK_PERCENT / 100;
-+	*threshold_buffers = mult_frac(buffers,
-+				       DM_BUFIO_WRITEBACK_PERCENT, 100);
+-static int device_discard_capable(struct dm_target *ti, struct dm_dev *dev,
+-				  sector_t start, sector_t len, void *data)
++static int device_not_discard_capable(struct dm_target *ti, struct dm_dev *dev,
++				      sector_t start, sector_t len, void *data)
+ {
+ 	struct request_queue *q = bdev_get_queue(dev->bdev);
+ 
+-	return q && blk_queue_discard(q);
++	return q && !blk_queue_discard(q);
  }
  
- /*
-@@ -1620,19 +1621,15 @@ static int __init dm_bufio_init(void)
- 	memset(&dm_bufio_caches, 0, sizeof dm_bufio_caches);
- 	memset(&dm_bufio_cache_names, 0, sizeof dm_bufio_cache_names);
+ bool dm_table_supports_discards(struct dm_table *t)
+@@ -1597,26 +1597,22 @@ bool dm_table_supports_discards(struct d
+ 	struct dm_target *ti;
+ 	unsigned i = 0;
  
--	mem = (__u64)((totalram_pages - totalhigh_pages) *
--		      DM_BUFIO_MEMORY_PERCENT / 100) << PAGE_SHIFT;
-+	mem = (__u64)mult_frac(totalram_pages - totalhigh_pages,
-+			       DM_BUFIO_MEMORY_PERCENT, 100) << PAGE_SHIFT;
- 
- 	if (mem > ULONG_MAX)
- 		mem = ULONG_MAX;
- 
- #ifdef CONFIG_MMU
 -	/*
--	 * Get the size of vmalloc space the same way as VMALLOC_TOTAL
--	 * in fs/proc/internal.h
+-	 * Unless any target used by the table set discards_supported,
+-	 * require at least one underlying device to support discards.
+-	 * t->devices includes internal dm devices such as mirror logs
+-	 * so we need to use iterate_devices here, which targets
+-	 * supporting discard selectively must provide.
 -	 */
--	if (mem > (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100)
--		mem = (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100;
-+	if (mem > mult_frac(VMALLOC_END - VMALLOC_START, DM_BUFIO_VMALLOC_PERCENT, 100))
-+		mem = mult_frac(VMALLOC_END - VMALLOC_START, DM_BUFIO_VMALLOC_PERCENT, 100);
- #endif
+ 	while (i < dm_table_get_num_targets(t)) {
+ 		ti = dm_table_get_target(t, i++);
  
- 	dm_bufio_default_cache_size = mem;
+ 		if (!ti->num_discard_requests)
+-			continue;
++			return false;
+ 
+-		if (ti->discards_supported)
+-			return 1;
+-
+-		if (ti->type->iterate_devices &&
+-		    ti->type->iterate_devices(ti, device_discard_capable, NULL))
+-			return 1;
++		/*
++		 * Either the target provides discard support (as implied by setting
++		 * 'discards_supported') or it relies on _all_ data devices having
++		 * discard support.
++		 */
++		if (!ti->discards_supported &&
++		    (!ti->type->iterate_devices ||
++		     ti->type->iterate_devices(ti, device_not_discard_capable, NULL)))
++			return false;
+ 	}
+ 
+-	return 0;
++	return true;
+ }
