@@ -1,93 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753196AbeBJXlV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Feb 2018 18:41:21 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:60670 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752926AbeBJXjs (ORCPT
+        id S1751185AbeBKB1i (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Feb 2018 20:27:38 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:41095 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750880AbeBKB1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Feb 2018 18:39:48 -0500
-X-IronPort-AV: E=Sophos;i="5.46,492,1511827200";
-   d="scan'208";a="719069391"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com
-Subject: [PATCH v2 2/6] Revert "x86/speculation: Simplify indirect_branch_prediction_barrier()"
-Date: Sat, 10 Feb 2018 23:39:23 +0000
-Message-Id: <1518305967-31356-3-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+        Sat, 10 Feb 2018 20:27:36 -0500
+X-ME-Sender: <xms:B5x_WlZnWFAPwEFRn6RJhVXVZqgQpx5ccyFIXLV-enbe5ecpwBVBwA>
+Subject: Re: [PATCH 2/2] xen: xenbus: WARN_ON XS_TRANSACTION_{START,END}
+ misuse
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org
+Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+References: <20180207222236.7434-1-simon@invisiblethingslab.com>
+ <20180207222236.7434-2-simon@invisiblethingslab.com>
+ <8a0fd059-7acf-3279-10f9-649c19522e2a@oracle.com>
+From: Simon Gaiser <simon@invisiblethingslab.com>
+Message-ID: <66103cca-321e-6950-2083-6f5d068e12e6@invisiblethingslab.com>
+Date: Sun, 11 Feb 2018 01:27:00 +0000
+MIME-Version: 1.0
+In-Reply-To: <8a0fd059-7acf-3279-10f9-649c19522e2a@oracle.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="9rPfl8OoqZyfBMI7dNy5ZXuWTBYfmxUvO"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 64e16720ea0879f8ab4547e3b9758936d483909b.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--9rPfl8OoqZyfBMI7dNy5ZXuWTBYfmxUvO
+Content-Type: multipart/mixed; boundary="Hv6kReX5iZ2wI86tLY4w7ImxxWyPXgif0";
+ protected-headers="v1"
+From: Simon Gaiser <simon@invisiblethingslab.com>
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ xen-devel@lists.xenproject.org
+Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+Message-ID: <66103cca-321e-6950-2083-6f5d068e12e6@invisiblethingslab.com>
+Subject: Re: [PATCH 2/2] xen: xenbus: WARN_ON XS_TRANSACTION_{START,END}
+ misuse
+References: <20180207222236.7434-1-simon@invisiblethingslab.com>
+ <20180207222236.7434-2-simon@invisiblethingslab.com>
+ <8a0fd059-7acf-3279-10f9-649c19522e2a@oracle.com>
+In-Reply-To: <8a0fd059-7acf-3279-10f9-649c19522e2a@oracle.com>
 
-We cannot call C functions like that, without marking all the
-call-clobbered registers as, well, clobbered. We might have got away
-with it for now because the __ibp_barrier() function was *fairly*
-unlikely to actually use any other registers. But no. Just no.
+--Hv6kReX5iZ2wI86tLY4w7ImxxWyPXgif0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/include/asm/nospec-branch.h | 13 +++++++++----
- arch/x86/include/asm/processor.h     |  3 ---
- arch/x86/kernel/cpu/bugs.c           |  6 ------
- 3 files changed, 9 insertions(+), 13 deletions(-)
+Boris Ostrovsky:
+> On 02/07/2018 05:22 PM, Simon Gaiser wrote:
+>> +    users_old =3D xs_state_users;
+>>       xs_state_users--;
+>>       if ((req->type =3D=3D XS_TRANSACTION_START && req->msg.type =3D=3D=
+ XS_ERROR) ||
+>>           req->type =3D=3D XS_TRANSACTION_END)
+>>           xs_state_users--;
+>> +    if (WARN_ON(xs_state_users > users_old))
+>=20
+>=20
+> WARN_ON_ONCE()?
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 4d57894..300cc15 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -164,10 +164,15 @@ static inline void vmexit_fill_RSB(void)
- 
- static inline void indirect_branch_prediction_barrier(void)
- {
--	alternative_input("",
--			  "call __ibp_barrier",
--			  X86_FEATURE_USE_IBPB,
--			  ASM_NO_INPUT_CLOBBER("eax", "ecx", "edx", "memory"));
-+	asm volatile(ALTERNATIVE("",
-+				 "movl %[msr], %%ecx\n\t"
-+				 "movl %[val], %%eax\n\t"
-+				 "movl $0, %%edx\n\t"
-+				 "wrmsr",
-+				 X86_FEATURE_USE_IBPB)
-+		     : : [msr] "i" (MSR_IA32_PRED_CMD),
-+			 [val] "i" (PRED_CMD_IBPB)
-+		     : "eax", "ecx", "edx", "memory");
- }
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 513f960..99799fb 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -969,7 +969,4 @@ bool xen_set_default_idle(void);
- 
- void stop_this_cpu(void *dummy);
- void df_debug(struct pt_regs *regs, long error_code);
--
--void __ibp_barrier(void);
--
- #endif /* _ASM_X86_PROCESSOR_H */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 71949bf..61152aa 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -337,9 +337,3 @@ ssize_t cpu_show_spectre_v2(struct device *dev,
- 		       spectre_v2_module_string());
- }
- #endif
--
--void __ibp_barrier(void)
--{
--	__wrmsr(MSR_IA32_PRED_CMD, PRED_CMD_IBPB, 0);
--}
--EXPORT_SYMBOL_GPL(__ibp_barrier);
--- 
-2.7.4
+Since we "fix" the wrong decrement by clamping at zero it should not
+happen immediately again. But if you prefer _ONCE I can change it.
+
+
+--Hv6kReX5iZ2wI86tLY4w7ImxxWyPXgif0--
+
+--9rPfl8OoqZyfBMI7dNy5ZXuWTBYfmxUvO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE3E8ezGzG3N1CTQ//kO9xfO/xly8FAlp/nBUACgkQkO9xfO/x
+ly/4DQ//ZclF18bi9X9ZZudZ7joijJeZE8YajQ86050+SiSXFdcuH37KbC46cT74
+RSrpP0pQ8g7smsS/vICut2ojZbMgxvGdAD+czGwaRYHcup+RzKRWmHwlS4QkHsXN
+L7lM/Q8gIRgJNdciKy4ax4Az7//1yHcEkvyTQz9GEsKa66RCbLaY0NKKjVN0yt0L
+aoVed0ABJelrUakSepOVSu12M0ovm35Nc3B1ffZYhqZ0NvApJBszJAf8S2y+8bCr
+MpdJlgOQw7A5LCfY7ZVd/6K45Yzr3r5tfhzO7yg448V+aSDzEHYryamJZ6mzFGL5
+Uhgk/7ZW/tji1Dl06A2Bjaku+XeUDzUyN6MBEXCQutf/BRiDonCqotZix8CPgRho
+Tp+6bLm0xm3L5KQASeYyATinLkceVJSobNeYdRn9geLetwHcpIf/4WS1oJnTA/BW
+1Bz5b/CwHNP+xIreOihh6luBELbQfWL3EyYQf/0u/c0A/x0zOSuzzdrhEVlxdXWO
+IOkvl4WO1jtXM2OP3Q029PvlxAbivHBL/UxMb2rqB4qK3jLRQbx97opdfQ+Tp987
+q4MVcUwyQg7K/i/Fo1ZSs9cQpjLq2R0lAngm+dzKFBFDqhtDn+EE4FD/hG7Kd5DU
+Q6vNMzn29h+uPGHl6iBnq3pLJq7X4e25cexG0c2+tE3xfZcSLMk=
+=2gDu
+-----END PGP SIGNATURE-----
+
+--9rPfl8OoqZyfBMI7dNy5ZXuWTBYfmxUvO--
