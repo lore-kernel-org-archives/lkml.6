@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325815-2-14379197494050957871
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325772-2-5681216262315738603
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325814; b=pZ1JbMn90CrdtFsPdOjh1J0qRhJhO33xPQOHFEgiJNCkXF3
-    h368mi9MzSYs5mweaSMMmYIygqwHVeUtrf+tl92k+mC2bRHubrOoq3TGUgzCLODa
-    crWzL6ivefh4bEG5KTIRAad0fMDmLt0hadznNwafirtnqidD3gDeeN+gjRO/FuP+
-    dpajSF+yAyyiHlSIfLa1YQxDS4yx77NEgOGlty+OBL0T9Z8mRuPdn7IltNtGdYb5
-    HXo/zBXJgNZUjI5GRVj0udJ0NXfnbCep/6Hj1NlPHhtlLO2cYyFQQkSeRfuIYhWF
-    N62tv2N3u0NTiKSPT8Bw3dBLEvxpwxtBhizxEvA==
+    t=1518325771; b=RzD/3eBGU6ea119ciOFfIkMhxQDoPWurVKjCbruIisJoDtO
+    9lAPUlIKuIWZsIw/hL36odpOKtrbwYeFHdDWB4/O9LFhy2RmkpPCcACVtUKiokeU
+    FUEPeYU9mZePPMqJQ4FzR6CImz0JRvgPNvZWDXviexkoFGJ22mHIu8/efg7QoEDq
+    1usZ5Bc9cfeDRv7os2XDmVfm/Ox9uaAyNquers+qmjm3ezF5m3303Z19ORbMZtZc
+    QgRtNYdD/FXqQUQPuBbbw0gDdLLhGnW3Vvye6MUT40Dc4y+qHV8+PLjFGX8l6Bui
+    0aK0+n9v2kIT2yFCPyDl/xJh2quhjL4iaWGRmwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325814; bh=aG6/P4xuObV5J5Q5Ucx
-    49nNizrmmI2h3RPv34sOoSvU=; b=vgwdqBr6sYGRm0Z7TxbIorFVI9onQjEOt2p
-    bucBny2Cors72aNoYFIlsL3FfG5CoJ3kTOwHwVbL7NzACFBo+qJqbose+tYdAuTo
-    Jn7vpBLWqCJgtldLB0qTcA7Rc+1P8nrPVNW9HROfs52pHNZ/JblLiYq38PBkt9Mn
-    3/5jX5Capv4gW6wlP6S+9z+tcOJANURKU0vdimSFpaw8M3O+IicvCdmWNGnZgnJt
-    e7X5QnHVoeD+PmjmcBz30k3DCQ4/E7QGrsKjvsAO2iaPuc9YKNFicD5ITSSWgGca
-    vLPZUx6HAn5yACGf2iiOX3IPoULMR/1wCoOQ4Sz8YONLlxAOf6A==
+    :sender:list-id; s=arctest; t=1518325771; bh=3TjjdGoyLgzRNfR5Vco
+    BIY7Vlplbn1L1HN9vYG4XL6U=; b=VOC3ugBBthgcFH9/LFsXIW+EsQDKICmq8TY
+    0ktFI/Zwc9tmjoWKKUA26IqqYgoF85vh2C18F/n9QktyuA0E2BR3GBWD/+JgFwQU
+    zzDxFEU2ricge/6erG3OwSRzBd5b4sRJPGivWNr/Vs5hVb7SKO2qPIuwQ8QsEcT8
+    Ofb/aJ3DvfAwpcMCV/PeOYhn31KqiPznW0ygTnbERnzJaLFgrknTpZlTv3mA2FQs
+    U3WyXrn4m+659IpJQZvvsP7l4IDhnMKar+2DIK4X4D6zFp4p7OCyC4OPa/MKc2C3
+    LItUHzyEcavNjZtaM3lmUrARpWqzP7jRgNWGXgEiJpp4Pj6KYVQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753430AbeBKFJ2 (ORCPT <rfc822;greg@kroah.com>);
+        id S1753692AbeBKFJ2 (ORCPT <rfc822;greg@kroah.com>);
         Sun, 11 Feb 2018 00:09:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41441 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41453 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752648AbeBKEdm (ORCPT
+        by vger.kernel.org with ESMTP id S1752649AbeBKEdm (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:42 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Felipe Balbi" <felipe.balbi@linux.intel.com>
+CC: akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
+        "Takashi Iwai" <tiwai@suse.de>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.945573344@decadent.org.uk>
+Message-ID: <lsq.1518322806.267761908@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 72/79] usb: add helper to extract bits 12:11 of
- wMaxPacketSize
+Subject: [PATCH 3.2 54/79] ALSA: timer: Remove kernel warning at compat
+ ioctl error paths
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,68 +80,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 541b6fe63023f3059cf85d47ff2767a3e42a8e44 upstream.
+commit 3d4e8303f2c747c8540a0a0126d0151514f6468b upstream.
 
-According to USB Specification 2.0 table 9-4,
-wMaxPacketSize is a bitfield. Endpoint's maxpacket
-is laid out in bits 10:0. For high-speed,
-high-bandwidth isochronous endpoints, bits 12:11
-contain a multiplier to tell us how many
-transactions we want to try per uframe.
+Some timer compat ioctls have NULL checks of timer instance with
+snd_BUG_ON() that bring up WARN_ON() when the debug option is set.
+Actually the condition can be met in the normal situation and it's
+confusing and bad to spew kernel warnings with stack trace there.
+Let's remove snd_BUG_ON() invocation and replace with the simple
+checks.  Also, correct the error code to EBADFD to follow the native
+ioctl error handling.
 
-This means that if we want an isochronous endpoint
-to issue 3 transfers of 1024 bytes per uframe,
-wMaxPacketSize should contain the value:
-
-	1024 | (2 << 11)
-
-or 5120 (0x1400). In order to make Host and
-Peripheral controller drivers' life easier, we're
-adding a helper which returns bits 12:11. Note that
-no care is made WRT to checking endpoint type and
-gadget's speed. That's left for drivers to handle.
-
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-[bwh: Backported to 3.2: adjust filename, context]
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/usb/ch9.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ sound/core/timer_compat.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/include/linux/usb/ch9.h
-+++ b/include/linux/usb/ch9.h
-@@ -390,6 +390,11 @@ struct usb_endpoint_descriptor {
- #define USB_ENDPOINT_XFER_INT		3
- #define USB_ENDPOINT_MAX_ADJUSTABLE	0x80
+--- a/sound/core/timer_compat.c
++++ b/sound/core/timer_compat.c
+@@ -40,11 +40,11 @@ static int snd_timer_user_info_compat(st
+ 	struct snd_timer *t;
  
-+#define USB_EP_MAXP_MULT_SHIFT	11
-+#define USB_EP_MAXP_MULT_MASK	(3 << USB_EP_MAXP_MULT_SHIFT)
-+#define USB_EP_MAXP_MULT(m) \
-+	(((m) & USB_EP_MAXP_MULT_MASK) >> USB_EP_MAXP_MULT_SHIFT)
-+
- #define USB_ENDPOINT_SYNCTYPE		0x0c
- #define USB_ENDPOINT_SYNC_NONE		(0 << 2)
- #define USB_ENDPOINT_SYNC_ASYNC		(1 << 2)
-@@ -592,6 +597,20 @@ static inline int usb_endpoint_maxp(cons
- 	return __le16_to_cpu(epd->wMaxPacketSize);
- }
- 
-+/**
-+ * usb_endpoint_maxp_mult - get endpoint's transactional opportunities
-+ * @epd: endpoint to be checked
-+ *
-+ * Return @epd's wMaxPacketSize[12:11] + 1
-+ */
-+static inline int
-+usb_endpoint_maxp_mult(const struct usb_endpoint_descriptor *epd)
-+{
-+	int maxp = __le16_to_cpu(epd->wMaxPacketSize);
-+
-+	return USB_EP_MAXP_MULT(maxp) + 1;
-+}
-+
- /*-------------------------------------------------------------------------*/
- 
- /* USB_DT_SS_ENDPOINT_COMP: SuperSpeed Endpoint Companion descriptor */
+ 	tu = file->private_data;
+-	if (snd_BUG_ON(!tu->timeri))
+-		return -ENXIO;
++	if (!tu->timeri)
++		return -EBADFD;
+ 	t = tu->timeri->timer;
+-	if (snd_BUG_ON(!t))
+-		return -ENXIO;
++	if (!t)
++		return -EBADFD;
+ 	memset(&info, 0, sizeof(info));
+ 	info.card = t->card ? t->card->number : -1;
+ 	if (t->hw.flags & SNDRV_TIMER_HW_SLAVE)
+@@ -73,8 +73,8 @@ static int snd_timer_user_status_compat(
+ 	struct snd_timer_status32 status;
+ 	
+ 	tu = file->private_data;
+-	if (snd_BUG_ON(!tu->timeri))
+-		return -ENXIO;
++	if (!tu->timeri)
++		return -EBADFD;
+ 	memset(&status, 0, sizeof(status));
+ 	status.tstamp.tv_sec = tu->tstamp.tv_sec;
+ 	status.tstamp.tv_nsec = tu->tstamp.tv_nsec;
