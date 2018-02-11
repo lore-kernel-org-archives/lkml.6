@@ -1,125 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752741AbeBKJ2i (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 04:28:38 -0500
-Received: from mail-eopbgr00050.outbound.protection.outlook.com ([40.107.0.50]:54880
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752273AbeBKJ2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 04:28:35 -0500
-From: Wen He <wen.he_1@nxp.com>
-To: Adam Wallis <awallis@codeaurora.org>,
-        Yang Shunyong <shunyong.yang@hxt-semitech.com>,
-        "vinod.koul@intel.com" <vinod.koul@intel.com>
-CC: "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "yu.zheng@hxt-semitech.com" <yu.zheng@hxt-semitech.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Graham Moore <graham.moore@linux.intel.com>,
-        "okaya@codeaurora.org >> Sinan Kaya" <okaya@codeaurora.org>
-Subject: RE: [PATCH] dmaengine: dmatest: fix container_of member in
- dmatest_callback
-Thread-Topic: [PATCH] dmaengine: dmatest: fix container_of member in
- dmatest_callback
-Thread-Index: AQHTk1VjC+EzSxjOrkqW9j62mCVEWqOBhzSAgB2F1QA=
-Date: Sun, 11 Feb 2018 09:28:32 +0000
-Message-ID: <DB6PR0401MB250319E17A025A8E03E84C72E2F00@DB6PR0401MB2503.eurprd04.prod.outlook.com>
-References: <1516606108-40562-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <65509b03-7efb-c4ae-0965-8f2f659ddf1a@codeaurora.org>
-In-Reply-To: <65509b03-7efb-c4ae-0965-8f2f659ddf1a@codeaurora.org>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=wen.he_1@nxp.com;
-x-originating-ip: [192.158.241.86]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0401MB2295;7:PmKl+Y6ehDBGrR8o4d9GaHWLx76FwmX+nPdByqnLq3Ar49utiAhPmySHSBrSDZXR5pF+v+wrtCpJah0gHH6aUG59DBBwf9Md/D2T/FHPr6WIau6Jl1ITCQA/KleBO5PuIjWZpRr9GC9P8lQRzuBX+mwcsSrakvJHqd8g1X4jx/WGurDTrtG9rQfg8uW3J1ad2lFXPSmvrVtfbraPwvD6FIu5iEU8jMMjKXkK5Z/BoYvHQ+tTAQCrjJQXlmhS8//j
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 700795e8-4ea6-4f10-020e-08d57131d16a
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:DB6PR0401MB2295;
-x-ms-traffictypediagnostic: DB6PR0401MB2295:
-x-microsoft-antispam-prvs: <DB6PR0401MB22955F1896A0F0D4CC04E0DAE2F00@DB6PR0401MB2295.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(189930954265078)(45079756050767)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231101)(944501161)(3002001)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DB6PR0401MB2295;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0401MB2295;
-x-forefront-prvs: 058043A388
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(39860400002)(346002)(366004)(396003)(51914003)(13464003)(199004)(189003)(6306002)(99286004)(55016002)(81156014)(81166006)(316002)(2950100002)(2501003)(53936002)(5250100002)(54906003)(9686003)(33656002)(966005)(68736007)(110136005)(8676002)(229853002)(3660700001)(305945005)(7736002)(74316002)(478600001)(3280700002)(66066001)(6246003)(106356001)(6436002)(45080400002)(76176011)(14454004)(186003)(2900100001)(3846002)(6116002)(5660300001)(97736004)(86362001)(7696005)(105586002)(26005)(53546011)(6506007)(4326008)(25786009)(102836004)(8936002)(2906002)(59450400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0401MB2295;H:DB6PR0401MB2503.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: Tqf0DgevsHWvbqzjtrvod95YePlxDP9AkonNqnSnbzqzYdLW776+ysadxkUivstP1Qh/lihuu2g8qMresHEhJA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 700795e8-4ea6-4f10-020e-08d57131d16a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2018 09:28:32.2733
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2295
+        id S1752731AbeBKJih (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 04:38:37 -0500
+Received: from mailout3.hostsharing.net ([176.9.242.54]:57827 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752273AbeBKJif (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 04:38:35 -0500
+X-Mailbox-Line: From 4c9bf72aacae1eef062bd134cd112e0770a7f121 Mon Sep 17 00:00:00 2001
+Message-Id: <cover.1518338788.git.lukas@wunner.de>
+From: Lukas Wunner <lukas@wunner.de>
+Date: Sun, 11 Feb 2018 10:38:28 +0100
+Subject: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
+To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, Peter Wu <peter@lekensteyn.nl>,
+        nouveau@lists.freedesktop.org, Lyude Paul <lyude@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Pierre Moreau <pierre.morrow@free.fr>, linux-kernel@vger.kernel.org,
+        Ismo Toijala <ismo.toijala@gmail.com>, intel-gfx@lists.freedesktop.org,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Archit Taneja <architt@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1B9Si0s030028
 
+Fix a deadlock on hybrid graphics laptops that's been present since 2013:
 
-Thanks for you, Shunyong.
+DRM drivers poll connectors in 10 sec intervals.  The poll worker is
+stopped on ->runtime_suspend with cancel_delayed_work_sync().  However
+the poll worker invokes the DRM drivers' ->detect callbacks, which call
+pm_runtime_get_sync().  If the poll worker starts after runtime suspend
+has begun, pm_runtime_get_sync() will wait for runtime suspend to finish
+with the intention of runtime resuming the device afterwards.  The result
+is a circular wait between poll worker and autosuspend worker.
 
-Best Regards,
-Wen He
+I'm seeing this deadlock so often it's not funny anymore. I've also found
+3 nouveau bugzillas about it and 1 radeon bugzilla. (See patch [3/5] and
+[4/5].)
 
-> -----Original Message-----
-> From: dmaengine-owner@vger.kernel.org
-> [mailto:dmaengine-owner@vger.kernel.org] On Behalf Of Adam Wallis
-> Sent: 2018年1月23日 22:32
-> To: Yang Shunyong <shunyong.yang@hxt-semitech.com>;
-> vinod.koul@intel.com
-> Cc: dan.j.williams@intel.com; yu.zheng@hxt-semitech.com;
-> dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; Graham Moore
-> <graham.moore@linux.intel.com>; okaya@codeaurora.org >> Sinan Kaya
-> <okaya@codeaurora.org>
-> Subject: Re: [PATCH] dmaengine: dmatest: fix container_of member in
-> dmatest_callback
-> 
-> On 1/22/2018 2:28 AM, Yang Shunyong wrote:
-> > The type of arg passed to dmatest_callback is struct dmatest_done.
-> > It refers to test_done in struct dmatest_thread, not done_wait.
-> >
-> > Fixes: 6f6a23a213be ("dmaengine: dmatest: move callback wait ...")
-> > Signed-off-by: Yang Shunyong <shunyong.yang@hxt-semitech.com>
-> > ---
-> >  drivers/dma/dmatest.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c index
-> > ec5f9d2bc820..906e85d6dedc 100644
-> > --- a/drivers/dma/dmatest.c
-> > +++ b/drivers/dma/dmatest.c
-> > @@ -355,7 +355,7 @@ static void dmatest_callback(void *arg)  {
-> >  	struct dmatest_done *done = arg;
-> >  	struct dmatest_thread *thread =
-> > -		container_of(arg, struct dmatest_thread, done_wait);
-> > +		container_of(arg, struct dmatest_thread, test_done);
-> >  	if (!thread->done) {
-> >  		done->done = true;
-> >  		wake_up_all(done->wait);
-> >
-> Thanks for the catch
-> 
-> Acked-by: Adam Wallis <awallis@codeaurora.org>
-> --
-> Adam Wallis
-> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies,
-> Inc.
-> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux
-> Foundation Collaborative Project.
-> --
-> To unsubscribe from this list: send the line "unsubscribe dmaengine" in the
-> body of a message to majordomo@vger.kernel.org More majordomo info at
-> https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fvger.
-> kernel.org%2Fmajordomo-info.html&data=02%7C01%7Cwen.he_1%40nxp.co
-> m%7C88161568a7fd4349149b08d5626e1661%7C686ea1d3bc2b4c6fa92cd9
-> 9c5c301635%7C0%7C0%7C636523147354196622&sdata=txItgvD3P%2FrQq
-> MSmpZlTY1rA1yUeWxMHTlELO5vwy84%3D&reserved=0
+One theoretical solution would be to add a flag to the ->detect callback
+to tell it that it's running in the poll worker's context.  In that case
+it doesn't need to call pm_runtime_get_sync() because the poll worker is
+only enabled while runtime active and we know that ->runtime_suspend
+waits for it to finish.  But this approach would require touching every
+single DRM driver's ->detect hook.  Moreover the ->detect hook is called
+from numerous other places, both in the DRM library as well as in each
+driver, making it necessary to trace every possible call chain and check
+if it's coming from the poll worker or not.  I've tried to do that for
+nouveau (see the call sites listed in the commit message of patch [3/5])
+and concluded that this approach is a nightmare to implement.
+
+Another reason for the infeasibility of this approach is that ->detect
+is called from within the DRM library without driver involvement, e.g.
+via DRM's sysfs interface.  In those cases, pm_runtime_get_sync() would
+have to be called by the DRM library, but the DRM library is supposed to
+stay generic, wheras runtime PM is driver-specific.
+
+So instead, I've come up with this much simpler solution which gleans
+from the current task's flags if it's a workqueue worker, retrieves the
+work_struct and checks if it's the poll worker.  All that's needed is
+one small helper in the workqueue code and another small helper in the
+DRM library.  This solution lends itself nicely to stable-backporting.
+
+The patches for radeon and amdgpu are compile-tested only, I only have a
+MacBook Pro with an Nvidia GK107 to test.  To test the patches, add an
+"msleep(12*1000);" at the top of the driver's ->runtime_suspend hook.
+This ensures that the poll worker runs after ->runtime_suspend has begun.
+Wait 12 sec after the GPU has begun runtime suspend, then check
+/sys/bus/pci/devices/0000:01:00.0/power/runtime_status.  Without this
+series, the status will be stuck at "suspending" and you'll get hung task
+errors in dmesg after a few minutes.
+
+i915, malidp and msm "solved" this issue by not stopping the poll worker
+on runtime suspend.  But this results in the GPU bouncing back and forth
+between D0 and D3 continuously.  That's a total no-go for GPUs which
+runtime suspend to D3cold since every suspend/resume cycle costs a
+significant amount of time and energy.  (i915 and malidp do not seem
+to acquire a runtime PM ref in the ->detect callbacks, which seems
+questionable.  msm however does and would also deadlock if it disabled
+the poll worker on runtime suspend.  cc += Archit, Liviu, intel-gfx)
+
+Please review.  Thanks,
+
+Lukas
+
+Lukas Wunner (5):
+  workqueue: Allow retrieval of current task's work struct
+  drm: Allow determining if current task is output poll worker
+  drm/nouveau: Fix deadlock on runtime suspend
+  drm/radeon: Fix deadlock on runtime suspend
+  drm/amdgpu: Fix deadlock on runtime suspend
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c | 58 +++++++++++++-------
+ drivers/gpu/drm/drm_probe_helper.c             | 14 +++++
+ drivers/gpu/drm/nouveau/nouveau_connector.c    | 18 +++++--
+ drivers/gpu/drm/radeon/radeon_connectors.c     | 74 +++++++++++++++++---------
+ include/drm/drm_crtc_helper.h                  |  1 +
+ include/linux/workqueue.h                      |  1 +
+ kernel/workqueue.c                             | 16 ++++++
+ 7 files changed, 132 insertions(+), 50 deletions(-)
+
+-- 
+2.15.1
