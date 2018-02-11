@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x226vb2m0zbzXv/OGQ7AJBTuYZAHMxiISYsUP43G5Ab0p8DabSnBkRX7jd75krucU7r75HIDk
-ARC-Seal: i=1; a=rsa-sha256; t=1518323642; cv=none;
+X-Google-Smtp-Source: AH8x226pGSnTaRMZndcXXqBFL3pN/JAAoQPgd35UwdmVle+ld320numSqxYYKFkKhFZ/x6aZNYIL
+ARC-Seal: i=1; a=rsa-sha256; t=1518323641; cv=none;
         d=google.com; s=arc-20160816;
-        b=e56EvTX78L12wHnG9tWyf8zgkpdv9wM406gHDVcPWpf1spEj+DRYs5qJJBer0o0hVA
-         xVDA7EqIkV3p/5Ja/Eth6xZhFeKLuvVG7HtH8oOUlO8G5kSlZPVLz8WjYZX5y8iVj1eL
-         NAZtbIqDwCwCpt3O/goiLJ2h7w+tVvDHJaBL/AH0mDeG7nfnWwcunitCaiEx3IkI8tpu
-         mOBd1jhbG/iMtG8iuGV1fh3qa2uE8slZJ3cmNYIrG7QZXFj4bBtVYNn1xBRprdXAgJa8
-         U4fh5CM+vTb0VP5XV7Kva9pHCJtSKPQ9s0hJChFYArVFCdXrEsZCEptRwfD9spNe6q6g
-         +t6w==
+        b=lzDwQEGfeYXY6EfCtKeXyMglVNVb9XyUplJLXBVm/CQttAI4oEOkHx5qNCvd5D+L4X
+         k94HJAZpDBojtsOc1n8knOyXjzCFQKr+sGL/6NmMP/Bp+leSLka/qhraMrQKrKehxnRP
+         DYLXSAP0AITH6/x5ALsIQQRl3Tf+pCK9of/SvECWfvNOEdrbE7ecm2/fB5r6JHN+0YQi
+         /E/4jtmH/8gnFBXOWaPmHgj/q5LmM0w1J2m/s7QS+n7FgA7Zl1TQOGmyREBOddHDNG9J
+         X/WB5ZVSdHw1c9SclFoAY/unTe9K18e4MX4nc1BiQOXOMpwNFWHx4FNLMpaweBRd4bUy
+         Todg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=Xv7C9/1JfhELLGn9noZh9SEoyYQbzPj9AfHtb4M5dJ4=;
-        b=jRMD2jg1lxrfFYJuajSE7w1XMUtuznqGGyeh7nKot1UHYBmxpbyotKq6OkRn6TtSNA
-         i6s2MRvne0Lt6aQaeAcX41LF1avmrV5VAAagEaBk7Z4L95KLqoUSkpVYaDC6PavE2iK+
-         YkltURnAR9CcCGSR9stmWWTpZ+7T4g0LJJcYTfpwOzSQjWkpSxfR88/rr9wQbgDAwGv4
-         A3eeHSwog0M1t2D9R76L+DqIj8oZjKSJuGMmzgUJlMFCYntk0bksccNCYWJdC23KgCPQ
-         vrlPSyoDCO7oAEOp//dQUWiL5e56D5wsUNt8QTd5EPYPNkTAzfo58BrkQgWBKdIp2mAr
-         0IYw==
+        bh=zAGwTg6n0dP7tv8indL/Y6jHw8rseiZKROU7UjsWTsY=;
+        b=C+7JUV55gz+iJCVXG4+eeKTYbv2Td029CmAtcgR1hcKKo9rO648V3fx8/7S08UX2eh
+         9aRElvdAJewFM6/tbo6mfPiKSTT1Z8mkgE0Mwouvml3ao/m0p2Zc5gNdQFMM7cLxzdHy
+         CoGIAoI+T5FRMKUkIaVSxiTGEzvv1RyXuk/dx6vNy3r3H/dBv2HjsvHhxAiCe8Cm/EUA
+         9u5t141jYOq6y0HlhCNXyU8o8x48MfEL1F+o7t3ee7lrWbG+1rwQrfOH1zadH++YhZHJ
+         cELySf3LbsCIlwvXqKdOFdpzEuxCNL4kniJ5lA+YkPdld1XXJP00pbq0UGnzPawe/eC7
+         Cckg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,25 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "kbuild test robot" <fengguang.wu@intel.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Ingo Molnar" <mingo@kernel.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>
+ "Colin Ian King" <colin.king@canonical.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.893461445@decadent.org.uk>
+Message-ID: <lsq.1518323471.46040531@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 115/136] x86/decoder: Add new TEST instruction pattern
+Subject: [PATCH 3.16 048/136] staging: rtl8188eu: avoid a null dereference
+ on pmlmepriv
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077714785292297?=
-X-GMAIL-MSGID: =?utf-8?q?1592077731662397888?=
+X-GMAIL-THRID: =?utf-8?q?1592077730466739636?=
+X-GMAIL-MSGID: =?utf-8?q?1592077730466739636?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,55 +51,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 12a78d43de767eaf8fb272facb7a7b6f2dc6a9df upstream.
+commit 123c0aab0050cd0e07ce18e453389fbbb0a5a425 upstream.
 
-The kbuild test robot reported this build warning:
+There is a check on pmlmepriv before dereferencing it when
+vfree'ing pmlmepriv->free_bss_buf however the previous call
+to rtw_free_mlme_priv_ie_data deferences pmlmepriv causing
+a null pointer deference if it is null.  Avoid this by also
+calling rtw_free_mlme_priv_ie_data if the pointer is non-null.
 
-  Warning: arch/x86/tools/test_get_len found difference at <jump_table>:ffffffff8103dd2c
-
-  Warning: ffffffff8103dd82: f6 09 d8 testb $0xd8,(%rcx)
-  Warning: objdump says 3 bytes, but insn_get_length() says 2
-  Warning: decoded and checked 1569014 instructions with 1 warnings
-
-This sequence seems to be a new instruction not in the opcode map in the Intel SDM.
-
-The instruction sequence is "F6 09 d8", means Group3(F6), MOD(00)REG(001)RM(001), and 0xd8.
-Intel SDM vol2 A.4 Table A-6 said the table index in the group is "Encoding of Bits 5,4,3 of
-the ModR/M Byte (bits 2,1,0 in parenthesis)"
-
-In that table, opcodes listed by the index REG bits as:
-
-  000         001       010 011  100        101        110         111
- TEST Ib/Iz,(undefined),NOT,NEG,MUL AL/rAX,IMUL AL/rAX,DIV AL/rAX,IDIV AL/rAX
-
-So, it seems TEST Ib is assigned to 001.
-
-Add the new pattern.
-
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Detected by CoverityScan, CID#1230262 ("Dereference before null check")
+Fixes: 7b464c9fa5cc ("staging: r8188eu: Add files for new driver - part 4")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/lib/x86-opcode-map.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/x86/lib/x86-opcode-map.txt
-+++ b/arch/x86/lib/x86-opcode-map.txt
-@@ -814,7 +814,7 @@ EndTable
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+@@ -120,9 +120,8 @@ void rtw_free_mlme_priv_ie_data(struct m
  
- GrpTable: Grp3_1
- 0: TEST Eb,Ib
--1:
-+1: TEST Eb,Ib
- 2: NOT Eb
- 3: NEG Eb
- 4: MUL AL,Eb
+ void _rtw_free_mlme_priv(struct mlme_priv *pmlmepriv)
+ {
+-	rtw_free_mlme_priv_ie_data(pmlmepriv);
+-
+ 	if (pmlmepriv) {
++		rtw_free_mlme_priv_ie_data(pmlmepriv);
+ 		if (pmlmepriv->free_bss_buf)
+ 			vfree(pmlmepriv->free_bss_buf);
+ 	}
