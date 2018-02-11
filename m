@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325407-2-1186556005753287272
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518325405-2-17669670138557234105
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325406; b=Li/Ztpu0VGmbNlwunW2UCExk3xItfO1kjewfNHpgD1CNUGF
-    ruIyOONN8Hq+3W1zKTklpcp8mPgiw2cYKlqTWJUFSe4MnZwh3bfDvvr9NRBnjUX8
-    a4FV/HDo+UCG5AOY5Kw8F9O7cuhjiHThf40hYhkSRigCstCZzOuhoiRjzuqdIK8I
-    JaunikvK2CGAHJJCTFz2+HxQVj4oQ/YV7l6A0JyXR4lwatoaBKTPaKnVHzkYB3qR
-    qi8yVx1I4vdr2OhGuYT4IYW3idMmCCHTqPKBRNU68NgbjkiFuGwVUDNm6D7CjKxA
-    FeQhoIrD3fsvDoefZcy/zDZUkVB1rB3HDBpqqVA==
+    t=1518325404; b=dh7ppBFAo8Q3s+deVuNgfHAdkbDwHpHC7WSez2avInwysBe
+    heqTcxOMZIprdhE3jF3ctAK7+EF3DdAyUPHuzCQSLnvE/HhE0HOF3DvSAsREo+16
+    ht5377L4x1L0uhTlbg+BKvY3lHyG1wT2bBnELwbEtq/2nk8UTPFIhuoJoXDJwE0w
+    OLvyRKgjR3mZHR5KdEPuAoR3Qyznh/6udA9iSVXK18013ghZHliaJkKhnSvl3U3F
+    bC3CLwypJryxUhFfC5RK9kZ3esJAqq6GhgrKcAzntKg+m+TshOPt7UsRiIsvy1zb
+    Ng/+xJhujB4U+hZOttNirsQEBU6B1JNg4rUK6nQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325406; bh=vQQ6WdzzJ3LpWByhiDR
-    mQV1H2GusuU3I9Jh56uE/oMk=; b=BkmHuSyxrlgKEdAVp2XnpDxPpzaCA2YvG6w
-    iHz7rpyF3iTaLfBzFHV7kozEOrZWhO6nXt/A57f+dKRccCAp5CT/JvbFlBUboQ9U
-    6s+lt80DPqSE7ISex5/c2FsiBCvAJCenuoJ3qeXZn9aoDJivJw4L2LOxko6xLKPC
-    jqMrTG+8vZHHv9H18DVUDihgHKCJGf890ypaPhYmfE2fSbPxewYmeWTYslaysK6b
-    68L9ccDu3+CtvPiVUSS7KsTQ4cYJyE1Y1k/E7ffg8wDdAnv3lJ5CWHlolBVzp+6v
-    2NH+wpJu4bHLMHN+KldUPxRp/RzhP/3NKJScankdqaWJJ7IQCpA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325404; bh=1GdlTN34VTm5RlQyxmR
+    HgSNfP+1eIYXtOaIS1ilGyV0=; b=vIajKcubdKrxY7kFzwypcGk8y1uQ5TW5Ndj
+    lHZu5MEPoEWX/4dfh+aKBEXqE9+VikeWBpTYAMq8Kb74q3Ia/3yg2wN5maKgJYqV
+    fYWvHn8mr0TSakIFYuCTHtBSpNNGLGIuUyLXQBEW8UZZgksA1doK6Xc42mO1k28N
+    cFrgeuyOEpGnuSe9pXcIvtxrHQLrCl3KwDFU61Ms5QVs02I3uv3lwnWx23cnP1hI
+    K4ozqPDjzEOd/HDpWzDbZWu8AF85/PIu0kMC29Bj63YcvyUgM5fiNzJ9FmjQUGxS
+    Z7o+72zij1QmBle0Q0Erb+0RWcydPiH+M4CPFtIf4C62qEHvz+Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752764AbeBKFCJ (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:02:09 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41609 "EHLO
+        id S1753439AbeBKFCK (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:02:10 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41613 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752750AbeBKEdq (ORCPT
+        by vger.kernel.org with ESMTP id S1752751AbeBKEdq (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:46 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,23 +59,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
-        "Peter Zijlstra" <peterz@infradead.org>, bp@suse.de,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Brian Gerst" <brgerst@gmail.com>,
-        "Denys Vlasenko" <dvlasenk@redhat.com>,
-        "Zhou Chengming" <zhouchengming1@huawei.com>,
+CC: akpm@linux-foundation.org, "Christoph Hellwig" <hch@infradead.org>,
+        "Waiman Long" <longman@redhat.com>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Masami Hiramatsu" <mhiramat@kernel.org>
+        "Jens Axboe" <axboe@kernel.dk>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.661963316@decadent.org.uk>
+Message-ID: <lsq.1518322806.634970288@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 30/79] kprobes, x86/alternatives: Use text_mutex to
- protect smp_alt_modules
+Subject: [PATCH 3.2 35/79] blktrace: Fix potential deadlock between delete
+ & sysfs ops
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -90,173 +82,143 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhou Chengming <zhouchengming1@huawei.com>
+From: Waiman Long <longman@redhat.com>
 
-commit e846d13958066828a9483d862cc8370a72fadbb6 upstream.
+commit 5acb3cc2c2e9d3020a4fee43763c6463767f1572 upstream.
 
-We use alternatives_text_reserved() to check if the address is in
-the fixed pieces of alternative reserved, but the problem is that
-we don't hold the smp_alt mutex when call this function. So the list
-traversal may encounter a deleted list_head if another path is doing
-alternatives_smp_module_del().
+The lockdep code had reported the following unsafe locking scenario:
 
-One solution is that we can hold smp_alt mutex before call this
-function, but the difficult point is that the callers of this
-functions, arch_prepare_kprobe() and arch_prepare_optimized_kprobe(),
-are called inside the text_mutex. So we must hold smp_alt mutex
-before we go into these arch dependent code. But we can't now,
-the smp_alt mutex is the arch dependent part, only x86 has it.
-Maybe we can export another arch dependent callback to solve this.
+       CPU0                    CPU1
+       ----                    ----
+  lock(s_active#228);
+                               lock(&bdev->bd_mutex/1);
+                               lock(s_active#228);
+  lock(&bdev->bd_mutex);
 
-But there is a simpler way to handle this problem. We can reuse the
-text_mutex to protect smp_alt_modules instead of using another mutex.
-And all the arch dependent checks of kprobes are inside the text_mutex,
-so it's safe now.
+ *** DEADLOCK ***
 
-Signed-off-by: Zhou Chengming <zhouchengming1@huawei.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+The deadlock may happen when one task (CPU1) is trying to delete a
+partition in a block device and another task (CPU0) is accessing
+tracing sysfs file (e.g. /sys/block/dm-1/trace/act_mask) in that
+partition.
+
+The s_active isn't an actual lock. It is a reference count (kn->count)
+on the sysfs (kernfs) file. Removal of a sysfs file, however, require
+a wait until all the references are gone. The reference count is
+treated like a rwsem using lockdep instrumentation code.
+
+The fact that a thread is in the sysfs callback method or in the
+ioctl call means there is a reference to the opended sysfs or device
+file. That should prevent the underlying block structure from being
+removed.
+
+Instead of using bd_mutex in the block_device structure, a new
+blk_trace_mutex is now added to the request_queue structure to protect
+access to the blk_trace structure.
+
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
 Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@suse.de
-Fixes: 2cfa197 "ftrace/alternatives: Introducing *_text_reserved functions"
-Link: http://lkml.kernel.org/r/1509585501-79466-1-git-send-email-zhouchengming1@huawei.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.2: adjust context]
+
+Fix typo in patch subject line, and prune a comment detailing how
+the code used to work.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/alternative.c | 26 +++++++++++++-------------
- kernel/extable.c              |  2 ++
- 2 files changed, 15 insertions(+), 13 deletions(-)
+ block/blk-core.c        |  3 +++
+ include/linux/blkdev.h  |  1 +
+ kernel/trace/blktrace.c | 18 ++++++++++++------
+ 3 files changed, 16 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -407,7 +407,6 @@ static void alternatives_smp_lock(const
- {
- 	const s32 *poff;
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -499,6 +499,9 @@ struct request_queue *blk_alloc_queue_no
  
--	mutex_lock(&text_mutex);
- 	for (poff = start; poff < end; poff++) {
- 		u8 *ptr = (u8 *)poff + *poff;
+ 	kobject_init(&q->kobj, &blk_queue_ktype);
  
-@@ -417,7 +416,6 @@ static void alternatives_smp_lock(const
- 		if (*ptr == 0x3e)
- 			text_poke(ptr, ((unsigned char []){0xf0}), 1);
- 	};
--	mutex_unlock(&text_mutex);
++#ifdef CONFIG_BLK_DEV_IO_TRACE
++	mutex_init(&q->blk_trace_mutex);
++#endif
+ 	mutex_init(&q->sysfs_lock);
+ 	spin_lock_init(&q->__queue_lock);
+ 
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -361,6 +361,7 @@ struct request_queue {
+ 	int			node;
+ #ifdef CONFIG_BLK_DEV_IO_TRACE
+ 	struct blk_trace	*blk_trace;
++	struct mutex		blk_trace_mutex;
+ #endif
+ 	/*
+ 	 * for flush operations
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -631,6 +631,12 @@ int blk_trace_startstop(struct request_q
  }
+ EXPORT_SYMBOL_GPL(blk_trace_startstop);
  
- static void alternatives_smp_unlock(const s32 *start, const s32 *end,
-@@ -425,7 +423,6 @@ static void alternatives_smp_unlock(cons
- {
- 	const s32 *poff;
++/*
++ * When reading or writing the blktrace sysfs files, the references to the
++ * opened sysfs or device files should prevent the underlying block device
++ * from being removed. So no further delete protection is really needed.
++ */
++
+ /**
+  * blk_trace_ioctl: - handle the ioctls associated with tracing
+  * @bdev:	the block device
+@@ -648,7 +654,7 @@ int blk_trace_ioctl(struct block_device
+ 	if (!q)
+ 		return -ENXIO;
  
--	mutex_lock(&text_mutex);
- 	for (poff = start; poff < end; poff++) {
- 		u8 *ptr = (u8 *)poff + *poff;
+-	mutex_lock(&bdev->bd_mutex);
++	mutex_lock(&q->blk_trace_mutex);
  
-@@ -435,7 +432,6 @@ static void alternatives_smp_unlock(cons
- 		if (*ptr == 0xf0)
- 			text_poke(ptr, ((unsigned char []){0x3E}), 1);
- 	};
--	mutex_unlock(&text_mutex);
- }
- 
- struct smp_alt_module {
-@@ -454,8 +450,7 @@ struct smp_alt_module {
- 	struct list_head next;
- };
- static LIST_HEAD(smp_alt_modules);
--static DEFINE_MUTEX(smp_alt);
--static bool uniproc_patched = false;	/* protected by smp_alt */
-+static bool uniproc_patched = false;	/* protected by text_mutex */
- 
- void __init_or_module alternatives_smp_module_add(struct module *mod,
- 						  char *name,
-@@ -464,7 +459,7 @@ void __init_or_module alternatives_smp_m
- {
- 	struct smp_alt_module *smp;
- 
--	mutex_lock(&smp_alt);
-+	mutex_lock(&text_mutex);
- 	if (!uniproc_patched)
- 		goto unlock;
- 
-@@ -491,14 +486,14 @@ void __init_or_module alternatives_smp_m
- smp_unlock:
- 	alternatives_smp_unlock(locks, locks_end, text, text_end);
- unlock:
--	mutex_unlock(&smp_alt);
-+	mutex_unlock(&text_mutex);
- }
- 
- void __init_or_module alternatives_smp_module_del(struct module *mod)
- {
- 	struct smp_alt_module *item;
- 
--	mutex_lock(&smp_alt);
-+	mutex_lock(&text_mutex);
- 	list_for_each_entry(item, &smp_alt_modules, next) {
- 		if (mod != item->mod)
- 			continue;
-@@ -506,7 +501,7 @@ void __init_or_module alternatives_smp_m
- 		kfree(item);
+ 	switch (cmd) {
+ 	case BLKTRACESETUP:
+@@ -674,7 +680,7 @@ int blk_trace_ioctl(struct block_device
  		break;
  	}
--	mutex_unlock(&smp_alt);
-+	mutex_unlock(&text_mutex);
+ 
+-	mutex_unlock(&bdev->bd_mutex);
++	mutex_unlock(&q->blk_trace_mutex);
+ 	return ret;
  }
  
- void alternatives_enable_smp(void)
-@@ -527,7 +522,7 @@ void alternatives_enable_smp(void)
- 	/* Why bother if there are no other CPUs? */
- 	BUG_ON(num_possible_cpus() == 1);
+@@ -1660,7 +1666,7 @@ static ssize_t sysfs_blk_trace_attr_show
+ 	if (q == NULL)
+ 		goto out_bdput;
  
--	mutex_lock(&smp_alt);
-+	mutex_lock(&text_mutex);
+-	mutex_lock(&bdev->bd_mutex);
++	mutex_lock(&q->blk_trace_mutex);
  
- 	if (uniproc_patched) {
- 		printk(KERN_INFO "SMP alternatives: switching to SMP code\n");
-@@ -539,10 +534,13 @@ void alternatives_enable_smp(void)
- 					      mod->text, mod->text_end);
- 		uniproc_patched = false;
+ 	if (attr == &dev_attr_enable) {
+ 		ret = sprintf(buf, "%u\n", !!q->blk_trace);
+@@ -1679,7 +1685,7 @@ static ssize_t sysfs_blk_trace_attr_show
+ 		ret = sprintf(buf, "%llu\n", q->blk_trace->end_lba);
+ 
+ out_unlock_bdev:
+-	mutex_unlock(&bdev->bd_mutex);
++	mutex_unlock(&q->blk_trace_mutex);
+ out_bdput:
+ 	bdput(bdev);
+ out:
+@@ -1721,7 +1727,7 @@ static ssize_t sysfs_blk_trace_attr_stor
+ 	if (q == NULL)
+ 		goto out_bdput;
+ 
+-	mutex_lock(&bdev->bd_mutex);
++	mutex_lock(&q->blk_trace_mutex);
+ 
+ 	if (attr == &dev_attr_enable) {
+ 		if (value)
+@@ -1747,7 +1753,7 @@ static ssize_t sysfs_blk_trace_attr_stor
  	}
--	mutex_unlock(&smp_alt);
-+	mutex_unlock(&text_mutex);
- }
  
--/* Return 1 if the address range is reserved for smp-alternatives */
-+/*
-+ * Return 1 if the address range is reserved for SMP-alternatives.
-+ * Must hold text_mutex.
-+ */
- int alternatives_text_reserved(void *start, void *end)
- {
- 	struct smp_alt_module *mod;
-@@ -550,6 +548,8 @@ int alternatives_text_reserved(void *sta
- 	u8 *text_start = start;
- 	u8 *text_end = end;
- 
-+	lockdep_assert_held(&text_mutex);
-+
- 	list_for_each_entry(mod, &smp_alt_modules, next) {
- 		if (mod->text > text_end || mod->text_end < text_start)
- 			continue;
---- a/kernel/extable.c
-+++ b/kernel/extable.c
-@@ -28,6 +28,8 @@
-  * mutex protecting text section modification (dynamic code patching).
-  * some users need to sleep (allocating memory...) while they hold this lock.
-  *
-+ * Note: Also protects SMP-alternatives modification on x86.
-+ *
-  * NOT exported to modules - patching kernel text is a really delicate matter.
-  */
- DEFINE_MUTEX(text_mutex);
+ out_unlock_bdev:
+-	mutex_unlock(&bdev->bd_mutex);
++	mutex_unlock(&q->blk_trace_mutex);
+ out_bdput:
+ 	bdput(bdev);
+ out:
