@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324425-2-5214016146916609436
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324422-2-8302719621279889289
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324424; b=hU7eonQuB5JKcN6CsfErvwXQSUjyiRQg0G+qRKf/189G3Qq
-    oodgioq7KBaI8dEPPaEcdwNBICgt1/bCzBA4k/7FwJlz/PBS3oARrPXCPh6mL7ZX
-    Mn3WVKgP77YF1neQb9lapJrlu9puYUxDcJfKglBr+c5nvmR4pHeM41MvomOLgR26
-    Pdn5pgKqkdXgUmn1VOgj4IYosbNeS5IBK94r8WyiKdWbAmKLZFtOVSrXRw5WrVmN
-    Kf40dgYiCzGjtxopjrANzPz0pfoA1Iici325gQCIDoiH5uGUHWvciVQ4imoPWdj7
-    yBpEku+pt647YyKk4ioYwiViG3NGQ2kdre0PBXg==
+    t=1518324421; b=bEoxkVvVUuFcsFYJXkWGYev2hX/cVTvSHdDipkwgo40Uz8n
+    19J1LDTo5040zfUiAhvfz6fb82M3WVhVLB6rtx/ye50GAhX80SSNC0jaBf3L0dJz
+    RjgaE8Zht1PMClz8C8UlseRtdXubC9nHtbhE8jxaRLBtztm/h588alZZgXH9UAkW
+    5OJrUg+MNa1xIEntFgfrVBcd0bAPg6Bz4U9Qc5oFA9FxHOPJMy6Wdep5YkdmmdYo
+    q2hvfbbm4eMeh8MKFXvdVkR0lKV4mo4kRNyMXCSh5UrN6cqVElW8hPrmM4ScDo7W
+    MUFijlHO7Yrf14/ueZzeApY9QY30yWnELVGXy2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324424; bh=BMBC225P6FR3RYuyN0O
-    FMbven6giQEBbn7A5v2QaBjI=; b=B/fjs53wUIzeE9ezWFDVDoS+LMqE6BkXmp4
-    pXqc7gAFRofHdzMtWnNeTgawk0A0o6TC6+ntGM8uTlXVdqz8m2gFCTvwSc0B3fGI
-    T+ZG2BscB/wuYoE7hnAVr8MJfwU5wMuilR37aaBU9g7X05ujiYQdAfo5J8TTQWAP
-    wZS57zFLQVL+lYdh0FxyMP+SxvUnQ34ijMpunOZ37VNoC//ZAaMLPG8LjWa8gZqT
-    Mk5q/xZnJjXEESvwgJ+m0IJ8K8EjeuLAIsx9pNrED8M1pG3DUg297Z/wBaGwFIGO
-    kNdrFU28db951u5Yhq+R6Ti39x5miJU+dHDfLcXOcpLL87Zau2A==
+    :sender:list-id; s=arctest; t=1518324421; bh=6nas6re4RmgfYA/2UPF
+    ubntoHKGQovGg/kt89hcGNnw=; b=vxOQ1RLfLSc1tsoUvPOtcrle4ritarKtepy
+    6yRV1Z5xzZZLSn5KOfXo3tr9rtCkAP7PmhHLXbz22+oFgkIwnBmqhkAavssTBrIG
+    BqjpmIscxiVCCc4u7KP/UBz/jnbK8KuK9DGecBCt+1uNeCsAnthClZh7v+vzqIdv
+    193PAK+6igLF29q9dBE/f7fCYpedAEFAmnroCMAdSYTsuw7CFZejPWp1/zIHN1Zq
+    CpvsRRHKMaf2pQSH3gJnjDFhgzAsgvMumaYO+aJjWMrNPJKSkI0cE/EIKZtZX3mA
+    JxSvYlpxr+Q+EDEsTyWZlm7HWYd8rfc/U97xxT4VjhXbzMl7mWg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753096AbeBKEpP (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:45:15 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41821 "EHLO
+        id S1753128AbeBKEpQ (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:45:16 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41841 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752844AbeBKEd6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752853AbeBKEd6 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:58 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,14 +59,12 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Pradeep Thomas" <pradeepthomas@gmail.com>,
-        "Anna Schumaker" <Anna.Schumaker@Netapp.com>,
-        "Chuck Lever" <chuck.lever@oracle.com>
+CC: akpm@linux-foundation.org, "Nadav Amit" <namit@cs.technion.ac.il>,
+        "Paolo Bonzini" <pbonzini@redhat.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.601770727@decadent.org.uk>
+Message-ID: <lsq.1518323471.905380071@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 092/136] nfs: Fix ugly referral attributes
+Subject: [PATCH 3.16 088/136] KVM: vmx: Inject #GP on invalid PAT CR
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,82 +79,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Nadav Amit <namit@cs.technion.ac.il>
 
-commit c05cefcc72416a37eba5a2b35f0704ed758a9145 upstream.
+commit 4566654bb9be9e8864df417bb72ceee5136b6a6a upstream.
 
-Before traversing a referral and performing a mount, the mounted-on
-directory looks strange:
+Guest which sets the PAT CR to invalid value should get a #GP.  Currently, if
+vmx supports loading PAT CR during entry, then the value is not checked.  This
+patch makes the required check in that case.
 
-dr-xr-xr-x. 2 4294967294 4294967294 0 Dec 31  1969 dir.0
-
-nfs4_get_referral is wiping out any cached attributes with what was
-returned via GETATTR(fs_locations), but the bit mask for that
-operation does not request any file attributes.
-
-Retrieve owner and timestamp information so that the memcpy in
-nfs4_get_referral fills in more attributes.
-
-Changes since v1:
-- Don't request attributes that the client unconditionally replaces
-- Request only MOUNTED_ON_FILEID or FILEID attribute, not both
-- encode_fs_locations() doesn't use the third bitmask word
-
-Fixes: 6b97fd3da1ea ("NFSv4: Follow a referral")
-Suggested-by: Pradeep Thomas <pradeepthomas@gmail.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Nadav Amit <namit@cs.technion.ac.il>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/nfs/nfs4proc.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ arch/x86/kvm/vmx.c | 2 ++
+ arch/x86/kvm/x86.c | 5 +++--
+ arch/x86/kvm/x86.h | 2 ++
+ 3 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -243,15 +243,12 @@ const u32 nfs4_fsinfo_bitmap[3] = { FATT
- };
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -2599,6 +2599,8 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 		break;
+ 	case MSR_IA32_CR_PAT:
+ 		if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT) {
++			if (!kvm_mtrr_valid(vcpu, MSR_IA32_CR_PAT, data))
++				return 1;
+ 			vmcs_write64(GUEST_IA32_PAT, data);
+ 			vcpu->arch.pat = data;
+ 			break;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1742,7 +1742,7 @@ static bool valid_mtrr_type(unsigned t)
+ 	return t < 8 && (1 << t) & 0x73; /* 0, 1, 4, 5, 6 */
+ }
  
- const u32 nfs4_fs_locations_bitmap[3] = {
--	FATTR4_WORD0_TYPE
--	| FATTR4_WORD0_CHANGE
-+	FATTR4_WORD0_CHANGE
- 	| FATTR4_WORD0_SIZE
- 	| FATTR4_WORD0_FSID
- 	| FATTR4_WORD0_FILEID
- 	| FATTR4_WORD0_FS_LOCATIONS,
--	FATTR4_WORD1_MODE
--	| FATTR4_WORD1_NUMLINKS
--	| FATTR4_WORD1_OWNER
-+	FATTR4_WORD1_OWNER
- 	| FATTR4_WORD1_OWNER_GROUP
- 	| FATTR4_WORD1_RAWDEV
- 	| FATTR4_WORD1_SPACE_USED
-@@ -6015,9 +6012,7 @@ static int _nfs4_proc_fs_locations(struc
- 				   struct page *page)
+-static bool mtrr_valid(struct kvm_vcpu *vcpu, u32 msr, u64 data)
++bool kvm_mtrr_valid(struct kvm_vcpu *vcpu, u32 msr, u64 data)
  {
- 	struct nfs_server *server = NFS_SERVER(dir);
--	u32 bitmask[3] = {
--		[0] = FATTR4_WORD0_FSID | FATTR4_WORD0_FS_LOCATIONS,
--	};
-+	u32 bitmask[3];
- 	struct nfs4_fs_locations_arg args = {
- 		.dir_fh = NFS_FH(dir),
- 		.name = name,
-@@ -6036,12 +6031,15 @@ static int _nfs4_proc_fs_locations(struc
+ 	int i;
  
- 	dprintk("%s: start\n", __func__);
+@@ -1768,12 +1768,13 @@ static bool mtrr_valid(struct kvm_vcpu *
+ 	/* variable MTRRs */
+ 	return valid_mtrr_type(data & 0xff);
+ }
++EXPORT_SYMBOL_GPL(kvm_mtrr_valid);
  
-+	bitmask[0] = nfs4_fattr_bitmap[0] | FATTR4_WORD0_FS_LOCATIONS;
-+	bitmask[1] = nfs4_fattr_bitmap[1];
+ static int set_msr_mtrr(struct kvm_vcpu *vcpu, u32 msr, u64 data)
+ {
+ 	u64 *p = (u64 *)&vcpu->arch.mtrr_state.fixed_ranges;
+ 
+-	if (!mtrr_valid(vcpu, msr, data))
++	if (!kvm_mtrr_valid(vcpu, msr, data))
+ 		return 1;
+ 
+ 	if (msr == MSR_MTRRdefType) {
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -132,6 +132,8 @@ int kvm_write_guest_virt_system(struct x
+ 	gva_t addr, void *val, unsigned int bytes,
+ 	struct x86_exception *exception);
+ 
++bool kvm_mtrr_valid(struct kvm_vcpu *vcpu, u32 msr, u64 data);
 +
- 	/* Ask for the fileid of the absent filesystem if mounted_on_fileid
- 	 * is not supported */
- 	if (NFS_SERVER(dir)->attr_bitmask[1] & FATTR4_WORD1_MOUNTED_ON_FILEID)
--		bitmask[1] |= FATTR4_WORD1_MOUNTED_ON_FILEID;
-+		bitmask[0] &= ~FATTR4_WORD0_FILEID;
- 	else
--		bitmask[0] |= FATTR4_WORD0_FILEID;
-+		bitmask[1] &= ~FATTR4_WORD1_MOUNTED_ON_FILEID;
- 
- 	nfs_fattr_init(&fs_locations->fattr);
- 	fs_locations->server = server;
+ #define KVM_SUPPORTED_XCR0     (XSTATE_FP | XSTATE_SSE | XSTATE_YMM \
+ 				| XSTATE_BNDREGS | XSTATE_BNDCSR)
+ extern u64 host_xcr0;
