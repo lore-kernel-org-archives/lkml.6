@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x224Yh5UbjOap/F1IBJr5wkDUJigFcXExZR9VzzHokYTbndoNj8N6Ye57u+SSnt67OSfGwxyh
-ARC-Seal: i=1; a=rsa-sha256; t=1518323624; cv=none;
+X-Google-Smtp-Source: AH8x225uA8nwJECM3oZbdCChkdLLiI1x1m3z6Yr2P2+QQOh99eLTs4G/9FRC05lT88KsI3b4Qf2n
+ARC-Seal: i=1; a=rsa-sha256; t=1518323622; cv=none;
         d=google.com; s=arc-20160816;
-        b=cUcRePcltuQnWRbWpiWybBa5dEKqJIaW40n1Fkum8vJ26zlyz3sflo8zYBXMeoOM4J
-         nbc/iG6RCc9KQgMdUgSAlFN851Gfh7YW1U6IZRzRV4w28mD1jfLp1fqh27ddFuHShU1s
-         W6y/MxN+Zegcw0dA40aHPnmWTySA5jWi6ZGmUyrvkZO19/OLp06sKPfdK7GE1b6RFXWz
-         5zCUeJeWkVNmuEEja3uAnvlScqHuC6eHiZKpZlgKRUGjEYJzJmK6jmxwx82hohWmnBFz
-         OzOaBzpXIDOLXvvl78oTUhlHR0xhlJOoCCJzjkjqTg10Zx6xL6HWpClecBch6+55ZaYl
-         cBtg==
+        b=vHojktc//TAfN238AI+wXsx+ZxgsIECETquY2SHnNQ4FPr5IU6Xu7jeF8oPsJZN7vf
+         KX8r6R09xNgnSuBAaxxxVMkYVnkD8mZD3YkFrK1svEbS+hDDejv2lqtf3hfxPbbfVLIe
+         7izN5R/w6cEB7FPStqf7I+M9BZNXAH4l5Qy4kemqooQp2P/Fir9UOayRfG3CdHtoNGP+
+         fzwVOCDOiLawTkq42S5m3nkWwXC058v1Mq1IZbaaNBFz3RycLnr6p7DaXpF4vpUM6Ssn
+         +4x42X5TAv4bSmZ6kLfHmvFh1VZi06YIUE3Z0pzdgvLKgv4BoyP90k8GapPfY2XeoLdg
+         1w8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=ILAEFQ0JBBuV79RsDt4ePSSDS2iODlVAhQKYnhH5LYE=;
-        b=lzwf0ZKpivWANMYdhrpSiNQfomtn38oc9u2ixoYSMb70SKTP68yiaCiqL0iG1fz8Fa
-         nGgxwXcsOKC5ZtXfjkhV1byScEuERojBCUQy9QgLdeKh16IVPCrzK12/6QEuilEyBg0p
-         ms/1QuSoi1bC3+8ozpZX0xnAwTIuuaAbNI8O2c6Bec095MkpauFv4I24AN5IEjoXupfK
-         najikZiJdDAslWro4P3XpQZosS09z324MTgWUo2vgqSgEjA1qTyG96opS9ksuXGWNwru
-         BdH3NZER54L1RreZBdVcDy5NRZ/gQyA3AWrhQeUzUZFjCpY3jlJzFynTc6boky97kox2
-         8FJA==
+        bh=/aGKCGAuCxUAiYB/qzwHW+aGTBZ0Y9vqhiufqTjuORU=;
+        b=ABqk/ZAZdQl+sTFDmGw0GOWXNxGFwpQ1k0VTOaQyky49EheoS5VOQflEGDa0EZ7fAm
+         ezWhdM1UpCA0zrvM4V7DaeTT3ldkIcGgVL8xu4vbHQFS/LlWZYjI0LX55YsEqZv9z2Jd
+         0g+g8OCC47P+aYilQeYFZwkpCBvajIw+FydvhG8nyRbqT5k6dcnDp2lDjeCyJXyBHVNI
+         pAjCazj6M94cerpmamczA0c4/KHzHSXEvt+UZygMS4fXuVGPS58MDIrsihB4QsuxB34m
+         Yq/LJsQgb01x5puSeVyHU3DRCXUBsU7S2nsBNNATlzzeMYksOmij+8GD3+/6FbkTQ0nV
+         FN8w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,21 +30,20 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Secunia Research" <vuln@secunia.com>,
- "Shuah Khan" <shuahkh@osg.samsung.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+ "Alan" <gnomes@lxorguk.ukuu.org.uk>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Alan Cox" <alan@linux.intel.com>
 Date: Sun, 11 Feb 2018 04:20:06 +0000
-Message-ID: <lsq.1518322806.310031406@decadent.org.uk>
+Message-ID: <lsq.1518322806.418920876@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 76/79] usbip: fix stub_send_ret_submit() vulnerability
- to null transfer_buffer
+Subject: [PATCH 3.2 71/79] usbip: Fix sscanf handling
 In-Reply-To: <lsq.1518322802.943358572@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077713295235600?=
-X-GMAIL-MSGID: =?utf-8?q?1592077713295235600?=
+X-GMAIL-THRID: =?utf-8?q?1592077710672305006?=
+X-GMAIL-MSGID: =?utf-8?q?1592077710672305006?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,39 +51,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Alan <gnomes@lxorguk.ukuu.org.uk>
 
-commit be6123df1ea8f01ee2f896a16c2b7be3e4557a5a upstream.
+commit 2d32927127f44d755780aa5fa88c8c34e72558f8 upstream.
 
-stub_send_ret_submit() handles urb with a potential null transfer_buffer,
-when it replays a packet with potential malicious data that could contain
-a null buffer. Add a check for the condition when actual_length > 0 and
-transfer_buffer is null.
+Scan only to the length permitted by the buffer
 
-Reported-by: Secunia Research <vuln@secunia.com>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+One of a set of sscanf problems noted by Jackie Chang
+
+Signed-off-by: Alan Cox <alan@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2:
- - Device for logging purposes is &sdev->interface->dev
- - Adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/stub_tx.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/staging/usbip/userspace/libsrc/usbip_common.c | 2 +-
+ drivers/staging/usbip/userspace/libsrc/vhci_driver.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/usbip/stub_tx.c
-+++ b/drivers/staging/usbip/stub_tx.c
-@@ -178,6 +178,13 @@ static int stub_send_ret_submit(struct s
- 		memset(&pdu_header, 0, sizeof(pdu_header));
- 		memset(&msg, 0, sizeof(msg));
+--- a/drivers/staging/usbip/userspace/libsrc/usbip_common.c
++++ b/drivers/staging/usbip/userspace/libsrc/usbip_common.c
+@@ -164,7 +164,7 @@ int read_attr_speed(struct sysfs_device
+ 		goto err;
+ 	}
  
-+		if (urb->actual_length > 0 && !urb->transfer_buffer) {
-+			dev_err(&sdev->interface->dev,
-+				"urb: actual_length %d transfer_buffer null\n",
-+				urb->actual_length);
-+			return -1;
-+		}
-+
- 		if (usb_pipetype(urb->pipe) == PIPE_ISOCHRONOUS)
- 			iovnum = 2 + urb->number_of_packets;
- 		else
+-	ret = sscanf(attr->value, "%s\n", speed);
++	ret = sscanf(attr->value, "%99s\n", speed);
+ 	if (ret < 1) {
+ 		dbg("sscanf failed");
+ 		goto err;
+--- a/drivers/staging/usbip/userspace/libsrc/vhci_driver.c
++++ b/drivers/staging/usbip/userspace/libsrc/vhci_driver.c
+@@ -66,7 +66,7 @@ static int parse_status(char *value)
+ 		unsigned long socket;
+ 		char lbusid[SYSFS_BUS_ID_SIZE];
+ 
+-		ret = sscanf(c, "%d %d %d %x %lx %s\n",
++		ret = sscanf(c, "%d %d %d %x %lx %31s\n",
+ 				&port, &status, &speed,
+ 				&devid, &socket, lbusid);
+ 
