@@ -1,143 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932109AbeBKTl5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 14:41:57 -0500
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:41553 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753459AbeBKTl4 (ORCPT
+        id S932153AbeBKTnL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 14:43:11 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38992 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbeBKTnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 14:41:56 -0500
-Date: Sun, 11 Feb 2018 20:41:54 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Mike Lothian <mike@fireburn.co.uk>
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
-        Ismo Toijala <ismo.toijala@gmail.com>, nouveau@lists.freedesktop.org,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        Hans de Goede <hdegoede@redhat.com>, Peter Wu <peter@lekensteyn.nl>
-Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
-Message-ID: <20180211194154.GB22869@wunner.de>
-References: <cover.1518338788.git.lukas@wunner.de>
- <CAHbf0-Fhi9j5H7VTxF84SENQph+UQE2zRbi2Q-u_DAMh6x+eSg@mail.gmail.com>
- <20180211192314.GA22869@wunner.de>
+        Sun, 11 Feb 2018 14:43:09 -0500
+X-Google-Smtp-Source: AH8x226128nSEIyFuFc+0fApuNmIi4p5720iH+Yo93Bj8HvQbouaQ+v0lZkkS319l1Kk8WAfFMfEAg==
+Date: Sun, 11 Feb 2018 20:43:05 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        karahmed@amazon.de, sironi@amazon.de, kvm@vger.kernel.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com
+Subject: Re: [PATCH] x86/speculation: Clean up various Spectre related details
+Message-ID: <20180211194305.zg7tq3x3cxjuphyo@gmail.com>
+References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+ <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <20180211185057.rest4bf2ydx7slrk@gmail.com>
+ <1518377119.6606.2.camel@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180211192314.GA22869@wunner.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518377119.6606.2.camel@infradead.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 08:23:14PM +0100, Lukas Wunner wrote:
-> On Sun, Feb 11, 2018 at 06:58:11PM +0000, Mike Lothian wrote:
-> > On 11 February 2018 at 09:38, Lukas Wunner <lukas@wunner.de> wrote:
-> > > The patches for radeon and amdgpu are compile-tested only, I only have a
-> > > MacBook Pro with an Nvidia GK107 to test.  To test the patches, add an
-> > > "msleep(12*1000);" at the top of the driver's ->runtime_suspend hook.
-> > > This ensures that the poll worker runs after ->runtime_suspend has begun.
-> > > Wait 12 sec after the GPU has begun runtime suspend, then check
-> > > /sys/bus/pci/devices/0000:01:00.0/power/runtime_status.  Without this
-> > > series, the status will be stuck at "suspending" and you'll get hung task
-> > > errors in dmesg after a few minutes.
-> > 
-> > I wasn't quite sure where to add that msleep. I've tested the patches
-> > as is on top of agd5f's wip branch without ill effects
-> > 
-> > I've had a radeon and now a amdgpu PRIME setup and don't believe I've
-> > ever seen this issue
-> > 
-> > If you could pop a patch together for the msleep I'll give it a test on
-> > amdgpu
+
+* David Woodhouse <dwmw2@infradead.org> wrote:
+
 > 
-> Here you go, this is for all 3 drivers.
-> Should deadlock without the series.
-> Thanks!
+> 
+> On Sun, 2018-02-11 at 19:50 +0100, Ingo Molnar wrote:
+> > 
+> > From 82c2b2f29691143a05181333f387e786646aa28b Mon Sep 17 00:00:00 2001
+> > From: Ingo Molnar <mingo@kernel.org>
+> > Date: Sat, 10 Feb 2018 11:51:57 +0100
+> > Subject: [PATCH] x86/speculation: Clean up various Spectre related details
+> > 
+> > Harmonize all the Spectre messages so that a:
+> > 
+> >     dmesg | grep -i spectre
+> > 
+> > ... gives us most Spectre related kernel boot messages.
+> > 
+> > Also fix a few other details:
+> > 
+> >  - clarify a comment about firmware speculation control
+> > 
+> >  - s/KPTI/PTI
+> > 
+> >  - remove various line-breaks that made the code uglier
+> > 
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Arjan van de Ven <arjan@linux.intel.com>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: David Woodhouse <dwmw2@infradead.org>
+> > Cc: David Woodhouse <dwmw@amazon.co.uk>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> 
+> 
+> 
+> Acked-by: David Woodhouse <dwmw@amazon.co.uk>
 
-Sorry, I missed that amdgpu_drv.c and radeon_drv.c don't include delay.h,
-rectified testing patch below:
+Thanks, added.
 
+> with a couple of comments:
+> 
+> 
+> -        * If neither SMEP or KPTI are available, there is a risk of
+> +        * If neither SMEP or PTI are available, there is a risk of
+> 
+> Make that 'neither SMEP nor PTI' while you're at it though please;
+> that's bugged me a couple of times in passing.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 50afcf6..beaaf2c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -36,6 +36,7 @@
- 
- #include <drm/drm_pciids.h>
- #include <linux/console.h>
-+#include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/pm_runtime.h>
- #include <linux/vga_switcheroo.h>
-@@ -718,6 +719,9 @@ static int amdgpu_pmops_runtime_suspend(struct device *dev)
- 		return -EBUSY;
- 	}
- 
-+	printk("waiting 12 sec\n");
-+	msleep(12*1000);
-+	printk("done waiting 12 sec\n");
- 	drm_dev->switch_power_state = DRM_SWITCH_POWER_CHANGING;
- 	drm_kms_helper_poll_disable(drm_dev);
- 	vga_switcheroo_set_dynamic_switch(pdev, VGA_SWITCHEROO_OFF);
-diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
-index 555fbe5..ee7cf0d 100644
---- a/drivers/gpu/drm/drm_probe_helper.c
-+++ b/drivers/gpu/drm/drm_probe_helper.c
-@@ -586,6 +586,7 @@ static void output_poll_execute(struct work_struct *work)
- 		repoll = true;
- 		goto out;
- 	}
-+	dev_info(&dev->pdev->dev, "begin poll\n");
- 
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	drm_for_each_connector_iter(connector, &conn_iter) {
-@@ -651,6 +652,7 @@ static void output_poll_execute(struct work_struct *work)
- 
- 	if (repoll)
- 		schedule_delayed_work(delayed_work, DRM_OUTPUT_POLL_PERIOD);
-+	dev_info(&dev->pdev->dev, "end poll\n");
- }
- 
- /**
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 3e29302..f9da5bc 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -855,6 +855,9 @@ static int nouveau_drm_probe(struct pci_dev *pdev,
- 		return -EBUSY;
- 	}
- 
-+	printk("waiting 12 sec\n");
-+	msleep(12*1000);
-+	printk("done waiting 12 sec\n");
- 	drm_kms_helper_poll_disable(drm_dev);
- 	vga_switcheroo_set_dynamic_switch(pdev, VGA_SWITCHEROO_OFF);
- 	nouveau_switcheroo_optimus_dsm();
-diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-index 31dd04f..2b4e7e0 100644
---- a/drivers/gpu/drm/radeon/radeon_drv.c
-+++ b/drivers/gpu/drm/radeon/radeon_drv.c
-@@ -35,6 +35,7 @@
- 
- #include <drm/drm_pciids.h>
- #include <linux/console.h>
-+#include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/pm_runtime.h>
- #include <linux/vga_switcheroo.h>
-@@ -413,6 +414,9 @@ static int radeon_pmops_runtime_suspend(struct device *dev)
- 		return -EBUSY;
- 	}
- 
-+	printk("waiting 12 sec\n");
-+	msleep(12*1000);
-+	printk("done waiting 12 sec\n");
- 	drm_dev->switch_power_state = DRM_SWITCH_POWER_CHANGING;
- 	drm_kms_helper_poll_disable(drm_dev);
- 	vga_switcheroo_set_dynamic_switch(pdev, VGA_SWITCHEROO_OFF);
+Ok, fixed that too.
+
+> 
+> And should these say 'Spectre v2' not just 'Spectre'?
+
+Yeah, you are probably right, but I didn't want to make the messages too specific 
+- do we really know that this is the end of Spectre-style speculation holes?
+
+Thanks,
+
+	Ingo
