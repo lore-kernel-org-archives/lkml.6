@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326316-2-356346734053594438
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326308-2-3725743534033115437
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326315; b=bgE9xXBP+Tl6MTKkgHG76el79oI8PhzZWWiZp82JmVvLOGX
-    RySiqr193xU1wZtmhSgpa64KGoTJrXKdSy1oUqqQpXuwzbqWNF/87fdumtvVFbrl
-    c9ebvvGac0pBA0GJyeGtLNBanGQAzsFZ9ZMICDG3uPSjXcxlbZBNsJn2bdtUY8o0
-    c6ykQ7lViToInFmrZ525qbXSw1q9avVIj/6Lz9sZKZEdgGcyM8pkXcE4YP36C0G0
-    KDVZqPtwJESop2LJA0KJmBlg/vMWw1K1famrqwrpSf6ieFeMEw06mDJEvc5lcbw6
-    B/lOzhOjWsYdPlT6DIjUfiWsVkYZMb/fMUiZ2Kw==
+    t=1518326307; b=kGtLH49p492je66XFe3xj4lLZd+3C9HsG4URvH13fRvOVN1
+    p/Ac5WYmg5V83OzIjKoSOR3I4OjB3vBzHfKyvLj2qNJNrWRXk46Ilt0m1UGnZwn0
+    7YNAok3LodpzyQZGopJX95JEAfgDXlpKCQtjM9PyF7kJAv78S+WHxcONWiP4+km8
+    biTrYWKkWXH3jP9IyOm3qH+m3j/y2jBCoJwsocCjkMFxjbU6oH5RXY5sxd0AdRd2
+    cpLDHoe94e1f85nx6JUzrEepaS1VZZJ8oTn87BZunrNNOryKx8RPXZTEZrqc/H/e
+    l4hNR8tf8ucsQpGR2XlE1dION0t+RRthVGrAftg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326315; bh=M639dDe2cO5lcPJFe91
-    IWXi8viaBd7LH5w/R0eW9fm8=; b=hvAlK1ocx7Y4i8gw6Ejf4WDnOvKNorpEC/x
-    IRmKxIun9wuaxP3F5R954oo5VUu7Kj9K2FpErhVA4huCAMV2bhVDTvz9CXBZ1Udx
-    HwcVRAbl5JV7No8P1ewpIbeUZrHKMKFv/Ii17GBcTsc8fwDTcnV/920dPwVID9oZ
-    aJXT56dHEWU/tBGoXGqL3pWzCgaHZSLjWg60CtOYtEKKVBhnw9GeMmkqEmYzVlvH
-    /RQvM/JK/AXLxOG/je9LfDeCF9pThVcqId0wPn1fIL9fNalHb+yKAz3tPIgcUvPr
-    6VmBAC/HrPVUN+pGn2yIcIWUNa3qGZ5noPpjBxF3Kcmr+UOgX7Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518326307; bh=4Zp9EJ3Ubrv18soT/AO
+    4NcPHq88bQMQ6eYP+ZZHUPN0=; b=Wq3PCUNhSbbawFXd1foA4rCcTwNCJq+aXB0
+    vJv5EReGAHTe8gdRLAO+KXrh0e6L8jlQjtfeJaaTIfEec+IlNfixqQufeNjEGJZ1
+    1n1Lgh6TzSlIvwBXllTiqPSRNrYok8o5ajV2Z9ig+ekPm7sbm9qfJrJwAGrsD9Mn
+    ewBRSPGCFpRVhhDJvpEL5hdDmoCbmIzfixqWI5XcMp78zMLPQYXBmI3TnaQAyBG6
+    qrs0thyPQrvWFz5x7W9UwSsWIoRkHCWbJAeRsKFq1dHkAoF+zvmvoo/ywWsdXoKn
+    h5c4qikREw7CPupfgW0gElGP+c/8HZ2THHnVhREZbLsEAlTBeFQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,12 +47,12 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754070AbeBKFSd (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:18:33 -0500
+        id S1754059AbeBKFSX (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:18:23 -0500
 Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42726 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932213AbeBKFSb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:31 -0500
+        by vger.kernel.org with ESMTP id S1754028AbeBKFSU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:20 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -60,12 +60,15 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Alexander Steffen" <Alexander.Steffen@infineon.com>,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+        "Djordje Todorovic" <djordje.todorovic@rt-rk.com>,
+        "Maciej W. Rozycki" <macro@mips.com>,
+        "Ralf Baechle" <ralf@linux-mips.org>,
+        "James Hogan" <jhogan@kernel.org>, linux-mips@linux-mips.org
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.937935490@decadent.org.uk>
+Message-ID: <lsq.1518323471.320638011@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 026/136] tpm-dev-common: Reject too short writes
+Subject: [PATCH 3.16 070/136] MIPS: Fix an n32 core file generation regset
+ support regression
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,42 +83,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Steffen <Alexander.Steffen@infineon.com>
+From: "Maciej W. Rozycki" <macro@mips.com>
 
-commit ee70bc1e7b63ac8023c9ff9475d8741e397316e7 upstream.
+commit 547da673173de51f73887377eb275304775064ad upstream.
 
-tpm_transmit() does not offer an explicit interface to indicate the number
-of valid bytes in the communication buffer. Instead, it relies on the
-commandSize field in the TPM header that is encoded within the buffer.
-Therefore, ensure that a) enough data has been written to the buffer, so
-that the commandSize field is present and b) the commandSize field does not
-announce more data than has been written to the buffer.
+Fix a commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
+regression, then activated by commit 6a9c001b7ec3 ("MIPS: Switch ELF
+core dumper to use regsets.)", that caused n32 processes to dump o32
+core files by failing to set the EF_MIPS_ABI2 flag in the ELF core file
+header's `e_flags' member:
 
-This should have been fixed with CVE-2011-1161 long ago, but apparently
-a correct version of that patch never made it into the kernel.
+$ file tls-core
+tls-core: ELF 32-bit MSB executable, MIPS, N32 MIPS64 rel2 version 1 (SYSV), [...]
+$ ./tls-core
+Aborted (core dumped)
+$ file core
+core: ELF 32-bit MSB core file MIPS, MIPS-I version 1 (SYSV), SVR4-style
+$
 
-Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-[bwh: Backported to 3.16: adjust filename, context]
+Previously the flag was set as the result of a:
+
+statement placed in arch/mips/kernel/binfmt_elfn32.c, however in the
+regset case, i.e. when CORE_DUMP_USE_REGSET is set, ELF_CORE_EFLAGS is
+no longer used by `fill_note_info' in fs/binfmt_elf.c, and instead the
+`->e_flags' member of the regset view chosen is.  We have the views
+defined in arch/mips/kernel/ptrace.c, however only an o32 and an n64
+one, and the latter is used for n32 as well.  Consequently an o32 core
+file is incorrectly dumped from n32 processes (the ELF32 vs ELF64 class
+is chosen elsewhere, and the 32-bit one is correctly selected for n32).
+
+Correct the issue then by defining an n32 regset view and using it as
+appropriate.  Issue discovered in GDB testing.
+
+Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Djordje Todorovic <djordje.todorovic@rt-rk.com>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/17617/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/char/tpm/tpm-dev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/mips/kernel/ptrace.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -139,6 +139,12 @@ static ssize_t tpm_write(struct file *fi
- 		return -EFAULT;
- 	}
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -522,6 +522,19 @@ static const struct user_regset_view use
+ 	.n		= ARRAY_SIZE(mips64_regsets),
+ };
  
-+	if (in_size < 6 ||
-+	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
-+		mutex_unlock(&priv->buffer_mutex);
-+		return -EINVAL;
-+	}
++#ifdef CONFIG_MIPS32_N32
 +
- 	/* atomic tpm command send and result receive */
- 	out_size = tpm_transmit(priv->chip, priv->data_buffer,
- 				sizeof(priv->data_buffer));
++static const struct user_regset_view user_mipsn32_view = {
++	.name		= "mipsn32",
++	.e_flags	= EF_MIPS_ABI2,
++	.e_machine	= ELF_ARCH,
++	.ei_osabi	= ELF_OSABI,
++	.regsets	= mips64_regsets,
++	.n		= ARRAY_SIZE(mips64_regsets),
++};
++
++#endif /* CONFIG_MIPS32_N32 */
++
+ #endif /* CONFIG_64BIT */
+ 
+ const struct user_regset_view *task_user_regset_view(struct task_struct *task)
+@@ -533,6 +546,10 @@ const struct user_regset_view *task_user
+ 	if (test_tsk_thread_flag(task, TIF_32BIT_REGS))
+ 		return &user_mips_view;
+ #endif
++#ifdef CONFIG_MIPS32_N32
++	if (test_tsk_thread_flag(task, TIF_32BIT_ADDR))
++		return &user_mipsn32_view;
++#endif
+ 	return &user_mips64_view;
+ #endif
+ }
