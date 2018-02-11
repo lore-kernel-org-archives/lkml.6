@@ -1,60 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752720AbeBKJX4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 04:23:56 -0500
-Received: from mailout2.hostsharing.net ([83.223.90.233]:47133 "EHLO
-        mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752273AbeBKJXy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 04:23:54 -0500
-Date: Sun, 11 Feb 2018 10:25:25 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        MUNEDA Takahiro <muneda.takahiro@jp.fujitsu.com>,
-        Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
-Subject: Re: [PATCH] PCI/portdrv: Remove "pcie_hp=nomsi" kernel parameter
-Message-ID: <20180211092525.GA1085@wunner.de>
-References: <20180211024815.73781.92853.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        id S1752733AbeBKJ04 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 04:26:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50842 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752273AbeBKJ0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 04:26:54 -0500
+Date: Sun, 11 Feb 2018 10:26:52 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
+ __GFP_HIGHMEM implicitly")
+Message-ID: <20180211092652.GV21609@dhcp22.suse.cz>
+References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
+ <20180208130649.GA15846@bombadil.infradead.org>
+ <20180208232004.GA21027@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180211024815.73781.92853.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180208232004.GA21027@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 08:48:15PM -0600, Bjorn Helgaas wrote:
-> 7570a333d8b0 ("PCI: Add pcie_hp=nomsi to disable MSI/MSI-X for pciehp
-> driver") added the "pcie_hp=nomsi" kernel parameter to work around this
-> error on shutdown:
+On Thu 08-02-18 15:20:04, Matthew Wilcox wrote:
+> On Thu, Feb 08, 2018 at 05:06:49AM -0800, Matthew Wilcox wrote:
+> > On Thu, Feb 08, 2018 at 02:29:57PM +0800, Kai Heng Feng wrote:
+> > > A user with i386 instead of AMD64 machine reports [1] that commit 19809c2da28a ("mm, vmalloc: use __GFP_HIGHMEM implicitly”) causes a regression.
+> > > BUG_ON(PageHighMem(pg)) in drivers/media/common/saa7146/saa7146_core.c always gets triggered after that commit.
+> > 
+> > Well, the BUG_ON is wrong.  You can absolutely have pages which are both
+> > HighMem and under the 4GB boundary.  Only the first 896MB (iirc) are LowMem,
+> > and the next 3GB of pages are available to vmalloc_32().
 > 
->   irq 16: nobody cared (try booting with the "irqpoll" option)
->   Pid: 1081, comm: reboot Not tainted 3.2.0 #1
->   ...
->   Disabling IRQ #16
+> ... nevertheless, 19809c2da28a does in fact break vmalloc_32 on 32-bit.  Look:
 > 
-> This happened on an unspecified system (possibly involving the Integrated
-> Device Technology, Inc. Device 807f bridge).  There is no automated way to
-> set this parameter, so it's not very useful for distributions or end users.
+> #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+> #define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
+> #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
+> #define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
+> #else
+> #define GFP_VMALLOC32 GFP_KERNEL
+> #endif
 > 
-> I suspect the root cause of the underlying "irq 16: nobody cared" issue was
-> fixed by Prarit Bhargava <prarit@redhat.com> with fda78d7a0ead ("PCI/MSI:
-> Stop disabling MSI/MSI-X in pci_device_shutdown()") and we probably don't
-> need "pcie_hp=nomsi" any more.
-> 
-> Revert 7570a333d8b0 to remove the "pcie_hp=nomsi" parameter.
+> So we pass in GFP_KERNEL to __vmalloc_node, which calls __vmalloc_node_range
+> which calls __vmalloc_area_node, which ORs in __GFP_HIGHMEM.
 
-This has been useful when bringing up broken hardware which claims to
-support MSI but really doesn't, such as in commit 19bf4d4f909d
-("thunderbolt: Support 1st gen Light Ridge controller").  In this case
-I didn't know why the controller wasn't sending interrupts, on a hunch
-I tried "pcie_hp=nomsi" and that worked, and looking in the macOS source
-code I was able to verify that they disable MSI for this particular
-hardware as well.  So please leave it in to ease developers' lives.
+Dohh. I have missed this. I was convinced that we always add GFP_DMA32
+when doing vmalloc_32. Sorry about that. The above definition looks
+quite weird to be honest. First of all do we have any 64b system without
+both DMA and DMA32 zones? If yes, what is the actual semantic of
+vmalloc_32? Or is there any magic forcing GFP_KERNEL into low 32b?
 
-Thanks,
+Also I would expect that __GFP_DMA32 should do the right thing on 32b
+systems. So something like the below should do the trick
+---
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 673942094328..2eab5d1ef548 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1947,7 +1947,8 @@ void *vmalloc_exec(unsigned long size)
+ #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
+ #define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
+ #else
+-#define GFP_VMALLOC32 GFP_KERNEL
++/* This should be only 32b systems */
++#define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
+ #endif
+ 
+ /**
 
-Lukas
+-- 
+Michal Hocko
+SUSE Labs
