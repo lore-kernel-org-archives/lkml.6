@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324475-2-6009275479207481418
+X-Cyrus-Session-Id: sloti22d1t05-1431546-1518324470-2-12031026592832494123
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518324474; b=pwhDR5Xqp56YS/ByzmWA4ao5jWPylYKHGM9WuWBUZdxq9WB
-    i9X1wVSB+D9TUJhvj3B36MUNA5krPdDISWDcCFBKBj2l5O3IXGXnnVkR9pabHtcL
-    6yE3QFUannpILkGdqDxPFpHGRLXDoQx7ZjbcdlcFsqhP6NOgni6qD1wjbWk1t8WX
-    RnyZ9qUUQHLc9SGQ3sARXvRikLyf74cCb12ulN/ltiuCHoHoIq3hYy/9ButOVLUG
-    lQkEWYyhh0SVXxyIWesvQOwxtAD/pBjfQTF0CezKzKHPoq1LOaFf+OYRJZ6xQ+18
-    WI4FrTQca+2SarvTwnOywrfRdQbZ/A3iafPRaGg==
+    t=1518324469; b=A6KpKCxDZlhLz/j/BTRxJbGKmk7U5whcMVi8dyMF6JbNbTc
+    bI8jAOoRicLQOwm50yXu8KyH7ZgYIZea6+i6G+40G3lDfQHs8LGoPatvcQ/WzMbl
+    /36LRwTYFwnt9q2iAx0TnNbPMAaoHODSHoA9WsYxJKQI/8DIgLMP+iyOu1WGkC/l
+    vpVv9RuK5wACOE+qEejZMXVROz+xNrl7A2z1oO7WMVD/kjPXO9WzCltdbWi4xalT
+    wBQpcZfd39/gVkKEO0+f1quRgaLFr+sSzPq4ZzEp1gp1LNcDSvN3pEz8tzE4gTN1
+    ipEpGOigLoIvMZa0NoeC5OCv/14GzfCjB32Btjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518324474; bh=Gp5KUfZgO0S9O19g6RA
-    DOe0nmtneTrD0ytMSNkSKVT8=; b=D/6STzo4CbYb3eC4BxkTsk0PXl8oa7K0jhk
-    PXjZUaF1toJmFBU3f64De7JXMVzKRHKfT3EPvHRQR98ukHwZbeUubmZoEJqMgBo0
-    LSdVlUxLW78fuTlKImZfYXGNCtpD9zm12EbCjkUw36lcahnZHM4ofFhUtGrmY7mj
-    rdZt+6jFp4gN2L2DfwdsqZWCpSeYjEzOHSBmIx3kUaMvOHmxWAfZX9eWFx0wr6up
-    l8PJTKu71xwtuQ0/Er/cDgOLLMlge9TAkkymQOFas2JZOtwz54AvYuZoWNZpiUbF
-    oF/u9io2Co458W6z5siy0fchpmAuNCZe7I3liazSia0unc9Mweg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324469; bh=oiU8XmsU9REKio4ioaw
+    txa8rw9c2piHCvmIh1Pdv5FU=; b=FdkBxMMlzdxdh49TA8O8IKKJ5HHxwGOvYcL
+    4WelJ7s4gh6cWRWPkF1Rlqo/GXS4XudNgmcGM1GADb8D7jJDwsm/MBFKKj+VX2FM
+    7aQ6hyEVFcieWymMr+YhgwcsP0pSAAlgRvXQUDSuTBOHxfBU0buMbsq1CHpzfEPi
+    psoMul82XV123AAbayRSBIvRQRV8F254XA6Mzzd6ULZwvMVEwv74/BG6O5LazE3I
+    feh6pstGP5trOZ6QsuJvNgsbONBkJmx5h7AbIsMyMQFWfILDR/LJVkjLrJsT/f3W
+    naw6utUH5+CJJhMU2pg7awiISVGdyyYPhfqm2/eCqHsMuGhB8uQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,11 +47,11 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752849AbeBKErs (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:47:48 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41812 "EHLO
+        id S1753332AbeBKErU (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:47:20 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41843 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752837AbeBKEd6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752852AbeBKEd6 (ORCPT
         <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:58 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -59,13 +59,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "John Johansen" <john.johansen@canonical.com>
+CC: akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>,
+        "Eric Biggers" <ebiggers@google.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.242496982@decadent.org.uk>
+Message-ID: <lsq.1518323471.798067463@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 101/136] apparmor: ensure that undecidable profile
- attachments fail
+Subject: [PATCH 3.16 087/136] dm bufio: fix integer overflow when limiting
+ maximum cache size
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -80,162 +80,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Johansen <john.johansen@canonical.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 844b8292b6311ecd30ae63db1471edb26e01d895 upstream.
+commit 74d4108d9e681dbbe4a2940ed8fdff1f6868184c upstream.
 
-Profiles that have an undecidable overlap in their attachments are
-being incorrectly handled. Instead of failing to attach the first one
-encountered is being used.
+The default max_cache_size_bytes for dm-bufio is meant to be the lesser
+of 25% of the size of the vmalloc area and 2% of the size of lowmem.
+However, on 32-bit systems the intermediate result in the expression
 
-eg.
-  profile A /** { .. }
-  profile B /*foo { .. }
+    (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100
 
-have an unresolvable longest left attachment, they both have an exact
-match on / and then have an overlapping expression that has no clear
-winner.
+overflows, causing the wrong result to be computed.  For example, on a
+32-bit system where the vmalloc area is 520093696 bytes, the result is
+1174405 rather than the expected 130023424, which makes the maximum
+cache size much too small (far less than 2% of lowmem).  This causes
+severe performance problems for dm-verity users on affected systems.
 
-Currently the winner will be the profile that is loaded first which
-can result in non-deterministic behavior. Instead in this situation
-the exec should fail.
+Fix this by using mult_frac() to correctly multiply by a percentage.  Do
+this for all places in dm-bufio that multiply by a percentage.  Also
+replace (VMALLOC_END - VMALLOC_START) with VMALLOC_TOTAL, which contrary
+to the comment is now defined in include/linux/vmalloc.h.
 
-Fixes: 898127c34ec0 ("AppArmor: functions for domain transitions")
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-[bwh: Backported to 3.16:
- - Add 'info' parameter to x_to_profile(), done upstream in commit
-   93c98a484c49 "apparmor: move exec domain mediation to using labels"
- - Adjust context]
+Depends-on: 9993bc635 ("sched/x86: Fix overflow in cyc2ns_offset")
+Fixes: 95d402f057f2 ("dm: add bufio")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- security/apparmor/domain.c | 46 ++++++++++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 14 deletions(-)
+ drivers/md/dm-bufio.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -126,6 +126,7 @@ static struct file_perms change_profile_
-  * __attach_match_ - find an attachment match
-  * @name - to match against  (NOT NULL)
-  * @head - profile list to walk  (NOT NULL)
-+ * @info - info message if there was an error (NOT NULL)
-  *
-  * Do a linear search on the profiles in the list.  There is a matching
-  * preference where an exact match is preferred over a name which uses
-@@ -137,28 +138,44 @@ static struct file_perms change_profile_
-  * Returns: profile or NULL if no match found
-  */
- static struct aa_profile *__attach_match(const char *name,
--					 struct list_head *head)
-+					 struct list_head *head,
-+					 const char **info)
- {
- 	int len = 0;
-+	bool conflict = false;
- 	struct aa_profile *profile, *candidate = NULL;
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -888,7 +888,8 @@ static void __get_memory_limit(struct dm
+ 		buffers = c->minimum_buffers;
  
- 	list_for_each_entry_rcu(profile, head, base.list) {
- 		if (profile->flags & PFLAG_NULL)
- 			continue;
--		if (profile->xmatch && profile->xmatch_len > len) {
--			unsigned int state = aa_dfa_match(profile->xmatch,
--							  DFA_START, name);
--			u32 perm = dfa_user_allow(profile->xmatch, state);
--			/* any accepting state means a valid match. */
--			if (perm & MAY_EXEC) {
--				candidate = profile;
--				len = profile->xmatch_len;
-+		if (profile->xmatch) {
-+			if (profile->xmatch_len == len) {
-+				conflict = true;
-+				continue;
-+			} else if (profile->xmatch_len > len) {
-+				unsigned int state;
-+				u32 perm;
-+
-+				state = aa_dfa_match(profile->xmatch,
-+						     DFA_START, name);
-+				perm = dfa_user_allow(profile->xmatch, state);
-+				/* any accepting state means a valid match. */
-+				if (perm & MAY_EXEC) {
-+					candidate = profile;
-+					len = profile->xmatch_len;
-+					conflict = false;
-+				}
- 			}
- 		} else if (!strcmp(profile->base.name, name))
- 			/* exact non-re match, no more searching required */
- 			return profile;
- 	}
- 
-+	if (conflict) {
-+		*info = "conflicting profile attachments";
-+		return NULL;
-+	}
-+
- 	return candidate;
+ 	*limit_buffers = buffers;
+-	*threshold_buffers = buffers * DM_BUFIO_WRITEBACK_PERCENT / 100;
++	*threshold_buffers = mult_frac(buffers,
++				       DM_BUFIO_WRITEBACK_PERCENT, 100);
  }
  
-@@ -167,16 +184,18 @@ static struct aa_profile *__attach_match
-  * @ns: the current namespace  (NOT NULL)
-  * @list: list to search  (NOT NULL)
-  * @name: the executable name to match against  (NOT NULL)
-+ * @info: info message if there was an error
-  *
-  * Returns: profile or NULL if no match found
-  */
- static struct aa_profile *find_attach(struct aa_namespace *ns,
--				      struct list_head *list, const char *name)
-+				      struct list_head *list, const char *name,
-+				      const char **info)
- {
- 	struct aa_profile *profile;
+ /*
+@@ -1778,19 +1779,15 @@ static int __init dm_bufio_init(void)
+ 	memset(&dm_bufio_caches, 0, sizeof dm_bufio_caches);
+ 	memset(&dm_bufio_cache_names, 0, sizeof dm_bufio_cache_names);
  
- 	rcu_read_lock();
--	profile = aa_get_profile(__attach_match(name, list));
-+	profile = aa_get_profile(__attach_match(name, list, info));
- 	rcu_read_unlock();
+-	mem = (__u64)((totalram_pages - totalhigh_pages) *
+-		      DM_BUFIO_MEMORY_PERCENT / 100) << PAGE_SHIFT;
++	mem = (__u64)mult_frac(totalram_pages - totalhigh_pages,
++			       DM_BUFIO_MEMORY_PERCENT, 100) << PAGE_SHIFT;
  
- 	return profile;
-@@ -298,7 +317,8 @@ static struct aa_profile *x_table_lookup
-  * Returns: refcounted profile or NULL if not found available
-  */
- static struct aa_profile *x_to_profile(struct aa_profile *profile,
--				       const char *name, u32 xindex)
-+				       const char *name, u32 xindex,
-+				       const char **info)
- {
- 	struct aa_profile *new_profile = NULL;
- 	struct aa_namespace *ns = profile->ns;
-@@ -312,11 +332,11 @@ static struct aa_profile *x_to_profile(s
- 		if (xindex & AA_X_CHILD)
- 			/* released by caller */
- 			new_profile = find_attach(ns, &profile->base.profiles,
--						  name);
-+						  name, info);
- 		else
- 			/* released by caller */
- 			new_profile = find_attach(ns, &ns->base.profiles,
--						  name);
-+						  name, info);
- 		break;
- 	case AA_X_TABLE:
- 		/* released by caller */
-@@ -385,7 +405,8 @@ int apparmor_bprm_set_creds(struct linux
- 			/* change_profile on exec already been granted */
- 			new_profile = aa_get_profile(cxt->onexec);
- 		else
--			new_profile = find_attach(ns, &ns->base.profiles, name);
-+			new_profile = find_attach(ns, &ns->base.profiles, name,
-+						  &info);
- 		if (!new_profile)
- 			goto cleanup;
- 		/*
-@@ -421,7 +442,7 @@ int apparmor_bprm_set_creds(struct linux
+ 	if (mem > ULONG_MAX)
+ 		mem = ULONG_MAX;
  
- 	if (perms.allow & MAY_EXEC) {
- 		/* exec permission determine how to transition */
--		new_profile = x_to_profile(profile, name, perms.xindex);
-+		new_profile = x_to_profile(profile, name, perms.xindex, &info);
- 		if (!new_profile) {
- 			if (perms.xindex & AA_X_INHERIT) {
- 				/* (p|c|n)ix - don't change profile but do
+ #ifdef CONFIG_MMU
+-	/*
+-	 * Get the size of vmalloc space the same way as VMALLOC_TOTAL
+-	 * in fs/proc/internal.h
+-	 */
+-	if (mem > (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100)
+-		mem = (VMALLOC_END - VMALLOC_START) * DM_BUFIO_VMALLOC_PERCENT / 100;
++	if (mem > mult_frac(VMALLOC_TOTAL, DM_BUFIO_VMALLOC_PERCENT, 100))
++		mem = mult_frac(VMALLOC_TOTAL, DM_BUFIO_VMALLOC_PERCENT, 100);
+ #endif
+ 
+ 	dm_bufio_default_cache_size = mem;
