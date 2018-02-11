@@ -1,89 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753169AbeBKJjg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 04:39:36 -0500
-Received: from mailout3.hostsharing.net ([176.9.242.54]:54449 "EHLO
-        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753112AbeBKJjc (ORCPT
+        id S1753228AbeBKJjp (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 04:39:45 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:54604 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753178AbeBKJjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 04:39:32 -0500
-X-Mailbox-Line: From 7831d4f21dde8cd0b1659e393854598995dfb249 Mon Sep 17 00:00:00 2001
-Message-Id: <7831d4f21dde8cd0b1659e393854598995dfb249.1518338788.git.lukas@wunner.de>
-In-Reply-To: <cover.1518338788.git.lukas@wunner.de>
-References: <cover.1518338788.git.lukas@wunner.de>
-From: Lukas Wunner <lukas@wunner.de>
-Date: Sun, 11 Feb 2018 10:38:28 +0100
-Subject: [PATCH 2/5] drm: Allow determining if current task is output poll
- worker
-To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, Peter Wu <peter@lekensteyn.nl>,
-        nouveau@lists.freedesktop.org, Lyude Paul <lyude@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Pierre Moreau <pierre.morrow@free.fr>, linux-kernel@vger.kernel.org,
-        Ismo Toijala <ismo.toijala@gmail.com>, intel-gfx@lists.freedesktop.org,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Archit Taneja <architt@codeaurora.org>
+        Sun, 11 Feb 2018 04:39:43 -0500
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/9] nvme: fix the dangerous reference of namespaces list
+Date: Sun, 11 Feb 2018 17:38:32 +0800
+Message-Id: <1518341920-1060-2-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8801 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=801
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802110127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a helper to determine if the current task is an output poll
-worker.
+nvme_remove_namespaces and nvme_remove_invalid_namespaces reference
+the ctrl->namespaces list w/o holding namespaces_mutext. It is ok
+to invoke nvme_ns_remove there, but what if there is others.
 
-This allows us to fix a long-standing deadlock in several DRM drivers
-wherein the ->runtime_suspend callback waits for the output poll worker
-to finish and the worker in turn calls a ->detect callback which waits
-for runtime suspend to finish.  The ->detect callback is invoked from
-multiple call sites and waiting for runtime suspend to finish is the
-correct thing to do except if it's executing in the context of the
-worker.
+To be safer, reference the ctrl->namespaces list under
+namespaces_mutext.
 
-Cc: Dave Airlie <airlied@redhat.com>
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- drivers/gpu/drm/drm_probe_helper.c | 14 ++++++++++++++
- include/drm/drm_crtc_helper.h      |  1 +
- 2 files changed, 15 insertions(+)
+ drivers/nvme/host/core.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
-index 555fbe54d6e2..019881d15ce1 100644
---- a/drivers/gpu/drm/drm_probe_helper.c
-+++ b/drivers/gpu/drm/drm_probe_helper.c
-@@ -653,6 +653,20 @@ static void output_poll_execute(struct work_struct *work)
- 		schedule_delayed_work(delayed_work, DRM_OUTPUT_POLL_PERIOD);
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index e810487..bc05bc4 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3092,11 +3092,20 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
+ 					unsigned nsid)
+ {
+ 	struct nvme_ns *ns, *next;
++	LIST_HEAD(rm_list);
+ 
++	mutex_lock(&ctrl->namespaces_mutex);
+ 	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
+-		if (ns->head->ns_id > nsid)
+-			nvme_ns_remove(ns);
++		if (ns->head->ns_id > nsid) {
++			list_del_init(&ns->list);
++			list_add_tail(&ns->list, &rm_list);
++		}
+ 	}
++	mutex_unlock(&ctrl->namespaces_mutex);
++
++	list_for_each_entry_safe(ns, next, &rm_list, list)
++		nvme_ns_remove(ns);
++
  }
  
-+/**
-+ * drm_kms_helper_is_poll_worker - is %current task an output poll worker?
-+ *
-+ * Determine if %current task is an output poll worker.  This can be used
-+ * to select distinct code paths for output polling versus other contexts.
-+ */
-+bool drm_kms_helper_is_poll_worker(void)
-+{
-+	struct work_struct *work = current_work();
-+
-+	return work && work->func == output_poll_execute;
-+}
-+EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
-+
- /**
-  * drm_kms_helper_poll_disable - disable output polling
-  * @dev: drm_device
-diff --git a/include/drm/drm_crtc_helper.h b/include/drm/drm_crtc_helper.h
-index 76e237bd989b..6914633037a5 100644
---- a/include/drm/drm_crtc_helper.h
-+++ b/include/drm/drm_crtc_helper.h
-@@ -77,5 +77,6 @@ void drm_kms_helper_hotplug_event(struct drm_device *dev);
+ static int nvme_scan_ns_list(struct nvme_ctrl *ctrl, unsigned nn)
+@@ -3196,6 +3205,7 @@ EXPORT_SYMBOL_GPL(nvme_queue_scan);
+ void nvme_remove_namespaces(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns, *next;
++	LIST_HEAD(ns_list);
  
- void drm_kms_helper_poll_disable(struct drm_device *dev);
- void drm_kms_helper_poll_enable(struct drm_device *dev);
-+bool drm_kms_helper_is_poll_worker(void);
+ 	/*
+ 	 * The dead states indicates the controller was not gracefully
+@@ -3206,7 +3216,11 @@ void nvme_remove_namespaces(struct nvme_ctrl *ctrl)
+ 	if (ctrl->state == NVME_CTRL_DEAD)
+ 		nvme_kill_queues(ctrl);
  
- #endif
+-	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list)
++	mutex_lock(&ctrl->namespaces_mutex);
++	list_splice_init(&ctrl->namespaces, &ns_list);
++	mutex_unlock(&ctrl->namespaces_mutex);
++
++	list_for_each_entry_safe(ns, next, &ns_list, list)
+ 		nvme_ns_remove(ns);
+ }
+ EXPORT_SYMBOL_GPL(nvme_remove_namespaces);
 -- 
-2.15.1
+2.7.4
