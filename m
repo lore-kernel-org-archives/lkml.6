@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AH8x224fJgJzKSOB95apRPePFRIZEDP/kxJpZFyjKHC60mtLyArRpHXUuYmoR2gvayd7u1L4XbyP
-ARC-Seal: i=1; a=rsa-sha256; t=1518323646; cv=none;
+X-Google-Smtp-Source: AH8x227jQjSWvqCWE3pxkF3jVcpXmAACDStmBjaMH7qk9ZKEhNBOaI3J4V6H+O3LtY0FYJZ0YV4d
+ARC-Seal: i=1; a=rsa-sha256; t=1518323643; cv=none;
         d=google.com; s=arc-20160816;
-        b=GHGvGlCVzI/q6gP7FdQmqSQtQ46D5Pi7qX8uKOxsC2kk8k6wa+hjC2Q8OMX6XMSNmr
-         zbe74/6RWW/jCZ/MdvISZJrqxZzEiWoqaD9b4zo6hRtZnmhrwVIzDHU9OYOkQw8GnSuy
-         5N5Qj9ZfQmW/f1G8ku2OExA69eWOG6ygTSeu0vIFEaKWGreFL9Ry7bBAHsdRwTBselen
-         5Y0RlrBxzdhL01PBEDRSFtUpRH+w5n6g/2lbJ9zdx5liZ6+4TLcP7hd7vz+Yyt0A3vlq
-         T1HznEoVr2D3sHEn2a0vbJ7ptPxUn4DYPKKxTaVXgqIB4tCh5c5bKAI2TbftoA+IdnWA
-         vGAA==
+        b=1JHloIMF2+6ypioDKOMgWWY04vZJsjzv4NJubrhGvUpFZhNKqmNcRi4ZFJnoQm1SMt
+         QxBIrzTxdtZllk38TQwykIwkuLdNKv3HG5cJoMEs0Y+DlbIFnJjzJhsqTkrqJanmX+Ee
+         QFLb7EcE/eFCAcf9dxgHkXN95Tw8opPJ8CjfNe4L58saUAyY1MNvCTp+2yaEHMV5tFzX
+         wpHCjSfZ37/szTo5XbJcBEExwpkbwQUuJZY6hpzcyRlzrbKI34gtDIQAt1VU7UErcAVA
+         SpTy4KnW/6KBeA9XknhrkF8AWqEMsxgWrJw0xiQzPPN1A9Z09/ArcIhqu8Q1TLreY5o2
+         I6UA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=NJLzYC9yaYnxSYQ62gTzM0qCi0Rk4fOSvC6etAKcZDQ=;
-        b=NSSGs95O103KqazADMhHH8YXeEpBp/+70mhK8N2OdwIZA8zGIBqAHPYaVlIPa6FUsV
-         6n94awi7/dC8FhWTai1yXE27FVYr41AxPyGfiFwRBRek7/6EVS8eTt315YWvmyPR/FBu
-         Kbp4OvT/z4zcAPXkuwH1DzjSMGMCjy3nD4qTyyJSYnEd9K5M+X9RqDqxXaNyROkd3ioa
-         ycyHXxA42MHYKwHl6hvA1ylf21wwQwNlhCypGtY74B3G9+c4FgNrHq8B3M8kbMG1T0Kq
-         EGG5oru+UYikjckTyObfeuWIi2lWdCkTj2O0xXUwlEhcF43ihVCyXECzDvEsELW7BFI0
-         lvzQ==
+        bh=CSYrzNFrkWNmMGgRe4RYru7DmCvBYUXhJLb9BB4/s6U=;
+        b=AH9YxGQXuObiQ1Y/oJKpQgRwzoOaSM7Rnea0/bknGAP21nbFTPV14WyXNMymaXE3b2
+         LaJv1MK1+jAjKwMpShL8Xfd7uv5r9GnDvXKUjesZks8JAwHLK31Mrvif5Q0XA9EO5XCI
+         vKdpTJZvvoZ9kA2boWKvYUPDfr01cRwIyYm6RXcaOlq/WEBKA2OUsD/YQtCLefrv3Q5n
+         KxbKj0Gn/56OTI/sa0EoujdSAFrQJv5c7KHJoPhop3Yrj+lifK07vWhap6qTq7ajCuYG
+         YsHkByLYqkVErxAjhj3g873QY0UqPs1BP9JD+r1mICLGBa/GIBvZ7BIWQXR0TiKhqUA8
+         qM/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,20 +30,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
+ "Bernhard Rosenkraenzer" <Bernhard.Rosenkranzer@linaro.org>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Johan Hovold" <johan@kernel.org>
+ "Bernhard Rosenkraenzer" <bernhard.rosenkranzer@linaro.org>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.485248163@decadent.org.uk>
+Message-ID: <lsq.1518323471.451537637@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 021/136] USB: serial: metro-usb: stop I/O after
- failed open
+Subject: [PATCH 3.16 050/136] USB: Add delay-init quirk for Corsair K70
+ LUX keyboards
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592077735628688366?=
-X-GMAIL-MSGID: =?utf-8?q?1592077735628688366?=
+X-GMAIL-THRID: =?utf-8?q?1592077710773842199?=
+X-GMAIL-MSGID: =?utf-8?q?1592077732963729105?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,51 +52,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Bernhard Rosenkraenzer <bernhard.rosenkranzer@linaro.org>
 
-commit 2339536d229df25c71c0900fc619289229bfecf6 upstream.
+commit a0fea6027f19c62727315aba1a7fae75a9caa842 upstream.
 
-Make sure to kill the interrupt-in URB after a failed open request.
-Apart from saving power (and avoiding stale input after a later
-successful open), this also prevents a NULL-deref in the completion
-handler if the port is manually unbound.
+Without this patch, K70 LUX keyboards don't work, saying
+usb 3-3: unable to read config index 0 descriptor/all
+usb 3-3: can't read configurations, error -110
+usb usb3-port3: unable to enumerate USB device
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Fixes: 704577861d5e ("USB: serial: metro-usb: get data from device in Uni-Directional mode.")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Bernhard Rosenkraenzer <Bernhard.Rosenkranzer@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/metro-usb.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/usb/core/quirks.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/serial/metro-usb.c
-+++ b/drivers/usb/serial/metro-usb.c
-@@ -217,7 +217,7 @@ static int metrousb_open(struct tty_stru
- 		dev_err(&port->dev,
- 			"%s - failed submitting interrupt in urb, error code=%d\n",
- 			__func__, result);
--		goto exit;
-+		return result;
- 	}
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -218,6 +218,9 @@ static const struct usb_device_id usb_qu
+ 	/* Corsair Strafe RGB */
+ 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
  
- 	/* Send activate cmd to device */
-@@ -226,11 +226,16 @@ static int metrousb_open(struct tty_stru
- 		dev_err(&port->dev,
- 			"%s - failed to configure device, error code=%d\n",
- 			__func__, result);
--		goto exit;
-+		goto err_kill_urb;
- 	}
- 
- 	dev_dbg(&port->dev, "%s - port open\n", __func__);
--exit:
++	/* Corsair K70 LUX */
++	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
 +
-+	return 0;
-+
-+err_kill_urb:
-+	usb_kill_urb(port->interrupt_in_urb);
-+
- 	return result;
- }
- 
+ 	/* MIDI keyboard WORLDE MINI */
+ 	{ USB_DEVICE(0x1c75, 0x0204), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
