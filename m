@@ -1,7 +1,7 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2169032-1518465370-2-6985035251652125638
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3984029-1518391598-2-15942534940059858019
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
@@ -9,232 +9,105 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518465369; b=vzU+ltyZhhpv/ONq8q5VxP/GAf7DAtAkjHGjToNiiJ7mvbP
-    KnfbjuJwkmVGV5aNrUWbZ3KfhrK3SAhafZzv49Zo7CP93kqDPeyJdW6eaZPKxPoW
-    cLTz4js1JnL+EXSjb6mBbPNcbfNUZ0VWQjoO+Ko5/Lo+DvzBVAJa89f+4vD+X6h1
-    70pahWstVuy/6qqq5uolg74wBepBkN2NIn9N0JLoRtsgxZBxqTCSJq1LcAHkG2J3
-    sFjn/A/Y7Y4XoeVLp1Aq1rg3B/CwBeY+832EWRr1IvTJsD/Dc6Hxwya0gw4eUUxu
-    LiiwHlUFNDtvzms63V7VVH0W591Xw2b5I5jBc7g==
+    t=1518391598; b=KxggqLPhW+2ZvC2BuvhCs0UoIaUttVWl/Yxm4k0LBQEZkVd
+    W8i7fOzEszf3zp5CwAOrb9q+W/HG6fdUFhmvnyBnsyoHxKnOHrag58Sm1zvvApxT
+    zlm8J/M/4W+YwpUSbehrgb/MG4WNGgLvuaYWcdSvEr2RNWwOqH8se45WjCNV3/rb
+    qR93MscKM/nCi4Yw3g0pI01Z4T1l/FYQI9cixrbcwz5eDjBH2729i8OHwN8VFQ0z
+    cTXtoZJBrIuLGxb/cPzMAQ38HmsUpkx+r4Ki6D8+CUVoQqg+4VbyDB9TNou8nrL7
+    WzWs/Ks26WGfLfroO1O79zzLLjyMQVkEbKk2bww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1518465369; bh=qXBtjC/dWj0RdsLg6wbjhfoao9
-    mLo1xoCVf2uu8HPpc=; b=Miik51wj2h10eZLQgjFCovSqzEHcVHQq1a2AkZT0Jb
-    WeG+wWNJDtPu3roNaOkMg0AmFQVUUld5Oniuwod1KAokuRMF3evLdKKyxt3zuiOh
-    VLVtlygfeBZCG3LL8t5nL5ghJUPl3uOKpt8YnRdHaHfHMF6oK8cSPAtIC/2JGm7A
-    bgYGzGxjyTUA9jnqahKxd4id/rtFnv1w7/wITT5NLflVLyAjG1AOI2hAQaLNxQHd
-    xHtOdnR7fbi9xy5DZjiClUBUt0Q97nddL4H+xQqN5gzvvYSzhKCgrYHxGdq55gk3
-    Wrt6p2fkfa3BIfuuE99sZXqNMj/9goXHqzWCD7sXHrCQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518391598; bh=L7NbBtqTefYgNxawRkB8uGWe6C
+    a56Vjm6t9OIkBeVAU=; b=oZDNqPG72B1jKZukC+0gCWe6KGoUQshVXRLQmqyqKR
+    XnQvsef3t5+yq2N6jnnfP3t9fk4UabMo4HDIGdD9eoVNhUVyIFCcS8Ljlv1494uT
+    h5gNDC2PIlTastz5WlufiU5SmriA5uSRRk2BDgTYwHvIRqYyhfPVXuwPrLnYTk7Z
+    EcbiFnT7vfBzOvokHRFEU10wVqOEz+ziKDr5VlAMLsempFaXFjT2T/YhelEgQeG4
+    jR3/XGetuKSEEf985oQsdMXSHnQln37fxvDbfq40RXFJ7nJDKuOxKCFznzXTYq+B
+    IcmHkMHPH8oRr0RfATwRgnq2g4OpqgROZRk0ZiaXeyHg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751058AbeBLT4H (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Feb 2018 14:56:07 -0500
-Received: from mail.efficios.com ([167.114.142.141]:60928 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750953AbeBLT4F (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Mon, 12 Feb 2018 14:56:05 -0500
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andrew Hunter <ahh@google.com>,
-        Maged Michael <maged.michael@gmail.com>,
-        Avi Kivity <avi@scylladb.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dave Watson <davejwatson@fb.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Greg Hackmann <ghackmann@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Sehr <sehr@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH manpages] membarrier.2: New membarrier commands introduced in 4.16
-Date: Mon, 12 Feb 2018 14:55:49 -0500
-Message-Id: <20180212195549.11485-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1753766AbeBKX0g (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 18:26:36 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34964 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753745AbeBKX0g (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 11 Feb 2018 18:26:36 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH] extcon: intel-int3496: Fix oops on probe
+Date: Mon, 12 Feb 2018 00:26:33 +0100
+Message-Id: <20180211232633.13565-1-hdegoede@redhat.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Document the following membarrier commands introduced in 4.16:
-- MEMBARRIER_CMD_GLOBAL_EXPEDITED (the old enum label
-  MEMBARRIER_CMD_SHARED is now an alias to preserve header backward
-  compatibility),
-- MEMBARRIER_CMD_GLOBAL_EXPEDITED,
-- MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
-- MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE,
-- MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE.
+Commit 41d600274fbf ("extcon: int3496: process id-pin first so that we
+start with the right status") starts the work on the workqueue before
+registration to make sure we've a valid cable state directly after
+registration.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
+But that commit moves the queuing of the work to before we even alloc the
+extcon, causing a NULL pointer deref in the worker.
+
+This commit moves the queuing of the work to after we alloc the extcon,
+fixing the NULL pointer deref.
+
+Fixes: 41d600274fbf ("extcon: int3496: process id-pin first ...")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- man2/membarrier.2 | 73 ++++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 62 insertions(+), 11 deletions(-)
+ drivers/extcon/extcon-intel-int3496.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/man2/membarrier.2 b/man2/membarrier.2
-index c47bc875a..e878301ca 100644
---- a/man2/membarrier.2
-+++ b/man2/membarrier.2
-@@ -80,7 +80,7 @@ This command is always supported (on kernels where
- .BR membarrier ()
- is provided).
- .TP
--.B MEMBARRIER_CMD_SHARED
-+.B MEMBARRIER_CMD_GLOBAL " (since Linux 4.16)"
- Ensure that all threads from all processes on the system pass through a
- state where all memory accesses to user-space addresses match program
- order between entry to and return from the
-@@ -88,7 +88,30 @@ order between entry to and return from the
- system call.
- All threads on the system are targeted by this command.
- .TP
--.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED " (since Linux 4.14)"
-+.B MEMBARRIER_CMD_GLOBAL_EXPEDITED " (since Linux 4.16)"
-+Execute a memory barrier on all running threads of all processes which
-+previously registered with
-+.BR MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED .
-+Upon return from system call, the caller thread is ensured that all
-+running threads have passed through a state where all memory accesses to
-+user-space addresses match program order between entry to and return
-+from the system call (non-running threads are de facto in such a state).
-+This only covers threads from processes which registered with
-+.BR MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED .
-+Given that registration is about the intent to receive the barriers, it
-+is valid to invoke
-+.BR MEMBARRIER_CMD_GLOBAL_EXPEDITED
-+from a non-registered process.
-+.IP
-+The "expedited" commands complete faster than the non-expedited ones;
-+they never block, but have the downside of causing extra overhead.
-+.TP
-+.B MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED " (since Linux 4.16)"
-+Register the process intent to receive
-+.BR MEMBARRIER_CMD_GLOBAL_EXPEDITED
-+memory barriers.
-+.TP
-+.B MEMBARRIER_CMD_PRIVATE_EXPEDITED " (since Linux 4.14)"
- Execute a memory barrier on each running thread belonging to the same
- process as the current thread.
- Upon return from system call, the calling
-@@ -103,9 +126,29 @@ they never block, but have the downside of causing extra overhead.
- A process needs to register its intent to use the private
- expedited command prior to using it.
- .TP
--.BR MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED " (since Linux 4.14)"
-+.B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED " (since Linux 4.14)"
- Register the process's intent to use
--.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED .
-+.B MEMBARRIER_CMD_PRIVATE_EXPEDITED .
-+.TP
-+.B MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE " (since Linux 4.16)"
-+In addition to provide memory ordering guarantees described in
-+.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED ,
-+ensure the caller thread, upon return from system call, that all its
-+running threads siblings have executed a core serializing instruction.
-+This only covers threads from the same process as the caller thread.
-+The "expedited" commands complete faster than the non-expedited ones,
-+they never block, but have the downside of causing extra overhead. A
-+process needs to register its intent to use the private expedited sync
-+core command prior to using it.
-+.TP
-+.B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE " (since Linux 4.16)"
-+Register the process intent to use
-+.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE .
-+.TP
-+.B MEMBARRIER_CMD_SHARED
-+ Alias to
-+.BR MEMBARRIER_CMD_GLOBAL .
-+Provided for header backward compatibility.
- .PP
- The
- .I flags
-@@ -137,10 +180,14 @@ The pair ordering is detailed as (O: ordered, X: not ordered):
- On success, the
- .B MEMBARRIER_CMD_QUERY
- operation returns a bit mask of supported commands, and the
--.B MEMBARRIER_CMD_SHARED ,
-+.B MEMBARRIER_CMD_GLOBAL ,
-+.B MEMBARRIER_CMD_GLOBAL_EXPEDITED ,
-+.B MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED ,
- .B MEMBARRIER_CMD_PRIVATE_EXPEDITED ,
--and
- .B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED ,
-+.B MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE ,
-+and
-+.B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE
- operations return zero.
- On error, \-1 is returned,
- and
-@@ -163,10 +210,14 @@ set to 0, error handling is required only for the first call to
- is invalid, or
- .I flags
- is nonzero, or the
--.BR MEMBARRIER_CMD_SHARED
-+.BR MEMBARRIER_CMD_GLOBAL
- command is disabled because the
- .I nohz_full
--CPU parameter has been set.
-+CPU parameter has been set, or the
-+.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE
-+and
-+.BR MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE
-+commands are not implemented by the architecture.
- .TP
- .B ENOSYS
- The
-@@ -294,9 +345,9 @@ init_membarrier(void)
-         return \-1;
-     }
+diff --git a/drivers/extcon/extcon-intel-int3496.c b/drivers/extcon/extcon-intel-int3496.c
+index b23ee9d993a3..673bb26a9a2a 100644
+--- a/drivers/extcon/extcon-intel-int3496.c
++++ b/drivers/extcon/extcon-intel-int3496.c
+@@ -131,15 +131,15 @@ static int int3496_probe(struct platform_device *pdev)
+ 	if (IS_ERR(data->gpio_usb_mux))
+ 		dev_info(dev, "can't request USB MUX GPIO\n");
  
--    if (!(ret & MEMBARRIER_CMD_SHARED)) {
-+    if (!(ret & MEMBARRIER_CMD_GLOBAL)) {
-         fprintf(stderr,
--            "membarrier does not support MEMBARRIER_CMD_SHARED\\n");
-+            "membarrier does not support MEMBARRIER_CMD_GLOBAL\\n");
-         return \-1;
-     }
++	data->edev = devm_extcon_dev_allocate(dev, int3496_cable);
++	if (IS_ERR(data->edev))
++		return -ENOMEM;
++
+ 	/* process id-pin first so that we start with the right status */
+ 	queue_delayed_work(system_wq, &data->work, 0);
+ 	flush_delayed_work(&data->work);
  
-@@ -315,7 +366,7 @@ static void
- slow_path(int *read_a)
- {
-     b = 1;
--    membarrier(MEMBARRIER_CMD_SHARED, 0);
-+    membarrier(MEMBARRIER_CMD_GLOBAL, 0);
-     *read_a = a;
- }
- 
+ 	/* register extcon device */
+-	data->edev = devm_extcon_dev_allocate(dev, int3496_cable);
+-	if (IS_ERR(data->edev))
+-		return -ENOMEM;
+-
+ 	ret = devm_extcon_dev_register(dev, data->edev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "can't register extcon device: %d\n", ret);
 -- 
-2.11.0
-
+2.14.3
