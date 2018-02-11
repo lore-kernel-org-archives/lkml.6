@@ -1,95 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932227AbeBKW5k (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 17:57:40 -0500
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:44835 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932160AbeBKW5i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 17:57:38 -0500
-X-Google-Smtp-Source: AH8x2264s+cDNg9GKqEI6TFGp3JFm0181zTyyGOqJ25Opz9leZ111DO/U4HwVkRKt9YTMjMkz0v5Vg==
-Date: Sun, 11 Feb 2018 23:57:35 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Mario.Limonciello@dell.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dvhart@infradead.org, andy.shevchenko@gmail.com
-Subject: Re: Dell SMBIOS initializing before backends are ready
-Message-ID: <20180211225735.ql6gbi5oxpsnurkc@pali>
-References: <8da25d14004a4bd6ac7415c5958bcfc8@ausx13mpc120.AMER.DELL.COM>
+        id S932271AbeBKX1I (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 18:27:08 -0500
+Received: from foss.arm.com ([217.140.101.70]:35098 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932249AbeBKX1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 18:27:05 -0500
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Subject: Re: [linux-sunxi] [PATCH v2 5/6] arm64: allwinner: h6: add the
+ basical Allwinner H6 DTSI file
+To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+References: <20180203154942.63566-1-icenowy@aosc.io>
+ <20180203154942.63566-6-icenowy@aosc.io>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Organization: ARM Ltd.
+Message-ID: <a4299cac-84c1-6468-c38a-f232d0dbfb8a@arm.com>
+Date: Sun, 11 Feb 2018 23:26:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4nootal7f2ujdqhx"
-Content-Disposition: inline
-In-Reply-To: <8da25d14004a4bd6ac7415c5958bcfc8@ausx13mpc120.AMER.DELL.COM>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180203154942.63566-6-icenowy@aosc.io>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---4nootal7f2ujdqhx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/02/18 15:49, Icenowy Zheng wrote:
+> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
+> memory map fully reworked and some high-speed peripherals (PCIe, USB
+> 3.0) introduced.
+> 
+> This commit adds the basical DTSI file of it, including the clock
+> support and UART support.
 
-On Thursday 08 February 2018 18:23:23 Mario.Limonciello@dell.com wrote:
-> After Paul's recent message regarding the odd wifi issue he had a=20
-> comment I wanted to investigate:
->=20
-> dell_smbios: "No dell-smbios drivers are loaded"
->=20
-> Coming up early in boot.  This is a side effect of dell-smbios having two
-> backend drivers that can be compiled as modules but no tie to force
-> them to initialize before calls to dell_smbios_call.
->=20
-> So I believe what is happening is dell_micmute_led_set is called from
-> the HDA driver and calls dell_smbios_call early too.
->=20
-> I haven't tried it on a platform with mic mute, but I suspect it might ca=
-use
-> the mic mute LED status to be wrong initially (but corrected later when=
-=20
-> toggled).
->=20
-> Ideas that came to mind:
->=20
-> 1) In dell_smbios_call if no backends loaded, explicitly do a symbol_requ=
-est
-> for both backends and run initialization at that time.
->=20
-> If that works, that would also resolve if someone manually unloaded both
-> backends but a kernel module still tried to perform a request.
->=20
-> 2) Add a notifier chain for when the driver is ready (a backend is loaded)
-> to all consumers of dell_smbios_call.  Don't let other modules call
-> dell_smbios_call until notified.
-> Don't let the HDA driver call dell_micmute_led_set either.
->=20
-> 3) try_module_get during dell-smbios initialization for both the backends
->=20
-> What's the correct way to address this?
+Checked the MMIO addresses and the interrupt numbers against the manual.
 
-I'm not really sure what is the best approach.
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-But in my opinion, if somebody call blocking function symbol_request()
-then after function return, caller wants to use this symbol and expects
-to be ready. Therefore I think that exported function
-(dell_micmute_led_set) should probably ensure that everything is
-initialized and after that continue... So maybe add "initialize & wait
-until backends are ready" code into beginning of that function?
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+Thanks!
+Andre.
 
---4nootal7f2ujdqhx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWoDKXQAKCRCL8Mk9A+RD
-Ul/JAKCWEu+aREZtzlPki5fyW+joy4CmowCeJjhjX32O/3/p2HNfQzKURWgSv9o=
-=KXBJ
------END PGP SIGNATURE-----
-
---4nootal7f2ujdqhx--
+> ---
+> Changes in v2:
+> - Add APB1 clock as PIO's APB clock.
+> - Switched to SPDX license identifier.
+> 
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 178 +++++++++++++++++++++++++++
+>  1 file changed, 178 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> new file mode 100644
+> index 000000000000..d4697bb42496
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -0,0 +1,178 @@
+> +/*
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/sun50i-h6-ccu.h>
+> +#include <dt-bindings/reset/sun50i-h6-ccu.h>
+> +
+> +/ {
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <0>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <1>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <2>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <3>;
+> +			enable-method = "psci";
+> +		};
+> +	};
+> +
+> +	iosc: internal-osc-clk {
+> +		#clock-cells = <0>;
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <16000000>;
+> +		clock-accuracy = <300000000>;
+> +		clock-output-names = "iosc";
+> +	};
+> +
+> +	osc24M: osc24M_clk {
+> +		#clock-cells = <0>;
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "osc24M";
+> +	};
+> +
+> +	osc32k: osc32k_clk {
+> +		#clock-cells = <0>;
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		clock-output-names = "osc32k";
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+> +			     <GIC_PPI 14
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+> +			     <GIC_PPI 11
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+> +			     <GIC_PPI 10
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> +	};
+> +
+> +	soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		ccu: clock@3001000 {
+> +			compatible = "allwinner,sun50i-h6-ccu";
+> +			reg = <0x03001000 0x1000>;
+> +			clocks = <&osc24M>, <&osc32k>;
+> +			clock-names = "hosc", "losc";
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +		};
+> +
+> +		gic: interrupt-controller@3021000 {
+> +			compatible = "arm,gic-400";
+> +			reg = <0x03021000 0x1000>,
+> +			      <0x03022000 0x2000>,
+> +			      <0x03024000 0x2000>,
+> +			      <0x03026000 0x2000>;
+> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +		};
+> +
+> +		pio: pinctrl@300b000 {
+> +			compatible = "allwinner,sun50i-h6-pinctrl";
+> +			reg = <0x0300b000 0x400>;
+> +			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
+> +			clock-names = "apb", "hosc", "losc";
+> +			gpio-controller;
+> +			#gpio-cells = <3>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +
+> +			uart0_ph_pins: uart0-ph {
+> +				pins = "PH0", "PH1";
+> +				function = "uart0";
+> +			};
+> +		};
+> +
+> +		uart0: serial@5000000 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x05000000 0x400>;
+> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART0>;
+> +			resets = <&ccu RST_BUS_UART0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart1: serial@5000400 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x05000400 0x400>;
+> +			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART1>;
+> +			resets = <&ccu RST_BUS_UART1>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@5000800 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x05000800 0x400>;
+> +			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART2>;
+> +			resets = <&ccu RST_BUS_UART2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart3: serial@5000c00 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x05000c00 0x400>;
+> +			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART3>;
+> +			resets = <&ccu RST_BUS_UART3>;
+> +			status = "disabled";
+> +		};
+> +	};
+> +};
+> 
