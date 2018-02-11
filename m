@@ -1,52 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752877AbeBKKls (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 05:41:48 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:52673 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752288AbeBKKlq (ORCPT
+        id S1752881AbeBKKrj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 05:47:39 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33120 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752288AbeBKKrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 05:41:46 -0500
-X-Google-Smtp-Source: AH8x2271yQjAwTKah/P5P3dg5mL25FCK+yvgyGdp4JHAm8zTY4zdMWN96e2c5rtezNRVmiIHinjy7A==
-Date: Sun, 11 Feb 2018 11:41:41 +0100
+        Sun, 11 Feb 2018 05:47:37 -0500
+X-Google-Smtp-Source: AH8x225/1V7c/uKrE+WlQbJz5FZzhea+xgPHysf/U2QisKTLtCMN6WLuHXIF7PCuuLL0eyOqsU1/5Q==
+Date: Sun, 11 Feb 2018 11:47:33 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: David Woodhouse <dwmw@amazon.co.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com
-Subject: Re: [PATCH v2 0/6] Spectre v2 updates
-Message-ID: <20180211104141.boxyofjfknxmggsj@gmail.com>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] x86/Kconfig: Further simplify the NR_CPUS config
+Message-ID: <20180211104733.fcqt3f7iqsyhzdvw@gmail.com>
+References: <56d0376c-dc1f-334b-d392-a8c5cd85f4aa@infradead.org>
+ <CA+55aFymknkNH2mP1vX5ZLEqQwA3BgxQhZF-SUbbJMwTDL6hAA@mail.gmail.com>
+ <0b833246-ed4b-e451-c426-c4464725be92@infradead.org>
+ <20180210113629.jcv6su3r4suuno63@gmail.com>
+ <20180210113842.7j62u7rxp4jscei2@gmail.com>
+ <CA+55aFzW=jVmcWGw6bPMwZsZiUFkWOzZYV7FzNFhG1WJ+qgzSw@mail.gmail.com>
+ <2cfadd13-7101-e6c8-9919-5269e0b29c29@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+In-Reply-To: <2cfadd13-7101-e6c8-9919-5269e0b29c29@infradead.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Paolo, Radim,
+* Randy Dunlap <rdunlap@infradead.org> wrote:
 
-* David Woodhouse <dwmw@amazon.co.uk> wrote:
+> On 02/10/2018 02:19 PM, Linus Torvalds wrote:
+> > Looks good to me.
+> > 
+> > At the risk of bike-shedding, we could remove all the
+> > 
+> >         default    1 if !SMP
+> > 
+> > from the BEGIN/END/DEFAULT things, and perhaps just keep that part in NR_CPUS.
+> > 
+> > I didn't check, but I *think* it would work to just do
+> > 
+> >  config NR_CPUS
+> >         int "Maximum number of CPUs" if SMP && !MAXSMP
+> >         range NR_CPUS_RANGE_BEGIN NR_CPUS_RANGE_END
+> >         default "1" if !SMP
+> >         default NR_CPUS_DEFAULT
+> > 
+> > but maybe the "range" line would need an "if !SMP" on it too to avoid
+> > the issue with "1" being out of range.,
+> 
+> Yeah, I had an early test that failed due to something like that.
 
-> David Woodhouse (4):
->   KVM: x86: Reduce retpoline performance impact in slot_handle_level_range()
-> KarimAllah Ahmed (2):
->   X86/nVMX: Properly set spec_ctrl and pred_cmd before merging MSRs
->   KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we have a valid L02 MSR bitmap
+I *think* I slightly prefer the current approach, because while it's somewhat 
+verbose, the advantage is that this way we have *all* range considerations for a 
+given main hardware variant in a single place, and the main NR_CPUS config entry 
+is 'passive' in terms of determining the range used.
 
-Similarly to the previous Spectre patches I've applied these three KVM patches to 
-tip:x86/pti too, to keep them all in a single backportable group of commits. They 
-all look correct to me and solve real problems, and there's no conflict with 
-current upstream KVM code.
-
-Let me know if that's OK to you or if you'd like to see any changes to them.
+Plus the verbosity isn't really a problem either, as the whole approach is a 
+'verbose' expansion of an overly complex config expression, for better 
+readability/maintainability.
 
 Thanks,
 
