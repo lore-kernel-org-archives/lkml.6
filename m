@@ -1,83 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753298AbeBKMFX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 07:05:23 -0500
-Received: from casper.infradead.org ([85.118.1.10]:34550 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752691AbeBKMFV (ORCPT
+        id S1753473AbeBKMTE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 07:19:04 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:42676 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753440AbeBKMTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 07:05:21 -0500
-Date: Sun, 11 Feb 2018 04:05:15 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, James.Bottomley@HansenPartnership.com,
-        davem@redhat.com
-Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
- __GFP_HIGHMEM implicitly")
-Message-ID: <20180211120515.GB4551@bombadil.infradead.org>
-References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
- <20180208130649.GA15846@bombadil.infradead.org>
- <20180208232004.GA21027@bombadil.infradead.org>
- <20180211092652.GV21609@dhcp22.suse.cz>
- <20180211112808.GA4551@bombadil.infradead.org>
+        Sun, 11 Feb 2018 07:19:00 -0500
+X-Google-Smtp-Source: AH8x224GI92+1UtfZa9hmPR9D84CRsl80XsnkXKSS5ky0+nGphdRmzXoMstcmXd1aUp+mD6mYokOyfD5iDs49p8/gcI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180211112808.GA4551@bombadil.infradead.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1518298282.16865.28.camel@perches.com>
+References: <20180210095651.y7kvf3oqp6pzvh33@gmail.com> <634edbaa-f877-8f61-b61c-79e060edf8b5@infradead.org>
+ <1518298282.16865.28.camel@perches.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 11 Feb 2018 13:18:59 +0100
+Message-ID: <CANiq72=LHVCob42HPqa453YD7kzX0dZyZxfscT=QS-xYh1u1Rw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: auxdisplay: remove obsolete webpages
+To: Joe Perches <joe@perches.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 03:28:08AM -0800, Matthew Wilcox wrote:
-> Now, longer-term, perhaps we should do the following:
-> 
-> #ifdef CONFIG_ZONE_DMA32
-> #define OPT_ZONE_DMA32	ZONE_DMA32
-> #elif defined(CONFIG_64BIT)
-> #define OPT_ZONE_DMA	OPT_ZONE_DMA
-> #else
-> #define OPT_ZONE_DMA32 ZONE_NORMAL
-> #endif
-> 
-> Then we wouldn't need the ifdef here and could always use GFP_DMA32
-> | GFP_KERNEL.  Would need to audit current users and make sure they
-> wouldn't be broken by such a change.
+On Sat, Feb 10, 2018 at 10:31 PM, Joe Perches <joe@perches.com> wrote:
+> On Sat, 2018-02-10 at 09:32 -0800, Randy Dunlap wrote:
+>> On 02/10/2018 01:56 AM, Miguel Ojeda wrote:
+>> > Cc: Randy Dunlap <rdunlap@infradead.org>
+>> > Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>>
+>> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> Are you merging this directly to Linus?  or what?
+>
+> A generic negative of these removals, even for ancient
+> drivers that may or may not work anymore, is that the
+> old links may still be found on things like the
+> wayback machine/archive.org.
 
-Argh, I forgot to say the most important thing.  (For those newly invited
-to the party, we're talking about drivers/media, in particular
-drivers/media/common/saa7146/saa7146_core.c, functions
-saa7146_vmalloc_build_pgtable and vmalloc_to_sg)
+That is actually a good point. I just tried to pick it up in the
+wayback machine and sadly it only saved the error page from Apache
+when it was already gone. :(
 
-I think we're missing a function in our DMA API.  These drivers don't
-actually need physical memory below the 4GB mark.  They need DMA addresses
-which are below the 4GB mark.  For machines with IOMMUs, this can mean
-no restrictions on physical memory.  If we don't have an IOMMU, then a
-bounce buffer could be used (but would be slow) -- like the swiotlb.
-So we should endeavour to allocate memory below the 4GB boundary on
-systems with no IOMMU, but can allocate memory anywhere on systems with
-an IOMMU.
+>
+> Miguel, do you have a copy of this link source?
+>
+> If you do, should it be introduced as a .rst into
+> Documentation/ somewhere?
 
-For consistent / coherent memory, we have an allocation function.
-But we don't have an allocation function for streaming memory, which is
-what these drivers want.  They also flush the DMA memory and then access
-the memory through a different virtual mapping, which I'm not sure is
-going to work well on virtually-indexed caches like SPARC and PA-RISC
-(maybe not MIPS either?)
+IIRC I had only some example usages and some photos of the device
+working with the driver, etc. The docs I wrote are in
+Documentation/auxdisplay/ (in particular the wiring required for the
+device), so that is fine.
 
-I think we want something like
+I will see in any case if I have it in my ancient backups :)
 
-struct scatterlist *dma_alloc_sg(struct device *dev, int *nents);
-void dma_free_sg(struct device *dev, struct scatterlist *sg, int nents);
+Cheers,
+Miguel
 
-That lets individual architectures decide where to allocate, and handle
-the tradeoff between allocating below 4GB and using bounce buffers.
-
-I don't have a good answer to synchronising between device-view of
-memory and CPU-view-through-vmalloc though.  They're already calling
-dma_sync_*_for_cpu(); do they need to also call a new vflush(void *p,
-unsigned long len) function which can be a no-op on x86 and flushes the
-range on SPARC/PA-RISC/... ?
+>
+>> Thanks.
+>>
+>> > ---
+>> >  MAINTAINERS | 8 --------
+>> >  1 file changed, 8 deletions(-)
+>> >
+>> > diff --git a/MAINTAINERS b/MAINTAINERS
+>> > index e6c26cb47d02..01e302f7967e 100644
+>> > --- a/MAINTAINERS
+>> > +++ b/MAINTAINERS
+>> > @@ -2484,8 +2484,6 @@ F:    kernel/audit*
+>> >
+>> >  AUXILIARY DISPLAY DRIVERS
+>> >  M: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+>> > -W: http://miguelojeda.es/auxdisplay.htm
+>> > -W: http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+>> >  S: Maintained
+>> >  F: drivers/auxdisplay/
+>> >  F: include/linux/cfag12864b.h
+>> > @@ -3373,16 +3371,12 @@ F:  include/linux/usb/wusb*
+>> >
+>> >  CFAG12864B LCD DRIVER
+>> >  M: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+>> > -W: http://miguelojeda.es/auxdisplay.htm
+>> > -W: http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+>> >  S: Maintained
+>> >  F: drivers/auxdisplay/cfag12864b.c
+>> >  F: include/linux/cfag12864b.h
+>
+> Another suggestion would be to move
+> "include/linux/cfag12864b.h" into drivers/auxdisplay
+>
+>> >  CFAG12864BFB LCD FRAMEBUFFER DRIVER
+>> >  M: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+>> > -W: http://miguelojeda.es/auxdisplay.htm
+>> > -W: http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+>> >  S: Maintained
+>> >  F: drivers/auxdisplay/cfag12864bfb.c
+>> >  F: include/linux/cfag12864b.h
+>> > @@ -7866,8 +7860,6 @@ F:    kernel/kprobes.c
+>> >
+>> >  KS0108 LCD CONTROLLER DRIVER
+>> >  M: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+>> > -W: http://miguelojeda.es/auxdisplay.htm
+>> > -W: http://jair.lab.fi.uva.es/~migojed/auxdisplay.htm
+>> >  S: Maintained
+>> >  F: Documentation/auxdisplay/ks0108
+>> >  F: drivers/auxdisplay/ks0108.c
+>> >
+>>
+>>
