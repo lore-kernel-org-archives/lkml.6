@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326308-2-3725743534033115437
+X-Cyrus-Session-Id: sloti22d1t05-1511654-1518325417-2-4858204950071076301
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326307; b=kGtLH49p492je66XFe3xj4lLZd+3C9HsG4URvH13fRvOVN1
-    p/Ac5WYmg5V83OzIjKoSOR3I4OjB3vBzHfKyvLj2qNJNrWRXk46Ilt0m1UGnZwn0
-    7YNAok3LodpzyQZGopJX95JEAfgDXlpKCQtjM9PyF7kJAv78S+WHxcONWiP4+km8
-    biTrYWKkWXH3jP9IyOm3qH+m3j/y2jBCoJwsocCjkMFxjbU6oH5RXY5sxd0AdRd2
-    cpLDHoe94e1f85nx6JUzrEepaS1VZZJ8oTn87BZunrNNOryKx8RPXZTEZrqc/H/e
-    l4hNR8tf8ucsQpGR2XlE1dION0t+RRthVGrAftg==
+    t=1518325416; b=cAG49YYkEdVI2qfY8fmSRGk8ZgqXLGQsi02R81r1SYHn//G
+    t8Q/Qf4rJqmbos50qFSem9USA7B5gfyYmBks2BT2dYNqkNXkBighORG62suKBRg0
+    KdAs6y8xgTNkDR6Sgej6O0D6cIOXSCbF7nWdxj/z3xav4pq+uGlWwvXND9PmMvej
+    VT72LBPEdBJlbek1EPkndnFQR0xw+EzAgKVYAyt1M2A1QCXonO0vTPla41T+/zSq
+    kqX8G2gsrLVL7gJ86r2FUEwluEO2/ZSjU5oTB1C/Y6ceU0ZGIVWjS3+qxh9S2iyz
+    VJaUgcwy/Z3A3ClkCcKFC5cLCrc+d+IRwROttQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326307; bh=4Zp9EJ3Ubrv18soT/AO
-    4NcPHq88bQMQ6eYP+ZZHUPN0=; b=Wq3PCUNhSbbawFXd1foA4rCcTwNCJq+aXB0
-    vJv5EReGAHTe8gdRLAO+KXrh0e6L8jlQjtfeJaaTIfEec+IlNfixqQufeNjEGJZ1
-    1n1Lgh6TzSlIvwBXllTiqPSRNrYok8o5ajV2Z9ig+ekPm7sbm9qfJrJwAGrsD9Mn
-    ewBRSPGCFpRVhhDJvpEL5hdDmoCbmIzfixqWI5XcMp78zMLPQYXBmI3TnaQAyBG6
-    qrs0thyPQrvWFz5x7W9UwSsWIoRkHCWbJAeRsKFq1dHkAoF+zvmvoo/ywWsdXoKn
-    h5c4qikREw7CPupfgW0gElGP+c/8HZ2THHnVhREZbLsEAlTBeFQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518325416; bh=4mUN4hQc+4WReZAMb70
+    hMA1aYF4aEJkfF7HLf/Ggt8Y=; b=SoGDPWCgtR9V4G5rrCkKePM82wG6ZcJ7rq4
+    jukpgUf9vwPUBe6QVt44mCzS3FC+91ulVIFwInClluIdQ4ZD7ySHMA97ruhR4b+v
+    zrJ5pwMQMjP2QjdzAayLTx3JqL49lSelo3vyKTn4Qh54Ef5YnaC/1BPWTcurCyUs
+    INF1h6PmMauI5cDZC8za5VSTcPAR31ticwtlSrSvfVSovmxnNath3XoHuQhQoAcB
+    iA4+Cr/yv4mC9y7zdCaSHrimCkl3EaCcN8j73jvUjnFvlCW4CgT0n9lHD7M5U/A8
+    lVY2qTYWzgugHcba0U4Tq1onU4/9ppIEdVg1v9O04MkTzf4iGSQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,28 +47,25 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754059AbeBKFSX (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:18:23 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42726 "EHLO
+        id S1750739AbeBKFCI (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:02:08 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41651 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754028AbeBKFSU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:20 -0500
+        by vger.kernel.org with ESMTP id S1752764AbeBKEdz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:55 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Djordje Todorovic" <djordje.todorovic@rt-rk.com>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        "Ralf Baechle" <ralf@linux-mips.org>,
-        "James Hogan" <jhogan@kernel.org>, linux-mips@linux-mips.org
+CC: akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.320638011@decadent.org.uk>
+Message-ID: <lsq.1518323471.915707353@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 070/136] MIPS: Fix an n32 core file generation regset
- support regression
+Subject: [PATCH 3.16 003/136] Input: adxl34x - do not treat FIFO_MODE() as
+ boolean
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,80 +80,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@mips.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 547da673173de51f73887377eb275304775064ad upstream.
+commit 1dbc080c9ef6bcfba652ef0d6ae919b8c7c85a1d upstream.
 
-Fix a commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-regression, then activated by commit 6a9c001b7ec3 ("MIPS: Switch ELF
-core dumper to use regsets.)", that caused n32 processes to dump o32
-core files by failing to set the EF_MIPS_ABI2 flag in the ELF core file
-header's `e_flags' member:
+FIFO_MODE() is a macro expression with a '<<' operator, which gcc points
+out could be misread as a '<':
 
-$ file tls-core
-tls-core: ELF 32-bit MSB executable, MIPS, N32 MIPS64 rel2 version 1 (SYSV), [...]
-$ ./tls-core
-Aborted (core dumped)
-$ file core
-core: ELF 32-bit MSB core file MIPS, MIPS-I version 1 (SYSV), SVR4-style
-$
+drivers/input/misc/adxl34x.c: In function 'adxl34x_probe':
+drivers/input/misc/adxl34x.c:799:36: error: '<<' in boolean context, did you mean '<' ? [-Werror=int-in-bool-context]
 
-Previously the flag was set as the result of a:
+While utility of this warning is being disputed (Chief Penguin: "This
+warning is clearly pure garbage.") FIFO_MODE() extracts range of values,
+with 0 being FIFO_BYPASS, and not something that is logically boolean.
 
-statement placed in arch/mips/kernel/binfmt_elfn32.c, however in the
-regset case, i.e. when CORE_DUMP_USE_REGSET is set, ELF_CORE_EFLAGS is
-no longer used by `fill_note_info' in fs/binfmt_elf.c, and instead the
-`->e_flags' member of the regset view chosen is.  We have the views
-defined in arch/mips/kernel/ptrace.c, however only an o32 and an n64
-one, and the latter is used for n32 as well.  Consequently an o32 core
-file is incorrectly dumped from n32 processes (the ELF32 vs ELF64 class
-is chosen elsewhere, and the 32-bit one is correctly selected for n32).
+This converts the test to an explicit comparison with FIFO_BYPASS,
+making it clearer to gcc and the reader what is intended.
 
-Correct the issue then by defining an n32 regset view and using it as
-appropriate.  Issue discovered in GDB testing.
-
-Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Djordje Todorovic <djordje.todorovic@rt-rk.com>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/17617/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Fixes: e27c729219ad ("Input: add driver for ADXL345/346 Digital Accelerometers")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/kernel/ptrace.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/input/misc/adxl34x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -522,6 +522,19 @@ static const struct user_regset_view use
- 	.n		= ARRAY_SIZE(mips64_regsets),
- };
+--- a/drivers/input/misc/adxl34x.c
++++ b/drivers/input/misc/adxl34x.c
+@@ -796,7 +796,7 @@ struct adxl34x *adxl34x_probe(struct dev
  
-+#ifdef CONFIG_MIPS32_N32
-+
-+static const struct user_regset_view user_mipsn32_view = {
-+	.name		= "mipsn32",
-+	.e_flags	= EF_MIPS_ABI2,
-+	.e_machine	= ELF_ARCH,
-+	.ei_osabi	= ELF_OSABI,
-+	.regsets	= mips64_regsets,
-+	.n		= ARRAY_SIZE(mips64_regsets),
-+};
-+
-+#endif /* CONFIG_MIPS32_N32 */
-+
- #endif /* CONFIG_64BIT */
- 
- const struct user_regset_view *task_user_regset_view(struct task_struct *task)
-@@ -533,6 +546,10 @@ const struct user_regset_view *task_user
- 	if (test_tsk_thread_flag(task, TIF_32BIT_REGS))
- 		return &user_mips_view;
- #endif
-+#ifdef CONFIG_MIPS32_N32
-+	if (test_tsk_thread_flag(task, TIF_32BIT_ADDR))
-+		return &user_mipsn32_view;
-+#endif
- 	return &user_mips64_view;
- #endif
- }
+ 	if (pdata->watermark) {
+ 		ac->int_mask |= WATERMARK;
+-		if (!FIFO_MODE(pdata->fifo_mode))
++		if (FIFO_MODE(pdata->fifo_mode) == FIFO_BYPASS)
+ 			ac->pdata.fifo_mode |= FIFO_STREAM;
+ 	} else {
+ 		ac->int_mask |= DATA_READY;
