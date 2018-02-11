@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1468877-1518325055-2-3084816152098733369
+X-Cyrus-Session-Id: sloti22d1t05-1468877-1518324961-2-2634642101612289245
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518325054; b=Thl8359NH5buvdiDUEsNa47HvUt6xsUBKKZV9wIrYPM+95V
-    9V9PhU/HMa1aHADC32mgTtXhIEYGnFM5hQe/xNMAhHiADN9saRu1mWVj3zPO/Uil
-    rRTNjtCuA5gMVIVJ544wcUrkHnr0xBjpoUYsQ9Jh6yeQDWTXQPaLJNGfT9QgVNTL
-    tPZa1Bs5G9w/ulmSilYRzTbTbnskTm+b6dVwr2yGpeJJ/5yn5MGeCu8U83YrSm6j
-    uHOJP7seRRq7tMtohd2Hq449hqEmVsGn7NVX6NM5qukCvZGn9t3ftcAkY68TqCz5
-    61iXLBKl/yVXNWu/giNWn3Uxw1zhNeyq9vNlu0A==
+    t=1518324961; b=ZrHHMSefn/7V2742QVJkLG4gGkLTQu6VPbFkC5kue7wJD+y
+    IVnhzX7nzmPdToejXCAieeHiNk7fYqSIO5vagqA7L4EGM38SbZozz0UfxtMz+ICE
+    plql4QYzxYVmOLLAq0QqMZQInGsM/jNvnADakuPdLwIhDCo/64SdE119ByiXElKo
+    LJoUobtDJQ5+WVzV/WKtgwBwlt1dOhUqeM2btJMW2ZghdjrK9YKB6NoehCN4KVl/
+    RIC8o/KcgweWH9cSDsCShWxAhagaXUx6KyW/5pJ05vEE2pl/ecMp0U4PC7WKoWMT
+    oDb0AFnQYy5VnYxTRLmanTr2c70o56v3x2DyExg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518325054; bh=6P3aT4kmTsDNjbRmfTz
-    4jrpO8Qs7hEYIghBTcp30wgU=; b=ICC225e7NbW931Oj8JHXY68i0sx3pxhZwGh
-    6hcVvsE9F1H809huBo6xowWvVi4Nc34bL9AmexKAV44o3N/+tekJ5NRiQIGoLOhH
-    EXgGimPNCjx3jFmXuH4zOcvg9iaVpD7igSosWYEyMlPKMl6yvlc7jn03K5EAaBY+
-    PwkzxSUY9AbFf96sbV1+S6pIgsR0FTdMvxy1CoRjt1GaRNaMTzEaXtnslYScdwJR
-    /Ih++KFfiBv0T3u21kP5c0nLmhPajt68adVhj6U6EdXKOxgGHMeQYOK8soqe3gSW
-    xGjhf/SeHWjHqPZ2grHnWgZz1pBlLPxb8OddJb2enhBUtFdVKbg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518324961; bh=4r/5rVqPh5rxwFO93Cq
+    zqRr6z4oCuNkMOw/GyZMuObg=; b=s/nVIJuX/WuwuO3g67sOlC8Qtrnqg9Dl7eb
+    wTUr5VSis2b7iDiOiieeJGfGHtEnBs05EOZMbJbC7adko5QC1HdUt/dMQTHLRvmU
+    OnHRfUBLlVL1yfSzk5QMcviJTBusMc6uofI09SKI2VonK3O61ahIiJcKmPUa2pZb
+    LvEGdnHMrUBYVzDrYcJDnyOb8jnFi+r/B6UOAStp2gz5doZsufY2Lkhu+Y5pEOZd
+    poHJAlWhjg6HXKtjm8F0UkVwEdDPHvm97xyGD5xLvCqB2V6bG0BGh+iA8BuF6JJs
+    vst41IIy9Qy1lw5ah0+Zq9jYKOYThz5zW4F63q/B+7OR/Al89uw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,27 +47,33 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753548AbeBKE4A (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Feb 2018 23:56:00 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41673 "EHLO
+        id S1752798AbeBKEz7 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Feb 2018 23:55:59 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41697 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752784AbeBKEd4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:56 -0500
+        by vger.kernel.org with ESMTP id S1752794AbeBKEd5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 10 Feb 2018 23:33:57 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Dongdong Liu" <liudongdong3@huawei.com>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        "Gabriele Paoloni" <gabriele.paoloni@huawei.com>
+CC: akpm@linux-foundation.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Andy Lutomirski" <luto@amacapital.net>, linux-mm@kvack.org,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Denys Vlasenko" <dvlasenk@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Brian Gerst" <brgerst@gmail.com>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.640554736@decadent.org.uk>
+Message-ID: <lsq.1518323471.513508387@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 010/136] PCI/AER: Report non-fatal errors only to the
- affected endpoint
+Subject: [PATCH 3.16 130/136] x86, vdso, pvclock: Simplify and speed up
+ the vdso pvclock reader
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,64 +88,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+From: Andy Lutomirski <luto@amacapital.net>
 
-commit 86acc790717fb60fb51ea3095084e331d8711c74 upstream.
+commit 6b078f5de7fc0851af4102493c7b5bb07e49c4cb upstream.
 
-Previously, if an non-fatal error was reported by an endpoint, we
-called report_error_detected() for the endpoint, every sibling on the
-bus, and their descendents.  If any of them did not implement the
-.error_detected() method, do_recovery() failed, leaving all these
-devices unrecovered.
+The pvclock vdso code was too abstracted to understand easily
+and excessively paranoid.  Simplify it for a huge speedup.
 
-For example, the system described in the bugzilla below has two devices:
+This opens the door for additional simplifications, as the vdso
+no longer accesses the pvti for any vcpu other than vcpu 0.
 
-  0000:74:02.0 [19e5:a230] SAS controller, driver has .error_detected()
-  0000:74:03.0 [19e5:a235] SATA controller, driver lacks .error_detected()
+Before, vclock_gettime using kvm-clock took about 45ns on my
+machine. With this change, it takes 29ns, which is almost as
+fast as the pure TSC implementation.
 
-When a device such as 74:02.0 reported a non-fatal error, do_recovery()
-failed because 74:03.0 lacked an .error_detected() method.  But per PCIe
-r3.1, sec 6.2.2.2.2, such an error does not compromise the Link and
-does not affect 74:03.0:
-
-  Non-fatal errors are uncorrectable errors which cause a particular
-  transaction to be unreliable but the Link is otherwise fully functional.
-  Isolating Non-fatal from Fatal errors provides Requester/Receiver logic
-  in a device or system management software the opportunity to recover from
-  the error without resetting the components on the Link and disturbing
-  other transactions in progress.  Devices not associated with the
-  transaction in error are not impacted by the error.
-
-Report non-fatal errors only to the endpoint that reported them.  We really
-want to check for AER_NONFATAL here, but the current code structure doesn't
-allow that.  Looking for pci_channel_io_normal is the best we can do now.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197055
-Fixes: 6c2b374d7485 ("PCI-Express AER implemetation: AER core and aerdriver")
-Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Signed-off-by: Dongdong Liu <liudongdong3@huawei.com>
-[bhelgaas: changelog]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Andy Lutomirski <luto@amacapital.net>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/6b51dcc41f1b101f963945c5ec7093d72bdac429.1449702533.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16:
+ - Open-code rdtsc_ordered()
+ - Adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/pcie/aer/aerdrv_core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
---- a/drivers/pci/pcie/aer/aerdrv_core.c
-+++ b/drivers/pci/pcie/aer/aerdrv_core.c
-@@ -360,7 +360,14 @@ static pci_ers_result_t broadcast_error_
- 		 * If the error is reported by an end point, we think this
- 		 * error is related to the upstream link of the end point.
- 		 */
--		pci_walk_bus(dev->bus, cb, &result_data);
-+		if (state == pci_channel_io_normal)
-+			/*
-+			 * the error is non fatal so the bus is ok, just invoke
-+			 * the callback for the function that logged the error.
-+			 */
-+			cb(dev, &result_data);
-+		else
-+			pci_walk_bus(dev->bus, cb, &result_data);
- 	}
+--- a/arch/x86/vdso/vclock_gettime.c
++++ b/arch/x86/vdso/vclock_gettime.c
+@@ -78,47 +78,59 @@ static notrace const struct pvclock_vsys
  
- 	return result_data.result;
+ static notrace cycle_t vread_pvclock(int *mode)
+ {
+-	const struct pvclock_vsyscall_time_info *pvti;
++	const struct pvclock_vcpu_time_info *pvti = &get_pvti(0)->pvti;
+ 	cycle_t ret;
+-	u64 last;
+-	u32 version;
+-	u8 flags;
+-	unsigned cpu, cpu1;
+-
++	u64 tsc, pvti_tsc;
++	u64 last, delta, pvti_system_time;
++	u32 version, pvti_tsc_to_system_mul, pvti_tsc_shift;
+ 
+ 	/*
+-	 * Note: hypervisor must guarantee that:
+-	 * 1. cpu ID number maps 1:1 to per-CPU pvclock time info.
+-	 * 2. that per-CPU pvclock time info is updated if the
+-	 *    underlying CPU changes.
+-	 * 3. that version is increased whenever underlying CPU
+-	 *    changes.
++	 * Note: The kernel and hypervisor must guarantee that cpu ID
++	 * number maps 1:1 to per-CPU pvclock time info.
++	 *
++	 * Because the hypervisor is entirely unaware of guest userspace
++	 * preemption, it cannot guarantee that per-CPU pvclock time
++	 * info is updated if the underlying CPU changes or that that
++	 * version is increased whenever underlying CPU changes.
+ 	 *
++	 * On KVM, we are guaranteed that pvti updates for any vCPU are
++	 * atomic as seen by *all* vCPUs.  This is an even stronger
++	 * guarantee than we get with a normal seqlock.
++	 *
++	 * On Xen, we don't appear to have that guarantee, but Xen still
++	 * supplies a valid seqlock using the version field.
++
++	 * We only do pvclock vdso timing at all if
++	 * PVCLOCK_TSC_STABLE_BIT is set, and we interpret that bit to
++	 * mean that all vCPUs have matching pvti and that the TSC is
++	 * synced, so we can just look at vCPU 0's pvti.
+ 	 */
+-	do {
+-		cpu = __getcpu() & VGETCPU_CPU_MASK;
+-		/* TODO: We can put vcpu id into higher bits of pvti.version.
+-		 * This will save a couple of cycles by getting rid of
+-		 * __getcpu() calls (Gleb).
+-		 */
+-
+-		pvti = get_pvti(cpu);
+-
+-		version = __pvclock_read_cycles(&pvti->pvti, &ret, &flags);
+-
+-		/*
+-		 * Test we're still on the cpu as well as the version.
+-		 * We could have been migrated just after the first
+-		 * vgetcpu but before fetching the version, so we
+-		 * wouldn't notice a version change.
+-		 */
+-		cpu1 = __getcpu() & VGETCPU_CPU_MASK;
+-	} while (unlikely(cpu != cpu1 ||
+-			  (pvti->pvti.version & 1) ||
+-			  pvti->pvti.version != version));
+ 
+-	if (unlikely(!(flags & PVCLOCK_TSC_STABLE_BIT)))
++	if (unlikely(!(pvti->flags & PVCLOCK_TSC_STABLE_BIT))) {
+ 		*mode = VCLOCK_NONE;
++		return 0;
++	}
++
++	do {
++		version = pvti->version;
++
++		/* This is also a read barrier, so we'll read version first. */
++		rdtsc_barrier();
++		tsc = __native_read_tsc();
++
++		pvti_tsc_to_system_mul = pvti->tsc_to_system_mul;
++		pvti_tsc_shift = pvti->tsc_shift;
++		pvti_system_time = pvti->system_time;
++		pvti_tsc = pvti->tsc_timestamp;
++
++		/* Make sure that the version double-check is last. */
++		smp_rmb();
++	} while (unlikely((version & 1) || version != pvti->version));
++
++	delta = tsc - pvti_tsc;
++	ret = pvti_system_time +
++		pvclock_scale_delta(delta, pvti_tsc_to_system_mul,
++				    pvti_tsc_shift);
+ 
+ 	/* refer to tsc.c read_tsc() comment for rationale */
+ 	last = gtod->cycle_last;
