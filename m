@@ -1,56 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752667AbeBKFqp (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 00:46:45 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44156 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750787AbeBKFqn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 00:46:43 -0500
-X-Google-Smtp-Source: AH8x226kMR7lsx0t/BTgOzgPcucOXwxDXyhH0we6C37xtihYUX9CLZt3uv+3NlMMA57tlajovGncJkI5oofU3TIqfEQ=
+        id S1752602AbeBKGQa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 01:16:30 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:46632 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750787AbeBKGQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 01:16:29 -0500
+Subject: Re: [PATCH] f2fs: set_code_data in move_data_block
+To: Chao Yu <yuchao0@huawei.com>, <jaegeuk@kernel.org>, <chao@kernel.org>,
+        <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1518093217-123705-1-git-send-email-yunlong.song@huawei.com>
+ <a55bc2f7-fc46-4f4a-cb30-d6eb61b30785@huawei.com>
+ <520ce370-daa0-0654-3992-be01e8d82607@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Message-ID: <8856fc96-03a8-b2d8-8639-512ba2ecb893@huawei.com>
+Date: Sun, 11 Feb 2018 14:15:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180211010201.GA14719@bombadil.infradead.org>
-References: <CAErzpmu5o+tLJyY9GqkFEOn=KSs0q9pevCBWcvzpxDyV9RiC_Q@mail.gmail.com>
- <1518285863.16865.17.camel@perches.com> <20180211010201.GA14719@bombadil.infradead.org>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Sun, 11 Feb 2018 13:46:22 +0800
-Message-ID: <CAErzpmtU+HOasX1PEpFyV6-aJgjn4KsH8mOa6ekySCEXCc_1ug@mail.gmail.com>
-Subject: Re: [PATCH] seq_file: remove redundant assignment of index to m->index
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Joe Perches <joe@perches.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <520ce370-daa0-0654-3992-be01e8d82607@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.111.220.140]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 9:02 AM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Sat, Feb 10, 2018 at 10:04:23AM -0800, Joe Perches wrote:
->> > @@ -120,14 +120,12 @@ static int traverse(struct seq_file *m, loff_t offset)
->> >          if (pos + m->count > offset) {
->> >              m->from = offset - pos;
->> >              m->count -= m->from;
->> > -            m->index = index;
->> >              break;
->> >          }
->> >          pos += m->count;
->> >          m->count = 0;
->> >          if (pos == offset) {
->> >              index++;
->> > -            m->index = index;
->> >              break;
->> >          }
->> >          p = m->op->next(m, p, &index);
+OK, Got it.
+
+On 2018/2/11 11:50, Chao Yu wrote:
+> On 2018/2/11 11:34, Yunlong Song wrote:
+>> Ping...
 >>
->> Of course this looks correct, but how
->> are you _absolutely sure_ about this?
+>> move_data_block misses set_cold_data, then the F2FS_WB_CP_DATA will
+>> lack these data pages in move_data_block, and write_checkpoint can
+>> not make sure this pages committed to the flash.
+> 
+> Hmm.. data block migration is running based on meta inode, so it will
+> be safe since checkpoint will flush all meta pages including encrypted
+> pages cached in meta inode?
+> 
+> Thanks,
+> 
 >>
->> Perhaps the m->op->stop(m, p) call below
->> the break, which takes m as an argument,
->> needs an updated m->index.
->
-> Not only that, but ->next might also look at m->index.
-I think there is no chance to call op->next, because the loop will
-break immediately
-after the assignment.
+>> On 2018/2/8 20:33, Yunlong Song wrote:
+>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>> ---
+>>>    fs/f2fs/gc.c | 1 +
+>>>    1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index b9d93fd..2095630 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -692,6 +692,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>>>    	fio.op = REQ_OP_WRITE;
+>>>    	fio.op_flags = REQ_SYNC;
+>>>    	fio.new_blkaddr = newaddr;
+>>> +	set_cold_data(fio.page);
+>>>    	err = f2fs_submit_page_write(&fio);
+>>>    	if (err) {
+>>>    		if (PageWriteback(fio.encrypted_page))
+>>>
+>>
+> 
+> 
+> .
+> 
+
+-- 
+Thanks,
+Yunlong Song
