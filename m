@@ -1,53 +1,53 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x224XVoAX4sGT5kXGQXFRBqLNRYreXzjtuqzlHeSKRcPjBsc3OVYbTAXf5s0BBHbQ3vCydULA
-ARC-Seal: i=1; a=rsa-sha256; t=1518513279; cv=none;
+X-Google-Smtp-Source: AH8x227/KeGv+mqUryX9JPnBV8XnKAgJGWdgk1AAukb3/LTtxdgFuiAZP4r/UhjtaeaeUB7SgAM3
+ARC-Seal: i=1; a=rsa-sha256; t=1518402184; cv=none;
         d=google.com; s=arc-20160816;
-        b=A4aTSYngm9v5vKM8sjdPXWhOQh8j4NtZHstOT8uSLNDhW8e7xGwxuDtmY87AkWnGCn
-         oYp6cBEJiN2RaTFxH792Oh+XoVnpVnOxYPhP8OI9TwaAwNYLppdiSQXzvFgJzdO1Uo2f
-         6F/kJVahpyYqn1YPkx+Ie57HCX70X2O54qvbuxddT97W9NE5ZLRJSErMKVf3PtXm7N1p
-         EllijGKMi2kovC/LHi+SS6nW6fGilfmjyuVCRztT49ROjTnhg3+jgIu//nUTme/c2Y5Z
-         sc3yFJ+EVgGiQGnO06nrxyQLn1c9gTQ4nk79RFpL+Y9EBuCeC/5EVD0remP4LcmPLgX0
-         GrHQ==
+        b=m9A1BNYvMrj8jylf99fvIxxwK8iindRd50Hv3vGUAS1Cy5wlJIMiWE3dE9TITPlZx8
+         Qmxr8E+emgl+pHYOvS+pe/aqwLudW/LCzbqC3qp5vUZJAZqdSTIbe6xMNoMfB9gZl92D
+         4jn7IUeHN0czEyhmVkno7JwoHZMeGDdaEz0SSQRhGCxgiFqPAtNeqjOzgEg8v1uzfI/n
+         NjFuNiabQDKrTTyM3z/z+whsCzw0kbQ4qbASJFNpBWbcc0Vef9k3Q4Yg4XcR1nQaGcyq
+         92qhV83/j6kDSmf3V6bV5M5IQYpzNV7MKZM8MwmuVtPBF1ithHArTSychWoooOmw1T/I
+         5gxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=1K39XiC3QZ2TfxMs/RczFLcYrgCfScmvj2qIh61hVsQ=;
-        b=twwo9LYhQdCPwD89zZWawxT4vzE/XNnuDZAoiKX+95KQ9o7UY587MIl1BsWNtIotQx
-         gsS56CNzejuS0RgV75OBXp52klEFa7N5xTQk4hxG5KVtdQmXu7m9IELpfR3zUNLL0fGH
-         rFY/GxMAOVRY8n8oJ5kblJNZF85r3/HNyRK9hyEjk+RP4ezrtUnrjXi5ljzp8BjBT32p
-         Dxt21KUIDsaqsXaSQxcqGVmizO18C9PfsdrQAnQxrUe5p3Gg3DlEhX39l2XUb4/JVoFi
-         uwaNGwQjV0pkvSQOFZFi/f/R2Wu4RYCFcB2jlwJkg2I9jGFj2XAyHK9S1O339G/rOae+
-         es0w==
+        bh=STmFPGpeWrYW9bt656jpayBxR2fBVtm1kElcVTy2Gio=;
+        b=SCAm/qFVZ8wg8KyGyR4PQ5YpDpDakp11sThN50xori8yzftQ5LOICLA3yDNeG3Qq9G
+         EpXo4ZQNdjGRhh7j4RLFze+mBPddAnK7YWA99+n1oF2JgpZXn7YK+7IXMwtym/HWwHpD
+         al3Exdj9Ju24Tx/fLSUYEL+PLjq390YbY/nVcqA7Z0gUJvYpcUtrHxDfs9WrQ/JE33wN
+         i1zUiuEUI71SO1hamWsJJJhdUteQEGV+Y9gh49Kr7ZfeaBaraLthcUKoLbuHbjJRgFx2
+         Y196I6NCEglsVfvH7KLuLOEFGhkknn2ql9yQ06om1BqytTAfgkLZW8k/p1W/QsgEDQMT
+         CcQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Tue, 13 Feb 2018 00:59:15 -0800
+Date: Sun, 11 Feb 2018 04:10:21 -0800
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for KarimAllah Ahmed <tipbot@zytor.com>
-Message-ID: <tip-206587a9fb764d71f035dc7f6d3b6488f5d5b304@git.kernel.org>
-Cc: rkrcmar@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, peterz@infradead.org, arjan@linux.intel.com,
-        mingo@kernel.org, dwmw2@infradead.org, luto@kernel.org,
-        dan.j.williams@intel.com, jmattson@google.com, karahmed@amazon.de,
-        bp@alien8.de, dave.hansen@linux.intel.com,
-        torvalds@linux-foundation.org, dwmw@amazon.co.uk, jpoimboe@redhat.com,
-        hpa@zytor.com, gregkh@linuxfoundation.org
-Reply-To: rkrcmar@redhat.com, peterz@infradead.org, tglx@linutronix.de,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        arjan@linux.intel.com, dwmw2@infradead.org, mingo@kernel.org,
-        karahmed@amazon.de, jmattson@google.com, dan.j.williams@intel.com,
-        luto@kernel.org, torvalds@linux-foundation.org,
-        dave.hansen@linux.intel.com, bp@alien8.de, dwmw@amazon.co.uk,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com
+Message-ID: <tip-fb5b90b795c76e9c10c520fcdb7fe0d7b8334833@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, karahmed@amazon.de, dwmw@amazon.co.uk,
+        dave.hansen@linux.intel.com, torvalds@linux-foundation.org,
+        arjan@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        pbonzini@redhat.com, dan.j.williams@intel.com, mingo@kernel.org,
+        hpa@zytor.com, jmattson@google.com, rkrcmar@redhat.com,
+        dwmw2@infradead.org, gregkh@linuxfoundation.org, luto@kernel.org,
+        jpoimboe@redhat.com, peterz@infradead.org
+Reply-To: peterz@infradead.org, luto@kernel.org, jpoimboe@redhat.com,
+        gregkh@linuxfoundation.org, rkrcmar@redhat.com, jmattson@google.com,
+        dwmw2@infradead.org, mingo@kernel.org, hpa@zytor.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, bp@alien8.de,
+        torvalds@linux-foundation.org, arjan@linux.intel.com,
+        tglx@linutronix.de, dave.hansen@linux.intel.com, dwmw@amazon.co.uk,
+        karahmed@amazon.de, linux-kernel@vger.kernel.org
 In-Reply-To: <1518305967-31356-5-git-send-email-dwmw@amazon.co.uk>
 References: <1518305967-31356-5-git-send-email-dwmw@amazon.co.uk>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] X86/nVMX: Properly set spec_ctrl and pred_cmd before
  merging MSRs
-Git-Commit-ID: 206587a9fb764d71f035dc7f6d3b6488f5d5b304
+Git-Commit-ID: fb5b90b795c76e9c10c520fcdb7fe0d7b8334833
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,16 +58,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592160088873236897?=
-X-GMAIL-MSGID: =?utf-8?q?1592276580724759024?=
+X-GMAIL-MSGID: =?utf-8?q?1592160088873236897?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  206587a9fb764d71f035dc7f6d3b6488f5d5b304
-Gitweb:     https://git.kernel.org/tip/206587a9fb764d71f035dc7f6d3b6488f5d5b304
+Commit-ID:  fb5b90b795c76e9c10c520fcdb7fe0d7b8334833
+Gitweb:     https://git.kernel.org/tip/fb5b90b795c76e9c10c520fcdb7fe0d7b8334833
 Author:     KarimAllah Ahmed <karahmed@amazon.de>
 AuthorDate: Sat, 10 Feb 2018 23:39:25 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 09:00:06 +0100
+CommitDate: Sun, 11 Feb 2018 11:24:16 +0100
 
 X86/nVMX: Properly set spec_ctrl and pred_cmd before merging MSRs
 
@@ -81,7 +81,6 @@ correct semantics.
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Reviewed-by: Jim Mattson <jmattson@google.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -91,6 +90,7 @@ Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
