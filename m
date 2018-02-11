@@ -1,66 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753519AbeBKPgn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 10:36:43 -0500
-Received: from mga03.intel.com ([134.134.136.65]:28139 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751077AbeBKPgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 10:36:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,496,1511856000";
-   d="scan'208";a="16864909"
-Message-ID: <1518363396.49408.2.camel@intel.com>
-Subject: [GIT PULL] arch/nios2 update for v4.16-rc1
-From: Ley Foon Tan <ley.foon.tan@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "lftan.linux@gmail.com" <lftan.linux@gmail.com>
-Date: Sun, 11 Feb 2018 23:36:36 +0800
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
+        id S1753510AbeBKPrv (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 10:47:51 -0500
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:34816 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751077AbeBKPrt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 10:47:49 -0500
+X-Google-Smtp-Source: AH8x225GI7kwG/gsnDTsObp4OTgPgkDirNG+PpXJjfdzwlK4v0TtlUshW7wZc52bn4q0K8Zk+LRG8A==
+Date: Sun, 11 Feb 2018 18:47:46 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Konstantin Khlebnikov <koct9i@gmail.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v2] mm/huge_memory.c: reorder operations in
+ __split_huge_page_tail()
+Message-ID: <20180211154746.j33vipgepv75dw3r@node.shutemov.name>
+References: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
+ <151835937752.185602.5640977700089242532.stgit@buzz>
+ <20180211151433.xvza2mugfybyocoi@node.shutemov.name>
+ <CALYGNiMjuW4BM2tSUOUmJUu7kX0HEL1EN-YFi=cvtstQi3YeHQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALYGNiMjuW4BM2tSUOUmJUu7kX0HEL1EN-YFi=cvtstQi3YeHQ@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus
+On Sun, Feb 11, 2018 at 06:32:10PM +0300, Konstantin Khlebnikov wrote:
+> On Sun, Feb 11, 2018 at 6:14 PM, Kirill A. Shutemov
+> <kirill@shutemov.name> wrote:
+> > On Sun, Feb 11, 2018 at 05:29:37PM +0300, Konstantin Khlebnikov wrote:
+> >> And replace page_ref_inc()/page_ref_add() with page_ref_unfreeze() which
+> >> is made especially for that and has semantic of smp_store_release().
+> >
+> > Nak on this part.
+> >
+> > page_ref_unfreeze() uses atomic_set() which neglects the situation in the
+> > comment you're removing.
+> 
+> Why? look into x86 smp_store_release
+> for PPro it use same sequence smp_wb + WRITE_ONCE
+> As I see spin_unlock uses exactly this macro.
+> 
+> Anyway if page_ref_unfreeze cannot handle races with
+> get_page_unless_zero() then it completely useless,
 
-Here is nios2 update for v4.16-rc1.
+Okay, fair enough.
 
-Please consider pulling.
+But please call it out it the commit message.
 
-Regards
-Ley Foon
-
-The following changes since commit d8a5b80568a9cb66810e75b182018e9edb68e8ff:
-
-  Linux 4.15 (2018-01-28 13:20:33 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lftan/nios2.git tags/nios2-v4.16-rc1
-
-for you to fetch changes up to e0691ebb33c12084ef11b6b59228c004e19f59c8:
-
-  nios2: defconfig: Cleanup from old Kconfig options (2018-02-11 23:04:53 +0800)
-
-----------------------------------------------------------------
-nios2 update for v4.16-rc1
-
-nios2: defconfig: Cleanup from old Kconfig options
-nios2: dts: Remove leading 0x and 0s from bindings notation
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      nios2: defconfig: Cleanup from old Kconfig options
-
-Mathieu Malaterre (1):
-      nios2: dts: Remove leading 0x and 0s from bindings notation
-
- arch/nios2/boot/dts/3c120_devboard.dts | 16 ++++++++--------
- arch/nios2/configs/10m50_defconfig     |  1 -
- arch/nios2/configs/3c120_defconfig     |  1 -
- 3 files changed, 8 insertions(+), 10 deletions(-)
+-- 
+ Kirill A. Shutemov
