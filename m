@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1511654-1518326500-2-10922544632905242374
+X-Cyrus-Session-Id: sloti22d1t05-1524142-1518326480-2-18220419510480026466
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518326500; b=ufD4BGMxxo40w9em80PdOYnSCfJtHsEXO/2QV+GQfbZD812
-    ofBuprTvsRx5Az5t9llQUbdCgmpDt9S1Qza+YuXIywkS+X92ccnhOEvhStqAoN+n
-    tNiuKdlBqeD43nqoYSIqOBo04PnbCPBnEYR7wBmPlgGF4ioU37yD2Qv6S+7wZBo1
-    0Bwz5vzhhIPYCfUSSEqVghSxCeXcE9bA4UyarKPoaLsSgYsNA+o3dcCO0DlMR3Qf
-    Q34Pc0lWDtmRHhhJBpcHbywwTmFxzeCrzhT6z3igXwWxp3L/Q/tNTwcZkNKqzkJu
-    RE4wkx6kt74TWjUYqam5FTx+g0xGQg8cUE0NCgw==
+    t=1518326480; b=hdxRDeTFMu7PdwwS2fVv1XH0IZghFdTVZB3Hur1H80u1CD2
+    6LsPvcahnK1dflJIjKNW/xcjUHeYbJZaLXmCXfCVuZIKtn1Os09QKRjCjLUGD3og
+    lXDak20RjBbBXV6spIZHn37IbBl6CieKo0/5ygXxAV/CLTB1SSXKIh3jnRAlT4Tz
+    7rjHzhfR7ZK4wqWmzj+WV44L5U2uNZo2mzPcWtPHrRIQysOu2BxP11lau7bSHLem
+    3dhCjZT6hEZzLOQwKFJd1vxxgm/6/2zCec1A6iKIe304yz3qjd/desTq953iXfdy
+    +yH0ea7pDbWiI8v3MuGNgSSerG2qiBIfS9Zt7bA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1518326500; bh=bTS2Ai+IATmlhImrpZY
-    pA6wWN1PgQJRaDjUhuRxgyLM=; b=ZNrf/qZmlW77FxGXss/u+Y0OMrVBZ7N9MAm
-    lHy0NUS+RFg0t4oc0idLZPFXwVXIkE8uy6O/qDwczmJDW1OZx6y3iooZZ2OKFedA
-    uFb3jBZ1BgcaAZ6BY8D6TJaS3Euneyebt0AvY9ZfAuaLo7hGCGYr9PJRElCU/PjG
-    ExGuJGlWZHD4ujrKKFHE2ORgDnoyZDh+yGZZ4Ji6X2RwTpEPF9UzpJiA4Pm6lWvo
-    Ejm31wp4MNC+8b1ReEGOO5/hZtDtuXS9aWGX9QYNiZinoLD48htc8e75tmgohGNj
-    /HIpXU5qMLv+F8RwqBk/ecLNoiniewJ/jiLuM4FLCMehoNBIwRw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1518326480; bh=nhIEFjNwdCdSdNSBJCI
+    7cESucAuIG5uR+lsguDlyT0A=; b=hQlWYNSUw+xH+HIi0mpcXU1PFlqhr+VqJF8
+    w1nCI4TmH2F/NOpybW0ANqTdkaE2OmiHbOovdePvPxiJkcu7mF7NwNwpr7EV7TwT
+    cg54GRbyKmxQh4WhG7BFWL11MLBU+78kn/3plPc5urw0Nopg4IjqT2LgvzWmZdZ+
+    a6guOsOhsJIiK14RbOa7C34cnWuJtEShKtRmYBoXHuKDvJnQHbtZ3g7jN+rqRhsw
+    RcDlXMiiN2xy7jEE4jMrTEETrFcA1cdpfVVfn2PyQttsW/3diol0VDH47CsWL20h
+    J44H5JoAdOrQoO1qmRFM1M9eXEDJfbIu279abH6570DP+V02zXQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -47,26 +47,36 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753285AbeBKFV0 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Feb 2018 00:21:26 -0500
+        id S1753250AbeBKFVD (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 00:21:03 -0500
 Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42726 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932151AbeBKFSG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:06 -0500
+        by vger.kernel.org with ESMTP id S932090AbeBKFSI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 00:18:08 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Doug Ledford" <dledford@redhat.com>,
-        "Bart Van Assche" <bart.vanassche@wdc.com>,
-        "Sagi Grimberg" <sagi@grimberg.me>
+CC: akpm@linux-foundation.org, "Peter Zijlstra" <peterz@infradead.org>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Masami Hiramatsu" <mhiramat@kernel.org>,
+        "Denys Vlasenko" <dvlasenk@redhat.com>,
+        "Brian Gerst" <brgerst@gmail.com>, bp@suse.de,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Zhou Chengming" <zhouchengming1@huawei.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date: Sun, 11 Feb 2018 04:31:11 +0000
-Message-ID: <lsq.1518323471.461209388@decadent.org.uk>
+Message-ID: <lsq.1518323471.741744715@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 025/136] IB/srp: Avoid that a cable pull can trigger
- a kernel crash
+Subject: [PATCH 3.16 062/136] kprobes, x86/alternatives: Use text_mutex to
+ protect smp_alt_modules
 In-Reply-To: <lsq.1518323469.348919605@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,78 +91,172 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Zhou Chengming <zhouchengming1@huawei.com>
 
-commit 8a0d18c62121d3c554a83eb96e2752861d84d937 upstream.
+commit e846d13958066828a9483d862cc8370a72fadbb6 upstream.
 
-This patch fixes the following kernel crash:
+We use alternatives_text_reserved() to check if the address is in
+the fixed pieces of alternative reserved, but the problem is that
+we don't hold the smp_alt mutex when call this function. So the list
+traversal may encounter a deleted list_head if another path is doing
+alternatives_smp_module_del().
 
-general protection fault: 0000 [#1] PREEMPT SMP
-Workqueue: ib_mad2 timeout_sends [ib_core]
-Call Trace:
- ib_sa_path_rec_callback+0x1c4/0x1d0 [ib_core]
- send_handler+0xb2/0xd0 [ib_core]
- timeout_sends+0x14d/0x220 [ib_core]
- process_one_work+0x200/0x630
- worker_thread+0x4e/0x3b0
- kthread+0x113/0x150
+One solution is that we can hold smp_alt mutex before call this
+function, but the difficult point is that the callers of this
+functions, arch_prepare_kprobe() and arch_prepare_optimized_kprobe(),
+are called inside the text_mutex. So we must hold smp_alt mutex
+before we go into these arch dependent code. But we can't now,
+the smp_alt mutex is the arch dependent part, only x86 has it.
+Maybe we can export another arch dependent callback to solve this.
 
-Fixes: commit aef9ec39c47f ("IB: Add SCSI RDMA Protocol (SRP) initiator")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-[bwh: Backported to 3.16: adjust context]
+But there is a simpler way to handle this problem. We can reuse the
+text_mutex to protect smp_alt_modules instead of using another mutex.
+And all the arch dependent checks of kprobes are inside the text_mutex,
+so it's safe now.
+
+Signed-off-by: Zhou Chengming <zhouchengming1@huawei.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@suse.de
+Fixes: 2cfa197 "ftrace/alternatives: Introducing *_text_reserved functions"
+Link: http://lkml.kernel.org/r/1509585501-79466-1-git-send-email-zhouchengming1@huawei.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -600,12 +600,19 @@ static void srp_path_rec_completion(int
- 
- static int srp_lookup_path(struct srp_target_port *target)
+ arch/x86/kernel/alternative.c | 26 +++++++++++++-------------
+ kernel/extable.c              |  2 ++
+ 2 files changed, 15 insertions(+), 13 deletions(-)
+
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -409,7 +409,6 @@ static void alternatives_smp_lock(const
  {
--	int ret;
-+	int ret = -ENODEV;
+ 	const s32 *poff;
  
- 	target->path.numb_path = 1;
+-	mutex_lock(&text_mutex);
+ 	for (poff = start; poff < end; poff++) {
+ 		u8 *ptr = (u8 *)poff + *poff;
  
- 	init_completion(&target->done);
- 
-+	/*
-+	 * Avoid that the SCSI host can be removed by srp_remove_target()
-+	 * before srp_path_rec_completion() is called.
-+	 */
-+	if (!scsi_host_get(target->scsi_host))
-+		goto out;
-+
- 	target->path_query_id = ib_sa_path_rec_get(&srp_sa_client,
- 						   target->srp_host->srp_dev->dev,
- 						   target->srp_host->port,
-@@ -619,18 +626,24 @@ static int srp_lookup_path(struct srp_ta
- 						   GFP_KERNEL,
- 						   srp_path_rec_completion,
- 						   target, &target->path_query);
--	if (target->path_query_id < 0)
--		return target->path_query_id;
-+	ret = target->path_query_id;
-+	if (ret < 0)
-+		goto put;
- 
- 	ret = wait_for_completion_interruptible(&target->done);
- 	if (ret < 0)
- 		return ret;
- 
--	if (target->status < 0)
-+	ret = target->status;
-+	if (ret < 0)
- 		shost_printk(KERN_WARNING, target->scsi_host,
- 			     PFX "Path record query failed\n");
- 
--	return target->status;
-+put:
-+	scsi_host_put(target->scsi_host);
-+
-+out:
-+	return ret;
+@@ -419,7 +418,6 @@ static void alternatives_smp_lock(const
+ 		if (*ptr == 0x3e)
+ 			text_poke(ptr, ((unsigned char []){0xf0}), 1);
+ 	}
+-	mutex_unlock(&text_mutex);
  }
  
- static int srp_send_req(struct srp_target_port *target)
+ static void alternatives_smp_unlock(const s32 *start, const s32 *end,
+@@ -427,7 +425,6 @@ static void alternatives_smp_unlock(cons
+ {
+ 	const s32 *poff;
+ 
+-	mutex_lock(&text_mutex);
+ 	for (poff = start; poff < end; poff++) {
+ 		u8 *ptr = (u8 *)poff + *poff;
+ 
+@@ -437,7 +434,6 @@ static void alternatives_smp_unlock(cons
+ 		if (*ptr == 0xf0)
+ 			text_poke(ptr, ((unsigned char []){0x3E}), 1);
+ 	}
+-	mutex_unlock(&text_mutex);
+ }
+ 
+ struct smp_alt_module {
+@@ -456,8 +452,7 @@ struct smp_alt_module {
+ 	struct list_head next;
+ };
+ static LIST_HEAD(smp_alt_modules);
+-static DEFINE_MUTEX(smp_alt);
+-static bool uniproc_patched = false;	/* protected by smp_alt */
++static bool uniproc_patched = false;	/* protected by text_mutex */
+ 
+ void __init_or_module alternatives_smp_module_add(struct module *mod,
+ 						  char *name,
+@@ -466,7 +461,7 @@ void __init_or_module alternatives_smp_m
+ {
+ 	struct smp_alt_module *smp;
+ 
+-	mutex_lock(&smp_alt);
++	mutex_lock(&text_mutex);
+ 	if (!uniproc_patched)
+ 		goto unlock;
+ 
+@@ -493,14 +488,14 @@ void __init_or_module alternatives_smp_m
+ smp_unlock:
+ 	alternatives_smp_unlock(locks, locks_end, text, text_end);
+ unlock:
+-	mutex_unlock(&smp_alt);
++	mutex_unlock(&text_mutex);
+ }
+ 
+ void __init_or_module alternatives_smp_module_del(struct module *mod)
+ {
+ 	struct smp_alt_module *item;
+ 
+-	mutex_lock(&smp_alt);
++	mutex_lock(&text_mutex);
+ 	list_for_each_entry(item, &smp_alt_modules, next) {
+ 		if (mod != item->mod)
+ 			continue;
+@@ -508,7 +503,7 @@ void __init_or_module alternatives_smp_m
+ 		kfree(item);
+ 		break;
+ 	}
+-	mutex_unlock(&smp_alt);
++	mutex_unlock(&text_mutex);
+ }
+ 
+ void alternatives_enable_smp(void)
+@@ -518,7 +513,7 @@ void alternatives_enable_smp(void)
+ 	/* Why bother if there are no other CPUs? */
+ 	BUG_ON(num_possible_cpus() == 1);
+ 
+-	mutex_lock(&smp_alt);
++	mutex_lock(&text_mutex);
+ 
+ 	if (uniproc_patched) {
+ 		pr_info("switching to SMP code\n");
+@@ -530,10 +525,13 @@ void alternatives_enable_smp(void)
+ 					      mod->text, mod->text_end);
+ 		uniproc_patched = false;
+ 	}
+-	mutex_unlock(&smp_alt);
++	mutex_unlock(&text_mutex);
+ }
+ 
+-/* Return 1 if the address range is reserved for smp-alternatives */
++/*
++ * Return 1 if the address range is reserved for SMP-alternatives.
++ * Must hold text_mutex.
++ */
+ int alternatives_text_reserved(void *start, void *end)
+ {
+ 	struct smp_alt_module *mod;
+@@ -541,6 +539,8 @@ int alternatives_text_reserved(void *sta
+ 	u8 *text_start = start;
+ 	u8 *text_end = end;
+ 
++	lockdep_assert_held(&text_mutex);
++
+ 	list_for_each_entry(mod, &smp_alt_modules, next) {
+ 		if (mod->text > text_end || mod->text_end < text_start)
+ 			continue;
+--- a/kernel/extable.c
++++ b/kernel/extable.c
+@@ -28,6 +28,8 @@
+  * mutex protecting text section modification (dynamic code patching).
+  * some users need to sleep (allocating memory...) while they hold this lock.
+  *
++ * Note: Also protects SMP-alternatives modification on x86.
++ *
+  * NOT exported to modules - patching kernel text is a really delicate matter.
+  */
+ DEFINE_MUTEX(text_mutex);
