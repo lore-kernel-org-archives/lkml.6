@@ -1,313 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753436AbeBKJld (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 04:41:33 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33580 "EHLO
+        id S1753283AbeBKJlt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 04:41:49 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:33572 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752809AbeBKJjO (ORCPT
+        with ESMTP id S1752805AbeBKJjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 04:39:14 -0500
+        Sun, 11 Feb 2018 04:39:13 -0500
 From: Jianchao Wang <jianchao.w.wang@oracle.com>
 To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
 Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] nvme: change namespaces_mutext to namespaces_rwsem
-Date: Sun, 11 Feb 2018 17:38:34 +0800
-Message-Id: <1518341920-1060-4-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH V3 0/6]nvme-pci: fixes on nvme_timeout and nvme_dev_disable
+Date: Sun, 11 Feb 2018 17:38:31 +0800
+Message-Id: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8801 signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=638
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802110127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-namespaces_mutext is used to synchronize the operations on ctrl
-namespaces list. Most of the time, it is a read operation. It is
-better to change it from mutex to rwsem.
+Hi Christoph, Keith and Sagi
 
-On the other hand, the namespaces mutex could introduce circular
-dependency easily.
+Please consider and comment on the following patchset.
+That's really appreciated.
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- drivers/nvme/host/core.c      | 64 +++++++++++++++++++++----------------------
- drivers/nvme/host/multipath.c |  4 +--
- drivers/nvme/host/nvme.h      |  2 +-
- 3 files changed, 35 insertions(+), 35 deletions(-)
+There is a complicated relationship between nvme_timeout and nvme_dev_disable.
+ - nvme_timeout has to invoke nvme_dev_disable to stop the
+   controller doing DMA access before free the request.
+ - nvme_dev_disable has to depend on nvme_timeout to complete
+   adminq requests to set HMB or delete sq/cq when the controller
+   has no response.
+ - nvme_dev_disable will race with nvme_timeout when cancels the
+   outstanding requests.
+We have found some issues introduced by them, please refer the following link
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 7425124..176ba9e 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1120,14 +1120,14 @@ static void nvme_update_formats(struct nvme_ctrl *ctrl)
- 	struct nvme_ns *ns, *next;
- 	LIST_HEAD(rm_list);
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_write(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
- 		if (ns->disk && nvme_revalidate_disk(ns->disk)) {
- 			list_del_init(&ns->list);
- 			list_add_tail(&ns->list, &rm_list);
- 		}
- 	}
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_write(&ctrl->namespaces_rwsem);
- 
- 	list_for_each_entry_safe(ns, next, &rm_list, list)
- 		nvme_ns_remove(ns);
-@@ -2437,7 +2437,7 @@ static int nvme_dev_user_cmd(struct nvme_ctrl *ctrl, void __user *argp)
- 	struct nvme_ns *ns;
- 	int ret;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	if (list_empty(&ctrl->namespaces)) {
- 		ret = -ENOTTY;
- 		goto out_unlock;
-@@ -2454,14 +2454,14 @@ static int nvme_dev_user_cmd(struct nvme_ctrl *ctrl, void __user *argp)
- 	dev_warn(ctrl->device,
- 		"using deprecated NVME_IOCTL_IO_CMD ioctl on the char device!\n");
- 	kref_get(&ns->kref);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- 
- 	ret = nvme_user_cmd(ctrl, ns, argp);
- 	nvme_put_ns(ns);
- 	return ret;
- 
- out_unlock:
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- 	return ret;
- }
- 
-@@ -2894,7 +2894,7 @@ static struct nvme_ns *nvme_find_get_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- {
- 	struct nvme_ns *ns, *ret = NULL;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
- 		if (ns->head->ns_id == nsid) {
- 			if (!kref_get_unless_zero(&ns->kref))
-@@ -2905,7 +2905,7 @@ static struct nvme_ns *nvme_find_get_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 		if (ns->head->ns_id > nsid)
- 			break;
- 	}
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- 	return ret;
- }
- 
-@@ -3017,9 +3017,9 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 
- 	__nvme_revalidate_disk(disk, id);
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_write(&ctrl->namespaces_rwsem);
- 	list_add_tail(&ns->list, &ctrl->namespaces);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_write(&ctrl->namespaces_rwsem);
- 
- 	nvme_get_ctrl(ctrl);
- 
-@@ -3072,9 +3072,9 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 	list_del_rcu(&ns->siblings);
- 	mutex_unlock(&ns->ctrl->subsys->lock);
- 
--	mutex_lock(&ns->ctrl->namespaces_mutex);
-+	down_write(&ns->ctrl->namespaces_rwsem);
- 	list_del_init(&ns->list);
--	mutex_unlock(&ns->ctrl->namespaces_mutex);
-+	up_write(&ns->ctrl->namespaces_rwsem);
- 
- 	synchronize_srcu(&ns->head->srcu);
- 	nvme_mpath_check_last_path(ns);
-@@ -3100,14 +3100,14 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
- 	struct nvme_ns *ns, *next;
- 	LIST_HEAD(rm_list);
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_write(&ctrl->namespaces_rwsem);
- 	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
- 		if (ns->head->ns_id > nsid) {
- 			list_del_init(&ns->list);
- 			list_add_tail(&ns->list, &rm_list);
- 		}
- 	}
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_write(&ctrl->namespaces_rwsem);
- 
- 	list_for_each_entry_safe(ns, next, &rm_list, list)
- 		nvme_ns_remove(ns);
-@@ -3187,9 +3187,9 @@ static void nvme_scan_work(struct work_struct *work)
- 	}
- 	nvme_scan_ns_sequential(ctrl, nn);
-  done:
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_write(&ctrl->namespaces_rwsem);
- 	list_sort(NULL, &ctrl->namespaces, ns_cmp);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_write(&ctrl->namespaces_rwsem);
- 	kfree(id);
- }
- 
-@@ -3222,9 +3222,9 @@ void nvme_remove_namespaces(struct nvme_ctrl *ctrl)
- 	if (ctrl->state == NVME_CTRL_DEAD)
- 		nvme_kill_queues(ctrl);
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_write(&ctrl->namespaces_rwsem);
- 	list_splice_init(&ctrl->namespaces, &ns_list);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_write(&ctrl->namespaces_rwsem);
- 
- 	list_for_each_entry_safe(ns, next, &ns_list, list)
- 		nvme_ns_remove(ns);
-@@ -3413,7 +3413,7 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
- 	ctrl->state = NVME_CTRL_NEW;
- 	spin_lock_init(&ctrl->lock);
- 	INIT_LIST_HEAD(&ctrl->namespaces);
--	mutex_init(&ctrl->namespaces_mutex);
-+	init_rwsem(&ctrl->namespaces_rwsem);
- 	ctrl->dev = dev;
- 	ctrl->ops = ops;
- 	ctrl->quirks = quirks;
-@@ -3474,7 +3474,7 @@ void nvme_kill_queues(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 
- 	/* Forcibly unquiesce queues to avoid blocking dispatch */
- 	if (ctrl->admin_q)
-@@ -3493,7 +3493,7 @@ void nvme_kill_queues(struct nvme_ctrl *ctrl)
- 		/* Forcibly unquiesce queues to avoid blocking dispatch */
- 		blk_mq_unquiesce_queue(ns->queue);
- 	}
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- EXPORT_SYMBOL_GPL(nvme_kill_queues);
- 
-@@ -3501,10 +3501,10 @@ void nvme_unfreeze(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list)
- 		blk_mq_unfreeze_queue(ns->queue);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- EXPORT_SYMBOL_GPL(nvme_unfreeze);
- 
-@@ -3512,13 +3512,13 @@ void nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
- 		timeout = blk_mq_freeze_queue_wait_timeout(ns->queue, timeout);
- 		if (timeout <= 0)
- 			break;
- 	}
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- EXPORT_SYMBOL_GPL(nvme_wait_freeze_timeout);
- 
-@@ -3526,10 +3526,10 @@ void nvme_wait_freeze(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list)
- 		blk_mq_freeze_queue_wait(ns->queue);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- EXPORT_SYMBOL_GPL(nvme_wait_freeze);
- 
-@@ -3537,10 +3537,10 @@ void nvme_start_freeze(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list)
- 		blk_freeze_queue_start(ns->queue);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- EXPORT_SYMBOL_GPL(nvme_start_freeze);
- 
-@@ -3548,10 +3548,10 @@ void nvme_stop_queues(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list)
- 		blk_mq_quiesce_queue(ns->queue);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- EXPORT_SYMBOL_GPL(nvme_stop_queues);
- 
-@@ -3559,10 +3559,10 @@ void nvme_start_queues(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list)
- 		blk_mq_unquiesce_queue(ns->queue);
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- EXPORT_SYMBOL_GPL(nvme_start_queues);
- 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 3b211d9..559b601 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -44,12 +44,12 @@ void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 
--	mutex_lock(&ctrl->namespaces_mutex);
-+	down_read(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
- 		if (ns->head->disk)
- 			kblockd_schedule_work(&ns->head->requeue_work);
- 	}
--	mutex_unlock(&ctrl->namespaces_mutex);
-+	up_read(&ctrl->namespaces_rwsem);
- }
- 
- static struct nvme_ns *__nvme_find_path(struct nvme_ns_head *head)
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 8e4550f..4191650 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -140,7 +140,7 @@ struct nvme_ctrl {
- 	struct blk_mq_tag_set *tagset;
- 	struct blk_mq_tag_set *admin_tagset;
- 	struct list_head namespaces;
--	struct mutex namespaces_mutex;
-+	struct rw_semaphore namespaces_rwsem;
- 	struct device ctrl_device;
- 	struct device *device;	/* char device */
- 	struct cdev cdev;
--- 
-2.7.4
+http://lists.infradead.org/pipermail/linux-nvme/2018-January/015053.html 
+http://lists.infradead.org/pipermail/linux-nvme/2018-January/015276.html
+http://lists.infradead.org/pipermail/linux-nvme/2018-January/015328.html
+Even we cannot ensure there is no other issue.
+
+The best way to fix them is to break up the relationship between them.
+With this patch, we could avoid nvme_dev_disable to be invoked
+by nvme_timeout and eliminate the race between nvme_timeout and
+nvme_dev_disable on outstanding requests.
+
+Change V2->V3:
+ - Keep queue frozen for reset case. If IO requests timeout during in RECONNECTING
+   state, fail them and kill the controller. Really appreciate Keith's directive and advice.
+ - Add 3 patches to fix some bug about namespaces_mutex and change it to rwsem. It could fix
+   the deadlock risk introduced by namespace_mutex following.
+ - other misc changes.
+
+Changes V1->V2:
+ - free and disable pci things in nvme_pci_disable_ctrl_directly
+ - change comment and add reviewed-by in 1st patch
+ - resort patches
+ - other misc changes
+
+There are 9 patches:
+
+1st ~ 3th patches is to change the namespaces_mutex to rw_semphore lock.
+4th, 6th, 7th is to do some preparations for the 8th patch.
+5th fixes a bug found when test.
+8th is to avoid nvme_dev_disable to be invoked by nvme_timeout, and implement
+the synchronization between them. More details, please refer to the comment of
+this patch.
+9th fixes a bug after 8th patch is introduced. It let nvme_delete_io_queues can
+only be wakeup by completion path.
+
+This patchset was tested under debug patch for some days.
+And some bugfix have been done.
+The patches are available in following it branch:
+https://github.com/jianchwa/linux-blcok.git nvme_fixes_V3_plus_rwsem
+
+Jianchao Wang (9)
+0001-nvme-fix-the-dangerous-reference-of-namespaces-list.patch
+0002-nvme-fix-the-deadlock-in-nvme_update_formats.patch
+0003-nvme-change-namespaces_mutext-to-namespaces_rwsem.patch
+0004-nvme-pci-quiesce-IO-queues-prior-to-disabling-device.patch
+0005-nvme-pci-suspend-queues-based-on-online_queues.patch
+0006-nvme-pci-drain-the-entered-requests-after-ctrl-is-sh.patch
+0007-blk-mq-make-blk_mq_rq_update_aborted_gstate-a-extern.patch
+0008-nvme-pci-break-up-nvme_timeout-and-nvme_dev_disable.patch
+0009-nvme-pci-discard-wait-timeout-when-delete-cq-sq.patch
+
+diff stat following:
+block/blk-mq.c                |   3 +-
+drivers/nvme/host/core.c      |  88 +++++++++------
+drivers/nvme/host/multipath.c |   4 +-
+drivers/nvme/host/nvme.h      |   2 +-
+drivers/nvme/host/pci.c       | 255 +++++++++++++++++++++++++++++++-----------
+include/linux/blk-mq.h        |   1 +
+6 files changed, 252 insertions(+), 101 deletions(-)
+
+Thanks
+Jianchao
