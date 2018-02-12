@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933030AbeBLW51 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:57:27 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37550 "EHLO
+        id S932619AbeBLWsT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:48:19 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:37516 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932695AbeBLWs1 (ORCPT
+        with ESMTP id S932247AbeBLWsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:48:27 -0500
+        Mon, 12 Feb 2018 17:48:16 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 12/45] rtc: m48t86: call rtc_nvmem_register()
-Date: Mon, 12 Feb 2018 23:47:26 +0100
-Message-Id: <20180212224759.15999-13-alexandre.belloni@bootlin.com>
+Subject: [PATCH 02/45] rtc: nvmem: pass nvmem_config to rtc_nvmem_register()
+Date: Mon, 12 Feb 2018 23:47:16 +0100
+Message-Id: <20180212224759.15999-3-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
 References: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
@@ -21,33 +21,96 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call rtc_nvmem_register instead of letting the core do it and stop using
-the nvmem_config member of struct rtc_device.
+To be able to remove nvmem_config from struct rtc_device, pass it as a
+parameter to rtc_nvmem_register.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-m48t86.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/rtc/class.c    |  2 +-
+ drivers/rtc/nvmem.c    | 17 +++++++++--------
+ drivers/rtc/rtc-core.h |  6 ++++--
+ 3 files changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/rtc/rtc-m48t86.c b/drivers/rtc/rtc-m48t86.c
-index d9aea9b6d9cd..3a48a7eb3e9c 100644
---- a/drivers/rtc/rtc-m48t86.c
-+++ b/drivers/rtc/rtc-m48t86.c
-@@ -266,13 +266,14 @@ static int m48t86_rtc_probe(struct platform_device *pdev)
- 	info->rtc->ops = &m48t86_rtc_ops;
+diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
+index 722d683e0b0f..47c4aeed5106 100644
+--- a/drivers/rtc/class.c
++++ b/drivers/rtc/class.c
+@@ -453,7 +453,7 @@ int __rtc_register_device(struct module *owner, struct rtc_device *rtc)
  
- 	m48t86_nvmem_cfg.priv = &pdev->dev;
--	info->rtc->nvmem_config = &m48t86_nvmem_cfg;
- 	info->rtc->nvram_old_abi = true;
+ 	rtc_proc_add_device(rtc);
  
- 	err = rtc_register_device(info->rtc);
- 	if (err)
- 		return err;
+-	rtc_nvmem_register(rtc);
++	rtc_nvmem_register(rtc, rtc->nvmem_config);
  
-+	rtc_nvmem_register(info->rtc, &m48t86_nvmem_cfg);
-+
- 	/* read battery status */
- 	reg = m48t86_readb(&pdev->dev, M48T86_D);
- 	dev_info(&pdev->dev, "battery %s\n",
+ 	rtc->registered = true;
+ 	dev_info(rtc->dev.parent, "registered as %s\n",
+diff --git a/drivers/rtc/nvmem.c b/drivers/rtc/nvmem.c
+index 8567b4ed9ac6..0a3522bcdd25 100644
+--- a/drivers/rtc/nvmem.c
++++ b/drivers/rtc/nvmem.c
+@@ -46,7 +46,7 @@ rtc_nvram_write(struct file *filp, struct kobject *kobj,
+ 	return nvmem_device_write(rtc->nvmem, off, count, buf);
+ }
+ 
+-static int rtc_nvram_register(struct rtc_device *rtc)
++static int rtc_nvram_register(struct rtc_device *rtc, size_t size)
+ {
+ 	int err;
+ 
+@@ -64,7 +64,7 @@ static int rtc_nvram_register(struct rtc_device *rtc)
+ 
+ 	rtc->nvram->read = rtc_nvram_read;
+ 	rtc->nvram->write = rtc_nvram_write;
+-	rtc->nvram->size = rtc->nvmem_config->size;
++	rtc->nvram->size = size;
+ 
+ 	err = sysfs_create_bin_file(&rtc->dev.parent->kobj,
+ 				    rtc->nvram);
+@@ -84,20 +84,21 @@ static void rtc_nvram_unregister(struct rtc_device *rtc)
+ /*
+  * New ABI, uses nvmem
+  */
+-void rtc_nvmem_register(struct rtc_device *rtc)
++void rtc_nvmem_register(struct rtc_device *rtc,
++			struct nvmem_config *nvmem_config)
+ {
+-	if (!rtc->nvmem_config)
++	if (!nvmem_config)
+ 		return;
+ 
+-	rtc->nvmem_config->dev = &rtc->dev;
+-	rtc->nvmem_config->owner = rtc->owner;
+-	rtc->nvmem = nvmem_register(rtc->nvmem_config);
++	nvmem_config->dev = &rtc->dev;
++	nvmem_config->owner = rtc->owner;
++	rtc->nvmem = nvmem_register(nvmem_config);
+ 	if (IS_ERR_OR_NULL(rtc->nvmem))
+ 		return;
+ 
+ 	/* Register the old ABI */
+ 	if (rtc->nvram_old_abi)
+-		rtc_nvram_register(rtc);
++		rtc_nvram_register(rtc, nvmem_config->size);
+ }
+ 
+ void rtc_nvmem_unregister(struct rtc_device *rtc)
+diff --git a/drivers/rtc/rtc-core.h b/drivers/rtc/rtc-core.h
+index 513b9bedd2c8..5f60e3b11cde 100644
+--- a/drivers/rtc/rtc-core.h
++++ b/drivers/rtc/rtc-core.h
+@@ -48,9 +48,11 @@ static inline const struct attribute_group **rtc_get_dev_attribute_groups(void)
+ #endif
+ 
+ #ifdef CONFIG_RTC_NVMEM
+-void rtc_nvmem_register(struct rtc_device *rtc);
++void rtc_nvmem_register(struct rtc_device *rtc,
++			struct nvmem_config *nvmem_config);
+ void rtc_nvmem_unregister(struct rtc_device *rtc);
+ #else
+-static inline void rtc_nvmem_register(struct rtc_device *rtc) {}
++static inline void rtc_nvmem_register(struct rtc_device *rtc,
++				      struct nvmem_config *nvmem_config) {}
+ static inline void rtc_nvmem_unregister(struct rtc_device *rtc) {}
+ #endif
 -- 
 2.16.1
