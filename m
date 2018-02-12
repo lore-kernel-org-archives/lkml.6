@@ -1,276 +1,342 @@
-Return-Path: <prvs=574ffc5cd=paf@cray.com>
-X-Google-Smtp-Source: AH8x225rd+/aODqOqSngaNytABuP0+5Lgy5Uc7v9rtxtSsUoNjP0BFlH80RzwwVefIwJNYya90KB
-ARC-Seal: i=1; a=rsa-sha256; t=1518471388; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AH8x226XBWZtMwn7fkxUNDGPQ9VZXpSyMaHAGGRiF3SW6olYheP7hTzwsgYLFYnxWiAwU6Ra9K6s
+ARC-Seal: i=1; a=rsa-sha256; t=1518479903; cv=none;
         d=google.com; s=arc-20160816;
-        b=JSFdc1GY0fOhoqjs1o+F2s2PetSjE4hXAzrg/Z01IzYovu8hOMDgpmK+2QHfco/Ul6
-         7+76ls/hh/Cw9AHS6kAAQFN7NuizpymTbIZZ5tBHDFUc66pZOrhMvWNQV4Bv73A8ruNh
-         oo9O9i/7/6Zsuxy25Beo5Z7lzw1ji6fCru1cdtJXvhq5l3kOGZQhPtqojTvxZc634JOa
-         C73x2rbY3eUGZ+7ykOtQXytRMgIZ5Efsa/LmXsBJUSr6QJaZYcfvhl8ddEn63fokOOXi
-         YhLDbO2E6dHccMqJa8/v0hM73id/UNbWiHH4uuXHwbbG/2NkGmHCfQ9OVwaA+82hyjz9
-         A2+Q==
+        b=aswKfnDSupx9chHv2M8vKT0hKbAkheLOMlkeScHzYwVVqdrUpXryfwnZXVRScSNnmb
+         wT3eM3DgvDFzv8McA5cr93sdkVFa7BEVZ83jIAB8E7V1Jyo8P3tAUHwcDfgx10soytQI
+         Dv7k+EEZS/5k2va8z4BI7hTsCRR8dTbxDPNWI9SSkz632wsxvJGaaP86d7nlIi4zt3MO
+         GQHqt6eL1FQyUpMaXJcg6o/36kpBRmajGnQu/G6yA7gKwkFm6yGwuBPtAHh72UfbzLzo
+         yB7Na7TiXmPtXyZJJ7A//81Tnp9cOI87NL0r9Qk+oxRQsJVrE/b7IoCT7FVn+EAjml7s
+         OGrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:user-agent
-         :content-language:accept-language:in-reply-to:references:message-id
-         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=oRJHheYLGivLEN9pr4dnuqja6mUIC0oxEY/aOVNw42Q=;
-        b=hr16E6uR2cHTNg3+WTzzWbKpH8mhGD+xduqJHJSeOFlNXEZID0iIWNnHXQgke4vCey
-         paxEHDB1isLsqGPQ5ZPNYmwbG6SZRVlMMLA1O2WmeiSO77jqn8cZrFHy3Kb2ZvZsqjeM
-         vV5ICQmK43/qJOVEhs+X3dQwBHplvBwhq4k4lUJNxh46Y7FOVjfqTwYlU5KONHNaT/7+
-         A77kYAauFiXtOTiJiqbUfh5/Vx8cORjDKKtFs4VasIjAWFEmUeftH1fQROGXqHaEatjP
-         QDL925N4/U/LNAK+G3TnNqIno3eO6LhSFqAjUMZCYDw6nNrL/F8lRhdnaDF1ftB9tMSt
-         25Iw==
+        h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
+         :from:arc-authentication-results;
+        bh=TJjKDq73qzWeYO1pwjODWeof8v3P5XrumeSPUGYG9wQ=;
+        b=pFS2o3wIU5xge/46PshVzTNGvtqAmoWfJp+v8dmw16eina31fPIXCrwWZMwmSPBJE3
+         fJbaMbCQSXMs55EC/FadDNCGFqeGQ9wksJQzQe4Oe9VgOcP60XVano56skkz3DZTHBK3
+         J3ReYo9QJN/ZSSiD1zJCvTPOCGgv084BZkTbR2Q1HLpS/QgFzJDMmEHftjWbuwI5I98c
+         qb1WsdbFKPWwHdHKVAzd+izKWVpcL/99F4y68DQPikJcSVylf/03NWoeYRiKOgrwkLSu
+         BLLvSJ7Rp6A6wP3SWiCRMa3z58bGWZ7FwPf7fYwW7QZTxq1hiVrm/TRKnZmwB6qD0dkY
+         lrwg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=O38EM0W3;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=JmLsXAQR;
-       spf=pass (google.com: domain of prvs=574ffc5cd=paf@cray.com designates 68.232.143.164 as permitted sender) smtp.mailfrom=prvs=574ffc5cd=paf@cray.com
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=O38EM0W3;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=JmLsXAQR;
-       spf=pass (google.com: domain of prvs=574ffc5cd=paf@cray.com designates 68.232.143.164 as permitted sender) smtp.mailfrom=prvs=574ffc5cd=paf@cray.com
-X-IronPort-AV: E=Sophos;i="5.46,504,1511827200";
-   d="scan'208";a="17952722"
-X-Cray-OBMMKR: 1433258124 17952722
-From: Patrick Farrell <paf@cray.com>
-To: NeilBrown <neilb@suse.com>, Oleg Drokin <oleg.drokin@intel.com>, "Andreas
- Dilger" <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: lkml <linux-kernel@vger.kernel.org>, lustre
-	<lustre-devel@lists.lustre.org>
-Subject: Re: [lustre-devel] [PATCH 06/19] staging: lustre: introduce and use
- l_wait_event_abortable()
-Thread-Topic: [lustre-devel] [PATCH 06/19] staging: lustre: introduce and use
- l_wait_event_abortable()
-Thread-Index: AQHTpEfT5Zkw57xrYEGtIc2NU64K96Og5egA
-Date: Mon, 12 Feb 2018 21:36:23 +0000
-Message-ID: <81AFF1FD-E398-4B69-9B20-1D202747AB25@cray.com>
-References: <151847037709.22826.16175867257667686132.stgit@noble>
- <151847055667.22826.8544979478231411275.stgit@noble>
-In-Reply-To: <151847055667.22826.8544979478231411275.stgit@noble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.9.0.180116
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=paf@cray.com; 
-x-originating-ip: [136.162.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2180;7:DDAJs+bTTvCxq1+/k42L+DCC3XdO1/3IMOicK0VxXUgrHh66QxVcdmpQIdVTyk1j+HlqgXKN4BacWIooUaCb2Waq49MWAa8plQlQbXRIA3z844nEiJLUGn4bD0H3hX6Pa99TARSHlX6URXu1Ex+ILm+SQDKnlKkmjpBDp6xSi/XfPLct1Fp4TsJZtC6KzNRfakdD96wADKeytb7pD/CPnTfMf3sMCDX+SNNhREMs0XpOC+Mq4qWwphDBftJ3GtEy
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 2c7b2863-e410-4e2d-ede0-08d57260a9be
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BN6PR1101MB2180;
-x-ms-traffictypediagnostic: BN6PR1101MB2180:
-x-microsoft-antispam-prvs: <BN6PR1101MB2180D39646DD903D44957761CBF70@BN6PR1101MB2180.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(788757137089);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231101)(2400082)(944501161)(10201501046)(93006095)(93001095)(3002001)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR1101MB2180;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2180;
-x-forefront-prvs: 0581B5AB35
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39380400002)(376002)(39850400004)(396003)(189003)(199004)(7736002)(2906002)(6246003)(68736007)(77096007)(53936002)(58126008)(6506007)(6512007)(59450400001)(229853002)(66066001)(6486002)(3280700002)(6306002)(6436002)(81166006)(82746002)(305945005)(25786009)(81156014)(110136005)(316002)(186003)(97736004)(102836004)(33656002)(4326008)(54906003)(26005)(5660300001)(86362001)(3660700001)(36756003)(99286004)(105586002)(575784001)(76176011)(966005)(2950100002)(83506002)(83716003)(2900100001)(3846002)(8936002)(6116002)(8676002)(478600001)(14454004)(106356001)(13693001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR1101MB2180;H:BN6PR1101MB2132.namprd11.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 3cN3kbOcJwVSXQ00AOGhxd+Q3VEfxcoonhixfyQydKk4Gr7+IeNz0FDfjSz65X+C2i28O7UMs3PaMlhAzIzFdw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AA3107272BF37644A36B4D799B547CE9@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Patrick Farrell <paf@cray.com>, Oleg Drokin <oleg.drokin@intel.com>, "Andreas
+ Dilger" <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 13 Feb 2018 10:58:09 +1100
+Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
+Subject: Re: [lustre-devel] [PATCH 06/19] staging: lustre: introduce and use l_wait_event_abortable()
+In-Reply-To: <81AFF1FD-E398-4B69-9B20-1D202747AB25@cray.com>
+References: <151847037709.22826.16175867257667686132.stgit@noble> <151847055667.22826.8544979478231411275.stgit@noble> <81AFF1FD-E398-4B69-9B20-1D202747AB25@cray.com>
+Message-ID: <87r2pprca6.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c7b2863-e410-4e2d-ede0-08d57260a9be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2018 21:36:23.1676
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e7b8488a-c0cd-4614-aae1-996bfabec247
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2180
-X-OriginatorOrg: cray.com
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592231846783527803?=
-X-GMAIL-MSGID: =?utf-8?q?1592232655346799271?=
+X-GMAIL-MSGID: =?utf-8?q?1592241582686097026?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SXQncyB3b3J0aCBub3RpbmcgdGhhdCB0aGUgY2hhbmdlIGZyb20gLUVJTlRSIHRvIC1FUkVTVEFS
-VFNZUyB3aWxsIG1vZGlmeSB0aGUgYmVoYXZpb3Igb2YgdXNlcnNwYWNlIHNsaWdodGx5LiAgU3Bl
-Y2lmaWNhbGx5LCB3aGVuIGEgc2lnbmFsIGhhbmRsZXIgaXMgc2V0dXAgd2l0aCByZXRyeSBzZXQg
-KFNBX1JFU1RBUlQgZmxhZyBzZXQpLCB0aGUgc3lzY2FsbCB3aWxsIGJlIHJlc3RhcnRlZCByYXRo
-ZXIgdGhhbiBhYm9ydGVkLg0KDQpUaGlzIHNob3VsZCBiZSBmaW5lLiAgSXQgbWF5IGV2ZW50dWFs
-bHkgc2hha2Ugb3V0IHNvbWUgc3R1YmxlIGJ1Z3MgaW4gTHVzdHJlIHdoZW4gd2UgYWJvcnQgYW4g
-b3BlcmF0aW9uIGFuZCB0aGVuIHJlc3RhcnQgaXQgZnJvbSBhIHBvaW50IHdoZXJlIHdlIGRpZG4n
-dCBpbiB0aGUgcGFzdCAtIHBhc3QgaW5zdGFuY2VzIHdoZXJlIHdlIGNoYW5nZWQgZnJvbSAtRUlO
-VFIgdG8gLUVSRVNUQVJUU1lTIGNlcnRhaW5seSBoYXZlIC0gYnV0IGl0J3MgZm9yIHRoZSBiZXN0
-LiAgQXMgSSB1bmRlcnN0YW5kIGl0IGZyb20gcGFzdCBjb252ZXJzYXRpb25zIHdpdGggQW5kcmVh
-cyBhbmQgb3RoZXJzLCBMdXN0cmUgaXMgbm90IHJlYWxseSBpbnRlbmRpbmcgdG8gY2xhaW0gaXQn
-cyBub3QgcmVzdGFydGFibGUsIGl0J3MganVzdCBhbiBhcnRpZmFjdCBvZiBwZW9wbGUgY29weWlu
-ZyBvbGRlciBjb2RlIHRoYXQgd2FzIHdyaXR0ZW4gd2l0aG91dCBhd2FyZW5lc3Mgb2YgdGhlIGRp
-ZmZlcmVuY2UgaW4gRUlOVFIgdnMgRVJFU1RBUlRTWVMuDQoNCklkZWFsbHkgc29tZW9uZSBzaG91
-bGQgZ28gdGhyb3VnaCBhbmQgYXVkaXQgdGhlIHJlbWFpbmluZyB1c2VzIG9mIC1FSU5UUiBhbmQg
-cmVwbGFjZSBtb3N0IG9mIHRoZW0gd2l0aCAtRVJFU1RBUlRTWVMuDQoNCkphbWVzLCBtYXliZSB5
-b3Ugd2FudCB0byBhZGQgdGhhdCB0byB0aGUgVE9ETyBsaXN0Pw0KDQrvu79PbiAyLzEyLzE4LCAz
-OjI0IFBNLCAibHVzdHJlLWRldmVsIG9uIGJlaGFsZiBvZiBOZWlsQnJvd24iIDxsdXN0cmUtZGV2
-ZWwtYm91bmNlc0BsaXN0cy5sdXN0cmUub3JnIG9uIGJlaGFsZiBvZiBuZWlsYkBzdXNlLmNvbT4g
-d3JvdGU6DQoNCiAgICBsdXN0cmUgc29tZXRpbWVzIHdhbnRzIHRvIHdhaXQgZm9yIGFuIGV2ZW50
-LCBidXQgYWJvcnQgaWYNCiAgICBvbmUgb2YgYSBzcGVjaWZpYyBsaXN0IG9mIHNpZ25hbHMgYXJy
-aXZlcy4gIFRoaXMgaXMgYSBsaXR0bGUNCiAgICBiaXQgbGlrZSB3YWl0X2V2ZW50X2tpbGxhYmxl
-KCksIGV4Y2VwdCB0aGF0IHRoZSBzaWduYWxzIGFyZQ0KICAgIGlkZW50aWZpZWQgYSBkaWZmZXJl
-bnQgd2F5Lg0KICAgIA0KICAgIFNvIGludHJvZHVjZSBsX3dhaXRfZXZlbnRfYWJvcnRhYmxlKCkg
-d2hpY2ggcHJvdmlkZXMgdGhpcw0KICAgIGZ1bmN0aW9uYWxpdHkuDQogICAgSGF2aW5nIHNlcGFy
-YXRlIGZ1bmN0aW9ucyBmb3Igc2VwYXJhdGUgbmVlZHMgaXMgbW9yZSBpbiBsaW5lDQogICAgd2l0
-aCB0aGUgcGF0dGVybiBzZXQgYnkgaW5jbHVkZS9saW51eC93YWl0LmgsIHRoYW4gaGF2aW5nIGEN
-CiAgICBzaW5nbGUgZnVuY3Rpb24gd2hpY2ggdHJpZXMgdG8gaW5jbHVkZSBhbGwgcG9zc2libGUg
-bmVlZHMuDQogICAgDQogICAgQWxzbyBpbnRyb2R1Y2UgbF93YWl0X2V2ZW50X2Fib3J0YWJsZV9l
-eGNsdXNpdmUoKS4NCiAgICANCiAgICBOb3RlIHRoYXQgbF93YWl0X2V2ZW50KCkgcmV0dXJuIC1F
-SU5UUiBvbiBhIHNpZ25hbCwgd2hpbGUNCiAgICBMaW51eCB3YWl0X2V2ZW50IGZ1bmN0aW9ucyBy
-ZXR1cm4gLUVSRVNUQVJUU1lTLg0KICAgIGxfd2FpdF9ldmVudF97YWJvcnRhYmxlXyx9ZXhjbHVz
-aXZlIGZvbGxvdyB0aGUgTGludXggcGF0dGVybi4NCiAgICANCiAgICBSZXZpZXdlZC1ieTogSmFt
-ZXMgU2ltbW9ucyA8anNpbW1vbnNAaW5mcmFkZWFkLm9yZz4NCiAgICBTaWduZWQtb2ZmLWJ5OiBO
-ZWlsQnJvd24gPG5laWxiQHN1c2UuY29tPg0KICAgIC0tLQ0KICAgICBkcml2ZXJzL3N0YWdpbmcv
-bHVzdHJlL2x1c3RyZS9pbmNsdWRlL2x1c3RyZV9saWIuaCB8ICAgMjQgKysrKysrKysrKysrKysr
-KysrKysNCiAgICAgZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvbGRsbS9sZGxtX3Jlc291
-cmNlLmMgfCAgIDEyICsrKysrLS0tLS0NCiAgICAgZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0
-cmUvbGxpdGUvbGxpdGVfbGliLmMgICAgfCAgIDEyICsrKy0tLS0tLS0NCiAgICAgZHJpdmVycy9z
-dGFnaW5nL2x1c3RyZS9sdXN0cmUvb2JkY2xhc3MvZ2Vub3BzLmMgICAgfCAgICA5ICsrKy0tLS0t
-DQogICAgIGRyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL29iZGNsYXNzL2xsb2dfb2JkLmMg
-IHwgICAgNSArKy0tDQogICAgIGRyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL29zYy9vc2Nf
-cGFnZS5jICAgICAgIHwgICAgNiArKy0tLQ0KICAgICBkcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1
-c3RyZS9vc2Mvb3NjX3JlcXVlc3QuYyAgICB8ICAgIDYgKystLS0NCiAgICAgNyBmaWxlcyBjaGFu
-Z2VkLCA0MyBpbnNlcnRpb25zKCspLCAzMSBkZWxldGlvbnMoLSkNCiAgICANCiAgICBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvaW5jbHVkZS9sdXN0cmVfbGliLmgg
-Yi9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9pbmNsdWRlL2x1c3RyZV9saWIuaA0KICAg
-IGluZGV4IDdkOTUwYzUzZTk2Mi4uYjJhNjRkMGU2ODJjIDEwMDY0NA0KICAgIC0tLSBhL2RyaXZl
-cnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL2luY2x1ZGUvbHVzdHJlX2xpYi5oDQogICAgKysrIGIv
-ZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvaW5jbHVkZS9sdXN0cmVfbGliLmgNCiAgICBA
-QCAtMzM2LDQgKzMzNiwyOCBAQCBkbyB7CQkJCQkJCQkJICAgXA0KICAgICAvKiogQH0gbGliICov
-DQogICAgIA0KICAgICANCiAgICArDQogICAgKy8qIGxfd2FpdF9ldmVudF9hYm9ydGFibGUoKSBp
-cyBhIGJpdCBsaWtlIHdhaXRfZXZlbnRfa2lsbGFibGUoKQ0KICAgICsgKiBleGNlcHQgdGhlcmUg
-aXMgYSBmaXhlZCBzZXQgb2Ygc2lnbmFscyB3aGljaCB3aWxsIGFib3J0Og0KICAgICsgKiBMVVNU
-UkVfRkFUQUxfU0lHUw0KICAgICsgKi8NCiAgICArI2RlZmluZSBsX3dhaXRfZXZlbnRfYWJvcnRh
-YmxlKHdxLCBjb25kaXRpb24pCQkJCVwNCiAgICArKHsJCQkJCQkJCQlcDQogICAgKwlzaWdzZXRf
-dCBfX2Jsb2NrZWQ7CQkJCQkJXA0KICAgICsJaW50IF9fcmV0ID0gMDsJCQkJCQkJXA0KICAgICsJ
-X19ibG9ja2VkID0gY2ZzX2Jsb2NrX3NpZ3NpbnYoTFVTVFJFX0ZBVEFMX1NJR1MpOwkJXA0KICAg
-ICsJX19yZXQgPSB3YWl0X2V2ZW50X2ludGVycnVwdGlibGUod3EsIGNvbmRpdGlvbik7CQlcDQog
-ICAgKwljZnNfcmVzdG9yZV9zaWdzKF9fYmxvY2tlZCk7CQkJCQlcDQogICAgKwlfX3JldDsJCQkJ
-CQkJCVwNCiAgICArfSkNCiAgICArDQogICAgKyNkZWZpbmUgbF93YWl0X2V2ZW50X2Fib3J0YWJs
-ZV9leGNsdXNpdmUod3EsIGNvbmRpdGlvbikJCQlcDQogICAgKyh7CQkJCQkJCQkJXA0KICAgICsJ
-c2lnc2V0X3QgX19ibG9ja2VkOwkJCQkJCVwNCiAgICArCWludCBfX3JldCA9IDA7CQkJCQkJCVwN
-CiAgICArCV9fYmxvY2tlZCA9IGNmc19ibG9ja19zaWdzaW52KExVU1RSRV9GQVRBTF9TSUdTKTsJ
-CVwNCiAgICArCV9fcmV0ID0gd2FpdF9ldmVudF9pbnRlcnJ1cHRpYmxlX2V4Y2x1c2l2ZSh3cSwg
-Y29uZGl0aW9uKTsJXA0KICAgICsJY2ZzX3Jlc3RvcmVfc2lncyhfX2Jsb2NrZWQpOwkJCQkJXA0K
-ICAgICsJX19yZXQ7CQkJCQkJCQlcDQogICAgK30pDQogICAgICNlbmRpZiAvKiBfTFVTVFJFX0xJ
-Ql9IICovDQogICAgZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL2xk
-bG0vbGRsbV9yZXNvdXJjZS5jIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvbGRsbS9s
-ZGxtX3Jlc291cmNlLmMNCiAgICBpbmRleCAyZTY2ODI1YzhmNGIuLjRjNDQ2MDNhYjZmOSAxMDA2
-NDQNCiAgICAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9sZGxtL2xkbG1fcmVz
-b3VyY2UuYw0KICAgICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL2xkbG0vbGRs
-bV9yZXNvdXJjZS5jDQogICAgQEAgLTg3OSw3ICs4NzksNiBAQCBzdGF0aWMgaW50IF9fbGRsbV9u
-YW1lc3BhY2VfZnJlZShzdHJ1Y3QgbGRsbV9uYW1lc3BhY2UgKm5zLCBpbnQgZm9yY2UpDQogICAg
-IAlsZGxtX25hbWVzcGFjZV9jbGVhbnVwKG5zLCBmb3JjZSA/IExETE1fRkxfTE9DQUxfT05MWSA6
-IDApOw0KICAgICANCiAgICAgCWlmIChhdG9taWNfcmVhZCgmbnMtPm5zX2JyZWYpID4gMCkgew0K
-ICAgIC0JCXN0cnVjdCBsX3dhaXRfaW5mbyBsd2kgPSBMV0lfSU5UUihMV0lfT05fU0lHTkFMX05P
-T1AsIE5VTEwpOw0KICAgICAJCWludCByYzsNCiAgICAgDQogICAgIAkJQ0RFQlVHKERfRExNVFJB
-Q0UsDQogICAgQEAgLTg4NywxMSArODg2LDEyIEBAIHN0YXRpYyBpbnQgX19sZGxtX25hbWVzcGFj
-ZV9mcmVlKHN0cnVjdCBsZGxtX25hbWVzcGFjZSAqbnMsIGludCBmb3JjZSkNCiAgICAgCQkgICAg
-ICAgbGRsbV9uc19uYW1lKG5zKSwgYXRvbWljX3JlYWQoJm5zLT5uc19icmVmKSk7DQogICAgIGZv
-cmNlX3dhaXQ6DQogICAgIAkJaWYgKGZvcmNlKQ0KICAgIC0JCQlsd2kgPSBMV0lfVElNRU9VVCht
-c2Vjc190b19qaWZmaWVzKG9iZF90aW1lb3V0ICoNCiAgICAtCQkJCQkgIE1TRUNfUEVSX1NFQykg
-LyA0LCBOVUxMLCBOVUxMKTsNCiAgICAtDQogICAgLQkJcmMgPSBsX3dhaXRfZXZlbnQobnMtPm5z
-X3dhaXRxLA0KICAgIC0JCQkJICBhdG9taWNfcmVhZCgmbnMtPm5zX2JyZWYpID09IDAsICZsd2kp
-Ow0KICAgICsJCQlyYyA9IHdhaXRfZXZlbnRfaWRsZV90aW1lb3V0KG5zLT5uc193YWl0cSwNCiAg
-ICArCQkJCQkJICAgICBhdG9taWNfcmVhZCgmbnMtPm5zX2JyZWYpID09IDAsDQogICAgKwkJCQkJ
-CSAgICAgb2JkX3RpbWVvdXQgKiBIWiAvIDQpID8gMCA6IC1FVElNRURPVVQ7DQogICAgKwkJZWxz
-ZQ0KICAgICsJCQlyYyA9IGxfd2FpdF9ldmVudF9hYm9ydGFibGUobnMtPm5zX3dhaXRxLA0KICAg
-ICsJCQkJCQkgICAgYXRvbWljX3JlYWQoJm5zLT5uc19icmVmKSA9PSAwKTsNCiAgICAgDQogICAg
-IAkJLyogRm9yY2VkIGNsZWFudXBzIHNob3VsZCBiZSBhYmxlIHRvIHJlY2xhaW0gYWxsIHJlZmVy
-ZW5jZXMsDQogICAgIAkJICogc28gaXQncyBzYWZlIHRvIHdhaXQgZm9yZXZlci4uLiB3ZSBjYW4n
-dCBsZWFrIGxvY2tzLi4uDQogICAgZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUv
-bHVzdHJlL2xsaXRlL2xsaXRlX2xpYi5jIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUv
-bGxpdGUvbGxpdGVfbGliLmMNCiAgICBpbmRleCBjODIwYjIwMWFmNzEuLmNjYjYxNGJkN2Y1MyAx
-MDA2NDQNCiAgICAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9sbGl0ZS9sbGl0
-ZV9saWIuYw0KICAgICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL2xsaXRlL2xs
-aXRlX2xpYi5jDQogICAgQEAgLTk4NiwxNiArOTg2LDEyIEBAIHZvaWQgbGxfcHV0X3N1cGVyKHN0
-cnVjdCBzdXBlcl9ibG9jayAqc2IpDQogICAgIAl9DQogICAgIA0KICAgICAJLyogV2FpdCBmb3Ig
-dW5zdGFibGUgcGFnZXMgdG8gYmUgY29tbWl0dGVkIHRvIHN0YWJsZSBzdG9yYWdlICovDQogICAg
-LQlpZiAoIWZvcmNlKSB7DQogICAgLQkJc3RydWN0IGxfd2FpdF9pbmZvIGx3aSA9IExXSV9JTlRS
-KExXSV9PTl9TSUdOQUxfTk9PUCwgTlVMTCk7DQogICAgLQ0KICAgIC0JCXJjID0gbF93YWl0X2V2
-ZW50KHNiaS0+bGxfY2FjaGUtPmNjY191bnN0YWJsZV93YWl0cSwNCiAgICAtCQkJCSAgIWF0b21p
-Y19sb25nX3JlYWQoJnNiaS0+bGxfY2FjaGUtPmNjY191bnN0YWJsZV9uciksDQogICAgLQkJCQkg
-ICZsd2kpOw0KICAgIC0JfQ0KICAgICsJaWYgKCFmb3JjZSkNCiAgICArCQlyYyA9IGxfd2FpdF9l
-dmVudF9hYm9ydGFibGUoc2JpLT5sbF9jYWNoZS0+Y2NjX3Vuc3RhYmxlX3dhaXRxLA0KICAgICsJ
-CQkJCSAgICAhYXRvbWljX2xvbmdfcmVhZCgmc2JpLT5sbF9jYWNoZS0+Y2NjX3Vuc3RhYmxlX25y
-KSk7DQogICAgIA0KICAgICAJY2NjX2NvdW50ID0gYXRvbWljX2xvbmdfcmVhZCgmc2JpLT5sbF9j
-YWNoZS0+Y2NjX3Vuc3RhYmxlX25yKTsNCiAgICAtCWlmICghZm9yY2UgJiYgcmMgIT0gLUVJTlRS
-KQ0KICAgICsJaWYgKCFmb3JjZSAmJiByYyAhPSAtRVJFU1RBUlRTWVMpDQogICAgIAkJTEFTU0VS
-VEYoIWNjY19jb3VudCwgImNvdW50OiAlbGlcbiIsIGNjY19jb3VudCk7DQogICAgIA0KICAgICAJ
-LyogV2UgbmVlZCB0byBzZXQgZm9yY2UgYmVmb3JlIHRoZSBsb3ZfZGlzY29ubmVjdCBpbg0KICAg
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9vYmRjbGFzcy9nZW5v
-cHMuYyBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL29iZGNsYXNzL2dlbm9wcy5jDQog
-ICAgaW5kZXggM2ZmMjViOGQzYjQ4Li44Zjc3NmE0MDU4YTkgMTAwNjQ0DQogICAgLS0tIGEvZHJp
-dmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvb2JkY2xhc3MvZ2Vub3BzLmMNCiAgICArKysgYi9k
-cml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9vYmRjbGFzcy9nZW5vcHMuYw0KICAgIEBAIC0x
-MzMyLDcgKzEzMzIsNiBAQCBzdGF0aWMgYm9vbCBvYmRfcmVxdWVzdF9zbG90X2F2YWlsKHN0cnVj
-dCBjbGllbnRfb2JkICpjbGksDQogICAgIGludCBvYmRfZ2V0X3JlcXVlc3Rfc2xvdChzdHJ1Y3Qg
-Y2xpZW50X29iZCAqY2xpKQ0KICAgICB7DQogICAgIAlzdHJ1Y3Qgb2JkX3JlcXVlc3Rfc2xvdF93
-YWl0ZXIgb3JzdzsNCiAgICAtCXN0cnVjdCBsX3dhaXRfaW5mbyBsd2k7DQogICAgIAlpbnQgcmM7
-DQogICAgIA0KICAgICAJc3Bpbl9sb2NrKCZjbGktPmNsX2xvaV9saXN0X2xvY2spOw0KICAgIEBA
-IC0xMzQ3LDExICsxMzQ2LDkgQEAgaW50IG9iZF9nZXRfcmVxdWVzdF9zbG90KHN0cnVjdCBjbGll
-bnRfb2JkICpjbGkpDQogICAgIAlvcnN3Lm9yc3dfc2lnbmFsZWQgPSBmYWxzZTsNCiAgICAgCXNw
-aW5fdW5sb2NrKCZjbGktPmNsX2xvaV9saXN0X2xvY2spOw0KICAgICANCiAgICAtCWx3aSA9IExX
-SV9JTlRSKExXSV9PTl9TSUdOQUxfTk9PUCwgTlVMTCk7DQogICAgLQlyYyA9IGxfd2FpdF9ldmVu
-dChvcnN3Lm9yc3dfd2FpdHEsDQogICAgLQkJCSAgb2JkX3JlcXVlc3Rfc2xvdF9hdmFpbChjbGks
-ICZvcnN3KSB8fA0KICAgIC0JCQkgIG9yc3cub3Jzd19zaWduYWxlZCwNCiAgICAtCQkJICAmbHdp
-KTsNCiAgICArCXJjID0gbF93YWl0X2V2ZW50X2Fib3J0YWJsZShvcnN3Lm9yc3dfd2FpdHEsDQog
-ICAgKwkJCQkgICAgb2JkX3JlcXVlc3Rfc2xvdF9hdmFpbChjbGksICZvcnN3KSB8fA0KICAgICsJ
-CQkJICAgIG9yc3cub3Jzd19zaWduYWxlZCk7DQogICAgIA0KICAgICAJLyoNCiAgICAgCSAqIEhl
-cmUsIHdlIG11c3QgdGFrZSB0aGUgbG9jayB0byBhdm9pZCB0aGUgb24tc3RhY2sgJ29yc3cnIHRv
-IGJlDQogICAgZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL29iZGNs
-YXNzL2xsb2dfb2JkLmMgYi9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9vYmRjbGFzcy9s
-bG9nX29iZC5jDQogICAgaW5kZXggMjhiYmFhMjEzNmFjLi4yNmFlYTExNGEyOWIgMTAwNjQ0DQog
-ICAgLS0tIGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvb2JkY2xhc3MvbGxvZ19vYmQu
-Yw0KICAgICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL29iZGNsYXNzL2xsb2df
-b2JkLmMNCiAgICBAQCAtMTA0LDcgKzEwNCw2IEBAIEVYUE9SVF9TWU1CT0woX19sbG9nX2N0eHRf
-cHV0KTsNCiAgICAgDQogICAgIGludCBsbG9nX2NsZWFudXAoY29uc3Qgc3RydWN0IGx1X2VudiAq
-ZW52LCBzdHJ1Y3QgbGxvZ19jdHh0ICpjdHh0KQ0KICAgICB7DQogICAgLQlzdHJ1Y3QgbF93YWl0
-X2luZm8gbHdpID0gTFdJX0lOVFIoTFdJX09OX1NJR05BTF9OT09QLCBOVUxMKTsNCiAgICAgCXN0
-cnVjdCBvYmRfbGxvZ19ncm91cCAqb2xnOw0KICAgICAJaW50IHJjLCBpZHg7DQogICAgIA0KICAg
-IEBAIC0xMjksOCArMTI4LDggQEAgaW50IGxsb2dfY2xlYW51cChjb25zdCBzdHJ1Y3QgbHVfZW52
-ICplbnYsIHN0cnVjdCBsbG9nX2N0eHQgKmN0eHQpDQogICAgIAkJQ0VSUk9SKCJFcnJvciAlZCB3
-aGlsZSBjbGVhbmluZyB1cCBjdHh0ICVwXG4iLA0KICAgICAJCSAgICAgICByYywgY3R4dCk7DQog
-ICAgIA0KICAgIC0JbF93YWl0X2V2ZW50KG9sZy0+b2xnX3dhaXRxLA0KICAgIC0JCSAgICAgbGxv
-Z19ncm91cF9jdHh0X251bGwob2xnLCBpZHgpLCAmbHdpKTsNCiAgICArCWxfd2FpdF9ldmVudF9h
-Ym9ydGFibGUob2xnLT5vbGdfd2FpdHEsDQogICAgKwkJCSAgICAgbGxvZ19ncm91cF9jdHh0X251
-bGwob2xnLCBpZHgpKTsNCiAgICAgDQogICAgIAlyZXR1cm4gcmM7DQogICAgIH0NCiAgICBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvb3NjL29zY19wYWdlLmMgYi9k
-cml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9vc2Mvb3NjX3BhZ2UuYw0KICAgIGluZGV4IDIw
-MDk0YjYzMDlmOS4uNmZkZDUyMWZlYjIxIDEwMDY0NA0KICAgIC0tLSBhL2RyaXZlcnMvc3RhZ2lu
-Zy9sdXN0cmUvbHVzdHJlL29zYy9vc2NfcGFnZS5jDQogICAgKysrIGIvZHJpdmVycy9zdGFnaW5n
-L2x1c3RyZS9sdXN0cmUvb3NjL29zY19wYWdlLmMNCiAgICBAQCAtNzU5LDcgKzc1OSw2IEBAIHN0
-YXRpYyBsb25nIG9zY19scnVfcmVjbGFpbShzdHJ1Y3QgY2xpZW50X29iZCAqY2xpLCB1bnNpZ25l
-ZCBsb25nIG5wYWdlcykNCiAgICAgc3RhdGljIGludCBvc2NfbHJ1X2FsbG9jKGNvbnN0IHN0cnVj
-dCBsdV9lbnYgKmVudiwgc3RydWN0IGNsaWVudF9vYmQgKmNsaSwNCiAgICAgCQkJIHN0cnVjdCBv
-c2NfcGFnZSAqb3BnKQ0KICAgICB7DQogICAgLQlzdHJ1Y3QgbF93YWl0X2luZm8gbHdpID0gTFdJ
-X0lOVFIoTFdJX09OX1NJR05BTF9OT09QLCBOVUxMKTsNCiAgICAgCXN0cnVjdCBvc2NfaW8gKm9p
-byA9IG9zY19lbnZfaW8oZW52KTsNCiAgICAgCWludCByYyA9IDA7DQogICAgIA0KICAgIEBAIC03
-ODIsOSArNzgxLDggQEAgc3RhdGljIGludCBvc2NfbHJ1X2FsbG9jKGNvbnN0IHN0cnVjdCBsdV9l
-bnYgKmVudiwgc3RydWN0IGNsaWVudF9vYmQgKmNsaSwNCiAgICAgDQogICAgIAkJY29uZF9yZXNj
-aGVkKCk7DQogICAgIA0KICAgIC0JCXJjID0gbF93YWl0X2V2ZW50KG9zY19scnVfd2FpdHEsDQog
-ICAgLQkJCQkgIGF0b21pY19sb25nX3JlYWQoY2xpLT5jbF9scnVfbGVmdCkgPiAwLA0KICAgIC0J
-CQkJICAmbHdpKTsNCiAgICArCQlyYyA9IGxfd2FpdF9ldmVudF9hYm9ydGFibGUob3NjX2xydV93
-YWl0cSwNCiAgICArCQkJCQkgICAgYXRvbWljX2xvbmdfcmVhZChjbGktPmNsX2xydV9sZWZ0KSA+
-IDApOw0KICAgICANCiAgICAgCQlpZiAocmMgPCAwKQ0KICAgICAJCQlicmVhazsNCiAgICBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvb3NjL29zY19yZXF1ZXN0LmMg
-Yi9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9vc2Mvb3NjX3JlcXVlc3QuYw0KICAgIGlu
-ZGV4IDQ1YjFlYmYzMzM2My4uMDc0YjVjZTYyODRjIDEwMDY0NA0KICAgIC0tLSBhL2RyaXZlcnMv
-c3RhZ2luZy9sdXN0cmUvbHVzdHJlL29zYy9vc2NfcmVxdWVzdC5jDQogICAgKysrIGIvZHJpdmVy
-cy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvb3NjL29zY19yZXF1ZXN0LmMNCiAgICBAQCAtNTUyLDE0
-ICs1NTIsMTIgQEAgc3RhdGljIGludCBvc2NfZGVzdHJveShjb25zdCBzdHJ1Y3QgbHVfZW52ICpl
-bnYsIHN0cnVjdCBvYmRfZXhwb3J0ICpleHAsDQogICAgIA0KICAgICAJcmVxLT5ycV9pbnRlcnBy
-ZXRfcmVwbHkgPSBvc2NfZGVzdHJveV9pbnRlcnByZXQ7DQogICAgIAlpZiAoIW9zY19jYW5fc2Vu
-ZF9kZXN0cm95KGNsaSkpIHsNCiAgICAtCQlzdHJ1Y3QgbF93YWl0X2luZm8gbHdpID0gTFdJX0lO
-VFIoTFdJX09OX1NJR05BTF9OT09QLCBOVUxMKTsNCiAgICAtDQogICAgIAkJLyoNCiAgICAgCQkg
-KiBXYWl0IHVudGlsIHRoZSBudW1iZXIgb2Ygb24tZ29pbmcgZGVzdHJveSBSUENzIGRyb3BzDQog
-ICAgIAkJICogdW5kZXIgbWF4X3JwY19pbl9mbGlnaHQNCiAgICAgCQkgKi8NCiAgICAtCQlsX3dh
-aXRfZXZlbnRfZXhjbHVzaXZlKGNsaS0+Y2xfZGVzdHJveV93YWl0cSwNCiAgICAtCQkJCSAgICAg
-ICBvc2NfY2FuX3NlbmRfZGVzdHJveShjbGkpLCAmbHdpKTsNCiAgICArCQlsX3dhaXRfZXZlbnRf
-YWJvcnRhYmxlX2V4Y2x1c2l2ZShjbGktPmNsX2Rlc3Ryb3lfd2FpdHEsDQogICAgKwkJCQkJICAg
-ICAgIG9zY19jYW5fc2VuZF9kZXN0cm95KGNsaSkpOw0KICAgICAJfQ0KICAgICANCiAgICAgCS8q
-IERvIG5vdCB3YWl0IGZvciByZXNwb25zZSAqLw0KICAgIA0KICAgIA0KICAgIF9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQogICAgbHVzdHJlLWRldmVsIG1h
-aWxpbmcgbGlzdA0KICAgIGx1c3RyZS1kZXZlbEBsaXN0cy5sdXN0cmUub3JnDQogICAgaHR0cDov
-L2xpc3RzLmx1c3RyZS5vcmcvbGlzdGluZm8uY2dpL2x1c3RyZS1kZXZlbC1sdXN0cmUub3JnDQog
-ICAgDQoNCg==
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Feb 12 2018, Patrick Farrell wrote:
+
+> It's worth noting that the change from -EINTR to -ERESTARTSYS will
+> modify the behavior of userspace slightly.  Specifically, when a
+> signal handler is setup with retry set (SA_RESTART flag set), the
+> syscall will be restarted rather than aborted.
+
+Thanks for the review.
+This state is true if the error status ever gets all the way up to user
+space.  I don't think it does, though I haven't carefully audited every
+l_wait_event_abortable() call site.  I did look at a few and the return
+value is only used locally in the same function.
+I suspect I would have checked for error codes escaping when I wrote
+the patch, but I don't have a clear memory.
+
+Some sort of audit wouldn't hurt of course.
+
+Thanks,
+NeilBrown
+
+
+>
+> This should be fine.  It may eventually shake out some stuble bugs in Lus=
+tre when we abort an operation and then restart it from a point where we di=
+dn't in the past - past instances where we changed from -EINTR to -ERESTART=
+SYS certainly have - but it's for the best.  As I understand it from past c=
+onversations with Andreas and others, Lustre is not really intending to cla=
+im it's not restartable, it's just an artifact of people copying older code=
+ that was written without awareness of the difference in EINTR vs ERESTARTS=
+YS.
+>
+> Ideally someone should go through and audit the remaining uses of -EINTR =
+and replace most of them with -ERESTARTSYS.
+>
+> James, maybe you want to add that to the TODO list?
+>
+> =EF=BB=BFOn 2/12/18, 3:24 PM, "lustre-devel on behalf of NeilBrown" <lust=
+re-devel-bounces@lists.lustre.org on behalf of neilb@suse.com> wrote:
+>
+>     lustre sometimes wants to wait for an event, but abort if
+>     one of a specific list of signals arrives.  This is a little
+>     bit like wait_event_killable(), except that the signals are
+>     identified a different way.
+>=20=20=20=20=20
+>     So introduce l_wait_event_abortable() which provides this
+>     functionality.
+>     Having separate functions for separate needs is more in line
+>     with the pattern set by include/linux/wait.h, than having a
+>     single function which tries to include all possible needs.
+>=20=20=20=20=20
+>     Also introduce l_wait_event_abortable_exclusive().
+>=20=20=20=20=20
+>     Note that l_wait_event() return -EINTR on a signal, while
+>     Linux wait_event functions return -ERESTARTSYS.
+>     l_wait_event_{abortable_,}exclusive follow the Linux pattern.
+>=20=20=20=20=20
+>     Reviewed-by: James Simmons <jsimmons@infradead.org>
+>     Signed-off-by: NeilBrown <neilb@suse.com>
+>     ---
+>      drivers/staging/lustre/lustre/include/lustre_lib.h |   24 ++++++++++=
+++++++++++
+>      drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |   12 +++++-----
+>      drivers/staging/lustre/lustre/llite/llite_lib.c    |   12 +++-------
+>      drivers/staging/lustre/lustre/obdclass/genops.c    |    9 +++-----
+>      drivers/staging/lustre/lustre/obdclass/llog_obd.c  |    5 ++--
+>      drivers/staging/lustre/lustre/osc/osc_page.c       |    6 ++---
+>      drivers/staging/lustre/lustre/osc/osc_request.c    |    6 ++---
+>      7 files changed, 43 insertions(+), 31 deletions(-)
+>=20=20=20=20=20
+>     diff --git a/drivers/staging/lustre/lustre/include/lustre_lib.h b/dri=
+vers/staging/lustre/lustre/include/lustre_lib.h
+>     index 7d950c53e962..b2a64d0e682c 100644
+>     --- a/drivers/staging/lustre/lustre/include/lustre_lib.h
+>     +++ b/drivers/staging/lustre/lustre/include/lustre_lib.h
+>     @@ -336,4 +336,28 @@ do {									   \
+>      /** @} lib */
+>=20=20=20=20=20=20
+>=20=20=20=20=20=20
+>     +
+>     +/* l_wait_event_abortable() is a bit like wait_event_killable()
+>     + * except there is a fixed set of signals which will abort:
+>     + * LUSTRE_FATAL_SIGS
+>     + */
+>     +#define l_wait_event_abortable(wq, condition)				\
+>     +({									\
+>     +	sigset_t __blocked;						\
+>     +	int __ret =3D 0;							\
+>     +	__blocked =3D cfs_block_sigsinv(LUSTRE_FATAL_SIGS);		\
+>     +	__ret =3D wait_event_interruptible(wq, condition);		\
+>     +	cfs_restore_sigs(__blocked);					\
+>     +	__ret;								\
+>     +})
+>     +
+>     +#define l_wait_event_abortable_exclusive(wq, condition)			\
+>     +({									\
+>     +	sigset_t __blocked;						\
+>     +	int __ret =3D 0;							\
+>     +	__blocked =3D cfs_block_sigsinv(LUSTRE_FATAL_SIGS);		\
+>     +	__ret =3D wait_event_interruptible_exclusive(wq, condition);	\
+>     +	cfs_restore_sigs(__blocked);					\
+>     +	__ret;								\
+>     +})
+>      #endif /* _LUSTRE_LIB_H */
+>     diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c b/dri=
+vers/staging/lustre/lustre/ldlm/ldlm_resource.c
+>     index 2e66825c8f4b..4c44603ab6f9 100644
+>     --- a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
+>     +++ b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
+>     @@ -879,7 +879,6 @@ static int __ldlm_namespace_free(struct ldlm_name=
+space *ns, int force)
+>      	ldlm_namespace_cleanup(ns, force ? LDLM_FL_LOCAL_ONLY : 0);
+>=20=20=20=20=20=20
+>      	if (atomic_read(&ns->ns_bref) > 0) {
+>     -		struct l_wait_info lwi =3D LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+>      		int rc;
+>=20=20=20=20=20=20
+>      		CDEBUG(D_DLMTRACE,
+>     @@ -887,11 +886,12 @@ static int __ldlm_namespace_free(struct ldlm_na=
+mespace *ns, int force)
+>      		       ldlm_ns_name(ns), atomic_read(&ns->ns_bref));
+>      force_wait:
+>      		if (force)
+>     -			lwi =3D LWI_TIMEOUT(msecs_to_jiffies(obd_timeout *
+>     -					  MSEC_PER_SEC) / 4, NULL, NULL);
+>     -
+>     -		rc =3D l_wait_event(ns->ns_waitq,
+>     -				  atomic_read(&ns->ns_bref) =3D=3D 0, &lwi);
+>     +			rc =3D wait_event_idle_timeout(ns->ns_waitq,
+>     +						     atomic_read(&ns->ns_bref) =3D=3D 0,
+>     +						     obd_timeout * HZ / 4) ? 0 : -ETIMEDOUT;
+>     +		else
+>     +			rc =3D l_wait_event_abortable(ns->ns_waitq,
+>     +						    atomic_read(&ns->ns_bref) =3D=3D 0);
+>=20=20=20=20=20=20
+>      		/* Forced cleanups should be able to reclaim all references,
+>      		 * so it's safe to wait forever... we can't leak locks...
+>     diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/driver=
+s/staging/lustre/lustre/llite/llite_lib.c
+>     index c820b201af71..ccb614bd7f53 100644
+>     --- a/drivers/staging/lustre/lustre/llite/llite_lib.c
+>     +++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
+>     @@ -986,16 +986,12 @@ void ll_put_super(struct super_block *sb)
+>      	}
+>=20=20=20=20=20=20
+>      	/* Wait for unstable pages to be committed to stable storage */
+>     -	if (!force) {
+>     -		struct l_wait_info lwi =3D LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+>     -
+>     -		rc =3D l_wait_event(sbi->ll_cache->ccc_unstable_waitq,
+>     -				  !atomic_long_read(&sbi->ll_cache->ccc_unstable_nr),
+>     -				  &lwi);
+>     -	}
+>     +	if (!force)
+>     +		rc =3D l_wait_event_abortable(sbi->ll_cache->ccc_unstable_waitq,
+>     +					    !atomic_long_read(&sbi->ll_cache->ccc_unstable_nr));
+>=20=20=20=20=20=20
+>      	ccc_count =3D atomic_long_read(&sbi->ll_cache->ccc_unstable_nr);
+>     -	if (!force && rc !=3D -EINTR)
+>     +	if (!force && rc !=3D -ERESTARTSYS)
+>      		LASSERTF(!ccc_count, "count: %li\n", ccc_count);
+>=20=20=20=20=20=20
+>      	/* We need to set force before the lov_disconnect in
+>     diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/driver=
+s/staging/lustre/lustre/obdclass/genops.c
+>     index 3ff25b8d3b48..8f776a4058a9 100644
+>     --- a/drivers/staging/lustre/lustre/obdclass/genops.c
+>     +++ b/drivers/staging/lustre/lustre/obdclass/genops.c
+>     @@ -1332,7 +1332,6 @@ static bool obd_request_slot_avail(struct clien=
+t_obd *cli,
+>      int obd_get_request_slot(struct client_obd *cli)
+>      {
+>      	struct obd_request_slot_waiter orsw;
+>     -	struct l_wait_info lwi;
+>      	int rc;
+>=20=20=20=20=20=20
+>      	spin_lock(&cli->cl_loi_list_lock);
+>     @@ -1347,11 +1346,9 @@ int obd_get_request_slot(struct client_obd *cl=
+i)
+>      	orsw.orsw_signaled =3D false;
+>      	spin_unlock(&cli->cl_loi_list_lock);
+>=20=20=20=20=20=20
+>     -	lwi =3D LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+>     -	rc =3D l_wait_event(orsw.orsw_waitq,
+>     -			  obd_request_slot_avail(cli, &orsw) ||
+>     -			  orsw.orsw_signaled,
+>     -			  &lwi);
+>     +	rc =3D l_wait_event_abortable(orsw.orsw_waitq,
+>     +				    obd_request_slot_avail(cli, &orsw) ||
+>     +				    orsw.orsw_signaled);
+>=20=20=20=20=20=20
+>      	/*
+>      	 * Here, we must take the lock to avoid the on-stack 'orsw' to be
+>     diff --git a/drivers/staging/lustre/lustre/obdclass/llog_obd.c b/driv=
+ers/staging/lustre/lustre/obdclass/llog_obd.c
+>     index 28bbaa2136ac..26aea114a29b 100644
+>     --- a/drivers/staging/lustre/lustre/obdclass/llog_obd.c
+>     +++ b/drivers/staging/lustre/lustre/obdclass/llog_obd.c
+>     @@ -104,7 +104,6 @@ EXPORT_SYMBOL(__llog_ctxt_put);
+>=20=20=20=20=20=20
+>      int llog_cleanup(const struct lu_env *env, struct llog_ctxt *ctxt)
+>      {
+>     -	struct l_wait_info lwi =3D LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+>      	struct obd_llog_group *olg;
+>      	int rc, idx;
+>=20=20=20=20=20=20
+>     @@ -129,8 +128,8 @@ int llog_cleanup(const struct lu_env *env, struct=
+ llog_ctxt *ctxt)
+>      		CERROR("Error %d while cleaning up ctxt %p\n",
+>      		       rc, ctxt);
+>=20=20=20=20=20=20
+>     -	l_wait_event(olg->olg_waitq,
+>     -		     llog_group_ctxt_null(olg, idx), &lwi);
+>     +	l_wait_event_abortable(olg->olg_waitq,
+>     +			     llog_group_ctxt_null(olg, idx));
+>=20=20=20=20=20=20
+>      	return rc;
+>      }
+>     diff --git a/drivers/staging/lustre/lustre/osc/osc_page.c b/drivers/s=
+taging/lustre/lustre/osc/osc_page.c
+>     index 20094b6309f9..6fdd521feb21 100644
+>     --- a/drivers/staging/lustre/lustre/osc/osc_page.c
+>     +++ b/drivers/staging/lustre/lustre/osc/osc_page.c
+>     @@ -759,7 +759,6 @@ static long osc_lru_reclaim(struct client_obd *cl=
+i, unsigned long npages)
+>      static int osc_lru_alloc(const struct lu_env *env, struct client_obd=
+ *cli,
+>      			 struct osc_page *opg)
+>      {
+>     -	struct l_wait_info lwi =3D LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+>      	struct osc_io *oio =3D osc_env_io(env);
+>      	int rc =3D 0;
+>=20=20=20=20=20=20
+>     @@ -782,9 +781,8 @@ static int osc_lru_alloc(const struct lu_env *env=
+, struct client_obd *cli,
+>=20=20=20=20=20=20
+>      		cond_resched();
+>=20=20=20=20=20=20
+>     -		rc =3D l_wait_event(osc_lru_waitq,
+>     -				  atomic_long_read(cli->cl_lru_left) > 0,
+>     -				  &lwi);
+>     +		rc =3D l_wait_event_abortable(osc_lru_waitq,
+>     +					    atomic_long_read(cli->cl_lru_left) > 0);
+>=20=20=20=20=20=20
+>      		if (rc < 0)
+>      			break;
+>     diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/driver=
+s/staging/lustre/lustre/osc/osc_request.c
+>     index 45b1ebf33363..074b5ce6284c 100644
+>     --- a/drivers/staging/lustre/lustre/osc/osc_request.c
+>     +++ b/drivers/staging/lustre/lustre/osc/osc_request.c
+>     @@ -552,14 +552,12 @@ static int osc_destroy(const struct lu_env *env=
+, struct obd_export *exp,
+>=20=20=20=20=20=20
+>      	req->rq_interpret_reply =3D osc_destroy_interpret;
+>      	if (!osc_can_send_destroy(cli)) {
+>     -		struct l_wait_info lwi =3D LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+>     -
+>      		/*
+>      		 * Wait until the number of on-going destroy RPCs drops
+>      		 * under max_rpc_in_flight
+>      		 */
+>     -		l_wait_event_exclusive(cli->cl_destroy_waitq,
+>     -				       osc_can_send_destroy(cli), &lwi);
+>     +		l_wait_event_abortable_exclusive(cli->cl_destroy_waitq,
+>     +					       osc_can_send_destroy(cli));
+>      	}
+>=20=20=20=20=20=20
+>      	/* Do not wait for response */
+>=20=20=20=20=20
+>=20=20=20=20=20
+>     _______________________________________________
+>     lustre-devel mailing list
+>     lustre-devel@lists.lustre.org
+>     http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
+>=20=20=20=20=20
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqCKhIACgkQOeye3VZi
+gblCHQ/+I60dZOiY1hOwZ6O9mlcKtDhGScjTcvtCYFyzO3wBvmFaF5QInluyhC1U
+9+ES0MJBFSGtDSXrkziKv4CVbUgRSCg9tjd0MVYOqDYu5ID+CWHeQvRhYHoYN1Rg
+Pb7QUxq7VT0hUAOImFqFZI24RJN5gG5abH0SxGZtM7TwZvjGpPhF/m4aOaQhBiBN
+2pPg1IXpP6Lmk4kk7xKCI0mFj17XTIogQG9qVN5146C2K3lYth1acVb9ySyeWFVT
+xQWAX/+f1U3mrKUuRDzY0tjfnnpZvdVQwIYAggK5uocH0Cai9b7Ob1Xo9tF3AY8U
+czwJ6KBEJsqtryCas6nceaU15TUnUnw+5JYhjIPHaqaOS2Bm/VtYu/XjAqPdS2kD
+DlSzGxeTtgtcOpjtyCv+tB3+uEtsVvFqiTmf66GA3lTs/PSwUpoqs1BqV5cFSovv
+JUVn6WX4fNmNkqeVjsNXDNLsOpSCH49/klChhR5w4yXKwKjk4Lq2RDlT/d4czy4w
+jMmu8GHVHuuWZyINVTTpnqNKa9zyBFf20xXiV+5ZidjHyDsjtitNFHopKtu2slne
+Lka0xtAjoszO6EPugUsIgup3k/KVdjnE3MJAUuYoUwBmmIEXvF5t/p9pglaPFRCr
+38gpYwoGJp6uKC/EVhHktzmHGaJVGAqezrk7pa0ThwSK3teGaKs=
+=F46S
+-----END PGP SIGNATURE-----
+--=-=-=--
