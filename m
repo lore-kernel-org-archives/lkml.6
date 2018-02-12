@@ -1,35 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932816AbeBLWb6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:31:58 -0500
-Received: from ozlabs.org ([103.22.144.67]:55907 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932628AbeBLWb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:31:57 -0500
-Date: Tue, 13 Feb 2018 09:31:53 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the nand tree
-Message-ID: <20180213093153.0958cff1@canb.auug.org.au>
+        id S932867AbeBLWcR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:32:17 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41081 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932628AbeBLWcP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:32:15 -0500
+X-Google-Smtp-Source: AH8x227gORkvsYNMJhI/SCvixBTssFRFgpWkYznv79xFv/hspMFu4dh5QzDpfMjTi5jUai+iHSc1Mg==
+From: Guenter Roeck <linux@roeck-us.net>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Subject: [PATCH] ia64: Remove pci-swiotlb.o from kernel Makefile
+Date: Mon, 12 Feb 2018 14:32:13 -0800
+Message-Id: <1518474733-2972-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Commit 4fac8076df85 ("ia64: clean up swiotlb support") removed
+arch/ia64/kernel/pci-swiotlb.c but neglected to update the ia64
+kernel Makefile. This results in
 
-A whole series of commits
+make[2]: *** No rule to make target 'arch/ia64/kernel/pci-swiotlb.o',
+	needed by 'arch/ia64/kernel/built-in.o'.  Stop.
 
-  558783726c98 ("mtd: nand: mxc: reorder functions to avoid forward declarations")
-to
-  e385e291129e ("mtd: nand: mxc: remove now unused code")
+when trying to build ia64 images.
 
-are missing a Signed-off-by from their committer.
+Fixes: 4fac8076df85 ("ia64: clean up swiotlb support")
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Christian König <christian.koenig@amd.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ arch/ia64/kernel/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/arch/ia64/kernel/Makefile b/arch/ia64/kernel/Makefile
+index 0b4c65a1af25..498f3da3f225 100644
+--- a/arch/ia64/kernel/Makefile
++++ b/arch/ia64/kernel/Makefile
+@@ -41,7 +41,6 @@ ifneq ($(CONFIG_IA64_ESI),)
+ obj-y				+= esi_stub.o	# must be in kernel proper
+ endif
+ obj-$(CONFIG_INTEL_IOMMU)	+= pci-dma.o
+-obj-$(CONFIG_SWIOTLB)		+= pci-swiotlb.o
+ 
+ obj-$(CONFIG_BINFMT_ELF)	+= elfcore.o
+ 
 -- 
-Cheers,
-Stephen Rothwell
+2.7.4
