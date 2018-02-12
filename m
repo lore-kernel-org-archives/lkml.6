@@ -1,87 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935176AbeBLNOJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:14:09 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44198 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933035AbeBLNOG (ORCPT
+        id S935208AbeBLNOg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:14:36 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933655AbeBLNOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:14:06 -0500
-X-Google-Smtp-Source: AH8x227xL7tBB7RNBuTePngsKhgdrH5/hDXAYH71+NzsuNnBQzCKMOJ0ntMT/YwpN+BU3Sq9pKn8+Q==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Revert "mmc: meson-gx: include tx phase in the tuning process"
-Date: Mon, 12 Feb 2018 14:13:59 +0100
-Message-Id: <20180212131359.7741-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
+        Mon, 12 Feb 2018 08:14:33 -0500
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        ananth@linux.vnet.ibm.com, lkml <linux-kernel@vger.kernel.org>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Uprobe: Bug(?) when probing small binaries
+Date: Mon, 12 Feb 2018 18:46:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18021213-0008-0000-0000-000004CBE7BD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021213-0009-0000-0000-00001E5FA53F
+Message-Id: <e74318e0-0cdf-e55d-bf06-b481541e2697@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802120171
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 0a44697627d17a66d7dc98f17aeca07ca79c5c20.
+Hi Oleg,
 
-This commit was initially intended to fix problems with hs200 and hs400
-on some boards, mainly the odroid-c2. The OC2 (Rev 0.2) I have performs
-well in this modes, so I could not confirm these issues.
+I'm observing a bug in the uprobe infrastructure. When target binary
+is quite small, uprobe replaces 'trap' instruction at two different
+places. Ex,
 
-We've had several reports about the issues being still present on (some)
-OC2, so apparently, this change does not do what it was supposed to do.
-Maybe the eMMC signal quality is on the edge on the board. This may
-explain the variability we see in term of stability, but this is just a
-guess. Lowering the max_frequency to 100Mhz seems to do trick for those
-affected by the issue
+Simple test.c that loops for 100 seconds:
 
-Worse, the commit created new issues (CRC errors and hangs) on other
-boards, such as the kvim 1 and 2, the p200 or the libretech-cc.
+    void main()
+    {
+        int i = 0;
+   
+        while (i++ != 100) {
+            printf("hi: %d", i);
+            sleep(1);
+        }
+    }
 
-According to amlogic, the Tx phase should not be tuned and left in its
-default configuration, so it is best to just revert the commit.
+Add a probe on function main() in test.c
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/mmc/host/meson-gx-mmc.c | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+  $ perf probe -x ./a.out main
+    Added new event:
+      probe_a:main          (on main in /home/ravi/a.out)
 
-diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-index 22438ebfe4e6..4f972b879fe6 100644
---- a/drivers/mmc/host/meson-gx-mmc.c
-+++ b/drivers/mmc/host/meson-gx-mmc.c
-@@ -717,22 +717,6 @@ static int meson_mmc_clk_phase_tuning(struct mmc_host *mmc, u32 opcode,
- static int meson_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- {
- 	struct meson_host *host = mmc_priv(mmc);
--	int ret;
--
--	/*
--	 * If this is the initial tuning, try to get a sane Rx starting
--	 * phase before doing the actual tuning.
--	 */
--	if (!mmc->doing_retune) {
--		ret = meson_mmc_clk_phase_tuning(mmc, opcode, host->rx_clk);
--
--		if (ret)
--			return ret;
--	}
--
--	ret = meson_mmc_clk_phase_tuning(mmc, opcode, host->tx_clk);
--	if (ret)
--		return ret;
- 
- 	return meson_mmc_clk_phase_tuning(mmc, opcode, host->rx_clk);
- }
-@@ -763,9 +747,8 @@ static void meson_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 		if (!IS_ERR(mmc->supply.vmmc))
- 			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, ios->vdd);
- 
--		/* Reset phases */
-+		/* Reset rx phase */
- 		clk_set_phase(host->rx_clk, 0);
--		clk_set_phase(host->tx_clk, 270);
- 
- 		break;
- 
--- 
-2.14.3
+Start the target program and pause it.
+
+  $ gdb --args ./a.out
+    (gdb) r
+    main: 1
+    main: 2
+    ^C
+
+  (gdb) disassemble main
+       0x000000001000069c <+8>:    mflr    r0
+ 
+  (gdb) x/w 0x1001069c
+    0x1001069c:    2080899750
+
+Now enable the probe:
+
+  # echo 1 > events/probe_a/main/enable
+
+Check probed instruction:
+
+  (gdb) disassemble main
+       0x000000001000069c <+8>:    trap
+
+*Bug*:
+
+  (gdb) x/w 0x1001069c
+    0x1001069c:  2145386504
+
+In short, when it replaces the probe instruction, it does some corruption
+in the readonly vma. This seems to be a bug.
+
+How did I get the other address 0x1001069c?I found build_map_info()
+returns these two vmas for the single probe:
+
+  10000000-10010000 r-xp 00000000 08:05 67325595   /home/ravi/a.out
+  10010000-10020000 r--p 00000000 08:05 67325595   /home/ravi/a.out
+
+and thusregister_for_each_vmas() calls install_breakpoint() on both of
+thesevmas with different vaddr.
+
+The example is on powerpc but same issue is observed on x86 as well. As,
+the code is common, it should be reproducible on every architecture.
+
+Also, I don't observe this issue for bigger binaries (maybe for those
+whose vma spans across multiple pages).
+
+Thanks,
+Ravi
