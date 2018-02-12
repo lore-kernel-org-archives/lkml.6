@@ -1,49 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932691AbeBLDNH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 22:13:07 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56784 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932492AbeBLDIo (ORCPT
+        id S932631AbeBLDRO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 22:17:14 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:33320 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932492AbeBLDRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 22:08:44 -0500
-To: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <644b8ab737c1eb5534215997d3c37bfb12af8b1e.1518397634.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1518397634.git.fthain@telegraphics.com.au>
-References: <cover.1518397634.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net v4 03/13] net/smc9194: Remove bogus CONFIG_MAC reference
-Date: Sun, 11 Feb 2018 22:08:43 -0500 (EST)
+        Sun, 11 Feb 2018 22:17:12 -0500
+Date: Mon, 12 Feb 2018 11:17:02 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Crypto Fixes for 4.16
+Message-ID: <20180212031702.GA26153@gondor.apana.org.au>
+References: <20161119102748.GA4277@gondor.apana.org.au>
+ <20161213132414.GA7898@gondor.apana.org.au>
+ <20170223125141.GA17400@gondor.apana.org.au>
+ <20170714141855.GA29426@gondor.apana.org.au>
+ <20170922084401.GA15541@gondor.apana.org.au>
+ <20171128230929.GA17783@gondor.apana.org.au>
+ <20171222064931.GA27068@gondor.apana.org.au>
+ <20180105073808.GA14405@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180105073808.GA14405@gondor.apana.org.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AFAIK the only version of smc9194.c with Mac support is the one in the
-linux-mac68k CVS repo, which never made it to the mainline.
+Hi Linus: 
 
-Despite that, from v2.3.45, arch/m68k/config.in listed CONFIG_SMC9194
-under CONFIG_MAC. This mistake got carried over into Kconfig in v2.5.55.
-(See pre-git era "[PATCH] add m68k dependencies to net driver config".)
+This push fixes the following issues:
 
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- drivers/net/ethernet/smsc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- Fix oversize stack frames on mn10300 in sha3-generic.
+- Fix warning on old compilers in sha3-generic.
+- Fix API error in sun4i_ss_prng.
+- Fix potential dead-lock in sun4i_ss_prng.
+- Fix null-pointer dereference in sha512-mb.
+- Fix endless loop when DECO acquire fails in caam.
+- Fix kernel oops when hashing empty message in talitos.
 
-diff --git a/drivers/net/ethernet/smsc/Kconfig b/drivers/net/ethernet/smsc/Kconfig
-index 63aca9f847e1..4c2f612e4414 100644
---- a/drivers/net/ethernet/smsc/Kconfig
-+++ b/drivers/net/ethernet/smsc/Kconfig
-@@ -20,7 +20,7 @@ if NET_VENDOR_SMSC
- 
- config SMC9194
- 	tristate "SMC 9194 support"
--	depends on (ISA || MAC && BROKEN)
-+	depends on ISA
- 	select CRC32
- 	---help---
- 	  This is support for the SMC9xxx based Ethernet cards. Choose this
+
+Please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+
+
+Ard Biesheuvel (1):
+      crypto: sha3-generic - deal with oversize stack frames
+
+Artem Savkov (2):
+      crypto: sun4i_ss_prng - fix return value of sun4i_ss_prng_generate
+      crypto: sun4i_ss_prng - convert lock to _bh in sun4i_ss_prng_generate
+
+Eric Biggers (1):
+      crypto: sha512-mb - initialize pending lengths correctly
+
+Geert Uytterhoeven (3):
+      compiler-gcc.h: Introduce __optimize function attribute
+      compiler-gcc.h: __nostackprotector needs gcc-4.4 and up
+      crypto: sha3-generic - Use __optimize to support old compilers
+
+Horia Geantă (1):
+      crypto: caam - fix endless loop when DECO acquire fails
+
+LEROY Christophe (1):
+      crypto: talitos - fix Kernel Oops on hashing an empty file
+
+ .../x86/crypto/sha512-mb/sha512_mb_mgr_init_avx2.c |   10 +-
+ crypto/sha3_generic.c                              |  218 +++++++++++---------
+ drivers/crypto/caam/ctrl.c                         |    8 +-
+ drivers/crypto/sunxi-ss/sun4i-ss-prng.c            |    6 +-
+ drivers/crypto/talitos.c                           |    4 +
+ include/linux/compiler-gcc.h                       |    7 +-
+ include/linux/compiler.h                           |    4 +
+ 7 files changed, 146 insertions(+), 111 deletions(-)
+
+Thanks,
 -- 
-2.13.6
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
