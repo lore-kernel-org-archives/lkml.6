@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932989AbeBLW5N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:57:13 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37552 "EHLO
+        id S933197AbeBLW5c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:57:32 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:37523 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932701AbeBLWs2 (ORCPT
+        with ESMTP id S932252AbeBLWs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:48:28 -0500
+        Mon, 12 Feb 2018 17:48:26 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 14/45] rtc: omap: call rtc_nvmem_register()
-Date: Mon, 12 Feb 2018 23:47:28 +0100
-Message-Id: <20180212224759.15999-15-alexandre.belloni@bootlin.com>
+Subject: [PATCH 06/45] rtc: ds1305: call rtc_nvmem_register()
+Date: Mon, 12 Feb 2018 23:47:20 +0100
+Message-Id: <20180212224759.15999-7-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
 References: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
@@ -26,29 +26,30 @@ the nvmem_config member of struct rtc_device.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-omap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-ds1305.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
-index 09ef802d6e54..e53cb27f4118 100644
---- a/drivers/rtc/rtc-omap.c
-+++ b/drivers/rtc/rtc-omap.c
-@@ -850,7 +850,6 @@ static int omap_rtc_probe(struct platform_device *pdev)
+diff --git a/drivers/rtc/rtc-ds1305.c b/drivers/rtc/rtc-ds1305.c
+index d8df2e9e14ad..affa90da26f1 100644
+--- a/drivers/rtc/rtc-ds1305.c
++++ b/drivers/rtc/rtc-ds1305.c
+@@ -703,15 +703,15 @@ static int ds1305_probe(struct spi_device *spi)
+ 	ds1305->rtc->ops = &ds1305_ops;
  
- 	rtc->rtc->ops = &omap_rtc_ops;
- 	omap_rtc_nvmem_config.priv = rtc;
--	rtc->rtc->nvmem_config = &omap_rtc_nvmem_config;
+ 	ds1305_nvmem_cfg.priv = ds1305;
+-	ds1305->rtc->nvmem_config = &ds1305_nvmem_cfg;
+ 	ds1305->rtc->nvram_old_abi = true;
+-
+ 	status = rtc_register_device(ds1305->rtc);
+ 	if (status) {
+ 		dev_dbg(&spi->dev, "register rtc --> %d\n", status);
+ 		return status;
+ 	}
  
- 	/* handle periodic and alarm irqs */
- 	ret = devm_request_irq(&pdev->dev, rtc->irq_timer, rtc_irq, 0,
-@@ -886,6 +885,8 @@ static int omap_rtc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err;
- 
-+	rtc_nvmem_register(rtc->rtc, &omap_rtc_nvmem_config);
++	rtc_nvmem_register(ds1305->rtc, &ds1305_nvmem_cfg);
 +
- 	return 0;
- 
- err:
+ 	/* Maybe set up alarm IRQ; be ready to handle it triggering right
+ 	 * away.  NOTE that we don't share this.  The signal is active low,
+ 	 * and we can't ack it before a SPI message delay.  We temporarily
 -- 
 2.16.1
