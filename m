@@ -1,52 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754148AbeBLVEq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:04:46 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56838 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754111AbeBLVEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:04:45 -0500
-Date: Mon, 12 Feb 2018 22:04:42 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH] perf: Add support for creating offline events
-Message-ID: <20180212210442.GA32093@krava>
-References: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
- <20180212094357.GD5821@krava>
- <53408020-8638-4947-90f6-87dbc4c2c4e5@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53408020-8638-4947-90f6-87dbc4c2c4e5@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1754143AbeBLVH2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:07:28 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34283 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753908AbeBLVH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:07:27 -0500
+X-Google-Smtp-Source: AH8x2279mvkysQSVDFJu1hRnz3XUHLjO+tn9VRPPCtW6iKFw1dVgrVTxzL1XjezLMeTZzgtMLDp+wA==
+From: Philipp Rossak <embed3d@gmail.com>
+To: wens@csie.org, a.zummo@towertech.it,
+        alexandre.belloni@free-electrons.com
+Cc: linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-rtc@vger.kernel.org
+Subject: [PATCH] rtc: ac100: Fix ac100 determine rate bug
+Date: Mon, 12 Feb 2018 22:07:23 +0100
+Message-Id: <20180212210723.20919-1-embed3d@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 09:42:05AM -0800, Raghavendra Rao Ananta wrote:
-> Hi Jiri,
-> 
-> Thank you for the response.
-> 
-> Does perf tool has its own check to see if the CPU was offline during the
-> lifetime of an event? If so, it might ignore these type of events.
+This patch fixes a bug, that prevents the Allwinner A83T and the A80
+from a successful boot. You can find the shortend trace below:
 
-nope, we don't check on that
+Unable to handle kernel NULL pointer dereference at virtual address
+00000000
+pgd = (ptrval)
+[00000000] *pgd=00000000
+Internal error: Oops: 5 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
+Hardware name: Allwinner sun8i Family
+Workqueue: events deferred_probe_work_func
+PC is at clk_hw_get_rate+0x0/0x34
+LR is at ac100_clkout_determine_rate+0x48/0x19c
 
-> 
-> Initially, I tested the same using perf tool and found similar results.
-> Then I debugged further and found that the perf core was actually sending
-> data to the userspace (copy_to_user()) and the corresponding count for the
-> data. Hence, I tested this further by writing my own userspace application,
-> and I was able to read the count through this,
-> even when the CPU was made offline and back online.
-> 
-> Do you think we also have to modify the perf tool accordingly?
+[ ... ]
 
-hum, I wonder what's wrong.. will check
+(clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
+(ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
+(clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
+(clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
+(of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
 
-jirka
+To fix that bug, we first check if the return of the 
+clk_hw_get_parent_by_index is non zero. If it is zero we skip that
+clock parent.
+
+The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
+
+Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+---
+ drivers/rtc/rtc-ac100.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+index 8ff9dc3fe5bf..820ce6fb9d34 100644
+--- a/drivers/rtc/rtc-ac100.c
++++ b/drivers/rtc/rtc-ac100.c
+@@ -183,7 +183,12 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
+ 
+ 	for (i = 0; i < num_parents; i++) {
+ 		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
+-		unsigned long tmp, prate = clk_hw_get_rate(parent);
++		unsigned long tmp, prate;
++
++		if (!parent)
++			continue;
++
++		prate = clk_hw_get_rate(parent);
+ 
+ 		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
+ 
+-- 
+2.11.0
