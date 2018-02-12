@@ -1,86 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753918AbeBLUKP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 15:10:15 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56502 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753836AbeBLUKM (ORCPT
+        id S1753988AbeBLUKq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 15:10:46 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46866 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753220AbeBLUKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 15:10:12 -0500
-Date: Mon, 12 Feb 2018 21:10:10 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Paul Kocialkowski <contact@paulk.fr>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 1/3] dt-bindings: mfd: axp20x: Document backup battery
- charging property
-Message-ID: <20180212201010.GB25608@amd>
-References: <20171230152330.28946-1-contact@paulk.fr>
- <20171230152330.28946-2-contact@paulk.fr>
+        Mon, 12 Feb 2018 15:10:45 -0500
+X-Google-Smtp-Source: AH8x226RhcAOb5V5gczvIB4+QM6FPlCV4cRBGm6pdqEV+DZJwf5QQvuHbRYlpodQRvZ20N8kWGou3g==
+Date: Mon, 12 Feb 2018 12:10:41 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Dennis Zhou <dennisszhou@gmail.com>
+Cc: Christoph Lameter <cl@linux.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH for-4.17] percpu: add Dennis Zhou as a percpu co-maintainer
+Message-ID: <20180212201041.GH695913@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20171230152330.28946-2-contact@paulk.fr>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dennis rewrote the percpu area allocator some months ago, understands
+most of the code base and has been responsive with the bug reports and
+questions.  Let's add him as a co-maintainer.
 
---CdrF4e02JqNVZeln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Imma apply this to percpu/for-4.17.  If there's any objection, please
+let me know.
 
-Hi!
+Thanks.
 
-> This adds documentation for the "backup" property of the axp20x driver,
-> that controls the charging mechanism for the backup battery on axp20x.
->=20
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
->=20
-> diff --git a/Documentation/devicetree/bindings/mfd/axp20x.txt b/Documenta=
-tion/devicetree/bindings/mfd/axp20x.txt
-> index 9455503b0299..382776b29932 100644
-> --- a/Documentation/devicetree/bindings/mfd/axp20x.txt
-> +++ b/Documentation/devicetree/bindings/mfd/axp20x.txt
-> @@ -58,6 +58,11 @@ Optional properties:
->  	      See Documentation/devicetree/bindings/regulator/regulator.txt
->  	      for more information on standard regulator bindings.
-> =20
-> +- backup: An array of two integers for backup battery charging (axp20x-o=
-nly),
-> +	  describing the charging voltage in mV first and the charging current
-> +	  in uA second. Backup battery charging is only enabled when these two
-> +	  fields are filled.
+ MAINTAINERS |    1 +
+ 1 file changed, 1 insertion(+)
 
-Well...
-
-We do want to charge batteries other than your backup
-battery. Probably this should get separate "backup battery" node with
-properties explaining how it is charged?
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---CdrF4e02JqNVZeln
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqB9KIACgkQMOfwapXb+vLuXgCguLT57URur6PyA8WAC2+0/cl2
-IG0Anjz1c68nRjbpeNtFUob5O4VALkNX
-=BL7q
------END PGP SIGNATURE-----
-
---CdrF4e02JqNVZeln--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3bdc260..f384e22 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10832,6 +10832,7 @@ F:	drivers/platform/x86/peaq-wmi.c
+ PER-CPU MEMORY ALLOCATOR
+ M:	Tejun Heo <tj@kernel.org>
+ M:	Christoph Lameter <cl@linux.com>
++M:	Dennis Zhou <dennisszhou@gmail.com>
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git
+ S:	Maintained
+ F:	include/linux/percpu*.h
