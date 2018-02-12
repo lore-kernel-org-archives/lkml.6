@@ -1,29 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933738AbeBLKRw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:17:52 -0500
-Received: from [198.137.202.136] ([198.137.202.136]:50409 "EHLO
+        id S933792AbeBLKSF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:18:05 -0500
+Received: from [198.137.202.136] ([198.137.202.136]:58785 "EHLO
         terminus.zytor.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S933355AbeBLKRl (ORCPT
+        with ESMTP id S933355AbeBLKSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:17:41 -0500
-Date: Mon, 12 Feb 2018 02:15:57 -0800
+        Mon, 12 Feb 2018 05:18:03 -0500
+Date: Mon, 12 Feb 2018 02:17:27 -0800
 From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-0305150fd7ab4d181c6ad874cb19f8c2b4465888@git.kernel.org>
-Cc: linux@dominikbrodowski.net, tglx@linutronix.de, hpa@zytor.com,
-        dvlasenk@redhat.com, jpoimboe@redhat.com, luto@kernel.org,
-        bp@alien8.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, brgerst@gmail.com
-Reply-To: bp@alien8.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, brgerst@gmail.com,
-        tglx@linutronix.de, linux@dominikbrodowski.net, hpa@zytor.com,
-        luto@kernel.org, jpoimboe@redhat.com, dvlasenk@redhat.com
-In-Reply-To: <20180211104949.12992-2-linux@dominikbrodowski.net>
-References: <20180211104949.12992-2-linux@dominikbrodowski.net>
+Message-ID: <tip-7b7b09f110f06f3c006e9b3f4590f7d9ba91345b@git.kernel.org>
+Cc: hpa@zytor.com, torvalds@linux-foundation.org, mingo@kernel.org,
+        luto@kernel.org, linux@dominikbrodowski.net, bp@alien8.de,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, brgerst@gmail.com,
+        jpoimboe@redhat.com, dvlasenk@redhat.com, tglx@linutronix.de
+Reply-To: hpa@zytor.com, torvalds@linux-foundation.org, luto@kernel.org,
+        mingo@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
+        linux@dominikbrodowski.net, brgerst@gmail.com, peterz@infradead.org,
+        tglx@linutronix.de, jpoimboe@redhat.com, dvlasenk@redhat.com
+In-Reply-To: <20180211104949.12992-5-linux@dominikbrodowski.net>
+References: <20180211104949.12992-5-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Merge SAVE_C_REGS and SAVE_EXTRA_REGS,
- remove unused extensions
-Git-Commit-ID: 0305150fd7ab4d181c6ad874cb19f8c2b4465888
+Subject: [tip:x86/pti] x86/entry/64: Introduce the PUSH_AND_CLEAN_REGS macro
+Git-Commit-ID: 7b7b09f110f06f3c006e9b3f4590f7d9ba91345b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,21 +35,19 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0305150fd7ab4d181c6ad874cb19f8c2b4465888
-Gitweb:     https://git.kernel.org/tip/0305150fd7ab4d181c6ad874cb19f8c2b4465888
+Commit-ID:  7b7b09f110f06f3c006e9b3f4590f7d9ba91345b
+Gitweb:     https://git.kernel.org/tip/7b7b09f110f06f3c006e9b3f4590f7d9ba91345b
 Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Sun, 11 Feb 2018 11:49:42 +0100
+AuthorDate: Sun, 11 Feb 2018 11:49:45 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 12 Feb 2018 08:06:35 +0100
+CommitDate: Mon, 12 Feb 2018 08:06:36 +0100
 
-x86/entry/64: Merge SAVE_C_REGS and SAVE_EXTRA_REGS, remove unused extensions
+x86/entry/64: Introduce the PUSH_AND_CLEAN_REGS macro
 
-All current code paths call SAVE_C_REGS and then immediately
-SAVE_EXTRA_REGS. Therefore, merge these two macros and order the MOV
-sequeneces properly.
-
-While at it, remove the macros to save all except specific registers,
-as these macros have been unused for a long time.
+Those instances where ALLOC_PT_GPREGS_ON_STACK is called just before
+SAVE_AND_CLEAR_REGS can trivially be replaced by PUSH_AND_CLEAN_REGS.
+This macro uses PUSH instead of MOV and should therefore be faster, at
+least on newer CPUs.
 
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
@@ -63,131 +60,81 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180211104949.12992-2-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180211104949.12992-5-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/calling.h  | 57 +++++++++++++----------------------------------
- arch/x86/entry/entry_64.S | 12 ++++------
- 2 files changed, 19 insertions(+), 50 deletions(-)
+ arch/x86/entry/calling.h  | 36 ++++++++++++++++++++++++++++++++++++
+ arch/x86/entry/entry_64.S |  6 ++----
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index f4b129d..8907a65 100644
+index a05cbb8..57b1b87 100644
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -101,49 +101,22 @@ For 32-bit we have the following conventions - kernel is built with
- 	addq	$-(15*8), %rsp
- 	.endm
- 
--	.macro SAVE_C_REGS_HELPER offset=0 rax=1 rcx=1 r8910=1 r11=1
--	.if \r11
--	movq %r11, 6*8+\offset(%rsp)
--	.endif
--	.if \r8910
--	movq %r10, 7*8+\offset(%rsp)
--	movq %r9,  8*8+\offset(%rsp)
--	movq %r8,  9*8+\offset(%rsp)
--	.endif
--	.if \rax
--	movq %rax, 10*8+\offset(%rsp)
--	.endif
--	.if \rcx
--	movq %rcx, 11*8+\offset(%rsp)
--	.endif
--	movq %rdx, 12*8+\offset(%rsp)
--	movq %rsi, 13*8+\offset(%rsp)
-+	.macro SAVE_REGS offset=0
- 	movq %rdi, 14*8+\offset(%rsp)
--	UNWIND_HINT_REGS offset=\offset extra=0
--	.endm
--	.macro SAVE_C_REGS offset=0
--	SAVE_C_REGS_HELPER \offset, 1, 1, 1, 1
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_RAX_RCX offset=0
--	SAVE_C_REGS_HELPER \offset, 0, 0, 1, 1
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_R891011
--	SAVE_C_REGS_HELPER 0, 1, 1, 0, 0
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_RCX_R891011
--	SAVE_C_REGS_HELPER 0, 1, 0, 0, 0
--	.endm
--	.macro SAVE_C_REGS_EXCEPT_RAX_RCX_R11
--	SAVE_C_REGS_HELPER 0, 0, 0, 1, 0
--	.endm
--
--	.macro SAVE_EXTRA_REGS offset=0
--	movq %r15, 0*8+\offset(%rsp)
--	movq %r14, 1*8+\offset(%rsp)
--	movq %r13, 2*8+\offset(%rsp)
--	movq %r12, 3*8+\offset(%rsp)
--	movq %rbp, 4*8+\offset(%rsp)
-+	movq %rsi, 13*8+\offset(%rsp)
-+	movq %rdx, 12*8+\offset(%rsp)
-+	movq %rcx, 11*8+\offset(%rsp)
-+	movq %rax, 10*8+\offset(%rsp)
-+	movq %r8,  9*8+\offset(%rsp)
-+	movq %r9,  8*8+\offset(%rsp)
-+	movq %r10, 7*8+\offset(%rsp)
-+	movq %r11, 6*8+\offset(%rsp)
- 	movq %rbx, 5*8+\offset(%rsp)
-+	movq %rbp, 4*8+\offset(%rsp)
-+	movq %r12, 3*8+\offset(%rsp)
-+	movq %r13, 2*8+\offset(%rsp)
-+	movq %r14, 1*8+\offset(%rsp)
-+	movq %r15, 0*8+\offset(%rsp)
+@@ -137,6 +137,42 @@ For 32-bit we have the following conventions - kernel is built with
  	UNWIND_HINT_REGS offset=\offset
  	.endm
  
-@@ -197,7 +170,7 @@ For 32-bit we have the following conventions - kernel is built with
-  * is just setting the LSB, which makes it an invalid stack address and is also
-  * a signal to the unwinder that it's a pt_regs pointer in disguise.
-  *
-- * NOTE: This macro must be used *after* SAVE_EXTRA_REGS because it corrupts
-+ * NOTE: This macro must be used *after* SAVE_REGS because it corrupts
-  * the original rbp.
-  */
- .macro ENCODE_FRAME_POINTER ptregs_offset=0
++	.macro PUSH_AND_CLEAR_REGS
++	/*
++	 * Push registers and sanitize registers of values that a
++	 * speculation attack might otherwise want to exploit. The
++	 * lower registers are likely clobbered well before they
++	 * could be put to use in a speculative execution gadget.
++	 * Interleave XOR with PUSH for better uop scheduling:
++	 */
++	pushq   %rdi		/* pt_regs->di */
++	pushq   %rsi		/* pt_regs->si */
++	pushq   %rdx		/* pt_regs->dx */
++	pushq   %rcx		/* pt_regs->cx */
++	pushq   %rax		/* pt_regs->ax */
++	pushq   %r8		/* pt_regs->r8 */
++	xorq    %r8, %r8	/* nospec   r8 */
++	pushq   %r9		/* pt_regs->r9 */
++	xorq    %r9, %r9	/* nospec   r9 */
++	pushq   %r10		/* pt_regs->r10 */
++	xorq    %r10, %r10	/* nospec   r10 */
++	pushq   %r11		/* pt_regs->r11 */
++	xorq    %r11, %r11	/* nospec   r11*/
++	pushq	%rbx		/* pt_regs->rbx */
++	xorl    %ebx, %ebx	/* nospec   rbx*/
++	pushq	%rbp		/* pt_regs->rbp */
++	xorl    %ebp, %ebp	/* nospec   rbp*/
++	pushq	%r12		/* pt_regs->r12 */
++	xorq    %r12, %r12	/* nospec   r12*/
++	pushq	%r13		/* pt_regs->r13 */
++	xorq    %r13, %r13	/* nospec   r13*/
++	pushq	%r14		/* pt_regs->r14 */
++	xorq    %r14, %r14	/* nospec   r14*/
++	pushq	%r15		/* pt_regs->r15 */
++	xorq    %r15, %r15	/* nospec   r15*/
++	UNWIND_HINT_REGS
++	.endm
++
+ 	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 932a445..1a6fc01 100644
+index 07692b4..cf4a9ae 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -573,8 +573,7 @@ END(irq_entries_start)
+@@ -564,8 +564,7 @@ END(irq_entries_start)
+ 	call	switch_to_thread_stack
  1:
  
- 	ALLOC_PT_GPREGS_ON_STACK
--	SAVE_C_REGS
--	SAVE_EXTRA_REGS
-+	SAVE_REGS
- 	CLEAR_REGS_NOSPEC
+-	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_AND_CLEAR_REGS
++	PUSH_AND_CLEAR_REGS
  	ENCODE_FRAME_POINTER
  
-@@ -1132,8 +1131,7 @@ ENTRY(xen_failsafe_callback)
+ 	testb	$3, CS(%rsp)
+@@ -1112,8 +1111,7 @@ ENTRY(xen_failsafe_callback)
+ 	addq	$0x30, %rsp
  	UNWIND_HINT_IRET_REGS
  	pushq	$-1 /* orig_ax = -1 => not a system call */
- 	ALLOC_PT_GPREGS_ON_STACK
--	SAVE_C_REGS
--	SAVE_EXTRA_REGS
-+	SAVE_REGS
- 	CLEAR_REGS_NOSPEC
+-	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_AND_CLEAR_REGS
++	PUSH_AND_CLEAR_REGS
  	ENCODE_FRAME_POINTER
  	jmp	error_exit
-@@ -1178,8 +1176,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
- ENTRY(paranoid_entry)
- 	UNWIND_HINT_FUNC
- 	cld
--	SAVE_C_REGS 8
--	SAVE_EXTRA_REGS 8
-+	SAVE_REGS 8
- 	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
- 	movl	$1, %ebx
-@@ -1231,8 +1228,7 @@ END(paranoid_exit)
- ENTRY(error_entry)
- 	UNWIND_HINT_FUNC
- 	cld
--	SAVE_C_REGS 8
--	SAVE_EXTRA_REGS 8
-+	SAVE_REGS 8
- 	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
- 	testb	$3, CS+8(%rsp)
+ END(xen_failsafe_callback)
