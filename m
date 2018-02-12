@@ -1,94 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751781AbeBLRE5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:04:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751063AbeBLRE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:04:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4236921104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 12 Feb 2018 12:04:52 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/power: Don't share template for cpu_idle and
- cpu_frequency
-Message-ID: <20180212120452.50abd9bf@gandalf.local.home>
-In-Reply-To: <20180211105004.p55ajlt5kw36qwxi@intel.com>
-References: <1518226624-8931-1-git-send-email-changbin.du@intel.com>
-        <20180209214458.1ed36c3c@vmware.local.home>
-        <20180211105004.p55ajlt5kw36qwxi@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752773AbeBLRHH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:07:07 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42002 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbeBLRHF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 12:07:05 -0500
+X-Google-Smtp-Source: AH8x226MEbp/R2tbOJDXVlcBZoFz2yR/2W0gBRTHxXTSSrXjxSAT0rD9pGx2NxzT+G8/bazYRHrKMg==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Memory controller hot reset
+Date: Mon, 12 Feb 2018 20:06:29 +0300
+Message-Id: <cover.1518452709.git.digetx@gmail.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Feb 2018 18:50:04 +0800
-"Du, Changbin" <changbin.du@intel.com> wrote:
+Hello,
 
-> Steve, How abount DEFINE_EVENT_PRINT as below?
+Tegra's memory controller has a "memory hot reset" functionality that
+blocks all memory transactions for the memory client. During reset of HW,
+it could perform DMA and resetting HW during DMA could lead to a system
+hang or memory corruption, so here comes the memory hot reset that blocks
+all interactions of HW with memory so that it could be reset safely. Memory
+hot reset is urgently required for multimedia, like GPU or video decoder,
+as it is quite easy to get into trouble without a proper HW reset.
 
-Yes, DEFINE_EVENT_PRINT is better.
+The short series introduces a custom Tegra-specific memory hot reset API.
 
-> 
-> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
-> index 908977d..e71ce98 100644
-> --- a/include/trace/events/power.h
-> +++ b/include/trace/events/power.h
-> @@ -14,12 +14,12 @@
-> 
->  DECLARE_EVENT_CLASS(cpu,
-> 
-> -       TP_PROTO(unsigned int state, unsigned int cpu_id),
-> +       TP_PROTO(int state, unsigned int cpu_id),
-> 
->         TP_ARGS(state, cpu_id),
-> 
->         TP_STRUCT__entry(
-> -               __field(        u32,            state           )
-> +               __field(        s32,            state           )
->                 __field(        u32,            cpu_id          )
->         ),
-> 
-> @@ -28,13 +28,12 @@ DECLARE_EVENT_CLASS(cpu,
->                 __entry->cpu_id = cpu_id;
->         ),
-> 
-> -       TP_printk("state=%lu cpu_id=%lu", (unsigned long)__entry->state,
-> -                 (unsigned long)__entry->cpu_id)
+Since first revision of this patchset haven't got any comment, I'm trying
+again with a V2 that has one minor correction compared to V1, I've added
+terga_mc_hotreset_assert()/deassert() functions as in V1 there was only
+tegra_mc_hot_reset() and turned out it is not enough.
 
-Yous still need the type casting, because s32/u32 on 32 bit machines
-can be defined as "long".
+Please review, thanks.
 
--- Steve
+Dmitry Osipenko (2):
+  memory: tegra: Squash tegra20-mc into common tegra-mc driver
+  memory: tegra: Introduce memory client hot reset API
 
-> +       TP_printk("state=%d cpu_id=%u", __entry->state, __entry->cpu_id)
->  );
-> 
->  DEFINE_EVENT(cpu, cpu_idle,
-> 
-> -       TP_PROTO(unsigned int state, unsigned int cpu_id),
-> +       TP_PROTO(int state, unsigned int cpu_id),
-> 
->         TP_ARGS(state, cpu_id)
->  );
-> @@ -141,11 +140,13 @@ TRACE_EVENT(pstate_sample,
->                 { PM_EVENT_RESTORE, "restore" }, \
->                 { PM_EVENT_RECOVER, "recover" })
-> 
-> -DEFINE_EVENT(cpu, cpu_frequency,
-> +DEFINE_EVENT_PRINT(cpu, cpu_frequency,
-> 
-> -       TP_PROTO(unsigned int frequency, unsigned int cpu_id),
-> +       TP_PROTO(int state, unsigned int cpu_id),
-> 
-> -       TP_ARGS(frequency, cpu_id)
-> +       TP_ARGS(state, cpu_id),
-> +
-> +       TP_printk("frequency=%u cpu_id=%lu", __entry->state, __entry->cpu_id)
->  );
+ drivers/memory/Kconfig          |  10 -
+ drivers/memory/Makefile         |   1 -
+ drivers/memory/tegra/Makefile   |   1 +
+ drivers/memory/tegra/mc.c       | 433 ++++++++++++++++++++++++++++++++++------
+ drivers/memory/tegra/mc.h       |  10 +
+ drivers/memory/tegra/tegra114.c |  25 +++
+ drivers/memory/tegra/tegra124.c |  32 +++
+ drivers/memory/tegra/tegra20.c  |  95 +++++++++
+ drivers/memory/tegra/tegra210.c |  27 +++
+ drivers/memory/tegra/tegra30.c  |  25 +++
+ drivers/memory/tegra20-mc.c     | 254 -----------------------
+ include/soc/tegra/mc.h          |  81 +++++++-
+ 12 files changed, 669 insertions(+), 325 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra20.c
+ delete mode 100644 drivers/memory/tegra20-mc.c
+
+-- 
+2.15.1
