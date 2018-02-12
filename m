@@ -1,70 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932238AbeBLSBq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:01:46 -0500
-Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:34898 "EHLO
-        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751386AbeBLSBp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:01:45 -0500
-Date: Mon, 12 Feb 2018 18:01:43 +0000
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] sched/fair: Do not migrate due to a sync wakeup on
- exit
-Message-ID: <20180212180143.cgibi5tpw2dh3bs4@techsingularity.net>
-References: <20180212145857.8056-1-mgorman@techsingularity.net>
- <20180212145857.8056-5-mgorman@techsingularity.net>
- <20180212173147.GZ25201@hirez.programming.kicks-ass.net>
- <20180212174729.4ftdldlepvcjsqji@techsingularity.net>
+        id S932292AbeBLSCp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:02:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752736AbeBLSCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:02:44 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F8F21726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 12 Feb 2018 13:02:39 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, vincent.guittot@linaro.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, tkjos@android.com, joelaf@google.com,
+        morten.rasmussen@arm.com, dietmar.eggemann@arm.com,
+        patrick.bellasi@arm.com, alessio.balsini@arm.com
+Subject: Re: [RFC PATCH 1/3] sched/deadline: merge dl_bw into dl_bandwidth
+Message-ID: <20180212130239.506cbce9@gandalf.local.home>
+In-Reply-To: <20180212174312.GN12979@localhost.localdomain>
+References: <20180212134030.12846-1-juri.lelli@redhat.com>
+        <20180212134030.12846-2-juri.lelli@redhat.com>
+        <20180212123430.6f8e4d6e@gandalf.local.home>
+        <20180212174312.GN12979@localhost.localdomain>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180212174729.4ftdldlepvcjsqji@techsingularity.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 05:47:29PM +0000, Mel Gorman wrote:
-> On Mon, Feb 12, 2018 at 06:31:47PM +0100, Peter Zijlstra wrote:
-> > On Mon, Feb 12, 2018 at 02:58:57PM +0000, Mel Gorman wrote:
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index 28c8d9c91955..50442697b455 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -5710,8 +5710,14 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
-> > >  	if (idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
-> > >  		return idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
-> > >  
-> > > -	if (sync && cpu_rq(this_cpu)->nr_running == 1)
-> > > +	if (sync && cpu_rq(this_cpu)->nr_running == 1) {
-> > > +		/* Avoid tasks exiting pulling parents to new nodes */
-> > > +		if ((current->flags & PF_EXITING) &&
-> > > +		    !cpus_share_cache(this_cpu, prev_cpu))
-> > > +			return prev_cpu;
-> > > +
-> > 
-> > Cute, but should we not kill @sync right at the source in this case?
-> > 
-> > Something a little like this?
-> > 
-> 
-> That works too but note that it has a slightly disadvantage in that we
-> add weight to the select_task_rq_fair fast path for all wakeups, not just
-> those that are affine. It's also not 100% functionally equivalent as I was
-> still allowing parents to migrate to the CPU if it shared cache although I
-> expect any advantage there is marginal. I can replace my patch with yours
-> if you really prefer it as the overhead in the fast path should be marginal.
-> 
+On Mon, 12 Feb 2018 18:43:12 +0100
+Juri Lelli <juri.lelli@redhat.com> wrote:
 
-Clearly my brains leaked out my ears at the end of a work day. The overhead
-only applies to sync wakeups and is a very small amount of overhead in the
-case where this_cpu or prev_cpu was idle so I'm happy with either version.
+> However, this surely needs to be fixed here. It's tracking the sum of
+> all tasks' (across CPUs) bandwidth admitted on the system, so that's why
+> it's called dl_total_bw. Incremented when a task passes sched_setattr()
+> and decremented when it leaves the system or changes scheduling class.
+> 
+> Does it make a bit more sense? Would you still prefer a different name?
 
--- 
-Mel Gorman
-SUSE Labs
+No the name is fine, the comment needs to change.
+
+ - dl_total_bw - tracks the sum of all tasks' bandwidth across CPUs.
+
+How's that?
+
+-- Steve
