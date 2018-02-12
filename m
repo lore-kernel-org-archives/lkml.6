@@ -1,84 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750984AbeBLTfn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 14:35:43 -0500
-Received: from server.eikelenboom.it ([91.121.65.215]:41326 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750881AbeBLTfl (ORCPT
+        id S1751240AbeBLTgx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 14:36:53 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:57040 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbeBLTgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 14:35:41 -0500
-From: Sander Eikelenboom <linux@eikelenboom.it>
-Subject: Linux 4.16-rc1: regression bisected, Debian kernel package tool
- make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
- remove check_stdin()"
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>
-Cc: srivasta@debian.org, linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <b7f71558-0e57-cacb-280c-a9d3baa030b2@eikelenboom.it>
-Date: Mon, 12 Feb 2018 20:01:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 12 Feb 2018 14:36:51 -0500
+Date: Mon, 12 Feb 2018 14:36:48 -0500 (EST)
+Message-Id: <20180212.143648.1353355347147054805.davem@davemloft.net>
+To: dvlasenk@redhat.com
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org,
+        linux-decnet-user@lists.sourceforge.net,
+        linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-x25@vger.kernel.org
+Subject: Re: [PATCH v2] net: make getname() functions return length rather
+ than use int* parameter
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180212190020.21536-1-dvlasenk@redhat.com>
+References: <20180212190020.21536-1-dvlasenk@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-L.S.,
+From: Denys Vlasenko <dvlasenk@redhat.com>
+Date: Mon, 12 Feb 2018 20:00:20 +0100
 
-The Debian kernel-package tool make-kpkg for easy building of upstream kernels on Debian fails with linux 4.16-rc1.
+> Changes since v1:
+> Added changes in these files:
+>     drivers/infiniband/hw/usnic/usnic_transport.c
+>     drivers/staging/lustre/lnet/lnet/lib-socket.c
+>     drivers/target/iscsi/iscsi_target_login.c
+>     drivers/vhost/net.c
+>     fs/dlm/lowcomms.c
+>     fs/ocfs2/cluster/tcp.c
+>     security/tomoyo/network.c
+> 
+> 
+> Before:
+> All these functions either return a negative error indicator,
+> or store length of sockaddr into "int *socklen" parameter
+> and return zero on success.
+> 
+> "int *socklen" parameter is awkward. For example, if caller does not
+> care, it still needs to provide on-stack storage for the value
+> it does not need.
+> 
+> None of the many FOO_getname() functions of various protocols
+> ever used old value of *socklen. They always just overwrite it.
+> 
+> This change drops this parameter, and makes all these functions, on success,
+> return length of sockaddr. It's always >= 0 and can be differentiated
+> from an error.
+> 
+> Tests in callers are changed from "if (err)" to "if (err < 0)", where needed.
+> 
+> rpc_sockname() lost "int buflen" parameter, since its only use was
+> to be passed to kernel_getsockname() as &buflen and subsequently
+> not used in any way.
+> 
+> Userspace API is not changed.
+> 
+>     text    data     bss      dec     hex filename
+> 30108430 2633624  873672 33615726 200ef6e vmlinux.before.o
+> 30108109 2633612  873672 33615393 200ee21 vmlinux.o
+> 
+> Signed-off-by: Denys Vlasenko <dvlasenk@redhat.com>
 
-The tool (perl script) while invoked with:
-    make-kpkg --initrd --append_to_version -20180212 kernel_image
-
-On a git tree with a .config from the previous kernel release, so new KConfig questions have to be asked on new or changed options.
-
-The script stalls indefinitely while it seems to be excuting:
-    exec make kpkg_version=13.018+nmu1 -f /usr/share/kernel-package/ruleset/minimal.mk debian APPEND_TO_VERSION=-t440s-20180212  INITRD=YES
-
-After using ctrl-c to break out it, i get:
-   ^CFailed to create a ./debian directory: No such file or directory at /usr/bin/make-kpkg line 970.
- 
-
-Bisection turned up as culprit:
-    commit d2a04648a5dbc3d1d043b35257364f0197d4d868
-    kconfig: remove check_stdin()
-    
-    Except silentoldconfig, valid_stdin is 1, so check_stdin() is no-op.
-    
-    oldconfig and silentoldconfig work almost in the same way except that
-    the latter generates additional files under include/.  Both ask users
-    for input for new symbols.
-    
-    I do not know why only silentoldconfig requires stdio be tty.
-    
-      $ rm -f .config; touch .config
-      $ yes "" | make oldconfig > stdout
-      $ rm -f .config; touch .config
-      $ yes "" | make silentoldconfig > stdout
-      make[1]: *** [silentoldconfig] Error 1
-      make: *** [silentoldconfig] Error 2
-      $ tail -n 4 stdout
-      Console input/output is redirected. Run 'make oldconfig' to update configuration.
-    
-      scripts/kconfig/Makefile:40: recipe for target 'silentoldconfig' failed
-      Makefile:507: recipe for target 'silentoldconfig' failed
-    
-    Redirection is useful, for example, for testing where we want to give
-    particular key inputs from a test file, then check the result.
-    
-    Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-    Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
-
-Reverting this specific commit makes make-kpkg work again as usual.
-
-Version of the kernel-package used:
-ii  kernel-package                                              13.018+nmu1 
-
-
-I also cc'ed the Debian developer who maintains the kernel-package package: Manoj Srivastava
-
---
-Sander
+Applied to net-next, thanks Denys.
