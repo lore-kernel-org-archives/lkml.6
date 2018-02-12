@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934524AbeBLM2c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:28:32 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38292 "EHLO
+        id S934511AbeBLM2a (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 07:28:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38290 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933156AbeBLM22 (ORCPT
+        with ESMTP id S933194AbeBLM22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Feb 2018 07:28:28 -0500
 From: Mark Brown <broonie@kernel.org>
@@ -16,17 +16,17 @@ Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
         kernel@stlinux.com, linux-kernel@vger.kernel.org,
         olivier.moysan@st.com, arnaud.pouliquen@st.com,
         benjamin.gaignard@st.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: stm32: spdifrx: fix typo in function name." to the asoc tree
-In-Reply-To: <1517417223-21899-2-git-send-email-olivier.moysan@st.com>
-Message-Id: <E1elDCq-0002ne-BX@debutante>
-Date: Mon, 12 Feb 2018 12:27:36 +0000
+Subject: Applied "ASoC: stm32: spdifrx: Use default dai name" to the asoc tree
+In-Reply-To: <1517417223-21899-3-git-send-email-olivier.moysan@st.com>
+Message-Id: <E1elDCm-0002mT-Dz@debutante>
+Date: Mon, 12 Feb 2018 12:27:32 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: stm32: spdifrx: fix typo in function name.
+   ASoC: stm32: spdifrx: Use default dai name
 
 has been applied to the asoc tree at
 
@@ -51,42 +51,30 @@ to this mail.
 Thanks,
 Mark
 
->From b9aa4716281247960e009dd55c38bcc4c2e4cb94 Mon Sep 17 00:00:00 2001
+>From 037002b14b7ae217aa79b260228ba51afc516a8c Mon Sep 17 00:00:00 2001
 From: olivier moysan <olivier.moysan@st.com>
-Date: Wed, 31 Jan 2018 17:47:02 +0100
-Subject: [PATCH] ASoC: stm32: spdifrx: fix typo in function name.
+Date: Wed, 31 Jan 2018 17:47:03 +0100
+Subject: [PATCH] ASoC: stm32: spdifrx: Use default dai name
 
-Fix function name prefix for naming consistency.
+Use dai name provided by framework from dev_name() function.
 
 Signed-off-by: olivier moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/stm/stm32_spdifrx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/stm/stm32_spdifrx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
-index b9bdefcd3e10..42ad2ae22d21 100644
+index 42ad2ae22d21..373df4f24be1 100644
 --- a/sound/soc/stm/stm32_spdifrx.c
 +++ b/sound/soc/stm/stm32_spdifrx.c
-@@ -858,8 +858,8 @@ static const struct of_device_id stm32_spdifrx_ids[] = {
- 	{}
- };
+@@ -819,7 +819,6 @@ static const struct snd_soc_dai_ops stm32_spdifrx_pcm_dai_ops = {
  
--static int stm_spdifrx_parse_of(struct platform_device *pdev,
--				struct stm32_spdifrx_data *spdifrx)
-+static int stm32_spdifrx_parse_of(struct platform_device *pdev,
-+				  struct stm32_spdifrx_data *spdifrx)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	const struct of_device_id *of_id;
-@@ -914,7 +914,7 @@ static int stm32_spdifrx_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, spdifrx);
- 
--	ret = stm_spdifrx_parse_of(pdev, spdifrx);
-+	ret = stm32_spdifrx_parse_of(pdev, spdifrx);
- 	if (ret)
- 		return ret;
- 
+ static struct snd_soc_dai_driver stm32_spdifrx_dai[] = {
+ 	{
+-		.name = "spdifrx-capture-cpu-dai",
+ 		.probe = stm32_spdifrx_dai_probe,
+ 		.capture = {
+ 			.stream_name = "CPU-Capture",
 -- 
 2.16.1
