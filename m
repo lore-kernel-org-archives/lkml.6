@@ -1,90 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932428AbeBLO7A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:59:00 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45244 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932293AbeBLO6z (ORCPT
+        id S932901AbeBLO7U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:59:20 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38410 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932358AbeBLO67 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:58:55 -0500
-X-Google-Smtp-Source: AH8x226FIL94kmNpXU/BBG2+JsmT1Bbe90cxUiyB7edMmYIg0NZtrnGOWQ/M8okgGsB6loXA+dSXAg==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/19] clk: meson: remove obsolete comments
-Date: Mon, 12 Feb 2018 15:58:31 +0100
-Message-Id: <20180212145846.19380-5-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+        Mon, 12 Feb 2018 09:58:59 -0500
+X-Google-Smtp-Source: AH8x2275RJAxFO6oo2cnTWmyniQAr3e/An2Z4yoMRqtolEufjAlyrY4WFeqMrgqrzODLrGRU7SnSWQ==
+Date: Mon, 12 Feb 2018 14:58:55 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 14/21] regulator: s5m8767: Pass descriptor instead of
+ GPIO number
+Message-ID: <20180212145855.2xxr5zvfbuswsbgh@dell>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-15-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180212131717.27193-15-linus.walleij@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Over time things changes in CCF and issues have been fixed in meson
-controllers.
+On Mon, 12 Feb 2018, Linus Walleij wrote:
 
-Now, clk81 is decently modeled by read-only PLLs, a mux, a divider
-and a gate. We can remove the FIXME comments related to clk81.
-Also remove the comment about devm_clk_hw_register, as there is
-apparently nothing wrong with it.
+> Instead of passing a global GPIO number for the enable GPIO, pass
+> a descriptor looked up from the device tree node for the
+> regulator.
+> 
+> This regulator supports passing platform data, but enable/sleep
+> regulators are looked up from the device tree exclusively, so
+> we can need not touch other files.
+> 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Lee: would be nice if you could ACK this smallish patch to
+> the MFD header.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c     | 5 -----
- drivers/clk/meson/gxbb.c    | 6 ------
- drivers/clk/meson/meson8b.c | 1 -
- 3 files changed, 12 deletions(-)
+Fine, but any sign of a conflict and I'll need a PR.
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 3bb77b4f1e8d..bc5c29f13282 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -411,11 +411,6 @@ static struct meson_clk_mpll axg_mpll3 = {
- 	},
- };
- 
--/*
-- * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
-- * and should be modeled with their respective PLLs via the forthcoming
-- * coordinated clock rates feature
-- */
- static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
- static const char * const clk81_parent_names[] = {
- 	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index e6adab49c0ba..6609024eee00 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -575,12 +575,6 @@ static struct meson_clk_mpll gxbb_mpll2 = {
- 	},
- };
- 
--/*
-- * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
-- * and should be modeled with their respective PLLs via the forthcoming
-- * coordinated clock rates feature
-- */
--
- static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
- static const char * const clk81_parent_names[] = {
- 	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index ffadad27375e..db017c29a84c 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -849,7 +849,6 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 		if (!meson8b_hw_onecell_data.hws[i])
- 			continue;
- 
--		/* FIXME convert to devm_clk_register */
- 		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
- 		if (ret)
- 			return ret;
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> ---
+>  drivers/regulator/s5m8767.c      | 26 +++++++++++++++-----------
+>  include/linux/mfd/samsung/core.h |  4 +++-
+>  2 files changed, 18 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+> index 4836947e1521..b8443a360646 100644
+> --- a/drivers/regulator/s5m8767.c
+> +++ b/drivers/regulator/s5m8767.c
+> @@ -13,6 +13,7 @@
+>  
+>  #include <linux/err.h>
+>  #include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/driver.h>
+> @@ -459,15 +460,14 @@ static void s5m8767_regulator_config_ext_control(struct s5m8767_info *s5m8767,
+>  		return;
+>  	}
+>  
+> -	if (!gpio_is_valid(rdata->ext_control_gpio)) {
+> +	if (!rdata->ext_control_gpiod) {
+>  		dev_warn(s5m8767->dev,
+>  				"ext-control for %s: GPIO not valid, ignoring\n",
+> -				rdata->reg_node->name);
+> +			 rdata->reg_node->name);
+>  		return;
+>  	}
+>  
+> -	config->ena_gpio = rdata->ext_control_gpio;
+> -	config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+> +	config->ena_gpiod = rdata->ext_control_gpiod;
+>  }
+>  
+>  /*
+> @@ -577,8 +577,14 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+>  			continue;
+>  		}
+>  
+> -		rdata->ext_control_gpio = of_get_named_gpio(reg_np,
+> -			"s5m8767,pmic-ext-control-gpios", 0);
+> +		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
+> +								       reg_np,
+> +								       "s5m8767,pmic-ext-control-gpios",
+> +								       0,
+> +								       GPIOD_OUT_HIGH,
+> +								       "s5m8767");
+> +		if (IS_ERR(rdata->ext_control_gpiod))
+> +			return PTR_ERR(rdata->ext_control_gpiod);
+>  
+>  		rdata->id = i;
+>  		rdata->initdata = of_get_regulator_init_data(
+> @@ -954,10 +960,8 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+>  		config.driver_data = s5m8767;
+>  		config.regmap = iodev->regmap_pmic;
+>  		config.of_node = pdata->regulators[i].reg_node;
+> -		config.ena_gpio = -EINVAL;
+> -		config.ena_gpio_flags = 0;
+> -		config.ena_gpio_initialized = true;
+> -		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio))
+> +		config.ena_gpiod = NULL;
+> +		if (pdata->regulators[i].ext_control_gpiod)
+>  			s5m8767_regulator_config_ext_control(s5m8767,
+>  					&pdata->regulators[i], &config);
+>  
+> @@ -970,7 +974,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+>  			return ret;
+>  		}
+>  
+> -		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio)) {
+> +		if (pdata->regulators[i].ext_control_gpiod) {
+>  			ret = s5m8767_enable_ext_control(s5m8767, rdev);
+>  			if (ret < 0) {
+>  				dev_err(s5m8767->dev,
+> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+> index 5a23dd4df432..28f4ae76271d 100644
+> --- a/include/linux/mfd/samsung/core.h
+> +++ b/include/linux/mfd/samsung/core.h
+> @@ -39,6 +39,8 @@
+>  #define STEP_12_5_MV		12500
+>  #define STEP_6_25_MV		6250
+>  
+> +struct gpio_desc;
+> +
+>  enum sec_device_type {
+>  	S5M8751X,
+>  	S5M8763X,
+> @@ -151,7 +153,7 @@ struct sec_regulator_data {
+>  	int				id;
+>  	struct regulator_init_data	*initdata;
+>  	struct device_node		*reg_node;
+> -	int				ext_control_gpio;
+> +	struct gpio_desc		*ext_control_gpiod;
+>  };
+>  
+>  /*
+
 -- 
-2.14.3
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
