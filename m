@@ -1,99 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753964AbeBLTRt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 14:17:49 -0500
-Received: from mail-it0-f45.google.com ([209.85.214.45]:35295 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeBLTRs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 14:17:48 -0500
-X-Google-Smtp-Source: AH8x227ReWuTSxyUT2HgklJ9dohnaNFp3q5mL4v3Iwg45q6LW4pnNY0NJmqlgpyzIuZK83/sYPOX9dGk+IibX4pZmcI=
+        id S1750899AbeBLTZH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 14:25:07 -0500
+Received: from mga11.intel.com ([192.55.52.93]:37411 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750750AbeBLTZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 14:25:06 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,503,1511856000";
+   d="scan'208";a="17367753"
+Date: Mon, 12 Feb 2018 12:29:14 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] nvme: fix the dangerous reference of namespaces list
+Message-ID: <20180212192914.GF16255@localhost.localdomain>
+References: <1518440086-583-1-git-send-email-jianchao.w.wang@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180212093742.6tj57fh7zagio3yj@gmail.com>
-References: <20180211104949.12992-1-linux@dominikbrodowski.net>
- <20180211104949.12992-9-linux@dominikbrodowski.net> <20180212093742.6tj57fh7zagio3yj@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 12 Feb 2018 11:17:46 -0800
-X-Google-Sender-Auth: TFLSGRfZDrhCb55W6w-LMSBE1WI
-Message-ID: <CA+55aFwLTF3EtaQ4OpDv2UM41J=EU7gfemv=eVq+uQi31-usSg@mail.gmail.com>
-Subject: Re: [PATCH v3 8/7] TESTING_ONLY x86/entry: reduce static footprint of idtentry
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518440086-583-1-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 1:37 AM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> Ok, so this does not look _that_ complicated, and the .text savings are
-> significant:
+Looks good.
 
-Honestly, I think we should do it. 3kB of assembly code is noticeable.
-
-Also, that patch actually allows more cleanups and simplifications.
-Look at the "interrupt" macro, which is used by 'apicinterrupt3', and
-has a number of uses that way.
-
-That code could be unified a lot, right now it does:
-
-        testb   $3, CS-ORIG_RAX(%rsp)
-        jz      1f
-        SWAPGS
-        call    switch_to_thread_stack
-1:
-
-        ALLOC_PT_GPREGS_ON_STACK
-        SAVE_C_REGS
-        SAVE_EXTRA_REGS
-        ENCODE_FRAME_POINTER
-
-        testb   $3, CS(%rsp)
-        jz      1f
-
-        /*
-         * IRQ from user mode.
-         *
-         * We need to tell lockdep that IRQs are off.  We can't do this until
-         * we fix gsbase, and we should do it before enter_from_user_mode
-         * (which can take locks).  Since TRACE_IRQS_OFF idempotent,
-         * the simplest way to handle it is to just call it twice if
-         * we enter from user mode.  There's no reason to optimize this since
-         * TRACE_IRQS_OFF is a no-op if lockdep is off.
-         */
-        TRACE_IRQS_OFF
-
-        CALL_enter_from_user_mode
-
-1:
-        ENTER_IRQ_STACK old_rsp=%rdi
-        /* We entered an interrupt context - irqs are off: */
-        TRACE_IRQS_OFF
-
-and *all* of that could be in a helper function rather than be
-duplicated. and the apicinterrupt3 macro should end up just expanding
-to
-
-        callq helper
-        pushq $~(\num)
-        callq \fn
-        jmp ret_from_intr
-
-instead of expanding to all that code.
-
-But that would require that same "save_ret" logic.
-
-So it's not just the idtentry cases that can use this trick.
-
-I admit that the trick isn't pretty, but it's not *horribly* ugly either.
-
-                    Linus
+Reviewed-by: Keith Busch <keith.busch@intel.com>
