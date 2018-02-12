@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933525AbeBLKIO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:08:14 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60982 "EHLO
+        id S933548AbeBLKIT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:08:19 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37530 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933150AbeBLKII (ORCPT
+        by vger.kernel.org with ESMTP id S933520AbeBLKIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:08:08 -0500
+        Mon, 12 Feb 2018 05:08:14 -0500
 From: Philipp Rudo <prudo@linux.vnet.ibm.com>
 To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
@@ -15,71 +15,129 @@ Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
-Subject: [PATCH 02/17] kexec_file: Remove checks in kexec_purgatory_load
-Date: Mon, 12 Feb 2018 11:07:39 +0100
+Subject: [PATCH 09/17] kexec_file: Remove mis-use of sh_offset field
+Date: Mon, 12 Feb 2018 11:07:46 +0100
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
 References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021210-0012-0000-0000-000005ADCAFC
+x-cbid: 18021210-0040-0000-0000-0000040ECB57
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021210-0013-0000-0000-000019298DBC
-Message-Id: <20180212100754.55121-3-prudo@linux.vnet.ibm.com>
+x-cbparentid: 18021210-0041-0000-0000-000026128965
+Message-Id: <20180212100754.55121-10-prudo@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=1
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802120131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before the purgatory is loaded several checks are done whether the ELF file
-in kexec_purgatory is valid or not. These checks are incomplete. For
-example they don't check for the total size of the sections defined in the
-section header table or if the entry point actually points into the
-purgatory.
+The current code uses the sh_offset field in purgatory_info->sechdrs to
+store a pointer to the current load address of the section. Depending
+whether the section will be loaded or not this is either a pointer into
+purgatory_info->purgatory_buf or kexec_purgatory. This is not only a
+violation of the ELF standard but also makes the code very hard to
+understand as you cannot tell if the memory you are using is read-only or
+not.
 
-On the other hand the purgatory, although an ELF file on its own, is part
-of the kernel. Thus not trusting the purgatory means not trusting the
-kernel build itself.
-
-So remove all validity checks on the purgatory and just trust the kernel
-build.
+Remove this mis-use and store the offset of the section in
+pugaroty_info->purgatory_buf in sh_offset.
 
 Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
 ---
- kernel/kexec_file.c | 14 --------------
- 1 file changed, 14 deletions(-)
+ arch/x86/kernel/machine_kexec_64.c | 10 ++++++----
+ kernel/kexec_file.c                | 33 +++------------------------------
+ 2 files changed, 9 insertions(+), 34 deletions(-)
 
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 6be04e4d4a7e..cf233e878d28 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -457,13 +457,15 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+ 		 * rel[i].r_offset contains byte offset from beginning
+ 		 * of section to the storage unit affected.
+ 		 *
+-		 * This is location to update (->sh_offset). This is temporary
+-		 * buffer where section is currently loaded. This will finally
+-		 * be loaded to a different address later, pointed to by
++		 * This is location to update. This is temporary buffer
++		 * where section is currently loaded. This will finally be
++		 * loaded to a different address later, pointed to by
+ 		 * ->sh_addr. kexec takes care of moving it
+ 		 *  (kexec_load_segment()).
+ 		 */
+-		location = (void *)(section->sh_offset + rel[i].r_offset);
++		location = pi->purgatory_buf;
++		location += section->sh_offset;
++		location += rel[i].r_offset;
+ 
+ 		/* Final address of the location */
+ 		address = section->sh_addr + rel[i].r_offset;
 diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index e5bcd94c1efb..0f044457b40c 100644
+index 746b91e46e34..25b44d1a664a 100644
 --- a/kernel/kexec_file.c
 +++ b/kernel/kexec_file.c
-@@ -880,22 +880,8 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
- 	if (kexec_purgatory_size <= 0)
+@@ -736,28 +736,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+ 	       pi->ehdr->e_shnum * sizeof(Elf_Shdr));
+ 	pi->sechdrs = sechdrs;
+ 
+-	/*
+-	 * We seem to have multiple copies of sections. First copy is which
+-	 * is embedded in kernel in read only section. Some of these sections
+-	 * will be copied to a temporary buffer and relocated. And these
+-	 * sections will finally be copied to their final destination at
+-	 * segment load time.
+-	 *
+-	 * Use ->sh_offset to reflect section address in memory. It will
+-	 * point to original read only copy if section is not allocatable.
+-	 * Otherwise it will point to temporary copy which will be relocated.
+-	 *
+-	 * Use ->sh_addr to contain final address of the section where it
+-	 * will go during execution time.
+-	 */
+-	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+-		if (sechdrs[i].sh_type == SHT_NOBITS)
+-			continue;
+-
+-		sechdrs[i].sh_offset = (unsigned long)pi->ehdr +
+-						sechdrs[i].sh_offset;
+-	}
+-
+ 	offset = 0;
+ 	bss_addr = kbuf->mem + kbuf->bufsz;
+ 	kbuf->image->start = pi->ehdr->e_entry;
+@@ -786,17 +764,12 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+ 			kbuf->image->start += kbuf->mem + offset;
+ 		}
+ 
+-		src = (void *)sechdrs[i].sh_offset;
++		src = (void *)pi->ehdr + sechdrs[i].sh_offset;
+ 		dst = pi->purgatory_buf + offset;
+ 		memcpy(dst, src, sechdrs[i].sh_size);
+ 
+ 		sechdrs[i].sh_addr = kbuf->mem + offset;
+-
+-		/*
+-		 * This section got copied to temporary buffer. Update
+-		 * ->sh_offset accordingly.
+-		 */
+-		sechdrs[i].sh_offset = (unsigned long)dst;
++		sechdrs[i].sh_offset = offset;
+ 		offset += sechdrs[i].sh_size;
+ 	}
+ 
+@@ -1006,7 +979,7 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
  		return -EINVAL;
+ 	}
  
--	if (kexec_purgatory_size < sizeof(Elf_Ehdr))
--		return -ENOEXEC;
--
- 	pi->ehdr = (Elf_Ehdr *)kexec_purgatory;
+-	sym_buf = (char *)sec->sh_offset + sym->st_value;
++	sym_buf = (char *)pi->purgatory_buf + sec->sh_offset + sym->st_value;
  
--	if (memcmp(pi->ehdr->e_ident, ELFMAG, SELFMAG) != 0
--	    || pi->ehdr->e_type != ET_REL
--	    || !elf_check_arch(pi->ehdr)
--	    || pi->ehdr->e_shentsize != sizeof(Elf_Shdr))
--		return -ENOEXEC;
--
--	if (pi->ehdr->e_shoff >= kexec_purgatory_size
--	    || (pi->ehdr->e_shnum * sizeof(Elf_Shdr) >
--	    kexec_purgatory_size - pi->ehdr->e_shoff))
--		return -ENOEXEC;
--
- 	ret = __kexec_load_purgatory(image, min, max, top_down);
- 	if (ret)
- 		return ret;
+ 	if (get_value)
+ 		memcpy((void *)buf, sym_buf, size);
 -- 
 2.13.5
