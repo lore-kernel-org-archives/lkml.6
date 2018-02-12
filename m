@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754205AbeBLQsk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 11:48:40 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53198 "EHLO
+        id S1754222AbeBLQtF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 11:49:05 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37951 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754096AbeBLQsf (ORCPT
+        with ESMTP id S1754017AbeBLQse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 11:48:35 -0500
-X-Google-Smtp-Source: AH8x227A2YRDK4AYxbxjUriHheS34w4sFqAxGW5KkeznkrJdVGVtZLa4EPLjWYMXPMEbcTPGq3lBzg==
+        Mon, 12 Feb 2018 11:48:34 -0500
+X-Google-Smtp-Source: AH8x226rFUfD7R80MW35oTnI06hyh7i5WHhYFJDjrpaJrtwzIBgiy/LCZWjAfHnH4fgXkHNazPrb8w==
 From: Dmitry Safonov <dima@arista.com>
 To: linux-kernel@vger.kernel.org
 Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
@@ -15,9 +15,9 @@ Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
         David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
         Joerg Roedel <joro@8bytes.org>, Lu Baolu <baolu.lu@linux.intel.com>,
         iommu@lists.linux-foundation.org
-Subject: [PATCHv2 6/6] iommu/intel: Ratelimit each dmar fault printing
-Date: Mon, 12 Feb 2018 16:48:25 +0000
-Message-Id: <20180212164825.22421-7-dima@arista.com>
+Subject: [PATCHv2 5/6] iommu/intel: Rename dmar_fault() => dmar_serve_faults()
+Date: Mon, 12 Feb 2018 16:48:24 +0000
+Message-Id: <20180212164825.22421-6-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180212164825.22421-1-dima@arista.com>
 References: <20180212164825.22421-1-dima@arista.com>
@@ -25,87 +25,94 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a ratelimit for printing, but it's incremented each time the
-cpu recives dmar fault interrupt. While one interrupt may signal about
-*many* faults. And delayed to wq dmar fault work might receive even
-more faults to clean, than it was earlier.
-
-Ratelimit each fault printing rather than each time the wq is scheduled.
-
-Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
-
-BUG: spinlock lockup suspected on CPU#0, CliShell/9903
- lock: 0xffffffff81a47440, .magic: dead4ead, .owner: kworker/u16:2/8915, .owner_cpu: 6
-CPU: 0 PID: 9903 Comm: CliShell
-Call Trace:$\n'
-[..] dump_stack+0x65/0x83$\n'
-[..] spin_dump+0x8f/0x94$\n'
-[..] do_raw_spin_lock+0x123/0x170$\n'
-[..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
-[..] uart_chars_in_buffer+0x20/0x4d$\n'
-[..] tty_chars_in_buffer+0x18/0x1d$\n'
-[..] n_tty_poll+0x1cb/0x1f2$\n'
-[..] tty_poll+0x5e/0x76$\n'
-[..] do_select+0x363/0x629$\n'
-[..] compat_core_sys_select+0x19e/0x239$\n'
-[..] compat_SyS_select+0x98/0xc0$\n'
-[..] sysenter_dispatch+0x7/0x25$\n'
-[..]
-NMI backtrace for cpu 6
-CPU: 6 PID: 8915 Comm: kworker/u16:2
-Workqueue: dmar_fault dmar_fault_work
-Call Trace:$\n'
-[..] wait_for_xmitr+0x26/0x8f$\n'
-[..] serial8250_console_putchar+0x1c/0x2c$\n'
-[..] uart_console_write+0x40/0x4b$\n'
-[..] serial8250_console_write+0xe6/0x13f$\n'
-[..] call_console_drivers.constprop.13+0xce/0x103$\n'
-[..] console_unlock+0x1f8/0x39b$\n'
-[..] vprintk_emit+0x39e/0x3e6$\n'
-[..] printk+0x4d/0x4f$\n'
-[..] dmar_fault+0x1a8/0x1fc$\n'
-[..] dmar_fault_work+0x15/0x17$\n'
-[..] process_one_work+0x1e8/0x3a9$\n'
-[..] worker_thread+0x25d/0x345$\n'
-[..] kthread+0xea/0xf2$\n'
-[..] ret_from_fork+0x58/0x90$\n'
+Fix the return value, parameters and a bit better naming.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/iommu/dmar.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/iommu/dmar.c                | 8 +++-----
+ drivers/iommu/intel-iommu.c         | 2 +-
+ drivers/iommu/intel_irq_remapping.c | 2 +-
+ include/linux/dmar.h                | 2 +-
+ 4 files changed, 6 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 37a1147a7592..7df69f410589 100644
+index 34a53aeede38..37a1147a7592 100644
 --- a/drivers/iommu/dmar.c
 +++ b/drivers/iommu/dmar.c
-@@ -1640,17 +1640,14 @@ void dmar_serve_faults(struct intel_iommu *iommu)
+@@ -1635,9 +1635,8 @@ static void clear_primary_faults(struct intel_iommu *iommu)
+ }
+ 
+ #define PRIMARY_FAULT_REG_LEN (16)
+-irqreturn_t dmar_fault(int irq, void *dev_id)
++void dmar_serve_faults(struct intel_iommu *iommu)
+ {
+-	struct intel_iommu *iommu = dev_id;
  	int reg, fault_index;
  	u32 fault_status;
  	unsigned long flag;
--	bool ratelimited;
- 	static DEFINE_RATELIMIT_STATE(rs,
- 				      DEFAULT_RATELIMIT_INTERVAL,
- 				      DEFAULT_RATELIMIT_BURST);
+@@ -1706,14 +1705,13 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
  
--	/* Disable printing, simply clear the fault when ratelimited */
--	ratelimited = !__ratelimit(&rs);
+ unlock_exit:
+ 	raw_spin_unlock_irqrestore(&iommu->register_lock, flag);
+-	return IRQ_HANDLED;
+ }
  
- 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
- 	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
--	if (fault_status && !ratelimited)
-+	if (fault_status && __ratelimit(&rs))
- 		pr_err("DRHD: handling fault status reg %x\n", fault_status);
+ static void dmar_fault_work(struct work_struct *work)
+ {
+ 	struct fault *fault = container_of(work, struct fault, work);
  
- 	/* TBD: ignore advanced fault log currently */
-@@ -1660,6 +1657,8 @@ void dmar_serve_faults(struct intel_iommu *iommu)
- 	fault_index = dma_fsts_fault_record_index(fault_status);
- 	reg = cap_fault_reg_offset(iommu->cap);
- 	while (1) {
-+		/* Disable printing, simply clear the fault when ratelimited */
-+		bool ratelimited = __ratelimit(&rs);
- 		u8 fault_reason;
- 		u16 source_id;
- 		u64 guest_addr;
+-	dmar_fault(-1, (void*)fault->iommu);
++	dmar_serve_faults(fault->iommu);
+ }
+ 
+ static irqreturn_t dmar_fault_handler(int irq, void *dev_id)
+@@ -1786,7 +1784,7 @@ int __init enable_drhd_fault_handling(void)
+ 		/*
+ 		 * Clear any previous faults.
+ 		 */
+-		dmar_fault(iommu->irq, iommu);
++		dmar_serve_faults(iommu);
+ 		fault_status = readl(iommu->reg + DMAR_FSTS_REG);
+ 		writel(fault_status, iommu->reg + DMAR_FSTS_REG);
+ 	}
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 64ad9786f5b9..3b55376b3b46 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -3015,7 +3015,7 @@ static void intel_iommu_init_qi(struct intel_iommu *iommu)
+ 		/*
+ 		 * Clear any previous faults.
+ 		 */
+-		dmar_fault(-1, iommu);
++		dmar_serve_faults(iommu);
+ 		/*
+ 		 * Disable queued invalidation if supported and already enabled
+ 		 * before OS handover.
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index 66f69af2c219..0958fdc76564 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -558,7 +558,7 @@ static int intel_setup_irq_remapping(struct intel_iommu *iommu)
+ 		/*
+ 		 * Clear previous faults.
+ 		 */
+-		dmar_fault(-1, iommu);
++		dmar_serve_faults(iommu);
+ 		dmar_disable_qi(iommu);
+ 
+ 		if (dmar_enable_qi(iommu)) {
+diff --git a/include/linux/dmar.h b/include/linux/dmar.h
+index 5de4932a6ad8..6e9a5e4ac73a 100644
+--- a/include/linux/dmar.h
++++ b/include/linux/dmar.h
+@@ -280,7 +280,7 @@ extern void dmar_msi_mask(struct irq_data *data);
+ extern void dmar_msi_read(int irq, struct msi_msg *msg);
+ extern void dmar_msi_write(int irq, struct msi_msg *msg);
+ extern int dmar_set_interrupt(struct intel_iommu *iommu);
+-extern irqreturn_t dmar_fault(int irq, void *dev_id);
++extern void dmar_serve_faults(struct intel_iommu *iommu);
+ extern int dmar_alloc_hwirq(int id, int node, void *arg);
+ extern void dmar_free_hwirq(int irq);
+ 
 -- 
 2.13.6
