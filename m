@@ -1,143 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933548AbeBLKIT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:08:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37530 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933520AbeBLKIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:08:14 -0500
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
-Subject: [PATCH 09/17] kexec_file: Remove mis-use of sh_offset field
-Date: Mon, 12 Feb 2018 11:07:46 +0100
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
-References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18021210-0040-0000-0000-0000040ECB57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021210-0041-0000-0000-000026128965
-Message-Id: <20180212100754.55121-10-prudo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802120131
+        id S933603AbeBLKIb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:08:31 -0500
+Received: from mga18.intel.com ([134.134.136.126]:33152 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933579AbeBLKI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 05:08:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,501,1511856000";
+   d="scan'208";a="29328242"
+Message-ID: <1518430103.22495.252.camel@linux.intel.com>
+Subject: Re: [PATCH] gpio: merrifield: Delete an error message for a failed
+ memory allocation in mrfld_gpio_probe()
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Date: Mon, 12 Feb 2018 12:08:23 +0200
+In-Reply-To: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
+References: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.3-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code uses the sh_offset field in purgatory_info->sechdrs to
-store a pointer to the current load address of the section. Depending
-whether the section will be loaded or not this is either a pointer into
-purgatory_info->purgatory_buf or kexec_purgatory. This is not only a
-violation of the ELF standard but also makes the code very hard to
-understand as you cannot tell if the memory you are using is read-only or
-not.
+On Sun, 2018-02-11 at 13:42 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 11 Feb 2018 13:30:14 +0100
+> 
+> Omit an extra message for a memory allocation failure in this
+> function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
 
-Remove this mis-use and store the offset of the section in
-pugaroty_info->purgatory_buf in sh_offset.
+Linus, I have no strong opinion here, so, up to you to decide.
 
-Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
----
- arch/x86/kernel/machine_kexec_64.c | 10 ++++++----
- kernel/kexec_file.c                | 33 +++------------------------------
- 2 files changed, 9 insertions(+), 34 deletions(-)
+If you decide this patch to go, 
 
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 6be04e4d4a7e..cf233e878d28 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -457,13 +457,15 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
- 		 * rel[i].r_offset contains byte offset from beginning
- 		 * of section to the storage unit affected.
- 		 *
--		 * This is location to update (->sh_offset). This is temporary
--		 * buffer where section is currently loaded. This will finally
--		 * be loaded to a different address later, pointed to by
-+		 * This is location to update. This is temporary buffer
-+		 * where section is currently loaded. This will finally be
-+		 * loaded to a different address later, pointed to by
- 		 * ->sh_addr. kexec takes care of moving it
- 		 *  (kexec_load_segment()).
- 		 */
--		location = (void *)(section->sh_offset + rel[i].r_offset);
-+		location = pi->purgatory_buf;
-+		location += section->sh_offset;
-+		location += rel[i].r_offset;
- 
- 		/* Final address of the location */
- 		address = section->sh_addr + rel[i].r_offset;
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 746b91e46e34..25b44d1a664a 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -736,28 +736,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 	       pi->ehdr->e_shnum * sizeof(Elf_Shdr));
- 	pi->sechdrs = sechdrs;
- 
--	/*
--	 * We seem to have multiple copies of sections. First copy is which
--	 * is embedded in kernel in read only section. Some of these sections
--	 * will be copied to a temporary buffer and relocated. And these
--	 * sections will finally be copied to their final destination at
--	 * segment load time.
--	 *
--	 * Use ->sh_offset to reflect section address in memory. It will
--	 * point to original read only copy if section is not allocatable.
--	 * Otherwise it will point to temporary copy which will be relocated.
--	 *
--	 * Use ->sh_addr to contain final address of the section where it
--	 * will go during execution time.
--	 */
--	for (i = 0; i < pi->ehdr->e_shnum; i++) {
--		if (sechdrs[i].sh_type == SHT_NOBITS)
--			continue;
--
--		sechdrs[i].sh_offset = (unsigned long)pi->ehdr +
--						sechdrs[i].sh_offset;
--	}
--
- 	offset = 0;
- 	bss_addr = kbuf->mem + kbuf->bufsz;
- 	kbuf->image->start = pi->ehdr->e_entry;
-@@ -786,17 +764,12 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
- 			kbuf->image->start += kbuf->mem + offset;
- 		}
- 
--		src = (void *)sechdrs[i].sh_offset;
-+		src = (void *)pi->ehdr + sechdrs[i].sh_offset;
- 		dst = pi->purgatory_buf + offset;
- 		memcpy(dst, src, sechdrs[i].sh_size);
- 
- 		sechdrs[i].sh_addr = kbuf->mem + offset;
--
--		/*
--		 * This section got copied to temporary buffer. Update
--		 * ->sh_offset accordingly.
--		 */
--		sechdrs[i].sh_offset = (unsigned long)dst;
-+		sechdrs[i].sh_offset = offset;
- 		offset += sechdrs[i].sh_size;
- 	}
- 
-@@ -1006,7 +979,7 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
- 		return -EINVAL;
- 	}
- 
--	sym_buf = (char *)sec->sh_offset + sym->st_value;
-+	sym_buf = (char *)pi->purgatory_buf + sec->sh_offset + sym->st_value;
- 
- 	if (get_value)
- 		memcpy((void *)buf, sym_buf, size);
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpio/gpio-merrifield.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-
+> merrifield.c
+> index dd67a31ac337..eec21122299e 100644
+> --- a/drivers/gpio/gpio-merrifield.c
+> +++ b/drivers/gpio/gpio-merrifield.c
+> @@ -408,10 +408,8 @@ static int mrfld_gpio_probe(struct pci_dev *pdev,
+> const struct pci_device_id *id
+>  	pcim_iounmap_regions(pdev, BIT(1));
+>  
+>  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> -	if (!priv) {
+> -		dev_err(&pdev->dev, "can't allocate chip data\n");
+> +	if (!priv)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	priv->dev = &pdev->dev;
+>  	priv->reg_base = pcim_iomap_table(pdev)[0];
+
 -- 
-2.13.5
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
