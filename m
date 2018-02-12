@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935357AbeBLNSP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:18:15 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38499 "EHLO
+        id S935379AbeBLNSc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:18:32 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43145 "EHLO
         mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935318AbeBLNSL (ORCPT
+        with ESMTP id S935350AbeBLNSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:18:11 -0500
-X-Google-Smtp-Source: AH8x227iq01qNn548pq+RF+sGvpMf0EQ1YmuQbLcwauNR5IKgMix2CmXwdzqQ2dwSsE8I/hVIai4xw==
+        Mon, 12 Feb 2018 08:18:15 -0500
+X-Google-Smtp-Source: AH8x225fZaQKizZ/cbZvEN0pPSwbEVPWDBeBdSDFzV1bCyc/4X65Z8x+ztPg5PkUSMxrb7zwSfc90g==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org
-Subject: [PATCH 19/21] regulator: fixed/gpio: Update device tree bindings
-Date: Mon, 12 Feb 2018 14:17:15 +0100
-Message-Id: <20180212131717.27193-20-linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 21/21] regulator: gpio: Simplify probe path
+Date: Mon, 12 Feb 2018 14:17:17 +0100
+Message-Id: <20180212131717.27193-22-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -22,72 +22,149 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deprecate the open drain binding for fixed regulator and indicate
-that we prefer this to be passed in the GPIO phandle flags.
+Use devm_* managed device resources and create a local
+struct device *dev variable to simplify the code inside
+probe().
 
-Clarify that the line inversion semantics for fixed and GPIO
-regulators completely overrides the active low flags in the
-phandle flags.
-
-Unfortunately this can not be changed to prefer that we pass
-the flags in the phandle: the bindings have been specified and
-deployed such that the presence/absence of this flag and only
-that controls the line inversion semantics. The crucial semantic
-is that the absence of the flag means the core will assume
-the line is active low, which in GPIO terms is an exception,
-as GPIO lines are normally assumed to be active high.
-
-This special device tree semantic cannot be changed without
-introducing a whole new compatible string for the fixed and
-GPIO regulators, so we just contain the situation.
-
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../devicetree/bindings/regulator/fixed-regulator.txt       | 13 +++++++++++--
- .../devicetree/bindings/regulator/gpio-regulator.txt        |  4 ++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/regulator/gpio-regulator.c | 60 +++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 36 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-index 4fae41d54798..60ce9cb8f891 100644
---- a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-@@ -7,10 +7,19 @@ Optional properties:
- - gpio: gpio to use for enable control
- - startup-delay-us: startup time in microseconds
- - enable-active-high: Polarity of GPIO is Active high
--If this property is missing, the default assumed is Active low.
-+  If this property is missing, the default assumed is Active low.
-+  If the phandle flags to the GPIO handle also flag the line as active
-+  low or high, that will be ignored for fixed regulators and the
-+  presence or absence of this flag solely controls the inversion
-+  semantics.
-+-vin-supply: Input supply name.
-+
-+Deprecated properties:
- - gpio-open-drain: GPIO is open drain type.
-   If this property is missing then default assumption is false.
---vin-supply: Input supply name.
-+  Do not use this property in new device trees: instead use the
-+  phandle flag to indicate to the GPIO provider that the line
-+  should be handled as open drain.
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index aecdd3f211ba..38a283252aaf 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -228,27 +228,28 @@ static struct regulator_ops gpio_regulator_current_ops = {
  
- Any property defined as part of the core regulator
- binding, defined in regulator.txt, can also be used.
-diff --git a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-index dd1ed789728e..06f5cb4af052 100644
---- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-@@ -12,6 +12,10 @@ Optional properties:
- 			  defualt is LOW if nothing is specified.
- - startup-delay-us	: Startup time in microseconds.
- - enable-active-high	: Polarity of GPIO is active high (default is low).
-+			  If the phandle flags to the GPIO handle also flag the line as
-+			  active low or high, that will be ignored for fixed regulators
-+			  and the presence or absence of this flag solely controls the
-+			  inversion semantics.
- - regulator-type	: Specifies what is being regulated, must be either
- 			  "voltage" or "current", defaults to voltage.
+ static int gpio_regulator_probe(struct platform_device *pdev)
+ {
+-	struct gpio_regulator_config *config = dev_get_platdata(&pdev->dev);
+-	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct gpio_regulator_config *config = dev_get_platdata(dev);
++	struct device_node *np = dev->of_node;
+ 	struct gpio_regulator_data *drvdata;
+ 	struct regulator_config cfg = { };
+ 	enum gpiod_flags gflags;
+ 	int ptr, ret, state, i;
  
+-	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
++	drvdata = devm_kzalloc(dev, sizeof(struct gpio_regulator_data),
+ 			       GFP_KERNEL);
+ 	if (drvdata == NULL)
+ 		return -ENOMEM;
+ 
+ 	if (np) {
+-		config = of_get_gpio_regulator_config(&pdev->dev, np,
++		config = of_get_gpio_regulator_config(dev, np,
+ 						      &drvdata->desc);
+ 		if (IS_ERR(config))
+ 			return PTR_ERR(config);
+ 	}
+ 
+ 	for (i = 0; i < config->ngpios; i++) {
+-		drvdata->gpiods[i] = devm_gpiod_get_index(&pdev->dev,
++		drvdata->gpiods[i] = devm_gpiod_get_index(dev,
+ 							  NULL,
+ 							  i,
+ 							  config->gflags[i]);
+@@ -257,21 +258,20 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	}
+ 	drvdata->nr_gpios = config->ngpios;
+ 
+-	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
++	drvdata->desc.name = devm_kstrdup(dev, config->supply_name, GFP_KERNEL);
+ 	if (drvdata->desc.name == NULL) {
+-		dev_err(&pdev->dev, "Failed to allocate supply name\n");
+-		ret = -ENOMEM;
+-		goto err;
++		dev_err(dev, "Failed to allocate supply name\n");
++		return -ENOMEM;
+ 	}
+ 
+-	drvdata->states = kmemdup(config->states,
+-				  config->nr_states *
+-					 sizeof(struct gpio_regulator_state),
+-				  GFP_KERNEL);
++	drvdata->states = devm_kmemdup(dev,
++				       config->states,
++				       config->nr_states *
++				       sizeof(struct gpio_regulator_state),
++				       GFP_KERNEL);
+ 	if (drvdata->states == NULL) {
+-		dev_err(&pdev->dev, "Failed to allocate state data\n");
+-		ret = -ENOMEM;
+-		goto err_name;
++		dev_err(dev, "Failed to allocate state data\n");
++		return -ENOMEM;
+ 	}
+ 	drvdata->nr_states = config->nr_states;
+ 
+@@ -290,9 +290,8 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 		drvdata->desc.ops = &gpio_regulator_current_ops;
+ 		break;
+ 	default:
+-		dev_err(&pdev->dev, "No regulator type set\n");
+-		ret = -EINVAL;
+-		goto err_memstate;
++		dev_err(dev, "No regulator type set\n");
++		return -EINVAL;
+ 	}
+ 
+ 	/* build initial state from gpio init data. */
+@@ -303,7 +302,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	}
+ 	drvdata->state = state;
+ 
+-	cfg.dev = &pdev->dev;
++	cfg.dev = dev;
+ 	cfg.init_data = config->init_data;
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = np;
+@@ -317,29 +316,20 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	else
+ 		gflags = GPIOD_OUT_LOW;
+ 
+-	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
+-	if (IS_ERR(cfg.ena_gpiod)) {
+-		ret = PTR_ERR(cfg.ena_gpiod);
+-		goto err_memstate;
+-	}
++	cfg.ena_gpiod = devm_gpiod_get_optional(dev, "enable", gflags);
++	if (IS_ERR(cfg.ena_gpiod))
++		return PTR_ERR(cfg.ena_gpiod);
+ 
+ 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+-		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+-		goto err_memstate;
++		dev_err(dev, "Failed to register regulator: %d\n", ret);
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, drvdata);
+ 
+ 	return 0;
+-
+-err_memstate:
+-	kfree(drvdata->states);
+-err_name:
+-	kfree(drvdata->desc.name);
+-err:
+-	return ret;
+ }
+ 
+ static int gpio_regulator_remove(struct platform_device *pdev)
+@@ -347,8 +337,6 @@ static int gpio_regulator_remove(struct platform_device *pdev)
+ 	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
+ 
+ 	regulator_unregister(drvdata->dev);
+-	kfree(drvdata->states);
+-	kfree(drvdata->desc.name);
+ 
+ 	return 0;
+ }
 -- 
 2.14.3
