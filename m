@@ -1,116 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933839AbeBLKWS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:22:18 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43377 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932868AbeBLKWQ (ORCPT
+        id S933842AbeBLK2f (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:28:35 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43319 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932868AbeBLK2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:22:16 -0500
-X-Google-Smtp-Source: AH8x224neNJB9kl9xzRvzprJ3vhaUBEWIgocTkmiJGY+W9oImSRy3vMmLm8bL/g0C2h6mfCjPA6Gpg==
-Date: Mon, 12 Feb 2018 11:22:11 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk, peterz@infradead.org
-Cc: linux-tip-commits@vger.kernel.org, Dave Hansen <dave@sr71.net>,
-        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@infradead.org>
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-Message-ID: <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+        Mon, 12 Feb 2018 05:28:33 -0500
+X-Google-Smtp-Source: AH8x226qV5fRtd455FwOg/z0yBvipNqd4AjMVRNMxLxGuNFSY6WnykNpi6Q04swqkJMmUcTv00iMLGCCyMECSYE6Hiw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1518430656-21669-1-git-send-email-geert@linux-m68k.org>
+References: <1518430656-21669-1-git-send-email-geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Feb 2018 11:28:32 +0100
+X-Google-Sender-Auth: AFSACDQWv1c8ykXuoGRhO-vXsFA
+Message-ID: <CAMuHMdW5qRH93CMyRL-gbWgiA_rnizErbjNtSMT5b3d58N3ZTQ@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.16-rc1
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Jose Ricardo Ziviani <joserz@linux.vnet.ibm.com>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Rob Gardner <rob.gardner@oracle.com>,
+        sparclinux <sparclinux@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        adi-buildroot-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 12, 2018 at 11:17 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Below is the list of build error/warning regressions/improvements in
+> v4.16-rc1[1] compared to v4.15[2].
+>
+> Summarized:
+>   - build errors: +13/-5
+>   - build warnings: +1653/-1537
+>
+> Note that there may be false regressions, as some logs are incomplete.
+> Still, they're build errors/warnings.
+>
+> Happy fixing! ;-)
+>
+> Thanks to the linux-next team for providing the build service.
+>
+> [1] http://kisskb.ellerman.id.au/kisskb/head/7928b2cbe55b2a410a0f5c1f154610059c57b1b2/ (all 273 configs)
+> [2] http://kisskb.ellerman.id.au/kisskb/head/d8a5b80568a9cb66810e75b182018e9edb68e8ff/ (271 out of 273 configs)
+>
+>
+> *** ERRORS ***
+>
+> 13 error regressions:
+>   + /home/kisskb/slave/src/arch/powerpc/kvm/powerpc.c: error: 'emulated' may be used uninitialized in this function [-Werror=uninitialized]:  => 1361:2
 
-* tip-bot for David Woodhouse <tipbot@zytor.com> wrote:
+Lots of powerpc configs
 
-> Commit-ID:  670c3e8da87fa4046a55077b1409cf250865a203
-> Gitweb:     https://git.kernel.org/tip/670c3e8da87fa4046a55077b1409cf250865a203
-> Author:     David Woodhouse <dwmw@amazon.co.uk>
-> AuthorDate: Sun, 11 Feb 2018 15:19:19 +0000
-> Committer:  Ingo Molnar <mingo@kernel.org>
-> CommitDate: Sun, 11 Feb 2018 19:44:46 +0100
-> 
-> x86/speculation: Use IBRS if available before calling into firmware
-> 
-> Retpoline means the kernel is safe because it has no indirect branches.
-> But firmware isn't, so use IBRS for firmware calls if it's available.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Link: http://lkml.kernel.org/r/1518362359-1005-1-git-send-email-dwmw@amazon.co.uk
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  arch/x86/include/asm/apm.h           |  6 ++++++
->  arch/x86/include/asm/cpufeatures.h   |  1 +
->  arch/x86/include/asm/efi.h           | 17 +++++++++++++++--
->  arch/x86/include/asm/nospec-branch.h | 37 +++++++++++++++++++++++++++---------
->  arch/x86/kernel/cpu/bugs.c           | 12 +++++++++++-
->  drivers/watchdog/hpwdt.c             |  3 +++
->  6 files changed, 64 insertions(+), 12 deletions(-)
+>   + /home/kisskb/slave/src/drivers/net/ethernet/intel/i40e/i40e_ethtool.c: error: implicit declaration of function 'cmpxchg64' [-Werror=implicit-function-declaration]:  => 4443:6, 4443:2
 
-> --- a/arch/x86/include/asm/nospec-branch.h
-> +++ b/arch/x86/include/asm/nospec-branch.h
+mips{,el}-allmodconfig
 
-> +/*
-> + * With retpoline, we must use IBRS to restrict branch prediction
-> + * before calling into firmware.
-> + */
-> +static inline void firmware_restrict_branch_speculation_start(void)
-> +{
-> +	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
-> +			      X86_FEATURE_USE_IBRS_FW);
-> +}
-> +
-> +static inline void firmware_restrict_branch_speculation_end(void)
-> +{
-> +	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-> +			      X86_FEATURE_USE_IBRS_FW);
+>   + /home/kisskb/slave/src/fs/signalfd.c: error: 'BUS_MCEERR_AR' undeclared (first use in this function):  => 126:26
 
-BTW., there's a detail that only occurred to me today, this enabling/disabling 
-sequence is not NMI safe, and it might be called from NMI context:
+Lots of blackfin configs
 
-> --- a/drivers/watchdog/hpwdt.c
-> +++ b/drivers/watchdog/hpwdt.c
-> @@ -38,6 +38,7 @@
->  #endif /* CONFIG_HPWDT_NMI_DECODING */
->  #include <asm/nmi.h>
->  #include <asm/frame.h>
-> +#include <asm/nospec-branch.h>
->  
->  #define HPWDT_VERSION			"1.4.0"
->  #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
-> @@ -486,11 +487,13 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
->  	if (!hpwdt_nmi_decoding)
->  		return NMI_DONE;
->  
-> +	firmware_restrict_branch_speculation_start();
->  	spin_lock_irqsave(&rom_lock, rom_pl);
->  	if (!die_nmi_called && !is_icru && !is_uefi)
->  		asminline_call(&cmn_regs, cru_rom_addr);
->  	die_nmi_called = 1;
->  	spin_unlock_irqrestore(&rom_lock, rom_pl);
-> +	firmware_restrict_branch_speculation_end();
->  
->  	if (allow_kdump)
->  		hpwdt_stop();
+>   + error: "mdesc_get_property" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
+>   + error: "mdesc_grab" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
+>   + error: "mdesc_node_by_name" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
+>   + error: "mdesc_release" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
+>   + error: "sun4v_ccb_info" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
+>   + error: "sun4v_ccb_kill" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
+>   + error: "sun4v_ccb_submit" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
+>   + error: "sun4v_hvapi_register" [drivers/sbus/char/oradax.ko] undefined!:  => N/A
 
-But ... this is a (comparatively rare) hardware-watchdog tick function, and the 
-chance of racing with say an EFI call seems minuscule. The race will result in an 
-EFI call being performed with speculation enabled, sporadically.
+sparc-allmodconfig (i.e. sparc32)
 
-Is this something we should worry about?
+>   + error: No rule to make target arch/ia64/kernel/pci-swiotlb.o:  => N/A
 
-Thanks,
+ia64-defconfig (patch availavle)
 
-	Ingo
+>   + error: hotplug-cpu.c: undefined reference to `find_and_online_cpu_nid':  => .text+0x13c)
+
+ppc64le/pseries_le_defconfig
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
