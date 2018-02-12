@@ -1,117 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932894AbeBLGBq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 01:01:46 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35934 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932880AbeBLGBm (ORCPT
+        id S1751209AbeBLGPR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 01:15:17 -0500
+Received: from LGEAMRELO11.lge.com ([156.147.23.51]:60362 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751082AbeBLGPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 01:01:42 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0029960F71
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-From: Vijay Viswanath <vviswana@codeaurora.org>
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com, vviswana@codeaurora.org,
-        Krishna Konda <kkonda@codeaurora.org>
-Subject: [PATCH V2 2/2] mmc: sdhci-msm: support voltage pad switching
-Date: Mon, 12 Feb 2018 11:31:18 +0530
-Message-Id: <1518415278-59062-3-git-send-email-vviswana@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518415278-59062-1-git-send-email-vviswana@codeaurora.org>
-References: <1518415278-59062-1-git-send-email-vviswana@codeaurora.org>
+        Mon, 12 Feb 2018 01:15:16 -0500
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Mon, 12 Feb 2018 15:15:10 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kernel-team@lge.com,
+        rostedt@goodmis.org
+Subject: Re: [PATCH v2] perf ftrace: Fix the buffer size in
+ __write_tracing_file
+Message-ID: <20180212061510.GI31513@sejong>
+References: <1518077600-19615-1-git-send-email-changbin.du@intel.com>
+ <20180212015527.GE31513@sejong>
+ <20180212044815.luulsdte6co5uku4@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180212044815.luulsdte6co5uku4@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krishna Konda <kkonda@codeaurora.org>
+On Mon, Feb 12, 2018 at 12:48:15PM +0800, Du, Changbin wrote:
+> Hi,
+> 
+> On Mon, Feb 12, 2018 at 10:55:27AM +0900, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > On Thu, Feb 08, 2018 at 04:13:20PM +0800, changbin.du@intel.com wrote:
+> > > From: Changbin Du <changbin.du@intel.com>
+> > > 
+> > > The terminal character '\0' should take into account into size of the
+> > > string buffer. Without this fix, the '--graph-funcs', '--nograph-funcs'
+> > > and '--trace-funcs' options didn't work as expected when the <func>
+> > > doesn't exist. If usersapce writes a non-terminated string, the kernel
+> > > side will always return success but actually no filter applied.
+> > > 
+> > > As discussed before, the kernel now support '\0' to mark the end of string:
+> > > https://lkml.org/lkml/2018/1/16/116
+> > > 
+> > > After this fix in userspace, the perf will report correct error state. Also
+> > > let it print an error if reset_tracing_files() fails.
+> > 
+> > But what about old kernels?  IIRC there was an error with this change.
+> >
+> Yes, you're right. I can't find a good compitable change. So what is the compatibilty policy for perf?
+> If it must work with recent kernel, I think the only idea is leave as it was.
 
-The PADs for SD card are dual-voltage that support 3v/1.8v. Those PADs
-have a control signal  (io_pad_pwr_switch/mode18 ) that indicates
-whether the PAD works in 3v or 1.8v.
+It should support *both* of kernels.  I suggest adding a space after
+function name.  You can simply call write(fd, " ", 1) IMHO.
 
-SDHC core on msm platforms should have IO_PAD_PWR_SWITCH bit set/unset
-based on actual voltage used for IO lines. So when power irq is
-triggered for io high or io low, the driver should check the voltages
-supported and set the pad accordingly.
+Thanks,
+Namhyung
 
-Signed-off-by: Krishna Konda <kkonda@codeaurora.org>
-Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
----
- drivers/mmc/host/sdhci-msm.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 5c23e92..96c81df 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -78,6 +78,8 @@
- #define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
- #define CORE_HC_MCLK_SEL_HS400	(3 << 8)
- #define CORE_HC_MCLK_SEL_MASK	(3 << 8)
-+#define CORE_IO_PAD_PWR_SWITCH_EN	(1 << 15)
-+#define CORE_IO_PAD_PWR_SWITCH  (1 << 16)
- #define CORE_HC_SELECT_IN_EN	BIT(18)
- #define CORE_HC_SELECT_IN_HS400	(6 << 19)
- #define CORE_HC_SELECT_IN_MASK	(7 << 19)
-@@ -1109,6 +1111,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 	u32 irq_status, irq_ack = 0;
- 	int retry = 10;
- 	int pwr_state = 0, io_level = 0;
-+	u32 config = 0;
- 
- 
- 	irq_status = readl_relaxed(msm_host->core_mem + CORE_PWRCTL_STATUS);
-@@ -1166,6 +1169,30 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 	 */
- 	writel_relaxed(irq_ack, msm_host->core_mem + CORE_PWRCTL_CTL);
- 
-+	/* Ensure order between core_mem and hc_mem */
-+	mb();
-+	/*
-+	 * We should unset IO PAD PWR switch only if the register write can
-+	 * set IO lines high and the regulator also switches to 3 V.
-+	 * Else, we should keep the IO PAD PWR switch set.
-+	 * This is applicable to certain targets where eMMC vccq supply is only
-+	 * 1.8V. In such targets, even during REQ_IO_HIGH, the IO PAD PWR
-+	 * switch must be kept set to reflect actual regulator voltage. This
-+	 * way, during initialization of controllers with only 1.8V, we will
-+	 * set the IO PAD bit without waiting for a REQ_IO_LOW.
-+	 */
-+	config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+
-+	if ((io_level & REQ_IO_HIGH) && (msm_host->caps_0 & CORE_3_0V_SUPPORT))
-+		config &= ~CORE_IO_PAD_PWR_SWITCH;
-+	else if ((io_level & REQ_IO_LOW) ||
-+			(msm_host->caps_0 & CORE_1_8V_SUPPORT))
-+		config |= CORE_IO_PAD_PWR_SWITCH;
-+
-+	writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-+	/* Ensure IO pad update before any further register read/writes */
-+	mb();
-+
- 	if (pwr_state)
- 		msm_host->curr_pwr_state = pwr_state;
- 	if (io_level)
-@@ -1518,6 +1545,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	}
- 
- 	/*
-+	 * Set the PAD_PWR_SWITCH_EN bit so that the PAD_PWR_SWITCH bit can
-+	 * be used as required later on.
-+	 */
-+	config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+	config |= CORE_IO_PAD_PWR_SWITCH_EN;
-+	writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-+	/*
- 	 * Power on reset state may trigger power irq if previous status of
- 	 * PWRCTL was either BUS_ON or IO_HIGH_V. So before enabling pwr irq
- 	 * interrupt in GIC, any pending power irq interrupt should be
--- 
- Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> > 
+> > 
+> > > 
+> > > The problem:
+> > > $ sudo ./perf ftrace -a --graph-depth 1 --graph-funcs abcdefg
+> > >  0)   0.140 us    |  rcu_all_qs();
+> > >  3)   0.304 us    |  mutex_unlock();
+> > >  0)   0.153 us    |  find_vma();
+> > >  3)   0.088 us    |  __fsnotify_parent();
+> > >  0)   6.145 us    |  handle_mm_fault();
+> > >  3)   0.089 us    |  fsnotify();
+> > >  3)   0.161 us    |  __sb_end_write();
+> > >  3)   0.710 us    |  SyS_close();
+> > >  3)   7.848 us    |  exit_to_usermode_loop();
+> > > 
+> > > On above example, I specified function filter 'abcdefg' but all functions
+> > > are enabled. The expected error is hidden.
+> > > 
+> > > Signed-off-by: Changbin Du <changbin.du@intel.com>
+> > > ---
+> > >  tools/perf/builtin-ftrace.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> > > index 25a42ac..a87e9b3 100644
+> > > --- a/tools/perf/builtin-ftrace.c
+> > > +++ b/tools/perf/builtin-ftrace.c
+> > > @@ -69,7 +69,7 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
+> > >  {
+> > >  	char *file;
+> > >  	int fd, ret = -1;
+> > > -	ssize_t size = strlen(val);
+> > > +	ssize_t size = strlen(val) + 1;
+> > >  	int flags = O_WRONLY;
+> > >  	char errbuf[512];
+> > >  
+> > > @@ -280,8 +280,10 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+> > >  	signal(SIGCHLD, sig_handler);
+> > >  	signal(SIGPIPE, sig_handler);
+> > >  
+> > > -	if (reset_tracing_files(ftrace) < 0)
+> > > +	if (reset_tracing_files(ftrace) < 0) {
+> > > +		pr_err("failed to reset ftrace\n");
+> > >  		goto out;
+> > > +	}
+> > >  
+> > >  	/* reset ftrace buffer */
+> > >  	if (write_tracing_file("trace", "0") < 0)
+> > > -- 
+> > > 2.7.4
+> > > 
+> 
+> -- 
+> Thanks,
+> Changbin Du
