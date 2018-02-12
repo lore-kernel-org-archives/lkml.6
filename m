@@ -1,470 +1,506 @@
-Return-Path: <prvs=568516f6c=stanislav.nijnikov@wdc.com>
-X-Google-Smtp-Source: AH8x224ARJTED4T77DInGHaSKUKQGFyp/sB/pIujpE04YqtaSZU1OuO9eIIekJLQB4an+SfdcAgg
-ARC-Seal: i=1; a=rsa-sha256; t=1517933193; cv=none;
+Return-Path: <jaegeuk@kernel.org>
+X-Google-Smtp-Source: AH8x2268whmpTzPx/LACArAgpXiZ8IALXzF4v8VJBvbzZPrdoFXfETsVWigbV87fCQC1G00XvG6S
+ARC-Seal: i=1; a=rsa-sha256; t=1518397563; cv=none;
         d=google.com; s=arc-20160816;
-        b=QjMeUI6aibLClynV03MTij7o7q+krD+ktAI9uGcTjM8KOj5KV7zZjsBR/MFRglODTG
-         34Shr5GP4R+jQ4rzFDPx5CfuQ2oLyevju2A3UIg3uE8WgaXYE358AHyXA5unY0PMNeiV
-         vNCLOuRuW+N81in8rcTPJwNoe+PYkDD36vd2Bnmc2jI9ASv0+5gdAUyp1RjOaNxB8wxt
-         +F/n7kY585UYnv/aj7TnlK4UfI/I9xrUUCUrjQOoFmbCumQq3QUdFc4z09XYT1aPzqkd
-         3pZb4fm1V5uzjpwJy4f42C7S2jd7w6XTaieroI6VXSiL2cvnDWi7By6CRFE0r3rHK3mo
-         uEoQ==
+        b=KOGyysH2nq312SsGyapNjUBCF+QsxHQwdljd+02nqy6uuZbcYVAqr+7K6ZCbF8/TDg
+         A9GGd4nkNStczc0fRjAxbGhuZWJm/ZHuOhKTSBfK36RJfxzWBVPDAPfmCH0RdAycm/y2
+         ZldfFWcBnAvp6GKtTZk8yLEX8PNw7UmI+Z8BjViqctmKxIL4V5MEtbDFo+4LFkP6o4ms
+         Hh+HoTla2+g6YzPuxLYk8KUKBiHv0jVZWWgHQ1mtXXuiiRDYm2Xmg1uFEyl5+QB9CUMZ
+         RFG2qFe7R/ANxc4fZHzqObPNlN9oYIjHe9hEHX9kBbd+AkQspJNxfcRjl1tDl/Z0yhym
+         PJdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=vXqlx8upMJfRTaeFeHmWPT89yAreWDvmGU935AsNzKY=;
-        b=CJaEIwbJrng4xkIcXUzEj7d2nPrhQRZ8gSJ9G/uE+CvejtaFuQ14lH4w8HA86wAv0A
-         XTQeGuytvpFBHYP+no43dVGE8lIAcQgnTvQUoBm3HSLsEv3pf5x3FaIOHyN4fZVKLbXx
-         jNl54s/nrYzt3++cuqHxRzkxZTwRhn82xVFqDQ8Q5LkU1BswSxbazcqIzpcRtgyJziYH
-         KCjHajBf1Hj5psXaFkGpxWFWQbgN2ZSw1tFbHKNBm8fI/tBBnwzmrWwV75jcayK4pcEd
-         xMRx+FysXS+pXwD63YxB4ThmP/4HCfkkwCwrTn4F3hilQx8rJEtja3lLoQ7OeY9fQVfr
-         NouQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=g+g40GN9JOA5YVSJHXgMBVc0U8Xg3aaSeqd8cHykAtg=;
+        b=VuduTu398lC2SuXwtQVPKZQEcVYHX8FZuQYwoOtxtI4IY/64fz2oubEXmgPcfjRfv3
+         nuL/mCVWBUVYUljk18DeOSp1h5cZt5jQZzWzM8aiyVTQJGtDT2tX1/uX8u+7SITBJUtm
+         ke2eCoQZ6BG9Xm/5/aV525uOaXCeAk7OBSUWKoeLUcdrVy8Q472UrGvrFsIC6Bes+/kX
+         y/3Xfcur8H4EXbCzVcfShEfuI1JCK5DGjBAvscAa5czJbsjTESkds9a7IcOyn5NjEgJI
+         qjgaEwRAcVVs9ZbvjM1nPQIOPoAaZd+Hmqo1+CARLaHvlpwsqF8VDZ2IJHvhDbGGPK37
+         Kn8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=J0j0h5Ya;
-       spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
+       spf=pass (google.com: best guess record for domain of jaegeuk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jaegeuk@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=J0j0h5Ya;
-       spf=pass (google.com: domain of prvs=568516f6c=stanislav.nijnikov@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=568516f6c=stanislav.nijnikov@wdc.com
-X-IronPort-AV: E=Sophos;i="5.46,469,1511798400";
-   d="scan'208";a="167144203"
-From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-To: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	jaegeuk@kernel.org
-Cc: alex.lemberg@wdc.com,
-	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-Subject: [PATCH v5 01/11] scsi: ufs: sysfs: attribute group for existing sysfs entries.
-Date: Tue,  6 Feb 2018 18:06:13 +0200
-Message-Id: <1517933183-30892-2-git-send-email-stanislav.nijnikov@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517933183-30892-1-git-send-email-stanislav.nijnikov@wdc.com>
+       spf=pass (google.com: best guess record for domain of jaegeuk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jaegeuk@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DD921723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Sun, 11 Feb 2018 17:06:02 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org, alex.lemberg@wdc.com
+Subject: Re: [PATCH v5 01/11] scsi: ufs: sysfs: attribute group for existing
+ sysfs entries.
+Message-ID: <20180212010602.GC44666@jaegeuk-macbookpro.roam.corp.google.com>
 References: <1517933183-30892-1-git-send-email-stanislav.nijnikov@wdc.com>
+ <1517933183-30892-2-git-send-email-stanislav.nijnikov@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517933183-30892-2-git-send-email-stanislav.nijnikov@wdc.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591668315913733623?=
-X-GMAIL-MSGID: =?utf-8?q?1591668315913733623?=
+X-GMAIL-MSGID: =?utf-8?q?1592155244204990981?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch introduces attribute group to show existing sysfs entries.
+On 02/06, Stanislav Nijnikov wrote:
+> This patch introduces attribute group to show existing sysfs entries.
+> 
+> Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+> ---
+>  drivers/scsi/ufs/Makefile    |   3 +-
+>  drivers/scsi/ufs/ufs-sysfs.c | 156 +++++++++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufs-sysfs.h |  14 ++++
+>  drivers/scsi/ufs/ufshcd.c    | 156 ++-----------------------------------------
+>  drivers/scsi/ufs/ufshcd.h    |   2 +
+>  5 files changed, 178 insertions(+), 153 deletions(-)
+>  create mode 100644 drivers/scsi/ufs/ufs-sysfs.c
+>  create mode 100644 drivers/scsi/ufs/ufs-sysfs.h
+> 
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 9310c6c..918f579 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -3,6 +3,7 @@
+>  obj-$(CONFIG_SCSI_UFS_DWC_TC_PCI) += tc-dwc-g210-pci.o ufshcd-dwc.o tc-dwc-g210.o
+>  obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-dwc-g210.o
+>  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+> -obj-$(CONFIG_SCSI_UFSHCD) += ufshcd.o
+> +obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+> +ufshcd-core-objs := ufshcd.o ufs-sysfs.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+> diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+> new file mode 100644
+> index 0000000..ce8dcb6
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ufs-sysfs.c
+> @@ -0,0 +1,156 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +// Copyright (C) 2018 Western Digital Corporation
+> +
+> +#include <linux/err.h>
+> +#include <linux/string.h>
+> +
+> +#include "ufs-sysfs.h"
+> +
+> +static const char *ufschd_uic_link_state_to_string(
+> +			enum uic_link_state state)
+> +{
+> +	switch (state) {
+> +	case UIC_LINK_OFF_STATE:	return "OFF";
+> +	case UIC_LINK_ACTIVE_STATE:	return "ACTIVE";
+> +	case UIC_LINK_HIBERN8_STATE:	return "HIBERN8";
+> +	default:			return "UNKNOWN";
+> +	}
+> +}
+> +
+> +static const char *ufschd_ufs_dev_pwr_mode_to_string(
+> +			enum ufs_dev_pwr_mode state)
+> +{
+> +	switch (state) {
+> +	case UFS_ACTIVE_PWR_MODE:	return "ACTIVE";
+> +	case UFS_SLEEP_PWR_MODE:	return "SLEEP";
+> +	case UFS_POWERDOWN_PWR_MODE:	return "POWERDOWN";
+> +	default:			return "UNKNOWN";
+> +	}
+> +}
+> +
+> +static inline ssize_t ufs_sysfs_pm_lvl_store(struct device *dev,
+> +					     struct device_attribute *attr,
+> +					     const char *buf, size_t count,
+> +					     bool rpm)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	unsigned long flags, value;
+> +
+> +	if (kstrtoul(buf, 0, &value))
+> +		return -EINVAL;
+> +
+> +	if (value >= UFS_PM_LVL_MAX)
+> +		return -EINVAL;
+> +
+> +	spin_lock_irqsave(hba->host->host_lock, flags);
+> +	if (rpm)
+> +		hba->rpm_lvl = value;
+> +	else
+> +		hba->spm_lvl = value;
+> +	spin_unlock_irqrestore(hba->host->host_lock, flags);
+> +	return count;
+> +}
+> +
+> +static ssize_t rpm_lvl_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	int curr_len;
+> +	u8 lvl;
+> +
+> +	curr_len = snprintf(buf, PAGE_SIZE,
+> +			    "\nCurrent Runtime PM level [%d] => dev_state [%s] link_state [%s]\n",
+> +			    hba->rpm_lvl,
+> +			    ufschd_ufs_dev_pwr_mode_to_string(
+> +				ufs_pm_lvl_states[hba->rpm_lvl].dev_state),
+> +			    ufschd_uic_link_state_to_string(
+> +				ufs_pm_lvl_states[hba->rpm_lvl].link_state));
 
-Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
----
- drivers/scsi/ufs/Makefile    |   3 +-
- drivers/scsi/ufs/ufs-sysfs.c | 156 +++++++++++++++++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs-sysfs.h |  14 ++++
- drivers/scsi/ufs/ufshcd.c    | 156 ++-----------------------------------------
- drivers/scsi/ufs/ufshcd.h    |   2 +
- 5 files changed, 178 insertions(+), 153 deletions(-)
- create mode 100644 drivers/scsi/ufs/ufs-sysfs.c
- create mode 100644 drivers/scsi/ufs/ufs-sysfs.h
+If there is no objection regarding to backward compatibility, can we also
+clean this up by adding multiple entries having single string each, as Greg
+recommended?
 
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 9310c6c..918f579 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -3,6 +3,7 @@
- obj-$(CONFIG_SCSI_UFS_DWC_TC_PCI) += tc-dwc-g210-pci.o ufshcd-dwc.o tc-dwc-g210.o
- obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-dwc-g210.o
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
--obj-$(CONFIG_SCSI_UFSHCD) += ufshcd.o
-+obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
-+ufshcd-core-objs := ufshcd.o ufs-sysfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-new file mode 100644
-index 0000000..ce8dcb6
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// Copyright (C) 2018 Western Digital Corporation
-+
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#include "ufs-sysfs.h"
-+
-+static const char *ufschd_uic_link_state_to_string(
-+			enum uic_link_state state)
-+{
-+	switch (state) {
-+	case UIC_LINK_OFF_STATE:	return "OFF";
-+	case UIC_LINK_ACTIVE_STATE:	return "ACTIVE";
-+	case UIC_LINK_HIBERN8_STATE:	return "HIBERN8";
-+	default:			return "UNKNOWN";
-+	}
-+}
-+
-+static const char *ufschd_ufs_dev_pwr_mode_to_string(
-+			enum ufs_dev_pwr_mode state)
-+{
-+	switch (state) {
-+	case UFS_ACTIVE_PWR_MODE:	return "ACTIVE";
-+	case UFS_SLEEP_PWR_MODE:	return "SLEEP";
-+	case UFS_POWERDOWN_PWR_MODE:	return "POWERDOWN";
-+	default:			return "UNKNOWN";
-+	}
-+}
-+
-+static inline ssize_t ufs_sysfs_pm_lvl_store(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count,
-+					     bool rpm)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	unsigned long flags, value;
-+
-+	if (kstrtoul(buf, 0, &value))
-+		return -EINVAL;
-+
-+	if (value >= UFS_PM_LVL_MAX)
-+		return -EINVAL;
-+
-+	spin_lock_irqsave(hba->host->host_lock, flags);
-+	if (rpm)
-+		hba->rpm_lvl = value;
-+	else
-+		hba->spm_lvl = value;
-+	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	return count;
-+}
-+
-+static ssize_t rpm_lvl_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	int curr_len;
-+	u8 lvl;
-+
-+	curr_len = snprintf(buf, PAGE_SIZE,
-+			    "\nCurrent Runtime PM level [%d] => dev_state [%s] link_state [%s]\n",
-+			    hba->rpm_lvl,
-+			    ufschd_ufs_dev_pwr_mode_to_string(
-+				ufs_pm_lvl_states[hba->rpm_lvl].dev_state),
-+			    ufschd_uic_link_state_to_string(
-+				ufs_pm_lvl_states[hba->rpm_lvl].link_state));
-+
-+	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+			     "\nAll available Runtime PM levels info:\n");
-+	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				     "\tRuntime PM level [%d] => dev_state [%s] link_state [%s]\n",
-+				    lvl,
-+				    ufschd_ufs_dev_pwr_mode_to_string(
-+					ufs_pm_lvl_states[lvl].dev_state),
-+				    ufschd_uic_link_state_to_string(
-+					ufs_pm_lvl_states[lvl].link_state));
-+
-+	return curr_len;
-+}
-+
-+static ssize_t rpm_lvl_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t count)
-+{
-+	return ufs_sysfs_pm_lvl_store(dev, attr, buf, count, true);
-+}
-+
-+static ssize_t spm_lvl_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	int curr_len;
-+	u8 lvl;
-+
-+	curr_len = snprintf(buf, PAGE_SIZE,
-+			    "\nCurrent System PM level [%d] => dev_state [%s] link_state [%s]\n",
-+			    hba->spm_lvl,
-+			    ufschd_ufs_dev_pwr_mode_to_string(
-+				ufs_pm_lvl_states[hba->spm_lvl].dev_state),
-+			    ufschd_uic_link_state_to_string(
-+				ufs_pm_lvl_states[hba->spm_lvl].link_state));
-+
-+	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+			     "\nAll available System PM levels info:\n");
-+	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				     "\tSystem PM level [%d] => dev_state [%s] link_state [%s]\n",
-+				    lvl,
-+				    ufschd_ufs_dev_pwr_mode_to_string(
-+					ufs_pm_lvl_states[lvl].dev_state),
-+				    ufschd_uic_link_state_to_string(
-+					ufs_pm_lvl_states[lvl].link_state));
-+
-+	return curr_len;
-+}
-+
-+static ssize_t spm_lvl_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t count)
-+{
-+	return ufs_sysfs_pm_lvl_store(dev, attr, buf, count, false);
-+}
-+
-+static DEVICE_ATTR_RW(rpm_lvl);
-+static DEVICE_ATTR_RW(spm_lvl);
-+
-+static struct attribute *ufs_sysfs_ufshcd_attrs[] = {
-+	&dev_attr_rpm_lvl.attr,
-+	&dev_attr_spm_lvl.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group ufs_sysfs_default_group = {
-+	.attrs = ufs_sysfs_ufshcd_attrs,
-+};
-+
-+static const struct attribute_group *ufs_sysfs_groups[] = {
-+	&ufs_sysfs_default_group,
-+	NULL,
-+};
-+
-+void ufs_sysfs_add_nodes(struct device *dev)
-+{
-+	int ret;
-+
-+	ret = sysfs_create_groups(&dev->kobj, ufs_sysfs_groups);
-+	if (ret)
-+		dev_err(dev,
-+			"%s: sysfs groups creation failed (err = %d)\n",
-+			__func__, ret);
-+}
-+
-+void ufs_sysfs_remove_nodes(struct device *dev)
-+{
-+	sysfs_remove_groups(&dev->kobj, ufs_sysfs_groups);
-+}
-diff --git a/drivers/scsi/ufs/ufs-sysfs.h b/drivers/scsi/ufs/ufs-sysfs.h
-new file mode 100644
-index 0000000..4a984ca
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-sysfs.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0-only
-+ * Copyright (C) 2018 Western Digital Corporation
-+ */
-+
-+#ifndef __UFS_SYSFS_H__
-+#define __UFS_SYSFS_H__
-+
-+#include <linux/sysfs.h>
-+
-+#include "ufshcd.h"
-+
-+void ufs_sysfs_add_nodes(struct device *dev);
-+void ufs_sysfs_remove_nodes(struct device *dev);
-+#endif
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index a355d98..e7621a0a 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -44,6 +44,7 @@
- #include "ufshcd.h"
- #include "ufs_quirks.h"
- #include "unipro.h"
-+#include "ufs-sysfs.h"
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/ufs.h>
-@@ -150,7 +151,7 @@ enum {
- #define ufshcd_is_ufs_dev_poweroff(h) \
- 	((h)->curr_dev_pwr_mode == UFS_POWERDOWN_PWR_MODE)
- 
--static struct ufs_pm_lvl_states ufs_pm_lvl_states[] = {
-+struct ufs_pm_lvl_states ufs_pm_lvl_states[] = {
- 	{UFS_ACTIVE_PWR_MODE, UIC_LINK_ACTIVE_STATE},
- 	{UFS_ACTIVE_PWR_MODE, UIC_LINK_HIBERN8_STATE},
- 	{UFS_SLEEP_PWR_MODE, UIC_LINK_ACTIVE_STATE},
-@@ -813,28 +814,6 @@ static inline bool ufshcd_is_hba_active(struct ufs_hba *hba)
- 		? false : true;
- }
- 
--static const char *ufschd_uic_link_state_to_string(
--			enum uic_link_state state)
--{
--	switch (state) {
--	case UIC_LINK_OFF_STATE:	return "OFF";
--	case UIC_LINK_ACTIVE_STATE:	return "ACTIVE";
--	case UIC_LINK_HIBERN8_STATE:	return "HIBERN8";
--	default:			return "UNKNOWN";
--	}
--}
--
--static const char *ufschd_ufs_dev_pwr_mode_to_string(
--			enum ufs_dev_pwr_mode state)
--{
--	switch (state) {
--	case UFS_ACTIVE_PWR_MODE:	return "ACTIVE";
--	case UFS_SLEEP_PWR_MODE:	return "SLEEP";
--	case UFS_POWERDOWN_PWR_MODE:	return "POWERDOWN";
--	default:			return "UNKNOWN";
--	}
--}
--
- u32 ufshcd_get_local_unipro_ver(struct ufs_hba *hba)
- {
- 	/* HCI version 1.0 and 1.1 supports UniPro 1.41 */
-@@ -7585,133 +7564,6 @@ int ufshcd_runtime_idle(struct ufs_hba *hba)
- }
- EXPORT_SYMBOL(ufshcd_runtime_idle);
- 
--static inline ssize_t ufshcd_pm_lvl_store(struct device *dev,
--					   struct device_attribute *attr,
--					   const char *buf, size_t count,
--					   bool rpm)
--{
--	struct ufs_hba *hba = dev_get_drvdata(dev);
--	unsigned long flags, value;
--
--	if (kstrtoul(buf, 0, &value))
--		return -EINVAL;
--
--	if (value >= UFS_PM_LVL_MAX)
--		return -EINVAL;
--
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (rpm)
--		hba->rpm_lvl = value;
--	else
--		hba->spm_lvl = value;
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
--	return count;
--}
--
--static ssize_t ufshcd_rpm_lvl_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
--{
--	struct ufs_hba *hba = dev_get_drvdata(dev);
--	int curr_len;
--	u8 lvl;
--
--	curr_len = snprintf(buf, PAGE_SIZE,
--			    "\nCurrent Runtime PM level [%d] => dev_state [%s] link_state [%s]\n",
--			    hba->rpm_lvl,
--			    ufschd_ufs_dev_pwr_mode_to_string(
--				ufs_pm_lvl_states[hba->rpm_lvl].dev_state),
--			    ufschd_uic_link_state_to_string(
--				ufs_pm_lvl_states[hba->rpm_lvl].link_state));
--
--	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
--			     "\nAll available Runtime PM levels info:\n");
--	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
--		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
--				     "\tRuntime PM level [%d] => dev_state [%s] link_state [%s]\n",
--				    lvl,
--				    ufschd_ufs_dev_pwr_mode_to_string(
--					ufs_pm_lvl_states[lvl].dev_state),
--				    ufschd_uic_link_state_to_string(
--					ufs_pm_lvl_states[lvl].link_state));
--
--	return curr_len;
--}
--
--static ssize_t ufshcd_rpm_lvl_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t count)
--{
--	return ufshcd_pm_lvl_store(dev, attr, buf, count, true);
--}
--
--static void ufshcd_add_rpm_lvl_sysfs_nodes(struct ufs_hba *hba)
--{
--	hba->rpm_lvl_attr.show = ufshcd_rpm_lvl_show;
--	hba->rpm_lvl_attr.store = ufshcd_rpm_lvl_store;
--	sysfs_attr_init(&hba->rpm_lvl_attr.attr);
--	hba->rpm_lvl_attr.attr.name = "rpm_lvl";
--	hba->rpm_lvl_attr.attr.mode = 0644;
--	if (device_create_file(hba->dev, &hba->rpm_lvl_attr))
--		dev_err(hba->dev, "Failed to create sysfs for rpm_lvl\n");
--}
--
--static ssize_t ufshcd_spm_lvl_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
--{
--	struct ufs_hba *hba = dev_get_drvdata(dev);
--	int curr_len;
--	u8 lvl;
--
--	curr_len = snprintf(buf, PAGE_SIZE,
--			    "\nCurrent System PM level [%d] => dev_state [%s] link_state [%s]\n",
--			    hba->spm_lvl,
--			    ufschd_ufs_dev_pwr_mode_to_string(
--				ufs_pm_lvl_states[hba->spm_lvl].dev_state),
--			    ufschd_uic_link_state_to_string(
--				ufs_pm_lvl_states[hba->spm_lvl].link_state));
--
--	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
--			     "\nAll available System PM levels info:\n");
--	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
--		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
--				     "\tSystem PM level [%d] => dev_state [%s] link_state [%s]\n",
--				    lvl,
--				    ufschd_ufs_dev_pwr_mode_to_string(
--					ufs_pm_lvl_states[lvl].dev_state),
--				    ufschd_uic_link_state_to_string(
--					ufs_pm_lvl_states[lvl].link_state));
--
--	return curr_len;
--}
--
--static ssize_t ufshcd_spm_lvl_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t count)
--{
--	return ufshcd_pm_lvl_store(dev, attr, buf, count, false);
--}
--
--static void ufshcd_add_spm_lvl_sysfs_nodes(struct ufs_hba *hba)
--{
--	hba->spm_lvl_attr.show = ufshcd_spm_lvl_show;
--	hba->spm_lvl_attr.store = ufshcd_spm_lvl_store;
--	sysfs_attr_init(&hba->spm_lvl_attr.attr);
--	hba->spm_lvl_attr.attr.name = "spm_lvl";
--	hba->spm_lvl_attr.attr.mode = 0644;
--	if (device_create_file(hba->dev, &hba->spm_lvl_attr))
--		dev_err(hba->dev, "Failed to create sysfs for spm_lvl\n");
--}
--
--static inline void ufshcd_add_sysfs_nodes(struct ufs_hba *hba)
--{
--	ufshcd_add_rpm_lvl_sysfs_nodes(hba);
--	ufshcd_add_spm_lvl_sysfs_nodes(hba);
--}
--
--static inline void ufshcd_remove_sysfs_nodes(struct ufs_hba *hba)
--{
--	device_remove_file(hba->dev, &hba->rpm_lvl_attr);
--	device_remove_file(hba->dev, &hba->spm_lvl_attr);
--}
--
- /**
-  * ufshcd_shutdown - shutdown routine
-  * @hba: per adapter instance
-@@ -7749,7 +7601,7 @@ EXPORT_SYMBOL(ufshcd_shutdown);
-  */
- void ufshcd_remove(struct ufs_hba *hba)
- {
--	ufshcd_remove_sysfs_nodes(hba);
-+	ufs_sysfs_remove_nodes(hba->dev);
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -7996,7 +7848,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 	ufshcd_set_ufs_dev_active(hba);
- 
- 	async_schedule(ufshcd_async_scan, hba);
--	ufshcd_add_sysfs_nodes(hba);
-+	ufs_sysfs_add_nodes(hba->dev);
- 
- 	return 0;
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 1332e54..53e2779 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -985,4 +985,6 @@ static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
- 		hba->vops->dbg_register_dump(hba);
- }
- 
-+extern struct ufs_pm_lvl_states ufs_pm_lvl_states[];
-+
- #endif /* End of Header */
--- 
-2.7.4
+For example,
+
+/rpm_level
+1
+
+/rpm_dev_state
+ACTIVE
+
+/rpm_link_state
+HIBERN8
+
+/spm_level
+2
+
+/spm_dev_state
+SLEEP
+
+/spm_link_state
+ACTIVE
+
+/avail_dev_states
+0:ACTIVE 1:ACTIVE 2:SLEEP 3:SLEEP 4:POWERDOWN 5:POWERDOWN
+
+/avail_link_states
+0:ACTIVE 1:HIBERN8 2:ACTIVE 3:HIBERN8 4:HIBERN8 5:OFF
+
+Thanks,
+
+> +
+> +	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +			     "\nAll available Runtime PM levels info:\n");
+> +	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
+> +		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +				     "\tRuntime PM level [%d] => dev_state [%s] link_state [%s]\n",
+> +				    lvl,
+> +				    ufschd_ufs_dev_pwr_mode_to_string(
+> +					ufs_pm_lvl_states[lvl].dev_state),
+> +				    ufschd_uic_link_state_to_string(
+> +					ufs_pm_lvl_states[lvl].link_state));
+> +
+> +	return curr_len;
+> +}
+> +
+> +static ssize_t rpm_lvl_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t count)
+> +{
+> +	return ufs_sysfs_pm_lvl_store(dev, attr, buf, count, true);
+> +}
+> +
+> +static ssize_t spm_lvl_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	int curr_len;
+> +	u8 lvl;
+> +
+> +	curr_len = snprintf(buf, PAGE_SIZE,
+> +			    "\nCurrent System PM level [%d] => dev_state [%s] link_state [%s]\n",
+> +			    hba->spm_lvl,
+> +			    ufschd_ufs_dev_pwr_mode_to_string(
+> +				ufs_pm_lvl_states[hba->spm_lvl].dev_state),
+> +			    ufschd_uic_link_state_to_string(
+> +				ufs_pm_lvl_states[hba->spm_lvl].link_state));
+> +
+> +	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +			     "\nAll available System PM levels info:\n");
+> +	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
+> +		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +				     "\tSystem PM level [%d] => dev_state [%s] link_state [%s]\n",
+> +				    lvl,
+> +				    ufschd_ufs_dev_pwr_mode_to_string(
+> +					ufs_pm_lvl_states[lvl].dev_state),
+> +				    ufschd_uic_link_state_to_string(
+> +					ufs_pm_lvl_states[lvl].link_state));
+> +
+> +	return curr_len;
+> +}
+> +
+> +static ssize_t spm_lvl_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t count)
+> +{
+> +	return ufs_sysfs_pm_lvl_store(dev, attr, buf, count, false);
+> +}
+> +
+> +static DEVICE_ATTR_RW(rpm_lvl);
+> +static DEVICE_ATTR_RW(spm_lvl);
+> +
+> +static struct attribute *ufs_sysfs_ufshcd_attrs[] = {
+> +	&dev_attr_rpm_lvl.attr,
+> +	&dev_attr_spm_lvl.attr,
+> +	NULL
+> +};
+> +
+> +static const struct attribute_group ufs_sysfs_default_group = {
+> +	.attrs = ufs_sysfs_ufshcd_attrs,
+> +};
+> +
+> +static const struct attribute_group *ufs_sysfs_groups[] = {
+> +	&ufs_sysfs_default_group,
+> +	NULL,
+> +};
+> +
+> +void ufs_sysfs_add_nodes(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	ret = sysfs_create_groups(&dev->kobj, ufs_sysfs_groups);
+> +	if (ret)
+> +		dev_err(dev,
+> +			"%s: sysfs groups creation failed (err = %d)\n",
+> +			__func__, ret);
+> +}
+> +
+> +void ufs_sysfs_remove_nodes(struct device *dev)
+> +{
+> +	sysfs_remove_groups(&dev->kobj, ufs_sysfs_groups);
+> +}
+> diff --git a/drivers/scsi/ufs/ufs-sysfs.h b/drivers/scsi/ufs/ufs-sysfs.h
+> new file mode 100644
+> index 0000000..4a984ca
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ufs-sysfs.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only
+> + * Copyright (C) 2018 Western Digital Corporation
+> + */
+> +
+> +#ifndef __UFS_SYSFS_H__
+> +#define __UFS_SYSFS_H__
+> +
+> +#include <linux/sysfs.h>
+> +
+> +#include "ufshcd.h"
+> +
+> +void ufs_sysfs_add_nodes(struct device *dev);
+> +void ufs_sysfs_remove_nodes(struct device *dev);
+> +#endif
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index a355d98..e7621a0a 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -44,6 +44,7 @@
+>  #include "ufshcd.h"
+>  #include "ufs_quirks.h"
+>  #include "unipro.h"
+> +#include "ufs-sysfs.h"
+>  
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/ufs.h>
+> @@ -150,7 +151,7 @@ enum {
+>  #define ufshcd_is_ufs_dev_poweroff(h) \
+>  	((h)->curr_dev_pwr_mode == UFS_POWERDOWN_PWR_MODE)
+>  
+> -static struct ufs_pm_lvl_states ufs_pm_lvl_states[] = {
+> +struct ufs_pm_lvl_states ufs_pm_lvl_states[] = {
+>  	{UFS_ACTIVE_PWR_MODE, UIC_LINK_ACTIVE_STATE},
+>  	{UFS_ACTIVE_PWR_MODE, UIC_LINK_HIBERN8_STATE},
+>  	{UFS_SLEEP_PWR_MODE, UIC_LINK_ACTIVE_STATE},
+> @@ -813,28 +814,6 @@ static inline bool ufshcd_is_hba_active(struct ufs_hba *hba)
+>  		? false : true;
+>  }
+>  
+> -static const char *ufschd_uic_link_state_to_string(
+> -			enum uic_link_state state)
+> -{
+> -	switch (state) {
+> -	case UIC_LINK_OFF_STATE:	return "OFF";
+> -	case UIC_LINK_ACTIVE_STATE:	return "ACTIVE";
+> -	case UIC_LINK_HIBERN8_STATE:	return "HIBERN8";
+> -	default:			return "UNKNOWN";
+> -	}
+> -}
+> -
+> -static const char *ufschd_ufs_dev_pwr_mode_to_string(
+> -			enum ufs_dev_pwr_mode state)
+> -{
+> -	switch (state) {
+> -	case UFS_ACTIVE_PWR_MODE:	return "ACTIVE";
+> -	case UFS_SLEEP_PWR_MODE:	return "SLEEP";
+> -	case UFS_POWERDOWN_PWR_MODE:	return "POWERDOWN";
+> -	default:			return "UNKNOWN";
+> -	}
+> -}
+> -
+>  u32 ufshcd_get_local_unipro_ver(struct ufs_hba *hba)
+>  {
+>  	/* HCI version 1.0 and 1.1 supports UniPro 1.41 */
+> @@ -7585,133 +7564,6 @@ int ufshcd_runtime_idle(struct ufs_hba *hba)
+>  }
+>  EXPORT_SYMBOL(ufshcd_runtime_idle);
+>  
+> -static inline ssize_t ufshcd_pm_lvl_store(struct device *dev,
+> -					   struct device_attribute *attr,
+> -					   const char *buf, size_t count,
+> -					   bool rpm)
+> -{
+> -	struct ufs_hba *hba = dev_get_drvdata(dev);
+> -	unsigned long flags, value;
+> -
+> -	if (kstrtoul(buf, 0, &value))
+> -		return -EINVAL;
+> -
+> -	if (value >= UFS_PM_LVL_MAX)
+> -		return -EINVAL;
+> -
+> -	spin_lock_irqsave(hba->host->host_lock, flags);
+> -	if (rpm)
+> -		hba->rpm_lvl = value;
+> -	else
+> -		hba->spm_lvl = value;
+> -	spin_unlock_irqrestore(hba->host->host_lock, flags);
+> -	return count;
+> -}
+> -
+> -static ssize_t ufshcd_rpm_lvl_show(struct device *dev,
+> -		struct device_attribute *attr, char *buf)
+> -{
+> -	struct ufs_hba *hba = dev_get_drvdata(dev);
+> -	int curr_len;
+> -	u8 lvl;
+> -
+> -	curr_len = snprintf(buf, PAGE_SIZE,
+> -			    "\nCurrent Runtime PM level [%d] => dev_state [%s] link_state [%s]\n",
+> -			    hba->rpm_lvl,
+> -			    ufschd_ufs_dev_pwr_mode_to_string(
+> -				ufs_pm_lvl_states[hba->rpm_lvl].dev_state),
+> -			    ufschd_uic_link_state_to_string(
+> -				ufs_pm_lvl_states[hba->rpm_lvl].link_state));
+> -
+> -	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> -			     "\nAll available Runtime PM levels info:\n");
+> -	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
+> -		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> -				     "\tRuntime PM level [%d] => dev_state [%s] link_state [%s]\n",
+> -				    lvl,
+> -				    ufschd_ufs_dev_pwr_mode_to_string(
+> -					ufs_pm_lvl_states[lvl].dev_state),
+> -				    ufschd_uic_link_state_to_string(
+> -					ufs_pm_lvl_states[lvl].link_state));
+> -
+> -	return curr_len;
+> -}
+> -
+> -static ssize_t ufshcd_rpm_lvl_store(struct device *dev,
+> -		struct device_attribute *attr, const char *buf, size_t count)
+> -{
+> -	return ufshcd_pm_lvl_store(dev, attr, buf, count, true);
+> -}
+> -
+> -static void ufshcd_add_rpm_lvl_sysfs_nodes(struct ufs_hba *hba)
+> -{
+> -	hba->rpm_lvl_attr.show = ufshcd_rpm_lvl_show;
+> -	hba->rpm_lvl_attr.store = ufshcd_rpm_lvl_store;
+> -	sysfs_attr_init(&hba->rpm_lvl_attr.attr);
+> -	hba->rpm_lvl_attr.attr.name = "rpm_lvl";
+> -	hba->rpm_lvl_attr.attr.mode = 0644;
+> -	if (device_create_file(hba->dev, &hba->rpm_lvl_attr))
+> -		dev_err(hba->dev, "Failed to create sysfs for rpm_lvl\n");
+> -}
+> -
+> -static ssize_t ufshcd_spm_lvl_show(struct device *dev,
+> -		struct device_attribute *attr, char *buf)
+> -{
+> -	struct ufs_hba *hba = dev_get_drvdata(dev);
+> -	int curr_len;
+> -	u8 lvl;
+> -
+> -	curr_len = snprintf(buf, PAGE_SIZE,
+> -			    "\nCurrent System PM level [%d] => dev_state [%s] link_state [%s]\n",
+> -			    hba->spm_lvl,
+> -			    ufschd_ufs_dev_pwr_mode_to_string(
+> -				ufs_pm_lvl_states[hba->spm_lvl].dev_state),
+> -			    ufschd_uic_link_state_to_string(
+> -				ufs_pm_lvl_states[hba->spm_lvl].link_state));
+> -
+> -	curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> -			     "\nAll available System PM levels info:\n");
+> -	for (lvl = UFS_PM_LVL_0; lvl < UFS_PM_LVL_MAX; lvl++)
+> -		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> -				     "\tSystem PM level [%d] => dev_state [%s] link_state [%s]\n",
+> -				    lvl,
+> -				    ufschd_ufs_dev_pwr_mode_to_string(
+> -					ufs_pm_lvl_states[lvl].dev_state),
+> -				    ufschd_uic_link_state_to_string(
+> -					ufs_pm_lvl_states[lvl].link_state));
+> -
+> -	return curr_len;
+> -}
+> -
+> -static ssize_t ufshcd_spm_lvl_store(struct device *dev,
+> -		struct device_attribute *attr, const char *buf, size_t count)
+> -{
+> -	return ufshcd_pm_lvl_store(dev, attr, buf, count, false);
+> -}
+> -
+> -static void ufshcd_add_spm_lvl_sysfs_nodes(struct ufs_hba *hba)
+> -{
+> -	hba->spm_lvl_attr.show = ufshcd_spm_lvl_show;
+> -	hba->spm_lvl_attr.store = ufshcd_spm_lvl_store;
+> -	sysfs_attr_init(&hba->spm_lvl_attr.attr);
+> -	hba->spm_lvl_attr.attr.name = "spm_lvl";
+> -	hba->spm_lvl_attr.attr.mode = 0644;
+> -	if (device_create_file(hba->dev, &hba->spm_lvl_attr))
+> -		dev_err(hba->dev, "Failed to create sysfs for spm_lvl\n");
+> -}
+> -
+> -static inline void ufshcd_add_sysfs_nodes(struct ufs_hba *hba)
+> -{
+> -	ufshcd_add_rpm_lvl_sysfs_nodes(hba);
+> -	ufshcd_add_spm_lvl_sysfs_nodes(hba);
+> -}
+> -
+> -static inline void ufshcd_remove_sysfs_nodes(struct ufs_hba *hba)
+> -{
+> -	device_remove_file(hba->dev, &hba->rpm_lvl_attr);
+> -	device_remove_file(hba->dev, &hba->spm_lvl_attr);
+> -}
+> -
+>  /**
+>   * ufshcd_shutdown - shutdown routine
+>   * @hba: per adapter instance
+> @@ -7749,7 +7601,7 @@ EXPORT_SYMBOL(ufshcd_shutdown);
+>   */
+>  void ufshcd_remove(struct ufs_hba *hba)
+>  {
+> -	ufshcd_remove_sysfs_nodes(hba);
+> +	ufs_sysfs_remove_nodes(hba->dev);
+>  	scsi_remove_host(hba->host);
+>  	/* disable interrupts */
+>  	ufshcd_disable_intr(hba, hba->intr_mask);
+> @@ -7996,7 +7848,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+>  	ufshcd_set_ufs_dev_active(hba);
+>  
+>  	async_schedule(ufshcd_async_scan, hba);
+> -	ufshcd_add_sysfs_nodes(hba);
+> +	ufs_sysfs_add_nodes(hba->dev);
+>  
+>  	return 0;
+>  
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 1332e54..53e2779 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -985,4 +985,6 @@ static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
+>  		hba->vops->dbg_register_dump(hba);
+>  }
+>  
+> +extern struct ufs_pm_lvl_states ufs_pm_lvl_states[];
+> +
+>  #endif /* End of Header */
+> -- 
+> 2.7.4
