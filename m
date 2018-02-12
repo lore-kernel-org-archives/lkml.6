@@ -1,108 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935545AbeBLNgN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:36:13 -0500
-Received: from smtp-out4.electric.net ([192.162.216.184]:60324 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933917AbeBLNgM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:36:12 -0500
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Denys Vlasenko'" <dvlasenk@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux@dominikbrodowski.net" <linux@dominikbrodowski.net>,
-        "brgerst@gmail.com" <brgerst@gmail.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-tip-commits@vger.kernel.org"
-        <linux-tip-commits@vger.kernel.org>
-Subject: RE: [tip:x86/pti] x86/entry/64: Introduce the PUSH_AND_CLEAN_REGS
- macro
-Thread-Topic: [tip:x86/pti] x86/entry/64: Introduce the PUSH_AND_CLEAN_REGS
- macro
-Thread-Index: AQHTpAWn8ytJURfBkkCmTvx0P6k12KOgxElw
-Date: Mon, 12 Feb 2018 13:36:52 +0000
-Message-ID: <1b5552f1231b4c9b867a17d0c5c594bb@AcuMS.aculab.com>
-References: <20180211104949.12992-5-linux@dominikbrodowski.net>
- <tip-7b7b09f110f06f3c006e9b3f4590f7d9ba91345b@git.kernel.org>
- <22559e63-5b78-21a7-27cd-a985957d5879@redhat.com>
-In-Reply-To: <22559e63-5b78-21a7-27cd-a985957d5879@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        id S935553AbeBLNhP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:37:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932944AbeBLNhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 08:37:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 681E721781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AH8x225oqxcgJ6Y0Bfn1wmxl0lRbvyvPmV8iw9VGHDgPN/Bl6DICLnmK3NBtPU3TJtHIdcWBUlbSGeMvRD4/s3+h66Q=
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <20180212131717.27193-9-linus.walleij@linaro.org>
+References: <20180212131717.27193-1-linus.walleij@linaro.org> <20180212131717.27193-9-linus.walleij@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 12 Feb 2018 14:37:11 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPdUUD_ht=S6Koee_mE+6X+7XMzQs+FTGEhVgc+_LbpMkQ@mail.gmail.com>
+Message-ID: <CAJKOXPdUUD_ht=S6Koee_mE+6X+7XMzQs+FTGEhVgc+_LbpMkQ@mail.gmail.com>
+Subject: Re: [PATCH 08/21] regulator: max77686: Pass descriptor instead of
+ GPIO number
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1CDaJuV008276
 
-From: Denys Vlasenko
-> Sent: 12 February 2018 13:29
-...
-> >
-> > x86/entry/64: Introduce the PUSH_AND_CLEAN_REGS macro
-> >
-> > Those instances where ALLOC_PT_GPREGS_ON_STACK is called just before
-> > SAVE_AND_CLEAR_REGS can trivially be replaced by PUSH_AND_CLEAN_REGS.
-> > This macro uses PUSH instead of MOV and should therefore be faster, at
-> > least on newer CPUs.
-...
-> > Link: http://lkml.kernel.org/r/20180211104949.12992-5-linux@dominikbrodowski.net
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > ---
-> >   arch/x86/entry/calling.h  | 36 ++++++++++++++++++++++++++++++++++++
-> >   arch/x86/entry/entry_64.S |  6 ++----
-> >   2 files changed, 38 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-> > index a05cbb8..57b1b87 100644
-> > --- a/arch/x86/entry/calling.h
-> > +++ b/arch/x86/entry/calling.h
-> > @@ -137,6 +137,42 @@ For 32-bit we have the following conventions - kernel is built with
-> >   	UNWIND_HINT_REGS offset=\offset
-> >   	.endm
-> >
-> > +	.macro PUSH_AND_CLEAR_REGS
-> > +	/*
-> > +	 * Push registers and sanitize registers of values that a
-> > +	 * speculation attack might otherwise want to exploit. The
-> > +	 * lower registers are likely clobbered well before they
-> > +	 * could be put to use in a speculative execution gadget.
-> > +	 * Interleave XOR with PUSH for better uop scheduling:
-> > +	 */
-> > +	pushq   %rdi		/* pt_regs->di */
-> > +	pushq   %rsi		/* pt_regs->si */
-> > +	pushq   %rdx		/* pt_regs->dx */
-> > +	pushq   %rcx		/* pt_regs->cx */
-> > +	pushq   %rax		/* pt_regs->ax */
-> > +	pushq   %r8		/* pt_regs->r8 */
-> > +	xorq    %r8, %r8	/* nospec   r8 */
-> 
-> xorq's are slower than xorl's on Silvermont/Knights Landing.
-> I propose using xorl instead.
+On Mon, Feb 12, 2018 at 2:17 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Instead of passing a global GPIO number, pass a descriptor looked
+> up from the device tree configuration node.
+>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/regulator/max77686-regulator.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
+> index c301f3733475..5ebd06f47e6a 100644
+> --- a/drivers/regulator/max77686-regulator.c
+> +++ b/drivers/regulator/max77686-regulator.c
+> @@ -25,8 +25,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/bug.h>
+>  #include <linux/err.h>
+> -#include <linux/gpio.h>
+> -#include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/driver.h>
+> @@ -90,6 +89,7 @@ enum max77686_ramp_rate {
+>  };
+>
+>  struct max77686_data {
+> +       struct device *dev;
+>         DECLARE_BITMAP(gpio_enabled, MAX77686_REGULATORS);
+>
+>         /* Array indexed by regulator id */
+> @@ -269,16 +269,20 @@ static int max77686_of_parse_cb(struct device_node *np,
+>         case MAX77686_BUCK8:
+>         case MAX77686_BUCK9:
+>         case MAX77686_LDO20 ... MAX77686_LDO22:
+> -               config->ena_gpio = of_get_named_gpio(np,
+> -                                       "maxim,ena-gpios", 0);
+> -               config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+> -               config->ena_gpio_initialized = true;
+> +               config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
+> +                                                               np,
+> +                                                               "maxim,ena",
+> +                                                               0,
+> +                                                               GPIOD_OUT_HIGH,
+> +                                                               "max77686-LDO");
 
-Does using movq to copy the first zero to the other registers make
-the code any faster?
+This is also for bucks so how about naming it "max77686-regulator"?
 
-ISTR mov reg-reg is often implemented as a register rename rather than an
-alu operation.
+> +               if (IS_ERR(config->ena_gpiod))
+> +                       return PTR_ERR(config->ena_gpiod);
 
-	David
+This is not equivalent (although I did not look at previous patches in
+the series). In case of of_get_named_gpio() failure, old code would
+just set ena_gpio to invalid value and the ena-gpio method would not
+be used. All other init data from Device Tree would be parsed.
+
+In new code, failure of devm_gpiod_get_from_of_node() would cause
+error of entire regulator_of_get_init_data() therefore using default
+driver's init data.
+
+This is not a huge difference in practice because both are result of
+bad DT. However discarding entire init data on one property error
+seems quite drastic.
+On the other hand, what would happen on PROBE_DEFER?
+
+Best regards,
+Krzysztof
+
+>                 break;
+>         default:
+>                 return 0;
+>         }
+>
+> -       if (gpio_is_valid(config->ena_gpio)) {
+> +       if (config->ena_gpiod) {
+>                 set_bit(desc->id, max77686->gpio_enabled);
+>
+>                 return regmap_update_bits(config->regmap, desc->enable_reg,
+> @@ -521,6 +525,7 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>         if (!max77686)
+>                 return -ENOMEM;
+>
+> +       max77686->dev = &pdev->dev;
+>         config.dev = iodev->dev;
+>         config.regmap = iodev->regmap;
+>         config.driver_data = max77686;
+> --
+> 2.14.3
+>
