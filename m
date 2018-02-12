@@ -1,32 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934730AbeBLMwQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:52:16 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51380 "EHLO
+        id S934745AbeBLMwd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 07:52:33 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51882 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbeBLMwO (ORCPT
+        with ESMTP id S1750980AbeBLMwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:52:14 -0500
+        Mon, 12 Feb 2018 07:52:31 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org,
-        b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com,
-        lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, m.szyprowski@samsung.com,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: samsung: i2s: Ensure the RCLK rate is properly determined" to the asoc tree
-In-Reply-To: <20180205154403.13520-2-s.nawrocki@samsung.com>
-Message-Id: <E1elDad-0006V3-Vj@debutante>
-Date: Mon, 12 Feb 2018 12:52:11 +0000
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: wm_adsp: Don't init cache from DSP memory if control is write-only" to the asoc tree
+In-Reply-To: <20180205113817.16470-1-rf@opensource.cirrus.com>
+Message-Id: <E1elDau-0006Xq-1z@debutante>
+Date: Mon, 12 Feb 2018 12:52:28 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: i2s: Ensure the RCLK rate is properly determined
+   ASoC: wm_adsp: Don't init cache from DSP memory if control is write-only
 
 has been applied to the asoc tree at
 
@@ -51,55 +47,49 @@ to this mail.
 Thanks,
 Mark
 
->From 647d04f8e07afc7c3b7a42b3ee01a8b28db29631 Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 5 Feb 2018 16:43:56 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Ensure the RCLK rate is properly
- determined
+>From 04ff40a983e864b586f189b4c3503b6f61263643 Mon Sep 17 00:00:00 2001
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Date: Mon, 5 Feb 2018 11:38:17 +0000
+Subject: [PATCH] ASoC: wm_adsp: Don't init cache from DSP memory if control is
+ write-only
 
-If the RCLK mux clock configuration is specified in DT and no set_sysclk()
-callback is used in the sound card driver the sclk_srcrate field will remain
-set to 0, leading to an incorrect PSR divider setting.
-To fix this the frequency value is retrieved from the CLK_I2S_RCLK_SRC clock,
-so the actual RCLK mux selection is taken into account.
+For controls marked write-only don't initialize the cache from the
+content of the DSP memory. We stil need the cache for any new data
+that is written to this control, and we need to return something
+for a read of the ALSA control because most user-side code assumes
+all ALSA controls are readable. The cache is already created zero-
+filled so the only change needed is to skip populating it from
+DSP memory if the control isn't readable.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wm_adsp.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 233f1c9a4b6c..aeba0ae890ea 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -656,8 +656,12 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
- 		tmp |= mod_slave;
- 		break;
- 	case SND_SOC_DAIFMT_CBS_CFS:
--		/* Set default source clock in Master mode */
--		if (i2s->rclk_srcrate == 0)
-+		/*
-+		 * Set default source clock in Master mode, only when the
-+		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
-+		 * clock configuration assigned in DT is not overwritten.
-+		 */
-+		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
- 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
- 							0, SND_SOC_CLOCK_IN);
- 		break;
-@@ -881,6 +885,11 @@ static int config_setup(struct i2s_dai *i2s)
- 		return 0;
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index 66e32f5d2917..0060aeb63a9f 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -1237,9 +1237,16 @@ static int wm_coeff_init_control_caches(struct wm_adsp *dsp)
+ 		if (ctl->flags & WMFW_CTL_FLAG_VOLATILE)
+ 			continue;
  
- 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+		struct clk *rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
-+
-+		if (i2s->rclk_srcrate == 0 && rclksrc && !IS_ERR(rclksrc))
-+			i2s->rclk_srcrate = clk_get_rate(rclksrc);
-+
- 		psr = i2s->rclk_srcrate / i2s->frmclk / rfs;
- 		writel(((psr - 1) << 8) | PSR_PSREN, i2s->addr + I2SPSR);
- 		dev_dbg(&i2s->pdev->dev,
+-		ret = wm_coeff_read_control(ctl, ctl->cache, ctl->len);
+-		if (ret < 0)
+-			return ret;
++		/*
++		 * For readable controls populate the cache from the DSP memory.
++		 * For non-readable controls the cache was zero-filled when
++		 * created so we don't need to do anything.
++		 */
++		if (!ctl->flags || (ctl->flags & WMFW_CTL_FLAG_READABLE)) {
++			ret = wm_coeff_read_control(ctl, ctl->cache, ctl->len);
++			if (ret < 0)
++				return ret;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.16.1
