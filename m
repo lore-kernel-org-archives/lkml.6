@@ -1,76 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751240AbeBLTgx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 14:36:53 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:57040 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeBLTgv (ORCPT
+        id S1751293AbeBLTho (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 14:37:44 -0500
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:52353 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750848AbeBLThn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 14:36:51 -0500
-Date: Mon, 12 Feb 2018 14:36:48 -0500 (EST)
-Message-Id: <20180212.143648.1353355347147054805.davem@davemloft.net>
-To: dvlasenk@redhat.com
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org,
-        linux-decnet-user@lists.sourceforge.net,
-        linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-x25@vger.kernel.org
-Subject: Re: [PATCH v2] net: make getname() functions return length rather
- than use int* parameter
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180212190020.21536-1-dvlasenk@redhat.com>
-References: <20180212190020.21536-1-dvlasenk@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Mon, 12 Feb 2018 14:37:43 -0500
+X-Google-Smtp-Source: AH8x227XAQWqQoMjrUSdvz95oNK5LSIO5l2XAjtRh5G7HG4nja9080Iht4+pShXZrK4HfcRMWc/rKw==
+Subject: Re: [PATCH 1/3] nvme: fix the dangerous reference of namespaces list
+To: Keith Busch <keith.busch@intel.com>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: axboe@fb.com, hch@lst.de, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1518440086-583-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180212192914.GF16255@localhost.localdomain>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <e74e3697-f8d5-7e4c-39d9-eb41196d0c03@grimberg.me>
+Date: Mon, 12 Feb 2018 21:37:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180212192914.GF16255@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denys Vlasenko <dvlasenk@redhat.com>
-Date: Mon, 12 Feb 2018 20:00:20 +0100
 
-> Changes since v1:
-> Added changes in these files:
->     drivers/infiniband/hw/usnic/usnic_transport.c
->     drivers/staging/lustre/lnet/lnet/lib-socket.c
->     drivers/target/iscsi/iscsi_target_login.c
->     drivers/vhost/net.c
->     fs/dlm/lowcomms.c
->     fs/ocfs2/cluster/tcp.c
->     security/tomoyo/network.c
+> Looks good.
 > 
+> Reviewed-by: Keith Busch <keith.busch@intel.com>
 > 
-> Before:
-> All these functions either return a negative error indicator,
-> or store length of sockaddr into "int *socklen" parameter
-> and return zero on success.
-> 
-> "int *socklen" parameter is awkward. For example, if caller does not
-> care, it still needs to provide on-stack storage for the value
-> it does not need.
-> 
-> None of the many FOO_getname() functions of various protocols
-> ever used old value of *socklen. They always just overwrite it.
-> 
-> This change drops this parameter, and makes all these functions, on success,
-> return length of sockaddr. It's always >= 0 and can be differentiated
-> from an error.
-> 
-> Tests in callers are changed from "if (err)" to "if (err < 0)", where needed.
-> 
-> rpc_sockname() lost "int buflen" parameter, since its only use was
-> to be passed to kernel_getsockname() as &buflen and subsequently
-> not used in any way.
-> 
-> Userspace API is not changed.
-> 
->     text    data     bss      dec     hex filename
-> 30108430 2633624  873672 33615726 200ef6e vmlinux.before.o
-> 30108109 2633612  873672 33615393 200ee21 vmlinux.o
-> 
-> Signed-off-by: Denys Vlasenko <dvlasenk@redhat.com>
 
-Applied to net-next, thanks Denys.
+Thanks Keith, appiled to nvme-4.17
