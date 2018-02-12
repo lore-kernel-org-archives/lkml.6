@@ -1,74 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932760AbeBLGAC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 01:00:02 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:50415 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932416AbeBLGAA (ORCPT
+        id S932854AbeBLGBf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 01:01:35 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35690 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932416AbeBLGBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 01:00:00 -0500
-X-Google-Smtp-Source: AH8x226GQ3PJpcrrkxEq3h+pcnq1knExXCtP4HjpzP4A5Hjrg2F57Dfxh9g11gtcYSCEP6Xlfwrcww==
-Date: Mon, 12 Feb 2018 11:29:48 +0530
-From: afzal mohammed <afzal.mohd.ma@gmail.com>
-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        dwmw@amazon.co.uk, peterz@infradead.org
-Cc: linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-Message-ID: <20180212055948.GA3281@afzalpc>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+        Mon, 12 Feb 2018 01:01:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6CF1608BF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
+From: Vijay Viswanath <vviswana@codeaurora.org>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com, vviswana@codeaurora.org
+Subject: [PATCH V2 0/2] mmc: sdhci-msm: Configuring IO_PAD support for sdhci-msm
+Date: Mon, 12 Feb 2018 11:31:16 +0530
+Message-Id: <1518415278-59062-1-git-send-email-vviswana@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+>From the HPG:
+In some platform, SDCC controller can be connected to either an eMMC device or
+an SD card. The PADs for SD card are dual-voltage that support 3v/1.8v. Those
+PADs have a control signal  (io_pad_pwr_switch/mode18 ) that indicates whether
+the PAD works in 3v or 1.8v.
 
-On Sun, Feb 11, 2018 at 11:19:10AM -0800, tip-bot for David Woodhouse wrote:
+For SD usage the default value of this signal is ‘0’, and SD driver changes it
+to ‘1’ as a part of voltage switching sequence.
+For eMMC usage, SW should configure this signal to ‘1’ and supply 1.8v to PADs
+before starting any activity on the eMMC BUS.
 
-> x86/speculation: Use IBRS if available before calling into firmware
-> 
-> Retpoline means the kernel is safe because it has no indirect branches.
-> But firmware isn't, so use IBRS for firmware calls if it's available.
+To set this signal, write the following in the
+SDC1_SDCC_HC_VENDOR_SPECIFIC_FUNC register:
+	HC_IO_PAD_PWR_SWITCH: bit 16
+	HC_IO_PAD_PWR_SWITCH_EN: bit 15
 
-afaui, so only retpoline means still mitigation not enough.
+Changes since v1:
+	Modified comments on io_pad related changes.
+	Split some read+modify+write commands to multiple lines
 
-Also David W has mentioned [1] that even with retpoline, IBPB is also
-required (except Sky Lake).
+Krishna Konda (1):
+  mmc: sdhci-msm: support voltage pad switching
 
-If IBPB & IBRS is not supported by ucode, shouldn't the below indicate
-some thing on the lines of Mitigation not enough ?
+Vijay Viswanath (1):
+  mmc: sdhci-msm: Add support to store supported vdd-io voltages
 
-> -	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-> +	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
->  		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-> +		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
->  		       spectre_v2_module_string());
+ drivers/mmc/host/sdhci-msm.c | 72 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-On 4.16-rc1, w/ GCC 7.3.0,
-
-/sys/devices/system/cpu/vulnerabilities/meltdown:Mitigation: PTI
-/sys/devices/system/cpu/vulnerabilities/spectre_v1:Mitigation: __user pointer sanitization
-/sys/devices/system/cpu/vulnerabilities/spectre_v2:Mitigation: Full generic retpoline
-
-Here for the user (at least for me), it is not clear whether the
-mitigation is enough. In the present system (Ivy Bridge), as ucode
-update is not available, IBPB is not printed along with
-"spectre_v2:Mitigation", so unless i am missing something, till then
-this system should be considered vulnerable, but for a user not
-familiar with details of the issue, it cannot be deduced.
-
-Perhaps an additional status field [OKAY,PARTIAL] to Mitigation in
-sysfs might be helpful. All these changes are in the air for me, this
-is from a user perspective, sorry if my feedback seems idiotic.
-
-afzal
-
-
-[1] lkml.kernel.org/r/1516638426.9521.20.camel@infradead.org
+-- 
+ Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
