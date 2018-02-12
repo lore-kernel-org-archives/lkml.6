@@ -1,33 +1,37 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x227j5IPs+J7hiz+nQBRXwVe1TLpoghtOxG0WiHcns1IRGtjqXw1d28BfBpTxr29uuwa3bTYb
-ARC-Seal: i=1; a=rsa-sha256; t=1518446433; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518449087; cv=none;
         d=google.com; s=arc-20160816;
-        b=gau/MBC7+4PA4MBk8BUYuZ8y5pn69dUEX2TO24wS8ugcgcm2qhCmegQoiFpd7wO9AS
-         EPHo9OrEvKX2Y92/Cfz92JZ90Jav/k1MUHFxncRXJHBYjcMj2LuJx3aDzF/Mc43obNEv
-         SVHaWevJxKPC44wDRERDJUOSnqsGUyYbASnctf4LW7B7vzapKGN0hisMtnKMOxN0ZNHA
-         4iSWiKwlyX9zi1Wtd8SFBjkmWUni/IgzmsHKugjSDnHaz+RHG+GI93egkeKwtuOBg2aN
-         kxoFVUvDtUkTmUO/qIQ5X2dNQjosATBTEa9PbVhzs9rV8mrfjVee3i1lvJKfKSuizHG7
-         H2zw==
+        b=Tay1Vbh4XSqy0H+lZt1T8619RxflnOfpackELUcQsdH6BNEFQpJFQpydYNLNfaWTqv
+         O2+Nk5mVWqVq1ecnSB60TR6vxsCbLnynn1+C+62psxcFr1YhRmHunV8p61a9l9cDdaTN
+         Zake4a2T/Hk5hoE4ARUOXiuN0IIp4FXCsweOq5/o6P6aZGLWgt9BPXwAFdVw2swoi9ZR
+         LShNUWEN686QY7nzhUvWDFo5mYhPy3ZbvgVTQ58btUpde+yocNZzN2QjOOGGmGwoSjoM
+         FhbcQK3olouJJVyO6clmsTlRXT5iW+CbGfOFg9cM1Mdr5qyHMGDPx8E65VzGy53liDVS
+         HCXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=cjOQpHr0mFKTcQWNFzUgns2b3mzRk285hGhHrg7QtPo=;
-        b=WDHW6lJ3wF7mq2GY7GTFofiforFNAvbDpcKOEhqHfj2LA6iSZ0cGBDcDLEQM74bxfz
-         KI36nTHQQK3EtsE5tiNanuVjlifsg2hZL/S/VSnjB7wcr/jFfeSEgu/Rn792nqwIr5El
-         3306SbczDT+nKcqW5Ht+Cpe+eEimRXsNphyo2+mExLt5jdDTDvJNjXVh38jBNV5rokgZ
-         kZnmYEBHrM5DNL+3FRyGiG4WKfjCqnwQ2HLvYSoN+Hgk/85NownX2s/r/0N5+wD2iz8T
-         oz64WFilqtVEQbSRm+IOmrYSynqp5e9zKinegD7KMcJVXOt4I7pylfoGMP1u5kasj5Z/
-         KuCA==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=jNjH+0bCywzYDbmL3NfqGFJxr56/eFgUZcOPy0gRptc=;
+        b=skX96Nd84owpAZm1arnNQlanGvrzG12WqGgiE7PzaX8igjaWvrwWElyrjjldht1WNv
+         MHUnqmP6Fl208KG53sNYGnoWretjTP9LGqnzJIVxn8jOC32FTmPfoFNX/N/uSEQB6qhF
+         uSagNr2K5UF5gfInKk5KMmAUtkJ8qzUGiF3qpkVn0zRKya+oW9BmTrzmyjiE5kvd9unL
+         Y66JC3JM51IQGCju4edlzvSY1rBDraWE8Qyld2UkHggJDMCg8KJSxO7w/z0a99DK6GTX
+         0483eV47KYL1ju8PUf7MYzstDS9WphnSF/jdEDOXDhOkyWggdtI1fPPqenInYc/JZF0j
+         05XQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=OAmLuyRx;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.81 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Dstnh2Cf;
+       dkim=pass header.i=@chromium.org header.s=google header.b=LFywC+Bn;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=OAmLuyRx;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.81 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w1CEeBC2010878
-X-Nifty-SrcIP: [209.85.217.175]
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Dstnh2Cf;
+       dkim=pass header.i=@chromium.org header.s=google header.b=LFywC+Bn;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x225zp7At7JsHuZwAjbtO0RmFjmXmu9vKLQn7AuWW5h/LdxOR4PWCYig/L5RXyB5Nj1SoF88o5NuFTWAhx3UHhoU=
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
+Sender: keescook@google.com
+In-Reply-To: <CAK7LNAQpS6dYBnt_PjL5zrX1=eccSg80khu=WYCjnHNvDiKa3w@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -36,224 +40,74 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
  <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
  <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 12 Feb 2018 23:39:29 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQpS6dYBnt_PjL5zrX1=eccSg80khu=WYCjnHNvDiKa3w@mail.gmail.com>
-Message-ID: <CAK7LNAQpS6dYBnt_PjL5zrX1=eccSg80khu=WYCjnHNvDiKa3w@mail.gmail.com>
+ <CAK7LNAQpS6dYBnt_PjL5zrX1=eccSg80khu=WYCjnHNvDiKa3w@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 12 Feb 2018 07:24:45 -0800
+X-Google-Sender-Auth: b98M03QUeohin780wbQyPAZH_Oo
+Message-ID: <CAGXu5j+7kv=jrg2u7jaxFEXwHoyzDXP_jyKHYA682_BrYuHwQQ@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Kees Cook <keescook@chromium.org>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
+	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592206488042391017?=
+X-GMAIL-MSGID: =?utf-8?q?1592209270251497873?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-12 2:56 GMT+09:00 Kees Cook <keescook@chromium.org>:
+On Mon, Feb 12, 2018 at 6:39 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-02-12 2:56 GMT+09:00 Kees Cook <keescook@chromium.org>:
+>> I think it would work to skip KBUILD_CPPFLAGS right up until it
+>> didn't. Since we have the arch split, we can already add -m32 to the
+>> 32-bit case, etc. However, I worry about interaction with other
+>> selected build options. For example, while retpoline doesn't interact
+>> stack-protector, it's easy to imagine things that might.
 
-> I think it would work to skip KBUILD_CPPFLAGS right up until it
-> didn't. Since we have the arch split, we can already add -m32 to the
-> 32-bit case, etc. However, I worry about interaction with other
-> selected build options. For example, while retpoline doesn't interact
-> stack-protector, it's easy to imagine things that might.
+I want to be sure I clarify: I'm not aware of any negative interaction
+between stack-protector and other options at present. I was just
+trying to think of an illustrative example. I do know we're about to
+get some per-architecture stack protector options (e.g. arm64 using a
+per-process canary instead of global), but I *think* that can be
+handled in the new Kconfig too.
 
+> One ugly solution could be
+> to add one more CC_HAS_ for the combination of the two ?
 
-One ugly solution could be
-to add one more CC_HAS_ for the combination of the two ?
+Yeah, that seems reasonable, but it's a fix after the fact. I guess
+we'll have to see.
 
-
-# If two compiler flags interact, the combination should be checked.
-# Hopefully, we do not have many cases like this...
-config CC_HAS_STACKPROTECTOR_WITH_RETPOLINE
-       option cc_option "-fstackprotector  -mindirect-branch=thunk-extern"
-
-
-
-> (And in thinking about this, does Kconfig know the true $CC in use?
-> i.e. the configured cross compiler, etc?)
-
-
-I was thinking of removing CONFIG_CROSS_COMPILE.
-
-A user can dynamically change CROSS_COMPILE from
-"make menuconfig".
-
-If we continue to support this, $CC changes
-according to CONFIG_CROSS_COMPILE.
-Then, compiler flags must be re-evaluated
-every time a user changes a compiler in use.
-It will introduce much more complexity.
-
-The easiest way would be to import $CC from environment
-and fix the compiler capability before loading Kconfig.
-
-
-
-
-
->>     - How old do you need to go with GCC for -fno-stack-protector to give an
->>       error (i.e., for not even the option to be recognized)? Is it still
->>       warranted to test for it?
+>> (And in thinking about this, does Kconfig know the true $CC in use?
+>> i.e. the configured cross compiler, etc?)
 >
-> Old? That's not the case. The check for -fno-stack-protector will
-> likely be needed forever, as some distro compilers enable
-> stack-protector by default. So when someone wants to explicitly build
-> without stack-protector (or if the compiler's stack-protector is
-> detected as broken), we must force it off for the kernel build.
+> I was thinking of removing CONFIG_CROSS_COMPILE.
 >
->> Adding some CCs who worked on the stack protector test scripts.
->>
->> And yeah, I was assuming that needing support scripts would be rare, and that
->> you'd usually just check whether gcc accepts the flag.
->
-> That would have been nice, yes. :(
->
->> When you Google "gcc broken stack protector", the top hits about are about the
->> scripts/gcc-x86_64-has-stack-protector.sh script in the kernel throwing a false
->> positive by the way (fixed in 82031ea29e45 ("scripts/has-stack-protector: add
->> -fno-PIE")).
->
-> That's just the most recent case (from the case where some distro
-> compilers enabled PIE by default). And was why I was hoping to drop
-> the scripts entirely.
->
->> 2. Whether to hide the Kconfig stack protector alternatives or always show them
->>
->> Or equivalently, whether to automatically fall back on other stack protector
->> alternatives (including no stack protector) if the one specified in the .config
->> isn't available.
->>
->> I'll let you battle this one out. In any case, as a user, I'd want a
->> super-clear message telling me what to change if the build breaks because of
->> missing stack protector support.
->
-> Yes, exactly.
->
-> The reason I built the _AUTO support was to make this easier for
-> people to not have to think about. I wanted to get rid of explicit
-> support (i.e. _REGULAR or _STRONG) but some people didn't want _STRONG
-> (since it has greater code-size impact than _REGULAR), so we've had to
-> keep that too.
->
->> 3. Whether to implement CC_STACKPROTECTOR_AUTO in Kconfig or the Makefiles
->>
->> I'd just go with whatever is simplest here. I don't find the Kconfig version
->> too bad, but I'm already very familiar with Kconfig, so it's harder for me to
->> tell how it looks to other people.
->>
->> I'd add some comments to explain the idea in the final version.
->>
->> @Kees:
->> I was assuming that the Makefiles would error out with a message if none of the
->> CC_STACKPROTECTOR_* variables are set, in addition to the Kconfig warning.
->
-> That doesn't happy either before nor after _AUTO. The default value
-> before was _NONE, and the default value after is _AUTO, which will use
-> whatever is available.
->
->> You could offload part of that check to Kconfig with something like
->>
->>         config CHOSEN_CC_STACKPROTECTOR_AVAILABLE
->>                 def_bool CC_STACKPROTECTOR_STRONG || \
->>                          CC_STACKPROTECTOR_REGULAR || \
->>                          CC_STACKPROTECTOR_NONE
->>
->> CHOSEN_STACKPROTECTOR_AVAILABLE could then be checked in the Makefile.
->> It has the advantage of making the constraint clear in the Kconfig file
->> at least.
->>
->> You could add some kind of assert feature to Kconfig too, but IMO it's not
->> warranted purely for one-offs like this at least.
->
-> Agreed; I want to do whatever we can to simplify things. :)
->
->> That's details though. I'd want to explain it with a comment in any case if we
->> go with something like this, since it's slightly kludgy and subtle
->> (CC_STACKPROTECTOR_{STRONG,REGULAR,NONE} form a kind of choice, only you can't
->> express it like that directly, since it's derived from other symbols).
->>
->>
->> Here's an overview of the current Kconfig layout by the way, assuming
->> the old no-fallback behavior and CC_STACKPROTECTOR_AUTO being
->> implemented in Kconfig:
->>
->>         # Feature tests
->>         CC_HAS_STACKPROTECTOR_STRONG
->>         CC_HAS_STACKPROTECTOR_REGULAR
->>         CC_HAS_STACKPROTECTOR_NONE
->
-> As long as the feature tests include actual compiler output tests,
-> yeah, this seems fine.
->
->>         # User request
->>         WANT_CC_STACKPROTECTOR_AUTO
->>         WANT_CC_STACKPROTECTOR_STRONG
->>         WANT_CC_STACKPROTECTOR_REGULAR
->>         WANT_CC_STACKPROTECTOR_NONE
->>
->>         # The actual "output" to the Makefiles
->>         CC_STACKPROTECTOR_STRONG
->>         CC_STACKPROTECTOR_REGULAR
->>         CC_STACKPROTECTOR_NONE
->
-> This should be fine too (though by this point, I think Kconfig would
-> already know the specific option, so it could just pass it with a
-> single output (CC_OPT_STACKPROTECTOR below?)
->
->>         # Some possible output "nicities"
->>         CHOSEN_CC_STACKPROTECTOR_AVAILABLE
->>         CC_OPT_STACKPROTECTOR
->>
->> Does anyone have objections to the naming or other things? I saw some
->> references to "Santa's wish list" in messages of commits that dealt with other
->> variables named WANT_*, though I didn't look into those cases. ;)
->
-> Another case I mentioned before that I just want to make sure we don't
-> reintroduce the problem of getting "stuck" with a bad .config file.
-> While adding _STRONG support, I discovered the two-phase Kconfig
-> resolution that happens during the build. If you selected _STRONG with
-> a strong-capable compiler, everything was fine. If you then tried to
-> build with an older compiler, you'd get stuck since _STRONG wasn't
-> support (as detected during the first Kconfig phase) so the
-> generated/autoconf.h would never get updated with the newly selected
-> _REGULAR). I moved the Makefile analysis of available stack-protector
-> options into the second phase (i.e. after all the Kconfig runs), and
-> that worked to both unstick such configs and provide a clear message
-> early in the build about what wasn't available.
->
-> If all this detection is getting moved up into Kconfig, I'm worried
-> we'll end up in this state again. If the answer is "you have to delete
-> autoconf.h if you change compilers", then that's fine, but it sure
-> seems unfriendly. :)
->
+> A user can dynamically change CROSS_COMPILE from
+> "make menuconfig".
 
-As Ulf explained, this does not happen.
+Most builds I've seen implement cross compilers as an environment
+variable during all "make" invocations.
 
-include/config/auto.conf and include/generated/autoconf.h
-are the mirror of the .config.
+> If we continue to support this, $CC changes
+> according to CONFIG_CROSS_COMPILE.
+> Then, compiler flags must be re-evaluated
+> every time a user changes a compiler in use.
+> It will introduce much more complexity.
 
-If .config is updated, silentoldconfig is invoked to sync them.
+Right now, this is just handled in the Makefile: all the right
+variables exist, etc.
 
-
-
-
+-Kees
 
 -- 
-Best Regards
-Masahiro Yamada
+Kees Cook
+Pixel Security
