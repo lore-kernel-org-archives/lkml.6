@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932901AbeBLO7U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:59:20 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38410 "EHLO
+        id S933121AbeBLO73 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:59:29 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34480 "EHLO
         mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932358AbeBLO67 (ORCPT
+        with ESMTP id S932358AbeBLO7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:58:59 -0500
-X-Google-Smtp-Source: AH8x2275RJAxFO6oo2cnTWmyniQAr3e/An2Z4yoMRqtolEufjAlyrY4WFeqMrgqrzODLrGRU7SnSWQ==
-Date: Mon, 12 Feb 2018 14:58:55 +0000
+        Mon, 12 Feb 2018 09:59:25 -0500
+X-Google-Smtp-Source: AH8x2271bOJ0ChMesoSue43Dc8AISNH65eFSiepZI4VjyXx7Gvm+Otn489CTBSywJcwzlvZhSWtNIQ==
+Date: Mon, 12 Feb 2018 14:59:21 +0000
 From: Lee Jones <lee.jones@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 14/21] regulator: s5m8767: Pass descriptor instead of
- GPIO number
-Message-ID: <20180212145855.2xxr5zvfbuswsbgh@dell>
+Subject: Re: [PATCH 04/21] regulator: da9055: Pass descriptor instead of GPIO
+ number
+Message-ID: <20180212145921.sopkw7un4iw4zrdd@dell>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-15-linus.walleij@linaro.org>
+ <20180212131717.27193-5-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180212131717.27193-15-linus.walleij@linaro.org>
+In-Reply-To: <20180212131717.27193-5-linus.walleij@linaro.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -30,121 +30,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 12 Feb 2018, Linus Walleij wrote:
 
-> Instead of passing a global GPIO number for the enable GPIO, pass
-> a descriptor looked up from the device tree node for the
-> regulator.
-> 
-> This regulator supports passing platform data, but enable/sleep
-> regulators are looked up from the device tree exclusively, so
-> we can need not touch other files.
+> When setting up a fixed regulator on the DA9055, pass a descriptor
+> instead of a global GPIO number. This facility is not used in the
+> kernel so we can easily just say that this should be a descriptor
+> if/when put to use.
 > 
 > Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> Lee: would be nice if you could ACK this smallish patch to
-> the MFD header.
+> Lee: would be nice if you could ACK this smallish patch
+> to the MFD header.
 
 Fine, but any sign of a conflict and I'll need a PR.
 
 Acked-by: Lee Jones <lee.jones@linaro.org>
 
 > ---
->  drivers/regulator/s5m8767.c      | 26 +++++++++++++++-----------
->  include/linux/mfd/samsung/core.h |  4 +++-
->  2 files changed, 18 insertions(+), 12 deletions(-)
+>  drivers/regulator/da9055-regulator.c | 4 ++--
+>  include/linux/mfd/da9055/pdata.h     | 5 +++--
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-> index 4836947e1521..b8443a360646 100644
-> --- a/drivers/regulator/s5m8767.c
-> +++ b/drivers/regulator/s5m8767.c
-> @@ -13,6 +13,7 @@
->  
+> diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
+> index d029c941a1e1..f40c3b8644ae 100644
+> --- a/drivers/regulator/da9055-regulator.c
+> +++ b/drivers/regulator/da9055-regulator.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/init.h>
 >  #include <linux/err.h>
->  #include <linux/of_gpio.h>
+>  #include <linux/gpio.h>
 > +#include <linux/gpio/consumer.h>
->  #include <linux/module.h>
 >  #include <linux/platform_device.h>
 >  #include <linux/regulator/driver.h>
-> @@ -459,15 +460,14 @@ static void s5m8767_regulator_config_ext_control(struct s5m8767_info *s5m8767,
->  		return;
->  	}
+>  #include <linux/regulator/machine.h>
+> @@ -455,8 +456,7 @@ static int da9055_gpio_init(struct da9055_regulator *regulator,
+>  		char name[18];
+>  		int gpio_mux = pdata->gpio_ren[id];
 >  
-> -	if (!gpio_is_valid(rdata->ext_control_gpio)) {
-> +	if (!rdata->ext_control_gpiod) {
->  		dev_warn(s5m8767->dev,
->  				"ext-control for %s: GPIO not valid, ignoring\n",
-> -				rdata->reg_node->name);
-> +			 rdata->reg_node->name);
->  		return;
->  	}
+> -		config->ena_gpio = pdata->ena_gpio[id];
+> -		config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+> +		config->ena_gpiod = pdata->ena_gpiods[id];
+>  		config->ena_gpio_invert = 1;
 >  
-> -	config->ena_gpio = rdata->ext_control_gpio;
-> -	config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
-> +	config->ena_gpiod = rdata->ext_control_gpiod;
->  }
+>  		/*
+> diff --git a/include/linux/mfd/da9055/pdata.h b/include/linux/mfd/da9055/pdata.h
+> index 04e092be4b07..1a94fa2ac309 100644
+> --- a/include/linux/mfd/da9055/pdata.h
+> +++ b/include/linux/mfd/da9055/pdata.h
+> @@ -12,6 +12,7 @@
+>  #define DA9055_MAX_REGULATORS	8
 >  
->  /*
-> @@ -577,8 +577,14 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
->  			continue;
->  		}
->  
-> -		rdata->ext_control_gpio = of_get_named_gpio(reg_np,
-> -			"s5m8767,pmic-ext-control-gpios", 0);
-> +		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
-> +								       reg_np,
-> +								       "s5m8767,pmic-ext-control-gpios",
-> +								       0,
-> +								       GPIOD_OUT_HIGH,
-> +								       "s5m8767");
-> +		if (IS_ERR(rdata->ext_control_gpiod))
-> +			return PTR_ERR(rdata->ext_control_gpiod);
->  
->  		rdata->id = i;
->  		rdata->initdata = of_get_regulator_init_data(
-> @@ -954,10 +960,8 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
->  		config.driver_data = s5m8767;
->  		config.regmap = iodev->regmap_pmic;
->  		config.of_node = pdata->regulators[i].reg_node;
-> -		config.ena_gpio = -EINVAL;
-> -		config.ena_gpio_flags = 0;
-> -		config.ena_gpio_initialized = true;
-> -		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio))
-> +		config.ena_gpiod = NULL;
-> +		if (pdata->regulators[i].ext_control_gpiod)
->  			s5m8767_regulator_config_ext_control(s5m8767,
->  					&pdata->regulators[i], &config);
->  
-> @@ -970,7 +974,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
->  			return ret;
->  		}
->  
-> -		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio)) {
-> +		if (pdata->regulators[i].ext_control_gpiod) {
->  			ret = s5m8767_enable_ext_control(s5m8767, rdev);
->  			if (ret < 0) {
->  				dev_err(s5m8767->dev,
-> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-> index 5a23dd4df432..28f4ae76271d 100644
-> --- a/include/linux/mfd/samsung/core.h
-> +++ b/include/linux/mfd/samsung/core.h
-> @@ -39,6 +39,8 @@
->  #define STEP_12_5_MV		12500
->  #define STEP_6_25_MV		6250
->  
+>  struct da9055;
 > +struct gpio_desc;
-> +
->  enum sec_device_type {
->  	S5M8751X,
->  	S5M8763X,
-> @@ -151,7 +153,7 @@ struct sec_regulator_data {
->  	int				id;
->  	struct regulator_init_data	*initdata;
->  	struct device_node		*reg_node;
-> -	int				ext_control_gpio;
-> +	struct gpio_desc		*ext_control_gpiod;
->  };
 >  
->  /*
+>  enum gpio_select {
+>  	NO_GPIO = 0,
+> @@ -47,7 +48,7 @@ struct da9055_pdata {
+>  	 * controls the regulator set A/B, 0 if  not available.
+>  	 */
+>  	enum gpio_select *reg_rsel;
+> -	/* GPIOs to enable regulator, 0 if not available */
+> -	int *ena_gpio;
+> +	/* GPIO descriptors to enable regulator, NULL if not available */
+> +	struct gpio_desc **ena_gpiods;
+>  };
+>  #endif /* __DA9055_PDATA_H */
 
 -- 
 Lee Jones
