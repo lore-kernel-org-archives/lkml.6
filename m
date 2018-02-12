@@ -1,101 +1,210 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3419167-1518507760-2-16048126097873484535
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518507759; b=kCMizHeGaosE+C/gaQNRHkz3nFjLvZcZJ1Ho+nLFbG5X8nZ
-    3TraxAZRrbgrE6xoMs6/kEu26C03lGvN1Hi9KwKdrkSBJOEDgyINBMDBAC+3ZUjX
-    xvsh3O6idU8sIZW1BHIC06TeHbY5QpyAMvwkfa+uCsSAD7GZ09tPNIglJLZdOY07
-    MAoXl6JQQ/rTRNphEC29z39xPplhHlHSAjUqo6xxL02PlcKQudLGKpaHP51Mqzcc
-    BvKn0FhrhjGwxBuC0mLxCbRd8EjQRZprPQFiLbHXSB5vdh+0+EtERvuejYdpuM6T
-    vZCGFyZi6gLqEvOkORYfYdYaUmdaQzTVoXUeiSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518507759; bh=G
-    hrgX4XPxalc7ED0MEosHW73I2KY7o2jTLs5g+mYq2E=; b=TQyEdpThBxlDKseWY
-    wuc3wuU++/viNFsaW51y9X5h9RzyFYbiOMyeAw1kgSmfbJCzagy87W3lYyDwJD6T
-    KZ/8tKjYUdc3hfw3E9OFqKCgSrX2WBYaJ77pLoe+YsOxVzICU9wUJHHII2OlCtQy
-    gA8mPMLDxgiUbuj4LjcojOMhEHgWZ69nl15KX/+tAakHAjeS4aqmRfRx4NvYycva
-    lO4Q+wwI9jLgCTCMmue+Q0ODu8Blma4F0Ja3EpKMccYr9KOOAwuIG+Sc9NtQOmPv
-    KXtYgpGPXK3bTNDa7siDMSZ1pWHucy7cr85E/xhFgvzHpb0bmj0bNyqNIZo2srYN
-    kuuuQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=RuZZZf9J x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=android.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Fv9RMigM;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=android.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=RuZZZf9J x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=android.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Fv9RMigM;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=android.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AH8x226PPtuleIf/jzYtWOgvJWDbnIfxXPIBlanXK2uHJANudx32r4mV+NpSJ7tAvgdDSvPCVUcdrVK/f4BB+bUkzV4=
+Return-Path: <xieyisheng1@huawei.com>
+X-Google-Smtp-Source: AH8x227aXjqVC0LIECwIH7+laVTqisiyFKCg3uX5iuP5PKtP38oOHwik6tQrAIwsN0oH3orpt7qE
+ARC-Seal: i=1; a=rsa-sha256; t=1518433678; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Z5SfpQ7kZq9OvenO/7ml55UlWpFODXDMre/8H4l6z0GJVqBEVyOnPtjJ0S7Ux/g8zw
+         RCLz58866gv0VW/ppPsHq+prPreN8xgJr3RH5E/695wTns9NTLfBKx86uBpssescqDeE
+         QZn8aIZqTaU5NZYAVo1Ap/qO0IBRXGgq8DISjOyWavbEd4TCdGcxNRt3j2TbqlK8QdWc
+         fYpDn+0u+2gWJp5S+je+dSxrY4QNqaf18FpcvYNgqiApGukw4oLCP+myzgYCswhWjmx+
+         3h5hey2U+Q+8RTtwBRCCF61tPV7WdKLVmmIIvZEaF/1vQIOXwbftal54K19WLi0fqAK7
+         anyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:cc:references:to:subject:arc-authentication-results;
+        bh=LOHDMFeStRVXidTasnNvqiyRFmNBR2fIJtWQmcqmo68=;
+        b=A/Jy3u511k8c19PYKL0aRqzpLjZq0zKf259Dwf5dMkf0Ak6LvLSOq41k6GOz3eWgIz
+         K0S7+DN5PoiPO6BSeBvc/jt18YB2OwFZqcbCBcniwPPS+5UOaKJi9WyEv1lVQ1qhGkLC
+         mE6zpIRj3OaGtsGclBr7BbeomYkEduHtSZGKfrjGcuUzbDA/GheZnaA1o8qd+EYrKUyw
+         EwN0pTjUBbmsZX/OP6kEXHp+/iSEXDTZxgJKemZ2lBcID0ZTLnD/q0pZ/H1a6+RzKtsK
+         sv5sY1tDVn4TaJaNaHvAzal2d+hhGAbCTungHyYvRkWFx1O4NZ1Nk3wUdbipgcaOR/bL
+         jccw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
+Subject: Re: [PATCH v6] devres: combine function devm_ioremap*
+To: <gregkh@linuxfoundation.org>
+References: <1517226496-32324-1-git-send-email-xieyisheng1@huawei.com>
+CC: <christophe.leroy@c-s.fr>, <thomas.lendacky@amd.com>,
+	<linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <db6ce14b-455f-034b-48a3-199cdc493479@huawei.com>
+Date: Mon, 12 Feb 2018 19:07:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-In-Reply-To: <20180212183125.GR30522@ZenIV.linux.org.uk>
-References: <001a113f65b6d93e74056505e572@google.com>
- <CACT4Y+ZcXVrPAFrxfAohQ=PdqcN8fwrFq4ZGwzP-K_sSUEOY8A@mail.gmail.com>
- <CAHRSSEw7xrtANf2t4bUqMuz83MOo4s9+oGcDqSS7QpMoW7XGJQ@mail.gmail.com>
- <CACT4Y+bPoOWqCfz-jx13Vs+KVnrV2V6nn-nFDzjP=WgWYN1CWw@mail.gmail.com>
- <20180212183125.GR30522@ZenIV.linux.org.uk>
-From: Martijn Coenen <maco@android.com>
-Date: Tue, 13 Feb 2018 08:42:29 +0100
-Message-ID: <CAB0TPYHGN9qLdKp1kiHqPp99TRs-WywHGHSyNAfoKvbhh2J_CA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in remove_wait_queue
-To: Al Viro <viro@zeniv.linux.org.uk>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
- Todd Kjos <tkjos@android.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- syzkaller-bugs@googlegroups.com, LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
- linux-fsdevel@vger.kernel.org,
- syzbot <syzbot+a2a3c4909716e271487e@syzkaller.appspotmail.com>,
- Dmitry Vyukov <dvyukov@google.com>, Todd Kjos <tkjos@google.com>
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1517226496-32324-1-git-send-email-xieyisheng1@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1590927888769516575?=
+X-GMAIL-MSGID: =?utf-8?q?1592193112719524775?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 7:31 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> Any chance of bisecting it?
+Hi Greg, Christophe,
 
-Perhaps my fix introduced another (related) problem, I'm looking into it.
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Any comment about this version?  And sorry to disturb  :)
+
+Thanks
+Yisheng
+
+On 2018/1/29 19:48, Yisheng Xie wrote:
+> When I tried to use devm_ioremap function and review related
+> code, I found devm_ioremap_* almost have the similar realize
+> with each other, which can be combined.
+> 
+> In the former version, I have tried to kill ioremap_cache to
+> reduce the size of devres, which can not work for ioremap is
+> not the same as ioremap_nocache in some ARCHs likes ia64.
+> Therefore, as the suggestion of Christophe, I introduce a help
+> function __devm_ioremap, let devm_ioremap* inline and call
+> __devm_ioremap with different devm_ioremap_type.
+> 
+> After apply the patch, the size of devres.o can be reduce from
+> 8216 Bytes to 8052 Bytes in my compile environment.
+> 
+> Suggested-by: Greg KH <gregkh@linuxfoundation.org>
+> Suggested-by: Christophe LEROY <christophe.leroy@c-s.fr>
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+> v2:
+>  - use MARCO for ioremap
+> v3:
+>  - kill dev_ioremap_nocache
+> v4:
+>  - combine function devm_ioremap*       - per Christophe
+> v5:
+>  - fix code style.                      - per Christophe
+> v6:
+>  - just put the cleanup in the devres.c - per Greg
+> 
+>  lib/devres.c | 78 +++++++++++++++++++++++++++++-------------------------------
+>  1 file changed, 38 insertions(+), 40 deletions(-)
+> 
+> diff --git a/lib/devres.c b/lib/devres.c
+> index 5f2aedd..5bec112 100644
+> --- a/lib/devres.c
+> +++ b/lib/devres.c
+> @@ -5,6 +5,12 @@
+>  #include <linux/gfp.h>
+>  #include <linux/export.h>
+>  
+> +enum devm_ioremap_type {
+> +	DEVM_IOREMAP = 0,
+> +	DEVM_IOREMAP_NC,
+> +	DEVM_IOREMAP_WC,
+> +};
+> +
+>  void devm_ioremap_release(struct device *dev, void *res)
+>  {
+>  	iounmap(*(void __iomem **)res);
+> @@ -15,24 +21,28 @@ static int devm_ioremap_match(struct device *dev, void *res, void *match_data)
+>  	return *(void **)res == match_data;
+>  }
+>  
+> -/**
+> - * devm_ioremap - Managed ioremap()
+> - * @dev: Generic device to remap IO address for
+> - * @offset: Resource address to map
+> - * @size: Size of map
+> - *
+> - * Managed ioremap().  Map is automatically unmapped on driver detach.
+> - */
+> -void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+> -			   resource_size_t size)
+> +static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
+> +				    resource_size_t size,
+> +				    enum devm_ioremap_type type)
+>  {
+> -	void __iomem **ptr, *addr;
+> +	void __iomem **ptr, *addr = NULL;
+>  
+>  	ptr = devres_alloc(devm_ioremap_release, sizeof(*ptr), GFP_KERNEL);
+>  	if (!ptr)
+>  		return NULL;
+>  
+> -	addr = ioremap(offset, size);
+> +	switch (type) {
+> +	case DEVM_IOREMAP:
+> +		addr = ioremap(offset, size);
+> +		break;
+> +	case DEVM_IOREMAP_NC:
+> +		addr = ioremap_nocache(offset, size);
+> +		break;
+> +	case DEVM_IOREMAP_WC:
+> +		addr = ioremap_wc(offset, size);
+> +		break;
+> +	}
+> +
+>  	if (addr) {
+>  		*ptr = addr;
+>  		devres_add(dev, ptr);
+> @@ -41,6 +51,20 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+>  
+>  	return addr;
+>  }
+> +
+> +/**
+> + * devm_ioremap - Managed ioremap()
+> + * @dev: Generic device to remap IO address for
+> + * @offset: Resource address to map
+> + * @size: Size of map
+> + *
+> + * Managed ioremap().  Map is automatically unmapped on driver detach.
+> + */
+> +void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+> +			   resource_size_t size)
+> +{
+> +	return __devm_ioremap(dev, offset, size, DEVM_IOREMAP);
+> +}
+>  EXPORT_SYMBOL(devm_ioremap);
+>  
+>  /**
+> @@ -55,20 +79,7 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+>  void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
+>  				   resource_size_t size)
+>  {
+> -	void __iomem **ptr, *addr;
+> -
+> -	ptr = devres_alloc(devm_ioremap_release, sizeof(*ptr), GFP_KERNEL);
+> -	if (!ptr)
+> -		return NULL;
+> -
+> -	addr = ioremap_nocache(offset, size);
+> -	if (addr) {
+> -		*ptr = addr;
+> -		devres_add(dev, ptr);
+> -	} else
+> -		devres_free(ptr);
+> -
+> -	return addr;
+> +	return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_NC);
+>  }
+>  EXPORT_SYMBOL(devm_ioremap_nocache);
+>  
+> @@ -83,20 +94,7 @@ void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
+>  void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
+>  			      resource_size_t size)
+>  {
+> -	void __iomem **ptr, *addr;
+> -
+> -	ptr = devres_alloc(devm_ioremap_release, sizeof(*ptr), GFP_KERNEL);
+> -	if (!ptr)
+> -		return NULL;
+> -
+> -	addr = ioremap_wc(offset, size);
+> -	if (addr) {
+> -		*ptr = addr;
+> -		devres_add(dev, ptr);
+> -	} else
+> -		devres_free(ptr);
+> -
+> -	return addr;
+> +	return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_WC);
+>  }
+>  EXPORT_SYMBOL(devm_ioremap_wc);
+>  
+> 
