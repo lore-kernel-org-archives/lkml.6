@@ -1,63 +1,66 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3577380-1517489027-2-4020862054458209472
+X-Cyrus-Session-Id: sloti22d1t05-1250878-1518435680-2-17064934060361365888
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517489026; b=e6Yog9Ix7IyU730w2gWV5lBwosH726rZ+IAZleW2TXfGlSs
-    Id2gT9G3LET7hOVvRnGgTl3vdqAm0/nrfrmY5S9Pkn21NpHNqxKiyzxKKJ21coJM
-    zQ+WzDtibMOueXE/h/zw8VmFRs3k3kK7smWKscBwi+T1zRwl7AeV8pcGgejXab3w
-    WsUcyR8HP5JHvg7JTAXzgzQ8JNUxC5fSDXi5FpdLh6Z1Sz+eqEt12zoh/Q1dIDTb
-    XMkPEGPEoyntNerDtcethTexA7l/uptQ+RtBDdu/NO9qrBOa2SbZzZmJImgVkPVM
-    gw4Ga86tBuWO25xGZMQK8kdkI1GjwhogA8I+2XA==
+    t=1518435679; b=TDG9Tdw0LkW23/KtylbwBdLSDjgGQRvCXFyMAk+p/g6UtG1
+    oh6zzhvTG1vy2cCXXEjnwlublHuw4XjcJZDDuc2sobzPsZI9fsAAx3RNEhNHTWIj
+    hmdDBkGmBDT1HkZtVC9xm6oywcqiAhDhOyu4wRT5L3bY4SsCJoAJEPDXA6HF/ouT
+    lCZ2xf8gHOcofpcz0dqDyCsqmvL63A4sDOyWb9ivJAhm/ywZwnWaUon1MALkvnEd
+    CGXcM+jiNgBGRj54mBS1RqP9so3H3Uu7sjisAqnOvtqEhKOr30n+Z7dpGNTu6HWR
+    OQlQo73EbMxR4L9KW7+es1lUPy+zKVY9HeINWaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1517489026; bh=5
-    mC0jbx2Uy9LVwolmfYB7MTJDWXjD/A+JyUn7uEVxuk=; b=j1E7CiBhO+jMPVeWA
-    eTP2KXxRUCrzwcfagZi+4Rxp8IeqgG8elweBiMbNu1T6wW+Xr7llh8SLMywpQxO7
-    1jz4uoaMS6HJ+Uvgsyym8VDl1igJ8ZoY/N8fvwxBcCu0C1+aVez8B/5ZBY3x6u1B
-    QzXjftY1929B+H717F2mH6OC8oM3dk6Jv5BTFXcpgulHsPeUQ+fEn7QKmhoGFZX2
-    dRDqmgwd/AdneGgn+/OPFm4y4a8yxyNbMczz6ru3ci6NbkRJ4AWQSjWWz5Zdo9yz
-    1fMJkTTHYFZN6IFIcFED0/veY8uEYZ5rKzhBZ3JStpIlH4gnV3+bl3DwujDPdjjc
-    bNq6Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518435679; bh=5
+    15/fyvJCSB2zytDRa1z/cmW/kNlDqbKHudLLRyaWvw=; b=f/vPug/XUsMyjfbm0
+    ZvvqCu06BvNcQ/fc6YAmvKLQGVKWf3XX8PiRrkwfsBA3R96oClFWlycB4UpiiNOB
+    Mn9bQ9thNQaWuM2KCdA4OVColHE0S0I0vq86uI9/Ru32N9k02KOjOOaP2w2fVqDD
+    3KoDjqRC0gwK9aKPdoypzpr0HIphmmjJIiEzW8KTvzAy0IdQUdCoYot04oJPC3k1
+    P3KtiUOk1mcJyf6X9XpCfgnUvujlyApn3rHtkDgB+TyuzVOIpp1jR8i4a1Va5Sf6
+    q9HhzfbldXImIDHu7gym8GZ8lvoMzgIYzwyM9kZrhBCBaCFJNBEhgAW4ceXZxR2P
+    iYXfQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Yisheng Xie <xieyisheng1@huawei.com>
+Subject: Re: [PATCH 1/2] staging: android: ion: Avoid NULL point in error path
 To: <gregkh@linuxfoundation.org>
-Subject: [PATCH 1/2] staging: android: ion: Avoid NULL point in error path
-Date: Thu, 1 Feb 2018 20:34:06 +0800
-Message-ID: <1517488447-41252-1-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+References: <1517488447-41252-1-git-send-email-xieyisheng1@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <1ac2eea4-83ef-d170-f115-7ce8e5d7503c@huawei.com>
+Date: Mon, 12 Feb 2018 19:40:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-X-Originating-IP: [10.175.102.37]
+In-Reply-To: <1517488447-41252-1-git-send-email-xieyisheng1@huawei.com>
+X-Originating-IP: [10.177.29.40]
 X-CFilter-Loop: Reflected
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
@@ -69,8 +72,8 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Yisheng Xie <xieyisheng1@huawei.com>,
- sumit.semwal@linaro.org, linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, sumit.semwal@linaro.org,
+ linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -79,43 +82,52 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If we failed to create debugfs for ion at ion_device_create, the
-debug_root of ion_device will be NULL, and then when try to create debug
-file for shrinker of heap it will be create on the top of debugfs. If we
-also failed to create this the debug file, it call dentry_path to found
-the path of debug_root, then a NULL point will occur.
+Hi Greg,
 
-Fix this by avoiding call dentry_path, but show the debug name only when
-failed to create debug file for shrinker.
+JFYI, I have rebase this patchset to v4.15-rc1.[1]
 
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- drivers/staging/android/ion/ion.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+[1] https://lkml.org/lkml/2018/2/12/204
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index f480885..3e41644 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -570,13 +570,9 @@ void ion_device_add_heap(struct ion_heap *heap)
- 		debug_file = debugfs_create_file(
- 			debug_name, 0644, dev->debug_root, heap,
- 			&debug_shrink_fops);
--		if (!debug_file) {
--			char buf[256], *path;
--
--			path = dentry_path(dev->debug_root, buf, 256);
--			pr_err("Failed to create heap shrinker debugfs at %s/%s\n",
--			       path, debug_name);
--		}
-+		if (!debug_file)
-+			pr_err("Failed to create ion heap shrinker debugfs at %s\n",
-+			       debug_name);
- 	}
- 
- 	dev->heap_cnt++;
--- 
-1.7.12.4
+Thanks
+Yisheng
+
+On 2018/2/1 20:34, Yisheng Xie wrote:
+> If we failed to create debugfs for ion at ion_device_create, the
+> debug_root of ion_device will be NULL, and then when try to create debug
+> file for shrinker of heap it will be create on the top of debugfs. If we
+> also failed to create this the debug file, it call dentry_path to found
+> the path of debug_root, then a NULL point will occur.
+> 
+> Fix this by avoiding call dentry_path, but show the debug name only when
+> failed to create debug file for shrinker.
+> 
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>  drivers/staging/android/ion/ion.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+> index f480885..3e41644 100644
+> --- a/drivers/staging/android/ion/ion.c
+> +++ b/drivers/staging/android/ion/ion.c
+> @@ -570,13 +570,9 @@ void ion_device_add_heap(struct ion_heap *heap)
+>  		debug_file = debugfs_create_file(
+>  			debug_name, 0644, dev->debug_root, heap,
+>  			&debug_shrink_fops);
+> -		if (!debug_file) {
+> -			char buf[256], *path;
+> -
+> -			path = dentry_path(dev->debug_root, buf, 256);
+> -			pr_err("Failed to create heap shrinker debugfs at %s/%s\n",
+> -			       path, debug_name);
+> -		}
+> +		if (!debug_file)
+> +			pr_err("Failed to create ion heap shrinker debugfs at %s\n",
+> +			       debug_name);
+>  	}
+>  
+>  	dev->heap_cnt++;
+> 
 
 _______________________________________________
 devel mailing list
