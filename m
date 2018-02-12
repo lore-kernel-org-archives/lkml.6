@@ -1,29 +1,29 @@
 Return-Path: <joel.stan@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518419364; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1518419356; cv=none;
         d=google.com; s=arc-20160816;
-        b=J1zhLIlAqOlHFjh+u8ZJ1SQAHXTanczZjNscFNhyO+1CNXIYOLaQYDChqzxI/fZgcl
-         XAASBHdRAMD2QGmvGYkvnmBLEaiotycyk+eSl1VJks2YiR+HvHOMX1VrArhbASxdsRaY
-         cYDBBsaTABMb1rGf50W6ZFjoq3yFS/ahLGOlyDcT5LOTmebBYFJPC0tqDjw4mtXz6d1c
-         34e8cVMiGG2Uh37DdPxi20d4C0iyuqERcNfYEgtWu1gU+ELFVwWM+mcaES9uSS0U2Z3T
-         xQUM3pBcebEuf25/qrQ/Lx41QWn2O7AT2zkDhuRh4Y5CBINuU4WM8FxD8tBkMzD4JfkN
-         YGxQ==
+        b=Cirr6M67kbJF9QRlmrGFtseVTzxnokCEH5NvQsRnd/XXEQCukgxdvcQNminHFPrnDD
+         F02s52sRcWqE5otltspUdlIzCmKjrPl101G2y90Rpb5SzS0oMh/PoAqGJhe0uxtG8H0Q
+         0/x6ah1PopvFzKsv67P7XX+dfDzV4Xw4Y+ixqVKOiX4b/H/NAk3c6uDRm4T27tZqCN2m
+         8CqeD4BByUv1craxEOf0IE1ecYSnbODA86t5u1xV8P92dgusDy/nH9xtyXnB85mPX4RE
+         hD7LpW4tA+Bp8pa+VATPXbeQGrvppgaE3J5AAPdI/Tn/+TOUO8OgKNMZhMxxQ2Gebjvg
+         xu3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:sender
          :dkim-signature:arc-authentication-results;
-        bh=+UnUovVBeP3OPX99eGGjysHXPyKEeVfZbA2KOoeGXvQ=;
-        b=aUVfiapdQwxZq4vFKFkvSY3onk0M5eDVkGeIf4GbNCTllrvYFC4UwFGlPb7JZP5hnJ
-         V5R2MRkQxfke1/vMM8BFPs7/Te7J0ZxRbYukUUmzF4VKMHItFMRJWWueHZjfImqL/oHQ
-         ccIjxi+OFZEw8zXdHJ04vH+GUeLE9lweIO3BOY5qwx7HAh/sQP7l/UiwInJk+zuOJ8Zb
-         n7LV65xus9LCx/nc1aCTva+G6SvzQx0UUJ12LQ+atgkw1OHoZXftCoFWtnS6xKsIbxdM
-         GM+PtEIA3wQWR0TJgAblaZex7711q++NU9C4g4ho3zJnevf7cfOh3Oi6XsVo+mPsUkfb
-         BkrA==
+        bh=NwL7A4hTUadKcUHHkqCgS88GiYok4oil6lnWHhgTt2o=;
+        b=ey8CK5ze90RHNNaSfGTg3JZY9VAI4o5ZH1JW6Y+Q07rpHLnCmsOfQ4+6XwwZUj0uYY
+         ikz65+WdAK4uSopn5SJO2mThCXGVgoscWbx9yBMI3TTLLMAvdoNTzJ/H4hwO5IoZJQEQ
+         S3/c398/9nKp6nVuX6JsQR3AUhQkQtFIbD1b8QGnLb671qfFOs4GlUsV9xZ9StMuswS9
+         PM8KVzI9iFF3D5u9QG8WwtJKyyisgNvPWG7PaQVTGPhxYsncIj9qKnHgfc3CkKx+xl3+
+         qeP1hvK1PFzVEUi18IX/c9cDyxs7hC71kCqdL6+P6aHjjhYaIxYYnJ3fdehLIre333p0
+         IGyg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bWwEXbfD;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RzFA6AUh;
        spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bWwEXbfD;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RzFA6AUh;
        spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
-X-Google-Smtp-Source: AH8x2247EviiIxGJtH6jnzqSXv3tVa4zIDwLE/OPx59C2tEWapwIfyvsGtNAc0Hyx+DwZYkxZC4XMQ==
+X-Google-Smtp-Source: AH8x225ox2rDdEn3vqyBUirsPHv0UZAntu/ba8jiSH2OxUXnLjv/7aa6es9wf8bqguDQrTs1fD0ijQ==
 Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
 From: Joel Stanley <joel@jms.id.au>
 To: Lee Jones <lee.jones@linaro.org>,
@@ -38,69 +38,95 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	Ryan Chen <ryan_chen@aspeedtech.com>,
 	Lei YU <mine260309@gmail.com>
-Subject: [PATCH 3/3] misc: aspeed-lpc-ctrl: Enable FWH and A2H bridge cycles
-Date: Mon, 12 Feb 2018 17:38:47 +1030
-Message-Id: <20180212070847.32387-4-joel@jms.id.au>
+Subject: [PATCH 2/3] misc: aspeed-lpc: Request and enable LPC clock
+Date: Mon, 12 Feb 2018 17:38:46 +1030
+Message-Id: <20180212070847.32387-3-joel@jms.id.au>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180212070847.32387-1-joel@jms.id.au>
 References: <20180212070847.32387-1-joel@jms.id.au>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592178104146690344?=
-X-GMAIL-MSGID: =?utf-8?q?1592178104146690344?=
+X-GMAIL-THRID: =?utf-8?q?1592178094702498887?=
+X-GMAIL-MSGID: =?utf-8?q?1592178094702498887?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-To date this driver has relied on prevous state from out of tree hacks
-and vendor u-boot trees in order to have the host be able to access
-data over the LPC bus.
+The LPC device needs to ensure it's clock is enabled before it can do
+anything.
 
-Now we explicitly enable the AHB to LPC bridge and FWH cycles from when
-the user first configures the address to map. We chose to do this then,
-as before that time there is no way for the kernel to know where it is
-safe to point the LPC window.
+In the past the clock was enabled and left running by u-boot, however
+Linux now has an upstream clock driver that disables unused clocks.
 
 Tested-by: Lei YU <mine260309@gmail.com>
 Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/misc/aspeed-lpc-ctrl.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/misc/aspeed-lpc-ctrl.c | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/misc/aspeed-lpc-ctrl.c b/drivers/misc/aspeed-lpc-ctrl.c
-index 1827b7aa6674..a024f8042259 100644
+index b5439643f54b..1827b7aa6674 100644
 --- a/drivers/misc/aspeed-lpc-ctrl.c
 +++ b/drivers/misc/aspeed-lpc-ctrl.c
-@@ -21,6 +21,10 @@
+@@ -7,6 +7,7 @@
+  * 2 of the License, or (at your option) any later version.
+  */
  
- #define DEVICE_NAME	"aspeed-lpc-ctrl"
- 
-+#define HICR5 0x0
-+#define HICR5_ENL2H	BIT(8)
-+#define HICR5_ENFWH	BIT(10)
-+
- #define HICR7 0x8
- #define HICR8 0xc
- 
-@@ -155,8 +159,18 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
- 		if (rc)
- 			return rc;
- 
--		return regmap_write(lpc_ctrl->regmap, HICR8,
--			(~(map.size - 1)) | ((map.size >> 16) - 1));
-+		rc = regmap_write(lpc_ctrl->regmap, HICR8,
-+				(~(map.size - 1)) | ((map.size >> 16) - 1));
-+		if (rc)
-+			return rc;
-+
-+		/*
-+		 * Enable LPC FHW cycles. This is required for the host to
-+		 * access the regions specified.
-+		 */
-+		return regmap_update_bits(lpc_ctrl->regmap, HICR5,
-+				HICR5_ENFWH | HICR5_ENL2H,
-+				HICR5_ENFWH | HICR5_ENL2H);
++#include <linux/clk.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/miscdevice.h>
+ #include <linux/mm.h>
+@@ -26,6 +27,7 @@
+ struct aspeed_lpc_ctrl {
+ 	struct miscdevice	miscdev;
+ 	struct regmap		*regmap;
++	struct clk		*clk;
+ 	phys_addr_t		mem_base;
+ 	resource_size_t		mem_size;
+ 	u32		pnor_size;
+@@ -221,16 +223,33 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  	}
  
- 	return -EINVAL;
++	lpc_ctrl->clk = devm_clk_get(dev, NULL);
++	if (IS_ERR(lpc_ctrl->clk)) {
++		dev_err(dev, "couldn't get clock\n");
++		return PTR_ERR(lpc_ctrl->clk);
++	}
++	rc = clk_prepare_enable(lpc_ctrl->clk);
++	if (rc) {
++		dev_err(dev, "couldn't enable clock\n");
++		return rc;
++	}
++
+ 	lpc_ctrl->miscdev.minor = MISC_DYNAMIC_MINOR;
+ 	lpc_ctrl->miscdev.name = DEVICE_NAME;
+ 	lpc_ctrl->miscdev.fops = &aspeed_lpc_ctrl_fops;
+ 	lpc_ctrl->miscdev.parent = dev;
+ 	rc = misc_register(&lpc_ctrl->miscdev);
+-	if (rc)
++	if (rc) {
+ 		dev_err(dev, "Unable to register device\n");
+-	else
+-		dev_info(dev, "Loaded at %pr\n", &resm);
++		goto err;
++	}
++
++	dev_info(dev, "Loaded at %pr\n", &resm);
++
++	return 0;
+ 
++err:
++	clk_disable_unprepare(lpc_ctrl->clk);
+ 	return rc;
+ }
+ 
+@@ -239,6 +258,7 @@ static int aspeed_lpc_ctrl_remove(struct platform_device *pdev)
+ 	struct aspeed_lpc_ctrl *lpc_ctrl = dev_get_drvdata(&pdev->dev);
+ 
+ 	misc_deregister(&lpc_ctrl->miscdev);
++	clk_disable_unprepare(lpc_ctrl->clk);
+ 
+ 	return 0;
+ }
 -- 
 2.15.1
