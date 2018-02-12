@@ -1,87 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932372AbeBLV0v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:26:51 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35760 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932134AbeBLV0s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:26:48 -0500
-X-Google-Smtp-Source: AH8x225rThqepVGwd2KTiRvoIpxDu4RAUI8LqeEw/87JiN3zs1qLP7d6vG6h12rq+V9JCumeErWXGA==
-Date: Mon, 12 Feb 2018 13:26:44 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Doug Anderson <dianders@chromium.org>,
-        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
-        huang lin <hl@rock-chips.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        id S932410AbeBLV1i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:27:38 -0500
+Received: from osg.samsung.com ([64.30.133.232]:62825 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932104AbeBLV1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:27:37 -0500
+Date: Mon, 12 Feb 2018 19:27:30 -0200
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel@collabora.com
-Subject: Re: [PATCH 2/3] Documentation: bindings: add usb3-host-disable and
- usb3-host-port for Rockchip USB Type-C PHY
-Message-ID: <20180212212643.GA37044@ban.mtv.corp.google.com>
-References: <20180208152028.9997-1-enric.balletbo@collabora.com>
- <20180208152028.9997-2-enric.balletbo@collabora.com>
- <CABGGisyaqV5HtTUL5LdjH3ZcU3_RTPmzMvEAhv5wZjCD_XCujg@mail.gmail.com>
- <CAFqH_53-iN9m=U+WdQh6_rKyxE5c9RUQO9qD1QaY0QePM_pOZA@mail.gmail.com>
- <CAL_JsqLvkPEm1mZaEfEVFEYMoGvOsbSQb8c35UvjmRTCwrCF8Q@mail.gmail.com>
+        Linus <torvalds@linux-foundation.org>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+Message-ID: <20180212192730.4b4df411@vento.lan>
+In-Reply-To: <20180213080036.3bf3a908@canb.auug.org.au>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+Organization: Samsung
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLvkPEm1mZaEfEVFEYMoGvOsbSQb8c35UvjmRTCwrCF8Q@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Stephen,
 
-On Mon, Feb 12, 2018 at 10:43:41AM -0600, Rob Herring wrote:
-> On Thu, Feb 8, 2018 at 3:23 PM, Enric Balletbo Serra
-> <eballetbo@gmail.com> wrote:
-> > 2018-02-08 18:52 GMT+01:00 Rob Herring <robh@kernel.org>:
-> >> On Thu, Feb 8, 2018 at 9:20 AM, Enric Balletbo i Serra
-> >> <enric.balletbo@collabora.com> wrote:
-> >>> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-> >>> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-> >>> @@ -36,6 +36,12 @@ offset, enable bit, write mask bit.
-> >>>   - rockchip,uphy-dp-sel : the register of type-c phy enable DP function
-> >>>     for type-c phy0, it must be <0x6268 19 19>;
-> >>>     for type-c phy1, it must be <0x6268 3 19>;
-> >>> + - rockchip,usb3-host-disable : the register of type-c phy disable usb3 host
-> >>> +   for type-c phy0, it must be <0x2434 0 16>;
-> >>> +   for type-c phy1, it must be <0x2444 0 16>;
-> >>> + - rockchip,usb3-host-port : the register of type-c phy usb3 port number
-> >>> +   for type-c phy0, it must be <0x2434 12 28>;
-> >>> +   for type-c phy1, it must be <0x2444 12 28>;
-> >>
-> >> When does this list stop? Adding properties for various register
-> >> fields doesn't scale. This information should be in the driver and
-> >> based on the compatible string if necessary.
-> >>
-> >
-> > I see, seams reasonable to me, is this applicable to the new ones only
-> > or I should get rid of all the proprieties like this from the DT
-> > (including the old ones)?
+Em Tue, 13 Feb 2018 08:00:36 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+
+> Hi Mauro,
 > 
-> We're already kind of stuck with the existing ones. So it depends if
-> people want to phase them out or not.
+> By merging the v4.16-rc1 tag into the v4l-dvb tree, you have created an
+> unnecessary merge commit.  The v4l-dvb tree was already contained in
+> v4.16-rc1, so a fast forward merge was possible, but explicitly merging
+> a signed tag will give you a commit instead.  In this case, you could
+> have just reset your branch to v4.16-rc1 or merged v4.16-rc1^0.
 
-FWIW, any Chrome{device} using these sort of bindings is perfectly
-capable of handling changed bindings (we ship DTBs with the kernel). But
-that's not typically how mainline covers binding deprecation.
+I did the usual way I used to do in the past. Not sure why it ended
+by being an explicit merge instead of a fast forward.
 
-If we're going to start recommending not putting these offsets in the
-DT, I'd vote for deprecating them, for consistency. (Otherwise, we'll
-keep running into this same question.) We only documented the RK3399
-("rockchip,rk3399-typec-phy") binding, so all users should have the same
-offsets. I dunno if/how we pick a time for eventually removing the
-bindings entirely.
+On a quick test here, doing:
 
-Brian
+$ git checkout -b test media/v4.16-2
+$ git merge v4.16-rc1
+
+indeed makes produce a merging commit.
+
+I never realized that I could force a fast forward using the weird
+
+	$ git merge v4.16-rc1^0
+
+If this is the way we should do git merges, are there a way to make
+it default, suppressing the need of a "^0" (either via some .git/config
+parameter or changing at git code)? Doing just one such merge once
+or twice on every Kernel cycle, I'm pretty sure I'll forget to do 
+it next time :-)
+
+> Linus, this happens a bit after the merge window, so I am wondering
+> about the rational of not doing a fast forward merge when merging a
+> signed tag (I forget the reasoning).
+
+Reset my tree on the top of v4.16-rc1 doesn't seem a good option,
+as it causes merge issues from media sub-maintainers and from other
+developer's trees.
+
+
+-- 
+Thanks,
+Mauro
