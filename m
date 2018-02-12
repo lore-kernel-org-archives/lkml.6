@@ -1,73 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933361AbeBLJoL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 04:44:11 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933099AbeBLJoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:44:09 -0500
-Date: Mon, 12 Feb 2018 10:44:06 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH] perf: Add support for creating offline events
-Message-ID: <20180212094406.GE5821@krava>
-References: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
+        id S933373AbeBLJpE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 04:45:04 -0500
+Received: from mailout3.hostsharing.net ([176.9.242.54]:48681 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933089AbeBLJpD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 04:45:03 -0500
+Date: Mon, 12 Feb 2018 10:45:00 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Mike Lothian <mike@fireburn.co.uk>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        Ismo Toijala <ismo.toijala@gmail.com>, nouveau@lists.freedesktop.org,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        Hans de Goede <hdegoede@redhat.com>, Peter Wu <peter@lekensteyn.nl>
+Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
+Message-ID: <20180212094500.22nvzzzpy6vrbqgc@wunner.de>
+References: <cover.1518338788.git.lukas@wunner.de>
+ <CAHbf0-Fhi9j5H7VTxF84SENQph+UQE2zRbi2Q-u_DAMh6x+eSg@mail.gmail.com>
+ <20180211192314.GA22869@wunner.de>
+ <20180211194154.GB22869@wunner.de>
+ <CAHbf0-HSNJmXs_Nm+bbcfUifoLEpFsMSpM96a-pVfLFMNz3GFw@mail.gmail.com>
+ <20180212033947.GA19049@wunner.de>
+ <CAHbf0-GFdw9M8rv0+xHms9_HdcK_cgHak7G1ugtz0ch1_k6=vQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAHbf0-GFdw9M8rv0+xHms9_HdcK_cgHak7G1ugtz0ch1_k6=vQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 03:07:00PM -0800, Raghavendra Rao Ananta wrote:
+On Mon, Feb 12, 2018 at 09:03:26AM +0000, Mike Lothian wrote:
+> On 12 February 2018 at 03:39, Lukas Wunner <lukas@wunner.de> wrote:
+> > On Mon, Feb 12, 2018 at 12:35:51AM +0000, Mike Lothian wrote:
+> > > I've not been able to reproduce the original problem you're trying to
+> > > solve on amdgpu thats with or without your patch set and the above
+> > > "trigger" too
+> > >
+> > > Is anything else required to trigger it, I started multiple DRI_PRIME
+> > > glxgears, in parallel, serial waiting the 12 seconds and serial within
+> > > the 12 seconds and I couldn't reproduce it
+> >
+> > The discrete GPU needs to runtime suspend, that's the trigger,
+> > so no DRI_PRIME executables should be running.  Just let it
+> > autosuspend after boot.  Do you see "waiting 12 sec" messages
+> > in dmesg?  If not it's not autosuspending.
+> 
+> Yes I'm seeing those messages, I'm just not seeing the hangs
+> 
+> I've attached the dmesg in case you're interested
 
-SNIP
+Okay the reason you're not seeing deadlocks is because the output poll
+worker is not enabled.  And the output poll worker is not enabled
+because your discrete GPU doesn't have any outputs:
 
->  
->  	if (!task) {
-> +#if defined CONFIG_HOTPLUG_CPU || defined CONFIG_KEXEC_CORE
-> +		struct perf_cpu_context *cpuctx =
-> +			container_of(ctx, struct perf_cpu_context, ctx);
-> +
-> +		if (!cpuctx->online) {
-> +			perf_prepare_install_in_context(event);
-> +			return;
-> +		}
-> +#endif
->  		cpu_function_call(cpu, __perf_install_in_context, event);
->  		return;
->  	}
-> @@ -2421,6 +2443,43 @@ static int  __perf_install_in_context(void *info)
->  	raw_spin_unlock_irq(&ctx->lock);
->  }
->  
-> +#if defined CONFIG_HOTPLUG_CPU || defined CONFIG_KEXEC_CORE
-> +static void perf_deferred_install_in_context(int cpu)
-> +{
-> +	struct perf_event *event, *tmp;
-> +	struct perf_event_context *ctx;
-> +
-> +	/* This function is called twice while coming online. Once for
-> +	 * CPUHP_PERF_PREPARE and the other for CPUHP_AP_PERF_ONLINE.
-> +	 * Only during the CPUHP_AP_PERF_ONLINE state, we can confirm
-> +	 * that CPU PMU is ready and can be installed to.
-> +	 */
-> +	if (!cpu_online(cpu))
-> +		return;
-> +
-> +	spin_lock(&dormant_event_list_lock);
-> +	list_for_each_entry_safe(event, tmp, &dormant_event_list,
-> +						dormant_entry) {
-> +		if (cpu != event->cpu)
-> +			continue;
+[    0.265568] [drm:dc_create] *ERROR* DC: Number of connectors is zero!
 
-I wonder having per cpu lists would be better here,
-could be quite busy for big number of CPUs
+The outputs are only polled if there are connectors which have the
+DRM_CONNECTOR_POLL_CONNECT or DRM_CONNECTOR_POLL_DISCONNECT flag set.
+And that only ever seems to be the case for VGA and DVI.
 
-jirka
+We know based on bugzilla reports that hybrid graphics laptops do exist
+which poll outputs with radeon and nouveau.  If there are no laptops
+supported by amdgpu whose discrete GPU has polled connectors, then
+patch [5/5] would be unnecessary.  That is for Alex to decide.
+
+However that is very good to know, so thanks a lot for your testing
+efforts, much appreciated!
+
+Kind regards,
+
+Lukas
