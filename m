@@ -1,55 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933191AbeBLJXY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 04:23:24 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60573 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751393AbeBLJXX (ORCPT
+        id S933218AbeBLJYN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 04:24:13 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:42516 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751312AbeBLJYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:23:23 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        x86 <x86@kernel.org>, Jiri Koshina <jikos@kernel.org>
-Subject: [PATCH] PM: cpuidle: Fix cpuidle_poll_state_init() prototype
-Date: Mon, 12 Feb 2018 10:21:35 +0100
-Message-ID: <4262687.hNuoLAlOtc@aspire.rjw.lan>
-In-Reply-To: <1862424.1bTBpgPzTf@aspire.rjw.lan>
-References: <20180122162747.19103-1-ville.syrjala@linux.intel.com> <20180206163134.GO5453@intel.com> <1862424.1bTBpgPzTf@aspire.rjw.lan>
+        Mon, 12 Feb 2018 04:24:12 -0500
+Date: Mon, 12 Feb 2018 10:24:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kthread: Export kthread_data()
+Message-ID: <20180212092405.GB25314@hirez.programming.kicks-ass.net>
+References: <1518187941-29275-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518187941-29275-1-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Feb 09, 2018 at 09:52:21AM -0500, Waiman Long wrote:
+> When multiple kernel threads are created to cooperatively work on
+> a common task, we may need a convenient way to access data that are
+> specific to each kthread.
+> 
+> The kthread_data() function fits this need.  However, it was not
+> visible to kthreads started in a kernel module. To solve this problem,
+> the kthread_data() function is now exported allowing kthreads from
+> kernel modules to use it.
 
-Commit f85942207516 (x86: PM: Make APM idle driver initialize polling
-state) made apm_init() call cpuidle_poll_state_init(), but that only
-is defined for CONFIG_CPU_IDLE set, so make the empty stub of it
-available for CONFIG_CPU_IDLE unset too to fix the resulting build
-issue.
-
-Fixes: f85942207516 (x86: PM: Make APM idle driver initialize polling state)
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- include/linux/cpuidle.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-pm/include/linux/cpuidle.h
-===================================================================
---- linux-pm.orig/include/linux/cpuidle.h
-+++ linux-pm/include/linux/cpuidle.h
-@@ -225,7 +225,7 @@ static inline void cpuidle_coupled_paral
- }
- #endif
- 
--#ifdef CONFIG_ARCH_HAS_CPU_RELAX
-+#if defined(CONFIG_CPU_IDLE) && defined(CONFIG_ARCH_HAS_CPU_RELAX)
- void cpuidle_poll_state_init(struct cpuidle_driver *drv);
- #else
- static inline void cpuidle_poll_state_init(struct cpuidle_driver *drv) {}
+No. Without an in-tree user, no export.
