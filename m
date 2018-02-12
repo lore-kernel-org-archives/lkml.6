@@ -1,23 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932410AbeBLV1i (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:27:38 -0500
-Received: from osg.samsung.com ([64.30.133.232]:62825 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932104AbeBLV1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:27:37 -0500
-Date: Mon, 12 Feb 2018 19:27:30 -0200
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus <torvalds@linux-foundation.org>
-Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
-Message-ID: <20180212192730.4b4df411@vento.lan>
-In-Reply-To: <20180213080036.3bf3a908@canb.auug.org.au>
-References: <20180213080036.3bf3a908@canb.auug.org.au>
-Organization: Samsung
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S932567AbeBLVbq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:31:46 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:35128 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932496AbeBLVbl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:31:41 -0500
+Date: Mon, 12 Feb 2018 22:31:39 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        ldv-project@linuxtesting.org, Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v4 0/3] mtd: nand: vf610: fix error handling in
+ vf610_nfc_probe()
+Message-ID: <20180212223139.2e5404a9@bbrezillon>
+In-Reply-To: <1518215316-21504-1-git-send-email-khoroshilov@ispras.ru>
+References: <20180130141141.7f4fd15a@bbrezillon>
+        <1518215316-21504-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -25,48 +28,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Sat, 10 Feb 2018 01:28:33 +0300
+Alexey Khoroshilov <khoroshilov@ispras.ru> wrote:
 
-Em Tue, 13 Feb 2018 08:00:36 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+> vf610_nfc_probe() misses error handling of mtd_device_register()
+> and contains unneeded of_node_put() on error path.
 
-> Hi Mauro,
+Applied the whole series.
+
+Thanks,
+
+Boris
+
 > 
-> By merging the v4.16-rc1 tag into the v4l-dvb tree, you have created an
-> unnecessary merge commit.  The v4l-dvb tree was already contained in
-> v4.16-rc1, so a fast forward merge was possible, but explicitly merging
-> a signed tag will give you a commit instead.  In this case, you could
-> have just reset your branch to v4.16-rc1 or merged v4.16-rc1^0.
+> v2: Add nand_cleanup() to undone nand_scan_tail() as Boris Brezillon noted.
+> v3: Rename error labels, remove of_node_put() per Boris Brezillon request.
+> v4: Separate fix in to 3 patches.
+> 
+> Alexey Khoroshilov (3):
+>   mtd: nand: vf610: remove the unnecessary of_node_put()
+>   mtd: nand: vf610: improve readability of error label
+>   mtd: nand: vf610: check mtd_device_register() return code
+> 
+>  drivers/mtd/nand/vf610_nfc.c | 29 ++++++++++++++++-------------
+>  1 file changed, 16 insertions(+), 13 deletions(-)
+> 
 
-I did the usual way I used to do in the past. Not sure why it ended
-by being an explicit merge instead of a fast forward.
-
-On a quick test here, doing:
-
-$ git checkout -b test media/v4.16-2
-$ git merge v4.16-rc1
-
-indeed makes produce a merging commit.
-
-I never realized that I could force a fast forward using the weird
-
-	$ git merge v4.16-rc1^0
-
-If this is the way we should do git merges, are there a way to make
-it default, suppressing the need of a "^0" (either via some .git/config
-parameter or changing at git code)? Doing just one such merge once
-or twice on every Kernel cycle, I'm pretty sure I'll forget to do 
-it next time :-)
-
-> Linus, this happens a bit after the merge window, so I am wondering
-> about the rational of not doing a fast forward merge when merging a
-> signed tag (I forget the reasoning).
-
-Reset my tree on the top of v4.16-rc1 doesn't seem a good option,
-as it causes merge issues from media sub-maintainers and from other
-developer's trees.
 
 
 -- 
-Thanks,
-Mauro
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
