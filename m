@@ -1,115 +1,102 @@
 Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AH8x2264VQUa0FHs+aHH6QbJIxr4LBB0S53QbOX/Rvl9W6q76nVXf5TUJ1Xx+zaO/Fz3CPw7O2tX
-ARC-Seal: i=1; a=rsa-sha256; t=1518688798; cv=none;
+X-Google-Smtp-Source: AH8x225tarjVoTwwDvm7XGiOgpR4Zo22eczcW0N2/l62r5vzTpNv9sAdL34e9aaF0TVJMBPHo3IU
+ARC-Seal: i=1; a=rsa-sha256; t=1518461175; cv=none;
         d=google.com; s=arc-20160816;
-        b=CKPqSiCLdmctdgk/3uj16Z7X1pxbjjj1hiEJFghpCQxzHG4eke1l/9YJZn6e/JFlmw
-         82hHfNryCsq8rkfvih4xsbYAxl1N3Emb8ySwxX6uQgBc7jLE8c3Ydr9DG1CL90yfTbGf
-         gUE/JrHXC3hiTCBfoxw/dUbZhf8xmx0XZYNLAjv4Zz4qwL6RS4Q4qLrk+IIo+rkfSeT5
-         hRdrPw1DozLWUiPKeJ1aADqBoNIsW28RHSya9OcJgDg0wgjrMK7ns2lAWO5WriQ11miR
-         jAZDNLZRjDg1O+pDwgmha0XQOOIOjmdEJIYrNQdC3zH+vNBgL+RtBJfA2l2I8KvnL7bE
-         RkLg==
+        b=wwfSxs/UA7OPU70CCjNH3X+g+TBqAybdBAODPbz0JizQcNrtbfKsQQAeDPMvNZDvHf
+         uitA7lA8j1u+OP24l0ox97QUOQUgWsgwl+Tv98SZutgMXvohR48veETfAIxLuyxCt60X
+         W8ZzsAb64AuWTQfhg+8Psx+K/R5F/tWOWyt5DUa7ykb1q+zZMalQkMhup49SeNkmSCmr
+         JBdZtJLmFwRz+KvdpItWJbmG0S8Wnj2cMV743H2R2J132nzThQ9QnrLRrt6GMVJDLNfc
+         S8GVTINkIBBc79CXdnvt6w8aQgJvEylog6nhQawBg44pxl3izZft8FKstLEvOeK5WtId
+         voYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:to:subject
-         :cc:arc-authentication-results;
-        bh=WixgscDL7Nu6UdXMosLG5+79QITbJe83UNi/LSQYJ9k=;
-        b=M3AJNswFXlWMijiZiD/W0TcXk4KaVi518CXOndxrPh6SdUX/ziuaV+qv9ENnxu5GLK
-         qlKhxnS+HgxYHBBO/SHLUWqA6KvkzaqwIq+kamT6MWL7kR3tJnqTL2P6M6fvZ/5jEe1y
-         uNclkUKjF6lu/tUz+YoOv5tpD16X3VX77eY4L9XUNzL3S2AMBWBz+cyeTrpNipSpkwKP
-         J/BTFIoVfKfKopL6Xs3S0SrumKPQhuwPeMfVzhtLPm0UMTkvfIyfJczZIjvb7P5mqjct
-         um8Fk+sSr8AtRtvjZUOLY/GjXU87e4mjN0qgcn23qoG/RaKTyWs3AKfzSfAjrxjD1PZ8
-         Mbuw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=PjOe8S8Onvct3BSagmr9w+aYI5UY8YfLSSSDIIsw9bc=;
+        b=Hle+KBbwJYDpeN9/WFSpE70Jk6GI/ZsJx3OGwTOOSoogZJFz+PpvoGeAyOZhtHhoAf
+         a/BocBD0Ty6mjX7CyQOTf3k2Kq5bQAD550r2Qapxomdq4cqrYwik9O2IkW1bZM+69CmI
+         3ieMpz7VJl794WM7lSsSnwiqMZwgKqr3tStTtLaJqeexDkwCdTsutiaKFUBVXdrj7cbN
+         RKAT3572G+svdjYeK+2QHs4CTIu9++8jkv9Z9w/fzjK+DCRtNl7tAkOOly/NxbwpByaI
+         e/aLlRdWO9IlJwXAZv64QQ7x2vAAdm+GWDT4kzoyihYY2Nup+BH6lK/i57NHnpslQrUG
+         Zu5g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- ALKML <linux-arm-kernel@lists.infradead.org>,
- LKML <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 00/20][RESEND] firmware: ARM System Control and
- Management Interface(SCMI) support
-To: Alexey Klimov <klimov.linux@gmail.com>
-References: <1518461124-17371-1-git-send-email-sudeep.holla@arm.com>
- <CALW4P+LPiYSOCKW4iS6OwK9S=M3aCP+X6QNnDkycY5TYQsCb5A@mail.gmail.com>
 From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <ad072d94-84fc-cd07-a4de-4fe66ca47b05@arm.com>
-Date: Thu, 15 Feb 2018 09:59:51 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CALW4P+LPiYSOCKW4iS6OwK9S=M3aCP+X6QNnDkycY5TYQsCb5A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: ALKML <linux-arm-kernel@lists.infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	DTML <devicetree@vger.kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alexey Klimov <klimov.linux@gmail.com>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v5 20/20] cpufreq: scmi: add support for fast frequency switching
+Date: Mon, 12 Feb 2018 18:45:24 +0000
+Message-Id: <1518461124-17371-21-git-send-email-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518461124-17371-1-git-send-email-sudeep.holla@arm.com>
+References: <1518461124-17371-1-git-send-email-sudeep.holla@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592221911183430118?=
-X-GMAIL-MSGID: =?utf-8?q?1592460625405560682?=
+X-GMAIL-THRID: =?utf-8?q?1592221946058023869?=
+X-GMAIL-MSGID: =?utf-8?q?1592221946058023869?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The cpufreq core provides option for drivers to implement fast_switch
+callback which is invoked for frequency switching from interrupt context.
 
+This patch adds support for fast_switch callback in SCMI cpufreq driver
+by making use of polling based SCMI transfer. It also sets the flag
+fast_switch_possible.
 
-On 15/02/18 00:09, Alexey Klimov wrote:
-> On Mon, Feb 12, 2018 at 6:45 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> Hi all,
->>
->> ARM System Control and Management Interface(SCMI) is more flexible and
->> easily extensible than any of the existing interfaces. Many vendors were
->> involved in the making of this formal specification and is now published[1].
->>
->> There is a strong trend in the industry to provide micro-controllers in
->> systems to abstract various power, or other system management tasks.
->> These controllers usually have similar interfaces, both in terms of the
->> functions that are provided by them, and in terms of how requests are
->> communicated to them.
->>
->> This specification is to standardise and avoid (any further)
->> fragmentation in the design of such interface by various vendors.
->>
->> This patch set is intended to get feedback on the design and structure
->> of the code. This is not complete and not fully tested due to
->> non-availability of firmware with full feature set at this time.
-> 
-> If it's not fully tested and not complete (I read as this patch set is
-> not ready to be merged), then maybe it's better to mark it as RFC?
-> 
+Cc: linux-pm@vger.kernel.org
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/cpufreq/scmi-cpufreq.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Sorry that's copy paste error, will drop that. It was valid for onlyRFC
-version posted long ago.
-
->> It currently doesn't support notification, asynchronous/delayed response,
->> perf/power statistics region and sensor register region to name a few.
->> I have borrowed some of the ideas of message allocation/management from
->> TI SCI.
->>
->> Changes:
->>
->> v4[6]->v5:
->>         - Rebased to v4.16-rc1
->>         - Updated all the gathered Ack/Reviewed-by tags(which includes
->>           all the drivers using SCMI protocol)
-> 
-> You still didn't comment on all questions to previous patchset.
-> 
-
-Anything else other than the below one ? I addressed the lock issue you
-mentioned and asked for suggestions on the delay thing.
-
-> For example,
-> https://www.spinics.net/lists/arm-kernel/msg626719.html
-> 
-
-Sorry I thought I responded but I clearly missed it.
-I am not so for the module parameter as I did try and never found it
-useful for debug images of the firmware. Any other use case you have in
-mind ?
-
-I think it's better to keep it simpler, I am thinking of even dropping
-it as a configurable variable like max_rx_timeout_ms.
-
+diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+index d6d35f7692b3..c869c99b2142 100644
+--- a/drivers/cpufreq/scmi-cpufreq.c
++++ b/drivers/cpufreq/scmi-cpufreq.c
+@@ -64,6 +64,19 @@ scmi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 	return perf_ops->freq_set(handle, priv->domain_id, freq, false);
+ }
+ 
++static unsigned int scmi_cpufreq_fast_switch(struct cpufreq_policy *policy,
++					     unsigned int target_freq)
++{
++	struct scmi_data *priv = policy->driver_data;
++	struct scmi_perf_ops *perf_ops = handle->perf_ops;
++
++	if (!perf_ops->freq_set(handle, priv->domain_id,
++				target_freq * 1000, true))
++		return target_freq;
++
++	return 0;
++}
++
+ static int
+ scmi_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask)
+ {
+@@ -163,6 +176,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
+ 
+ 	policy->cpuinfo.transition_latency = latency;
+ 
++	policy->fast_switch_possible = true;
+ 	return 0;
+ 
+ out_free_cpufreq_table:
+@@ -201,6 +215,7 @@ static struct cpufreq_driver scmi_cpufreq_driver = {
+ 	.verify	= cpufreq_generic_frequency_table_verify,
+ 	.attr	= cpufreq_generic_attr,
+ 	.target_index	= scmi_cpufreq_set_target,
++	.fast_switch	= scmi_cpufreq_fast_switch,
+ 	.get	= scmi_cpufreq_get_rate,
+ 	.init	= scmi_cpufreq_init,
+ 	.exit	= scmi_cpufreq_exit,
 -- 
-Regards,
-Sudeep
+2.7.4
