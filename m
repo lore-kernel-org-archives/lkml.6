@@ -1,31 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754085AbeBLUxf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 15:53:35 -0500
-Received: from resqmta-ch2-12v.sys.comcast.net ([69.252.207.44]:38706 "EHLO
-        resqmta-ch2-12v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753347AbeBLUxe (ORCPT
+        id S1754014AbeBLU6n (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 15:58:43 -0500
+Received: from mail-pl0-f53.google.com ([209.85.160.53]:40701 "EHLO
+        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753347AbeBLU6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 15:53:34 -0500
-Date: Mon, 12 Feb 2018 14:53:32 -0600 (CST)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Tejun Heo <tj@kernel.org>
-cc: Dennis Zhou <dennisszhou@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-4.17] percpu: add Dennis Zhou as a percpu
- co-maintainer
-In-Reply-To: <20180212201041.GH695913@devbig577.frc2.facebook.com>
-Message-ID: <alpine.DEB.2.20.1802121453160.14976@nuc-kabylake>
-References: <20180212201041.GH695913@devbig577.frc2.facebook.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfHJer2J4wHmzsMg/m6KpN5+vK7eNOGtP6MdURB4MSO9/l3N+WvQwjGqq75u2UNux0hQSTlo9bfBpw0oN2ylKIQTPksxtUgPuAzIA4ix/EafCP0oITtyq
- AQm8LehvKavYrS0rGV1lL4O/HfFLqxwbf+ifJN+e4O1nZu+shMgjW/VtArHsc+ui4NZgDcaQ3fnafB8xQ/rkZN3mHIuMVXWwGu6VIHC4NKWFlZoceUZQcFgT
+        Mon, 12 Feb 2018 15:58:41 -0500
+X-Google-Smtp-Source: AH8x227mw+4t6ujuIx3oe8i5itH9r3ZEpQusWQIGAaId9QWnrcOqeSfL3nGnGvuX/SXdCqQZ7ekHgw==
+From: Brendan Higgins <brendanhiggins@google.com>
+To: linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
+        venture@google.com, yuenn@google.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        openbmc@lists.ozlabs.org
+Subject: [PATCH v1 0/2] arm: npcm: add low-level debug support for NPCM7XX
+Date: Mon, 12 Feb 2018 12:58:31 -0800
+Message-Id: <20180212205833.151019-1-brendanhiggins@google.com>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Adds low-level debug support for Nuvoton's NPCM7XX architecture.
 
-Acked-by: Christopher Lameter <cl@linux.com>
+Change has been tested on Nuvoton's NPCM750 EVB.
