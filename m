@@ -1,58 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753445AbeBLSRh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:17:37 -0500
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:53930 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752110AbeBLSRf (ORCPT
+        id S1752370AbeBLSVL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:21:11 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46213 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751176AbeBLSVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:17:35 -0500
-X-Google-Smtp-Source: AH8x227ZCeKlBSHDgYBOiSztvkm7Nam/gJN3y9749w5hjQJLCcJFIQy2UBdzJ8zwXTgxzQwxUCoyzQ==
-Date: Mon, 12 Feb 2018 19:17:31 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, vincent.guittot@linaro.org,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
-        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
-        mathieu.poirier@linaro.org, tkjos@android.com, joelaf@google.com,
-        morten.rasmussen@arm.com, dietmar.eggemann@arm.com,
-        patrick.bellasi@arm.com, alessio.balsini@arm.com
-Subject: Re: [RFC PATCH 1/3] sched/deadline: merge dl_bw into dl_bandwidth
-Message-ID: <20180212181731.GO12979@localhost.localdomain>
-References: <20180212134030.12846-1-juri.lelli@redhat.com>
- <20180212134030.12846-2-juri.lelli@redhat.com>
- <20180212123430.6f8e4d6e@gandalf.local.home>
- <20180212174312.GN12979@localhost.localdomain>
- <20180212130239.506cbce9@gandalf.local.home>
+        Mon, 12 Feb 2018 13:21:09 -0500
+X-Google-Smtp-Source: AH8x227YZGn6KFsm+p7iDlMuwWF5DMaEdR8YFo6+YWzZbBmvys5LJ4Nt1573NlLTJOIuMLFje6Ab9A==
+Date: Mon, 12 Feb 2018 10:21:05 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+5ac9d43b97a33f321ed58e24960e30defaef843f@syzkaller.appspotmail.com>
+Cc: syzkaller-bugs@googlegroups.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ sha512_mb_mgr_get_comp_job_avx2
+Message-ID: <20180212182105.GA193902@gmail.com>
+References: <001a113ec900d65ea5055f70560f@google.com>
+ <001a113fae28e4fe39055f757ab5@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180212130239.506cbce9@gandalf.local.home>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <001a113fae28e4fe39055f757ab5@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/02/18 13:02, Steven Rostedt wrote:
-> On Mon, 12 Feb 2018 18:43:12 +0100
-> Juri Lelli <juri.lelli@redhat.com> wrote:
+On Sun, Dec 03, 2017 at 12:31:01PM -0800, syzbot wrote:
+> syzkaller has found reproducer for the following crash on
+> 4131d5166185d0d75b5f1d4bf362a9e0bac05598
+> git://git.cmpxchg.org/linux-mmots.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
 > 
-> > However, this surely needs to be fixed here. It's tracking the sum of
-> > all tasks' (across CPUs) bandwidth admitted on the system, so that's why
-> > it's called dl_total_bw. Incremented when a task passes sched_setattr()
-> > and decremented when it leaves the system or changes scheduling class.
-> > 
-> > Does it make a bit more sense? Would you still prefer a different name?
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
 > 
-> No the name is fine, the comment needs to change.
 > 
->  - dl_total_bw - tracks the sum of all tasks' bandwidth across CPUs.
-> 
-> How's that?
+> BUG: unable to handle kernel NULL pointer dereference at 00000000c58b0b19
+> IP: sha512_mb_mgr_get_comp_job_avx2+0x6e/0xee
+> arch/x86/crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S:251
+> PGD 1cb562067 P4D 1cb562067 PUD 1cb563067 PMD 0
+> Oops: 0002 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 1 PID: 24 Comm: kworker/1:1 Not tainted 4.15.0-rc1-mm1+ #29
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: crypto mcryptd_queue_worker
+> task: 0000000018ff7174 task.stack: 000000004c6e7fb4
+> RIP: 0010:sha512_mb_mgr_get_comp_job_avx2+0x6e/0xee
+> arch/x86/crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S:251
+> RSP: 0018:ffff8801d9d171b8 EFLAGS: 00010002
+> RAX: 0000000000000000 RBX: ffff8801d5aa38d0 RCX: 0000000000000000
+> RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff8801d5aa3780
+> RBP: ffff8801d9d171e0 R08: 0000000100000000 R09: 0000000000000001
+> R10: 0000000000000002 R11: 0000000000000003 R12: ffff8801d5aa3780
+> R13: 0000000000000282 R14: ffff8801cc115760 R15: ffffe8ffffd10630
+> FS:  0000000000000000(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000060 CR3: 00000001cb55f000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  sha_complete_job+0x276/0x830 arch/x86/crypto/sha512-mb/sha512_mb.c:510
+>  sha512_mb_update+0x2f6/0x530 arch/x86/crypto/sha512-mb/sha512_mb.c:610
+>  crypto_ahash_update include/crypto/hash.h:522 [inline]
+>  ahash_mcryptd_update crypto/mcryptd.c:628 [inline]
+>  mcryptd_hash_update+0xcd/0x1c0 crypto/mcryptd.c:374
+>  mcryptd_queue_worker+0xfe/0x660 crypto/mcryptd.c:182
+>  process_one_work+0xbfd/0x1bc0 kernel/workqueue.c:2113
+>  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+>  kthread+0x37a/0x440 kernel/kthread.c:238
+>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:517
+> Code: 49 0f 42 d3 48 f7 c2 f0 ff ff ff 0f 85 9a 00 00 00 48 83 e2 0f 48 6b
+> da 08 48 8d 9c 1f 48 01 00 00 48 8b 03 48 c7 03 00 00 00 00 <c7> 40 60 02 00
+> 00 00 48 8b 9f 40 01 00 00 48 c1 e3 08 48 09 d3
+> RIP: sha512_mb_mgr_get_comp_job_avx2+0x6e/0xee
+> arch/x86/crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S:251 RSP:
+> ffff8801d9d171b8
+> CR2: 0000000000000060
+> ---[ end trace 2003a6fbb2bb168e ]---
+> Kernel panic - not syncing: Fatal exception
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
 
-LGTM. I'll fix in next version.
+Fixed by commit eff84b379089cd, so marking it fixed for syzbot:
 
-Thanks!
+#syz fix: crypto: sha512-mb - initialize pending lengths correctly
 
-- Juri
+- Eric
