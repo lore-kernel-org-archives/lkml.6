@@ -1,141 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932936AbeBLWWn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:22:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55442 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932628AbeBLWWk (ORCPT
+        id S932959AbeBLWWt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:22:49 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41021 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932628AbeBLWWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:22:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5B2160F6C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rananta@codeaurora.org
-From: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Subject: Re: [PATCH] perf: Add support for creating offline events
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        tsoni@codeaurora.org
-References: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
- <20180212094357.GD5821@krava>
- <53408020-8638-4947-90f6-87dbc4c2c4e5@codeaurora.org>
- <20180212210442.GA32093@krava> <20180212212101.GA15817@krava>
-Message-ID: <6aab2b36-0fe6-7a3d-2106-d4c93ec95a8a@codeaurora.org>
-Date: Mon, 12 Feb 2018 14:22:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Mon, 12 Feb 2018 17:22:44 -0500
+X-Google-Smtp-Source: AH8x226fXc+bgXWFTLHQkRH3fY3hwZL5IWYWVc72gZIV1vha7f3uiejObW4Da/k9guZL4LtQUzg4Sw==
+Date: Mon, 12 Feb 2018 14:22:41 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        =?iso-8859-1?B?Wm9sdOFuIEL2c3r2cm3pbnlp?= <zboszor@pr.hu>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: piix4: Use usleep_range()
+Message-ID: <20180212222241.GA32060@roeck-us.net>
+References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
+ <1514652658-6228-2-git-send-email-linux@roeck-us.net>
+ <20180212115336.4b828ab8@endymion>
 MIME-Version: 1.0
-In-Reply-To: <20180212212101.GA15817@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212115336.4b828ab8@endymion>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jean,
 
-
-On 02/12/2018 01:21 PM, Jiri Olsa wrote:
-> On Mon, Feb 12, 2018 at 10:04:42PM +0100, Jiri Olsa wrote:
->> On Mon, Feb 12, 2018 at 09:42:05AM -0800, Raghavendra Rao Ananta wrote:
->>> Hi Jiri,
->>>
->>> Thank you for the response.
->>>
->>> Does perf tool has its own check to see if the CPU was offline during the
->>> lifetime of an event? If so, it might ignore these type of events.
->>
->> nope, we don't check on that
->>
->>>
->>> Initially, I tested the same using perf tool and found similar results.
->>> Then I debugged further and found that the perf core was actually sending
->>> data to the userspace (copy_to_user()) and the corresponding count for the
->>> data. Hence, I tested this further by writing my own userspace application,
->>> and I was able to read the count through this,
->>> even when the CPU was made offline and back online.
->>>
->>> Do you think we also have to modify the perf tool accordingly?
->>
->> hum, I wonder what's wrong.. will check
+On Mon, Feb 12, 2018 at 11:53:36AM +0100, Jean Delvare wrote:
+> Hi Guenter,
 > 
-> I think the user space needs to enable the event once the
-> cpu gets online.. which we dont do and your app does..?
+> On Sat, 30 Dec 2017 08:50:58 -0800, Guenter Roeck wrote:
+> > The piix4 i2c driver is extremely slow. Replacing msleep()
+> > with usleep_range() increases its speed substantially.
+> > 
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > ---
+> >  drivers/i2c/busses/i2c-piix4.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+> > index 78dd5951d6e7..52a8b1c5c110 100644
+> > --- a/drivers/i2c/busses/i2c-piix4.c
+> > +++ b/drivers/i2c/busses/i2c-piix4.c
+> > @@ -467,13 +467,13 @@ static int piix4_transaction(struct i2c_adapter *piix4_adapter)
+> >  
+> >  	/* We will always wait for a fraction of a second! (See PIIX4 docs errata) */
+> >  	if (srvrworks_csb5_delay) /* Extra delay for SERVERWORKS_CSB5 */
+> > -		msleep(2);
+> > +		usleep_range(2000, 2000);
 > 
-> maybe we could add perf_event_attr::enable_on_online ;-)
+> Isn't this exactly the same? I'm fine using the same function for
+> consistency, just curious.
 > 
-> I'll check what we can do in user space, I guess we can
-> monitor the cpu state and enable event accordingly
+> >  	else
+> > -		msleep(1);
+> > +		usleep_range(500, 1000);
 > 
-> jirka
+> Were you able to test this on older hardware? Unfortunately, the
+> specification errata of the original Intel PIIX4 is quite vague on the
+> amount of time you must wait before checking the Host Busy bit:
 > 
-Yes, probably that's the reason.
+> "Note that there may be moderate latency before the transaction begins
+> and the Host Busy bit gets set."
+> 
+> I guess we made it 1 ms at the time because it was the minimum we could
+> sleep anyway.
+> 
+> One option if you really care about the performance of the i2c-piix4
+> driver on recent hardware would be to lower the initial delay even more
+> for ATI and AMD chipsets. The errata was for Intel chipsets originally,
+> and while we know that at least some of the ServerWorks implementations
+> suffered from the same problem (worse actually) I don't think that
+> anybody ever bothered checking if it applied to more recent
+> implementations by other vendors.
+> 
+> For reference, at 93.75 kHz (the default SMBus frequency or the SB800),
+> an SMBus Quick transaction would be completed in 117 us, so I guess an
+> initial delay of 150 or 200 us would be optimum. And an SMBus Read Byte
+> transaction completes in 416 ms. I think this is the most popular SMBus
+> transaction, so ensuring that it is as fast as possible would make
+> sense.
+> 
+> And it might even work on older Intel chipsets, who knows. Plus I doubt
+> anyone is still using them anyway, so you have my approval to lower the
+> delays to whatever works for you.
+> 
+> As a comparison point, in the i2c-i801 driver we use:
+> 
+> 	usleep_range(250, 500);
+> 
+> for both the initial sleep and the waiting loop.
+> 
+A further test on Ryzen shows that bit 0 of SMBHSTSTS is set immediately,
+ie with
+	outb_p(inb(SMBHSTCNT) | 0x040, SMBHSTCNT);
+        busy = inb_p(SMBHSTSTS) & 0x01;
+busy is always true. None of the datasheets I was able to find (sb700,
+sb800, bolton) suggests that an initial delay is needed.
 
-In order for an event to get scheduled-in, it expects the event to be at 
-least in PERF_EVENT_STATE_INACTIVE state. If you notice, in my patch,
-when the cpu wakes up, we are initializing the state of the event 
-(perf_event__state_init()) and then trying to schedule-in. Since the 
-event was created with a disabled state, it seems that the same this is 
-followed and the state gets initialized to PERF_EVENT_STATE_OFF. 
-Unfortunately, events in this state could not be scheduled.
+Another quick test with my Ryzen system, using usleep_range(100, 100),
+shows the result of quick commands in the third loop iteration (ie
+after 200 uS), and the result of a "read byte" operation in the 6th
+loop iteration (ie after 500 uS). This is measured without initial delay.
 
-One way for things to get working is, instead of calling 
-perf_event__state_init() before the event is scheduled-in (when the cpu 
-wakes up), we can do something like:
-perf_event_set_state(event, PERF_EVENT_STATE_INACTIVE);
+Not sure what that means, if anything, for the driver. The biggest concern
+is the "moderate latency" required by the Intel chips. Otherwise we could
+just use the values from i2c-i801 for both initial and loop delay.
 
-I made this change and ran the same test as yours, and I see things 
-working out for us:
-
-# ./perf stat -C 1 -e sched:sched_switch -v -I 1000
-failed to read counter sched:sched_switch
-#           time             counts unit events
-      1.000115547      <not counted>      sched:sched_switch 
-
-failed to read counter sched:sched_switch
-      2.000265492      <not counted>      sched:sched_switch 
-
-failed to read counter sched:sched_switch
-      3.000379462      <not counted>      sched:sched_switch 
-
-failed to read counter sched:sched_switch
-      4.000523872      <not counted>      sched:sched_switch 
-
-failed to read counter sched:sched_switch
-      5.000614808      <not counted>      sched:sched_switch
-
-/* CPU bought ONLINE here */
-
-sched:sched_switch: 541 284808940 284808940
-      6.000767761                541      sched:sched_switch 
-
-sched:sched_switch: 180 1000119686 1000119686
-      7.000907234                180      sched:sched_switch 
-
-sched:sched_switch: 248 1000129929 1000129929
-      8.001026518                248      sched:sched_switch 
-
-sched:sched_switch: 253 1000173050 1000173050
-      9.001203689                253      sched:sched_switch 
-
-sched:sched_switch: 620 1000113378 1000113378
-     10.001323334                620      sched:sched_switch 
-
-sched:sched_switch: 366 1000121839 1000121839
-     11.001448354                366      sched:sched_switch 
-
-sched:sched_switch: 327 1000147664 1000147664
-     12.001591432                327      sched:sched_switch 
-
-^Csched:sched_switch: 272 488810681 488810681
-     12.490414290                272      sched:sched_switch 
-
-sched:sched_switch: 6 75893 75893
-
-Yes, so as you mentioned adding something like 
-perf_event_attr::enable_on_online gives us a control as to put the event 
-in INACTIVE state.
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Guenter
