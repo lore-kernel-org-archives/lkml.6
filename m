@@ -1,35 +1,36 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518376396; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AH8x226w9OPKiC3U/FkJgsQiBEWTPY5wlarJvmDl5R94aurRXJZeJNOSA+BGRthDO+hUynHTgTRe
+ARC-Seal: i=1; a=rsa-sha256; t=1518447090; cv=none;
         d=google.com; s=arc-20160816;
-        b=DNr+MdTgToW/NshnfI0MZ4oSn0VCvViYS7eAPWudMwF/u8+uwc3o4oQ7sFQM/xxlBN
-         FqXNR2JYEhtBVNDW8dFcMAYdnt1WCKWyXoxsD5uGJVeks/WrnoPN67UVjAOaStpa1Eke
-         /a5eqlZsfSwl+JREkeEnRkDjJV7R+10dhNE5x7o80dXaR52lCwRNVDmzVWi8tvOJxfYq
-         /gD7RMU96Qf9CqxsxtpxEdfoMtu2vbTgHa+r+DA5FR8HXz7kAs+CyDKFVJerW8m92Cy+
-         Mr+Qz22B9ILQQsTsXmqno/t7i2ifAnmOMjgc37WY4VjfpYkNOsLxVUKVi+H0TXCpFQPs
-         u7Dw==
+        b=NDrLk/mthMniAnykOg7AUOKqKvxaqbblqDFZulsNYOeMVh8gtdh1umhk6WirYqgfTc
+         frdns120PrcWJYqIKJulYI2ZTZhBrJ5ZXA6VtG1iqS8XKPW2oymTALMIa05QLSPRa6A+
+         a2iOM1aaLx60k39s8c4Cuss3UUeEOgFidnL5DYEw48Uy5Ma9XvDtrYfsum4skSdigIHH
+         zYjRiorBZSPGXzclgpCbCfjRnSkXEDA2/j0QsmwKtT011J7ioR44IQg1FpSy3Af9qF/U
+         wFKs01Dpl2nAHIy33xThhwuO0Hfyk2SCZyXCiKZ4kZfHs2agPEAUUaDHH0zYybP4srqL
+         kbVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=Sb7D/e+myKUPxA0fmAFwq4qF2XlDjLhyP8QV6vk16WM=;
-        b=D/bpdDzhp6W7/L52lBEh0ixXmrhBkiW2n9I0D8Cmea7m2AQgh95UDzXKj8pi9Sctym
-         Cjev1FRTVzUc9LKygluGjr1v17ltFELjOH1UH8Z10Z3NN08DGXOsLLzTBdPY8hBMEn4k
-         VWbbZFYZCd+N5czybUVMnJMKzCPmwyqeEgPY5Z7WFjOFjYChV9LW1Xiur5smpgGqoJyv
-         v3aiRvlvHlB0gxUS8vtavsckGhM88ZZ6gPakR86SA1aLOPX+qPgTn3FKu0dO+UZV/pvs
-         9UpOD1YCjf6BwKxoTaECp+fH4lJ8ohFSUP97Aoc0CuljUaNNtk8xuJzddKVcGLUzSefX
-         jFTg==
+        bh=RkA0cC2xwhDqGD2V24jJockc3BFx3kH29esjN8Pt+ew=;
+        b=0NNuEuHZNsaXggK5b4RhVzr1DuulzZXt2KzePP99FXLpYcxVvIZLuCRzMYYNtYZemE
+         dDb6VCXUkxn3mp0oZtFLRd0IFHLrUJbYhNpjwk2nYpD85+lSbSBMl5WjD0duNdryQq8l
+         fIk/hOiuO/lndENUih3K6AFrfRilzY0U6fUOK9WNdxCU9YNsNBJKubeq1hQiIHvirKQf
+         wgEHMfgFhmdicv7tEiH6BQnA6Ovq22LLjVc9FKT+ywLgwg9PfmNlA9lk3g2theVWssBU
+         Ct0+uePOY8bp5Rz5C/N72i6d3dVvEHpg86T+UMrn7on1FchZPdMflnI2ihKz+M9wJZdf
+         w0xA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=X+YZdKyL;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GIlu4cMk;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=X+YZdKyL;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-X-Google-Smtp-Source: AH8x226h8BGJdx/8XTLuQwe3M1h/2q5taCVoHe694JHBhAyV7TQpIv8KJnaP+lGgeIf1rsqFYTmfuw==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sun, 11 Feb 2018 20:13:12 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Joerg Roedel <jroedel@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GIlu4cMk;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Date: Mon, 12 Feb 2018 15:51:25 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Joerg Roedel <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	"H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
@@ -52,61 +53,93 @@ Cc: Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
 	Andrea Arcangeli <aarcange@redhat.com>,
 	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 00/31 v2] PTI support for x86_32
-Message-ID: <20180211191312.54apu5edk3olsfz3@gmail.com>
+Message-ID: <20180212145125.GE16484@8bytes.org>
 References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
  <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
  <20180209191112.55zyjf4njum75brd@suse.de>
+ <20180211191312.54apu5edk3olsfz3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180209191112.55zyjf4njum75brd@suse.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180211191312.54apu5edk3olsfz3@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914900490843452?=
-X-GMAIL-MSGID: =?utf-8?q?1592133048313998878?=
+X-GMAIL-MSGID: =?utf-8?q?1592207175975342363?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi Ingo,
 
-* Joerg Roedel <jroedel@suse.de> wrote:
+On Sun, Feb 11, 2018 at 08:13:12PM +0100, Ingo Molnar wrote:
+> Could you please measure the PTI kernel vs. vanilla kernel?
 
-> Hi Andy,
-> 
-> On Fri, Feb 09, 2018 at 05:47:43PM +0000, Andy Lutomirski wrote:
-> > One thing worth noting is that performance of this whole series is
-> > going to be abysmal due to the complete lack of 32-bit PCID.  Maybe
-> > any kernel built with this option set that runs on a CPU that has the
-> > PCID bit set in CPUID should print a big fat warning like "WARNING:
-> > you are using 32-bit PTI on a 64-bit PCID-capable CPU.  Your
-> > performance will increase dramatically if you switch to a 64-bit
-> > kernel."
-> 
-> Thanks for your review. I can add this warning, but I just hope that not
-> a lot of people will actually see it :)
+Okay, did that, here is the data. The test machine is a Xeon E5-1620v2,
+which is Ivy Bridge based (no PCIE) and has 4C/8T.
 
-Could you please measure the PTI kernel vs. vanilla kernel?
+I ran the 2 tests you suggested:
 
-Nothing complex, just perf's built-in scheduler and syscall benchmark should be 
-enough:
+	* Test-1: perf stat --null --sync --repeat 10 perf bench sched messaging -g 20
 
-   perf stat --null --sync --repeat 10 perf bench sched messaging -g 20
+	* Test-2: perf stat --null --sync --repeat 10 perf bench sched messaging -g 20 -t
 
-this should give us a pretty good worst-case overhead figure for process 
-workloads.
+The tests ran on these kernels:
 
-Add '-t' to test threaded workloads as well:
+	* tip-32-pae: current top of tip/x86-tip-for-linus branch,
+	              compiled as a 32 bit kernel with PAE
+	              (commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
 
-   perf stat --null --sync --repeat 10 perf bench sched messaging -g 20 -t
+	* pti-32-pae: Same as above with my patches on-top, as on
 
-The 10 runs used should be enough to reach good stability in practice:
+		      git://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git pti-x32-v2
 
- Performance counter stats for 'perf bench sched messaging -g 20 -t' (10 runs):
+	              compiled as a 32 bit kernel with PAE
+		      (commit dbb0074f778b396a11e0c897fef9d0c4583e7ccb)
 
-       0.380742219 seconds time elapsed                                          ( +-  0.73% )
+	* pti-off-64: current top of tip/x86-tip-for-linus branch,
+		      compiled as a 64 bit kernel, booted with pti=off
+	              (commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
 
-Maybe do the same on the 64-bit kernel as well, so that we have 4 good data points 
-on the same hardware?
+	* pti-on-64: current top of tip/x86-tip-for-linus branch,
+		     compiled as a 64 bit kernel, booted with pti=on
+	             (commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
 
-Thanks,
+Results are:
+	            | Test-1             | Test-2          
+	------------+--------------------+-----------------
+	tip-32-pae  | 0.28s (+-0.44%)    | 0.27s (+-2.15%) 
+	------------+--------------------+-----------------
+	pti-32-pae  | 0.44s (+-0.40%)    | 0.42s (+-0.48%) 
+	------------+--------------------+-----------------
+	pti-off-64  | 0.24s (+-0.40%)    | 0.25s (+-1.31%) 
+	------------+--------------------+-----------------
+	pti-on-64   | 0.30s (+-0.47%)    | 0.31s (+-0.95%)
 
-	Ingo
+On 32 bit with PTI enabled the test needs 157% (non-threaded) and
+156% (threaded) of time compared to the non-PTI baseline.
+
+On 64 bit these numbers are 125% (non-threaded) and 124% (threaded).
+
+The pti-32-pae kernel still used 'rep movsb' in the entry code. I
+replaced that with 'rep movsl' and measured again, but overhead is still
+around 152%.
+
+I also measured cycles with 'perf record' to see where the additional
+time is spent. The report showed around 25% in entry_SYSENTER_32 for
+the pti-32-pae kernel. The same report on the tip-32-pae kernel shows
+around 2.5% for the same symbol.
+
+The entry_SYSENTER_32 path does no stack-copy on entry (it only
+push/pops 8 bytes for the cr3 switch), but one full pt_regs copy on
+exit. The exit-path was easy to optimize, I got it to the point where it
+only copied 8 bytes to the entry stack (flags and eax).  This way I got
+the 'perf report' numbers for entry_SYSENTER_32 down to around 20%, but
+the overall numbers for Test-1 and Test-2 are still at around 150% of
+the baseline.
+
+So it seems that most of the additional time is actually spent switching
+the cr3s.
+
+Regards,
+
+	Joerg
