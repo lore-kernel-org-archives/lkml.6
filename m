@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932660AbeBLWIC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:08:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58770 "EHLO mail.kernel.org"
+        id S932714AbeBLWIL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:08:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932413AbeBLWIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:08:00 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C1121780
+        id S932413AbeBLWIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:08:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D0021799
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -16,11 +16,17 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 0/5] Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:48 +0000
-Message-Id: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH v3 1/5] dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 22:07:49 +0000
+Message-Id: <1518473273-6333-2-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -28,51 +34,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
 
-Back in 2014, Jean-Michel provided patches [0] to implement a means of
-describing software defined I2C addresses for devices through the DT nodes.
+The ADV7604 has thirteen 256-byte maps that can be accessed via the main
+I²C ports. Each map has it own I²C address and acts as a standard slave
+device on the I²C bus.
 
-The patch to implement the function "i2c_new_secondary_device()" was integrated,
-but the corresponding driver update didn't get applied.
+Extend the device tree node bindings to be able to override the default
+addresses so that address conflicts with other devices on the same bus
+may be resolved at the board description level.
 
-This short series re-bases Jean-Michel's patch to mainline for the ADV7604 driver
-in linux-media, and also provides a patch for the ADV7511 DRM Bridge driver taking
-the same approach.
+Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+[Kieran: Re-adapted for mainline]
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-This series allows us to define the I2C address allocations of these devices in
-the device tree for the Renesas D3 platform where these two devices reside on
-the same bus and conflict with each other presently..
-
-[0] https://lkml.org/lkml/2014/10/22/468
-[1] https://lkml.org/lkml/2014/10/22/469
+---
+Based upon the original posting :
+  https://lkml.org/lkml/2014/10/22/469
 
 v2:
- - dt bindings split from driver changes
- - fixed up dt binding property descriptions
- - Update missing edid-i2c address setting (adv7511)
- - Provide update for r8a7792 DTB to account for address conflict
+ - DT Binding update separated from code change
+ - Minor reword to commit message to account for DT only change.
+ - Collected Rob's RB tag.
 
 v3:
- - Split map register addresses into individual declarations across all uses
+ - Split map register addresses into individual declarations.
 
+ .../devicetree/bindings/media/i2c/adv7604.txt          | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-Jean-Michel Hautbois (2):
-  dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
-  media: adv7604: Add support for i2c_new_secondary_device
-
-Kieran Bingham (3):
-  dt-bindings: adv7511: Add support for i2c_new_secondary_device
-  [RFT] ARM: dts: wheat: Fix ADV7513 address usage
-  drm: adv7511: Add support for i2c_new_secondary_device
-
- .../bindings/display/bridge/adi,adv7511.txt        | 18 ++++++-
- .../devicetree/bindings/media/i2c/adv7604.txt      | 18 ++++++-
- arch/arm/boot/dts/r8a7792-wheat.dts                | 12 ++++-
- drivers/gpu/drm/bridge/adv7511/adv7511.h           |  6 +++
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 42 +++++++++------
- drivers/media/i2c/adv7604.c                        | 62 ++++++++++++++--------
- 6 files changed, 115 insertions(+), 43 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+index 9cbd92eb5d05..ebb5f070c05b 100644
+--- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
++++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+@@ -13,7 +13,11 @@ Required Properties:
+     - "adi,adv7611" for the ADV7611
+     - "adi,adv7612" for the ADV7612
+ 
+-  - reg: I2C slave address
++  - reg: I2C slave addresses
++    The ADV76xx has up to thirteen 256-byte maps that can be accessed via the
++    main I²C ports. Each map has it own I²C address and acts as a standard
++    slave device on the I²C bus. The main address is mandatory, others are
++    optional and revert to defaults if not specified.
+ 
+   - hpd-gpios: References to the GPIOs that control the HDMI hot-plug
+     detection pins, one per HDMI input. The active flag indicates the GPIO
+@@ -35,6 +39,11 @@ Optional Properties:
+ 
+   - reset-gpios: Reference to the GPIO connected to the device's reset pin.
+   - default-input: Select which input is selected after reset.
++  - reg-names : Names of maps with programmable addresses.
++		It can contain any map needing a non-default address.
++		Possible maps names are :
++		  "main", "avlink", "cec", "infoframe", "esdp", "dpp", "afe",
++		  "rep", "edid", "hdmi", "test", "cp", "vdp"
+ 
+ Optional Endpoint Properties:
+ 
+@@ -52,7 +61,12 @@ Example:
+ 
+ 	hdmi_receiver@4c {
+ 		compatible = "adi,adv7611";
+-		reg = <0x4c>;
++		/*
++		 * The edid page will be accessible @ 0x66 on the i2c bus. All
++		 * other maps will retain their default addresses.
++		 */
++		reg = <0x4c>, <0x66>;
++		reg-names "main", "edid";
+ 
+ 		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
+ 		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
 -- 
 2.7.4
