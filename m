@@ -1,62 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754200AbeBLVVI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:21:08 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57058 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754117AbeBLVVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:21:04 -0500
-Date: Mon, 12 Feb 2018 22:21:01 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH] perf: Add support for creating offline events
-Message-ID: <20180212212101.GA15817@krava>
-References: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
- <20180212094357.GD5821@krava>
- <53408020-8638-4947-90f6-87dbc4c2c4e5@codeaurora.org>
- <20180212210442.GA32093@krava>
+        id S1754216AbeBLVWW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:22:22 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:34559 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754067AbeBLVWV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:22:21 -0500
+Date: Mon, 12 Feb 2018 22:22:08 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Miquel Raynal <miquel.raynal@free-electrons.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: nand: MTD_NAND_MARVELL should depend on HAS_DMA
+Message-ID: <20180212222208.39324af1@bbrezillon>
+In-Reply-To: <1517318601-14793-1-git-send-email-geert@linux-m68k.org>
+References: <1517318601-14793-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180212210442.GA32093@krava>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 10:04:42PM +0100, Jiri Olsa wrote:
-> On Mon, Feb 12, 2018 at 09:42:05AM -0800, Raghavendra Rao Ananta wrote:
-> > Hi Jiri,
-> > 
-> > Thank you for the response.
-> > 
-> > Does perf tool has its own check to see if the CPU was offline during the
-> > lifetime of an event? If so, it might ignore these type of events.
+On Tue, 30 Jan 2018 14:23:21 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+
+> If NO_DMA=y:
 > 
-> nope, we don't check on that
+>     ERROR: "bad_dma_ops" [drivers/mtd/nand/marvell_nand.ko] undefined!
 > 
-> > 
-> > Initially, I tested the same using perf tool and found similar results.
-> > Then I debugged further and found that the perf core was actually sending
-> > data to the userspace (copy_to_user()) and the corresponding count for the
-> > data. Hence, I tested this further by writing my own userspace application,
-> > and I was able to read the count through this,
-> > even when the CPU was made offline and back online.
-> > 
-> > Do you think we also have to modify the perf tool accordingly?
+> Add a dependency on HAS_DMA to fix this.
+
+Applied.
+
+Thanks,
+
+Boris
+
 > 
-> hum, I wonder what's wrong.. will check
+> Fixes: 02f26ecf8c772751 ("mtd: nand: add reworked Marvell NAND controller driver")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  drivers/mtd/nand/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/Kconfig b/drivers/mtd/nand/Kconfig
+> index e6b8c59f2c0da7c0..736ac887303c88ba 100644
+> --- a/drivers/mtd/nand/Kconfig
+> +++ b/drivers/mtd/nand/Kconfig
+> @@ -328,7 +328,7 @@ config MTD_NAND_MARVELL
+>  	tristate "NAND controller support on Marvell boards"
+>  	depends on PXA3xx || ARCH_MMP || PLAT_ORION || ARCH_MVEBU || \
+>  		   COMPILE_TEST
+> -	depends on HAS_IOMEM
+> +	depends on HAS_IOMEM && HAS_DMA
+>  	help
+>  	  This enables the NAND flash controller driver for Marvell boards,
+>  	  including:
 
-I think the user space needs to enable the event once the
-cpu gets online.. which we dont do and your app does..?
 
-maybe we could add perf_event_attr::enable_on_online ;-)
 
-I'll check what we can do in user space, I guess we can
-monitor the cpu state and enable event accordingly
-
-jirka
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
