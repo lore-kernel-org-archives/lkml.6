@@ -1,151 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935125AbeBLM7f (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:59:35 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:59574 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933881AbeBLM7c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:59:32 -0500
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] nvme-pci: suspend queues based on online_queues
-Date: Mon, 12 Feb 2018 20:59:15 +0800
-Message-Id: <1518440355-801-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802120168
+        id S935124AbeBLNEM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:04:12 -0500
+Received: from mga06.intel.com ([134.134.136.31]:16449 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933646AbeBLNEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 08:04:11 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,501,1511856000";
+   d="scan'208";a="19298663"
+Date: Mon, 12 Feb 2018 15:04:06 +0200
+From: Imre Deak <imre.deak@intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        Ismo Toijala <ismo.toijala@gmail.com>, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, Liviu Dudau <Liviu.Dudau@arm.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Hans de Goede <hdegoede@redhat.com>, Peter Wu <peter@lekensteyn.nl>
+Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
+Message-ID: <20180212130406.5dsh7rm47azeyev7@ideak-desk.fi.intel.com>
+Reply-To: imre.deak@intel.com
+References: <cover.1518338788.git.lukas@wunner.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1518338788.git.lukas@wunner.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nvme cq irq is freed based on queue_count. When the sq/cq creation
-fails, irq will not be setup. free_irq will warn 'Try to free
-already-free irq'.
+On Sun, Feb 11, 2018 at 10:38:28AM +0100, Lukas Wunner wrote:
+> [...]
+> i915, malidp and msm "solved" this issue by not stopping the poll worker
+> on runtime suspend.  But this results in the GPU bouncing back and forth
+> between D0 and D3 continuously.  That's a total no-go for GPUs which
+> runtime suspend to D3cold since every suspend/resume cycle costs a
+> significant amount of time and energy.  (i915 and malidp do not seem
+> to acquire a runtime PM ref in the ->detect callbacks, which seems
+> questionable.  msm however does and would also deadlock if it disabled
+> the poll worker on runtime suspend.  cc += Archit, Liviu, intel-gfx)
 
-To fix it, we only increase online_queues when adminq/sq/cq are
-created and associated irq is setup. Then suspend queues based
-on online_queues.
+In i915 polling is on during runtime suspend only if there are outputs
+without hotplug interrupt support. A special case is when an output has
+working HPD interrupts when in D0, but no interrupts when runtime
+suspended. For these we start polling (from a scheduled work) in the
+runtime suspend hook and stop it in the runtime resume hook (again from
+a scheduled work).
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- drivers/nvme/host/pci.c | 41 ++++++++++++++++++++++++++---------------
- 1 file changed, 26 insertions(+), 15 deletions(-)
+Imo whether to leave polling on or not for the above purpose is a policy
+question (configurable with the drm_kms_helper.poll param).
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 0cba8d8..2106681 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1317,9 +1317,6 @@ static int nvme_suspend_queue(struct nvme_queue *nvmeq)
- 	nvmeq->cq_vector = -1;
- 	spin_unlock_irq(&nvmeq->q_lock);
- 
--	if (!nvmeq->qid && nvmeq->dev->ctrl.admin_q)
--		blk_mq_quiesce_queue(nvmeq->dev->ctrl.admin_q);
--
- 	pci_free_irq(to_pci_dev(nvmeq->dev->dev), vector, nvmeq);
- 
- 	return 0;
-@@ -1463,13 +1460,14 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
- 	nvme_init_queue(nvmeq, qid);
- 	result = queue_request_irq(nvmeq);
- 	if (result < 0)
--		goto release_sq;
-+		goto offline;
- 
- 	return result;
- 
-- release_sq:
-+offline:
-+	dev->online_queues--;
- 	adapter_delete_sq(dev, qid);
-- release_cq:
-+release_cq:
- 	adapter_delete_cq(dev, qid);
- 	return result;
- }
-@@ -1609,6 +1607,7 @@ static int nvme_pci_configure_admin_queue(struct nvme_dev *dev)
- 	result = queue_request_irq(nvmeq);
- 	if (result) {
- 		nvmeq->cq_vector = -1;
-+		dev->online_queues--;
- 		return result;
- 	}
- 
-@@ -1956,6 +1955,7 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
- 	result = queue_request_irq(adminq);
- 	if (result) {
- 		adminq->cq_vector = -1;
-+		dev->online_queues--;
- 		return result;
- 	}
- 	return nvme_create_io_queues(dev);
-@@ -2169,6 +2169,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 	int i;
- 	bool dead = true;
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
-+	int onlines;
- 
- 	mutex_lock(&dev->shutdown_lock);
- 	if (pci_is_enabled(pdev)) {
-@@ -2177,8 +2178,11 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 		if (dev->ctrl.state == NVME_CTRL_LIVE ||
- 		    dev->ctrl.state == NVME_CTRL_RESETTING)
- 			nvme_start_freeze(&dev->ctrl);
--		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
--			pdev->error_state  != pci_channel_io_normal);
-+
-+		dead = !!((csts & NVME_CSTS_CFS) ||
-+				!(csts & NVME_CSTS_RDY) ||
-+				(pdev->error_state  != pci_channel_io_normal) ||
-+				(dev->online_queues == 0));
- 	}
- 
- 	/*
-@@ -2204,9 +2208,14 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 		nvme_disable_io_queues(dev);
- 		nvme_disable_admin_queue(dev, shutdown);
- 	}
--	for (i = dev->ctrl.queue_count - 1; i >= 0; i--)
-+
-+	onlines = dev->online_queues;
-+	for (i = onlines - 1; i >= 0; i--)
- 		nvme_suspend_queue(&dev->queues[i]);
- 
-+	if (dev->ctrl.admin_q)
-+		blk_mq_quiesce_queue(dev->ctrl.admin_q);
-+
- 	nvme_pci_disable(dev);
- 
- 	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
-@@ -2342,16 +2351,18 @@ static void nvme_reset_work(struct work_struct *work)
- 	if (result)
- 		goto out;
- 
--	/*
--	 * Keep the controller around but remove all namespaces if we don't have
--	 * any working I/O queue.
--	 */
--	if (dev->online_queues < 2) {
-+
-+	/* In case of online_queues is zero, it has gone to out */
-+	if (dev->online_queues == 1) {
-+		/*
-+		 * Keep the controller around but remove all namespaces if we
-+		 * don't have any working I/O queue.
-+		 */
- 		dev_warn(dev->ctrl.device, "IO queues not created\n");
- 		nvme_kill_queues(&dev->ctrl);
- 		nvme_remove_namespaces(&dev->ctrl);
- 		new_state = NVME_CTRL_ADMIN_ONLY;
--	} else {
-+	} else if (dev->online_queues > 1) {
- 		nvme_start_queues(&dev->ctrl);
- 		nvme_wait_freeze(&dev->ctrl);
- 		/* hit this only when allocate tagset fails */
--- 
-2.7.4
+--Imre
+
+> 
+> Please review.  Thanks,
+> 
+> Lukas
+> 
+> Lukas Wunner (5):
+>   workqueue: Allow retrieval of current task's work struct
+>   drm: Allow determining if current task is output poll worker
+>   drm/nouveau: Fix deadlock on runtime suspend
+>   drm/radeon: Fix deadlock on runtime suspend
+>   drm/amdgpu: Fix deadlock on runtime suspend
+> 
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c | 58 +++++++++++++-------
+>  drivers/gpu/drm/drm_probe_helper.c             | 14 +++++
+>  drivers/gpu/drm/nouveau/nouveau_connector.c    | 18 +++++--
+>  drivers/gpu/drm/radeon/radeon_connectors.c     | 74 +++++++++++++++++---------
+>  include/drm/drm_crtc_helper.h                  |  1 +
+>  include/linux/workqueue.h                      |  1 +
+>  kernel/workqueue.c                             | 16 ++++++
+>  7 files changed, 132 insertions(+), 50 deletions(-)
+> 
+> -- 
+> 2.15.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
