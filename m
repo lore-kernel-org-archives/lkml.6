@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935419AbeBLNTr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:19:47 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36312 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935287AbeBLNSD (ORCPT
+        id S935431AbeBLNUL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:20:11 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45213 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935289AbeBLNR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:18:03 -0500
-X-Google-Smtp-Source: AH8x225WgnSqK6dspll2Dsfh1NbYWpzim0RFV8RtJPJkwG+XFDXE0r8NgTBbBGdzxoL9p5LKNfwKaA==
+        Mon, 12 Feb 2018 08:17:59 -0500
+X-Google-Smtp-Source: AH8x227mTi7XQ5R0cym1pD3vR8pQbrXiit/Vib8mHLFyavcfbMRcj6M5hte5ftkSgZWHTWWfw2FnEg==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 15/21] regulator: tps65090: Pass descriptor instead of GPIO number
-Date: Mon, 12 Feb 2018 14:17:11 +0100
-Message-Id: <20180212131717.27193-16-linus.walleij@linaro.org>
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 13/21] regulator: s2mps11: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:17:09 +0100
+Message-Id: <20180212131717.27193-14-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -24,137 +26,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up from the device tree node for the
-regulator.
+a descriptor looked up with the standard devm_gpiod_get_optional()
+call.
 
 This regulator supports passing platform data, but enable/sleep
 regulators are looked up from the device tree exclusively, so
 we can need not touch other files.
 
-Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Lee: it would be nice if you could ACK this smallish patch to
-the MFD header.
----
- drivers/regulator/tps65090-regulator.c | 50 ++++++++++++++++------------------
- include/linux/mfd/tps65090.h           |  8 ++++--
- 2 files changed, 28 insertions(+), 30 deletions(-)
+ drivers/regulator/s2mps11.c | 46 ++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-index 395f35dc8cdb..2d398fa3b720 100644
---- a/drivers/regulator/tps65090-regulator.c
-+++ b/drivers/regulator/tps65090-regulator.c
-@@ -19,8 +19,8 @@
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/init.h>
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 7726b874e539..9a1dca26362e 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -18,7 +18,7 @@
+ 
+ #include <linux/bug.h>
+ #include <linux/err.h>
 -#include <linux/gpio.h>
--#include <linux/of_gpio.h>
-+#include <linux/of.h>
 +#include <linux/gpio/consumer.h>
  #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/platform_device.h>
-@@ -300,26 +300,6 @@ static int tps65090_regulator_disable_ext_control(
- 	return tps65090_config_ext_control(ri, false);
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -27,7 +27,6 @@
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/of_regulator.h>
+-#include <linux/of_gpio.h>
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/s2mps11.h>
+ #include <linux/mfd/samsung/s2mps13.h>
+@@ -57,7 +56,7 @@ struct s2mps11_info {
+ 	 * Array (size: number of regulators) with GPIO-s for external
+ 	 * sleep control.
+ 	 */
+-	int *ext_control_gpio;
++	struct gpio_desc **ext_control_gpiod;
+ };
+ 
+ static int get_ramp_delay(int ramp_delay)
+@@ -524,7 +523,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ 	case S2MPS14X:
+ 		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+ 			val = S2MPS14_ENABLE_SUSPEND;
+-		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
++		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
+ 			val = S2MPS14_ENABLE_EXT_CONTROL;
+ 		else
+ 			val = rdev->desc->enable_mask;
+@@ -818,7 +817,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
+ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
+ {
+-	int *gpio = s2mps11->ext_control_gpio;
++	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
+ 	unsigned int i;
+ 	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
+ 		S2MPS14_LDO12 };
+@@ -829,11 +828,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+ 			continue;
+ 
+-		gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
+-				"samsung,ext-control-gpios", 0);
+-		if (gpio_is_valid(gpio[reg]))
+-			dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
+-					gpio[reg], reg, rdata[reg].name);
++		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
++							rdata[reg].of_node,
++							"samsung,ext-control-gpios",
++							0,
++							GPIOD_OUT_HIGH,
++							"s2mps11-LDO");
++		if (IS_ERR(gpio[reg])) {
++			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
++				reg, rdata[reg].name);
++			continue;
++		}
++		if (gpio[reg])
++			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
++				reg, rdata[reg].name);
+ 	}
  }
  
--static void tps65090_configure_regulator_config(
--		struct tps65090_regulator_plat_data *tps_pdata,
--		struct regulator_config *config)
--{
--	if (gpio_is_valid(tps_pdata->gpio)) {
--		int gpio_flag = GPIOF_OUT_INIT_LOW;
--
--		if (tps_pdata->reg_init_data->constraints.always_on ||
--				tps_pdata->reg_init_data->constraints.boot_on)
--			gpio_flag = GPIOF_OUT_INIT_HIGH;
--
--		config->ena_gpio = tps_pdata->gpio;
--		config->ena_gpio_initialized = true;
--		config->ena_gpio_flags = gpio_flag;
--	} else {
--		config->ena_gpio = -EINVAL;
--		config->ena_gpio_initialized = false;
--	}
--}
--
- #ifdef CONFIG_OF
- static struct of_regulator_match tps65090_matches[] = {
- 	{ .name = "dcdc1", },
-@@ -385,9 +365,26 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
- 		rpdata->enable_ext_control = of_property_read_bool(
- 					tps65090_matches[idx].of_node,
- 					"ti,enable-ext-control");
--		if (rpdata->enable_ext_control)
--			rpdata->gpio = of_get_named_gpio(np,
--					"dcdc-ext-control-gpios", 0);
-+		if (rpdata->enable_ext_control) {
-+			enum gpiod_flags gflags;
-+
-+			if (ri_data->constraints.always_on ||
-+			    ri_data->constraints.boot_on)
-+				gflags = GPIOD_OUT_HIGH;
-+			else
-+				gflags = GPIOD_OUT_LOW;
-+
-+			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
-+								    tps65090_matches[idx].of_node,
-+								    "dcdc-ext-control-gpios", 0,
-+								    gflags,
-+								    "tps65090");
-+			if (IS_ERR(rpdata->gpiod))
-+				return ERR_CAST(rpdata->gpiod);
-+			if (!rpdata->gpiod)
-+				dev_err(&pdev->dev,
-+					"could not find DCDC external control GPIO\n");
-+		}
+@@ -1139,17 +1147,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
- 		if (of_property_read_u32(tps65090_matches[idx].of_node,
- 					 "ti,overcurrent-wait",
-@@ -455,8 +452,7 @@ static int tps65090_regulator_probe(struct platform_device *pdev)
- 		 */
- 		if (tps_pdata && is_dcdc(num) && tps_pdata->reg_init_data) {
- 			if (tps_pdata->enable_ext_control) {
--				tps65090_configure_regulator_config(
--						tps_pdata, &config);
-+				config.ena_gpiod = tps_pdata->gpiod;
- 				ri->desc->ops = &tps65090_ext_control_ops;
- 			} else {
- 				ret = tps65090_regulator_disable_ext_control(
-diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-index 67d144b3b8f9..f05bf4a146e2 100644
---- a/include/linux/mfd/tps65090.h
-+++ b/include/linux/mfd/tps65090.h
-@@ -83,6 +83,8 @@ enum {
- #define TPS65090_MAX_REG	TPS65090_REG_AD_OUT2
- #define TPS65090_NUM_REGS	(TPS65090_MAX_REG + 1)
+-	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
+-			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
++	s2mps11->ext_control_gpiod = devm_kmalloc(&pdev->dev,
++			sizeof(*s2mps11->ext_control_gpiod) * rdev_num,
+ 			GFP_KERNEL);
+-	if (!s2mps11->ext_control_gpio)
++	if (!s2mps11->ext_control_gpiod)
+ 		return -ENOMEM;
+-	/*
+-	 * 0 is a valid GPIO so initialize all GPIO-s to negative value
+-	 * to indicate that external control won't be used for this regulator.
+-	 */
+-	for (i = 0; i < rdev_num; i++)
+-		s2mps11->ext_control_gpio[i] = -EINVAL;
  
-+struct gpio_desc;
-+
- struct tps65090 {
- 	struct device		*dev;
- 	struct regmap		*rmap;
-@@ -95,8 +97,8 @@ struct tps65090 {
-  * @reg_init_data: The regulator init data.
-  * @enable_ext_control: Enable extrenal control or not. Only available for
-  *     DCDC1, DCDC2 and DCDC3.
-- * @gpio: Gpio number if external control is enabled and controlled through
-- *     gpio.
-+ * @gpiod: Gpio descriptor if external control is enabled and controlled through
-+ *     gpio
-  * @overcurrent_wait_valid: True if the overcurrent_wait should be applied.
-  * @overcurrent_wait: Value to set as the overcurrent wait time.  This is the
-  *     actual bitfield value, not a time in ms (valid value are 0 - 3).
-@@ -104,7 +106,7 @@ struct tps65090 {
- struct tps65090_regulator_plat_data {
- 	struct regulator_init_data *reg_init_data;
- 	bool enable_ext_control;
--	int gpio;
-+	struct gpio_desc *gpiod;
- 	bool overcurrent_wait_valid;
- 	int overcurrent_wait;
- };
+ 	if (!iodev->dev->of_node) {
+ 		if (iodev->pdata) {
+@@ -1179,8 +1181,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	config.dev = &pdev->dev;
+ 	config.regmap = iodev->regmap_pmic;
+ 	config.driver_data = s2mps11;
+-	config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+-	config.ena_gpio_initialized = true;
+ 	for (i = 0; i < rdev_num; i++) {
+ 		struct regulator_dev *regulator;
+ 
+@@ -1191,7 +1191,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 			config.init_data = rdata[i].init_data;
+ 			config.of_node = rdata[i].of_node;
+ 		}
+-		config.ena_gpio = s2mps11->ext_control_gpio[i];
++		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
+ 
+ 		regulator = devm_regulator_register(&pdev->dev,
+ 						&regulators[i], &config);
+@@ -1202,7 +1202,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 			goto out;
+ 		}
+ 
+-		if (gpio_is_valid(s2mps11->ext_control_gpio[i])) {
++		if (s2mps11->ext_control_gpiod[i]) {
+ 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
+ 					regulator);
+ 			if (ret < 0) {
 -- 
 2.14.3
