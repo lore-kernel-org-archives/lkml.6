@@ -1,161 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753903AbeBLSNq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:13:46 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:10429 "EHLO pegase1.c-s.fr"
+        id S1753736AbeBLSOR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:14:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753349AbeBLSM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:12:28 -0500
-Message-Id: <caa9d52e0a8ef15719bafe8002a4ad2dc359c634.1518382747.git.christophe.leroy@c-s.fr>
-In-Reply-To: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
-References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC REBASED 3/5] powerpc/mm/slice: implement slice_check_range_fits
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Mon, 12 Feb 2018 19:12:26 +0100 (CET)
+        id S1752822AbeBLSMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:12:16 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E553E21781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)
+Subject: [PATCH v2 3/5] [RFT] ARM: dts: wheat: Fix ADV7513 address usage
+Date: Mon, 12 Feb 2018 18:11:55 +0000
+Message-Id: <1518459117-16733-4-git-send-email-kbingham@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than build slice masks from a range then use that to check for
-fit in a candidate mask, implement slice_check_range_fits that checks
-if a range fits in a mask directly.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This allows several structures to be removed from stacks, and also we
-don't expect a huge range in a lot of these cases, so building and
-comparing a full mask is going to be more expensive than testing just
-one or two bits of the range.
+The r8a7792 Wheat board has two ADV7513 devices sharing a single i2c
+bus, however in low power mode the ADV7513 will reset it's slave maps to
+use the hardware defined default addresses.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+The ADV7511 driver was adapted to allow the two devices to be registered
+correctly - but it did not take into account the fault whereby the
+devices reset the addresses.
+
+This results in an address conflict between the device using the default
+addresses, and the other device if it is in low-power-mode.
+
+Repair this issue by moving both devices away from the default address
+definitions.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- arch/powerpc/mm/slice.c | 68 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 36 insertions(+), 32 deletions(-)
+ arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
-index ddf015d2d05b..311168ca3939 100644
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -233,22 +233,36 @@ static const struct slice_mask *slice_mask_for_size(struct mm_struct *mm, int ps
- #error "Must define the slice masks for page sizes supported by the platform"
- #endif
+diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
+index b9471b67b728..c94f330392ee 100644
+--- a/arch/arm/boot/dts/r8a7792-wheat.dts
++++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -240,9 +240,16 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
  
--static int slice_check_fit(struct mm_struct *mm,
--			   const struct slice_mask *mask,
--			   const struct slice_mask *available)
-+static bool slice_check_range_fits(struct mm_struct *mm,
-+			   const struct slice_mask *available,
-+			   unsigned long start, unsigned long len)
- {
--	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
--	/*
--	 * Make sure we just do bit compare only to the max
--	 * addr limit and not the full bit map size.
--	 */
--	unsigned long slice_count = GET_HIGH_SLICE_INDEX(mm->context.slb_addr_limit);
-+	unsigned long end = start + len - 1;
-+	u64 low_slices = 0;
-+
-+	if (start < SLICE_LOW_TOP) {
-+		unsigned long mend = min(end,
-+					 (unsigned long)(SLICE_LOW_TOP - 1));
-+
-+		low_slices = (1u << (GET_LOW_SLICE_INDEX(mend) + 1))
-+				- (1u << GET_LOW_SLICE_INDEX(start));
-+	}
-+	if ((low_slices & available->low_slices) != low_slices)
-+		return false;
-+
-+	if ((start + len) > SLICE_LOW_TOP) {
-+		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
-+		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
-+		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
-+		unsigned long i;
++	/*
++	 * The adv75xx resets its addresses to defaults during low power power
++	 * mode. Because we have two ADV7513 devices on the same bus, we must
++	 * change both of them away from the defaults so that they do not
++	 * conflict.
++	 */
+ 	hdmi@3d {
+ 		compatible = "adi,adv7513";
+-		reg = <0x3d>;
++		reg = <0x3d 0x2d 0x4d, 0x5d>;
++		reg-names = "main", "cec", "edid", "packet";
  
--	slice_bitmap_and(result, mask->high_slices, available->high_slices,
--			 slice_count);
-+		for (i = start_index; i < start_index + count; i++) {
-+			if (!test_bit(i, available->high_slices))
-+				return false;
-+		}
-+	}
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
+@@ -272,7 +279,8 @@
  
--	return (mask->low_slices & available->low_slices) == mask->low_slices &&
--		slice_bitmap_equal(result, mask->high_slices, slice_count);
-+	return true;
- }
+ 	hdmi@39 {
+ 		compatible = "adi,adv7513";
+-		reg = <0x39>;
++		reg = <0x39 0x29 0x49, 0x59>;
++		reg-names = "main", "cec", "edid", "packet";
  
- static void slice_flush_segments(void *parm)
-@@ -519,12 +533,6 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
- 		on_each_cpu(slice_flush_segments, mm, 1);
- 	}
- 
--	/*
--	 * init different masks
--	 */
--	mask.low_slices = 0;
--	slice_bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
--
- 	/* silence stupid warning */;
- 	potential_mask.low_slices = 0;
- 	slice_bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
-@@ -586,15 +594,11 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
- #endif
- 
- 	/* First check hint if it's valid or if we have MAP_FIXED */
--	if (addr != 0 || fixed) {
--		/* Build a mask for the requested range */
--		slice_range_to_mask(addr, len, &mask);
--		slice_print_mask(" mask", &mask);
--
-+	if (addr || fixed) {
- 		/* Check if we fit in the good mask. If we do, we just return,
- 		 * nothing else to do
- 		 */
--		if (slice_check_fit(mm, &mask, &good_mask)) {
-+		if (slice_check_range_fits(mm, &good_mask, addr, len)) {
- 			slice_dbg(" fits good !\n");
- 			return addr;
- 		}
-@@ -620,10 +624,11 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
- 	slice_or_mask(&potential_mask, &good_mask);
- 	slice_print_mask(" potential", &potential_mask);
- 
--	if ((addr != 0 || fixed) &&
--			slice_check_fit(mm, &mask, &potential_mask)) {
--		slice_dbg(" fits potential !\n");
--		goto convert;
-+	if (addr || fixed) {
-+		if (slice_check_range_fits(mm, &potential_mask, addr, len)) {
-+			slice_dbg(" fits potential !\n");
-+			goto convert;
-+		}
- 	}
- 
- 	/* If we have MAP_FIXED and failed the above steps, then error out */
-@@ -829,13 +834,12 @@ void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
- int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
- 			   unsigned long len)
- {
--	struct slice_mask mask, available;
-+	struct slice_mask available;
- 	unsigned int psize = mm->context.user_psize;
- 
- 	if (radix_enabled())
- 		return 0;
- 
--	slice_range_to_mask(addr, len, &mask);
- 	available = *slice_mask_for_size(mm, psize);
- #ifdef CONFIG_PPC_64K_PAGES
- 	/* We need to account for 4k slices too */
-@@ -852,6 +856,6 @@ int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
- 	slice_print_mask(" mask", &mask);
- 	slice_print_mask(" available", &available);
- #endif
--	return !slice_check_fit(mm, &mask, &available);
-+	return !slice_check_range_fits(mm, &available, addr, len);
- }
- #endif
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
 -- 
-2.13.3
+2.7.4
