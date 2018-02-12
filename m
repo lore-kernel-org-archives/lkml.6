@@ -1,135 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932637AbeBLXjB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 18:39:01 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44722 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932378AbeBLXjA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 18:39:00 -0500
-X-Google-Smtp-Source: AH8x225NboxvCsOzkmVKnPl/t7pFZ1E2wnr0HMPEUUtNMMbnXhzsrZ4V7E5/CJvmYqloM7mjlW2aMg==
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: acme@kernel.org
-Cc: peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf-tools: cs-etm: Properly deal with cpu maps
-Date: Mon, 12 Feb 2018 16:38:57 -0700
-Message-Id: <1518478737-24649-1-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S932695AbeBLXm2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 18:42:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932378AbeBLXm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 18:42:27 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF23217A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Mon, 12 Feb 2018 23:42:02 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, Alice Michael <alice.michael@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Shannon Nelson <shannon.nelson@oracle.com>
+Subject: Re: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
+Message-ID: <20180212234201.GB4290@saruman>
+References: <1518475021-3337-1-git-send-email-linux@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
+Content-Disposition: inline
+In-Reply-To: <1518475021-3337-1-git-send-email-linux@roeck-us.net>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows the CoreSight AUX info section to fit topologies where
-only a subset of all available CPUs are present, avoiding at the same time
-accessing the ETM configuration areas of CPUs that have been offlined.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- tools/perf/arch/arm/util/cs-etm.c | 51 +++++++++++++++++++++++++++------------
- 1 file changed, 36 insertions(+), 15 deletions(-)
+--dTy3Mrz/UPE2dbVg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index fbfc055d3f4d..5c655ad4621e 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -298,12 +298,17 @@ cs_etm_info_priv_size(struct auxtrace_record *itr __maybe_unused,
- {
- 	int i;
- 	int etmv3 = 0, etmv4 = 0;
--	const struct cpu_map *cpus = evlist->cpus;
-+	struct cpu_map *event_cpus = evlist->cpus;
-+	struct cpu_map *online_cpus = cpu_map__new(NULL);
- 
- 	/* cpu map is not empty, we have specific CPUs to work with */
--	if (!cpu_map__empty(cpus)) {
--		for (i = 0; i < cpu_map__nr(cpus); i++) {
--			if (cs_etm_is_etmv4(itr, cpus->map[i]))
-+	if (!cpu_map__empty(event_cpus)) {
-+		for (i = 0; i < cpu__max_cpu(); i++) {
-+			if (!cpu_map__has(event_cpus, i) ||
-+			    !cpu_map__has(online_cpus, i))
-+				continue;
-+
-+			if (cs_etm_is_etmv4(itr, i))
- 				etmv4++;
- 			else
- 				etmv3++;
-@@ -311,6 +316,9 @@ cs_etm_info_priv_size(struct auxtrace_record *itr __maybe_unused,
- 	} else {
- 		/* get configuration for all CPUs in the system */
- 		for (i = 0; i < cpu__max_cpu(); i++) {
-+			if (!cpu_map__has(online_cpus, i))
-+				continue;
-+
- 			if (cs_etm_is_etmv4(itr, i))
- 				etmv4++;
- 			else
-@@ -318,6 +326,8 @@ cs_etm_info_priv_size(struct auxtrace_record *itr __maybe_unused,
- 		}
- 	}
- 
-+	cpu_map__put(online_cpus);
-+
- 	return (CS_ETM_HEADER_SIZE +
- 	       (etmv4 * CS_ETMV4_PRIV_SIZE) +
- 	       (etmv3 * CS_ETMV3_PRIV_SIZE));
-@@ -447,7 +457,9 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
- 	int i;
- 	u32 offset;
- 	u64 nr_cpu, type;
--	const struct cpu_map *cpus = session->evlist->cpus;
-+	struct cpu_map *cpu_map;
-+	struct cpu_map *event_cpus = session->evlist->cpus;
-+	struct cpu_map *online_cpus = cpu_map__new(NULL);
- 	struct cs_etm_recording *ptr =
- 			container_of(itr, struct cs_etm_recording, itr);
- 	struct perf_pmu *cs_etm_pmu = ptr->cs_etm_pmu;
-@@ -458,8 +470,21 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
- 	if (!session->evlist->nr_mmaps)
- 		return -EINVAL;
- 
--	/* If the cpu_map is empty all CPUs are involved */
--	nr_cpu = cpu_map__empty(cpus) ? cpu__max_cpu() : cpu_map__nr(cpus);
-+	/* If the cpu_map is empty all online CPUs are involved */
-+	if (cpu_map__empty(event_cpus)) {
-+		cpu_map = online_cpus;
-+	} else {
-+		/* Make sure all specified CPUs are online */
-+		for (i = 0; i < cpu_map__nr(event_cpus); i++) {
-+			if (cpu_map__has(event_cpus, i) &&
-+			    !cpu_map__has(online_cpus, i))
-+				return -EINVAL;
-+		}
-+
-+		cpu_map = event_cpus;
-+	}
-+
-+	nr_cpu = cpu_map__nr(cpu_map);
- 	/* Get PMU type as dynamically assigned by the core */
- 	type = cs_etm_pmu->type;
- 
-@@ -472,15 +497,11 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
- 
- 	offset = CS_ETM_SNAPSHOT + 1;
- 
--	/* cpu map is not empty, we have specific CPUs to work with */
--	if (!cpu_map__empty(cpus)) {
--		for (i = 0; i < cpu_map__nr(cpus) && offset < priv_size; i++)
--			cs_etm_get_metadata(cpus->map[i], &offset, itr, info);
--	} else {
--		/* get configuration for all CPUs in the system */
--		for (i = 0; i < cpu__max_cpu(); i++)
-+	for (i = 0; i < cpu__max_cpu() && offset < priv_size; i++)
-+		if (cpu_map__has(cpu_map, i))
- 			cs_etm_get_metadata(i, &offset, itr, info);
--	}
-+
-+	cpu_map__put(online_cpus);
- 
- 	return 0;
- }
--- 
-2.7.4
+Hi Guenter,
+
+On Mon, Feb 12, 2018 at 02:37:01PM -0800, Guenter Roeck wrote:
+> Since commit 60f481b970386 ("i40e: change flags to use 64 bits"),
+> the i40e driver uses cmpxchg64(). This causes mips:allmodconfig builds
+> to fail with
+>=20
+> drivers/net/ethernet/intel/i40e/i40e_ethtool.c:
+> 	In function 'i40e_set_priv_flags':
+> drivers/net/ethernet/intel/i40e/i40e_ethtool.c:4443:2: error:
+> 	implicit declaration of function 'cmpxchg64'
+>=20
+> Implement a poor-mans-version of cmpxchg64() to fix the problem for 32-bit
+> mips builds. The code is derived from sparc32, but only uses a single
+> spinlock.
+
+Will this be implemened for all 32-bit architectures which are currently
+missing cmpxchg64()?
+
+If so, any particular reason not to do it in generic code?
+
+If not then I think that driver should be fixed to either depend on some
+appropriate Kconfig symbol or to not use this API since it clearly isn't
+portable at the moment.
+
+See also Shannon's comment about that specific driver:
+https://lkml.kernel.org/r/e7c934d7-e5f4-ee1b-0647-c31a98d9e944@oracle.com
+
+Cheers
+James
+
+>=20
+> Fixes: 60f481b970386 ("i40e: change flags to use 64 bits")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> Compile-tested only.
+>=20
+>  arch/mips/include/asm/cmpxchg.h |  3 +++
+>  arch/mips/kernel/cmpxchg.c      | 17 +++++++++++++++++
+>  2 files changed, 20 insertions(+)
+>=20
+> diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpx=
+chg.h
+> index 89e9fb7976fe..9f7b1df95b99 100644
+> --- a/arch/mips/include/asm/cmpxchg.h
+> +++ b/arch/mips/include/asm/cmpxchg.h
+> @@ -206,6 +206,9 @@ static inline unsigned long __cmpxchg(volatile void *=
+ptr, unsigned long old,
+>  #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o),=
+ (n))
+>  #ifndef CONFIG_SMP
+>  #define cmpxchg64(ptr, o, n) cmpxchg64_local((ptr), (o), (n))
+> +#else
+> +u64 __cmpxchg_u64(u64 *ptr, u64 old, u64 new);
+> +#define cmpxchg64(ptr, old, new)	__cmpxchg_u64(ptr, old, new)
+>  #endif
+>  #endif
+> =20
+> diff --git a/arch/mips/kernel/cmpxchg.c b/arch/mips/kernel/cmpxchg.c
+> index 0b9535bc2c53..30216beb2334 100644
+> --- a/arch/mips/kernel/cmpxchg.c
+> +++ b/arch/mips/kernel/cmpxchg.c
+> @@ -9,6 +9,7 @@
+>   */
+> =20
+>  #include <linux/bitops.h>
+> +#include <linux/spinlock.h>
+>  #include <asm/cmpxchg.h>
+> =20
+>  unsigned long __xchg_small(volatile void *ptr, unsigned long val, unsign=
+ed int size)
+> @@ -107,3 +108,19 @@ unsigned long __cmpxchg_small(volatile void *ptr, un=
+signed long old,
+>  			return old;
+>  	}
+>  }
+> +
+> +static DEFINE_SPINLOCK(cmpxchg_lock);
+> +
+> +u64 __cmpxchg_u64(u64 *ptr, u64 old, u64 new)
+> +{
+> +	unsigned long flags;
+> +	u64 prev;
+> +
+> +	spin_lock_irqsave(&cmpxchg_lock, flags);
+> +	if ((prev =3D *ptr) =3D=3D old)
+> +		*ptr =3D new;
+> +	spin_unlock_irqrestore(&cmpxchg_lock, flags);
+> +
+> +	return prev;
+> +}
+> +EXPORT_SYMBOL(__cmpxchg_u64);
+> --=20
+> 2.7.4
+>=20
+
+--dTy3Mrz/UPE2dbVg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqCJkMACgkQbAtpk944
+dno+Hw//T9FYzJDizLYv3MQejxSYFcOh137PFoX4zTU3qFD0gL57LGo6wXgwHH5j
+YW7KzdP/EsNkeRfWBgqk2AaNBWTRUztrV814RTo1R14dFSnPumLOq/IYynmnsDo3
+nvm823NCIcPvtJ9jR2PhrhFlLZuNjqBEfzYr8jdmnBkNeqAixtlpW1prymBJNwNW
+/0O+2RlOlpQITUnDEbPUeZy5XkfvZTJaXZHPlBaxNuwy0iE6suWkR+Fi+XDEV+CG
+8zIezG/kHDYS/JZizymDp5BzMglOXE1WR7VGGKHrJQ+D2Z/qfHEHT/chMc3JF2ce
+DlN7V4yaF8+X/FnkM9A3rSreMQiREvzAB/wGve9bGuQqT5myFr4R40L3Skok9TW7
+LWu9BMvIEGYnqzEgqbutsIweYgcr6vhNtZ13vxJIUtovpcbc/lV8cIBWX1L0WZ6p
+940HR92VgMFJxyEaV52t4BaYb02+SvO3N+w/O3L60nAVcJSnG+4YLFRjY3xd4M/P
+S+RlqK04ZqI8r5Z8srGELWfU8HRYu3GMFhu7nU0CH2+O3GtjdLzmMH5huR3DB8AV
+ZHh9/lXuXfAsIiX9GXvy89rTzd5EJBPLpN9wo0JrMHHCgio/wCi7DmQJC7+p4e4d
+YCHVWYxXKETa1lv8/d84GtvW5Ydb5U2Ga/GPgHyLmfZ7tlWIp9o=
+=PH9W
+-----END PGP SIGNATURE-----
+
+--dTy3Mrz/UPE2dbVg--
