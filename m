@@ -1,157 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753309AbeBLSMV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:12:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42708 "EHLO mail.kernel.org"
+        id S1753627AbeBLSMc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:12:32 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:24089 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752741AbeBLSMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:12:18 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0835D21726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v2 4/5] media: adv7604: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 18:11:56 +0000
-Message-Id: <1518459117-16733-5-git-send-email-kbingham@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
-References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1753346AbeBLSM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:12:26 -0500
+Message-Id: <b38e0382fec8df4aaf247256a1d56d44cb1a3c9c.1518382747.git.christophe.leroy@c-s.fr>
+In-Reply-To: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
+References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC REBASED 2/5] powerpc/mm/slice: implement a slice mask cache
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Mon, 12 Feb 2018 19:12:24 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+Calculating the slice mask can become a signifcant overhead for
+get_unmapped_area. This patch adds a struct slice_mask for
+each page size in the mm_context, and keeps these in synch with
+the slices psize arrays and slb_addr_limit.
 
-The ADV7604 has thirteen 256-byte maps that can be accessed via the main
-I²C ports. Each map has it own I²C address and acts as a standard slave
-device on the I²C bus.
+This saves about 30% kernel time on a single-page mmap/munmap micro
+benchmark.
 
-Allow a device tree node to override the default addresses so that
-address conflicts with other devices on the same bus may be resolved at
-the board description level.
-
-Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
-[Kieran: Re-adapted for mainline]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
-Based upon the original posting :
-  https://lkml.org/lkml/2014/10/22/469
+ arch/powerpc/include/asm/book3s/64/mmu.h |  20 ++++++-
+ arch/powerpc/include/asm/mmu-8xx.h       |  16 ++++-
+ arch/powerpc/mm/slice.c                  | 100 ++++++++++++++++++++++++++-----
+ 3 files changed, 118 insertions(+), 18 deletions(-)
 
-v2:
- - Split out DT bindings from driver updates
- - Return -EINVAL on error paths from adv76xx_dummy_client()
-
- drivers/media/i2c/adv7604.c | 62 +++++++++++++++++++++++++++++----------------
- 1 file changed, 40 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index 1544920ec52d..872e124793f8 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -2734,6 +2734,27 @@ static const struct v4l2_ctrl_config adv76xx_ctrl_free_run_color = {
+diff --git a/arch/powerpc/include/asm/book3s/64/mmu.h b/arch/powerpc/include/asm/book3s/64/mmu.h
+index 0abeb0e2d616..b6d136fd8ffd 100644
+--- a/arch/powerpc/include/asm/book3s/64/mmu.h
++++ b/arch/powerpc/include/asm/book3s/64/mmu.h
+@@ -80,6 +80,16 @@ struct spinlock;
+ /* Maximum possible number of NPUs in a system. */
+ #define NV_MAX_NPUS 8
  
- /* ----------------------------------------------------------------------- */
- 
-+struct adv76xx_register {
-+	const char *name;
-+	u8 default_addr;
++/*
++ * One bit per slice. We have lower slices which cover 256MB segments
++ * upto 4G range. That gets us 16 low slices. For the rest we track slices
++ * in 1TB size.
++ */
++struct slice_mask {
++	u64 low_slices;
++	DECLARE_BITMAP(high_slices, SLICE_NUM_HIGH);
 +};
 +
-+static const struct adv76xx_register adv76xx_secondary_names[] = {
-+	[ADV76XX_PAGE_IO] = { "main", 0x4c },
-+	[ADV7604_PAGE_AVLINK] = { "avlink", 0x42 },
-+	[ADV76XX_PAGE_CEC] = { "cec", 0x40 },
-+	[ADV76XX_PAGE_INFOFRAME] = { "infoframe", 0x3e },
-+	[ADV7604_PAGE_ESDP] = { "esdp", 0x38 },
-+	[ADV7604_PAGE_DPP] = { "dpp", 0x3c },
-+	[ADV76XX_PAGE_AFE] = { "afe", 0x26 },
-+	[ADV76XX_PAGE_REP] = { "rep", 0x32 },
-+	[ADV76XX_PAGE_EDID] = { "edid", 0x36 },
-+	[ADV76XX_PAGE_HDMI] = { "hdmi", 0x34 },
-+	[ADV76XX_PAGE_TEST] = { "test", 0x30 },
-+	[ADV76XX_PAGE_CP] = { "cp", 0x22 },
-+	[ADV7604_PAGE_VDP] = { "vdp", 0x24 },
+ typedef struct {
+ 	mm_context_id_t id;
+ 	u16 user_psize;		/* page size index */
+@@ -91,9 +101,17 @@ typedef struct {
+ 	struct npu_context *npu_context;
+ 
+ #ifdef CONFIG_PPC_MM_SLICES
++	unsigned long slb_addr_limit;
+ 	u64 low_slices_psize;	/* SLB page size encodings */
+ 	unsigned char high_slices_psize[SLICE_ARRAY_SIZE];
+-	unsigned long slb_addr_limit;
++# ifdef CONFIG_PPC_64K_PAGES
++	struct slice_mask mask_64k;
++# endif
++	struct slice_mask mask_4k;
++# ifdef CONFIG_HUGETLB_PAGE
++	struct slice_mask mask_16m;
++	struct slice_mask mask_16g;
++# endif
+ #else
+ 	u16 sllp;		/* SLB page size encoding */
+ #endif
+diff --git a/arch/powerpc/include/asm/mmu-8xx.h b/arch/powerpc/include/asm/mmu-8xx.h
+index b324ab46d838..b97d4ed3dddf 100644
+--- a/arch/powerpc/include/asm/mmu-8xx.h
++++ b/arch/powerpc/include/asm/mmu-8xx.h
+@@ -187,15 +187,29 @@
+ #define M_APG3		0x00000060
+ 
+ #ifndef __ASSEMBLY__
++struct slice_mask {
++	u64 low_slices;
++	DECLARE_BITMAP(high_slices, 0);
 +};
 +
- static int adv76xx_core_init(struct v4l2_subdev *sd)
- {
- 	struct adv76xx_state *state = to_state(sd);
-@@ -2834,13 +2855,26 @@ static void adv76xx_unregister_clients(struct adv76xx_state *state)
+ typedef struct {
+ 	unsigned int id;
+ 	unsigned int active;
+ 	unsigned long vdso_base;
+ #ifdef CONFIG_PPC_MM_SLICES
++	unsigned long slb_addr_limit;
+ 	u16 user_psize;		/* page size index */
+ 	u64 low_slices_psize;	/* page size encodings */
+ 	unsigned char high_slices_psize[0];
+-	unsigned long slb_addr_limit;
++# ifdef CONFIG_PPC_16K_PAGES
++	struct slice_mask mask_16k;
++# else
++	struct slice_mask mask_4k;
++# endif
++# ifdef CONFIG_HUGETLB_PAGE
++	struct slice_mask mask_512k;
++	struct slice_mask mask_8m;
++# endif
+ #endif
+ } mm_context_t;
+ 
+diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
+index db1278ac21c2..ddf015d2d05b 100644
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -37,15 +37,6 @@
+ #include <asm/hugetlb.h>
+ 
+ static DEFINE_SPINLOCK(slice_convert_lock);
+-/*
+- * One bit per slice. We have lower slices which cover 256MB segments
+- * upto 4G range. That gets us 16 low slices. For the rest we track slices
+- * in 1TB size.
+- */
+-struct slice_mask {
+-	u64 low_slices;
+-	DECLARE_BITMAP(high_slices, SLICE_NUM_HIGH);
+-};
+ 
+ #ifdef DEBUG
+ int _slice_debug = 1;
+@@ -147,7 +138,7 @@ static void slice_mask_for_free(struct mm_struct *mm, struct slice_mask *ret,
+ 			__set_bit(i, ret->high_slices);
  }
  
- static struct i2c_client *adv76xx_dummy_client(struct v4l2_subdev *sd,
--							u8 addr, u8 io_reg)
-+					       unsigned int i)
+-static void slice_mask_for_size(struct mm_struct *mm, int psize,
++static void calc_slice_mask_for_size(struct mm_struct *mm, int psize,
+ 				struct slice_mask *ret,
+ 				unsigned long high_limit)
  {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct adv76xx_state *state = to_state(sd);
-+	struct adv76xx_platform_data *pdata = &state->pdata;
-+	unsigned int io_reg = 0xf2 + i;
-+	struct i2c_client *new_client;
-+
-+	if (pdata && pdata->i2c_addresses[i])
-+		new_client = i2c_new_dummy(client->adapter,
-+					   pdata->i2c_addresses[i]);
-+	else
-+		new_client = i2c_new_secondary_device(client,
-+				adv76xx_secondary_names[i].name,
-+				adv76xx_secondary_names[i].default_addr);
- 
--	if (addr)
--		io_write(sd, io_reg, addr << 1);
--	return i2c_new_dummy(client->adapter, io_read(sd, io_reg) >> 1);
-+	if (new_client)
-+		io_write(sd, io_reg, new_client->addr << 1);
-+
-+	return new_client;
+@@ -176,6 +167,72 @@ static void slice_mask_for_size(struct mm_struct *mm, int psize,
+ 	}
  }
  
- static const struct adv76xx_reg_seq adv7604_recommended_settings_afe[] = {
-@@ -3115,20 +3149,6 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
- 	/* Disable the interrupt for now as no DT-based board uses it. */
- 	state->pdata.int1_config = ADV76XX_INT1_CONFIG_DISABLED;
++#ifdef CONFIG_PPC_BOOK3S_64
++static void recalc_slice_mask_cache(struct mm_struct *mm)
++{
++	unsigned long l = mm->context.slb_addr_limit;
++	calc_slice_mask_for_size(mm, MMU_PAGE_4K, &mm->context.mask_4k, l);
++#ifdef CONFIG_PPC_64K_PAGES
++	calc_slice_mask_for_size(mm, MMU_PAGE_64K, &mm->context.mask_64k, l);
++#endif
++#ifdef CONFIG_HUGETLB_PAGE
++	calc_slice_mask_for_size(mm, MMU_PAGE_16M, &mm->context.mask_16m, l);
++	calc_slice_mask_for_size(mm, MMU_PAGE_16G, &mm->context.mask_16g, l);
++#endif
++}
++
++static const struct slice_mask *slice_mask_for_size(struct mm_struct *mm, int psize)
++{
++#ifdef CONFIG_PPC_64K_PAGES
++	if (psize == MMU_PAGE_64K)
++		return &mm->context.mask_64k;
++#endif
++	if (psize == MMU_PAGE_4K)
++		return &mm->context.mask_4k;
++#ifdef CONFIG_HUGETLB_PAGE
++	if (psize == MMU_PAGE_16M)
++		return &mm->context.mask_16m;
++	if (psize == MMU_PAGE_16G)
++		return &mm->context.mask_16g;
++#endif
++	BUG();
++}
++#elif defined(CONFIG_PPC_8xx)
++static void recalc_slice_mask_cache(struct mm_struct *mm)
++{
++	unsigned long l = mm->context.slb_addr_limit;
++#ifdef CONFIG_PPC_16K_PAGES
++	calc_slice_mask_for_size(mm, MMU_PAGE_16K, &mm->context.mask_16k, l);
++#else
++	calc_slice_mask_for_size(mm, MMU_PAGE_4K, &mm->context.mask_4k, l);
++#endif
++#ifdef CONFIG_HUGETLB_PAGE
++	calc_slice_mask_for_size(mm, MMU_PAGE_512K, &mm->context.mask_512k, l);
++	calc_slice_mask_for_size(mm, MMU_PAGE_8M, &mm->context.mask_8m, l);
++#endif
++}
++
++static const struct slice_mask *slice_mask_for_size(struct mm_struct *mm, int psize)
++{
++#ifdef CONFIG_PPC_16K_PAGES
++	if (psize == MMU_PAGE_16K)
++		return &mm->context.mask_16k;
++#else
++	if (psize == MMU_PAGE_4K)
++		return &mm->context.mask_4k;
++#endif
++#ifdef CONFIG_HUGETLB_PAGE
++	if (psize == MMU_PAGE_512K)
++		return &mm->context.mask_512k;
++	if (psize == MMU_PAGE_8M)
++		return &mm->context.mask_8m;
++#endif
++	BUG();
++}
++#else
++#error "Must define the slice masks for page sizes supported by the platform"
++#endif
++
+ static int slice_check_fit(struct mm_struct *mm,
+ 			   const struct slice_mask *mask,
+ 			   const struct slice_mask *available)
+@@ -251,6 +308,8 @@ static void slice_convert(struct mm_struct *mm,
+ 		  (unsigned long)mm->context.low_slices_psize,
+ 		  (unsigned long)mm->context.high_slices_psize);
  
--	/* Use the default I2C addresses. */
--	state->pdata.i2c_addresses[ADV7604_PAGE_AVLINK] = 0x42;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_CEC] = 0x40;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_INFOFRAME] = 0x3e;
--	state->pdata.i2c_addresses[ADV7604_PAGE_ESDP] = 0x38;
--	state->pdata.i2c_addresses[ADV7604_PAGE_DPP] = 0x3c;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_AFE] = 0x26;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_REP] = 0x32;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_EDID] = 0x36;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_HDMI] = 0x34;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_TEST] = 0x30;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_CP] = 0x22;
--	state->pdata.i2c_addresses[ADV7604_PAGE_VDP] = 0x24;
--
- 	/* Hardcode the remaining platform data fields. */
- 	state->pdata.disable_pwrdnb = 0;
- 	state->pdata.disable_cable_det_rst = 0;
-@@ -3478,11 +3498,9 @@ static int adv76xx_probe(struct i2c_client *client,
- 		if (!(BIT(i) & state->info->page_mask))
- 			continue;
++	recalc_slice_mask_cache(mm);
++
+ 	spin_unlock_irqrestore(&slice_convert_lock, flags);
  
--		state->i2c_clients[i] =
--			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
--					     0xf2 + i);
-+		state->i2c_clients[i] = adv76xx_dummy_client(sd, i);
- 		if (!state->i2c_clients[i]) {
--			err = -ENOMEM;
-+			err = -EINVAL;
- 			v4l2_err(sd, "failed to create i2c client %u\n", i);
- 			goto err_i2c;
- 		}
+ 	copro_flush_all_slbs(mm);
+@@ -449,7 +508,14 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ 	}
+ 
+ 	if (high_limit > mm->context.slb_addr_limit) {
++		unsigned long flags;
++
+ 		mm->context.slb_addr_limit = high_limit;
++
++		spin_lock_irqsave(&slice_convert_lock, flags);
++		recalc_slice_mask_cache(mm);
++		spin_unlock_irqrestore(&slice_convert_lock, flags);
++
+ 		on_each_cpu(slice_flush_segments, mm, 1);
+ 	}
+ 
+@@ -488,7 +554,7 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ 	/* First make up a "good" mask of slices that have the right size
+ 	 * already
+ 	 */
+-	slice_mask_for_size(mm, psize, &good_mask, high_limit);
++	good_mask = *slice_mask_for_size(mm, psize);
+ 	slice_print_mask(" good_mask", &good_mask);
+ 
+ 	/*
+@@ -513,7 +579,7 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ #ifdef CONFIG_PPC_64K_PAGES
+ 	/* If we support combo pages, we can allow 64k pages in 4k slices */
+ 	if (psize == MMU_PAGE_64K) {
+-		slice_mask_for_size(mm, MMU_PAGE_4K, &compat_mask, high_limit);
++		compat_mask = *slice_mask_for_size(mm, MMU_PAGE_4K);
+ 		if (fixed)
+ 			slice_or_mask(&good_mask, &compat_mask);
+ 	}
+@@ -695,7 +761,7 @@ void slice_set_user_psize(struct mm_struct *mm, unsigned int psize)
+ 		goto bail;
+ 
+ 	mm->context.user_psize = psize;
+-	wmb();
++	wmb(); /* Why? */
+ 
+ 	lpsizes = mm->context.low_slices_psize;
+ 	for (i = 0; i < SLICE_NUM_LOW; i++)
+@@ -722,6 +788,9 @@ void slice_set_user_psize(struct mm_struct *mm, unsigned int psize)
+ 		  (unsigned long)mm->context.low_slices_psize,
+ 		  (unsigned long)mm->context.high_slices_psize);
+ 
++	recalc_slice_mask_cache(mm);
++	spin_unlock_irqrestore(&slice_convert_lock, flags);
++	return;
+  bail:
+ 	spin_unlock_irqrestore(&slice_convert_lock, flags);
+ }
+@@ -762,18 +831,17 @@ int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
+ {
+ 	struct slice_mask mask, available;
+ 	unsigned int psize = mm->context.user_psize;
+-	unsigned long high_limit = mm->context.slb_addr_limit;
+ 
+ 	if (radix_enabled())
+ 		return 0;
+ 
+ 	slice_range_to_mask(addr, len, &mask);
+-	slice_mask_for_size(mm, psize, &available, high_limit);
++	available = *slice_mask_for_size(mm, psize);
+ #ifdef CONFIG_PPC_64K_PAGES
+ 	/* We need to account for 4k slices too */
+ 	if (psize == MMU_PAGE_64K) {
+ 		struct slice_mask compat_mask;
+-		slice_mask_for_size(mm, MMU_PAGE_4K, &compat_mask, high_limit);
++		compat_mask = *slice_mask_for_size(mm, MMU_PAGE_4K);
+ 		slice_or_mask(&available, &compat_mask);
+ 	}
+ #endif
 -- 
-2.7.4
+2.13.3
