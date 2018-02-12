@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751453AbeBLG4r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 01:56:47 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:51612 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751332AbeBLG4p (ORCPT
+        id S1751658AbeBLG7B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 01:59:01 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33241 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750768AbeBLG67 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 01:56:45 -0500
-X-Google-Smtp-Source: AH8x225IgkyEkXB4+hKNOD62WgdW4peDy1DKe6Uioj0gWf7V8e4w3y4ZxgKC5a1BGiDba513sfp25g==
+        Mon, 12 Feb 2018 01:58:59 -0500
+X-Google-Smtp-Source: AH8x2243B7Fgk9x7Dwcd7U67A8+9Zp//6a1SXzD8XKA2cfm1AhCXHR8Hd0VSXi+xJHqCxRdCTKusoQ==
 Subject: Re: [PATCH v2] of: cache phandle nodes to reduce cost of
  of_find_node_by_phandle()
 From: Frank Rowand <frowand.list@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: cpandya@codeaurora.org
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <1518416868-8804-1-git-send-email-frowand.list@gmail.com>
-Message-ID: <6e967dd4-0fae-a912-88cd-b60f40ec0727@gmail.com>
-Date: Sun, 11 Feb 2018 22:56:42 -0800
+Message-ID: <dc3c66d5-b848-d1cc-48f4-cabeccc2e383@gmail.com>
+Date: Sun, 11 Feb 2018 22:58:57 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
@@ -26,8 +27,6 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-Hi Rob,
 
 On 02/11/18 22:27, frowand.list@gmail.com wrote:
 > From: Frank Rowand <frank.rowand@sony.com>
@@ -58,43 +57,50 @@ On 02/11/18 22:27, frowand.list@gmail.com wrote:
 >     is not obvious, so this check makes it more apparent.
 >   - do not free phandle_cache if modules are enabled, so that
 >     cached phandles will be available when modules are loaded
+> 
+>  drivers/of/base.c       | 93 ++++++++++++++++++++++++++++++++++++++++++++++---
+>  drivers/of/of_private.h |  5 +++
+>  drivers/of/resolver.c   | 21 -----------
+>  3 files changed, 94 insertions(+), 25 deletions(-)
+> 
 
 < snip >
 
+Hi Chintan,
 
+Just as in the previous version, this part of the patch will not apply
+on older kernel versions, and can just be deleted:
 
-In a previous thread, you said:
-
-> We should be able to do this earlier. We already walk the tree twice
-> in unflattening. We can get the max phandle (or number of phandles
-> IMO) on the first pass, allocate with the early allocator and then
-> populate the cache in the 2nd pass. AIUI, you can alloc with memblock
-> and then free with kfree as the memblock allocations get transferred
-> to the slab.
-
-And I replied:
-
-   Thanks for pointing out that kfree() can be used for memory alloced
-   with memblock.  I'll change to populate the cache earlier.
-
-
-I started to make this change when I moved forward to v4.16-rc1.  There
-are two obvious ways to do this.
-
-The first is to create and populate
-the phandle cache during the two phases of unflattening.  To do this
-would require counting the number of nodes to be unflattened and find
-the largest phandle value during phase 1, then allocate the cache before
-phase 2, then populate the cache during phase 2.  This is not difficult,
-but it is intrusive.
-
-The second obvious way is to modify of_populate_phandle_cache() to
-use the early allocator if called early in the boot and call this
-immediately after unflattening.  Then if of_populate_phandle_cache()
-is called later (eg for applying overlays) it would have to change
-to using kzalloc().  It did not seem like the larger overhead of the
-very few calls of of_find_node_by_phandle() before the slightly later
-phandle cache population justify adding the extra complexity in
-of_populate_phandle_cache().
-
--Frank
+> diff --git a/drivers/of/resolver.c b/drivers/of/resolver.c
+> index 740d19bde601..a7580c24737a 100644
+> --- a/drivers/of/resolver.c
+> +++ b/drivers/of/resolver.c
+> @@ -19,27 +19,6 @@
+>  
+>  #include "of_private.h"
+>  
+> -/* illegal phandle value (set when unresolved) */
+> -#define OF_PHANDLE_ILLEGAL	0xdeadbeef
+> -
+> -static phandle live_tree_max_phandle(void)
+> -{
+> -	struct device_node *node;
+> -	phandle phandle;
+> -	unsigned long flags;
+> -
+> -	raw_spin_lock_irqsave(&devtree_lock, flags);
+> -	phandle = 0;
+> -	for_each_of_allnodes(node) {
+> -		if (node->phandle != OF_PHANDLE_ILLEGAL &&
+> -				node->phandle > phandle)
+> -			phandle = node->phandle;
+> -	}
+> -	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> -
+> -	return phandle;
+> -}
+> -
+>  static void adjust_overlay_phandles(struct device_node *overlay,
+>  		int phandle_delta)
+>  {
+> 
