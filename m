@@ -1,292 +1,260 @@
-Return-Path: <prvs=5756e5741=paf@cray.com>
-X-Google-Smtp-Source: AH8x224iG4yo31O5znNEe/88e+IE90cB+bOgC734ODRpjp27tIxidb431B0nVAe1tdc6YM4fyFpI
-ARC-Seal: i=1; a=rsa-sha256; t=1518545764; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AH8x227ebWX+FeTQ2uQ9AQqRBWnV2FDPKeqoW5RBwAdk8MfyUSPjYcCg38uGPxuNdPYEGp3cT3gU
+ARC-Seal: i=1; a=rsa-sha256; t=1518470617; cv=none;
         d=google.com; s=arc-20160816;
-        b=NWFRw9yfQzySlS9eiLHXbVPI/B3nO3fXNF5ZzBDXHLcKIRpLUnGgC7aZ8ZEwi5EiPN
-         3EXM6vJK0XcoY2zw/0noD2Jv5IhcH/9Fwk43NHGPgo6Cy7zA9kXe5pGJlgN06vurYxFl
-         aPDRM8rLDJ9ylNaEHiMFeQh32qK/I7v8O/B1GAWJL8GU0AZtOA4rO0Ga+KB3wXCtZjsI
-         DZ5m7R3eM3c4X4bnFDQLXKSqSIMUl4l0zqXQTYaWCXIJlviGZY/1Jug3GMMu29K6E7EC
-         0RrRV6/qq8qRBZlusDLIuoc9ROOrCb2cG+vcMXHx0zh0lYhjA44kuwwvovkO8EIH/j9V
-         kaww==
+        b=jzP5aXyktGOuSAUMKo/x8TtWYATxLdQ9TDs4o9PA46gQ4iJDMdl7XwPkTQfAnpa6JP
+         TWrc05WIkaC7MQHhYPP8DGvTBOdvXFKSoqNFw3ByT8kbHPGY4E7LBT1I6puT9dDrebkT
+         u3XKUrvdxWgMSWJCEJt7R8/RPVRCMBCHdu14T47vT62OXwQI1BtlhmckOgxY3JjzdUH8
+         DwF/bDX8k8UJVCmGbBIFdsHsX9H96DLRFWFZdVhXgb+yYVeampakMTg9xcgprJFMGJ+A
+         9hLad4g/xQ0m0IAiytjiKa7t59Yk1XLyHjj3jXMiIqrXDlasF5GPWS3WYla3ZIanUl9O
+         4Hhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:user-agent
-         :content-language:accept-language:in-reply-to:references:message-id
-         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=jrabsMek/gh/VWkSrZE5SfdOlkJPZRU7oD08lTMn5JA=;
-        b=qPKW22flhfOK0wiyWfNKX+JzGBY2t5Zd8g6gSk8Z2L6H1RfrobwpQq0WKZ8MvKEjrH
-         uSgIzp55Yf/NuWONrAJvV1TpIeICP7xJCeYAq9MfcbsrdF2eQEfuiNPPkwRo0WH0P4yO
-         kSuE5RDi8veKJpCWM3Eq42kpmWMF1g46pjKW3fsYkevnp06TXhrZCgK5vijVtzdNaYjc
-         QKnx3UYhtckm+F4XJpc4mJuuumZiBS5jWBL1jDYHKu2sMrrePYpfN4g4MT8iP0NIMYoP
-         w3vkwQ/zmV9gcTwTjKG/l4VeRGdejZaFwc5ILUDXiRlyUf7VzCA09roL8EJIcNSvmjXn
-         ekMw==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=njuDXHzQilTDZ66qV8ZeKMxsAYs5OsDz0jPgR83x4LE=;
+        b=cZj1mKRpiYMENnNMJeHrHN/vmT5a41avoALjtrXXNJAfPxJyO3vx35NQhLKsnLV8HC
+         9ohjiCSCOaugo7ahkEaX9e4k5iKU6ypWhryQKPS1iDyNOPPaBD6+O0kEuEY9GCrnETlU
+         fsdEX09FV5fYZOc9hsVqWbHfqBTWSJB9ylYVUUPfd3YGeEMNIl1vdsO3WdH23XOnun7u
+         Ipn98ppT8Zz6ug6t87BWEV8EizbNmzfC+NJOD/XR0sf6dy2JvIK1VrsW/EITLMFXBOd7
+         AW8DeROTdS4J42eTU3qLtFa5NBx0UJgEVqpV2pZs0+0BqpjxouytoHzt5GmgEfwr5Nx0
+         ymCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=C4bnwTT5;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=YZh1vorF;
-       spf=pass (google.com: domain of prvs=5756e5741=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=5756e5741=paf@cray.com
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=C4bnwTT5;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=YZh1vorF;
-       spf=pass (google.com: domain of prvs=5756e5741=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=5756e5741=paf@cray.com
-X-IronPort-AV: E=Sophos;i="5.46,508,1511827200";
-   d="scan'208";a="18130481"
-X-Cray-OBMMKR: 1433258124 18130481
-From: Patrick Farrell <paf@cray.com>
-To: NeilBrown <neilb@suse.com>, Oleg Drokin <oleg.drokin@intel.com>, "Andreas
- Dilger" <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: lkml <linux-kernel@vger.kernel.org>, lustre
-	<lustre-devel@lists.lustre.org>
-Subject: Re: [lustre-devel] [PATCH 19/19] staging: lustre: remove
- l_wait_event() and related code
-Thread-Topic: [lustre-devel] [PATCH 19/19] staging: lustre: remove
- l_wait_event() and related code
-Thread-Index: AQHTpFyCw4Iq74E6D0aL/7t8cBEfT6OiQBSA
-Date: Tue, 13 Feb 2018 18:15:58 +0000
-Message-ID: <7207F5AF-1798-4C53-8EBF-6A8316004D1C@cray.com>
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>,
+ James Simmons <jsimmons@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 13 Feb 2018 08:22:36 +1100
+Subject: [PATCH 06/19] staging: lustre: introduce and use
+ l_wait_event_abortable()
+Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
+Message-ID: <151847055667.22826.8544979478231411275.stgit@noble>
+In-Reply-To: <151847037709.22826.16175867257667686132.stgit@noble>
 References: <151847037709.22826.16175867257667686132.stgit@noble>
- <151847927929.19840.14894766883488647956.stgit@noble>
-In-Reply-To: <151847927929.19840.14894766883488647956.stgit@noble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.9.0.180116
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=paf@cray.com; 
-x-originating-ip: [136.162.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2132;7:G8SvLhYYWPXyovFUHDOo6elZaEXXueBcRMslzHqgIoZ6+UAoF8009PAtW6J0jsXz033RHStHYXpl8WnbEPGfB0s6mD9OmnTUmtMOpgErc03rx7aO8TLX20AJA7mQTomN7dYC78GIjkfjREYPs/On8klXUgx77geZDcDcXhpIKBJKQM4Dw/KpBwIo28BrDOqDd3Cv0UvXWpB+GgpIKGaB1GyMsoQdDR0YzrZo1yK/MAzX2ACzqJGqHlB0ghjzw1B6
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 1def3173-c6cc-471f-c932-08d5730dd51d
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BN6PR1101MB2132;
-x-ms-traffictypediagnostic: BN6PR1101MB2132:
-x-microsoft-antispam-prvs: <BN6PR1101MB2132D8833D8DE42BF7F3C3B0CBF60@BN6PR1101MB2132.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231101)(2400082)(944501161)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR1101MB2132;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2132;
-x-forefront-prvs: 0582641F53
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39380400002)(366004)(39850400004)(376002)(189003)(199004)(966005)(8676002)(3846002)(6116002)(5660300001)(2900100001)(82746002)(6436002)(2906002)(6486002)(3280700002)(66066001)(58126008)(26005)(77096007)(59450400001)(68736007)(106356001)(186003)(54906003)(229853002)(97736004)(316002)(33656002)(6506007)(3660700001)(102836004)(110136005)(76176011)(305945005)(7736002)(36756003)(83506002)(14454004)(99286004)(8936002)(4326008)(478600001)(83716003)(2950100002)(81166006)(86362001)(105586002)(6306002)(81156014)(6512007)(6246003)(25786009)(53936002)(13693001)(21314002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR1101MB2132;H:BN6PR1101MB2132.namprd11.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: GotxEaK+vF6OXG7TX53svf15OU9ZSj/W15riqC5FCVRg87RxefalWGvodymYi1RlLvxweISpqJ5KYQKdU0FQSQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <543AD7BC98F46D489170F939B5F90FB8@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1def3173-c6cc-471f-c932-08d5730dd51d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2018 18:15:58.8342
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e7b8488a-c0cd-4614-aae1-996bfabec247
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2132
-X-OriginatorOrg: cray.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592241114925401343?=
-X-GMAIL-MSGID: =?utf-8?q?1592310643195957950?=
+X-GMAIL-THRID: =?utf-8?q?1592231846783527803?=
+X-GMAIL-MSGID: =?utf-8?q?1592231846783527803?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-V2l0aCB0aGUgZml4IGZyb20geWVzdGVyZGF5LCB0aGVzZSBsb29rIGdvb2QuICBUaGFua3MsIE5l
-aWwuDQoNClJldmlld2VkLWJ5OiBQYXRyaWNrIEZhcnJlbGwgPHBhZkBjcmF5LmNvbT4NCg0KLSBQ
-YXRyaWNrDQoNCu+7v09uIDIvMTIvMTgsIDU6NTIgUE0sICJsdXN0cmUtZGV2ZWwgb24gYmVoYWxm
-IG9mIE5laWxCcm93biIgPGx1c3RyZS1kZXZlbC1ib3VuY2VzQGxpc3RzLmx1c3RyZS5vcmcgb24g
-YmVoYWxmIG9mIG5laWxiQHN1c2UuY29tPiB3cm90ZToNCg0KICAgIFRoZXNlIG1hY3JvcyBhcmUg
-bm8gbG9uZ2VyIHVzZWQsIHNvIHRoZXkgY2FuDQogICAgYmUgcmVtb3ZlZC4NCiAgICANCiAgICBS
-ZXZpZXdlZC1ieTogSmFtZXMgU2ltbW9ucyA8anNpbW1vbnNAaW5mcmFkZWFkLm9yZz4NCiAgICBT
-aWduZWQtb2ZmLWJ5OiBOZWlsQnJvd24gPG5laWxiQHN1c2UuY29tPg0KICAgIC0tLQ0KICAgICBk
-cml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9pbmNsdWRlL2x1c3RyZV9saWIuaCB8ICAyNDkg
-LS0tLS0tLS0tLS0tLS0tLS0tLS0NCiAgICAgMSBmaWxlIGNoYW5nZWQsIDI0OSBkZWxldGlvbnMo
-LSkNCiAgICANCiAgICBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUv
-aW5jbHVkZS9sdXN0cmVfbGliLmggYi9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9pbmNs
-dWRlL2x1c3RyZV9saWIuaA0KICAgIGluZGV4IGNjYzFhMzI5ZTQyYi4uMWVmZDg2ZjE4YzFmIDEw
-MDY0NA0KICAgIC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL2luY2x1ZGUvbHVz
-dHJlX2xpYi5oDQogICAgKysrIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvaW5jbHVk
-ZS9sdXN0cmVfbGliLmgNCiAgICBAQCAtNzYsMTIzICs3Niw2IEBAIGludCBkb19zZXRfaW5mb19h
-c3luYyhzdHJ1Y3Qgb2JkX2ltcG9ydCAqaW1wLA0KICAgICANCiAgICAgdm9pZCB0YXJnZXRfc2Vu
-ZF9yZXBseShzdHJ1Y3QgcHRscnBjX3JlcXVlc3QgKnJlcSwgaW50IHJjLCBpbnQgZmFpbF9pZCk7
-DQogICAgIA0KICAgIC0vKg0KICAgIC0gKiBsX3dhaXRfZXZlbnQgaXMgYSBmbGV4aWJsZSBzbGVl
-cGluZyBmdW5jdGlvbiwgcGVybWl0dGluZyBzaW1wbGUgY2FsbGVyDQogICAgLSAqIGNvbmZpZ3Vy
-YXRpb24gb2YgaW50ZXJydXB0IGFuZCB0aW1lb3V0IHNlbnNpdGl2aXR5IGFsb25nIHdpdGggYWN0
-aW9ucyB0bw0KICAgIC0gKiBiZSBwZXJmb3JtZWQgaW4gdGhlIGV2ZW50IG9mIGVpdGhlciBleGNl
-cHRpb24uDQogICAgLSAqDQogICAgLSAqIFRoZSBmaXJzdCBmb3JtIG9mIHVzYWdlIGxvb2tzIGxp
-a2UgdGhpczoNCiAgICAtICoNCiAgICAtICogc3RydWN0IGxfd2FpdF9pbmZvIGx3aSA9IExXSV9U
-SU1FT1VUX0lOVFIodGltZW91dCwgdGltZW91dF9oYW5kbGVyLA0KICAgIC0gKgkJCQkJICAgaW50
-cl9oYW5kbGVyLCBjYWxsYmFja19kYXRhKTsNCiAgICAtICogcmMgPSBsX3dhaXRfZXZlbnQod2Fp
-dHEsIGNvbmRpdGlvbiwgJmx3aSk7DQogICAgLSAqDQogICAgLSAqIGxfd2FpdF9ldmVudCgpIG1h
-a2VzIHRoZSBjdXJyZW50IHByb2Nlc3Mgd2FpdCBvbiAnd2FpdHEnIHVudGlsICdjb25kaXRpb24n
-DQogICAgLSAqIGlzIFRSVUUgb3IgYSAia2lsbGFibGUiIHNpZ25hbCAoU0lHVEVSTSwgU0lLR0lM
-TCwgU0lHSU5UKSBpcyBwZW5kaW5nLiAgSXQNCiAgICAtICogcmV0dXJucyAwIHRvIHNpZ25pZnkg
-J2NvbmRpdGlvbicgaXMgVFJVRSwgYnV0IGlmIGEgc2lnbmFsIHdha2VzIGl0IGJlZm9yZQ0KICAg
-IC0gKiAnY29uZGl0aW9uJyBiZWNvbWVzIHRydWUsIGl0IG9wdGlvbmFsbHkgY2FsbHMgdGhlIHNw
-ZWNpZmllZCAnaW50cl9oYW5kbGVyJw0KICAgIC0gKiBpZiBub3QgTlVMTCwgYW5kIHJldHVybnMg
-LUVJTlRSLg0KICAgIC0gKg0KICAgIC0gKiBJZiBhIG5vbi16ZXJvIHRpbWVvdXQgaXMgc3BlY2lm
-aWVkLCBzaWduYWxzIGFyZSBpZ25vcmVkIHVudGlsIHRoZSB0aW1lb3V0DQogICAgLSAqIGhhcyBl
-eHBpcmVkLiAgQXQgdGhpcyB0aW1lLCBpZiAndGltZW91dF9oYW5kbGVyJyBpcyBub3QgTlVMTCBp
-dCBpcyBjYWxsZWQuDQogICAgLSAqIElmIGl0IHJldHVybnMgRkFMU0UgbF93YWl0X2V2ZW50KCkg
-Y29udGludWVzIHRvIHdhaXQgYXMgZGVzY3JpYmVkIGFib3ZlIHdpdGgNCiAgICAtICogc2lnbmFs
-cyBlbmFibGVkLiAgT3RoZXJ3aXNlIGl0IHJldHVybnMgLUVUSU1FRE9VVC4NCiAgICAtICoNCiAg
-ICAtICogTFdJX0lOVFIoaW50cl9oYW5kbGVyLCBjYWxsYmFja19kYXRhKSBpcyBzaG9ydGhhbmQg
-Zm9yDQogICAgLSAqIExXSV9USU1FT1VUX0lOVFIoMCwgTlVMTCwgaW50cl9oYW5kbGVyLCBjYWxs
-YmFja19kYXRhKQ0KICAgIC0gKg0KICAgIC0gKiBUaGUgc2Vjb25kIGZvcm0gb2YgdXNhZ2UgbG9v
-a3MgbGlrZSB0aGlzOg0KICAgIC0gKg0KICAgIC0gKiBzdHJ1Y3QgbF93YWl0X2luZm8gbHdpID0g
-TFdJX1RJTUVPVVQodGltZW91dCwgdGltZW91dF9oYW5kbGVyKTsNCiAgICAtICogcmMgPSBsX3dh
-aXRfZXZlbnQod2FpdHEsIGNvbmRpdGlvbiwgJmx3aSk7DQogICAgLSAqDQogICAgLSAqIFRoaXMg
-Zm9ybSBpcyB0aGUgc2FtZSBhcyB0aGUgZmlyc3QgZXhjZXB0IHRoYXQgaXQgQ09NUExFVEVMWSBJ
-R05PUkVTDQogICAgLSAqIFNJR05BTFMuICBUaGUgY2FsbGVyIG11c3QgdGhlcmVmb3JlIGJld2Fy
-ZSB0aGF0IGlmICd0aW1lb3V0JyBpcyB6ZXJvLCBvciBpZg0KICAgIC0gKiAndGltZW91dF9oYW5k
-bGVyJyBpcyBub3QgTlVMTCBhbmQgcmV0dXJucyBGQUxTRSwgdGhlbiB0aGUgT05MWSB0aGluZyB0
-aGF0DQogICAgLSAqIGNhbiB1bmJsb2NrIHRoZSBjdXJyZW50IHByb2Nlc3MgaXMgJ2NvbmRpdGlv
-bicgYmVjb21pbmcgVFJVRS4NCiAgICAtICoNCiAgICAtICogQW5vdGhlciBmb3JtIG9mIHVzYWdl
-IGlzOg0KICAgIC0gKiBzdHJ1Y3QgbF93YWl0X2luZm8gbHdpID0gTFdJX1RJTUVPVVRfSU5URVJW
-QUwodGltZW91dCwgaW50ZXJ2YWwsDQogICAgLSAqCQkJCQkgICAgICAgdGltZW91dF9oYW5kbGVy
-KTsNCiAgICAtICogcmMgPSBsX3dhaXRfZXZlbnQod2FpdHEsIGNvbmRpdGlvbiwgJmx3aSk7DQog
-ICAgLSAqIFRoaXMgaXMgdGhlIHNhbWUgYXMgcHJldmlvdXMgY2FzZSwgYnV0IGNvbmRpdGlvbiBp
-cyBjaGVja2VkIG9uY2UgZXZlcnkNCiAgICAtICogJ2ludGVydmFsJyBqaWZmaWVzIChpZiBub24t
-emVybykuDQogICAgLSAqDQogICAgLSAqIFN1YnRsZSBzeW5jaHJvbml6YXRpb24gcG9pbnQ6IHRo
-aXMgbWFjcm8gZG9lcyAqbm90KiBuZWNlc3NhcnkgdGFrZXMNCiAgICAtICogd2FpdC1xdWV1ZSBz
-cGluLWxvY2sgYmVmb3JlIHJldHVybmluZywgYW5kLCBoZW5jZSwgZm9sbG93aW5nIGlkaW9tIGlz
-IHNhZmUNCiAgICAtICogT05MWSB3aGVuIGNhbGxlciBwcm92aWRlcyBzb21lIGV4dGVybmFsIGxv
-Y2tpbmc6DQogICAgLSAqDQogICAgLSAqCSAgICAgVGhyZWFkMQkJCSAgICBUaHJlYWQyDQogICAg
-LSAqDQogICAgLSAqICAgbF93YWl0X2V2ZW50KCZvYmotPndxLCAuLi4uKTsJCQkJICAgICAgICgx
-KQ0KICAgIC0gKg0KICAgIC0gKgkJCQkgICAgd2FrZV91cCgmb2JqLT53cSk6CQkgKDIpDQogICAg
-LSAqCQkJCQkgc3Bpbl9sb2NrKCZxLT5sb2NrKTsJICAoMi4xKQ0KICAgIC0gKgkJCQkJIF9fd2Fr
-ZV91cF9jb21tb24ocSwgLi4uKTsgICAgICgyLjIpDQogICAgLSAqCQkJCQkgc3Bpbl91bmxvY2so
-JnEtPmxvY2ssIGZsYWdzKTsgKDIuMykNCiAgICAtICoNCiAgICAtICogICBrZnJlZShvYmopOwkJ
-CQkJCSAgKDMpDQogICAgLSAqDQogICAgLSAqIEFzIGxfd2FpdF9ldmVudCgpIG1heSAic2hvcnQt
-Y3V0IiBleGVjdXRpb24gYW5kIHJldHVybiB3aXRob3V0IHRha2luZw0KICAgIC0gKiB3YWl0LXF1
-ZXVlIHNwaW4tbG9jaywgc29tZSBhZGRpdGlvbmFsIHN5bmNocm9uaXphdGlvbiBpcyBuZWNlc3Nh
-cnkgdG8NCiAgICAtICogZ3VhcmFudGVlIHRoYXQgc3RlcCAoMykgY2FuIGJlZ2luIG9ubHkgYWZ0
-ZXIgKDIuMykgZmluaXNoZXMuDQogICAgLSAqDQogICAgLSAqIFhYWCBuaWtpdGE6IHNvbWUgcHRs
-cnBjIGRhZW1vbiB0aHJlYWRzIGhhdmUgcmFjZXMgb2YgdGhhdCBzb3J0Lg0KICAgIC0gKg0KICAg
-IC0gKi8NCiAgICAtDQogICAgLSNkZWZpbmUgTFdJX09OX1NJR05BTF9OT09QICgodm9pZCAoKiko
-dm9pZCAqKSkoLTEpKQ0KICAgIC0NCiAgICAtc3RydWN0IGxfd2FpdF9pbmZvIHsNCiAgICAtCWxv
-bmcgbHdpX3RpbWVvdXQ7DQogICAgLQlsb25nIGx3aV9pbnRlcnZhbDsNCiAgICAtCWludAkgICAg
-bHdpX2FsbG93X2ludHI7DQogICAgLQlpbnQgICgqbHdpX29uX3RpbWVvdXQpKHZvaWQgKik7DQog
-ICAgLQl2b2lkICgqbHdpX29uX3NpZ25hbCkodm9pZCAqKTsNCiAgICAtCXZvaWQgICpsd2lfY2Jf
-ZGF0YTsNCiAgICAtfTsNCiAgICAtDQogICAgLS8qIE5COiBMV0lfVElNRU9VVCBpZ25vcmVzIHNp
-Z25hbHMgY29tcGxldGVseSAqLw0KICAgIC0jZGVmaW5lIExXSV9USU1FT1VUKHRpbWUsIGNiLCBk
-YXRhKQkgICAgIFwNCiAgICAtKChzdHJ1Y3QgbF93YWl0X2luZm8pIHsJCQkgXA0KICAgIC0JLmx3
-aV90aW1lb3V0ICAgID0gdGltZSwJCSBcDQogICAgLQkubHdpX29uX3RpbWVvdXQgPSBjYiwJCSAg
-IFwNCiAgICAtCS5sd2lfY2JfZGF0YSAgICA9IGRhdGEsCQkgXA0KICAgIC0JLmx3aV9pbnRlcnZh
-bCAgID0gMCwJCSAgICBcDQogICAgLQkubHdpX2FsbG93X2ludHIgPSAwCQkgICAgIFwNCiAgICAt
-fSkNCiAgICAtDQogICAgLSNkZWZpbmUgTFdJX1RJTUVPVVRfSU5URVJWQUwodGltZSwgaW50ZXJ2
-YWwsIGNiLCBkYXRhKSAgXA0KICAgIC0oKHN0cnVjdCBsX3dhaXRfaW5mbykgewkJCQkgXA0KICAg
-IC0JLmx3aV90aW1lb3V0ICAgID0gdGltZSwJCQkgXA0KICAgIC0JLmx3aV9vbl90aW1lb3V0ID0g
-Y2IsCQkJICAgXA0KICAgIC0JLmx3aV9jYl9kYXRhICAgID0gZGF0YSwJCQkgXA0KICAgIC0JLmx3
-aV9pbnRlcnZhbCAgID0gaW50ZXJ2YWwsCQkgICAgIFwNCiAgICAtCS5sd2lfYWxsb3dfaW50ciA9
-IDAJCQkgICAgIFwNCiAgICAtfSkNCiAgICAtDQogICAgLSNkZWZpbmUgTFdJX1RJTUVPVVRfSU5U
-Uih0aW1lLCB0aW1lX2NiLCBzaWdfY2IsIGRhdGEpICAgXA0KICAgIC0oKHN0cnVjdCBsX3dhaXRf
-aW5mbykgewkJCQkgXA0KICAgIC0JLmx3aV90aW1lb3V0ICAgID0gdGltZSwJCQkgXA0KICAgIC0J
-Lmx3aV9vbl90aW1lb3V0ID0gdGltZV9jYiwJCSAgICAgIFwNCiAgICAtCS5sd2lfb25fc2lnbmFs
-ICA9IHNpZ19jYiwJCSAgICAgICBcDQogICAgLQkubHdpX2NiX2RhdGEgICAgPSBkYXRhLAkJCSBc
-DQogICAgLQkubHdpX2ludGVydmFsICAgPSAwLAkJCSAgICBcDQogICAgLQkubHdpX2FsbG93X2lu
-dHIgPSAwCQkJICAgICBcDQogICAgLX0pDQogICAgLQ0KICAgIC0jZGVmaW5lIExXSV9USU1FT1VU
-X0lOVFJfQUxMKHRpbWUsIHRpbWVfY2IsIHNpZ19jYiwgZGF0YSkgICAgICAgXA0KICAgIC0oKHN0
-cnVjdCBsX3dhaXRfaW5mbykgewkJCQkJIFwNCiAgICAtCS5sd2lfdGltZW91dCAgICA9IHRpbWUs
-CQkJCSBcDQogICAgLQkubHdpX29uX3RpbWVvdXQgPSB0aW1lX2NiLAkJCSAgICAgIFwNCiAgICAt
-CS5sd2lfb25fc2lnbmFsICA9IHNpZ19jYiwJCQkgICAgICAgXA0KICAgIC0JLmx3aV9jYl9kYXRh
-ICAgID0gZGF0YSwJCQkJIFwNCiAgICAtCS5sd2lfaW50ZXJ2YWwgICA9IDAsCQkJCSAgICBcDQog
-ICAgLQkubHdpX2FsbG93X2ludHIgPSAxCQkJCSAgICAgXA0KICAgIC19KQ0KICAgIC0NCiAgICAt
-I2RlZmluZSBMV0lfSU5UUihjYiwgZGF0YSkgIExXSV9USU1FT1VUX0lOVFIoMCwgTlVMTCwgY2Is
-IGRhdGEpDQogICAgLQ0KICAgICAjZGVmaW5lIExVU1RSRV9GQVRBTF9TSUdTIChzaWdtYXNrKFNJ
-R0tJTEwpIHwgc2lnbWFzayhTSUdJTlQpIHwJCVwNCiAgICAgCQkJICAgc2lnbWFzayhTSUdURVJN
-KSB8IHNpZ21hc2soU0lHUVVJVCkgfAlcDQogICAgIAkJCSAgIHNpZ21hc2soU0lHQUxSTSkpDQog
-ICAgQEAgLTIwMSwxMzggKzg0LDYgQEAgc3RhdGljIGlubGluZSBpbnQgbF9mYXRhbF9zaWduYWxf
-cGVuZGluZyhzdHJ1Y3QgdGFza19zdHJ1Y3QgKnApDQogICAgIAlyZXR1cm4gc2lnbmFsX3BlbmRp
-bmcocCkgJiYgc2lndGVzdHNldG1hc2soJnAtPnBlbmRpbmcuc2lnbmFsLCBMVVNUUkVfRkFUQUxf
-U0lHUyk7DQogICAgIH0NCiAgICAgDQogICAgLS8qKg0KICAgIC0gKiB3YWl0X3F1ZXVlX2VudHJ5
-X3Qgb2YgTGludXggKHZlcnNpb24gPCAyLjYuMzQpIGlzIGEgRklGTyBsaXN0IGZvciBleGNsdXNp
-dmVseQ0KICAgIC0gKiB3YWl0aW5nIHRocmVhZHMsIHdoaWNoIGlzIG5vdCBhbHdheXMgZGVzaXJh
-YmxlIGJlY2F1c2UgYWxsIHRocmVhZHMgd2lsbA0KICAgIC0gKiBiZSB3YWtlbiB1cCBhZ2FpbiBh
-bmQgYWdhaW4sIGV2ZW4gdXNlciBvbmx5IG5lZWRzIGEgZmV3IG9mIHRoZW0gdG8gYmUNCiAgICAt
-ICogYWN0aXZlIG1vc3QgdGltZS4gVGhpcyBpcyBub3QgZ29vZCBmb3IgcGVyZm9ybWFuY2UgYmVj
-YXVzZSBjYWNoZSBjYW4NCiAgICAtICogYmUgcG9sbHV0ZWQgYnkgZGlmZmVyZW50IHRocmVhZHMu
-DQogICAgLSAqDQogICAgLSAqIExJRk8gbGlzdCBjYW4gcmVzb2x2ZSB0aGlzIHByb2JsZW0gYmVj
-YXVzZSB3ZSBhbHdheXMgd2FrZXVwIHRoZSBtb3N0DQogICAgLSAqIHJlY2VudCBhY3RpdmUgdGhy
-ZWFkIGJ5IGRlZmF1bHQuDQogICAgLSAqDQogICAgLSAqIE5COiBwbGVhc2UgZG9uJ3QgY2FsbCBu
-b24tZXhjbHVzaXZlICYgZXhjbHVzaXZlIHdhaXQgb24gdGhlIHNhbWUNCiAgICAtICogd2FpdHEg
-aWYgYWRkX3dhaXRfcXVldWVfZXhjbHVzaXZlX2hlYWQgaXMgdXNlZC4NCiAgICAtICovDQogICAg
-LSNkZWZpbmUgYWRkX3dhaXRfcXVldWVfZXhjbHVzaXZlX2hlYWQod2FpdHEsIGxpbmspCQlcDQog
-ICAgLXsJCQkJCQkJCVwNCiAgICAtCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CQkJCQlcDQogICAgLQkJ
-CQkJCQkJXA0KICAgIC0Jc3Bpbl9sb2NrX2lycXNhdmUoJigod2FpdHEpLT5sb2NrKSwgZmxhZ3Mp
-OwkJXA0KICAgIC0JX19hZGRfd2FpdF9xdWV1ZV9leGNsdXNpdmUod2FpdHEsIGxpbmspOwkJXA0K
-ICAgIC0Jc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmKCh3YWl0cSktPmxvY2spLCBmbGFncyk7CVwN
-CiAgICAtfQ0KICAgIC0NCiAgICAtLyoNCiAgICAtICogd2FpdCBmb3IgQGNvbmRpdGlvbiB0byBi
-ZWNvbWUgdHJ1ZSwgYnV0IG5vIGxvbmdlciB0aGFuIHRpbWVvdXQsIHNwZWNpZmllZA0KICAgIC0g
-KiBieSBAaW5mby4NCiAgICAtICovDQogICAgLSNkZWZpbmUgX19sX3dhaXRfZXZlbnQod3EsIGNv
-bmRpdGlvbiwgaW5mbywgcmV0LCBsX2FkZF93YWl0KQkJICAgXA0KICAgIC1kbyB7CQkJCQkJCQkJ
-ICAgXA0KICAgIC0Jd2FpdF9xdWV1ZV9lbnRyeV90IF9fd2FpdDsJCQkJCQkgXA0KICAgIC0JbG9u
-ZyBfX3RpbWVvdXQgPSBpbmZvLT5sd2lfdGltZW91dDsJCQkgIFwNCiAgICAtCXNpZ3NldF90ICAg
-X19ibG9ja2VkOwkJCQkJICAgICAgXA0KICAgIC0JaW50ICAgX19hbGxvd19pbnRyID0gaW5mby0+
-bHdpX2FsbG93X2ludHI7CQkJICAgICBcDQogICAgLQkJCQkJCQkJCSAgICAgICBcDQogICAgLQly
-ZXQgPSAwOwkJCQkJCQkgICAgICAgXA0KICAgIC0JaWYgKGNvbmRpdGlvbikJCQkJCQkJIFwNCiAg
-ICAtCQlicmVhazsJCQkJCQkJIFwNCiAgICAtCQkJCQkJCQkJICAgICAgIFwNCiAgICAtCWluaXRf
-d2FpdHF1ZXVlX2VudHJ5KCZfX3dhaXQsIGN1cnJlbnQpOwkJCQkJICAgIFwNCiAgICAtCWxfYWRk
-X3dhaXQoJndxLCAmX193YWl0KTsJCQkJCSAgICAgIFwNCiAgICAtCQkJCQkJCQkJICAgICAgIFwN
-CiAgICAtCS8qIEJsb2NrIGFsbCBzaWduYWxzIChqdXN0IHRoZSBub24tZmF0YWwgb25lcyBpZiBu
-byB0aW1lb3V0KS4gKi8gICAgICAgXA0KICAgIC0JaWYgKGluZm8tPmx3aV9vbl9zaWduYWwgJiYg
-KF9fdGltZW91dCA9PSAwIHx8IF9fYWxsb3dfaW50cikpICAgXA0KICAgIC0JCV9fYmxvY2tlZCA9
-IGNmc19ibG9ja19zaWdzaW52KExVU1RSRV9GQVRBTF9TSUdTKTsJICAgICAgXA0KICAgIC0JZWxz
-ZQkJCQkJCQkJICAgXA0KICAgIC0JCV9fYmxvY2tlZCA9IGNmc19ibG9ja19zaWdzaW52KDApOwkJ
-CSAgICAgIFwNCiAgICAtCQkJCQkJCQkJICAgICAgIFwNCiAgICAtCWZvciAoOzspIHsJCQkJCQkJ
-ICAgICBcDQogICAgLQkJaWYgKGNvbmRpdGlvbikJCQkJCQkgXA0KICAgIC0JCQlicmVhazsJCQkJ
-CQkgXA0KICAgIC0JCQkJCQkJCQkgICAgICAgXA0KICAgIC0JCXNldF9jdXJyZW50X3N0YXRlKFRB
-U0tfSU5URVJSVVBUSUJMRSk7CQkJICAgICAgIFwNCiAgICAtCQkJCQkJCQkJICAgICAgIFwNCiAg
-ICAtCQlpZiAoX190aW1lb3V0ID09IDApIHsJCQkJCSAgXA0KICAgIC0JCQlzY2hlZHVsZSgpOwkJ
-CQkJICAgICAgIFwNCiAgICAtCQl9IGVsc2UgewkJCQkJCSAgICAgICBcDQogICAgLQkJCWxvbmcg
-aW50ZXJ2YWwgPSBpbmZvLT5sd2lfaW50ZXJ2YWwgPwkgIFwNCiAgICAtCQkJCQkgICAgIG1pbl90
-KGxvbmcsCSAgICAgXA0KICAgIC0JCQkJCQkgaW5mby0+bHdpX2ludGVydmFsLCBfX3RpbWVvdXQp
-IDogXA0KICAgIC0JCQkJCSAgICAgX190aW1lb3V0OwkJCVwNCiAgICAtCQkJbG9uZyByZW1haW5p
-bmcgPSBzY2hlZHVsZV90aW1lb3V0KGludGVydmFsKTtcDQogICAgLQkJCV9fdGltZW91dCA9IGNm
-c190aW1lX3N1YihfX3RpbWVvdXQsCQkgICAgXA0KICAgIC0JCQkJCSAgICBjZnNfdGltZV9zdWIo
-aW50ZXJ2YWwsIHJlbWFpbmluZykpO1wNCiAgICAtCQkJaWYgKF9fdGltZW91dCA9PSAwKSB7CQkJ
-CSAgXA0KICAgIC0JCQkJaWYgKCFpbmZvLT5sd2lfb25fdGltZW91dCB8fAkJICAgICAgXA0KICAg
-IC0JCQkJICAgIGluZm8tPmx3aV9vbl90aW1lb3V0KGluZm8tPmx3aV9jYl9kYXRhKSkgeyBcDQog
-ICAgLQkJCQkJcmV0ID0gLUVUSU1FRE9VVDsJCSAgICAgIFwNCiAgICAtCQkJCQlicmVhazsJCQkJ
-IFwNCiAgICAtCQkJCX0JCQkJCSAgICAgIFwNCiAgICAtCQkJCS8qIFRha2Ugc2lnbmFscyBhZnRl
-ciB0aGUgdGltZW91dCBleHBpcmVzLiAqLyAgXA0KICAgIC0JCQkJaWYgKGluZm8tPmx3aV9vbl9z
-aWduYWwpCQkgICAgICAgXA0KICAgIC0JCQkJICAgICh2b2lkKWNmc19ibG9ja19zaWdzaW52KExV
-U1RSRV9GQVRBTF9TSUdTKTtcDQogICAgLQkJCX0JCQkJCQkgICAgICBcDQogICAgLQkJfQkJCQkJ
-CQkgICAgICBcDQogICAgLQkJCQkJCQkJCSAgICAgICBcDQogICAgLQkJc2V0X2N1cnJlbnRfc3Rh
-dGUoVEFTS19SVU5OSU5HKTsJCQkgICAgICAgXA0KICAgIC0JCQkJCQkJCQkgICAgICAgXA0KICAg
-IC0JCWlmIChjb25kaXRpb24pCQkJCQkJIFwNCiAgICAtCQkJYnJlYWs7CQkJCQkJIFwNCiAgICAt
-CQlpZiAoc2lnbmFsX3BlbmRpbmcoY3VycmVudCkpIHsJCQkJICAgIFwNCiAgICAtCQkJaWYgKGlu
-Zm8tPmx3aV9vbl9zaWduYWwgJiYJCSAgICAgXA0KICAgIC0JCQkgICAgKF9fdGltZW91dCA9PSAw
-IHx8IF9fYWxsb3dfaW50cikpIHsJCVwNCiAgICAtCQkJCWlmIChpbmZvLT5sd2lfb25fc2lnbmFs
-ICE9IExXSV9PTl9TSUdOQUxfTk9PUCkgXA0KICAgIC0JCQkJCWluZm8tPmx3aV9vbl9zaWduYWwo
-aW5mby0+bHdpX2NiX2RhdGEpO1wNCiAgICAtCQkJCXJldCA9IC1FSU5UUjsJCQkJICBcDQogICAg
-LQkJCQlicmVhazsJCQkJCSBcDQogICAgLQkJCX0JCQkJCQkgICAgICBcDQogICAgLQkJCS8qIFdl
-IGhhdmUgdG8gZG8gdGhpcyBoZXJlIGJlY2F1c2Ugc29tZSBzaWduYWxzICovICAgICBcDQogICAg
-LQkJCS8qIGFyZSBub3QgYmxvY2thYmxlIC0gaWUgZnJvbSBzdHJhY2UoMSkuICAgICAgICovICAg
-ICBcDQogICAgLQkJCS8qIEluIHRoZXNlIGNhc2VzIHdlIHdhbnQgdG8gc2NoZWR1bGVfdGltZW91
-dCgpICovICAgICBcDQogICAgLQkJCS8qIGFnYWluLCBiZWNhdXNlIHdlIGRvbid0IHdhbnQgdGhh
-dCB0byByZXR1cm4gICovICAgICBcDQogICAgLQkJCS8qIC1FSU5UUiB3aGVuIHRoZSBSUEMgYWN0
-dWFsbHkgc3VjY2VlZGVkLiAgICAgICovICAgICBcDQogICAgLQkJCS8qIHRoZSByZWNhbGNfc2ln
-cGVuZGluZygpIGJlbG93IHdpbGwgZGVsaXZlciB0aGUgKi8gICAgIFwNCiAgICAtCQkJLyogc2ln
-bmFsIHByb3Blcmx5LgkJCSAgICAgKi8gICAgIFwNCiAgICAtCQkJY2ZzX2NsZWFyX3NpZ3BlbmRp
-bmcoKTsJCQkJXA0KICAgIC0JCX0JCQkJCQkJICAgICAgXA0KICAgIC0JfQkJCQkJCQkJICAgICAg
-XA0KICAgIC0JCQkJCQkJCQkgICAgICAgXA0KICAgIC0JY2ZzX3Jlc3RvcmVfc2lncyhfX2Jsb2Nr
-ZWQpOwkJCQkJICAgXA0KICAgIC0JCQkJCQkJCQkgICAgICAgXA0KICAgIC0JcmVtb3ZlX3dhaXRf
-cXVldWUoJndxLCAmX193YWl0KTsJCQkJCSAgIFwNCiAgICAtfSB3aGlsZSAoMCkNCiAgICAtDQog
-ICAgLSNkZWZpbmUgbF93YWl0X2V2ZW50KHdxLCBjb25kaXRpb24sIGluZm8pCQkgICAgICAgXA0K
-ICAgIC0oewkJCQkJCQkgICAgICBcDQogICAgLQlpbnQJCSBfX3JldDsJCQkgICAgICBcDQogICAg
-LQlzdHJ1Y3QgbF93YWl0X2luZm8gKl9faW5mbyA9IChpbmZvKTsJCSAgICBcDQogICAgLQkJCQkJ
-CQkJXA0KICAgIC0JX19sX3dhaXRfZXZlbnQod3EsIGNvbmRpdGlvbiwgX19pbmZvLAkJICAgXA0K
-ICAgIC0JCSAgICAgICBfX3JldCwgYWRkX3dhaXRfcXVldWUpOwkJICAgXA0KICAgIC0JX19yZXQ7
-CQkJCQkJICBcDQogICAgLX0pDQogICAgLQ0KICAgIC0jZGVmaW5lIGxfd2FpdF9ldmVudF9leGNs
-dXNpdmUod3EsIGNvbmRpdGlvbiwgaW5mbykJICAgICBcDQogICAgLSh7CQkJCQkJCSAgICAgIFwN
-CiAgICAtCWludAkJIF9fcmV0OwkJCSAgICAgIFwNCiAgICAtCXN0cnVjdCBsX3dhaXRfaW5mbyAq
-X19pbmZvID0gKGluZm8pOwkJICAgIFwNCiAgICAtCQkJCQkJCQlcDQogICAgLQlfX2xfd2FpdF9l
-dmVudCh3cSwgY29uZGl0aW9uLCBfX2luZm8sCQkgICBcDQogICAgLQkJICAgICAgIF9fcmV0LCBh
-ZGRfd2FpdF9xdWV1ZV9leGNsdXNpdmUpOwkgXA0KICAgIC0JX19yZXQ7CQkJCQkJICBcDQogICAg
-LX0pDQogICAgLQ0KICAgIC0jZGVmaW5lIGxfd2FpdF9ldmVudF9leGNsdXNpdmVfaGVhZCh3cSwg
-Y29uZGl0aW9uLCBpbmZvKQlcDQogICAgLSh7CQkJCQkJCSAgICAgIFwNCiAgICAtCWludAkJIF9f
-cmV0OwkJCSAgICAgIFwNCiAgICAtCXN0cnVjdCBsX3dhaXRfaW5mbyAqX19pbmZvID0gKGluZm8p
-OwkJICAgIFwNCiAgICAtCQkJCQkJCQlcDQogICAgLQlfX2xfd2FpdF9ldmVudCh3cSwgY29uZGl0
-aW9uLCBfX2luZm8sCQkgICBcDQogICAgLQkJICAgICAgIF9fcmV0LCBhZGRfd2FpdF9xdWV1ZV9l
-eGNsdXNpdmVfaGVhZCk7ICAgIFwNCiAgICAtCV9fcmV0OwkJCQkJCSAgXA0KICAgIC19KQ0KICAg
-IC0NCiAgICAgLyoqIEB9IGxpYiAqLw0KICAgICANCiAgICAgDQogICAgDQogICAgDQogICAgX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCiAgICBsdXN0cmUt
-ZGV2ZWwgbWFpbGluZyBsaXN0DQogICAgbHVzdHJlLWRldmVsQGxpc3RzLmx1c3RyZS5vcmcNCiAg
-ICBodHRwOi8vbGlzdHMubHVzdHJlLm9yZy9saXN0aW5mby5jZ2kvbHVzdHJlLWRldmVsLWx1c3Ry
-ZS5vcmcNCiAgICANCg0K
+lustre sometimes wants to wait for an event, but abort if
+one of a specific list of signals arrives.  This is a little
+bit like wait_event_killable(), except that the signals are
+identified a different way.
+
+So introduce l_wait_event_abortable() which provides this
+functionality.
+Having separate functions for separate needs is more in line
+with the pattern set by include/linux/wait.h, than having a
+single function which tries to include all possible needs.
+
+Also introduce l_wait_event_abortable_exclusive().
+
+Note that l_wait_event() return -EINTR on a signal, while
+Linux wait_event functions return -ERESTARTSYS.
+l_wait_event_{abortable_,}exclusive follow the Linux pattern.
+
+Reviewed-by: James Simmons <jsimmons@infradead.org>
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: Patrick Farrell <paf@cray.com>
+---
+ drivers/staging/lustre/lustre/include/lustre_lib.h |   24 ++++++++++++++++++++
+ drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |   12 +++++-----
+ drivers/staging/lustre/lustre/llite/llite_lib.c    |   12 +++-------
+ drivers/staging/lustre/lustre/obdclass/genops.c    |    9 +++-----
+ drivers/staging/lustre/lustre/obdclass/llog_obd.c  |    5 ++--
+ drivers/staging/lustre/lustre/osc/osc_page.c       |    6 ++---
+ drivers/staging/lustre/lustre/osc/osc_request.c    |    6 ++---
+ 7 files changed, 43 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/include/lustre_lib.h b/drivers/staging/lustre/lustre/include/lustre_lib.h
+index 7d950c53e962..b2a64d0e682c 100644
+--- a/drivers/staging/lustre/lustre/include/lustre_lib.h
++++ b/drivers/staging/lustre/lustre/include/lustre_lib.h
+@@ -336,4 +336,28 @@ do {									   \
+ /** @} lib */
+ 
+ 
++
++/* l_wait_event_abortable() is a bit like wait_event_killable()
++ * except there is a fixed set of signals which will abort:
++ * LUSTRE_FATAL_SIGS
++ */
++#define l_wait_event_abortable(wq, condition)				\
++({									\
++	sigset_t __blocked;						\
++	int __ret = 0;							\
++	__blocked = cfs_block_sigsinv(LUSTRE_FATAL_SIGS);		\
++	__ret = wait_event_interruptible(wq, condition);		\
++	cfs_restore_sigs(__blocked);					\
++	__ret;								\
++})
++
++#define l_wait_event_abortable_exclusive(wq, condition)			\
++({									\
++	sigset_t __blocked;						\
++	int __ret = 0;							\
++	__blocked = cfs_block_sigsinv(LUSTRE_FATAL_SIGS);		\
++	__ret = wait_event_interruptible_exclusive(wq, condition);	\
++	cfs_restore_sigs(__blocked);					\
++	__ret;								\
++})
+ #endif /* _LUSTRE_LIB_H */
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
+index 2e66825c8f4b..4c44603ab6f9 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
+@@ -879,7 +879,6 @@ static int __ldlm_namespace_free(struct ldlm_namespace *ns, int force)
+ 	ldlm_namespace_cleanup(ns, force ? LDLM_FL_LOCAL_ONLY : 0);
+ 
+ 	if (atomic_read(&ns->ns_bref) > 0) {
+-		struct l_wait_info lwi = LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+ 		int rc;
+ 
+ 		CDEBUG(D_DLMTRACE,
+@@ -887,11 +886,12 @@ static int __ldlm_namespace_free(struct ldlm_namespace *ns, int force)
+ 		       ldlm_ns_name(ns), atomic_read(&ns->ns_bref));
+ force_wait:
+ 		if (force)
+-			lwi = LWI_TIMEOUT(msecs_to_jiffies(obd_timeout *
+-					  MSEC_PER_SEC) / 4, NULL, NULL);
+-
+-		rc = l_wait_event(ns->ns_waitq,
+-				  atomic_read(&ns->ns_bref) == 0, &lwi);
++			rc = wait_event_idle_timeout(ns->ns_waitq,
++						     atomic_read(&ns->ns_bref) == 0,
++						     obd_timeout * HZ / 4) ? 0 : -ETIMEDOUT;
++		else
++			rc = l_wait_event_abortable(ns->ns_waitq,
++						    atomic_read(&ns->ns_bref) == 0);
+ 
+ 		/* Forced cleanups should be able to reclaim all references,
+ 		 * so it's safe to wait forever... we can't leak locks...
+diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
+index c820b201af71..ccb614bd7f53 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_lib.c
++++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
+@@ -986,16 +986,12 @@ void ll_put_super(struct super_block *sb)
+ 	}
+ 
+ 	/* Wait for unstable pages to be committed to stable storage */
+-	if (!force) {
+-		struct l_wait_info lwi = LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+-
+-		rc = l_wait_event(sbi->ll_cache->ccc_unstable_waitq,
+-				  !atomic_long_read(&sbi->ll_cache->ccc_unstable_nr),
+-				  &lwi);
+-	}
++	if (!force)
++		rc = l_wait_event_abortable(sbi->ll_cache->ccc_unstable_waitq,
++					    !atomic_long_read(&sbi->ll_cache->ccc_unstable_nr));
+ 
+ 	ccc_count = atomic_long_read(&sbi->ll_cache->ccc_unstable_nr);
+-	if (!force && rc != -EINTR)
++	if (!force && rc != -ERESTARTSYS)
+ 		LASSERTF(!ccc_count, "count: %li\n", ccc_count);
+ 
+ 	/* We need to set force before the lov_disconnect in
+diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
+index 3ff25b8d3b48..8f776a4058a9 100644
+--- a/drivers/staging/lustre/lustre/obdclass/genops.c
++++ b/drivers/staging/lustre/lustre/obdclass/genops.c
+@@ -1332,7 +1332,6 @@ static bool obd_request_slot_avail(struct client_obd *cli,
+ int obd_get_request_slot(struct client_obd *cli)
+ {
+ 	struct obd_request_slot_waiter orsw;
+-	struct l_wait_info lwi;
+ 	int rc;
+ 
+ 	spin_lock(&cli->cl_loi_list_lock);
+@@ -1347,11 +1346,9 @@ int obd_get_request_slot(struct client_obd *cli)
+ 	orsw.orsw_signaled = false;
+ 	spin_unlock(&cli->cl_loi_list_lock);
+ 
+-	lwi = LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+-	rc = l_wait_event(orsw.orsw_waitq,
+-			  obd_request_slot_avail(cli, &orsw) ||
+-			  orsw.orsw_signaled,
+-			  &lwi);
++	rc = l_wait_event_abortable(orsw.orsw_waitq,
++				    obd_request_slot_avail(cli, &orsw) ||
++				    orsw.orsw_signaled);
+ 
+ 	/*
+ 	 * Here, we must take the lock to avoid the on-stack 'orsw' to be
+diff --git a/drivers/staging/lustre/lustre/obdclass/llog_obd.c b/drivers/staging/lustre/lustre/obdclass/llog_obd.c
+index 28bbaa2136ac..26aea114a29b 100644
+--- a/drivers/staging/lustre/lustre/obdclass/llog_obd.c
++++ b/drivers/staging/lustre/lustre/obdclass/llog_obd.c
+@@ -104,7 +104,6 @@ EXPORT_SYMBOL(__llog_ctxt_put);
+ 
+ int llog_cleanup(const struct lu_env *env, struct llog_ctxt *ctxt)
+ {
+-	struct l_wait_info lwi = LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+ 	struct obd_llog_group *olg;
+ 	int rc, idx;
+ 
+@@ -129,8 +128,8 @@ int llog_cleanup(const struct lu_env *env, struct llog_ctxt *ctxt)
+ 		CERROR("Error %d while cleaning up ctxt %p\n",
+ 		       rc, ctxt);
+ 
+-	l_wait_event(olg->olg_waitq,
+-		     llog_group_ctxt_null(olg, idx), &lwi);
++	l_wait_event_abortable(olg->olg_waitq,
++			     llog_group_ctxt_null(olg, idx));
+ 
+ 	return rc;
+ }
+diff --git a/drivers/staging/lustre/lustre/osc/osc_page.c b/drivers/staging/lustre/lustre/osc/osc_page.c
+index 20094b6309f9..6fdd521feb21 100644
+--- a/drivers/staging/lustre/lustre/osc/osc_page.c
++++ b/drivers/staging/lustre/lustre/osc/osc_page.c
+@@ -759,7 +759,6 @@ static long osc_lru_reclaim(struct client_obd *cli, unsigned long npages)
+ static int osc_lru_alloc(const struct lu_env *env, struct client_obd *cli,
+ 			 struct osc_page *opg)
+ {
+-	struct l_wait_info lwi = LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+ 	struct osc_io *oio = osc_env_io(env);
+ 	int rc = 0;
+ 
+@@ -782,9 +781,8 @@ static int osc_lru_alloc(const struct lu_env *env, struct client_obd *cli,
+ 
+ 		cond_resched();
+ 
+-		rc = l_wait_event(osc_lru_waitq,
+-				  atomic_long_read(cli->cl_lru_left) > 0,
+-				  &lwi);
++		rc = l_wait_event_abortable(osc_lru_waitq,
++					    atomic_long_read(cli->cl_lru_left) > 0);
+ 
+ 		if (rc < 0)
+ 			break;
+diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
+index 45b1ebf33363..074b5ce6284c 100644
+--- a/drivers/staging/lustre/lustre/osc/osc_request.c
++++ b/drivers/staging/lustre/lustre/osc/osc_request.c
+@@ -552,14 +552,12 @@ static int osc_destroy(const struct lu_env *env, struct obd_export *exp,
+ 
+ 	req->rq_interpret_reply = osc_destroy_interpret;
+ 	if (!osc_can_send_destroy(cli)) {
+-		struct l_wait_info lwi = LWI_INTR(LWI_ON_SIGNAL_NOOP, NULL);
+-
+ 		/*
+ 		 * Wait until the number of on-going destroy RPCs drops
+ 		 * under max_rpc_in_flight
+ 		 */
+-		l_wait_event_exclusive(cli->cl_destroy_waitq,
+-				       osc_can_send_destroy(cli), &lwi);
++		l_wait_event_abortable_exclusive(cli->cl_destroy_waitq,
++					       osc_can_send_destroy(cli));
+ 	}
+ 
+ 	/* Do not wait for response */
