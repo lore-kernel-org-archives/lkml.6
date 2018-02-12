@@ -1,72 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935863AbeBLO1d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:27:33 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37864 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933794AbeBLO1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:27:32 -0500
-Date: Mon, 12 Feb 2018 15:27:30 +0100
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
-        kernel@collabora.com, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-Message-ID: <20180212142730.g2646v77qsvzd5ff@sirius.home.kraxel.org>
-References: <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
- <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
- <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
- <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
- <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
- <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
- <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
- <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
- <20180212115242.z3qv5uejbnhgvd6o@sirius.home.kraxel.org>
- <eea72b9d-d180-6a57-81ce-4366dc0f2bcc@collabora.com>
+        id S935893AbeBLOcc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:32:32 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48345 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935375AbeBLOcb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 09:32:31 -0500
+Date: Mon, 12 Feb 2018 15:32:32 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: David Woodhouse <dwmw2@infradead.org>
+cc: karahmed@amazon.de, sironi@amazon.de, x86@kernel.org,
+        kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com
+Subject: Re: [PATCH v2 1/6] x86/speculation: Update Speculation Control
+ microcode blacklist
+In-Reply-To: <1518444989.6606.83.camel@infradead.org>
+Message-ID: <alpine.DEB.2.21.1802121532200.1158@nanos.tec.linutronix.de>
+References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>  <1518305967-31356-2-git-send-email-dwmw@amazon.co.uk> <1518444989.6606.83.camel@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eea72b9d-d180-6a57-81ce-4366dc0f2bcc@collabora.com>
-User-Agent: NeoMutt/20171215
+Content-Type: multipart/mixed; boundary="8323329-1368810593-1518445952=:1158"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 03:00:24PM +0100, Tomeu Vizoso wrote:
-> On 02/12/2018 12:52 PM, Gerd Hoffmann wrote:
-> >    Hi,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1368810593-1518445952=:1158
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Mon, 12 Feb 2018, David Woodhouse wrote:
+
+> On Sat, 2018-02-10 at 23:39 +0000, David Woodhouse wrote:
 > > 
-> > > can we reach agreement on whether vsock should be involved in this?
-> > 
-> > I think the best approach would be to have guest proxy and host proxy
-> > use vsock for the wayland protocol.  Use a wayland protocol extension to
-> > reference the buffers in stdvga / ivshmem / virtio-gpu.  Only the two
-> > proxies need to understand the extension, the client <=> guest proxy and
-> > host proxy <=> server communication would be standard wayland protocol.
+> > --- a/arch/x86/kernel/cpu/intel.c
+> > +++ b/arch/x86/kernel/cpu/intel.c
+> > @@ -123,8 +123,6 @@ static const struct sku_microcode
+> > spectre_bad_microcodes[] = {
+> >         { INTEL_FAM6_KABYLAKE_MOBILE,   0x09,   0x84 },
+> >         { INTEL_FAM6_SKYLAKE_X,         0x03,   0x0100013e },
+> >         { INTEL_FAM6_SKYLAKE_X,         0x04,   0x0200003c },
+> > -       { INTEL_FAM6_SKYLAKE_MOBILE,    0x03,   0xc2 },
+> > -       { INTEL_FAM6_SKYLAKE_DESKTOP,   0x03,   0xc2 },
+> >         { INTEL_FAM6_BROADWELL_CORE,    0x04,   0x28 },
+> >         { INTEL_FAM6_BROADWELL_GT3E,    0x01,   0x1b },
+> >         { INTEL_FAM6_BROADWELL_XEON_D,  0x02,   0x14 },
 > 
-> Thanks for the ideas. What I haven't understood yet is how you see the
-> actual passing of buffers via vsock. Are you thinking of using ancillary
-> data to pass FDs, or something else?
+> Arjan points out that the SKYLAKE_DESKTOP one there is premature. There
+> are *two* rows in Intel's table which match that CPUID (506E3).
+> 
+> Only *one* of them ("Skylake H/S") has cleared the 0xC2 microcode for
+> use, while the "Skylake E3" line still doesn't approve it. (But doesn't
+> explicitly list it in the "STOP deploying" column any more either,
+> which it probably should, and might have helped me notice.)
+> 
+> Ingo, Thomas: do you want to drop this patch which is already in
+> tip/x86/pti and have a new version with the SKYLAKE_DESKTOP no longer
+> removed? Or shall I send an incremental patch to add it back?
 
-I was more thinking about a struct containing enough info to allow the
-proxy on the host side find the buffer, something like:
-
-   struct {
-      enum type { stdvga, virtio-cpu, ... }
-      pcislot device;
-      union {
-         int stdvga_pcibar_offset;
-         int virtio_gpu_resource_id;
-      }
-   }
-
-So when the guest proxy gets a message with a fd referencing a buffer it
-would have to figure where the buffer is, rewrite the message into the
-struct above for the host proxy.  The host proxy would rewrite the
-message again for the server.
-
-cheers,
-  Gerd
+Delta patch please.
+--8323329-1368810593-1518445952=:1158--
