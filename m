@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935442AbeBLNUx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:20:53 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:32951 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935269AbeBLNRx (ORCPT
+        id S935256AbeBLNV3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:21:29 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44084 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935226AbeBLNRq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:17:53 -0500
-X-Google-Smtp-Source: AH8x224rtV4g8zXgeVKr3NeEMIwKje1e9p7GXHxgkwaKvKm2/0oR0FAchUibAGYAUG+0Ex1nDkEHsQ==
+        Mon, 12 Feb 2018 08:17:46 -0500
+X-Google-Smtp-Source: AH8x225Kh4DfgtAMITg1qisKhy5pzlYrWnn0+5SMDoz8rBjlJFB/K2Y/yoL1sO9zmhPdZBGzz1kr2g==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>, Milo Kim <milo.kim@ti.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 10/21] regulator: lp8788-ldo: Pass descriptor instead of GPIO number
-Date: Mon, 12 Feb 2018 14:17:06 +0100
-Message-Id: <20180212131717.27193-11-linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 07/21] regulator: max8973: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:17:03 +0100
+Message-Id: <20180212131717.27193-8-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -24,153 +25,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Instead of passing a global GPIO number, pass a descriptor looked
-up with the standard devm_gpiod_get_index_optional() call.
+up with the standard devm_gpiod_get_optional() call.
 
-This driver has supported passing a LDO enable GPIO for years,
-yet this facility has never been put to use in the upstream kernel.
-If someone desires to put in place GPIO control for the LDOs,
-this can be done by adding a GPIO descriptor table in the MFD
-nexus in drivers/mfd/lp8788.c for the LDO device when spawning the
-MFD children, or using a board file.
-
-Cc: Milo Kim <milo.kim@ti.com>
-Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Lee: would be nice if you could ACK this smallish patch to
-the MFD header.
----
- drivers/regulator/lp8788-ldo.c | 32 ++++++++++++++++----------------
- include/linux/mfd/lp8788.h     | 16 ----------------
- 2 files changed, 16 insertions(+), 32 deletions(-)
+ drivers/regulator/max8973-regulator.c | 54 +++++++++++++++++++----------------
+ 1 file changed, 29 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
-index cbfd35873575..f2347474a106 100644
---- a/drivers/regulator/lp8788-ldo.c
-+++ b/drivers/regulator/lp8788-ldo.c
-@@ -16,7 +16,7 @@
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
--#include <linux/gpio.h>
+diff --git a/drivers/regulator/max8973-regulator.c b/drivers/regulator/max8973-regulator.c
+index e0c747aa9f85..7cd493ec6315 100644
+--- a/drivers/regulator/max8973-regulator.c
++++ b/drivers/regulator/max8973-regulator.c
+@@ -34,6 +34,7 @@
+ #include <linux/regulator/max8973-regulator.h>
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/gpio.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/mfd/lp8788.h>
+ #include <linux/of_gpio.h>
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
+@@ -114,7 +115,6 @@ struct max8973_chip {
+ 	struct regulator_desc desc;
+ 	struct regmap *regmap;
+ 	bool enable_external_control;
+-	int enable_gpio;
+ 	int dvs_gpio;
+ 	int lru_index[MAX8973_MAX_VOUT_REG];
+ 	int curr_vout_val[MAX8973_MAX_VOUT_REG];
+@@ -567,7 +567,6 @@ static struct max8973_regulator_platform_data *max8973_parse_dt(
  
- /* register address */
-@@ -85,8 +85,6 @@
- #define LP8788_STARTUP_TIME_S		3
+ 	pdata->enable_ext_control = of_property_read_bool(np,
+ 						"maxim,externally-enable");
+-	pdata->enable_gpio = of_get_named_gpio(np, "maxim,enable-gpio", 0);
+ 	pdata->dvs_gpio = of_get_named_gpio(np, "maxim,dvs-gpio", 0);
  
- #define ENABLE_TIME_USEC		32
--#define ENABLE				GPIOF_OUT_INIT_HIGH
--#define DISABLE				GPIOF_OUT_INIT_LOW
+ 	ret = of_property_read_u32(np, "maxim,dvs-default-state", &pval);
+@@ -633,6 +632,8 @@ static int max8973_probe(struct i2c_client *client,
+ 	struct max8973_chip *max;
+ 	bool pdata_from_dt = false;
+ 	unsigned int chip_id;
++	struct gpio_desc *gpiod;
++	enum gpiod_flags gflags;
+ 	int ret;
  
- enum lp8788_ldo_id {
- 	DLDO1,
-@@ -117,7 +115,7 @@ struct lp8788_ldo {
- 	struct lp8788 *lp;
- 	struct regulator_desc *desc;
- 	struct regulator_dev *regulator;
--	struct lp8788_ldo_enable_pin *en_pin;
-+	struct gpio_desc *ena_gpiod;
- };
- 
- /* DLDO 1, 2, 3, 9 voltage table */
-@@ -469,7 +467,6 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
- 					enum lp8788_ldo_id id)
- {
- 	struct lp8788 *lp = ldo->lp;
--	struct lp8788_platform_data *pdata = lp->pdata;
- 	enum lp8788_ext_ldo_en_id enable_id;
- 	u8 en_mask[] = {
- 		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
-@@ -504,11 +501,18 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
- 		return 0;
+ 	pdata = dev_get_platdata(&client->dev);
+@@ -647,8 +648,7 @@ static int max8973_probe(struct i2c_client *client,
+ 		return -EIO;
  	}
  
--	/* if no platform data for ldo pin, then set default enable mode */
--	if (!pdata || !pdata->ldo_pin || !pdata->ldo_pin[enable_id])
-+	/* FIXME: check default mode for GPIO here: high or low? */
-+	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
-+						       "enable",
-+						       enable_id,
-+						       GPIOD_OUT_HIGH);
-+	if (IS_ERR(ldo->ena_gpiod))
-+		return PTR_ERR(ldo->ena_gpiod);
-+
-+	/* if no GPIO for ldo pin, then set default enable mode */
-+	if (!ldo->ena_gpiod)
- 		goto set_default_ldo_enable_mode;
+-	if ((pdata->dvs_gpio == -EPROBE_DEFER) ||
+-		(pdata->enable_gpio == -EPROBE_DEFER))
++	if (pdata->dvs_gpio == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
  
--	ldo->en_pin = pdata->ldo_pin[enable_id];
- 	return 0;
+ 	max = devm_kzalloc(&client->dev, sizeof(*max), GFP_KERNEL);
+@@ -696,15 +696,11 @@ static int max8973_probe(struct i2c_client *client,
+ 	max->desc.n_voltages = MAX8973_BUCK_N_VOLTAGE;
  
- set_default_ldo_enable_mode:
-@@ -533,10 +537,8 @@ static int lp8788_dldo_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+ 	max->dvs_gpio = (pdata->dvs_gpio) ? pdata->dvs_gpio : -EINVAL;
+-	max->enable_gpio = (pdata->enable_gpio) ? pdata->enable_gpio : -EINVAL;
+ 	max->enable_external_control = pdata->enable_ext_control;
+ 	max->curr_gpio_val = pdata->dvs_def_state;
+ 	max->curr_vout_reg = MAX8973_VOUT + pdata->dvs_def_state;
+ 	max->junction_temp_warning = pdata->junction_temp_warning;
  
--	if (ldo->en_pin) {
--		cfg.ena_gpio = ldo->en_pin->gpio;
--		cfg.ena_gpio_flags = ldo->en_pin->init_state;
--	}
-+	if (ldo->ena_gpiod)
-+		cfg.ena_gpiod = ldo->ena_gpiod;
- 
- 	cfg.dev = pdev->dev.parent;
- 	cfg.init_data = lp->pdata ? lp->pdata->dldo_data[id] : NULL;
-@@ -582,10 +584,8 @@ static int lp8788_aldo_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	if (ldo->en_pin) {
--		cfg.ena_gpio = ldo->en_pin->gpio;
--		cfg.ena_gpio_flags = ldo->en_pin->init_state;
--	}
-+	if (ldo->ena_gpiod)
-+		cfg.ena_gpiod = ldo->ena_gpiod;
- 
- 	cfg.dev = pdev->dev.parent;
- 	cfg.init_data = lp->pdata ? lp->pdata->aldo_data[id] : NULL;
-diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
-index 786bf6679a28..2010e0de3e34 100644
---- a/include/linux/mfd/lp8788.h
-+++ b/include/linux/mfd/lp8788.h
-@@ -181,20 +181,6 @@ struct lp8788_buck2_dvs {
- 	enum lp8788_dvs_sel vsel;
- };
- 
--/*
-- * struct lp8788_ldo_enable_pin
-- *
-- *   Basically, all LDOs are enabled through the I2C commands.
-- *   But ALDO 1 ~ 5, 7, DLDO 7, 9, 11 can be enabled by external gpio pins.
-- *
-- * @gpio         : gpio number which is used for enabling ldos
-- * @init_state   : initial gpio state (ex. GPIOF_OUT_INIT_LOW)
-- */
--struct lp8788_ldo_enable_pin {
--	int gpio;
--	int init_state;
--};
+-	if (gpio_is_valid(max->enable_gpio))
+-		max->enable_external_control = true;
 -
- /*
-  * struct lp8788_chg_param
-  * @addr         : charging control register address (range : 0x11 ~ 0x1C)
-@@ -288,7 +274,6 @@ struct lp8788_vib_platform_data {
-  * @aldo_data    : regulator initial data for analog ldo
-  * @buck1_dvs    : gpio configurations for buck1 dvs
-  * @buck2_dvs    : gpio configurations for buck2 dvs
-- * @ldo_pin      : gpio configurations for enabling LDOs
-  * @chg_pdata    : platform data for charger driver
-  * @alarm_sel    : rtc alarm selection (1 or 2)
-  * @bl_pdata     : configurable data for backlight driver
-@@ -306,7 +291,6 @@ struct lp8788_platform_data {
- 	struct regulator_init_data *aldo_data[LP8788_NUM_ALDOS];
- 	struct lp8788_buck1_dvs *buck1_dvs;
- 	struct lp8788_buck2_dvs *buck2_dvs;
--	struct lp8788_ldo_enable_pin *ldo_pin[EN_LDOS_MAX];
+ 	max->lru_index[0] = max->curr_vout_reg;
  
- 	/* charger */
- 	struct lp8788_charger_platform_data *chg_pdata;
+ 	if (gpio_is_valid(max->dvs_gpio)) {
+@@ -757,27 +753,35 @@ static int max8973_probe(struct i2c_client *client,
+ 			break;
+ 		}
+ 
+-		if (gpio_is_valid(max->enable_gpio)) {
+-			config.ena_gpio_flags = GPIOF_OUT_INIT_LOW;
+-			if (ridata && (ridata->constraints.always_on ||
+-					ridata->constraints.boot_on))
+-				config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+-			config.ena_gpio = max->enable_gpio;
++		if (ridata && (ridata->constraints.always_on ||
++			       ridata->constraints.boot_on))
++			gflags = GPIOD_OUT_HIGH;
++		else
++			gflags = GPIOD_OUT_LOW;
++		gpiod = devm_gpiod_get_optional(&client->dev,
++						"maxim,enable",
++						gflags);
++		if (IS_ERR(gpiod))
++			return PTR_ERR(gpiod);
++		if (gpiod) {
++			config.ena_gpiod = gpiod;
++			max->enable_external_control = true;
+ 		}
++
+ 		break;
+ 
+ 	case MAX77621:
+-		if (gpio_is_valid(max->enable_gpio)) {
+-			ret = devm_gpio_request_one(&client->dev,
+-					max->enable_gpio, GPIOF_OUT_INIT_HIGH,
+-					"max8973-en-gpio");
+-			if (ret) {
+-				dev_err(&client->dev,
+-					"gpio_request for gpio %d failed: %d\n",
+-					max->enable_gpio, ret);
+-				return ret;
+-			}
+-		}
++		/*
++		 * We do not let the core switch this regulator on/off,
++		 * we just leave it on.
++		 */
++		gpiod = devm_gpiod_get_optional(&client->dev,
++						"maxim,enable",
++						GPIOD_OUT_HIGH);
++		if (IS_ERR(gpiod))
++			return PTR_ERR(gpiod);
++		if (gpiod)
++			max->enable_external_control = true;
+ 
+ 		max->desc.enable_reg = MAX8973_VOUT;
+ 		max->desc.enable_mask = MAX8973_VOUT_ENABLE;
 -- 
 2.14.3
