@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935256AbeBLNV3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:21:29 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44084 "EHLO
+        id S935461AbeBLNVx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:21:53 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34769 "EHLO
         mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935226AbeBLNRq (ORCPT
+        with ESMTP id S935210AbeBLNRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:17:46 -0500
-X-Google-Smtp-Source: AH8x225Kh4DfgtAMITg1qisKhy5pzlYrWnn0+5SMDoz8rBjlJFB/K2Y/yoL1sO9zmhPdZBGzz1kr2g==
+        Mon, 12 Feb 2018 08:17:40 -0500
+X-Google-Smtp-Source: AH8x227mQBvM6rfBiqRWZ+X6ll29b8JBJ5IGv2NN+4PeV240u5BreIQITqleTW04zkaY9vUKmOf5DQ==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 07/21] regulator: max8973: Pass descriptor instead of GPIO number
-Date: Mon, 12 Feb 2018 14:17:03 +0100
-Message-Id: <20180212131717.27193-8-linus.walleij@linaro.org>
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 04/21] regulator: da9055: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:17:00 +0100
+Message-Id: <20180212131717.27193-5-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -24,131 +23,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of passing a global GPIO number, pass a descriptor looked
-up with the standard devm_gpiod_get_optional() call.
+When setting up a fixed regulator on the DA9055, pass a descriptor
+instead of a global GPIO number. This facility is not used in the
+kernel so we can easily just say that this should be a descriptor
+if/when put to use.
 
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/max8973-regulator.c | 54 +++++++++++++++++++----------------
- 1 file changed, 29 insertions(+), 25 deletions(-)
+Lee: would be nice if you could ACK this smallish patch
+to the MFD header.
+---
+ drivers/regulator/da9055-regulator.c | 4 ++--
+ include/linux/mfd/da9055/pdata.h     | 5 +++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/max8973-regulator.c b/drivers/regulator/max8973-regulator.c
-index e0c747aa9f85..7cd493ec6315 100644
---- a/drivers/regulator/max8973-regulator.c
-+++ b/drivers/regulator/max8973-regulator.c
-@@ -34,6 +34,7 @@
- #include <linux/regulator/max8973-regulator.h>
- #include <linux/regulator/of_regulator.h>
+diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
+index d029c941a1e1..f40c3b8644ae 100644
+--- a/drivers/regulator/da9055-regulator.c
++++ b/drivers/regulator/da9055-regulator.c
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/err.h>
  #include <linux/gpio.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/of_gpio.h>
- #include <linux/i2c.h>
- #include <linux/slab.h>
-@@ -114,7 +115,6 @@ struct max8973_chip {
- 	struct regulator_desc desc;
- 	struct regmap *regmap;
- 	bool enable_external_control;
--	int enable_gpio;
- 	int dvs_gpio;
- 	int lru_index[MAX8973_MAX_VOUT_REG];
- 	int curr_vout_val[MAX8973_MAX_VOUT_REG];
-@@ -567,7 +567,6 @@ static struct max8973_regulator_platform_data *max8973_parse_dt(
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+@@ -455,8 +456,7 @@ static int da9055_gpio_init(struct da9055_regulator *regulator,
+ 		char name[18];
+ 		int gpio_mux = pdata->gpio_ren[id];
  
- 	pdata->enable_ext_control = of_property_read_bool(np,
- 						"maxim,externally-enable");
--	pdata->enable_gpio = of_get_named_gpio(np, "maxim,enable-gpio", 0);
- 	pdata->dvs_gpio = of_get_named_gpio(np, "maxim,dvs-gpio", 0);
+-		config->ena_gpio = pdata->ena_gpio[id];
+-		config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
++		config->ena_gpiod = pdata->ena_gpiods[id];
+ 		config->ena_gpio_invert = 1;
  
- 	ret = of_property_read_u32(np, "maxim,dvs-default-state", &pval);
-@@ -633,6 +632,8 @@ static int max8973_probe(struct i2c_client *client,
- 	struct max8973_chip *max;
- 	bool pdata_from_dt = false;
- 	unsigned int chip_id;
-+	struct gpio_desc *gpiod;
-+	enum gpiod_flags gflags;
- 	int ret;
+ 		/*
+diff --git a/include/linux/mfd/da9055/pdata.h b/include/linux/mfd/da9055/pdata.h
+index 04e092be4b07..1a94fa2ac309 100644
+--- a/include/linux/mfd/da9055/pdata.h
++++ b/include/linux/mfd/da9055/pdata.h
+@@ -12,6 +12,7 @@
+ #define DA9055_MAX_REGULATORS	8
  
- 	pdata = dev_get_platdata(&client->dev);
-@@ -647,8 +648,7 @@ static int max8973_probe(struct i2c_client *client,
- 		return -EIO;
- 	}
+ struct da9055;
++struct gpio_desc;
  
--	if ((pdata->dvs_gpio == -EPROBE_DEFER) ||
--		(pdata->enable_gpio == -EPROBE_DEFER))
-+	if (pdata->dvs_gpio == -EPROBE_DEFER)
- 		return -EPROBE_DEFER;
- 
- 	max = devm_kzalloc(&client->dev, sizeof(*max), GFP_KERNEL);
-@@ -696,15 +696,11 @@ static int max8973_probe(struct i2c_client *client,
- 	max->desc.n_voltages = MAX8973_BUCK_N_VOLTAGE;
- 
- 	max->dvs_gpio = (pdata->dvs_gpio) ? pdata->dvs_gpio : -EINVAL;
--	max->enable_gpio = (pdata->enable_gpio) ? pdata->enable_gpio : -EINVAL;
- 	max->enable_external_control = pdata->enable_ext_control;
- 	max->curr_gpio_val = pdata->dvs_def_state;
- 	max->curr_vout_reg = MAX8973_VOUT + pdata->dvs_def_state;
- 	max->junction_temp_warning = pdata->junction_temp_warning;
- 
--	if (gpio_is_valid(max->enable_gpio))
--		max->enable_external_control = true;
--
- 	max->lru_index[0] = max->curr_vout_reg;
- 
- 	if (gpio_is_valid(max->dvs_gpio)) {
-@@ -757,27 +753,35 @@ static int max8973_probe(struct i2c_client *client,
- 			break;
- 		}
- 
--		if (gpio_is_valid(max->enable_gpio)) {
--			config.ena_gpio_flags = GPIOF_OUT_INIT_LOW;
--			if (ridata && (ridata->constraints.always_on ||
--					ridata->constraints.boot_on))
--				config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
--			config.ena_gpio = max->enable_gpio;
-+		if (ridata && (ridata->constraints.always_on ||
-+			       ridata->constraints.boot_on))
-+			gflags = GPIOD_OUT_HIGH;
-+		else
-+			gflags = GPIOD_OUT_LOW;
-+		gpiod = devm_gpiod_get_optional(&client->dev,
-+						"maxim,enable",
-+						gflags);
-+		if (IS_ERR(gpiod))
-+			return PTR_ERR(gpiod);
-+		if (gpiod) {
-+			config.ena_gpiod = gpiod;
-+			max->enable_external_control = true;
- 		}
-+
- 		break;
- 
- 	case MAX77621:
--		if (gpio_is_valid(max->enable_gpio)) {
--			ret = devm_gpio_request_one(&client->dev,
--					max->enable_gpio, GPIOF_OUT_INIT_HIGH,
--					"max8973-en-gpio");
--			if (ret) {
--				dev_err(&client->dev,
--					"gpio_request for gpio %d failed: %d\n",
--					max->enable_gpio, ret);
--				return ret;
--			}
--		}
-+		/*
-+		 * We do not let the core switch this regulator on/off,
-+		 * we just leave it on.
-+		 */
-+		gpiod = devm_gpiod_get_optional(&client->dev,
-+						"maxim,enable",
-+						GPIOD_OUT_HIGH);
-+		if (IS_ERR(gpiod))
-+			return PTR_ERR(gpiod);
-+		if (gpiod)
-+			max->enable_external_control = true;
- 
- 		max->desc.enable_reg = MAX8973_VOUT;
- 		max->desc.enable_mask = MAX8973_VOUT_ENABLE;
+ enum gpio_select {
+ 	NO_GPIO = 0,
+@@ -47,7 +48,7 @@ struct da9055_pdata {
+ 	 * controls the regulator set A/B, 0 if  not available.
+ 	 */
+ 	enum gpio_select *reg_rsel;
+-	/* GPIOs to enable regulator, 0 if not available */
+-	int *ena_gpio;
++	/* GPIO descriptors to enable regulator, NULL if not available */
++	struct gpio_desc **ena_gpiods;
+ };
+ #endif /* __DA9055_PDATA_H */
 -- 
 2.14.3
