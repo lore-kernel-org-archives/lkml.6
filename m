@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935439AbeBLNUb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:20:31 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43100 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935272AbeBLNRz (ORCPT
+        id S964774AbeBLNUy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:20:54 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44090 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935256AbeBLNRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:17:55 -0500
-X-Google-Smtp-Source: AH8x226e/SF8ovVnak8om+lcwsvj42ncxcO+AluAT8w/F7KxBWoATnk/GpWVOsP/WzX3sWAlMXkM5g==
+        Mon, 12 Feb 2018 08:17:48 -0500
+X-Google-Smtp-Source: AH8x224WpKmB8wiBR+v4CmhuoZqvocAJHxI4mVDmtiRNIpoj/t4/CpyWTh60q4glqcKtoWTpVXTRJQ==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH 11/21] regulator: max8952: Pass descriptor instead of GPIO number
-Date: Mon, 12 Feb 2018 14:17:07 +0100
-Message-Id: <20180212131717.27193-12-linus.walleij@linaro.org>
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 08/21] regulator: max77686: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:17:04 +0100
+Message-Id: <20180212131717.27193-9-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -23,82 +25,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up with the standard devm_gpiod_get_optional()
-call.
+Instead of passing a global GPIO number, pass a descriptor looked
+up from the device tree configuration node.
 
-All users of this regulator use device tree so the transition is
-pretty smooth.
-
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/max8952.c       | 18 +++++++++++++-----
- include/linux/regulator/max8952.h |  1 -
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/regulator/max77686-regulator.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/regulator/max8952.c b/drivers/regulator/max8952.c
-index 1096546c05e9..f1e77ed5dfec 100644
---- a/drivers/regulator/max8952.c
-+++ b/drivers/regulator/max8952.c
-@@ -27,6 +27,7 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/max8952.h>
- #include <linux/gpio.h>
+diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
+index c301f3733475..5ebd06f47e6a 100644
+--- a/drivers/regulator/max77686-regulator.c
++++ b/drivers/regulator/max77686-regulator.c
+@@ -25,8 +25,7 @@
+ #include <linux/kernel.h>
+ #include <linux/bug.h>
+ #include <linux/err.h>
+-#include <linux/gpio.h>
+-#include <linux/of_gpio.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-@@ -148,7 +149,6 @@ static struct max8952_platform_data *max8952_parse_dt(struct device *dev)
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+@@ -90,6 +89,7 @@ enum max77686_ramp_rate {
+ };
  
- 	pd->gpio_vid0 = of_get_named_gpio(np, "max8952,vid-gpios", 0);
- 	pd->gpio_vid1 = of_get_named_gpio(np, "max8952,vid-gpios", 1);
--	pd->gpio_en = of_get_named_gpio(np, "max8952,en-gpio", 0);
+ struct max77686_data {
++	struct device *dev;
+ 	DECLARE_BITMAP(gpio_enabled, MAX77686_REGULATORS);
  
- 	if (of_property_read_u32(np, "max8952,default-mode", &pd->default_mode))
- 		dev_warn(dev, "Default mode not specified, assuming 0\n");
-@@ -197,6 +197,8 @@ static int max8952_pmic_probe(struct i2c_client *client,
- 	struct regulator_config config = { };
- 	struct max8952_data *max8952;
- 	struct regulator_dev *rdev;
-+	struct gpio_desc *gpiod;
-+	enum gpiod_flags gflags;
+ 	/* Array indexed by regulator id */
+@@ -269,16 +269,20 @@ static int max77686_of_parse_cb(struct device_node *np,
+ 	case MAX77686_BUCK8:
+ 	case MAX77686_BUCK9:
+ 	case MAX77686_LDO20 ... MAX77686_LDO22:
+-		config->ena_gpio = of_get_named_gpio(np,
+-					"maxim,ena-gpios", 0);
+-		config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+-		config->ena_gpio_initialized = true;
++		config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
++								np,
++								"maxim,ena",
++								0,
++								GPIOD_OUT_HIGH,
++								"max77686-LDO");
++		if (IS_ERR(config->ena_gpiod))
++			return PTR_ERR(config->ena_gpiod);
+ 		break;
+ 	default:
+ 		return 0;
+ 	}
  
- 	int ret = 0, err = 0;
+-	if (gpio_is_valid(config->ena_gpio)) {
++	if (config->ena_gpiod) {
+ 		set_bit(desc->id, max77686->gpio_enabled);
  
-@@ -224,11 +226,17 @@ static int max8952_pmic_probe(struct i2c_client *client,
- 	config.driver_data = max8952;
- 	config.of_node = client->dev.of_node;
+ 		return regmap_update_bits(config->regmap, desc->enable_reg,
+@@ -521,6 +525,7 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+ 	if (!max77686)
+ 		return -ENOMEM;
  
--	config.ena_gpio = pdata->gpio_en;
--	if (client->dev.of_node)
--		config.ena_gpio_initialized = true;
- 	if (pdata->reg_data->constraints.boot_on)
--		config.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
-+		gflags = GPIOD_OUT_HIGH;
-+	else
-+		gflags = GPIOD_OUT_LOW;
-+	gpiod = devm_gpiod_get_optional(&client->dev,
-+					"max8952,en",
-+					gflags);
-+	if (IS_ERR(gpiod))
-+		return PTR_ERR(gpiod);
-+	if (gpiod)
-+		config.ena_gpiod = gpiod;
- 
- 	rdev = devm_regulator_register(&client->dev, &regulator, &config);
- 	if (IS_ERR(rdev)) {
-diff --git a/include/linux/regulator/max8952.h b/include/linux/regulator/max8952.h
-index 4dbb63a1d4ab..686c42c041b5 100644
---- a/include/linux/regulator/max8952.h
-+++ b/include/linux/regulator/max8952.h
-@@ -120,7 +120,6 @@ enum {
- struct max8952_platform_data {
- 	int gpio_vid0;
- 	int gpio_vid1;
--	int gpio_en;
- 
- 	u32 default_mode;
- 	u32 dvs_mode[MAX8952_NUM_DVS_MODE]; /* MAX8952_DVS_MODEx_XXXXmV */
++	max77686->dev = &pdev->dev;
+ 	config.dev = iodev->dev;
+ 	config.regmap = iodev->regmap;
+ 	config.driver_data = max77686;
 -- 
 2.14.3
