@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964784AbeBLPD3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:03:29 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53757 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932293AbeBLO7C (ORCPT
+        id S934568AbeBLPD0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:03:26 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34437 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932448AbeBLO7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:59:02 -0500
-X-Google-Smtp-Source: AH8x227pfpXxiyiyso4OV10Wqjhm5RR/FoUD4ph/lc1O6V88IW70NLM7WKjDOH8Yl8mbbChY5kpbvw==
+        Mon, 12 Feb 2018 09:59:04 -0500
+X-Google-Smtp-Source: AH8x224J7J0G8oBw2HkcWQAUyA4JG6L0FsI3qbvVcbqywkMm6W9SyCLF+FnieAEOOv2dT98/OL3M4A==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>
@@ -16,9 +16,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 09/19] clk: meson: migrate gates to clk_regmap
-Date: Mon, 12 Feb 2018 15:58:36 +0100
-Message-Id: <20180212145846.19380-10-jbrunet@baylibre.com>
+Subject: [PATCH v2 11/19] clk: meson: migrate muxes to clk_regmap
+Date: Mon, 12 Feb 2018 15:58:38 +0100
+Message-Id: <20180212145846.19380-12-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
 References: <20180212145846.19380-1-jbrunet@baylibre.com>
@@ -26,126 +26,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move meson8b, gxbb and axg clocks using clk_gate to clk_regmap
+Move meson8b, gxbb and axg clocks using clk_mux to clk_regmap
+Also remove a few useless tables in the process
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/Kconfig   |   4 +-
- drivers/clk/meson/axg.c     |  72 ++++++------
- drivers/clk/meson/clkc.h    |  20 ++--
- drivers/clk/meson/gxbb.c    | 266 +++++++++++++++++++++++---------------------
- drivers/clk/meson/meson8b.c |  39 +++----
- 5 files changed, 206 insertions(+), 195 deletions(-)
+ drivers/clk/meson/axg.c     |  60 ++++-----
+ drivers/clk/meson/gxbb.c    | 310 +++++++++++++++++++++-----------------------
+ drivers/clk/meson/meson8b.c |  27 ++--
+ 3 files changed, 184 insertions(+), 213 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 9735335b17a9..936afddae406 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -11,7 +11,7 @@ config COMMON_CLK_MESON8B
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
--	select REGMAP
-+	select COMMON_CLK_REGMAP_MESON
- 	help
- 	  Support for the clock controller on AmLogic S802 (Meson8),
- 	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
-@@ -30,7 +30,7 @@ config COMMON_CLK_AXG
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
--	select REGMAP
-+	select COMMON_CLK_REGMAP_MESON
- 	help
- 	  Support for the clock controller on AmLogic A113D devices, aka axg.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
 diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index aed0f9e64f71..ed14f6ea7b07 100644
+index f8b8ff2eba6c..9f0c36e12cb8 100644
 --- a/drivers/clk/meson/axg.c
 +++ b/drivers/clk/meson/axg.c
-@@ -447,13 +447,14 @@ static struct clk_divider axg_mpeg_clk_div = {
- 	},
+@@ -418,16 +418,16 @@ static const char * const clk81_parent_names[] = {
+ 	"fclk_div3", "fclk_div5"
  };
  
--static struct clk_gate axg_clk81 = {
+-static struct clk_mux axg_mpeg_clk_sel = {
 -	.reg = (void *)HHI_MPEG_CLK_CNTL,
--	.bit_idx = 7,
+-	.mask = 0x7,
+-	.shift = 12,
+-	.flags = CLK_MUX_READ_ONLY,
+-	.table = mux_table_clk81,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap axg_clk81 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap axg_mpeg_clk_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_MPEG_CLK_CNTL,
-+		.bit_idx = 7,
++		.mask = 0x7,
++		.shift = 12,
++		.table = mux_table_clk81,
 +	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "clk81",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_div" },
- 		.num_parents = 1,
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
-@@ -501,13 +502,14 @@ static struct clk_divider axg_sd_emmc_b_clk0_div = {
+ 		.name = "mpeg_clk_sel",
+-		.ops = &clk_mux_ro_ops,
++		.ops = &clk_regmap_mux_ro_ops,
+ 		.parent_names = clk81_parent_names,
+ 		.num_parents = ARRAY_SIZE(clk81_parent_names),
  	},
+@@ -474,14 +474,15 @@ static const char * const axg_sd_emmc_clk0_parent_names[] = {
  };
  
--static struct clk_gate axg_sd_emmc_b_clk0 = {
+ /* SDcard clock */
+-static struct clk_mux axg_sd_emmc_b_clk0_sel = {
 -	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
--	.bit_idx = 23,
+-	.mask = 0x7,
+-	.shift = 25,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap axg_sd_emmc_b_clk0 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap axg_sd_emmc_b_clk0_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_SD_EMMC_CLK_CNTL,
-+		.bit_idx = 23,
++		.mask = 0x7,
++		.shift = 25,
 +	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_b_clk0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_b_clk0_div" },
- 		.num_parents = 1,
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "sd_emmc_b_clk0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = axg_sd_emmc_clk0_parent_names,
+ 		.num_parents = ARRAY_SIZE(axg_sd_emmc_clk0_parent_names),
  		.flags = CLK_SET_RATE_PARENT,
-@@ -544,13 +546,14 @@ static struct clk_divider axg_sd_emmc_c_clk0_div = {
- 	},
+@@ -519,14 +520,15 @@ static struct clk_regmap axg_sd_emmc_b_clk0 = {
  };
  
--static struct clk_gate axg_sd_emmc_c_clk0 = {
+ /* EMMC/NAND clock */
+-static struct clk_mux axg_sd_emmc_c_clk0_sel = {
 -	.reg = (void *)HHI_NAND_CLK_CNTL,
--	.bit_idx = 7,
+-	.mask = 0x7,
+-	.shift = 9,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap axg_sd_emmc_c_clk0 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap axg_sd_emmc_c_clk0_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_NAND_CLK_CNTL,
-+		.bit_idx = 7,
++		.mask = 0x7,
++		.shift = 9,
 +	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_c_clk0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_c_clk0_div" },
- 		.num_parents = 1,
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "sd_emmc_c_clk0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = axg_sd_emmc_clk0_parent_names,
+ 		.num_parents = ARRAY_SIZE(axg_sd_emmc_clk0_parent_names),
  		.flags = CLK_SET_RATE_PARENT,
-@@ -697,7 +700,19 @@ static struct meson_clk_mpll *const axg_clk_mplls[] = {
+@@ -703,12 +705,6 @@ static struct meson_clk_mpll *const axg_clk_mplls[] = {
  	&axg_mpll3,
- };
- 
--static struct clk_gate *const axg_clk_gates[] = {
-+static struct clk_mux *const axg_clk_muxes[] = {
-+	&axg_mpeg_clk_sel,
-+	&axg_sd_emmc_b_clk0_sel,
-+	&axg_sd_emmc_c_clk0_sel,
-+};
-+
-+static struct clk_divider *const axg_clk_dividers[] = {
-+	&axg_mpeg_clk_div,
-+	&axg_sd_emmc_b_clk0_div,
-+	&axg_sd_emmc_c_clk0_div,
-+};
-+
-+static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_clk81,
- 	&axg_ddr,
- 	&axg_audio_locker,
-@@ -747,21 +762,7 @@ static struct clk_gate *const axg_clk_gates[] = {
- 	&axg_sd_emmc_c_clk0,
  };
  
 -static struct clk_mux *const axg_clk_muxes[] = {
@@ -154,456 +119,490 @@ index aed0f9e64f71..ed14f6ea7b07 100644
 -	&axg_sd_emmc_c_clk0_sel,
 -};
 -
--static struct clk_divider *const axg_clk_dividers[] = {
--	&axg_mpeg_clk_div,
--	&axg_sd_emmc_b_clk0_div,
--	&axg_sd_emmc_c_clk0_div,
--};
--
- struct clkc_data {
--	struct clk_gate *const *clk_gates;
--	unsigned int clk_gates_count;
- 	struct meson_clk_mpll *const *clk_mplls;
- 	unsigned int clk_mplls_count;
- 	struct meson_clk_pll *const *clk_plls;
-@@ -774,8 +775,6 @@ struct clkc_data {
+ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_clk81,
+ 	&axg_ddr,
+@@ -760,6 +756,9 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_mpeg_clk_div,
+ 	&axg_sd_emmc_b_clk0_div,
+ 	&axg_sd_emmc_c_clk0_div,
++	&axg_mpeg_clk_sel,
++	&axg_sd_emmc_b_clk0_sel,
++	&axg_sd_emmc_c_clk0_sel,
  };
  
- static const struct clkc_data axg_clkc_data = {
--	.clk_gates = axg_clk_gates,
--	.clk_gates_count = ARRAY_SIZE(axg_clk_gates),
- 	.clk_mplls = axg_clk_mplls,
+ struct clkc_data {
+@@ -767,8 +766,6 @@ struct clkc_data {
+ 	unsigned int clk_mplls_count;
+ 	struct meson_clk_pll *const *clk_plls;
+ 	unsigned int clk_plls_count;
+-	struct clk_mux *const *clk_muxes;
+-	unsigned int clk_muxes_count;
+ 	struct clk_hw_onecell_data *hw_onecell_data;
+ };
+ 
+@@ -777,8 +774,6 @@ static const struct clkc_data axg_clkc_data = {
  	.clk_mplls_count = ARRAY_SIZE(axg_clk_mplls),
  	.clk_plls = axg_clk_plls,
-@@ -834,11 +833,6 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 	.clk_plls_count = ARRAY_SIZE(axg_clk_plls),
+-	.clk_muxes = axg_clk_muxes,
+-	.clk_muxes_count = ARRAY_SIZE(axg_clk_muxes),
+ 	.hw_onecell_data = &axg_hw_onecell_data,
+ };
+ 
+@@ -829,11 +824,6 @@ static int axg_clkc_probe(struct platform_device *pdev)
  	for (i = 0; i < clkc_data->clk_mplls_count; i++)
  		clkc_data->clk_mplls[i]->base = clk_base;
  
--	/* Populate base address for gates */
--	for (i = 0; i < clkc_data->clk_gates_count; i++)
--		clkc_data->clk_gates[i]->reg = clk_base +
--			(u64)clkc_data->clk_gates[i]->reg;
+-	/* Populate base address for muxes */
+-	for (i = 0; i < clkc_data->clk_muxes_count; i++)
+-		clkc_data->clk_muxes[i]->reg = clk_base +
+-			(u64)clkc_data->clk_muxes[i]->reg;
 -
- 	/* Populate base address for muxes */
- 	for (i = 0; i < clkc_data->clk_muxes_count; i++)
- 		clkc_data->clk_muxes[i]->reg = clk_base +
-@@ -849,6 +843,10 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 		clkc_data->clk_dividers[i]->reg = clk_base +
- 			(u64)clkc_data->clk_dividers[i]->reg;
- 
-+	/* Populate regmap for the regmap backed clocks */
-+	for (i = 0; i < ARRAY_SIZE(axg_clk_regmaps); i++)
-+		axg_clk_regmaps[i]->map = map;
-+
- 	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
- 		/* array might be sparse */
- 		if (!clkc_data->hw_onecell_data->hws[i])
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 07aaba26a857..aa2dfa0ff89f 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -18,6 +18,9 @@
- #ifndef __CLKC_H
- #define __CLKC_H
- 
-+#include <linux/clk-provider.h>
-+#include "clk-regmap.h"
-+
- #define PMASK(width)			GENMASK(width - 1, 0)
- #define SETPMASK(width, shift)		GENMASK(shift + width - 1, shift)
- #define CLRPMASK(width, shift)		(~SETPMASK(width, shift))
-@@ -134,16 +137,17 @@ struct meson_clk_audio_divider {
- };
- 
- #define MESON_GATE(_name, _reg, _bit)					\
--struct clk_gate _name = { 						\
--	.reg = (void __iomem *) _reg, 					\
--	.bit_idx = (_bit), 						\
--	.lock = &meson_clk_lock,					\
--	.hw.init = &(struct clk_init_data) { 				\
--		.name = #_name,					\
--		.ops = &clk_gate_ops,					\
-+struct clk_regmap _name = {						\
-+	.data = &(struct clk_regmap_gate_data){				\
-+		.offset = (_reg),					\
-+		.bit_idx = (_bit),					\
-+	},								\
-+	.hw.init = &(struct clk_init_data) {				\
-+		.name = #_name,						\
-+		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED), 	\
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
- 	},								\
- };
- 
+ 	/* Populate regmap for the regmap backed clocks */
+ 	for (i = 0; i < ARRAY_SIZE(axg_clk_regmaps); i++)
+ 		axg_clk_regmaps[i]->map = map;
 diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index e3faf0a0fdb7..ccbbebb6a69b 100644
+index ec515dc71476..d9f426265774 100644
 --- a/drivers/clk/meson/gxbb.c
 +++ b/drivers/clk/meson/gxbb.c
-@@ -27,6 +27,7 @@
- 
- #include "clkc.h"
- #include "gxbb.h"
-+#include "clk-regmap.h"
- 
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
-@@ -617,14 +618,15 @@ static struct clk_divider gxbb_mpeg_clk_div = {
- 	},
+@@ -583,16 +583,16 @@ static const char * const clk81_parent_names[] = {
+ 	"fclk_div3", "fclk_div5"
  };
  
--/* the mother of dragons^W gates */
--static struct clk_gate gxbb_clk81 = {
+-static struct clk_mux gxbb_mpeg_clk_sel = {
 -	.reg = (void *)HHI_MPEG_CLK_CNTL,
--	.bit_idx = 7,
+-	.mask = 0x7,
+-	.shift = 12,
+-	.flags = CLK_MUX_READ_ONLY,
+-	.table = mux_table_clk81,
 -	.lock = &meson_clk_lock,
-+/* the mother of dragons gates */
-+static struct clk_regmap gxbb_clk81 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_mpeg_clk_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_MPEG_CLK_CNTL,
-+		.bit_idx = 7,
++		.mask = 0x7,
++		.shift = 12,
++		.table = mux_table_clk81,
 +	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "clk81",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_div" },
- 		.num_parents = 1,
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
-@@ -658,13 +660,14 @@ static struct clk_divider gxbb_sar_adc_clk_div = {
+ 		.name = "mpeg_clk_sel",
+-		.ops = &clk_mux_ro_ops,
++		.ops = &clk_regmap_mux_ro_ops,
+ 		/*
+ 		 * bits 14:12 selects from 8 possible parents:
+ 		 * xtal, 1'b0 (wtf), fclk_div7, mpll_clkout1, mpll_clkout2,
+@@ -634,14 +634,15 @@ static struct clk_regmap gxbb_clk81 = {
  	},
  };
  
--static struct clk_gate gxbb_sar_adc_clk = {
+-static struct clk_mux gxbb_sar_adc_clk_sel = {
 -	.reg = (void *)HHI_SAR_CLK_CNTL,
--	.bit_idx = 8,
+-	.mask = 0x3,
+-	.shift = 9,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_sar_adc_clk = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_sar_adc_clk_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_SAR_CLK_CNTL,
-+		.bit_idx = 8,
++		.mask = 0x3,
++		.shift = 9,
 +	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "sar_adc_clk",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "sar_adc_clk_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -716,13 +719,14 @@ static struct clk_divider gxbb_mali_0_div = {
- 	},
+ 		.name = "sar_adc_clk_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/* NOTE: The datasheet doesn't list the parents for bit 10 */
+ 		.parent_names = (const char *[]){ "xtal", "clk81", },
+ 		.num_parents = 2,
+@@ -681,21 +682,20 @@ static struct clk_regmap gxbb_sar_adc_clk = {
+  * muxed by a glitch-free switch.
+  */
+ 
+-static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
+ static const char * const gxbb_mali_0_1_parent_names[] = {
+ 	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
+ 	"fclk_div4", "fclk_div3", "fclk_div5"
  };
  
--static struct clk_gate gxbb_mali_0 = {
+-static struct clk_mux gxbb_mali_0_sel = {
 -	.reg = (void *)HHI_MALI_CLK_CNTL,
--	.bit_idx = 8,
+-	.mask = 0x7,
+-	.shift = 9,
+-	.table = mux_table_mali_0_1,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_mali_0 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_mali_0_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_MALI_CLK_CNTL,
-+		.bit_idx = 8,
++		.mask = 0x7,
++		.shift = 9,
 +	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "mali_0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "mali_0_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -763,13 +767,14 @@ static struct clk_divider gxbb_mali_1_div = {
+ 		.name = "mali_0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bits 10:9 selects from 8 possible parents:
+ 		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
+@@ -736,15 +736,15 @@ static struct clk_regmap gxbb_mali_0 = {
  	},
  };
  
--static struct clk_gate gxbb_mali_1 = {
+-static struct clk_mux gxbb_mali_1_sel = {
 -	.reg = (void *)HHI_MALI_CLK_CNTL,
--	.bit_idx = 24,
+-	.mask = 0x7,
+-	.shift = 25,
+-	.table = mux_table_mali_0_1,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_mali_1 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_mali_1_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_MALI_CLK_CNTL,
-+		.bit_idx = 24,
++		.mask = 0x7,
++		.shift = 25,
 +	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "mali_1",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "mali_1_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -829,13 +834,14 @@ static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
+ 		.name = "mali_1_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bits 10:9 selects from 8 possible parents:
+ 		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
+@@ -785,36 +785,35 @@ static struct clk_regmap gxbb_mali_1 = {
  	},
  };
  
--static struct clk_gate gxbb_cts_amclk = {
+-static u32 mux_table_mali[] = {0, 1};
+ static const char * const gxbb_mali_parent_names[] = {
+ 	"mali_0", "mali_1"
+ };
+ 
+-static struct clk_mux gxbb_mali = {
+-	.reg = (void *)HHI_MALI_CLK_CNTL,
+-	.mask = 1,
+-	.shift = 31,
+-	.table = mux_table_mali,
+-	.lock = &meson_clk_lock,
++static struct clk_regmap gxbb_mali = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_MALI_CLK_CNTL,
++		.mask = 1,
++		.shift = 31,
++	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mali",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = gxbb_mali_parent_names,
+ 		.num_parents = 2,
+ 		.flags = CLK_SET_RATE_NO_REPARENT,
+ 	},
+ };
+ 
+-static struct clk_mux gxbb_cts_amclk_sel = {
 -	.reg = (void *) HHI_AUD_CLK_CNTL,
--	.bit_idx = 8,
+-	.mask = 0x3,
+-	.shift = 9,
+-	/* Default parent unknown (register reset value: 0) */
+-	.table = (u32[]){ 1, 2, 3 },
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_cts_amclk = {
-+	.data = &(struct clk_regmap_gate_data){
+-		.hw.init = &(struct clk_init_data){
++static struct clk_regmap gxbb_cts_amclk_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_AUD_CLK_CNTL,
-+		.bit_idx = 8,
++		.mask = 0x3,
++		.shift = 9,
++		.table = (u32[]){ 1, 2, 3 },
 +	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cts_amclk",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "cts_amclk_div" },
- 		.num_parents = 1,
++	.hw.init = &(struct clk_init_data){
+ 		.name = "cts_amclk_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = (const char *[]){ "mpll0", "mpll1", "mpll2" },
+ 		.num_parents = 3,
  		.flags = CLK_SET_RATE_PARENT,
-@@ -873,13 +879,14 @@ static struct clk_divider gxbb_cts_mclk_i958_div = {
+@@ -852,16 +851,16 @@ static struct clk_regmap gxbb_cts_amclk = {
  	},
  };
  
--static struct clk_gate gxbb_cts_mclk_i958 = {
+-static struct clk_mux gxbb_cts_mclk_i958_sel = {
 -	.reg = (void *)HHI_AUD_CLK_CNTL2,
--	.bit_idx = 24,
+-	.mask = 0x3,
+-	.shift = 25,
+-	/* Default parent unknown (register reset value: 0) */
+-	.table = (u32[]){ 1, 2, 3 },
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_cts_mclk_i958 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_cts_mclk_i958_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_AUD_CLK_CNTL2,
-+		.bit_idx = 24,
++		.mask = 0x3,
++		.shift = 25,
++		.table = (u32[]){ 1, 2, 3 },
 +	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cts_mclk_i958",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "cts_mclk_i958_div" },
- 		.num_parents = 1,
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "cts_mclk_i958_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = (const char *[]){ "mpll0", "mpll1", "mpll2" },
+ 		.num_parents = 3,
  		.flags = CLK_SET_RATE_PARENT,
-@@ -918,13 +925,14 @@ static struct clk_divider gxbb_32k_clk_div = {
+@@ -898,14 +897,15 @@ static struct clk_regmap gxbb_cts_mclk_i958 = {
  	},
  };
  
--static struct clk_gate gxbb_32k_clk = {
+-static struct clk_mux gxbb_cts_i958 = {
+-	.reg = (void *)HHI_AUD_CLK_CNTL2,
+-	.mask = 0x1,
+-	.shift = 27,
+-	.lock = &meson_clk_lock,
+-		.hw.init = &(struct clk_init_data){
++static struct clk_regmap gxbb_cts_i958 = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_AUD_CLK_CNTL2,
++		.mask = 0x1,
++		.shift = 27,
++		},
++	.hw.init = &(struct clk_init_data){
+ 		.name = "cts_i958",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = (const char *[]){ "cts_amclk", "cts_mclk_i958" },
+ 		.num_parents = 2,
+ 		/*
+@@ -949,14 +949,15 @@ static const char * const gxbb_32k_clk_parent_names[] = {
+ 	"xtal", "cts_slow_oscin", "fclk_div3", "fclk_div5"
+ };
+ 
+-static struct clk_mux gxbb_32k_clk_sel = {
 -	.reg = (void *)HHI_32K_CLK_CNTL,
--	.bit_idx = 15,
+-	.mask = 0x3,
+-	.shift = 16,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_32k_clk = {
-+	.data = &(struct clk_regmap_gate_data){
+-		.hw.init = &(struct clk_init_data){
++static struct clk_regmap gxbb_32k_clk_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_32K_CLK_CNTL,
-+		.bit_idx = 15,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "32k_clk",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "32k_clk_div" },
- 		.num_parents = 1,
++		.mask = 0x3,
++		.shift = 16,
++		},
++	.hw.init = &(struct clk_init_data){
+ 		.name = "32k_clk_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = gxbb_32k_clk_parent_names,
+ 		.num_parents = 4,
  		.flags = CLK_SET_RATE_PARENT,
-@@ -990,13 +998,14 @@ static struct clk_divider gxbb_sd_emmc_a_clk0_div = {
- 	},
+@@ -975,14 +976,15 @@ static const char * const gxbb_sd_emmc_clk0_parent_names[] = {
  };
  
--static struct clk_gate gxbb_sd_emmc_a_clk0 = {
+ /* SDIO clock */
+-static struct clk_mux gxbb_sd_emmc_a_clk0_sel = {
 -	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
--	.bit_idx = 7,
+-	.mask = 0x7,
+-	.shift = 9,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_sd_emmc_a_clk0 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_sd_emmc_a_clk0_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_SD_EMMC_CLK_CNTL,
-+		.bit_idx = 7,
++		.mask = 0x7,
++		.shift = 9,
 +	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_a_clk0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_a_clk0_div" },
- 		.num_parents = 1,
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "sd_emmc_a_clk0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = gxbb_sd_emmc_clk0_parent_names,
+ 		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
  		.flags = CLK_SET_RATE_PARENT,
-@@ -1033,13 +1042,14 @@ static struct clk_divider gxbb_sd_emmc_b_clk0_div = {
- 	},
+@@ -1020,14 +1022,15 @@ static struct clk_regmap gxbb_sd_emmc_a_clk0 = {
  };
  
--static struct clk_gate gxbb_sd_emmc_b_clk0 = {
+ /* SDcard clock */
+-static struct clk_mux gxbb_sd_emmc_b_clk0_sel = {
 -	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
--	.bit_idx = 23,
+-	.mask = 0x7,
+-	.shift = 25,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_sd_emmc_b_clk0 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_sd_emmc_b_clk0_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_SD_EMMC_CLK_CNTL,
-+		.bit_idx = 23,
++		.mask = 0x7,
++		.shift = 25,
 +	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_b_clk0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_b_clk0_div" },
- 		.num_parents = 1,
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "sd_emmc_b_clk0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = gxbb_sd_emmc_clk0_parent_names,
+ 		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
  		.flags = CLK_SET_RATE_PARENT,
-@@ -1076,13 +1086,14 @@ static struct clk_divider gxbb_sd_emmc_c_clk0_div = {
- 	},
+@@ -1065,14 +1068,15 @@ static struct clk_regmap gxbb_sd_emmc_b_clk0 = {
  };
  
--static struct clk_gate gxbb_sd_emmc_c_clk0 = {
+ /* EMMC/NAND clock */
+-static struct clk_mux gxbb_sd_emmc_c_clk0_sel = {
 -	.reg = (void *)HHI_NAND_CLK_CNTL,
--	.bit_idx = 7,
+-	.mask = 0x7,
+-	.shift = 9,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_sd_emmc_c_clk0 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_sd_emmc_c_clk0_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_NAND_CLK_CNTL,
-+		.bit_idx = 7,
++		.mask = 0x7,
++		.shift = 9,
++	},
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "sd_emmc_c_clk0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		.parent_names = gxbb_sd_emmc_clk0_parent_names,
+ 		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
+ 		.flags = CLK_SET_RATE_PARENT,
+@@ -1111,20 +1115,19 @@ static struct clk_regmap gxbb_sd_emmc_c_clk0 = {
+ 
+ /* VPU Clock */
+ 
+-static u32 mux_table_vpu[] = {0, 1, 2, 3};
+ static const char * const gxbb_vpu_parent_names[] = {
+ 	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
+ };
+ 
+-static struct clk_mux gxbb_vpu_0_sel = {
+-	.reg = (void *)HHI_VPU_CLK_CNTL,
+-	.mask = 0x3,
+-	.shift = 9,
+-	.lock = &meson_clk_lock,
+-	.table = mux_table_vpu,
++static struct clk_regmap gxbb_vpu_0_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.mask = 0x3,
++		.shift = 9,
 +	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_c_clk0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_c_clk0_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1129,13 +1140,14 @@ static struct clk_divider gxbb_vpu_0_div = {
+ 		.name = "vpu_0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bits 9:10 selects from 4 possible parents:
+ 		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
+@@ -1164,15 +1167,15 @@ static struct clk_regmap gxbb_vpu_0 = {
  	},
  };
  
--static struct clk_gate gxbb_vpu_0 = {
+-static struct clk_mux gxbb_vpu_1_sel = {
 -	.reg = (void *)HHI_VPU_CLK_CNTL,
--	.bit_idx = 8,
+-	.mask = 0x3,
+-	.shift = 25,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vpu_0 = {
-+	.data = &(struct clk_regmap_gate_data){
+-	.table = mux_table_vpu,
++static struct clk_regmap gxbb_vpu_1_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_VPU_CLK_CNTL,
-+		.bit_idx = 8,
++		.mask = 0x3,
++		.shift = 25,
 +	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vpu_0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "vpu_0_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-@@ -1175,13 +1187,14 @@ static struct clk_divider gxbb_vpu_1_div = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vpu_1_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bits 25:26 selects from 4 possible parents:
+ 		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
+@@ -1212,14 +1215,15 @@ static struct clk_regmap gxbb_vpu_1 = {
  	},
  };
  
--static struct clk_gate gxbb_vpu_1 = {
+-static struct clk_mux gxbb_vpu = {
 -	.reg = (void *)HHI_VPU_CLK_CNTL,
--	.bit_idx = 24,
+-	.mask = 1,
+-	.shift = 31,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vpu_1 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_vpu = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_VPU_CLK_CNTL,
-+		.bit_idx = 24,
++		.mask = 1,
++		.shift = 31,
 +	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vpu_1",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "vpu_1_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-@@ -1246,13 +1259,14 @@ static struct clk_divider gxbb_vapb_0_div = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vpu",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bit 31 selects from 2 possible parents:
+ 		 * vpu_0 or vpu_1
+@@ -1232,20 +1236,19 @@ static struct clk_mux gxbb_vpu = {
+ 
+ /* VAPB Clock */
+ 
+-static u32 mux_table_vapb[] = {0, 1, 2, 3};
+ static const char * const gxbb_vapb_parent_names[] = {
+ 	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
+ };
+ 
+-static struct clk_mux gxbb_vapb_0_sel = {
+-	.reg = (void *)HHI_VAPBCLK_CNTL,
+-	.mask = 0x3,
+-	.shift = 9,
+-	.lock = &meson_clk_lock,
+-	.table = mux_table_vapb,
++static struct clk_regmap gxbb_vapb_0_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VAPBCLK_CNTL,
++		.mask = 0x3,
++		.shift = 9,
++	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vapb_0_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bits 9:10 selects from 4 possible parents:
+ 		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
+@@ -1285,15 +1288,15 @@ static struct clk_regmap gxbb_vapb_0 = {
  	},
  };
  
--static struct clk_gate gxbb_vapb_0 = {
+-static struct clk_mux gxbb_vapb_1_sel = {
 -	.reg = (void *)HHI_VAPBCLK_CNTL,
--	.bit_idx = 8,
+-	.mask = 0x3,
+-	.shift = 25,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vapb_0 = {
-+	.data = &(struct clk_regmap_gate_data){
+-	.table = mux_table_vapb,
++static struct clk_regmap gxbb_vapb_1_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_VAPBCLK_CNTL,
-+		.bit_idx = 8,
++		.mask = 0x3,
++		.shift = 25,
 +	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vapb_0",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "vapb_0_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-@@ -1292,13 +1306,14 @@ static struct clk_divider gxbb_vapb_1_div = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vapb_1_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bits 25:26 selects from 4 possible parents:
+ 		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
+@@ -1333,14 +1336,15 @@ static struct clk_regmap gxbb_vapb_1 = {
  	},
  };
  
--static struct clk_gate gxbb_vapb_1 = {
+-static struct clk_mux gxbb_vapb_sel = {
 -	.reg = (void *)HHI_VAPBCLK_CNTL,
--	.bit_idx = 24,
+-	.mask = 1,
+-	.shift = 31,
 -	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vapb_1 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap gxbb_vapb_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_VAPBCLK_CNTL,
-+		.bit_idx = 24,
++		.mask = 1,
++		.shift = 31,
 +	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vapb_1",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "vapb_1_div" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-@@ -1323,13 +1338,14 @@ static struct clk_mux gxbb_vapb_sel = {
- 	},
- };
- 
--static struct clk_gate gxbb_vapb = {
--	.reg = (void *)HHI_VAPBCLK_CNTL,
--	.bit_idx = 30,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vapb = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_VAPBCLK_CNTL,
-+		.bit_idx = 30,
-+	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vapb",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "vapb_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-@@ -1744,7 +1760,48 @@ static struct meson_clk_mpll *const gxbb_clk_mplls[] = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vapb_sel",
+-		.ops = &clk_mux_ops,
++		.ops = &clk_regmap_mux_ops,
+ 		/*
+ 		 * bit 31 selects from 2 possible parents:
+ 		 * vapb_0 or vapb_1
+@@ -1773,27 +1777,6 @@ static struct meson_clk_mpll *const gxbb_clk_mplls[] = {
  	&gxbb_mpll2,
- };
- 
--static struct clk_gate *const gxbb_clk_gates[] = {
-+static struct clk_mux *const gxbb_clk_muxes[] = {
-+	&gxbb_mpeg_clk_sel,
-+	&gxbb_sar_adc_clk_sel,
-+	&gxbb_mali_0_sel,
-+	&gxbb_mali_1_sel,
-+	&gxbb_mali,
-+	&gxbb_cts_amclk_sel,
-+	&gxbb_cts_mclk_i958_sel,
-+	&gxbb_cts_i958,
-+	&gxbb_32k_clk_sel,
-+	&gxbb_sd_emmc_a_clk0_sel,
-+	&gxbb_sd_emmc_b_clk0_sel,
-+	&gxbb_sd_emmc_c_clk0_sel,
-+	&gxbb_vpu_0_sel,
-+	&gxbb_vpu_1_sel,
-+	&gxbb_vpu,
-+	&gxbb_vapb_0_sel,
-+	&gxbb_vapb_1_sel,
-+	&gxbb_vapb_sel,
-+};
-+
-+static struct clk_divider *const gxbb_clk_dividers[] = {
-+	&gxbb_mpeg_clk_div,
-+	&gxbb_sar_adc_clk_div,
-+	&gxbb_mali_0_div,
-+	&gxbb_mali_1_div,
-+	&gxbb_cts_mclk_i958_div,
-+	&gxbb_32k_clk_div,
-+	&gxbb_sd_emmc_a_clk0_div,
-+	&gxbb_sd_emmc_b_clk0_div,
-+	&gxbb_sd_emmc_c_clk0_div,
-+	&gxbb_vpu_0_div,
-+	&gxbb_vpu_1_div,
-+	&gxbb_vapb_0_div,
-+	&gxbb_vapb_1_div,
-+};
-+
-+static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
-+	&gxbb_cts_amclk_div,
-+};
-+
-+static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_clk81,
- 	&gxbb_ddr,
- 	&gxbb_dos,
-@@ -1843,50 +1900,7 @@ static struct clk_gate *const gxbb_clk_gates[] = {
- 	&gxbb_vapb,
  };
  
 -static struct clk_mux *const gxbb_clk_muxes[] = {
@@ -627,158 +626,133 @@ index e3faf0a0fdb7..ccbbebb6a69b 100644
 -	&gxbb_vapb_sel,
 -};
 -
--static struct clk_divider *const gxbb_clk_dividers[] = {
--	&gxbb_mpeg_clk_div,
--	&gxbb_sar_adc_clk_div,
--	&gxbb_mali_0_div,
--	&gxbb_mali_1_div,
--	&gxbb_cts_mclk_i958_div,
--	&gxbb_32k_clk_div,
--	&gxbb_sd_emmc_a_clk0_div,
--	&gxbb_sd_emmc_b_clk0_div,
--	&gxbb_sd_emmc_c_clk0_div,
--	&gxbb_vpu_0_div,
--	&gxbb_vpu_1_div,
--	&gxbb_vapb_0_div,
--	&gxbb_vapb_1_div,
--};
--
--static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
--	&gxbb_cts_amclk_div,
--};
--
+ static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+ 	&gxbb_cts_amclk_div,
+ };
+@@ -1908,6 +1891,24 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_vpu_1_div,
+ 	&gxbb_vapb_0_div,
+ 	&gxbb_vapb_1_div,
++	&gxbb_mpeg_clk_sel,
++	&gxbb_sar_adc_clk_sel,
++	&gxbb_mali_0_sel,
++	&gxbb_mali_1_sel,
++	&gxbb_mali,
++	&gxbb_cts_amclk_sel,
++	&gxbb_cts_mclk_i958_sel,
++	&gxbb_cts_i958,
++	&gxbb_32k_clk_sel,
++	&gxbb_sd_emmc_a_clk0_sel,
++	&gxbb_sd_emmc_b_clk0_sel,
++	&gxbb_sd_emmc_c_clk0_sel,
++	&gxbb_vpu_0_sel,
++	&gxbb_vpu_1_sel,
++	&gxbb_vpu,
++	&gxbb_vapb_0_sel,
++	&gxbb_vapb_1_sel,
++	&gxbb_vapb_sel,
+ };
+ 
  struct clkc_data {
--	struct clk_gate *const *clk_gates;
--	unsigned int clk_gates_count;
- 	struct meson_clk_mpll *const *clk_mplls;
+@@ -1915,8 +1916,6 @@ struct clkc_data {
  	unsigned int clk_mplls_count;
  	struct meson_clk_pll *const *clk_plls;
-@@ -1901,8 +1915,6 @@ struct clkc_data {
- };
- 
- static const struct clkc_data gxbb_clkc_data = {
--	.clk_gates = gxbb_clk_gates,
--	.clk_gates_count = ARRAY_SIZE(gxbb_clk_gates),
- 	.clk_mplls = gxbb_clk_mplls,
+ 	unsigned int clk_plls_count;
+-	struct clk_mux *const *clk_muxes;
+-	unsigned int clk_muxes_count;
+ 	struct meson_clk_audio_divider *const *clk_audio_dividers;
+ 	unsigned int clk_audio_dividers_count;
+ 	struct clk_hw_onecell_data *hw_onecell_data;
+@@ -1927,8 +1926,6 @@ static const struct clkc_data gxbb_clkc_data = {
  	.clk_mplls_count = ARRAY_SIZE(gxbb_clk_mplls),
  	.clk_plls = gxbb_clk_plls,
-@@ -1917,8 +1929,6 @@ static const struct clkc_data gxbb_clkc_data = {
- };
- 
- static const struct clkc_data gxl_clkc_data = {
--	.clk_gates = gxbb_clk_gates,
--	.clk_gates_count = ARRAY_SIZE(gxbb_clk_gates),
- 	.clk_mplls = gxbb_clk_mplls,
+ 	.clk_plls_count = ARRAY_SIZE(gxbb_clk_plls),
+-	.clk_muxes = gxbb_clk_muxes,
+-	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
+ 	.clk_audio_dividers = gxbb_audio_dividers,
+ 	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.hw_onecell_data = &gxbb_hw_onecell_data,
+@@ -1939,8 +1936,6 @@ static const struct clkc_data gxl_clkc_data = {
  	.clk_mplls_count = ARRAY_SIZE(gxbb_clk_mplls),
  	.clk_plls = gxl_clk_plls,
-@@ -1979,11 +1989,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	.clk_plls_count = ARRAY_SIZE(gxl_clk_plls),
+-	.clk_muxes = gxbb_clk_muxes,
+-	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
+ 	.clk_audio_dividers = gxbb_audio_dividers,
+ 	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.hw_onecell_data = &gxl_hw_onecell_data,
+@@ -1993,11 +1988,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
  	for (i = 0; i < clkc_data->clk_mplls_count; i++)
  		clkc_data->clk_mplls[i]->base = clk_base;
  
--	/* Populate base address for gates */
--	for (i = 0; i < clkc_data->clk_gates_count; i++)
--		clkc_data->clk_gates[i]->reg = clk_base +
--			(u64)clkc_data->clk_gates[i]->reg;
+-	/* Populate base address for muxes */
+-	for (i = 0; i < clkc_data->clk_muxes_count; i++)
+-		clkc_data->clk_muxes[i]->reg = clk_base +
+-			(u64)clkc_data->clk_muxes[i]->reg;
 -
- 	/* Populate base address for muxes */
- 	for (i = 0; i < clkc_data->clk_muxes_count; i++)
- 		clkc_data->clk_muxes[i]->reg = clk_base +
-@@ -1998,6 +2003,9 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	/* Populate base address for the audio dividers */
  	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
  		clkc_data->clk_audio_dividers[i]->base = clk_base;
- 
-+	/* Populate regmap for the common regmap backed clocks */
-+	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
-+		gx_clk_regmaps[i]->map = map;
- 
- 	/* Register all clks */
- 	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
 diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 0981e970de3d..835dbb1d2c9d 100644
+index e9c5278072cd..e643f7556f5e 100644
 --- a/drivers/clk/meson/meson8b.c
 +++ b/drivers/clk/meson/meson8b.c
-@@ -32,6 +32,7 @@
- 
- #include "clkc.h"
- #include "meson8b.h"
-+#include "clk-regmap.h"
- 
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
-@@ -406,13 +407,14 @@ struct clk_divider meson8b_mpeg_clk_div = {
- 	},
+@@ -370,17 +370,16 @@ static struct meson_clk_cpu meson8b_cpu_clk = {
  };
  
--struct clk_gate meson8b_clk81 = {
+ static u32 mux_table_clk81[]	= { 6, 5, 7 };
+-
+-struct clk_mux meson8b_mpeg_clk_sel = {
 -	.reg = (void *)HHI_MPEG_CLK_CNTL,
--	.bit_idx = 7,
+-	.mask = 0x7,
+-	.shift = 12,
+-	.flags = CLK_MUX_READ_ONLY,
+-	.table = mux_table_clk81,
 -	.lock = &meson_clk_lock,
-+struct clk_regmap meson8b_clk81 = {
-+	.data = &(struct clk_regmap_gate_data){
++static struct clk_regmap meson8b_mpeg_clk_sel = {
++	.data = &(struct clk_regmap_mux_data){
 +		.offset = HHI_MPEG_CLK_CNTL,
-+		.bit_idx = 7,
++		.mask = 0x7,
++		.shift = 12,
++		.table = mux_table_clk81,
 +	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "clk81",
--		.ops = &clk_gate_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_div" },
- 		.num_parents = 1,
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
-@@ -617,7 +619,15 @@ static struct meson_clk_mpll *const meson8b_clk_mplls[] = {
+ 		.name = "mpeg_clk_sel",
+-		.ops = &clk_mux_ro_ops,
++		.ops = &clk_regmap_mux_ro_ops,
+ 		/*
+ 		 * FIXME bits 14:12 selects from 8 possible parents:
+ 		 * xtal, 1'b0 (wtf), fclk_div7, mpll_clkout1, mpll_clkout2,
+@@ -620,10 +619,6 @@ static struct meson_clk_mpll *const meson8b_clk_mplls[] = {
  	&meson8b_mpll2,
- };
- 
--static struct clk_gate *const meson8b_clk_gates[] = {
-+static struct clk_mux *const meson8b_clk_muxes[] = {
-+	&meson8b_mpeg_clk_sel,
-+};
-+
-+static struct clk_divider *const meson8b_clk_dividers[] = {
-+	&meson8b_mpeg_clk_div,
-+};
-+
-+static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_clk81,
- 	&meson8b_ddr,
- 	&meson8b_dos,
-@@ -698,14 +708,6 @@ static struct clk_gate *const meson8b_clk_gates[] = {
- 	&meson8b_ao_iface,
  };
  
 -static struct clk_mux *const meson8b_clk_muxes[] = {
 -	&meson8b_mpeg_clk_sel,
 -};
 -
--static struct clk_divider *const meson8b_clk_dividers[] = {
--	&meson8b_mpeg_clk_div,
--};
--
+ static struct clk_regmap *const meson8b_clk_regmaps[] = {
+ 	&meson8b_clk81,
+ 	&meson8b_ddr,
+@@ -704,6 +699,7 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
+ 	&meson8b_ao_ahb_bus,
+ 	&meson8b_ao_iface,
+ 	&meson8b_mpeg_clk_div,
++	&meson8b_mpeg_clk_sel,
+ };
+ 
  static const struct meson8b_clk_reset_line {
- 	u32 reg;
- 	u8 bit_idx;
-@@ -837,11 +839,6 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+@@ -837,11 +833,6 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
  	/* Populate the base address for CPU clk */
  	meson8b_cpu_clk.base = clk_base;
  
--	/* Populate base address for gates */
--	for (i = 0; i < ARRAY_SIZE(meson8b_clk_gates); i++)
--		meson8b_clk_gates[i]->reg = clk_base +
--			(u32)meson8b_clk_gates[i]->reg;
+-	/* Populate base address for muxes */
+-	for (i = 0; i < ARRAY_SIZE(meson8b_clk_muxes); i++)
+-		meson8b_clk_muxes[i]->reg = clk_base +
+-			(u32)meson8b_clk_muxes[i]->reg;
 -
- 	/* Populate base address for muxes */
- 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_muxes); i++)
- 		meson8b_clk_muxes[i]->reg = clk_base +
-@@ -852,6 +849,10 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 		meson8b_clk_dividers[i]->reg = clk_base +
- 			(u32)meson8b_clk_dividers[i]->reg;
- 
-+	/* Populate regmap for the regmap backed clocks */
-+	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
-+		meson8b_clk_regmaps[i]->map = map;
-+
- 	/*
- 	 * register all clks
- 	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
+ 	/* Populate regmap for the regmap backed clocks */
+ 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
+ 		meson8b_clk_regmaps[i]->map = map;
 -- 
 2.14.3
