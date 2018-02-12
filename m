@@ -1,262 +1,143 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x226OZ0CRoFf4azGj+056EHgR4h8tkF6j0JpLvZSMziGWT8eY/tkl26rvUMoAAuyOwYQJpch1
-ARC-Seal: i=1; a=rsa-sha256; t=1518868271; cv=none;
-        d=google.com; s=arc-20160816;
-        b=a+jFCUab8P24ZVim5TMnMrn8aJnQC5Uud8S0rLvG9NJd/vvG/OU/jRCjGopzplfqqd
-         xFpc/ZKlIIGkkf9lnRGVfJk37s/9OlLrXq6UnOtJgLZc3dJFb+BePWWfvjHGtueXHH7R
-         wxymCJgw+lYNHXJf1Ll8e0I3fK26dwDvQ7KELDHIjWRFF2U0JNgrNaGHVTmgIB22EjVW
-         3YaxHVrLfuAe6EOV65Vw+0jVsW+R3vQXUm+ZDLWMT1GmdMPYY0szrWXy/gDLsxAdC22x
-         RZTKcWBAM1miZJTWEenYCKky5FKVPL5CRNsxU8Qe7F63H6bzKyHDPz+uOL0VYDIqL7tq
-         rpJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=5lgnVpyzhOYavrMODMBCiXg7j43m1etvtNrgAPmm2Uo=;
-        b=VV+sDbMWKYFojPA1b8iq7ebKSSb02StUwKyK9mNiJ4u0WJXY1VGgRjC0vmEJhc9fX1
-         T2Odzlx1rQ2InECI5fEFb6f6e4C2ioe/xeIRdtBLxlWw1maVv2sOxiB+kZjACyCjIb+I
-         FG/pFr38nrL2aNNrbGaJ0epT44+GHNQy6F2kpBw1rRvkzcrCY/zk1kOKzevkZAbFyRts
-         ja+RyTUu5rr79wUTYho6LMBwCuzMhrRpIAmO8uoLjrxTzdlrwqpZQTTnHCqrlKDhSiAW
-         2Og0A960M85lOD0NH3Hhabo8Cq+JLEklouLpCc9fFifxQy/mpwuhZoZsa69lmYU/YJ+j
-         B2Ew==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Sat, 17 Feb 2018 03:40:42 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-ced5d0bf603fa0baee8ea889e1d70971fd210894@git.kernel.org>
-Cc: torvalds@linux-foundation.org, dvlasenk@redhat.com, arjan@linux.intel.com,
-        luto@kernel.org, bp@alien8.de, peterz@infradead.org,
-        dave.hansen@linux.intel.com, dan.j.williams@intel.com,
-        mingo@kernel.org, jpoimboe@redhat.com, hpa@zytor.com,
-        dwmw2@infradead.org, linux-kernel@vger.kernel.org,
-        linux@dominikbrodowski.net, tglx@linutronix.de,
-        gregkh@linuxfoundation.org
-Reply-To: jpoimboe@redhat.com, mingo@kernel.org, dave.hansen@linux.intel.com,
-        dan.j.williams@intel.com, peterz@infradead.org, bp@alien8.de,
-        luto@kernel.org, dvlasenk@redhat.com, arjan@linux.intel.com,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        tglx@linutronix.de, linux@dominikbrodowski.net,
-        linux-kernel@vger.kernel.org, dwmw2@infradead.org, hpa@zytor.com
-In-Reply-To: <20180214175924.23065-3-linux@dominikbrodowski.net>
-References: <20180214175924.23065-3-linux@dominikbrodowski.net>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Use 'xorl' for faster register clearing
-Git-Commit-ID: ced5d0bf603fa0baee8ea889e1d70971fd210894
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-911174-1518425332-2-16818301881519275436
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518425331; b=eLxfsivp5z3t1K1u6SyN1TXO0qSpoxqURqHtjw5Be/ZN/51
+    g8qnt8IpBtfNWWbT68htgOduCObwpNksafpvnUt8r5XW6DxTH16PeeWwEfscjAUD
+    Zii7XFBAtxtSF7dK/9I7wjn01v7tFEQ7K7bENi79TdudcXJGtIf8h7KiVEhhWI6D
+    W6G/Zs3sWOTnOAR5kEtsNbWwGY7WcR4EHAa7S25jGF9OyePyxBheQwqu8cKW2ce9
+    qzhT7ZkKYTNi2aRnvzyoMJVJplXfyEnxJ3vTUEXL3TXbANLPu5fjgZs8oBy3iqZf
+    3BbRHSUbmCtBweaAG9HxcX5NC31MV9Lo9eNox5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:in-reply-to:references
+    :date:message-id:mime-version:content-type:sender:list-id; s=
+    arctest; t=1518425331; bh=3AD/IhJrnAqMQDKtGkj1nf91iHpGsTF9Be9DoH
+    CsNjo=; b=hvCP/eu4eIt+anmvK+huTyr+Nj1nxxvx32uQ9WhRcKYVxh1YuM+kDf
+    ZyNjfVN36vzS4aMz8Wk21XGcUPn46UtP6xi+6Rj0albRL+Fl1mh/65cOl2X4o+qR
+    DCg3iAnI2Lmz2D65rov6A5zMkI++Ef1JKTNf4CnnLynHZdQ2osxnuZuDpavD3BwO
+    Asvm2QZbddk1p3Q6/u3AzumZix+P/UGE1ODhrvYzi5IMS5UVxqd95q83zThUtAwC
+    Yp3DHfu11BFOADPYJyq1icsX+2PW3vnXZ4+uxbrjy5VN9NKk68HK7KjyFEkiXyXJ
+    MJzwvKxKuK+nF1KG9vUp/d2jsx33jCqg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    smime=temperror;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    smime=temperror;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933002AbeBLIsd (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Feb 2018 03:48:33 -0500
+Received: from mga14.intel.com ([192.55.52.115]:43070 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932804AbeBLIsc (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Mon, 12 Feb 2018 03:48:32 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,501,1511856000";
+   d="asc'?scan'208";a="17245660"
+From: Felipe Balbi <balbi@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        gregkh@linuxfoundation.org, bhumirks@gmail.com, leoyang.li@nxp.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 0/4] usb: gadget: fotg210-udc: Fixes and cleanup
+In-Reply-To: <cover.1515791144.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1515791144.git.christophe.jaillet@wanadoo.fr>
+Date: Mon, 12 Feb 2018 10:48:04 +0200
+Message-ID: <871shqbnln.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592648816679521654?=
-X-GMAIL-MSGID: =?utf-8?q?1592648816679521654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  ced5d0bf603fa0baee8ea889e1d70971fd210894
-Gitweb:     https://git.kernel.org/tip/ced5d0bf603fa0baee8ea889e1d70971fd210894
-Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Wed, 14 Feb 2018 18:59:24 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 17 Feb 2018 11:14:33 +0100
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-x86/entry/64: Use 'xorl' for faster register clearing
 
-On some x86 CPU microarchitectures using 'xorq' to clear general-purpose
-registers is slower than 'xorl'. As 'xorl' is sufficient to clear all
-64 bits of these registers due to zero-extension [*], switch the x86
-64-bit entry code to use 'xorl'.
+Hi,
 
-No change in functionality and no change in code size.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+> This serie aims to fix 2 issues. (path 2 & 4)
+>
+> The 2nd patch fixes a memory leak. It uses devm_ function a simplify the
+> handling of the memory.
+>
+> The 4th patch fixes a potential invalid pointer dereference.
+>
+> The 2 other ones, are just clean-ups to remove useless code and add other
+> uses of devm_ function to simplify code.
+>
+> I've left the request_irq/free_irq because I'm unsure of potential side
+> effects if some other resources are freed while an IRQ can still be
+> triggered. So I've preferred to leave it as-is.
+>
+> Christophe JAILLET (4):
+>   usb: gadget: fotg210-udc: Remove a useless
+>   usb: gadget: fotg210-udc: Fix a memory leak
+>   usb: gadget: fotg210-udc: Simplify code
+>   usb: gadget: fotg210-udc: Fix a potential invalid pointer dereference
 
-[*] According to Intel 64 and IA-32 Architecture Software Developer's
-    Manual, section 3.4.1.1, the result of 32-bit operands are "zero-
-    extended to a 64-bit result in the destination general-purpose
-    register." The AMD64 Architecture Programmer’s Manual Volume 3,
-    Appendix B.1, describes the same behaviour.
+you should NEVER make fixes depend on cleanups. It should be the other
+way around :-) First fixes, then cleanups. The reason is that fixes can
+get accepted during -rc cycle, but cleanups must wait until the next
+merge window.
 
-Suggested-by: Denys Vlasenko <dvlasenk@redhat.com>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180214175924.23065-3-linux@dominikbrodowski.net
-[ Improved on the changelog a bit. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/calling.h         | 16 ++++++------
- arch/x86/entry/entry_64_compat.S | 54 ++++++++++++++++++++--------------------
- 2 files changed, 35 insertions(+), 35 deletions(-)
+Please fix up your patches, otherwise I'll have to apply the entire
+series for v4.17
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 196b610..5d10b7a 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -117,25 +117,25 @@ For 32-bit we have the following conventions - kernel is built with
- 	pushq   %rcx		/* pt_regs->cx */
- 	pushq   \rax		/* pt_regs->ax */
- 	pushq   %r8		/* pt_regs->r8 */
--	xorq    %r8, %r8	/* nospec   r8 */
-+	xorl	%r8d, %r8d	/* nospec   r8 */
- 	pushq   %r9		/* pt_regs->r9 */
--	xorq    %r9, %r9	/* nospec   r9 */
-+	xorl	%r9d, %r9d	/* nospec   r9 */
- 	pushq   %r10		/* pt_regs->r10 */
--	xorq    %r10, %r10	/* nospec   r10 */
-+	xorl	%r10d, %r10d	/* nospec   r10 */
- 	pushq   %r11		/* pt_regs->r11 */
--	xorq    %r11, %r11	/* nospec   r11*/
-+	xorl	%r11d, %r11d	/* nospec   r11*/
- 	pushq	%rbx		/* pt_regs->rbx */
- 	xorl    %ebx, %ebx	/* nospec   rbx*/
- 	pushq	%rbp		/* pt_regs->rbp */
- 	xorl    %ebp, %ebp	/* nospec   rbp*/
- 	pushq	%r12		/* pt_regs->r12 */
--	xorq    %r12, %r12	/* nospec   r12*/
-+	xorl	%r12d, %r12d	/* nospec   r12*/
- 	pushq	%r13		/* pt_regs->r13 */
--	xorq    %r13, %r13	/* nospec   r13*/
-+	xorl	%r13d, %r13d	/* nospec   r13*/
- 	pushq	%r14		/* pt_regs->r14 */
--	xorq    %r14, %r14	/* nospec   r14*/
-+	xorl	%r14d, %r14d	/* nospec   r14*/
- 	pushq	%r15		/* pt_regs->r15 */
--	xorq    %r15, %r15	/* nospec   r15*/
-+	xorl	%r15d, %r15d	/* nospec   r15*/
- 	UNWIND_HINT_REGS
- 	.if \save_ret
- 	pushq	%rsi		/* return address on top of stack */
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index fd65e01..364ea4a 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -85,25 +85,25 @@ ENTRY(entry_SYSENTER_compat)
- 	pushq	%rcx			/* pt_regs->cx */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
--	xorq	%r8, %r8		/* nospec   r8 */
-+	xorl	%r8d, %r8d		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
--	xorq	%r9, %r9		/* nospec   r9 */
-+	xorl	%r9d, %r9d		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
--	xorq	%r10, %r10		/* nospec   r10 */
-+	xorl	%r10d, %r10d		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
--	xorq	%r11, %r11		/* nospec   r11 */
-+	xorl	%r11d, %r11d		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
- 	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
- 	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   $0			/* pt_regs->r12 = 0 */
--	xorq	%r12, %r12		/* nospec   r12 */
-+	xorl	%r12d, %r12d		/* nospec   r12 */
- 	pushq   $0			/* pt_regs->r13 = 0 */
--	xorq	%r13, %r13		/* nospec   r13 */
-+	xorl	%r13d, %r13d		/* nospec   r13 */
- 	pushq   $0			/* pt_regs->r14 = 0 */
--	xorq	%r14, %r14		/* nospec   r14 */
-+	xorl	%r14d, %r14d		/* nospec   r14 */
- 	pushq   $0			/* pt_regs->r15 = 0 */
--	xorq	%r15, %r15		/* nospec   r15 */
-+	xorl	%r15d, %r15d		/* nospec   r15 */
- 	cld
- 
- 	/*
-@@ -224,25 +224,25 @@ GLOBAL(entry_SYSCALL_compat_after_hwframe)
- 	pushq	%rbp			/* pt_regs->cx (stashed in bp) */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
--	xorq	%r8, %r8		/* nospec   r8 */
-+	xorl	%r8d, %r8d		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
--	xorq	%r9, %r9		/* nospec   r9 */
-+	xorl	%r9d, %r9d		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
--	xorq	%r10, %r10		/* nospec   r10 */
-+	xorl	%r10d, %r10d		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
--	xorq	%r11, %r11		/* nospec   r11 */
-+	xorl	%r11d, %r11d		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
- 	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
- 	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   $0			/* pt_regs->r12 = 0 */
--	xorq	%r12, %r12		/* nospec   r12 */
-+	xorl	%r12d, %r12d		/* nospec   r12 */
- 	pushq   $0			/* pt_regs->r13 = 0 */
--	xorq	%r13, %r13		/* nospec   r13 */
-+	xorl	%r13d, %r13d		/* nospec   r13 */
- 	pushq   $0			/* pt_regs->r14 = 0 */
--	xorq	%r14, %r14		/* nospec   r14 */
-+	xorl	%r14d, %r14d		/* nospec   r14 */
- 	pushq   $0			/* pt_regs->r15 = 0 */
--	xorq	%r15, %r15		/* nospec   r15 */
-+	xorl	%r15d, %r15d		/* nospec   r15 */
- 
- 	/*
- 	 * User mode is traced as though IRQs are on, and SYSENTER
-@@ -298,9 +298,9 @@ sysret32_from_system_call:
- 	 */
- 	SWITCH_TO_USER_CR3_NOSTACK scratch_reg=%r8 scratch_reg2=%r9
- 
--	xorq	%r8, %r8
--	xorq	%r9, %r9
--	xorq	%r10, %r10
-+	xorl	%r8d, %r8d
-+	xorl	%r9d, %r9d
-+	xorl	%r10d, %r10d
- 	swapgs
- 	sysretl
- END(entry_SYSCALL_compat)
-@@ -358,25 +358,25 @@ ENTRY(entry_INT80_compat)
- 	pushq	%rcx			/* pt_regs->cx */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
--	xorq	%r8, %r8		/* nospec   r8 */
-+	xorl	%r8d, %r8d		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
--	xorq	%r9, %r9		/* nospec   r9 */
-+	xorl	%r9d, %r9d		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
--	xorq	%r10, %r10		/* nospec   r10 */
-+	xorl	%r10d, %r10d		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
--	xorq	%r11, %r11		/* nospec   r11 */
-+	xorl	%r11d, %r11d		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
- 	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp */
- 	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   %r12                    /* pt_regs->r12 */
--	xorq	%r12, %r12		/* nospec   r12 */
-+	xorl	%r12d, %r12d		/* nospec   r12 */
- 	pushq   %r13                    /* pt_regs->r13 */
--	xorq	%r13, %r13		/* nospec   r13 */
-+	xorl	%r13d, %r13d		/* nospec   r13 */
- 	pushq   %r14                    /* pt_regs->r14 */
--	xorq	%r14, %r14		/* nospec   r14 */
-+	xorl	%r14d, %r14d		/* nospec   r14 */
- 	pushq   %r15                    /* pt_regs->r15 */
--	xorq	%r15, %r15		/* nospec   r15 */
-+	xorl	%r15d, %r15d		/* nospec   r15 */
- 	cld
- 
- 	/*
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqBVMQACgkQzL64meEa
+mQZQlQ/+M0CfPqushKipcO7SiVf+SgbJRb1EYgDd/UuJjTDk+PjicsI4X3CY9Edi
+5RRia83bO6umVFFWl6iJFdGBNjxlnouPJbKioR1rW0CFcu17EsD0bbUMzrQ9v3b9
+a3eU6X5yvOcdOHcIZDzsuOXmk24SG68HuIIPyYDKYBkrVI6LQVYOKYkYldahAJJ/
+AxV1ebcCIhoeIG21V8NBC5xKTj+zP3S/Oz9vJ4ReD/iRLl7U5yQaK1p+sCE8yKFe
+QiolaqDdPpATvv4Ppj37GWx2tJfFh6w/Tva9pXj/hzMjKJvaOTlWGO8i2Q2KL82F
+ls6M/V9DnkMBEpbZWAhsfOryBuDDwY+TTWkgh5yg9xOU6VDRcWs9zhzyo3Eh3wgW
+kbOjI6j0iKJW9RQM9YrZ+uva20grE+pO8aqRrlrhw2s3dt7k18KfToLNbnBYFl/v
+Rcjp/v8GNl1xrV2cgJmKWFV98/Anc4X1C1OXgQItAYC8fxOw3NtdPHpIWelpFtB9
+3uUIncVXYQe80iArV/dBYmLYVwRZtG+ghx+LMJXP4WhIgolpB7Mc7LSoHYDL7BSM
+36vIP7A4fZvhD37DUBe6lPT8JeLIfPPhEmuBPdzW2iTxD9khF/8Q/he0Il8Dce5H
+Bf+QqXGL4XyFBMcbY04nJENSHKEax3y3Qc/qHi6rbdQe2FERXEM=
+=WDQL
+-----END PGP SIGNATURE-----
+--=-=-=--
