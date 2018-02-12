@@ -1,58 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932867AbeBLWcR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:32:17 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41081 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932628AbeBLWcP (ORCPT
+        id S932819AbeBLWeP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:34:15 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:42533 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932741AbeBLWeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:32:15 -0500
-X-Google-Smtp-Source: AH8x227gORkvsYNMJhI/SCvixBTssFRFgpWkYznv79xFv/hspMFu4dh5QzDpfMjTi5jUai+iHSc1Mg==
+        Mon, 12 Feb 2018 17:34:13 -0500
+X-Google-Smtp-Source: AH8x22443MCsG+ZS2c6lvrScyTO7AM9F1DEKf1BfhGk20/EHCNOFhwXT8pmaNa4PAd33pIWIjJ/jXA==
 From: Guenter Roeck <linux@roeck-us.net>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH] ia64: Remove pci-swiotlb.o from kernel Makefile
-Date: Mon, 12 Feb 2018 14:32:13 -0800
-Message-Id: <1518474733-2972-1-git-send-email-linux@roeck-us.net>
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Subject: [PATCH 2/2] powerpc/pseries: Declare optional dummy function for find_and_online_cpu_nid
+Date: Mon, 12 Feb 2018 14:34:08 -0800
+Message-Id: <1518474848-3158-2-git-send-email-linux@roeck-us.net>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
+References: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 4fac8076df85 ("ia64: clean up swiotlb support") removed
-arch/ia64/kernel/pci-swiotlb.c but neglected to update the ia64
-kernel Makefile. This results in
+Commit e67e02a544e9 ("powerpc/pseries: Fix cpu hotplug crash with
+memoryless nodes") adds an unconditional call to find_and_online_cpu_nid(),
+which is only declared if CONFIG_PPC_SPLPAR is enabled. This results in
+the following build error if this is not the case.
 
-make[2]: *** No rule to make target 'arch/ia64/kernel/pci-swiotlb.o',
-	needed by 'arch/ia64/kernel/built-in.o'.  Stop.
+arch/powerpc/platforms/pseries/hotplug-cpu.o: In function `dlpar_online_cpu':
+arch/powerpc/platforms/pseries/hotplug-cpu.c:369:
+			undefined reference to `.find_and_online_cpu_nid'
 
-when trying to build ia64 images.
+Follow the guideline provided by similar functions and provide a dummy
+function if CONFIG_PPC_SPLPAR is not enabled. This also moves the external
+function declaration into an include file where it should be.
 
-Fixes: 4fac8076df85 ("ia64: clean up swiotlb support")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Christian König <christian.koenig@amd.com>
+Fixes: e67e02a544e9 ("powerpc/pseries: Fix cpu hotplug crash with ...")
+Cc: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- arch/ia64/kernel/Makefile | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/include/asm/topology.h          | 5 +++++
+ arch/powerpc/platforms/pseries/hotplug-cpu.c | 2 --
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/ia64/kernel/Makefile b/arch/ia64/kernel/Makefile
-index 0b4c65a1af25..498f3da3f225 100644
---- a/arch/ia64/kernel/Makefile
-+++ b/arch/ia64/kernel/Makefile
-@@ -41,7 +41,6 @@ ifneq ($(CONFIG_IA64_ESI),)
- obj-y				+= esi_stub.o	# must be in kernel proper
- endif
- obj-$(CONFIG_INTEL_IOMMU)	+= pci-dma.o
--obj-$(CONFIG_SWIOTLB)		+= pci-swiotlb.o
+diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
+index 88187c285c70..52815982436f 100644
+--- a/arch/powerpc/include/asm/topology.h
++++ b/arch/powerpc/include/asm/topology.h
+@@ -82,6 +82,7 @@ static inline int numa_update_cpu_topology(bool cpus_locked)
+ extern int start_topology_update(void);
+ extern int stop_topology_update(void);
+ extern int prrn_is_enabled(void);
++extern int find_and_online_cpu_nid(int cpu);
+ #else
+ static inline int start_topology_update(void)
+ {
+@@ -95,6 +96,10 @@ static inline int prrn_is_enabled(void)
+ {
+ 	return 0;
+ }
++static inline int find_and_online_cpu_nid(int cpu)
++{
++	return 0;
++}
+ #endif /* CONFIG_NUMA && CONFIG_PPC_SPLPAR */
  
- obj-$(CONFIG_BINFMT_ELF)	+= elfcore.o
+ #if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_NEED_MULTIPLE_NODES)
+diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+index dceb51454d8d..f5c6a8cd2926 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
++++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+@@ -340,8 +340,6 @@ static void pseries_remove_processor(struct device_node *np)
+ 	cpu_maps_update_done();
+ }
  
+-extern int find_and_online_cpu_nid(int cpu);
+-
+ static int dlpar_online_cpu(struct device_node *dn)
+ {
+ 	int rc = 0;
 -- 
 2.7.4
