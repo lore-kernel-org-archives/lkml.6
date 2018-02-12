@@ -1,107 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934746AbeBLQBK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 11:01:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:42148 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932878AbeBLQBI (ORCPT
+        id S934940AbeBLQDb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 11:03:31 -0500
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:38237 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932878AbeBLQD3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 11:01:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B19F60A4E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Mon, 12 Feb 2018 16:01:06 +0000
-From: Lina Iyer <ilina@codeaurora.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: jason@lakedaemon.net, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, asathyak@codeaurora.org
-Subject: Re: [PATCH v6 1/2] drivers: irqchip: pdc: Add PDC interrupt
- controller for QCOM SoCs
-Message-ID: <20180212160106.GE7084@codeaurora.org>
-References: <20180209165735.19151-1-ilina@codeaurora.org>
- <20180209165735.19151-2-ilina@codeaurora.org>
- <alpine.DEB.2.21.1802121430020.1158@nanos.tec.linutronix.de>
+        Mon, 12 Feb 2018 11:03:29 -0500
+X-Google-Smtp-Source: AH8x224PcWjYcp/q7DYZ8irZ5q/HVJ34RFQX0oetZbbvqcMlqDn3rsL2hc6sQBS1uMasnkRYVtQVDrPwM/jeKLTNBJY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1802121430020.1158@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <001a113f8734783e94056505f8fd@google.com>
+References: <001a113f8734783e94056505f8fd@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 12 Feb 2018 17:03:08 +0100
+Message-ID: <CACT4Y+ZBHw7VZBFOeqLmrpmzgn4owW88qvP5v=xnr9966hbM_Q@mail.gmail.com>
+Subject: Re: lost connection to test machine (4)
+To: syzbot <syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12 2018 at 13:40 +0000, Thomas Gleixner wrote:
->On Fri, 9 Feb 2018, Lina Iyer wrote:
->> +/*
->> + * GIC does not handle falling edge or active low. To allow falling edge and
->> + * active low interrupts to be handled at GIC, PDC has an inverter that inverts
->> + * falling edge into a rising edge and active low into an active high.
->> + * For the inverter to work, the polarity bit in the IRQ_CONFIG register has to
->> + * set as per the table below.
->> + * (polarity, falling edge, rising edge ) POLARITY
->> + * 3'b0 00  Level sensitive active low    LOW
->> + * 3'b0 01  Rising edge sensitive         NOT USED
->> + * 3'b0 10  Falling edge sensitive        LOW
->> + * 3'b0 11  Dual Edge sensitive           NOT USED
->> + * 3'b1 00  Level sensitive active High   HIGH
->> + * 3'b1 01  Falling Edge sensitive        NOT USED
->> + * 3'b1 10  Rising edge sensitive         HIGH
->> + * 3'b1 11  Dual Edge sensitive           HIGH
->> + */
->> +enum pdc_irq_config_bits {
->> +	PDC_POLARITY_LOW	= 0,
->> +	PDC_FALLING_EDGE	= 2,
->> +	PDC_POLARITY_HIGH	= 4,
->> +	PDC_RISING_EDGE		= 6,
->> +	PDC_DUAL_EDGE		= 7,
+On Mon, Feb 12, 2018 at 5:00 PM, syzbot
+<syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com> wrote:
+> Hello,
 >
->My previous comment about using binary constants still stands. Please
->either address review comments or reply at least. Ignoring reviews is not
->an option.
+> syzbot hit the following crash on bpf-next commit
+> 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
+> Merge tag 'usercopy-v4.16-rc1' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
 >
-I removed them from the enum definitions. Will remove them from the
-comments as well. Sorry. It was not my intention to ignore any review
-comments.
+> So far this crash happened 898 times on bpf-next, net-next, upstream.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
 
->Aside of that I really have to ask about the naming of these constants. Are
->these names hardware register nomenclature? If yes, they are disgusting. If
->no, they are still disgusting, but should be changed to sensible ones,
->which just match the IRQ_TYPE naming convention.
->
->    PDC_LEVEL_LOW	= 000b,
->    PDC_EDGE_FALLING	= 010b,
->    ....
->
->
-They are named that way in spec :) Will change.
 
->> +	switch (type) {
->> +	case IRQ_TYPE_EDGE_RISING:
->> +		pdc_type = PDC_RISING_EDGE;
->> +		type = IRQ_TYPE_EDGE_RISING;
->
->Whats the point of assigning the same value again?
->
-Failed to notice. Will fix.
+The reproducer first causes several tasks spending minutes at this stack:
 
-Thanks,
-Lina
+[  110.762189] NMI backtrace for cpu 2
+[  110.762206] CPU: 2 PID: 3760 Comm: syz-executor Not tainted 4.15.0+ #96
+[  110.762210] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS Bochs 01/01/2011
+[  110.762224] RIP: 0010:mutex_spin_on_owner+0x303/0x420
+[  110.762232] INFO: NMI handler (nmi_cpu_backtrace_handler) took too
+long to run: 1.103 msecs
+[  110.762237] RSP: 0018:ffff88005be470e8 EFLAGS: 00000246
+[  110.762268] RAX: ffff88006ca00000 RBX: 0000000000000000 RCX: ffffffff81554165
+[  110.762275] RDX: 0000000000000001 RSI: 1ffffffff0d97884 RDI: 0000000000000000
+[  110.762281] RBP: ffff88005be47210 R08: dffffc0000000001 R09: fffffbfff0db2b75
+[  110.762286] R10: fffffbfff0db2b74 R11: ffffffff86d95ba7 R12: ffffffff86d95ba0
+[  110.762292] R13: ffffed000b7c8e25 R14: dffffc0000000000 R15: ffff880064691040
+[  110.762300] FS:  00007f84ed029700(0000) GS:ffff88006cb00000(0000)
+knlGS:0000000000000000
+[  110.762305] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  110.762311] CR2: 00007fd565f7b1b0 CR3: 000000005bddf002 CR4: 00000000001606e0
+[  110.762316] Call Trace:
+[  110.762383]  __mutex_lock.isra.1+0x97d/0x1440
+[  110.762659]  __mutex_lock_slowpath+0xe/0x10
+[  110.762668]  mutex_lock+0x3e/0x50
+[  110.762677]  pcpu_alloc+0x846/0xfe0
+[  110.762778]  __alloc_percpu_gfp+0x27/0x30
+[  110.762801]  array_map_alloc+0x484/0x690
+[  110.762832]  SyS_bpf+0xa27/0x4770
+[  110.763190]  do_syscall_64+0x297/0x760
+[  110.763260]  entry_SYSCALL_64_after_hwframe+0x21/0x86
 
->> +		break;
->> +	case IRQ_TYPE_EDGE_FALLING:
->> +		pdc_type = PDC_FALLING_EDGE;
->> +		type = IRQ_TYPE_EDGE_RISING;
->> +		break;
->> +	case IRQ_TYPE_EDGE_BOTH:
->> +		pdc_type = PDC_DUAL_EDGE;
->> +		break;
->> +	case IRQ_TYPE_LEVEL_HIGH:
->> +		pdc_type = PDC_POLARITY_HIGH;
->> +		type = IRQ_TYPE_LEVEL_HIGH;
+and later machine dies with:
+
+[  191.484308] Kernel panic - not syncing: Out of memory and no
+killable processes...
+[  191.484308]
+[  191.485740] CPU: 3 PID: 746 Comm: kworker/3:1 Not tainted 4.15.0+ #96
+[  191.486761] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS Bochs 01/01/2011
+[  191.488071] Workqueue: events pcpu_balance_workfn
+[  191.488821] Call Trace:
+[  191.489299]  dump_stack+0x175/0x225
+[  191.490590]  panic+0x22a/0x4be
+[  191.493061]  out_of_memory.cold.31+0x20/0x21
+[  191.496380]  __alloc_pages_slowpath+0x1d98/0x28a0
+[  191.503616]  __alloc_pages_nodemask+0x89c/0xc60
+[  191.507876]  pcpu_populate_chunk+0x1fd/0x9b0
+[  191.510114]  pcpu_balance_workfn+0x1019/0x1450
+[  191.517804]  process_one_work+0x9d5/0x1460
+[  191.522714]  worker_thread+0x1cc/0x1410
+[  191.529319]  kthread+0x304/0x3c0
+
+
+The original message with attachments is here:
+https://groups.google.com/d/msg/syzkaller-bugs/Km3xEZu9zzU/rO-7XuwZAgAJ
+
+
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
 >
->Ditto
 >
->Thanks,
 >
->	tglx
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/001a113f8734783e94056505f8fd%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
