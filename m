@@ -1,23 +1,23 @@
 Return-Path: <kys@linuxonhyperv2.linuxonhyperv.com>
-X-Google-Smtp-Source: AH8x2243cyp73GKMb2bw4rKRcwiova3v6SGjWOzQm4CzTAiwmHFI9snHv+ZpnAgESLFd3E4E+A3H
-ARC-Seal: i=1; a=rsa-sha256; t=1518395677; cv=none;
+X-Google-Smtp-Source: AH8x225/A0PpyyL8K+mRXb14P7TXJ8r/WBCi/RrvD15hyJCzylh1pdAEIzqOyMqBw4E+p37q8qsY
+ARC-Seal: i=1; a=rsa-sha256; t=1518395678; cv=none;
         d=google.com; s=arc-20160816;
-        b=1IzEWAul8FQ6oDbhMb/FGR61iIx5I3EDodjvqrIEzrglLvRhUcNMtI5D87XCkojZD9
-         qFzZdGa8DYaDMBPOTwix9r6Y189KCdePdjA4otUb2cg5LlawBBqOEIUEcgGuRs+kaveh
-         ckx7izU0c4F6TRu54n/S4fO8p+xWZ4+Hv5WVr1MHXPKCMMea6BfPLiU/YEGsjvdsLzpA
-         NWKJ0cmodJY1rewQK+HoAIi1cT7GpcP44E+6iCxLnxa+gPeh00InW1eUt/+7amQ0nzzJ
-         TFf/bkupm3dnfux26y7WP6zHwM1bHL4gm5umK07vD9PHR9oHLJeEj+n2SHwWFHhEwr5E
-         JEaw==
+        b=fN8xNyv+8vzS1x76+kn8wKF1OT3qf82OBNivPSbft505suPGxXIcuJblxwmoe24rWO
+         9JNOX25dw9IVRqbvNFjZ/iaK6At2GXZTBCllc7dmgpR+vQ3yaN7d5OiJ0so47Kdzsr+0
+         cmwkjN6WH6pbgmiOYcSGyrn3urvznyhChpeQ4iNDyYIz3idsuDdlCF4+pHPsAHtMejgz
+         Ett1A8xvdIgYyEznX3eULO6cC3qMjL0cLJjk5CD8n0wgOs1RSgCVIXLxFHT6F/sF2JM1
+         eSSCc5OrQ4K870rOzhcKsynJXzEMuhO8ktTlE80xm7guRXpEcyTQbgc0qjgMfO0pMNyz
+         jFww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=reply-to:references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=R3kHaS3UHzeaKjpV5WqNVUXxku0yrrCv8xbl67XnXSc=;
-        b=flOgrfrzog42AFCrGlzq7lVWDw86OHeejNyoNXjuRxkE2Y71jzPVK8aNBwrU3gq5mf
-         +gRFMxgTlz5mDCcjbqTXwIL+YkYc1UvU8NCuzFt4sTH4KFoJtPLIiUfh63iE8oqEc9so
-         O96xPhZbtHOfdGYkSWlbru18js0PheI1hKqMTMoeQ0OvCmTz7Q71xx8ld8TeL5T1HMHj
-         VW90HEh4748hXaZY1fjkycjFZ05gNQ+LGfHLqWVJtEsi3cP3UR6/hI7qhl/xQ5ECKA4J
-         BwwzR9JXswDgQVqf+BuwdyDVC6+wHq8gqpsDSKfxb47vEFZytfANO1AI1npDGkj6D7IS
-         ulpg==
+        bh=EA3Neul88egmMUxchbj3qYQhFNdn0c6y7ZjYJDth6Zo=;
+        b=JSSo2zc4KRyDqzFAFA3WmQuJoo/4zzNFq4kWK393C1pJXRzi7H5tkzoN8LQPFemrai
+         bfdMWRCLxuvJHuocgE0nEXCV8G2KYqOkGJbjNv8KHyn6nKUJiimt1CPutRXtrMvzmNzR
+         uHRBCGwTScBsT30KsDv59k/fm6nNjoBhDG5B4pqkFeQ5cOmUTBy3E/64kX6BOp8Geay6
+         pj1CIVmW5PUBA+417W8P3QmX2s1PbKHOXpyaVScpuL4dGTTrXjUxdZaEz90MasnOLZtZ
+         yYYFZ7d5ZuGfSY25gcySsWsjk0rdNaw0Aj94FeEELpb1MYMcPFylylA74O9RciRbrQyo
+         v/Bg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 198.71.225.38 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=exchange.microsoft.com
@@ -36,212 +36,379 @@ To: gregkh@linuxfoundation.org,
 	leann.ogasawara@canonical.com,
 	marcelo.cerri@canonical.com,
 	sthemmin@microsoft.com
-Cc: Haiyang Zhang <haiyangz@microsoft.com>,
+Cc: Michael Kelley <mikelley@microsoft.com>,
 	"K . Y . Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 01/12] tools/hv: Fix IP reporting by KVP daemon with SRIOV
-Date: Sun, 11 Feb 2018 17:33:09 -0700
-Message-Id: <20180212003320.6748-1-kys@exchange.microsoft.com>
+Subject: [PATCH 08/12] Drivers: hv: vmbus: Implement Direct Mode for stimer0
+Date: Sun, 11 Feb 2018 17:33:16 -0700
+Message-Id: <20180212003320.6748-8-kys@exchange.microsoft.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180212002958.6679-1-kys@exchange.microsoft.com>
+In-Reply-To: <20180212003320.6748-1-kys@exchange.microsoft.com>
 References: <20180212002958.6679-1-kys@exchange.microsoft.com>
+ <20180212003320.6748-1-kys@exchange.microsoft.com>
 Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfHWyA3bWQpJbWP7paxsWZ4WiegLdr/MCrqMhpnf7IdDAdEuAh6/GiOfoWsqrWthZGN1Q6iHsE4nVKVe2t61vUyTUCdWp7KO9aUtm4q3xEZB1IdJQoC0D
- 2oTVvnveXmhDvGMxe6D6fuzerbUchQHVpcunCNRdpeZyU4xBkwQ1/yGrHDoxlbuyOEwsTyIIYJRCUqOttaL5irOuowXp3w5eJi1t6VJgGwDat1KRPp2wXSOj
- He5Y63QB9a6Pr8lR3Sy/i9cJqUdSYbR81pLpAN2y2zVZMM83tQU1cbU5janAwD+DRFCx16lT6VI/dZE1mnvZ7PvDuW/EmtXy9Gfo1zY6pfPZcG+rRlL/tb6Y
- /bgkUkTP1iwxzxSqzx2ToE17S9yjmMy73cky3eFQZhM8kI3pNf6dFRPfSjNKmmrTz0varQUIXWUkDbyBUOh/3W4uzlqsO/cQItLP7oA/92mQ9LhfOG54jW/p
- FhrIfPDKsVjddr/rlVgx3YfYyFzcMuv9+zaTnIFWvFdWcr2NmfJOBG5+5ZFmNiJS8tpvTVYTPZDt0CR6IZLB99ii4WToQFZWB7ClhSVBJv8pHU1co1zntTw2
- dW881tHKiPOqxGT4Q1D+i4uF
+X-CMAE-Envelope: MS4wfFBS4iFExjF+Ue2BP7ayEqngObyuDahQMBHeSI8RIlYOOQ2N7YSuR5UI1lb7Zqa8jHhm8zuUUdfrSVaLBMO2X8j5ssNCUS+y7V6unuCQOVBcg2D0W96Y
+ BNuMi34GnE/zshj/D79Srfok51UxK5FXmC+5TnVJzdRH4/vN5jJncB/SFGgm193fRiy5SuAIQQxZpDMx65o6Su4iAfsKTGShAkkVZIkNdMZlq/AWQxnjCYx9
+ g5RAvRpuy+Cn36f59pYjw5KYGNKJG8dnKlH7j73MnUC951OlTTwH8xpOycHj5Q9OqkEkmXq+yVMj1B1OLn4yeWL37Ko3gcG7ofP9KtiYDc0oY9nnUvlUlYgc
+ Zc6hVzxA3Zt649f6QRgriK6uCMghGhmYOrcJgXcnX/QMl/g9ojzroz5Oet82QnpZXaVGda8ZeroOl1Oo3wuGyj9ylxg0OaLeCsz4e8uXlppT0TJQk4zl6NyF
+ OEKTp9wDtXK0otRXTK99JQ+CSc4D3LAcjqyhkn3/un7G7McWM3t+rlaYE8hNmU2IVoWZkrjziQLV03foZr6yQ5cVIm4ncqcK+SdN2dQPwE0Wpmp8Bae0OSks
+ NeH8ZMM+sfG+ywCjnCHs/cRO
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592153265311281374?=
-X-GMAIL-MSGID: =?utf-8?q?1592153265311281374?=
+X-GMAIL-THRID: =?utf-8?q?1592153266380237670?=
+X-GMAIL-MSGID: =?utf-8?q?1592153266380237670?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+From: Michael Kelley <mikelley@microsoft.com>
 
-On Hyper-V the VF NIC has the same MAC as the related synthetic NIC.
-VF NIC can work under the synthetic NIC transparently, without its
-own IP address. The existing KVP daemon only gets IP from the first
-NIC matching a MAC address, and may not be able to find the IP in
-this case.
+The 2016 version of Hyper-V offers the option to operate the guest VM
+per-vcpu stimer's in Direct Mode, which means the timer interupts on its
+own vector rather than queueing a VMbus message. Direct Mode reduces
+timer processing overhead in both the hypervisor and the guest, and
+avoids having timer interrupts pollute the VMbus interrupt stream for
+the synthetic NIC and storage.  This patch enables Direct Mode by
+default on stimer0 when running on a version of Hyper-V that supports
+it.
 
-This patch fixes the problem by searching the NIC matching the MAC,
-and having an IP address. So, the IP address will be found and
-reported to the host successfully.
+In prep for coming support of Hyper-V on ARM64, the arch independent
+portion of the code contains calls to routines that will be populated
+on ARM64 but are not needed and do nothing on x86.
 
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- tools/hv/hv_kvp_daemon.c | 138 ++++++++++++++++++++++-------------------------
- 1 file changed, 65 insertions(+), 73 deletions(-)
+ arch/x86/entry/entry_32.S          |  3 ++
+ arch/x86/entry/entry_64.S          |  2 ++
+ arch/x86/include/asm/hardirq.h     |  3 ++
+ arch/x86/include/asm/irq_vectors.h |  7 ++++-
+ arch/x86/include/asm/mshyperv.h    | 13 ++++++++
+ arch/x86/include/uapi/asm/hyperv.h |  3 ++
+ arch/x86/kernel/cpu/mshyperv.c     | 41 ++++++++++++++++++++++++-
+ arch/x86/kernel/irq.c              |  9 ++++++
+ drivers/hv/hv.c                    | 61 ++++++++++++++++++++++++++++++++++++--
+ drivers/hv/hyperv_vmbus.h          |  4 ++-
+ 10 files changed, 141 insertions(+), 5 deletions(-)
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index 4c99c57736ce..dbf6e8bd98ba 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -634,64 +634,6 @@ static char *kvp_if_name_to_mac(char *if_name)
- 	return mac_addr;
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2a35b1e0fb90..e36f75bdbecc 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -895,6 +895,9 @@ BUILD_INTERRUPT3(xen_hvm_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
+ BUILD_INTERRUPT3(hyperv_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
+ 		 hyperv_vector_handler)
+ 
++BUILD_INTERRUPT3(hv_stimer0_callback_vector, HYPERV_STIMER0_VECTOR,
++		 hv_stimer0_vector_handler)
++
+ #endif /* CONFIG_HYPERV */
+ 
+ ENTRY(page_fault)
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index a83570495162..4a9bdfed8588 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1245,6 +1245,8 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+ #if IS_ENABLED(CONFIG_HYPERV)
+ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+ 	hyperv_callback_vector hyperv_vector_handler
++apicinterrupt3 HYPERV_STIMER0_VECTOR \
++	hv_stimer0_callback_vector hv_stimer0_vector_handler
+ #endif /* CONFIG_HYPERV */
+ 
+ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
+index 51cc979dd364..c788343f93d9 100644
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -38,6 +38,9 @@ typedef struct {
+ #if IS_ENABLED(CONFIG_HYPERV) || defined(CONFIG_XEN)
+ 	unsigned int irq_hv_callback_count;
+ #endif
++#if IS_ENABLED(CONFIG_HYPERV)
++	unsigned int hyperv_stimer0_count;
++#endif
+ } ____cacheline_aligned irq_cpustat_t;
+ 
+ DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
+diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
+index 67421f649cfa..6accf0b6491b 100644
+--- a/arch/x86/include/asm/irq_vectors.h
++++ b/arch/x86/include/asm/irq_vectors.h
+@@ -103,7 +103,12 @@
+ #endif
+ 
+ #define MANAGED_IRQ_SHUTDOWN_VECTOR	0xef
+-#define LOCAL_TIMER_VECTOR		0xee
++
++#if IS_ENABLED(CONFIG_HYPERV)
++#define HYPERV_STIMER0_VECTOR		0xee
++#endif
++
++#define LOCAL_TIMER_VECTOR		0xed
+ 
+ #define NR_VECTORS			 256
+ 
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index b52af150cbd8..2bd73b4240e9 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -172,6 +172,19 @@ void hv_remove_kexec_handler(void);
+ void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
+ void hv_remove_crash_handler(void);
+ 
++/*
++ * Routines for stimer0 Direct Mode handling.
++ * On x86/x64, there are no percpu actions to take.
++ */
++void hv_stimer0_vector_handler(struct pt_regs *regs);
++void hv_stimer0_callback_vector(void);
++int hv_setup_stimer0_irq(int *irq, int *vector, void (*handler)(void));
++void hv_remove_stimer0_irq(int irq);
++
++static inline void hv_enable_stimer0_percpu_irq(int irq) {}
++static inline void hv_disable_stimer0_percpu_irq(int irq) {}
++
++
+ #if IS_ENABLED(CONFIG_HYPERV)
+ extern struct clocksource *hyperv_cs;
+ extern void *hv_hypercall_pg;
+diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+index 1a5bfead93b4..7213cb8448cf 100644
+--- a/arch/x86/include/uapi/asm/hyperv.h
++++ b/arch/x86/include/uapi/asm/hyperv.h
+@@ -74,6 +74,9 @@
+ /* Crash MSR available */
+ #define HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE (1 << 10)
+ 
++/* stimer Direct Mode is available */
++#define HV_X64_STIMER_DIRECT_MODE_AVAILABLE	(1 << 19)
++
+ /*
+  * Feature identification: EBX indicates which flags were specified at
+  * partition creation. The format is the same as the partition creation
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 85eb5fc180c8..dfcb8d2a88ae 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -37,6 +37,7 @@ EXPORT_SYMBOL_GPL(ms_hyperv);
+ 
+ #if IS_ENABLED(CONFIG_HYPERV)
+ static void (*vmbus_handler)(void);
++static void (*hv_stimer0_handler)(void);
+ static void (*hv_kexec_handler)(void);
+ static void (*hv_crash_handler)(struct pt_regs *regs);
+ 
+@@ -69,6 +70,41 @@ void hv_remove_vmbus_irq(void)
+ EXPORT_SYMBOL_GPL(hv_setup_vmbus_irq);
+ EXPORT_SYMBOL_GPL(hv_remove_vmbus_irq);
+ 
++/*
++ * Routines to do per-architecture handling of stimer0
++ * interrupts when in Direct Mode
++ */
++
++__visible void __irq_entry hv_stimer0_vector_handler(struct pt_regs *regs)
++{
++	struct pt_regs *old_regs = set_irq_regs(regs);
++
++	entering_irq();
++	inc_irq_stat(hyperv_stimer0_count);
++	if (hv_stimer0_handler)
++		hv_stimer0_handler();
++	ack_APIC_irq();
++
++	exiting_irq();
++	set_irq_regs(old_regs);
++}
++
++int hv_setup_stimer0_irq(int *irq, int *vector, void (*handler)(void))
++{
++	*vector = HYPERV_STIMER0_VECTOR;
++	*irq = 0;   /* Unused on x86/x64 */
++	hv_stimer0_handler = handler;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(hv_setup_stimer0_irq);
++
++void hv_remove_stimer0_irq(int irq)
++{
++	/* We have no way to deallocate the interrupt gate */
++	hv_stimer0_handler = NULL;
++}
++EXPORT_SYMBOL_GPL(hv_remove_stimer0_irq);
++
+ void hv_setup_kexec_handler(void (*handler)(void))
+ {
+ 	hv_kexec_handler = handler;
+@@ -249,8 +285,11 @@ static void __init ms_hyperv_init_platform(void)
+ 	 */
+ 	x86_platform.apic_post_init = hyperv_init;
+ 	hyperv_setup_mmu_ops();
+-	/* Setup the IDT for hypervisor callback */
++	/* Setup the IDTs for hypervisor callback and for stimer0 */
+ 	alloc_intr_gate(HYPERVISOR_CALLBACK_VECTOR, hyperv_callback_vector);
++	if (ms_hyperv.misc_features & HV_X64_STIMER_DIRECT_MODE_AVAILABLE)
++		alloc_intr_gate(HYPERV_STIMER0_VECTOR,
++				hv_stimer0_callback_vector);
+ #endif
  }
  
--
--/*
-- * Retrieve the interface name given tha MAC address.
-- */
--
--static char *kvp_mac_to_if_name(char *mac)
--{
--	DIR *dir;
--	struct dirent *entry;
--	FILE    *file;
--	char    *p, *x;
--	char    *if_name = NULL;
--	char    buf[256];
--	char dev_id[PATH_MAX];
--	unsigned int i;
--
--	dir = opendir(KVP_NET_DIR);
--	if (dir == NULL)
--		return NULL;
--
--	while ((entry = readdir(dir)) != NULL) {
--		/*
--		 * Set the state for the next pass.
--		 */
--		snprintf(dev_id, sizeof(dev_id), "%s%s/address", KVP_NET_DIR,
--			 entry->d_name);
--
--		file = fopen(dev_id, "r");
--		if (file == NULL)
--			continue;
--
--		p = fgets(buf, sizeof(buf), file);
--		if (p) {
--			x = strchr(p, '\n');
--			if (x)
--				*x = '\0';
--
--			for (i = 0; i < strlen(p); i++)
--				p[i] = toupper(p[i]);
--
--			if (!strcmp(p, mac)) {
--				/*
--				 * Found the MAC match; return the interface
--				 * name. The caller will free the memory.
--				 */
--				if_name = strdup(entry->d_name);
--				fclose(file);
--				break;
--			}
--		}
--		fclose(file);
--	}
--
--	closedir(dir);
--	return if_name;
--}
--
--
- static void kvp_process_ipconfig_file(char *cmd,
- 					char *config_buf, unsigned int len,
- 					int element_size, int offset)
-@@ -997,6 +939,70 @@ kvp_get_ip_info(int family, char *if_name, int op,
- 	return error;
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 68e1867cca80..e1154f0b582c 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -141,6 +141,15 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ 				   irq_stats(j)->irq_hv_callback_count);
+ 		seq_puts(p, "  Hypervisor callback interrupts\n");
+ 	}
++#endif
++#if IS_ENABLED(CONFIG_HYPERV)
++	if (test_bit(HYPERV_STIMER0_VECTOR, system_vectors)) {
++		seq_printf(p, "%*s: ", prec, "HVS");
++		for_each_online_cpu(j)
++			seq_printf(p, "%10u ",
++				   irq_stats(j)->hyperv_stimer0_count);
++		seq_puts(p, "  Hyper-V stimer0 interrupts\n");
++	}
+ #endif
+ 	seq_printf(p, "%*s: %10u\n", prec, "ERR", atomic_read(&irq_err_count));
+ #if defined(CONFIG_X86_IO_APIC)
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index 31142b72f1b9..4d56cc3a8dad 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -27,7 +27,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/hyperv.h>
+ #include <linux/version.h>
+-#include <linux/interrupt.h>
++#include <linux/random.h>
+ #include <linux/clockchips.h>
+ #include <asm/hyperv.h>
+ #include <asm/mshyperv.h>
+@@ -38,6 +38,17 @@ struct hv_context hv_context = {
+ 	.synic_initialized	= false,
+ };
+ 
++/*
++ * If false, we're using the old mechanism for stimer0 interrupts
++ * where it sends a VMbus message when it expires. The old
++ * mechanism is used when running on older versions of Hyper-V
++ * that don't support Direct Mode. While Hyper-V provides
++ * four stimer's per CPU, Linux uses only stimer0.
++ */
++static bool direct_mode_enabled;
++static int stimer0_irq;
++static int stimer0_vector;
++
+ #define HV_TIMER_FREQUENCY (10 * 1000 * 1000) /* 100ns period */
+ #define HV_MAX_MAX_DELTA_TICKS 0xffffffff
+ #define HV_MIN_DELTA_TICKS 1
+@@ -53,6 +64,8 @@ int hv_init(void)
+ 	if (!hv_context.cpu_context)
+ 		return -ENOMEM;
+ 
++	direct_mode_enabled = ms_hyperv.misc_features &
++			HV_X64_STIMER_DIRECT_MODE_AVAILABLE;
+ 	return 0;
+ }
+ 
+@@ -91,6 +104,21 @@ int hv_post_message(union hv_connection_id connection_id,
+ 	return status & 0xFFFF;
  }
  
 +/*
-+ * Retrieve the IP given the MAC address.
++ * ISR for when stimer0 is operating in Direct Mode.  Direct Mode
++ * does not use VMbus or any VMbus messages, so process here and not
++ * in the VMbus driver code.
 + */
-+static int kvp_mac_to_ip(struct hv_kvp_ipaddr_value *kvp_ip_val)
++
++static void hv_stimer0_isr(void)
 +{
-+	char *mac = (char *)kvp_ip_val->adapter_id;
-+	DIR *dir;
-+	struct dirent *entry;
-+	FILE    *file;
-+	char    *p, *x;
-+	char    *if_name = NULL;
-+	char    buf[256];
-+	char dev_id[PATH_MAX];
-+	unsigned int i;
-+	int error = HV_E_FAIL;
++	struct hv_per_cpu_context *hv_cpu;
 +
-+	dir = opendir(KVP_NET_DIR);
-+	if (dir == NULL)
-+		return HV_E_FAIL;
-+
-+	while ((entry = readdir(dir)) != NULL) {
-+		/*
-+		 * Set the state for the next pass.
-+		 */
-+		snprintf(dev_id, sizeof(dev_id), "%s%s/address", KVP_NET_DIR,
-+			 entry->d_name);
-+
-+		file = fopen(dev_id, "r");
-+		if (file == NULL)
-+			continue;
-+
-+		p = fgets(buf, sizeof(buf), file);
-+		fclose(file);
-+		if (!p)
-+			continue;
-+
-+		x = strchr(p, '\n');
-+		if (x)
-+			*x = '\0';
-+
-+		for (i = 0; i < strlen(p); i++)
-+			p[i] = toupper(p[i]);
-+
-+		if (strcmp(p, mac))
-+			continue;
-+
-+		/*
-+		 * Found the MAC match.
-+		 * A NIC (e.g. VF) matching the MAC, but without IP, is skipped.
-+		 */
-+		if_name = entry->d_name;
-+		if (!if_name)
-+			continue;
-+
-+		error = kvp_get_ip_info(0, if_name, KVP_OP_GET_IP_INFO,
-+					kvp_ip_val, MAX_IP_ADDR_SIZE * 2);
-+
-+		if (!error && strlen((char *)kvp_ip_val->ip_addr))
-+			break;
-+	}
-+
-+	closedir(dir);
-+	return error;
++	hv_cpu = this_cpu_ptr(hv_context.cpu_context);
++	hv_cpu->clk_evt->event_handler(hv_cpu->clk_evt);
++	add_interrupt_randomness(stimer0_vector, 0);
 +}
- 
- static int expand_ipv6(char *addr, int type)
++
+ static int hv_ce_set_next_event(unsigned long delta,
+ 				struct clock_event_device *evt)
  {
-@@ -1472,26 +1478,12 @@ int main(int argc, char *argv[])
- 		switch (op) {
- 		case KVP_OP_GET_IP_INFO:
- 			kvp_ip_val = &hv_msg->body.kvp_ip_val;
--			if_name =
--			kvp_mac_to_if_name((char *)kvp_ip_val->adapter_id);
+@@ -108,6 +136,8 @@ static int hv_ce_shutdown(struct clock_event_device *evt)
+ {
+ 	hv_init_timer(HV_X64_MSR_STIMER0_COUNT, 0);
+ 	hv_init_timer_config(HV_X64_MSR_STIMER0_CONFIG, 0);
++	if (direct_mode_enabled)
++		hv_disable_stimer0_percpu_irq(stimer0_irq);
  
--			if (if_name == NULL) {
--				/*
--				 * We could not map the mac address to an
--				 * interface name; return error.
--				 */
--				hv_msg->error = HV_E_FAIL;
--				break;
--			}
--			error = kvp_get_ip_info(
--						0, if_name, KVP_OP_GET_IP_INFO,
--						kvp_ip_val,
--						(MAX_IP_ADDR_SIZE * 2));
-+			error =  kvp_mac_to_ip(kvp_ip_val);
+ 	return 0;
+ }
+@@ -116,9 +146,29 @@ static int hv_ce_set_oneshot(struct clock_event_device *evt)
+ {
+ 	union hv_timer_config timer_cfg;
  
- 			if (error)
- 				hv_msg->error = error;
++	timer_cfg.as_uint64 = 0;
+ 	timer_cfg.enable = 1;
+ 	timer_cfg.auto_enable = 1;
+-	timer_cfg.sintx = VMBUS_MESSAGE_SINT;
++	if (direct_mode_enabled)
++		/*
++		 * When it expires, the timer will directly interrupt
++		 * on the specified hardware vector/IRQ.
++		 */
++		{
++		timer_cfg.direct_mode = 1;
++		timer_cfg.apic_vector = stimer0_vector;
++		hv_enable_stimer0_percpu_irq(stimer0_irq);
++		}
++	else
++		/*
++		 * When it expires, the timer will generate a VMbus message,
++		 * to be handled by the normal VMbus interrupt handler.
++		 */
++		{
++		timer_cfg.direct_mode = 0;
++		timer_cfg.sintx = VMBUS_MESSAGE_SINT;
++		}
++
+ 	hv_init_timer_config(HV_X64_MSR_STIMER0_CONFIG, timer_cfg.as_uint64);
  
--			free(if_name);
- 			break;
+ 	return 0;
+@@ -191,6 +241,10 @@ int hv_synic_alloc(void)
+ 		INIT_LIST_HEAD(&hv_cpu->chan_list);
+ 	}
  
- 		case KVP_OP_SET_IP_INFO:
++	if (direct_mode_enabled && hv_setup_stimer0_irq(
++		&stimer0_irq, &stimer0_vector, hv_stimer0_isr))
++		goto err;
++
+ 	return 0;
+ err:
+ 	return -ENOMEM;
+@@ -292,6 +346,9 @@ void hv_synic_clockevents_cleanup(void)
+ 	if (!(ms_hyperv.features & HV_X64_MSR_SYNTIMER_AVAILABLE))
+ 		return;
+ 
++	if (direct_mode_enabled)
++		hv_remove_stimer0_irq(stimer0_irq);
++
+ 	for_each_present_cpu(cpu) {
+ 		struct hv_per_cpu_context *hv_cpu
+ 			= per_cpu_ptr(hv_context.cpu_context, cpu);
+diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+index 22300ec7b556..36d34fe3ccb3 100644
+--- a/drivers/hv/hyperv_vmbus.h
++++ b/drivers/hv/hyperv_vmbus.h
+@@ -57,7 +57,9 @@ union hv_timer_config {
+ 		u64 periodic:1;
+ 		u64 lazy:1;
+ 		u64 auto_enable:1;
+-		u64 reserved_z0:12;
++		u64 apic_vector:8;
++		u64 direct_mode:1;
++		u64 reserved_z0:3;
+ 		u64 sintx:4;
+ 		u64 reserved_z1:44;
+ 	};
 -- 
 2.15.1
