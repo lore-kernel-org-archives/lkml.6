@@ -1,131 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753453AbeBLSPw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:15:52 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:46512 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752331AbeBLSPv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:15:51 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <david.rhodes@cirrus.com>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH 3/4] regmap: Don't use format_val in regmap_bulk_read
-Date: Mon, 12 Feb 2018 18:15:46 +0000
-Message-ID: <20180212181547.2415-3-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180212181547.2415-1-ckeepax@opensource.cirrus.com>
-References: <20180212181547.2415-1-ckeepax@opensource.cirrus.com>
+        id S1753196AbeBLSRT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:17:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44746 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751549AbeBLSRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:17:18 -0500
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 2/2] arm64: dts: juno: Describe the full GICv2m region
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Liviu Dudau <liviu.dudau@arm.com>
+References: <20180207143255.17003-1-marc.zyngier@arm.com>
+ <20180207143255.17003-3-marc.zyngier@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <d10fa874-1de2-1b95-dae1-42a336b98fa2@arm.com>
+Date: Mon, 12 Feb 2018 18:17:13 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=795 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802120234
+In-Reply-To: <20180207143255.17003-3-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A bulk read can be implemented either through regmap_raw_read, or
-by reading each register individually using regmap_read.  Both
-regmap_read and regmap_bulk_read should return values in native
-endian. In the individual case the current implementation calls
-format_val to put the data into the output array, which can cause
-endian issues. The regmap_read will have already converted the data
-into native endian, if the hosts endian differs from the device then
-format_val will switch the endian back again.
 
-Rather than using format_val simply use the code that is called if
-there is no format_val function. This code supports all cases except
-24-bit but there don't appear to be any users of regmap_bulk_read for
-24-bit. Additionally, it would have to be a big endian host for the
-old code to actually function correctly anyway.
 
-Fixes: 15b8d2c41fe5 ("regmap: Fix regmap_bulk_read in BE mode")
-Reported-by: David Rhodes <david.rhodes@cirrus.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/base/regmap/regmap.c | 55 ++++++++++++++++++--------------------------
- 1 file changed, 23 insertions(+), 32 deletions(-)
+On 07/02/18 14:32, Marc Zyngier wrote:
+> From: Robin Murphy <robin.murphy@arm.com>
+> 
+> Juno's GICv2m implementation consists of four frames providing 32
+> interrupts each. Since it is possible to plug in enough PCIe endpoints
+> to consume more than 32 MSIs, and the driver already has a bodge to
+> handle multiple frames, let's expose the other three as well.
+> 
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 2339b98f1b6e4..8594b02aa3e67 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -2709,47 +2709,38 @@ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
- 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
- 			map->format.parse_inplace(val + i);
- 	} else {
-+#ifdef CONFIG_64BIT
-+		u64 *u64 = val;
-+#endif
-+		u32 *u32 = val;
-+		u16 *u16 = val;
-+		u8 *u8 = val;
-+
- 		for (i = 0; i < val_count; i++) {
- 			unsigned int ival;
-+
- 			ret = regmap_read(map, reg + regmap_get_offset(map, i),
- 					  &ival);
- 			if (ret != 0)
- 				return ret;
- 
--			if (map->format.format_val) {
--				map->format.format_val(val + (i * val_bytes), ival, 0);
--			} else {
--				/* Devices providing read and write
--				 * operations can use the bulk I/O
--				 * functions if they define a val_bytes,
--				 * we assume that the values are native
--				 * endian.
--				 */
--#ifdef CONFIG_64BIT
--				u64 *u64 = val;
--#endif
--				u32 *u32 = val;
--				u16 *u16 = val;
--				u8 *u8 = val;
--
--				switch (map->format.val_bytes) {
-+			switch (map->format.val_bytes) {
- #ifdef CONFIG_64BIT
--				case 8:
--					u64[i] = ival;
--					break;
-+			case 8:
-+				u64[i] = ival;
-+				break;
- #endif
--				case 4:
--					u32[i] = ival;
--					break;
--				case 2:
--					u16[i] = ival;
--					break;
--				case 1:
--					u8[i] = ival;
--					break;
--				default:
--					return -EINVAL;
--				}
-+			case 4:
-+				u32[i] = ival;
-+				break;
-+			case 2:
-+				u16[i] = ival;
-+				break;
-+			case 1:
-+				u8[i] = ival;
-+				break;
-+			default:
-+				return -EINVAL;
- 			}
- 		}
- 	}
+Change on it own looks good. So if you want to merge via your tree:
+
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+
+Let me know if you decide not to take it via your tree and you want me
+to send it to arm-soc.
+
+On the side note I just noticed the Juno TRM[1] has 64k for each of
+these MSI frames(page 3-24 section 3.3.5 Application memory map summary)
+
+I am not sure if TRM is wrong. This patch is just copying the 4k size
+from frame 0 which got added with initial Juno DTS.
+
 -- 
-2.11.0
+Regards,
+Sudeep
+
+[1]
+http://infocenter.arm.com/help/topic/com.arm.doc.ddi0515f/DDI0515F_juno_arm_development_platform_soc_trm.pdf
