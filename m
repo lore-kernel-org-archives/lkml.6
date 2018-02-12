@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935614AbeBLNz2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:55:28 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:33018 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934522AbeBLNzZ (ORCPT
+        id S935727AbeBLNz6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:55:58 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:55980 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934690AbeBLNz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:55:25 -0500
+        Mon, 12 Feb 2018 08:55:26 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -16,9 +16,9 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/3] irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
-Date: Mon, 12 Feb 2018 14:55:12 +0100
-Message-Id: <1518443713-1835-3-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 1/3] irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock handling
+Date: Mon, 12 Feb 2018 14:55:11 +0100
+Message-Id: <1518443713-1835-2-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
 References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
@@ -26,10 +26,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 6f46aedb9c85873b ("irqchip: renesas-irqc: Add wake-up
-support"), when an IRQ is used for wakeup, the INTC
-block's module clock is manually kept running during system suspend, to
-make sure the device stays active.
+Since commit 705bc96c2c15313c ("irqchip: renesas-intc-irqpin: Add
+minimal runtime PM support"), when an IRQ is used for wakeup, the INTC
+block's module clock (if exists) is manually kept running during system
+suspend, to make sure the device stays active.
 
 However, this explicit clock handling is merely a workaround for a
 failure to properly communicate wakeup information to the device core.
@@ -52,37 +52,45 @@ v3:
   - Use new helper device_set_wakeup_path(),
   - Drop checks for CONFIG_PM_SLEEP, as device_set_wakeup_path() is
     always available, unlike dev_pm_info.wakeup_path,
-  - Mark irqc_suspend() __maybe_unused,
-  - Drop RFC state, now the dependencies are upstream.
+  - Mark intc_irqpin_suspend() __maybe_unused,
 
 v2 (sent by Ulf Hanson):
   - Convert to use the WAKEUP_PATH driver PM flag (Ulf).
 ---
- drivers/irqchip/irq-renesas-irqc.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 40 +++++++++++++------------------
+ 1 file changed, 16 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index 52304b139aa46a60..a4f11124024dcf32 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
+diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
+index cee59fe1321c44f9..c6e6c9e9137ad1d2 100644
+--- a/drivers/irqchip/irq-renesas-intc-irqpin.c
++++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
 @@ -17,7 +17,6 @@
   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   */
  
 -#include <linux/clk.h>
  #include <linux/init.h>
+ #include <linux/of.h>
  #include <linux/platform_device.h>
- #include <linux/spinlock.h>
-@@ -64,7 +63,7 @@ struct irqc_priv {
+@@ -78,16 +77,14 @@ struct intc_irqpin_priv {
  	struct platform_device *pdev;
- 	struct irq_chip_generic *gc;
+ 	struct irq_chip irq_chip;
  	struct irq_domain *irq_domain;
 -	struct clk *clk;
 +	atomic_t wakeup_path;
+ 	unsigned shared_irqs:1;
+-	unsigned needs_clk:1;
+ 	u8 shared_irq_mask;
  };
  
- static struct irqc_priv *irq_data_to_priv(struct irq_data *data)
-@@ -111,14 +110,10 @@ static int irqc_irq_set_wake(struct irq_data *d, unsigned int on)
+ struct intc_irqpin_config {
+ 	unsigned int irlm_bit;
+ 	unsigned needs_irlm:1;
+-	unsigned needs_clk:1;
+ };
+ 
+ static unsigned long intc_irqpin_read32(void __iomem *iomem)
+@@ -287,14 +284,10 @@ static int intc_irqpin_irq_set_wake(struct irq_data *d, unsigned int on)
  	int hw_irq = irqd_to_hwirq(d);
  
  	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
@@ -99,26 +107,45 @@ index 52304b139aa46a60..a4f11124024dcf32 100644
  
  	return 0;
  }
-@@ -159,12 +154,6 @@ static int irqc_probe(struct platform_device *pdev)
- 	p->pdev = pdev;
+@@ -369,12 +362,10 @@ static const struct irq_domain_ops intc_irqpin_irq_domain_ops = {
+ static const struct intc_irqpin_config intc_irqpin_irlm_r8a777x = {
+ 	.irlm_bit = 23, /* ICR0.IRLM0 */
+ 	.needs_irlm = 1,
+-	.needs_clk = 0,
+ };
+ 
+ static const struct intc_irqpin_config intc_irqpin_rmobile = {
+ 	.needs_irlm = 0,
+-	.needs_clk = 1,
+ };
+ 
+ static const struct of_device_id intc_irqpin_dt_ids[] = {
+@@ -426,18 +417,6 @@ static int intc_irqpin_probe(struct platform_device *pdev)
  	platform_set_drvdata(pdev, p);
  
--	p->clk = devm_clk_get(&pdev->dev, NULL);
+ 	config = of_device_get_match_data(dev);
+-	if (config)
+-		p->needs_clk = config->needs_clk;
+-
+-	p->clk = devm_clk_get(dev, NULL);
 -	if (IS_ERR(p->clk)) {
--		dev_warn(&pdev->dev, "unable to get clock\n");
+-		if (p->needs_clk) {
+-			dev_err(dev, "unable to get clock\n");
+-			ret = PTR_ERR(p->clk);
+-			goto err0;
+-		}
 -		p->clk = NULL;
 -	}
--
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
  
-@@ -276,6 +265,18 @@ static int irqc_remove(struct platform_device *pdev)
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
+@@ -606,12 +585,25 @@ static int intc_irqpin_remove(struct platform_device *pdev)
  	return 0;
  }
  
-+static int __maybe_unused irqc_suspend(struct device *dev)
++static int __maybe_unused intc_irqpin_suspend(struct device *dev)
 +{
-+	struct irqc_priv *p = dev_get_drvdata(dev);
++	struct intc_irqpin_priv *p = dev_get_drvdata(dev);
 +
 +	if (atomic_read(&p->wakeup_path))
 +		device_set_wakeup_path(dev);
@@ -126,16 +153,15 @@ index 52304b139aa46a60..a4f11124024dcf32 100644
 +	return 0;
 +}
 +
-+static SIMPLE_DEV_PM_OPS(irqc_pm_ops, irqc_suspend, NULL);
++static SIMPLE_DEV_PM_OPS(intc_irqpin_pm_ops, intc_irqpin_suspend, NULL);
 +
- static const struct of_device_id irqc_dt_ids[] = {
- 	{ .compatible = "renesas,irqc", },
- 	{},
-@@ -288,6 +289,7 @@ static struct platform_driver irqc_device_driver = {
+ static struct platform_driver intc_irqpin_device_driver = {
+ 	.probe		= intc_irqpin_probe,
+ 	.remove		= intc_irqpin_remove,
  	.driver		= {
- 		.name	= "renesas_irqc",
- 		.of_match_table	= irqc_dt_ids,
-+		.pm	= &irqc_pm_ops,
+ 		.name	= "renesas_intc_irqpin",
+ 		.of_match_table = intc_irqpin_dt_ids,
++		.pm	= &intc_irqpin_pm_ops,
  	}
  };
  
