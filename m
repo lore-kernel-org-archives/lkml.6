@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933350AbeBLKRW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:17:22 -0500
-Received: from [198.137.202.136] ([198.137.202.136]:43921 "EHLO
+        id S933507AbeBLKRm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:17:42 -0500
+Received: from [198.137.202.136] ([198.137.202.136]:37081 "EHLO
         terminus.zytor.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S932663AbeBLKRU (ORCPT
+        with ESMTP id S932756AbeBLKRj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:17:20 -0500
-Date: Mon, 12 Feb 2018 02:16:25 -0800
+        Mon, 12 Feb 2018 05:17:39 -0500
+Date: Mon, 12 Feb 2018 02:16:57 -0800
 From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-a1490086a98e51e3358be8eaf2bc5743c73c6b6e@git.kernel.org>
-Cc: linux@dominikbrodowski.net, luto@kernel.org,
-        torvalds@linux-foundation.org, brgerst@gmail.com, tglx@linutronix.de,
-        mingo@kernel.org, dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, jpoimboe@redhat.com, hpa@zytor.com, bp@alien8.de
-Reply-To: luto@kernel.org, torvalds@linux-foundation.org, brgerst@gmail.com,
-        tglx@linutronix.de, linux@dominikbrodowski.net, bp@alien8.de,
-        hpa@zytor.com, dvlasenk@redhat.com, jpoimboe@redhat.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20180211104949.12992-3-linux@dominikbrodowski.net>
-References: <20180211104949.12992-3-linux@dominikbrodowski.net>
+Message-ID: <tip-e922c091d34db9dec1eeb6e7b923043ae4d366e3@git.kernel.org>
+Cc: bp@alien8.de, tglx@linutronix.de, hpa@zytor.com,
+        torvalds@linux-foundation.org, jpoimboe@redhat.com, luto@kernel.org,
+        dvlasenk@redhat.com, brgerst@gmail.com, linux@dominikbrodowski.net,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org
+Reply-To: luto@kernel.org, dvlasenk@redhat.com, mingo@kernel.org,
+        brgerst@gmail.com, linux@dominikbrodowski.net,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, bp@alien8.de,
+        tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org,
+        jpoimboe@redhat.com
+In-Reply-To: <20180211104949.12992-4-linux@dominikbrodowski.net>
+References: <20180211104949.12992-4-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Merge the POP_C_REGS and POP_EXTRA_REGS
- macros into a single POP_REGS macro
-Git-Commit-ID: a1490086a98e51e3358be8eaf2bc5743c73c6b6e
+Subject: [tip:x86/pti] x86/entry/64: Interleave XOR register clearing with
+ PUSH instructions
+Git-Commit-ID: e922c091d34db9dec1eeb6e7b923043ae4d366e3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,17 +37,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a1490086a98e51e3358be8eaf2bc5743c73c6b6e
-Gitweb:     https://git.kernel.org/tip/a1490086a98e51e3358be8eaf2bc5743c73c6b6e
+Commit-ID:  e922c091d34db9dec1eeb6e7b923043ae4d366e3
+Gitweb:     https://git.kernel.org/tip/e922c091d34db9dec1eeb6e7b923043ae4d366e3
 Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Sun, 11 Feb 2018 11:49:43 +0100
+AuthorDate: Sun, 11 Feb 2018 11:49:44 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 12 Feb 2018 08:06:35 +0100
 
-x86/entry/64: Merge the POP_C_REGS and POP_EXTRA_REGS macros into a single POP_REGS macro
+x86/entry/64: Interleave XOR register clearing with PUSH instructions
 
-The two special, opencoded cases for POP_C_REGS can be handled by ASM
-macros.
+Same as is done for syscalls, interleave XOR with PUSH instructions
+for exceptions/interrupts, in order to minimize the cost of the
+additional instructions required for register clearing.
 
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -59,109 +61,166 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180211104949.12992-3-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180211104949.12992-4-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/calling.h  | 15 +++++++++++----
- arch/x86/entry/entry_64.S | 26 ++++----------------------
- 2 files changed, 15 insertions(+), 26 deletions(-)
+ arch/x86/entry/calling.h  | 40 +++++++++++++++++++---------------------
+ arch/x86/entry/entry_64.S | 30 +++++++++++++++++++++---------
+ 2 files changed, 40 insertions(+), 30 deletions(-)
 
 diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 8907a65..3bda317 100644
+index 3bda317..a05cbb8 100644
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -139,25 +139,32 @@ For 32-bit we have the following conventions - kernel is built with
- 	xorq %r15, %r15
+@@ -101,44 +101,42 @@ For 32-bit we have the following conventions - kernel is built with
+ 	addq	$-(15*8), %rsp
  	.endm
  
--	.macro POP_EXTRA_REGS
-+	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
- 	popq %r15
- 	popq %r14
- 	popq %r13
- 	popq %r12
- 	popq %rbp
- 	popq %rbx
+-	.macro SAVE_REGS offset=0
++	.macro SAVE_AND_CLEAR_REGS offset=0
++	/*
++	 * Save registers and sanitize registers of values that a
++	 * speculation attack might otherwise want to exploit. The
++	 * lower registers are likely clobbered well before they
++	 * could be put to use in a speculative execution gadget.
++	 * Interleave XOR with PUSH for better uop scheduling:
++	 */
+ 	movq %rdi, 14*8+\offset(%rsp)
+ 	movq %rsi, 13*8+\offset(%rsp)
+ 	movq %rdx, 12*8+\offset(%rsp)
+ 	movq %rcx, 11*8+\offset(%rsp)
+ 	movq %rax, 10*8+\offset(%rsp)
+ 	movq %r8,  9*8+\offset(%rsp)
++	xorq %r8, %r8				/* nospec r8 */
+ 	movq %r9,  8*8+\offset(%rsp)
++	xorq %r9, %r9				/* nospec r9 */
+ 	movq %r10, 7*8+\offset(%rsp)
++	xorq %r10, %r10				/* nospec r10 */
+ 	movq %r11, 6*8+\offset(%rsp)
++	xorq %r11, %r11				/* nospec r11 */
+ 	movq %rbx, 5*8+\offset(%rsp)
++	xorl %ebx, %ebx				/* nospec rbx */
+ 	movq %rbp, 4*8+\offset(%rsp)
++	xorl %ebp, %ebp				/* nospec rbp */
+ 	movq %r12, 3*8+\offset(%rsp)
++	xorq %r12, %r12				/* nospec r12 */
+ 	movq %r13, 2*8+\offset(%rsp)
++	xorq %r13, %r13				/* nospec r13 */
+ 	movq %r14, 1*8+\offset(%rsp)
++	xorq %r14, %r14				/* nospec r14 */
+ 	movq %r15, 0*8+\offset(%rsp)
++	xorq %r15, %r15				/* nospec r15 */
+ 	UNWIND_HINT_REGS offset=\offset
+ 	.endm
+ 
+-	/*
+-	 * Sanitize registers of values that a speculation attack
+-	 * might otherwise want to exploit. The lower registers are
+-	 * likely clobbered well before they could be put to use in
+-	 * a speculative execution gadget:
+-	 */
+-	.macro CLEAR_REGS_NOSPEC
+-	xorl %ebp, %ebp
+-	xorl %ebx, %ebx
+-	xorq %r8, %r8
+-	xorq %r9, %r9
+-	xorq %r10, %r10
+-	xorq %r11, %r11
+-	xorq %r12, %r12
+-	xorq %r13, %r13
+-	xorq %r14, %r14
+-	xorq %r15, %r15
 -	.endm
 -
--	.macro POP_C_REGS
-+	.if \skip_r11rcx
-+	popq %rsi
-+	.else
- 	popq %r11
-+	.endif
- 	popq %r10
- 	popq %r9
- 	popq %r8
- 	popq %rax
-+	.if \skip_r11rcx
-+	popq %rsi
-+	.else
- 	popq %rcx
-+	.endif
- 	popq %rdx
- 	popq %rsi
-+	.if \pop_rdi
- 	popq %rdi
-+	.endif
- 	.endm
- 
- 	.macro icebp
+ 	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+@@ -177,7 +175,7 @@ For 32-bit we have the following conventions - kernel is built with
+  * is just setting the LSB, which makes it an invalid stack address and is also
+  * a signal to the unwinder that it's a pt_regs pointer in disguise.
+  *
+- * NOTE: This macro must be used *after* SAVE_REGS because it corrupts
++ * NOTE: This macro must be used *after* SAVE_AND_CLEAR_REGS because it corrupts
+  * the original rbp.
+  */
+ .macro ENCODE_FRAME_POINTER ptregs_offset=0
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 1a6fc01..7351c91 100644
+index 7351c91..07692b4 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -334,15 +334,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
- syscall_return_via_sysret:
- 	/* rcx and r11 are already restored (see code above) */
- 	UNWIND_HINT_EMPTY
--	POP_EXTRA_REGS
--	popq	%rsi	/* skip r11 */
--	popq	%r10
--	popq	%r9
--	popq	%r8
--	popq	%rax
--	popq	%rsi	/* skip rcx */
--	popq	%rdx
--	popq	%rsi
-+	POP_REGS pop_rdi=0 skip_r11rcx=1
- 
- 	/*
- 	 * Now all regs are restored except RSP and RDI.
-@@ -635,15 +627,7 @@ GLOBAL(swapgs_restore_regs_and_return_to_usermode)
- 	ud2
+@@ -565,8 +565,7 @@ END(irq_entries_start)
  1:
- #endif
--	POP_EXTRA_REGS
--	popq	%r11
--	popq	%r10
--	popq	%r9
--	popq	%r8
--	popq	%rax
--	popq	%rcx
--	popq	%rdx
--	popq	%rsi
-+	POP_REGS pop_rdi=0
+ 
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 
+ 	testb	$3, CS(%rsp)
+@@ -1114,8 +1113,7 @@ ENTRY(xen_failsafe_callback)
+ 	UNWIND_HINT_IRET_REGS
+ 	pushq	$-1 /* orig_ax = -1 => not a system call */
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
+@@ -1159,8 +1157,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+ ENTRY(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1211,8 +1208,7 @@ END(paranoid_exit)
+ ENTRY(error_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
+ 	testb	$3, CS+8(%rsp)
+ 	jz	.Lerror_kernelspace
+@@ -1399,18 +1395,34 @@ ENTRY(nmi)
+ 	pushq   (%rdx)		/* pt_regs->dx */
+ 	pushq   %rcx		/* pt_regs->cx */
+ 	pushq   %rax		/* pt_regs->ax */
++	/*
++	 * Sanitize registers of values that a speculation attack
++	 * might otherwise want to exploit. The lower registers are
++	 * likely clobbered well before they could be put to use in
++	 * a speculative execution gadget. Interleave XOR with PUSH
++	 * for better uop scheduling:
++	 */
+ 	pushq   %r8		/* pt_regs->r8 */
++	xorq    %r8, %r8	/* nospec   r8 */
+ 	pushq   %r9		/* pt_regs->r9 */
++	xorq    %r9, %r9	/* nospec   r9 */
+ 	pushq   %r10		/* pt_regs->r10 */
++	xorq    %r10, %r10	/* nospec   r10 */
+ 	pushq   %r11		/* pt_regs->r11 */
++	xorq    %r11, %r11	/* nospec   r11*/
+ 	pushq	%rbx		/* pt_regs->rbx */
++	xorl    %ebx, %ebx	/* nospec   rbx*/
+ 	pushq	%rbp		/* pt_regs->rbp */
++	xorl    %ebp, %ebp	/* nospec   rbp*/
+ 	pushq	%r12		/* pt_regs->r12 */
++	xorq    %r12, %r12	/* nospec   r12*/
+ 	pushq	%r13		/* pt_regs->r13 */
++	xorq    %r13, %r13	/* nospec   r13*/
+ 	pushq	%r14		/* pt_regs->r14 */
++	xorq    %r14, %r14	/* nospec   r14*/
+ 	pushq	%r15		/* pt_regs->r15 */
++	xorq    %r15, %r15	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
+-	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
  
  	/*
- 	 * The stack is now user RDI, orig_ax, RIP, CS, EFLAGS, RSP, SS.
-@@ -701,8 +685,7 @@ GLOBAL(restore_regs_and_return_to_kernel)
- 	ud2
- 1:
- #endif
--	POP_EXTRA_REGS
--	POP_C_REGS
-+	POP_REGS
- 	addq	$8, %rsp	/* skip regs->orig_ax */
- 	INTERRUPT_RETURN
- 
-@@ -1661,8 +1644,7 @@ end_repeat_nmi:
- nmi_swapgs:
- 	SWAPGS_UNSAFE_STACK
- nmi_restore:
--	POP_EXTRA_REGS
--	POP_C_REGS
-+	POP_REGS
- 
- 	/*
- 	 * Skip orig_ax and the "outermost" frame to point RSP at the "iret"
