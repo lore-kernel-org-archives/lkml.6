@@ -1,137 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934940AbeBLQDb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 11:03:31 -0500
-Received: from mail-pg0-f41.google.com ([74.125.83.41]:38237 "EHLO
-        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932878AbeBLQD3 (ORCPT
+        id S934912AbeBLQG4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 11:06:56 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:41326 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932878AbeBLQGy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 11:03:29 -0500
-X-Google-Smtp-Source: AH8x224PcWjYcp/q7DYZ8irZ5q/HVJ34RFQX0oetZbbvqcMlqDn3rsL2hc6sQBS1uMasnkRYVtQVDrPwM/jeKLTNBJY=
+        Mon, 12 Feb 2018 11:06:54 -0500
+X-Google-Smtp-Source: AH8x226Qj/Jjptq3zekA6HHbXdmELE2RqwpfQB9UcLEU9+SppAMoHWPFXjLFmpaII2mwY9NWv9bDor/PyJ8BIL8MgxQ=
 MIME-Version: 1.0
-In-Reply-To: <001a113f8734783e94056505f8fd@google.com>
-References: <001a113f8734783e94056505f8fd@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 12 Feb 2018 17:03:08 +0100
-Message-ID: <CACT4Y+ZBHw7VZBFOeqLmrpmzgn4owW88qvP5v=xnr9966hbM_Q@mail.gmail.com>
-Subject: Re: lost connection to test machine (4)
-To: syzbot <syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+In-Reply-To: <20180212153805.GW25201@hirez.programming.kicks-ass.net>
+References: <1518422874-13216-1-git-send-email-vincent.guittot@linaro.org>
+ <1518422874-13216-4-git-send-email-vincent.guittot@linaro.org>
+ <20180212120411.GT25201@hirez.programming.kicks-ass.net> <20180212143444.GA12378@linaro.org>
+ <20180212153805.GW25201@hirez.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 12 Feb 2018 17:06:32 +0100
+Message-ID: <CAKfTPtAXk=U2aNnnhFQHmRkCXZ_-uoW1n2CuCP4MD7YK1cOGmg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] sched: update blocked load when newly idle
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1CG72cB021908
 
-On Mon, Feb 12, 2018 at 5:00 PM, syzbot
-<syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com> wrote:
-> Hello,
+On 12 February 2018 at 16:38, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Feb 12, 2018 at 03:34:44PM +0100, Vincent Guittot wrote:
+>> Le Monday 12 Feb 2018 à 13:04:11 (+0100), Peter Zijlstra a écrit :
+>> > On Mon, Feb 12, 2018 at 09:07:54AM +0100, Vincent Guittot wrote:
 >
-> syzbot hit the following crash on bpf-next commit
-> 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
-> Merge tag 'usercopy-v4.16-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+>> > So I really hate this one, also I suspect its broken, because we do this
+>> > check before dropping rq->lock and _nohz_idle_balance() will take
+>> > rq->lock.
+>>
+>> yes. it will take both newly idle rq and idle rq lock
 >
-> So far this crash happened 898 times on bpf-next, net-next, upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-
-
-The reproducer first causes several tasks spending minutes at this stack:
-
-[  110.762189] NMI backtrace for cpu 2
-[  110.762206] CPU: 2 PID: 3760 Comm: syz-executor Not tainted 4.15.0+ #96
-[  110.762210] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS Bochs 01/01/2011
-[  110.762224] RIP: 0010:mutex_spin_on_owner+0x303/0x420
-[  110.762232] INFO: NMI handler (nmi_cpu_backtrace_handler) took too
-long to run: 1.103 msecs
-[  110.762237] RSP: 0018:ffff88005be470e8 EFLAGS: 00000246
-[  110.762268] RAX: ffff88006ca00000 RBX: 0000000000000000 RCX: ffffffff81554165
-[  110.762275] RDX: 0000000000000001 RSI: 1ffffffff0d97884 RDI: 0000000000000000
-[  110.762281] RBP: ffff88005be47210 R08: dffffc0000000001 R09: fffffbfff0db2b75
-[  110.762286] R10: fffffbfff0db2b74 R11: ffffffff86d95ba7 R12: ffffffff86d95ba0
-[  110.762292] R13: ffffed000b7c8e25 R14: dffffc0000000000 R15: ffff880064691040
-[  110.762300] FS:  00007f84ed029700(0000) GS:ffff88006cb00000(0000)
-knlGS:0000000000000000
-[  110.762305] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  110.762311] CR2: 00007fd565f7b1b0 CR3: 000000005bddf002 CR4: 00000000001606e0
-[  110.762316] Call Trace:
-[  110.762383]  __mutex_lock.isra.1+0x97d/0x1440
-[  110.762659]  __mutex_lock_slowpath+0xe/0x10
-[  110.762668]  mutex_lock+0x3e/0x50
-[  110.762677]  pcpu_alloc+0x846/0xfe0
-[  110.762778]  __alloc_percpu_gfp+0x27/0x30
-[  110.762801]  array_map_alloc+0x484/0x690
-[  110.762832]  SyS_bpf+0xa27/0x4770
-[  110.763190]  do_syscall_64+0x297/0x760
-[  110.763260]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-
-and later machine dies with:
-
-[  191.484308] Kernel panic - not syncing: Out of memory and no
-killable processes...
-[  191.484308]
-[  191.485740] CPU: 3 PID: 746 Comm: kworker/3:1 Not tainted 4.15.0+ #96
-[  191.486761] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS Bochs 01/01/2011
-[  191.488071] Workqueue: events pcpu_balance_workfn
-[  191.488821] Call Trace:
-[  191.489299]  dump_stack+0x175/0x225
-[  191.490590]  panic+0x22a/0x4be
-[  191.493061]  out_of_memory.cold.31+0x20/0x21
-[  191.496380]  __alloc_pages_slowpath+0x1d98/0x28a0
-[  191.503616]  __alloc_pages_nodemask+0x89c/0xc60
-[  191.507876]  pcpu_populate_chunk+0x1fd/0x9b0
-[  191.510114]  pcpu_balance_workfn+0x1019/0x1450
-[  191.517804]  process_one_work+0x9d5/0x1460
-[  191.522714]  worker_thread+0x1cc/0x1410
-[  191.529319]  kthread+0x304/0x3c0
-
-
-The original message with attachments is here:
-https://groups.google.com/d/msg/syzkaller-bugs/Km3xEZu9zzU/rO-7XuwZAgAJ
-
-
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
+> Right, can't do that, there's ordering rules for multiple RQ locks etc..
 >
+>>
+>> >
+>> >
+>> > Aside from the above being an unreadable mess, I dislike that it breaks
+>> > the various isolation crud, we should not touch CPUs outside of our
+>> > domain.
+>> >
+>> >
+>> > Maybe something like the below? (unfinished)
+>> >
+>>
+>> good catch. I completely miss the isolation stuff.
+>> But isn't already the case when kicking ilb ? I mean that an idle CPU touches
+>> all idle CPUs and some can be outside its domain during ilb.
 >
+>> Shouldn't we test housekeeping_cpu(cpu, HK_FLAG_SCHED) instead if we want to
+>> make sure that an isolated/full nohz CPU will not be used for updating blocked
+>> load of CPUs outside its domain ?
 >
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
+> I _thought_ we had some 'housekeeping' crud in the ilb selection logic,
+> but now I can't find it. Frederic?
 >
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+>> Is something below more readable:
+>>
+>>               /*
+>> +              * This CPU doesn't want to be disturbed by scheduler
+>> +              * houskeeping
+>>                */
+>> +             if (!housekeeping_cpu(cpu, HK_FLAG_SCHED))
+>> +                     goto out;
+>> +
+>> +             /* Will wake up very soon. No time for doing anything else*/
+>> +             if (this_rq->avg_idle < sysctl_sched_migration_cost)
+>> +                     goto out;
+>> +
+>> +             /* Don't need to update blocked load of idle CPUs*/
+>> +             if (!has_blocked || time_after_eq(jiffies, next_blocked)
+>> +                     goto out;
+>> +
+>> +             raw_spin_unlock(&this_rq->lock);
+>> +             /*
+>> +              * This CPU is going to be idle and blocked load of idle CPUs
+>> +              * need to be updated. Run the ilb locally as it is a good
+>> +              * candidate for ilb instead of waking up another idle CPU.
+>> +              * Kick an normal ilb if we failed to do the update.
+>> +              */
+>> +             if !_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE))
+>>                       kick_ilb(NOHZ_STATS_KICK);
+>> +             raw_spin_lock(&this_rq->lock);
+>>
+>>               goto out;
 >
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/001a113f8734783e94056505f8fd%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+> It is, but I think you're still doing that avg_idle thing twice now,
+> right?
+
+yes the goal was to try to not exceed idle time but I wonder if it is
+really needed because the need_resched() in the
+"for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+" will abort the loop if something is schedule on this_cpu just like
+for a normal ilb().
+So I think that we can remove this test with avg_idle.
+
+>
+>> > @@ -7850,7 +7850,7 @@ static bool update_nohz_stats(struct rq
+>> >     if (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
+>> >             return false;
+>> >
+>> > -   if (!time_after(jiffies, rq->last_blocked_load_update_tick))
+>> > +   if (!force && !time_after(jiffies, rq->last_blocked_load_update_tick))
+>>
+>> This fix the concern raised on the other thread, isn't it ?
+>
+> Yes.
+>
+>> > +static int nohz_age(struct sched_domain *sd)
+>> > +{
+>> > +   struct cpumask *cpus = this_cpu_cpumask_var_ptr(load_balance_mask);
+>> > +   bool has_blocked_load;
+>> > +
+>> > +   WRITE_ONCE(nohz.has_blocked, 0);
+>> > +
+>> > +   smp_mb();
+>> > +
+>> > +   cpumask_and(cpus, sched_domain_span(sd), nohz.idle_cpus_mask);
+>> > +
+>> > +   has_blocked_load = cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(sd));
+>> > +
+>> > +   for_each_cpu(cpu, cpus) {
+>> > +           struct rq *rq = cpu_rq(cpu);
+>> > +
+>> > +           has_blocked_load |= update_nohz_stats(rq, true);
+>> > +   }
+>> > +
+>> > +   if (has_blocked_load)
+>> > +           WRITE_ONCE(nohz.has_blocked, 1);
+>> > +}
+>> > +
+>>
+>> we duplicate what is done in nohe_idle_balance
+>
+> In parts yes.. I was too lazy to combine :-)
+>
+>> > @@ -8919,9 +8955,13 @@ static int idle_balance(struct rq *this_
+>> >             if (sd->flags & SD_BALANCE_NEWIDLE) {
+>> >                     t0 = sched_clock_cpu(this_cpu);
+>> >
+>> > -                   pulled_task = load_balance(this_cpu, this_rq,
+>> > -                                              sd, CPU_NEWLY_IDLE,
+>> > -                                              &continue_balancing);
+>> > +                   if (nohz_blocked) {
+>> > +                           nohz_age(sd);
+>>
+>> Do we really need to loop all sched_domain of newly idle CPU and call
+>> nohz_age for each level ?
+>> Can't we only call  nohz_age with the widest/last sched_domain level ?
+>
+> Yeah, dunno. I went back and forth on that a bit. The largest is
+> rq->rd->span. The reason I settled on this variant in the end is that it
+> keeps locality. When short idle, it will only scan nearby CPUs instead
+> of reaching half-way across the machine.
+>
+>> Furthermore, we use sd->max_newidle_lb_cost to decide to abort the loop.
+>> But this is updated with full load balancing which is longer than just
+>> updating blocked load.
+>> This will increase the chance to abort before reaching the last level.
+>
+> Yes.. I figured we'd take that hit :/
+>
+>> > +                   } else {
+>> > +                           pulled_task = load_balance(this_cpu, this_rq,
+>> > +                                           sd, CPU_NEWLY_IDLE,
+>> > +                                           &continue_balancing);
+>> > +                   }
+>> >
+>> >                     domain_cost = sched_clock_cpu(this_cpu) - t0;
+>> >                     if (domain_cost > sd->max_newidle_lb_cost)
+>>
+>> We have to kick an ilb if we must abort before looping all levels and all
+>> idle CPUs otherwise we can have situation where the load of some idle CPus
+>> could stay blocked
+>
+> Yes, like said, was unfinished, I gave up before I got to that.
