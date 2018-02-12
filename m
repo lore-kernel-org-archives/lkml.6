@@ -1,51 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753078AbeBLRDa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:03:30 -0500
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:41628 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752745AbeBLRD2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:03:28 -0500
-X-Google-Smtp-Source: AH8x224enHG1Js2g63B6y0/L6hW/eusKhkKp29IDIUlJYCMqGnR69IXfUGTo0vqlPA86VHOxoYYU7w==
-Date: Mon, 12 Feb 2018 09:03:25 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: dennisszhou@gmail.com, Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
-Subject: Re: lost connection to test machine (4)
-Message-ID: <20180212170325.GW695913@devbig577.frc2.facebook.com>
-References: <001a113f8734783e94056505f8fd@google.com>
- <CACT4Y+ZBHw7VZBFOeqLmrpmzgn4owW88qvP5v=xnr9966hbM_Q@mail.gmail.com>
- <00c45ca8-305d-1818-e974-a9903c8494b8@iogearbox.net>
+        id S1751781AbeBLRE5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:04:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751063AbeBLRE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 12:04:56 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4236921104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 12 Feb 2018 12:04:52 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing/power: Don't share template for cpu_idle and
+ cpu_frequency
+Message-ID: <20180212120452.50abd9bf@gandalf.local.home>
+In-Reply-To: <20180211105004.p55ajlt5kw36qwxi@intel.com>
+References: <1518226624-8931-1-git-send-email-changbin.du@intel.com>
+        <20180209214458.1ed36c3c@vmware.local.home>
+        <20180211105004.p55ajlt5kw36qwxi@intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00c45ca8-305d-1818-e974-a9903c8494b8@iogearbox.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Daniel.
+On Sun, 11 Feb 2018 18:50:04 +0800
+"Du, Changbin" <changbin.du@intel.com> wrote:
 
-On Mon, Feb 12, 2018 at 06:00:13PM +0100, Daniel Borkmann wrote:
-> [ +Dennis, +Tejun ]
+> Steve, How abount DEFINE_EVENT_PRINT as below?
+
+Yes, DEFINE_EVENT_PRINT is better.
+
 > 
-> Looks like we're stuck in percpu allocator with key/value size of 4 bytes
-> each and large number of entries (max_entries) in the reproducer in above
-> link.
+> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+> index 908977d..e71ce98 100644
+> --- a/include/trace/events/power.h
+> +++ b/include/trace/events/power.h
+> @@ -14,12 +14,12 @@
 > 
-> Could we have some __GFP_NORETRY semantics and let allocations fail instead
-> of triggering OOM killer?
+>  DECLARE_EVENT_CLASS(cpu,
+> 
+> -       TP_PROTO(unsigned int state, unsigned int cpu_id),
+> +       TP_PROTO(int state, unsigned int cpu_id),
+> 
+>         TP_ARGS(state, cpu_id),
+> 
+>         TP_STRUCT__entry(
+> -               __field(        u32,            state           )
+> +               __field(        s32,            state           )
+>                 __field(        u32,            cpu_id          )
+>         ),
+> 
+> @@ -28,13 +28,12 @@ DECLARE_EVENT_CLASS(cpu,
+>                 __entry->cpu_id = cpu_id;
+>         ),
+> 
+> -       TP_printk("state=%lu cpu_id=%lu", (unsigned long)__entry->state,
+> -                 (unsigned long)__entry->cpu_id)
 
-For some part, maybe, but not generally.  The virt area allocation
-goes down to page table allocation which is hard coded to use
-GFP_KERNEL in arch mm code.
+Yous still need the type casting, because s32/u32 on 32 bit machines
+can be defined as "long".
 
-Thanks.
+-- Steve
 
--- 
-tejun
+> +       TP_printk("state=%d cpu_id=%u", __entry->state, __entry->cpu_id)
+>  );
+> 
+>  DEFINE_EVENT(cpu, cpu_idle,
+> 
+> -       TP_PROTO(unsigned int state, unsigned int cpu_id),
+> +       TP_PROTO(int state, unsigned int cpu_id),
+> 
+>         TP_ARGS(state, cpu_id)
+>  );
+> @@ -141,11 +140,13 @@ TRACE_EVENT(pstate_sample,
+>                 { PM_EVENT_RESTORE, "restore" }, \
+>                 { PM_EVENT_RECOVER, "recover" })
+> 
+> -DEFINE_EVENT(cpu, cpu_frequency,
+> +DEFINE_EVENT_PRINT(cpu, cpu_frequency,
+> 
+> -       TP_PROTO(unsigned int frequency, unsigned int cpu_id),
+> +       TP_PROTO(int state, unsigned int cpu_id),
+> 
+> -       TP_ARGS(frequency, cpu_id)
+> +       TP_ARGS(state, cpu_id),
+> +
+> +       TP_printk("frequency=%u cpu_id=%lu", __entry->state, __entry->cpu_id)
+>  );
