@@ -1,77 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933861AbeBLK3F (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:29:05 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43156 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932868AbeBLK3D (ORCPT
+        id S933724AbeBLKby (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:31:54 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:39791 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932941AbeBLKbx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:29:03 -0500
-X-Google-Smtp-Source: AH8x225YyjH2FjZVQAd3OrIgp7g3vx2DE0cS+prkD3Rfmc6LJOq/ZBXpk7WtkMa4WMhtJXPS0h7zVg==
-Date: Mon, 12 Feb 2018 15:59:00 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Cc: rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH] cpufreq: powernv: Check  negative value returned by
- cpufreq_table_find_index_dl()
-Message-ID: <20180212102900.GU28462@vireshk-i7>
-References: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+        Mon, 12 Feb 2018 05:31:53 -0500
+Date: Mon, 12 Feb 2018 11:31:51 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: han.xu@nxp.com, boris.brezillon@free-electrons.com,
+        marek.vasut@gmail.com, richard@nod.at, dwmw2@infradead.org,
+        cyrille.pitchen@wedev4u.fr, max.oss.09@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mtd: nand: gpmi: add support for specific ECC
+ strength
+Message-ID: <20180212113151.17c60680@bbrezillon>
+In-Reply-To: <20180206174021.5947-2-stefan@agner.ch>
+References: <20180206174021.5947-1-stefan@agner.ch>
+        <20180206174021.5947-2-stefan@agner.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-02-18, 15:51, Shilpasri G Bhat wrote:
-> This patch fixes the below Coverity warning:
+On Tue,  6 Feb 2018 18:40:21 +0100
+Stefan Agner <stefan@agner.ch> wrote:
+
+> Add support for specified ECC strength/size using device tree
+> properties nand-ecc-strength/nand-ecc-step-size.
 > 
-> *** CID 182816:  Memory - illegal accesses  (NEGATIVE_RETURNS)
-> /drivers/cpufreq/powernv-cpufreq.c: 1008 in powernv_fast_switch()
-> 1002     					unsigned int target_freq)
-> 1003     {
-> 1004     	int index;
-> 1005     	struct powernv_smp_call_data freq_data;
-> 1006
-> 1007     	index = cpufreq_table_find_index_dl(policy, target_freq);
-> >>>     CID 182816:  Memory - illegal accesses  (NEGATIVE_RETURNS)
-> >>>     Using variable "index" as an index to array "powernv_freqs".
-> 1008     	freq_data.pstate_id = powernv_freqs[index].driver_data;
-> 1009     	freq_data.gpstate_id = powernv_freqs[index].driver_data;
-> 1010     	set_pstate(&freq_data);
-> 1011
-> 1012     	return powernv_freqs[index].frequency;
-> 1013     }
-> 
-> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
->  drivers/cpufreq/powernv-cpufreq.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../devicetree/bindings/mtd/gpmi-nand.txt          |  5 ++++
+
+I don't care that much, but I know DT maintainers like to have DT
+bindings changes placed in a separate patch.
+
+>  drivers/mtd/nand/gpmi-nand/gpmi-nand.c             | 29 ++++++++++++++--------
+>  2 files changed, 24 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-> index 29cdec1..69edfe9 100644
-> --- a/drivers/cpufreq/powernv-cpufreq.c
-> +++ b/drivers/cpufreq/powernv-cpufreq.c
-> @@ -1005,6 +1005,9 @@ static unsigned int powernv_fast_switch(struct cpufreq_policy *policy,
->  	struct powernv_smp_call_data freq_data;
+> diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
+> index eb2d9919d063..ea6e9b735160 100644
+> --- a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
+> +++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
+> @@ -46,6 +46,11 @@ Optional properties:
+>                         partitions written from Linux with this feature
+>                         turned on may not be accessible by the BootROM
+>                         code.
+> +  - nand-ecc-strength: integer representing the number of bits to correct
+> +                       per ECC step. Needs to be a multiple of 2.
+> +  - nand-ecc-step-size: integer representing the number of data bytes
+> +                       that are covered by a single ECC step. The driver
+> +                       supports 512 and 1024.
 >  
->  	index = cpufreq_table_find_index_dl(policy, target_freq);
-> +	if (unlikely(index < 0))
-> +		index = get_nominal_index();
+>  The device tree may optionally contain sub-nodes describing partitions of the
+>  address space. See partition.txt for more detail.
+> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> index 50f8d4a1b983..8cb378358e11 100644
+> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> @@ -198,17 +198,15 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
+>   *
+>   * We may have available oob space in this case.
+>   */
+> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
+> +			unsigned int ecc_strength, unsigned int ecc_step)
+>  {
+>  	struct bch_geometry *geo = &this->bch_geometry;
+>  	struct nand_chip *chip = &this->nand;
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+>  	unsigned int block_mark_bit_offset;
+>  
+> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+> -		return -EINVAL;
+> -
+> -	switch (chip->ecc_step_ds) {
+> +	switch (ecc_step) {
+>  	case SZ_512:
+>  		geo->gf_len = 13;
+>  		break;
+> @@ -221,8 +219,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+>  			chip->ecc_strength_ds, chip->ecc_step_ds);
+>  		return -EINVAL;
+>  	}
+> -	geo->ecc_chunk_size = chip->ecc_step_ds;
+> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
+> +	geo->ecc_chunk_size = ecc_step;
+> +	geo->ecc_strength = round_up(ecc_strength, 2);
+>  	if (!gpmi_check_ecc(this))
+>  		return -EINVAL;
+>  
+> @@ -230,7 +228,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+>  	if (geo->ecc_chunk_size < mtd->oobsize) {
+>  		dev_err(this->dev,
+>  			"unsupported nand chip. ecc size: %d, oob size : %d\n",
+> -			chip->ecc_step_ds, mtd->oobsize);
+> +			ecc_step, mtd->oobsize);
+>  		return -EINVAL;
+>  	}
+>  
+> @@ -423,9 +421,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
+>  
+>  int common_nfc_set_geometry(struct gpmi_nand_data *this)
+>  {
+> +	struct nand_chip *chip = &this->nand;
 > +
+> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
+> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
+> +						chip->ecc.size);
+> +
+>  	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
+> -				|| legacy_set_geometry(this))
+> -		return set_geometry_by_ecc_info(this);
+> +				|| legacy_set_geometry(this)) {
+> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+> +			return -EINVAL;
+> +
+> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
+> +						chip->ecc_step_ds);
+> +	}
+>  
+>  	return 0;
+>  }
 
-AFAICT, you will get -1 here only if the freq table had no valid
-frequencies (or the freq table is empty). Why would that happen ?
+Both patches look good to me. Han, could review them and add your Ack
+if you're happy with the changes.
 
->  	freq_data.pstate_id = powernv_freqs[index].driver_data;
->  	freq_data.gpstate_id = powernv_freqs[index].driver_data;
->  	set_pstate(&freq_data);
-> -- 
-> 1.8.3.1
+Thanks,
+
+Boris
 
 -- 
-viresh
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
