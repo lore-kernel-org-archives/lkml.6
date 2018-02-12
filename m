@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932145AbeBLTst (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 14:48:49 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59618 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752320AbeBLTsn (ORCPT
+        id S932235AbeBLTtJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 14:49:09 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:54822 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752039AbeBLTtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 14:48:43 -0500
-Date: Mon, 12 Feb 2018 11:48:15 -0800
+        Mon, 12 Feb 2018 14:49:02 -0500
+Date: Mon, 12 Feb 2018 11:48:33 -0800
 From: Dave Watson <davejwatson@fb.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
         Junaid Shahid <junaids@google.com>,
@@ -19,8 +19,8 @@ CC: "David S. Miller" <davem@davemloft.net>,
         Sabrina Dubroca <sd@queasysnail.net>, <linux-kernel@vger.kernel.org>,
         Stephan Mueller <smueller@chronox.de>,
         Ilya Lesokhin <ilyal@mellanox.com>
-Subject: [PATCH 02/14] x86/crypto: aesni: Macro-ify func save/restore
-Message-ID: <20180212194815.GA60401@davejwatson-mba.local>
+Subject: [PATCH 03/14] x86/crypto: aesni: Add GCM_INIT macro
+Message-ID: <20180212194833.GA60642@davejwatson-mba.local>
 References: <cover.1518211765.git.davejwatson@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -28,51 +28,50 @@ Content-Disposition: inline
 In-Reply-To: <cover.1518211765.git.davejwatson@fb.com>
 User-Agent: Mutt/1.6.0 (2016-04-01)
 X-Originating-IP: [2620:10d:c090:200::6:842f]
-X-ClientProxiedBy: SN4PR0501CA0130.namprd05.prod.outlook.com (10.167.128.47)
- To MWHPR15MB1759.namprd15.prod.outlook.com (10.174.255.12)
+X-ClientProxiedBy: MWHPR22CA0029.namprd22.prod.outlook.com (10.168.250.143) To
+ MWHPR15MB1757.namprd15.prod.outlook.com (10.174.255.10)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 81a152a7-abdc-4423-140d-08d572519207
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR15MB1759;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1759;3:erWwjhYsS37qVaeKMpMbHlROj8bpiS7bOPNvVJOSBIUDyRj+ucZlnGj3EEJLLtmZgs2fyUrHI6VQ4cUyGDoofXpgaVvAYgok26CwEMfkHshugX6pDj82xHY80xpedggGvI/Y8WVO0pCXC0wvABbglPPBWjLfGv6/fq4JlRkoXu8FQ5Nwm9SyTA66QfLXQzyZW/Uvl5obFKIOJ7GBGYmTTA07SOlicr/rWr/CCDS6wV82Rx7tZDhlOvctwJIjX+S5;25:z4YVXMTY/3eRBMT6gzaZN0zwhT5pmicRnr8e9loGjS/mVQAAkp2HQdf/zQdBHmjiArcZosPO/gWLHUNj7Mx6786nFzdPckAsMb9AqTShX9zFPKRialD3YJtpXbJ9pzFHipeyakA+1p72UDvrezsg+2U9ul77EXIJF7bG87jBqJ2uT3TDalz8XJ99u9pXGzC/0JcFSdzZkegrag+u0hAFYW3WsOJ/o9GTAzEpE/+I3pxgRsETJ20+8huN9QG0qnaYaFn6i7xPK3ndBg9w32HeLxrNmLe5HJguhgmkGcir4f9x1MFIj9yOi1p/7zejge+YCjN8wYtR6QHAq+b+btL/qQ==;31:cIGMWnlJ9xFV5/PVpPsyq4qXJ+E4An2BPiAQaHuYHwvjG+mVAIJ1vS9vgmiXxJs60KZp4oHoi/MKmkYzOn6BvhqzLZi71opS2Tz/PZ0SOjEQq1cAJCUWou7Zt5k27lNOrIYH2oIiyxTqdQ0YBfwkJuHbNFnjz7btJxOLli21V4L96eBFE5buuyfEQIkpbMGuRtTbZfwO+73wv4mZe/KCKMsyTheZTohNS3IUyrY8gRY=
-X-MS-TrafficTypeDiagnostic: MWHPR15MB1759:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1759;20:TYQyC9GTXaQx8bZtelsVSI7g4tjp3RIIGogAtL9aifAuSFeMMqbmcTMscyn3yKRqwjqhRBfrVzqc8yLbWTeUTpfYJGZ3DftxsUmyXk7lcePMT22oneoHsbLqxFHHZ8+bqPyi2W36OwqPHkkQX2kRFCo3CYWVYMt9iuxIWO4hW+ufwXXQEIfR+oplvEKpL5had3/dcJdgC33XuJ1d/jHHDIMRsFt7p9t2JgQtG7DQekde/8eNd5hkhyISWrymgwzaOLJvPq1DupKCEzrCtczs5phTfqJuxErpz/0tFnW62ZmiyM22HPA2NaUerFCqJ8lSQhbU0GTr2q/0YZt1qeyNnfPQ/H1pEjZwGj7uqv63Stn2GJCX2Goh9n5PPz80+g2sck8ESVv253neGkdUhvQqb0CtzO2MkrAjOMWF7xTKdNL99b7A89B4a2mtkBRAy4qkEeVlVOvssearQdss02msUD4SaVWtuOSDPRycdsPcAo1/Nm8mYly7Mv1abpaS7ULW;4:aSDSVn1jRDAxUKGm+PbW39xTF0P5nlvHcToqlSxFd7sITipSxZ5ylEl3YtWx6Zo4uUtwer875lzkb803zOvEUKEgj0eJkoJxhpR6z8ZJDCa6iTMphkIEFiw8Bk8m9mdK630dr1nzvue002M+ZaDM2dUGq3cUsCjHj+LNGMR02chxfVrrVRwg+CbU5b5ER614+AmShbQTSDfZvrAeyh/C5ZIq+QRBdntoUkLMR0z2o0b5Gc2uguicdCV5+LTMgR/E/g1uDSbwwFpc3nZci7aswSGX6L1GLcpulOc9zVBiksIyTO1qooZJNxr2uih/sjkyDuUvhIL1Tc++4OLFcYUsvqDrLUpjZtWTFTKepREmnlo=
-X-Microsoft-Antispam-PRVS: <MWHPR15MB17597E5E04720848211F90ACDDF70@MWHPR15MB1759.namprd15.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: d9c3cc80-273f-4b8a-2665-08d572519b07
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR15MB1757;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1757;3:CsboLofSIYfEGxaZr59P4aaZEKqo+30n+7DG+SSoqQHn8pbEsAk3o1o3hHSnpZSVo1RkojB32Voe4cNLRGGlH9CVdmLuW7x4vN2Is7Gt8/Cq2DNKHgNxADXqj37eiUB5cYGVco9doLrYHtqbEfrTpeNfq9jWiGIIFtySRF020rQPlKn85QHrMojnjAk9U6CDx2nqMSwWA6RTU6RirqbfWKgjoFJ3a+UqxhVS+S7kJoLaCOXoAt9a/w3AecuWA87p;25:deACTSUoUHFFN4xliX57SvzWBu2xaxy+/v3VFMwp+ABtlM/x508j4zfycletCLyUr0J/AGrRzqgs+1gpwJdWvqAij0Ymq5iLqd6v3aONdpiLcvhurw1vwiKkXazxOl+k3PcjJ6mm9qdhoAPGz5+KQlngfWEZHS/Q99HxSgUtvbti5JwixaWcAW1oXWloeAYvOiHKmMPf2WetQPq+tYpDKw+baj4IUcoQalme1lC09qk2i2QeWMIaPqonETzVqu5Z2KXS88OgUZ7fmAS5vSCiqO+VKR9Bbrql4vdQZYGR5xfGtIliRvp/Zp5FoAEYnirwC+Rre9SrUYa9qUJw2zlEZg==;31:95Akgc7++OGTZ/H/NkTuNXGr6SECreDXIXfVsaq1zWx+a0o+girwaF2kyciuq0IBrsu7R2yTl3TslGBR3VuYRLV0efcJ3Sd0N8untR39Jm0QJWPjnbBmEWMqmTh3Fi5BugNY6wS4NUsfNsorRKq4mco+No3yTTSIr7AdGKLmYf4JqXugjTF332C/XIIlFCLPVv/A6nejIpR6bBhfX3rC1bmpKRKlVAyR8ylrwWC25vk=
+X-MS-TrafficTypeDiagnostic: MWHPR15MB1757:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1757;20:+GCSEHoZlFgA6NajucdyGxV+Gq8rdnhRQBcMDfOgUknM0yLfBzPE7sRQ6EY2lPdpuwYSxgqsKcC2T1gYoCB00bJpwK4DCt03zdJ539+ziBjpgRPnSROHJ98VGMzs5pYWU9NaL88PmIL1bBmF0WIrdE2wyL6RhB7aREY6mkus7VbhSIusjZDivvtZBxm/I8nBERFQM+dhyA08CccwDDkkk+r3pbU0pQJSskE+sluDYYnZQ7EM5wPNepa8yDK02cGmu9AL195KR0iNmQyiZzZyCs8uVCEwZlWQe+XvJOM2YqR9CsD8DhVfIrsNsSGfYpxpAl0d/N7HLpW1o92Z9m0m6e9It7wE5CAJI3EgiKsZrbUAoHhJ8FDHRT4zM/DRdAa8tlf1QoqhKIUj9dETpbZXp2fJBKhDODJGMPAkD0mdCwhN7ik3yaaNyY09p+5He+LwDYQ+YS8i5g2JULIXhg55jNjvzT5Z5eHu8hpN/9N4p8GaoCc5za8AbUKXRR/GrxBz;4:3Z0pLnTjZTQ7zs665Q8QC6dVVC26uZDlRHWsbT+4XOL09+oaPlwoIY7v8PewWIHmDUJJrpF82n3Fd+QWgyP+l9B88XOhojEBvRV7OOMnYgEuxF+S2BMOBgoLPj4NkifFA3S+cfNv8QOmdzsT1mqCpou6248ffkee9MOrBlF1fR80ms6LLsK2PQPPG0POlz7ixW79WslJoqLGuPAglweapZklp9hFKo/bZvPNVpc8OFTTkw/gkYT68baR8z7Hk3KXfDQ9/8njjX3m/nXkbDApTmU2txFgIbl9UVpRD5ZupBe0VREod1VMsRZD6qCKHSllcLz6qamApvFAxp6hytG46vV9caYlTlbqengvhFri6nw=
+X-Microsoft-Antispam-PRVS: <MWHPR15MB17572B3B18D1152B1B3E119CDDF70@MWHPR15MB1757.namprd15.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(67672495146484)(266576461109395);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231101)(11241501184)(2400082)(944501161)(6041288)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR15MB1759;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1759;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231101)(11241501184)(2400082)(944501161)(6041288)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR15MB1757;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1757;
 X-Forefront-PRVS: 0581B5AB35
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(39380400002)(346002)(376002)(39860400002)(366004)(396003)(199004)(189003)(6496006)(25786009)(4326008)(59450400001)(50466002)(1076002)(7416002)(52116002)(52396003)(8936002)(76506005)(98436002)(83506002)(316002)(33656002)(386003)(68736007)(2906002)(6666003)(86362001)(16586007)(105586002)(2950100002)(76176011)(110136005)(47776003)(58126008)(53936002)(33896004)(106356001)(7736002)(81166006)(478600001)(8676002)(6116002)(16526019)(186003)(81156014)(305945005)(23726003)(97736004)(5660300001)(54906003)(6346003)(9686003)(6486002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1759;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR15MB1759;23:65+BQRCG8bYWl8Jhu4PlWZrs8bZaPI+1TLzAdxN8O?=
- =?us-ascii?Q?ItoBcrTjHgS49OCNi86H/5wE2CwgtGzYulmSlXBAdRbofrhaFrBHPmyZjHtM?=
- =?us-ascii?Q?AXiuDDGBiIbWiYBIETdTN1f9+gDdAT69PX5djDUxMhuSM2Iw0Ep2pUbYMGmU?=
- =?us-ascii?Q?jD5C8P13TeOZnjXd2lJAn+biGsGN088I4IWbts7r1K5XVbIeidz48lX/7UIg?=
- =?us-ascii?Q?/Mvkmyet+RMeVzQ4LMYvNwpYg/b0t12j0mVVYMpXaI/fLk8QxxOUU8YOOFEp?=
- =?us-ascii?Q?rZlH6U0UmZ0t4UGN7v7qIgvE3dK87bli5S4SOJCASXcspceoJV/qmNJfa06L?=
- =?us-ascii?Q?FnXSWfl2JvN3DLHJ1/LQHCoIGDhWNLWy3zFzjVpr1c1yqdbiE5qCid3XXUMs?=
- =?us-ascii?Q?qIwFmz085VUaLJbe5zU4M7+LD6izP6w+cLaC+QPWbjT5mKd5br6lG0i+UXLw?=
- =?us-ascii?Q?EIrxzbAQcvcQGQoWUZC+Nk/c+PlVBLTiOqKg2RiMu95ap7PEPUFDjqOgEJ3p?=
- =?us-ascii?Q?upcpyn/YWBgqVHXE3DjEsnvD2ZXY3zOOHkGyv9zyLCsmbRDdSIxihM3roICg?=
- =?us-ascii?Q?a02/uHKFxgaa6YCF1KjxttAkQEo52XfeNgoBVx/BwEO7JyadrwMPiHQh6wM2?=
- =?us-ascii?Q?g4Opjq3WTAPD0VJPw/bh17oSXSbYAZnic607SUzc5Y1ff8lY5sdChL+IZD1M?=
- =?us-ascii?Q?PQLDUmwVfC2SSzGJkq3TW5VIE17X3F7uc4HXjKTxivKJIt2Gq789CFwJr349?=
- =?us-ascii?Q?JVPia27V5hFPX1CWPjYXExEXji7N3ZRqmLOskk/6CEBqHTYEjqlJq3hyOElg?=
- =?us-ascii?Q?rUwB4oMhZZ6DbigPGc8K5tEMF6ll9RnO1dHQvVocvJulZjNiZd+VbuGNlBce?=
- =?us-ascii?Q?2U8AaScAW+Gk+iGnEmy7RVN7+DlhMg8931mShoCyqqJO9CKzhyPoC8yVOI38?=
- =?us-ascii?Q?j7in/CWmCBfm8P0mvlfFueNyantHavTkBfVBpMGjhWbXH2goB7nch/Se/hP1?=
- =?us-ascii?Q?VJ5eEZw70E8It/sB9JPeE8ejK7+fVaoAffMj+j0SoZ5v5i9M15x4NSsksGcE?=
- =?us-ascii?Q?A7UfNcvu19r9mWDuJ2YlbPlVyfAhoHcuPOVMjFIUsBDqPMPA6AtU1TS/himP?=
- =?us-ascii?Q?85nkDUIk5i7T9kLdUAZltC+zdQGvZH6GyrIUY+qqxmW6Hnxn2bTpC5JjyBmb?=
- =?us-ascii?Q?bPkdtx6TKwNpqhrDjuhXi6oDL0lfwBB1LSmfVM8h+Ixs3CG2ZrfNKAx3aJlY?=
- =?us-ascii?Q?obZfXzujuQlWuTP9r2nAuea2nV6wg91WZBbN/anBkzIMic2KHl8ghGScGC7g?=
- =?us-ascii?B?Zz09?=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1759;6:hjCyq7HPwioImqoNcSn6bkFgudf6dckU9shT9zLBQznus9p1n9g9htj5vU6TKOLtU0Sv6pG//7C85ZmLCx+ZuHlYUzosOybIAGMiBoBnyp9sxCPoGSyjHIK8c3IXjZbnqQqLpPzNrTFOMHQgI/Ls2IsEEx653bcB+0FQTsfur8eUqG+zWDxvQZWJGWSB0VxCfeP+FFdWG4NtLxBqSWfAt7B5Dv0hBMoOVoMzzXElevbjhRwLh5UY8V4UQDw8kiY8JZktKNtcf77SCFIBdgV654HELDDv6TbfpApm4D61mCFMbO47jt+JsN6JTS1a47EvYtckNwUtZ31zvxr/ati2PiGv7Ti9R81awx/aEFAA8Yk=;5:E21/yQJBFiq4oj6xMqdokw2d8VOIDee56bn0TysdNBUlibtScSSOgUninbIrgRxfdfzKprbkCAduK3cZ/DXmnG7KHjHTr2pJOHf2PWm11dqO4gVNFQdBJCuYk6EqQu4OAGz6Lk2V4dlXTjn12XeYdiUbY1A5i/ojskt36KCr5WA=;24:HJhq+vzJGhZ7xzmhMj770SrgXDKherSq7vYpktLcBar6kQIZPVtTy2iQuR5eiFcy7qcY35FAdlG1m3c87NSBETLWUpqAW80zmtku1NeeaK8=;7:qugr4gJTVmi0LztahVxfKkAE/mezc7fSPTuOtYWB8h8SYJ7pgrHfTVnT2fiyEbJQLk6sJP+LR12FXMuGoHc6FlKBqgC7HBffcTNcrUHS6tI85Z8hqpKwdnP6tCSMQIQQ1npbMwqB5yPwzPak4shCGjbft1AnHU1nM5NmZ1MY5KuSZYTX3UVAoZc6dUOvpcBEUrGnr539ilJgEb9b57SX0jI6N3pgS8n6Yoar+1+cynfMLGYzjOe77FtgXCIskczs
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(396003)(376002)(39380400002)(346002)(366004)(39860400002)(199004)(189003)(76506005)(6496006)(86362001)(6666003)(4326008)(52116002)(6486002)(52396003)(25786009)(7416002)(2950100002)(105586002)(97736004)(68736007)(478600001)(47776003)(54906003)(23726003)(58126008)(1076002)(5660300001)(98436002)(33656002)(110136005)(386003)(81156014)(81166006)(106356001)(186003)(7736002)(16526019)(305945005)(2906002)(8676002)(8936002)(316002)(83506002)(9686003)(50466002)(53936002)(76176011)(16586007)(33896004)(6116002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1757;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR15MB1757;23:AYioLwBeky7C6esnr8wqnCtudRWvGiPoXKabbilm7?=
+ =?us-ascii?Q?qa8GEkvy3WbC+1DNOPhCFKuhhnujjmje2d/Hr38Nh4gH27qDxIU4KHiCEJJt?=
+ =?us-ascii?Q?5mDeBDBfGwLIyHnzb72MoZYbxoOkFzpNYv0hklY7Xs/as1KxGSy3nNeK7pII?=
+ =?us-ascii?Q?yAI474SuknAn/YGcnx6BqZnOwv4iLRWBSPqvzN+ovPbzq236OpMsb7DBQLdU?=
+ =?us-ascii?Q?WHTd4QNXa07CCuRlmXlkKiyLaXN3u3hmIgsdlVA9cOXEo0Pc5Z0UkzOovalk?=
+ =?us-ascii?Q?VoJckmodgqRMZ4Ef1rBJX0zJ5yuLt+jju7dpPdyoTMPj9k0fwU/3llhmwS4U?=
+ =?us-ascii?Q?+gPjEC9EkNi+I4/akb38ZHmPExScbyp+DiJPD9m/Y5ebBkpwpFdq3igRk6WJ?=
+ =?us-ascii?Q?XdcParUhwpMNncqtomMNpbJcgxG/iZKbHyPwS/AGyjrlpKYLWrp+tpJJh6f1?=
+ =?us-ascii?Q?/Hzs+MbnEKGkLXOjBwx1Xu5u6L6D2H7VfNquIsKxdAiDDLEn+Zbo1TLZnIcS?=
+ =?us-ascii?Q?tL5gUed0MEGnYfqQv94IJrwajpISFRWK5WtdP7T8FeQu3GPyDamDC+sdLAKR?=
+ =?us-ascii?Q?hOWRwZgxC9OMu6YDe7w8xzSOrCqVxyyBo0wdzL+LRDcs1MN4tZAExDSrgQZb?=
+ =?us-ascii?Q?brzTxjPbtpIfodbatb2EtB6PqjzPP2sIs0TEbRpX+WeEx2x559/VIbnLjwtz?=
+ =?us-ascii?Q?wIADcHv56ZHAWQNc/b4oXBBlqnd9zLYlq/xNTnYNwF70g3jNe9R4NkXFCTPc?=
+ =?us-ascii?Q?XVBhnylB6vIb3Z5w2Ds0bSs0W9a53u2o0aQqm7oIX9ud7zzHSVCwnd9MSA5S?=
+ =?us-ascii?Q?M4E50SKu6D2VSU2/YKvr+6QGXDi0om9/CGqYM5tpDIVs14ifv1k2YjjbXxkr?=
+ =?us-ascii?Q?plZCVvZnk4u8LQj+K7it2vDYpfiyrkIdrFAW6Cm8cFGtkvlK8C61tY29WSJM?=
+ =?us-ascii?Q?bDVhzKloPcSvu0BrjneH3T6ofH8t8BX6G3NEltWanWOePP9V7KI6wRVAlBjO?=
+ =?us-ascii?Q?B+eezExeZ+61ISfOJGaCfWBtk/Tr+2F4Doc+MA8JZ8JkqSBT0Unpm8sOtbLy?=
+ =?us-ascii?Q?HOCOII9O9QrtgiK+qBdULgUqdEMamoBbdxVVKIKgUeo+Y0ZyrEv9X1iUEudB?=
+ =?us-ascii?Q?9AnXSLAPOiTrB4LZvIxivomWJ8WlI9lJN181LQ+UKCSeDUZ1jHE5h5L5eCUN?=
+ =?us-ascii?Q?D+haSJE1Vcfc1XxNMB/Uv+6knkOk4CpNX1WIFklZiIJOVmfNsIY8fRlcE6Bx?=
+ =?us-ascii?Q?qAjSMXFzjo8UBhSUrk=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1757;6:54+hVtYBVutsljHMmeU7c2h0nBcp1UHFsiloex4HMjcq7Y9cHtWYAfOce9aA6JpIY2ZjDWczz9/UoWkcg3NrY/3cMgyfq1kFu4sGGOvPdhp/WATWmalV4SAYCVNVx+efMV+4L018V6Ct4tmxIdDJm3O0L0J+CV7ZoOSIn+i02u9xXmNpPoo62+e7PYmo0bkIlstRNJcx6FVCewiA9B+kIXE1Dfjb4hrG2o9nueYE3LroKASxj4zgMar8dNRvPk4+kRK2WshDL9RJZWN5BUM0uKh9ASbl+zxl23pM8NGNfgQ2TiQ3KUFGkzm5SgPNORmKUmQisLtnkDMJt1f+XDG79bJFWs3cPgphH3Pr7srlA64=;5:p40wRoqa59yA7pD9ugW8a68Uf6gOWJCzqyVAY0IAHPcwN5RuOK4NdkvCYpSnZLyWh/c0EN1YO0qN8SVSdKXHWP2PmDlujri9hF0Avtucj31cCb54HHajh1MUfr55kFQQR+j0RrsvYY0hSiLZ8PJeZbZTSNLs1EAY/GNZuxGYlvI=;24:R+9qLRW1RI4E7u4vgGVlhwBhpTWLYSylhiPjp5nZ427UiGOKpOAES5s3ZeVKJqrE16R3DHtatS4xMhHfaqcZVEXs0/8q+IwQXtlDQ/5AYVY=;7:qa/GzYt6pMerIDuUYjbBiPG2OmR/dDP5oB/qBhbCrVllJtjD42AiL2CyLQOC9tyqdi0LLI7fAkJyDVQuUauY8NHlTzl+OB8FNhUxFLwrqqbD0lWj3letFtQ2RO2+QaO1VycowM5rWVQ5gS1a3R6QMM269A8+1700ZscmgGHH5MsJjINzcikVTElC6GEJN6SERW5M/N7OdQB8OuogXnIpsthb/pZNDDqzrO1keHTm7K9cyKwd1XyYaANGS27nak13
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1759;20:LSkWByKuBFrpOcHW9MzLP7Xhls4b8Db8+yoK+zUuQ4L0tHSEaAOguEHOdwOjvUiY5DMDbmgfA14K5MK8KiGJPo9JI1bosxlCu0D+kIh3zPp2SWBYYu13z65RlEu1jh6YxRgCS3DNMyV1YjKvbuUl7/fojVljQOtXZR52y9BGYxc=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2018 19:48:20.8304 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81a152a7-abdc-4423-140d-08d572519207
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1757;20:GP+U/G9bRl57C+kB4Pr2dHwRrK7fJEtLhYGdDuDmjjdqlsKKRnmVqbRnUle6ZUR3qaL5L1mkGtcVk+LMQcunrQ/k56VOBLOC4tmKZ3GkkEgEdl8uDeyFmDYitmdXwn8cttg0Ken7c5KIJ5UH+Y426f+E4V9xk48Nx0wN3M52GYI=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2018 19:48:36.0866 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9c3cc80-273f-4b8a-2665-08d572519b07
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1759
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1757
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_08:,,
  signatures=0
@@ -82,110 +81,129 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Macro-ify function save and restore.  These will be used in new functions
-added for scatter/gather update operations.
+Reduce code duplication by introducting GCM_INIT macro.  This macro
+will also be exposed as a function for implementing scatter/gather
+support, since INIT only needs to be called once for the full
+operation.
 
 Signed-off-by: Dave Watson <davejwatson@fb.com>
 ---
- arch/x86/crypto/aesni-intel_asm.S | 53 ++++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 29 deletions(-)
+ arch/x86/crypto/aesni-intel_asm.S | 84 +++++++++++++++------------------------
+ 1 file changed, 33 insertions(+), 51 deletions(-)
 
 diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
-index 48911fe..39b42b1 100644
+index 39b42b1..b9fe2ab 100644
 --- a/arch/x86/crypto/aesni-intel_asm.S
 +++ b/arch/x86/crypto/aesni-intel_asm.S
-@@ -170,6 +170,26 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
- #define TKEYP	T1
- #endif
+@@ -191,6 +191,37 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
+ 	pop	%r12
+ .endm
  
-+.macro FUNC_SAVE
-+	push	%r12
-+	push	%r13
-+	push	%r14
-+	mov	%rsp, %r14
-+#
-+# states of %xmm registers %xmm6:%xmm15 not saved
-+# all %xmm registers are clobbered
-+#
-+	sub	$VARIABLE_OFFSET, %rsp
-+	and	$~63, %rsp
++
++# GCM_INIT initializes a gcm_context struct to prepare for encoding/decoding.
++# Clobbers rax, r10-r13 and xmm0-xmm6, %xmm13
++.macro GCM_INIT
++	mov	%arg6, %r12
++	movdqu	(%r12), %xmm13
++	movdqa  SHUF_MASK(%rip), %xmm2
++	PSHUFB_XMM %xmm2, %xmm13
++
++	# precompute HashKey<<1 mod poly from the HashKey (required for GHASH)
++
++	movdqa	%xmm13, %xmm2
++	psllq	$1, %xmm13
++	psrlq	$63, %xmm2
++	movdqa	%xmm2, %xmm1
++	pslldq	$8, %xmm2
++	psrldq	$8, %xmm1
++	por	%xmm2, %xmm13
++
++	# reduce HashKey<<1
++
++	pshufd	$0x24, %xmm1, %xmm2
++	pcmpeqd TWOONE(%rip), %xmm2
++	pand	POLY(%rip), %xmm2
++	pxor	%xmm2, %xmm13
++	movdqa	%xmm13, HashKey(%rsp)
++	mov	%arg4, %r13			# %xmm13 holds HashKey<<1 (mod poly)
++	and	$-16, %r13
++	mov	%r13, %r12
 +.endm
 +
-+
-+.macro FUNC_RESTORE
-+	mov	%r14, %rsp
-+	pop	%r14
-+	pop	%r13
-+	pop	%r12
-+.endm
- 
  #ifdef __x86_64__
  /* GHASH_MUL MACRO to implement: Data*HashKey mod (128,127,126,121,0)
-@@ -1130,16 +1150,7 @@ _esb_loop_\@:
  *
+@@ -1151,36 +1182,11 @@ _esb_loop_\@:
  *****************************************************************************/
  ENTRY(aesni_gcm_dec)
--	push	%r12
--	push	%r13
--	push	%r14
--	mov	%rsp, %r14
--/*
--* states of %xmm registers %xmm6:%xmm15 not saved
--* all %xmm registers are clobbered
--*/
--	sub	$VARIABLE_OFFSET, %rsp
--	and	$~63, %rsp                        # align rsp to 64 bytes
-+	FUNC_SAVE
- 	mov	%arg6, %r12
- 	movdqu	(%r12), %xmm13			  # %xmm13 = HashKey
-         movdqa  SHUF_MASK(%rip), %xmm2
-@@ -1309,10 +1320,7 @@ _T_1_decrypt:
- _T_16_decrypt:
- 	movdqu	%xmm0, (%r10)
- _return_T_done_decrypt:
--	mov	%r14, %rsp
--	pop	%r14
--	pop	%r13
--	pop	%r12
-+	FUNC_RESTORE
- 	ret
- ENDPROC(aesni_gcm_dec)
+ 	FUNC_SAVE
+-	mov	%arg6, %r12
+-	movdqu	(%r12), %xmm13			  # %xmm13 = HashKey
+-        movdqa  SHUF_MASK(%rip), %xmm2
+-	PSHUFB_XMM %xmm2, %xmm13
+-
+-
+-# Precompute HashKey<<1 (mod poly) from the hash key (required for GHASH)
+-
+-	movdqa	%xmm13, %xmm2
+-	psllq	$1, %xmm13
+-	psrlq	$63, %xmm2
+-	movdqa	%xmm2, %xmm1
+-	pslldq	$8, %xmm2
+-	psrldq	$8, %xmm1
+-	por	%xmm2, %xmm13
+-
+-        # Reduction
+-
+-	pshufd	$0x24, %xmm1, %xmm2
+-	pcmpeqd TWOONE(%rip), %xmm2
+-	pand	POLY(%rip), %xmm2
+-	pxor	%xmm2, %xmm13     # %xmm13 holds the HashKey<<1 (mod poly)
  
-@@ -1393,22 +1401,12 @@ ENDPROC(aesni_gcm_dec)
- * poly = x^128 + x^127 + x^126 + x^121 + 1
++	GCM_INIT
+ 
+         # Decrypt first few blocks
+ 
+-	movdqa %xmm13, HashKey(%rsp)           # store HashKey<<1 (mod poly)
+-	mov %arg4, %r13    # save the number of bytes of plaintext/ciphertext
+-	and $-16, %r13                      # %r13 = %r13 - (%r13 mod 16)
+-	mov %r13, %r12
+ 	and $(3<<4), %r12
+ 	jz _initial_num_blocks_is_0_decrypt
+ 	cmp $(2<<4), %r12
+@@ -1402,32 +1408,8 @@ ENDPROC(aesni_gcm_dec)
  ***************************************************************************/
  ENTRY(aesni_gcm_enc)
--	push	%r12
--	push	%r13
--	push	%r14
--	mov	%rsp, %r14
--#
--# states of %xmm registers %xmm6:%xmm15 not saved
--# all %xmm registers are clobbered
--#
--	sub	$VARIABLE_OFFSET, %rsp
--	and	$~63, %rsp
-+	FUNC_SAVE
- 	mov	%arg6, %r12
- 	movdqu	(%r12), %xmm13
-         movdqa  SHUF_MASK(%rip), %xmm2
- 	PSHUFB_XMM %xmm2, %xmm13
- 
+ 	FUNC_SAVE
+-	mov	%arg6, %r12
+-	movdqu	(%r12), %xmm13
+-        movdqa  SHUF_MASK(%rip), %xmm2
+-	PSHUFB_XMM %xmm2, %xmm13
 -
- # precompute HashKey<<1 mod poly from the HashKey (required for GHASH)
+-# precompute HashKey<<1 mod poly from the HashKey (required for GHASH)
+-
+-	movdqa	%xmm13, %xmm2
+-	psllq	$1, %xmm13
+-	psrlq	$63, %xmm2
+-	movdqa	%xmm2, %xmm1
+-	pslldq	$8, %xmm2
+-	psrldq	$8, %xmm1
+-	por	%xmm2, %xmm13
+-
+-        # reduce HashKey<<1
+-
+-	pshufd	$0x24, %xmm1, %xmm2
+-	pcmpeqd TWOONE(%rip), %xmm2
+-	pand	POLY(%rip), %xmm2
+-	pxor	%xmm2, %xmm13
+-	movdqa	%xmm13, HashKey(%rsp)
+-	mov	%arg4, %r13            # %xmm13 holds HashKey<<1 (mod poly)
+-	and	$-16, %r13
+-	mov	%r13, %r12
  
- 	movdqa	%xmm13, %xmm2
-@@ -1576,10 +1574,7 @@ _T_1_encrypt:
- _T_16_encrypt:
- 	movdqu	%xmm0, (%r10)
- _return_T_done_encrypt:
--	mov	%r14, %rsp
--	pop	%r14
--	pop	%r13
--	pop	%r12
-+	FUNC_RESTORE
- 	ret
- ENDPROC(aesni_gcm_enc)
++	GCM_INIT
+         # Encrypt first few blocks
  
+ 	and	$(3<<4), %r12
 -- 
 2.9.5
