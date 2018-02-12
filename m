@@ -1,186 +1,249 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1250620-1517927355-2-4057929392043842852
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1442817-1518442222-2-10183461425732620180
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517927355; b=eNWtzPMZtmAM9lwJ+jQ73Oo4iPJysX3Na0geUrHUrCi3wBs
-    U+0kOZy1b53B8LOChnM4FPXOOW+afSXdg2i2PG7jKteIwk8cjzZtx5XkyOBx7TaK
-    sSOWSS4Dq265YI/iXxWmF9no+6T4+YwFeRxD4HDsYkBiuD12wxLK6TDpl1ZvDttn
-    lm/jcAz7PYLVhQJZt2iKHB4hqGVdskyDJ+ZSKmoYjAjwR90XfLIDWKyrMuhAI28C
-    kx79/KxBTtNiu90b7a3rv3MGU2iBbcOIt274nqJQyG5G8sPeK35+GJvH0Ud8cCzK
-    x05A/BZe3jxxYDQvs0VQn93j79gLcSa0LyuOsOA==
+    t=1518442221; b=gnsBODVKztqmfX2YX//lj/zM5xK7MV/xUxBRF/chSjSid/U
+    56u/05czRAFD+fIbVIc0V69H90IHm+hn++RMx3oStKvhyrJUypn7jsLOwzRwjN3g
+    y1QMknfZKTr7QYmsQcHRxPsfPPwIHeU+tuTJUbCxkox2nlIltWZY5BRmIrHfDGTP
+    //v4AlbMaFRILjCkIBxhnVknjvzcjeVPHcygxUEBwGE/0zNMM64LLXVQlnX8fKJ6
+    ifo5fQi8X8GUMrNtueRCR6tYubhb5iFM1DA9mesxOm8Rv0Ak1YIq1GafAZIRVDpu
+    bPBCRPNZfp0ZwuKbVDYAG3yDg4F/CHSzuFeUMIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:cc:references:from:message-id
     :date:mime-version:in-reply-to:content-type
     :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1517927355; bh=iOxnFhU4wi529Rg31X0IERW8CGZQgfFIZf7G7pJaylY=; b=D
-    CRlh2ecwuW0basMFi+lTSRXNsQSEx9k4He47ocEnrfLki5bq/Vic34J/a1/UywoI
-    lSoeHYobAJU91Q/9Mf4sE1PH37Sfezf0+f9kBezrBV1eebOwaUZVOK14YlYg6vDM
-    f/8nHPQI2HNNZm1p3HQOqwtnW7flAACOeZtntW8uJSNP9RKicYojDA5HAfXSAooU
-    Ym8WZJQ6OrnQOxUoHEzuFq65yq0ZT5hnskyeFNllAXYNo5nKMqc00kElrlc5lGqn
-    SqxEfNLuJ8zdoG1/eCXe35mpkQqxoKoXcYCngSN8kjz+DKdVAmkq5D+d8zW5dQbd
-    qS1AZQ58kFkT6K5o8hNIQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    1518442221; bh=F55TNhW1+en19zFgERSZwRKbdH2EqDSrJE12wlT3pCM=; b=F
+    BPNCb6ihifuKsI/pvRvENZFOeLiKr0wsGMJ6j6nDAVQ7sGFVltgrkAnD00/2oYXD
+    tAlcIzcl+NGX7ZDSvigZGH4xC/oGFSixgday/X2B611H1pQxJShnpo3wGbw/dG4e
+    FC6WuEG3BqefPi+DAZbKnb9t1oQeYLV13udmVcbF5RQJFz8nLY1hM3pcWxyyjAZD
+    8P7gmzwusEzpeYPImvlzwjIQ/sbh5mSaD3IbePtesSS5pwZxYE49FJMpoyZnRPI4
+    LCnj5h9yErG1/sN7y0TnXN4+VZomEH1nezzO5LMAvzT5PAiZXSgdPI+MWz0+t+Ew
+    LmNZ8PiAPm9YDWWpnE7ow==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=KM9uk9CR x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=KM9uk9CR x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752293AbeBFO3N (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 09:29:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53081 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752116AbeBFO3M (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 6 Feb 2018 09:29:12 -0500
-Subject: Re: [PATCH v2] xenbus: track caller request id
-To: Joao Martins <joao.m.martins@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        stable@vger.kernel.org
-References: <20180202174233.27341-1-joao.m.martins@oracle.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <99d14fe8-2f7a-6133-ced7-0ecec732d135@suse.com>
-Date: Tue, 6 Feb 2018 15:29:10 +0100
+        id S935504AbeBLNaP (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Feb 2018 08:30:15 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:44293 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933917AbeBLNaN (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 12 Feb 2018 08:30:13 -0500
+Subject: [PATCH v2 RESEND] usb: dwc3: core: Fix ULPI PHYs and prevent
+ phy_get/ulpi_init during suspend/resume
+To: <balbi@kernel.org>
+CC: <vigneshr@ti.com>, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "linux-stable # = v4 . 13" <stable@vger.kernel.org>,
+        <rogerq@ti.com>
+References: <1515667087-4110-1-git-send-email-rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <ee73347b-e996-4052-6a9d-dd94edd4a61a@ti.com>
+Date: Mon, 12 Feb 2018 15:30:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180202174233.27341-1-joao.m.martins@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <1515667087-4110-1-git-send-email-rogerq@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/02/18 18:42, Joao Martins wrote:
-> Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple concurrent
-> xenstore accesses") optimized xenbus concurrent accesses but in doing so
-> broke UABI of /dev/xen/xenbus. Through /dev/xen/xenbus applications are in
-> charge of xenbus message exchange with the correct header and body. Now,
-> after the mentioned commit the replies received by application will no
-> longer have the header req_id echoed back as it was on request (see
-> specification below for reference), because that particular field is being
-> overwritten by kernel.
-> 
-> struct xsd_sockmsg
-> {
->   uint32_t type;  /* XS_??? */
->   uint32_t req_id;/* Request identifier, echoed in daemon's response.  */
->   uint32_t tx_id; /* Transaction id (0 if not related to a transaction). */
->   uint32_t len;   /* Length of data following this. */
-> 
->   /* Generally followed by nul-terminated string(s). */
-> };
-> 
-> Before there was only one request at a time so req_id could simply be
-> forwarded back and forth. To allow simultaneous requests we need a
-> different req_id for each message thus kernel keeps a monotonic increasing
-> counter for this field and is written on every request irrespective of
-> userspace value.
-> 
-> Forwarding again the req_id on userspace requests is not a solution because
-> we would open the possibility of userspace-generated req_id colliding with
-> kernel ones. So this patch instead takes another route which is to
-> artificially keep user req_id while keeping the xenbus logic as is. We do
-> that by saving the original req_id before xs_send(), use the private kernel
-> counter as req_id and then once reply comes and was validated, we restore
-> back the original req_id.
-> 
-> Cc: <stable@vger.kernel.org> # 4.11
-> Fixes: fd8aa9095a ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
-> Reported-by: Bhavesh Davda <bhavesh.davda@oracle.com>
-> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+In order for ULPI PHYs to work, dwc3_phy_setup() and dwc3_ulpi_init()
+must be doene before dwc3_core_get_phy().
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+commit 541768b08a40 ("usb: dwc3: core: Call dwc3_core_get_phy() before initializing phys")
+broke this.
+
+The other issue is that dwc3_core_get_phy() and dwc3_ulpi_init() should
+be called only once during the life cycle of the driver. However,
+as dwc3_core_init() is called during system suspend/resume it will
+result in multiple calls to dwc3_core_get_phy() and dwc3_ulpi_init()
+which is wrong.
+
+Fix this by moving dwc3_ulpi_init() out of dwc3_phy_setup()
+into dwc3_core_ulpi_init(). Use a flag 'ulpi_ready' to ensure that
+dwc3_core_ulpi_init() is called only once from dwc3_core_init().
+
+Use another flag 'phys_ready' to call dwc3_core_get_phy() only once from
+dwc3_core_init().
+
+Fixes: 541768b08a40 ("usb: dwc3: core: Call dwc3_core_get_phy() before initializing phys")
+Fixes: f54edb539c11 ("usb: dwc3: core: initialize ULPI before trying to get the PHY")
+Cc: linux-stable <stable@vger.kernel.org> # >= v4.13
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+Rebased on Felipe's testing/fixes branch.
+
+ drivers/usb/dwc3/core.c | 47 ++++++++++++++++++++++++++++++++++++-----------
+ drivers/usb/dwc3/core.h |  5 +++++
+ 2 files changed, 41 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 59511f2..f1d838a 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -486,6 +486,22 @@ static void dwc3_cache_hwparams(struct dwc3 *dwc)
+ 	parms->hwparams8 = dwc3_readl(dwc->regs, DWC3_GHWPARAMS8);
+ }
+ 
++static int dwc3_core_ulpi_init(struct dwc3 *dwc)
++{
++	int intf;
++	int ret = 0;
++
++	intf = DWC3_GHWPARAMS3_HSPHY_IFC(dwc->hwparams.hwparams3);
++
++	if (intf == DWC3_GHWPARAMS3_HSPHY_IFC_ULPI ||
++	    (intf == DWC3_GHWPARAMS3_HSPHY_IFC_UTMI_ULPI &&
++	     dwc->hsphy_interface &&
++	     !strncmp(dwc->hsphy_interface, "ulpi", 4)))
++		ret = dwc3_ulpi_init(dwc);
++
++	return ret;
++}
++
+ /**
+  * dwc3_phy_setup - Configure USB PHY Interface of DWC3 Core
+  * @dwc: Pointer to our controller context structure
+@@ -497,7 +513,6 @@ static void dwc3_cache_hwparams(struct dwc3 *dwc)
+ static int dwc3_phy_setup(struct dwc3 *dwc)
+ {
+ 	u32 reg;
+-	int ret;
+ 
+ 	reg = dwc3_readl(dwc->regs, DWC3_GUSB3PIPECTL(0));
+ 
+@@ -568,9 +583,6 @@ static int dwc3_phy_setup(struct dwc3 *dwc)
+ 		}
+ 		/* FALLTHROUGH */
+ 	case DWC3_GHWPARAMS3_HSPHY_IFC_ULPI:
+-		ret = dwc3_ulpi_init(dwc);
+-		if (ret)
+-			return ret;
+ 		/* FALLTHROUGH */
+ 	default:
+ 		break;
+@@ -727,6 +739,7 @@ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
+ }
+ 
+ static int dwc3_core_get_phy(struct dwc3 *dwc);
++static int dwc3_core_ulpi_init(struct dwc3 *dwc);
+ 
+ /**
+  * dwc3_core_init - Low-level initialization of DWC3 Core
+@@ -758,17 +771,27 @@ static int dwc3_core_init(struct dwc3 *dwc)
+ 			dwc->maximum_speed = USB_SPEED_HIGH;
+ 	}
+ 
+-	ret = dwc3_core_get_phy(dwc);
++	ret = dwc3_phy_setup(dwc);
+ 	if (ret)
+ 		goto err0;
+ 
+-	ret = dwc3_core_soft_reset(dwc);
+-	if (ret)
+-		goto err0;
++	if (!dwc->ulpi_ready) {
++		ret = dwc3_core_ulpi_init(dwc);
++		if (ret)
++			goto err0;
++		dwc->ulpi_ready = true;
++	}
+ 
+-	ret = dwc3_phy_setup(dwc);
++	if (!dwc->phys_ready) {
++		ret = dwc3_core_get_phy(dwc);
++		if (ret)
++			goto err0a;
++		dwc->phys_ready = true;
++	}
++
++	ret = dwc3_core_soft_reset(dwc);
+ 	if (ret)
+-		goto err0;
++		goto err0a;
+ 
+ 	dwc3_core_setup_global_control(dwc);
+ 	dwc3_core_num_eps(dwc);
+@@ -841,6 +864,9 @@ static int dwc3_core_init(struct dwc3 *dwc)
+ 	phy_exit(dwc->usb2_generic_phy);
+ 	phy_exit(dwc->usb3_generic_phy);
+ 
++err0a:
++	dwc3_ulpi_exit(dwc);
++
+ err0:
+ 	return ret;
+ }
+@@ -1235,7 +1261,6 @@ static int dwc3_probe(struct platform_device *pdev)
+ 
+ err3:
+ 	dwc3_free_event_buffers(dwc);
+-	dwc3_ulpi_exit(dwc);
+ 
+ err2:
+ 	pm_runtime_allow(&pdev->dev);
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 185b960..860d2bc 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -797,7 +797,9 @@ struct dwc3_scratchpad_array {
+  * @usb3_phy: pointer to USB3 PHY
+  * @usb2_generic_phy: pointer to USB2 PHY
+  * @usb3_generic_phy: pointer to USB3 PHY
++ * @phys_ready: flag to indicate that PHYs are ready
+  * @ulpi: pointer to ulpi interface
++ * @ulpi_ready: flag to indicate that ULPI is initialized
+  * @u2sel: parameter from Set SEL request.
+  * @u2pel: parameter from Set SEL request.
+  * @u1sel: parameter from Set SEL request.
+@@ -895,7 +897,10 @@ struct dwc3 {
+ 	struct phy		*usb2_generic_phy;
+ 	struct phy		*usb3_generic_phy;
+ 
++	bool			phys_ready;
++
+ 	struct ulpi		*ulpi;
++	bool			ulpi_ready;
+ 
+ 	void __iomem		*regs;
+ 	size_t			regs_size;
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
 
-Juergen
-
-> ---
-> Here's a link to a unit test (https://pastebin.com/2q51j2sR) where req_id of
-> reply and response are being asserted each request. Without this patch
-> the assert will fail (e.g. try it with `./xswire_reqid_test name`). But
-> on <= v4.10 or >= v4.11 with the fix above, it will print domain name 10
-> times.
-> 
-> Changes since v1:
->  * Adjust commit message
->  (Comments from Juergen on IRC)
->  * Unilateraly save/restore req_id and remove xs_request_is_user()
->  * Initialize req_id for kernel callers
-> ---
->  drivers/xen/xenbus/xenbus.h       | 1 +
->  drivers/xen/xenbus/xenbus_comms.c | 1 +
->  drivers/xen/xenbus/xenbus_xs.c    | 3 +++
->  3 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/xen/xenbus/xenbus.h b/drivers/xen/xenbus/xenbus.h
-> index 149c5e7efc89..092981171df1 100644
-> --- a/drivers/xen/xenbus/xenbus.h
-> +++ b/drivers/xen/xenbus/xenbus.h
-> @@ -76,6 +76,7 @@ struct xb_req_data {
->  	struct list_head list;
->  	wait_queue_head_t wq;
->  	struct xsd_sockmsg msg;
-> +	uint32_t caller_req_id;
->  	enum xsd_sockmsg_type type;
->  	char *body;
->  	const struct kvec *vec;
-> diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
-> index 5b081a01779d..d239fc3c5e3d 100644
-> --- a/drivers/xen/xenbus/xenbus_comms.c
-> +++ b/drivers/xen/xenbus/xenbus_comms.c
-> @@ -309,6 +309,7 @@ static int process_msg(void)
->  			goto out;
->  
->  		if (req->state == xb_req_state_wait_reply) {
-> +			req->msg.req_id = req->caller_req_id;
->  			req->msg.type = state.msg.type;
->  			req->msg.len = state.msg.len;
->  			req->body = state.body;
-> diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-> index 3e59590c7254..3f3b29398ab8 100644
-> --- a/drivers/xen/xenbus/xenbus_xs.c
-> +++ b/drivers/xen/xenbus/xenbus_xs.c
-> @@ -227,6 +227,8 @@ static void xs_send(struct xb_req_data *req, struct xsd_sockmsg *msg)
->  	req->state = xb_req_state_queued;
->  	init_waitqueue_head(&req->wq);
->  
-> +	/* Save the caller req_id and restore it later in the reply */
-> +	req->caller_req_id = req->msg.req_id;
->  	req->msg.req_id = xs_request_enter(req);
->  
->  	mutex_lock(&xb_write_mutex);
-> @@ -310,6 +312,7 @@ static void *xs_talkv(struct xenbus_transaction t,
->  	req->num_vecs = num_vecs;
->  	req->cb = xs_wake_up;
->  
-> +	msg.req_id = 0;
->  	msg.tx_id = t.id;
->  	msg.type = type;
->  	msg.len = 0;
-> 
