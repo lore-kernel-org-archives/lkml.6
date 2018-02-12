@@ -1,63 +1,67 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2216002-1518210227-2-497607843688253474
+X-Cyrus-Session-Id: sloti22d1t05-79580-1518402488-2-1509244300571040655
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518210226; b=CPDhM3z6hZpNV9+wC9LtBqnoylSKCzuTIEk01LITQyAyPt1
-    vNWLKlSfj55MGjij44/hpXkPJZDJ4Fv7pyaH3BiFXOgEgfypJG2b0IBCqBk+eZyQ
-    kXA/yKxCfOWaXNf13J296jj8cwsRgJ0HYv02v+wmLTfjEqcyybuZIoiipcdIchV+
-    lVzS7nNOY6DK+p/dVpHfFYkMkInh5vTrSnMK1o10WN485GUMAIxKhsShEeTJC5hS
-    MiCK17ZreDH3XcS6G7yIhZMKihDfhJOu8cY1ulBHoPnzNm+TvbK/u/ga4aeBeNvk
-    v5zWpF3QYnEvvWmn+zwNkZ1zpeRkrpenVKlJH1g==
+    t=1518402488; b=YQZTPzmqBMHZPMLXyh3wjpQSMSuUplA25mz5zd234C1hADe
+    r/9itPNA0QKDlnbO4nJBH6BKjj3g38/mC3WnfGkkXfUCZgqc57+OPntmzspdy+f6
+    fk7HX/lXZEWfc/efQ0Jq5UN3XCWQEp2Hc7rkw88yn+/ildZDWXlkFiJjC+o1KnW5
+    Br0PlHplQs+B6frenTJRvQpYWNeI/yiWrShWyUemduKedyYJ3q203UW3tL+PY7B/
+    zs7mXKHSY7vQNB5iluumljzMr3ulo3JCpbTn6NpC+YRnIu4uKPua2d/cUmeLh77I
+    rK7YB00029hraPE1QK5795E/AwxLoRjh6MMboUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1518210226; bh=q2QcCQOAa8kf4g4/e/MRg1i3LfSXLRVRNl9sdXht6Bk=; b=U
-    6N3ngUPiNofDFS13JE5tXYsKUUymwPu9WgvwBL29O+EhuYHCWTBrLWhqJ+Szx2lZ
-    DHmGn4+iI/KGSIjvNrS81NRHgra/uj2vZN/TMkZCZlpDqUAJY7PeyQXB7EysE8OM
-    9B4k+4flOEMHEZ0NwcKRD+pYMBINJnSs3x9nVMQTvEqe93XTLmIA9wFINiUrlHiM
-    agvNMtH7CHNNV76BwEdSe3I41kR8LOfJ+kctYTIiEhS2WS3IRKwFc6khNNHtH9Sh
-    DNVyDQyX0DCKJOYbxWOXrAWrlWM/1QGBk/Q9ZcGseKL1Kx4xeGD+9EhFGjHYMUwE
-    GHgO5WvaboUod5nDgM6IQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1518402488; bh=DmXNpxSi+tncN3EXIjFNPHuxbi
+    /zmE2u4A/UA1/RwAs=; b=uX5CGToW6FYhFsBWNE5bAA3Hi5ydLIdtJdZOtX6tbp
+    TXh9NDMlp4qZaArxdwsMks5U4Cn3BwUf/2RTjqR7V6yzIrRjGGGyg+i2RwNYg7TJ
+    Ja030647W4wAFvGfvUe5z2qqsr/kuAHpc1Kt3P19eBHzf3UqLD95mbusYoY2Uz6x
+    W1BxskXWZ1zGNnB0yrKPQXnBJewsMy3JryA1xAjbuuGpWgTT6vfnF6JkqX+NDex5
+    I9/NEuR9PyJiedKZ/TGrZcWgbWjiMVOY83AjfL79AU7PX83C/T2bPUWea+g8XBtR
+    Q+NqOSEB42fRMPHOv2Pko3AvVGJ0PjA9ee0GojW4hZ7A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=taDtz+Au x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kgLs/eo1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=taDtz+Au x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kgLs/eo1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeBIVDp (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 16:03:45 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38732 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeBIVDp (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 16:03:45 -0500
-Date: Fri, 9 Feb 2018 13:03:39 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        id S932261AbeBLC2H (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 21:28:07 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:42124 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932243AbeBLC2G (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Feb 2018 21:28:06 -0500
+X-Google-Smtp-Source: AH8x225dXI9AfVVx4RCM4hg5R4ykg+wXLK8Q7jN1CDc9KlisTpff/Yxho5FXZI9JHWXsOJk803Ekmw==
+Date: Mon, 12 Feb 2018 11:28:00 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
         Huang Ying <huang.ying.caritas@gmail.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Dan Streetman <ddstreet@ieee.org>,
@@ -73,86 +77,39 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Minchan Kim <minchan@kernel.org>
 Subject: Re: [PATCH -mm -v3] mm, swap, frontswap: Fix THP swap if frontswap
  enabled
-Message-Id: <20180209130339.e91c8709e9c46e5b3f941a29@linux-foundation.org>
-In-Reply-To: <20180209084947.22749-1-ying.huang@intel.com>
+Message-ID: <20180212022800.GA458@jagdpanzerIV>
 References: <20180209084947.22749-1-ying.huang@intel.com>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <20180209130339.e91c8709e9c46e5b3f941a29@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209130339.e91c8709e9c46e5b3f941a29@linux-foundation.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri,  9 Feb 2018 16:49:47 +0800 "Huang, Ying" <ying.huang@intel.com> wrote:
+Hello,
 
-> From: Huang Ying <huang.ying.caritas@gmail.com>
+On (02/09/18 13:03), Andrew Morton wrote:
+[..]
+> > Frontswap has multiple backends, to make it easy for one backend to
+> > enable THP support, the THP checking is put in backend frontswap store
+> > functions instead of the general interfaces.
+> > 
+> > Fixes: bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped out")
+> > Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> > Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 > 
-> It was reported by Sergey Senozhatsky that if THP (Transparent Huge
-> Page) and frontswap (via zswap) are both enabled, when memory goes low
-> so that swap is triggered, segfault and memory corruption will occur
-> in random user space applications as follow,
-> 
-> kernel: urxvt[338]: segfault at 20 ip 00007fc08889ae0d sp 00007ffc73a7fc40 error 6 in libc-2.26.so[7fc08881a000+1ae000]
->  #0  0x00007fc08889ae0d _int_malloc (libc.so.6)
->  #1  0x00007fc08889c2f3 malloc (libc.so.6)
->  #2  0x0000560e6004bff7 _Z14rxvt_wcstoutf8PKwi (urxvt)
->  #3  0x0000560e6005e75c n/a (urxvt)
->  #4  0x0000560e6007d9f1 _ZN16rxvt_perl_interp6invokeEP9rxvt_term9hook_typez (urxvt)
->  #5  0x0000560e6003d988 _ZN9rxvt_term9cmd_parseEv (urxvt)
->  #6  0x0000560e60042804 _ZN9rxvt_term6pty_cbERN2ev2ioEi (urxvt)
->  #7  0x0000560e6005c10f _Z17ev_invoke_pendingv (urxvt)
->  #8  0x0000560e6005cb55 ev_run (urxvt)
->  #9  0x0000560e6003b9b9 main (urxvt)
->  #10 0x00007fc08883af4a __libc_start_main (libc.so.6)
->  #11 0x0000560e6003f9da _start (urxvt)
-> 
-> After bisection, it was found the first bad commit is
-> bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped
-> out").
-> 
-> The root cause is as follow.
-> 
-> When the pages are written to swap device during swapping out in
-> swap_writepage(), zswap (fontswap) is tried to compress the pages
-> instead to improve the performance.  But zswap (frontswap) will treat
-> THP as normal page, so only the head page is saved.  After swapping
-> in, tail pages will not be restored to its original contents, so cause
-> the memory corruption in the applications.
-> 
-> This is fixed via rejecting to save page in frontswap store functions
-> if the page is a THP.  So that the THP will be swapped out to swap
-> device.
-> 
-> Another choice is to split THP if frontswap is enabled.  But it is
-> found that the frontswap enabling isn't flexible.  For example, if
-> CONFIG_ZSWAP=y (cannot be module), frontswap will be enabled even if
-> zswap itself isn't enabled.
-> 
-> Frontswap has multiple backends, to make it easy for one backend to
-> enable THP support, the THP checking is put in backend frontswap store
-> functions instead of the general interfaces.
-> 
-> Fixes: bd4c82c22c367e068 ("mm, THP, swap: delay splitting THP after swapped out")
-> Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> I don't think Sergey has tested this version and I suspect this is a
+> holdover from the earlier patch, so I'll remove this line.
 
-I don't think Sergey has tested this version and I suspect this is a
-holdover from the earlier patch, so I'll remove this line.
+Just tested it (v3) with FRONTSWAP enabled (didn't test XEN tmem).
+Works fine.
 
-> Suggested-by: Minchan Kim <minchan@kernel.org> # put THP checking in backend
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Cc: Dan Streetman <ddstreet@ieee.org>
-> Cc: Seth Jennings <sjenning@redhat.com>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: stable@vger.kernel.org # 4.14
+FWIW
+Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com> # frontswap
+
+	-ss
