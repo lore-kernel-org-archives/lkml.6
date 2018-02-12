@@ -1,151 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934359AbeBLLzw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:55:52 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36605 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933898AbeBLLzs (ORCPT
+        id S933062AbeBLL62 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:58:28 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35882 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932519AbeBLL60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:55:48 -0500
-X-Google-Smtp-Source: AH8x226kYVVUXCbq2FdOFo2uao0ah5stIXmwvPeH/PU+fVl+KvtlMAP3TZYWXGjzGEkOVPY7XcHTLg==
-Subject: Re: [PATCH v2 14/16] arm64: dts: mt7622: add thermal and related
- nodes
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1517910489.git.sean.wang@mediatek.com>
- <687a7c43e3e3260ebdf004a96d2cde143f563250.1517910489.git.sean.wang@mediatek.com>
- <4db5c81b-0e55-3676-d7c8-d1b6aefb99c4@gmail.com>
- <1518148312.9025.17.camel@mtkswgap22>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <b7d74cbb-9ad8-23cb-aa3c-e9704aafa107@gmail.com>
-Date: Mon, 12 Feb 2018 12:55:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Feb 2018 06:58:26 -0500
+X-Google-Smtp-Source: AH8x227rubXeebTAdt0QmPzvFOrpuOViMGY7LBAqIpQsipnmMj0AdDzBRPu49INgf4Hn1ClE36J0Hw==
+Date: Mon, 12 Feb 2018 14:58:22 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kstrtox: make kstrtobool_from_user() very strict
+Message-ID: <20180212115822.GA4984@avx2>
+References: <20180210211110.GA24324@avx2>
+ <CAGXu5jL2xLz88X8in-9GjLZyDQzynYvf3bKDnCPVgL+e3uGFLw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1518148312.9025.17.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jL2xLz88X8in-9GjLZyDQzynYvf3bKDnCPVgL+e3uGFLw@mail.gmail.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/09/2018 04:51 AM, Sean Wang wrote:
-> On Wed, 2018-02-07 at 12:43 +0100, Matthias Brugger wrote:
->>
->> On 02/06/2018 10:53 AM, sean.wang@mediatek.com wrote:
->>> From: Sean Wang <sean.wang@mediatek.com>
->>>
->>> add nodes for the thermal controller and associated thermal zone using
->>> CPU as the cooling device for each trip point. In addition, add a fixup
->>> for thermal_calibration on nvmem should be 12 bytes as the minimal
->>> requirement.
->>>
->>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->>> ---
->>>  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 72 +++++++++++++++++++++++++++++++-
->>>  1 file changed, 71 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
->>> index e6dd4f6..6cf67dd 100644
->>> --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
->>> +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
->>> @@ -12,6 +12,7 @@
->>>  #include <dt-bindings/phy/phy.h>
->>>  #include <dt-bindings/power/mt7622-power.h>
->>>  #include <dt-bindings/reset/mt7622-reset.h>
->>> +#include <dt-bindings/thermal/thermal.h>
->>>  
->>>  / {
->>>  	compatible = "mediatek,mt7622";
->>> @@ -75,6 +76,7 @@
->>>  				 <&apmixedsys CLK_APMIXED_MAIN_CORE_EN>;
->>>  			clock-names = "cpu", "intermediate";
->>>  			operating-points-v2 = <&cpu_opp_table>;
->>> +			#cooling-cells = <2>;
->>>  			enable-method = "psci";
->>>  			clock-frequency = <1300000000>;
->>>  		};
->>> @@ -119,6 +121,58 @@
->>>  		};
->>>  	};
->>>  
->>> +	thermal-zones {
->>> +		cpu_thermal: cpu-thermal {
->>> +			polling-delay-passive = <1000>;
->>> +			polling-delay = <1000>;
->>> +
->>> +			thermal-sensors = <&thermal 0>;
->>> +
->>> +			trips {
->>> +				cpu_passive: cpu-passive {
->>> +					temperature = <47000>;
->>> +					hysteresis = <2000>;
->>> +					type = "passive";
->>> +				};
->>> +
->>> +				cpu_active: cpu-active {
->>> +					temperature = <67000>;
->>> +					hysteresis = <2000>;
->>> +					type = "active";
->>> +				};
->>> +
->>> +				cpu_hot: cpu-hot {
->>> +					temperature = <87000>;
->>> +					hysteresis = <2000>;
->>> +					type = "hot";
->>> +				};
->>> +
->>> +				cpu-crit {
->>> +					temperature = <107000>;
->>> +					hysteresis = <2000>;
->>> +					type = "critical";
->>> +				};
->>> +			};
->>> +
->>> +			cooling-maps {
->>> +				map0 {
->>> +					trip = <&cpu_passive>;
->>> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->>> +				};
->>> +
->>> +				map1 {
->>> +					trip = <&cpu_active>;
->>> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->>> +				};
->>> +
->>> +				map2 {
->>> +					trip = <&cpu_hot>;
->>> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->>> +				};
->>> +			};
->>> +		};
->>> +	};
->>> +
->>>  	timer {
->>>  		compatible = "arm,armv8-timer";
->>>  		interrupt-parent = <&gic>;
->>> @@ -201,7 +255,7 @@
->>>  		#size-cells = <1>;
->>>  
->>>  		thermal_calibration: calib@198 {
->>> -			reg = <0x198 0x8>;
->>> +			reg = <0x198 0xc>;
->>
->> Any reason why this is not part of patch 8/16?
->>
+On Sun, Feb 11, 2018 at 01:27:58PM -0800, Kees Cook wrote:
+> On Sat, Feb 10, 2018 at 1:11 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> > Once upon a time module parameter parsing code accepted
+> > 0, 1, y, n, Y and N for boolean values. Gratituous but contained
+> > to module code and thus tolerable.
 > 
-> There's no strong reason wanting me to do that. patch 8 has contained a
-> lot of nodes and patch 16 is present just in v2. So, I felt it should be
-> a little bit easy that people reviews those patches if they are put into
-> separate patches. But, It's still fine to make them into one in the next
-> version.
+> And kernel command line.
+
+True that.
+
+> > Commit ef951599074ba4fad2d0efa0a977129b41e6d203
+> > ("lib: move strtobool() to kstrtobool()") promoted that ugly wart
+> > to kstrtobool() and, more importantly, kstrtobool_from_user().
+> >
+> > Later set of accepted values was expanded to "on" and "of".
+> > Now there are 6+8=14(!) valid strings for a boolean.
+> >
+> > This patch reduces set of accepted values to "0" and "1"
+> > (with optional newline) in spirit with other kstrto*() functions.
+> >
+> > I'm starting with kstrtobool_from_user() as it is explicitly designed
+> > to be used for interacting with userspace. Currently there are 9 users
+> > all debug code, so there is hope.
+> >
+> > Please send before 4.16 so no real users start to depend on verbose behaviour.
+> >
+> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 > 
+> Why bother? What's wrong with generous input parsing? This just
+> creates a divergence where none is needed.
 
-Please add it to 8/16 as this is where you define the node in the first place.
+Generous parsing creates more problems and more code than necessary.
+kstrtobool() is very instructive example.
 
-Thanks!
+Booleans are 2 values, so 2 strings is enough.
+Add optional newline so shell users don't have to type "echo -n".
+That's all.
+
+In a generous world things are little more complicated:
+
+First, as written code doesn't accept "on" it accepts "on.*" and
+"of.*". Now imagine some parameter gets semantic change from "on/off"
+to "on/off/once" (kmemleak-style detectors).
+
+Formally you can't add "once" because user in theory may use "once"
+by accident or mistake and expecting "on" behaviour which he relies
+upon.
+
+In a very strict world, I add "2" for "once" and document it.
+Now I know that no users were broken, because kstrtobool() returned
+errors for "2" previously.
+
+Second, English centric view of the world. If English speaking users get
+more usability with "on" and "off" why, say, 150 millions of
+Russian-speaking people can't get that too. And if you accept that argument,
+encoding subquestion arises immediately.
+
+At this point you've adding Merriam Webster and libicu to the kernel.
+
+Third, it is simply more code in ring 0. If anyone wants user-friendly
+parameters, then write wrappers and leave kernel alone.
+
+To reiterate, it was mistake to add "yYnN" to module and kernel parameter
+parsing code, it was another mistake to propagate yYnN to generic code.
+Those "on" and "off" exceptions should have stayed where they were as
+small monuments to kernel imperfection :^)
