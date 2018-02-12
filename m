@@ -1,109 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753375AbeBLR0V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:26:21 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56110 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751440AbeBLR0U (ORCPT
+        id S1753215AbeBLRa0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:30:26 -0500
+Received: from casper.infradead.org ([85.118.1.10]:47366 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751200AbeBLRaZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:26:20 -0500
-X-Google-Smtp-Source: AH8x224csR+kGk66YPBCax7aVU/5O+hQFOa6y0zZMii3b8QJo+wnwBTi3acdiJIyB/ekdIEK8qA1SQ==
-From: Dmitry Safonov <dima@arista.com>
-To: linux-kernel@vger.kernel.org
-Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>
-Subject: [PATCHv3 6/6] iommu/intel: Ratelimit each dmar fault printing
-Date: Mon, 12 Feb 2018 17:26:17 +0000
-Message-Id: <20180212172617.23367-1-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180212164825.22421-7-dima@arista.com>
-References: <20180212164825.22421-7-dima@arista.com>
+        Mon, 12 Feb 2018 12:30:25 -0500
+Date: Mon, 12 Feb 2018 18:29:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/4] sched/fair: Do not migrate on wake_affine_weight if
+ weights are equal
+Message-ID: <20180212172926.GY25201@hirez.programming.kicks-ass.net>
+References: <20180212145857.8056-1-mgorman@techsingularity.net>
+ <20180212145857.8056-4-mgorman@techsingularity.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212145857.8056-4-mgorman@techsingularity.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a ratelimit for printing, but it's incremented each time the
-cpu recives dmar fault interrupt. While one interrupt may signal about
-*many* faults. And delayed to wq dmar fault work might receive even
-more faults to clean, than it was earlier.
+On Mon, Feb 12, 2018 at 02:58:56PM +0000, Mel Gorman wrote:
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c1091cb023c4..28c8d9c91955 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5747,7 +5747,16 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+>  		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
+>  	prev_eff_load *= capacity_of(this_cpu);
+>  
+> -	return this_eff_load <= prev_eff_load ? this_cpu : nr_cpumask_bits;
+> +	/*
+> +	 * If sync, adjust the weight of prev_eff_load such that if
+> +	 * prev_eff == this_eff that select_idle_sibling will consider
+> +	 * stacking the wakee on top of the waker if no other CPU is
+> +	 * idle.
+> +	 */
+> +	if (sync)
+> +		prev_eff_load += 1;
 
-Ratelimit each fault printing rather than each time the wq is scheduled.
+So where we had <= and would consistently favour pulling the task to the
+waking CPU when all else what equal, you now switch to <, such that when
+things are equal we do not pull.
 
-Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
+That makes sense I suppose.
 
-BUG: spinlock lockup suspected on CPU#0, CliShell/9903
- lock: 0xffffffff81a47440, .magic: dead4ead, .owner: kworker/u16:2/8915, .owner_cpu: 6
-CPU: 0 PID: 9903 Comm: CliShell
-Call Trace:$\n'
-[..] dump_stack+0x65/0x83$\n'
-[..] spin_dump+0x8f/0x94$\n'
-[..] do_raw_spin_lock+0x123/0x170$\n'
-[..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
-[..] uart_chars_in_buffer+0x20/0x4d$\n'
-[..] tty_chars_in_buffer+0x18/0x1d$\n'
-[..] n_tty_poll+0x1cb/0x1f2$\n'
-[..] tty_poll+0x5e/0x76$\n'
-[..] do_select+0x363/0x629$\n'
-[..] compat_core_sys_select+0x19e/0x239$\n'
-[..] compat_SyS_select+0x98/0xc0$\n'
-[..] sysenter_dispatch+0x7/0x25$\n'
-[..]
-NMI backtrace for cpu 6
-CPU: 6 PID: 8915 Comm: kworker/u16:2
-Workqueue: dmar_fault dmar_fault_work
-Call Trace:$\n'
-[..] wait_for_xmitr+0x26/0x8f$\n'
-[..] serial8250_console_putchar+0x1c/0x2c$\n'
-[..] uart_console_write+0x40/0x4b$\n'
-[..] serial8250_console_write+0xe6/0x13f$\n'
-[..] call_console_drivers.constprop.13+0xce/0x103$\n'
-[..] console_unlock+0x1f8/0x39b$\n'
-[..] vprintk_emit+0x39e/0x3e6$\n'
-[..] printk+0x4d/0x4f$\n'
-[..] dmar_fault+0x1a8/0x1fc$\n'
-[..] dmar_fault_work+0x15/0x17$\n'
-[..] process_one_work+0x1e8/0x3a9$\n'
-[..] worker_thread+0x25d/0x345$\n'
-[..] kthread+0xea/0xf2$\n'
-[..] ret_from_fork+0x58/0x90$\n'
+Except for sync wakeups, where you say, if everything else is equal,
+pull, which also makes sense, because sync says 'current' promises to go
+away.
 
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
-v3: inverse `ratelimited'
+OK.
 
- drivers/iommu/dmar.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 37a1147a7592..3f98a5fd59c0 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1640,17 +1640,14 @@ void dmar_serve_faults(struct intel_iommu *iommu)
- 	int reg, fault_index;
- 	u32 fault_status;
- 	unsigned long flag;
--	bool ratelimited;
- 	static DEFINE_RATELIMIT_STATE(rs,
- 				      DEFAULT_RATELIMIT_INTERVAL,
- 				      DEFAULT_RATELIMIT_BURST);
- 
--	/* Disable printing, simply clear the fault when ratelimited */
--	ratelimited = !__ratelimit(&rs);
- 
- 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
- 	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
--	if (fault_status && !ratelimited)
-+	if (fault_status && __ratelimit(&rs))
- 		pr_err("DRHD: handling fault status reg %x\n", fault_status);
- 
- 	/* TBD: ignore advanced fault log currently */
-@@ -1660,6 +1657,8 @@ void dmar_serve_faults(struct intel_iommu *iommu)
- 	fault_index = dma_fsts_fault_record_index(fault_status);
- 	reg = cap_fault_reg_offset(iommu->cap);
- 	while (1) {
-+		/* Disable printing, simply clear the fault when ratelimited */
-+		bool ratelimited = !__ratelimit(&rs);
- 		u8 fault_reason;
- 		u16 source_id;
- 		u64 guest_addr;
--- 
-2.13.6
+> +
+> +	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+>  }
+>  
+>  static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+> -- 
+> 2.15.1
+> 
