@@ -1,70 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934550AbeBLNws (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:52:48 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37262 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934522AbeBLNwq (ORCPT
+        id S934600AbeBLNyV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:54:21 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36080 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934522AbeBLNyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:52:46 -0500
-X-Google-Smtp-Source: AH8x2261clWSvnfkqv51BKLFC6x0DyvTDxOJaCHJp/cOPP/KnFjj7IinzSGECoTKSgDtCsa/ZmaBHw==
-Date: Mon, 12 Feb 2018 22:52:37 +0900
-From: Jinbum Park <jinb.park7@gmail.com>
-To: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
-        ard.biesheuvel@linaro.org
-Subject: [PATCH] crypto: arm/aes-cipher - move S-box to .rodata section
-Message-ID: <20180212135237.GA3011@pjb1027-Latitude-E5410>
+        Mon, 12 Feb 2018 08:54:19 -0500
+X-Google-Smtp-Source: AH8x227PCwMNJliHVd3KFWxQ7i8DMXTZwc34K0UT35+djVjYsXbX5tNez/zVExtP4Jne/YWZsPG/h4Ykntb7wjcy5DE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CANiq72k4CqzAAOKcK0c4uGWPNxeztDn733+1cphzM7zOiz+N_Q@mail.gmail.com>
+References: <20180118201348.18053-1-clabbe.montjoie@gmail.com> <CANiq72k4CqzAAOKcK0c4uGWPNxeztDn733+1cphzM7zOiz+N_Q@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 12 Feb 2018 14:54:18 +0100
+Message-ID: <CANiq72nk=aOLvPeV6zN1suM=gHsarD7zMJusG3-tnGHMhqb8jQ@mail.gmail.com>
+Subject: Re: [PATCH] auxdisplay: img-ascii-lcd: fix typo on select SYSCON/MFD_SYSCON
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, paul.burton@mips.com,
+        Ralf Baechle <ralf@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the AES inverse S-box to the .rodata section
-where it is safe from abuse by speculation.
+On Thu, Feb 8, 2018 at 4:58 PM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Thu, Jan 18, 2018 at 9:13 PM, Corentin Labbe
+> <clabbe.montjoie@gmail.com> wrote:
+>> img-ascii-lcd select un-existing SYSCON kconfig name.
+>> This patch fix this error by using the correct MFD_SYSCON kconfig name.
+>>
+>
+> CC'ing Paul & Ralf in case they want to ack.
+>
+> The mistake seems to be in the tree since the addition of the driver
+> in 0cad855fbd08 ("auxdisplay: img-ascii-lcd: driver for simple ASCII
+> LCD displays").
+>
+> Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>
 
-Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
----
- arch/arm/crypto/aes-cipher-core.S | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+I will pick this one up in my queue.
 
-diff --git a/arch/arm/crypto/aes-cipher-core.S b/arch/arm/crypto/aes-cipher-core.S
-index 54b3840..184d6c2 100644
---- a/arch/arm/crypto/aes-cipher-core.S
-+++ b/arch/arm/crypto/aes-cipher-core.S
-@@ -174,6 +174,16 @@
- 	.ltorg
- 	.endm
- 
-+ENTRY(__aes_arm_encrypt)
-+	do_crypt	fround, crypto_ft_tab, crypto_ft_tab + 1, 2
-+ENDPROC(__aes_arm_encrypt)
-+
-+	.align		5
-+ENTRY(__aes_arm_decrypt)
-+	do_crypt	iround, crypto_it_tab, __aes_arm_inverse_sbox, 0
-+ENDPROC(__aes_arm_decrypt)
-+
-+	.section	".rodata", "a"
- 	.align		L1_CACHE_SHIFT
- 	.type		__aes_arm_inverse_sbox, %object
- __aes_arm_inverse_sbox:
-@@ -210,12 +220,3 @@ __aes_arm_inverse_sbox:
- 	.byte		0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26
- 	.byte		0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
- 	.size		__aes_arm_inverse_sbox, . - __aes_arm_inverse_sbox
--
--ENTRY(__aes_arm_encrypt)
--	do_crypt	fround, crypto_ft_tab, crypto_ft_tab + 1, 2
--ENDPROC(__aes_arm_encrypt)
--
--	.align		5
--ENTRY(__aes_arm_decrypt)
--	do_crypt	iround, crypto_it_tab, __aes_arm_inverse_sbox, 0
--ENDPROC(__aes_arm_decrypt)
--- 
-1.9.1
+> Thanks,
+> Miguel
+>
+>> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+>> ---
+>>  drivers/auxdisplay/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+>> index 2c2ed9cf8796..d9ab60ed6c9b 100644
+>> --- a/drivers/auxdisplay/Kconfig
+>> +++ b/drivers/auxdisplay/Kconfig
+>> @@ -138,7 +138,7 @@ config IMG_ASCII_LCD
+>>         tristate "Imagination Technologies ASCII LCD Display"
+>>         depends on HAS_IOMEM
+>>         default y if MIPS_MALTA || MIPS_SEAD3
+>> -       select SYSCON
+>> +       select MFD_SYSCON
+>>         help
+>>           Enable this to support the simple ASCII LCD displays found on
+>>           development boards such as the MIPS Boston, MIPS Malta & MIPS SEAD3
+>> --
+>> 2.13.6
+>>
