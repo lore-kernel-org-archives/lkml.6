@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x227Hzz+gp5ZQcH8+HSolupzv88mqaSu74ic2tFBSwtfMJU6NLdv7UGRFTVweaLS89XICoMun
-ARC-Seal: i=1; a=rsa-sha256; t=1518479449; cv=none;
+X-Google-Smtp-Source: AH8x2245kIWZi4eQHH2kfjm50tDlxRVbINOOaPu21ANHjNXCaASmBCQoeSCLX8dsHTik3f5dr5CV
+ARC-Seal: i=1; a=rsa-sha256; t=1518479437; cv=none;
         d=google.com; s=arc-20160816;
-        b=jVP+194xc82uOqvcGLQKphNSyB/pB7+UDBAVXL0QjPxxdVnhQn2Eurqk5Yp5nIV0Je
-         5CNzv8SS55KDmtCfUAaN+bgRXmaTTZhSM6cEfgzauRhXMssuY2xoCL7cfhcZ69rzztAZ
-         r0xZJjP67k+wF71zLpyaUAQRBJPS1WR0y6XfNN5yp7/9l9r1DOU1Dvwqg4d2V91Vha12
-         6EvJXsMR7zTwp5WdLqksWgAzkPD4Qjwdpcqtd4OyiNlIHUBUWyyufypr6myOtJDOC2hR
-         luOmCyug5qBXpkRP71KSWeys2WnvIJkZci/MIbRTtgWXF5dB9winPq+Va6Uea7OLC9+D
-         hCcg==
+        b=s89nkTaKRJABiLDZQTxLI7zdMuqUKlkCcrgfvT9z+q2yfbHoJCNmf+48upxk0+cIkA
+         gptwgtTh/MQxCBgpTH2dQgXN7hsVg6yI3kHBjkAXMyJtm6hk/UL45R/3GloS4Zmh+r1F
+         G1/HCNMBYNUBzLKJNmkfhKp2EyeHHwVrBhO2RpgCmLqJ8wrSpV/NodaVOLZLlDSCctGC
+         2qwfFlRfbg0D/4t8+1pOg7QvWbvFLF3hs5dEtUr8dvER/K3iVKf2eYyRHVT/CBibIyBy
+         D1WaZycizRbdkHbVDVl+52ro4BnknkwERtoxCg07010rec4CQowcT8yt52GaLE5ZUmcK
+         onGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=3AGkfr/n+kwjzcH7/BRNulNM3tntd1v/5nz5qRkBi0I=;
-        b=H9zQCH5NtuT7RljL3BQi52VL3ID1a6vt/O/k6ZO1x+8fddX/RYBolTSMdAKenI8K9H
-         +Salac0Jq0T35eRKDUtnwczxKvdu7sq/F6dD+cz60rpiMGyfyKgVjpoV1/1sTPZeDWkS
-         0pxIUx3Aui2rU/VDrTmgl4A6T+YES9yk8mnccvcC1Yx3kmWJStcjxd/4uu88r4FwCfGI
-         qFwGfQ97J8dw2J/dpiD0/WON/YFRDVkCtOjeeZEDh40xFrz04dqJLf5IsdcJyCwyZExX
-         DQPjTgPm8qwXoDC9hiL9Ipfj5cOzgohBQOfsJWo/SpftpfGGeREPsCj2ysfSU79HDLiI
-         ERZA==
+        bh=ijA8fx8Eb/X15IQkYhp/z7mhjOSNu0Z8O4lskaBIT04=;
+        b=nPaj8xQGuWcpxhp64uqHyH+/fzHwXccV87/KSXl1mDsZJPaEowcWRsP2y7Qr5wrp19
+         RWYGKn/+KWJ6NzMeXcx9wsmcRYwroepMZ0FMol3GPAxd0rEsQCYVQRCg9Gfx2Ua5advg
+         ALyuFMIAl7R6VrNie8DYguO+00OlVusjk7K1SZDyhM4joD+JSefdl8oUUIQEMozPVeyx
+         GTjUsAJEagpNirSRSllRB79GOmMABaN2z+Knv2pEXEJVIzpqbtD21CHfWBb2dRoGEu3t
+         X1902aYuiARzT0uzo6R0Rxc0vVMWr9dDyk42loXQPGBgVhY0DGj0ks9KrjcySkkc+ajw
+         rb2g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,10 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Tue, 13 Feb 2018 10:47:59 +1100
-Subject: [PATCH 18/19] staging: lustre: replace
- l_wait_event_exclusive_head() with wait_event_idle_exclusive
+Subject: [PATCH 17/19] staging: lustre: remove l_wait_event from
+ ptlrpc_set_wait
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151847927926.19840.9872301796680320791.stgit@noble>
+Message-ID: <151847927923.19840.5570834902527836784.stgit@noble>
 In-Reply-To: <151847037709.22826.16175867257667686132.stgit@noble>
 References: <151847037709.22826.16175867257667686132.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,103 +40,205 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592241107103949181?=
-X-GMAIL-MSGID: =?utf-8?q?1592241107103949181?=
+X-GMAIL-THRID: =?utf-8?q?1592241094473096029?=
+X-GMAIL-MSGID: =?utf-8?q?1592241094473096029?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This l_wait_event_exclusive_head() will wait indefinitely
-if the timeout is zero.  If it does wait with a timeout
-and times out, the timeout for next time is set to zero.
-
-The can be mapped to a call to either
- wait_event_idle_exclusive()
-or
- wait_event_idle_exclusive_timeout()
-depending in the timeout setting.
-
-The current code arranges for LIFO queuing of waiters,
-but include/event.h doesn't support that yet.
-Until it does, fall back on FIFO with
-wait_event_idle_exclusive{,_timeout}().
+This is the last remaining use of l_wait_event().
+It is the only use of LWI_TIMEOUT_INTR_ALL() which
+has a meaning that timeouts can be interrupted.
+Only interrupts by "fatal" signals are allowed, so
+introduce l_wait_event_abortable_timeout() to
+support this.
 
 Reviewed-by: James Simmons <jsimmons@infradead.org>
 Signed-off-by: NeilBrown <neilb@suse.com>
 Reviewed-by: Patrick Farrell <paf@cray.com>
 ---
- drivers/staging/lustre/lustre/ptlrpc/service.c |   43 ++++++++++++++----------
- 1 file changed, 25 insertions(+), 18 deletions(-)
+ drivers/staging/lustre/lustre/include/lustre_lib.h |   14 +++
+ drivers/staging/lustre/lustre/ptlrpc/client.c      |   84 ++++++++------------
+ 2 files changed, 49 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/service.c b/drivers/staging/lustre/lustre/ptlrpc/service.c
-index 6e3403417434..29fdb54f16ca 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/service.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/service.c
-@@ -1897,15 +1897,6 @@ ptlrpc_check_rqbd_pool(struct ptlrpc_service_part *svcpt)
+diff --git a/drivers/staging/lustre/lustre/include/lustre_lib.h b/drivers/staging/lustre/lustre/include/lustre_lib.h
+index 1939e959b92a..ccc1a329e42b 100644
+--- a/drivers/staging/lustre/lustre/include/lustre_lib.h
++++ b/drivers/staging/lustre/lustre/include/lustre_lib.h
+@@ -196,6 +196,10 @@ struct l_wait_info {
+ #define LUSTRE_FATAL_SIGS (sigmask(SIGKILL) | sigmask(SIGINT) |		\
+ 			   sigmask(SIGTERM) | sigmask(SIGQUIT) |	\
+ 			   sigmask(SIGALRM))
++static inline int l_fatal_signal_pending(struct task_struct *p)
++{
++	return signal_pending(p) && sigtestsetmask(&p->pending.signal, LUSTRE_FATAL_SIGS);
++}
+ 
+ /**
+  * wait_queue_entry_t of Linux (version < 2.6.34) is a FIFO list for exclusively
+@@ -347,6 +351,16 @@ do {									   \
+ 	__ret;								\
+ })
+ 
++#define l_wait_event_abortable_timeout(wq, condition, timeout)		\
++({									\
++	sigset_t __blocked;						\
++	int __ret = 0;							\
++	__blocked = cfs_block_sigsinv(LUSTRE_FATAL_SIGS);		\
++	__ret = wait_event_interruptible_timeout(wq, condition, timeout);\
++	cfs_restore_sigs(__blocked);					\
++	__ret;								\
++})
++
+ #define l_wait_event_abortable_exclusive(wq, condition)			\
+ ({									\
+ 	sigset_t __blocked;						\
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
+index ffdd3ffd62c6..3d689d6100bc 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/client.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
+@@ -1774,7 +1774,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
+ 		}
+ 
+ 		/*
+-		 * ptlrpc_set_wait->l_wait_event sets lwi_allow_intr
++		 * ptlrpc_set_wait allow signal to abort the timeout
+ 		 * so it sets rq_intr regardless of individual rpc
+ 		 * timeouts. The synchronous IO waiting path sets
+ 		 * rq_intr irrespective of whether ptlrpcd
+@@ -2122,8 +2122,7 @@ int ptlrpc_expire_one_request(struct ptlrpc_request *req, int async_unlink)
+ 
+ /**
+  * Time out all uncompleted requests in request set pointed by \a data
+- * Callback used when waiting on sets with l_wait_event.
+- * Always returns 1.
++ * Called when wait_event_idle_timeout times out.
+  */
+ void ptlrpc_expired_set(struct ptlrpc_request_set *set)
+ {
+@@ -2156,18 +2155,6 @@ void ptlrpc_expired_set(struct ptlrpc_request_set *set)
+ 		ptlrpc_expire_one_request(req, 1);
  	}
  }
- 
--static int
--ptlrpc_retry_rqbds(void *arg)
+-static int ptlrpc_expired_set_void(void *data)
 -{
--	struct ptlrpc_service_part *svcpt = arg;
+-	struct ptlrpc_request_set *set = data;
 -
--	svcpt->scp_rqbd_timeout = 0;
--	return -ETIMEDOUT;
+-	ptlrpc_expired_set(set);
+-	/*
+-	 * When waiting for a whole set, we always break out of the
+-	 * sleep so we can recalculate the timeout, or enable interrupts
+-	 * if everyone's timed out.
+-	 */
+-	return 1;
 -}
+ 
+ /**
+  * Sets rq_intr flag in \a req under spinlock.
+@@ -2182,11 +2169,10 @@ EXPORT_SYMBOL(ptlrpc_mark_interrupted);
+ 
+ /**
+  * Interrupts (sets interrupted flag) all uncompleted requests in
+- * a set \a data. Callback for l_wait_event for interruptible waits.
++ * a set \a data. Called when l_wait_event_abortable_timeout receives signal.
+  */
+-static void ptlrpc_interrupted_set(void *data)
++static void ptlrpc_interrupted_set(struct ptlrpc_request_set *set)
+ {
+-	struct ptlrpc_request_set *set = data;
+ 	struct list_head *tmp;
+ 
+ 	CDEBUG(D_RPCTRACE, "INTERRUPTED SET %p\n", set);
+@@ -2256,7 +2242,6 @@ int ptlrpc_set_wait(struct ptlrpc_request_set *set)
+ {
+ 	struct list_head *tmp;
+ 	struct ptlrpc_request *req;
+-	struct l_wait_info lwi;
+ 	int rc, timeout;
+ 
+ 	if (set->set_producer)
+@@ -2282,46 +2267,47 @@ int ptlrpc_set_wait(struct ptlrpc_request_set *set)
+ 		CDEBUG(D_RPCTRACE, "set %p going to sleep for %d seconds\n",
+ 		       set, timeout);
+ 
+-		if (timeout == 0 && !signal_pending(current))
++		if (timeout == 0 && !signal_pending(current)) {
+ 			/*
+ 			 * No requests are in-flight (ether timed out
+ 			 * or delayed), so we can allow interrupts.
+ 			 * We still want to block for a limited time,
+ 			 * so we allow interrupts during the timeout.
+ 			 */
+-			lwi = LWI_TIMEOUT_INTR_ALL(HZ,
+-						   ptlrpc_expired_set_void,
+-						   ptlrpc_interrupted_set, set);
+-		else
++			rc = l_wait_event_abortable_timeout(set->set_waitq,
++							    ptlrpc_check_set(NULL, set),
++							    HZ);
++			if (rc == 0) {
++				rc = -ETIMEDOUT;
++				ptlrpc_expired_set(set);
++			} else if (rc < 0) {
++				rc = -EINTR;
++				ptlrpc_interrupted_set(set);
++			} else
++				rc = 0;
++		} else {
+ 			/*
+ 			 * At least one request is in flight, so no
+ 			 * interrupts are allowed. Wait until all
+ 			 * complete, or an in-flight req times out.
+ 			 */
+-			lwi = LWI_TIMEOUT((timeout ? timeout : 1) * HZ,
+-					  ptlrpc_expired_set_void, set);
 -
- static inline int
- ptlrpc_threads_enough(struct ptlrpc_service_part *svcpt)
- {
-@@ -1968,13 +1959,17 @@ ptlrpc_server_request_incoming(struct ptlrpc_service_part *svcpt)
- 	return !list_empty(&svcpt->scp_req_incoming);
- }
+-		rc = l_wait_event(set->set_waitq, ptlrpc_check_set(NULL, set), &lwi);
+-
+-		/*
+-		 * LU-769 - if we ignored the signal because it was already
+-		 * pending when we started, we need to handle it now or we risk
+-		 * it being ignored forever
+-		 */
+-		if (rc == -ETIMEDOUT && !lwi.lwi_allow_intr &&
+-		    signal_pending(current)) {
+-			sigset_t blocked_sigs =
+-					   cfs_block_sigsinv(LUSTRE_FATAL_SIGS);
+-
+-			/*
+-			 * In fact we only interrupt for the "fatal" signals
+-			 * like SIGINT or SIGKILL. We still ignore less
+-			 * important signals since ptlrpc set is not easily
+-			 * reentrant from userspace again
+-			 */
+-			if (signal_pending(current))
+-				ptlrpc_interrupted_set(set);
+-			cfs_restore_sigs(blocked_sigs);
++			rc = wait_event_idle_timeout(set->set_waitq,
++						     ptlrpc_check_set(NULL, set),
++						     (timeout ? timeout : 1) * HZ);
++			if (rc == 0) {
++				ptlrpc_expired_set(set);
++				rc = -ETIMEDOUT;
++				/*
++				 * LU-769 - if we ignored the signal
++				 * because it was already pending when
++				 * we started, we need to handle it
++				 * now or we risk it being ignored
++				 * forever
++				 */
++				if (l_fatal_signal_pending(current))
++					ptlrpc_interrupted_set(set);
++			} else
++				rc = 0;
+ 		}
  
-+/* We perfer lifo queuing, but kernel doesn't provide that yet. */
-+#ifndef wait_event_idle_exclusive_lifo
-+#define wait_event_idle_exclusive_lifo wait_event_idle_exclusive
-+#define wait_event_idle_exclusive_lifo_timeout wait_event_idle_exclusive_timeout
-+#endif
-+
- static __attribute__((__noinline__)) int
- ptlrpc_wait_event(struct ptlrpc_service_part *svcpt,
- 		  struct ptlrpc_thread *thread)
- {
- 	/* Don't exit while there are replies to be handled */
--	struct l_wait_info lwi = LWI_TIMEOUT(svcpt->scp_rqbd_timeout,
--					     ptlrpc_retry_rqbds, svcpt);
+ 		LASSERT(rc == 0 || rc == -EINTR || rc == -ETIMEDOUT);
+@@ -2528,7 +2514,7 @@ static int ptlrpc_unregister_reply(struct ptlrpc_request *request, int async)
+ 		return 0;
  
- 	/* XXX: Add this back when libcfs watchdog is merged upstream
- 	lc_watchdog_disable(thread->t_watchdog);
-@@ -1982,13 +1977,25 @@ ptlrpc_wait_event(struct ptlrpc_service_part *svcpt,
- 
- 	cond_resched();
- 
--	l_wait_event_exclusive_head(svcpt->scp_waitq,
--				    ptlrpc_thread_stopping(thread) ||
--				    ptlrpc_server_request_incoming(svcpt) ||
--				    ptlrpc_server_request_pending(svcpt,
--								  false) ||
--				    ptlrpc_rqbd_pending(svcpt) ||
--				    ptlrpc_at_check(svcpt), &lwi);
-+	if (svcpt->scp_rqbd_timeout == 0)
-+		wait_event_idle_exclusive_lifo(
-+			svcpt->scp_waitq,
-+			ptlrpc_thread_stopping(thread) ||
-+			ptlrpc_server_request_incoming(svcpt) ||
-+			ptlrpc_server_request_pending(svcpt,
-+						      false) ||
-+			ptlrpc_rqbd_pending(svcpt) ||
-+			ptlrpc_at_check(svcpt));
-+	else if (0 == wait_event_idle_exclusive_lifo_timeout(
-+			 svcpt->scp_waitq,
-+			 ptlrpc_thread_stopping(thread) ||
-+			 ptlrpc_server_request_incoming(svcpt) ||
-+			 ptlrpc_server_request_pending(svcpt,
-+						       false) ||
-+			 ptlrpc_rqbd_pending(svcpt) ||
-+			 ptlrpc_at_check(svcpt),
-+			 svcpt->scp_rqbd_timeout))
-+		svcpt->scp_rqbd_timeout = 0;
- 
- 	if (ptlrpc_thread_stopping(thread))
- 		return -EINTR;
+ 	/*
+-	 * We have to l_wait_event() whatever the result, to give liblustre
++	 * We have to wait_event_idle_timeout() whatever the result, to give liblustre
+ 	 * a chance to run reply_in_callback(), and to make sure we've
+ 	 * unlinked before returning a req to the pool.
+ 	 */
