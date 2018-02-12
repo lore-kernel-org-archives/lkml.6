@@ -1,120 +1,82 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1166103-1518434250-2-13670494281916962520
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518434250; b=hAWYPSDr8uTXHosw9K/vECtsnVeDHr+o/BtHZcXrg3EcOrp
-    mGX8s6jZ7PasBiKsT8BnK/x76oUy8iUBmgW+0fDO0j+jS8mZi+GoSI2FXtnXVPn8
-    XwoR4ciWNt1ixir1Zksr9ZGz/FU7CC+2bKaIAGe2+cb6bTiHbUxI/pxMX2WHLQCJ
-    RNLSFUyVZ+pAkLG1tMt0aBrbcU/5bn4K2RVipCdXhI+qHSh1ciESnOLVANN4pWO2
-    EG9cMT1G0K3FxLXV/4YvGQbhUBh/AcR8QBjioQCTRGeCwJvo6mS422DaQ9Y5GXUu
-    AXTNUaMIOcjtJCZlMNRDOIGFm1o3GO03oISIdhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518434250; bh=x
-    jShOv2DPUpjLhKo8t0S7Ztp0SXkznZ9f+LuOyByObU=; b=b5xz8WKPuWrAyQSgn
-    jkFnObtlyxaL2m6RMyNME4DK13gohX2nCR6fHQix7yoiBWyt/w1ijDhcJhgxvC9h
-    blfkO4d6/NOKFaNma6j1ONo/1aglJh3X3ffX5afvq8LjC87x1Ppu7wsGEzQUges2
-    U2RqPGfOA9317GQjfUprUaSx8aUIiLa5vPeC9qOEbCIaE+Jyq3nl/1evoqq49fqU
-    kWOWEIlyuzjRCR3+uUoLQFKt1LLN0SLI6RC/7174vlLg3XG+Amr6qJLsf/EyKMY4
-    NvZplUYcq9JHasWCpZJDJrStG/L8MZHYRo4dHGGJxpPHDQcId/7siDAPra4UYx+V
-    q6fEA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=eKUhhbhu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=eKUhhbhu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Mon, 12 Feb 2018 14:17:11 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Yisheng Xie <xieyisheng1@huawei.com>
+Return-Path: <xieyisheng1@huawei.com>
+X-Google-Smtp-Source: AH8x226Ilo9idi20Mihs1q21FB/aldDqOrR6fWdquetkhxfIkwWfxhRRHqFOIy6YsCo+4kHoC06C
+ARC-Seal: i=1; a=rsa-sha256; t=1518435259; cv=none;
+        d=google.com; s=arc-20160816;
+        b=dv8X9pIxmvpjsrqzdaw2CBgEHbACAcO4GPr/lTMne3w68yDgyEwSqaVQfgsTnadlDf
+         8sEfp4beqEygRsVQhL2kI7CyZ87KRzCe2DZFraz9T31MOC1SvCixaP1tojxJAkP5BNyP
+         LFvsEvDezodkbx9Xdhzpb1GpPBD9SF6hYMFSb3MOYZxfxhngz6NvQZZDmqk55LPKmVQw
+         y4ktjLjKSI/qnpes7eMzDAxuxnzS5IC+vnycr8uKDojKCyhiQV7vmyY5Czc9y/oMkmFu
+         Qfsuh20eRFdmra5RrC+zbLyaKJAsX7/OUj9uu26MASQIdME2FDGQHJU/xp0yl/RfZ2Aw
+         oQBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:cc:references:to:subject:arc-authentication-results;
+        bh=99+0d+Vk3Ev1d1HPjYFsKW0k8wrm+QGjJ4rBf+tCR3k=;
+        b=gvftWO/71xLomxl/aTaNjiLlb+oO2u9mWoTc0gF7yMVp/6ej8o/je6UKyFfnewqED1
+         6yJrsi3jrYniZkzDfjIc8XFXRBJUXWtbJnYn80AOV1McayitaN7FngqvaLiUbeq4s9Sd
+         OiyUgJPYJXn5VkU5GgAcCmPs/1gzNXD2G2Hc+lOWPlPygUTN3+FBxcK6FdHtQ4jXeyT0
+         2P/6o3W3JIM3D7SFHW/KAWRRiCIjqQOHVowhdtozVb2KTb4M09St8H6OkJEK/cJ3HkeT
+         si3bjygX2LUvE5l8W2phT9Cbc1KuYbMMvYMc+I64SL3r/Z2OHvzCMVmxChUo2XxgnESM
+         X6Ng==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
 Subject: Re: [PATCH v2 0/9] staging: android: ion: Some cleanup about ion
-Message-ID: <20180212111710.zc2eskdu5dvlvww4@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 References: <1518432194-41536-1-git-send-email-xieyisheng1@huawei.com>
+ <20180212111710.zc2eskdu5dvlvww4@mwanda>
+CC: <gregkh@linuxfoundation.org>, <labbott@redhat.com>,
+	<sumit.semwal@linaro.org>, <devel@driverdev.osuosl.org>,
+	<linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <189b2f7b-4348-1ebc-fb9b-7e7588824cf1@huawei.com>
+Date: Mon, 12 Feb 2018 19:33:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <1518432194-41536-1-git-send-email-xieyisheng1@huawei.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802
- signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=659
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802120148
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
- sumit.semwal@linaro.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180212111710.zc2eskdu5dvlvww4@mwanda>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592192143298654950?=
+X-GMAIL-MSGID: =?utf-8?q?1592194770604150331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 06:43:05PM +0800, Yisheng Xie wrote:
-> Hi all,
-> 
-> When I tried to review the code of ion, I find that there are many place
-> can be cleanup, so I post this patchset.
-> 
-> I mark it as v2, because I have post them in different patchset before[1][2]
-> [3][4]. And now, I combine them in one patchset to make it easy to review,
-> Meanwhile, I add some acks and rebase them to v4.15-rc1.
-> 
-> Thanks.
-> 
-> [1] https://lkml.org/lkml/2018/1/31/711
-> [2] https://lkml.org/lkml/2018/2/1/240
-> [3] https://lkml.org/lkml/2018/2/4/320
-> [4] https://lkml.org/lkml/2018/2/6/949
-> 
+Hi Dan,
 
-Could you go back and reply to these threads that you have redone the
-patches?  Otherwise, what's likely to happen is that Greg will apply
-as many as he can get to this series and it won't apply.
+On 2018/2/12 19:17, Dan Carpenter wrote:
+> On Mon, Feb 12, 2018 at 06:43:05PM +0800, Yisheng Xie wrote:
+>> Hi all,
+>>
+>> When I tried to review the code of ion, I find that there are many place
+>> can be cleanup, so I post this patchset.
+>>
+>> I mark it as v2, because I have post them in different patchset before[1][2]
+>> [3][4]. And now, I combine them in one patchset to make it easy to review,
+>> Meanwhile, I add some acks and rebase them to v4.15-rc1.
+>>
+>> Thanks.
+>>
+>> [1] https://lkml.org/lkml/2018/1/31/711
+>> [2] https://lkml.org/lkml/2018/2/1/240
+>> [3] https://lkml.org/lkml/2018/2/4/320
+>> [4] https://lkml.org/lkml/2018/2/6/949
+>>
+> 
+> Could you go back and reply to these threads that you have redone the
+> patches?  Otherwise, what's likely to happen is that Greg will apply
+> as many as he can get to this series and it won't apply.
 
-regards,
-dan carpenter
+Sure! thanks
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Yisheng
+> 
+> regards,
+> dan carpenter
+> 
+> 
+> 
