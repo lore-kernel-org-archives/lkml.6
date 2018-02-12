@@ -1,47 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932815AbeBLW7D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:59:03 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37521 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932272AbeBLWsR (ORCPT
+        id S932590AbeBLXCC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 18:02:02 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:36556 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932402AbeBLXB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:48:17 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 04/45] rtc: nvmem: disallow registering nvmem more than once
-Date: Mon, 12 Feb 2018 23:47:18 +0100
-Message-Id: <20180212224759.15999-5-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
-References: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
+        Mon, 12 Feb 2018 18:01:58 -0500
+X-Google-Smtp-Source: AH8x225D5ScNfFoaHCcS16VMJyKnhgvNhlFukBCsoVkntRhOTIor7PYOhV3Km9vwMXYojyflFlmLSKrfOWth6TnQLGs=
+MIME-Version: 1.0
+In-Reply-To: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
+References: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
+From: Balbir Singh <bsingharora@gmail.com>
+Date: Tue, 13 Feb 2018 10:01:57 +1100
+Message-ID: <CAKTCnzmtDNJHThzuZa1+ydrriQG-dVovHA7uLSVvfLFG2MaidQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] powerpc/kdump: Add missing optional dummy functions
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
+        <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make rtc_nvmem_register return -EBUSY when an nvmem is already registered
-for that RTC.
+On Tue, Feb 13, 2018 at 9:34 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> If KEXEC_CORE is not enabled, PowerNV builds fail as follows.
+>
+> arch/powerpc/platforms/powernv/smp.c: In function 'pnv_smp_cpu_kill_self':
+> arch/powerpc/platforms/powernv/smp.c:236:4: error:
+>         implicit declaration of function 'crash_ipi_callback'
+>
+> Add dummy function calls, similar to kdump_in_progress(), to solve the
+> problem.
+>
+> Fixes: 4145f358644b ("powernv/kdump: Fix cases where the kdump kernel ...")
+> Cc: Balbir Singh <bsingharora@gmail.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/nvmem.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks for working on this.
 
-diff --git a/drivers/rtc/nvmem.c b/drivers/rtc/nvmem.c
-index 293df6db7c42..fd1c39a5ade5 100644
---- a/drivers/rtc/nvmem.c
-+++ b/drivers/rtc/nvmem.c
-@@ -87,6 +87,9 @@ static void rtc_nvram_unregister(struct rtc_device *rtc)
- int rtc_nvmem_register(struct rtc_device *rtc,
- 		       struct nvmem_config *nvmem_config)
- {
-+	if (!IS_ERR_OR_NULL(rtc->nvmem))
-+		return -EBUSY;
-+
- 	if (!nvmem_config)
- 		return -ENODEV;
- 
--- 
-2.16.1
+You've added two functions, I understand the crash_send_ipi() bits
+that I broke. Looks like crash_ipi_callback broken without KEXEC_CORE?
+
+I am going to test these patches, for now
+
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+
+Balbir Singh
