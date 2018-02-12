@@ -1,261 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933167AbeBLPAi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:00:38 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39477 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932651AbeBLO7M (ORCPT
+        id S932962AbeBLPAg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:00:36 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53223 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932666AbeBLO7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Feb 2018 09:59:12 -0500
-X-Google-Smtp-Source: AH8x225EUEmHkmPzjq8Is7YIy8YsKrDdM+vDyp7HAG8yBFVnjB0pCLe9+vSkkKN3VY3VsF+zPTtLlQ==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 18/19] clk: meson: remove obsolete cpu_clk
-Date: Mon, 12 Feb 2018 15:58:45 +0100
-Message-Id: <20180212145846.19380-19-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+X-Google-Smtp-Source: AH8x2267qpW2cfoiRdJN4JL+K8Y/UYjCWx0Hwi0qZBmh7t0vucF1F8IOEiXB+mxuTdiABD145llZ3A==
+Date: Mon, 12 Feb 2018 14:59:08 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Milo Kim <milo.kim@ti.com>
+Subject: Re: [PATCH 10/21] regulator: lp8788-ldo: Pass descriptor instead of
+ GPIO number
+Message-ID: <20180212145908.fil3dtrdzlycy4ea@dell>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-11-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180212131717.27193-11-linus.walleij@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-meson8b cpu_clk has been replaced by a set of divider and mux clocks.
-meson_cpu_clk is no longer used and can be removed
+On Mon, 12 Feb 2018, Linus Walleij wrote:
 
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/Makefile  |   2 +-
- drivers/clk/meson/clk-cpu.c | 178 --------------------------------------------
- drivers/clk/meson/clkc.h    |  11 ---
- 3 files changed, 1 insertion(+), 190 deletions(-)
- delete mode 100644 drivers/clk/meson/clk-cpu.c
+> Instead of passing a global GPIO number, pass a descriptor looked
+> up with the standard devm_gpiod_get_index_optional() call.
+> 
+> This driver has supported passing a LDO enable GPIO for years,
+> yet this facility has never been put to use in the upstream kernel.
+> If someone desires to put in place GPIO control for the LDOs,
+> this can be done by adding a GPIO descriptor table in the MFD
+> nexus in drivers/mfd/lp8788.c for the LDO device when spawning the
+> MFD children, or using a board file.
+> 
+> Cc: Milo Kim <milo.kim@ti.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Lee: would be nice if you could ACK this smallish patch to
+> the MFD header.
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 465086118d62..ffee82e60b7a 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for Meson specific clk
- #
- 
--obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-diff --git a/drivers/clk/meson/clk-cpu.c b/drivers/clk/meson/clk-cpu.c
-deleted file mode 100644
-index f8b2b7efd016..000000000000
---- a/drivers/clk/meson/clk-cpu.c
-+++ /dev/null
-@@ -1,178 +0,0 @@
--/*
-- * Copyright (c) 2015 Endless Mobile, Inc.
-- * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-- */
--
--/*
-- * CPU clock path:
-- *
-- *                           +-[/N]-----|3|
-- *             MUX2  +--[/3]-+----------|2| MUX1
-- * [sys_pll]---|1|   |--[/2]------------|1|-|1|
-- *             | |---+------------------|0| | |----- [a5_clk]
-- *          +--|0|                          | |
-- * [xtal]---+-------------------------------|0|
-- *
-- *
-- *
-- */
--
--#include <linux/delay.h>
--#include <linux/err.h>
--#include <linux/io.h>
--#include <linux/module.h>
--#include <linux/of_address.h>
--#include <linux/slab.h>
--#include <linux/clk.h>
--#include <linux/clk-provider.h>
--
--#define MESON_CPU_CLK_CNTL1		0x00
--#define MESON_CPU_CLK_CNTL		0x40
--
--#define MESON_CPU_CLK_MUX1		BIT(7)
--#define MESON_CPU_CLK_MUX2		BIT(0)
--
--#define MESON_N_WIDTH			9
--#define MESON_N_SHIFT			20
--#define MESON_SEL_WIDTH			2
--#define MESON_SEL_SHIFT			2
--
--#include "clkc.h"
--
--#define to_meson_clk_cpu_hw(_hw) container_of(_hw, struct meson_clk_cpu, hw)
--#define to_meson_clk_cpu_nb(_nb) container_of(_nb, struct meson_clk_cpu, clk_nb)
--
--static long meson_clk_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
--				     unsigned long *prate)
--{
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
--
--	return divider_round_rate(hw, rate, prate, clk_cpu->div_table,
--				  MESON_N_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
--}
--
--static int meson_clk_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
--				  unsigned long parent_rate)
--{
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
--	unsigned int div, sel, N = 0;
--	u32 reg;
--
--	div = DIV_ROUND_UP(parent_rate, rate);
--
--	if (div <= 3) {
--		sel = div - 1;
--	} else {
--		sel = 3;
--		N = div / 2;
--	}
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
--	reg = PARM_SET(MESON_N_WIDTH, MESON_N_SHIFT, reg, N);
--	writel(reg, clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
--	reg = PARM_SET(MESON_SEL_WIDTH, MESON_SEL_SHIFT, reg, sel);
--	writel(reg, clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
--
--	return 0;
--}
--
--static unsigned long meson_clk_cpu_recalc_rate(struct clk_hw *hw,
--					       unsigned long parent_rate)
--{
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
--	unsigned int N, sel;
--	unsigned int div = 1;
--	u32 reg;
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
--	N = PARM_GET(MESON_N_WIDTH, MESON_N_SHIFT, reg);
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
--	sel = PARM_GET(MESON_SEL_WIDTH, MESON_SEL_SHIFT, reg);
--
--	if (sel < 3)
--		div = sel + 1;
--	else
--		div = 2 * N;
--
--	return parent_rate / div;
--}
--
--/* FIXME MUX1 & MUX2 should be struct clk_hw objects */
--static int meson_clk_cpu_pre_rate_change(struct meson_clk_cpu *clk_cpu,
--					 struct clk_notifier_data *ndata)
--{
--	u32 cpu_clk_cntl;
--
--	/* switch MUX1 to xtal */
--	cpu_clk_cntl = readl(clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	cpu_clk_cntl &= ~MESON_CPU_CLK_MUX1;
--	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	udelay(100);
--
--	/* switch MUX2 to sys-pll */
--	cpu_clk_cntl |= MESON_CPU_CLK_MUX2;
--	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--
--	return 0;
--}
--
--/* FIXME MUX1 & MUX2 should be struct clk_hw objects */
--static int meson_clk_cpu_post_rate_change(struct meson_clk_cpu *clk_cpu,
--					  struct clk_notifier_data *ndata)
--{
--	u32 cpu_clk_cntl;
--
--	/* switch MUX1 to divisors' output */
--	cpu_clk_cntl = readl(clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	cpu_clk_cntl |= MESON_CPU_CLK_MUX1;
--	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	udelay(100);
--
--	return 0;
--}
--
--/*
-- * This clock notifier is called when the frequency of the of the parent
-- * PLL clock is to be changed. We use the xtal input as temporary parent
-- * while the PLL frequency is stabilized.
-- */
--int meson_clk_cpu_notifier_cb(struct notifier_block *nb,
--				     unsigned long event, void *data)
--{
--	struct clk_notifier_data *ndata = data;
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_nb(nb);
--	int ret = 0;
--
--	if (event == PRE_RATE_CHANGE)
--		ret = meson_clk_cpu_pre_rate_change(clk_cpu, ndata);
--	else if (event == POST_RATE_CHANGE)
--		ret = meson_clk_cpu_post_rate_change(clk_cpu, ndata);
--
--	return notifier_from_errno(ret);
--}
--
--const struct clk_ops meson_clk_cpu_ops = {
--	.recalc_rate	= meson_clk_cpu_recalc_rate,
--	.round_rate	= meson_clk_cpu_round_rate,
--	.set_rate	= meson_clk_cpu_set_rate,
--};
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index cc1a964cd4d7..8d8fe608cff4 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -101,17 +101,6 @@ struct meson_clk_pll_data {
- 
- #define to_meson_clk_pll(_hw) container_of(_hw, struct meson_clk_pll, hw)
- 
--struct meson_clk_cpu {
--	struct clk_hw hw;
--	void __iomem *base;
--	u16 reg_off;
--	struct notifier_block clk_nb;
--	const struct clk_div_table *div_table;
--};
--
--int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
--		void *data);
--
- struct meson_clk_mpll_data {
- 	struct parm sdm;
- 	struct parm sdm_en;
+Fine, but any sign of a conflict and I'll need a PR.
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> ---
+>  drivers/regulator/lp8788-ldo.c | 32 ++++++++++++++++----------------
+>  include/linux/mfd/lp8788.h     | 16 ----------------
+>  2 files changed, 16 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+> index cbfd35873575..f2347474a106 100644
+> --- a/drivers/regulator/lp8788-ldo.c
+> +++ b/drivers/regulator/lp8788-ldo.c
+> @@ -16,7 +16,7 @@
+>  #include <linux/err.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/driver.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/mfd/lp8788.h>
+>  
+>  /* register address */
+> @@ -85,8 +85,6 @@
+>  #define LP8788_STARTUP_TIME_S		3
+>  
+>  #define ENABLE_TIME_USEC		32
+> -#define ENABLE				GPIOF_OUT_INIT_HIGH
+> -#define DISABLE				GPIOF_OUT_INIT_LOW
+>  
+>  enum lp8788_ldo_id {
+>  	DLDO1,
+> @@ -117,7 +115,7 @@ struct lp8788_ldo {
+>  	struct lp8788 *lp;
+>  	struct regulator_desc *desc;
+>  	struct regulator_dev *regulator;
+> -	struct lp8788_ldo_enable_pin *en_pin;
+> +	struct gpio_desc *ena_gpiod;
+>  };
+>  
+>  /* DLDO 1, 2, 3, 9 voltage table */
+> @@ -469,7 +467,6 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+>  					enum lp8788_ldo_id id)
+>  {
+>  	struct lp8788 *lp = ldo->lp;
+> -	struct lp8788_platform_data *pdata = lp->pdata;
+>  	enum lp8788_ext_ldo_en_id enable_id;
+>  	u8 en_mask[] = {
+>  		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
+> @@ -504,11 +501,18 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+>  		return 0;
+>  	}
+>  
+> -	/* if no platform data for ldo pin, then set default enable mode */
+> -	if (!pdata || !pdata->ldo_pin || !pdata->ldo_pin[enable_id])
+> +	/* FIXME: check default mode for GPIO here: high or low? */
+> +	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
+> +						       "enable",
+> +						       enable_id,
+> +						       GPIOD_OUT_HIGH);
+> +	if (IS_ERR(ldo->ena_gpiod))
+> +		return PTR_ERR(ldo->ena_gpiod);
+> +
+> +	/* if no GPIO for ldo pin, then set default enable mode */
+> +	if (!ldo->ena_gpiod)
+>  		goto set_default_ldo_enable_mode;
+>  
+> -	ldo->en_pin = pdata->ldo_pin[enable_id];
+>  	return 0;
+>  
+>  set_default_ldo_enable_mode:
+> @@ -533,10 +537,8 @@ static int lp8788_dldo_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (ldo->en_pin) {
+> -		cfg.ena_gpio = ldo->en_pin->gpio;
+> -		cfg.ena_gpio_flags = ldo->en_pin->init_state;
+> -	}
+> +	if (ldo->ena_gpiod)
+> +		cfg.ena_gpiod = ldo->ena_gpiod;
+>  
+>  	cfg.dev = pdev->dev.parent;
+>  	cfg.init_data = lp->pdata ? lp->pdata->dldo_data[id] : NULL;
+> @@ -582,10 +584,8 @@ static int lp8788_aldo_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (ldo->en_pin) {
+> -		cfg.ena_gpio = ldo->en_pin->gpio;
+> -		cfg.ena_gpio_flags = ldo->en_pin->init_state;
+> -	}
+> +	if (ldo->ena_gpiod)
+> +		cfg.ena_gpiod = ldo->ena_gpiod;
+>  
+>  	cfg.dev = pdev->dev.parent;
+>  	cfg.init_data = lp->pdata ? lp->pdata->aldo_data[id] : NULL;
+> diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
+> index 786bf6679a28..2010e0de3e34 100644
+> --- a/include/linux/mfd/lp8788.h
+> +++ b/include/linux/mfd/lp8788.h
+> @@ -181,20 +181,6 @@ struct lp8788_buck2_dvs {
+>  	enum lp8788_dvs_sel vsel;
+>  };
+>  
+> -/*
+> - * struct lp8788_ldo_enable_pin
+> - *
+> - *   Basically, all LDOs are enabled through the I2C commands.
+> - *   But ALDO 1 ~ 5, 7, DLDO 7, 9, 11 can be enabled by external gpio pins.
+> - *
+> - * @gpio         : gpio number which is used for enabling ldos
+> - * @init_state   : initial gpio state (ex. GPIOF_OUT_INIT_LOW)
+> - */
+> -struct lp8788_ldo_enable_pin {
+> -	int gpio;
+> -	int init_state;
+> -};
+> -
+>  /*
+>   * struct lp8788_chg_param
+>   * @addr         : charging control register address (range : 0x11 ~ 0x1C)
+> @@ -288,7 +274,6 @@ struct lp8788_vib_platform_data {
+>   * @aldo_data    : regulator initial data for analog ldo
+>   * @buck1_dvs    : gpio configurations for buck1 dvs
+>   * @buck2_dvs    : gpio configurations for buck2 dvs
+> - * @ldo_pin      : gpio configurations for enabling LDOs
+>   * @chg_pdata    : platform data for charger driver
+>   * @alarm_sel    : rtc alarm selection (1 or 2)
+>   * @bl_pdata     : configurable data for backlight driver
+> @@ -306,7 +291,6 @@ struct lp8788_platform_data {
+>  	struct regulator_init_data *aldo_data[LP8788_NUM_ALDOS];
+>  	struct lp8788_buck1_dvs *buck1_dvs;
+>  	struct lp8788_buck2_dvs *buck2_dvs;
+> -	struct lp8788_ldo_enable_pin *ldo_pin[EN_LDOS_MAX];
+>  
+>  	/* charger */
+>  	struct lp8788_charger_platform_data *chg_pdata;
+
 -- 
-2.14.3
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
