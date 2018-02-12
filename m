@@ -1,65 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933269AbeBLJkB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 04:40:01 -0500
-Received: from mga07.intel.com ([134.134.136.100]:29033 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753849AbeBLJj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:39:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,501,1511856000";
-   d="scan'208";a="30061053"
-From: Jani Nikula <jani.nikula@intel.com>
-To: Lubomir Rintel <lkundrak@v3.sk>, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH] drm/edid: drop the dcc probe before drm_do_get_edid
-In-Reply-To: <1518346607.8520.1.camel@v3.sk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180210180355.2284-1-lkundrak@v3.sk> <1518346607.8520.1.camel@v3.sk>
-Date: Mon, 12 Feb 2018 11:39:51 +0200
-Message-ID: <87tvum7di0.fsf@intel.com>
+        id S1753928AbeBLJlY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 04:41:24 -0500
+Received: from casper.infradead.org ([85.118.1.10]:54328 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753843AbeBLJlW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 04:41:22 -0500
+Date: Mon, 12 Feb 2018 10:41:15 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
+        valentin.schneider@arm.com, morten.rasmussen@foss.arm.com,
+        brendan.jackman@arm.com, dietmar.eggemann@arm.com
+Subject: Re: [PATCH v3 1/3] sched: Stop nohz stats when decayed
+Message-ID: <20180212094115.GS25201@hirez.programming.kicks-ass.net>
+References: <1518422874-13216-1-git-send-email-vincent.guittot@linaro.org>
+ <1518422874-13216-2-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518422874-13216-2-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Feb 2018, Lubomir Rintel <lkundrak@v3.sk> wrote:
-> On Sat, 2018-02-10 at 19:03 +0100, Lubomir Rintel wrote:
->> Now that drm_do_get_edid() handles override and firmware EDIDs it makes
->> no sense to conditionalize it with a DCC probe. On the contrary -- the
->> overrides are useful specifically when DCC is not functioning.
->> 
->> drm_do_get_edid() already bails out when DCC fails, there's no need for
->> an extra check. It seems entirely safe to just drop this.
->> 
->> Working around the issue by forcing the connector on is not a good
->> solution because that way the desktop shell can't tell when a monitor is
->> plugged in or removed.
->> 
->> Cc: Jani Nikula <jani.nikula@intel.com>
->> Fixes: 53fd40a ("drm: handle override and firmware EDID at drm_do_get_edid() level")
->
-> Please disregard this, should have given it more thought. Sorry.
->
-> It removes a symbol other modules use, and typoes DDC/DCC in the commit
-> message. Moreover it doesn't actually seem to solve my problem -- will
-> try to follow up with a better fix.
+On Mon, Feb 12, 2018 at 09:07:52AM +0100, Vincent Guittot wrote:
+> @@ -9222,6 +9259,20 @@ void nohz_balance_enter_idle(int cpu)
+>  	atomic_inc(&nohz.nr_cpus);
+>  
+>  	set_cpu_sd_state_idle(cpu);
+> +
+> +	/*
+> +         * Ensures that if nohz_idle_balance() fails to observe our
+> +         * @idle_cpus_mask store, it must observe the @has_blocked
+> +         * store.
+> +         */
+> +        smp_mb__after_atomic();
+> +
+> +out:
+> +	/*
+> +	 * Each time a cpu enter idle, we assume that it has blocked load and
+> +	 * enable the periodic update of the load of idle cpus
+> +	 */
+> +	WRITE_ONCE(nohz.has_blocked, 1);
+>  }
+>  #else
+>  static inline void nohz_balancer_kick(struct rq *rq) { }
 
-I think the ddc probe was originally added for a reason. What that
-reason was, I have no idea. I suggest you go on a bit of git blame/log
-history digging to find what it was before removing.
+I moved the barrier up one statement, such that its right after the
+atomic_inc(). Otherwise people will get all itchy about __after_atomic()
+semantics and we really only care about the cpumask_set_cpu() vs
+WRITE_ONCE() ordering, so it doesn't really matter _where_ that barrier
+lands in between.
 
-Anyway, as you can see from the code, you can still use connector
-forcing to bypass the ddc check.
+> @@ -9374,6 +9425,22 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  
+>  	SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
+>  
+> +	/*
+> +	 * We assume there will be no idle load after this update and clear
+> +	 * the has_blocked flag. If a cpu enters idle in the mean time, it will
+> +	 * set the has_blocked flag and trig another update of idle load.
+> +	 * Because a cpu that becomes idle, is added to idle_cpus_mask before
+> +	 * setting the flag, we are sure to not clear the state and not
+> +	 * check the load of an idle cpu.
+> +	 */
+> +	WRITE_ONCE(nohz.has_blocked, 0);
+> +
+> +	/*
+> +         * Ensures that if we miss the CPU, we must see the has_blocked
+> +         * store from nohz_balance_enter_idle().
+> +         */
+> +        smp_mb();
+> +
+>  	for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+>  		if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
+>  			continue;
 
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+Fixed that white space damage for you ;-)
