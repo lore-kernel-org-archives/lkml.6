@@ -1,55 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753449AbeBLRdP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:33:15 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:23021 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751200AbeBLRdM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:33:12 -0500
-Subject: Re: [PATCH 0/2] GPIO-OMAP: Adjustments for omap_gpio_probe()
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        <linux-gpio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC: LKML <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <f6e04efd-061e-a534-c821-ac717d90904b@ti.com>
-Date: Mon, 12 Feb 2018 11:33:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932234AbeBLReg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:34:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932148AbeBLRee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 12:34:34 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B69F21726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 12 Feb 2018 12:34:30 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, vincent.guittot@linaro.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, tkjos@android.com, joelaf@google.com,
+        morten.rasmussen@arm.com, dietmar.eggemann@arm.com,
+        patrick.bellasi@arm.com, alessio.balsini@arm.com
+Subject: Re: [RFC PATCH 1/3] sched/deadline: merge dl_bw into dl_bandwidth
+Message-ID: <20180212123430.6f8e4d6e@gandalf.local.home>
+In-Reply-To: <20180212134030.12846-2-juri.lelli@redhat.com>
+References: <20180212134030.12846-1-juri.lelli@redhat.com>
+        <20180212134030.12846-2-juri.lelli@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.247.59.147]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 12 Feb 2018 14:40:28 +0100
+Juri Lelli <juri.lelli@redhat.com> wrote:
 
+> + *  - dl_bw (< 100%) is the bandwidth of the system (domain) on each CPU;
+> + *  - dl_total_bw array contains the currently allocated bandwidth on the
+> + *    i-eth CPU.
 
-On 02/10/2018 03:05 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Feb 2018 21:56:54 +0100
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (2):
->    Delete an error message for a failed memory allocation
->    Improve a size determination
-> 
->   drivers/gpio/gpio-omap.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
+The comment for dl_total_bw doesn't make sense. You mean that
+dl_total_bw is the cpu's bandwidth? If so, let's not call it total,
+because that would suggest it's the bandwidth of all CPUs. What about
+dl_cpu_bw?
 
-For series:
-Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
--- 
-regards,
--grygorii
+-- Steve
