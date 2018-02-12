@@ -1,85 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754033AbeBLUvv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 15:51:51 -0500
-Received: from vern.gendns.com ([206.190.152.46]:57243 "EHLO vern.gendns.com"
+        id S1754053AbeBLUww (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 15:52:52 -0500
+Received: from smtp2.it.da.ut.ee ([193.40.5.67]:39993 "EHLO smtp2.it.da.ut.ee"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753366AbeBLUvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 15:51:49 -0500
-Subject: Re: [PATCH] clk: don't call __of_clk_get_by_name() unnecessarily from
- clk_get()
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>
-References: <20180212142439.15885-1-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <36b4b8a0-0254-c6fa-c84f-ceab20c326ad@lechnology.com>
-Date: Mon, 12 Feb 2018 14:51:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1753817AbeBLUwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 15:52:50 -0500
+Date: Mon, 12 Feb 2018 22:52:46 +0200 (EET)
+From: Meelis Roos <mroos@linux.ee>
+To: Christoph Hellwig <hch@lst.de>
+cc: linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        Linux Kernel list <linux-kernel@vger.kernel.org>
+Subject: pata-macio WARNING at dmam_alloc_coherent+0xec/0x110
+Message-ID: <alpine.LRH.2.21.1802122246230.9153@math.ut.ee>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180212142439.15885-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 08:24 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The way this function is implemented caused some confusion when
-> converting the TI DaVinci platform to using the common clock framework.
-> 
-> Current kernel supports booting DaVinci boards both in device tree as
-> well as legacy, board-file mode. In the latter, we always end up
-> calling clk_get_sys() as of_node is NULL and __of_clk_get_by_name()
-> returns -ENOENT.
-> 
-> It was not obvious at first glance how clk_get(dev, NULL) will work in
-> board-file mode since we always call __of_clk_get_by_name(). Let's make
-> it clearer by checking if of_node is NULL and skipping right to
-> clk_get_sys().
-> 
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: David Lechner <david@lechnology.com>
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/clk/clkdev.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index 7513411140b6..f394e8964909 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -199,7 +199,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
->   	const char *dev_id = dev ? dev_name(dev) : NULL;
->   	struct clk *clk;
->   
-> -	if (dev) {
-> +	if (dev && dev->of_node) {
->   		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
->   		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
->   			return clk;
-> 
+I tested 4.16-rc1 on my PowerMac G4 and got the following warning from 
+macio pata driver. Since pata-macio has no recent changes, dma-mapping.h 
+changes seem to be related.
 
-Shouldn't you be sending this to the linux-clk mailing list and cc'ing
-the clock maintainers?
+[    0.228408] MacIO PCI driver attached to Keylargo chipset
+[    1.283931] pata-macio 0.0001f000:ata-4: Activating pata-macio chipset KeyLargo ATA-4, Apple bus ID 2
+[    1.284398] WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 dmam_alloc_coherent+0xec/0x110
+[    1.284689] Modules linked in:
+[    1.284797] CPU: 0 PID: 1 Comm: swapper Not tainted 4.16.0-rc1 #60
+[    1.284991] NIP:  c03259ec LR: c0325948 CTR: 00000000
+[    1.285150] REGS: ef047c10 TRAP: 0700   Not tainted  (4.16.0-rc1)
+[    1.285337] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24fff228  XER: 20000000
+[    1.285559] 
+               GPR00: c0325948 ef047cc0 ef048000 ef1321b0 00000000 00000000 ef1321bc 00000000 
+               GPR08: 00000000 00000000 c04f1bd0 00000000 22fff884 00000000 c0004c80 00000000 
+               GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 c0660000 c05f0960 
+               GPR24: 00000007 c063d7a8 00000000 ef1e59ac 00001020 ef1321b0 ef135c18 014000c0 
+[    1.303085] NIP [c03259ec] dmam_alloc_coherent+0xec/0x110
+[    1.308751] LR [c0325948] dmam_alloc_coherent+0x48/0x110
+[    1.314511] Call Trace:
+[    1.320187] [ef047cc0] [c0325948] dmam_alloc_coherent+0x48/0x110 (unreliable)
+[    1.326133] [ef047ce0] [c0370a90] pata_macio_port_start+0x44/0xb8
+[    1.332110] [ef047d00] [c0355ed4] ata_host_start.part.5+0x138/0x254
+[    1.338100] [ef047d30] [c035c1e8] ata_host_activate+0x84/0x1a0
+[    1.344007] [ef047d50] [c0371214] pata_macio_common_init+0x3b0/0x608
+[    1.349890] [ef047db0] [c0336f9c] macio_device_probe+0x60/0x120
+[    1.355761] [ef047dd0] [c031868c] driver_probe_device+0x25c/0x35c
+[    1.361576] [ef047e00] [c031887c] __driver_attach+0xf0/0xf4
+[    1.367320] [ef047e20] [c0316340] bus_for_each_dev+0x80/0xc0
+[    1.373051] [ef047e50] [c031782c] bus_add_driver+0x144/0x258
+[    1.378805] [ef047e70] [c03190dc] driver_register+0x8c/0x140
+[    1.384580] [ef047e80] [c060ce14] pata_macio_init+0x5c/0x8c
+[    1.390303] [ef047ea0] [c0004aa0] do_one_initcall+0x48/0x18c
+[    1.396000] [ef047f00] [c05f1214] kernel_init_freeable+0x12c/0x1ec
+[    1.401615] [ef047f30] [c0004c98] kernel_init+0x18/0x128
+[    1.407208] [ef047f40] [c00122e4] ret_from_kernel_thread+0x5c/0x64
+[    1.412829] Instruction dump:
+[    1.418409] 939d0000 4bff6329 80010024 7fe3fb78 8361000c 83810010 7c0803a6 83a10014
+[    1.424201] 83c10018 83e1001c 38210020 4e800020 <0fe00000> 4bffff84 7fa3eb78 3be00000 
+[    1.430020] ---[ end trace 89c0f4a91a110769 ]---
 
-FWIW, it seems pretty clear to me that if we are using a board file
-then we should expect clk_get_sys() to be called because there is
-no device tree.
+
+-- 
+Meelis Roos (mroos@linux.ee)
