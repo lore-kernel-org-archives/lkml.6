@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935431AbeBLNUL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:20:11 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45213 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935289AbeBLNR7 (ORCPT
+        id S935439AbeBLNUb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:20:31 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43100 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935272AbeBLNRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:17:59 -0500
-X-Google-Smtp-Source: AH8x227mTi7XQ5R0cym1pD3vR8pQbrXiit/Vib8mHLFyavcfbMRcj6M5hte5ftkSgZWHTWWfw2FnEg==
+        Mon, 12 Feb 2018 08:17:55 -0500
+X-Google-Smtp-Source: AH8x226e/SF8ovVnak8om+lcwsvj42ncxcO+AluAT8w/F7KxBWoATnk/GpWVOsP/WzX3sWAlMXkM5g==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 13/21] regulator: s2mps11: Pass descriptor instead of GPIO number
-Date: Mon, 12 Feb 2018 14:17:09 +0100
-Message-Id: <20180212131717.27193-14-linus.walleij@linaro.org>
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 11/21] regulator: max8952: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:17:07 +0100
+Message-Id: <20180212131717.27193-12-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -29,139 +27,78 @@ Instead of passing a global GPIO number for the enable GPIO, pass
 a descriptor looked up with the standard devm_gpiod_get_optional()
 call.
 
-This regulator supports passing platform data, but enable/sleep
-regulators are looked up from the device tree exclusively, so
-we can need not touch other files.
+All users of this regulator use device tree so the transition is
+pretty smooth.
 
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/s2mps11.c | 46 ++++++++++++++++++++++-----------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ drivers/regulator/max8952.c       | 18 +++++++++++++-----
+ include/linux/regulator/max8952.h |  1 -
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 7726b874e539..9a1dca26362e 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -18,7 +18,7 @@
- 
- #include <linux/bug.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -27,7 +27,6 @@
+diff --git a/drivers/regulator/max8952.c b/drivers/regulator/max8952.c
+index 1096546c05e9..f1e77ed5dfec 100644
+--- a/drivers/regulator/max8952.c
++++ b/drivers/regulator/max8952.c
+@@ -27,6 +27,7 @@
  #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
--#include <linux/of_gpio.h>
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/s2mps11.h>
- #include <linux/mfd/samsung/s2mps13.h>
-@@ -57,7 +56,7 @@ struct s2mps11_info {
- 	 * Array (size: number of regulators) with GPIO-s for external
- 	 * sleep control.
- 	 */
--	int *ext_control_gpio;
-+	struct gpio_desc **ext_control_gpiod;
- };
+ #include <linux/regulator/max8952.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+@@ -148,7 +149,6 @@ static struct max8952_platform_data *max8952_parse_dt(struct device *dev)
  
- static int get_ramp_delay(int ramp_delay)
-@@ -524,7 +523,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
- 	case S2MPS14X:
- 		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
- 			val = S2MPS14_ENABLE_SUSPEND;
--		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
-+		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
- 			val = S2MPS14_ENABLE_EXT_CONTROL;
- 		else
- 			val = rdev->desc->enable_mask;
-@@ -818,7 +817,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
- static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
- {
--	int *gpio = s2mps11->ext_control_gpio;
-+	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
- 	unsigned int i;
- 	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
- 		S2MPS14_LDO12 };
-@@ -829,11 +828,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
- 			continue;
+ 	pd->gpio_vid0 = of_get_named_gpio(np, "max8952,vid-gpios", 0);
+ 	pd->gpio_vid1 = of_get_named_gpio(np, "max8952,vid-gpios", 1);
+-	pd->gpio_en = of_get_named_gpio(np, "max8952,en-gpio", 0);
  
--		gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
--				"samsung,ext-control-gpios", 0);
--		if (gpio_is_valid(gpio[reg]))
--			dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
--					gpio[reg], reg, rdata[reg].name);
-+		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
-+							rdata[reg].of_node,
-+							"samsung,ext-control-gpios",
-+							0,
-+							GPIOD_OUT_HIGH,
-+							"s2mps11-LDO");
-+		if (IS_ERR(gpio[reg])) {
-+			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
-+				reg, rdata[reg].name);
-+			continue;
-+		}
-+		if (gpio[reg])
-+			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
-+				reg, rdata[reg].name);
- 	}
- }
+ 	if (of_property_read_u32(np, "max8952,default-mode", &pd->default_mode))
+ 		dev_warn(dev, "Default mode not specified, assuming 0\n");
+@@ -197,6 +197,8 @@ static int max8952_pmic_probe(struct i2c_client *client,
+ 	struct regulator_config config = { };
+ 	struct max8952_data *max8952;
+ 	struct regulator_dev *rdev;
++	struct gpio_desc *gpiod;
++	enum gpiod_flags gflags;
  
-@@ -1139,17 +1147,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+ 	int ret = 0, err = 0;
  
--	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
--			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
-+	s2mps11->ext_control_gpiod = devm_kmalloc(&pdev->dev,
-+			sizeof(*s2mps11->ext_control_gpiod) * rdev_num,
- 			GFP_KERNEL);
--	if (!s2mps11->ext_control_gpio)
-+	if (!s2mps11->ext_control_gpiod)
- 		return -ENOMEM;
--	/*
--	 * 0 is a valid GPIO so initialize all GPIO-s to negative value
--	 * to indicate that external control won't be used for this regulator.
--	 */
--	for (i = 0; i < rdev_num; i++)
--		s2mps11->ext_control_gpio[i] = -EINVAL;
+@@ -224,11 +226,17 @@ static int max8952_pmic_probe(struct i2c_client *client,
+ 	config.driver_data = max8952;
+ 	config.of_node = client->dev.of_node;
  
- 	if (!iodev->dev->of_node) {
- 		if (iodev->pdata) {
-@@ -1179,8 +1181,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	config.dev = &pdev->dev;
- 	config.regmap = iodev->regmap_pmic;
- 	config.driver_data = s2mps11;
--	config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
--	config.ena_gpio_initialized = true;
- 	for (i = 0; i < rdev_num; i++) {
- 		struct regulator_dev *regulator;
+-	config.ena_gpio = pdata->gpio_en;
+-	if (client->dev.of_node)
+-		config.ena_gpio_initialized = true;
+ 	if (pdata->reg_data->constraints.boot_on)
+-		config.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++		gflags = GPIOD_OUT_HIGH;
++	else
++		gflags = GPIOD_OUT_LOW;
++	gpiod = devm_gpiod_get_optional(&client->dev,
++					"max8952,en",
++					gflags);
++	if (IS_ERR(gpiod))
++		return PTR_ERR(gpiod);
++	if (gpiod)
++		config.ena_gpiod = gpiod;
  
-@@ -1191,7 +1191,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			config.init_data = rdata[i].init_data;
- 			config.of_node = rdata[i].of_node;
- 		}
--		config.ena_gpio = s2mps11->ext_control_gpio[i];
-+		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
+ 	rdev = devm_regulator_register(&client->dev, &regulator, &config);
+ 	if (IS_ERR(rdev)) {
+diff --git a/include/linux/regulator/max8952.h b/include/linux/regulator/max8952.h
+index 4dbb63a1d4ab..686c42c041b5 100644
+--- a/include/linux/regulator/max8952.h
++++ b/include/linux/regulator/max8952.h
+@@ -120,7 +120,6 @@ enum {
+ struct max8952_platform_data {
+ 	int gpio_vid0;
+ 	int gpio_vid1;
+-	int gpio_en;
  
- 		regulator = devm_regulator_register(&pdev->dev,
- 						&regulators[i], &config);
-@@ -1202,7 +1202,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			goto out;
- 		}
- 
--		if (gpio_is_valid(s2mps11->ext_control_gpio[i])) {
-+		if (s2mps11->ext_control_gpiod[i]) {
- 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
- 					regulator);
- 			if (ret < 0) {
+ 	u32 default_mode;
+ 	u32 dvs_mode[MAX8952_NUM_DVS_MODE]; /* MAX8952_DVS_MODEx_XXXXmV */
 -- 
 2.14.3
