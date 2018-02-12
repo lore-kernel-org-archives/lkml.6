@@ -1,50 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932842AbeBLFXz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 00:23:55 -0500
-Received: from ozlabs.org ([103.22.144.67]:52927 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932543AbeBLFXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 00:23:52 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, mikey@neuling.org,
-        hbabu@us.ibm.com, linuxppc-dev@ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] powerpc/vas: Fix cleanup when VAS is not configured
-In-Reply-To: <1518234567-24869-2-git-send-email-sukadev@linux.vnet.ibm.com>
-References: <1518234567-24869-1-git-send-email-sukadev@linux.vnet.ibm.com> <1518234567-24869-2-git-send-email-sukadev@linux.vnet.ibm.com>
-Date: Mon, 12 Feb 2018 16:23:50 +1100
-Message-ID: <87d11awzkp.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S932864AbeBLFYY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 00:24:24 -0500
+Received: from g9t5009.houston.hpe.com ([15.241.48.73]:36650 "EHLO
+        g9t5009.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750912AbeBLFWZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 00:22:25 -0500
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
+To: wim@linux-watchdog.org, linux@roeck-us.net
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rwright@hpe.com, maurice.a.saldivar@hpe.com,
+        Jerry Hoemann <jerry.hoemann@hpe.com>
+Subject: [PATCH v2 05/11] watchdog/hpwdt: Update Module info.
+Date: Sun, 11 Feb 2018 22:21:05 -0700
+Message-Id: <20180212052111.12010-6-jerry.hoemann@hpe.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180212052111.12010-1-jerry.hoemann@hpe.com>
+References: <20180212052111.12010-1-jerry.hoemann@hpe.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com> writes:
+Update Module Author and permission on parameters so that the
+parameters show up in sysfs.
 
-> When VAS is not configured in the system, make sure to remove
-> the VAS debugfs directory and unregister the platform driver.
->
-> Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-...
-> diff --git a/arch/powerpc/platforms/powernv/vas.c b/arch/powerpc/platforms/powernv/vas.c
-> index aebbe95..f83e27d8 100644
-> --- a/arch/powerpc/platforms/powernv/vas.c
-> +++ b/arch/powerpc/platforms/powernv/vas.c
-> @@ -169,8 +169,11 @@ static int __init vas_init(void)
->  		found++;
->  	}
->  
-> -	if (!found)
-> +	if (!found) {
-> +		platform_driver_unregister(&vas_driver);
-> +		vas_cleanup_dbgdir();
->  		return -ENODEV;
-> +	}
+Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+---
+ drivers/watchdog/hpwdt.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The better patch would be to move the call to vas_init_dbgdir() down
-here, where we know we have successfully registered the driver.
-
-cheers
+diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+index ee9a92220ece..dead59f9ca80 100644
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -432,20 +432,20 @@ static struct pci_driver hpwdt_driver = {
+ 	.remove		= hpwdt_exit,
+ };
+ 
+-MODULE_AUTHOR("Tom Mingarelli");
+-MODULE_DESCRIPTION("hp watchdog driver");
++MODULE_AUTHOR("Jerry Hoemann");
++MODULE_DESCRIPTION("hpe watchdog driver");
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION(HPWDT_VERSION);
+ 
+-module_param(soft_margin, int, 0);
++module_param(soft_margin, int, 0444);
+ MODULE_PARM_DESC(soft_margin, "Watchdog timeout in seconds");
+ 
+-module_param(nowayout, bool, 0);
++module_param(nowayout, bool, 0444);
+ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+ 		__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+ 
+ #ifdef CONFIG_HPWDT_NMI_DECODING	/* { */
+-module_param(allow_kdump, int, 0);
++module_param(allow_kdump, int, 0444);
+ MODULE_PARM_DESC(allow_kdump, "Start a kernel dump after NMI occurs");
+ #endif					/* } */
+ 
+-- 
+2.13.6
