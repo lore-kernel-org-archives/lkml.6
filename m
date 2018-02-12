@@ -1,65 +1,209 @@
-Date: Fri, 16 Feb 2018 15:18:43 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: NeilBrown <neilb@suse.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>,
-	Andreas Dilger <andreas.dilger@intel.com>,
-	James Simmons <jsimmons@infradead.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	lustre <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 08/19 - v2] staging: lustre: simplify waiting in
+Return-Path: <prvs=574ffc5cd=paf@cray.com>
+X-Google-Smtp-Source: AH8x2275Mz43wmDcWi6hGNMtGv0mwsnetz76KGvzXZqgxSB7adxCHeQ4bzKN/g2WbLoZ4DMma6Pq
+ARC-Seal: i=1; a=rsa-sha256; t=1518473341; cv=none;
+        d=google.com; s=arc-20160816;
+        b=yVXnRXyY3QghukTnk35AokY77I8G+gLHbAwaHqa/JRibVgwfEKQY9LnvI/72qjiwA9
+         POILXdSwvgpgIaIEb5K8xVDwvaiPvq0M194Bm0iQibJl4jVNIFhD1Opg527zGJ5TCX7V
+         J9DleIt/SeXHS2/ei4HY4lD+FQq5pPZrKM7IaiyqcrJw7Kb7rn9rsevFibvm5SDV2Fo3
+         89vrUT8nt0km7v6DO31sVA5CAAuOgUojkbqU7HZ9RH7a/aoVybemMJ6oMjP8JGc9OG0M
+         mKZGYZipGHeba3ng4VnuuB/7KRG481F5M7zDJOTOkFeMEQzQeOb2pwCTqaekto76Rb2f
+         XwVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:content-id
+         :spamdiagnosticmetadata:spamdiagnosticoutput:user-agent
+         :content-language:accept-language:in-reply-to:references:message-id
+         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=2vqxy1UGWlweQZ1i3/5ynRngnwBTqFpnD1zkEKLvj7I=;
+        b=EBxvsupbE0Fqseqr40LSGHVOJSoW2Vv8Cz/TqmQ6ECXakGH1fkd+cwyv61gmOQjPwu
+         lD/C4rDAudtBP9L6O5IS/xOGQFtI9h7ZlQpqjsOD9Ht/uZ5bgEtoqr4qx56/mwK3lbM1
+         ysTC8eu6TzxAH1wjyVs4gxEB/Grk/sMWXcGidBFVz9eG6xz0CEeGDNGkbN/GEd5hT6Bg
+         I+g0hIxHcaFRrqTaUb9k8SCojqw0lHQmAbWEvPJJQco8qN5srNr1UE39ltXgEAc9NIsp
+         C3mV3f+CMwzZU4c6fe9O8w1WFyXT4zWxAaWtAbkS4etN24ClsGTvZHY1vUVP/uEVYGy1
+         J3hg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=ivFkLdSf;
+       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=kAANav9+;
+       spf=pass (google.com: domain of prvs=574ffc5cd=paf@cray.com designates 68.232.143.164 as permitted sender) smtp.mailfrom=prvs=574ffc5cd=paf@cray.com
+Authentication-Results: mx.google.com;
+       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=ivFkLdSf;
+       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=kAANav9+;
+       spf=pass (google.com: domain of prvs=574ffc5cd=paf@cray.com designates 68.232.143.164 as permitted sender) smtp.mailfrom=prvs=574ffc5cd=paf@cray.com
+X-IronPort-AV: E=Sophos;i="5.46,504,1511827200";
+   d="scan'208";a="17953317"
+X-Cray-OBMMKR: 1433258124 17953317
+From: Patrick Farrell <paf@cray.com>
+To: NeilBrown <neilb@suse.com>, Oleg Drokin <oleg.drokin@intel.com>, "Andreas
+ Dilger" <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: lkml <linux-kernel@vger.kernel.org>, lustre
+	<lustre-devel@lists.lustre.org>
+Subject: Re: [lustre-devel] [PATCH 08/19] staging: lustre: simplify waiting in
  ldlm_completion_ast()
-Message-ID: <20180216141843.GA22540@kroah.com>
+Thread-Topic: [lustre-devel] [PATCH 08/19] staging: lustre: simplify waiting
+ in ldlm_completion_ast()
+Thread-Index: AQHTpEfozrbM95cnIUGwArRq++a4gKOg7wCA
+Date: Mon, 12 Feb 2018 22:08:56 +0000
+Message-ID: <4AC4BB93-85C5-4CA1-B062-1274833C51C6@cray.com>
 References: <151847037709.22826.16175867257667686132.stgit@noble>
  <151847055674.22826.12912356108048917428.stgit@noble>
- <87fu64r6ed.fsf@notabene.neil.brown.name>
+In-Reply-To: <151847055674.22826.12912356108048917428.stgit@noble>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.9.0.180116
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=paf@cray.com; 
+x-originating-ip: [136.162.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2148;7:xeXj8fhtrQ1yfdRFNfUvCI9CEXsWRgkiwA3oVMJqnMS0K/+Bw11fYqdKJRHPS4K9jYiJfoWx6hGJqaEN3CYedyKQlHjkr1UPgLwjG7Vz0pMdj7dpdfHPuigKbHPgHqX6o8XWtzXhIksa9rOdLlhjU9WasyAly430MecoIbOjH9vwmur+9E9ADxDlqqH8RQ5DTuB4Vnlemil1dgCfNvy4xkMWmYaGnorTrkneHC3bDCsvR+8Xn4HTTW4bv0N2PHNT
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: 871e9860-d040-490a-4961-08d572653648
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BN6PR1101MB2148;
+x-ms-traffictypediagnostic: BN6PR1101MB2148:
+x-microsoft-antispam-prvs: <BN6PR1101MB2148076794458418DE5EFE63CBF70@BN6PR1101MB2148.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231101)(2400082)(944501161)(10201501046)(93006095)(93001095)(3002001)(6041288)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN6PR1101MB2148;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2148;
+x-forefront-prvs: 0581B5AB35
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(396003)(39850400004)(346002)(376002)(189003)(199004)(51444003)(59450400001)(8936002)(86362001)(6512007)(82746002)(83716003)(81156014)(81166006)(2950100002)(76176011)(478600001)(106356001)(6116002)(3846002)(8676002)(102836004)(6506007)(7736002)(3280700002)(68736007)(229853002)(36756003)(305945005)(3660700001)(33656002)(83506002)(966005)(6486002)(6246003)(6436002)(99286004)(14454004)(26005)(186003)(4326008)(58126008)(66066001)(105586002)(54906003)(110136005)(316002)(2906002)(97736004)(53936002)(6306002)(2900100001)(77096007)(25786009)(5660300001)(13693001)(21314002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR1101MB2148;H:BN6PR1101MB2132.namprd11.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: fKG1vnIUc5P7taO55u8BzHw+5JLxgmajJ26uNrZu2mtO8DLm8GAR1H1zMGhBbgLK1+ah1Z+CPAbggujhY1mVMA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0D6C7677B8D7E8428E87687D524D1415@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87fu64r6ed.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 871e9860-d040-490a-4961-08d572653648
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2018 22:08:56.8732
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e7b8488a-c0cd-4614-aae1-996bfabec247
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2148
+X-OriginatorOrg: cray.com
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592231861062476291?=
+X-GMAIL-MSGID: =?utf-8?q?1592234702381578419?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 14, 2018 at 07:17:30AM +1100, NeilBrown wrote:
-> 
-> If a signal-callback (lwi_on_signal) is set without lwi_allow_intr, as
-> is the case in ldlm_completion_ast(), the behavior depends on the
-> timeout set.
-> 
-> If a timeout is set, then signals are ignored.  If the timeout is
-> reached, the timeout handler is called.  If the timeout handler
-> return 0, which ldlm_expired_completion_wait() always does, the
-> l_wait_event() switches to exactly the behavior if no timeout was set.
-> 
-> If no timeout is set, then "fatal" signals are not ignored.  If one
-> arrives the callback is run, but as the callback is empty in this
-> case, that is not relevant.
-> 
-> This can be simplified to:
->  if a timeout is wanted
->      wait_event_idle_timeout()
->      if that timed out, call the timeout handler
->  l_wait_event_abortable()
-> 
-> i.e. the code always waits indefinitely.  Sometimes it performs a
-> non-abortable wait first.  Sometimes it doesn't.  But it only
-> aborts before the condition is true if it is signaled.
-> This doesn't quite agree with the comments and debug messages.
-> 
-> Now that we call the timeout handler (ldlm_expired_completion_wait())
-> wait directly, we can pass the two args directly rather then
-> using a special-purpose struct.
-> 
-> Reviewed-by: Patrick Farrell <paf@cray.com>
-> Reviewed-by: James Simmons <jsimmons@infradead.org>
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
-> 
-> Patrick discovered a bug in v1, which this v2 fixes.
-> 
-> Greg - do you need me to resend the whole series, or are you ok with
-> taking this replacement in the rest of the original series?
-
-I can take this replacement, thanks.
-
-greg k-h
+TmVpbCwNCg0KSSBkaWRuJ3QgZ2V0IGFueXRoaW5nIGFmdGVyIDgvMTkgaW4gdGhpcyBzZXJpZXMu
+ICBJcyB0aGlzIGp1c3QgbWU/ICAoSSdkIGtlZXAgd2FpdGluZywgZXhjZXB0IEkgYWxzbyBmb3Vu
+ZCBhIGZldyB0aGluZ3MgaW4gdGhpcyBwYXRjaC4pDQoNCk1pbm9yOg0KVGhlIGxpbmUgWFhYIEFM
+TE9DQVRFIGlzIG91dCBvZiBkYXRlIGFuZCBjb3VsZCBnby4gIChJdCByZWZlcnMgdG8gYSBtaXgg
+b2YgdGhpbmdzIHlvdSBlbGltaW5hdGVkIGFuZCB0aGluZ3MgdGhhdCB3ZXJlIGFscmVhZHkgZ29u
+ZS4pDQoNCkxlc3MgbWlub3I6DQpZb3UgcmVtb3ZlIHVzZSBvZiB0aGUgaW1wX2xvY2sgd2hlbiBy
+ZWFkaW5nIHRoZSBjb25uZWN0aW9uIGNvdW50LiAgV2hpbGUgdGhhdCdsbCB3b3JrIG9uIHg4Niwg
+aXQncyBwcm9iYWJseSB3cm9uZyBvbiBzb21lIGFyY2hpdGVjdHVyZSB0byByZWFkIHRoYXQgd2l0
+aG91dCB0YWtpbmcgdGhlIGxvY2suLi4/DQoNCkJ1ZzoNClRoZSBleGlzdGluZyBjb2RlIHVzZXMg
+dGhlIGltcF9jb25uX2NudCBmcm9tICpiZWZvcmUqIHRoZSB3YWl0LCByYXRoZXIgdGhhbiBhZnRl
+ci4gIEkgdGhpbmsgdGhhdCdzIHF1aXRlIGltcG9ydGFudC4gIFNvIHlvdSdsbCB3YW50IHRvIHJl
+YWQgaXQgb3V0IGJlZm9yZSB0aGUgd2FpdC4gIEkgdGhpbmsgdGhlIG1haW4gcmVhc29uIHdlJ2Qg
+aGl0IHRoZSB0aW1lb3V0IGlzIGEgZGlzY29ubmVjdCwgd2hpY2ggc2hvdWxkIGNhdXNlIGEgcmVj
+b25uZWN0LCBzbyBpdCdzIHZlcnkgaW1wb3J0YW50IHRvIHVzZSB0aGUgdmFsdWUgZnJvbSAqYmVm
+b3JlKiB0aGUgd2FpdC4gIChTZWUgY29tbWVudCBvbiBwdGxycGNfc2V0X2ltcG9ydF9kaXNjb24g
+Zm9yIG1vcmUgb2YgYW4gZXhwbGFuYXRpb24uICBCYXNpY2FsbHkgaXQncyB0cmFja2luZyBhIGNv
+bm5lY3Rpb24gJ2Vwb2NoJywgaWYgaXQncyBjaGFuZ2VkLCBzb21lb25lIGVsc2UgYWxyZWFkeSB3
+ZW50IHRocm91Z2ggdGhlIHJlY29ubmVjdCBjb2RlIGZvciB0aGlzICdjb25uZWN0aW9uIGVwb2No
+JyBhbmQgd2Ugc2hvdWxkbid0IHN0YXJ0IHRoYXQgcHJvY2Vzcy4pDQoNCi0gUGF0cmljaw0KDQrv
+u79PbiAyLzEyLzE4LCAzOjI0IFBNLCAibHVzdHJlLWRldmVsIG9uIGJlaGFsZiBvZiBOZWlsQnJv
+d24iIDxsdXN0cmUtZGV2ZWwtYm91bmNlc0BsaXN0cy5sdXN0cmUub3JnIG9uIGJlaGFsZiBvZiBu
+ZWlsYkBzdXNlLmNvbT4gd3JvdGU6DQoNCiAgICBJZiBhIHNpZ25hbC1jYWxsYmFjayAobHdpX29u
+X3NpZ25hbCkgaXMgc2V0IHdpdGhvdXQgbHdpX2FsbG93X2ludHIsIGFzDQogICAgaXMgdGhlIGNh
+c2UgaW4gbGRsbV9jb21wbGV0aW9uX2FzdCgpLCB0aGUgYmVoYXZpb3IgZGVwZW5kcyBvbiB0aGUN
+CiAgICB0aW1lb3V0IHNldC4NCiAgICANCiAgICBJZiBhIHRpbWVvdXQgaXMgc2V0LCB0aGVuIHNp
+Z25hbHMgYXJlIGlnbm9yZWQuICBJZiB0aGUgdGltZW91dCBpcw0KICAgIHJlYWNoZWQsIHRoZSB0
+aW1lb3V0IGhhbmRsZXIgaXMgY2FsbGVkLiAgSWYgdGhlIHRpbWVvdXQgaGFuZGxlcg0KICAgIHJl
+dHVybiAwLCB3aGljaCBsZGxtX2V4cGlyZWRfY29tcGxldGlvbl93YWl0KCkgYWx3YXlzIGRvZXMs
+IHRoZQ0KICAgIGxfd2FpdF9ldmVudCgpIHN3aXRjaGVzIHRvIGV4YWN0bHkgdGhlIGJlaGF2aW9y
+IGlmIG5vIHRpbWVvdXQgd2FzIHNldC4NCiAgICANCiAgICBJZiBubyB0aW1lb3V0IGlzIHNldCwg
+dGhlbiAiZmF0YWwiIHNpZ25hbHMgYXJlIG5vdCBpZ25vcmVkLiAgSWYgb25lDQogICAgYXJyaXZl
+cyB0aGUgY2FsbGJhY2sgaXMgcnVuLCBidXQgYXMgdGhlIGNhbGxiYWNrIGlzIGVtcHR5IGluIHRo
+aXMNCiAgICBjYXNlLCB0aGF0IGlzIG5vdCByZWxldmFudC4NCiAgICANCiAgICBUaGlzIGNhbiBi
+ZSBzaW1wbGlmaWVkIHRvOg0KICAgICBpZiBhIHRpbWVvdXQgaXMgd2FudGVkDQogICAgICAgICB3
+YWl0X2V2ZW50X2lkbGVfdGltZW91dCgpDQogICAgICAgICBpZiB0aGF0IHRpbWVkIG91dCwgY2Fs
+bCB0aGUgdGltZW91dCBoYW5kbGVyDQogICAgIGxfd2FpdF9ldmVudF9hYm9ydGFibGUoKQ0KICAg
+IA0KICAgIGkuZS4gdGhlIGNvZGUgYWx3YXlzIHdhaXRzIGluZGVmaW5pdGVseS4gIFNvbWV0aW1l
+cyBpdCBwZXJmb3JtcyBhDQogICAgbm9uLWFib3J0YWJsZSB3YWl0IGZpcnN0LiAgU29tZXRpbWVz
+IGl0IGRvZXNuJ3QuICBCdXQgaXQgb25seQ0KICAgIGFib3J0cyBiZWZvcmUgdGhlIGNvbmRpdGlv
+biBpcyB0cnVlIGlmIGl0IGlzIHNpZ25hbGVkLg0KICAgIFRoaXMgZG9lc24ndCBxdWl0ZSBhZ3Jl
+ZSB3aXRoIHRoZSBjb21tZW50cyBhbmQgZGVidWcgbWVzc2FnZXMuDQogICAgDQogICAgUmV2aWV3
+ZWQtYnk6IEphbWVzIFNpbW1vbnMgPGpzaW1tb25zQGluZnJhZGVhZC5vcmc+DQogICAgU2lnbmVk
+LW9mZi1ieTogTmVpbEJyb3duIDxuZWlsYkBzdXNlLmNvbT4NCiAgICAtLS0NCiAgICAgZHJpdmVy
+cy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvbGRsbS9sZGxtX3JlcXVlc3QuYyB8ICAgNTUgKysrKysr
+Ky0tLS0tLS0tLS0tLS0tDQogICAgIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAz
+NyBkZWxldGlvbnMoLSkNCiAgICANCiAgICBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1
+c3RyZS9sdXN0cmUvbGRsbS9sZGxtX3JlcXVlc3QuYyBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUv
+bHVzdHJlL2xkbG0vbGRsbV9yZXF1ZXN0LmMNCiAgICBpbmRleCBhMjQ0ZmE3MTcxMzQuLmYxMjMz
+ZDg0NGJiZCAxMDA2NDQNCiAgICAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9s
+ZGxtL2xkbG1fcmVxdWVzdC5jDQogICAgKysrIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0
+cmUvbGRsbS9sZGxtX3JlcXVlc3QuYw0KICAgIEBAIC03MiwxNSArNzIsNiBAQCBNT0RVTEVfUEFS
+TV9ERVNDKGxkbG1fZW5xdWV1ZV9taW4sICJsb2NrIGVucXVldWUgdGltZW91dCBtaW5pbXVtIik7
+DQogICAgIC8qIGluIGNsaWVudCBzaWRlLCB3aGV0aGVyIHRoZSBjYWNoZWQgbG9ja3Mgd2lsbCBi
+ZSBjYW5jZWxlZCBiZWZvcmUgcmVwbGF5ICovDQogICAgIHVuc2lnbmVkIGludCBsZGxtX2NhbmNl
+bF91bnVzZWRfbG9ja3NfYmVmb3JlX3JlcGxheSA9IDE7DQogICAgIA0KICAgIC1zdGF0aWMgdm9p
+ZCBpbnRlcnJ1cHRlZF9jb21wbGV0aW9uX3dhaXQodm9pZCAqZGF0YSkNCiAgICAtew0KICAgIC19
+DQogICAgLQ0KICAgIC1zdHJ1Y3QgbG9ja193YWl0X2RhdGEgew0KICAgIC0Jc3RydWN0IGxkbG1f
+bG9jayAqbHdkX2xvY2s7DQogICAgLQlfX3UzMgkgICAgIGx3ZF9jb25uX2NudDsNCiAgICAtfTsN
+CiAgICAtDQogICAgIHN0cnVjdCBsZGxtX2FzeW5jX2FyZ3Mgew0KICAgICAJc3RydWN0IGx1c3Ry
+ZV9oYW5kbGUgbG9ja19oYW5kbGU7DQogICAgIH07DQogICAgQEAgLTExMiwxMCArMTAzLDggQEAg
+c3RhdGljIGludCBsZGxtX3JlcXVlc3RfYnVmc2l6ZShpbnQgY291bnQsIGludCB0eXBlKQ0KICAg
+ICAJcmV0dXJuIHNpemVvZihzdHJ1Y3QgbGRsbV9yZXF1ZXN0KSArIGF2YWlsOw0KICAgICB9DQog
+ICAgIA0KICAgIC1zdGF0aWMgaW50IGxkbG1fZXhwaXJlZF9jb21wbGV0aW9uX3dhaXQodm9pZCAq
+ZGF0YSkNCiAgICArc3RhdGljIHZvaWQgbGRsbV9leHBpcmVkX2NvbXBsZXRpb25fd2FpdChzdHJ1
+Y3QgbGRsbV9sb2NrICpsb2NrLCBzdHJ1Y3Qgb2JkX2ltcG9ydCAqaW1wMikNCiAgICAgew0KICAg
+IC0Jc3RydWN0IGxvY2tfd2FpdF9kYXRhICpsd2QgPSBkYXRhOw0KICAgIC0Jc3RydWN0IGxkbG1f
+bG9jayAqbG9jayA9IGx3ZC0+bHdkX2xvY2s7DQogICAgIAlzdHJ1Y3Qgb2JkX2ltcG9ydCAqaW1w
+Ow0KICAgICAJc3RydWN0IG9iZF9kZXZpY2UgKm9iZDsNCiAgICAgDQogICAgQEAgLTEzNSwxOSAr
+MTI0LDE3IEBAIHN0YXRpYyBpbnQgbGRsbV9leHBpcmVkX2NvbXBsZXRpb25fd2FpdCh2b2lkICpk
+YXRhKQ0KICAgICAJCQlpZiAobGFzdF9kdW1wID09IDApDQogICAgIAkJCQlsaWJjZnNfZGVidWdf
+ZHVtcGxvZygpOw0KICAgICAJCX0NCiAgICAtCQlyZXR1cm4gMDsNCiAgICArCQlyZXR1cm47DQog
+ICAgIAl9DQogICAgIA0KICAgICAJb2JkID0gbG9jay0+bF9jb25uX2V4cG9ydC0+ZXhwX29iZDsN
+CiAgICAgCWltcCA9IG9iZC0+dS5jbGkuY2xfaW1wb3J0Ow0KICAgIC0JcHRscnBjX2ZhaWxfaW1w
+b3J0KGltcCwgbHdkLT5sd2RfY29ubl9jbnQpOw0KICAgICsJcHRscnBjX2ZhaWxfaW1wb3J0KGlt
+cCwgaW1wMiA/IGltcDItPmltcF9jb25uX2NudCA6IDApOw0KICAgICAJTERMTV9FUlJPUihsb2Nr
+LA0KICAgICAJCSAgICJsb2NrIHRpbWVkIG91dCAoZW5xdWV1ZWQgYXQgJWxsZCwgJWxsZHMgYWdv
+KSwgZW50ZXJpbmcgcmVjb3ZlcnkgZm9yICVzQCVzIiwNCiAgICAgCQkgICAoczY0KWxvY2stPmxf
+bGFzdF9hY3Rpdml0eSwNCiAgICAgCQkgICAoczY0KShrdGltZV9nZXRfcmVhbF9zZWNvbmRzKCkg
+LSBsb2NrLT5sX2xhc3RfYWN0aXZpdHkpLA0KICAgICAJCSAgIG9iZDJjbGlfdGd0KG9iZCksIGlt
+cC0+aW1wX2Nvbm5lY3Rpb24tPmNfcmVtb3RlX3V1aWQudXVpZCk7DQogICAgLQ0KICAgIC0JcmV0
+dXJuIDA7DQogICAgIH0NCiAgICAgDQogICAgIC8qKg0KICAgIEBAIC0yNTEsMTAgKzIzOCw4IEBA
+IEVYUE9SVF9TWU1CT0wobGRsbV9jb21wbGV0aW9uX2FzdF9hc3luYyk7DQogICAgIGludCBsZGxt
+X2NvbXBsZXRpb25fYXN0KHN0cnVjdCBsZGxtX2xvY2sgKmxvY2ssIF9fdTY0IGZsYWdzLCB2b2lk
+ICpkYXRhKQ0KICAgICB7DQogICAgIAkvKiBYWFggQUxMT0NBVEUgLSAxNjAgYnl0ZXMgKi8NCiAg
+ICAtCXN0cnVjdCBsb2NrX3dhaXRfZGF0YSBsd2Q7DQogICAgIAlzdHJ1Y3Qgb2JkX2RldmljZSAq
+b2JkOw0KICAgICAJc3RydWN0IG9iZF9pbXBvcnQgKmltcCA9IE5VTEw7DQogICAgLQlzdHJ1Y3Qg
+bF93YWl0X2luZm8gbHdpOw0KICAgICAJX191MzIgdGltZW91dDsNCiAgICAgCWludCByYyA9IDA7
+DQogICAgIA0KICAgIEBAIC0yODEsMzIgKzI2NiwyOCBAQCBpbnQgbGRsbV9jb21wbGV0aW9uX2Fz
+dChzdHJ1Y3QgbGRsbV9sb2NrICpsb2NrLCBfX3U2NCBmbGFncywgdm9pZCAqZGF0YSkNCiAgICAg
+DQogICAgIAl0aW1lb3V0ID0gbGRsbV9jcF90aW1lb3V0KGxvY2spOw0KICAgICANCiAgICAtCWx3
+ZC5sd2RfbG9jayA9IGxvY2s7DQogICAgIAlsb2NrLT5sX2xhc3RfYWN0aXZpdHkgPSBrdGltZV9n
+ZXRfcmVhbF9zZWNvbmRzKCk7DQogICAgIA0KICAgIC0JaWYgKGxkbG1faXNfbm9fdGltZW91dChs
+b2NrKSkgew0KICAgIC0JCUxETE1fREVCVUcobG9jaywgIndhaXRpbmcgaW5kZWZpbml0ZWx5IGJl
+Y2F1c2Ugb2YgTk9fVElNRU9VVCIpOw0KICAgIC0JCWx3aSA9IExXSV9JTlRSKGludGVycnVwdGVk
+X2NvbXBsZXRpb25fd2FpdCwgJmx3ZCk7DQogICAgLQl9IGVsc2Ugew0KICAgIC0JCWx3aSA9IExX
+SV9USU1FT1VUX0lOVFIodGltZW91dCAqIEhaLA0KICAgIC0JCQkJICAgICAgIGxkbG1fZXhwaXJl
+ZF9jb21wbGV0aW9uX3dhaXQsDQogICAgLQkJCQkgICAgICAgaW50ZXJydXB0ZWRfY29tcGxldGlv
+bl93YWl0LCAmbHdkKTsNCiAgICAtCX0NCiAgICAtDQogICAgLQlpZiAoaW1wKSB7DQogICAgLQkJ
+c3Bpbl9sb2NrKCZpbXAtPmltcF9sb2NrKTsNCiAgICAtCQlsd2QubHdkX2Nvbm5fY250ID0gaW1w
+LT5pbXBfY29ubl9jbnQ7DQogICAgLQkJc3Bpbl91bmxvY2soJmltcC0+aW1wX2xvY2spOw0KICAg
+IC0JfQ0KICAgIC0NCiAgICAgCWlmIChPQkRfRkFJTF9DSEVDS19SRVNFVChPQkRfRkFJTF9MRExN
+X0lOVFJfQ1BfQVNULA0KICAgICAJCQkJIE9CRF9GQUlMX0xETE1fQ1BfQkxfUkFDRSB8IE9CRF9G
+QUlMX09OQ0UpKSB7DQogICAgIAkJbGRsbV9zZXRfZmFpbF9sb2MobG9jayk7DQogICAgIAkJcmMg
+PSAtRUlOVFI7DQogICAgIAl9IGVsc2Ugew0KICAgIC0JCS8qIEdvIHRvIHNsZWVwIHVudGlsIHRo
+ZSBsb2NrIGlzIGdyYW50ZWQgb3IgY2FuY2VsbGVkLiAqLw0KICAgIC0JCXJjID0gbF93YWl0X2V2
+ZW50KGxvY2stPmxfd2FpdHEsDQogICAgLQkJCQkgIGlzX2dyYW50ZWRfb3JfY2FuY2VsbGVkKGxv
+Y2spLCAmbHdpKTsNCiAgICArCQkvKiBHbyB0byBzbGVlcCB1bnRpbCB0aGUgbG9jayBpcyBncmFu
+dGVkIG9yIGNhbmNlbGVkLiAqLw0KICAgICsJCWlmICghbGRsbV9pc19ub190aW1lb3V0KGxvY2sp
+KSB7DQogICAgKwkJCS8qIFdhaXQgdW5pbnRlcnJ1cHRpYmxlIGZvciBhIHdoaWxlIGZpcnN0ICov
+DQogICAgKwkJCXJjID0gd2FpdF9ldmVudF9pZGxlX3RpbWVvdXQobG9jay0+bF93YWl0cSwNCiAg
+ICArCQkJCQkJICAgICBpc19ncmFudGVkX29yX2NhbmNlbGxlZChsb2NrKSwNCiAgICArCQkJCQkJ
+ICAgICB0aW1lb3V0ICogSFopOw0KICAgICsJCQlpZiAocmMgPT0gMCkNCiAgICArCQkJCWxkbG1f
+ZXhwaXJlZF9jb21wbGV0aW9uX3dhaXQobG9jaywgaW1wKTsNCiAgICArCQl9DQogICAgKwkJLyog
+Tm93IHdhaXQgYWJvcnRhYmxlICovDQogICAgKwkJaWYgKHJjID09IDApDQogICAgKwkJCXJjID0g
+bF93YWl0X2V2ZW50X2Fib3J0YWJsZShsb2NrLT5sX3dhaXRxLA0KICAgICsJCQkJCQkgICAgaXNf
+Z3JhbnRlZF9vcl9jYW5jZWxsZWQobG9jaykpOw0KICAgICsJCWVsc2UNCiAgICArCQkJcmMgPSAw
+Ow0KICAgICAJfQ0KICAgICANCiAgICAgCWlmIChyYykgew0KICAgIA0KICAgIA0KICAgIF9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQogICAgbHVzdHJlLWRl
+dmVsIG1haWxpbmcgbGlzdA0KICAgIGx1c3RyZS1kZXZlbEBsaXN0cy5sdXN0cmUub3JnDQogICAg
+aHR0cDovL2xpc3RzLmx1c3RyZS5vcmcvbGlzdGluZm8uY2dpL2x1c3RyZS1kZXZlbC1sdXN0cmUu
+b3JnDQogICAgDQoNCg==
