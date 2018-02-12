@@ -1,175 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964823AbeBLPFF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:05:05 -0500
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:53758 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932401AbeBLO7A (ORCPT
+        id S964848AbeBLPFP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:05:15 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45172 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933930AbeBLPFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:59:00 -0500
-From: Mel Gorman <mgorman@techsingularity.net>
+        Mon, 12 Feb 2018 10:05:11 -0500
+X-Google-Smtp-Source: AH8x2260Scrkfqg3alDE7nQ5/BuBUiFA8h5Ja3wFoWtNQHYKvWgZYrv3ywSO3MN/OezRI1hQuZfOe124kps3WA5n080=
+MIME-Version: 1.0
+In-Reply-To: <20171027153336.GC3857@worktop>
+References: <001a11448f6c0346ec055c831a71@google.com> <20171027151137.GC3165@worktop.lehotels.local>
+ <20171027153336.GC3857@worktop>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 12 Feb 2018 16:04:50 +0100
+Message-ID: <CACT4Y+YNSZQXy_V4QzjmOK+UJSihdQw8_yRu3A8GBMsCUSs_vQ@mail.gmail.com>
+Subject: Re: possible deadlock in perf_event_ctx_lock_nested
 To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 3/4] sched/fair: Do not migrate on wake_affine_weight if weights are equal
-Date: Mon, 12 Feb 2018 14:58:56 +0000
-Message-Id: <20180212145857.8056-4-mgorman@techsingularity.net>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180212145857.8056-1-mgorman@techsingularity.net>
-References: <20180212145857.8056-1-mgorman@techsingularity.net>
+Cc: syzbot
+        <bot+f67ad450a4bd1e42a7bd09f592904b15be39db7a@syzkaller.appspotmail.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wake_affine_weight() will consider migrating a task to, or near, the current
-CPU if there is a load imbalance. If the CPUs share LLC then either CPU
-is valid as a search-for-idle-sibling target and equally appropriate for
-stacking two tasks on one CPU if an idle sibling is unavailable. If they do
-not share cache then a cross-node migration potentially impacts locality
-so while they are equal from a CPU capacity point of view, they are not
-equal in terms of memory locality. In either case, it's more appropriate
-to migrate only if there is a difference in their effective load.
+On Fri, Oct 27, 2017 at 5:33 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Fri, Oct 27, 2017 at 05:11:37PM +0200, Peter Zijlstra wrote:
+>> On Fri, Oct 27, 2017 at 01:30:30AM -0700, syzbot wrote:
+>>
+>> > ======================================================
+>> > WARNING: possible circular locking dependency detected
+>> > 4.13.0-next-20170911+ #19 Not tainted
+>> > ------------------------------------------------------
+>> > syz-executor2/12380 is trying to acquire lock:
+>> >  (&ctx->mutex){+.+.}, at: [<ffffffff8180923c>]
+>> > perf_event_ctx_lock_nested+0x1dc/0x3c0 kernel/events/core.c:1210
+>> >
+>> > but task is already holding lock:
+>> >  (&pipe->mutex/1){+.+.}, at: [<ffffffff81ac0fa6>] pipe_lock_nested
+>> > fs/pipe.c:66 [inline]
+>> >  (&pipe->mutex/1){+.+.}, at: [<ffffffff81ac0fa6>] pipe_lock+0x56/0x70
+>> > fs/pipe.c:74
+>> >
+>> > which lock already depends on the new lock.
+>>
+>>
+>> ARRGH!!
+>>
+>> that translates like the below, which is an absolute maze and requires
+>> at least 5 concurrent callstacks, possibly more.
+>>
+>> We already had a lot of fun with hotplug-perf-ftrace, but the below
+>> contains more. Let me try and page that previous crap back.
+>>
+>>
+>>
+>>       perf_ioctl()
+>> #0      perf_event_ctx_lock()         [ctx->mutex]
+>>         perf_event_set_filter
+>> #1        ftrace_profile_set_filter   [event_mutex]
+>>
+>>
+>>
+>>
+>>       sys_perf_event_open
+>>         ...
+>>         perf_trace_init
+>> #1        mutex_lock [event_mutex]
+>>           trace_event_reg
+>>             tracepoint_probe_register
+>> #2            mutex_lock() [tracepoints_mutex]
+>>               tracepoint_add_func()
+>> #3              static_key_slow_inc() [cpuhotplug_lock]
+>>
+>>
+>>
+>>
+>>
+>>       cpuhp_setup_state_nocalls
+>> #3      cpus_read_lock        [cpuhotplug_lock]
+>>           __cpuhp_setup_state_cpuslocked
+>> #4          mutex_lock        [cpuhp_state_mutex]
+>>             cpuhp_issue_call
+>> #5            cpuhp_invoke_ap_callback()      [cpuhp_state]
+>>
+>>
+>> #5    cpuhp_invoke_callback [cpuhp_state]
+>>         ...
+>>           devtmpfs_create_node
+>> #6          wait_for_completion()     [&req.done]
+>>
+>>                                               devtmpfsd
+>>                                                 handle_create
+>> #7                                                filename_create [sb_writers]
+>> #6                                              complete [&req.done]
+>>
+>>
+>>
+>>
+>>
+>>
+>>       do_splice
+>> #7      file_start_write() [sb_writers]
+>>         do_splice_from
+>>           iter_file_splice_write
+>> #8          pipe_lock [pipe->mutex]
+>>
+>>
+>>
+>>
+>>
+>>       do_splice
+>> #8      pipe_lock     [pipe->mutex]
+>>         do_splice_to
+>>           ...
+>> #0          perf_read() [ctx->mutex]
+>>
+>
+> So arguably that last op, splice_read from a perf fd is fairly
+> pointless and we could dis-allow that. How about something like the
+> below?
+>
+> ---
+>  kernel/events/core.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 04989fb769f0..fd03f3082ee3 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -5468,6 +5468,13 @@ static int perf_fasync(int fd, struct file *filp, int on)
+>         return 0;
+>  }
+>
+> +static ssize_t perf_splice_read(struct file *file, loff_t *ppos,
+> +                               struct pipe_inode_info *pope, size_t len,
+> +                               unsigned int flags)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+>  static const struct file_operations perf_fops = {
+>         .llseek                 = no_llseek,
+>         .release                = perf_release,
+> @@ -5477,6 +5484,7 @@ static int perf_fasync(int fd, struct file *filp, int on)
+>         .compat_ioctl           = perf_compat_ioctl,
+>         .mmap                   = perf_mmap,
+>         .fasync                 = perf_fasync,
+> +       .splice_read            = perf_splice_read,
+>  };
 
-This patch modifies wake_affine_weight to only consider migrating a task
-if there is a load imbalance for normal wakeups but will allow potential
-stacking if the loads are equal and it's a sync wakeup.
 
-For the most part, the different in performance is marginal. For example,
-on a 4-socket server running netperf UDP_STREAM on localhost the differences
-are as follows
-
-                                     4.15.0                 4.15.0
-                                      16rc0          noequal-v1r23
-Hmean     send-64         355.47 (   0.00%)      349.50 (  -1.68%)
-Hmean     send-128        697.98 (   0.00%)      693.35 (  -0.66%)
-Hmean     send-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
-Hmean     send-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
-Hmean     send-2048      9637.02 (   0.00%)     9601.34 (  -0.37%)
-Hmean     send-3312     14355.37 (   0.00%)    14414.51 (   0.41%)
-Hmean     send-4096     16464.97 (   0.00%)    16301.37 (  -0.99%)
-Hmean     send-8192     26722.42 (   0.00%)    26428.95 (  -1.10%)
-Hmean     send-16384    38137.81 (   0.00%)    38046.11 (  -0.24%)
-Hmean     recv-64         355.47 (   0.00%)      349.50 (  -1.68%)
-Hmean     recv-128        697.98 (   0.00%)      693.35 (  -0.66%)
-Hmean     recv-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
-Hmean     recv-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
-Hmean     recv-2048      9636.95 (   0.00%)     9601.30 (  -0.37%)
-Hmean     recv-3312     14355.32 (   0.00%)    14414.48 (   0.41%)
-Hmean     recv-4096     16464.74 (   0.00%)    16301.16 (  -0.99%)
-Hmean     recv-8192     26721.63 (   0.00%)    26428.17 (  -1.10%)
-Hmean     recv-16384    38136.00 (   0.00%)    38044.88 (  -0.24%)
-Stddev    send-64           7.30 (   0.00%)        4.75 (  34.96%)
-Stddev    send-128         15.15 (   0.00%)       22.38 ( -47.66%)
-Stddev    send-256         13.99 (   0.00%)       19.14 ( -36.81%)
-Stddev    send-1024       105.73 (   0.00%)       67.38 (  36.27%)
-Stddev    send-2048       294.57 (   0.00%)      223.88 (  24.00%)
-Stddev    send-3312       302.28 (   0.00%)      271.74 (  10.10%)
-Stddev    send-4096       195.92 (   0.00%)      121.10 (  38.19%)
-Stddev    send-8192       399.71 (   0.00%)      563.77 ( -41.04%)
-Stddev    send-16384     1163.47 (   0.00%)     1103.68 (   5.14%)
-Stddev    recv-64           7.30 (   0.00%)        4.75 (  34.96%)
-Stddev    recv-128         15.15 (   0.00%)       22.38 ( -47.66%)
-Stddev    recv-256         13.99 (   0.00%)       19.14 ( -36.81%)
-Stddev    recv-1024       105.73 (   0.00%)       67.38 (  36.27%)
-Stddev    recv-2048       294.59 (   0.00%)      223.89 (  24.00%)
-Stddev    recv-3312       302.24 (   0.00%)      271.75 (  10.09%)
-Stddev    recv-4096       196.03 (   0.00%)      121.14 (  38.20%)
-Stddev    recv-8192       399.86 (   0.00%)      563.65 ( -40.96%)
-Stddev    recv-16384     1163.79 (   0.00%)     1103.86 (   5.15%)
-
-The difference in overall performance is marginal but note that most
-measurements are less variable. There were similar observations for other
-netperf comparisons. hackbench with sockets or threads with processes or
-threads showed minor difference with some reduction of migration. tbench
-showed only marginal differences that were within the noise. dbench,
-regardless of filesystem, showed minor differences all of which are
-within noise. Multiple machines, both UMA and NUMA were tested without
-any regressions showing up.
-
-The biggest risk with a patch like this is affecting wakeup latencies.
-However, the schbench load from Facebook which is very sensitive to wakeup
-latency showed a mixed result with mostly improvements in wakeup latency
-
-                                     4.15.0                 4.15.0
-                                      16rc0          noequal-v1r23
-Lat 50.00th-qrtle-1        38.00 (   0.00%)       38.00 (   0.00%)
-Lat 75.00th-qrtle-1        49.00 (   0.00%)       41.00 (  16.33%)
-Lat 90.00th-qrtle-1        52.00 (   0.00%)       50.00 (   3.85%)
-Lat 95.00th-qrtle-1        54.00 (   0.00%)       51.00 (   5.56%)
-Lat 99.00th-qrtle-1        63.00 (   0.00%)       60.00 (   4.76%)
-Lat 99.50th-qrtle-1        66.00 (   0.00%)       61.00 (   7.58%)
-Lat 99.90th-qrtle-1        78.00 (   0.00%)       65.00 (  16.67%)
-Lat 50.00th-qrtle-2        38.00 (   0.00%)       38.00 (   0.00%)
-Lat 75.00th-qrtle-2        42.00 (   0.00%)       43.00 (  -2.38%)
-Lat 90.00th-qrtle-2        46.00 (   0.00%)       48.00 (  -4.35%)
-Lat 95.00th-qrtle-2        49.00 (   0.00%)       50.00 (  -2.04%)
-Lat 99.00th-qrtle-2        55.00 (   0.00%)       57.00 (  -3.64%)
-Lat 99.50th-qrtle-2        58.00 (   0.00%)       60.00 (  -3.45%)
-Lat 99.90th-qrtle-2        65.00 (   0.00%)       68.00 (  -4.62%)
-Lat 50.00th-qrtle-4        41.00 (   0.00%)       41.00 (   0.00%)
-Lat 75.00th-qrtle-4        45.00 (   0.00%)       46.00 (  -2.22%)
-Lat 90.00th-qrtle-4        50.00 (   0.00%)       50.00 (   0.00%)
-Lat 95.00th-qrtle-4        54.00 (   0.00%)       53.00 (   1.85%)
-Lat 99.00th-qrtle-4        61.00 (   0.00%)       61.00 (   0.00%)
-Lat 99.50th-qrtle-4        65.00 (   0.00%)       64.00 (   1.54%)
-Lat 99.90th-qrtle-4        76.00 (   0.00%)       82.00 (  -7.89%)
-Lat 50.00th-qrtle-8        48.00 (   0.00%)       46.00 (   4.17%)
-Lat 75.00th-qrtle-8        55.00 (   0.00%)       54.00 (   1.82%)
-Lat 90.00th-qrtle-8        60.00 (   0.00%)       59.00 (   1.67%)
-Lat 95.00th-qrtle-8        63.00 (   0.00%)       63.00 (   0.00%)
-Lat 99.00th-qrtle-8        71.00 (   0.00%)       69.00 (   2.82%)
-Lat 99.50th-qrtle-8        74.00 (   0.00%)       73.00 (   1.35%)
-Lat 99.90th-qrtle-8        98.00 (   0.00%)       90.00 (   8.16%)
-Lat 50.00th-qrtle-16       56.00 (   0.00%)       55.00 (   1.79%)
-Lat 75.00th-qrtle-16       68.00 (   0.00%)       67.00 (   1.47%)
-Lat 90.00th-qrtle-16       77.00 (   0.00%)       78.00 (  -1.30%)
-Lat 95.00th-qrtle-16       82.00 (   0.00%)       84.00 (  -2.44%)
-Lat 99.00th-qrtle-16       90.00 (   0.00%)       93.00 (  -3.33%)
-Lat 99.50th-qrtle-16       93.00 (   0.00%)       97.00 (  -4.30%)
-Lat 99.90th-qrtle-16      110.00 (   0.00%)      110.00 (   0.00%)
-Lat 50.00th-qrtle-32       68.00 (   0.00%)       62.00 (   8.82%)
-Lat 75.00th-qrtle-32       90.00 (   0.00%)       83.00 (   7.78%)
-Lat 90.00th-qrtle-32      110.00 (   0.00%)      100.00 (   9.09%)
-Lat 95.00th-qrtle-32      122.00 (   0.00%)      111.00 (   9.02%)
-Lat 99.00th-qrtle-32      145.00 (   0.00%)      133.00 (   8.28%)
-Lat 99.50th-qrtle-32      154.00 (   0.00%)      143.00 (   7.14%)
-Lat 99.90th-qrtle-32     2316.00 (   0.00%)      515.00 (  77.76%)
-Lat 50.00th-qrtle-35       69.00 (   0.00%)       72.00 (  -4.35%)
-Lat 75.00th-qrtle-35       92.00 (   0.00%)       95.00 (  -3.26%)
-Lat 90.00th-qrtle-35      111.00 (   0.00%)      114.00 (  -2.70%)
-Lat 95.00th-qrtle-35      122.00 (   0.00%)      124.00 (  -1.64%)
-Lat 99.00th-qrtle-35      142.00 (   0.00%)      144.00 (  -1.41%)
-Lat 99.50th-qrtle-35      150.00 (   0.00%)      154.00 (  -2.67%)
-Lat 99.90th-qrtle-35     6104.00 (   0.00%)     5640.00 (   7.60%)
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- kernel/sched/fair.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c1091cb023c4..28c8d9c91955 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5747,7 +5747,16 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
- 	prev_eff_load *= capacity_of(this_cpu);
- 
--	return this_eff_load <= prev_eff_load ? this_cpu : nr_cpumask_bits;
-+	/*
-+	 * If sync, adjust the weight of prev_eff_load such that if
-+	 * prev_eff == this_eff that select_idle_sibling will consider
-+	 * stacking the wakee on top of the waker if no other CPU is
-+	 * idle.
-+	 */
-+	if (sync)
-+		prev_eff_load += 1;
-+
-+	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
- }
- 
- static int wake_affine(struct sched_domain *sd, struct task_struct *p,
--- 
-2.15.1
+Another perf deadlock that involves splice:
+https://groups.google.com/d/msg/syzkaller-bugs/vVy6Zj3wPxo/6oj5U6WiAwAJ
