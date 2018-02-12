@@ -1,40 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934711AbeBLMsq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:48:46 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40880 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbeBLMso (ORCPT
+        id S934727AbeBLMtG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 07:49:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45936 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbeBLMtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:48:44 -0500
-X-Google-Smtp-Source: AH8x225sBAhgUE+yWcv86WYWcfXz+rVXzCgzjQnA4i2hm7DJDPIcnIjUvXeaOJJssZl4I8gnyyxq6EHyU5t9QB0hSGI=
+        Mon, 12 Feb 2018 07:49:05 -0500
+Date: Mon, 12 Feb 2018 12:48:58 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: alsa-devel@alsa-project.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kuninori.morimoto.gx@renesas.com
+Subject: Re: [PATCH v2 0/9] add UniPhier audio system support
+Message-ID: <20180212124858.GC12976@sirena.org.uk>
+References: <20180119092536.22501-1-suzuki.katsuhiro@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <20180212123945.15732-2-sebastian.reichel@collabora.co.uk>
-References: <20180212123945.15732-1-sebastian.reichel@collabora.co.uk> <20180212123945.15732-2-sebastian.reichel@collabora.co.uk>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 12 Feb 2018 10:48:43 -0200
-Message-ID: <CAOMZO5A6OSe_i8L_9NXGR-FjFg1msGeybtj9Yk5FLKszZMe+SA@mail.gmail.com>
-Subject: Re: [PATCHv4 1/2] ARM: imx53: add secure-reg-access support for PMU
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>, Ian Ray <ian.ray@ge.com>,
-        Nandor Han <nandor.han@ge.com>, kernel@collabora.com,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="IpbVkmxF4tDyP/Kb"
+Content-Disposition: inline
+In-Reply-To: <20180119092536.22501-1-suzuki.katsuhiro@socionext.com>
+X-Cookie: What UNIVERSE is this, please??
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 10:39 AM, Sebastian Reichel
-<sebastian.reichel@collabora.co.uk> wrote:
-> On i.MX53 it is necessary to set the DBG_EN bit in the
-> platform GPC register to enable access to PMU counters
-> other than the cycle counter.
->
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+--IpbVkmxF4tDyP/Kb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Jan 19, 2018 at 06:25:27PM +0900, Katsuhiro Suzuki wrote:
+> This series adds support for Socionext audio system for
+> UniPhier LD11/LD20 SoCs. This driver supports I2S output
+> for Line-In, Line-Out and S/PDIF output.
+
+These look fine so I'll apply them however a patch series from
+Morimoto-san (CCed) moving things to use components rather than
+CODEC/platform/whatever driver types that was sent about the same time
+has just gone in - the driver will require the same conversions.
+
+--IpbVkmxF4tDyP/Kb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqBjTkACgkQJNaLcl1U
+h9B97Af/WZ98YjR9pqKv2q9x07O8um3kwXtYVGFUp3gFYX13OQZUW+sfFSg1q2YG
+W7386wNTVqEYCyA7w2O024GFRc62ued4u2vjt0VlegFTkEt8xhc07DLEjvFamGwl
+ve6DxpuOVwd9UTQxeuiq/xxQE6wtDXKjX/Xn0u9+Zc+2w0dQGyZCX0AE9jgb/dD5
+vnsn7+3EPa8uip7x4Tnur8Y+aXJl9skenvuJ0jGIWgahclRKd/nXpNxxVHcwJmJc
+ZGSD4fca4ORnPMaV2UDNavg+fnZIZet4uJaIBBHVP68N+Cn+htpOlxuVCdHj1UZz
+J0vPIhagpoWOl7k843pQgtUROpmn7A==
+=J7Qc
+-----END PGP SIGNATURE-----
+
+--IpbVkmxF4tDyP/Kb--
