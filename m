@@ -1,73 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933905AbeBLKVb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:21:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34248 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932868AbeBLKV2 (ORCPT
+        id S933839AbeBLKWS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:22:18 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43377 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932868AbeBLKWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:21:28 -0500
-From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To: rjw@rjwysocki.net
-Cc: linux-pm@vger.kernel.org, viresh.kumar@linaro.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au, Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH] cpufreq: powernv: Check  negative value returned by cpufreq_table_find_index_dl()
-Date: Mon, 12 Feb 2018 15:51:16 +0530
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18021210-0040-0000-0000-0000040ECC8C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021210-0041-0000-0000-000026128AB1
-Message-Id: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802120134
+        Mon, 12 Feb 2018 05:22:16 -0500
+X-Google-Smtp-Source: AH8x224neNJB9kl9xzRvzprJ3vhaUBEWIgocTkmiJGY+W9oImSRy3vMmLm8bL/g0C2h6mfCjPA6Gpg==
+Date: Mon, 12 Feb 2018 11:22:11 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk, peterz@infradead.org
+Cc: linux-tip-commits@vger.kernel.org, Dave Hansen <dave@sr71.net>,
+        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Arjan van de Ven <arjan@infradead.org>
+Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
+ calling into firmware
+Message-ID: <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the below Coverity warning:
 
-*** CID 182816:  Memory - illegal accesses  (NEGATIVE_RETURNS)
-/drivers/cpufreq/powernv-cpufreq.c: 1008 in powernv_fast_switch()
-1002     					unsigned int target_freq)
-1003     {
-1004     	int index;
-1005     	struct powernv_smp_call_data freq_data;
-1006
-1007     	index = cpufreq_table_find_index_dl(policy, target_freq);
->>>     CID 182816:  Memory - illegal accesses  (NEGATIVE_RETURNS)
->>>     Using variable "index" as an index to array "powernv_freqs".
-1008     	freq_data.pstate_id = powernv_freqs[index].driver_data;
-1009     	freq_data.gpstate_id = powernv_freqs[index].driver_data;
-1010     	set_pstate(&freq_data);
-1011
-1012     	return powernv_freqs[index].frequency;
-1013     }
+* tip-bot for David Woodhouse <tipbot@zytor.com> wrote:
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
----
- drivers/cpufreq/powernv-cpufreq.c | 3 +++
- 1 file changed, 3 insertions(+)
+> Commit-ID:  670c3e8da87fa4046a55077b1409cf250865a203
+> Gitweb:     https://git.kernel.org/tip/670c3e8da87fa4046a55077b1409cf250865a203
+> Author:     David Woodhouse <dwmw@amazon.co.uk>
+> AuthorDate: Sun, 11 Feb 2018 15:19:19 +0000
+> Committer:  Ingo Molnar <mingo@kernel.org>
+> CommitDate: Sun, 11 Feb 2018 19:44:46 +0100
+> 
+> x86/speculation: Use IBRS if available before calling into firmware
+> 
+> Retpoline means the kernel is safe because it has no indirect branches.
+> But firmware isn't, so use IBRS for firmware calls if it's available.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Link: http://lkml.kernel.org/r/1518362359-1005-1-git-send-email-dwmw@amazon.co.uk
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>  arch/x86/include/asm/apm.h           |  6 ++++++
+>  arch/x86/include/asm/cpufeatures.h   |  1 +
+>  arch/x86/include/asm/efi.h           | 17 +++++++++++++++--
+>  arch/x86/include/asm/nospec-branch.h | 37 +++++++++++++++++++++++++++---------
+>  arch/x86/kernel/cpu/bugs.c           | 12 +++++++++++-
+>  drivers/watchdog/hpwdt.c             |  3 +++
+>  6 files changed, 64 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-index 29cdec1..69edfe9 100644
---- a/drivers/cpufreq/powernv-cpufreq.c
-+++ b/drivers/cpufreq/powernv-cpufreq.c
-@@ -1005,6 +1005,9 @@ static unsigned int powernv_fast_switch(struct cpufreq_policy *policy,
- 	struct powernv_smp_call_data freq_data;
- 
- 	index = cpufreq_table_find_index_dl(policy, target_freq);
-+	if (unlikely(index < 0))
-+		index = get_nominal_index();
-+
- 	freq_data.pstate_id = powernv_freqs[index].driver_data;
- 	freq_data.gpstate_id = powernv_freqs[index].driver_data;
- 	set_pstate(&freq_data);
--- 
-1.8.3.1
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+
+> +/*
+> + * With retpoline, we must use IBRS to restrict branch prediction
+> + * before calling into firmware.
+> + */
+> +static inline void firmware_restrict_branch_speculation_start(void)
+> +{
+> +	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
+> +			      X86_FEATURE_USE_IBRS_FW);
+> +}
+> +
+> +static inline void firmware_restrict_branch_speculation_end(void)
+> +{
+> +	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
+> +			      X86_FEATURE_USE_IBRS_FW);
+
+BTW., there's a detail that only occurred to me today, this enabling/disabling 
+sequence is not NMI safe, and it might be called from NMI context:
+
+> --- a/drivers/watchdog/hpwdt.c
+> +++ b/drivers/watchdog/hpwdt.c
+> @@ -38,6 +38,7 @@
+>  #endif /* CONFIG_HPWDT_NMI_DECODING */
+>  #include <asm/nmi.h>
+>  #include <asm/frame.h>
+> +#include <asm/nospec-branch.h>
+>  
+>  #define HPWDT_VERSION			"1.4.0"
+>  #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
+> @@ -486,11 +487,13 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+>  	if (!hpwdt_nmi_decoding)
+>  		return NMI_DONE;
+>  
+> +	firmware_restrict_branch_speculation_start();
+>  	spin_lock_irqsave(&rom_lock, rom_pl);
+>  	if (!die_nmi_called && !is_icru && !is_uefi)
+>  		asminline_call(&cmn_regs, cru_rom_addr);
+>  	die_nmi_called = 1;
+>  	spin_unlock_irqrestore(&rom_lock, rom_pl);
+> +	firmware_restrict_branch_speculation_end();
+>  
+>  	if (allow_kdump)
+>  		hpwdt_stop();
+
+But ... this is a (comparatively rare) hardware-watchdog tick function, and the 
+chance of racing with say an EFI call seems minuscule. The race will result in an 
+EFI call being performed with speculation enabled, sporadically.
+
+Is this something we should worry about?
+
+Thanks,
+
+	Ingo
