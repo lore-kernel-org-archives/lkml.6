@@ -1,67 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932748AbeBLEQD convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 23:16:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41584 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932454AbeBLEQB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 23:16:01 -0500
-X-Google-Smtp-Source: AH8x225lDhv4PI78zzLHGiKCWwMHXHhiyEehktpPoE5IKZW9NAWqUMY6O13qPGQADsJ2O1I1+XASnA==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] ath9k: turn on btcoex_enable as default
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <7170e2d5-a59d-8260-fa8e-f02f583b773f@nbd.name>
-Date: Mon, 12 Feb 2018 12:15:53 +0800
-Cc: Kalle Valo <kvalo@codeaurora.org>, ath9k-devel@qca.qualcomm.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <6A0F65EF-A7C4-469F-8FAF-CBE314676237@canonical.com>
-References: <20180208052801.15670-1-kai.heng.feng@canonical.com>
- <56d650e6-d26f-087c-4e86-2e5d4e859414@nbd.name>
- <A5972CE9-8325-404A-A63D-ED29E44FB67B@canonical.com>
- <87k1vmeip8.fsf@kamboji.qca.qualcomm.com>
- <E500FA42-23F1-433F-9BFB-78A2FD1946AF@canonical.com>
- <7170e2d5-a59d-8260-fa8e-f02f583b773f@nbd.name>
-To: Felix Fietkau <nbd@nbd.name>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S932766AbeBLERF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 23:17:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932454AbeBLERD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Feb 2018 23:17:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F1F21781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AH8x227AF1XiBEO3YKGOkzDeemIxYZPGIQLvGiVbj5yAJs9UYk0Dknh7FS4Lxp4KTwb47agIcJUrp+IQVuAZ0DTWuE8=
+MIME-Version: 1.0
+In-Reply-To: <20180209171822.fmrifuybxg3t7dkx@derp-derp.lan>
+References: <20180207210530.3099-1-atull@kernel.org> <20180209171822.fmrifuybxg3t7dkx@derp-derp.lan>
+From: Alan Tull <atull@kernel.org>
+Date: Sun, 11 Feb 2018 22:16:20 -0600
+X-Gmail-Original-Message-ID: <CANk1AXT9cPUdFg56ObeCM=CoYFmgap8An0=Gnax7XPvCqmgEZQ@mail.gmail.com>
+Message-ID: <CANk1AXT9cPUdFg56ObeCM=CoYFmgap8An0=Gnax7XPvCqmgEZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] fpga: don't use drvdata in common code
+To: Moritz Fischer <mdf@kernel.org>
+Cc: Anatolij Gustschin <agust@denx.de>,
+        Matthew Gerlach <matthew.gerlach@linux.intel.com>,
+        Joel Holdsworth <joel@airwebreathe.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Joshua Clayton <stillcompiling@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 9, 2018 at 11:18 AM, Moritz Fischer <mdf@kernel.org> wrote:
+> On Wed, Feb 07, 2018 at 03:05:26PM -0600, Alan Tull wrote:
+>> Setting drvdata is fine for DT based devices which have one manager,
+>> bridge, or region device per platform device.  However, PCIe based
+>> devices may have multiple FPGA mgr/bridge/regions under one PCIe
+>> device.  Without these changes, PCIe-based solutions have to create an
+>> extra device for each child mgr/bridge/region to hold drvdata.
+>>
+>> Also changing the fpga_*_register/unregister functions to take the
+>> corresponding struct as the only parameter wherever they weren't already.
+>>
+>> * int fpga_bridge_register(struct fpga_bridge *br)
+>> * int fpga_mgr_register(struct fpga_manager *mgr)
+>> * int fpga_region_register(struct fpga_region *region)
+>>
+>> * void fpga_bridge_unregister(struct fpga_bridge *br)
+>> * void fpga_mgr_unregister(struct fpga_manager *mgr)
+>> * int fpga_region_unregister(struct fpga_region *region)
+>>
+>> Changes from v2:
+>> * Drop patch 5 which fixed a DT overlay issue.  The underlying
+>>   issue was fixed in the main DT overlay code.
+>> * Minor code cleanup to make it more obvious that the changes
+>>   were not breaking anything
+>> * Added Moritz' ack on patch 1
+>>
+>> Alan Tull (4):
+>>   fpga: region: don't use drvdata in common fpga code
+>>   fpga: manager: don't use drvdata in common fpga code
+>>   fpga: bridge: don't use drvdata in common fpga code
+>>   fpga: region: change fpga_region_register to have one param
+>
+> Acked-by: Moritz Fischer <mdf@kernel.org> for the ones I haven't ack'd
+> so far.
 
+Thanks Moritz!
 
-> On 10 Feb 2018, at 10:05 PM, Felix Fietkau <nbd@nbd.name> wrote:
-> 
-> On 2018-02-10 14:56, Kai Heng Feng wrote:
->> 
->>> On 9 Feb 2018, at 3:16 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
->>> Sure, but we have to make sure that we don't create regressions on
->>> existing systems. For example, did you test this with any system which
->>> don't support btcoex? (just asking, haven't tested this myself)
->> 
->> No not really, but I will definitely test it.
->> The only module I have that uses ath9k is Dell’s DW1707.
->> How do I check if it support btcoex or not?
-> I just reviewed the code again, and I am sure that we cannot merge this
-> patch. Enabling the btcoex parameter makes the driver enable a whole
-> bunch of code starting timers, listening to some GPIOs, etc.
-> 
-> On non-btcoex systems, some of those GPIOs might be floating or even
-> connected to different things, which could cause a lot of undefined
-> behavior.
-> 
-> This is simply too big a risk, so there absolutely needs to be a
-> whitelist for systems that need this, otherwise it has to remain
-> disabled by default.
+Alan
 
-So what information can we use to whitelist btcoex chips?
-Can we get btcoex support status at ath9k probing?
-
-Kai-Heng
-
-> 
-> - Felix
+>
+> Thanks,
+>
+> Moritz
+>>
+>>  Documentation/fpga/fpga-mgr.txt     | 24 +++++++++++++++------
+>>  Documentation/fpga/fpga-region.txt  |  3 +--
+>>  drivers/fpga/altera-cvp.c           | 18 ++++++++++++----
+>>  drivers/fpga/altera-fpga2sdram.c    | 20 +++++++++++++----
+>>  drivers/fpga/altera-freeze-bridge.c | 18 +++++++++++++---
+>>  drivers/fpga/altera-hps2fpga.c      | 16 +++++++++++---
+>>  drivers/fpga/altera-pr-ip-core.c    | 17 +++++++++++++--
+>>  drivers/fpga/altera-ps-spi.c        | 18 +++++++++++++---
+>>  drivers/fpga/fpga-bridge.c          | 43 ++++++++++++++-----------------------
+>>  drivers/fpga/fpga-mgr.c             | 39 ++++++++++++---------------------
+>>  drivers/fpga/fpga-region.c          |  9 ++++++--
+>>  drivers/fpga/ice40-spi.c            | 20 +++++++++++++----
+>>  drivers/fpga/of-fpga-region.c       |  4 +++-
+>>  drivers/fpga/socfpga-a10.c          | 16 +++++++++++---
+>>  drivers/fpga/socfpga.c              | 18 +++++++++++++---
+>>  drivers/fpga/ts73xx-fpga.c          | 18 +++++++++++++---
+>>  drivers/fpga/xilinx-pr-decoupler.c  | 15 ++++++++++---
+>>  drivers/fpga/xilinx-spi.c           | 18 +++++++++++++---
+>>  drivers/fpga/zynq-fpga.c            | 16 +++++++++++---
+>>  include/linux/fpga/fpga-bridge.h    |  7 +++---
+>>  include/linux/fpga/fpga-mgr.h       |  8 +++----
+>>  include/linux/fpga/fpga-region.h    |  4 +++-
+>>  22 files changed, 256 insertions(+), 113 deletions(-)
+>>
+>> --
+>> 2.7.4
+>>
