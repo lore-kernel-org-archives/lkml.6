@@ -1,232 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754116AbeBLSv7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:51:59 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:40989 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753380AbeBLSv4 (ORCPT
+        id S1753791AbeBLSxo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:53:44 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:44773 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751196AbeBLSxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:51:56 -0500
-X-Google-Smtp-Source: AH8x226qx5I0kNQ+m05609ANOajWs0b//SD6RmBBOzeued3uhZ8RsLWhwes4NS2MCFrIjFu3roShIg==
-Date: Mon, 12 Feb 2018 10:51:52 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        =?iso-8859-1?B?Wm9sdOFuIEL2c3r2cm3pbnlp?= <zboszor@pr.hu>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: piix4: Use request_muxed_region
-Message-ID: <20180212185152.GA20877@roeck-us.net>
-References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
- <20180212111041.027edd85@endymion>
+        Mon, 12 Feb 2018 13:53:43 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Sy4DNNL_1518461608;
+Subject: Re: [PATCH 2/4 v6] lib: debugobjects: add global free list and the
+ counter
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: longman@redhat.com, linux-kernel@vger.kernel.org
+References: <1517872708-24207-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
+ <alpine.DEB.2.21.1802121649490.1158@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1802121654350.1158@nanos.tec.linutronix.de>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <0ba82b3c-367e-29d3-59ee-6d85ce10037a@linux.alibaba.com>
+Date: Mon, 12 Feb 2018 10:53:24 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180212111041.027edd85@endymion>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <alpine.DEB.2.21.1802121654350.1158@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 11:10:41AM +0100, Jean Delvare wrote:
-> Hi Guneter,
-> 
-> Sorry for the delay :(
-> 
-> On Sat, 30 Dec 2017 08:50:57 -0800, Guenter Roeck wrote:
-> > Accesses to SB800_PIIX4_SMB_IDX can occur from multiple drivers.
-> > Use request_muxed_region() to ensure synchronization.
-> 
-> Which ones? Documenting it, at least in the commit message, would seem
-> useful. Out of curiosity, have these other drivers been converted to
-> use request_muxed_region already?
-> 
-Primarily watchdog, but there is also unprotected initialization code
-in several locations. I did convert the watchdog driver, and the changes
-will be in v4.16. I did not touch the other code since none of the calls
-has an error return.
 
-> > 
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > ---
-> >  drivers/i2c/busses/i2c-piix4.c | 50 ++++++++++++++++++------------------------
-> >  1 file changed, 21 insertions(+), 29 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-> > index 462948e2c535..78dd5951d6e7 100644
-> > --- a/drivers/i2c/busses/i2c-piix4.c
-> > +++ b/drivers/i2c/busses/i2c-piix4.c
-> > @@ -153,10 +153,7 @@ static const struct dmi_system_id piix4_dmi_ibm[] = {
-> >  
-> >  /*
-> >   * SB800 globals
-> > - * piix4_mutex_sb800 protects piix4_port_sel_sb800 and the pair
-> > - * of I/O ports at SB800_PIIX4_SMB_IDX.
-> >   */
-> > -static DEFINE_MUTEX(piix4_mutex_sb800);
-> 
-> With this gone, you can remove #include <linux/mutex.h>.
-> 
-> >  static u8 piix4_port_sel_sb800;
-> >  static u8 piix4_port_mask_sb800;
-> >  static u8 piix4_port_shift_sb800;
-> > @@ -298,12 +295,15 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
-> >  	else
-> >  		smb_en = (aux) ? 0x28 : 0x2c;
-> >  
-> > -	mutex_lock(&piix4_mutex_sb800);
-> > +	if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2, "sb800_piix4_smb"))
-> > +		return -EBUSY;
-> 
-> This would happen if and only if another driver has requested the
-> region already but without IORESOURCE_MUXED, right? Don't you want to
 
-Or if its call to alloc_resource() fails.
+On 2/12/18 7:54 AM, Thomas Gleixner wrote:
+> On Mon, 12 Feb 2018, Thomas Gleixner wrote:
+>> On Tue, 6 Feb 2018, Yang Shi wrote:
+>>> +	/*
+>>> +	 * The objs on the pool list might be allocated before the work is
+>>> +	 * run, so recheck if pool list it full or not, if not fill pool
+>>> +	 * list from the global free list
+>>> +	 */
+>>> +	while (obj_pool_free < debug_objects_pool_size) {
+>>> +		if (obj_nr_tofree <= 0)
+>>> +			break;
+>>> +
+>>> +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+>>> +		hlist_del(&obj->node);
+>>> +		hlist_add_head(&obj->node, &obj_pool);
+>>> +		obj_pool_free++;
+>>> +		obj_nr_tofree--;
+>>> +	}
+>>> +
+>>> +	/*
+>>> +	 * pool list is already full, and there are still objs on the free list,
+>>> +	 * move remaining free objs to a separate list to free the memory later.
+>>> +	 */
+>>> +	if (obj_nr_tofree > 0) {
+>>> +		hlist_move_list(&obj_to_free, &tofree);
+>>> +		obj_nr_tofree = 0;
+>>> +	}
+>>> +
+>>>   	while (obj_pool_free >= debug_objects_pool_size + ODEBUG_FREE_BATCH) {
+>>>   		for (i = 0; i < ODEBUG_FREE_BATCH; i++) {
+>>>   			objs[i] = hlist_entry(obj_pool.first,
+>> This whole section is now pointless and can be removed. There is no way
+>> that this code path can be entered after this change. Surplus objects are
+>> on the obj_to_free list and not on the obj_pool itself.
 
-> write an error message then? I don't think request_muxed_region() will
-> do, and probe failing with -EBUSY but no error message logged would be
-> hard to diagnose.
-> 
-NP, though the analysis is quite simple - /proc/iomem will show the culprit.
+Yes, it is correct. I think the whole ODEBUG_FREE_BATCH thing can be 
+removed too.
 
-> > +
-> >  	outb_p(smb_en, SB800_PIIX4_SMB_IDX);
-> >  	smba_en_lo = inb_p(SB800_PIIX4_SMB_IDX + 1);
-> >  	outb_p(smb_en + 1, SB800_PIIX4_SMB_IDX);
-> >  	smba_en_hi = inb_p(SB800_PIIX4_SMB_IDX + 1);
-> > -	mutex_unlock(&piix4_mutex_sb800);
-> > +
-> > +	release_region(SB800_PIIX4_SMB_IDX, 2);
-> >  
-> >  	if (!smb_en) {
-> >  		smb_en_status = smba_en_lo & 0x10;
-> > @@ -373,7 +373,12 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
-> >  			break;
-> >  		}
-> >  	} else {
-> > -		mutex_lock(&piix4_mutex_sb800);
-> > +		if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2,
-> > +					  "sb800_piix4_smb")) {
-> > +			release_region(piix4_smba, SMBIOSIZE);
-> > +			return -EBUSY;
-> > +		}
-> > +
-> >  		outb_p(SB800_PIIX4_PORT_IDX_SEL, SB800_PIIX4_SMB_IDX);
-> >  		port_sel = inb_p(SB800_PIIX4_SMB_IDX + 1);
-> >  		piix4_port_sel_sb800 = (port_sel & 0x01) ?
-> > @@ -381,7 +386,7 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
-> >  				       SB800_PIIX4_PORT_IDX;
-> >  		piix4_port_mask_sb800 = SB800_PIIX4_PORT_IDX_MASK;
-> >  		piix4_port_shift_sb800 = SB800_PIIX4_PORT_IDX_SHIFT;
-> > -		mutex_unlock(&piix4_mutex_sb800);
-> > +		release_region(SB800_PIIX4_SMB_IDX, 2);
-> >  	}
-> >  
-> >  	dev_info(&PIIX4_dev->dev,
-> > @@ -679,7 +684,8 @@ static s32 piix4_access_sb800(struct i2c_adapter *adap, u16 addr,
-> >  	u8 port;
-> >  	int retval;
-> >  
-> > -	mutex_lock(&piix4_mutex_sb800);
-> > +	if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2, "sb800_piix4_smb"))
-> > +		return -EBUSY;
-> 
-> Did you check the performance cost? I thought that
-> request_muxed_region() was meant for driver setup, I did not expect it
-> to be used at driver run-time. Requesting the region again for every
-> transaction seems quite costly?
-> 
-I did check why the driver has such a bad performance, which is why
-I submitted the other patch to change msleep() to usleep_range().
+Will do it in the next version.
 
-Evaulating the actual per-call overhead seems to be quite pointless, unless
-someone volunteers to introduce a specific access API for situations like this.
-It is definitely not a unique situation - I have to do something similar
-in the out-of-tree it87 driver, for example.
+Regards,
+Yang
 
-> That being said, being slow is certainly better than failing, as is
-> currently the case, so I'm fine with this change anyway. Just curious.
-> 
-> >  
-> >  	/* Request the SMBUS semaphore, avoid conflicts with the IMC */
-> >  	smbslvcnt  = inb_p(SMBSLVCNT);
-> > @@ -695,8 +701,8 @@ static s32 piix4_access_sb800(struct i2c_adapter *adap, u16 addr,
-> >  	} while (--retries);
-> >  	/* SMBus is still owned by the IMC, we give up */
-> >  	if (!retries) {
-> > -		mutex_unlock(&piix4_mutex_sb800);
-> > -		return -EBUSY;
-> > +		retval = -EBUSY;
-> > +		goto release;
-> >  	}
-> >  
-> >  	/*
-> > @@ -753,8 +759,8 @@ static s32 piix4_access_sb800(struct i2c_adapter *adap, u16 addr,
-> >  	if ((size == I2C_SMBUS_BLOCK_DATA) && adapdata->notify_imc)
-> >  		piix4_imc_wakeup();
-> >  
-> > -	mutex_unlock(&piix4_mutex_sb800);
-> > -
-> > +release:
-> > +	release_region(SB800_PIIX4_SMB_IDX, 2);
-> >  	return retval;
-> >  }
-> >  
-> > @@ -899,13 +905,6 @@ static int piix4_probe(struct pci_dev *dev, const struct pci_device_id *id)
-> >  		bool notify_imc = false;
-> >  		is_sb800 = true;
-> >  
-> > -		if (!request_region(SB800_PIIX4_SMB_IDX, 2, "smba_idx")) {
-> > -			dev_err(&dev->dev,
-> > -			"SMBus base address index region 0x%x already in use!\n",
-> > -			SB800_PIIX4_SMB_IDX);
-> > -			return -EBUSY;
-> > -		}
-> > -
-> >  		if (dev->vendor == PCI_VENDOR_ID_AMD &&
-> >  		    dev->device == PCI_DEVICE_ID_AMD_KERNCZ_SMBUS) {
-> >  			u8 imc;
-> > @@ -922,20 +921,16 @@ static int piix4_probe(struct pci_dev *dev, const struct pci_device_id *id)
-> >  
-> >  		/* base address location etc changed in SB800 */
-> >  		retval = piix4_setup_sb800(dev, id, 0);
-> > -		if (retval < 0) {
-> > -			release_region(SB800_PIIX4_SMB_IDX, 2);
-> > +		if (retval < 0)
-> >  			return retval;
-> > -		}
-> >  
-> >  		/*
-> >  		 * Try to register multiplexed main SMBus adapter,
-> >  		 * give up if we can't
-> >  		 */
-> >  		retval = piix4_add_adapters_sb800(dev, retval, notify_imc);
-> > -		if (retval < 0) {
-> > -			release_region(SB800_PIIX4_SMB_IDX, 2);
-> > +		if (retval < 0)
-> >  			return retval;
-> > -		}
-> >  	} else {
-> >  		retval = piix4_setup(dev, id);
-> >  		if (retval < 0)
-> > @@ -983,11 +978,8 @@ static void piix4_adap_remove(struct i2c_adapter *adap)
-> >  
-> >  	if (adapdata->smba) {
-> >  		i2c_del_adapter(adap);
-> > -		if (adapdata->port == (0 << piix4_port_shift_sb800)) {
-> > +		if (adapdata->port == (0 << piix4_port_shift_sb800))
-> >  			release_region(adapdata->smba, SMBIOSIZE);
-> > -			if (adapdata->sb800_main)
-> > -				release_region(SB800_PIIX4_SMB_IDX, 2);
-> > -		}
-> >  		kfree(adapdata);
-> >  		kfree(adap);
-> >  	}
-> 
-> Everything else looks good to me, thanks.
-> 
-> I assume you have tested this patch on real hardware?
-> 
-I have been running the code on several systems since I submitted
-the patch, together with the related changes in the watchdog driver.
-
-Guenter
+> Actually not in this patch, but in the next one.
+>
+> Thanks,
+>
+> 	tglx
