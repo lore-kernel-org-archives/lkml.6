@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932714AbeBLWIL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:08:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58846 "EHLO mail.kernel.org"
+        id S932796AbeBLWIR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:08:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932413AbeBLWIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:08:06 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D0021799
+        id S932717AbeBLWIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:08:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A81217A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -17,13 +17,16 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>, Mark Brown <broonie@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS)
-Subject: [PATCH v3 1/5] dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:49 +0000
-Message-Id: <1518473273-6333-2-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v3 2/5] dt-bindings: adv7511: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 22:07:50 +0000
+Message-Id: <1518473273-6333-3-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
 References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
@@ -34,78 +37,73 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The ADV7604 has thirteen 256-byte maps that can be accessed via the main
-I²C ports. Each map has it own I²C address and acts as a standard slave
+The ADV7511 has four 256-byte maps that can be accessed via the main I²C
+ports. Each map has it own I²C address and acts as a standard slave
 device on the I²C bus.
 
 Extend the device tree node bindings to be able to override the default
 addresses so that address conflicts with other devices on the same bus
 may be resolved at the board description level.
 
-Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
-[Kieran: Re-adapted for mainline]
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-
 ---
-Based upon the original posting :
-  https://lkml.org/lkml/2014/10/22/469
-
 v2:
- - DT Binding update separated from code change
- - Minor reword to commit message to account for DT only change.
- - Collected Rob's RB tag.
+ - Fixed up reg: property description to account for multiple optional
+   addresses.
+ - Minor reword to commit message to account for DT only change
+ - Collected Robs RB tag
 
 v3:
  - Split map register addresses into individual declarations.
 
- .../devicetree/bindings/media/i2c/adv7604.txt          | 18 ++++++++++++++++--
+ .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++++++--
  1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index 9cbd92eb5d05..ebb5f070c05b 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-@@ -13,7 +13,11 @@ Required Properties:
-     - "adi,adv7611" for the ADV7611
-     - "adi,adv7612" for the ADV7612
+diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+index 0047b1394c70..3f85c351dd39 100644
+--- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
++++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+@@ -14,7 +14,13 @@ Required properties:
+ 		"adi,adv7513"
+ 		"adi,adv7533"
  
--  - reg: I2C slave address
-+  - reg: I2C slave addresses
-+    The ADV76xx has up to thirteen 256-byte maps that can be accessed via the
-+    main I²C ports. Each map has it own I²C address and acts as a standard
-+    slave device on the I²C bus. The main address is mandatory, others are
-+    optional and revert to defaults if not specified.
+-- reg: I2C slave address
++- reg: I2C slave addresses
++  The ADV7511 internal registers are split into four pages exposed through
++  different I2C addresses, creating four register maps. Each map has it own
++  I2C address and acts as a standard slave device on the I²C bus. The main
++  address is mandatory, others are optional and revert to defaults if not
++  specified.
++
  
-   - hpd-gpios: References to the GPIOs that control the HDMI hot-plug
-     detection pins, one per HDMI input. The active flag indicates the GPIO
-@@ -35,6 +39,11 @@ Optional Properties:
+ The ADV7511 supports a large number of input data formats that differ by their
+ color depth, color format, clock mode, bit justification and random
+@@ -70,6 +76,9 @@ Optional properties:
+   rather than generate its own timings for HDMI output.
+ - clocks: from common clock binding: reference to the CEC clock.
+ - clock-names: from common clock binding: must be "cec".
++- reg-names : Names of maps with programmable addresses.
++	It can contain any map needing a non-default address.
++	Possible maps names are : "main", "edid", "cec", "packet"
  
-   - reset-gpios: Reference to the GPIO connected to the device's reset pin.
-   - default-input: Select which input is selected after reset.
-+  - reg-names : Names of maps with programmable addresses.
-+		It can contain any map needing a non-default address.
-+		Possible maps names are :
-+		  "main", "avlink", "cec", "infoframe", "esdp", "dpp", "afe",
-+		  "rep", "edid", "hdmi", "test", "cp", "vdp"
+ Required nodes:
  
- Optional Endpoint Properties:
+@@ -88,7 +97,12 @@ Example
  
-@@ -52,7 +61,12 @@ Example:
- 
- 	hdmi_receiver@4c {
- 		compatible = "adi,adv7611";
--		reg = <0x4c>;
+ 	adv7511w: hdmi@39 {
+ 		compatible = "adi,adv7511w";
+-		reg = <39>;
 +		/*
-+		 * The edid page will be accessible @ 0x66 on the i2c bus. All
-+		 * other maps will retain their default addresses.
++		 * The EDID page will be accessible on address 0x66 on the i2c
++		 * bus. All other maps continue to use their default addresses.
 +		 */
-+		reg = <0x4c>, <0x66>;
-+		reg-names "main", "edid";
- 
- 		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
- 		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
++		reg = <0x39>, <0x66>;
++		reg-names = "main", "edid";
+ 		interrupt-parent = <&gpio3>;
+ 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
+ 		clocks = <&cec_clock>;
 -- 
 2.7.4
