@@ -1,59 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935027AbeBLOLN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:11:13 -0500
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:33155 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933182AbeBLOLM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:11:12 -0500
-X-Google-Smtp-Source: AH8x2246zKNHV+l2SLopSgFBvTNaIUTQ6MeAfhb6hv0o1vSklnbsg6bNMZcfO0vmVnyVajUu+lfTeg==
-Date: Mon, 12 Feb 2018 17:11:09 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH v3 2/2] mm/huge_memory.c: reorder operations in
- __split_huge_page_tail()
-Message-ID: <20180212141109.2lowammpogi3wtvt@node.shutemov.name>
-References: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
- <151844393341.210639.13162088407980624477.stgit@buzz>
+        id S935798AbeBLOMW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:12:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57694 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933415AbeBLOMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 09:12:21 -0500
+Date: Mon, 12 Feb 2018 12:12:18 -0200
+From: Eduardo Habkost <ehabkost@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v3 1/3] KVM: Introduce dedicated vCPUs hint
+ KVM_HINTS_DEDICATED
+Message-ID: <20180212141218.GO13981@localhost.localdomain>
+References: <1518319786-1466-1-git-send-email-wanpengli@tencent.com>
+ <1518319786-1466-2-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <151844393341.210639.13162088407980624477.stgit@buzz>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1518319786-1466-2-git-send-email-wanpengli@tencent.com>
+X-Fnord: you can see the fnord
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 04:58:53PM +0300, Konstantin Khlebnikov wrote:
-> THP split makes non-atomic change of tail page flags. This is almost ok
-> because tail pages are locked and isolated but this breaks recent changes
-> in page locking: non-atomic operation could clear bit PG_waiters.
-> 
-> As a result concurrent sequence get_page_unless_zero() -> lock_page()
-> might block forever. Especially if this page was truncated later.
-> 
-> Fix is trivial: clone flags before unfreezing page reference counter.
-> 
-> This race exists since commit 62906027091f ("mm: add PageWaiters indicating
-> tasks are waiting for a page bit") while unsave unfreeze itself was added
-> in commit 8df651c7059e ("thp: cleanup split_huge_page()").
-> 
-> clear_compound_head() also must be called before unfreezing page reference
-> because after successful get_page_unless_zero() might follow put_page()
-> which needs correct compound_head().
-> 
-> And replace page_ref_inc()/page_ref_add() with page_ref_unfreeze() which
-> is made especially for that and has semantic of smp_store_release().
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+On Sun, Feb 11, 2018 at 11:29:44AM +0800, Wanpeng Li wrote:
+[...]
+> +KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit
+> +                                   ||       || to determine if they run on dedicated
+> +                                   ||       || vCPUs, allowing optimizations
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+What "dedicated vCPUs" mean, exactly?  Can we document this more
+explicitly?
 
 -- 
- Kirill A. Shutemov
+Eduardo
