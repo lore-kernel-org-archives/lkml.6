@@ -1,98 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeBLSVL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:21:11 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46213 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751176AbeBLSVJ (ORCPT
+        id S1753052AbeBLSVp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:21:45 -0500
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:40706 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752515AbeBLSVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:21:09 -0500
-X-Google-Smtp-Source: AH8x227YZGn6KFsm+p7iDlMuwWF5DMaEdR8YFo6+YWzZbBmvys5LJ4Nt1573NlLTJOIuMLFje6Ab9A==
-Date: Mon, 12 Feb 2018 10:21:05 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+5ac9d43b97a33f321ed58e24960e30defaef843f@syzkaller.appspotmail.com>
-Cc: syzkaller-bugs@googlegroups.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
- sha512_mb_mgr_get_comp_job_avx2
-Message-ID: <20180212182105.GA193902@gmail.com>
-References: <001a113ec900d65ea5055f70560f@google.com>
- <001a113fae28e4fe39055f757ab5@google.com>
+        Mon, 12 Feb 2018 13:21:43 -0500
+X-Google-Smtp-Source: AH8x227QOqbqLBqwP4bgnfJpizW1nuhzOoK0foESqLEJTQZ5u5NibEZeEQauZBE3himBTvWwq8IYnQ==
+To: linux-sunxi@googlegroups.com, maxime.ripard@free-electrons.com,
+        wens@csie.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+From: Philipp Rossak <embed3d@gmail.com>
+Subject: BUG: A31s Not booting anymore
+Message-ID: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
+Date: Mon, 12 Feb 2018 19:21:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a113fae28e4fe39055f757ab5@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 03, 2017 at 12:31:01PM -0800, syzbot wrote:
-> syzkaller has found reproducer for the following crash on
-> 4131d5166185d0d75b5f1d4bf362a9e0bac05598
-> git://git.cmpxchg.org/linux-mmots.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> 
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
-> 
-> 
-> BUG: unable to handle kernel NULL pointer dereference at 00000000c58b0b19
-> IP: sha512_mb_mgr_get_comp_job_avx2+0x6e/0xee
-> arch/x86/crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S:251
-> PGD 1cb562067 P4D 1cb562067 PUD 1cb563067 PMD 0
-> Oops: 0002 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 24 Comm: kworker/1:1 Not tainted 4.15.0-rc1-mm1+ #29
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Workqueue: crypto mcryptd_queue_worker
-> task: 0000000018ff7174 task.stack: 000000004c6e7fb4
-> RIP: 0010:sha512_mb_mgr_get_comp_job_avx2+0x6e/0xee
-> arch/x86/crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S:251
-> RSP: 0018:ffff8801d9d171b8 EFLAGS: 00010002
-> RAX: 0000000000000000 RBX: ffff8801d5aa38d0 RCX: 0000000000000000
-> RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff8801d5aa3780
-> RBP: ffff8801d9d171e0 R08: 0000000100000000 R09: 0000000000000001
-> R10: 0000000000000002 R11: 0000000000000003 R12: ffff8801d5aa3780
-> R13: 0000000000000282 R14: ffff8801cc115760 R15: ffffe8ffffd10630
-> FS:  0000000000000000(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000060 CR3: 00000001cb55f000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  sha_complete_job+0x276/0x830 arch/x86/crypto/sha512-mb/sha512_mb.c:510
->  sha512_mb_update+0x2f6/0x530 arch/x86/crypto/sha512-mb/sha512_mb.c:610
->  crypto_ahash_update include/crypto/hash.h:522 [inline]
->  ahash_mcryptd_update crypto/mcryptd.c:628 [inline]
->  mcryptd_hash_update+0xcd/0x1c0 crypto/mcryptd.c:374
->  mcryptd_queue_worker+0xfe/0x660 crypto/mcryptd.c:182
->  process_one_work+0xbfd/0x1bc0 kernel/workqueue.c:2113
->  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
->  kthread+0x37a/0x440 kernel/kthread.c:238
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:517
-> Code: 49 0f 42 d3 48 f7 c2 f0 ff ff ff 0f 85 9a 00 00 00 48 83 e2 0f 48 6b
-> da 08 48 8d 9c 1f 48 01 00 00 48 8b 03 48 c7 03 00 00 00 00 <c7> 40 60 02 00
-> 00 00 48 8b 9f 40 01 00 00 48 c1 e3 08 48 09 d3
-> RIP: sha512_mb_mgr_get_comp_job_avx2+0x6e/0xee
-> arch/x86/crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S:251 RSP:
-> ffff8801d9d171b8
-> CR2: 0000000000000060
-> ---[ end trace 2003a6fbb2bb168e ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
+Hey,
 
-Fixed by commit eff84b379089cd, so marking it fixed for syzbot:
+When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting 
+kernel ... . After enabling the earlyprintk I could capture this log: [1].
 
-#syz fix: crypto: sha512-mb - initialize pending lengths correctly
+After reverting those 5 commits from Chen-Yu I was able to boot again:
 
-- Eric
+
+clk: sunxi-ng: Support fixed post-dividers on NM style clocks
+7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
+
+clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
+10e6eb4f2c5b35ae71c9bc0db83d74238719b453
+
+clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
+e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
+
+clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+946797aa3f08e2f6f5992f3ec2be44791e9b9260
+
+clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
+83fe3be4d1974f5f50c5e2039a1609f4960e8579
+
+
+I allready tried to fix it with making them save against zero:
+
+if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
+     	cmp->fixed_post_div with)
+                rate *= cmp->fixed_post_div;
+
+But that didn't help.
+
+Any ideas?
+
+Regards,
+Philipp
+
+[1]: https://pastebin.com/64Fzzqvg
