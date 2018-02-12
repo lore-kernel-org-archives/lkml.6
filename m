@@ -1,180 +1,333 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964830AbeBLP5S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:57:18 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38794 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932945AbeBLP5H (ORCPT
+        id S964858AbeBLP5r (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:57:47 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:46527 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934541AbeBLP5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:57:07 -0500
-X-Google-Smtp-Source: AH8x224pd1AD52NtC77qrldAzPeispiG3tZo64yZNCaAA6rty+pqyJNHIXjClLj+wsToLc5k4hug+/c/zoBz5tXWip0=
+        Mon, 12 Feb 2018 10:57:32 -0500
+X-Google-Smtp-Source: AH8x227LybtOgdTqQNgcr9pTaWgYs/bCD8N8CnEbBcbmtsdjfxj2+i8eJXEsa8OecGs16XCDix20qcebXkLSOMl2npE=
 MIME-Version: 1.0
-In-Reply-To: <001a1148bb9ede7df1056505e56b@google.com>
-References: <001a1148bb9ede7df1056505e56b@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 12 Feb 2018 16:56:45 +0100
-Message-ID: <CACT4Y+YM688uOs0xGYskLzR+G7dvrHW_kZ_Qq97yvnUyHubY1w@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in do_raw_spin_unlock (2)
-To: syzbot <syzbot+421677102422908e104e@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>
+In-Reply-To: <c85c293e19a478353aba8e6e3ee39e5914f798d5.1512041070.git.dongsu@kinvolk.io>
+References: <cover.1512741134.git.dongsu@kinvolk.io> <c85c293e19a478353aba8e6e3ee39e5914f798d5.1512041070.git.dongsu@kinvolk.io>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Mon, 12 Feb 2018 16:57:31 +0100
+Message-ID: <CAOssrKd6vkMDwRT=QQofKCufzQczzQ7dXoVbVfVax-0HqD986w@mail.gmail.com>
+Subject: Re: [PATCH 08/11] fuse: Support fuse filesystems outside of init_user_ns
+To: Dongsu Park <dongsu@kinvolk.io>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org, Alban Crequy <alban@kinvolk.io>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 4:54 PM, syzbot
-<syzbot+421677102422908e104e@syzkaller.appspotmail.com> wrote:
-> Hello,
+On Fri, Dec 22, 2017 at 3:32 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
+> From: Seth Forshee <seth.forshee@canonical.com>
 >
-> syzbot hit the following crash on upstream commit
-> f1517df8701c9f12dae9ce7f43a5d300a6917619 (Thu Feb 8 23:18:32 2018 +0000)
-> Merge tag 'nfsd-4.16' of git://linux-nfs.org/~bfields/linux
+> In order to support mounts from namespaces other than
+> init_user_ns, fuse must translate uids and gids to/from the
+> userns of the process servicing requests on /dev/fuse. This
+> patch does that, with a couple of restrictions on the namespace:
 >
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
+>  - The userns for the fuse connection is fixed to the namespace
+>    from which /dev/fuse is opened.
 >
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+421677102422908e104e@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
+>  - The namespace must be the same as s_user_ns.
+>
+> These restrictions simplify the implementation by avoiding the
+> need to pass around userns references and by allowing fuse to
+> rely on the checks in inode_change_ok for ownership changes.
+> Either restriction could be relaxed in the future if needed.
 
-This is the same as:
+Can we not introduce potential userspace interface regressions?
 
-#syz dup: KASAN: use-after-free Read in remove_wait_queue
+The issue with pid namespaces fixed in commit 5d6d3a301c4e ("fuse:
+allow server to run in different pid_ns") will probably bite us here
+as well.
 
+We basically need two modes of operation:
 
-> ==================================================================
-> BUG: KASAN: use-after-free in debug_spin_unlock
-> kernel/locking/spinlock_debug.c:100 [inline]
-> BUG: KASAN: use-after-free in do_raw_spin_unlock+0x2a4/0x300
-> kernel/locking/spinlock_debug.c:134
-> Read of size 4 at addr ffff8801af8d1328 by task syzkaller254122/4773
+a) old, backward compatible (not introducing any new failure mores),
+created with privileged mount
+b) new, non-backward compatible, created with unprivileged mount
+
+Technically there would still be a risk from breaking userspace, since
+we are using the same entry point for both, but let's hope that no
+practical problems come from that.
+
+> For cuse the namespace used for the connection is also simply
+> current_user_ns() at the time /dev/cuse is opened.
 >
-> CPU: 0 PID: 4773 Comm: syzkaller254122 Not tainted 4.15.0+ #305
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  print_address_description+0x73/0x250 mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report+0x23b/0x360 mm/kasan/report.c:412
->  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
->  debug_spin_unlock kernel/locking/spinlock_debug.c:100 [inline]
->  do_raw_spin_unlock+0x2a4/0x300 kernel/locking/spinlock_debug.c:134
->  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:159 [inline]
->  _raw_spin_unlock_irqrestore+0x27/0xba kernel/locking/spinlock.c:184
->  spin_unlock_irqrestore include/linux/spinlock.h:365 [inline]
->  remove_wait_queue+0x1b4/0x350 kernel/sched/wait.c:52
->  ep_remove_wait_queue fs/eventpoll.c:595 [inline]
->  ep_unregister_pollwait.isra.7+0x18c/0x590 fs/eventpoll.c:613
->  ep_free+0x13f/0x320 fs/eventpoll.c:830
->  ep_eventpoll_release+0x44/0x60 fs/eventpoll.c:862
->  __fput+0x327/0x7e0 fs/file_table.c:209
->  ____fput+0x15/0x20 fs/file_table.c:243
->  task_work_run+0x199/0x270 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
->  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x6ed/0x940 arch/x86/entry/common.c:292
->  entry_SYSCALL_64_after_hwframe+0x26/0x9b
-> RIP: 0033:0x44a0f9
-> RSP: 002b:00007f03daef9da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000124
-> RAX: 0000000000000008 RBX: 00000000006debfc RCX: 000000000044a0f9
-> RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000007
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006debf8
-> R13: 6e69622f7665642f R14: 6273752f7665642f R15: 000000000000000b
+> Patch v4 is available: https://patchwork.kernel.org/patch/8944661/
 >
-> Allocated by task 4761:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
->  kmem_cache_alloc_trace+0x136/0x740 mm/slab.c:3607
->  kmalloc include/linux/slab.h:512 [inline]
->  kzalloc include/linux/slab.h:701 [inline]
->  binder_get_thread+0x1cf/0x870 drivers/android/binder.c:4279
->  binder_poll+0x8c/0x390 drivers/android/binder.c:4393
->  ep_item_poll.isra.10+0xf2/0x320 fs/eventpoll.c:885
->  ep_insert+0x6a2/0x1ac0 fs/eventpoll.c:1457
->  SYSC_epoll_ctl fs/eventpoll.c:2104 [inline]
->  SyS_epoll_ctl+0x12bf/0x1a80 fs/eventpoll.c:1990
->  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x26/0x9b
->
-> Freed by task 4761:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
->  __cache_free mm/slab.c:3485 [inline]
->  kfree+0xd9/0x260 mm/slab.c:3800
->  binder_free_thread drivers/android/binder.c:4306 [inline]
->  binder_thread_dec_tmpref+0x27f/0x310 drivers/android/binder.c:1879
->  binder_thread_release+0x4a1/0x6b0 drivers/android/binder.c:4382
->  binder_ioctl+0xc02/0x1417 drivers/android/binder.c:4599
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
->  SYSC_ioctl fs/ioctl.c:701 [inline]
->  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
->  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x26/0x9b
->
-> The buggy address belongs to the object at ffff8801af8d1280
->  which belongs to the cache kmalloc-512 of size 512
-> The buggy address is located 168 bytes inside of
->  512-byte region [ffff8801af8d1280, ffff8801af8d1480)
-> The buggy address belongs to the page:
-> page:ffffea0006be3440 count:1 mapcount:0 mapping:ffff8801af8d1000 index:0x0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffff8801af8d1000 0000000000000000 0000000100000006
-> raw: ffffea0006bcd4a0 ffffea0006bb3e60 ffff8801db000940 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801af8d1200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801af8d1280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>
->> ffff8801af8d1300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->
->                                   ^
->  ffff8801af8d1380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801af8d1400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
->
->
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Miklos Szeredi <mszeredi@redhat.com>
+> Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+> Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
 > ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
+>  fs/fuse/cuse.c   |  3 ++-
+>  fs/fuse/dev.c    | 11 ++++++++---
+>  fs/fuse/dir.c    | 14 +++++++-------
+>  fs/fuse/fuse_i.h |  6 +++++-
+>  fs/fuse/inode.c  | 31 +++++++++++++++++++------------
+>  5 files changed, 41 insertions(+), 24 deletions(-)
 >
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+> diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+> index e9e97803..b1b83259 100644
+> --- a/fs/fuse/cuse.c
+> +++ b/fs/fuse/cuse.c
+> @@ -48,6 +48,7 @@
+>  #include <linux/stat.h>
+>  #include <linux/module.h>
+>  #include <linux/uio.h>
+> +#include <linux/user_namespace.h>
 >
+>  #include "fuse_i.h"
+>
+> @@ -498,7 +499,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+>         if (!cc)
+>                 return -ENOMEM;
+>
+> -       fuse_conn_init(&cc->fc);
+> +       fuse_conn_init(&cc->fc, current_user_ns());
+>
+>         fud = fuse_dev_alloc(&cc->fc);
+>         if (!fud) {
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 17f0d05b..0f780e16 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -114,8 +114,8 @@ static void __fuse_put_request(struct fuse_req *req)
+>
+>  static void fuse_req_init_context(struct fuse_conn *fc, struct fuse_req *req)
+>  {
+> -       req->in.h.uid = from_kuid_munged(&init_user_ns, current_fsuid());
+> -       req->in.h.gid = from_kgid_munged(&init_user_ns, current_fsgid());
+> +       req->in.h.uid = from_kuid(fc->user_ns, current_fsuid());
+> +       req->in.h.gid = from_kgid(fc->user_ns, current_fsgid());
+>         req->in.h.pid = pid_nr_ns(task_pid(current), fc->pid_ns);
+>  }
+>
+> @@ -167,6 +167,10 @@ static struct fuse_req *__fuse_get_req(struct fuse_conn *fc, unsigned npages,
+>         __set_bit(FR_WAITING, &req->flags);
+>         if (for_background)
+>                 __set_bit(FR_BACKGROUND, &req->flags);
+> +       if (req->in.h.uid == (uid_t)-1 || req->in.h.gid == (gid_t)-1) {
+> +               fuse_put_request(fc, req);
+> +               return ERR_PTR(-EOVERFLOW);
+> +       }
+>
+>         return req;
+>
+> @@ -1260,7 +1264,8 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+>         in = &req->in;
+>         reqsize = in->h.len;
+>
+> -       if (task_active_pid_ns(current) != fc->pid_ns) {
+> +       if (task_active_pid_ns(current) != fc->pid_ns ||
+> +           current_user_ns() != fc->user_ns) {
+
+I don't get it.  Why recalculate the pid if the user_ns does not match?
+
+>                 rcu_read_lock();
+>                 in->h.pid = pid_vnr(find_pid_ns(in->h.pid, fc->pid_ns));
+>                 rcu_read_unlock();
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 24967382..ad1cfac1 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -858,8 +858,8 @@ static void fuse_fillattr(struct inode *inode, struct fuse_attr *attr,
+>         stat->ino = attr->ino;
+>         stat->mode = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
+>         stat->nlink = attr->nlink;
+> -       stat->uid = make_kuid(&init_user_ns, attr->uid);
+> -       stat->gid = make_kgid(&init_user_ns, attr->gid);
+> +       stat->uid = make_kuid(fc->user_ns, attr->uid);
+> +       stat->gid = make_kgid(fc->user_ns, attr->gid);
+>         stat->rdev = inode->i_rdev;
+>         stat->atime.tv_sec = attr->atime;
+>         stat->atime.tv_nsec = attr->atimensec;
+> @@ -1475,17 +1475,17 @@ static bool update_mtime(unsigned ivalid, bool trust_local_mtime)
+>         return true;
+>  }
+>
+> -static void iattr_to_fattr(struct iattr *iattr, struct fuse_setattr_in *arg,
+> -                          bool trust_local_cmtime)
+> +static void iattr_to_fattr(struct fuse_conn *fc, struct iattr *iattr,
+> +                          struct fuse_setattr_in *arg, bool trust_local_cmtime)
+>  {
+>         unsigned ivalid = iattr->ia_valid;
+>
+>         if (ivalid & ATTR_MODE)
+>                 arg->valid |= FATTR_MODE,   arg->mode = iattr->ia_mode;
+>         if (ivalid & ATTR_UID)
+> -               arg->valid |= FATTR_UID,    arg->uid = from_kuid(&init_user_ns, iattr->ia_uid);
+> +               arg->valid |= FATTR_UID,    arg->uid = from_kuid(fc->user_ns, iattr->ia_uid);
+>         if (ivalid & ATTR_GID)
+> -               arg->valid |= FATTR_GID,    arg->gid = from_kgid(&init_user_ns, iattr->ia_gid);
+> +               arg->valid |= FATTR_GID,    arg->gid = from_kgid(fc->user_ns, iattr->ia_gid);
+>         if (ivalid & ATTR_SIZE)
+>                 arg->valid |= FATTR_SIZE,   arg->size = iattr->ia_size;
+>         if (ivalid & ATTR_ATIME) {
+> @@ -1646,7 +1646,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+>
+>         memset(&inarg, 0, sizeof(inarg));
+>         memset(&outarg, 0, sizeof(outarg));
+> -       iattr_to_fattr(attr, &inarg, trust_local_cmtime);
+> +       iattr_to_fattr(fc, attr, &inarg, trust_local_cmtime);
+>         if (file) {
+>                 struct fuse_file *ff = file->private_data;
+>                 inarg.valid |= FATTR_FH;
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index d5773ca6..364e65c8 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -26,6 +26,7 @@
+>  #include <linux/xattr.h>
+>  #include <linux/pid_namespace.h>
+>  #include <linux/refcount.h>
+> +#include <linux/user_namespace.h>
+>
+>  /** Max number of pages that can be used in a single read request */
+>  #define FUSE_MAX_PAGES_PER_REQ 32
+> @@ -466,6 +467,9 @@ struct fuse_conn {
+>         /** The pid namespace for this mount */
+>         struct pid_namespace *pid_ns;
+>
+> +       /** The user namespace for this mount */
+> +       struct user_namespace *user_ns;
+> +
+>         /** Maximum read size */
+>         unsigned max_read;
+>
+> @@ -870,7 +874,7 @@ struct fuse_conn *fuse_conn_get(struct fuse_conn *fc);
+>  /**
+>   * Initialize fuse_conn
+>   */
+> -void fuse_conn_init(struct fuse_conn *fc);
+> +void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns);
+>
+>  /**
+>   * Release reference to fuse_conn
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 2f504d61..7f6b2e55 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -171,8 +171,8 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
+>         inode->i_ino     = fuse_squash_ino(attr->ino);
+>         inode->i_mode    = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
+>         set_nlink(inode, attr->nlink);
+> -       inode->i_uid     = make_kuid(&init_user_ns, attr->uid);
+> -       inode->i_gid     = make_kgid(&init_user_ns, attr->gid);
+> +       inode->i_uid     = make_kuid(fc->user_ns, attr->uid);
+> +       inode->i_gid     = make_kgid(fc->user_ns, attr->gid);
+>         inode->i_blocks  = attr->blocks;
+>         inode->i_atime.tv_sec   = attr->atime;
+>         inode->i_atime.tv_nsec  = attr->atimensec;
+> @@ -477,7 +477,8 @@ static int fuse_match_uint(substring_t *s, unsigned int *res)
+>         return err;
+>  }
+>
+> -static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
+> +static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev,
+> +                         struct user_namespace *user_ns)
+>  {
+>         char *p;
+>         memset(d, 0, sizeof(struct fuse_mount_data));
+> @@ -513,7 +514,7 @@ static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
+>                 case OPT_USER_ID:
+>                         if (fuse_match_uint(&args[0], &uv))
+>                                 return 0;
+> -                       d->user_id = make_kuid(current_user_ns(), uv);
+> +                       d->user_id = make_kuid(user_ns, uv);
+>                         if (!uid_valid(d->user_id))
+>                                 return 0;
+>                         d->user_id_present = 1;
+> @@ -522,7 +523,7 @@ static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
+>                 case OPT_GROUP_ID:
+>                         if (fuse_match_uint(&args[0], &uv))
+>                                 return 0;
+> -                       d->group_id = make_kgid(current_user_ns(), uv);
+> +                       d->group_id = make_kgid(user_ns, uv);
+>                         if (!gid_valid(d->group_id))
+>                                 return 0;
+>                         d->group_id_present = 1;
+> @@ -565,8 +566,8 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
+>         struct super_block *sb = root->d_sb;
+>         struct fuse_conn *fc = get_fuse_conn_super(sb);
+>
+> -       seq_printf(m, ",user_id=%u", from_kuid_munged(&init_user_ns, fc->user_id));
+> -       seq_printf(m, ",group_id=%u", from_kgid_munged(&init_user_ns, fc->group_id));
+> +       seq_printf(m, ",user_id=%u", from_kuid_munged(fc->user_ns, fc->user_id));
+> +       seq_printf(m, ",group_id=%u", from_kgid_munged(fc->user_ns, fc->group_id));
+>         if (fc->default_permissions)
+>                 seq_puts(m, ",default_permissions");
+>         if (fc->allow_other)
+> @@ -597,7 +598,7 @@ static void fuse_pqueue_init(struct fuse_pqueue *fpq)
+>         fpq->connected = 1;
+>  }
+>
+> -void fuse_conn_init(struct fuse_conn *fc)
+> +void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns)
+>  {
+>         memset(fc, 0, sizeof(*fc));
+>         spin_lock_init(&fc->lock);
+> @@ -621,6 +622,7 @@ void fuse_conn_init(struct fuse_conn *fc)
+>         fc->attr_version = 1;
+>         get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
+>         fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
+> +       fc->user_ns = get_user_ns(user_ns);
+>  }
+>  EXPORT_SYMBOL_GPL(fuse_conn_init);
+>
+> @@ -630,6 +632,7 @@ void fuse_conn_put(struct fuse_conn *fc)
+>                 if (fc->destroy_req)
+>                         fuse_request_free(fc->destroy_req);
+>                 put_pid_ns(fc->pid_ns);
+> +               put_user_ns(fc->user_ns);
+>                 fc->release(fc);
+>         }
+>  }
+> @@ -1061,7 +1064,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+>
+>         sb->s_flags &= ~(MS_NOSEC | SB_I_VERSION);
+>
+> -       if (!parse_fuse_opt(data, &d, is_bdev))
+> +       if (!parse_fuse_opt(data, &d, is_bdev, sb->s_user_ns))
+>                 goto err;
+>
+>         if (is_bdev) {
+> @@ -1086,8 +1089,12 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+>         if (!file)
+>                 goto err;
+>
+> -       if ((file->f_op != &fuse_dev_operations) ||
+> -           (file->f_cred->user_ns != &init_user_ns))
+> +       /*
+> +        * Require mount to happen from the same user namespace which
+> +        * opened /dev/fuse to prevent potential attacks.
+> +        */
+> +       if (file->f_op != &fuse_dev_operations ||
+> +           file->f_cred->user_ns != sb->s_user_ns)
+>                 goto err_fput;
+>
+>         fc = kmalloc(sizeof(*fc), GFP_KERNEL);
+> @@ -1095,7 +1102,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+>         if (!fc)
+>                 goto err_fput;
+>
+> -       fuse_conn_init(fc);
+> +       fuse_conn_init(fc, sb->s_user_ns);
+>         fc->release = fuse_free_conn;
+>
+>         fud = fuse_dev_alloc(fc);
 > --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/001a1148bb9ede7df1056505e56b%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+> 2.13.6
+>
