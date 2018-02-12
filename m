@@ -1,105 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754177AbeBLVVA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:21:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58786 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754006AbeBLVU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:20:58 -0500
-Date: Mon, 12 Feb 2018 14:20:57 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: kwankhede@nvidia.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cordius.wu@huawei.com,
-        eskultet@redhat.com
-Subject: Re: [PATCH RFC] vfio/mdev: delay uevent after initialization
- complete
-Message-ID: <20180212142057.66e2b15c@w520.home>
-In-Reply-To: <20180209102716.32253-1-cohuck@redhat.com>
-References: <20180209102716.32253-1-cohuck@redhat.com>
+        id S1754200AbeBLVVI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:21:08 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57058 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754117AbeBLVVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:21:04 -0500
+Date: Mon, 12 Feb 2018 22:21:01 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Raghavendra Rao Ananta <rananta@codeaurora.org>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
+        tsoni@codeaurora.org
+Subject: Re: [PATCH] perf: Add support for creating offline events
+Message-ID: <20180212212101.GA15817@krava>
+References: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
+ <20180212094357.GD5821@krava>
+ <53408020-8638-4947-90f6-87dbc4c2c4e5@codeaurora.org>
+ <20180212210442.GA32093@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212210442.GA32093@krava>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Feb 2018 11:27:16 +0100
-Cornelia Huck <cohuck@redhat.com> wrote:
+On Mon, Feb 12, 2018 at 10:04:42PM +0100, Jiri Olsa wrote:
+> On Mon, Feb 12, 2018 at 09:42:05AM -0800, Raghavendra Rao Ananta wrote:
+> > Hi Jiri,
+> > 
+> > Thank you for the response.
+> > 
+> > Does perf tool has its own check to see if the CPU was offline during the
+> > lifetime of an event? If so, it might ignore these type of events.
+> 
+> nope, we don't check on that
+> 
+> > 
+> > Initially, I tested the same using perf tool and found similar results.
+> > Then I debugged further and found that the perf core was actually sending
+> > data to the userspace (copy_to_user()) and the corresponding count for the
+> > data. Hence, I tested this further by writing my own userspace application,
+> > and I was able to read the count through this,
+> > even when the CPU was made offline and back online.
+> > 
+> > Do you think we also have to modify the perf tool accordingly?
+> 
+> hum, I wonder what's wrong.. will check
 
-> The registration code first registers the mdev device, and then
-> proceeds to populate sysfs. An userspace application that listens
-> for the ADD uevent is therefore likely to look for sysfs entries
-> that have not yet been created.
-> 
-> The canonical way to fix this is to use attribute groups that are
-> registered by the driver core before it sends the ADD uevent; I
-> unfortunately did not find a way to make this work in this case,
-> though.
-> 
-> An alternative approach is to suppress uevents before we register
-> with the core and generate the ADD uevent ourselves after the
-> sysfs infrastructure is in place.
-> 
-> Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-> ---
-> 
-> This feels like a band-aid, but I can't figure out how to handle creating
-> attribute groups when there's a callback in the parent involved.
-> 
-> This should address the issue with libvirt's processing of mdevs raised in
-> https://www.redhat.com/archives/libvir-list/2018-February/msg00023.html
-> - although libvirt will still need to deal with older kernels, of course.
-> 
-> Best to consider this an untested patch :)
+I think the user space needs to enable the event once the
+cpu gets online.. which we dont do and your app does..?
 
-I agree, this feels like a band-aide.  If every device in the kernel
-needs to suppress udev events until until some key component is added,
-that suggests that either udev is broken in general or not being used
-as intended.  Zongyong submitted a different proposal to fix this
-here[1].  That proposal seems a bit more sound and has precedence
-elsewhere in the kernel.  What do you think of that approach?  We
-don't need both afaict.  Thanks,
+maybe we could add perf_event_attr::enable_on_online ;-)
 
-Alex
+I'll check what we can do in user space, I guess we can
+monitor the cpu state and enable event accordingly
 
-[1]https://patchwork.kernel.org/patch/10196197/
-
-> ---
->  drivers/vfio/mdev/mdev_core.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-> index 126991046eb7..942e880d8e7f 100644
-> --- a/drivers/vfio/mdev/mdev_core.c
-> +++ b/drivers/vfio/mdev/mdev_core.c
-> @@ -335,6 +335,8 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
->  	mdev->dev.release = mdev_device_release;
->  	dev_set_name(&mdev->dev, "%pUl", uuid.b);
->  
-> +	/* don't notify userspace until we're ready */
-> +	dev_set_uevent_suppress(&mdev->dev, 1);
->  	ret = device_register(&mdev->dev);
->  	if (ret) {
->  		put_device(&mdev->dev);
-> @@ -350,6 +352,9 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
->  		mdev_device_remove_ops(mdev, true);
->  		goto create_failed;
->  	}
-> +	/* all done, notify userspace */
-> +	dev_set_uevent_suppress(&mdev->dev, 0);
-> +	kobject_uevent(&mdev->dev.kobj, KOBJ_ADD);
->  
->  	mdev->type_kobj = kobj;
->  	dev_dbg(&mdev->dev, "MDEV: created\n");
-> @@ -363,6 +368,10 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
->  	return ret;
->  
->  create_failed:
-> +	/*
-> +	 * If we reach this, uevents are still suppressed for mdev->dev,
-> +	 * so we don't get a KOBJ_DEL uevent without a previous KOBJ_ADD.
-> +	 */
->  	device_unregister(&mdev->dev);
->  
->  create_err:
+jirka
