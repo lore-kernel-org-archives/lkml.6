@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933243AbeBLWvI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:51:08 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37601 "EHLO
+        id S933305AbeBLWvY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:51:24 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:37598 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932963AbeBLWss (ORCPT
+        with ESMTP id S933077AbeBLWss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Feb 2018 17:48:48 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 45/45] rtc: tx4939: use generic nvmem
-Date: Mon, 12 Feb 2018 23:47:59 +0100
-Message-Id: <20180212224759.15999-46-alexandre.belloni@bootlin.com>
+Subject: [PATCH 41/45] rtc: tx4939: remove arch/mips dependency
+Date: Mon, 12 Feb 2018 23:47:55 +0100
+Message-Id: <20180212224759.15999-42-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
 References: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
@@ -21,125 +21,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of adding a binary sysfs attribute from the driver, use the core to
-register an nvmem device.
+Copy RTC definitions from arch/mips/include/asm/txx9/tx4939.h to the RTC
+driver so it doesn't depend on arch/mips anymore.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-tx4939.c | 57 ++++++++++++++++++++++--------------------------
- 1 file changed, 26 insertions(+), 31 deletions(-)
+ drivers/rtc/rtc-tx4939.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
-index 5a3a6b457b8f..feededce3ded 100644
+index 560d9a5e0225..1f4013d8ae7b 100644
 --- a/drivers/rtc/rtc-tx4939.c
 +++ b/drivers/rtc/rtc-tx4939.c
-@@ -212,58 +212,52 @@ static const struct rtc_class_ops tx4939_rtc_ops = {
- 	.alarm_irq_enable	= tx4939_rtc_alarm_irq_enable,
- };
- 
--static ssize_t tx4939_rtc_nvram_read(struct file *filp, struct kobject *kobj,
--				     struct bin_attribute *bin_attr,
--				     char *buf, loff_t pos, size_t size)
-+static int tx4939_nvram_read(void *priv, unsigned int pos, void *val,
-+			     size_t bytes)
- {
--	struct device *dev = container_of(kobj, struct device, kobj);
--	struct tx4939rtc_plat_data *pdata = get_tx4939rtc_plat_data(dev);
-+	struct tx4939rtc_plat_data *pdata = priv;
- 	struct tx4939_rtc_reg __iomem *rtcreg = pdata->rtcreg;
--	ssize_t count;
-+	u8 *buf = val;
- 
- 	spin_lock_irq(&pdata->lock);
--	for (count = 0; count < size; count++) {
-+	for (; bytes; bytes--) {
- 		__raw_writel(pos++, &rtcreg->adr);
- 		*buf++ = __raw_readl(&rtcreg->dat);
- 	}
- 	spin_unlock_irq(&pdata->lock);
--	return count;
-+	return 0;
- }
- 
--static ssize_t tx4939_rtc_nvram_write(struct file *filp, struct kobject *kobj,
--				      struct bin_attribute *bin_attr,
--				      char *buf, loff_t pos, size_t size)
-+static int tx4939_nvram_write(void *priv, unsigned int pos, void *val,
-+			      size_t bytes)
- {
--	struct device *dev = container_of(kobj, struct device, kobj);
--	struct tx4939rtc_plat_data *pdata = get_tx4939rtc_plat_data(dev);
-+	struct tx4939rtc_plat_data *pdata = priv;
- 	struct tx4939_rtc_reg __iomem *rtcreg = pdata->rtcreg;
--	ssize_t count;
-+	u8 *buf = val;
- 
- 	spin_lock_irq(&pdata->lock);
--	for (count = 0; count < size; count++) {
-+	for (; bytes; bytes--) {
- 		__raw_writel(pos++, &rtcreg->adr);
- 		__raw_writel(*buf++, &rtcreg->dat);
- 	}
- 	spin_unlock_irq(&pdata->lock);
--	return count;
-+	return 0;
- }
- 
--static struct bin_attribute tx4939_rtc_nvram_attr = {
--	.attr = {
--		.name = "nvram",
--		.mode = S_IRUGO | S_IWUSR,
--	},
--	.size = TX4939_RTC_REG_RAMSIZE,
--	.read = tx4939_rtc_nvram_read,
--	.write = tx4939_rtc_nvram_write,
--};
--
- static int __init tx4939_rtc_probe(struct platform_device *pdev)
- {
- 	struct rtc_device *rtc;
- 	struct tx4939rtc_plat_data *pdata;
- 	struct resource *res;
- 	int irq, ret;
-+	struct nvmem_config nvmem_cfg = {
-+		.name = "rv8803_nvram",
-+		.word_size = 4,
-+		.stride = 4,
-+		.size = TX4939_RTC_REG_RAMSIZE,
-+		.reg_read = tx4939_nvram_read,
-+		.reg_write = tx4939_nvram_write,
-+	};
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
-@@ -288,14 +282,16 @@ static int __init tx4939_rtc_probe(struct platform_device *pdev)
- 		return PTR_ERR(rtc);
- 
- 	rtc->ops = &tx4939_rtc_ops;
--
--	ret = sysfs_create_bin_file(&pdev->dev.kobj, &tx4939_rtc_nvram_attr);
--	if (ret)
--		return ret;
-+	rtc->nvram_old_abi = true;
- 
- 	pdata->rtc = rtc;
- 
- 	ret = rtc_register_device(rtc);
-+	if (ret)
-+		return ret;
+@@ -14,7 +14,30 @@
+ #include <linux/module.h>
+ #include <linux/io.h>
+ #include <linux/gfp.h>
+-#include <asm/txx9/tx4939.h>
 +
-+	nvmem_cfg.priv = pdata;
-+	ret = rtc_nvmem_register(rtc, &nvmem_cfg);
++#define TX4939_RTCCTL_ALME	0x00000080
++#define TX4939_RTCCTL_ALMD	0x00000040
++#define TX4939_RTCCTL_BUSY	0x00000020
++
++#define TX4939_RTCCTL_COMMAND	0x00000007
++#define TX4939_RTCCTL_COMMAND_NOP	0x00000000
++#define TX4939_RTCCTL_COMMAND_GETTIME	0x00000001
++#define TX4939_RTCCTL_COMMAND_SETTIME	0x00000002
++#define TX4939_RTCCTL_COMMAND_GETALARM	0x00000003
++#define TX4939_RTCCTL_COMMAND_SETALARM	0x00000004
++
++#define TX4939_RTCTBC_PM	0x00000080
++#define TX4939_RTCTBC_COMP	0x0000007f
++
++#define TX4939_RTC_REG_RAMSIZE	0x00000100
++#define TX4939_RTC_REG_RWBSIZE	0x00000006
++
++struct tx4939_rtc_reg {
++	__u32 ctl;
++	__u32 adr;
++	__u32 dat;
++	__u32 tbc;
++};
  
- 	return ret;
- }
-@@ -304,7 +300,6 @@ static int __exit tx4939_rtc_remove(struct platform_device *pdev)
- {
- 	struct tx4939rtc_plat_data *pdata = platform_get_drvdata(pdev);
- 
--	sysfs_remove_bin_file(&pdev->dev.kobj, &tx4939_rtc_nvram_attr);
- 	spin_lock_irq(&pdata->lock);
- 	tx4939_rtc_cmd(pdata->rtcreg, TX4939_RTCCTL_COMMAND_NOP);
- 	spin_unlock_irq(&pdata->lock);
+ struct tx4939rtc_plat_data {
+ 	struct rtc_device *rtc;
 -- 
 2.16.1
