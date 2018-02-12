@@ -1,68 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934600AbeBLNyV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:54:21 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:36080 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934522AbeBLNyT (ORCPT
+        id S935699AbeBLNz3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:55:29 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:50760 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934672AbeBLNzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:54:19 -0500
-X-Google-Smtp-Source: AH8x227PCwMNJliHVd3KFWxQ7i8DMXTZwc34K0UT35+djVjYsXbX5tNez/zVExtP4Jne/YWZsPG/h4Ykntb7wjcy5DE=
-MIME-Version: 1.0
-In-Reply-To: <CANiq72k4CqzAAOKcK0c4uGWPNxeztDn733+1cphzM7zOiz+N_Q@mail.gmail.com>
-References: <20180118201348.18053-1-clabbe.montjoie@gmail.com> <CANiq72k4CqzAAOKcK0c4uGWPNxeztDn733+1cphzM7zOiz+N_Q@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 12 Feb 2018 14:54:18 +0100
-Message-ID: <CANiq72nk=aOLvPeV6zN1suM=gHsarD7zMJusG3-tnGHMhqb8jQ@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: img-ascii-lcd: fix typo on select SYSCON/MFD_SYSCON
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, paul.burton@mips.com,
-        Ralf Baechle <ralf@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 12 Feb 2018 08:55:25 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit clock handling
+Date: Mon, 12 Feb 2018 14:55:10 +0100
+Message-Id: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 8, 2018 at 4:58 PM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> On Thu, Jan 18, 2018 at 9:13 PM, Corentin Labbe
-> <clabbe.montjoie@gmail.com> wrote:
->> img-ascii-lcd select un-existing SYSCON kconfig name.
->> This patch fix this error by using the correct MFD_SYSCON kconfig name.
->>
->
-> CC'ing Paul & Ralf in case they want to ack.
->
-> The mistake seems to be in the tree since the addition of the driver
-> in 0cad855fbd08 ("auxdisplay: img-ascii-lcd: driver for simple ASCII
-> LCD displays").
->
-> Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->
+	Hi all,
 
-I will pick this one up in my queue.
+If an interrupt controller in a Renesas ARM SoC is part of a Clock
+Domain, and it is part of the wakeup path, it must be kept active during
+system suspend.
 
-> Thanks,
-> Miguel
->
->> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
->> ---
->>  drivers/auxdisplay/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
->> index 2c2ed9cf8796..d9ab60ed6c9b 100644
->> --- a/drivers/auxdisplay/Kconfig
->> +++ b/drivers/auxdisplay/Kconfig
->> @@ -138,7 +138,7 @@ config IMG_ASCII_LCD
->>         tristate "Imagination Technologies ASCII LCD Display"
->>         depends on HAS_IOMEM
->>         default y if MIPS_MALTA || MIPS_SEAD3
->> -       select SYSCON
->> +       select MFD_SYSCON
->>         help
->>           Enable this to support the simple ASCII LCD displays found on
->>           development boards such as the MIPS Boston, MIPS Malta & MIPS SEAD3
->> --
->> 2.13.6
->>
+Currently this is handled in all interrupt controller drivers by
+explicitly increasing the use count of the module clock when the device
+is part of the wakeup path.  However, this explicit clock handling is
+merely a workaround for a failure to properly communicate wakeup
+information to the device core.
+
+Hence this series fixes the affected drivers by setting the devices'
+power.wakeup_path fields instead, to indicate they are part of the
+wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+the genpd core code will keep the device enabled (and the clock running)
+during system suspend when needed.
+
+Target trees:
+  - Patches 1 and 2 are meant for the irqchip tree,
+  - Patch 3 is meant for the GPIO tree.
+
+Changes compared to v2 (sent by Ulf Hanson):
+  - Revert to v1, as WAKEUP_PATH didn't make it,
+  - Use an atomic_t instead of a boolean flag, as the boolean tracked
+    only the status of the last configured GPIO, while multiple interrupt
+    sources on the same irqchip may be involved with wake-up,
+  - Use new helper device_set_wakeup_path(),
+  - Drop checks for CONFIG_PM_SLEEP, as device_set_wakeup_path() is
+    always available, unlike dev_pm_info.wakeup_path,
+  - Mark suspend functions __maybe_unused.
+
+Changes compared to v1:
+  - Convert to use the WAKEUP_PATH driver PM flag (Ulf Hanson).
+
+This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
+r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
+sh73a0/kzm9g.
+
+Thanks for applying!
+
+Geert Uytterhoeven (3):
+  irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock
+    handling
+  irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
+  gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+
+ drivers/gpio/gpio-rcar.c                  | 38 +++++++++++++----------------
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 40 +++++++++++++------------------
+ drivers/irqchip/irq-renesas-irqc.c        | 30 ++++++++++++-----------
+ 3 files changed, 48 insertions(+), 60 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
