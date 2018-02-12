@@ -1,112 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932846AbeBLHsP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 02:48:15 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:35395 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932795AbeBLHsN (ORCPT
+        id S1753883AbeBLHzD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 02:55:03 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43654 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932819AbeBLHzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 02:48:13 -0500
-X-Google-Smtp-Source: AH8x224Art9Y6Rmj8paGFWCfxrvWZTws2Y/adVJxhF4FLVATRWnbk29enLpooSPOvGnoT6JLhnT7Dg==
-Date: Mon, 12 Feb 2018 10:48:10 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 0/5] x86: Enumerate TME and PCONFIG, add MKTME_KEY_PROG
- helper
-Message-ID: <20180212074809.7hk6m7y2yzf5r252@node.shutemov.name>
-References: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
- <20180211190241.nzulvhhzkb74t72o@gmail.com>
+        Mon, 12 Feb 2018 02:55:01 -0500
+Subject: Re: [PATCH 8/9] nvme-pci: break up nvme_timeout and nvme_dev_disable
+To: Sagi Grimberg <sagi@grimberg.me>, keith.busch@intel.com, axboe@fb.com,
+        hch@lst.de
+Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1518341920-1060-9-git-send-email-jianchao.w.wang@oracle.com>
+ <4f2268ba-6b6a-8273-594c-b63fdb7b6a96@grimberg.me>
+ <992179f4-becc-f0bf-867a-e49adbd756ee@oracle.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <b8748837-616e-7e92-bf58-38246ae8ca0f@oracle.com>
+Date: Mon, 12 Feb 2018 15:51:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180211190241.nzulvhhzkb74t72o@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <992179f4-becc-f0bf-867a-e49adbd756ee@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802120103
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 08:02:41PM +0100, Ingo Molnar wrote:
+Hi Sagi
+
+Just make some supplement here.
+
+On 02/12/2018 10:16 AM, jianchao.wang wrote:
+>> I think this is going in the wrong direction. Every state that is needed
+>> to handle serialization should be done in core ctrl state. Moreover,
+>> please try to avoid handling this locally in nvme-pci, place common
+>> helpers in nvme-core and use them. I won't be surprised if fc would
+>> need some of these.
+>>
+>> Also, can we try and not disable the controller from nvme_timeout?
+> In fact, that is what this patch what to do. For the previous outstanding requests,
+> this patch return BLK_EH_NOT_HANDLED and defer the work to nvme_dev_disable.
 > 
-> * Kirill A. Shutemov <kirill.shutemov@linux.intel.com> wrote:
+>  I'm
+>> not sure I understand why is this needed at all. What's wrong with
+>> scheduling a controller reset/delete? Why is something like
+>> nvme_pci_disable_ctrl_directly needed?
+> Keith used to point out to me that, we cannot complete and free a request
+> before we close the controller and pci master bus, otherwise, there will
+> be somethings wrong in DMA accessing, because when we complete a request, 
+> the associated DMA mapping will be freed.
 > 
-> > Multikey Total Memory Encryption (MKTME)[1] is a technology that allows
-> > transparent memory encryption in upcoming Intel platforms.
-> >
-> > MKTME is built on top of TME. TME allows encryption of the entirety of
-> > system memory using a single key. MKTME allows to have multiple encryption
-> > domains, each having own key -- different memory pages can be encrypted
-> > with different keys.
-> > 
-> > The patchset does some ground work for MKTME enabling:
-> >   - Adds two new cpufeatures: TME and PCONFIG;
-> >   - Detects if BIOS enabled TME and MKTME;
-> >   - Enumerates what PCONFIG targets are supported;
-> >   - Provides helper to program encryption keys into CPU;
-> > 
-> > As part of TME enumeration we check out how many bits from physical address
-> > are claimed for encryption key ID. This may be critical as we or guest VM
-> > must not use these bits for physical address.
+> For the previous outstanding requests, this patch could grab them with blk_abort_request
+> in nvme_dev_disable, and complete them after we disable/shutdown the controller.
 > 
-> So how will the 'full' patchset look like, roughly - is there a tree or diffstat 
-> we could take a look at perhaps?
+> But for the adminq requests in nvme_dev_disable and nvme_reset_work, we cannot do this.
+> We cannot schedule another reset_work->nvme_dev_disable to do that, because we are in it.
+> So I use this nvme_pci_disable_ctrl_directly which looks like very ugly, to disable the
+> controller and then we could complete the request with failure to move progress forward.
+> 
+>> I'd like to see an effort to consolidate error handling paths rather
+>> than enhancing the current skew...
+> Yes, absolutely. That is also what I expect. :)
+> 
+> This patch has two aspects:
+> 1. grab all the previous outstanding requests with blk_abort_request.
+>    It is safe when race with the irq completion path. And then complete them
+>    after we disable/shutdown the controller completely.
+>    I think this part could be placed in nvme ctrl core.
 
-I don't have anything to show beyond this yet. I'll post as soon I have it
-ready.
+The 'grab' here is to avoid the timeout path to be triggered during nvme_dev_disable.
+This is important, because nvme_timeout may issue IOs on adminq or invoke nvme_pci_disable_ctrl_directly
+which could race with nvme_dev_disable.
 
-This patchset includes only things that are close to hardware and unlikely
-to change substantially by the next steps.
+> 2. avoid nvme_timeout invoke nvme_dev_disable. this is the most tricky part.
 
-> I'm also wondering how 'TME' compares to AMD's SME (Secure Memory Encryption) and 
-> SEV features. SME required a number of low level boot code changes - I'm wondering 
-> how much commonality there can be achieved with Intel's TME so that we don't end 
-> up with two sets of interfaces.
+And also, this will introduce some dangerous scenarios. I have reported some of them before.
 
-Unlike AMD SME, Intel TME doesn't really requires enabling on kernel side.
+>    as I shared above, we have to _disable_ the controller _before_ we compete the adminq request
+>    from the nvme_dev_disable and nvme_reset_work. Consequently, we cannot do as the
+>    nvme_rdma_timeout, schedule a recovery work and then return. 
 
-It's job of BIOS to get it enabled and by time kernel has control all
-memory it has access too is encrypted with the single TME key. BIOS
-exclude some of its memory for encryption to work properly.
+Actually, the nvme_timeout have a similar pattern with nvme_rdma_timeout.
+When adminq/IOq request timeout, we can schedule reset_work for it. But if the requests from the reset_work
+procedure timeout, we cannot schedule reset_work any more. At the moment, we have to close the controller
+directly and fail the requests.
 
-What requires enabling is MKTME. As with TME, it gets enabled by BIOS: it
-reserves a number of upper bits from physical address to indicate KeyID.
+Looking forward some advice on this.
+That's really appreciated.
 
-This means we don't need to change anything during early boot. MKTME is
-targeted to userspace memory: typically to protect one VM from another.
-
-Of course we can choose to use MKTME for kernel hardening and it may
-require changes during early boot, that's not part of my initial enabling
-plan.
-
-Key design points of Intel MKTME:
-
- - Initial HW implementation would support upto 63 keys (plus one default
-   TME key). But the number of keys may be as low as 3, depending to SKU
-   and BIOS settings
-
- - To access encrypted memory you need to use mapping with proper KeyID
-   int the page table entry. KeyID is encoded in upper bits of PFN in page
-   table entry.
-
-   This means we cannot use direct map to access encrypted memory from
-   kernel side. My idea is to re-use kmap() interface to get proper
-   temporary mapping on kernel side.
-
- - CPU does not enforce coherency between mappings of the same physical
-   page with different KeyIDs or encryption keys. We wound need to take
-   care about flushing cache on allocation of encrypted page and on
-   returning it back to free pool.
-
- - For managing keys, there's MKTME_KEY_PROGRAM leaf of the new PCONFIG
-   (platform configuration) instruction. It allows load and clear keys
-   associated with a KeyID. You can also ask CPU to generate a key for
-   you or disable memory encryption when a KeyID is used.
-
-If you have any questions I would be glad to answer.
-
--- 
- Kirill A. Shutemov
+Thanks
+Jianchao
