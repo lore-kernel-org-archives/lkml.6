@@ -1,240 +1,170 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x226cfw2mV5RvTZlXwwHSbz5t6nBB3oi/xN8xQVupwe7NSjFi/gJsbo1t6wj2SbQufO3SaLnY
-ARC-Seal: i=1; a=rsa-sha256; t=1518429533; cv=none;
+Return-Path: <dcb314@hotmail.com>
+X-Google-Smtp-Source: AH8x227f2tVBYvYFE2Zc0Oh3JjVhYExIe4a29eIrrTG+Cw1/gq3RNZnw7HIP2OcdAP1w6rll7PnF
+ARC-Seal: i=1; a=rsa-sha256; t=1518425893; cv=none;
         d=google.com; s=arc-20160816;
-        b=BE1qR+Nw57q0asqrf9lghqaGNtj0NMuVeC+vFsSsS9mQE4bwho+YM8Xwoc4MVw1FK5
-         a9Mdy4fnJS86402vWgktPI8uMp8wcEyc7XQf4a4DCFQzdGxX/wm6fqq/KTtPpKb285wq
-         NjMJCyWqgSCaiTdT/mRB+dt3G3jzVNLfDq91H9nAN/OxjZv2nc3r14jJaOxUl96BVpWN
-         L7/Q41R5nSnydzrjnauwsxdu9OPRQZY/6Lp6QLUjkb1Fl5ts1LarXKynIwAfIy0gBmI7
-         Id7s5vHwEJauTdv36zIyq9vMsi96qgb4xybaVCwpsSj6rU9mL13HCu30N0NdDJ4EFIez
-         0w2Q==
+        b=T5jrXl0650JrIgTCjwYr5OOjoKuwsV/EG/mDHMdkcv1JOk5PCrDAK5yUOAtr5LP99/
+         S+lQXyoQ20/pr6c9DydoYIGOMVB0338C+qtLQkd/3i0KwPUiV8FoWxU6BS9EWldZOO3s
+         oRAC5ogHBg/m7ipY0klLDup4gg4bk77EOKFszZSgnMO8ey+dtG1mO95/gL/gXb6qFjHu
+         OWfoFvFE9zDBd8jK8vDtwlf4xxFs0RZyz9317LZ1i2j5znUDTZyY1IIbxrHLlDfntn14
+         w87blAPbJPZiUDBK0UGzZFtoMfqVjks1SoJ0p+WDrHn2kExT6EYjwvW0RghNBHLDhd2N
+         nXQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-language
-         :content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:references:cc:to:from:subject:arc-authentication-results;
-        bh=pl2lSir2UTg3dl/r0yRbe76Q2YUv45IRoF2BwNyoGtg=;
-        b=0ZwUlMpyKRb4pigctzQkbGzLvrV8pzpUW8MesQ5nckmvR4F50H5Ta/nKmXWdhlTzRD
-         hi45j15/TBxwbZVHtvbCSzF+Rwr17iJyPhvgpN4s2zREfM1RXJvwqsqXgNJLw471Sdkl
-         Wjt1I2mG2/fYABfMwAYOnBBacmZioS7DjldCnP5GU+IWhmA6vTUmny9Q2XF7jRglrKC/
-         OFd1WkTwvEt0jk5RQjrBhnDEDmUAcbzzO6dGQR/DkzB6h+s3BMMuEr80fW4KP6NXY8RK
-         Dw1Zqp9Ie3YepByg4ocCZ3OvBaZUUeF0CRNVZ5ZQOurQNlrCuNpQHExoigyQCsSMzsfU
-         C2Iw==
+        h=mime-version:spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-language:accept-language:message-id:date:thread-index
+         :thread-topic:subject:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=MJSRBsXqncufCxeMU1jWoWYCnZT6f1L4Ah+yegzY53o=;
+        b=dg4UFhJE32VL+2Hl529EBTZ8KEgHmCxroloudUKyVF4vlLI0Qgy6iJ5WLsqyqSNEct
+         OaEgA/7+CAkWYci1ZiPTo9Kt/Z+/DjSKfSgUnLt8W5wxjIWyOXY6jIXDgerhsEe8Q1rG
+         JC1puR0C4qbKtEUiwi0U9q8v3qi3zv4vj4DEU/YarDWuZ9cuXLHCjYlFGzqFSX7Gt6k6
+         1mrIa+pq1v+Q+KRrXaywS5svC1KogCb1akGATASXQn8W0hDjbE07pFJYiDm5x7GNokoJ
+         cKZzHmvUAgljr6daQkg6b8Is/8iJtcB7TnwzV0Ea/GnXglw9B7ESZQU2OeyFCzG3ZxkD
+         885Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@hotmail.com header.s=selector1 header.b=bDRoTWGA;
+       spf=pass (google.com: domain of dcb314@hotmail.com designates 40.92.68.46 as permitted sender) smtp.mailfrom=dcb314@hotmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=hotmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932629AbeBLJ6w (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 12 Feb 2018 04:58:52 -0500
-Received: from mga17.intel.com ([192.55.52.151]:16629 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932505AbeBLJ6v (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:58:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,501,1511856000";
-   d="scan'208";a="17451709"
-Subject: Re: [kselftests] compaction_test is blocked
-From: Li Zhijian <zhijianx.li@intel.com>
-To: Li Zhijian <lizhijian@cn.fujitsu.com>, Dan Rue <dan.rue@linaro.org>
-Cc: linux-kselftest@vger.kernel.org,
-        "Li, Philip" <philip.li@intel.com>, linux-kernel@vger.kernel.org
-References: <700acd92-2b0b-d2da-615e-1f228708d216@cn.fujitsu.com>
- <20180209211119.xbch2eok6holyvel@xps>
- <7c95e7cc-1955-ba99-9aa5-4bf5d994bd58@cn.fujitsu.com>
- <30e882ea-1e79-44bf-9a85-c0be105ec218@intel.com>
-Message-ID: <5cdc12c4-a85f-f1bd-8008-52296f90da3a@intel.com>
-Date: Mon, 12 Feb 2018 17:58:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+       dkim=pass header.i=@hotmail.com header.s=selector1 header.b=bDRoTWGA;
+       spf=pass (google.com: domain of dcb314@hotmail.com designates 40.92.68.46 as permitted sender) smtp.mailfrom=dcb314@hotmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=hotmail.com
+From: David Binderman <dcb314@hotmail.com>
+To: "fbarrat@linux.vnet.ibm.com" <fbarrat@linux.vnet.ibm.com>,
+	"andrew.donnellan@au1.ibm.com" <andrew.donnellan@au1.ibm.com>,
+	"arnd@arndb.de" <arnd@arndb.de>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: linux-4.16-rc1/drivers/misc/ocxl/file.c:320:broken error checking ?
+Thread-Topic: linux-4.16-rc1/drivers/misc/ocxl/file.c:320:broken error
+ checking ?
+Thread-Index: AQHTo98nRDtSdzhcWU2uBiULTAMmWw==
+Date: Mon, 12 Feb 2018 08:58:10 +0000
+Message-ID: <HE1PR0802MB23312F7C9FFE65D802F9D0259CF70@HE1PR0802MB2331.eurprd08.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-incomingtopheadermarker: OriginalChecksum:782AA256940272223DC26F17CF1659D7A3B5E00E100E24D58D3218F266F90A9B;UpperCasedChecksum:D0D184A2F327616523249F75DB6A5DB4E5D0D6A1D2A7CD6D4ED894593A58158B;SizeAsReceived:7264;Count:44
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [6jFnY4Ib/BXTVgvvJy0iT6NxZwH+iRVd]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VE1EUR02HT126;6:T73WF9HzOulFmQp8pFWtSEd3X5+57CCd932o1eWrSn015FBE8ouX58azz7CupxC/HBC4o3BoXdOBf0C4H3z3rKI/yxNmw2VE3EIpHRN1S7Rarc+GQPpqeeproTsHioHiB6VrkEWAvFkPgwFTi8DiBLQAS6TqqE8G/vfYoJ133JgFNoxKBIBo6IkDWv6YptlY56WVWdTkn53a9QxwcBVfyKSKorHqErdSEgXf6u8zr6kLjj+LCHr0hki40gsoSxa3RMZTzAm/w6if5uBJFZePpTxDwJlQcDfYYlkoG/xPkM0k2rIUir/qWDtVRo5FixuozFJeGc9fxzl2xt3JF30h8RzQN0iPfU7kOSJXVtv1Q9w=;5:0iuagdEL6pHMaPvMQDMSL4wqTdI2mIpCkmmmK7Bx72SCtf6WMadbZeInvHdQu4dgREH1U1vqPaA+tKxWHqueJA/ANvjHo0S9+JLJ+QdYoZOV1GdTUL/2NUeCDNnK6Ll9Zf/aIVHNu0f/phCyZoZzPsEhF2twsWqrZfFkFhsJxRA=;24:gEb7/alpQmNRNcyeVMjBqypYVmw3E+wyh0Pz9KNL7QtSkeAZLStPPG3RL8Sx45R6cg2DTMPr++fOGloq0cC5TxLpOjO6afrcEX5mOtXWGnU=;7:kq3ak1JIlk2mZl8Gx0SQRkFxrSl75pEGx6a48dRgyFUHY1K9MHQQx4TC2o/X3wwyT+7qu9tE7Ey5q7T6+5zGta/w1SWUvSs/uOYtn4y7o9QvxD4aGtmEqdYQkoOTZpWAXI1w6qCWnhgtIWTSjYxw+eg6Wg0hjBPBlQUTyKM6EdJvG8gAXdmZesd27keo1JzKixPUCb2yEAHivYzMrHPwtoYLEwDfcXwi8qLcb+ae/5DxA13ee9GV7+kxEapuD98F
+x-incomingheadercount: 44
+x-eopattributedmessage: 0
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(201702061074)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101448)(1601125374)(1701031045);SRVR:VE1EUR02HT126;
+x-ms-traffictypediagnostic: VE1EUR02HT126:
+x-ms-office365-filtering-correlation-id: 3a4377f0-8ab5-4350-b73c-08d571f6be39
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(444000031);SRVR:VE1EUR02HT126;BCL:0;PCL:0;RULEID:;SRVR:VE1EUR02HT126;
+x-forefront-prvs: 0581B5AB35
+x-forefront-antispam-report: SFV:NSPM;SFS:(7070007)(98901004);DIR:OUT;SFP:1901;SCL:1;SRVR:VE1EUR02HT126;H:HE1PR0802MB2331.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:;
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/alternative;
+	boundary="_000_HE1PR0802MB23312F7C9FFE65D802F9D0259CF70HE1PR0802MB2331_"
 MIME-Version: 1.0
-In-Reply-To: <30e882ea-1e79-44bf-9a85-c0be105ec218@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+X-OriginatorOrg: hotmail.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a4377f0-8ab5-4350-b73c-08d571f6be39
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2018 08:58:10.9358
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR02HT126
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591909123815142975?=
-X-GMAIL-MSGID: =?utf-8?q?1592188765736744558?=
+X-GMAIL-THRID: =?utf-8?q?1592184949792413225?=
+X-GMAIL-MSGID: =?utf-8?q?1592184949792413225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+--_000_HE1PR0802MB23312F7C9FFE65D802F9D0259CF70HE1PR0802MB2331_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Hello there,
 
 
-On 2018年02月12日 11:26, Li Zhijian wrote:
->
->
-> On 2018年02月11日 13:44, Li Zhijian wrote:
->>
->>
->> On 02/10/2018 05:11 AM, Dan Rue wrote:
->>> On Fri, Feb 09, 2018 at 03:53:59PM +0800, Li Zhijian wrote:
->>>> Hi
->>>>
->>>> kselftests is integrated Intel 0Day project.
->>>> Sometimes we found compaction_test is blocked for more than 1 hours 
->>>> until i kill it.
->>>>
->>>> Try to figure out where it is running, i added some log to this case.
->>>>
->>>> the test log is like:
->>>> -------------------
->>>>   [  111.750543] main: 248
->>>>   [  111.750544]-
->>>>   [ 111.750821] check_compaction: 98
->>>>   [  111.750822]-
->>>>   [  111.751102] check_compaction: 105
->>>>   [  111.751103]-
->>>>   [  111.751362] check_compaction: 111
->>>>   [  111.751363]-
->>>>   [  111.751621] check_compaction: 118
->>>>   [  111.751622]-
->>>>   [  111.751879] check_compaction: 123
->>>>   [  111.751880]-
->>>> -------------------
->>>> 118         fprintf(stderr, "%s: %d\n", __func__, __LINE__);
->>>> 119         lseek(fd, 0, SEEK_SET);
->>>> 120
->>>> 121         /* Request a large number of huge pages. The Kernel 
->>>> will allocate
->>>> 122            as much as it can */
->>>> 123         fprintf(stderr, "%s: %d\n", __func__, 
->>>> __LINE__);         <<<======== the last line we can catch.
->>>> 124         if (write(fd, "100000", (6*sizeof(char))) != 
->>>> (6*sizeof(char))) {        <<<<============ blocking position
->>>> 125                 perror("Failed to write 100000 to 
->>>> /proc/sys/vm/nr_hugepages\n");
->>>> 126                 goto close_fd;
->>>> 127         }
->>>> 128
->>>> 129         lseek(fd, 0, SEEK_SET);
->>>> 130
->>>> 131         fprintf(stderr, "%s: %d\n", __func__, __LINE__);
->>>> 132         if (read(fd, nr_hugepages, sizeof(nr_hugepages)) <= 0) {
->>>> 133                 perror("Failed to re-read from 
->>>> /proc/sys/vm/nr_hugepages\n");
->>>> 134                 goto close_fd;
->>>> 135         }
->>>> -------------------
->>>>
->>>> According to above log and code, it most likely it is blocking at 
->>>> the writing operation.
->>>>
->>>> my environment is like:
->>>> OS: debian
->>>> kernel: v4.15
->>>> model: Ivytown Ivy Bridge-EP
->>>> nr_cpu: 48
->>>> memory: 64G
->>> Hi Zhijian,
->>>
->>> Please try this patch in mainline:
->>>
->>>      4c1baad22390 kselftest: fix OOM in memory compaction test
->>
->> Hi Dan
->>
->> Thanks for your replies.
->>
->> I run this case on v4.15, looks this patch is already merged to v4.15.
->> lizhijian@inn:~/linux$ git describe 4c1baad
->> v4.15-rc2-2-g4c1baad223906
->
-> My mistake, this path is not contained by v4.15 yet.
-> i will have a try.
-Hi Dan,
+linux-4.16-rc1/drivers/misc/ocxl/file.c:320]: (style) Checking if unsigned =
+variable 'used' is less than zero.
 
-I ran this case on this commit 4c1baad22390, this issue still occurs.
-
-root@ivb44 ~# dmesg | tail -n 30
-[  105.825870] main: 247
-
-[  105.825994] main: 242
-
-[  105.826130] main: 247
-
-[  105.826250] main: 242
-
-[  105.826394] main: 247
-
-[  105.826506] main: 242
-
-[  105.826617] main: 247
-
-[  105.826728] main: 242
-
-[  105.826840] main: 247
-
-[  105.826950] main: 250
-
-[  105.827272] check_compaction: 98
-
-[  105.827589] check_compaction: 105
-
-[  105.827849] check_compaction: 111
-
-[  105.828152] check_compaction: 118
-
-[  105.828451] check_compaction: 123
+Source code is
 
 
-the runtime code is like
--------------------
-110
-111         fprintf(stderr, "%s: %d\n", __func__, __LINE__);
-112         /* Start with the initial condition of 0 huge pages*/
-113         if (write(fd, "0", sizeof(char)) != sizeof(char)) {
-114                 perror("Failed to write 0 to 
-/proc/sys/vm/nr_hugepages\n");
-115                 goto close_fd;
-116 }
-117
-118         fprintf(stderr, "%s: %d\n", __func__, __LINE__);
-119         lseek(fd, 0, SEEK_SET);
-120
-121         /* Request a large number of huge pages. The Kernel will 
-allocate
-122            as much as it can */
-123         fprintf(stderr, "%s: %d\n", __func__, __LINE__);
-124         if (write(fd, "100000", (6*sizeof(char))) != 
-(6*sizeof(char))) {
-125                 perror("Failed to write 100000 to 
-/proc/sys/vm/nr_hugepages\n");
-126                 goto close_fd;
-127         }
--------------------
+       used =3D append_xsl_error(ctx, &header, buf + sizeof(header));
+        if (used < 0)
+            return used;
 
-Thanks
->
-> Thanks
->
->
->
->>
->> Thanks
->>
->>> Dan
->>>
->>>>
->>>> NOTE: 0Day can reproduce this issue in 20% on 0Day.
->>>>
->>>> Anybody can help have a look?
->>>>
->>>> Thanks
->>>> Zhjian
->>>>
->>>>
->>>>
->>>> -- 
->>>> To unsubscribe from this list: send the line "unsubscribe 
->>>> linux-kselftest" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
->>>
->>> .
->>>
->>
->
+Suggest put return value from function into signed variable, sanity check i=
+t,
 
+then assign it to an unsigned variable.
+
+
+Also, use of the gcc compiler flag -Wtype-limits will show up this kind of =
+problem in future.
+
+
+Regards
+
+
+David Binderman
+
+
+--_000_HE1PR0802MB23312F7C9FFE65D802F9D0259CF70HE1PR0802MB2331_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"><!-- P {margin-top:0;margi=
+n-bottom:0;} --></style>
+</head>
+<body dir=3D"ltr">
+<div id=3D"divtagdefaultwrapper" style=3D"font-size: 12pt; color: rgb(0, 0,=
+ 0); font-family: Calibri, Helvetica, sans-serif, &quot;EmojiFont&quot;, &q=
+uot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, NotoColorEmoji, &q=
+uot;Segoe UI Symbol&quot;, &quot;Android Emoji&quot;, EmojiSymbols;" dir=3D=
+"ltr">
+<p style=3D"margin-top:0;margin-bottom:0">Hello there,</p>
+<p style=3D"margin-top:0;margin-bottom:0"><br>
+</p>
+<p style=3D"margin-top:0;margin-bottom:0"></p>
+<div>linux-4.16-rc1/drivers/misc/ocxl/file.c:320]: (style) Checking if unsi=
+gned variable 'used' is less than zero.<br>
+<br>
+</div>
+Source code is
+<p></p>
+<p style=3D"margin-top:0;margin-bottom:0"><br>
+</p>
+<p style=3D"margin-top:0;margin-bottom:0"></p>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; used =3D append_xsl_error(ctx, &a=
+mp;header, buf &#43; sizeof(header));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (used &lt; 0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return u=
+sed;<br>
+<br>
+</div>
+Suggest put return value from function into signed variable, sanity check i=
+t,
+<p></p>
+<p style=3D"margin-top:0;margin-bottom:0">then assign it to an unsigned var=
+iable.</p>
+<p style=3D"margin-top:0;margin-bottom:0"><br>
+</p>
+<p style=3D"margin-top:0;margin-bottom:0">Also, use of the gcc compiler fla=
+g -Wtype-limits will show up this kind of problem in future.</p>
+<p style=3D"margin-top:0;margin-bottom:0"><br>
+</p>
+<p style=3D"margin-top:0;margin-bottom:0">Regards</p>
+<p style=3D"margin-top:0;margin-bottom:0"><br>
+</p>
+<p style=3D"margin-top:0;margin-bottom:0">David Binderman</p>
+<p style=3D"margin-top:0;margin-bottom:0"><br>
+</p>
+</div>
+</body>
+</html>
+
+--_000_HE1PR0802MB23312F7C9FFE65D802F9D0259CF70HE1PR0802MB2331_--
