@@ -1,90 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754242AbeBLOmo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:42:44 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:39814 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754224AbeBLOmm (ORCPT
+        id S1754265AbeBLOmt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:42:49 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43111 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754244AbeBLOmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:42:42 -0500
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
-        kernel@collabora.com, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
-References: <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
- <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
- <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
- <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
- <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
- <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
- <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
- <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
- <20180212115242.z3qv5uejbnhgvd6o@sirius.home.kraxel.org>
- <eea72b9d-d180-6a57-81ce-4366dc0f2bcc@collabora.com>
- <20180212142730.g2646v77qsvzd5ff@sirius.home.kraxel.org>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Message-ID: <6cf0c06a-b884-3251-166b-6ff3dec3ebc7@collabora.com>
-Date: Mon, 12 Feb 2018 15:42:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Feb 2018 09:42:45 -0500
+X-Google-Smtp-Source: AH8x227cgIylQl2pKi1NxBqLa/KaLcE5b3TS7KcWxwrFfA2X76GRcJmBVasrla6n3bLsI4cEDwbmbQ==
+Date: Mon, 12 Feb 2018 08:42:43 -0600
+From: Rob Herring <robh@kernel.org>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, mark.rutland@arm.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] dt-bindings: tegra: Add missing chips and NVIDIA
+ boards
+Message-ID: <20180212144243.5ovljzk2heu3ccck@rob-hp-laptop>
+References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
+ <1517901757-15353-5-git-send-email-mperttunen@nvidia.com>
+ <20180209224922.4fxlpl77kwibzfui@rob-hp-laptop>
+ <5105d996-8020-ebcf-cf46-2f13c6b8b35f@kapsi.fi>
 MIME-Version: 1.0
-In-Reply-To: <20180212142730.g2646v77qsvzd5ff@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5105d996-8020-ebcf-cf46-2f13c6b8b35f@kapsi.fi>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 03:27 PM, Gerd Hoffmann wrote:
-> On Mon, Feb 12, 2018 at 03:00:24PM +0100, Tomeu Vizoso wrote:
->> On 02/12/2018 12:52 PM, Gerd Hoffmann wrote:
->>>     Hi,
->>>
->>>> can we reach agreement on whether vsock should be involved in this?
->>>
->>> I think the best approach would be to have guest proxy and host proxy
->>> use vsock for the wayland protocol.  Use a wayland protocol extension to
->>> reference the buffers in stdvga / ivshmem / virtio-gpu.  Only the two
->>> proxies need to understand the extension, the client <=> guest proxy and
->>> host proxy <=> server communication would be standard wayland protocol.
->>
->> Thanks for the ideas. What I haven't understood yet is how you see the
->> actual passing of buffers via vsock. Are you thinking of using ancillary
->> data to pass FDs, or something else?
+On Sat, Feb 10, 2018 at 10:45:35AM +0200, Mikko Perttunen wrote:
+> On 02/10/2018 12:49 AM, Rob Herring wrote:
+> > On Tue, Feb 06, 2018 at 09:22:34AM +0200, Mikko Perttunen wrote:
+> > > Add compatibility strings for supported but undocumented Tegra chips
+> > > (Tegra114/124/132/210/186/194) and reference boards.
+> > > 
+> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > > ---
+> > > 
+> > > Notes:
+> > >      v2:
+> > >      - add patch
+> > > 
+> > >   Documentation/devicetree/bindings/arm/tegra.txt | 16 ++++++++++++++++
+> > >   1 file changed, 16 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+> > > index 7f1411bbabf7..32f62bb7006d 100644
+> > > --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+> > > @@ -9,6 +9,12 @@ following compatible values:
+> > >     nvidia,tegra20
+> > >     nvidia,tegra30
+> > > +  nvidia,tegra114
+> > > +  nvidia,tegra124
+> > > +  nvidia,tegra132
+> > > +  nvidia,tegra210
+> > 
+> > Some reason why this is not in numerical order?
 > 
-> I was more thinking about a struct containing enough info to allow the
-> proxy on the host side find the buffer, something like:
-> 
->     struct {
->        enum type { stdvga, virtio-cpu, ... }
->        pcislot device;
->        union {
->           int stdvga_pcibar_offset;
->           int virtio_gpu_resource_id;
->        }
->     }
-> 
-> So when the guest proxy gets a message with a fd referencing a buffer it
-> would have to figure where the buffer is, rewrite the message into the
-> struct above for the host proxy.  The host proxy would rewrite the
-> message again for the server.
+> They are in chronological/chip generation order, and for whatever reason,
+> that isn't numerical.
 
-What I don't understand yet is how we can keep the buffer descriptions 
-together with the protocol data that references them.
+Okay.
 
-With SCM_RIGHTS, the FDs are placed in the ancillary data that "travels" 
-together with the protocol data that references them.
-
-With the present series, the DRM_IOCTL_VIRTGPU_WINSRV_TX ioctl struct has 
-a field for the protocol data and an array of FDs.
-
-How are you proposing to pass instances of that struct from above along 
-the protocol data that refers to them?
-
-Thanks,
-
-Tomeu
+Reviewed-by: Rob Herring <robh@kernel.org>
