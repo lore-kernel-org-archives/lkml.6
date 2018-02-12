@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x226omSbUA/QcCgGhXE6PaYL2ReWQnNogTgSF6sUGXCXgc0ZAQYfnccvdFB98xn1XzKfQwfb+
-ARC-Seal: i=1; a=rsa-sha256; t=1518471094; cv=none;
+X-Google-Smtp-Source: AH8x226HLaFqOEqUq+zS3WbxbDqgRkt7rkVD6CLg7eYB3PxomrOMxqITonuJfW4Ur2C0BB5RD9g4
+ARC-Seal: i=1; a=rsa-sha256; t=1518471087; cv=none;
         d=google.com; s=arc-20160816;
-        b=wXgyqj0lHss8TbjBVim+8chbYpUR/YzmxUKF8lNy4abRSvQx5Tz/8Tppieam80LPzC
-         g5XKQBf9DJ8sZUAM+VbJJis8F2jO3ny2e8yx4sjA55E3hIwNWAfriLTOor+IQsFqnwNx
-         CAvZ5o1NeGub3XvZpUXmppsd9HkQoCY+CCOiHnt4s12iW7+WOpFll7ekSbcXrfL515m6
-         kwPQJD39w6Sd42c1xKBe/TlbGa3GPHO50RHsK06XvSAZWS0/O/baY5w13RwXPvk6gS3Z
-         L60dMeiUv2+4tRavv3FNYz/ofujDrhnGRLqbOXo6W2XC1q34gKnQf0fVaHpOgiFu7tMn
-         f4UA==
+        b=JJkE8ZFm1dwsVimCyxQB4n582Xrv9+D3900VOKVXEcD4NYmF7br1LkCE0/ITk6DGLM
+         gKFTI0C1SNV2xDL1aDYImz010+rTgpEzuSm+FtOMYUvTesurMRl6iAiFzjL3FNvIYr4S
+         +StO3sdIaR0nSvC4zdMch3SrwHxKe+NgVolTEJ1vD44gxxmCb9X4LDu5bzvRdyBOu3KQ
+         Kzuuh+hRGH7ZxLP15fUOjPdo3D+3xu7r8nfcj1um3TACP1/HoKs4El6KtHIYnnCVhkBn
+         09zaNEafGWezSpl59VDrjOeDTnynBp4+4RQiMmIEITTSIXmCtcgXAg0ytyJsvoYc5OeB
+         OO5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=C+diicdm/ptQ/X5OgPIV59FfbAUYvqFzyR/R/OYbcHA=;
-        b=rEJEGaC1fiMAflWHtFqu4WjeYuD3U57Rm/YHVTPKMCc44zQuP913FKuuL2V2fsCWbe
-         EHhZ+W5ISqQzh+Kxfy1biakrobg/MvBJMcKQKcwj3qYoSMGV+hfFBye0dza7qee4QhAN
-         Uo/0TJVpbNxYk5WfiMa3panvuBUlLj2emRo2EKR73hxKbvBM0LzKuxaYATmB8h80K1io
-         8USTEldgi0av4ArPNRVV1Kq36jV/XOaGPRWGD889xqZXb3FWZEVH8GB3/38EXQRC4Ptq
-         8/xs4/UY54djeglOvM0LHodv8GE2li7/93TzolHKf0BxvuJdDfM58ipX8C/n2PQSfd4t
-         C8Zg==
+        bh=FJCX4MBg5brfEqVtg3+ky9G6rzPwK9HOmKCd1/m0ehU=;
+        b=m4rDDA3nv5JxGEcRV1qUNr+MM7iYWKWvQ6DTJhHdRNoMSVb3EqwNHWITwGSSd9r3/T
+         y4JIG9mI09aw2E9zhJsIQxXtoOnzAp+OR48d6QB7P1icbJ5Q8nm1Ezz6euTZywT84Qkg
+         Md2y2Iq0uKFtp/hui7oeh5GzrqjmwjjWKF2gNsiJ/diyd7GoUHpO/dBDIvctySxBCt6h
+         tcbx+ZJxNxw7BPlE8buJ73NVqXLTSdu9fy3S27dG/IY9RjlmdyEZeMJNYVwMCYOl7atW
+         t6JduqJHhqaO8zZzvtTOaH3OIcooZlsdjkwGfLuf4j624rgZP46AjNkVqFCX2lK9SDQn
+         /3Jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,10 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Tue, 13 Feb 2018 08:30:48 +1100
-Subject: [PATCH 3/5] staging: lustre: llite: remove directory-specific code
- from ll_find_alias()
+Subject: [PATCH 2/5] staging: lustre: llite: use d_splice_alias for
+ directories.
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151847104800.26699.1742105991834584712.stgit@noble>
+Message-ID: <151847104797.26699.15971881529877617500.stgit@noble>
 In-Reply-To: <151847081541.26699.3911837371411314092.stgit@noble>
 References: <151847081541.26699.3911837371411314092.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,73 +40,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592232346163869586?=
-X-GMAIL-MSGID: =?utf-8?q?1592232346163869586?=
+X-GMAIL-THRID: =?utf-8?q?1592232339103633670?=
+X-GMAIL-MSGID: =?utf-8?q?1592232339103633670?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Now that ll_find_alias() is never called for directories,
-we can remove code that only applies to directories.
+In the Linux dcache a directory only ever has one dentry,
+so d_splice_alias() can be used by ll_splice_alias() for directories.
+It will find the one dentry whether it is DCACHE_DISCONNECTED or
+IS_ROOT() or d_lustre_invalid().
+Separating out the directories from non-directories will allow us
+to simplify the non-directory code.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/llite/namei.c |   26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ drivers/staging/lustre/lustre/llite/namei.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
-index 60fb18f83bf8..2322328155d6 100644
+index a2687f46a16d..60fb18f83bf8 100644
 --- a/drivers/staging/lustre/lustre/llite/namei.c
 +++ b/drivers/staging/lustre/lustre/llite/namei.c
-@@ -380,21 +380,15 @@ void ll_i2gids(__u32 *suppgids, struct inode *i1, struct inode *i2)
- }
- 
- /*
-- * try to reuse three types of dentry:
-- * 1. unhashed alias, this one is unhashed by d_invalidate (but it may be valid
-- *    by concurrent .revalidate).
-- * 2. INVALID alias (common case for no valid ldlm lock held, but this flag may
-- *    be cleared by others calling d_lustre_revalidate).
-- * 3. DISCONNECTED alias.
-+ * Try to reuse unhashed or invalidated dentries.
+@@ -434,7 +434,7 @@ static struct dentry *ll_find_alias(struct inode *inode, struct dentry *dentry)
   */
- static struct dentry *ll_find_alias(struct inode *inode, struct dentry *dentry)
+ struct dentry *ll_splice_alias(struct inode *inode, struct dentry *de)
  {
--	struct dentry *alias, *discon_alias, *invalid_alias;
-+	struct dentry *alias, *invalid_alias;
+-	if (inode) {
++	if (inode && !S_ISDIR(inode->i_mode)) {
+ 		struct dentry *new = ll_find_alias(inode, de);
  
- 	if (hlist_empty(&inode->i_dentry))
- 		return NULL;
- 
--	discon_alias = NULL;
- 	invalid_alias = NULL;
- 
- 	spin_lock(&inode->i_lock);
-@@ -402,22 +396,18 @@ static struct dentry *ll_find_alias(struct inode *inode, struct dentry *dentry)
- 		LASSERT(alias != dentry);
- 
- 		spin_lock(&alias->d_lock);
--		if ((alias->d_flags & DCACHE_DISCONNECTED) &&
--		    S_ISDIR(inode->i_mode))
--			/* LASSERT(last_discon == NULL); LU-405, bz 20055 */
--			discon_alias = alias;
--		else if (alias->d_parent == dentry->d_parent	     &&
--			 alias->d_name.hash == dentry->d_name.hash       &&
--			 alias->d_name.len == dentry->d_name.len	 &&
--			 memcmp(alias->d_name.name, dentry->d_name.name,
--				dentry->d_name.len) == 0)
-+		if (alias->d_parent == dentry->d_parent	     &&
-+		    alias->d_name.hash == dentry->d_name.hash       &&
-+		    alias->d_name.len == dentry->d_name.len	 &&
-+		    memcmp(alias->d_name.name, dentry->d_name.name,
-+			   dentry->d_name.len) == 0)
- 			invalid_alias = alias;
- 		spin_unlock(&alias->d_lock);
- 
- 		if (invalid_alias)
- 			break;
+ 		if (new) {
+@@ -445,8 +445,13 @@ struct dentry *ll_splice_alias(struct inode *inode, struct dentry *de)
+ 			      new, d_inode(new), d_count(new), new->d_flags);
+ 			return new;
+ 		}
++		d_add(de, inode);
++	} else {
++		struct dentry *new = d_splice_alias(inode, de);
++
++		if (new)
++			de = new;
  	}
--	alias = invalid_alias ?: discon_alias ?: NULL;
-+	alias = invalid_alias ?: NULL;
- 	if (alias) {
- 		spin_lock(&alias->d_lock);
- 		dget_dlock(alias);
+-	d_add(de, inode);
+ 	CDEBUG(D_DENTRY, "Add dentry %p inode %p refc %d flags %#x\n",
+ 	       de, d_inode(de), d_count(de), de->d_flags);
+ 	return de;
