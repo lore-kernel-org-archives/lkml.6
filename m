@@ -1,48 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753476AbeBLRiE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:38:04 -0500
-Received: from mail-io0-f177.google.com ([209.85.223.177]:45801 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753453AbeBLRiB (ORCPT
+        id S1753763AbeBLRio (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:38:44 -0500
+Received: from casper.infradead.org ([85.118.1.10]:37910 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751156AbeBLRin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:38:01 -0500
-X-Google-Smtp-Source: AH8x226NtQ3ZFLD4IB9NDHgqFRK+bZv0NDPKYqb6Na1eEEmorn0KbhcRA5Eu7i8BGtXbz+ZhpPS7eHliBQOsMzfp3g8=
+        Mon, 12 Feb 2018 12:38:43 -0500
+Date: Mon, 12 Feb 2018 18:37:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] sched/numa: Delay retrying placement for automatic
+ NUMA balance after wake_affine
+Message-ID: <20180212173743.GB25201@hirez.programming.kicks-ass.net>
+References: <20180212171131.26139-1-mgorman@techsingularity.net>
+ <20180212171131.26139-3-mgorman@techsingularity.net>
 MIME-Version: 1.0
-In-Reply-To: <CANRm+CwsT_sL0kbO9ZKW4HJdmRw9sSKpwZAoOjpWBeWXZ-Q7-g@mail.gmail.com>
-References: <1517828686-29070-1-git-send-email-wanpengli@tencent.com>
- <CALMp9eQNB+2KLAR2Tv+By2oTthRLvAQMmJiEs61kFNrZDct3_g@mail.gmail.com>
- <CALMp9eSXvMmRj15q26_=VpJhYfUL_gHP-ce4h9bCv0N55JtT1w@mail.gmail.com>
- <CANRm+Cx_KVftOfeGWjqn_1P=j8R-NsNcH7w+pA9gCouM_4FDRw@mail.gmail.com>
- <CALMp9eRHzmU3Kfr0cxhy2Hrr-RybnjrsKHByoV27TdYffuuC3w@mail.gmail.com>
- <CANRm+CyqV6s6etBAveNTG2WjfMZrfuuN+HpF9Ub1ex=JjyA1yw@mail.gmail.com>
- <CALMp9eQ+wJyxQfru1j8i6CmBzvsYEPrK2wx94JFZ0M3rWSV0+g@mail.gmail.com>
- <CANRm+Cx9vBGNgk0Gfc=tNVR49hxwexD7U-NmtBadXy0AadA1fg@mail.gmail.com>
- <CALMp9eR0gaYuYbxKs6oWFJj+ciCtHtU+pnF4pLHmbdf2wnUuPw@mail.gmail.com> <CANRm+CwsT_sL0kbO9ZKW4HJdmRw9sSKpwZAoOjpWBeWXZ-Q7-g@mail.gmail.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 12 Feb 2018 09:37:59 -0800
-Message-ID: <CALMp9eR9J7yNcb3rLYjO1pg2AYkmy8j7hFor08u1fm5U0i3a7A@mail.gmail.com>
-Subject: Re: [PATCH] KVM: nVMX: Fix CR4 after VMLAUNCH/VMRESUME failure
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212171131.26139-3-mgorman@techsingularity.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 3:56 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+On Mon, Feb 12, 2018 at 05:11:31PM +0000, Mel Gorman wrote:
+> +static void
+> +update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
+> +{
+> +	unsigned long interval;
+> +
+> +	if (!static_branch_likely(&sched_numa_balancing))
+> +		return;
+> +
+> +	/* If balancing has no preference then accept the target */
+> +	if (p->numa_preferred_nid == -1)
+> +		return;
+> +
+> +	/* If the wakeup is not affecting locality then accept the target */
+> +	if (cpus_share_cache(prev_cpu, target))
+> +		return;
 
-> Writes 0 to cr3 can't be detected during vmentry checks by hardware.
+Both the above comments speak of 'accepting' the target, but its a void
+function, there's nothing they can do about it. It cannot not accept the
+placement.
 
-I never suggested otherwise. I was just trying to explain why you
-can't assume that the host CR3 field in the VMCS matches the host CR3
-at the time of VMLAUNCH.
+> +
+> +	/*
+> +	 * Temporarily prevent NUMA balancing trying to place waker/wakee after
+> +	 * wakee has been moved by wake_affine. This will potentially allow
+> +	 * related tasks to converge and update their data placement. The
+> +	 * 4 * numa_scan_period is to allow the two-pass filter to migrate
+> +	 * hot data to the wakers node.
+> +	 */
+> +	interval = max(sysctl_numa_balancing_scan_delay,
+> +			 p->numa_scan_period << 2);
+> +	p->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
+> +
+> +	interval = max(sysctl_numa_balancing_scan_delay,
+> +			 current->numa_scan_period << 2);
+> +	current->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
+> +}
 
-KVM is set up for failure, because it loads a bunch of guest state
-before checking the validity of all of the control fields. If a
-control field in the vmcs12 is invalid, but KVM doesn't recognize this
-until after it has loaded guest state, all of the host state that has
-been overwritten should be restored. "Restored" does not mean "loaded
-from the vmcs12." It means reverted to its state at the time of the
-failed VMLAUNCH/VMRESUME.
+Otherwise that makes sense.
