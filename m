@@ -1,144 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933255AbeBLMCT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:02:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50518 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932519AbeBLMCQ (ORCPT
+        id S1753876AbeBLMET (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 07:04:19 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44878 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbeBLMER (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:02:16 -0500
-Date: Mon, 12 Feb 2018 12:02:13 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wakasugi.jb@om.asahi-kasei.co.jp,
-        shengjiu.wang@nxp.com, mihai.serban@gmail.com, cosmin.samoila@nxp.com,
-        linux-imx@nxp.com, fabio.estevam@nxp.com, robh@kernel.org,
-        andy.shevchenko@gmail.com, Mihai Serban <mihai.serban@nxp.com>
-Subject: Re: [PATCH v3 1/2] ASoC: codecs: Add support for AK5558 ADC driver
-Message-ID: <20180212120213.GB12976@sirena.org.uk>
-References: <1517850115-24340-1-git-send-email-daniel.baluta@nxp.com>
- <1517850115-24340-2-git-send-email-daniel.baluta@nxp.com>
+        Mon, 12 Feb 2018 07:04:17 -0500
+Date: Mon, 12 Feb 2018 13:04:11 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
+        valentin.schneider@arm.com, morten.rasmussen@foss.arm.com,
+        brendan.jackman@arm.com, dietmar.eggemann@arm.com
+Subject: Re: [PATCH v3 3/3] sched: update blocked load when newly idle
+Message-ID: <20180212120411.GT25201@hirez.programming.kicks-ass.net>
+References: <1518422874-13216-1-git-send-email-vincent.guittot@linaro.org>
+ <1518422874-13216-4-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517850115-24340-2-git-send-email-daniel.baluta@nxp.com>
-X-Cookie: What UNIVERSE is this, please??
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1518422874-13216-4-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---QKdGvSO+nmPlgiQ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Feb 05, 2018 at 07:01:54PM +0200, Daniel Baluta wrote:
-> AK5558 is a 32-bit, 768 kHZ sampling, differential input ADC
-> for digital audio systems.
-
-> --- /dev/null
-> +++ b/sound/soc/codecs/ak5558.c
-> @@ -0,0 +1,618 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Audio driver for AK5558 ADC
-
-Please don't mix C++ and C style comments - just make the entire comment
-C++.
-
-> +static const char * const tdm_texts[] = {
-> +	"Off", "TDM128",  "TDM256", "TDM512",
-> +};
-
-This looks like it should be a set_tdm_slot() operation, and indeed
-set_tdm_slot() appears to be implemented and duplicate this.
-
-> +static const char * const dsdon_texts[] = {
-> +	"PCM", "DSD",
-> +};
-
-This looks like it's setting the DAI format?
-
-> +	SND_SOC_DAPM_MUX("AK5558 Ch1 Enable", SND_SOC_NOPM, 0, 0,
-> +			 &ak5558_channel1_mux_control),
-
-On/off controls should be switches not muxes, though if this is just
-selecting which channels are active (rather than a mute) I'd not expect
-it to be a control at all - the board can say if inputs are disabled.
-
-> +static int ak5558_set_mcki(struct snd_soc_codec *codec, int fs, int rclk)
-> +{
-> +	u8  mode;
+On Mon, Feb 12, 2018 at 09:07:54AM +0100, Vincent Guittot wrote:
+> @@ -8863,12 +8866,26 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>  
+>  	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+>  	    !this_rq->rd->overload) {
+> +		unsigned long has_blocked = READ_ONCE(nohz.has_blocked);
+> +		unsigned long next_blocked = READ_ONCE(nohz.next_blocked);
 > +
-> +	mode = snd_soc_read(codec, AK5558_02_CONTROL1);
-> +	mode &= ~AK5558_CKS;
-> +	mode |= AK5558_CKS_AUTO;
+>  		rcu_read_lock();
+>  		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+>  		if (sd)
+>  			update_next_balance(sd, &next_balance);
+>  		rcu_read_unlock();
+>  
+> +		/*
+> +		 * Update blocked idle load if it has not been done for a
+> +		 * while. Try to do it locally before entering idle but kick a
+> +		 * ilb if it takes too much time and/or might delay next local
+> +		 * wake up
+> +		 */
+> +		if (has_blocked && time_after_eq(jiffies, next_blocked) &&
+> +				(this_rq->avg_idle < sysctl_sched_migration_cost ||
+> +				!_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE)))
+> +			kick_ilb(NOHZ_STATS_KICK);
 > +
-> +	snd_soc_update_bits(codec, AK5558_02_CONTROL1, AK5558_CKS, mode);
-> +
-> +	return 0;
-> +}
+>  		goto out;
+>  	}
 
-This appears to just ignore the parameters?
+So I really hate this one, also I suspect its broken, because we do this
+check before dropping rq->lock and _nohz_idle_balance() will take
+rq->lock.
 
-> +static int ak5558_set_dai_mute(struct snd_soc_dai *dai, int mute)
-> +{
-> +	struct snd_soc_codec *codec = dai->codec;
-> +	struct ak5558_priv *ak5558 = snd_soc_codec_get_drvdata(codec);
-> +	int ndt = 0;
-> +
-> +	if (!mute)
-> +		return 0;
-> +
-> +	if (ak5558->fs != 0)
-> +		ndt = 583000 / ak5558->fs;
-> +
-> +	msleep(max(ndt, 5));
-> +
-> +	return 0;
-> +}
+Aside from the above being an unreadable mess, I dislike that it breaks
+the various isolation crud, we should not touch CPUs outside of our
+domain.
 
-This doesn't appear to interact with the device at all.
+Maybe something like the below? (unfinished)
 
-> +static int ak5558_set_bias_level(struct snd_soc_codec *codec,
-> +				 enum snd_soc_bias_level level)
-> +{
-> +	switch (level) {
-> +	case SND_SOC_BIAS_ON:
-> +	case SND_SOC_BIAS_PREPARE:
-> +	case SND_SOC_BIAS_STANDBY:
-> +		break;
-> +	case SND_SOC_BIAS_OFF:
-> +		snd_soc_write(codec, AK5558_00_POWER_MANAGEMENT1, 0x00);
-> +		break;
-> +	}
-
-I'd expect there to be symmetry here - if we disable things when
-transitioning to _OFF we should enable them when transitioning out.
-
-> +	reg = snd_soc_read(codec, AK5558_03_CONTROL2);
-> +	reg &= ~AK5558_MODE_BITS;
-> +	reg |= tdm_mode;
-> +	snd_soc_write(codec, AK5558_03_CONTROL2, reg);
-
-snd_soc_update_bits().
-
---QKdGvSO+nmPlgiQ/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqBgkQACgkQJNaLcl1U
-h9C/uQf/a43OXnyCy8+wJ5aqImprGmRz2MeNF77ZGVOiyn9jGn26dOPv7cUcKvr8
-I2gvJmXqA9zZSYBXq2DW2Oglj4Rdte1ur6DaDY+GxymiFWmfapnzRdFg0hwwRJK0
-nYmiq+trR/Mci6YqERoj/SYHvxyck/YzW17z2Z7pM/GQZq2OoA2wajD/EGskTWxC
-5/hM4o90LTAHh1iVymfHWaWFqSXY2Pc6k0/U86uRMnXr8neFqvC+3mu5CF80HmaL
-NmGbe7hE2BoqQAMjr/jIR1kE0szTIdTLwK+xgkmtEe8e5twyM5OpYJV6v0fPizrj
-0YShetJaeOnH5vPZ+LFUMfQb/jF9sQ==
-=qOOt
------END PGP SIGNATURE-----
-
---QKdGvSO+nmPlgiQ/--
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7839,7 +7839,7 @@ group_type group_classify(struct sched_g
+ 	return group_other;
+ }
+ 
+-static bool update_nohz_stats(struct rq *rq)
++static bool update_nohz_stats(struct rq *rq, bool force)
+ {
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	unsigned int cpu = rq->cpu;
+@@ -7850,7 +7850,7 @@ static bool update_nohz_stats(struct rq
+ 	if (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
+ 		return false;
+ 
+-	if (!time_after(jiffies, rq->last_blocked_load_update_tick))
++	if (!force && !time_after(jiffies, rq->last_blocked_load_update_tick))
+ 		return true;
+ 
+ 	update_blocked_averages(cpu);
+@@ -7883,7 +7883,7 @@ static inline void update_sg_lb_stats(st
+ 	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
+ 		struct rq *rq = cpu_rq(i);
+ 
+-		if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq))
++		if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq, false))
+ 			env->flags |= LBF_NOHZ_AGAIN;
+ 
+ 		/* Bias balancing toward cpus of our domain */
+@@ -8857,6 +8857,29 @@ update_next_balance(struct sched_domain
+ 		*next_balance = next;
+ }
+ 
++static int nohz_age(struct sched_domain *sd)
++{
++	struct cpumask *cpus = this_cpu_cpumask_var_ptr(load_balance_mask);
++	bool has_blocked_load;
++
++	WRITE_ONCE(nohz.has_blocked, 0);
++
++	smp_mb();
++
++	cpumask_and(cpus, sched_domain_span(sd), nohz.idle_cpus_mask);
++
++	has_blocked_load = cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(sd));
++
++	for_each_cpu(cpu, cpus) {
++		struct rq *rq = cpu_rq(cpu);
++
++		has_blocked_load |= update_nohz_stats(rq, true);
++	}
++
++	if (has_blocked_load)
++		WRITE_ONCE(nohz.has_blocked, 1);
++}
++
+ /*
+  * idle_balance is called by schedule() if this_cpu is about to become
+  * idle. Attempts to pull tasks from other CPUs.
+@@ -8868,6 +8891,7 @@ static int idle_balance(struct rq *this_
+ 	struct sched_domain *sd;
+ 	int pulled_task = 0;
+ 	u64 curr_cost = 0;
++	bool nohz_blocked = false;
+ 
+ 	/*
+ 	 * We must set idle_stamp _before_ calling idle_balance(), such that we
+@@ -8889,8 +8913,8 @@ static int idle_balance(struct rq *this_
+ 	 */
+ 	rq_unpin_lock(this_rq, rf);
+ 
+-	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+-	    !this_rq->rd->overload) {
++	if (this_rq->avg_idle < sysctl_sched_migration_cost) {
++short_idle:
+ 		rcu_read_lock();
+ 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+ 		if (sd)
+@@ -8900,6 +8924,18 @@ static int idle_balance(struct rq *this_
+ 		goto out;
+ 	}
+ 
++	if (!this_rq->rd->overload) {
++#ifdef CONFIG_NO_HZ_COMMON
++		unsigned int has_blocked = READ_ONCE(nohz.has_blocked);
++		unsigned long next_blocked = READ_ONE(nohz.next_blocked);
++
++		if (has_blocked && time_after_eq(jiffies, next_blocked))
++			nohz_blocked = true;
++		else
++#endif
++		goto short_idle;
++	}
++
+ 	raw_spin_unlock(&this_rq->lock);
+ 
+ 	update_blocked_averages(this_cpu);
+@@ -8919,9 +8955,13 @@ static int idle_balance(struct rq *this_
+ 		if (sd->flags & SD_BALANCE_NEWIDLE) {
+ 			t0 = sched_clock_cpu(this_cpu);
+ 
+-			pulled_task = load_balance(this_cpu, this_rq,
+-						   sd, CPU_NEWLY_IDLE,
+-						   &continue_balancing);
++			if (nohz_blocked) {
++				nohz_age(sd);
++			} else {
++				pulled_task = load_balance(this_cpu, this_rq,
++						sd, CPU_NEWLY_IDLE,
++						&continue_balancing);
++			}
+ 
+ 			domain_cost = sched_clock_cpu(this_cpu) - t0;
+ 			if (domain_cost > sd->max_newidle_lb_cost)
+@@ -9497,8 +9537,7 @@ static bool nohz_idle_balance(struct rq
+ 
+ 		rq = cpu_rq(balance_cpu);
+ 
+-		update_blocked_averages(rq->cpu);
+-		has_blocked_load |= rq->has_blocked_load;
++		has_blocked_load |= update_nohz_stats(rq, true);
+ 
+ 		/*
+ 		 * If time for next balance is due,
