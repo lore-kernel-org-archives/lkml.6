@@ -1,90 +1,95 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518457072; cv=none;
+Return-Path: <peterz@infradead.org>
+X-Google-Smtp-Source: AH8x225I3MlnwWnwkolOUDYVWNF/l/jxLP6XmaaylDTp2zzlGmSS5OPYkjWjdolRZ/cwpFZyt5Qf
+ARC-Seal: i=1; a=rsa-sha256; t=1518454880; cv=none;
         d=google.com; s=arc-20160816;
-        b=A1UbJGBfG91OfK+37uxHCp6GKa6ckObg4BQ68JxBkmhxHChdG3saXJ9qfOj4+MQ6be
-         Kv9WE/hJ7/OPhxZjnctQNp473406EC8hAnaDL/sZMj0seB7odduheR1eqTQJgO7VvMSg
-         R7FPl5tBXqSis20IWrEHrYUsShUqWQyy48L3o3TLDitOBaoH4tbkrFydQ3hnpGWh62iF
-         ZRRWxnEQiuY0CgBHd5Hz3fhNDwXgRsAZ0nzqsqmic3fe8ONxsUzsXdl7OIP57q24oD9K
-         IpvB8W6NHL8BRnaLvjOO5JY43J81WKSC1c/LUXhA1wCipM52F/XkeyWPmcu+B2QsZZMK
-         HQWg==
+        b=QfmQ7o6uMHJaoH2CE2YzISVL/E2SagN44mM2v06co/YjvIRT5mFIm8Lg1bcIdgY4UC
+         /nF6wKHQX90NqJrjMSLpRE6pqVHKYw8aSSFdqc0Cy2/F0YKSWdmvPj5uP2YZJ1LIrwpR
+         cuXJpsp+nOAzTELsyCjh3suThcaEpu1A82ioaUP1BN7kn30QmHYnmfmvZiQUlY4P5XYt
+         cxxARuwUwr1yOf0ovjUkg3t8mM48qfG3lFRlZRI5U51H49IPqxpxYFhvqzBcKxeVOCK7
+         udfVUBvRJg8f8n3Y+KbV52PbRSK7kcpQTtPqKWFKyFXuwQWpqg9PEEyvTWA+zehe/Mwz
+         nMPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=iyhfWm310SIZGQH58zfkrstmBK0tuHQXl4LT/M4v5m0=;
-        b=ODZnIwT8QjD/EPO9rSEMELZZI+BtaTVmjlE3CJFbUdiTEyy/rnz4KM1rLqJcGXBKxg
-         7NpZfEUfZTZLhpw5FlHxHInt/33olBnOT/AnGsqo6hqUoa/QBxEgUwQ82+BCGdSHlJFt
-         SLbAr695oOKjUoG137p4B3fcANSpfOfJOiQ2Hqr7xzi1X8ulyOsnphiB6fYIdQfSzDR4
-         95QMBEJ7uf/4KgWdYig11cIgFLW4jYsjfb+m/Rr/51qF+EUQP2pdVY3YBBrYDDbXcuoL
-         1E6aMamL2N+0PfTV2rCs5Kxiiv2sAvHlTxw+mEk3ytC9Nuq9TBEsw4gpcbHSpyaAXSjw
-         848g==
+        bh=b1ExieaGY1FxmXxm8xD3/gr6bpSumEyDBJC3WPmVvl8=;
+        b=UQnSbfxZMmirvEevbCtXGmk1I59anpsahSQKhOVqyR61q2JznmhlEJF7M9pg+STm3n
+         RCQpMQB2/Z1YZbXOqri199AAvcVw0aOpUAH8VW1HQO7jNHHNBJDPHuchT/HJszw6G1rt
+         IvIZVbqVGtSx8U8uGKoDUdYek4X/4vJtH+sQw2cSaGozTc1BukDWWy+vDIpm2+BWV32x
+         4nm+fP4po4G7eVuTe2H4wPz84Z0EEN4/iGB7As/WK3iB24OVdCw6S4EZwnNveyzNLpGG
+         EnS0IamWubFlrmJrmPF5spZquiZfIA7AMqHr8xUMsSxHhXbkRga27pJ06ma5Rg+osAm6
+         d4bw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=kS8weAke;
-       dkim=pass header.i=@chromium.org header.s=google header.b=K/H5aI0f;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=EcUadDjF;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=nSEP3uKO;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 85.118.1.10 as permitted sender) smtp.mailfrom=peterz@infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=kS8weAke;
-       dkim=pass header.i=@chromium.org header.s=google header.b=K/H5aI0f;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AH8x227EAMvcHza1MW1/xGx89Uvv1MghVriPA8BLWWSaQckAUK9A4bSfOzb+N98WtVSXg5Zu3PaQVp+6kYZMF55rx3s=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <1518456964.12890.7.camel@infradead.org>
-References: <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
+       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=EcUadDjF;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=nSEP3uKO;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 85.118.1.10 as permitted sender) smtp.mailfrom=peterz@infradead.org
+Date: Mon, 12 Feb 2018 18:00:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Ulf Magnusson <ulfalizer@gmail.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@suse.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Michal Marek <michal.lkml@markovi.net>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-s390 <linux-s390@vger.kernel.org>,
+	Jiri Kosina <jkosina@suse.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	"Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
+Message-ID: <20180212170027.GP25181@hirez.programming.kicks-ass.net>
+References: <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
+ <CA+55aFz-SJ970iqDsR8-Ke4z6WvB4n9RXAeen8pG=+YJWubETw@mail.gmail.com>
  <CAGXu5jLo0iuMsH89vj3nr8sv+1YvXfXgoPeBdxHwZm5i=DWoOA@mail.gmail.com>
  <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
  <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
- <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
+ <20180211103432.pf2ot6nd7nbhdhsy@huvuddator>
+ <CAGXu5jLtFcvbazxUvL_=6uT+a8m0JQEB7v0OE41Z-PMoX_fWpA@mail.gmail.com>
  <CA+55aFz3gUKQMr-X-b=ytLPX0AjGUaXNtLSUQ0_xZwZuDU33RQ@mail.gmail.com>
- <20180212082635.GA25314@hirez.programming.kicks-ass.net> <1518452362.6606.102.camel@infradead.org>
- <CAGXu5jLdH7wkrnB9YnRLf+vQsQyfHehUywkXqsBuy6WmVLH3OA@mail.gmail.com>
- <20180212170510.GQ25181@hirez.programming.kicks-ass.net> <CAGXu5j+ev_TORtrogt+sPhBx0BMc3rrQ+6hkfxU7OHoG2bmdoQ@mail.gmail.com>
- <1518456964.12890.7.camel@infradead.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 12 Feb 2018 09:37:50 -0800
-X-Google-Sender-Auth: pg17nLIKGyAeJzqnEJyWUIinDOg
-Message-ID: <CAGXu5j+h2uvSg30DvvnQMUFr25MepaGa690VJBxCGW0f4HarNQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
-	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+ <20180212082635.GA25314@hirez.programming.kicks-ass.net>
+ <1518452362.6606.102.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518452362.6606.102.camel@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592217642518079829?=
+X-GMAIL-MSGID: =?utf-8?q?1592215345092706123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 9:36 AM, David Woodhouse <dwmw2@infradead.org> wrote:
-> On Mon, 2018-02-12 at 09:33 -0800, Kees Cook wrote:
->> On Mon, Feb 12, 2018 at 9:05 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->> > On Mon, Feb 12, 2018 at 08:56:31AM -0800, Kees Cook wrote:
->> >> That would be bad: Android exclusively builds with clang.
->> >
->> > So implement asm-goto already, and do asm-cc-output while you're at it.
->>
->> Yup, I've already been asking for it. I'm hoping there will be more
->> time/attention now that retpoline is "done".
->
-> Retpoline isn't done for 32-bit x86.
->
-> https://bugs.llvm.org/show_bug.cgi?id=36329
+On Mon, Feb 12, 2018 at 04:19:22PM +0000, David Woodhouse wrote:
+> On Mon, 2018-02-12 at 09:26 +0100, Peter Zijlstra wrote:
+> > On Sun, Feb 11, 2018 at 10:13:44AM -0800, Linus Torvalds wrote:
+> > 
+> > > That actually sounds like we could just
+> > > 
+> > >  (a) make gcc 4.5 be the minimum required version
+> > > 
+> > >  (b) actually error out if we find a bad compiler
+> > 
+> > So the unofficial plan was to enforce asm-goto and -fentry support by
+> > hard failure to build, which would get us at gcc-4.6 and then remove all
+> > the fallback cruft needed for those features -- for x86. If we want to
+> > do this tree wide, that's obviously OK with me too ;-)
+> 
+> This would also kill clang support, right?
 
-Understood. I should have said: s/now that/when/
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Yes, not sure why I should care about that though.
