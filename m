@@ -1,69 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754265AbeBLOmt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:42:49 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43111 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754244AbeBLOmp (ORCPT
+        id S1754313AbeBLOnl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:43:41 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:17521 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754285AbeBLOnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:42:45 -0500
-X-Google-Smtp-Source: AH8x227cgIylQl2pKi1NxBqLa/KaLcE5b3TS7KcWxwrFfA2X76GRcJmBVasrla6n3bLsI4cEDwbmbQ==
-Date: Mon, 12 Feb 2018 08:42:43 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, mark.rutland@arm.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] dt-bindings: tegra: Add missing chips and NVIDIA
- boards
-Message-ID: <20180212144243.5ovljzk2heu3ccck@rob-hp-laptop>
-References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
- <1517901757-15353-5-git-send-email-mperttunen@nvidia.com>
- <20180209224922.4fxlpl77kwibzfui@rob-hp-laptop>
- <5105d996-8020-ebcf-cf46-2f13c6b8b35f@kapsi.fi>
+        Mon, 12 Feb 2018 09:43:40 -0500
+From: <patrice.chotard@st.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <patrice.chotard@st.com>
+Subject: [PATCH v2 00/12] ARM: dts: STi: Fix DT dtc warnings 
+Date: Mon, 12 Feb 2018 15:42:58 +0100
+Message-ID: <1518446590-16800-1-git-send-email-patrice.chotard@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5105d996-8020-ebcf-cf46-2f13c6b8b35f@kapsi.fi>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG6NODE3.st.com
+ (10.75.127.18)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 10:45:35AM +0200, Mikko Perttunen wrote:
-> On 02/10/2018 12:49 AM, Rob Herring wrote:
-> > On Tue, Feb 06, 2018 at 09:22:34AM +0200, Mikko Perttunen wrote:
-> > > Add compatibility strings for supported but undocumented Tegra chips
-> > > (Tegra114/124/132/210/186/194) and reference boards.
-> > > 
-> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > > ---
-> > > 
-> > > Notes:
-> > >      v2:
-> > >      - add patch
-> > > 
-> > >   Documentation/devicetree/bindings/arm/tegra.txt | 16 ++++++++++++++++
-> > >   1 file changed, 16 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-> > > index 7f1411bbabf7..32f62bb7006d 100644
-> > > --- a/Documentation/devicetree/bindings/arm/tegra.txt
-> > > +++ b/Documentation/devicetree/bindings/arm/tegra.txt
-> > > @@ -9,6 +9,12 @@ following compatible values:
-> > >     nvidia,tegra20
-> > >     nvidia,tegra30
-> > > +  nvidia,tegra114
-> > > +  nvidia,tegra124
-> > > +  nvidia,tegra132
-> > > +  nvidia,tegra210
-> > 
-> > Some reason why this is not in numerical order?
-> 
-> They are in chronological/chip generation order, and for whatever reason,
-> that isn't numerical.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Okay.
+This series fixes all dtc warnings related to STi platforms dt files.
+It has been reported by Rob Herring [1]
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+For most of implicated node, the addition of a fake reg property
+fixes these warnings.
+
+[1] https://www.spinics.net/lists/devicetree/msg206209.html
+
+v2: _ add a fake reg property to node without reg property, instead 
+      of moving them outside soc node.
+
+Patrice Chotard (7):
+  ARM: dts: STi: fix bindings notation
+  ARM: dts: STi: Add gpio polarity for "hdmi,hpd-gpio" property
+  ARM: dts: STi: Move clocks without reg outside soc
+  ARM: dts: STi: Move leds node outside soc node
+  ARM: dts: STi: Add fake reg property for sti-display-subsystem
+  ARM: dts: STi: Add fake reg property for miphy28lp_phy
+  ARM: dts: STi: Add fake reg property for irq-syscfg
+  ARM: dts: STi: Add fake reg property for remote processors
+  ARM: dts: STi: Add fake reg for restart, powerdown and
+    picophy/softreset
+  ARM: dts: STi: Add fake reg property for usb2_picophyX nodes
+  ARM: dts: STi: Add fake reg property for sound related nodes
+  ARM: dts: STi: Add fake reg property for clocks
+  ARM: dts: STi: Move clk_sysin clock ouside soc node
+  ARM: dts: STi: Remove unused clk_ext2f_a9 clock
+
+ arch/arm/boot/dts/stih407-b2120.dts    |  2 +-
+ arch/arm/boot/dts/stih407-clock.dtsi   | 40 +++++++++-------------
+ arch/arm/boot/dts/stih407-family.dtsi  | 31 +++++++++++------
+ arch/arm/boot/dts/stih407-pinctrl.dtsi | 10 +++---
+ arch/arm/boot/dts/stih407.dtsi         |  4 +--
+ arch/arm/boot/dts/stih410-b2120.dts    |  8 ++---
+ arch/arm/boot/dts/stih410-b2260.dts    | 62 +++++++++++++++++-----------------
+ arch/arm/boot/dts/stih410-clock.dtsi   | 42 ++++++++++-------------
+ arch/arm/boot/dts/stih410-pinctrl.dtsi |  2 +-
+ arch/arm/boot/dts/stih410.dtsi         | 13 ++++---
+ arch/arm/boot/dts/stih418-b2199.dts    | 30 ++++++++--------
+ arch/arm/boot/dts/stih418-clock.dtsi   | 42 ++++++++++-------------
+ arch/arm/boot/dts/stih418.dtsi         |  6 ++--
+ arch/arm/boot/dts/stihxxx-b2120.dtsi   | 41 +++++++++++-----------
+ 14 files changed, 163 insertions(+), 170 deletions(-)
+
+-- 
+1.9.1
