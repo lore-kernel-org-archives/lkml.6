@@ -1,101 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933874AbeBLKUg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:20:36 -0500
-Received: from [198.137.202.136] ([198.137.202.136]:33217 "EHLO
-        terminus.zytor.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S932868AbeBLKUf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:20:35 -0500
-Date: Mon, 12 Feb 2018 02:18:55 -0800
-From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-5a10e729bc0aa9420a23a70b169eadd229c27bc1@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, dvlasenk@redhat.com, luto@kernel.org,
-        torvalds@linux-foundation.org, jpoimboe@redhat.com, hpa@zytor.com,
-        brgerst@gmail.com, linux@dominikbrodowski.net, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, bp@alien8.de
-Reply-To: dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, luto@kernel.org, jpoimboe@redhat.com,
-        hpa@zytor.com, brgerst@gmail.com, linux@dominikbrodowski.net,
-        mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        bp@alien8.de
-In-Reply-To: <20180211104949.12992-8-linux@dominikbrodowski.net>
-References: <20180211104949.12992-8-linux@dominikbrodowski.net>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Indent PUSH_AND_CLEAR_REGS and POP_REGS
- properly
-Git-Commit-ID: 5a10e729bc0aa9420a23a70b169eadd229c27bc1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S933891AbeBLKV0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:21:26 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5222 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932868AbeBLKVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 05:21:23 -0500
+Subject: Re: [PATCH v9 5/7] arm64: kvm: Introduce KVM_ARM_SET_SERROR_ESR ioctl
+To: James Morse <james.morse@arm.com>
+CC: "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "lv.zheng@intel.com" <lv.zheng@intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        Huangshaoyu <huangshaoyu@huawei.com>
+References: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com>
+ <5A70C5A0.1050600@arm.com> <d1b17dae-9d9c-970a-d164-a41c618d449b@huawei.com>
+ <5A7DDDEE.9050306@arm.com>
+From: gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <93d07d3e-8388-7814-d674-538071d84e2a@huawei.com>
+Date: Mon, 12 Feb 2018 18:19:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <5A7DDDEE.9050306@arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5a10e729bc0aa9420a23a70b169eadd229c27bc1
-Gitweb:     https://git.kernel.org/tip/5a10e729bc0aa9420a23a70b169eadd229c27bc1
-Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Sun, 11 Feb 2018 11:49:48 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 12 Feb 2018 08:06:37 +0100
+Hi James,
+ Thanks for the mail.
 
-x86/entry/64: Indent PUSH_AND_CLEAR_REGS and POP_REGS properly
+On 2018/2/10 1:44, James Morse wrote:
+[...]
+> 
+>> its ESR is 0, can not control the virtual SError's syndrom value, it does not have
+>> such registers to control that.
+> 
+> My point was its more nuanced than this: the ARM-ARM's
+> TakeVirtualSErrorException() pseudo-code lets virtual-SError have an
+> implementation defined syndrome. I've never seen Juno generate anything other
+> than '0', but it might do something different on a thursday.
 
-... same as the other macros in arch/x86/entry/calling.h
+I checked the "aarch64/exceptions/asynch/AArch64.TakeVirtualSErrorException",
+you are right, the virtual SError's syndrome value can be 0 or implementation defined value, not always 0,
+which is decided by the "exception.syndrome<24>".
+thanks for the clarification.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180211104949.12992-8-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/calling.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> The point? We can't know what a CPU without the RAS extensions puts in there.
+> 
+> Why Does this matter? When migrating a pending SError we have to know the
+> difference between 'use this 64bit value', and 'the CPU will generate it'.
+> If I make an SError pending with ESR=0 on a CPU with VSESR, I can't migrated to
+> a system that generates an impdef SError-ESR, because I can't know it will be 0.
+Yes,
+But it will have a issue,
+For the target system, before taking the SError, no one can know whether its syndrome value
+is IMPLEMENTATION DEFINED or architecturally defined.
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 5967501..6985440 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -97,7 +97,7 @@ For 32-bit we have the following conventions - kernel is built with
- 
- #define SIZEOF_PTREGS	21*8
- 
--	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
-+.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
- 	/*
- 	 * Push registers and sanitize registers of values that a
- 	 * speculation attack might otherwise want to exploit. The
-@@ -131,9 +131,9 @@ For 32-bit we have the following conventions - kernel is built with
- 	pushq	%r15		/* pt_regs->r15 */
- 	xorq    %r15, %r15	/* nospec   r15*/
- 	UNWIND_HINT_REGS
--	.endm
-+.endm
- 
--	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
-+.macro POP_REGS pop_rdi=1 skip_r11rcx=0
- 	popq %r15
- 	popq %r14
- 	popq %r13
-@@ -163,7 +163,7 @@ For 32-bit we have the following conventions - kernel is built with
- 
- 	.macro icebp
- 	.byte 0xf1
--	.endm
-+.endm
- 
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+when the virtual SError is taken, the ESR_ELx.IDS will be updated, then we can know
+whether the ESR value is impdef or architecturally defined.
+
+It seems migration is only allowed only when target system and source system all support RAS extension, because we do not know
+whether its syndrome is IMPLEMENTATION DEFINED or architecturally defined.
+
+> 
+> 
+>> Does Juno not have RAS Extension? 
+> 
+> It's two types of v8.0 CPU, no RAS extensions.
+> 
+> 
+>> if yes, I think we can only inject an SError, but can not change its ESR value,
+>> because it does not have vsesr_el2.
+> 
+> I agree, this means we need to be able to tell the difference between 'pending'
+> and 'pending with this ESR'.
+> 
+> 
+>>> Just because we can't control the ESR doesn't mean injecting an SError isn't
+>>> something user-space may want to do.
+> 
+>> yes, we may need to support user-space injects an SError even through CPU does not have RAS Extension.
+>>
+>>> If we tackle migration of pending-SError first, I think that will give us the
+>>> API to create a new pending SError with/without an ESR as appropriate.
+>>
+>> sure, we should. Last week, I checked the KVM_GET/SET_VCPU_EVENTS IOCTL, it should meet our
+>> migration requirements
+> 
+> Great!
+> 
+> 
+> Thanks,
+> 
+> James
+> 
+> 
