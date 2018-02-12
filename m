@@ -1,72 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753677AbeBLRnq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:43:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753288AbeBLRnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:43:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA4F20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 12 Feb 2018 11:43:41 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Arjun Vynipadath <arjun@chelsio.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        netdev@vger.kernel.org, leedom@chelsio.com, santosh@chelsio.com,
-        ganeshgr@chelsio.com, nirranjan@chelsio.com, kumaras@chelsio.com,
-        swise@opengridcomputing.com, hare@suse.de
-Subject: Re: [REGRESSION, bisect] pci: cxgb4 probe fails after commit
- 104daa71b3961434 ("PCI: Determine actual VPD size on first access")
-Message-ID: <20180212174341.GC75542@bhelgaas-glaptop.roam.corp.google.com>
-References: <1516710549-26660-1-git-send-email-arjun@chelsio.com>
+        id S932191AbeBLRpH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:45:07 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752294AbeBLRpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 12:45:06 -0500
+Date: Mon, 12 Feb 2018 11:45:03 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: kbuild test robot <fengguang.wu@intel.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org, tipbuild@zytor.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] x86/entry/64: Fix paranoid_entry() frame pointer warning
+Message-ID: <20180212174503.5acbymg5z6p32snu@treble>
+References: <201802121926.YqVjXPha%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1516710549-26660-1-git-send-email-arjun@chelsio.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <201802121926.YqVjXPha%fengguang.wu@intel.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 23, 2018 at 05:59:09PM +0530, Arjun Vynipadath wrote:
-> Sending on behalf of "Casey Leedom <leedom@chelsio.com>"
-> 
-> Way back on April 11, 2016 we reported a regression in Linux kernel 4.6-rc2 
-> brought on by kernel.org commit 104daa71b396. This commit calculates the 
-> size of a PCI Device's VPD area by parsing the VPD Structure at offset 0x000, 
-> and restricts accesses to the VPD to that computed size.
-> 
-> Our devices have a second VPD structure which is located starting at offset 
-> 0x400 which is the "real" VPD[1].  The 104daa71b396 commit (plus a follow on 
-> commit 408641e93aa5) caused efforts to read past the end of that computed 
-> length of the VPD to return silently without error leaving stack junk in the 
-> VPD read buffers.
-> 
-> We introduced kernel.org commit cb92148b to allow a driver to tell the 
-> kernel how large the VPD area really is, introducing a new API 
-> pci_set_vpd_size() for this purpose.
-> 
-> Now we've discovered a new subtlety to the problem.
-> 
-> We have a KVM Hypervisor running a 4.9.70 kernel.  So it has all of the 
-> above commits.  When we attach our Physical Function 4 to a Virtual Machine 
-> and attempt to run cxgb4 in that VM, we see the problem again.  The issue is 
-> that all of the VM Guest OS's efforts to access the PCIe VPD Capability are 
-> trapped into the KVM 4.9.70 kernel and executed there, with the results 
-> routed back to the VM Guest OS.  The cxgb4 driver in the VM Guest OS uses 
-> the new pci_set_vpd_size() to notify the OS of the true size of the VPD, but 
-> that information of course is never sent to the KVM 4.9.70 Hypervisor. 
-> (And, truth be told, if the Guest OS were older than 4.6, it wouldn't even 
-> know that it needed to do this.)  The result is that again we get silent VPD 
-> read failures with random stack garbage in the VPD read buffers. (sigh) 
+With the following commit:
 
-Let me pull out one tiny piece of this problem: If the VPD read
-returns failure, the caller should not look at the read buffer.  But
-we should *never* copy random stack garbage into the read buffer, no
-matter what the VPD read returns.
+  f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
 
-I guess it's the 4.9.70 kernel that's putting garbage into the VPD
-read buffer?  Is this something that needs to be fixed in the current
-upstream kernel?
+... one of my suggested improvements triggered a frame pointer warning:
+
+  arch/x86/entry/entry_64.o: warning: objtool: paranoid_entry()+0x11: call without frame pointer save/setup
+
+The warning is correct for the build-time code, but it's actually not
+relevant at runtime because of paravirt patching.  The paravirt swapgs
+call gets replaced with either a SWAPGS instruction or NOPs at runtime.
+
+Go back to the previous behavior by removing the ELF function annotation
+for paranoid_entry() and adding an unwind hint, which effectively
+silences the warning.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Fixes: f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ arch/x86/entry/entry_64.S | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index cfbf43366731..1c54204207d8 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1128,6 +1128,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
+  */
+ ENTRY(paranoid_entry)
++	UNWIND_HINT_FUNC
+ 	cld
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1141,7 +1142,7 @@ ENTRY(paranoid_entry)
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
+ 	ret
+-ENDPROC(paranoid_entry)
++END(paranoid_entry)
+ 
+ /*
+  * "Paranoid" exit path from exception stack.  This is invoked
+-- 
+2.14.3
