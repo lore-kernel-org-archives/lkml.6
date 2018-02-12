@@ -1,45 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753781AbeBLPux (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:50:53 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:51137 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753159AbeBLPuv (ORCPT
+        id S1753855AbeBLPv7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:51:59 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48570 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753535AbeBLPv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:50:51 -0500
-X-IronPort-AV: E=Sophos;i="5.46,501,1511798400";
-   d="scan'208";a="71266092"
-Subject: Re: [PATCH] blk: optimization for classic polling
-To: Nitesh Shetty <nj.shetty@samsung.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc: linux-block@vger.kernel.org, axboe@fb.com,
-        linux-nvme@lists.infradead.org, joshi.k@samsung.com
-References: <CGME20180208143655epcas1p444bf34705526b7839a5a135f82761aad@epcas1p4.samsung.com>
- <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
-From: Bart Van Assche <bart.vanassche@wdc.com>
-Message-ID: <3efa5f64-27e8-1c2e-233e-5813c6c8493c@wdc.com>
-Date: Mon, 12 Feb 2018 07:50:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Feb 2018 10:51:57 -0500
+Date: Mon, 12 Feb 2018 16:52:00 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+cc: longman@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4 v6] lib: debugobjects: add global free list and the
+ counter
+In-Reply-To: <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
+Message-ID: <alpine.DEB.2.21.1802121649490.1158@nanos.tec.linutronix.de>
+References: <1517872708-24207-1-git-send-email-yang.shi@linux.alibaba.com> <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/83 20:21, Nitesh Shetty wrote:
-> [ ... ]
+On Tue, 6 Feb 2018, Yang Shi wrote:
+> +	/*
+> +	 * The objs on the pool list might be allocated before the work is
+> +	 * run, so recheck if pool list it full or not, if not fill pool
+> +	 * list from the global free list
+> +	 */
+> +	while (obj_pool_free < debug_objects_pool_size) {
+> +		if (obj_nr_tofree <= 0)
+> +			break;
+> +
+> +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+> +		hlist_del(&obj->node);
+> +		hlist_add_head(&obj->node, &obj_pool);
+> +		obj_pool_free++;
+> +		obj_nr_tofree--;
+> +	}
+> +
+> +	/*
+> +	 * pool list is already full, and there are still objs on the free list,
+> +	 * move remaining free objs to a separate list to free the memory later.
+> +	 */
+> +	if (obj_nr_tofree > 0) {
+> +		hlist_move_list(&obj_to_free, &tofree);
+> +		obj_nr_tofree = 0;
+> +	}
+> +
+>  	while (obj_pool_free >= debug_objects_pool_size + ODEBUG_FREE_BATCH) {
+>  		for (i = 0; i < ODEBUG_FREE_BATCH; i++) {
+>  			objs[i] = hlist_entry(obj_pool.first,
 
-Hello Nitesh,
-
-Can you check the clock of the system you used to send this e-mail? In 
-the header of your e-mail I found the following:
-
-Date: Sun, 30 May 2083 09:51:06 +0530
+This whole section is now pointless and can be removed. There is no way
+that this code path can be entered after this change. Surplus objects are
+on the obj_to_free list and not on the obj_pool itself.
 
 Thanks,
 
-Bart.
+	tglx
