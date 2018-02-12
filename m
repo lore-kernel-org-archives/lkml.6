@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935247AbeBLNRo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:17:44 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34763 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935226AbeBLNRi (ORCPT
+        id S935265AbeBLNRt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:17:49 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:40992 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935244AbeBLNRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:17:38 -0500
-X-Google-Smtp-Source: AH8x226LO9stJmfHbG/zvH2Xek3aAkjcGpddkT8VxpPr+1pGSBjMuOTJOXlTDYuXsuxAbLg88DN7+A==
+        Mon, 12 Feb 2018 08:17:44 -0500
+X-Google-Smtp-Source: AH8x225nTc5BI2RmrtS8CPOKTViDo6NTHB2gWjknd9bXvFRLJ/fOOLUHHn6XdeHlECUL4zsdlFn9eg==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <philipp.zabel@gmail.com>
-Subject: [PATCH 03/21] regulator: gpio: Get enable GPIO using GPIO descriptor
-Date: Mon, 12 Feb 2018 14:16:59 +0100
-Message-Id: <20180212131717.27193-4-linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 06/21] regulator: da9211: Pass descriptors instead of GPIO numbers
+Date: Mon, 12 Feb 2018 14:17:02 +0100
+Message-Id: <20180212131717.27193-7-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -23,187 +22,92 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We augment the GPIO regulator to get the *enable* regulator
-GPIO line (not the other lines) using a descriptor rather than
-a global number.
+This augments the DA9211 regulator driver to fetch its GPIO descriptors
+directly from the device tree using the newly exported
+devm_get_gpiod_from_child().
 
-We then pass this into the regulator core which has been
-prepared to hande enable descriptors in a separate patch.
-
-Switch over the two boardfiles using this facility and clean
-up so we only pass descriptors around.
-
-Cc: Philipp Zabel <philipp.zabel@gmail.com> # HX4700/Magician maintainer
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/mach-pxa/hx4700.c               | 12 +++++++++++-
- arch/arm/mach-pxa/magician.c             | 11 ++++++++++-
- drivers/regulator/gpio-regulator.c       | 23 +++++++++++------------
- include/linux/regulator/gpio-regulator.h |  3 ---
- 4 files changed, 32 insertions(+), 17 deletions(-)
+ drivers/regulator/da9211-regulator.c | 23 +++++++++++------------
+ include/linux/regulator/da9211.h     |  4 +++-
+ 2 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index e2e7f247a645..6717a10180eb 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -20,6 +20,7 @@
- #include <linux/delay.h>
- #include <linux/fb.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
- #include <linux/gpio_keys.h>
- #include <linux/input.h>
- #include <linux/input/navpoint.h>
-@@ -711,7 +712,6 @@ static struct gpio_regulator_state bq24022_states[] = {
- static struct gpio_regulator_config bq24022_info = {
- 	.supply_name = "bq24022",
- 
--	.enable_gpio = GPIO72_HX4700_BQ24022_nCHARGE_EN,
- 	.enable_high = 0,
- 	.enabled_at_boot = 0,
- 
-@@ -733,6 +733,15 @@ static struct platform_device bq24022 = {
- 	},
- };
- 
-+static struct gpiod_lookup_table bq24022_gpiod_table = {
-+	.dev_id = "gpio-regulator",
-+	.table = {
-+		GPIO_LOOKUP("gpio-pxa", GPIO72_HX4700_BQ24022_nCHARGE_EN,
-+			    "enable", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
- /*
-  * StrataFlash
+diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+index 9b8f47617724..6c122b3df5d0 100644
+--- a/drivers/regulator/da9211-regulator.c
++++ b/drivers/regulator/da9211-regulator.c
+@@ -15,7 +15,6 @@
   */
-@@ -875,6 +884,7 @@ static void __init hx4700_init(void)
- 	pxa_set_btuart_info(NULL);
- 	pxa_set_stuart_info(NULL);
  
-+	gpiod_add_lookup_table(&bq24022_gpiod_table);
- 	platform_add_devices(devices, ARRAY_SIZE(devices));
- 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
- 
-diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
-index 14c0f80bc9e7..9a5bda3ea194 100644
---- a/arch/arm/mach-pxa/magician.c
-+++ b/arch/arm/mach-pxa/magician.c
-@@ -657,7 +657,6 @@ static struct gpio_regulator_state bq24022_states[] = {
- static struct gpio_regulator_config bq24022_info = {
- 	.supply_name		= "bq24022",
- 
--	.enable_gpio		= GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
- 	.enable_high		= 0,
- 	.enabled_at_boot	= 1,
- 
-@@ -679,6 +678,15 @@ static struct platform_device bq24022 = {
- 	},
- };
- 
-+static struct gpiod_lookup_table bq24022_gpiod_table = {
-+	.dev_id = "gpio-regulator",
-+	.table = {
-+		GPIO_LOOKUP("gpio-pxa", GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
-+			    "enable", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
- /*
-  * fixed regulator for ads7846
-  */
-@@ -1007,6 +1015,7 @@ static void __init magician_init(void)
- 	regulator_register_always_on(0, "power", pwm_backlight_supply,
- 		ARRAY_SIZE(pwm_backlight_supply), 5000000);
- 
-+	gpiod_add_lookup_table(&bq24022_gpiod_table);
- 	platform_add_devices(ARRAY_AND_SIZE(devices));
- }
- 
-diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
-index 0fce06acfaec..172ca4c578b2 100644
---- a/drivers/regulator/gpio-regulator.c
-+++ b/drivers/regulator/gpio-regulator.c
-@@ -31,6 +31,7 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/regulator/gpio-regulator.h>
- #include <linux/gpio.h>
+ #include <linux/err.h>
+-#include <linux/gpio.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -25,7 +24,7 @@
+ #include <linux/regmap.h>
+ #include <linux/irq.h>
+ #include <linux/interrupt.h>
+-#include <linux/of_gpio.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/slab.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-@@ -161,10 +162,6 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regulator/da9211.h>
+ #include "da9211-regulator.h"
+@@ -294,9 +293,12 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
  
- 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
- 
--	config->enable_gpio = of_get_named_gpio(np, "enable-gpio", 0);
--	if (config->enable_gpio < 0 && config->enable_gpio != -ENOENT)
--		return ERR_PTR(config->enable_gpio);
--
- 	/* Fetch GPIOs. - optional property*/
- 	ret = of_gpio_count(np);
- 	if ((ret < 0) && (ret != -ENOENT))
-@@ -254,6 +251,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	struct gpio_regulator_data *drvdata;
- 	struct regulator_config cfg = { };
-+	enum gpiod_flags gflags;
- 	int ptr, ret, state;
- 
- 	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
-@@ -340,21 +338,22 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	cfg.driver_data = drvdata;
- 	cfg.of_node = np;
- 
--	if (gpio_is_valid(config->enable_gpio)) {
--		cfg.ena_gpio = config->enable_gpio;
--		cfg.ena_gpio_initialized = true;
--	}
- 	cfg.ena_gpio_invert = !config->enable_high;
- 	if (config->enabled_at_boot) {
- 		if (config->enable_high)
--			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
-+			gflags = GPIOD_OUT_HIGH;
- 		else
--			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
-+			gflags = GPIOD_OUT_LOW;
- 	} else {
- 		if (config->enable_high)
--			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
-+			gflags = GPIOD_OUT_LOW;
- 		else
--			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
-+			gflags = GPIOD_OUT_HIGH;
-+	}
-+	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
-+	if (IS_ERR(cfg.ena_gpiod)) {
-+		ret = PTR_ERR(cfg.ena_gpiod);
-+		goto err_stategpio;
+ 		pdata->init_data[n] = da9211_matches[i].init_data;
+ 		pdata->reg_node[n] = da9211_matches[i].of_node;
+-		pdata->gpio_ren[n] =
+-			of_get_named_gpio(da9211_matches[i].of_node,
+-				"enable-gpios", 0);
++		pdata->gpiod_ren[n] = devm_gpiod_get_from_of_node(dev,
++								  da9211_matches[i].of_node,
++								  "enable",
++								  0,
++								  GPIOD_OUT_HIGH,
++								  "da9211-enable");
+ 		n++;
  	}
  
- 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
-diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
-index 19fbd267406d..536cab86f2d5 100644
---- a/include/linux/regulator/gpio-regulator.h
-+++ b/include/linux/regulator/gpio-regulator.h
-@@ -44,8 +44,6 @@ struct gpio_regulator_state {
- /**
-  * struct gpio_regulator_config - config structure
-  * @supply_name:	Name of the regulator supply
-- * @enable_gpio:	GPIO to use for enable control
-- *			set to -EINVAL if not used
-  * @enable_high:	Polarity of enable GPIO
-  *			1 = Active high, 0 = Active low
-  * @enabled_at_boot:	Whether regulator has been enabled at
-@@ -69,7 +67,6 @@ struct gpio_regulator_state {
- struct gpio_regulator_config {
- 	const char *supply_name;
+@@ -382,13 +384,10 @@ static int da9211_regulator_init(struct da9211 *chip)
+ 		config.regmap = chip->regmap;
+ 		config.of_node = chip->pdata->reg_node[i];
  
--	int enable_gpio;
- 	unsigned enable_high:1;
- 	unsigned enabled_at_boot:1;
- 	unsigned startup_delay;
+-		if (gpio_is_valid(chip->pdata->gpio_ren[i])) {
+-			config.ena_gpio = chip->pdata->gpio_ren[i];
+-			config.ena_gpio_initialized = true;
+-		} else {
+-			config.ena_gpio = -EINVAL;
+-			config.ena_gpio_initialized = false;
+-		}
++		if (chip->pdata->gpiod_ren[i])
++			config.ena_gpiod = chip->pdata->gpiod_ren[i];
++		else
++			config.ena_gpiod = NULL;
+ 
+ 		chip->rdev[i] = devm_regulator_register(chip->dev,
+ 			&da9211_regulators[i], &config);
+diff --git a/include/linux/regulator/da9211.h b/include/linux/regulator/da9211.h
+index f2fd2d3bf58f..d1f2073e4d5f 100644
+--- a/include/linux/regulator/da9211.h
++++ b/include/linux/regulator/da9211.h
+@@ -21,6 +21,8 @@
+ 
+ #define DA9211_MAX_REGULATORS	2
+ 
++struct gpio_desc;
++
+ enum da9211_chip_id {
+ 	DA9211,
+ 	DA9212,
+@@ -39,7 +41,7 @@ struct da9211_pdata {
+ 	 * 2 : 2 phase 2 buck
+ 	 */
+ 	int num_buck;
+-	int gpio_ren[DA9211_MAX_REGULATORS];
++	struct gpio_desc *gpiod_ren[DA9211_MAX_REGULATORS];
+ 	struct device_node *reg_node[DA9211_MAX_REGULATORS];
+ 	struct regulator_init_data *init_data[DA9211_MAX_REGULATORS];
+ };
 -- 
 2.14.3
