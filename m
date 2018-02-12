@@ -1,49 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964904AbeBLQUC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 11:20:02 -0500
-Received: from www.sr71.net ([198.145.64.142]:53760 "EHLO blackbird.sr71.net"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S964916AbeBLQUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 11:20:01 -0500
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-To: Ingo Molnar <mingo@kernel.org>, hpa@zytor.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        dwmw@amazon.co.uk, peterz@infradead.org
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
- <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
-Cc: linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Arjan van de Ven <arjan@infradead.org>
-From: Dave Hansen <dave@sr71.net>
-Message-ID: <a85c28b8-1255-3264-bb4a-89e85e3c6009@sr71.net>
-Date: Mon, 12 Feb 2018 08:13:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S964952AbeBLQZd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 11:25:33 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48664 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964875AbeBLQZc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 11:25:32 -0500
+Date: Mon, 12 Feb 2018 17:25:36 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+cc: longman@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4 v6] lib: debugobjects: add global free list and the
+ counter
+In-Reply-To: <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
+Message-ID: <alpine.DEB.2.21.1802121718270.1158@nanos.tec.linutronix.de>
+References: <1517872708-24207-1-git-send-email-yang.shi@linux.alibaba.com> <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 02:22 AM, Ingo Molnar wrote:
->> +static inline void firmware_restrict_branch_speculation_end(void)
->> +{
->> +	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
->> +			      X86_FEATURE_USE_IBRS_FW);
-> BTW., there's a detail that only occurred to me today, this enabling/disabling 
-> sequence is not NMI safe, and it might be called from NMI context:
+On Tue, 6 Feb 2018, Yang Shi wrote:
+> +	/*
+> +	 * Reuse objs from the global free list, they will be reinitialized
+> +	 * when allocating
+> +	 */
+> +	while (obj_nr_tofree > 0 && (obj_pool_free < obj_pool_min_free)) {
+> +		raw_spin_lock_irqsave(&pool_lock, flags);
+> +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
 
-FWIW, Tim Chen and I talked about this a bunch.  We ended up just
-saving/restoring the MSR verbatim in the NMI handler the same way we do
-CR3, stashing it in a high general-purpose-register (r%12?).  That costs
-a RDMSR (at least) and an WRMSR (which you can optimize out).  We have a
-patch for that somewhere if anybody wants it.
+This is racy vs. the worker thread. Assume obj_nr_tofree = 1:
 
-We also came to the same conclusion that it's a rather challenging thing
-to exploit these cases, especially when you consider that we can easily
-do RSB stuffing on NMI exit just before going back to the firmware.
+CPU0					CPU1
+worker
+   lock(&pool_lock);			while (obj_nr_tofree > 0 && ...) {
+     obj = hlist_entry(obj_to_free);	  lock(&pool_lock);
+     hlist_del(obj);			  
+     obj_nr_tofree--;
+     ...
+   unlock(&pool_lock);
+					  obj = hlist_entry(obj_to_free);
+					  hlist_del(obj); <------- NULL pointer dereference
+
+Not what you want, right? The counter or the list head need to be rechecked
+after the lock is acquired.
+
+> +		hlist_del(&obj->node);
+> +		obj_nr_tofree--;
+> +		hlist_add_head(&obj->node, &obj_pool);
+> +		obj_pool_free++;
+> +		raw_spin_unlock_irqrestore(&pool_lock, flags);
+> +	}
+
+Thanks,
+
+	tglx
