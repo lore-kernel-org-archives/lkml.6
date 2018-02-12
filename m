@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935404AbeBLNTa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:19:30 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41039 "EHLO
+        id S935419AbeBLNTr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:19:47 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36312 "EHLO
         mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935307AbeBLNSF (ORCPT
+        with ESMTP id S935287AbeBLNSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:18:05 -0500
-X-Google-Smtp-Source: AH8x225E0V+8DUKAyxOZNNPsNG0RQ1FfDi/nGNKc05SuEvWEA/ZLO9ipR4NLHUMCfeaokG+Zfw5vTQ==
+        Mon, 12 Feb 2018 08:18:03 -0500
+X-Google-Smtp-Source: AH8x225WgnSqK6dspll2Dsfh1NbYWpzim0RFV8RtJPJkwG+XFDXE0r8NgTBbBGdzxoL9p5LKNfwKaA==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        patches@opensource.cirrus.com,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 16/21] regulator: wm8994: Pass descriptor instead of GPIO number
-Date: Mon, 12 Feb 2018 14:17:12 +0100
-Message-Id: <20180212131717.27193-17-linus.walleij@linaro.org>
+Subject: [PATCH 15/21] regulator: tps65090: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:17:11 +0100
+Message-Id: <20180212131717.27193-16-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -26,169 +24,137 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up from the device tree node or the board file
-decriptor table for the regulator.
+a descriptor looked up from the device tree node for the
+regulator.
 
-There is a single board file passing the GPIOs for LDO1 and LDO2
-through platform data, so augment this to pass descriptors
-associated with the i2c device as well.
+This regulator supports passing platform data, but enable/sleep
+regulators are looked up from the device tree exclusively, so
+we can need not touch other files.
 
-Cc: patches@opensource.cirrus.com
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
 Cc: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Lee: this patch is touching the MFD core driver for WM8994,
-but as with all other patches we just change the regulator
-parts. Would be nice if you could ACK it.
+Lee: it would be nice if you could ACK this smallish patch to
+the MFD header.
 ---
- arch/arm/mach-s3c64xx/mach-crag6410-module.c | 18 ++++++++++++++++--
- drivers/mfd/wm8994-core.c                    |  9 ---------
- drivers/regulator/wm8994-regulator.c         | 19 +++++++++++--------
- include/linux/mfd/wm8994/pdata.h             |  3 ---
- 4 files changed, 27 insertions(+), 22 deletions(-)
+ drivers/regulator/tps65090-regulator.c | 50 ++++++++++++++++------------------
+ include/linux/mfd/tps65090.h           |  8 ++++--
+ 2 files changed, 28 insertions(+), 30 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index f00988705408..a4db97f156d7 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
- #include <linux/spi/spi.h>
-+#include <linux/gpio/machine.h>
- 
- #include <linux/mfd/wm831x/irq.h>
- #include <linux/mfd/wm831x/gpio.h>
-@@ -193,8 +194,8 @@ static struct wm8994_pdata wm8994_pdata = {
- 		0x3,          /* IRQ out, active high, CMOS */
- 	},
- 	.ldo = {
--		 { .enable = S3C64XX_GPN(6), .init_data = &wm8994_ldo1, },
--		 { .enable = S3C64XX_GPN(4), .init_data = &wm8994_ldo2, },
-+		 { .init_data = &wm8994_ldo1, },
-+		 { .init_data = &wm8994_ldo2, },
- 	},
- };
- 
-@@ -202,6 +203,18 @@ static const struct i2c_board_info wm1277_devs[] = {
- 	{ I2C_BOARD_INFO("wm8958", 0x1a),  /* WM8958 is the superset */
- 	  .platform_data = &wm8994_pdata,
- 	  .irq = GLENFARCLAS_PMIC_IRQ_BASE + WM831X_IRQ_GPIO_2,
-+	  .dev_name = "wm8958",
-+	},
-+};
-+
-+static struct gpiod_lookup_table wm8994_gpiod_table = {
-+	.dev_id = "i2c-wm8958", /* I2C device name */
-+	.table = {
-+		GPIO_LOOKUP("GPION", 6,
-+			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("GPION", 4,
-+			    "wlf,ldo2ena", GPIO_ACTIVE_HIGH),
-+		{ },
- 	},
- };
- 
-@@ -366,6 +379,7 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
- 					    rev == gf_mods[i].rev))
- 			break;
- 
-+	gpiod_add_lookup_table(&wm8994_gpiod_table);
- 	if (i < ARRAY_SIZE(gf_mods)) {
- 		dev_info(&i2c->dev, "%s revision %d\n",
- 			 gf_mods[i].name, rev + 1);
-diff --git a/drivers/mfd/wm8994-core.c b/drivers/mfd/wm8994-core.c
-index 953d0790ffd5..c409464231f6 100644
---- a/drivers/mfd/wm8994-core.c
-+++ b/drivers/mfd/wm8994-core.c
-@@ -21,7 +21,6 @@
- #include <linux/mfd/core.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
-@@ -302,14 +301,6 @@ static int wm8994_set_pdata_from_of(struct wm8994 *wm8994)
- 	if (of_find_property(np, "wlf,ldoena-always-driven", NULL))
- 		pdata->lineout2fb = true;
- 
--	pdata->ldo[0].enable = of_get_named_gpio(np, "wlf,ldo1ena", 0);
--	if (pdata->ldo[0].enable < 0)
--		pdata->ldo[0].enable = 0;
--
--	pdata->ldo[1].enable = of_get_named_gpio(np, "wlf,ldo2ena", 0);
--	if (pdata->ldo[1].enable < 0)
--		pdata->ldo[1].enable = 0;
--
- 	return 0;
- }
- #else
-diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
-index 7a4ce6df4f22..d3a5f48119c2 100644
---- a/drivers/regulator/wm8994-regulator.c
-+++ b/drivers/regulator/wm8994-regulator.c
-@@ -19,7 +19,7 @@
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index 395f35dc8cdb..2d398fa3b720 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -19,8 +19,8 @@
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/init.h>
 -#include <linux/gpio.h>
+-#include <linux/of_gpio.h>
++#include <linux/of.h>
 +#include <linux/gpio/consumer.h>
  #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+@@ -300,26 +300,6 @@ static int tps65090_regulator_disable_ext_control(
+ 	return tps65090_config_ext_control(ri, false);
+ }
  
- #include <linux/mfd/wm8994/core.h>
-@@ -129,6 +129,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
- 	int id = pdev->id % ARRAY_SIZE(pdata->ldo);
- 	struct regulator_config config = { };
- 	struct wm8994_ldo *ldo;
-+	struct gpio_desc *gpiod;
- 	int ret;
- 
- 	dev_dbg(&pdev->dev, "Probing LDO%d\n", id + 1);
-@@ -145,12 +146,14 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
- 	config.driver_data = ldo;
- 	config.regmap = wm8994->regmap;
- 	config.init_data = &ldo->init_data;
--	if (pdata) {
--		config.ena_gpio = pdata->ldo[id].enable;
--	} else if (wm8994->dev->of_node) {
--		config.ena_gpio = wm8994->pdata.ldo[id].enable;
--		config.ena_gpio_initialized = true;
--	}
-+
-+	/* Look up LDO enable GPIO from the parent device node */
-+	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
-+					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
-+					GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod))
-+		return PTR_ERR(gpiod);
-+	config.ena_gpiod = gpiod;
- 
- 	/* Use default constraints if none set up */
- 	if (!pdata || !pdata->ldo[id].init_data || wm8994->dev->of_node) {
-@@ -159,7 +162,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
- 
- 		ldo->init_data = wm8994_ldo_default[id];
- 		ldo->init_data.consumer_supplies = &ldo->supply;
--		if (!config.ena_gpio)
-+		if (!gpiod)
- 			ldo->init_data.constraints.valid_ops_mask = 0;
- 	} else {
- 		ldo->init_data = *pdata->ldo[id].init_data;
-diff --git a/include/linux/mfd/wm8994/pdata.h b/include/linux/mfd/wm8994/pdata.h
-index 90c60524a496..fca67bd194e2 100644
---- a/include/linux/mfd/wm8994/pdata.h
-+++ b/include/linux/mfd/wm8994/pdata.h
-@@ -20,9 +20,6 @@
- #define WM8994_NUM_AIF   3
- 
- struct wm8994_ldo_pdata {
--	/** GPIOs to enable regulator, 0 or less if not available */
--	int enable;
+-static void tps65090_configure_regulator_config(
+-		struct tps65090_regulator_plat_data *tps_pdata,
+-		struct regulator_config *config)
+-{
+-	if (gpio_is_valid(tps_pdata->gpio)) {
+-		int gpio_flag = GPIOF_OUT_INIT_LOW;
 -
- 	const struct regulator_init_data *init_data;
- };
+-		if (tps_pdata->reg_init_data->constraints.always_on ||
+-				tps_pdata->reg_init_data->constraints.boot_on)
+-			gpio_flag = GPIOF_OUT_INIT_HIGH;
+-
+-		config->ena_gpio = tps_pdata->gpio;
+-		config->ena_gpio_initialized = true;
+-		config->ena_gpio_flags = gpio_flag;
+-	} else {
+-		config->ena_gpio = -EINVAL;
+-		config->ena_gpio_initialized = false;
+-	}
+-}
+-
+ #ifdef CONFIG_OF
+ static struct of_regulator_match tps65090_matches[] = {
+ 	{ .name = "dcdc1", },
+@@ -385,9 +365,26 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 		rpdata->enable_ext_control = of_property_read_bool(
+ 					tps65090_matches[idx].of_node,
+ 					"ti,enable-ext-control");
+-		if (rpdata->enable_ext_control)
+-			rpdata->gpio = of_get_named_gpio(np,
+-					"dcdc-ext-control-gpios", 0);
++		if (rpdata->enable_ext_control) {
++			enum gpiod_flags gflags;
++
++			if (ri_data->constraints.always_on ||
++			    ri_data->constraints.boot_on)
++				gflags = GPIOD_OUT_HIGH;
++			else
++				gflags = GPIOD_OUT_LOW;
++
++			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
++								    tps65090_matches[idx].of_node,
++								    "dcdc-ext-control-gpios", 0,
++								    gflags,
++								    "tps65090");
++			if (IS_ERR(rpdata->gpiod))
++				return ERR_CAST(rpdata->gpiod);
++			if (!rpdata->gpiod)
++				dev_err(&pdev->dev,
++					"could not find DCDC external control GPIO\n");
++		}
  
+ 		if (of_property_read_u32(tps65090_matches[idx].of_node,
+ 					 "ti,overcurrent-wait",
+@@ -455,8 +452,7 @@ static int tps65090_regulator_probe(struct platform_device *pdev)
+ 		 */
+ 		if (tps_pdata && is_dcdc(num) && tps_pdata->reg_init_data) {
+ 			if (tps_pdata->enable_ext_control) {
+-				tps65090_configure_regulator_config(
+-						tps_pdata, &config);
++				config.ena_gpiod = tps_pdata->gpiod;
+ 				ri->desc->ops = &tps65090_ext_control_ops;
+ 			} else {
+ 				ret = tps65090_regulator_disable_ext_control(
+diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
+index 67d144b3b8f9..f05bf4a146e2 100644
+--- a/include/linux/mfd/tps65090.h
++++ b/include/linux/mfd/tps65090.h
+@@ -83,6 +83,8 @@ enum {
+ #define TPS65090_MAX_REG	TPS65090_REG_AD_OUT2
+ #define TPS65090_NUM_REGS	(TPS65090_MAX_REG + 1)
+ 
++struct gpio_desc;
++
+ struct tps65090 {
+ 	struct device		*dev;
+ 	struct regmap		*rmap;
+@@ -95,8 +97,8 @@ struct tps65090 {
+  * @reg_init_data: The regulator init data.
+  * @enable_ext_control: Enable extrenal control or not. Only available for
+  *     DCDC1, DCDC2 and DCDC3.
+- * @gpio: Gpio number if external control is enabled and controlled through
+- *     gpio.
++ * @gpiod: Gpio descriptor if external control is enabled and controlled through
++ *     gpio
+  * @overcurrent_wait_valid: True if the overcurrent_wait should be applied.
+  * @overcurrent_wait: Value to set as the overcurrent wait time.  This is the
+  *     actual bitfield value, not a time in ms (valid value are 0 - 3).
+@@ -104,7 +106,7 @@ struct tps65090 {
+ struct tps65090_regulator_plat_data {
+ 	struct regulator_init_data *reg_init_data;
+ 	bool enable_ext_control;
+-	int gpio;
++	struct gpio_desc *gpiod;
+ 	bool overcurrent_wait_valid;
+ 	int overcurrent_wait;
+ };
 -- 
 2.14.3
