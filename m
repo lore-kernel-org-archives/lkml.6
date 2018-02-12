@@ -1,221 +1,88 @@
-Return-Path: <xieyisheng1@huawei.com>
-X-Google-Smtp-Source: AH8x225IH7pvPt6kAfznXpB1cNXF7xw4nQcKRk1B5Ss/4jmB3S0PsIrugB3w7DBDk4MYMIh+/XYT
-ARC-Seal: i=1; a=rsa-sha256; t=1518435785; cv=none;
+Return-Path: <joel.stan@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518412576; cv=none;
         d=google.com; s=arc-20160816;
-        b=rfCfIqk2orYhdci3CXiDBbOGuY9orX9SwwXpK4DVNopn2JnyfRetFT0mS8vT75PDSY
-         ZjyGy3BfobtxMfvQtLeIlKQ9reaNUVSSdP8sooojLFDA6gLbbSeYwGMplgbedovdVguH
-         TMqBOMz9iJ0DnoIjT3ISP5ZCWQWLpKXGCvIlvVah4Iln1gs42CyOo4GufpB0vGBoYwiu
-         H7m7lSuPxnwaDTCTeuPm30MdPiiZGZ+ZMRrRGv9gktjRMzP4DZ2VDIlZzt7YuFI/89lp
-         sJBun37/mUH51ST+pPNpTx0pRcsscZzd1VGRP55PF88yPd8gCULyaWJOQ2QyRFKiojGB
-         yLoA==
+        b=kuYcr7KZ/29yWzp6JxjUQ5el7tUJ2TW1/96IcA/7F5DMYfhkigSbA6bJkBvt07ESiK
+         3n9662dmXDEwxJKjWmoLuH3nMvrifuUujSAsevYCeMBykog0eQl+LuTbCgUPs1tPn+K0
+         f1DwNWN7IX3UV5dDMGjSXA50oYfTY0VsayZTR2DWWWeDZhsotMYu4yHchcyYON1BaISt
+         vbd9zDSRT4azFRx2mkb7WudKLZS+A/d1Q94QgY+hNy6MKfEptQpznYqhTXyLyNZmO5jf
+         WHdWfaHJwOVTjKE3giYVI2e47JBWeMJJ7FvR5OJa6SdBmx1jCtBeIOP40fpsaYuosYVV
+         57ZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:arc-authentication-results;
-        bh=utI/Phb+VXoyI33zoS6PefNxFotAFCOIZUFdPPkBctc=;
-        b=jMWeJY3uUKcR9aaDxFBXW2u/RLTG6FGbZ4L9fr0wr8L+8/m1LQrI+6GvKQ/QnV8Bmt
-         gQ+5XoLll0w1FXbrfypjfCOmaY2aKNj0Xv+Swf9uSyCmQRlMUDUwznSjDqPgtk01+Dmg
-         g4wJidQNTorrRyVniwcFJinJEZ6K+hIbXB9nwmQhy2QukKERv6H+9aJlwynBcY9pz1+T
-         2hxUW5GRDT2iorc7Qjc4n3Bk2px5HKIegtYgnJlOQDoKpOJZ/rbyMnaRscH7ThSJrRjY
-         /wlrw3owr2nn3tDsRG/cThKg5tO8yJIs7ceg69ThGBaoCiRqQMicxmpRKiT1jlUn1Ahh
-         Dnpg==
+        h=message-id:date:subject:cc:to:from:sender:dkim-signature
+         :arc-authentication-results;
+        bh=BcFz18amMgm9LDLm6VxIr3GEcZr68E20vphi7zAfEYk=;
+        b=VSC2AjlnavQZiP8A4spaDEky0tvV+vrCb9jAE7jL0bBdwZp5eqxZLqJMFhEAEmR9y/
+         m/oq7sBk/j6qXfo6n6/oLJrmFl7xYfsibnrz4h964ufpWwNygDMvO30kFlt7PE4FNkE0
+         bT8+24KPyPrpVp4euFaFXm9eU29OTEQ3NwOrxekBcLbQWIkjQlpvs+y4bgQMxh26pT8A
+         ySsWMJfrH/TjXobEdVNU2U2i+GKB3+yONT1Qx7pspObwgfzr3DHBJIn6CAn3el+/8Sr7
+         qa6Qn7lsM8Tj5MzCKg+Som2DE/ZIdpYdUUW22rVva56MNJV+zTlkJ12+ofBSSnU1JP3r
+         rVmA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.191 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jJzTpxoW;
+       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.191 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
-Subject: Re: [PATCH v6] devres: combine function devm_ioremap*
-To: Christophe LEROY <christophe.leroy@c-s.fr>, <gregkh@linuxfoundation.org>
-References: <1517226496-32324-1-git-send-email-xieyisheng1@huawei.com>
- <db6ce14b-455f-034b-48a3-199cdc493479@huawei.com>
- <f0e40718-98dd-6383-8bfc-c05b0e5b8ad1@c-s.fr>
-CC: <thomas.lendacky@amd.com>, <linux-kernel@vger.kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <35b2422e-1e01-38b5-e106-b04763412734@huawei.com>
-Date: Mon, 12 Feb 2018 19:42:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
-MIME-Version: 1.0
-In-Reply-To: <f0e40718-98dd-6383-8bfc-c05b0e5b8ad1@c-s.fr>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jJzTpxoW;
+       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
+X-Google-Smtp-Source: AH8x224jsV5RXSOggcVaPjB+XkjTUghvxLOO/qVjeieSrTIAklj+m9GJndiQcjHB44K35LiYJQKlsA==
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Jeremy Kerr <jk@ozlabs.org>,
+	Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+	Brad Bishop <bradleyb@fuzziesquirrel.com>,
+	Edward James <eajames@us.ibm.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 00/10] FSI enhancements for v4.17
+Date: Mon, 12 Feb 2018 15:45:39 +1030
+Message-Id: <20180212051549.8575-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.15.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590927888769516575?=
-X-GMAIL-MSGID: =?utf-8?q?1592195322000649332?=
+X-GMAIL-THRID: =?utf-8?q?1592170985110788689?=
+X-GMAIL-MSGID: =?utf-8?q?1592170985110788689?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Christophe,
+Hello Greg,
 
-On 2018/2/12 19:21, Christophe LEROY wrote:
-> Hi Yisheng,
-> 
-> I don't have any comment.
-> 
-> Reviewed-by: <christophe.leroy@c-s.fr>
+Here is a set of FSI patches that we would like you to merge for 4.17.
+These have been sitting in the OpenBMC tree for a while, and some had
+been posted upstream for review in the past but not merged. That is to
+say they have seen plenty of testing.
 
-Thanks
-Yisheng
-> 
-> Christophe
-> 
-> Le 12/02/2018 à 12:07, Yisheng Xie a écrit :
->> Hi Greg, Christophe,
->>
->> Any comment about this version?  And sorry to disturb  :)
->>
->> Thanks
->> Yisheng
->>
->> On 2018/1/29 19:48, Yisheng Xie wrote:
->>> When I tried to use devm_ioremap function and review related
->>> code, I found devm_ioremap_* almost have the similar realize
->>> with each other, which can be combined.
->>>
->>> In the former version, I have tried to kill ioremap_cache to
->>> reduce the size of devres, which can not work for ioremap is
->>> not the same as ioremap_nocache in some ARCHs likes ia64.
->>> Therefore, as the suggestion of Christophe, I introduce a help
->>> function __devm_ioremap, let devm_ioremap* inline and call
->>> __devm_ioremap with different devm_ioremap_type.
->>>
->>> After apply the patch, the size of devres.o can be reduce from
->>> 8216 Bytes to 8052 Bytes in my compile environment.
->>>
->>> Suggested-by: Greg KH <gregkh@linuxfoundation.org>
->>> Suggested-by: Christophe LEROY <christophe.leroy@c-s.fr>
->>> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
->>> ---
->>> v2:
->>>   - use MARCO for ioremap
->>> v3:
->>>   - kill dev_ioremap_nocache
->>> v4:
->>>   - combine function devm_ioremap*       - per Christophe
->>> v5:
->>>   - fix code style.                      - per Christophe
->>> v6:
->>>   - just put the cleanup in the devres.c - per Greg
->>>
->>>   lib/devres.c | 78 +++++++++++++++++++++++++++++-------------------------------
->>>   1 file changed, 38 insertions(+), 40 deletions(-)
->>>
->>> diff --git a/lib/devres.c b/lib/devres.c
->>> index 5f2aedd..5bec112 100644
->>> --- a/lib/devres.c
->>> +++ b/lib/devres.c
->>> @@ -5,6 +5,12 @@
->>>   #include <linux/gfp.h>
->>>   #include <linux/export.h>
->>>   +enum devm_ioremap_type {
->>> +    DEVM_IOREMAP = 0,
->>> +    DEVM_IOREMAP_NC,
->>> +    DEVM_IOREMAP_WC,
->>> +};
->>> +
->>>   void devm_ioremap_release(struct device *dev, void *res)
->>>   {
->>>       iounmap(*(void __iomem **)res);
->>> @@ -15,24 +21,28 @@ static int devm_ioremap_match(struct device *dev, void *res, void *match_data)
->>>       return *(void **)res == match_data;
->>>   }
->>>   -/**
->>> - * devm_ioremap - Managed ioremap()
->>> - * @dev: Generic device to remap IO address for
->>> - * @offset: Resource address to map
->>> - * @size: Size of map
->>> - *
->>> - * Managed ioremap().  Map is automatically unmapped on driver detach.
->>> - */
->>> -void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->>> -               resource_size_t size)
->>> +static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
->>> +                    resource_size_t size,
->>> +                    enum devm_ioremap_type type)
->>>   {
->>> -    void __iomem **ptr, *addr;
->>> +    void __iomem **ptr, *addr = NULL;
->>>         ptr = devres_alloc(devm_ioremap_release, sizeof(*ptr), GFP_KERNEL);
->>>       if (!ptr)
->>>           return NULL;
->>>   -    addr = ioremap(offset, size);
->>> +    switch (type) {
->>> +    case DEVM_IOREMAP:
->>> +        addr = ioremap(offset, size);
->>> +        break;
->>> +    case DEVM_IOREMAP_NC:
->>> +        addr = ioremap_nocache(offset, size);
->>> +        break;
->>> +    case DEVM_IOREMAP_WC:
->>> +        addr = ioremap_wc(offset, size);
->>> +        break;
->>> +    }
->>> +
->>>       if (addr) {
->>>           *ptr = addr;
->>>           devres_add(dev, ptr);
->>> @@ -41,6 +51,20 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->>>         return addr;
->>>   }
->>> +
->>> +/**
->>> + * devm_ioremap - Managed ioremap()
->>> + * @dev: Generic device to remap IO address for
->>> + * @offset: Resource address to map
->>> + * @size: Size of map
->>> + *
->>> + * Managed ioremap().  Map is automatically unmapped on driver detach.
->>> + */
->>> +void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->>> +               resource_size_t size)
->>> +{
->>> +    return __devm_ioremap(dev, offset, size, DEVM_IOREMAP);
->>> +}
->>>   EXPORT_SYMBOL(devm_ioremap);
->>>     /**
->>> @@ -55,20 +79,7 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->>>   void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
->>>                      resource_size_t size)
->>>   {
->>> -    void __iomem **ptr, *addr;
->>> -
->>> -    ptr = devres_alloc(devm_ioremap_release, sizeof(*ptr), GFP_KERNEL);
->>> -    if (!ptr)
->>> -        return NULL;
->>> -
->>> -    addr = ioremap_nocache(offset, size);
->>> -    if (addr) {
->>> -        *ptr = addr;
->>> -        devres_add(dev, ptr);
->>> -    } else
->>> -        devres_free(ptr);
->>> -
->>> -    return addr;
->>> +    return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_NC);
->>>   }
->>>   EXPORT_SYMBOL(devm_ioremap_nocache);
->>>   @@ -83,20 +94,7 @@ void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
->>>   void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
->>>                     resource_size_t size)
->>>   {
->>> -    void __iomem **ptr, *addr;
->>> -
->>> -    ptr = devres_alloc(devm_ioremap_release, sizeof(*ptr), GFP_KERNEL);
->>> -    if (!ptr)
->>> -        return NULL;
->>> -
->>> -    addr = ioremap_wc(offset, size);
->>> -    if (addr) {
->>> -        *ptr = addr;
->>> -        devres_add(dev, ptr);
->>> -    } else
->>> -        devres_free(ptr);
->>> -
->>> -    return addr;
->>> +    return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_WC);
->>>   }
->>>   EXPORT_SYMBOL(devm_ioremap_wc);
->>>  
-> 
-> .
-> 
+Cheers,
+
+Joel
+
+Christopher Bostic (3):
+  fsi: core: Reduce console output during normal scan
+  dt-bindings: fsi: Add optional property no-scan-on-init
+  fsi: core: Add check for master property no-scan-on-init
+
+Eddie James (1):
+  fsi: Fix one and two byte bus reads/writes
+
+Jeremy Kerr (6):
+  fsi: Add fsi_master_rescan()
+  fsi: master-gpio: Add locking during break and link enable
+  fsi: master-gpio: Add external mode
+  dt-bindings: fsi: Add specification for FSI busses
+  fsi: Match fsi slaves and engines to available dt nodes
+  fsi: master: Clarify master lifetimes & fix use-after-free in hub
+    master
+
+ .../ABI/testing/sysfs-driver-fsi-master-gpio       |  10 ++
+ Documentation/devicetree/bindings/fsi/fsi.txt      | 151 +++++++++++++++++++++
+ drivers/fsi/Kconfig                                |   1 +
+ drivers/fsi/fsi-core.c                             | 129 ++++++++++++++++--
+ drivers/fsi/fsi-master-gpio.c                      |  89 +++++++++++-
+ drivers/fsi/fsi-master-hub.c                       |  27 +++-
+ drivers/fsi/fsi-master.h                           |  17 +++
+ 7 files changed, 409 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-fsi-master-gpio
+ create mode 100644 Documentation/devicetree/bindings/fsi/fsi.txt
+
+-- 
+2.15.1
