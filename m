@@ -1,48 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934256AbeBLLu6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:50:58 -0500
-Received: from casper.infradead.org ([85.118.1.10]:35568 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933898AbeBLLu4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:50:56 -0500
-Date: Mon, 12 Feb 2018 12:50:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
-        linux-tip-commits@vger.kernel.org, Dave Hansen <dave@sr71.net>,
-        Borislav Petkov <bp@alien8.de>, Arjan van de Ven <arjan@infradead.org>
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-Message-ID: <20180212115002.GI25181@hirez.programming.kicks-ass.net>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
- <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
+        id S934280AbeBLLwx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:52:53 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43800 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933898AbeBLLwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 06:52:49 -0500
+Date: Mon, 12 Feb 2018 12:52:42 +0100
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+Message-ID: <20180212115242.z3qv5uejbnhgvd6o@sirius.home.kraxel.org>
+References: <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+ <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+ <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 11:22:11AM +0100, Ingo Molnar wrote:
-> > +static inline void firmware_restrict_branch_speculation_start(void)
-> > +{
-> > +	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
-> > +			      X86_FEATURE_USE_IBRS_FW);
-> > +}
-> > +
-> > +static inline void firmware_restrict_branch_speculation_end(void)
-> > +{
-> > +	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-> > +			      X86_FEATURE_USE_IBRS_FW);
-> 
-> BTW., there's a detail that only occurred to me today, this enabling/disabling 
-> sequence is not NMI safe, and it might be called from NMI context:
+  Hi,
 
-Wait, we're doing firmware from NMI? That sounds like a _REALLY_ bad
-idea.
+> can we reach agreement on whether vsock should be involved in this?
+
+I think the best approach would be to have guest proxy and host proxy
+use vsock for the wayland protocol.  Use a wayland protocol extension to
+reference the buffers in stdvga / ivshmem / virtio-gpu.  Only the two
+proxies need to understand the extension, the client <=> guest proxy and
+host proxy <=> server communication would be standard wayland protocol.
+
+cheers,
+  Gerd
