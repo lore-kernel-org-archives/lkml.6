@@ -1,422 +1,97 @@
-Return-Path: <kernel-hardening-return-11629-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x2274UafwIpIGZzu3OB/rxhhdVNQfkBz796rdQceYS047GLoVyAsFaaoGU7n2aSqct/ru0Le5
-ARC-Seal: i=1; a=rsa-sha256; t=1517920751; cv=none;
-        d=google.com; s=arc-20160816;
-        b=XHlAXaPi4yTF6d6UGKvREtd2jEwgP8WusQc/9zTIq3hWqwFyA3OB34upeR2zmkiiBE
-         HyffFObhSeGlvrYBYIKEXdDhxAjsImS88yeK4XI9ucuZmApGTSSfqTeomvCUjdYiRMaj
-         d8F/5CvPPr36aarwtr8t33ntWFSLyP9fkQty3Z18Io8o/iHb4H4zNFwt17PWiC0qSpki
-         dSYnrFBtA3L+TC7k2T2cHc2KfQSkLETbmTKKnjeiL6psacjE61AdyXPhScF2/3u9jggl
-         lEc1T+KgwSSGxpHq0HcGWquX4BnaoEgPqP9j79ecgXaESMf+X/6nkXcRmuuFfCnky/eh
-         +FVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=13Vrt5h408qmUU8XSd8dzxWs5mn7Qgq5y6ifpqepBWk=;
-        b=L/nblGAaFhyuWP9Y8aSS7/YS1iNSNmelDHU8ez70CTaLEnC4PQh54gvRPF7WtJ+Fs+
-         ZrjxLndkZZqFKEEpNguad0KRdLJG5uDp09TEv5j1wgAxwidfVBfpCI8HurgRZOJl91u4
-         gz0wwfk9WwrrrLqTnQ9gOv9m6igha4h24qAU82oNs8yOCw8Tlesrx2m038mcASCfDoDq
-         IwREIEm9s8vzqM2mbBs67vaSgqDaLCZCEbEhe/l86Man9CAdmag31Yfhtn/FoH8zETxe
-         b4vD6QPQ0ObKG4IS3aRzAFPissA5ORF+xm5ufNumuZ2hMTa+vfdmLJLNTPSntoeHx8Ez
-         CozA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=MS8VHC30;
-       spf=pass (google.com: domain of kernel-hardening-return-11629-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11629-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=MS8VHC30;
-       spf=pass (google.com: domain of kernel-hardening-return-11629-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11629-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Tue, 6 Feb 2018 13:38:47 +0100
-From: Christoffer Dall <christoffer.dall@linaro.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
-	catalin.marinas@arm.com, cdall@linaro.org,
-	kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
-	marc.zyngier@arm.com, suzuki.poulose@arm.com, will.deacon@arm.com,
-	yao.qi@arm.com, kernel-hardening@lists.openwall.com,
-	linux-kernel@vger.kernel.org, awallis@codeaurora.org
-Subject: Re: [PATCHv2 10/12] arm64/kvm: context-switch ptrauth registers
-Message-ID: <20180206123847.GY21802@cbox>
-References: <20171127163806.31435-1-mark.rutland@arm.com>
- <20171127163806.31435-11-mark.rutland@arm.com>
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1442817-1518442501-2-1387855136070741524
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518442501; b=sQK5Dvulk/Trzfqwtk3V5Qz444id+7p4DrZ84CLu11bXvDD
+    vd2gPFpATh+0bbgWEZUviFODtjz2V1N1UpJ9/v49YHWrEenAVu0mjcINC7uX+MAB
+    HqkJ4O5R4N1VqfsKniZVXkwR8/SX7knKmgCDbCGrdOTl5lyAA/qwP+qS8AbZ1rHr
+    /gHFFqJznHEpHVG54cAVFE8sIHVtApPPFY8L302MM4ALJg6FNfSrZJYTN5q3jUkj
+    TgdP+kqQPc6cAeKFnXK8g7g4y7DNT1ACNDJldFgjlHlZeadXorjxDnawf74wv/5K
+    41nCr8sTubqADTHRq2pmKkt8Nctm7GZ8nErc5xQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1518442501; bh=/vfRlOz4fb8uOvgndxjurcjEaz
+    H8TdA0uac/QVZGghs=; b=itszrqP4wJQgKx0yxn8BB09+AtNXF1yxiKJoLh1XFB
+    lUc9TEY9av9/WzqyJAJ6qYoLMl93CHqg2mqG/fsjQ7x4qH/O3I922Ib9sZnn0nRj
+    ipnAOeQwoAOuvfefSWmUGkMaDokYgktU1fmhexMRWfD9hohlA9njx1+OKJox9AhL
+    0h3KmS2tLUBHhXXObcsKUGFkXVEvVbQteS1TLbKOrCfITtJtDzjVpSE++T1LT+Cb
+    qWe6eiJgzZ66flkF4g8+ymT3vQn/FqbuVsrFrYJfz7Ru8yqYuitK72MkrcgDfTus
+    FdDLnZsr6oMKbQVovf1dtXkbpjx26uv17RGpxhLog2dw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=PBPHQg9B x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=merlin.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=PBPHQg9B x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=merlin.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S935518AbeBLNer (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Feb 2018 08:34:47 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46034 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933917AbeBLNep (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Mon, 12 Feb 2018 08:34:45 -0500
+Date: Mon, 12 Feb 2018 14:34:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Prarit Bhargava <prarit@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Lv Zheng <lv.zheng@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Timur Tabi <timur@codeaurora.org>, graeme.gregory@linaro.org,
+        mark.salter@redhat.com
+Subject: Re: [PATCH] acpi, spcr: Make SPCR available to x86
+Message-ID: <20180212133429.GC25314@hirez.programming.kicks-ass.net>
+References: <20180118150951.28964-1-prarit@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20171127163806.31435-11-mark.rutland@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180118150951.28964-1-prarit@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1585238074122761401?=
-X-GMAIL-MSGID: =?utf-8?q?1591655270072636736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Nov 27, 2017 at 04:38:04PM +0000, Mark Rutland wrote:
-> When pointer authentication is supported, a guest may wish to use it.
-> This patch adds the necessary KVM infrastructure for this to work, with
-> a semi-lazy context switch of the pointer auth state.
-> 
-> When we schedule a vcpu, 
+On Thu, Jan 18, 2018 at 10:09:51AM -0500, Prarit Bhargava wrote:
+>  config ACPI_SPCR_TABLE
+> +	bool "ACPI Serial Port Console Redirection Support"
+> +	default y if X86
+> +	help
+> +	  Enable support for Serial Port Console Redirection (SPCR) Table.
+> +	  This table provides information about the configuration of the
+> +	  earlycon console.
 
-That's not quite what the code does, the code only does this when we
-schedule back a preempted or blocked vcpu thread.
-
-> we disable guest usage of pointer
-> authentication instructions and accesses to the keys. While these are
-> disabled, we avoid context-switching the keys. When we trap the guest
-> trying to use pointer authentication functionality, we change to eagerly
-> context-switching the keys, and enable the feature. The next time the
-> vcpu is scheduled out/in, we start again.
-> 
-> Pointer authentication consists of address authentication and generic
-> authentication, and CPUs in a system might have varied support for
-> either. Where support for either feature is not uniform, it is hidden
-> from guests via ID register emulation, as a result of the cpufeature
-> framework in the host.
-> 
-> Unfortunately, address authentication and generic authentication cannot
-> be trapped separately, as the architecture provides a single EL2 trap
-> covering both. If we wish to expose one without the other, we cannot
-> prevent a (badly-written) guest from intermittently using a feature
-> which is not uniformly supported (when scheduled on a physical CPU which
-> supports the relevant feature). 
-
-We could choose to always trap and emulate in software in this case,
-couldn't we?  (not saying we should though).
-
-Also, this patch doesn't let userspace decide if we should hide or
-expose the feature to guests, and will expose new system registers to
-userspace.  That means that on hardware supporting pointer
-authentication, with this patch, it's not possible to migrate to a
-machine which doesn't have the support.  That's probably a good thing
-(false sense of security etc.), but I wonder if we should have a
-mechanism for userspace to ask for pointer authentication in the guest
-and only if that's enabled, do we expose the feature to the guest and in
-the system register list to user space as well?
-
-> When the guest is scheduled on a
-> physical CPU lacking the feature, these atetmps will result in an UNDEF
-
-attempts
-
-> being taken by the guest.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Christoffer Dall <cdall@linaro.org>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: kvmarm@lists.cs.columbia.edu
-> ---
->  arch/arm64/include/asm/kvm_host.h | 23 +++++++++-
->  arch/arm64/include/asm/kvm_hyp.h  |  7 +++
->  arch/arm64/kvm/handle_exit.c      | 21 +++++++++
->  arch/arm64/kvm/hyp/Makefile       |  1 +
->  arch/arm64/kvm/hyp/ptrauth-sr.c   | 91 +++++++++++++++++++++++++++++++++++++++
->  arch/arm64/kvm/hyp/switch.c       |  4 ++
->  arch/arm64/kvm/sys_regs.c         | 32 ++++++++++++++
->  7 files changed, 178 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/kvm/hyp/ptrauth-sr.c
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 39184aa3e2f2..2fc21a2a75a7 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -136,6 +136,18 @@ enum vcpu_sysreg {
->  	PMSWINC_EL0,	/* Software Increment Register */
->  	PMUSERENR_EL0,	/* User Enable Register */
->  
-> +	/* Pointer Authentication Registers */
-> +	APIAKEYLO_EL1,
-> +	APIAKEYHI_EL1,
-> +	APIBKEYLO_EL1,
-> +	APIBKEYHI_EL1,
-> +	APDAKEYLO_EL1,
-> +	APDAKEYHI_EL1,
-> +	APDBKEYLO_EL1,
-> +	APDBKEYHI_EL1,
-> +	APGAKEYLO_EL1,
-> +	APGAKEYHI_EL1,
-> +
->  	/* 32bit specific registers. Keep them at the end of the range */
->  	DACR32_EL2,	/* Domain Access Control Register */
->  	IFSR32_EL2,	/* Instruction Fault Status Register */
-> @@ -363,10 +375,19 @@ static inline void __cpu_init_hyp_mode(phys_addr_t pgd_ptr,
->  	__kvm_call_hyp((void *)pgd_ptr, hyp_stack_ptr, vector_ptr);
->  }
->  
-> +void kvm_arm_vcpu_ptrauth_enable(struct kvm_vcpu *vcpu);
-> +void kvm_arm_vcpu_ptrauth_disable(struct kvm_vcpu *vcpu);
-> +void kvm_arm_vcpu_ptrauth_trap(struct kvm_vcpu *vcpu);
-> +
->  static inline void kvm_arch_hardware_unsetup(void) {}
->  static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->  static inline void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu) {}
-> -static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
-> +
-> +static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
-> +{
-> +	kvm_arm_vcpu_ptrauth_disable(vcpu);
-> +}
-> +
-
-I still find this decision to begin trapping again quite arbitrary, and
-would at least prefer this to be in vcpu_load (which would make the
-behavior match the commit text as well).
-
-My expectation would be that if a guest is running software with pointer
-authentication enabled, then it's likely to either keep using the
-feature, or not use it at all, so I would make this a one-time flag.
-
-
-Thanks,
--Christoffer
-
->  static inline void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu) {}
->  
->  void kvm_arm_init_debug(void);
-> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-> index 08d3bb66c8b7..d0dd924cb175 100644
-> --- a/arch/arm64/include/asm/kvm_hyp.h
-> +++ b/arch/arm64/include/asm/kvm_hyp.h
-> @@ -152,6 +152,13 @@ void __fpsimd_save_state(struct user_fpsimd_state *fp_regs);
->  void __fpsimd_restore_state(struct user_fpsimd_state *fp_regs);
->  bool __fpsimd_enabled(void);
->  
-> +void __ptrauth_switch_to_guest(struct kvm_vcpu *vcpu,
-> +			       struct kvm_cpu_context *host_ctxt,
-> +			       struct kvm_cpu_context *guest_ctxt);
-> +void __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
-> +			      struct kvm_cpu_context *host_ctxt,
-> +			      struct kvm_cpu_context *guest_ctxt);
-> +
->  u64 __guest_enter(struct kvm_vcpu *vcpu, struct kvm_cpu_context *host_ctxt);
->  void __noreturn __hyp_do_panic(unsigned long, ...);
->  
-> diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-> index b71247995469..d9aff3c86551 100644
-> --- a/arch/arm64/kvm/handle_exit.c
-> +++ b/arch/arm64/kvm/handle_exit.c
-> @@ -136,6 +136,26 @@ static int kvm_handle_guest_debug(struct kvm_vcpu *vcpu, struct kvm_run *run)
->  	return ret;
->  }
->  
-> +/*
-> + * Handle the guest trying to use a ptrauth instruction, or trying to access a
-> + * ptrauth register.
-> + */
-> +void kvm_arm_vcpu_ptrauth_trap(struct kvm_vcpu *vcpu)
-> +{
-> +	if (cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH) ||
-> +	    cpus_have_const_cap(ARM64_HAS_GENERIC_AUTH)) {
-> +		kvm_arm_vcpu_ptrauth_enable(vcpu);
-> +	} else {
-> +		kvm_inject_undefined(vcpu);
-> +	}
-> +}
-> +
-> +static int kvm_handle_ptrauth(struct kvm_vcpu *vcpu, struct kvm_run *run)
-> +{
-> +	kvm_arm_vcpu_ptrauth_trap(vcpu);
-> +	return 1;
-> +}
-> +
->  static int kvm_handle_unknown_ec(struct kvm_vcpu *vcpu, struct kvm_run *run)
->  {
->  	u32 hsr = kvm_vcpu_get_hsr(vcpu);
-> @@ -176,6 +196,7 @@ static exit_handle_fn arm_exit_handlers[] = {
->  	[ESR_ELx_EC_BKPT32]	= kvm_handle_guest_debug,
->  	[ESR_ELx_EC_BRK64]	= kvm_handle_guest_debug,
->  	[ESR_ELx_EC_FP_ASIMD]	= handle_no_fpsimd,
-> +	[ESR_ELx_EC_PAC]	= kvm_handle_ptrauth,
->  };
->  
->  static exit_handle_fn kvm_get_exit_handler(struct kvm_vcpu *vcpu)
-> diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-> index f04400d494b7..2c2c3bd90cc0 100644
-> --- a/arch/arm64/kvm/hyp/Makefile
-> +++ b/arch/arm64/kvm/hyp/Makefile
-> @@ -19,6 +19,7 @@ obj-$(CONFIG_KVM_ARM_HOST) += fpsimd.o
->  obj-$(CONFIG_KVM_ARM_HOST) += tlb.o
->  obj-$(CONFIG_KVM_ARM_HOST) += hyp-entry.o
->  obj-$(CONFIG_KVM_ARM_HOST) += s2-setup.o
-> +obj-$(CONFIG_KVM_ARM_HOST) += ptrauth-sr.o
->  
->  # KVM code is run at a different exception code with a different map, so
->  # compiler instrumentation that inserts callbacks or checks into the code may
-> diff --git a/arch/arm64/kvm/hyp/ptrauth-sr.c b/arch/arm64/kvm/hyp/ptrauth-sr.c
-> new file mode 100644
-> index 000000000000..2784fb373296
-> --- /dev/null
-> +++ b/arch/arm64/kvm/hyp/ptrauth-sr.c
-> @@ -0,0 +1,91 @@
-> +/*
-> + * Copyright (C) 2017 ARM Ltd
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/compiler.h>
-> +#include <linux/kvm_host.h>
-> +
-> +#include <asm/cpucaps.h>
-> +#include <asm/cpufeature.h>
-> +#include <asm/kvm_asm.h>
-> +#include <asm/kvm_hyp.h>
-> +
-> +static bool __hyp_text __ptrauth_is_enabled(struct kvm_vcpu *vcpu)
-> +{
-> +	return vcpu->arch.hcr_el2 & (HCR_API | HCR_APK);
-> +}
-> +
-> +#define __ptrauth_save_key(regs, key)						\
-> +({										\
-> +	regs[key ## KEYLO_EL1] = read_sysreg_s(SYS_ ## key ## KEYLO_EL1);	\
-> +	regs[key ## KEYHI_EL1] = read_sysreg_s(SYS_ ## key ## KEYHI_EL1);	\
-> +})
-> +
-> +static void __hyp_text __ptrauth_save_state(struct kvm_cpu_context *ctxt)
-> +{
-> +	if (cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH)) {
-> +		__ptrauth_save_key(ctxt->sys_regs, APIA);
-> +		__ptrauth_save_key(ctxt->sys_regs, APIB);
-> +		__ptrauth_save_key(ctxt->sys_regs, APDA);
-> +		__ptrauth_save_key(ctxt->sys_regs, APDB);
-> +	}
-> +
-> +	if (cpus_have_const_cap(ARM64_HAS_GENERIC_AUTH)) {
-> +		__ptrauth_save_key(ctxt->sys_regs, APGA);
-> +	}
-> +}
-> +
-> +#define __ptrauth_restore_key(regs, key) 					\
-> +({										\
-> +	write_sysreg_s(regs[key ## KEYLO_EL1], SYS_ ## key ## KEYLO_EL1);	\
-> +	write_sysreg_s(regs[key ## KEYHI_EL1], SYS_ ## key ## KEYHI_EL1);	\
-> +})
-> +
-> +static void __hyp_text __ptrauth_restore_state(struct kvm_cpu_context *ctxt)
-> +{
-> +
-> +	if (cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH)) {
-> +		__ptrauth_restore_key(ctxt->sys_regs, APIA);
-> +		__ptrauth_restore_key(ctxt->sys_regs, APIB);
-> +		__ptrauth_restore_key(ctxt->sys_regs, APDA);
-> +		__ptrauth_restore_key(ctxt->sys_regs, APDB);
-> +	}
-> +
-> +	if (cpus_have_const_cap(ARM64_HAS_GENERIC_AUTH)) {
-> +		__ptrauth_restore_key(ctxt->sys_regs, APGA);
-> +	}
-> +}
-> +
-> +void __hyp_text __ptrauth_switch_to_guest(struct kvm_vcpu *vcpu,
-> +					  struct kvm_cpu_context *host_ctxt,
-> +					  struct kvm_cpu_context *guest_ctxt)
-> +{
-> +	if (!__ptrauth_is_enabled(vcpu))
-> +		return;
-> +
-> +	__ptrauth_save_state(host_ctxt);
-> +	__ptrauth_restore_state(guest_ctxt);
-> +}
-> +
-> +void __hyp_text __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
-> +					 struct kvm_cpu_context *host_ctxt,
-> +					 struct kvm_cpu_context *guest_ctxt)
-> +{
-> +	if (!__ptrauth_is_enabled(vcpu))
-> +		return;
-> +
-> +	__ptrauth_save_state(guest_ctxt);
-> +	__ptrauth_restore_state(host_ctxt);
-> +}
-> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> index 2205f0be3ced..d9be2762ac1a 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -315,6 +315,8 @@ int __hyp_text __kvm_vcpu_run(struct kvm_vcpu *vcpu)
->  	__sysreg_restore_guest_state(guest_ctxt);
->  	__debug_restore_state(vcpu, kern_hyp_va(vcpu->arch.debug_ptr), guest_ctxt);
->  
-> +	__ptrauth_switch_to_guest(vcpu, host_ctxt, guest_ctxt);
-> +
->  	/* Jump in the fire! */
->  again:
->  	exit_code = __guest_enter(vcpu, host_ctxt);
-> @@ -373,6 +375,8 @@ int __hyp_text __kvm_vcpu_run(struct kvm_vcpu *vcpu)
->  
->  	fp_enabled = __fpsimd_enabled();
->  
-> +	__ptrauth_switch_to_host(vcpu, host_ctxt, guest_ctxt);
-> +
->  	__sysreg_save_guest_state(guest_ctxt);
->  	__sysreg32_save_state(vcpu);
->  	__timer_disable_traps(vcpu);
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 1830ebc227d1..5fe3b2588bec 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -838,6 +838,32 @@ static bool access_pmuserenr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
->  	{ SYS_DESC(SYS_PMEVTYPERn_EL0(n)),					\
->  	  access_pmu_evtyper, reset_unknown, (PMEVTYPER0_EL0 + n), }
->  
-> +
-> +void kvm_arm_vcpu_ptrauth_enable(struct kvm_vcpu *vcpu)
-> +{
-> +	vcpu->arch.hcr_el2 |= (HCR_API | HCR_APK);
-> +}
-> +
-> +void kvm_arm_vcpu_ptrauth_disable(struct kvm_vcpu *vcpu)
-> +{
-> +	vcpu->arch.hcr_el2 &= ~(HCR_API | HCR_APK);
-> +}
-> +
-> +static bool trap_ptrauth(struct kvm_vcpu *vcpu,
-> +			 struct sys_reg_params *p,
-> +			 const struct sys_reg_desc *rd)
-> +{
-> +	kvm_arm_vcpu_ptrauth_trap(vcpu);
-> +	return false;
-> +}
-> +
-> +#define __PTRAUTH_KEY(k)						\
-> +	{ SYS_DESC(SYS_## k), trap_ptrauth, reset_unknown, k }
-> +
-> +#define PTRAUTH_KEY(k)							\
-> +	__PTRAUTH_KEY(k ## KEYLO_EL1),					\
-> +	__PTRAUTH_KEY(k ## KEYHI_EL1)
-> +
->  static bool access_cntp_tval(struct kvm_vcpu *vcpu,
->  		struct sys_reg_params *p,
->  		const struct sys_reg_desc *r)
-> @@ -1156,6 +1182,12 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_TTBR1_EL1), access_vm_reg, reset_unknown, TTBR1_EL1 },
->  	{ SYS_DESC(SYS_TCR_EL1), access_vm_reg, reset_val, TCR_EL1, 0 },
->  
-> +	PTRAUTH_KEY(APIA),
-> +	PTRAUTH_KEY(APIB),
-> +	PTRAUTH_KEY(APDA),
-> +	PTRAUTH_KEY(APDB),
-> +	PTRAUTH_KEY(APGA),
-> +
->  	{ SYS_DESC(SYS_AFSR0_EL1), access_vm_reg, reset_unknown, AFSR0_EL1 },
->  	{ SYS_DESC(SYS_AFSR1_EL1), access_vm_reg, reset_unknown, AFSR1_EL1 },
->  	{ SYS_DESC(SYS_ESR_EL1), access_vm_reg, reset_unknown, ESR_EL1 },
-> -- 
-> 2.11.0
-> 
+I just got asked this by oldconfig, which left me rather puzzled, WTF
+does this do?
