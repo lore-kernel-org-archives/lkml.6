@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1166103-1518432774-2-11114418653323585140
+X-Cyrus-Session-Id: sloti22d1t05-1166103-1518432772-2-7060277231287989779
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
 X-Spam-charsets: plain='us-ascii'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518432774; b=RhG89CRfyvsSKBoCrAkU+KpWcQpnMv31DcuP4hu22FkySD/
-    nYvW9bkkN3xHqGfAP9pbm6IKhIbX6cjoHijPO+dlJKF9kASIIJceg8sN9BChxgJT
-    8vUBWv0We11BssldiqPSTnxKYt4e9tj7ZQn2ywBAERqTbV2nRwO9TZtp42m/cd9F
-    GeG3OUvK+b9fnrujGjzUzYB3LXMXIrPnZNjVJJc5S1FW2PtrbXe8AIE/wxZruArb
-    naEdVVKtNrdJdwORrkjLRsNX2RtPCvk8gYSvY17UzjVqU9ckykBt5bo1aLbOVdFg
-    mbDFwT1ORvzQYs458t9ePZwOPG5Mw/FWK8dhhAg==
+    t=1518432772; b=YSmlzKLAl3tgBeoLr3C9omZrYOk+k3GfXLg66tqyElRLnZO
+    zc5sDaIT0Ipt0TKBWaUM981WPuNP5BhMgwFBujdUiR6ov6+MwJocWSe2mEoNoSI1
+    dpkQs1Je8lEVM+VY9kS0H3GqGx8R9vYyk+Qy0m8XbnTX8GhTuioapK2NgEIHM8eT
+    D6Is+YNzACi05GU2X+iaOuhD/eWPAf6hs1ywTZXAlIwh7CJSFdxu+z3BZSajHRv+
+    cFe0G3so+MBfDuXjqhIifLTuqW8jifm3CJu4WcHpAr6xrNx7FK3zSX5bQUUfwNt/
+    J3s12kROPx52n5trXSJUISIsfjTYm3bR7xTCSlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518432774; bh=c
-    JMfDELOvofX1sb2m3jhyLhqist9L2hSBZdy9cS2+9k=; b=Pf1ixwZEZol0398nQ
-    vw1ldCWyrZLr151KUmg/cZ6MObqBLdS54VMSVl3jtjRymnfUfI7NNAxsxYNFvEDI
-    XqnPmYyUi08a5FauRImzpKm6AV4DpluhnAs0JEiKwh22PknwR1WtSSz7XTWHeygc
-    O2uL2m/fSMjqd8i9Zj/DK3mFL+4tcpdL5FiviwwQ5N6itFbteoP0YYdqOu0tmQ2B
-    J1GBFsGMkzlEIS4CqKdX+L6eEzzQG5FyZMKOO6ZR00j7LhHqkJyy+j+kvBRp7sWU
-    +FdYqfnoXRzXUb+nRktzCFA5q5gHogiLCylU0oMap0MneZ5JZew5KKMinSxkLaWi
-    U457w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=arctest; t=1518432772; bh=N
+    ar6k5otbreVsVc3GKLBodyndWCmuQVMdH5rckOxtmw=; b=P5nyd4n2VIkvSF1SP
+    j2awNNfLea1DsXVIMHKnS8QVjp5ismTcKopUR0pfBq+2wKENVWxlzRelX21h9LwG
+    oyjm/zGXu81XQKhdsdEBq79lq5Ihle52vYNB+dSMLhat8c/uA8vxHGwH/NCoIWyp
+    HqZM4I5IP4WRgoq72mu5W/1oVw4R344EPhkYYxPGlkEX8OnejDTg4HXsbDrNxjEV
+    MR0kT62k0zuoTmjgyWh5gVmP4oxZu43TkWsiU94f6K/NI0MfOGTZP69bPb4sEmjf
+    RWIt7CvDAh1DEG2gzIB9Mzz1fzmlaP8Ub0p7Hzg1ITdqWvecUIccCTAMpztj1moD
+    wjKfA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
@@ -53,9 +53,10 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <gregkh@linuxfoundation.org>, <labbott@redhat.com>,
  <sumit.semwal@linaro.org>
-Subject: [PATCH v2 7/9] staging: android: ion: Return void instead of int
-Date: Mon, 12 Feb 2018 18:43:12 +0800
-Message-ID: <1518432194-41536-8-git-send-email-xieyisheng1@huawei.com>
+Subject: [PATCH v2 8/9] staging: android: ion: Cleanup
+ ion_page_pool_alloc_pages
+Date: Mon, 12 Feb 2018 18:43:13 +0800
+Message-ID: <1518432194-41536-9-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1518432194-41536-1-git-send-email-xieyisheng1@huawei.com>
 References: <1518432194-41536-1-git-send-email-xieyisheng1@huawei.com>
@@ -82,36 +83,37 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Now, nobody care about the return value of ion_page_pool_add, therefore
-we can just make it return void.
+ion_page_pool_alloc_pages calls alloc_pages to allocate pages for page
+pools. If alloc_pages return NULL, it will return NULL, or it will
+return the pages allocate from alloc_pages. So we can just return
+alloc_pages without any judgement.
 
-Acked-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/staging/android/ion/ion_page_pool.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/android/ion/ion_page_pool.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
-index 150626f..e3a6e32 100644
+index e3a6e32..6d2caf0 100644
 --- a/drivers/staging/android/ion/ion_page_pool.c
 +++ b/drivers/staging/android/ion/ion_page_pool.c
-@@ -26,7 +26,7 @@ static void ion_page_pool_free_pages(struct ion_page_pool *pool,
- 	__free_pages(page, pool->order);
- }
+@@ -11,13 +11,9 @@
  
--static int ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
-+static void ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
+ #include "ion.h"
+ 
+-static void *ion_page_pool_alloc_pages(struct ion_page_pool *pool)
++static inline struct page *ion_page_pool_alloc_pages(struct ion_page_pool *pool)
  {
- 	mutex_lock(&pool->mutex);
- 	if (PageHighMem(page)) {
-@@ -37,7 +37,6 @@ static int ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
- 		pool->low_count++;
- 	}
- 	mutex_unlock(&pool->mutex);
--	return 0;
+-	struct page *page = alloc_pages(pool->gfp_mask, pool->order);
+-
+-	if (!page)
+-		return NULL;
+-	return page;
++	return alloc_pages(pool->gfp_mask, pool->order);
  }
  
- static struct page *ion_page_pool_remove(struct ion_page_pool *pool, bool high)
+ static void ion_page_pool_free_pages(struct ion_page_pool *pool,
 -- 
 1.7.12.4
 
