@@ -1,66 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933139AbeBLJAR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 04:00:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56802 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932768AbeBLJAP (ORCPT
+        id S933167AbeBLJAm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 04:00:42 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:38233 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932768AbeBLJAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:00:15 -0500
-From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Douglas Miller <dougmill@linux.vnet.ibm.com>,
-        Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>
-Subject: [PATCH] powerpc/xmon: Dont register sysrq key when kernel param xmon=off
-Date: Mon, 12 Feb 2018 14:29:56 +0530
-X-Mailer: git-send-email 2.14.3
-X-TM-AS-GCONF: 00
-x-cbid: 18021209-0040-0000-0000-0000042ECFBF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021209-0041-0000-0000-000020D28DFE
-Message-Id: <20180212085956.12016-1-vaibhav@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802120116
+        Mon, 12 Feb 2018 04:00:38 -0500
+X-Google-Smtp-Source: AH8x226BFNSDfDLl4DOXC3yKWn/juR2A9I7caw09lM9vTKahnCI7Kciu5srJ/DwtvSNdXf8m3FsvNKNoyyoIqPEIF6I=
+MIME-Version: 1.0
+In-Reply-To: <1518425496-12159-5-git-send-email-frowand.list@gmail.com>
+References: <1518425496-12159-1-git-send-email-frowand.list@gmail.com> <1518425496-12159-5-git-send-email-frowand.list@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Feb 2018 10:00:37 +0100
+X-Google-Sender-Auth: Y3kDr5p-0d6flr_U3My2CxAArkA
+Message-ID: <CAMuHMdUnkdtHnbSVM7p4756OQzq24N8=g8==s-6yKLAgki+LyA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] of: improve reporting invalid overlay target path
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Presently sysrq key for xmon('x') is registered during kernel init
-irrespective of the value of kernel param 'xmon'. Thus xmon is enabled
-even if 'xmon=off' is passed on the kernel command line.
+Hi Frank,
 
-This minor patch updates setup_xmon_sysrq() to register
-'sysrq_xmon_op' only when variable 'xmon_on' is set.
+On Mon, Feb 12, 2018 at 9:51 AM,  <frowand.list@gmail.com> wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> Errors while developing the patch to create of_overlay_fdt_apply()
+> exposed inadequate error messages to debug problems when overlay
+> devicetree fragment nodes contain an invalid target path.  Improve
+> the messages in find_target_node() to remedy this.
+>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 
-Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
----
- arch/powerpc/xmon/xmon.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks for your patch!
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index 82e1a3ee6e0f..3b995474b102 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -3642,8 +3642,7 @@ static struct sysrq_key_op sysrq_xmon_op = {
- 
- static int __init setup_xmon_sysrq(void)
- {
--	register_sysrq_key('x', &sysrq_xmon_op);
--	return 0;
-+	return xmon_on ? register_sysrq_key('x', &sysrq_xmon_op) : 0;
- }
- device_initcall(setup_xmon_sysrq);
- #endif /* CONFIG_MAGIC_SYSRQ */
--- 
-2.14.3
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -488,17 +488,26 @@ static int build_changeset(struct overlay_changeset *ovcs)
+>   */
+>  static struct device_node *find_target_node(struct device_node *info_node)
+>  {
+> +       struct device_node *node;
+>         const char *path;
+>         u32 val;
+>         int ret;
+>
+>         ret = of_property_read_u32(info_node, "target", &val);
+> -       if (!ret)
+> -               return of_find_node_by_phandle(val);
+> +       if (!ret) {
+> +               node = of_find_node_by_phandle(val);
+> +               if (!node)
+> +                       pr_err("target node find by phandle failed\n");
+
+Do you want to print the actual node, cfr. below?
+
+> +               return node;
+> +       }
+>
+>         ret = of_property_read_string(info_node, "target-path", &path);
+> -       if (!ret)
+> -               return of_find_node_by_path(path);
+> +       if (!ret) {
+> +               node =  of_find_node_by_path(path);
+> +               if (!node)
+> +                       pr_err("target node find by path failed\n");
+
+Likewise.
+
+> +               return node;
+> +       }
+>
+>         pr_err("Failed to find target for node %p (%s)\n",
+>                 info_node, info_node->name);
+
+This one prints more info.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
