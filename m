@@ -1,23 +1,23 @@
 Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AH8x227ipR42lIKgD4y4BljNtVBkjGxtUew3GMN0Lc+aYKNobeLmBig3wBgTtc0WU5FZEyLwnPad
-ARC-Seal: i=1; a=rsa-sha256; t=1518461157; cv=none;
+X-Google-Smtp-Source: AH8x22570ICK3I4FcHHkcObKfG8T8qrp25u2BoW0SEcHVCoqFvnGLnVIwoPE1bV9TXHd2h5tSu70
+ARC-Seal: i=1; a=rsa-sha256; t=1518461156; cv=none;
         d=google.com; s=arc-20160816;
-        b=rR1a6J57tVFbQW1KWksZ1CXEHtoqW55ml8Sj0LnInaaThSxt1CcrhtWSyrXz6s2XK8
-         EuQCQPEtdUpZptCE5aJKrUUY2FPps1PXfuYy7ch6GqOWyC7dSOAGxs5WeB4vy1eLsbVc
-         mbKwpfS4oDThtcnEz5r9SThRpI6tmCPdsRdMKAjVNvMs+kF5PQ2o8S15Ord68JsP4Sct
-         pVPLn3EVklAqCwAIYSFsxZCUSELkiTMPkGobuOEcY/VZjOEeyFYH9UZhGgZkHzYIU2jH
-         bxmk98QRARkTxKzS9Bi+nMvvH76fQEDaocrE6JB4rqjjIWfPuOAgLo2QYOGrq8S0QS2s
-         vAlg==
+        b=ltA29PT9hXPuqvwM7ln0e9yrJyLVF0rbEE4ezsoTbeGKERB+3ZC+dpBAoYpeZkEjvp
+         dV7Gl19yGNj+jyCFZTFO7qL34LWuMHZA7i88MWQGrEkIYJQjlR4cSATcJodSbta0mqE5
+         GDqYow1Vz0r10qZqP6n0foQiRXg6KGTgvbI0lvU3ZCQ7I9cGJuhLXtQM+M7KX3XHx6Xz
+         u/IV7GwuFoaaIRDw6H1ZC8ewRqV2VP16lDRn1BUnfLXdqRCxjk5KfMS6F9Aj3/UmK92z
+         wtz4ImAM4x6szrrm/2Jn4p4v+gc/QmGKUVcZfcWzMU4/7QvCkf/kAg7cHIrw0FLs52/u
+         FtGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=+EUx+YRJhDnUSE3IHHSEIy9JidFrhnXNbJZMbpaivlM=;
-        b=Lhg6kZGSozbS5N+HV/NRC2CxdXTSGUIScObk3MOFpoy3KboGA+krBQCGVcuQiZMPhG
-         NXYzhn9ffc3k9xn/5wxGPLC81opMnC6BtSazzGj4kaTi0aQJjoZJncq8hGWlojVUJmNf
-         urCKKMyoWYacPF7UuC0SLyaKpgFOXDoT+de/JYWX30QIiNkzkGO/VbwTzI1dZJckKG2h
-         Kuz+1cKE20drRcivZ9k6aeRh0yU3h7U6HkkKZBWP2kjOkp94YDDB9xB5h36coqIsTMS/
-         KoK6jAARsXIMWqUUhO7e5+6G8i/stAn9rQ5PP8QrKpwVFtvxabL8RLmLCp3Um5btkdvn
-         fFoA==
+        bh=ZdvqDw4R+2v4GRXqNKwtlO7uldnV8Jmw7omMzhSjXqs=;
+        b=u3g7dWeMUVMtuBIKvy3pXEpr/LzH3Jn8KQDBczdi3Onjr9iilW741hG9QpanNffZUT
+         zpri5COsk0uyNcc5y6cAXoLnOOOdHu9WtH62OupLK1uAzszZFVsq/zaDZzAXQDld0pB3
+         1OAd4H6r3YxumK51+Bp0cB0CVTad59fOid0HyBxxrlzMFl6iIdUUz6rZTr3Wwy6e1u+y
+         CXHDLfj6kqrpMg/uh4ecLFQLZmoMmWqOvtkF4DJlI0YzbtRlyOqaTQ0Cx40GeYJ3DljA
+         acPWFc4lCacVKFwoPPJgrKXHrPdImMgaOVdKR7XypqW7l5fhtuV8sUBGAhW+gKuBywWF
+         CapQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
 Authentication-Results: mx.google.com;
@@ -30,55 +30,59 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Alexey Klimov <klimov.linux@gmail.com>
-Subject: [PATCH v5 09/20] firmware: arm_scmi: add initial support for sensor protocol
-Date: Mon, 12 Feb 2018 18:45:13 +0000
-Message-Id: <1518461124-17371-10-git-send-email-sudeep.holla@arm.com>
+Subject: [PATCH v5 08/20] firmware: arm_scmi: add initial support for power protocol
+Date: Mon, 12 Feb 2018 18:45:12 +0000
+Message-Id: <1518461124-17371-9-git-send-email-sudeep.holla@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518461124-17371-1-git-send-email-sudeep.holla@arm.com>
 References: <1518461124-17371-1-git-send-email-sudeep.holla@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592221926164719033?=
-X-GMAIL-MSGID: =?utf-8?q?1592221926164719033?=
+X-GMAIL-THRID: =?utf-8?q?1592221925482353057?=
+X-GMAIL-MSGID: =?utf-8?q?1592221925482353057?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The sensor protocol provides functions to manage platform sensors, and
-provides the commands to describe the protocol version and the various
-attribute flags. It also provides commands to discover various sensors
-implemented and managed by the platform, read any sensor synchronously
-or asynchronously as allowed by the platform, program sensor attributes
-and/or configurations, if applicable.
+The power protocol is intended for management of power states of various
+power domains. The power domain management protocol provides commands to
+describe the protocol version, discover the implementation specific
+attributes, set and get the power state of a domain.
 
-This patch adds support for most of the above features.
+This patch adds support for the above mention features of the protocol.
 
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+--
+ drivers/firmware/arm_scmi/Makefile |   2 +-
+ drivers/firmware/arm_scmi/power.c  | 242 +++++++++++++++++++++++++++++++++++++
+ include/linux/scmi_protocol.h      |  28 +++++
+ 3 files changed, 271 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/firmware/arm_scmi/power.c
 ---
- drivers/firmware/arm_scmi/Makefile  |   2 +-
- drivers/firmware/arm_scmi/sensors.c | 302 ++++++++++++++++++++++++++++++++++++
- include/linux/scmi_protocol.h       |  42 +++++
- 3 files changed, 345 insertions(+), 1 deletion(-)
- create mode 100644 drivers/firmware/arm_scmi/sensors.c
+ drivers/firmware/arm_scmi/Makefile |   2 +-
+ drivers/firmware/arm_scmi/power.c  | 232 +++++++++++++++++++++++++++++++++++++
+ include/linux/scmi_protocol.h      |  26 +++++
+ 3 files changed, 259 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/firmware/arm_scmi/power.c
 
 diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-index 420c761ced94..3236890905b9 100644
+index 2130ee9ac825..420c761ced94 100644
 --- a/drivers/firmware/arm_scmi/Makefile
 +++ b/drivers/firmware/arm_scmi/Makefile
 @@ -1,4 +1,4 @@
  obj-y	= scmi-bus.o scmi-driver.o scmi-protocols.o
  scmi-bus-y = bus.o
  scmi-driver-y = driver.o
--scmi-protocols-y = base.o clock.o perf.o power.o
-+scmi-protocols-y = base.o clock.o perf.o power.o sensors.o
-diff --git a/drivers/firmware/arm_scmi/sensors.c b/drivers/firmware/arm_scmi/sensors.c
+-scmi-protocols-y = base.o clock.o perf.o
++scmi-protocols-y = base.o clock.o perf.o power.o
+diff --git a/drivers/firmware/arm_scmi/power.c b/drivers/firmware/arm_scmi/power.c
 new file mode 100644
-index 000000000000..aee38d3d1c2d
+index 000000000000..baf92a15b7e9
 --- /dev/null
-+++ b/drivers/firmware/arm_scmi/sensors.c
-@@ -0,0 +1,302 @@
++++ b/drivers/firmware/arm_scmi/power.c
+@@ -0,0 +1,232 @@
 +/*
-+ * System Control and Management Interface (SCMI) Sensor Protocol
++ * System Control and Management Interface (SCMI) Power Protocol
 + *
 + * Copyright (C) 2017 ARM Ltd.
 + *
@@ -97,80 +101,64 @@ index 000000000000..aee38d3d1c2d
 +
 +#include "common.h"
 +
-+enum scmi_sensor_protocol_cmd {
-+	SENSOR_DESCRIPTION_GET = 0x3,
-+	SENSOR_CONFIG_SET = 0x4,
-+	SENSOR_TRIP_POINT_SET = 0x5,
-+	SENSOR_READING_GET = 0x6,
++enum scmi_power_protocol_cmd {
++	POWER_DOMAIN_ATTRIBUTES = 0x3,
++	POWER_STATE_SET = 0x4,
++	POWER_STATE_GET = 0x5,
++	POWER_STATE_NOTIFY = 0x6,
 +};
 +
-+struct scmi_msg_resp_sensor_attributes {
-+	__le16 num_sensors;
-+	    u8 max_requests;
-+	    u8 reserved;
-+	__le32 reg_addr_low;
-+	__le32 reg_addr_high;
-+	__le32 reg_size;
++struct scmi_msg_resp_power_attributes {
++	__le16 num_domains;
++	__le16 reserved;
++	__le32 stats_addr_low;
++	__le32 stats_addr_high;
++	__le32 stats_size;
 +};
 +
-+struct scmi_msg_resp_sensor_description {
-+	__le16 num_returned;
-+	__le16 num_remaining;
-+	struct {
-+		__le32 id;
-+		__le32 attributes_low;
-+#define SUPPORTS_ASYNC_READ(x)	((x) & BIT(31))
-+#define NUM_TRIP_POINTS(x)	(((x) >> 4) & 0xff)
-+		__le32 attributes_high;
-+#define SENSOR_TYPE(x)		((x) & 0xff)
-+#define SENSOR_SCALE(x)		(((x) >> 11) & 0x3f)
-+#define SENSOR_UPDATE_SCALE(x)	(((x) >> 22) & 0x1f)
-+#define SENSOR_UPDATE_BASE(x)	(((x) >> 27) & 0x1f)
-+		    u8 name[SCMI_MAX_STR_SIZE];
-+	} desc[0];
-+};
-+
-+struct scmi_msg_set_sensor_config {
-+	__le32 id;
-+	__le32 event_control;
-+};
-+
-+struct scmi_msg_set_sensor_trip_point {
-+	__le32 id;
-+	__le32 event_control;
-+#define SENSOR_TP_EVENT_MASK	(0x3)
-+#define SENSOR_TP_DISABLED	0x0
-+#define SENSOR_TP_POSITIVE	0x1
-+#define SENSOR_TP_NEGATIVE	0x2
-+#define SENSOR_TP_BOTH		0x3
-+#define SENSOR_TP_ID(x)		(((x) & 0xff) << 4)
-+	__le32 value_low;
-+	__le32 value_high;
-+};
-+
-+struct scmi_msg_sensor_reading_get {
-+	__le32 id;
++struct scmi_msg_resp_power_domain_attributes {
 +	__le32 flags;
-+#define SENSOR_READ_ASYNC	BIT(0)
++#define SUPPORTS_STATE_SET_NOTIFY(x)	((x) & BIT(31))
++#define SUPPORTS_STATE_SET_ASYNC(x)	((x) & BIT(30))
++#define SUPPORTS_STATE_SET_SYNC(x)	((x) & BIT(29))
++	    u8 name[SCMI_MAX_STR_SIZE];
 +};
 +
-+struct sensors_info {
-+	int num_sensors;
-+	int max_requests;
-+	u64 reg_addr;
-+	u32 reg_size;
-+	struct scmi_sensor_info *sensors;
++struct scmi_power_set_state {
++	__le32 flags;
++#define STATE_SET_ASYNC		BIT(0)
++	__le32 domain;
++	__le32 state;
 +};
 +
-+static int scmi_sensor_attributes_get(const struct scmi_handle *handle,
-+				      struct sensors_info *si)
++struct scmi_power_state_notify {
++	__le32 domain;
++	__le32 notify_enable;
++};
++
++struct power_dom_info {
++	bool state_set_sync;
++	bool state_set_async;
++	bool state_set_notify;
++	char name[SCMI_MAX_STR_SIZE];
++};
++
++struct scmi_power_info {
++	int num_domains;
++	u64 stats_addr;
++	u32 stats_size;
++	struct power_dom_info *dom_info;
++};
++
++static int scmi_power_attributes_get(const struct scmi_handle *handle,
++				     struct scmi_power_info *pi)
 +{
 +	int ret;
 +	struct scmi_xfer *t;
-+	struct scmi_msg_resp_sensor_attributes *attr;
++	struct scmi_msg_resp_power_attributes *attr;
 +
 +	ret = scmi_one_xfer_init(handle, PROTOCOL_ATTRIBUTES,
-+				 SCMI_PROTOCOL_SENSOR, 0, sizeof(*attr), &t);
++				 SCMI_PROTOCOL_POWER, 0, sizeof(*attr), &t);
 +	if (ret)
 +		return ret;
 +
@@ -178,275 +166,201 @@ index 000000000000..aee38d3d1c2d
 +
 +	ret = scmi_do_xfer(handle, t);
 +	if (!ret) {
-+		si->num_sensors = le16_to_cpu(attr->num_sensors);
-+		si->max_requests = attr->max_requests;
-+		si->reg_addr = le32_to_cpu(attr->reg_addr_low) |
-+				(u64)le32_to_cpu(attr->reg_addr_high) << 32;
-+		si->reg_size = le32_to_cpu(attr->reg_size);
++		pi->num_domains = le16_to_cpu(attr->num_domains);
++		pi->stats_addr = le32_to_cpu(attr->stats_addr_low) |
++				(u64)le32_to_cpu(attr->stats_addr_high) << 32;
++		pi->stats_size = le32_to_cpu(attr->stats_size);
 +	}
-+
-+	scmi_one_xfer_put(handle, t);
-+	return ret;
-+}
-+
-+static int scmi_sensor_description_get(const struct scmi_handle *handle,
-+				       struct sensors_info *si)
-+{
-+	int ret, cnt;
-+	u32 desc_index = 0;
-+	u16 num_returned, num_remaining;
-+	struct scmi_xfer *t;
-+	struct scmi_msg_resp_sensor_description *buf;
-+
-+	ret = scmi_one_xfer_init(handle, SENSOR_DESCRIPTION_GET,
-+				 SCMI_PROTOCOL_SENSOR, sizeof(__le32), 0, &t);
-+	if (ret)
-+		return ret;
-+
-+	buf = t->rx.buf;
-+
-+	do {
-+		/* Set the number of sensors to be skipped/already read */
-+		*(__le32 *)t->tx.buf = cpu_to_le32(desc_index);
-+
-+		ret = scmi_do_xfer(handle, t);
-+		if (ret)
-+			break;
-+
-+		num_returned = le16_to_cpu(buf->num_returned);
-+		num_remaining = le16_to_cpu(buf->num_remaining);
-+
-+		if (desc_index + num_returned > si->num_sensors) {
-+			dev_err(handle->dev, "No. of sensors can't exceed %d",
-+				si->num_sensors);
-+			break;
-+		}
-+
-+		for (cnt = 0; cnt < num_returned; cnt++) {
-+			u32 attrh;
-+			struct scmi_sensor_info *s;
-+
-+			attrh = le32_to_cpu(buf->desc[cnt].attributes_high);
-+			s = &si->sensors[desc_index + cnt];
-+			s->id = le32_to_cpu(buf->desc[cnt].id);
-+			s->type = SENSOR_TYPE(attrh);
-+			memcpy(s->name, buf->desc[cnt].name, SCMI_MAX_STR_SIZE);
-+		}
-+
-+		desc_index += num_returned;
-+		/*
-+		 * check for both returned and remaining to avoid infinite
-+		 * loop due to buggy firmware
-+		 */
-+	} while (num_returned && num_remaining);
 +
 +	scmi_one_xfer_put(handle, t);
 +	return ret;
 +}
 +
 +static int
-+scmi_sensor_configuration_set(const struct scmi_handle *handle, u32 sensor_id)
-+{
-+	int ret;
-+	u32 evt_cntl = BIT(0);
-+	struct scmi_xfer *t;
-+	struct scmi_msg_set_sensor_config *cfg;
-+
-+	ret = scmi_one_xfer_init(handle, SENSOR_CONFIG_SET,
-+				 SCMI_PROTOCOL_SENSOR, sizeof(*cfg), 0, &t);
-+	if (ret)
-+		return ret;
-+
-+	cfg = t->tx.buf;
-+	cfg->id = cpu_to_le32(sensor_id);
-+	cfg->event_control = cpu_to_le32(evt_cntl);
-+
-+	ret = scmi_do_xfer(handle, t);
-+
-+	scmi_one_xfer_put(handle, t);
-+	return ret;
-+}
-+
-+static int scmi_sensor_trip_point_set(const struct scmi_handle *handle,
-+				      u32 sensor_id, u8 trip_id, u64 trip_value)
-+{
-+	int ret;
-+	u32 evt_cntl = SENSOR_TP_BOTH;
-+	struct scmi_xfer *t;
-+	struct scmi_msg_set_sensor_trip_point *trip;
-+
-+	ret = scmi_one_xfer_init(handle, SENSOR_TRIP_POINT_SET,
-+				 SCMI_PROTOCOL_SENSOR, sizeof(*trip), 0, &t);
-+	if (ret)
-+		return ret;
-+
-+	trip = t->tx.buf;
-+	trip->id = cpu_to_le32(sensor_id);
-+	trip->event_control = cpu_to_le32(evt_cntl | SENSOR_TP_ID(trip_id));
-+	trip->value_low = cpu_to_le32(trip_value & 0xffffffff);
-+	trip->value_high = cpu_to_le32(trip_value >> 32);
-+
-+	ret = scmi_do_xfer(handle, t);
-+
-+	scmi_one_xfer_put(handle, t);
-+	return ret;
-+}
-+
-+static int scmi_sensor_reading_get(const struct scmi_handle *handle,
-+				   u32 sensor_id, bool async, u64 *value)
++scmi_power_domain_attributes_get(const struct scmi_handle *handle, u32 domain,
++				 struct power_dom_info *dom_info)
 +{
 +	int ret;
 +	struct scmi_xfer *t;
-+	struct scmi_msg_sensor_reading_get *sensor;
++	struct scmi_msg_resp_power_domain_attributes *attr;
 +
-+	ret = scmi_one_xfer_init(handle, SENSOR_READING_GET,
-+				 SCMI_PROTOCOL_SENSOR, sizeof(*sensor),
-+				 sizeof(u64), &t);
++	ret = scmi_one_xfer_init(handle, POWER_DOMAIN_ATTRIBUTES,
++				 SCMI_PROTOCOL_POWER, sizeof(domain),
++				 sizeof(*attr), &t);
 +	if (ret)
 +		return ret;
 +
-+	sensor = t->tx.buf;
-+	sensor->id = cpu_to_le32(sensor_id);
-+	sensor->flags = cpu_to_le32(async ? SENSOR_READ_ASYNC : 0);
++	*(__le32 *)t->tx.buf = cpu_to_le32(domain);
++	attr = t->rx.buf;
 +
 +	ret = scmi_do_xfer(handle, t);
 +	if (!ret) {
-+		__le32 *pval = t->rx.buf;
++		u32 flags = le32_to_cpu(attr->flags);
 +
-+		*value = le32_to_cpu(*pval);
-+		*value |= (u64)le32_to_cpu(*(pval + 1)) << 32;
++		dom_info->state_set_notify = SUPPORTS_STATE_SET_NOTIFY(flags);
++		dom_info->state_set_async = SUPPORTS_STATE_SET_ASYNC(flags);
++		dom_info->state_set_sync = SUPPORTS_STATE_SET_SYNC(flags);
++		memcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
 +	}
 +
 +	scmi_one_xfer_put(handle, t);
 +	return ret;
 +}
 +
-+static const struct scmi_sensor_info *
-+scmi_sensor_info_get(const struct scmi_handle *handle, u32 sensor_id)
++static int
++scmi_power_state_set(const struct scmi_handle *handle, u32 domain, u32 state)
 +{
-+	struct sensors_info *si = handle->sensor_priv;
++	int ret;
++	struct scmi_xfer *t;
++	struct scmi_power_set_state *st;
 +
-+	return si->sensors + sensor_id;
++	ret = scmi_one_xfer_init(handle, POWER_STATE_SET, SCMI_PROTOCOL_POWER,
++				 sizeof(*st), 0, &t);
++	if (ret)
++		return ret;
++
++	st = t->tx.buf;
++	st->flags = cpu_to_le32(0);
++	st->domain = cpu_to_le32(domain);
++	st->state = cpu_to_le32(state);
++
++	ret = scmi_do_xfer(handle, t);
++
++	scmi_one_xfer_put(handle, t);
++	return ret;
 +}
 +
-+static int scmi_sensor_count_get(const struct scmi_handle *handle)
++static int
++scmi_power_state_get(const struct scmi_handle *handle, u32 domain, u32 *state)
 +{
-+	struct sensors_info *si = handle->sensor_priv;
++	int ret;
++	struct scmi_xfer *t;
 +
-+	return si->num_sensors;
++	ret = scmi_one_xfer_init(handle, POWER_STATE_GET, SCMI_PROTOCOL_POWER,
++				 sizeof(u32), sizeof(u32), &t);
++	if (ret)
++		return ret;
++
++	*(__le32 *)t->tx.buf = cpu_to_le32(domain);
++
++	ret = scmi_do_xfer(handle, t);
++	if (!ret)
++		*state = le32_to_cpu(*(__le32 *)t->rx.buf);
++
++	scmi_one_xfer_put(handle, t);
++	return ret;
 +}
 +
-+static struct scmi_sensor_ops sensor_ops = {
-+	.count_get = scmi_sensor_count_get,
-+	.info_get = scmi_sensor_info_get,
-+	.configuration_set = scmi_sensor_configuration_set,
-+	.trip_point_set = scmi_sensor_trip_point_set,
-+	.reading_get = scmi_sensor_reading_get,
++static int scmi_power_num_domains_get(const struct scmi_handle *handle)
++{
++	struct scmi_power_info *pi = handle->power_priv;
++
++	return pi->num_domains;
++}
++
++static char *scmi_power_name_get(const struct scmi_handle *handle, u32 domain)
++{
++	struct scmi_power_info *pi = handle->power_priv;
++	struct power_dom_info *dom = pi->dom_info + domain;
++
++	return dom->name;
++}
++
++static struct scmi_power_ops power_ops = {
++	.num_domains_get = scmi_power_num_domains_get,
++	.name_get = scmi_power_name_get,
++	.state_set = scmi_power_state_set,
++	.state_get = scmi_power_state_get,
 +};
 +
-+static int scmi_sensors_protocol_init(struct scmi_handle *handle)
++static int scmi_power_protocol_init(struct scmi_handle *handle)
 +{
++	int domain;
 +	u32 version;
-+	struct sensors_info *sinfo;
++	struct scmi_power_info *pinfo;
 +
-+	scmi_version_get(handle, SCMI_PROTOCOL_SENSOR, &version);
++	scmi_version_get(handle, SCMI_PROTOCOL_POWER, &version);
 +
-+	dev_dbg(handle->dev, "Sensor Version %d.%d\n",
++	dev_dbg(handle->dev, "Power Version %d.%d\n",
 +		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
 +
-+	sinfo = devm_kzalloc(handle->dev, sizeof(*sinfo), GFP_KERNEL);
-+	if (!sinfo)
++	pinfo = devm_kzalloc(handle->dev, sizeof(*pinfo), GFP_KERNEL);
++	if (!pinfo)
 +		return -ENOMEM;
 +
-+	scmi_sensor_attributes_get(handle, sinfo);
++	scmi_power_attributes_get(handle, pinfo);
 +
-+	sinfo->sensors = devm_kcalloc(handle->dev, sinfo->num_sensors,
-+				      sizeof(*sinfo->sensors), GFP_KERNEL);
-+	if (!sinfo->sensors)
++	pinfo->dom_info = devm_kcalloc(handle->dev, pinfo->num_domains,
++				       sizeof(*pinfo->dom_info), GFP_KERNEL);
++	if (!pinfo->dom_info)
 +		return -ENOMEM;
 +
-+	scmi_sensor_description_get(handle, sinfo);
++	for (domain = 0; domain < pinfo->num_domains; domain++) {
++		struct power_dom_info *dom = pinfo->dom_info + domain;
 +
-+	handle->sensor_ops = &sensor_ops;
-+	handle->sensor_priv = sinfo;
++		scmi_power_domain_attributes_get(handle, domain, dom);
++	}
++
++	handle->power_ops = &power_ops;
++	handle->power_priv = pinfo;
 +
 +	return 0;
 +}
 +
-+static int __init scmi_sensors_init(void)
++static int __init scmi_power_init(void)
 +{
-+	return scmi_protocol_register(SCMI_PROTOCOL_SENSOR,
-+				      &scmi_sensors_protocol_init);
++	return scmi_protocol_register(SCMI_PROTOCOL_POWER,
++				      &scmi_power_protocol_init);
 +}
-+subsys_initcall(scmi_sensors_init);
++subsys_initcall(scmi_power_init);
 diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index b853ac56940d..6785dd9f61e3 100644
+index cfdc8967e5d9..b853ac56940d 100644
 --- a/include/linux/scmi_protocol.h
 +++ b/include/linux/scmi_protocol.h
-@@ -136,6 +136,45 @@ struct scmi_power_ops {
- 	int (*state_get)(const struct scmi_handle *, u32, u32 *);
+@@ -114,10 +114,34 @@ struct scmi_perf_ops {
  };
  
-+struct scmi_sensor_info {
-+	u32 id;
-+	u8 type;
-+	char name[SCMI_MAX_STR_SIZE];
-+};
-+
-+/*
-+ * Partial list from Distributed Management Task Force (DMTF) specification:
-+ * DSP0249 (Platform Level Data Model specification)
+ /**
++ * struct scmi_power_ops - represents the various operations provided
++ *	by SCMI Power Protocol
++ *
++ * @num_domains_get: get the count of power domains provided by SCMI
++ * @name_get: gets the name of a power domain
++ * @state_set: sets the power state of a power domain
++ * @state_get: gets the power state of a power domain
 + */
-+enum scmi_sensor_class {
-+	NONE = 0x0,
-+	TEMPERATURE_C = 0x2,
-+	VOLTAGE = 0x5,
-+	CURRENT = 0x6,
-+	POWER = 0x7,
-+	ENERGY = 0x8,
++struct scmi_power_ops {
++	int (*num_domains_get)(const struct scmi_handle *);
++	char *(*name_get)(const struct scmi_handle *, u32);
++#define SCMI_POWER_STATE_TYPE_SHIFT	30
++#define SCMI_POWER_STATE_ID_MASK	(BIT(28) - 1)
++#define SCMI_POWER_STATE_PARAM(type, id) \
++	((((type) & BIT(0)) << SCMI_POWER_STATE_TYPE_SHIFT) | \
++		((id) & SCMI_POWER_STATE_ID_MASK))
++#define SCMI_POWER_STATE_GENERIC_ON	SCMI_POWER_STATE_PARAM(0, 0)
++#define SCMI_POWER_STATE_GENERIC_OFF	SCMI_POWER_STATE_PARAM(1, 0)
++	int (*state_set)(const struct scmi_handle *, u32, u32);
++	int (*state_get)(const struct scmi_handle *, u32, u32 *);
 +};
 +
 +/**
-+ * struct scmi_sensor_ops - represents the various operations provided
-+ *	by SCMI Sensor Protocol
-+ *
-+ * @count_get: get the count of sensors provided by SCMI
-+ * @info_get: get the information of the specified sensor
-+ * @configuration_set: control notifications on cross-over events for
-+ *	the trip-points
-+ * @trip_point_set: selects and configures a trip-point of interest
-+ * @reading_get: gets the current value of the sensor
-+ */
-+struct scmi_sensor_ops {
-+	int (*count_get)(const struct scmi_handle *);
-+	const struct scmi_sensor_info *(*info_get)(const struct scmi_handle *,
-+						   u32);
-+	int (*configuration_set)(const struct scmi_handle *, u32);
-+	int (*trip_point_set)(const struct scmi_handle *, u32, u8, u64);
-+	int (*reading_get)(const struct scmi_handle *, u32, bool, u64 *);
-+};
-+
- /**
   * struct scmi_handle - Handle returned to ARM SCMI clients for usage.
   *
-@@ -144,6 +183,7 @@ struct scmi_power_ops {
-  * @power_ops: pointer to set of power protocol operations
+  * @dev: pointer to the SCMI device
+  * @version: pointer to the structure containing SCMI version information
++ * @power_ops: pointer to set of power protocol operations
   * @perf_ops: pointer to set of performance protocol operations
   * @clk_ops: pointer to set of clock protocol operations
-+ * @sensor_ops: pointer to set of sensor protocol operations
   */
- struct scmi_handle {
- 	struct device *dev;
-@@ -151,10 +191,12 @@ struct scmi_handle {
+@@ -126,9 +150,11 @@ struct scmi_handle {
+ 	struct scmi_revision_info *version;
  	struct scmi_perf_ops *perf_ops;
  	struct scmi_clk_ops *clk_ops;
- 	struct scmi_power_ops *power_ops;
-+	struct scmi_sensor_ops *sensor_ops;
++	struct scmi_power_ops *power_ops;
  	/* for protocol internal use */
  	void *perf_priv;
  	void *clk_priv;
- 	void *power_priv;
-+	void *sensor_priv;
++	void *power_priv;
  };
  
  enum scmi_std_protocol {
