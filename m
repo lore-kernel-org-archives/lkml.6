@@ -1,74 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932782AbeBLWHD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:07:03 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36674 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932413AbeBLWCj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:02:39 -0500
-X-Google-Smtp-Source: AH8x225NG9ClhxU/kY0pdGWOZTpfbA1evETW1w5notyGSv/Dj8E/3McKgoZOobtRmV9pkl9CXMaLYg==
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-To: broonie@kernel.org, timur@tabi.org
-Cc: caleb@crome.org, mail@maciej.szmigiero.name, fabio.estevam@nxp.com,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-        arnaud.mouiche@invoxia.com, lukma@denx.de, kernel@pengutronix.de
-Subject: [PATCH v6 01/17] ASoC: fsl_ssi: Redefine RX and TX macros
-Date: Mon, 12 Feb 2018 14:03:09 -0800
-Message-Id: <1518473005-14090-2-git-send-email-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1518473005-14090-1-git-send-email-nicoleotsuka@gmail.com>
-References: <1518473005-14090-1-git-send-email-nicoleotsuka@gmail.com>
+        id S932660AbeBLWIC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:08:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932413AbeBLWIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:08:00 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C1121780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 0/5] Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 22:07:48 +0000
+Message-Id: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RX and TX macros were defined implicitly and there was
-a potential risk if someone changes their values.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Since they were defined to index the array ssi->regvals[2],
-this patch moves these two macros to fsl_ssi.c, closer to
-its owner ssi->regvals. And it also puts some comments here
-to limit their value within [0, 1].
+Back in 2014, Jean-Michel provided patches [0] to implement a means of
+describing software defined I2C addresses for devices through the DT nodes.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Tested-by: Caleb Crome <caleb@crome.org>
-Tested-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Reviewed-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
----
- sound/soc/fsl/fsl_ssi.c | 4 ++++
- sound/soc/fsl/fsl_ssi.h | 3 ---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+The patch to implement the function "i2c_new_secondary_device()" was integrated,
+but the corresponding driver update didn't get applied.
 
-diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
-index 24fb672..3c8dd60 100644
---- a/sound/soc/fsl/fsl_ssi.c
-+++ b/sound/soc/fsl/fsl_ssi.c
-@@ -56,6 +56,10 @@
- #include "fsl_ssi.h"
- #include "imx-pcm.h"
- 
-+/* Define RX and TX to index ssi->regvals array; Can be 0 or 1 only */
-+#define RX 0
-+#define TX 1
-+
- /**
-  * FSLSSI_I2S_FORMATS: audio formats supported by the SSI
-  *
-diff --git a/sound/soc/fsl/fsl_ssi.h b/sound/soc/fsl/fsl_ssi.h
-index de2fdc5..18f8dd5 100644
---- a/sound/soc/fsl/fsl_ssi.h
-+++ b/sound/soc/fsl/fsl_ssi.h
-@@ -12,9 +12,6 @@
- #ifndef _MPC8610_I2S_H
- #define _MPC8610_I2S_H
- 
--#define RX 0
--#define TX 1
--
- /* -- SSI Register Map -- */
- 
- /* SSI Transmit Data Register 0 */
+This short series re-bases Jean-Michel's patch to mainline for the ADV7604 driver
+in linux-media, and also provides a patch for the ADV7511 DRM Bridge driver taking
+the same approach.
+
+This series allows us to define the I2C address allocations of these devices in
+the device tree for the Renesas D3 platform where these two devices reside on
+the same bus and conflict with each other presently..
+
+[0] https://lkml.org/lkml/2014/10/22/468
+[1] https://lkml.org/lkml/2014/10/22/469
+
+v2:
+ - dt bindings split from driver changes
+ - fixed up dt binding property descriptions
+ - Update missing edid-i2c address setting (adv7511)
+ - Provide update for r8a7792 DTB to account for address conflict
+
+v3:
+ - Split map register addresses into individual declarations across all uses
+
+
+Jean-Michel Hautbois (2):
+  dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
+  media: adv7604: Add support for i2c_new_secondary_device
+
+Kieran Bingham (3):
+  dt-bindings: adv7511: Add support for i2c_new_secondary_device
+  [RFT] ARM: dts: wheat: Fix ADV7513 address usage
+  drm: adv7511: Add support for i2c_new_secondary_device
+
+ .../bindings/display/bridge/adi,adv7511.txt        | 18 ++++++-
+ .../devicetree/bindings/media/i2c/adv7604.txt      | 18 ++++++-
+ arch/arm/boot/dts/r8a7792-wheat.dts                | 12 ++++-
+ drivers/gpu/drm/bridge/adv7511/adv7511.h           |  6 +++
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 42 +++++++++------
+ drivers/media/i2c/adv7604.c                        | 62 ++++++++++++++--------
+ 6 files changed, 115 insertions(+), 43 deletions(-)
+
 -- 
-2.1.4
+2.7.4
