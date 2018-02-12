@@ -1,90 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933111AbeBLWxe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:53:34 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37590 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933043AbeBLWsq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:48:46 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 35/45] rtc: rp5c01: fix possible race condition
-Date: Mon, 12 Feb 2018 23:47:49 +0100
-Message-Id: <20180212224759.15999-36-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
-References: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
+        id S933165AbeBLWxo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:53:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52096 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933084AbeBLWxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:53:42 -0500
+From: Jeff Moyer <jmoyer@redhat.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: dan.j.williams@intel.com, ross.zwisler@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH v2] libnvdimm: re-enable deep flush for pmem devices
+References: <151847194459.58291.11339638808076622981.stgit@djiang5-desk3.ch.intel.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+X-PCLoadLetter: What the f**k does that mean?
+Date: Mon, 12 Feb 2018 17:53:40 -0500
+In-Reply-To: <151847194459.58291.11339638808076622981.stgit@djiang5-desk3.ch.intel.com>
+        (Dave Jiang's message of "Mon, 12 Feb 2018 14:46:13 -0700")
+Message-ID: <x49inb1n7kb.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The probe function is not allowed to fail after registering the RTC because
-the following may happen:
+Dave Jiang <dave.jiang@intel.com> writes:
 
-CPU0:                                CPU1:
-sys_load_module()
- do_init_module()
-  do_one_initcall()
-   cmos_do_probe()
-    rtc_device_register()
-     __register_chrdev()
-     cdev->owner = struct module*
-                                     open("/dev/rtc0")
-    rtc_device_unregister()
-  module_put()
-  free_module()
-   module_free(mod->module_core)
-   /* struct module *module is now
-      freed */
-                                      chrdev_open()
-                                       spin_lock(cdev_lock)
-                                       cdev_get()
-                                        try_module_get()
-                                         module_is_live()
-                                         /* dereferences already
-                                            freed struct module* */
+> Re-enable deep flush so that users always have a way to be sure that a write
+> does make it all the way out to the NVDIMM. The PMEM driver writes always
+> make it "all the way to the NVDIMM", and it relies on the ADR mechanism to
+> flush the write buffers on power failure. Deep flush is there to explicitly
+> flush those write buffers to protect against (rare) ADR failure.
+> This change prevents a regression in deep flush behavior so that applications
+> can continue to depend on fsync() as a mechanism to trigger deep flush in the
+> filesystem-dax case.
 
-Switch to devm_rtc_allocate_device/rtc_register_device to register the rtc
-as late as possible.
+That's still very confusing text.  Specifically, the part where you say
+that pmem driver writes always make it to the DIMM.  I think the
+changelog could start with "Deep flush is there to explicitly flush
+write buffers...."  Anyway, the fix looks right to me.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-rp5c01.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-rp5c01.c b/drivers/rtc/rtc-rp5c01.c
-index 026035373ae6..38a12435b5a0 100644
---- a/drivers/rtc/rtc-rp5c01.c
-+++ b/drivers/rtc/rtc-rp5c01.c
-@@ -249,16 +249,24 @@ static int __init rp5c01_rtc_probe(struct platform_device *dev)
- 
- 	platform_set_drvdata(dev, priv);
- 
--	rtc = devm_rtc_device_register(&dev->dev, "rtc-rp5c01", &rp5c01_rtc_ops,
--				  THIS_MODULE);
-+	rtc = devm_rtc_allocate_device(&dev->dev);
- 	if (IS_ERR(rtc))
- 		return PTR_ERR(rtc);
-+
-+	rtc->ops = &rp5c01_rtc_ops;
-+
- 	priv->rtc = rtc;
- 
- 	error = sysfs_create_bin_file(&dev->dev.kobj, &priv->nvram_attr);
- 	if (error)
- 		return error;
- 
-+	error = rtc_register_device(rtc);
-+	if (error) {
-+		sysfs_remove_bin_file(&dev->dev.kobj, &priv->nvram_attr);
-+		return error;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.16.1
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
