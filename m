@@ -1,424 +1,317 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935030AbeBLMzd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:55:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55372 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934929AbeBLMyc (ORCPT
+        id S934942AbeBLMzb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 07:55:31 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50030 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934729AbeBLMzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:54:32 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: uniphier: add support for UniPhier AIO DMA driver" to the asoc tree
-In-Reply-To: <20180119092536.22501-4-suzuki.katsuhiro@socionext.com>
-Message-Id: <E1elDcp-0007Bq-OG@debutante>
-Date: Mon, 12 Feb 2018 12:54:27 +0000
+        Mon, 12 Feb 2018 07:55:25 -0500
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] nvme: change namespaces_mutext to namespaces_rwsem
+Date: Mon, 12 Feb 2018 20:54:46 +0800
+Message-Id: <1518440086-583-3-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518440086-583-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1518440086-583-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=823
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802120167
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+namespaces_mutext is used to synchronize the operations on ctrl
+namespaces list. Most of the time, it is a read operation.
 
-   ASoC: uniphier: add support for UniPhier AIO DMA driver
+On the other hand, there are many interfaces in nvme core that
+need this lock, such as nvme_wait_freeze, and even more interfaces
+will be added. If we use mutex here, circular dependency could be
+introduced easily. For example:
+context A                  context B
+nvme_xxx                   nvme_xxx
+hold namespaces_mutext     require namespaces_mutext
+sync context B
 
-has been applied to the asoc tree at
+So it is better to change it from mutex to rwsem.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From caa3e443aef6308abfe0710e8d8f602a75bed0ed Mon Sep 17 00:00:00 2001
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Date: Fri, 19 Jan 2018 18:25:30 +0900
-Subject: [PATCH] ASoC: uniphier: add support for UniPhier AIO DMA driver
-
-This patch adds supports for UniPhier AIO DMA.
-
-This module shared register area with all sound devices for
-I2S, S/PDIF and so on. Since the AIO has mixed register map
-for those I/Os, it is hard to split register areas for each
-sound devices.
-
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- sound/soc/uniphier/Makefile  |   2 +-
- sound/soc/uniphier/aio-dma.c | 317 +++++++++++++++++++++++++++++++++++++++++++
- sound/soc/uniphier/aio.h     |   2 +
- 3 files changed, 320 insertions(+), 1 deletion(-)
- create mode 100644 sound/soc/uniphier/aio-dma.c
+ drivers/nvme/host/core.c      | 64 +++++++++++++++++++++----------------------
+ drivers/nvme/host/multipath.c |  4 +--
+ drivers/nvme/host/nvme.h      |  2 +-
+ 3 files changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/sound/soc/uniphier/Makefile b/sound/soc/uniphier/Makefile
-index f3b36aba4879..9efe0feffdc2 100644
---- a/sound/soc/uniphier/Makefile
-+++ b/sound/soc/uniphier/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--snd-soc-uniphier-aio-cpu-objs := aio-core.o
-+snd-soc-uniphier-aio-cpu-objs := aio-core.o aio-dma.o
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index a051c2f..e8a3671 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1122,13 +1122,13 @@ static void nvme_update_formats(struct nvme_ctrl *ctrl)
+ 	struct nvme_ns *ns, *next;
+ 	LIST_HEAD(rm_list);
  
- obj-$(CONFIG_SND_SOC_UNIPHIER_AIO) += snd-soc-uniphier-aio-cpu.o
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_write(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list) {
+ 		if (ns->disk && nvme_revalidate_disk(ns->disk)) {
+ 			list_move_tail(&ns->list, &rm_list);
+ 		}
+ 	}
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_write(&ctrl->namespaces_rwsem);
  
-diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
-new file mode 100644
-index 000000000000..6d0ca6dde913
---- /dev/null
-+++ b/sound/soc/uniphier/aio-dma.c
-@@ -0,0 +1,317 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Socionext UniPhier AIO DMA driver.
-+//
-+// Copyright (c) 2016-2018 Socionext Inc.
-+//
-+// This program is free software; you can redistribute it and/or
-+// modify it under the terms of the GNU General Public License
-+// as published by the Free Software Foundation; version 2
-+// of the License.
-+//
-+// This program is distributed in the hope that it will be useful,
-+// but WITHOUT ANY WARRANTY; without even the implied warranty of
-+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+// GNU General Public License for more details.
-+//
-+// You should have received a copy of the GNU General Public License
-+// along with this program; if not, see <http://www.gnu.org/licenses/>.
-+
-+#include <linux/dma-mapping.h>
-+#include <linux/errno.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <sound/core.h>
-+#include <sound/pcm.h>
-+#include <sound/soc.h>
-+
-+#include "aio.h"
-+
-+static struct snd_pcm_hardware uniphier_aiodma_hw = {
-+	.info = SNDRV_PCM_INFO_MMAP |
-+		SNDRV_PCM_INFO_MMAP_VALID |
-+		SNDRV_PCM_INFO_INTERLEAVED,
-+	.period_bytes_min = 256,
-+	.period_bytes_max = 4096,
-+	.periods_min      = 4,
-+	.periods_max      = 1024,
-+	.buffer_bytes_max = 128 * 1024,
-+};
-+
-+static void aiodma_pcm_irq(struct uniphier_aio_sub *sub)
-+{
-+	struct snd_pcm_runtime *runtime = sub->substream->runtime;
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	int ret;
-+
-+	spin_lock(&sub->lock);
-+	ret = aiodma_rb_set_threshold(sub, runtime->dma_bytes,
-+				      sub->threshold + bytes);
-+	if (!ret)
-+		sub->threshold += bytes;
-+
-+	aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes, bytes);
-+	aiodma_rb_clear_irq(sub);
-+	spin_unlock(&sub->lock);
-+
-+	snd_pcm_period_elapsed(sub->substream);
-+}
-+
-+static void aiodma_compr_irq(struct uniphier_aio_sub *sub)
-+{
-+	struct snd_compr_runtime *runtime = sub->cstream->runtime;
-+	int bytes = runtime->fragment_size;
-+	int ret;
-+
-+	spin_lock(&sub->lock);
-+	ret = aiodma_rb_set_threshold(sub, sub->compr_bytes,
-+				      sub->threshold + bytes);
-+	if (!ret)
-+		sub->threshold += bytes;
-+
-+	aiodma_rb_sync(sub, sub->compr_addr, sub->compr_bytes, bytes);
-+	aiodma_rb_clear_irq(sub);
-+	spin_unlock(&sub->lock);
-+
-+	snd_compr_fragment_elapsed(sub->cstream);
-+}
-+
-+static irqreturn_t aiodma_irq(int irq, void *p)
-+{
-+	struct platform_device *pdev = p;
-+	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
-+	irqreturn_t ret = IRQ_NONE;
-+	int i, j;
-+
-+	for (i = 0; i < chip->num_aios; i++) {
-+		struct uniphier_aio *aio = &chip->aios[i];
-+
-+		for (j = 0; j < ARRAY_SIZE(aio->sub); j++) {
-+			struct uniphier_aio_sub *sub = &aio->sub[j];
-+
-+			/* Skip channel that does not trigger */
-+			if (!sub->running || !aiodma_rb_is_irq(sub))
-+				continue;
-+
-+			if (sub->substream)
-+				aiodma_pcm_irq(sub);
-+			if (sub->cstream)
-+				aiodma_compr_irq(sub);
-+
-+			ret = IRQ_HANDLED;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int uniphier_aiodma_open(struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+
-+	snd_soc_set_runtime_hwparams(substream, &uniphier_aiodma_hw);
-+
-+	return snd_pcm_hw_constraint_step(runtime, 0,
-+		SNDRV_PCM_HW_PARAM_BUFFER_BYTES, 256);
-+}
-+
-+static int uniphier_aiodma_hw_params(struct snd_pcm_substream *substream,
-+				     struct snd_pcm_hw_params *params)
-+{
-+	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
-+	substream->runtime->dma_bytes = params_buffer_bytes(params);
-+
-+	return 0;
-+}
-+
-+static int uniphier_aiodma_hw_free(struct snd_pcm_substream *substream)
-+{
-+	snd_pcm_set_runtime_buffer(substream, NULL);
-+	substream->runtime->dma_bytes = 0;
-+
-+	return 0;
-+}
-+
-+static int uniphier_aiodma_prepare(struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
-+	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
-+	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	unsigned long flags;
-+	int ret;
-+
-+	ret = aiodma_ch_set_param(sub);
-+	if (ret)
-+		return ret;
-+
-+	spin_lock_irqsave(&sub->lock, flags);
-+	ret = aiodma_rb_set_buffer(sub, runtime->dma_addr,
-+				   runtime->dma_addr + runtime->dma_bytes,
-+				   bytes);
-+	spin_unlock_irqrestore(&sub->lock, flags);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int uniphier_aiodma_trigger(struct snd_pcm_substream *substream, int cmd)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
-+	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
-+	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
-+	struct device *dev = &aio->chip->pdev->dev;
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sub->lock, flags);
-+	switch (cmd) {
-+	case SNDRV_PCM_TRIGGER_START:
-+		aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes,
-+			       bytes);
-+		aiodma_ch_set_enable(sub, 1);
-+		sub->running = 1;
-+
-+		break;
-+	case SNDRV_PCM_TRIGGER_STOP:
-+		sub->running = 0;
-+		aiodma_ch_set_enable(sub, 0);
-+
-+		break;
-+	default:
-+		dev_warn(dev, "Unknown trigger(%d) ignored\n", cmd);
-+		break;
-+	}
-+	spin_unlock_irqrestore(&sub->lock, flags);
-+
-+	return 0;
-+}
-+
-+static snd_pcm_uframes_t uniphier_aiodma_pointer(
-+					struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	struct snd_soc_pcm_runtime *rtd = snd_pcm_substream_chip(substream);
-+	struct uniphier_aio *aio = uniphier_priv(rtd->cpu_dai);
-+	struct uniphier_aio_sub *sub = &aio->sub[substream->stream];
-+	int bytes = runtime->period_size *
-+		runtime->channels * samples_to_bytes(runtime, 1);
-+	unsigned long flags;
-+	snd_pcm_uframes_t pos;
-+
-+	spin_lock_irqsave(&sub->lock, flags);
-+	aiodma_rb_sync(sub, runtime->dma_addr, runtime->dma_bytes, bytes);
-+
-+	if (sub->swm->dir == PORT_DIR_OUTPUT)
-+		pos = bytes_to_frames(runtime, sub->rd_offs);
-+	else
-+		pos = bytes_to_frames(runtime, sub->wr_offs);
-+	spin_unlock_irqrestore(&sub->lock, flags);
-+
-+	return pos;
-+}
-+
-+static int uniphier_aiodma_mmap(struct snd_pcm_substream *substream,
-+				struct vm_area_struct *vma)
-+{
-+	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
-+
-+	return remap_pfn_range(vma, vma->vm_start,
-+			       substream->dma_buffer.addr >> PAGE_SHIFT,
-+			       vma->vm_end - vma->vm_start, vma->vm_page_prot);
-+}
-+
-+static const struct snd_pcm_ops uniphier_aiodma_ops = {
-+	.open      = uniphier_aiodma_open,
-+	.ioctl     = snd_pcm_lib_ioctl,
-+	.hw_params = uniphier_aiodma_hw_params,
-+	.hw_free   = uniphier_aiodma_hw_free,
-+	.prepare   = uniphier_aiodma_prepare,
-+	.trigger   = uniphier_aiodma_trigger,
-+	.pointer   = uniphier_aiodma_pointer,
-+	.mmap      = uniphier_aiodma_mmap,
-+};
-+
-+static int uniphier_aiodma_new(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct device *dev = rtd->card->snd_card->dev;
-+	struct snd_pcm *pcm = rtd->pcm;
-+	int ret;
-+
-+	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(33));
-+	if (ret)
-+		return ret;
-+
-+	return snd_pcm_lib_preallocate_pages_for_all(pcm,
-+		SNDRV_DMA_TYPE_DEV, dev,
-+		uniphier_aiodma_hw.buffer_bytes_max,
-+		uniphier_aiodma_hw.buffer_bytes_max);
-+}
-+
-+static void uniphier_aiodma_free(struct snd_pcm *pcm)
-+{
-+	snd_pcm_lib_preallocate_free_for_all(pcm);
-+}
-+
-+static const struct snd_soc_platform_driver uniphier_soc_platform = {
-+	.pcm_new   = uniphier_aiodma_new,
-+	.pcm_free  = uniphier_aiodma_free,
-+	.ops       = &uniphier_aiodma_ops,
-+};
-+
-+static const struct regmap_config aiodma_regmap_config = {
-+	.reg_bits      = 32,
-+	.reg_stride    = 4,
-+	.val_bits      = 32,
-+	.max_register  = 0x7fffc,
-+	.cache_type    = REGCACHE_NONE,
-+};
-+
-+/**
-+ * uniphier_aiodma_soc_register_platform - register the AIO DMA
-+ * @pdev: the platform device
-+ *
-+ * Register and setup the DMA of AIO to transfer the sound data to device.
-+ * This function need to call once at driver startup and need NOT to call
-+ * unregister function.
-+ *
-+ * Return: Zero if successful, otherwise a negative value on error.
-+ */
-+int uniphier_aiodma_soc_register_platform(struct platform_device *pdev)
-+{
-+	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	void __iomem *preg;
-+	int irq, ret;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	preg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(preg))
-+		return PTR_ERR(preg);
-+
-+	chip->regmap = devm_regmap_init_mmio(dev, preg,
-+					     &aiodma_regmap_config);
-+	if (IS_ERR(chip->regmap))
-+		return PTR_ERR(chip->regmap);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(dev, "Could not get irq.\n");
-+		return irq;
-+	}
-+
-+	ret = devm_request_irq(dev, irq, aiodma_irq,
-+			       IRQF_SHARED, dev_name(dev), pdev);
-+	if (ret)
-+		return ret;
-+
-+	return devm_snd_soc_register_platform(dev, &uniphier_soc_platform);
-+}
-+EXPORT_SYMBOL_GPL(uniphier_aiodma_soc_register_platform);
-diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
-index 774abae28028..3687f6ff30b1 100644
---- a/sound/soc/uniphier/aio.h
-+++ b/sound/soc/uniphier/aio.h
-@@ -304,6 +304,8 @@ static inline struct uniphier_aio *uniphier_priv(struct snd_soc_dai *dai)
- 	return &chip->aios[dai->id];
+ 	list_for_each_entry_safe(ns, next, &rm_list, list)
+ 		nvme_ns_remove(ns);
+@@ -2438,7 +2438,7 @@ static int nvme_dev_user_cmd(struct nvme_ctrl *ctrl, void __user *argp)
+ 	struct nvme_ns *ns;
+ 	int ret;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	if (list_empty(&ctrl->namespaces)) {
+ 		ret = -ENOTTY;
+ 		goto out_unlock;
+@@ -2455,14 +2455,14 @@ static int nvme_dev_user_cmd(struct nvme_ctrl *ctrl, void __user *argp)
+ 	dev_warn(ctrl->device,
+ 		"using deprecated NVME_IOCTL_IO_CMD ioctl on the char device!\n");
+ 	kref_get(&ns->kref);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ 
+ 	ret = nvme_user_cmd(ctrl, ns, argp);
+ 	nvme_put_ns(ns);
+ 	return ret;
+ 
+ out_unlock:
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ 	return ret;
  }
  
-+int uniphier_aiodma_soc_register_platform(struct platform_device *pdev);
-+
- u64 aio_rb_cnt(struct uniphier_aio_sub *sub);
- u64 aio_rbt_cnt_to_end(struct uniphier_aio_sub *sub);
- u64 aio_rb_space(struct uniphier_aio_sub *sub);
+@@ -2895,7 +2895,7 @@ static struct nvme_ns *nvme_find_get_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ {
+ 	struct nvme_ns *ns, *ret = NULL;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list) {
+ 		if (ns->head->ns_id == nsid) {
+ 			if (!kref_get_unless_zero(&ns->kref))
+@@ -2906,7 +2906,7 @@ static struct nvme_ns *nvme_find_get_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 		if (ns->head->ns_id > nsid)
+ 			break;
+ 	}
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ 	return ret;
+ }
+ 
+@@ -3018,9 +3018,9 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 
+ 	__nvme_revalidate_disk(disk, id);
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_write(&ctrl->namespaces_rwsem);
+ 	list_add_tail(&ns->list, &ctrl->namespaces);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_write(&ctrl->namespaces_rwsem);
+ 
+ 	nvme_get_ctrl(ctrl);
+ 
+@@ -3073,9 +3073,9 @@ static void nvme_ns_remove(struct nvme_ns *ns)
+ 	list_del_rcu(&ns->siblings);
+ 	mutex_unlock(&ns->ctrl->subsys->lock);
+ 
+-	mutex_lock(&ns->ctrl->namespaces_mutex);
++	down_write(&ns->ctrl->namespaces_rwsem);
+ 	list_del_init(&ns->list);
+-	mutex_unlock(&ns->ctrl->namespaces_mutex);
++	up_write(&ns->ctrl->namespaces_rwsem);
+ 
+ 	synchronize_srcu(&ns->head->srcu);
+ 	nvme_mpath_check_last_path(ns);
+@@ -3101,12 +3101,12 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
+ 	struct nvme_ns *ns, *next;
+ 	LIST_HEAD(rm_list);
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_write(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
+ 		if (ns->head->ns_id > nsid)
+ 			list_move_tail(&ns->list, &rm_list);
+ 	}
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_write(&ctrl->namespaces_rwsem);
+ 
+ 	list_for_each_entry_safe(ns, next, &rm_list, list)
+ 		nvme_ns_remove(ns);
+@@ -3186,9 +3186,9 @@ static void nvme_scan_work(struct work_struct *work)
+ 	}
+ 	nvme_scan_ns_sequential(ctrl, nn);
+  done:
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_write(&ctrl->namespaces_rwsem);
+ 	list_sort(NULL, &ctrl->namespaces, ns_cmp);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_write(&ctrl->namespaces_rwsem);
+ 	kfree(id);
+ }
+ 
+@@ -3221,9 +3221,9 @@ void nvme_remove_namespaces(struct nvme_ctrl *ctrl)
+ 	if (ctrl->state == NVME_CTRL_DEAD)
+ 		nvme_kill_queues(ctrl);
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_write(&ctrl->namespaces_rwsem);
+ 	list_splice_init(&ctrl->namespaces, &ns_list);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_write(&ctrl->namespaces_rwsem);
+ 
+ 	list_for_each_entry_safe(ns, next, &ns_list, list)
+ 		nvme_ns_remove(ns);
+@@ -3412,7 +3412,7 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
+ 	ctrl->state = NVME_CTRL_NEW;
+ 	spin_lock_init(&ctrl->lock);
+ 	INIT_LIST_HEAD(&ctrl->namespaces);
+-	mutex_init(&ctrl->namespaces_mutex);
++	init_rwsem(&ctrl->namespaces_rwsem);
+ 	ctrl->dev = dev;
+ 	ctrl->ops = ops;
+ 	ctrl->quirks = quirks;
+@@ -3473,7 +3473,7 @@ void nvme_kill_queues(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 
+ 	/* Forcibly unquiesce queues to avoid blocking dispatch */
+ 	if (ctrl->admin_q)
+@@ -3492,7 +3492,7 @@ void nvme_kill_queues(struct nvme_ctrl *ctrl)
+ 		/* Forcibly unquiesce queues to avoid blocking dispatch */
+ 		blk_mq_unquiesce_queue(ns->queue);
+ 	}
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_kill_queues);
+ 
+@@ -3500,10 +3500,10 @@ void nvme_unfreeze(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list)
+ 		blk_mq_unfreeze_queue(ns->queue);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_unfreeze);
+ 
+@@ -3511,13 +3511,13 @@ void nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list) {
+ 		timeout = blk_mq_freeze_queue_wait_timeout(ns->queue, timeout);
+ 		if (timeout <= 0)
+ 			break;
+ 	}
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_wait_freeze_timeout);
+ 
+@@ -3525,10 +3525,10 @@ void nvme_wait_freeze(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list)
+ 		blk_mq_freeze_queue_wait(ns->queue);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_wait_freeze);
+ 
+@@ -3536,10 +3536,10 @@ void nvme_start_freeze(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list)
+ 		blk_freeze_queue_start(ns->queue);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_start_freeze);
+ 
+@@ -3547,10 +3547,10 @@ void nvme_stop_queues(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list)
+ 		blk_mq_quiesce_queue(ns->queue);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_stop_queues);
+ 
+@@ -3558,10 +3558,10 @@ void nvme_start_queues(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list)
+ 		blk_mq_unquiesce_queue(ns->queue);
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_start_queues);
+ 
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 3b211d9..559b601 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -44,12 +44,12 @@ void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_ns *ns;
+ 
+-	mutex_lock(&ctrl->namespaces_mutex);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list) {
+ 		if (ns->head->disk)
+ 			kblockd_schedule_work(&ns->head->requeue_work);
+ 	}
+-	mutex_unlock(&ctrl->namespaces_mutex);
++	up_read(&ctrl->namespaces_rwsem);
+ }
+ 
+ static struct nvme_ns *__nvme_find_path(struct nvme_ns_head *head)
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 27e31c0..d90f638 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -140,7 +140,7 @@ struct nvme_ctrl {
+ 	struct blk_mq_tag_set *tagset;
+ 	struct blk_mq_tag_set *admin_tagset;
+ 	struct list_head namespaces;
+-	struct mutex namespaces_mutex;
++	struct rw_semaphore namespaces_rwsem;
+ 	struct device ctrl_device;
+ 	struct device *device;	/* char device */
+ 	struct cdev cdev;
 -- 
-2.16.1
+2.7.4
