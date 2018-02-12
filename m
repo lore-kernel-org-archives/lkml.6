@@ -1,51 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753883AbeBLSN2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:13:28 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57109 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753334AbeBLSN0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:13:26 -0500
-X-IronPort-AV: E=Sophos;i="5.46,503,1511798400";
-   d="scan'208";a="71751855"
-Subject: Re: UFS writing request failure handling
-To: "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <2a98182c0eed4f0d9615982dc3733024@SIWEX5A.sing.micron.com>
-From: Bart Van Assche <bart.vanassche@wdc.com>
-Message-ID: <f81bf6c9-fe46-344a-15cb-03867c9e7c6c@wdc.com>
-Date: Mon, 12 Feb 2018 10:13:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <2a98182c0eed4f0d9615982dc3733024@SIWEX5A.sing.micron.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753903AbeBLSNq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:13:46 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:10429 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753349AbeBLSM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:12:28 -0500
+Message-Id: <caa9d52e0a8ef15719bafe8002a4ad2dc359c634.1518382747.git.christophe.leroy@c-s.fr>
+In-Reply-To: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
+References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC REBASED 3/5] powerpc/mm/slice: implement slice_check_range_fits
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Mon, 12 Feb 2018 19:12:26 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/18 04:21, Bean Huo (beanhuo) wrote:
-> I am looking at UFS error handling, but I didn't notice re-issues
-> requests with UTP error to the host controller. According UFS host
-> spec, "host software either completes the request that had the error
-> and requests still outstanding with error to higher level software,
-> or re-issues these requests to the host controller". For the latest
-> Linux UFS driver, it belongs to former one? If I am wrong, please
-> correct me.
+Rather than build slice masks from a range then use that to check for
+fit in a candidate mask, implement slice_check_range_fits that checks
+if a range fits in a mask directly.
 
-Hello Bean,
+This allows several structures to be removed from stacks, and also we
+don't expect a huge range in a lot of these cases, so building and
+comparing a full mask is going to be more expensive than testing just
+one or two bits of the range.
 
-I'm afraid that reissuing a failed write forever could cause an infinite 
-loop that makes e.g. user space processes unkillable or that could cause 
-an orderly system shutdown to hang. I'm not sure that we want such behavior.
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/mm/slice.c | 68 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 36 insertions(+), 32 deletions(-)
 
-If you want to learn more about how the SCSI core handles failed writes, 
-please have a look at scsi_decide_disposition(). A possible approach to 
-modify the error handling behavior is to stack a dm driver on top of the 
-SCSI core that implements the desired behavior.
-
-Bart.
+diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
+index ddf015d2d05b..311168ca3939 100644
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -233,22 +233,36 @@ static const struct slice_mask *slice_mask_for_size(struct mm_struct *mm, int ps
+ #error "Must define the slice masks for page sizes supported by the platform"
+ #endif
+ 
+-static int slice_check_fit(struct mm_struct *mm,
+-			   const struct slice_mask *mask,
+-			   const struct slice_mask *available)
++static bool slice_check_range_fits(struct mm_struct *mm,
++			   const struct slice_mask *available,
++			   unsigned long start, unsigned long len)
+ {
+-	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
+-	/*
+-	 * Make sure we just do bit compare only to the max
+-	 * addr limit and not the full bit map size.
+-	 */
+-	unsigned long slice_count = GET_HIGH_SLICE_INDEX(mm->context.slb_addr_limit);
++	unsigned long end = start + len - 1;
++	u64 low_slices = 0;
++
++	if (start < SLICE_LOW_TOP) {
++		unsigned long mend = min(end,
++					 (unsigned long)(SLICE_LOW_TOP - 1));
++
++		low_slices = (1u << (GET_LOW_SLICE_INDEX(mend) + 1))
++				- (1u << GET_LOW_SLICE_INDEX(start));
++	}
++	if ((low_slices & available->low_slices) != low_slices)
++		return false;
++
++	if ((start + len) > SLICE_LOW_TOP) {
++		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
++		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
++		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
++		unsigned long i;
+ 
+-	slice_bitmap_and(result, mask->high_slices, available->high_slices,
+-			 slice_count);
++		for (i = start_index; i < start_index + count; i++) {
++			if (!test_bit(i, available->high_slices))
++				return false;
++		}
++	}
+ 
+-	return (mask->low_slices & available->low_slices) == mask->low_slices &&
+-		slice_bitmap_equal(result, mask->high_slices, slice_count);
++	return true;
+ }
+ 
+ static void slice_flush_segments(void *parm)
+@@ -519,12 +533,6 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ 		on_each_cpu(slice_flush_segments, mm, 1);
+ 	}
+ 
+-	/*
+-	 * init different masks
+-	 */
+-	mask.low_slices = 0;
+-	slice_bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
+-
+ 	/* silence stupid warning */;
+ 	potential_mask.low_slices = 0;
+ 	slice_bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
+@@ -586,15 +594,11 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ #endif
+ 
+ 	/* First check hint if it's valid or if we have MAP_FIXED */
+-	if (addr != 0 || fixed) {
+-		/* Build a mask for the requested range */
+-		slice_range_to_mask(addr, len, &mask);
+-		slice_print_mask(" mask", &mask);
+-
++	if (addr || fixed) {
+ 		/* Check if we fit in the good mask. If we do, we just return,
+ 		 * nothing else to do
+ 		 */
+-		if (slice_check_fit(mm, &mask, &good_mask)) {
++		if (slice_check_range_fits(mm, &good_mask, addr, len)) {
+ 			slice_dbg(" fits good !\n");
+ 			return addr;
+ 		}
+@@ -620,10 +624,11 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ 	slice_or_mask(&potential_mask, &good_mask);
+ 	slice_print_mask(" potential", &potential_mask);
+ 
+-	if ((addr != 0 || fixed) &&
+-			slice_check_fit(mm, &mask, &potential_mask)) {
+-		slice_dbg(" fits potential !\n");
+-		goto convert;
++	if (addr || fixed) {
++		if (slice_check_range_fits(mm, &potential_mask, addr, len)) {
++			slice_dbg(" fits potential !\n");
++			goto convert;
++		}
+ 	}
+ 
+ 	/* If we have MAP_FIXED and failed the above steps, then error out */
+@@ -829,13 +834,12 @@ void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
+ int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
+ 			   unsigned long len)
+ {
+-	struct slice_mask mask, available;
++	struct slice_mask available;
+ 	unsigned int psize = mm->context.user_psize;
+ 
+ 	if (radix_enabled())
+ 		return 0;
+ 
+-	slice_range_to_mask(addr, len, &mask);
+ 	available = *slice_mask_for_size(mm, psize);
+ #ifdef CONFIG_PPC_64K_PAGES
+ 	/* We need to account for 4k slices too */
+@@ -852,6 +856,6 @@ int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
+ 	slice_print_mask(" mask", &mask);
+ 	slice_print_mask(" available", &available);
+ #endif
+-	return !slice_check_fit(mm, &mask, &available);
++	return !slice_check_range_fits(mm, &available, addr, len);
+ }
+ #endif
+-- 
+2.13.3
