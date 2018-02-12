@@ -1,47 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932234AbeBLReg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:34:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932148AbeBLRee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:34:34 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B69F21726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 12 Feb 2018 12:34:30 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, vincent.guittot@linaro.org,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
-        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
-        mathieu.poirier@linaro.org, tkjos@android.com, joelaf@google.com,
-        morten.rasmussen@arm.com, dietmar.eggemann@arm.com,
-        patrick.bellasi@arm.com, alessio.balsini@arm.com
-Subject: Re: [RFC PATCH 1/3] sched/deadline: merge dl_bw into dl_bandwidth
-Message-ID: <20180212123430.6f8e4d6e@gandalf.local.home>
-In-Reply-To: <20180212134030.12846-2-juri.lelli@redhat.com>
-References: <20180212134030.12846-1-juri.lelli@redhat.com>
-        <20180212134030.12846-2-juri.lelli@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753882AbeBLRfW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:35:22 -0500
+Received: from casper.infradead.org ([85.118.1.10]:58296 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753292AbeBLRfT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 12:35:19 -0500
+Date: Mon, 12 Feb 2018 18:34:49 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] sched/numa: Delay retrying placement for automatic
+ NUMA balance after wake_affine
+Message-ID: <20180212173449.GA25201@hirez.programming.kicks-ass.net>
+References: <20180212171131.26139-1-mgorman@techsingularity.net>
+ <20180212171131.26139-3-mgorman@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212171131.26139-3-mgorman@techsingularity.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Feb 2018 14:40:28 +0100
-Juri Lelli <juri.lelli@redhat.com> wrote:
+On Mon, Feb 12, 2018 at 05:11:31PM +0000, Mel Gorman wrote:
 
-> + *  - dl_bw (< 100%) is the bandwidth of the system (domain) on each CPU;
-> + *  - dl_total_bw array contains the currently allocated bandwidth on the
-> + *    i-eth CPU.
+> However, the benefit in other cases is large. This is the result for NAS
+> with the D class sizing on a 4-socket machine
+> 
+>                           4.15.0                 4.15.0
+>                     sdnuma-v1r23       delayretry-v1r23
+> Time cg.D      557.00 (   0.00%)      431.82 (  22.47%)
+> Time ep.D       77.83 (   0.00%)       79.01 (  -1.52%)
+> Time is.D       26.46 (   0.00%)       26.64 (  -0.68%)
+> Time lu.D      727.14 (   0.00%)      597.94 (  17.77%)
+> Time mg.D      191.35 (   0.00%)      146.85 (  23.26%)
 
-The comment for dl_total_bw doesn't make sense. You mean that
-dl_total_bw is the cpu's bandwidth? If so, let's not call it total,
-because that would suggest it's the bandwidth of all CPUs. What about
-dl_cpu_bw?
-
--- Steve
+Last time I checked, we were some ~25% from OMP_PROC_BIND with NAS, this
+seems to close that hole significantly. Do you happen to have
+OMP_PROC_BIND numbers handy to see how far away we are from manual
+affinity?
