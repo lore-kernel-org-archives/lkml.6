@@ -1,100 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753883AbeBLHzD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 02:55:03 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43654 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932819AbeBLHzB (ORCPT
+        id S1753968AbeBLH5v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 02:57:51 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:33071 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751171AbeBLH5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 02:55:01 -0500
-Subject: Re: [PATCH 8/9] nvme-pci: break up nvme_timeout and nvme_dev_disable
-To: Sagi Grimberg <sagi@grimberg.me>, keith.busch@intel.com, axboe@fb.com,
-        hch@lst.de
-Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-References: <1518341920-1060-1-git-send-email-jianchao.w.wang@oracle.com>
- <1518341920-1060-9-git-send-email-jianchao.w.wang@oracle.com>
- <4f2268ba-6b6a-8273-594c-b63fdb7b6a96@grimberg.me>
- <992179f4-becc-f0bf-867a-e49adbd756ee@oracle.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <b8748837-616e-7e92-bf58-38246ae8ca0f@oracle.com>
-Date: Mon, 12 Feb 2018 15:51:48 +0800
+        Mon, 12 Feb 2018 02:57:49 -0500
+Subject: Re: [PATCH] ARM: da8xx: use platform data for CFGCHIP syscon regmap
+From: Sekhar Nori <nsekhar@ti.com>
+To: David Lechner <david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>,
+        Lee Jones <lee.jones@linaro.org>
+References: <1516750563-24981-1-git-send-email-david@lechnology.com>
+ <0ca5c498-e16e-f02a-28be-51ee9abb3363@ti.com>
+Message-ID: <92c5a905-a3d3-1fcc-ff76-66ec075fbadc@ti.com>
+Date: Mon, 12 Feb 2018 13:26:33 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <992179f4-becc-f0bf-867a-e49adbd756ee@oracle.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <0ca5c498-e16e-f02a-28be-51ee9abb3363@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802120103
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sagi
-
-Just make some supplement here.
-
-On 02/12/2018 10:16 AM, jianchao.wang wrote:
->> I think this is going in the wrong direction. Every state that is needed
->> to handle serialization should be done in core ctrl state. Moreover,
->> please try to avoid handling this locally in nvme-pci, place common
->> helpers in nvme-core and use them. I won't be surprised if fc would
->> need some of these.
+On Thursday 25 January 2018 08:57 PM, Sekhar Nori wrote:
+> + Arnd, Kishon and Lee for their information.
+> 
+> On Wednesday 24 January 2018 05:06 AM, David Lechner wrote:
+>> This converts from using a platform device for the CFGCHIP syscon
+>> regmap to using platform data to pass the regmap to consumers.
 >>
->> Also, can we try and not disable the controller from nvme_timeout?
-> In fact, that is what this patch what to do. For the previous outstanding requests,
-> this patch return BLK_EH_NOT_HANDLED and defer the work to nvme_dev_disable.
+>> A lazy getter function is used so that the regmap will only be
+>> created if it is actually used. This function will also be used
+>> in the clock init when we convert to the common clock framework.
+>>
+>> The USB PHY driver is currently the only consumer. This driver is
+>> updated to use platform data to get the CFGCHIP regmap instead of
+>> syscon_regmap_lookup_by_pdevname().
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>
+>> This is based on the feedback from the series "ARM: davinci: common clock prep
+>> work​". https://lkml.org/lkml/2018/1/19/715
 > 
->  I'm
->> not sure I understand why is this needed at all. What's wrong with
->> scheduling a controller reset/delete? Why is something like
->> nvme_pci_disable_ctrl_directly needed?
-> Keith used to point out to me that, we cannot complete and free a request
-> before we close the controller and pci master bus, otherwise, there will
-> be somethings wrong in DMA accessing, because when we complete a request, 
-> the associated DMA mapping will be freed.
+> It will be nice to have the discussion link as part of commit description.
 > 
-> For the previous outstanding requests, this patch could grab them with blk_abort_request
-> in nvme_dev_disable, and complete them after we disable/shutdown the controller.
+> Links:
+> https://lkml.kernel.org/r/<CAK8P3a1AP1sz3nT8S6WMupo3iSVRsn2t9sPg2Mj1RAY1AS58UQ@mail.gmail.com>
 > 
-> But for the adminq requests in nvme_dev_disable and nvme_reset_work, we cannot do this.
-> We cannot schedule another reset_work->nvme_dev_disable to do that, because we are in it.
-> So I use this nvme_pci_disable_ctrl_directly which looks like very ugly, to disable the
-> controller and then we could complete the request with failure to move progress forward.
+> Kishon,
 > 
->> I'd like to see an effort to consolidate error handling paths rather
->> than enhancing the current skew...
-> Yes, absolutely. That is also what I expect. :)
+> With your ack I would like to queue this through the DaVinci tree for
+
+Kishon, ping on this.
+
+> v4.17. Due to ongoing common clock framework conversion effort, I expect
+> to queue a number of other patches dependent on this.
 > 
-> This patch has two aspects:
-> 1. grab all the previous outstanding requests with blk_abort_request.
->    It is safe when race with the irq completion path. And then complete them
->    after we disable/shutdown the controller completely.
->    I think this part could be placed in nvme ctrl core.
+> Once v4.16-rc1 comes out, I can provide an immutable commit/tag with
+> just this patch applied. You can use that if you end up queuing other
+> patches which conflict with this.
+> 
+> Let me know.
 
-The 'grab' here is to avoid the timeout path to be triggered during nvme_dev_disable.
-This is important, because nvme_timeout may issue IOs on adminq or invoke nvme_pci_disable_ctrl_directly
-which could race with nvme_dev_disable.
-
-> 2. avoid nvme_timeout invoke nvme_dev_disable. this is the most tricky part.
-
-And also, this will introduce some dangerous scenarios. I have reported some of them before.
-
->    as I shared above, we have to _disable_ the controller _before_ we compete the adminq request
->    from the nvme_dev_disable and nvme_reset_work. Consequently, we cannot do as the
->    nvme_rdma_timeout, schedule a recovery work and then return. 
-
-Actually, the nvme_timeout have a similar pattern with nvme_rdma_timeout.
-When adminq/IOq request timeout, we can schedule reset_work for it. But if the requests from the reset_work
-procedure timeout, we cannot schedule reset_work any more. At the moment, we have to close the controller
-directly and fail the requests.
-
-Looking forward some advice on this.
-That's really appreciated.
-
-Thanks
-Jianchao
+Thanks,
+Sekhar
