@@ -1,76 +1,279 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933603AbeBLKIb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:08:31 -0500
-Received: from mga18.intel.com ([134.134.136.126]:33152 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933579AbeBLKI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933585AbeBLKI2 (ORCPT <rfc822;w@1wt.eu>);
         Mon, 12 Feb 2018 05:08:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,501,1511856000";
-   d="scan'208";a="29328242"
-Message-ID: <1518430103.22495.252.camel@linux.intel.com>
-Subject: Re: [PATCH] gpio: merrifield: Delete an error message for a failed
- memory allocation in mrfld_gpio_probe()
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Date: Mon, 12 Feb 2018 12:08:23 +0200
-In-Reply-To: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
-References: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.3-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46252 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933520AbeBLKIV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 05:08:21 -0500
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
+Subject: [PATCH 14/17] s390/kexec_file: Add kexec_file_load system call
+Date: Mon, 12 Feb 2018 11:07:51 +0100
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
+References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18021210-0040-0000-0000-0000042ED628
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021210-0041-0000-0000-000020D294C4
+Message-Id: <20180212100754.55121-15-prudo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802120131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-02-11 at 13:42 +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Feb 2018 13:30:14 +0100
-> 
-> Omit an extra message for a memory allocation failure in this
-> function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
+This patch adds the kexec_file_load system call to s390 as well as the arch
+specific functions common code requires to work. Loaders for the different
+file types will be added later.
 
-Linus, I have no strong opinion here, so, up to you to decide.
+Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+---
+ arch/s390/Kconfig                     |   4 +
+ arch/s390/kernel/Makefile             |   1 +
+ arch/s390/kernel/compat_wrapper.c     |   1 +
+ arch/s390/kernel/machine_kexec_file.c | 174 ++++++++++++++++++++++++++++++++++
+ arch/s390/kernel/syscalls/syscall.tbl |   1 +
+ 5 files changed, 181 insertions(+)
+ create mode 100644 arch/s390/kernel/machine_kexec_file.c
 
-If you decide this patch to go, 
-
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpio/gpio-merrifield.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-
-> merrifield.c
-> index dd67a31ac337..eec21122299e 100644
-> --- a/drivers/gpio/gpio-merrifield.c
-> +++ b/drivers/gpio/gpio-merrifield.c
-> @@ -408,10 +408,8 @@ static int mrfld_gpio_probe(struct pci_dev *pdev,
-> const struct pci_device_id *id
->  	pcim_iounmap_regions(pdev, BIT(1));
->  
->  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> -	if (!priv) {
-> -		dev_err(&pdev->dev, "can't allocate chip data\n");
-> +	if (!priv)
->  		return -ENOMEM;
-> -	}
->  
->  	priv->dev = &pdev->dev;
->  	priv->reg_base = pcim_iomap_table(pdev)[0];
-
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 0105ce28e246..baffd88109a5 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -51,6 +51,10 @@ config KEXEC
+ 	def_bool y
+ 	select KEXEC_CORE
+ 
++config KEXEC_FILE
++	def_bool y
++	select KEXEC_CORE
++
+ config AUDIT_ARCH
+ 	def_bool y
+ 
+diff --git a/arch/s390/kernel/Makefile b/arch/s390/kernel/Makefile
+index 909bce65cb2b..496d4711c186 100644
+--- a/arch/s390/kernel/Makefile
++++ b/arch/s390/kernel/Makefile
+@@ -60,6 +60,7 @@ obj-y	+= debug.o irq.o ipl.o dis.o diag.o vdso.o als.o
+ obj-y	+= sysinfo.o jump_label.o lgr.o os_info.o machine_kexec.o pgm_check.o
+ obj-y	+= runtime_instr.o cache.o fpu.o dumpstack.o guarded_storage.o sthyi.o
+ obj-y	+= entry.o reipl.o relocate_kernel.o kdebugfs.o alternative.o
++obj-y	+= machine_kexec_file.o
+ 
+ extra-y				+= head.o head64.o vmlinux.lds
+ 
+diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
+index 11e9d8b5c1b0..607c5e9fba3d 100644
+--- a/arch/s390/kernel/compat_wrapper.c
++++ b/arch/s390/kernel/compat_wrapper.c
+@@ -182,3 +182,4 @@ COMPAT_SYSCALL_WRAP6(copy_file_range, int, fd_in, loff_t __user *, off_in, int,
+ COMPAT_SYSCALL_WRAP2(s390_guarded_storage, int, command, struct gs_cb *, gs_cb);
+ COMPAT_SYSCALL_WRAP5(statx, int, dfd, const char __user *, path, unsigned, flags, unsigned, mask, struct statx __user *, buffer);
+ COMPAT_SYSCALL_WRAP4(s390_sthyi, unsigned long, code, void __user *, info, u64 __user *, rc, unsigned long, flags);
++COMPAT_SYSCALL_WRAP5(kexec_file_load, int, kernel_fd, int, initrd_fd, unsigned long, cmdline_len, const char __user *, cmdline_ptr, unsigned long, flags)
+diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+new file mode 100644
+index 000000000000..e6928cbed524
+--- /dev/null
++++ b/arch/s390/kernel/machine_kexec_file.c
+@@ -0,0 +1,174 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * s390 code for kexec_file_load system call
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ */
++
++#include <linux/elf.h>
++#include <linux/kexec.h>
++#include <asm/setup.h>
++
++const struct kexec_file_ops * const kexec_file_loaders[] = {
++	NULL,
++};
++
++/*
++ * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
++ * and provide kbuf->mem by hand.
++ */
++int arch_kexec_walk_mem(struct kexec_buf *kbuf,
++			int (*func)(struct resource *, void *))
++{
++	return 1;
++}
++
++int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
++				     Elf_Shdr *section,
++				     const Elf_Shdr *relsec,
++				     const Elf_Shdr *symtab)
++{
++	Elf_Rela *relas;
++	int i;
++
++	relas = (void *)pi->ehdr + relsec->sh_offset;
++
++	for (i = 0; i < relsec->sh_size / sizeof(*relas); i++) {
++		const Elf_Sym *sym;	/* symbol to relocate */
++		unsigned long addr;	/* final location after relocation */
++		unsigned long val;	/* relocated symbol value */
++		void *loc;		/* tmp location to modify */
++
++		sym = (void *)pi->ehdr + symtab->sh_offset;
++		sym += ELF64_R_SYM(relas[i].r_info);
++
++		if (sym->st_shndx == SHN_UNDEF)
++			return -ENOEXEC;
++
++		if (sym->st_shndx == SHN_COMMON)
++			return -ENOEXEC;
++
++		if (sym->st_shndx >= pi->ehdr->e_shnum &&
++		    sym->st_shndx != SHN_ABS)
++			return -ENOEXEC;
++
++		loc = pi->purgatory_buf;
++		loc += section->sh_offset;
++		loc += relas[i].r_offset;
++
++		val = sym->st_value;
++		if (sym->st_shndx != SHN_ABS)
++			val += pi->sechdrs[sym->st_shndx].sh_addr;
++		val += relas[i].r_addend;
++
++		addr = section->sh_addr + relas[i].r_offset;
++
++		switch (ELF64_R_TYPE(relas[i].r_info)) {
++		case R_390_8:		/* Direct 8 bit.   */
++			*(u8 *)loc = val;
++			break;
++		case R_390_12:		/* Direct 12 bit.  */
++			*(u16 *)loc &= 0xf000;
++			*(u16 *)loc |= val & 0xfff;
++			break;
++		case R_390_16:		/* Direct 16 bit.  */
++			*(u16 *)loc = val;
++			break;
++		case R_390_20:		/* Direct 20 bit.  */
++			*(u32 *)loc &= 0xf00000ff;
++			*(u32 *)loc |= (val & 0xfff) << 16;	/* DL */
++			*(u32 *)loc |= (val & 0xff000) >> 4;	/* DH */
++			break;
++		case R_390_32:		/* Direct 32 bit.  */
++			*(u32 *)loc = val;
++			break;
++		case R_390_64:		/* Direct 64 bit.  */
++			*(u64 *)loc = val;
++			break;
++		case R_390_PC16:	/* PC relative 16 bit.  */
++			*(u16 *)loc = (val - addr);
++			break;
++		case R_390_PC16DBL:	/* PC relative 16 bit shifted by 1.  */
++			*(u16 *)loc = (val - addr) >> 1;
++			break;
++		case R_390_PC32DBL:	/* PC relative 32 bit shifted by 1.  */
++			*(u32 *)loc = (val - addr) >> 1;
++			break;
++		case R_390_PC32:	/* PC relative 32 bit.  */
++			*(u32 *)loc = (val - addr);
++			break;
++		case R_390_PC64:	/* PC relative 64 bit.  */
++			*(u64 *)loc = (val - addr);
++			break;
++		default:
++			break;
++		}
++	}
++	return 0;
++}
++
++int arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
++				  unsigned long buf_len)
++{
++	struct kexec_file_ops *fops;
++	int i, ret;
++
++	/* A kernel must be at least large enough to contain head.S. During
++	 * load memory in head.S will be accessed, e.g. to register the next
++	 * command line. If the next kernel were smaller the current kernel
++	 * will panic at load.
++	 *
++	 * 0x11000 = sizeof(head.S)
++	 */
++	if (buf_len < 0x11000)
++		return -ENOEXEC;
++
++	for (i = 0; i < ARRAY_SIZE(kexec_file_loaders); i++) {
++		fops = kexec_file_loaders[i];
++		if (!fops || !fops->probe)
++			continue;
++
++		ret = fops->probe(buf, buf_len);
++		if (!ret) {
++			image->fops = fops;
++			return ret;
++		}
++	}
++
++	return -ENOEXEC;
++}
++
++void *arch_kexec_kernel_image_load(struct kimage *image)
++{
++	if (!image->fops || !image->fops->load)
++		return ERR_PTR(-ENOEXEC);
++
++	if (image->cmdline_buf_len >= ARCH_COMMAND_LINE_SIZE)
++		return ERR_PTR(-EINVAL);
++
++	return image->fops->load(image, image->kernel_buf,
++				 image->kernel_buf_len, image->initrd_buf,
++				 image->initrd_buf_len, image->cmdline_buf,
++				 image->cmdline_buf_len);
++}
++
++int arch_kimage_file_post_load_cleanup(struct kimage *image)
++{
++	if (!image->fops || !image->fops->cleanup)
++		return 0;
++
++	return image->fops->cleanup(image->image_loader_data);
++}
++
++#ifdef CONFIG_KEXEC_VERIFY_SIG
++int arch_kexec_kernel_verify_sig(struct kimage *image, void *kernel,
++				 unsigned long kernel_len)
++{
++	if (!image->fops || !image->fops->verify_sig)
++		return -EKEYREJECTED;
++
++	return image->fops->verify_sig(kernel, kernel_len);
++}
++#endif /* CONFIG_KEXEC_VERIFY_SIG */
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index b38d48464368..8b210ead7956 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -388,3 +388,4 @@
+ 378  common	s390_guarded_storage	sys_s390_guarded_storage	compat_sys_s390_guarded_storage
+ 379  common	statx			sys_statx			compat_sys_statx
+ 380  common	s390_sthyi		sys_s390_sthyi			compat_sys_s390_sthyi
++381  common	kexec_file_load		sys_kexec_file_load		compat_sys_kexec_file_load
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.13.5
