@@ -1,78 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753644AbeBLSEj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:04:39 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.216]:49540 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752741AbeBLSEi (ORCPT
+        id S932239AbeBLSFp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:05:45 -0500
+Received: from [195.159.176.226] ([195.159.176.226]:43794 "EHLO
+        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1751386AbeBLSFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:04:38 -0500
-Subject: Re: [PATCH] spi: bcm2835aux: use 64-bit arithmetic instead of 32-bit
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-spi@vger.kernel.org
-References: <20180207160002.GA9292@embeddedgus>
- <CAKv+Gu9hmxLSS0ekr8av-ADt3OQjBV=Bt-hRq_-SzWaGODs4SQ@mail.gmail.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <275feee3-7140-498b-714f-4c88a302d3f6@embeddedor.com>
-Date: Mon, 12 Feb 2018 12:04:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu9hmxLSS0ekr8av-ADt3OQjBV=Bt-hRq_-SzWaGODs4SQ@mail.gmail.com>
+        Mon, 12 Feb 2018 13:05:44 -0500
+X-Injected-Via-Gmane: http://gmane.org/
+To: linux-kernel@vger.kernel.org
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 0/4] usb: gadget: fotg210-udc: Fixes and cleanup
+Date: Mon, 12 Feb 2018 19:05:16 +0100
+Message-ID: <p5sksu$4pc$1@blaine.gmane.org>
+References: <cover.1515791144.git.christophe.jaillet@wanadoo.fr>
+ <871shqbnln.fsf@linux.intel.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Complaints-To: usenet@blaine.gmane.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+In-Reply-To: <871shqbnln.fsf@linux.intel.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1elISy-0033Zw-NN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.4.238]:46316
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Cc: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
-
-On 02/08/2018 03:54 AM, Ard Biesheuvel wrote:
-> On 7 February 2018 at 16:00, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
->> Add suffix ULL to constant 9 in order to give the compiler complete
->> information about the proper arithmetic to use. Notice that this
->> constant is used in a context that expects an expression of type
->> unsigned long long (64 bits, unsigned).
->>
->> The expression tfr->len * 9 * 1000000 is currently being evaluated
->> using 32-bit arithmetic.
->>
->> Addresses-Coverity-ID: 1339619
+Le 12/02/2018 à 09:48, Felipe Balbi a écrit :
 > 
-> What does this number mean? If it is an index into some internal
-> database, please remove it.
+> Hi,
+> 
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+>> This serie aims to fix 2 issues. (path 2 & 4)
+>>
+>> The 2nd patch fixes a memory leak. It uses devm_ function a simplify the
+>> handling of the memory.
+>>
+>> The 4th patch fixes a potential invalid pointer dereference.
+>>
+>> The 2 other ones, are just clean-ups to remove useless code and add other
+>> uses of devm_ function to simplify code.
+>>
+>> I've left the request_irq/free_irq because I'm unsure of potential side
+>> effects if some other resources are freed while an IRQ can still be
+>> triggered. So I've preferred to leave it as-is.
+>>
+>> Christophe JAILLET (4):
+>>    usb: gadget: fotg210-udc: Remove a useless
+>>    usb: gadget: fotg210-udc: Fix a memory leak
+>>    usb: gadget: fotg210-udc: Simplify code
+>>    usb: gadget: fotg210-udc: Fix a potential invalid pointer dereference
+> 
+> you should NEVER make fixes depend on cleanups. It should be the other
+> way around :-) First fixes, then cleanups. The reason is that fixes can
+> get accepted during -rc cycle, but cleanups must wait until the next
+> merge window.
+> 
+> Please fix up your patches, otherwise I'll have to apply the entire
+> series for v4.17
 > 
 
-This is a unique Coverity identifier. We want to keep information like 
-public Bugzilla IDs and tools like Coverity on the commit message.
+I agree with you. I will be more careful in the future.
+However, I will not re-send an updated version. Development on this 
+driver does not seem to be very active. So the proposed fix (2/4) and 
+cleanups can wait a few more months.
+Feel free to update yourself 2/4 (and eventually drop 1/4 completely to 
+avoid the time to re-work it) if you think that it worth it.
 
-Thanks
---
-Gustavo
+Best regards,
+CJ
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
