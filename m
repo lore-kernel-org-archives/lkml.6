@@ -1,35 +1,32 @@
 Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AH8x227xmL8m6lEjj42SVMNfQ0iahjPEyZ2ylrTJza3G4nPsB3xEtA1TcYAaKw4HH/qNAcIFfjHR
-ARC-Seal: i=1; a=rsa-sha256; t=1518439995; cv=none;
+X-Google-Smtp-Source: AH8x2259p8fubKryszMoVffHVL2WHFtYrNnPXi7N1EqRlQLxnPeoFaXVatg3utWUL3FDaE4lnBHz
+ARC-Seal: i=1; a=rsa-sha256; t=1518439977; cv=none;
         d=google.com; s=arc-20160816;
-        b=R00dv9Fz6IKsQ8Lnz1UjnyG+mXw9S6/y2HbcHjYNCQhng7tb8kZ+x8kWIpKk8XUcVi
-         h1d1/IH/8VEudqHsFdmpZEwzSyGm3I+PV4bJ4fPzTieJlmvbK+ukzq9xGJD/yhQMhAVt
-         gzKrAy21a5MpZt6qWSAs43hNjEohbjgcN1esEoG+gtYFVgytIe1GD+N+RP96Pz6qMjg2
-         uY3M6Yn3DzxFGnV8yxtAcm+cBZjKsK+PgdP0ocAH0iHOsrNAQfGnU3QBE5br33nzXwo1
-         5TZZEEySV0AQXlsAGW04R555eXOMOqSuAleY0r/SuGlmjv3o2cjjnakOBEvJu7Gfa/EW
-         qddg==
+        b=TPnzETW2rWkKhEYMZKooXBMkflBnAvdgKn3HGMvfldHlrEzLjdw63gMiMExy2IePwU
+         SY0mLjclRUldp/+7Hmv1rvW1hmzvJBD5l7FnOms8axzMdgLRnJF4xlKPbAtXotKCIA7d
+         qQKCbWAgTNkqxlWmbcx5hMtDutWaMhQAyvpw/QcNVL5mXpX1Y+AwGSND8jY71TLxN4bT
+         mF/tMqBQR84hTJgZKIUcL4FPnUwNblxL5LQpZwUnMZ89Bf6SDixv4kYs65IHBX9uNfSF
+         nVu8nObjYX+DQ3Zu3/i6DWpZs5wqYm4Zi5bF2IhIjSukRIAOhcvCxuHfEbJmScCB0mdK
+         DpCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-disposition:mime-version:references:subject:cc:to:from:date
-         :user-agent:message-id:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=190MSA6KHrSTK2yofS0WZXp/2shbW/rYmqGrbiYQIlc=;
-        b=X8zoUzmZ0Fsn1+w70PYAbI+IfHG7xy82VurWbEc9kZKjL4ZV4lRDgG1R4iDW8PppEx
-         uWyPdovy2Ggwm/fTWvnYG3XR9GTmFLRT/SlPZ81noij8bX9Y9QiQwNwX7fbNA3HB+GII
-         qsXBzJo9J7l0ef3Hrq9JBkwoUz8Z1IFqFugql8kcPMOGA+LeYUJLqgXasXbIuiCQeCOc
-         oG8yRQDre1Wg8Q4XDx7Ewb05hLu3gPnfYEiRRSDWpsKsoQS+939Z6hPCHBP1JBcShDEV
-         NJH/9W8xHCSTmgfZBhhXBppZdFMXEbFrNG39wRIrNtl5u00vY/HvYhPJXIGhnmxTRuwj
-         cB9A==
+         :user-agent:message-id:dkim-signature:arc-authentication-results;
+        bh=zzxSwkzluqaKzunLGs5H+dWgp3ngoABjZy7yjsXwVnk=;
+        b=V1ZL46NGFs+aOaZSwo14UaFZOkx515WAemKfTF5qxNVs2CMsS39Nt0Vt0W4QtdH0Xn
+         d+vM4odJ3U0Jl0+NcL2MTq0KSSf0NdfaAKdK6ptKij96zCcV4QPKEaTuqDnHb3qWNJpK
+         Dxj4wLhzV020dAQYSlNiQo+C+JvBAQ5Ztv3wrxxcLmvbQ1SXCPgHW83nFu6iuahKn0SO
+         Z8zQB/sfUIZlbQCLrKT83n4FikQw6pfz9hYYO+G9bh6vdEwmXTJxnzkBnaSIhjEyvNIU
+         lnq/l3vw3I5RBooAQgIVhqT5A53rpJaQJ/9wlurSQb92Jhvmg/z39C/+YbSQbLKcEnfK
+         NpRw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=BL1Eu+4E;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=soGrwzDp;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 85.118.1.10 as permitted sender) smtp.mailfrom=peterz@infradead.org
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=wV7WDXXs;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=BL1Eu+4E;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=soGrwzDp;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 85.118.1.10 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Message-Id: <20180212125033.346541648@infradead.org>
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=wV7WDXXs;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
+Message-Id: <20180212125033.500513960@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Mon, 12 Feb 2018 13:48:57 +0100
+Date: Mon, 12 Feb 2018 13:49:00 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: David Woodhouse <dwmw2@infradead.org>,
  Thomas Gleixner <tglx@linutronix.de>,
@@ -50,216 +47,90 @@ Cc: linux-kernel@vger.kernel.org,
  Asit Mallick <asit.k.mallick@intel.com>,
  Peter Zijlstra <peterz@infradead.org>,
  David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH v2 2/8] objtool: Add retpoline validation
+Subject: [PATCH v2 5/8] x86,nospec: Annotate indirect calls/jumps
 References: <20180212124855.882405399@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-objtool-indirect.patch
+Content-Disposition: inline; filename=peterz-retpoline-annotate-nospec.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592199736159925781?=
-X-GMAIL-MSGID: =?utf-8?q?1592199736159925781?=
+X-GMAIL-THRID: =?utf-8?q?1592199718005457841?=
+X-GMAIL-MSGID: =?utf-8?q?1592199718005457841?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-David requested a objtool validation pass for RETPOLINE enabled
-builds, where it validates no unannotated indirect  jumps or calls are
-left.
-
-Add an additional .discard.retpoline_safe section to allow annotating
-the few indirect sites that are required and safe.
+Annotate the indirect calls/jumps in the CALL_NOSPEC/JUMP_NOSPEC
+alternatives.
 
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
-Requested-by: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- scripts/Makefile.build        |    4 +
- tools/objtool/builtin-check.c |    3 -
- tools/objtool/builtin.h       |    2 
- tools/objtool/check.c         |   86 +++++++++++++++++++++++++++++++++++++++++-
- tools/objtool/check.h         |    1 
- 5 files changed, 93 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -264,6 +264,10 @@ objtool_args += --no-unreachable
- else
- objtool_args += $(call cc-ifversion, -lt, 0405, --no-unreachable)
- endif
-+ifdef CONFIG_RETPOLINE
-+  objtool_args += --retpoline
-+endif
-+
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -67,6 +67,18 @@
+ .endm
  
- ifdef CONFIG_MODVERSIONS
- objtool_o = $(@D)/.tmp_$(@F)
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -29,7 +29,7 @@
- #include "builtin.h"
- #include "check.h"
+ /*
++ * This should be used immediately before an indirect jump/call. It tells
++ * objtool the subsequent indirect jump/call is vouched safe for retpoline
++ * builds.
++ */
++.macro ANNOTATE_RETPOLINE_SAFE
++	.Lannotate_\@:
++	.pushsection .discard.retpoline_safe
++	_ASM_PTR .Lannotate_\@
++	.popsection
++.endm
++
++/*
+  * These are the bare retpoline primitives for indirect jmp and call.
+  * Do not use these directly; they only exist to make the ALTERNATIVE
+  * invocation below less ugly.
+@@ -102,9 +114,9 @@
+ .macro JMP_NOSPEC reg:req
+ #ifdef CONFIG_RETPOLINE
+ 	ANNOTATE_NOSPEC_ALTERNATIVE
+-	ALTERNATIVE_2 __stringify(jmp *\reg),				\
++	ALTERNATIVE_2 __stringify(ANNOTATE_RETPOLINE_SAFE; jmp *\reg),	\
+ 		__stringify(RETPOLINE_JMP \reg), X86_FEATURE_RETPOLINE,	\
+-		__stringify(lfence; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
++		__stringify(lfence; ANNOTATE_RETPOLINE_SAFE; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
+ #else
+ 	jmp	*\reg
+ #endif
+@@ -113,9 +125,9 @@
+ .macro CALL_NOSPEC reg:req
+ #ifdef CONFIG_RETPOLINE
+ 	ANNOTATE_NOSPEC_ALTERNATIVE
+-	ALTERNATIVE_2 __stringify(call *\reg),				\
++	ALTERNATIVE_2 __stringify(ANNOTATE_RETPOLINE_SAFE; call *\reg),	\
+ 		__stringify(RETPOLINE_CALL \reg), X86_FEATURE_RETPOLINE,\
+-		__stringify(lfence; call *\reg), X86_FEATURE_RETPOLINE_AMD
++		__stringify(lfence; ANNOTATE_RETPOLINE_SAFE; call *\reg), X86_FEATURE_RETPOLINE_AMD
+ #else
+ 	call	*\reg
+ #endif
+@@ -143,6 +155,12 @@
+ 	".long 999b - .\n\t"					\
+ 	".popsection\n\t"
  
--bool no_fp, no_unreachable;
-+bool no_fp, no_unreachable, retpoline;
++#define ANNOTATE_RETPOLINE_SAFE					\
++	"999:\n\t"						\
++	".pushsection .discard.retpoline_safe\n\t"		\
++	_ASM_PTR " 999b\n\t"					\
++	".popsection\n\t"
++
+ #if defined(CONFIG_X86_64) && defined(RETPOLINE)
  
- static const char * const check_usage[] = {
- 	"objtool check [<options>] file.o",
-@@ -39,6 +39,7 @@ static const char * const check_usage[]
- const struct option check_options[] = {
- 	OPT_BOOLEAN('f', "no-fp", &no_fp, "Skip frame pointer validation"),
- 	OPT_BOOLEAN('u', "no-unreachable", &no_unreachable, "Skip 'unreachable instruction' warnings"),
-+	OPT_BOOLEAN('r', "retpoline", &retpoline, "Validate retpoline assumptions"),
- 	OPT_END(),
- };
- 
---- a/tools/objtool/builtin.h
-+++ b/tools/objtool/builtin.h
-@@ -20,7 +20,7 @@
- #include <subcmd/parse-options.h>
- 
- extern const struct option check_options[];
--extern bool no_fp, no_unreachable;
-+extern bool no_fp, no_unreachable, retpoline;
- 
- extern int cmd_check(int argc, const char **argv);
- extern int cmd_orc(int argc, const char **argv);
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -496,6 +496,7 @@ static int add_jump_destinations(struct
- 			 * disguise, so convert them accordingly.
- 			 */
- 			insn->type = INSN_JUMP_DYNAMIC;
-+			insn->retpoline_safe = true;
- 			continue;
- 		} else {
- 			/* sibling call */
-@@ -547,7 +548,8 @@ static int add_call_destinations(struct
- 			if (!insn->call_dest && !insn->ignore) {
- 				WARN_FUNC("unsupported intra-function call",
- 					  insn->sec, insn->offset);
--				WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
-+				if (retpoline)
-+					WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
- 				return -1;
- 			}
- 
-@@ -1107,6 +1109,54 @@ static int read_unwind_hints(struct objt
- 	return 0;
- }
- 
-+static int read_retpoline_hints(struct objtool_file *file)
-+{
-+	struct section *sec, *relasec;
-+	struct instruction *insn;
-+	struct rela *rela;
-+	int i;
-+
-+	sec = find_section_by_name(file->elf, ".discard.retpoline_safe");
-+	if (!sec)
-+		return 0;
-+
-+	relasec = sec->rela;
-+	if (!relasec) {
-+		WARN("missing .rela.discard.retpoline_safe section");
-+		return -1;
-+	}
-+
-+	if (sec->len % sizeof(unsigned long)) {
-+		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
-+		return -1;
-+	}
-+
-+	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
-+		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
-+		if (!rela) {
-+			WARN("can't find rela for retpoline_safe[%d]", i);
-+			return -1;
-+		}
-+
-+		insn = find_insn(file, rela->sym->sec, rela->addend);
-+		if (!insn) {
-+			WARN("can't find insn for retpoline_safe[%d]", i);
-+			return -1;
-+		}
-+
-+		if (insn->type != INSN_JUMP_DYNAMIC &&
-+		    insn->type != INSN_CALL_DYNAMIC) {
-+			WARN_FUNC("retpoline_safe hint not a indirect jump/call",
-+				  insn->sec, insn->offset);
-+			return -1;
-+		}
-+
-+		insn->retpoline_safe = true;
-+	}
-+
-+	return 0;
-+}
-+
- static int decode_sections(struct objtool_file *file)
- {
- 	int ret;
-@@ -1145,6 +1195,10 @@ static int decode_sections(struct objtoo
- 	if (ret)
- 		return ret;
- 
-+	ret = read_retpoline_hints(file);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
-@@ -1890,6 +1944,29 @@ static int validate_unwind_hints(struct
- 	return warnings;
- }
- 
-+static int validate_retpoline(struct objtool_file *file)
-+{
-+	struct instruction *insn;
-+	int warnings = 0;
-+
-+	for_each_insn(file, insn) {
-+		if (insn->type != INSN_JUMP_DYNAMIC &&
-+		    insn->type != INSN_CALL_DYNAMIC)
-+			continue;
-+
-+		if (insn->retpoline_safe)
-+			continue;
-+
-+		WARN_FUNC("indirect %s found in RETPOLINE build",
-+			  insn->sec, insn->offset,
-+			  insn->type == INSN_JUMP_DYNAMIC ? "jump" : "call");
-+
-+		warnings++;
-+	}
-+
-+	return warnings;
-+}
-+
- static bool is_kasan_insn(struct instruction *insn)
- {
- 	return (insn->type == INSN_CALL &&
-@@ -2044,6 +2121,13 @@ int check(const char *_objname, bool orc
- 	if (list_empty(&file.insn_list))
- 		goto out;
- 
-+	if (retpoline) {
-+		ret = validate_retpoline(&file);
-+		if (ret < 0)
-+			return ret;
-+		warnings += ret;
-+	}
-+
- 	ret = validate_functions(&file);
- 	if (ret < 0)
- 		goto out;
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -45,6 +45,7 @@ struct instruction {
- 	unsigned char type;
- 	unsigned long immediate;
- 	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
-+	bool retpoline_safe;
- 	struct symbol *call_dest;
- 	struct instruction *jump_dest;
- 	struct instruction *first_jump_src;
+ /*
+@@ -152,6 +170,7 @@
+ # define CALL_NOSPEC						\
+ 	ANNOTATE_NOSPEC_ALTERNATIVE				\
+ 	ALTERNATIVE(						\
++	ANNOTATE_RETPOLINE_SAFE					\
+ 	"call *%[thunk_target]\n",				\
+ 	"call __x86_indirect_thunk_%V[thunk_target]\n",		\
+ 	X86_FEATURE_RETPOLINE)
