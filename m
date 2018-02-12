@@ -1,155 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932695AbeBLXm2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 18:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932378AbeBLXm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 18:42:27 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF23217A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Mon, 12 Feb 2018 23:42:02 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, Alice Michael <alice.michael@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Shannon Nelson <shannon.nelson@oracle.com>
-Subject: Re: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-Message-ID: <20180212234201.GB4290@saruman>
-References: <1518475021-3337-1-git-send-email-linux@roeck-us.net>
+        id S932787AbeBLXmu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 18:42:50 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36677 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932378AbeBLXms (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 18:42:48 -0500
+X-Google-Smtp-Source: AH8x227x9M5kEVfO13czJtnwm7UegEaP8q7maDIw86yU1RluwLVbvapg9chk4IQPebbxjM48rtokaw==
+From: Junio C Hamano <gitster@pobox.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Git Mailing List <git@vger.kernel.org>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
+        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
+        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+Date: Mon, 12 Feb 2018 15:42:44 -0800
+In-Reply-To: <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+        (Linus Torvalds's message of "Mon, 12 Feb 2018 13:59:27 -0800")
+Message-ID: <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
-Content-Disposition: inline
-In-Reply-To: <1518475021-3337-1-git-send-email-linux@roeck-us.net>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
---dTy3Mrz/UPE2dbVg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> And some maintainers end up using multiple repositories as branches
+> (the old _original_ git model). Again, you can just use "git fetch +
+> git reset", of course, but that's a bit unsafe. In contrast, doing
+> "git pull --ff-only" is a safe convenient operation that does both the
+> fetch and the update to whatever state.
+>
+> But you do need that "--ff-only" to avoid the merge.
 
-Hi Guenter,
+OK.  I guess it is legit (and semi-sensible) for downstream
+contributors to "git pull --ff-only $upstream $release_tag_X" to
+bring their long-running topic currently based on release X-1 up to
+date with respect to release X.  It probably makes more sense than
+rebasing on top of release X, even though it makes a lot less sense
+than merging their topics into release X.
 
-On Mon, Feb 12, 2018 at 02:37:01PM -0800, Guenter Roeck wrote:
-> Since commit 60f481b970386 ("i40e: change flags to use 64 bits"),
-> the i40e driver uses cmpxchg64(). This causes mips:allmodconfig builds
-> to fail with
->=20
-> drivers/net/ethernet/intel/i40e/i40e_ethtool.c:
-> 	In function 'i40e_set_priv_flags':
-> drivers/net/ethernet/intel/i40e/i40e_ethtool.c:4443:2: error:
-> 	implicit declaration of function 'cmpxchg64'
->=20
-> Implement a poor-mans-version of cmpxchg64() to fix the problem for 32-bit
-> mips builds. The code is derived from sparc32, but only uses a single
-> spinlock.
+As you said, pull of a tag that forbids fast-forward by default is
+rather old development (I am kind of surprised that it was so old,
+in v1.7.9), so it may be a bit difficult to transition.
 
-Will this be implemened for all 32-bit architectures which are currently
-missing cmpxchg64()?
+There is 
 
-If so, any particular reason not to do it in generic code?
+	[pull]
+                ff = only
 
-If not then I think that driver should be fixed to either depend on some
-appropriate Kconfig symbol or to not use this API since it clearly isn't
-portable at the moment.
+but pull.ff is quite global, and not good for intermediate level
+maintainers who pull to integrate work of their downstream (for
+which they do want the current "do not ff, record the tag in a merge
+commit" behaviour) and also pull to catch up from their upstream
+(which they want "ff-when-able").  They need to control between
+ff=only and ff=when-able, depending on whom they are pulling from.
 
-See also Shannon's comment about that specific driver:
-https://lkml.kernel.org/r/e7c934d7-e5f4-ee1b-0647-c31a98d9e944@oracle.com
+We may want per-remote equivalent for it, i.e. e.g.
 
-Cheers
-James
+	[pull]
+		ff=false ;# good default for collecting contributions
 
->=20
-> Fixes: 60f481b970386 ("i40e: change flags to use 64 bits")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> Compile-tested only.
->=20
->  arch/mips/include/asm/cmpxchg.h |  3 +++
->  arch/mips/kernel/cmpxchg.c      | 17 +++++++++++++++++
->  2 files changed, 20 insertions(+)
->=20
-> diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpx=
-chg.h
-> index 89e9fb7976fe..9f7b1df95b99 100644
-> --- a/arch/mips/include/asm/cmpxchg.h
-> +++ b/arch/mips/include/asm/cmpxchg.h
-> @@ -206,6 +206,9 @@ static inline unsigned long __cmpxchg(volatile void *=
-ptr, unsigned long old,
->  #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o),=
- (n))
->  #ifndef CONFIG_SMP
->  #define cmpxchg64(ptr, o, n) cmpxchg64_local((ptr), (o), (n))
-> +#else
-> +u64 __cmpxchg_u64(u64 *ptr, u64 old, u64 new);
-> +#define cmpxchg64(ptr, old, new)	__cmpxchg_u64(ptr, old, new)
->  #endif
->  #endif
-> =20
-> diff --git a/arch/mips/kernel/cmpxchg.c b/arch/mips/kernel/cmpxchg.c
-> index 0b9535bc2c53..30216beb2334 100644
-> --- a/arch/mips/kernel/cmpxchg.c
-> +++ b/arch/mips/kernel/cmpxchg.c
-> @@ -9,6 +9,7 @@
->   */
-> =20
->  #include <linux/bitops.h>
-> +#include <linux/spinlock.h>
->  #include <asm/cmpxchg.h>
-> =20
->  unsigned long __xchg_small(volatile void *ptr, unsigned long val, unsign=
-ed int size)
-> @@ -107,3 +108,19 @@ unsigned long __cmpxchg_small(volatile void *ptr, un=
-signed long old,
->  			return old;
->  	}
->  }
-> +
-> +static DEFINE_SPINLOCK(cmpxchg_lock);
-> +
-> +u64 __cmpxchg_u64(u64 *ptr, u64 old, u64 new)
-> +{
-> +	unsigned long flags;
-> +	u64 prev;
-> +
-> +	spin_lock_irqsave(&cmpxchg_lock, flags);
-> +	if ((prev =3D *ptr) =3D=3D old)
-> +		*ptr =3D new;
-> +	spin_unlock_irqrestore(&cmpxchg_lock, flags);
-> +
-> +	return prev;
-> +}
-> +EXPORT_SYMBOL(__cmpxchg_u64);
-> --=20
-> 2.7.4
->=20
+	[remote "torvalds"] 
+		pullFF = only ;# good default for catching up
 
---dTy3Mrz/UPE2dbVg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqCJkMACgkQbAtpk944
-dno+Hw//T9FYzJDizLYv3MQejxSYFcOh137PFoX4zTU3qFD0gL57LGo6wXgwHH5j
-YW7KzdP/EsNkeRfWBgqk2AaNBWTRUztrV814RTo1R14dFSnPumLOq/IYynmnsDo3
-nvm823NCIcPvtJ9jR2PhrhFlLZuNjqBEfzYr8jdmnBkNeqAixtlpW1prymBJNwNW
-/0O+2RlOlpQITUnDEbPUeZy5XkfvZTJaXZHPlBaxNuwy0iE6suWkR+Fi+XDEV+CG
-8zIezG/kHDYS/JZizymDp5BzMglOXE1WR7VGGKHrJQ+D2Z/qfHEHT/chMc3JF2ce
-DlN7V4yaF8+X/FnkM9A3rSreMQiREvzAB/wGve9bGuQqT5myFr4R40L3Skok9TW7
-LWu9BMvIEGYnqzEgqbutsIweYgcr6vhNtZ13vxJIUtovpcbc/lV8cIBWX1L0WZ6p
-940HR92VgMFJxyEaV52t4BaYb02+SvO3N+w/O3L60nAVcJSnG+4YLFRjY3xd4M/P
-S+RlqK04ZqI8r5Z8srGELWfU8HRYu3GMFhu7nU0CH2+O3GtjdLzmMH5huR3DB8AV
-ZHh9/lXuXfAsIiX9GXvy89rTzd5EJBPLpN9wo0JrMHHCgio/wCi7DmQJC7+p4e4d
-YCHVWYxXKETa1lv8/d84GtvW5Ydb5U2Ga/GPgHyLmfZ7tlWIp9o=
-=PH9W
------END PGP SIGNATURE-----
-
---dTy3Mrz/UPE2dbVg--
+or something like that, perhaps?
