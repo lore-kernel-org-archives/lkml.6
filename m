@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933777AbeBLPG3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:06:29 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38405 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932320AbeBLO65 (ORCPT
+        id S934709AbeBLPGp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:06:45 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46312 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932271AbeBLO6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:58:57 -0500
-X-Google-Smtp-Source: AH8x2247WN14YX4qycPBitlxR3Guh6nawdL1b/7Eyx1b0xDM4jaM7ffLzUwZFPzEM0N3TKoPiNz6zw==
+        Mon, 12 Feb 2018 09:58:54 -0500
+X-Google-Smtp-Source: AH8x2252Jz6YdYVo1vT0KkbNZuUq+oTBMOo2Qm3dVZtSh1QTFbeMhJu0t7dMt0iP4mUOyGp1tcUl/Q==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>
@@ -16,9 +16,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/19] clk: meson: add regmap clocks
-Date: Mon, 12 Feb 2018 15:58:32 +0100
-Message-Id: <20180212145846.19380-6-jbrunet@baylibre.com>
+Subject: [PATCH v2 03/19] clk: meson: only one loop index is necessary in probe
+Date: Mon, 12 Feb 2018 15:58:30 +0100
+Message-Id: <20180212145846.19380-4-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
 References: <20180212145846.19380-1-jbrunet@baylibre.com>
@@ -26,340 +26,112 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Meson clock controllers need to move the classical iomem registers to
-regmap. This is triggered because the HHI controllers found on the GXBB
-and GXL host more than just clocks. To properly handle this, we would
-like to migrate HHI to syscon. Also GXBB AO clock controller already use
-regmap, AXG AO and Audio clock controllers will as well.
-
-The purpose of this change is to provide a common structure to these
-meson controllers (and possibly others) for regmap based clocks.
-
-This change provides the basic gate, mux and divider, based on the
-helpers provided by the related generic clocks
+We don't need several loop index variables in the probe function
+This is far from being critical but since we are doing a vast
+rework of meson clock controllers, now is the time to lower the
+entropy a bit
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/Kconfig      |   4 +
- drivers/clk/meson/Makefile     |   1 +
- drivers/clk/meson/clk-regmap.c | 166 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clk-regmap.h | 111 +++++++++++++++++++++++++++
- 4 files changed, 282 insertions(+)
- create mode 100644 drivers/clk/meson/clk-regmap.c
- create mode 100644 drivers/clk/meson/clk-regmap.h
+ drivers/clk/meson/axg.c     |  8 ++++----
+ drivers/clk/meson/gxbb.c    | 13 ++++++-------
+ drivers/clk/meson/meson8b.c |  8 ++++----
+ 3 files changed, 14 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 7694302c70a4..e97e85077da1 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -3,6 +3,10 @@ config COMMON_CLK_AMLOGIC
- 	depends on OF
- 	depends on ARCH_MESON || COMPILE_TEST
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index e16d53b6be30..3bb77b4f1e8d 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -802,7 +802,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 	const struct clkc_data *clkc_data;
+ 	struct resource *res;
+ 	void __iomem *clk_base;
+-	int ret, clkid, i;
++	int ret, i;
  
-+config COMMON_CLK_REGMAP_MESON
-+	bool
-+	select REGMAP
+ 	clkc_data = of_device_get_match_data(dev);
+ 	if (!clkc_data)
+@@ -841,13 +841,13 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 		clkc_data->clk_dividers[i]->reg = clk_base +
+ 			(u64)clkc_data->clk_dividers[i]->reg;
+ 
+-	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
++	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
+ 		/* array might be sparse */
+-		if (!clkc_data->hw_onecell_data->hws[clkid])
++		if (!clkc_data->hw_onecell_data->hws[i])
+ 			continue;
+ 
+ 		ret = devm_clk_hw_register(dev,
+-					clkc_data->hw_onecell_data->hws[clkid]);
++					   clkc_data->hw_onecell_data->hws[i]);
+ 		if (ret) {
+ 			dev_err(dev, "Clock registration failed\n");
+ 			return ret;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 17f44ac751b3..e6adab49c0ba 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1947,7 +1947,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ {
+ 	const struct clkc_data *clkc_data;
+ 	void __iomem *clk_base;
+-	int ret, clkid, i;
++	int ret, i;
+ 	struct device *dev = &pdev->dev;
+ 
+ 	clkc_data = of_device_get_match_data(dev);
+@@ -1988,16 +1988,15 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
+ 		clkc_data->clk_audio_dividers[i]->base = clk_base;
+ 
+-	/*
+-	 * register all clks
+-	 */
+-	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
 +
- config COMMON_CLK_MESON8B
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 3c03ce583798..11a50586666a 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-div
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-+obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-new file mode 100644
-index 000000000000..3645fdb62343
---- /dev/null
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#include "clk-regmap.h"
-+
-+static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
-+	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+
-+	set ^= enable;
-+
-+	return regmap_update_bits(clk->map, gate->offset, BIT(gate->bit_idx),
-+				  set ? BIT(gate->bit_idx) : 0);
-+}
-+
-+static int clk_regmap_gate_enable(struct clk_hw *hw)
-+{
-+	return clk_regmap_gate_endisable(hw, 1);
-+}
-+
-+static void clk_regmap_gate_disable(struct clk_hw *hw)
-+{
-+	clk_regmap_gate_endisable(hw, 0);
-+}
-+
-+static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
-+	unsigned int val;
-+
-+	regmap_read(clk->map, gate->offset, &val);
-+	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
-+		val ^= BIT(gate->bit_idx);
-+
-+	val &= BIT(gate->bit_idx);
-+
-+	return val ? 1 : 0;
-+}
-+
-+const struct clk_ops clk_regmap_gate_ops = {
-+	.enable = clk_regmap_gate_enable,
-+	.disable = clk_regmap_gate_disable,
-+	.is_enabled = clk_regmap_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_gate_ops);
-+
-+static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-+						unsigned long prate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(clk->map, div->offset, &val);
-+	if (ret)
-+		/* Gives a hint that something is wrong */
-+		return 0;
-+
-+	val >>= div->shift;
-+	val &= clk_div_mask(div->width);
-+	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
-+				   div->width);
-+}
-+
-+static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *prate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	/* if read only, just return current value */
-+	if (div->flags & CLK_DIVIDER_READ_ONLY) {
-+		ret = regmap_read(clk->map, div->offset, &val);
-+		if (ret)
-+			/* Gives a hint that something is wrong */
-+			return 0;
-+
-+		val >>= div->shift;
-+		val &= clk_div_mask(div->width);
-+
-+		return divider_ro_round_rate(hw, rate, prate, div->table,
-+					     div->width, div->flags, val);
-+	}
-+
-+	return divider_round_rate(hw, rate, prate, div->table, div->width,
-+				  div->flags);
-+}
-+
-+static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = divider_get_val(rate, parent_rate, div->table, div->width,
-+			      div->flags);
-+	if (ret < 0)
-+		return ret;
-+
-+	val = (unsigned int)ret << div->shift;
-+	return regmap_update_bits(clk->map, div->offset,
-+				  clk_div_mask(div->width) << div->shift, val);
-+};
-+
-+/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
-+
-+const struct clk_ops clk_regmap_divider_ops = {
-+	.recalc_rate = clk_regmap_div_recalc_rate,
-+	.round_rate = clk_regmap_div_round_rate,
-+	.set_rate = clk_regmap_div_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
-+
-+const struct clk_ops clk_regmap_divider_ro_ops = {
-+	.recalc_rate = clk_regmap_div_recalc_rate,
-+	.round_rate = clk_regmap_div_round_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_divider_ro_ops);
-+
-+static u8 clk_regmap_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(clk->map, mux->offset, &val);
-+	if (ret)
-+		return ret;
-+
-+	val >>= mux->shift;
-+	val &= mux->mask;
-+	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-+}
-+
-+static int clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+	unsigned int val = clk_mux_index_to_val(mux->table, mux->flags, index);
-+
-+	return regmap_update_bits(clk->map, mux->offset,
-+				  mux->mask << mux->shift,
-+				  val << mux->shift);
-+}
-+
-+const struct clk_ops clk_regmap_mux_ops = {
-+	.get_parent = clk_regmap_mux_get_parent,
-+	.set_parent = clk_regmap_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_mux_ops);
-+
-+const struct clk_ops clk_regmap_mux_ro_ops = {
-+	.get_parent = clk_regmap_mux_get_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_mux_ro_ops);
-diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-new file mode 100644
-index 000000000000..627c888026d7
---- /dev/null
-+++ b/drivers/clk/meson/clk-regmap.h
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#ifndef __CLK_REGMAP_H
-+#define __CLK_REGMAP_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+/**
-+ * struct clk_regmap - regmap backed clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @map:	pointer to the regmap structure controlling the clock
-+ * @data:	data specific to the clock type
-+ *
-+ * Clock which is controlled by regmap backed registers. The actual type of
-+ * of the clock is controlled by the clock_ops and data.
-+ */
-+struct clk_regmap {
-+	struct clk_hw	hw;
-+	struct regmap	*map;
-+	void		*data;
-+};
-+
-+#define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
-+
-+/**
-+ * struct clk_regmap_gate_data - regmap backed gate specific data
-+ *
-+ * @offset:	offset of the register controlling gate
-+ * @bit_idx:	single bit controlling gate
-+ * @flags:	hardware-specific flags
-+ *
-+ * Flags:
-+ * Same as clk_gate except CLK_GATE_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_gate_data {
-+	unsigned int	offset;
-+	u8		bit_idx;
-+	u8		flags;
-+};
-+
-+static inline struct clk_regmap_gate_data *
-+clk_get_regmap_gate_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_gate_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_gate_ops;
-+
-+/**
-+ * struct clk_regmap_div_data - regmap backed adjustable divider specific data
-+ *
-+ * @offset:	offset of the register controlling the divider
-+ * @shift:	shift to the divider bit field
-+ * @width:	width of the divider bit field
-+ * @table:	array of value/divider pairs, last entry should have div = 0
-+ *
-+ * Flags:
-+ * Same as clk_divider except CLK_DIVIDER_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_div_data {
-+	unsigned int	offset;
-+	u8		shift;
-+	u8		width;
-+	u8		flags;
-+	const struct clk_div_table	*table;
-+};
-+
-+static inline struct clk_regmap_div_data *
-+clk_get_regmap_div_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_div_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_divider_ops;
-+extern const struct clk_ops clk_regmap_divider_ro_ops;
-+
-+/**
-+ * struct clk_regmap_mux_data - regmap backed multiplexer clock specific data
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @offset:	offset of theregister controlling multiplexer
-+ * @table:	array of parent indexed register values
-+ * @shift:	shift to multiplexer bit field
-+ * @mask:	mask of mutliplexer bit field
-+ * @flags:	hardware-specific flags
-+ *
-+ * Flags:
-+ * Same as clk_divider except CLK_MUX_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_mux_data {
-+	unsigned int	offset;
-+	u32		*table;
-+	u32		mask;
-+	u8		shift;
-+	u8		flags;
-+};
-+
-+static inline struct clk_regmap_mux_data *
-+clk_get_regmap_mux_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_mux_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_mux_ops;
-+extern const struct clk_ops clk_regmap_mux_ro_ops;
-+
-+#endif /* __CLK_REGMAP_H */
++	/* Register all clks */
++	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
+ 		/* array might be sparse */
+-		if (!clkc_data->hw_onecell_data->hws[clkid])
++		if (!clkc_data->hw_onecell_data->hws[i])
+ 			continue;
+ 
+ 		ret = devm_clk_hw_register(dev,
+-					clkc_data->hw_onecell_data->hws[clkid]);
++					   clkc_data->hw_onecell_data->hws[i]);
+ 		if (ret)
+ 			goto iounmap;
+ 	}
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index abac079ff77f..ffadad27375e 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -806,7 +806,7 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
+ 
+ static int meson8b_clkc_probe(struct platform_device *pdev)
+ {
+-	int ret, clkid, i;
++	int ret, i;
+ 	struct clk_hw *parent_hw;
+ 	struct clk *parent_clk;
+ 	struct device *dev = &pdev->dev;
+@@ -844,13 +844,13 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 	 * register all clks
+ 	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
+ 	 */
+-	for (clkid = CLKID_XTAL; clkid < CLK_NR_CLKS; clkid++) {
++	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
+ 		/* array might be sparse */
+-		if (!meson8b_hw_onecell_data.hws[clkid])
++		if (!meson8b_hw_onecell_data.hws[i])
+ 			continue;
+ 
+ 		/* FIXME convert to devm_clk_register */
+-		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[clkid]);
++		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
 2.14.3
