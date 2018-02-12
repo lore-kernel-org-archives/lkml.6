@@ -1,49 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934280AbeBLLwx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:52:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43800 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933898AbeBLLwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:52:49 -0500
-Date: Mon, 12 Feb 2018 12:52:42 +0100
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
-        kernel@collabora.com, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-Message-ID: <20180212115242.z3qv5uejbnhgvd6o@sirius.home.kraxel.org>
-References: <20180126135803.29781-2-tomeu.vizoso@collabora.com>
- <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
- <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
- <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
- <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
- <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
- <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
- <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
- <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
- <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
+        id S934290AbeBLLyC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:54:02 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:36476 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933898AbeBLLyB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 06:54:01 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date: Mon, 12 Feb 2018 12:53:59 +0100
+From: Stefan Agner <stefan@agner.ch>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Baruch Siach <baruch@tkos.co.il>, linus.walleij@linaro.org,
+        aisheng.dong@nxp.com, fabio.estevam@nxp.com, shawnguo@kernel.org,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] MAINTAINERS: add Freescale pin controllers
+In-Reply-To: <1518435295.2744.7.camel@pengutronix.de>
+References: <20180210153204.12728-1-stefan@agner.ch>
+ <1518432502.2744.5.camel@pengutronix.de>
+ <20180212112255.u333xb676kfmi63f@sapphire.tkos.co.il>
+ <1518435295.2744.7.camel@pengutronix.de>
+Message-ID: <3701bd50c7b3269af308223a1712f6d9@agner.ch>
+User-Agent: Roundcube Webmail/1.3.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+On 12.02.2018 12:34, Lucas Stach wrote:
+> Am Montag, den 12.02.2018, 13:22 +0200 schrieb Baruch Siach:
+>> Hi Lucas,
+>>
+>> On Mon, Feb 12, 2018 at 11:48:22AM +0100, Lucas Stach wrote:
+>> > Am Samstag, den 10.02.2018, 16:32 +0100 schrieb Stefan Agner:
+>> > > Add Dong Aisheng, Fabio Estevam, Shawn Guo and myself as
+>> > > maintainer
+>> > > and Sascha as reviewer.
+>> > >
+>> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> > > ---
+>> > >  MAINTAINERS | 11 +++++++++++
+>> > >  1 file changed, 11 insertions(+)
+>> > >
+>> > > diff --git a/MAINTAINERS b/MAINTAINERS
+>> > > index 82ad0eabce4f..fb672dfc519d 100644
+>> > > --- a/MAINTAINERS
+>> > > +++ b/MAINTAINERS
+>> > > @@ -10768,6 +10768,17 @@ L:	linux-gpio@vger.kernel.org
+>> > >  S:	Supported
+>> > >  F:	drivers/pinctrl/pinctrl-at91-pio4.*
+>> > >  
+>> > > +PIN CONTROLLER - FREESCALE
+>> > > +M:	Dong Aisheng <aisheng.dong@nxp.com>
+>> > > +M:	Fabio Estevam <festevam@gmail.com>
+>> > > +M:	Shawn Guo <shawnguo@kernel.org>
+>> > > +M:	Stefan Agner <stefan@agner.ch>
+>> > > +R:	Sascha Hauer <kernel@pengutronix.de>
+>> >
+>> > I'm fine with the patch, but it might make sense to clarify this a
+>> > bit:
+>> > the kernel@ address is really the whole Pengutronix kernel team,
+>> > not
+>> > just Sascha. Using this address is totally fine if you expect
+>> > comments
+>> > on patches, as it gives them a quite wide exposure inside of PTX.
+>>
+>> Of the 5 mentions of kernel@pengutronix.de in MAINTAINERS as of
+>> v4.16-rc1, 
+>> three name Sascha, and two name Uwe. Would you like to also clarify
+>> those?
+> 
+> I think it fine to keep the names of the individual people where they
+> maintain stuff, as this is usually bound to a single person (where
+> kernel@ address is only used for the exposure benefits), but I think it
+> makes less sense for the reviewer role.
 
-> can we reach agreement on whether vsock should be involved in this?
+Sounds reasonable, I will send a v2 with:
+R:	Pengutronix Kernel Team <kernel@pengutronix.de>
 
-I think the best approach would be to have guest proxy and host proxy
-use vsock for the wayland protocol.  Use a wayland protocol extension to
-reference the buffers in stdvga / ivshmem / virtio-gpu.  Only the two
-proxies need to understand the extension, the client <=> guest proxy and
-host proxy <=> server communication would be standard wayland protocol.
+--
+Stefan
 
-cheers,
-  Gerd
+> 
+> Regards,
+> Lucas
