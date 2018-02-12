@@ -1,20 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935379AbeBLNSc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:18:32 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43145 "EHLO
+        id S935392AbeBLNTE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:19:04 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44139 "EHLO
         mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935350AbeBLNSP (ORCPT
+        with ESMTP id S935300AbeBLNSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:18:15 -0500
-X-Google-Smtp-Source: AH8x225fZaQKizZ/cbZvEN0pPSwbEVPWDBeBdSDFzV1bCyc/4X65Z8x+ztPg5PkUSMxrb7zwSfc90g==
+        Mon, 12 Feb 2018 08:18:09 -0500
+X-Google-Smtp-Source: AH8x225luY9FgHchSwsYrAf1UIwY59pk90aBsMEg7iQDbt+v1uFpy2H2ok2Kh0dQN9VAI1apGGcaEA==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 21/21] regulator: gpio: Simplify probe path
-Date: Mon, 12 Feb 2018 14:17:17 +0100
-Message-Id: <20180212131717.27193-22-linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>, arm@kernel.orh,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <mike@compulab.co.il>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 18/21] regulator: fixed/gpio: Pull inversion/OD into gpiolib
+Date: Mon, 12 Feb 2018 14:17:14 +0100
+Message-Id: <20180212131717.27193-19-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -22,149 +30,460 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_* managed device resources and create a local
-struct device *dev variable to simplify the code inside
-probe().
+This pushes the handling of inversion semantics and open drain
+settings to the GPIO descriptor and gpiolib. All affected board
+files are also augmented.
 
+This is especiallt nice since we don't have to have any
+confusing flags passed around to the left and right littering
+the fixed and GPIO regulator drivers and the regulator core.
+It is all just very straight-forward: the core asks the GPIO
+line to be asserted or deasserted and gpiolib deals with the
+rest depending on how the platform is configured: if the line
+is active low, it deals with that, if the line is open drain,
+it deals with that too.
+
+Cc: arm@kernel.orh # ARM systems
+Cc: Alexander Shiyan <shc_work@mail.ru> # i.MX boards user
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com> # MMP2 maintainer
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi> # OMAP1 maintainer
+Cc: Tony Lindgren <tony@atomide.com> # OMAP1,2,3 maintainer
+Cc: Mike Rapoport <mike@compulab.co.il> # EM-X270 maintainer
+Cc: Robert Jarzmik <robert.jarzmik@free.fr> # EZX maintainer
+Cc: Philipp Zabel <philipp.zabel@gmail.com> # Magician maintainer
+Cc: Daniel Mack <zonque@gmail.com> # Raumfeld maintainer
+Cc: Marc Zyngier <marc.zyngier@arm.com> # Zeus maintainer
+Cc: Geert Uytterhoeven <geert+renesas@glider.be> # SuperH pinctrl/GPIO maintainer
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/gpio-regulator.c | 60 +++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 36 deletions(-)
+Maintainers: I would like to see ACKs or Tested-by's if possible,
+see patch 0/21 for information on the series.
+---
+ arch/arm/mach-imx/mach-mx21ads.c                   |  1 -
+ arch/arm/mach-imx/mach-mx27ads.c                   |  2 +-
+ arch/arm/mach-mmp/brownstone.c                     |  1 -
+ arch/arm/mach-omap1/board-ams-delta.c              |  1 -
+ arch/arm/mach-omap2/pdata-quirks.c                 |  1 -
+ arch/arm/mach-pxa/em-x270.c                        |  1 -
+ arch/arm/mach-pxa/ezx.c                            |  3 +--
+ arch/arm/mach-pxa/hx4700.c                         |  3 +--
+ arch/arm/mach-pxa/magician.c                       |  3 +--
+ arch/arm/mach-pxa/raumfeld.c                       |  1 -
+ arch/arm/mach-pxa/zeus.c                           |  3 +--
+ arch/blackfin/mach-bf537/boards/stamp.c            |  1 -
+ arch/sh/boards/mach-ecovec24/setup.c               |  2 --
+ .../intel-mid/device_libs/platform_bcm43xx.c       |  1 -
+ drivers/regulator/core.c                           |  8 ++----
+ drivers/regulator/da9055-regulator.c               |  1 -
+ drivers/regulator/fixed.c                          | 30 ++++++----------------
+ drivers/regulator/gpio-regulator.c                 | 24 +++++++----------
+ include/linux/regulator/fixed.h                    | 10 --------
+ include/linux/regulator/gpio-regulator.h           |  3 ---
+ 20 files changed, 24 insertions(+), 76 deletions(-)
 
-diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
-index aecdd3f211ba..38a283252aaf 100644
---- a/drivers/regulator/gpio-regulator.c
-+++ b/drivers/regulator/gpio-regulator.c
-@@ -228,27 +228,28 @@ static struct regulator_ops gpio_regulator_current_ops = {
+diff --git a/arch/arm/mach-imx/mach-mx21ads.c b/arch/arm/mach-imx/mach-mx21ads.c
+index 5d3b6b4fe6db..8c4a4920468a 100644
+--- a/arch/arm/mach-imx/mach-mx21ads.c
++++ b/arch/arm/mach-imx/mach-mx21ads.c
+@@ -205,7 +205,6 @@ static struct regulator_init_data mx21ads_lcd_regulator_init_data = {
+ static struct fixed_voltage_config mx21ads_lcd_regulator_pdata = {
+ 	.supply_name	= "LCD",
+ 	.microvolts	= 3300000,
+-	.enable_high	= 1,
+ 	.init_data	= &mx21ads_lcd_regulator_init_data,
+ };
  
- static int gpio_regulator_probe(struct platform_device *pdev)
- {
--	struct gpio_regulator_config *config = dev_get_platdata(&pdev->dev);
--	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct gpio_regulator_config *config = dev_get_platdata(dev);
-+	struct device_node *np = dev->of_node;
- 	struct gpio_regulator_data *drvdata;
- 	struct regulator_config cfg = { };
- 	enum gpiod_flags gflags;
- 	int ptr, ret, state, i;
+diff --git a/arch/arm/mach-imx/mach-mx27ads.c b/arch/arm/mach-imx/mach-mx27ads.c
+index 0fdb88db0cbd..08a7e217b9e6 100644
+--- a/arch/arm/mach-imx/mach-mx27ads.c
++++ b/arch/arm/mach-imx/mach-mx27ads.c
+@@ -237,7 +237,7 @@ static struct fixed_voltage_config mx27ads_lcd_regulator_pdata = {
+ static struct gpiod_lookup_table mx27ads_lcd_regulator_gpiod_table = {
+ 	.dev_id = "reg-fixed-voltage.0", /* Let's hope ID 0 is what we get */
+ 	.table = {
+-		GPIO_LOOKUP("LCD", 0, "enable", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("LCD", 0, "enable", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-mmp/brownstone.c b/arch/arm/mach-mmp/brownstone.c
+index 563b5a278d65..502343b32c7f 100644
+--- a/arch/arm/mach-mmp/brownstone.c
++++ b/arch/arm/mach-mmp/brownstone.c
+@@ -149,7 +149,6 @@ static struct regulator_init_data brownstone_v_5vp_data = {
+ static struct fixed_voltage_config brownstone_v_5vp = {
+ 	.supply_name		= "v_5vp",
+ 	.microvolts		= 5000000,
+-	.enable_high		= 1,
+ 	.enabled_at_boot	= 1,
+ 	.init_data		= &brownstone_v_5vp_data,
+ };
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index 759fa18f6ab4..22e94da4af85 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -275,7 +275,6 @@ static struct fixed_voltage_config modem_nreset_config = {
+ 	.supply_name		= "modem_nreset",
+ 	.microvolts		= 3300000,
+ 	.startup_delay		= 25000,
+-	.enable_high		= 1,
+ 	.enabled_at_boot	= 1,
+ 	.init_data		= &modem_nreset_data,
+ };
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+index 4ddde151809c..2ff620b01367 100644
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -332,7 +332,6 @@ static struct fixed_voltage_config pandora_vwlan = {
+ 	.supply_name		= "vwlan",
+ 	.microvolts		= 1800000, /* 1.8V */
+ 	.startup_delay		= 50000, /* 50ms */
+-	.enable_high		= 1,
+ 	.init_data		= &pandora_vmmc3,
+ };
  
--	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
-+	drvdata = devm_kzalloc(dev, sizeof(struct gpio_regulator_data),
- 			       GFP_KERNEL);
- 	if (drvdata == NULL)
+diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
+index 6d7d93981098..8d9ec158f118 100644
+--- a/arch/arm/mach-pxa/em-x270.c
++++ b/arch/arm/mach-pxa/em-x270.c
+@@ -987,7 +987,6 @@ static struct fixed_voltage_config camera_dummy_config = {
+ 	.supply_name		= "camera_vdd",
+ 	.input_supply		= "vcc cam",
+ 	.microvolts		= 2800000,
+-	.enable_high		= 0,
+ 	.init_data		= &camera_dummy_initdata,
+ };
+ 
+diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
+index 2b4bd6d94855..13ebdfd697cc 100644
+--- a/arch/arm/mach-pxa/ezx.c
++++ b/arch/arm/mach-pxa/ezx.c
+@@ -714,7 +714,6 @@ static struct regulator_init_data camera_regulator_initdata = {
+ static struct fixed_voltage_config camera_regulator_config = {
+ 	.supply_name		= "camera_vdd",
+ 	.microvolts		= 2800000,
+-	.enable_high		= 0,
+ 	.init_data		= &camera_regulator_initdata,
+ };
+ 
+@@ -730,7 +729,7 @@ static struct gpiod_lookup_table camera_supply_gpiod_table = {
+ 	.dev_id = "reg-fixed-voltage.1",
+ 	.table = {
+ 		GPIO_LOOKUP("gpio-pxa", GPIO50_nCAM_EN,
+-			    "enable", GPIO_ACTIVE_HIGH),
++			    "enable", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index 6717a10180eb..05148016c620 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -712,7 +712,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name = "bq24022",
+ 
+-	.enable_high = 0,
+ 	.enabled_at_boot = 0,
+ 
+ 	.gpios = bq24022_gpios,
+@@ -737,7 +736,7 @@ static struct gpiod_lookup_table bq24022_gpiod_table = {
+ 	.dev_id = "gpio-regulator",
+ 	.table = {
+ 		GPIO_LOOKUP("gpio-pxa", GPIO72_HX4700_BQ24022_nCHARGE_EN,
+-			    "enable", GPIO_ACTIVE_HIGH),
++			    "enable", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index 9a5bda3ea194..fab63c52d50e 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -657,7 +657,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name		= "bq24022",
+ 
+-	.enable_high		= 0,
+ 	.enabled_at_boot	= 1,
+ 
+ 	.gpios			= bq24022_gpios,
+@@ -682,7 +681,7 @@ static struct gpiod_lookup_table bq24022_gpiod_table = {
+ 	.dev_id = "gpio-regulator",
+ 	.table = {
+ 		GPIO_LOOKUP("gpio-pxa", GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
+-			    "enable", GPIO_ACTIVE_HIGH),
++			    "enable", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-pxa/raumfeld.c b/arch/arm/mach-pxa/raumfeld.c
+index 58833dcd2293..67e6e0759c78 100644
+--- a/arch/arm/mach-pxa/raumfeld.c
++++ b/arch/arm/mach-pxa/raumfeld.c
+@@ -875,7 +875,6 @@ static struct regulator_init_data audio_va_initdata = {
+ static struct fixed_voltage_config audio_va_config = {
+ 	.supply_name		= "audio_va",
+ 	.microvolts		= 5000000,
+-	.enable_high		= 1,
+ 	.enabled_at_boot	= 0,
+ 	.init_data		= &audio_va_initdata,
+ };
+diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
+index 58e05afcece0..428c2db6818a 100644
+--- a/arch/arm/mach-pxa/zeus.c
++++ b/arch/arm/mach-pxa/zeus.c
+@@ -426,7 +426,7 @@ static struct gpiod_lookup_table can_regulator_gpiod_table = {
+ 	.dev_id = "reg-fixed-voltage.0",
+ 	.table = {
+ 		GPIO_LOOKUP("gpio-pxa", ZEUS_CAN_SHDN_GPIO,
+-			    "enable", GPIO_ACTIVE_HIGH),
++			    "enable", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+@@ -547,7 +547,6 @@ static struct regulator_init_data zeus_ohci_regulator_data = {
+ static struct fixed_voltage_config zeus_ohci_regulator_config = {
+ 	.supply_name		= "vbus2",
+ 	.microvolts		= 5000000, /* 5.0V */
+-	.enable_high		= 1,
+ 	.startup_delay		= 0,
+ 	.init_data		= &zeus_ohci_regulator_data,
+ };
+diff --git a/arch/blackfin/mach-bf537/boards/stamp.c b/arch/blackfin/mach-bf537/boards/stamp.c
+index 0adc34e8c975..648df18c4ccd 100644
+--- a/arch/blackfin/mach-bf537/boards/stamp.c
++++ b/arch/blackfin/mach-bf537/boards/stamp.c
+@@ -2696,7 +2696,6 @@ static struct regulator_init_data adp_switch_regulator_data = {
+ static struct fixed_voltage_config adp_switch_pdata = {
+ 	.supply_name = REGULATOR_ADP122,
+ 	.microvolts = REGULATOR_ADP122_UV,
+-	.enable_high = 1,
+ 	.enabled_at_boot = 0,
+ 	.init_data = &adp_switch_regulator_data,
+ };
+diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
+index 2b8472431f02..934482f8bce8 100644
+--- a/arch/sh/boards/mach-ecovec24/setup.c
++++ b/arch/sh/boards/mach-ecovec24/setup.c
+@@ -555,7 +555,6 @@ static struct regulator_init_data cn12_power_init_data = {
+ static struct fixed_voltage_config cn12_power_info = {
+ 	.supply_name = "CN12 SD/MMC Vdd",
+ 	.microvolts = 3300000,
+-	.enable_high = 1,
+ 	.init_data = &cn12_power_init_data,
+ };
+ 
+@@ -596,7 +595,6 @@ static struct regulator_init_data sdhi0_power_init_data = {
+ static struct fixed_voltage_config sdhi0_power_info = {
+ 	.supply_name = "CN11 SD/MMC Vdd",
+ 	.microvolts = 3300000,
+-	.enable_high = 1,
+ 	.init_data = &sdhi0_power_init_data,
+ };
+ 
+diff --git a/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c b/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+index d185d3696fc5..1ec518472344 100644
+--- a/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
++++ b/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+@@ -44,7 +44,6 @@ static struct fixed_voltage_config bcm43xx_vmmc = {
+ 	 */
+ 	.microvolts		= 2000000,		/* 1.8V */
+ 	.startup_delay		= 250 * 1000,		/* 250ms */
+-	.enable_high		= 1,			/* active high */
+ 	.enabled_at_boot	= 0,			/* disabled at boot */
+ 	.init_data		= &bcm43xx_vmmc_data,
+ };
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index fc5346d23fd7..4554f52818f9 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -79,7 +79,6 @@ struct regulator_enable_gpio {
+ 	struct gpio_desc *gpiod;
+ 	u32 enable_count;	/* a number of enabled shared GPIO */
+ 	u32 request_count;	/* a number of requested shared GPIO */
+-	unsigned int ena_gpio_invert:1;
+ };
+ 
+ /*
+@@ -1949,7 +1948,6 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
  		return -ENOMEM;
  
- 	if (np) {
--		config = of_get_gpio_regulator_config(&pdev->dev, np,
-+		config = of_get_gpio_regulator_config(dev, np,
- 						      &drvdata->desc);
- 		if (IS_ERR(config))
- 			return PTR_ERR(config);
- 	}
+ 	pin->gpiod = gpiod;
+-	pin->ena_gpio_invert = config->ena_gpio_invert;
+ 	list_add(&pin->list, &regulator_ena_gpio_list);
  
- 	for (i = 0; i < config->ngpios; i++) {
--		drvdata->gpiods[i] = devm_gpiod_get_index(&pdev->dev,
-+		drvdata->gpiods[i] = devm_gpiod_get_index(dev,
- 							  NULL,
- 							  i,
- 							  config->gflags[i]);
-@@ -257,21 +258,20 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	}
- 	drvdata->nr_gpios = config->ngpios;
+ update_ena_gpio_to_rdev:
+@@ -1999,8 +1997,7 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
+ 	if (enable) {
+ 		/* Enable GPIO at initial use */
+ 		if (pin->enable_count == 0)
+-			gpiod_set_value_cansleep(pin->gpiod,
+-						 !pin->ena_gpio_invert);
++			gpiod_set_value_cansleep(pin->gpiod, 1);
  
--	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
-+	drvdata->desc.name = devm_kstrdup(dev, config->supply_name, GFP_KERNEL);
- 	if (drvdata->desc.name == NULL) {
--		dev_err(&pdev->dev, "Failed to allocate supply name\n");
--		ret = -ENOMEM;
--		goto err;
-+		dev_err(dev, "Failed to allocate supply name\n");
-+		return -ENOMEM;
- 	}
+ 		pin->enable_count++;
+ 	} else {
+@@ -2011,8 +2008,7 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
  
--	drvdata->states = kmemdup(config->states,
--				  config->nr_states *
--					 sizeof(struct gpio_regulator_state),
--				  GFP_KERNEL);
-+	drvdata->states = devm_kmemdup(dev,
-+				       config->states,
-+				       config->nr_states *
-+				       sizeof(struct gpio_regulator_state),
-+				       GFP_KERNEL);
- 	if (drvdata->states == NULL) {
--		dev_err(&pdev->dev, "Failed to allocate state data\n");
--		ret = -ENOMEM;
--		goto err_name;
-+		dev_err(dev, "Failed to allocate state data\n");
-+		return -ENOMEM;
+ 		/* Disable GPIO if not used */
+ 		if (pin->enable_count <= 1) {
+-			gpiod_set_value_cansleep(pin->gpiod,
+-						 pin->ena_gpio_invert);
++			gpiod_set_value_cansleep(pin->gpiod, 0);
+ 			pin->enable_count = 0;
+ 		}
  	}
- 	drvdata->nr_states = config->nr_states;
+diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
+index f40c3b8644ae..1a384258d0e5 100644
+--- a/drivers/regulator/da9055-regulator.c
++++ b/drivers/regulator/da9055-regulator.c
+@@ -457,7 +457,6 @@ static int da9055_gpio_init(struct da9055_regulator *regulator,
+ 		int gpio_mux = pdata->gpio_ren[id];
  
-@@ -290,9 +290,8 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 		drvdata->desc.ops = &gpio_regulator_current_ops;
- 		break;
- 	default:
--		dev_err(&pdev->dev, "No regulator type set\n");
--		ret = -EINVAL;
--		goto err_memstate;
-+		dev_err(dev, "No regulator type set\n");
-+		return -EINVAL;
- 	}
+ 		config->ena_gpiod = pdata->ena_gpiods[id];
+-		config->ena_gpio_invert = 1;
  
- 	/* build initial state from gpio init data. */
-@@ -303,7 +302,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	}
- 	drvdata->state = state;
+ 		/*
+ 		 * GPI pin is muxed with regulator to control the
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index 1142f195529b..8c479cdb69a9 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -79,10 +79,6 @@ of_get_fixed_voltage_config(struct device *dev,
  
--	cfg.dev = &pdev->dev;
-+	cfg.dev = dev;
- 	cfg.init_data = config->init_data;
+ 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+ 
+-	config->enable_high = of_property_read_bool(np, "enable-active-high");
+-	config->gpio_is_open_drain = of_property_read_bool(np,
+-							   "gpio-open-drain");
+-
+ 	if (of_find_property(np, "vin-supply", NULL))
+ 		config->input_supply = "vin";
+ 
+@@ -146,24 +142,14 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 
+ 	drvdata->desc.fixed_uV = config->microvolts;
+ 
+-	cfg.ena_gpio_invert = !config->enable_high;
+-	if (config->enabled_at_boot) {
+-		if (config->enable_high)
+-			gflags = GPIOD_OUT_HIGH;
+-		else
+-			gflags = GPIOD_OUT_LOW;
+-	} else {
+-		if (config->enable_high)
+-			gflags = GPIOD_OUT_LOW;
+-		else
+-			gflags = GPIOD_OUT_HIGH;
+-	}
+-	if (config->gpio_is_open_drain) {
+-		if (gflags == GPIOD_OUT_HIGH)
+-			gflags = GPIOD_OUT_HIGH_OPEN_DRAIN;
+-		else
+-			gflags = GPIOD_OUT_LOW_OPEN_DRAIN;
+-	}
++	/*
++	 * The signal will be inverted by the GPIO core if flagged so in the
++	 * decriptor.
++	 */
++	if (config->enabled_at_boot)
++		gflags = GPIOD_OUT_HIGH;
++	else
++		gflags = GPIOD_OUT_LOW;
+ 
+ 	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, NULL, gflags);
+ 	if (IS_ERR(cfg.ena_gpiod))
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index 172ca4c578b2..fb9563de59fc 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -154,9 +154,6 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ 
+ 	config->supply_name = config->init_data->constraints.name;
+ 
+-	if (of_property_read_bool(np, "enable-active-high"))
+-		config->enable_high = true;
+-
+ 	if (of_property_read_bool(np, "enable-at-boot"))
+ 		config->enabled_at_boot = true;
+ 
+@@ -338,18 +335,15 @@ static int gpio_regulator_probe(struct platform_device *pdev)
  	cfg.driver_data = drvdata;
  	cfg.of_node = np;
-@@ -317,29 +316,20 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	else
- 		gflags = GPIOD_OUT_LOW;
  
--	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
--	if (IS_ERR(cfg.ena_gpiod)) {
--		ret = PTR_ERR(cfg.ena_gpiod);
--		goto err_memstate;
+-	cfg.ena_gpio_invert = !config->enable_high;
+-	if (config->enabled_at_boot) {
+-		if (config->enable_high)
+-			gflags = GPIOD_OUT_HIGH;
+-		else
+-			gflags = GPIOD_OUT_LOW;
+-	} else {
+-		if (config->enable_high)
+-			gflags = GPIOD_OUT_LOW;
+-		else
+-			gflags = GPIOD_OUT_HIGH;
 -	}
-+	cfg.ena_gpiod = devm_gpiod_get_optional(dev, "enable", gflags);
-+	if (IS_ERR(cfg.ena_gpiod))
-+		return PTR_ERR(cfg.ena_gpiod);
++	/*
++	 * The signal will be inverted by the GPIO core if flagged so in the
++	 * decriptor.
++	 */
++	if (config->enabled_at_boot)
++		gflags = GPIOD_OUT_HIGH;
++	else
++		gflags = GPIOD_OUT_LOW;
++
+ 	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
+ 	if (IS_ERR(cfg.ena_gpiod)) {
+ 		ret = PTR_ERR(cfg.ena_gpiod);
+diff --git a/include/linux/regulator/fixed.h b/include/linux/regulator/fixed.h
+index 1a4340ed8e2b..f10140da7145 100644
+--- a/include/linux/regulator/fixed.h
++++ b/include/linux/regulator/fixed.h
+@@ -25,14 +25,6 @@ struct regulator_init_data;
+  * @input_supply:	Name of the input regulator supply
+  * @microvolts:		Output voltage of regulator
+  * @startup_delay:	Start-up time in microseconds
+- * @gpio_is_open_drain: Gpio pin is open drain or normal type.
+- *			If it is open drain type then HIGH will be set
+- *			through PULL-UP with setting gpio as input
+- *			and low will be set as gpio-output with driven
+- *			to low. For non-open-drain case, the gpio will
+- *			will be in output and drive to low/high accordingly.
+- * @enable_high:	Polarity of enable GPIO
+- *			1 = Active high, 0 = Active low
+  * @enabled_at_boot:	Whether regulator has been enabled at
+  * 			boot or not. 1 = Yes, 0 = No
+  * 			This is used to keep the regulator at
+@@ -48,8 +40,6 @@ struct fixed_voltage_config {
+ 	const char *input_supply;
+ 	int microvolts;
+ 	unsigned startup_delay;
+-	unsigned gpio_is_open_drain:1;
+-	unsigned enable_high:1;
+ 	unsigned enabled_at_boot:1;
+ 	struct regulator_init_data *init_data;
+ };
+diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
+index 536cab86f2d5..4f3cc1a73ade 100644
+--- a/include/linux/regulator/gpio-regulator.h
++++ b/include/linux/regulator/gpio-regulator.h
+@@ -44,8 +44,6 @@ struct gpio_regulator_state {
+ /**
+  * struct gpio_regulator_config - config structure
+  * @supply_name:	Name of the regulator supply
+- * @enable_high:	Polarity of enable GPIO
+- *			1 = Active high, 0 = Active low
+  * @enabled_at_boot:	Whether regulator has been enabled at
+  *			boot or not. 1 = Yes, 0 = No
+  *			This is used to keep the regulator at
+@@ -67,7 +65,6 @@ struct gpio_regulator_state {
+ struct gpio_regulator_config {
+ 	const char *supply_name;
  
- 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
- 	if (IS_ERR(drvdata->dev)) {
- 		ret = PTR_ERR(drvdata->dev);
--		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
--		goto err_memstate;
-+		dev_err(dev, "Failed to register regulator: %d\n", ret);
-+		return ret;
- 	}
+-	unsigned enable_high:1;
+ 	unsigned enabled_at_boot:1;
+ 	unsigned startup_delay;
  
- 	platform_set_drvdata(pdev, drvdata);
- 
- 	return 0;
--
--err_memstate:
--	kfree(drvdata->states);
--err_name:
--	kfree(drvdata->desc.name);
--err:
--	return ret;
- }
- 
- static int gpio_regulator_remove(struct platform_device *pdev)
-@@ -347,8 +337,6 @@ static int gpio_regulator_remove(struct platform_device *pdev)
- 	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
- 
- 	regulator_unregister(drvdata->dev);
--	kfree(drvdata->states);
--	kfree(drvdata->desc.name);
- 
- 	return 0;
- }
 -- 
 2.14.3
