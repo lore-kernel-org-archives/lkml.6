@@ -1,200 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933394AbeBLJuX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 04:50:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42941 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933377AbeBLJuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:50:21 -0500
-Date: Mon, 12 Feb 2018 10:50:19 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
- __GFP_HIGHMEM implicitly")
-Message-ID: <20180212095019.GX21609@dhcp22.suse.cz>
-References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
- <20180208130649.GA15846@bombadil.infradead.org>
- <20180208232004.GA21027@bombadil.infradead.org>
- <20180211092652.GV21609@dhcp22.suse.cz>
- <20180211112808.GA4551@bombadil.infradead.org>
+        id S933417AbeBLJvR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 04:51:17 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43312 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932505AbeBLJvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 04:51:14 -0500
+Date: Mon, 12 Feb 2018 09:50:16 +0000
+From: Darren Kenny <darren.kenny@oracle.com>
+To: David Woodhouse <dwmw@amazon.co.uk>
+Cc: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com
+Subject: Re: [PATCH v2 1/6] x86/speculation: Update Speculation Control
+ microcode blacklist
+Message-ID: <20180212095016.i5w3iimemu74ypf6@starbug-vm.ie.oracle.com>
+Mail-Followup-To: David Woodhouse <dwmw@amazon.co.uk>, tglx@linutronix.de,
+        karahmed@amazon.de, sironi@amazon.de, x86@kernel.org,
+        kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com
+References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+ <1518305967-31356-2-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180211112808.GA4551@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1518305967-31356-2-git-send-email-dwmw@amazon.co.uk>
+User-Agent: NeoMutt/20171215
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802120127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[I am crawling over a large backlog after vacation so I will get to
- other emails in this thread later. Let's just fix the regression
- first. The patch with the full changelog is at the end of this email.
- CC Andrew - the original report is http://lkml.kernel.org/r/627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com]
+On Sat, Feb 10, 2018 at 11:39:22PM +0000, David Woodhouse wrote:
+>Intel have retroactively blessed the 0xc2 microcode on Skylake mobile
+>and desktop parts, and the Gemini Lake 0x22 microcode is apparently fine
+>too. We blacklisted the latter purely because it was present with all
+>the other problematic ones in the 2018-01-08 release, but now it's
+>explicitly listed as OK.
+>
+>We still list 0x84 for the various Kaby Lake / Coffee Lake parts, as
+>that appeared in one version of the blacklist and then reverted to
+>0x80 again. We can change it if 0x84 is actually announced to be safe.
+>
+>Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
-On Sun 11-02-18 03:28:08, Matthew Wilcox wrote:
-> On Sun, Feb 11, 2018 at 10:26:52AM +0100, Michal Hocko wrote:
-> > On Thu 08-02-18 15:20:04, Matthew Wilcox wrote:
-> > > ... nevertheless, 19809c2da28a does in fact break vmalloc_32 on 32-bit.  Look:
-> > > 
-> > > #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
-> > > #define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
-> > > #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
-> > > #define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
-> > > #else
-> > > #define GFP_VMALLOC32 GFP_KERNEL
-> > > #endif
-> > > 
-> > > So we pass in GFP_KERNEL to __vmalloc_node, which calls __vmalloc_node_range
-> > > which calls __vmalloc_area_node, which ORs in __GFP_HIGHMEM.
-> > 
-> > Dohh. I have missed this. I was convinced that we always add GFP_DMA32
-> > when doing vmalloc_32. Sorry about that. The above definition looks
-> > quite weird to be honest. First of all do we have any 64b system without
-> > both DMA and DMA32 zones? If yes, what is the actual semantic of
-> > vmalloc_32? Or is there any magic forcing GFP_KERNEL into low 32b?
-> 
-> mmzone.h has the following, which may be inaccurate / out of date:
-> 
->          * parisc, ia64, sparc  <4G
->          * s390                 <2G
->          * arm                  Various
->          * alpha                Unlimited or 0-16MB.
->          *
->          * i386, x86_64 and multiple other arches
->          *                      <16M.
-> 
-> It claims ZONE_DMA32 is x86-64 only, which is incorrect; it's now used
-> by arm64, ia64, mips, powerpc, tile.
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
 
-yes, nobody seem to keep this one in sync.
-
-> > Also I would expect that __GFP_DMA32 should do the right thing on 32b
-> > systems. So something like the below should do the trick
-> 
-> Oh, I see.  Because we have:
-> 
-> #ifdef CONFIG_ZONE_DMA32
-> #define OPT_ZONE_DMA32 ZONE_DMA32
-> #else
-> #define OPT_ZONE_DMA32 ZONE_NORMAL
-> #endif
-> 
-> we'll end up allocating from ZONE_NORMAL if a non-DMA32 architecture asks
-> for GFP_DMA32 memory.  Thanks; I missed that.
-
-yep
-
-> I'd recommend this instead then:
-> 
-> #if defined(CONFIG_64BIT) && !defined(CONFIG_ZONE_DMA32)
-> #define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
-> #else
-> #define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
-> #endif
-> 
-> I think it's clearer than the three-way #if.
-
-I do not have a strong opinion here. I just wanted the change to be
-obvious without meddling with the 64b ifdefs much. Follow up cleanups
-are certainly possible.
-
-> Now, longer-term, perhaps we should do the following:
-> 
-> #ifdef CONFIG_ZONE_DMA32
-> #define OPT_ZONE_DMA32	ZONE_DMA32
-> #elif defined(CONFIG_64BIT)
-> #define OPT_ZONE_DMA	OPT_ZONE_DMA
-> #else
-> #define OPT_ZONE_DMA32 ZONE_NORMAL
-> #endif
-> 
-> Then we wouldn't need the ifdef here and could always use GFP_DMA32
-> | GFP_KERNEL.  Would need to audit current users and make sure they
-> wouldn't be broken by such a change.
-
-I am pretty sure improvements are possible.
-
-> I noticed a mistake in 704b862f9efd;
-> 
-> -               pages = __vmalloc_node(array_size, 1, nested_gfp|__GFP_HIGHMEM,
-> +               pages = __vmalloc_node(array_size, 1, nested_gfp|highmem_mask,
-> 
-> We should unconditionally use __GFP_HIGHMEM here instead of highmem_mask
-> because this is where we allocate the array to hold the struct page
-> pointers.  This can be allocated from highmem, and does not need to be
-> allocated from ZONE_NORMAL.
-
-You seem to be right. nested_gfp doesn't include zone modifiers. Care to
-send a patch?
-
-> Similarly,
-> 
-> -               if (gfpflags_allow_blocking(gfp_mask))
-> +               if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
-> 
-> is not needed (it's not *wrong*, it was just an unnecessary change).
-
-yes. highmem_mask has no influence on the blocking behavior.
-
-The fix for the regressions should be
-
->From 301c0acbce9dd80a854bba49c9db40991df0f9e4 Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Mon, 12 Feb 2018 10:37:19 +0100
-Subject: [PATCH] vmalloc: fix __GFP_HIGHMEM usage for vmalloc_32 on 32b
- systems
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Kai Heng Feng has noticed that BUG_ON(PageHighMem(pg)) triggers in
-drivers/media/common/saa7146/saa7146_core.c since 19809c2da28a ("mm,
-vmalloc: use __GFP_HIGHMEM implicitly”). saa7146_vmalloc_build_pgtable
-uses vmalloc_32 and it is reasonable to expect that the resulting page
-is not in highmem. The above commit aimed to add __GFP_HIGHMEM only
-for those requests which do not specify any zone modifier gfp flag.
-vmalloc_32 relies on GFP_VMALLOC32 which should do the right thing.
-Except it has been missed that GFP_VMALLOC32 is an alias for GFP_KERNEL
-on 32b architectures. Thanks to Matthew to notice this.
-
-Fix the problem by unconditionally setting GFP_DMA32 in GFP_VMALLOC32
-for !64b arches (as a bailout). This should do the right thing and use
-ZONE_NORMAL which should be always below 4G on 32b systems.
-
-Debugged-by: Matthew Wilcox <willy@infradead.org>
-Reported-by: Kai Heng Feng <kai.heng.feng@canonical.com>
-Fixes: 19809c2da28a ("mm, vmalloc: use __GFP_HIGHMEM implicitly”)
-Cc: stable
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/vmalloc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 673942094328..1d147078c469 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1947,7 +1947,11 @@ void *vmalloc_exec(unsigned long size)
- #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
- #define GFP_VMALLOC32 GFP_DMA | GFP_KERNEL
- #else
--#define GFP_VMALLOC32 GFP_KERNEL
-+/*
-+ * 64b systems should always have either DMA or DMA32 zones. For others
-+ * GFP_DMA32 should do the right thing and use the normal zone.
-+ */
-+#define GFP_VMALLOC32 GFP_DMA32 | GFP_KERNEL
- #endif
- 
- /**
--- 
-2.15.1
-
--- 
-Michal Hocko
-SUSE Labs
+>---
+> arch/x86/kernel/cpu/intel.c | 4 ----
+> 1 file changed, 4 deletions(-)
+>
+>diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+>index 319bf98..f73b814 100644
+>--- a/arch/x86/kernel/cpu/intel.c
+>+++ b/arch/x86/kernel/cpu/intel.c
+>@@ -123,8 +123,6 @@ static const struct sku_microcode spectre_bad_microcodes[] = {
+> 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
+> 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
+> 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
+>-	{ INTEL_FAM6_SKYLAKE_MOBILE,	0x03,	0xc2 },
+>-	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
+> 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
+> 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
+> 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+>@@ -136,8 +134,6 @@ static const struct sku_microcode spectre_bad_microcodes[] = {
+> 	{ INTEL_FAM6_HASWELL_X,		0x02,	0x3b },
+> 	{ INTEL_FAM6_HASWELL_X,		0x04,	0x10 },
+> 	{ INTEL_FAM6_IVYBRIDGE_X,	0x04,	0x42a },
+>-	/* Updated in the 20180108 release; blacklist until we know otherwise */
+>-	{ INTEL_FAM6_ATOM_GEMINI_LAKE,	0x01,	0x22 },
+> 	/* Observed in the wild */
+> 	{ INTEL_FAM6_SANDYBRIDGE_X,	0x06,	0x61b },
+> 	{ INTEL_FAM6_SANDYBRIDGE_X,	0x07,	0x712 },
+>-- 
+>2.7.4
+>
