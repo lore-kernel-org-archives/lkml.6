@@ -1,105 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932766AbeBLERF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 23:17:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932454AbeBLERD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 23:17:03 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F1F21781
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AH8x227AF1XiBEO3YKGOkzDeemIxYZPGIQLvGiVbj5yAJs9UYk0Dknh7FS4Lxp4KTwb47agIcJUrp+IQVuAZ0DTWuE8=
+        id S932660AbeBLEWo (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 23:22:44 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:36027 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932237AbeBLEWm (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Sun, 11 Feb 2018 23:22:42 -0500
+Subject: Re: [PATCH] .gitignore: ignore ANS.1 auto generated files
+To: linux-kernel@vger.kernel.org, trivial@kernel.org
+Cc: netfilter-devel@vger.kernel.org, yamada.masahiro@socionext.com,
+        robh@kernel.org
+References: <20180211095554.16303-1-lszhu@suse.com>
+From: Zhu Lingshan <lszhu@suse.com>
+Message-ID: <bcbf57f0-0377-7d35-3507-250fb5e970df@suse.com>
+Date: Mon, 12 Feb 2018 12:22:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180209171822.fmrifuybxg3t7dkx@derp-derp.lan>
-References: <20180207210530.3099-1-atull@kernel.org> <20180209171822.fmrifuybxg3t7dkx@derp-derp.lan>
-From: Alan Tull <atull@kernel.org>
-Date: Sun, 11 Feb 2018 22:16:20 -0600
-X-Gmail-Original-Message-ID: <CANk1AXT9cPUdFg56ObeCM=CoYFmgap8An0=Gnax7XPvCqmgEZQ@mail.gmail.com>
-Message-ID: <CANk1AXT9cPUdFg56ObeCM=CoYFmgap8An0=Gnax7XPvCqmgEZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] fpga: don't use drvdata in common code
-To: Moritz Fischer <mdf@kernel.org>
-Cc: Anatolij Gustschin <agust@denx.de>,
-        Matthew Gerlach <matthew.gerlach@linux.intel.com>,
-        Joel Holdsworth <joel@airwebreathe.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Joshua Clayton <stillcompiling@gmail.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180211095554.16303-1-lszhu@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 9, 2018 at 11:18 AM, Moritz Fischer <mdf@kernel.org> wrote:
-> On Wed, Feb 07, 2018 at 03:05:26PM -0600, Alan Tull wrote:
->> Setting drvdata is fine for DT based devices which have one manager,
->> bridge, or region device per platform device.  However, PCIe based
->> devices may have multiple FPGA mgr/bridge/regions under one PCIe
->> device.  Without these changes, PCIe-based solutions have to create an
->> extra device for each child mgr/bridge/region to hold drvdata.
->>
->> Also changing the fpga_*_register/unregister functions to take the
->> corresponding struct as the only parameter wherever they weren't already.
->>
->> * int fpga_bridge_register(struct fpga_bridge *br)
->> * int fpga_mgr_register(struct fpga_manager *mgr)
->> * int fpga_region_register(struct fpga_region *region)
->>
->> * void fpga_bridge_unregister(struct fpga_bridge *br)
->> * void fpga_mgr_unregister(struct fpga_manager *mgr)
->> * int fpga_region_unregister(struct fpga_region *region)
->>
->> Changes from v2:
->> * Drop patch 5 which fixed a DT overlay issue.  The underlying
->>   issue was fixed in the main DT overlay code.
->> * Minor code cleanup to make it more obvious that the changes
->>   were not breaking anything
->> * Added Moritz' ack on patch 1
->>
->> Alan Tull (4):
->>   fpga: region: don't use drvdata in common fpga code
->>   fpga: manager: don't use drvdata in common fpga code
->>   fpga: bridge: don't use drvdata in common fpga code
->>   fpga: region: change fpga_region_register to have one param
->
-> Acked-by: Moritz Fischer <mdf@kernel.org> for the ones I haven't ack'd
-> so far.
+cc Masahiro and Rob
 
-Thanks Moritz!
+Thanks,
+BR
+Zhu Lingshan
 
-Alan
-
+On 2018/2/11 17:55, Zhu Lingshan wrote:
+> when build kernel with default configure, files:
 >
-> Thanks,
+> generatenet/ipv4/netfilter/nf_nat_snmp_basic-asn1.c
+> net/ipv4/netfilter/nf_nat_snmp_basic-asn1.h
 >
-> Moritz
->>
->>  Documentation/fpga/fpga-mgr.txt     | 24 +++++++++++++++------
->>  Documentation/fpga/fpga-region.txt  |  3 +--
->>  drivers/fpga/altera-cvp.c           | 18 ++++++++++++----
->>  drivers/fpga/altera-fpga2sdram.c    | 20 +++++++++++++----
->>  drivers/fpga/altera-freeze-bridge.c | 18 +++++++++++++---
->>  drivers/fpga/altera-hps2fpga.c      | 16 +++++++++++---
->>  drivers/fpga/altera-pr-ip-core.c    | 17 +++++++++++++--
->>  drivers/fpga/altera-ps-spi.c        | 18 +++++++++++++---
->>  drivers/fpga/fpga-bridge.c          | 43 ++++++++++++++-----------------------
->>  drivers/fpga/fpga-mgr.c             | 39 ++++++++++++---------------------
->>  drivers/fpga/fpga-region.c          |  9 ++++++--
->>  drivers/fpga/ice40-spi.c            | 20 +++++++++++++----
->>  drivers/fpga/of-fpga-region.c       |  4 +++-
->>  drivers/fpga/socfpga-a10.c          | 16 +++++++++++---
->>  drivers/fpga/socfpga.c              | 18 +++++++++++++---
->>  drivers/fpga/ts73xx-fpga.c          | 18 +++++++++++++---
->>  drivers/fpga/xilinx-pr-decoupler.c  | 15 ++++++++++---
->>  drivers/fpga/xilinx-spi.c           | 18 +++++++++++++---
->>  drivers/fpga/zynq-fpga.c            | 16 +++++++++++---
->>  include/linux/fpga/fpga-bridge.h    |  7 +++---
->>  include/linux/fpga/fpga-mgr.h       |  8 +++----
->>  include/linux/fpga/fpga-region.h    |  4 +++-
->>  22 files changed, 256 insertions(+), 113 deletions(-)
->>
->> --
->> 2.7.4
->>
+> will be automatically generated by ASN.1 compiler, so
+> No need to track them in git, it's better to ignore them.
+>
+> Signed-off-by: Zhu Lingshan <lszhu@suse.com>
+> ---
+>   .gitignore | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/.gitignore b/.gitignore
+> index 705e09913dc2..1be78fd8163b 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -127,3 +127,7 @@ all.config
+>   
+>   # Kdevelop4
+>   *.kdev4
+> +
+> +#Automatically generated by ASN.1 compiler
+> +net/ipv4/netfilter/nf_nat_snmp_basic-asn1.c
+> +net/ipv4/netfilter/nf_nat_snmp_basic-asn1.h
