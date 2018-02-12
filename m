@@ -1,52 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932371AbeBLVfb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:35:31 -0500
-Received: from smtprelay0053.hostedemail.com ([216.40.44.53]:50821 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932204AbeBLVfa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:35:30 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3871:4321:5007:9040:10004:10400:10848:10967:11232:11658:11914:12043:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21324:21611:21627:21740:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: base66_2fbe07e1f9f60
-X-Filterd-Recvd-Size: 1862
-Message-ID: <1518471326.22190.8.camel@perches.com>
-Subject: Re: [PATCH 2/2] i2c: piix4: Use usleep_range()
-From: Joe Perches <joe@perches.com>
-To: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.de>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        =?ISO-8859-1?Q?Zolt=E1n_B=F6sz=F6rm=E9nyi?= <zboszor@pr.hu>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 12 Feb 2018 13:35:26 -0800
-In-Reply-To: <20180212205959.GA27573@roeck-us.net>
-References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
-         <1514652658-6228-2-git-send-email-linux@roeck-us.net>
-         <20180212115336.4b828ab8@endymion> <20180212205959.GA27573@roeck-us.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        id S932422AbeBLVgZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:36:25 -0500
+Received: from osg.samsung.com ([64.30.133.232]:57089 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932204AbeBLVgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:36:24 -0500
+Date: Mon, 12 Feb 2018 19:36:17 -0200
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Junio C Hamano <gitster@pobox.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Git Mailing List <git@vger.kernel.org>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+Message-ID: <20180212193617.4993398a@vento.lan>
+In-Reply-To: <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+Organization: Samsung
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-02-12 at 12:59 -0800, Guenter Roeck wrote:
-> On Mon, Feb 12, 2018 at 11:53:36AM +0100, Jean Delvare wrote:
-> > On Sat, 30 Dec 2017 08:50:58 -0800, Guenter Roeck wrote:
-> > > The piix4 i2c driver is extremely slow. Replacing msleep()
-> > > with usleep_range() increases its speed substantially.
-[]
-> > > diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-[]
-> > > @@ -467,13 +467,13 @@ static int piix4_transaction(struct i2c_adapter *piix4_adapter)
-> > >  
-> > >  	/* We will always wait for a fraction of a second! (See PIIX4 docs errata) */
-> > >  	if (srvrworks_csb5_delay) /* Extra delay for SERVERWORKS_CSB5 */
-> > > -		msleep(2);
-> > > +		usleep_range(2000, 2000);
+Em Mon, 12 Feb 2018 13:15:04 -0800
+Linus Torvalds <torvalds@linux-foundation.org> escreveu:
 
-usleep_range without a range isn't particularly useful.
-Perhaps a 100 uSec range would allow better scheduling.
+> On Mon, Feb 12, 2018 at 1:00 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Linus, this happens a bit after the merge window, so I am wondering
+> > about the rational of not doing a fast forward merge when merging a
+> > signed tag (I forget the reasoning).  
+> 
+> The reasoning is to avoid losing the signature from the tag (when
+> merging a signed tag, the signature gets inserted into the merge
+> commit itself - use "git log --show-signature" to see them).
+> 
+> So when I merge a signed tag, I do *not* want to fast-forward to the
+> top commit, because then I'd lose the signature from the tag. Thus the
+> "merging signed tags are non-fast-forward by default" reasoning.
+> 
+> But, yes, that reasoning is really only valid for proper merges of new
+> features, not for back-merges.
+> 
+> The problem, of course, is that since git is distributed, git doesn't
+> know who is "upstream" and who is "downstream", so there's no
+> _technical_ difference between merging a development tree, and a
+> development tree doing a back-merge of the upstream tree.
+> 
+> Maybe it was a mistake to make signed tag merges non-fast-forward,
+> since they cause these kinds of issues with people who use "pull" to
+> update their otherwise unmodified trees.
+> 
+> I can always teach myself to just use --no-ff, since I end up doing
+> things like verifying at the signatures anyway.
 
-		usleep_range(2000, 2100);
+Hmm... at least at git version 2.14.3, git documentation doesn't
+mention that signed pull requests won't do fast forward. Instead,
+it says that --ff is the default behavior:
+
+
+       --ff
+           When the merge resolves as a fast-forward, only update the branch pointer, without creating a merge commit. This is the
+           default behavior.
+
+Btw, even doing:
+
+	$ git merge -ff v4.16-rc1
+
+it will still produce a git commit for the merge.
+
+
+-- 
+Thanks,
+Mauro
