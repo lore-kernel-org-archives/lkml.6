@@ -1,35 +1,35 @@
 Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AH8x2264cmAxDXb7aQwbeM6ne6JVw/2OTfS3aeu4zYduooOdLDqHXgEqCsMmJss/JmzAym3wNajt
-ARC-Seal: i=1; a=rsa-sha256; t=1518440006; cv=none;
+X-Google-Smtp-Source: AH8x227xmL8m6lEjj42SVMNfQ0iahjPEyZ2ylrTJza3G4nPsB3xEtA1TcYAaKw4HH/qNAcIFfjHR
+ARC-Seal: i=1; a=rsa-sha256; t=1518439995; cv=none;
         d=google.com; s=arc-20160816;
-        b=L4x5/iZo+nSX2C9G8x9nxBJxQhM37dILJIuhbYDUWvyqvfP5lnJc4D5vo1MGg6MnqC
-         D0QIxaG1OGnqb2zwtyMXXeTsVhZAbf3E0zGHQB5RppIotaYw5dH8GVKV0WUqRPrt9n8K
-         wMENUNUg8cUGRDuiLiqlk926nOScxzTh+Y72+3Jb192GzKlMpBylZtY6C9hdIKavu8uG
-         iWoa2sIg1rYGFl8zc+/CzzR3WK+23/3wVlkghvFBzBANO0KtSF6zmYxUFErxjQhTFosf
-         uXyg/TA9t9Lyh02LorBHHuc6MwxtZuHPBkdzexBX/fc/B70y/442l5+A65tSepYsljxv
-         jHmw==
+        b=R00dv9Fz6IKsQ8Lnz1UjnyG+mXw9S6/y2HbcHjYNCQhng7tb8kZ+x8kWIpKk8XUcVi
+         h1d1/IH/8VEudqHsFdmpZEwzSyGm3I+PV4bJ4fPzTieJlmvbK+ukzq9xGJD/yhQMhAVt
+         gzKrAy21a5MpZt6qWSAs43hNjEohbjgcN1esEoG+gtYFVgytIe1GD+N+RP96Pz6qMjg2
+         uY3M6Yn3DzxFGnV8yxtAcm+cBZjKsK+PgdP0ocAH0iHOsrNAQfGnU3QBE5br33nzXwo1
+         5TZZEEySV0AQXlsAGW04R555eXOMOqSuAleY0r/SuGlmjv3o2cjjnakOBEvJu7Gfa/EW
+         qddg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-disposition:mime-version:references:subject:cc:to:from:date
          :user-agent:message-id:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=0er5PgGdn9nSm4N++HRzzjN3ATy1dFK+dxzGrkM8nLw=;
-        b=QV7+gl3GT6S9BC44Twk4H867AhuPcszPfydSPW4Y/STipP28XTOFWGxQq9nGVHRef7
-         0VZa2CyLilz6O9i6bheJI6jj1LGupb1dZGCDj0enR8oIKAYMUlnram3Og1nLm6JIplp1
-         ZBtmpYvtYl1YnZGPvmot84jdgo7CNHMWac5dYF7SDPYlF57Yj2r4kBzO66xZ4BC/GdTw
-         LJ+4qqaLYihhbYV4QOprk9ptrILrHyRmzYjtM4VzFRkaWf9jgP3vLfPYdlFiecs+gFVd
-         JRQvRNCANz2zr4kq1mZb8a1DFylKYAyQZNVY4FwU1VMln/ahM2KxM+x5LLBgrN6UR16N
-         lXeg==
+        bh=190MSA6KHrSTK2yofS0WZXp/2shbW/rYmqGrbiYQIlc=;
+        b=X8zoUzmZ0Fsn1+w70PYAbI+IfHG7xy82VurWbEc9kZKjL4ZV4lRDgG1R4iDW8PppEx
+         uWyPdovy2Ggwm/fTWvnYG3XR9GTmFLRT/SlPZ81noij8bX9Y9QiQwNwX7fbNA3HB+GII
+         qsXBzJo9J7l0ef3Hrq9JBkwoUz8Z1IFqFugql8kcPMOGA+LeYUJLqgXasXbIuiCQeCOc
+         oG8yRQDre1Wg8Q4XDx7Ewb05hLu3gPnfYEiRRSDWpsKsoQS+939Z6hPCHBP1JBcShDEV
+         NJH/9W8xHCSTmgfZBhhXBppZdFMXEbFrNG39wRIrNtl5u00vY/HvYhPJXIGhnmxTRuwj
+         cB9A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=ML+xW6lo;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=LN3Iuijz;
+       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=BL1Eu+4E;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=soGrwzDp;
        spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 85.118.1.10 as permitted sender) smtp.mailfrom=peterz@infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=ML+xW6lo;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=LN3Iuijz;
+       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=BL1Eu+4E;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=soGrwzDp;
        spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 85.118.1.10 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Message-Id: <20180212125033.550669905@infradead.org>
+Message-Id: <20180212125033.346541648@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Mon, 12 Feb 2018 13:49:01 +0100
+Date: Mon, 12 Feb 2018 13:48:57 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: David Woodhouse <dwmw2@infradead.org>,
  Thomas Gleixner <tglx@linutronix.de>,
@@ -50,120 +50,216 @@ Cc: linux-kernel@vger.kernel.org,
  Asit Mallick <asit.k.mallick@intel.com>,
  Peter Zijlstra <peterz@infradead.org>,
  David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH v2 6/8] x86/paravirt: Annotate indirect calls
+Subject: [PATCH v2 2/8] objtool: Add retpoline validation
 References: <20180212124855.882405399@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-retpoline-annotate-pv.patch
+Content-Disposition: inline; filename=peterz-objtool-indirect.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592199747452922783?=
-X-GMAIL-MSGID: =?utf-8?q?1592199747452922783?=
+X-GMAIL-THRID: =?utf-8?q?1592199736159925781?=
+X-GMAIL-MSGID: =?utf-8?q?1592199736159925781?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Paravirt emits indirect calls which get flagged by objtool retpoline
-checks, annotate it away because all these indirect calls will be
-patched out before we start userspace.
+David requested a objtool validation pass for RETPOLINE enabled
+builds, where it validates no unannotated indirect  jumps or calls are
+left.
 
-This patching happens through alternative_instructions() ->
-apply_paravirt() -> pv_init_ops.patch() which will eventually end up
-in paravirt_patch_default(). This function _will_ write direct
-alternatives.
+Add an additional .discard.retpoline_safe section to allow annotating
+the few indirect sites that are required and safe.
 
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+Requested-by: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/paravirt.h       |   17 +++++++++++++----
- arch/x86/include/asm/paravirt_types.h |    5 ++++-
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ scripts/Makefile.build        |    4 +
+ tools/objtool/builtin-check.c |    3 -
+ tools/objtool/builtin.h       |    2 
+ tools/objtool/check.c         |   86 +++++++++++++++++++++++++++++++++++++++++-
+ tools/objtool/check.h         |    1 
+ 5 files changed, 93 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -7,6 +7,7 @@
- #ifdef CONFIG_PARAVIRT
- #include <asm/pgtable_types.h>
- #include <asm/asm.h>
-+#include <asm/nospec-branch.h>
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -264,6 +264,10 @@ objtool_args += --no-unreachable
+ else
+ objtool_args += $(call cc-ifversion, -lt, 0405, --no-unreachable)
+ endif
++ifdef CONFIG_RETPOLINE
++  objtool_args += --retpoline
++endif
++
  
- #include <asm/paravirt_types.h>
+ ifdef CONFIG_MODVERSIONS
+ objtool_o = $(@D)/.tmp_$(@F)
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -29,7 +29,7 @@
+ #include "builtin.h"
+ #include "check.h"
  
-@@ -879,23 +880,27 @@ extern void default_banner(void);
+-bool no_fp, no_unreachable;
++bool no_fp, no_unreachable, retpoline;
  
- #define INTERRUPT_RETURN						\
- 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_iret), CLBR_NONE,	\
--		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret))
-+		  ANNOTATE_RETPOLINE_SAFE;					\
-+		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret);)
+ static const char * const check_usage[] = {
+ 	"objtool check [<options>] file.o",
+@@ -39,6 +39,7 @@ static const char * const check_usage[]
+ const struct option check_options[] = {
+ 	OPT_BOOLEAN('f', "no-fp", &no_fp, "Skip frame pointer validation"),
+ 	OPT_BOOLEAN('u', "no-unreachable", &no_unreachable, "Skip 'unreachable instruction' warnings"),
++	OPT_BOOLEAN('r', "retpoline", &retpoline, "Validate retpoline assumptions"),
+ 	OPT_END(),
+ };
  
- #define DISABLE_INTERRUPTS(clobbers)					\
- 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_disable), clobbers, \
- 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
-+		  ANNOTATE_RETPOLINE_SAFE;					\
- 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_disable);	\
- 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+--- a/tools/objtool/builtin.h
++++ b/tools/objtool/builtin.h
+@@ -20,7 +20,7 @@
+ #include <subcmd/parse-options.h>
  
- #define ENABLE_INTERRUPTS(clobbers)					\
- 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_enable), clobbers,	\
- 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
-+		  ANNOTATE_RETPOLINE_SAFE;					\
- 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_enable);	\
- 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ extern const struct option check_options[];
+-extern bool no_fp, no_unreachable;
++extern bool no_fp, no_unreachable, retpoline;
  
- #ifdef CONFIG_X86_32
- #define GET_CR0_INTO_EAX				\
- 	push %ecx; push %edx;				\
-+	ANNOTATE_RETPOLINE_SAFE;				\
- 	call PARA_INDIRECT(pv_cpu_ops+PV_CPU_read_cr0);	\
- 	pop %edx; pop %ecx
- #else	/* !CONFIG_X86_32 */
-@@ -917,21 +922,25 @@ extern void default_banner(void);
-  */
- #define SWAPGS								\
- 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs), CLBR_NONE,	\
--		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs)		\
-+		  ANNOTATE_RETPOLINE_SAFE;					\
-+		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs);		\
- 		 )
+ extern int cmd_check(int argc, const char **argv);
+ extern int cmd_orc(int argc, const char **argv);
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -496,6 +496,7 @@ static int add_jump_destinations(struct
+ 			 * disguise, so convert them accordingly.
+ 			 */
+ 			insn->type = INSN_JUMP_DYNAMIC;
++			insn->retpoline_safe = true;
+ 			continue;
+ 		} else {
+ 			/* sibling call */
+@@ -547,7 +548,8 @@ static int add_call_destinations(struct
+ 			if (!insn->call_dest && !insn->ignore) {
+ 				WARN_FUNC("unsupported intra-function call",
+ 					  insn->sec, insn->offset);
+-				WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
++				if (retpoline)
++					WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
+ 				return -1;
+ 			}
  
- #define GET_CR2_INTO_RAX				\
--	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2)
-+	ANNOTATE_RETPOLINE_SAFE;				\
-+	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2);
+@@ -1107,6 +1109,54 @@ static int read_unwind_hints(struct objt
+ 	return 0;
+ }
  
- #define USERGS_SYSRET64							\
- 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_usergs_sysret64),	\
- 		  CLBR_NONE,						\
--		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64))
-+		  ANNOTATE_RETPOLINE_SAFE;					\
-+		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64);)
++static int read_retpoline_hints(struct objtool_file *file)
++{
++	struct section *sec, *relasec;
++	struct instruction *insn;
++	struct rela *rela;
++	int i;
++
++	sec = find_section_by_name(file->elf, ".discard.retpoline_safe");
++	if (!sec)
++		return 0;
++
++	relasec = sec->rela;
++	if (!relasec) {
++		WARN("missing .rela.discard.retpoline_safe section");
++		return -1;
++	}
++
++	if (sec->len % sizeof(unsigned long)) {
++		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
++		return -1;
++	}
++
++	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
++		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
++		if (!rela) {
++			WARN("can't find rela for retpoline_safe[%d]", i);
++			return -1;
++		}
++
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!insn) {
++			WARN("can't find insn for retpoline_safe[%d]", i);
++			return -1;
++		}
++
++		if (insn->type != INSN_JUMP_DYNAMIC &&
++		    insn->type != INSN_CALL_DYNAMIC) {
++			WARN_FUNC("retpoline_safe hint not a indirect jump/call",
++				  insn->sec, insn->offset);
++			return -1;
++		}
++
++		insn->retpoline_safe = true;
++	}
++
++	return 0;
++}
++
+ static int decode_sections(struct objtool_file *file)
+ {
+ 	int ret;
+@@ -1145,6 +1195,10 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
  
- #ifdef CONFIG_DEBUG_ENTRY
- #define SAVE_FLAGS(clobbers)                                        \
- 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_save_fl), clobbers, \
- 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);        \
-+		  ANNOTATE_RETPOLINE_SAFE;				    \
- 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_save_fl);    \
- 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
- #endif
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -43,6 +43,7 @@
- #include <asm/desc_defs.h>
- #include <asm/kmap_types.h>
- #include <asm/pgtable_types.h>
-+#include <asm/nospec-branch.h>
++	ret = read_retpoline_hints(file);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
  
- struct page;
- struct thread_struct;
-@@ -392,7 +393,9 @@ int paravirt_disable_iospace(void);
-  * offset into the paravirt_patch_template structure, and can therefore be
-  * freely converted back into a structure offset.
-  */
--#define PARAVIRT_CALL	"call *%c[paravirt_opptr];"
-+#define PARAVIRT_CALL					\
-+	ANNOTATE_RETPOLINE_SAFE				\
-+	"call *%c[paravirt_opptr];"
+@@ -1890,6 +1944,29 @@ static int validate_unwind_hints(struct
+ 	return warnings;
+ }
  
- /*
-  * These macros are intended to wrap calls through one of the paravirt
++static int validate_retpoline(struct objtool_file *file)
++{
++	struct instruction *insn;
++	int warnings = 0;
++
++	for_each_insn(file, insn) {
++		if (insn->type != INSN_JUMP_DYNAMIC &&
++		    insn->type != INSN_CALL_DYNAMIC)
++			continue;
++
++		if (insn->retpoline_safe)
++			continue;
++
++		WARN_FUNC("indirect %s found in RETPOLINE build",
++			  insn->sec, insn->offset,
++			  insn->type == INSN_JUMP_DYNAMIC ? "jump" : "call");
++
++		warnings++;
++	}
++
++	return warnings;
++}
++
+ static bool is_kasan_insn(struct instruction *insn)
+ {
+ 	return (insn->type == INSN_CALL &&
+@@ -2044,6 +2121,13 @@ int check(const char *_objname, bool orc
+ 	if (list_empty(&file.insn_list))
+ 		goto out;
+ 
++	if (retpoline) {
++		ret = validate_retpoline(&file);
++		if (ret < 0)
++			return ret;
++		warnings += ret;
++	}
++
+ 	ret = validate_functions(&file);
+ 	if (ret < 0)
+ 		goto out;
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -45,6 +45,7 @@ struct instruction {
+ 	unsigned char type;
+ 	unsigned long immediate;
+ 	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
++	bool retpoline_safe;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
+ 	struct instruction *first_jump_src;
