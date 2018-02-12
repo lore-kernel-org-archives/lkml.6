@@ -1,65 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933596AbeBLPzR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:55:17 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:48580 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932573AbeBLPyy (ORCPT
+        id S933773AbeBLPz2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:55:28 -0500
+Received: from smtprelay0204.hostedemail.com ([216.40.44.204]:42709 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932485AbeBLPz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:54:54 -0500
-Date: Mon, 12 Feb 2018 16:54:58 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-cc: longman@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4 v6] lib: debugobjects: add global free list and the
- counter
-In-Reply-To: <alpine.DEB.2.21.1802121649490.1158@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1802121654350.1158@nanos.tec.linutronix.de>
-References: <1517872708-24207-1-git-send-email-yang.shi@linux.alibaba.com> <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com> <alpine.DEB.2.21.1802121649490.1158@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 12 Feb 2018 10:55:26 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:965:966:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1431:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3868:4321:4385:4390:4395:5007:7514:7875:10004:10400:10848:11232:11658:11914:12043:12048:12555:12740:12760:12895:13069:13161:13229:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21611:21627:30054:30055:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
+X-HE-Tag: skin68_864aee451f05b
+X-Filterd-Recvd-Size: 1824
+Message-ID: <1518450921.4139.9.camel@perches.com>
+Subject: Re: [PATCH v2] MAINTAINERS: add Freescale pin controllers
+From: Joe Perches <joe@perches.com>
+To: Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org,
+        aisheng.dong@nxp.com, fabio.estevam@nxp.com, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Mon, 12 Feb 2018 07:55:21 -0800
+In-Reply-To: <20180212150549.8622-1-stefan@agner.ch>
+References: <20180212150549.8622-1-stefan@agner.ch>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Feb 2018, Thomas Gleixner wrote:
-> On Tue, 6 Feb 2018, Yang Shi wrote:
-> > +	/*
-> > +	 * The objs on the pool list might be allocated before the work is
-> > +	 * run, so recheck if pool list it full or not, if not fill pool
-> > +	 * list from the global free list
-> > +	 */
-> > +	while (obj_pool_free < debug_objects_pool_size) {
-> > +		if (obj_nr_tofree <= 0)
-> > +			break;
-> > +
-> > +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
-> > +		hlist_del(&obj->node);
-> > +		hlist_add_head(&obj->node, &obj_pool);
-> > +		obj_pool_free++;
-> > +		obj_nr_tofree--;
-> > +	}
-> > +
-> > +	/*
-> > +	 * pool list is already full, and there are still objs on the free list,
-> > +	 * move remaining free objs to a separate list to free the memory later.
-> > +	 */
-> > +	if (obj_nr_tofree > 0) {
-> > +		hlist_move_list(&obj_to_free, &tofree);
-> > +		obj_nr_tofree = 0;
-> > +	}
-> > +
-> >  	while (obj_pool_free >= debug_objects_pool_size + ODEBUG_FREE_BATCH) {
-> >  		for (i = 0; i < ODEBUG_FREE_BATCH; i++) {
-> >  			objs[i] = hlist_entry(obj_pool.first,
-> 
-> This whole section is now pointless and can be removed. There is no way
-> that this code path can be entered after this change. Surplus objects are
-> on the obj_to_free list and not on the obj_pool itself.
+On Mon, 2018-02-12 at 16:05 +0100, Stefan Agner wrote:
+> Add Dong Aisheng, Fabio Estevam, Shawn Guo and myself as maintainer
+> and the Pengutronix kernel team as reviewer.
+[]
+> diff --git a/MAINTAINERS b/MAINTAINERS
+[]
+> @@ -10768,6 +10768,17 @@ L:	linux-gpio@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/pinctrl/pinctrl-at91-pio4.*
+>  
+> +PIN CONTROLLER - FREESCALE
+> +M:	Dong Aisheng <aisheng.dong@nxp.com>
+> +M:	Fabio Estevam <festevam@gmail.com>
+> +M:	Shawn Guo <shawnguo@kernel.org>
+> +M:	Stefan Agner <stefan@agner.ch>
+> +R:	Pengutronix Kernel Team <kernel@pengutronix.de>
+> +L:	linux-gpio@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/pinctrl/freescale/*
 
-Actually not in this patch, but in the next one.
+The * here should probably be removed so perhaps just
 
-Thanks,
+F:	drivers/pinctrl/freescale/
 
-	tglx
+> +F:	Documentation/devicetree/bindings/pinctrl/fsl,*
+> +
+>  PIN CONTROLLER - INTEL
+>  M:	Mika Westerberg <mika.westerberg@linux.intel.com>
+>  M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
