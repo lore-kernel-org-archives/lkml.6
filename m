@@ -1,88 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933138AbeBLJQs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 04:16:48 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40693 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933054AbeBLJQp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:16:45 -0500
-X-Google-Smtp-Source: AH8x224LMJLYFFgqi7t2S+taId3OQDofhwMqwFhFnF9FS1IZdah6L/ToVOkxvehH05LJx0QlhilwcfEd4BG/8QTN6Rw=
+        id S932922AbeBLJTd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 04:19:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932955AbeBLJTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 04:19:30 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69FD21779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AH8x227Rdmb6rTLdX1nQT5B8EPSkdxkE6sLQ+xdBh8NJzI3UKhLghULsOrs5B7ZgFJii7EF+CgQjBaeE1QpC3IccupY=
 MIME-Version: 1.0
-In-Reply-To: <a4299cac-84c1-6468-c38a-f232d0dbfb8a@arm.com>
-References: <20180203154942.63566-1-icenowy@aosc.io> <20180203154942.63566-6-icenowy@aosc.io>
- <a4299cac-84c1-6468-c38a-f232d0dbfb8a@arm.com>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Mon, 12 Feb 2018 10:16:03 +0100
-Message-ID: <CAOFm3uHoQcZ3TZg_uTs2aBgU-p0r2ffJ2VLK+E4V19fmLW10WA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 5/6] arm64: allwinner: h6: add the
- basical Allwinner H6 DTSI file
-To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com
+In-Reply-To: <67a9f473-0eba-b3d0-ae92-5602658b6958@samsung.com>
+References: <CGME20180205154537epcas1p10a9a30a574e3f472358e7dacf3cb0489@epcas1p1.samsung.com>
+ <20180205154403.13520-1-s.nawrocki@samsung.com> <20180205154403.13520-9-s.nawrocki@samsung.com>
+ <CAJKOXPeRFgJQpUTeJeYYo+qqAxkT1iZczSJQzRzn3O3bXmvOZA@mail.gmail.com> <67a9f473-0eba-b3d0-ae92-5602658b6958@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 12 Feb 2018 10:19:27 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPezeWHCaHz1PY03_nTFxb0qOCsgPtNjfMC4id0DsrFLqA@mail.gmail.com>
+Message-ID: <CAJKOXPezeWHCaHz1PY03_nTFxb0qOCsgPtNjfMC4id0DsrFLqA@mail.gmail.com>
+Subject: Re: [PATCH 8/8] ASoC: samsung,tm2-audio DT binding documentation update
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com,
+        sbkim73@samsung.com, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1C9Gw8j017793
 
-Icenowy,
-
-On Mon, Feb 12, 2018 at 12:26 AM, André Przywara <andre.przywara@arm.com> wrote:
-> Hi,
->
-> On 03/02/18 15:49, Icenowy Zheng wrote:
->> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
->> memory map fully reworked and some high-speed peripherals (PCIe, USB
->> 3.0) introduced.
+On Wed, Feb 7, 2018 at 5:31 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 02/06/2018 02:05 PM, Krzysztof Kozlowski wrote:
+>> On Mon, Feb 5, 2018 at 4:44 PM, Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>>> This patch documents additional entries of the audio-codec and
+>>> i2s-controller properties required for the HDMI audio support.
+>>>
+>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/sound/samsung,tm2-audio.txt        | 14 +++++++++-----
+>>>  1 file changed, 9 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+>>> index 94442e5673b3..f5ccc12ddc00 100644
+>>> --- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+>>> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+>>> @@ -4,9 +4,13 @@ Required properties:
+>>>
+>>>   - compatible           : "samsung,tm2-audio"
+>>>   - model                : the user-visible name of this sound complex
+>>> - - audio-codec          : the phandle of the wm5110 audio codec node,
+>>> -                          as described in ../mfd/arizona.txt
+>>> - - i2s-controller       : the phandle of the I2S controller
+>>> + - audio-codec          : the first entry should be phandle of the wm5110 audio
+>>> +                          codec node, as described in ../mfd/arizona.txt;
+>>> +                          the second entry should be phandle of the HDMI
 >>
->> This commit adds the basical DTSI file of it, including the clock
->> support and UART support.
+>> AFAIU, this property is still optional so the wording should be
+>> different. Maybe just add "optional properties" paragraph?
 >
-> Checked the MMIO addresses and the interrupt numbers against the manual.
->
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
->
-> Thanks!
-> Andre.
->
->> ---
->> Changes in v2:
->> - Add APB1 clock as PIO's APB clock.
->> - Switched to SPDX license identifier.
->>
->>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 178 +++++++++++++++++++++++++++
->>  1 file changed, 178 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> new file mode 100644
->> index 000000000000..d4697bb42496
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> @@ -0,0 +1,178 @@
->> +/*
->> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
->> + *
->> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
->> + */
+> I'd like to keep the second entries required in the documentation,
+> and the driver would still be handling the case with just single
+> entries.
 
-Thank you for using SPDX ids: this needs to be on the first line
-though! [1] and eventually some special comments style.
+I understand.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
-
--- 
-Cordially
-Philippe Ombredanne
+Best regards,
+Krzysztof
