@@ -1,163 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935846AbeBLOQl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:16:41 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:33242 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933892AbeBLOQk (ORCPT
+        id S964814AbeBLOTd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:19:33 -0500
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:45101 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933813AbeBLOT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:16:40 -0500
-Message-ID: <1518444989.6606.83.camel@infradead.org>
-Subject: Re: [PATCH v2 1/6] x86/speculation: Update Speculation Control
- microcode blacklist
-From: David Woodhouse <dwmw2@infradead.org>
-To: tglx@linutronix.de, karahmed@amazon.de, sironi@amazon.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com
-In-Reply-To: <1518305967-31356-2-git-send-email-dwmw@amazon.co.uk>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
-         <1518305967-31356-2-git-send-email-dwmw@amazon.co.uk>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-BXm42IpBNnUVLpQmUASf"
-Date: Mon, 12 Feb 2018 14:16:30 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 12 Feb 2018 09:19:26 -0500
+X-Google-Smtp-Source: AH8x227MCwr5/MQWHM2diaJOk++Uv7e4RAx7BtYttdjrHJ64XnziQJkt/eCmIHIu1aLQ+4Mtsw45gmbZP/F1y4zOu4c=
+MIME-Version: 1.0
+In-Reply-To: <2188399.T539WJDZNr@amdc3058>
+References: <CGME20180212134949epcas2p37f0bdae15608340bc21dbb2358db8df3@epcas2p3.samsung.com>
+ <2188399.T539WJDZNr@amdc3058>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Mon, 12 Feb 2018 15:18:44 +0100
+Message-ID: <CAOFm3uFP8bot3b6zRq5WBUxvr-u8TFbPfn4o5rOgRf4duSbOkQ@mail.gmail.com>
+Subject: Re: [PATCH] ata: add Amiga Gayle PATA controller driver
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Tejun Heo <tj@kernel.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, linux-ide@vger.kernel.org,
+        linux-m68k@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 12, 2018 at 2:49 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Add Amiga Gayle PATA controller driver. It enables libata support
+> for the on-board IDE interfaces on some Amiga models (A600, A1200,
+> A4000 and A4000T) and also for IDE interfaces on the Zorro expansion
+> bus (M-Tech E-Matrix 530 expansion card).
+>
+> Thanks to John Paul Adrian Glaubitz and Michael Schmitz for help
+> with testing the driver.
+>
+> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Cc: Michael Schmitz <schmitzmic@gmail.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
---=-BXm42IpBNnUVLpQmUASf
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+<snip>
+> + *
+> + * This file is subject to the terms and conditions of the GNU General Public
+> + * License.  See the file "COPYING" in the main directory of this archive
+> + * for more details.
+> + */
 
-T24gU2F0LCAyMDE4LTAyLTEwIGF0IDIzOjM5ICswMDAwLCBEYXZpZCBXb29kaG91c2Ugd3JvdGU6
-Cj4gCj4gLS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9pbnRlbC5jCj4gKysrIGIvYXJjaC94ODYv
-a2VybmVsL2NwdS9pbnRlbC5jCj4gQEAgLTEyMyw4ICsxMjMsNiBAQCBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IHNrdV9taWNyb2NvZGUKPiBzcGVjdHJlX2JhZF9taWNyb2NvZGVzW10gPSB7Cj4gwqDCoMKg
-wqDCoMKgwqDCoHsgSU5URUxfRkFNNl9LQUJZTEFLRV9NT0JJTEUswqDCoMKgMHgwOSzCoMKgwqAw
-eDg0IH0sCj4gwqDCoMKgwqDCoMKgwqDCoHsgSU5URUxfRkFNNl9TS1lMQUtFX1gswqDCoMKgwqDC
-oMKgwqDCoMKgMHgwMyzCoMKgwqAweDAxMDAwMTNlIH0sCj4gwqDCoMKgwqDCoMKgwqDCoHsgSU5U
-RUxfRkFNNl9TS1lMQUtFX1gswqDCoMKgwqDCoMKgwqDCoMKgMHgwNCzCoMKgwqAweDAyMDAwMDNj
-IH0sCj4gLcKgwqDCoMKgwqDCoMKgeyBJTlRFTF9GQU02X1NLWUxBS0VfTU9CSUxFLMKgwqDCoMKg
-MHgwMyzCoMKgwqAweGMyIH0sCj4gLcKgwqDCoMKgwqDCoMKgeyBJTlRFTF9GQU02X1NLWUxBS0Vf
-REVTS1RPUCzCoMKgwqAweDAzLMKgwqDCoDB4YzIgfSwKPiDCoMKgwqDCoMKgwqDCoMKgeyBJTlRF
-TF9GQU02X0JST0FEV0VMTF9DT1JFLMKgwqDCoMKgMHgwNCzCoMKgwqAweDI4IH0sCj4gwqDCoMKg
-wqDCoMKgwqDCoHsgSU5URUxfRkFNNl9CUk9BRFdFTExfR1QzRSzCoMKgwqDCoDB4MDEswqDCoMKg
-MHgxYiB9LAo+IMKgwqDCoMKgwqDCoMKgwqB7IElOVEVMX0ZBTTZfQlJPQURXRUxMX1hFT05fRCzC
-oMKgMHgwMizCoMKgwqAweDE0IH0sCgpBcmphbiBwb2ludHMgb3V0IHRoYXQgdGhlIFNLWUxBS0Vf
-REVTS1RPUCBvbmUgdGhlcmUgaXMgcHJlbWF0dXJlLiBUaGVyZQphcmUgKnR3byogcm93cyBpbiBJ
-bnRlbCdzIHRhYmxlIHdoaWNoIG1hdGNoIHRoYXQgQ1BVSUQgKDUwNkUzKS4KCk9ubHkgKm9uZSog
-b2YgdGhlbSAoIlNreWxha2UgSC9TIikgaGFzIGNsZWFyZWQgdGhlIDB4QzIgbWljcm9jb2RlIGZv
-cgp1c2UsIHdoaWxlIHRoZSAiU2t5bGFrZSBFMyIgbGluZSBzdGlsbCBkb2Vzbid0IGFwcHJvdmUg
-aXQuIChCdXQgZG9lc24ndApleHBsaWNpdGx5IGxpc3QgaXQgaW4gdGhlICJTVE9QIGRlcGxveWlu
-ZyIgY29sdW1uIGFueSBtb3JlIGVpdGhlciwKd2hpY2ggaXQgcHJvYmFibHkgc2hvdWxkLCBhbmQg
-bWlnaHQgaGF2ZSBoZWxwZWQgbWUgbm90aWNlLikKCkluZ28sIFRob21hczogZG8geW91IHdhbnQg
-dG8gZHJvcCB0aGlzIHBhdGNoIHdoaWNoIGlzIGFscmVhZHkgaW4KdGlwL3g4Ni9wdGkgYW5kIGhh
-dmUgYSBuZXcgdmVyc2lvbiB3aXRoIHRoZSBTS1lMQUtFX0RFU0tUT1Agbm8gbG9uZ2VyCnJlbW92
-ZWQ/IE9yIHNoYWxsIEkgc2VuZCBhbiBpbmNyZW1lbnRhbCBwYXRjaCB0byBhZGQgaXQgYmFjaz8=
+Do you mind using the new SDPX ids? (well not so new anymore). [1]
 
+<snip>
+> +
+> +MODULE_AUTHOR("Bartlomiej Zolnierkiewicz");
+> +MODULE_DESCRIPTION("low-level driver for Amiga Gayle PATA");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:amiga-gayle-ide");
+> +MODULE_VERSION(DRV_VERSION);
+>
 
---=-BXm42IpBNnUVLpQmUASf
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTIxNDE2MzBaMC8GCSqG
-SIb3DQEJBDEiBCAWCFEWO7zrg9WwFAJlc7Gu91EFa323w6CKoq/lf5dwHTCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAB7jxarZ1jX7
-hKxBdUtwK3fhHiaZDkopVvv3pXeHXJNjnadgzgzyc7bCXaDqHbBNQ44AX/BKPjb41iqfC+Ox6Ro+
-z3k8Lb/yATDWzcucjm8fg9794jqBPX/TfQFCaQpf4cukkJCq7qWB5AVy6lCBk0PmwJ2ac6YGiBO+
-fHndu2P7y8/7zfPPSbaRKkEx7xheD1igTxxVvxzfBC5tOKdQP3y1qWArIJPCvCKtxu+idp+EJWJC
-2qAKwTh9ZnPlKmLr9sjRi+WsXruj2+mZMowEwwxsNydJ4Ao+JsS+azkc9huAbiAQEj0Ha0uLh0O0
-TBDnxtJ8d22HUtCcDDLhjNwFiJ0AAAAAAAA=
+.... and while doing it please make sure your MODULE_LICENSE matches
+the license.
+Here for instance it is not clear to me if this a GPL-2.0 or a GPL-2.0+
 
 
---=-BXm42IpBNnUVLpQmUASf--
+Thanks!
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
+-- 
+Cordially
+Philippe Ombredanne
+
++1 650 799 0949 | pombredanne@nexB.com
+DejaCode - What's in your code?! - http://www.dejacode.com
+AboutCode - Open source for open source - https://www.aboutcode.org
+nexB Inc. - http://www.nexb.com
+
+CONFIDENTIALITY NOTICE:  This e-mail (including attachments) may
+contain information that is proprietary or confidential. If you are
+not the intended recipient or a person responsible for its delivery to
+the intended recipient, do not copy or distribute it. Please
+permanently delete the e-mail and any attachments, and notify us
+immediately at (650) 799 0949.
