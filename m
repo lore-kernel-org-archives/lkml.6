@@ -1,38 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932694AbeBLDez (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 22:34:55 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:47574 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932376AbeBLDey (ORCPT
+        id S932711AbeBLDjv (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 22:39:51 -0500
+Received: from bmailout2.hostsharing.net ([83.223.90.240]:57063 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932310AbeBLDjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 22:34:54 -0500
-Date: Sun, 11 Feb 2018 22:34:50 -0500 (EST)
-Message-Id: <20180211.223450.926436849855081876.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, mst@redhat.com,
-        ebiggers3@gmail.com
-Subject: Re: [PATCH net] ptr_ring: prevent integer overflow when
- calculating size
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1518319692-5421-1-git-send-email-jasowang@redhat.com>
-References: <1518319692-5421-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Sun, 11 Feb 2018 22:39:49 -0500
+Date: Mon, 12 Feb 2018 04:39:47 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Mike Lothian <mike@fireburn.co.uk>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        Ismo Toijala <ismo.toijala@gmail.com>, nouveau@lists.freedesktop.org,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        Hans de Goede <hdegoede@redhat.com>, Peter Wu <peter@lekensteyn.nl>
+Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
+Message-ID: <20180212033947.GA19049@wunner.de>
+References: <cover.1518338788.git.lukas@wunner.de>
+ <CAHbf0-Fhi9j5H7VTxF84SENQph+UQE2zRbi2Q-u_DAMh6x+eSg@mail.gmail.com>
+ <20180211192314.GA22869@wunner.de>
+ <20180211194154.GB22869@wunner.de>
+ <CAHbf0-HSNJmXs_Nm+bbcfUifoLEpFsMSpM96a-pVfLFMNz3GFw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHbf0-HSNJmXs_Nm+bbcfUifoLEpFsMSpM96a-pVfLFMNz3GFw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Sun, 11 Feb 2018 11:28:12 +0800
-
-> Switch to use dividing to prevent integer overflow when size is too
-> big to calculate allocation size properly.
+On Mon, Feb 12, 2018 at 12:35:51AM +0000, Mike Lothian wrote:
+> I've not been able to reproduce the original problem you're trying to
+> solve on amdgpu thats with or without your patch set and the above
+> "trigger" too
 > 
-> Reported-by: Eric Biggers <ebiggers3@gmail.com>
-> Fixes: 6e6e41c31122 ("ptr_ring: fail early if queue occupies more than KMALLOC_MAX_SIZE")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> Is anything else required to trigger it, I started multiple DRI_PRIME
+> glxgears, in parallel, serial waiting the 12 seconds and serial within
+> the 12 seconds and I couldn't reproduce it
 
-Applied and queued up for -stable, thanks Jason.
+The discrete GPU needs to runtime suspend, that's the trigger,
+so no DRI_PRIME executables should be running.  Just let it
+autosuspend after boot.  Do you see "waiting 12 sec" messages
+in dmesg?  If not it's not autosuspending.
+
+Thanks,
+
+Lukas
