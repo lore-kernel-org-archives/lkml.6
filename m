@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933885AbeBLLDL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:03:11 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:44759 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933397AbeBLLDK (ORCPT
+        id S933946AbeBLLDl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:03:41 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40543 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933581AbeBLLDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:03:10 -0500
-X-Google-Smtp-Source: AH8x226mczrZNV422aGfXLFyz8mBrt+IYwPgaoLZauw/OWJ/dPXuUlkokbjUg0CyRQmYLaRzOHsfdYOt4AKNBUHIwIo=
-MIME-Version: 1.0
-In-Reply-To: <20180212104537.GH25181@hirez.programming.kicks-ass.net>
-References: <1518422874-13216-1-git-send-email-vincent.guittot@linaro.org>
- <1518422874-13216-2-git-send-email-vincent.guittot@linaro.org> <20180212104537.GH25181@hirez.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 12 Feb 2018 12:02:49 +0100
-Message-ID: <CAKfTPtC+AEy64jBjkTap0yYBiCt06gUb5FAtDyRtMPXy_-qQNw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] sched: Stop nohz stats when decayed
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 12 Feb 2018 06:03:39 -0500
+X-Google-Smtp-Source: AH8x224fJxzdB0AkGUXEi7RHw1Xzd67opyXguscvwBGPRHcdxY/9vve4LGqbbUYeWCT8hlE9DGaACQ==
+From: Amit Kucheria <amit.kucheria@linaro.org>
+To: andy.gross@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Timur Tabi <timur@codeaurora.org>, Wei Xu <xuwei5@hisilicon.com>,
+        Alex Elder <elder@linaro.org>, Rob Herring <robh@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: defconfig: Enable the APCS IPC driver on Qualcomm platforms
+Date: Mon, 12 Feb 2018 16:33:32 +0530
+Message-Id: <6ab84c75aadc152fdd7c63282ee6690096b8b704.1518415510.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 February 2018 at 11:45, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Mon, Feb 12, 2018 at 09:07:52AM +0100, Vincent Guittot wrote:
->> @@ -9383,11 +9450,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>                * work being done for other cpus. Next load
->>                * balancing owner will pick it up.
->>                */
->> -             if (need_resched())
->> -                     break;
->> +             if (need_resched()) {
->> +                     has_blocked_load = true;
->> +                     goto abort;
->> +             }
->>
->>               rq = cpu_rq(balance_cpu);
->>
->> +             update_blocked_averages(rq->cpu);
->
-> Does that want to be update_nohz_stats() ?
+The APCS block is present on several Qualcomm SoCs e.g. 8916, 8996.  On the
+8916 it is needed to enable the clock controller that in turn enables
+cpufreq on the platform while on the 8996 it is needed for communication
+with RPM.
 
-I was about to say yesy but the test if (!time_after(jiffies,
-rq->last_blocked_load_update_tick)) worry me a bit because it can skip
-the update and the chance to clear nohz.has_blocked.
-As an example the tick is 10ms long on arm 32bits so we can easily
-reach the 32ms decay within the current tick even if we have already
-updated it
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->
->> +             has_blocked_load |= rq->has_blocked_load;
->> +
->>               /*
->>                * If time for next balance is due,
->>                * do the balance.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 634b373..96a8ed8 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -525,6 +525,7 @@ CONFIG_ARM_MHU=y
+ CONFIG_PLATFORM_MHU=y
+ CONFIG_BCM2835_MBOX=y
+ CONFIG_HI6220_MBOX=y
++CONFIG_QCOM_APCS_IPC=y
+ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_ARM_SMMU=y
+ CONFIG_ARM_SMMU_V3=y
+-- 
+2.7.4
