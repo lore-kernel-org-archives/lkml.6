@@ -1,142 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753775AbeBLPF4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:05:56 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40633 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932324AbeBLO66 (ORCPT
+        id S1753886AbeBLPGE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:06:04 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:39156 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753801AbeBLPGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:58:58 -0500
-X-Google-Smtp-Source: AH8x227NMCJMm+QgUMXT7dz6JyO4mo9JVWP69QMT6UbJWQJ6e35SFk4kYnxfQfmfy7afSxpr8kE/1A==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/19] clk: meson: switch gxbb ao_clk to clk_regmap
-Date: Mon, 12 Feb 2018 15:58:33 +0100
-Message-Id: <20180212145846.19380-7-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+        Mon, 12 Feb 2018 10:06:02 -0500
+From: Stefan Agner <stefan@agner.ch>
+To: linus.walleij@linaro.org, aisheng.dong@nxp.com, fabio.estevam@nxp.com,
+        shawnguo@kernel.org, kernel@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v2] MAINTAINERS: add Freescale pin controllers
+Date: Mon, 12 Feb 2018 16:05:49 +0100
+Message-Id: <20180212150549.8622-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the gxbb ao specific regmap based clock and use the
-meson clk_regmap based clock instead.
+Add Dong Aisheng, Fabio Estevam, Shawn Guo and myself as maintainer
+and the Pengutronix kernel team as reviewer.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 ---
- drivers/clk/meson/Kconfig      |  1 +
- drivers/clk/meson/Makefile     |  2 +-
- drivers/clk/meson/gxbb-aoclk.c | 20 ++++++++++----------
- drivers/clk/meson/gxbb-aoclk.h |  1 -
- 4 files changed, 12 insertions(+), 12 deletions(-)
+ MAINTAINERS | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index e97e85077da1..33d148e19066 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -20,6 +20,7 @@ config COMMON_CLK_GXBB
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
-+	select COMMON_CLK_REGMAP_MESON
- 	help
- 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 11a50586666a..465086118d62 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,6 +4,6 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 82ad0eabce4f..df60ca7c3355 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10768,6 +10768,17 @@ L:	linux-gpio@vger.kernel.org
+ S:	Supported
+ F:	drivers/pinctrl/pinctrl-at91-pio4.*
  
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
--obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
-+obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 6c161e0a8e59..9ec23ae9a219 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -62,10 +62,9 @@
- #include <linux/delay.h>
- #include <dt-bindings/clock/gxbb-aoclkc.h>
- #include <dt-bindings/reset/gxbb-aoclkc.h>
-+#include "clk-regmap.h"
- #include "gxbb-aoclk.h"
- 
--static DEFINE_SPINLOCK(gxbb_aoclk_lock);
--
- struct gxbb_aoclk_reset_controller {
- 	struct reset_controller_dev reset;
- 	unsigned int *data;
-@@ -87,12 +86,14 @@ static const struct reset_control_ops gxbb_aoclk_reset_ops = {
- };
- 
- #define GXBB_AO_GATE(_name, _bit)					\
--static struct aoclk_gate_regmap _name##_ao = {				\
--	.bit_idx = (_bit),						\
--	.lock = &gxbb_aoclk_lock,					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = AO_RTI_GEN_CNTL_REG0,				\
-+		.bit_idx = (_bit),					\
-+	},								\
- 	.hw.init = &(struct clk_init_data) {				\
- 		.name = #_name "_ao",					\
--		.ops = &meson_aoclk_gate_regmap_ops,			\
-+		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-@@ -107,7 +108,6 @@ GXBB_AO_GATE(uart2, 5);
- GXBB_AO_GATE(ir_blaster, 6);
- 
- static struct aoclk_cec_32k cec_32k_ao = {
--	.lock = &gxbb_aoclk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "cec_32k_ao",
- 		.ops = &meson_aoclk_cec_32k_ops,
-@@ -126,7 +126,7 @@ static unsigned int gxbb_aoclk_reset[] = {
- 	[RESET_AO_IR_BLASTER] = 23,
- };
- 
--static struct aoclk_gate_regmap *gxbb_aoclk_gate[] = {
-+static struct clk_regmap *gxbb_aoclk_gate[] = {
- 	[CLKID_AO_REMOTE] = &remote_ao,
- 	[CLKID_AO_I2C_MASTER] = &i2c_master_ao,
- 	[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao,
-@@ -177,10 +177,10 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
- 	 * Populate regmap and register all clks
- 	 */
- 	for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
--		gxbb_aoclk_gate[clkid]->regmap = regmap;
-+		gxbb_aoclk_gate[clkid]->map = regmap;
- 
- 		ret = devm_clk_hw_register(dev,
--					gxbb_aoclk_onecell_data.hws[clkid]);
-+					   gxbb_aoclk_onecell_data.hws[clkid]);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index e8604c8f7eee..127d58954cca 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -32,7 +32,6 @@ extern const struct clk_ops meson_aoclk_gate_regmap_ops;
- struct aoclk_cec_32k {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
--	spinlock_t *lock;
- };
- 
- #define to_aoclk_cec_32k(_hw) container_of(_hw, struct aoclk_cec_32k, hw)
++PIN CONTROLLER - FREESCALE
++M:	Dong Aisheng <aisheng.dong@nxp.com>
++M:	Fabio Estevam <festevam@gmail.com>
++M:	Shawn Guo <shawnguo@kernel.org>
++M:	Stefan Agner <stefan@agner.ch>
++R:	Pengutronix Kernel Team <kernel@pengutronix.de>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	drivers/pinctrl/freescale/*
++F:	Documentation/devicetree/bindings/pinctrl/fsl,*
++
+ PIN CONTROLLER - INTEL
+ M:	Mika Westerberg <mika.westerberg@linux.intel.com>
+ M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
 -- 
-2.14.3
+2.16.1
