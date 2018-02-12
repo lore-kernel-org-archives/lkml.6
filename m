@@ -1,115 +1,114 @@
-Return-Path: <miguel.ojeda.sandonis@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518468144; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VhbM7HdOf9fh3we0Zzo7hWz5e2CooJUgAihbjY4yniSTt6FYvauDrlsBWgzaXAD/7e
-         e2mHRseOKZBp49+NrwSb9uG2U39ts/Xg6fnK4a7OZg2wV0Ak2BLalQIoeNRR0N7DZ6vx
-         bbcEj/VsDFxP885vdUyZ5+zXhDKDndcwPBYk1dHcg/TfP5nsXpscYkqAxHWFpU769M4Y
-         XLPf2dFbN9HA4YrQTCF82OPFmMetgG9IgzFVzH62drweJlYZYvfEz+KNu3W8E+97rsm8
-         DbCmFf+QJc6Moz2SJjg05hp8poNfqYabUzPmX3+xOkzteR3StUD/DirVX0mWaP/hqdNh
-         uo0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=PUM8dcBdB5RdSQCvTyKcQbPKCYMwGoYW+tLnnX7bY98=;
-        b=zY2m8WKijHzkfBYqlOZJ4fDb+rOYfVUnFg9soBpFNmJDGH1t8hGmP9f/SSaH7Ni7oi
-         lVT4o1FFdJ4HLCnk1uqzwv0M7bS4FvyJxYMQlh6LXOVJsSkckiFm2ZVRRSyns3sfltv5
-         dcbT4UTA4WXURU4qKmZS9hKDNnYoTTc2PZuzwUqXHPqorOlX20tIOL5rmTv5hkCwfiIL
-         0nsWVA1W1q/klBvr8r4eS0WW/K26jcv2SjBTMiYJg3tgoQ7sRowou8iI1Gg6ziyDiSVL
-         GSORhZYnLhQWN1nxpM6Pi1znz6OFRkNzAYF3w7+SBGQxt7JnaDh0DJofqpwGsM3RWbHd
-         52vA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Y1/OVUUx;
-       spf=pass (google.com: domain of miguel.ojeda.sandonis@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=miguel.ojeda.sandonis@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Y1/OVUUx;
-       spf=pass (google.com: domain of miguel.ojeda.sandonis@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=miguel.ojeda.sandonis@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227fP1MO+7D5cFeqvr1yHI6XGKaxcyUhPYi6vncwRVoPIZ3e7WI3UQgtvwSm8JAR7HDFVFAExlT9OTLc/NbM7nU=
-MIME-Version: 1.0
-In-Reply-To: <20180212171137.GA31601@1wt.eu>
-References: <1516095490-83827-1-git-send-email-wangxiongfeng2@huawei.com>
- <CANiq72=AeytaT5KBtujTBUkfbNTFFxMPAeToqzmZJOr790R6yw@mail.gmail.com> <20180212171137.GA31601@1wt.eu>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 12 Feb 2018 21:42:23 +0100
-Message-ID: <CANiq72n0nvCPcR5t=z2dxdP-pJC+QsMmhAN7NXX-+HS-LhN8BA@mail.gmail.com>
-Subject: Re: [PATCH V2] auxdisplay: use correct string length
-To: Willy Tarreau <w@1wt.eu>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg KH <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Xiongfeng Wang <wangxiongfeng2@huawei.com>, Dan <dan.carpenter@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2169032-1518466860-2-7520831238737437203
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518466860; b=mzMgGz2SVfqUXhsdYg0Lr24hJ9tRFycYaK2fxP+MEAXpxX2
+    9NiUstGzydmdU5eI9JKVgjVHYXySvRs1SbQ47lH6AAbM4Jrf4e4GcI5chrUIQ34c
+    EQAAJqYn0ViFXIFMln+Vh/Gy1x+CrNDWJGD772ol18X/MqMa3qn4VwYbesM5prYH
+    yE74B170mwwxYyQ7Aa6KSamKEAND2YtN9i15KAlGjqcZHcGRci08D66dgzoQyte4
+    UpF7Jx1HN8DUqjwWCRIda6+X8r+v7mNpCmX88pz2WHUxtc0+G9EtctBra5Mh/zDP
+    JitfT1VqkNagYJhMtUeMCYagg84DMTN6z7CKjFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518466860; bh=YMjOEin0z0ZLNo1FpZUQpSbL9I
+    5hrwYU/ii2do5IZKY=; b=KdSNyOFU6BMldApPFH9lQgbrvi7PvrCO9mphLEztRe
+    tQOmsBbU0hHRXTvwlbswM+ZVLwDylF4n2iU7AnDmZ8uZVOB4AAuX5nY22TKpmk2U
+    wKpOzUmUJW0TnUFfOHKf+PN5kbHsy9Nkn5f5+n5VCKxAMD2wItrjRqh/l0M0Qk9+
+    4Rnk1iAQ8E5umwN0bnHPX3e4160Rct8M5eSFdHbR/ZK2iXJNRKlIeJ/sdGOMY0UO
+    xn8bieZWdD3yueUrqsix1Iz5srCanCjCQvff5cTk5GBUUAvMuPf6jl6fOKUQ25x+
+    ab+n5Hne7wvd9sowEGyUSj7/KmLTXx16qMoAoLBBXZ2w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=i2se.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=i2se.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=i2se.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=i2se.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932139AbeBLUUn (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Feb 2018 15:20:43 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:46519 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751725AbeBLUUm (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 12 Feb 2018 15:20:42 -0500
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: John Youn <johnyoun@synopsys.com>, Felipe Balbi <balbi@kernel.org>
+Cc: Gevorg Sahakyan <gevorg.sahakyan@synopsys.com>,
+        Minas Harutyunyan <minas.harutyunyan@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH] usb: dwc2: Print error if unable to set DMA coherent mask
+Date: Mon, 12 Feb 2018 21:20:08 +0100
+Message-Id: <1518466808-30318-1-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K0:2jNFc0A5hGkCW92jd4oH8ZsdT4xFW4cozKwtn7KMjs0r7P/jfUz
+ uQ600Br8TW7TOJDUJo07KXsQO1xphGGTrfnOsCMTtqz2pXCyop88Fkmu5jaJDYtiRAmEu+t
+ 4sAHVhjX72mf5TE9/fdgHvpiyphrO5lPHKq0ehjReAIvq4IfELhT0bhygU7XPo4OyvVDjP+
+ zFoyn95W9wMGpYSWM38zA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:NlyBiB39s6M=:KoTosZ6TNET4nX5i5Ps5vo
+ WljKs9ZguMznBChBoT2cGx9fkhHfsJXb44hn2mBMFTZLEU1A63kjPuP5wSU4Ax57dsBDMx4aY
+ xCkzbQ+tUjXS8t+Mmt2PUt1HINK/CZIs3yhrodNDXlNZDlnqq2qozCJUGY3lQiqqaS5dX60ot
+ XSDXEqdyJ4bJqOnkJ+W/uypAAMIqgA4OekvUwfkRC3w0cwmz418wqTzIwIRLhxt6NmzCHz6aB
+ nVQioocCCsPteIPsvDPXrF3fC0a3EZ6H8Gncsn05JRq63zJjhOF8hGAZEjM60etOSJ8Zn+Dbn
+ rlI0UDkIPur1CiaGRNXOoWQA8FxQP+Sj8SUx9fdfpOjt0AdosdgcMUgw6sg7HBpxsZ+WQs/U0
+ 3DwenXeZKAwwQENgozMbRaN+kzKKUm5CKHgCp/ABPkEcwcoZ3vFg2uFFfUpDE1iTl2nZAheNT
+ uVH/L7jaHYSXAdfAtJLQ4ZtjBNKThaoOEp9OAb1pWNMtAv903V+/+z6lKmPQT8IPAeogbAsLz
+ i2E7iXpjueVHq3lGRoCxpoji0r10n3fk5A1tycEiMAUFftAT+qE3jlF+I+a7nshmD+8rG83OO
+ TGUIh3cqKb4iM7dztZvb0rKOBBgdfF3snhzZJvBDb9K1a0Bcbv5BSz674Ph1KRzS+nt41xeZe
+ KiUyemEuJtFB/IxhGfmipNBnwbrBYRYwew4s7cPaWAwjIBGNDzkLDh3Igxp6HxSPWt/BZLB0h
+ 5o9c3rRwgrhPi5/ymqD3ZSzjADolOT7iEfgbK9mUHb2eOYBL0C55zE7VMLk=
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1592229253763542229?=
-X-GMAIL-MSGID: =?utf-8?q?1592229253763542229?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 6:11 PM, Willy Tarreau <w@1wt.eu> wrote:
-> On Mon, Feb 12, 2018 at 01:53:57PM +0100, Miguel Ojeda wrote:
->> > diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
->> > index ea7869c..d288900 100644
->> > --- a/drivers/auxdisplay/panel.c
->> > +++ b/drivers/auxdisplay/panel.c
->> > @@ -1506,10 +1506,10 @@ static struct logical_input *panel_bind_key(const char *name, const char *press,
->> >         key->rise_time = 1;
->> >         key->fall_time = 1;
->> >
->> > -       strncpy(key->u.kbd.press_str, press, sizeof(key->u.kbd.press_str));
->> > -       strncpy(key->u.kbd.repeat_str, repeat, sizeof(key->u.kbd.repeat_str));
->> > +       strncpy(key->u.kbd.press_str, press, sizeof(key->u.kbd.press_str) - 1);
->> > +       strncpy(key->u.kbd.repeat_str, repeat, sizeof(key->u.kbd.repeat_str) - 1);
->> >         strncpy(key->u.kbd.release_str, release,
->> > -               sizeof(key->u.kbd.release_str));
->> > +               sizeof(key->u.kbd.release_str) - 1);
->>
->> Are you sure about this patch? `kbd` says "strings can be non null-terminated".
->>
->> Willy, maybe those should just be memcpy()s? (unless the remaining
->> bytes, if any, must be 0).
->
-> For me this seems to be the result of yet another very stupid gcc warning
-> trying to dissuade us from using well defined fonctions... it's unimaginable
-> how gcc warnings have become stupid and irrelevant since its developers
-> stopped using C to write it :-(
->
-> If you want to work around this wrong warning, probably that increasing the
-> destination storage size by one and adding -1 to strncpy() would shut it up
+We better print an error in case probing of dwc2 fails on
+setting the DMA coherent mask.
 
-It does indeed.
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/usb/dwc2/platform.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> but that really becomes quite annoying to have to modify code and storage
-> just to shut down a dumbass compiler trying to be smart.
->
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index 4703478..4ddbdbd 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -382,8 +382,10 @@ static int dwc2_driver_probe(struct platform_device *dev)
+ 	if (!dev->dev.dma_mask)
+ 		dev->dev.dma_mask = &dev->dev.coherent_dma_mask;
+ 	retval = dma_set_coherent_mask(&dev->dev, DMA_BIT_MASK(32));
+-	if (retval)
++	if (retval) {
++		dev_err(&dev->dev, "can't set coherent DMA mask: %d\n", retval);
+ 		return retval;
++	}
+ 
+ 	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+ 	hsotg->regs = devm_ioremap_resource(&dev->dev, res);
+-- 
+2.7.4
 
-I have looked a bit deeper at this new warning. It comes with -Wall,
-and to trigger it the compiler needs to have some optimization passes
-enabled (-O2 works). See https://godbolt.org/g/dydPah to play with it
-in action.
-
-Assuming gcc 8 comes out with this warning implemented as of today
-(likely), we have several options then:
-
-  a) -Wno-stringop-truncation for gcc >= 8. Note: the warning checks
-for several kinds of potential issues, some might be useful.
-
-  b) Use the new __attribute__((nonstring)) for gcc >= 8. For
-instance, the kbd strings are anyhow marked with the /* strings can be
-non null-terminated */ comment, so we might just as well replace the
-comment with the attribute.
-
-  c) For this case: +1 the array length, -1 the sizeof; as Willy
-suggested; or similar workarounds.
-
-  d) For this case: try to make gcc see that the source is a small
-enough array. Unlikely, due to the keypad_profile indirection and the
-loop in keypad_init.
-
-Since anyway we will be hit by this warning in N places in the kernel
-now or in the future, let's ask Linus et. al. about what should be the
-policy to follow :)
-
-Miguel
-
-> Willy
