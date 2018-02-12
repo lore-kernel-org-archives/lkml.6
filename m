@@ -1,128 +1,113 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3079078-1517595605-2-595949498079750814
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1227156-1518437599-2-10512299339420903497
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517595604; b=BfKdUC8mHlPIaGvyxtvq/TWzLLYpKPHRf/WAuZFwtbV9R6g
-    bbbvt/sN+iKrdf6FuyjbSdLvAn+Eku9xzDYn5XSkS8C89VGKxvWxyF7cBbQvuDI0
-    UnMxUWMXRr7MuuGAAS253l8nlO0iY3X3WSAZoXrNsGnTDY+Lh0XIeDaR2BdCzQ71
-    wpXZrijihy7DdTOpzAT98Q2ttBPzeHgiNtz0XJp3Id0Gte/JFX8DeS1AExjkjgCo
-    1Yjc21f+5ucWRbzOxltoe87NjMfAs77Mt0nDuVJnKwTkiCW7HmAWUMrr/CU2HgTt
-    IJ0dCxilkcSLLyINx9x5EiqhmT3vOXSYWJ88zrg==
+    t=1518437599; b=VzluRolHPvHCHBJhzQ1qJFaItLBGbWim+2SudH36dwrIUdJ
+    /v6kDkN0gcK2BUIZCnP2Mj51uQAdA1rYY4qtumBMxKFQ8ki2XhpHjQXFzv8RSX/5
+    M0+a8GV6f41TYVjbdFHb9PjITsAfA0mEwveGi53LquLkzpnRLHGWyNyQFQnda9NL
+    j86l73n16Jb0oiVzOMkmDqmBxsZjHeJokOjzC185GGD7QOFpMk9+ssIRWlDlGcwL
+    W9KS5NNeImnF2apTkwlRpqs3jzXTUK9qRdHld4ZovmNeZ6Av5hwKvjy5wUeCAuHa
+    /J81O13qajLuKwCY8JIBBR6n4DUA6iSEiE1ihcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:message-id
-    :references:to:sender:list-id; s=arctest; t=1517595604; bh=xGWpD
-    LLhCtmgwsCFiifaOkpS2tUDaHZAatMPIZ+dD2M=; b=CdKfEEFtUZ4wmmdtXknHA
-    pdobGnLoBUlckmDhdd2cXwl5PZwr0wuOk3lIwyi7DXq2Ap3ZvqapeGVbggSKzN+l
-    PnFJTg6J0fTkQ6m78ECHtE6JbqKdZPF9iisqlvnZCDESkPYoymdlbPisxyqMhRpw
-    5msj6fiauXuTzt9IgD6oKJgPahhi2QE0goziQ1cVm7FbpebiMYMW7dJF7loHmG1Z
-    g6HURXKtdmQMGt78avhn02PfGM1ZreHaYkyBHVbduTg0sLNPsUXIhOYO2n62WguG
-    Fv1UiXUnuTRO5cAAPPL2m/ZSWRMIEeu+/RLqVKvYL57D2uRVwO7odGVssF6WzNxk
-    A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RJfOM5+G x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518437599; bh=F
+    PwPq12epdr6nrClLoVaTT34pRgZ/ASxISOkkmxXwj0=; b=e3wsiUbGZbw5cnWWD
+    l0lSEOT/MhIzWyrPgL7p5aHteR0ptEaJq8Yp5C/ZzpAPXwHKtCp5p5jaZ2QBwfXM
+    9AI50qF7O2Th97UgUDTlvqya7F7s/QEZI/2oEJzNYC3pewXVAXbKgctnfIT8U8Uk
+    hEYVRsp6HiEthD9tZxVqJbbhltLbei/xn7tNmal4h43JEQ4sdjYQy+ln8uhdtWmZ
+    qyOriJXqrm7rmc6rqfwvieiTmxVbnJfmH7AzWi3BY1kT7YdEym8CTbr+KqHLJdax
+    W0wE55v46vM7ZWZMdjzpxWHfd3TgYH5USJVRRLTBKiadUFeVeYwkmaDWDbSaYdas
+    dNL/Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=denx.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JQpxIao3;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=denx.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RJfOM5+G x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=denx.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JQpxIao3;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754273AbeBBST7 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Feb 2018 13:19:59 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35831 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754427AbeBBST2 (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Fri, 2 Feb 2018 13:19:28 -0500
-X-Google-Smtp-Source: AH8x224CcKF+qDB1aagdCUCyYjEx4yo7wmAKL+8Gk1MAmm4nuiPjgfKExIzUKXfsjtUjpmBBFcmpqw==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] Add delay-init quirk for Corsair K70 RGB keyboards
-From: Dmitry Fleytman <dmitry.fleytman@gmail.com>
-In-Reply-To: <1517586717-6209-1-git-send-email-jackstocker.93@gmail.com>
-Date: Fri, 2 Feb 2018 20:19:23 +0200
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Stefan Bader <stefan.bader@canonical.com>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Sandeep Singh <sandeep.singh@amd.com>,
-        dmitry <dmitry@daynix.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=denx.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Auth-Info: Bgjhh1ynBQJC9SJqMfnuPerAB0zQ1msxa/PAHBXQnb8=
+From: Parthiban Nallathambi <pn@denx.de>
+To: slongerbeam@gmail.com
+Subject: [PATCH] staging: media: reformat line to 80 chars or less
+Date: Mon, 12 Feb 2018 13:05:48 +0100
+Message-Id: <20180212120548.7391-1-pn@denx.de>
+X-Mailer: git-send-email 2.14.3
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+ Parthiban Nallathambi <pn@denx.de>, mchehab@kernel.org,
+ linux-media@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Message-Id: <596D3B57-74E7-4038-85CA-2F48F0130EFE@gmail.com>
-References: <1517586717-6209-1-git-send-email-jackstocker.93@gmail.com>
-To: JackStocker <jackstocker.93@gmail.com>
-X-Mailer: Apple Mail (2.3445.5.20)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> On 2 Feb 2018, at 17:51, JackStocker <jackstocker.93@gmail.com> wrote:
-> 
-> From: Jack Stocker <jackstocker.93@gmail.com>
-> 
-> Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
-> Corsair K70 RGB keyboards also require the DELAY_INIT quirk to
-> start correctly at boot.
-> 
-> Device ids found here:
-> usb 3-3: New USB device found, idVendor=1b1c, idProduct=1b13
-> usb 3-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-> usb 3-3: Product: Corsair K70 RGB Gaming Keyboard 
+This is a cleanup patch to fix line length issue found
+by checkpatch.pl script.
 
-Reviewed-by: Dmitry Fleytman <dmitry.fleytman@gmail.com>
+In this patch, line 144 have been wrapped.
 
-> 
-> Signed-off-by: Jack Stocker <jackstocker.93@gmail.com>
-> ---
-> drivers/usb/core/quirks.c | 3 +++
-> 1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-> index a6aaf2f..9eb92dc 100644
-> --- a/drivers/usb/core/quirks.c
-> +++ b/drivers/usb/core/quirks.c
-> @@ -221,6 +221,9 @@ static const struct usb_device_id usb_quirk_list[] = {
-> 	/* Corsair Strafe RGB */
-> 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
-> 
-> +	/* Corsair K70 RGB */
-> +	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
-> +
-> 	/* MIDI keyboard WORLDE MINI */
-> 	{ USB_DEVICE(0x1c75, 0x0204), .driver_info =
-> 			USB_QUIRK_CONFIG_INTF_STRINGS },
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+---
+ drivers/staging/media/imx/imx-media-capture.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
+index 576bdc7e9c42..0ccabe04b0e1 100644
+--- a/drivers/staging/media/imx/imx-media-capture.c
++++ b/drivers/staging/media/imx/imx-media-capture.c
+@@ -141,7 +141,8 @@ static int capture_enum_frameintervals(struct file *file, void *fh,
+ 
+ 	fie.code = cc->codes[0];
+ 
+-	ret = v4l2_subdev_call(priv->src_sd, pad, enum_frame_interval, NULL, &fie);
++	ret = v4l2_subdev_call(priv->src_sd, pad, enum_frame_interval,
++			       NULL, &fie);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.14.3
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
