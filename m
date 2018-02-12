@@ -1,54 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933946AbeBLLDl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:03:41 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:40543 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933581AbeBLLDj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:03:39 -0500
-X-Google-Smtp-Source: AH8x224fJxzdB0AkGUXEi7RHw1Xzd67opyXguscvwBGPRHcdxY/9vve4LGqbbUYeWCT8hlE9DGaACQ==
-From: Amit Kucheria <amit.kucheria@linaro.org>
-To: andy.gross@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Timur Tabi <timur@codeaurora.org>, Wei Xu <xuwei5@hisilicon.com>,
-        Alex Elder <elder@linaro.org>, Rob Herring <robh@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: defconfig: Enable the APCS IPC driver on Qualcomm platforms
-Date: Mon, 12 Feb 2018 16:33:32 +0530
-Message-Id: <6ab84c75aadc152fdd7c63282ee6690096b8b704.1518415510.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S933973AbeBLLFV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:05:21 -0500
+Received: from mout.gmx.net ([212.227.15.18]:36745 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933581AbeBLLFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 06:05:19 -0500
+From: Ingo van Lil <inguin@gmx.de>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        Ingo van Lil <inguin@gmx.de>
+Subject: [PATCH] net: phy: fix wrong mask to phy_modify()
+Date: Mon, 12 Feb 2018 12:02:52 +0100
+Message-Id: <20180212110252.27804-1-inguin@gmx.de>
+X-Mailer: git-send-email 2.14.3
+X-Provags-ID: V03:K0:0xa+Ege4/TFr17fnAo/wt0x4/QNu1dVP49lgan5nlZmIRb3mnt7
+ HiwrM6kWrV3v/NGygGsj+st6uAnms4sNwNzO/qZwAcjpF+6Ot2OQf36bHzlvrdYrTfMipPK
+ pT6ifQjoO1PS+gA1chTalnDLDiY8Lhp5jPdC+N42NrDagS/fZ34XjoFIrfRdGUh0jHxE8qv
+ VZbqqtq6MRwhpLF7shlVg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AaASbDlukbc=:iZ+YyVRhcy5fKa7oct9Ufh
+ sQTUFXcI7mWmBvcBiALMvqLydHgb51Cmc/2EBaIe/IeofnV5FdQHDaNoSFLZLxXklbROPmgU9
+ akzzOC2m/5w/IIlwBPBxPPIPxAGnnkNcv0qvHMwPE8J1ZssSXg6KHMCUzXMVpKwaBVXKOlvAr
+ 6hUDxJBe4nK1qVIhHC3CnjV39CU1x1PWMTTiNG4nun6aw5lOsWtco2+ATKtoh9rWuYKXMpZqY
+ vAQ5rQ55gZeAV3wMkHqVThAR6RyLrw+1sRBp4nR49RQhr47M46W+HDDdBm8eGy5IN0QCjEIlU
+ dl5xgq9caCF0dhdPI5T8f77zAoOBtpreZCDLoCRATboGCzId7MNLTbAeCy2yligfySe2YFoco
+ JD30E+mzTtCKiVaZHALBU1Ru6wjyHJmLNLzTGlNnuZXHyuWoM2Z0lObXCvv1x2BXv97BFiWHH
+ PAaAyRFfyathoe9yJutGL+SU8Bd3tAkmV1JtqVxi9GcCxfrNr5IJ8R761L+MQ8byVQTgupVZ7
+ NR3FSuZWFOFHF7+LeGXgu1YDPnNmUJtsl7PvvyhXjnH493r6IQUrdLptIqaW0BXdm8A7hsanF
+ sAzre8X2iU8BHW/w2Cj1DptlRWZqIcSCA2YAKZVfgxlWoMh1LpzxmtWsHZGVColXh/2BM+7Fb
+ Xvea//69mHZocXCLBhtXS1dV9k/wuLeBWSwBwUsK4dFb1CHsP3dKTKNiJr2k5IeOwtWtWdn38
+ xH8us3eWpXQUd7X487R0bSX9+he9YbtocphShFccx4DvencyXKkfLyUiUuhCkwUZ3DGYft7Cr
+ HYg2SQ8NMqyWeoUYrU2EobuHnGEVw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The APCS block is present on several Qualcomm SoCs e.g. 8916, 8996.  On the
-8916 it is needed to enable the clock controller that in turn enables
-cpufreq on the platform while on the 8996 it is needed for communication
-with RPM.
+When forcing a specific link mode, the PHY driver must clear the
+existing speed and duplex bits in BMCR while preserving some other
+control bits. This logic was accidentally inverted with the introduction
+of phy_modify().
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Ingo van Lil <inguin@gmx.de>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/phy/phy_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 634b373..96a8ed8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -525,6 +525,7 @@ CONFIG_ARM_MHU=y
- CONFIG_PLATFORM_MHU=y
- CONFIG_BCM2835_MBOX=y
- CONFIG_HI6220_MBOX=y
-+CONFIG_QCOM_APCS_IPC=y
- CONFIG_ROCKCHIP_IOMMU=y
- CONFIG_ARM_SMMU=y
- CONFIG_ARM_SMMU_V3=y
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index b13eed21c87d..d39ae77707ef 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1382,7 +1382,7 @@ int genphy_setup_forced(struct phy_device *phydev)
+ 		ctl |= BMCR_FULLDPLX;
+ 
+ 	return phy_modify(phydev, MII_BMCR,
+-			  BMCR_LOOPBACK | BMCR_ISOLATE | BMCR_PDOWN, ctl);
++			  ~(BMCR_LOOPBACK | BMCR_ISOLATE | BMCR_PDOWN), ctl);
+ }
+ EXPORT_SYMBOL(genphy_setup_forced);
+ 
 -- 
-2.7.4
+2.14.3
