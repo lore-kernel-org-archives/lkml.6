@@ -1,64 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934242AbeBLLts (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:49:48 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57776 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933898AbeBLLtr (ORCPT
+        id S934256AbeBLLu6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:50:58 -0500
+Received: from casper.infradead.org ([85.118.1.10]:35568 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933898AbeBLLu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:49:47 -0500
-Date: Mon, 12 Feb 2018 11:49:37 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code
- duplication
-Message-ID: <20180212114937.GA12976@sirena.org.uk>
-References: <CAErzpmuxmrJszRz5_SZXPMkdU2UWNHChrnKjnHuCWZYrs4hgTA@mail.gmail.com>
+        Mon, 12 Feb 2018 06:50:56 -0500
+Date: Mon, 12 Feb 2018 12:50:02 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
+        linux-tip-commits@vger.kernel.org, Dave Hansen <dave@sr71.net>,
+        Borislav Petkov <bp@alien8.de>, Arjan van de Ven <arjan@infradead.org>
+Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
+ calling into firmware
+Message-ID: <20180212115002.GI25181@hirez.programming.kicks-ass.net>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+ <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAErzpmuxmrJszRz5_SZXPMkdU2UWNHChrnKjnHuCWZYrs4hgTA@mail.gmail.com>
-X-Cookie: What UNIVERSE is this, please??
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 12, 2018 at 11:22:11AM +0100, Ingo Molnar wrote:
+> > +static inline void firmware_restrict_branch_speculation_start(void)
+> > +{
+> > +	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
+> > +			      X86_FEATURE_USE_IBRS_FW);
+> > +}
+> > +
+> > +static inline void firmware_restrict_branch_speculation_end(void)
+> > +{
+> > +	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
+> > +			      X86_FEATURE_USE_IBRS_FW);
+> 
+> BTW., there's a detail that only occurred to me today, this enabling/disabling 
+> sequence is not NMI safe, and it might be called from NMI context:
 
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Feb 09, 2018 at 11:10:55PM +0800, Donglin Peng wrote:
-
-> --- a/sound/soc/soc-core.c
-> +++ b/sound/soc/soc-core.c
-> @@ -349,7 +349,7 @@ static void soc_init_codec_debugfs(struct
-> snd_soc_component *component)
->              "ASoC: Failed to create codec register debugfs file\n");
-
-Your patch has been corrupted somewhere (probably in your mail client) -
-there's word wrapping here.
-
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqBf1AACgkQJNaLcl1U
-h9A0oQf+K1BHGQpmD2u0rbAAgnMVpBk8Bba2D3r8jGR8C7xYj+r2jQnyQfXsBzKb
-lThoUQXRQ+VjzEB+/DLtJlAXHzNyNrc2uoucrHnwhEUfDhrynJ/RDBVWbXCj5oHj
-4ifpaKfJ4fIQHU1x/fBEnsMl6MvrASNVftcXwhcKRZFVpyMCbxNyE69uXmQMqEOX
-98dhL7KtjrhcGYRKtF5JyMBhme1r6UjtTZ6a890f/5SmFCEVbBo3bd2kl1zyHXao
-tFWg6b+2yqBYQAW+LFxCuxSaSpMUB4YxW9tY3jqKqz5lXIzpgVl/LSHAa2XAh3ZT
-9gmmv4WLEZVjO310uG+K9MmJHZNkDA==
-=H/HU
------END PGP SIGNATURE-----
-
---7JfCtLOvnd9MIVvH--
+Wait, we're doing firmware from NMI? That sounds like a _REALLY_ bad
+idea.
