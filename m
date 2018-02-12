@@ -1,77 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964835AbeBLOm0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:42:26 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:25075 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933843AbeBLOmZ (ORCPT
+        id S1754242AbeBLOmo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:42:44 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39814 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754224AbeBLOmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:42:25 -0500
-From: <patrice.chotard@st.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <patrice.chotard@st.com>
-Subject: [PATCH v2 00/12] ARM: dts: STi: Fix DT dtc warnings 
-Date: Mon, 12 Feb 2018 15:41:20 +0100
-Message-ID: <1518446480-16713-1-git-send-email-patrice.chotard@st.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 12 Feb 2018 09:42:42 -0500
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+References: <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+ <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+ <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
+ <20180212115242.z3qv5uejbnhgvd6o@sirius.home.kraxel.org>
+ <eea72b9d-d180-6a57-81ce-4366dc0f2bcc@collabora.com>
+ <20180212142730.g2646v77qsvzd5ff@sirius.home.kraxel.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <6cf0c06a-b884-3251-166b-6ff3dec3ebc7@collabora.com>
+Date: Mon, 12 Feb 2018 15:42:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG6NODE3.st.com
- (10.75.127.18)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_07:,,
- signatures=0
+In-Reply-To: <20180212142730.g2646v77qsvzd5ff@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
+On 02/12/2018 03:27 PM, Gerd Hoffmann wrote:
+> On Mon, Feb 12, 2018 at 03:00:24PM +0100, Tomeu Vizoso wrote:
+>> On 02/12/2018 12:52 PM, Gerd Hoffmann wrote:
+>>>     Hi,
+>>>
+>>>> can we reach agreement on whether vsock should be involved in this?
+>>>
+>>> I think the best approach would be to have guest proxy and host proxy
+>>> use vsock for the wayland protocol.  Use a wayland protocol extension to
+>>> reference the buffers in stdvga / ivshmem / virtio-gpu.  Only the two
+>>> proxies need to understand the extension, the client <=> guest proxy and
+>>> host proxy <=> server communication would be standard wayland protocol.
+>>
+>> Thanks for the ideas. What I haven't understood yet is how you see the
+>> actual passing of buffers via vsock. Are you thinking of using ancillary
+>> data to pass FDs, or something else?
+> 
+> I was more thinking about a struct containing enough info to allow the
+> proxy on the host side find the buffer, something like:
+> 
+>     struct {
+>        enum type { stdvga, virtio-cpu, ... }
+>        pcislot device;
+>        union {
+>           int stdvga_pcibar_offset;
+>           int virtio_gpu_resource_id;
+>        }
+>     }
+> 
+> So when the guest proxy gets a message with a fd referencing a buffer it
+> would have to figure where the buffer is, rewrite the message into the
+> struct above for the host proxy.  The host proxy would rewrite the
+> message again for the server.
 
-This series fixes all dtc warnings related to STi platforms dt files.
-It has been reported by Rob Herring [1]
+What I don't understand yet is how we can keep the buffer descriptions 
+together with the protocol data that references them.
 
-For most of implicated node, the addition of a fake reg property
-fixes these warnings.
+With SCM_RIGHTS, the FDs are placed in the ancillary data that "travels" 
+together with the protocol data that references them.
 
-[1] https://www.spinics.net/lists/devicetree/msg206209.html
+With the present series, the DRM_IOCTL_VIRTGPU_WINSRV_TX ioctl struct has 
+a field for the protocol data and an array of FDs.
 
-v2: _ add a fake reg property to node without reg property, instead 
-      of moving them outside soc node.
+How are you proposing to pass instances of that struct from above along 
+the protocol data that refers to them?
 
-Patrice Chotard (7):
-  ARM: dts: STi: fix bindings notation
-  ARM: dts: STi: Add gpio polarity for "hdmi,hpd-gpio" property
-  ARM: dts: STi: Move clocks without reg outside soc
-  ARM: dts: STi: Move leds node outside soc node
-  ARM: dts: STi: Add fake reg property for sti-display-subsystem
-  ARM: dts: STi: Add fake reg property for miphy28lp_phy
-  ARM: dts: STi: Add fake reg property for irq-syscfg
-  ARM: dts: STi: Add fake reg property for remote processors
-  ARM: dts: STi: Add fake reg for restart, powerdown and
-    picophy/softreset
-  ARM: dts: STi: Add fake reg property for usb2_picophyX nodes
-  ARM: dts: STi: Add fake reg property for sound related nodes
-  ARM: dts: STi: Add fake reg property for clocks
-  ARM: dts: STi: Move clk_sysin clock ouside soc node
-  ARM: dts: STi: Remove unused clk_ext2f_a9 clock
+Thanks,
 
- arch/arm/boot/dts/stih407-b2120.dts    |  2 +-
- arch/arm/boot/dts/stih407-clock.dtsi   | 40 +++++++++-------------
- arch/arm/boot/dts/stih407-family.dtsi  | 31 +++++++++++------
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 10 +++---
- arch/arm/boot/dts/stih407.dtsi         |  4 +--
- arch/arm/boot/dts/stih410-b2120.dts    |  8 ++---
- arch/arm/boot/dts/stih410-b2260.dts    | 62 +++++++++++++++++-----------------
- arch/arm/boot/dts/stih410-clock.dtsi   | 42 ++++++++++-------------
- arch/arm/boot/dts/stih410-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/stih410.dtsi         | 13 ++++---
- arch/arm/boot/dts/stih418-b2199.dts    | 30 ++++++++--------
- arch/arm/boot/dts/stih418-clock.dtsi   | 42 ++++++++++-------------
- arch/arm/boot/dts/stih418.dtsi         |  6 ++--
- arch/arm/boot/dts/stihxxx-b2120.dtsi   | 41 +++++++++++-----------
- 14 files changed, 163 insertions(+), 170 deletions(-)
-
--- 
-1.9.1
+Tomeu
