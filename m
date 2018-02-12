@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932796AbeBLWIR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:08:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
+        id S932650AbeBLWIV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:08:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932717AbeBLWIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:08:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A81217A6
+        id S932759AbeBLWIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:08:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 791EB217B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -17,93 +17,81 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>, Mark Brown <broonie@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH v3 2/5] dt-bindings: adv7511: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:50 +0000
-Message-Id: <1518473273-6333-3-git-send-email-kbingham@kernel.org>
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)
+Subject: [PATCH v3 3/5] [RFT] ARM: dts: wheat: Fix ADV7513 address usage
+Date: Mon, 12 Feb 2018 22:07:51 +0000
+Message-Id: <1518473273-6333-4-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
 References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The ADV7511 has four 256-byte maps that can be accessed via the main I²C
-ports. Each map has it own I²C address and acts as a standard slave
-device on the I²C bus.
+The r8a7792 Wheat board has two ADV7513 devices sharing a single i2c
+bus, however in low power mode the ADV7513 will reset it's slave maps to
+use the hardware defined default addresses.
 
-Extend the device tree node bindings to be able to override the default
-addresses so that address conflicts with other devices on the same bus
-may be resolved at the board description level.
+The ADV7511 driver was adapted to allow the two devices to be registered
+correctly - but it did not take into account the fault whereby the
+devices reset the addresses.
+
+This results in an address conflict between the device using the default
+addresses, and the other device if it is in low-power-mode.
+
+Repair this issue by moving both devices away from the default address
+definitions.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+
 ---
 v2:
- - Fixed up reg: property description to account for multiple optional
-   addresses.
- - Minor reword to commit message to account for DT only change
- - Collected Robs RB tag
+ - Addition to series
 
 v3:
  - Split map register addresses into individual declarations.
 
- .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-index 0047b1394c70..3f85c351dd39 100644
---- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-@@ -14,7 +14,13 @@ Required properties:
- 		"adi,adv7513"
- 		"adi,adv7533"
+diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
+index b9471b67b728..42fff8837eab 100644
+--- a/arch/arm/boot/dts/r8a7792-wheat.dts
++++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -240,9 +240,16 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
  
--- reg: I2C slave address
-+- reg: I2C slave addresses
-+  The ADV7511 internal registers are split into four pages exposed through
-+  different I2C addresses, creating four register maps. Each map has it own
-+  I2C address and acts as a standard slave device on the I²C bus. The main
-+  address is mandatory, others are optional and revert to defaults if not
-+  specified.
-+
++	/*
++	 * The adv75xx resets its addresses to defaults during low power power
++	 * mode. Because we have two ADV7513 devices on the same bus, we must
++	 * change both of them away from the defaults so that they do not
++	 * conflict.
++	 */
+ 	hdmi@3d {
+ 		compatible = "adi,adv7513";
+-		reg = <0x3d>;
++		reg = <0x3d>, <0x2d>, <0x4d>, <0x5d>;
++		reg-names = "main", "cec", "edid", "packet";
  
- The ADV7511 supports a large number of input data formats that differ by their
- color depth, color format, clock mode, bit justification and random
-@@ -70,6 +76,9 @@ Optional properties:
-   rather than generate its own timings for HDMI output.
- - clocks: from common clock binding: reference to the CEC clock.
- - clock-names: from common clock binding: must be "cec".
-+- reg-names : Names of maps with programmable addresses.
-+	It can contain any map needing a non-default address.
-+	Possible maps names are : "main", "edid", "cec", "packet"
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
+@@ -272,7 +279,8 @@
  
- Required nodes:
+ 	hdmi@39 {
+ 		compatible = "adi,adv7513";
+-		reg = <0x39>;
++		reg = <0x39>, <0x29>, <0x49>, <0x59>;
++		reg-names = "main", "cec", "edid", "packet";
  
-@@ -88,7 +97,12 @@ Example
- 
- 	adv7511w: hdmi@39 {
- 		compatible = "adi,adv7511w";
--		reg = <39>;
-+		/*
-+		 * The EDID page will be accessible on address 0x66 on the i2c
-+		 * bus. All other maps continue to use their default addresses.
-+		 */
-+		reg = <0x39>, <0x66>;
-+		reg-names = "main", "edid";
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
- 		clocks = <&cec_clock>;
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
 -- 
 2.7.4
