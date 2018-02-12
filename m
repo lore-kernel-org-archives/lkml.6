@@ -1,33 +1,33 @@
-Return-Path: <ulfalizer@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518435901; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x226JsEg9dWE8jGO1A6/f/sXVSqkAyjAhAKqok+Lc1Zoj3qRGrvl7hg2TZ4hRtuF8Lnf/ueGz
+ARC-Seal: i=1; a=rsa-sha256; t=1518443673; cv=none;
         d=google.com; s=arc-20160816;
-        b=dqJ4QiYC5Yp2JU53YoyUth2LJJbnr31ZhU5X+p1K2hBnny1R9ArvZ+OhwjcU1poc7O
-         xURXE/JH5+qrn1AP/kVlRzDSiaN7DPGK5dSe/s5ClH/fCsp2VFiREgohfDg/4g9P1/T/
-         aBs/4icqmxl9YIjwly2PMIWX3AURWUhNcsqBBQOZC7qimw6D8ukEYhg5n1WSVlXg4a7c
-         MNy+oxmjuKMPZek4DvVWORZgLC4QnGDMBExUDzbhVl+O0vTojm9SLXRXm3kyzVvEmCgY
-         16TsA3mNT8XU2qiBAjoU7Dlh3S8XgC1MuCW7zZsN9I52+5usRVt29Y/N9SeYvYveRpSb
-         PR3g==
+        b=gIKm0QHfcEnAP3IjEUGO+J+RCDpbj9laMoKNSby8lX6mfIXRxR5KNShop7X4N8gk5H
+         h8DKiJnBFYwHQxUPA2YK5RTswME896p0Pa03YsGjyicQ7fds+oukP9efx/wFqUwLG77/
+         6rRuZeUayrlkC6CNY7zfYlazRZ0wMg1/tBzej8PaLKi9NLT04ilIKEbtooRh08coc01E
+         42nj2XZDLi5sC4ilsGmdtaHnMtJCDxTcJM9w9HU/FalQHbNZBcLFeDwjwNxNrfAgOPVq
+         uxLNmpi7zpCXJO5tQQ4X3qwxrSeG+beMuIREQX40lirMH0mWjLQHe/s9k3rUOSdBxVxo
+         ZeVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=ZhMxCDl8YSVIxWg1F3e3K9axma0q5LIzKRBSqAF7m4c=;
-        b=VoJroOHRKX21WmW0VRM0cXPzsRNeGUFhS0exdqdsG5omjc+q/W84wWQx9h3oQCLR+j
-         CJoIUasW7FMHEw/bfo/+ndfrbtNW3DaM5wPtRwSXv/2HMaR26IjpBwZDUrAuQ/1JGgjA
-         5R8gc59b7rGWanCow+4kr7yL+kudCPG8iBabMeqLQljxP9K+c1F2oHaPXg2aUFt9xoUw
-         yWjCiHsEeT0zzCW87FxKSQVQQ2A9aN7RcnGLeN/zwk12w+375pvtnXnTOuRehiQt2FT2
-         NyPfi8bUvZAhyrdkuTaQoMptnVW736aJaRv4mVUemqn4QPrMe7LG+xi5TUZAFMnzdMnQ
-         IB6A==
+         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
+        bh=/cmGT7BAxe5y4A64+X8VUSv0GmUWjVCmhBFXmMPYRcA=;
+        b=vzh0qTQ081QtaSkrGOT0ylRmTJgMlFmDwP4mETFBpo3L7dpDHKz4Bhm6ECu27v5ZaP
+         a5Z+cyHezntQ2w7EwS8j3C9Nd0pQpx5G+0W4vKjfiYqiEpOL1+d+/b8papK5/ECH13v9
+         UFfxeM+eu5Qj7vZ5Pmn+rTfo2Kaf72uDAgDy8VF/lzgDBzSatxGbzPlr2J/I7VkJQKSZ
+         gdgeluvFoRNuNKfWLjd88LXjqB9/jQzBzD9zPkVOeW6vR7xAT9wSa9+xhXcKDAgi74Du
+         KkdqvdjhB5jci7hLaw7Hq9qjlo1yHqeUkb08xCS64y8tgC9CBWx7GtaL0puBIleyLBQ7
+         3VhA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZMzsIu3G;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=TO5aN1ne;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZMzsIu3G;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x226CRVJXhoR/3zxaKYhmaH1FZvCwfJDTF+QOYQ6i6oKgCtXDYK35uUGm8ABXo79UmI5SyZdreve7u+4cHGwox+k=
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=TO5aN1ne;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w1CDsBHS010591
+X-Nifty-SrcIP: [209.85.213.48]
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNARdm7UESEEh-2qEP9R8jWSwzZ4d2x=pZZPuj6EVAsXnAA@mail.gmail.com>
+In-Reply-To: <CAFkk2KQ+ybTQF4U9eHqhi-Hg8ML1Z72DsXij2sM58S5HHg6C-Q@mail.gmail.com>
 References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUEH5MMzUo_furLevqy7QzGxqNRHYiyQ@mail.gmail.com>
  <20180210074924.3nhxsza5zdbaahxx@huvuddator> <20180210080556.mycqsjhxbaguwhay@huvuddator>
  <20180210085519.737ckf4bcl57h4g2@huvuddator> <CAGXu5jKQgxxC2RQL0dxLKFVED2v-LiWKjtXY3DDpfwAXbnxM4Q@mail.gmail.com>
@@ -36,321 +36,293 @@ References: <20180210054843.z3g7wvcmlccvww3h@huvuddator> <CAK7LNARHmAF2SxBcc1aUE
  <CA+55aFxdx3FYE6YGifRR=BSG9QzXwgThj5z7RmV5P5+RpNXSiQ@mail.gmail.com>
  <CA+55aFyPyYyG-riaBQU5cGp_sC=r8mf9Mg6L=DUEH6EyQfWYwA@mail.gmail.com>
  <20180211103432.pf2ot6nd7nbhdhsy@huvuddator> <CAK7LNARdm7UESEEh-2qEP9R8jWSwzZ4d2x=pZZPuj6EVAsXnAA@mail.gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Mon, 12 Feb 2018 12:44:59 +0100
-Message-ID: <CAFkk2KQ+ybTQF4U9eHqhi-Hg8ML1Z72DsXij2sM58S5HHg6C-Q@mail.gmail.com>
+ <CAFkk2KQ+ybTQF4U9eHqhi-Hg8ML1Z72DsXij2sM58S5HHg6C-Q@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 12 Feb 2018 22:53:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR1tgw0hnjRF=T1tPkqA=_wSwn8x6Ux-LYsNCrqrbEyLg@mail.gmail.com>
+Message-ID: <CAK7LNAR1tgw0hnjRF=T1tPkqA=_wSwn8x6Ux-LYsNCrqrbEyLg@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/7] kconfig: support new special property shell=
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>,
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis R . Rodriguez" <mcgrof@suse.com>,
-	Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Michal Marek <michal.lkml@markovi.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-s390 <linux-s390@vger.kernel.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591850368607646970?=
-X-GMAIL-MSGID: =?utf-8?q?1592195444138637325?=
+X-GMAIL-MSGID: =?utf-8?q?1592203593438814077?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 11:44 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-02-11 19:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->> Looks to me like there's a few unrelated issues here:
->>
->>
->> 1. The stack protector support test scripts
->>
->> Worthwhile IMO if they (*in practice*) prevent hard-to-debug build errors or a
->> subtly broken kernel from being built.
->>
->> A few questions:
->>
->>     - How do things fail with a broken stack protector implementation?
->>
->>     - How common are those broken compilers?
->>
->>     - Do you really need to pass $(KBUILD_CPPFLAGS) when testing for breakage,
->>       or would a simpler static test work in practice?
->>
->>       I don't know how messy it would be to get $(KBUILD_CPPFLAGS) into
->>       Kconfig, but should make sure it's actually needed in any case.
->>
->>       The scripts are already split up as
->>
->>           scripts/gcc-$(SRCARCH)_$(BITS)-has-stack-protector.sh
->>
->>       by the way, though only gcc-x86_32-has-stack-protector.sh and
->>       gcc-x86_64-has-stack-protector.sh exist.
->>
->>     - How old do you need to go with GCC for -fno-stack-protector to give an
->>       error (i.e., for not even the option to be recognized)? Is it still
->>       warranted to test for it?
->>
->> Adding some CCs who worked on the stack protector test scripts.
->>
->> And yeah, I was assuming that needing support scripts would be rare, and that
->> you'd usually just check whether gcc accepts the flag.
->>
->> When you Google "gcc broken stack protector", the top hits about are about the
->> scripts/gcc-x86_64-has-stack-protector.sh script in the kernel throwing a false
->> positive by the way (fixed in 82031ea29e45 ("scripts/has-stack-protector: add
->> -fno-PIE")).
->>
->>
->> 2. Whether to hide the Kconfig stack protector alternatives or always show them
->>
->> Or equivalently, whether to automatically fall back on other stack protector
->> alternatives (including no stack protector) if the one specified in the .config
->> isn't available.
->>
->> I'll let you battle this one out. In any case, as a user, I'd want a
->> super-clear message telling me what to change if the build breaks because of
->> missing stack protector support.
->>
->>
->> 3. Whether to implement CC_STACKPROTECTOR_AUTO in Kconfig or the Makefiles
->>
->> I'd just go with whatever is simplest here. I don't find the Kconfig version
->> too bad, but I'm already very familiar with Kconfig, so it's harder for me to
->> tell how it looks to other people.
->>
->> I'd add some comments to explain the idea in the final version.
->>
->> @Kees:
->> I was assuming that the Makefiles would error out with a message if none of the
->> CC_STACKPROTECTOR_* variables are set, in addition to the Kconfig warning.
->>
->> You could offload part of that check to Kconfig with something like
->>
->>         config CHOSEN_CC_STACKPROTECTOR_AVAILABLE
->>                 def_bool CC_STACKPROTECTOR_STRONG || \
->>                          CC_STACKPROTECTOR_REGULAR || \
->>                          CC_STACKPROTECTOR_NONE
->>
->> CHOSEN_STACKPROTECTOR_AVAILABLE could then be checked in the Makefile.
->> It has the advantage of making the constraint clear in the Kconfig file
->> at least.
->>
->> You could add some kind of assert feature to Kconfig too, but IMO it's not
->> warranted purely for one-offs like this at least.
->>
->> That's details though. I'd want to explain it with a comment in any case if we
->> go with something like this, since it's slightly kludgy and subtle
->> (CC_STACKPROTECTOR_{STRONG,REGULAR,NONE} form a kind of choice, only you can't
->> express it like that directly, since it's derived from other symbols).
->>
->>
->> Here's an overview of the current Kconfig layout by the way, assuming
->> the old no-fallback behavior and CC_STACKPROTECTOR_AUTO being
->> implemented in Kconfig:
->>
->>         # Feature tests
->>         CC_HAS_STACKPROTECTOR_STRONG
->>         CC_HAS_STACKPROTECTOR_REGULAR
->>         CC_HAS_STACKPROTECTOR_NONE
->>
->>         # User request
->>         WANT_CC_STACKPROTECTOR_AUTO
->>         WANT_CC_STACKPROTECTOR_STRONG
->>         WANT_CC_STACKPROTECTOR_REGULAR
->>         WANT_CC_STACKPROTECTOR_NONE
->>
->>         # The actual "output" to the Makefiles
->>         CC_STACKPROTECTOR_STRONG
->>         CC_STACKPROTECTOR_REGULAR
->>         CC_STACKPROTECTOR_NONE
->>
->>         # Some possible output "nicities"
->>         CHOSEN_CC_STACKPROTECTOR_AVAILABLE
->>         CC_OPT_STACKPROTECTOR
->>
->> Does anyone have objections to the naming or other things? I saw some
->> references to "Santa's wish list" in messages of commits that dealt with other
->> variables named WANT_*, though I didn't look into those cases. ;)
->>
->
->
->
-> I think Linus's comment was dismissed here.
->
->
-> Linus said:
->
->> But yes, I also reacted to your earlier " It can't silently rewrite it
->> to _REGULAR because the compiler support for _STRONG regressed."
->> Because it damn well can. If the compiler doesn't support
->> -fstack-protector-strong, we can just fall back on -fstack-protector.
->> Silently. No extra crazy complex logic for that either.
->
->
-> If I understood his comment correctly,
-> we do not need either WANT_* or _AUTO.
->
->
->
->
-> Kees' comment:
->
->> In the stack-protector case, this becomes quite important, since the
->> goal is to record the user's selection regardless of compiler
->> capability. For example, if someone selects _REGULAR, it shouldn't
->> "upgrade" to _STRONG. (Similarly for _NONE.)
->
-> No.  Kconfig will not do this silently.
+2018-02-12 20:44 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
 
-(Playing devil's advocate...)
+>>
+>> I think Linus's comment was dismissed here.
+>>
+>>
+>> Linus said:
+>>
+>>> But yes, I also reacted to your earlier " It can't silently rewrite it
+>>> to _REGULAR because the compiler support for _STRONG regressed."
+>>> Because it damn well can. If the compiler doesn't support
+>>> -fstack-protector-strong, we can just fall back on -fstack-protector.
+>>> Silently. No extra crazy complex logic for that either.
+>>
+>>
+>> If I understood his comment correctly,
+>> we do not need either WANT_* or _AUTO.
+>>
+>>
+>>
+>>
+>> Kees' comment:
+>>
+>>> In the stack-protector case, this becomes quite important, since the
+>>> goal is to record the user's selection regardless of compiler
+>>> capability. For example, if someone selects _REGULAR, it shouldn't
+>>> "upgrade" to _STRONG. (Similarly for _NONE.)
+>>
+>> No.  Kconfig will not do this silently.
+>
+> (Playing devil's advocate...)
+>
+> If the user selected _STRONG and it becomes unavailable later, it
+> seems to silently fall back on other options, even for oldnoconfig
+> (which just checks if there are any new symbols in the choice).
+>
+> It would be possible to also check if the old user selection still
+> applies btw. I do that in Kconfiglib. It's arguable whether that
+> matches the intent of oldnoconfig.
+>
+>>
+>>
+>> "make oldconfig" (or "make silentoldconfig" as well)
+>> always ask users about new symbols.
+>>
+>>
+>> For example, let's say your compiler supports -fstack-protector
+>> but not -fstack-protector-strong.
+>> CC_STACKPROTECTOR_REGULAR is the best you can choose.
+>>
+>> Then, let's say you upgrade your compiler and the new compiler supports
+>> -fstack-protector-strong as well.
+>>
+>> In this case, CC_STACKPROTECTOR_STRONG is a newly visible symbol,
+>> so Kconfig will ask you
+>> "Hey, you were previously using _REGULAR, but your new compiler
+>> also supports _STRONG.  Do you want to use it?"
+>>
+>>
+>> The "make oldconfig" will look like follows:
+>>
+>>
+>> masahiro@grover:~/workspace/linux-kbuild$ make oldconfig
+>>   HOSTCC  scripts/kconfig/conf.o
+>>   HOSTLD  scripts/kconfig/conf
+>> scripts/kconfig/conf  --oldconfig Kconfig
+>> *
+>> * Restart config...
+>> *
+>> *
+>> * Linux Kernel Configuration
+>> *
+>> Stack Protector buffer overflow detection
+>>   1. Strong (CC_STACKPROTECTOR_STRONG) (NEW)
+>>> 2. Regular (CC_STACKPROTECTOR_REGULAR)
+>>   3. None (CC_STACKPROTECTOR_NONE)
+>> choice[1-3?]:
+>>
+>>
+>>
+>> Please notice the Strong is marked as "(NEW)".
+>>
+>> Kconfig handles this really nicely with Linus' suggestion.
+>>
+>> [1] Users can select only features supported by your compiler
+>>     - this makes sense.
+>>
+>> [2] If you upgrade your compiler and it provides more capability,
+>>     "make (silent)oldconfig" will ask you about new choices.
+>>      - this also makes sense.
+>
+> If you switch to a compiler that provides less capability, it'll
+> silently forget the old user preference though.
 
-If the user selected _STRONG and it becomes unavailable later, it
-seems to silently fall back on other options, even for oldnoconfig
-(which just checks if there are any new symbols in the choice).
 
-It would be possible to also check if the old user selection still
-applies btw. I do that in Kconfiglib. It's arguable whether that
-matches the intent of oldnoconfig.
+Yes, forget.
 
->
->
-> "make oldconfig" (or "make silentoldconfig" as well)
-> always ask users about new symbols.
->
->
-> For example, let's say your compiler supports -fstack-protector
-> but not -fstack-protector-strong.
-> CC_STACKPROTECTOR_REGULAR is the best you can choose.
->
-> Then, let's say you upgrade your compiler and the new compiler supports
-> -fstack-protector-strong as well.
->
-> In this case, CC_STACKPROTECTOR_STRONG is a newly visible symbol,
-> so Kconfig will ask you
-> "Hey, you were previously using _REGULAR, but your new compiler
-> also supports _STRONG.  Do you want to use it?"
->
->
-> The "make oldconfig" will look like follows:
->
->
-> masahiro@grover:~/workspace/linux-kbuild$ make oldconfig
->   HOSTCC  scripts/kconfig/conf.o
->   HOSTLD  scripts/kconfig/conf
-> scripts/kconfig/conf  --oldconfig Kconfig
-> *
-> * Restart config...
-> *
-> *
-> * Linux Kernel Configuration
-> *
-> Stack Protector buffer overflow detection
->   1. Strong (CC_STACKPROTECTOR_STRONG) (NEW)
->> 2. Regular (CC_STACKPROTECTOR_REGULAR)
->   3. None (CC_STACKPROTECTOR_NONE)
-> choice[1-3?]:
->
->
->
-> Please notice the Strong is marked as "(NEW)".
->
-> Kconfig handles this really nicely with Linus' suggestion.
->
-> [1] Users can select only features supported by your compiler
->     - this makes sense.
->
-> [2] If you upgrade your compiler and it provides more capability,
->     "make (silent)oldconfig" will ask you about new choices.
->      - this also makes sense.
+So, "make oldconfig" will ask user preference again
+when you switch back to a compiler that provides more capability.
+This is not rude, right?
 
-If you switch to a compiler that provides less capability, it'll
-silently forget the old user preference though.
 
->
->
->
-> So, the following simple implementation works well enough,
-> doesn't it?
->
-> ---------------->8---------------
-> choice
->         prompt "Stack Protector buffer overflow detection"
->
-> config CC_STACKPROTECTOR_STRONG
->         bool "Strong"
->         depends on CC_HAS_STACKPROTECTOR_STRONG
->         select CC_STACKPROTECTOR
->
-> config CC_STACKPROTECTOR_REGULAR
->         bool "Regular"
->         depends on CC_HAS_STACKPROTECTOR
->         select CC_STACKPROTECTOR
->
-> config CC_STACKPROTECTOR_NONE
->         bool "None"
->
-> endchoice
-> ---------------->8-------------------------
 
-Obviously much neater at least. :)
 
->
->
->
-> BTW, do we need to use 'choice' ?
->
->
-> The problem of using 'choice' is,
-> it does not work well with allnoconfig.
->
->
-> For all{yes,mod}config, we want to enable as many features as possible.
-> For allnoconfig, we want to disable as many as possible.
+To remember user preference (for both upgrade/downgrade capability),
+we need 3 symbols for each feature.
 
-Oh... right. For allnoconfig, it would always pick the default, so if
-the default is "on", it's bad there.
+[1] WANT_FOO
+    A user can enable this option regardless of compiler capability.
+    This will remember your preference forever.
 
->
-> However, the default of 'choice' is always the first visible value.
->
->
-> So, I can suggest to remove _REGULAR and _NONE.
->
-> We have just two bool options, like follows.
->
-> ------------------->8-----------------
-> config CC_STACKPROTECTOR
->         bool "Use stack protector"
->         depends on CC_HAS_STACKPROTECTOR
->
-> config CC_STACKPROTECTOR_STRONG
->         bool "Use strong strong stack protector"
->         depends on CC_STACKPROTECTOR
->         depends on CC_HAS_STACKPROTECTOR_STRONG
-> -------------------->8------------------
+[2] CC_HAS_FOO
+    Compiler capability.
 
-Even neater. Much easier to understand.
+[3] FOO
+    logical 'and' of WANT_FOO and CC_HAS_FOO.
 
->
-> This will work well for all{yes,mod,no}config.
->
-> We will not have a case where
-> -fstack-protector-strong is supported, but -fstack-protector is not.
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+If we do this way, what's the point of
+moving compiler capability tests to Kconfig?
 
-So there's just the caveat about possibly "forgetting" the user
-preferences and automatically falling back on
-CC_STACKPROTECTOR_REGULAR or CC_STACKPROTECTOR_NONE when the
-environment changes, instead of erroring out.
 
-When you have to think hard about cases where something might break,
-it might be a sign that it's not a huge problem in practice, but I
-can't really speak for the priorities here.
+[1] is the same as what we do now.
 
-Cheers,
-Ulf
+Then, it will be disabled later
+if it turns out unsupported by your compiler.
+
+The only difference is,
+whether we calculate [2], [3] in Makefile or Kconfig.
+
+Kconfig is, in the end, inter-symbol dependency/visibility solver.
+The WANT_ is not using the benefit of Kconfig.
+We can calculate the logical 'and' by other means.
+
+
+
+
+
+The problem I see in this approach is 'savedefconfig'.
+
+'make defconfig && make savedefconfig'
+will produce the subset of user preference and compiler capability.
+
+To make arbitrary set of CONFIG options,
+we need a full-featured compiler
+in order to enable all CC_HAS_... options.
+
+
+Maybe, we can add a new environment to ease this.
+
+KCONFIG_SHELL_ALWAYS_TRUE
+  If this environment is specified, all 'option shell=...'
+  will be evaluated as true.  So, all symbols that depend on
+  CC_HAS_  will be visible.   This is useful to make
+  arbitrary set of CONFIG options regardless of
+  your compiler capability.
+
+
+$ KCONFIG_SHELL_ALWAYS_TRUE=1  make  menuconfig
+   -> build up your favorite config setting
+
+$ KCONFIG_SHELL_ALWAYS_TRUE=1 make savedefconfig
+   ->  write out the minimum set of config
+
+
+Thought?
+
+
+
+
+
+
+
+>>
+>>
+>>
+>> So, the following simple implementation works well enough,
+>> doesn't it?
+>>
+>> ---------------->8---------------
+>> choice
+>>         prompt "Stack Protector buffer overflow detection"
+>>
+>> config CC_STACKPROTECTOR_STRONG
+>>         bool "Strong"
+>>         depends on CC_HAS_STACKPROTECTOR_STRONG
+>>         select CC_STACKPROTECTOR
+>>
+>> config CC_STACKPROTECTOR_REGULAR
+>>         bool "Regular"
+>>         depends on CC_HAS_STACKPROTECTOR
+>>         select CC_STACKPROTECTOR
+>>
+>> config CC_STACKPROTECTOR_NONE
+>>         bool "None"
+>>
+>> endchoice
+>> ---------------->8-------------------------
+>
+> Obviously much neater at least. :)
+>
+>>
+>>
+>>
+>> BTW, do we need to use 'choice' ?
+>>
+>>
+>> The problem of using 'choice' is,
+>> it does not work well with allnoconfig.
+>>
+>>
+>> For all{yes,mod}config, we want to enable as many features as possible.
+>> For allnoconfig, we want to disable as many as possible.
+>
+> Oh... right. For allnoconfig, it would always pick the default, so if
+> the default is "on", it's bad there.
+>
+>>
+>> However, the default of 'choice' is always the first visible value.
+>>
+>>
+>> So, I can suggest to remove _REGULAR and _NONE.
+>>
+>> We have just two bool options, like follows.
+>>
+>> ------------------->8-----------------
+>> config CC_STACKPROTECTOR
+>>         bool "Use stack protector"
+>>         depends on CC_HAS_STACKPROTECTOR
+>>
+>> config CC_STACKPROTECTOR_STRONG
+>>         bool "Use strong strong stack protector"
+>>         depends on CC_STACKPROTECTOR
+>>         depends on CC_HAS_STACKPROTECTOR_STRONG
+>> -------------------->8------------------
+>
+> Even neater. Much easier to understand.
+>
+>>
+>> This will work well for all{yes,mod,no}config.
+>>
+>> We will not have a case where
+>> -fstack-protector-strong is supported, but -fstack-protector is not.
+>>
+>>
+>> --
+>> Best Regards
+>> Masahiro Yamada
+>
+> So there's just the caveat about possibly "forgetting" the user
+> preferences and automatically falling back on
+> CC_STACKPROTECTOR_REGULAR or CC_STACKPROTECTOR_NONE when the
+> environment changes, instead of erroring out.
+>
+> When you have to think hard about cases where something might break,
+> it might be a sign that it's not a huge problem in practice, but I
+> can't really speak for the priorities here.
+>
+
+-- 
+Best Regards
+Masahiro Yamada
