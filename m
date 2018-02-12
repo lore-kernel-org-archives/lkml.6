@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752752AbeBLTsf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 14:48:35 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:59092 "EHLO
+        id S1753360AbeBLTuU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 14:50:20 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:55272 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751048AbeBLTsc (ORCPT
+        by vger.kernel.org with ESMTP id S1751208AbeBLTuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 14:48:32 -0500
-Date: Mon, 12 Feb 2018 11:47:41 -0800
+        Mon, 12 Feb 2018 14:50:14 -0500
+Date: Mon, 12 Feb 2018 11:49:42 -0800
 From: Dave Watson <davejwatson@fb.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
         Junaid Shahid <junaids@google.com>,
@@ -19,57 +19,60 @@ CC: "David S. Miller" <davem@davemloft.net>,
         Sabrina Dubroca <sd@queasysnail.net>, <linux-kernel@vger.kernel.org>,
         Stephan Mueller <smueller@chronox.de>,
         Ilya Lesokhin <ilyal@mellanox.com>
-Subject: [PATCH 00/14] x86/crypto gcmaes SSE scatter/gather support
-Message-ID: <20180212194741.GA59290@davejwatson-mba.local>
+Subject: [PATCH 07/14] x86/crypto: aesni: Split AAD hash calculation to
+ separate macro
+Message-ID: <20180212194942.GA60838@davejwatson-mba.local>
+References: <cover.1518211765.git.davejwatson@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <cover.1518211765.git.davejwatson@fb.com>
 User-Agent: Mutt/1.6.0 (2016-04-01)
 X-Originating-IP: [2620:10d:c090:200::6:842f]
-X-ClientProxiedBy: MWHPR20CA0018.namprd20.prod.outlook.com (10.171.151.156) To
- BN6PR15MB1746.namprd15.prod.outlook.com (10.174.238.136)
+X-ClientProxiedBy: CY4PR18CA0047.namprd18.prod.outlook.com (10.173.177.33) To
+ DM5PR15MB1755.namprd15.prod.outlook.com (10.174.246.137)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 88c30968-95d4-44fb-feb3-08d572517c94
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BN6PR15MB1746;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1746;3:7cvmua0yJubrDrUIwcB+t/VK4mn46lSYhWMLS6syIEn4i3LOwoAMbwYuSPYeke4vYSkBdzlcu7uZ4KMWI3JPmUfItemrm4RtJ1viBod2vXx4/0GOmhzKNXyeYjovoWBzCyo6W5lmP1s0GjPgSns4oUCVfdyROzifb2UOXYixPIq40L13N0t02o4DG1bKaqy2BkyleFTMRwn78zgiGewgn5oV48rKKRg6iuvV2bz8QNVgnrTywW6bcdz9adIEbV0A;25:d1sDZfNI5gf19VpuKNrLlqzteb5UwVmDwXoer1tHxImP86Kt0uGOjoIFTlM6lCf4m/uW/PyoVoKCz+bQ1K4ZjwyKtr1eOCyftQv+zh9Bbcv3nPHvWyrtRR7SE1/NMfqIMFNUrOJyH2UH4P7MrXfUtrHyFzFN+WIjUOCC1WlohRrOhxtkx3FGPR+50izghKiEEsqPzl8EDaRA1kfV6vyNyXxel6Bq9bBMNO4j9gsZEtnL0tqqzsJxGBUtFSR1PHzLgDBGrRL3tlqu3/0fuVVIBXOCi8uKiGNzOx7kGk3yxZ7UR6YuSw9YzAk97mnSW/+NcIXcPht8myVZQ/UW6O18pg==;31:YxUZ4goAg5ez0QMu1QVW3hYPnG3Zfz2bZj4QSzXCNJtKoz9Hiy0OlGdhU0abu1jzmk7JIb2m9gIKzM+ZKI07Kqg/v2Ovb2nC33Tjts4u/j6y4oWV0uaspbE0Dkqukj3JDQZAZaW9ty7QDoTeUZMI8sFBVH+khco4ciN8msT81i43DYOpVP/8n3aQThdRRFaQQQSS71oYjY55gmjpPCudVVA/6Ccika6UDg2ZqvfXgcU=
-X-MS-TrafficTypeDiagnostic: BN6PR15MB1746:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1746;20:IRbVysFqO5h1MT2Akto1QkniP/OdQlsoBoC2BHZD7ULThI5QOrRXyx/WwwrDJcR6rmWfftxa3Dj8RYosFGHZ2NjUMKop0WtXwIgQDqkSsSMRlhx+PxDKpQbLaUHC5g3GOVKXUXRrK72Kc+wsTE7P3P8wlWQ4+7VNrAwN0vJkJg25NLmh19gvjW8QV2dz5kHFdRC5N8MkxF2INeZrkR6q5jMKp5qwlTKyRDrWA970oUxaNOTMkXZ7RS45/F0wFVhykHqcNY6jOLQjCQ8BEaMNUeyzlXGRH7iCCNArKgmctAd5196ANAPDYTFdzLsmX7ai5IItE4VknWtruBFeYpLgbInDO/Rpg3AuuACCqEVlqNOcaxTPJhz6S8Mxs9w/jvHHY635+pdSCVUSINgM+T7LCH0fy6qWDtNnRmbLsWwbE+j39s6brNBnUL7W5fiyCFCkAl7W2+NjVkgw0DdnZ78ZbZpxZoU3iWgfted7WRtB8wiWt/9/oy1X2fjFLVPpfX8q;4:I0QD+pumOr8VzP/1Saa58iy3VAoyE/0+/KpgRdSgQWtA1cjEyuW3JNOYCLHhvDPqpyFjY/2UFXH2mmUajCaJanUm4FAwIBzLJjLBVMSsIkw4OEYpiY29xRybRzGy7wSZO0AQVYK69rcpqACGr5FJnaOjn/7ziN/SgAKh+ktzrjbsjC4wHKBeBHsfJibwOHyKBHaH6ddCo6qpPog0U/9inAKPcuakug1XfQIAImjXHhYpZu1e9vL/qPB5EC5taBT/nGYtRHreuAf6TsiI4REriz1kbF8vvj+7AMLhQ52zpfm2SZ7hhRzSRNnzprGgTpvj
-X-Microsoft-Antispam-PRVS: <BN6PR15MB1746F51F92928CA6F1B5B2BCDDF70@BN6PR15MB1746.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(266576461109395);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231101)(11241501184)(2400082)(944501161)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR15MB1746;BCL:0;PCL:0;RULEID:;SRVR:BN6PR15MB1746;
+X-MS-Office365-Filtering-Correlation-Id: c6d4dcdd-5fba-4b4d-1b6d-08d57251c699
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:DM5PR15MB1755;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1755;3:fgZ0kf1/vGtxj9mc92NNsEJF9VolPL/JiCPCrIQLozXTNS9Ampv7JQpp4YzJUVqBIDVp1WshMjjQqMecKFjQpYn9GR70A2NGSXX2874TeKn5DK+2WIBBvFv8i1+8QW/ey0w/vkAlGKMemW64V3TZFtz5TOdra3/l8ZAzPWU4ABnxJP7TYZMwmr+ln4WC9w0RlH50noWFI1X1mpORWpyU+a/OuJB23Y6ptTSHBab1CQpTn3v708vE4wEgyOOirmXU;25:iQsfdex3vDd2HgRN8e+9DMymvLEuociqiIZhQ1qH+c7J3Hbw6NBqyYiXPeWMgDXzA5TKUTdw+OibZxlmEcPCf9f3YASBeF/V6ZGmm964HDwaiJ708qYT9UZCqdOn1ZxIjbObl7U8zfd+7pHGq5v//BZ2OY9cgSMRn0Rm7X48MMvHEvRNKvLA2/TCkR41o5umkcQyazss7McUVJ3RAjRuDP25VlBPKf8dEAY8VvVDNNDdwyWND+frwKTRnwAgFL71JO2KPdGt3dcN03UJeoYAI2djE6UohVRl0QzF8IrgbJaYCBAzYWRoP9heWyC21DDg0INVryNzoCkQcI3olzsO5g==;31:vjl6Gk6sxu/UROXrob1e2/r2tkf6BMlmRHV870q/Ir/WtblsHotIGdgsTvLKx+Kl+3YeRhjZi5mkp3Z+pypOvV0GqbtEMSjbfBEccKkljuL3HbjO+Bwx+e8/ouavAJBstJnd4uAqeKdHbETaJ7TwX5LQ41KruPXzmwplIepesu4eMF73eSRmPoy4Eh/4YEL6Z0MUSJmd6SJ0wedRaxLldZGg2UFBvJ4a2aLlrkgvKCA=
+X-MS-TrafficTypeDiagnostic: DM5PR15MB1755:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1755;20:2pI8INVd2hMKSJa+wsKH00y9mwPxFih2RqcHGv5zyO7cw4Ip/Ya22uaAMXTTUSbqPPTYiIB4cXh5jMSo5xJ94yeKEzNU89vequkAskzM6iJ0X+tKbbpH0s0GvGiSXHPCz1yjj0vCpmlbVH4PYhkl1dnwVnAGOzKy3lRTgrkaHLk4o5OwC40EYsyUJuLSjOgzg0EfOjEPtudUHtjKPq8EprjapuS4NyNo8LstmGvWdTAfgxK1JAvo0479y34O77Dqw7UdwGNtnGxBTYKVtDLqHwzERcL/3tZkmYYwdKWC8rlxbOaersqKThsCB5+ksMqPrzCxxb6YoTy/wp+V3w0ZALmcTMhi1kf3VubfrPt/vaVBIIZovu/nJ5XHGq/jfn6LsUKtHFxqhUltdMIpWPfFaIy6egP29Gi1gPnix1hJ85GfopO/XpNVadrUlLxyx6rc+v4dxjZKE7UOwHRyY9MLaQmXOqWpee13GgzN7NN+gYVXac4Hvn/5GGBUnVN/3sUZ;4:2mDrrxAuZm928ntnyxUoPhFOGilWJwwfXklqxxgM3HhshCHDSPmRxeRdhKUOu/AYMnnfVNl2ZTHq9+xX3hWkIQfgVtLtFM6efnAOsEX0tl9BekpcgpP2jBXwzB8XDcpVndzqq33+iZzUsrF4RMVoIknOP2tRSVsJVev3sUFhHP4SV2+/MHnRPYE0k2hwRbavccLFLl4iDKDnOoPhzpkUys6SU/MHLshgKlQ5dLQ0NUK3G4KPgywPaC8heogZtdc7XGkF+4PVwTuh4nlh2mRyaufhjqxXGeU7Q/FSJE3SJL3qjUeJMxMCoMBe7YNYKiwbhBhtK3CyhNpYhe0WXr/InYF6rOBTa0RpB2e39+p5ZGE=
+X-Microsoft-Antispam-PRVS: <DM5PR15MB17553FE35BD9736FC63954F1DDF70@DM5PR15MB1755.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(67672495146484)(266576461109395);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231101)(11241501184)(944501161)(10201501046)(3002001)(93006095)(93001095)(6041288)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR15MB1755;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1755;
 X-Forefront-PRVS: 0581B5AB35
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(396003)(346002)(376002)(39860400002)(39380400002)(366004)(189003)(199004)(54906003)(1076002)(305945005)(68736007)(6666003)(7416002)(7736002)(6116002)(98436002)(81156014)(110136005)(58126008)(83506002)(16586007)(5660300001)(33656002)(8936002)(52396003)(81166006)(2906002)(52116002)(6496006)(6486002)(47776003)(316002)(8676002)(50466002)(186003)(16526019)(86362001)(97736004)(76506005)(23726003)(33896004)(106356001)(9686003)(478600001)(59450400001)(4326008)(53936002)(25786009)(386003)(105586002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR15MB1746;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR15MB1746;23:UOK4H89i4/PvalBtAXjsOBPN1U1fAz5utHyWZCcnU?=
- =?us-ascii?Q?1ft0spbJRofngQGgL/R2GXQI1ykLNh9QrPmg1LNLIXpAsFe2rvjY9Fivc2yu?=
- =?us-ascii?Q?+vGg8uYZGbitAkD86iDgdi59iueKsHdNAY69QPzpbZhzpjmhR40c6QUHf73a?=
- =?us-ascii?Q?goXq10sG2rYnvzOyDphzDSEhmOlDNsOGDPuwYjKWeZpvJ0hY/hkFf/J66hGd?=
- =?us-ascii?Q?Qrx0UYFshauCAN3lt8GHbhw3llfyRW0yI120g41lXsur1Yfe0j7xmy4lr2CD?=
- =?us-ascii?Q?Uvd5BGTMNPCKca9ktGbQ9n+HmfMcXMofF1wHli8k+mOoxmvNW+m/1ir6iZi/?=
- =?us-ascii?Q?JLUhbysKHAH4FY2QNswBrd3UOrDZvVBoUDD+8qsudJJ7y/j73hnziR6xw/Rg?=
- =?us-ascii?Q?Fni8gjrtvSpyMboLrJ+lIFwETelAOjSd+NVPwLxWN1vZmI4kmAxu5Dbrz5aD?=
- =?us-ascii?Q?8Albe8DMy3TRJy/BfoaDlUXB30OU34jffJyKQzNEI0gcQlPkiBO6oZh+J/1F?=
- =?us-ascii?Q?+vRngaa6jHBVmJGslEa+a5VvQHRBhTratVn3y1hNPyNtsgx2WyE7/bSM1vgO?=
- =?us-ascii?Q?XQYykAli7QSiU5kVdJhhy7i3iJcL12c2gGwBuVgn4T88wFeRqYYIHwMiJNeI?=
- =?us-ascii?Q?N02byAx/kuGCuCMldmsFTQdnRA27OnKIFqQqmRGUSYmLAhkmu1rdOPZFjmkV?=
- =?us-ascii?Q?fo+xVdYq9JCvzDLYT6ZkNsGrVlurvjgInSFfdXDYJOVCK+bgmIPrzPsiq3jX?=
- =?us-ascii?Q?2R1rZYhZNEPNn8S04Oadx2OBKZGT+FQ/yZMBLFDhlseZ8VaHb3NxTE42zlPl?=
- =?us-ascii?Q?hrhV57l6hgUP9ihXj7KalaFOExgMk5OCSZJKcX34OGwW5VY2zgQFHw0+EdG1?=
- =?us-ascii?Q?le8ZTqCrJpbwDUFgEkKlDzTulU37lRLgJhzAhIJCNY2D/ZSawPcickPUD2bf?=
- =?us-ascii?Q?ycQYBdeuy5/8IBYjRoyumkFREgXoXmZPUIjpt2xiEdpRhZY3wIFREYx20b3d?=
- =?us-ascii?Q?F3xhsRuLUNVsQJo2qQLva4TE4hYlfKqLAGG4EGgIMCw15KTMOzMWatjjv6oO?=
- =?us-ascii?Q?fOTmCR4NBBi0gk/KJkFz/rnSIYF1+IfX1p+sz4Ft4huRHSMfUHaySxti3oqE?=
- =?us-ascii?Q?gm5trYR5x2Ac5ZGyxWJgAlCw2/glsGNcwli0MQxZafy2YurRPTwUvvmxLF+Z?=
- =?us-ascii?Q?5NDCnBUOG5noSJow/60jwMnO6OrneFpvEffeZxbaJr9KV380XvBkcEsDQ=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1746;6:kAfK13Drk+syzYvnAOS1WPbCb5RwyygwdQ71SfVinRY2YK/eRxdJQM5ybMazGVoe2OgTnMbjXCNm0dc0B204OLwpW/y4CENK7Ecuq5ythIiapuUwbVKyx/7UgAwitsNndc6jJwrY5kjAzjRbQpyQxebM59VeUmaDRXz/khrNtQnDRbudA49cU0LLb8AyJoGz8C9Y0YwyJ+HJnRo3/8HXxGFJ93O7wpz5ES7aDveVNuvB7TSWLN1xtaxQG6l/7Fv0mJ99bbE5g39qZ45sQDLZOV3zuqR9dW/BKLRBRt4YiGU+EdLvvM6A2ReZt4eVKI9OubPAw4HOP1mm9GMEzjtRvpC/W6nDPYmo8G99ICp7FCM=;5:2jf956GwNhnNo57eg1flpUR7DbVn2GLjVsg7a7tL261huwWINoiCcwY1Q+0Z4gRDcV0FA8z0RuAH625E4tnevpC/iFB4j0GTeStlK8TfM84P5kYyuc731pwHO9WuwxEQ4eS0ap6okOMHcdaZmRRLfyszfAD2W4w8LTnwvAdv3ew=;24:L/ABU8hzFbqHDMtu7h0Fi3EEfUo4AVjpIuY5gVZck074mmL3CYNLjUto8wzjjFR1eZSuq9uK8BFgi1dPnleFl+pBh6cdnoYXXaw8aUTQIG8=;7:NplUDBfQzgecfqmCQ1ISD1q0O5p5UfjhEAa2zNs7na4tATj8GS9rHnPJ0sENJZGK1CPEJCB7fUdcSWTpJsUdqVlnQ/3kG85l33UlHOhil2Zt2x+tbVbR/YMmnb1tjn4RvqWOnFEUjMSrC02qbz8+b35YK9ZfiI0qeqa0SksCS7rzwa6MIN9wmCOJvn7jiYcEeujAAtRNWlDUKvW/NZnrxJFGLGoZmLF86uBOmsV4zrZtiRWB0G42qxsufT1BpBGC
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(396003)(376002)(39860400002)(366004)(39380400002)(346002)(199004)(189003)(23726003)(6116002)(1076002)(8936002)(9686003)(50466002)(81156014)(81166006)(8676002)(186003)(16526019)(86362001)(2906002)(98436002)(33656002)(478600001)(33896004)(97736004)(52396003)(6496006)(106356001)(386003)(68736007)(105586002)(5660300001)(76176011)(47776003)(6486002)(58126008)(110136005)(6666003)(7736002)(316002)(16586007)(54906003)(52116002)(76506005)(4326008)(25786009)(305945005)(2950100002)(7416002)(83506002)(53936002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1755;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR15MB1755;23:K5zXaj9LQuC+7Q9ZJWCoXLmUZ+8rtHC3w1Y0Jzv9J?=
+ =?us-ascii?Q?5nc+d5AuEB1gscnuacWqyykLo/Xl25C0TOM2ySKhsnKve0M3R1PnQSEsAKVz?=
+ =?us-ascii?Q?4wT1TuADTtB4Mnnew7KihZzvZJaQ4taSGNYg+XHqpywoH1VyDa8lErrK6hRk?=
+ =?us-ascii?Q?WXPArG8vXT6u2aKx9Z+phXa7DU7NGbCxRBejR65++S8gzNPPZbWo+c6tbQgH?=
+ =?us-ascii?Q?//mgNKEoo5Dt32YmaKjwyLpOCeSrAlEG1c7a8yca3jSfrp8dUmZ5ym6d71Yi?=
+ =?us-ascii?Q?7/Yau5J4cZUeLKl7N5ILqnAZWD6dBmvqtvD7kdjrs/8uCM1sCGNY+UqLs0gm?=
+ =?us-ascii?Q?bfluVxrW4+X4HCerU7ygZP49XKgPWQT3Yz1Qkd/t+jeuePs3kNj9clwLQgJz?=
+ =?us-ascii?Q?TNK0KY2N6ayXTC64RjY/j07w5J5R+Lnl/Y5eOcn8lSCtWuzTXxem3vDmr3Ub?=
+ =?us-ascii?Q?z5QUnaHhA8wCJ2PF1qi6bSMIKgMMIooGmfA7TBP//KJLcri3/re+8yQ/dauQ?=
+ =?us-ascii?Q?JPC+D3sGBaAe5XxTJOQiAwzJslbjvMfkrpjO8t+sqXjL361WF5FFk7FgC9nE?=
+ =?us-ascii?Q?WWWBUF6V4NquxKSNrdMIXVgds7l1lNFsbEvqaPkJJ99Pyiv2/vLL028tTg4x?=
+ =?us-ascii?Q?GgHiJaLK/O4bRC16kEL/4ocLVhmIcyGASG1s/q2mtrFDNM7bGdbj22JdPgi5?=
+ =?us-ascii?Q?mwmFP8OvAMw0hIIXnzUygR47WYVGRKirZTGyKBisyZxXvOglWN+PaEtkHNhJ?=
+ =?us-ascii?Q?9W9qUoG2j34TUKUZfFZTu6mSrXXY+QfakYX0bRun76wCt0ytIFXXUWQlq81K?=
+ =?us-ascii?Q?c3jZVcHO97tY89o3paC/cAkWqFAPMQt/p6liiiAjyiU1u94dpU0OsptVeNHc?=
+ =?us-ascii?Q?jm1pcpKOxYQ83LC9SvvTDgwCRSZ8Wmn+mRHZOduaTN+rHeu413F1mMGcWHYd?=
+ =?us-ascii?Q?mgLkvCF5bBUn84mc1DC4aQFmEUUBW0YfILaa5QZgcqDj4xfMgBKYQH8Kx0s4?=
+ =?us-ascii?Q?8d71wphWnSF2Aae0ap1doc8x1TGjmhn2dQBQiuKkOVzhfeeYVNbiwCbFrd2+?=
+ =?us-ascii?Q?iSx0o4q3lx33gYzwj5PZdgyafirfFhUw+dJrgjMh8/bzGdm5PTVh8FT7MjIa?=
+ =?us-ascii?Q?3/AXsAr/GYFbP3h9y44Rd3OqDR6NuuTBLGDIejDt5HhvQCtQCRhDA3IsCT27?=
+ =?us-ascii?Q?347cBzPisqC9noJD2jEAWpqnBfF9F2M1xf8uAlYHBB7Oax6SwC+oYMWpn6kn?=
+ =?us-ascii?Q?/9uN8Zn0jfrg4pLmws=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1755;6:6rGzwyVkYZFEbIoM+UvvEVVwvZdDtCqE3J7cnntwk/fnwpkz0afvsM2lr1rzOo53Z9JfcIyTesrcyKicyCTrn7h7FUcED5watze/XUBmhKiHEV7m4vRM/CxERz+h3Zz+FubLAiPC1uj1K5CqFjZvtdi2N6Wk4/gUgBMlzrQM51xXmqa72yeQ9DPnuQFynaUoyQihcRV76i8K7vO1pMDmgR1Q+xEsic9xipOlUvatd2tiFu7A/0A2SGnZKU6zobRHtCHIdWtY07P38HJti8kXMfZhtUbXaNA6AlyiiOpGZgKGTv7COHu6V7roclu7cJa3rLFgBTiFD9ZjHBcIEBcndGuicLmkGK04ecEsJHV+M5o=;5:C3LCmvl3FnYHcSjPpBy66tMMRI6xjYs/hY3pR+RFmJEfwKKsTErn71u2Mr5GqS9vlk6nhAlMQCtDPHHSTUr4jBoYkhTVNiwdlk8WPokkv7WDLVCuzajTRQv2kcdepm71/FlazwghC0YvFZC9bZN0B/G8sFhNGr+lsZD0keac2nk=;24:mmgZVx3lrMuPja2SjpyLYzwYhRHd6gWxLWiEnbmBqmtxXpL3qVAgM5sS1gJnqiUR6D2kkJsCS9VP2U6xDrvSv/A6OczjR8qt5uWfdf2bjgA=;7:n70imhvTbqf88ijLSOGWGnkLaykgnHORNTwWP+J+M7V1iTGKnE1mVxTl9ynfKWhNAL2BrGrcMdopvZaG5pTKOEFI1PAL+PLcDturDxXu3MbAoFPYcoznj5pJXdlNv1kn5NRl3H7hudA2IU9R0FReY2feVWb4uAXN6Etb3VGkWdVV/uNi3ntqGOvecbeSTgvNwmitsEemGWlsyjwRzotSOJnt75OyhXEcl4D9pEA+xGu+P1zzrBnngEiC+NMyriVI
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1746;20:PRuUrnIYhFvtgLpJlTOa9/TRlo519vLP0vzv7vHi/UBQ7W9UYDnl20FRmDo6xHEr20MKejxDjuRggpo+1JEvYLns1fZwTyV154ZYCQp5y53bc+XpMrs7QKF9FmzBF/KbyjkEgj23y6dQxehDopwakbL6Q+Hf/otw2VLXQK7WgVE=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2018 19:47:44.8662 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88c30968-95d4-44fb-feb3-08d572517c94
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1755;20:+jWammbjKVVHBNSWQbnQjYEbbsW6oIcHU4wt/JrzXl49Iz4yOqGoI4QCf8IEkCwK4IULS0WG8cidd1yoNtXEbteVFku2k/MjZSE62OcbcKonlDRUD4XuWPyxHp5IA8lPMAdXAYV9cUcSUyC3VRJQlk/d1DHNRcV1a4I7HEgN4P8=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2018 19:49:49.0914 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6d4dcdd-5fba-4b4d-1b6d-08d57251c699
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1746
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1755
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_08:,,
  signatures=0
@@ -79,71 +82,120 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set refactors the x86 aes/gcm SSE crypto routines to
-support true scatter/gather by adding gcm_enc/dec_update methods.
+AAD hash only needs to be calculated once for each scatter/gather operation.
+Move it to its own macro, and call it from GCM_INIT instead of
+INITIAL_BLOCKS.
 
-The layout is:
+Signed-off-by: Dave Watson <davejwatson@fb.com>
+---
+ arch/x86/crypto/aesni-intel_asm.S | 71 ++++++++++++++++++++++++---------------
+ 1 file changed, 43 insertions(+), 28 deletions(-)
 
-* First 5 patches refactor the code to use macros, so changes only
-  need to be applied once for encode and decode.  There should be no
-  functional changes.
-
-* The next 6 patches introduce a gcm_context structure to be passed
-  between scatter/gather calls to maintain state.  The struct is also
-  used as scratch space for the existing enc/dec routines.
-
-* The last 2 set up the asm function entry points for scatter gather
-  support, and then call the new routines per buffer in the passed in
-  sglist in aesni-intel_glue.
-
-Testing: 
-asm itself fuzz tested vs. existing code and isa-l asm.
-Ran libkcapi test suite, passes.
-Passes my TLS tests.
-IPSec or testing of other aesni users would be appreciated.
-
-perf of a large (16k messages) TLS sends sg vs. no sg:
-
-no-sg
-
-33287255597      cycles  
-53702871176      instructions
-
-43.47%   _crypt_by_4
-17.83%   memcpy
-16.36%   aes_loop_par_enc_done
-
-sg
-
-27568944591      cycles 
-54580446678      instructions
-
-49.87%   _crypt_by_4
-17.40%   aes_loop_par_enc_done
-1.79%    aes_loop_initial_5416
-1.52%    aes_loop_initial_4974
-1.27%    gcmaes_encrypt_sg.constprop.15
-
-
-Dave Watson (14):
-  x86/crypto: aesni: Merge INITIAL_BLOCKS_ENC/DEC
-  x86/crypto: aesni: Macro-ify func save/restore
-  x86/crypto: aesni: Add GCM_INIT macro
-  x86/crypto: aesni: Add GCM_COMPLETE macro
-  x86/crypto: aesni: Merge encode and decode to GCM_ENC_DEC macro
-  x86/crypto: aesni: Introduce gcm_context_data
-  x86/crypto: aesni: Split AAD hash calculation to separate macro
-  x86/crypto: aesni: Fill in new context data structures
-  x86/crypto: aesni: Move ghash_mul to GCM_COMPLETE
-  x86/crypto: aesni: Move HashKey computation from stack to gcm_context
-  x86/crypto: aesni: Introduce partial block macro
-  x86/crypto: aesni: Add fast path for > 16 byte update
-  x86/crypto: aesni: Introduce scatter/gather asm function stubs
-  x86/crypto: aesni: Update aesni-intel_glue to use scatter/gather
-
- arch/x86/crypto/aesni-intel_asm.S  | 1414 ++++++++++++++++++------------------
- arch/x86/crypto/aesni-intel_glue.c |  263 ++++++-
- 2 files changed, 932 insertions(+), 745 deletions(-)
-
+diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
+index 6c5a80d..58bbfac 100644
+--- a/arch/x86/crypto/aesni-intel_asm.S
++++ b/arch/x86/crypto/aesni-intel_asm.S
+@@ -229,6 +229,10 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
+ 	mov	%arg5, %r13		# %xmm13 holds HashKey<<1 (mod poly)
+ 	and	$-16, %r13
+ 	mov	%r13, %r12
++
++	CALC_AAD_HASH %xmm13 %xmm0 %xmm1 %xmm2 %xmm3 %xmm4 \
++	%xmm5 %xmm6
++	mov %r13, %r12
+ .endm
+ 
+ # GCM_ENC_DEC Encodes/Decodes given data. Assumes that the passed gcm_context
+@@ -496,51 +500,62 @@ _read_next_byte_lt8_\@:
+ _done_read_partial_block_\@:
+ .endm
+ 
+-/*
+-* if a = number of total plaintext bytes
+-* b = floor(a/16)
+-* num_initial_blocks = b mod 4
+-* encrypt the initial num_initial_blocks blocks and apply ghash on
+-* the ciphertext
+-* %r10, %r11, %r12, %rax, %xmm5, %xmm6, %xmm7, %xmm8, %xmm9 registers
+-* are clobbered
+-* arg1, %arg3, %arg4, %r14 are used as a pointer only, not modified
+-*/
+-
+-
+-.macro INITIAL_BLOCKS_ENC_DEC TMP1 TMP2 TMP3 TMP4 TMP5 XMM0 XMM1 \
+-XMM2 XMM3 XMM4 XMMDst TMP6 TMP7 i i_seq operation
+-        MOVADQ     SHUF_MASK(%rip), %xmm14
+-	mov	   arg8, %r10           # %r10 = AAD
+-	mov	   arg9, %r11           # %r11 = aadLen
+-	pxor	   %xmm\i, %xmm\i
+-	pxor	   \XMM2, \XMM2
++# CALC_AAD_HASH: Calculates the hash of the data which will not be encrypted.
++# clobbers r10-11, xmm14
++.macro CALC_AAD_HASH HASHKEY TMP1 TMP2 TMP3 TMP4 TMP5 \
++	TMP6 TMP7
++	MOVADQ	   SHUF_MASK(%rip), %xmm14
++	mov	   arg8, %r10		# %r10 = AAD
++	mov	   arg9, %r11		# %r11 = aadLen
++	pxor	   \TMP7, \TMP7
++	pxor	   \TMP6, \TMP6
+ 
+ 	cmp	   $16, %r11
+ 	jl	   _get_AAD_rest\@
+ _get_AAD_blocks\@:
+-	movdqu	   (%r10), %xmm\i
+-	PSHUFB_XMM   %xmm14, %xmm\i # byte-reflect the AAD data
+-	pxor	   %xmm\i, \XMM2
+-	GHASH_MUL  \XMM2, \TMP3, \TMP1, \TMP2, \TMP4, \TMP5, \XMM1
++	movdqu	   (%r10), \TMP7
++	PSHUFB_XMM   %xmm14, \TMP7 # byte-reflect the AAD data
++	pxor	   \TMP7, \TMP6
++	GHASH_MUL  \TMP6, \HASHKEY, \TMP1, \TMP2, \TMP3, \TMP4, \TMP5
+ 	add	   $16, %r10
+ 	sub	   $16, %r11
+ 	cmp	   $16, %r11
+ 	jge	   _get_AAD_blocks\@
+ 
+-	movdqu	   \XMM2, %xmm\i
++	movdqu	   \TMP6, \TMP7
+ 
+ 	/* read the last <16B of AAD */
+ _get_AAD_rest\@:
+ 	cmp	   $0, %r11
+ 	je	   _get_AAD_done\@
+ 
+-	READ_PARTIAL_BLOCK %r10, %r11, \TMP1, %xmm\i
+-	PSHUFB_XMM   %xmm14, %xmm\i # byte-reflect the AAD data
+-	pxor	   \XMM2, %xmm\i
+-	GHASH_MUL  %xmm\i, \TMP3, \TMP1, \TMP2, \TMP4, \TMP5, \XMM1
++	READ_PARTIAL_BLOCK %r10, %r11, \TMP1, \TMP7
++	PSHUFB_XMM   %xmm14, \TMP7 # byte-reflect the AAD data
++	pxor	   \TMP6, \TMP7
++	GHASH_MUL  \TMP7, \HASHKEY, \TMP1, \TMP2, \TMP3, \TMP4, \TMP5
++	movdqu \TMP7, \TMP6
+ 
+ _get_AAD_done\@:
++	movdqu \TMP6, AadHash(%arg2)
++.endm
++
++/*
++* if a = number of total plaintext bytes
++* b = floor(a/16)
++* num_initial_blocks = b mod 4
++* encrypt the initial num_initial_blocks blocks and apply ghash on
++* the ciphertext
++* %r10, %r11, %r12, %rax, %xmm5, %xmm6, %xmm7, %xmm8, %xmm9 registers
++* are clobbered
++* arg1, %arg2, %arg3, %r14 are used as a pointer only, not modified
++*/
++
++
++.macro INITIAL_BLOCKS_ENC_DEC TMP1 TMP2 TMP3 TMP4 TMP5 XMM0 XMM1 \
++	XMM2 XMM3 XMM4 XMMDst TMP6 TMP7 i i_seq operation
++
++	movdqu AadHash(%arg2), %xmm\i		    # XMM0 = Y0
++
+ 	xor	   %r11, %r11 # initialise the data pointer offset as zero
+ 	# start AES for num_initial_blocks blocks
+ 
 -- 
 2.9.5
