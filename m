@@ -1,113 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932827AbeBLO7S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:59:18 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41817 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932377AbeBLO67 (ORCPT
+        id S932770AbeBLO7Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:59:16 -0500
+Received: from outbound-smtp09.blacknight.com ([46.22.139.14]:34635 "EHLO
+        outbound-smtp09.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932397AbeBLO67 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Feb 2018 09:58:59 -0500
-X-Google-Smtp-Source: AH8x227GAn4AuI1/MFej3GoFpeu+0UO3oBUsfOGr/TahWAE10gP8GcARp1VWA4HSWhsaFAPRNTVAhg==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/19] clk: meson: remove superseded aoclk_gate_regmap
-Date: Mon, 12 Feb 2018 15:58:34 +0100
-Message-Id: <20180212145846.19380-8-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 1/4] sched/fair: Avoid an unnecessary lookup of current CPU ID during wake_affine
+Date: Mon, 12 Feb 2018 14:58:54 +0000
+Message-Id: <20180212145857.8056-2-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180212145857.8056-1-mgorman@techsingularity.net>
+References: <20180212145857.8056-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-aoclk_gate_regmap has been replaced by meson's clk_regmap.
-It is no longer necessary so, remove it
+The only caller of wake_affine() knows the CPU ID. Pass it in instead of
+rechecking it.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- drivers/clk/meson/gxbb-aoclk-regmap.c | 46 -----------------------------------
- drivers/clk/meson/gxbb-aoclk.h        | 10 --------
- 2 files changed, 56 deletions(-)
- delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+ kernel/sched/fair.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb-aoclk-regmap.c b/drivers/clk/meson/gxbb-aoclk-regmap.c
-deleted file mode 100644
-index 2515fbfa0467..000000000000
---- a/drivers/clk/meson/gxbb-aoclk-regmap.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--/*
-- * Copyright (c) 2017 BayLibre, SAS.
-- * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/bitfield.h>
--#include <linux/regmap.h>
--#include "gxbb-aoclk.h"
--
--static int aoclk_gate_regmap_enable(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--
--	return regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
--				  BIT(gate->bit_idx), BIT(gate->bit_idx));
--}
--
--static void aoclk_gate_regmap_disable(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--
--	regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
--			   BIT(gate->bit_idx), 0);
--}
--
--static int aoclk_gate_regmap_is_enabled(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--	unsigned int val;
--	int ret;
--
--	ret = regmap_read(gate->regmap, AO_RTI_GEN_CNTL_REG0, &val);
--	if (ret)
--		return ret;
--
--	return (val & BIT(gate->bit_idx)) != 0;
--}
--
--const struct clk_ops meson_aoclk_gate_regmap_ops = {
--	.enable = aoclk_gate_regmap_enable,
--	.disable = aoclk_gate_regmap_disable,
--	.is_enabled = aoclk_gate_regmap_is_enabled,
--};
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index 127d58954cca..0be78383f257 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -17,16 +17,6 @@
- #define AO_RTC_ALT_CLK_CNTL0	0x94
- #define AO_RTC_ALT_CLK_CNTL1	0x98
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 5eb3ffc9be84..4b3e86eb2222 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5751,9 +5751,8 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ }
  
--struct aoclk_gate_regmap {
--	struct clk_hw hw;
--	unsigned bit_idx;
--	struct regmap *regmap;
--	spinlock_t *lock;
--};
--
--#define to_aoclk_gate_regmap(_hw) \
--	container_of(_hw, struct aoclk_gate_regmap, hw)
--
- extern const struct clk_ops meson_aoclk_gate_regmap_ops;
+ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+-		       int prev_cpu, int sync)
++		       int this_cpu, int prev_cpu, int sync)
+ {
+-	int this_cpu = smp_processor_id();
+ 	int target = nr_cpumask_bits;
  
- struct aoclk_cec_32k {
+ 	if (sched_feat(WA_IDLE))
+@@ -6376,7 +6375,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 		if (cpu == prev_cpu)
+ 			goto pick_cpu;
+ 
+-		new_cpu = wake_affine(affine_sd, p, prev_cpu, sync);
++		new_cpu = wake_affine(affine_sd, p, cpu, prev_cpu, sync);
+ 	}
+ 
+ 	if (sd && !(sd_flag & SD_BALANCE_FORK)) {
 -- 
-2.14.3
+2.15.1
