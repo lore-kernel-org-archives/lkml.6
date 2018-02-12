@@ -1,37 +1,37 @@
-Return-Path: <kernel-hardening-return-11717-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x224d41P0VDhApy1Jwj9GhelLV7msrBqIa1MBR2PlGN0uBKXRKTrMR41/6AVQLHGPohDzSjlT
-ARC-Seal: i=1; a=rsa-sha256; t=1518435820; cv=none;
+Return-Path: <kernel-hardening-return-11718-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x226nBRvfjVZE52IqXGvgPmxY5sHzmqfiBqgLE8WA2ApGkXGS49fZ4rzU7+g5dsHQs1b1UiB5
+ARC-Seal: i=1; a=rsa-sha256; t=1518440073; cv=none;
         d=google.com; s=arc-20160816;
-        b=jdl47+vVwJLWSVpQJF7/k1Z7PCsXOupl+K1BJ57O18KMfXRQzpfWTv5FMavfcmvAuw
-         Pipx7Omx5MbGpfV0KhxX9KM4RjuAi6uiRk4Od8edUySCcacQo/Jceg0xq/ZxJt3WPYDx
-         XRxHeMj2tJmLbDzG4gIbYdEhu3UsELp3N+iIoW2bpGS1TSnQaSSKGJRRHEY/XIsXrC+S
-         oZKvAwHy87mz6oWosnrtt80zSO6m/rv4rdkrg6Ce/yPgygseymBdkdRUL94IxEM+zzjw
-         BHwTUCTLqvkbFZfYlAYSxkIK1fyLuLNnUtl5DuM2+8lNFe8BcQz/j0uBCnK9fCmhA2/W
-         RWjA==
+        b=W1T6pvECz4Ca4kfJ4Wme9h+DKskfoAiQunyT8zLL8wd2AgwZPe7VujYVazE5Br80oa
+         xjDe/HkimM9I/RYuWtb497LNXtqPpa5omUu7M90zxtn7nykS0cEdDdahOi5nmrZvvzVP
+         5btt8goXhGEnY4B4aeDYhRmewke7wZntTgCy/OmykvVEAEbcK/eWDveUMNk0ixRBqT5q
+         QhFeTLIQLseEPtDizILOu9Lt6pJYuCGH98c+5berobCuLpmYWL59AdsA592COHCRLhqL
+         ERocZ7fQmPQ0UmFDP+lhDnHCscYR+cBfbsxczwdT800A65UbC1NMVLwwff1tTwaWpR9j
+         gfug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:user-agent:in-reply-to:content-disposition:mime-version
          :references:subject:cc:to:from:date:delivered-to:list-id
          :list-subscribe:list-unsubscribe:list-help:list-post:precedence
          :mailing-list:arc-authentication-results;
-        bh=hftJI/+FcPVp0sn65VgvnwEERuYAqY/kq7YqwGLxbzs=;
-        b=AK6t32KpgNo6FrgSFJ4w/x0o+aeqGEVxNYkIbkeeQO7AIwAsVt776YKoPf3YWfnWoT
-         AGFhEBOnlJtKS6GCAxKvu6UUpZ2ziRkuFYsjOvj1LWioEGlYO9HGCHclh4G+vZ+KWf1A
-         RyDkElsuhZhYuFVN3B7C0wHXKoqtWsqbrTCQZe3d+jZGDIhmahsfTgmI1IFRnwRhoK9x
-         8/ZhPIo8++XykVmzdXrz7gBWW0nxLMYhYv017dRGHsUXaQKjecXu5SqlxSQ8BAn9M1lV
-         JShAhK/PoD2MS960qTD8pEU6zkGcJwM5NtGCF0lXEqWRoidU5UpBrE5Tik02YOSOdfQE
-         BGdg==
+        bh=UDcmFcOP2xKLBFtazfVBEXUfWq5osKJaQYZgn2kBXD8=;
+        b=0D+BEef5OT6A20ez0BvfUFWNv8RXjlHzarWP9/N/ISHX+NyYUWZbqE1nogCT3OJZ3k
+         y1IQR6KQ3Gq1g5nm1d29/GL6u+4OJ4AtDjfKslMQrTF17WdQKxz1vd1iDFiq0HxySg8v
+         3kVjZJHlhc81cW1O/vjzQBm3cdr0Q2PNL7gNTGdvtigmY1+hMR0vbXaDUaFjHKBbyL42
+         pH6vEMsRQ0heFMzLLRkEgaIsjUm7sz1BakAqUrDpNPdDOaH6jFQrtQkXlZNiqoeMMxKL
+         apo1Ja2T2RCMLi9OAyZLZ+nZ2MokpMR0R0kQ2r08tvrGI3NMX1hzagyBJ/+jNNoH2ajW
+         Vhig==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11717-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11717-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11718-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11718-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11717-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11717-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11718-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11718-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Mon, 12 Feb 2018 13:43:11 +0200
+Date: Mon, 12 Feb 2018 14:53:47 +0200
 From: Mike Rapoport <rppt@linux.vnet.ibm.com>
 To: Igor Stoppa <igor.stoppa@huawei.com>
 Cc: willy@infradead.org, rdunlap@infradead.org, corbet@lwn.net,
@@ -44,65 +44,68 @@ References: <20180211031920.3424-1-igor.stoppa@huawei.com>
  <20180211031920.3424-5-igor.stoppa@huawei.com>
  <20180211123743.GC13931@rapoport-lnx>
  <e7ea02b4-3d43-9543-3d14-61c27e155042@huawei.com>
+ <20180212114310.GD20737@rapoport-lnx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e7ea02b4-3d43-9543-3d14-61c27e155042@huawei.com>
+In-Reply-To: <20180212114310.GD20737@rapoport-lnx>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-TM-AS-GCONF: 00
-x-cbid: 18021211-0016-0000-0000-00000521DD51
+x-cbid: 18021212-0040-0000-0000-0000042EE5D5
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021211-0017-0000-0000-0000285E9FF5
-Message-Id: <20180212114310.GD20737@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
+x-cbparentid: 18021212-0041-0000-0000-000020D2A591
+Message-Id: <20180212125347.GE20737@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802120153
+ definitions=main-1802120167
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1590497635371449856?=
-X-GMAIL-MSGID: =?utf-8?q?1592195358656126321?=
+X-GMAIL-MSGID: =?utf-8?q?1592199819002651571?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 01:26:28PM +0200, Igor Stoppa wrote:
-> On 11/02/18 14:37, Mike Rapoport wrote:
-> > On Sun, Feb 11, 2018 at 05:19:18AM +0200, Igor Stoppa wrote:
-> 
-> >> + * Return: 0 if the object does not belong to pmalloc, 1 if it belongs to
-> >> + * pmalloc, -1 if it partially overlaps pmalloc meory, but incorectly.
+On Mon, Feb 12, 2018 at 01:43:11PM +0200, Mike Rapoport wrote:
+> On Mon, Feb 12, 2018 at 01:26:28PM +0200, Igor Stoppa wrote:
+> > On 11/02/18 14:37, Mike Rapoport wrote:
+> > > On Sun, Feb 11, 2018 at 05:19:18AM +0200, Igor Stoppa wrote:
 > > 
-> > typo:                                            ^ memory
-> 
-> thanks :-(
-> 
-> [...]
-> 
-> >> +/**
-> >> + * When the sysfs is ready to receive registrations, connect all the
-> >> + * pools previously created. Also enable further pools to be connected
-> >> + * right away.
-> >> + */
+> > >> + * Return: 0 if the object does not belong to pmalloc, 1 if it belongs to
+> > >> + * pmalloc, -1 if it partially overlaps pmalloc meory, but incorectly.
+> > > 
+> > > typo:                                            ^ memory
 > > 
-> > This does not seem as kernel-doc comment. Please either remove the second *
-> > from the opening comment mark or reformat the comment.
+> > thanks :-(
+> > 
+> > [...]
+> > 
+> > >> +/**
+> > >> + * When the sysfs is ready to receive registrations, connect all the
+> > >> + * pools previously created. Also enable further pools to be connected
+> > >> + * right away.
+> > >> + */
+> > > 
+> > > This does not seem as kernel-doc comment. Please either remove the second *
+> > > from the opening comment mark or reformat the comment.
+> > 
+> > For this too, I thought I had caught them all, but I was wrong ...
+> > 
+> > I didn't find any mention of automated checking for comments.
+> > Is there such tool?
 > 
-> For this too, I thought I had caught them all, but I was wrong ...
+> I don't know if there is a tool. I couldn't find anything in scripts, maybe
+> somebody have such tool out of tree.
 > 
-> I didn't find any mention of automated checking for comments.
-> Is there such tool?
+> For now, I've added mm-api.rst that includes all mm .c files and run 'make
+> htmldocs' which spits plenty of warnings and errors.
 
-I don't know if there is a tool. I couldn't find anything in scripts, maybe
-somebody have such tool out of tree.
-
-For now, I've added mm-api.rst that includes all mm .c files and run 'make
-htmldocs' which spits plenty of warnings and errors.
-
-> --
-> thanks, igor
-> 
+Actually, you can run 'scripts/kernel-doc -v -none <filename>' to check
+comments starting with '/**'. I afraid it won't catch formatted blocks that
+start with '/*'
+ 
 
 -- 
 Sincerely yours,
