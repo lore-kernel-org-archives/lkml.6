@@ -1,70 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754216AbeBLVWW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:22:22 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:34559 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754067AbeBLVWV (ORCPT
+        id S932372AbeBLV0v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:26:51 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:35760 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932134AbeBLV0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:22:21 -0500
-Date: Mon, 12 Feb 2018 22:22:08 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Miquel Raynal <miquel.raynal@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: nand: MTD_NAND_MARVELL should depend on HAS_DMA
-Message-ID: <20180212222208.39324af1@bbrezillon>
-In-Reply-To: <1517318601-14793-1-git-send-email-geert@linux-m68k.org>
-References: <1517318601-14793-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 12 Feb 2018 16:26:48 -0500
+X-Google-Smtp-Source: AH8x225rThqepVGwd2KTiRvoIpxDu4RAUI8LqeEw/87JiN3zs1qLP7d6vG6h12rq+V9JCumeErWXGA==
+Date: Mon, 12 Feb 2018 13:26:44 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
+        huang lin <hl@rock-chips.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com
+Subject: Re: [PATCH 2/3] Documentation: bindings: add usb3-host-disable and
+ usb3-host-port for Rockchip USB Type-C PHY
+Message-ID: <20180212212643.GA37044@ban.mtv.corp.google.com>
+References: <20180208152028.9997-1-enric.balletbo@collabora.com>
+ <20180208152028.9997-2-enric.balletbo@collabora.com>
+ <CABGGisyaqV5HtTUL5LdjH3ZcU3_RTPmzMvEAhv5wZjCD_XCujg@mail.gmail.com>
+ <CAFqH_53-iN9m=U+WdQh6_rKyxE5c9RUQO9qD1QaY0QePM_pOZA@mail.gmail.com>
+ <CAL_JsqLvkPEm1mZaEfEVFEYMoGvOsbSQb8c35UvjmRTCwrCF8Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqLvkPEm1mZaEfEVFEYMoGvOsbSQb8c35UvjmRTCwrCF8Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Jan 2018 14:23:21 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi,
 
-> If NO_DMA=y:
+On Mon, Feb 12, 2018 at 10:43:41AM -0600, Rob Herring wrote:
+> On Thu, Feb 8, 2018 at 3:23 PM, Enric Balletbo Serra
+> <eballetbo@gmail.com> wrote:
+> > 2018-02-08 18:52 GMT+01:00 Rob Herring <robh@kernel.org>:
+> >> On Thu, Feb 8, 2018 at 9:20 AM, Enric Balletbo i Serra
+> >> <enric.balletbo@collabora.com> wrote:
+> >>> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
+> >>> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
+> >>> @@ -36,6 +36,12 @@ offset, enable bit, write mask bit.
+> >>>   - rockchip,uphy-dp-sel : the register of type-c phy enable DP function
+> >>>     for type-c phy0, it must be <0x6268 19 19>;
+> >>>     for type-c phy1, it must be <0x6268 3 19>;
+> >>> + - rockchip,usb3-host-disable : the register of type-c phy disable usb3 host
+> >>> +   for type-c phy0, it must be <0x2434 0 16>;
+> >>> +   for type-c phy1, it must be <0x2444 0 16>;
+> >>> + - rockchip,usb3-host-port : the register of type-c phy usb3 port number
+> >>> +   for type-c phy0, it must be <0x2434 12 28>;
+> >>> +   for type-c phy1, it must be <0x2444 12 28>;
+> >>
+> >> When does this list stop? Adding properties for various register
+> >> fields doesn't scale. This information should be in the driver and
+> >> based on the compatible string if necessary.
+> >>
+> >
+> > I see, seams reasonable to me, is this applicable to the new ones only
+> > or I should get rid of all the proprieties like this from the DT
+> > (including the old ones)?
 > 
->     ERROR: "bad_dma_ops" [drivers/mtd/nand/marvell_nand.ko] undefined!
-> 
-> Add a dependency on HAS_DMA to fix this.
+> We're already kind of stuck with the existing ones. So it depends if
+> people want to phase them out or not.
 
-Applied.
+FWIW, any Chrome{device} using these sort of bindings is perfectly
+capable of handling changed bindings (we ship DTBs with the kernel). But
+that's not typically how mainline covers binding deprecation.
 
-Thanks,
+If we're going to start recommending not putting these offsets in the
+DT, I'd vote for deprecating them, for consistency. (Otherwise, we'll
+keep running into this same question.) We only documented the RK3399
+("rockchip,rk3399-typec-phy") binding, so all users should have the same
+offsets. I dunno if/how we pick a time for eventually removing the
+bindings entirely.
 
-Boris
-
-> 
-> Fixes: 02f26ecf8c772751 ("mtd: nand: add reworked Marvell NAND controller driver")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
->  drivers/mtd/nand/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/Kconfig b/drivers/mtd/nand/Kconfig
-> index e6b8c59f2c0da7c0..736ac887303c88ba 100644
-> --- a/drivers/mtd/nand/Kconfig
-> +++ b/drivers/mtd/nand/Kconfig
-> @@ -328,7 +328,7 @@ config MTD_NAND_MARVELL
->  	tristate "NAND controller support on Marvell boards"
->  	depends on PXA3xx || ARCH_MMP || PLAT_ORION || ARCH_MVEBU || \
->  		   COMPILE_TEST
-> -	depends on HAS_IOMEM
-> +	depends on HAS_IOMEM && HAS_DMA
->  	help
->  	  This enables the NAND flash controller driver for Marvell boards,
->  	  including:
-
-
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Brian
