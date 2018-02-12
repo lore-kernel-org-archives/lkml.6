@@ -1,53 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935767AbeBLN64 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:58:56 -0500
-Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:46615 "EHLO
-        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934880AbeBLN6y (ORCPT
+        id S935788AbeBLOAb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:00:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39658 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935772AbeBLOA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:58:54 -0500
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH v3 1/2] mm/page_ref: use atomic_set_release in
- page_ref_unfreeze
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Date: Mon, 12 Feb 2018 16:58:50 +0300
-Message-ID: <151844393004.210639.4672319312617954272.stgit@buzz>
-In-Reply-To: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
-References: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
-User-Agent: StGit/0.17.1-dirty
+        Mon, 12 Feb 2018 09:00:28 -0500
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+References: <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+ <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+ <38880e66-b676-1170-c2ca-5a5603c5b521@collabora.com>
+ <20180212115242.z3qv5uejbnhgvd6o@sirius.home.kraxel.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <eea72b9d-d180-6a57-81ce-4366dc0f2bcc@collabora.com>
+Date: Mon, 12 Feb 2018 15:00:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180212115242.z3qv5uejbnhgvd6o@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-page_ref_unfreeze() has exactly that semantic. No functional
-changes: just minus one barrier and proper handling of PPro errata.
+On 02/12/2018 12:52 PM, Gerd Hoffmann wrote:
+>    Hi,
+> 
+>> can we reach agreement on whether vsock should be involved in this?
+> 
+> I think the best approach would be to have guest proxy and host proxy
+> use vsock for the wayland protocol.  Use a wayland protocol extension to
+> reference the buffers in stdvga / ivshmem / virtio-gpu.  Only the two
+> proxies need to understand the extension, the client <=> guest proxy and
+> host proxy <=> server communication would be standard wayland protocol.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- include/linux/page_ref.h |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks for the ideas. What I haven't understood yet is how you see the 
+actual passing of buffers via vsock. Are you thinking of using ancillary 
+data to pass FDs, or something else?
 
-diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
-index 760d74a0e9a9..14d14beb1f7f 100644
---- a/include/linux/page_ref.h
-+++ b/include/linux/page_ref.h
-@@ -175,8 +175,7 @@ static inline void page_ref_unfreeze(struct page *page, int count)
- 	VM_BUG_ON_PAGE(page_count(page) != 0, page);
- 	VM_BUG_ON(count == 0);
- 
--	smp_mb();
--	atomic_set(&page->_refcount, count);
-+	atomic_set_release(&page->_refcount, count);
- 	if (page_ref_tracepoint_active(__tracepoint_page_ref_unfreeze))
- 		__page_ref_unfreeze(page, count);
- }
+Thanks,
+
+Tomeu
