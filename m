@@ -1,161 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964848AbeBLPFP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:05:15 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45172 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933930AbeBLPFL (ORCPT
+        id S1753775AbeBLPF4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:05:56 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40633 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932324AbeBLO66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:05:11 -0500
-X-Google-Smtp-Source: AH8x2260Scrkfqg3alDE7nQ5/BuBUiFA8h5Ja3wFoWtNQHYKvWgZYrv3ywSO3MN/OezRI1hQuZfOe124kps3WA5n080=
-MIME-Version: 1.0
-In-Reply-To: <20171027153336.GC3857@worktop>
-References: <001a11448f6c0346ec055c831a71@google.com> <20171027151137.GC3165@worktop.lehotels.local>
- <20171027153336.GC3857@worktop>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 12 Feb 2018 16:04:50 +0100
-Message-ID: <CACT4Y+YNSZQXy_V4QzjmOK+UJSihdQw8_yRu3A8GBMsCUSs_vQ@mail.gmail.com>
-Subject: Re: possible deadlock in perf_event_ctx_lock_nested
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: syzbot
-        <bot+f67ad450a4bd1e42a7bd09f592904b15be39db7a@syzkaller.appspotmail.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 12 Feb 2018 09:58:58 -0500
+X-Google-Smtp-Source: AH8x227NMCJMm+QgUMXT7dz6JyO4mo9JVWP69QMT6UbJWQJ6e35SFk4kYnxfQfmfy7afSxpr8kE/1A==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 06/19] clk: meson: switch gxbb ao_clk to clk_regmap
+Date: Mon, 12 Feb 2018 15:58:33 +0100
+Message-Id: <20180212145846.19380-7-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+References: <20180212145846.19380-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 27, 2017 at 5:33 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Fri, Oct 27, 2017 at 05:11:37PM +0200, Peter Zijlstra wrote:
->> On Fri, Oct 27, 2017 at 01:30:30AM -0700, syzbot wrote:
->>
->> > ======================================================
->> > WARNING: possible circular locking dependency detected
->> > 4.13.0-next-20170911+ #19 Not tainted
->> > ------------------------------------------------------
->> > syz-executor2/12380 is trying to acquire lock:
->> >  (&ctx->mutex){+.+.}, at: [<ffffffff8180923c>]
->> > perf_event_ctx_lock_nested+0x1dc/0x3c0 kernel/events/core.c:1210
->> >
->> > but task is already holding lock:
->> >  (&pipe->mutex/1){+.+.}, at: [<ffffffff81ac0fa6>] pipe_lock_nested
->> > fs/pipe.c:66 [inline]
->> >  (&pipe->mutex/1){+.+.}, at: [<ffffffff81ac0fa6>] pipe_lock+0x56/0x70
->> > fs/pipe.c:74
->> >
->> > which lock already depends on the new lock.
->>
->>
->> ARRGH!!
->>
->> that translates like the below, which is an absolute maze and requires
->> at least 5 concurrent callstacks, possibly more.
->>
->> We already had a lot of fun with hotplug-perf-ftrace, but the below
->> contains more. Let me try and page that previous crap back.
->>
->>
->>
->>       perf_ioctl()
->> #0      perf_event_ctx_lock()         [ctx->mutex]
->>         perf_event_set_filter
->> #1        ftrace_profile_set_filter   [event_mutex]
->>
->>
->>
->>
->>       sys_perf_event_open
->>         ...
->>         perf_trace_init
->> #1        mutex_lock [event_mutex]
->>           trace_event_reg
->>             tracepoint_probe_register
->> #2            mutex_lock() [tracepoints_mutex]
->>               tracepoint_add_func()
->> #3              static_key_slow_inc() [cpuhotplug_lock]
->>
->>
->>
->>
->>
->>       cpuhp_setup_state_nocalls
->> #3      cpus_read_lock        [cpuhotplug_lock]
->>           __cpuhp_setup_state_cpuslocked
->> #4          mutex_lock        [cpuhp_state_mutex]
->>             cpuhp_issue_call
->> #5            cpuhp_invoke_ap_callback()      [cpuhp_state]
->>
->>
->> #5    cpuhp_invoke_callback [cpuhp_state]
->>         ...
->>           devtmpfs_create_node
->> #6          wait_for_completion()     [&req.done]
->>
->>                                               devtmpfsd
->>                                                 handle_create
->> #7                                                filename_create [sb_writers]
->> #6                                              complete [&req.done]
->>
->>
->>
->>
->>
->>
->>       do_splice
->> #7      file_start_write() [sb_writers]
->>         do_splice_from
->>           iter_file_splice_write
->> #8          pipe_lock [pipe->mutex]
->>
->>
->>
->>
->>
->>       do_splice
->> #8      pipe_lock     [pipe->mutex]
->>         do_splice_to
->>           ...
->> #0          perf_read() [ctx->mutex]
->>
->
-> So arguably that last op, splice_read from a perf fd is fairly
-> pointless and we could dis-allow that. How about something like the
-> below?
->
-> ---
->  kernel/events/core.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 04989fb769f0..fd03f3082ee3 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -5468,6 +5468,13 @@ static int perf_fasync(int fd, struct file *filp, int on)
->         return 0;
->  }
->
-> +static ssize_t perf_splice_read(struct file *file, loff_t *ppos,
-> +                               struct pipe_inode_info *pope, size_t len,
-> +                               unsigned int flags)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +
->  static const struct file_operations perf_fops = {
->         .llseek                 = no_llseek,
->         .release                = perf_release,
-> @@ -5477,6 +5484,7 @@ static int perf_fasync(int fd, struct file *filp, int on)
->         .compat_ioctl           = perf_compat_ioctl,
->         .mmap                   = perf_mmap,
->         .fasync                 = perf_fasync,
-> +       .splice_read            = perf_splice_read,
->  };
+Drop the gxbb ao specific regmap based clock and use the
+meson clk_regmap based clock instead.
 
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Kconfig      |  1 +
+ drivers/clk/meson/Makefile     |  2 +-
+ drivers/clk/meson/gxbb-aoclk.c | 20 ++++++++++----------
+ drivers/clk/meson/gxbb-aoclk.h |  1 -
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
-Another perf deadlock that involves splice:
-https://groups.google.com/d/msg/syzkaller-bugs/vVy6Zj3wPxo/6oj5U6WiAwAJ
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index e97e85077da1..33d148e19066 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -20,6 +20,7 @@ config COMMON_CLK_GXBB
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
++	select COMMON_CLK_REGMAP_MESON
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 11a50586666a..465086118d62 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -4,6 +4,6 @@
+ 
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+-obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
++obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+ obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
+ obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 6c161e0a8e59..9ec23ae9a219 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -62,10 +62,9 @@
+ #include <linux/delay.h>
+ #include <dt-bindings/clock/gxbb-aoclkc.h>
+ #include <dt-bindings/reset/gxbb-aoclkc.h>
++#include "clk-regmap.h"
+ #include "gxbb-aoclk.h"
+ 
+-static DEFINE_SPINLOCK(gxbb_aoclk_lock);
+-
+ struct gxbb_aoclk_reset_controller {
+ 	struct reset_controller_dev reset;
+ 	unsigned int *data;
+@@ -87,12 +86,14 @@ static const struct reset_control_ops gxbb_aoclk_reset_ops = {
+ };
+ 
+ #define GXBB_AO_GATE(_name, _bit)					\
+-static struct aoclk_gate_regmap _name##_ao = {				\
+-	.bit_idx = (_bit),						\
+-	.lock = &gxbb_aoclk_lock,					\
++static struct clk_regmap _name##_ao = {					\
++	.data = &(struct clk_regmap_gate_data) {			\
++		.offset = AO_RTI_GEN_CNTL_REG0,				\
++		.bit_idx = (_bit),					\
++	},								\
+ 	.hw.init = &(struct clk_init_data) {				\
+ 		.name = #_name "_ao",					\
+-		.ops = &meson_aoclk_gate_regmap_ops,			\
++		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+ 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
+@@ -107,7 +108,6 @@ GXBB_AO_GATE(uart2, 5);
+ GXBB_AO_GATE(ir_blaster, 6);
+ 
+ static struct aoclk_cec_32k cec_32k_ao = {
+-	.lock = &gxbb_aoclk_lock,
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "cec_32k_ao",
+ 		.ops = &meson_aoclk_cec_32k_ops,
+@@ -126,7 +126,7 @@ static unsigned int gxbb_aoclk_reset[] = {
+ 	[RESET_AO_IR_BLASTER] = 23,
+ };
+ 
+-static struct aoclk_gate_regmap *gxbb_aoclk_gate[] = {
++static struct clk_regmap *gxbb_aoclk_gate[] = {
+ 	[CLKID_AO_REMOTE] = &remote_ao,
+ 	[CLKID_AO_I2C_MASTER] = &i2c_master_ao,
+ 	[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao,
+@@ -177,10 +177,10 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+ 	 * Populate regmap and register all clks
+ 	 */
+ 	for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
+-		gxbb_aoclk_gate[clkid]->regmap = regmap;
++		gxbb_aoclk_gate[clkid]->map = regmap;
+ 
+ 		ret = devm_clk_hw_register(dev,
+-					gxbb_aoclk_onecell_data.hws[clkid]);
++					   gxbb_aoclk_onecell_data.hws[clkid]);
+ 		if (ret)
+ 			return ret;
+ 	}
+diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+index e8604c8f7eee..127d58954cca 100644
+--- a/drivers/clk/meson/gxbb-aoclk.h
++++ b/drivers/clk/meson/gxbb-aoclk.h
+@@ -32,7 +32,6 @@ extern const struct clk_ops meson_aoclk_gate_regmap_ops;
+ struct aoclk_cec_32k {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+-	spinlock_t *lock;
+ };
+ 
+ #define to_aoclk_cec_32k(_hw) container_of(_hw, struct aoclk_cec_32k, hw)
+-- 
+2.14.3
