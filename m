@@ -1,117 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934977AbeBLOGm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:06:42 -0500
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:40929 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753720AbeBLOGl (ORCPT
+        id S1754184AbeBLOHu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:07:50 -0500
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:54961 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754154AbeBLOHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:06:41 -0500
-Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH v3 2/2] mm/huge_memory.c: reorder operations in
- __split_huge_page_tail()
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: Michal Hocko <mhocko@suse.com>,
+        Mon, 12 Feb 2018 09:07:49 -0500
+X-Google-Smtp-Source: AH8x224tSlAbOktQJtrXE+SQEveeD8Qbow17MNA4YCr5xnH/xAZ3EtyRzOb7IZ0sqIVMXKpt8rW1oQ==
+Date: Mon, 12 Feb 2018 17:07:46 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Nicholas Piggin <npiggin@gmail.com>
-Date: Mon, 12 Feb 2018 16:58:53 +0300
-Message-ID: <151844393341.210639.13162088407980624477.stgit@buzz>
-In-Reply-To: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
+Subject: Re: [PATCH v3 1/2] mm/page_ref: use atomic_set_release in
+ page_ref_unfreeze
+Message-ID: <20180212140746.3gojy7ybiq763pj3@node.shutemov.name>
 References: <4f64569f-b8ce-54f8-33d9-0e67216bb54c@yandex-team.ru>
-User-Agent: StGit/0.17.1-dirty
+ <151844393004.210639.4672319312617954272.stgit@buzz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <151844393004.210639.4672319312617954272.stgit@buzz>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-THP split makes non-atomic change of tail page flags. This is almost ok
-because tail pages are locked and isolated but this breaks recent changes
-in page locking: non-atomic operation could clear bit PG_waiters.
+On Mon, Feb 12, 2018 at 04:58:50PM +0300, Konstantin Khlebnikov wrote:
+> page_ref_unfreeze() has exactly that semantic. No functional
+> changes: just minus one barrier and proper handling of PPro errata.
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-As a result concurrent sequence get_page_unless_zero() -> lock_page()
-might block forever. Especially if this page was truncated later.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Fix is trivial: clone flags before unfreezing page reference counter.
-
-This race exists since commit 62906027091f ("mm: add PageWaiters indicating
-tasks are waiting for a page bit") while unsave unfreeze itself was added
-in commit 8df651c7059e ("thp: cleanup split_huge_page()").
-
-clear_compound_head() also must be called before unfreezing page reference
-because after successful get_page_unless_zero() might follow put_page()
-which needs correct compound_head().
-
-And replace page_ref_inc()/page_ref_add() with page_ref_unfreeze() which
-is made especially for that and has semantic of smp_store_release().
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- mm/huge_memory.c |   36 +++++++++++++++---------------------
- 1 file changed, 15 insertions(+), 21 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 87ab9b8f56b5..7a8ead256b2f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2355,26 +2355,13 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 	struct page *page_tail = head + tail;
- 
- 	VM_BUG_ON_PAGE(atomic_read(&page_tail->_mapcount) != -1, page_tail);
--	VM_BUG_ON_PAGE(page_ref_count(page_tail) != 0, page_tail);
- 
- 	/*
--	 * tail_page->_refcount is zero and not changing from under us. But
--	 * get_page_unless_zero() may be running from under us on the
--	 * tail_page. If we used atomic_set() below instead of atomic_inc() or
--	 * atomic_add(), we would then run atomic_set() concurrently with
--	 * get_page_unless_zero(), and atomic_set() is implemented in C not
--	 * using locked ops. spin_unlock on x86 sometime uses locked ops
--	 * because of PPro errata 66, 92, so unless somebody can guarantee
--	 * atomic_set() here would be safe on all archs (and not only on x86),
--	 * it's safer to use atomic_inc()/atomic_add().
-+	 * Clone page flags before unfreezing refcount.
-+	 *
-+	 * After successful get_page_unless_zero() might follow flags change,
-+	 * for exmaple lock_page() which set PG_waiters.
- 	 */
--	if (PageAnon(head) && !PageSwapCache(head)) {
--		page_ref_inc(page_tail);
--	} else {
--		/* Additional pin to radix tree */
--		page_ref_add(page_tail, 2);
--	}
--
- 	page_tail->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
- 	page_tail->flags |= (head->flags &
- 			((1L << PG_referenced) |
-@@ -2387,14 +2374,21 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 			 (1L << PG_unevictable) |
- 			 (1L << PG_dirty)));
- 
--	/*
--	 * After clearing PageTail the gup refcount can be released.
--	 * Page flags also must be visible before we make the page non-compound.
--	 */
-+	/* Page flags must be visible before we make the page non-compound. */
- 	smp_wmb();
- 
-+	/*
-+	 * Clear PageTail before unfreezing page refcount.
-+	 *
-+	 * After successful get_page_unless_zero() might follow put_page()
-+	 * which needs correct compound_head().
-+	 */
- 	clear_compound_head(page_tail);
- 
-+	/* Finally unfreeze refcount. Additional reference from page cache. */
-+	page_ref_unfreeze(page_tail, 1 + (!PageAnon(head) ||
-+					  PageSwapCache(head)));
-+
- 	if (page_is_young(head))
- 		set_page_young(page_tail);
- 	if (page_is_idle(head))
+-- 
+ Kirill A. Shutemov
