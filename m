@@ -1,63 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753196AbeBLSRT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:17:19 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44746 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751549AbeBLSRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:17:18 -0500
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 2/2] arm64: dts: juno: Describe the full GICv2m region
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Liviu Dudau <liviu.dudau@arm.com>
-References: <20180207143255.17003-1-marc.zyngier@arm.com>
- <20180207143255.17003-3-marc.zyngier@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <d10fa874-1de2-1b95-dae1-42a336b98fa2@arm.com>
-Date: Mon, 12 Feb 2018 18:17:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753445AbeBLSRh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:17:37 -0500
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:53930 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752110AbeBLSRf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:17:35 -0500
+X-Google-Smtp-Source: AH8x227ZCeKlBSHDgYBOiSztvkm7Nam/gJN3y9749w5hjQJLCcJFIQy2UBdzJ8zwXTgxzQwxUCoyzQ==
+Date: Mon, 12 Feb 2018 19:17:31 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, vincent.guittot@linaro.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, tkjos@android.com, joelaf@google.com,
+        morten.rasmussen@arm.com, dietmar.eggemann@arm.com,
+        patrick.bellasi@arm.com, alessio.balsini@arm.com
+Subject: Re: [RFC PATCH 1/3] sched/deadline: merge dl_bw into dl_bandwidth
+Message-ID: <20180212181731.GO12979@localhost.localdomain>
+References: <20180212134030.12846-1-juri.lelli@redhat.com>
+ <20180212134030.12846-2-juri.lelli@redhat.com>
+ <20180212123430.6f8e4d6e@gandalf.local.home>
+ <20180212174312.GN12979@localhost.localdomain>
+ <20180212130239.506cbce9@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20180207143255.17003-3-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212130239.506cbce9@gandalf.local.home>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/02/18 14:32, Marc Zyngier wrote:
-> From: Robin Murphy <robin.murphy@arm.com>
+On 12/02/18 13:02, Steven Rostedt wrote:
+> On Mon, 12 Feb 2018 18:43:12 +0100
+> Juri Lelli <juri.lelli@redhat.com> wrote:
 > 
-> Juno's GICv2m implementation consists of four frames providing 32
-> interrupts each. Since it is possible to plug in enough PCIe endpoints
-> to consume more than 32 MSIs, and the driver already has a bodge to
-> handle multiple frames, let's expose the other three as well.
+> > However, this surely needs to be fixed here. It's tracking the sum of
+> > all tasks' (across CPUs) bandwidth admitted on the system, so that's why
+> > it's called dl_total_bw. Incremented when a task passes sched_setattr()
+> > and decremented when it leaves the system or changes scheduling class.
+> > 
+> > Does it make a bit more sense? Would you still prefer a different name?
 > 
+> No the name is fine, the comment needs to change.
+> 
+>  - dl_total_bw - tracks the sum of all tasks' bandwidth across CPUs.
+> 
+> How's that?
 
-Change on it own looks good. So if you want to merge via your tree:
+LGTM. I'll fix in next version.
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Thanks!
 
-Let me know if you decide not to take it via your tree and you want me
-to send it to arm-soc.
-
-On the side note I just noticed the Juno TRM[1] has 64k for each of
-these MSI frames(page 3-24 section 3.3.5 Application memory map summary)
-
-I am not sure if TRM is wrong. This patch is just copying the 4k size
-from frame 0 which got added with initial Juno DTS.
-
--- 
-Regards,
-Sudeep
-
-[1]
-http://infocenter.arm.com/help/topic/com.arm.doc.ddi0515f/DDI0515F_juno_arm_development_platform_soc_trm.pdf
+- Juri
