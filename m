@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936025AbeBLOn5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:43:57 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57495 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754321AbeBLOny (ORCPT
+        id S1754372AbeBLOoF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:44:05 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:31405 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754354AbeBLOoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:43:54 -0500
+        Mon, 12 Feb 2018 09:44:00 -0500
 From: <patrice.chotard@st.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
 CC: <patrice.chotard@st.com>
-Subject: [PATCH v2 03/12] ARM: dts: STi: Add fake reg property for sti-display-subsystem
-Date: Mon, 12 Feb 2018 15:43:01 +0100
-Message-ID: <1518446590-16800-4-git-send-email-patrice.chotard@st.com>
+Subject: [PATCH v2 11/12] ARM: dts: STi: Move clk_sysin clock ouside soc node
+Date: Mon, 12 Feb 2018 15:43:09 +0100
+Message-ID: <1518446590-16800-12-git-send-email-patrice.chotard@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1518446590-16800-1-git-send-email-patrice.chotard@st.com>
 References: <1518446590-16800-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG6NODE3.st.com
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG6NODE3.st.com
  (10.75.127.18)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_07:,,
  signatures=0
@@ -31,73 +31,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-As sti-display-subsystem sub-nodes (sti-compositor, sti-tvout
-sti-hdmi, sti-hda and sti-hqvdp) are SoC's IP, we add a fake
-reg property.
-This allows to fix the following warning when compiling
-dtb with W=1 option:
+As clk_sysin node describes the external oscillator, there is no
+reason to put it into soc node.
+This allows to fix the following warnings when compiling
+dtb with W=1 option :
 
-arch/arm/boot/dts/stih410-b2120.dtb: Warning (unit_address_vs_reg):
-Node /soc/sti-display-subsystem/sti-hda@8d02000 has a unit name, but no reg property
+arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
+Node /clocks/clk-sysin missing or empty reg/ranges property
+
+arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
+Node /clocks/clk-sysin missing or empty reg/ranges property
+
+arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
+Node /clocks/clk-sysin missing or empty reg/ranges property
 
 Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
 
-v2: _ add a fake reg property to node without reg property
+v2: _ move clk_sys_in outside soc node
 
- arch/arm/boot/dts/stih407.dtsi      | 4 ++--
- arch/arm/boot/dts/stih410-b2120.dts | 2 +-
- arch/arm/boot/dts/stih410.dtsi      | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/stih407-clock.dtsi | 18 +++++++++---------
+ arch/arm/boot/dts/stih410-clock.dtsi | 20 ++++++++++----------
+ arch/arm/boot/dts/stih418-clock.dtsi | 20 ++++++++++----------
+ 3 files changed, 29 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stih407.dtsi b/arch/arm/boot/dts/stih407.dtsi
-index 11fdecd9312e..4f01777082f5 100644
---- a/arch/arm/boot/dts/stih407.dtsi
-+++ b/arch/arm/boot/dts/stih407.dtsi
-@@ -11,11 +11,11 @@
- #include <dt-bindings/gpio/gpio.h>
+diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
+index 1bba47e06ebe..f4e21e2234c9 100644
+--- a/arch/arm/boot/dts/stih407-clock.dtsi
++++ b/arch/arm/boot/dts/stih407-clock.dtsi
+@@ -7,21 +7,21 @@
+  */
+ #include <dt-bindings/clock/stih407-clks.h>
  / {
- 	soc {
--		sti-display-subsystem {
-+		sti-display-subsystem@0 {
- 			compatible = "st,sti-display-subsystem";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
++	/*
++	 * Fixed 30MHz oscillator inputs to SoC
++	 */
++	clk_sysin: clk-sysin {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <30000000>;
++	};
++
+ 	clocks {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+ 		/*
+-		 * Fixed 30MHz oscillator inputs to SoC
+-		 */
+-		clk_sysin: clk-sysin {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <30000000>;
+-		};
 -
-+			reg = <0 0>;
- 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
- 					  <&clk_s_d2_quadfs 1>,
- 					  <&clk_s_c0_pll1 0>,
-diff --git a/arch/arm/boot/dts/stih410-b2120.dts b/arch/arm/boot/dts/stih410-b2120.dts
-index 37a42afa0dd1..23199b1b0991 100644
---- a/arch/arm/boot/dts/stih410-b2120.dts
-+++ b/arch/arm/boot/dts/stih410-b2120.dts
-@@ -61,7 +61,7 @@
- 			status = "okay";
- 		};
+-		/*
+ 		 * ARM Peripheral clock for timers
+ 		 */
+ 		arm_periph_clk: clk-m-a9-periphs@0 {
+diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
+index 41fb1a910d49..9481f8769e8a 100644
+--- a/arch/arm/boot/dts/stih410-clock.dtsi
++++ b/arch/arm/boot/dts/stih410-clock.dtsi
+@@ -7,6 +7,16 @@
+  */
+ #include <dt-bindings/clock/stih410-clks.h>
+ / {
++	/*
++	 * Fixed 30MHz oscillator inputs to SoC
++	 */
++	clk_sysin: clk-sysin {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <30000000>;
++		clock-output-names = "CLK_SYSIN";
++	};
++
+ 	clocks {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -15,16 +25,6 @@
+ 		compatible = "st,stih410-clk", "simple-bus";
  
--		sti-display-subsystem {
-+		sti-display-subsystem@0 {
- 			sti-hda@8d02000 {
- 				status = "okay";
- 			};
-diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
-index e4b7e3ddc9ee..d9f964702933 100644
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -102,11 +102,12 @@
- 			status = "disabled";
- 		};
+ 		/*
+-		 * Fixed 30MHz oscillator inputs to SoC
+-		 */
+-		clk_sysin: clk-sysin {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <30000000>;
+-			clock-output-names = "CLK_SYSIN";
+-		};
+-
+-		/*
+ 		 * ARM Peripheral clock for timers
+ 		 */
+ 		arm_periph_clk: clk-m-a9-periphs@0 {
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index 50413eabe73a..9e3790198f51 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -7,6 +7,16 @@
+  */
+ #include <dt-bindings/clock/stih418-clks.h>
+ / {
++	/*
++	 * Fixed 30MHz oscillator inputs to SoC
++	 */
++	clk_sysin: clk-sysin {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <30000000>;
++		clock-output-names = "CLK_SYSIN";
++	};
++
+ 	clocks {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -15,16 +25,6 @@
+ 		compatible = "st,stih418-clk", "simple-bus";
  
--		sti-display-subsystem {
-+		sti-display-subsystem@0 {
- 			compatible = "st,sti-display-subsystem";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 
-+			reg = <0 0>;
- 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
- 					  <&clk_s_d2_quadfs 1>,
- 					  <&clk_s_c0_pll1 0>,
+ 		/*
+-		 * Fixed 30MHz oscillator inputs to SoC
+-		 */
+-		clk_sysin: clk-sysin {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <30000000>;
+-			clock-output-names = "CLK_SYSIN";
+-		};
+-
+-		/*
+ 		 * ARM Peripheral clock for timers
+ 		 */
+ 		arm_periph_clk: clk-m-a9-periphs@0 {
 -- 
 1.9.1
