@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932501AbeBLVpC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:45:02 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:27440 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbeBLVo7 (ORCPT
+        id S932543AbeBLVqF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:46:05 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:22306 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbeBLVqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:44:59 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180212214457epoutp047303edef54a07a9d5b868d521fc8606e~SsiVCgcTD1632616326epoutp04K
-X-AuditID: b6c32a35-891ff70000001031-8e-5a820ad9599c
+        Mon, 12 Feb 2018 16:46:02 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180212214600epoutp015b31e30a8505a76b99b6bf9211a9e007~SsjQFBLk41561915619epoutp01e
+X-AuditID: b6c32a46-3a9ff70000001029-af-5a820b17efef
 MIME-version: 1.0
 Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Message-id: <5A820ADA.8000403@samsung.com>
-Date: Tue, 13 Feb 2018 06:44:58 +0900
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5A820B19.8080902@samsung.com>
+Date: Tue, 13 Feb 2018 06:46:01 +0900
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
@@ -21,108 +21,77 @@ User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
 Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH 2/3] clk: exynos5433: Allow audio subsystem clock rate
- propagation
-In-reply-to: <e0d88ac2-439b-8e6e-af32-310b53ca0693@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e1ud1dpdVtpBwvTCwVKW97p8lqtB1mMMhhEIEqum15UdJvd
-        u0n2R6k9pvPRQyGxl0H0MMR8ELrIalpWlNVG71oP6UFpD7Ra1B/du5vkf9/z5XO+nHM4BKat
-        xGOIQruT4+1sMYVHKi/0J+h0TyIrs5J6P+FMR1O7iukcfqhivtUGVUzAewRnmu72KZi2gRdq
-        5v6t1Uz/iFvFhG7XKFdEmL883qM2B+rrFOaukzvN9d2tyDzWGWtRZXFLCzg2j+PjOHuuI6/Q
-        nm+i1m2wrrIaFyXROjqNSaXi7KyNM1HpGRbdmsJicRwqrpQtdomWhRUEauGypbzD5eTiChyC
-        00Rl07RBTyel6g0Ggz4ledNig1FENnMFI7se4SUN0duqX3cpy1HbdA+KIIBMgYqjt3EPiiS0
-        ZA+Cs2euY3LxE8Foxzl8gnJ/PauWtJa8iOBM41pJa8jpEGoIKj2IIDByLgz4iyQbIxPgw/hB
-        pZwTRHD+1EEk84ngflKvkLSSnAeV+36F83HRv/zhcVhPI+PhQWg4zEeRmdB7/Idayp9JroVj
-        5TopEyP9CJ59cSPJnyEyz+8kSngEuRz2vPUiiQEygMPrEf+/+dPBfzyAZD0DPg52hzOBnA3+
-        ayaZdyNwXzqGyUUjgqFHQYXckAzvTngU8mZT4fP3WpXcrIGqvVoZMUPtjRalrFdCy81Ktbz8
-        ewUMhlqx/Si2edK9mv/fq3nSvVoQ1oqiuRLBls8JdAmtF1ib4LLn63Mdtk4U/r9EYw9qHMrw
-        IZJA1BRN1eGKLK2KLRXKbD4EBEbN1PzZJVqaPLZsO8c7rLyrmBN8yCie+wAWE5XrEL/Z7rTS
-        KWlJKYsM4nel0TQ1S2OxpGdpyXzWyRVxXAnHT/QpiIiYchR9tDZqS4X3Hb/b87b9xr31dVvL
-        XvFXvKMvk+cMD4yPmHdaqBO/bWNThjY/WAOpDb2RWy3qbaXN3zPm95027XajBTtyYmoC3uic
-        GpNnyPXjkLU0Gwx9dcFQ4Zv+I00bjd+swz58sEoHnaM+qI6Pv/p5VgtbtKEdxnMyl4w91VBK
-        oYClEzFeYP8Cj8+hZZUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsVy+t9jAd0bXE1RBl826FtsnLGe1WLT42us
-        Fh977rFaXN41h81ixvl9TBZrj9xlt7h4ytXi8Jt2VosfZ7pZHDg93t9oZfe43NfL5LF5Sb1H
-        35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZbxpvs5WMFmsovPhZpYGxrWCXYycHBICJhLtH1ay
-        dzFycQgJ7GSUmLnvDwtIgldAUOLH5HtANgcHs4C8xJFL2RCmusSUKbkQ5Q8YJT6cf8IOUa4l
-        0X6zjwnEZhFQlWjq/8kGYrMBxfe/uAFm8wsoSlz98ZgRZI6oQIRE94lKEFNEwEtiXoMuyEhm
-        gUuMEqc37mMFiQsDldw5qwWx6jGTxJVf38DGcwrYS7Q+3cU4gVFgFpJDZyEcOgvh0AWMzKsY
-        JVMLinPTc4uNCgzzUsv1ihNzi0vz0vWS83M3MQKDftthrb4djPeXxB9iFOBgVOLh7ZjdGCXE
-        mlhWXJl7iFGCg1lJhPdPM1CINyWxsiq1KD++qDQntfgQozQHi5I47+28Y5FCAumJJanZqakF
-        qUUwWSYOTqkGxslMWb2vdwht8YpqdusV4ZH47VTqdiz6+X73v0uK0yve3/mSX7Vjf99GS7ns
-        paYpfffCTvifZY023Lnz7PHYwFUp5uqGp/avEu+Z/kx8x7Et1j/cdvz+cvX5xgWR+d+kTv5f
-        WqO9qSLa9V6fr9AS9/fTtiqfKvHhymKV7D+ib/HtwidZhbWuVUosxRmJhlrMRcWJABWQtrB2
-        AgAA
-X-CMS-MailID: 20180212214456epcas1p252f0e02555e0fc1d8f311b35af2ea1cc
+        krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH v2] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+In-reply-to: <20180212155227.20605-1-s.nawrocki@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdljTTFecuynKoP+ZqcXGGetZLc6f38Bu
+        8bHnHqvF5V1z2CxmnN/HZLH2yF12i4unXC0Ov2lntfhxppvFgdPj/Y1Wdo/Lfb1MHptWdbJ5
+        9G1ZxejxeZNcAGtUqk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKL
+        T4CuW2YO0D1KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElulaENDIz1DA3M9IyMjPRPjWCsj
+        U6CShNSMXftXMBc84KjYcvAASwPjNPYuRk4OCQETiebZR1i7GLk4hAR2MEpcvPqBEcL5ziix
+        Y/EfuKrLPV3MEIndjBJPrh1lBknwCghK/Jh8j6WLkYODWUBe4silbJAws4CmxNbd69kh6u8x
+        SjxftRCshldAS+Jysy9IDYuAqsTShe/ZQGw2oPD+FzfAbH4BRYmrPx4zgtiiAhESO+d/Ywdp
+        FRHwkpjXoAsykhnkhDk7j4CdICwQJ/FpWQtYPaeAjUTDz+ssIEUSAo/ZJFperGOBeMBF4ljr
+        FkYIW1ji1fEtUI9JSzxbtZERoqGdUaJ97zxmCGcKo8S56/eYIKqMJZ4t7GKCeI1PouPwX7CT
+        JAR4JTrahCBKPCS+rDnPBmE7Snxr/QZ2nZBAP6PEpEOqExjlZiGF1yxEeM1CCq8FjMyrGMVS
+        C4pz01OLjQqM9IoTc4tL89L1kvNzNzGCU6CW2w7GJed8DjEKcDAq8fB2zG6MEmJNLCuuzD3E
+        KMHBrCTC+6cZKMSbklhZlVqUH19UmpNafIjRFBjeE5mlRJPzgek5ryTe0MTSwMTMzMjczAKY
+        wMR5WwNcooQE0hNLUrNTUwtSi2D6mDg4pRoYGZebXsz+UcoTdK5cLnyf3pnDphsmvlmt1556
+        OCnayU6q7MaqN3NfX1A9oLTqhYtShyp3k/ihH5mi7/RvKB+boVofLXg8VdLM9axF0IOoItmG
+        5h8P32z7v9/botNZ291rpk9dd0/B03P5i1w33HgWNP+c8K0d14xuneFLFg++qpdauIgvUSNS
+        iaU4I9FQi7moOBEA+VBmBZcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t9jAV1x7qYogyfHOC02zljPanH+/AZ2
+        i48991gtLu+aw2Yx4/w+Jou1R+6yW1w85Wpx+E07q8WPM90sDpwe72+0sntc7utl8ti0qpPN
+        o2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDJ27V/BXPCAo2LLwQMsDYzT2LsYOTkkBEwkLvd0
+        MXcxcnEICexklFjx+w4rSIJXQFDix+R7LF2MHBzMAvISRy5lg4SZBdQlJs1bBFX/gFHi64Oz
+        bCA1vAJaEpebfUFqWARUJZYufM8GYrMBhfe/uAFm8wsoSlz98ZgRpFxUIEKi+0QliCki4CUx
+        r0EXZCKzwG5GiSUd18FOExaIk/i0rIURYtVERokvH88wgiQ4BWwkGn5eZ5nAKDALyaWzEC6d
+        heTSBYzMqxglUwuKc9Nzi40KjPJSy/WKE3OLS/PS9ZLzczcxAkN/22Gt/h2Mj5fEH2IU4GBU
+        4uHtmN0YJcSaWFZcmXuIUYKDWUmE908zUIg3JbGyKrUoP76oNCe1+BCjNAeLkjgvf/6xSCGB
+        9MSS1OzU1ILUIpgsEwenVAPj0ZR3j21uTgxYLhkoFZE3eXLLuc7UourPvh+eTRXo0nVaLDz1
+        9vP1twW2ro6RrOi+wXNsxre729cu8s6Kf1Ok1CDFfyL0wJv7vxaeX3j3mdTZ8LCSsjdTbmr/
+        6Zw/796nXd2npjfu3HZCU0Hq8f2tQRtWLTLd27BXY9bH6wuaFloX77RPufJnU6YSS3FGoqEW
+        c1FxIgC5w4lAeQIAAA==
+X-CMS-MailID: 20180212214559epcas2p34289e55206c38d0ad4b947067f3af9af
 X-Msg-Generator: CA
-CMS-TYPE: 101P
+CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180205142308epcas2p376f8656f7e421f8474938de788cea8db
-X-RootMTR: 20180205142308epcas2p376f8656f7e421f8474938de788cea8db
-References: <20180205142230.9755-1-s.nawrocki@samsung.com>
-        <CGME20180205142308epcas2p376f8656f7e421f8474938de788cea8db@epcas2p3.samsung.com>
-        <20180205142230.9755-2-s.nawrocki@samsung.com>
-        <5A7929C1.8040706@samsung.com>
-        <3fcfad37-4c8f-7375-b2c2-5154607aa47a@samsung.com>
-        <5A7D4F92.100@samsung.com>
-        <e0d88ac2-439b-8e6e-af32-310b53ca0693@samsung.com>
+X-CMS-RootMailID: 20180212155239epcas2p34dad3d106036f65e5ee566a593a983e3
+X-RootMTR: 20180212155239epcas2p34dad3d106036f65e5ee566a593a983e3
+References: <CGME20180212155239epcas2p34dad3d106036f65e5ee566a593a983e3@epcas2p3.samsung.com>
+        <20180212155227.20605-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sylwester,
+Hi,
 
-On 2018년 02월 12일 20:45, Sylwester Nawrocki wrote:
-> Hi Chanwoo,
+On 2018년 02월 13일 00:52, Sylwester Nawrocki wrote:
+> Add one more entry to the exynos5433_aud_pll_rates table, this allows
+> to support audio sample rates: 48000, 96000, 192000 Hz with minimum
+> error. The M, P, S, K values re confirmed by the HW team.
 > 
-> On 02/09/2018 08:36 AM, Chanwoo Choi wrote:
->> On 2018년 02월 08일 00:18, Sylwester Nawrocki wrote:
->>> On 02/06/2018 05:06 AM, Chanwoo Choi wrote:
->>>>>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
->>>>>  1 file changed, 11 insertions(+), 11 deletions(-)
->>>>>
->>>>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->>>>> index 74b70ddab4d6..d74361736e64 100644
->>>>> --- a/drivers/clk/samsung/clk-exynos5433.c
->>>>> +++ b/drivers/clk/samsung/clk-exynos5433.c
->>>>> @@ -246,14 +246,14 @@ static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
->>>>>  
->>>>>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
->>>>>  	/* MUX_SEL_TOP0 */
->>>>> -	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->>>>> -			4, 1),
->>>>> +	MUX_F(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->>>>> +	      4, 1, CLK_SET_RATE_PARENT, 0),
->>>> If you add CLK_SET_RATE_PARENT to 'mout_aud_pll' and mout_aud_pll changes the rate,
->>>> fout_aud_pll's rate will be changed. But, fout_aud_pll is also the parent
->>>> of 'mout_aud_pll_user'. It might change the rate of children of mout_aud_pll_user.
->>>> mout_aud_pll_user would not want to change the parent's clock.
->>>>
->>>>     fout_aud_pll                          2            2   196608009          0 0  
->>>>        mout_aud_pll_user                  1            1   196608009          0 0  
->>>>        mout_aud_pll                       0            0   196608009          0 0  
->>> I'd say the range of changes is such that the consumers of the affected child 
->>> clocks can cope and could adjust to the changed frequencies. Those consumer 
->>> devices are all components/peripherals of the audio subsystem (LPASS) and, 
->>
->> The mout_aud_pll_user has the child clock of serial_3.
->> serial_3 was used for bluetooth on TM2. If you change the aud_pll
->> with CLK_SET_RATE_PARENT, it might affect the bluetooth operation.
->> The bluetooth is only used for transfering the data.
->>
->> Actually, I'm not sure that this patch might affect bluetooth operation or not.
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> You are right, the AUD PLL frequency adjustments would break the bluetooth's 
-> operation. I double checked and in the downstream kernel only one AUD PLL 
-> frequency can be set - 196608009. So I will drop this patch and add just
-> a single PLL_36XX_RATE() entry for that frequency, the PMS values have been
-> confirmed by the HW team. Only 48000/9600/192000 sample rates will then be 
-> supported natively and others could be through software rate conversion.
-> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index ebd18586e325..b08a9028653f 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -765,6 +765,7 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
+>  	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
+> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
+>  	{ /* sentinel */ }
+>  };
 
-OK. Thanks for your check.
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
 Best Regards,
