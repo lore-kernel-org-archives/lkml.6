@@ -1,82 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753928AbeBLJlY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 04:41:24 -0500
-Received: from casper.infradead.org ([85.118.1.10]:54328 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753843AbeBLJlW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:41:22 -0500
-Date: Mon, 12 Feb 2018 10:41:15 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
-        valentin.schneider@arm.com, morten.rasmussen@foss.arm.com,
-        brendan.jackman@arm.com, dietmar.eggemann@arm.com
-Subject: Re: [PATCH v3 1/3] sched: Stop nohz stats when decayed
-Message-ID: <20180212094115.GS25201@hirez.programming.kicks-ass.net>
-References: <1518422874-13216-1-git-send-email-vincent.guittot@linaro.org>
- <1518422874-13216-2-git-send-email-vincent.guittot@linaro.org>
+        id S933346AbeBLJoB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 04:44:01 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933099AbeBLJoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 04:44:00 -0500
+Date: Mon, 12 Feb 2018 10:43:57 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Raghavendra Rao Ananta <rananta@codeaurora.org>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
+        tsoni@codeaurora.org
+Subject: Re: [PATCH] perf: Add support for creating offline events
+Message-ID: <20180212094357.GD5821@krava>
+References: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518422874-13216-2-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 09:07:52AM +0100, Vincent Guittot wrote:
-> @@ -9222,6 +9259,20 @@ void nohz_balance_enter_idle(int cpu)
->  	atomic_inc(&nohz.nr_cpus);
->  
->  	set_cpu_sd_state_idle(cpu);
-> +
-> +	/*
-> +         * Ensures that if nohz_idle_balance() fails to observe our
-> +         * @idle_cpus_mask store, it must observe the @has_blocked
-> +         * store.
-> +         */
-> +        smp_mb__after_atomic();
-> +
-> +out:
-> +	/*
-> +	 * Each time a cpu enter idle, we assume that it has blocked load and
-> +	 * enable the periodic update of the load of idle cpus
-> +	 */
-> +	WRITE_ONCE(nohz.has_blocked, 1);
->  }
->  #else
->  static inline void nohz_balancer_kick(struct rq *rq) { }
+On Fri, Feb 09, 2018 at 03:07:00PM -0800, Raghavendra Rao Ananta wrote:
+> Perf framework doesn't allow creation of hardware events if
+> the requested CPU is offline. However, creation of an event
+> is achievable if the event is attached to the PMU as soon
+> as the CPU is online again.
+> 
+> So, introducing a feature that could allow to create events
+> even when the CPU is offline and return a success to the caller.
+> If, during the time of event creation, the CPU is found offline,
+> the event is moved to a new state (PERF_EVENT_STATE_DORMANT). As
+> and when the CPU is know to be woken up (through hotplug notifiers),
+> all the dormant events would be attached to the PMU (by
+> perf_install_in_context()). If during the life time of the event,
+> the CPU hasn't come online, the dormant event would just be freed.
+> 
+> Signed-off-by: Raghavendra Rao Ananta <rananta@codeaurora.org>
 
-I moved the barrier up one statement, such that its right after the
-atomic_inc(). Otherwise people will get all itchy about __after_atomic()
-semantics and we really only care about the cpumask_set_cpu() vs
-WRITE_ONCE() ordering, so it doesn't really matter _where_ that barrier
-lands in between.
+hum, I tried and for some reason I'm getting zero counts/times
+when the cpu 1 is set back online (in 9.second)
 
-> @@ -9374,6 +9425,22 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->  
->  	SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
->  
-> +	/*
-> +	 * We assume there will be no idle load after this update and clear
-> +	 * the has_blocked flag. If a cpu enters idle in the mean time, it will
-> +	 * set the has_blocked flag and trig another update of idle load.
-> +	 * Because a cpu that becomes idle, is added to idle_cpus_mask before
-> +	 * setting the flag, we are sure to not clear the state and not
-> +	 * check the load of an idle cpu.
-> +	 */
-> +	WRITE_ONCE(nohz.has_blocked, 0);
-> +
-> +	/*
-> +         * Ensures that if we miss the CPU, we must see the has_blocked
-> +         * store from nohz_balance_enter_idle().
-> +         */
-> +        smp_mb();
-> +
->  	for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
->  		if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
->  			continue;
+[root@ibm-x3650m4-02 perf]# ./perf stat -C 1 -e sched:sched_switch -v -I 1000
+failed to read counter sched:sched_switch
+#           time             counts unit events
+     1.000921624      <not counted>      sched:sched_switch                                          
+failed to read counter sched:sched_switch
+     2.001725364      <not counted>      sched:sched_switch                                          
+failed to read counter sched:sched_switch
+     3.002685350      <not counted>      sched:sched_switch                                          
+failed to read counter sched:sched_switch
+     4.003463851      <not counted>      sched:sched_switch                                          
+failed to read counter sched:sched_switch
+     5.004651601      <not counted>      sched:sched_switch                                          
+failed to read counter sched:sched_switch
+     6.005338294      <not counted>      sched:sched_switch                                          
+failed to read counter sched:sched_switch
+     7.006351155      <not counted>      sched:sched_switch                                          
+failed to read counter sched:sched_switch
+     8.007239698      <not counted>      sched:sched_switch                                          
+sched:sched_switch: 0 0 0
+     9.008665621      <not counted>      sched:sched_switch                                          
+sched:sched_switch: 0 0 0
+    10.009570492      <not counted>      sched:sched_switch                                          
+sched:sched_switch: 0 0 0
+    11.010811591      <not counted>      sched:sched_switch                                          
+sched:sched_switch: 0 0 0
+    12.011614182      <not counted>      sched:sched_switch                                          
+sched:sched_switch: 0 0 0
+    13.012299851      <not counted>      sched:sched_switch                                          
 
-Fixed that white space damage for you ;-)
+looks like the dormant event wasn't scheduled in properly
+
+also while at it, could we also handle cpu going offline case,
+so the event would survive until it's back online
+
+jirka
