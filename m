@@ -1,57 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932590AbeBLXCC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 18:02:02 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:36556 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932402AbeBLXB6 (ORCPT
+        id S932485AbeBLXFN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 18:05:13 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38995 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932336AbeBLXFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 18:01:58 -0500
-X-Google-Smtp-Source: AH8x225D5ScNfFoaHCcS16VMJyKnhgvNhlFukBCsoVkntRhOTIor7PYOhV3Km9vwMXYojyflFlmLSKrfOWth6TnQLGs=
+        Mon, 12 Feb 2018 18:05:11 -0500
+X-Google-Smtp-Source: AH8x227bwaFNXLIY2b16wo/HYYcWP8TSg+wwmiaLn6IJphITdNlZd69owoiZO6qE3b1goaSNKuiDXeNDoORHgaATqTo=
 MIME-Version: 1.0
-In-Reply-To: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
-References: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
-From: Balbir Singh <bsingharora@gmail.com>
-Date: Tue, 13 Feb 2018 10:01:57 +1100
-Message-ID: <CAKTCnzmtDNJHThzuZa1+ydrriQG-dVovHA7uLSVvfLFG2MaidQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] powerpc/kdump: Add missing optional dummy functions
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>
+In-Reply-To: <x49inb1n7kb.fsf@segfault.boston.devel.redhat.com>
+References: <151847194459.58291.11339638808076622981.stgit@djiang5-desk3.ch.intel.com>
+ <x49inb1n7kb.fsf@segfault.boston.devel.redhat.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 12 Feb 2018 15:05:10 -0800
+Message-ID: <CAPcyv4gt88pEivOyEGdYbTx9H2LV7+mQQ9H1ESWhzM+gpbtW0g@mail.gmail.com>
+Subject: Re: [PATCH v2] libnvdimm: re-enable deep flush for pmem devices
+To: Jeff Moyer <jmoyer@redhat.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+        "Zwisler, Ross" <ross.zwisler@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 9:34 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> If KEXEC_CORE is not enabled, PowerNV builds fail as follows.
+On Mon, Feb 12, 2018 at 2:53 PM, Jeff Moyer <jmoyer@redhat.com> wrote:
+> Dave Jiang <dave.jiang@intel.com> writes:
 >
-> arch/powerpc/platforms/powernv/smp.c: In function 'pnv_smp_cpu_kill_self':
-> arch/powerpc/platforms/powernv/smp.c:236:4: error:
->         implicit declaration of function 'crash_ipi_callback'
+>> Re-enable deep flush so that users always have a way to be sure that a write
+>> does make it all the way out to the NVDIMM. The PMEM driver writes always
+>> make it "all the way to the NVDIMM", and it relies on the ADR mechanism to
+>> flush the write buffers on power failure. Deep flush is there to explicitly
+>> flush those write buffers to protect against (rare) ADR failure.
+>> This change prevents a regression in deep flush behavior so that applications
+>> can continue to depend on fsync() as a mechanism to trigger deep flush in the
+>> filesystem-dax case.
 >
-> Add dummy function calls, similar to kdump_in_progress(), to solve the
-> problem.
->
-> Fixes: 4145f358644b ("powernv/kdump: Fix cases where the kdump kernel ...")
-> Cc: Balbir Singh <bsingharora@gmail.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
+> That's still very confusing text.  Specifically, the part where you say
+> that pmem driver writes always make it to the DIMM.  I think the
+> changelog could start with "Deep flush is there to explicitly flush
+> write buffers...."  Anyway, the fix looks right to me.
 
-Thanks for working on this.
+I ended up changing the commit message to this, let me know if it reads better:
 
-You've added two functions, I understand the crash_send_ipi() bits
-that I broke. Looks like crash_ipi_callback broken without KEXEC_CORE?
 
-I am going to test these patches, for now
+    libnvdimm: re-enable deep flush for pmem devices via fsync()
 
-Acked-by: Balbir Singh <bsingharora@gmail.com>
+    Re-enable deep flush so that users always have a way to be sure that a
+    write makes it all the way out to media. The PMEM driver writes always
+    arrive at the NVDIMM, and it relies on the ADR (Asynchronous DRAM
+    Refresh) mechanism to flush the write buffers on power failure. Deep
+    flush is there to explicitly flush those write buffers to protect
+    against (rare) ADR failure.  This change prevents a regression in deep
+    flush behavior so that applications can continue to depend on fsync() as
+    a mechanism to trigger deep flush in the filesystem-DAX case.
 
-Balbir Singh
+    Fixes: 06e8ccdab15f4 ("acpi: nfit: Add support for detect platform
+CPU cache...")
+    Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+    Signed-off-by: Dan Williams <dan.j.williams@intel.com>
