@@ -1,77 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754143AbeBLVH2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 16:07:28 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34283 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753908AbeBLVH1 (ORCPT
+        id S1754137AbeBLVPH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 16:15:07 -0500
+Received: from mail-it0-f51.google.com ([209.85.214.51]:34648 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751441AbeBLVPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:07:27 -0500
-X-Google-Smtp-Source: AH8x2279mvkysQSVDFJu1hRnz3XUHLjO+tn9VRPPCtW6iKFw1dVgrVTxzL1XjezLMeTZzgtMLDp+wA==
-From: Philipp Rossak <embed3d@gmail.com>
-To: wens@csie.org, a.zummo@towertech.it,
-        alexandre.belloni@free-electrons.com
-Cc: linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-rtc@vger.kernel.org
-Subject: [PATCH] rtc: ac100: Fix ac100 determine rate bug
-Date: Mon, 12 Feb 2018 22:07:23 +0100
-Message-Id: <20180212210723.20919-1-embed3d@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 12 Feb 2018 16:15:05 -0500
+X-Google-Smtp-Source: AH8x225M6RUYVhMv2eFugdswImcqdLGK/M4ckBrlZwXO31xTmdOuLKInFTwAuIrdVP9sPpnOmbvRi0uXnfXiqeIxgYw=
+MIME-Version: 1.0
+In-Reply-To: <20180213080036.3bf3a908@canb.auug.org.au>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 12 Feb 2018 13:15:04 -0800
+X-Google-Sender-Auth: HhhET1ykQmQ9TZ_zQOooMIkXTeM
+Message-ID: <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Junio C Hamano <gitster@pobox.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Git Mailing List <git@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a bug, that prevents the Allwinner A83T and the A80
-from a successful boot. You can find the shortend trace below:
+On Mon, Feb 12, 2018 at 1:00 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Linus, this happens a bit after the merge window, so I am wondering
+> about the rational of not doing a fast forward merge when merging a
+> signed tag (I forget the reasoning).
 
-Unable to handle kernel NULL pointer dereference at virtual address
-00000000
-pgd = (ptrval)
-[00000000] *pgd=00000000
-Internal error: Oops: 5 [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
-Hardware name: Allwinner sun8i Family
-Workqueue: events deferred_probe_work_func
-PC is at clk_hw_get_rate+0x0/0x34
-LR is at ac100_clkout_determine_rate+0x48/0x19c
+The reasoning is to avoid losing the signature from the tag (when
+merging a signed tag, the signature gets inserted into the merge
+commit itself - use "git log --show-signature" to see them).
 
-[ ... ]
+So when I merge a signed tag, I do *not* want to fast-forward to the
+top commit, because then I'd lose the signature from the tag. Thus the
+"merging signed tags are non-fast-forward by default" reasoning.
 
-(clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
-(ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
-(clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
-(clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
-(of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
+But, yes, that reasoning is really only valid for proper merges of new
+features, not for back-merges.
 
-To fix that bug, we first check if the return of the 
-clk_hw_get_parent_by_index is non zero. If it is zero we skip that
-clock parent.
+The problem, of course, is that since git is distributed, git doesn't
+know who is "upstream" and who is "downstream", so there's no
+_technical_ difference between merging a development tree, and a
+development tree doing a back-merge of the upstream tree.
 
-The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
+Maybe it was a mistake to make signed tag merges non-fast-forward,
+since they cause these kinds of issues with people who use "pull" to
+update their otherwise unmodified trees.
 
-Signed-off-by: Philipp Rossak <embed3d@gmail.com>
----
- drivers/rtc/rtc-ac100.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I can always teach myself to just use --no-ff, since I end up doing
+things like verifying at the signatures anyway.
 
-diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-index 8ff9dc3fe5bf..820ce6fb9d34 100644
---- a/drivers/rtc/rtc-ac100.c
-+++ b/drivers/rtc/rtc-ac100.c
-@@ -183,7 +183,12 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
- 
- 	for (i = 0; i < num_parents; i++) {
- 		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
--		unsigned long tmp, prate = clk_hw_get_rate(parent);
-+		unsigned long tmp, prate;
-+
-+		if (!parent)
-+			continue;
-+
-+		prate = clk_hw_get_rate(parent);
- 
- 		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
- 
--- 
-2.11.0
+Junio, comments?
+
+               Linus
