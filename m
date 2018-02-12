@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x226HLaFqOEqUq+zS3WbxbDqgRkt7rkVD6CLg7eYB3PxomrOMxqITonuJfW4Ur2C0BB5RD9g4
-ARC-Seal: i=1; a=rsa-sha256; t=1518471087; cv=none;
+X-Google-Smtp-Source: AH8x227TsLzD6JTuqPg5kNGZ7Bp8aKfBZQXL4hbkvWsvBoGi/ANQ7mG5uAPIAuU1XnvZx3qc5j88
+ARC-Seal: i=1; a=rsa-sha256; t=1518471079; cv=none;
         d=google.com; s=arc-20160816;
-        b=JJkE8ZFm1dwsVimCyxQB4n582Xrv9+D3900VOKVXEcD4NYmF7br1LkCE0/ITk6DGLM
-         gKFTI0C1SNV2xDL1aDYImz010+rTgpEzuSm+FtOMYUvTesurMRl6iAiFzjL3FNvIYr4S
-         +StO3sdIaR0nSvC4zdMch3SrwHxKe+NgVolTEJ1vD44gxxmCb9X4LDu5bzvRdyBOu3KQ
-         Kzuuh+hRGH7ZxLP15fUOjPdo3D+3xu7r8nfcj1um3TACP1/HoKs4El6KtHIYnnCVhkBn
-         09zaNEafGWezSpl59VDrjOeDTnynBp4+4RQiMmIEITTSIXmCtcgXAg0ytyJsvoYc5OeB
-         OO5A==
+        b=urg/zXHKG1q76IcPHYM8L3j4Vi/Kzm/0D9clbUd4SA0zbVGQt6EPiO3FOwPIvU8UW2
+         Kn54oPwQUSYKA+5HciiFk7VkEY3+qxLIgUEJ6d7U5hx/8Rb5v+Awmtpj+ivQaD4HXyG8
+         x4xNL3stcaqKWskFb5k2I0NBlUTfNyBgCfzfIf29I+MnoIwaNYRDa8mnkDDDVU3ldtVa
+         BYWCgnsDqBGwKfFVEddsh29cjD0GgnuwOqSFDY6JWcO0m8T1yKCLt3S90FhJ+qJ7lZHk
+         kIf6pl/yzK0wwIjDN7iSBihUgIztrGwGTN3lOMJfys3vFO+CZbzWJme4CJIYxkB6dWHx
+         7q7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=FJCX4MBg5brfEqVtg3+ky9G6rzPwK9HOmKCd1/m0ehU=;
-        b=m4rDDA3nv5JxGEcRV1qUNr+MM7iYWKWvQ6DTJhHdRNoMSVb3EqwNHWITwGSSd9r3/T
-         y4JIG9mI09aw2E9zhJsIQxXtoOnzAp+OR48d6QB7P1icbJ5Q8nm1Ezz6euTZywT84Qkg
-         Md2y2Iq0uKFtp/hui7oeh5GzrqjmwjjWKF2gNsiJ/diyd7GoUHpO/dBDIvctySxBCt6h
-         tcbx+ZJxNxw7BPlE8buJ73NVqXLTSdu9fy3S27dG/IY9RjlmdyEZeMJNYVwMCYOl7atW
-         t6JduqJHhqaO8zZzvtTOaH3OIcooZlsdjkwGfLuf4j624rgZP46AjNkVqFCX2lK9SDQn
-         /3Jw==
+        bh=bybd3I1RwW1nhYG0thXTK6uT/to32XzUDjyG7xOET80=;
+        b=gJifenBFvO0T7friGQEqYDKrE6bxmzxt7JCJgsd/vgr8+yGF+F0WOCcSMF+w41xEwq
+         vAOL1VGLml9FCERxPKku6+buP8W2uH6oSX62stjYNszLRxdqHG4162bFLhnnoJm+0l68
+         Nu8EboVnDUQUk+Gr3RkMjVvH4ALosny8NZeLvH6lvEIC+lpVejHtFikA+U+7GWwuYlrV
+         A81641mk3eQGxr9wKmjAnb1SX0nzBIC/gUWwE/KllgZzpXdMMCNWfoPGgksQr1E5+0Uv
+         NEWw1tncVm5JsNLeSAvdCllJZsFN7FDPm5rcF7vpjw1MuoJ1OF88ALod6FmcW2h5dk61
+         GUbA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -28,11 +28,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  Andreas Dilger <andreas.dilger@intel.com>,
  James Simmons <jsimmons@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 13 Feb 2018 08:30:48 +1100
-Subject: [PATCH 2/5] staging: lustre: llite: use d_splice_alias for
- directories.
+Date: Tue, 13 Feb 2018 08:30:47 +1100
+Subject: [PATCH 1/5] staging: lustre: llite: handle DCACHE_PAR_LOOKUP in
+ ll_dcompare
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151847104797.26699.15971881529877617500.stgit@noble>
+Message-ID: <151847104793.26699.5632904371432185858.stgit@noble>
 In-Reply-To: <151847081541.26699.3911837371411314092.stgit@noble>
 References: <151847081541.26699.3911837371411314092.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,48 +40,61 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592232339103633670?=
-X-GMAIL-MSGID: =?utf-8?q?1592232339103633670?=
+X-GMAIL-THRID: =?utf-8?q?1592232330850537692?=
+X-GMAIL-MSGID: =?utf-8?q?1592232330850537692?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In the Linux dcache a directory only ever has one dentry,
-so d_splice_alias() can be used by ll_splice_alias() for directories.
-It will find the one dentry whether it is DCACHE_DISCONNECTED or
-IS_ROOT() or d_lustre_invalid().
-Separating out the directories from non-directories will allow us
-to simplify the non-directory code.
+ll_dcompare is used in two slightly different contexts.
+It is called (from __d_lookup, __d_lookup_rcu, and d_exact_alias)
+to compare a name against a dentry that is already in the dcache.
+It is also called (from d_alloc_parallel) to compare a name against
+a dentry that is not in the dcache yet, but is part of an active
+"lookup" or "atomic_open" call.
+
+In the first case we need to avoid matching against "invalid" dentries
+as a match implies something about ldlm locks which is not accurate.
+In the second case we need to allow matching against "invalid" dentries
+as the dentry will always be invalid (set by ll_d_init()) but we still
+want to guard against multiple concurrent lookups of the same name.
+d_alloc_parallel() will repeat the call to ll_dcompare() after
+the lookup has finished, and if the dentry is still invalid, the whole
+d_alloc_parallel() process is repeated.  This assures us that it is safe
+to report success whenever d_in_lookup().
+
+With this patch, there will never be two threads concurrently in
+ll_lookup_nd(), looking up the same name in the same directory.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/llite/namei.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/llite/dcache.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
-index a2687f46a16d..60fb18f83bf8 100644
---- a/drivers/staging/lustre/lustre/llite/namei.c
-+++ b/drivers/staging/lustre/lustre/llite/namei.c
-@@ -434,7 +434,7 @@ static struct dentry *ll_find_alias(struct inode *inode, struct dentry *dentry)
+diff --git a/drivers/staging/lustre/lustre/llite/dcache.c b/drivers/staging/lustre/lustre/llite/dcache.c
+index 549369739d80..dc30b4582234 100644
+--- a/drivers/staging/lustre/lustre/llite/dcache.c
++++ b/drivers/staging/lustre/lustre/llite/dcache.c
+@@ -74,6 +74,12 @@ static void ll_release(struct dentry *de)
+  * an AST before calling d_revalidate_it().  The dentry still exists (marked
+  * INVALID) so d_lookup() matches it, but we have no lock on it (so
+  * lock_match() fails) and we spin around real_lookup().
++ *
++ * This race doesn't apply to lookups in d_alloc_parallel(), and for
++ * those we want to ensure that only one dentry with a given name is
++ * in ll_lookup_nd() at a time.  So allow invalid dentries to match
++ * while d_in_lookup().  We will be called again when the lookup
++ * completes, and can give a different answer then.
   */
- struct dentry *ll_splice_alias(struct inode *inode, struct dentry *de)
- {
--	if (inode) {
-+	if (inode && !S_ISDIR(inode->i_mode)) {
- 		struct dentry *new = ll_find_alias(inode, de);
+ static int ll_dcompare(const struct dentry *dentry,
+ 		       unsigned int len, const char *str,
+@@ -93,6 +99,10 @@ static int ll_dcompare(const struct dentry *dentry,
+ 	if (d_mountpoint((struct dentry *)dentry))
+ 		return 0;
  
- 		if (new) {
-@@ -445,8 +445,13 @@ struct dentry *ll_splice_alias(struct inode *inode, struct dentry *de)
- 			      new, d_inode(new), d_count(new), new->d_flags);
- 			return new;
- 		}
-+		d_add(de, inode);
-+	} else {
-+		struct dentry *new = d_splice_alias(inode, de);
++	/* ensure exclusion against parallel lookup of the same name */
++	if (d_in_lookup((struct dentry*)dentry))
++		return 0;
 +
-+		if (new)
-+			de = new;
- 	}
--	d_add(de, inode);
- 	CDEBUG(D_DENTRY, "Add dentry %p inode %p refc %d flags %#x\n",
- 	       de, d_inode(de), d_count(de), de->d_flags);
- 	return de;
+ 	if (d_lustre_invalid(dentry))
+ 		return 1;
+ 
