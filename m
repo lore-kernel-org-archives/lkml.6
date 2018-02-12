@@ -1,159 +1,374 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753531AbeBLPa1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:30:27 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:38364 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752281AbeBLPaX (ORCPT
+        id S1753442AbeBLPc4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:32:56 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39837 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752943AbeBLPcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:30:23 -0500
-Message-ID: <1518449413.6606.99.camel@infradead.org>
-Subject: Re: [PATCH] x86/speculation: Clean up various Spectre related
- details
-From: David Woodhouse <dwmw2@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        karahmed@amazon.de, sironi@amazon.de, kvm@vger.kernel.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com
-In-Reply-To: <20180211194305.zg7tq3x3cxjuphyo@gmail.com>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
-         <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
-         <20180211185057.rest4bf2ydx7slrk@gmail.com>
-         <1518377119.6606.2.camel@infradead.org>
-         <20180211194305.zg7tq3x3cxjuphyo@gmail.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-G/PIQONl/hxYl2UfxICs"
-Date: Mon, 12 Feb 2018 15:30:13 +0000
+        Mon, 12 Feb 2018 10:32:54 -0500
+X-Google-Smtp-Source: AH8x224kks/MucvskVnzhEPeFXl3/40wIIjORTepB46NqTJ532pxv8iQHYNwMfEkySMtaK61X7eaMg==
+Message-ID: <1518449571.2883.30.camel@baylibre.com>
+Subject: Re: [PATCH 2/2] clk: meson-axg: Add AO Clock and Reset controller
+ driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Mon, 12 Feb 2018 16:32:51 +0100
+In-Reply-To: <20180209070026.193879-3-yixun.lan@amlogic.com>
+References: <20180209070026.193879-1-yixun.lan@amlogic.com>
+         <20180209070026.193879-3-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
 Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2018-02-09 at 15:00 +0800, Yixun Lan wrote:
+> Adds a Clock and Reset controller driver for the Always-On part
+> of the Amlogic Meson-AXG SoC.
+> 
+> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  drivers/clk/meson/Makefile    |   2 +-
+>  drivers/clk/meson/axg-aoclk.c | 236 ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/axg-aoclk.h |  25 +++++
+>  3 files changed, 262 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/meson/axg-aoclk.c
+>  create mode 100644 drivers/clk/meson/axg-aoclk.h
+> 
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 11f99139b844..c7510744406a 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -6,6 +6,6 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
+>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+> -obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
+> +obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
+>  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+> diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+> new file mode 100644
+> index 000000000000..832aa19dd76c
+> --- /dev/null
+> +++ b/drivers/clk/meson/axg-aoclk.c
+> @@ -0,0 +1,236 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * AmLogic Meson-AXG Clock Controller Driver
 
---=-G/PIQONl/hxYl2UfxICs
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Unless there a rule behind it, I think we should stop 
+with the funny camel case and stick to "Amlogic" like written below.
 
+> + *
+> + * Copyright (c) 2016 Baylibre SAS.
+> + * Author: Michael Turquette <mturquette@baylibre.com>
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+> + */
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+I did not see what is requiring this header. Did I miss something ?
 
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +#include <linux/init.h>
+> +#include <linux/delay.h>
+Same question for this one.
 
-On Sun, 2018-02-11 at 20:43 +0100, Ingo Molnar wrote:
-> > And should these say 'Spectre v2' not just 'Spectre'?
->=20
-> Yeah, you are probably right, but I didn't want to make the messages too =
-specific=C2=A0
-> - do we really know that this is the end of Spectre-style speculation hol=
-es?
+> +#include <dt-bindings/clock/axg-aoclkc.h>
+> +#include <dt-bindings/reset/axg-aoclkc.h>
 
-Well... if a new problem is also remedied by use if IBRS/IBPB and
-retpoline, I think we can happily call it a subclass of "Spectre v2".
+I think those should be included in the same fashion as axg.h, gxbb.h and
+meson8.h ... which is at the end of the private header.
 
-And if it *isn't* addressed by those same things, then it's clearly
-something different. Either way, these messages should be 'v2', no?
+> +#include "clkc.h"
+> +#include "axg-aoclk.h"
+> +
+> +struct axg_aoclk_reset_controller {
+> +	struct reset_controller_dev reset;
+> +	unsigned int *data;
+> +	struct regmap *regmap;
+> +};
 
-On the whole though, there are plenty of better things to be worrying
-about :)
+This duplicate what is gxbb-aoclk.
+Please make something cleaner with a shared definition.
 
---=-G/PIQONl/hxYl2UfxICs
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+> +
+> +static int axg_aoclk_do_reset(struct reset_controller_dev *rcdev,
+> +			       unsigned long id)
+> +{
+> +	struct axg_aoclk_reset_controller *reset =
+> +		container_of(rcdev, struct axg_aoclk_reset_controller, reset);
+> +
+> +	return regmap_write(reset->regmap, AO_RTI_GEN_CNTL_REG0,
+> +			    BIT(reset->data[id]));
+> +}
+> +
+> +static const struct reset_control_ops axg_aoclk_reset_ops = {
+> +	.reset = axg_aoclk_do_reset,
+> +};
+> +
+> +#define AXG_AO_GATE(_name, _bit)					\
+> +static struct clk_regmap _name##_ao = {					\
+> +	.data = &(struct clk_regmap_gate_data) {			\
+> +		.offset = (AO_RTI_GEN_CNTL_REG0),			\
+> +		.bit_idx = (_bit),					\
+> +	},								\
+> +	.hw.init = &(struct clk_init_data) {				\
+> +		.name = #_name "_ao",					\
+> +		.ops = &clk_regmap_gate_ops,				\
+> +		.parent_names = (const char *[]){ "clk81" },		\
+> +		.num_parents = 1,					\
+> +		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTIxNTMwMTNaMC8GCSqG
-SIb3DQEJBDEiBCCMwz7l8g4wlQn1O8DaaBcyplvFrtdZfFlwSHve9vDVLzCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAFoaECZVqLih
-pP/peOl/lydUJtuNIkYjC+Zx5H5L5SZ88U5mOSt4cA7IwB0tqSFGmp6klV3eHk/k/hDPP1xC570E
-IEm/giFFjwr7q9HIaFbO8jIBSLNaab/mjt3/mXhmuj/vtp9D1PMDq6kF0V/02PlEzAuQRswOn9M+
-qNZcL1eQr6NjAMZk3onNE4I3L76MqkWCT4TTpjKbuBOLQmxwzlcAuiE3IGXM/X3I8pQrsnWQZNCE
-F1R41C1SYYCwlRIXLC2fJxkr4njJ3xxM8I5uQLLN4RdjfD4ky2KONZR6WxSLJr0ipeQtXa0qfPZ5
-B9J6N3EfvMuPTHItSSvSTwHRw3cAAAAAAAA=
+These clock are peripheral clocks (meant to enable/disable IPs):
+* CLK_SET_RATE_PARENT: why do you need rate propagation here ? do you really
+want a consumer of these gate to be able to change clk81 ? 
 
+* CLK_IGNORE_UNUSED: Why do need this flag ? All the IPs behind this
+definition should be able to claim the pclk properly. If not the driver should
+be fixed.
 
---=-G/PIQONl/hxYl2UfxICs--
+> +	},								\
+> +}
+> +
+> +AXG_AO_GATE(remote, 0);
+> +AXG_AO_GATE(i2c_master, 1);
+> +AXG_AO_GATE(i2c_slave, 2);
+> +AXG_AO_GATE(uart1, 3);
+> +AXG_AO_GATE(uart2, 5);
+> +AXG_AO_GATE(ir_blaster, 6);
+> +AXG_AO_GATE(saradc, 7);
+> +
+> +static struct clk_fixed_rate ao_alt_xtal = {
+> +	.fixed_rate = 32000,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "ao_alt_xtal",
+> +		.num_parents = 0,
+> +		.ops = &clk_fixed_rate_ops,
+> +	},
+> +};
+
+Unless this xtal is actually embedded in SoC, this should be defined it the DT,
+same as the other xtal.
+
+> +
+> +static struct clk_regmap ao_clk81 = {
+> +	.data = &(struct clk_regmap_mux_data) {
+> +		.offset = AO_RTI_PWR_CNTL_REG0,
+> +		.mask = 0x1,
+> +		.shift = 8,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "ao_clk81",
+> +		.ops = &clk_regmap_mux_ro_ops,
+> +		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
+> +		.num_parents = 2,
+> +	},
+> +};
+> +
+> +static struct clk_regmap axg_saradc_mux = {
+> +	.data = &(struct clk_regmap_mux_data) {
+> +		.offset = AO_SAR_CLK,
+> +		.mask = 0x3,
+> +		.shift = 9,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "axg_saradc_mux",
+> +		.ops = &clk_regmap_mux_ops,
+> +		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
+> +		.num_parents = 2,
+> +	},
+> +};
+> +
+> +static struct clk_regmap axg_saradc_div = {
+> +	.data = &(struct clk_regmap_div_data) {
+> +		.offset = AO_SAR_CLK,
+> +		.shift = 0,
+> +		.width = 8,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "axg_saradc_div",
+> +		.ops = &clk_regmap_divider_ops,
+> +		.parent_names = (const char *[]){ "axg_saradc_mux" },
+> +		.num_parents = 1,
+
+Should the saradc mux change to accomodate the requested rate, if needed ?
+If so, you might want to add a CLK_SET_RATE_PARENT here.
+
+> +	},
+> +};
+> +
+> +static struct clk_regmap axg_saradc_gate = {
+> +	.data = &(struct clk_regmap_gate_data) {
+> +		.offset = AO_SAR_CLK,
+> +		.bit_idx = 8,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "axg_saradc_gate",
+> +		.ops = &clk_regmap_gate_ops,
+> +		.parent_names = (const char *[]){ "axg_saradc_div" },
+> +		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +static unsigned int axg_aoclk_reset[] = {
+> +	[RESET_AO_REMOTE] = 16,
+> +	[RESET_AO_I2C_MASTER] = 18,
+> +	[RESET_AO_I2C_SLAVE] = 19,
+> +	[RESET_AO_UART1] = 17,
+> +	[RESET_AO_UART2] = 22,
+> +	[RESET_AO_IR_BLASTER] = 23,
+> +};
+> +
+> +static struct clk_regmap *axg_aoclk_regmap[] = {
+> +	[CLKID_AO_REMOTE]	= &remote_ao,
+> +	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
+> +	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
+> +	[CLKID_AO_UART1]	= &uart1_ao,
+> +	[CLKID_AO_UART2]	= &uart2_ao,
+> +	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
+> +	[CLKID_AO_SAR_ADC]	= &saradc_ao,
+> +	[CLKID_AO_CLK81]	= &ao_clk81,
+> +	[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux,
+> +	[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div,
+> +	[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate,
+> +};
+> +
+> +static struct clk_hw_onecell_data axg_aoclk_onecell_data = {
+> +	.hws = {
+> +		[CLKID_AO_REMOTE]	= &remote_ao.hw,
+> +		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
+> +		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
+> +		[CLKID_AO_UART1]	= &uart1_ao.hw,
+> +		[CLKID_AO_UART2]	= &uart2_ao.hw,
+> +		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
+> +		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
+> +		[CLKID_AO_CLK81]	= &ao_clk81.hw,
+> +		[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux.hw,
+> +		[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div.hw,
+> +		[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate.hw,
+> +		[CLKID_AO_ALT_XTAL]	= &ao_alt_xtal.hw,
+> +	},
+> +	.num = 12,
+
+I would prefer having a NR_CLKS defined in drivers/clk/meson/axg-aoclk.h
+
+> +};
+> +
+> +static int axg_aoclkc_probe(struct platform_device *pdev)
+> +{
+> +	struct axg_aoclk_reset_controller *rstc;
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *regmap;
+> +	int ret, clkid;
+> +
+> +	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
+> +	if (!rstc)
+> +		return -ENOMEM;
+> +
+> +	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(dev, "failed to get regmap\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	/* Reset Controller */
+> +	rstc->regmap = regmap;
+> +	rstc->data = axg_aoclk_reset;
+> +	rstc->reset.ops = &axg_aoclk_reset_ops;
+> +	rstc->reset.nr_resets = ARRAY_SIZE(axg_aoclk_reset);
+> +	rstc->reset.of_node = dev->of_node;
+> +	ret = devm_reset_controller_register(dev, &rstc->reset);
+> +
+> +	/*
+> +	 * Populate regmap and register all clks
+> +	 */
+> +	for (clkid = 0; clkid < ARRAY_SIZE(axg_aoclk_regmap); clkid++) {
+> +		axg_aoclk_regmap[clkid]->map = regmap;
+> +
+> +		ret = devm_clk_hw_register(dev,
+> +					axg_aoclk_onecell_data.hws[clkid]);
+> +		if (ret) {
+> +			dev_err(dev, "clk register failed.\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* Specific clocks */
+> +	ret = devm_clk_hw_register(dev, &ao_alt_xtal.hw);
+> +	if (ret) {
+> +		dev_err(dev, "clk alt_xtal register failed.\n");
+> +		return ret;
+> +	}
+> +
+> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+> +			&axg_aoclk_onecell_data);
+> +}
+> +
+> +static const struct of_device_id axg_aoclkc_match_table[] = {
+> +	{ .compatible = "amlogic,meson-axg-aoclkc" },
+> +	{ }
+> +};
+> +
+> +static struct platform_driver axg_aoclkc_driver = {
+> +	.probe		= axg_aoclkc_probe,
+> +	.driver		= {
+> +		.name	= "axg-aoclkc",
+> +		.of_match_table = axg_aoclkc_match_table,
+> +	},
+> +};
+> +
+> +builtin_platform_driver(axg_aoclkc_driver);
+> diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
+> new file mode 100644
+> index 000000000000..70f82004d3db
+> --- /dev/null
+> +++ b/drivers/clk/meson/axg-aoclk.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2017 BayLibre, SAS
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+> + */
+> +
+> +#ifndef __AXG_AOCLKC_H
+> +#define __AXG_AOCLKC_H
+> +
+> +/* AO Configuration Clock registers offsets
+> + * Register offsets from the data sheet must be multiplied by 4.
+> + */
+> +#define AO_RTI_PWR_CNTL_REG1	(0x03 << 2)
+> +#define AO_RTI_PWR_CNTL_REG0	(0x04 << 2)
+> +#define AO_RTI_GEN_CNTL_REG0	(0x10 << 2)
+> +#define AO_OSCIN_CNTL		(0x16 << 2)
+> +#define AO_CRT_CLK_CNTL1	(0x1a << 2)
+> +#define AO_SAR_CLK		(0x24 << 2)
+> +#define AO_RTC_ALT_CLK_CNTL0	(0x25 << 2)
+> +#define AO_RTC_ALT_CLK_CNTL1	(0x26 << 2)
+
+As already pointed out for the axg clk series, please remove those
+calculation from the header file.
+
+> +
+> +#endif /* __AXG_AOCLKC_H */
