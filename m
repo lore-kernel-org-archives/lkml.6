@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753084AbeBLSMQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:12:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
+        id S1753309AbeBLSMV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:12:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752370AbeBLSMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:12:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7FF321726
+        id S1752741AbeBLSMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:12:18 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0835D21726
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -16,15 +16,11 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
-        John Stultz <john.stultz@linaro.org>, Mark Brown <broonie@kernel.org>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH v2 2/5] dt-bindings: adv7511: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 18:11:54 +0000
-Message-Id: <1518459117-16733-3-git-send-email-kbingham@kernel.org>
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH v2 4/5] media: adv7604: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 18:11:56 +0000
+Message-Id: <1518459117-16733-5-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
@@ -35,70 +31,127 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
 
-The ADV7511 has four 256-byte maps that can be accessed via the main I²C
-ports. Each map has it own I²C address and acts as a standard slave
+The ADV7604 has thirteen 256-byte maps that can be accessed via the main
+I²C ports. Each map has it own I²C address and acts as a standard slave
 device on the I²C bus.
 
-Extend the device tree node bindings to be able to override the default
-addresses so that address conflicts with other devices on the same bus
-may be resolved at the board description level.
+Allow a device tree node to override the default addresses so that
+address conflicts with other devices on the same bus may be resolved at
+the board description level.
 
+Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+[Kieran: Re-adapted for mainline]
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
+Based upon the original posting :
+  https://lkml.org/lkml/2014/10/22/469
+
 v2:
- - Fixed up reg: property description to account for multiple optional
-   addresses.
- - Minor reword to commit message to account for DT only change
- - Collected Robs RB tag
+ - Split out DT bindings from driver updates
+ - Return -EINVAL on error paths from adv76xx_dummy_client()
 
- .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/media/i2c/adv7604.c | 62 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 40 insertions(+), 22 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-index 0047b1394c70..f1b5466b1ca7 100644
---- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-@@ -14,7 +14,13 @@ Required properties:
- 		"adi,adv7513"
- 		"adi,adv7533"
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index 1544920ec52d..872e124793f8 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -2734,6 +2734,27 @@ static const struct v4l2_ctrl_config adv76xx_ctrl_free_run_color = {
  
--- reg: I2C slave address
-+- reg: I2C slave addresses
-+  The ADV7511 internal registers are split into four pages exposed through
-+  different I2C addresses, creating four register maps. Each map has it own
-+  I2C address and acts as a standard slave device on the I²C bus. The main
-+  address is mandatory, others are optional and revert to defaults if not
-+  specified.
+ /* ----------------------------------------------------------------------- */
+ 
++struct adv76xx_register {
++	const char *name;
++	u8 default_addr;
++};
 +
++static const struct adv76xx_register adv76xx_secondary_names[] = {
++	[ADV76XX_PAGE_IO] = { "main", 0x4c },
++	[ADV7604_PAGE_AVLINK] = { "avlink", 0x42 },
++	[ADV76XX_PAGE_CEC] = { "cec", 0x40 },
++	[ADV76XX_PAGE_INFOFRAME] = { "infoframe", 0x3e },
++	[ADV7604_PAGE_ESDP] = { "esdp", 0x38 },
++	[ADV7604_PAGE_DPP] = { "dpp", 0x3c },
++	[ADV76XX_PAGE_AFE] = { "afe", 0x26 },
++	[ADV76XX_PAGE_REP] = { "rep", 0x32 },
++	[ADV76XX_PAGE_EDID] = { "edid", 0x36 },
++	[ADV76XX_PAGE_HDMI] = { "hdmi", 0x34 },
++	[ADV76XX_PAGE_TEST] = { "test", 0x30 },
++	[ADV76XX_PAGE_CP] = { "cp", 0x22 },
++	[ADV7604_PAGE_VDP] = { "vdp", 0x24 },
++};
++
+ static int adv76xx_core_init(struct v4l2_subdev *sd)
+ {
+ 	struct adv76xx_state *state = to_state(sd);
+@@ -2834,13 +2855,26 @@ static void adv76xx_unregister_clients(struct adv76xx_state *state)
+ }
  
- The ADV7511 supports a large number of input data formats that differ by their
- color depth, color format, clock mode, bit justification and random
-@@ -70,6 +76,9 @@ Optional properties:
-   rather than generate its own timings for HDMI output.
- - clocks: from common clock binding: reference to the CEC clock.
- - clock-names: from common clock binding: must be "cec".
-+- reg-names : Names of maps with programmable addresses.
-+	It can contain any map needing a non-default address.
-+	Possible maps names are : "main", "edid", "cec", "packet"
+ static struct i2c_client *adv76xx_dummy_client(struct v4l2_subdev *sd,
+-							u8 addr, u8 io_reg)
++					       unsigned int i)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
++	struct adv76xx_state *state = to_state(sd);
++	struct adv76xx_platform_data *pdata = &state->pdata;
++	unsigned int io_reg = 0xf2 + i;
++	struct i2c_client *new_client;
++
++	if (pdata && pdata->i2c_addresses[i])
++		new_client = i2c_new_dummy(client->adapter,
++					   pdata->i2c_addresses[i]);
++	else
++		new_client = i2c_new_secondary_device(client,
++				adv76xx_secondary_names[i].name,
++				adv76xx_secondary_names[i].default_addr);
  
- Required nodes:
+-	if (addr)
+-		io_write(sd, io_reg, addr << 1);
+-	return i2c_new_dummy(client->adapter, io_read(sd, io_reg) >> 1);
++	if (new_client)
++		io_write(sd, io_reg, new_client->addr << 1);
++
++	return new_client;
+ }
  
-@@ -88,7 +97,12 @@ Example
+ static const struct adv76xx_reg_seq adv7604_recommended_settings_afe[] = {
+@@ -3115,20 +3149,6 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
+ 	/* Disable the interrupt for now as no DT-based board uses it. */
+ 	state->pdata.int1_config = ADV76XX_INT1_CONFIG_DISABLED;
  
- 	adv7511w: hdmi@39 {
- 		compatible = "adi,adv7511w";
--		reg = <39>;
-+		/*
-+		 * The EDID page will be accessible on address 0x66 on the i2c
-+		 * bus. All other maps continue to use their default addresses.
-+		 */
-+		reg = <0x39 0x66>;
-+		reg-names = "main", "edid";
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
- 		clocks = <&cec_clock>;
+-	/* Use the default I2C addresses. */
+-	state->pdata.i2c_addresses[ADV7604_PAGE_AVLINK] = 0x42;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_CEC] = 0x40;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_INFOFRAME] = 0x3e;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_ESDP] = 0x38;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_DPP] = 0x3c;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_AFE] = 0x26;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_REP] = 0x32;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_EDID] = 0x36;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_HDMI] = 0x34;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_TEST] = 0x30;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_CP] = 0x22;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_VDP] = 0x24;
+-
+ 	/* Hardcode the remaining platform data fields. */
+ 	state->pdata.disable_pwrdnb = 0;
+ 	state->pdata.disable_cable_det_rst = 0;
+@@ -3478,11 +3498,9 @@ static int adv76xx_probe(struct i2c_client *client,
+ 		if (!(BIT(i) & state->info->page_mask))
+ 			continue;
+ 
+-		state->i2c_clients[i] =
+-			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
+-					     0xf2 + i);
++		state->i2c_clients[i] = adv76xx_dummy_client(sd, i);
+ 		if (!state->i2c_clients[i]) {
+-			err = -ENOMEM;
++			err = -EINVAL;
+ 			v4l2_err(sd, "failed to create i2c client %u\n", i);
+ 			goto err_i2c;
+ 		}
 -- 
 2.7.4
