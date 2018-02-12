@@ -1,115 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934936AbeBLMyp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:54:45 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55568 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934969AbeBLMyi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:54:38 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: uniphier: add DT bindings documentation for UniPhier AIO" to the asoc tree
-In-Reply-To: <20171122114321.29196-4-suzuki.katsuhiro@socionext.com>
-Message-Id: <E1elDcw-0007Dv-68@debutante>
-Date: Mon, 12 Feb 2018 12:54:34 +0000
+        id S934953AbeBLMyx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 07:54:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934938AbeBLMys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 07:54:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4590620685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Mon, 12 Feb 2018 12:54:22 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jose Ricardo Ziviani <joserz@linux.vnet.ibm.com>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Rob Gardner <rob.gardner@oracle.com>,
+        sparclinux <sparclinux@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        adi-buildroot-devel@lists.sourceforge.net
+Subject: Re: Build regressions/improvements in v4.16-rc1
+Message-ID: <20180212125421.GA4290@saruman>
+References: <1518430656-21669-1-git-send-email-geert@linux-m68k.org>
+ <CAMuHMdW5qRH93CMyRL-gbWgiA_rnizErbjNtSMT5b3d58N3ZTQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW5qRH93CMyRL-gbWgiA_rnizErbjNtSMT5b3d58N3ZTQ@mail.gmail.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   ASoC: uniphier: add DT bindings documentation for UniPhier AIO
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+On Mon, Feb 12, 2018 at 11:28:32AM +0100, Geert Uytterhoeven wrote:
+> On Mon, Feb 12, 2018 at 11:17 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > Below is the list of build error/warning regressions/improvements in
+> > v4.16-rc1[1] compared to v4.15[2].
+> >
+> > Summarized:
+> >   - build errors: +13/-5
+> >   - build warnings: +1653/-1537
+> >
+> > Note that there may be false regressions, as some logs are incomplete.
+> > Still, they're build errors/warnings.
+> >
+> > Happy fixing! ;-)
+> >
+> > Thanks to the linux-next team for providing the build service.
+> >
+> > [1] http://kisskb.ellerman.id.au/kisskb/head/7928b2cbe55b2a410a0f5c1f15=
+4610059c57b1b2/ (all 273 configs)
+> > [2] http://kisskb.ellerman.id.au/kisskb/head/d8a5b80568a9cb66810e75b182=
+018e9edb68e8ff/ (271 out of 273 configs)
+> >
+> >
+> > *** ERRORS ***
+=2E..
+> >   + /home/kisskb/slave/src/drivers/net/ethernet/intel/i40e/i40e_ethtool=
+=2Ec: error: implicit declaration of function 'cmpxchg64' [-Werror=3Dimplic=
+it-function-declaration]:  =3D> 4443:6, 4443:2
+>=20
+> mips{,el}-allmodconfig
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+FYI I reported this here:
+https://lkml.kernel.org/r/20180207150907.GB5092@saruman
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+but I haven't seen any action on it yet.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Cheers
+James
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Mark
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqBjncACgkQbAtpk944
+dnrzRA/8C7zFp+hDGfaEMTJvchN1s/KPNhINmM6xqiQkuWMAkYrRx/kGiscsIdtc
+8CGG+u0oFl+yuTI/MY/FQi5MZQ78M2WyXMPTJsvaAHjvtFG3DYGFeDVXRVfGrB6Q
+UvcoERC20bv9ihLy9tI9tR3Mf5OvTsUvjOvN9Cp2tPiOlfTjqWSuqm9UDU9fQ3Y+
+rUkIoUOWOBZKNNdnmYopFEXyH831NM2VzZrLVYT+rkskOptk40chwbMuRt4dN8Rw
+lvYzl+b1Guj6F4tY/fbGQ/VRXOLz1/hWI4mCg/0RIZwBQHuel1sTi2Mjp/PoQsBD
+H7pAQVAkVVR+uu2K0B9dIxj1Dvp98RA3BEU4OHDIYs540BDpI4vd8h29urXhjMNq
+g6BiathgvxPH+fhK8VLDtUwa6CN+tf9h19NHgTFakyj5VJuSl86bcciueq4L7dYv
+fBzxlCfZqfMT6qwV0ifqG8Z+fP6T8+cXBV2bzNnHq0fXLVGvsch0pA/AcoL0PgvD
+MuNpC3fuaZLs9L1z2PM7dSuqU5nUoQBVzUDRNCkMUqGS8tlMgI1Au73zR2SQnvFR
+GsALvr8+eF/EHr1Ona6l9gpn1IDZOnVYi6eUu3kXpRv/+sel19+avnxC9JCMRm6q
+MOvtWqDkU1IY1XnLAAN/8q96FKYTn+ZzfeQu5i/D8r73SjGp1Vo=
+=8KE3
+-----END PGP SIGNATURE-----
 
->From 28fb53de064b24eed55540ddeccab517e4babca3 Mon Sep 17 00:00:00 2001
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Date: Fri, 19 Jan 2018 18:25:28 +0900
-Subject: [PATCH] ASoC: uniphier: add DT bindings documentation for UniPhier
- AIO
-
-This patch adds DT binding documentation for UniPhier
-AIO audio subsystem.
-
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/sound/uniphier,aio.txt     | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/uniphier,aio.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/uniphier,aio.txt b/Documentation/devicetree/bindings/sound/uniphier,aio.txt
-new file mode 100644
-index 000000000000..73f6c27ae4f7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/uniphier,aio.txt
-@@ -0,0 +1,36 @@
-+Socionext UniPhier SoC audio driver
-+
-+The Socionext UniPhier audio subsystem consists of I2S and S/PDIF blocks in
-+the same register space.
-+
-+Required properties:
-+- compatible      : should be one of the following:
-+		    "socionext,uniphier-ld11-aio"
-+		    "socionext,uniphier-ld20-aio"
-+- reg             : offset and length of the register set for the device.
-+- interrupts      : should contain I2S or S/PDIF interrupt.
-+- pinctrl-names   : should be "default".
-+- pinctrl-0       : defined I2S signal pins for an external codec chip.
-+- clock-names     : should include following entries:
-+                    "aio"
-+- clocks          : a list of phandle, should contain an entry for each
-+                    entry in clock-names.
-+- reset-names     : should include following entries:
-+                    "aio"
-+- resets          : a list of phandle, should contain an entry for each
-+                    entry in reset-names.
-+- #sound-dai-cells: should be 1.
-+
-+Example:
-+	audio {
-+		compatible = "socionext,uniphier-ld20-aio";
-+		reg = <0x56000000 0x80000>;
-+		interrupts = <0 144 4>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_aout>;
-+		clock-names = "aio";
-+		clocks = <&sys_clk 40>;
-+		reset-names = "aio";
-+		resets = <&sys_rst 40>;
-+		#sound-dai-cells = <1>;
-+	};
--- 
-2.16.1
+--IS0zKkzwUGydFO0o--
