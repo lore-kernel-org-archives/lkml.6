@@ -1,112 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753746AbeBLPlI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:41:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59108 "EHLO mail.kernel.org"
+        id S932198AbeBLPoI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:44:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47422 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753438AbeBLPlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:41:07 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E8921785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x224tpDKiFpakSnMMBvQvutzh9QwC1XcE++Gn/S3aBFQ5MHG2ctvj8Zov1YJVHR1oJdCPDCfUE5I5TzwxVj43Ojc=
+        id S932094AbeBLPoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 10:44:07 -0500
+Date: Mon, 12 Feb 2018 16:03:14 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hartley <james.hartley@mips.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/1] mm: page_alloc: skip over regions of invalid pfns
+ on UMA
+Message-ID: <20180212150314.GG3443@dhcp22.suse.cz>
+References: <20180124143545.31963-1-erosca@de.adit-jv.com>
+ <20180124143545.31963-2-erosca@de.adit-jv.com>
+ <20180129184746.GK21609@dhcp22.suse.cz>
+ <20180203122422.GA11832@vmlxhi-102.adit-jv.com>
 MIME-Version: 1.0
-In-Reply-To: <1518446590-16800-10-git-send-email-patrice.chotard@st.com>
-References: <1518446590-16800-1-git-send-email-patrice.chotard@st.com> <1518446590-16800-10-git-send-email-patrice.chotard@st.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 12 Feb 2018 09:40:44 -0600
-X-Gmail-Original-Message-ID: <CABGGiszvx=Nyeq+KTt9uHGwSabxsJuEfvG01H4NyrBtB40atoA@mail.gmail.com>
-Message-ID: <CABGGiszvx=Nyeq+KTt9uHGwSabxsJuEfvG01H4NyrBtB40atoA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/12] ARM: dts: STi: Add fake reg property for sound
- related nodes
-To: patrice.chotard@st.com
-Cc: Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180203122422.GA11832@vmlxhi-102.adit-jv.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 8:43 AM,  <patrice.chotard@st.com> wrote:
-> From: Patrice Chotard <patrice.chotard@st.com>
->
-> Add fake reg property to sound, simple-audio-card, dai-link and
-> sti_sasg_codec nodes, this allows to fix the following warning
-> when compiling dtb with W=1 option:
->
-> arch/arm/boot/dts/stih407-b2120.dtb: Warning (unit_address_vs_reg):
-> Node /soc/sound/simple-audio-card,dai-link@0 has a unit name, but no reg property
-> arch/arm/boot/dts/stih407-b2120.dtb: Warning (unit_address_vs_reg):
-> Node /soc/sound/simple-audio-card,dai-link@1 has a unit name, but no reg property
-> arch/arm/boot/dts/stih407-b2120.dtb: Warning (unit_address_vs_reg):
-> Node /soc/sound/simple-audio-card,dai-link@2 has a unit name, but no reg property
-> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
-> Node /soc/sti-sasg-codec missing or empty reg/ranges property
->
-> arch/arm/boot/dts/stih410-b2120.dtb: Warning (unit_address_vs_reg):
-> Node /soc/sound/simple-audio-card,dai-link@0 has a unit name, but no reg property
-> arch/arm/boot/dts/stih410-b2120.dtb: Warning (unit_address_vs_reg):
-> Node /soc/sound/simple-audio-card,dai-link@1 has a unit name, but no reg property
-> arch/arm/boot/dts/stih410-b2120.dtb: Warning (unit_address_vs_reg):
-> Node /soc/sound/simple-audio-card,dai-link@2 has a unit name, but no reg property
-> arch/arm/boot/dts/stih407-b2120.dtb: Warning (simple_bus_reg):
-> Node /soc/sound missing or empty reg/ranges property
-> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
-> Node /soc/sti-sasg-codec missing or empty reg/ranges property
->
-> arch/arm/boot/dts/stih410-b2260.dtb: Warning (unit_address_vs_reg):
-> Node /soc/sound/simple-audio-card,dai-link@0 has a unit name, but no reg property
-> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
-> Node /soc/sti-sasg-codec missing or empty reg/ranges property
-> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
-> Node /soc/sound missing or empty reg/ranges property
->
-> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
-> Node /soc/sti-sasg-codec missing or empty reg/ranges property
->
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> ---
->
-> v2: _ add a fake reg property to node without reg property.
->
->  arch/arm/boot/dts/stih407-family.dtsi |  3 ++-
->  arch/arm/boot/dts/stih410-b2260.dts   |  5 +++--
->  arch/arm/boot/dts/stihxxx-b2120.dtsi  | 11 ++++++-----
->  3 files changed, 11 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-> index 5df827b00eb6..df1a3f1dc5a7 100644
-> --- a/arch/arm/boot/dts/stih407-family.dtsi
-> +++ b/arch/arm/boot/dts/stih407-family.dtsi
-> @@ -894,8 +894,9 @@
->                         status = "disabled";
->                 };
->
-> -               sti_sasg_codec: sti-sasg-codec {
-> +               sti_sasg_codec: sti-sasg-codec@0 {
->                         compatible = "st,stih407-sas-codec";
-> +                       reg = <0 0>;
->                         #sound-dai-cells = <1>;
->                         status = "disabled";
->                         st,syscfg = <&syscfg_core>;
+On Sat 03-02-18 13:24:22, Eugeniu Rosca wrote:
+[...]
+> That said, I really hope this won't be the last comment in the thread
+> and appropriate suggestions will come on how to go forward.
 
-This should probably be a child of syscfg to fix this. And if this
-block has a dedicated set of registers, then use reg to define those
-(even though regmap/syscon doesn't need it).
+Just to make sure we are on the same page. I was suggesting the
+following. The patch is slightly larger just because I move
+memblock_next_valid_pfn around which I find better than sprinkling
+ifdefs around. Please note I haven't tried to compile test this.
 
-> diff --git a/arch/arm/boot/dts/stih410-b2260.dts b/arch/arm/boot/dts/stih410-b2260.dts
-> index 8bcd58118dba..03d05a98b7fc 100644
-> --- a/arch/arm/boot/dts/stih410-b2260.dts
-> +++ b/arch/arm/boot/dts/stih410-b2260.dts
-> @@ -181,12 +181,13 @@
->                         status = "okay";
->                 };
->
-> -               sound {
-> +               sound: sound@0 {
-
-I'd move this up to top level.
-
-Rob
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 8be5077efb5f..0d3cb4c70858 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -187,7 +187,6 @@ int memblock_search_pfn_nid(unsigned long pfn, unsigned long *start_pfn,
+ 			    unsigned long  *end_pfn);
+ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+ 			  unsigned long *out_end_pfn, int *out_nid);
+-unsigned long memblock_next_valid_pfn(unsigned long pfn, unsigned long max_pfn);
+ 
+ /**
+  * for_each_mem_pfn_range - early memory pfn range iterator
+@@ -204,6 +203,8 @@ unsigned long memblock_next_valid_pfn(unsigned long pfn, unsigned long max_pfn);
+ 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
+ #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
++unsigned long memblock_next_valid_pfn(unsigned long pfn, unsigned long max_pfn);
++
+ /**
+  * for_each_free_mem_range - iterate through free memblock areas
+  * @i: u64 used as loop variable
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 5a9ca2a1751b..8a627d4fa5b2 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1101,34 +1101,6 @@ void __init_memblock __next_mem_pfn_range(int *idx, int nid,
+ 		*out_nid = r->nid;
+ }
+ 
+-unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
+-						      unsigned long max_pfn)
+-{
+-	struct memblock_type *type = &memblock.memory;
+-	unsigned int right = type->cnt;
+-	unsigned int mid, left = 0;
+-	phys_addr_t addr = PFN_PHYS(pfn + 1);
+-
+-	do {
+-		mid = (right + left) / 2;
+-
+-		if (addr < type->regions[mid].base)
+-			right = mid;
+-		else if (addr >= (type->regions[mid].base +
+-				  type->regions[mid].size))
+-			left = mid + 1;
+-		else {
+-			/* addr is within the region, so pfn + 1 is valid */
+-			return min(pfn + 1, max_pfn);
+-		}
+-	} while (left < right);
+-
+-	if (right == type->cnt)
+-		return max_pfn;
+-	else
+-		return min(PHYS_PFN(type->regions[right].base), max_pfn);
+-}
+-
+ /**
+  * memblock_set_node - set node ID on memblock regions
+  * @base: base of area to set node ID for
+@@ -1160,6 +1132,34 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+ }
+ #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
++unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
++						      unsigned long max_pfn)
++{
++	struct memblock_type *type = &memblock.memory;
++	unsigned int right = type->cnt;
++	unsigned int mid, left = 0;
++	phys_addr_t addr = PFN_PHYS(pfn + 1);
++
++	do {
++		mid = (right + left) / 2;
++
++		if (addr < type->regions[mid].base)
++			right = mid;
++		else if (addr >= (type->regions[mid].base +
++				  type->regions[mid].size))
++			left = mid + 1;
++		else {
++			/* addr is within the region, so pfn + 1 is valid */
++			return min(pfn + 1, max_pfn);
++		}
++	} while (left < right);
++
++	if (right == type->cnt)
++		return max_pfn;
++	else
++		return min(PHYS_PFN(type->regions[right].base), max_pfn);
++}
++
+ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t start,
+ 					phys_addr_t end, int nid, ulong flags)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index e2b42f603b1a..b7968fd5736f 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5352,14 +5352,13 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 			goto not_early;
+ 
+ 		if (!early_pfn_valid(pfn)) {
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 			/*
+ 			 * Skip to the pfn preceding the next valid one (or
+ 			 * end_pfn), such that we hit a valid pfn (or end_pfn)
+ 			 * on our next iteration of the loop.
+ 			 */
+-			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+-#endif
++			if IS_ENABLED(HAVE_MEMBLOCK)
++				pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+ 			continue;
+ 		}
+ 		if (!early_pfn_in_nid(pfn, nid))
+-- 
+Michal Hocko
+SUSE Labs
