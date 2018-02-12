@@ -1,121 +1,206 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-727090-1517912145-2-14404889290006586622
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-352227-1518410911-2-15452101324311787354
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='au',
+  MailFrom='org'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517912144; b=fAU3ut+xuyDrNTv3qV6u2tGd/OycH+DOJ/v63yFPLYobLl2
-    KvhDHBusOE9uDJ00aE5Ue0o8K73aFs8so3JuLh6r/aLbOYP/NqbbrmBF0jApd9XQ
-    c3TpYCIsmyhSTGe10ofdUeVaP2I3oi5VzJk0s55fv64L6XfWK2dTc905foHyjeCm
-    hhswS2yp68yF5BXzZcEgWkLJH2rsCLjiTSCuI3a/o6TphUmOqD4cdtmvPuv1lKp0
-    alrVz4xNqqp7MT0AHFrTwPtYBRnp5dyX68FP7VJDK/rOsmXIPEAy/OeLYYV2KHlI
-    /e9NiIIx5s0D9OtLUcFaWoIvj8y4ceI2hcDTOBw==
+    t=1518410911; b=mfNaSZQvPRL8FIajCY9BoYwTe3vsyc8WlClE3PrZPFdWRni
+    L52m+RRcjz2C1VqkEM3mfwSKgIEFd47MFaCTB4vvc4taR2qBung+0QohvYWUs03n
+    jhcrIT6Jt1WUQ0FIMps7U+M3LR+iGhUJRL95L2Ycu+LAACbbODec37pPFEkDAFZk
+    4OQ/azCUvJR3ZwKjzt96ekNWXYc//+bJ1MHGrLo2LTgjpj0Lu+79N047mtNoQ1Mi
+    b4JuGxIDK+ZEVGYUAzTLFc1PmirsfM3QMJY9ikLlEFUzD2Cxdqa+SbBocDYUz528
+    sAxz6nNqG71dPAtQVYuljKRN3vzcQI6M3UOPQ3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1517912144;
-    bh=NyNRC1GkHS4xPsn5ep6pnRnXWwP01BDMPScD+6ri3oU=; b=N7aXkaxSj/sh
-    oJGlXqFrCF10GRd/ptlWUqHhOI79LW77pb88E1nf9ZN5lJ9UMiSJslHU4AnClw/v
-    /PSLmtLZRWtWwaWeq+vgkXtqeo7xMoAz8m+6e//r5HqQgnGPNucPhKHS9CUZq3fL
-    lZFZewpRz9VdSxvuGuAfA/LiGRirXRthwZWyOOC1/Yi7v/X4yT/s+oMKI2E7UckB
-    HIeSb37E0D4pSAHVKnXAzVHnfsn+v31HN9weW7ic2BYiHHE0GrxXKjfp3+lkhHYf
-    tIQuxX0GbKFbesdSOLzna9xuYoCYpCuAhhBOpjyYis82gOMNfDN8a0tfDzQE3yvd
-    c9zoWefekA==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518410911; bh=9xfpD9zAEXPF4AMEhwfnSs7z9r
+    uTKokLufeMsFnMzvc=; b=TrXPIs5bgXQVsutAUk+VqQOQlVzaVWWVvHc8+CAxvn
+    rq5G09j7dmAYu2RyMSVAy+S/l0sko0Q9n2/WuzvwaJBbn9Ef9KtlO4hR20C9ZzTD
+    0U/23Q+koUOcJp5rFiKZDXikxMBD5lhxAFfdvoK84f0LxCIKmQJX68AucDNfQTCn
+    fNHMX2ViAm2MD1WuU1l2AUkIOevaB74Rv7S3pEL/OT/3GQQUqxCIVhLmja0wm/JH
+    NRolH2TCL1yAu7ZDmD/sqcDVm7pwew9pOvaOunXxj5RCWH3a+im8hkyYL6NNRf8E
+    1ZPCUUJa3HQmmiopQPlBye6ZntO09cdiRZRD9J/S5EPQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hgveibjE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=jms.id.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ex/hd3BH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=jms.id.au header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hgveibjE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=jms.id.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ex/hd3BH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=jms.id.au header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeBFKPk (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 05:15:40 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:46860 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeBFKPD (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 6 Feb 2018 05:15:03 -0500
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Richard Weinberger <richard@nod.at>
-Cc: Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH/RFC 1/6] dma-mapping: Convert NO_DMA get_dma_ops() into a real dummy
-Date: Tue,  6 Feb 2018 11:14:47 +0100
-Message-Id: <1517912092-15470-2-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517912092-15470-1-git-send-email-geert@linux-m68k.org>
-References: <1517912092-15470-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+        id S932435AbeBLEs1 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Feb 2018 23:48:27 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41006 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932433AbeBLEs0 (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Sun, 11 Feb 2018 23:48:26 -0500
+X-Google-Smtp-Source: AH8x226fQvXSj7AnsQbdqc8XFpUaRIQs8kSqTdCvU3GlDlq8C74zcZu4AKheeJzJQ3DC2yRciARL4w==
+From: Joel Stanley <joel@jms.id.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomer Maimon <tomer.maimon@nuvoton.com>,
+        Avi Fishman <Avi.Fishman@nuvoton.com>,
+        Jeremy Kerr <jk@ozlabs.org>
+Subject: [PATCH] serial: 8250: Add Nuvoton NPCM UART
+Date: Mon, 12 Feb 2018 15:18:10 +1030
+Message-Id: <20180212044810.23547-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.15.1
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If NO_DMA=y, get_dma_ops() returns a reference to the
-non-existing symbol bad_dma_ops, thus causing a link failure if it is
-ever used.
+The Nuvoton UART is almost compatible with the 8250 driver when probed
+via the 8250_of driver, however it requires some extra configuration
+at startup.
 
-Make get_dma_ops() return NULL instead, to avoid the link failure.
-This allows to improve compile-testing, and limits the need to keep on
-sprinkling dependencies on HAS_DMA all over the place.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- include/linux/dma-mapping.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/serial/8250.txt |  1 +
+ drivers/tty/serial/8250/8250_of.c                 |  1 +
+ drivers/tty/serial/8250/8250_port.c               | 30 +++++++++++++++++++++++
+ include/uapi/linux/serial_core.h                  |  3 +++
+ include/uapi/linux/serial_reg.h                   |  5 ++++
+ 5 files changed, 40 insertions(+)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 34fe8463d10ea3be..d78d7541f784875b 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -212,14 +212,14 @@ static inline void set_dma_ops(struct device *dev,
+diff --git a/Documentation/devicetree/bindings/serial/8250.txt b/Documentation/devicetree/bindings/serial/8250.txt
+index dad3b2ec66d4..aeb6db4e35c3 100644
+--- a/Documentation/devicetree/bindings/serial/8250.txt
++++ b/Documentation/devicetree/bindings/serial/8250.txt
+@@ -24,6 +24,7 @@ Required properties:
+ 	- "ti,da830-uart"
+ 	- "aspeed,ast2400-vuart"
+ 	- "aspeed,ast2500-vuart"
++	- "nuvoton,npcm750-uart"
+ 	- "serial" if the port type is unknown.
+ - reg : offset and length of the register set for the device.
+ - interrupts : should contain uart interrupt.
+diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+index 160b8906d9b9..9835b1c1cbe1 100644
+--- a/drivers/tty/serial/8250/8250_of.c
++++ b/drivers/tty/serial/8250/8250_of.c
+@@ -316,6 +316,7 @@ static const struct of_device_id of_platform_serial_table[] = {
+ 	{ .compatible = "mrvl,mmp-uart",
+ 		.data = (void *)PORT_XSCALE, },
+ 	{ .compatible = "ti,da830-uart", .data = (void *)PORT_DA830, },
++	{ .compatible = "nuvoton,npcm750-uart", .data = (void *)PORT_NPCM, },
+ 	{ /* end of list */ },
+ };
+ MODULE_DEVICE_TABLE(of, of_platform_serial_table);
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index 1328c7e70108..c2e7fc111338 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -293,6 +293,16 @@ static const struct serial8250_config uart_config[] = {
+ 				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
+ 		.flags		= UART_CAP_FIFO,
+ 	},
++	[PORT_NPCM] = {
++		.name		= "Nuvoton 16550",
++		.fifo_size	= 16,
++		.tx_loadsz	= 16,
++		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10 |
++				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
++		.rxtrig_bytes	= {1, 4, 8, 14},
++		.flags		= UART_CAP_FIFO,
++
++	},
+ };
+ 
+ /* Uart divisor latch read */
+@@ -2140,6 +2150,15 @@ int serial8250_do_startup(struct uart_port *port)
+ 				UART_DA830_PWREMU_MGMT_FREE);
+ 	}
+ 
++	if (port->type == PORT_NPCM) {
++		/*
++		 * Nuvoton calls the scratch register 'UART_TOR' (timeout
++		 * register). Enable it, and set TIOC (timeout interrupt
++		 * comparator) to be 0x20 for correct operation.
++		 */
++		serial_port_out(port, UART_NPCM_TOR, UART_NPCM_TOIE | 0x20);
++	}
++
+ #ifdef CONFIG_SERIAL_8250_RSA
+ 	/*
+ 	 * If this is an RSA port, see if we can kick it up to the
+@@ -2462,6 +2481,15 @@ static unsigned int xr17v35x_get_divisor(struct uart_8250_port *up,
+ 	return quot_16 >> 4;
  }
- #else
- /*
-- * Define the dma api to allow compilation but not linking of
-- * dma dependent code.  Code that depends on the dma-mapping
-- * API needs to set 'depends on HAS_DMA' in its Kconfig
-+ * Define the dma api to allow compilation of dma dependent code.
-+ * Code that depends on the dma-mapping API needs to set 'depends on HAS_DMA'
-+ * in its Kconfig, unless it already depends on <something> || COMPILE_TEST,
-+ * where <something> guarantuees the availability of the dma-mapping API.
-  */
--extern const struct dma_map_ops bad_dma_ops;
- static inline const struct dma_map_ops *get_dma_ops(struct device *dev)
- {
--	return &bad_dma_ops;
-+	return NULL;
- }
- #endif
+ 
++/* Nuvoton NPCM UARTs have a custom divisor calculation */
++static unsigned int npcm_get_divisor(struct uart_8250_port *up,
++		unsigned int baud)
++{
++	struct uart_port *port = &up->port;
++
++	return DIV_ROUND_CLOSEST(port->uartclk, 16 * baud + 2) - 2;
++}
++
+ static unsigned int serial8250_get_divisor(struct uart_8250_port *up,
+ 					   unsigned int baud,
+ 					   unsigned int *frac)
+@@ -2482,6 +2510,8 @@ static unsigned int serial8250_get_divisor(struct uart_8250_port *up,
+ 		quot = 0x8002;
+ 	else if (up->port.type == PORT_XR17V35X)
+ 		quot = xr17v35x_get_divisor(up, baud, frac);
++	else if (up->port.type == PORT_NPCM)
++		quot = npcm_get_divisor(up, baud);
+ 	else
+ 		quot = uart_get_divisor(port, baud);
+ 
+diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+index 1c8413f93e3d..3890ca4c5985 100644
+--- a/include/uapi/linux/serial_core.h
++++ b/include/uapi/linux/serial_core.h
+@@ -278,4 +278,7 @@
+ /* MediaTek BTIF */
+ #define PORT_MTK_BTIF	117
+ 
++/* Nuvoton UART */
++#define PORT_NPCM	118
++
+ #endif /* _UAPILINUX_SERIAL_CORE_H */
+diff --git a/include/uapi/linux/serial_reg.h b/include/uapi/linux/serial_reg.h
+index be07b5470f4b..f82f3c869df9 100644
+--- a/include/uapi/linux/serial_reg.h
++++ b/include/uapi/linux/serial_reg.h
+@@ -376,5 +376,10 @@
+ #define UART_ALTR_EN_TXFIFO_LW	0x01	/* Enable the TX FIFO Low Watermark */
+ #define UART_ALTR_TX_LOW	0x41	/* Tx FIFO Low Watermark */
+ 
++
++/* Nuvoton NPCM timeout register */
++#define UART_NPCM_TOR		7
++#define UART_NPCM_TOIE		BIT(7)	/* Timeout Interrupt Enable */
++
+ #endif /* _LINUX_SERIAL_REG_H */
  
 -- 
-2.7.4
+2.15.1
 
