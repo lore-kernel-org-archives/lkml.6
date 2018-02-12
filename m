@@ -1,71 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752637AbeBLPTi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:19:38 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42632 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751279AbeBLPTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:19:37 -0500
-Date: Mon, 12 Feb 2018 16:19:35 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        ananth@linux.vnet.ibm.com, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Uprobe: Bug(?) when probing small binaries
-Message-ID: <20180212151935.GA12577@redhat.com>
-References: <e74318e0-0cdf-e55d-bf06-b481541e2697@linux.vnet.ibm.com>
+        id S1752731AbeBLPT7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:19:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752667AbeBLPT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 10:19:58 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596DF217A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x226bEAiR9zGlesS5hjuOdNQZ4+5MOvvHv1v7uE4cBxhbZ1z9UFRH7UwyOOvsN8J6LM1f3OzjH08JZ7T+L/VY8TY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e74318e0-0cdf-e55d-bf06-b481541e2697@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1518446590-16800-2-git-send-email-patrice.chotard@st.com>
+References: <1518446590-16800-1-git-send-email-patrice.chotard@st.com> <1518446590-16800-2-git-send-email-patrice.chotard@st.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 12 Feb 2018 09:19:35 -0600
+X-Gmail-Original-Message-ID: <CABGGiswMN1-CQi-guB5y5YFNLhKH3z58b_skxb_q+ZMm7+n1Nw@mail.gmail.com>
+Message-ID: <CABGGiswMN1-CQi-guB5y5YFNLhKH3z58b_skxb_q+ZMm7+n1Nw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] ARM: dts: STi: Fix bindings notation
+To: patrice.chotard@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux@armlinux.org.uk,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ravi,
+On Mon, Feb 12, 2018 at 8:42 AM,  <patrice.chotard@st.com> wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
+>
+> Remove leading 0x and 0s from bindings notation
+> Add missing unit-address and remove some which are useless.
+>
+> This allows to fix several warnings like :
+>
+> Warning (unit_address_vs_reg): Node XXXX has a reg or ranges property, but no unit name
+> Warning (simple_bus_reg): Node XXXX simple-bus unit address format error, expected "123456"
+> Warning (unit_address_vs_reg): Node XXXX has a unit name, but no reg property
+>
+> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+> ---
 
-On 02/12, Ravi Bangoria wrote:
->
-> I'm observing a bug in the uprobe infrastructure.
+[...]
 
-I am not sure,
+> diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> index a29090077fdf..53c6888d1fc0 100644
+> --- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> @@ -45,7 +45,7 @@
+>         };
+>
+>         soc {
+> -               pin-controller-sbc {
+> +               pin-controller-sbc@961f080 {
 
-> When target binary
-> is quite small, uprobe replaces 'trap' instruction at two different
-> places. Ex,
+While you're here changing the node name, these all should be "pinctrl@..."
 
-but this is actually "the same place" (in the file), just 2 virtual addrs differ,
+With that,
 
->   (gdb) x/w 0x1001069c
->     0x1001069c:    2080899750
->
-> Now enable the probe:
->
->   # echo 1 > events/probe_a/main/enable
->
-> Check probed instruction:
->
->   (gdb) disassemble main
->        0x000000001000069c <+8>:    trap
->
-> *Bug*:
->
->   (gdb) x/w 0x1001069c
->     0x1001069c:  2145386504
->
-> In short, when it replaces the probe instruction, it does some corruption
-> in the readonly vma. This seems to be a bug.
->
-> How did I get the other address 0x1001069c?I found build_map_info()
-> returns these two vmas for the single probe:
->
->   10000000-10010000 r-xp 00000000 08:05 67325595   /home/ravi/a.out
->   10010000-10020000 r--p 00000000 08:05 67325595   /home/ravi/a.out
-
-please note that these 2 vma's mmap the same region in a.out, so
-*0x1001069c and *0x1000069c point to the same insn.
-
-Oleg.
+Reviewed-by: Rob Herring <robh@kernel.org>
