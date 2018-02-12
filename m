@@ -1,514 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932644AbeBLDIz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 22:08:55 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56858 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932443AbeBLDIt (ORCPT
+        id S932651AbeBLDJU (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 22:09:20 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:47236 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932341AbeBLDJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 22:08:49 -0500
-To: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Chris Zankel <chris@zankel.net>
-Message-Id: <a37645a0cc71a89c28459113cee651ba30466675.1518397634.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1518397634.git.fthain@telegraphics.com.au>
-References: <cover.1518397634.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net v4 13/13] net/sonic: Replace custom debug logging with
- netif_* calls
-Date: Sun, 11 Feb 2018 22:08:44 -0500 (EST)
+        Sun, 11 Feb 2018 22:09:15 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        x86@kernel.org, douly.fnst@cn.fujitsu.com, joro@8bytes.org,
+        uobergfe@redhat.com, prarit@redhat.com
+References: <20180209121008.28980-1-bhe@redhat.com>
+        <20180209121008.28980-3-bhe@redhat.com>
+Date: Sun, 11 Feb 2018 21:08:55 -0600
+In-Reply-To: <20180209121008.28980-3-bhe@redhat.com> (Baoquan He's message of
+        "Fri, 9 Feb 2018 20:10:05 +0800")
+Message-ID: <87r2pq9a60.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1el4US-00036F-OR;;;mid=<87r2pq9a60.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19SgId9rhbSGhprIGIJyk/WB14dl0QW0Ho=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.7 XMSubLong Long Subject
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Baoquan He <bhe@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 332 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 4.3 (1.3%), b_tie_ro: 3.1 (0.9%), parse: 1.25 (0.4%),
+        extract_message_metadata: 7 (2.0%), get_uri_detail_list: 4.2 (1.3%),
+        tests_pri_-1000: 3.3 (1.0%), tests_pri_-950: 1.21 (0.4%), tests_pri_-900:
+        0.89 (0.3%), tests_pri_-400: 32 (9.8%), check_bayes: 31 (9.5%), b_tokenize:
+        10 (3.1%), b_tok_get_all: 12 (3.5%), b_comp_prob: 2.3 (0.7%),
+        b_tok_touch_all: 5 (1.5%), b_finish: 0.72 (0.2%), tests_pri_0: 269 (81.1%),
+        check_dkim_signature: 0.43 (0.1%), check_dkim_adsp: 2.7 (0.8%),
+        tests_pri_500: 5 (1.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v3 2/5] x86/apic: Fix restoring boot irq mode in reboot and kexec/kdump
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eliminate duplicated debug code by moving it into the core driver.
-Don't log the only valid silicon revision number (it's in the source).
+Baoquan He <bhe@redhat.com> writes:
 
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Chris Zankel <chris@zankel.net>
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
-Only the sonic.[ch] and macsonic.c changes have been tested. The other
-changes are similar but untested.
----
- drivers/net/ethernet/natsemi/jazzsonic.c | 19 +------
- drivers/net/ethernet/natsemi/macsonic.c  | 25 ++-------
- drivers/net/ethernet/natsemi/sonic.c     | 92 +++++++++++++++-----------------
- drivers/net/ethernet/natsemi/sonic.h     |  2 +
- drivers/net/ethernet/natsemi/xtsonic.c   | 19 +------
- 5 files changed, 54 insertions(+), 103 deletions(-)
+> This is a regression fix.
+>
+> Before, to fix erratum AVR31, commit 522e66464467 ("x86/apic: Disable
+> I/O APIC before shutdown of the local APIC") moved lapic_shutdown()
+> calling after disable_IO_APIC(). This introdued a regression. The
+> root cause is that disable_IO_APIC() not only clears IO_APIC, also
+> restore boot irq mode by setting LAPIC/APIC/IMCR, lapic_shutdown()
+> after disable_IO_APIC() will disable LAPIC and ruin the possible
+> virtual wire mode setting which the code has been trying to do all
+> along.
+>
+> The consequence is, in KVM guest kernel always prints warning as below
+> during kexec/kdump kernel boots up. That happened in setup_local_APIC()
+> since 'do { xxx } while (queued && max_loops > 0)' loop does not function
+> well any more if pending irq exists in APIC IRR after LAPIC is disabled.
+> And people even saw casual kdump kernel hang once in ~30 attempts during
+> stress testing of kdump on KVM machine.
+>
+> [    0.001000] WARNING: CPU: 0 PID: 0 at arch/x86/kernel/apic/apic.c:1467 setup_local_APIC+0x228/0x330
+> [    0.001000] Modules linked in:
+> [    0.001000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.15.0-rc5+ #3
+> [    0.001000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
+> [    0.001000] RIP: 0010:setup_local_APIC+0x228/0x330
+> [    0.001000] RSP: 0000:ffffffffb6e03eb8 EFLAGS: 00010286
+> [    0.001000] RAX: 0000009edb4c4d84 RBX: 0000000000000000 RCX: 00000000b099d800
+> [    0.001000] RDX: 0000009e00000000 RSI: 0000000000000000 RDI: 0000000000000810
+> [    0.001000] RBP: 0000000000000000 R08: ffffffffffffffff R09: 0000000000000001
+> [    0.001000] R10: ffff98ce6a801c00 R11: 0761076d072f0776 R12: 0000000000000001
+> [    0.001000] R13: 00000000000000f0 R14: 0000000000004000 R15: ffffffffffffc6ff
+> [    0.001000] FS:  0000000000000000(0000) GS:ffff98ce6bc00000(0000) knlGS:0000000000000000
+> [    0.001000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.001000] CR2: 00000000ffffffff CR3: 0000000022209000 CR4: 00000000000406b0
+> [    0.001000] Call Trace:
+> [    0.001000]  apic_bsp_setup+0x56/0x74
+> [    0.001000]  x86_late_time_init+0x11/0x16
+> [    0.001000]  start_kernel+0x3c9/0x486
+> [    0.001000]  secondary_startup_64+0xa5/0xb0
+> [    0.001000] Code: 00 85 c9 74 2d 0f 31 c1 e1 0a 48 c1 e2 20 41 89 cf 4c 03 7c 24 08 48 09 d0 49 29 c7 4c 89 3c 24 48 83 3c 24 00 0f 8f 8f fe ff
+> ff <0f> ff e9 10 ff ff ff 48 83 2c 24 01 eb e7 48 83 c4 18 5b 5d 41
+> [    0.001000] ---[ end trace b88e71b9a6ebebdd ]---
+> [    0.001000] masked ExtINT on CPU#0
+>
+> To fix this, just break down disable_IO_APIC(), then call
+> clear_IO_APIC() to stop IO_APIC where disable_IO_APIC() was called,
+> and call restore_boot_irq_mode() to restore boot irq mode before
+> reboot or kexec/kdump jump.
 
-diff --git a/drivers/net/ethernet/natsemi/jazzsonic.c b/drivers/net/ethernet/natsemi/jazzsonic.c
-index 58495316d318..51fa82b429a3 100644
---- a/drivers/net/ethernet/natsemi/jazzsonic.c
-+++ b/drivers/net/ethernet/natsemi/jazzsonic.c
-@@ -60,14 +60,6 @@ do {									\
- 	*((volatile unsigned int *)dev->base_addr+(reg)) = (val);		\
- } while (0)
- 
--
--/* use 0 for production, 1 for verification, >1 for debug */
--#ifdef SONIC_DEBUG
--static unsigned int sonic_debug = SONIC_DEBUG;
--#else
--static unsigned int sonic_debug = 1;
--#endif
--
- /*
-  * We cannot use station (ethernet) address prefixes to detect the
-  * sonic controller since these are board manufacturer depended.
-@@ -117,7 +109,6 @@ static const struct net_device_ops sonic_netdev_ops = {
- 
- static int sonic_probe1(struct net_device *dev)
- {
--	static unsigned version_printed;
- 	unsigned int silicon_revision;
- 	unsigned int val;
- 	struct sonic_local *lp = netdev_priv(dev);
-@@ -133,9 +124,6 @@ static int sonic_probe1(struct net_device *dev)
- 	 * the expected location.
- 	 */
- 	silicon_revision = SONIC_READ(SONIC_SR);
--	if (sonic_debug > 1)
--		printk("SONIC Silicon Revision = 0x%04x\n",silicon_revision);
--
- 	i = 0;
- 	while (known_revisions[i] != 0xffff &&
- 	       known_revisions[i] != silicon_revision)
-@@ -147,9 +135,6 @@ static int sonic_probe1(struct net_device *dev)
- 		goto out;
- 	}
- 
--	if (sonic_debug  &&  version_printed++ == 0)
--		printk(version);
--
- 	/*
- 	 * Put the sonic into software reset, then
- 	 * retrieve and print the ethernet address.
-@@ -246,6 +231,8 @@ static int jazz_sonic_probe(struct platform_device *pdev)
- 	pr_info("SONIC ethernet @%08lx, MAC %pM, IRQ %d\n",
- 		dev->base_addr, dev->dev_addr, dev->irq);
- 
-+	sonic_msg_init(dev);
-+
- 	err = register_netdev(dev);
- 	if (err)
- 		goto out1;
-@@ -261,8 +248,6 @@ static int jazz_sonic_probe(struct platform_device *pdev)
- }
- 
- MODULE_DESCRIPTION("Jazz SONIC ethernet driver");
--module_param(sonic_debug, int, 0);
--MODULE_PARM_DESC(sonic_debug, "jazzsonic debug level (1-4)");
- MODULE_ALIAS("platform:jazzsonic");
- 
- #include "sonic.c"
-diff --git a/drivers/net/ethernet/natsemi/macsonic.c b/drivers/net/ethernet/natsemi/macsonic.c
-index a2d1d1587433..54acaaeef1f3 100644
---- a/drivers/net/ethernet/natsemi/macsonic.c
-+++ b/drivers/net/ethernet/natsemi/macsonic.c
-@@ -70,15 +70,6 @@
- #define SONIC_WRITE(reg,val) (nubus_writew(val, dev->base_addr + (reg * 4) \
- 	      + lp->reg_offset))
- 
--/* use 0 for production, 1 for verification, >1 for debug */
--#ifdef SONIC_DEBUG
--static unsigned int sonic_debug = SONIC_DEBUG;
--#else
--static unsigned int sonic_debug = 1;
--#endif
--
--static int sonic_version_printed;
--
- /* For onboard SONIC */
- #define ONBOARD_SONIC_REGISTERS	0x50F0A000
- #define ONBOARD_SONIC_PROM_BASE	0x50f08000
-@@ -336,11 +327,6 @@ static int mac_onboard_sonic_probe(struct net_device *dev)
- 	else
- 		dev->irq = IRQ_NUBUS_9;
- 
--	if (!sonic_version_printed) {
--		printk(KERN_INFO "%s", version);
--		sonic_version_printed = 1;
--	}
--
- 	/* The PowerBook's SONIC is 16 bit always. */
- 	if (macintosh_config->ident == MAC_MODEL_PB520) {
- 		lp->reg_offset = 0;
-@@ -502,11 +488,6 @@ static int mac_sonic_nubus_probe_board(struct nubus_board *board, int id,
- 	lp->dma_bitmode = dma_bitmode;
- 	dev->irq = SLOT2IRQ(board->slot);
- 
--	if (!sonic_version_printed) {
--		printk(KERN_INFO "%s", version);
--		sonic_version_printed = 1;
--	}
--
- 	dev_info(&board->dev, "%s, revision 0x%04x, %d bit DMA, register offset %d\n",
- 		 board->name, SONIC_READ(SONIC_SR),
- 		 lp->dma_bitmode ? 32 : 16, lp->reg_offset);
-@@ -558,6 +539,8 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
- 	if (err)
- 		goto out;
- 
-+	sonic_msg_init(dev);
-+
- 	err = register_netdev(dev);
- 	if (err)
- 		goto out;
-@@ -571,8 +554,6 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
- }
- 
- MODULE_DESCRIPTION("Macintosh SONIC ethernet driver");
--module_param(sonic_debug, int, 0);
--MODULE_PARM_DESC(sonic_debug, "macsonic debug level (1-4)");
- MODULE_ALIAS("platform:macsonic");
- 
- #include "sonic.c"
-@@ -636,6 +617,8 @@ static int mac_sonic_nubus_probe(struct nubus_board *board)
- 	if (err)
- 		goto out;
- 
-+	sonic_msg_init(ndev);
-+
- 	err = register_netdev(ndev);
- 	if (err)
- 		goto out;
-diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 612c7a44b26c..e0ab066b687b 100644
---- a/drivers/net/ethernet/natsemi/sonic.c
-+++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -33,7 +33,18 @@
-  * the NetBSD file "sys/arch/mac68k/dev/if_sn.c".
-  */
- 
-+static int sonic_debug = -1;
-+module_param(sonic_debug, int, 0);
-+MODULE_PARM_DESC(sonic_debug, "debug message level");
- 
-+static void sonic_msg_init(struct net_device *dev)
-+{
-+	struct sonic_local *lp = netdev_priv(dev);
-+
-+	lp->msg_enable = netif_msg_init(sonic_debug, 0);
-+
-+	netif_dbg(lp, drv, dev, "%s", version);
-+}
- 
- /*
-  * Open/initialize the SONIC controller.
-@@ -47,8 +58,7 @@ static int sonic_open(struct net_device *dev)
- 	struct sonic_local *lp = netdev_priv(dev);
- 	int i;
- 
--	if (sonic_debug > 2)
--		printk("sonic_open: initializing sonic driver.\n");
-+	netif_dbg(lp, ifup, dev, "%s\n", __func__);
- 
- 	for (i = 0; i < SONIC_NUM_RRS; i++) {
- 		struct sk_buff *skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
-@@ -95,8 +105,7 @@ static int sonic_open(struct net_device *dev)
- 
- 	netif_start_queue(dev);
- 
--	if (sonic_debug > 2)
--		printk("sonic_open: Initialization done.\n");
-+	netif_dbg(lp, ifup, dev, "%s: done\n", __func__);
- 
- 	return 0;
- }
-@@ -110,8 +119,7 @@ static int sonic_close(struct net_device *dev)
- 	struct sonic_local *lp = netdev_priv(dev);
- 	int i;
- 
--	if (sonic_debug > 2)
--		printk("sonic_close\n");
-+	netif_dbg(lp, ifdown, dev, "%s\n", __func__);
- 
- 	netif_stop_queue(dev);
- 
-@@ -205,8 +213,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	int length;
- 	int entry = lp->next_tx;
- 
--	if (sonic_debug > 2)
--		printk("sonic_send_packet: skb=%p, dev=%p\n", skb, dev);
-+	netif_dbg(lp, tx_queued, dev, "%s: skb=%p\n", __func__, skb);
- 
- 	length = skb->len;
- 	if (length < ETH_ZLEN) {
-@@ -252,14 +259,12 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	lp->next_tx = (entry + 1) & SONIC_TDS_MASK;
- 	if (lp->tx_skb[lp->next_tx] != NULL) {
- 		/* The ring is full, the ISR has yet to process the next TD. */
--		if (sonic_debug > 3)
--			printk("%s: stopping queue\n", dev->name);
-+		netif_dbg(lp, tx_queued, dev, "%s: stop queue\n", __func__);
- 		netif_stop_queue(dev);
- 		/* after this packet, wait for ISR to free up some TDAs */
- 	} else netif_start_queue(dev);
- 
--	if (sonic_debug > 2)
--		printk("sonic_send_packet: issuing Tx command\n");
-+	netif_dbg(lp, tx_queued, dev, "%s: issuing tx command\n", __func__);
- 
- 	SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
- 
-@@ -281,8 +286,7 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 
- 	do {
- 		if (status & SONIC_INT_PKTRX) {
--			if (sonic_debug > 2)
--				printk("%s: packet rx\n", dev->name);
-+			netif_dbg(lp, intr, dev, "%s: packet rx\n", __func__);
- 			sonic_rx(dev);	/* got packet(s) */
- 			SONIC_WRITE(SONIC_ISR, SONIC_INT_PKTRX); /* clear the interrupt */
- 		}
-@@ -299,8 +303,7 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 			 *   still being allocated by sonic_send_packet (status clear & tx_skb[entry] clear)
- 			 */
- 
--			if (sonic_debug > 2)
--				printk("%s: tx done\n", dev->name);
-+			netif_dbg(lp, intr, dev, "%s: tx done\n", __func__);
- 
- 			while (lp->tx_skb[entry] != NULL) {
- 				if ((td_status = sonic_tda_get(dev, entry, SONIC_TD_STATUS)) == 0)
-@@ -346,20 +349,20 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 		 * check error conditions
- 		 */
- 		if (status & SONIC_INT_RFO) {
--			if (sonic_debug > 1)
--				printk("%s: rx fifo overrun\n", dev->name);
-+			netif_dbg(lp, rx_err, dev, "%s: rx fifo overrun\n",
-+				  __func__);
- 			lp->stats.rx_fifo_errors++;
- 			SONIC_WRITE(SONIC_ISR, SONIC_INT_RFO); /* clear the interrupt */
- 		}
- 		if (status & SONIC_INT_RDE) {
--			if (sonic_debug > 1)
--				printk("%s: rx descriptors exhausted\n", dev->name);
-+			netif_dbg(lp, rx_err, dev, "%s: rx descriptors exhausted\n",
-+				  __func__);
- 			lp->stats.rx_dropped++;
- 			SONIC_WRITE(SONIC_ISR, SONIC_INT_RDE); /* clear the interrupt */
- 		}
- 		if (status & SONIC_INT_RBAE) {
--			if (sonic_debug > 1)
--				printk("%s: rx buffer area exceeded\n", dev->name);
-+			netif_dbg(lp, rx_err, dev, "%s: rx buffer area exceeded\n",
-+				  __func__);
- 			lp->stats.rx_dropped++;
- 			SONIC_WRITE(SONIC_ISR, SONIC_INT_RBAE); /* clear the interrupt */
- 		}
-@@ -380,8 +383,9 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 
- 		/* transmit error */
- 		if (status & SONIC_INT_TXER) {
--			if ((SONIC_READ(SONIC_TCR) & SONIC_TCR_FU) && (sonic_debug > 2))
--				printk(KERN_ERR "%s: tx fifo underrun\n", dev->name);
-+			if (SONIC_READ(SONIC_TCR) & SONIC_TCR_FU)
-+				netif_dbg(lp, tx_err, dev, "%s: tx fifo underrun\n",
-+					  __func__);
- 			SONIC_WRITE(SONIC_ISR, SONIC_INT_TXER); /* clear the interrupt */
- 		}
- 
-@@ -475,8 +479,8 @@ static void sonic_rx(struct net_device *dev)
- 			if (lp->cur_rwp >= lp->rra_end) lp->cur_rwp = lp->rra_laddr & 0xffff;
- 			SONIC_WRITE(SONIC_RWP, lp->cur_rwp);
- 			if (SONIC_READ(SONIC_ISR) & SONIC_INT_RBE) {
--				if (sonic_debug > 2)
--					printk("%s: rx buffer exhausted\n", dev->name);
-+				netif_dbg(lp, rx_err, dev, "%s: rx buffer exhausted\n",
-+					  __func__);
- 				SONIC_WRITE(SONIC_ISR, SONIC_INT_RBE); /* clear the flag */
- 			}
- 		} else
-@@ -542,9 +546,8 @@ static void sonic_multicast_list(struct net_device *dev)
- 		    (netdev_mc_count(dev) > 15)) {
- 			rcr |= SONIC_RCR_AMC;
- 		} else {
--			if (sonic_debug > 2)
--				printk("sonic_multicast_list: mc_count %d\n",
--				       netdev_mc_count(dev));
-+			netif_dbg(lp, ifup, dev, "%s: mc_count %d\n", __func__,
-+				  netdev_mc_count(dev));
- 			sonic_set_cam_enable(dev, 1);  /* always enable our own address */
- 			i = 1;
- 			netdev_for_each_mc_addr(ha, dev) {
-@@ -562,8 +565,7 @@ static void sonic_multicast_list(struct net_device *dev)
- 		}
- 	}
- 
--	if (sonic_debug > 2)
--		printk("sonic_multicast_list: setting RCR=%x\n", rcr);
-+	netif_dbg(lp, ifup, dev, "%s: rcr=%x\n", __func__, rcr);
- 
- 	SONIC_WRITE(SONIC_RCR, rcr);
- }
-@@ -596,8 +598,7 @@ static int sonic_init(struct net_device *dev)
- 	/*
- 	 * initialize the receive resource area
- 	 */
--	if (sonic_debug > 2)
--		printk("sonic_init: initialize receive resource area\n");
-+	netif_dbg(lp, ifup, dev, "%s: receive resource area\n", __func__);
- 
- 	for (i = 0; i < SONIC_NUM_RRS; i++) {
- 		u16 bufadr_l = (unsigned long)lp->rx_laddr[i] & 0xffff;
-@@ -622,8 +623,7 @@ static int sonic_init(struct net_device *dev)
- 	SONIC_WRITE(SONIC_EOBC, (SONIC_RBSIZE >> 1) - (lp->dma_bitmode ? 2 : 1));
- 
- 	/* load the resource pointers */
--	if (sonic_debug > 3)
--		printk("sonic_init: issuing RRRA command\n");
-+	netif_dbg(lp, ifup, dev, "%s: issuing RRRA command\n", __func__);
- 
- 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RRRA);
- 	i = 0;
-@@ -632,16 +632,16 @@ static int sonic_init(struct net_device *dev)
- 			break;
- 	}
- 
--	if (sonic_debug > 2)
--		printk("sonic_init: status=%x i=%d\n", SONIC_READ(SONIC_CMD), i);
-+	netif_dbg(lp, ifup, dev, "%s: status=%x, i=%d\n", __func__,
-+		  SONIC_READ(SONIC_CMD), i);
- 
- 	/*
- 	 * Initialize the receive descriptors so that they
- 	 * become a circular linked list, ie. let the last
- 	 * descriptor point to the first again.
- 	 */
--	if (sonic_debug > 2)
--		printk("sonic_init: initialize receive descriptors\n");
-+	netif_dbg(lp, ifup, dev, "%s: receive descriptors\n", __func__);
-+
- 	for (i=0; i<SONIC_NUM_RDS; i++) {
- 		sonic_rda_put(dev, i, SONIC_RD_STATUS, 0);
- 		sonic_rda_put(dev, i, SONIC_RD_PKTLEN, 0);
-@@ -664,8 +664,8 @@ static int sonic_init(struct net_device *dev)
- 	/*
- 	 * initialize transmit descriptors
- 	 */
--	if (sonic_debug > 2)
--		printk("sonic_init: initialize transmit descriptors\n");
-+	netif_dbg(lp, ifup, dev, "%s: transmit descriptors\n", __func__);
-+
- 	for (i = 0; i < SONIC_NUM_TDS; i++) {
- 		sonic_tda_put(dev, i, SONIC_TD_STATUS, 0);
- 		sonic_tda_put(dev, i, SONIC_TD_CONFIG, 0);
-@@ -712,10 +712,8 @@ static int sonic_init(struct net_device *dev)
- 		if (SONIC_READ(SONIC_ISR) & SONIC_INT_LCD)
- 			break;
- 	}
--	if (sonic_debug > 2) {
--		printk("sonic_init: CMD=%x, ISR=%x\n, i=%d",
--		       SONIC_READ(SONIC_CMD), SONIC_READ(SONIC_ISR), i);
--	}
-+	netif_dbg(lp, ifup, dev, "%s: CMD=%x, ISR=%x, i=%d\n", __func__,
-+		  SONIC_READ(SONIC_CMD), SONIC_READ(SONIC_ISR), i);
- 
- 	/*
- 	 * enable receiver, disable loopback
-@@ -731,9 +729,7 @@ static int sonic_init(struct net_device *dev)
- 	if ((cmd & SONIC_CR_RXEN) == 0 || (cmd & SONIC_CR_STP) == 0)
- 		printk(KERN_ERR "sonic_init: failed, status=%x\n", cmd);
- 
--	if (sonic_debug > 2)
--		printk("sonic_init: new status=%x\n",
--		       SONIC_READ(SONIC_CMD));
-+	netif_dbg(lp, ifup, dev, "%s: cmd=%x\n", __func__, cmd);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
-index 421b1a283fed..2b27f7049acb 100644
---- a/drivers/net/ethernet/natsemi/sonic.h
-+++ b/drivers/net/ethernet/natsemi/sonic.h
-@@ -319,6 +319,7 @@ struct sonic_local {
- 	unsigned int eol_rx;
- 	unsigned int eol_tx;           /* last unacked transmit packet */
- 	unsigned int next_tx;          /* next free TD */
-+	int msg_enable;
- 	struct device *device;         /* generic device */
- 	struct net_device_stats stats;
- };
-@@ -336,6 +337,7 @@ static struct net_device_stats *sonic_get_stats(struct net_device *dev);
- static void sonic_multicast_list(struct net_device *dev);
- static int sonic_init(struct net_device *dev);
- static void sonic_tx_timeout(struct net_device *dev);
-+static void sonic_msg_init(struct net_device *dev);
- 
- /* Internal inlines for reading/writing DMA buffers.  Note that bus
-    size and endianness matter here, whereas they don't for registers,
-diff --git a/drivers/net/ethernet/natsemi/xtsonic.c b/drivers/net/ethernet/natsemi/xtsonic.c
-index d1659c75cce8..e1b886e87a76 100644
---- a/drivers/net/ethernet/natsemi/xtsonic.c
-+++ b/drivers/net/ethernet/natsemi/xtsonic.c
-@@ -73,14 +73,6 @@ extern void xtboard_get_ether_addr(unsigned char *buf);
- #define SONIC_WRITE(reg,val) \
- 	*((volatile unsigned int *)dev->base_addr+reg) = val
- 
--
--/* Use 0 for production, 1 for verification, and >2 for debug */
--#ifdef SONIC_DEBUG
--static unsigned int sonic_debug = SONIC_DEBUG;
--#else
--static unsigned int sonic_debug = 1;
--#endif
--
- /*
-  * We cannot use station (ethernet) address prefixes to detect the
-  * sonic controller since these are board manufacturer depended.
-@@ -130,7 +122,6 @@ static const struct net_device_ops xtsonic_netdev_ops = {
- 
- static int __init sonic_probe1(struct net_device *dev)
- {
--	static unsigned version_printed = 0;
- 	unsigned int silicon_revision;
- 	struct sonic_local *lp = netdev_priv(dev);
- 	unsigned int base_addr = dev->base_addr;
-@@ -146,9 +137,6 @@ static int __init sonic_probe1(struct net_device *dev)
- 	 * the expected location.
- 	 */
- 	silicon_revision = SONIC_READ(SONIC_SR);
--	if (sonic_debug > 1)
--		printk("SONIC Silicon Revision = 0x%04x\n",silicon_revision);
--
- 	i = 0;
- 	while ((known_revisions[i] != 0xffff) &&
- 			(known_revisions[i] != silicon_revision))
-@@ -160,9 +148,6 @@ static int __init sonic_probe1(struct net_device *dev)
- 		return -ENODEV;
- 	}
- 
--	if (sonic_debug  &&  version_printed++ == 0)
--		printk(version);
--
- 	/*
- 	 * Put the sonic into software reset, then retrieve ethernet address.
- 	 * Note: we are assuming that the boot-loader has initialized the cam.
-@@ -277,6 +262,8 @@ int xtsonic_probe(struct platform_device *pdev)
- 	pr_info("SONIC ethernet @%08lx, MAC %pM, IRQ %d\n",
- 		dev->base_addr, dev->dev_addr, dev->irq);
- 
-+	sonic_msg_init(dev);
-+
- 	if ((err = register_netdev(dev)))
- 		goto out1;
- 
-@@ -291,8 +278,6 @@ int xtsonic_probe(struct platform_device *pdev)
- }
- 
- MODULE_DESCRIPTION("Xtensa XT2000 SONIC ethernet driver");
--module_param(sonic_debug, int, 0);
--MODULE_PARM_DESC(sonic_debug, "xtsonic debug level (1-4)");
- 
- #include "sonic.c"
- 
--- 
-2.13.6
+Two things here.
+a) This is missing a fixes tag and a CC stable.
+b) What makes your change to the KEXEC_JUMP code path safe?
+   Have the lapic and ioapic already been shut down?
+
+The KEXEC_JUMP changes to machine_kexec_32.c and machine_kexec_64.c
+either need to be documented in the change long why they are safe
+so that this change becomes obviously safe and correct.
+
+Otherwise we risk and trivial and obvious looking change causing another
+regression like changing the order of lapic_shutdown and disable_IOAPIC
+did.
+
+Eric
+
+
+>
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/include/asm/io_apic.h     | 1 +
+>  arch/x86/kernel/apic/io_apic.c     | 2 +-
+>  arch/x86/kernel/crash.c            | 3 ++-
+>  arch/x86/kernel/machine_kexec_32.c | 2 +-
+>  arch/x86/kernel/machine_kexec_64.c | 2 +-
+>  arch/x86/kernel/reboot.c           | 3 ++-
+>  6 files changed, 8 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/io_apic.h b/arch/x86/include/asm/io_apic.h
+> index 558d1a6a13ad..0fa95bfacb39 100644
+> --- a/arch/x86/include/asm/io_apic.h
+> +++ b/arch/x86/include/asm/io_apic.h
+> @@ -193,6 +193,7 @@ static inline unsigned int io_apic_read(unsigned int apic, unsigned int reg)
+>  extern void setup_IO_APIC(void);
+>  extern void enable_IO_APIC(void);
+>  extern void disable_IO_APIC(void);
+> +extern void clear_IO_APIC(void);
+>  extern void restore_boot_irq_mode(void);
+>  extern int IO_APIC_get_PCI_irq_vector(int bus, int devfn, int pin);
+>  extern void print_IO_APICs(void);
+> diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+> index 7b73b6b9b4b6..2d7cd2db77f5 100644
+> --- a/arch/x86/kernel/apic/io_apic.c
+> +++ b/arch/x86/kernel/apic/io_apic.c
+> @@ -587,7 +587,7 @@ static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
+>  		       mpc_ioapic_id(apic), pin);
+>  }
+>  
+> -static void clear_IO_APIC (void)
+> +void clear_IO_APIC (void)
+>  {
+>  	int apic, pin;
+>  
+> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+> index 10e74d4778a1..1f6680427ff0 100644
+> --- a/arch/x86/kernel/crash.c
+> +++ b/arch/x86/kernel/crash.c
+> @@ -199,9 +199,10 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+>  #ifdef CONFIG_X86_IO_APIC
+>  	/* Prevent crash_kexec() from deadlocking on ioapic_lock. */
+>  	ioapic_zap_locks();
+> -	disable_IO_APIC();
+> +	clear_IO_APIC();
+>  #endif
+>  	lapic_shutdown();
+> +	restore_boot_irq_mode();
+>  #ifdef CONFIG_HPET_TIMER
+>  	hpet_disable();
+>  #endif
+> diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+> index edfede768688..f78bb4432bfb 100644
+> --- a/arch/x86/kernel/machine_kexec_32.c
+> +++ b/arch/x86/kernel/machine_kexec_32.c
+> @@ -199,7 +199,7 @@ void machine_kexec(struct kimage *image)
+>  		 * one form or other. kexec jump path also need
+>  		 * one.
+>  		 */
+> -		disable_IO_APIC();
+> +		restore_boot_irq_mode();
+>  #endif
+>  	}
+>  
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index 1f790cf9d38f..cb0c2d0a4c99 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -297,7 +297,7 @@ void machine_kexec(struct kimage *image)
+>  		 * one form or other. kexec jump path also need
+>  		 * one.
+>  		 */
+> -		disable_IO_APIC();
+> +		restore_boot_irq_mode();
+>  #endif
+>  	}
+>  
+> diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+> index 2126b9d27c34..725624b6c0c0 100644
+> --- a/arch/x86/kernel/reboot.c
+> +++ b/arch/x86/kernel/reboot.c
+> @@ -666,7 +666,7 @@ void native_machine_shutdown(void)
+>  	 * Even without the erratum, it still makes sense to quiet IO APIC
+>  	 * before disabling Local APIC.
+>  	 */
+> -	disable_IO_APIC();
+> +	clear_IO_APIC();
+>  #endif
+>  
+>  #ifdef CONFIG_SMP
+> @@ -680,6 +680,7 @@ void native_machine_shutdown(void)
+>  #endif
+>  
+>  	lapic_shutdown();
+> +	restore_boot_irq_mode();
+>  
+>  #ifdef CONFIG_HPET_TIMER
+>  	hpet_disable();
