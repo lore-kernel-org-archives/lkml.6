@@ -1,71 +1,72 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2037081-1518460981-2-1600890710929264712
+X-Cyrus-Session-Id: sloti22d1t05-2039553-1518462706-2-17999664784270317462
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518460980; b=vLSn8fdOS2IYeVwGQSotaHKnzg+n/0dc1+aBmGluvUYTnOF
-    EwUnUtwcbETch6AmJK6yD8RVUT4SCTtvh5PdSEwz6OxYe515c9DOSf0dCZwWMrO0
-    vsb+dxQXSxn/mvcCu89BJLs9L90zSYmfOlrUVNfvRAu8RZla+AOjZ7c2BSGn5y2O
-    CQ4mrhYYDjsioUjzuSBrGFyvcBmgMtKJBDl8jGkd7sSgCxiP3uzm9vzgo14Ahoue
-    dZzNBW1OzB76g18hAJrRN3Yo0cLtk7PzBqc2Xq7JZ9Yqo1hBcMf+rTPI7LIUebKV
-    mWyh0FLWWR0PKwzsxNjuV32/NMEt4uiFjc/rgoQ==
+    t=1518462705; b=eN8QNz2+9hjkmrxmCmnATKdNhLP1WOoMXtbjpneQeo6r+/x
+    uTWMDNxtH93559G2icg64i46krvGx9MSWMqtCVK4yvo/oo1WjaQ5KBcScE/V2gH8
+    o307KHRZn/jaq4aVzC4XXyr3waeFC/fFreIDxG9fXA3DaSLbtO6tzNRFfatRqxIf
+    0jPp4H9KfBsEivru2Oysy0XCfSTTvTvM4OAx+UjzDp5h5VD2hQnRZrcZphlEtGnK
+    a1EaLVceQtvrLzCbcPHThbJSsplBWl2fQnx+AMGlCGjBlX2gunwpKPuC1wEZ3Whc
+    ma5YGx44CAQV1h+jZ4w6DtQ7QlWtkUgfnzmD/Mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:references:from:message-id
     :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc
-    :content-transfer-encoding:content-type:sender; s=arctest; t=
-    1518460980; bh=RMu6XIyvfPY4IPmJG8Hsfep2BRKdTMtr5N3D23OrtlU=; b=G
-    /JtPCTLKLUFzU1ASTBBV2w0rLjDHUV35cBXXbjIdJ5TlQKjpNgJnRDwn1ORvV+SR
-    f7uPK0dSNBcXFy2YHpb62iFKvVL2DOqbykSSQL3ldjU9V+FYoyd4ECjx2c4J/nJ4
-    5gx8v8y7/0kbsxBcQHzgdfw008/TgEdM0Gb2deFDGo1oQMAUf+VPwL0+6zkile90
-    WfhSqhTsDxWuwiA1W2Xp3kJJEe8KY95B1+IgX0+noptqWOkydoEgXsNe6HEfsZ0h
-    x9vSAMwgF7FGqfaGg9yPO3mUKXyvs9cKG0krNd+HMsikjT4M++FMKvivLWH66jNq
-    n+CVWovwShFnwB3DtMo0Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518462705; bh=6
+    TZdKsmlX6i0HuFWXc0pQavb7zGanYJl/bxlH8ZWcm4=; b=UOuZ/eUOjDtb7fKVM
+    NHYA0hSbaD9Yf2ipVJJcrwKL0fGW1P8Jkjz+Pr+Dvx1/rYiC/NNXcPpH3faQ1LVy
+    qKZl5A4/9P+AA4nf17mnfi/tJptaB76EV80sIaaMaNOo6KtpakzCoU1+f1lzf6wr
+    Lw7lEJsw5FDvM86zOjjMdn7Gjd/PdUk+d2Z4MAXlILPR8Fy7RAuCZ6NhMB6RSToF
+    5N7VInVuW0iTrDEpZJLw/6BB+k6GgyrzUTn6uSZRdvmrS8HqfrZE71b+uWAAD1+y
+    008UDqhdHCcvEkijTe4u2mDobo4RQqj1mUZ/e/4NhjM1JhOakjJB8hf3D6W5P5c9
+    rVtiQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ridP7XhE;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ridP7XhE;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AH8x226j7JKy0tznzo8a7gHhkzcBh/cIZD56Yr7CTVAB2MkeXpuRkbDpRCkbNv1I6vgNDi5ioopsyA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,503,1511856000"; d="scan'208";a="17365535"
 Subject: Re: [PATCH] staging: android: ion: Add requested allocation alignment
-To: Alexey Skidanov <alexey.skidanov@intel.com>, sumit.semwal@linaro.org,
+To: Laura Abbott <labbott@redhat.com>, sumit.semwal@linaro.org,
  gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
  maco@android.com, devel@driverdev.osuosl.org
 References: <1518257863-6903-1-git-send-email-alexey.skidanov@intel.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <ae413008-6c8b-5e53-9251-d11f4ae9713a@redhat.com>
-Date: Mon, 12 Feb 2018 10:42:46 -0800
+ <ae413008-6c8b-5e53-9251-d11f4ae9713a@redhat.com>
+From: Alexey Skidanov <alexey.skidanov@intel.com>
+Message-ID: <8284b2ba-a532-23fd-4c52-7ac556d63918@intel.com>
+Date: Mon, 12 Feb 2018 21:11:40 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1518257863-6903-1-git-send-email-alexey.skidanov@intel.com>
+In-Reply-To: <ae413008-6c8b-5e53-9251-d11f4ae9713a@redhat.com>
 Content-Language: en-US
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
@@ -78,265 +79,235 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/10/2018 02:17 AM, Alexey Skidanov wrote:
-> Current ion defined allocation ioctl doesn't allow to specify the requested
-> allocation alignment. CMA heap allocates buffers aligned on buffer size
-> page order.
-> 
-> Sometimes, the alignment requirement is less restrictive. In such cases,
-> providing specific alignment may reduce the external memory fragmentation
-> and in some cases it may avoid the allocation request failure.
-> 
-
-I really do not want to bring this back as part of the regular
-ABI. Having an alignment parameter that gets used for exactly
-one heap only leads to confusion (which is why it was removed
-from the ABI in the first place).
-
-The alignment came from the behavior of the DMA APIs. Do you
-actually need to specify any alignment from userspace or do
-you only need page size?
-
-Thanks,
-Laura
-
-> To fix this, we add an alignment parameter to the allocation ioctl.
-> 
-> Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
-> ---
->   drivers/staging/android/ion/ion-ioctl.c         |  3 ++-
->   drivers/staging/android/ion/ion.c               | 14 +++++++++-----
->   drivers/staging/android/ion/ion.h               |  9 ++++++---
->   drivers/staging/android/ion/ion_carveout_heap.c |  3 ++-
->   drivers/staging/android/ion/ion_chunk_heap.c    |  3 ++-
->   drivers/staging/android/ion/ion_cma_heap.c      | 18 ++++++++++++------
->   drivers/staging/android/ion/ion_system_heap.c   |  6 ++++--
->   drivers/staging/android/uapi/ion.h              |  7 +++----
->   8 files changed, 40 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion-ioctl.c b/drivers/staging/android/ion/ion-ioctl.c
-> index c789893..9fe022b 100644
-> --- a/drivers/staging/android/ion/ion-ioctl.c
-> +++ b/drivers/staging/android/ion/ion-ioctl.c
-> @@ -83,7 +83,8 @@ long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->   
->   		fd = ion_alloc(data.allocation.len,
->   			       data.allocation.heap_id_mask,
-> -			       data.allocation.flags);
-> +			       data.allocation.flags,
-> +			       data.allocation.align);
->   		if (fd < 0)
->   			return fd;
->   
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index f480885..35ddc7a 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -78,7 +78,8 @@ static void ion_buffer_add(struct ion_device *dev,
->   static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
->   					    struct ion_device *dev,
->   					    unsigned long len,
-> -					    unsigned long flags)
-> +					    unsigned long flags,
-> +					    unsigned int align)
->   {
->   	struct ion_buffer *buffer;
->   	int ret;
-> @@ -90,14 +91,14 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
->   	buffer->heap = heap;
->   	buffer->flags = flags;
->   
-> -	ret = heap->ops->allocate(heap, buffer, len, flags);
-> +	ret = heap->ops->allocate(heap, buffer, len, flags, align);
->   
->   	if (ret) {
->   		if (!(heap->flags & ION_HEAP_FLAG_DEFER_FREE))
->   			goto err2;
->   
->   		ion_heap_freelist_drain(heap, 0);
-> -		ret = heap->ops->allocate(heap, buffer, len, flags);
-> +		ret = heap->ops->allocate(heap, buffer, len, flags, align);
->   		if (ret)
->   			goto err2;
->   	}
-> @@ -390,7 +391,10 @@ static const struct dma_buf_ops dma_buf_ops = {
->   	.unmap = ion_dma_buf_kunmap,
->   };
->   
-> -int ion_alloc(size_t len, unsigned int heap_id_mask, unsigned int flags)
-> +int ion_alloc(size_t len,
-> +	      unsigned int heap_id_mask,
-> +	      unsigned int flags,
-> +	      unsigned int align)
->   {
->   	struct ion_device *dev = internal_dev;
->   	struct ion_buffer *buffer = NULL;
-> @@ -417,7 +421,7 @@ int ion_alloc(size_t len, unsigned int heap_id_mask, unsigned int flags)
->   		/* if the caller didn't specify this heap id */
->   		if (!((1 << heap->id) & heap_id_mask))
->   			continue;
-> -		buffer = ion_buffer_create(heap, dev, len, flags);
-> +		buffer = ion_buffer_create(heap, dev, len, flags, align);
->   		if (!IS_ERR(buffer))
->   			break;
->   	}
-> diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
-> index f5f9cd6..0c161d2 100644
-> --- a/drivers/staging/android/ion/ion.h
-> +++ b/drivers/staging/android/ion/ion.h
-> @@ -123,8 +123,10 @@ struct ion_device {
->    */
->   struct ion_heap_ops {
->   	int (*allocate)(struct ion_heap *heap,
-> -			struct ion_buffer *buffer, unsigned long len,
-> -			unsigned long flags);
-> +			struct ion_buffer *buffer,
-> +			unsigned long len,
-> +			unsigned long flags,
-> +			unsigned int align);
->   	void (*free)(struct ion_buffer *buffer);
->   	void * (*map_kernel)(struct ion_heap *heap, struct ion_buffer *buffer);
->   	void (*unmap_kernel)(struct ion_heap *heap, struct ion_buffer *buffer);
-> @@ -228,7 +230,8 @@ int ion_heap_pages_zero(struct page *page, size_t size, pgprot_t pgprot);
->   
->   int ion_alloc(size_t len,
->   	      unsigned int heap_id_mask,
-> -	      unsigned int flags);
-> +	      unsigned int flags,
-> +	      unsigned int align);
->   
->   /**
->    * ion_heap_init_shrinker
-> diff --git a/drivers/staging/android/ion/ion_carveout_heap.c b/drivers/staging/android/ion/ion_carveout_heap.c
-> index fee7650..deae9dd 100644
-> --- a/drivers/staging/android/ion/ion_carveout_heap.c
-> +++ b/drivers/staging/android/ion/ion_carveout_heap.c
-> @@ -59,7 +59,8 @@ static void ion_carveout_free(struct ion_heap *heap, phys_addr_t addr,
->   static int ion_carveout_heap_allocate(struct ion_heap *heap,
->   				      struct ion_buffer *buffer,
->   				      unsigned long size,
-> -				      unsigned long flags)
-> +				      unsigned long flags,
-> +				      unsigned int align)
->   {
->   	struct sg_table *table;
->   	phys_addr_t paddr;
-> diff --git a/drivers/staging/android/ion/ion_chunk_heap.c b/drivers/staging/android/ion/ion_chunk_heap.c
-> index 102c093..15f9518 100644
-> --- a/drivers/staging/android/ion/ion_chunk_heap.c
-> +++ b/drivers/staging/android/ion/ion_chunk_heap.c
-> @@ -35,7 +35,8 @@ struct ion_chunk_heap {
->   static int ion_chunk_heap_allocate(struct ion_heap *heap,
->   				   struct ion_buffer *buffer,
->   				   unsigned long size,
-> -				   unsigned long flags)
-> +				   unsigned long flags,
-> +				   unsigned int align)
->   {
->   	struct ion_chunk_heap *chunk_heap =
->   		container_of(heap, struct ion_chunk_heap, heap);
-> diff --git a/drivers/staging/android/ion/ion_cma_heap.c b/drivers/staging/android/ion/ion_cma_heap.c
-> index 86196ff..f3f8deb 100644
-> --- a/drivers/staging/android/ion/ion_cma_heap.c
-> +++ b/drivers/staging/android/ion/ion_cma_heap.c
-> @@ -32,25 +32,31 @@ struct ion_cma_heap {
->   #define to_cma_heap(x) container_of(x, struct ion_cma_heap, heap)
->   
->   /* ION CMA heap operations functions */
-> -static int ion_cma_allocate(struct ion_heap *heap, struct ion_buffer *buffer,
-> +static int ion_cma_allocate(struct ion_heap *heap,
-> +			    struct ion_buffer *buffer,
->   			    unsigned long len,
-> -			    unsigned long flags)
-> +			    unsigned long flags,
-> +			    unsigned int align)
->   {
->   	struct ion_cma_heap *cma_heap = to_cma_heap(heap);
->   	struct sg_table *table;
->   	struct page *pages;
->   	unsigned long size = PAGE_ALIGN(len);
->   	unsigned long nr_pages = size >> PAGE_SHIFT;
-> -	unsigned long align = get_order(size);
-> +	int order = get_order(align);
->   	int ret;
->   
-> -	if (align > CONFIG_CMA_ALIGNMENT)
-> -		align = CONFIG_CMA_ALIGNMENT;
-> +	/* CMA allocation alignment is in PAGE_SIZE order */
-> +	if (order > CONFIG_CMA_ALIGNMENT)
-> +		order = CONFIG_CMA_ALIGNMENT;
->   
-> -	pages = cma_alloc(cma_heap->cma, nr_pages, align, GFP_KERNEL);
-> +	pages = cma_alloc(cma_heap->cma, nr_pages, order, GFP_KERNEL);
->   	if (!pages)
->   		return -ENOMEM;
->   
-> +	pr_debug("Allocated block of %lu pages starting at 0x%lX",
-> +		 nr_pages, page_to_pfn(pages));
-> +
->   	table = kmalloc(sizeof(*table), GFP_KERNEL);
->   	if (!table)
->   		goto err;
-> diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
-> index 4dc5d7a..b5a1720 100644
-> --- a/drivers/staging/android/ion/ion_system_heap.c
-> +++ b/drivers/staging/android/ion/ion_system_heap.c
-> @@ -125,7 +125,8 @@ static struct page *alloc_largest_available(struct ion_system_heap *heap,
->   static int ion_system_heap_allocate(struct ion_heap *heap,
->   				    struct ion_buffer *buffer,
->   				    unsigned long size,
-> -				    unsigned long flags)
-> +				    unsigned long flags,
-> +				    unsigned int align)
->   {
->   	struct ion_system_heap *sys_heap = container_of(heap,
->   							struct ion_system_heap,
-> @@ -363,7 +364,8 @@ device_initcall(ion_system_heap_create);
->   static int ion_system_contig_heap_allocate(struct ion_heap *heap,
->   					   struct ion_buffer *buffer,
->   					   unsigned long len,
-> -					   unsigned long flags)
-> +					   unsigned long flags,
-> +					   unsigned int align)
->   {
->   	int order = get_order(len);
->   	struct page *page;
-> diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
-> index 9e21451..b093edd 100644
-> --- a/drivers/staging/android/uapi/ion.h
-> +++ b/drivers/staging/android/uapi/ion.h
-> @@ -70,9 +70,8 @@ enum ion_heap_type {
->    * @len:		size of the allocation
->    * @heap_id_mask:	mask of heap ids to allocate from
->    * @flags:		flags passed to heap
-> - * @handle:		pointer that will be populated with a cookie to use to
-> - *			refer to this allocation
-> - *
-> + * @fd:		file descriptor associated with newly allocated buffer
-> + * @align:	allocation alignment
->    * Provided by userspace as an argument to the ioctl
->    */
->   struct ion_allocation_data {
-> @@ -80,7 +79,7 @@ struct ion_allocation_data {
->   	__u32 heap_id_mask;
->   	__u32 flags;
->   	__u32 fd;
-> -	__u32 unused;
-> +	__u32 align;
->   };
->   
->   #define MAX_HEAP_NAME			32
-> 
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+CgpPbiAwMi8xMi8yMDE4IDA4OjQyIFBNLCBMYXVyYSBBYmJvdHQgd3JvdGU6Cj4gT24gMDIvMTAv
+MjAxOCAwMjoxNyBBTSwgQWxleGV5IFNraWRhbm92IHdyb3RlOgo+PiBDdXJyZW50IGlvbiBkZWZp
+bmVkIGFsbG9jYXRpb24gaW9jdGwgZG9lc24ndCBhbGxvdyB0byBzcGVjaWZ5IHRoZQo+PiByZXF1
+ZXN0ZWQKPj4gYWxsb2NhdGlvbiBhbGlnbm1lbnQuIENNQSBoZWFwIGFsbG9jYXRlcyBidWZmZXJz
+IGFsaWduZWQgb24gYnVmZmVyIHNpemUKPj4gcGFnZSBvcmRlci4KPj4KPj4gU29tZXRpbWVzLCB0
+aGUgYWxpZ25tZW50IHJlcXVpcmVtZW50IGlzIGxlc3MgcmVzdHJpY3RpdmUuIEluIHN1Y2ggY2Fz
+ZXMsCj4+IHByb3ZpZGluZyBzcGVjaWZpYyBhbGlnbm1lbnQgbWF5IHJlZHVjZSB0aGUgZXh0ZXJu
+YWwgbWVtb3J5IGZyYWdtZW50YXRpb24KPj4gYW5kIGluIHNvbWUgY2FzZXMgaXQgbWF5IGF2b2lk
+IHRoZSBhbGxvY2F0aW9uIHJlcXVlc3QgZmFpbHVyZS4KPj4KPiAKPiBJIHJlYWxseSBkbyBub3Qg
+d2FudCB0byBicmluZyB0aGlzIGJhY2sgYXMgcGFydCBvZiB0aGUgcmVndWxhcgo+IEFCSS4gClll
+cywgSSBrbm93IGl0IHdhcyByZW1vdmVkIGluIDQuMTIuCkhhdmluZyBhbiBhbGlnbm1lbnQgcGFy
+YW1ldGVyIHRoYXQgZ2V0cyB1c2VkIGZvciBleGFjdGx5Cj4gb25lIGhlYXAgb25seSBsZWFkcyB0
+byBjb25mdXNpb24gKHdoaWNoIGlzIHdoeSBpdCB3YXMgcmVtb3ZlZAo+IGZyb20gdGhlIEFCSSBp
+biB0aGUgZmlyc3QgcGxhY2UpLgpZb3UgYXJlIGNvcnJlY3QgcmVnYXJkaW5nIHRoZSBDTUEgaGVh
+cC4gQnV0LCBwcm9iYWJseSBpdCBtYXkgYmUgdXNlZCBieQpjdXN0b20gaGVhcCBhcyB3ZWxsLgo+
+IAo+IFRoZSBhbGlnbm1lbnQgY2FtZSBmcm9tIHRoZSBiZWhhdmlvciBvZiB0aGUgRE1BIEFQSXMu
+IERvIHlvdQo+IGFjdHVhbGx5IG5lZWQgdG8gc3BlY2lmeSBhbnkgYWxpZ25tZW50IGZyb20gdXNl
+cnNwYWNlIG9yIGRvCj4geW91IG9ubHkgbmVlZCBwYWdlIHNpemU/Clllcy4gSWYgQ01BIGdpdmVz
+IGl0IGZvciBmcmVlLCBJIHdvdWxkIHN1Z2dlc3QgdG8gbGV0IHRoZSBpb24gdXNlciB0byBkZWNp
+ZGUKPiAKPiBUaGFua3MsCj4gTGF1cmEKPiAKVGhhbmtzLApBbGV4ZXkKCj4+IFRvIGZpeCB0aGlz
+LCB3ZSBhZGQgYW4gYWxpZ25tZW50IHBhcmFtZXRlciB0byB0aGUgYWxsb2NhdGlvbiBpb2N0bC4K
+Pj4KPj4gU2lnbmVkLW9mZi1ieTogQWxleGV5IFNraWRhbm92IDxhbGV4ZXkuc2tpZGFub3ZAaW50
+ZWwuY29tPgo+PiAtLS0KPj4gwqAgZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0
+bC5jwqDCoMKgwqDCoMKgwqDCoCB8wqAgMyArKy0KPj4gwqAgZHJpdmVycy9zdGFnaW5nL2FuZHJv
+aWQvaW9uL2lvbi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDE0ICsrKysrKysrKy0t
+LS0tCj4+IMKgIGRyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uaMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgfMKgIDkgKysrKysrLS0tCj4+IMKgIGRyaXZlcnMvc3RhZ2luZy9hbmRy
+b2lkL2lvbi9pb25fY2FydmVvdXRfaGVhcC5jIHzCoCAzICsrLQo+PiDCoCBkcml2ZXJzL3N0YWdp
+bmcvYW5kcm9pZC9pb24vaW9uX2NodW5rX2hlYXAuY8KgwqDCoCB8wqAgMyArKy0KPj4gwqAgZHJp
+dmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9jbWFfaGVhcC5jwqDCoMKgwqDCoCB8IDE4ICsr
+KysrKysrKysrKy0tLS0tLQo+PiDCoCBkcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uX3N5
+c3RlbV9oZWFwLmPCoMKgIHzCoCA2ICsrKystLQo+PiDCoCBkcml2ZXJzL3N0YWdpbmcvYW5kcm9p
+ZC91YXBpL2lvbi5owqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDcgKysrLS0tLQo+PiDC
+oCA4IGZpbGVzIGNoYW5nZWQsIDQwIGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQo+Pgo+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0bC5jCj4+
+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0bC5jCj4+IGluZGV4IGM3ODk4
+OTMuLjlmZTAyMmIgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9p
+b24taW9jdGwuYwo+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLWlvY3Rs
+LmMKPj4gQEAgLTgzLDcgKzgzLDggQEAgbG9uZyBpb25faW9jdGwoc3RydWN0IGZpbGUgKmZpbHAs
+IHVuc2lnbmVkIGludCBjbWQsCj4+IHVuc2lnbmVkIGxvbmcgYXJnKQo+PiDCoCDCoMKgwqDCoMKg
+wqDCoMKgwqAgZmQgPSBpb25fYWxsb2MoZGF0YS5hbGxvY2F0aW9uLmxlbiwKPj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkYXRhLmFsbG9jYXRpb24uaGVhcF9pZF9t
+YXNrLAo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRhdGEuYWxsb2Nh
+dGlvbi5mbGFncyk7Cj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGF0
+YS5hbGxvY2F0aW9uLmZsYWdzLAo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGRhdGEuYWxsb2NhdGlvbi5hbGlnbik7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoZmQg
+PCAwKQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gZmQ7Cj4+IMKgIGRpZmYg
+LS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmMKPj4gYi9kcml2ZXJzL3N0
+YWdpbmcvYW5kcm9pZC9pb24vaW9uLmMKPj4gaW5kZXggZjQ4MDg4NS4uMzVkZGM3YSAxMDA2NDQK
+Pj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5jCj4+ICsrKyBiL2RyaXZl
+cnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uYwo+PiBAQCAtNzgsNyArNzgsOCBAQCBzdGF0aWMg
+dm9pZCBpb25fYnVmZmVyX2FkZChzdHJ1Y3QgaW9uX2RldmljZSAqZGV2LAo+PiDCoCBzdGF0aWMg
+c3RydWN0IGlvbl9idWZmZXIgKmlvbl9idWZmZXJfY3JlYXRlKHN0cnVjdCBpb25faGVhcCAqaGVh
+cCwKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+c3RydWN0IGlvbl9kZXZpY2UgKmRldiwKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgbG9uZyBsZW4sCj4+IC3CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVk
+IGxvbmcgZmxhZ3MsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHVuc2lnbmVkIGludCBhbGlnbikKPj4gwqAgewo+PiDCoMKgwqDCoMKgIHN0cnVjdCBp
+b25fYnVmZmVyICpidWZmZXI7Cj4+IMKgwqDCoMKgwqAgaW50IHJldDsKPj4gQEAgLTkwLDE0ICs5
+MSwxNCBAQCBzdGF0aWMgc3RydWN0IGlvbl9idWZmZXIgKmlvbl9idWZmZXJfY3JlYXRlKHN0cnVj
+dAo+PiBpb25faGVhcCAqaGVhcCwKPj4gwqDCoMKgwqDCoCBidWZmZXItPmhlYXAgPSBoZWFwOwo+
+PiDCoMKgwqDCoMKgIGJ1ZmZlci0+ZmxhZ3MgPSBmbGFnczsKPj4gwqAgLcKgwqDCoCByZXQgPSBo
+ZWFwLT5vcHMtPmFsbG9jYXRlKGhlYXAsIGJ1ZmZlciwgbGVuLCBmbGFncyk7Cj4+ICvCoMKgwqAg
+cmV0ID0gaGVhcC0+b3BzLT5hbGxvY2F0ZShoZWFwLCBidWZmZXIsIGxlbiwgZmxhZ3MsIGFsaWdu
+KTsKPj4gwqAgwqDCoMKgwqDCoCBpZiAocmV0KSB7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAo
+IShoZWFwLT5mbGFncyAmIElPTl9IRUFQX0ZMQUdfREVGRVJfRlJFRSkpCj4+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIGdvdG8gZXJyMjsKPj4gwqAgwqDCoMKgwqDCoMKgwqDCoMKgIGlvbl9o
+ZWFwX2ZyZWVsaXN0X2RyYWluKGhlYXAsIDApOwo+PiAtwqDCoMKgwqDCoMKgwqAgcmV0ID0gaGVh
+cC0+b3BzLT5hbGxvY2F0ZShoZWFwLCBidWZmZXIsIGxlbiwgZmxhZ3MpOwo+PiArwqDCoMKgwqDC
+oMKgwqAgcmV0ID0gaGVhcC0+b3BzLT5hbGxvY2F0ZShoZWFwLCBidWZmZXIsIGxlbiwgZmxhZ3Ms
+IGFsaWduKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChyZXQpCj4+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGdvdG8gZXJyMjsKPj4gwqDCoMKgwqDCoCB9Cj4+IEBAIC0zOTAsNyArMzkx
+LDEwIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZG1hX2J1Zl9vcHMgZG1hX2J1Zl9vcHMgPSB7Cj4+
+IMKgwqDCoMKgwqAgLnVubWFwID0gaW9uX2RtYV9idWZfa3VubWFwLAo+PiDCoCB9Owo+PiDCoCAt
+aW50IGlvbl9hbGxvYyhzaXplX3QgbGVuLCB1bnNpZ25lZCBpbnQgaGVhcF9pZF9tYXNrLCB1bnNp
+Z25lZCBpbnQKPj4gZmxhZ3MpCj4+ICtpbnQgaW9uX2FsbG9jKHNpemVfdCBsZW4sCj4+ICvCoMKg
+wqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgaW50IGhlYXBfaWRfbWFzaywKPj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoCB1bnNpZ25lZCBpbnQgZmxhZ3MsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWdu
+ZWQgaW50IGFsaWduKQo+PiDCoCB7Cj4+IMKgwqDCoMKgwqAgc3RydWN0IGlvbl9kZXZpY2UgKmRl
+diA9IGludGVybmFsX2RldjsKPj4gwqDCoMKgwqDCoCBzdHJ1Y3QgaW9uX2J1ZmZlciAqYnVmZmVy
+ID0gTlVMTDsKPj4gQEAgLTQxNyw3ICs0MjEsNyBAQCBpbnQgaW9uX2FsbG9jKHNpemVfdCBsZW4s
+IHVuc2lnbmVkIGludAo+PiBoZWFwX2lkX21hc2ssIHVuc2lnbmVkIGludCBmbGFncykKPj4gwqDC
+oMKgwqDCoMKgwqDCoMKgIC8qIGlmIHRoZSBjYWxsZXIgZGlkbid0IHNwZWNpZnkgdGhpcyBoZWFw
+IGlkICovCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoISgoMSA8PCBoZWFwLT5pZCkgJiBoZWFw
+X2lkX21hc2spKQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb250aW51ZTsKPj4gLcKg
+wqDCoMKgwqDCoMKgIGJ1ZmZlciA9IGlvbl9idWZmZXJfY3JlYXRlKGhlYXAsIGRldiwgbGVuLCBm
+bGFncyk7Cj4+ICvCoMKgwqDCoMKgwqDCoCBidWZmZXIgPSBpb25fYnVmZmVyX2NyZWF0ZShoZWFw
+LCBkZXYsIGxlbiwgZmxhZ3MsIGFsaWduKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGlmICghSVNf
+RVJSKGJ1ZmZlcikpCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+PiDCoMKg
+wqDCoMKgIH0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24u
+aAo+PiBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uaAo+PiBpbmRleCBmNWY5Y2Q2
+Li4wYzE2MWQyIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9u
+LmgKPj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5oCj4+IEBAIC0xMjMs
+OCArMTIzLDEwIEBAIHN0cnVjdCBpb25fZGV2aWNlIHsKPj4gwqDCoCAqLwo+PiDCoCBzdHJ1Y3Qg
+aW9uX2hlYXBfb3BzIHsKPj4gwqDCoMKgwqDCoCBpbnQgKCphbGxvY2F0ZSkoc3RydWN0IGlvbl9o
+ZWFwICpoZWFwLAo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgaW9uX2J1ZmZlciAq
+YnVmZmVyLCB1bnNpZ25lZCBsb25nIGxlbiwKPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5z
+aWduZWQgbG9uZyBmbGFncyk7Cj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBpb25f
+YnVmZmVyICpidWZmZXIsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGxvbmcg
+bGVuLAo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBsb25nIGZsYWdzLAo+PiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnQgYWxpZ24pOwo+PiDCoMKgwqDCoMKg
+IHZvaWQgKCpmcmVlKShzdHJ1Y3QgaW9uX2J1ZmZlciAqYnVmZmVyKTsKPj4gwqDCoMKgwqDCoCB2
+b2lkICogKCptYXBfa2VybmVsKShzdHJ1Y3QgaW9uX2hlYXAgKmhlYXAsIHN0cnVjdCBpb25fYnVm
+ZmVyCj4+ICpidWZmZXIpOwo+PiDCoMKgwqDCoMKgIHZvaWQgKCp1bm1hcF9rZXJuZWwpKHN0cnVj
+dCBpb25faGVhcCAqaGVhcCwgc3RydWN0IGlvbl9idWZmZXIKPj4gKmJ1ZmZlcik7Cj4+IEBAIC0y
+MjgsNyArMjMwLDggQEAgaW50IGlvbl9oZWFwX3BhZ2VzX3plcm8oc3RydWN0IHBhZ2UgKnBhZ2Us
+IHNpemVfdAo+PiBzaXplLCBwZ3Byb3RfdCBwZ3Byb3QpOwo+PiDCoCDCoCBpbnQgaW9uX2FsbG9j
+KHNpemVfdCBsZW4sCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgaW50IGhlYXBf
+aWRfbWFzaywKPj4gLcKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnQgZmxhZ3MpOwo+PiAr
+wqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGludCBmbGFncywKPj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoCB1bnNpZ25lZCBpbnQgYWxpZ24pOwo+PiDCoCDCoCAvKioKPj4gwqDCoCAqIGlvbl9oZWFw
+X2luaXRfc2hyaW5rZXIKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lv
+bi9pb25fY2FydmVvdXRfaGVhcC5jCj4+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lv
+bl9jYXJ2ZW91dF9oZWFwLmMKPj4gaW5kZXggZmVlNzY1MC4uZGVhZTlkZCAxMDA2NDQKPj4gLS0t
+IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9jYXJ2ZW91dF9oZWFwLmMKPj4gKysr
+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9jYXJ2ZW91dF9oZWFwLmMKPj4gQEAg
+LTU5LDcgKzU5LDggQEAgc3RhdGljIHZvaWQgaW9uX2NhcnZlb3V0X2ZyZWUoc3RydWN0IGlvbl9o
+ZWFwICpoZWFwLAo+PiBwaHlzX2FkZHJfdCBhZGRyLAo+PiDCoCBzdGF0aWMgaW50IGlvbl9jYXJ2
+ZW91dF9oZWFwX2FsbG9jYXRlKHN0cnVjdCBpb25faGVhcCAqaGVhcCwKPj4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgaW9uX2J1ZmZlciAqYnVm
+ZmVyLAo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVu
+c2lnbmVkIGxvbmcgc2l6ZSwKPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB1bnNpZ25lZCBsb25nIGZsYWdzKQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGxvbmcgZmxhZ3MsCj4+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgaW50IGFsaWduKQo+PiDCoCB7
+Cj4+IMKgwqDCoMKgwqAgc3RydWN0IHNnX3RhYmxlICp0YWJsZTsKPj4gwqDCoMKgwqDCoCBwaHlz
+X2FkZHJfdCBwYWRkcjsKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lv
+bi9pb25fY2h1bmtfaGVhcC5jCj4+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9j
+aHVua19oZWFwLmMKPj4gaW5kZXggMTAyYzA5My4uMTVmOTUxOCAxMDA2NDQKPj4gLS0tIGEvZHJp
+dmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9jaHVua19oZWFwLmMKPj4gKysrIGIvZHJpdmVy
+cy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9jaHVua19oZWFwLmMKPj4gQEAgLTM1LDcgKzM1LDgg
+QEAgc3RydWN0IGlvbl9jaHVua19oZWFwIHsKPj4gwqAgc3RhdGljIGludCBpb25fY2h1bmtfaGVh
+cF9hbGxvY2F0ZShzdHJ1Y3QgaW9uX2hlYXAgKmhlYXAsCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGlvbl9idWZmZXIgKmJ1ZmZlciwKPj4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBsb25nIHNpemUsCj4+
+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgbG9uZyBmbGFn
+cykKPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBsb25n
+IGZsYWdzLAo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVk
+IGludCBhbGlnbikKPj4gwqAgewo+PiDCoMKgwqDCoMKgIHN0cnVjdCBpb25fY2h1bmtfaGVhcCAq
+Y2h1bmtfaGVhcCA9Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBjb250YWluZXJfb2YoaGVhcCwgc3Ry
+dWN0IGlvbl9jaHVua19oZWFwLCBoZWFwKTsKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2lu
+Zy9hbmRyb2lkL2lvbi9pb25fY21hX2hlYXAuYwo+PiBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lk
+L2lvbi9pb25fY21hX2hlYXAuYwo+PiBpbmRleCA4NjE5NmZmLi5mM2Y4ZGViIDEwMDY0NAo+PiAt
+LS0gYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uX2NtYV9oZWFwLmMKPj4gKysrIGIv
+ZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9jbWFfaGVhcC5jCj4+IEBAIC0zMiwyNSAr
+MzIsMzEgQEAgc3RydWN0IGlvbl9jbWFfaGVhcCB7Cj4+IMKgICNkZWZpbmUgdG9fY21hX2hlYXAo
+eCkgY29udGFpbmVyX29mKHgsIHN0cnVjdCBpb25fY21hX2hlYXAsIGhlYXApCj4+IMKgIMKgIC8q
+IElPTiBDTUEgaGVhcCBvcGVyYXRpb25zIGZ1bmN0aW9ucyAqLwo+PiAtc3RhdGljIGludCBpb25f
+Y21hX2FsbG9jYXRlKHN0cnVjdCBpb25faGVhcCAqaGVhcCwgc3RydWN0IGlvbl9idWZmZXIKPj4g
+KmJ1ZmZlciwKPj4gK3N0YXRpYyBpbnQgaW9uX2NtYV9hbGxvY2F0ZShzdHJ1Y3QgaW9uX2hlYXAg
+KmhlYXAsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGlvbl9idWZm
+ZXIgKmJ1ZmZlciwKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25l
+ZCBsb25nIGxlbiwKPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBs
+b25nIGZsYWdzKQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGxv
+bmcgZmxhZ3MsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgaW50
+IGFsaWduKQo+PiDCoCB7Cj4+IMKgwqDCoMKgwqAgc3RydWN0IGlvbl9jbWFfaGVhcCAqY21hX2hl
+YXAgPSB0b19jbWFfaGVhcChoZWFwKTsKPj4gwqDCoMKgwqDCoCBzdHJ1Y3Qgc2dfdGFibGUgKnRh
+YmxlOwo+PiDCoMKgwqDCoMKgIHN0cnVjdCBwYWdlICpwYWdlczsKPj4gwqDCoMKgwqDCoCB1bnNp
+Z25lZCBsb25nIHNpemUgPSBQQUdFX0FMSUdOKGxlbik7Cj4+IMKgwqDCoMKgwqAgdW5zaWduZWQg
+bG9uZyBucl9wYWdlcyA9IHNpemUgPj4gUEFHRV9TSElGVDsKPj4gLcKgwqDCoCB1bnNpZ25lZCBs
+b25nIGFsaWduID0gZ2V0X29yZGVyKHNpemUpOwo+PiArwqDCoMKgIGludCBvcmRlciA9IGdldF9v
+cmRlcihhbGlnbik7Cj4+IMKgwqDCoMKgwqAgaW50IHJldDsKPj4gwqAgLcKgwqDCoCBpZiAoYWxp
+Z24gPiBDT05GSUdfQ01BX0FMSUdOTUVOVCkKPj4gLcKgwqDCoMKgwqDCoMKgIGFsaWduID0gQ09O
+RklHX0NNQV9BTElHTk1FTlQ7Cj4+ICvCoMKgwqAgLyogQ01BIGFsbG9jYXRpb24gYWxpZ25tZW50
+IGlzIGluIFBBR0VfU0laRSBvcmRlciAqLwo+PiArwqDCoMKgIGlmIChvcmRlciA+IENPTkZJR19D
+TUFfQUxJR05NRU5UKQo+PiArwqDCoMKgwqDCoMKgwqAgb3JkZXIgPSBDT05GSUdfQ01BX0FMSUdO
+TUVOVDsKPj4gwqAgLcKgwqDCoCBwYWdlcyA9IGNtYV9hbGxvYyhjbWFfaGVhcC0+Y21hLCBucl9w
+YWdlcywgYWxpZ24sIEdGUF9LRVJORUwpOwo+PiArwqDCoMKgIHBhZ2VzID0gY21hX2FsbG9jKGNt
+YV9oZWFwLT5jbWEsIG5yX3BhZ2VzLCBvcmRlciwgR0ZQX0tFUk5FTCk7Cj4+IMKgwqDCoMKgwqAg
+aWYgKCFwYWdlcykKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU5PTUVNOwo+PiDCoCAr
+wqDCoMKgIHByX2RlYnVnKCJBbGxvY2F0ZWQgYmxvY2sgb2YgJWx1IHBhZ2VzIHN0YXJ0aW5nIGF0
+IDB4JWxYIiwKPj4gK8KgwqDCoMKgwqDCoMKgwqAgbnJfcGFnZXMsIHBhZ2VfdG9fcGZuKHBhZ2Vz
+KSk7Cj4+ICsKPj4gwqDCoMKgwqDCoCB0YWJsZSA9IGttYWxsb2Moc2l6ZW9mKCp0YWJsZSksIEdG
+UF9LRVJORUwpOwo+PiDCoMKgwqDCoMKgIGlmICghdGFibGUpCj4+IMKgwqDCoMKgwqDCoMKgwqDC
+oCBnb3RvIGVycjsKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9p
+b25fc3lzdGVtX2hlYXAuYwo+PiBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb25fc3lz
+dGVtX2hlYXAuYwo+PiBpbmRleCA0ZGM1ZDdhLi5iNWExNzIwIDEwMDY0NAo+PiAtLS0gYS9kcml2
+ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uX3N5c3RlbV9oZWFwLmMKPj4gKysrIGIvZHJpdmVy
+cy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9zeXN0ZW1faGVhcC5jCj4+IEBAIC0xMjUsNyArMTI1
+LDggQEAgc3RhdGljIHN0cnVjdCBwYWdlICphbGxvY19sYXJnZXN0X2F2YWlsYWJsZShzdHJ1Y3QK
+Pj4gaW9uX3N5c3RlbV9oZWFwICpoZWFwLAo+PiDCoCBzdGF0aWMgaW50IGlvbl9zeXN0ZW1faGVh
+cF9hbGxvY2F0ZShzdHJ1Y3QgaW9uX2hlYXAgKmhlYXAsCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgaW9uX2J1ZmZlciAqYnVmZmVyLAo+PiDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgbG9uZyBzaXpl
+LAo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgbG9u
+ZyBmbGFncykKPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2ln
+bmVkIGxvbmcgZmxhZ3MsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB1bnNpZ25lZCBpbnQgYWxpZ24pCj4+IMKgIHsKPj4gwqDCoMKgwqDCoCBzdHJ1Y3QgaW9uX3N5
+c3RlbV9oZWFwICpzeXNfaGVhcCA9IGNvbnRhaW5lcl9vZihoZWFwLAo+PiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBpb25f
+c3lzdGVtX2hlYXAsCj4+IEBAIC0zNjMsNyArMzY0LDggQEAgZGV2aWNlX2luaXRjYWxsKGlvbl9z
+eXN0ZW1faGVhcF9jcmVhdGUpOwo+PiDCoCBzdGF0aWMgaW50IGlvbl9zeXN0ZW1fY29udGlnX2hl
+YXBfYWxsb2NhdGUoc3RydWN0IGlvbl9oZWFwICpoZWFwLAo+PiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGlvbl9idWZmZXIgKmJ1ZmZlciwK
+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2ln
+bmVkIGxvbmcgbGVuLAo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgdW5zaWduZWQgbG9uZyBmbGFncykKPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGxvbmcgZmxhZ3MsCj4+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnQgYWxpZ24pCj4+IMKg
+IHsKPj4gwqDCoMKgwqDCoCBpbnQgb3JkZXIgPSBnZXRfb3JkZXIobGVuKTsKPj4gwqDCoMKgwqDC
+oCBzdHJ1Y3QgcGFnZSAqcGFnZTsKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRy
+b2lkL3VhcGkvaW9uLmgKPj4gYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC91YXBpL2lvbi5oCj4+
+IGluZGV4IDllMjE0NTEuLmIwOTNlZGQgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9h
+bmRyb2lkL3VhcGkvaW9uLmgKPj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvdWFwaS9p
+b24uaAo+PiBAQCAtNzAsOSArNzAsOCBAQCBlbnVtIGlvbl9oZWFwX3R5cGUgewo+PiDCoMKgICog
+QGxlbjrCoMKgwqDCoMKgwqDCoCBzaXplIG9mIHRoZSBhbGxvY2F0aW9uCj4+IMKgwqAgKiBAaGVh
+cF9pZF9tYXNrOsKgwqDCoCBtYXNrIG9mIGhlYXAgaWRzIHRvIGFsbG9jYXRlIGZyb20KPj4gwqDC
+oCAqIEBmbGFnczrCoMKgwqDCoMKgwqDCoCBmbGFncyBwYXNzZWQgdG8gaGVhcAo+PiAtICogQGhh
+bmRsZTrCoMKgwqDCoMKgwqDCoCBwb2ludGVyIHRoYXQgd2lsbCBiZSBwb3B1bGF0ZWQgd2l0aCBh
+IGNvb2tpZSB0bwo+PiB1c2UgdG8KPj4gLSAqwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWZlciB0
+byB0aGlzIGFsbG9jYXRpb24KPj4gLSAqCj4+ICsgKiBAZmQ6wqDCoMKgwqDCoMKgwqAgZmlsZSBk
+ZXNjcmlwdG9yIGFzc29jaWF0ZWQgd2l0aCBuZXdseSBhbGxvY2F0ZWQgYnVmZmVyCj4+ICsgKiBA
+YWxpZ246wqDCoMKgIGFsbG9jYXRpb24gYWxpZ25tZW50Cj4+IMKgwqAgKiBQcm92aWRlZCBieSB1
+c2Vyc3BhY2UgYXMgYW4gYXJndW1lbnQgdG8gdGhlIGlvY3RsCj4+IMKgwqAgKi8KPj4gwqAgc3Ry
+dWN0IGlvbl9hbGxvY2F0aW9uX2RhdGEgewo+PiBAQCAtODAsNyArNzksNyBAQCBzdHJ1Y3QgaW9u
+X2FsbG9jYXRpb25fZGF0YSB7Cj4+IMKgwqDCoMKgwqAgX191MzIgaGVhcF9pZF9tYXNrOwo+PiDC
+oMKgwqDCoMKgIF9fdTMyIGZsYWdzOwo+PiDCoMKgwqDCoMKgIF9fdTMyIGZkOwo+PiAtwqDCoMKg
+IF9fdTMyIHVudXNlZDsKPj4gK8KgwqDCoCBfX3UzMiBhbGlnbjsKPj4gwqAgfTsKPj4gwqAgwqAg
+I2RlZmluZSBNQVhfSEVBUF9OQU1FwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAzMgo+Pgo+IApfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5n
+IGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4
+ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
