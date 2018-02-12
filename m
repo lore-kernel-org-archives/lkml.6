@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753741AbeBLTvy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 14:51:54 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:44242 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751048AbeBLTvt (ORCPT
+        id S1754042AbeBLTv6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 14:51:58 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:47774 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752277AbeBLTvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 14:51:49 -0500
-Date: Mon, 12 Feb 2018 11:51:14 -0800
+        Mon, 12 Feb 2018 14:51:54 -0500
+Date: Mon, 12 Feb 2018 11:49:02 -0800
 From: Dave Watson <davejwatson@fb.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
         Junaid Shahid <junaids@google.com>,
@@ -19,9 +19,9 @@ CC: "David S. Miller" <davem@davemloft.net>,
         Sabrina Dubroca <sd@queasysnail.net>, <linux-kernel@vger.kernel.org>,
         Stephan Mueller <smueller@chronox.de>,
         Ilya Lesokhin <ilyal@mellanox.com>
-Subject: [PATCH 13/14] x86/crypto: aesni: Introduce scatter/gather asm
- function stubs
-Message-ID: <20180212195114.GA61055@davejwatson-mba.local>
+Subject: [PATCH 05/14] x86/crypto: aesni: Merge encode and decode to
+ GCM_ENC_DEC macro
+Message-ID: <20180212194902.GA60735@davejwatson-mba.local>
 References: <cover.1518211765.git.davejwatson@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,50 +29,51 @@ Content-Disposition: inline
 In-Reply-To: <cover.1518211765.git.davejwatson@fb.com>
 User-Agent: Mutt/1.6.0 (2016-04-01)
 X-Originating-IP: [2620:10d:c090:200::6:842f]
-X-ClientProxiedBy: MWHPR20CA0019.namprd20.prod.outlook.com (10.171.151.157) To
- BN6PR15MB1748.namprd15.prod.outlook.com (10.174.238.138)
+X-ClientProxiedBy: CY4PR22CA0069.namprd22.prod.outlook.com (10.173.187.31) To
+ DM5PR15MB1756.namprd15.prod.outlook.com (10.174.246.138)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5ea7ac3f-868b-454a-d32d-08d57251fbf3
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BN6PR15MB1748;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1748;3:mpcqXpJrK2dxO1xsQTOUlQ7jU6seslvnPRCzRNY7qnblh4k/jZ5eowaut8icjU3hAou+NR+FidChv+mrDfnf++iEXsRxOiWHraL3XVwwXIys54Bwe+XIm5Rid9c3bQhH4K7u/Uxxs0Rly+WJRi9HJ2owCLoYwbOAXubZ3NGe4EqSGINIZ2sNFzH+qDMv/j3/qbjYXFkxlZ8jW4s6N4aXthGNLEF7PwWZaY821MX6RMjxuKoIAeRfhl0mxVL/KUhU;25:lJDrrj7zAuq3zCFS27z6SsDNDrzpcK1/Q20RQuMlbz7fJWXpe8VvE6V2cFoCKKBntn89p3DFP83x3UAIytkuWskI0Y/C+Bs9tWTY/K+40SLP54if0SpGFtEUjroiXmcEo61bhOZb0952hKTOc8Swaw8rCBSjJntgeGb2YCEvwOrtfN+m019WGrXsxxLfHotsGnU8N9EB0ta4zvke2pBo0ZxbzppFpLZisdQ8B6zOpofqzyVEFuibdZjihPKUk4MabKMlIQ2xuUtdci+xzZieaYz6tj2eOiMAimDg6gzA98ZoNvGxCnilOoURUqOY07i+zulH9lGtpTJ7ONIwBWlUGA==;31:eex3nvORr4++nURoRucSD7oAYr1VTGiCadWq9dPe8B+uWxFHoNROMpIx3xlfgd4DTcvF0w0W6U85s7VKmLDlpOjJpoWApzl5r8oGoViq8IJV+VAUgoTjann+WVn2jpm//semMvFt7hgGV2gNhh+5UCum4JTanKbQPBTBi8s4ngHyEXDWWPMlr7F6b6CAlLK15l+4AsH8/5DkdQzjgKylTfNxJkKg1xhBYf1rg2trb3U=
-X-MS-TrafficTypeDiagnostic: BN6PR15MB1748:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1748;20:+bKc3yY87AYCad7PMC0D+tvPt5xa32/88/2ASNE2hJfPgs67DZUJDLF01BQwXKpwj9rsVg0GmGlsaEUlY78wDYhQBheSjWMEabmfv9ARgL0sZdsmZ2xJKK9V//l3ULvkV8St9V7VaPlom86HTfDtqkjzWoR6d3fMFWE+SCcQ+ELOGai0nu9Mq97QwwkYmGaTetPy8ZFwJoHnSfZxFO2ycboKZzj6eZhh5iMTmzgNBQ1r/sHxKBCcV32EL15K9vTaUp/6k8dfD4MDypxd8kZe81td9AvTsJb0ZxVN1zIB47LYbzkN2AR05JoOI3IAnHZZOY1fAt9Se6oHsved8CHui+t/aL5XT4uK7z2unJxB4minGlPIghGG/NvKd43EFLKsOuGodDTIlmtnzAR2NNZCtLj37q3SBRCoHcY/hTewuoZIDnhSuqhiUhtrCcOdyteIHtXhyLElw6rou8vkne+MKurX6O1+oQIN8thmwvrwLdvENw2sJxv24ksPr/6ocI6c;4:4G3trgIrhHTHmPbO7NfZsby/WD7S7LKmkfPRncoCgM15sufUxjeoEPDGluiCwtvHRDFqVhvGdTgWuX2Uha1z7uJc7YGFVhAHogAelRErV6rmC1XuZLv5qDC6YLqezyqr1nBSd8Sj7qht+z5qmhpH4pQHb64QBaUw/0ny1rxbrd/irw40eksjXNsWyI54PZXQ6dcucA1Xvej03nuxEPJrR/gKK9jUyUKeaP+VluOyeMHiXccrDxo4/LfKPvC7ZaPZZtxkeIqlMXVSdGJn23kdo+puREr7j2BUu0lt+IMsLsA3knJ+o/ucCKNJNNVI08KMPVt9G4WwigSxw5FqFU10KC0KAL3Itw9Chd7rcsbvpVyx3jUOy/8Q+IDLFyQGyVPE
-X-Microsoft-Antispam-PRVS: <BN6PR15MB17488E63850E746F8BC73621DDF70@BN6PR15MB1748.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(192374486261705)(67672495146484)(266576461109395);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(11241501184)(2400082)(944501161)(10201501046)(3002001)(93006095)(93001095)(6041288)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR15MB1748;BCL:0;PCL:0;RULEID:;SRVR:BN6PR15MB1748;
+X-MS-Office365-Filtering-Correlation-Id: 620b2a4c-84a1-4589-4f0d-08d57251aee6
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:DM5PR15MB1756;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1756;3:zp7VfaLoeDBjWML/QxK0UsbXZvrsbplszd0wl58TnjFWvd7LibisqrKetgg0DnVeFh0uYx+KVnpJhLdVzzyD42qgppH0YUSLeUx5dxQRZZyAALq1WIxluHoc74e5KshoJzekS6qUPu4wRsisgiisfjmfn6Ecb2r6X7RhsLrFfTR5xlyFCBSZPCYLdVNntnB46nGycJ8J8iS9LAl6gGnxCbYIk3mfM/Qe0AwNYSSlFebe6AWAdJNcsvchwGl/JQTz;25:ys6XW9zm6yOT0a+Jaxokc0QGz9ePqB+f4C9RCvjhkzZqt8fzajGZpCS+2UcYXSjg/gzzHoMLxoybJ/j12lfP1c1RNaEnxFBLs2RecBisEI6ujMuvupBDSlI1hJ5YzMvAkdJzENR9GEYRL/L2adGV/+XGiN/xihAFpTjfAFEcBlGvC/Bbfo81U9r3jRVSbHN2fPpdP4Q30pXajo4OPzwptwh5LIoId9TOL8APX+8C9ba1jxOlHKDCNWqO19tDzGVrlTYi00rfR0GaI4JSIzxID4BjBzP8nwg7xnnjnGgFj4rKO8ZkG/BqSapVIj59nzKYxnwfQYAiXLoagq3Bdf184A==;31:smIOqBD8xoxSo3i89n35dyywRcECgyvWW5+mBrIxe5NWqtOuNrV8kewu3Q9i9hALR/d0SEAnOiaC6mShYikvFlIl3VkJZxBZawaPuyuBDLZRp8XgZC1TUrY+OsQ+IHeVVJuN5a80+ZAbYqQdNdJMWPMPiwfhq2If7i+6PCvWWHVlvNJcmNKIRBmKHcVFcN6SQaLB4J/ADZMrMo9l7ALbOsXnh1SeFhktm8n7S+y9+uM=
+X-MS-TrafficTypeDiagnostic: DM5PR15MB1756:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1756;20:gZjl1eBa5LBARDr2glzpjKiVFo/+brJ72XtE0CGP8y93k0CGgsjrQS5IIJ9nmZVnESFdWBwGi2SIkzLhNALB+H7RAGk6g903+iyyEWPdquTpLIlTCU813M/QkTeXEwfTNh5ctTgBd/DQqnZdx7E4jy1lRq/UTFTUuMBqevjMnMu9Xq8xYc8O/sQiMvHyLumDyOaE0Ou5ty2ixPJfmr99UVnSA9q63G3mwZ6nmjCxtrClBfJHLj3+627OlZgOObjwo3jwMpdx/v7iYMj2z8zH4kiKypQ1cj2It0zmma6WfwNNrBUdpYf2xzeYH6zOh8wcv1tVzQQqRqCIbNGzAOnCPDwFvLdvPgaW8rCYSVxMsTwgb0I6bR1bvZplM1RSUbURIbWYfmRetGyeEhCUXT2PGZvWo9ENO3JyG4Gryfn/uiCJY3ZTVTj20LiOGTxcmn1ZfxGIVgNxJ0O32SKDTBEH0eCHSN3F056vhuh0OnPkO7m2RhjuJE1p0qUscGwCJWGh;4:IjcAr1o5/+HnyH7e10eSADIm2vzEfDBgQlPWTXlEoj7nh64/IsWSoQZZo3vDp6A3ocQy1Vd9ShKuMIHnr7fvegFOylidn35jI4pw7m/d72+7/SpiDQceJYYHbUZPK7IogPRGm8kvOSZoNoMY7icWbi6XhZlcExqJYDKY6+2I5v+2KH40H6ceggonp7AHCdPhN0XzZMjGSIbHvd4zJyvH1u9UOFMpvpVLlK3PFPu/KEbGztaWE1eSQvdETqdd8cjVfOGKnIpfY5mp2CJukZp9/F3+ox/FopriEvFP+1EPM//SSqxcLFy546gT775fWZtE42pJo/kABMD19Q7IIIRHrYNoM2l8Uxxhg2/MYFHLWvM=
+X-Microsoft-Antispam-PRVS: <DM5PR15MB17568EF98E5956097961CE3DDDF70@DM5PR15MB1756.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(67672495146484)(266576461109395);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(3231101)(11241501184)(944501161)(93006095)(93001095)(10201501046)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR15MB1756;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1756;
 X-Forefront-PRVS: 0581B5AB35
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(346002)(396003)(366004)(376002)(39860400002)(39380400002)(199004)(189003)(59450400001)(386003)(58126008)(76506005)(86362001)(6496006)(52396003)(478600001)(33896004)(47776003)(50466002)(316002)(52116002)(16586007)(110136005)(83506002)(54906003)(53936002)(98436002)(76176011)(6116002)(25786009)(9686003)(6486002)(81156014)(7416002)(1076002)(97736004)(106356001)(4326008)(5660300001)(8676002)(8936002)(6666003)(33656002)(2906002)(105586002)(7736002)(305945005)(68736007)(186003)(16526019)(23726003)(2950100002)(81166006)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR15MB1748;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR15MB1748;23:6nM32tjCQcTRyJv3LljwKsfj+0jzzV6NgGI6OBP70?=
- =?us-ascii?Q?SnNda1zsvCA7LmBN7o9OmlZ4Nf9q8Rxec3PLoW8XYMwpwW0Yr5BdTLutrbXB?=
- =?us-ascii?Q?3HGA2lK1fE6daQZaGQCtFhcnY/L/HSZlQ8qwR7A+NadH0VXTKo/EH1w+GZno?=
- =?us-ascii?Q?kGqe06sNHZZUOB5Vcw0HSydLipw4AY0U473oT9ya41KTneE4JaQw5R2bRDGK?=
- =?us-ascii?Q?n7zJM7ERQ0B2LfvIfGyUjOAuQjC8mYJbKEWZTPeKbi00S3AcDPNNPPm8DrSo?=
- =?us-ascii?Q?y6lhAlUtfpuLFTfUI+0xPZN3tlVBww03XcPz4NaGhQxtbcw7dYV34z3hYQFq?=
- =?us-ascii?Q?TEBPbeGbdcTYFwAc9euZzV0DKGtbeZLuPZ+CPHq2fQQt0taaaafQC5+7zBE+?=
- =?us-ascii?Q?rbmJ6lthaRs/V7FzeYceddjwiEq+7q1dkZFBQJaj0SxriP7jWHCIwiKL3Ttl?=
- =?us-ascii?Q?EqdP2sJ8t/0l4qMkEz3nRZU/Pyh3sGCNjEULDu7Kkk5ci9mrQ1JaXWuMynvs?=
- =?us-ascii?Q?tg2SyY8UuCQ7XGbZV4TtGv31QVUgIAWaWMW7B88m63hJs1XIMjqYaIIbi2gJ?=
- =?us-ascii?Q?BbrPWZKJfgaphM7mnEICZ8rTpWh8MUtpckJNiYqX0RAVZSavKSQwjWTeyfbh?=
- =?us-ascii?Q?oHVJVHX9V3spKYUcs0rOKemwJ8ljrwo+yhlt0NQgFJOqcUP+EdLcuiyq9mzL?=
- =?us-ascii?Q?q3qAjKo8TbGvI+oWfWVyGO8xN/B4YaARywVFkZbSb0huZduj5tJ8a9Sr50YC?=
- =?us-ascii?Q?dPd4yug3IQIVnypIiAT/FeIGQ2ujkmpvDfDEyDxun5JdVm0bLClyuz1U2jop?=
- =?us-ascii?Q?d5tdt2Aol72TEvygaJWHLGthYpISS/hefHt0cYTOK4stJPEzqpPlcnETMRDr?=
- =?us-ascii?Q?9+bCSP/rvZUfQ1sj8GZe6L2G4/UxolCN9ra6v8/2f66RR+pcxziwpDY1Kf04?=
- =?us-ascii?Q?p5iTL+ZoIUKtLlJZp0kxrXa2kNU1R8e3ffBWQVVtoKeP28nv7DRao0HGufpk?=
- =?us-ascii?Q?7z4V0QCjHvzJz+kpL10dxMXDDHuSVwvs42AkgbQJRpvfYPO4Nn17L+szvtHG?=
- =?us-ascii?Q?AGGNLurFmpWLYjMReN338sBv8EPrC32JyFrYy5zqwlLTFss6bzKCcKz6xb6N?=
- =?us-ascii?Q?au8zkZXBAvuPALlbzkFdKl5+JsxCqBiFawt4rCYglALhx/zhRbUcBBdiXoqt?=
- =?us-ascii?Q?cQe6vCqU0Vn6I3amEJ22UdJTfcW4rxYdTAXLPe1sNq4BwyEyy2mtW/OG2nIN?=
- =?us-ascii?Q?OyKPJ3owqPCMWpoKQ/tu+lUolps5K3MFIYXYClS?=
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1748;6:iE44mTj/gaMADkCDxi70Z6JHvn6jJV3Icz+1UAonXEOvNU8nIgFu9fyNxX57lSGalWL4nFh7hMw0mBt1f2LnEFoPOS1rZSnkK/RXITBn+RBn5ZXGQ+k/p5IBbc72gbaXkqH9+saEvuOKjvEGkAHap3ENH/uQGI8IsdugR8jYL+V+4bgidqN1CHtwFR+JSoc+6yGCjRIMUk0hxmakQOp4JnJRLnFxewf9VtqZL2vMul40HgBumkpZwO8dTS+eSIk+mfw0fCauggv5/Qu0LhEDiA7epbiEi9WJMQqTJprRp5o0NGDN49w7F3GDsyRVo31N2Q4t1ILG7a8OVkxGO0vsbBSuw+/qy9alDYRx5fkfcqA=;5:web1ubeqwcQfl7m3TqCvs7wCSevGdyoFqxWgYyIcomHCL6oVxw2ZxK2gjLY+j090ud0f0FPM8OWGHfTtoK1t5XN5kq9pK7efdGx76Dsxxhtw4bnFfRJq04of+wjcNdB6GD/GjyuCqhHroA/Qw8aY5CIR2zuAnrT+TPhGiJsgCTk=;24:pUvoJHAbm1F0y+2nQ1XBUgErqqsJt7rG44XFNV9aRKxCyCPLbPiqGEUfXQ1g0CPAWyRgp9KMVEkiEQMzFvlZM1LiHGt88wicQBCBW/JOIxY=;7:klZwpCuhUelKrHuUXs75FWgLx5IKOkSia9rzTYa2nUyBVUV4lP5VhAJaDlp8jjHWwsVgLFulmIq66sl+85IFI/o1A8kLfmOEZHUIVZXozbHqvLXmmS0V7o7h9yWYJRCPPK9JdGyo/4TAPRowTEH7NgARaFkPQTjp1lQ0wIP+y9cAm/VC52N86UlGfeP4917j6Q/AtiITkchJbEJSXs220SNpdv9tLqILFpZ+D4L31qWUFGcM9OYHhtfBlE5SJn0/
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(39380400002)(376002)(39860400002)(346002)(396003)(199004)(189003)(16586007)(97736004)(316002)(7416002)(186003)(23726003)(16526019)(5660300001)(59450400001)(1076002)(50466002)(6116002)(33896004)(7736002)(110136005)(54906003)(386003)(305945005)(86362001)(25786009)(58126008)(83506002)(2906002)(33656002)(6666003)(8676002)(6346003)(478600001)(2950100002)(106356001)(68736007)(8936002)(81166006)(81156014)(98436002)(105586002)(76506005)(76176011)(4326008)(9686003)(53936002)(52116002)(52396003)(47776003)(6486002)(6496006)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1756;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR15MB1756;23:Daav5UQsClKFxS1YZI2XEMdkUySLDHpx/J8n9HYxU?=
+ =?us-ascii?Q?gkg2XTMXf4PEwImpwzaTuV+h0OiaIlaNWBXYuTIziE5rbZ8Q8fCYbxtfb59u?=
+ =?us-ascii?Q?XngE669K9E/4Iv20rluA+OM2PdzYdhjuGHYcIJC47AyWYwGqc5Yc/7cnsjuJ?=
+ =?us-ascii?Q?dg5GDCvFYVbenWRn+R9Jk2U8GjRfJzKXk1LEQooKU78xQ8/bvJ4ppjHSiKCP?=
+ =?us-ascii?Q?xilLTY2nEnIuW4pzJhx9w23Zmg4+7aoS8YwP3up6o8WtNWg2dSLUHkdeqNyM?=
+ =?us-ascii?Q?NhsMDPPSetArD3lKHAW02pLLx08zPYP8EGPOquT2Xcq7greIzrCA4fDYOT9T?=
+ =?us-ascii?Q?hrTMPgf4mQPt2uCdYqOa06uZDi0ax/oFxWVKSr2N+NVyWy8Cgr9vJTBBWb9J?=
+ =?us-ascii?Q?Xv/tj2ZkFEhhVcGruIaijNkn5rL/HZxRYT3Baw0cVaW43VOPVBwZcRED25qh?=
+ =?us-ascii?Q?ZluX6xqMaKLt1Yg7C9vMWH+cB9bw77KGJ4/W4E3hf7lTDtamyK6K/RA+CAfx?=
+ =?us-ascii?Q?6P5qSUuU20IF7WCeFFYh/X0qmicLW6uKgFcOwdJeWT8Q4Zy6BNDJ5UsoNkfR?=
+ =?us-ascii?Q?GHN1InigGdxdqfso3uf4qH9h5LkYqzxBIMMsJKHFV0ghci/Ecfs+54JFvALF?=
+ =?us-ascii?Q?DmaqCQ1RDx06CBRK1P0Ypt7k2B7NVmcz8u+YOOrK2RP3FEFt6zsxFNw7KOcP?=
+ =?us-ascii?Q?HY1yBysZe/soCtH6/ksfG4GmxGkzl4p4vtENzpYjpmn3+JPUDDfZzEQlcuo6?=
+ =?us-ascii?Q?HAdbivUVtMLC9aE8/GkBKLzz9FZl2vRvyHiIIIVMMNMPult/QvzPStWLPo2E?=
+ =?us-ascii?Q?RYELCUQ8We0pUitBS5bvCqZ6rAkBpTYs6dwSxOgvmO+LuropBnyQ/2iGnvJa?=
+ =?us-ascii?Q?wOnRUT3+KXWb3MFpYr8phmkPZxvQmlsYpwuINomTb8KnpNsNcjA4WU2zSL53?=
+ =?us-ascii?Q?hwOlYw4cKScB4epdy4aQFnRd+JAktzExGEgvLvJAnSCG5+cr4zvkXjMlychI?=
+ =?us-ascii?Q?zxEJpA24ksAKS6SunGDveAmteNOBzMoGL+h+VHqoeFCZ0mQQyXri/+j9zy2d?=
+ =?us-ascii?Q?Am+hxWK/f2fD74zJiGreiXeMAxIACLddtIDJEIfP2P/+aFnSj67HXFEQcUrh?=
+ =?us-ascii?Q?bhhiwSE/L26SZMHvibwx+N7R2UxD/GjDOTyAyQC8zbSjDaWBsb5DQyZNErqD?=
+ =?us-ascii?Q?EMAHght5EZUd/9+LcojZsX6CLPD7J+Puta+4ZWVv+dtM2SwjzWWFXrprjpFE?=
+ =?us-ascii?Q?pR6yZv/z1662wWcg+EhNSdra9lcE1SNEExoLz+XFFbKupu6z5wu9NykAIna1?=
+ =?us-ascii?B?QT09?=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1756;6:hiIl6u1toTXY53jtzKz50Ge6/WYVxo5i5PxH5e9p29UGkFgugAWRJJJ7vksbKK849GEuZDUWZOl0dtTuc00AGDvziFoiEndtbJs+5o7KMLq/n5r+uqml1tLgMJ53j3L5ROCcPGU3Lx1kP3A5FzoXSTvUjm9n5ByABmh6U9V2aqnIscClbD2FC6hHrZhiURVYUrcBBM9FgVvdOGYjgl4d3bln5JrJc/sPHFrDynpRAJstlq//b3JEjyWgTPetHxtXUsEzgCyQ7QdtabSYuQ2Fb8HvuIXFr1vbmk4xA3UBNC2F+8xEVcjgyFvBUuHurWDA0BpIgC0CFMjNqKWpLemfPLEy+ZRjDdVvYjBG4MQtrVk=;5:yGfvr2D3MUXhOzvXCB5nXTPDcxqe60VzjqIJ/GptGdsvYV3MCnk92Kx228dm1xcTw8HQn9RS8swl5wCBfS7YWoOCZkrrSc5Q63lvnsEx8hOf0is8iRC6ObT+19FGf+xkYE0We5AxJCiTYUvbJ2qIUpXDoNt0BR1gaVE4gJEsI1Y=;24:DsNg17dQEDN5WxePYag18XkjN0E1WzPfx4lPqavBYnhHchjtdMRFxUrPfRtkVuPPxF8m9sXCYKSjfR/WBHBJ0o14PDw4YY2GPZLFBggoRJA=;7:OjqMn9VV8dsav/Z5+V8tUSZWJ4SPAKTSZLjnNuCv6FxDZ/yge0rDFBtybKPfd4rwBm1HMOzPHBdWIilNXfwvz1daQw+vWklsFPovquMx8bUFs4sT/x84hePEL/yv7tYNExgG9LD67d4xVJa/ymcS9lSUNcefxFJiB/7+uTiodOvhamLfPoP/NHwaS1XCy9T14MnSvKD3bVSIO46HczIF5EDJe8u8nQWSpFgdseLKF2JtGZvtVaiewTFIjdwwOpzS
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1748;20:52IGB1G84dXmvMQrxt0Yty3VktRqITYsqji/WIXnKi232bpQTt6FG/duvq3JDTJ401MHSJ5bOlZod+a4dwCl8xEmDXniz4qGi+ekRxlf0AvJu2RAuDfwkK9b6CHm4B0rmpHwhJb9h16pq3S/P7F1PIXjI+4ybBlWq+SkqefYTsQ=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2018 19:51:18.5271 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ea7ac3f-868b-454a-d32d-08d57251fbf3
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1756;20:D3m3fjXki4fsoKO6Mq93xfxX2AC6Z0wMsKLORBhnyq7X7h3r1cPUlgL0yRF9VTsswktuz/B56oIkxNAPXUN9KKW5frCfMH/gE3Bcw/1/A6bAI2iwt3Le+a8R3X8IplNlbpAlLxMBiiiZXgwdvxlYyBbqIKoLRGP0ozjOcdQFngg=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2018 19:49:09.3164 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 620b2a4c-84a1-4589-4f0d-08d57251aee6
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1748
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1756
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_08:,,
  signatures=0
@@ -82,265 +83,332 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The asm macros are all set up now, introduce entry points.
-
-GCM_INIT and GCM_COMPLETE have arguments supplied, so that
-the new scatter/gather entry points don't have to take all the
-arguments, and only the ones they need.
+Make a macro for the main encode/decode routine.  Only a small handful
+of lines differ for enc and dec.   This will also become the main
+scatter/gather update routine.
 
 Signed-off-by: Dave Watson <davejwatson@fb.com>
 ---
- arch/x86/crypto/aesni-intel_asm.S  | 116 ++++++++++++++++++++++++++++---------
- arch/x86/crypto/aesni-intel_glue.c |  16 +++++
- 2 files changed, 106 insertions(+), 26 deletions(-)
+ arch/x86/crypto/aesni-intel_asm.S | 293 +++++++++++++++-----------------------
+ 1 file changed, 114 insertions(+), 179 deletions(-)
 
 diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
-index b941952..311b2de 100644
+index 529c542..8021fd1 100644
 --- a/arch/x86/crypto/aesni-intel_asm.S
 +++ b/arch/x86/crypto/aesni-intel_asm.S
-@@ -200,8 +200,8 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
- # Output: HashKeys stored in gcm_context_data.  Only needs to be called
- # once per key.
- # clobbers r12, and tmp xmm registers.
--.macro PRECOMPUTE TMP1 TMP2 TMP3 TMP4 TMP5 TMP6 TMP7
--	mov	arg7, %r12
-+.macro PRECOMPUTE SUBKEY TMP1 TMP2 TMP3 TMP4 TMP5 TMP6 TMP7
-+	mov	\SUBKEY, %r12
- 	movdqu	(%r12), \TMP3
- 	movdqa	SHUF_MASK(%rip), \TMP2
- 	PSHUFB_XMM \TMP2, \TMP3
-@@ -254,14 +254,14 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
- 
- # GCM_INIT initializes a gcm_context struct to prepare for encoding/decoding.
- # Clobbers rax, r10-r13 and xmm0-xmm6, %xmm13
--.macro GCM_INIT
--	mov arg9, %r11
-+.macro GCM_INIT Iv SUBKEY AAD AADLEN
-+	mov \AADLEN, %r11
- 	mov %r11, AadLen(%arg2) # ctx_data.aad_length = aad_length
- 	xor %r11, %r11
- 	mov %r11, InLen(%arg2) # ctx_data.in_length = 0
- 	mov %r11, PBlockLen(%arg2) # ctx_data.partial_block_length = 0
- 	mov %r11, PBlockEncKey(%arg2) # ctx_data.partial_block_enc_key = 0
--	mov %arg6, %rax
-+	mov \Iv, %rax
- 	movdqu (%rax), %xmm0
- 	movdqu %xmm0, OrigIV(%arg2) # ctx_data.orig_IV = iv
- 
-@@ -269,11 +269,11 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
- 	PSHUFB_XMM %xmm2, %xmm0
- 	movdqu %xmm0, CurCount(%arg2) # ctx_data.current_counter = iv
- 
--	PRECOMPUTE %xmm1 %xmm2 %xmm3 %xmm4 %xmm5 %xmm6 %xmm7
-+	PRECOMPUTE \SUBKEY, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7,
- 	movdqa HashKey(%arg2), %xmm13
- 
--	CALC_AAD_HASH %xmm13 %xmm0 %xmm1 %xmm2 %xmm3 %xmm4 \
--	%xmm5 %xmm6
-+	CALC_AAD_HASH %xmm13, \AAD, \AADLEN, %xmm0, %xmm1, %xmm2, %xmm3, \
-+	%xmm4, %xmm5, %xmm6
+@@ -222,6 +222,118 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
+ 	mov	%r13, %r12
  .endm
  
- # GCM_ENC_DEC Encodes/Decodes given data. Assumes that the passed gcm_context
-@@ -435,7 +435,7 @@ _multiple_of_16_bytes_\@:
++# GCM_ENC_DEC Encodes/Decodes given data. Assumes that the passed gcm_context
++# struct has been initialized by GCM_INIT.
++# Requires the input data be at least 1 byte long because of READ_PARTIAL_BLOCK
++# Clobbers rax, r10-r13, and xmm0-xmm15
++.macro GCM_ENC_DEC operation
++	# Encrypt/Decrypt first few blocks
++
++	and	$(3<<4), %r12
++	jz	_initial_num_blocks_is_0_\@
++	cmp	$(2<<4), %r12
++	jb	_initial_num_blocks_is_1_\@
++	je	_initial_num_blocks_is_2_\@
++_initial_num_blocks_is_3_\@:
++	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
++%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 5, 678, \operation
++	sub	$48, %r13
++	jmp	_initial_blocks_\@
++_initial_num_blocks_is_2_\@:
++	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
++%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 6, 78, \operation
++	sub	$32, %r13
++	jmp	_initial_blocks_\@
++_initial_num_blocks_is_1_\@:
++	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
++%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 7, 8, \operation
++	sub	$16, %r13
++	jmp	_initial_blocks_\@
++_initial_num_blocks_is_0_\@:
++	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
++%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 8, 0, \operation
++_initial_blocks_\@:
++
++	# Main loop - Encrypt/Decrypt remaining blocks
++
++	cmp	$0, %r13
++	je	_zero_cipher_left_\@
++	sub	$64, %r13
++	je	_four_cipher_left_\@
++_crypt_by_4_\@:
++	GHASH_4_ENCRYPT_4_PARALLEL_\operation	%xmm9, %xmm10, %xmm11, %xmm12, \
++	%xmm13, %xmm14, %xmm0, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, \
++	%xmm7, %xmm8, enc
++	add	$64, %r11
++	sub	$64, %r13
++	jne	_crypt_by_4_\@
++_four_cipher_left_\@:
++	GHASH_LAST_4	%xmm9, %xmm10, %xmm11, %xmm12, %xmm13, %xmm14, \
++%xmm15, %xmm1, %xmm2, %xmm3, %xmm4, %xmm8
++_zero_cipher_left_\@:
++	mov	%arg4, %r13
++	and	$15, %r13			# %r13 = arg4 (mod 16)
++	je	_multiple_of_16_bytes_\@
++
++	# Handle the last <16 Byte block separately
++	paddd ONE(%rip), %xmm0                # INCR CNT to get Yn
++        movdqa SHUF_MASK(%rip), %xmm10
++	PSHUFB_XMM %xmm10, %xmm0
++
++	ENCRYPT_SINGLE_BLOCK	%xmm0, %xmm1        # Encrypt(K, Yn)
++
++	lea (%arg3,%r11,1), %r10
++	mov %r13, %r12
++	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
++
++	lea ALL_F+16(%rip), %r12
++	sub %r13, %r12
++.ifc \operation, dec
++	movdqa  %xmm1, %xmm2
++.endif
++	pxor	%xmm1, %xmm0            # XOR Encrypt(K, Yn)
++	movdqu	(%r12), %xmm1
++	# get the appropriate mask to mask out top 16-r13 bytes of xmm0
++	pand	%xmm1, %xmm0            # mask out top 16-r13 bytes of xmm0
++.ifc \operation, dec
++	pand    %xmm1, %xmm2
++	movdqa SHUF_MASK(%rip), %xmm10
++	PSHUFB_XMM %xmm10 ,%xmm2
++
++	pxor %xmm2, %xmm8
++.else
++	movdqa SHUF_MASK(%rip), %xmm10
++	PSHUFB_XMM %xmm10,%xmm0
++
++	pxor	%xmm0, %xmm8
++.endif
++
++	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
++.ifc \operation, enc
++	# GHASH computation for the last <16 byte block
++	movdqa SHUF_MASK(%rip), %xmm10
++	# shuffle xmm0 back to output as ciphertext
++	PSHUFB_XMM %xmm10, %xmm0
++.endif
++
++	# Output %r13 bytes
++	MOVQ_R64_XMM %xmm0, %rax
++	cmp $8, %r13
++	jle _less_than_8_bytes_left_\@
++	mov %rax, (%arg2 , %r11, 1)
++	add $8, %r11
++	psrldq $8, %xmm0
++	MOVQ_R64_XMM %xmm0, %rax
++	sub $8, %r13
++_less_than_8_bytes_left_\@:
++	mov %al,  (%arg2, %r11, 1)
++	add $1, %r11
++	shr $8, %rax
++	sub $1, %r13
++	jne _less_than_8_bytes_left_\@
++_multiple_of_16_bytes_\@:
++.endm
++
  # GCM_COMPLETE Finishes update of tag of last partial block
  # Output: Authorization Tag (AUTH_TAG)
  # Clobbers rax, r10-r12, and xmm0, xmm1, xmm5-xmm15
--.macro GCM_COMPLETE
-+.macro GCM_COMPLETE AUTHTAG AUTHTAGLEN
- 	movdqu AadHash(%arg2), %xmm8
- 	movdqu HashKey(%arg2), %xmm13
- 
-@@ -466,8 +466,8 @@ _partial_done\@:
- 	ENCRYPT_SINGLE_BLOCK	%xmm0,  %xmm1	  # E(K, Y0)
- 	pxor	%xmm8, %xmm0
- _return_T_\@:
--	mov	arg10, %r10                     # %r10 = authTag
--	mov	arg11, %r11                    # %r11 = auth_tag_len
-+	mov	\AUTHTAG, %r10                     # %r10 = authTag
-+	mov	\AUTHTAGLEN, %r11                    # %r11 = auth_tag_len
- 	cmp	$16, %r11
- 	je	_T_16_\@
- 	cmp	$8, %r11
-@@ -599,11 +599,11 @@ _done_read_partial_block_\@:
- 
- # CALC_AAD_HASH: Calculates the hash of the data which will not be encrypted.
- # clobbers r10-11, xmm14
--.macro CALC_AAD_HASH HASHKEY TMP1 TMP2 TMP3 TMP4 TMP5 \
-+.macro CALC_AAD_HASH HASHKEY AAD AADLEN TMP1 TMP2 TMP3 TMP4 TMP5 \
- 	TMP6 TMP7
- 	MOVADQ	   SHUF_MASK(%rip), %xmm14
--	mov	   arg8, %r10		# %r10 = AAD
--	mov	   arg9, %r11		# %r11 = aadLen
-+	mov	   \AAD, %r10		# %r10 = AAD
-+	mov	   \AADLEN, %r11		# %r11 = aadLen
- 	pxor	   \TMP7, \TMP7
- 	pxor	   \TMP6, \TMP6
- 
-@@ -1103,18 +1103,18 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6 XMM7 XMM8 operation
- 	mov	  keysize,%eax
- 	shr	  $2,%eax			# 128->4, 192->6, 256->8
- 	sub	  $4,%eax			# 128->0, 192->2, 256->4
--	jz	  aes_loop_par_enc_done
-+	jz	  aes_loop_par_enc_done\@
- 
--aes_loop_par_enc:
-+aes_loop_par_enc\@:
- 	MOVADQ	  (%r10),\TMP3
- .irpc	index, 1234
- 	AESENC	  \TMP3, %xmm\index
- .endr
- 	add	  $16,%r10
- 	sub	  $1,%eax
--	jnz	  aes_loop_par_enc
-+	jnz	  aes_loop_par_enc\@
- 
--aes_loop_par_enc_done:
-+aes_loop_par_enc_done\@:
- 	MOVADQ	  (%r10), \TMP3
- 	AESENCLAST \TMP3, \XMM1           # Round 10
- 	AESENCLAST \TMP3, \XMM2
-@@ -1311,18 +1311,18 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6 XMM7 XMM8 operation
- 	mov	  keysize,%eax
- 	shr	  $2,%eax		        # 128->4, 192->6, 256->8
- 	sub	  $4,%eax			# 128->0, 192->2, 256->4
--	jz	  aes_loop_par_dec_done
-+	jz	  aes_loop_par_dec_done\@
- 
--aes_loop_par_dec:
-+aes_loop_par_dec\@:
- 	MOVADQ	  (%r10),\TMP3
- .irpc	index, 1234
- 	AESENC	  \TMP3, %xmm\index
- .endr
- 	add	  $16,%r10
- 	sub	  $1,%eax
--	jnz	  aes_loop_par_dec
-+	jnz	  aes_loop_par_dec\@
- 
--aes_loop_par_dec_done:
-+aes_loop_par_dec_done\@:
- 	MOVADQ	  (%r10), \TMP3
- 	AESENCLAST \TMP3, \XMM1           # last round
- 	AESENCLAST \TMP3, \XMM2
-@@ -1598,9 +1598,9 @@ _esb_loop_\@:
- ENTRY(aesni_gcm_dec)
+@@ -1245,93 +1357,7 @@ ENTRY(aesni_gcm_dec)
  	FUNC_SAVE
  
--	GCM_INIT
-+	GCM_INIT %arg6, arg7, arg8, arg9
- 	GCM_ENC_DEC dec
--	GCM_COMPLETE
-+	GCM_COMPLETE arg10, arg11
- 	FUNC_RESTORE
- 	ret
- ENDPROC(aesni_gcm_dec)
-@@ -1686,13 +1686,77 @@ ENDPROC(aesni_gcm_dec)
- ENTRY(aesni_gcm_enc)
- 	FUNC_SAVE
- 
--	GCM_INIT
-+	GCM_INIT %arg6, arg7, arg8, arg9
- 	GCM_ENC_DEC enc
--	GCM_COMPLETE
-+
-+	GCM_COMPLETE arg10, arg11
- 	FUNC_RESTORE
- 	ret
- ENDPROC(aesni_gcm_enc)
- 
-+/*****************************************************************************
-+* void aesni_gcm_init(void *aes_ctx,      // AES Key schedule. Starts on a 16 byte boundary.
-+*                     struct gcm_context_data *data,
-+*                                         // context data
-+*                     u8 *iv,             // Pre-counter block j0: 4 byte salt (from Security Association)
-+*                                         // concatenated with 8 byte Initialisation Vector (from IPSec ESP Payload)
-+*                                         // concatenated with 0x00000001. 16-byte aligned pointer.
-+*                     u8 *hash_subkey,    // H, the Hash sub key input. Data starts on a 16-byte boundary.
-+*                     const u8 *aad,      // Additional Authentication Data (AAD)
-+*                     u64 aad_len)        // Length of AAD in bytes.
-+*/
-+ENTRY(aesni_gcm_init)
-+	FUNC_SAVE
-+	GCM_INIT %arg3, %arg4,%arg5, %arg6
-+	FUNC_RESTORE
-+	ret
-+ENDPROC(aesni_gcm_init)
-+
-+/*****************************************************************************
-+* void aesni_gcm_enc_update(void *aes_ctx,      // AES Key schedule. Starts on a 16 byte boundary.
-+*                    struct gcm_context_data *data,
-+*                                        // context data
-+*                    u8 *out,            // Ciphertext output. Encrypt in-place is allowed.
-+*                    const u8 *in,       // Plaintext input
-+*                    u64 plaintext_len,  // Length of data in bytes for encryption.
-+*/
-+ENTRY(aesni_gcm_enc_update)
-+	FUNC_SAVE
-+	GCM_ENC_DEC enc
-+	FUNC_RESTORE
-+	ret
-+ENDPROC(aesni_gcm_enc_update)
-+
-+/*****************************************************************************
-+* void aesni_gcm_dec_update(void *aes_ctx,      // AES Key schedule. Starts on a 16 byte boundary.
-+*                    struct gcm_context_data *data,
-+*                                        // context data
-+*                    u8 *out,            // Ciphertext output. Encrypt in-place is allowed.
-+*                    const u8 *in,       // Plaintext input
-+*                    u64 plaintext_len,  // Length of data in bytes for encryption.
-+*/
-+ENTRY(aesni_gcm_dec_update)
-+	FUNC_SAVE
+ 	GCM_INIT
+-
+-        # Decrypt first few blocks
+-
+-	and $(3<<4), %r12
+-	jz _initial_num_blocks_is_0_decrypt
+-	cmp $(2<<4), %r12
+-	jb _initial_num_blocks_is_1_decrypt
+-	je _initial_num_blocks_is_2_decrypt
+-_initial_num_blocks_is_3_decrypt:
+-	INITIAL_BLOCKS_ENC_DEC %xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 5, 678, dec
+-	sub	$48, %r13
+-	jmp	_initial_blocks_decrypted
+-_initial_num_blocks_is_2_decrypt:
+-	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 6, 78, dec
+-	sub	$32, %r13
+-	jmp	_initial_blocks_decrypted
+-_initial_num_blocks_is_1_decrypt:
+-	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 7, 8, dec
+-	sub	$16, %r13
+-	jmp	_initial_blocks_decrypted
+-_initial_num_blocks_is_0_decrypt:
+-	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 8, 0, dec
+-_initial_blocks_decrypted:
+-	cmp	$0, %r13
+-	je	_zero_cipher_left_decrypt
+-	sub	$64, %r13
+-	je	_four_cipher_left_decrypt
+-_decrypt_by_4:
+-	GHASH_4_ENCRYPT_4_PARALLEL_DEC	%xmm9, %xmm10, %xmm11, %xmm12, %xmm13, \
+-%xmm14, %xmm0, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, dec
+-	add	$64, %r11
+-	sub	$64, %r13
+-	jne	_decrypt_by_4
+-_four_cipher_left_decrypt:
+-	GHASH_LAST_4	%xmm9, %xmm10, %xmm11, %xmm12, %xmm13, %xmm14, \
+-%xmm15, %xmm1, %xmm2, %xmm3, %xmm4, %xmm8
+-_zero_cipher_left_decrypt:
+-	mov	%arg4, %r13
+-	and	$15, %r13				# %r13 = arg4 (mod 16)
+-	je	_multiple_of_16_bytes_decrypt
+-
+-        # Handle the last <16 byte block separately
+-
+-	paddd ONE(%rip), %xmm0         # increment CNT to get Yn
+-        movdqa SHUF_MASK(%rip), %xmm10
+-	PSHUFB_XMM %xmm10, %xmm0
+-
+-	ENCRYPT_SINGLE_BLOCK  %xmm0, %xmm1    # E(K, Yn)
+-
+-	lea (%arg3,%r11,1), %r10
+-	mov %r13, %r12
+-	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
+-
+-	lea ALL_F+16(%rip), %r12
+-	sub %r13, %r12
+-	movdqa  %xmm1, %xmm2
+-	pxor %xmm1, %xmm0            # Ciphertext XOR E(K, Yn)
+-	movdqu (%r12), %xmm1
+-	# get the appropriate mask to mask out top 16-%r13 bytes of %xmm0
+-	pand %xmm1, %xmm0            # mask out top 16-%r13 bytes of %xmm0
+-	pand    %xmm1, %xmm2
+-        movdqa SHUF_MASK(%rip), %xmm10
+-	PSHUFB_XMM %xmm10 ,%xmm2
+-
+-	pxor %xmm2, %xmm8
+-	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
+-
+-        # output %r13 bytes
+-	MOVQ_R64_XMM	%xmm0, %rax
+-	cmp	$8, %r13
+-	jle	_less_than_8_bytes_left_decrypt
+-	mov	%rax, (%arg2 , %r11, 1)
+-	add	$8, %r11
+-	psrldq	$8, %xmm0
+-	MOVQ_R64_XMM	%xmm0, %rax
+-	sub	$8, %r13
+-_less_than_8_bytes_left_decrypt:
+-	mov	%al,  (%arg2, %r11, 1)
+-	add	$1, %r11
+-	shr	$8, %rax
+-	sub	$1, %r13
+-	jne	_less_than_8_bytes_left_decrypt
+-_multiple_of_16_bytes_decrypt:
 +	GCM_ENC_DEC dec
-+	FUNC_RESTORE
-+	ret
-+ENDPROC(aesni_gcm_dec_update)
-+
-+/*****************************************************************************
-+* void aesni_gcm_finalize(void *aes_ctx,      // AES Key schedule. Starts on a 16 byte boundary.
-+*                    struct gcm_context_data *data,
-+*                                        // context data
-+*                    u8 *auth_tag,       // Authenticated Tag output.
-+*                    u64 auth_tag_len);  // Authenticated Tag Length in bytes. Valid values are 16 (most likely),
-+*                                        // 12 or 8.
-+*/
-+ENTRY(aesni_gcm_finalize)
-+	FUNC_SAVE
-+	GCM_COMPLETE %arg3 %arg4
-+	FUNC_RESTORE
-+	ret
-+ENDPROC(aesni_gcm_finalize)
-+
- #endif
+ 	GCM_COMPLETE
+ 	FUNC_RESTORE
+ 	ret
+@@ -1417,98 +1443,7 @@ ENTRY(aesni_gcm_enc)
+ 	FUNC_SAVE
  
- 
-diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
-index 4dd5b9b..de986f9 100644
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -161,6 +161,22 @@ asmlinkage void aesni_gcm_dec(void *ctx,
- 			u8 *hash_subkey, const u8 *aad, unsigned long aad_len,
- 			u8 *auth_tag, unsigned long auth_tag_len);
- 
-+/* Scatter / Gather routines, with args similar to above */
-+asmlinkage void aesni_gcm_init(void *ctx,
-+			       struct gcm_context_data *gdata,
-+			       u8 *iv,
-+			       u8 *hash_subkey, const u8 *aad,
-+			       unsigned long aad_len);
-+asmlinkage void aesni_gcm_enc_update(void *ctx,
-+				     struct gcm_context_data *gdata, u8 *out,
-+				     const u8 *in, unsigned long plaintext_len);
-+asmlinkage void aesni_gcm_dec_update(void *ctx,
-+				     struct gcm_context_data *gdata, u8 *out,
-+				     const u8 *in,
-+				     unsigned long ciphertext_len);
-+asmlinkage void aesni_gcm_finalize(void *ctx,
-+				   struct gcm_context_data *gdata,
-+				   u8 *auth_tag, unsigned long auth_tag_len);
- 
- #ifdef CONFIG_AS_AVX
- asmlinkage void aes_ctr_enc_128_avx_by8(const u8 *in, u8 *iv,
+ 	GCM_INIT
+-        # Encrypt first few blocks
+-
+-	and	$(3<<4), %r12
+-	jz	_initial_num_blocks_is_0_encrypt
+-	cmp	$(2<<4), %r12
+-	jb	_initial_num_blocks_is_1_encrypt
+-	je	_initial_num_blocks_is_2_encrypt
+-_initial_num_blocks_is_3_encrypt:
+-	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 5, 678, enc
+-	sub	$48, %r13
+-	jmp	_initial_blocks_encrypted
+-_initial_num_blocks_is_2_encrypt:
+-	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 6, 78, enc
+-	sub	$32, %r13
+-	jmp	_initial_blocks_encrypted
+-_initial_num_blocks_is_1_encrypt:
+-	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 7, 8, enc
+-	sub	$16, %r13
+-	jmp	_initial_blocks_encrypted
+-_initial_num_blocks_is_0_encrypt:
+-	INITIAL_BLOCKS_ENC_DEC	%xmm9, %xmm10, %xmm13, %xmm11, %xmm12, %xmm0, \
+-%xmm1, %xmm2, %xmm3, %xmm4, %xmm8, %xmm5, %xmm6, 8, 0, enc
+-_initial_blocks_encrypted:
+-
+-        # Main loop - Encrypt remaining blocks
+-
+-	cmp	$0, %r13
+-	je	_zero_cipher_left_encrypt
+-	sub	$64, %r13
+-	je	_four_cipher_left_encrypt
+-_encrypt_by_4_encrypt:
+-	GHASH_4_ENCRYPT_4_PARALLEL_ENC	%xmm9, %xmm10, %xmm11, %xmm12, %xmm13, \
+-%xmm14, %xmm0, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, enc
+-	add	$64, %r11
+-	sub	$64, %r13
+-	jne	_encrypt_by_4_encrypt
+-_four_cipher_left_encrypt:
+-	GHASH_LAST_4	%xmm9, %xmm10, %xmm11, %xmm12, %xmm13, %xmm14, \
+-%xmm15, %xmm1, %xmm2, %xmm3, %xmm4, %xmm8
+-_zero_cipher_left_encrypt:
+-	mov	%arg4, %r13
+-	and	$15, %r13			# %r13 = arg4 (mod 16)
+-	je	_multiple_of_16_bytes_encrypt
+-
+-         # Handle the last <16 Byte block separately
+-	paddd ONE(%rip), %xmm0                # INCR CNT to get Yn
+-        movdqa SHUF_MASK(%rip), %xmm10
+-	PSHUFB_XMM %xmm10, %xmm0
+-
+-	ENCRYPT_SINGLE_BLOCK	%xmm0, %xmm1        # Encrypt(K, Yn)
+-
+-	lea (%arg3,%r11,1), %r10
+-	mov %r13, %r12
+-	READ_PARTIAL_BLOCK %r10 %r12 %xmm2 %xmm1
+-
+-	lea ALL_F+16(%rip), %r12
+-	sub %r13, %r12
+-	pxor	%xmm1, %xmm0            # Plaintext XOR Encrypt(K, Yn)
+-	movdqu	(%r12), %xmm1
+-	# get the appropriate mask to mask out top 16-r13 bytes of xmm0
+-	pand	%xmm1, %xmm0            # mask out top 16-r13 bytes of xmm0
+-        movdqa SHUF_MASK(%rip), %xmm10
+-	PSHUFB_XMM %xmm10,%xmm0
+-
+-	pxor	%xmm0, %xmm8
+-	GHASH_MUL %xmm8, %xmm13, %xmm9, %xmm10, %xmm11, %xmm5, %xmm6
+-	# GHASH computation for the last <16 byte block
+-	movdqa SHUF_MASK(%rip), %xmm10
+-	PSHUFB_XMM %xmm10, %xmm0
+-
+-	# shuffle xmm0 back to output as ciphertext
+-
+-        # Output %r13 bytes
+-	MOVQ_R64_XMM %xmm0, %rax
+-	cmp $8, %r13
+-	jle _less_than_8_bytes_left_encrypt
+-	mov %rax, (%arg2 , %r11, 1)
+-	add $8, %r11
+-	psrldq $8, %xmm0
+-	MOVQ_R64_XMM %xmm0, %rax
+-	sub $8, %r13
+-_less_than_8_bytes_left_encrypt:
+-	mov %al,  (%arg2, %r11, 1)
+-	add $1, %r11
+-	shr $8, %rax
+-	sub $1, %r13
+-	jne _less_than_8_bytes_left_encrypt
+-_multiple_of_16_bytes_encrypt:
+-_return_T_encrypt:
++	GCM_ENC_DEC enc
+ 	GCM_COMPLETE
+ 	FUNC_RESTORE
+ 	ret
 -- 
 2.9.5
