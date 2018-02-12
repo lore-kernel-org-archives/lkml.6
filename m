@@ -1,46 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932695AbeBLIQs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 03:16:48 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:38511 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751082AbeBLIQo (ORCPT
+        id S932795AbeBLIZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 03:25:59 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45940 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932561AbeBLIZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 03:16:44 -0500
-X-Google-Smtp-Source: AH8x226/x6ChMzSoR5xAsvb/uE0tNShE3DM10LDpY1rl4wozxgPHZUh+PXVSxnTp1n5IKJCFLvqVkCqBzJil16ZTSwk=
+        Mon, 12 Feb 2018 03:25:57 -0500
+X-Google-Smtp-Source: AH8x226+I9V7XpkfxjUiDpaD7mviQ7WCxXH02StdLT78gHZv1AK6OmK6GX4Qg63PoGWyePRngO22wtzBmv3+w+46Vdc=
 MIME-Version: 1.0
-In-Reply-To: <46988f8227bd3ad617b5c7dd0ce8f159b75ffdb2.1518397634.git.fthain@telegraphics.com.au>
-References: <cover.1518397634.git.fthain@telegraphics.com.au> <46988f8227bd3ad617b5c7dd0ce8f159b75ffdb2.1518397634.git.fthain@telegraphics.com.au>
+In-Reply-To: <2ce948e1e6c0ef2476f57600b429b24355871eb8.1518397634.git.fthain@telegraphics.com.au>
+References: <cover.1518397634.git.fthain@telegraphics.com.au> <2ce948e1e6c0ef2476f57600b429b24355871eb8.1518397634.git.fthain@telegraphics.com.au>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Feb 2018 09:16:43 +0100
-X-Google-Sender-Auth: zqrPD5vxp47_NJ_KYlh2EUklonk
-Message-ID: <CAMuHMdVVu4CZ3sj0fJ4NS0Qn5wJmpVM1Z32_B2bgs5FyQXK8mw@mail.gmail.com>
-Subject: Re: [PATCH net v4 01/13] net/8390: Remove redundant make dependencies
+Date: Mon, 12 Feb 2018 09:25:56 +0100
+X-Google-Sender-Auth: jtEV-5ZpaW9DyozKmwUr-tAd7eo
+Message-ID: <CAMuHMdWEcTipfQNFgMmcRQL+eavdc26-SqLrqscOy=K1+YW98g@mail.gmail.com>
+Subject: Re: [PATCH net v4 06/13] net/mac89x0: Convert to platform_driver
 To: Finn Thain <fthain@telegraphics.com.au>
 Cc: "David S. Miller" <davem@davemloft.net>,
         netdev <netdev@vger.kernel.org>,
         "Linux/m68k" <linux-m68k@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>
+        linux-m68k <linux-m68k@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Feb 12, 2018 at 4:08 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> The hydra, zorro8390 and mcf8390 drivers all #include "lib8390.c" and
-> have no need for 8390.o. modinfo confirms no dependency on 8390.ko.
-> Drop the redundant dependency from the Makefile. objdump confirms
-> that this has no effect on the module binaries.
+> Apparently these Dayna cards don't have a pseudoslot declaration ROM
+> which means they can't be probed like NuBus cards.
 >
-> Cc: Greg Ungerer <gerg@linux-m68k.org>
 > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
 > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> ---
+>  arch/m68k/mac/config.c                |  4 ++
+>  drivers/net/Space.c                   |  3 --
+>  drivers/net/ethernet/cirrus/mac89x0.c | 69 ++++++++++++++++-------------------
+>  include/net/Space.h                   |  1 -
+>  4 files changed, 35 insertions(+), 42 deletions(-)
 
+For the m68k part:
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-The superfluous additions of 8390.o were introduced in commit
-644570b830266ff3 ("8390: Move the 8390 related drivers").
+> --- a/drivers/net/ethernet/cirrus/mac89x0.c
+> +++ b/drivers/net/ethernet/cirrus/mac89x0.c
+
+> @@ -167,10 +172,9 @@ static const struct net_device_ops mac89x0_netdev_ops = {
+>
+>  /* Probe for the CS8900 card in slot E.  We won't bother looking
+>     anywhere else until we have a really good reason to do so. */
+> -struct net_device * __init mac89x0_probe(int unit)
+> +static int mac89x0_device_probe(struct platform_device *pdev)
+>  {
+>         struct net_device *dev;
+> -       static int once_is_enough;
+>         struct net_local *lp;
+>         static unsigned version_printed;
+>         int i, slot;
+> @@ -181,20 +185,13 @@ struct net_device * __init mac89x0_probe(int unit)
+>         struct nubus_rsrc *fres;
+>
+>         if (!MACH_IS_MAC)
+> -               return ERR_PTR(-ENODEV);
+> +               return -ENODEV;
+
+I think this check can be removed completely, as the platform device will
+exist on suitable Macs only.
 
 Gr{oetje,eeting}s,
 
