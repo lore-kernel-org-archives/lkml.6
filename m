@@ -1,75 +1,75 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-607806-1518419115-2-15032499079009743662
+X-Cyrus-Session-Id: sloti22d1t05-1227156-1518435292-2-9769364153111801443
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='us-ascii'
+X-Spam-charsets: to='UTF-8', plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518419114; b=nAjK3Fo493MJIsAQGePu/SLsgrXZ61xjezgu0DK2pMls9Iw
-    5A3TfGdIaC+5LwYAEm9E3X1KAkZXFGyqOPLcSpp1kDzdYXO+Um9X3oShDlPVw9KF
-    fK5chZSXKNMiE6qgN0rtZ+VXha3xISWPRNNmS48vMFiF2FAoUHYU6Ab1hsVm9fHo
-    MfeYJxhNjvWDLhIj97Dm1abxI7XA3Sdg4VJWQrDvixkew7Dwo01I37Q0G43Kh96z
-    qEIdGDPogZHkjr4hwMcFRzGsx3XdU1WplZvZwWBnihnu0tIcHtFUiym67dZZiCaX
-    L3aSbKeiJuK2wyq3KdIjGG8/d2/5Pf5gioEhfaA==
+    t=1518435292; b=ouqApfhfVndKdMW+rFxybx7HK3cbGvDltdS/WbYyNEf2anL
+    6OqRq1gvMkvoX7XJM8ND5XiQTxUDPBoPzT7XqsGcjhJOEciiQZZO1IPg+XNcNXQJ
+    JEiGJCW7clbWwbcDaJjBMvyxTCfy8H1W3iFfBZuI+8FxnwcdFqCGrYcHJ7KYENgN
+    HQt4wpPEyLlO1TWWyN8ksDihJIa/ahOsAc/o4g6Xwj1wd6NXyNElFx8HpvMQZQ32
+    qyAIYWJ90Pf7MPFU2v6REKCd72PUFDwIRcDb4/eDVMrQGL76g9Wy8BXAFzVbPRsl
+    ArL4Ms70in32gi5MEv/JV1dwPn7eTgWobsrg/rA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518419114; bh=O
-    4ts6EYOUoKm7HQ+r5tqRNWwzq1muZ1aWeUL/IJsq4I=; b=iJMOk17jtO87HOMru
-    756A9LkySTGsnBoZFcD5GeSjPaQ6ww3kWJUL1GH79WUttCiuObiHeyMMPTCzxggQ
-    slflxw0ImxF4T1ke68JvytKzgm/GCkIm/L+kK6Uo82tFxYRuuKTOv0Ns9zjJGcBR
-    FDKKOwLnL1vWc0ZxtxrTjiawwBw/nNcK2NufNQBu6So6wDDZXwNkw+RzXN4UQDpQ
-    fZH84iKC8OkA3eVFHR/u4P7DuCFLBumcp79CMLFLrfYUCDUUb08NlNbxMiJwYhMa
-    aki2vufoQ77xNTT3EybtEzYBb6DY7T0WpeBRhYGEERKDssq6gy3IHzlKjvJUl1Vp
-    p7/nQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=i3V+LLDh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518435292; bh=f
+    9X5hLPJPkHZ6JPBkD3ON952pX9NfWj4thupF52yWT4=; b=slv3JAf/zckrKkd3C
+    yc/Az3VCbClav3/kjjox2HCRWNezkML4JjO1daI6chpVZ31MxwLiWtjikyIOZHZ1
+    e5DDFn8lekPCU5Xs5LObMT1H7NCcEPbH8in4KqAbG0OOTK2bA6mzCZZsJQZeHH/Y
+    sYgqBRLnZHgBsFiTSmgaF13avmEOmZ/ObjPdtdft+J241VLcIf/6pwEywCyi/VDO
+    fIDQPR4GDlrsFDu79fxeYdotM4nyvVRW+Z9Je1TjyvLoHLFPLfkyWUEav2d/Tf0x
+    GsK4IC+MeJkHZwP38c6BdChFiBbwEf3G4Ujkxx+BsSCSkAMdpYddxXPINQFuWCqq
+    VP7OA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=jvGRroaP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WGUkUKwu;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=i3V+LLDh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=jvGRroaP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WGUkUKwu;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Mon, 12 Feb 2018 10:02:19 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Dileep Sankhla <sankhla.dileep96@gmail.com>
-Subject: Re: [PATCH] staging: vt6656: Fix "Possible unnecessary 'out of
- memory' message" checkpatch.pl warning
-Message-ID: <20180212070218.va2zivzu6qdejk3n@mwanda>
-References: <20180210161621.22246-1-sankhla.dileep96@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180210161621.22246-1-sankhla.dileep96@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8802
- signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=475
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802120091
+X-Google-Smtp-Source: AH8x2259KKQ05FkywnsGMZTRclTa5rSjWFVkdwdHDDy4qaouS17J5U5TISIAVoEI0F3fXh10DxVQ/A==
+From: Dileep Sankhla <sankhla.dileep96@gmail.com>
+To: Forest Bond <forest@alittletooquiet.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Malcolm Priestley <tvboxspy@gmail.com>,
+ Jitendra Kumar Khasdev <jkhasdev@gmail.com>,
+ Dileep Sankhla <sankhla.dileep96@gmail.com>,
+ Arushi Singhal <arushisinghal19971997@gmail.com>,
+ =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
+ devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: vt6656: Remove unnecessary 'out of memory' message
+Date: Mon, 12 Feb 2018 17:04:27 +0530
+Message-Id: <20180212113437.8953-1-sankhla.dileep96@gmail.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180212070218.va2zivzu6qdejk3n@mwanda>
+References: <20180212070218.va2zivzu6qdejk3n@mwanda>
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -80,12 +80,7 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Arushi Singhal <arushisinghal19971997@gmail.com>,
- devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- Forest Bond <forest@alittletooquiet.net>,
- Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>,
- Jitendra Kumar Khasdev <jkhasdev@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -94,13 +89,34 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Feb 10, 2018 at 09:46:18PM +0530, Dileep Sankhla wrote:
-> Signed-off-by: Dileep Sankhla <sankhla.dileep96@gmail.com>
+This patch removes the unnecessary out of memory message fixing the
+following checkpatch.pl warning in usbpipe.c:
+WARNING: Possible unnecessary 'out of memory' message
 
-The subject is too long and you need to have a changelog.
+Signed-off-by: Dileep Sankhla <sankhla.dileep96@gmail.com>
+---
+Change in v2:
+- changed commit message
+---
+ drivers/staging/vt6656/usbpipe.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/vt6656/usbpipe.c b/drivers/staging/vt6656/usbpipe.c
+index 273176386a51..5bbc56f8779e 100644
+--- a/drivers/staging/vt6656/usbpipe.c
++++ b/drivers/staging/vt6656/usbpipe.c
+@@ -194,9 +194,6 @@ static void vnt_submit_rx_urb_complete(struct urb *urb)
+ 		if (vnt_rx_data(priv, rcb, urb->actual_length)) {
+ 			rcb->skb = dev_alloc_skb(priv->rx_buf_sz);
+ 			if (!rcb->skb) {
+-				dev_dbg(&priv->usb->dev,
+-					"Failed to re-alloc rx skb\n");
+-
+ 				rcb->in_use = false;
+ 				return;
+ 			}
+-- 
+2.15.1
 
 _______________________________________________
 devel mailing list
