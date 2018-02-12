@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeBLPT7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 10:19:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752667AbeBLPT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:19:58 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596DF217A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x226bEAiR9zGlesS5hjuOdNQZ4+5MOvvHv1v7uE4cBxhbZ1z9UFRH7UwyOOvsN8J6LM1f3OzjH08JZ7T+L/VY8TY=
+        id S1752631AbeBLPXT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 10:23:19 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39778 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752199AbeBLPXR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 10:23:17 -0500
+X-Google-Smtp-Source: AH8x226+hLCFPQsZ3YcupthyT+bfpxin0pnaj/CIikUuRU33QQ0FS2OIQrYB0T7KJKoNdR5M3ZqVBagGuUvq0Xf6pZg=
 MIME-Version: 1.0
-In-Reply-To: <1518446590-16800-2-git-send-email-patrice.chotard@st.com>
-References: <1518446590-16800-1-git-send-email-patrice.chotard@st.com> <1518446590-16800-2-git-send-email-patrice.chotard@st.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 12 Feb 2018 09:19:35 -0600
-X-Gmail-Original-Message-ID: <CABGGiswMN1-CQi-guB5y5YFNLhKH3z58b_skxb_q+ZMm7+n1Nw@mail.gmail.com>
-Message-ID: <CABGGiswMN1-CQi-guB5y5YFNLhKH3z58b_skxb_q+ZMm7+n1Nw@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] ARM: dts: STi: Fix bindings notation
+In-Reply-To: <1518446590-16800-11-git-send-email-patrice.chotard@st.com>
+References: <1518446590-16800-1-git-send-email-patrice.chotard@st.com> <1518446590-16800-11-git-send-email-patrice.chotard@st.com>
+From: Rob Herring <rob.herring@linaro.org>
+Date: Mon, 12 Feb 2018 09:22:55 -0600
+Message-ID: <CABGGisxgejFHj0xQq-aBQETt9CX3OzLc3ER_Y9nyrw7FeLdt6g@mail.gmail.com>
+Subject: Re: [PATCH v2 10/12] ARM: dts: STi: Add fake reg property for clocks
 To: patrice.chotard@st.com
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         linux@armlinux.org.uk,
@@ -29,36 +26,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 8:42 AM,  <patrice.chotard@st.com> wrote:
+On Mon, Feb 12, 2018 at 8:43 AM,  <patrice.chotard@st.com> wrote:
 > From: Patrice Chotard <patrice.chotard@st.com>
 >
-> Remove leading 0x and 0s from bindings notation
-> Add missing unit-address and remove some which are useless.
+> For all clock's element inside SoC, add a fake reg property,
+> this allows to fix the following warnings when compiling
+> dtb with W=1 option :
 >
-> This allows to fix several warnings like :
+> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
+> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
+> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
 >
-> Warning (unit_address_vs_reg): Node XXXX has a reg or ranges property, but no unit name
-> Warning (simple_bus_reg): Node XXXX simple-bus unit address format error, expected "123456"
-> Warning (unit_address_vs_reg): Node XXXX has a unit name, but no reg property
+> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
+> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
+> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
+>
+> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
+> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
+> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
+> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
 >
 > Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 > ---
-
-[...]
-
-> diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-> index a29090077fdf..53c6888d1fc0 100644
-> --- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-> @@ -45,7 +45,7 @@
->         };
 >
->         soc {
-> -               pin-controller-sbc {
-> +               pin-controller-sbc@961f080 {
+> v2: _ add a fake reg property to node without reg property.
+>
+>  arch/arm/boot/dts/stih407-clock.dtsi | 9 ++++++---
+>  arch/arm/boot/dts/stih410-clock.dtsi | 9 ++++++---
+>  arch/arm/boot/dts/stih418-clock.dtsi | 9 ++++++---
+>  3 files changed, 18 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
+> index b882dcf3a649..1bba47e06ebe 100644
+> --- a/arch/arm/boot/dts/stih407-clock.dtsi
+> +++ b/arch/arm/boot/dts/stih407-clock.dtsi
+> @@ -24,9 +24,10 @@
+>                 /*
+>                  * ARM Peripheral clock for timers
+>                  */
+> -               arm_periph_clk: clk-m-a9-periphs {
+> +               arm_periph_clk: clk-m-a9-periphs@0 {
+>                         #clock-cells = <0>;
+>                         compatible = "fixed-factor-clock";
+> +                       reg = <0 0>;
 
-While you're here changing the node name, these all should be "pinctrl@..."
+Don't do this. The correct fix is change the location of these nodes
+to be under whatever controls them.
 
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+Rob
