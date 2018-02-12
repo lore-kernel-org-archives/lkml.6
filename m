@@ -1,134 +1,99 @@
 Return-Path: <joel.stan@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518412639; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1518412631; cv=none;
         d=google.com; s=arc-20160816;
-        b=zjcVd4+XpNqAhyyeQdnHwvJRYK42e58sokk9SJr87yoU1YB78p4sCknW5B/L5d/DSV
-         pn/T7iNCw5wmSuJ0OCxTgkPuLpZaEYnldGGNXt95k+awmB70xC9jxqOTi/6Bv5CQqx88
-         MSxCRtXlYvS9uCNv+egvDkfvCBIfTEtgFJrNyDU40pcxx/1sTKTMzAkOg9Jj1fmL7WSC
-         iCiCDXEXYo515H+vuLy09yD16yB5CajwBms/JsVzkWsjIMNHtSvZsOEZwoRnnaNUXFvx
-         efw41XBt4NEm89UR1OTPey1BVJR+i9T0Vs62J07TP+FblWr34KgdUTdtLp/AcpmdIRwd
-         jMjg==
+        b=jOIobPnfLyVueK0/jztATUDT8J1kpmLluDpuoipUyAr/BdJaPPPk8imzcV7+KzEp53
+         brq7zivs9UnbMDn6ShoIKrjlhwTay4kBRL/Hwn/xyAndGx4KqoiufpDjrwI4h3nv7OdI
+         9PXtkjZxAh4qSRjaR5Of6lp9ob/MQHbQqc4/Wig5poggVa6G4MWIywdUWZMvtUzUOxFh
+         wpFPPuYOtZXx3jv6l8deGMzaCTsa2tK2bi+H7/kr0daF9w4B1HavGlrMXHYy8PssIpG+
+         CwK3aO/dFCfhTzTz+7AYoZaR+i8vUd+WTyO8uDgj1CZ97r79XKRUF+DPejYr3jGM8cL6
+         x/Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:sender
          :dkim-signature:arc-authentication-results;
-        bh=B7eddgQ2fGlz7MNVOtGON1OIZLIyyZdsrEn1FPOB0qQ=;
-        b=NGgG8k0uJpk7mRWSVlH8Qg4CIKLK9BqY3id/j4qx76eNN5RrHJuwd2hQN5gaEmmBOS
-         i5IOnP/qyEvvDJ2zmnF+4O2W6W6UBEAO7PZC58ETkeYleE7PJPzOiwnp01/ULJASVHtu
-         Tdr1OpbYtRD9lMCBtL851e0N2yJ1kXyxXEdK46rzYtJjs7RABniC/vHGTiwzQbLwE63N
-         bpJ6jz23Mbw9+qvCeFp+JYGjRYOcdQ+L9rOSjT6TJfe2mad5CnhW+7lxaHEgi05XBsCJ
-         0Lp+Y8tcYFCt/KNerdeCouWnWTLMRVA3NoKJmAEjjrezQfWkcaZM1lvVWxRgRx6W0Yjn
-         KqtQ==
+        bh=/pe7gC4457snTkdizIdjllMLQxQZAy76GlQWszn3i6Q=;
+        b=TY9avGZr08fNyUgYfUlknCNDEBRiLujq62kbSIv+ACzs104mJho3BltAVzjJQ8857r
+         kC2HTE0oYQxAWEs3el43ZtbvCOIstcBfWMoXvVXu/rPpTo4+rygolaM32na2RDhov/oW
+         TUxzAkLgf6eCqG1lqq4bNGWS1tDWqQBxz6aUyrwWn1d3uFJ3ft7W5BOaY5NefxSmqz3h
+         wdZec2jUSA6NUcIBgFeUb3sakTkfQwz44TGVWyAgbgGlXKlBceWwW17Ja9SOFcuPjBif
+         i8bT8b5ExuvKMmzwY8eJ8KO9a5qzMNWMH8vcVW0uSP8ECVnwj1xGi+WG3MSF5yRmvm88
+         FgEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pJ+Oa51r;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vIwOvjHb;
        spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pJ+Oa51r;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vIwOvjHb;
        spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
-X-Google-Smtp-Source: AH8x226Q2dD9HejjSV76PH2ILIQYiGq2YYIjb18lRAYeDne6qv1LZuHsQiUW5v8au1/8lcj6GZgB7g==
+X-Google-Smtp-Source: AH8x225IwVNEqkB1vJjOE8cHLj/vf1OYdK1XevNbrjtXlRqAbgrzYFciKc6O66M0UESUnIynfIrNtg==
 Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
 From: Joel Stanley <joel@jms.id.au>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>
-Cc: Jeremy Kerr <jk@ozlabs.org>,
-	Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+Cc: Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+	Jeremy Kerr <jk@ozlabs.org>,
 	Brad Bishop <bradleyb@fuzziesquirrel.com>,
 	Edward James <eajames@us.ibm.com>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 08/10] fsi: master: Clarify master lifetimes & fix use-after-free in hub master
-Date: Mon, 12 Feb 2018 15:45:47 +1030
-Message-Id: <20180212051549.8575-9-joel@jms.id.au>
+Subject: [PATCH 07/10] fsi: core: Reduce console output during normal scan
+Date: Mon, 12 Feb 2018 15:45:46 +1030
+Message-Id: <20180212051549.8575-8-joel@jms.id.au>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180212051549.8575-1-joel@jms.id.au>
 References: <20180212051549.8575-1-joel@jms.id.au>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592171051914795065?=
-X-GMAIL-MSGID: =?utf-8?q?1592171051914795065?=
+X-GMAIL-THRID: =?utf-8?q?1592171043563710176?=
+X-GMAIL-MSGID: =?utf-8?q?1592171043563710176?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jeremy Kerr <jk@ozlabs.org>
+From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 
-Once we call fsi_master_unregister, the core will put_device,
-potentially freeing the hub master. This change adds a comment
-explaining the lifetime of an allocated fsi_master.
+To reduce amount of console output during boot / power up make
+all normal path scan related messages debug type.
 
-We then add a reference from the driver to the hub master, so it stays
-around until we've finished ->remove().
-
-Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
-Tested-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Acked-by: Jeremy Kerr <jk@ozlabs.org>
 Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/fsi/fsi-master-hub.c | 21 ++++++++++++++++++---
- drivers/fsi/fsi-master.h     | 15 +++++++++++++++
- 2 files changed, 33 insertions(+), 3 deletions(-)
+ drivers/fsi/fsi-core.c       | 4 ++--
+ drivers/fsi/fsi-master-hub.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 1069cb402bd3..8d8b25809452 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -207,7 +207,7 @@ static int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
+ 	if (rc)
+ 		return rc;
+ 
+-	dev_info(&slave->dev, "status: 0x%08x, sisc: 0x%08x\n",
++	dev_dbg(&slave->dev, "status: 0x%08x, sisc: 0x%08x\n",
+ 			be32_to_cpu(stat), be32_to_cpu(irq));
+ 
+ 	/* clear interrupts */
+@@ -687,7 +687,7 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
+ 		return -EIO;
+ 	}
+ 
+-	dev_info(&master->dev, "fsi: found chip %08x at %02x:%02x:%02x\n",
++	dev_dbg(&master->dev, "fsi: found chip %08x at %02x:%02x:%02x\n",
+ 			chip_id, master->idx, link, id);
+ 
+ 	rc = fsi_slave_set_smode(master, link, id);
 diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
-index 5e4cd3134bc0..5885fc4a1ef0 100644
+index 3223a671a0ef..5e4cd3134bc0 100644
 --- a/drivers/fsi/fsi-master-hub.c
 +++ b/drivers/fsi/fsi-master-hub.c
-@@ -288,10 +288,19 @@ static int hub_master_probe(struct device *dev)
- 	hub_master_init(hub);
+@@ -254,7 +254,7 @@ static int hub_master_probe(struct device *dev)
  
- 	rc = fsi_master_register(&hub->master);
--	if (!rc)
--		return 0;
-+	if (rc)
-+		goto err_release;
-+
-+	/* At this point, fsi_master_register performs the device_initialize(),
-+	 * and holds the sole reference on master.dev. This means the device
-+	 * will be freed (via ->release) during any subsequent call to
-+	 * fsi_master_unregister.  We add our own reference to it here, so we
-+	 * can perform cleanup (in _remove()) without it being freed before
-+	 * we're ready.
-+	 */
-+	get_device(&hub->master.dev);
-+	return 0;
+ 	reg = be32_to_cpu(__reg);
+ 	links = (reg >> 8) & 0xff;
+-	dev_info(dev, "hub version %08x (%d links)\n", reg, links);
++	dev_dbg(dev, "hub version %08x (%d links)\n", reg, links);
  
--	kfree(hub);
- err_release:
- 	fsi_slave_release_range(fsi_dev->slave, FSI_HUB_LINK_OFFSET,
+ 	rc = fsi_slave_claim_range(fsi_dev->slave, FSI_HUB_LINK_OFFSET,
  			FSI_HUB_LINK_SIZE * links);
-@@ -306,6 +315,12 @@ static int hub_master_remove(struct device *dev)
- 	fsi_slave_release_range(hub->upstream->slave, hub->addr, hub->size);
- 	of_node_put(hub->master.dev.of_node);
- 
-+	/*
-+	 * master.dev will likely be ->release()ed after this, which free()s
-+	 * the hub
-+	 */
-+	put_device(&hub->master.dev);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/fsi/fsi-master.h b/drivers/fsi/fsi-master.h
-index 18bd4ad79356..ee0b46086026 100644
---- a/drivers/fsi/fsi-master.h
-+++ b/drivers/fsi/fsi-master.h
-@@ -37,6 +37,21 @@ struct fsi_master {
- 
- #define dev_to_fsi_master(d) container_of(d, struct fsi_master, dev)
- 
-+/**
-+ * fsi_master registration & lifetime: the fsi_master_register() and
-+ * fsi_master_unregister() functions will take ownership of the master, and
-+ * ->dev in particular. The registration path performs a get_device(), which
-+ * takes the first reference on the device. Similarly, the unregistration path
-+ * performs a put_device(), which may well drop the last reference.
-+ *
-+ * This means that master implementations *may* need to hold their own
-+ * reference (via get_device()) on master->dev. In particular, if the device's
-+ * ->release callback frees the fsi_master, then fsi_master_unregister will
-+ * invoke this free if no other reference is held.
-+ *
-+ * The same applies for the error path of fsi_master_register; if the call
-+ * fails, dev->release will have been invoked.
-+ */
- extern int fsi_master_register(struct fsi_master *master);
- extern void fsi_master_unregister(struct fsi_master *master);
- 
 -- 
 2.15.1
