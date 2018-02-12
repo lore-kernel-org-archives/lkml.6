@@ -1,110 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932288AbeBLR6K (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:58:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:44404 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752564AbeBLR6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:58:08 -0500
-Date: Mon, 12 Feb 2018 17:58:01 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Vignesh R <vigneshr@ti.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Niklas Cassel <niklas.cassel@axis.com>, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] PCI: dwc: pci-dra7xx: Improve MSI IRQ handling
-Message-ID: <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
-References: <20180209120415.17590-1-vigneshr@ti.com>
- <20180209120415.17590-3-vigneshr@ti.com>
+        id S932351AbeBLR7M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:59:12 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48542 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752532AbeBLR7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 12:59:09 -0500
+Subject: Re: [PATCH] net: make getname() functions return length rather than
+ use int* parameter
+To: David Miller <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org,
+        linux-decnet-user@lists.sourceforge.net,
+        linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-x25@vger.kernel.org
+References: <20180212141518.3354-1-dvlasenk@redhat.com>
+ <20180212.124738.870301786818646917.davem@davemloft.net>
+From: Denys Vlasenko <dvlasenk@redhat.com>
+Message-ID: <4f0c5a1d-f75d-4c54-8cdd-5660b2233252@redhat.com>
+Date: Mon, 12 Feb 2018 18:59:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209120415.17590-3-vigneshr@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180212.124738.870301786818646917.davem@davemloft.net>
+Content-Type: text/plain; charset=iso-8859-7; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 05:34:14PM +0530, Vignesh R wrote:
-> We need to ensure that there are no pending MSI IRQ vector set (i.e
-> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting
-> dra7xx_pcie_msi_irq_handler(). Else, the dra7xx PCIe wrapper will not
-> register new MSI IRQs even though PCIE_MSI_INTR0_STATUS shows IRQs are
-> pending. Therefore, keep calling dra7xx_pcie_msi_irq_handler() until it
-> returns IRQ_NONE, which suggests that PCIE_MSI_INTR0_STATUS is 0.
+On 02/12/2018 06:47 PM, David Miller wrote:
+> From: Denys Vlasenko <dvlasenk@redhat.com>
+> Date: Mon, 12 Feb 2018 15:15:18 +0100
 > 
-> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
-> 8260 used to throw following error and stall during ping/iperf3 tests.
+>> Before:
+>> All these functions either return a negative error indicator,
+>> or store length of sockaddr into "int *socklen" parameter
+>> and return zero on success.
+>>
+>> "int *socklen" parameter is awkward. For example, if caller does not
+>> care, it still needs to provide on-stack storage for the value
+>> it does not need.
+>>
+>> None of the many FOO_getname() functions of various protocols
+>> ever used old value of *socklen. They always just overwrite it.
+>>
+>> This change drops this parameter, and makes all these functions, on success,
+>> return length of sockaddr. It's always >= 0 and can be differentiated
+>> from an error.
+>>
+>> Tests in callers are changed from "if (err)" to "if (err < 0)", where needed.
+>>
+>> rpc_sockname() lost "int buflen" parameter, since its only use was
+>> to be passed to kernel_getsockname() as &buflen and subsequently
+>> not used in any way.
+>>
+>> Userspace API is not changed.
+>>
+>>      text    data     bss      dec     hex filename
+>> 30108430 2633624  873672 33615726 200ef6e vmlinux.before.o
+>> 30108109 2633612  873672 33615393 200ee21 vmlinux.o
+>>
+>> Signed-off-by: Denys Vlasenko <dvlasenk@redhat.com>
 > 
-> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
+> Please do an allmodconfig build, there are still some conversions you
+> missed:
 > 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
->  drivers/pci/dwc/pci-dra7xx.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
-> index ed8558d638e5..3420cbf7b60a 100644
-> --- a/drivers/pci/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/dwc/pci-dra7xx.c
-> @@ -254,14 +254,31 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
->  	struct dra7xx_pcie *dra7xx = arg;
->  	struct dw_pcie *pci = dra7xx->pci;
->  	struct pcie_port *pp = &pci->pp;
-> +	int count = 0;
->  	unsigned long reg;
->  	u32 virq, bit;
->  
->  	reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
-> +	dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
->  
->  	switch (reg) {
->  	case MSI:
-> -		dw_handle_msi_irq(pp);
-> +		/*
-> +		 * Need to make sure no MSI IRQs are pending before
-> +		 * exiting handler, else the wrapper will not catch new
-> +		 * IRQs. So loop around till dw_handle_msi_irq() returns
-> +		 * IRQ_NONE
-> +		 */
-> +		while (dw_handle_msi_irq(pp) != IRQ_NONE && count < 1000)
-> +			count++;
-> +
-> +		if (count == 1000) {
-> +			dev_err(pci->dev, "too much work in msi irq\n");
-> +			dra7xx_pcie_writel(dra7xx,
-> +					   PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI,
-> +					   reg);
-> +			return IRQ_HANDLED;
+> security/tomoyo/network.c: In function ¡tomoyo_socket_listen_permission¢:
+> security/tomoyo/network.c:658:19: warning: passing argument 3 of ¡sock->ops->getname¢ makes integer from pointer without a cast [-Wint-conversion]
+>              &addr, &addr_len, 0);
+>                     ^
+> security/tomoyo/network.c:658:19: note: expected ¡int¢ but argument is of type ¡int *¢
+> security/tomoyo/network.c:657:21: error: too many arguments to function ¡sock->ops->getname¢
+>     const int error = sock->ops->getname(sock, (struct sockaddr *)
+>                       ^~~~
+> fs/dlm/lowcomms.c: In function ¡lowcomms_error_report¢:
+> fs/dlm/lowcomms.c:495:6: error: too many arguments to function ¡kernel_getpeername¢
+>        kernel_getpeername(con->sock, (struct sockaddr *)&saddr, &buflen)) {
+>        ^~~~~~~~~~~~~~~~~~
+> fs/dlm/lowcomms.c: In function ¡tcp_accept_from_sock¢:
+> fs/dlm/lowcomms.c:761:7: warning: passing argument 3 of ¡newsock->ops->getname¢ makes integer from pointer without a cast [-Wint-conversion]
+>         &len, 2)) {
+>         ^
+> fs/dlm/lowcomms.c:761:7: note: expected ¡int¢ but argument is of type ¡int *¢
+> fs/dlm/lowcomms.c:760:6: error: too many arguments to function ¡newsock->ops->getname¢
+>    if (newsock->ops->getname(newsock, (struct sockaddr *)&peeraddr,
+>        ^~~~~~~
 
-I am not merging any code patching this IRQ handling routine anymore
-unless you thoroughly explain to me how this CONF_IRQSTATUS_MSI register
-works (and how it is related to DW registers) and why this specific host
-controller needs handling that is not required by any other host
-controller relying on dw_handle_msi_irq().
-
-I suspect there is a code design flaw with the way this host handles
-IRQs and we are going to find it and fix it the way it should, not with
-any plaster like this patch.
-
-Lorenzo
-
-> +		}
->  		break;
->  	case INTA:
->  	case INTB:
-> @@ -275,8 +292,6 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
->  		break;
->  	}
->  
-> -	dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
-> -
->  	return IRQ_HANDLED;
->  }
->  
-> -- 
-> 2.16.1
-> 
+Sorry. Will send updated patch.
+  
