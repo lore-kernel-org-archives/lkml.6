@@ -1,194 +1,336 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754013AbeBLKD7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:03:59 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59404 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932505AbeBLKDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:03:23 -0500
-Date: Mon, 12 Feb 2018 18:03:17 +0800
-From: Baoquan He <bhe@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        x86@kernel.org, douly.fnst@cn.fujitsu.com, joro@8bytes.org,
-        uobergfe@redhat.com, prarit@redhat.com
-Subject: Re: [PATCH v3 2/5] x86/apic: Fix restoring boot irq mode in reboot
- and kexec/kdump
-Message-ID: <20180212100317.GB13253@localhost.localdomain>
-References: <20180209121008.28980-1-bhe@redhat.com>
- <20180209121008.28980-3-bhe@redhat.com>
- <87r2pq9a60.fsf@xmission.com>
+        id S1754035AbeBLKEw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:04:52 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:39507 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754009AbeBLKEu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 05:04:50 -0500
+X-Google-Smtp-Source: AH8x224kK43P3Vitc/d8x407Qn1HYm7GZGerMBvAlaPGhT5eTz5/2pLbayoKbtlkEZ/3K6ISIJ93AsmCqrIDuXleB24=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r2pq9a60.fsf@xmission.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180212053104-mutt-send-email-mst@kernel.org>
+References: <20180207013525.1634-1-marcandre.lureau@redhat.com>
+ <20180207013525.1634-4-marcandre.lureau@redhat.com> <20180212053104-mutt-send-email-mst@kernel.org>
+From: Marc-Andre Lureau <mlureau@redhat.com>
+Date: Mon, 12 Feb 2018 11:04:49 +0100
+Message-ID: <CAMxuvawozzWQ98WkduM=nWQJMMmagSQuHPZMhOYbGZEG5a2aaQ@mail.gmail.com>
+Subject: Re: [PATCH v13 3/4] fw_cfg: write vmcoreinfo details
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/11/18 at 09:08pm, Eric W. Biederman wrote:
-> Baoquan He <bhe@redhat.com> writes:
-> 
-> > This is a regression fix.
-> >
-> > Before, to fix erratum AVR31, commit 522e66464467 ("x86/apic: Disable
-> > I/O APIC before shutdown of the local APIC") moved lapic_shutdown()
-> > calling after disable_IO_APIC(). This introdued a regression. The
-> > root cause is that disable_IO_APIC() not only clears IO_APIC, also
-> > restore boot irq mode by setting LAPIC/APIC/IMCR, lapic_shutdown()
-> > after disable_IO_APIC() will disable LAPIC and ruin the possible
-> > virtual wire mode setting which the code has been trying to do all
-> > along.
-> >
-> > The consequence is, in KVM guest kernel always prints warning as below
-> > during kexec/kdump kernel boots up. That happened in setup_local_APIC()
-> > since 'do { xxx } while (queued && max_loops > 0)' loop does not function
-> > well any more if pending irq exists in APIC IRR after LAPIC is disabled.
-> > And people even saw casual kdump kernel hang once in ~30 attempts during
-> > stress testing of kdump on KVM machine.
-> >
-> > [    0.001000] WARNING: CPU: 0 PID: 0 at arch/x86/kernel/apic/apic.c:1467 setup_local_APIC+0x228/0x330
-> > [    0.001000] Modules linked in:
-> > [    0.001000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.15.0-rc5+ #3
-> > [    0.001000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
-> > [    0.001000] RIP: 0010:setup_local_APIC+0x228/0x330
-> > [    0.001000] RSP: 0000:ffffffffb6e03eb8 EFLAGS: 00010286
-> > [    0.001000] RAX: 0000009edb4c4d84 RBX: 0000000000000000 RCX: 00000000b099d800
-> > [    0.001000] RDX: 0000009e00000000 RSI: 0000000000000000 RDI: 0000000000000810
-> > [    0.001000] RBP: 0000000000000000 R08: ffffffffffffffff R09: 0000000000000001
-> > [    0.001000] R10: ffff98ce6a801c00 R11: 0761076d072f0776 R12: 0000000000000001
-> > [    0.001000] R13: 00000000000000f0 R14: 0000000000004000 R15: ffffffffffffc6ff
-> > [    0.001000] FS:  0000000000000000(0000) GS:ffff98ce6bc00000(0000) knlGS:0000000000000000
-> > [    0.001000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [    0.001000] CR2: 00000000ffffffff CR3: 0000000022209000 CR4: 00000000000406b0
-> > [    0.001000] Call Trace:
-> > [    0.001000]  apic_bsp_setup+0x56/0x74
-> > [    0.001000]  x86_late_time_init+0x11/0x16
-> > [    0.001000]  start_kernel+0x3c9/0x486
-> > [    0.001000]  secondary_startup_64+0xa5/0xb0
-> > [    0.001000] Code: 00 85 c9 74 2d 0f 31 c1 e1 0a 48 c1 e2 20 41 89 cf 4c 03 7c 24 08 48 09 d0 49 29 c7 4c 89 3c 24 48 83 3c 24 00 0f 8f 8f fe ff
-> > ff <0f> ff e9 10 ff ff ff 48 83 2c 24 01 eb e7 48 83 c4 18 5b 5d 41
-> > [    0.001000] ---[ end trace b88e71b9a6ebebdd ]---
-> > [    0.001000] masked ExtINT on CPU#0
-> >
-> > To fix this, just break down disable_IO_APIC(), then call
-> > clear_IO_APIC() to stop IO_APIC where disable_IO_APIC() was called,
-> > and call restore_boot_irq_mode() to restore boot irq mode before
-> > reboot or kexec/kdump jump.
-> 
-> Two things here.
-> a) This is missing a fixes tag and a CC stable.
-> b) What makes your change to the KEXEC_JUMP code path safe?
->    Have the lapic and ioapic already been shut down?
-> 
-> The KEXEC_JUMP changes to machine_kexec_32.c and machine_kexec_64.c
-> either need to be documented in the change long why they are safe
-> so that this change becomes obviously safe and correct.
-> 
-> Otherwise we risk and trivial and obvious looking change causing another
-> regression like changing the order of lapic_shutdown and disable_IOAPIC
-> did.
+Hi
 
-Makes sense. Will change as you suggested and repost. Thanks a lot.
+On Mon, Feb 12, 2018 at 4:43 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Wed, Feb 07, 2018 at 02:35:24AM +0100, Marc-André Lureau wrote:
+>> If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
+>> the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
+>>
+>> The DMA operation is expected to run synchronously with today qemu,
+>> but the specification states that it may become async, so we run
+>> "control" field check in a loop for eventual changes.
+>>
+>> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+>> ---
+>>  drivers/firmware/qemu_fw_cfg.c | 157 ++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 154 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> index 740df0df2260..fd576ba7b337 100644
+>> --- a/drivers/firmware/qemu_fw_cfg.c
+>> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> @@ -33,6 +33,9 @@
+>>  #include <linux/slab.h>
+>>  #include <linux/io.h>
+>>  #include <linux/ioport.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/crash_dump.h>
+>> +#include <linux/crash_core.h>
+>>
+>>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+>>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+>> @@ -43,12 +46,24 @@ MODULE_LICENSE("GPL");
+>>  #define FW_CFG_ID         0x01
+>>  #define FW_CFG_FILE_DIR   0x19
+>>
+>> +#define FW_CFG_VERSION_DMA     0x02
+>> +#define FW_CFG_DMA_CTL_ERROR   0x01
+>> +#define FW_CFG_DMA_CTL_READ    0x02
+>> +#define FW_CFG_DMA_CTL_SKIP    0x04
+>> +#define FW_CFG_DMA_CTL_SELECT  0x08
+>> +#define FW_CFG_DMA_CTL_WRITE   0x10
+>> +
+>>  /* size in bytes of fw_cfg signature */
+>>  #define FW_CFG_SIG_SIZE 4
+>>
+>>  /* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+>>  #define FW_CFG_MAX_FILE_PATH 56
+>>
+>> +#define VMCOREINFO_FORMAT_ELF 0x1
+>
+> How about exporting interface parts in include/uapi/linux/ ?
+> QEMU can import it from there then.
+> This is what virtio does.
 
-Thanks
-Baoquan
+Good idea, we didn't have it yet. So this is an additional change.
+I'll work on it. Though, if this should delay more this series, I
+think we should drop it.
 
-> > ---
-> >  arch/x86/include/asm/io_apic.h     | 1 +
-> >  arch/x86/kernel/apic/io_apic.c     | 2 +-
-> >  arch/x86/kernel/crash.c            | 3 ++-
-> >  arch/x86/kernel/machine_kexec_32.c | 2 +-
-> >  arch/x86/kernel/machine_kexec_64.c | 2 +-
-> >  arch/x86/kernel/reboot.c           | 3 ++-
-> >  6 files changed, 8 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/io_apic.h b/arch/x86/include/asm/io_apic.h
-> > index 558d1a6a13ad..0fa95bfacb39 100644
-> > --- a/arch/x86/include/asm/io_apic.h
-> > +++ b/arch/x86/include/asm/io_apic.h
-> > @@ -193,6 +193,7 @@ static inline unsigned int io_apic_read(unsigned int apic, unsigned int reg)
-> >  extern void setup_IO_APIC(void);
-> >  extern void enable_IO_APIC(void);
-> >  extern void disable_IO_APIC(void);
-> > +extern void clear_IO_APIC(void);
-> >  extern void restore_boot_irq_mode(void);
-> >  extern int IO_APIC_get_PCI_irq_vector(int bus, int devfn, int pin);
-> >  extern void print_IO_APICs(void);
-> > diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-> > index 7b73b6b9b4b6..2d7cd2db77f5 100644
-> > --- a/arch/x86/kernel/apic/io_apic.c
-> > +++ b/arch/x86/kernel/apic/io_apic.c
-> > @@ -587,7 +587,7 @@ static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
-> >  		       mpc_ioapic_id(apic), pin);
-> >  }
-> >  
-> > -static void clear_IO_APIC (void)
-> > +void clear_IO_APIC (void)
-> >  {
-> >  	int apic, pin;
-> >  
-> > diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-> > index 10e74d4778a1..1f6680427ff0 100644
-> > --- a/arch/x86/kernel/crash.c
-> > +++ b/arch/x86/kernel/crash.c
-> > @@ -199,9 +199,10 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
-> >  #ifdef CONFIG_X86_IO_APIC
-> >  	/* Prevent crash_kexec() from deadlocking on ioapic_lock. */
-> >  	ioapic_zap_locks();
-> > -	disable_IO_APIC();
-> > +	clear_IO_APIC();
-> >  #endif
-> >  	lapic_shutdown();
-> > +	restore_boot_irq_mode();
-> >  #ifdef CONFIG_HPET_TIMER
-> >  	hpet_disable();
-> >  #endif
-> > diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
-> > index edfede768688..f78bb4432bfb 100644
-> > --- a/arch/x86/kernel/machine_kexec_32.c
-> > +++ b/arch/x86/kernel/machine_kexec_32.c
-> > @@ -199,7 +199,7 @@ void machine_kexec(struct kimage *image)
-> >  		 * one form or other. kexec jump path also need
-> >  		 * one.
-> >  		 */
-> > -		disable_IO_APIC();
-> > +		restore_boot_irq_mode();
-> >  #endif
-> >  	}
-> >  
-> > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-> > index 1f790cf9d38f..cb0c2d0a4c99 100644
-> > --- a/arch/x86/kernel/machine_kexec_64.c
-> > +++ b/arch/x86/kernel/machine_kexec_64.c
-> > @@ -297,7 +297,7 @@ void machine_kexec(struct kimage *image)
-> >  		 * one form or other. kexec jump path also need
-> >  		 * one.
-> >  		 */
-> > -		disable_IO_APIC();
-> > +		restore_boot_irq_mode();
-> >  #endif
-> >  	}
-> >  
-> > diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-> > index 2126b9d27c34..725624b6c0c0 100644
-> > --- a/arch/x86/kernel/reboot.c
-> > +++ b/arch/x86/kernel/reboot.c
-> > @@ -666,7 +666,7 @@ void native_machine_shutdown(void)
-> >  	 * Even without the erratum, it still makes sense to quiet IO APIC
-> >  	 * before disabling Local APIC.
-> >  	 */
-> > -	disable_IO_APIC();
-> > +	clear_IO_APIC();
-> >  #endif
-> >  
-> >  #ifdef CONFIG_SMP
-> > @@ -680,6 +680,7 @@ void native_machine_shutdown(void)
-> >  #endif
-> >  
-> >  	lapic_shutdown();
-> > +	restore_boot_irq_mode();
-> >  
-> >  #ifdef CONFIG_HPET_TIMER
-> >  	hpet_disable();
+>
+>> +
+>> +/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
+>> +static u32 fw_cfg_rev;
+>> +
+>>  /* fw_cfg file directory entry type */
+>>  struct fw_cfg_file {
+>>       u32 size;
+>> @@ -57,6 +72,12 @@ struct fw_cfg_file {
+>>       char name[FW_CFG_MAX_FILE_PATH];
+>>  };
+>>
+>> +struct fw_cfg_dma {
+>> +     u32 control;
+>> +     u32 length;
+>> +     u64 address;
+>> +} __packed;
+>> +
+>
+> you can drop __packed here - it's always aligned properly.
+
+Isn't it preferable to make that explicit? Fwiw, qemu also declares
+the struct packed in its headers.
+
+>
+>>  /* fw_cfg device i/o register addresses */
+>>  static bool fw_cfg_is_mmio;
+>>  static phys_addr_t fw_cfg_p_base;
+>> @@ -75,6 +96,59 @@ static inline u16 fw_cfg_sel_endianness(u16 key)
+>>       return fw_cfg_is_mmio ? cpu_to_be16(key) : cpu_to_le16(key);
+>>  }
+>>
+>> +static inline bool fw_cfg_dma_enabled(void)
+>> +{
+>> +     return fw_cfg_rev & FW_CFG_VERSION_DMA && fw_cfg_reg_dma;
+>
+> Why do you use () with == below but not with && here?
+>
+
+Let's add them.
+
+>> +}
+>> +
+>> +/* qemu fw_cfg device is sync today, but spec says it may become async */
+>> +static void fw_cfg_wait_for_control(struct fw_cfg_dma *d)
+>> +{
+>> +     do {
+>> +             u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
+>> +
+>> +             if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
+>> +                     return;
+>> +
+>> +             usleep_range(50, 100);
+>> +     } while (true);
+>
+> And you need an smp rmb here.
+
+Could you explain? thanks
+
+>
+>> +}
+>> +
+>> +static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
+>> +{
+>> +     phys_addr_t dma;
+>> +     struct fw_cfg_dma *d = NULL;
+>> +     ssize_t ret = length;
+>> +
+>> +     d = kmalloc(sizeof(*d), GFP_KERNEL);
+>> +     if (!d) {
+>> +             ret = -ENOMEM;
+>> +             goto end;
+>> +     }
+>> +
+>> +     *d = (struct fw_cfg_dma) {
+>> +             .address = address ? cpu_to_be64(virt_to_phys(address)) : 0,
+>> +             .length = cpu_to_be32(length),
+>> +             .control = cpu_to_be32(control)
+>> +     };
+>> +
+>> +     dma = virt_to_phys(d);
+>
+> Pls add docs on why this DMA bypasses the DMA API.
+
+Peter said in his patch: "fw_cfg device does not need IOMMU
+protection, so use physical addresses
+always.  That's how QEMU implements fw_cfg.  Otherwise we'll see call
+traces during boot."
+
+Is that enough justification?
+
+>
+>> +
+>> +     iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
+>> +     iowrite32be(dma, fw_cfg_reg_dma + 4);
+>> +
+>> +     fw_cfg_wait_for_control(d);
+>> +
+>> +     if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
+>> +             ret = -EIO;
+>> +     }
+>> +
+>> +end:
+>> +     kfree(d);
+>> +
+>> +     return ret;
+>> +}
+>> +
+>>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>>  static inline void fw_cfg_read_blob(u16 key,
+>>                                   void *buf, loff_t pos, size_t count)
+>> @@ -103,6 +177,47 @@ static inline void fw_cfg_read_blob(u16 key,
+>>       acpi_release_global_lock(glk);
+>>  }
+>>
+>> +#ifdef CONFIG_CRASH_CORE
+>> +/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>> +static ssize_t fw_cfg_write_blob(u16 key,
+>> +                              void *buf, loff_t pos, size_t count)
+>
+> fw_cfg_dma_write seems like a nicer name.
+
+ok (I used the same naming as fw_cfg_read_blob() for consistency)
+
+>
+>> +{
+>> +     u32 glk = -1U;
+>> +     acpi_status status;
+>> +     ssize_t ret = count;
+>> +
+>> +     /* If we have ACPI, ensure mutual exclusion against any potential
+>> +      * device access by the firmware, e.g. via AML methods:
+>> +      */
+>> +     status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
+>> +     if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
+>> +             /* Should never get here */
+>> +             WARN(1, "%s: Failed to lock ACPI!\n", __func__);
+>> +             return -EINVAL;
+>> +     }
+>> +
+>> +     mutex_lock(&fw_cfg_dev_lock);
+>> +     if (pos == 0) {
+>> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
+>> +                                       | FW_CFG_DMA_CTL_SELECT
+>> +                                       | FW_CFG_DMA_CTL_WRITE);
+>> +     } else {
+>> +             iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
+>> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
+>> +             if (ret < 0)
+>> +                     goto end;
+>> +             ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
+>> +     }
+>> +
+>> +end:
+>> +     mutex_unlock(&fw_cfg_dev_lock);
+>> +
+>> +     acpi_release_global_lock(glk);
+>> +
+>> +     return ret;
+>> +}
+>> +#endif /* CONFIG_CRASH_CORE */
+>> +
+>>  /* clean up fw_cfg device i/o */
+>>  static void fw_cfg_io_cleanup(void)
+>>  {
+>> @@ -201,9 +316,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>>       return 0;
+>>  }
+>>
+>> -/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
+>> -static u32 fw_cfg_rev;
+>> -
+>>  static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
+>>  {
+>>       return sprintf(buf, "%u\n", fw_cfg_rev);
+>> @@ -224,6 +336,37 @@ struct fw_cfg_sysfs_entry {
+>>       struct list_head list;
+>>  };
+>>
+>> +#ifdef CONFIG_CRASH_CORE
+>> +static ssize_t write_vmcoreinfo(const struct fw_cfg_file *f)
+>
+> why not prefix with fw_cfg here?
+
+ok
+
+>
+>> +{
+>> +     struct vmci {
+>> +             __le16 host_format;
+>> +             __le16 guest_format;
+>> +             __le32 size;
+>> +             __le64 paddr;
+>> +     } __packed;
+>
+>
+> No need for the __packed attribute.
+
+discussed above
+
+> And pls do not declare structures within functions.
+> Name them sanely and place in a header or near top of file.
+
+ok
+
+>
+>> +     static struct vmci *data;
+>> +     ssize_t ret;
+>> +
+>> +     data = kmalloc(sizeof(struct vmci), GFP_KERNEL);
+>> +     if (!data)
+>> +             return -ENOMEM;
+>> +
+>> +     *data = (struct vmci) {
+>> +             .guest_format = cpu_to_le16(VMCOREINFO_FORMAT_ELF),
+>> +             .size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
+>> +             .paddr = cpu_to_le64(paddr_vmcoreinfo_note())
+>> +     };
+>> +     /* spare ourself reading host format support for now since we
+>> +      * don't know what else to format - host may ignore ours
+>> +      */
+>> +     ret = fw_cfg_write_blob(f->select, data, 0, sizeof(struct vmci));
+>> +
+>> +     kfree(data);
+>> +     return ret;
+>> +}
+>> +#endif /* CONFIG_CRASH_CORE */
+>> +
+>>  /* get fw_cfg_sysfs_entry from kobject member */
+>>  static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
+>>  {
+>> @@ -464,6 +607,14 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
+>>       int err;
+>>       struct fw_cfg_sysfs_entry *entry;
+>>
+>> +#ifdef CONFIG_CRASH_CORE
+>> +     if (fw_cfg_dma_enabled() &&
+>> +             strcmp(f->name, "etc/vmcoreinfo") == 0 && !is_kdump_kernel()) {
+>> +             if (write_vmcoreinfo(f) < 0)
+>> +                     pr_warn("fw_cfg: failed to write vmcoreinfo");
+>> +     }
+>> +#endif
+>> +
+>>       /* allocate new entry */
+>>       entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+>>       if (!entry)
+>> --
+>> 2.16.1.73.g5832b7e9f2
+
+thanks
