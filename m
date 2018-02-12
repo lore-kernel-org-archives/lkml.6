@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x227NQZM9oI8putqbcxXetbnjKnsLDREYzLZhCgx+qqNhlAJCh5UfegC0jo2+AvSQTp/9+Ssf
-ARC-Seal: i=1; a=rsa-sha256; t=1518479382; cv=none;
+X-Google-Smtp-Source: AH8x224JSKSKjkP6z/91lfYIJRxb4+6BQyRyuOYUe/yS2lb78VI94RxMJoVMRAlc+Y92+vDmUOTX
+ARC-Seal: i=1; a=rsa-sha256; t=1518470624; cv=none;
         d=google.com; s=arc-20160816;
-        b=L4NEMLbG2Wu62qkmGjfYTnvI/VGeQFbyKY1WREpnr4R0FOmpmmtvX5Fjbk9kzjitVr
-         tiqcyjpdc2Aqf6nKMsXhRR52fsTuiRQIVH/MNAfPsmjDj1aAVxiq+8U8bcG+87UAwM3v
-         CjJdxv9RpyGMxDS6XXBYn6HdFfnoD2jsUP4Yg0Mp00S5UgFNSL8uggz+svO8EAl9xiUZ
-         DmOLnS1SCbNOUcYxjq0FxA3GJWcy6Jwm+dj3uzc3HpQqBeX8N8kdsWbS+ePajMez6R49
-         FuL2BFPresrgC/jnWbRAZjpeQb5B2ZowWrGNyhXV2+kFOZbobs9aAOE/hHsMIMwQDQ0d
-         lIWw==
+        b=LkEZuNr4UvobPKQxWgL//CD4qwO6CL4rw7C/DObfZAKPwT+DsxgRtStF8tADVETr8I
+         tEZF2hkimmufcdDdsZ5Ok0+gnTTjxf5pdw2sQrOBk+Zcjso9STDHqJH7hIpVQzU74poD
+         1eqJF9bweddgRVQHB2MqSUSh7oOowFbRj3qmH+kqh7BjLrWmuI48vBol4QvYTkKgJDXN
+         BfIzNsnLITlyNZwzM9oZMm/uVGyfDg6PKiCjkioC6S/Xzvr3cb4DgFRXKioeaQvsaLXF
+         5eKt05TOMLOeq6cIkqpxfRlMhQHgZ+Fsf/4y2uOqrwqouKUkzOanMlyjZflY2DqaErbb
+         Fs4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=Kv97LvDSSMvgiuLDTy14SBsJpibsfv/e9CQKty1jCg8=;
-        b=V+4+4/qCVvYr0x4uuHsezuF5uI5lmJ+uOq+E0Zh4y6AkwGNcHXQbWTkrOQXpX8AARe
-         42r0c4f4Zq76Q2+MhpLo11+HQudLK7+o2P9swz0/2OOwnwTWWf5sZGTYWLwfgFaH/MnJ
-         5+NXEtIzI49jqT1YHRb6tBUxysuEgrNNPFwlj9cf0A8bFSly6y9MZVP1PJqa6cj6XgIj
-         nqYdtmh+ipncnC7VcDvMC9/JTwKuRealGlk7VvFCAnub59Sw9wCfe6qT8WbikVTSVYtN
-         Yyxw/gbliuBElCJmfNaxAI/+cfWVqcURBxH/5ehXyaGNiWJfC85arWj/hBpFqGLkJrW0
-         pgdw==
+        bh=BLkOZYFDrxhcPc5fsA3KxOiDgWqvifMuMBHXQsfH9Qk=;
+        b=T9VjLlYOtBquEvSz9KqGyZs/JCtZqg/u7FCZUy0Be8KCRKYBoxThOv3t66wMF5PPLN
+         KXnHYP2FjwxH7wrhGH17n5BAel4l6Np8kT1euJSRM0vQImHEJYTP49GXqBdzcZTyguxW
+         N+B//l9BNv2GGBKN1egzzKLvoQ15uh4wHhQ+YhX97AodC762dgC58+v3zOBa7+KVijG/
+         GT84MFUdEE6FxB5DGlIy/h6fUQ/HBd33SuJD0+52O2sTJTgYQt3GNN3Z+z29ht4VABKH
+         g8S8jmd6wzfzYt+uK8F2PKjq/Pv1fEcRGJ2Qyma9dtPECJmYn4QGkpr3Ev9/GIOU7BKb
+         sCRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -28,11 +28,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  Andreas Dilger <andreas.dilger@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 13 Feb 2018 10:47:59 +1100
-Subject: [PATCH 09/19] staging: lustre: open code polling loop instead of
- using l_wait_event()
+Date: Tue, 13 Feb 2018 08:22:36 +1100
+Subject: [PATCH 07/19] staging: lustre: simplify l_wait_event when intr
+ handler but no timeout.
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151847927897.19840.8283814090245785502.stgit@noble>
+Message-ID: <151847055671.22826.8688568641693262055.stgit@noble>
 In-Reply-To: <151847037709.22826.16175867257667686132.stgit@noble>
 References: <151847037709.22826.16175867257667686132.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,81 +40,81 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592241037181173129?=
-X-GMAIL-MSGID: =?utf-8?q?1592241037181173129?=
+X-GMAIL-THRID: =?utf-8?q?1592231853626578407?=
+X-GMAIL-MSGID: =?utf-8?q?1592231853626578407?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Two places that LWI_TIMEOUT_INTERVAL() is used, the outcome is a
-simple polling loop that polls every second for some event (with a
-limit).
-
-So write a simple loop to make this more apparent.
+If l_wait_event() is given a function to be called on a signal,
+but no timeout or timeout handler, then the intr function is simply
+called at the end if the wait was aborted by a signal.
+So a simpler way to write the code (in the one place this case is
+used) it to open-code the body of the function after the
+wait_event, if -ERESTARTSYS was returned.
 
 Reviewed-by: James Simmons <jsimmons@infradead.org>
 Signed-off-by: NeilBrown <neilb@suse.com>
 Reviewed-by: Patrick Farrell <paf@cray.com>
 ---
- drivers/staging/lustre/lustre/llite/llite_lib.c |   11 +++++------
- drivers/staging/lustre/lustre/lov/lov_request.c |   12 +++++-------
- 2 files changed, 10 insertions(+), 13 deletions(-)
+ drivers/staging/lustre/lustre/ldlm/ldlm_flock.c |   30 +++++------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
-index ccb614bd7f53..9e96a8ee1783 100644
---- a/drivers/staging/lustre/lustre/llite/llite_lib.c
-+++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
-@@ -1984,8 +1984,7 @@ void ll_umount_begin(struct super_block *sb)
- 	struct ll_sb_info *sbi = ll_s2sbi(sb);
- 	struct obd_device *obd;
- 	struct obd_ioctl_data *ioc_data;
--	wait_queue_head_t waitq;
--	struct l_wait_info lwi;
-+	int cnt = 0;
- 
- 	CDEBUG(D_VFSTRACE, "VFS Op: superblock %p count %d active %d\n", sb,
- 	       sb->s_count, atomic_read(&sb->s_active));
-@@ -2021,10 +2020,10 @@ void ll_umount_begin(struct super_block *sb)
- 	 * and then continue. For now, we just periodically checking for vfs
- 	 * to decrement mnt_cnt and hope to finish it within 10sec.
- 	 */
--	init_waitqueue_head(&waitq);
--	lwi = LWI_TIMEOUT_INTERVAL(10 * HZ,
--				   HZ, NULL, NULL);
--	l_wait_event(waitq, may_umount(sbi->ll_mnt.mnt), &lwi);
-+	while (cnt < 10 && !may_umount(sbi->ll_mnt.mnt)) {
-+		schedule_timeout_uninterruptible(HZ);
-+		cnt ++;
-+	}
- 
- 	schedule();
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
+index 657ab95091a0..411b540b96d9 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
+@@ -310,24 +310,6 @@ static int ldlm_process_flock_lock(struct ldlm_lock *req)
+ 	return LDLM_ITER_CONTINUE;
  }
-diff --git a/drivers/staging/lustre/lustre/lov/lov_request.c b/drivers/staging/lustre/lustre/lov/lov_request.c
-index fb3b7a7fa32a..c1e58fcc30b3 100644
---- a/drivers/staging/lustre/lustre/lov/lov_request.c
-+++ b/drivers/staging/lustre/lustre/lov/lov_request.c
-@@ -99,8 +99,7 @@ static int lov_check_set(struct lov_obd *lov, int idx)
-  */
- static int lov_check_and_wait_active(struct lov_obd *lov, int ost_idx)
- {
--	wait_queue_head_t waitq;
--	struct l_wait_info lwi;
-+	int cnt = 0;
- 	struct lov_tgt_desc *tgt;
- 	int rc = 0;
  
-@@ -125,11 +124,10 @@ static int lov_check_and_wait_active(struct lov_obd *lov, int ost_idx)
- 
- 	mutex_unlock(&lov->lov_lock);
- 
--	init_waitqueue_head(&waitq);
--	lwi = LWI_TIMEOUT_INTERVAL(obd_timeout * HZ,
--				   HZ, NULL, NULL);
+-struct ldlm_flock_wait_data {
+-	struct ldlm_lock *fwd_lock;
+-};
 -
--	rc = l_wait_event(waitq, lov_check_set(lov, ost_idx), &lwi);
-+	while (cnt < obd_timeout && !lov_check_set(lov, ost_idx)) {
-+		schedule_timeout_uninterruptible(HZ);
-+		cnt ++;
-+	}
- 	if (tgt->ltd_active)
- 		return 1;
+-static void
+-ldlm_flock_interrupted_wait(void *data)
+-{
+-	struct ldlm_lock *lock;
+-
+-	lock = ((struct ldlm_flock_wait_data *)data)->fwd_lock;
+-
+-	lock_res_and_lock(lock);
+-
+-	/* client side - set flag to prevent lock from being put on LRU list */
+-	ldlm_set_cbpending(lock);
+-	unlock_res_and_lock(lock);
+-}
+-
+ /**
+  * Flock completion callback function.
+  *
+@@ -342,8 +324,6 @@ int
+ ldlm_flock_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
+ {
+ 	struct file_lock		*getlk = lock->l_ast_data;
+-	struct ldlm_flock_wait_data	fwd;
+-	struct l_wait_info		lwi;
+ 	int				rc = 0;
  
+ 	OBD_FAIL_TIMEOUT(OBD_FAIL_LDLM_CP_CB_WAIT2, 4);
+@@ -372,13 +352,17 @@ ldlm_flock_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
+ 
+ 	LDLM_DEBUG(lock,
+ 		   "client-side enqueue returned a blocked lock, sleeping");
+-	fwd.fwd_lock = lock;
+-	lwi = LWI_TIMEOUT_INTR(0, NULL, ldlm_flock_interrupted_wait, &fwd);
+ 
+ 	/* Go to sleep until the lock is granted. */
+-	rc = l_wait_event(lock->l_waitq, is_granted_or_cancelled(lock), &lwi);
++	rc = l_wait_event_abortable(lock->l_waitq, is_granted_or_cancelled(lock));
+ 
+ 	if (rc) {
++		lock_res_and_lock(lock);
++
++		/* client side - set flag to prevent lock from being put on LRU list */
++		ldlm_set_cbpending(lock);
++		unlock_res_and_lock(lock);
++
+ 		LDLM_DEBUG(lock, "client-side enqueue waking up: failed (%d)",
+ 			   rc);
+ 		return rc;
