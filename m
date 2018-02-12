@@ -1,119 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933169AbeBLIxN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 03:53:13 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39911 "EHLO
+        id S933188AbeBLIxZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 03:53:25 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46354 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932946AbeBLIxI (ORCPT
+        with ESMTP id S932946AbeBLIxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 03:53:08 -0500
-X-Google-Smtp-Source: AH8x226S4HMtGKX7L/GqrV184bu9JaxEElG13mPZ+pouIF895TXDLIheH/mwiCdKylp2Yn5hIhLXPQ==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: daniel.vetter@intel.com, gustavo@padovan.org, airlied@linux.ie,
-        seanpaul@chromium.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4/4] drm/pl111: Do not use deprecated drm_driver.{enable|disable)_vblank
-Date: Mon, 12 Feb 2018 10:52:54 +0200
-Message-Id: <1518425574-32671-5-git-send-email-andr2000@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518425574-32671-1-git-send-email-andr2000@gmail.com>
-References: <1518425574-32671-1-git-send-email-andr2000@gmail.com>
+        Mon, 12 Feb 2018 03:53:20 -0500
+X-Google-Smtp-Source: AH8x227T52i5v5VotGjPlQ5qDOSWI1SyCZqugap6VGhqRrnrEHeLnTbec4XCvixP0T1yEwjB4SjzhQ==
+From: Linus Walleij <linus.walleij@linaro.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Mike Lockwood <lockwood@google.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/3] extcon: gpio: Localize platform data
+Date: Mon, 12 Feb 2018 09:53:12 +0100
+Message-Id: <20180212085314.23014-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Nothing in the entire kernel #includes <linux/extcon/extcon-gpio.h>
+so move the platform data declaration inside of the driver.
 
-Do not use deprecated drm_driver.{enable|disable)_vblank callbacks,
-but use drm_simple_kms_helpe's pipe callbacks instead.
-
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Cc: Eric Anholt <eric@anholt.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpu/drm/pl111/pl111_display.c | 15 ++++++++++++---
- drivers/gpu/drm/pl111/pl111_drm.h     |  2 --
- drivers/gpu/drm/pl111/pl111_drv.c     |  5 -----
- 3 files changed, 12 insertions(+), 10 deletions(-)
+ drivers/extcon/extcon-gpio.c       | 22 +++++++++++++++++-
+ include/linux/extcon/extcon-gpio.h | 47 --------------------------------------
+ 2 files changed, 21 insertions(+), 48 deletions(-)
+ delete mode 100644 include/linux/extcon/extcon-gpio.h
 
-diff --git a/drivers/gpu/drm/pl111/pl111_display.c b/drivers/gpu/drm/pl111/pl111_display.c
-index d75923896609..5b8368c76734 100644
---- a/drivers/gpu/drm/pl111/pl111_display.c
-+++ b/drivers/gpu/drm/pl111/pl111_display.c
-@@ -321,8 +321,10 @@ static void pl111_display_update(struct drm_simple_display_pipe *pipe,
- 	}
- }
+diff --git a/drivers/extcon/extcon-gpio.c b/drivers/extcon/extcon-gpio.c
+index ab770adcca7e..5f88f36cc54e 100644
+--- a/drivers/extcon/extcon-gpio.c
++++ b/drivers/extcon/extcon-gpio.c
+@@ -18,7 +18,6 @@
+  */
  
--int pl111_enable_vblank(struct drm_device *drm, unsigned int crtc)
-+static int pl111_display_enable_vblank(struct drm_simple_display_pipe *pipe)
- {
-+	struct drm_crtc *crtc = &pipe->crtc;
-+	struct drm_device *drm = crtc->dev;
- 	struct pl111_drm_dev_private *priv = drm->dev_private;
+ #include <linux/extcon-provider.h>
+-#include <linux/extcon/extcon-gpio.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+@@ -29,6 +28,27 @@
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
  
- 	writel(CLCD_IRQ_NEXTBASE_UPDATE, priv->regs + priv->ienb);
-@@ -330,8 +332,10 @@ int pl111_enable_vblank(struct drm_device *drm, unsigned int crtc)
- 	return 0;
- }
- 
--void pl111_disable_vblank(struct drm_device *drm, unsigned int crtc)
-+static void pl111_display_disable_vblank(struct drm_simple_display_pipe *pipe)
- {
-+	struct drm_crtc *crtc = &pipe->crtc;
-+	struct drm_device *drm = crtc->dev;
- 	struct pl111_drm_dev_private *priv = drm->dev_private;
- 
- 	writel(0, priv->regs + priv->ienb);
-@@ -343,7 +347,7 @@ static int pl111_display_prepare_fb(struct drm_simple_display_pipe *pipe,
- 	return drm_gem_fb_prepare_fb(&pipe->plane, plane_state);
- }
- 
--static const struct drm_simple_display_pipe_funcs pl111_display_funcs = {
-+static struct drm_simple_display_pipe_funcs pl111_display_funcs = {
- 	.check = pl111_display_check,
- 	.enable = pl111_display_enable,
- 	.disable = pl111_display_disable,
-@@ -502,6 +506,11 @@ int pl111_display_init(struct drm_device *drm)
- 	if (ret)
- 		return ret;
- 
-+	if (!priv->variant->broken_vblank) {
-+		pl111_display_funcs.enable_vblank = pl111_display_enable_vblank;
-+		pl111_display_funcs.disable_vblank = pl111_display_disable_vblank;
-+	}
++/**
++ * struct gpio_extcon_pdata - A simple GPIO-controlled extcon device.
++ * @extcon_id:		The unique id of specific external connector.
++ * @gpio:		Corresponding GPIO.
++ * @gpio_active_low:	Boolean describing whether gpio active state is 1 or 0
++ *			If true, low state of gpio means active.
++ *			If false, high state of gpio means active.
++ * @debounce:		Debounce time for GPIO IRQ in ms.
++ * @irq_flags:		IRQ Flags (e.g., IRQF_TRIGGER_LOW).
++ * @check_on_resume:	Boolean describing whether to check the state of gpio
++ *			while resuming from sleep.
++ */
++struct gpio_extcon_pdata {
++	unsigned int extcon_id;
++	unsigned gpio;
++	bool gpio_active_low;
++	unsigned long debounce;
++	unsigned long irq_flags;
++	bool check_on_resume;
++};
 +
- 	ret = drm_simple_display_pipe_init(drm, &priv->pipe,
- 					   &pl111_display_funcs,
- 					   priv->variant->formats,
-diff --git a/drivers/gpu/drm/pl111/pl111_drm.h b/drivers/gpu/drm/pl111/pl111_drm.h
-index 6d0e450e51b1..8e252b561e2c 100644
---- a/drivers/gpu/drm/pl111/pl111_drm.h
-+++ b/drivers/gpu/drm/pl111/pl111_drm.h
-@@ -79,8 +79,6 @@ struct pl111_drm_dev_private {
- };
- 
- int pl111_display_init(struct drm_device *dev);
--int pl111_enable_vblank(struct drm_device *drm, unsigned int crtc);
--void pl111_disable_vblank(struct drm_device *drm, unsigned int crtc);
- irqreturn_t pl111_irq(int irq, void *data);
- int pl111_debugfs_init(struct drm_minor *minor);
- 
-diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
-index 1231905150d0..a7a3a49956c5 100644
---- a/drivers/gpu/drm/pl111/pl111_drv.c
-+++ b/drivers/gpu/drm/pl111/pl111_drv.c
-@@ -249,11 +249,6 @@ static int pl111_amba_probe(struct amba_device *amba_dev,
- 	if (!priv)
- 		return -ENOMEM;
- 
--	if (!variant->broken_vblank) {
--		pl111_drm_driver.enable_vblank = pl111_enable_vblank;
--		pl111_drm_driver.disable_vblank = pl111_disable_vblank;
--	}
+ struct gpio_extcon_data {
+ 	struct extcon_dev *edev;
+ 	int irq;
+diff --git a/include/linux/extcon/extcon-gpio.h b/include/linux/extcon/extcon-gpio.h
+deleted file mode 100644
+index 7cacafb78b09..000000000000
+--- a/include/linux/extcon/extcon-gpio.h
++++ /dev/null
+@@ -1,47 +0,0 @@
+-/*
+- * Single-state GPIO extcon driver based on extcon class
+- *
+- * Copyright (C) 2012 Samsung Electronics
+- * Author: MyungJoo Ham <myungjoo.ham@samsung.com>
+- *
+- * based on switch class driver
+- * Copyright (C) 2008 Google, Inc.
+- * Author: Mike Lockwood <lockwood@android.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-#ifndef __EXTCON_GPIO_H__
+-#define __EXTCON_GPIO_H__ __FILE__
 -
- 	drm = drm_dev_alloc(&pl111_drm_driver, dev);
- 	if (IS_ERR(drm))
- 		return PTR_ERR(drm);
+-#include <linux/extcon.h>
+-
+-/**
+- * struct gpio_extcon_pdata - A simple GPIO-controlled extcon device.
+- * @extcon_id:		The unique id of specific external connector.
+- * @gpio:		Corresponding GPIO.
+- * @gpio_active_low:	Boolean describing whether gpio active state is 1 or 0
+- *			If true, low state of gpio means active.
+- *			If false, high state of gpio means active.
+- * @debounce:		Debounce time for GPIO IRQ in ms.
+- * @irq_flags:		IRQ Flags (e.g., IRQF_TRIGGER_LOW).
+- * @check_on_resume:	Boolean describing whether to check the state of gpio
+- *			while resuming from sleep.
+- */
+-struct gpio_extcon_pdata {
+-	unsigned int extcon_id;
+-	unsigned gpio;
+-	bool gpio_active_low;
+-	unsigned long debounce;
+-	unsigned long irq_flags;
+-
+-	bool check_on_resume;
+-};
+-
+-#endif /* __EXTCON_GPIO_H__ */
 -- 
-2.7.4
+2.14.3
