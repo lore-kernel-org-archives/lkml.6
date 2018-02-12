@@ -1,94 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932791AbeBLXpt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 18:45:49 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35205 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932469AbeBLXps (ORCPT
+        id S932969AbeBLXw3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 18:52:29 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47742 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932735AbeBLXw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 18:45:48 -0500
-X-Google-Smtp-Source: AH8x2272Fmrb5CStSUZXhuy20t92V+TWichHLfZTI2x247H53OjqEjx4X8hkts9BwXNB7yUIgvL2Bw==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: tchalamarla@cavium.com, rrichter@cavium.com, timur@codeaurora.org,
-        opendmb@gmail.com, Florian Fainelli <f.fainelli@gmail.com>,
+        Mon, 12 Feb 2018 18:52:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E8ED60A4E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
+Subject: Re: [PATCH] arm64: Make L1_CACHE_SHIFT configurable
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: tchalamarla@cavium.com, rrichter@cavium.com, opendmb@gmail.com,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] arm64: Make L1_CACHE_SHIFT configurable
-Date: Mon, 12 Feb 2018 15:45:23 -0800
-Message-Id: <1518479125-14428-1-git-send-email-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        open list <linux-kernel@vger.kernel.org>
+References: <1518479125-14428-1-git-send-email-f.fainelli@gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Message-ID: <ca6c47f9-86df-bcdb-bbe1-eac9db68ec33@codeaurora.org>
+Date: Mon, 12 Feb 2018 17:52:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1518479125-14428-1-git-send-email-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On many platforms, including, but not limited to Brahma-B53 platforms,
-the L1 cache line size is 64bytes. Increasing the value to 128bytes
-appears to be creating performance problems for workloads involving
-network drivers and lots of data movement. In order to keep what was
-introduced with 97303480753e ("arm64: Increase the max granular size"),
-a kernel built for ARCH_THUNDER or ARCH_THUNDER2 will get a 128bytes
-cache line size definition.
+On 02/12/2018 05:45 PM, Florian Fainelli wrote:
+> +config ARM64_L1_CACHE_SHIFT
+> +	int
+> +	default 7 if ARM64_L1_CACHE_SHIFT_7
+> +	default 6
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/arm64/Kconfig             | 10 ++++++++++
- arch/arm64/Kconfig.platforms   |  2 ++
- arch/arm64/include/asm/cache.h |  2 +-
- 3 files changed, 13 insertions(+), 1 deletion(-)
+Shouldn't this be the other way around?  Everyone is used to 7 now, so 
+you're changing the default back to 6.  I would think that it should be 
+7 by default, and platforms like Brahma-B53 should force it to 6.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index b488076d63c2..8060cbbbfd77 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -782,6 +782,16 @@ config ARCH_WANT_HUGE_PMD_SHARE
- config ARCH_HAS_CACHE_LINE_SIZE
- 	def_bool y
- 
-+config ARM64_L1_CACHE_SHIFT_7
-+	bool
-+	help
-+	  Setting ARM64 L1 cache line size to 128 bytes.
-+
-+config ARM64_L1_CACHE_SHIFT
-+	int
-+	default 7 if ARM64_L1_CACHE_SHIFT_7
-+	default 6
-+
- source "mm/Kconfig"
- 
- config SECCOMP
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 2401373565ff..b595f5624f75 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -228,11 +228,13 @@ config ARCH_SPRD
- 
- config ARCH_THUNDER
- 	bool "Cavium Inc. Thunder SoC Family"
-+	select ARM64_L1_CACHE_SHIFT_7
- 	help
- 	  This enables support for Cavium's Thunder Family of SoCs.
- 
- config ARCH_THUNDER2
- 	bool "Cavium ThunderX2 Server Processors"
-+	select ARM64_L1_CACHE_SHIFT_7
- 	select GPIOLIB
- 	help
- 	  This enables support for Cavium's ThunderX2 CN99XX family of
-diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-index ea9bb4e0e9bb..2ff64929e6bd 100644
---- a/arch/arm64/include/asm/cache.h
-+++ b/arch/arm64/include/asm/cache.h
-@@ -29,7 +29,7 @@
- #define ICACHE_POLICY_VIPT	2
- #define ICACHE_POLICY_PIPT	3
- 
--#define L1_CACHE_SHIFT		7
-+#define L1_CACHE_SHIFT		CONFIG_ARM64_L1_CACHE_SHIFT
- #define L1_CACHE_BYTES		(1 << L1_CACHE_SHIFT)
- 
- /*
 -- 
-2.7.4
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
