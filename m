@@ -1,62 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932286AbeBLALC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Feb 2018 19:11:02 -0500
-Received: from casper.infradead.org ([85.118.1.10]:59540 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932244AbeBLALA (ORCPT
+        id S932293AbeBLAgO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Feb 2018 19:36:14 -0500
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:43496 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932108AbeBLAgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Feb 2018 19:11:00 -0500
-Date: Sun, 11 Feb 2018 15:51:07 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, James.Bottomley@HansenPartnership.com,
-        davem@redhat.com
-Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
- __GFP_HIGHMEM implicitly")
-Message-ID: <20180211235107.GE4680@bombadil.infradead.org>
-References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
- <20180208130649.GA15846@bombadil.infradead.org>
- <20180208232004.GA21027@bombadil.infradead.org>
- <20180211092652.GV21609@dhcp22.suse.cz>
- <20180211112808.GA4551@bombadil.infradead.org>
- <20180211120515.GB4551@bombadil.infradead.org>
+        Sun, 11 Feb 2018 19:36:12 -0500
+X-Google-Smtp-Source: AH8x225ddqk5EYmNn/B2UVAEUKPjBvQqiNmsB9XooocQTGPeckPmuhOveq6QyAfqZA7JkMkTla9lR052e6bXfGYMn4w=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180211120515.GB4551@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180211194154.GB22869@wunner.de>
+References: <cover.1518338788.git.lukas@wunner.de> <CAHbf0-Fhi9j5H7VTxF84SENQph+UQE2zRbi2Q-u_DAMh6x+eSg@mail.gmail.com>
+ <20180211192314.GA22869@wunner.de> <20180211194154.GB22869@wunner.de>
+From: Mike Lothian <mike@fireburn.co.uk>
+Date: Mon, 12 Feb 2018 00:35:51 +0000
+Message-ID: <CAHbf0-HSNJmXs_Nm+bbcfUifoLEpFsMSpM96a-pVfLFMNz3GFw@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        Ismo Toijala <ismo.toijala@gmail.com>, nouveau@lists.freedesktop.org,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        Hans de Goede <hdegoede@redhat.com>, Peter Wu <peter@lekensteyn.nl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 04:05:15AM -0800, Matthew Wilcox wrote:
-> On Sun, Feb 11, 2018 at 03:28:08AM -0800, Matthew Wilcox wrote:
-> > Now, longer-term, perhaps we should do the following:
-> > 
-> > #ifdef CONFIG_ZONE_DMA32
-> > #define OPT_ZONE_DMA32	ZONE_DMA32
-> > #elif defined(CONFIG_64BIT)
-> > #define OPT_ZONE_DMA	OPT_ZONE_DMA
-> > #else
-> > #define OPT_ZONE_DMA32 ZONE_NORMAL
-> > #endif
-> 
-> For consistent / coherent memory, we have an allocation function.
-> But we don't have an allocation function for streaming memory, which is
-> what these drivers want.  They also flush the DMA memory and then access
-> the memory through a different virtual mapping, which I'm not sure is
-> going to work well on virtually-indexed caches like SPARC and PA-RISC
-> (maybe not MIPS either?)
+Hi
 
-Perhaps I (and a number of other people ...) have misunderstood the
-semantics of GFP_DMA32.  Perhaps GFP_DMA32 is not "allocate memory below
-4GB", perhaps it's "allocate memory which can be mapped below 4GB".
-Machines with an IOMMU can use ZONE_NORMAL.  Machines with no IOMMU can
-choose to allocate memory with a physical address below 4GB.
+I've not been able to reproduce the original problem you're trying to
+solve on amdgpu thats with or without your patch set and the above
+"trigger" too
 
-After all, it has 'DMA' right there in the name.  If someone's relying
-on it to allocate physical memory below 4GB, they're arguably misusing it.
+Is anything else required to trigger it, I started multiple DRI_PRIME
+glxgears, in parallel, serial waiting the 12 seconds and serial within
+the 12 seconds and I couldn't reproduce it
+
+Regards
+
+Mike
