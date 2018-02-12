@@ -1,92 +1,124 @@
-Return-Path: <ed@cashinworks.com>
-X-Google-Smtp-Source: AH8x225CLaMCZdhS94YKUV+D5Ex8h5zLxmvcLk1XxNOQiYN4jmSJFegxJdTfz3M0P4uiYY/OB62y
-ARC-Seal: i=1; a=rsa-sha256; t=1518898926; cv=none;
-        d=google.com; s=arc-20160816;
-        b=zvFPpDt1twH/qYJwJPSkhlLY8ocnjse3HP8Yj90HxMwq7Tzx+gc3pRlByeowqUJXNI
-         GUorlXjy9WpJ4MLmklQ1cKWvE+NSzZbhmOhlFZSvc2mtBFf95Um9gjOrlrBHipGtArpa
-         QKxw2k3cxlRXjJSEUvDHaGPYUxNVTvNZ95/LZNoUFdI7FgHUrlK5vY9dxZ57tapmlnav
-         Im0QmyZggzOzXoCGLfZxswQw6E2FiaDhq+30ebCC1WKw6uaKrZR8MEr5+Edzcab5mT87
-         4HnfWG4rPjRZKtYNnpRSPkqYqKV8DZzxwa0tJwGcUbM28DSzliYpQ1yT/fr5iuMDKIVo
-         oaMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:arc-authentication-results;
-        bh=GK+lH9rLrhDG6rf5Hum5YklWieh0Qg4m0oeYdRyjF1I=;
-        b=R3SrmwlECNRapzPqPR3q2rzRk0QmFSzXLX8nt7yEmxewmYDlahXX4eoPlQ5hyW/T7R
-         wiNVoUP/rkBVWg8EMhnHB7ZdC4Rnnra8946pDgpmONOvv7hbS7tO62SzV9r9+BmfWMwv
-         2RteeGW7Ki9fSOozPLdtSri4vEikvq864YvxGn4U1u5OYK+oHaqA5LfELd21rZEfFnZ/
-         A2nxnfMac4Dd7PJTXGDw8c0LJB+PD4Bs+ft2LmP8nIE0F0yC2BeIC5NvLujjkNw5l5Ig
-         dgQjOdhLpryr3NmeakC7sOi7XhcuhS9OhRE4Zymwg4cXWaIjm//+AKuCivv6wUM+rYn8
-         pbIw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 67.222.38.20 is neither permitted nor denied by domain of ed@cashinworks.com) smtp.mailfrom=ed@cashinworks.com
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 67.222.38.20 is neither permitted nor denied by domain of ed@cashinworks.com) smtp.mailfrom=ed@cashinworks.com
-X-Authority-Analysis: v=2.2 cv=G85sK5s5 c=1 sm=1 tr=0
- a=6lV6tj8ir7tGSl/9xQZNPA==:117 a=6lV6tj8ir7tGSl/9xQZNPA==:17
- a=IkcTkHD0fZMA:10 a=Op4juWPpsa0A:10 a=9pOfaIXFVCWWA_ahaSMA:9 a=QEXdDO2ut3YA:10
-Content-Type: text/plain;
-	charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] aoe: document sysfs interface
-From: Ed Cashin <ed@cashinworks.com>
-X-Mailer: iPhone Mail (15D60)
-In-Reply-To: <alpine.DEB.2.20.1802171537240.2205@hadrien>
-Date: Sat, 17 Feb 2018 15:21:04 -0500
-Cc: Ed Cashin <ed.cashin@acm.org>, Aishwarya Pant <aishpant@gmail.com>,
- linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Greg KH <gregkh@linuxfoundation.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2A411BD5-B759-4734-A818-DE5F545F913A@cashinworks.com>
-References: <20180216153900.GA12832@mordor.localdomain> <9ddc04c5-eedf-b88a-0cea-bd0c91a2dfcc@acm.org> <alpine.DEB.2.20.1802171537240.2205@hadrien>
-To: Julia Lawall <julia.lawall@lip6.fr>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box320.bluehost.com
-X-AntiAbuse: Original Domain - linuxfoundation.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - cashinworks.com
-X-BWhitelist: no
-X-Source-IP: 24.99.197.19
-X-Exim-ID: 1en8yp-004H2v-1Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-24-99-197-19.hsd1.ga.comcast.net ([10.0.0.100]) [24.99.197.19]:58838
-X-Source-Auth: nobody
-X-Email-Count: 0
-X-Source-Cap: bm9ib2R5Oztib3gzMjAuYmx1ZWhvc3QuY29t
-X-Local-Domain: no
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1250878-1518436531-2-7250405460410476913
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.8
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  RCVD_IN_SBL_CSS 3.335, RCVD_IN_SORBS_WEB 1.5, SPF_PASS -0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518436531; b=rLPTawxSoHtBGBrMxxeSv7Jqa9qfCpwwLTwZlmkfTC6/CmL
+    MRyvWK6CI2N9hKe/rK1oMRYpMi+5QY4FSyMdOSszij6KefddNwl0Jolqpv3aQiLn
+    7nbmNwPF1m/EwpES6oRBB0u9dyB9luMB2bx+9KRmQGihTz3CzRPaE/dj1wYIjgKN
+    E3KvhYBWx+Prz3Sg/A4jcAComdDpPhhGtnRQXsys/86tOXUxBjyipOsqxPgVwEei
+    zZcZqKqoDLpqoV4k1sfAXSqnU6cvKE7rhnT42HuxUK4BzxqB2DtK92T6uXofsglw
+    fXEyG8H5CRBWEBKM/uFlsEL8jPG3tdp9GOaZPUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518436531; bh=G
+    kFKr374nM/5GlDplObuOKdhWpV02M43mRkuB37X5Vc=; b=H1tKLUu8pzkoWJSor
+    of/Ct9bKMvL3O2ioJ0elvus9QofS6mShL7lotXQjl25KbQH7IpwT048Tb12wiapW
+    x/sEf9yxoDp9HiewvfdkftRryVG7FUkFdh9qIpXnitdH/trXjwJD+3isne0JP1oz
+    5pizJYxY+Pj2bSPHHY/aCxJfVMfXNxl/cPzQxqXLTZn9605crWc4GhjPJKrkKC46
+    L23dhTSdmv+XSmZChDL3kTv7+bG/0J0GJbT/YaOyBXaLHUM3Lv17l6V3xQUKHdqG
+    HH4zjRTceMrbfktWqiQn+L6m7n8Nhg2EW4eJwUWfakVoNesO9PbUfZF/zP3Y3dJN
+    qqxfQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HSXpq09t x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=rh1cD9hc;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HSXpq09t x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=rh1cD9hc;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AH8x225NQjDx/2ndibSqLfrQxSvZ/R8DYOiB8hCA0W2lVeIn5/zMTF/0+ofEff9qeIQz7t+NqAXwVg==
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: 21cnbao@gmail.com,
+	jic23@kernel.org
+Subject: [PATCH 0/4] staging: iio: accel: adis16201 driver cleanup
+Date: Mon, 12 Feb 2018 17:24:55 +0530
+Message-Id: <1518436499-8584-1-git-send-email-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, Himanshu Jha <himanshujha199640@gmail.com>,
+ pmeerw@pmeerw.net, knaack.h@gmx.de
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592572558446163401?=
-X-GMAIL-MSGID: =?utf-8?q?1592680960424170405?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The following patch series cleans up miscellaneous code fragments and
+then the driver is moved from staging to mainline IIO subsytem directory.
+Note that the last patch to move driver is *not* generated using '-M' flag,
+which is used for detecting renames, since it may help reviewers to
+suggest more cleanups/fix while pointing inline to the patch the
+necessary changes.
 
-> On Feb 17, 2018, at 9:37 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
->=20
->=20
->=20
->> On Fri, 16 Feb 2018, Ed Cashin wrote:
->>=20
->>> On 02/16/2018 10:39 AM, Aishwarya Pant wrote:
->>> Documentation has been compiled from git commit logs and descriptions in=
+All the patches have been tested using 0-day test service with success.
 
->>> Documentation/aoe/aoe.txt. This should be useful for scripting and
->>> tracking changes in the ABI.
->> ...
->>> +What:        /sys/block/etherd*/netif
->> ...
->>> +Description:
->>> +        (RO) The name of the network interface on the localhost
->>> through
->>> +        which we are communicating with the remote AoE device.
->>=20
->> I'd recommend changing that to, "network interfaces".
->=20
-> Should it then be "names"?
+For all the patches:
+Suggested-by: Jonathan Cameron <jic23@kernel.org>
 
-Yes, s=E2=80=99il vous plait. Merci.
+Himanshu Jha (4):
+  staging: iio: accel: adis16201: Use SPDX identifier
+  staging: iio: accel: Remove unnecessary comments and add suitable
+    suffix
+  staging: iio: accel: Use sign_extend32 and adjust a switch statement
+  staging: iio: accel: Move adis16201 driver out of staging
 
-=E2=80=94=20
-  Ed=
+ drivers/iio/accel/Kconfig             |  12 ++
+ drivers/iio/accel/Makefile            |   1 +
+ drivers/iio/accel/adis16201.c         | 315 ++++++++++++++++++++++++++++
+ drivers/staging/iio/accel/Kconfig     |  12 --
+ drivers/staging/iio/accel/Makefile    |   1 -
+ drivers/staging/iio/accel/adis16201.c | 381 ----------------------------------
+ 6 files changed, 328 insertions(+), 394 deletions(-)
+ create mode 100644 drivers/iio/accel/adis16201.c
+ delete mode 100644 drivers/staging/iio/accel/adis16201.c
+
+-- 
+2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
