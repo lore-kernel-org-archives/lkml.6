@@ -1,70 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932822AbeBLWWU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:22:20 -0500
-Received: from mga07.intel.com ([134.134.136.100]:64299 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932737AbeBLWVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:21:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,504,1511856000";
-   d="scan'208";a="29490602"
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: acme@kernel.org, tglx@linutronix.de, jolsa@redhat.com,
-        eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 4/5] perf/x86/intel: Fix pmu read for auto-reload
-Date: Mon, 12 Feb 2018 14:20:34 -0800
-Message-Id: <1518474035-21006-5-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518474035-21006-1-git-send-email-kan.liang@linux.intel.com>
-References: <1518474035-21006-1-git-send-email-kan.liang@linux.intel.com>
+        id S932678AbeBLWVr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:21:47 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37482 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932627AbeBLWVq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:21:46 -0500
+From: Mike Kravetz <mike.kravetz@oracle.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Michal Hocko <mhocko@kernel.org>, Christopher Lameter <cl@linux.com>,
+        Guy Shattah <sguy@mellanox.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Vlastimil Babka <vbabka@suse.cz>, David Nellans <dnellans@nvidia.com>,
+        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [RFC PATCH 1/3] mm: make start_isolate_page_range() fail if already isolated
+Date: Mon, 12 Feb 2018 14:20:54 -0800
+Message-Id: <20180212222056.9735-2-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180212222056.9735-1-mike.kravetz@oracle.com>
+References: <20180212222056.9735-1-mike.kravetz@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8803 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=723
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802120282
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+start_isolate_page_range() is used to set the migrate type of a
+page block to MIGRATE_ISOLATE while attempting to start a
+migration operation.  It is assumed that only one thread is
+attempting such an operation, and due to the limited number of
+callers this is generally the case.  However, there are no
+guarantees and it is 'possible' for two threads to operate on
+the same range.
 
-Auto-reload event needs to be specially handled in event count read.
+Since start_isolate_page_range() is called at the beginning of
+such operations, have it return -EBUSY if MIGRATE_ISOLATE is
+already set.
 
-Auto-reload is only available for intel_pmu.
+This will allow start_isolate_page_range to serve as a
+synchronization mechanism and will allow for more general use
+of callers making use of these interfaces.
 
-Fixes: b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt
-handling (large PEBS interrupt threshold)")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- arch/x86/events/intel/core.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ mm/page_alloc.c     |  8 ++++----
+ mm/page_isolation.c | 10 +++++++++-
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 731153a..6461a4a 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2060,6 +2060,14 @@ static void intel_pmu_del_event(struct perf_event *event)
- 		intel_pmu_pebs_del(event);
- }
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 76c9688b6a0a..064458f317bf 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7605,11 +7605,11 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+  * @gfp_mask:	GFP mask to use during compaction
+  *
+  * The PFN range does not have to be pageblock or MAX_ORDER_NR_PAGES
+- * aligned, however it's the caller's responsibility to guarantee that
+- * we are the only thread that changes migrate type of pageblocks the
+- * pages fall in.
++ * aligned.  The PFN range must belong to a single zone.
+  *
+- * The PFN range must belong to a single zone.
++ * The first thing this routine does is attempt to MIGRATE_ISOLATE all
++ * pageblocks in the range.  Once isolated, the pageblocks should not
++ * be modified by others.
+  *
+  * Returns zero on success or negative error code.  On success all
+  * pages which PFN is in [start, end) are allocated for the caller and
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 165ed8117bd1..e815879d525f 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -28,6 +28,13 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
  
-+static void intel_pmu_read_event(struct perf_event *event)
-+{
-+	if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
-+		intel_pmu_auto_reload_read(event);
-+	else
-+		x86_perf_event_update(event);
-+}
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 
++	/*
++	 * We assume we are the only ones trying to isolate this block.
++	 * If MIGRATE_ISOLATE already set, return -EBUSY
++	 */
++	if (is_migrate_isolate_page(page))
++		goto out;
 +
- static void intel_pmu_enable_fixed(struct hw_perf_event *hwc)
- {
- 	int idx = hwc->idx - INTEL_PMC_IDX_FIXED;
-@@ -3495,6 +3503,7 @@ static __initconst const struct x86_pmu intel_pmu = {
- 	.disable		= intel_pmu_disable_event,
- 	.add			= intel_pmu_add_event,
- 	.del			= intel_pmu_del_event,
-+	.read			= intel_pmu_read_event,
- 	.hw_config		= intel_pmu_hw_config,
- 	.schedule_events	= x86_schedule_events,
- 	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
+ 	pfn = page_to_pfn(page);
+ 	arg.start_pfn = pfn;
+ 	arg.nr_pages = pageblock_nr_pages;
+@@ -166,7 +173,8 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
+  * future will not be allocated again.
+  *
+  * start_pfn/end_pfn must be aligned to pageblock_order.
+- * Returns 0 on success and -EBUSY if any part of range cannot be isolated.
++ * Returns 0 on success and -EBUSY if any part of range cannot be isolated
++ * or any part of the range is already set to MIGRATE_ISOLATE.
+  */
+ int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
+ 			     unsigned migratetype, bool skip_hwpoisoned_pages)
 -- 
-2.7.4
+2.13.6
