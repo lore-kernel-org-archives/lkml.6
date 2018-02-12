@@ -1,145 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964895AbeBLQQy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 11:16:54 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:12865 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935579AbeBLQQp (ORCPT
+        id S964986AbeBLQSX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 11:18:23 -0500
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:40106 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964852AbeBLQQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 11:16:45 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180212161643epoutp03f6cafd19aa60617339901205bcc4307e~SoDvU5asx2297922979epoutp03B
-X-AuditID: b6c32a35-891ff70000001031-2b-5a81bdea614b
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: broonie@kernel.org
-Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        krzk@kernel.org, jcsing.lee@samsung.com, sbkim73@samsung.com,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 2/7] ASoC: samsung: i2s: Ensure names of supplied clocks
- are unique
-Date: Mon, 12 Feb 2018 17:15:33 +0100
-Message-id: <20180212161538.22669-3-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.14.2
-In-reply-to: <20180212161538.22669-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsWy7bCmvu6rvY1RBn+fyFlcuXiIyWLjjPWs
-        FlMfPmGzmH/kHKvF2/3dzBbnz29gt/h2pYPJ4vKuOWwWM87vY7JYe+Quu0Xr3iPsFofftLNa
-        XFzxhcmB12PD5yY2j52z7rJ7bFrVyebRt2UVo8fnTXIBrFFcNimpOZllqUX6dglcGT27L7AV
-        TJasOHb0L3MD432RLkZODgkBE4lPs+awdjFycQgJ7GCUuDntNROE851RonnFaXaYqr9rlkFV
-        7WaU+HnkPTNIQkjgF6PE9VWpIDabgKFE79E+RhBbREBM4vacTmaQBmaBM0wS0/etYQJJCAtE
-        SHx4dgjMZhFQlVj8vQuoiIODV8BaYmeXKMQyeYn3C+6DzeEUsJGYdHk52EUSAjvYJO6f7mGG
-        KHKR+NP2kRHCFpZ4dXwLO8gcCQFpiUtHbSHq+xklPh7fzwLhrGaUeP1tFytEg7XE4eMXwWxm
-        AT6Jd197WCGaeSU62oQgSjwk+r7fYYQIO0pMvmMG8TzQzNMPN7JMYJRawMiwilEstaA4Nz21
-        2LDAUK84Mbe4NC9dLzk/dxMjOKK1THcwTjnnc4hRgINRiYe3Y3ZjlBBrYllxZe4hRgkOZiUR
-        3j/NQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8AQEuUUIC6YklqdmpqQWpRTBZJg5OqQbGS9mS
-        m5mXmp/f9rpfWFUqb670i5W/RAyOPYuSviB/2+CAltH5qys0/qfGrL3hp917vyso0KTyoJri
-        7AX/3/zY+jhSuj3z58bVmXeP73v+rSr6oOxmm44ALvFkJ+Edx6rfFq8RLv5o8NLPQPXHsW1J
-        k98+Pvnp0pUV86KelE3g6chfX2B2dVvaLyWW4oxEQy3mouJEAL3EfBzkAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFLMWRmVeSWpSXmKPExsVy+t9jAd2XexujDKbcMbe4cvEQk8XGGetZ
-        LaY+fMJmMf/IOVaLt/u7mS3On9/AbvHtSgeTxeVdc9gsZpzfx2Sx9shddovWvUfYLQ6/aWe1
-        uLjiC5MDr8eGz01sHjtn3WX32LSqk82jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mnp2X2Ar
-        mCxZcezoX+YGxvsiXYycHBICJhJ/1yxj7WLk4hAS2MkocWLtfTYI5xejxNfF7SwgVWwChhK9
-        R/sYQWwRATGJ23M6mUGKmAXOMEl8mXiJHSQhLBAhsenyJyYQm0VAVWLx9y6gIg4OXgFriZ1d
-        ohDb5CXeL7gPNodTwEZi0uXlYOVCQCVHlq9nnsDIs4CRYRWjZGpBcW56brFRgWFearlecWJu
-        cWleul5yfu4mRmAIbjus1beD8f6S+EOMAhyMSjy8HbMbo4RYE8uKK3MPMUpwMCuJ8P5pBgrx
-        piRWVqUW5ccXleakFh9ilOZgURLnvZ13LFJIID2xJDU7NbUgtQgmy8TBKdXAGBu9Rq2dIb0k
-        stpcwG/io5emp7eUJ1w8+HHFJ72ZzmwKz7Zyc346pF3xrUR69nGxe/NU1hasfyJSfr2im7uj
-        MtbylZfTeeZZfP2vK6devSH5luHjN0Hr/19FWTzXpm1kevV0V9tmuZzu94+qGZMFf19Nczz9
-        svLWMrZtzPX/F1ucY9NRjxH4rMRSnJFoqMVcVJwIAAEM24k9AgAA
-X-CMS-MailID: 20180212161641epcas1p2418c2323e5eb99a37a89b42c246f23dd
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180212161641epcas1p2418c2323e5eb99a37a89b42c246f23dd
-X-RootMTR: 20180212161641epcas1p2418c2323e5eb99a37a89b42c246f23dd
-References: <20180212161538.22669-1-s.nawrocki@samsung.com>
-        <CGME20180212161641epcas1p2418c2323e5eb99a37a89b42c246f23dd@epcas1p2.samsung.com>
+        Mon, 12 Feb 2018 11:16:54 -0500
+Date: Mon, 12 Feb 2018 17:16:40 +0100
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To: Michal Hocko <mhocko@kernel.org>
+CC: Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        James Hartley <james.hartley@mips.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 1/1] mm: page_alloc: skip over regions of invalid pfns
+ on UMA
+Message-ID: <20180212161640.GA30811@vmlxhi-102.adit-jv.com>
+References: <20180124143545.31963-1-erosca@de.adit-jv.com>
+ <20180124143545.31963-2-erosca@de.adit-jv.com>
+ <20180129184746.GK21609@dhcp22.suse.cz>
+ <20180203122422.GA11832@vmlxhi-102.adit-jv.com>
+ <20180212150314.GG3443@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180212150314.GG3443@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to support multiple instances of the I2S IP block the platform
-device name is prepended to each clock registered by the driver.
-The clock-output-names property is now not used, this should not cause
-any issues as, for example, CDCLK clock is referenced through DT 'clocks'
-property, not by name.
+Hi Michal,
 
-This change allows to have both I2S0 and I2S1 enabled simultaneously
-on exynos5433 and working properly when #clock-cells property is specified
-in respective DT nodes.
+On Mon, Feb 12, 2018 at 04:03:14PM +0100, Michal Hocko wrote:
+> On Sat 03-02-18 13:24:22, Eugeniu Rosca wrote:
+> [...]
+> > That said, I really hope this won't be the last comment in the thread
+> > and appropriate suggestions will come on how to go forward.
+> 
+> Just to make sure we are on the same page. I was suggesting the
+> following. The patch is slightly larger just because I move
+> memblock_next_valid_pfn around which I find better than sprinkling
+> ifdefs around. Please note I haven't tried to compile test this.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v1:
- - added devm_kasprintf() error handling.
----
- sound/soc/samsung/i2s.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+I got your point. So, I was wrong. You are not preferring v2 of this
+patch, but suggest a new variant of it. For the record, I've also
+build/boot-tested your variant with no issues. The reason I did not
+make it my favorite is to allow reviewers to concentrate on what's
+actually the essence of this change, i.e. relaxing the dependency of
+memblock_next_valid_pfn() from HAVE_MEMBLOCK_NODE_MAP (which requires/
+depends on NUMA) to HAVE_MEMBLOCK (which doesn't).
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index aeba0ae890ea..5088d12faeda 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1193,11 +1193,13 @@ static void i2s_unregister_clock_provider(struct platform_device *pdev)
- 
- static int i2s_register_clock_provider(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
--	struct i2s_dai *i2s = dev_get_drvdata(dev);
-+	const char * const i2s_clk_desc[] = { "cdclk", "rclk_src", "prescaler" };
- 	const char *clk_name[2] = { "i2s_opclk0", "i2s_opclk1" };
- 	const char *p_names[2] = { NULL };
-+	struct device *dev = &pdev->dev;
-+	struct i2s_dai *i2s = dev_get_drvdata(dev);
- 	const struct samsung_i2s_variant_regs *reg_info = i2s->variant_regs;
-+	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
- 	struct clk *rclksrc;
- 	int ret, i;
- 
-@@ -1214,30 +1216,38 @@ static int i2s_register_clock_provider(struct platform_device *pdev)
- 		clk_put(rclksrc);
- 	}
- 
-+	for (i = 0; i < ARRAY_SIZE(i2s_clk_desc); i++) {
-+		i2s_clk_name[i] = devm_kasprintf(dev, GFP_KERNEL, "%s_%s",
-+						dev_name(dev), i2s_clk_desc[i]);
-+		if (!i2s_clk_name[i])
-+			return -ENOMEM;
-+	}
-+
- 	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
- 		/* Activate the prescaler */
- 		u32 val = readl(i2s->addr + I2SPSR);
- 		writel(val | PSR_PSREN, i2s->addr + I2SPSR);
- 
- 		i2s->clk_table[CLK_I2S_RCLK_SRC] = clk_register_mux(dev,
--				"i2s_rclksrc", p_names, ARRAY_SIZE(p_names),
-+				i2s_clk_name[CLK_I2S_RCLK_SRC], p_names,
-+				ARRAY_SIZE(p_names),
- 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SMOD, reg_info->rclksrc_off,
- 				1, 0, i2s->lock);
- 
- 		i2s->clk_table[CLK_I2S_RCLK_PSR] = clk_register_divider(dev,
--				"i2s_presc", "i2s_rclksrc",
-+				i2s_clk_name[CLK_I2S_RCLK_PSR],
-+				i2s_clk_name[CLK_I2S_RCLK_SRC],
- 				CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SPSR, 8, 6, 0, i2s->lock);
- 
--		p_names[0] = "i2s_presc";
-+		p_names[0] = i2s_clk_name[CLK_I2S_RCLK_PSR];
- 		i2s->clk_data.clk_num = 2;
- 	}
--	of_property_read_string_index(dev->of_node,
--				"clock-output-names", 0, &clk_name[0]);
- 
--	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev, clk_name[0],
--				p_names[0], CLK_SET_RATE_PARENT,
-+	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev,
-+				i2s_clk_name[CLK_I2S_CDCLK], p_names[0],
-+				CLK_SET_RATE_PARENT,
- 				i2s->addr + I2SMOD, reg_info->cdclkcon_off,
- 				CLK_GATE_SET_TO_DISABLE, i2s->lock);
- 
--- 
-2.14.2
+As I've said in some previous reply, I am open minded about which
+variant is selected by MM people, since, from my point of view, all of
+them do the same thing with variable degree of code readability.
+
+For me it's not a problem to submit a new patch. I guess that a
+prerequisite for this is to reach some agreement on what people think is
+the best option, which I feel didn't occur yet.
+
+Best regards,
+Eugeniu.
+
+> 
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index 8be5077efb5f..0d3cb4c70858 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -187,7 +187,6 @@ int memblock_search_pfn_nid(unsigned long pfn, unsigned long *start_pfn,
+>  			    unsigned long  *end_pfn);
+>  void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+>  			  unsigned long *out_end_pfn, int *out_nid);
+> -unsigned long memblock_next_valid_pfn(unsigned long pfn, unsigned long max_pfn);
+>  
+>  /**
+>   * for_each_mem_pfn_range - early memory pfn range iterator
+> @@ -204,6 +203,8 @@ unsigned long memblock_next_valid_pfn(unsigned long pfn, unsigned long max_pfn);
+>  	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
+>  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+>  
+> +unsigned long memblock_next_valid_pfn(unsigned long pfn, unsigned long max_pfn);
+> +
+>  /**
+>   * for_each_free_mem_range - iterate through free memblock areas
+>   * @i: u64 used as loop variable
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 5a9ca2a1751b..8a627d4fa5b2 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1101,34 +1101,6 @@ void __init_memblock __next_mem_pfn_range(int *idx, int nid,
+>  		*out_nid = r->nid;
+>  }
+>  
+> -unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
+> -						      unsigned long max_pfn)
+> -{
+> -	struct memblock_type *type = &memblock.memory;
+> -	unsigned int right = type->cnt;
+> -	unsigned int mid, left = 0;
+> -	phys_addr_t addr = PFN_PHYS(pfn + 1);
+> -
+> -	do {
+> -		mid = (right + left) / 2;
+> -
+> -		if (addr < type->regions[mid].base)
+> -			right = mid;
+> -		else if (addr >= (type->regions[mid].base +
+> -				  type->regions[mid].size))
+> -			left = mid + 1;
+> -		else {
+> -			/* addr is within the region, so pfn + 1 is valid */
+> -			return min(pfn + 1, max_pfn);
+> -		}
+> -	} while (left < right);
+> -
+> -	if (right == type->cnt)
+> -		return max_pfn;
+> -	else
+> -		return min(PHYS_PFN(type->regions[right].base), max_pfn);
+> -}
+> -
+>  /**
+>   * memblock_set_node - set node ID on memblock regions
+>   * @base: base of area to set node ID for
+> @@ -1160,6 +1132,34 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+>  }
+>  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+>  
+> +unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
+> +						      unsigned long max_pfn)
+> +{
+> +	struct memblock_type *type = &memblock.memory;
+> +	unsigned int right = type->cnt;
+> +	unsigned int mid, left = 0;
+> +	phys_addr_t addr = PFN_PHYS(pfn + 1);
+> +
+> +	do {
+> +		mid = (right + left) / 2;
+> +
+> +		if (addr < type->regions[mid].base)
+> +			right = mid;
+> +		else if (addr >= (type->regions[mid].base +
+> +				  type->regions[mid].size))
+> +			left = mid + 1;
+> +		else {
+> +			/* addr is within the region, so pfn + 1 is valid */
+> +			return min(pfn + 1, max_pfn);
+> +		}
+> +	} while (left < right);
+> +
+> +	if (right == type->cnt)
+> +		return max_pfn;
+> +	else
+> +		return min(PHYS_PFN(type->regions[right].base), max_pfn);
+> +}
+> +
+>  static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+>  					phys_addr_t align, phys_addr_t start,
+>  					phys_addr_t end, int nid, ulong flags)
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index e2b42f603b1a..b7968fd5736f 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5352,14 +5352,13 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>  			goto not_early;
+>  
+>  		if (!early_pfn_valid(pfn)) {
+> -#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+>  			/*
+>  			 * Skip to the pfn preceding the next valid one (or
+>  			 * end_pfn), such that we hit a valid pfn (or end_pfn)
+>  			 * on our next iteration of the loop.
+>  			 */
+> -			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+> -#endif
+> +			if IS_ENABLED(HAVE_MEMBLOCK)
+> +				pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+>  			continue;
+>  		}
+>  		if (!early_pfn_in_nid(pfn, nid))
+> -- 
+> Michal Hocko
+> SUSE Labs
