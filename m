@@ -1,233 +1,75 @@
-Return-Path: <BATV+30b93a52ff5b1c3ea8f7+5286+infradead.org+dwmw2@twosheds.srs.infradead.org>
-X-Google-Smtp-Source: AH8x224ACP8w7J1GF+584GFxDLHU+dSFK+dObRwsZEl2YfcdlO1kpvLG4cG8lOkUZdXEMZnburtq
-ARC-Seal: i=1; a=rsa-sha256; t=1518428121; cv=none;
+Return-Path: <arjan.van.de.ven@intel.com>
+X-Google-Smtp-Source: AH8x225fcnvcm1rsAvf2Gea//0w/QUnHJLNnfRpr6RS/dkjwuvwf8LetInAAyIRzWvZRd6KjiHYB
+ARC-Seal: i=1; a=rsa-sha256; t=1518443776; cv=none;
         d=google.com; s=arc-20160816;
-        b=RJqwm+UQVbKE+7DNHkzd73/lfCdD+3JyRlbgKyQjQFUhw+8F1q3BvfENlsG8D+xre4
-         PG3AVGsDzlSwhM+GlB6AcUryLstk2n4RrQQHWf+68Z8kFQePR/UnYd06xFAzlfWoPhcN
-         3hCBkTyoC0M7kKMWBNvjwWg/9WpAfO4iyZYTdWV3NLtvCBQXqeDf4t71T0YzCw3c7Ogq
-         LQ5vu0ghUaja7k8jeyTslfzDrulVotXIrIP0eIKqu6hRtHafEpbibn9xDFZxyBDs6cEr
-         T8LZwCSwzJzObj8n1b392qEYoln/bQTVRNqrxlOyjRp3065BBpW/8iPu7DktDO/4IQLk
-         cBHA==
+        b=cph+g/Rkaz8tEiZ2ZiI5vj1kB805vdQKNkfnOVjZB7OEoqWmioCp/WZmcXz329siby
+         mRtTomOUs+7bqczYhdkzjTNXUucdsWaBmA4ISJNdu6TrgiNfmrpg9CN8sNV7ATTKZwqD
+         DG0LpYMy6j0PdqB3up7pE8bmjrSckVi2/afk/2ToApiHiRP3Pd/+KG/cl9nWDSKZ7xZG
+         LW9RgrPahqcSGFj3X3rIQKqheLwzlAUhHARG9xJnvjibLHIJvyatZTeGE3P/hdy5bdPc
+         JELqr1iRw8q+nsx8RSmYjV8I2Sfd+oY5/x/dXK/2INO6hX1Hw8E0x764sZQohYizAint
+         G9Kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:date:face:references:in-reply-to:cc:to:from:subject
-         :message-id:dkim-signature:arc-authentication-results;
-        bh=Kqz1PASVBnk6iKnuba/rRNR5zDtfUTdN7AhT2wqmuIc=;
-        b=oSRZMcXO9wbuz8kewfnnpoxO7tcb1JzTdS+XaHb7Uks0JksH8bpf5Km4Fta2v3fBkg
-         laOkibmkOVVe6iMUhyqUmXtKlEgS6ODgliZnDVpaeGjUiHisftU+hYwf65rNgNi0yos+
-         JgJ5o3chIynUN7qDlMCGqsN5pP9RdmHKFLrp9PNDwfQ4oW5bzE8HxhWUxTgZgygL3vQW
-         Jqd1L/2a5ZAprU39d49TS2Z4GgKc45B4PGSACp9CfBJyA/Ot1ueCU2Em96H1cpC85dzT
-         39jpYHcdJa2FzqJkhZwdebjtoi72QRiayhkJiCj1Sov/nI/X0DlTRm/Jy3tUHkuOlvtD
-         n/OQ==
+        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
+         :dlp-product:content-language:accept-language:in-reply-to:references
+         :message-id:date:thread-index:thread-topic:subject:cc:to:from
+         :arc-authentication-results;
+        bh=lSjfKkkoRUIWy2wTNG0F6dimqRCUoR2RG08DDKFW7Pw=;
+        b=nCmRG9cQhnKGcWAA46xbSYxRg2jx8q2d0ByioT8UhxT2P+OPW1GTFqL32Rlnv3Eepb
+         OtrK89oxCgosTfIpxVgdfO9VO5Na8cNVGhh0YyBGI0WU2S4UHrSyT3njphPbNM8c0F8j
+         Oi4WYThOZDLeM3zGXDhNMs2ByOCbOnrlpGBwWb/iiQkUR2+btA2goFXfIWzxNW4YXXl4
+         3/jphIdrYb+TVRHK5ZjpWDvKLiuNcTV3LSw3NvMJbDWlT600NEGGviBwQDS2eqwibUG5
+         mzgeURiCDKXdx0jv3dQXK6+njmZhn/4jVYNEvCnGc/WLLBUgiHkIFUP+BkS2CPIyZ2Ih
+         hcsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=lhDn5r7s;
-       spf=pass (google.com: best guess record for domain of batv+30b93a52ff5b1c3ea8f7+5286+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+30b93a52ff5b1c3ea8f7+5286+infradead.org+dwmw2@twosheds.srs.infradead.org
+       spf=pass (google.com: domain of arjan.van.de.ven@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=arjan.van.de.ven@intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=lhDn5r7s;
-       spf=pass (google.com: best guess record for domain of batv+30b93a52ff5b1c3ea8f7+5286+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+30b93a52ff5b1c3ea8f7+5286+infradead.org+dwmw2@twosheds.srs.infradead.org
-Message-ID: <1518428086.6606.11.camel@infradead.org>
-Subject: Re: update spectre v2 microcodes blacklist
-From: David Woodhouse <dwmw2@infradead.org>
-To: Alexander Sergeyev <sergeev917@gmail.com>, "Van De Ven, Arjan"
- <arjan.van.de.ven@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Kyle Huey
- <me@kylehuey.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Levin,
+       spf=pass (google.com: domain of arjan.van.de.ven@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=arjan.van.de.ven@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,501,1511856000";
+   d="scan'208";a="203524513"
+From: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+To: David Woodhouse <dwmw2@infradead.org>, Alexander Sergeyev
+	<sergeev917@gmail.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, Kyle Huey
+	<me@kylehuey.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Levin,
  Alexander (Sasha Levin)" <alexander.levin@verizon.com>, Peter Zijlstra
- <peterz@infradead.org>,  linux-kernel@vger.kernel.org
-In-Reply-To: <20180210171459.GA12797@localhost.localdomain>
+	<peterz@infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: update spectre v2 microcodes blacklist
+Thread-Topic: update spectre v2 microcodes blacklist
+Thread-Index: AQHTo+TO+IKkHARMz0e3WxseD4Wi/aOgymnA
+Date: Mon, 12 Feb 2018 13:56:15 +0000
+Message-ID: <0575AF4FD06DD142AD198903C74E1CC87A61260B@ORSMSX103.amr.corp.intel.com>
 References: <20180210123123.GA19396@localhost.localdomain>
 	 <20180210171459.GA12797@localhost.localdomain>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-n7svytLqRs9Y+4ZI4H5T"
-Date: Mon, 12 Feb 2018 09:34:46 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+ <1518428086.6606.11.camel@infradead.org>
+In-Reply-To: <1518428086.6606.11.camel@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592016927852230730?=
-X-GMAIL-MSGID: =?utf-8?q?1592187285526168098?=
+X-GMAIL-MSGID: =?utf-8?q?1592203701722715886?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---=-n7svytLqRs9Y+4ZI4H5T
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-
-
-On Sat, 2018-02-10 at 20:14 +0300, Alexander Sergeyev wrote:
-> >=20
-> > I didn't fully match the updated revision guidance and spectre_bad_micr=
-ocodes
-> I compared these lists and it seems that the only difference is about sky=
-lakes.=C2=A0
-> Everything else is covered by less-or-equal criteria on revision version.
->=20
-> Both desktop and mobile skylakes are stated to be unaffected for 0xC2:
->=20
-> { INTEL_FAM6_SKYLAKE_DESKTOP,=C2=A0=C2=A0=C2=A0=C2=A00x03, 0xc2 }, // sig=
-nature 0x000506E3
-> { INTEL_FAM6_SKYLAKE_MOBILE,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x03, 0xc2 }, /=
-/ signature 0x000406E3
->=20
-> I reformated the Intel bulletin into json format for ease of automation a=
-nd=C2=A0
-> batch processing -- it is attached.
->=20
-> Raw diff between the mainline blacklist and the bulletin looks like:
-> @@ -1,5 +1,6 @@
-> =C2=A0{ INTEL_FAM6_BROADWELL_CORE,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x04, 0x2=
-8 },
-> =C2=A0{ INTEL_FAM6_BROADWELL_GT3E,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x01, 0x1=
-b },
-> +{ INTEL_FAM6_BROADWELL_X,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A00x01, 0x0b000023 },
-> =C2=A0{ INTEL_FAM6_BROADWELL_X,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A00x01, 0x0b000025 },
-
-That's redundant since blacklisting 0x0b000025 will also stop us from
-using 0x0b000023 anyway.
-
-> -{ INTEL_FAM6_KABYLAKE_DESKTOP,=C2=A0=C2=A0=C2=A00x09, 0x84 },
-> -{ INTEL_FAM6_KABYLAKE_DESKTOP,=C2=A0=C2=A0=C2=A00x0a, 0x84 },
-> -{ INTEL_FAM6_KABYLAKE_DESKTOP,=C2=A0=C2=A0=C2=A00x0b, 0x84 },
-> -{ INTEL_FAM6_KABYLAKE_MOBILE,=C2=A0=C2=A0=C2=A0=C2=A00x09, 0x84 },
-> -{ INTEL_FAM6_KABYLAKE_MOBILE,=C2=A0=C2=A0=C2=A0=C2=A00x0a, 0x84 },
-
-No, let's not assume 0x84 will be safe on those just yet. Intel
-mentioned 0x84 as bad in one of the revisions of the doc, and it's
-safer to leave it blacklisted until they explicitly say otherwise.
-
-> -{ INTEL_FAM6_SKYLAKE_DESKTOP,=C2=A0=C2=A0=C2=A0=C2=A00x03, 0xc2 },
-> -{ INTEL_FAM6_SKYLAKE_MOBILE,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x03, 0xc2 },
-
-OK. With 0xc2 being exonerated, I believe there is *no* publicly
-released microcode for these which needs to be blacklisted, so they can
-be removed entirely.
-
-> -{ INTEL_FAM6_SKYLAKE_X,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A00x03, 0x0100013e },
-
-Again, that appeared in an earlier version of the document and hasn't
-been explicitly cleared.
-
-> +{ INTEL_FAM6_SKYLAKE_X,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A00x04, 0x0200003a },
-> =C2=A0{ INTEL_FAM6_SKYLAKE_X,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A00x04, 0x0200003c },
-
-Redundant again.
-
-> Note: Gemini Lake and Sandy Bridge are not considered (observed in wild).
-
-Ah, but we have more information now from the doc.=C2=A0
-
-The Gemini Lake 0x22 was observed in the wild, sure, but is also
-explicitly mentioned as OK in the latest doc. So I removed it from the
-blacklist (again, with no prior Gemini Lake bad microcode, so the line
-can be removed entirely).
-
-The Sandy Bridge ones observed in the wild are, however, *newer* than
-the "Pre-Mitigation Production MCU" listed for the corresponding CPU in
-the table, and thus we should assume they should still be blacklisted.
---=-n7svytLqRs9Y+4ZI4H5T
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTIwOTM0NDZaMC8GCSqG
-SIb3DQEJBDEiBCASH6vjG+jYOTz19rRIBkHS/51AhhpzrrhS/SewWrXbDjCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAHdeQBxXKYbB
-60RQenjPSv6PAu/e35a6Dz7/rHtgSbTbFwPvSo2NEhl3sLK2KUgqhqHa4R3ilF0DT0TosRq+Zup5
-2Fd4Rwm9xcwdHvXHyid4vCkDIp9xfvqOVwwqEqLXI2Cqm/jLLc9A58/jF4TZWAty4r39SjwK7Eox
-sR8ASj8HOpW1zHUnThDwzfsjj/vs4WlTr/BN8bhXRkgK9AVcUUZEmoKrr1YYig8P9eGpaRLJC6K7
-FGpcjvrifX6p+jp4OnfLHI7ZfKgGBJq5lI92eUaGsZgtgarMJUC36gaZl6VD1TEst8dUzeLSU3YC
-jxSxABg95b3FdjetTsaJf9/QRR0AAAAAAAA=
-
-
---=-n7svytLqRs9Y+4ZI4H5T--
+PiA+IFJhdyBkaWZmIGJldHdlZW4gdGhlIG1haW5saW5lIGJsYWNrbGlzdCBhbmQgdGhlIGJ1bGxl
+dGluIGxvb2tzIGxpa2U6DQo+ID4gQEAgLTEsNSArMSw2IEBADQo+ID4gwqB7IElOVEVMX0ZBTTZf
+QlJPQURXRUxMX0NPUkUswqDCoMKgwqDCoDB4MDQsIDB4MjggfSwNCj4gPiDCoHsgSU5URUxfRkFN
+Nl9CUk9BRFdFTExfR1QzRSzCoMKgwqDCoMKgMHgwMSwgMHgxYiB9LA0KPiA+ICt7IElOVEVMX0ZB
+TTZfQlJPQURXRUxMX1gswqDCoMKgwqDCoMKgwqDCoDB4MDEsIDB4MGIwMDAwMjMgfSwNCj4gPiDC
+oHsgSU5URUxfRkFNNl9CUk9BRFdFTExfWCzCoMKgwqDCoMKgwqDCoMKgMHgwMSwgMHgwYjAwMDAy
+NSB9LA0KPiANCj4gVGhhdCdzIHJlZHVuZGFudCBzaW5jZSBibGFja2xpc3RpbmcgMHgwYjAwMDAy
+NSB3aWxsIGFsc28gc3RvcCB1cyBmcm9tDQo+IHVzaW5nIDB4MGIwMDAwMjMgYW55d2F5Lg0KDQph
+bmQgMjMgaXMgdGhlIHByZSBzZWN1cml0eSB2ZXJzaW9uIHNvIGtub3duIGdvb2QuDQoNCg0KDQo=
