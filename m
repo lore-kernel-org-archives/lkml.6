@@ -1,83 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934151AbeBLLfD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:35:03 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52771 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933981AbeBLLfB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:35:01 -0500
-Message-ID: <1518435295.2744.7.camel@pengutronix.de>
-Subject: Re: [PATCH] MAINTAINERS: add Freescale pin controllers
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org,
-        aisheng.dong@nxp.com, fabio.estevam@nxp.com, shawnguo@kernel.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date: Mon, 12 Feb 2018 12:34:55 +0100
-In-Reply-To: <20180212112255.u333xb676kfmi63f@sapphire.tkos.co.il>
-References: <20180210153204.12728-1-stefan@agner.ch>
-         <1518432502.2744.5.camel@pengutronix.de>
-         <20180212112255.u333xb676kfmi63f@sapphire.tkos.co.il>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S934207AbeBLLpo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:45:44 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43652 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934059AbeBLLpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 06:45:42 -0500
+Date: Mon, 12 Feb 2018 12:45:40 +0100
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+Message-ID: <20180212114540.iygbha554busy4ip@sirius.home.kraxel.org>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+ <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, den 12.02.2018, 13:22 +0200 schrieb Baruch Siach:
-> Hi Lucas,
-> 
-> On Mon, Feb 12, 2018 at 11:48:22AM +0100, Lucas Stach wrote:
-> > Am Samstag, den 10.02.2018, 16:32 +0100 schrieb Stefan Agner:
-> > > Add Dong Aisheng, Fabio Estevam, Shawn Guo and myself as
-> > > maintainer
-> > > and Sascha as reviewer.
-> > > 
-> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > ---
-> > >  MAINTAINERS | 11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > > 
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 82ad0eabce4f..fb672dfc519d 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -10768,6 +10768,17 @@ L:	linux-gpio@vger.kernel.org
-> > >  S:	Supported
-> > >  F:	drivers/pinctrl/pinctrl-at91-pio4.*
-> > >  
-> > > +PIN CONTROLLER - FREESCALE
-> > > +M:	Dong Aisheng <aisheng.dong@nxp.com>
-> > > +M:	Fabio Estevam <festevam@gmail.com>
-> > > +M:	Shawn Guo <shawnguo@kernel.org>
-> > > +M:	Stefan Agner <stefan@agner.ch>
-> > > +R:	Sascha Hauer <kernel@pengutronix.de>
+  Hi,
+
+> >    (a) software rendering: client allocates shared memory buffer, renders
+> >        into it, then passes a file handle for that shmem block together
+> >        with some meta data (size, format, ...) to the wayland server.
 > > 
-> > I'm fine with the patch, but it might make sense to clarify this a
-> > bit:
-> > the kernel@ address is really the whole Pengutronix kernel team,
-> > not
-> > just Sascha. Using this address is totally fine if you expect
-> > comments
-> > on patches, as it gives them a quite wide exposure inside of PTX.
+> >    (b) gpu rendering: client opens a render node, allocates a buffer,
+> >        asks the cpu to renders into it, exports the buffer as dma-buf
+> >        (DRM_IOCTL_PRIME_HANDLE_TO_FD), passes this to the wayland server
+> >        (again including meta data of course).
+> > 
+> > Is that correct?
 > 
-> Of the 5 mentions of kernel@pengutronix.de in MAINTAINERS as of
-> v4.16-rc1, 
-> three name Sascha, and two name Uwe. Would you like to also clarify
-> those?
+> Both are correct descriptions of typical behaviors. But it isn't spec'ed
+> anywhere who has to do the buffer allocation.
 
-I think it fine to keep the names of the individual people where they
-maintain stuff, as this is usually bound to a single person (where
-kernel@ address is only used for the exposure benefits), but I think it
-makes less sense for the reviewer role.
+Well, according to Pekka's reply it is spec'ed that way, for the
+existing buffer types.  So for server allocated buffers you need
+(a) a wayland protocol extension and (b) support for the extension
+in the clients.
 
-Regards,
-Lucas
+> That's to say that if we cannot come up with a zero-copy solution for
+> unmodified clients, we should at least support zero-copy for cooperative
+> clients.
+
+"cooperative clients" == "client which has support for the wayland
+protocol extension", correct?
+
+> > > Creation of shareable buffer by guest
+> > > -------------------------------------------------
+> > > 
+> > > 1. Client requests virtio driver to create a buffer suitable for sharing
+> > > with host (DRM_VIRTGPU_RESOURCE_CREATE)
+> > 
+> > client or guest proxy?
+> 
+> As per the above, the GUI toolkit could have been modified so the client
+> directly creates a shareable buffer, and renders directly to it without any
+> extra copies.
+> 
+> If clients cannot be modified, then it's the guest proxy what has to create
+> the shareable buffer and keep it in sync with the client's non-shareable
+> buffer at the right times, by intercepting wl_surface.commit messages and
+> copying buffer contents.
+
+Ok.
+
+> > > 4. QEMU maps that buffer to the guest's address space
+> > > (KVM_SET_USER_MEMORY_REGION), passes the guest PFN to the virtio driver
+> > 
+> > That part is problematic.  The host can't simply allocate something in
+> > the physical address space, because most physical address space
+> > management is done by the guest.  All pci bars are mapped by the guest
+> > firmware for example (or by the guest OS in case of hotplug).
+> 
+> How can KVM_SET_USER_MEMORY_REGION ever be safely used then? I would have
+> expected that callers of that ioctl have enough knowledge to be able to
+> choose a physical address that won't conflict with the guest's kernel.
+
+Depends on the kind of region.  Guest RAM is allocated and mapped by
+qemu, guest firmware can query qemu about RAM mappings using a special
+interface, then create a e820 memory map for the guest os.  PCI device
+bars are mapped according to the pci config space registers, which in
+turn are initialized by the guest firmware, so it is basically in the
+guests hand where they show up.
+
+> I see that the ivshmem device in QEMU registers the memory region in BAR 2
+> of a PCI device instead. Would that be better in your opinion?
+
+Yes.
+
+> > > 4. QEMU pops data+buffers from the virtqueue, looks up shmem FD for each
+> > > resource, sends data + FDs to the compositor with SCM_RIGHTS
+> > 
+> > BTW: Is there a 1:1 relationship between buffers and shmem blocks?  Or
+> > does the wayland protocol allow for offsets in buffer meta data, so you
+> > can place multiple buffers in a single shmem block?
+> 
+> The latter:
+> https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_shm_pool
+
+Ah, good, that makes it alot easier.
+
+So, yes, using ivshmem would be one option.  Tricky part here is the
+buffer management though.  It's just a raw piece of memory.  The guest
+proxy could mmap the pci bar and manage it.  But then it is again either
+unmodified guest + copying the data, or modified client (which requests
+buffers from guest proxy) for zero-copy.
+
+Another idea would be extending stdvga.  Basically qemu would have to
+use shmem as backing storage for vga memory instead of anonymous memory,
+so it would be very  simliar to ivshmem on the host side.  But on the
+guest side we have a drm driver for it (bochs-drm).  So clients can
+allocate dumb drm buffers for software rendering, and the buffer would
+already be backed by a host shmem segment.  Given that wayland already
+supports drm buffers for 3d rendering that could work without extending
+the wayland protocol.  The client proxy would have to translate the drm
+buffer into an pci bar offset and pass it to the host side.  The host
+proxy could register the pci bar as wl_shm_pool, then just pass through
+the offset to reference the individual buffers.
+
+Drawback of both approaches would be that software rendering and gpu
+rendering would use quite different code paths.
+
+We also need a solution for the keymap shmem block.  I guess the keymap
+doesn't change all that often, so maybe it is easiest to just copy it
+over (host proxy -> guest proxy) instead of trying to map the host shmem
+into the guest?
+
+cheers,
+  Gerd
