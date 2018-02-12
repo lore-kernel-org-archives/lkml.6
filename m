@@ -1,49 +1,301 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933635AbeBLKJS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:09:18 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41592 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933560AbeBLKJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:09:16 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH] audit: session ID should not set arch quick field pointer
-Date: Mon, 12 Feb 2018 05:04:53 -0500
-Message-Id: <8bd4cb1d24af27d9ace70f03300d5033e38e5a48.1518429770.git.rgb@redhat.com>
+        id S933567AbeBLKIZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:08:25 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49466 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933542AbeBLKIT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 05:08:19 -0500
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
+Subject: [PATCH 13/17] s390/kexec_file: Add purgatory
+Date: Mon, 12 Feb 2018 11:07:50 +0100
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
+References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18021210-0016-0000-0000-00000521D431
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021210-0017-0000-0000-0000285E9619
+Message-Id: <20180212100754.55121-14-prudo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802120131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A bug was introduced in 8fae47705685fcaa75a1fe4c8c3e18300a702979
-("audit: add support for session ID user filter")
-See: https://github.com/linux-audit/audit-kernel/issues/4
+The common code expects the architecture to have a purgatory that runs
+between the two kernels. Add it now. For simplicity first skip crash
+support.
 
-When setting a session ID filter, the session ID filter field overwrote
-the quick pointer reference to the arch field, potentially causing the
-arch field to be misinterpreted.
-
-Passes audit-testsuite.
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
 ---
- kernel/auditfilter.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/s390/Kbuild                  |  1 +
+ arch/s390/include/asm/purgatory.h | 17 +++++++
+ arch/s390/kernel/asm-offsets.c    |  5 ++
+ arch/s390/purgatory/Makefile      | 37 +++++++++++++++
+ arch/s390/purgatory/head.S        | 96 +++++++++++++++++++++++++++++++++++++++
+ arch/s390/purgatory/purgatory.c   | 38 ++++++++++++++++
+ 6 files changed, 194 insertions(+)
+ create mode 100644 arch/s390/include/asm/purgatory.h
+ create mode 100644 arch/s390/purgatory/Makefile
+ create mode 100644 arch/s390/purgatory/head.S
+ create mode 100644 arch/s390/purgatory/purgatory.c
 
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index 4a1758a..739a6d2 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -496,7 +496,6 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
- 			if (!gid_valid(f->gid))
- 				goto exit_free;
- 			break;
--		case AUDIT_SESSIONID:
- 		case AUDIT_ARCH:
- 			entry->rule.arch_f = f;
- 			break;
+diff --git a/arch/s390/Kbuild b/arch/s390/Kbuild
+index 9fdff3fe1a42..091f14bc9af0 100644
+--- a/arch/s390/Kbuild
++++ b/arch/s390/Kbuild
+@@ -8,3 +8,4 @@ obj-$(CONFIG_APPLDATA_BASE)	+= appldata/
+ obj-y				+= net/
+ obj-$(CONFIG_PCI)		+= pci/
+ obj-$(CONFIG_NUMA)		+= numa/
++obj-y				+= purgatory/
+diff --git a/arch/s390/include/asm/purgatory.h b/arch/s390/include/asm/purgatory.h
+new file mode 100644
+index 000000000000..e297bcfc476f
+--- /dev/null
++++ b/arch/s390/include/asm/purgatory.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ */
++
++#ifndef _S390_PURGATORY_H_
++#define _S390_PURGATORY_H_
++#ifndef __ASSEMBLY__
++
++#include <linux/purgatory.h>
++
++int verify_sha256_digest(void);
++
++#endif	/* __ASSEMBLY__ */
++#endif /* _S390_PURGATORY_H_ */
+diff --git a/arch/s390/kernel/asm-offsets.c b/arch/s390/kernel/asm-offsets.c
+index 587b195b588d..a22b478de567 100644
+--- a/arch/s390/kernel/asm-offsets.c
++++ b/arch/s390/kernel/asm-offsets.c
+@@ -10,6 +10,7 @@
+ #include <linux/kbuild.h>
+ #include <linux/kvm_host.h>
+ #include <linux/sched.h>
++#include <linux/purgatory.h>
+ #include <asm/idle.h>
+ #include <asm/vdso.h>
+ #include <asm/pgtable.h>
+@@ -203,5 +204,9 @@ int main(void)
+ 	OFFSET(__GMAP_ASCE, gmap, asce);
+ 	OFFSET(__SIE_PROG0C, kvm_s390_sie_block, prog0c);
+ 	OFFSET(__SIE_PROG20, kvm_s390_sie_block, prog20);
++	/* kexec_sha_region */
++	OFFSET(__KEXEC_SHA_REGION_START, kexec_sha_region, start);
++	OFFSET(__KEXEC_SHA_REGION_LEN, kexec_sha_region, len);
++	DEFINE(__KEXEC_SHA_REGION_SIZE, sizeof(struct kexec_sha_region));
+ 	return 0;
+ }
+diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
+new file mode 100644
+index 000000000000..c4b405d9c713
+--- /dev/null
++++ b/arch/s390/purgatory/Makefile
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: GPL-2.0
++
++OBJECT_FILES_NON_STANDARD := y
++
++purgatory-y := head.o purgatory.o string.o sha256.o mem.o
++
++targets += $(purgatory-y) purgatory.ro kexec-purgatory.c
++PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
++
++$(obj)/sha256.o: $(srctree)/lib/sha256.c
++	$(call if_changed_rule,cc_o_c)
++
++$(obj)/mem.o: $(srctree)/arch/s390/lib/mem.S
++	$(call if_changed_rule,as_o_S)
++
++$(obj)/string.o: $(srctree)/arch/s390/lib/string.c
++	$(call if_changed_rule,cc_o_c)
++
++LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib
++LDFLAGS_purgatory.ro += -z nodefaultlib
++KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes
++KBUILD_CFLAGS += -Wno-pointer-sign -Wno-sign-compare
++KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
++KBUILD_CFLAGS += -c -MD -Os -m64
++KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
++
++$(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
++		$(call if_changed,ld)
++
++CMD_BIN2C = $(objtree)/scripts/basic/bin2c
++quiet_cmd_bin2c = BIN2C   $@
++      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
++
++$(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
++	$(call if_changed,bin2c)
++
++obj-y	+= kexec-purgatory.o
+diff --git a/arch/s390/purgatory/head.S b/arch/s390/purgatory/head.S
+new file mode 100644
+index 000000000000..8735409d0280
+--- /dev/null
++++ b/arch/s390/purgatory/head.S
+@@ -0,0 +1,96 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Purgatory setup code
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ */
++
++#include <linux/linkage.h>
++#include <asm/asm-offsets.h>
++#include <asm/page.h>
++#include <asm/sigp.h>
++
++/* The purgatory is the code running between two kernels. It's main purpose
++ * is to verify that the next kernel was not corrupted after load and to
++ * start it.
++ */
++
++.macro START_NEXT_KERNEL base
++	lg	%r4,kernel_entry-\base(%r13)
++	lg	%r5,load_psw_mask-\base(%r13)
++	ogr	%r4,%r5
++	stg	%r4,0(%r0)
++
++	xgr	%r0,%r0
++	diag	%r0,%r0,0x308
++.endm
++
++.text
++.align PAGE_SIZE
++ENTRY(purgatory_start)
++	/* The purgatory might be called after a diag308 so better set
++	 * architecture and addressing mode.
++	 */
++	lhi	%r1,1
++	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
++	sam64
++
++	larl	%r5,gprregs
++	stmg	%r6,%r15,0(%r5)
++
++	basr	%r13,0
++.base_crash:
++
++	/* Setup stack */
++	larl	%r15,purgatory_end
++	aghi	%r15,-160
++
++.do_checksum_verification:
++	brasl	%r14,verify_sha256_digest
++
++	cghi	%r2,0		/* checksum match */
++	jne	.disabled_wait
++
++	/* start normal kernel */
++	START_NEXT_KERNEL .base_crash
++
++.disabled_wait:
++	lpswe	disabled_wait_psw-.base_crash(%r13)
++
++
++load_psw_mask:
++	.long	0x00080000,0x80000000
++
++	.align	8
++disabled_wait_psw:
++	.quad	0x0002000180000000
++	.quad	0x0000000000000000 + .do_checksum_verification
++
++gprregs:
++	.rept	10
++	.quad	0
++	.endr
++
++purgatory_sha256_digest:
++	.global purgatory_sha256_digest
++	.rept	32	/* SHA256_DIGEST_SIZE */
++	.byte	0
++	.endr
++
++purgatory_sha_regions:
++	.global purgatory_sha_regions
++	.rept	16 * __KEXEC_SHA_REGION_SIZE	/* KEXEC_SEGMENTS_MAX */
++	.byte	0
++	.endr
++
++kernel_entry:
++	.global kernel_entry
++	.quad	0
++
++	.align	PAGE_SIZE
++stack:
++	.skip	PAGE_SIZE
++	.align	PAGE_SIZE
++purgatory_end:
+diff --git a/arch/s390/purgatory/purgatory.c b/arch/s390/purgatory/purgatory.c
+new file mode 100644
+index 000000000000..fec67b58b8be
+--- /dev/null
++++ b/arch/s390/purgatory/purgatory.c
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Purgatory code running between two kernels.
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Philipp Rudo <prudo@linux.vnet.ibm.com>
++ */
++
++#include <linux/kexec.h>
++#include <linux/sha256.h>
++#include <linux/string.h>
++#include <asm/purgatory.h>
++
++struct kexec_sha_region purgatory_sha_regions[KEXEC_SEGMENT_MAX];
++u8 purgatory_sha256_digest[SHA256_DIGEST_SIZE];
++
++u64 kernel_entry;
++
++int verify_sha256_digest(void)
++{
++	struct kexec_sha_region *ptr, *end;
++	u8 digest[SHA256_DIGEST_SIZE];
++	struct sha256_state sctx;
++
++	sha256_init(&sctx);
++	end = purgatory_sha_regions + ARRAY_SIZE(purgatory_sha_regions);
++
++	for (ptr = purgatory_sha_regions; ptr < end; ptr++)
++		sha256_update(&sctx, (uint8_t *)(ptr->start), ptr->len);
++
++	sha256_final(&sctx, digest);
++
++	if (memcmp(digest, purgatory_sha256_digest, sizeof(digest)))
++		return 1;
++
++	return 0;
++}
 -- 
-1.8.3.1
+2.13.5
