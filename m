@@ -1,55 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751332AbeBLQqi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 11:46:38 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:36236 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751220AbeBLQqf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 11:46:35 -0500
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
-        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: mm-initialize-pages-on-demand-during-boot-fix2
-Date: Mon, 12 Feb 2018 11:45:43 -0500
-Message-Id: <20180212164543.26592-1-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.16.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8803 signatures=668668
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=837
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802120214
+        id S1751808AbeBLQrI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 11:47:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751227AbeBLQrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 11:47:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C403A21726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 12 Feb 2018 11:47:02 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 12/18] tracing: Add accessing direct address from
+ function based events
+Message-ID: <20180212114702.0452e71c@gandalf.local.home>
+In-Reply-To: <20180213004750.62e7ee5a1038589a80b09b41@kernel.org>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231018.828677654@goodmis.org>
+        <20180209003436.GB28206@sejong>
+        <20180209170737.5921ea0f@gandalf.local.home>
+        <20180212020644.GG31513@sejong>
+        <20180213004750.62e7ee5a1038589a80b09b41@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fixes types mismatch warning reported by kbuild
+On Tue, 13 Feb 2018 00:47:50 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- mm/page_alloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > >  		if (WARN_ON(!fevent->last_arg))
+> > >  			break;
+> > > -		ret = kstrtoul(token, 0, &val);
+> > > -		if (ret < 0)
+> > > -			break;
+> > > +		if (isalpha(token[0]) || token[0] != '_') {  
+> > 
+> > I guess you wanted the token[0] being '_'.  Maybe it'd be better adding
+> > 
+> >   #define isident0(x)  (isalpha(x) || (x) == '_')  
+> 
+> If this '$' is only for the symbol or direct address(with 0x prefix),
+> you just need to check by !isdigit(token[0]), isn't it? 
+> (and if it is insane get_symbol just fails)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index b310a0587c3b..5a45255e3aa0 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6354,8 +6354,8 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
- 	 * We start only with one section of pages, more pages are added as
- 	 * needed until the rest of deferred pages are initialized.
- 	 */
--	pgdat->static_init_pgcnt = min(PAGES_PER_SECTION,
--				       pgdat->node_spanned_pages);
-+	pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
-+					 pgdat->node_spanned_pages);
- 	pgdat->first_deferred_pfn = ULONG_MAX;
- #endif
- 	free_area_init_core(pgdat);
--- 
-2.16.1
+I modified a lot of this code for the next version (which I'm still
+tweaking).
+
+I have this for next_token() (which I may add for the
+trace_events_filter.c code as Al Viro has recently pointed out issues
+with its parsing):
+
+static char *next_token(char **ptr, char *last)
+{
+	char *arg;
+	char *str;
+
+	if (!*ptr)
+		return NULL;
+
+	arg = *ptr;
+
+	if (*last)
+		*arg = *last;
+
+	if (!*arg)
+		return NULL;
+
+	for (str = arg; *str; str++) {
+		if (!isalnum(*str) && *str != '_')
+			break;
+	}
+	if (*str) {
+		if (str == arg)
+			str++;
+		*last = *str;
+		*str = 0;
+		*ptr = str;
+		return arg;
+	}
+
+	*last = 0;
+	*ptr = NULL;
+	return arg;
+}
+
+
+And this:
+
+static bool valid_name(const char *token)
+{
+	return isalpha(token[0]) || token[0] == '_';
+}
+
+As all tokens will now be either entirely alphanumeric with '_' or a
+single character.
+
+-- Steve
