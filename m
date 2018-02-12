@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932781AbeBLWWE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:22:04 -0500
-Received: from mga07.intel.com ([134.134.136.100]:64295 "EHLO mga07.intel.com"
+        id S932912AbeBLWWX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:22:23 -0500
+Received: from mga07.intel.com ([134.134.136.100]:64299 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932738AbeBLWVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:21:52 -0500
+        id S932628AbeBLWVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 17:21:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,504,1511856000";
-   d="scan'208";a="29490605"
+   d="scan'208";a="29490596"
 From: kan.liang@linux.intel.com
 To: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc: acme@kernel.org, tglx@linutronix.de, jolsa@redhat.com,
         eranian@google.com, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 5/5] perf/x86: Fix: disable userspace RDPMC usage for large PEBS
-Date: Mon, 12 Feb 2018 14:20:35 -0800
-Message-Id: <1518474035-21006-6-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V4 1/5] perf/x86/intel: Fix event update for auto-reload
+Date: Mon, 12 Feb 2018 14:20:31 -0800
+Message-Id: <1518474035-21006-2-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518474035-21006-1-git-send-email-kan.liang@linux.intel.com>
 References: <1518474035-21006-1-git-send-email-kan.liang@linux.intel.com>
@@ -28,38 +28,201 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The userspace RDPMC usage never works for large PEBS since the large
-PEBS is introduced by
-commit b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt
-handling (large PEBS interrupt threshold)")
+There is a bug when mmap read event->count with large PEBS enabled.
+Here is an example.
+ #./read_count
+ 0x71f0
+ 0x122c0
+ 0x1000000001c54
+ 0x100000001257d
+ 0x200000000bdc5
 
-When the PEBS interrupt threshold is larger than one, there is no way to
-get exact auto-reload times and value for userspace RDPMC.
-Disable the userspace RDPMC usage when large PEBS is enabled.
+In fixed period mode, the auto-reload mechanism could be enabled for
+PEBS events. But the calculation of event->count does not take the
+auto-reload values into account. Anyone who read the event->count will
+get wrong result, e.g x86_pmu_read.
 
-For the PEBS interrupt threshold equals to one, even it's auto-reload
-event, it doesn't need to disable the userspace RDPMC. It works well.
+The issue was introduced with the auto-reload mechanism enabled since
+commit 851559e35fd5 ("perf/x86/intel: Use the PEBS auto reload mechanism
+when possible")
 
-Fixes: b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt
-handling (large PEBS interrupt threshold)")
+Introduce intel_pmu_save_and_restart_reload to calculate the
+event->count only for auto-reload.
+Since the counter increments a negative counter value and overflows on
+the sign switch, giving the interval:
+        [-period, 0]
+the difference between two consequtive reads is:
+A) value2 - value1;
+   when no overflows have happened in between,
+B) (0 - value1) + (value2 - (-period));
+   when one overflow happened in between,
+C) (0 - value1) + (n - 1) * (period) + (value2 - (-period));
+   when @n overflows happened in betwee.
+Here A) is the obvious difference, B) is the extension to the discrete
+interval, where the first term is to the top of the interval and the
+second term is from the bottom of the next interval and C) the extension
+to multiple intervals, where the middle term is the whole intervals
+covered.
+The equation for all cases is
+    value2 - value1 + n * period
+
+Previously the event->count is updated right before the sample output.
+But for case A, there is no PEBS record ready. It needs to be specially
+handled.
+
+Remove the auto-reload code from x86_perf_event_set_period(). It doesn't
+need.
+
+Fixes: 851559e35fd5 ("perf/x86/intel: Use the PEBS auto reload mechanism
+when possible")
+Based-on-code-from: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/events/core.c     | 15 ++++----
+ arch/x86/events/intel/ds.c | 87 ++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 90 insertions(+), 12 deletions(-)
 
 diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 00a6251..9c86e10 100644
+index 140d332..5a3ccd1 100644
 --- a/arch/x86/events/core.c
 +++ b/arch/x86/events/core.c
-@@ -2117,7 +2117,8 @@ static int x86_pmu_event_init(struct perf_event *event)
- 			event->destroy(event);
- 	}
+@@ -1156,16 +1156,13 @@ int x86_perf_event_set_period(struct perf_event *event)
  
--	if (READ_ONCE(x86_pmu.attr_rdpmc))
-+	if (READ_ONCE(x86_pmu.attr_rdpmc) &&
-+	    !(event->hw.flags & PERF_X86_EVENT_FREERUNNING))
- 		event->hw.flags |= PERF_X86_EVENT_RDPMC_ALLOWED;
+ 	per_cpu(pmc_prev_left[idx], smp_processor_id()) = left;
  
- 	return err;
+-	if (!(hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) ||
+-	    local64_read(&hwc->prev_count) != (u64)-left) {
+-		/*
+-		 * The hw event starts counting from this event offset,
+-		 * mark it to be able to extra future deltas:
+-		 */
+-		local64_set(&hwc->prev_count, (u64)-left);
++	/*
++	 * The hw event starts counting from this event offset,
++	 * mark it to be able to extra future deltas:
++	 */
++	local64_set(&hwc->prev_count, (u64)-left);
+ 
+-		wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+-	}
++	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+ 
+ 	/*
+ 	 * Due to erratum on certan cpu we need
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 8156e47..f519ebc 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1303,17 +1303,84 @@ get_next_pebs_record_by_bit(void *base, void *top, int bit)
+ 	return NULL;
+ }
+ 
++/*
++ * Special variant of intel_pmu_save_and_restart() for auto-reload.
++ */
++static int
++intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	int shift = 64 - x86_pmu.cntval_bits;
++	u64 period = hwc->sample_period;
++	u64 prev_raw_count, new_raw_count;
++	s64 new, old;
++
++	WARN_ON(!period);
++
++	/*
++	 * drain_pebs() only happens when the PMU is disabled.
++	 */
++	WARN_ON(this_cpu_read(cpu_hw_events.enabled));
++
++	prev_raw_count = local64_read(&hwc->prev_count);
++	rdpmcl(hwc->event_base_rdpmc, new_raw_count);
++	local64_set(&hwc->prev_count, new_raw_count);
++
++	/*
++	 * Since the counter increments a negative counter value and
++	 * overflows on the sign switch, giving the interval:
++	 *
++	 *   [-period, 0]
++	 *
++	 * the difference between two consequtive reads is:
++	 *
++	 *   A) value2 - value1;
++	 *      when no overflows have happened in between,
++	 *
++	 *   B) (0 - value1) + (value2 - (-period));
++	 *      when one overflow happened in between,
++	 *
++	 *   C) (0 - value1) + (n - 1) * (period) + (value2 - (-period));
++	 *      when @n overflows happened in between.
++	 *
++	 * Here A) is the obvious difference, B) is the extension to the
++	 * discrete interval, where the first term is to the top of the
++	 * interval and the second term is from the bottom of the next
++	 * interval and 3) the extension to multiple intervals, where the
++	 * middle term is the whole intervals covered.
++	 *
++	 * An equivalent of C, by reduction, is:
++	 *
++	 *   value2 - value1 + n * period
++	 */
++	new = ((s64)(new_raw_count << shift) >> shift);
++	old = ((s64)(prev_raw_count << shift) >> shift);
++	local64_add(new - old + count * period, &event->count);
++
++	perf_event_update_userpage(event);
++
++	return 0;
++}
++
+ static void __intel_pmu_pebs_event(struct perf_event *event,
+ 				   struct pt_regs *iregs,
+ 				   void *base, void *top,
+ 				   int bit, int count)
+ {
++	struct hw_perf_event *hwc = &event->hw;
+ 	struct perf_sample_data data;
+ 	struct pt_regs regs;
+ 	void *at = get_next_pebs_record_by_bit(base, top, bit);
+ 
+-	if (!intel_pmu_save_and_restart(event) &&
+-	    !(event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD))
++	if (hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) {
++		/*
++		 * Now, auto-reload is only enabled in fixed period mode.
++		 * The reload value is always hwc->sample_period.
++		 * May need to change it, if auto-reload is enabled in
++		 * freq mode later.
++		 */
++		intel_pmu_save_and_restart_reload(event, count);
++	} else if (!intel_pmu_save_and_restart(event))
+ 		return;
+ 
+ 	while (count > 1) {
+@@ -1389,8 +1456,22 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs)
+ 
+ 	ds->pebs_index = ds->pebs_buffer_base;
+ 
+-	if (unlikely(base >= top))
++	if (unlikely(base >= top)) {
++		/*
++		 * The drain_pebs() could be called twice in a short period
++		 * for auto-reload event in pmu::read(). There are no
++		 * overflows have happened in between.
++		 * It needs to call intel_pmu_save_and_restart_reload() to
++		 * update the event->count for this case.
++		 */
++		for_each_set_bit(bit, (unsigned long *)&cpuc->pebs_enabled,
++				 x86_pmu.max_pebs_events) {
++			event = cpuc->events[bit];
++			if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
++				intel_pmu_save_and_restart_reload(event, 0);
++		}
+ 		return;
++	}
+ 
+ 	for (at = base; at < top; at += x86_pmu.pebs_record_size) {
+ 		struct pebs_record_nhm *p = at;
 -- 
 2.7.4
