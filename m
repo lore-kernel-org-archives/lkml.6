@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x225aWt0PdntdtFVpDYcDtEYYbvX0VJ7vJmVM/4hH7on0ILlZYsTBbTTtXiJ4M6tIcmcA/d6O
-ARC-Seal: i=1; a=rsa-sha256; t=1518471109; cv=none;
+X-Google-Smtp-Source: AH8x225E0JXR8BS417z1W/pon3LhGAL9cmmdBuNO9FuGYkTabXQAciu7Oowy3difaeOVxY7oL2bV
+ARC-Seal: i=1; a=rsa-sha256; t=1518471101; cv=none;
         d=google.com; s=arc-20160816;
-        b=vVIJm6rAEzynP5aqZSGFtQghnWltXCn4lMAb8VRxaNv/8aFELI5mz+mLTc3dXpJmyw
-         lbfw/vf/35ldeZd8NG8LpF4fW+bDEuUWjPBG+0NC83IsgFB915ZhcAyQs+mT5a2GrjMg
-         TwDmuAl08HMTJxRIbOliVNGhKD4IaKiRgnJK8Wyl7c6pe5rpPy4ptTdVJSgPkcadd3Wf
-         PrQ+U1jGGUyXC6cySyZFyHyG7iLG8J4I/Nn7nQ4JnF4FbMjj28FgBkn3ZY4WCO4aGY0V
-         OpNjkZ19VtXhrPRJoW26k5CjnRDosaD3jD+OvfFSOS3QHeswMK8grmG2dh/5ehBHcpIK
-         goCg==
+        b=jmLpleuBknsyP6ZPKnMLdQBdIxVixiyobJ2edGgSqUQ2Hju4lgWqwk7EIx6aJ82g+3
+         tIQnQZ2Zrn4rJWYW36/O1jM8ko7uoyVa6ZIUMqoK++pVk68Qhzo5agp0agPviT8vivKI
+         l6Mz7ifBwC99XyhuTtaV77JqaOHKfRJYkoNbD1NxyDn/KR8EKyMZk0d5UfFMtUp9pOBm
+         xsIqcnYEat0oE/Wxg3ELy60uNC4DA1BTiq+X1I5A/bLDTayKOiA1ebfA0oooNZkfyhWr
+         52193HaFserv42N4H7jhkbCMuh17IyXLuP9Q82ARWVrJw/FQjL4XPp7yqTXMSY2XglMd
+         74Fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=xkwTJjUef5c+SUJhrk+S3aoqwBoJK5jTfq+ii7uSeQQ=;
-        b=wxKGj6LHFmTZD5uiZOXEU7EjvRvXYMHA+swlnG5pnIxGx8UIFAfkHYdnrlop9wdRl8
-         /rsZZLniVW0IyviW/MbMCbOmBZg0Kbr5qTD9nfAnchTjz3/lj1DlgD2V7CoLEx0MOHbr
-         ixgHa77tTuJTa3xI94MoRctf0GgsLCaaVwoL/qFvR3uJoKAyazQg9jPCfDoiLR4CcMFL
-         3x9/Rkz8k0okb3BqKbIaL1ua3hoRC5GW43P4sMYAHL8zLB/nqryTOZklEhwlwrQomWJp
-         WpLs6d/5JTrhllLLpKDdlnDHQovs3TtmouGSucwwSzu5YjoAPKBn6h8+Bp2SlnOMPrhz
-         zavQ==
+        bh=WOLJyu/1h0DOrLc9jwi/C+LrAZAidrkqrmPOPoJE+M0=;
+        b=feVSzJLXje5YDZYasrSf40DB0fWi+4v0IU8UZI5gIlgHDTkBYUI+aswgtj4+HbaPfH
+         8Ab+ngEDJPdSg5WiquMYgjcQny7h/Xmt7b1t1wWYZhR04hKEyWhDLHjtHUdKByH3Ulei
+         MnPSYRWvMvmXkNqxzQfEPk4cNGo5gKypV5FAru9HvNg9bsTPvbb7cwmdyqcJ3HP819lF
+         UgXFoc8yCioX6azsSLftvfVbRhYLdpvbnLO996HyoWe/eG9ZbPQzJ7wlNGp/eWtk3ywP
+         mA8GSi1Mq94X0FcJ2RJxGNASoYajkQkESpFdRBeemLRUuf5sqGC9dH2vSk6Nw4TD85FP
+         wxhw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,9 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Tue, 13 Feb 2018 08:30:48 +1100
-Subject: [PATCH 5/5] staging: lustre: llite: refine ll_find_alias based on
- d_exact_alias
+Subject: [PATCH 4/5] staging: lustre: llite: simplify ll_find_alias()
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151847104807.26699.140278585898570948.stgit@noble>
+Message-ID: <151847104803.26699.4826721577063033284.stgit@noble>
 In-Reply-To: <151847081541.26699.3911837371411314092.stgit@noble>
 References: <151847081541.26699.3911837371411314092.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,71 +39,69 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592232362307793331?=
-X-GMAIL-MSGID: =?utf-8?q?1592232362307793331?=
+X-GMAIL-THRID: =?utf-8?q?1592232354102823818?=
+X-GMAIL-MSGID: =?utf-8?q?1592232354102823818?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The task of ll_find_alias() is now very similar to d_exact_alias().
-We cannot use that function directly, but we can copy much of
-the structure so that the similarities and differences are more
-obvious.
-Examining d_exact_alias() shows that the d_lock spinlock does not
-need to be held in ll_find_alias as much as it currently is.
+Now that ll_find_alias is only searching for one type
+of dentry, we can return as soon as we find it.
+This allows substantial simplification, and brings the
+bonus that we don't need to take the d_lock again just
+to increment the ref-count.  We can increment it immediately
+that the dentry is found.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/llite/namei.c |   30 ++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ drivers/staging/lustre/lustre/llite/namei.c |   23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
-index baf94f4bcee9..6c9ec462eb41 100644
+index 2322328155d6..baf94f4bcee9 100644
 --- a/drivers/staging/lustre/lustre/llite/namei.c
 +++ b/drivers/staging/lustre/lustre/llite/namei.c
-@@ -381,6 +381,10 @@ void ll_i2gids(__u32 *suppgids, struct inode *i1, struct inode *i2)
- 
- /*
-  * Try to reuse unhashed or invalidated dentries.
-+ * This is very similar to d_exact_alias(), and any changes in one should be
-+ * considered for inclusion in the other.  The differences are that we don't
-+ * need an unhashed alias, and we don't want d_compare to be used for
-+ * comparison.
+@@ -384,13 +384,11 @@ void ll_i2gids(__u32 *suppgids, struct inode *i1, struct inode *i2)
   */
  static struct dentry *ll_find_alias(struct inode *inode, struct dentry *dentry)
  {
-@@ -392,19 +396,25 @@ static struct dentry *ll_find_alias(struct inode *inode, struct dentry *dentry)
+-	struct dentry *alias, *invalid_alias;
++	struct dentry *alias;
+ 
+ 	if (hlist_empty(&inode->i_dentry))
+ 		return NULL;
+ 
+-	invalid_alias = NULL;
+-
  	spin_lock(&inode->i_lock);
  	hlist_for_each_entry(alias, &inode->i_dentry, d_u.d_alias) {
  		LASSERT(alias != dentry);
-+		/*
-+		 * Don't need alias->d_lock here, because aliases with
-+		 * d_parent == entry->d_parent are not subject to name or
-+		 * parent changes, because the parent inode i_mutex is held.
-+		 */
- 
--		spin_lock(&alias->d_lock);
--		if (alias->d_parent == dentry->d_parent	     &&
--		    alias->d_name.hash == dentry->d_name.hash       &&
--		    alias->d_name.len == dentry->d_name.len	 &&
-+		if (alias->d_parent != dentry->d_parent)
-+			continue;
-+		if (alias->d_name.hash != dentry->d_name.hash)
-+			continue;
-+		if (alias->d_name.len != dentry->d_name.len ||
+@@ -400,22 +398,17 @@ static struct dentry *ll_find_alias(struct inode *inode, struct dentry *dentry)
+ 		    alias->d_name.hash == dentry->d_name.hash       &&
+ 		    alias->d_name.len == dentry->d_name.len	 &&
  		    memcmp(alias->d_name.name, dentry->d_name.name,
--			   dentry->d_name.len) == 0) {
--			dget_dlock(alias);
--			spin_unlock(&alias->d_lock);
--			spin_unlock(&inode->i_lock);
--			return alias;
--		}
-+			   dentry->d_name.len) != 0)
-+			continue;
-+		spin_lock(&alias->d_lock);
-+		dget_dlock(alias);
+-			   dentry->d_name.len) == 0)
+-			invalid_alias = alias;
+-		spin_unlock(&alias->d_lock);
+-
+-		if (invalid_alias)
+-			break;
+-	}
+-	alias = invalid_alias ?: NULL;
+-	if (alias) {
+-		spin_lock(&alias->d_lock);
+-		dget_dlock(alias);
++			   dentry->d_name.len) == 0) {
++			dget_dlock(alias);
++			spin_unlock(&alias->d_lock);
++			spin_unlock(&inode->i_lock);
++			return alias;
++		}
  		spin_unlock(&alias->d_lock);
-+		spin_unlock(&inode->i_lock);
-+		return alias;
  	}
  	spin_unlock(&inode->i_lock);
  
+-	return alias;
++	return NULL;
+ }
+ 
+ /*
