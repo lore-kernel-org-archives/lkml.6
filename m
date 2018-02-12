@@ -1,23 +1,23 @@
 Return-Path: <kys@linuxonhyperv2.linuxonhyperv.com>
-X-Google-Smtp-Source: AH8x227mrbUVdw7gfhQV//91hb8/gAJ3lUcbHgfrXfnTweAGsi7bbURL2wQWHakA0nC2GD9Q0A+o
+X-Google-Smtp-Source: AH8x2245MppTA9V5nHuGd4YEINkWDkBo8IByI0yY37uYoBSW5javCcr/41d0M5OCSXN8IA667m3g
 ARC-Seal: i=1; a=rsa-sha256; t=1518395677; cv=none;
         d=google.com; s=arc-20160816;
-        b=Urgevfc+h2F93ucjRXkQNJXZnI/lFZk+8xU7c9nF4aezAu6AThnn2VU/VZ+P8DpQj3
-         oIR1RLeo1zblzEbJ0uUH0I//IZ/JBzJmmmY9lFQxaI5s1XAKM3uSJ2bpudLjKwk2fsU3
-         o1NhOxe2qULG+OQ1HrLZImCZJvL+mZVu3YyEEC68ZIfP0Zj2NyF9xkrkKQGhzPfdgxFS
-         gJzvdTAoyXAmV1oF+L0ApRRji+7DEfrCbae9BdKD18sskaLA/3VBacJA+vL6fvXpPP3L
-         KVg2CDgVP1mT/YjOOGbGiRCQJ0j9jXYqBvusBDk2NQyMU1HFsSGGNetKsYayzhlSTqKM
-         bIkw==
+        b=PMKd2j9tcjN6ccGYPRdSB7PutTZhf+f8SxYiudz6WjllfwP/69qBZUnrV44w0i3HH/
+         uB2FCLkKntVbVyqZz0R2/Fy6R377Uvy8V6RO2XK4OnVD+rKq2KOTPM2ZljPlpAYKQ8dE
+         jpvX4aq/65VorNKvjFXoAPBjj2jBDORoBZPEE0lGoQfdOd6acau3CVzfCK/6nnPWe71a
+         CiYS2bkFpkjEX+PZHWoDJNy7/zIxtWhUc4hYk90vpP9QgeTBdH4t+8bojRmklEO+/jSp
+         V3CcyE9qBwcLtIwBgICqo4oJoDt1cS/xBpxxZ8JosAGbJ5A03K5Wszn85u3bJX7F0Ba3
+         S4yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=reply-to:references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=2fOXktozMO7zWLbzSsrdATwYXICExJKsB46ySel3r58=;
-        b=kcyWdFJ2XnmiYfThkQ+jqdOL9nfFZZO1XZfH7XZBD9GKC9p1h4C5DyDNJs5vnM0LNi
-         M4foSh9oIKpwOjUxifuh5vSIAhupxBIGiycEHdLJ+Xw5PH5pfHo2ok6qD2QAP3aHNEj6
-         PYGOuCOkmizMCsxG1jtlo3vXlwvbxMAmdx0YW+4I9vOP5q5ri/hbM0beRoEvp432tbQc
-         cLZVI71wQDq854br7Y4dTWzvSielcFPOhhXgLrjZpEJT3MGtyCEjZJLM55mLMbu38TFo
-         D3iipfT8Mh2//AuefRd5r3vK797ubP4Y+gGTBuDGiPtQpZpJKYVfr39DqDGpzBc8m42X
-         BdHw==
+        bh=Le2ACXnjdA7T+MNmnFQkKLrRyG8nOx9bpU5FmFBdoFo=;
+        b=l10lpE+Bj0y2JmBQOESHgLs8Q7GAb3lbtVEOl/FwCu9583zn1KnMQHEKzub4oGbZ5e
+         rdMfnDEejTqyNjKo7JRh24ajv1e3JykS8Z7OPoqjU/QgbTBOP9P1vcVjAPzjfA694XzF
+         tEqzvYgxe7dLjLep9QaT7Szy7KA9ROWL1SAUhdGLXuz0k2Ulbxa3QPHXtbkAaSVaZauR
+         heiwjI5aqdwPwfDuEnbkcBSX425dL+EHyJMMZidumXI9BA5SHcDALgux003B7tMJ2rQP
+         72aODLtAA5FlcO5HZtKiQ3KRPyRt90aNdl9rt1Rjoyi2xo//jMjdUrrOBXR5UfRyy2Oy
+         Socw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 198.71.225.49 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=exchange.microsoft.com
@@ -36,11 +36,11 @@ To: gregkh@linuxfoundation.org,
 	leann.ogasawara@canonical.com,
 	marcelo.cerri@canonical.com,
 	sthemmin@microsoft.com
-Cc: Joe Perches <joe@perches.com>,
+Cc: Dexuan Cui <decui@microsoft.com>,
 	"K . Y . Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 03/12] hv: Synthetic typo correction
-Date: Sun, 11 Feb 2018 17:33:11 -0700
-Message-Id: <20180212003320.6748-3-kys@exchange.microsoft.com>
+Subject: [PATCH 04/12] tools: hv: fix compiler warnings about major/target_fname
+Date: Sun, 11 Feb 2018 17:33:12 -0700
+Message-Id: <20180212003320.6748-4-kys@exchange.microsoft.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180212003320.6748-1-kys@exchange.microsoft.com>
 References: <20180212002958.6679-1-kys@exchange.microsoft.com>
@@ -50,36 +50,66 @@ X-CMAE-Envelope: MS4wfGfLzs+4lIQQWJS3NtKpuQDQuHn6mJDvI/GoOSSpt2MSgqIXmewL8IWLJmo
  z4ixOdZdd5j28Q7tUcvxTKEEtpKJ8bcgRypNjPQIQrxYV4Y6igIOQF/QP7GkLKf6MH3zarw+UQ61dn1S2Dp/ShBX22sH496kCVTjQKleuvtN0oNwM3U0z1yQ
  qE7NysJ3Ta2HIA8Kh7rU8lW546b7pkq8wyfwGFxVHUpKgtDs7h3UWC1WxJr5d5QXdBDTZLZ1c8Q3nRB3zxAAEABUWF//LD9p5A02cp/qgibeWyIocHXKSTJA
  8yfsOZkXbPmBX0fon5F9pETaMZsjRyvrF4ISpMR0GjocZdQL9SZXuY88AyhURQxuP90DIgdZAx/WGP4x/Na+VgsS9cKCKFlnSgfh9sdIehTyYS2FjHaD9Kyj
- 36feUfyFiFysgR5/EW5i1AIl747Io7CKsCEUxjbKUxR8EcREreVi9nfqwsrzaJD7dQzNtXMKjEXtT/W8bwAOjF46xIL3fSc/lVtTDoONi2rKnrYm/p1/xbD9
- HC1ncz8cXxMRKWsA7G1mKkOS
+ 36feUfyFiFysgR5/EW5i1AIl747Io7CKsCEUxjbKUxR8EcREreVi9nfqwspko0+gbjuqAnLjHslk53OqV9s3vFiPFGpRQMpS3H38cFEfMQR7Ic+qpxRdTXLU
+ 1DdkPTNGAcAygdwt7IkZOKYX
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592153265455550245?=
-X-GMAIL-MSGID: =?utf-8?q?1592153265455550245?=
+X-GMAIL-THRID: =?utf-8?q?1592153265140898818?=
+X-GMAIL-MSGID: =?utf-8?q?1592153265140898818?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Joe Perches <joe@perches.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-Just a trivial tyop fix.
+This patch fixes the below warnings with new glibc and gcc:
 
-Signed-off-by: Joe Perches <joe@perches.com>
+hv_vss_daemon.c:100:13: warning: In the GNU C Library, "major" is defined
+ by <sys/sysmacros.h>. For historical compatibility, it is currently
+defined by <sys/types.h> as well, but we plan to  remove this soon.
+To use "major", include <sys/sysmacros.h>  directly.
+
+hv_fcopy_daemon.c:42:2: note: 'snprintf' output between 2 and 1040
+bytes into a destination of size 260
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- drivers/hv/hv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/hv/hv_fcopy_daemon.c | 3 ++-
+ tools/hv/hv_vss_daemon.c   | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-index b6cacc4cccf2..31142b72f1b9 100644
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -217,7 +217,7 @@ void hv_synic_free(void)
- }
+diff --git a/tools/hv/hv_fcopy_daemon.c b/tools/hv/hv_fcopy_daemon.c
+index 457a1521f32f..785f4e95148c 100644
+--- a/tools/hv/hv_fcopy_daemon.c
++++ b/tools/hv/hv_fcopy_daemon.c
+@@ -23,13 +23,14 @@
+ #include <unistd.h>
+ #include <errno.h>
+ #include <linux/hyperv.h>
++#include <linux/limits.h>
+ #include <syslog.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <getopt.h>
  
- /*
-- * hv_synic_init - Initialize the Synthethic Interrupt Controller.
-+ * hv_synic_init - Initialize the Synthetic Interrupt Controller.
-  *
-  * If it is already initialized by another entity (ie x2v shim), we need to
-  * retrieve the initialized message and event pages.  Otherwise, we create and
+ static int target_fd;
+-static char target_fname[W_MAX_PATH];
++static char target_fname[PATH_MAX];
+ static unsigned long long filesize;
+ 
+ static int hv_start_fcopy(struct hv_start_fcopy *smsg)
+diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
+index b2b4ebffab8c..34031a297f02 100644
+--- a/tools/hv/hv_vss_daemon.c
++++ b/tools/hv/hv_vss_daemon.c
+@@ -22,6 +22,7 @@
+ #include <sys/poll.h>
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <fcntl.h>
+ #include <stdio.h>
+ #include <mntent.h>
 -- 
 2.15.1
