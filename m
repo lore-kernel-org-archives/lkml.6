@@ -1,210 +1,157 @@
-Date: Tue, 13 Feb 2018 17:35:33 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.com>, Alan Cox <alan@llwyncelyn.cymru>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] tty: make n_tty_read() always abort if hangup is in
- progress
-Message-ID: <20180213163533.GB17101@kroah.com>
-References: <20180213153808.GQ695913@devbig577.frc2.facebook.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2131322-1518463967-2-2752616405163366747
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518463966; b=CD1bM5OV0aKgDg/OPjlnBPaIdTNpS+h5LzyzBV9NM5SJ13B
+    DoY7AFPZKzR/Bhs1H6g9/zSD1NcCQI9Lwm+dSDBJ0UEMKH2RwQ24FEL3VI5jvNWn
+    TR/15adipWTlvWoFDWdQ2c+2vKHUAEqTzsXRvG5cjW2qm3hm4bYhQewF3AqTv7an
+    HN+utpIm2vnXCY08MFB5EYV11qJU0f86aT6jIfLcF6GDzsWoZ2RtiLvZ1LYLyZtK
+    ILAyfMz+wgGN92HYaoodWxaCORfYl1x3d8+eEFAnCsdvClX9jCdRhOVmgTVXrnOJ
+    hv7C0GOrk1qm5qERtaZFMaM+sHgH5bT5iuYIjaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1518463966; bh=c3PaerMNI2FB4MXZt5Hmeh5VPLDKNxIhsqXJXbx+Umc=; b=t
+    3hzQdTMKpv+yrEwwyfgGYNRm+UTDGPLcc27vFPzQyjyw7nS4X9MIhIyURecJLJPX
+    nfGb4WP/ECKBJ80n3CT73UFFU+jM6faY+n1DiZYDVpm2FcWhZiuT9aeu2Q+pnh75
+    wK204pISW3e63a+sdF3mVbeKbr5d7Qs6q7ZJmEOwY+cPkDReD/6nI7DFyZyqdnDB
+    zEAlH7l+9dv5Ar2P0fiv6uDYCx4JSLAzkNCmortWL3yD7ATHQIGezBnQ7sk0r3nR
+    S8sMfTpJP2fNWNVESoT9qipGDjVWrPcu3qy0lTH1o1nFHw5xLjwArGn8r8KzlM67
+    aLsB5fwWhkhWmUmlWzU+A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mi1eJS/H x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Nd/0+61C;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mi1eJS/H x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Nd/0+61C;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750848AbeBLTcp (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Feb 2018 14:32:45 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:56227 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750800AbeBLTco (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 12 Feb 2018 14:32:44 -0500
+X-Google-Smtp-Source: AH8x224ia7lpJaFvSVMnWgqiRBH2VTJE57TXdUtCBquASql2rKmpwaQoxDwZEyL+lGqK1JTIoTPkjQ==
+Subject: Re: [PATCH] ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE
+ attribute
+To: Takashi Iwai <tiwai@suse.de>
+Cc: perex@perex.cz, alsa-devel@alsa-project.org,
+        Stephen Barber <smbarber@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Jaejoong Kim <climbbb.kim@gmail.com>,
+        Julian Scheel <julian@jusst.de>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20180129053755.20136-1-k.marinushkin@gmail.com>
+ <s5hvaf95p4i.wl-tiwai@suse.de>
+ <40196230-8f73-4cca-08e5-d67bfbea2d6e@gmail.com>
+ <s5hinb2aauh.wl-tiwai@suse.de>
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
+Message-ID: <120bc0f8-f472-268d-1247-3245ae994fe5@gmail.com>
+Date: Mon, 12 Feb 2018 20:32:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180213153808.GQ695913@devbig577.frc2.facebook.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <s5hinb2aauh.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 07:38:08AM -0800, Tejun Heo wrote:
-> A tty is hung up by __tty_hangup() setting file->f_op to
-> hung_up_tty_fops, which is skipped on ttys whose write operation isn't
-> tty_write().  This means that, for example, /dev/console whose write
-> op is redirected_tty_write() is never actually marked hung up.
-> 
-> Because n_tty_read() uses the hung up status to decide whether to
-> abort the waiting readers, the lack of hung-up marking can lead to the
-> following scenario.
-> 
->  1. A session contains two processes.  The leader and its child.  The
->     child ignores SIGHUP.
-> 
->  2. The leader exits and starts disassociating from the controlling
->     terminal (/dev/console).
-> 
->  3. __tty_hangup() skips setting f_op to hung_up_tty_fops.
-> 
->  4. SIGHUP is delivered and ignored.
-> 
->  5. tty_ldisc_hangup() is invoked.  It wakes up the waits which should
->     clear the read lockers of tty->ldisc_sem.
-> 
->  6. The reader wakes up but because tty_hung_up_p() is false, it
->     doesn't abort and goes back to sleep while read-holding
->     tty->ldisc_sem.
-> 
->  7. The leader progresses to tty_ldisc_lock() in tty_ldisc_hangup()
->     and is now stuck in D sleep indefinitely waiting for
->     tty->ldisc_sem.
-> 
-> The following is Alan's explanation on why some ttys aren't hung up.
-> 
->  http://lkml.kernel.org/r/20171101170908.6ad08580@alans-desktop
-> 
->  1. It broke the serial consoles because they would hang up and close
->     down the hardware. With tty_port that *should* be fixable properly
->     for any cases remaining.
-> 
->  2. The console layer was (and still is) completely broken and doens't
->     refcount properly. So if you turn on console hangups it breaks (as
->     indeed does freeing consoles and half a dozen other things).
-> 
-> As neither can be fixed quickly, this patch works around the problem
-> by introducing a new flag, TTY_HUPPING, which is used solely to tell
-> n_tty_read() that hang-up is in progress for the console and the
-> readers should be aborted regardless of the hung-up status of the
-> device.
-> 
-> 
-> The following is a sample hung task warning caused by this issue.
-> 
->   INFO: task agetty:2662 blocked for more than 120 seconds.
->         Not tainted 4.11.3-dbg-tty-lockup-02478-gfd6c7ee-dirty #28
->   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->       0  2662      1 0x00000086
->   Call Trace:
->    __schedule+0x267/0x890
->    schedule+0x36/0x80
->    schedule_timeout+0x23c/0x2e0
->    ldsem_down_write+0xce/0x1f6
->    tty_ldisc_lock+0x16/0x30
->    tty_ldisc_hangup+0xb3/0x1b0
->    __tty_hangup+0x300/0x410
->    disassociate_ctty+0x6c/0x290
->    do_exit+0x7ef/0xb00
->    do_group_exit+0x3f/0xa0
->    get_signal+0x1b3/0x5d0
->    do_signal+0x28/0x660
->    exit_to_usermode_loop+0x46/0x86
->    do_syscall_64+0x9c/0xb0
->    entry_SYSCALL64_slow_path+0x25/0x25
-> 
-> The following is the repro.  Run "$PROG /dev/console".  The parent
-> process hangs in D state.
-> 
->   #include <sys/types.h>
->   #include <sys/stat.h>
->   #include <sys/wait.h>
->   #include <sys/ioctl.h>
->   #include <fcntl.h>
->   #include <unistd.h>
->   #include <stdio.h>
->   #include <stdlib.h>
->   #include <errno.h>
->   #include <signal.h>
->   #include <time.h>
->   #include <termios.h>
-> 
->   int main(int argc, char **argv)
->   {
-> 	  struct sigaction sact = { .sa_handler = SIG_IGN };
-> 	  struct timespec ts1s = { .tv_sec = 1 };
-> 	  pid_t pid;
-> 	  int fd;
-> 
-> 	  if (argc < 2) {
-> 		  fprintf(stderr, "test-hung-tty /dev/$TTY\n");
-> 		  return 1;
-> 	  }
-> 
-> 	  /* fork a child to ensure that it isn't already the session leader */
-> 	  pid = fork();
-> 	  if (pid < 0) {
-> 		  perror("fork");
-> 		  return 1;
-> 	  }
-> 
-> 	  if (pid > 0) {
-> 		  /* top parent, wait for everyone */
-> 		  while (waitpid(-1, NULL, 0) >= 0)
-> 			  ;
-> 		  if (errno != ECHILD)
-> 			  perror("waitpid");
-> 		  return 0;
-> 	  }
-> 
-> 	  /* new session, start a new session and set the controlling tty */
-> 	  if (setsid() < 0) {
-> 		  perror("setsid");
-> 		  return 1;
-> 	  }
-> 
-> 	  fd = open(argv[1], O_RDWR);
-> 	  if (fd < 0) {
-> 		  perror("open");
-> 		  return 1;
-> 	  }
-> 
-> 	  if (ioctl(fd, TIOCSCTTY, 1) < 0) {
-> 		  perror("ioctl");
-> 		  return 1;
-> 	  }
-> 
-> 	  /* fork a child, sleep a bit and exit */
-> 	  pid = fork();
-> 	  if (pid < 0) {
-> 		  perror("fork");
-> 		  return 1;
-> 	  }
-> 
-> 	  if (pid > 0) {
-> 		  nanosleep(&ts1s, NULL);
-> 		  printf("Session leader exiting\n");
-> 		  exit(0);
-> 	  }
-> 
-> 	  /*
-> 	   * The child ignores SIGHUP and keeps reading from the controlling
-> 	   * tty.  Because SIGHUP is ignored, the child doesn't get killed on
-> 	   * parent exit and the bug in n_tty makes the read(2) block the
-> 	   * parent's control terminal hangup attempt.  The parent ends up in
-> 	   * D sleep until the child is explicitly killed.
-> 	   */
-> 	  sigaction(SIGHUP, &sact, NULL);
-> 	  printf("Child reading tty\n");
-> 	  while (1) {
-> 		  char buf[1024];
-> 
-> 		  if (read(fd, buf, sizeof(buf)) < 0) {
-> 			  perror("read");
-> 			  return 1;
-> 		  }
-> 	  }
-> 
-> 	  return 0;
->   }
-> 
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Alan Cox <alan@llwyncelyn.cymru>
-> Cc: stable@vger.kernel.org
-> ---
-> Hello,
-> 
-> This patch was initially posted several months ago as a sort of RFC.
-> 
->  http://lkml.kernel.org/r/20171101020651.GK3252168@devbig577.frc2.facebook.com
-> 
-> IIUC Alan's explanation correctly, this workaround actually seems like
-> the right thing to do, so I refreshed the patch, added some comments
-> and updated the patch description accordingly.
-> 
-> We've been running this in the fleet for the past couple months to
-> avoid the process hang issues and it hasn't caused any issues.  Greg,
-> can you please pick it up?
+Hello maintainers of <stable@vger.kernel.org>,
 
-Yes, I will, give me a few days to catch up on my patch queue.
 
-thanks,
+As discussed earlier in this thread, I propose this patch to stable.
 
-greg k-h
+It fixes the issue, which exists since v2.6.34.
+
+
+Best Regards,
+
+Kirill
+
+On 02/12/18 09:08, Takashi Iwai wrote:
+> On Thu, 08 Feb 2018 07:21:36 +0100,
+> Kirill Marinushkin wrote:
+>> On 02/07/18 06:45, Takashi Iwai wrote:
+>>> On Mon, 29 Jan 2018 06:37:55 +0100,
+>>> Kirill Marinushkin wrote:
+>>>> The layout of the UAC2 Control request and response varies depending on
+>>>> the request type. With the current implementation, only the Layout 2
+>>>> Parameter Block (with the 2-byte sized RANGE attribute) is handled
+>>>> properly. For the Control requests with the 1-byte sized RANGE attribute
+>>>> (Bass Control, Mid Control, Tremble Control), the response is parsed
+>>>> incorrectly.
+>>>>
+>>>> This commit:
+>>>> * fixes the wLength field value in the request
+>>>> * fixes parsing the range values from the response
+>>>>
+>>>> Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
+>>>> Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+>>>> Cc: Jaroslav Kysela <perex@perex.cz>
+>>>> Cc: Takashi Iwai <tiwai@suse.com>
+>>>> Cc: Jaejoong Kim <climbbb.kim@gmail.com>
+>>>> Cc: Bhumika Goyal <bhumirks@gmail.com>
+>>>> Cc: Stephen Barber <smbarber@chromium.org>
+>>>> Cc: Julian Scheel <julian@jusst.de>
+>>>> Cc: alsa-devel@alsa-project.org
+>>>> Cc: linux-kernel@vger.kernel.org
+>>> Sorry for the late reply, as I've been (and still) off.
+>>>
+>>> Does this bug actually hit on any real devices, or is it only a
+>>> logical error so far?  In the former case, a Cc to stable is
+>>> mandatory.
+>>>
+>>> In anyway, I'll review and merge it properly once after I back to
+>>> work.
+>>>
+>>>
+>>> thanks,
+>>>
+>>> Takashi
+>> Hello Takashi,
+>>
+>> Thank you for your answer. I will wait until you are back to work, don't 
+>> worry about the late replies.
+>>
+>> I did not hit the issue on a real device.
+>>
+>> During my UAC2 experiments, I reproduced this issue on the development 
+>> board, and then tested my solution on it.
+> OK, if it happened on a development system, it's a real issue, and we
+> should put Cc to stable.  Now I applied the patch.
+>
+> Thanks!
+>
+>
+> Takashi
