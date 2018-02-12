@@ -1,55 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeBLRUR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 12:20:17 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:43242 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751315AbeBLRUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:20:14 -0500
-X-Google-Smtp-Source: AH8x226dZUMT0vdleKMs+neLMDTaquVgovnMmjappo99dXk3vMXHwhqCJqGgMCxZRfWPEozqVkM6Zg==
-Date: Mon, 12 Feb 2018 09:20:10 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Mark Lord <mlord@pobox.com>, Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] libata: fix length validation of ATAPI-relayed SCSI
- commands
-Message-ID: <20180212172010.GB695913@devbig577.frc2.facebook.com>
-References: <001a114aa95cfa4339055cd4e8e0@google.com>
- <20180204043056.16466-1-ebiggers3@gmail.com>
+        id S1753152AbeBLRYH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 12:24:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752433AbeBLRYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 12:24:05 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D4A21726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 12 Feb 2018 12:23:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 17/18] tracing: Add indirect to indirect access for
+ function based events
+Message-ID: <20180212122354.1d2fb867@gandalf.local.home>
+In-Reply-To: <20180212021534.GH31513@sejong>
+References: <20180202230458.840252014@goodmis.org>
+        <20180202231019.582037880@goodmis.org>
+        <20180209051301.GE28206@sejong>
+        <20180209104758.093d31ad@gandalf.local.home>
+        <20180212021534.GH31513@sejong>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180204043056.16466-1-ebiggers3@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 03, 2018 at 08:30:56PM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> syzkaller reported a crash in ata_bmdma_fill_sg() when writing to
-> /dev/sg1.  The immediate cause was that the ATA command's scatterlist
-> was not DMA-mapped, which causes 'pi - 1' to underflow, resulting in a
-> write to 'qc->ap->bmdma_prd[0xffffffff]'.
-> 
-> Strangely though, the flag ATA_QCFLAG_DMAMAP was set in qc->flags.  The
-> root cause is that when __ata_scsi_queuecmd() is preparing to relay a
-> SCSI command to an ATAPI device, it doesn't correctly validate the CDB
-> length before copying it into the 16-byte buffer 'cdb' in 'struct
-> ata_queued_cmd'.  Namely, it validates the fixed CDB length expected
-> based on the SCSI opcode but not the actual CDB length, which can be
-> larger due to the use of the SG_NEXT_CMD_LEN ioctl.  Since 'flags' is
-> the next member in ata_queued_cmd, a buffer overflow corrupts it.
-> 
-> Fix it by requiring that the actual CDB length be <= 16 (ATAPI_CDB_LEN).
+On Mon, 12 Feb 2018 11:15:34 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-Applied to libata/for-4.16-fixes.
+> > It should have been:
+> > 
+> > 		return process_redirects(arg, val, buf);  
+> 
+> But I think you need to consider data type of the arg when
+> dereferencing the last redirect.
 
-Thanks.
+What for?
 
--- 
-tejun
+Also this code has also changed. I haven't posted new patches but my
+latest is in my git tree in the branch ftrace/dynamic-ftrace-events.
+
+-- Steve
