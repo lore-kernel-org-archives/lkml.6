@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752293AbeBLSMG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:12:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42558 "EHLO mail.kernel.org"
+        id S1753084AbeBLSMQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:12:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751176AbeBLSME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:12:04 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B30C21104
+        id S1752370AbeBLSMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:12:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7FF321726
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -15,11 +15,19 @@ To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 0/5] Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 18:11:52 +0000
-Message-Id: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        John Stultz <john.stultz@linaro.org>, Mark Brown <broonie@kernel.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH v2 2/5] dt-bindings: adv7511: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 18:11:54 +0000
+Message-Id: <1518459117-16733-3-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -29,45 +37,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Back in 2014, Jean-Michel provided patches [0] to implement a means of
-describing software defined I2C addresses for devices through the DT nodes.
+The ADV7511 has four 256-byte maps that can be accessed via the main I²C
+ports. Each map has it own I²C address and acts as a standard slave
+device on the I²C bus.
 
-The patch to implement the function "i2c_new_secondary_device()" was integrated,
-but the corresponding driver update didn't get applied.
+Extend the device tree node bindings to be able to override the default
+addresses so that address conflicts with other devices on the same bus
+may be resolved at the board description level.
 
-This short series re-bases Jean-Michel's patch to mainline for the ADV7604 driver
-in linux-media, and also provides a patch for the ADV7511 DRM Bridge driver taking
-the same approach.
-
-This series allows us to define the I2C address allocations of these devices in
-the device tree for the Renesas D3 platform where these two devices reside on
-the same bus and conflict with each other presently..
-
-[0] https://lkml.org/lkml/2014/10/22/468
-[1] https://lkml.org/lkml/2014/10/22/469
-
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
 v2:
- - dt bindings split from driver changes
- - fixed up dt binding property descriptions
- - Update missing edid-i2c address setting (adv7511)
- - Provide update for r8a7792 DTB to account for address conflict
+ - Fixed up reg: property description to account for multiple optional
+   addresses.
+ - Minor reword to commit message to account for DT only change
+ - Collected Robs RB tag
 
-Jean-Michel Hautbois (2):
-  dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
-  media: adv7604: Add support for i2c_new_secondary_device
+ .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-Kieran Bingham (3):
-  dt-bindings: adv7511: Add support for i2c_new_secondary_device
-  [RFT] ARM: dts: wheat: Fix ADV7513 address usage
-  drm: adv7511: Add support for i2c_new_secondary_device
-
- .../bindings/display/bridge/adi,adv7511.txt        | 18 ++++++-
- .../devicetree/bindings/media/i2c/adv7604.txt      | 18 ++++++-
- arch/arm/boot/dts/r8a7792-wheat.dts                | 12 ++++-
- drivers/gpu/drm/bridge/adv7511/adv7511.h           |  6 +++
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 42 +++++++++------
- drivers/media/i2c/adv7604.c                        | 62 ++++++++++++++--------
- 6 files changed, 115 insertions(+), 43 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+index 0047b1394c70..f1b5466b1ca7 100644
+--- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
++++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+@@ -14,7 +14,13 @@ Required properties:
+ 		"adi,adv7513"
+ 		"adi,adv7533"
+ 
+-- reg: I2C slave address
++- reg: I2C slave addresses
++  The ADV7511 internal registers are split into four pages exposed through
++  different I2C addresses, creating four register maps. Each map has it own
++  I2C address and acts as a standard slave device on the I²C bus. The main
++  address is mandatory, others are optional and revert to defaults if not
++  specified.
++
+ 
+ The ADV7511 supports a large number of input data formats that differ by their
+ color depth, color format, clock mode, bit justification and random
+@@ -70,6 +76,9 @@ Optional properties:
+   rather than generate its own timings for HDMI output.
+ - clocks: from common clock binding: reference to the CEC clock.
+ - clock-names: from common clock binding: must be "cec".
++- reg-names : Names of maps with programmable addresses.
++	It can contain any map needing a non-default address.
++	Possible maps names are : "main", "edid", "cec", "packet"
+ 
+ Required nodes:
+ 
+@@ -88,7 +97,12 @@ Example
+ 
+ 	adv7511w: hdmi@39 {
+ 		compatible = "adi,adv7511w";
+-		reg = <39>;
++		/*
++		 * The EDID page will be accessible on address 0x66 on the i2c
++		 * bus. All other maps continue to use their default addresses.
++		 */
++		reg = <0x39 0x66>;
++		reg-names = "main", "edid";
+ 		interrupt-parent = <&gpio3>;
+ 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
+ 		clocks = <&cec_clock>;
 -- 
 2.7.4
