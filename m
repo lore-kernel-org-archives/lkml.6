@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933234AbeBLIyt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 03:54:49 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33972 "EHLO
+        id S933239AbeBLIzN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 03:55:13 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45332 "EHLO
         mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933044AbeBLIxH (ORCPT
+        with ESMTP id S933109AbeBLIxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 03:53:07 -0500
-X-Google-Smtp-Source: AH8x224JnnFgVdGG3qeom4YqUEuQUx40EI96aUhD0goYOg3umEhH4nXzz8qoDM9+z1hrFeC82r4pRg==
+        Mon, 12 Feb 2018 03:53:04 -0500
+X-Google-Smtp-Source: AH8x2259uCSaUUa18sk9KqsN0As3a3OWUmtBiV8pZcvwDCuPvRjGIDyYWNuOCQjYKuXj8fgnwbWUhw==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Cc: daniel.vetter@intel.com, gustavo@padovan.org, airlied@linux.ie,
         seanpaul@chromium.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/4] drm/tve200: Do not use deprecated drm_driver.{enable|disable)_vblank
-Date: Mon, 12 Feb 2018 10:52:53 +0200
-Message-Id: <1518425574-32671-4-git-send-email-andr2000@gmail.com>
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH 1/4] drm/simple_kms_helper: Add {enable|disable}_vblank callback support
+Date: Mon, 12 Feb 2018 10:52:51 +0200
+Message-Id: <1518425574-32671-2-git-send-email-andr2000@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518425574-32671-1-git-send-email-andr2000@gmail.com>
 References: <1518425574-32671-1-git-send-email-andr2000@gmail.com>
@@ -26,79 +25,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Do not use deprecated drm_driver.{enable|disable)_vblank callbacks,
-but use drm_simple_kms_helpe's pipe callbacks instead.
+If simple_kms_helper based driver needs to work with vblanks,
+then it has to provide drm_driver.{enable|disable}_vblank callbacks,
+because drm_simple_kms_helper.drm_crtc_funcs does not provide any.
+At the same time drm_driver.{enable|disable}_vblank callbacks
+are marked as deprecated and shouldn't be used by new drivers.
+
+Fix this by extending drm_simple_kms_helper.drm_crtc_funcs
+to provide the missing callbacks.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpu/drm/tve200/tve200_display.c | 10 ++++++++--
- drivers/gpu/drm/tve200/tve200_drm.h     |  2 --
- drivers/gpu/drm/tve200/tve200_drv.c     |  3 ---
- 3 files changed, 8 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/drm_simple_kms_helper.c | 24 ++++++++++++++++++++++++
+ include/drm/drm_simple_kms_helper.h     | 18 ++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-diff --git a/drivers/gpu/drm/tve200/tve200_display.c b/drivers/gpu/drm/tve200/tve200_display.c
-index 2c668bd6d997..db397fcb345a 100644
---- a/drivers/gpu/drm/tve200/tve200_display.c
-+++ b/drivers/gpu/drm/tve200/tve200_display.c
-@@ -273,16 +273,20 @@ static void tve200_display_update(struct drm_simple_display_pipe *pipe,
- 	}
- }
- 
--int tve200_enable_vblank(struct drm_device *drm, unsigned int crtc)
-+static int tve200_display_enable_vblank(struct drm_simple_display_pipe *pipe)
- {
-+	struct drm_crtc *crtc = &pipe->crtc;
-+	struct drm_device *drm = crtc->dev;
- 	struct tve200_drm_dev_private *priv = drm->dev_private;
- 
- 	writel(TVE200_INT_V_STATUS, priv->regs + TVE200_INT_EN);
- 	return 0;
- }
- 
--void tve200_disable_vblank(struct drm_device *drm, unsigned int crtc)
-+static void tve200_display_disable_vblank(struct drm_simple_display_pipe *pipe)
- {
-+	struct drm_crtc *crtc = &pipe->crtc;
-+	struct drm_device *drm = crtc->dev;
- 	struct tve200_drm_dev_private *priv = drm->dev_private;
- 
- 	writel(0, priv->regs + TVE200_INT_EN);
-@@ -300,6 +304,8 @@ static const struct drm_simple_display_pipe_funcs tve200_display_funcs = {
- 	.disable = tve200_display_disable,
- 	.update = tve200_display_update,
- 	.prepare_fb = tve200_display_prepare_fb,
-+	.enable_vblank = tve200_display_enable_vblank,
-+	.disable_vblank = tve200_display_disable_vblank,
+diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
+index 9d3f6b70812c..9ca8a4a59b74 100644
+--- a/drivers/gpu/drm/drm_simple_kms_helper.c
++++ b/drivers/gpu/drm/drm_simple_kms_helper.c
+@@ -77,6 +77,28 @@ static const struct drm_crtc_helper_funcs drm_simple_kms_crtc_helper_funcs = {
+ 	.atomic_disable = drm_simple_kms_crtc_disable,
  };
  
- int tve200_display_init(struct drm_device *drm)
-diff --git a/drivers/gpu/drm/tve200/tve200_drm.h b/drivers/gpu/drm/tve200/tve200_drm.h
-index 5c270055bd58..1ba4380f489b 100644
---- a/drivers/gpu/drm/tve200/tve200_drm.h
-+++ b/drivers/gpu/drm/tve200/tve200_drm.h
-@@ -113,8 +113,6 @@ struct tve200_drm_dev_private {
- 	container_of(x, struct tve200_drm_connector, connector)
++static int drm_simple_kms_crtc_enable_vblank(struct drm_crtc *crtc)
++{
++	struct drm_simple_display_pipe *pipe;
++
++	pipe = container_of(crtc, struct drm_simple_display_pipe, crtc);
++	if (!pipe->funcs || !pipe->funcs->enable_vblank)
++		return 0;
++
++	return pipe->funcs->enable_vblank(pipe);
++}
++
++static void drm_simple_kms_crtc_disable_vblank(struct drm_crtc *crtc)
++{
++	struct drm_simple_display_pipe *pipe;
++
++	pipe = container_of(crtc, struct drm_simple_display_pipe, crtc);
++	if (!pipe->funcs || !pipe->funcs->disable_vblank)
++		return;
++
++	pipe->funcs->disable_vblank(pipe);
++}
++
+ static const struct drm_crtc_funcs drm_simple_kms_crtc_funcs = {
+ 	.reset = drm_atomic_helper_crtc_reset,
+ 	.destroy = drm_crtc_cleanup,
+@@ -84,6 +106,8 @@ static const struct drm_crtc_funcs drm_simple_kms_crtc_funcs = {
+ 	.page_flip = drm_atomic_helper_page_flip,
+ 	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
++	.enable_vblank = drm_simple_kms_crtc_enable_vblank,
++	.disable_vblank = drm_simple_kms_crtc_disable_vblank,
+ };
  
- int tve200_display_init(struct drm_device *dev);
--int tve200_enable_vblank(struct drm_device *drm, unsigned int crtc);
--void tve200_disable_vblank(struct drm_device *drm, unsigned int crtc);
- irqreturn_t tve200_irq(int irq, void *data);
- int tve200_connector_init(struct drm_device *dev);
- int tve200_encoder_init(struct drm_device *dev);
-diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
-index 44911d921864..ac344ddb23bc 100644
---- a/drivers/gpu/drm/tve200/tve200_drv.c
-+++ b/drivers/gpu/drm/tve200/tve200_drv.c
-@@ -162,9 +162,6 @@ static struct drm_driver tve200_drm_driver = {
- 	.gem_free_object_unlocked = drm_gem_cma_free_object,
- 	.gem_vm_ops = &drm_gem_cma_vm_ops,
+ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
+diff --git a/include/drm/drm_simple_kms_helper.h b/include/drm/drm_simple_kms_helper.h
+index 6d9adbb46293..79567826b099 100644
+--- a/include/drm/drm_simple_kms_helper.h
++++ b/include/drm/drm_simple_kms_helper.h
+@@ -93,6 +93,24 @@ struct drm_simple_display_pipe_funcs {
+ 	 */
+ 	void (*cleanup_fb)(struct drm_simple_display_pipe *pipe,
+ 			   struct drm_plane_state *plane_state);
++
++	/**
++	 * @enable_vblank:
++	 *
++	 * Optional, called by &drm_crtc_funcs.enable_vblank. Please read
++	 * the documentation for the &drm_crtc_funcs.enable_vblank hook for
++	 * more details.
++	 */
++	int (*enable_vblank)(struct drm_simple_display_pipe *pipe);
++
++	/**
++	 * @disable_vblank:
++	 *
++	 * Optional, called by &drm_crtc_funcs.disable_vblank. Please read
++	 * the documentation for the &drm_crtc_funcs.disable_vblank hook for
++	 * more details.
++	 */
++	void (*disable_vblank)(struct drm_simple_display_pipe *pipe);
+ };
  
--	.enable_vblank = tve200_enable_vblank,
--	.disable_vblank = tve200_disable_vblank,
--
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
- 	.gem_prime_import = drm_gem_prime_import,
+ /**
 -- 
 2.7.4
