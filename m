@@ -1,176 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932242AbeBLO6j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 09:58:39 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53664 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932171AbeBLO6h (ORCPT
+        id S932312AbeBLO6z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 09:58:55 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36036 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932246AbeBLO6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:58:37 -0500
-X-Google-Smtp-Source: AH8x226GuSBlJH8kyb7ZRyV17JEnyikFotS1m2JeTah+puYqcxO49O89O//0zwBKsWNBOPds4PnikA==
-Date: Mon, 12 Feb 2018 14:58:33 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 15/21] regulator: tps65090: Pass descriptor instead of
- GPIO number
-Message-ID: <20180212145833.rfbz5lyj3vtxdm2n@dell>
-References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-16-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180212131717.27193-16-linus.walleij@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 12 Feb 2018 09:58:51 -0500
+X-Google-Smtp-Source: AH8x225WFgxeV+C3p+ieGhP6CnCBp5IqHLM8+oLCqvpz0O7URkwvVjKzDKLNfIRDxtnmN7q/KliV/g==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/19] clk: meson: use regmap in clock controllers
+Date: Mon, 12 Feb 2018 15:58:27 +0100
+Message-Id: <20180212145846.19380-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Feb 2018, Linus Walleij wrote:
+This changeset is a rework of meson's clock controllers to use regmap
+instead of directly using io memory. It based clk-meson next/drivers
+and depends on few core clock patches, mainly to export generic clocks
+helpers: [0],[1]. The line count is pretty high but the changes are
+actually fairly simple and repetitive.
 
-> Instead of passing a global GPIO number for the enable GPIO, pass
-> a descriptor looked up from the device tree node for the
-> regulator.
-> 
-> This regulator supports passing platform data, but enable/sleep
-> regulators are looked up from the device tree exclusively, so
-> we can need not touch other files.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Lee: it would be nice if you could ACK this smallish patch to
-> the MFD header.
+This work has been triggered by the fact that the HHI register space on
+gxbb and axg provides more than just clocks. The display driver already
+uses a syscon for HHI on gxbb. This is why gxbb did not use
+devm_ioremap_resource() to map the registers, since it would have
+reserved the memory region, preventing another driver from re-mapping
+it. The cleaner solution is, of course, to use syscon to handle. The
+purpose of this changeset is to allow it. Even if meson8b does not need
+this ATM, there is real reason to leave it behind. It is actually easier
+to migrate it as well, so all meson clock drivers may support regmap
+only.
 
-Fine, but any sign of a conflict and I'll need a PR.
+The rework starts with a few easy clean-ups. The real deal starts with
+patch 5, which adds meson's clk_regmap. This will be used as common
+structure to implement all the controller clocks. Having this replaces
+the gxbb AO controller specific regmap gate. This structure will also be
+re-used in upcoming controllers, such as the axg's AO and audio
+controllers.  Each clock type is then migrated, one at a time, to this
+new structure.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+While at it, the meson clock drivers have been cleaned-up a bit,
+removing the gate embedded in the mpll driver, simplifying the pll
+driver and removing the legacy cpu_clk of meson8b.
 
-> ---
->  drivers/regulator/tps65090-regulator.c | 50 ++++++++++++++++------------------
->  include/linux/mfd/tps65090.h           |  8 ++++--
->  2 files changed, 28 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-> index 395f35dc8cdb..2d398fa3b720 100644
-> --- a/drivers/regulator/tps65090-regulator.c
-> +++ b/drivers/regulator/tps65090-regulator.c
-> @@ -19,8 +19,8 @@
->  #include <linux/module.h>
->  #include <linux/delay.h>
->  #include <linux/init.h>
-> -#include <linux/gpio.h>
-> -#include <linux/of_gpio.h>
-> +#include <linux/of.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
->  #include <linux/platform_device.h>
-> @@ -300,26 +300,6 @@ static int tps65090_regulator_disable_ext_control(
->  	return tps65090_config_ext_control(ri, false);
->  }
->  
-> -static void tps65090_configure_regulator_config(
-> -		struct tps65090_regulator_plat_data *tps_pdata,
-> -		struct regulator_config *config)
-> -{
-> -	if (gpio_is_valid(tps_pdata->gpio)) {
-> -		int gpio_flag = GPIOF_OUT_INIT_LOW;
-> -
-> -		if (tps_pdata->reg_init_data->constraints.always_on ||
-> -				tps_pdata->reg_init_data->constraints.boot_on)
-> -			gpio_flag = GPIOF_OUT_INIT_HIGH;
-> -
-> -		config->ena_gpio = tps_pdata->gpio;
-> -		config->ena_gpio_initialized = true;
-> -		config->ena_gpio_flags = gpio_flag;
-> -	} else {
-> -		config->ena_gpio = -EINVAL;
-> -		config->ena_gpio_initialized = false;
-> -	}
-> -}
-> -
->  #ifdef CONFIG_OF
->  static struct of_regulator_match tps65090_matches[] = {
->  	{ .name = "dcdc1", },
-> @@ -385,9 +365,26 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
->  		rpdata->enable_ext_control = of_property_read_bool(
->  					tps65090_matches[idx].of_node,
->  					"ti,enable-ext-control");
-> -		if (rpdata->enable_ext_control)
-> -			rpdata->gpio = of_get_named_gpio(np,
-> -					"dcdc-ext-control-gpios", 0);
-> +		if (rpdata->enable_ext_control) {
-> +			enum gpiod_flags gflags;
-> +
-> +			if (ri_data->constraints.always_on ||
-> +			    ri_data->constraints.boot_on)
-> +				gflags = GPIOD_OUT_HIGH;
-> +			else
-> +				gflags = GPIOD_OUT_LOW;
-> +
-> +			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
-> +								    tps65090_matches[idx].of_node,
-> +								    "dcdc-ext-control-gpios", 0,
-> +								    gflags,
-> +								    "tps65090");
-> +			if (IS_ERR(rpdata->gpiod))
-> +				return ERR_CAST(rpdata->gpiod);
-> +			if (!rpdata->gpiod)
-> +				dev_err(&pdev->dev,
-> +					"could not find DCDC external control GPIO\n");
-> +		}
->  
->  		if (of_property_read_u32(tps65090_matches[idx].of_node,
->  					 "ti,overcurrent-wait",
-> @@ -455,8 +452,7 @@ static int tps65090_regulator_probe(struct platform_device *pdev)
->  		 */
->  		if (tps_pdata && is_dcdc(num) && tps_pdata->reg_init_data) {
->  			if (tps_pdata->enable_ext_control) {
-> -				tps65090_configure_regulator_config(
-> -						tps_pdata, &config);
-> +				config.ena_gpiod = tps_pdata->gpiod;
->  				ri->desc->ops = &tps65090_ext_control_ops;
->  			} else {
->  				ret = tps65090_regulator_disable_ext_control(
-> diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-> index 67d144b3b8f9..f05bf4a146e2 100644
-> --- a/include/linux/mfd/tps65090.h
-> +++ b/include/linux/mfd/tps65090.h
-> @@ -83,6 +83,8 @@ enum {
->  #define TPS65090_MAX_REG	TPS65090_REG_AD_OUT2
->  #define TPS65090_NUM_REGS	(TPS65090_MAX_REG + 1)
->  
-> +struct gpio_desc;
-> +
->  struct tps65090 {
->  	struct device		*dev;
->  	struct regmap		*rmap;
-> @@ -95,8 +97,8 @@ struct tps65090 {
->   * @reg_init_data: The regulator init data.
->   * @enable_ext_control: Enable extrenal control or not. Only available for
->   *     DCDC1, DCDC2 and DCDC3.
-> - * @gpio: Gpio number if external control is enabled and controlled through
-> - *     gpio.
-> + * @gpiod: Gpio descriptor if external control is enabled and controlled through
-> + *     gpio
->   * @overcurrent_wait_valid: True if the overcurrent_wait should be applied.
->   * @overcurrent_wait: Value to set as the overcurrent wait time.  This is the
->   *     actual bitfield value, not a time in ms (valid value are 0 - 3).
-> @@ -104,7 +106,7 @@ struct tps65090 {
->  struct tps65090_regulator_plat_data {
->  	struct regulator_init_data *reg_init_data;
->  	bool enable_ext_control;
-> -	int gpio;
-> +	struct gpio_desc *gpiod;
->  	bool overcurrent_wait_valid;
->  	int overcurrent_wait;
->  };
+The new code around the cpu clk of the meson8b is just re-implementation,
+using simple elements, of the old cpu_clk. As explained by Martin, the
+old cpu_clk would hang quite often when changing the rate of the cpu
+clock. Surprisingly, the new implementation improved the situation a bit,
+but still hangs from time to time. As this is not acceptable, the cpu
+clk subtree as been switched to a read-only mode, preventing any change
+of the cpu rate, until an acceptable solution is found.
+
+With this series applied, the clock controllers of the gxbb, gxl and axg
+SoC will try get regmap from their parent DT node. If this fails, they
+will fallback to mapping the register themselves. This fallback will be
+kept until platform DTs have changed so clock controllers is a child of
+the HHI system controller.
+
+Based on this changeset, more patches are coming. For those interested,
+the WIP is available here [2]
+
+Changes since v1 [3]:
+* Fixed a few typos in patches descriptions
+* Fixed cpu clock names on meson8b, as suggested by Martin
+* Switched cpu clock subtree to reead-only mode
+* Fix clk_regmap mux documentation, as reported by Yixun
+
+[0]: https://lkml.kernel.org/r/20180118110144.30619-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/20180122105759.12206-1-jbrunet@baylibre.com
+[2]: https://github.com/jeromebrunet/linux/tree/v4.17/meson/clk-regmap
+[1]: https://lkml.kernel.org/r/20180131180945.18025-1-jbrunet@baylibre.com
+
+Jerome Brunet (19):
+  clk: meson: use dev pointer where possible
+  clk: meson: use devm_of_clk_add_hw_provider
+  clk: meson: only one loop index is necessary in probe
+  clk: meson: remove obsolete comments
+  clk: meson: add regmap clocks
+  clk: meson: switch gxbb ao_clk to clk_regmap
+  clk: meson: remove superseded aoclk_gate_regmap
+  clk: meson: add regmap to the clock controllers
+  clk: meson: migrate gates to clk_regmap
+  clk: meson: migrate dividers to clk_regmap
+  clk: meson: migrate muxes to clk_regmap
+  clk: meson: add regmap helpers for parm
+  clk: meson: migrate mplls clocks to clk_regmap
+  clk: meson: migrate the audio divider clock to clk_regmap
+  clk: meson: migrate plls clocks to clk_regmap
+  clk: meson: split divider and gate part of mpll
+  clk: meson: rework meson8b cpu clock
+  clk: meson: remove obsolete cpu_clk
+  clk: meson: use hhi syscon if available
+
+ drivers/clk/meson/Kconfig             |    9 +
+ drivers/clk/meson/Makefile            |    5 +-
+ drivers/clk/meson/axg.c               |  722 +++++++++--------
+ drivers/clk/meson/axg.h               |    6 +-
+ drivers/clk/meson/clk-audio-divider.c |   63 +-
+ drivers/clk/meson/clk-cpu.c           |  178 -----
+ drivers/clk/meson/clk-mpll.c          |  132 +---
+ drivers/clk/meson/clk-pll.c           |  243 +++---
+ drivers/clk/meson/clk-regmap.c        |  166 ++++
+ drivers/clk/meson/clk-regmap.h        |  111 +++
+ drivers/clk/meson/clkc.h              |   93 +--
+ drivers/clk/meson/gxbb-aoclk-regmap.c |   46 --
+ drivers/clk/meson/gxbb-aoclk.c        |   20 +-
+ drivers/clk/meson/gxbb-aoclk.h        |   11 -
+ drivers/clk/meson/gxbb.c              | 1402 ++++++++++++++++++---------------
+ drivers/clk/meson/gxbb.h              |    5 +-
+ drivers/clk/meson/meson8b.c           |  588 ++++++++------
+ drivers/clk/meson/meson8b.h           |   11 +-
+ 18 files changed, 1978 insertions(+), 1833 deletions(-)
+ delete mode 100644 drivers/clk/meson/clk-cpu.c
+ create mode 100644 drivers/clk/meson/clk-regmap.c
+ create mode 100644 drivers/clk/meson/clk-regmap.h
+ delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
 
 -- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.14.3
