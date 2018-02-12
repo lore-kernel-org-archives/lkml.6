@@ -1,140 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933103AbeBLKIE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:08:04 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43204 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932558AbeBLKIB (ORCPT
+        id S933350AbeBLKRW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:17:22 -0500
+Received: from [198.137.202.136] ([198.137.202.136]:43921 "EHLO
+        terminus.zytor.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S932663AbeBLKRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:08:01 -0500
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
-Subject: [PATCH 00/17] Add kexec_file_load support to s390
-Date: Mon, 12 Feb 2018 11:07:37 +0100
-X-Mailer: git-send-email 2.13.5
+        Mon, 12 Feb 2018 05:17:20 -0500
+Date: Mon, 12 Feb 2018 02:16:25 -0800
+From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
+Message-ID: <tip-a1490086a98e51e3358be8eaf2bc5743c73c6b6e@git.kernel.org>
+Cc: linux@dominikbrodowski.net, luto@kernel.org,
+        torvalds@linux-foundation.org, brgerst@gmail.com, tglx@linutronix.de,
+        mingo@kernel.org, dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, jpoimboe@redhat.com, hpa@zytor.com, bp@alien8.de
+Reply-To: luto@kernel.org, torvalds@linux-foundation.org, brgerst@gmail.com,
+        tglx@linutronix.de, linux@dominikbrodowski.net, bp@alien8.de,
+        hpa@zytor.com, dvlasenk@redhat.com, jpoimboe@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org
+In-Reply-To: <20180211104949.12992-3-linux@dominikbrodowski.net>
+References: <20180211104949.12992-3-linux@dominikbrodowski.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/entry/64: Merge the POP_C_REGS and POP_EXTRA_REGS
+ macros into a single POP_REGS macro
+Git-Commit-ID: a1490086a98e51e3358be8eaf2bc5743c73c6b6e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18021210-0008-0000-0000-000004CBD609
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021210-0009-0000-0000-00001E5F927A
-Message-Id: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802120131
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everybody
+Commit-ID:  a1490086a98e51e3358be8eaf2bc5743c73c6b6e
+Gitweb:     https://git.kernel.org/tip/a1490086a98e51e3358be8eaf2bc5743c73c6b6e
+Author:     Dominik Brodowski <linux@dominikbrodowski.net>
+AuthorDate: Sun, 11 Feb 2018 11:49:43 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 12 Feb 2018 08:06:35 +0100
 
-resending the series as there was no reaction, yet. Furthermore i was told
-that Andrew and the x86 list should also be CCed, so welcome.
+x86/entry/64: Merge the POP_C_REGS and POP_EXTRA_REGS macros into a single POP_REGS macro
 
-No changes made to the patches since first time i sent them. The patches
-apply to the current master (v4.16-rc1).
+The two special, opencoded cases for POP_C_REGS can be handled by ASM
+macros.
 
-Thanks
-Philipp
-
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dan.j.williams@intel.com
+Link: http://lkml.kernel.org/r/20180211104949.12992-3-linux@dominikbrodowski.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
+ arch/x86/entry/calling.h  | 15 +++++++++++----
+ arch/x86/entry/entry_64.S | 26 ++++----------------------
+ 2 files changed, 15 insertions(+), 26 deletions(-)
 
-this series adds the kexec_file_load system call to s390. Before the system
-call is added there are some preparations/clean ups to common
-kexec_file_load. In detail this series contains:
-
-Patch #1&2: Minor cleanups/fixes.
-
-Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-depending on the section. With these patches the section address will be
-calculated verbosely and sh_offset will contain the offset of the section
-in the stripped purgatory binary (purgatory_buf).
-
-Patch #10: Allows architectures to set the purgaory load address. This
-patch is important for s390 as the kernel and purgatory have to be loaded
-to fixed addresses. In current code this is impossible as the purgatory
-load is opaque to the architecture.
-
-Patch #11: Moves x86 purgatories sha implementation to common lib/
-directory.
-
-Patches #12-17 finally adds the kexec_file_load system call to s390.
-
-Please note that I had to touch arch code for x86 and power a little. In
-theory this should not change the behavior but I don't have a way to test
-it. Cross-compiling with defconfig(*) works fine for both.
-
-Thanks
-Philipp
-
-(*) On x86 with the orc unwinder turned off. objtool SEGFAULTs on s390...
-
-Philipp Rudo (17):
-  kexec_file: Silence compile warnings
-  kexec_file: Remove checks in kexec_purgatory_load
-  kexec_file: Make purgatory_info->ehdr const
-  kexec_file: Search symbols in read-only kexec_purgatory
-  kexec_file: Use read-only sections in arch_kexec_apply_relocations*
-  kexec_file: Split up __kexec_load_puragory
-  kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-  kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-  kexec_file: Remove mis-use of sh_offset field
-  kexec_file: Allow archs to set purgatory load address
-  kexec_file: Move purgatories sha256 to common code
-  s390/kexec_file: Prepare setup.h for kexec_file_load
-  s390/kexec_file: Add purgatory
-  s390/kexec_file: Add kexec_file_load system call
-  s390/kexec_file: Add image loader
-  s390/kexec_file: Add crash support to image loader
-  s390/kexec_file: Add ELF loader
-
- arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
- arch/s390/Kbuild                               |   1 +
- arch/s390/Kconfig                              |   4 +
- arch/s390/include/asm/kexec.h                  |  23 ++
- arch/s390/include/asm/purgatory.h              |  17 ++
- arch/s390/include/asm/setup.h                  |  40 ++-
- arch/s390/kernel/Makefile                      |   1 +
- arch/s390/kernel/asm-offsets.c                 |   5 +
- arch/s390/kernel/compat_wrapper.c              |   1 +
- arch/s390/kernel/kexec_elf.c                   | 149 ++++++++++
- arch/s390/kernel/kexec_image.c                 |  78 +++++
- arch/s390/kernel/machine_kexec_file.c          | 291 +++++++++++++++++++
- arch/s390/kernel/syscalls/syscall.tbl          |   1 +
- arch/s390/purgatory/Makefile                   |  37 +++
- arch/s390/purgatory/head.S                     | 279 ++++++++++++++++++
- arch/s390/purgatory/purgatory.c                |  42 +++
- arch/x86/kernel/kexec-bzimage64.c              |   8 +-
- arch/x86/kernel/machine_kexec_64.c             |  66 ++---
- arch/x86/purgatory/Makefile                    |   3 +
- arch/x86/purgatory/purgatory.c                 |   2 +-
- include/linux/kexec.h                          |  38 +--
- {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
- kernel/kexec_file.c                            | 375 ++++++++++++-------------
- {arch/x86/purgatory => lib}/sha256.c           |   4 +-
- 24 files changed, 1200 insertions(+), 284 deletions(-)
- create mode 100644 arch/s390/include/asm/purgatory.h
- create mode 100644 arch/s390/kernel/kexec_elf.c
- create mode 100644 arch/s390/kernel/kexec_image.c
- create mode 100644 arch/s390/kernel/machine_kexec_file.c
- create mode 100644 arch/s390/purgatory/Makefile
- create mode 100644 arch/s390/purgatory/head.S
- create mode 100644 arch/s390/purgatory/purgatory.c
- rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
- rename {arch/x86/purgatory => lib}/sha256.c (99%)
-
--- 
-2.13.5
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 8907a65..3bda317 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -139,25 +139,32 @@ For 32-bit we have the following conventions - kernel is built with
+ 	xorq %r15, %r15
+ 	.endm
+ 
+-	.macro POP_EXTRA_REGS
++	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+ 	popq %r13
+ 	popq %r12
+ 	popq %rbp
+ 	popq %rbx
+-	.endm
+-
+-	.macro POP_C_REGS
++	.if \skip_r11rcx
++	popq %rsi
++	.else
+ 	popq %r11
++	.endif
+ 	popq %r10
+ 	popq %r9
+ 	popq %r8
+ 	popq %rax
++	.if \skip_r11rcx
++	popq %rsi
++	.else
+ 	popq %rcx
++	.endif
+ 	popq %rdx
+ 	popq %rsi
++	.if \pop_rdi
+ 	popq %rdi
++	.endif
+ 	.endm
+ 
+ 	.macro icebp
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 1a6fc01..7351c91 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -334,15 +334,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+ syscall_return_via_sysret:
+ 	/* rcx and r11 are already restored (see code above) */
+ 	UNWIND_HINT_EMPTY
+-	POP_EXTRA_REGS
+-	popq	%rsi	/* skip r11 */
+-	popq	%r10
+-	popq	%r9
+-	popq	%r8
+-	popq	%rax
+-	popq	%rsi	/* skip rcx */
+-	popq	%rdx
+-	popq	%rsi
++	POP_REGS pop_rdi=0 skip_r11rcx=1
+ 
+ 	/*
+ 	 * Now all regs are restored except RSP and RDI.
+@@ -635,15 +627,7 @@ GLOBAL(swapgs_restore_regs_and_return_to_usermode)
+ 	ud2
+ 1:
+ #endif
+-	POP_EXTRA_REGS
+-	popq	%r11
+-	popq	%r10
+-	popq	%r9
+-	popq	%r8
+-	popq	%rax
+-	popq	%rcx
+-	popq	%rdx
+-	popq	%rsi
++	POP_REGS pop_rdi=0
+ 
+ 	/*
+ 	 * The stack is now user RDI, orig_ax, RIP, CS, EFLAGS, RSP, SS.
+@@ -701,8 +685,7 @@ GLOBAL(restore_regs_and_return_to_kernel)
+ 	ud2
+ 1:
+ #endif
+-	POP_EXTRA_REGS
+-	POP_C_REGS
++	POP_REGS
+ 	addq	$8, %rsp	/* skip regs->orig_ax */
+ 	INTERRUPT_RETURN
+ 
+@@ -1661,8 +1644,7 @@ end_repeat_nmi:
+ nmi_swapgs:
+ 	SWAPGS_UNSAFE_STACK
+ nmi_restore:
+-	POP_EXTRA_REGS
+-	POP_C_REGS
++	POP_REGS
+ 
+ 	/*
+ 	 * Skip orig_ax and the "outermost" frame to point RSP at the "iret"
