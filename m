@@ -1,28 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934745AbeBLMwd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 07:52:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51882 "EHLO
+        id S934755AbeBLMwq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 07:52:46 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52274 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbeBLMwb (ORCPT
+        with ESMTP id S1750980AbeBLMwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:52:31 -0500
+        Mon, 12 Feb 2018 07:52:44 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: wm_adsp: Don't init cache from DSP memory if control is write-only" to the asoc tree
-In-Reply-To: <20180205113817.16470-1-rf@opensource.cirrus.com>
-Message-Id: <E1elDau-0006Xq-1z@debutante>
-Date: Mon, 12 Feb 2018 12:52:28 +0000
+Subject: Applied "ASoC: Intel: Skylake: make function skl_clk_round_rate static" to the asoc tree
+In-Reply-To: <20180208143530.11450-1-colin.king@canonical.com>
+Message-Id: <E1elDax-0006Yt-6k@debutante>
+Date: Mon, 12 Feb 2018 12:52:31 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: wm_adsp: Don't init cache from DSP memory if control is write-only
+   ASoC: Intel: Skylake: make function skl_clk_round_rate static
 
 has been applied to the asoc tree at
 
@@ -47,49 +52,40 @@ to this mail.
 Thanks,
 Mark
 
->From 04ff40a983e864b586f189b4c3503b6f61263643 Mon Sep 17 00:00:00 2001
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Date: Mon, 5 Feb 2018 11:38:17 +0000
-Subject: [PATCH] ASoC: wm_adsp: Don't init cache from DSP memory if control is
- write-only
+>From 29c5b8fd8c07a42b07383c5fac47173d882f74b2 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 8 Feb 2018 14:35:30 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: make function skl_clk_round_rate static
 
-For controls marked write-only don't initialize the cache from the
-content of the DSP memory. We stil need the cache for any new data
-that is written to this control, and we need to return something
-for a read of the ALSA control because most user-side code assumes
-all ALSA controls are readable. The cache is already created zero-
-filled so the only change needed is to skip populating it from
-DSP memory if the control isn't readable.
+The function skl_clk_round_rate is local to the source and does not
+need to be in global scope, so make it static.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cleans up sparse warning:
+sound/soc/intel/skylake/skl-ssp-clk.c:250:6: warning: symbol
+'skl_clk_round_rate' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm_adsp.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ sound/soc/intel/skylake/skl-ssp-clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index 66e32f5d2917..0060aeb63a9f 100644
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -1237,9 +1237,16 @@ static int wm_coeff_init_control_caches(struct wm_adsp *dsp)
- 		if (ctl->flags & WMFW_CTL_FLAG_VOLATILE)
- 			continue;
+diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
+index 7fbddf5e3b00..cda1b5fa7436 100644
+--- a/sound/soc/intel/skylake/skl-ssp-clk.c
++++ b/sound/soc/intel/skylake/skl-ssp-clk.c
+@@ -247,8 +247,8 @@ static unsigned long skl_clk_recalc_rate(struct clk_hw *hw,
+ }
  
--		ret = wm_coeff_read_control(ctl, ctl->cache, ctl->len);
--		if (ret < 0)
--			return ret;
-+		/*
-+		 * For readable controls populate the cache from the DSP memory.
-+		 * For non-readable controls the cache was zero-filled when
-+		 * created so we don't need to do anything.
-+		 */
-+		if (!ctl->flags || (ctl->flags & WMFW_CTL_FLAG_READABLE)) {
-+			ret = wm_coeff_read_control(ctl, ctl->cache, ctl->len);
-+			if (ret < 0)
-+				return ret;
-+		}
- 	}
- 
- 	return 0;
+ /* Not supported by clk driver. Implemented to satisfy clk fw */
+-long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+-				unsigned long *parent_rate)
++static long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *parent_rate)
+ {
+ 	return rate;
+ }
 -- 
 2.16.1
