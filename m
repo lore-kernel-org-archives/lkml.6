@@ -1,60 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932581AbeBLXMW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 18:12:22 -0500
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:36357 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932376AbeBLXMU (ORCPT
+        id S932691AbeBLXNZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 18:13:25 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33237 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932376AbeBLXNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 18:12:20 -0500
-X-Google-Smtp-Source: AH8x225NzzLeE5PtPIzsvFR9nbrb5IWtxRTYWTPz3CpWJjUyMjRAgU9w/akgFtaqHDJR9y7kZ7ghlw==
-Subject: Re: [PATCH 14/14] x86/crypto: aesni: Update aesni-intel_glue to use
- scatter/gather
-To: Dave Watson <davejwatson@fb.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-crypto@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sabrina Dubroca <sd@queasysnail.net>, linux-kernel@vger.kernel.org,
-        Stephan Mueller <smueller@chronox.de>,
-        Ilya Lesokhin <ilyal@mellanox.com>
-References: <cover.1518211765.git.davejwatson@fb.com>
- <20180212195128.GA61087@davejwatson-mba.local>
-From: Junaid Shahid <junaids@google.com>
-Organization: Google
-Message-ID: <dc69bdfa-6dc2-da54-9d9a-b171aeb3212b@google.com>
-Date: Mon, 12 Feb 2018 15:12:16 -0800
+        Mon, 12 Feb 2018 18:13:23 -0500
+X-Google-Smtp-Source: AH8x225KG3XvZMffL2tuVq4mWKTAVMgB6Rp3utD/LvqD5vnyoHMaajzrJK93GFXOoiuA9mp7o0VGJQ==
+Subject: Re: RFC: build config via DT names
+To: "Enrico Weigelt, metux IT consult" <metux@gmx.de>
+References: <63f25fea-f163-f9cc-b5b2-f6f291d7f8d2@gmx.de>
+Cc: linux-kernel@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <d55f95cc-228b-e65f-b46c-2f314f4fa582@gmail.com>
+Date: Mon, 12 Feb 2018 15:13:21 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180212195128.GA61087@davejwatson-mba.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <63f25fea-f163-f9cc-b5b2-f6f291d7f8d2@gmx.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
++ devicetree mail list
 
-
-On 02/12/2018 11:51 AM, Dave Watson wrote:
-
-> +static int gcmaes_encrypt_sg(struct aead_request *req, unsigned int assoclen,
-> +			u8 *hash_subkey, u8 *iv, void *aes_ctx)
->  
-> +static int gcmaes_decrypt_sg(struct aead_request *req, unsigned int assoclen,
-> +			u8 *hash_subkey, u8 *iv, void *aes_ctx)
-
-These two functions are almost identical. Wouldn't it be better to combine them into a single encrypt/decrypt function, similar to what you have done for the assembly macros?
-
-> +	if (((struct crypto_aes_ctx *)aes_ctx)->key_length != AES_KEYSIZE_128 ||
-> +		aesni_gcm_enc_tfm == aesni_gcm_enc) {
-
-Shouldn't we also include a check for the buffer length being less than AVX_GEN2_OPTSIZE? AVX will not be used in that case either.
-
-
-Thanks,
-Junaid
+On 02/10/18 07:52, Enrico Weigelt, metux IT consult wrote:
+> Hi folks,
+> 
+> I've regularily have the task of configuring a kernel for a given DT.
+> To make this a little bit easier, I'd like to do this automatically.
+> 
+> The tuff task here is getting a mapping between dt compatible strings
+> and corresponding CONFIG_* flags. Automatically extracting it from the
+> source code seems pretty tricky, especially w/ corner cases (eg. some
+> drivers support groups of devices, depending on config options) - IMHO
+> it will need some code changes anyways.
+> 
+> Therefore I propose a simple approach using the existing Kconfig system:
+> 
+> Add an extra (toplevel) menu and config flag naming scheme which
+> directly map DT compatible strings to config flags. For example:
+> 
+>> fsl,mpc5200-gpio <=> CONFIG_DTDEV_FSL_MPC5200_GPIO
+> 
+>> config CONFIG_DTDEV_FSL_MPC5200_GPIO
+>>    tristate "fsl,mpc5200-gpio"
+>>    select GPIO_MPC5200
+> 
+> Note that these flags are separate from the actual drivers - they just
+> enable them automatically. Of course they'll have to be maintained by
+> the driver maintainers.
+> 
+> 
+> What do you think about this idea ?
+> 
+> 
+> --mtx
+> 
