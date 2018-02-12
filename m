@@ -1,28 +1,28 @@
 Return-Path: <kys@linuxonhyperv2.linuxonhyperv.com>
-X-Google-Smtp-Source: AH8x2268oWuhylpu2l3fkEkD1UjUQaOLFrx4ZfOIUjqWWCg5r2PcULvsvwfqUrv7CTmbkunRi4Fl
-ARC-Seal: i=1; a=rsa-sha256; t=1518395678; cv=none;
+X-Google-Smtp-Source: AH8x224eXB7Q2v1+kA7L6lwa1PApZST2yT6PvlLqRGOD6s6ckSNWmaK0r/S73xyv5VgiLZQp3QsN
+ARC-Seal: i=1; a=rsa-sha256; t=1518395677; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jhb0Fb2YHcfoSTLf74gehOdlrkdidXLto3wgYt57Fph800l/KMtpSOmM6sPnprESAS
-         IHkbG0R0BuloUG0jugV0T2mBT6PIH7H146nmOhemFx0dTvFD7ppDco/o/QPJqNYnAdNH
-         Oi+CMNi7Vs34P6yyezRcKBgwhsdg0bdoPVFBA73SItlK+3RPfKxoF2LDDDZgeAJx5Xa4
-         3MdxSG80bcmV4jOKPho42Ti8xzIzhzeNPEDktwKW0iQwmqZ/ph8s85xyOlJc+yVjBhLd
-         1KdweUIDUfKyu5xFRixaqQ1hOJBSJwSd/xKr8XzVxwYOObwgYtLR40AHhH97d+qwqv7b
-         1Hxw==
+        b=lA/3k8te6W8OFVKfKzHveidJcgThUNWSlfySdDbtZE9k8EkdkyGfoVUQJZGFVFDbdy
+         rJNaDHUezcpFX5NGL3VFy1Unhd1EoytMFNrFowQi2u0aiPeTdASiNKAQVmlVsoMtm3Eg
+         SwvLfhG5ZzOLMF+3GVjfLHqCI31HeXF2FnSM6U7rhA9pTyxwio1R6W7ewkjYc4so9S5k
+         vWxzMsd9mDvZOHXA9Ji7qMVky1KadGk0Akjq1EBddftlG2TUuOtUlIjQUsZFWR8eQurT
+         TDWKDblgDLfZP08k/HikYb9pGGvbJ97ORFlwUCDUl68C7LAxrnqACq9xYLhbKbOWDBS1
+         gbNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=reply-to:references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=nSZRY2rdh7tLFySSazDUoH5HYn8HmrJhSgLVb1EBAIE=;
-        b=atfmFZoQrPDLwikotFLGZR0eSsfWMXzslbLAJgYyervekivOzN1VzbKAHt1Iqs81Dc
-         fbW/427FaPTVBcqgE3NwQ4fjVzyTLUMOEllNDQbKLEhuPP1Z8YC8z633H6Cb3q0F2HwG
-         QUCLLFllPPee0of9HvTYQZy9auu+7USgQTB4+2TRqSTEHEDyXaHUDvWATppsU4Tjr0Kp
-         R61iYRP3zxo5VdAenNA0A7LQzoCAEz4IcHkiI0kiJmaKLh9mgwURYl/jvgh4Fmj/ne4N
-         UsXOKNqUr018ahH50b5NlbQruu5XL9w/KejizQMO7t9xlYzsQDcTOUmNoDmdMNHrGF8p
-         O0hg==
+        bh=JQ/3kht8kIryrttkw0UX4qH+oFlJ0XDAzctfg0EK8c8=;
+        b=BGI6lvByoXVaOmqhr/IKxomt7Wu2zqHd2C3UgdNALOdNBLAVd+YNSz+qOe1yzLGHTD
+         y7uYB8qIoMWWkzMqYOrlQH64JUV+F15A7tKgAAu4WwAvMFkGEP5j96aJAz0ObMbQCk4C
+         4tDZCuL3injJZzqUKlotd42/oI2v6SnoA3lnXeGiUKKBfdEZhNPoHCmxTX4pdHSLoH49
+         WyUmryMgUxSBYfyALhyzM/oQs/MD11qFvN+WIjkPjhK7bjaP2uuG6U6KbXwNgd2Dy9wF
+         +4wudZQFeJ4r50uEW3iXfmwIXJMwVBz+XX+GzYVz6JcImnErp9IOSo7T/fSm5iBBzH1m
+         7y5g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 198.71.225.36 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com;
+       spf=neutral (google.com: 198.71.225.37 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=exchange.microsoft.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 198.71.225.36 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com;
+       spf=neutral (google.com: 198.71.225.37 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=exchange.microsoft.com
 x-originating-ip: 107.180.71.197
 From: kys@exchange.microsoft.com
@@ -36,164 +36,55 @@ To: gregkh@linuxfoundation.org,
 	leann.ogasawara@canonical.com,
 	marcelo.cerri@canonical.com,
 	sthemmin@microsoft.com
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 11/12] hv_balloon: fix bugs in num_pages_onlined accounting
-Date: Sun, 11 Feb 2018 17:33:19 -0700
-Message-Id: <20180212003320.6748-11-kys@exchange.microsoft.com>
+Cc: Jia-Ju Bai <baijiaju1990@gmail.com>,
+	"K . Y . Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 02/12] hyper-v: use GFP_KERNEL for hv_context.hv_numa_map
+Date: Sun, 11 Feb 2018 17:33:10 -0700
+Message-Id: <20180212003320.6748-2-kys@exchange.microsoft.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180212003320.6748-1-kys@exchange.microsoft.com>
 References: <20180212002958.6679-1-kys@exchange.microsoft.com>
  <20180212003320.6748-1-kys@exchange.microsoft.com>
 Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfHyZdqk6Dl3CqdKTeQUaFt4DiPq4NwSJNRbSHot72htVxwhQ9iyRVvrQfyMq2KbUn3bruBG3LJedKxJcr14wtflyhxwq2GFNtBHGivf4zE+1HrQTk3qJ
- lchFZUskV71tfjZpPPgJGrjGEmiWyPA1H5CR1UyGekyhxpcIgq3ZmhNdEaJiFj1BRlgZgyFU5T1fMnMO7oJ3amYOSknqcrv/gop8VTmLqBrjTIHrJcvNUCpH
- cpMZske8xgoR5PkZkbLjaXHMRleTcVHbzbbxyyX38+4PS1mKe123/FGeeMg2tpDUjjaE4+fXSFQGGs4SvUJgKhzlJuXoJ8FTRx9cv9IkAxwwR8QpAlobKhAn
- qlvuOOwBfMDxJ7QlAM+ha1ydkdvcrThUGefSrB1Dk7g1Byrnwf79IB38LrNnGA28cUxZelJ/p28OCXQn8BYQSsaseRMJcknTpkPDYDdxTtWluvwzqUpxJDXh
- Y1kzVxTFDVzIC176u5n6sD6jT0IK4B0q0P8NYFDSpVFawd1CWKMkPXNyqpAkEYhuP7sdvUGmGA7iYEugmoz6MIvaj6DlNKeVNv34eQ==
+X-CMAE-Envelope: MS4wfMBPoVmBpj5ZCphvaGIPrQDPdiP9EBYCoCwA13x7dFTj0gCvjgvLTrZo/d8eqMq58uZhIcAyYn4RsEcbpIMrcjHLlYImX+d1C+FSuKEllEHKslHysej8
+ fg7BkCJVqliBc/AKN5cBO6jAxYFgkycGtdH8qut8ktMRW0Bmc7FWA4uMwH/XSbpT9WCi29bLPck7BeAPhIol5Sk95IcEJGnd0gy6Q8kfBQuJSIMiKiHNtvtI
+ ZZsHHvY6BIhiJ1tEgXlJcp1apCC0JDVlzlwYQ91d26kU8+G+hb5irM9ZMfj5pzi1kqADc6T96pw9TPN9DyaqKPC+B2utn7uMPiuUGrL0ix8x/snFhl0XNdWL
+ 6WZNefcY70YeF2ofNxiENxtaUMeCtVFPYmZiU6rIqm1kw6eJJYPEg3xapljbGJK/fJu6A3zUc4swCvro1qKhF9+cM/ubhqkW+Uh3AiCvtlLAuRe8ln5PqPZd
+ 4XtisNTPydI9JOxsJfPNsEdVuKIfvuRX25HNiOC05FkFyD8Kb4PABOGrcHcP20JPhEXbvd0kD7gHhIm2EVVPWZ9LgRFOX1CzT/T9vLEEp5Uk4JPWXjGjufEq
+ ko/avFLAaOUXh+rOrj711Yti
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592153266298505228?=
-X-GMAIL-MSGID: =?utf-8?q?1592153266298505228?=
+X-GMAIL-THRID: =?utf-8?q?1592153265147182049?=
+X-GMAIL-MSGID: =?utf-8?q?1592153265147182049?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-Our num_pages_onlined accounting is buggy:
-1) In case we're offlining a memory block which was present at boot (e.g.
-   when there was no hotplug at all) we subtract 32k from 0 and as
-   num_pages_onlined is unsigned get a very big positive number.
+The kzalloc function is called with GFP_ATOMIC.
+But according to driver call graph, it is not in atomic context,
+namely no spinlock is held nor in an interrupt handler.
 
-2) Commit 6df8d9aaf3af ("Drivers: hv: balloon: Correctly update onlined
-   page count") made num_pages_onlined counter accurate on onlining but
-   totally incorrect on offlining for partly populated regions: no matter
-   how many pages were onlined and what was actually added to
-   num_pages_onlined counter we always subtract the full region (32k) so
-   again, num_pages_onlined can wrap around zero. By onlining/offlining
-   the same partly populated region multiple times we can make the
-   situation worse.
+This GFP_ATOMIC is unnecessary, and replace with GFP_KERNEL.
 
-Solve these issues by doing accurate accounting on offlining: walk HAS
-list, check for covered range and gaps.
-
-Fixes: 6df8d9aaf3af ("Drivers: hv: balloon: Correctly update onlined page count")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- drivers/hv/hv_balloon.c | 82 +++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 69 insertions(+), 13 deletions(-)
+ drivers/hv/hv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index 5b8e1ad1bcfe..7514a32d0de4 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -576,11 +576,65 @@ static struct hv_dynmem_device dm_device;
- static void post_status(struct hv_dynmem_device *dm);
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index fe96aab9e794..b6cacc4cccf2 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -147,7 +147,7 @@ int hv_synic_alloc(void)
+ 	int cpu;
  
- #ifdef CONFIG_MEMORY_HOTPLUG
-+static inline bool has_pfn_is_backed(struct hv_hotadd_state *has,
-+				     unsigned long pfn)
-+{
-+	struct hv_hotadd_gap *gap;
-+
-+	/* The page is not backed. */
-+	if ((pfn < has->covered_start_pfn) || (pfn >= has->covered_end_pfn))
-+		return false;
-+
-+	/* Check for gaps. */
-+	list_for_each_entry(gap, &has->gap_list, list) {
-+		if ((pfn >= gap->start_pfn) && (pfn < gap->end_pfn))
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static unsigned long hv_page_offline_check(unsigned long start_pfn,
-+					   unsigned long nr_pages)
-+{
-+	unsigned long pfn = start_pfn, count = 0;
-+	struct hv_hotadd_state *has;
-+	bool found;
-+
-+	while (pfn < start_pfn + nr_pages) {
-+		/*
-+		 * Search for HAS which covers the pfn and when we find one
-+		 * count how many consequitive PFNs are covered.
-+		 */
-+		found = false;
-+		list_for_each_entry(has, &dm_device.ha_region_list, list) {
-+			while ((pfn >= has->start_pfn) &&
-+			       (pfn < has->end_pfn) &&
-+			       (pfn < start_pfn + nr_pages)) {
-+				found = true;
-+				if (has_pfn_is_backed(has, pfn))
-+					count++;
-+				pfn++;
-+			}
-+		}
-+
-+		/*
-+		 * This PFN is not in any HAS (e.g. we're offlining a region
-+		 * which was present at boot), no need to account for it. Go
-+		 * to the next one.
-+		 */
-+		if (!found)
-+			pfn++;
-+	}
-+
-+	return count;
-+}
-+
- static int hv_memory_notifier(struct notifier_block *nb, unsigned long val,
- 			      void *v)
- {
- 	struct memory_notify *mem = (struct memory_notify *)v;
--	unsigned long flags;
-+	unsigned long flags, pfn_count;
- 
- 	switch (val) {
- 	case MEM_ONLINE:
-@@ -593,7 +647,19 @@ static int hv_memory_notifier(struct notifier_block *nb, unsigned long val,
- 
- 	case MEM_OFFLINE:
- 		spin_lock_irqsave(&dm_device.ha_lock, flags);
--		dm_device.num_pages_onlined -= mem->nr_pages;
-+		pfn_count = hv_page_offline_check(mem->start_pfn,
-+						  mem->nr_pages);
-+		if (pfn_count <= dm_device.num_pages_onlined) {
-+			dm_device.num_pages_onlined -= pfn_count;
-+		} else {
-+			/*
-+			 * We're offlining more pages than we managed to online.
-+			 * This is unexpected. In any case don't let
-+			 * num_pages_onlined wrap around zero.
-+			 */
-+			WARN_ON_ONCE(1);
-+			dm_device.num_pages_onlined = 0;
-+		}
- 		spin_unlock_irqrestore(&dm_device.ha_lock, flags);
- 		break;
- 	case MEM_GOING_ONLINE:
-@@ -612,19 +678,9 @@ static struct notifier_block hv_memory_nb = {
- /* Check if the particular page is backed and can be onlined and online it. */
- static void hv_page_online_one(struct hv_hotadd_state *has, struct page *pg)
- {
--	struct hv_hotadd_gap *gap;
--	unsigned long pfn = page_to_pfn(pg);
--
--	/* The page is not backed. */
--	if ((pfn < has->covered_start_pfn) || (pfn >= has->covered_end_pfn))
-+	if (!has_pfn_is_backed(has, page_to_pfn(pg)))
- 		return;
- 
--	/* Check for gaps. */
--	list_for_each_entry(gap, &has->gap_list, list) {
--		if ((pfn >= gap->start_pfn) && (pfn < gap->end_pfn))
--			return;
--	}
--
- 	/* This frame is currently backed; online the page. */
- 	__online_page_set_limits(pg);
- 	__online_page_increment_counters(pg);
+ 	hv_context.hv_numa_map = kzalloc(sizeof(struct cpumask) * nr_node_ids,
+-					 GFP_ATOMIC);
++					 GFP_KERNEL);
+ 	if (hv_context.hv_numa_map == NULL) {
+ 		pr_err("Unable to allocate NUMA map\n");
+ 		goto err;
 -- 
 2.15.1
