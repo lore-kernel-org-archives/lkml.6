@@ -1,83 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933481AbeBLKAz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:00:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932505AbeBLKAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:00:53 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E46CE21779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AH8x224+w3yj2mdzEomQHDZQ9jbPe8Fuay5rb3i7XnuNbrn0xG+Kfid19ffLJbz3FG76A2Bz3vJhXH29ueJB1a5G/s8=
+        id S933484AbeBLKCe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:02:34 -0500
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:46330 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932505AbeBLKCc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 05:02:32 -0500
+X-Google-Smtp-Source: AH8x227lDIBm9ec02eBe163QOSTRpNCuf5bs6JMogxfJAxEu6fPnl5SyTcL+hCitMQ6KSy5Mhp/9Sw==
+Subject: ext4 iomap SEEK broken [was: [GIT PULL] ext4 updates for 4.15]
+To: "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+References: <20171113031502.f6mctmlmgk5psh77@thunk.org>
+From: Jiri Slaby <jslaby@suse.cz>
+Message-ID: <7ae851b1-92a8-779a-a066-1c7e34867465@suse.cz>
+Date: Mon, 12 Feb 2018 11:02:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <7f86ec02-2235-7622-9298-f6edd367edb2@samsung.com>
-References: <CGME20180205154520epcas1p4132421a187a4d767a2f75badfef5eec4@epcas1p4.samsung.com>
- <20180205154403.13520-1-s.nawrocki@samsung.com> <20180205154403.13520-5-s.nawrocki@samsung.com>
- <CAJKOXPf-6wFDSPttdDbc34Y2hiuc=TG2j5bb+2uQeScxGuxjZg@mail.gmail.com> <7f86ec02-2235-7622-9298-f6edd367edb2@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 12 Feb 2018 11:00:50 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPeHDHbt8e+aVd6RCv3M+AW7qPVep=Cb7nBJeZn3k+u5Bg@mail.gmail.com>
-Message-ID: <CAJKOXPeHDHbt8e+aVd6RCv3M+AW7qPVep=Cb7nBJeZn3k+u5Bg@mail.gmail.com>
-Subject: Re: [PATCH 4/8] ASoC: samsung: i2s: Define the parameters list for SAMSUNG_I2S_OPCLK
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, jcsing.lee@samsung.com,
-        sbkim73@samsung.com, linux-kernel@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20171113031502.f6mctmlmgk5psh77@thunk.org>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 7, 2018 at 5:23 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 02/06/2018 01:26 PM, Krzysztof Kozlowski wrote:
->> On Mon, Feb 5, 2018 at 4:43 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->
->>> diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
->>> index 79781de2f247..a9832a9555cb 100644
->>> --- a/sound/soc/samsung/i2s.h
->>> +++ b/sound/soc/samsung/i2s.h
->>> @@ -16,11 +16,16 @@
->>>  #define SAMSUNG_I2S_DAI        "samsung-i2s"
->>>  #define SAMSUNG_I2S_DAI_SEC    "samsung-i2s-sec"
->>>
->>> -#define SAMSUNG_I2S_DIV_BCLK   1
->>> +#define SAMSUNG_I2S_DIV_BCLK           1
->>>
->>> -#define SAMSUNG_I2S_RCLKSRC_0  0
->>> -#define SAMSUNG_I2S_RCLKSRC_1  1
->>> +#define SAMSUNG_I2S_RCLKSRC_0          0
->>> +#define SAMSUNG_I2S_RCLKSRC_1          1
->>>  #define SAMSUNG_I2S_CDCLK              2
->>> +/* Operation clock for IIS logic */
->>>  #define SAMSUNG_I2S_OPCLK              3
->>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_OUT   0       /* CODEC clock out */
->>> +#define  SAMSUNG_I2S_OPCLK_CDCLK_IN    1       /* CODEC clock in */
->>> +#define  SAMSUNG_I2S_OPCLK_BCLK_OUT    2       /* Bit clock out */
->>> +#define  SAMSUNG_I2S_OPCLK_PCLK                3       /* Audio bus clock */
->>>
->>>  #endif /* __SND_SOC_SAMSUNG_I2S_H */
->>
->> This part of patch seems to be unrelated (and it includes some cleanups).
->
-> This is actually the main part of the patch, an API exported to other
-> drivers.
+Hi,
 
-You are right, I looked at it without the context of 5/8 and I assumed
-you are changing existing user of the defines...
+On 11/13/2017, 04:15 AM, Theodore Ts'o wrote:
+> The following changes since commit 9e66317d3c92ddaab330c125dfe9d06eee268aff:
+> 
+>   Linux 4.14-rc3 (2017-10-01 14:54:54 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus
+...
+> Christoph Hellwig (1):
+>       ext4: Switch to iomap for SEEK_HOLE / SEEK_DATA
 
-> The whitespace changes are for keeping the alignment uniform,
-> I could just drop them.
+So I bisected a 32bit hole problem in 4.15 down to this one.
 
-Let it be then.
+tar selftests never finish during build on the 32bit kernel. The stack
+trace is something like this:
+tar             R  running task        0 24780  24590 0x00000000
+Call Trace:
+ ? ext4_map_blocks+0x2fa/0x5f0
+ ? ext4_map_blocks+0x348/0x5f0
+ ? ext4_iomap_begin+0x39b/0x4d0
+ ? ext4_evict_inode+0x5c0/0x5c0
+ ? iomap_apply+0x61/0x160
+ ? iomap_to_fiemap+0xd0/0xd0
+ ? iomap_seek_data+0xac/0x110
+ ? iomap_seek_hole_actor+0x80/0x80
+ ? ext4_llseek+0x13a/0x140
+ ? ext4_file_mmap+0x90/0x90
+ ? SyS_llseek+0x7b/0xc0
+ ? do_int80_syscall_32+0x51/0x100
+ ? entry_INT80_32+0x36/0x36
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Best regards,
-Krzysztof
+The tar test does this:
+AT_TAR_CHECK([
+AT_DATA([mapfile],
+[0 =2560
+m4_for([i], 1, 999, 1, [10M =2560
+])])
+genfile --sparse --file BIGFILE --block-size 4K - < mapfile || AT_SKIP_TEST
+tar -f - -c --sparse --posix BIGFILE | tar tvf - | awk '{ print $3, $(NF) }'
+],
+
+I.e. it generates a file with 1000 blocks of 2560*4K bytes. The blocks
+are 10M from each other, that is 999 10M holes. Tar then tries to
+read&seek in the file, but the seek above never finishes (or maybe
+finishes after a long time).
+
+Given this happens only on 32bit kernel, I assume some 32bit overflow.
+But I am unable to see it (yet).
+
+thanks,
+-- 
+js
+suse labs
