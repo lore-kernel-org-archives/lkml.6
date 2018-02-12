@@ -1,84 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753866AbeBLTRM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 14:17:12 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47710 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752392AbeBLTRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 14:17:10 -0500
-Subject: Re: [PATCH 2/2] arm64: dts: juno: Describe the full GICv2m region
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Liviu Dudau <liviu.dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180207143255.17003-1-marc.zyngier@arm.com>
- <20180207143255.17003-3-marc.zyngier@arm.com>
- <d10fa874-1de2-1b95-dae1-42a336b98fa2@arm.com>
- <a0707972-f984-7aea-98fb-8cd8382f8287@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e66f71b8-fd0f-c7a5-dcc3-852d44898276@arm.com>
-Date: Mon, 12 Feb 2018 19:17:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753964AbeBLTRt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 14:17:49 -0500
+Received: from mail-it0-f45.google.com ([209.85.214.45]:35295 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeBLTRs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 14:17:48 -0500
+X-Google-Smtp-Source: AH8x227ReWuTSxyUT2HgklJ9dohnaNFp3q5mL4v3Iwg45q6LW4pnNY0NJmqlgpyzIuZK83/sYPOX9dGk+IibX4pZmcI=
 MIME-Version: 1.0
-In-Reply-To: <a0707972-f984-7aea-98fb-8cd8382f8287@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180212093742.6tj57fh7zagio3yj@gmail.com>
+References: <20180211104949.12992-1-linux@dominikbrodowski.net>
+ <20180211104949.12992-9-linux@dominikbrodowski.net> <20180212093742.6tj57fh7zagio3yj@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 12 Feb 2018 11:17:46 -0800
+X-Google-Sender-Auth: TFLSGRfZDrhCb55W6w-LMSBE1WI
+Message-ID: <CA+55aFwLTF3EtaQ4OpDv2UM41J=EU7gfemv=eVq+uQi31-usSg@mail.gmail.com>
+Subject: Re: [PATCH v3 8/7] TESTING_ONLY x86/entry: reduce static footprint of idtentry
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/02/18 18:27, Marc Zyngier wrote:
-> Hi Sudeep,
-> 
-> On 12/02/18 18:17, Sudeep Holla wrote:
->>
->>
->> On 07/02/18 14:32, Marc Zyngier wrote:
->>> From: Robin Murphy <robin.murphy@arm.com>
->>>
->>> Juno's GICv2m implementation consists of four frames providing 32
->>> interrupts each. Since it is possible to plug in enough PCIe endpoints
->>> to consume more than 32 MSIs, and the driver already has a bodge to
->>> handle multiple frames, let's expose the other three as well.
->>>
->>
->> Change on it own looks good. So if you want to merge via your tree:
->>
->> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->>
->> Let me know if you decide not to take it via your tree and you want me
->> to send it to arm-soc.
-> 
-> If this would usually go via arm-soc, feel free to take it via this
-> route. I'll drop the patch from my tree.
-> 
->> On the side note I just noticed the Juno TRM[1] has 64k for each of
->> these MSI frames(page 3-24 section 3.3.5 Application memory map summary)
->>
->> I am not sure if TRM is wrong. This patch is just copying the 4k size
->> from frame 0 which got added with initial Juno DTS.
-> 
-> I can't see why the TRM would be wrong. This is actually consistent with
-> the expected practice of aligning all devices on a 64kB boundary and
-> size so that you don't get any nasty surprise when passing the device to
-> a VM (*cough* GIC400 *cough*).
-> 
-> Robin, any chance you could check this?
+On Mon, Feb 12, 2018 at 1:37 AM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> Ok, so this does not look _that_ complicated, and the .text savings are
+> significant:
 
-Well, the engineering spec for the v2m widget does claim that only the 
-bottom 12 bits of AxADDR are used, but on the other hand it also implies 
-that the "real" endpoint here is a single monolithic block of 4 such 
-widgets, so a third truth is that there is only a single 256KB region...
+Honestly, I think we should do it. 3kB of assembly code is noticeable.
 
-As usual, I've completely forgotten about virtualisation when it comes 
-to hardware :) On reflection I do of course appreciate that whilst 60KB 
-of RAZ/WI space isn't significant in terms of "a device", it is rather 
-more so in terms of "not a device" - if the only reasonable way to 
-communicate that is to describe the v2m devices each owning 64KB, then 
-I'm quite happy for you to fix up the patch that way if you want.
+Also, that patch actually allows more cleanups and simplifications.
+Look at the "interrupt" macro, which is used by 'apicinterrupt3', and
+has a number of uses that way.
 
-Robin.
+That code could be unified a lot, right now it does:
+
+        testb   $3, CS-ORIG_RAX(%rsp)
+        jz      1f
+        SWAPGS
+        call    switch_to_thread_stack
+1:
+
+        ALLOC_PT_GPREGS_ON_STACK
+        SAVE_C_REGS
+        SAVE_EXTRA_REGS
+        ENCODE_FRAME_POINTER
+
+        testb   $3, CS(%rsp)
+        jz      1f
+
+        /*
+         * IRQ from user mode.
+         *
+         * We need to tell lockdep that IRQs are off.  We can't do this until
+         * we fix gsbase, and we should do it before enter_from_user_mode
+         * (which can take locks).  Since TRACE_IRQS_OFF idempotent,
+         * the simplest way to handle it is to just call it twice if
+         * we enter from user mode.  There's no reason to optimize this since
+         * TRACE_IRQS_OFF is a no-op if lockdep is off.
+         */
+        TRACE_IRQS_OFF
+
+        CALL_enter_from_user_mode
+
+1:
+        ENTER_IRQ_STACK old_rsp=%rdi
+        /* We entered an interrupt context - irqs are off: */
+        TRACE_IRQS_OFF
+
+and *all* of that could be in a helper function rather than be
+duplicated. and the apicinterrupt3 macro should end up just expanding
+to
+
+        callq helper
+        pushq $~(\num)
+        callq \fn
+        jmp ret_from_intr
+
+instead of expanding to all that code.
+
+But that would require that same "save_ret" logic.
+
+So it's not just the idtentry cases that can use this trick.
+
+I admit that the trick isn't pretty, but it's not *horribly* ugly either.
+
+                    Linus
