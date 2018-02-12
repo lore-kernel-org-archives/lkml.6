@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932619AbeBLWsT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 17:48:19 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37516 "EHLO
+        id S932413AbeBLWsR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 17:48:17 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:37512 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932247AbeBLWsQ (ORCPT
+        with ESMTP id S932231AbeBLWsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Feb 2018 17:48:16 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 02/45] rtc: nvmem: pass nvmem_config to rtc_nvmem_register()
-Date: Mon, 12 Feb 2018 23:47:16 +0100
-Message-Id: <20180212224759.15999-3-alexandre.belloni@bootlin.com>
+Subject: [PATCH 01/45] rtc: documentation: correct nvmem date and version
+Date: Mon, 12 Feb 2018 23:47:15 +0100
+Message-Id: <20180212224759.15999-2-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
 References: <20180212224759.15999-1-alexandre.belloni@bootlin.com>
@@ -21,96 +21,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To be able to remove nvmem_config from struct rtc_device, pass it as a
-parameter to rtc_nvmem_register.
+The nvmem interface appaeared in linux 4.13
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/class.c    |  2 +-
- drivers/rtc/nvmem.c    | 17 +++++++++--------
- drivers/rtc/rtc-core.h |  6 ++++--
- 3 files changed, 14 insertions(+), 11 deletions(-)
+ Documentation/ABI/testing/sysfs-class-rtc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-index 722d683e0b0f..47c4aeed5106 100644
---- a/drivers/rtc/class.c
-+++ b/drivers/rtc/class.c
-@@ -453,7 +453,7 @@ int __rtc_register_device(struct module *owner, struct rtc_device *rtc)
+diff --git a/Documentation/ABI/testing/sysfs-class-rtc b/Documentation/ABI/testing/sysfs-class-rtc
+index cf60412882f0..65270d95873c 100644
+--- a/Documentation/ABI/testing/sysfs-class-rtc
++++ b/Documentation/ABI/testing/sysfs-class-rtc
+@@ -58,8 +58,8 @@ Description:
+ 		(RO) RTC-provided time in 24-hour notation (hh:mm:ss)
  
- 	rtc_proc_add_device(rtc);
- 
--	rtc_nvmem_register(rtc);
-+	rtc_nvmem_register(rtc, rtc->nvmem_config);
- 
- 	rtc->registered = true;
- 	dev_info(rtc->dev.parent, "registered as %s\n",
-diff --git a/drivers/rtc/nvmem.c b/drivers/rtc/nvmem.c
-index 8567b4ed9ac6..0a3522bcdd25 100644
---- a/drivers/rtc/nvmem.c
-+++ b/drivers/rtc/nvmem.c
-@@ -46,7 +46,7 @@ rtc_nvram_write(struct file *filp, struct kobject *kobj,
- 	return nvmem_device_write(rtc->nvmem, off, count, buf);
- }
- 
--static int rtc_nvram_register(struct rtc_device *rtc)
-+static int rtc_nvram_register(struct rtc_device *rtc, size_t size)
- {
- 	int err;
- 
-@@ -64,7 +64,7 @@ static int rtc_nvram_register(struct rtc_device *rtc)
- 
- 	rtc->nvram->read = rtc_nvram_read;
- 	rtc->nvram->write = rtc_nvram_write;
--	rtc->nvram->size = rtc->nvmem_config->size;
-+	rtc->nvram->size = size;
- 
- 	err = sysfs_create_bin_file(&rtc->dev.parent->kobj,
- 				    rtc->nvram);
-@@ -84,20 +84,21 @@ static void rtc_nvram_unregister(struct rtc_device *rtc)
- /*
-  * New ABI, uses nvmem
-  */
--void rtc_nvmem_register(struct rtc_device *rtc)
-+void rtc_nvmem_register(struct rtc_device *rtc,
-+			struct nvmem_config *nvmem_config)
- {
--	if (!rtc->nvmem_config)
-+	if (!nvmem_config)
- 		return;
- 
--	rtc->nvmem_config->dev = &rtc->dev;
--	rtc->nvmem_config->owner = rtc->owner;
--	rtc->nvmem = nvmem_register(rtc->nvmem_config);
-+	nvmem_config->dev = &rtc->dev;
-+	nvmem_config->owner = rtc->owner;
-+	rtc->nvmem = nvmem_register(nvmem_config);
- 	if (IS_ERR_OR_NULL(rtc->nvmem))
- 		return;
- 
- 	/* Register the old ABI */
- 	if (rtc->nvram_old_abi)
--		rtc_nvram_register(rtc);
-+		rtc_nvram_register(rtc, nvmem_config->size);
- }
- 
- void rtc_nvmem_unregister(struct rtc_device *rtc)
-diff --git a/drivers/rtc/rtc-core.h b/drivers/rtc/rtc-core.h
-index 513b9bedd2c8..5f60e3b11cde 100644
---- a/drivers/rtc/rtc-core.h
-+++ b/drivers/rtc/rtc-core.h
-@@ -48,9 +48,11 @@ static inline const struct attribute_group **rtc_get_dev_attribute_groups(void)
- #endif
- 
- #ifdef CONFIG_RTC_NVMEM
--void rtc_nvmem_register(struct rtc_device *rtc);
-+void rtc_nvmem_register(struct rtc_device *rtc,
-+			struct nvmem_config *nvmem_config);
- void rtc_nvmem_unregister(struct rtc_device *rtc);
- #else
--static inline void rtc_nvmem_register(struct rtc_device *rtc) {}
-+static inline void rtc_nvmem_register(struct rtc_device *rtc,
-+				      struct nvmem_config *nvmem_config) {}
- static inline void rtc_nvmem_unregister(struct rtc_device *rtc) {}
- #endif
+ What:		/sys/class/rtc/rtcX/*/nvmem
+-Date:		February 2016
+-KernelVersion:	4.6
++Date:		July 2017
++KernelVersion:	4.13
+ Contact:	linux-rtc@vger.kernel.org
+ Description:
+ 		(RW) The non volatile storage exported as a raw file, as
 -- 
 2.16.1
