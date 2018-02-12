@@ -1,88 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934408AbeBLNvw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 08:51:52 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:38445 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933072AbeBLNvu (ORCPT
+        id S934550AbeBLNws (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 08:52:48 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37262 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934522AbeBLNwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:51:50 -0500
-X-Google-Smtp-Source: AH8x226fnIyVdHi+m0Z959AV0pZzRH4UchRkkH5OA7JtJJ63KdzgcEuIOqxKSazro3ZDf8HVrZPJT4oL1Di6FEUJhEg=
+        Mon, 12 Feb 2018 08:52:46 -0500
+X-Google-Smtp-Source: AH8x2261clWSvnfkqv51BKLFC6x0DyvTDxOJaCHJp/cOPP/KnFjj7IinzSGECoTKSgDtCsa/ZmaBHw==
+Date: Mon, 12 Feb 2018 22:52:37 +0900
+From: Jinbum Park <jinb.park7@gmail.com>
+To: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
+        ard.biesheuvel@linaro.org
+Subject: [PATCH] crypto: arm/aes-cipher - move S-box to .rodata section
+Message-ID: <20180212135237.GA3011@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
-In-Reply-To: <CANiq72mDZQFGsTXZM+ULd-5BLbA6xOjvKPoiCKuvF_hyhBmCrA@mail.gmail.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com> <20180205012146.23981-17-ulfalizer@gmail.com>
- <CANiq72kaCDcUHFuJ0P4CA-0KGgg+a8T+66p0aPwatAjfvDB8bA@mail.gmail.com>
- <20180210141405.syaeuuktkebsp5jy@huvuddator> <CANiq72mDZQFGsTXZM+ULd-5BLbA6xOjvKPoiCKuvF_hyhBmCrA@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 12 Feb 2018 14:51:49 +0100
-Message-ID: <CANiq72mm5FxWfN1ai6HxOTTy_ixaXASHqJK_-TvtfEJHQvTuJg@mail.gmail.com>
-Subject: Re: [PATCH v2] auxdisplay: img-ascii-lcd: kconfig: Remove MIPS_SEAD3 reference
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
-        Linus Walleij <linus.walleij@linaro.org>, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
-        will.deacon@arm.com, Tony Lindgren <tony@atomide.com>,
-        npiggin@gmail.com, yamada.masahiro@socionext.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 5:40 PM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> On Sat, Feb 10, 2018 at 3:14 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->> Commit 3f5f0a4475e1 ("MIPS: generic: Convert SEAD-3 to a generic board")
->> removed the MIPS_SEAD3 symbol and moved the setting of IMG_ASCII_LCD to
->> the board-sead-3.config defconfig file, but IMG_ASCII_LCD still
->> references the removed MIPS_SEAD3 symbol.
->>
->> Remove the reference.
->>
->> Discovered with the
->> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
->> script.
->>
->> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->> ---
->> Changes in v2:
->>
->>  - The wrong commit was referenced in the commit message.
->>
->>  - Mention that IMG_ASCII_LCD is now set via the board-sead-3.config defconfig
->>    file.
->>
->>  - Clarify that Kconfig is involved. The previous commit title was
->>    "auxdisplay: img-ascii-lcd: Remove MIPS_SEAD3 reference".
->>
->
-> Thanks for the new version!
->
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Move the AES inverse S-box to the .rodata section
+where it is safe from abuse by speculation.
 
-To clarify, I am picking this patch up for my queue (sorry for any confusion!).
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+---
+ arch/arm/crypto/aes-cipher-core.S | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
->
->>
->>  drivers/auxdisplay/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
->> index 2c2ed9cf8796..3cba78d36eec 100644
->> --- a/drivers/auxdisplay/Kconfig
->> +++ b/drivers/auxdisplay/Kconfig
->> @@ -137,7 +137,7 @@ config CFAG12864B_RATE
->>  config IMG_ASCII_LCD
->>         tristate "Imagination Technologies ASCII LCD Display"
->>         depends on HAS_IOMEM
->> -       default y if MIPS_MALTA || MIPS_SEAD3
->> +       default y if MIPS_MALTA
->>         select SYSCON
->>         help
->>           Enable this to support the simple ASCII LCD displays found on
->> --
->> 2.14.1
->>
+diff --git a/arch/arm/crypto/aes-cipher-core.S b/arch/arm/crypto/aes-cipher-core.S
+index 54b3840..184d6c2 100644
+--- a/arch/arm/crypto/aes-cipher-core.S
++++ b/arch/arm/crypto/aes-cipher-core.S
+@@ -174,6 +174,16 @@
+ 	.ltorg
+ 	.endm
+ 
++ENTRY(__aes_arm_encrypt)
++	do_crypt	fround, crypto_ft_tab, crypto_ft_tab + 1, 2
++ENDPROC(__aes_arm_encrypt)
++
++	.align		5
++ENTRY(__aes_arm_decrypt)
++	do_crypt	iround, crypto_it_tab, __aes_arm_inverse_sbox, 0
++ENDPROC(__aes_arm_decrypt)
++
++	.section	".rodata", "a"
+ 	.align		L1_CACHE_SHIFT
+ 	.type		__aes_arm_inverse_sbox, %object
+ __aes_arm_inverse_sbox:
+@@ -210,12 +220,3 @@ __aes_arm_inverse_sbox:
+ 	.byte		0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26
+ 	.byte		0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
+ 	.size		__aes_arm_inverse_sbox, . - __aes_arm_inverse_sbox
+-
+-ENTRY(__aes_arm_encrypt)
+-	do_crypt	fround, crypto_ft_tab, crypto_ft_tab + 1, 2
+-ENDPROC(__aes_arm_encrypt)
+-
+-	.align		5
+-ENTRY(__aes_arm_decrypt)
+-	do_crypt	iround, crypto_it_tab, __aes_arm_inverse_sbox, 0
+-ENDPROC(__aes_arm_decrypt)
+-- 
+1.9.1
