@@ -1,104 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933904AbeBLLAJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 06:00:09 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36506 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933397AbeBLLAG (ORCPT
+        id S933885AbeBLLDL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 06:03:11 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:44759 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933397AbeBLLDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 06:00:06 -0500
-X-Google-Smtp-Source: AH8x226WwpTvg1qgC7onJqQzKLW+PpoyG0kGi40m63echhIBMWF513hHL+nSUu4arWV6NSdfKNsZEw==
-Subject: Re: [PATCH v5 0/6] IR support for A83T
-From: Philipp Rossak <embed3d@gmail.com>
-To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
-        sean@mess.org, p.zabel@pengutronix.de, andi.shyti@samsung.com
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20180130174656.10657-1-embed3d@gmail.com>
-Message-ID: <a1ce4422-33d7-1214-6527-0d299e97fe8b@gmail.com>
-Date: Mon, 12 Feb 2018 12:00:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Feb 2018 06:03:10 -0500
+X-Google-Smtp-Source: AH8x226mczrZNV422aGfXLFyz8mBrt+IYwPgaoLZauw/OWJ/dPXuUlkokbjUg0CyRQmYLaRzOHsfdYOt4AKNBUHIwIo=
 MIME-Version: 1.0
-In-Reply-To: <20180130174656.10657-1-embed3d@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180212104537.GH25181@hirez.programming.kicks-ass.net>
+References: <1518422874-13216-1-git-send-email-vincent.guittot@linaro.org>
+ <1518422874-13216-2-git-send-email-vincent.guittot@linaro.org> <20180212104537.GH25181@hirez.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 12 Feb 2018 12:02:49 +0100
+Message-ID: <CAKfTPtC+AEy64jBjkTap0yYBiCt06gUb5FAtDyRtMPXy_-qQNw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] sched: Stop nohz stats when decayed
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12 February 2018 at 11:45, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Feb 12, 2018 at 09:07:52AM +0100, Vincent Guittot wrote:
+>> @@ -9383,11 +9450,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>                * work being done for other cpus. Next load
+>>                * balancing owner will pick it up.
+>>                */
+>> -             if (need_resched())
+>> -                     break;
+>> +             if (need_resched()) {
+>> +                     has_blocked_load = true;
+>> +                     goto abort;
+>> +             }
+>>
+>>               rq = cpu_rq(balance_cpu);
+>>
+>> +             update_blocked_averages(rq->cpu);
+>
+> Does that want to be update_nohz_stats() ?
 
-On 30.01.2018 18:46, Philipp Rossak wrote:
-> This patch series adds support for the sunxi A83T ir module and enhances
-> the sunxi-ir driver. Right now the base clock frequency for the ir driver
-> is a hard coded define and is set to 8 MHz.
-> This works for the most common ir receivers. On the Sinovoip Bananapi M3
-> the ir receiver needs, a 3 MHz base clock frequency to work without
-> problems with this driver.
-> 
-> This patch series adds support for an optinal property that makes it able
-> to override the default base clock frequency and enables the ir interface
-> on the a83t and the Bananapi M3.
-> 
-> changes since v4:
-> * rename cir pin from cir_pins to r_cir_pin
-> * drop unit-adress from r_cir_pin
-> * add a83t compatible to the cir node
-> * move muxing options to dtsi
-> * rename cir label and reorder it in the bananpim3.dts file
-> 
-> changes since v3:
-> * collecting all acks & reviewd by
-> * fixed typos
-> 
-> changes since v2:
-> * reorder cir pin (alphabetical)
-> * fix typo in documentation
-> 
-> changes since v1:
-> * fix typos, reword Documentation
-> * initialize 'b_clk_freq' to 'SUNXI_IR_BASE_CLK' & remove if statement
-> * change dev_info() to dev_dbg()
-> * change naming to cir* in dts/dtsi
-> * Added acked Ackedi-by to related patch
-> * use whole memory block instead of registers needed + fix for h3/h5
-> 
-> changes since rfc:
-> * The property is now optinal. If the property is not available in
->    the dtb the driver uses the default base clock frequency.
-> * the driver prints out the the selected base clock frequency.
-> * changed devicetree property from base-clk-frequency to clock-frequency
-> 
-> Regards,
-> Philipp
-> 
-> Philipp Rossak (6):
->    media: rc: update sunxi-ir driver to get base clock frequency from
->      devicetree
->    media: dt: bindings: Update binding documentation for sunxi IR
->      controller
->    arm: dts: sun8i: a83t: Add the cir pin for the A83T
->    arm: dts: sun8i: a83t: Add support for the cir interface
->    arm: dts: sun8i: a83t: bananapi-m3: Enable IR controller
->    arm: dts: sun8i: h3-h5: ir register size should be the whole memory
->      block
-> 
->   Documentation/devicetree/bindings/media/sunxi-ir.txt |  3 +++
->   arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts         |  5 +++++
->   arch/arm/boot/dts/sun8i-a83t.dtsi                    | 18 ++++++++++++++++++
->   arch/arm/boot/dts/sunxi-h3-h5.dtsi                   |  2 +-
->   drivers/media/rc/sunxi-cir.c                         | 19 +++++++++++--------
->   5 files changed, 38 insertions(+), 9 deletions(-)
-> 
+I was about to say yesy but the test if (!time_after(jiffies,
+rq->last_blocked_load_update_tick)) worry me a bit because it can skip
+the update and the chance to clear nohz.has_blocked.
+As an example the tick is 10ms long on arm 32bits so we can easily
+reach the 32ms decay within the current tick even if we have already
+updated it
 
-Hey,
-
-RC1 is now out, thus I would like to ask you to have a look at this 
-patch series again. Some patches still miss an acked-by. It would be 
-nice if we could schedule this for v4.17.
-
-Thanks,
-Philipp
+>
+>> +             has_blocked_load |= rq->has_blocked_load;
+>> +
+>>               /*
+>>                * If time for next balance is due,
+>>                * do the balance.
