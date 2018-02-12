@@ -1,46 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753517AbeBLSZB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:25:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36388 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752943AbeBLSY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:24:59 -0500
-Date: Mon, 12 Feb 2018 19:22:42 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][btrfs-next] Btrfs: extent map selftest: fix non-ANSI
- btrfs_test_extent_map declaration
-Message-ID: <20180212182242.GP3003@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Colin King <colin.king@canonical.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180208141327.10951-1-colin.king@canonical.com>
+        id S1753216AbeBLS0N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:26:13 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44856 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751295AbeBLS0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:26:12 -0500
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 2/2] arm64: dts: juno: Describe the full GICv2m region
+To: Robin Murphy <robin.murphy@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Liviu Dudau <liviu.dudau@arm.com>
+References: <20180207143255.17003-1-marc.zyngier@arm.com>
+ <20180207143255.17003-3-marc.zyngier@arm.com>
+ <d10fa874-1de2-1b95-dae1-42a336b98fa2@arm.com>
+ <b0604207-8edf-6b32-9bf1-e45895926178@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <4bdc6616-c616-9d28-797d-fb445f263e22@arm.com>
+Date: Mon, 12 Feb 2018 18:26:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180208141327.10951-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <b0604207-8edf-6b32-9bf1-e45895926178@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 02:13:27PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function btrfs_test_extent_map requires a void argument to be ANSI C
-> compliant and so it matches the prototype in fs/btrfs/tests/btrfs-tests.h
-> 
-> Cleans up sparse warning:
-> fs/btrfs/tests/extent-map-tests.c:346:27: warning: non-ANSI function
-> declaration of function 'btrfs_test_extent_map'
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Robin,
 
-FYI, the first patch fixing the warning has been added to for-next
-already.
+On 12/02/18 18:22, Robin Murphy wrote:
+> On 12/02/18 18:17, Sudeep Holla wrote:
+>>
+>>
+>> On 07/02/18 14:32, Marc Zyngier wrote:
+>>> From: Robin Murphy <robin.murphy@arm.com>
+>>>
+>>> Juno's GICv2m implementation consists of four frames providing 32
+>>> interrupts each. Since it is possible to plug in enough PCIe endpoints
+>>> to consume more than 32 MSIs, and the driver already has a bodge to
+>>> handle multiple frames, let's expose the other three as well.
+>>>
+>>
+>> Change on it own looks good. So if you want to merge via your tree:
+>>
+>> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>>
+>> Let me know if you decide not to take it via your tree and you want me
+>> to send it to arm-soc.
+>>
+>> On the side note I just noticed the Juno TRM[1] has 64k for each of
+>> these MSI frames(page 3-24 section 3.3.5 Application memory map summary)
+>>
+>> I am not sure if TRM is wrong. This patch is just copying the 4k size
+>> from frame 0 which got added with initial Juno DTS.
+> 
+> Depends what your point of view is: The address map allocates 64KB worth
+> of space for the device, but the device itself only decodes the first
+> 4KB of that. My view is that the DT is describing the actual devices,
+> not the interconnect routing between them, so there's really no need to
+> tell consumers to map known-useless empty space.
+> 
+
+Thanks for the clarification.
+
+-- 
+Regards,
+Sudeep
