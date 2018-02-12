@@ -1,53 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932292AbeBLSCp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 13:02:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752736AbeBLSCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:02:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F8F21726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 12 Feb 2018 13:02:39 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, vincent.guittot@linaro.org,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
-        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
-        mathieu.poirier@linaro.org, tkjos@android.com, joelaf@google.com,
-        morten.rasmussen@arm.com, dietmar.eggemann@arm.com,
-        patrick.bellasi@arm.com, alessio.balsini@arm.com
-Subject: Re: [RFC PATCH 1/3] sched/deadline: merge dl_bw into dl_bandwidth
-Message-ID: <20180212130239.506cbce9@gandalf.local.home>
-In-Reply-To: <20180212174312.GN12979@localhost.localdomain>
-References: <20180212134030.12846-1-juri.lelli@redhat.com>
-        <20180212134030.12846-2-juri.lelli@redhat.com>
-        <20180212123430.6f8e4d6e@gandalf.local.home>
-        <20180212174312.GN12979@localhost.localdomain>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753644AbeBLSEj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 13:04:39 -0500
+Received: from gateway33.websitewelcome.com ([192.185.145.216]:49540 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752741AbeBLSEi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:04:38 -0500
+Subject: Re: [PATCH] spi: bcm2835aux: use 64-bit arithmetic instead of 32-bit
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-spi@vger.kernel.org
+References: <20180207160002.GA9292@embeddedgus>
+ <CAKv+Gu9hmxLSS0ekr8av-ADt3OQjBV=Bt-hRq_-SzWaGODs4SQ@mail.gmail.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <275feee3-7140-498b-714f-4c88a302d3f6@embeddedor.com>
+Date: Mon, 12 Feb 2018 12:04:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAKv+Gu9hmxLSS0ekr8av-ADt3OQjBV=Bt-hRq_-SzWaGODs4SQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1elISy-0033Zw-NN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.4.238]:46316
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Feb 2018 18:43:12 +0100
-Juri Lelli <juri.lelli@redhat.com> wrote:
+Hi Ard,
 
-> However, this surely needs to be fixed here. It's tracking the sum of
-> all tasks' (across CPUs) bandwidth admitted on the system, so that's why
-> it's called dl_total_bw. Incremented when a task passes sched_setattr()
-> and decremented when it leaves the system or changes scheduling class.
+On 02/08/2018 03:54 AM, Ard Biesheuvel wrote:
+> On 7 February 2018 at 16:00, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
+>> Add suffix ULL to constant 9 in order to give the compiler complete
+>> information about the proper arithmetic to use. Notice that this
+>> constant is used in a context that expects an expression of type
+>> unsigned long long (64 bits, unsigned).
+>>
+>> The expression tfr->len * 9 * 1000000 is currently being evaluated
+>> using 32-bit arithmetic.
+>>
+>> Addresses-Coverity-ID: 1339619
 > 
-> Does it make a bit more sense? Would you still prefer a different name?
+> What does this number mean? If it is an index into some internal
+> database, please remove it.
+> 
 
-No the name is fine, the comment needs to change.
+This is a unique Coverity identifier. We want to keep information like 
+public Bugzilla IDs and tools like Coverity on the commit message.
 
- - dl_total_bw - tracks the sum of all tasks' bandwidth across CPUs.
-
-How's that?
-
--- Steve
+Thanks
+--
+Gustavo
