@@ -1,5 +1,5 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2169032-1518466860-2-7520831238737437203
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2169032-1518465370-2-6985035251652125638
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -11,104 +11,230 @@ X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518466860; b=mzMgGz2SVfqUXhsdYg0Lr24hJ9tRFycYaK2fxP+MEAXpxX2
-    9NiUstGzydmdU5eI9JKVgjVHYXySvRs1SbQ47lH6AAbM4Jrf4e4GcI5chrUIQ34c
-    EQAAJqYn0ViFXIFMln+Vh/Gy1x+CrNDWJGD772ol18X/MqMa3qn4VwYbesM5prYH
-    yE74B170mwwxYyQ7Aa6KSamKEAND2YtN9i15KAlGjqcZHcGRci08D66dgzoQyte4
-    UpF7Jx1HN8DUqjwWCRIda6+X8r+v7mNpCmX88pz2WHUxtc0+G9EtctBra5Mh/zDP
-    JitfT1VqkNagYJhMtUeMCYagg84DMTN6z7CKjFg==
+    t=1518465369; b=vzU+ltyZhhpv/ONq8q5VxP/GAf7DAtAkjHGjToNiiJ7mvbP
+    KnfbjuJwkmVGV5aNrUWbZ3KfhrK3SAhafZzv49Zo7CP93kqDPeyJdW6eaZPKxPoW
+    cLTz4js1JnL+EXSjb6mBbPNcbfNUZ0VWQjoO+Ko5/Lo+DvzBVAJa89f+4vD+X6h1
+    70pahWstVuy/6qqq5uolg74wBepBkN2NIn9N0JLoRtsgxZBxqTCSJq1LcAHkG2J3
+    sFjn/A/Y7Y4XoeVLp1Aq1rg3B/CwBeY+832EWRr1IvTJsD/Dc6Hxwya0gw4eUUxu
+    LiiwHlUFNDtvzms63V7VVH0W591Xw2b5I5jBc7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1518466860; bh=YMjOEin0z0ZLNo1FpZUQpSbL9I
-    5hrwYU/ii2do5IZKY=; b=KdSNyOFU6BMldApPFH9lQgbrvi7PvrCO9mphLEztRe
-    tQOmsBbU0hHRXTvwlbswM+ZVLwDylF4n2iU7AnDmZ8uZVOB4AAuX5nY22TKpmk2U
-    wKpOzUmUJW0TnUFfOHKf+PN5kbHsy9Nkn5f5+n5VCKxAMD2wItrjRqh/l0M0Qk9+
-    4Rnk1iAQ8E5umwN0bnHPX3e4160Rct8M5eSFdHbR/ZK2iXJNRKlIeJ/sdGOMY0UO
-    xn8bieZWdD3yueUrqsix1Iz5srCanCjCQvff5cTk5GBUUAvMuPf6jl6fOKUQ25x+
-    ab+n5Hne7wvd9sowEGyUSj7/KmLTXx16qMoAoLBBXZ2w==
+    :list-id; s=arctest; t=1518465369; bh=qXBtjC/dWj0RdsLg6wbjhfoao9
+    mLo1xoCVf2uu8HPpc=; b=Miik51wj2h10eZLQgjFCovSqzEHcVHQq1a2AkZT0Jb
+    WeG+wWNJDtPu3roNaOkMg0AmFQVUUld5Oniuwod1KAokuRMF3evLdKKyxt3zuiOh
+    VLVtlygfeBZCG3LL8t5nL5ghJUPl3uOKpt8YnRdHaHfHMF6oK8cSPAtIC/2JGm7A
+    bgYGzGxjyTUA9jnqahKxd4id/rtFnv1w7/wITT5NLflVLyAjG1AOI2hAQaLNxQHd
+    xHtOdnR7fbi9xy5DZjiClUBUt0Q97nddL4H+xQqN5gzvvYSzhKCgrYHxGdq55gk3
+    Wrt6p2fkfa3BIfuuE99sZXqNMj/9goXHqzWCD7sXHrCQ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=i2se.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=i2se.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=i2se.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=i2se.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932139AbeBLUUn (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Feb 2018 15:20:43 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:46519 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751725AbeBLUUm (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 12 Feb 2018 15:20:42 -0500
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: John Youn <johnyoun@synopsys.com>, Felipe Balbi <balbi@kernel.org>
-Cc: Gevorg Sahakyan <gevorg.sahakyan@synopsys.com>,
-        Minas Harutyunyan <minas.harutyunyan@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH] usb: dwc2: Print error if unable to set DMA coherent mask
-Date: Mon, 12 Feb 2018 21:20:08 +0100
-Message-Id: <1518466808-30318-1-git-send-email-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K0:2jNFc0A5hGkCW92jd4oH8ZsdT4xFW4cozKwtn7KMjs0r7P/jfUz
- uQ600Br8TW7TOJDUJo07KXsQO1xphGGTrfnOsCMTtqz2pXCyop88Fkmu5jaJDYtiRAmEu+t
- 4sAHVhjX72mf5TE9/fdgHvpiyphrO5lPHKq0ehjReAIvq4IfELhT0bhygU7XPo4OyvVDjP+
- zFoyn95W9wMGpYSWM38zA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NlyBiB39s6M=:KoTosZ6TNET4nX5i5Ps5vo
- WljKs9ZguMznBChBoT2cGx9fkhHfsJXb44hn2mBMFTZLEU1A63kjPuP5wSU4Ax57dsBDMx4aY
- xCkzbQ+tUjXS8t+Mmt2PUt1HINK/CZIs3yhrodNDXlNZDlnqq2qozCJUGY3lQiqqaS5dX60ot
- XSDXEqdyJ4bJqOnkJ+W/uypAAMIqgA4OekvUwfkRC3w0cwmz418wqTzIwIRLhxt6NmzCHz6aB
- nVQioocCCsPteIPsvDPXrF3fC0a3EZ6H8Gncsn05JRq63zJjhOF8hGAZEjM60etOSJ8Zn+Dbn
- rlI0UDkIPur1CiaGRNXOoWQA8FxQP+Sj8SUx9fdfpOjt0AdosdgcMUgw6sg7HBpxsZ+WQs/U0
- 3DwenXeZKAwwQENgozMbRaN+kzKKUm5CKHgCp/ABPkEcwcoZ3vFg2uFFfUpDE1iTl2nZAheNT
- uVH/L7jaHYSXAdfAtJLQ4ZtjBNKThaoOEp9OAb1pWNMtAv903V+/+z6lKmPQT8IPAeogbAsLz
- i2E7iXpjueVHq3lGRoCxpoji0r10n3fk5A1tycEiMAUFftAT+qE3jlF+I+a7nshmD+8rG83OO
- TGUIh3cqKb4iM7dztZvb0rKOBBgdfF3snhzZJvBDb9K1a0Bcbv5BSz674Ph1KRzS+nt41xeZe
- KiUyemEuJtFB/IxhGfmipNBnwbrBYRYwew4s7cPaWAwjIBGNDzkLDh3Igxp6HxSPWt/BZLB0h
- 5o9c3rRwgrhPi5/ymqD3ZSzjADolOT7iEfgbK9mUHb2eOYBL0C55zE7VMLk=
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+        id S1751058AbeBLT4H (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Feb 2018 14:56:07 -0500
+Received: from mail.efficios.com ([167.114.142.141]:60928 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbeBLT4F (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 12 Feb 2018 14:56:05 -0500
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andrew Hunter <ahh@google.com>,
+        Maged Michael <maged.michael@gmail.com>,
+        Avi Kivity <avi@scylladb.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Dave Watson <davejwatson@fb.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Greg Hackmann <ghackmann@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Sehr <sehr@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH manpages] membarrier.2: New membarrier commands introduced in 4.16
+Date: Mon, 12 Feb 2018 14:55:49 -0500
+Message-Id: <20180212195549.11485-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We better print an error in case probing of dwc2 fails on
-setting the DMA coherent mask.
+Document the following membarrier commands introduced in 4.16:
+- MEMBARRIER_CMD_GLOBAL_EXPEDITED (the old enum label
+  MEMBARRIER_CMD_SHARED is now an alias to preserve header backward
+  compatibility),
+- MEMBARRIER_CMD_GLOBAL_EXPEDITED,
+- MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
+- MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE,
+- MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Michael Kerrisk <mtk.manpages@gmail.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Thomas Gleixner <tglx@linutronix.de>
 ---
- drivers/usb/dwc2/platform.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ man2/membarrier.2 | 73 ++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 62 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index 4703478..4ddbdbd 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -382,8 +382,10 @@ static int dwc2_driver_probe(struct platform_device *dev)
- 	if (!dev->dev.dma_mask)
- 		dev->dev.dma_mask = &dev->dev.coherent_dma_mask;
- 	retval = dma_set_coherent_mask(&dev->dev, DMA_BIT_MASK(32));
--	if (retval)
-+	if (retval) {
-+		dev_err(&dev->dev, "can't set coherent DMA mask: %d\n", retval);
- 		return retval;
-+	}
+diff --git a/man2/membarrier.2 b/man2/membarrier.2
+index c47bc875a..e878301ca 100644
+--- a/man2/membarrier.2
++++ b/man2/membarrier.2
+@@ -80,7 +80,7 @@ This command is always supported (on kernels where
+ .BR membarrier ()
+ is provided).
+ .TP
+-.B MEMBARRIER_CMD_SHARED
++.B MEMBARRIER_CMD_GLOBAL " (since Linux 4.16)"
+ Ensure that all threads from all processes on the system pass through a
+ state where all memory accesses to user-space addresses match program
+ order between entry to and return from the
+@@ -88,7 +88,30 @@ order between entry to and return from the
+ system call.
+ All threads on the system are targeted by this command.
+ .TP
+-.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED " (since Linux 4.14)"
++.B MEMBARRIER_CMD_GLOBAL_EXPEDITED " (since Linux 4.16)"
++Execute a memory barrier on all running threads of all processes which
++previously registered with
++.BR MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED .
++Upon return from system call, the caller thread is ensured that all
++running threads have passed through a state where all memory accesses to
++user-space addresses match program order between entry to and return
++from the system call (non-running threads are de facto in such a state).
++This only covers threads from processes which registered with
++.BR MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED .
++Given that registration is about the intent to receive the barriers, it
++is valid to invoke
++.BR MEMBARRIER_CMD_GLOBAL_EXPEDITED
++from a non-registered process.
++.IP
++The "expedited" commands complete faster than the non-expedited ones;
++they never block, but have the downside of causing extra overhead.
++.TP
++.B MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED " (since Linux 4.16)"
++Register the process intent to receive
++.BR MEMBARRIER_CMD_GLOBAL_EXPEDITED
++memory barriers.
++.TP
++.B MEMBARRIER_CMD_PRIVATE_EXPEDITED " (since Linux 4.14)"
+ Execute a memory barrier on each running thread belonging to the same
+ process as the current thread.
+ Upon return from system call, the calling
+@@ -103,9 +126,29 @@ they never block, but have the downside of causing extra overhead.
+ A process needs to register its intent to use the private
+ expedited command prior to using it.
+ .TP
+-.BR MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED " (since Linux 4.14)"
++.B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED " (since Linux 4.14)"
+ Register the process's intent to use
+-.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED .
++.B MEMBARRIER_CMD_PRIVATE_EXPEDITED .
++.TP
++.B MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE " (since Linux 4.16)"
++In addition to provide memory ordering guarantees described in
++.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED ,
++ensure the caller thread, upon return from system call, that all its
++running threads siblings have executed a core serializing instruction.
++This only covers threads from the same process as the caller thread.
++The "expedited" commands complete faster than the non-expedited ones,
++they never block, but have the downside of causing extra overhead. A
++process needs to register its intent to use the private expedited sync
++core command prior to using it.
++.TP
++.B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE " (since Linux 4.16)"
++Register the process intent to use
++.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE .
++.TP
++.B MEMBARRIER_CMD_SHARED
++ Alias to
++.BR MEMBARRIER_CMD_GLOBAL .
++Provided for header backward compatibility.
+ .PP
+ The
+ .I flags
+@@ -137,10 +180,14 @@ The pair ordering is detailed as (O: ordered, X: not ordered):
+ On success, the
+ .B MEMBARRIER_CMD_QUERY
+ operation returns a bit mask of supported commands, and the
+-.B MEMBARRIER_CMD_SHARED ,
++.B MEMBARRIER_CMD_GLOBAL ,
++.B MEMBARRIER_CMD_GLOBAL_EXPEDITED ,
++.B MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED ,
+ .B MEMBARRIER_CMD_PRIVATE_EXPEDITED ,
+-and
+ .B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED ,
++.B MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE ,
++and
++.B MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE
+ operations return zero.
+ On error, \-1 is returned,
+ and
+@@ -163,10 +210,14 @@ set to 0, error handling is required only for the first call to
+ is invalid, or
+ .I flags
+ is nonzero, or the
+-.BR MEMBARRIER_CMD_SHARED
++.BR MEMBARRIER_CMD_GLOBAL
+ command is disabled because the
+ .I nohz_full
+-CPU parameter has been set.
++CPU parameter has been set, or the
++.BR MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE
++and
++.BR MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE
++commands are not implemented by the architecture.
+ .TP
+ .B ENOSYS
+ The
+@@ -294,9 +345,9 @@ init_membarrier(void)
+         return \-1;
+     }
  
- 	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
- 	hsotg->regs = devm_ioremap_resource(&dev->dev, res);
+-    if (!(ret & MEMBARRIER_CMD_SHARED)) {
++    if (!(ret & MEMBARRIER_CMD_GLOBAL)) {
+         fprintf(stderr,
+-            "membarrier does not support MEMBARRIER_CMD_SHARED\\n");
++            "membarrier does not support MEMBARRIER_CMD_GLOBAL\\n");
+         return \-1;
+     }
+ 
+@@ -315,7 +366,7 @@ static void
+ slow_path(int *read_a)
+ {
+     b = 1;
+-    membarrier(MEMBARRIER_CMD_SHARED, 0);
++    membarrier(MEMBARRIER_CMD_GLOBAL, 0);
+     *read_a = a;
+ }
+ 
 -- 
-2.7.4
+2.11.0
 
