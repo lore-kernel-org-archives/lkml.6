@@ -1,127 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933687AbeBLKKm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 05:10:42 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36052 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933527AbeBLKIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:08:16 -0500
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
-Subject: [PATCH 11/17] kexec_file: Move purgatories sha256 to common code
-Date: Mon, 12 Feb 2018 11:07:48 +0100
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
-References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18021210-0040-0000-0000-0000040ECB58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021210-0041-0000-0000-000026128968
-Message-Id: <20180212100754.55121-12-prudo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802120131
+        id S933704AbeBLKK4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 05:10:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44446 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932630AbeBLKKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 05:10:46 -0500
+Date: Mon, 12 Feb 2018 11:10:41 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?Wm9sdMOhbiBCw7ZzesO2cm0=?= =?UTF-8?B?w6lueWk=?=
+        <zboszor@pr.hu>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: piix4: Use request_muxed_region
+Message-ID: <20180212111041.027edd85@endymion>
+In-Reply-To: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
+References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code to verify the new kernels sha digest are applicable for all
-architectures. Move it to common code.
+Hi Guneter,
 
-Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
----
- arch/x86/purgatory/Makefile                    |  3 +++
- arch/x86/purgatory/purgatory.c                 |  2 +-
- {arch/x86/purgatory => include/linux}/sha256.h | 10 +++++++++-
- {arch/x86/purgatory => lib}/sha256.c           |  4 ++--
- 4 files changed, 15 insertions(+), 4 deletions(-)
- rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
- rename {arch/x86/purgatory => lib}/sha256.c (99%)
+Sorry for the delay :(
 
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 2f15a2ac4209..414eed6b5065 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
- targets += $(purgatory-y)
- PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
- 
-+$(obj)/sha256.o: $(srctree)/lib/sha256.c
-+	$(call if_changed_rule,cc_o_c)
-+
- LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
- targets += purgatory.ro
- 
-diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
-index 470edad96bb9..025c34ac0d84 100644
---- a/arch/x86/purgatory/purgatory.c
-+++ b/arch/x86/purgatory/purgatory.c
-@@ -11,9 +11,9 @@
-  */
- 
- #include <linux/bug.h>
-+#include <linux/sha256.h>
- #include <asm/purgatory.h>
- 
--#include "sha256.h"
- #include "../boot/string.h"
- 
- unsigned long purgatory_backup_dest __section(.kexec-purgatory);
-diff --git a/arch/x86/purgatory/sha256.h b/include/linux/sha256.h
-similarity index 63%
-rename from arch/x86/purgatory/sha256.h
-rename to include/linux/sha256.h
-index 2867d9825a57..43a20ac33688 100644
---- a/arch/x86/purgatory/sha256.h
-+++ b/include/linux/sha256.h
-@@ -13,9 +13,17 @@
- #include <linux/types.h>
- #include <crypto/sha.h>
- 
-+/* Stand-alone implementation of the SHA256 algorithm. It is designed to
-+ * have as little dependencies as possible so it can be used in the
-+ * kexec_file purgatory. In other cases you should use the implementation in
-+ * crypto/.
-+ *
-+ * For details see lib/sha256.c
-+ */
-+
- extern int sha256_init(struct sha256_state *sctx);
- extern int sha256_update(struct sha256_state *sctx, const u8 *input,
--				unsigned int length);
-+			 unsigned int length);
- extern int sha256_final(struct sha256_state *sctx, u8 *hash);
- 
- #endif /* SHA256_H */
-diff --git a/arch/x86/purgatory/sha256.c b/lib/sha256.c
-similarity index 99%
-rename from arch/x86/purgatory/sha256.c
-rename to lib/sha256.c
-index 548ca675a14a..4400c832e2aa 100644
---- a/arch/x86/purgatory/sha256.c
-+++ b/lib/sha256.c
-@@ -16,9 +16,9 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/sha256.h>
-+#include <linux/string.h>
- #include <asm/byteorder.h>
--#include "sha256.h"
--#include "../boot/string.h"
- 
- static inline u32 Ch(u32 x, u32 y, u32 z)
- {
+On Sat, 30 Dec 2017 08:50:57 -0800, Guenter Roeck wrote:
+> Accesses to SB800_PIIX4_SMB_IDX can occur from multiple drivers.
+> Use request_muxed_region() to ensure synchronization.
+
+Which ones? Documenting it, at least in the commit message, would seem
+useful. Out of curiosity, have these other drivers been converted to
+use request_muxed_region already?
+
+> 
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  drivers/i2c/busses/i2c-piix4.c | 50 ++++++++++++++++++------------------------
+>  1 file changed, 21 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+> index 462948e2c535..78dd5951d6e7 100644
+> --- a/drivers/i2c/busses/i2c-piix4.c
+> +++ b/drivers/i2c/busses/i2c-piix4.c
+> @@ -153,10 +153,7 @@ static const struct dmi_system_id piix4_dmi_ibm[] = {
+>  
+>  /*
+>   * SB800 globals
+> - * piix4_mutex_sb800 protects piix4_port_sel_sb800 and the pair
+> - * of I/O ports at SB800_PIIX4_SMB_IDX.
+>   */
+> -static DEFINE_MUTEX(piix4_mutex_sb800);
+
+With this gone, you can remove #include <linux/mutex.h>.
+
+>  static u8 piix4_port_sel_sb800;
+>  static u8 piix4_port_mask_sb800;
+>  static u8 piix4_port_shift_sb800;
+> @@ -298,12 +295,15 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
+>  	else
+>  		smb_en = (aux) ? 0x28 : 0x2c;
+>  
+> -	mutex_lock(&piix4_mutex_sb800);
+> +	if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2, "sb800_piix4_smb"))
+> +		return -EBUSY;
+
+This would happen if and only if another driver has requested the
+region already but without IORESOURCE_MUXED, right? Don't you want to
+write an error message then? I don't think request_muxed_region() will
+do, and probe failing with -EBUSY but no error message logged would be
+hard to diagnose.
+
+> +
+>  	outb_p(smb_en, SB800_PIIX4_SMB_IDX);
+>  	smba_en_lo = inb_p(SB800_PIIX4_SMB_IDX + 1);
+>  	outb_p(smb_en + 1, SB800_PIIX4_SMB_IDX);
+>  	smba_en_hi = inb_p(SB800_PIIX4_SMB_IDX + 1);
+> -	mutex_unlock(&piix4_mutex_sb800);
+> +
+> +	release_region(SB800_PIIX4_SMB_IDX, 2);
+>  
+>  	if (!smb_en) {
+>  		smb_en_status = smba_en_lo & 0x10;
+> @@ -373,7 +373,12 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
+>  			break;
+>  		}
+>  	} else {
+> -		mutex_lock(&piix4_mutex_sb800);
+> +		if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2,
+> +					  "sb800_piix4_smb")) {
+> +			release_region(piix4_smba, SMBIOSIZE);
+> +			return -EBUSY;
+> +		}
+> +
+>  		outb_p(SB800_PIIX4_PORT_IDX_SEL, SB800_PIIX4_SMB_IDX);
+>  		port_sel = inb_p(SB800_PIIX4_SMB_IDX + 1);
+>  		piix4_port_sel_sb800 = (port_sel & 0x01) ?
+> @@ -381,7 +386,7 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
+>  				       SB800_PIIX4_PORT_IDX;
+>  		piix4_port_mask_sb800 = SB800_PIIX4_PORT_IDX_MASK;
+>  		piix4_port_shift_sb800 = SB800_PIIX4_PORT_IDX_SHIFT;
+> -		mutex_unlock(&piix4_mutex_sb800);
+> +		release_region(SB800_PIIX4_SMB_IDX, 2);
+>  	}
+>  
+>  	dev_info(&PIIX4_dev->dev,
+> @@ -679,7 +684,8 @@ static s32 piix4_access_sb800(struct i2c_adapter *adap, u16 addr,
+>  	u8 port;
+>  	int retval;
+>  
+> -	mutex_lock(&piix4_mutex_sb800);
+> +	if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2, "sb800_piix4_smb"))
+> +		return -EBUSY;
+
+Did you check the performance cost? I thought that
+request_muxed_region() was meant for driver setup, I did not expect it
+to be used at driver run-time. Requesting the region again for every
+transaction seems quite costly?
+
+That being said, being slow is certainly better than failing, as is
+currently the case, so I'm fine with this change anyway. Just curious.
+
+>  
+>  	/* Request the SMBUS semaphore, avoid conflicts with the IMC */
+>  	smbslvcnt  = inb_p(SMBSLVCNT);
+> @@ -695,8 +701,8 @@ static s32 piix4_access_sb800(struct i2c_adapter *adap, u16 addr,
+>  	} while (--retries);
+>  	/* SMBus is still owned by the IMC, we give up */
+>  	if (!retries) {
+> -		mutex_unlock(&piix4_mutex_sb800);
+> -		return -EBUSY;
+> +		retval = -EBUSY;
+> +		goto release;
+>  	}
+>  
+>  	/*
+> @@ -753,8 +759,8 @@ static s32 piix4_access_sb800(struct i2c_adapter *adap, u16 addr,
+>  	if ((size == I2C_SMBUS_BLOCK_DATA) && adapdata->notify_imc)
+>  		piix4_imc_wakeup();
+>  
+> -	mutex_unlock(&piix4_mutex_sb800);
+> -
+> +release:
+> +	release_region(SB800_PIIX4_SMB_IDX, 2);
+>  	return retval;
+>  }
+>  
+> @@ -899,13 +905,6 @@ static int piix4_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  		bool notify_imc = false;
+>  		is_sb800 = true;
+>  
+> -		if (!request_region(SB800_PIIX4_SMB_IDX, 2, "smba_idx")) {
+> -			dev_err(&dev->dev,
+> -			"SMBus base address index region 0x%x already in use!\n",
+> -			SB800_PIIX4_SMB_IDX);
+> -			return -EBUSY;
+> -		}
+> -
+>  		if (dev->vendor == PCI_VENDOR_ID_AMD &&
+>  		    dev->device == PCI_DEVICE_ID_AMD_KERNCZ_SMBUS) {
+>  			u8 imc;
+> @@ -922,20 +921,16 @@ static int piix4_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  
+>  		/* base address location etc changed in SB800 */
+>  		retval = piix4_setup_sb800(dev, id, 0);
+> -		if (retval < 0) {
+> -			release_region(SB800_PIIX4_SMB_IDX, 2);
+> +		if (retval < 0)
+>  			return retval;
+> -		}
+>  
+>  		/*
+>  		 * Try to register multiplexed main SMBus adapter,
+>  		 * give up if we can't
+>  		 */
+>  		retval = piix4_add_adapters_sb800(dev, retval, notify_imc);
+> -		if (retval < 0) {
+> -			release_region(SB800_PIIX4_SMB_IDX, 2);
+> +		if (retval < 0)
+>  			return retval;
+> -		}
+>  	} else {
+>  		retval = piix4_setup(dev, id);
+>  		if (retval < 0)
+> @@ -983,11 +978,8 @@ static void piix4_adap_remove(struct i2c_adapter *adap)
+>  
+>  	if (adapdata->smba) {
+>  		i2c_del_adapter(adap);
+> -		if (adapdata->port == (0 << piix4_port_shift_sb800)) {
+> +		if (adapdata->port == (0 << piix4_port_shift_sb800))
+>  			release_region(adapdata->smba, SMBIOSIZE);
+> -			if (adapdata->sb800_main)
+> -				release_region(SB800_PIIX4_SMB_IDX, 2);
+> -		}
+>  		kfree(adapdata);
+>  		kfree(adap);
+>  	}
+
+Everything else looks good to me, thanks.
+
+I assume you have tested this patch on real hardware?
+
 -- 
-2.13.5
+Jean Delvare
+SUSE L3 Support
