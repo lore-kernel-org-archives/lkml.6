@@ -1,143 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932957AbeBLI2m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 03:28:42 -0500
-Received: from www62.your-server.de ([213.133.104.62]:47322 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932785AbeBLI2l (ORCPT
+        id S933007AbeBLI3O (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 03:29:14 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44647 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932625AbeBLI3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 03:28:41 -0500
-Subject: Re: [kmemleak] unreferenced object 0xcd9c1a80 (size 192):
-To: Yonghong Song <yhs@fb.com>, Mathieu Malaterre <malat@debian.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CA+7wUsyxpHnq_POujjwEVXhJjE5GRLN9GypV+63g1OFmfq=_ZA@mail.gmail.com>
- <CAADnVQJnobUCg4ZEkHUgAAMXiw5w1K1DLqo09005mPPgOuLD+g@mail.gmail.com>
- <CA+7wUswo-XwiMEcSTnB3HQE6qo2YUJxeSNije3KtFoy6CqzQoQ@mail.gmail.com>
- <3fa5958d-c14e-56bd-de49-84fc43db4b32@fb.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <609d04c4-f947-ede5-3c4f-28eaf0b14745@iogearbox.net>
-Date: Mon, 12 Feb 2018 09:28:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 12 Feb 2018 03:29:12 -0500
+X-Google-Smtp-Source: AH8x226bjrEVpnenjD0WPfQZQaIfEN1lWQTMMYMP/wJIpK43Y4EEF9AqUBWpoIbJEJ3CNi2eL0mMbgKHdriYJymIJ7k=
 MIME-Version: 1.0
-In-Reply-To: <3fa5958d-c14e-56bd-de49-84fc43db4b32@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
+In-Reply-To: <219b4da3972b28307c599f7d340e613303de7ed7.1518397634.git.fthain@telegraphics.com.au>
+References: <cover.1518397634.git.fthain@telegraphics.com.au> <219b4da3972b28307c599f7d340e613303de7ed7.1518397634.git.fthain@telegraphics.com.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Feb 2018 09:29:11 +0100
+X-Google-Sender-Auth: VUZXzsGWcktGiga2kyHnPJNm-ls
+Message-ID: <CAMuHMdUoiVhA5BxVpxJ81VxZ5Y_n1DBugqPxhABE5Z8eL1Bd3w@mail.gmail.com>
+Subject: Re: [PATCH net v4 09/13] net/mac8390: Convert to nubus_driver
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 06:47 AM, Yonghong Song wrote:
-> On 2/11/18 11:18 AM, Mathieu Malaterre wrote:
->> On Sun, Feb 11, 2018 at 5:54 PM, Alexei Starovoitov
->> <alexei.starovoitov@gmail.com> wrote:
->>> On Sun, Feb 11, 2018 at 7:24 AM, Mathieu Malaterre <malat@debian.org> wrote:
->>>> Alexei,
->>>>
->>>> Could you please comment on why I am seeing those memleaks being
->>>> reported on my ppc32 system ? Should they be marked as false positive
->>>> ?
->>>>
->>>> System is Mac Mini G4, git/master (4.15.0+), ppc.
->>>>
->>>> Thanks for your time
->>>>
->>>> $ dmesg
->>>> ...
->>>> [ 1281.504173] kmemleak: 36 new suspected memory leaks (see
->>>> /sys/kernel/debug/kmemleak)
->>>>
->>>> Where:
->>>>
->>>> # cat /sys/kernel/debug/kmemleak
->>>> unreferenced object 0xdee25000 (size 192):
->>>>    comm "systemd", pid 1, jiffies 4294894348 (age 1438.580s)
->>>>    hex dump (first 32 bytes):
->>>>      c0 56 2f 88 00 00 00 00 00 00 00 0b 00 00 00 0c  .V/.............
->>>>      00 00 00 08 00 00 00 01 00 00 00 01 00 00 00 01  ................
->>>>    backtrace:
->>>>      [<6c69baf5>] trie_alloc+0xb0/0x150
->>>>      [<fa093284>] SyS_bpf+0x288/0x1458
->>>>      [<82182f53>] ret_from_syscall+0x0/0x38
->>>> unreferenced object 0xdee25900 (size 192):
->>>>    comm "systemd", pid 1, jiffies 4294894540 (age 1437.812s)
->>>>    hex dump (first 32 bytes):
->>>>      c0 56 2f 88 00 00 00 00 00 00 00 0b 00 00 00 08  .V/.............
->>>>      00 00 00 08 00 00 00 01 00 00 00 01 00 00 00 01  ................
->>>>    backtrace:
->>>>      [<6c69baf5>] trie_alloc+0xb0/0x150
->>>>      [<fa093284>] SyS_bpf+0x288/0x1458
->>>>      [<82182f53>] ret_from_syscall+0x0/0x38
->>>
->>> hmm. looks real. Is there a reproducer?
->>> Yonghong, lpm map not cleaning after itself?
->>
->> Not really. I simply boot up my machine and wait for the first kmemleak scan.
-> 
-> I am not able to reproduce the issue. Tried with latest net-next on FC26 with kmemleak on. I only got this one after bootup,
-> 'cat /sys/kernel/debug/kmemleak' or
-> 'echo scan > /sys/kernel/debug/kmemleak
->  cat /sys/kernel/debug/kmemleak':
-> 
-> unreferenced object 0xffff99701a7386e0 (size 32):
->   comm "mount", pid 1856, jiffies 4294669263 (age 98.440s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<000000004668ec00>] security_sb_parse_opts_str+0x36/0x50
->     [<00000000a9807d2b>] parse_security_options+0x3d/0x60
->     [<00000000cc1e1d58>] btrfs_mount_root+0x139/0x720
->     [<00000000bdc4f1a3>] mount_fs+0x30/0x150
->     [<00000000f189f1bd>] vfs_kern_mount.part.26+0x54/0x100
->     [<0000000093ae5db7>] btrfs_mount+0x184/0x914
->     [<00000000bdc4f1a3>] mount_fs+0x30/0x150
->     [<00000000f189f1bd>] vfs_kern_mount.part.26+0x54/0x100
->     [<000000003b67b9fc>] do_mount+0x5b9/0xc70
->     [<00000000de4073a0>] SyS_mount+0x80/0xd0
->     [<00000000fc5a968a>] do_syscall_64+0x5d/0x110
->     [<000000003d61f5fc>] entry_SYSCALL_64_after_hwframe+0x21/0x86
->     [<00000000458a6ffa>] 0xffffffffffffffff
-> 
-> Not sure whether the above is a true issue or not.
-> 
-> However, by inspecting the code, I do find the trie_free in lpm_trie.c
-> may have missed freeing the trie memory.
-> 
-> The change likes below should work:
-> -bash-4.2$ git diff
-> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-> index 7b469d1..cecb259 100644
-> --- a/kernel/bpf/lpm_trie.c
-> +++ b/kernel/bpf/lpm_trie.c
-> @@ -589,6 +589,7 @@ static void trie_free(struct bpf_map *map)
-> 
->  unlock:
->         raw_spin_unlock(&trie->lock);
-> +       kfree(trie);
->  }
-> 
->  static int trie_get_next_key(struct bpf_map *map, void *_key, void *_next_key)
-> -bash-4.2$
-> 
-> Will propose a formal patch for this soon.
+On Mon, Feb 12, 2018 at 4:08 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> This resolves an old bug that constrained this driver to no more than
+> one card.
+>
+> Tested-by: Stan Johnson <userm57@yahoo.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-Agree, good catch, and I also think that this is the issue, since this
-is what kmemleak reports in terms of size (192):
+> --- a/drivers/net/ethernet/8390/mac8390.c
+> +++ b/drivers/net/ethernet/8390/mac8390.c
 
-struct lpm_trie {
-        struct bpf_map             map;                  /*     0   128 */
-        /* --- cacheline 2 boundary (128 bytes) --- */
-        struct lpm_trie_node *     root;                 /*   128     8 */
-        size_t                     n_entries;            /*   136     8 */
-        size_t                     max_prefixlen;        /*   144     8 */
-        size_t                     data_size;            /*   152     8 */
-        raw_spinlock_t             lock;                 /*   160     4 */
+> @@ -390,86 +389,86 @@ static bool __init mac8390_init(struct net_device *dev,
+>         return true;
+>  }
+>
+> -struct net_device * __init mac8390_probe(int unit)
+> +static int mac8390_device_probe(struct nubus_board *board)
+>  {
+>         struct net_device *dev;
+> -       struct nubus_rsrc *ndev = NULL;
+>         int err = -ENODEV;
+> -       static unsigned int slots;
+> -
+> -       enum mac8390_type cardtype;
+> -
+> -       /* probably should check for Nubus instead */
+> +       struct nubus_rsrc *fres;
+> +       enum mac8390_type cardtype = MAC8390_NONE;
+>
+>         if (!MACH_IS_MAC)
+> -               return ERR_PTR(-ENODEV);
+> +               return -ENODEV;
 
-        /* size: 192, cachelines: 3, members: 6 */
-        /* padding: 28 */
-};
+I think this check can be removed completely, as the nubus_board will
+exist on suitable Macs only.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
