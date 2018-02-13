@@ -1,97 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965559AbeBMTaH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 14:30:07 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.131]:32759 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965313AbeBMTaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 14:30:06 -0500
-Date: Tue, 13 Feb 2018 13:05:50 -0600
-Message-ID: <20180213130550.Horde.JMezTfF5lIykmPMB49PKEwG@gator4166.hostgator.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI/ASPM: Use 64-bit arithmetic instead of 32-bit
-References: <20180213165948.GA14035@embeddedor.com>
- <CAHp75VfdDUooc=zy2rk8ep0PdsEsD1TGbaD9nm8DBB1NmYYTTw@mail.gmail.com>
-In-Reply-To: <CAHp75VfdDUooc=zy2rk8ep0PdsEsD1TGbaD9nm8DBB1NmYYTTw@mail.gmail.com>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 108.167.133.22
-X-Source-L: Yes
-X-Exim-ID: 1elftm-003Iwq-VO
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:48297
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S965609AbeBMTar (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 14:30:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965569AbeBMTap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 14:30:45 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6B82178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/4] arm64: dts: renesas: r8a77995: add FCPV nodes
+Date: Tue, 13 Feb 2018 19:30:34 +0000
+Message-Id: <1518550237-16753-2-git-send-email-kbingham@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
+References: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Quoting Andy Shevchenko <andy.shevchenko@gmail.com>:
+The FCPVB handles the interface between the VSPB and memory, while the
+FCPVD handles the interface between the VSPD and memory.
 
-> On Tue, Feb 13, 2018 at 6:59 PM, Gustavo A. R. Silva
-> <garsilva@embeddedor.com> wrote:
->> Add suffix ULL to constant 1000 in order to give the compiler complete
->> information about the proper arithmetic to use. Notice that this
->> constant is used in a context that expects an expression of type
->> u64 (64 bits, unsigned).
->>
->> The expression threshold_us * 1000 is currently being evaluated
->> using 32-bit arithmetic.
->
->> -       u64 threshold_ns = threshold_us * 1000;
->> +       u64 threshold_ns = threshold_us * 1000ULL;
->
-> Shouldn't be other way around, i.e.
->
-> (u64)threshold_us ?
->
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Either way works. The thing is that casting threshold_us to u64 may  
-imply that there is something wrong with threshold_us, which does not  
-seem to be the case. So adding the suffix ULL to the constant 1000 is  
-good enough to make the expression be evaluated using 64-bit  
-arithmetic instead of 32-bit.
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-But, again, either way works.
-
-> But still the question. have you checked all callers? Does it even  
-> makes sense?
->
-
-The proposed patch was due to fact that currently threshold_ns is of  
-type u64. But based on the following piece of code (which is the only  
-piece of code from where encode_l12_threshold is being called):
-
-          * Based on PCIe r3.1, sec 5.5.3.3.1, Figures 5-16 and 5-17, and
-          * Table 5-11.  T(POWER_OFF) is at most 2us and T(L1.2) is at
-          * least 4us.
-          */
-         l1_2_threshold = 2 + 4 + t_common_mode + t_power_on;
-         encode_l12_threshold(l1_2_threshold, &scale, &value);
-
-It seems to me that it makes no sense for threshold_ns to be of type  
-u64, because the expression threshold_us * 1000 will never exceed the  
-32-bit limits. So if you agree I can send a patch to change its type  
-to u32 instead.
-
-Thanks
---
-Gustavo
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index cd3c6a30fc47..196a917afea6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -691,6 +691,33 @@
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+ 		};
++
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 607>;
++			iommus = <&ipmmu_vp0 5>;
++		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++			iommus = <&ipmmu_vi0 8>;
++		};
++
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 602>;
++			iommus = <&ipmmu_vi0 9>;
++		};
+ 	};
+ 
+ 	timer {
+-- 
+2.7.4
