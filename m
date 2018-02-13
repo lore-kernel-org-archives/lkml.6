@@ -1,75 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935409AbeBMOdZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:33:25 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58642 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933612AbeBMOdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:33:23 -0500
-Date: Tue, 13 Feb 2018 14:33:19 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Channa <ckadabi@codeaurora.org>
-Cc: Matt Sealey <neko@bakuhatsu.net>, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-arm@lists.infradead.org,
-        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
-        Stephen Boyd <sboyd@codeaurora.org>, kyan@codeaurora.org,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: Documentation for qcom,llcc
-Message-ID: <20180213143318.be2dmmmoiafkehqk@lakrids.cambridge.arm.com>
-References: <1516924513-20183-1-git-send-email-ckadabi@codeaurora.org>
- <1516924513-20183-2-git-send-email-ckadabi@codeaurora.org>
- <CAHCPf3vt-ZCXgTfCZ-LSW3TSXAk5KBz3wCu-LuTOBdCB+sgGgw@mail.gmail.com>
- <0ce690ab886d4896506ba916d2d39554@codeaurora.org>
+        id S935424AbeBMOde (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:33:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964950AbeBMOdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:33:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6918E21723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: handle quota for orphan inodes
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180210022841.5707-1-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <e48fd2e5-fab6-57c5-5fff-2e44f5a817b0@kernel.org>
+Date: Tue, 13 Feb 2018 22:33:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ce690ab886d4896506ba916d2d39554@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180210022841.5707-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 04:24:16PM -0800, Channa wrote:
-> On 2018-02-08 08:52, Matt Sealey wrote:
-> > On 25 January 2018 at 17:55, Channagoud Kadabi <ckadabi@codeaurora.org>
-> > wrote:
-> > > Documentation for last level cache controller device tree bindings,
-> > > client bindings usage examples.
-> > 
-> > [snippety snip]
-> > 
-> > > +- llcc-bank-off:
-> > > +       Usage: required
-> > > +       Value Type: <u32 array>
-> > > +       Definition: Offsets of llcc banks from llcc base address
-> > > starting from
-> > > +                   LLCC bank0.
-> > > +
-> > > +- llcc-broadcast-off:
-> > > +       Usage: required
-> > > +       Value Type: <u32>
-> > > +       Definition: Offset of broadcast register from LLCC bank0
-> > > address.
+On 2018/2/10 10:28, Jaegeuk Kim wrote:
+> This is to fix missing dquot_initialize for orphan inodes.
 
-> > And if you need to describe register offsets... why aren't you able to
-> > use the reg property?
-> 
-> Reg property did not suit well for my need, so I choose to maintain offsets
-> instead.
-> 
-> The registers in the HW block are organized as
->                 (offset1)    (offset2)     (offset3)     (offset4)
-> Base(Block0) -- Block1 -- Block 2 -- Block 3 -- Broadcast_Block
-> 
-> Each block has identical register mapping. You can think of it as 4
-> instances of identical HW.
-
-We have similar in other devices (e.g. GICv3 has multiple instances of
-the same register block).
-
-If there's nothing between those blocks, using a reg entry sounds
-prefectly reasonable. You can list the broadcast block first, then the
-others, or use reg-names.
+IMO, we don't need to call dquot_initialize as we have call the function
+in evict(), right?
 
 Thanks,
-Mark.
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c | 28 ++++++++++++++++------------
+>  1 file changed, 16 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 8b0945ba284d..e3bf753a47be 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -569,13 +569,8 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  	struct node_info ni;
+>  	int err = acquire_orphan_inode(sbi);
+>  
+> -	if (err) {
+> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> -		f2fs_msg(sbi->sb, KERN_WARNING,
+> -				"%s: orphan failed (ino=%x), run fsck to fix.",
+> -				__func__, ino);
+> -		return err;
+> -	}
+> +	if (err)
+> +		goto err_out;
+>  
+>  	__add_ino_entry(sbi, ino, 0, ORPHAN_INO);
+>  
+> @@ -589,6 +584,11 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  		return PTR_ERR(inode);
+>  	}
+>  
+> +	err = dquot_initialize(inode);
+> +	if (err)
+> +		goto err_out;
+> +
+> +	dquot_initialize(inode);
+>  	clear_nlink(inode);
+>  
+>  	/* truncate all the data during iput */
+> @@ -598,14 +598,18 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  
+>  	/* ENOMEM was fully retried in f2fs_evict_inode. */
+>  	if (ni.blk_addr != NULL_ADDR) {
+> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> -		f2fs_msg(sbi->sb, KERN_WARNING,
+> -			"%s: orphan failed (ino=%x) by kernel, retry mount.",
+> -				__func__, ino);
+> -		return -EIO;
+> +		err = -EIO;
+> +		goto err_out;
+>  	}
+>  	__remove_ino_entry(sbi, ino, ORPHAN_INO);
+>  	return 0;
+> +
+> +err_out:
+> +	set_sbi_flag(sbi, SBI_NEED_FSCK);
+> +	f2fs_msg(sbi->sb, KERN_WARNING,
+> +			"%s: orphan failed (ino=%x), run fsck to fix.",
+> +			__func__, ino);
+> +	return err;
+>  }
+>  
+>  int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+> 
