@@ -1,81 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966020AbeBMWTx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 17:19:53 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:34941 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965900AbeBMWTw (ORCPT
+        id S966021AbeBMWVv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:21:51 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:38293 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965935AbeBMWVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 17:19:52 -0500
-Subject: Re: plan9 semantics on Linux - mount namespaces
-From: Enrico Weigelt <lkml@metux.net>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
-Cc: Linux Containers <containers@lists.linux-foundation.org>
-Organization: metux IT consult
-Message-ID: <5633d335-3926-d98f-d6d7-948b1e2a0b2c@metux.net>
-Date: Tue, 13 Feb 2018 22:19:48 +0000
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-In-Reply-To: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:t4V4fBdWLi707Vf0/ed0i+UM0+tnOr6yYKHUHr7chLmRwbVaavY
- R7k3zYGG/3sfaMsXvgEMQgJrLJVsTw1NtB39EpVaYoYSsllhUTLJXDx59h/7IfCX4sJMF+C
- 9I/aAs5dvA1c2VafEUQh9FMfh9u4uKwwZUA/kfEY9V1ySZi06JHUTIx+xMR1nQ6ApH9CsJU
- 428KXdboQEqHPMiMJww+w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:TGf9kgR1LeU=:hkj5QF3meZvVB0WAAVp3la
- DrEmqA1OsdAEFAFNzXGsgJzt84EdtWLZmrnkRYJO3JGhzBVj/Dm9yR9d/p+FoXaGeoqExVcEX
- Lf2NXGQMpmhykerLPZVb5rLtQmndWsvQL8RjkUVlVpEtSHZitq9tYg1mCrGV9/BT+CekZNNNS
- L+FLhe0V0AlGDVYj/MSFZeruEUqZxO56d82sOsWKOyiqVmSa42rKfHDIFDbEOL+SwtEoCNNRH
- RmOk+EqUcobmfybuX8Jqo40YiKav0z8RN6VKqucfNeFTvvBgIzOYY9Fen0FnZnfwZsxkPIG+7
- WTx861/KrZbkUknIkKLkRawoJfPMyNdfeSgX7GySOD4ZiOL2RC4yt0YTvpOudiTT5MgmY/3tM
- KT9l4RzXMvOdIN++yBrwOjuULFd5UV9pwz2CWxXgwSxKEwqUXJvhVP4ZZdVHk2+U18jf94Eo+
- 0VxksU1kMpzot7APP9vF3OkXe+ciSV8AgtMewSXaZ31xTwUKP7dHwW6lrDFdByCJcn7/iqzQo
- fbFR/LW9Xcgz1Ca//GPgoC8f+ytaJEPQDlFymM9m5/MYD0CcNjxnVCO7RNYDV/gUNcIUn6iIK
- O6iH13LDDonY2AHHVij9RpHvUHZqnvxjjVrrqqmmO4HQmDlQf2Ay0/cyWgJGwxtbr4qnp6wPR
- vd1For8s51agjJgSkwNs+nBGxvKj3YI0j8KPsVz3Jz3RDV8ppPg7tEbdODlrF/mAX/DpYTqcH
- YjodZrwO4AyDnIBQFKqaIYBsnWRyWStRmsg//MxKtQoNonQJNwey/XopJr8=
+        Tue, 13 Feb 2018 17:21:48 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180213222146epoutp02f2b7c2cab29f40c57043565d0cab9acd~TArwczJ4N1706317063epoutp02b
+X-AuditID: b6c32a45-3ebff70000001023-25-5a8364f91229
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Message-id: <5A8364F8.8050801@samsung.com>
+Date: Wed, 14 Feb 2018 07:21:44 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PM / devfreq: exynos-ppmu: Delete an error message for
+ a failed memory allocation in exynos_ppmu_probe()
+In-reply-to: <e4d3a870-f420-5a06-1665-59152c1924a3@users.sourceforge.net>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3a2szNt9TUtPxaYHQpJ2tqWzmNlFK5YJCREEEbZUQ86dBd2
+        pqQEm+syXXlJQ8SGXVS8EGjTbiuttAsEtajMsNDMMkuD0O4Zdo4nqf9+78PzPt/3vrwEpijB
+        lYTJ4mDsFjqXxEPEl3pXUaofmYdSNU0fJVSwpAmjLg4spcpHxjEqGGyXUg/cE1LKP/JMQj0J
+        +HBqqvQ2oGqC3SLqRVEzvinE6G8twY0dDU5jWWcrMLrveyTGKX9kiiSV2ZDN0JmMPYqxZFgz
+        TZasRHL7zrSktDi9RqvSJlDxZJSFNjOJpCE5RbXVlMv9iYzKp3PzOCmFZllyzcYNdmueg4nK
+        trKORHKPVqtTazXxap1Op45du3edLo6z7GeyL/9wiWyTsgONX/tELlBJeIGMQDAW+RqeYl4Q
+        QijgFYCOVU+IheIbV7z6ic25ai62zbICtgM0OhzOsxwuQt+rBrkGgsDgMnT7cQ4vY3AVGvtc
+        +TdnEKAL3ueY4I9B7tGghGcxXImuXT8j4hnn9Btjz3GeF8LlqO/7COB5MdyNrp7+KuWDwmFA
+        hNonv4iFF4zINRyYDQ2DTlT0a2Y2VAa3odePpiV8A4IjOCo/3QCECQzomOeWWOAw9OFep1Tg
+        pWi09QIQGjwAebrqMKE4CdDD/kGR4FqLRs96RcLTC1Bx728pPzOCclR8VCGgEbUdCRHcm1HH
+        QO/f8X0AVT2YxipAZO1/G6v9t7Ha/zZ2BmCtYAljY81ZDKuzadUsbWbzLFnqDKvZD2bPMGbL
+        FVDzMLkHQAKQ8+XER3eqQkLnswXmHoAIjAyX7x/iJHkmXVDI2K1p9rxchu0BcdzCT2DKxRlW
+        7qgtjjRtbIImVq/Xxesp7sIi5EdTDKkKmEU7mByGsTH2uT4RIVO6wJqu6nRfdJnzTUdcz4qD
+        UBxhGO8Odqmax0Lfybr2nS8vzVAmnepvUTpol9FRMbPaFfo2EHQfDns/dG7r+l2GmsAQrqvQ
+        FHvrNU8KVHeoef3pJv2BppicopbCcduA567z5/3mm766831m53FV8GVboymaHnhTnGDY8WnY
+        X4+mSDGbTWtjMDtL/wH4X8ManAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t9jQd0fKc1RBi8WSluc71zObLH1lrRF
+        /+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFrcbV7A5cHlsWtXJ5rF5Sb1H
+        35ZVjB5Np9pZPT5vkgtgjeKySUnNySxLLdK3S+DK2P6zgangE2fF0m9XmRoYJ3F0MXJySAiY
+        SMzYup65i5GLQ0hgHaPE5Ieb2UESvAKCEj8m32PpYuTgYBaQlzhyKRvCVJeYMiUXovwBo8TX
+        q58YIcq1JJqenWcFsVkEVCV271nABGKzAcX3v7jBBmLzCyhKXP3xmBFkjqhAhET3iUqQOSIC
+        u5gkFp+aClbPLOAh0fBwFzNIjbBAvcSasy4Qu+YxSjydOJcFpIZTwFPi0YU/rBMYBWYhuXQW
+        wqWzEC5dwMi8ilEytaA4Nz232KjAKC+1XK84Mbe4NC9dLzk/dxMjMAK2Hdbq38H4eEn8IUYB
+        DkYlHl6Ot01RQqyJZcWVuYcYJTiYlUR4E+4DhXhTEiurUovy44tKc1KLDzFKc7AoifPy5x+L
+        FBJITyxJzU5NLUgtgskycXBKNTA6if32SyuOqDzFPulAMveK26dOGjGf/vLDXqTlsPaT1SZ+
+        a71sdaW3vH/WXN99/JH+ZO7yBMWg6sMm0yemvfr5847EQt/QHX6uR6dfez95efpCV+3rvgUR
+        hv4/Vrr9L+Q2r/SMvLrn4QRGUZcehZ0n9BrD3qwK0G3/tugQl2Wc7Hc5u7Krf+KVWIozEg21
+        mIuKEwEyM1+IfAIAAA==
+X-CMS-MailID: 20180213222144epcas2p10804eec2e1831336794bae101599f831
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180213211754epcas1p12c743dac97dbc187c46206bc2fa16c78
+X-RootMTR: 20180213211754epcas1p12c743dac97dbc187c46206bc2fa16c78
+References: <CGME20180213211754epcas1p12c743dac97dbc187c46206bc2fa16c78@epcas1p1.samsung.com>
+        <e4d3a870-f420-5a06-1665-59152c1924a3@users.sourceforge.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.02.2018 22:12, Enrico Weigelt wrote:
+On 2018년 02월 14일 06:17, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 13 Feb 2018 22:10:42 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index d96e3dc71cf8..72ac9113500d 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -627,11 +627,9 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
+>  
+>  	size = sizeof(struct devfreq_event_dev *) * info->num_events;
+>  	info->edev = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
+> -	if (!info->edev) {
+> -		dev_err(&pdev->dev,
+> -			"failed to allocate memory devfreq-event devices\n");
+> +	if (!info->edev)
+>  		return -ENOMEM;
+> -	}
+> +
+>  	edev = info->edev;
+>  	platform_set_drvdata(pdev, info);
+>  
+> 
 
-CC @containers@lists.linux-foundation.org
-
-> Hi folks,
-> 
-> 
-> I'm currently trying to implement plan9 semantics on Linux and
-> yet sorting out how to do the mount namespace handling.
-> 
-> On plan9, any unprivileged process can create its own namespace
-> and mount/bind at will, while on Linux this requires CAP_SYS_ADMIN.
-> 
-> What is the reason for not allowing arbitrary users to create their
-> own private mount namespace ? What could go wrong here ?
-> 
-> IMHO, we could allow mount/bind under the following conditions:
-> 
-> * the process is in a private mount namespace
-> * no suid-flag is honored (either force all mounts to nosuid or
->    completely mask it out)
-> * only certain whitelisted filesystems allowed (eg. 9P and FUSE)
-> 
-> Maybe that all could be enabled by a new capability.
-> 
-> 
-> any suggestions ?
-> 
-> 
-> --mtx
-> 
-
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
