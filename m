@@ -1,111 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964833AbeBMM7T (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:59:19 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6766 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935077AbeBMM7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:59:18 -0500
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Rob Herring <rob.herring@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 10/12] ARM: dts: STi: Add fake reg property for clocks
-Thread-Topic: [PATCH v2 10/12] ARM: dts: STi: Add fake reg property for clocks
-Thread-Index: AQHTpA/VYWz7ZbGWUUiNKMJpjfZgi6Og0dKAgAFqFIA=
-Date: Tue, 13 Feb 2018 12:58:52 +0000
-Message-ID: <ce036283-586b-0603-2c85-a502ed656e72@st.com>
-References: <1518446590-16800-1-git-send-email-patrice.chotard@st.com>
- <1518446590-16800-11-git-send-email-patrice.chotard@st.com>
- <CABGGisxgejFHj0xQq-aBQETt9CX3OzLc3ER_Y9nyrw7FeLdt6g@mail.gmail.com>
-In-Reply-To: <CABGGisxgejFHj0xQq-aBQETt9CX3OzLc3ER_Y9nyrw7FeLdt6g@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8B25772FB022A346B0B37143D353A66F@st.com>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_06:,,
- signatures=0
+        id S935261AbeBMNCH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:02:07 -0500
+Received: from mx.socionext.com ([202.248.49.38]:19014 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935119AbeBMNCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:02:05 -0500
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: alsa-devel@alsa-project.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v3 2/3] arm64: dts: uniphier: add speaker out for UniPhier LD11/LD20 boards
+Date: Tue, 13 Feb 2018 22:01:55 +0900
+Message-Id: <20180213130156.27827-3-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180213130156.27827-1-suzuki.katsuhiro@socionext.com>
+References: <20180213130156.27827-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1DCxPdJ021279
 
-Hi Rob
+This patch adds codec node for TI TAS571x on UniPhier LD11/20
+global boards. And adds settings of AIO for speaker out.
 
-On 02/12/2018 04:22 PM, Rob Herring wrote:
-> On Mon, Feb 12, 2018 at 8:43 AM,  <patrice.chotard@st.com> wrote:
->> From: Patrice Chotard <patrice.chotard@st.com>
->>
->> For all clock's element inside SoC, add a fake reg property,
->> this allows to fix the following warnings when compiling
->> dtb with W=1 option :
->>
->> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
->> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
->> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
->>
->> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
->> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
->> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
->>
->> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
->> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
->> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
->> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
->>
->> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
->> ---
->>
->> v2: _ add a fake reg property to node without reg property.
->>
->>   arch/arm/boot/dts/stih407-clock.dtsi | 9 ++++++---
->>   arch/arm/boot/dts/stih410-clock.dtsi | 9 ++++++---
->>   arch/arm/boot/dts/stih418-clock.dtsi | 9 ++++++---
->>   3 files changed, 18 insertions(+), 9 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
->> index b882dcf3a649..1bba47e06ebe 100644
->> --- a/arch/arm/boot/dts/stih407-clock.dtsi
->> +++ b/arch/arm/boot/dts/stih407-clock.dtsi
->> @@ -24,9 +24,10 @@
->>                  /*
->>                   * ARM Peripheral clock for timers
->>                   */
->> -               arm_periph_clk: clk-m-a9-periphs {
->> +               arm_periph_clk: clk-m-a9-periphs@0 {
->>                          #clock-cells = <0>;
->>                          compatible = "fixed-factor-clock";
->> +                       reg = <0 0>;
-> 
-> Don't do this. The correct fix is change the location of these nodes
-> to be under whatever controls them.
-> 
-Ok i will put this node as a child of clockgen-a9@92b0000
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-Thanks
+---
 
-Patrice
+Changes in v3:
+  - Use phandle of endpoint directly instead of port node
+---
+ .../boot/dts/socionext/uniphier-ld11-global.dts     | 21 +++++++++++++++++++++
+ .../boot/dts/socionext/uniphier-ld20-global.dts     | 21 +++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-> Rob
-> 
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
+index fb6bf435dc96..f057ee80f38e 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
+@@ -10,6 +10,7 @@
+ 
+ /dts-v1/;
+ #include "uniphier-ld11.dtsi"
++#include "dt-bindings/gpio/uniphier-gpio.h"
+ 
+ / {
+ 	model = "UniPhier LD11 Global Board (REF_LD11_GP)";
+@@ -44,6 +45,7 @@
+ 		widgets = "Headphone", "Headphone Jack";
+ 
+ 		dais = <&i2s_port2
++			&i2s_port3
+ 			&i2s_port4
+ 			&spdif_port0>;
+ 	};
+@@ -71,6 +73,20 @@
+ &i2c0 {
+ 	status = "okay";
+ 
++	tas5707a@1d {
++		compatible = "ti,tas5711";
++		reg = <0x1d>;
++		reset-gpios = <&gpio UNIPHIER_GPIO_PORT(23, 4) GPIO_ACTIVE_LOW>;
++		pdn-gpios = <&gpio UNIPHIER_GPIO_PORT(23, 5) GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++
++		port@0 {
++			tas_speaker: endpoint {
++				remote-endpoint = <&i2s_hpcmout1>;
++			};
++		};
++	};
++
+ 	eeprom@50 {
+ 		compatible = "st,24c64", "atmel,24c64";
+ 		reg = <0x50>;
+@@ -94,6 +110,11 @@
+ 	status = "okay";
+ };
+ 
++&i2s_hpcmout1 {
++	dai-format = "i2s";
++	remote-endpoint = <&tas_speaker>;
++};
++
+ &spdif_hiecout1 {
+ 	remote-endpoint = <&spdif_tx>;
+ };
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
+index 2d49163cfde4..b2e197bc968c 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
+@@ -10,6 +10,7 @@
+ 
+ /dts-v1/;
+ #include "uniphier-ld20.dtsi"
++#include "dt-bindings/gpio/uniphier-gpio.h"
+ 
+ / {
+ 	model = "UniPhier LD20 Global Board (REF_LD20_GP)";
+@@ -44,6 +45,7 @@
+ 		widgets = "Headphone", "Headphone Jack";
+ 
+ 		dais = <&i2s_port2
++			&i2s_port3
+ 			&i2s_port4
+ 			&spdif_port0>;
+ 	};
+@@ -70,12 +72,31 @@
+ 
+ &i2c0 {
+ 	status = "okay";
++
++	tas5707@1b {
++		compatible = "ti,tas5711";
++		reg = <0x1b>;
++		reset-gpios = <&gpio UNIPHIER_GPIO_PORT(0, 0) GPIO_ACTIVE_LOW>;
++		pdn-gpios = <&gpio UNIPHIER_GPIO_PORT(0, 1) GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++
++		port@0 {
++			tas_speaker: endpoint {
++				remote-endpoint = <&i2s_hpcmout1>;
++			};
++		};
++	};
+ };
+ 
+ &nand {
+ 	status = "okay";
+ };
+ 
++&i2s_hpcmout1 {
++	dai-format = "i2s";
++	remote-endpoint = <&tas_speaker>;
++};
++
+ &spdif_hiecout1 {
+ 	remote-endpoint = <&spdif_tx>;
+ };
+-- 
+2.15.1
