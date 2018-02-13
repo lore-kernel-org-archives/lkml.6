@@ -1,158 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933724AbeBMIPO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 03:15:14 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:51238 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933539AbeBMIPN (ORCPT
+        id S933755AbeBMIPv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 03:15:51 -0500
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:35778 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933697AbeBMIPt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 03:15:13 -0500
-Message-ID: <1518509708.12890.33.camel@infradead.org>
-Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-From: David Woodhouse <dwmw2@infradead.org>
-To: Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com
-In-Reply-To: <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
-References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
-         <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
-         <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-pBfZP5dAR9cB2AdA5O+1"
-Date: Tue, 13 Feb 2018 08:15:08 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 13 Feb 2018 03:15:49 -0500
+X-Google-Smtp-Source: AH8x227x9iIvy7imJRYSFFrh7xuNc6ZEAX1q1zujbtKcBywI0QOHd2K8gub/HQZiHi8MBTIkwEetDw==
+MIME-Version: 1.0
+In-Reply-To: <20180117084654.8234-1-wens@csie.org>
+References: <20180117084654.8234-1-wens@csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 13 Feb 2018 16:15:26 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67WeUPx2X0aJev0ezu5aO6TYsZMuxM2njictxPHRePPYA@mail.gmail.com>
+Message-ID: <CAGb2v67WeUPx2X0aJev0ezu5aO6TYsZMuxM2njictxPHRePPYA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] ARM: sun9i: SMP and CPU hotplug support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Russell King <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Nicolas, Dave,
 
---=-pBfZP5dAR9cB2AdA5O+1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 17, 2018 at 4:46 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> This is v4 of my sun9i SMP/hotplug support series which was started
+> over two years ago [1]. We've tried to implement PSCI for both the A80
+> and A83T. Results were not promising. The issue is that these two chips
+> have a broken security extensions implementation. If a specific bit is
+> not burned in its e-fuse, most if not all security protections don't
+> work [2]. Even worse, non-secure access to the GIC become secure. This
+> requires a crazy workaround in the GIC driver which probably doesn't work
+> in all cases [3].
+>
+> Version 3 completely did away with the MCPM framework, instead just
+> implementing a set of smp_ops. Most of the code from the previous
+> version was reused, so the structure still has some traces of MCPM.
+> As our hardware has CCI-400, we still need some sort of MMU/cache
+> disabled trampoline code to enable cache coherency. Code for this
+> was adapted from the MCPM framework. This and the entry code are done
+> in inline assembly. Most of the other sunxi-specific code is derived
+> from Allwinner code and documentation, with some references to the
+> other MCPM implementations, as well as the Cortex's Technical Reference
+> Manuals for the power sequencing stuff.
+>
+> In version 4, all traces of MCPM have been removed, except in the
+> comments for atttributing code sources. Thumb2 mode is also fixed.
+> It failed due to an unaligned word access.
 
+Any more comments on this series? Or is it OK for you guys now that
+there are no traces of MCPM? :)
 
+We'll merge this series later this week for 4.17 if nothing else.
 
-On Tue, 2018-02-13 at 09:02 +0100, Paolo Bonzini wrote:
-> > --- a/arch/x86/kvm/vmx.c
-> > +++ b/arch/x86/kvm/vmx.c
-> > @@ -3419,13 +3419,14 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, s=
-truct msr_data *msr_info)
-> > =C2=A0
-> > =C2=A0		vmx->spec_ctrl =3D data;
-> > =C2=A0
-> > -		if (!data)
-> > +		if (!data && !spectre_v2_ibrs_all())
-> > =C2=A0			break;
-> This should check the value of IBRS_ALL in the VM, not in the host.
+Thanks
+ChenYu
 
-No, it's host we want. If IBRS_ALL is set in the host, we set the
-actual hardware MSR once at boot time and never touch it again. The
-SPEC_CTRL MSR we expose to guests is purely a no-op fiction.
-
-If spectre_v2_ibrs_all() is true then KVM should *never* actually pass
-through or touch the real MSR.
-
---=-pBfZP5dAR9cB2AdA5O+1
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTMwODE1MDhaMC8GCSqG
-SIb3DQEJBDEiBCDwn37JBkLR8GZLwWRf7kRGc99VyF96jg9PToPCVCGOGzCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAKUIHxbX0e6m
-HYPLksPqt4vcVTR6we7j2dtX5wMiqAKpBH76u2cZEgv2iEFJ0WmO28haqwZs+3zmlxwrpuAn6p+n
-MuPt6vg/ih3whInG+myM5oBFE/l2+gwsrEy3C6RGTUmsJT6ePMfCi5BniWm0c79So//TamjC1opb
-iQJ+A21+8rpylcBAxjr+iY4Ko6VrwWVtXoSh4AIZ9y7WrcyR9k9JDVgsXrSA9SGzv6Ag6WfRimvn
-byCHN7gmsUqGBZuZt0c7lB1WCLV/HfQW5Kjl9F67dfLc7VtyYkSCnqyhWxLBiGRbVu8BS66pUr0C
-pGC8ZtaZSJz++PvVlIsLFscWX4UAAAAAAAA=
-
-
---=-pBfZP5dAR9cB2AdA5O+1--
+>
+> Hope we can get this version merged. A83T SMP support will be built on
+> it.
+>
+> Regards
+> ChenYu
+>
+> Changes since v3:
+>   - Renamed all "MCPM" occurrences to "MC_SMP", as the MCPM framework
+>     is no longer used
+>   - Thumb2 mode fixed
+>
+> Changes since v2:
+>   - Do away with the MCPM framework, directly implement smp_ops
+>   - Some debug messages were clarified
+>   - New ARCH_SUNXI_MCPM Kconfig symbol for this feature
+>
+> Changes since v1:
+>
+>   - Leading zeroes for device node addresses removed
+>   - Added device tree binding for SMP SRAM
+>   - Simplified Kconfig options
+>   - Switched to SPDX license identifier
+>   - Map CPU to device tree node and check compatible to see if it's
+>     Cortex-A15 or Cortex-A7
+>   - Fix incorrect CPUCFG cluster status macro that prevented cluster
+>     0 L2 cache WFI detection
+>   - Fixed reversed bit for turning off cluster
+>   - Put cluster in reset before turning off power (or it hangs)
+>   - Added dedicated workqueue for turning off power to cpus and clusters
+>   - Request CPUCFG and SRAM MMIO ranges
+>   - Some comments fixed or added
+>   - Some debug messages added
+>
+> [1] http://www.spinics.net/lists/arm-kernel/msg418350.html
+> [2] https://lists.denx.de/pipermail/u-boot/2017-June/294637.html
+> [3] https://github.com/wens/linux/commit/c48654c1f737116e7a7660183c8c74fa91970528
+>
+> Chen-Yu Tsai (8):
+>   ARM: sun9i: Support SMP bring-up on A80
+>   ARM: dts: sun9i: Add CCI-400 device nodes for A80
+>   ARM: dts: sun9i: Add CPUCFG device node for A80 dtsi
+>   ARM: dts: sun9i: Add PRCM device node for the A80 dtsi
+>   ARM: sun9i: smp: Support CPU/cluster power down and hotplugging for
+>     cpu1~7
+>   dt-bindings: ARM: sunxi: Document A80 SoC secure SRAM usage by SMP
+>     hotplug
+>   ARM: sun9i: smp: Support cpu0 hotplug
+>   ARM: dts: sun9i: Add secure SRAM node used for SMP hotplug
+>
+>  .../devicetree/bindings/arm/sunxi/smp-sram.txt     |  44 ++
+>  arch/arm/boot/dts/sun9i-a80.dtsi                   |  75 ++
+>  arch/arm/mach-sunxi/Kconfig                        |   7 +
+>  arch/arm/mach-sunxi/Makefile                       |   1 +
+>  arch/arm/mach-sunxi/mc_smp.c                       | 791 +++++++++++++++++++++
+>  5 files changed, 918 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/sunxi/smp-sram.txt
+>  create mode 100644 arch/arm/mach-sunxi/mc_smp.c
+>
+> --
+> 2.15.1
+>
