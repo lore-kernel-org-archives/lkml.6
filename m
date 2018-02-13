@@ -1,94 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966170AbeBMXla (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 18:41:30 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35290 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966064AbeBMXl0 (ORCPT
+        id S966187AbeBMXmv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 18:42:51 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40267 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966064AbeBMXms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 18:41:26 -0500
-Date: Tue, 13 Feb 2018 15:41:23 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>, Shaohua Li <shli@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>, Rik van Riel <riel@redhat.com>,
-        Jan Kara <jack@suse.cz>, Dave Jiang <dave.jiang@intel.com>,
-        Aaron Lu <aaron.lu@intel.com>
-Subject: Re: [PATCH -mm -v5 RESEND] mm, swap: Fix race between swapoff and
- some swap operations
-Message-Id: <20180213154123.9f4ef9e406ea8365ca46d9c5@linux-foundation.org>
-In-Reply-To: <20180213014220.2464-1-ying.huang@intel.com>
-References: <20180213014220.2464-1-ying.huang@intel.com>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Feb 2018 18:42:48 -0500
+X-Google-Smtp-Source: AH8x224RUS+YAUXb8QB4mAQYb0RBgSe/wP2ixK41RWfRUu65fyJfwgFkWOaoTFbqImxapnXmlcxiYw==
+Date: Tue, 13 Feb 2018 17:42:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Todor Tomov <todor.tomov@linaro.org>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: media: Binding document for OV7251
+ camera sensor
+Message-ID: <20180213234246.vmiwrxlxuprlak4z@rob-hp-laptop>
+References: <1518080018-10403-1-git-send-email-todor.tomov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518080018-10403-1-git-send-email-todor.tomov@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Feb 2018 09:42:20 +0800 "Huang, Ying" <ying.huang@intel.com> wrote:
-
-> From: Huang Ying <ying.huang@intel.com>
+On Thu, Feb 08, 2018 at 10:53:37AM +0200, Todor Tomov wrote:
+> Add the document for ov7251 device tree binding.
 > 
-> When the swapin is performed, after getting the swap entry information
-> from the page table, system will swap in the swap entry, without any
-> lock held to prevent the swap device from being swapoff.  This may
-> cause the race like below,
-
-Sigh.  In terms of putting all the work into the swapoff path and
-avoiding overheads in the hot paths, I guess this is about as good as
-it will get.
-
-It's a very low-priority fix so I'd prefer to keep the patch in -mm
-until Hugh has had an opportunity to think about it.
-
-> ...
->  
-> +/*
-> + * Check whether swap entry is valid in the swap device.  If so,
-> + * return pointer to swap_info_struct, and keep the swap entry valid
-> + * via preventing the swap device from being swapoff, until
-> + * put_swap_device() is called.  Otherwise return NULL.
-> + */
-> +struct swap_info_struct *get_swap_device(swp_entry_t entry)
-> +{
-> +	struct swap_info_struct *si;
-> +	unsigned long type, offset;
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: Mark Rutland <mark.rutland@arm.com>
+> CC: devicetree@vger.kernel.org
+> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+> ---
+>  .../devicetree/bindings/media/i2c/ov7251.txt       | 51 ++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov7251.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ov7251.txt b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
+> new file mode 100644
+> index 0000000..c807646
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
+> @@ -0,0 +1,51 @@
+> +* Omnivision 1/7.5-Inch B&W VGA CMOS Digital Image Sensor
 > +
-> +	if (!entry.val)
-> +		goto out;
-> +	type = swp_type(entry);
-> +	if (type >= nr_swapfiles)
-> +		goto bad_nofile;
-> +	si = swap_info[type];
+> +The Omnivision OV7251 is a 1/7.5-Inch CMOS active pixel digital image sensor with
+> +an active array size of 640H x 480V. It is programmable through a serial I2C
+> +interface.
 > +
-> +	preempt_disable();
-
-This preempt_disable() is later than I'd expect.  If a well-timed race
-occurs, `si' could now be pointing at a defunct entry.  If that
-well-timed race include a swapoff AND a swapon, `si' could be pointing
-at the info for a new device?
-
-> +	if (!(si->flags & SWP_VALID))
-> +		goto unlock_out;
-> +	offset = swp_offset(entry);
-> +	if (offset >= si->max)
-> +		goto unlock_out;
+> +Required Properties:
+> +- compatible: Value should be "ovti,ov7251".
+> +- clocks: Reference to the xclk clock.
+> +- clock-names: Should be "xclk".
+> +- clock-frequency: Frequency of the xclk clock.
+> +- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
+> +  to the hardware pin XSHUTDOWN which is physically active low.
+> +- vdddo-supply: Chip digital IO regulator.
+> +- vdda-supply: Chip analog regulator.
+> +- vddd-supply: Chip digital core regulator.
 > +
-> +	return si;
-> +bad_nofile:
-> +	pr_err("%s: %s%08lx\n", __func__, Bad_file, entry.val);
-> +out:
-> +	return NULL;
-> +unlock_out:
-> +	preempt_enable();
-> +	return NULL;
-> +}
+> +The device node must contain one 'port' child node for its digital output
+> +video port, in accordance with the video interface bindings defined in
+> +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +Example:
+> +
+> +	&i2c1 {
+> +		...
+> +
+> +		ov7251: ov7251@60 {
+
+camera-sensor@60
+
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +			compatible = "ovti,ov7251";
+> +			reg = <0x60>;
+> +
+> +			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&camera_bw_default>;
+> +
+> +			clocks = <&clks 200>;
+> +			clock-names = "xclk";
+> +			clock-frequency = <24000000>;
+> +
+> +			vdddo-supply = <&camera_dovdd_1v8>;
+> +			vdda-supply = <&camera_avdd_2v8>;
+> +			vddd-supply = <&camera_dvdd_1v2>;
+> +
+> +			port {
+> +				ov7251_ep: endpoint {
+> +					clock-lanes = <1>;
+> +					data-lanes = <0>;
+> +					remote-endpoint = <&csi0_ep>;
+> +				};
+> +			};
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
