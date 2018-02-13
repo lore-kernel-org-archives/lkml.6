@@ -1,89 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966060AbeBMWvk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 17:51:40 -0500
-Received: from mga01.intel.com ([192.55.52.88]:63880 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965942AbeBMWvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 17:51:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
-   d="scan'208";a="17899061"
-Date: Tue, 13 Feb 2018 14:53:32 -0800
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "Raj, Ashok" <ashok.raj@intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Sohil Mehta <sohil.mehta@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
-Message-ID: <20180213145332.35c73eda@jacob-builder>
-In-Reply-To: <20180213214002.GA27066@otc-nc-03>
-References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
-        <20180213140303.42mbzfxpypljy37l@8bytes.org>
-        <20180213214002.GA27066@otc-nc-03>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S966052AbeBMW5e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:57:34 -0500
+Received: from complete.lackof.org ([198.49.126.79]:41500 "EHLO
+        complete.lackof.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965942AbeBMW5c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 17:57:32 -0500
+Date: Tue, 13 Feb 2018 15:57:21 -0700
+From: dann frazier <dann.frazier@canonical.com>
+To: John Garry <john.garry@huawei.com>
+Cc: mika.westerberg@linux.intel.com, rafael@kernel.org,
+        lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, hanjun.guo@linaro.org,
+        robh+dt@kernel.org, bhelgaas@google.com, arnd@arndb.de,
+        mark.rutland@arm.com, olof@lixom.net, andy.shevchenko@gmail.com,
+        robh@kernel.org, joe@perches.com, benh@kernel.crashing.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linuxarm@huawei.com, minyard@acm.org,
+        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+        rdunlap@infradead.org
+Subject: Re: [PATCH v13 4/9] PCI: Apply the new generic I/O management on PCI
+ IO hosts
+Message-ID: <20180213225721.GA22219@xps13.dannf>
+References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+ <1518543933-22456-5-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518543933-22456-5-git-send-email-john.garry@huawei.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Feb 2018 13:40:02 -0800
-"Raj, Ashok" <ashok.raj@intel.com> wrote:
+On Wed, Feb 14, 2018 at 01:45:28AM +0800, John Garry wrote:
+> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+> 
+> After introducing the new generic I/O space management in logic pio, the
+> original PCI MMIO relevant helpers need to be updated based on the new
+> interfaces.
+> This patch adapts the corresponding code to match the changes introduced
+> by logic pio.
+> 
+> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
+> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>        #earlier draft
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-> Hi Joerg,
-> 
-> On Tue, Feb 13, 2018 at 03:03:03PM +0100, Joerg Roedel wrote:
-> > On Fri, Feb 02, 2018 at 04:49:56PM -0800, Sohil Mehta wrote:  
-> > > This series aims to add debugfs support for Intel IOMMU. It
-> > > exposes IOMMU registers, internal context and dumps individual
-> > > table entries to help debug Intel IOMMUs.
-> > > 
-> > > The first patch does the ground work for the following patches by
-> > > reorganizing some Intel IOMMU data structures. The following
-> > > patches create a new Kconfig option - INTEL_IOMMU_DEBUG and add
-> > > debugfs support for IOMMU context internals, register contents,
-> > > PASID internals, and Interrupt remapping in that order. The
-> > > information can be accessed in sysfs at
-> > > '/sys/kernel/debug/intel_iommu/'.  
-> > 
-> > This looks like it only presents data from the iommu-hardware
-> > (register state) or from in-memory data structures used by the
-> > hardware. Can't all this be read out from user-space with libpci
-> > and /dev/mem access?  
-> 
-> True, we can do the tools and keep it strictly user space, but find
-> it very convenient to keep the kernel code and debugfs together. When
-> there are bug-reports its rather easy for the user to collect some
-> data and report it, and all the data-structures we need are readily
-> available instead of finding a round-about way to capture the same
-> data from user-space.
-> 
-> This version has only hw dumps for now, but we plan to add some other
-> things like walking 2nd level page-tables, or get some SVM specific
-> data from the driver in the future. 
-> 
-We did start out with /dev/mem but run into CONFIG_STRICT_DEVMEM
-requirement which is turned on by default.
-libpci is only limited to PCI config space access, right?
+I saw that Bjorn Acked this back in v6, but it seems like the code in
+pci.c was reworked a bit for v7 onwards and I didn't see a follow-up
+review (apologies if I just missed it). In which case, maybe his Ack
+should have the "#earlier draft" tag as well?
 
-> > 
-> > Things are different for kernel-defined data structures, as they
-> > might change between releases and can be presented to user-space
-> > via debugfs is needed, but the data structures used by the hardware
-> > should be pretty stable.  
+> ---
+>  drivers/pci/pci.c        | 95 +++++++++---------------------------------------
+>  include/asm-generic/io.h |  2 +-
+>  2 files changed, 18 insertions(+), 79 deletions(-)
 > 
-> Cheers,
-> Ashok
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 07290a3..8aa5c54 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/string.h>
+>  #include <linux/log2.h>
+> +#include <linux/logic_pio.h>
+>  #include <linux/pci-aspm.h>
+>  #include <linux/pm_wakeup.h>
+>  #include <linux/interrupt.h>
+> @@ -3440,17 +3441,6 @@ int pci_request_regions_exclusive(struct pci_dev *pdev, const char *res_name)
+>  }
+>  EXPORT_SYMBOL(pci_request_regions_exclusive);
+>  
+> -#ifdef PCI_IOBASE
+> -struct io_range {
+> -	struct list_head list;
+> -	phys_addr_t start;
+> -	resource_size_t size;
+> -};
+> -
+> -static LIST_HEAD(io_range_list);
+> -static DEFINE_SPINLOCK(io_range_lock);
+> -#endif
+> -
+>  /*
+>   * Record the PCI IO range (expressed as CPU physical address + size).
+>   * Return a negative value if an error has occured, zero otherwise
+> @@ -3458,51 +3448,28 @@ struct io_range {
+>  int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
+>  			resource_size_t	size)
+>  {
+> -	int err = 0;
+> -
+> +	int ret = 0;
+>  #ifdef PCI_IOBASE
+> -	struct io_range *range;
+> -	resource_size_t allocated_size = 0;
+> -
+> -	/* check if the range hasn't been previously recorded */
+> -	spin_lock(&io_range_lock);
+> -	list_for_each_entry(range, &io_range_list, list) {
+> -		if (addr >= range->start && addr + size <= range->start + size) {
+> -			/* range already registered, bail out */
+> -			goto end_register;
+> -		}
+> -		allocated_size += range->size;
+> -	}
+> +	struct logic_pio_hwaddr *range;
+>  
+> -	/* range not registed yet, check for available space */
+> -	if (allocated_size + size - 1 > IO_SPACE_LIMIT) {
+> -		/* if it's too big check if 64K space can be reserved */
+> -		if (allocated_size + SZ_64K - 1 > IO_SPACE_LIMIT) {
+> -			err = -E2BIG;
+> -			goto end_register;
+> -		}
+> -
+> -		size = SZ_64K;
+> -		pr_warn("Requested IO range too big, new size set to 64K\n");
+> -	}
+> +	if (!size || addr + size < addr)
+> +		return -EINVAL;
+>  
+> -	/* add the range to the list */
+>  	range = kzalloc(sizeof(*range), GFP_ATOMIC);
+> -	if (!range) {
+> -		err = -ENOMEM;
+> -		goto end_register;
+> -	}
+> +	if (!range)
+> +		return -ENOMEM;
+>  
+> -	range->start = addr;
+> +	range->fwnode = fwnode;
+>  	range->size = size;
+> +	range->hw_start = addr;
+> +	range->flags = PIO_CPU_MMIO;
+>  
+> -	list_add_tail(&range->list, &io_range_list);
+> -
+> -end_register:
+> -	spin_unlock(&io_range_lock);
+> +	ret = logic_pio_register_range(range);
+> +	if (ret)
+> +		kfree(range);
+>  #endif
+>  
+> -	return err;
+> +	return ret;
+>  }
+>  
+>  phys_addr_t pci_pio_to_address(unsigned long pio)
+> @@ -3510,21 +3477,10 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
+>  	phys_addr_t address = (phys_addr_t)OF_BAD_ADDR;
+>  
+>  #ifdef PCI_IOBASE
+> -	struct io_range *range;
+> -	resource_size_t allocated_size = 0;
+> -
+> -	if (pio > IO_SPACE_LIMIT)
+> +	if (pio >= MMIO_UPPER_LIMIT)
+>  		return address;
+>  
+> -	spin_lock(&io_range_lock);
+> -	list_for_each_entry(range, &io_range_list, list) {
+> -		if (pio >= allocated_size && pio < allocated_size + range->size) {
+> -			address = range->start + pio - allocated_size;
+> -			break;
+> -		}
+> -		allocated_size += range->size;
+> -	}
+> -	spin_unlock(&io_range_lock);
+> +	address = logic_pio_to_hwaddr(pio);
+>  #endif
+>  
+>  	return address;
+> @@ -3533,25 +3489,8 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
+>  unsigned long __weak pci_address_to_pio(phys_addr_t address)
+>  {
+>  #ifdef PCI_IOBASE
+> -	struct io_range *res;
+> -	resource_size_t offset = 0;
+> -	unsigned long addr = -1;
+> -
+> -	spin_lock(&io_range_lock);
+> -	list_for_each_entry(res, &io_range_list, list) {
+> -		if (address >= res->start && address < res->start + res->size) {
+> -			addr = address - res->start + offset;
+> -			break;
+> -		}
+> -		offset += res->size;
+> -	}
+> -	spin_unlock(&io_range_lock);
+> -
+> -	return addr;
+> +	return logic_pio_trans_cpuaddr(address);
+>  #else
+> -	if (address > IO_SPACE_LIMIT)
+> -		return (unsigned long)-1;
+> -
 
-[Jacob Pan]
+Why is this check now safe to drop in the !PCI_IOBASE case?
+
+  -dann
+
+>  	return (unsigned long) address;
+>  #endif
+>  }
+> diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+> index b7996a79..5a59931 100644
+> --- a/include/asm-generic/io.h
+> +++ b/include/asm-generic/io.h
+> @@ -901,7 +901,7 @@ static inline void iounmap(void __iomem *addr)
+>  #define ioport_map ioport_map
+>  static inline void __iomem *ioport_map(unsigned long port, unsigned int nr)
+>  {
+> -	return PCI_IOBASE + (port & IO_SPACE_LIMIT);
+> +	return PCI_IOBASE + (port & MMIO_UPPER_LIMIT);
+>  }
+>  #endif
+>  
