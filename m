@@ -1,108 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966187AbeBMXmv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 18:42:51 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40267 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966064AbeBMXms (ORCPT
+        id S966153AbeBMXqL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 18:46:11 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36584 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966064AbeBMXqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 18:42:48 -0500
-X-Google-Smtp-Source: AH8x224RUS+YAUXb8QB4mAQYb0RBgSe/wP2ixK41RWfRUu65fyJfwgFkWOaoTFbqImxapnXmlcxiYw==
-Date: Tue, 13 Feb 2018 17:42:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: Todor Tomov <todor.tomov@linaro.org>
-Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: media: Binding document for OV7251
- camera sensor
-Message-ID: <20180213234246.vmiwrxlxuprlak4z@rob-hp-laptop>
-References: <1518080018-10403-1-git-send-email-todor.tomov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518080018-10403-1-git-send-email-todor.tomov@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 13 Feb 2018 18:46:09 -0500
+Date: Tue, 13 Feb 2018 15:46:07 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
+ for percent
+Message-Id: <20180213154607.f631e2e033f42c32925e3d2d@linux-foundation.org>
+In-Reply-To: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
+References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 10:53:37AM +0200, Todor Tomov wrote:
-> Add the document for ov7251 device tree binding.
+On Mon, 12 Feb 2018 16:24:25 -0800 (PST) David Rientjes <rientjes@google.com> wrote:
+
+> Both kernelcore= and movablecore= can be used to define the amount of
+> ZONE_NORMAL and ZONE_MOVABLE on a system, respectively.  This requires
+> the system memory capacity to be known when specifying the command line,
+> however.
 > 
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> CC: devicetree@vger.kernel.org
-> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-> ---
->  .../devicetree/bindings/media/i2c/ov7251.txt       | 51 ++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov7251.txt
+> This introduces the ability to define both kernelcore= and movablecore=
+> as a percentage of total system memory.  This is convenient for systems
+> software that wants to define the amount of ZONE_MOVABLE, for example, as
+> a proportion of a system's memory rather than a hardcoded byte value.
 > 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ov7251.txt b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
-> new file mode 100644
-> index 0000000..c807646
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
-> @@ -0,0 +1,51 @@
-> +* Omnivision 1/7.5-Inch B&W VGA CMOS Digital Image Sensor
-> +
-> +The Omnivision OV7251 is a 1/7.5-Inch CMOS active pixel digital image sensor with
-> +an active array size of 640H x 480V. It is programmable through a serial I2C
-> +interface.
-> +
-> +Required Properties:
-> +- compatible: Value should be "ovti,ov7251".
-> +- clocks: Reference to the xclk clock.
-> +- clock-names: Should be "xclk".
-> +- clock-frequency: Frequency of the xclk clock.
-> +- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-> +  to the hardware pin XSHUTDOWN which is physically active low.
-> +- vdddo-supply: Chip digital IO regulator.
-> +- vdda-supply: Chip analog regulator.
-> +- vddd-supply: Chip digital core regulator.
-> +
-> +The device node must contain one 'port' child node for its digital output
-> +video port, in accordance with the video interface bindings defined in
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +Example:
-> +
-> +	&i2c1 {
-> +		...
-> +
-> +		ov7251: ov7251@60 {
+> To define the percentage, the final character of the parameter should be
+> a '%'.
 
-camera-sensor@60
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +			compatible = "ovti,ov7251";
-> +			reg = <0x60>;
-> +
-> +			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&camera_bw_default>;
-> +
-> +			clocks = <&clks 200>;
-> +			clock-names = "xclk";
-> +			clock-frequency = <24000000>;
-> +
-> +			vdddo-supply = <&camera_dovdd_1v8>;
-> +			vdda-supply = <&camera_avdd_2v8>;
-> +			vddd-supply = <&camera_dvdd_1v2>;
-> +
-> +			port {
-> +				ov7251_ep: endpoint {
-> +					clock-lanes = <1>;
-> +					data-lanes = <0>;
-> +					remote-endpoint = <&csi0_ep>;
-> +				};
-> +			};
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+Is this fine-grained enough?  We've had percentage-based tunables in
+the past, and 10 years later when systems are vastly larger, 1% is too
+much.
