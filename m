@@ -1,72 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965316AbeBMRsC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:48:02 -0500
-Received: from gateway30.websitewelcome.com ([192.185.192.34]:47496 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965057AbeBMRsB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:48:01 -0500
-Date: Tue, 13 Feb 2018 10:52:58 -0600
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        id S965375AbeBMRtE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:49:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965057AbeBMRtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:49:02 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703E021726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] iio: adc: ina2xx: Use 64-bit arithmetic instead of 32-bit
-Message-ID: <20180213165258.GA12967@embeddedor.com>
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 0/5] Add support for i2c_new_secondary_device
+Date: Tue, 13 Feb 2018 17:48:52 +0000
+Message-Id: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1eldpG-001CH2-So
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.175.4.238]:35058
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 1000 in order to give the compiler complete
-information about the proper arithmetic to use. Notice that this
-constant is used in a context that expects an expression of type
-u64 (64 bits, unsigned).
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The expression 1000 * sampling_us is currently being evaluated
-using 32-bit arithmetic.
+Back in 2014, Jean-Michel provided patches [0] to implement a means of
+describing software defined I2C addresses for devices through the DT nodes.
 
-Addresses-Coverity-ID: 1463793
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- drivers/iio/adc/ina2xx-adc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch to implement the function "i2c_new_secondary_device()" was integrated,
+but the corresponding driver update didn't get applied.
 
-diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
-index 0635a79..8649700 100644
---- a/drivers/iio/adc/ina2xx-adc.c
-+++ b/drivers/iio/adc/ina2xx-adc.c
-@@ -810,7 +810,7 @@ static int ina2xx_capture_thread(void *data)
- 		 * multiple times, i.e. samples are dropped.
- 		 */
- 		do {
--			timespec64_add_ns(&next, 1000 * sampling_us);
-+			timespec64_add_ns(&next, 1000ULL * sampling_us);
- 			delta = timespec64_sub(next, now);
- 			delay_us = div_s64(timespec64_to_ns(&delta), 1000);
- 		} while (delay_us <= 0);
+This short series re-bases Jean-Michel's patch to mainline for the ADV7604 driver
+in linux-media, and also provides a patch for the ADV7511 DRM Bridge driver taking
+the same approach.
+
+This series allows us to define the I2C address allocations of these devices in
+the device tree for the Renesas D3 platform where these two devices reside on
+the same bus and conflict with each other presently..
+
+[0] https://lkml.org/lkml/2014/10/22/468
+[1] https://lkml.org/lkml/2014/10/22/469
+
+v2:
+ - dt bindings split from driver changes
+ - fixed up dt binding property descriptions
+ - Update missing edid-i2c address setting (adv7511)
+ - Provide update for r8a7792 DTB to account for address conflict
+
+v3:
+ - Split map register addresses into individual declarations across all uses
+
+v4:
+ - Normalise the usage of the I2C term throughout
+ - Fix registration/cleanup of packet client in adv7511
+ - Rename adv76xx structures
+ - Update commit titles of dt-bindings patches.
+
+
+
+Jean-Michel Hautbois (2):
+  dt-bindings: media: adv7604: Extend bindings to allow specifying slave
+    map addresses
+  media: adv7604: Add support for i2c_new_secondary_device
+
+Kieran Bingham (3):
+  dt-bindings: adv7511: Extend bindings to allow specifying slave map
+    addresses
+  [RFT] ARM: dts: wheat: Fix ADV7513 address usage
+  drm: adv7511: Add support for i2c_new_secondary_device
+
+ .../bindings/display/bridge/adi,adv7511.txt        | 18 ++++++-
+ .../devicetree/bindings/media/i2c/adv7604.txt      | 18 ++++++-
+ arch/arm/boot/dts/r8a7792-wheat.dts                | 12 ++++-
+ drivers/gpu/drm/bridge/adv7511/adv7511.h           |  6 +++
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 42 +++++++++------
+ drivers/media/i2c/adv7604.c                        | 62 ++++++++++++++--------
+ 6 files changed, 115 insertions(+), 43 deletions(-)
+
 -- 
 2.7.4
