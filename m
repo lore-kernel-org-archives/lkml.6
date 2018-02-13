@@ -1,69 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965476AbeBMRMj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:12:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59055 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965348AbeBMRA0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S965458AbeBMRMi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:12:38 -0500
+Received: from mga07.intel.com ([134.134.136.100]:47869 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965351AbeBMRA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Feb 2018 12:00:26 -0500
-Date: Tue, 13 Feb 2018 09:00:01 -0800
-From: tip-bot for Alexey Dobriyan <tipbot@zytor.com>
-Message-ID: <tip-16c5055a5ff5e1ff13c5211e44514a2b1d2c1dae@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        adobriyan@gmail.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, bp@suse.de, tglx@linutronix.de
-Reply-To: peterz@infradead.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, bp@suse.de, adobriyan@gmail.com,
-        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180113190648.GB23111@avx2>
-References: <20180113190648.GB23111@avx2>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/asm: Trim clear_page.S includes
-Git-Commit-ID: 16c5055a5ff5e1ff13c5211e44514a2b1d2c1dae
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,508,1511856000";
+   d="scan'208";a="174656477"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 13/18] thunderbolt: Add constant for approval timeout
+Date: Tue, 13 Feb 2018 20:00:13 +0300
+Message-Id: <20180213170018.9780-14-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
+References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  16c5055a5ff5e1ff13c5211e44514a2b1d2c1dae
-Gitweb:     https://git.kernel.org/tip/16c5055a5ff5e1ff13c5211e44514a2b1d2c1dae
-Author:     Alexey Dobriyan <adobriyan@gmail.com>
-AuthorDate: Sat, 13 Jan 2018 22:06:48 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 17:37:07 +0100
+We will be using this from Titan Ridge support code as well so make it
+constant.
 
-x86/asm: Trim clear_page.S includes
-
-After alternatives were shifted to the call site, only 2 headers are
-necessary.
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180113190648.GB23111@avx2
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- arch/x86/lib/clear_page_64.S | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/thunderbolt/icm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
-index 81b1635..88acd34 100644
---- a/arch/x86/lib/clear_page_64.S
-+++ b/arch/x86/lib/clear_page_64.S
-@@ -1,6 +1,4 @@
- #include <linux/linkage.h>
--#include <asm/cpufeatures.h>
--#include <asm/alternative-asm.h>
- #include <asm/export.h>
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index 55006994b517..a707a3b60f90 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -41,7 +41,8 @@
+ #define PHY_PORT_CS1_LINK_STATE_MASK	GENMASK(29, 26)
+ #define PHY_PORT_CS1_LINK_STATE_SHIFT	26
  
- /*
+-#define ICM_TIMEOUT			5000 /* ms */
++#define ICM_TIMEOUT			5000	/* ms */
++#define ICM_APPROVE_TIMEOUT		10000	/* ms */
+ #define ICM_MAX_LINK			4
+ #define ICM_MAX_DEPTH			6
+ 
+@@ -260,7 +261,7 @@ static int icm_fr_approve_switch(struct tb *tb, struct tb_switch *sw)
+ 	memset(&reply, 0, sizeof(reply));
+ 	/* Use larger timeout as establishing tunnels can take some time */
+ 	ret = icm_request(tb, &request, sizeof(request), &reply, sizeof(reply),
+-			  1, 10000);
++			  1, ICM_APPROVE_TIMEOUT);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.15.1
