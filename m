@@ -1,119 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965119AbeBMOSX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:18:23 -0500
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:42663 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964950AbeBMOSV (ORCPT
+        id S965114AbeBMOUY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:20:24 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44736 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964950AbeBMOUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:18:21 -0500
-Subject: Re: [PATCH v2 13/15] MIPS: memblock: Discard bootmem from Loongson3
- code
-To: Serge Semin <fancer.lancer@gmail.com>, <ralf@linux-mips.org>,
-        <miodrag.dinic@mips.com>, <jhogan@kernel.org>, <goran.ferenc@mips.com>,
-        <david.daney@cavium.com>, <paul.gortmaker@windriver.com>,
-        <paul.burton@mips.com>, <alex.belits@cavium.com>,
-        <Steven.Hill@cavium.com>
-CC: <alexander.sverdlin@nokia.com>, <kumba@gentoo.org>,
-        <marcin.nowakowski@mips.com>, <James.hogan@mips.com>,
-        <Peter.Wotton@mips.com>, <Sergey.Semin@t-platforms.ru>,
-        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
-References: <20180117222312.14763-1-fancer.lancer@gmail.com>
- <20180202035458.30456-1-fancer.lancer@gmail.com>
- <20180202035458.30456-14-fancer.lancer@gmail.com>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <65660251-bc25-c676-b08c-5168885faf5d@mips.com>
-Date: Tue, 13 Feb 2018 14:09:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Tue, 13 Feb 2018 09:20:22 -0500
+X-Google-Smtp-Source: AH8x227Eep8D5pGRbnUW1bE44QRIcn3ToC4cGIy4DWMbkciKwKVerZTJMLvR8DYjtJVLkRE6UOsN4+Ts/yrDFViYP98=
 MIME-Version: 1.0
-In-Reply-To: <20180202035458.30456-14-fancer.lancer@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.150.130.83]
-X-BESS-ID: 1518531291-298552-26922-43867-3
-X-BESS-VER: 2018.1-r1801291959
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189978
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+In-Reply-To: <20180213093013.rsoprhs5aoimyy2r@dell>
+References: <201802131728.QBRqHsyy%fengguang.wu@intel.com> <20180213093013.rsoprhs5aoimyy2r@dell>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Tue, 13 Feb 2018 06:20:21 -0800
+Message-ID: <CAHQ1cqHrTU+=tTxn_no-AdHLMi_j4-gDKLKCkaAuOF=v4TAHmg@mail.gmail.com>
+Subject: Re: drivers/watchdog/rave-sp-wdt.c:278: undefined reference to `nvmem_cell_get'
+To: Lee Jones <lee.jones@linaro.org>
+Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Serge,
+On Tue, Feb 13, 2018 at 1:30 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Tue, 13 Feb 2018, kbuild test robot wrote:
+>
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>> head:   178e834c47b0d01352c48730235aae69898fbc02
+>> commit: c3bb333457218ca4ed9553be47c0f567b4ef8a38 watchdog: Add RAVE SP watchdog driver
+>> date:   5 weeks ago
+>> config: x86_64-randconfig-u0-02131401 (attached as .config)
+>> compiler: gcc-5 (Debian 5.5.0-3) 5.4.1 20171010
+>> reproduce:
+>>         git checkout c3bb333457218ca4ed9553be47c0f567b4ef8a38
+>>         # save the attached .config to linux build tree
+>>         make ARCH=x86_64
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>    drivers/watchdog/rave-sp-wdt.o: In function `rave_sp_wdt_probe':
+>> >> drivers/watchdog/rave-sp-wdt.c:278: undefined reference to `nvmem_cell_get'
+>> >> drivers/watchdog/rave-sp-wdt.c:281: undefined reference to `nvmem_cell_read'
+>> >> drivers/watchdog/rave-sp-wdt.c:287: undefined reference to `nvmem_cell_put'
+>>    make[2]: *** [vmlinux] Error 1
+>
+> Looks like the RAVE Watchdog driver should select NVMEM?
+>
 
-On 02/02/18 03:54, Serge Semin wrote:
-> Loongson64/3 runs its own code to initialize memory allocator in
-> case of NUMA configuration is selected. So in order to move to the
-> pure memblock utilization we discard the bootmem allocator usage
-> and insert the memblock reservation method for kernel/addrspace_offset
-> memory regions.
-> 
+AFAICT, this is happening when RAVE SP core and watchdog drivers are
+built as built-in and NVMEM is selected as module. Looking at other
+users on NVMEM in the kernel is seems that the pattern to prevent this
+problem is to add "depends on NVMEM || !NVMEM" line to consumer's
+Kconfig entry.
 
-I don't have a NUMA Loongson to test with, but on a non-NUMA Loongson3 
-machine, tested as a part of the whole series, this works and looks good 
-to me.
-
-Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
+I'll submit a patch to that effect shortly.
 
 Thanks,
-Matt
-
-
-> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> ---
->   arch/mips/loongson64/loongson-3/numa.c | 16 +++++-----------
->   1 file changed, 5 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/mips/loongson64/loongson-3/numa.c b/arch/mips/loongson64/loongson-3/numa.c
-> index f17ef520799a..2f1ebf496c17 100644
-> --- a/arch/mips/loongson64/loongson-3/numa.c
-> +++ b/arch/mips/loongson64/loongson-3/numa.c
-> @@ -180,7 +180,6 @@ static void __init szmem(unsigned int node)
->   
->   static void __init node_mem_init(unsigned int node)
->   {
-> -	unsigned long bootmap_size;
->   	unsigned long node_addrspace_offset;
->   	unsigned long start_pfn, end_pfn, freepfn;
->   
-> @@ -197,26 +196,21 @@ static void __init node_mem_init(unsigned int node)
->   
->   	__node_data[node] = prealloc__node_data + node;
->   
-> -	NODE_DATA(node)->bdata = &bootmem_node_data[node];
->   	NODE_DATA(node)->node_start_pfn = start_pfn;
->   	NODE_DATA(node)->node_spanned_pages = end_pfn - start_pfn;
->   
-> -	bootmap_size = init_bootmem_node(NODE_DATA(node), freepfn,
-> -					start_pfn, end_pfn);
->   	free_bootmem_with_active_regions(node, end_pfn);
->   	if (node == 0) /* used by finalize_initrd() */
->   		max_low_pfn = end_pfn;
->   
-> -	/* This is reserved for the kernel and bdata->node_bootmem_map */
-> -	reserve_bootmem_node(NODE_DATA(node), start_pfn << PAGE_SHIFT,
-> -		((freepfn - start_pfn) << PAGE_SHIFT) + bootmap_size,
-> -		BOOTMEM_DEFAULT);
-> +	/* This is reserved for the kernel only */
-> +	if (node == 0)
-> +		memblock_reserve(start_pfn << PAGE_SHIFT,
-> +			((freepfn - start_pfn) << PAGE_SHIFT));
->   
->   	if (node == 0 && node_end_pfn(0) >= (0xffffffff >> PAGE_SHIFT)) {
->   		/* Reserve 0xfe000000~0xffffffff for RS780E integrated GPU */
-> -		reserve_bootmem_node(NODE_DATA(node),
-> -				(node_addrspace_offset | 0xfe000000),
-> -				32 << 20, BOOTMEM_DEFAULT);
-> +		memblock_reserve(node_addrspace_offset | 0xfe000000, 32 << 20);
->   	}
->   
->   	sparse_memory_present_with_active_regions(node);
-> 
+Andrey Smirnov
