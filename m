@@ -1,115 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934783AbeBMLhe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:37:34 -0500
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:52171 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934078AbeBMLhd (ORCPT
+        id S934665AbeBMLkp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:40:45 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:44521 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934086AbeBMLkn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:37:33 -0500
-Subject: Re: [PATCH v2 05/15] MIPS: KASLR: Drop relocatable fixup from
- reservation_init
-To: Serge Semin <fancer.lancer@gmail.com>, <ralf@linux-mips.org>,
-        <miodrag.dinic@mips.com>, <jhogan@kernel.org>, <goran.ferenc@mips.com>,
-        <david.daney@cavium.com>, <paul.gortmaker@windriver.com>,
-        <paul.burton@mips.com>, <alex.belits@cavium.com>,
-        <Steven.Hill@cavium.com>
-CC: <alexander.sverdlin@nokia.com>, <kumba@gentoo.org>,
-        <marcin.nowakowski@mips.com>, <James.hogan@mips.com>,
-        <Peter.Wotton@mips.com>, <Sergey.Semin@t-platforms.ru>,
-        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
-References: <20180117222312.14763-1-fancer.lancer@gmail.com>
- <20180202035458.30456-1-fancer.lancer@gmail.com>
- <20180202035458.30456-6-fancer.lancer@gmail.com>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <25ae5315-0386-4709-ec73-d265ed342b58@mips.com>
-Date: Tue, 13 Feb 2018 11:30:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Tue, 13 Feb 2018 06:40:43 -0500
+Date: Tue, 13 Feb 2018 03:30:15 -0800
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-30dde5167c432f8e32d3d13fe73a241578a4f259@git.kernel.org>
+Cc: mingo@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
+        jpoimboe@redhat.com, peterz@infradead.org, brgerst@gmail.com,
+        dvlasenk@redhat.com, torvalds@linux-foundation.org, tglx@linutronix.de,
+        hpa@zytor.com, fengguang.wu@intel.com, arjan@linux.intel.com,
+        luto@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, bp@alien8.de, mingo@kernel.org,
+        luto@kernel.org, arjan@linux.intel.com, fengguang.wu@intel.com,
+        hpa@zytor.com, tglx@linutronix.de, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, jpoimboe@redhat.com,
+        peterz@infradead.org, brgerst@gmail.com
+In-Reply-To: <0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com>
+References: <0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/debug, objtool: Annotate WARN()-related UD2 as
+ reachable
+Git-Commit-ID: 30dde5167c432f8e32d3d13fe73a241578a4f259
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180202035458.30456-6-fancer.lancer@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.150.130.83]
-X-BESS-ID: 1518521760-637137-26795-167917-12
-X-BESS-VER: 2018.1-r1801291959
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.188374
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Serge,
+Commit-ID:  30dde5167c432f8e32d3d13fe73a241578a4f259
+Gitweb:     https://git.kernel.org/tip/30dde5167c432f8e32d3d13fe73a241578a4f259
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Thu, 8 Feb 2018 17:09:26 -0600
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 11:47:00 +0100
 
-On 02/02/18 03:54, Serge Semin wrote:
-> From: Matt Redfearn <matt.redfearn@mips.com>
-> 
-> A recent change ("MIPS: memblock: Discard bootmem initialization")
-> removed the reservation of all memory below the kernel's _end symbol in
-> bootmem. This makes the call to free_bootmem unnecessary, since the
-> memory region is no longer marked reserved.
-> 
-> Additionally, ("MIPS: memblock: Print out kernel virtual mem
-> layout") added a display of the kernel's virtual memory layout, so
-> printing the relocation information at this point is redundant.
-> 
-> Remove this section of code.
-> 
-> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+x86/debug, objtool: Annotate WARN()-related UD2 as reachable
 
-Missing your SoB.
+By default, objtool assumes that a UD2 is a dead end.  This is mainly
+because GCC 7+ sometimes inserts a UD2 when it detects a divide-by-zero
+condition.
 
-I think this change should go after you introduce the new mechanism, 
-i.e. after "MIPS: memblock: Print out kernel virtual mem layout", which 
-should probably go nearer the start of the series.
+Now that WARN() is moving back to UD2, annotate the code after it as
+reachable so objtool can follow the code flow.
 
-Thanks,
-Matt
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kbuild test robot <fengguang.wu@intel.com>
+Link: http://lkml.kernel.org/r/0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/bug.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> ---
->   arch/mips/kernel/setup.c | 23 -----------------------
->   1 file changed, 23 deletions(-)
-> 
-> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-> index b5fcacf71b3f..cf3674977170 100644
-> --- a/arch/mips/kernel/setup.c
-> +++ b/arch/mips/kernel/setup.c
-> @@ -528,29 +528,6 @@ static void __init bootmem_init(void)
->   		memory_present(0, start, end);
->   	}
->   
-> -#ifdef CONFIG_RELOCATABLE
-> -	/*
-> -	 * The kernel reserves all memory below its _end symbol as bootmem,
-> -	 * but the kernel may now be at a much higher address. The memory
-> -	 * between the original and new locations may be returned to the system.
-> -	 */
-> -	if (__pa_symbol(_text) > __pa_symbol(VMLINUX_LOAD_ADDRESS)) {
-> -		unsigned long offset;
-> -		extern void show_kernel_relocation(const char *level);
-> -
-> -		offset = __pa_symbol(_text) - __pa_symbol(VMLINUX_LOAD_ADDRESS);
-> -		free_bootmem(__pa_symbol(VMLINUX_LOAD_ADDRESS), offset);
-> -
-> -#if defined(CONFIG_DEBUG_KERNEL) && defined(CONFIG_DEBUG_INFO)
-> -		/*
-> -		 * This information is necessary when debugging the kernel
-> -		 * But is a security vulnerability otherwise!
-> -		 */
-> -		show_kernel_relocation(KERN_INFO);
-> -#endif
-> -	}
-> -#endif
-> -
->   	/*
->   	 * Reserve initrd memory if needed.
->   	 */
-> 
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 34d99af4..71e6f4bf 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -77,7 +77,11 @@ do {								\
+ 	unreachable();						\
+ } while (0)
+ 
+-#define __WARN_FLAGS(flags)	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags))
++#define __WARN_FLAGS(flags)					\
++do {								\
++	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
++	annotate_reachable();					\
++} while (0)
+ 
+ #include <asm-generic/bug.h>
+ 
