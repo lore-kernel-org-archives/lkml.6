@@ -1,132 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934240AbeBMKl3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:41:29 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51591 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934011AbeBMKl1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:41:27 -0500
-X-Google-Smtp-Source: AH8x224rKzWzy9UyVChg04h5aDrya8ZSAUwrbaNqZVok/u4/BPNtuVZFUiNVG9KXzYU9eyrgTNdWEQ==
-From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Fangu=C3=A8de?=
-        <j.fanguede@virtualopensystems.com>
-To: Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org
-Cc: tech@virtualopensystems.com,
-        =?UTF-8?q?J=C3=A9r=C3=A9my=20Fangu=C3=A8de?=
-        <j.fanguede@virtualopensystems.com>
-Subject: [PATCH] KVM: arm: Enable emulation of the physical timer
-Date: Tue, 13 Feb 2018 11:41:16 +0100
-Message-Id: <1518518476-26645-1-git-send-email-j.fanguede@virtualopensystems.com>
-X-Mailer: git-send-email 2.7.4
+        id S934374AbeBMKll (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:41:41 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52146 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934011AbeBMKli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:41:38 -0500
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+To: David Woodhouse <dwmw2@infradead.org>, tglx@linutronix.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+ <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+ <1518509708.12890.33.camel@infradead.org>
+ <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+ <1518517262.12890.43.camel@infradead.org>
+ <1518518198.12890.48.camel@infradead.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
+Date: Tue, 13 Feb 2018 11:41:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1518518198.12890.48.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the handlers to emulate read and write operations for CNTP_CTL,
-CNTP_CVAL and CNTP_TVAL registers in such a way that VMs can use the
-physical timer.
+On 13/02/2018 11:36, David Woodhouse wrote:
+>>> - if the VM has IBRS_ALL, pass through the MSR when it is zero and
+>>> intercept writes when it is one (no writes should happen)
+>>>  
+>>> - if the VM doesn't have IBRS_ALL, do as we are doing now, independent
+>>> of what the host spectre_v2_ibrs_all() setting is.
+>> We end up having to turn IBRS on again on vmexit then, taking care that
+>> no conditional branch can go round it. So that becomes an
+>> *unconditional* wrmsr or lfence in the vmexit path. We really don't
+>> want that.
+>
+> Note that being able to keep it simple in KVM was basically what made
+> the difference between me tolerating IBRS_ALL as Intel currently define
+> it, and throwing my toys out of the pram (as I had done in the first
+> iterations of this patch).
 
-Signed-off-by: Jérémy Fanguède <j.fanguede@virtualopensystems.com>
----
+You have my vote. :)  Really, IBRS_ALL makes no sense and it would be
+nice to know _why_ Intel is pushing something that makes no sense.
 
-This patch is the equivalent of this one: [1], but for arm 32bits
-instead of ARMv8 aarch32.
-
-[1] https://patchwork.kernel.org/patch/10207019/
-
----
- arch/arm/kvm/coproc.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/arch/arm/kvm/coproc.c b/arch/arm/kvm/coproc.c
-index 6d1d2e2..3a02e76 100644
---- a/arch/arm/kvm/coproc.c
-+++ b/arch/arm/kvm/coproc.c
-@@ -270,6 +270,60 @@ static bool access_gic_sre(struct kvm_vcpu *vcpu,
- 	return true;
- }
- 
-+static bool access_cntp_tval(struct kvm_vcpu *vcpu,
-+			     const struct coproc_params *p,
-+			     const struct coproc_reg *r)
-+{
-+	u64 now = kvm_phys_timer_read();
-+	u64 val;
-+
-+	if (p->is_write) {
-+		val = *vcpu_reg(vcpu, p->Rt1);
-+		kvm_arm_timer_set_reg(vcpu, KVM_REG_ARM_PTIMER_CVAL, val + now);
-+	} else {
-+		val = kvm_arm_timer_get_reg(vcpu, KVM_REG_ARM_PTIMER_CVAL);
-+		*vcpu_reg(vcpu, p->Rt1) = val - now;
-+	}
-+
-+	return true;
-+}
-+
-+static bool access_cntp_ctl(struct kvm_vcpu *vcpu,
-+			    const struct coproc_params *p,
-+			    const struct coproc_reg *r)
-+{
-+	u32 val;
-+
-+	if (p->is_write) {
-+		val = *vcpu_reg(vcpu, p->Rt1);
-+		kvm_arm_timer_set_reg(vcpu, KVM_REG_ARM_PTIMER_CTL, val);
-+	} else {
-+		val = kvm_arm_timer_get_reg(vcpu, KVM_REG_ARM_PTIMER_CTL);
-+		*vcpu_reg(vcpu, p->Rt1) = val;
-+	}
-+
-+	return true;
-+}
-+
-+static bool access_cntp_cval(struct kvm_vcpu *vcpu,
-+			     const struct coproc_params *p,
-+			     const struct coproc_reg *r)
-+{
-+	u64 val;
-+
-+	if (p->is_write) {
-+		val = (u64)*vcpu_reg(vcpu, p->Rt2) << 32;
-+		val |= *vcpu_reg(vcpu, p->Rt1);
-+		kvm_arm_timer_set_reg(vcpu, KVM_REG_ARM_PTIMER_CVAL, val);
-+	} else {
-+		val = kvm_arm_timer_get_reg(vcpu, KVM_REG_ARM_PTIMER_CVAL);
-+		*vcpu_reg(vcpu, p->Rt1) = val;
-+		*vcpu_reg(vcpu, p->Rt2) = val >> 32;
-+	}
-+
-+	return true;
-+}
-+
- /*
-  * We could trap ID_DFR0 and tell the guest we don't support performance
-  * monitoring.  Unfortunately the patch to make the kernel check ID_DFR0 was
-@@ -423,10 +477,17 @@ static const struct coproc_reg cp15_regs[] = {
- 	{ CRn(13), CRm( 0), Op1( 0), Op2( 4), is32,
- 			NULL, reset_unknown, c13_TID_PRIV },
- 
-+	/* CNTP */
-+	{ CRm64(14), Op1( 2), is64, access_cntp_cval},
-+
- 	/* CNTKCTL: swapped by interrupt.S. */
- 	{ CRn(14), CRm( 1), Op1( 0), Op2( 0), is32,
- 			NULL, reset_val, c14_CNTKCTL, 0x00000000 },
- 
-+	/* CNTP */
-+	{ CRn(14), CRm( 2), Op1( 0), Op2( 0), is32, access_cntp_tval },
-+	{ CRn(14), CRm( 2), Op1( 0), Op2( 1), is32, access_cntp_ctl },
-+
- 	/* The Configuration Base Address Register. */
- 	{ CRn(15), CRm( 0), Op1( 4), Op2( 0), is32, access_cbar},
- };
--- 
-2.7.4
+Paolo
