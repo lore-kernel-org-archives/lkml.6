@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3813382-1518514900-2-6017090219823685226
+X-Cyrus-Session-Id: sloti22d1t05-3807972-1518514876-2-16506698682625539855
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518514899; b=mF49pOE4Wdm9DUh7SLa4Qkl4ZfJ5BthfE7yrIDP5aCGTtbq
-    xf5pOuYiazI8+RLjpfJ4E7kKFoo9DdklTmc06gDVIE7BdNHftwagB9ZkUbXTjlmO
-    fcFORNtJEOiE9RFxwtVyMX0NMotuwIf8vrSn3dy5Y7+vgak3vey08h3S4DkEiTZD
-    sFq4cVox58f9mbShOTlUWQqNkpbZUEOwUz18PlxtlK2UJz6apV68Lg5ha08nHCqS
-    2X/MAe9rurjULcir0pPszM89JauYe4NymIWrBqVjiYDVVXK1G7fQdJLjmM5ca5AK
-    eI/l03Nzi3Ae94jMTGyL+VZefVL+IEBeElT/xXA==
+    t=1518514876; b=lAQDfAcmU9t+Yj4zG5EyejD3yR3CzjafPlshCXAwrh7ccV/
+    iKBfZ7ZmMfinfaKkydtL+fMbiOL3q7oVImXK1j/9rYC1VuMShNms7iq/lm62jiXf
+    w7bbwJOIiuiR+lHqzrebKd/7BanZUmR4IaX7sYdmRF4pUbgltnqnkcPpZUQV6hK9
+    as6Wk5UCxlE6hKOVsBXzgrA3ayWClr7G9ofTiASgR+VKX9AF8fLlwcS3QyyGM8md
+    NX5lyCPrYUAfVxVi19x9FSu69C6l8AuIL2fO/Db501H8W0Ye57UGYprP74+ss+Eh
+    NhDDgMd5KSifIeB8+Kvt0fQYpIQSU3vj2ydpxTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1518514899;
-    bh=DTKAFFbVyDRl/MaQFF193G2uoh7FtlLIqJwcimhmrpg=; b=kdXE4cn7q/ed
-    Prh+VvhyR9s756pLuuLoH1aLrId/TtcHlFbHtCkSVztUxejeMYP/tFtzL9xlvgdx
-    uvzHV9BYTsF/Zf3s3b1vkG7KhXU0DMttrEU92QytNqG8AADEWWmebYExCpItctQy
-    rSU+V1CSxP+fsSMEcJGaos15ukHaLIrFdqxG5SoBFnnbiUPMjOWWyFBdp1L5Zns4
-    VDwm1nOriNjGKY8LHGcprnZ1PJ4W0oCE4xw6OgmH+VnqQm+5o0Oi6Po9sGMTMP0d
-    jbFvynqcKW2oY0O4E7p2Yr4ReSBJbzUY2Ywy6G68XUL4dkAfdNYkXeQdKtnavtVq
-    KdajJv85PA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518514876;
+    bh=JSy94qwFdjB6l8UBxZN8ovcCp5pqTJt1x6lni9UDrP8=; b=T05YlXAwK+c+
+    iL+PepCsr43bQ/h0ocmfwuJI9JDufQaSCkFMWmPYv1QZXI0bfTaTiaFPdrQ4sTA8
+    h9ZOV013SGyR5co3zPPejU4sXkznUAgITJ9+XsJEuXyAsZwxuZ4WzTziasPrP7NQ
+    HiNU/sjxMkbNqzMp8WsIC/lV7J4LS/LLrXqs9iajWQq6ODZb4ckOLOXTSPvgNEVZ
+    P8XFnr14g9ZesBEL08J2gTr9ks9jzZnzbrLnaEjwp0hzDYYoxc8vopNlOyERnDOy
+    zF0KX+FIZOqp7jIeRiEuIo4wbpwC03tqyUkHG8lfDpOj/BDkSMEmTRkCxpW19mwv
+    nS9VP1M9Og==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -47,17 +47,17 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933681AbeBMJlP (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Feb 2018 04:41:15 -0500
-Received: from mga03.intel.com ([134.134.136.65]:27128 "EHLO mga03.intel.com"
+        id S934763AbeBMJft (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 04:35:49 -0500
+Received: from mga03.intel.com ([134.134.136.65]:27121 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934505AbeBMJfs (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:35:48 -0500
+        id S934370AbeBMJfp (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:35:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
-   d="scan'208";a="26889581"
+   d="scan'208";a="26889565"
 From: Wu Hao <hao.wu@intel.com>
 To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
         Shiva Rao <shiva.rao@intel.com>,
         Christopher Rauer <christopher.rauer@intel.com>,
         Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: [PATCH v4 14/24] fpga: dfl: fme: add partial reconfiguration sub feature support
-Date: Tue, 13 Feb 2018 17:24:43 +0800
-Message-Id: <1518513893-4719-15-git-send-email-hao.wu@intel.com>
+Subject: [PATCH v4 12/24] fpga: dfl: fme: add FPGA_GET_API_VERSION/CHECK_EXTENSION ioctls support
+Date: Tue, 13 Feb 2018 17:24:41 +0800
+Message-Id: <1518513893-4719-13-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
 References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
@@ -80,878 +80,137 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Kang Luwei <luwei.kang@intel.com>
+FPGA_GET_API_VERSION and FPGA_CHECK_EXTENSION ioctls are common ones which
+need to be supported by all feature devices drivers including FME and AFU.
+Userspace application can use these ioctl interfaces to get the API info
+and check if specific extension is supported or not in current driver.
 
-Partial Reconfiguration (PR) is the most important function for FME. It
-allows reconfiguration for given Port/Accelerated Function Unit (AFU).
-
-It creates platform devices for fpga-mgr, fpga-regions and fpga-bridges,
-and invokes fpga-region's interface (fpga_region_program_fpga) for PR
-operation once PR request received via ioctl. Below user space interface
-is exposed by this sub feature.
-
-Ioctl interface:
-* FPGA_FME_PORT_PR
-  Do partial reconfiguration per information from userspace, including
-  target port(AFU), buffer size and address info. It returns error code
-  to userspace if failed. For detailed PR error information, user needs
-  to read fpga-mgr's status sysfs interface.
+This patch implements above 2 ioctls in FPGA Management Engine (FME)
+driver.
 
 Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
 Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
 Signed-off-by: Shiva Rao <shiva.rao@intel.com>
 Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-Signed-off-by: Kang Luwei <luwei.kang@intel.com>
 Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v2: moved the code to drivers/fpga folder as suggested by Alan Tull.
-    switched to GPLv2 license.
-    removed status from FPGA_FME_PORT_PR ioctl data structure.
-    added platform devices creation for fpga-mgr/fpga-region/fpga-bridge.
-    switched to fpga-region interface fpga_region_program_fpga for PR.
-    fixed comments from Alan Tull on FPGA_MGR_PARTIAL_RECONFIG flag usage.
-    fixed kbuild warnings.
-v3: rename driver files to dfl-fme-*.
-    rebase due to fpga APIs change.
-    replace bitfields.
-    switch to fpga_cdev_find_port to find port device.
-v4: rebase and correct comments for some function.
-    fix SPDX license issue.
-    remove unnecessary input parameter for destroy_bridge/region function.
-    add dfl-fme-pr.h for PR sub feature data structure and registers.
+v2: switched to GPLv2 license.
+v3: rename intel-fpga.h to fpga-dfl.h and rebased.
+v4: fix SPDX license issue.
+    add Acked-by from Alan and Moritz.
 ---
- drivers/fpga/Makefile         |   2 +-
- drivers/fpga/dfl-fme-main.c   |  45 +++-
- drivers/fpga/dfl-fme-pr.c     | 497 ++++++++++++++++++++++++++++++++++++++++++
- drivers/fpga/dfl-fme-pr.h     | 113 ++++++++++
- drivers/fpga/dfl-fme.h        |  38 ++++
- include/uapi/linux/fpga-dfl.h |  27 +++
- 6 files changed, 720 insertions(+), 2 deletions(-)
- create mode 100644 drivers/fpga/dfl-fme-pr.c
- create mode 100644 drivers/fpga/dfl-fme-pr.h
- create mode 100644 drivers/fpga/dfl-fme.h
+ Documentation/ioctl/ioctl-number.txt |  1 +
+ drivers/fpga/dfl-fme-main.c          | 12 +++++++++
+ include/uapi/linux/fpga-dfl.h        | 48 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 61 insertions(+)
+ create mode 100644 include/uapi/linux/fpga-dfl.h
 
-diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-index fbd1c85..3c44fc9 100644
---- a/drivers/fpga/Makefile
-+++ b/drivers/fpga/Makefile
-@@ -32,7 +32,7 @@ obj-$(CONFIG_OF_FPGA_REGION)		+= of-fpga-region.o
- obj-$(CONFIG_FPGA_DFL)			+= dfl.o
- obj-$(CONFIG_FPGA_DFL_FME)		+= dfl-fme.o
- 
--dfl-fme-objs := dfl-fme-main.o
-+dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
- 
- # Drivers for FPGAs which implement DFL
- obj-$(CONFIG_FPGA_DFL_PCI)		+= dfl-pci.o
+diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+index 6501389..f1e7baa 100644
+--- a/Documentation/ioctl/ioctl-number.txt
++++ b/Documentation/ioctl/ioctl-number.txt
+@@ -324,6 +324,7 @@ Code  Seq#(hex)	Include File		Comments
+ 0xB3	00	linux/mmc/ioctl.h
+ 0xB4	00-0F	linux/gpio.h		<mailto:linux-gpio@vger.kernel.org>
+ 0xB5	00-0F	uapi/linux/rpmsg.h	<mailto:linux-remoteproc@vger.kernel.org>
++0xB6	all	linux/fpga-dfl.h
+ 0xC0	00-0F	linux/usb/iowarrior.h
+ 0xCA	00-0F	uapi/misc/cxl.h
+ 0xCA	10-2F	uapi/misc/ocxl.h
 diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
-index 1a9929c..967a44c 100644
+index 056ae24..1a9929c 100644
 --- a/drivers/fpga/dfl-fme-main.c
 +++ b/drivers/fpga/dfl-fme-main.c
-@@ -19,6 +19,7 @@
- #include <linux/fpga-dfl.h>
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/fpga-dfl.h>
  
  #include "dfl.h"
-+#include "dfl-fme.h"
  
- static ssize_t ports_num_show(struct device *dev,
- 			      struct device_attribute *attr, char *buf)
-@@ -111,6 +112,10 @@ static struct feature_driver fme_feature_drvs[] = {
- 		.ops = &fme_hdr_ops,
- 	},
- 	{
-+		.id = FME_FEATURE_ID_PR_MGMT,
-+		.ops = &pr_mgmt_ops,
-+	},
-+	{
- 		.ops = NULL,
+@@ -114,6 +115,13 @@ static struct feature_driver fme_feature_drvs[] = {
  	},
  };
-@@ -194,14 +199,49 @@ static const struct file_operations fme_fops = {
- 	.unlocked_ioctl = fme_ioctl,
- };
  
-+static int fme_dev_init(struct platform_device *pdev)
++static long fme_ioctl_check_extension(struct feature_platform_data *pdata,
++				      unsigned long arg)
 +{
-+	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	struct fpga_fme *fme;
-+
-+	fme = devm_kzalloc(&pdev->dev, sizeof(*fme), GFP_KERNEL);
-+	if (!fme)
-+		return -ENOMEM;
-+
-+	fme->pdata = pdata;
-+
-+	mutex_lock(&pdata->lock);
-+	fpga_pdata_set_private(pdata, fme);
-+	mutex_unlock(&pdata->lock);
-+
++	/* No extension support for now */
 +	return 0;
 +}
 +
-+static void fme_dev_destroy(struct platform_device *pdev)
-+{
-+	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	struct fpga_fme *fme;
-+
-+	mutex_lock(&pdata->lock);
-+	fme = fpga_pdata_get_private(pdata);
-+	fpga_pdata_set_private(pdata, NULL);
-+	mutex_unlock(&pdata->lock);
-+
-+	devm_kfree(&pdev->dev, fme);
-+}
-+
- static int fme_probe(struct platform_device *pdev)
+ static int fme_open(struct inode *inode, struct file *filp)
  {
- 	int ret;
+ 	struct platform_device *fdev = fpga_inode_to_feature_dev(inode);
+@@ -154,6 +162,10 @@ static long fme_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	dev_dbg(&pdev->dev, "%s cmd 0x%x\n", __func__, cmd);
  
--	ret = fpga_dev_feature_init(pdev, fme_feature_drvs);
-+	ret = fme_dev_init(pdev);
- 	if (ret)
- 		goto exit;
- 
-+	ret = fpga_dev_feature_init(pdev, fme_feature_drvs);
-+	if (ret)
-+		goto dev_destroy;
-+
- 	ret = fpga_register_dev_ops(pdev, &fme_fops, THIS_MODULE);
- 	if (ret)
- 		goto feature_uinit;
-@@ -210,6 +250,8 @@ static int fme_probe(struct platform_device *pdev)
- 
- feature_uinit:
- 	fpga_dev_feature_uinit(pdev);
-+dev_destroy:
-+	fme_dev_destroy(pdev);
- exit:
- 	return ret;
- }
-@@ -218,6 +260,7 @@ static int fme_remove(struct platform_device *pdev)
- {
- 	fpga_dev_feature_uinit(pdev);
- 	fpga_unregister_dev_ops(pdev);
-+	fme_dev_destroy(pdev);
- 
- 	return 0;
- }
-diff --git a/drivers/fpga/dfl-fme-pr.c b/drivers/fpga/dfl-fme-pr.c
-new file mode 100644
-index 0000000..526e90b
---- /dev/null
-+++ b/drivers/fpga/dfl-fme-pr.c
-@@ -0,0 +1,497 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for FPGA Management Engine (FME) Partial Reconfiguration
-+ *
-+ * Copyright (C) 2017 Intel Corporation, Inc.
-+ *
-+ * Authors:
-+ *   Kang Luwei <luwei.kang@intel.com>
-+ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-+ *   Wu Hao <hao.wu@intel.com>
-+ *   Joseph Grecco <joe.grecco@intel.com>
-+ *   Enno Luebbers <enno.luebbers@intel.com>
-+ *   Tim Whisonant <tim.whisonant@intel.com>
-+ *   Ananda Ravuri <ananda.ravuri@intel.com>
-+ *   Christopher Rauer <christopher.rauer@intel.com>
-+ *   Henry Mitchel <henry.mitchel@intel.com>
-+ */
-+
-+#include <linux/types.h>
-+#include <linux/device.h>
-+#include <linux/vmalloc.h>
-+#include <linux/uaccess.h>
-+#include <linux/fpga/fpga-mgr.h>
-+#include <linux/fpga/fpga-bridge.h>
-+#include <linux/fpga/fpga-region.h>
-+#include <linux/fpga-dfl.h>
-+
-+#include "dfl.h"
-+#include "dfl-fme.h"
-+#include "dfl-fme-pr.h"
-+
-+static struct fme_region *
-+find_fme_region_by_port_id(struct fpga_fme *fme, int port_id)
-+{
-+	struct fme_region *fme_region;
-+
-+	list_for_each_entry(fme_region, &fme->region_list, node)
-+		if (fme_region->port_id == port_id)
-+			return fme_region;
-+
-+	return NULL;
-+}
-+
-+static int fpga_fme_region_match(struct device *dev, const void *data)
-+{
-+	return dev->parent == data;
-+}
-+
-+static struct fpga_region *
-+fpga_fme_region_find(struct fpga_fme *fme, int port_id)
-+{
-+	struct fme_region *fme_region;
-+	struct fpga_region *region;
-+
-+	fme_region = find_fme_region_by_port_id(fme, port_id);
-+	if (!fme_region)
-+		return NULL;
-+
-+	region = fpga_region_class_find(NULL, &fme_region->region->dev,
-+					fpga_fme_region_match);
-+	if (!region)
-+		return NULL;
-+
-+	return region;
-+}
-+
-+static int fme_pr(struct platform_device *pdev, unsigned long arg)
-+{
-+	void __user *argp = (void __user *)arg;
-+	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	struct fpga_fme *fme;
-+	struct fpga_image_info *info;
-+	struct fpga_region *region;
-+	struct fpga_fme_port_pr port_pr;
-+	unsigned long minsz;
-+	void __iomem *fme_hdr;
-+	void *buf = NULL;
-+	int ret = 0;
-+	u64 v;
-+
-+	minsz = offsetofend(struct fpga_fme_port_pr, buffer_address);
-+
-+	if (copy_from_user(&port_pr, argp, minsz))
-+		return -EFAULT;
-+
-+	if (port_pr.argsz < minsz || port_pr.flags)
-+		return -EINVAL;
-+
-+	if (!IS_ALIGNED(port_pr.buffer_size, 4))
-+		return -EINVAL;
-+
-+	/* get fme header region */
-+	fme_hdr = get_feature_ioaddr_by_id(&pdev->dev,
-+					   FME_FEATURE_ID_HEADER);
-+
-+	/* check port id */
-+	v = readq(fme_hdr + FME_HDR_CAP);
-+	if (port_pr.port_id >= FIELD_GET(FME_CAP_NUM_PORTS, v)) {
-+		dev_dbg(&pdev->dev, "port number more than maximum\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!access_ok(VERIFY_READ,
-+		       (void __user *)(unsigned long)port_pr.buffer_address,
-+		       port_pr.buffer_size))
-+		return -EFAULT;
-+
-+	buf = vmalloc(port_pr.buffer_size);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	if (copy_from_user(buf,
-+			   (void __user *)(unsigned long)port_pr.buffer_address,
-+			   port_pr.buffer_size)) {
-+		ret = -EFAULT;
-+		goto free_exit;
-+	}
-+
-+	/* prepare fpga_image_info for PR */
-+	info = fpga_image_info_alloc(&pdev->dev);
-+	if (!info) {
-+		ret = -ENOMEM;
-+		goto free_exit;
-+	}
-+
-+	info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
-+
-+	mutex_lock(&pdata->lock);
-+	fme = fpga_pdata_get_private(pdata);
-+	/* fme device has been unregistered. */
-+	if (!fme) {
-+		ret = -EINVAL;
-+		goto unlock_exit;
-+	}
-+
-+	region = fpga_fme_region_find(fme, port_pr.port_id);
-+	if (!region) {
-+		ret = -EINVAL;
-+		goto unlock_exit;
-+	}
-+
-+	fpga_image_info_free(region->info);
-+
-+	info->buf = buf;
-+	info->count = port_pr.buffer_size;
-+	info->region_id = port_pr.port_id;
-+	region->info = info;
-+
-+	ret = fpga_region_program_fpga(region);
-+
-+	if (region->get_bridges)
-+		fpga_bridges_put(&region->bridge_list);
-+
-+	put_device(&region->dev);
-+unlock_exit:
-+	mutex_unlock(&pdata->lock);
-+free_exit:
-+	vfree(buf);
-+	if (copy_to_user((void __user *)arg, &port_pr, minsz))
-+		return -EFAULT;
-+
-+	return ret;
-+}
-+
-+/**
-+ * fpga_fme_create_mgr - create fpga mgr platform device as child device
-+ *
-+ * @pdata: fme platform_device's pdata
-+ *
-+ * Return: mgr platform device if successful, and error code otherwise.
-+ */
-+static struct platform_device *
-+fpga_fme_create_mgr(struct feature_platform_data *pdata)
-+{
-+	struct platform_device *mgr, *fme = pdata->dev;
-+	struct feature *feature;
-+	struct resource res;
-+	struct resource *pres;
-+	int ret = -ENOMEM;
-+
-+	feature = get_feature_by_id(&pdata->dev->dev, FME_FEATURE_ID_PR_MGMT);
-+	if (!feature)
-+		return ERR_PTR(-ENODEV);
-+
-+	/*
-+	 * Each FME has only one fpga-mgr, so allocate platform device using
-+	 * the same FME platform device id.
-+	 */
-+	mgr = platform_device_alloc(FPGA_DFL_FME_MGR, fme->id);
-+	if (!mgr)
-+		return ERR_PTR(ret);
-+
-+	mgr->dev.parent = &fme->dev;
-+
-+	pres = platform_get_resource(fme, IORESOURCE_MEM,
-+				     feature->resource_index);
-+	if (!pres) {
-+		ret = -ENODEV;
-+		goto create_mgr_err;
-+	}
-+
-+	memset(&res, 0, sizeof(struct resource));
-+
-+	res.start = pres->start;
-+	res.end = pres->end;
-+	res.name = pres->name;
-+	res.flags = IORESOURCE_MEM;
-+
-+	ret = platform_device_add_resources(mgr, &res, 1);
-+	if (ret)
-+		goto create_mgr_err;
-+
-+	ret = platform_device_add(mgr);
-+	if (ret)
-+		goto create_mgr_err;
-+
-+	return mgr;
-+
-+create_mgr_err:
-+	platform_device_put(mgr);
-+	return ERR_PTR(ret);
-+}
-+
-+/**
-+ * fpga_fme_destroy_mgr - destroy fpga mgr platform device
-+ * @pdata: fme platform device's pdata
-+ */
-+static void fpga_fme_destroy_mgr(struct feature_platform_data *pdata)
-+{
-+	struct fpga_fme *priv = fpga_pdata_get_private(pdata);
-+
-+	platform_device_unregister(priv->mgr);
-+}
-+
-+/**
-+ * fpga_fme_create_bridge - create fme fpga bridge platform device as child
-+ *
-+ * @pdata: fme platform device's pdata
-+ * @port_id: port id for the bridge to be created.
-+ *
-+ * Return: bridge platform device if successful, and error code otherwise.
-+ */
-+static struct fme_bridge *
-+fpga_fme_create_bridge(struct feature_platform_data *pdata, int port_id)
-+{
-+	struct device *dev = &pdata->dev->dev;
-+	struct fme_br_pdata br_pdata;
-+	struct fme_bridge *fme_br;
-+	int ret = -ENOMEM;
-+
-+	fme_br = devm_kzalloc(dev, sizeof(*fme_br), GFP_KERNEL);
-+	if (!fme_br)
-+		return ERR_PTR(ret);
-+
-+	br_pdata.port = fpga_cdev_find_port(fpga_pdata_to_fpga_cdev(pdata),
-+					    &port_id, fpga_port_check_id);
-+	if (!br_pdata.port)
-+		return ERR_PTR(-ENODEV);
-+
-+	/*
-+	 * Each FPGA device may have more than one port, so allocate platform
-+	 * device using the same port platform device id.
-+	 */
-+	fme_br->br = platform_device_alloc(FPGA_DFL_FME_BRIDGE,
-+					   br_pdata.port->id);
-+	if (!fme_br->br) {
-+		ret = -ENOMEM;
-+		goto create_br_err;
-+	}
-+
-+	fme_br->br->dev.parent = dev;
-+
-+	ret = platform_device_add_data(fme_br->br, &br_pdata, sizeof(br_pdata));
-+	if (ret)
-+		goto create_br_err;
-+
-+	ret = platform_device_add(fme_br->br);
-+	if (ret)
-+		goto create_br_err;
-+
-+	return fme_br;
-+
-+create_br_err:
-+	platform_device_put(fme_br->br);
-+	put_device(&br_pdata.port->dev);
-+	return ERR_PTR(ret);
-+}
-+
-+/**
-+ * fpga_fme_destroy_bridge - destroy fpga bridge platform device
-+ * @fme_br: fme bridge to destroy
-+ */
-+static void fpga_fme_destroy_bridge(struct fme_bridge *fme_br)
-+{
-+	struct fme_br_pdata *br_pdata = dev_get_platdata(&fme_br->br->dev);
-+
-+	put_device(&br_pdata->port->dev);
-+	platform_device_unregister(fme_br->br);
-+}
-+
-+/**
-+ * fpga_fme_destroy_bridge - destroy all fpga bridge platform device
-+ * @pdata: fme platform device's pdata
-+ */
-+static void fpga_fme_destroy_bridges(struct feature_platform_data *pdata)
-+{
-+	struct fpga_fme *priv = fpga_pdata_get_private(pdata);
-+	struct fme_bridge *fbridge, *tmp;
-+
-+	list_for_each_entry_safe(fbridge, tmp, &priv->bridge_list, node) {
-+		list_del(&fbridge->node);
-+		fpga_fme_destroy_bridge(fbridge);
-+	}
-+}
-+
-+/**
-+ * fpga_fme_create_region - create fpga region platform device as child
-+ *
-+ * @pdata: fme platform device's pdata
-+ * @mgr: mgr platform device needed for region
-+ * @br: br platform device needed for region
-+ * @port_id: port id
-+ *
-+ * Return: fme region if successful, and error code otherwise.
-+ */
-+static struct fme_region *
-+fpga_fme_create_region(struct feature_platform_data *pdata,
-+		       struct platform_device *mgr,
-+		       struct platform_device *br, int port_id)
-+{
-+	struct device *dev = &pdata->dev->dev;
-+	struct fme_region_pdata region_pdata;
-+	struct fme_region *fme_region;
-+	int ret = -ENOMEM;
-+
-+	fme_region = devm_kzalloc(dev, sizeof(*fme_region), GFP_KERNEL);
-+	if (!fme_region)
-+		return ERR_PTR(ret);
-+
-+	region_pdata.mgr = mgr;
-+	region_pdata.br = br;
-+
-+	/*
-+	 * Each FPGA device may have more than one port, so allocate platform
-+	 * device using the same port platform device id.
-+	 */
-+	fme_region->region = platform_device_alloc(FPGA_DFL_FME_REGION, br->id);
-+	if (!fme_region->region)
-+		return ERR_PTR(ret);
-+
-+	fme_region->region->dev.parent = dev;
-+
-+	ret = platform_device_add_data(fme_region->region, &region_pdata,
-+				       sizeof(region_pdata));
-+	if (ret)
-+		goto create_region_err;
-+
-+	ret = platform_device_add(fme_region->region);
-+	if (ret)
-+		goto create_region_err;
-+
-+	fme_region->port_id = port_id;
-+
-+	return fme_region;
-+
-+create_region_err:
-+	platform_device_put(fme_region->region);
-+	return ERR_PTR(ret);
-+}
-+
-+/**
-+ * fpga_fme_destroy_region - destroy fme region
-+ * @fme_region: fme region to destroy
-+ */
-+static void fpga_fme_destroy_region(struct fme_region *fme_region)
-+{
-+	platform_device_unregister(fme_region->region);
-+}
-+
-+/**
-+ * fpga_fme_destroy_regions - destroy all fme regions
-+ * @pdata: fme platform device's pdata
-+ */
-+static void fpga_fme_destroy_regions(struct feature_platform_data *pdata)
-+{
-+	struct fpga_fme *priv = fpga_pdata_get_private(pdata);
-+	struct fme_region *fme_region, *tmp;
-+
-+	list_for_each_entry_safe(fme_region, tmp, &priv->region_list, node) {
-+		list_del(&fme_region->node);
-+		fpga_fme_destroy_region(fme_region);
-+	}
-+}
-+
-+static int pr_mgmt_init(struct platform_device *pdev, struct feature *feature)
-+{
-+	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	void __iomem *fme_hdr;
-+	struct platform_device *mgr;
-+	struct fme_region *fme_region;
-+	struct fme_bridge *fme_br;
-+	struct fpga_fme *priv;
-+	int ret = -ENODEV, i = 0;
-+	u64 fme_cap, port_offset;
-+
-+	fme_hdr = get_feature_ioaddr_by_id(&pdev->dev,
-+					   FME_FEATURE_ID_HEADER);
-+
-+	mutex_lock(&pdata->lock);
-+	priv = fpga_pdata_get_private(pdata);
-+
-+	/* Initialize the region and bridge sub device list */
-+	INIT_LIST_HEAD(&priv->region_list);
-+	INIT_LIST_HEAD(&priv->bridge_list);
-+
-+	/* Create fpga mgr platform device */
-+	mgr = fpga_fme_create_mgr(pdata);
-+	if (IS_ERR(mgr)) {
-+		dev_err(&pdev->dev, "fail to create fpga mgr pdev\n");
-+		goto unlock;
-+	}
-+
-+	priv->mgr = mgr;
-+
-+	/* Read capability register to check number of regions and bridges */
-+	fme_cap = readq(fme_hdr + FME_HDR_CAP);
-+	for (; i < FIELD_GET(FME_CAP_NUM_PORTS, fme_cap); i++) {
-+		port_offset = readq(fme_hdr + FME_HDR_PORT_OFST(i));
-+		if (!(port_offset & FME_PORT_OFST_IMP))
-+			continue;
-+
-+		/* Create bridge for each port */
-+		fme_br = fpga_fme_create_bridge(pdata, i);
-+		if (IS_ERR(fme_br)) {
-+			ret = PTR_ERR(fme_br);
-+			goto destroy_region;
-+		}
-+
-+		list_add(&fme_br->node, &priv->bridge_list);
-+
-+		/* Create region for each port */
-+		fme_region = fpga_fme_create_region(pdata, mgr, fme_br->br, i);
-+		if (!fme_region) {
-+			ret = PTR_ERR(fme_region);
-+			goto destroy_region;
-+		}
-+
-+		list_add(&fme_region->node, &priv->region_list);
-+	}
-+	mutex_unlock(&pdata->lock);
-+
-+	return 0;
-+
-+destroy_region:
-+	fpga_fme_destroy_regions(pdata);
-+	fpga_fme_destroy_bridges(pdata);
-+	fpga_fme_destroy_mgr(pdata);
-+unlock:
-+	mutex_unlock(&pdata->lock);
-+	return ret;
-+}
-+
-+static void pr_mgmt_uinit(struct platform_device *pdev, struct feature *feature)
-+{
-+	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	struct fpga_fme *priv;
-+
-+	mutex_lock(&pdata->lock);
-+	priv = fpga_pdata_get_private(pdata);
-+
-+	fpga_fme_destroy_regions(pdata);
-+	fpga_fme_destroy_bridges(pdata);
-+	fpga_fme_destroy_mgr(pdata);
-+	mutex_unlock(&pdata->lock);
-+}
-+
-+static long fme_pr_ioctl(struct platform_device *pdev, struct feature *feature,
-+			 unsigned int cmd, unsigned long arg)
-+{
-+	long ret;
-+
-+	switch (cmd) {
-+	case FPGA_FME_PORT_PR:
-+		ret = fme_pr(pdev, arg);
-+		break;
-+	default:
-+		ret = -ENODEV;
-+	}
-+
-+	return ret;
-+}
-+
-+const struct feature_ops pr_mgmt_ops = {
-+	.init = pr_mgmt_init,
-+	.uinit = pr_mgmt_uinit,
-+	.ioctl = fme_pr_ioctl,
-+};
-diff --git a/drivers/fpga/dfl-fme-pr.h b/drivers/fpga/dfl-fme-pr.h
-new file mode 100644
-index 0000000..11bd001
---- /dev/null
-+++ b/drivers/fpga/dfl-fme-pr.h
-@@ -0,0 +1,113 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Header file for FPGA Management Engine (FME) Partial Reconfiguration Driver
-+ *
-+ * Copyright (C) 2017 Intel Corporation, Inc.
-+ *
-+ * Authors:
-+ *   Kang Luwei <luwei.kang@intel.com>
-+ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-+ *   Wu Hao <hao.wu@intel.com>
-+ *   Joseph Grecco <joe.grecco@intel.com>
-+ *   Enno Luebbers <enno.luebbers@intel.com>
-+ *   Tim Whisonant <tim.whisonant@intel.com>
-+ *   Ananda Ravuri <ananda.ravuri@intel.com>
-+ *   Henry Mitchel <henry.mitchel@intel.com>
-+ */
-+
-+#ifndef __DFL_FME_PR_H
-+#define __DFL_FME_PR_H
-+
-+#include <linux/platform_device.h>
-+
-+/**
-+ * struct fme_region - FME fpga region data structure
-+ *
-+ * @region: platform device of the FPGA region.
-+ * @node: used to link fme_region to a list.
-+ * @port_id: indicate which port this region connected to.
-+ */
-+struct fme_region {
-+	struct platform_device *region;
-+	struct list_head node;
-+	int port_id;
-+};
-+
-+/**
-+ * struct fme_region_pdata - platform data for FME region platform device.
-+ *
-+ * @mgr: platform device of the FPGA manager.
-+ * @br: platform device of the FPGA bridge.
-+ * @region_id: region id (same as port_id).
-+ */
-+struct fme_region_pdata {
-+	struct platform_device *mgr;
-+	struct platform_device *br;
-+	int region_id;
-+};
-+
-+/**
-+ * struct fme_bridge - FME fpga bridge data structure
-+ *
-+ * @br: platform device of the FPGA bridge.
-+ * @node: used to link fme_bridge to a list.
-+ */
-+struct fme_bridge {
-+	struct platform_device *br;
-+	struct list_head node;
-+};
-+
-+/**
-+ * struct fme_bridge_pdata - platform data for FME bridge platform device.
-+ *
-+ * @port: platform device of the port feature dev.
-+ */
-+struct fme_br_pdata {
-+	struct platform_device *port;
-+};
-+
-+#define FPGA_DFL_FME_MGR	"dfl-fme-mgr"
-+#define FPGA_DFL_FME_BRIDGE	"dfl-fme-bridge"
-+#define FPGA_DFL_FME_REGION	"dfl-fme-region"
-+
-+/* FME Partial Reconfiguration Sub Feature Register Set */
-+#define FME_PR_DFH		0x0
-+#define FME_PR_CTRL		0x8
-+#define FME_PR_STS		0x10
-+#define FME_PR_DATA		0x18
-+#define FME_PR_ERR		0x20
-+#define FME_PR_INTFC_ID_H	0xA8
-+#define FME_PR_INTFC_ID_L	0xB0
-+
-+/* FME PR Control Register Bitfield */
-+#define FME_PR_CTRL_PR_RST	BIT(0)  /* Reset PR engine */
-+#define FME_PR_CTRL_PR_RSTACK	BIT(4)  /* Ack for PR engine reset */
-+#define FME_PR_CTRL_PR_RGN_ID	GENMASK_ULL(9, 7)       /* PR Region ID */
-+#define FME_PR_CTRL_PR_START	BIT(12) /* Start to request for PR service */
-+#define FME_PR_CTRL_PR_COMPLETE	BIT(13) /* PR data push complete notification */
-+
-+/* FME PR Status Register Bitfield */
-+/* Number of available entries in HW queue inside the PR engine. */
-+#define FME_PR_STS_PR_CREDIT	GENMASK_ULL(8, 0)
-+#define FME_PR_STS_PR_STS	BIT(16) /* PR operation status */
-+#define FME_PR_STS_PR_STS_IDLE	0
-+#define FME_PR_STS_PR_CTRLR_STS	GENMASK_ULL(22, 20)     /* Controller status */
-+#define FME_PR_STS_PR_HOST_STS	GENMASK_ULL(27, 24)     /* PR host status */
-+
-+/* FME PR Data Register Bitfield */
-+/* PR data from the raw-binary file. */
-+#define FME_PR_DATA_PR_DATA_RAW	GENMASK_ULL(32, 0)
-+
-+/* FME PR Error Register */
-+/* PR Operation errors detected. */
-+#define FME_PR_ERR_OPERATION_ERR	BIT(0)
-+/* CRC error detected. */
-+#define FME_PR_ERR_CRC_ERR		BIT(1)
-+/* Incompatible PR bitstream detected. */
-+#define FME_PR_ERR_INCOMPATIBLE_BS	BIT(2)
-+/* PR data push protocol violated. */
-+#define FME_PR_ERR_PROTOCOL_ERR		BIT(3)
-+/* PR data fifo overflow error detected */
-+#define FME_PR_ERR_FIFO_OVERFLOW	BIT(4)
-+
-+#endif /* __DFL_FME_PR_H */
-diff --git a/drivers/fpga/dfl-fme.h b/drivers/fpga/dfl-fme.h
-new file mode 100644
-index 0000000..c8bd48a
---- /dev/null
-+++ b/drivers/fpga/dfl-fme.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Header file for FPGA Management Engine (FME) Driver
-+ *
-+ * Copyright (C) 2017 Intel Corporation, Inc.
-+ *
-+ * Authors:
-+ *   Kang Luwei <luwei.kang@intel.com>
-+ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-+ *   Wu Hao <hao.wu@intel.com>
-+ *   Joseph Grecco <joe.grecco@intel.com>
-+ *   Enno Luebbers <enno.luebbers@intel.com>
-+ *   Tim Whisonant <tim.whisonant@intel.com>
-+ *   Ananda Ravuri <ananda.ravuri@intel.com>
-+ *   Henry Mitchel <henry.mitchel@intel.com>
-+ */
-+
-+#ifndef __DFL_FME_H
-+#define __DFL_FME_H
-+
-+/**
-+ * struct fpga_fme - fpga fme private data
-+ *
-+ * @mgr: FME's FPGA manager platform device.
-+ * @region_list: link list of FME's FPGA regions.
-+ * @bridge_list: link list of FME's FPGA bridges.
-+ * @pdata: fme platform device's pdata.
-+ */
-+struct fpga_fme {
-+	struct platform_device *mgr;
-+	struct list_head region_list;
-+	struct list_head bridge_list;
-+	struct feature_platform_data *pdata;
-+};
-+
-+extern const struct feature_ops pr_mgmt_ops;
-+
-+#endif /* __DFL_FME_H */
+ 	switch (cmd) {
++	case FPGA_GET_API_VERSION:
++		return FPGA_API_VERSION;
++	case FPGA_CHECK_EXTENSION:
++		return fme_ioctl_check_extension(pdata, arg);
+ 	default:
+ 		/*
+ 		 * Let sub-feature's ioctl function to handle the cmd
 diff --git a/include/uapi/linux/fpga-dfl.h b/include/uapi/linux/fpga-dfl.h
-index 9321ee9..50ee831 100644
---- a/include/uapi/linux/fpga-dfl.h
+new file mode 100644
+index 0000000..9321ee9
+--- /dev/null
 +++ b/include/uapi/linux/fpga-dfl.h
-@@ -14,6 +14,8 @@
- #ifndef _UAPI_LINUX_FPGA_DFL_H
- #define _UAPI_LINUX_FPGA_DFL_H
- 
-+#include <linux/types.h>
-+
- #define FPGA_API_VERSION 0
- 
- /*
-@@ -26,6 +28,7 @@
- #define FPGA_MAGIC 0xB6
- 
- #define FPGA_BASE 0
-+#define FME_BASE 0x80
- 
- /**
-  * FPGA_GET_API_VERSION - _IO(FPGA_MAGIC, FPGA_BASE + 0)
-@@ -45,4 +48,28 @@
- 
- #define FPGA_CHECK_EXTENSION	_IO(FPGA_MAGIC, FPGA_BASE + 1)
- 
-+/* IOCTLs for FME file descriptor */
-+
-+/**
-+ * FPGA_FME_PORT_PR - _IOW(FPGA_MAGIC, FME_BASE + 0, struct fpga_fme_port_pr)
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Header File for FPGA DFL User API
 + *
-+ * Driver does Partial Reconfiguration based on Port ID and Buffer (Image)
-+ * provided by caller.
-+ * Return: 0 on success, -errno on failure.
-+ * If FPGA_FME_PORT_PR returns -EIO, that indicates the HW has detected
-+ * some errors during PR, under this case, the user can fetch HW error info
-+ * from the status of FME's fpga manager.
++ * Copyright (C) 2017 Intel Corporation, Inc.
++ *
++ * Authors:
++ *   Kang Luwei <luwei.kang@intel.com>
++ *   Zhang Yi <yi.z.zhang@intel.com>
++ *   Wu Hao <hao.wu@intel.com>
++ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
 + */
 +
-+struct fpga_fme_port_pr {
-+	/* Input */
-+	__u32 argsz;		/* Structure length */
-+	__u32 flags;		/* Zero for now */
-+	__u32 port_id;
-+	__u32 buffer_size;
-+	__u64 buffer_address;	/* Userspace address to the buffer for PR */
-+};
++#ifndef _UAPI_LINUX_FPGA_DFL_H
++#define _UAPI_LINUX_FPGA_DFL_H
 +
-+#define FPGA_FME_PORT_PR	_IO(FPGA_MAGIC, FME_BASE + 0)
++#define FPGA_API_VERSION 0
 +
- #endif /* _UAPI_LINUX_FPGA_DFL_H */
++/*
++ * The IOCTL interface for DFL based FPGA is designed for extensibility by
++ * embedding the structure length (argsz) and flags into structures passed
++ * between kernel and userspace. This design referenced the VFIO IOCTL
++ * interface (include/uapi/linux/vfio.h).
++ */
++
++#define FPGA_MAGIC 0xB6
++
++#define FPGA_BASE 0
++
++/**
++ * FPGA_GET_API_VERSION - _IO(FPGA_MAGIC, FPGA_BASE + 0)
++ *
++ * Report the version of the driver API.
++ * Return: Driver API Version.
++ */
++
++#define FPGA_GET_API_VERSION	_IO(FPGA_MAGIC, FPGA_BASE + 0)
++
++/**
++ * FPGA_CHECK_EXTENSION - _IO(FPGA_MAGIC, FPGA_BASE + 1)
++ *
++ * Check whether an extension is supported.
++ * Return: 0 if not supported, otherwise the extension is supported.
++ */
++
++#define FPGA_CHECK_EXTENSION	_IO(FPGA_MAGIC, FPGA_BASE + 1)
++
++#endif /* _UAPI_LINUX_FPGA_DFL_H */
 -- 
 2.7.4
 
