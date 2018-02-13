@@ -1,65 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934250AbeBMKCs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:02:48 -0500
-Received: from mga12.intel.com ([192.55.52.136]:41165 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933691AbeBMKBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:01:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
-   d="scan'208";a="30353526"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        "open list\:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, tcharding <me@tobin.cc>
-Subject: Re: [PATCH 5/8] docs: kernel-doc: Move STATE_BODY processing to a separate function
-In-Reply-To: <CA+55aFwULB0-ALeQP9jsbW0qbAkiSPnDw3smJEiZqU+VV=QrBg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180207172624.24555-1-corbet@lwn.net> <20180207172624.24555-6-corbet@lwn.net> <877erma4oy.fsf@intel.com> <CA+55aFwULB0-ALeQP9jsbW0qbAkiSPnDw3smJEiZqU+VV=QrBg@mail.gmail.com>
-Date: Tue, 13 Feb 2018 12:01:43 +0200
-Message-ID: <87y3jxky2g.fsf@intel.com>
+        id S934434AbeBMKEI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:04:08 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60211 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933877AbeBMKEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:04:00 -0500
+Date: Tue, 13 Feb 2018 02:03:51 -0800
+From: tip-bot for Yang Shi <tipbot@zytor.com>
+Message-ID: <tip-bd9dcd046509cd5355605e43791eacee8bf5e40f@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, yang.shi@linux.alibaba.com,
+        hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
+Reply-To: yang.shi@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <1517872708-24207-2-git-send-email-yang.shi@linux.alibaba.com>
+References: <1517872708-24207-2-git-send-email-yang.shi@linux.alibaba.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:core/debugobjects] debugobjects: Export max loops counter
+Git-Commit-ID: bd9dcd046509cd5355605e43791eacee8bf5e40f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 09 Feb 2018, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Fri, Feb 9, 2018 at 1:32 AM, Jani Nikula <jani.nikula@linux.intel.com> wrote:
->>> +     # miguel-style comment kludge, look for blank lines after
->>> +     # @parameter line to signify start of description
->>
->> The "miguel-style" always intrigued me, but its origin predates git
->> history. Does anyone know?
->
-> It came with the original script in 2.3.52-pre1, somewhere around March 2000.
->
-> (Historical footnote: there was no actual 2.3.52 ever released - it
-> was supposed turn into 2.4, but there was a long line of 2.3.99-pre
-> kernels before that then finally happened early 2001).
->
-> But no, back then we didn't track things well enough to have an actual
-> reason. And even with git, we probably wouldn't have had a reason
-> since it came in the initial patch.
->
-> You'd have to go search emails if you really care. That "around March
-> 2000" would at least give you a starting point for searches.
+Commit-ID:  bd9dcd046509cd5355605e43791eacee8bf5e40f
+Gitweb:     https://git.kernel.org/tip/bd9dcd046509cd5355605e43791eacee8bf5e40f
+Author:     Yang Shi <yang.shi@linux.alibaba.com>
+AuthorDate: Tue, 6 Feb 2018 07:18:25 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 13 Feb 2018 10:58:58 +0100
 
-Thanks for the background digging! I had a cursory look at the list
-archives, nothing much jumped at me but I found that the script was
-originally called gdoc. A little googling revealed that other forks of
-the script predating inclusion to the kernel also included the comment.
+debugobjects: Export max loops counter
 
-I'll bet whoever added that didn't think someone would wonder about it
-two decades later.
+__debug_check_no_obj_freed() can be an expensive operation depending on the
+size of memory freed. It already exports the maximum chain walk length via
+debugfs, but this only records the maximum of a single memory chunk.
 
-BR,
-Jani.
+Though there is no information about the total number of objects inspected
+for a __debug_check_no_obj_freed() operation, which might be significantly
+larger when a huge memory region is freed.
 
--- 
-Jani Nikula, Intel Open Source Technology Center
+Aggregate the number of objects inspected for a single invocation of
+__debug_check_no_obj_freed() and export it via sysfs.
+
+The resulting output of /sys/kernel/debug/debug_objects/stats looks like:
+
+max_chain     :121
+max_checked   :543267
+warnings      :0
+fixups        :0
+pool_free     :1764
+pool_min_free :341
+pool_used     :86438
+pool_max_used :268887
+objs_allocated:6068254
+objs_freed    :5981076
+
+[ tglx: Renamed the variable to max_checked and adjusted changelog ]
+
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: longman@redhat.com
+Link: https://lkml.kernel.org/r/1517872708-24207-2-git-send-email-yang.shi@linux.alibaba.com
+
+---
+ lib/debugobjects.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 2f5349c..f6d57a1 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -50,6 +50,7 @@ static int			obj_pool_max_used;
+ static struct kmem_cache	*obj_cache;
+ 
+ static int			debug_objects_maxchain __read_mostly;
++static int			debug_objects_maxchecked __read_mostly;
+ static int			debug_objects_fixups __read_mostly;
+ static int			debug_objects_warnings __read_mostly;
+ static int			debug_objects_enabled __read_mostly
+@@ -720,7 +721,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 	enum debug_obj_state state;
+ 	struct debug_bucket *db;
+ 	struct debug_obj *obj;
+-	int cnt;
++	int cnt, objs_checked = 0;
+ 
+ 	saddr = (unsigned long) address;
+ 	eaddr = saddr + size;
+@@ -765,7 +766,12 @@ repeat:
+ 
+ 		if (cnt > debug_objects_maxchain)
+ 			debug_objects_maxchain = cnt;
++
++		objs_checked += cnt;
+ 	}
++
++	if (objs_checked > debug_objects_maxchecked)
++		debug_objects_maxchecked = objs_checked;
+ }
+ 
+ void debug_check_no_obj_freed(const void *address, unsigned long size)
+@@ -780,6 +786,7 @@ void debug_check_no_obj_freed(const void *address, unsigned long size)
+ static int debug_stats_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "max_chain     :%d\n", debug_objects_maxchain);
++	seq_printf(m, "max_checked   :%d\n", debug_objects_maxchecked);
+ 	seq_printf(m, "warnings      :%d\n", debug_objects_warnings);
+ 	seq_printf(m, "fixups        :%d\n", debug_objects_fixups);
+ 	seq_printf(m, "pool_free     :%d\n", obj_pool_free);
