@@ -1,118 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934221AbeBMPqM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:46:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:59646 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751465AbeBMPqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:46:11 -0500
-Date: Tue, 13 Feb 2018 15:46:08 +0000
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
-        dri-devel@lists.freedesktop.org, Peter Wu <peter@lekensteyn.nl>,
-        nouveau@lists.freedesktop.org, Lyude Paul <lyude@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Pierre Moreau <pierre.morrow@free.fr>, linux-kernel@vger.kernel.org,
-        Ismo Toijala <ismo.toijala@gmail.com>, intel-gfx@lists.freedesktop.org,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
-Message-ID: <20180213154608.GI9111@e110455-lin.cambridge.arm.com>
-References: <cover.1518338788.git.lukas@wunner.de>
- <20180213105506.GF9111@e110455-lin.cambridge.arm.com>
- <20180213115206.GA16075@wunner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180213115206.GA16075@wunner.de>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S934110AbeBMPr5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:47:57 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:31028 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933594AbeBMPrz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:47:55 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180213154753epoutp037e51bfc09e5d0c37eec2d1f7f69925a7~S7T2jBFTR2594625946epoutp03g
+X-AuditID: b6c32a37-44bff70000001029-85-5a8308a8c8df
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: axboe@kernel.dk, axboe@fb.com, linux-nvme@lists.infradead.org,
+        nj.shetty@samsung.com, joshi.k@samsung.com
+Subject: [PATCH v3] blk: optimization for classic polling
+Date: Tue, 13 Feb 2018 21:18:12 +0530
+Message-id: <1518536892-2051-1-git-send-email-nj.shetty@samsung.com>
+X-Mailer: git-send-email 2.7.4
+In-reply-to: <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsWy7bCmvu4KjuYogwsnhSz+7znGZrH6bj+b
+        xdH/b9ks9t7Stri8aw6bxfxlT9kttv2ez+zA7jGx+R27x+WzpR6bl9R79G1ZxejxeZNcAGsU
+        l01Kak5mWWqRvl0CV8bL59eZC/6yV0xe9IulgfEMWxcjJ4eEgInE5okdzF2MXBxCAjsYJTbO
+        uccG4XxnlFgzcRYzTNXEx5ehqjYwSjzfvRSqqp1J4t2fi+xdjBwcbALaEqf/c4A0iAjYSsw9
+        do0FJMwskC/xdZEYSFhYwFJiT/d9FhCbRUBVov/hRzCbV8BFou9gIyPELjmJm+c6wfZyCrhK
+        /HnbCbZXQqCDTeLn2tNQZ7tIfNrwkx3CFpZ4dXwL2AkSAtISl47aQtR3M0rcaF0NNXQKo8SM
+        ufoQtr3ExT1/mUBsZgE+iXdfe1ghenklOtqEIEo8JPa8fcMEYTtKbHp1kRXi3RmMEm0zNjBN
+        YJRawMiwilEstaA4Nz212LDAWK84Mbe4NC9dLzk/dxMjOBq1zHcwbjjnc4hRgINRiYeX421T
+        lBBrYllxZe4hRgkOZiUR3oT7QCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8AQEuUUIC6Yklqdmp
+        qQWpRTBZJg5OqQZGx5eNr8JlZrRxyCaxCuVLPt6gH5j39pPyhfScYzu9jkx7c8xlZ+CML1fv
+        ZfWH3Tqx4wbzgYh6/URL7yqXy6H3zQxzQhJY1tyNUT/S98X+h338JYHrB9VZEoOj1A+HL3Lc
+        MLH39RSF3llvZkRcnMGxKiraMXUnh/4BCYHjnrFHco6cz2Avf6GsxFKckWioxVxUnAgAOxo+
+        usICAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgluLIzCtJLcpLzFFi42I5/e+xoO4KjuYog2NHmC3+7znGZrH6bj+b
+        xdH/b9ks9t7Stri8aw6bxfxlT9kttv2ez+zA7jGx+R27x+WzpR6bl9R79G1ZxejxeZNcAGsU
+        l01Kak5mWWqRvl0CV8bL59eZC/6yV0xe9IulgfEMWxcjJ4eEgInExMeXmbsYuTiEBNYxSpw5
+        dpcVwulkkrj36TZQFQcHm4C2xOn/HCANIgK2EnOPXWMBsZkF8iW6fnxgArGFBSwl9nTfB4uz
+        CKhK9D/8CGbzCrhI9B1sZIRYJidx81wnM4jNKeAq8ecthC0EVHNifRPrBEaeBYwMqxglUwuK
+        c9Nzi40KDPNSy/WKE3OLS/PS9ZLzczcxAsNn22Gtvh2M95fEH2IU4GBU4uHd8KopSog1say4
+        MvcQowQHs5IIb8J9oBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe23nHIoUE0hNLUrNTUwtSi2Cy
+        TBycUg2MC48eFjr2n4sjYJOXm/e8VTyy5zamX1Cd76Dy6+LjH1OM72Ut3tD9YefXP5Zzftaz
+        bJFc9eL5l2mfzm6qXxmc4/HbKmJ55Gvu1TuSfIOP7fr9boHX1S8PF6+LLlX74nvX5Yi66vrv
+        XBWxRtP1mXa/mleR2l3DJHRAnUM1RCj4dsrnypcaF041GymxFGckGmoxFxUnAgA1+pH6GwIA
+        AA==
+X-CMS-MailID: 20180213154752epcas1p35e3c13d150d2108a06342781ec5e64d7
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180213154752epcas1p35e3c13d150d2108a06342781ec5e64d7
+X-RootMTR: 20180213154752epcas1p35e3c13d150d2108a06342781ec5e64d7
+References: <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
+        <CGME20180213154752epcas1p35e3c13d150d2108a06342781ec5e64d7@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 12:52:06PM +0100, Lukas Wunner wrote:
-> On Tue, Feb 13, 2018 at 10:55:06AM +0000, Liviu Dudau wrote:
-> > On Sun, Feb 11, 2018 at 10:38:28AM +0100, Lukas Wunner wrote:
-> > > DRM drivers poll connectors in 10 sec intervals.  The poll worker is
-> > > stopped on ->runtime_suspend with cancel_delayed_work_sync().  However
-> > > the poll worker invokes the DRM drivers' ->detect callbacks, which call
-> > > pm_runtime_get_sync().  If the poll worker starts after runtime suspend
-> > > has begun, pm_runtime_get_sync() will wait for runtime suspend to finish
-> > > with the intention of runtime resuming the device afterwards.  The result
-> > > is a circular wait between poll worker and autosuspend worker.
-> > 
-> > I think I understand the problem you are trying to solve, but I'm
-> > struggling to understand where malidp makes any specific mistakes. First
-> > of all, malidp is only a display engine, so there is no GPU attached to
-> > it, but that is only a small clarification. Second, malidp doesn't use
-> > directly any of the callbacks that you are referring to, it uses the
-> > drm_cma_xxxx() API plus the generic drm_xxxx() call. So if there are any
-> > issues there (as they might well be) I think they would apply to a lot
-> > more drivers and the fix will involve more than just malidp, i915 and
-> > msm.
-> 
-> I don't know if malidp makes any specific mistakes and didn't mean to
-> cast it in a negative light, sorry.
+This removes the dependency on interrupts to wake up task. Set task
+state as TASK_RUNNING, if need_resched() returns true,
+while polling for IO completion.
+Earlier, polling task used to sleep, relying on interrupt to wake it up.
+This made some IO take very long when interrupt-coalescing is enabled in
+NVMe.
 
-I did not take what you've said as a negative thing, only wanted to
-understand how you came to your conclusions.
+Reference:
+http://lists.infradead.org/pipermail/linux-nvme/2018-February/015435.html
 
-> 
-> So a lot of DRM drivers acquire a runtime PM ref in the connector ->detect
-> hook because they can't probe connectors while runtime suspended.
-> E.g. for a PCI device, probing might require mmio access, which isn't
-> possible outside of power state D0.  There are no ->detect hooks declared
-> in drivers/gpu/drm/arm/, so it's unclear to me whether you're able to probe
-> during runtime suspend.
+Changes since v2->v3:
+	-using __set_current_state() instead of set_current_state()
 
-That's because the drivers in drivers/gpu/drm/arm do not have
-connectors, they are only the CRTC part of the driver. Both hdlcd and
-mali-dp use the component framework to locate an encoder in device tree
-that will then provide the connectors.
+Changes since v1->v2:
+	-setting task state once in blk_poll, instead of multiple
+callers.
+Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+---
+ block/blk-mq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> hdlcd_drv.c and malidp_drv.c both enable output polling.  Output polling
-> is only necessary if you don't get HPD interrupts.
-
-That's right, hdlcd and mali-dp don't receive HPD interrupts because
-they don't have any. And because we don't know ahead of time which
-encoder/connector will be paired with the driver, we enable polling as a
-safe fallback.
-
-> 
-> You're not disabling polling upon runtime suspend.  Thus, if a runtime PM
-> ref is acquired during polling (such as in a ->detect hook), the GPU will
-> be runtime resumed every 10 secs.  You may want to verify that's not the
-> case.  If you decide that you do want to stop polling during runtime
-> suspend because it runtime resumes the GPU continuously, you'll need the
-> helper introduced in this series.  So by cc'ing you I just wanted to keep
-> you in the loop about an issue that may potentially affect your driver.
-
-Again, we have no GPU linked to us and the polling during runtime
-suspend should be handled by the driver for the paired encoder, not by
-us. I understand the potential issue but I'm struggling to understand if
-it really applies to the drivers/gpu/drm/arm drivers other than in an
-abstract way.
-
-Best regards,
-Liviu
-
-> 
-> Let me know if there are any questions.
-> 
-> Thanks,
-> 
-> Lukas
-
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index df93102..3574927 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3164,6 +3164,7 @@ static bool __blk_mq_poll(struct blk_mq_hw_ctx *hctx, struct request *rq)
+ 		cpu_relax();
+ 	}
+ 
++	__set_current_state(TASK_RUNNING);
+ 	return false;
+ }
+ 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.7.4
