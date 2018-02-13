@@ -1,157 +1,164 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2131322-1518463967-2-2752616405163366747
+X-Cyrus-Session-Id: sloti22d1t05-3210981-1518498292-2-5602264492318142570
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518463966; b=CD1bM5OV0aKgDg/OPjlnBPaIdTNpS+h5LzyzBV9NM5SJ13B
-    DoY7AFPZKzR/Bhs1H6g9/zSD1NcCQI9Lwm+dSDBJ0UEMKH2RwQ24FEL3VI5jvNWn
-    TR/15adipWTlvWoFDWdQ2c+2vKHUAEqTzsXRvG5cjW2qm3hm4bYhQewF3AqTv7an
-    HN+utpIm2vnXCY08MFB5EYV11qJU0f86aT6jIfLcF6GDzsWoZ2RtiLvZ1LYLyZtK
-    ILAyfMz+wgGN92HYaoodWxaCORfYl1x3d8+eEFAnCsdvClX9jCdRhOVmgTVXrnOJ
-    hv7C0GOrk1qm5qERtaZFMaM+sHgH5bT5iuYIjaA==
+    t=1518498291; b=MHVA8qOegm4dQ3jVaD9B7q1iKP1vd41sIqp2B/JxvEnhuvr
+    bAH5/oiem9Vh3R9Ck6z+LkTwQV2y5WvIap6msglsjHGtI03SRhUnn9lkyTS/5lo2
+    MY+nCa8iU/EWOfLOlDlr6+csSnuClq65EVIe2uj3XKM9VQg1+pMhnG8tq69LhX0A
+    ORSRVfEjzPhXPRKclfLWr04eN2rUPPXGXk0bHsDAw9nLCwtWjEoOfvJu2XcpZJu2
+    4ak2IG8WI1/WDPjozWBHVev1GKqTEZ/lrCGFemdHDDWB6CD2/hcGho3tnHkAXayx
+    Q5odExtQauypQnMPMoJ+ZIk5yzsWWgzBsDLi+kA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1518463966; bh=c3PaerMNI2FB4MXZt5Hmeh5VPLDKNxIhsqXJXbx+Umc=; b=t
-    3hzQdTMKpv+yrEwwyfgGYNRm+UTDGPLcc27vFPzQyjyw7nS4X9MIhIyURecJLJPX
-    nfGb4WP/ECKBJ80n3CT73UFFU+jM6faY+n1DiZYDVpm2FcWhZiuT9aeu2Q+pnh75
-    wK204pISW3e63a+sdF3mVbeKbr5d7Qs6q7ZJmEOwY+cPkDReD/6nI7DFyZyqdnDB
-    zEAlH7l+9dv5Ar2P0fiv6uDYCx4JSLAzkNCmortWL3yD7ATHQIGezBnQ7sk0r3nR
-    S8sMfTpJP2fNWNVESoT9qipGDjVWrPcu3qy0lTH1o1nFHw5xLjwArGn8r8KzlM67
-    aLsB5fwWhkhWmUmlWzU+A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mi1eJS/H x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=date:message-id:from:to:cc:subject
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518498291; bh=Nankpsxolo5dZO8twaWpKWtk3N
+    ybUf6pWcwNvKjQDCk=; b=LHvOoDz5HknQn1x4oRMoocGditdqc2ckRQ3KzG9M4I
+    j8q357Eq32TfW5SXmeIphnmfpuefyl9klN3aXSj8t6IQHajAz3unODF++XUuaplL
+    MMOCgJ4xUYDwrX5VIQk5CCbJNeV56k52muwnUYdfP/H59yLdCUol9z0ogeWx5ri8
+    OF7CxNvmPrcx9t0EPSnt6xiCDtaH7NT8ttCTLVAKpNZwx0SfKT9kRCuOfiIy/Yws
+    2c+1Ze+66eoMe58/AtFn79udRq4W9pBROmCpUDe6eIhx6sLVnzMTfbcPV3ZVcibA
+    rOLJNDNQ5GPv3MpZzJ5e4qwWGi1CCkDo35qLkSzXu5Ag==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Nd/0+61C;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mi1eJS/H x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Nd/0+61C;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750848AbeBLTcp (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Feb 2018 14:32:45 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:56227 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeBLTco (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 12 Feb 2018 14:32:44 -0500
-X-Google-Smtp-Source: AH8x224ia7lpJaFvSVMnWgqiRBH2VTJE57TXdUtCBquASql2rKmpwaQoxDwZEyL+lGqK1JTIoTPkjQ==
-Subject: Re: [PATCH] ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE
- attribute
-To: Takashi Iwai <tiwai@suse.de>
+        id S1751365AbeBMFEt (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 00:04:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56889 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751160AbeBMFEs (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 13 Feb 2018 00:04:48 -0500
+Date: Tue, 13 Feb 2018 06:04:45 +0100
+Message-ID: <s5hk1vh4h02.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Kirill Marinushkin <k.marinushkin@gmail.com>
 Cc: perex@perex.cz, alsa-devel@alsa-project.org,
         Stephen Barber <smbarber@chromium.org>,
         Bhumika Goyal <bhumirks@gmail.com>,
         Jaejoong Kim <climbbb.kim@gmail.com>,
         Julian Scheel <julian@jusst.de>, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE attribute
+In-Reply-To: <120bc0f8-f472-268d-1247-3245ae994fe5@gmail.com>
 References: <20180129053755.20136-1-k.marinushkin@gmail.com>
- <s5hvaf95p4i.wl-tiwai@suse.de>
- <40196230-8f73-4cca-08e5-d67bfbea2d6e@gmail.com>
- <s5hinb2aauh.wl-tiwai@suse.de>
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
-Message-ID: <120bc0f8-f472-268d-1247-3245ae994fe5@gmail.com>
-Date: Mon, 12 Feb 2018 20:32:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-In-Reply-To: <s5hinb2aauh.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        <s5hvaf95p4i.wl-tiwai@suse.de>
+        <40196230-8f73-4cca-08e5-d67bfbea2d6e@gmail.com>
+        <s5hinb2aauh.wl-tiwai@suse.de>
+        <120bc0f8-f472-268d-1247-3245ae994fe5@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello maintainers of <stable@vger.kernel.org>,
+On Mon, 12 Feb 2018 20:32:53 +0100,
+Kirill Marinushkin wrote:
+> 
+> Hello maintainers of <stable@vger.kernel.org>,
+> 
+> 
+> As discussed earlier in this thread, I propose this patch to stable.
+> 
+> It fixes the issue, which exists since v2.6.34.
+
+It's already marked in the applied patch, so you don't need to ping
+stable kernel guys.
 
 
-As discussed earlier in this thread, I propose this patch to stable.
+thanks,
 
-It fixes the issue, which exists since v2.6.34.
+Takashi
 
-
-Best Regards,
-
-Kirill
-
-On 02/12/18 09:08, Takashi Iwai wrote:
-> On Thu, 08 Feb 2018 07:21:36 +0100,
-> Kirill Marinushkin wrote:
->> On 02/07/18 06:45, Takashi Iwai wrote:
->>> On Mon, 29 Jan 2018 06:37:55 +0100,
->>> Kirill Marinushkin wrote:
->>>> The layout of the UAC2 Control request and response varies depending on
->>>> the request type. With the current implementation, only the Layout 2
->>>> Parameter Block (with the 2-byte sized RANGE attribute) is handled
->>>> properly. For the Control requests with the 1-byte sized RANGE attribute
->>>> (Bass Control, Mid Control, Tremble Control), the response is parsed
->>>> incorrectly.
->>>>
->>>> This commit:
->>>> * fixes the wLength field value in the request
->>>> * fixes parsing the range values from the response
->>>>
->>>> Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
->>>> Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
->>>> Cc: Jaroslav Kysela <perex@perex.cz>
->>>> Cc: Takashi Iwai <tiwai@suse.com>
->>>> Cc: Jaejoong Kim <climbbb.kim@gmail.com>
->>>> Cc: Bhumika Goyal <bhumirks@gmail.com>
->>>> Cc: Stephen Barber <smbarber@chromium.org>
->>>> Cc: Julian Scheel <julian@jusst.de>
->>>> Cc: alsa-devel@alsa-project.org
->>>> Cc: linux-kernel@vger.kernel.org
->>> Sorry for the late reply, as I've been (and still) off.
->>>
->>> Does this bug actually hit on any real devices, or is it only a
->>> logical error so far?  In the former case, a Cc to stable is
->>> mandatory.
->>>
->>> In anyway, I'll review and merge it properly once after I back to
->>> work.
->>>
->>>
->>> thanks,
->>>
->>> Takashi
->> Hello Takashi,
->>
->> Thank you for your answer. I will wait until you are back to work, don't 
->> worry about the late replies.
->>
->> I did not hit the issue on a real device.
->>
->> During my UAC2 experiments, I reproduced this issue on the development 
->> board, and then tested my solution on it.
-> OK, if it happened on a development system, it's a real issue, and we
-> should put Cc to stable.  Now I applied the patch.
->
-> Thanks!
->
->
-> Takashi
+> 
+> 
+> Best Regards,
+> 
+> Kirill
+> 
+> On 02/12/18 09:08, Takashi Iwai wrote:
+> > On Thu, 08 Feb 2018 07:21:36 +0100,
+> > Kirill Marinushkin wrote:
+> >> On 02/07/18 06:45, Takashi Iwai wrote:
+> >>> On Mon, 29 Jan 2018 06:37:55 +0100,
+> >>> Kirill Marinushkin wrote:
+> >>>> The layout of the UAC2 Control request and response varies depending on
+> >>>> the request type. With the current implementation, only the Layout 2
+> >>>> Parameter Block (with the 2-byte sized RANGE attribute) is handled
+> >>>> properly. For the Control requests with the 1-byte sized RANGE attribute
+> >>>> (Bass Control, Mid Control, Tremble Control), the response is parsed
+> >>>> incorrectly.
+> >>>>
+> >>>> This commit:
+> >>>> * fixes the wLength field value in the request
+> >>>> * fixes parsing the range values from the response
+> >>>>
+> >>>> Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
+> >>>> Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+> >>>> Cc: Jaroslav Kysela <perex@perex.cz>
+> >>>> Cc: Takashi Iwai <tiwai@suse.com>
+> >>>> Cc: Jaejoong Kim <climbbb.kim@gmail.com>
+> >>>> Cc: Bhumika Goyal <bhumirks@gmail.com>
+> >>>> Cc: Stephen Barber <smbarber@chromium.org>
+> >>>> Cc: Julian Scheel <julian@jusst.de>
+> >>>> Cc: alsa-devel@alsa-project.org
+> >>>> Cc: linux-kernel@vger.kernel.org
+> >>> Sorry for the late reply, as I've been (and still) off.
+> >>>
+> >>> Does this bug actually hit on any real devices, or is it only a
+> >>> logical error so far?  In the former case, a Cc to stable is
+> >>> mandatory.
+> >>>
+> >>> In anyway, I'll review and merge it properly once after I back to
+> >>> work.
+> >>>
+> >>>
+> >>> thanks,
+> >>>
+> >>> Takashi
+> >> Hello Takashi,
+> >>
+> >> Thank you for your answer. I will wait until you are back to work, don't 
+> >> worry about the late replies.
+> >>
+> >> I did not hit the issue on a real device.
+> >>
+> >> During my UAC2 experiments, I reproduced this issue on the development 
+> >> board, and then tested my solution on it.
+> > OK, if it happened on a development system, it's a real issue, and we
+> > should put Cc to stable.  Now I applied the patch.
+> >
+> > Thanks!
+> >
+> >
+> > Takashi
+> 
