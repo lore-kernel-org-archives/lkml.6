@@ -1,48 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965505AbeBMScd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:32:33 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44365 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965365AbeBMSc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:32:28 -0500
-X-Google-Smtp-Source: AH8x225lYy5oSoD4f8bl/aNFhnKA/SvgXzwUEFT84/aUjvL3xVJXkdpbOvJErYBcIlKlxcq/fA2l/Q==
-Date: Tue, 13 Feb 2018 21:32:24 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: kirill.shutemov@linux.intel.com
-Cc: linux-tip-commits@vger.kernel.org, bp@suse.de, luto@amacapital.net,
-        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
-        willy@infradead.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
-Message-ID: <20180213183224.GC17395@uranus.lan>
-References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
- <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+        id S965528AbeBMSdG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:33:06 -0500
+Received: from mout.web.de ([212.227.17.12]:35847 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965365AbeBMSdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 13:33:04 -0500
+To: linux1394-devel@lists.sourceforge.net,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] FireWire-nosy: Adjustments for three function
+ implementations
+Message-ID: <c4e817a2-1554-2480-9469-9d06543b1eee@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 19:32:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:RXWIFPxpYu1B6aMGmPXNMUjH2Noxxx3DkOno6nIe1H82/tbXGTO
+ LZYAG7/t6dFN7SzncsQkoj0LjuSAyHU+tWihM0yOisrIsEeeLhEsBvOz8UsxGBK0IqOvV+D
+ 1dxkgRAJwzhdT0nDCoXx3upPD1l4C6A1lKTZpxhA1z9OdBOa3T6nrkO7RtCUzfrpamKqsXs
+ ONvXIT6fqPSXmYb2Sgl8Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Snb3Wl/vYgY=:jZLGvU7spah3jNAZn1/9L9
+ 9KhV5PzlwfqSNQ5Oi60aDw8LK+Ri7H5t6CJ7Pzs3XOLC/dZ52hTnf/GwSilqcnmSjATGOH5ri
+ YPa92xO8cFzb3Ggpl4SwkXQiCm4dstB7rZNUPHDn2GA7y20ZOCdz6sUbyIufAgsYSrOZpNWTX
+ zDFB0KjFcyqmFQhf5XHBLB2uxY/A+QyXy/GRSubkyip/+zyk+ta6RVwJoZxQ/6qnKTOx4rZd4
+ VI6qr2onlnHqKDGNQMIP4JR9YZxhtzcBNqi2W+WKwEkiVuyBTOuZ0KKQN609XcaAyLUhhhQcm
+ PYkRgLz8qzeCCtCuxej8/aT/CZQmWM8cntvN9JAtaw2ZBdW1pz8gLSMdnsQ9r1EFzTpeWv65M
+ H1UyVGTGPwITtOith+PTNlxTuzy1TcMGNtT0UbRaPKiNHVe8W1mn/SabmjyUrKLDd35/SNR6v
+ 4r2X3mnOtFftK41gauD4RCDtitVTRFLJXveF3crZJ5OHkq96cCvLiLcmvh4l9w6uBtW0Nl2di
+ NIqXDoW2/5jN9PsHXkQ25hnOpZ5aKd8i54y7PXDaaylRHmOHudedYWV0MvK/wleWw4+qy50sJ
+ esjAiMmNXZC1Xsl3En7VgAwrys9FHedzDEaq28nOA7oy93zzHxX06teFiXIAAUDW46gtJA/1G
+ WDKweaurW/DsXiD+f9r3SaEAEFt7hWG+lNimLHbtYbRh6qvJKL7LIVDxKOQ8Of4NJ8KeBDG4a
+ gROSQwT3bqJBr73YUi8tVqM9wh/VQGhpGX/laGgqK0fK+22JXqGKQPt2BEM2Ggpx3F+pSbNp5
+ ybtPfnDwEAt56+3xNvPzICCKYI4d/GsJ1BOhpd9KOQ7nMTnhoY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 04:19:38AM -0800, tip-bot for Kirill A. Shutemov wrote:
-...
-> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-> index d598d65..af9ffbd 100644
-> --- a/arch/x86/boot/compressed/head_64.S
-> +++ b/arch/x86/boot/compressed/head_64.S
-...
-> @@ -586,3 +604,7 @@ pgtable:
->  	.fill BOOT_PGT_SIZE, 1, 0
->  lvl5_pgtable:
->  	.fill PAGE_SIZE, 1, 0
-> +
-> +	.global pgtable_trampoline
-> +pgtable_trampoline:
-> +	.fill 4096, 1, 0
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 19:30:19 +0100
 
-Btw, Kirill, while you're at this code: 4096 might be changed to PAGE_SIZE I think.
-(of course on top of the series, when you have a spare minute, just for polishing)
+Two update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in add_card()
+  Adjust eight checks for null pointers
+
+ drivers/firewire/nosy.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+-- 
+2.16.1
