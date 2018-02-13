@@ -1,71 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965044AbeBMOC5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:02:57 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45151 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964879AbeBMOCz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:02:55 -0500
-X-Google-Smtp-Source: AH8x224K1+QRBY3IeG4Z/TMI/GPlusEd7Duw0Rxopte4J4T/8qJEOJ13guF3HUJHpO8ZlzxpCa5mjQ==
-Date: Tue, 13 Feb 2018 15:02:48 +0100
-From: Ulf Magnusson <ulfalizer@gmail.com>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Hans de Goede <j.w.r.degoede@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH] video: fbdev: kconfig: Add help text to FB_I810_I2C
-Message-ID: <20180213140248.h4yyc77futu74xg7@huvuddator>
-References: <20180131093434.20050-1-ulfalizer@gmail.com>
- <3132455.r9uCTL3ZTk@amdc3058>
- <CAFkk2KQxPnwMKmvhCoKQ0BBciTc5JKqjJqHGHAMR5uHF0w13sg@mail.gmail.com>
- <CGME20180213123147epcas2p2a2bb399e700dacef57a2340afcc0e459@epcas2p2.samsung.com>
- <2836658.i9VlN9LAid@amdc3058>
+        id S965065AbeBMODH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:03:07 -0500
+Received: from 8bytes.org ([81.169.241.247]:38208 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964879AbeBMODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:03:05 -0500
+Date: Tue, 13 Feb 2018 15:03:03 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Ashok Raj <ashok.raj@intel.com>, David Woodhouse <dwmw2@infradead.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>
+Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
+Message-ID: <20180213140303.42mbzfxpypljy37l@8bytes.org>
+References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2836658.i9VlN9LAid@amdc3058>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The FB_I810_I2C symbol previously had a blank help text, which was
-removed in e9829ac4e5fd ("video: fbdev: kconfig: Remove blank help
-text").
+On Fri, Feb 02, 2018 at 04:49:56PM -0800, Sohil Mehta wrote:
+> This series aims to add debugfs support for Intel IOMMU. It exposes IOMMU
+> registers, internal context and dumps individual table entries to help debug
+> Intel IOMMUs.
+> 
+> The first patch does the ground work for the following patches by reorganizing
+> some Intel IOMMU data structures. The following patches create a new Kconfig
+> option - INTEL_IOMMU_DEBUG and add debugfs support for IOMMU context internals,
+> register contents, PASID internals, and Interrupt remapping in that order. The
+> information can be accessed in sysfs at '/sys/kernel/debug/intel_iommu/'.
 
-Give it a proper help text, derived from commit 74f6ae84b23 ("[PATCH]
-i810fb: Add > i2c/DDC support").
+This looks like it only presents data from the iommu-hardware (register
+state) or from in-memory data structures used by the hardware. Can't all
+this be read out from user-space with libpci and /dev/mem access?
 
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
----
-Note: The removal of the blank help text is already in Linus' tree.
+Things are different for kernel-defined data structures, as they might
+change between releases and can be presented to user-space via debugfs
+is needed, but the data structures used by the hardware should be pretty
+stable.
 
- drivers/video/fbdev/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 11e699f1062b..c691f1489bb7 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -1156,6 +1156,11 @@ config FB_I810_I2C
- 	bool "Enable DDC Support"
- 	depends on FB_I810 && FB_I810_GTF
- 	select FB_DDC
-+	help
-+	  Add DDC/I2C support for i810fb.  This will allow the driver to get
-+	  display information, especially for monitors with fickle timings.
-+
-+	  If unsure, say Y.
- 
- config FB_LE80578
- 	tristate "Intel LE80578 (Vermilion) support"
--- 
-2.14.1
+	Joerg
