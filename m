@@ -1,165 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965262AbeBMPPA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:15:00 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46984 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965215AbeBMPOi (ORCPT
+        id S965243AbeBMPQL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:16:11 -0500
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:37971 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965079AbeBMPQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:14:38 -0500
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
-Subject: [PATCH 3/4] perf cpuid: Introduce a platform specfic cpuid compare function
-Date: Tue, 13 Feb 2018 16:14:18 +0100
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180213151419.80737-1-tmricht@linux.vnet.ibm.com>
-References: <20180213151419.80737-1-tmricht@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18021315-0020-0000-0000-000003F53CCE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021315-0021-0000-0000-00004287C8DD
-Message-Id: <20180213151419.80737-3-tmricht@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802130180
+        Tue, 13 Feb 2018 10:16:09 -0500
+X-Google-Smtp-Source: AH8x225z/yXm5W8e3rJVAme6uT6DOe+uXCuRUU8P8j3qD6LGI5CMS9ctiNwUgpJ48CXxoDnZ4FQwKtUnkYDL3+VmwPM=
+MIME-Version: 1.0
+In-Reply-To: <20180213162038-mutt-send-email-mst@kernel.org>
+References: <20180207013525.1634-1-marcandre.lureau@redhat.com>
+ <20180207013525.1634-4-marcandre.lureau@redhat.com> <20180212053104-mutt-send-email-mst@kernel.org>
+ <CAMxuvawozzWQ98WkduM=nWQJMMmagSQuHPZMhOYbGZEG5a2aaQ@mail.gmail.com>
+ <20180212160849-mutt-send-email-mst@kernel.org> <CAMxuvayUh=N3Lc6+ut8Ct5scVyS5dVRP_qDmpX7pCYf60hnQRA@mail.gmail.com>
+ <20180213162038-mutt-send-email-mst@kernel.org>
+From: Marc-Andre Lureau <mlureau@redhat.com>
+Date: Tue, 13 Feb 2018 16:16:08 +0100
+Message-ID: <CAMxuvaxq9boTcJ2uDOJsYyo3=_WYtn1==kuq3QbPygBfVc+8Zw@mail.gmail.com>
+Subject: Re: [PATCH v13 3/4] fw_cfg: write vmcoreinfo details
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function get_cpuid_str() is called by perf_pmu__getcpuid()
-and on s390 returns a complete description of the CPU and its
-capabilities, which is a comma separated list.
+Hi
 
-To map the CPU type with the value defined in the
-pmu-events/arch/s390/mapfile.csv, introduce an architecture
-specific cpuid compare function named strcmp_cpuid_str()
+On Tue, Feb 13, 2018 at 3:27 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Tue, Feb 13, 2018 at 03:14:03PM +0100, Marc-Andre Lureau wrote:
+>> Hi
+>>
+>> On Mon, Feb 12, 2018 at 10:00 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+>> > On Mon, Feb 12, 2018 at 11:04:49AM +0100, Marc-Andre Lureau wrote:
+>> >> >> +}
+>> >> >> +
+>> >> >> +/* qemu fw_cfg device is sync today, but spec says it may become async */
+>> >> >> +static void fw_cfg_wait_for_control(struct fw_cfg_dma *d)
+>> >> >> +{
+>> >> >> +     do {
+>> >> >> +             u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
+>> >> >> +
+>> >> >> +             if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
+>> >> >> +                     return;
+>> >> >> +
+>> >> >> +             usleep_range(50, 100);
+>> >> >> +     } while (true);
+>> >> >
+>> >> > And you need an smp rmb here.
+>> >
+>> > I'd just do rmb() in fact.
+>> >
+>> >> Could you explain? thanks
+>> >
+>> > See Documentation/memory-barriers.txt
+>> > You know that control is valid, but following read of
+>> > the structure could be reordered. So you need that barrier there.
+>> > Same for write: wmb.
+>>
+>> Is this ok?
+>> @@ -103,10 +104,14 @@ static ssize_t fw_cfg_dma_transfer(void
+>> *address, u32 length, u32 control)
+>>         dma = virt_to_phys(d);
+>>
+>>         iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
+>> +       /* force memory to sync before notifying device via MMIO */
+>> +       wmb();
+>>         iowrite32be(dma, fw_cfg_reg_dma + 4);
+>>
+>>         fw_cfg_wait_for_control(d);
+>>
+>> +       /* do not reorder the read to d->control */
+>> +       rmb();
+>>         if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
+>>                 ret = -EIO;
+>>         }
+>
+> I think you need an rmb after the read of d->control.
+>
 
-The currently used regex algorithm is defined as the
-weak default and will be used if no platform specific
-one is defined. This matches the current behavior.
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
----
- tools/perf/arch/s390/util/header.c | 18 +++++++++++++++
- tools/perf/util/header.h           |  1 +
- tools/perf/util/pmu.c              | 47 +++++++++++++++++++++++---------------
- 3 files changed, 48 insertions(+), 18 deletions(-)
+There are two reads of d->control, one in fw_cfg_wait_for_control() to
+wait for completion, and the other one here to handle error. Do you
+mean that for clarity rmb() should be moved at the end of
+fw_cfg_wait_for_control() instead?
 
-diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
-index 3d29ba47edce..90360272ced6 100644
---- a/tools/perf/arch/s390/util/header.c
-+++ b/tools/perf/arch/s390/util/header.c
-@@ -142,3 +142,21 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
- 		zfree(&buf);
- 	return buf;
- }
-+
-+/*
-+ * Compare the cpuid string returned by get_cpuid() function
-+ * with the name generated by the jevents file read from
-+ * pmu-events/arch/s390/mapfile.csv.
-+ *
-+ * Parameter mapcpuid is the cpuid as stored in the
-+ * pmu-events/arch/s390/mapfile.csv. This is just the type number.
-+ * Parameter cpuid is the cpuid returned by function get_cpuid().
-+ */
-+int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
-+{
-+	char *cp = strchr(cpuid, ',');
-+
-+	if (cp == NULL)
-+		return -1;
-+	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
-+}
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index f28aaaa3a440..942bdec6d70d 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -174,4 +174,5 @@ int write_padded(struct feat_fd *fd, const void *bf,
- int get_cpuid(char *buffer, size_t sz);
- 
- char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused);
-+int strcmp_cpuid_str(const char *s1, const char *s2);
- #endif /* __PERF_HEADER_H */
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 57e38fdf0b34..1111d5bf15ca 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -576,6 +576,34 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
- 	return NULL;
- }
- 
-+/* Return zero when the cpuid from the mapfile.csv matches the
-+ * cpuid string generated on this platform.
-+ * Otherwise return non-zero.
-+ */
-+int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
-+{
-+	regex_t re;
-+	regmatch_t pmatch[1];
-+	int match;
-+
-+	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
-+		/* Warn unable to generate match particular string. */
-+		pr_info("Invalid regular expression %s\n", mapcpuid);
-+		return 1;
-+	}
-+
-+	match = !regexec(&re, cpuid, 1, pmatch, 0);
-+	regfree(&re);
-+	if (match) {
-+		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
-+
-+		/* Verify the entire string matched. */
-+		if (match_len == strlen(cpuid))
-+			return 0;
-+	}
-+	return 1;
-+}
-+
- static char *perf_pmu__getcpuid(struct perf_pmu *pmu)
- {
- 	char *cpuid;
-@@ -610,31 +638,14 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
- 
- 	i = 0;
- 	for (;;) {
--		regex_t re;
--		regmatch_t pmatch[1];
--		int match;
--
- 		map = &pmu_events_map[i++];
- 		if (!map->table) {
- 			map = NULL;
- 			break;
- 		}
- 
--		if (regcomp(&re, map->cpuid, REG_EXTENDED) != 0) {
--			/* Warn unable to generate match particular string. */
--			pr_info("Invalid regular expression %s\n", map->cpuid);
-+		if (!strcmp_cpuid_str(map->cpuid, cpuid))
- 			break;
--		}
--
--		match = !regexec(&re, cpuid, 1, pmatch, 0);
--		regfree(&re);
--		if (match) {
--			size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
--
--			/* Verify the entire string matched. */
--			if (match_len == strlen(cpuid))
--				break;
--		}
- 	}
- 	free(cpuid);
- 	return map;
--- 
-2.14.3
+thanks
