@@ -1,53 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964996AbeBMNyi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:54:38 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33588 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964846AbeBMNyh (ORCPT
+        id S964964AbeBMN5Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:57:25 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:50585 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964859AbeBMN5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:54:37 -0500
-X-Google-Smtp-Source: AH8x227AOQOvmXiFTxwGMJINFvyj7rwwmG+oD4HothiGdiVtd1m1hR4BddVSUMFTSTkP08SzPYHxzw==
-Subject: Re: [PATCH 3/4] drm/tve200: Do not use deprecated
- drm_driver.{enable|disable)_vblank
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>, gustavo@padovan.org,
-        Dave Airlie <airlied@linux.ie>, Sean Paul <seanpaul@chromium.org>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <1518425574-32671-1-git-send-email-andr2000@gmail.com>
- <1518425574-32671-4-git-send-email-andr2000@gmail.com>
- <CACRpkdasQOCzm-7dTG8TSki1mpAjwmGRvv+w+ukxt7NDs8R6+g@mail.gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <a777ecbf-151d-9983-f7d1-6fe3a7646de1@gmail.com>
-Date: Tue, 13 Feb 2018 15:54:33 +0200
+        Tue, 13 Feb 2018 08:57:24 -0500
+Subject: Re: [PATCH v2 08/15] MIPS: memblock: Mark present sparsemem sections
+To: Serge Semin <fancer.lancer@gmail.com>, <ralf@linux-mips.org>,
+        <miodrag.dinic@mips.com>, <jhogan@kernel.org>, <goran.ferenc@mips.com>,
+        <david.daney@cavium.com>, <paul.gortmaker@windriver.com>,
+        <paul.burton@mips.com>, <alex.belits@cavium.com>,
+        <Steven.Hill@cavium.com>
+CC: <alexander.sverdlin@nokia.com>, <kumba@gentoo.org>,
+        <marcin.nowakowski@mips.com>, <James.hogan@mips.com>,
+        <Peter.Wotton@mips.com>, <Sergey.Semin@t-platforms.ru>,
+        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+References: <20180117222312.14763-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-9-fancer.lancer@gmail.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <2e6f3afd-6413-2fc7-4c23-a272cb9e19ff@mips.com>
+Date: Tue, 13 Feb 2018 13:50:14 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdasQOCzm-7dTG8TSki1mpAjwmGRvv+w+ukxt7NDs8R6+g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180202035458.30456-9-fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1518530150-298554-11449-1261-6
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189978
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2018 03:51 PM, Linus Walleij wrote:
-> On Mon, Feb 12, 2018 at 9:52 AM, Oleksandr Andrushchenko
-> <andr2000@gmail.com> wrote:
->
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Do not use deprecated drm_driver.{enable|disable)_vblank callbacks,
->> but use drm_simple_kms_helpe's pipe callbacks instead.
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
-> The new way of doing these abstractions seem good, so if people
-> agree on the general subject (other patches in the series I guess)
-fair enough, thank you
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Yours,
-> Linus Walleij
+Hi Serge,
+
+
+On 02/02/18 03:54, Serge Semin wrote:
+> If sparsemem is activated all sections with present pages must
+> be accordingly marked after memblock is fully initialized.
+> 
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> ---
+>   arch/mips/kernel/setup.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+> index b2a5b89ae6b2..54302319ce1c 100644
+> --- a/arch/mips/kernel/setup.c
+> +++ b/arch/mips/kernel/setup.c
+> @@ -837,6 +837,11 @@ static void __init arch_mem_init(char **cmdline_p)
+>   				 crashk_res.end - crashk_res.start + 1);
+>   #endif
+>   	device_tree_init();
+> +#ifdef CONFIG_SPARSEMEM
+> +	for_each_memblock(memory, reg)
+> +		memory_present(0, memblock_region_memory_base_pfn(reg),
+> +				memblock_region_memory_end_pfn(reg));
+> +#endif /* CONFIG_SPARSEMEM */
+
+
+Existing code calls memory_present without CONFIG_SPARSEMEM, is it 
+really conditional on SPARSEMEM?
+
+Thanks,
+Matt
+
+>   	sparse_init();
+>   	plat_swiotlb_setup();
+>   
+> 
