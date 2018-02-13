@@ -1,60 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934862AbeBMJ6K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:58:10 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49826 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934683AbeBMJ6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:58:06 -0500
-Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-To: David Woodhouse <dwmw2@infradead.org>, tglx@linutronix.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com
-References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
- <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
- <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
- <1518509708.12890.33.camel@infradead.org>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
-Date: Tue, 13 Feb 2018 10:58:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S934352AbeBMKAN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:00:13 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37843 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933416AbeBMKAK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:00:10 -0500
+X-Google-Smtp-Source: AH8x2261cFqKtool5BKWOASWe614nHASef9eiKGboEl8vGi4oB3p/EbjD/upk3jkwW96aQ20RcYMrA==
+Date: Tue, 13 Feb 2018 13:00:05 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Andrei Vagin <avagin@virtuozzo.com>,
+        tip-bot for Jacob Shin <tipbot@zytor.com>,
+        kirill.shutemov@linux.intel.com, linux-tip-commits@vger.kernel.org,
+        tglx@linutronix.de, willy@infradead.org, gorcunov@openvz.org,
+        bp@suse.de, peterz@infradead.org, torvalds@linux-foundation.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, luto@amacapital.net
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging
+ boot if kernel is above 4G
+Message-ID: <20180213100005.53exytg5sqlk7kh4@node.shutemov.name>
+References: <tip-b4b56015ed1c98cbc9469e35ebbc4373a2844030@git.kernel.org>
+ <20180213065155.GA14087@outlook.office365.com>
+ <20180213080816.vwh64jiz23frjiot@node.shutemov.name>
+ <20180213084121.GA19906@outlook.office365.com>
+ <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
+ <20180213094355.jodz6cuh3n3brfmc@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1518509708.12890.33.camel@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180213094355.jodz6cuh3n3brfmc@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/2018 09:15, David Woodhouse wrote:
->>>  
->>> -		if (!data)
->>> +		if (!data && !spectre_v2_ibrs_all())
->>>  			break;
->> This should check the value of IBRS_ALL in the VM, not in the host.
-> No, it's host we want. If IBRS_ALL is set in the host, we set the
-> actual hardware MSR once at boot time and never touch it again. The
-> SPEC_CTRL MSR we expose to guests is purely a no-op fiction.
+On Tue, Feb 13, 2018 at 10:43:56AM +0100, Ingo Molnar wrote:
 > 
-> If spectre_v2_ibrs_all() is true then KVM should *never* actually pass
-> through or touch the real MSR.
+> * Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> 
+> > On Tue, Feb 13, 2018 at 12:41:22AM -0800, Andrei Vagin wrote:
+> > > On Tue, Feb 13, 2018 at 11:08:16AM +0300, Kirill A. Shutemov wrote:
+> > > > On Mon, Feb 12, 2018 at 10:51:56PM -0800, Andrei Vagin wrote:
+> > > > > Hi Kirill,
+> > > > > 
+> > > > > Something is wrong in this patch.
+> > 
+> > Could you please check if this makes a difference?
+> > 
+> > diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> > index 70b30f2bc9e0..99a0e7993252 100644
+> > --- a/arch/x86/boot/compressed/head_64.S
+> > +++ b/arch/x86/boot/compressed/head_64.S
+> > @@ -332,7 +332,7 @@ ENTRY(startup_64)
+> >  
+> >  	/* Make sure we have GDT with 32-bit code segment */
+> >  	leaq	gdt(%rip), %rax
+> > -	movl	%eax, gdt64+2(%rip)
+> > +	movq	%rax, gdt64+2(%rip)
+> >  	lgdt	gdt64(%rip)
+> 
+> There's another suspicious looking pattern as well:
+> 
+>         leaq    startup_32(%rip), %rax
+>         movl    %eax, BP_code32_start(%rsi)
+> ...
+>         movl    BP_code32_start(%esi), %eax
+>         leaq    startup_64(%rax), %rax
+> ...
 
-That would be nice but unfortunately it's not possible. :(
+code32_start is 4-byte field as described in the boot protocol, so the
+truncation is intentional I think.
 
-The VM might actually not have IBRS_ALL, as usual the reason is
-migration compatibility.  In that case, that no-op fiction would be very
-slow because the VM will actually do a lot of SPEC_CTRL writes.
-
-So the right logic is:
-
-- if the VM has IBRS_ALL, pass through the MSR when it is zero and
-intercept writes when it is one (no writes should happen)
-
-- if the VM doesn't have IBRS_ALL, do as we are doing now, independent
-of what the host spectre_v2_ibrs_all() setting is.
-
-Paolo
+-- 
+ Kirill A. Shutemov
