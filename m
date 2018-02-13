@@ -1,127 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935345AbeBMN3R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:29:17 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:35039 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935174AbeBMN3P (ORCPT
+        id S935381AbeBMN3j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:29:39 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42429 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935174AbeBMN3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:29:15 -0500
-X-Google-Smtp-Source: AH8x224nSGurSSlxQbJpjPHldyyM2oULfPRZPw2xyB0K938aPDQT8/f6Sq7BqqE4M/YHsj/kvpyXBg==
-Date: Tue, 13 Feb 2018 16:29:11 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: [PATCH] proc: do less stuff under ->pde_unload_lock
-Message-ID: <20180213132911.GA24298@avx2>
+        Tue, 13 Feb 2018 08:29:35 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
+Date: Tue, 13 Feb 2018 15:30:06 +0200
+Message-ID: <52386641.uAENE5yG1n@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <e4d4e6ab-2f4b-27c3-f1ee-916e9bbad5ab@ideasonboard.com>
+References: <1518473273-6333-1-git-send-email-kbingham@kernel.org> <84376496.fPaZ5qpN3E@avalon> <e4d4e6ab-2f4b-27c3-f1ee-916e9bbad5ab@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1DDTipE030171
 
-Commit ca469f35a8e9ef12571a4b80ac6d7fdc0260fb44
-("deal with races between remove_proc_entry() and proc_reg_release()")
-moved too much stuff under ->pde_unload_lock making a problem described
-at series "[PATCH v5] procfs: Improve Scaling in proc" worse.
+Hi Kieran,
 
-While RCU is being figured out, move kfree() out of ->pde_unload_lock.
+On Tuesday, 13 February 2018 15:14:43 EET Kieran Bingham wrote:
+> On 13/02/18 12:06, Laurent Pinchart wrote:
+> > On Tuesday, 13 February 2018 00:07:49 EET Kieran Bingham wrote:
+> >> From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+> >> 
+> >> The ADV7604 has thirteen 256-byte maps that can be accessed via the main
+> >> I²C ports. Each map has it own I²C address and acts as a standard slave
+> >> device on the I²C bus.
+> >> 
+> >> Extend the device tree node bindings to be able to override the default
+> >> addresses so that address conflicts with other devices on the same bus
+> >> may be resolved at the board description level.
+> >> 
+> >> Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+> >> [Kieran: Re-adapted for mainline]
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> > 
+> > Nitpicking, I might not mention i2c_new_secondary_device in the subject,
+> > as this is a DT bindings change. I don't mind too much though, as long as
+> > the bindings themselves don't contain Linux-specific information, and they
+> > don't, so
+> 
+> How about: ... adv7604: Extend bindings to allow specifying slave map
+> addresses
 
-On my potato, difference is only 0.5% speedup with concurrent
-open+read+close of /proc/cmdline, but the effect should be more
-noticeable on more capable machines.
+Sounds good to me.
 
-$ perf stat -r 16 -- ./proc-j 16
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> Collected, thanks.
+> 
+> --
+> Kieran
+> 
+> >> ---
+> >> 
+> >> Based upon the original posting :
+> >>   https://lkml.org/lkml/2014/10/22/469
+> >> 
+> >> v2:
+> >>  - DT Binding update separated from code change
+> >>  - Minor reword to commit message to account for DT only change.
+> >>  - Collected Rob's RB tag.
+> >> 
+> >> v3:
+> >>  - Split map register addresses into individual declarations.
+> >>  
+> >>  .../devicetree/bindings/media/i2c/adv7604.txt          | 18
+> >> 
+> >> ++++++++++++++++-- 1 file changed, 16 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+> >> b/Documentation/devicetree/bindings/media/i2c/adv7604.txt index
+> >> 9cbd92eb5d05..ebb5f070c05b 100644
+> >> --- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+> >> +++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+> >> 
+> >> @@ -13,7 +13,11 @@ Required Properties:
+> >>      - "adi,adv7611" for the ADV7611
+> >>      - "adi,adv7612" for the ADV7612
+> >> 
+> >> -  - reg: I2C slave address
+> >> +  - reg: I2C slave addresses
+> >> +    The ADV76xx has up to thirteen 256-byte maps that can be accessed
+> >> via
+> >> the +    main I²C ports. Each map has it own I²C address and acts as a
+> >> standard +    slave device on the I²C bus. The main address is mandatory,
+> >> others are +    optional and revert to defaults if not specified.
+> >> 
+> >>    - hpd-gpios: References to the GPIOs that control the HDMI hot-plug
+> >>    
+> >>      detection pins, one per HDMI input. The active flag indicates the
+> >>      GPIO
+> >> 
+> >> @@ -35,6 +39,11 @@ Optional Properties:
+> >>    - reset-gpios: Reference to the GPIO connected to the device's reset
+> >>    pin.
+> >> 
+> >> - default-input: Select which input is selected after reset.
+> >> +  - reg-names : Names of maps with programmable addresses.
+> >> +		It can contain any map needing a non-default address.
+> >> +		Possible maps names are :
+> >> +		  "main", "avlink", "cec", "infoframe", "esdp", "dpp", "afe",
+> >> +		  "rep", "edid", "hdmi", "test", "cp", "vdp"
+> >> 
+> >>  Optional Endpoint Properties:
+> >> @@ -52,7 +61,12 @@ Example:
+> >>  	hdmi_receiver@4c {
+> >>  	
+> >>  		compatible = "adi,adv7611";
+> >> 
+> >> -		reg = <0x4c>;
+> >> +		/*
+> >> +		 * The edid page will be accessible @ 0x66 on the i2c bus. All
+> >> +		 * other maps will retain their default addresses.
+> >> +		 */
+> >> +		reg = <0x4c>, <0x66>;
+> >> +		reg-names "main", "edid";
+> >> 
+> >>  		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
+> >>  		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
 
- Performance counter stats for './proc-j 16' (16 runs):
+-- 
+Regards,
 
-     130569.502377      task-clock (msec)         #   15.872 CPUs utilized            ( +-  0.05% )
-            19,169      context-switches          #    0.147 K/sec                    ( +-  0.18% )
-                15      cpu-migrations            #    0.000 K/sec                    ( +-  3.27% )
-               437      page-faults               #    0.003 K/sec                    ( +-  1.25% )
-   300,172,097,675      cycles                    #    2.299 GHz                      ( +-  0.05% )
-    96,793,267,308      instructions              #    0.32  insn per cycle           ( +-  0.04% )
-    22,798,342,298      branches                  #  174.607 M/sec                    ( +-  0.04% )
-       111,764,687      branch-misses             #    0.49% of all branches          ( +-  0.47% )
-
-       8.226574400 seconds time elapsed                                          ( +-  0.05% )
-       ^^^^^^^^^^^
-
-
-$ perf stat -r 16 -- ./proc-j 16
-
- Performance counter stats for './proc-j 16' (16 runs):
-
-     129866.777392      task-clock (msec)         #   15.869 CPUs utilized            ( +-  0.04% )
-            19,154      context-switches          #    0.147 K/sec                    ( +-  0.66% )
-                14      cpu-migrations            #    0.000 K/sec                    ( +-  1.73% )
-               431      page-faults               #    0.003 K/sec                    ( +-  1.09% )
-   298,556,520,546      cycles                    #    2.299 GHz                      ( +-  0.04% )
-    96,525,366,833      instructions              #    0.32  insn per cycle           ( +-  0.04% )
-    22,730,194,043      branches                  #  175.027 M/sec                    ( +-  0.04% )
-       111,506,074      branch-misses             #    0.49% of all branches          ( +-  0.18% )
-
-       8.183629778 seconds time elapsed                                          ( +-  0.04% )
-       ^^^^^^^^^^^
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- fs/proc/inode.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -138,7 +138,7 @@ static void unuse_pde(struct proc_dir_entry *pde)
- 		complete(pde->pde_unload_completion);
- }
- 
--/* pde is locked */
-+/* pde is locked on entry, unlocked on exit */
- static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
- {
- 	/*
-@@ -157,9 +157,10 @@ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
- 		pdeo->c = &c;
- 		spin_unlock(&pde->pde_unload_lock);
- 		wait_for_completion(&c);
--		spin_lock(&pde->pde_unload_lock);
- 	} else {
- 		struct file *file;
-+		struct completion *c;
-+
- 		pdeo->closing = true;
- 		spin_unlock(&pde->pde_unload_lock);
- 		file = pdeo->file;
-@@ -167,8 +168,10 @@ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
- 		spin_lock(&pde->pde_unload_lock);
- 		/* After ->release. */
- 		list_del(&pdeo->lh);
--		if (unlikely(pdeo->c))
--			complete(pdeo->c);
-+		c = pdeo->c;
-+		spin_unlock(&pde->pde_unload_lock);
-+		if (unlikely(c))
-+			complete(c);
- 		kfree(pdeo);
- 	}
- }
-@@ -188,6 +191,7 @@ void proc_entry_rundown(struct proc_dir_entry *de)
- 		struct pde_opener *pdeo;
- 		pdeo = list_first_entry(&de->pde_openers, struct pde_opener, lh);
- 		close_pdeo(de, pdeo);
-+		spin_lock(&de->pde_unload_lock);
- 	}
- 	spin_unlock(&de->pde_unload_lock);
- }
-@@ -375,7 +379,7 @@ static int proc_reg_release(struct inode *inode, struct file *file)
- 	list_for_each_entry(pdeo, &pde->pde_openers, lh) {
- 		if (pdeo->file == file) {
- 			close_pdeo(pde, pdeo);
--			break;
-+			return 0;
- 		}
- 	}
- 	spin_unlock(&pde->pde_unload_lock);
+Laurent Pinchart
