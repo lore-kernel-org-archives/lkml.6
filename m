@@ -1,56 +1,56 @@
 Return-Path: <green.hu@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513125-2-4492267233746837586
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513119-2-5163169531915603069
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
   RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
-  LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='74.125.83.67', Host='mail-pg0-f67.google.com', Country='US',
+  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.160.66', Host='mail-pl0-f66.google.com', Country='US',
   FromHeader='com', MailFrom='com'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: green.hu@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518513124; b=T9GUtqx0wDX9PTXyLB5BS5ZFvvvWOALTCunb4xVhkpWb5GX
-    aMRbjZAUBM7hd+jWO8G1SGqLUTP+2ht0Hzg//Zak9KRGzbIZkD5a68cYdmvH+42R
-    P5W9wJpELO5E2NvbsVfa7bJzucwfkERViFY5nsQkcpsalBD2n0bxLg3FYgB1DcQg
-    asqD+5Gb9Jsk8Nfogrrlk5mKLbOY1J2RHQSznGJY3EBqMYQRkgpEfCjnsY6wcKFs
-    t29TzDDxifozjwhya4UpCbKgi99DubDfl0TB5imdsSw4PxWsDdYz1hD57736asR2
-    48bM9pYiPhP3lyyybECaTh5Qi1eUsmAynkINNsw==
+    t=1518513119; b=pYL6YmhSJgiEM1BG7vKBDQ52Gnm3gKJ/xAiyqPrusglP9vE
+    bRpaX2nE0+vbTECoy8ysZSupXVy7I7cW074gv7re5sb+cr/oXAqGa68tB+EWx465
+    wjo2ho8JKSLATvkdtIrYhzdK4Pdr2wuC7OKCguyjIuMpbd3b81cU3wHZ7qQErK9D
+    w80JUXovi+RX75iHT8JwxzMv6XtBUvigMVoQnLM9gZhN2/ARFoZeSU4IJ4yWaYxd
+    bwg5l8sU33eCtDWrT0/hQUFegwX/vtZ2xFddCrxo2G8QhL8dL/aGsUE/NvdDpj0/
+    7Wppr2lViCh65kwafERRzJv7nN45qu7dy79Arwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references; s=arctest; t=
-    1518513124; bh=R+uFQ6kxhcjB1JLnTlkRjiYrnirnlAw6iANazyu94Xk=; b=o
-    yHcCH+PzahziLPDPbWJ8zOjNHuE/p11t5KRxYHnSdyOO5Zf6gghlNiBedHHe5RXh
-    aiyAviSFjYHYU7w2kkL8xaIy7NyKlFDoXtSpmUBw94IbeRG+u7aMk3daoFMG2CKk
-    fatOaspPCucdxXjpTlVI2ul25vUIFTnLEPbTvoihcgI3KKoOK/yNLY4CKuMiDwUq
-    Fc+SgseeTVkAVi0QqlwTTVQUvR5DUkaDKkSCoWtZH/VMC4k1sQJwMSaqLef69o4r
-    FyiEiYipMNqLfGiZBuq8DMPgm2y7vBmGc0+VJclIj5KChQRafU4zn+y6ShzlqtRR
-    rjQ6Wvg8kwtton+f98X3A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iZ+qd/ac x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    1518513119; bh=xgHzkhJWBoJv/Fl/sRwkdRpdpsVaXVMq6WjRbtStb2U=; b=A
+    9Tkotm3jRRCLyZGn8et64wKSiI+lhvLPTBmnOkO31ZJAxiqzAlszuTF+XX4mdX8z
+    vh7vv1iXvIjZv/obBBTjDYAjRhimaL8LHOSqAHUXmahJPzbxSaOjBy11skn5CCxk
+    +lgnR96EX9kP/LVPIFbNyLBMtd3VuICcPWkL3ycUUiRiB8/MFqKRHyvton2Xbhf9
+    xte2XjcPYN9XnXvcp2J94O+k+BVSqTWbuucnDW2oJg6iMyqf90As81TJZNsNaox8
+    pAJ5RmY3wq2RS13YNtgRTWfQ1nq8etvfE+1y55zILqXxT0jTZoGCGxanJpBbexPV
+    w5LjLappW+MCVaSD+wIJw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=O5E/vD6a x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f67.google.com;
+    iprev=pass policy.iprev=209.85.160.66 (mail-pl0-f66.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f66.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=J4wnwrWP;
-    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Cswybkt7;
+    x-ptr=pass x-ptr-helo=mail-pl0-f66.google.com x-ptr-lookup=mail-pl0-f66.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iZ+qd/ac x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=O5E/vD6a x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f67.google.com;
+    iprev=pass policy.iprev=209.85.160.66 (mail-pl0-f66.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f66.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=J4wnwrWP;
-    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Cswybkt7;
+    x-ptr=pass x-ptr-helo=mail-pl0-f66.google.com x-ptr-lookup=mail-pl0-f66.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x225B58Ev37FW5Chtt+BUcimURvfkohgqfFPh0vIu1Rdit9veaCWVB0gFB0xjKR4zdmJ5ahbNzA==
+X-Google-Smtp-Source: AH8x227l+2aEULDADf63ZIt83N4IlPcJF+X33ehX0Nh+P6V8sGTNV4uB2WioFduiacQlbtsBCF20+g==
 From: Greentime Hu <green.hu@gmail.com>
 X-Google-Original-From: Greentime Hu <greentime@andestech.com>
 To: greentime@andestech.com,
@@ -81,9 +81,9 @@ To: greentime@andestech.com,
 	shorne@gmail.com
 Cc: green.hu@gmail.com,
 	Vincent Chen <vincentc@andestech.com>
-Subject: [PATCH v7 17/37] nds32: DMA mapping API
-Date: Tue, 13 Feb 2018 17:09:21 +0800
-Message-Id: <90ec95c1675532550f71b39340508cc443c6a54f.1518505384.git.greentime@andestech.com>
+Subject: [PATCH v7 16/37] nds32: Device specific operations
+Date: Tue, 13 Feb 2018 17:09:20 +0800
+Message-Id: <7e158934acdeac150645a303de21b7ed9c75e4ff.1518505384.git.greentime@andestech.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
 References: <cover.1518505384.git.greentime@andestech.com>
@@ -93,521 +93,174 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds support for the DMA mapping API. It uses dma_map_ops for
-flexibility.
+This patch introduces ioremap implementations.
 
 Signed-off-by: Vincent Chen <vincentc@andestech.com>
 Signed-off-by: Greentime Hu <greentime@andestech.com>
 Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/nds32/include/asm/dma-mapping.h |  14 +
- arch/nds32/kernel/dma.c              | 477 +++++++++++++++++++++++++++++++++++
- 2 files changed, 491 insertions(+)
- create mode 100644 arch/nds32/include/asm/dma-mapping.h
- create mode 100644 arch/nds32/kernel/dma.c
+ arch/nds32/include/asm/io.h | 83 +++++++++++++++++++++++++++++++++++++++++++++
+ arch/nds32/mm/ioremap.c     | 62 +++++++++++++++++++++++++++++++++
+ 2 files changed, 145 insertions(+)
+ create mode 100644 arch/nds32/include/asm/io.h
+ create mode 100644 arch/nds32/mm/ioremap.c
 
-diff --git a/arch/nds32/include/asm/dma-mapping.h b/arch/nds32/include/asm/dma-mapping.h
+diff --git a/arch/nds32/include/asm/io.h b/arch/nds32/include/asm/io.h
 new file mode 100644
-index 000000000000..2dd47d245c25
+index 000000000000..966e71b3c960
 --- /dev/null
-+++ b/arch/nds32/include/asm/dma-mapping.h
-@@ -0,0 +1,14 @@
++++ b/arch/nds32/include/asm/io.h
+@@ -0,0 +1,83 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#ifndef ASMNDS32_DMA_MAPPING_H
-+#define ASMNDS32_DMA_MAPPING_H
++#ifndef __ASM_NDS32_IO_H
++#define __ASM_NDS32_IO_H
 +
-+extern struct dma_map_ops nds32_dma_ops;
-+
-+static inline struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
++extern void iounmap(volatile void __iomem *addr);
++#define __raw_writeb __raw_writeb
++static inline void __raw_writeb(u8 val, volatile void __iomem *addr)
 +{
-+	return &nds32_dma_ops;
++	asm volatile("sbi %0, [%1]" : : "r" (val), "r" (addr));
 +}
 +
-+#endif
-diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
++#define __raw_writew __raw_writew
++static inline void __raw_writew(u16 val, volatile void __iomem *addr)
++{
++	asm volatile("shi %0, [%1]" : : "r" (val), "r" (addr));
++}
++
++#define __raw_writel __raw_writel
++static inline void __raw_writel(u32 val, volatile void __iomem *addr)
++{
++	asm volatile("swi %0, [%1]" : : "r" (val), "r" (addr));
++}
++
++#define __raw_readb __raw_readb
++static inline u8 __raw_readb(const volatile void __iomem *addr)
++{
++	u8 val;
++
++	asm volatile("lbi %0, [%1]" : "=r" (val) : "r" (addr));
++	return val;
++}
++
++#define __raw_readw __raw_readw
++static inline u16 __raw_readw(const volatile void __iomem *addr)
++{
++	u16 val;
++
++	asm volatile("lhi %0, [%1]" : "=r" (val) : "r" (addr));
++	return val;
++}
++
++#define __raw_readl __raw_readl
++static inline u32 __raw_readl(const volatile void __iomem *addr)
++{
++	u32 val;
++
++	asm volatile("lwi %0, [%1]" : "=r" (val) : "r" (addr));
++	return val;
++}
++
++#define __iormb()               rmb()
++#define __iowmb()               wmb()
++
++#define mmiowb()        __asm__ __volatile__ ("msync all" : : : "memory");
++
++/*
++ * {read,write}{b,w,l,q}_relaxed() are like the regular version, but
++ * are not guaranteed to provide ordering against spinlocks or memory
++ * accesses.
++ */
++
++#define readb_relaxed(c)	({ u8  __v = __raw_readb(c); __v; })
++#define readw_relaxed(c)	({ u16 __v = le16_to_cpu((__force __le16)__raw_readw(c)); __v; })
++#define readl_relaxed(c)	({ u32 __v = le32_to_cpu((__force __le32)__raw_readl(c)); __v; })
++#define writeb_relaxed(v,c)	((void)__raw_writeb((v),(c)))
++#define writew_relaxed(v,c)	((void)__raw_writew((__force u16)cpu_to_le16(v),(c)))
++#define writel_relaxed(v,c)	((void)__raw_writel((__force u32)cpu_to_le32(v),(c)))
++
++/*
++ * {read,write}{b,w,l,q}() access little endian memory and return result in
++ * native endianness.
++ */
++#define readb(c)	({ u8  __v = readb_relaxed(c); __iormb(); __v; })
++#define readw(c)	({ u16 __v = readw_relaxed(c); __iormb(); __v; })
++#define readl(c)	({ u32 __v = readl_relaxed(c); __iormb(); __v; })
++
++#define writeb(v,c)	({ __iowmb(); writeb_relaxed((v),(c)); })
++#define writew(v,c)	({ __iowmb(); writew_relaxed((v),(c)); })
++#define writel(v,c)	({ __iowmb(); writel_relaxed((v),(c)); })
++#include <asm-generic/io.h>
++#endif /* __ASM_NDS32_IO_H */
+diff --git a/arch/nds32/mm/ioremap.c b/arch/nds32/mm/ioremap.c
 new file mode 100644
-index 000000000000..d291800fc621
+index 000000000000..690140bb23a2
 --- /dev/null
-+++ b/arch/nds32/kernel/dma.c
-@@ -0,0 +1,477 @@
++++ b/arch/nds32/mm/ioremap.c
+@@ -0,0 +1,62 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#include <linux/types.h>
-+#include <linux/mm.h>
-+#include <linux/export.h>
-+#include <linux/string.h>
-+#include <linux/scatterlist.h>
-+#include <linux/dma-mapping.h>
++#include <linux/vmalloc.h>
 +#include <linux/io.h>
-+#include <linux/cache.h>
-+#include <linux/highmem.h>
-+#include <linux/slab.h>
-+#include <asm/cacheflush.h>
-+#include <asm/tlbflush.h>
-+#include <asm/dma-mapping.h>
-+#include <asm/proc-fns.h>
++#include <linux/mm.h>
++#include <asm/pgtable.h>
 +
-+/*
-+ * This is the page table (2MB) covering uncached, DMA consistent allocations
-+ */
-+static pte_t *consistent_pte;
-+static DEFINE_RAW_SPINLOCK(consistent_lock);
++void __iomem *ioremap(phys_addr_t phys_addr, size_t size);
 +
-+enum master_type {
-+	FOR_CPU = 0,
-+	FOR_DEVICE = 1,
-+};
-+
-+/*
-+ * VM region handling support.
-+ *
-+ * This should become something generic, handling VM region allocations for
-+ * vmalloc and similar (ioremap, module space, etc).
-+ *
-+ * I envisage vmalloc()'s supporting vm_struct becoming:
-+ *
-+ *  struct vm_struct {
-+ *    struct vm_region	region;
-+ *    unsigned long	flags;
-+ *    struct page	**pages;
-+ *    unsigned int	nr_pages;
-+ *    unsigned long	phys_addr;
-+ *  };
-+ *
-+ * get_vm_area() would then call vm_region_alloc with an appropriate
-+ * struct vm_region head (eg):
-+ *
-+ *  struct vm_region vmalloc_head = {
-+ *	.vm_list	= LIST_HEAD_INIT(vmalloc_head.vm_list),
-+ *	.vm_start	= VMALLOC_START,
-+ *	.vm_end		= VMALLOC_END,
-+ *  };
-+ *
-+ * However, vmalloc_head.vm_start is variable (typically, it is dependent on
-+ * the amount of RAM found at boot time.)  I would imagine that get_vm_area()
-+ * would have to initialise this each time prior to calling vm_region_alloc().
-+ */
-+struct arch_vm_region {
-+	struct list_head vm_list;
-+	unsigned long vm_start;
-+	unsigned long vm_end;
-+	struct page *vm_pages;
-+};
-+
-+static struct arch_vm_region consistent_head = {
-+	.vm_list = LIST_HEAD_INIT(consistent_head.vm_list),
-+	.vm_start = CONSISTENT_BASE,
-+	.vm_end = CONSISTENT_END,
-+};
-+
-+static struct arch_vm_region *vm_region_alloc(struct arch_vm_region *head,
-+					      size_t size, int gfp)
++static void __iomem *__ioremap_caller(phys_addr_t phys_addr, size_t size,
++				      void *caller)
 +{
-+	unsigned long addr = head->vm_start, end = head->vm_end - size;
-+	unsigned long flags;
-+	struct arch_vm_region *c, *new;
++	struct vm_struct *area;
++	unsigned long addr, offset, last_addr;
++	pgprot_t prot;
 +
-+	new = kmalloc(sizeof(struct arch_vm_region), gfp);
-+	if (!new)
-+		goto out;
++	/* Don't allow wraparound or zero size */
++	last_addr = phys_addr + size - 1;
++	if (!size || last_addr < phys_addr)
++		return NULL;
 +
-+	raw_spin_lock_irqsave(&consistent_lock, flags);
-+
-+	list_for_each_entry(c, &head->vm_list, vm_list) {
-+		if ((addr + size) < addr)
-+			goto nospc;
-+		if ((addr + size) <= c->vm_start)
-+			goto found;
-+		addr = c->vm_end;
-+		if (addr > end)
-+			goto nospc;
-+	}
-+
-+found:
 +	/*
-+	 * Insert this entry _before_ the one we found.
++	 * Mappings have to be page-aligned
 +	 */
-+	list_add_tail(&new->vm_list, &c->vm_list);
-+	new->vm_start = addr;
-+	new->vm_end = addr + size;
++	offset = phys_addr & ~PAGE_MASK;
++	phys_addr &= PAGE_MASK;
++	size = PAGE_ALIGN(last_addr + 1) - phys_addr;
 +
-+	raw_spin_unlock_irqrestore(&consistent_lock, flags);
-+	return new;
++	/*
++	 * Ok, go for it..
++	 */
++	area = get_vm_area_caller(size, VM_IOREMAP, caller);
++	if (!area)
++		return NULL;
 +
-+nospc:
-+	raw_spin_unlock_irqrestore(&consistent_lock, flags);
-+	kfree(new);
-+out:
-+	return NULL;
-+}
-+
-+static struct arch_vm_region *vm_region_find(struct arch_vm_region *head,
-+					     unsigned long addr)
-+{
-+	struct arch_vm_region *c;
-+
-+	list_for_each_entry(c, &head->vm_list, vm_list) {
-+		if (c->vm_start == addr)
-+			goto out;
-+	}
-+	c = NULL;
-+out:
-+	return c;
-+}
-+
-+/* FIXME: attrs is not used. */
-+static void *nds32_dma_alloc_coherent(struct device *dev, size_t size,
-+				      dma_addr_t * handle, gfp_t gfp,
-+				      unsigned long attrs)
-+{
-+	struct page *page;
-+	struct arch_vm_region *c;
-+	unsigned long order;
-+	u64 mask = ~0ULL, limit;
-+	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
-+
-+	if (!consistent_pte) {
-+		pr_err("%s: not initialized\n", __func__);
-+		dump_stack();
++	area->phys_addr = phys_addr;
++	addr = (unsigned long)area->addr;
++	prot = __pgprot(_PAGE_V | _PAGE_M_KRW | _PAGE_D |
++			_PAGE_G | _PAGE_C_DEV);
++	if (ioremap_page_range(addr, addr + size, phys_addr, prot)) {
++		vunmap((void *)addr);
 +		return NULL;
 +	}
++	return (__force void __iomem *)(offset + (char *)addr);
 +
-+	if (dev) {
-+		mask = dev->coherent_dma_mask;
-+
-+		/*
-+		 * Sanity check the DMA mask - it must be non-zero, and
-+		 * must be able to be satisfied by a DMA allocation.
-+		 */
-+		if (mask == 0) {
-+			dev_warn(dev, "coherent DMA mask is unset\n");
-+			goto no_page;
-+		}
-+
-+	}
-+
-+	/*
-+	 * Sanity check the allocation size.
-+	 */
-+	size = PAGE_ALIGN(size);
-+	limit = (mask + 1) & ~mask;
-+	if ((limit && size >= limit) ||
-+	    size >= (CONSISTENT_END - CONSISTENT_BASE)) {
-+		pr_warn("coherent allocation too big "
-+			"(requested %#x mask %#llx)\n", size, mask);
-+		goto no_page;
-+	}
-+
-+	order = get_order(size);
-+
-+	if (mask != 0xffffffff)
-+		gfp |= GFP_DMA;
-+
-+	page = alloc_pages(gfp, order);
-+	if (!page)
-+		goto no_page;
-+
-+	/*
-+	 * Invalidate any data that might be lurking in the
-+	 * kernel direct-mapped region for device DMA.
-+	 */
-+	{
-+		unsigned long kaddr = (unsigned long)page_address(page);
-+		memset(page_address(page), 0, size);
-+		cpu_dma_wbinval_range(kaddr, kaddr + size);
-+	}
-+
-+	/*
-+	 * Allocate a virtual address in the consistent mapping region.
-+	 */
-+	c = vm_region_alloc(&consistent_head, size,
-+			    gfp & ~(__GFP_DMA | __GFP_HIGHMEM));
-+	if (c) {
-+		pte_t *pte = consistent_pte + CONSISTENT_OFFSET(c->vm_start);
-+		struct page *end = page + (1 << order);
-+
-+		c->vm_pages = page;
-+
-+		/*
-+		 * Set the "dma handle"
-+		 */
-+		*handle = page_to_phys(page);
-+
-+		do {
-+			BUG_ON(!pte_none(*pte));
-+
-+			/*
-+			 * x86 does not mark the pages reserved...
-+			 */
-+			SetPageReserved(page);
-+			set_pte(pte, mk_pte(page, prot));
-+			page++;
-+			pte++;
-+		} while (size -= PAGE_SIZE);
-+
-+		/*
-+		 * Free the otherwise unused pages.
-+		 */
-+		while (page < end) {
-+			__free_page(page);
-+			page++;
-+		}
-+
-+		return (void *)c->vm_start;
-+	}
-+
-+	if (page)
-+		__free_pages(page, order);
-+no_page:
-+	*handle = ~0;
-+	return NULL;
 +}
 +
-+static void nds32_dma_free(struct device *dev, size_t size, void *cpu_addr,
-+			   dma_addr_t handle, unsigned long attrs)
++void __iomem *ioremap(phys_addr_t phys_addr, size_t size)
 +{
-+	struct arch_vm_region *c;
-+	unsigned long flags, addr;
-+	pte_t *ptep;
-+
-+	size = PAGE_ALIGN(size);
-+
-+	raw_spin_lock_irqsave(&consistent_lock, flags);
-+
-+	c = vm_region_find(&consistent_head, (unsigned long)cpu_addr);
-+	if (!c)
-+		goto no_area;
-+
-+	if ((c->vm_end - c->vm_start) != size) {
-+		pr_err("%s: freeing wrong coherent size (%ld != %d)\n",
-+		       __func__, c->vm_end - c->vm_start, size);
-+		dump_stack();
-+		size = c->vm_end - c->vm_start;
-+	}
-+
-+	ptep = consistent_pte + CONSISTENT_OFFSET(c->vm_start);
-+	addr = c->vm_start;
-+	do {
-+		pte_t pte = ptep_get_and_clear(&init_mm, addr, ptep);
-+		unsigned long pfn;
-+
-+		ptep++;
-+		addr += PAGE_SIZE;
-+
-+		if (!pte_none(pte) && pte_present(pte)) {
-+			pfn = pte_pfn(pte);
-+
-+			if (pfn_valid(pfn)) {
-+				struct page *page = pfn_to_page(pfn);
-+
-+				/*
-+				 * x86 does not mark the pages reserved...
-+				 */
-+				ClearPageReserved(page);
-+
-+				__free_page(page);
-+				continue;
-+			}
-+		}
-+
-+		pr_crit("%s: bad page in kernel page table\n", __func__);
-+	} while (size -= PAGE_SIZE);
-+
-+	flush_tlb_kernel_range(c->vm_start, c->vm_end);
-+
-+	list_del(&c->vm_list);
-+
-+	raw_spin_unlock_irqrestore(&consistent_lock, flags);
-+
-+	kfree(c);
-+	return;
-+
-+no_area:
-+	raw_spin_unlock_irqrestore(&consistent_lock, flags);
-+	pr_err("%s: trying to free invalid coherent area: %p\n",
-+	       __func__, cpu_addr);
-+	dump_stack();
++	return __ioremap_caller(phys_addr, size,
++				__builtin_return_address(0));
 +}
 +
-+/*
-+ * Initialise the consistent memory allocation.
-+ */
-+static int __init consistent_init(void)
++EXPORT_SYMBOL(ioremap);
++
++void iounmap(volatile void __iomem * addr)
 +{
-+	pgd_t *pgd;
-+	pmd_t *pmd;
-+	pte_t *pte;
-+	int ret = 0;
-+
-+	do {
-+		pgd = pgd_offset(&init_mm, CONSISTENT_BASE);
-+		pmd = pmd_alloc(&init_mm, pgd, CONSISTENT_BASE);
-+		if (!pmd) {
-+			pr_err("%s: no pmd tables\n", __func__);
-+			ret = -ENOMEM;
-+			break;
-+		}
-+		/* The first level mapping may be created in somewhere.
-+		 * It's not necessary to warn here. */
-+		/* WARN_ON(!pmd_none(*pmd)); */
-+
-+		pte = pte_alloc_kernel(pmd, CONSISTENT_BASE);
-+		if (!pte) {
-+			ret = -ENOMEM;
-+			break;
-+		}
-+
-+		consistent_pte = pte;
-+	} while (0);
-+
-+	return ret;
++	vunmap((void *)(PAGE_MASK & (unsigned long)addr));
 +}
 +
-+core_initcall(consistent_init);
-+static void consistent_sync(void *vaddr, size_t size, int direction, int master_type);
-+static dma_addr_t nds32_dma_map_page(struct device *dev, struct page *page,
-+				     unsigned long offset, size_t size,
-+				     enum dma_data_direction dir,
-+				     unsigned long attrs)
-+{
-+	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-+		consistent_sync((void *)(page_address(page) + offset), size, dir, FOR_DEVICE);
-+	return page_to_phys(page) + offset;
-+}
-+
-+static void nds32_dma_unmap_page(struct device *dev, dma_addr_t handle,
-+				 size_t size, enum dma_data_direction dir,
-+				 unsigned long attrs)
-+{
-+	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-+		consistent_sync(phys_to_virt(handle), size, dir, FOR_CPU);
-+}
-+
-+/*
-+ * Make an area consistent for devices.
-+ */
-+static void consistent_sync(void *vaddr, size_t size, int direction, int master_type)
-+{
-+	unsigned long start = (unsigned long)vaddr;
-+	unsigned long end = start + size;
-+
-+	if (master_type == FOR_CPU) {
-+		switch (direction) {
-+		case DMA_TO_DEVICE:
-+			break;
-+		case DMA_FROM_DEVICE:
-+		case DMA_BIDIRECTIONAL:
-+			cpu_dma_inval_range(start, end);
-+			break;
-+		default:
-+			BUG();
-+		}
-+	} else {
-+		/* FOR_DEVICE */
-+		switch (direction) {
-+		case DMA_FROM_DEVICE:
-+			break;
-+		case DMA_TO_DEVICE:
-+		case DMA_BIDIRECTIONAL:
-+			cpu_dma_wb_range(start, end);
-+			break;
-+		default:
-+			BUG();
-+		}
-+	}
-+}
-+
-+static int nds32_dma_map_sg(struct device *dev, struct scatterlist *sg,
-+			    int nents, enum dma_data_direction dir,
-+			    unsigned long attrs)
-+{
-+	int i;
-+
-+	for (i = 0; i < nents; i++, sg++) {
-+		void *virt;
-+		unsigned long pfn;
-+		struct page *page = sg_page(sg);
-+
-+		sg->dma_address = sg_phys(sg);
-+		pfn = page_to_pfn(page) + sg->offset / PAGE_SIZE;
-+		page = pfn_to_page(pfn);
-+		if (PageHighMem(page)) {
-+			virt = kmap_atomic(page);
-+			consistent_sync(virt, sg->length, dir, FOR_CPU);
-+			kunmap_atomic(virt);
-+		} else {
-+			if (sg->offset > PAGE_SIZE)
-+				panic("sg->offset:%08x > PAGE_SIZE\n",
-+				      sg->offset);
-+			virt = page_address(page) + sg->offset;
-+			consistent_sync(virt, sg->length, dir, FOR_CPU);
-+		}
-+	}
-+	return nents;
-+}
-+
-+static void nds32_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
-+			       int nhwentries, enum dma_data_direction dir,
-+			       unsigned long attrs)
-+{
-+}
-+
-+static void
-+nds32_dma_sync_single_for_cpu(struct device *dev, dma_addr_t handle,
-+			      size_t size, enum dma_data_direction dir)
-+{
-+	consistent_sync((void *)phys_to_virt(handle), size, dir, FOR_CPU);
-+}
-+
-+static void
-+nds32_dma_sync_single_for_device(struct device *dev, dma_addr_t handle,
-+				 size_t size, enum dma_data_direction dir)
-+{
-+	consistent_sync((void *)phys_to_virt(handle), size, dir, FOR_DEVICE);
-+}
-+
-+static void
-+nds32_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg, int nents,
-+			  enum dma_data_direction dir)
-+{
-+	int i;
-+
-+	for (i = 0; i < nents; i++, sg++) {
-+		char *virt =
-+		    page_address((struct page *)sg->page_link) + sg->offset;
-+		consistent_sync(virt, sg->length, dir, FOR_CPU);
-+	}
-+}
-+
-+static void
-+nds32_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
-+			     int nents, enum dma_data_direction dir)
-+{
-+	int i;
-+
-+	for (i = 0; i < nents; i++, sg++) {
-+		char *virt =
-+		    page_address((struct page *)sg->page_link) + sg->offset;
-+		consistent_sync(virt, sg->length, dir, FOR_DEVICE);
-+	}
-+}
-+
-+struct dma_map_ops nds32_dma_ops = {
-+	.alloc = nds32_dma_alloc_coherent,
-+	.free = nds32_dma_free,
-+	.map_page = nds32_dma_map_page,
-+	.unmap_page = nds32_dma_unmap_page,
-+	.map_sg = nds32_dma_map_sg,
-+	.unmap_sg = nds32_dma_unmap_sg,
-+	.sync_single_for_device = nds32_dma_sync_single_for_device,
-+	.sync_single_for_cpu = nds32_dma_sync_single_for_cpu,
-+	.sync_sg_for_cpu = nds32_dma_sync_sg_for_cpu,
-+	.sync_sg_for_device = nds32_dma_sync_sg_for_device,
-+};
-+
-+EXPORT_SYMBOL(nds32_dma_ops);
++EXPORT_SYMBOL(iounmap);
 -- 
 2.16.1
