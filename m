@@ -1,236 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934068AbeBMKgw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:36:52 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51533 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933865AbeBMKgs (ORCPT
+        id S934161AbeBMKhB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:37:01 -0500
+Received: from twosheds.infradead.org ([90.155.92.209]:38644 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933865AbeBMKgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:36:48 -0500
-X-Google-Smtp-Source: AH8x226w9jz07VTA68iP4wurJ8EkeJTz9fMKSb35RrAlulhAgYSMN5ZYv1mhmqjd+wBwb4uBEBqecw==
-MIME-Version: 1.0
-In-Reply-To: <c59ee4bd3246172ec62705967bb8f751@megadrive.org>
-References: <20180203112353.13497-1-icenowy@aosc.io> <20180205095558.2e713c24cdb7c3232943db52@bidouilliste.com>
- <207CD143-6535-42C9-BEF3-9D2614336482@aosc.io> <c59ee4bd3246172ec62705967bb8f751@megadrive.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 13 Feb 2018 18:36:24 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66BDbLgNVAp=D0QXH4WEMZpa+rCWYk+uLXexme2qgjeBg@mail.gmail.com>
-Message-ID: <CAGb2v66BDbLgNVAp=D0QXH4WEMZpa+rCWYk+uLXexme2qgjeBg@mail.gmail.com>
-Subject: Re: [PATCH] Revert "ARM: dts: sunxi: Add regulators for Sinovoip BPI-M2"
-To: Emmanuel Vadot <manu@bidouilliste.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Tue, 13 Feb 2018 05:36:54 -0500
+Message-ID: <1518518198.12890.48.camel@infradead.org>
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+From: David Woodhouse <dwmw2@infradead.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+In-Reply-To: <1518517262.12890.43.camel@infradead.org>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+         <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+         <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+         <1518509708.12890.33.camel@infradead.org>
+         <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+         <1518517262.12890.43.camel@infradead.org>
+Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-rU25DfTblbC2+QrTscoL"
+Date: Tue, 13 Feb 2018 10:36:38 +0000
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 5:20 AM, Emmanuel Vadot <manu@bidouilliste.com> wrote:
-> On 2018-02-05 10:05, Icenowy Zheng wrote:
->>
->> 于 2018年2月5日 GMT+08:00 下午4:55:58, Emmanuel Vadot <manu@bidouilliste.com>
->> 写到:
->>>
->>>
->>> Hello,
->>>
->>> On Sat,  3 Feb 2018 19:23:53 +0800
->>> Icenowy Zheng <icenowy@aosc.io> wrote:
->>>
->>>> This reverts commit 7daa213700758b5b08fc0daab09bb139dd334165.
->>>>
->>>> The original commit has several problems:
->>>>
->>>> - vdd-cpus and aldo3 (AVCC of the SoC) are not set to always-on,
->>>
->>> which
->>>>
->>>> leads to system hang when disabling unused regulators.
->>>
->>>
->>> Indeed I should have make those always-on.
->>>
->>>> - GMAC (which uses dldo1 and aldo2) and Wi-Fi (which uses aldo1) are
->>>
->>> not
->>>>
->>>> considered, and will fail to work after adding this commit.
->>>
->>>
->>> While I understand the problem with vdd-cpus and aldo3 I don't see why
->>> when you don't declare regulator the code should do something with it.
->>> DT is supposed to describe the hardware and the code should not use
->>> hardware not described right ?
->>> The gmac node doesn't declare any regulators and the mmc2 uses
->>> reg_vcc3v0 (haven't checked on the schematics yet if it is correct).
->>
->>
->> It's because the regulator support isn't present before
->> this commit. However these parts really need special
->> regulators. I don't have M2 schematics at hand, so you'd
->> check it by yourself.
->
->
->  Yes but why does the PMIC should disable regulators not defined in the DTS
-> ? That the part I don't understand and want to know where it is
-> described/documented.
 
-They are defined. See axp22x.dtsi, which you included in your patch.
+--=-rU25DfTblbC2+QrTscoL
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now the system is free to do whatever it wants under the constraints
-of the device tree. Since you do not reference the regulator, the
-kernel is free to turn it off to save power.
+On Tue, 2018-02-13 at 10:21 +0000, David Woodhouse wrote:
+>=20
+> > So the right logic is:
+> >=C2=A0
+> > - if the VM has IBRS_ALL, pass through the MSR when it is zero and
+> > intercept writes when it is one (no writes should happen)
+> >=C2=A0
+> > - if the VM doesn't have IBRS_ALL, do as we are doing now, independent
+> > of what the host spectre_v2_ibrs_all() setting is.
+>=20
+> We end up having to turn IBRS on again on vmexit then, taking care that
+> no conditional branch can go round it. So that becomes an
+> *unconditional* wrmsr or lfence in the vmexit path. We really don't
+> want that.
 
->
->> P.S. a proper device tree with AXP shouldn't use
->> reg_vcc3v0/3v3/1v8/etc. They're dummy
->> regulator nodes for
->> not implemented or not controllable regulators.
->>
->>>
->>>> This indicates that this patch should be not tested at all.
->>>
->>>
->>> This have indeed not been tested with linux.
->>> I think that this commit should not be reverted, I'll send a proper
->>> patch tonight or tomorow night max.
->>
->>
->> Please test patches sent to Linux on Linux :-)
->
->
->  If my patches adhere to the bindings I don't see why.
+Note that being able to keep it simple in KVM was basically what made
+the difference between me tolerating IBRS_ALL as Intel currently define
+it, and throwing my toys out of the pram (as I had done in the first
+iterations of this patch).
 
-It adheres to the bindings, but does not accurately describe the
-hardware constraints.
+If we *can't* keep it nice and simple in KVM, then I think we *really*
+want Intel to make the hardware bit a no-op. If not for all CPUs with
+the IBRS_ALL bit, then for all *future* CPUs and they can define a new
+IBRS_ALL_UNCONDITIONAL bit. Which is the only one we'd ever care about.
 
-ChenYu
+--=-rU25DfTblbC2+QrTscoL
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
->
->
->>>
->>> P.S.: Also as I'm the original sender I think I should have been in CC
->>> no ?
->>
->>
->> get_maintainer.pl didn't mention you and I forgot... sorry.
->>
->>>
->>> Cheers,
->>>
->>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>>> ---
->>>>  arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 57
->>>
->>> ------------------------
->>>>
->>>>  1 file changed, 57 deletions(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->>>
->>> b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->>>>
->>>> index 51e6f1d21c32..a565316eb340 100644
->>>> --- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->>>> +++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
->>>> @@ -86,10 +86,6 @@
->>>>         };
->>>>  };
->>>>
->>>> -&cpu0 {
->>>> -       cpu-supply = <&reg_dcdc3>;
->>>> -};
->>>> -
->>>>  &ehci0 {
->>>>         status = "okay";
->>>>  };
->>>> @@ -155,17 +151,6 @@
->>>>         status = "okay";
->>>>  };
->>>>
->>>> -&p2wi {
->>>> -       status = "okay";
->>>> -
->>>> -       axp22x: pmic@68 {
->>>> -               compatible = "x-powers,axp221";
->>>> -               reg = <0x68>;
->>>> -               interrupt-parent = <&nmi_intc>;
->>>> -               interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->>>> -       };
->>>> -};
->>>> -
->>>>  &pio {
->>>>         gmac_phy_reset_pin_bpi_m2: gmac_phy_reset_pin@0 {
->>>>                 pins = "PA21";
->>>> @@ -191,48 +176,6 @@
->>>>         };
->>>>  };
->>>>
->>>> -#include "axp22x.dtsi"
->>>> -
->>>> -&reg_dc5ldo {
->>>> -       regulator-min-microvolt = <700000>;
->>>> -       regulator-max-microvolt = <1320000>;
->>>> -       regulator-name = "vdd-cpus";
->>>> -};
->>>> -
->>>> -&reg_dcdc1 {
->>>> -       regulator-always-on;
->>>> -       regulator-min-microvolt = <3000000>;
->>>> -       regulator-max-microvolt = <3000000>;
->>>> -       regulator-name = "vdd-3v0";
->>>> -};
->>>> -
->>>> -&reg_dcdc2 {
->>>> -       regulator-min-microvolt = <700000>;
->>>> -       regulator-max-microvolt = <1320000>;
->>>> -       regulator-name = "vdd-gpu";
->>>> -};
->>>> -
->>>> -&reg_dcdc3 {
->>>> -       regulator-always-on;
->>>> -       regulator-min-microvolt = <700000>;
->>>> -       regulator-max-microvolt = <1320000>;
->>>> -       regulator-name = "vdd-cpu";
->>>> -};
->>>> -
->>>> -&reg_dcdc4 {
->>>> -       regulator-always-on;
->>>> -       regulator-min-microvolt = <700000>;
->>>> -       regulator-max-microvolt = <1320000>;
->>>> -       regulator-name = "vdd-sys-dll";
->>>> -};
->>>> -
->>>> -&reg_dcdc5 {
->>>> -       regulator-always-on;
->>>> -       regulator-min-microvolt = <1500000>;
->>>> -       regulator-max-microvolt = <1500000>;
->>>> -       regulator-name = "vcc-dram";
->>>> -};
->>>> -
->>>>  &uart0 {
->>>>         pinctrl-names = "default";
->>>>         pinctrl-0 = <&uart0_pins_a>;
->>>> --
->>>> 2.15.1
->>>>
->>>>
->>>> _______________________________________________
->>>> linux-arm-kernel mailing list
->>>> linux-arm-kernel@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
-> --
-> Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTMxMDM2MzhaMC8GCSqG
+SIb3DQEJBDEiBCDjOa/ERBBfZek2NAhQkTT8GH5tWzFh36ygjLYp9YyZMTCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAAXA/IweT6Va
+KRNtR/g4SK6fTOHtIYnIGpcU8yenZLx4x0FTC1XknTylsq1DUadhXIaNT5XBMVSsnfhRRAOKUCnB
+aibErGJnea35Pq1+nBkkgljdPJqXCAUF+8IHAyV9jCEo6Gv4UTbJ7kTkfO0mUoQaL/Dw6duxdGl+
+hYNM+7XFNSw+6pTbFJLs+QmfZsoGl9oM6A6+GMO4XRmhamtRtWh+rARA4nESOvjuKj1rHIEiJZhe
+nA1Opu7r0qMw53Y8Gqax2ZXt7xEJ5yezyl9XHo6G7RH595050/dIAnUMSkC6RZHhuuQXibe6Is7F
+mJDSa45kackX/OZg2Z2VVAqNVjwAAAAAAAA=
+
+
+--=-rU25DfTblbC2+QrTscoL--
