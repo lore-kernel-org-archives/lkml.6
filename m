@@ -1,73 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933185AbeBMBF5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 20:05:57 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41914 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933093AbeBMBFy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 20:05:54 -0500
-X-Google-Smtp-Source: AH8x2268XRr+lc+S9RUObxHNlvJiQhPAyYSNzr9dgR7GTKezFkXKpubL+QpKf7d3RvYCAMWPFK6/PQ==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-Subject: [PATCH v4 3/3] KVM: X86: Don't use PV TLB flush with dedicated vCPUs and steal time disabled
-Date: Tue, 13 Feb 2018 09:05:42 +0800
-Message-Id: <1518483942-14741-4-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518483942-14741-1-git-send-email-wanpengli@tencent.com>
-References: <1518483942-14741-1-git-send-email-wanpengli@tencent.com>
+        id S933208AbeBMBGF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 20:06:05 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41144 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933012AbeBMBGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 20:06:03 -0500
+Date: Mon, 12 Feb 2018 19:06:02 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: tglx@linutronix.de, x86@kernel.org, linux-kernel@vger.kernel.org,
+        bp@alien8.de, dwmw2@infradead.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH 2/2] x86/retpoline: Fix return buffer filling
+Message-ID: <20180213010601.a6vbrdealdngb6df@treble>
+References: <20180213000422.16916-1-andi@firstfloor.org>
+ <20180213000422.16916-2-andi@firstfloor.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180213000422.16916-2-andi@firstfloor.org>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Mon, Feb 12, 2018 at 04:04:22PM -0800, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> An earlier patch moved the RSB filling out of line, ending
+> it with a return. This results in the return buffer filling
+> only giving 15 instead of 16 usable returns because
+> the return from fill_rsb already uses one up.
+> 
+> Since the kernel call chains can be quite deep that's
+> somewhat dangerous and better avoided.
+> 
+> Always do one extra return buffer fill in the caller.
+> I added a STUFF_ONE_RSB macro for this, and fixed
+> up all the caller
+> 
+> An alternative would be to revert 1dde7415e999
+> and just go back to the inline version.
+> 
+> Needs the earlier patch to avoid lots of bogus warnings
+> from objtool, but even with that there is one left.
+> 
+> Fixes: 1dde7415e999 ("x86/retpoline: Simplify vmexit...")
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
 
-vCPUs are very unlikely to get preempted when they are the only task
-running on a CPU.  PV TLB flush is slower that the native flush in that
-case. In addition, avoid traversing all the cpus for pv tlb flush when
-steal time is disabled since pv tlb flush depends on the field in steal
-time for shared data.
+Instead of patch 1/2, the alternatives need to be annotated like:
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Eduardo Habkost <ehabkost@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kernel/kvm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index c5566d9..285822f 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -545,7 +545,9 @@ static void __init kvm_guest_init(void)
- 		pv_time_ops.steal_clock = kvm_steal_clock;
- 	}
- 
--	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH))
-+	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-+		!kvm_para_has_feature(KVM_HINTS_DEDICATED) &&
-+		!kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
- 		pv_mmu_ops.flush_tlb_others = kvm_flush_tlb_others;
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
-@@ -638,7 +640,9 @@ static __init int kvm_setup_pv_tlb_flush(void)
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index af0ca73abb23..4deeb869ab83 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -89,6 +89,7 @@
+ .macro FILL_RETURN_BUFFER nr:req ftr:req
+ #ifdef CONFIG_RETPOLINE
+ 	ALTERNATIVE "", "call __clear_rsb" , \ftr
++	ANNOTATE_NOSPEC_ALTERNATIVE
+ 	ALTERNATIVE "", "STUFF_ONE_RSB", \ftr
+ #endif
+ .endm
+@@ -178,7 +179,7 @@ extern char __indirect_thunk_end[];
+ static inline void vmexit_fill_RSB(void)
  {
- 	int cpu;
- 
--	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH)) {
-+	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-+		!kvm_para_has_feature(KVM_HINTS_DEDICATED) &&
-+		!kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
- 		for_each_possible_cpu(cpu) {
- 			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
- 				GFP_KERNEL, cpu_to_node(cpu));
--- 
-2.7.4
+ #ifdef CONFIG_RETPOLINE
+-	alternative_input("",
++	alternative_input(ANNOTATE_NOSPEC_ALTERNATIVE,
+ 			  "call __fill_rsb;" STUFF_ONE_RSB,
+ 			  X86_FEATURE_RETPOLINE,
+ 			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
