@@ -1,125 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965239AbeBMRYt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:24:49 -0500
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:30057 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934279AbeBMRYs (ORCPT
+        id S965297AbeBMRdG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:33:06 -0500
+Received: from mail-io0-f171.google.com ([209.85.223.171]:33363 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964849AbeBMRdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:24:48 -0500
-Date: Tue, 13 Feb 2018 11:24:47 -0600
-Message-ID: <20180213112447.Horde.gzaHZ_lO1wrYVuxHFhkn6nu@gator4166.hostgator.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/microcode/intel: Use 64-bit arithmetic instead of
- 32-bit
-References: <20180213164404.GA11664@embeddedor.com>
- <alpine.DEB.2.21.1802131747290.1130@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1802131747290.1130@nanos.tec.linutronix.de>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        Tue, 13 Feb 2018 12:33:03 -0500
+X-Google-Smtp-Source: AH8x22490nGLT3uA3wy78p+sULMZs8/EvfIirfetMbRaHVorYL3Jd2UvtYnwfGFikQjQPNKdm3YEIeaQZMnQ31pu7WM=
 MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 108.167.133.22
-X-Source-L: Yes
-X-Exim-ID: 1eleJz-001hr9-J3
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:12264
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
+References: <20180213080036.3bf3a908@canb.auug.org.au> <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+ <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
+ <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com> <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+ <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com> <20180212222157.0a3bd472@vento.lan>
+ <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 13 Feb 2018 09:33:02 -0800
+X-Google-Sender-Auth: RLJeNAPNsu-SnY8G5XVzo3Ipv2Q
+Message-ID: <CA+55aFxkYTeY9h=VHFXi=gbXsnsHCRMAVZ9=1_EsFGSqr0sj9g@mail.gmail.com>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+To: Junio C Hamano <gitster@pobox.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Git Mailing List <git@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Tue, Feb 13, 2018 at 9:18 AM, Junio C Hamano <gitster@pobox.com> wrote:
+>
+> That makes me wonder if another heuristic I floated earlier is more
+> appropriate.  When merging a tag object T, if refs/tags/T exists and
+> it is that tag object, then an updated "merge" would default to "--ff";
+> otherwise, it would keep the current default of creating a merge even
+> when we could fast-forward, in order to record that tag T in the
+> resulting history.
 
-Quoting Thomas Gleixner <tglx@linutronix.de>:
+Oooh. Yes, that sounds like the right thing to do.
 
-> On Tue, 13 Feb 2018, Gustavo A. R. Silva wrote:
->
->> Add suffix ULL to constant 1024 in order to give the compiler complete
->> information about the proper arithmetic to use. Notice that this
->> constant is used in a context that expects an expression of type
->> u64 (64 bits, unsigned).
->>
->> The expression c->x86_cache_size * 1024 is currently being evaluated
->> using 32-bit arithmetic.
->>
->> Addresses-Coverity-ID: 1464429
->> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->> ---
->>  arch/x86/kernel/cpu/microcode/intel.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/kernel/cpu/microcode/intel.c  
->> b/arch/x86/kernel/cpu/microcode/intel.c
->> index f7c55b0..e5edb92 100644
->> --- a/arch/x86/kernel/cpu/microcode/intel.c
->> +++ b/arch/x86/kernel/cpu/microcode/intel.c
->> @@ -982,7 +982,7 @@ static struct microcode_ops microcode_intel_ops = {
->>
->>  static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
->>  {
->> -	u64 llc_size = c->x86_cache_size * 1024;
->> +	u64 llc_size = c->x86_cache_size * 1024ULL;
->
-> x86_cache_size is 'int', so you really want to cast c->x86_cache_size to
-> (u64) for correctness sake.
->
-> Aside of that the patch is really purely cosmetic at the moment because the
-> largest LLC sizes are still below the 3 digit MB range which fits into
-> 32bit quite well. You'd need to have a CPU with >= 2G LLC to create a
-> problem.
->
-> But looking at c->x86_cache_size again. It's int because it's set to -1
-> initially which is then changed if CPUid or general CPU info gives real
-> information about the cache size. The only place where that matters is the
-> /proc/cpuinfo output:
->
-> 	if (c->x86_cache_size >= 0)
-> 		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
->
-> which is silly, because that really can be done with:
->
-> 	if (c->x86_cache_size)
->
-> as there is no point in printing 'cache size 0KB', which means
-> x86_cache_size can be made unsigned int, which makes sense because cache
-> size < 0 does not at all.
->
-> So instead of doing this purely mechanical cosmetic change to make a static
-> checker shut up, I'd like to see a proper cleanup of that thing.
->
+So the "no fast-forward" logic would trigger only if the name we used
+for merging is one of the temporary ones (ie .git/{FETCH,MERGE}_HEAD),
+not if the mentioned tag is already a normal tag reference.
 
-Yeah, actually I was curious about why x86_cache_size is signed  
-instead of unsigned. You've made it clear now.
+Then it's very explicitly about "don't lose the signing information".
 
-I will change it to be of type unsigned int and make the proper  
-changes to the rest of code in which x86_cache_size is being used.
+I'd still have to teach people to use "--only-ff" if they don't do the
+"fetch and merge" model but literally just do  "git pull upstream
+vX.Y", but at least the case Mauro describes would automatically just
+DTRT.
 
-Also, I'm curious about the types of the rest of the related variables:
+Me likey.
 
-         /* Cache QoS architectural values: */
-         int                     x86_cache_max_rmid;     /* max index */
-         int                     x86_cache_occ_scale;    /* scale to bytes */
-         int                     x86_power;
-
-
-Maybe they need some cleanup too.
-
-Thanks for the feedback.
---
-Gustavo
+           Linus
