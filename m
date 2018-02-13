@@ -1,73 +1,296 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965522AbeBMSps (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:45:48 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34020 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965415AbeBMSpq (ORCPT
+        id S965533AbeBMSqs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:46:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36173 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965415AbeBMSqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:45:46 -0500
-X-Google-Smtp-Source: AH8x225GyF8o8b20HRyyubELAcmzBtQTFzzw4Xqeww1zbD+iN1COIoEoSlHlDIHHCzxfsFOXLZwdp1/CzW0gUwkKevQ=
+        Tue, 13 Feb 2018 13:46:46 -0500
+Date: Tue, 13 Feb 2018 10:46:02 -0800
+From: tip-bot for Jessica Yu <tipbot@zytor.com>
+Message-ID: <tip-384f1d86a8890fcf8118add0b6a0785ee35f5a65@git.kernel.org>
+Cc: ananth@linux.vnet.ibm.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, joe.lawrence@redhat.com,
+        mhiramat@kernel.org, linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
+        rostedt@goodmis.org, pmladek@suse.com, davem@davemloft.net,
+        jeyu@kernel.org, peterz@infradead.org, jikos@kernel.org,
+        mbenes@suse.cz, hpa@zytor.com, anil.s.keshavamurthy@intel.com,
+        mingo@kernel.org
+Reply-To: pmladek@suse.com, rostedt@goodmis.org, davem@davemloft.net,
+        jpoimboe@redhat.com, mingo@kernel.org, jeyu@kernel.org,
+        peterz@infradead.org, jikos@kernel.org, mbenes@suse.cz, hpa@zytor.com,
+        anil.s.keshavamurthy@intel.com, ananth@linux.vnet.ibm.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, joe.lawrence@redhat.com
+In-Reply-To: <20180109235124.30886-2-jeyu@kernel.org>
+References: <20180109235124.30886-2-jeyu@kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] kprobes: Propagate error from arm_kprobe_ftrace()
+Git-Commit-ID: 384f1d86a8890fcf8118add0b6a0785ee35f5a65
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <0ea6dba4-0c52-4c9c-ae7e-d80c2f3d50f3@users.sourceforge.net>
-References: <0ea6dba4-0c52-4c9c-ae7e-d80c2f3d50f3@users.sourceforge.net>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Feb 2018 20:45:45 +0200
-Message-ID: <CAHp75Ve+Yifx4YO2Fbn+Ui4pGPpx0xSutSVjLVN9nVq6aOQyjg@mail.gmail.com>
-Subject: Re: [PATCH] gpio-intel-mid: Delete an error message for a failed
- memory allocation in intel_gpio_probe()
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        David Cohen <david.a.cohen@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 11:04 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Feb 2018 21:56:42 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
+Commit-ID:  384f1d86a8890fcf8118add0b6a0785ee35f5a65
+Gitweb:     https://git.kernel.org/tip/384f1d86a8890fcf8118add0b6a0785ee35f5a65
+Author:     Jessica Yu <jeyu@kernel.org>
+AuthorDate: Wed, 10 Jan 2018 00:51:23 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 18:20:00 +0100
 
-Linus, same comment as previously.
-If you are OK with the change, take my
+kprobes: Propagate error from arm_kprobe_ftrace()
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Improve error handling when arming ftrace-based kprobes. Specifically, if
+we fail to arm a ftrace-based kprobe, register_kprobe()/enable_kprobe()
+should report an error instead of success. Previously, this has lead to
+confusing situations where register_kprobe() would return 0 indicating
+success, but the kprobe would not be functional if ftrace registration
+during the kprobe arming process had failed. We should therefore take any
+errors returned by ftrace into account and propagate this error so that we
+do not register/enable kprobes that cannot be armed. This can happen if,
+for example, register_ftrace_function() finds an IPMODIFY conflict (since
+kprobe_ftrace_ops has this flag set) and returns an error. Such a conflict
+is possible since livepatches also set the IPMODIFY flag for their ftrace_ops.
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpio/gpio-intel-mid.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-> index 629575ea46a0..028d64c2cb1e 100644
-> --- a/drivers/gpio/gpio-intel-mid.c
-> +++ b/drivers/gpio/gpio-intel-mid.c
-> @@ -361,10 +361,8 @@ static int intel_gpio_probe(struct pci_dev *pdev,
->         pcim_iounmap_regions(pdev, 1 << 1);
->
->         priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> -       if (!priv) {
-> -               dev_err(&pdev->dev, "can't allocate chip data\n");
-> +       if (!priv)
->                 return -ENOMEM;
-> -       }
->
->         priv->reg_base = pcim_iomap_table(pdev)[0];
->         priv->chip.label = dev_name(&pdev->dev);
-> --
-> 2.16.1
->
+arm_all_kprobes() keeps its current behavior and attempts to arm all
+kprobes. It returns the last encountered error and gives a warning if
+not all probes could be armed.
 
+This patch is based on Petr Mladek's original patchset (patches 2 and 3)
+back in 2015, which improved kprobes error handling, found here:
 
+   https://lkml.org/lkml/2015/2/26/452
 
--- 
-With Best Regards,
-Andy Shevchenko
+However, further work on this had been paused since then and the patches
+were not upstreamed.
+
+Based-on-patches-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miroslav Benes <mbenes@suse.cz>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: live-patching@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180109235124.30886-2-jeyu@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/kprobes.c | 100 +++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 75 insertions(+), 25 deletions(-)
+
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index da2ccf1..2d98814 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -978,18 +978,36 @@ static int prepare_kprobe(struct kprobe *p)
+ }
+ 
+ /* Caller must lock kprobe_mutex */
+-static void arm_kprobe_ftrace(struct kprobe *p)
++static int arm_kprobe_ftrace(struct kprobe *p)
+ {
+-	int ret;
++	int ret = 0;
+ 
+ 	ret = ftrace_set_filter_ip(&kprobe_ftrace_ops,
+ 				   (unsigned long)p->addr, 0, 0);
+-	WARN(ret < 0, "Failed to arm kprobe-ftrace at %p (%d)\n", p->addr, ret);
+-	kprobe_ftrace_enabled++;
+-	if (kprobe_ftrace_enabled == 1) {
++	if (ret) {
++		pr_debug("Failed to arm kprobe-ftrace at %p (%d)\n", p->addr, ret);
++		return ret;
++	}
++
++	if (kprobe_ftrace_enabled == 0) {
+ 		ret = register_ftrace_function(&kprobe_ftrace_ops);
+-		WARN(ret < 0, "Failed to init kprobe-ftrace (%d)\n", ret);
++		if (ret) {
++			pr_debug("Failed to init kprobe-ftrace (%d)\n", ret);
++			goto err_ftrace;
++		}
+ 	}
++
++	kprobe_ftrace_enabled++;
++	return ret;
++
++err_ftrace:
++	/*
++	 * Note: Since kprobe_ftrace_ops has IPMODIFY set, and ftrace requires a
++	 * non-empty filter_hash for IPMODIFY ops, we're safe from an accidental
++	 * empty filter_hash which would undesirably trace all functions.
++	 */
++	ftrace_set_filter_ip(&kprobe_ftrace_ops, (unsigned long)p->addr, 1, 0);
++	return ret;
+ }
+ 
+ /* Caller must lock kprobe_mutex */
+@@ -1008,22 +1026,23 @@ static void disarm_kprobe_ftrace(struct kprobe *p)
+ }
+ #else	/* !CONFIG_KPROBES_ON_FTRACE */
+ #define prepare_kprobe(p)	arch_prepare_kprobe(p)
+-#define arm_kprobe_ftrace(p)	do {} while (0)
++#define arm_kprobe_ftrace(p)	(-ENODEV)
+ #define disarm_kprobe_ftrace(p)	do {} while (0)
+ #endif
+ 
+ /* Arm a kprobe with text_mutex */
+-static void arm_kprobe(struct kprobe *kp)
++static int arm_kprobe(struct kprobe *kp)
+ {
+-	if (unlikely(kprobe_ftrace(kp))) {
+-		arm_kprobe_ftrace(kp);
+-		return;
+-	}
++	if (unlikely(kprobe_ftrace(kp)))
++		return arm_kprobe_ftrace(kp);
++
+ 	cpus_read_lock();
+ 	mutex_lock(&text_mutex);
+ 	__arm_kprobe(kp);
+ 	mutex_unlock(&text_mutex);
+ 	cpus_read_unlock();
++
++	return 0;
+ }
+ 
+ /* Disarm a kprobe with text_mutex */
+@@ -1362,9 +1381,15 @@ out:
+ 
+ 	if (ret == 0 && kprobe_disabled(ap) && !kprobe_disabled(p)) {
+ 		ap->flags &= ~KPROBE_FLAG_DISABLED;
+-		if (!kprobes_all_disarmed)
++		if (!kprobes_all_disarmed) {
+ 			/* Arm the breakpoint again. */
+-			arm_kprobe(ap);
++			ret = arm_kprobe(ap);
++			if (ret) {
++				ap->flags |= KPROBE_FLAG_DISABLED;
++				list_del_rcu(&p->list);
++				synchronize_sched();
++			}
++		}
+ 	}
+ 	return ret;
+ }
+@@ -1573,8 +1598,14 @@ int register_kprobe(struct kprobe *p)
+ 	hlist_add_head_rcu(&p->hlist,
+ 		       &kprobe_table[hash_ptr(p->addr, KPROBE_HASH_BITS)]);
+ 
+-	if (!kprobes_all_disarmed && !kprobe_disabled(p))
+-		arm_kprobe(p);
++	if (!kprobes_all_disarmed && !kprobe_disabled(p)) {
++		ret = arm_kprobe(p);
++		if (ret) {
++			hlist_del_rcu(&p->hlist);
++			synchronize_sched();
++			goto out;
++		}
++	}
+ 
+ 	/* Try to optimize kprobe */
+ 	try_to_optimize_kprobe(p);
+@@ -2116,7 +2147,9 @@ int enable_kprobe(struct kprobe *kp)
+ 
+ 	if (!kprobes_all_disarmed && kprobe_disabled(p)) {
+ 		p->flags &= ~KPROBE_FLAG_DISABLED;
+-		arm_kprobe(p);
++		ret = arm_kprobe(p);
++		if (ret)
++			p->flags |= KPROBE_FLAG_DISABLED;
+ 	}
+ out:
+ 	mutex_unlock(&kprobe_mutex);
+@@ -2407,11 +2440,12 @@ static const struct file_operations debugfs_kprobe_blacklist_ops = {
+ 	.release        = seq_release,
+ };
+ 
+-static void arm_all_kprobes(void)
++static int arm_all_kprobes(void)
+ {
+ 	struct hlist_head *head;
+ 	struct kprobe *p;
+-	unsigned int i;
++	unsigned int i, total = 0, errors = 0;
++	int err, ret = 0;
+ 
+ 	mutex_lock(&kprobe_mutex);
+ 
+@@ -2428,16 +2462,28 @@ static void arm_all_kprobes(void)
+ 	/* Arming kprobes doesn't optimize kprobe itself */
+ 	for (i = 0; i < KPROBE_TABLE_SIZE; i++) {
+ 		head = &kprobe_table[i];
+-		hlist_for_each_entry_rcu(p, head, hlist)
+-			if (!kprobe_disabled(p))
+-				arm_kprobe(p);
++		/* Arm all kprobes on a best-effort basis */
++		hlist_for_each_entry_rcu(p, head, hlist) {
++			if (!kprobe_disabled(p)) {
++				err = arm_kprobe(p);
++				if (err)  {
++					errors++;
++					ret = err;
++				}
++				total++;
++			}
++		}
+ 	}
+ 
+-	printk(KERN_INFO "Kprobes globally enabled\n");
++	if (errors)
++		pr_warn("Kprobes globally enabled, but failed to arm %d out of %d probes\n",
++			errors, total);
++	else
++		pr_info("Kprobes globally enabled\n");
+ 
+ already_enabled:
+ 	mutex_unlock(&kprobe_mutex);
+-	return;
++	return ret;
+ }
+ 
+ static void disarm_all_kprobes(void)
+@@ -2494,6 +2540,7 @@ static ssize_t write_enabled_file_bool(struct file *file,
+ {
+ 	char buf[32];
+ 	size_t buf_size;
++	int ret = 0;
+ 
+ 	buf_size = min(count, (sizeof(buf)-1));
+ 	if (copy_from_user(buf, user_buf, buf_size))
+@@ -2504,7 +2551,7 @@ static ssize_t write_enabled_file_bool(struct file *file,
+ 	case 'y':
+ 	case 'Y':
+ 	case '1':
+-		arm_all_kprobes();
++		ret = arm_all_kprobes();
+ 		break;
+ 	case 'n':
+ 	case 'N':
+@@ -2515,6 +2562,9 @@ static ssize_t write_enabled_file_bool(struct file *file,
+ 		return -EINVAL;
+ 	}
+ 
++	if (ret)
++		return ret;
++
+ 	return count;
+ }
+ 
