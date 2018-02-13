@@ -1,151 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966034AbeBMWeM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 17:34:12 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:36970 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965942AbeBMWeL (ORCPT
+        id S966037AbeBMWgO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:36:14 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38945 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965942AbeBMWgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 17:34:11 -0500
-Subject: Re: [PATCH v2] mm: hwpoison: disable memory error handling on 1GB
- hugepage
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Punit Agrawal <punit.agrawal@arm.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20180130013919.GA19959@hori1.linux.bs1.fc.nec.co.jp>
- <1517284444-18149-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <87inbbjx2w.fsf@e105922-lin.cambridge.arm.com>
- <20180207011455.GA15214@hori1.linux.bs1.fc.nec.co.jp>
- <87fu6bfytm.fsf@e105922-lin.cambridge.arm.com>
- <20180208121749.0ac09af2b5a143106f339f55@linux-foundation.org>
- <87wozhvc49.fsf@concordia.ellerman.id.au>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <e673f38a-9e5f-21f6-421b-b3cb4ff02e91@oracle.com>
-Date: Tue, 13 Feb 2018 14:33:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <87wozhvc49.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8804 signatures=668670
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802130264
+        Tue, 13 Feb 2018 17:36:12 -0500
+X-Google-Smtp-Source: AH8x2248WP8M967zhLcV0e5CRp0xS4SKDborrNqWVByMg5cG/jO084zKGwvAMHjlobyxiNuTOLuDSg==
+From: Guenter Roeck <linux@roeck-us.net>
+To: Tyler Hicks <tyhicks@canonical.com>
+Cc: ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH] ecryptfs: Restore support for both encrypted and unencrypted file names
+Date: Tue, 13 Feb 2018 14:36:08 -0800
+Message-Id: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 06:48 PM, Michael Ellerman wrote:
-> Andrew Morton <akpm@linux-foundation.org> writes:
-> 
->> On Thu, 08 Feb 2018 12:30:45 +0000 Punit Agrawal <punit.agrawal@arm.com> wrote:
->>
->>>>
->>>> So I don't think that the above test result means that errors are properly
->>>> handled, and the proposed patch should help for arm64.
->>>
->>> Although, the deviation of pud_huge() avoids a kernel crash the code
->>> would be easier to maintain and reason about if arm64 helpers are
->>> consistent with expectations by core code.
->>>
->>> I'll look to update the arm64 helpers once this patch gets merged. But
->>> it would be helpful if there was a clear expression of semantics for
->>> pud_huge() for various cases. Is there any version that can be used as
->>> reference?
->>
->> Is that an ack or tested-by?
->>
->> Mike keeps plaintively asking the powerpc developers to take a look,
->> but they remain steadfastly in hiding.
-> 
-> Cc'ing linuxppc-dev is always a good idea :)
-> 
+Commit 88ae4ab9802e ("ecryptfs_lookup(): try either only encrypted or
+plaintext name") was supposed to fix a situation where two files with
+the same name and same inode could be created in ecryptfs. One of those
+files had an encrypted file name, the other file name was unencrypted.
 
-Thanks Michael,
+After commit 88ae4ab9802e, having a mix of encrypted and unencrypted file
+names is no longer supposed to be possible. However, that is not the case.
+The only difference is that it is now even easier to create a situation
+where two files with the same name coexist (one encrypted and the other
+not encrypted). In practice, this looks like the following (files
+created with v4.14.12).
 
-I was mostly concerned about use cases for soft/hard offline of huge pages
-larger than PMD_SIZE on powerpc.  I know that powerpc supports PGD_SIZE
-huge pages, and soft/hard offline support was specifically added for this.
-See, 94310cbcaa3c "mm/madvise: enable (soft|hard) offline of HugeTLB pages
-at PGD level"
+ecryptfs mounted with file name encryption enabled:
 
-This patch will disable that functionality.  So, at a minimum this is a
-'heads up'.  If there are actual use cases that depend on this, then more
-work/discussions will need to happen.  From the e-mail thread on PGD_SIZE
-support, I can not tell if there is a real use case or this is just a
-'nice to have'.
+$ ls -li
+total 48
+5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+$ grep . *
+myfile:encrypted
+myfile:encrypted
+myfile2:encrypted
+myfile2:encrypted
 
+$ ls -li
+total 48
+5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36
+ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njbcIPoApxk7-E--
+5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02
+ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCtJ70cm911yZ---
+5252817 -rw-rw-r-- 1 groeck groeck 12 Jan 20 12:52 myfile
+5252827 -rw-rw-r-- 1 groeck groeck 12 Jan 20 15:37 myfile2
+
+$ grep . *
+ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njbcIPoApxk7-E--:encrypted
+ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCtJ70cm911yZ---:encrypted
+myfile:unencrypted
+myfile2:unencrypted
+
+Creating a file with file name encryption disabled and remounting with
+file name encryption enabled results in the following.
+
+$ ls -li
+ls: cannot access 'myfile3': No such file or directory
+total 48
+5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+      ? -????????? ? ?      ?       ?            ? myfile3
+
+Prior to commit 88ae4ab9802e, the file system had to be mounted with
+encrypted file names first to create a file, then the same had to be
+repeated after mounting with unencrypted file names. Now the duplicate
+files can be created both ways (unencrypted _or_ encrypted first).
+
+The only real difference is that it is no longer possible to have a
+_working_ combination of encrypted and unencrypted file names. In other
+words, commit 88ae4ab9802e results in reduced functionality with no
+benefit whatsoever.
+
+Restore ability to have a mix of unencrypted and encrypted files.
+This effectively reverts commit 88ae4ab9802e, but the code is now
+better readable since it avoids a number of goto statements.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ fs/ecryptfs/inode.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index 847904aa63a9..14a5c096ead6 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -392,11 +392,11 @@ static struct dentry *ecryptfs_lookup(struct inode *ecryptfs_dir_inode,
+ 	int rc = 0;
+ 
+ 	lower_dir_dentry = ecryptfs_dentry_to_lower(ecryptfs_dentry->d_parent);
+-
++	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len);
+ 	mount_crypt_stat = &ecryptfs_superblock_to_private(
+ 				ecryptfs_dentry->d_sb)->mount_crypt_stat;
+-	if (mount_crypt_stat
+-	    && (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
++	if (IS_ERR(lower_dentry) &&
++	    (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
+ 		rc = ecryptfs_encrypt_and_encode_filename(
+ 			&encrypted_and_encoded_name, &len,
+ 			mount_crypt_stat, name, len);
+@@ -405,10 +405,10 @@ static struct dentry *ecryptfs_lookup(struct inode *ecryptfs_dir_inode,
+ 			       "filename; rc = [%d]\n", __func__, rc);
+ 			return ERR_PTR(rc);
+ 		}
+-		name = encrypted_and_encoded_name;
++		lower_dentry = lookup_one_len_unlocked(
++			encrypted_and_encoded_name, lower_dir_dentry, len);
+ 	}
+ 
+-	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len);
+ 	if (IS_ERR(lower_dentry)) {
+ 		ecryptfs_printk(KERN_DEBUG, "%s: lookup_one_len() returned "
+ 				"[%ld] on lower_dentry = [%s]\n", __func__,
 -- 
-Mike Kravetz
-
->> Folks, this patch fixes a BUG and is marked for -stable.  Can we please
->> prioritize it?
-> 
-> It's not crashing for me (on 4.16-rc1):
-> 
->   # ./huge-poison 
->   Poisoning page...once
->   Poisoning page...once again
->   madvise: Bad address
-> 
-> And I guess the above is the expected behaviour?
-> 
-> Looking at the function trace it looks like the 2nd madvise is going
-> down reasonable code paths, but I don't know for sure:
-> 
->   8)               |  SyS_madvise() {
->   8)               |    capable() {
->   8)               |      ns_capable_common() {
->   8)   0.094 us    |        cap_capable();
->   8)   0.516 us    |      }
->   8)   1.052 us    |    }
->   8)               |    get_user_pages_fast() {
->   8)   0.354 us    |      gup_pgd_range();
->   8)               |      get_user_pages_unlocked() {
->   8)   0.050 us    |        down_read();
->   8)               |        __get_user_pages() {
->   8)               |          find_extend_vma() {
->   8)               |            find_vma() {
->   8)   0.148 us    |              vmacache_find();
->   8)   0.622 us    |            }
->   8)   1.064 us    |          }
->   8)   0.028 us    |          arch_vma_access_permitted();
->   8)               |          follow_hugetlb_page() {
->   8)               |            huge_pte_offset() {
->   8)   0.128 us    |              __find_linux_pte();
->   8)   0.580 us    |            }
->   8)   0.048 us    |            _raw_spin_lock();
->   8)               |            hugetlb_fault() {
->   8)               |              huge_pte_offset() {
->   8)   0.034 us    |                __find_linux_pte();
->   8)   0.434 us    |              }
->   8)   0.028 us    |              is_hugetlb_entry_migration();
->   8)   0.032 us    |              is_hugetlb_entry_hwpoisoned();
->   8)   2.118 us    |            }
->   8)   4.940 us    |          }
->   8)   7.468 us    |        }
->   8)   0.056 us    |        up_read();
->   8)   8.722 us    |      }
->   8) + 10.264 us   |    }
->   8) + 12.212 us   |  }
-> 
-> 
-> cheers
-> 
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
-> 
+2.7.4
