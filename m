@@ -1,78 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934484AbeBMJNv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:13:51 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:45204 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933494AbeBMJNq (ORCPT
+        id S934622AbeBMJSM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:18:12 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33406 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933805AbeBMJNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:13:46 -0500
-Date: Tue, 13 Feb 2018 10:13:34 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rafael Wysocki <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, daniel.lezcano@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/10] ARM: dts: sun[4-7]i: Remove
- "cooling-{min|max}-level" for CPU nodes
-Message-ID: <20180213091333.rq4rtvvkwppn5ypu@flea.lan>
-References: <cover.1518166039.git.viresh.kumar@linaro.org>
- <4d489d040ec1fc3821d8e4bf31ffcc2eebfa41e1.1518166039.git.viresh.kumar@linaro.org>
+        Tue, 13 Feb 2018 04:13:37 -0500
+X-Google-Smtp-Source: AH8x22787XEPJ30BcZf0CRdiTC10suTxBeMbCJV2x4/Wx32r89RdDESpmrboEwAlrkQIKRev7ugirg==
+Subject: Re: [PATCH v3 1/5] clk: mediatek: update missing clock data for
+ MT7622 audsys
+To: Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
+References: <cover.1518424204.git.ryder.lee@mediatek.com>
+ <ee93f496edb238935940233d88f5548940b53b6a.1518424204.git.ryder.lee@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <8af9dd65-13da-299d-fb38-fe2da4685e1a@gmail.com>
+Date: Tue, 13 Feb 2018 10:13:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4d4boujzcki57u7y"
-Content-Disposition: inline
-In-Reply-To: <4d489d040ec1fc3821d8e4bf31ffcc2eebfa41e1.1518166039.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <ee93f496edb238935940233d88f5548940b53b6a.1518424204.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---4d4boujzcki57u7y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 09, 2018 at 02:28:04PM +0530, Viresh Kumar wrote:
-> The "cooling-min-level" and "cooling-max-level" properties are not
-> parsed by any part of the kernel currently and the max cooling state of
-> a CPU cooling device is found by referring to the cpufreq table instead.
->=20
-> Remove the unused properties from the CPU nodes.
->=20
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+On 02/12/2018 12:28 PM, Ryder Lee wrote:
+> Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/clk/mediatek/clk-mt7622-aud.c  | 1 +
+>  include/dt-bindings/clock/mt7622-clk.h | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)>
 
-Applied, thanks!
-Maxime
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
---4d4boujzcki57u7y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqCrD0ACgkQ0rTAlCFN
-r3Smyg//QoNE7NIhBDcwyZ4ZhLCECasqLnAoCYZItq4CRCJ/FQ3imxHApe2RmK/W
-MKAcMtsAiIfQlenLAocUVkG/KZ2al6p5vqjMp1xz+vV6WLOeBOOfhVnEpYEhWuYz
-lJ/wlyULmzl1NQvCS+RB9y/VIbC8ppbjrzFpChBd0+4u6rA9bgS/0D41Z0bB7JNA
-uyGT1vAX3y3gR7jxUAQz6YiDFOSi6E46M6j/QOSKzG+LLYtvLc5NaBv/GyyJUOPe
-GCZkNyO+OMIZmRX7871wKlUwzkbsN5AIKd8V4GhmR3qmwzmK0JM2oSCkE/AoJVhq
-ajOM4yKT8SnVuowSBPzvP4dtj7uthg0CiFlXqVvpVjgoTz+Q81p6HIjJvnqSiv38
-8sem21Dii6M3sQgek4aV8s8gYMwODzyha2zP+oeq0SqeWfEKNXXNLsIJd9gYKyA3
-3FpUPOxoSDusTa+aCfww8TRj1s9ALWFJVBpbleirxIqDOr40u/k40Nwlzp4rEAOY
-DkrDbNpglmJ/HU/E10xFB7vAmUxggXT6RwBPdI5luZWnmpaWobATAs2RJ2WGdVWm
-AHF5kiFec8BO7BSTqudHUeU9bXJiwm9/MzDOFt51B0DUyW7T/vs3HlhykrfsbfJa
-p5ViZTApOwKXrj+bbm4EiRxiaoE4Y9wMbOGS2762azw2zzNTABw=
-=T13h
------END PGP SIGNATURE-----
-
---4d4boujzcki57u7y--
+> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+> index fad7d9f..13f752d 100644
+> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
+> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+> @@ -106,6 +106,7 @@
+>  	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
+>  	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
+>  	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
+> +	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
+>  	/* AUDIO2 */
+>  	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
+>  	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
+> diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
+> index 3e514ed..e9d77f0 100644
+> --- a/include/dt-bindings/clock/mt7622-clk.h
+> +++ b/include/dt-bindings/clock/mt7622-clk.h
+> @@ -235,7 +235,8 @@
+>  #define CLK_AUDIO_MEM_ASRC3		43
+>  #define CLK_AUDIO_MEM_ASRC4		44
+>  #define CLK_AUDIO_MEM_ASRC5		45
+> -#define CLK_AUDIO_NR_CLK		46
+> +#define CLK_AUDIO_AFE_CONN		46
+> +#define CLK_AUDIO_NR_CLK		47
+>  
+>  /* SSUSBSYS */
+>  
+> 
