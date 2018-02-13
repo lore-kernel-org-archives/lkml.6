@@ -1,49 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934470AbeBMP6T (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:58:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37018 "EHLO mx2.suse.de"
+        id S934542AbeBMP60 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:58:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933730AbeBMP6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:58:18 -0500
-Date: Tue, 13 Feb 2018 16:58:16 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: David Rientjes <rientjes@google.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [patch] kvm: suppress KVM_SET_GSI_ROUTING allocation failure
-Message-ID: <20180213155816.GW3443@dhcp22.suse.cz>
-References: <alpine.DEB.2.10.1802081334120.133173@chino.kir.corp.google.com>
- <20180213144836.GU3443@dhcp22.suse.cz>
- <a68ddd16-dc7a-4ea7-ac33-ceff6d9276b8@redhat.com>
- <20180213154428.GV3443@dhcp22.suse.cz>
- <1083260b-dfcd-6354-4e0c-b7b162661b15@redhat.com>
+        id S933730AbeBMP6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:58:24 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE0F2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 13 Feb 2018 10:58:20 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-trace-users@vger.kernel.org
+Subject: Re: [RFC PATCH 0/8] tracing: probeevent: Improve fetcharg features
+Message-ID: <20180213105820.3e0581a0@gandalf.local.home>
+In-Reply-To: <151853614489.31487.10683006682475678487.stgit@devbox>
+References: <151853614489.31487.10683006682475678487.stgit@devbox>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1083260b-dfcd-6354-4e0c-b7b162661b15@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13-02-18 16:49:20, Paolo Bonzini wrote:
-> On 13/02/2018 16:44, Michal Hocko wrote:
-> > On Tue 13-02-18 16:03:09, Paolo Bonzini wrote:
-[...]
-> >> There have been quite a few reports of this from syzkaller and generally
-> >> we've fixed them.  It does seem like a recipe for NULL-pointer
-> >> dereferences when the size is user-controlled (as in this case).
-> > 
-> > We do return NULL for that case regardless the above. The patch just
-> > doesn't warn. Or do you think it is helpful to warn?
+On Wed, 14 Feb 2018 00:35:45 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Hi,
 > 
-> It certainly helps bringing potential issues in the spotlight (through
-> fuzzing, mostly).
+> This series improves probeevent variable fetcharg framework,
+> 
+> - Rewrite fetcharg framework with fetch_insn, switch-case based
+>   instead of function pointer. (maybe good for retpoline)
+> - Add "symbol" type support, which shows symbol+offset instead of
+>   address value.
+> - Add "$argN" fetcharg, which fetches function parameters.
+>   (currently only for x86-64)
+> - Add array type support for basic types (except for string),
+>   which enables to get fixed length array from probeevents.
+> 
+> All ideas came from Steve's function event tracer. Thanks Steve!
 
-Fair enough.
+You're welcome ;-)
 
--- 
-Michal Hocko
-SUSE Labs
+> 
+> I'll add string (pointer) array support and testcases for these
+> features in the next version.
+> 
+
+Just to let you know I'm trying to catch up with some internal work and
+may not be able to look at these for a few days.
+
+Hopefully others will be able to review them.
+
+-- Steve
