@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3813382-1518514809-2-5564810822235936775
+X-Cyrus-Session-Id: sloti22d1t05-3807972-1518514797-2-12615756377461976835
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roenca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518514808; b=RhNnmdBefYm5c6AgSWt6btgO/ix54DMhquIOeu0cgGlFSJy
-    aQ6LHmHUr4ishTiVE3rPsd0RzrZopXcdz0WG5EsMdVi76oSL51WP5RZvLtqk4e7G
-    J5PDrVq26ePArx2VQiSxBMG7egJdNv563OJvos90dRKVqxd85V1sFPqXssRGSJgo
-    oWQdCcQvyWdCrenkHHyIalXUnergp4MGKebReNns5Yq6shtqbUFe5ZrI35CVLSD8
-    DK3JcvvBHj6o+DXzMNItMIzhODPLwKL+IzrLHPr62keQTVGkmGyBbTbT6Na4xlsl
-    DENFn/CbIuvdJ6ZTD2HglKDJ6e+TOqcJIyWj85Q==
+    t=1518514797; b=LrjpjtXgbussroO/a4PdnMJjFo55wWAJE6p2xXvBJ07e8cs
+    qkXl94vppGrlANO1lNFZLxe6f/JpvsVLO30aJoy6o52Z433Zk94FF8wFG8cjz6cc
+    Lnrh3EyA7oxR3/2XyLJztrP/QYM4xOtd1J0RQRK0QfJ22EiMKB0QbMegQVeXo2Of
+    5fzzQkqb+Vmr3gUeOX+HwN2ZbrnyU5Iq7zzXY+FwHBjnaP3OaRR/9QHXsoipThqm
+    04c3DsUsbNrEqxuszb3d+CWlC5ctxjTSKjHkvWzITb/b7gKlpafmgeeWclRXG+RN
+    MrKmICB+H9liiYDmAYXcQfM3TXq+4mP6PMnIf0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1518514808;
-    bh=yXNZuOhY2Esdd9AFQAZ/GEfW/o3WkL6XavIgLQh5LnU=; b=s+DPdqtqKQqF
-    LbdMD1P9PHvGrmr5tqQkxnQa8rziyAsnV6clMbX/lyEFdF/u84WHphN20RKmSc3r
-    L7km8pb+2EOg6Wy6AQkYi3ZExWrHNchIjyUbEQbjM+6Ry29p0oGPlzaWMOTcCEwB
-    qPHhouvwo0x1HMKL7Yr7m+ZZ6Hy5hugJiDP2txDy33oiGIsgPtvqpQj8yMCtfjZa
-    aqAVtaccC64v5XEbhZ9yzRxiT24oPplLVQ97UZo19uVGS8OGZC6SlnFfaEQREWDG
-    gpf0V6kIN8geI1wmUDF5HU3ORdF9ywbRdOcV0SW4V/q9pAC89SESpX3doAqybHwl
-    vTq09JjBZw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518514797;
+    bh=3X3gHetx7k854u45bKoDEESbj5Ea2qbMelbzjhUi2qk=; b=on5Z/eNyfu5y
+    R7ITN/myDW79F3XLiBB//vQIKKzDF4dh5KdaACuj6h9kHthaE9qj+i5bWGspAiG/
+    4eAnSdE1QCAEwV+MWVpXa8FV1Ae+bnEHpXtLTIwDtEtjiXXQBRwSoEo4GDAN+DzC
+    ShoslmC02A156zMOcIqriv4dQFWlkzk+U1M8no2OEjLr70FJsuE382R2rX2DhsQg
+    /NtrcjcttHMzBHZbNAd7VUEMexW6wfvgM4nyGcNgtAxEaS0s9hytwj5ymV2aXUnE
+    rSpil5cvZyVRlGSHy8GkvZbOv2TRgcDgFfjexcj5W1zixzbwV9Z2y74FOMHbpYVD
+    6z5TRhKFNA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -47,17 +47,17 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934722AbeBMJfy (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Feb 2018 04:35:54 -0500
-Received: from mga03.intel.com ([134.134.136.65]:27128 "EHLO mga03.intel.com"
+        id S934352AbeBMJji (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 04:39:38 -0500
+Received: from mga03.intel.com ([134.134.136.65]:27146 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934370AbeBMJfw (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:35:52 -0500
+        id S934560AbeBMJgE (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:36:04 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
-   d="scan'208";a="26889597"
+   d="scan'208";a="26889646"
 From: Wu Hao <hao.wu@intel.com>
 To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
         Shiva Rao <shiva.rao@intel.com>,
         Christopher Rauer <christopher.rauer@intel.com>,
         Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: [PATCH v4 16/24] fpga: dfl: add fpga manager platform driver for FME
-Date: Tue, 13 Feb 2018 17:24:45 +0800
-Message-Id: <1518513893-4719-17-git-send-email-hao.wu@intel.com>
+Subject: [PATCH v4 21/24] fpga: dfl: afu: add header sub feature support
+Date: Tue, 13 Feb 2018 17:24:50 +0800
+Message-Id: <1518513893-4719-22-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
 References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
@@ -80,356 +80,170 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds fpga manager driver for FPGA Management Engine (FME). It
-implements fpga_manager_ops for FPGA Partial Reconfiguration function.
+The port header register set is always present for port, it is mainly
+for capability, control and status of the ports that AFU connected to.
+
+This patch implements header sub feature support. Below user interfaces
+are created by this patch.
+
+Sysfs interface:
+* /sys/class/fpga_region/<regionX>/<dfl-port.x>/id
+  Read-only. Port ID.
+
+Ioctl interface:
+* FPGA_PORT_RESET
+  Reset the FPGA Port and its AFU.
 
 Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
 Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
 Signed-off-by: Shiva Rao <shiva.rao@intel.com>
 Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-Signed-off-by: Kang Luwei <luwei.kang@intel.com>
 Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
 ---
-v3: rename driver to dfl-fpga-fme-mgr
-    implemented status callback for fpga manager
-    rebased due to fpga api changes
-v4: rename to dfl-fme-mgr, and fix SPDX license issue
-    add pr_credit comments and improve dev_err message
-    remove interface_id sysfs interface
-    include dfl-fme-pr.h instead of dfl.h
+v3: rename driver name to fpga-dfl-afu
+    add more description for reset ioctl.
+    fix some checkpatch issues.
+v4: rebase.
+    add Acked-by from Alan.
 ---
- drivers/fpga/Kconfig       |   6 +
- drivers/fpga/Makefile      |   1 +
- drivers/fpga/dfl-fme-mgr.c | 290 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 297 insertions(+)
- create mode 100644 drivers/fpga/dfl-fme-mgr.c
+ Documentation/ABI/testing/sysfs-platform-dfl-port |  7 ++++
+ drivers/fpga/dfl-afu-main.c                       | 44 ++++++++++++++++++++++-
+ include/uapi/linux/fpga-dfl.h                     | 17 +++++++++
+ 3 files changed, 67 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-dfl-port
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 103d5e2..89f76e8 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -150,6 +150,12 @@ config FPGA_DFL_FME
- 	  FPGA platform level management features. There shall be 1 FME
- 	  per DFL based FPGA device.
- 
-+config FPGA_DFL_FME_MGR
-+	tristate "FPGA DFL FME Manager Driver"
-+	depends on FPGA_DFL_FME
-+	help
-+	  Say Y to enable FPGA Manager driver for FPGA Management Engine.
-+
- config FPGA_DFL_PCI
- 	tristate "FPGA Device Feature List (DFL) PCIe Device Driver"
- 	depends on PCI && FPGA_DFL
-diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-index 3c44fc9..f82814a 100644
---- a/drivers/fpga/Makefile
-+++ b/drivers/fpga/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_OF_FPGA_REGION)		+= of-fpga-region.o
- # FPGA Device Feature List Support
- obj-$(CONFIG_FPGA_DFL)			+= dfl.o
- obj-$(CONFIG_FPGA_DFL_FME)		+= dfl-fme.o
-+obj-$(CONFIG_FPGA_DFL_FME_MGR)		+= dfl-fme-mgr.o
- 
- dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
- 
-diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+diff --git a/Documentation/ABI/testing/sysfs-platform-dfl-port b/Documentation/ABI/testing/sysfs-platform-dfl-port
 new file mode 100644
-index 0000000..2f92c29
+index 0000000..79e8332
 --- /dev/null
-+++ b/drivers/fpga/dfl-fme-mgr.c
-@@ -0,0 +1,290 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * FPGA Manager Driver for FPGA Management Engine (FME)
-+ *
-+ * Copyright (C) 2017 Intel Corporation, Inc.
-+ *
-+ * Authors:
-+ *   Kang Luwei <luwei.kang@intel.com>
-+ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-+ *   Wu Hao <hao.wu@intel.com>
-+ *   Joseph Grecco <joe.grecco@intel.com>
-+ *   Enno Luebbers <enno.luebbers@intel.com>
-+ *   Tim Whisonant <tim.whisonant@intel.com>
-+ *   Ananda Ravuri <ananda.ravuri@intel.com>
-+ *   Christopher Rauer <christopher.rauer@intel.com>
-+ *   Henry Mitchel <henry.mitchel@intel.com>
-+ */
++++ b/Documentation/ABI/testing/sysfs-platform-dfl-port
+@@ -0,0 +1,7 @@
++What:		/sys/bus/platform/devices/dfl-port.0/id
++Date:		Februray 2018
++KernelVersion:  4.16
++Contact:	Wu Hao <hao.wu@intel.com>
++Description:	Read-only. It returns id of this port. One DFL FPGA device
++		may have more than one port. Userspace could use this id to
++		distinguish different ports under same FPGA device.
+diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+index 70db28c..b2f8798 100644
+--- a/drivers/fpga/dfl-afu-main.c
++++ b/drivers/fpga/dfl-afu-main.c
+@@ -16,25 +16,66 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/fpga-dfl.h>
+ 
+ #include "dfl.h"
+ 
++static ssize_t
++id_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	int id = fpga_port_id(to_platform_device(dev));
 +
-+#include <linux/bitfield.h>
-+#include <linux/module.h>
-+#include <linux/iopoll.h>
-+#include <linux/fpga/fpga-mgr.h>
++	return scnprintf(buf, PAGE_SIZE, "%d\n", id);
++}
++static DEVICE_ATTR_RO(id);
 +
-+#include "dfl-fme-pr.h"
-+
-+#define PR_WAIT_TIMEOUT   8000000
-+#define PR_HOST_STATUS_IDLE	0
-+
-+struct fme_mgr_priv {
-+	void __iomem *ioaddr;
-+	u64 pr_error;
++static const struct attribute *port_hdr_attrs[] = {
++	&dev_attr_id.attr,
++	NULL,
 +};
 +
-+static u64 pr_error_to_mgr_status(u64 err)
-+{
-+	u64 status = 0;
+ static int port_hdr_init(struct platform_device *pdev, struct feature *feature)
+ {
+ 	dev_dbg(&pdev->dev, "PORT HDR Init.\n");
+ 
+-	return 0;
++	fpga_port_reset(pdev);
 +
-+	if (err & FME_PR_ERR_OPERATION_ERR)
-+		status |= FPGA_MGR_STATUS_OPERATION_ERR;
-+	if (err & FME_PR_ERR_CRC_ERR)
-+		status |= FPGA_MGR_STATUS_CRC_ERR;
-+	if (err & FME_PR_ERR_INCOMPATIBLE_BS)
-+		status |= FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR;
-+	if (err & FME_PR_ERR_PROTOCOL_ERR)
-+		status |= FPGA_MGR_STATUS_IP_PROTOCOL_ERR;
-+	if (err & FME_PR_ERR_FIFO_OVERFLOW)
-+		status |= FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR;
++	return sysfs_create_files(&pdev->dev.kobj, port_hdr_attrs);
+ }
+ 
+ static void port_hdr_uinit(struct platform_device *pdev,
+ 			   struct feature *feature)
+ {
+ 	dev_dbg(&pdev->dev, "PORT HDR UInit.\n");
 +
-+	return status;
++	sysfs_remove_files(&pdev->dev.kobj, port_hdr_attrs);
 +}
 +
-+static u64 fme_mgr_pr_error_handle(void __iomem *fme_pr)
++static long
++port_hdr_ioctl(struct platform_device *pdev, struct feature *feature,
++	       unsigned int cmd, unsigned long arg)
 +{
-+	u64 pr_status, pr_error;
++	long ret;
 +
-+	pr_status = readq(fme_pr + FME_PR_STS);
-+	if (!(pr_status & FME_PR_STS_PR_STS))
-+		return 0;
-+
-+	pr_error = readq(fme_pr + FME_PR_ERR);
-+	writeq(pr_error, fme_pr + FME_PR_ERR);
-+
-+	return pr_error;
-+}
-+
-+static int fme_mgr_write_init(struct fpga_manager *mgr,
-+			      struct fpga_image_info *info,
-+			      const char *buf, size_t count)
-+{
-+	struct device *dev = &mgr->dev;
-+	struct fme_mgr_priv *priv = mgr->priv;
-+	void __iomem *fme_pr = priv->ioaddr;
-+	u64 pr_ctrl, pr_status;
-+
-+	if (!(info->flags & FPGA_MGR_PARTIAL_RECONFIG)) {
-+		dev_err(dev, "only supports partial reconfiguration.\n");
-+		return -EINVAL;
++	switch (cmd) {
++	case FPGA_PORT_RESET:
++		if (!arg)
++			ret = fpga_port_reset(pdev);
++		else
++			ret = -EINVAL;
++		break;
++	default:
++		dev_dbg(&pdev->dev, "%x cmd not handled", cmd);
++		ret = -ENODEV;
 +	}
-+
-+	dev_dbg(dev, "resetting PR before initiated PR\n");
-+
-+	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
-+	pr_ctrl |= FME_PR_CTRL_PR_RST;
-+	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
-+
-+	if (readq_poll_timeout(fme_pr + FME_PR_CTRL, pr_ctrl,
-+			       pr_ctrl & FME_PR_CTRL_PR_RSTACK, 1,
-+			       PR_WAIT_TIMEOUT)) {
-+		dev_err(dev, "PR Reset ACK timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
-+	pr_ctrl &= ~FME_PR_CTRL_PR_RST;
-+	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
-+
-+	dev_dbg(dev,
-+		"waiting for PR resource in HW to be initialized and ready\n");
-+
-+	if (readq_poll_timeout(fme_pr + FME_PR_STS, pr_status,
-+			       (pr_status & FME_PR_STS_PR_STS) ==
-+			       FME_PR_STS_PR_STS_IDLE, 1, PR_WAIT_TIMEOUT)) {
-+		dev_err(dev, "PR Status timeout\n");
-+		priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
-+		return -ETIMEDOUT;
-+	}
-+
-+	dev_dbg(dev, "check and clear previous PR error\n");
-+	priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
-+	if (priv->pr_error)
-+		dev_dbg(dev, "previous PR error detected %llx\n",
-+			(unsigned long long)priv->pr_error);
-+
-+	dev_dbg(dev, "set PR port ID\n");
-+
-+	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
-+	pr_ctrl &= ~FME_PR_CTRL_PR_RGN_ID;
-+	pr_ctrl |= FIELD_PREP(FME_PR_CTRL_PR_RGN_ID, info->region_id);
-+	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
-+
-+	return 0;
-+}
-+
-+static int fme_mgr_write(struct fpga_manager *mgr,
-+			 const char *buf, size_t count)
-+{
-+	struct device *dev = &mgr->dev;
-+	struct fme_mgr_priv *priv = mgr->priv;
-+	void __iomem *fme_pr = priv->ioaddr;
-+	u64 pr_ctrl, pr_status, pr_data;
-+	int delay = 0, pr_credit, i = 0;
-+
-+	dev_dbg(dev, "start request\n");
-+
-+	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
-+	pr_ctrl |= FME_PR_CTRL_PR_START;
-+	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
-+
-+	dev_dbg(dev, "pushing data from bitstream to HW\n");
-+
-+	/*
-+	 * driver can push data to PR hardware using PR_DATA register once HW
-+	 * has enough pr_credit (> 1), pr_credit reduces one for every 32bit
-+	 * pr data write to PR_DATA register. If pr_credit <= 1, driver needs
-+	 * to wait for enough pr_credit from hardware by polling.
-+	 */
-+	pr_status = readq(fme_pr + FME_PR_STS);
-+	pr_credit = FIELD_GET(FME_PR_STS_PR_CREDIT, pr_status);
-+
-+	while (count > 0) {
-+		while (pr_credit <= 1) {
-+			if (delay++ > PR_WAIT_TIMEOUT) {
-+				dev_err(dev, "PR_CREDIT timeout\n");
-+				return -ETIMEDOUT;
-+			}
-+			udelay(1);
-+
-+			pr_status = readq(fme_pr + FME_PR_STS);
-+			pr_credit = FIELD_GET(FME_PR_STS_PR_CREDIT, pr_status);
-+		}
-+
-+		if (count >= 4) {
-+			pr_data = 0;
-+			pr_data |= FIELD_PREP(FME_PR_DATA_PR_DATA_RAW,
-+					      *(((u32 *)buf) + i));
-+			writeq(pr_data, fme_pr + FME_PR_DATA);
-+			count -= 4;
-+			pr_credit--;
-+			i++;
-+		} else {
-+			WARN_ON(1);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int fme_mgr_write_complete(struct fpga_manager *mgr,
-+				  struct fpga_image_info *info)
-+{
-+	struct device *dev = &mgr->dev;
-+	struct fme_mgr_priv *priv = mgr->priv;
-+	void __iomem *fme_pr = priv->ioaddr;
-+	u64 pr_ctrl;
-+
-+	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
-+	pr_ctrl |= FME_PR_CTRL_PR_COMPLETE;
-+	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
-+
-+	dev_dbg(dev, "green bitstream push complete\n");
-+	dev_dbg(dev, "waiting for HW to release PR resource\n");
-+
-+	if (readq_poll_timeout(fme_pr + FME_PR_CTRL, pr_ctrl,
-+			       !(pr_ctrl & FME_PR_CTRL_PR_START), 1,
-+			       PR_WAIT_TIMEOUT)) {
-+		dev_err(dev, "PR Completion ACK timeout.\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	dev_dbg(dev, "PR operation complete, checking status\n");
-+	priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
-+	if (priv->pr_error) {
-+		dev_dbg(dev, "PR error detected %llx\n",
-+			(unsigned long long)priv->pr_error);
-+		return -EIO;
-+	}
-+
-+	dev_dbg(dev, "PR done successfully\n");
-+
-+	return 0;
-+}
-+
-+static enum fpga_mgr_states fme_mgr_state(struct fpga_manager *mgr)
-+{
-+	return FPGA_MGR_STATE_UNKNOWN;
-+}
-+
-+static u64 fme_mgr_status(struct fpga_manager *mgr)
-+{
-+	struct fme_mgr_priv *priv = mgr->priv;
-+
-+	return pr_error_to_mgr_status(priv->pr_error);
-+}
-+
-+static const struct fpga_manager_ops fme_mgr_ops = {
-+	.write_init = fme_mgr_write_init,
-+	.write = fme_mgr_write,
-+	.write_complete = fme_mgr_write_complete,
-+	.state = fme_mgr_state,
-+	.status = fme_mgr_status,
-+};
-+
-+static int fme_mgr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct fme_mgr_priv *priv;
-+	struct fpga_manager *mgr;
-+	struct resource *res;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->ioaddr = devm_ioremap(dev, res->start, resource_size(res));
-+	if (IS_ERR(priv->ioaddr))
-+		return PTR_ERR(priv->ioaddr);
-+
-+	mgr = devm_kzalloc(dev, sizeof(*mgr), GFP_KERNEL);
-+	if (!mgr)
-+		return -ENOMEM;
-+
-+	mgr->name = "DFL FPGA Manager";
-+	mgr->mops = &fme_mgr_ops;
-+	mgr->priv = priv;
-+	mgr->parent = dev;
-+	platform_set_drvdata(pdev, mgr);
-+
-+	ret = fpga_mgr_register(mgr);
-+	if (ret)
-+		dev_err(dev, "unable to register FPGA manager\n");
 +
 +	return ret;
-+}
+ }
+ 
+ static const struct feature_ops port_hdr_ops = {
+ 	.init = port_hdr_init,
+ 	.uinit = port_hdr_uinit,
++	.ioctl = port_hdr_ioctl,
+ };
+ 
+ static struct feature_driver port_feature_drvs[] = {
+@@ -74,6 +115,7 @@ static int afu_release(struct inode *inode, struct file *filp)
+ 
+ 	dev_dbg(&pdev->dev, "Device File Release\n");
+ 
++	fpga_port_reset(pdev);
+ 	feature_dev_use_end(pdata);
+ 
+ 	return 0;
+diff --git a/include/uapi/linux/fpga-dfl.h b/include/uapi/linux/fpga-dfl.h
+index 50ee831..727bec2 100644
+--- a/include/uapi/linux/fpga-dfl.h
++++ b/include/uapi/linux/fpga-dfl.h
+@@ -28,8 +28,11 @@
+ #define FPGA_MAGIC 0xB6
+ 
+ #define FPGA_BASE 0
++#define PORT_BASE 0x40
+ #define FME_BASE 0x80
+ 
++/* Common IOCTLs for both FME and AFU file descriptor */
 +
-+static int fme_mgr_remove(struct platform_device *pdev)
-+{
-+	struct fpga_manager *mgr = platform_get_drvdata(pdev);
+ /**
+  * FPGA_GET_API_VERSION - _IO(FPGA_MAGIC, FPGA_BASE + 0)
+  *
+@@ -48,6 +51,20 @@
+ 
+ #define FPGA_CHECK_EXTENSION	_IO(FPGA_MAGIC, FPGA_BASE + 1)
+ 
++/* IOCTLs for AFU file descriptor */
 +
-+	fpga_mgr_unregister(mgr);
++/**
++ * FPGA_PORT_RESET - _IO(FPGA_MAGIC, PORT_BASE + 0)
++ *
++ * Reset the FPGA Port and its AFU. No parameters are supported.
++ * Userspace can do Port reset at any time, e.g during DMA or PR. But
++ * it should never cause any system level issue, only functional failure
++ * (e.g DMA or PR operation failure) and be recoverable from the failure.
++ * Return: 0 on success, -errno of failure
++ */
 +
-+	return 0;
-+}
++#define FPGA_PORT_RESET		_IO(FPGA_MAGIC, PORT_BASE + 0)
 +
-+static struct platform_driver fme_mgr_driver = {
-+	.driver	= {
-+		.name    = FPGA_DFL_FME_MGR,
-+	},
-+	.probe   = fme_mgr_probe,
-+	.remove  = fme_mgr_remove,
-+};
-+
-+module_platform_driver(fme_mgr_driver);
-+
-+MODULE_DESCRIPTION("FPGA Manager for DFL FPGA Management Engine");
-+MODULE_AUTHOR("Intel Corporation");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:dfl-fme-mgr");
+ /* IOCTLs for FME file descriptor */
+ 
+ /**
 -- 
 2.7.4
 
