@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965385AbeBMRDN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:03:13 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38064 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965513AbeBMRBp (ORCPT
+        id S965510AbeBMRBo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:01:44 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:47083 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965467AbeBMRBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:01:45 -0500
-X-Google-Smtp-Source: AH8x225IOZFbQQ7JVdA1/VRUbu5dcfsSKeQEKO1XlZQNAIfWdoV5cCkXlIiRsTkXFzkyH5fHa3kAQA==
+        Tue, 13 Feb 2018 12:01:33 -0500
+X-Google-Smtp-Source: AH8x227f2gvxe3ExBrAuZLsCeqTh8+MOyrW5s6P9TA1T//HGw6Qs/K0/y7ScYw5IX7WScOI7MJe6DA==
 From: srinivas.kandagatla@linaro.org
 To: andy.gross@linaro.org, broonie@kernel.org,
         linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
@@ -18,9 +18,9 @@ Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
         spatakok@qti.qualcomm.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 22/25] ASoC: qcom: q6routing: add support to MI2S Mixers
-Date: Tue, 13 Feb 2018 16:58:34 +0000
-Message-Id: <20180213165837.1620-23-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 12/25] ASoC: qcom: qdsp6: Add support to Q6CORE
+Date: Tue, 13 Feb 2018 16:58:24 +0000
+Message-Id: <20180213165837.1620-13-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
 References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
@@ -30,180 +30,306 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-This patch add support to MI2S mixers required to select path between
-ASM stream and AFE ports.
+This patch adds support to core apr service, which is used to query
+status of other static and dynamic services on the dsp.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- sound/soc/qcom/qdsp6/q6routing.c | 142 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 142 insertions(+)
+ sound/soc/qcom/Kconfig        |   5 +
+ sound/soc/qcom/qdsp6/Makefile |   1 +
+ sound/soc/qcom/qdsp6/q6core.c | 235 ++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6core.h |   9 ++
+ 4 files changed, 250 insertions(+)
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.h
 
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
-index 8c9b5d899ba7..8ffcc49a79a1 100644
---- a/sound/soc/qcom/qdsp6/q6routing.c
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -232,6 +232,102 @@ static const struct snd_kcontrol_new hdmi_mixer_controls[] = {
- 		       msm_routing_put_audio_mixer),
- };
+diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+index a14d960b8fe4..8c2d65e0a28e 100644
+--- a/sound/soc/qcom/Kconfig
++++ b/sound/soc/qcom/Kconfig
+@@ -60,6 +60,10 @@ config SND_SOC_QDSP6_ASM
+ 	tristate
+ 	default n
  
-+static const struct snd_kcontrol_new primary_mi2s_rx_mixer_controls[] = {
-+	SOC_SINGLE_EXT("MultiMedia1", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia2", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia3", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia4", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia5", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia6", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia7", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia8", PRIMARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
++config SND_SOC_QDSP6_CORE
++	tristate
++	default n
++
+ config SND_SOC_QDSP6
+ 	tristate "SoC ALSA audio driver for QDSP6"
+ 	depends on QCOM_APR && HAS_DMA
+@@ -67,6 +71,7 @@ config SND_SOC_QDSP6
+ 	select SND_SOC_QDSP6_AFE
+ 	select SND_SOC_QDSP6_ADM
+ 	select SND_SOC_QDSP6_ASM
++	select SND_SOC_QDSP6_CORE
+ 	help
+ 	 To add support for MSM QDSP6 Soc Audio.
+ 	 This will enable sound soc platform specific
+diff --git a/sound/soc/qcom/qdsp6/Makefile b/sound/soc/qcom/qdsp6/Makefile
+index eea962315ab3..61f089bc0d25 100644
+--- a/sound/soc/qcom/qdsp6/Makefile
++++ b/sound/soc/qcom/qdsp6/Makefile
+@@ -2,3 +2,4 @@ obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
+ obj-$(CONFIG_SND_SOC_QDSP6_AFE) += q6afe.o
+ obj-$(CONFIG_SND_SOC_QDSP6_ADM) += q6adm.o
+ obj-$(CONFIG_SND_SOC_QDSP6_ASM) += q6asm.o
++obj-$(CONFIG_SND_SOC_QDSP6_CORE) += q6core.o
+diff --git a/sound/soc/qcom/qdsp6/q6core.c b/sound/soc/qcom/qdsp6/q6core.c
+new file mode 100644
+index 000000000000..d4a3ff409a34
+--- /dev/null
++++ b/sound/soc/qcom/qdsp6/q6core.c
+@@ -0,0 +1,235 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2011-2017, The Linux Foundation
++ * Copyright (c) 2018, Linaro Limited
++ */
++
++#include <linux/slab.h>
++#include <linux/wait.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/sched.h>
++#include <linux/of.h>
++#include <linux/jiffies.h>
++#include <linux/wait.h>
++#include <linux/soc/qcom/apr.h>
++#include "q6dsp-errno.h"
++
++#define ADSP_STATE_READY_TIMEOUT_MS    3000
++#define Q6_READY_TIMEOUT_MS 100
++#define AVCS_CMD_ADSP_EVENT_GET_STATE		0x0001290C
++#define AVCS_CMDRSP_ADSP_EVENT_GET_STATE	0x0001290D
++#define AVCS_GET_VERSIONS       0x00012905
++#define AVCS_GET_VERSIONS_RSP   0x00012906
++
++struct avcs_svc_info {
++	uint32_t service_id;
++	uint32_t version;
++} __packed;
++
++struct q6core {
++	struct apr_device *adev;
++	wait_queue_head_t wait;
++	uint32_t avcs_state;
++	bool resp_received;
++	uint32_t num_services;
++	struct avcs_svc_info *svcs_info;
 +};
 +
-+static const struct snd_kcontrol_new secondary_mi2s_rx_mixer_controls[] = {
-+	SOC_SINGLE_EXT("MultiMedia1", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia2", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia3", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia4", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia5", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia6", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia7", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia8", SECONDARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
++struct q6core *core;
++
++static int q6core_callback(struct apr_device *adev,
++			 struct apr_client_message *data)
++{
++	struct q6core *core = dev_get_drvdata(&adev->dev);
++	struct aprv2_ibasic_rsp_result_t *result;
++
++	result = data->payload;
++	switch (data->opcode) {
++	case AVCS_GET_VERSIONS_RSP:
++		core->num_services = result->status;
++
++		core->svcs_info = kcalloc(core->num_services,
++					  sizeof(*core->svcs_info),
++					  GFP_ATOMIC);
++		if (!core->svcs_info)
++			return -ENOMEM;
++
++		/* svc info is after apr result */
++		memcpy(core->svcs_info, result + sizeof(*result),
++		       core->num_services * sizeof(*core->svcs_info));
++
++		core->resp_received = true;
++		wake_up(&core->wait);
++
++		break;
++	case AVCS_CMDRSP_ADSP_EVENT_GET_STATE:
++		core->avcs_state = result->opcode;
++
++		core->resp_received = true;
++		wake_up(&core->wait);
++		break;
++	default:
++		dev_err(&adev->dev, "Message id from adsp core svc: 0x%x\n",
++			data->opcode);
++		break;
++	}
++
++	return 0;
++}
++
++static int q6core_get_svc_versions(struct q6core *core)
++{
++	struct apr_device *adev = core->adev;
++	struct apr_hdr hdr = {0};
++	int rc;
++
++	hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
++				      APR_HDR_LEN(APR_HDR_SIZE), APR_PKT_VER);
++	hdr.pkt_size = APR_HDR_SIZE;
++	hdr.opcode = AVCS_GET_VERSIONS;
++
++	rc = apr_send_pkt(adev, &hdr);
++	if (rc < 0)
++		return rc;
++
++	rc = wait_event_timeout(core->wait, (core->resp_received),
++				msecs_to_jiffies(Q6_READY_TIMEOUT_MS));
++	if (rc > 0 && core->resp_received) {
++		core->resp_received = false;
++		return 0;
++	}
++
++	return rc;
++}
++
++static bool __q6core_is_adsp_ready(struct q6core *core)
++{
++	struct apr_device *adev = core->adev;
++	struct apr_hdr hdr = {0};
++	int rc;
++
++	hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
++				      APR_HDR_LEN(APR_HDR_SIZE), APR_PKT_VER);
++	hdr.pkt_size = APR_HDR_SIZE;
++	hdr.opcode = AVCS_CMD_ADSP_EVENT_GET_STATE;
++
++	rc = apr_send_pkt(adev, &hdr);
++	if (rc < 0)
++		return false;
++
++	rc = wait_event_timeout(core->wait, (core->resp_received),
++				msecs_to_jiffies(Q6_READY_TIMEOUT_MS));
++	if (rc > 0 && core->resp_received) {
++		core->resp_received = false;
++		if (core->avcs_state == 0x1)
++			return true;
++	}
++
++	return false;
++}
++
++/**
++ * q6core_get_svc_version() - Get version number of a service.
++ *
++ * @svc_id: service id of the service.
++ *
++ * Return: Will be a valid version number on success and zero on failure.
++ * version number returned contains bits 0 to 15 as Minor version number
++ * Bits 16 to 31 as Major version number
++ */
++uint32_t q6core_get_svc_version(int svc_id)
++{
++	struct apr_device *adev;
++	struct avcs_svc_info *svcs_info;
++	int i, ret;
++
++	if (!core)
++		return 0;
++
++	if (!core->svcs_info) {
++		ret = q6core_get_svc_versions(core);
++		if (ret)
++			return ret;
++	}
++
++	adev  = core->adev;
++	svcs_info = core->svcs_info;
++
++	for (i = 0; i < core->num_services; i++)
++		if (svcs_info[i].service_id == svc_id)
++			return svcs_info[i].version;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(q6core_get_svc_version);
++
++/**
++ * q6core_is_adsp_ready() - Get status of adsp
++ *
++ * Return: Will be an true if adsp is ready and false if not.
++ */
++bool q6core_is_adsp_ready(void)
++{
++	unsigned long  timeout;
++
++	if (!core)
++		return false;
++
++	timeout = jiffies + msecs_to_jiffies(ADSP_STATE_READY_TIMEOUT_MS);
++	for (;;) {
++		if (__q6core_is_adsp_ready(core))
++			return true;
++
++		if (!time_after(timeout, jiffies))
++			return false;
++	}
++
++	return false;
++}
++EXPORT_SYMBOL_GPL(q6core_is_adsp_ready);
++
++static int q6core_probe(struct apr_device *adev)
++{
++	core = kzalloc(sizeof(*core), GFP_KERNEL);
++	if (!core)
++		return -ENOMEM;
++
++	dev_set_drvdata(&adev->dev, core);
++
++	core->adev = adev;
++	init_waitqueue_head(&core->wait);
++
++	return 0;
++}
++
++static int q6core_exit(struct apr_device *adev)
++{
++	if (core->svcs_info)
++		kfree(core->svcs_info);
++
++	kfree(core);
++	core = NULL;
++
++	return 0;
++}
++
++static const struct of_device_id q6core_device_id[]  = {
++	{ .compatible = "qcom,q6core" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, q6core_device_id);
++
++static struct apr_driver qcom_q6core_driver = {
++	.probe = q6core_probe,
++	.remove = q6core_exit,
++	.callback = q6core_callback,
++	.driver = {
++		.name = "qcom-q6core",
++		.of_match_table = of_match_ptr(q6core_device_id),
++	},
 +};
 +
-+static const struct snd_kcontrol_new quaternary_mi2s_rx_mixer_controls[] = {
-+	SOC_SINGLE_EXT("MultiMedia1", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia2", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia3", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia4", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia5", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia6", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia7", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia8", QUATERNARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+};
++module_apr_driver(qcom_q6core_driver);
++MODULE_DESCRIPTION("q6 core");
++MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/qcom/qdsp6/q6core.h b/sound/soc/qcom/qdsp6/q6core.h
+new file mode 100644
+index 000000000000..2852fbb7756e
+--- /dev/null
++++ b/sound/soc/qcom/qdsp6/q6core.h
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+static const struct snd_kcontrol_new tertiary_mi2s_rx_mixer_controls[] = {
-+	SOC_SINGLE_EXT("MultiMedia1", TERTIARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia2", TERTIARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia3", TERTIARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia4", TERTIARY_MI2S_RX,
-+	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
-+	msm_routing_put_audio_mixer),
-+};
++#ifndef __Q6CORE_H__
++#define __Q6CORE_H__
 +
- static const struct snd_kcontrol_new slimbus_rx_mixer_controls[] = {
- 	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_0_RX,
- 	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
-@@ -443,6 +539,18 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
- 	SND_SOC_DAPM_MIXER("SLIMBUS_6_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
- 			   slimbus_6_rx_mixer_controls,
- 			   ARRAY_SIZE(slimbus_6_rx_mixer_controls)),
-+	SND_SOC_DAPM_MIXER("PRI_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
-+			   primary_mi2s_rx_mixer_controls,
-+			   ARRAY_SIZE(primary_mi2s_rx_mixer_controls)),
-+	SND_SOC_DAPM_MIXER("SEC_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
-+			   secondary_mi2s_rx_mixer_controls,
-+			   ARRAY_SIZE(secondary_mi2s_rx_mixer_controls)),
-+	SND_SOC_DAPM_MIXER("QUAT_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
-+			   quaternary_mi2s_rx_mixer_controls,
-+			   ARRAY_SIZE(quaternary_mi2s_rx_mixer_controls)),
-+	SND_SOC_DAPM_MIXER("TERT_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
-+			   tertiary_mi2s_rx_mixer_controls,
-+			   ARRAY_SIZE(tertiary_mi2s_rx_mixer_controls)),
- };
- 
- static const struct snd_soc_dapm_route intercon[] = {
-@@ -520,6 +628,40 @@ static const struct snd_soc_dapm_route intercon[] = {
- 	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
- 	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
- 	{"SLIMBUS_6_RX", NULL, "SLIMBUS_6_RX Audio Mixer"},
++bool q6core_is_adsp_ready(void);
++uint32_t q6core_get_svc_version(int svc_id);
 +
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
-+	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
-+	{"QUAT_MI2S_RX", NULL, "QUAT_MI2S_RX Audio Mixer"},
-+
-+	{"TERT_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
-+	{"TERT_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
-+	{"TERT_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
-+	{"TERT_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
-+	{"TERT_MI2S_RX", NULL, "TERT_MI2S_RX Audio Mixer"},
-+
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia6", "MM_DL5"},
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
-+	{"SEC_MI2S_RX Audio Mixer", "MultiMedia8", "MM_DL7"},
-+	{"SEC_MI2S_RX", NULL, "SEC_MI2S_RX Audio Mixer"},
-+
-+	{"PRI_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
-+	{"PRI_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
-+	{"PRI_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
-+	{"PRI_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
-+	{"PRI_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
-+	{"PRI_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
-+	{"PRI_MI2S_RX", NULL, "PRI_MI2S_RX Audio Mixer"},
- };
- 
- static int routing_hw_params(struct snd_pcm_substream *substream,
++#endif /* __Q6CORE_H__ */
 -- 
 2.15.1
