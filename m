@@ -1,48 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965552AbeBMSu7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:50:59 -0500
-Received: from smtprelay0061.hostedemail.com ([216.40.44.61]:46001 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965425AbeBMSu4 (ORCPT
+        id S965577AbeBMSwY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:52:24 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:39558 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965479AbeBMSwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:50:56 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:800:960:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2540:2553:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3865:3866:3867:3873:4321:5007:7809:7903:8527:10004:10400:10471:10848:11232:11658:11914:12043:12663:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21212:21433:21451:21611:21627:30054:30059:30065:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: snake91_7bceef0b9b74c
-X-Filterd-Recvd-Size: 1592
-Message-ID: <1518547848.22190.50.camel@perches.com>
-Subject: Re: [PATCH] efi/apple-properties: Delete an error message for a
- failed memory allocation in unmarshal_devices()
-From: Joe Perches <joe@perches.com>
-To: Lukas Wunner <lukas@wunner.de>,
-        SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-efi@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Date: Tue, 13 Feb 2018 10:50:48 -0800
-In-Reply-To: <20180213184033.GA24299@wunner.de>
-References: <145f8fac-9297-b362-d89f-886632e2507f@users.sourceforge.net>
-         <20180213184033.GA24299@wunner.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Feb 2018 13:52:22 -0500
+X-Google-Smtp-Source: AH8x2253KPKuxwIYJUl+/u1AVmk/R0zSetyHwWR5EWHJ9YfczjUJsAMOwFiS1LK7bQL9VWuQJuVJ2wPxy2g1Z/P5nas=
+MIME-Version: 1.0
+In-Reply-To: <9e71dff9-7ba8-a3c2-6862-fb8557546a54@oracle.com>
+References: <001a1148d244ade0aa055d6a69b9@google.com> <9e71dff9-7ba8-a3c2-6862-fb8557546a54@oracle.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 13 Feb 2018 19:52:01 +0100
+Message-ID: <CACT4Y+brwWYeMKSyQ1Oxj8EPdnVqX4txXmk0Y9TGbndbwcRgTQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in rds_tcp_dev_event
+To: Girish Moodalbail <girish.moodalbail@oracle.com>
+Cc: syzbot
+        <bot+643ecad3f5bb49700e839363b608c4928f6db8f0@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-13 at 19:40 +0100, Lukas Wunner wrote:
-> On Tue, Feb 13, 2018 at 06:00:26PM +0100, SF Markus Elfring wrote:
-> > --- a/drivers/firmware/efi/apple-properties.c
-> You didn't cc me on your submission even though I'm the author of
-> 99% of this file.  Please make an effort prior to submission to
-> identify interested parties.
+On Tue, Nov 14, 2017 at 4:30 AM, Girish Moodalbail
+<girish.moodalbail@oracle.com> wrote:
+> On 11/7/17 12:28 PM, syzbot wrote:
+>>
+>> Hello,
+>>
+>> syzkaller hit the following crash on
+>> 287683d027a3ff83feb6c7044430c79881664ecf
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached
+>> Raw console output is attached.
+>>
+>>
+>>
+>>
+>> ==================================================================
+>> BUG: KASAN: use-after-free in rds_tcp_kill_sock net/rds/tcp.c:530 [inline]
+>> BUG: KASAN: use-after-free in rds_tcp_dev_event+0xc01/0xc90
+>> net/rds/tcp.c:568
+>> Read of size 8 at addr ffff8801cd879200 by task kworker/u4:3/147
+>>
+>> CPU: 0 PID: 147 Comm: kworker/u4:3 Not tainted 4.14.0-rc7+ #156
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Workqueue: netns cleanup_net
+>> Call Trace:
+>>   __dump_stack lib/dump_stack.c:16 [inline]
+>>   dump_stack+0x194/0x257 lib/dump_stack.c:52
+>>   print_address_description+0x73/0x250 mm/kasan/report.c:252
+>>   kasan_report_error mm/kasan/report.c:351 [inline]
+>>   kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
+>>   rds_tcp_kill_sock net/rds/tcp.c:530 [inline]
+>>   rds_tcp_dev_event+0xc01/0xc90 net/rds/tcp.c:568
+>
+>
+> The issue here is that we are trying to reference a network namespace
+> (struct net *) that is long gone (i.e., L532 below -- c_net is the culprit).
+>
+>     528         spin_lock_irq(&rds_tcp_conn_lock);
+>     529         list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list,
+>                      t_tcp_node) {
+>     530                 struct net *c_net = tc->t_cpath->cp_conn->c_net;
+>     531
+>     532                 if (net != c_net || !tc->t_sock)
+>     533                         continue;
+>     534                 if (!list_has_conn(&tmp_list, tc->t_cpath->cp_conn))
+>     535                         list_move_tail(&tc->t_tcp_node, &tmp_list);
+>     536         }
+>     537         spin_unlock_irq(&rds_tcp_conn_lock);
+>     538         list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node) {
+>     539                 rds_tcp_conn_paths_destroy(tc->t_cpath->cp_conn);
+>     540                 rds_conn_destroy(tc->t_cpath->cp_conn);
+>     541         }
+>
+> When a network namespace is deleted, devices within that namespace are
+> unregistered and removed one by one. RDS is notified about this event
+> through rds_tcp_dev_event() callback. When the loopback device is removed
+> from the namespace, the above RDS callback function destroys all the RDS
+> connections in that namespace.
+>
+> The loop@L529 above walks through each of the rds_tcp connection in the
+> global list (rds_tcp_conn_list) to see if that connection belongs to the
+> namespace in question. It collects all such connections and destroys them
+> (L538-540). However, it leaves behind some of the rds_tcp connections that
+> shared the same underlying RDS connection (L534 and 535). These connections
+> with pointer to stale network namespace are left behind in the global list.
+> When the 2nd network namespace is deleted, we will hit the above stale
+> pointer and hit UAF panic.
+>
+> I think we should move away from global list to a per-namespace list. The
+> global list are used only in two places (both of which are per-namespace
+> operations):
+>
+>  - to destroy all the RDS connections belonging to a namespace when the
+>    network namespace is being deleted.
+>  - to reset all the RDS connections  when socket parameters for a namespace
+> are
+>    modified using sysctl
+>
+> Thanks,
+> ~Girish
 
-If you want to receive patches for this file, even
-if you are not a maintainer or an upstream path,
-you should add yourself as a reviewer to the
-MAINTAINERS file like:
 
-APPLE EFI PROPERTIES
-R:	Lukas Wunner <lukas@wunner.de>
-F:	drivers/firmware/efi/apple-properties.c
+This seems to be fixed with:
+
+#syz fix: rds: tcp: correctly sequence cleanup on netns deletion.
