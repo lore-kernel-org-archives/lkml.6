@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934811AbeBMLlK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:41:10 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60577 "EHLO
+        id S934878AbeBMLl2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:41:28 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58465 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934086AbeBMLlI (ORCPT
+        with ESMTP id S934086AbeBMLl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:41:08 -0500
-Date: Tue, 13 Feb 2018 03:30:42 -0800
-From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-0eb55de80e26f87cc26eab139c097eb5a6f2b159@git.kernel.org>
-Cc: brgerst@gmail.com, peterz@infradead.org, torvalds@linux-foundation.org,
-        jpoimboe@redhat.com, luto@kernel.org, hpa@zytor.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@kernel.org, arjan@linux.intel.com,
-        dvlasenk@redhat.com, linux-kernel@vger.kernel.org
-Reply-To: brgerst@gmail.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com, luto@kernel.org,
-        jpoimboe@redhat.com, tglx@linutronix.de, bp@alien8.de,
-        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
-        arjan@linux.intel.com, mingo@kernel.org
-In-Reply-To: <20180208194406.GD25181@hirez.programming.kicks-ass.net>
-References: <20180208194406.GD25181@hirez.programming.kicks-ass.net>
+        Tue, 13 Feb 2018 06:41:26 -0500
+Date: Tue, 13 Feb 2018 03:29:46 -0800
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-59d13cd6789e8feb4615bb999d46bbd439a9a396@git.kernel.org>
+Cc: brgerst@gmail.com, tglx@linutronix.de, bp@alien8.de,
+        torvalds@linux-foundation.org, jpoimboe@redhat.com, luto@kernel.org,
+        arjan@linux.intel.com, fengguang.wu@intel.com, peterz@infradead.org,
+        mingo@kernel.org, hpa@zytor.com, dvlasenk@redhat.com,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, dvlasenk@redhat.com, hpa@zytor.com,
+        mingo@kernel.org, peterz@infradead.org, fengguang.wu@intel.com,
+        arjan@linux.intel.com, luto@kernel.org, torvalds@linux-foundation.org,
+        jpoimboe@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        brgerst@gmail.com
+In-Reply-To: <bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com>
+References: <bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/debug: Use UD2 for WARN()
-Git-Commit-ID: 0eb55de80e26f87cc26eab139c097eb5a6f2b159
+Subject: [tip:x86/pti] objtool: Fix segfault in ignore_unreachable_insn()
+Git-Commit-ID: 59d13cd6789e8feb4615bb999d46bbd439a9a396
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,94 +37,70 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0eb55de80e26f87cc26eab139c097eb5a6f2b159
-Gitweb:     https://git.kernel.org/tip/0eb55de80e26f87cc26eab139c097eb5a6f2b159
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Fri, 9 Feb 2018 13:16:59 +0100
+Commit-ID:  59d13cd6789e8feb4615bb999d46bbd439a9a396
+Gitweb:     https://git.kernel.org/tip/59d13cd6789e8feb4615bb999d46bbd439a9a396
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Thu, 8 Feb 2018 17:09:25 -0600
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 11:47:00 +0100
+CommitDate: Tue, 13 Feb 2018 11:46:59 +0100
 
-x86/debug: Use UD2 for WARN()
+objtool: Fix segfault in ignore_unreachable_insn()
 
-Since the Intel SDM added an ModR/M byte to UD0 and binutils followed
-that specification, we now cannot disassemble our kernel anymore.
+Peter Zijlstra's patch for converting WARN() to use UD2 triggered a
+bunch of false "unreachable instruction" warnings, which then triggered
+a seg fault in ignore_unreachable_insn().
 
-This now means Intel and AMD disagree on the encoding of UD0. And instead
-of playing games with additional bytes that are valid ModR/M and single
-byte instructions (0xd6 for instance), simply use UD2 for both WARN() and
-BUG().
+The seg fault happened when it tried to dereference a NULL 'insn->func'
+pointer.  Thanks to static_cpu_has(), some functions can jump to a
+non-function area in the .altinstr_aux section.  That breaks
+ignore_unreachable_insn()'s assumption that it's always inside the
+original function.
 
-Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Make sure ignore_unreachable_insn() only follows jumps within the
+current function.
+
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180208194406.GD25181@hirez.programming.kicks-ass.net
+Cc: kbuild test robot <fengguang.wu@intel.com>
+Link: http://lkml.kernel.org/r/bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/bug.h | 15 ++++++---------
- arch/x86/kernel/traps.c    |  2 +-
- 2 files changed, 7 insertions(+), 10 deletions(-)
+ tools/objtool/check.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 71e6f4bf..6804d66 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -5,23 +5,20 @@
- #include <linux/stringify.h>
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 2e458eb..c7fb5c2 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1935,13 +1935,19 @@ static bool ignore_unreachable_insn(struct instruction *insn)
+ 		if (is_kasan_insn(insn) || is_ubsan_insn(insn))
+ 			return true;
  
- /*
-- * Since some emulators terminate on UD2, we cannot use it for WARN.
-- * Since various instruction decoders disagree on the length of UD1,
-- * we cannot use it either. So use UD0 for WARN.
-+ * Despite that some emulators terminate on UD2, we use it for WARN().
-  *
-- * (binutils knows about "ud1" but {en,de}codes it as 2 bytes, whereas
-- *  our kernel decoder thinks it takes a ModRM byte, which seems consistent
-- *  with various things like the Intel SDM instruction encoding rules)
-+ * Since various instruction decoders/specs disagree on the encoding of
-+ * UD0/UD1.
-  */
+-		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest) {
+-			insn = insn->jump_dest;
+-			continue;
++		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
++			if (insn->jump_dest &&
++			    insn->jump_dest->func == insn->func) {
++				insn = insn->jump_dest;
++				continue;
++			}
++
++			break;
+ 		}
  
--#define ASM_UD0		".byte 0x0f, 0xff"
-+#define ASM_UD0		".byte 0x0f, 0xff" /* + ModRM (for Intel) */
- #define ASM_UD1		".byte 0x0f, 0xb9" /* + ModRM */
- #define ASM_UD2		".byte 0x0f, 0x0b"
- 
- #define INSN_UD0	0xff0f
- #define INSN_UD2	0x0b0f
- 
--#define LEN_UD0		2
-+#define LEN_UD2		2
- 
- #ifdef CONFIG_GENERIC_BUG
- 
-@@ -79,7 +76,7 @@ do {								\
- 
- #define __WARN_FLAGS(flags)					\
- do {								\
--	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
-+	_BUG_FLAGS(ASM_UD2, BUGFLAG_WARNING|(flags));		\
- 	annotate_reachable();					\
- } while (0)
- 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 446c9ef..3d9b230 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -181,7 +181,7 @@ int fixup_bug(struct pt_regs *regs, int trapnr)
- 		break;
- 
- 	case BUG_TRAP_TYPE_WARN:
--		regs->ip += LEN_UD0;
-+		regs->ip += LEN_UD2;
- 		return 1;
+ 		if (insn->offset + insn->len >= insn->func->offset + insn->func->len)
+ 			break;
++
+ 		insn = list_next_entry(insn, list);
  	}
  
