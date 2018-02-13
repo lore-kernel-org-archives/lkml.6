@@ -1,49 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964951AbeBMNry (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:47:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41551 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964832AbeBMNrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:47:53 -0500
-Message-ID: <1518529671.3592.9.camel@suse.de>
-Subject: Re: [PATCH 1/1] nvme: implement log page low/high offset and dwords
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Matias =?ISO-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>, hch@lst.de,
-        keith.busch@intel.com
-Cc: javier@cnexlabs.com, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Date: Tue, 13 Feb 2018 14:47:51 +0100
-In-Reply-To: <20180213124916.28653-2-mb@lightnvm.io>
-References: <20180213124916.28653-1-mb@lightnvm.io>
-         <20180213124916.28653-2-mb@lightnvm.io>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S964927AbeBMNv2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:51:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45472 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964846AbeBMNv1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:51:27 -0500
+Date: Tue, 13 Feb 2018 14:51:24 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH] atomic/bitops: Clarify ordering semantics for failed
+ test_and_{}_bit()
+Message-ID: <20180213135124.GL25201@hirez.programming.kicks-ass.net>
+References: <1518528619-20049-1-git-send-email-will.deacon@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518528619-20049-1-git-send-email-will.deacon@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-13 at 13:49 +0100, Matias Bjørling wrote:
-> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-> +			    u8 log_page, void *log,
-> +			    size_t size, size_t offset)
-> +{
-> +	struct nvme_command c = { };
-> +	unsigned long dwlen = (size / 4) - 1;
+On Tue, Feb 13, 2018 at 01:30:19PM +0000, Will Deacon wrote:
+> A test_and_{}_bit() operation fails if the value of the bit is such that
+> the modification does not take place. For example, if test_and_set_bit()
+> returns 1. In these cases, follow the behaviour of cmpxchg and allow the
+> operation to be unordered. This also applies to test_and_set_bit_lock()
+> if the lock is found to be be taken already.
 
-Consulting my long gone maths knowledge suggests the parantheses aren't
-really needed here.
+You also looked at a bunch of users, right? And while you found some
+dodgy ones, they were not more broken because of this IIRC.
 
--- 
-Johannes Thumshirn                                          Storage
-jthu
-mshirn@suse.de                                +49 911 74053 689
-SUSE
-LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane
-Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38
-9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> ---
+>  Documentation/atomic_bitops.txt   | 7 ++++++-
+>  include/asm-generic/bitops/lock.h | 3 ++-
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/atomic_bitops.txt b/Documentation/atomic_bitops.txt
+> index 5550bfdcce5f..be70b32c95d9 100644
+> --- a/Documentation/atomic_bitops.txt
+> +++ b/Documentation/atomic_bitops.txt
+> @@ -58,7 +58,12 @@ Like with atomic_t, the rule of thumb is:
+>  
+>   - RMW operations that have a return value are fully ordered.
+>  
+> -Except for test_and_set_bit_lock() which has ACQUIRE semantics and
+> + - RMW operations that are conditional are unordered on FAILURE,
+> +   otherwise the above rules apply. In the case of test_and_{}_bit() operations,
+> +   if the bit in memory is unchanged by the operation then it is deemed to have
+> +   failed.
+> +
+> +Except for a successful test_and_set_bit_lock() which has ACQUIRE semantics and
+>  clear_bit_unlock() which has RELEASE semantics.
+>  
+>  Since a platform only has a single means of achieving atomic operations
+> diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
+> index bc397573c43a..67ab280ad134 100644
+> --- a/include/asm-generic/bitops/lock.h
+> +++ b/include/asm-generic/bitops/lock.h
+> @@ -7,7 +7,8 @@
+>   * @nr: Bit to set
+>   * @addr: Address to count from
+>   *
+> - * This operation is atomic and provides acquire barrier semantics.
+> + * This operation is atomic and provides acquire barrier semantics if
+> + * the returned value is 0.
+>   * It can be used to implement bit locks.
+>   */
+>  #define test_and_set_bit_lock(nr, addr)	test_and_set_bit(nr, addr)
+> -- 
+> 2.1.4
+> 
