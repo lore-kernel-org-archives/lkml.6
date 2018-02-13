@@ -1,71 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935366AbeBMM5n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:57:43 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46702 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935219AbeBMMyp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:54:45 -0500
-From: <patrice.chotard@st.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <patrice.chotard@st.com>
-Subject: [PATCH v3 05/11] ARM: dts: STi: Add fake reg property for irq-syscfg
-Date: Tue, 13 Feb 2018 13:53:31 +0100
-Message-ID: <1518526417-11919-6-git-send-email-patrice.chotard@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518526417-11919-1-git-send-email-patrice.chotard@st.com>
-References: <1518526417-11919-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG6NODE3.st.com
- (10.75.127.18)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_07:,,
- signatures=0
+        id S964812AbeBMM6s (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:58:48 -0500
+Received: from foss.arm.com ([217.140.101.70]:57150 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935077AbeBMM6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 07:58:46 -0500
+From: Will Deacon <will.deacon@arm.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH] fs: dcache: Avoid livelock between d_alloc_parallel and __d_add
+Date: Tue, 13 Feb 2018 12:58:51 +0000
+Message-Id: <1518526731-26546-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
+If d_alloc_parallel runs concurrently with __d_add, it is possible for
+d_alloc_parallel to continuously retry whilst i_dir_seq has been
+incremented to an odd value by __d_add:
 
-Add fake reg property to irq-syscfg node.
-This allows to fix the following warning when compiling
-dtb with W=1 option:
+CPU0:
+__d_add
+	n = start_dir_add(dir);
+		cmpxchg(&dir->i_dir_seq, n, n + 1) == n
 
-arch/arm/boot/dts/stih407-b2120.dtb: Warning (simple_bus_reg):
-Node /soc/irq-syscfg missing or empty reg/ranges property
-arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
-Node /soc/irq-syscfg missing or empty reg/ranges property
-arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
-Node /soc/irq-syscfg missing or empty reg/ranges property
-arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
-Node /soc/irq-syscfg missing or empty reg/ranges property
+CPU1:
+d_alloc_parallel
+retry:
+	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
+	hlist_bl_lock(b);
+		bit_spin_lock(0, (unsigned long *)b); // Always succeeds
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+CPU0:
+	__d_lookup_done(dentry)
+		hlist_bl_lock
+			bit_spin_lock(0, (unsigned long *)b); // Never succeeds
+
+CPU1:
+	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
+		hlist_bl_unlock(b);
+		goto retry;
+	}
+
+Since the simple bit_spin_lock used to implement hlist_bl_lock does not
+provide any fairness guarantees, then CPU1 can starve CPU0 of the lock
+and prevent it from reaching end_dir_add(dir), therefore CPU1 cannot
+exit its retry loop because the sequence number always has the bottom
+bit set.
+
+This patch resolves the livelock by not taking hlist_bl_lock in
+d_alloc_parallel if the sequence counter is odd, since any subsequent
+masked comparison with i_dir_seq will fail anyway.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
-v3: _ none
-v2: _ add a fake reg property to node without reg property
+ fs/dcache.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
- arch/arm/boot/dts/stih407-family.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index e279cd07ba67..c8dc659fd14e 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -181,8 +181,9 @@
- 			reg = <0x94b5100 0x1000>;
- 		};
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 7c38f39958bc..b243deec298c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2474,7 +2474,7 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
  
--		irq-syscfg {
-+		irq-syscfg@0 {
- 			compatible    = "st,stih407-irq-syscfg";
-+			reg = <0 0>;
- 			st,syscfg     = <&syscfg_core>;
- 			st,irq-device = <ST_IRQ_SYSCFG_PMU_0>,
- 					<ST_IRQ_SYSCFG_PMU_1>;
+ retry:
+ 	rcu_read_lock();
+-	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
++	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
+ 	r_seq = read_seqbegin(&rename_lock);
+ 	dentry = __d_lookup_rcu(parent, name, &d_seq);
+ 	if (unlikely(dentry)) {
+@@ -2495,6 +2495,12 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
+ 		rcu_read_unlock();
+ 		goto retry;
+ 	}
++
++	if (unlikely(seq & 1)) {
++		rcu_read_unlock();
++		goto retry;
++	}
++
+ 	hlist_bl_lock(b);
+ 	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
+ 		hlist_bl_unlock(b);
 -- 
-1.9.1
+2.1.4
