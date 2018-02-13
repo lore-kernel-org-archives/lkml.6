@@ -1,124 +1,227 @@
-Return-Path: <kernel-hardening-return-11627-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x227V5k+nag4M4vTkTFWVyMmQ0y4lWh6FGwwRNucHZbFfdBVarS31hRNTttEFGrq7LWwyjn44
-ARC-Seal: i=1; a=rsa-sha256; t=1517879270; cv=none;
+Return-Path: <aishpant@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518509903; cv=none;
         d=google.com; s=arc-20160816;
-        b=rLBZc8IfoxOmLcTKWp90it29UCkVb8RxvM/pBHF738zhL4uwPEu62s0PQODUjV7Gdy
-         gnRQsPrrQe026JcC6w88yZmghDiErbqHDQbuKsaKb8w/zmC+TqAUfI5mH3Zc8dO2Eslc
-         nZmawNmEgfE5s6nDJOCzs+T9S8UD7gZZDGwfuH13PUrRPrtEgATb0f8AjW4vPjUPh8yW
-         F0QeJMFsHJ2w3J2Q1/rpfOLIA4jpQSmPttmRk3PvNI0qM80Z1M6WUz+lz6xPP5Lj4UYt
-         /0XNznWHbP3zFPSHLUUMcjuFG+dvphq0CIa9/Ioyn9zNd4Gpy+eTFSSFhit3iKh9syTf
-         d8yg==
+        b=NhvBRRy6WAUHT42J9o44Wtewz7hzc0i7eYq+bx0N+IIIylpuKGywvzy+teWWmtXm/2
+         lane4cwHgFiJbkeK32A3TVweWqZiyJoZX8vLOmygr+Q5mSsAn/DF8JRQLY32pykVduVG
+         vb9Dt48FRZwFKDHs/gcMFa/NuPUQuOaKXy02Dg+8LRJHOXI8qqHYZU+WQ5EhOuuM2pZd
+         Uf+nSYukK8/zXy4ipE+BPzGDvL9s8KlS3891CSgca9rX7qagurSalQDbjhPNdZfVy9RR
+         f4lRVkj5SI046xRkJo6g0tP4JxTwTVaPOXr0SIdSalI18h6iDVZ9dYXE3aEVgCeBJbWZ
+         9iTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=NtXtDVxfsNX8AVrBws/1xBpUVYPXf6QVwKBrQ7hCIec=;
-        b=XJAZ07TSwj+hzhvH6rKOCu6o3/BNsHVJRiOAyjF65Xxt9dhiF5NvM+ZhHhAVSkLh10
-         1BQWllMgjJ3DpiYyn9Z7fvEPpwgTPQdEbC4FhBz39Q8Yaud5e7OS5yFaDZNULM3yhfqk
-         +K1DLH3JvDiZtWtRCLsd8rcOC0DhWsJR6Z3juySH1zDorlefFXKAcLuun2sl7zkNShBf
-         f3ynLZXOjRWTdMsV7xASifBloNgmT63cj6k0oZrMUA5aCNs9l0Faq1FXwpLX0QAXdAZI
-         /fXQtTw65Y6ZtWSRUQt7JLK2B+5ahDpO/K7DOad9uL3hJmeJLsVIqQjeldT/y5q0rDLr
-         JdbA==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=0MKjXTeDx15Sp+L7YweSh0AWXuZ8i5EMoab8nQA22ao=;
+        b=xSuHIRXOMuX/acDeegc85qh5c/ktVDtnZpVYE1tZZqznmhnAKoeBVDTXvxXG72HKXC
+         XQYXDwxIyj+FA42a5BKMYzt1F6utNrqgFSoH5r0ncaep4BUiqRChGnkoXxPZrSHqQAf3
+         kP8ihAjzsutrDAIi/Ldm0saD1S1O8TvcLZleN9kQp0ylT1pozpYglXSZrSFtim6hWldL
+         Ekn4ovQP6RfEzF+jJQhFH8UdbRVuABk7Bl3PIScmQvwW+9PyUPADP/MRUVJIz6jq3RZ3
+         /Uo223m0MkhOI7nNNI1IDACnOLgRTFlZ0/yUVU6LphRDEn7ZiTitWGGpkL8YF8QqT9pq
+         4Xyg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Jmo6kIv4;
-       dkim=pass header.i=@chromium.org header.s=google header.b=jZexWGjl;
-       spf=pass (google.com: domain of kernel-hardening-return-11627-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11627-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nsfOatcs;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Jmo6kIv4;
-       dkim=pass header.i=@chromium.org header.s=google header.b=jZexWGjl;
-       spf=pass (google.com: domain of kernel-hardening-return-11627-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11627-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nsfOatcs;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x224d3dsYZUuw7qfMK5aXdlFd3Sokww+MT/ybBiyh4bEsyPiPHf67jlw8b2H7Kte5x0k8WvRYYw==
+Date: Tue, 13 Feb 2018 13:48:16 +0530
+From: Aishwarya Pant <aishpant@gmail.com>
+To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH] libata: update documentation for sysfs interfaces
+Message-ID: <20180213081816.GA11350@mordor.localdomain>
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <123377.1517765678@turing-police.cc.vt.edu>
-References: <123377.1517765678@turing-police.cc.vt.edu>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 6 Feb 2018 12:07:31 +1100
-X-Google-Sender-Auth: uXzJmOkelSc8tgbmPjXG8gyUBmo
-Message-ID: <CAGXu5jJYwtUwYWh9VfuZ7hydScoBaT3gWbjcN=TpnZsywYO3Ng@mail.gmail.com>
-Subject: Re: [PATCH 2/2] GCC release 8 support for gcc-plugins
-To: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc: kernel-hardening@lists.openwall.com, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591490625322246882?=
-X-GMAIL-MSGID: =?utf-8?q?1591611773835516742?=
+X-GMAIL-THRID: =?utf-8?q?1592273039999135902?=
+X-GMAIL-MSGID: =?utf-8?q?1592273039999135902?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 5, 2018 at 4:34 AM,  <valdis.kletnieks@vt.edu> wrote:
-> For reasons totally beyond my understanding, gcc 8 changed the
-> order of two structure member, which leads to an error:
->
->   HOSTCXX -fPIC scripts/gcc-plugins/latent_entropy_plugin.o
-> scripts/gcc-plugins/latent_entropy_plugin.c:269:1: error: designator order for field 'attribute_spec::affects_type_identity' does not match declaration order in 'attribute_spec'
->  };
->  ^
+Dcoumentation has been added by parsing through git commit history and
+reading code. This might be useful for scripting and tracking changes in
+the ABI.
 
-FWIW, my gcc 8 snapshot reports:
+I do not have complete descriptions for the following 3 attributes; they
+have been annotated with the comment [to be documented] -
 
-scripts/gcc-plugins/latent_entropy_plugin.c:269:1: sorry,
-unimplemented: non-trivial designated initializers not supported
- };
- ^
+	/sys/class/scsi_host/hostX/ahci_port_cmd
+	/sys/class/scsi_host/hostX/ahci_host_caps
+	/sys/class/scsi_host/hostX/ahci_host_cap2
 
-But yeah, it seems that initializer _order_ matters here. Uuuugh.
+Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-block-device    | 58 ++++++++++++++++
+ Documentation/ABI/testing/sysfs-class-scsi_host | 89 +++++++++++++++++++++++++
+ 2 files changed, 147 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-block-device
 
-I think instead of static initializers, we can just move this into the
-register function, then order won't matter again. e.g.:
-
-
-diff --git a/scripts/gcc-plugins/latent_entropy_plugin.c
-b/scripts/gcc-plugins/latent_entropy_plugin.c
-index 65264960910d..6836b8cd9fc4 100644
---- a/scripts/gcc-plugins/latent_entropy_plugin.c
-+++ b/scripts/gcc-plugins/latent_entropy_plugin.c
-@@ -255,21 +255,21 @@ static tree handle_latent_entropy_attribute(tree
-*node, tree name,
-        return NULL_TREE;
- }
-
--static struct attribute_spec latent_entropy_attr = {
--       .name                           = "latent_entropy",
--       .min_length                     = 0,
--       .max_length                     = 0,
--       .decl_required                  = true,
--       .type_required                  = false,
--       .function_type_required         = false,
--       .handler                        = handle_latent_entropy_attribute,
--#if BUILDING_GCC_VERSION >= 4007
--       .affects_type_identity          = false
--#endif
--};
-+static struct attribute_spec latent_entropy_attr;
-
- static void register_attributes(void *event_data __unused, void *data __unused)
- {
-+       latent_entropy_attr.name                        = "latent_entropy";
-+       latent_entropy_attr.min_length                  = 0;
-+       latent_entropy_attr.max_length                  = 0;
-+       latent_entropy_attr.decl_required               = true;
-+       latent_entropy_attr.type_required               = false;
-+       latent_entropy_attr.function_type_required      = false;
-+       latent_entropy_attr.handler     = handle_latent_entropy_attribute;
-+#if BUILDING_GCC_VERSION >= 4007
-+       latent_entropy_attr.affects_type_identity       = false;
-+#endif
+diff --git a/Documentation/ABI/testing/sysfs-block-device b/Documentation/ABI/testing/sysfs-block-device
+new file mode 100644
+index 000000000000..82ef6eab042d
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-block-device
+@@ -0,0 +1,58 @@
++What:		/sys/block/*/device/sw_activity
++Date:		Jun, 2008
++KernelVersion:	v2.6.27
++Contact:	linux-ide@vger.kernel.org
++Description:
++		(RW) Used by drivers which support software controlled activity
++		LEDs.
 +
-        register_attribute(&latent_entropy_attr);
- }
-
-(pardon whitespace damage...)
-
--Kees
-
++		It has the following valid values:
++
++		0	OFF - the LED is not activated on activity
++		1	BLINK_ON - the LED blinks on every 10ms when activity is
++			detected.
++		2	BLINK_OFF - the LED is on when idle, and blinks off
++			every 10ms when activity is detected.
++
++		Note that the user must turn sw_activity OFF it they wish to
++		control the activity LED via the em_message file.
++
++
++What:		/sys/block/*/device/unload_heads
++Date:		Sep, 2008
++KernelVersion:	v2.6.28
++Contact:	linux-ide@vger.kernel.org
++Description:
++		(RW) Hard disk shock protection
++
++		Writing an integer value to this file will take the heads of the
++		respective drive off the platter and block all I/O operations
++		for the specified number of milliseconds.
++
++		- If the device does not support the unload heads feature,
++		  access is denied with -EOPNOTSUPP.
++		- The maximal value accepted for a timeout is 30000
++		  milliseconds.
++		- A previously set timeout can be cancelled and disk can resume
++		  normal operation immediately by specifying a timeout of 0.
++		- Some hard drives only comply with an earlier version of the
++		  ATA standard, but support the unload feature nonetheless.
++		  There is no safe way Linux can detect these devices, so this
++		  is not enabled by default. If it is known that your device
++		  does support the unload feature, then you can tell the kernel
++		  to enable it by writing -1. It can be disabled again by
++		  writing -2.
++		- Values below -2 are rejected with -EINVAL
++
++		For more information, see
++		Documentation/laptops/disk-shock-protection.txt
++
++
++What:		/sys/block/*/device/ncq_prio_enable
++Date:		Oct, 2016
++KernelVersion:	v4.10
++Contact:	linux-ide@vger.kernel.org
++Description:
++		(RW) Write to the file to turn on or off the SATA ncq (native
++		command queueing) support. By default this feature is turned
++		off.
+diff --git a/Documentation/ABI/testing/sysfs-class-scsi_host b/Documentation/ABI/testing/sysfs-class-scsi_host
+index 0eb255e7db12..bafc59fd7b69 100644
+--- a/Documentation/ABI/testing/sysfs-class-scsi_host
++++ b/Documentation/ABI/testing/sysfs-class-scsi_host
+@@ -27,3 +27,92 @@ Description:	This file contains the current status of the "SSD Smart Path"
+ 		the direct i/o path to physical devices.  This setting is
+ 		controller wide, affecting all configured logical drives on the
+ 		controller.  This file is readable and writable.
++
++What:		/sys/class/scsi_host/hostX/link_power_management_policy
++Date:		Oct, 2007
++KernelVersion:	v2.6.24
++Contact:	linux-ide@vger.kernel.org
++Description:
++		(RW) This parameter allows the user to read and set the link
++		(interface) power management.
++
++		There are four possible options:
++
++		min_power: Tell the controller to try to make the link use the
++		least possible power when possible. This may sacrifice some
++		performance due to increased latency when coming out of lower
++		power states.
++
++		max_performance: Generally, this means no power management.
++		Tell the controller to have performance be a priority over power
++		management.
++
++		medium_power: Tell the controller to enter a lower power state
++		when possible, but do not enter the lowest power state, thus
++		improving latency over min_power setting.
++
++		med_power_with_dipm: Identical to the existing medium_power
++		setting except that it enables dipm (device initiated power
++		management) on top, which makes it match the Windows IRST (Intel
++		Rapid Storage Technology) driver settings. This setting is also
++		close to min_power, except that:
++		a) It does not use host-initiated slumber mode, but it does
++		allow device-initiated slumber
++		b) It does not enable low power device sleep mode (DevSlp).
++
++What:		/sys/class/scsi_host/hostX/em_message
++What:		/sys/class/scsi_host/hostX/em_message_type
++Date:		Jun, 2008
++KernelVersion:	v2.6.27
++Contact:	linux-ide@vger.kernel.org
++Description:
++		em_message: (RW) Enclosure management support. For the LED
++		protocol, writes and reads correspond to the LED message format
++		as defined in the AHCI spec.
++
++		The user must turn sw_activity (under /sys/block/*/device/) OFF
++		it they wish to control the activity LED via the em_message
++		file.
++
++		em_message_type: (RO) Displays the current enclosure management
++		protocol that is being used by the driver (for eg. LED, SAF-TE,
++		SES-2, SGPIO etc).
++
++What:		/sys/class/scsi_host/hostX/ahci_port_cmd
++What:		/sys/class/scsi_host/hostX/ahci_host_caps
++What:		/sys/class/scsi_host/hostX/ahci_host_cap2
++Date:		Mar, 2010
++KernelVersion:	v2.6.35
++Contact:	linux-ide@vger.kernel.org
++Description:
++		[to be documented]
++
++What:		/sys/class/scsi_host/hostX/ahci_host_version
++Date:		Mar, 2010
++KernelVersion:	v2.6.35
++Contact:	linux-ide@vger.kernel.org
++Description:
++		(RO) Display the version of the AHCI spec implemented by the
++		host.
++
++What:		/sys/class/scsi_host/hostX/em_buffer
++Date:		Apr, 2010
++KernelVersion:	v2.6.35
++Contact:	linux-ide@vger.kernel.org
++Description:
++		(RW) Allows access to AHCI EM (enclosure management) buffer
++		directly if the host supports EM.
++
++		For eg. the AHCI driver supports SGPIO EM messages but the
++		SATA/AHCI specs do not define the SGPIO message format of the EM
++		buffer. Different hardware(HW) vendors may have different
++		definitions. With the em_buffer attribute, this issue can be
++		solved by allowing HW vendors to provide userland drivers and
++		tools for their SGPIO initiators.
++
++What:		/sys/class/scsi_host/hostX/em_message_supported
++Date:		Oct, 2009
++KernelVersion:	v2.6.39
++Contact:	linux-ide@vger.kernel.org
++Description:
++		(RO) Displays supported enclosure management message types.
 -- 
-Kees Cook
-Pixel Security
+2.16.1
