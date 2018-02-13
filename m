@@ -1,70 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935527AbeBMOwf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:52:35 -0500
-Received: from h1.radempa.de ([176.9.142.194]:57166 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935254AbeBMOwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:52:34 -0500
-From: Harald Geyer <harald@ccbib.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        Harald Geyer <harald@ccbib.org>
-Subject: [PATCH,RESEND2] regulator: fixed, gpio: dt: regulator-name is required property
-Date: Tue, 13 Feb 2018 14:43:08 +0000
-Message-Id: <1518532988-10990-1-git-send-email-harald@ccbib.org>
-X-Mailer: git-send-email 2.1.4
+        id S965085AbeBMOzF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:55:05 -0500
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:34200 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935436AbeBMOzC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:55:02 -0500
+X-Google-Smtp-Source: AH8x224C+aCTAUyW43xCoXkdTZLgYqTvSCeGUaNZNhez0+aJZ8dUUmFUniD251nZMFag/rAqCjT+J9nruPkjI8tTVpk=
+MIME-Version: 1.0
+In-Reply-To: <20180212153012.vffvjmz26ifyxbj5@pali>
+References: <20180127133209.28995-1-pali.rohar@gmail.com> <CAHp75VdWA-0a_FeicHSi_FfWurQ9EvkdW0raqgoRVySTyxDJ0Q@mail.gmail.com>
+ <20180128144509.pobnj7cayc4psgrj@pali> <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
+ <20180131120348.azy25aqvn5wrdkeh@pali> <CAHp75Vf=-RQvCtS684Q5+X=YKmZXgP_1kr0to8BGZX0jQAsuZw@mail.gmail.com>
+ <20180212153012.vffvjmz26ifyxbj5@pali>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Feb 2018 16:55:00 +0200
+Message-ID: <CAHp75VfF+qwCXcr3yuayE-Z+UG9wuMOKfGzLhdyPk79daEi9gQ@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
+ Dell machines
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+        Steven Honeyman <stevenhoneyman@gmail.com>,
+        Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+        Jochen Eisinger <jochen@penguin-breeder.org>,
+        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mario Limonciello <Mario_Limonciello@dell.com>,
+        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1DEtEej029712
 
-These two drivers fail to probe if no name is provided. For details see:
-https://www.spinics.net/lists/kernel/msg2457515.html
+On Mon, Feb 12, 2018 at 5:30 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+> On Wednesday 31 January 2018 14:27:51 Andy Shevchenko wrote:
+>> On Wed, Jan 31, 2018 at 2:03 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+>> > On Sunday 28 January 2018 17:00:35 Andy Shevchenko wrote:
+>> >> On Sun, Jan 28, 2018 at 4:45 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+>>
+>> >> > ACPI device name is SMO8800, SMO8810, ... Will that acpi_dev_present
+>> >> > function match only prefix and not exact string?
+>> >>
+>> >> OK, fair enough.
+>> >>
+>> >> Do we have more users of such pattern?
+>> >
+>> > I have not seen this ACPI pattern yet, so probably not.
+>>
+>> I see. So, my  one concern is the implicit names of the devices. I
+>> would like rather to see
+>>
+>> ... acpi_device_id ... []= {
+>>  {"SMO8800"},
+>>  {"SMO8810"},
+>> ...
+>> {}
+>> };
+>
+> Following table already exists in dell-smo8800.c file:
+>
+> static const struct acpi_device_id smo8800_ids[] = {
+>         { "SMO8800", 0 },
+>         { "SMO8801", 0 },
+>         { "SMO8810", 0 },
+>         { "SMO8811", 0 },
+>         { "SMO8820", 0 },
+>         { "SMO8821", 0 },
+>         { "SMO8830", 0 },
+>         { "SMO8831", 0 },
+>         { "", 0 },
+> };
+>
+> MODULE_DEVICE_TABLE(acpi, smo8800_ids);
+>
+> Can we reuse it?
 
-Signed-off-by: Harald Geyer <harald@ccbib.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
-This is already the second resend for this trivial device probing bug
-fix. It was written to your specification, got an ACK from devicetree
-and has no unaddressed review comments, so I can't see what might be
-holding it back. If there is still anything wrong with it, I'd appreciate
-actual feedback instead of a canned response or silence.
+>  Maybe moving array smo8800_ids[] into some header file
+> (which one?) and statically inline it?
 
-BTW, it took me a bit to figure out that by "content free ping" you are
-refering to the quoting of the patch. Maybe you can reword your canned
-response to make it easier to understand.
+Bad idea.
 
-The ACK was added in the (first) resend.
+> Or having it only in
+> dell-smo8800.c file and exporting its symbol?
 
- Documentation/devicetree/bindings/regulator/fixed-regulator.txt | 1 +
- Documentation/devicetree/bindings/regulator/gpio-regulator.txt  | 2 ++
- 2 files changed, 3 insertions(+)
+Even worse.
 
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-index 4fae41d..0c2a6c8 100644
---- a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-@@ -2,6 +2,7 @@ Fixed Voltage regulators
- 
- Required properties:
- - compatible: Must be "regulator-fixed";
-+- regulator-name: Defined in regulator.txt as optional, but required here.
- 
- Optional properties:
- - gpio: gpio to use for enable control
-diff --git a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-index dd1ed78..1f49615 100644
---- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-@@ -2,6 +2,8 @@ GPIO controlled regulators
- 
- Required properties:
- - compatible		: Must be "regulator-gpio".
-+- regulator-name	: Defined in regulator.txt as optional, but required
-+			  here.
- - states		: Selection of available voltages and GPIO configs.
-                           if there are no states, then use a fixed regulator
- 
+> Or is there better idea?
+>
+> For sure I do not want to copy paste this table into another module and
+> maintaining two copies of this list.
+
+The copy is fine. Can you guarantee that those two lists would be
+always the same? I'm not.
+And besides that explicitly over implicitly  is a really good thing. I
+would not like to grep for an ID followed by grepping include line and
+check each files to check if it uses it or not.
+
 -- 
-2.1.4
+With Best Regards,
+Andy Shevchenko
