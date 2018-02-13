@@ -1,59 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933819AbeBMJDC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:03:02 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37695 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933638AbeBMJCz (ORCPT
+        id S933855AbeBMJEH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:04:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51451 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933638AbeBMJEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:02:55 -0500
-X-Google-Smtp-Source: AH8x226DYyV6BfmKCATtm4GOJnDuCj7yW3LwxjPS9YplKIDW9wx9pt9u8iecZs4hDph2QcLf8/sqMg==
-Date: Tue, 13 Feb 2018 12:02:49 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Andrei Vagin <avagin@virtuozzo.com>
-Cc: tip-bot for Jacob Shin <tipbot@zytor.com>,
-        kirill.shutemov@linux.intel.com, linux-tip-commits@vger.kernel.org,
-        tglx@linutronix.de, willy@infradead.org, gorcunov@openvz.org,
-        bp@suse.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        luto@amacapital.net
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging
- boot if kernel is above 4G
-Message-ID: <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
-References: <tip-b4b56015ed1c98cbc9469e35ebbc4373a2844030@git.kernel.org>
- <20180213065155.GA14087@outlook.office365.com>
- <20180213080816.vwh64jiz23frjiot@node.shutemov.name>
- <20180213084121.GA19906@outlook.office365.com>
+        Tue, 13 Feb 2018 04:04:02 -0500
+Date: Tue, 13 Feb 2018 01:03:37 -0800
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-b3ccefaed922529e6a67de7b30af5aa38c76ace9@git.kernel.org>
+Cc: tglx@linutronix.de, linux@dominikbrodowski.net, hpa@zytor.com,
+        fengguang.wu@intel.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        peterz@infradead.org, jpoimboe@redhat.com,
+        torvalds@linux-foundation.org
+Reply-To: torvalds@linux-foundation.org, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, fengguang.wu@intel.com, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, linux@dominikbrodowski.net,
+        hpa@zytor.com
+In-Reply-To: <20180212174503.5acbymg5z6p32snu@treble>
+References: <20180212174503.5acbymg5z6p32snu@treble>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/entry/64: Fix paranoid_entry() frame pointer
+ warning
+Git-Commit-ID: b3ccefaed922529e6a67de7b30af5aa38c76ace9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180213084121.GA19906@outlook.office365.com>
-User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 12:41:22AM -0800, Andrei Vagin wrote:
-> On Tue, Feb 13, 2018 at 11:08:16AM +0300, Kirill A. Shutemov wrote:
-> > On Mon, Feb 12, 2018 at 10:51:56PM -0800, Andrei Vagin wrote:
-> > > Hi Kirill,
-> > > 
-> > > Something is wrong in this patch.
+Commit-ID:  b3ccefaed922529e6a67de7b30af5aa38c76ace9
+Gitweb:     https://git.kernel.org/tip/b3ccefaed922529e6a67de7b30af5aa38c76ace9
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Mon, 12 Feb 2018 11:45:03 -0600
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 09:04:55 +0100
 
-Could you please check if this makes a difference?
+x86/entry/64: Fix paranoid_entry() frame pointer warning
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index 70b30f2bc9e0..99a0e7993252 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -332,7 +332,7 @@ ENTRY(startup_64)
+With the following commit:
+
+  f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
+
+... one of my suggested improvements triggered a frame pointer warning:
+
+  arch/x86/entry/entry_64.o: warning: objtool: paranoid_entry()+0x11: call without frame pointer save/setup
+
+The warning is correct for the build-time code, but it's actually not
+relevant at runtime because of paravirt patching.  The paravirt swapgs
+call gets replaced with either a SWAPGS instruction or NOPs at runtime.
+
+Go back to the previous behavior by removing the ELF function annotation
+for paranoid_entry() and adding an unwind hint, which effectively
+silences the warning.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kbuild-all@01.org
+Cc: tipbuild@zytor.com
+Fixes: f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
+Link: http://lkml.kernel.org/r/20180212174503.5acbymg5z6p32snu@treble
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/entry_64.S | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index cfbf433..1c5420420 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1128,6 +1128,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
+  */
+ ENTRY(paranoid_entry)
++	UNWIND_HINT_FUNC
+ 	cld
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1141,7 +1142,7 @@ ENTRY(paranoid_entry)
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
  
- 	/* Make sure we have GDT with 32-bit code segment */
- 	leaq	gdt(%rip), %rax
--	movl	%eax, gdt64+2(%rip)
-+	movq	%rax, gdt64+2(%rip)
- 	lgdt	gdt64(%rip)
+ 	ret
+-ENDPROC(paranoid_entry)
++END(paranoid_entry)
  
- 	/*
--- 
- Kirill A. Shutemov
+ /*
+  * "Paranoid" exit path from exception stack.  This is invoked
