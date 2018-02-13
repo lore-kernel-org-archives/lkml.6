@@ -1,65 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965183AbeBMRRt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:17:49 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38562 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934602AbeBMRRr (ORCPT
+        id S965295AbeBMRSM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:18:12 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52015 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965091AbeBMRSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:17:47 -0500
-X-Google-Smtp-Source: AH8x225wAh/2HDB9X1wjm6H9q/kbyDbWneDWgGIPlnpGhp0/0flM6jPmah1Rgmu3ynZnya3YPw6cQQ==
-Date: Tue, 13 Feb 2018 18:17:43 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Andrei Vagin <avagin@virtuozzo.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        tip-bot for Jacob Shin <tipbot@zytor.com>,
-        kirill.shutemov@linux.intel.com, linux-tip-commits@vger.kernel.org,
-        tglx@linutronix.de, willy@infradead.org, gorcunov@openvz.org,
-        bp@suse.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, luto@amacapital.net
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging
- boot if kernel is above 4G
-Message-ID: <20180213171742.ssblqj37l5daxc4s@gmail.com>
-References: <tip-b4b56015ed1c98cbc9469e35ebbc4373a2844030@git.kernel.org>
- <20180213065155.GA14087@outlook.office365.com>
- <20180213080816.vwh64jiz23frjiot@node.shutemov.name>
- <20180213084121.GA19906@outlook.office365.com>
- <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
- <20180213165337.GA20735@outlook.office365.com>
+        Tue, 13 Feb 2018 12:18:07 -0500
+X-Google-Smtp-Source: AH8x224HcU/LVIVUpbT7GIDDLTM2/PsYWB5bEsNfNtQuQt6ANYmIPV2mIHzMa8BuFcW5stqZib/0Jw==
+From: Junio C Hamano <gitster@pobox.com>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Git Mailing List <git@vger.kernel.org>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
+        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
+        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+        <20180212222157.0a3bd472@vento.lan>
+Date: Tue, 13 Feb 2018 09:18:03 -0800
+In-Reply-To: <20180212222157.0a3bd472@vento.lan> (Mauro Carvalho Chehab's
+        message of "Mon, 12 Feb 2018 22:21:57 -0200")
+Message-ID: <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180213165337.GA20735@outlook.office365.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mauro Carvalho Chehab <mchehab@osg.samsung.com> writes:
 
-* Andrei Vagin <avagin@virtuozzo.com> wrote:
+> Yes, that's my pain. I don't want ff only when pulling from others,
+> only when pulling from upstream tree.
+>
+>> 
+>> We may want per-remote equivalent for it, i.e. e.g.
+>> 
+>> 	[pull]
+>> 		ff=false ;# good default for collecting contributions
+>> 
+>> 	[remote "torvalds"] 
+>> 		pullFF = only ;# good default for catching up
+>> 
+>> or something like that, perhaps?
+>
+>
+> Yeah, something like that works. Please notice, however, that what I
+> usually do is:
+>
+> 	$ git remote update torvalds
+> 	$ git merge <tag>
+> 	  (or git pull . <tag>)
+>
+> So, for the above to work, it should store somehow the remote from
+> where a tag came from.
 
-> On Tue, Feb 13, 2018 at 12:02:49PM +0300, Kirill A. Shutemov wrote:
-> > On Tue, Feb 13, 2018 at 12:41:22AM -0800, Andrei Vagin wrote:
-> > > On Tue, Feb 13, 2018 at 11:08:16AM +0300, Kirill A. Shutemov wrote:
-> > > > On Mon, Feb 12, 2018 at 10:51:56PM -0800, Andrei Vagin wrote:
-> > > > > Hi Kirill,
-> > > > > 
-> > > > > Something is wrong in this patch.
-> > 
-> > Could you please check if this makes a difference?
-> 
-> The kernel booted with this patch. Thanks!
-> https://travis-ci.org/avagin/linux/jobs/341030882
+That makes me wonder if another heuristic I floated earlier is more
+appropriate.  When merging a tag object T, if refs/tags/T exists and
+it is that tag object, then an updated "merge" would default to "--ff";
+otherwise, it would keep the current default of creating a merge even
+when we could fast-forward, in order to record that tag T in the
+resulting history.
 
-Fantastic, thanks for the help!
-
-I've amended the commit to keep the series bisectable, and added these two tags:
-
- Debugged-by: "Kirill A. Shutemov" <kirill@shutemov.name>
- Tested-by: "Kirill A. Shutemov" <kirill@shutemov.name>
-
-To credit your debugging/testing help.
-
-Thanks,
-
-	Ingo
+Of course, end users can use command line options to override such
+heuristics anyway, but if the behaviour based on the new heuristic
+is easy to explain and understand, and covers majority of the use
+cases without command line override, then we might not even need a
+new configuration mechanism like remove.torvalds.pullFF mentioned
+above.
