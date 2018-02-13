@@ -1,76 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965295AbeBMRSM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:18:12 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52015 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965091AbeBMRSH (ORCPT
+        id S965317AbeBMRS3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:18:29 -0500
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:44425 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965064AbeBMRSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:18:07 -0500
-X-Google-Smtp-Source: AH8x224HcU/LVIVUpbT7GIDDLTM2/PsYWB5bEsNfNtQuQt6ANYmIPV2mIHzMa8BuFcW5stqZib/0Jw==
-From: Junio C Hamano <gitster@pobox.com>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Git Mailing List <git@vger.kernel.org>
-Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
-References: <20180213080036.3bf3a908@canb.auug.org.au>
-        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
-        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
-        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
-        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
-        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
-        <20180212222157.0a3bd472@vento.lan>
-Date: Tue, 13 Feb 2018 09:18:03 -0800
-In-Reply-To: <20180212222157.0a3bd472@vento.lan> (Mauro Carvalho Chehab's
-        message of "Mon, 12 Feb 2018 22:21:57 -0200")
-Message-ID: <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
+        Tue, 13 Feb 2018 12:18:10 -0500
+X-Google-Smtp-Source: AH8x226CGpn0NkPjEII4iaVhkpAmIFBIu/JlJo1ulEl6u67vahvAAYF7PS/ej7mwHQgeXUVYWoLXvEHWvnz2cBFtS7s=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180213171112.GA28598@avx2>
+References: <20180210211110.GA24324@avx2> <CAHp75VcQf-8RUP+bjej5dGJ+s2-hW9=51NVkvhYE6mUO3dY1Cg@mail.gmail.com>
+ <20180213171112.GA28598@avx2>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Feb 2018 19:18:08 +0200
+Message-ID: <CAHp75VffzNNws=zb+oBRuaJ=rQUwMgtxgN32Qv85X-Gfr0dR8Q@mail.gmail.com>
+Subject: Re: [PATCH] kstrtox: make kstrtobool_from_user() very strict
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mauro Carvalho Chehab <mchehab@osg.samsung.com> writes:
+On Tue, Feb 13, 2018 at 7:11 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> On Tue, Feb 13, 2018 at 06:02:27PM +0200, Andy Shevchenko wrote:
+>> On Sat, Feb 10, 2018 at 11:11 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>> > Once upon a time module parameter parsing code accepted
+>> > 0, 1, y, n, Y and N for boolean values. Gratituous but contained
+>> > to module code and thus tolerable.
+>> >
+>> > Commit ef951599074ba4fad2d0efa0a977129b41e6d203
+>> > ("lib: move strtobool() to kstrtobool()") promoted that ugly wart
+>> > to kstrtobool() and, more importantly, kstrtobool_from_user().
+>> >
+>> > Later set of accepted values was expanded to "on" and "of".
+>> > Now there are 6+8=14(!) valid strings for a boolean.
+>> >
+>> > This patch reduces set of accepted values to "0" and "1"
+>> > (with optional newline) in spirit with other kstrto*() functions.
+>> >
+>> > I'm starting with kstrtobool_from_user() as it is explicitly designed
+>> > to be used for interacting with userspace. Currently there are 9 users
+>> > all debug code, so there is hope.
+>> >
+>> > Please send before 4.16 so no real users start to depend on verbose behaviour.
 
-> Yes, that's my pain. I don't want ff only when pulling from others,
-> only when pulling from upstream tree.
+>> NACK.
+>> You basically are breaking ABI here. I don't see a zillion patches
+>> which adds a tons of duplicate code to the corresponding users.
 >
->> 
->> We may want per-remote equivalent for it, i.e. e.g.
->> 
->> 	[pull]
->> 		ff=false ;# good default for collecting contributions
->> 
->> 	[remote "torvalds"] 
->> 		pullFF = only ;# good default for catching up
->> 
->> or something like that, perhaps?
->
->
-> Yeah, something like that works. Please notice, however, that what I
-> usually do is:
->
-> 	$ git remote update torvalds
-> 	$ git merge <tag>
-> 	  (or git pull . <tag>)
->
-> So, for the above to work, it should store somehow the remote from
-> where a tag came from.
+> Please do "find . -type f -name '*.[ch]' | xargs grep kstrtobool_from_user -w'
+> before talking about zillion of patches.
 
-That makes me wonder if another heuristic I floated earlier is more
-appropriate.  When merging a tag object T, if refs/tags/T exists and
-it is that tag object, then an updated "merge" would default to "--ff";
-otherwise, it would keep the current default of creating a merge even
-when we could fast-forward, in order to record that tag T in the
-resulting history.
+If you wonder, I did it of course. The stylistic device I used here is
+called "hyperbole".
 
-Of course, end users can use command line options to override such
-heuristics anyway, but if the behaviour based on the new heuristic
-is easy to explain and understand, and covers majority of the use
-cases without command line override, then we might not even need a
-new configuration mechanism like remove.torvalds.pullFF mentioned
-above.
+Even for that dozen or so users I don't see how you handled the change.
+
+-- 
+With Best Regards,
+Andy Shevchenko
