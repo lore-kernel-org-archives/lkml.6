@@ -1,55 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933792AbeBMIci (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 03:32:38 -0500
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:55047 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933631AbeBMIcg (ORCPT
+        id S933763AbeBMIfM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 03:35:12 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42059 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933631AbeBMIfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 03:32:36 -0500
-X-Google-Smtp-Source: AH8x224XJl7eMdM/kopx4KoBdPFtZVCreI/Elfr7qB0KqcW1gO1rJkGfJ7cyzHj2y49OwhBxqu8lQQ==
-Date: Tue, 13 Feb 2018 09:32:31 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>, linux-kernel@vger.kernel.org,
-        stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v2] tools/memory-model: Make compat with herd7 7.47 ("-"
- -> "_")
-Message-ID: <20180213083231.armedi33dpymnrld@gmail.com>
-References: <20180209141832.GA17505@linux.vnet.ibm.com>
- <df87e89b-7fbe-37a7-42cb-62df74591df4@gmail.com>
- <a788e08d-eccb-0aec-6aa5-944e5321e5c6@gmail.com>
- <20180210010703.GE3617@linux.vnet.ibm.com>
- <20180211115148.iylaqk3f53f2vgf4@gmail.com>
- <20180213013803.GI3617@linux.vnet.ibm.com>
+        Tue, 13 Feb 2018 03:35:10 -0500
+X-Google-Smtp-Source: AH8x225d0oZeKSuoASMhsSKnI2/tUZfL3GuMo0Io4BzwKAGoquwZWR+0HjhXhPmp3GZayv4lf38FUg==
+Date: Tue, 13 Feb 2018 17:35:05 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2] printk: move dump stack related code to
+ lib/dump_stack.c
+Message-ID: <20180213083505.GA1953@jagdpanzerIV>
+References: <20180213072834.GA24784@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180213013803.GI3617@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180213072834.GA24784@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
-
-> Cat-language code has used "-" as a word
-> separator in names, and the model had previously had an odd mixture of
-> "-" and "_".  Hence, the switch to the cat-language convention.
+On (02/13/18 15:28), Dave Young wrote:
 > 
-> Of course, if underscore is strongly preferred, underscore does work,
-> and it should be possible to move in that direction.
+> dump_stack related stuff should belong to lib/dump_stack.c thus move them
+> there. Also conditionally compile lib/dump_stack.c since dump_stack code
+> does not make sense if printk is disabled.
+> 
+> Signed-off-by: Dave Young <dyoung@redhat.com>
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-I'm fine with either of these variants, as long as it's consistent: the 
-idiosynchratic seeming mixture of both '-' and '_' convention looked odd to me.
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-If '_' is also more compatible with installed versions of the language, then I'd 
-go for that - but it's your call.
 
-Thanks,
+The patch also saves us some additional memory on !PRINTK configs.
+For example things like this
 
-	Ingo
+	if (kobj->state_initialized) {
+		/* do not error out as sometimes we can recover */
+		printk(KERN_ERR "kobject (%p): tried to init an initialized "
+		       "object, something is seriously wrong.\n", kobj);
+		dump_stack();
+	}
+
+now we won't have that dump_stack() call, which does not seems to be doing
+anything useful anyway when printk() is not available.
+
+	-ss
