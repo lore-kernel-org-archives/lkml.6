@@ -1,45 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965106AbeBMQ6G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:58:06 -0500
-Received: from mail-io0-f170.google.com ([209.85.223.170]:40901 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934514AbeBMQ6C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:58:02 -0500
-X-Google-Smtp-Source: AH8x225Oh12Np4117yEV3oP97f57mo5brnkXz3+2Ums+503dkQUgQ5c+f18GLE9z4mFDCZXNCPmf8nrV8JJvmEO6P6A=
+        id S965236AbeBMQ5T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:57:19 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5237 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934845AbeBMQ44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:56:56 -0500
+From: John Garry <john.garry@huawei.com>
+To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
+        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
+        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
+        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
+        <robh@kernel.org>
+CC: <joe@perches.com>, <benh@kernel.crashing.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
+        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <rdunlap@infradead.org>
+Subject: [PATCH v13 8/9] LPC, ACPI: Add the HISI LPC ACPI support
+Date: Wed, 14 Feb 2018 01:45:32 +0800
+Message-ID: <1518543933-22456-9-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Reply-To: whiteheadm@acm.org
-In-Reply-To: <20180213165159.GR695913@devbig577.frc2.facebook.com>
-References: <CAP8WD_bdbmAp=bYAXp--36SME5Cgn42ovz+YpjEt94fzaVt4Ew@mail.gmail.com>
- <20180213165159.GR695913@devbig577.frc2.facebook.com>
-From: tedheadster <tedheadster@gmail.com>
-Date: Tue, 13 Feb 2018 11:57:41 -0500
-Message-ID: <CAP8WD_Z+yYXiRUZt4eMo2+zOSPFhsw=XiqJQUqVZFGGnGoWdPg@mail.gmail.com>
-Subject: Re: x86/stack protector: X86_32_LAZY_GS=n hangs kernel on old processors
-To: Tejun Heo <tj@kernel.org>
-Cc: jeremy@xensource.com, rusty@rustcorp.com.au, mingo@elte.hu,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Tue, Feb 13, 2018 at 11:40:17AM -0500, tedheadster wrote:
->>   in your patch "x86: make lazy %gs optional on x86_32" were you able
->> to test it on really old processors? In 4.16.0-rc1, X86_32_LAZY_GS got
->> toggled from 'y' to 'n' in my default config because of changes to the
->> stack protector code. It hangs my ancient i486 test machine right
->> after 'Booting the kernel'.
->
-> I didn't have access to an i486 at the time or ever since, so it
-> wasn't tested there.  If this is specific to i486, flagging it so in
-> the config probably isn't the end of the world at this point.
+Based on the previous patches, this patch supports the LPC host on
+Hip06/Hip07 for ACPI FW.
 
-Tejun,
-  I will be able to test this on other 32bit hardware at the end of
-the week. Hopefully I'll be able to identify which processors it does
-not work on (i486/i586/i686).
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
+Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Tested-by: Dann Frazier <dann.frazier@canonical.com>
+---
+ drivers/acpi/arm64/acpi_indirectio.c |  1 +
+ drivers/bus/hisi_lpc.c               | 17 ++++++++++++++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-- Matthew
+diff --git a/drivers/acpi/arm64/acpi_indirectio.c b/drivers/acpi/arm64/acpi_indirectio.c
+index 51a1b92..52519a21 100644
+--- a/drivers/acpi/arm64/acpi_indirectio.c
++++ b/drivers/acpi/arm64/acpi_indirectio.c
+@@ -225,6 +225,7 @@ static int acpi_indirect_io_setup(struct acpi_device *adev)
+ 
+ /* All the host devices which apply indirect-IO can be listed here. */
+ static const struct acpi_device_id acpi_indirect_io_host_id[] = {
++	{"HISI0191"},
+ 	{}
+ };
+ 
+diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+index 2290cf2..6211c95 100644
+--- a/drivers/bus/hisi_lpc.c
++++ b/drivers/bus/hisi_lpc.c
+@@ -439,7 +439,13 @@ static int hisilpc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* register the LPC host PIO resources */
+-	{
++	if (has_acpi_companion(dev)) {
++		lpcdev->io_host = find_io_range_by_fwnode(dev->fwnode);
++		if (!lpcdev->io_host) {
++			dev_err(dev, "range not registered!\n");
++			return -EFAULT;
++		}
++	} else {
+ 		struct logic_pio_hwaddr *range;
+ 
+ 		range = devm_kzalloc(dev, sizeof(*range), GFP_KERNEL);
+@@ -496,10 +502,19 @@ static int hisilpc_probe(struct platform_device *pdev)
+ 	{},
+ };
+ 
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id hisilpc_acpi_match[] = {
++	{"HISI0191", },
++	{},
++};
++
++#endif
++
+ static struct platform_driver hisilpc_driver = {
+ 	.driver = {
+ 		.name           = "hisi_lpc",
+ 		.of_match_table = hisilpc_of_match,
++		.acpi_match_table = ACPI_PTR(hisilpc_acpi_match),
+ 	},
+ 	.probe = hisilpc_probe,
+ };
+-- 
+1.9.1
